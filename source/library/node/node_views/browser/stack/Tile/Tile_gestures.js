@@ -17,6 +17,7 @@
      * @description Determines if the tile accepts tap begin gesture.
      * @param {Object} aGesture - The gesture object.
      * @returns {boolean} Always returns true.
+     * @category Gesture
      */
     acceptsTapBegin (aGesture) {
         return true
@@ -26,6 +27,7 @@
      * @description Handles the completion of a tap gesture.
      * @param {Object} aGesture - The gesture object.
      * @returns {Tile_gestures} The instance of the class.
+     * @category Gesture
      */
     onTapComplete (aGesture) {
         this.setLastTapDate(new Date())
@@ -44,6 +46,7 @@
 
     /**
      * @description Handles a simple tap gesture.
+     * @category Gesture
      */
     justTap () {
         this.setIsInspecting(false)
@@ -63,6 +66,7 @@
 
     /**
      * @description Handles a shift-tap gesture.
+     * @category Gesture
      */
     justShiftTap () {
         this.setIsInspecting(false)
@@ -71,6 +75,7 @@
 
     /**
      * @description Handles an alternate-tap gesture.
+     * @category Gesture
      */
     justAlternateTap () {
         this.debugLog(".justInspect()")
@@ -82,6 +87,7 @@
 
     /**
      * @description Handles a meta-tap gesture.
+     * @category Gesture
      */
     justMetaTap () {
         this.setIsInspecting(false)
@@ -93,6 +99,7 @@
     /**
      * @description Determines if the tile accepts long press.
      * @returns {boolean} True if the column can reorder tiles, false otherwise.
+     * @category Gesture
      */
     acceptsLongPress () {
         if (!this.column()) {
@@ -108,6 +115,7 @@
     /**
      * @description Handles the beginning of a long press gesture.
      * @param {Object} aGesture - The gesture object.
+     * @category Gesture
      */
     onLongPressBegin (aGesture) {
         if (this.isRegisteredForBrowserDrag()) {
@@ -118,6 +126,7 @@
     /**
      * @description Handles the cancellation of a long press gesture.
      * @param {Object} aGesture - The gesture object.
+     * @category Gesture
      */
     onLongPressCancelled (aGesture) {
     }
@@ -125,6 +134,7 @@
     /**
      * @description Determines if the gesture is a tap-long press.
      * @returns {boolean} True if it's a tap-tap-hold, false otherwise.
+     * @category Gesture
      */
     isTapLongPress () {
         const maxDt = 0.7
@@ -144,6 +154,7 @@
     /**
      * @description Handles the completion of a long press gesture.
      * @param {Object} longPressGesture - The long press gesture object.
+     * @category Gesture
      */
     onLongPressComplete (longPressGesture) {
         longPressGesture.deactivate()
@@ -171,6 +182,7 @@
     /**
      * @description Determines if the tile accepts pan gesture.
      * @returns {boolean} The value of _isReordering.
+     * @category Gesture
      */
     acceptsPan () {
         return this._isReordering
@@ -182,6 +194,7 @@
     /**
      * @description Determines if the tile accepts bottom edge pan.
      * @returns {boolean} True if the node can edit tile height, false otherwise.
+     * @category Gesture
      */
     acceptsBottomEdgePan () {
         if (this.node().nodeCanEditTileHeight) {
@@ -195,6 +208,7 @@
     /**
      * @description Handles the beginning of a bottom edge pan gesture.
      * @param {Object} aGesture - The gesture object.
+     * @category Gesture
      */
     onBottomEdgePanBegin (aGesture) {
         this._beforeEdgePanBorderBottom = this.borderBottom()
@@ -206,6 +220,7 @@
      * @description Handles the movement of a bottom edge pan gesture.
      * @param {Object} aGesture - The gesture object.
      * @returns {Tile_gestures} The instance of the class.
+     * @category Gesture
      */
     onBottomEdgePanMove (aGesture) {
         const p = aGesture.currentPosition()
@@ -224,6 +239,7 @@
     /**
      * @description Handles the completion of a bottom edge pan gesture.
      * @param {Object} aGesture - The gesture object.
+     * @category Gesture
      */
     onBottomEdgePanComplete (aGesture) {
         this.setBorderBottom(this._beforeEdgePanBorderBottom)

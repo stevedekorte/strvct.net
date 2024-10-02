@@ -14,6 +14,7 @@
     /**
      * @description Initializes prototype slots for the TransitionListener class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -22,6 +23,7 @@
     /**
      * @description Initializes the TransitionListener instance.
      * @returns {TransitionListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -31,6 +33,7 @@
     /**
      * @description Sets up the listeners for various transition events.
      * @returns {TransitionListener} The instance with listeners set up.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("transitionrun", "onTransitionRun");

@@ -14,6 +14,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
 
   /**
    * @constructor
+   * @category Initialization
    */
   constructor() {
     this._refs = new EnumerableWeakMap();
@@ -22,6 +23,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Asserts that the provided value is valid (not undefined).
    * @param {*} v - The value to assert.
+   * @category Validation
    */
   assertValidValue(v) {
     if (v === undefined) {
@@ -34,6 +36,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
    * @description Adds a value to the EnumerableWeakSet.
    * @param {*} v - The value to add.
    * @returns {EnumerableWeakSet} This instance.
+   * @category Modification
    */
   add(v) {
     this.assertValidValue(v);
@@ -49,6 +52,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
 
   /**
    * @description Clears all values from the EnumerableWeakSet.
+   * @category Modification
    */
   clear() {
     this._refs.clear();
@@ -58,6 +62,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
    * @description Deletes a value from the EnumerableWeakSet.
    * @param {*} v - The value to delete.
    * @returns {boolean} True if the value was present and removed, false otherwise.
+   * @category Modification
    */
   delete(v) {
     this.assertValidValue(v);
@@ -73,6 +78,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
    * @description Checks if the EnumerableWeakSet has a given value.
    * @param {*} v - The value to check for.
    * @returns {boolean} True if the value is present, false otherwise.
+   * @category Query
    */
   has(v) {
     this.assertValidValue(v)
@@ -82,6 +88,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Returns an array of the values in the EnumerableWeakSet.
    * @returns {Array} An array of the values.
+   * @category Query
    */
   keys() {
     return this.valuesArray()
@@ -90,6 +97,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Returns an array of the values in the EnumerableWeakSet.
    * @returns {Array} An array of the values.
+   * @category Query
    */
   values() {
     return this.valuesArray()
@@ -99,6 +107,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
    * @description Returns the count of values in the EnumerableWeakSet.
    * @returns {number} The count of values.
    * @description IMPORTANT: due to the nature of WeakRefs, the size may be smaller when actually used.
+   * @category Query
    */
   count() {
     return this._refs.count()
@@ -107,6 +116,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Executes a provided function once for each value in the EnumerableWeakSet.
    * @param {Function} fn - The function to execute for each value.
+   * @category Iteration
    */
   forEach(fn) {
     this._refs.forEach(v => fn(v, v, this))
@@ -117,6 +127,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Unimplemented method.
    * @throws {Error} Throws an error indicating that the method is unimplemented.
+   * @category Uncategorized
    */
   entries() {
     throw new Error("unimplemented")
@@ -124,6 +135,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
 
   /**
    * @description Clears any collected (stale) WeakRefs from the EnumerableWeakSet.
+   * @category Maintenance
    */
   clearCollected() {
     this.forEach(v => {}) // forEach will remove any stale weakrefs
@@ -132,6 +144,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Returns a Set containing all values in the EnumerableWeakSet.
    * @returns {Set} A Set containing all values.
+   * @category Query
    */
   valuesSet() {
     const set = new Set()
@@ -142,6 +155,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Returns an array containing all values in the EnumerableWeakSet.
    * @returns {Array} An array containing all values.
+   * @category Query
    */
   valuesArray() {
     const a = new Array()
@@ -152,6 +166,7 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
   /**
    * @description Returns an array containing all keys (puuid values) in the EnumerableWeakSet.
    * @returns {Array} An array containing all keys.
+   * @category Query
    */
   keysArray() {
     return this._refs.keysArray()

@@ -15,6 +15,7 @@
   /**
    * @description Returns an array of valid roles for the AI message.
    * @returns {string[]} Array of valid roles.
+   * @category Configuration
    */
   validRoles () {
     /* 
@@ -33,11 +34,13 @@
   
   /**
    * @description Initializes the prototype slots for the AiMessage class.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
     /**
      * @member {string} role - The role of the message (user, system, or assistant).
+     * @category Message Properties
      */
     {
       const slot = this.newSlot("role", "user"); 
@@ -53,6 +56,7 @@
 
     /**
      * @member {boolean} isVisibleToAi - Determines if the message is visible to the AI.
+     * @category Message Properties
      */
     {
       const slot = this.newSlot("isVisibleToAi", true);
@@ -64,6 +68,7 @@
 
     /**
      * @member {Action} requestResponseAction - Action for requesting a response.
+     * @category Actions
      */
     {
       const slot = this.newSlot("requestResponseAction", null);
@@ -83,6 +88,7 @@
 
   /**
    * @description Initializes the AiMessage instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -92,6 +98,7 @@
   /**
    * @description Checks if the message is a response.
    * @returns {boolean} Always returns false for AiMessage.
+   * @category Message Properties
    */
   isResponse () {
     return false;
@@ -100,6 +107,7 @@
   /**
    * @description Determines if the message is visible.
    * @returns {boolean} True if the role is not "system", false otherwise.
+   * @category Message Properties
    */
   isVisible () {
     return this.role() !== "system";
@@ -108,6 +116,7 @@
   /**
    * @description Checks if the value is editable.
    * @returns {boolean} True if the role is "user", false otherwise.
+   * @category Message Properties
    */
   valueIsEditable () {
     return this.role() === "user";
@@ -116,6 +125,7 @@
   /**
    * @description Returns the AI speaker name.
    * @returns {string} The name of the AI speaker.
+   * @category Message Properties
    */
   aiSpeakerName () {
     return "LLM";
@@ -124,6 +134,7 @@
   /**
    * @description Gets the content of the message.
    * @returns {string} The content of the message.
+   * @category Message Properties
    */
   content () {
     return this.value()
@@ -133,6 +144,7 @@
    * @description Sets the content of the message.
    * @param {string} s - The content to set.
    * @returns {AiMessage} This instance for chaining.
+   * @category Message Properties
    */
   setContent (s) {
     this.setValue(s)
@@ -143,6 +155,7 @@
   /**
    * @description Generates a subtitle for the message.
    * @returns {string} The generated subtitle.
+   * @category Message Properties
    */
   subtitle () {
     let s = this.content()
@@ -160,6 +173,7 @@
   /**
    * @description Calculates an approximate token count for the message content.
    * @returns {number} The estimated token count.
+   * @category Message Properties
    */
   tokenCount () {
     const s = this.content()
@@ -172,6 +186,7 @@
   /**
    * @description Gets the service associated with the conversation.
    * @returns {Object} The service object.
+   * @category Service
    */
   service () {
     return this.conversation().service();
@@ -180,6 +195,7 @@
   /**
    * @description Generates a JSON representation of the message for the service.
    * @returns {Object} JSON object with role and content.
+   * @category JSON
    */
   messagesJson () {
     return {
@@ -191,6 +207,7 @@
   /**
    * @description Gets the content visible to the AI.
    * @returns {string} The content visible to the AI.
+   * @category Message Properties
    */
   contentVisisbleToAi () {
     return this.content()
@@ -199,6 +216,7 @@
   /**
    * @description Checks if a response can be requested.
    * @returns {boolean} True if a response can be requested, false otherwise.
+   * @category Actions
    */
   canRequestResponse () {
     return this.isVisibleToAi()
@@ -207,6 +225,7 @@
   /**
    * @description Provides information for the request response action.
    * @returns {Object} Action information object.
+   * @category Actions
    */
   requestResponseActionInfo () {
     return {
@@ -219,6 +238,7 @@
   /**
    * @description Placeholder method for sending a message.
    * @throws {Error} Always throws an error indicating to use requestResponse instead.
+   * @category Actions
    */
   send () {
     throw new Error("use requestResponse instead");
@@ -227,6 +247,7 @@
   /**
    * @description Gets the response message class for the conversation.
    * @returns {Class} The response message class.
+   * @category Message Properties
    */
   responseMsgClass () {
     return this.conversation().responseMsgClass();
@@ -235,6 +256,7 @@
   /**
    * @description Requests a response from the AI.
    * @returns {Object} The response message object.
+   * @category Actions
    */
   requestResponse () {
     //debugger;
@@ -249,6 +271,7 @@
   /**
    * @description Gets the error message if there's an error in the value.
    * @returns {string|null} The error message or null if no error.
+   * @category Error Handling
    */
   valueError () {
     const e = this.error()
@@ -257,6 +280,7 @@
 
   /**
    * @description Called when the message is complete.
+   * @category Lifecycle
    */
   onComplete () {
     super.onComplete() // sends a delegate message
@@ -265,6 +289,7 @@
   
   /**
    * @description Handles input value changes.
+   * @category Event Handling
    */
   onValueInput () {
     this.requestResponse()
@@ -273,6 +298,7 @@
   /**
    * @description Generates a JSON message for updates.
    * @returns {Object} JSON object with name and payload.
+   * @category JSON
    */
   jsonMsgForSet () {
     return {
@@ -283,6 +309,7 @@
 
   /**
    * @description Cleans up the message if it's incomplete.
+   * @category Cleanup
    */
   cleanupIfIncomplete () {
     super.cleanupIfIncomplete();
@@ -297,6 +324,7 @@
 
   /**
    * @description Cleans up an incomplete assistant message.
+   * @category Cleanup
    */
   cleanupAssistantMessage () {
     if (this.type() === "AiResponseMessage") {
@@ -311,6 +339,7 @@
 
   /**
    * @description Cleans up an incomplete user message.
+   * @category Cleanup
    */
   cleanupUserMessage () {
     //debugger;

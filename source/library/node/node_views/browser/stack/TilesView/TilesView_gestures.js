@@ -17,6 +17,7 @@
      * @description Handles the completion of a tap gesture.
      * @param {Object} aGesture - The tap gesture object.
      * @returns {boolean|TilesView_gestures} Returns true or the instance itself.
+     * @category Gesture Handling
      */
     onTapComplete (aGesture) {
         //console.log(this.typeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
@@ -46,6 +47,7 @@
     /**
      * @description Checks if tiles can be reordered.
      * @returns {boolean} Whether tiles can be reordered.
+     * @category Tile Management
      */
     canReorderTiles () {
         return this.node().nodeTileLink().nodeCanReorderSubnodes()
@@ -54,6 +56,7 @@
     /**
      * @description Handles the reordering of tiles.
      * @returns {TilesView_gestures} The instance itself.
+     * @category Tile Management
      */
     didReorderTiles () { 
         if (!this.node() || !this.isInBrowser()) {
@@ -72,6 +75,7 @@
      * @description Finds the tile containing a given point.
      * @param {Object} aPoint - The point to check.
      * @returns {Object|undefined} The tile containing the point, or undefined if not found.
+     * @category Tile Management
      */
     tileContainingPoint (aPoint) {
         // potentially faster:
@@ -87,6 +91,7 @@
      * @description Handles the beginning of a pinch gesture.
      * @param {Object} aGesture - The pinch gesture object.
      * @returns {TilesView_gestures} The instance itself.
+     * @category Gesture Handling
      */
     onPinchBegin (aGesture) { // pinch apart to insert a new tile
         // TODO: move tile specific code to Tile
@@ -142,6 +147,7 @@
     /**
      * @description Handles the movement of a pinch gesture.
      * @param {Object} aGesture - The pinch gesture object.
+     * @category Gesture Handling
      */
     onPinchMove (aGesture) {
         if (this._temporaryPinchSubnode) {
@@ -181,6 +187,7 @@
     /**
      * @description Handles the completion of a pinch gesture.
      * @param {Object} aGesture - The pinch gesture object.
+     * @category Gesture Handling
      */
     onPinchComplete (aGesture) {
         //this.debugLog(".onPinchCompleted()")
@@ -206,6 +213,7 @@
     /**
      * @description Handles the cancellation of a pinch gesture.
      * @param {Object} aGesture - The pinch gesture object.
+     * @category Gesture Handling
      */
     onPinchCancelled (aGesture) {
         //this.debugLog(".onPinchCancelled()")

@@ -40,6 +40,7 @@
     initPrototypeSlots () {
         /**
          * @member {Set} readOpSet - Set of read operations that can trigger a reflow
+         * @category DOM Operations
          */
         {
             const slot = this.newSlot("readOpSet", new Set([
@@ -71,6 +72,7 @@
 
         /**
          * @member {Set} writeOpSet - Set of write operations that can trigger a reflow
+         * @category DOM Operations
          */
         {
             const slot = this.newSlot("writeOpSet", new Set([
@@ -93,6 +95,7 @@
 
         /**
          * @member {Set} noReflowWriteOpSet - Set of write operations that do not trigger a reflow
+         * @category DOM Operations
          */
         {
             const slot = this.newSlot("noReflowWriteOpSet", new Set(
@@ -131,6 +134,7 @@
 
         /**
          * @member {Boolean} needsReflow - Indicates if a reflow is needed
+         * @category State
          */
         {
             const slot = this.newSlot("needsReflow", false);
@@ -139,6 +143,7 @@
 
         /**
          * @member {Number} reflowCount - Count of reflows
+         * @category State
          */
         {
             const slot = this.newSlot("reflowCount", false);
@@ -147,6 +152,7 @@
 
         /**
          * @member {Array} triggers - Array of triggers that caused reflows
+         * @category State
          */
         {
             const slot = this.newSlot("triggers", null);
@@ -155,6 +161,7 @@
 
         /**
          * @member {String} lastWrite - The last write operation performed
+         * @category State
          */
         {
             const slot = this.newSlot("lastWrite", null);
@@ -163,6 +170,7 @@
 
         /**
          * @member {Boolean} enabled - Indicates if the ThrashDetector is enabled
+         * @category Configuration
          */
         {
             const slot = this.newSlot("enabled", false);
@@ -172,6 +180,7 @@
 
     /**
      * @description Begins a new frame for thrash detection
+     * @category Frame Management
      */
     beginFrame () {
         this.setNeedsReflow(false)
@@ -185,6 +194,7 @@
      * @param {string} opName - The name of the read operation
      * @param {Object} optionalView - Optional view object
      * @returns {ThrashDetector} - Returns this ThrashDetector instance
+     * @category DOM Operations
      */
     didRead (opName, optionalView) {
         if (this.readOpSet().has(opName)) {
@@ -208,6 +218,7 @@
      * @param {string} opName - The name of the write operation
      * @param {Object} optionalView - Optional view object
      * @returns {ThrashDetector} - Returns this ThrashDetector instance
+     * @category DOM Operations
      */
     didWrite (opName, optionalView) {
         if (!this.noReflowWriteOpSet().has(opName)) {
@@ -224,6 +235,7 @@
     /**
      * @description Handles thrash detection
      * @private
+     * @category Thrash Detection
      */
     onThrash () {
         //console.log(this.type() + " reflowCount: ", this.reflowCount())
@@ -231,6 +243,7 @@
 
     /**
      * @description Ends the current frame and logs thrash information if enabled
+     * @category Frame Management
      */
     endFrame () {
         if (this.enabled() && this.reflowCount()) {

@@ -12,6 +12,7 @@
     initPrototypeSlots () {
         /**
          * @member {Array} tiles
+         * @category Data
          */
         {
             const slot = this.newSlot("tiles", null);
@@ -19,6 +20,7 @@
         }
         /**
          * @member {Boolean} allowsCursorNavigation
+         * @category Navigation
          */
         {
             const slot = this.newSlot("allowsCursorNavigation", true);
@@ -26,6 +28,7 @@
         }
         /**
          * @member {Tile} tilePlaceHolder
+         * @category UI
          */
         {
             const slot = this.newSlot("tilePlaceHolder", null);
@@ -33,6 +36,7 @@
         }
         /**
          * @member {Boolean} hasPausedSync
+         * @category State
          */
         {
             const slot = this.newSlot("hasPausedSync", false);
@@ -52,6 +56,7 @@
     /**
      * @description Initializes the TilesView
      * @returns {TilesView}
+     * @category Initialization
      */
     init () {
         super.init()
@@ -98,6 +103,7 @@
     /**
      * @description Gets the NavView
      * @returns {NavView|null}
+     * @category Navigation
      */
     navView () {
         const sv = this.scrollView()
@@ -110,6 +116,7 @@
     /**
      * @description Gets the StackView
      * @returns {StackView|null}
+     * @category Navigation
      */
     stackView () {
         const nv = this.navView()
@@ -130,6 +137,7 @@
     /**
      * @description Gets the title
      * @returns {string}
+     * @category UI
      */
     title () {
         return this.node() ? this.node().title() : ""
@@ -140,6 +148,7 @@
     /**
      * @description Gets the tiles
      * @returns {Array}
+     * @category Data
      */
     tiles () {
         return this.subviews()
@@ -149,6 +158,7 @@
      * @description Adds a tile
      * @param {Tile} v - The tile to add
      * @returns {Tile}
+     * @category Data
      */
     addTile (v) {
         return this.addSubview(v)
@@ -158,6 +168,7 @@
      * @description Removes a tile
      * @param {Tile} v - The tile to remove
      * @returns {Tile}
+     * @category Data
      */
     removeTile (v) {
         return this.removeSubview(v)
@@ -167,6 +178,7 @@
      * @description Gets tiles with nodes
      * @param {Array} nodeArray - Array of nodes
      * @returns {Array}
+     * @category Data
      */
     tilesWithNodes (nodeArray) {
         return nodeArray.map(node => this.tileWithNode(node))
@@ -176,6 +188,7 @@
      * @description Gets tile with node
      * @param {Node} aNode - The node
      * @returns {Tile|undefined}
+     * @category Data
      */
     tileWithNode (aNode) {
         return this.tiles().detect(tile => tile.node() === aNode)
@@ -185,6 +198,7 @@
      * @description Gets index of tile
      * @param {Tile} aTile - The tile
      * @returns {number}
+     * @category Data
      */
     indexOfTile (aTile) {
         // we might want this to be based on flex view order instead, 
@@ -196,6 +210,7 @@
      * @description Gets tile at index
      * @param {number} anIndex - The index
      * @returns {Tile}
+     * @category Data
      */
     tileAtIndex (anIndex) {
         return this.subviews().at(anIndex)
@@ -205,6 +220,7 @@
      * @description Gets tile with node
      * @param {Node} aNode - The node
      * @returns {Tile|undefined}
+     * @category Data
      */
     tileWithNode (aNode) {
         return this.tiles().detect(tile => tile.node().nodeTileLink() === aNode)
@@ -213,6 +229,7 @@
     /**
      * @description Gets max tile width
      * @returns {number}
+     * @category UI
      */
     maxTileWidth () {
         if (this.tiles().length === 0) {
@@ -228,6 +245,7 @@
     /**
      * @description Syncs from node
      * @returns {TilesView}
+     * @category Sync
      */
     syncFromNode () {
         this.syncOrientation() // implemented in Tiles_orientation.js
@@ -251,6 +269,7 @@
      * @description Gets subview proto for subnode
      * @param {Node} aSubnode - The subnode
      * @returns {Tile}
+     * @category Initialization
      */
     subviewProtoForSubnode (aSubnode) {
         let proto = aSubnode.nodeTileClass() // we need this to get tile versions of view
@@ -265,6 +284,7 @@
     /**
      * @description Called when node changes
      * @returns {TilesView}
+     * @category Sync
      */
     didChangeNode () {
         super.didChangeNode()
@@ -286,6 +306,7 @@
 
     /**
      * @description Duplicates selected tile
+     * @category Data
      */
     duplicateSelectedTile () {
         const node = this.node()
@@ -307,6 +328,7 @@
     /**
      * @description Duplicates selected tiles
      * @returns {TilesView}
+     * @category Data
      */
     duplicateSelectedTiles () {
         const newNodes = []
@@ -336,6 +358,7 @@
     /**
      * @description Checks if inspecting
      * @returns {boolean}
+     * @category State
      */
     isInspecting () {
         /*
@@ -369,6 +392,7 @@
     /**
      * @description Gets column index
      * @returns {number}
+     * @category Navigation
      */
     columnIndex () {
         return this.parentViewsOfClass(StackView).length
@@ -379,6 +403,7 @@
     /**
      * @description Gets next column
      * @returns {TilesView|null}
+     * @category Navigation
      */
     nextColumn () {
         const nsv = this.stackView().nextStackView()
@@ -393,6 +418,7 @@
     /**
      * @description Gets previous item set
      * @returns {TilesView|null}
+     * @category Navigation
      */
     previousItemSet () {
         if (this.stackView()) {
@@ -410,6 +436,7 @@
      * @description Handles double click event
      * @param {Event} event - The double click event
      * @returns {boolean}
+     * @category Events
      */
     onDoubleClick (event) {
         //this.debugLog(".onDoubleClick()")
@@ -434,6 +461,7 @@
     /**
      * @description Handles browser drop chunk
      * @param {Object} dataChunk - The data chunk
+     * @category Events
      */
     onBrowserDropChunk (dataChunk) {
         const node = this.node()

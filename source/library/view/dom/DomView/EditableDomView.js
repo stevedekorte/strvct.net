@@ -13,6 +13,7 @@
     
     /**
      * @description Initializes prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /*
@@ -47,6 +48,7 @@
     /**
      * @description Consolidates text nodes and preserves selection.
      * @returns {EditableDomView} The instance of EditableDomView.
+     * @category Text Manipulation
      */
     consolidateTextNodesAndPreserveSelection () {
         const div = this.element()
@@ -94,6 +96,7 @@
     /**
      * @description Inserts text at the cursor position and consolidates text nodes.
      * @param {string} text - The text to insert.
+     * @category Text Manipulation
      */
     insertTextAtCursorAndConsolidate (text) {
         const el = this.element();
@@ -142,6 +145,7 @@
      * @description Inserts text at the cursor position (assumes content ONLY has text).
      * @param {string} text - The text to insert.
      * @returns {EditableDomView} The instance of EditableDomView.
+     * @category Text Manipulation
      */
     insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
         this.consolidateTextNodesAndPreserveSelection()
@@ -223,6 +227,7 @@
      * @description Handles the paste event.
      * @param {Event} event - The paste event object.
      * @returns {boolean} Returns false if paste is handled, true otherwise.
+     * @category Event Handling
      */
     onPaste (event) {
         //debugger;

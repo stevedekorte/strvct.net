@@ -10,12 +10,14 @@
     
     /**
      * @description Initializes prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
         this.setTitle("Prototypes");
@@ -25,6 +27,7 @@
     /**
      * @description Initializes the node.
      * @returns {BMPrototypesNode} The initialized node.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -36,6 +39,7 @@
     /**
      * @description Sets up subnodes.
      * @returns {BMPrototypesNode} The current instance.
+     * @category Node Management
      */
     setupSubnodes () {
         /*

@@ -22,6 +22,7 @@
     
     /**
      * @description Initializes the prototype slots for the WebSocketListener.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -30,6 +31,7 @@
     /**
      * @description Initializes the WebSocketListener.
      * @returns {WebSocketListener} The initialized WebSocketListener instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -39,6 +41,7 @@
     /**
      * @description Sets up the listeners for the WebSocket events.
      * @returns {WebSocketListener} The WebSocketListener instance with listeners set up.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("open", "onOpen");

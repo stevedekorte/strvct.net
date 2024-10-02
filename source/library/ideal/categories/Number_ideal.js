@@ -49,6 +49,7 @@ const Base64 = (function () {
     /**
      * Returns a duplicate of the number (which is the number itself for primitives)
      * @returns {number} The number
+     * @category Duplication
      */
     duplicate () {
         return this;
@@ -57,6 +58,7 @@ const Base64 = (function () {
     /**
      * Returns a copy of the number (which is the number itself for primitives)
      * @returns {number} The number
+     * @category Duplication
      */
     copy () {
         return this;
@@ -65,6 +67,7 @@ const Base64 = (function () {
     /**
      * Returns a shallow copy of the number (which is the number itself for primitives)
      * @returns {number} The number
+     * @category Duplication
      */
     shallowCopy () {
         return this;
@@ -74,6 +77,7 @@ const Base64 = (function () {
      * Repeats a function the number of times specified by this number
      * @param {function(number): (boolean|void)} func - The function to repeat
      * @returns {Number_ideal} This number instance
+     * @category Iteration
      */
     repeat (func) {
         for (let i = 0; i < this; i++) {
@@ -87,6 +91,7 @@ const Base64 = (function () {
     /**
      * Iterates from 0 to this number (exclusive), calling the provided function for each number
      * @param {function(number): void} func - The function to call for each number
+     * @category Iteration
      */
     forEach (func) {
         assert(Number.isInteger(this))
@@ -98,6 +103,7 @@ const Base64 = (function () {
     /**
      * Iterates from this number - 1 to 0, calling the provided function for each number
      * @param {function(number): void} func - The function to call for each number
+     * @category Iteration
      */
     reverseForEach (func) {
         assert(Number.isInteger(this))
@@ -109,6 +115,7 @@ const Base64 = (function () {
     /**
      * Throws an error if called (placeholder for potential future implementation)
      * @throws {Error} Always throws an error
+     * @category Uncategorized
      */
     map () {
         throw new Error("Number map is actually used?");
@@ -117,6 +124,7 @@ const Base64 = (function () {
     /**
      * Checks if the number is even
      * @returns {boolean} True if the number is even, false otherwise
+     * @category Arithmetic
      */
     isEven () {
         return this % 2 === 0;
@@ -125,6 +133,7 @@ const Base64 = (function () {
     /**
      * Checks if the number is odd
      * @returns {boolean} True if the number is odd, false otherwise
+     * @category Arithmetic
      */
     isOdd () {
         return this % 2 !== 0;
@@ -133,6 +142,7 @@ const Base64 = (function () {
     /**
      * Returns the ordinal suffix for the number
      * @returns {string} The ordinal suffix ('st', 'nd', 'rd', or 'th')
+     * @category Formatting
      */
     ordinalSuffix () {
         const i = this;
@@ -154,6 +164,7 @@ const Base64 = (function () {
     /**
      * Converts the number to a base64 string
      * @returns {string} The base64 representation of the number
+     * @category Conversion
      */
     toBase64 () {
         return Base64.fromInt(this);
@@ -163,6 +174,7 @@ const Base64 = (function () {
      * Converts a base64 string to a number
      * @param {string} base64String - The base64 string to convert
      * @returns {number} The number represented by the base64 string
+     * @category Conversion
      */
     fromBase64 (base64String) {
         // need to call like: 
@@ -173,6 +185,7 @@ const Base64 = (function () {
     /**
      * Returns a human-readable string describing the byte size
      * @returns {string} A formatted string representing the byte size
+     * @category Formatting
      */
     byteSizeDescription () {
         return ByteFormatter.clone().setValue(this).formattedValue();
@@ -181,6 +194,7 @@ const Base64 = (function () {
     /**
      * Returns the number with its ordinal indicator
      * @returns {string} The number followed by its ordinal indicator
+     * @category Formatting
      */
     withOrdinalIndicator () {
         return this + "" + this.ordinalIndicator()
@@ -189,6 +203,7 @@ const Base64 = (function () {
     /**
      * Returns the ordinal indicator for the number
      * @returns {string} The ordinal indicator ('st', 'nd', 'rd', or 'th')
+     * @category Formatting
      */
     ordinalIndicator () {
         const num = this;
@@ -220,6 +235,7 @@ const Base64 = (function () {
      * Returns a string representation of the number as a count for a given label
      * @param {string} label - The label to use for the count
      * @returns {string} A formatted string representing the count
+     * @category Formatting
      */
     asCountForLabel (label) {
         const count = this;
@@ -235,6 +251,7 @@ const Base64 = (function () {
      * Returns a random number between this number and another number
      * @param {number} other - The other number to use as a range boundary
      * @returns {number} A random number between this number and the other number
+     * @category Random
      */
     randomBetween (other) {
         const min = Math.min(this, other);

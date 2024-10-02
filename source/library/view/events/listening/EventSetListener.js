@@ -24,6 +24,7 @@
     initPrototypeSlots () {
         /**
          * @member {Element} listenTarget - DOM Element (EventTarget)
+         * @category Configuration
          */
         {
             const slot = this.newSlot("listenTarget", null)
@@ -31,6 +32,7 @@
         }
         /**
          * @member {Object} delegate
+         * @category Configuration
          */
         {
             const slot = this.newSlot("delegate", null);
@@ -38,6 +40,7 @@
         }
         /**
          * @member {Boolean} isListening
+         * @category State
          */
         {
             const slot = this.newSlot("isListening", false);
@@ -45,6 +48,7 @@
         }
         /**
          * @member {Boolean} useCapture - whether event will be dispatched to listener before EventTarget beneath it in DOM tree
+         * @category Configuration
          */
         {
             const slot = this.newSlot("useCapture", false);
@@ -53,6 +57,7 @@
         }
         /**
          * @member {String} methodSuffix
+         * @category Configuration
          */
         {
             const slot = this.newSlot("methodSuffix", "");
@@ -60,6 +65,7 @@
         }
         /**
          * @member {Map} listenersMap - Map of eventName -> EventListener entries
+         * @category State
          */
         {
             const slot = this.newSlot("listenersMap", null)
@@ -70,6 +76,7 @@
     /**
      * @description Initializes the EventSetListener
      * @returns {EventSetListener}
+     * @category Lifecycle
      */
     init () {
         super.init();
@@ -80,6 +87,7 @@
 
     /**
      * @description Sets up event listeners. Subclasses override and set up event listeners by calling addEventNameAndMethodName()
+     * @category Setup
      */
     setupListeners () {
         // subclasses override and set up event listeners by calling addEventNameAndMethodName()
@@ -94,6 +102,7 @@
     /**
      * @description Returns an array of all event listeners
      * @returns {Array}
+     * @category Accessors
      */
     allEventListeners () {
         return this.listenersMap().valuesArray()
@@ -104,6 +113,7 @@
     /**
      * @description Updates the delegate and resyncs
      * @returns {EventSetListener}
+     * @category Updates
      */
     didUpdateSlotDelegate () {
         this.resync()
@@ -113,6 +123,7 @@
     /**
      * @description Updates the listen target and resyncs
      * @returns {EventSetListener}
+     * @category Updates
      */
     didUpdateSlotListenTarget () {
         this.resync()
@@ -122,6 +133,7 @@
     /**
      * @description Updates the use capture setting and resyncs
      * @returns {EventSetListener}
+     * @category Updates
      */
     didUpdateSlotUseCapture () {
         this.resync()
@@ -131,6 +143,7 @@
     /**
      * @description Updates the method suffix and resyncs
      * @returns {EventSetListener}
+     * @category Updates
      */
     didUpdateSlotMethodSuffix () {
         this.resync()
@@ -140,6 +153,7 @@
     /**
      * @description Resyncs the event listeners
      * @returns {EventSetListener}
+     * @category Updates
      */
     resync () {
         if (this.isListening()) {
@@ -159,6 +173,7 @@
     /**
      * @description Creates a new EventListener
      * @returns {EventListener}
+     * @category Listeners
      */
     newListener () {
         const listener = EventListener.clone()
@@ -170,6 +185,7 @@
      * @description Checks if there's a listener for the given event name
      * @param {string} eventName - The name of the event
      * @returns {boolean}
+     * @category Listeners
      */
     hasListenerForEventName (eventName) {
         return this.listenersMap().has(eventName)
@@ -181,6 +197,7 @@
      * @param {string} methodName - The name of the method to be called
      * @param {boolean} isUserInteraction - Whether this is a user interaction event
      * @returns {EventListener}
+     * @category Listeners
      */
     addEventNameAndMethodName (eventName, methodName, isUserInteraction) {
         assert(!isUserInteraction)
@@ -201,6 +218,7 @@
      * @description Syncs the given listener with the current state
      * @param {EventListener} aListener - The listener to sync
      * @returns {EventSetListener}
+     * @category Listeners
      */
     syncToListener (aListener) {
         aListener.setListenTarget(this.listenTarget())
@@ -213,6 +231,7 @@
     /**
      * @description Syncs all listeners
      * @returns {EventSetListener}
+     * @category Listeners
      */
     syncToListeners () {
         this.forEachListener(listener => this.syncToListener(listener))
@@ -222,6 +241,7 @@
     /**
      * @description Executes a function for each listener
      * @param {Function} fn - The function to execute
+     * @category Listeners
      */
     forEachListener (fn) {
         this.listenersMap().forEachV(listener => fn(listener))
@@ -233,6 +253,7 @@
      * @description Sets the listening state
      * @param {boolean} aBool - Whether to start or stop listening
      * @returns {EventSetListener}
+     * @category Listening
      */
     setIsListening (aBool) {
         if (aBool) {
@@ -246,6 +267,7 @@
     /**
      * @description Starts listening for events
      * @returns {EventSetListener}
+     * @category Listening
      */
     start () {
         if (!this.isListening()) {
@@ -259,6 +281,7 @@
     /**
      * @description Stops listening for events
      * @returns {EventSetListener}
+     * @category Listening
      */
     stop () {
         if (this.isListening()) {

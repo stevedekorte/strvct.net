@@ -27,6 +27,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -36,6 +37,7 @@
      * @static
      * @description Returns the shared instance of the class
      * @returns {App} The shared instance
+     * @category Instance Management
      */
     static shared () {
         return super.shared();
@@ -45,6 +47,7 @@
      * @static
      * @description Returns the shared context
      * @returns {App} The shared context
+     * @category Instance Management
      */
     static sharedContext () {
         // We override sharedContext so all subclasses use the same shared value
@@ -56,6 +59,7 @@
      * @static
      * @description Loads and runs the shared instance
      * @returns {App} The shared instance
+     * @category Initialization
      */
     static loadAndRunShared () {
         const app = this.shared();
@@ -67,6 +71,7 @@
 
     /**
      * @description Loads the app from the store
+     * @category Initialization
      */
     async loadFromStore () {
         const clearFirst = false;
@@ -81,6 +86,7 @@
 
     /**
      * @description Clears the store
+     * @category Data Management
      */
     async clearStore () {
         console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<");
@@ -92,6 +98,7 @@
      * @description Logs the time taken to run a block of code
      * @param {Function} block - The block of code to run
      * @param {string} label - The label for the log
+     * @category Utility
      */
     async asyncLogTimeToRun (block, label) {
         const start = performance.now();
@@ -103,6 +110,7 @@
 
     /**
      * @description Opens the store and runs the app
+     * @category Initialization
      */
     async justOpen () {
         try {
@@ -130,6 +138,7 @@
      * @static
      * @description Returns the root node prototype
      * @returns {BMStorableNode} The root node prototype
+     * @category Data Management
      */
     static rootNodeProto () {
         return BMStorableNode;
@@ -137,10 +146,12 @@
 
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {PersistentObjectPool} store
+         * @category Data Management
          */
         {
             const slot = this.newSlot("store", null);
@@ -149,6 +160,7 @@
 
         /**
          * @member {String} name
+         * @category Metadata
          */
         {
             const slot = this.newSlot("name", "App");
@@ -157,6 +169,7 @@
 
         /**
          * @member {Array} version
+         * @category Metadata
          */
         {
             const slot = this.newSlot("version", [0, 0]);
@@ -165,6 +178,7 @@
 
         /**
          * @member {Boolean} hasDoneAppInit
+         * @category State Management
          */
         {
             const slot = this.newSlot("hasDoneAppInit", false);
@@ -173,6 +187,7 @@
 
         /**
          * @member {DomView} rootView
+         * @category UI
          */
         {
             const slot = this.newSlot("rootView", null);
@@ -181,6 +196,7 @@
 
         /**
          * @member {Promise} didInitPromise
+         * @category Initialization
          */
         {
             const slot = this.newSlot("didInitPromise", null);
@@ -190,6 +206,7 @@
   
     /**
      * @description Initializes the prototype
+     * @category Initialization
      */
     initPrototype () {
         this.setIsDebugging(true);
@@ -197,6 +214,7 @@
 
     /**
      * @description Initializes the instance
+     * @category Initialization
      */
     init () {
         this.setDidInitPromise(Promise.clone());
@@ -205,6 +223,7 @@
     /**
      * @description Returns the title of the app
      * @returns {string} The title
+     * @category Metadata
      */
     title () {
         return this.name();
@@ -213,6 +232,7 @@
     /**
      * @description Checks if the browser is compatible
      * @returns {boolean} True if compatible, false otherwise
+     * @category Utility
      */
     isBrowserCompatible () {
         return true;
@@ -220,6 +240,7 @@
 
     /**
      * @description Runs the app
+     * @category Lifecycle
      */
     async run () {
         await this.setup()
@@ -227,6 +248,7 @@
 
     /**
      * @description Sets up the app
+     * @category Initialization
      */
     async setup () {
         SyncScheduler.shared().pause();
@@ -255,6 +277,7 @@
 
     /**
      * @description Sets up the model
+     * @category Initialization
      */
     async setupModel () {
         // for subclasses to override
@@ -262,6 +285,7 @@
 
     /**
      * @description Sets up the UI
+     * @category Initialization
      */
     async setupUi () {
         this.setupDocTheme();
@@ -270,6 +294,7 @@
     /**
      * @description Hides the root view
      * @returns {App} The app instance
+     * @category UI
      */
     hideRootView () {
         if (this.rootView()) {
@@ -281,6 +306,7 @@
     /**
      * @description Unhides the root view
      * @returns {App} The app instance
+     * @category UI
      */
     unhideRootView () {
         if (this.rootView()) {
@@ -291,6 +317,7 @@
 
     /**
      * @description Shows the classes
+     * @category Debugging
      */
     showClasses () {
         const s = ProtoClass.subclassesDescription()
@@ -299,6 +326,7 @@
 
     /**
      * @description Called when the app has finished initializing
+     * @category Lifecycle
      */
     async appDidInit () {
         this.setHasDoneAppInit(true);
@@ -318,6 +346,7 @@
 
     /**
      * @description Called after the app UI has initialized
+     * @category Lifecycle
      */
     afterAppUiDidInit () {
         const searchParams = WebBrowserWindow.shared().pageUrl().searchParams;
@@ -331,6 +360,7 @@
      * @description Handles search parameters
      * @param {URLSearchParams} searchParams - The search parameters
      * @returns {App} The app instance
+     * @category Utility
      */
     handleSearchParams (searchParams) {
         // for subclasses to implement
@@ -339,6 +369,7 @@
 
     /**
      * @description Called after the first render
+     * @category Lifecycle
      */
     afterFirstRender () {
         ResourceManager.shared().markPageLoadTime();
@@ -348,6 +379,7 @@
     /**
      * @description Returns the main window
      * @returns {WebBrowserWindow} The main window
+     * @category UI
      */
     mainWindow () {
         return WebBrowserWindow.shared()
@@ -356,6 +388,7 @@
     /**
      * @description Returns the document body view
      * @returns {DomView} The document body view
+     * @category UI
      */
     documentBodyView () {
         return this.mainWindow().documentBody()
@@ -365,6 +398,7 @@
      * @description Sets the name of the app
      * @param {string} aString - The new name
      * @returns {App} The app instance
+     * @category Metadata
      */
     setName (aString) {
         this._name = aString
@@ -375,6 +409,7 @@
     /**
      * @description Returns the version string
      * @returns {string} The version string
+     * @category Metadata
      */
     versionsString () {
         return this.version().join(".")
@@ -383,6 +418,7 @@
     /**
      * @description Returns the full version string
      * @returns {string} The full version string
+     * @category Metadata
      */
     fullVersionString () {
         return "Application '" + this.name() + "' version " + this.versionsString();
@@ -390,6 +426,7 @@
 
     /**
      * @description Sets up the document theme
+     * @category UI
      */
     setupDocTheme () {
         const doc = DocumentBody.shared()
@@ -400,6 +437,7 @@
 
     /**
      * @description Sets up the normal document theme
+     * @category UI
      */
     setupNormalDocTheme () {
         const doc = DocumentBody.shared()

@@ -11,6 +11,7 @@
     /**
      * @static
      * @returns {boolean} True if the field is available as a node primitive.
+     * @category Availability
      */
     static availableAsNodePrimitive () {
         return true
@@ -20,6 +21,7 @@
      * @static
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} True if the field can open the given MIME type.
+     * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
         return mimeType.startsWith("text/uri-list")
@@ -29,6 +31,7 @@
      * @static
      * @param {Object} dataChunk - The data chunk to open.
      * @returns {BMUrlField} A new BMUrlField instance with the opened data.
+     * @category Data Opening
      */
     static openMimeChunk (dataChunk) {
         const newNode = this.clone()
@@ -55,49 +58,60 @@
 
     /**
      * @description Initializes the prototype slots for the BMUrlField.
+     * @category Initialization
      */
     initPrototypeSlots () {
         // scheme : // userinfo @host : port / path ? query # fragment
         /**
          * @member {string} href - The full URL.
+         * @category URL Components
          */
         this.newStringSlotNamed("href", "");
         /**
          * @member {string} protocol - The URL protocol.
+         * @category URL Components
          */
         this.newStringSlotNamed("protocol", "http");
         /**
          * @member {string} username - The URL username.
+         * @category URL Components
          */
         this.newStringSlotNamed("username", "");
         /**
          * @member {string} password - The URL password.
+         * @category URL Components
          */
         this.newStringSlotNamed("password", "");
         /**
          * @member {string} hostname - The URL hostname.
+         * @category URL Components
          */
         this.newStringSlotNamed("hostname", "hostname");
         /**
          * @member {string} port - The URL port.
+         * @category URL Components
          */
         this.newStringSlotNamed("port", "");
         /**
          * @member {string} pathname - The URL pathname.
+         * @category URL Components
          */
         this.newStringSlotNamed("pathname", "");
         /**
          * @member {string} search - The URL search query.
+         * @category URL Components
          */
         this.newStringSlotNamed("search", "");
         /**
          * @member {string} hash - The URL hash.
+         * @category URL Components
          */
         this.newStringSlotNamed("hash", "");
 
         {
             /**
              * @member {boolean} isUpdatingHref - Flag to indicate if href is being updated.
+             * @category State
              */
             const slot = this.newSlot("isUpdatingHref", false);
             slot.setSlotType("Boolean");
@@ -106,6 +120,7 @@
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -115,6 +130,7 @@
      * @param {string} slotName - The name of the slot.
      * @param {string} defaultValue - The default value for the slot.
      * @returns {Object} The created slot.
+     * @category Slot Management
      */
     newStringSlotNamed (slotName, defaultValue) {
         const slot = this.newSlot(slotName, defaultValue)
@@ -134,6 +150,7 @@
 
     /**
      * @description Initializes the BMUrlField.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -153,6 +170,7 @@
     /**
      * @description Returns the node inspector.
      * @returns {Object} The node inspector.
+     * @category Inspection
      */
     nodeInspector () {
         return super.nodeInspector()
@@ -161,6 +179,7 @@
     /**
      * @description Creates a URL object from the current value.
      * @returns {URL|null} The URL object or null if invalid.
+     * @category URL Manipulation
      */
     urlFromValue () {
         const s = this.value()
@@ -179,6 +198,7 @@
 
     /**
      * @description Called when a slot value is updated.
+     * @category Event Handling
      */
     didUpdateSlotValue () {
         this.parseValue()
@@ -186,6 +206,7 @@
 
     /**
      * @description Called when the href slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotHref () {
         this.setIsUpdatingHref(true)
@@ -196,6 +217,7 @@
 
     /**
      * @description Schedules the unparse operation.
+     * @category URL Manipulation
      */
     scheduleUnparse () {
         if (this.hasDoneInit()) {
@@ -205,6 +227,7 @@
     
     /**
      * @description Called when the protocol slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotProtocol () {
         this.scheduleUnparse()
@@ -212,6 +235,7 @@
 
     /**
      * @description Called when the username slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotUsername () {
         this.scheduleUnparse()
@@ -219,6 +243,7 @@
 
     /**
      * @description Called when the password slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotPassword () {
         this.scheduleUnparse()
@@ -226,6 +251,7 @@
 
     /**
      * @description Called when the hostname slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotHostName () {
         this.scheduleUnparse()
@@ -233,6 +259,7 @@
 
     /**
      * @description Called when the port slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotPort () {
         this.scheduleUnparse()
@@ -240,6 +267,7 @@
 
     /**
      * @description Called when the pathname slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotPathname () {
         this.scheduleUnparse()
@@ -247,6 +275,7 @@
 
     /**
      * @description Called when the search slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotSearch () {
         this.scheduleUnparse()
@@ -254,6 +283,7 @@
 
     /**
      * @description Called when the hash slot is updated.
+     * @category Event Handling
      */
     didUpdateSlotHash () {
         this.scheduleUnparse()
@@ -262,6 +292,7 @@
     /**
      * @description Parses the current value and updates the individual URL components.
      * @returns {BMUrlField} This instance.
+     * @category URL Manipulation
      */
     parseValue () {
         const url = this.urlFromValue()
@@ -285,6 +316,7 @@
     /**
      * @description Creates a URL object from the current component values.
      * @returns {URL} The constructed URL object.
+     * @category URL Manipulation
      */
     urlFromComponents () {
         const url = new URL("http://test.com")
@@ -302,6 +334,7 @@
     /**
      * @description Updates the href value based on the current component values.
      * @returns {BMUrlField} This instance.
+     * @category URL Manipulation
      */
     unparseValue () {
         const url = this.urlFromComponents()
@@ -312,6 +345,7 @@
     /**
      * @description Returns the URL link for the node.
      * @returns {string} The URL link.
+     * @category URL Manipulation
      */
     nodeUrlLink () {
         return this.value()
@@ -320,6 +354,7 @@
     /**
      * @description Validates the current URL value.
      * @returns {boolean} True if the URL is valid, false otherwise.
+     * @category Validation
      */
     validate () {
         const isValid = this.valueIsValidUrl()
@@ -336,6 +371,7 @@
     /**
      * @description Checks if the current value is a valid URL.
      * @returns {boolean} True if the URL is valid, false otherwise.
+     * @category Validation
      */
     valueIsValidUrl () {
         if (Type.isNullOrUndefined(this.value())) {

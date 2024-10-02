@@ -14,6 +14,7 @@
     /**
      * @description Initializes prototype slots for the DropListener class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -22,6 +23,7 @@
     /**
      * @description Initializes the DropListener instance.
      * @returns {DropListener} The initialized DropListener instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -31,6 +33,7 @@
     /**
      * @description Sets up event listeners for drag and drop operations.
      * @returns {DropListener} The DropListener instance.
+     * @category Event Management
      */
     setupListeners () {
         // fired on drop target
@@ -44,6 +47,7 @@
     /**
      * @description Starts the DropListener.
      * @returns {DropListener} The DropListener instance.
+     * @category Lifecycle
      */
     start () {
         super.start()
@@ -54,6 +58,7 @@
     /**
      * @description Stops the DropListener.
      * @returns {DropListener} The DropListener instance.
+     * @category Lifecycle
      */
     stop () {
         super.stop()

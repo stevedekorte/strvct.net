@@ -15,6 +15,7 @@
     initPrototypeSlots () {
         /**
          * @member {String|null} name - The name of the notification.
+         * @category Identification
          */
         {
             const slot = this.newSlot("name", null);
@@ -23,6 +24,7 @@
         }
         /**
          * @member {Object|null} sender - The sender of the notification.
+         * @category Identification
          */
         {
             const slot = this.newSlot("sender", null);
@@ -31,6 +33,7 @@
         }
         /**
          * @member {Object|null} info - Additional information for the notification.
+         * @category Data
          */
         {
             const slot = this.newSlot("info", null);
@@ -39,6 +42,7 @@
         }
         /**
          * @member {BMNotificationCenter|null} center - The NotificationCenter that owns this notification.
+         * @category Management
          */
         {
             const slot = this.newSlot("center", null);
@@ -47,6 +51,7 @@
         }
         /**
          * @member {Object|null} senderStack - The stack trace of the sender.
+         * @category Debugging
          */
         {
             const slot = this.newSlot("senderStack", null);
@@ -55,6 +60,7 @@
         }
         /**
          * @member {String|null} noteHash - A unique hash for the notification.
+         * @category Identification
          */
         {
             const slot = this.newSlot("noteHash", null);
@@ -72,6 +78,7 @@
     /**
      * Gets the sender's debug type ID.
      * @returns {string} The sender's debug type ID.
+     * @category Identification
      */
     senderId () {
         return this.sender().debugTypeId()
@@ -81,6 +88,7 @@
      * Sets the sender of the notification.
      * @param {Object} obj - The sender object.
      * @returns {BMNotification} The current instance.
+     * @category Identification
      */
     setSender (obj) {
         assert(Type.isObject(obj))
@@ -93,6 +101,7 @@
      * Sets the name of the notification.
      * @param {string} aName - The name to set.
      * @returns {BMNotification} The current instance.
+     * @category Identification
      */
     setName (aName) {
         this._name = aName;
@@ -104,6 +113,7 @@
      * Checks if this notification is equal to another.
      * @param {BMNotification} obs - The notification to compare with.
      * @returns {boolean} True if equal, false otherwise.
+     * @category Comparison
      */
     isEqual (obs) {
         if (this === obs) { 
@@ -116,6 +126,7 @@
     /**
      * Clears the note hash.
      * @returns {BMNotification} The current instance.
+     * @category Identification
      */
     clearNoteHash () {
         this._noteHash = null;
@@ -125,6 +136,7 @@
     /**
      * Gets or generates the note hash.
      * @returns {string} The note hash.
+     * @category Identification
      */
     noteHash () {
         if (!this._noteHash) {
@@ -137,6 +149,7 @@
     /**
      * Checks if the notification is posted.
      * @returns {boolean} True if posted, false otherwise.
+     * @category Status
      */
     isPosted () {
         return this.center().hasNotification(this)
@@ -145,6 +158,7 @@
     /**
      * Posts the notification.
      * @returns {BMNotification} The current instance.
+     * @category Management
      */
     post () {
         if (this.center().isDebugging()) {
@@ -161,6 +175,7 @@
     /**
      * Gets a description of the notification.
      * @returns {string} The description.
+     * @category Utility
      */
     description () {
         const s = this.senderId() ? this.senderId() : "null"
@@ -171,6 +186,7 @@
     /**
      * Creates a new observation for this notification.
      * @returns {BMObservation} A new observation instance.
+     * @category Management
      */
     newObservation () {
         return BMNotificationCenter.shared().newObservation().setName(this.name()).setSender(this.sender())

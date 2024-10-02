@@ -25,6 +25,7 @@
     /**
      * @description Initializes prototype slots
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -33,6 +34,7 @@
     /**
      * @description Initializes the PinchGestureRecognizer
      * @returns {PinchGestureRecognizer} The initialized instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -47,6 +49,7 @@
     /**
      * @description Checks if the gesture has moved enough to be recognized
      * @returns {boolean} True if the gesture has moved enough, false otherwise
+     * @category Gesture Recognition
      */
     hasMovedEnough () {
         const m = this.minDistToBegin()

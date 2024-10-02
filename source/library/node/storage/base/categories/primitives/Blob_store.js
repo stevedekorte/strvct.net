@@ -33,6 +33,7 @@
      * @param {Object} aRecord - The record to create the instance from.
      * @param {Object} aStore - The store containing the record.
      * @returns {Blob_store} A new Blob_store instance.
+     * @category Initialization
      */
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
         //assert(aRecord.type === "Blob")
@@ -45,6 +46,7 @@
      * @param {Object} aRecord - The record to load from.
      * @param {Object} aStore - The store containing the record.
      * @returns {Blob} A new Blob instance.
+     * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
         const dataUrl = aRecord.dataUrl
@@ -64,6 +66,7 @@
     /**
      * @description Prepares the blob for synchronous storage by caching its base64 representation.
      * @returns {Promise<void>}
+     * @category Data Preparation
      */
     async asyncPrepareToStoreSynchronously () {
         this._dataUrl = await this.toBase64()
@@ -73,6 +76,7 @@
      * @description Creates a record for storage.
      * @param {Object} aStore - The store to create the record for.
      * @returns {Object} The record object.
+     * @category Data Serialization
      */
     recordForStore (aStore) { // should only be called by Store
         assert(this._dataUrl)
@@ -86,6 +90,7 @@
      * @description Gets the referenced persistent IDs for JSON store.
      * @param {Set} puuids - Set of persistent UUIDs.
      * @returns {Set} The set of referenced persistent IDs.
+     * @category Data Reference
      */
     refsPidsForJsonStore (puuids = new Set()) {
         return puuids
@@ -94,6 +99,7 @@
     /**
      * @description Converts the blob to a base64 string.
      * @returns {Promise<string>} A promise that resolves to the base64 representation of the blob.
+     * @category Data Conversion
      */
     async toBase64 () {
         return this.asyncToDataUrl();
@@ -104,6 +110,7 @@
      * @description Creates a Blob from a base64 string.
      * @param {string} dataURL - The base64 data URL.
      * @returns {Blob} A new Blob instance.
+     * @category Data Conversion
      */
     static fromBase64 (dataURL) {
         const parts = dataURL.split(',');

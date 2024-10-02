@@ -26,6 +26,7 @@
      * @description Inserts a rule for the given CSS animation
      * @param {CssAnimation} cssAnimation - The CSS animation object
      * @returns {CssAnimation} - The CssAnimation class
+     * @category Animation
      */
     static insertRuleForAnimation (cssAnimation) {
         const name = cssAnimation.ruleName()
@@ -41,6 +42,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.newClassSlot("insertedRuleNamesSet", new Set())
@@ -48,10 +50,12 @@
 
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {DomView} view
+         * @category View
          */
         {
             const slot = this.newSlot("view", null);
@@ -59,6 +63,7 @@
         }
         /**
          * @member {String} propertyName
+         * @category Animation
          */
         {
             const slot = this.newSlot("propertyName", "");
@@ -66,6 +71,7 @@
         }
         /**
          * @member {String} startValue
+         * @category Animation
          */
         {
             const slot = this.newSlot("startValue", null);
@@ -73,6 +79,7 @@
         }
         /**
          * @member {String} targetValue
+         * @category Animation
          */
         {
             const slot = this.newSlot("targetValue", 0);
@@ -82,6 +89,7 @@
         // animation name is computed from hash of animation css rule string
         /**
          * @member {Number} duration - seconds
+         * @category Animation
          */
         {
             const slot = this.newSlot("duration", 1);
@@ -90,6 +98,7 @@
         }
         /**
          * @member {String} timingFunction
+         * @category Animation
          */
         {
             const slot = this.newSlot("timingFunction", "ease");
@@ -97,6 +106,7 @@
         }
         /**
          * @member {Number} iterationCount - animation-iteration-count
+         * @category Animation
          */
         {
             const slot = this.newSlot("iterationCount", 1) // animation-iteration-count
@@ -104,6 +114,7 @@
         }
         /**
          * @member {Number} delay - animation-delay
+         * @category Animation
          */
         {
             const slot = this.newSlot("delay", 0); // animation-delay
@@ -111,6 +122,7 @@
         }
         /**
          * @member {String} direction - animation-direction (normal or alternate)
+         * @category Animation
          */
         {
             const slot = this.newSlot("direction", "normal"); // animation-direction (normal or alternate)
@@ -118,6 +130,7 @@
         }
         /**
          * @member {String} fillMode - animation-fill-mode (none|forwards|backwards|both|initial|inherit)
+         * @category Animation
          */
         {
             const slot = this.newSlot("fillMode", "forwards");  // animation-fill-mode (none|forwards|backwards|both|initial|inherit)
@@ -125,6 +138,7 @@
         }
         /**
          * @member {String} playState - animation-play-state (paused|running|initial|inherit)
+         * @category Animation
          */
         {
             const slot = this.newSlot("playState", "running");  // animation-play-state (paused|running|initial|inherit)
@@ -132,6 +146,7 @@
         }
         /**
          * @member {Array} animationPropertyNames
+         * @category Animation
          */
         {
             const slot = this.newSlot("animationPropertyNames", [
@@ -148,6 +163,7 @@
         }
         /**
          * @member {Object} propertySlotsDict
+         * @category Animation
          */
         {
             const slot = this.newSlot("propertySlotsDict", null);
@@ -157,6 +173,7 @@
 
     /**
      * @description Initializes the prototype
+     * @category Initialization
      */
     initPrototype () {
         this.propertySlotsDict(); // cache it on the prototype
@@ -164,6 +181,7 @@
 
     /**
      * @description Initializes the instance
+     * @category Initialization
      */
     init () {
         super.init();
@@ -171,6 +189,7 @@
 
     /**
      * @description Inserts the rule
+     * @category Animation
      */
     insertRule () {
         assert(this.isValidRule());
@@ -180,6 +199,7 @@
     /**
      * @description Composes the rule
      * @returns {string} The composed rule
+     * @category Animation
      */
     composedRule () {
         return "@keyframes " + this.name() + " { " + this.ruleContent() + "}";
@@ -188,6 +208,7 @@
     /**
      * @description Gets the name of the animation
      * @returns {string} The name of the animation
+     * @category Animation
      */
     name () {
         return "animation" + this.ruleContent().hashCode();
@@ -196,6 +217,7 @@
     /**
      * @description Gets the content of the rule
      * @returns {string} The content of the rule
+     * @category Animation
      */
     ruleContent () {
         const k = this.propertyName();
@@ -211,6 +233,7 @@
     /**
      * @description Checks if the rule is valid
      * @returns {boolean} True if the rule is valid, false otherwise
+     * @category Validation
      */
     isValidRule () {
         return !Type.isNullOrUndefined(this.startValue()) && Type.isNullOrUndefined(this.targetValue());
@@ -219,6 +242,7 @@
     /**
      * @description Gets the property slots dictionary
      * @returns {Object} The property slots dictionary
+     * @category Animation
      */
     propertySlotsDict () {
         if (!this._propertySlotsDict) {
@@ -233,6 +257,7 @@
      * @description Gets the slot name for a given property name
      * @param {string} k - The property name
      * @returns {string} The slot name
+     * @category Utility
      */
     slotNameForPropertyName (k) {
         const parts = k.split("-");
@@ -245,6 +270,7 @@
     /**
      * @description Applies the animation to a view
      * @param {DomView} aView - The view to apply the animation to
+     * @category Animation
      */
     applyToView (aView) { 
         const dict = this.propertySlotsDict();
@@ -259,6 +285,7 @@
     /**
      * @description Starts the animation
      * @returns {CssAnimation} The CssAnimation instance
+     * @category Animation
      */
     start () {
         this.insertRule();
@@ -270,6 +297,7 @@
 
     /**
      * @description Called when the animation is completed
+     * @category Animation
      */
     didComplete () {
     }

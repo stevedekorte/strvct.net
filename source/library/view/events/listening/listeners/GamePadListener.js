@@ -14,6 +14,7 @@
     /**
      * @description Initializes prototype slots.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -22,6 +23,7 @@
     /**
      * @description Initializes the GamePadListener instance.
      * @returns {GamePadListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -31,6 +33,7 @@
     /**
      * @description Sets up the event listeners for gamepad events.
      * @returns {GamePadListener} The current instance.
+     * @category Event Management
      */
     setupListeners () {
         this.addEventNameAndMethodName("gamepadconnected",   "onGamePadConnected");

@@ -32,6 +32,7 @@ if (!String.prototype.capitalized) {
     /**
      * Checks if the code is running in a browser environment.
      * @returns {boolean} True if running in a browser, false otherwise.
+     * @category Environment
      */
     static isInBrowser () {
         return (typeof (document) !== 'undefined')
@@ -40,6 +41,7 @@ if (!String.prototype.capitalized) {
     /**
      * Instance method to check if running in a browser environment.
      * @returns {boolean} True if running in a browser, false otherwise.
+     * @category Environment
      */
     isInBrowser () {
         return (typeof (document) !== 'undefined')
@@ -48,6 +50,7 @@ if (!String.prototype.capitalized) {
     /**
      * Returns a shared instance of the class.
      * @returns {Base} The shared instance of the class.
+     * @category Instance Management
      */
     static shared () {
         if (!Object.hasOwn(this, "_shared")) {
@@ -61,6 +64,7 @@ if (!String.prototype.capitalized) {
     /**
      * Returns the name of the class.
      * @returns {string} The name of the class.
+     * @category Reflection
      */
     static type () {
         return this.name
@@ -69,6 +73,7 @@ if (!String.prototype.capitalized) {
     /**
      * Initializes the class by setting up prototype slots and methods.
      * @returns {typeof Base} The class itself.
+     * @category Initialization
      */
     static initThisClass () {
         // initPrototypeSlots is split from initPrototype as initPrototype may need to 
@@ -92,6 +97,7 @@ if (!String.prototype.capitalized) {
     /**
      * Returns the name of the class.
      * @returns {string} The name of the class.
+     * @category Reflection
      */
     type () {
         return this.constructor.name;
@@ -100,6 +106,7 @@ if (!String.prototype.capitalized) {
     /**
      * Creates and initializes a new instance of the class.
      * @returns {Base} A new instance of the class.
+     * @category Instance Management
      */
     static clone () {
         const obj = new this();
@@ -109,6 +116,7 @@ if (!String.prototype.capitalized) {
 
     /**
      * Initializes the prototype. Subclasses should override this method.
+     * @category Initialization
      */
     initPrototype () {
         this.newSlot("isDebugging", false);
@@ -116,6 +124,7 @@ if (!String.prototype.capitalized) {
 
     /**
      * Initializes the instance. Subclasses should override this method.
+     * @category Initialization
      */
     init () {
         // subclasses should override to initialize
@@ -126,6 +135,7 @@ if (!String.prototype.capitalized) {
      * @param {string} slotName - The name of the slot to create.
      * @param {*} [initialValue=null] - The initial value of the slot.
      * @returns {Base} The instance itself for method chaining.
+     * @category Slot Management
      */
     newSlot (slotName, initialValue) {
         if (typeof (slotName) !== "string") {
@@ -160,6 +170,7 @@ if (!String.prototype.capitalized) {
     /**
      * Returns a string identifier for debugging purposes.
      * @returns {string} The type of the instance.
+     * @category Debugging
      */
     debugTypeId () {
         return this.type()
@@ -169,6 +180,7 @@ if (!String.prototype.capitalized) {
      * Logs a debug message if debugging is enabled.
      * @param {string|function} s - The message to log or a function that returns the message.
      * @returns {Base} The instance itself for method chaining.
+     * @category Debugging
      */
     debugLog (s) {
         if (this.isDebugging()) {

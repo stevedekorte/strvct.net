@@ -121,6 +121,7 @@
      * @description Displays the tiles in the console.
      * @param {Array} tiles - The array of tiles to be displayed.
      * @returns {TilesView_helpers} Returns this instance for method chaining.
+     * @category Debugging
      */
     showTiles(tiles) {
         console.log("tiles: ", tiles.map(r => {
@@ -136,6 +137,7 @@
      * @description Displays the nodes in the console.
      * @param {Array} nodes - The array of nodes to be displayed.
      * @returns {TilesView_helpers} Returns this instance for method chaining.
+     * @category Debugging
      */
     showNodes(nodes) {
         console.log("nodes: ", nodes.map(node => {

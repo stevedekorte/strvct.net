@@ -12,6 +12,7 @@
     /**
      * @description Initializes the prototype slots for the FlexDomView.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -19,6 +20,7 @@
     /**
      * @description Initializes the FlexDomView instance.
      * @returns {FlexDomView} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -29,6 +31,7 @@
     /**
      * @description Sets up the view to use flex and center its content.
      * @returns {FlexDomView} The current instance.
+     * @category Layout
      */
     makeFlexAndCenterContent () {
         this.setDisplay("flex")
@@ -40,6 +43,7 @@
     /**
      * @description Checks if the view can be split.
      * @returns {boolean} True if the view has no subviews, false otherwise.
+     * @category Layout
      */
     canSplit () {
         return this.subviews().length === 0
@@ -49,6 +53,7 @@
      * @description Adds a specified number of subviews to the current view.
      * @param {number} count - The number of subviews to add.
      * @returns {FlexDomView} The current instance.
+     * @category Subview Management
      */
     addSubviewCount (count) {
         for (let i = 0; i < count; i++) {
@@ -60,6 +65,7 @@
     /**
      * @description Creates and adds a new flex subview to the current view.
      * @returns {FlexDomView} The newly created subview.
+     * @category Subview Management
      */
     newFlexSubview () {
         const v = FlexDomView.clone()
@@ -74,6 +80,7 @@
 
     /**
      * @description Sets the order of subviews to match their index in the subviews array.
+     * @category Subview Management
      */
     makeSubviewsOrdered () {
         this.subviews().forEachKV((i, sv) => {
@@ -83,6 +90,7 @@
 
     /**
      * @description Sets the order of subviews to be the reverse of their index in the subviews array.
+     * @category Subview Management
      */
     makeSubviewsReverseOrdered () {
         const count = this.subviews().length
@@ -95,6 +103,7 @@
      * @description Splits the view into a specified number of tiles arranged vertically.
      * @param {number} count - The number of tiles to create.
      * @returns {FlexDomView} The current instance.
+     * @category Layout
      */
     flexSplitIntoTiles (count) {
         assert(this.canSplit()) // temporary
@@ -109,6 +118,7 @@
      * @description Splits the view into a specified number of columns arranged horizontally.
      * @param {number} count - The number of columns to create.
      * @returns {FlexDomView} The current instance.
+     * @category Layout
      */
     flexSplitIntoColumns (count) {
         assert(this.canSplit()) // temporary
@@ -122,6 +132,7 @@
     /**
      * @description Centers the content of the flex container both horizontally and vertically.
      * @returns {FlexDomView} The current instance.
+     * @category Layout
      */
     flexCenterContent () {
         this.setJustifyContent("center")
@@ -132,6 +143,7 @@
     /**
      * @description Sets up the view with standard flex properties.
      * @returns {FlexDomView} The current instance.
+     * @category Layout
      */
     makeStandardFlexView () {
         this.setDisplay("flex")
@@ -144,6 +156,7 @@
     /**
      * @description Adds debug borders to subviews (currently commented out).
      * @private
+     * @category Debugging
      */
     debugBorders () {
         //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))

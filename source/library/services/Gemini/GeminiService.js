@@ -33,6 +33,7 @@
   /**
    * @static
    * @description Initializes the class by setting it as a singleton.
+   * @category Initialization
    */
   static initClass () {
     this.setIsSingleton(true);
@@ -41,6 +42,7 @@
   /**
    * @description Returns the JSON representation of available models.
    * @returns {Array} An array of model objects.
+   * @category Model Management
    */
   modelsJson () {
     return [
@@ -60,10 +62,12 @@
   
   /**
    * @description Initializes the prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {String} projectId
+     * @category Configuration
      */
     {
       const slot = this.newSlot("projectId", null);
@@ -72,6 +76,7 @@
 
     /**
      * @member {String} locationId
+     * @category Configuration
      */
     {
       const slot = this.newSlot("locationId", null);
@@ -81,6 +86,7 @@
 
   /**
    * @description Initializes the instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -101,6 +107,7 @@
   /**
    * @description Returns the endpoint URL format.
    * @returns {string} The endpoint URL format.
+   * @category API Communication
    */
   endPointUrlFormat () {
     return "https://generativelanguage.googleapis.com/v1beta/models/{model id}:{generate response method}?key={api key}";
@@ -108,6 +115,7 @@
 
   /**
    * @description Sets up the chat endpoint URL.
+   * @category API Communication
    */
   setupChatEndpoint () {
     let url = this.endPointUrlFormat();
@@ -119,6 +127,7 @@
 
   /**
    * @description Performs final initialization steps.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -143,6 +152,7 @@
    * @description Validates the API key.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the API key is valid, false otherwise.
+   * @category Authentication
    */
   validateKey (s) {
     return s.startsWith("sk-");
@@ -151,6 +161,7 @@
   /**
    * @description Checks if the API key is set.
    * @returns {boolean} True if the API key is set, false otherwise.
+   * @category Authentication
    */
   hasApiKey () {
     return this.apiKey().length > 0; // && this.validateKey(this.apiKey());
@@ -159,6 +170,7 @@
   /**
    * @description Validates the token.
    * @param {string} token - The token to validate.
+   * @category Authentication
    */
   validateKey (token) {
     /*
@@ -180,6 +192,7 @@
 
   /**
    * @description Sets up the service from the provided information.
+   * @category Configuration
    */
   setupFromInfo () {
     super.setupFromInfo();
@@ -200,6 +213,7 @@
   /**
    * @description Prepares the request before sending it.
    * @param {Object} aRequest - The request object to prepare.
+   * @category API Communication
    */
   prepareToSendRequest (aRequest) {
     const bodyJson = aRequest.bodyJson();

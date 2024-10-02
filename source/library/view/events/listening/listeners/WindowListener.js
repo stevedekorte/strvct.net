@@ -14,6 +14,7 @@
     
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -22,6 +23,7 @@
     /**
      * @description Initializes the instance.
      * @returns {WindowListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -31,6 +33,7 @@
     /**
      * @description Sets up the event listeners for various window-related events.
      * @returns {WindowListener} The instance with set up listeners.
+     * @category Event Setup
      */
     setupListeners () {
         // See: https://developer.chrome.com/blog/page-lifecycle-api/
@@ -57,6 +60,7 @@
     /**
      * @description Returns the target for the event listeners.
      * @returns {Window} The window object.
+     * @category Event Handling
      */
     listenTarget () {
         return window // we need to target the window and not the element asssociated with a View

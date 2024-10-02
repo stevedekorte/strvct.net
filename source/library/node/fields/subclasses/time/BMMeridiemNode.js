@@ -10,10 +10,12 @@
     
     /**
      * Initializes the prototype slots for the BMMeridiemNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} value - The value of the meridiem (1 for AM, 2 for PM).
+         * @category Time
          */
         {
             const slot = this.newSlot("value", 1);

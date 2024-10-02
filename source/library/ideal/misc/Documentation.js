@@ -18,6 +18,7 @@
     /**
      * @description Returns an array of all the classes.
      * @returns {Array} An array of all the classes.
+     * @category Data Retrieval
      */
     classes() {
         return ProtoClass.allClassesSet().asArray();
@@ -27,6 +28,7 @@
      * @description Returns an array of objects containing information about the methods of the given class.
      * @param {ProtoClass} aClass - The class for which to get the method documentation.
      * @returns {Array} An array of objects containing information about the methods of the given class.
+     * @category Data Retrieval
      */
     methodsDocsForClass(aClass) {
         const methods = [];
@@ -47,6 +49,7 @@
     /**
      * @description Returns a JSON representation of the documentation for all classes and their methods.
      * @returns {Object} A JSON representation of the documentation for all classes and their methods.
+     * @category Data Representation
      */
     asJson() {
         const classes = [];
@@ -65,6 +68,7 @@
 
     /**
      * @description Logs a summary of the documentation for all classes and their methods to the console.
+     * @category Output
      */
     show() {
         const classes = this.asJson();

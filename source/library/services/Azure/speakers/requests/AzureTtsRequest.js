@@ -12,11 +12,12 @@
 (class AzureTtsRequest extends BMStorableNode {
   /**
    * Initializes the prototype slots for the AzureTtsRequest class.
-
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {string} inputText - The input text for the TTS request.
+     * @category Data
      */
     {
       const slot = this.newSlot("inputText", "");
@@ -28,6 +29,7 @@
 
     /**
      * @member {Action} startAction - The action to start the TTS request.
+     * @category Action
      */
     {
       const slot = this.newSlot("startAction", null);
@@ -42,6 +44,7 @@
 
     /**
      * @member {AudioBlob} outputAudioBlob - The output audio blob from the TTS request.
+     * @category Data
      */
     {
       const slot = this.newSlot("outputAudioBlob", null);
@@ -52,6 +55,7 @@
 
     /**
      * @member {*} error - The error object if any error occurs during the TTS request.
+     * @category Error Handling
      */
     {
       const slot = this.newSlot("error", null);
@@ -60,7 +64,7 @@
 
   /**
    * Initializes the prototype of the AzureTtsRequest class.
-
+   * @category Initialization
    */
   initPrototype () {
     this.setShouldStore(true);
@@ -69,7 +73,7 @@
 
   /**
    * Initializes the AzureTtsRequest instance.
-
+   * @category Initialization
    */
   init() {
     super.init();
@@ -83,7 +87,7 @@
 
   /**
    * Performs final initialization of the AzureTtsRequest instance.
-
+   * @category Initialization
    */
   finalInit() {
     super.finalInit();
@@ -94,8 +98,8 @@
 
   /**
    * Returns the parent requests node.
-
    * @returns {*} The parent requests node.
+   * @category Hierarchy
    */
   requests() {
     return this.parentNode();
@@ -103,8 +107,8 @@
 
   /**
    * Returns the Azure service associated with this request.
-
    * @returns {*} The Azure service.
+   * @category Service
    */
   service () {
     return this.speaker().service()
@@ -112,8 +116,8 @@
 
   /**
    * Returns the speaker associated with this request.
-
    * @returns {*} The speaker.
+   * @category Service
    */
   speaker () {
     return this.requests().speaker()
@@ -121,9 +125,9 @@
 
   /**
    * Cleans the input text by removing HTML tags and adjusting formatting.
-
    * @param {string} text - The text to clean.
    * @returns {string} The cleaned text.
+   * @category Text Processing
    */
   cleanText (text) {
     text = text.replaceAll("<p>", "");
@@ -136,8 +140,8 @@
 
   /**
    * Returns the cleaned input text.
-
    * @returns {string} The cleaned input text.
+   * @category Text Processing
    */
   cleanedText () {
     return this.cleanText(this.inputText());
@@ -145,8 +149,8 @@
 
   /**
    * Returns the request URL for the Azure TTS service.
-
    * @returns {string} The request URL.
+   * @category HTTP
    */
   requestUrl () {
     return "https://" + this.speaker().service().region() + ".tts.speech.microsoft.com/cognitiveservices/v1";
@@ -154,8 +158,8 @@
 
   /**
    * Returns the request options for the Azure TTS service.
-
    * @returns {Object} The request options.
+   * @category HTTP
    */
   requestOptions () {
 
@@ -163,8 +167,8 @@
 
   /**
    * Checks if the request can be spoken.
-
    * @returns {boolean} True if the request can be spoken, false otherwise.
+   * @category Validation
    */
   canSpeak () {
     const hasKey = speaker.service().apiKey() !== null;
@@ -174,8 +178,8 @@
 
   /**
    * Starts the TTS request.
-
    * @async
+   * @category Action
    */
   async start() {
     const speaker = this.speaker();
@@ -224,8 +228,8 @@
 
   /**
    * Returns the title of the request.
-
    * @returns {string} The title of the request.
+   * @category UI
    */
   title () {
     const p = this.inputText().clipWithEllipsis(30);
@@ -234,8 +238,8 @@
 
   /**
    * Updates the title when the input text is changed.
-
    * @returns {AzureTtsRequest} The current instance.
+   * @category UI
    */
   didUpdateSlotInputText () {
     this.setTitle(this.inputText())
@@ -245,9 +249,9 @@
 
   /**
    * Updates the subtitle of the request.
-
    * @param {string} s - The new subtitle.
    * @returns {AzureTtsRequest} The current instance.
+   * @category UI
    */
   updateSubtitle (s) {
     this.setSubtitle(s);

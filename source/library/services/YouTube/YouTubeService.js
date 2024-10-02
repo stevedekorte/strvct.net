@@ -12,6 +12,7 @@
 (class YouTubeService extends BMStorableNode {
   /**
    * @description Initializes the prototype slots for the YouTubeService.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /*
@@ -32,6 +33,7 @@
 
     /**
      * @member {YouTubeAudioPlayer} youTubeAudioPlayer - The YouTube audio player instance.
+     * @category Audio
      */
     {
         const slot = this.newSlot("youTubeAudioPlayer", null)
@@ -47,6 +49,7 @@
 
   /**
    * @description Initializes the YouTubeService instance.
+   * @category Initialization
    */
   init() {
     super.init();

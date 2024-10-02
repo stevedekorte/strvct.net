@@ -16,6 +16,7 @@
     initPrototypeSlots () {
         /**
          * @member {ButtonView} sttButton - Button for speech to text functionality.
+         * @category UI
          */
         {
             const slot = this.newSlot("sttButton", null);
@@ -24,6 +25,7 @@
 
         /**
          * @member {SpeechToTextSession} sttSession - Session for managing speech to text conversion.
+         * @category Speech Recognition
          */
         {
             const slot = this.newSlot("sttSession", null); 
@@ -40,6 +42,7 @@
     /**
      * Initializes the BMTextAreaFieldTile instance.
      * @returns {BMTextAreaFieldTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -54,6 +57,7 @@
     /**
      * Creates and configures the value view for the text area.
      * @returns {TextField} The configured value view.
+     * @category UI
      */
     createValueView () {
         const v = TextField.clone().setElementClassName("BMTextAreaFieldValueView");
@@ -73,6 +77,7 @@
 
     /**
      * Sets up the button for the value view.
+     * @category UI
      */
     setupValueViewButton () {
         this.valueViewContainer().setGap("1em");
@@ -95,6 +100,7 @@
 
     /**
      * Synchronizes the value from the node and updates the STT button visibility.
+     * @category Data Synchronization
      */
     syncValueFromNode () {
         super.syncValueFromNode();
@@ -108,6 +114,7 @@
     /**
      * Checks if the microphone is currently active.
      * @returns {boolean} True if the microphone is on, false otherwise.
+     * @category Speech Recognition
      */
     isMicOn () {
         if (!this.sttSession()) {
@@ -118,6 +125,7 @@
 
     /**
      * Updates the STT button icon based on the microphone state.
+     * @category UI
      */
     updateSttButton () {
         const iconName = this.isMicOn() ? "Mic On" : "Mic Off";
@@ -126,6 +134,7 @@
 
     /**
      * Handles the click event on the value button.
+     * @category Event Handling
      */
     onClickValueButton () {
         console.log("this.isMicOn():", this.isMicOn());
@@ -140,6 +149,7 @@
 
     /**
      * Sets up the STT session if it hasn't been created yet.
+     * @category Speech Recognition
      */
     setupSttSessionIfNeeded () {
         if (!this.sttSession()) {
@@ -151,6 +161,7 @@
     /**
      * Handles interim speech recognition results.
      * @param {SpeechToTextSession} sttSession - The STT session.
+     * @category Speech Recognition
      */
     onSpeechInterimResult (sttSession) {
         const text = this.sttSession().interimTranscript();
@@ -161,6 +172,7 @@
     /**
      * Handles final speech recognition results.
      * @param {SpeechToTextSession} sttSession - The STT session.
+     * @category Speech Recognition
      */
     onSpeechFinal (sttSession) {
 
@@ -169,6 +181,7 @@
     /**
      * Handles speech input and updates the value view.
      * @param {SpeechToTextSession} sttSession - The STT session.
+     * @category Speech Recognition
      */
     onSpeechInput (sttSession) {
         const text = this.sttSession().fullTranscript();
@@ -185,6 +198,7 @@
     /**
      * Handles the end of speech recognition.
      * @param {SpeechToTextSession} sttSession - The STT session.
+     * @category Speech Recognition
      */
     onSpeechEnd (sttSession) {
         this.updateSttButton()
@@ -193,6 +207,7 @@
     /**
      * Handles the end of the STT session.
      * @param {SpeechToTextSession} sttSession - The STT session.
+     * @category Speech Recognition
      */
     onSessionEnd (sttSession) {
         this.updateSttButton()

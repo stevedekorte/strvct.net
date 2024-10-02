@@ -15,6 +15,8 @@ if (getGlobalThis()["Node"]) { // DOM Node
 
         /**
          * @private
+         * @member {WeakRef|null}
+         * @category Internal
          */
         _domViewWeakRef: null,
 
@@ -22,6 +24,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * Sets the DOM view for the node.
          * @param {Object} aView - The view to set.
          * @returns {Node} The node instance.
+         * @category View Management
          */
         setDomView: function (aView) {
             this._domViewWeakRef = aView ? new WeakRef(aView) : null;
@@ -31,6 +34,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Gets the DOM view for the node.
          * @returns {Object|undefined} The DOM view or undefined if not set.
+         * @category View Management
          */
         domView: function () { 
             const ref = this._domViewWeakRef;
@@ -41,6 +45,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Removes all child nodes from the current node.
          * @returns {Node} The node instance.
+         * @category Node Manipulation
          */
         removeAllChildren: function () {
             while (this.firstChild) {
@@ -52,6 +57,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Moves all child nodes to another element.
          * @param {Node} e - The target element to move children to.
+         * @category Node Manipulation
          */
         moveChildrenTo: function (e) {
             while (this.firstChild) {
@@ -64,6 +70,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * @param {number} index - The index at which to insert the child.
          * @param {Node} child - The child element to insert.
          * @throws {Error} If the index is invalid.
+         * @category Node Manipulation
          */
         atInsertElement: function (index, child) {
             const children = this.children
@@ -84,6 +91,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Returns a description of the node.
          * @returns {string} A description of the node.
+         * @category Node Information
          */
         description: function () {
             let s = false
@@ -110,6 +118,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Executes a function for each child node.
          * @param {Function} fn - The function to execute for each child.
+         * @category Node Traversal
          */
         forEachChild (fn) {
             for(let i = 0; i < this.childNodes.length; i ++) {
@@ -121,6 +130,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Executes a function for each descendant node.
          * @param {Function} fn - The function to execute for each descendant.
+         * @category Node Traversal
          */
         forEachDecendant: function (fn) {
             this.forEachChild(child => {
@@ -132,6 +142,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Executes a function for each ancestor node.
          * @param {Function} fn - The function to execute for each ancestor.
+         * @category Node Traversal
          */
         forEachAncestor: function (fn) {
             const pn = this.parentNode()
@@ -145,6 +156,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * Checks if the node has a specific ancestor.
          * @param {Node} anElement - The potential ancestor to check.
          * @returns {boolean} True if the element is an ancestor, false otherwise.
+         * @category Node Traversal
          */
         hasAncestor: function (anElement) {
             const pn = this.parentNode()
@@ -163,6 +175,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * Copies the computed style from another element.
          * @param {Node} e - The element to copy the style from.
          * @returns {Node} The node instance.
+         * @category Styling
          */
         copyComputedStyleFrom: function (e) {
             debugger; // getComputedStyle can force a reflow
@@ -175,6 +188,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * Copies the style from another element.
          * @param {Node} e - The element to copy the style from.
          * @returns {Node} The node instance.
+         * @category Styling
          */
         copyStyleFrom: function (e) {
             const style = e.style.cssText;
@@ -186,6 +200,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * Copies attributes from another element.
          * @param {Node} e - The element to copy attributes from.
          * @returns {Node} The node instance.
+         * @category Attributes
          */
         copyAttributesFrom: function (e) {
             for (const attr of e.attributes) {
@@ -202,6 +217,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Returns a map of the node's attributes.
          * @returns {Map} A map of attribute names to values.
+         * @category Attributes
          */
         attributesMap: function () {
             const map = new Map()
@@ -214,6 +230,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Sets attributes from a map.
          * @param {Map} map - A map of attribute names to values.
+         * @category Attributes
          */
         setAttributesMap: function (map) {
             if (this.setAttribute) {
@@ -226,6 +243,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Removes specified attributes from the node.
          * @param {string[]} names - An array of attribute names to remove.
+         * @category Attributes
          */
         removeAttributes: function (names) {
             if (this.removeAttribute) {
@@ -236,6 +254,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Sets attributes on this node and removes them from descendants.
          * @param {Map} attributeMap - A map of attribute names to values.
+         * @category Attributes
          */
         setAttributesAndRemoveFromDecendants: function (attributeMap) {
             this.setAttributesMap(attributeMap)
@@ -248,6 +267,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         /**
          * Adds an SVG group layer to the node.
          * @returns {Node} The newly created SVG group element.
+         * @category SVG
          */
         addSvgGroupLayer: function () {
             const xmlns = "http://www.w3.org/2000/svg";
@@ -263,6 +283,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
          * @param {number} x - The x-coordinate of the point.
          * @param {number} y - The y-coordinate of the point.
          * @returns {boolean} True if the node contains the point, false otherwise.
+         * @category Geometry
          */
         containsPointXY: function (x, y) {
             // this assumes ancestors geographically contain descendant elements

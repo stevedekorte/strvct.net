@@ -36,6 +36,7 @@
   static initClass () {
     /**
      * @member {Set} implementers - A set of all implementers of the protocol.
+     * @category State
      */
     this.newClassSlot("implementers", new Set());
   }
@@ -43,6 +44,7 @@
   /**
    * @description Adds an implementer to the protocol.
    * @param {Object} implementer - The implementer class to add.
+   * @category Management
    */
   static addImplementer (implementer) {
     assert(implementer.isClass(), "implementer must be a class");
@@ -52,17 +54,24 @@
   /**
    * @description Removes an implementer from the protocol.
    * @param {Object} anImplementer - The implementer to remove.
+   * @category Management
    */
   static removeImplementer (anImplementer) {
     this.implementers().delete(anImplementer);
   }
 
+  /**
+   * @description Asserts that the given value is a Protocol class.
+   * @param {Object} aProtocol - The value to check.
+   * @category Validation
+   */
   static assertValueIsProtocolClass (aProtocol) {
     assert(aProtocol.isClass() && aProtocol.isKindOf(Protocol), "aProtocol must be a Protocol class");
   }
 
   /**
    * @description Throws an error because Protocol classes should not be instantiated.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -73,6 +82,7 @@
    * @description Checks if the current protocol is a subset of the given protocol.
    * @param {Protocol} aProtocol - The protocol class to check against.
    * @returns {boolean} True if the current protocol is a subset of the given protocol, false otherwise.
+   * @category Comparison
    */
   isSubsetOfProtocol (aProtocol) {
     this.thisClass().assertValueIsProtocolClass(aProtocol);
@@ -83,6 +93,7 @@
    * @description Checks if the current protocol is a superset of the given protocol.
    * @param {Protocol} protocol - The protocol to check against.
    * @returns {boolean} True if the current protocol is a superset of the given protocol, false otherwise.
+   * @category Comparison
    */
   isSupersetOfProtocol (protocol) {
     this.thisClass().assertValueIsProtocolClass(aProtocol);
@@ -92,6 +103,7 @@
   /**
    * @description Returns all protocols (i.e. all subclasses of Protocol).
    * @returns {Array} An array of all protocols.
+   * @category Query
    */
   static allProtocols () {
     return this.thisClass().allSubclasses();

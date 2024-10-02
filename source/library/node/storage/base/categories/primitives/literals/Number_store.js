@@ -12,6 +12,7 @@
      * Retrieves reference PIDs for JSON store.
      * @param {Set} puuids - A Set of PUUIDs.
      * @returns {Set} The input Set of PUUIDs.
+     * @category Storage
      */
     refsPidsForJsonStore (puuids = new Set()) {
         return puuids

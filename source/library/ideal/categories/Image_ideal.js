@@ -18,6 +18,7 @@ if (!getGlobalThis().Image) {
          * Sets the delegate object for this image.
          * @param {Object} anObject - The delegate object
          * @returns {Image_ideal} This image instance
+         * @category Delegation
          */
         setDelegate (anObject) {
             Object.defineSlot(this, "_delegate", anObject)
@@ -27,6 +28,7 @@ if (!getGlobalThis().Image) {
         /**
          * Gets the delegate object for this image.
          * @returns {Object|undefined} The delegate object
+         * @category Delegation
          */
         delegate () {
             return this._delegate
@@ -36,6 +38,7 @@ if (!getGlobalThis().Image) {
          * Loads an image from a given URL.
          * @param {string} url - The URL of the image to load
          * @returns {Image_ideal} This image instance
+         * @category Image Loading
          */
         loadUrl (url) {
             this.crossOrigin = "Anonymous";
@@ -54,6 +57,7 @@ if (!getGlobalThis().Image) {
          * Handles the image load event.
          * Converts the loaded image to a data URL and notifies the delegate.
          * @returns {Image_ideal} This image instance
+         * @category Image Processing
          */
         onDidLoad () {
             // create a canvas the size of the image
@@ -74,6 +78,7 @@ if (!getGlobalThis().Image) {
                  * Callback function for the delegate when the image data URL is fetched.
                  * @callback didFetchDataUrl
                  * @param {string} data - The image data URL
+                 * @category Image Processing
                  */
                 this._delegate.didFetchDataUrl(data)
             }

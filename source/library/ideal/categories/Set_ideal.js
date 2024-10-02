@@ -12,6 +12,7 @@
      * Creates a new Set from an iterator
      * @param {Iterator} iterator - The iterator to create the Set from
      * @returns {Set_ideal} A new Set containing the iterator's values
+     * @category Creation
      */
     static fromIterator (iterator) {
         const results = new this()
@@ -28,6 +29,7 @@
      * Checks if this set is equal to another set
      * @param {Set} aSet - The set to compare with
      * @returns {boolean} True if the sets are equal, false otherwise
+     * @category Comparison
      */
     equals (aSet) {
         return this.size === aSet.size && [...this].every(v => aSet.has(v));
@@ -36,6 +38,7 @@
     /**
      * Returns the number of elements in the set
      * @returns {number} The number of elements
+     * @category Information
      */
     count () {
         return this.size
@@ -44,6 +47,7 @@
     /**
      * Creates a shallow copy of the set
      * @returns {Set} A new Set with the same elements
+     * @category Creation
      */
     shallowCopy () {
         return new Set(this);
@@ -53,6 +57,7 @@
      * Creates a deep copy of the set
      * @param {Map} [refMap=new Map()] - A map to handle circular references
      * @returns {Set_ideal} A new Set with deeply copied elements
+     * @category Creation
      */
     deepCopy (refMap = new Map()) {
         const newSet = new this.constructor();
@@ -67,6 +72,7 @@
     /**
      * Returns an array of all elements in the set
      * @returns {Array} An array containing all elements
+     * @category Conversion
      */
     keysArray () {
         return Array.fromIterator(this.values())
@@ -75,6 +81,7 @@
     /**
      * Returns an array of all elements in the set
      * @returns {Array} An array containing all elements
+     * @category Conversion
      */
     valuesArray () {
         return this.keysArray()
@@ -83,6 +90,7 @@
     /**
      * Returns an array of all elements in the set
      * @returns {Array} An array containing all elements
+     * @category Conversion
      */
     asArray () {
         return this.keysArray()
@@ -91,6 +99,7 @@
     /**
      * Iterates over the set, calling a function for each key-value pair
      * @param {function(*, *, Set_ideal): void} fn - The function to call for each entry
+     * @category Iteration
      */
     forEachKV (fn) {
         this.forEach((v, k, self) => fn(k, v, self))
@@ -99,6 +108,7 @@
     /**
      * Iterates over the set, calling a function for each key
      * @param {function(*): void} fn - The function to call for each key
+     * @category Iteration
      */
     forEachK (fn) {
         this.forEach((v, k) => fn(k))
@@ -107,6 +117,7 @@
     /**
      * Iterates over the set, calling a function for each value
      * @param {function(*): void} fn - The function to call for each value
+     * @category Iteration
      */
     forEachV (fn) {
         this.forEach(v => fn(v))
@@ -116,6 +127,7 @@
      * Checks if the set can detect an element that satisfies the given function
      * @param {function(*): boolean} func - The function to test each element
      * @returns {boolean} True if an element is detected, false otherwise
+     * @category Search
      */
     canDetect (func) {
         const result = this.detect(func);
@@ -126,6 +138,7 @@
      * Finds the first element in the set that satisfies the given function
      * @param {function(*): boolean} fn - The function to test each element
      * @returns {*} The first element that satisfies the function, or undefined if none found
+     * @category Search
      */
     detect (fn) {
         for (let v of this) {
@@ -141,6 +154,7 @@
      * Alias for select method
      * @param {function(*): boolean} fn - The function to test each element
      * @returns {Array} An array of elements that satisfy the function
+     * @category Filtering
      */
     filter (fn) {
         return this.select(fn)
@@ -150,6 +164,7 @@
      * Returns an array of elements that satisfy the given function
      * @param {function(*): boolean} fn - The function to test each element
      * @returns {Array} An array of elements that satisfy the function
+     * @category Filtering
      */
     select (fn) {
         return this.valuesArray().select(fn)
@@ -159,6 +174,7 @@
      * Creates a new set with the results of calling a provided function on every element
      * @param {function(*): *} func - Function that produces an element of the new Set
      * @returns {Set} A new Set with each element being the result of the callback function
+     * @category Transformation
      */
     map (func) {
         const result = new Set()
@@ -178,6 +194,7 @@
      * Checks if this set is a subset of another set
      * @param {Set} superSet - The set to check against
      * @returns {boolean} True if this set is a subset of superSet, false otherwise
+     * @category Comparison
      */
     isSubsetOf (superSet) {
         return superSet.isSupersetOf(this);
@@ -195,6 +212,7 @@
      * Checks if this set is a superset of another set
      * @param {Set} subset - The set to check against
      * @returns {boolean} True if this set is a superset of subset, false otherwise
+     * @category Comparison
      */
     isSupersetOf (subset) {
         if (this.size < subset.size) {
@@ -221,6 +239,7 @@
      * Returns a new set that is the union of this set and another set
      * @param {Set} setB - The set to union with
      * @returns {Set} A new set containing all elements from both sets
+     * @category Set Operations
      */
     union (setB) {
         let _union = new Set(this);
@@ -242,6 +261,7 @@
      * Returns a new set that is the intersection of this set and another set
      * @param {Set} setB - The set to intersect with
      * @returns {Set} A new set containing elements common to both sets
+     * @category Set Operations
      */
     intersection (setB) {
         let _intersection = new Set();
@@ -265,6 +285,7 @@
      * Returns a new set that is the symmetric difference of this set and another set
      * @param {Set} setB - The set to compute the symmetric difference with
      * @returns {Set} A new set containing elements in either set but not in both
+     * @category Set Operations
      */
     symmetricDifference (setB) { 
         let _difference = new Set(this);
@@ -290,6 +311,7 @@
      * Returns a new set that is the difference of this set and another set
      * @param {Set} setB - The set to subtract
      * @returns {Set} A new set containing elements in this set that are not in setB
+     * @category Set Operations
      */
     difference (setB) {
         let _difference = new Set(this);
@@ -302,6 +324,7 @@
     /**
      * Checks if the set is empty
      * @returns {boolean} True if the set is empty, false otherwise
+     * @category Information
      */
     isEmpty () {
         return this.size == 0        
@@ -310,6 +333,7 @@
     /**
      * Removes and returns an arbitrary element from the set
      * @returns {*} The removed element
+     * @category Modification
      */
     pop () {
         const iter = this.values();
@@ -320,6 +344,7 @@
     /**
      * Returns an immutable version of this set
      * @returns {ImmutableSet} An immutable set with the same elements as this set
+     * @category Conversion
      */
     asImmutable () {
         return new ImmutableSet(this);

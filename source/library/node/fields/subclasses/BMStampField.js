@@ -10,12 +10,14 @@
     
     /**
      * @description Initializes prototype slots for the BMStampField.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype of the BMStampField.
+     * @category Initialization
      */
     initPrototype () {
         //this.setKeyIsVisible(false)

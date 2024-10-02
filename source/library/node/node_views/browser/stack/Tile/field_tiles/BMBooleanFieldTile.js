@@ -16,6 +16,7 @@
     /**
      * @description Initializes the BMBooleanFieldTile.
      * @returns {BMBooleanFieldTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -47,6 +48,7 @@
     /**
      * @description Creates and returns a BooleanView for the value.
      * @returns {BooleanView} The created BooleanView instance.
+     * @category View Creation
      */
     createValueView () {
         const bv = BooleanView.clone()
@@ -56,6 +58,7 @@
     /**
      * @description Returns the BooleanView used for the value.
      * @returns {BooleanView} The BooleanView instance.
+     * @category Accessors
      */
     booleanView () {
         return this.valueView()
@@ -64,6 +67,7 @@
     /**
      * @description Synchronizes the tile with its associated node and updates the appearance.
      * @returns {BMBooleanFieldTile} The current instance.
+     * @category Synchronization
      */
     syncFromNode () {
         super.syncFromNode()

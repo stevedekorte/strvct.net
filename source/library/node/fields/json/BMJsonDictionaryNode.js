@@ -13,6 +13,7 @@
      * @description Checks if this node type can open a specific MIME type.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} Always returns false for this class.
+     * @category File Operations
      */
     static canOpenMimeType (mimeType) {
         return false;
@@ -20,11 +21,13 @@
 
     /**
      * @description Initializes the prototype slots for this class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {boolean} shouldMerge
          * @description Determines if the node should merge when updating JSON.
+         * @category Configuration
          */
         {
             const slot = this.newSlot("shouldMerge", true);
@@ -34,6 +37,7 @@
 
     /**
      * @description Initializes the prototype with default values and settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setNodeCanEditTitle(true);
@@ -50,6 +54,7 @@
     /**
      * @description Returns the JSON archive of the node.
      * @throws {Error} Throws an error as this method is not implemented.
+     * @category Data Operations
      */
     jsonArchive () {
         // use asJson() if you want to get the json
@@ -61,6 +66,7 @@
      * @description Sets the JSON for this node, updating its structure accordingly.
      * @param {Object} json - The JSON object to set.
      * @returns {BMJsonDictionaryNode} Returns this node after updating.
+     * @category Data Operations
      */
     setJson (json) {
         if (this.doesMatchJson(json)) {
@@ -102,6 +108,7 @@
     /**
      * @description Calculates and returns the JSON representation of this node.
      * @returns {Object} The calculated JSON object.
+     * @category Data Operations
      */
     calcJson () {
         const dict = {};
@@ -121,6 +128,7 @@
      * @param {BMJsonNode} newNode - The new node to add.
      * @param {number} anIndex - The index at which to add the new node.
      * @returns {BMJsonNode} The added subnode.
+     * @category Node Operations
      */
     addSubnodeAt (newNode, anIndex) {
         newNode = this.prepareSubnode(newNode);
@@ -132,6 +140,7 @@
      * @param {BMJsonNode} oldNode - The node to be replaced.
      * @param {BMJsonNode} newNode - The new node to replace with.
      * @returns {BMJsonNode} The new subnode that replaced the old one.
+     * @category Node Operations
      */
     replaceSubnodeWith (oldNode, newNode) {
         newNode = this.prepareSubnode(newNode);
@@ -142,6 +151,7 @@
      * @description Prepares a subnode by setting its properties.
      * @param {BMJsonNode} aSubnode - The subnode to prepare.
      * @returns {BMJsonNode} The prepared subnode.
+     * @category Node Operations
      */
     prepareSubnode (aSubnode) {
         this.assertValidSubnodeType(aSubnode);
@@ -159,6 +169,7 @@
     /**
      * @description Gets the BMDataUrl for this node.
      * @returns {BMDataUrl} The BMDataUrl object for this node.
+     * @category Data Operations
      */
     getBMDataUrl () {
         const json = this.jsonArchive();
@@ -173,6 +184,7 @@
      * @description Sets the editable state of this node and its subnodes.
      * @param {boolean} aBool - The editable state to set.
      * @returns {BMJsonDictionaryNode} This node after setting the editable state.
+     * @category Node Operations
      */
     setIsEditable (aBool) {
         this.subnodes().forEach(sn => {

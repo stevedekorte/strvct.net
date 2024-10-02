@@ -1,4 +1,3 @@
-
 "use strict"; 
 
 /*
@@ -42,6 +41,10 @@
 
 */
 
+/**
+ * @member defineSlot
+ * @category Property
+ */
 Object.defineSlot = function (obj, slotName, slotValue) {
     if (Object.getOwnPropertyDescriptor(slotName)) {
         // TODO: raise exception if it exists? Safer for categories?
@@ -103,6 +106,10 @@ if (d.enumerable) {
 }
 */
 
+/**
+ * @member defineSlots
+ * @category Property
+ */
 Object.defineSlots = function (obj, dict) {
     Object.keys(dict).forEach((slotName) => {
         const slotValue = dict[slotName]
@@ -110,6 +117,10 @@ Object.defineSlots = function (obj, dict) {
     })
 };
 
+/**
+ * @member defineSlotSafely
+ * @category Property
+ */
 Object.defineSlotSafely = function(obj, slotName, slotValue) {
     const nameForObj = function (obj) {
         let name = "?";
@@ -139,6 +150,10 @@ Object.defineSlotSafely = function(obj, slotName, slotValue) {
     }
 };
 
+/**
+ * @member defineSlotsSafelyFromMap
+ * @category Property
+ */
 Object.defineSlotsSafelyFromMap = function (obj, aMap) {
     for (const [slotName, slotValue] of aMap) {
         Object.defineSlotSafely(obj, slotName, slotValue);
@@ -150,40 +165,72 @@ Object.defineSlotsSafelyFromMap = function (obj, aMap) {
 
 // --- type ---
 
+/**
+ * @member type
+ * @category Type
+ */
 Object.defineSlotSafely(Object, "type", function () { 
     return this.name;
 });
 
+/**
+ * @member type
+ * @category Type
+ */
 Object.defineSlotSafely(Object.prototype, "type", function () { 
     return this.constructor.name;
 });
 
 // --- isClass ---
 
+/**
+ * @member isClass
+ * @category Type
+ */
 Object.defineSlotSafely(Object, "isClass", function () { 
     return true;
 });
 
+/**
+ * @member isClass
+ * @category Type
+ */
 Object.defineSlotSafely(Object.prototype, "isClass", function () { 
     return false;
 });
 
 // --- isPrototype ---
 
+/**
+ * @member isPrototype
+ * @category Type
+ */
 Object.defineSlotSafely(Object, "isPrototype", function () { 
     return false;
 });
 
+/**
+ * @member isPrototype
+ * @category Type
+ */
 Object.defineSlotSafely(Object.prototype, "isPrototype", function () { 
     return this.constructor.prototype === this;
 });
 
 // --- isInstance ---
 
+/**
+ * @member isInstance
+ * @category Type
+ */
 Object.defineSlotSafely(Object, "isInstance", function () { 
     return false;
 });
 
+/**
+ * @member isInstance
+ * @category Type
+ */
 Object.defineSlotSafely(Object.prototype, "isInstance", function () { 
     return !this.isPrototype();
 });
@@ -191,6 +238,10 @@ Object.defineSlotSafely(Object.prototype, "isInstance", function () {
 
 // --- slot enumeration -----------------------------------------------------
 
+/**
+ * @member forEachPrototype
+ * @category Iteration
+ */
 Object.defineSlotSafely(Object.prototype, "forEachPrototype", function (fn) { 
     let proto = this;
 
@@ -210,6 +261,10 @@ Object.defineSlotSafely(Object.prototype, "forEachPrototype", function (fn) {
     }
 });
 
+/**
+ * @member forEachSlot
+ * @category Iteration
+ */
 Object.defineSlot(Object.prototype, "forEachSlot", function (fn) { 
     this.forEachPrototype(proto => {
         if (Object.hasOwn(proto, "_slotsMap")) {
@@ -220,6 +275,10 @@ Object.defineSlot(Object.prototype, "forEachSlot", function (fn) {
     });
 });
 
+/**
+ * @member setupAllSlotsMap
+ * @category Initialization
+ */
 Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () { 
     if (!this.isPrototype()) {
         throw new Error("setupAllSlotsMap called on non-prototype");
@@ -237,14 +296,26 @@ Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () {
     });
 });
 
+/**
+ * @member allSlotsMap
+ * @category Getter
+ */
 Object.defineSlot(Object.prototype, "allSlotsMap", function () { 
     return this._allSlotsMap;
 });
 
+/**
+ * @member slotsMap
+ * @category Getter
+ */
 Object.defineSlot(Object.prototype, "slotsMap", function () { 
     return this._slotsMap;
 });
 
+/**
+ * @member initSlots
+ * @category Initialization
+ */
 Object.defineSlot(Object.prototype, "initSlots", function () { // setup property, getter, setter for each slot
     assert(this.isPrototype());
     //console.log(this.type() + " this.slotsMap().size = " + this.slotsMap().size);
@@ -255,6 +326,10 @@ Object.defineSlot(Object.prototype, "initSlots", function () { // setup property
     });
 });
 
+/**
+ * @member setupPrototype
+ * @category Initialization
+ */
 Object.defineSlot(Object.prototype, "setupPrototype", function () { 
 
     if (!this.isPrototype()) {
@@ -300,6 +375,10 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
 });
 
 
+/**
+ * @member initThisCategory
+ * @category Initialization
+ */
 Object.defineSlot(Object, "initThisCategory", function () { 
     // define this first, so we can use it to more cleanly define our
     // Object categories.
@@ -377,5 +456,3 @@ Object.defineSlot(Object, "initThisCategory", function () {
 
     return this
 });
-
-

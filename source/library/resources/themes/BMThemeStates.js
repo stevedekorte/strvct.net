@@ -10,10 +10,12 @@
 (class BMThemeStates extends BMThemeFolder {
   /**
    * @description Initializes the prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {Array} standardStateNames - An array of standard state names.
+     * @category Configuration
      */
     {
       const slot =this.newSlot("standardStateNames", [
@@ -28,6 +30,7 @@
 
   /**
    * @description Initializes the instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -44,6 +47,7 @@
 
   /**
    * @description Performs final initialization.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -52,6 +56,7 @@
 
   /**
    * @description Sets up the subnodes.
+   * @category Initialization
    */
   setupSubnodes () {
     if (!this.hasSubnodes()) {
@@ -69,6 +74,7 @@
    * @description Retrieves a state with the given name.
    * @param {string} name - The name of the state to retrieve.
    * @returns {BMThemeState} The theme state with the given name.
+   * @category State Retrieval
    */
   stateWithName (name) {
     assert(this.standardStateNames().contains(name))
@@ -78,6 +84,7 @@
   /**
    * @description Retrieves the active theme state.
    * @returns {BMThemeState} The active theme state.
+   * @category State Retrieval
    */
   activeThemeState () {
     return this.stateWithName("active");
@@ -86,6 +93,7 @@
   /**
    * @description Retrieves the unselected theme state.
    * @returns {BMThemeState} The unselected theme state.
+   * @category State Retrieval
    */
   unselectedThemeState () {
     return this.stateWithName("unselected");
@@ -94,6 +102,7 @@
   /**
    * @description Retrieves the selected theme state.
    * @returns {BMThemeState} The selected theme state.
+   * @category State Retrieval
    */
   selectedThemeState () {
     return this.stateWithName("selected");
@@ -102,6 +111,7 @@
   /**
    * @description Retrieves the disabled theme state.
    * @returns {BMThemeState} The disabled theme state.
+   * @category State Retrieval
    */
   disabledThemeState () {
     return this.stateWithName("disabled");
@@ -110,6 +120,7 @@
   /**
    * @description Sets up the instance as default.
    * @returns {BMThemeStates} The instance.
+   * @category Initialization
    */
   setupAsDefault () {
     this.setTitle("states");

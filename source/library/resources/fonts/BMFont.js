@@ -16,6 +16,7 @@
      * @static
      * @description Returns an array of supported file extensions for fonts.
      * @returns {string[]} An array of supported file extensions.
+     * @category File Operations
      */
     static supportedExtensions () {
         return ["ttf", "woff", "woff2"];
@@ -25,6 +26,7 @@
      * @static
      * @description Returns a map of font weight names to their corresponding numeric values.
      * @returns {Map<string, number>} A map of font weight names to numeric values.
+     * @category Font Properties
      */
     static fontWeightMap () {
         const wm = new Map()
@@ -46,11 +48,13 @@
 
     /**
      * @description Initializes the prototype slots for the BMFont class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {string} name - The name of the font.
+             * @category Font Properties
              */
             const slot = this.newSlot("name", null);
             slot.setSlotType("String");
@@ -58,6 +62,7 @@
         {
             /**
              * @member {Object} options - The options for the font.
+             * @category Font Properties
              */
             const slot = this.newSlot("options", null);
             slot.setSlotType("Object");
@@ -65,6 +70,7 @@
         {
             /**
              * @member {FontFace} fontFace - Reference to browser FontFace object.
+             * @category Font Properties
              */
             const slot = this.newSlot("fontFace", null);
             slot.setSlotType("FontFace");
@@ -72,6 +78,7 @@
         {
             /**
              * @member {Map} weightMap - Map of font weight names to numeric values.
+             * @category Font Properties
              */
             const slot = this.newSlot("weightMap", BMFont.fontWeightMap());
             slot.setSlotType("Map");
@@ -80,6 +87,7 @@
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
         this.setIsDebugging(false)
@@ -87,6 +95,7 @@
 
     /**
      * @description Initializes the BMFont instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -96,6 +105,7 @@
     /**
      * @description Returns the title of the font.
      * @returns {string} The title of the font.
+     * @category Font Properties
      */
     title () {
         return this.name()
@@ -104,6 +114,7 @@
     /**
      * @description Returns the name of the font.
      * @returns {string} The name of the font.
+     * @category Font Properties
      */
     name () {
         if (this._name) {
@@ -116,6 +127,7 @@
     /**
      * @description Checks if the font face is loaded.
      * @returns {boolean} True if the font face is loaded, false otherwise.
+     * @category Font Loading
      */
     fontFaceIsLoaded () {
         const face = this.fontFace();
@@ -125,6 +137,7 @@
     /**
      * @description Extracts font options from the font name.
      * @returns {Object} An object containing the extracted font options.
+     * @category Font Properties
      */
     optionsFromName () {
         const name = this.name();
@@ -146,6 +159,7 @@
      * @description Called when the resource data is loaded.
      * @async
      * @returns {Promise<void>}
+     * @category Font Loading
      */
     async onDidLoad () {
         await super.onDidLoad();
@@ -156,6 +170,7 @@
      * @description Asynchronously loads the font from the data.
      * @async
      * @returns {Promise<BMFont>} A promise that resolves to the BMFont instance.
+     * @category Font Loading
      */
     async asyncLoadFontFromData () {
         if (this.fontFace()) {
@@ -188,6 +203,7 @@
      * @description Handles load errors.
      * @param {Error} error - The error object.
      * @returns {BMFont} The BMFont instance.
+     * @category Error Handling
      */
     onLoadError (error) {
         if (this.isDebugging()) {
@@ -200,6 +216,7 @@
      * @description Retrieves a font face attribute.
      * @param {string} name - The name of the attribute.
      * @returns {*} The value of the attribute.
+     * @category Font Properties
      */
     fontFaceAttribute (name) {
         const face = this.fontFace();
@@ -212,6 +229,7 @@
     /**
      * @description Returns the font family name.
      * @returns {string|null} The font family name.
+     * @category Font Properties
      */
     fontFamilyName () {
         return this.fontFaceAttribute("family");
@@ -220,6 +238,7 @@
     /**
      * @description Returns the font style.
      * @returns {string|null} The font style.
+     * @category Font Properties
      */
     fontStyle () {
         return this.fontFaceAttribute("style");
@@ -228,6 +247,7 @@
     /**
      * @description Returns the font weight.
      * @returns {number|null} The font weight.
+     * @category Font Properties
      */
     fontWeight () {
         return this.fontFaceAttribute("weight");
@@ -236,6 +256,7 @@
     /**
      * @description Returns the font stretch.
      * @returns {string|null} The font stretch.
+     * @category Font Properties
      */
     fontStretch () {
         return this.fontFaceAttribute("stretch");

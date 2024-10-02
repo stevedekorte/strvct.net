@@ -14,6 +14,7 @@
     /**
      * @description Initializes the BMIconResources instance.
      * @returns {BMIconResources} The initialized instance.
+     * @category Initialization
      */
     init() {
         super.init()
@@ -23,6 +24,7 @@
 
     /**
      * @description Sets up the BMIconResources instance.
+     * @category Initialization
      */
     setup() {
         super.setup();
@@ -37,6 +39,7 @@
      * @param {string} aName - The name of the icon.
      * @param {string} svgString - The SVG string representation of the icon.
      * @returns {BMIconResources} The current instance.
+     * @category Icon Management
      */
     addIcon(aName, svgString) {
         const node = SvgIconNode.clone().setTitle(aName).setSvgString(svgString)
@@ -48,6 +51,7 @@
      * @description Retrieves an icon view by name.
      * @param {string} aName - The name of the icon to retrieve.
      * @returns {Object|null} The SVG icon view if found, null otherwise.
+     * @category Icon Retrieval
      */
     iconWithName(aName) {
         const node = this.firstSubnodeWithTitle(aName)
@@ -60,6 +64,7 @@
     /**
      * @description Gets an array of all icon names.
      * @returns {string[]} An array of icon names.
+     * @category Icon Retrieval
      */
     iconNames() {
         return this.subnodes().map(sn => sn.title())

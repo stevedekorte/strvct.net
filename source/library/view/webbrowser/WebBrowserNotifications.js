@@ -25,6 +25,7 @@
     /**
      * @static
      * @description Initializes the class as a singleton
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -32,10 +33,12 @@
 
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Promise} permissionPromise
+         * @category State
          */
         {
             const slot = this.newSlot("permissionPromise", null);
@@ -49,6 +52,7 @@
     /**
      * @description Requests permission for sending notifications
      * @returns {Promise} A promise that resolves to a boolean indicating whether permission was granted
+     * @category Permissions
      */
     async requestPermission () {
         if (!this.permissionPromise()) {
@@ -75,6 +79,7 @@
     /**
      * @description Checks if browser notifications are supported
      * @returns {boolean} True if notifications are supported, false otherwise
+     * @category Support
      */
     isSupported () {
         return window.hasOwnProperty("Notification");
@@ -85,6 +90,7 @@
     /**
      * @description Posts a notification if permission is granted
      * @param {WebBrowserNotification} aNote - The notification to post
+     * @category Notification
      */
     async postNote (aNote) {
         if (await this.requestPermission()) {
@@ -95,6 +101,7 @@
     /**
      * @description Creates a new notification
      * @returns {WebBrowserNotification} A new WebBrowserNotification instance
+     * @category Notification
      */
     newNote () {
         return WebBrowserNotification.clone();

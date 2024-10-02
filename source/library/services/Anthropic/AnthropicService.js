@@ -19,6 +19,7 @@
   /**
    * @static
    * @description Initializes the class as a singleton.
+   * @category Initialization
    */
   static initClass () {
     this.setIsSingleton(true);
@@ -27,6 +28,7 @@
   /**
    * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model configuration objects.
+   * @category Configuration
    */
   modelsJson () {
     return [
@@ -63,12 +65,14 @@
   
   /**
    * @description Initializes the prototype slots.
+   * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
    * @description Initializes the service.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -76,6 +80,7 @@
 
   /**
    * @description Performs final initialization steps.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -87,6 +92,7 @@
    * @description Validates the API key format.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the API key is valid, false otherwise.
+   * @category Authentication
    */
   validateKey (s) {
     return s.startsWith("sk-");
@@ -95,6 +101,7 @@
   /**
    * @description Checks if a valid API key is set.
    * @returns {boolean} True if a valid API key is set, false otherwise.
+   * @category Authentication
    */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
@@ -104,6 +111,7 @@
    * @description Prepares the request before sending it to the API.
    * @param {Object} aRequest - The request object to prepare.
    * @returns {AnthropicService} The service instance.
+   * @category Request Handling
    */
   prepareToSendRequest (aRequest) {
     const bodyJson = aRequest.bodyJson();

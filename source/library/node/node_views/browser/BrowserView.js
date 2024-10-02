@@ -53,6 +53,7 @@
     
     /**
      * @description Initializes prototype slots for the BrowserView class.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -60,6 +61,7 @@
     /**
      * @description Initializes the BrowserView instance.
      * @returns {BrowserView} The initialized BrowserView instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -91,6 +93,7 @@
     /**
      * @description Returns the browser header node.
      * @returns {Node} The browser header node.
+     * @category Node Access
      */
     browserHeaderNode () {
         return this.node().subnodes().first()
@@ -99,6 +102,7 @@
     /**
      * @description Returns the breadcrumbs node.
      * @returns {Node} The breadcrumbs node.
+     * @category Node Access
      */
     breadCrumbsNode () {
         return this.browserHeaderNode().subnodes().first()
@@ -107,6 +111,7 @@
     /**
      * @description Moves the view to the base state.
      * @returns {BrowserView} The current BrowserView instance.
+     * @category Navigation
      */
     moveToBase () {
         assert(this.browserHeaderNode())

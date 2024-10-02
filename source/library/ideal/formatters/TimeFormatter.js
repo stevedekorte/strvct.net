@@ -29,6 +29,8 @@
          * The date to be formatted.
          * @type {Date}
          * @default null
+         * @member {Date}
+         * @category Data
          */
         {
             const slot = this.newSlot("date", null) // temp value which will be formatted
@@ -41,6 +43,8 @@
          * Whether to use 24-hour format.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("is24Hour", false)
@@ -53,6 +57,8 @@
          * Whether to show meridiem (AM/PM).
          * @type {boolean}
          * @default true
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("showsMeridiem", true)
@@ -65,6 +71,8 @@
          * Whether to uppercase the meridiem.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("uppercaseMeridem", false)
@@ -77,6 +85,8 @@
          * The string to use for AM.
          * @type {string}
          * @default "am"
+         * @member {string}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("amString", "am")
@@ -89,6 +99,8 @@
          * The string to use for PM.
          * @type {string}
          * @default "pm"
+         * @member {string}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("pmString", "pm")
@@ -101,6 +113,8 @@
          * Whether to pad hours with zeros.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("doesPadHours", false)
@@ -113,6 +127,8 @@
          * Whether to show hours.
          * @type {boolean}
          * @default true
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("showsHours", true)
@@ -125,6 +141,8 @@
          * The spacer between hours and minutes.
          * @type {string}
          * @default ":"
+         * @member {string}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("hourMinuteSpacer", ":")
@@ -137,6 +155,8 @@
          * Whether to show minutes.
          * @type {boolean}
          * @default true
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("showsMinutes", true)
@@ -149,6 +169,8 @@
          * Whether to show seconds.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("showsSeconds", false)
@@ -161,6 +183,8 @@
          * Whether to show milliseconds.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("showsMilliseconds", false)
@@ -178,6 +202,7 @@
      * @param {number} n - The number to pad.
      * @param {number} [padLength=2] - The desired length of the padded number.
      * @returns {string} The padded number as a string.
+     * @category Formatting
      */
     paddedNumber (n, padLength) {
         if (!padLength) {
@@ -193,6 +218,7 @@
     /**
      * Gets the hours in 12-hour format.
      * @returns {number} The hours in 12-hour format.
+     * @category Formatting
      */
     getTwelveHours () {
         let h = this.date().getHours()
@@ -204,6 +230,7 @@
     /**
      * Gets the date in zero-padded US format (HH:MM).
      * @returns {string} The date in zero-padded US format.
+     * @category Formatting
      */
     zeroPaddedUSDate () {
         return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes())
@@ -212,6 +239,7 @@
     /**
      * Gets the hours string based on the formatter's settings.
      * @returns {string} The hours string.
+     * @category Formatting
      */
     hoursString () {
         let h = this.date().getHours()
@@ -230,6 +258,7 @@
     /**
      * Gets the minutes string.
      * @returns {string} The minutes string.
+     * @category Formatting
      */
     minutesString () {
         return this.paddedNumber(this.date().getMinutes())
@@ -238,6 +267,7 @@
     /**
      * Gets the seconds string.
      * @returns {string} The seconds string.
+     * @category Formatting
      */
     secondsString () {
         return this.paddedNumber(this.date().getSeconds())
@@ -246,6 +276,7 @@
     /**
      * Gets the milliseconds string.
      * @returns {string} The milliseconds string.
+     * @category Formatting
      */
     millisecondsString () {
         return this.paddedNumber(this.date().getMilliseconds() % 1000)
@@ -254,6 +285,7 @@
     /**
      * Gets the meridiem string (AM/PM) based on the formatter's settings.
      * @returns {string} The meridiem string.
+     * @category Formatting
      */
     meridiemString () {
         let s = ""
@@ -274,6 +306,7 @@
     /**
      * Formats the date value into a string based on the formatter's settings.
      * @returns {string} The formatted date string.
+     * @category Formatting
      */
     formattedValue () {
         assert(this.date())
@@ -323,7 +356,3 @@
         return s
     }
 }.initThisClass());
-
-
-
-

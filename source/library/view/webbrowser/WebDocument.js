@@ -14,6 +14,7 @@
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -21,6 +22,7 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -28,6 +30,7 @@
     /**
      * @description Returns the shared DocumentBody instance.
      * @returns {DocumentBody} The shared DocumentBody instance.
+     * @category Document Structure
      */
     body () {
         return DocumentBody.shared();
@@ -36,6 +39,7 @@
     /**
      * @description Retrieves all style sheets in the document.
      * @returns {Array<StyleSheet>} An array of StyleSheet objects.
+     * @category Styling
      */
     styleSheets () {
         const elements = document.styleSheets;
@@ -53,6 +57,7 @@
      * @description Adds a new style sheet to the document using a CSS string.
      * @param {string} cssCode - The CSS code to be added as a style sheet.
      * @returns {WebDocument} The current WebDocument instance.
+     * @category Styling
      */
     addStyleSheetString (cssCode) {
         const styleElement = document.createElement('style');
@@ -64,6 +69,7 @@
     /**
      * @description Displays debug information about the document's style sheets.
      * @returns {WebDocument} The current WebDocument instance.
+     * @category Debugging
      */
     show () {
         this.debugLog(":");

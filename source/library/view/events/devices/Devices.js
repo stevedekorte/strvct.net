@@ -23,6 +23,7 @@
     /**
      * @static
      * @description Initializes the class.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -30,6 +31,7 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /*
@@ -40,6 +42,7 @@
         */
         /**
          * @member {BMKeyboard} keyboard
+         * @category Input Devices
          */
         {
             const slot = this.newSlot("keyboard", null);
@@ -47,6 +50,7 @@
         }
         /**
          * @member {Mouse} mouse
+         * @category Input Devices
          */
         {
             const slot = this.newSlot("mouse", null);
@@ -54,6 +58,7 @@
         }
         /**
          * @member {TouchScreen} touchScreen
+         * @category Input Devices
          */
         {
             const slot = this.newSlot("touchScreen", null);
@@ -61,6 +66,7 @@
         }
         /**
          * @member {GamePadManager} gamePadManager
+         * @category Input Devices
          */
         {
             const slot = this.newSlot("gamePadManager", null);
@@ -68,6 +74,7 @@
         }
         /**
          * @member {Boolean} isSetup
+         * @category State
          */
         {
             const slot = this.newSlot("isSetup", false);
@@ -78,6 +85,7 @@
     /**
      * @description Initializes the instance.
      * @returns {Devices} The instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -88,6 +96,7 @@
     /**
      * @description Sets up the devices if needed.
      * @returns {Devices} The instance.
+     * @category Setup
      */
     setupIfNeeded () {
         if (!this.isSetup()) {
@@ -103,6 +112,7 @@
     /**
      * @description Gets the current touch or mouse event.
      * @returns {Event} The current touch or mouse event.
+     * @category Event Handling
      */
     currentTouchOrMouseEvent () {
         // needed?

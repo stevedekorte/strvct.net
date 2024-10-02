@@ -11,11 +11,13 @@
 
   /**
    * @description Initializes the prototype slots for the RzPeer class.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
     /**
      * @member {string} peerId - The unique identifier for the peer.
+     * @category Identification
      */
     {
       const slot = this.newSlot("peerId", "");      
@@ -35,6 +37,7 @@
   /**
    * @description Initializes the RzPeer instance.
    * @returns {RzPeer} The initialized RzPeer instance.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -45,6 +48,7 @@
 
   /**
    * @description Performs final initialization steps for the RzPeer instance.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -54,6 +58,7 @@
   /**
    * @description Gets the title of the peer, which is its peer ID.
    * @returns {string} The peer ID.
+   * @category Identification
    */
   title () {
     return this.peerId()
@@ -62,6 +67,7 @@
   /**
    * @description Gets the subtitle for the peer.
    * @returns {string} The subtitle "peer".
+   * @category Identification
    */
   subtitle () {
     return "peer"
@@ -70,6 +76,7 @@
   /**
    * @description Gets the server associated with this peer.
    * @returns {Object} The server object.
+   * @category Relationships
    */
   server () {
     return this.parentNode().parentNode()

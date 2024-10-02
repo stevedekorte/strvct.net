@@ -9,6 +9,7 @@
 (class BMSettingsNode extends BMStorableNode {
     /**
      * Initializes the prototype slots for the settings node.
+     * @category Initialization
      */
     initPrototypeSlots() {
         {
@@ -33,6 +34,7 @@
      * @param {string} slotName - The name of the slot.
      * @param {Object} proto - The prototype for the subnode.
      * @returns {Object} The added slot.
+     * @category Configuration
      */
     addSubnodeSlot(slotName, proto) {
         const slot = this.newSlot(slotName, null);
@@ -44,6 +46,7 @@
 
     /**
      * Initializes the prototype for the settings node.
+     * @category Initialization
      */
     initPrototype() {
         this.setNodeCanReorderSubnodes(false);

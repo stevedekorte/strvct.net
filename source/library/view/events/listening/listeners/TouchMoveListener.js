@@ -12,6 +12,7 @@
     
     /**
      * @description Initializes prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -19,6 +20,7 @@
     /**
      * @description Initializes the TouchMoveListener
      * @returns {TouchMoveListener} The initialized TouchMoveListener instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -28,6 +30,7 @@
     /**
      * @description Sets up the event listeners
      * @returns {TouchMoveListener} The TouchMoveListener instance
+     * @category Event Management
      */
     setupListeners () {
         this.addEventNameAndMethodName("touchmove",   "onTouchMove");

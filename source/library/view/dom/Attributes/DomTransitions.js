@@ -33,6 +33,7 @@
     initPrototypeSlots () {
         /**
          * @member {Object} properties - JSON Object to store transition properties.
+         * @category Data
          */
         {
             const slot = this.newSlot("properties", null);
@@ -40,6 +41,7 @@
         }
         /**
          * @member {DomView} domView - The associated DomView instance.
+         * @category Association
          */
         {
             const slot = this.newSlot("domView", null);
@@ -49,6 +51,7 @@
 
     /**
      * @description Initializes the DomTransitions instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -59,6 +62,7 @@
      * @description Retrieves or creates a DomTransition for a given property name.
      * @param {string} aName - The name of the transition property.
      * @returns {DomTransition} The DomTransition instance for the given property.
+     * @category Accessor
      */
     at (aName) {
         const d = this.properties();
@@ -71,6 +75,7 @@
     /**
      * @description Returns an array of all DomTransition instances.
      * @returns {Array} An array of DomTransition instances.
+     * @category Data
      */
     propertiesAsList () {
         return Object.values(this.properties());
@@ -79,6 +84,7 @@
     /**
      * @description Returns a string representation of all transitions.
      * @returns {string} A comma-separated string of all transitions.
+     * @category Conversion
      */
     asString () {
         return this.propertiesAsList().map(t => t.asString()).join(", ");
@@ -87,6 +93,7 @@
     /**
      * @description Synchronizes the transitions to the associated DomView.
      * @returns {DomTransitions} The current DomTransitions instance.
+     * @category Synchronization
      */
     syncToDomView () {
         this.domView().justSetTransition(this.asString());
@@ -96,6 +103,7 @@
     /**
      * @description Synchronizes the transitions from the associated DomView.
      * @returns {DomTransitions} The current DomTransitions instance.
+     * @category Synchronization
      */
     syncFromDomView () {
         this.setProperties({})

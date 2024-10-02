@@ -14,6 +14,7 @@
     /**
      * @description Initializes the prototype slots for the FocusListener class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -22,6 +23,7 @@
     /**
      * @description Initializes the FocusListener instance.
      * @returns {FocusListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -31,6 +33,7 @@
     /**
      * @description Sets up the event listeners for focus-related events.
      * @returns {FocusListener} The instance with listeners set up.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("blur", "onBlur");

@@ -38,6 +38,7 @@
     /**
      * @static
      * @description Initialize the class
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -45,11 +46,13 @@
     
     /**
      * @description Initialize prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {Map} nameToListenersMap
+             * @category Storage
              */
             const slot = this.newSlot("nameToListenersMap", null);  // Map to set
             slot.setSlotType("Map");
@@ -58,12 +61,14 @@
 
     /**
      * @description Initialize prototype
+     * @category Initialization
      */
     initPrototype () {
     }
 
     /**
      * @description Initialize the instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -74,6 +79,7 @@
      * @description Get the listener set for a given name
      * @param {string} name - The name to get the listener set for
      * @returns {Set} The set of listeners for the given name
+     * @category Listener Management
      */
     listenerSetForName (name) {
         assert(!Type.isNullOrUndefined(name))
@@ -94,6 +100,7 @@
      * @param {Object} aListener - The listener to add
      * @param {string} name - The name to add the listener for
      * @returns {Broadcaster} The broadcaster instance
+     * @category Listener Management
      */
     addListenerForName (aListener, name) {
         this.listenerSetForName(name).add(aListener)
@@ -105,6 +112,7 @@
      * @param {Object} aListener - The listener to remove
      * @param {string} name - The name to remove the listener for
      * @returns {Broadcaster} The broadcaster instance
+     * @category Listener Management
      */
     removeListenerForName (aListener, name) {
         this.listenerSetForName(name).delete(aListener)
@@ -116,6 +124,7 @@
      * @param {string} methodName - The name of the method to call on listeners
      * @param {*} anArgument - The argument to pass to the method
      * @returns {Broadcaster} The broadcaster instance
+     * @category Broadcasting
      */
     broadcastNameAndArgument (methodName, anArgument) {
         this.listenerSetForName(methodName).forEach(v => {
@@ -128,6 +137,7 @@
      * @description Remove all listeners for a given name
      * @param {string} name - The name to remove listeners for
      * @returns {Broadcaster} The broadcaster instance
+     * @category Listener Management
      */
     removeListenersForName (name) {
         this.nameToListenersMap().delete(name)
@@ -136,6 +146,7 @@
 
     /**
      * @description Clean up empty listener sets
+     * @category Maintenance
      */
     clean () {
         const n2l = this.nameToListenersMap()
@@ -154,6 +165,7 @@ Object.defineSlots(ProtoClass.prototype, {
      * @description Broadcast a message to all listeners
      * @param {string} methodName - The name of the method to call on listeners
      * @returns {ProtoClass} The instance
+     * @category Broadcasting
      */
     broadcastMessage: function(methodName) {
         Broadcaster.shared().broadcastNameAndArgument(methodName, this)

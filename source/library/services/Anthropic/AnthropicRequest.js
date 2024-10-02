@@ -54,6 +54,7 @@
   initPrototypeSlots () {
     /**
      * @member {Number} usageInputTokenCount - The number of input tokens used in the request.
+     * @category Usage
      */
     {
       const slot = this.newSlot("usageInputTokenCount", 0);
@@ -62,6 +63,7 @@
 
     /**
      * @member {Number} usageOutputTokenCount - The number of output tokens generated in the response.
+     * @category Usage
      */
     {
       const slot = this.newSlot("usageOutputTokenCount", 0);
@@ -70,6 +72,7 @@
 
     /**
      * @member {String} betaVersion - The beta version of the Anthropic API to use.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("betaVersion", "tools-2024-05-16"); // "messages-2023-12-15"
@@ -80,6 +83,7 @@
 
   /**
    * @description Initializes the AnthropicRequest instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -89,6 +93,7 @@
   /**
    * @description Retrieves the API key for Anthropic service.
    * @returns {String} The API key.
+   * @category Authentication
    */
   apiKey () {
     return AnthropicService.shared().apiKey();
@@ -97,6 +102,7 @@
   /**
    * @description Prepares the request options for the Anthropic API call.
    * @returns {Object} The request options.
+   * @category Request Preparation
    */
   requestOptions () {
     const apiKey = this.apiKey();
@@ -119,6 +125,7 @@
   /**
    * @description Sets up the request for streaming responses.
    * @returns {AnthropicRequest} The current instance.
+   * @category Request Preparation
    */
   setupForStreaming () {
     // subclasses should override this method to set up the request for streaming
@@ -130,6 +137,7 @@
 
   /**
    * @description Reads and processes the XHR response lines.
+   * @category Response Processing
    */
   readXhrLines () {
     try {
@@ -162,6 +170,7 @@
   /**
    * @description Processes a JSON chunk from the stream response.
    * @param {Object} json - The JSON chunk to process.
+   * @category Response Processing
    */
   onStreamJsonChunk (json) {
     const type = json.type;
@@ -218,6 +227,7 @@
   /**
    * @description Returns a dictionary of stop reasons and their descriptions.
    * @returns {Object} The stop reason dictionary.
+   * @category Error Handling
    */
   stopReasonDict () {
     /*
@@ -270,6 +280,7 @@
   /**
    * @description Returns an array of stop reasons that are considered okay.
    * @returns {Array} The array of okay stop reasons.
+   * @category Error Handling
    */
   okStopReasons () {
     return [null, "end_turn"];
@@ -278,6 +289,7 @@
   /**
    * @description Checks if the request stopped due to reaching the maximum token limit.
    * @returns {Boolean} True if stopped due to max tokens, false otherwise.
+   * @category Error Handling
    */
   stoppedDueToMaxTokens () {
     return this.stopReason() === "max_tokens";
@@ -286,6 +298,7 @@
   /**
    * @description Returns a set of stop reasons that can be retried.
    * @returns {Set} The set of retriable stop reasons.
+   * @category Error Handling
    */
   retriableStopReasons () {
     return new Set(["overloaded_error", "server_overloaded_error", "service_unavailable_error"]);
@@ -295,6 +308,7 @@
    * @description Handles the XHR load end event.
    * @param {Event} event - The XHR load end event.
    * @returns {*} The result of the parent class's onXhrLoadEnd method.
+   * @category Request Processing
    */
   onXhrLoadEnd (event) {
     const s = this.xhr().responseText;

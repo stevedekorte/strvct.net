@@ -12,6 +12,7 @@
   /**
    * @static
    * @description Initializes the class
+   * @category Initialization
    */
   static initClass () {
     this.setIsSingleton(true);
@@ -20,6 +21,7 @@
   /**
    * @description Returns the JSON representation of available models
    * @returns {Array} An array of model objects
+   * @category Model Management
    */
   modelsJson () {
     return [
@@ -48,12 +50,14 @@
     
   /**
    * @description Initializes prototype slots
+   * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
    * @description Initializes the service
+   * @category Initialization
    */
   init () {
     super.init();
@@ -61,6 +65,7 @@
 
   /**
    * @description Performs final initialization steps
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -71,6 +76,7 @@
   /**
    * @description Checks if the API key is present and valid
    * @returns {boolean} True if the API key is present and valid, false otherwise
+   * @category Authentication
    */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
@@ -80,6 +86,7 @@
    * @description Validates the API key
    * @param {string} s - The API key to validate
    * @returns {boolean} True if the API key is valid, false otherwise
+   * @category Authentication
    */
   validateKey (s) {
     return s.startsWith("gsk_");

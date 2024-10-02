@@ -13,6 +13,7 @@
      * @param {Object} aRecord - The record to load from.
      * @param {Object} aStore - The store object used for unreferencing values.
      * @returns {Map_store} The current instance.
+     * @category Data Loading
      */
     loadFromRecord(aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
@@ -28,6 +29,7 @@
      * @description Converts the map to a record for storage.
      * @param {Object} aStore - The store object used for referencing values.
      * @returns {Object} The record representation of the map.
+     * @category Data Conversion
      */
     recordForStore(aStore) { // should only be called by Store
         let iterator = this.entries();
@@ -49,6 +51,7 @@
     /**
      * @description Determines if the map should be stored.
      * @returns {boolean} Always returns true.
+     * @category Storage Management
      */
     shouldStore() {
         return true
@@ -58,6 +61,7 @@
      * @description Collects persistent unique identifiers (PUIDs) for JSON storage.
      * @param {Set} puuids - A set to collect the PUIDs.
      * @returns {Set} The set of collected PUIDs.
+     * @category Data Collection
      */
     refsPidsForJsonStore(puuids = new Set()) {
         this.forEach(v => { 

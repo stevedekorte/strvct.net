@@ -23,6 +23,7 @@
      * Creates and configures a value view for the string field tile.
      * @returns {TextField} The configured TextField instance.
      * @description Creates a TextField instance and sets its display properties.
+     * @category UI
      */
     createValueView () {
         const v = TextField.clone()

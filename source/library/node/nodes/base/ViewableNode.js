@@ -19,6 +19,7 @@
     initPrototypeSlots () {
         /**
          * @member {string|null} nodeViewClassName
+         * @category View
          */
         {
             const slot = this.newSlot("nodeViewClassName", null);
@@ -28,6 +29,7 @@
         
         /**
          * @member {string} nodeTileClassName
+         * @category View
          */
         {
             const addSlot = (name, path, label, values) => {
@@ -53,6 +55,7 @@
         
         /**
          * @member {string|null} nodeThumbnailUrl
+         * @category View
          */
         {
             const slot = this.newSlot("nodeThumbnailUrl", null);
@@ -62,6 +65,7 @@
 
         /**
          * @member {boolean} nodeIsVertical
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeIsVertical", true);
@@ -75,6 +79,7 @@
 
         /**
          * @member {string} nodeChildrenAlignment
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeChildrenAlignment", "flex-start");
@@ -89,6 +94,7 @@
 
         /**
          * @member {boolean} nodeTileIsSelectable
+         * @category Interaction
          */
         {
             const slot = this.newSlot("nodeTileIsSelectable", true);
@@ -98,6 +104,7 @@
 
         /**
          * @member {boolean} nodeTilesStartAtBottom
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeTilesStartAtBottom", false);
@@ -107,6 +114,7 @@
 
         /**
          * @member {boolean} nodeNavBorderHint
+         * @category View
          */
         {
             const slot = this.newSlot("nodeNavBorderHint", true);
@@ -116,6 +124,7 @@
 
         /**
          * @member {number} nodeMinTileHeight
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeMinTileHeight", 0);
@@ -127,6 +136,7 @@
 
         /**
          * @member {number} nodeMinTileWidth
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeMinTileWidth", 0);
@@ -138,6 +148,7 @@
 
         /**
          * @member {boolean} acceptsFileDrop
+         * @category Interaction
          */
         {
             const slot = this.newSlot("acceptsFileDrop", false);
@@ -146,6 +157,7 @@
 
         /**
          * @member {string|null} nodeInputFieldMethod
+         * @category View
          */
         {
             const slot = this.newSlot("nodeInputFieldMethod", null);
@@ -155,6 +167,7 @@
 
         /**
          * @member {boolean} nodeFillsRemainingWidth
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeFillsRemainingWidth", false);
@@ -168,6 +181,7 @@
 
         /**
          * @member {boolean} nodeFillsWindow
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeFillsWindow", false);
@@ -181,6 +195,7 @@
 
         /**
          * @member {boolean} nodeCanEditTileHeight
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeCanEditTileHeight", false);
@@ -190,6 +205,7 @@
 
         /**
          * @member {boolean} nodeCanEditColumnWidth
+         * @category Layout
          */
         {
             const slot = this.newSlot("nodeCanEditColumnWidth", false);
@@ -204,6 +220,7 @@
 
     /**
      * @description Finalizes the initialization of the node.
+     * @category Initialization
      */
     finalInit () {
         super.finalInit()
@@ -215,6 +232,7 @@
     /**
      * @description Returns the node orientation.
      * @returns {string} The node orientation.
+     * @category Layout
      */
     nodeOrientation () {
         return this.nodeIsVertical() ? "right" : "down" 
@@ -223,6 +241,7 @@
     /**
      * @description Returns the node view class.
      * @returns {Object} The node view class.
+     * @category View
      */
     nodeViewClass () {
         const name = this.nodeViewClassName()
@@ -241,6 +260,7 @@
     /**
      * @description Returns the node tile class.
      * @returns {Object} The node tile class.
+     * @category View
      */
     nodeTileClass () {  
         // This is used (instead of nodeViewClass) by TilesView to 
@@ -261,6 +281,7 @@
     /**
      * @description Handles the browser drop chunk event.
      * @param {Object} dataChunk - The data chunk object.
+     * @category Interaction
      */
     onBrowserDropChunk (dataChunk) {
         const mimeType = dataChunk.mimeType();
@@ -291,6 +312,7 @@
      * @param {Object} aSlot - The updated slot.
      * @param {*} oldValue - The old value of the slot.
      * @param {*} newValue - The new value of the slot.
+     * @category Event
      */
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue);
@@ -304,6 +326,7 @@
      * @description Schedules a sync to view for the given slot name.
      * @param {string} slotName - The name of the slot to sync.
      * @returns {ViewableNode} The current instance.
+     * @category View
      */
     scheduleSyncToView (slotName) {
         this.didUpdateNodeIfInitialized(this, slotName);
@@ -312,6 +335,7 @@
 
     /**
      * @description Prepares the node to sync to view.
+     * @category View
      */
     prepareToSyncToView () {
         this.prepareToAccess();
@@ -320,6 +344,7 @@
     /**
      * @description Handles the node becoming visible event.
      * @returns {ViewableNode} The current instance.
+     * @category View
      */
     nodeBecameVisible () {
 	    return this;
@@ -328,6 +353,7 @@
     /**
      * @description Handles the request for selection of a descendant node.
      * @returns {boolean} Always returns false to allow propagation up the parentNode line.
+     * @category Interaction
      */
     onRequestSelectionOfDecendantNode () {
         return false; // allow propogation up the parentNode line
@@ -336,6 +362,7 @@
     /**
      * @description Handles the request for selection of the current node.
      * @returns {ViewableNode} The current instance.
+     * @category Interaction
      */
     onRequestSelectionOfNode () {
         this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
@@ -345,6 +372,7 @@
     /**
      * @description Handles the tap event on the node.
      * @returns {ViewableNode} The current instance.
+     * @category Interaction
      */
     onTapOfNode () {
         this.tellParentNodes("onTapOfDecendantNode", this);

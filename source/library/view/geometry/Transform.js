@@ -12,10 +12,12 @@
 (class Transform extends ProtoClass {
     /**
      * @description Initializes the prototype slots for the Transform class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Point} position - The position of the transform in px units.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("position", null);
@@ -24,6 +26,7 @@
         }
         /**
          * @member {Point} rotation - The rotation of the transform in degrees units.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("rotation", null);
@@ -32,6 +35,7 @@
         }
         /**
          * @member {Point} scale - The scale of the transform.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("scale", null);
@@ -42,6 +46,7 @@
     /**
      * @description Initializes the Transform instance.
      * @returns {Transform} The initialized Transform instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -54,6 +59,7 @@
     /**
      * @description Generates a CSS string representation of the transform.
      * @returns {string} The CSS transform string.
+     * @category Rendering
      */
     cssString () {
         // NOTE: multiple transform one line directives are applied from right to left
@@ -67,6 +73,7 @@
     /**
      * @description Creates a copy of the current Transform instance.
      * @returns {Transform} A new Transform instance with copied values.
+     * @category Utility
      */
     copy () {
         const t = Transform.clone()
@@ -80,6 +87,7 @@
      * @description Adds another Transform to this Transform in place.
      * @param {Transform} otherTransform - The Transform to add.
      * @returns {Transform} This Transform instance after addition.
+     * @category Geometry
      */
     addInPlace (otherTransform) {
         this.position().addInPlace(otherTransform.position())

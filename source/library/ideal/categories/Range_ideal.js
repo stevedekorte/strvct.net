@@ -12,6 +12,7 @@
     * Checks if this range is equal to another range.
     * @param {Range} otherRange - The range to compare with
     * @returns {boolean} True if the ranges are equal, false otherwise
+    * @category Comparison
     */
    isEqual (otherRange) {
     if (this === otherRange) {
@@ -31,5 +32,3 @@
   };
 
 }).initThisCategory();
-
-    

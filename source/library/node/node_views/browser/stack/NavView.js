@@ -11,6 +11,7 @@
     initPrototypeSlots () {
         /**
          * @member {StackView} stackView
+         * @category Layout
          */
         {
             const slot = this.newSlot("stackView", null);
@@ -19,6 +20,7 @@
             
         /**
          * @member {DomView} headerView - Placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
+         * @category Layout
          */
         {
             const slot = this.newSlot("headerView", null);
@@ -27,6 +29,7 @@
 
         /**
          * @member {ScrollView} scrollView - ScrollView fits NavView size, and contains TilesView which may be larger
+         * @category Layout
          */
         {
             const slot = this.newSlot("scrollView", null);
@@ -35,6 +38,7 @@
 
         /**
          * @member {DomView} footerView - Placed in bottom of NavView, set to display:none if no node.footerNode()
+         * @category Layout
          */
         {
             const slot = this.newSlot("footerView", null);
@@ -43,6 +47,7 @@
 
         /**
          * @member {TilesView} tilesView - Is inside scrollView
+         * @category Layout
          */
         {
             const slot = this.newSlot("tilesView", null);
@@ -51,6 +56,7 @@
 
         /**
          * @member {Boolean} isCollapsed
+         * @category State
          */
         {
             const slot = this.newSlot("isCollapsed", false);
@@ -59,6 +65,7 @@
 
         /**
          * @member {Boolean} animatesCollapse
+         * @category Animation
          */
         {
             const slot = this.newSlot("animatesCollapse", true);
@@ -68,6 +75,7 @@
         /**
          * @member {String} beforeEdgePanBorderBottom
          * @private
+         * @category State
          */
         {
             const slot = this.newSlot("beforeEdgePanBorderBottom", null);
@@ -77,6 +85,7 @@
         /**
          * @member {String} beforeEdgePanBorderRight
          * @private
+         * @category State
          */
         {
             const slot = this.newSlot("beforeEdgePanBorderRight", null);
@@ -87,6 +96,7 @@
     /**
      * @description Calculates the target width for the NavView
      * @returns {number} The calculated target width
+     * @category Layout
      */
     targetWidth () {
         const defaultWidth = 400;
@@ -106,6 +116,7 @@
     /**
      * @description Calculates the target height for the NavView
      * @returns {number} The calculated target height
+     * @category Layout
      */
     targetHeight () {
         if (this.node()) {
@@ -120,6 +131,7 @@
     /**
      * @description Initializes the NavView
      * @returns {NavView} The initialized NavView instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -165,6 +177,7 @@
     /**
      * @description Checks if the NavView is vertical
      * @returns {boolean|null} True if vertical, false if horizontal, null if stackView is not set
+     * @category Layout
      */
     isVertical () {
         const sv = this.stackView()
@@ -177,6 +190,7 @@
     /**
      * @description Synchronizes the orientation of the NavView
      * @returns {NavView} The NavView instance
+     * @category Layout
      */
     syncOrientation () {
         if (this.isVertical()) {
@@ -190,6 +204,7 @@
     /**
      * @description Gets the border color for the NavView
      * @returns {string} The border color
+     * @category Styling
      */
     borderColor () {
         return "rgba(255, 255, 255, 0.3)"
@@ -198,6 +213,7 @@
     /**
      * @description Checks if the NavView should have a border
      * @returns {boolean} True if the NavView should have a border, false otherwise
+     * @category Styling
      */
     hasBorder () {
         const node = this.node()
@@ -213,6 +229,7 @@
     /**
      * @description Gets the border style for the NavView
      * @returns {string|null} The border style or null if no border
+     * @category Styling
      */
     borderStyle () {
         if (this.hasBorder()) {
@@ -223,6 +240,7 @@
 
     /**
      * @description Sets the orientation of the NavView to right (vertical)
+     * @category Layout
      */
     makeOrientationRight () {
         this.setFlexDirection("column")
@@ -260,6 +278,7 @@
 
     /**
      * @description Sets the orientation of the NavView to down (horizontal)
+     * @category Layout
      */
     makeOrientationDown () {
         this.setFlexDirection("row")
@@ -297,6 +316,7 @@
      * @description Sets the node for the NavView
      * @param {Object} aNode - The node to set
      * @returns {NavView} The NavView instance
+     * @category Node Management
      */
     setNode (aNode) {
         super.setNode(aNode)
@@ -316,6 +336,7 @@
     /**
      * @description Checks if this NavView is the last one in the stack
      * @returns {boolean} True if this is the last NavView, false otherwise
+     * @category Layout
      */
     isLastNavView () {
         return Type.isNullOrUndefined(this.stackView().nextStackView())
@@ -324,6 +345,7 @@
     /**
      * @description Synchronizes the NavView with its node
      * @returns {NavView} The NavView instance
+     * @category Node Management
      */
     syncFromNode () {
         this.syncOrientation()
@@ -350,6 +372,7 @@
 
     /**
      * @description Collapses the NavView
+     * @category State
      */
     collapse () {
         if (!this.isCollapsed()) {
@@ -360,6 +383,7 @@
 
     /**
      * @description Uncollapses the NavView
+     * @category State
      */
     uncollapse () {
         if (this.isCollapsed()) {
@@ -372,6 +396,7 @@
     /**
      * @description Gets the border style for edge movement
      * @returns {string} The border style for edge movement
+     * @category Styling
      */
     edgeMoveBorderStyle () {
         return "1px rgba(255, 255, 255, 0.5) inset"
@@ -380,6 +405,7 @@
     /**
      * @description Handles the beginning of a right edge pan gesture
      * @param {Object} aGesture - The gesture object
+     * @category Gesture Handling
      */
     onRightEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderRight(this.borderRight())
@@ -390,6 +416,7 @@
      * @description Handles the movement of a right edge pan gesture
      * @param {Object} aGesture - The gesture object
      * @returns {NavView} The NavView instance
+     * @category Gesture Handling
      */
     onRightEdgePanMove (aGesture) {
         const p = aGesture.currentPosition()
@@ -403,6 +430,7 @@
     /**
      * @description Handles the completion of a right edge pan gesture
      * @param {Object} aGesture - The gesture object
+     * @category Gesture Handling
      */
     onRightEdgePanComplete (aGesture) {
         this.onRightEdgePanMove(aGesture)
@@ -414,6 +442,7 @@
     /**
      * @description Handles the beginning of a bottom edge pan gesture
      * @param {Object} aGesture - The gesture object
+     * @category Gesture Handling
      */
     onBottomEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderBottom(this.borderBottom())
@@ -425,6 +454,7 @@
      * @description Handles the movement of a bottom edge pan gesture
      * @param {Object} aGesture - The gesture object
      * @returns {NavView} The NavView instance
+     * @category Gesture Handling
      */
     onBottomEdgePanMove (aGesture) {
         const p = aGesture.currentPosition()
@@ -438,6 +468,7 @@
     /**
      * @description Handles the completion of a bottom edge pan gesture
      * @param {Object} aGesture - The gesture object
+     * @category Gesture Handling
      */
     onBottomEdgePanComplete (aGesture) {
         this.onBottomEdgePanMove(aGesture)

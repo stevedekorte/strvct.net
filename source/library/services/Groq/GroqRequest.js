@@ -21,12 +21,14 @@
 
   /**
    * @description Initializes prototype slots for the GroqRequest class.
+   * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
    * @description Initializes the GroqRequest instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -36,6 +38,7 @@
   /**
    * @description Retrieves the API key for Groq service.
    * @returns {string} The API key for Groq service.
+   * @category Authentication
    */
   apiKey () {
     return GroqService.shared().apiKey();
@@ -44,6 +47,7 @@
   /**
    * @description Sets up the request for streaming.
    * @returns {GroqRequest} The current GroqRequest instance.
+   * @category Configuration
    */
   setupForStreaming () {
     // subclasses should override this method to set up the request for streaming

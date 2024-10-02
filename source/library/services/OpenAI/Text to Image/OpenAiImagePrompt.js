@@ -15,6 +15,7 @@
     /**
      * @member {string} prompt
      * @description The prompt text for image generation.
+     * @category Input
      */
     {
       const slot = this.newSlot("prompt", "");
@@ -30,6 +31,7 @@
     /**
      * @member {string} model
      * @description The DALL-E model to use for image generation.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("model", "dall-e-3");
@@ -46,6 +48,7 @@
     /**
      * @member {string} quality
      * @description The quality of the generated image.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("quality", "standard");
@@ -61,6 +64,7 @@
     /**
      * @member {number} imageCount
      * @description The number of images to generate.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("imageCount", 1);
@@ -77,6 +81,7 @@
     /**
      * @member {string} imageSize
      * @description The size of the generated image.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("imageSize", "1792x1024");
@@ -97,6 +102,7 @@
     /**
      * @member {Action} generateAction
      * @description The action to trigger image generation.
+     * @category Action
      */
     {
       const slot = this.newSlot("generateAction", null);
@@ -113,6 +119,7 @@
     /**
      * @member {string} error
      * @description The error message if any during image generation.
+     * @category Status
      */
     {
       const slot = this.newSlot("error", ""); // null or String
@@ -128,6 +135,7 @@
     /**
      * @member {OpenAiImages} images
      * @description The generated images.
+     * @category Output
      */
     {
       const slot = this.newSlot("images", null)
@@ -140,6 +148,7 @@
     /**
      * @member {string} status
      * @description The current status of the image generation process.
+     * @category Status
      */
     {
       const slot = this.newSlot("status", ""); // String
@@ -155,6 +164,7 @@
     /**
      * @member {Object} delegate
      * @description The delegate object for handling various events.
+     * @category Delegation
      */
     {
       const slot = this.newSlot("delegate", null); 
@@ -172,6 +182,7 @@
   /**
    * @description Gets the title for the image prompt.
    * @returns {string} The title.
+   * @category Metadata
    */
   title () {
     const p = this.prompt().clipWithEllipsis(15);
@@ -181,6 +192,7 @@
   /**
    * @description Gets the subtitle for the image prompt.
    * @returns {string} The subtitle.
+   * @category Metadata
    */
   subtitle () {
     return this.status()
@@ -188,6 +200,7 @@
 
   /**
    * @description Performs final initialization.
+   * @category Initialization
    */
   finalInit() {
     super.finalInit()
@@ -197,6 +210,7 @@
   /**
    * @description Gets the parent image prompts node.
    * @returns {Object} The parent image prompts node.
+   * @category Hierarchy
    */
   imagePrompts () {
     return this.parentNode()
@@ -205,6 +219,7 @@
   /**
    * @description Gets the OpenAI service.
    * @returns {Object} The OpenAI service.
+   * @category Service
    */
   service () {
     //return this.imagePrompts().service()
@@ -214,6 +229,7 @@
   /**
    * @description Checks if image generation can be performed.
    * @returns {boolean} True if generation can be performed, false otherwise.
+   * @category Validation
    */
   canGenerate () {
     return this.prompt().length !== 0;
@@ -221,6 +237,7 @@
 
   /**
    * @description Initiates the image generation process.
+   * @category Action
    */
   generate () {
     this.start()
@@ -229,6 +246,7 @@
   /**
    * @description Gets information about the generate action.
    * @returns {Object} The action information.
+   * @category Action
    */
   generateActionInfo () {
     return {
@@ -240,6 +258,7 @@
 
   /**
    * @description Starts the image generation process.
+   * @category Process
    */
   async start () {
     this.setError("");
@@ -278,6 +297,7 @@
   /**
    * @description Handles successful image generation.
    * @param {Object} json - The response JSON from the API.
+   * @category Process
    */
   onSuccess (json) {
     this.sendDelegate("onImagePromptLoading", [this]);
@@ -315,6 +335,7 @@
   /**
    * @description Handles errors during image generation.
    * @param {Error} error - The error object.
+   * @category Process
    */
   onError (error) {
     const s = "ERROR: " + error.message;
@@ -328,6 +349,7 @@
   /**
    * @description Handles successful image loading.
    * @param {Object} aiImage - The loaded AI image object.
+   * @category Process
    */
   onImageLoaded (aiImage) {
     this.didUpdateNode();
@@ -339,6 +361,7 @@
   /**
    * @description Handles errors during image loading.
    * @param {Object} aiImage - The AI image object that failed to load.
+   * @category Process
    */
   onImageError (aiImage) {
     this.didUpdateNode();
@@ -349,6 +372,7 @@
 
   /**
    * @description Handles the end of the image generation process.
+   * @category Process
    */
   onEnd () {
     this.sendDelegate("onImagePromptEnd", [this]);
@@ -356,6 +380,7 @@
 
   /**
    * @description Updates the status of the image prompt.
+   * @category Status
    */
   updateStatus () {
     const s = this.images().status();
@@ -369,6 +394,7 @@
    * @param {string} methodName - The name of the method to call.
    * @param {Array} args - The arguments to pass to the method.
    * @returns {boolean} True if the delegate method was called, false otherwise.
+   * @category Delegation
    */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate();
@@ -385,6 +411,7 @@
   /**
    * @description Shuts down the image prompt and its associated images.
    * @returns {OpenAiImagePrompt} The current instance.
+   * @category Lifecycle
    */
   shutdown () {
     // TODO: add request ivar and abort it

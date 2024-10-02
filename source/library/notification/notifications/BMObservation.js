@@ -20,6 +20,7 @@
     
         /**
          * @member {BMNotificationCenter} center - NotificationCenter that owns this
+         * @category Configuration
          */
         {
             const slot = this.newSlot("center", null);
@@ -27,6 +28,7 @@
         }
         /**
          * @member {String|null} name
+         * @category Configuration
          */
         {
             const slot = this.newSlot("name", null);
@@ -35,6 +37,7 @@
         }
         /**
          * @member {String} sendName
+         * @category Configuration
          */
         {
             const slot = this.newSlot("sendName", null);
@@ -42,6 +45,7 @@
         }
         /**
          * @member {Boolean} isOneShot
+         * @category Configuration
          */
         {
             const slot = this.newSlot("isOneShot", false);
@@ -49,6 +53,7 @@
         }
         /**
          * @member {Boolean} didFinalizeStop
+         * @category State
          */
         {
             const slot = this.newSlot("didFinalizeStop", false); 
@@ -56,6 +61,7 @@
         }
         /**
          * @member {Object|null} observer - WeakRef slot to observer
+         * @category Configuration
          */
         {
             const slot = this.newWeakSlot("observer", null);
@@ -63,6 +69,7 @@
         }
         /**
          * @member {Object|null} sender - WeakRef to sender
+         * @category Configuration
          */
         {
             const slot = this.newWeakSlot("sender", null);
@@ -71,6 +78,7 @@
         }
         /**
          * @member {String|null} obsHash
+         * @category State
          */
         {
             const slot = this.newSlot("obsHash", null); 
@@ -79,6 +87,7 @@
         }
         /**
          * @member {String|null} noteHash
+         * @category State
          */
         {
             const slot = this.newSlot("noteHash", null); 
@@ -89,6 +98,7 @@
 
     /**
      * @description Initializes the BMObservation instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -99,6 +109,7 @@
 
     /**
      * @description Handles the finalization of the observer slot.
+     * @category Lifecycle
      */
     onFinalizedSlotObserver () {
         this.stopFromCollectedRef()
@@ -106,6 +117,7 @@
 
     /**
      * @description Handles the finalization of the sender slot.
+     * @category Lifecycle
      */
     onFinalizedSlotSender () {
         this.stopFromCollectedRef()
@@ -113,6 +125,7 @@
 
     /**
      * @description Stops watching when a reference is collected.
+     * @category Lifecycle
      */
     stopFromCollectedRef () {
         if (!this.didFinalizeStop()) {
@@ -126,6 +139,7 @@
 
     /**
      * @description Updates the sender slot and clears hashes.
+     * @category State Management
      */
     didUpdateSlotSender () {
         this.clearHashes();
@@ -133,6 +147,7 @@
 
     /**
      * @description Updates the observer slot and clears hashes.
+     * @category State Management
      */
     didUpdateSlotObserver () {
         this.clearHashes();
@@ -140,6 +155,7 @@
 
     /**
      * @description Updates the name slot and clears hashes.
+     * @category State Management
      */
     didUpdateSlotName () {
         this.clearHashes();
@@ -148,6 +164,7 @@
     /**
      * @description Clears both note and observation hashes.
      * @returns {BMObservation} The current instance.
+     * @category State Management
      */
     clearHashes () {
         this.clearNoteHash();
@@ -158,6 +175,7 @@
     /**
      * @description Clears the observation hash.
      * @returns {BMObservation} The current instance.
+     * @category State Management
      */
     clearObsHash () {
         this._obsHash = null;
@@ -167,6 +185,7 @@
     /**
      * @description Generates and returns the observation hash.
      * @returns {String} The observation hash.
+     * @category State Management
      */
     obsHash () {
         if (!this._noteHash) {
@@ -179,6 +198,7 @@
     /**
      * @description Clears the note hash.
      * @returns {BMObservation} The current instance.
+     * @category State Management
      */
     clearNoteHash () {
         this._noteHash = null;
@@ -188,6 +208,7 @@
     /**
      * @description Generates and returns the note hash.
      * @returns {String} The note hash.
+     * @category State Management
      */
     noteHash () {
         if (!this._noteHash) {
@@ -201,6 +222,7 @@
      * @description Checks if this observation is equal to another.
      * @param {BMObservation} obs - The observation to compare with.
      * @returns {Boolean} True if equal, false otherwise.
+     * @category Comparison
      */
     isEqual (obs) {
         return this.obsHash() === obs.obsHash();
@@ -211,6 +233,7 @@
      * @private
      * @param {*} v - The value to get an ID for.
      * @returns {String} The value ID.
+     * @category Utility
      */
     valueId (v) {
         return v ? v.typeId() : "undefined"
@@ -219,6 +242,7 @@
     /**
      * @description Gets the sender ID.
      * @returns {String} The sender ID.
+     * @category Utility
      */
     senderId () { 
         return this.valueId(this.sender())
@@ -227,6 +251,7 @@
     /**
      * @description Gets the observer ID.
      * @returns {String} The observer ID.
+     * @category Utility
      */
     observerId () { 
         return this.valueId(this.observer())
@@ -235,6 +260,7 @@
     /**
      * @description Gets the match method for notifications.
      * @returns {Function} The match method.
+     * @category Matching
      */
     getMatchMethod () {
         const sender = this.sender();
@@ -258,6 +284,7 @@
      * @description Checks if a notification matches this observation.
      * @param {BMNotification} note - The notification to check.
      * @returns {Boolean} True if the notification matches, false otherwise.
+     * @category Matching
      */
     matchesNotification (note) {
         if (!this._matchMethod) {
@@ -271,6 +298,7 @@
      * @description Attempts to send a notification, catching and logging any errors.
      * @param {BMNotification} note - The notification to send.
      * @returns {null}
+     * @category Notification Handling
      */
     tryToSendNotification (note) {
         try {
@@ -292,6 +320,7 @@
     /**
      * @description Sends a notification to the observer.
      * @param {BMNotification} note - The notification to send.
+     * @category Notification Handling
      */
     sendNotification (note) {
         const obs = this.observer()
@@ -323,6 +352,7 @@
     /**
      * @description Starts watching for notifications.
      * @returns {BMObservation} The current instance.
+     * @category Lifecycle
      */
     startWatching () {
         this.center().addObservation(this)
@@ -332,6 +362,7 @@
     /**
      * @description Checks if the observation is currently watching.
      * @returns {Boolean} True if watching, false otherwise.
+     * @category State
      */
     isWatching () {
         return this.center().hasObservation(this)
@@ -340,6 +371,7 @@
     /**
      * @description Stops watching for notifications.
      * @returns {BMObservation} The current instance.
+     * @category Lifecycle
      */
     stopWatching () {
         this.center().removeObservation(this)
@@ -349,6 +381,7 @@
     /**
      * @description Returns a description of the observation.
      * @returns {String} The description.
+     * @category Utility
      */
     description () {
         return this.observerId() + " listening to " + this.senderId() + " " + this.name()
@@ -357,6 +390,7 @@
     /**
      * @description Tests weak references.
      * @static
+     * @category Testing
      */
     static testWeakRefs () {
         const observer = new Object()

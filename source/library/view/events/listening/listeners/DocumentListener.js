@@ -11,6 +11,7 @@
     
     /**
      * @description Initializes prototype slots for the DocumentListener class.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -19,6 +20,7 @@
     /**
      * @description Initializes the DocumentListener instance.
      * @returns {DocumentListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -28,6 +30,7 @@
     /**
      * @description Sets up the event listeners for the DocumentListener.
      * @returns {DocumentListener} The instance with setup listeners.
+     * @category Event Handling
      */
     setupListeners () {
         // See: https://developer.chrome.com/blog/page-lifecycle-api/
@@ -48,6 +51,7 @@
     /**
      * @description Returns the target for the event listener.
      * @returns {Document} The document object.
+     * @category Event Handling
      */
     listenTarget () {
         return document // is this the best way to handle this?

@@ -14,6 +14,7 @@
 
     /**
      * Sets up mutator hooks.
+     * @category Initialization
      */
     initPrototypeSlots () {
         this.setupMutatorHooks()
@@ -25,6 +26,7 @@
      * Returns a Set of mutator method names that should be hooked.
      * These include add, clear, and delete.
      * @returns {Set<string>} A Set containing the names of mutator methods.
+     * @category Configuration
      */
     mutatorMethodNamesSet () {
         return new Set([
@@ -37,6 +39,7 @@
     /**
      * Performs a self-test of the HookedSet class.
      * @returns {boolean} True if the self-test passes, false otherwise.
+     * @category Testing
      */
     static selfTest () {
         const a = this.clone()
@@ -64,4 +67,3 @@
 }.initThisClass()); 
 
 //HookedSet.selfTest()
-

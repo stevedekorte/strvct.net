@@ -13,6 +13,7 @@
      * @static
      * @description Indicates if this node is available as a node primitive
      * @returns {boolean} True if available as a node primitive
+     * @category Node Configuration
      */
     static availableAsNodePrimitive () {
         return true
@@ -20,6 +21,7 @@
 
     /**
      * @description Initializes the prototype slots for the BMTextNode
+     * @category Initialization
      */
     initPrototypeSlots () {
         /*
@@ -37,6 +39,7 @@
         /**
          * @member {string} value
          * @description The text content of the node
+         * @category Content
          */
         {
             const slot = this.newSlot("value", "...")
@@ -51,6 +54,7 @@
 
     /**
      * @description Initializes the prototype of the BMTextNode
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true)
@@ -70,6 +74,7 @@
     /**
      * @description Returns the accepted subnode types for this node
      * @returns {Array} An empty array as this node does not accept subnodes
+     * @category Node Configuration
      */
     acceptedSubnodeTypes () {
         return [];

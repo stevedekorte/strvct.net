@@ -14,6 +14,7 @@
      * @description Checks if the given MIME type can be opened by this class.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} True if the MIME type is "application/json", false otherwise.
+     * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
         return mimeType === "application/json"
@@ -24,6 +25,7 @@
      * @description Opens and parses a chunk of JSON data.
      * @param {Object} dataChunk - The data chunk containing JSON.
      * @returns {BMJsonNode|null} A node representing the parsed JSON, or null if parsing fails.
+     * @category Data Parsing
      */
     static openMimeChunk (dataChunk) {
         const data = dataChunk.decodedData()
@@ -44,6 +46,7 @@
     /**
      * @description Returns an array of JSON-related classes.
      * @returns {Array} An array of classes used for handling different JSON data types.
+     * @category Class Management
      */
     jsonClasses () {
         return [
@@ -60,6 +63,7 @@
      * @static
      * @description Returns a dictionary mapping JSON types to their corresponding prototype names.
      * @returns {Object} A dictionary with JSON types as keys and prototype names as values.
+     * @category Class Management
      */
     static jsonToProtoNameDict () {
         return {
@@ -77,6 +81,7 @@
      * @description Creates a node instance based on the given JSON data.
      * @param {*} json - The JSON data to create a node for.
      * @returns {BMJsonNode|null} A node instance representing the JSON data, or null if no matching prototype is found.
+     * @category Node Creation
      */
     static nodeForJson(json) {
         const t = Type.typeName(json)
@@ -94,12 +99,14 @@
 
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype with default settings.
+     * @category Initialization
      */
     initPrototype () {
         //this.setSubnodeClasses(this.jsonClasses());
@@ -115,6 +122,7 @@
 
     /**
      * @description Performs final initialization steps.
+     * @category Initialization
      */
     finalInit () {
         super.finalInit();

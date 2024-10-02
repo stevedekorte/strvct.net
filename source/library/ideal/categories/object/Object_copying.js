@@ -26,6 +26,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     /**
      * Creates a shallow copy of the object.
      * @returns {Object} A shallow copy of the object.
+     * @category Copying
      */
     shallowCopy () {
         const copy = Object.assign({}, this);
@@ -35,6 +36,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     /**
      * Creates a deep copy of the object.
      * @returns {Object} A deep copy of the object.
+     * @category Copying
      */
     duplicate () {
         if (this.constructor === Object) {
@@ -52,6 +54,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     /**
      * Alias for duplicate method.
      * @returns {Object} A deep copy of the object.
+     * @category Copying
      */
     copy () {
         return this.duplicate()
@@ -60,6 +63,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     /**
      * Alias for copy method.
      * @returns {Object} A deep copy of the object.
+     * @category Copying
      */
     deepCopy () {
         return this.copy();
@@ -69,6 +73,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
      * Copies values from another object, ignoring missing slots.
      * @param {Object} anObject - The object to copy from.
      * @returns {Object} This object after copying.
+     * @category Copying
      */
     copyFromAndIgnoreMissingSlots (anObject) {
         return this.copyFrom(anObject, true) 
@@ -79,6 +84,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
      * @param {Object} anObject - The object to copy from.
      * @param {boolean} [ignoreMissingSlots=false] - Whether to ignore missing slots.
      * @returns {Object} This object after copying.
+     * @category Copying
      */
     copyFrom (anObject, ignoreMissingSlots = false) { 
         this.duplicateSlotValuesFrom(anObject, ignoreMissingSlots)
@@ -91,6 +97,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
      * @param {boolean} [ignoreMissingSlots=false] - Whether to ignore missing slots.
      * @returns {Object} This object after duplicating slot values.
      * @throws {MissingSlotError} If a slot is missing and ignoreMissingSlots is false.
+     * @category Copying
      */
     duplicateSlotValuesFrom (otherObject, ignoreMissingSlots = false) {
         this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
@@ -123,6 +130,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
      * Copies slot values from another object.
      * @param {Object} otherObject - The object to copy from.
      * @returns {Object} This object after copying slot values.
+     * @category Copying
      */
     copySlotValuesFrom (otherObject) {
         this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
@@ -134,4 +142,3 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     }
 
 }).initThisCategory();
-

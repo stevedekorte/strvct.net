@@ -14,6 +14,7 @@
   /**
    * @description Returns a sample entry for an Azure voice.
    * @returns {Object} Sample entry object
+   * @category Data
    */
   sampleEntry () {
     return {
@@ -36,10 +37,12 @@
 
   /**
    * @description Initializes prototype slots for the AzureVoice class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {Object} json - JSON representation of the Azure voice
+     * @category Data
      */
     {
       const slot = this.newSlot("json", null)
@@ -51,6 +54,7 @@
 
   /**
    * @description Sets up prototype slots based on the sample entry properties.
+   * @category Initialization
    */
   setupPrototypeSlotsForEntryProperties () {
     const sample = this.sampleEntry();
@@ -69,6 +73,7 @@
 
   /**
    * @description Initializes the AzureVoice instance.
+   * @category Initialization
    */
   init () {
     super.init()
@@ -77,6 +82,7 @@
   /**
    * @description Returns the title of the voice.
    * @returns {string} The display name of the voice
+   * @category Display
    */
   title () {
     return this.displayName()
@@ -85,6 +91,7 @@
   /**
    * @description Returns the subtitle of the voice.
    * @returns {string} Combination of gender and locale name
+   * @category Display
    */
   subtitle () {
     return this.gender() + "\n" + this.localeName()
@@ -94,6 +101,7 @@
    * @description Sets the JSON representation of the voice and syncs slots.
    * @param {Object} json - The JSON object to set
    * @returns {AzureVoice} The current instance
+   * @category Data
    */
   setJson (json) {
     this._json = json
@@ -104,6 +112,7 @@
   /**
    * @description Synchronizes slots from the JSON representation.
    * @returns {AzureVoice} The current instance
+   * @category Data
    */
   syncSlotsFromJson () {
     const json = this.json()
@@ -126,6 +135,7 @@
    * @description Checks if the voice supports a given style name.
    * @param {string} styleName - The style name to check
    * @returns {boolean} True if the style is supported, false otherwise
+   * @category Voice Capabilities
    */
   supportsStyleName (styleName) {
     if (this.styleList()) {
@@ -137,6 +147,7 @@
   /**
    * @description Returns the language of the voice.
    * @returns {string} The language name
+   * @category Language
    */
   language () {
     return this.localeName().before(" (")
@@ -145,6 +156,7 @@
   /**
    * @description Returns the sublocale of the voice.
    * @returns {string|null} The sublocale if available, null otherwise
+   * @category Language
    */
   sublocale () {
     const ln = this.localeName()
@@ -160,6 +172,7 @@
    * @description Generates the locale path components for the voice.
    * @param {Array} allVoices - All available voices
    * @returns {Array} The locale path components
+   * @category Language
    */
   localePathComponents (allVoices = []) {
     const path = []

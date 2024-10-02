@@ -11,6 +11,7 @@
 
     /**
      * @description Initializes the prototype slots for the BMStorableNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         this.setShouldStore(true)
@@ -20,6 +21,7 @@
         /**
          * @member {boolean} canDelete
          * @description Indicates if the node can be deleted.
+         * @category Node Properties
          */
         {
             const slot = this.overrideSlot("canDelete", false)
@@ -29,6 +31,7 @@
         /**
          * @member {string|null} title
          * @description The title of the node.
+         * @category Node Properties
          */
         {
             const slot = this.overrideSlot("title", null)
@@ -38,6 +41,7 @@
         /**
          * @member {string} subtitle
          * @description The subtitle of the node.
+         * @category Node Properties
          */
         {
             const slot = this.overrideSlot("subtitle", "")
@@ -47,6 +51,7 @@
         /**
          * @member {boolean} nodeFillsRemainingWidth
          * @description Indicates if the node fills the remaining width.
+         * @category Layout
          */
         {
             const slot = this.overrideSlot("nodeFillsRemainingWidth", false)
@@ -58,6 +63,7 @@
         /**
          * @member {SubnodesArray|null} subnodes
          * @description The subnodes of the current node.
+         * @category Node Structure
          */
         {
             const slot = this.overrideSlot("subnodes", null)
@@ -81,6 +87,7 @@
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -90,6 +97,7 @@
      * @param {Object} aSlot - The slot being updated.
      * @param {*} oldValue - The old value of the slot.
      * @param {*} newValue - The new value of the slot.
+     * @category Slot Management
      */
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue)
@@ -133,6 +141,7 @@
     /**
      * @description Handles changes to the subnode list.
      * @returns {BMStorableNode} Returns this instance.
+     * @category Node Structure
      */
     didChangeSubnodeList () {
         super.didChangeSubnodeList()
@@ -143,6 +152,7 @@
     /**
      * @description Gets the count of subnodes.
      * @returns {number} The number of subnodes.
+     * @category Node Structure
      */
     subnodeCount () {
         if (!this._subnodes) {
@@ -154,6 +164,7 @@
     /**
      * @description Prepares the node for first access.
      * @returns {BMStorableNode} Returns this instance.
+     * @category Initialization
      */
     prepareForFirstAccess () {
         super.prepareForFirstAccess()

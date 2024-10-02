@@ -15,6 +15,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.newClassSlot("tabCount", 0)
@@ -22,10 +23,12 @@
 
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} acceptsFirstResponder
+         * @category Focus Management
          */
         {
             const slot = this.newSlot("acceptsFirstResponder", false);
@@ -42,6 +45,7 @@
         */
         /**
          * @member {ResponderDomView} nextKeyView
+         * @category Focus Management
          */
         {
             const slot = this.newSlot("nextKeyView", null);
@@ -59,6 +63,7 @@
 
     /**
      * @description Schedules registration for focus
+     * @category Focus Management
      */
     scheduleRegisterForFocus () {
         if (this.element().parentElement) {
@@ -74,6 +79,7 @@
     /**
      * @description Checks if the view has a focused descendant view
      * @returns {Boolean}
+     * @category Focus Management
      */
     hasFocusedDecendantView () {
         const focusedView = WebBrowserWindow.shared().activeDomView();
@@ -86,6 +92,7 @@
     /**
      * @description Focuses the view
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     focus () {
         if (!this.isActiveElement()) {
@@ -98,6 +105,7 @@
      * @description Focuses the view after a specified delay
      * @param {number} seconds - Delay in seconds
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     focusAfterDelay (seconds) {
         this.addTimeout(() => {
@@ -113,6 +121,7 @@
     /**
      * @description Checks if the view has focus
      * @returns {Boolean}
+     * @category Focus Management
      */
     hasFocus () {
         return this.isActiveElement()
@@ -121,6 +130,7 @@
     /**
      * @description Blurs (unfocuses) the view
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     blur () { 
         this.element().blur()
@@ -132,6 +142,7 @@
     /**
      * @description Checks if the view is the active element
      * @returns {Boolean}
+     * @category Focus Management
      */
     isActiveElement () {
         return document.activeElement === this.element()
@@ -140,6 +151,7 @@
     /**
      * @description Checks if the view is the active element and editable
      * @returns {Boolean}
+     * @category Focus Management
      */
     isActiveElementAndEditable () {
         return this.isActiveElement() && this.contentEditable()
@@ -148,6 +160,7 @@
     /**
      * @description Checks if the view is focused
      * @returns {Boolean}
+     * @category Focus Management
      */
     isFocused () {
         return this.isActiveElement()
@@ -159,6 +172,7 @@
      * @description Sets the inner HTML of the view
      * @param {string} v - HTML content
      * @returns {ResponderDomView}
+     * @category DOM Manipulation
      */
     setInnerHtml (v) {
         const oldValue = this.element().innerHTML;
@@ -188,6 +202,7 @@
     /**
      * @description Forces a redisplay of the view
      * @returns {ResponderDomView}
+     * @category DOM Manipulation
      */
     forceRedisplay () {
         // NOTE: not sure this works
@@ -202,6 +217,7 @@
 
     /**
      * @description Called when input occurs
+     * @category Event Handling
      */
     didInput () {
         this.debugLog("didInput")
@@ -211,6 +227,7 @@
 
     /**
      * @description Called when editing occurs
+     * @category Event Handling
      */
     didEdit () {
         this.debugLog("didEdit")
@@ -222,6 +239,7 @@
      * @description Handles the Enter key up event
      * @param {Event} event - The key event
      * @returns {Boolean}
+     * @category Event Handling
      */
     onEnterKeyUp (event) {
         return true
@@ -233,6 +251,7 @@
      * @description Handles the Tab key down event
      * @param {Event} event - The key event
      * @returns {Boolean}
+     * @category Event Handling
      */
     onTabKeyDown (event) {
         if (this.selectNextKeyView()) {
@@ -244,6 +263,7 @@
      * @description Handles the Tab key up event
      * @param {Event} event - The key event
      * @returns {Boolean}
+     * @category Event Handling
      */
     onTabKeyUp (event) {
         return false
@@ -252,6 +272,7 @@
     /**
      * @description Makes this view the key view
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     becomeKeyView () { 
         this.focus()
@@ -261,6 +282,7 @@
     /**
      * @description Selects the next key view
      * @returns {Boolean}
+     * @category Focus Management
      */
     selectNextKeyView () {
         const nkv = this.nextKeyView()
@@ -281,6 +303,7 @@
     /**
      * @description Checks if the view is valid
      * @returns {Boolean}
+     * @category Validation
      */
     isValid () {
         return true
@@ -291,6 +314,7 @@
     /**
      * @description Called before accepting first responder status
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     willAcceptFirstResponder () {
         return this
@@ -299,6 +323,7 @@
     /**
      * @description Called after releasing first responder status
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     didReleaseFirstResponder () {
         return this
@@ -309,6 +334,7 @@
     /**
      * @description Checks if this view is the first responder
      * @returns {Boolean}
+     * @category Focus Management
      */
     isFirstResponder () {
         return document.activeElement === this.element()
@@ -316,6 +342,7 @@
 
     /**
      * @description Called before becoming the first responder
+     * @category Focus Management
      */
     willBecomeFirstResponder () {
     }
@@ -323,6 +350,7 @@
     /**
      * @description Makes this view the first responder
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     becomeFirstResponder () {
         if (this.acceptsFirstResponder()) {
@@ -337,6 +365,7 @@
     /**
      * @description Releases first responder status
      * @returns {ResponderDomView}
+     * @category Focus Management
      */
     releaseFirstResponder () {
         if (this.isFocused()) { 
@@ -353,6 +382,7 @@
      * @description Disables pointer events for a specified time
      * @param {number} ms - Timeout in milliseconds
      * @returns {ResponderDomView}
+     * @category Event Handling
      */
     disablePointerEventsUntilTimeout (ms) {
         this.setPointerEvents("none")
@@ -372,6 +402,7 @@
  * @description Updates the HTML content of an element while preserving focus and selection
  * @param {HTMLElement} element - The element to update
  * @param {string} htmlContent - The new HTML content
+ * @category DOM Manipulation
  */
 function updateElementHTML(element, htmlContent) {
     let isFocused = (document.activeElement === element);

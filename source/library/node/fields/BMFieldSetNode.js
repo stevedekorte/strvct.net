@@ -28,10 +28,12 @@
     
     /**
      * @description Initializes prototype slots for the BMFieldSetNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {string} status - The status of the field set.
+         * @category State
          */
         {
             const slot = this.newSlot("status", "");
@@ -39,6 +41,7 @@
         }
         /**
          * @member {boolean} isEditable - Determines if the field set is editable.
+         * @category State
          */
         {
             const slot = this.newSlot("isEditable", true);
@@ -48,6 +51,7 @@
 
     /**
      * @description Initializes the prototype of the BMFieldSetNode.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStoreSubnodes(false)
@@ -56,6 +60,7 @@
     /**
      * @description Called when a field is updated.
      * @param {BMField} aField - The field that was updated.
+     * @category Event Handling
      */
     didUpdateField (aField) {
         // override to implement hooks
@@ -67,6 +72,7 @@
      * @description Adds a field to the field set.
      * @param {BMField} aField - The field to add.
      * @returns {BMField} The added field.
+     * @category Field Management
      */
     addField (aField) {
         aField.setTarget(this) 
@@ -79,6 +85,7 @@
      * @description Adds a field with the given name to the field set.
      * @param {string} name - The name of the field to add.
      * @returns {BMField} The added field.
+     * @category Field Management
      */
     addFieldNamed (name) {	
         const field = BMField.clone().setKey(name)
@@ -92,6 +99,7 @@
      * @description Finds a field by name.
      * @param {string} aName - The name of the field to find.
      * @returns {BMField|undefined} The found field or undefined if not found.
+     * @category Field Management
      */
     fieldNamed (aName) {
         return this.subnodes().detect(sn => { 
@@ -110,6 +118,7 @@
     /**
      * @description Validates all fields in the field set.
      * @returns {boolean} True if all fields are valid, false otherwise.
+     * @category Validation
      */
     validate () {
         return this.invalidSubnodes().length === 0
@@ -118,6 +127,7 @@
     /**
      * @description Gets all invalid subnodes (fields) in the field set.
      * @returns {BMField[]} An array of invalid fields.
+     * @category Validation
      */
     invalidSubnodes () {
         return this.subnodes().select(sn => !sn.validate())
@@ -126,6 +136,7 @@
     /**
      * @description Checks if the field set is valid.
      * @returns {boolean} True if the field set is valid, false otherwise.
+     * @category Validation
      */
     isValid () {
         return this.validate() // could cache this later...

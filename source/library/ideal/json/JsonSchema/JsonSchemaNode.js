@@ -12,6 +12,7 @@
   /**
    * Initializes the class
    * @static
+   * @category Initialization
    */
   static initClass () {
   }
@@ -20,6 +21,7 @@
    * Sets up slots from a given JSON schema
    * @description Sets up slots from a JSON schema object, creating slots for each property and handling nested schemas
    * @param {Object} schema - The JSON schema object to set up slots from
+   * @category Schema Management
    */
   setupSlotsFromJsonSchema (schema) {
 
@@ -66,6 +68,7 @@
   /**
    * Initializes prototype slots
    * @description Sets up the "schemaString" slot on the prototype
+   * @category Initialization
    */
   initPrototypeSlots () {
 
@@ -88,6 +91,7 @@
   /**
    * Initializes the prototype
    * @description Sets up the initial state of the prototype
+   * @category Initialization
    */
   initPrototype () {
     this.setCanDelete(true);
@@ -101,6 +105,7 @@
    * Performs post-initialization tasks
    * @description Initializes the schemaString slot with the root JSON schema for this class
    * @returns {JsonSchemaNode} This instance
+   * @category Initialization
    */
   didInit () {
     super.didInit()
@@ -114,6 +119,7 @@
    * @description Sets the JSON archive for this instance
    * @param {Object} json - The JSON object to set as the archive
    * @returns {JsonSchemaNode} This instance
+   * @category Data Management
    */
   setJsonArchive (json) {
     debugger;
@@ -126,6 +132,7 @@
    * @description Updates the JSON for this instance, applying patches if the input is an array or updating the entire JSON if it's an object
    * @param {Object|Array} json - The JSON object or array of patches to apply
    * @returns {JsonSchemaNode} This instance
+   * @category Data Management
    */
   updateJson (json) {
     // we assume it's a patch if it's an array
@@ -140,6 +147,7 @@
   /**
    * Handles post-update tasks
    * @description Schedules a UI update if the update was triggered by user input and a player is associated with this instance
+   * @category Event Handling
    */
   didUpdateNode () {
     super.didUpdateNode()
@@ -156,6 +164,7 @@
   /**
    * Shares the UI update with the player's session
    * @description Shares the UI update with the player's session, if a player is associated with this instance
+   * @category UI Management
    */
   shareUiUpdate () {
     console.log(this.type() + " '" + this.name() + "' shareUiUpdate")
@@ -166,6 +175,7 @@
    * Sets up this instance as a sample
    * @description Sets up this instance and its subnodes as a sample
    * @returns {JsonSchemaNode} This instance
+   * @category Data Management
    */
   setupAsSample () {
     this.subnodes().forEach(sn => {
@@ -180,6 +190,7 @@
    * Updates the message JSON
    * @description Creates a JSON object containing the necessary information to update the character on the server
    * @returns {Object} The message JSON object
+   * @category Data Management
    */
   updateMsgJson () {
     const json = {
@@ -197,6 +208,7 @@
    * Returns the JSON string representation of this instance
    * @description Returns the JSON string representation of this instance
    * @returns {String} The JSON string representation
+   * @category Data Conversion
    */
   jsonString () {
     return JSON.stableStringify(this.asJson(), 2, 2);
@@ -208,6 +220,7 @@
    * @param {Set} refSet - A set of references to include in the schema
    * @returns {Object} The JSON schema properties
    * @static
+   * @category Schema Management
    */
   static jsonSchemaProperties (refSet) {
     assert(refSet);
@@ -225,6 +238,7 @@
    * Returns the JSON representation of this instance
    * @description Returns the JSON representation of this instance, including only the slots that are JSON archivable
    * @returns {Object} The JSON representation
+   * @category Data Conversion
    */
   asJson () {
     // we want to limit to just the slots that are json archivable

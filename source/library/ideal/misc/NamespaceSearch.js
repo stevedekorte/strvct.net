@@ -21,6 +21,7 @@
         /**
          * @member {Set} visited
          * @private
+         * @category Search
          */
         {
             const slot = this.newSlot("visited", null);
@@ -29,6 +30,7 @@
         /**
          * @member {Array} matchingPaths
          * @private
+         * @category Search
          */
         {
             const slot = this.newSlot("matchingPaths", null);
@@ -37,6 +39,7 @@
         /**
          * @member {Function} slotMatchClosure
          * @private
+         * @category Search
          */
         {
             const slot = this.newSlot("slotMatchClosure", null);
@@ -49,6 +52,7 @@
 
     /**
      * @description Initializes the NamespaceSearch instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -57,6 +61,7 @@
 
     /**
      * @description Clears the visited set and matchingPaths array.
+     * @category Search
      */
     clear () {
         this.setVisited(new Set([this])) // to avoid searching this object
@@ -67,6 +72,7 @@
      * @description Finds matches based on the provided searchString or the slotMatchClosure.
      * @param {string} [searchString]
      * @returns {NamespaceSearch} The current instance for chaining.
+     * @category Search
      */
     find (searchString) {
         this.clear()
@@ -86,6 +92,7 @@
      * @description Recursively searches for matching slots on the given object and its properties.
      * @param {Object} v The object to search.
      * @param {Array} [path=[]] The current path to the object.
+     * @category Search
      */
     findOnObject (v, path = []) {
         if (Type.isNullOrUndefined(v)) {
@@ -112,6 +119,7 @@
      * @param {Object} v The object containing the slot.
      * @param {string} k The slot name.
      * @returns {boolean} True if the slot can be accessed, false otherwise.
+     * @category Utility
      */
     canAccessSlot (v, k) {
         // to avoid illegal operation errors
@@ -125,6 +133,7 @@
      * @param {Object} slotOwner The object containing the slot.
      * @param {string} slotName The name of the slot.
      * @param {Array} [path=[]] The current path to the slot.
+     * @category Search
      */
     findOnSlot (slotOwner, slotName, path = []) {
         const localPath = path.shallowCopy()
@@ -146,6 +155,7 @@
      * @param {*} slotValue The value of the slot.
      * @param {Array} slotPath The path to the slot.
      * @returns {boolean} True if the slot matches the criteria, false otherwise.
+     * @category Search
      */
     doesMatchOnSlot (slotOwner, slotName, slotValue, slotPath) {
         return this.slotMatchClosure()(slotOwner, slotName, slotValue, slotPath)
@@ -155,6 +165,7 @@
      * @description Adds a matching path to the matchingPaths array.
      * @param {Array} aPath The path to add.
      * @returns {NamespaceSearch} The current instance for chaining.
+     * @category Search
      */
     addMatchingPath (aPath) {
         const stringPath = aPath.join("/")
@@ -166,6 +177,7 @@
 
     /**
      * @description Logs the matching paths to the console.
+     * @category Output
      */
     showMatches () {
         console.log("matchingPaths:")
@@ -175,6 +187,7 @@
     /**
      * @description Performs a self-test of the NamespaceSearch class.
      * @static
+     * @category Testing
      */
     static selfTest () {
         const ns = NamespaceSearch.clone()

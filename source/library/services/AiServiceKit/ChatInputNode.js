@@ -11,10 +11,12 @@
   /**
    * Initialize prototype slots
    * @private
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {Object} conversation - The conversation object
+     * @category Conversation
      */
     {
       const slot = this.newSlot("conversation", null); 
@@ -25,6 +27,7 @@
 
     /**
      * @member {Boolean} hasValueButton - Indicates if the node has a value button
+     * @category UI
      */
     {
       const slot = this.newSlot("hasValueButton", false);
@@ -34,6 +37,7 @@
 
     /**
      * @member {Boolean} isMicOn - Indicates if the microphone is on
+     * @category Audio
      */
     {
       const slot = this.newSlot("isMicOn", false);
@@ -51,6 +55,7 @@
   /**
    * Initialize the prototype
    * @private
+   * @category Initialization
    */
   initPrototype () {
     this.setShouldStore(true);
@@ -73,6 +78,7 @@
    * Set the value of the chat input
    * @param {string} v - The value to set
    * @returns {ChatInputNode} - Returns this instance
+   * @category Input
    */
   setValue (v) {
     super.setValue(v);
@@ -82,6 +88,7 @@
   /**
    * Handle the event when the value is edited
    * @param {Object} valueView - The view object
+   * @category Event Handling
    */
   onDidEditValue (valueView) {
     this.conversation().onChatEditValue(this.value())
@@ -90,6 +97,7 @@
   /**
    * Check if the node accepts value input
    * @returns {boolean} - Returns true if the node accepts value input
+   * @category Input
    */
   acceptsValueInput () {
     return this.conversation() && this.conversation().acceptsChatInput();
@@ -98,6 +106,7 @@
   /**
    * Handle the value input event
    * @param {Object} changedView - The changed view object
+   * @category Event Handling
    */
   onValueInput (changedView) {
     if (this.value()) {
@@ -107,6 +116,7 @@
 
   /**
    * Send the chat input value
+   * @category Communication
    */
   send () {
     const v = this.value();

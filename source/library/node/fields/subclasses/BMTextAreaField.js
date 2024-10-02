@@ -13,6 +13,7 @@
      * @static
      * @description Indicates whether this class is available as a node primitive.
      * @returns {boolean} Always returns true.
+     * @category Availability
      */
     static availableAsNodePrimitive () {
         return true;
@@ -23,6 +24,7 @@
      * @description Checks if this class can handle a given MIME type.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} True if the MIME type starts with "text/plain", false otherwise.
+     * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
         return mimeType.startsWith("text/plain");
@@ -33,6 +35,7 @@
      * @description Creates a new instance of BMTextAreaField from a data chunk.
      * @param {Object} dataChunk - The data chunk to open.
      * @returns {BMTextAreaField} A new instance of BMTextAreaField with the decoded data.
+     * @category Initialization
      */
     static openMimeChunk (dataChunk) {
         const newNode = this.clone();
@@ -45,11 +48,13 @@
 
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {boolean} isMono
          * @description Indicates whether the text area should use a monospace font.
+         * @category Appearance
          */
         {
             const slot = this.newSlot("isMono", false);
@@ -59,6 +64,7 @@
 
     /**
      * @description Initializes the prototype by setting the key as not visible.
+     * @category Initialization
      */
     initPrototype () {
         this.setKeyIsVisible(false);
@@ -68,6 +74,7 @@
      * @description Appends text to the current value of the text area.
      * @param {string} text - The text to append.
      * @returns {BMTextAreaField} The instance of the class for method chaining.
+     * @category Data Manipulation
      */
     appendToValue (text) {
         this.setValue(this.value() + text);
@@ -77,6 +84,7 @@
     /**
      * @description Synchronizes the field with its target.
      * @returns {BMTextAreaField} The instance of the class for method chaining.
+     * @category Synchronization
      */
     syncFromTarget () {
         super.syncFromTarget();

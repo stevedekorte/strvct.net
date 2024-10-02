@@ -15,6 +15,7 @@
     
     /**
      * Initializes prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
         Object.defineSlot(this, "_hasDoneInit", false); // so object's can distinguish changes from deserialization
@@ -27,6 +28,7 @@
      * Checks if this object is a kind of the given class.
      * @param {Function} aClass - The class to check against.
      * @returns {boolean} True if this object is a kind of aClass, false otherwise.
+     * @category Type Checking
      */
     isKindOf (aClass) {
         return this.thisClass().isKindOf(aClass);
@@ -36,6 +38,7 @@
      * Returns the type category of this object.
      * @returns {string} The type category ("instance", "prototype", or "class").
      * @throws {Error} If unable to identify the type category.
+     * @category Type Checking
      */
     typeCategory () {
         if (this.isInstance()) {
@@ -51,6 +54,7 @@
     /**
      * Returns the full type name of this object.
      * @returns {string} The full type name.
+     * @category Type Checking
      */
     fullTypeName () {
         return this.type() + " " + this.typeCategory();
@@ -64,6 +68,7 @@
      * @param {*} arg3 - The third argument to pass to the method.
      * @returns {*} The result of the method call.
      * @throws {Error} If the object does not respond to the given method.
+     * @category Method Invocation
      */
     perform (methodName, arg1, arg2, arg3) {
         const f = this[methodName];
@@ -80,6 +85,7 @@
      * @param {*} arg2 - The second argument to pass to the method.
      * @param {*} arg3 - The third argument to pass to the method.
      * @returns {*} The result of the method call, or undefined if the method doesn't exist.
+     * @category Method Invocation
      */
     performIfResponding (methodName, arg1, arg2, arg3) {
         const f = this[methodName];
@@ -92,6 +98,7 @@
      * Gets the value of a slot.
      * @param {string|symbol} key - The key of the slot.
      * @returns {*} The value of the slot.
+     * @category Property Access
      */
     atSlot (key) {
         return this[key];
@@ -102,6 +109,7 @@
      * @param {string|symbol} key - The key of the slot.
      * @param {*} value - The value to set.
      * @returns {Object_ideal} This object.
+     * @category Property Access
      */
     atSlotPut (key, value) {
         this[key] = value;
@@ -112,6 +120,7 @@
      * Removes a slot from this object.
      * @param {string|symbol} key - The key of the slot to remove.
      * @returns {Object_ideal} This object.
+     * @category Property Access
      */
     removeSlotAt (key) {
         delete this[key];
@@ -122,6 +131,7 @@
      * Maps over the object's own key-value pairs.
      * @param {Function} fn - The function to call for each key-value pair.
      * @returns {Array} The results of calling the function on each key-value pair.
+     * @category Iteration
      */
     ownKVMap (fn) {
         return Object.entries(this).map(entry => fn(entry[0], entry[1]));
@@ -131,6 +141,7 @@
      * Iterates over the object's own values.
      * @param {Function} fn - The function to call for each value.
      * @returns {Object_ideal} This object.
+     * @category Iteration
      */
     ownForEachValue (fn) {
         Object.entries(this).forEach(entry => fn(entry[1])); 
@@ -141,6 +152,7 @@
      * Iterates over the object's own keys.
      * @param {Function} fn - The function to call for each key.
      * @returns {Object_ideal} This object.
+     * @category Iteration
      */
     ownForEachKey(fn) {
         Object.entries(this).forEach(entry => fn(entry[0])); 
@@ -151,6 +163,7 @@
      * Iterates over the object's own key-value pairs.
      * @param {Function} fn - The function to call for each key-value pair.
      * @returns {Object_ideal} This object.
+     * @category Iteration
      */
     ownForEachKV (fn) {
         Object.entries(this).forEach(entry => fn(entry[0], entry[1])); 
@@ -161,6 +174,7 @@
      * Checks if this object is equal to another object.
      * @param {Object} anObject - The object to compare with.
      * @returns {boolean} True if the objects are equal, false otherwise.
+     * @category Comparison
      */
     isEqual (anObject) {
         const entries = Object.entries(this);
@@ -180,6 +194,7 @@
      * Gets the value of an own property.
      * @param {string|symbol} key - The key of the property.
      * @returns {*} The value of the property, or undefined if it doesn't exist.
+     * @category Property Access
      */
     getOwnProperty (key) {
         if (this.hasOwnProperty(key)) {
@@ -193,6 +208,7 @@
      * @param {string} slotName - The name of the slot.
      * @param {Array} [entries=[]] - The array to store entries.
      * @returns {Array} The slot value path.
+     * @category Debugging
      */
     slotValuePath (slotName, entries = []) {
         const entry = [this.fullTypeName(), this.getOwnProperty(slotName)];
@@ -211,6 +227,7 @@
      * @param {string} methodName - The name of the method to schedule.
      * @param {number} priority - The priority of the scheduled method.
      * @returns {*} The result of scheduling the method.
+     * @category Scheduling
      */
     scheduleMethod (methodName, priority) {
         return SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority);

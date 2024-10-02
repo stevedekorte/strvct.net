@@ -11,6 +11,7 @@
     /**
      * @description Handles the Enter key up event.
      * @returns {boolean} Returns false to stop propagation.
+     * @category Keyboard Interaction
      */
     onEnterKeyUp () {
         //this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
@@ -22,6 +23,7 @@
      * @description Handles the Shift+Backspace key up event.
      * @param {Event} event - The keyboard event.
      * @returns {boolean} Returns false to stop propagation.
+     * @category Keyboard Interaction
      */
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onBackspaceKeyUp")
@@ -35,6 +37,7 @@
      * @description Handles the Meta+A key down event.
      * @param {Event} event - The keyboard event.
      * @returns {boolean} Returns false.
+     * @category Keyboard Interaction
      */
     onMeta_a_KeyDown (event) {
         // only select subnodes if this tile can have them,
@@ -51,6 +54,7 @@
      * @description Handles the D key down event.
      * @param {Event} event - The keyboard event.
      * @returns {boolean} Returns true.
+     * @category Keyboard Interaction
      */
     on_d_KeyDown (event) {
         this.debugLog(" on_d_KeyDown ", event._id)
@@ -62,6 +66,7 @@
      * @description Handles the D key up event.
      * @param {Event} event - The keyboard event.
      * @returns {boolean} Returns true.
+     * @category Keyboard Interaction
      */
     on_d_KeyUp (event) {
         this.debugLog(" on_d_KeyUp ", event._id)

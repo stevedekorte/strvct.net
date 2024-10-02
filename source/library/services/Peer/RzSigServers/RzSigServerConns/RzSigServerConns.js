@@ -12,6 +12,7 @@
 (class RzSigServerConns extends BMSummaryNode {
   /**
    * @description Initializes prototype slots
+   * @category Initialization
    */
   initPrototypeSlots () {
     this.setSubnodeClasses([RzSigServerConn]);
@@ -19,6 +20,7 @@
 
   /**
    * @description Initializes the instance
+   * @category Initialization
    */
   init() {
     super.init();
@@ -31,6 +33,7 @@
 
   /**
    * @description Performs final initialization
+   * @category Initialization
    */
   finalInit() {
     super.finalInit()
@@ -41,6 +44,7 @@
   /**
    * @description Gets the parent service
    * @returns {Object} The parent service
+   * @category Service
    */
   service () {
     return this.parentNode()
@@ -49,6 +53,7 @@
   /**
    * @description Gets the connection class
    * @returns {Object} The connection class
+   * @category Connection
    */
   connClass () {
     return this.subnodeClasses().first()

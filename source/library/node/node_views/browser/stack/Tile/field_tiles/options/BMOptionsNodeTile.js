@@ -29,6 +29,7 @@
     /**
      * @description Synchronizes the tile with its associated node
      * @returns {BMOptionsNodeTile} Returns this instance for method chaining
+     * @category Synchronization
      */
     syncFromNode () {
         super.syncFromNode()

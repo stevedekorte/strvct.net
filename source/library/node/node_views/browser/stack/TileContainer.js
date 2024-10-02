@@ -11,6 +11,7 @@
     initPrototypeSlots () {
         /**
          * @member {Tile} tile - The tile contained in this container
+         * @category Data
          */
         {
             const slot = this.newSlot("tile", null);
@@ -21,6 +22,7 @@
     /**
      * @description Initializes the TileContainer with default styles and settings
      * @returns {TileContainer} The initialized TileContainer instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -40,6 +42,7 @@
     /**
      * @description Checks if the container's orientation is vertical
      * @returns {boolean|null} True if vertical, false if horizontal, null if no parent view
+     * @category Layout
      */
     isVertical () {
         const sv = this.parentView()
@@ -52,6 +55,7 @@
     /**
      * @description Synchronizes the container's orientation with its parent view
      * @returns {TileContainer} The current TileContainer instance
+     * @category Layout
      */
     syncOrientation () {
         if (this.isVertical()) {
@@ -64,6 +68,7 @@
 
     /**
      * @description Sets the orientation to right (for vertical layout)
+     * @category Layout
      */
     makeOrientationRight () {
         this.setWidth("-webkit-fill-available")
@@ -72,6 +77,7 @@
 
     /**
      * @description Sets the orientation to down (for horizontal layout)
+     * @category Layout
      */
     makeOrientationDown () {
         this.setWidth("fit-content")
@@ -81,6 +87,7 @@
     /**
      * @description Removes the current tile from the container
      * @returns {TileContainer} The current TileContainer instance
+     * @category Tile Management
      */
     removeTile () {
         const oldTile = this.tile()
@@ -95,6 +102,7 @@
      * @description Sets the node for the container and updates the tile accordingly
      * @param {Object|null} aNode - The node to set
      * @returns {TileContainer} The current TileContainer instance
+     * @category Node Management
      */
     setNode (aNode) {
         super.setNode(aNode)
@@ -120,6 +128,7 @@
     /**
      * @description Sets up a new tile for the current node
      * @returns {TileContainer} The current TileContainer instance
+     * @category Tile Management
      */
     setupTile () {
         this.removeTile()
@@ -135,6 +144,7 @@
     /**
      * @description Synchronizes the container and its tile with the current node
      * @returns {TileContainer} The current TileContainer instance
+     * @category Synchronization
      */
     syncFromNode () {
         this.syncOrientation()

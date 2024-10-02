@@ -24,6 +24,7 @@
     initPrototypeSlots () {
         /**
          * @member {Number} minNumberOfFingersRequired
+         * @category Configuration
          */
         {
             const slot = this.newSlot("minNumberOfFingersRequired", 1);
@@ -31,6 +32,7 @@
         }
         /**
          * @member {Number} maxNumberOfFingersAllowed
+         * @category Configuration
          */
         {
             const slot = this.newSlot("maxNumberOfFingersAllowed", 1);
@@ -42,6 +44,7 @@
     /**
      * @description Initializes the PanGestureRecognizer
      * @returns {PanGestureRecognizer}
+     * @category Initialization
      */
     init () {
         super.init();
@@ -57,6 +60,7 @@
     /**
      * @description Checks if the number of fingers down is within the allowed range
      * @returns {boolean}
+     * @category Validation
      */
     hasOkFingerCount () {
         const n = this.numberOfFingersDown();
@@ -68,6 +72,7 @@
     /**
      * @description Checks if the gesture is ready to begin
      * @returns {boolean}
+     * @category Validation
      */
     isReadyToBegin () {
         return this.hasOkFingerCount();
@@ -77,6 +82,7 @@
      * @description Handles the press event
      * @param {Event} event - The press event
      * @returns {PanGestureRecognizer}
+     * @category Event Handling
      */
     doPress (event) { 
         this.debugLog("doPress");
@@ -90,6 +96,7 @@
      * @description Handles the down event
      * @param {Event} event - The down event
      * @returns {PanGestureRecognizer}
+     * @category Event Handling
      */
     onDown (event) {
         super.onDown(event);
@@ -105,6 +112,7 @@
 
     /**
      * @description Attempts to begin the gesture
+     * @category Gesture Control
      */
     attemptBegin () {
         this.debugLog("attemptBegin")
@@ -125,6 +133,7 @@
     /**
      * @description Handles the mouse move capture event
      * @param {Event} event - The mouse move capture event
+     * @category Event Handling
      */
     onMouseMoveCapture (event) { // tmp for debugging dragview
         this.debugLog("onMouseMoveCapture")
@@ -135,6 +144,7 @@
      * @description Handles the move event
      * @param {Event} event - The move event
      * @returns {PanGestureRecognizer}
+     * @category Event Handling
      */
     onMove (event) {
         super.onMove(event)
@@ -155,6 +165,7 @@
      * @description Handles the up event
      * @param {Event} event - The up event
      * @returns {PanGestureRecognizer}
+     * @category Event Handling
      */
     onUp (event) {
         super.onUp(event)
@@ -173,6 +184,7 @@
     /**
      * @description Cancels the gesture
      * @returns {PanGestureRecognizer}
+     * @category Gesture Control
      */
     cancel () {
         if (this.isActive()) {
@@ -185,6 +197,7 @@
     /**
      * @description Finishes the gesture
      * @returns {PanGestureRecognizer}
+     * @category Gesture Control
      */
     didFinish () {
         super.didFinish()
@@ -198,6 +211,7 @@
     /**
      * @description Checks if the gesture has moved enough to begin
      * @returns {boolean}
+     * @category Validation
      */
     hasMovedEnough () {
         const m = this.minDistToBegin()
@@ -208,6 +222,7 @@
     /**
      * @description Calculates the distance of the gesture
      * @returns {number}
+     * @category Calculation
      */
     distance () {
         return this.currentPosition().distanceFrom(this.beginPosition())

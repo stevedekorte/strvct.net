@@ -37,10 +37,12 @@
     /**
      * @description Initializes the prototype slots for the TapGestureRecognizer.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} maxHoldPeriod - milliseconds per tap down hold
+         * @category Configuration
          */
         {
             const slot = this.newSlot("maxHoldPeriod", 1000);
@@ -49,6 +51,7 @@
         }
         /**
          * @member {Number} timeoutId - private
+         * @category Internal
          */
         {
             const slot = this.newSlot("timeoutId", null);
@@ -56,6 +59,7 @@
         }
         /**
          * @member {Number} numberOfTapsRequired
+         * @category Configuration
          */
         {
             const slot = this.newSlot("numberOfTapsRequired", 1);
@@ -63,6 +67,7 @@
         }
         /**
          * @member {Number} numberOfFingersRequired
+         * @category Configuration
          */
         {
             const slot = this.newSlot("numberOfFingersRequired", 1);
@@ -70,6 +75,7 @@
         }
         /**
          * @member {Number} tapCount
+         * @category State
          */
         {
             const slot = this.newSlot("tapCount", 0);
@@ -80,6 +86,7 @@
     /**
      * @description Initializes the TapGestureRecognizer.
      * @returns {TapGestureRecognizer} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -94,6 +101,7 @@
     /**
      * @description Resets the tap count to zero.
      * @returns {TapGestureRecognizer} The instance.
+     * @category State Management
      */
     resetTapCount () {
         this.setTapCount(0)
@@ -104,6 +112,7 @@
      * @description Starts the timer for the tap gesture.
      * @param {Event} event - The event that triggered the timer start.
      * @returns {TapGestureRecognizer} The instance.
+     * @category Timer Management
      */
     startTimer (event) {
         if (this.timeoutId()) {
@@ -118,6 +127,7 @@
     /**
      * @description Stops the timer for the tap gesture.
      * @returns {TapGestureRecognizer} The instance.
+     * @category Timer Management
      */
     stopTimer () {
         if (this.hasTimer()) {
@@ -131,6 +141,7 @@
     /**
      * @description Checks if the timer is currently running.
      * @returns {boolean} True if the timer is running, false otherwise.
+     * @category Timer Management
      */
     hasTimer () {
         return this.timeoutId() !== null
@@ -140,6 +151,7 @@
      * @description Handles the down event for the tap gesture.
      * @param {Event} event - The down event.
      * @returns {boolean} True if the event was handled, false otherwise.
+     * @category Event Handling
      */
     onDown (event) {
         super.onDown(event)
@@ -162,6 +174,7 @@
     /**
      * @description Handles the up event for the tap gesture.
      * @param {Event} event - The up event.
+     * @category Event Handling
      */
     onUp (event) {
         super.onUp(event)
@@ -182,6 +195,7 @@
 
     /**
      * @description Completes the tap gesture.
+     * @category Gesture State
      */
     complete () {
         this.stopTimer()
@@ -193,6 +207,7 @@
     /**
      * @description Cancels the tap gesture.
      * @returns {TapGestureRecognizer} The instance.
+     * @category Gesture State
      */
     cancel () {
         if (this.hasTimer()) {

@@ -33,6 +33,7 @@
     /**
      * @static
      * @description Initializes the class as a singleton
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -40,10 +41,12 @@
     
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} eventLevelCount
+         * @category State
          */
         {
             const slot = this.newSlot("eventLevelCount", 0);
@@ -51,6 +54,7 @@
         }
         /**
          * @member {Boolean} hasReceivedUserEvent
+         * @category State
          */
         {
             const slot = this.newSlot("hasReceivedUserEvent", false);
@@ -58,6 +62,7 @@
         }
         /**
          * @member {Event} currentEvent
+         * @category State
          */
         {
             const slot = this.newSlot("currentEvent", null);
@@ -65,6 +70,7 @@
         }
         /**
          * @member {Promise} firstUserEventPromise
+         * @category State
          */
         {
             const slot = this.newSlot("firstUserEventPromise", null);
@@ -75,6 +81,7 @@
 
     /**
      * @description Initializes the instance
+     * @category Initialization
      */
     init () {
         super.init();
@@ -84,6 +91,7 @@
     /**
      * @description Gets the name of the current event
      * @returns {string|null} The name of the current event or null
+     * @category Event Handling
      */
     currentEventName () {
         const e = this.currentEvent();
@@ -98,6 +106,7 @@
     /**
      * @description Checks if the current event is a user input event
      * @returns {boolean} True if the current event is a user input event, false otherwise
+     * @category Event Handling
      */
     currentEventIsUserInput () {
         const userEventNames = ["KeyboardEvent", "MouseEvent"];
@@ -107,6 +116,7 @@
     /**
      * @description Handles the reception of a user event
      * @returns {EventManager} The instance of EventManager
+     * @category Event Handling
      */
     onReceivedUserEvent () {
         if (!this.hasReceivedUserEvent()) {
@@ -122,6 +132,7 @@
      * @description Sets the event level count
      * @param {number} n - The new event level count
      * @returns {EventManager} The instance of EventManager
+     * @category State Management
      */
     setEventLevelCount (n) {
         assert(n > -1)
@@ -132,6 +143,7 @@
     /**
      * @description Increments the event level count
      * @returns {EventManager} The instance of EventManager
+     * @category State Management
      */
     incrementEventLevelCount () {
         const count = this.eventLevelCount()
@@ -142,6 +154,7 @@
     /**
      * @description Decrements the event level count
      * @returns {EventManager} The instance of EventManager
+     * @category State Management
      */
     decrementEventLevelCount () {
         const count = this.eventLevelCount()
@@ -154,6 +167,7 @@
      * @param {Function} callback - The callback function to wrap
      * @param {Event} event - The event object
      * @returns {*} The result of the callback function
+     * @category Event Handling
      */
     safeWrapEvent (callback, event) {
         assert(event)
@@ -174,6 +188,7 @@
     /**
      * @description Syncs if appropriate based on the current event level
      * @returns {EventManager} The instance of EventManager
+     * @category Synchronization
      */
     syncIfAppropriate () {
         if (getGlobalThis().SyncScheduler) {

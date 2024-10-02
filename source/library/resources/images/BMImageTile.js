@@ -14,6 +14,7 @@
     /**
      * @description Initializes the prototype slots for the BMImageTile class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -21,6 +22,7 @@
     /**
      * @description Initializes the prototype for the BMImageTile class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -28,6 +30,7 @@
     /**
      * @description Updates the subviews of the BMImageTile.
      * @returns {BMImageTile} Returns the instance of BMImageTile.
+     * @category View Management
      */
     updateSubviews () {
         super.updateSubviews()

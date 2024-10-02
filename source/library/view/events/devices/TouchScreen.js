@@ -19,6 +19,7 @@
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -26,10 +27,12 @@
     
     /**
      * @description Initializes the prototype slots for the TouchScreen class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {TouchEvent} currentEvent - The current touch event.
+         * @category Event Tracking
          */
         {
             const slot = this.newSlot("currentEvent", null);
@@ -37,6 +40,7 @@
         }
         /**
          * @member {TouchEvent} lastEvent - The last touch event.
+         * @category Event Tracking
          */
         {
             const slot = this.newSlot("lastEvent", null);
@@ -44,6 +48,7 @@
         }
         /**
          * @member {TouchListener} touchListener - The touch listener object.
+         * @category Event Handling
          */
         {
             const slot = this.newSlot("touchListener", null);
@@ -51,6 +56,7 @@
         }
         /**
          * @member {Boolean} isSupported - Indicates if touch is supported.
+         * @category Device Capability
          */
         {
             const slot = this.newSlot("isSupported", null);
@@ -67,6 +73,7 @@
     /**
      * @description Checks if touch is supported.
      * @returns {Boolean} True if touch is supported, false otherwise.
+     * @category Device Capability
      */
     isSupported () {
         if (this._isSupported === null) {
@@ -78,6 +85,7 @@
     /**
      * @description Calculates if touch is supported.
      * @returns {Boolean} True if touch is supported, false otherwise.
+     * @category Device Capability
      */
     calcIsSupported () {
         // return WebBrowserWindow.isTouchDevice()
@@ -99,6 +107,7 @@
     /**
      * @description Initializes the TouchScreen instance.
      * @returns {TouchScreen} The initialized TouchScreen instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -114,6 +123,7 @@
      * @description Sets the current touch event.
      * @param {TouchEvent} event - The touch event to set as current.
      * @returns {TouchScreen} The TouchScreen instance.
+     * @category Event Tracking
      */
     setCurrentEvent (event) {
         if (this._currentEvent !== event) {
@@ -130,6 +140,7 @@
     /**
      * @description Starts listening for touch events.
      * @returns {TouchScreen} The TouchScreen instance.
+     * @category Event Handling
      */
     startListening () {
         this.setTouchListener(TouchListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
@@ -141,6 +152,7 @@
      * @description Handles the touch begin capture event.
      * @param {TouchEvent} event - The touch begin event.
      * @returns {Boolean} Always returns true.
+     * @category Event Handling
      */
     onTouchBeginCapture (event) {
         if (this.isDebugging()) {
@@ -155,6 +167,7 @@
      * @description Finds the last point for a given touch ID.
      * @param {Number} id - The touch ID.
      * @returns {EventPoint|undefined} The last point for the given ID, or undefined if not found.
+     * @category Touch Point Tracking
      */
     lastPointForId (id) {
         const lastPoints = this.pointsForEvent(this.lastEvent())
@@ -165,6 +178,7 @@
      * @description Finds the current point for a given touch ID.
      * @param {Number} id - The touch ID.
      * @returns {EventPoint|undefined} The current point for the given ID, or undefined if not found.
+     * @category Touch Point Tracking
      */
     currentPointForId (id) {
         const currentPoints = this.pointsForEvent(this.currentEvent())
@@ -175,6 +189,7 @@
      * @description Handles the touch move capture event.
      * @param {TouchEvent} event - The touch move event.
      * @returns {Boolean} Always returns true.
+     * @category Event Handling
      */
     onTouchMoveCapture (event) {
         this.setCurrentEvent(event)
@@ -186,6 +201,7 @@
      * @description Handles the touch end capture event.
      * @param {TouchEvent} event - The touch end event.
      * @returns {Boolean} Always returns true.
+     * @category Event Handling
      */
     onTouchEndCapture (event) {
         this.setCurrentEvent(event)
@@ -197,6 +213,7 @@
      * @description Creates an EventPoint from a Touch object.
      * @param {Touch} touch - The Touch object.
      * @returns {EventPoint} The created EventPoint.
+     * @category Touch Point Creation
      */
     pointForTouch (touch) {
         assert(event.__proto__.constructor === TouchEvent)
@@ -215,6 +232,7 @@
      * @description Creates EventPoints for all touches in a TouchEvent.
      * @param {TouchEvent} event - The TouchEvent.
      * @returns {Array<EventPoint>} An array of EventPoints.
+     * @category Touch Point Creation
      */
     justPointsForEvent (event) {
         const points = []
@@ -233,6 +251,7 @@
      * @description Gets or creates EventPoints for a TouchEvent.
      * @param {TouchEvent} event - The TouchEvent.
      * @returns {Array<EventPoint>} An array of EventPoints.
+     * @category Touch Point Creation
      */
     pointsForEvent (event) {
         if (!event.hasCachedPoints()) {
@@ -248,6 +267,7 @@
     /**
      * @description Gets the current touch points.
      * @returns {Array<EventPoint>} An array of current EventPoints.
+     * @category Touch Point Tracking
      */
     currentPoints () {
         if (this.currentEvent()) {

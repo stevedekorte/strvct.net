@@ -12,6 +12,7 @@
      * @description Checks if the given mime type can be opened.
      * @param {string} mimeType - The mime type to check.
      * @returns {boolean} True if the mime type can be opened, false otherwise.
+     * @category File Handling
      */
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
@@ -20,6 +21,7 @@
 
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -28,6 +30,7 @@
     /**
      * @description Initializes the BMImageWellFieldTile.
      * @returns {BMImageWellFieldTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -46,6 +49,7 @@
     /**
      * @description Creates and returns a value view.
      * @returns {ImageWellView} The created image well view.
+     * @category View Creation
      */
     createValueView () {
         const imageWellView = ImageWellView.clone()
@@ -56,6 +60,7 @@
     /**
      * @description Returns the image well view.
      * @returns {ImageWellView} The image well view.
+     * @category View Access
      */
     imageWellView () {
         return this.valueView()
@@ -64,6 +69,7 @@
     /**
      * @description Synchronizes the tile from the node.
      * @returns {BMImageWellFieldTile} The synchronized instance.
+     * @category Synchronization
      */
     syncFromNode () {
         super.syncFromNode()
@@ -81,6 +87,7 @@
     /**
      * @description Synchronizes the tile to the node.
      * @returns {BMImageWellFieldTile} The synchronized instance.
+     * @category Synchronization
      */
     syncToNode () {
         const field = this.node()
@@ -102,6 +109,7 @@
     /**
      * @description Returns the data URL of the image.
      * @returns {string|null} The data URL of the image.
+     * @category Data Access
      */
     dataUrl () {
         return this.imageWellView().imageDataUrl()
@@ -110,6 +118,7 @@
     /**
      * @description Checks if the image well is empty.
      * @returns {boolean} True if empty, false otherwise.
+     * @category State Check
      */
     isEmpty () {
         return Type.isNull(this.dataUrl())
@@ -119,6 +128,7 @@
      * @description Handles the update of the image well view.
      * @param {ImageWellView} anImageWell - The updated image well view.
      * @returns {BMImageWellFieldTile} The current instance.
+     * @category Event Handling
      */
     didUpdateImageWellView (anImageWell) {
         //this.debugLog(".didUpdateImageWellView()")

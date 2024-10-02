@@ -28,6 +28,8 @@
          * The number of bytes to format.
          * @type {number}
          * @default 0
+         * @member {number}
+         * @category Data
          */
         {
             const slot = this.newSlot("value", 0);
@@ -40,6 +42,8 @@
          * Whether to use a postfix in the formatted output.
          * @type {boolean}
          * @default true
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("usePostfix", true);
@@ -52,6 +56,8 @@
          * Whether to use a space between the number and the unit in the formatted output.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("useSpace", false);
@@ -64,6 +70,8 @@
          * Whether to use long names for units in the formatted output.
          * @type {boolean}
          * @default false
+         * @member {boolean}
+         * @category Formatting
          */
         {
             const slot = this.newSlot("useLongNames", false);
@@ -75,6 +83,8 @@
         /**
          * Array of short unit names.
          * @type {string[]}
+         * @member {string[]}
+         * @category Data
          */
         {
             const slot = this.newSlot("orderNamesShort", [
@@ -94,6 +104,8 @@
         /**
          * Array of long unit names.
          * @type {string[]}
+         * @member {string[]}
+         * @category Data
          */
         {
             const slot = this.newSlot("orderNamesLong", [
@@ -117,6 +129,7 @@
     /**
      * Formats the byte value into a human-readable string.
      * @returns {string} The formatted byte value.
+     * @category Formatting
      */
     formattedValue () {
         const b = Math.floor(this.value());

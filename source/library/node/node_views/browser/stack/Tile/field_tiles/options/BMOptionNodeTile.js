@@ -11,6 +11,7 @@
     /**
      * @description Toggles the option state if editable
      * @returns {BMOptionNodeTile} Returns this instance
+     * @category User Interaction
      */
     toggle () {
         const canToggle = this.node().optionsNode().valueIsEditable();
@@ -24,6 +25,7 @@
      * @description Handles the enter key up event
      * @param {Event} event - The key up event
      * @returns {BMOptionNodeTile} Returns this instance
+     * @category Event Handling
      */
     onEnterKeyUp (event) {
         super.onEnterKeyUp(event)
@@ -36,6 +38,7 @@
      * @description Handles the tap complete gesture
      * @param {Object} aGesture - The tap gesture object
      * @returns {BMOptionNodeTile} Returns this instance
+     * @category Event Handling
      */
     onTapComplete (aGesture) {
         super.onTapComplete(aGesture)
@@ -46,6 +49,7 @@
     /**
      * @description Synchronizes the tile with its node
      * @returns {BMOptionNodeTile} Returns this instance
+     * @category Data Synchronization
      */
     syncToNode () {
         super.syncToNode()

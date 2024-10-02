@@ -12,11 +12,13 @@
 (class HomeAssistantObject extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the HomeAssistantObject.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
     /**
      * @member {HomeAssistantGroup|null} group - Reference to HomeAssistantGroup subclass instance.
+     * @category Relationships
      */
     {
       const slot = this.newSlot("group", null)
@@ -25,6 +27,7 @@
 
     /**
      * @member {Object|null} owner - The owner of this HomeAssistantObject.
+     * @category Relationships
      */
     {
       const slot = this.newSlot("owner", null)
@@ -33,6 +36,7 @@
 
     /**
      * @member {string} name - The name of the HomeAssistantObject.
+     * @category Identification
      */
     {
       const slot = this.newSlot("name", "")
@@ -41,6 +45,7 @@
 
     /**
      * @member {Object|null} haJson - The Home Assistant JSON data.
+     * @category Data
      */
     {
       const slot = this.newSlot("haJson", null)
@@ -49,6 +54,7 @@
 
     /**
      * @member {string} jsonString - The JSON string representation of the haJson.
+     * @category Data
      */
     {
       const slot = this.newSlot("jsonString", "");
@@ -69,6 +75,7 @@
 
   /**
    * @description Initializes the HomeAssistantObject.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -79,6 +86,7 @@
   
   /**
    * @description Performs final initialization of the HomeAssistantObject.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -92,6 +100,7 @@
   /**
    * @description Returns the JSON string representation of the haJson.
    * @returns {string} The JSON string.
+   * @category Data
    */
   jsonString () {
     return JSON.stringify(this.haJson(), 2, 2);
@@ -100,6 +109,7 @@
   /**
    * @description Returns the HomeAssistant instance.
    * @returns {HomeAssistant} The HomeAssistant instance.
+   * @category Relationships
    */
   homeAssistant () {
     return this.group().homeAssistant();
@@ -109,6 +119,7 @@
   /**
    * @description Returns the HomeAssistantArea instance.
    * @returns {HomeAssistantArea} The HomeAssistantArea instance.
+   * @category Relationships
    */
   area () {
     return this.firstParentChainNodeOfClass(HomeAssistantArea)
@@ -117,6 +128,7 @@
   /**
    * @description Returns the owner ID.
    * @throws {Error} Subclasses should override this method.
+   * @category Relationships
    */
   ownerId () {
     throw new Error("subclasses should override");
@@ -125,6 +137,7 @@
   /**
    * @description Returns the owner group.
    * @throws {Error} Subclasses should override this method.
+   * @category Relationships
    */
   ownerGroup () {
     throw new Error("subclasses should override");
@@ -133,6 +146,7 @@
   /**
    * @description Finds and returns the owner object.
    * @returns {Object} The owner object.
+   * @category Relationships
    */
   findOwner () {
     return this.ownerGroup().objectWithId(this.ownerId());
@@ -141,6 +155,7 @@
   /**
    * @description Connects this object to its owner.
    * @returns {HomeAssistantObject} This instance.
+   * @category Relationships
    */
   connectObjects () {
     const owner = this.findOwner();
@@ -156,6 +171,7 @@
   /**
    * @description Adds a child node to this object.
    * @param {Object} node - The node to add as a child.
+   * @category Relationships
    */
   addChild (node) {
     this.addSubnode(node);
@@ -163,6 +179,7 @@
 
   /**
    * @description Completes the setup of this object.
+   * @category Initialization
    */
   completeSetup () {
     this.updateTitles();
@@ -170,6 +187,7 @@
 
   /**
    * @description Updates the title and subtitle of this object.
+   * @category Display
    */
   updateTitles () {
     this.setTitle(this.computeShortName());
@@ -179,6 +197,7 @@
   /**
    * @description Returns the ID of this object.
    * @throws {Error} Subclasses should implement this method.
+   * @category Identification
    */
   id () {
     throw new Error("subclasses should implement this method");
@@ -187,6 +206,7 @@
   /**
    * @description Returns the parent chain path as a string.
    * @returns {string} The parent chain path.
+   * @category Relationships
    */
   parentChainPath () {
     return this.parentChainNodes().map(node => {
@@ -203,6 +223,7 @@
   /**
    * @description Computes and returns the short name of this object.
    * @returns {string} The computed short name.
+   * @category Display
    */
   computeShortName () {
     let name = this.name();

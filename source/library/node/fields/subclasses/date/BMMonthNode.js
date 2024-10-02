@@ -13,11 +13,13 @@
     
     /**
      * @description Initializes the prototype slots for the BMMonthNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} value - The month value (1-12).
          * @description Month value starts with 1.
+         * @category Data
          */
         {
             const slot = this.newSlot("value", 1);
@@ -28,6 +30,7 @@
 
     /**
      * @description Initializes the prototype with default settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setNoteIconName("right-arrow")
@@ -48,6 +51,7 @@
      * @description Sets the value of the month.
      * @param {Number} v - The month value to set (1-12).
      * @returns {BMMonthNode} - The current instance.
+     * @category Data Manipulation
      */
     setValue (v) {
         assert(Number.isInteger(v) && v > 0 && v < 13)
@@ -58,6 +62,7 @@
     /**
      * @description Gets the year value from the parent node.
      * @returns {Number} The year value.
+     * @category Data Retrieval
      */
     year () {
         const year = this.parentNode().value()
@@ -67,6 +72,7 @@
     /**
      * @description Calculates the number of days in the current month.
      * @returns {Number} The number of days in the month.
+     * @category Calculation
      */
     daysThisMonth () {
         return new Date(this.year(), this.value() - 1, 0).getDate();
@@ -75,6 +81,7 @@
     /**
      * @description Returns an array of month names.
      * @returns {string[]} An array of month names.
+     * @category Data Retrieval
      */
     monthNames () {
         return ["January", "February", "March", "April", 
@@ -85,6 +92,7 @@
     /**
      * @description Gets the name of the current month.
      * @returns {string} The name of the current month.
+     * @category Data Retrieval
      */
     monthName () {
         return this.monthNames()[this.value()-1]
@@ -93,6 +101,7 @@
     /**
      * @description Gets the title of the node, which is the month name.
      * @returns {string} The month name.
+     * @category Display
      */
     title () {
         return this.monthName()
@@ -101,6 +110,7 @@
     /**
      * @description Returns the month number as a zero-padded string.
      * @returns {string} The zero-padded month number.
+     * @category Formatting
      */
     zeroPaddedMonthNumber () {
         let v = this.value()
@@ -113,6 +123,7 @@
     /**
      * @description Gets the subtitle of the node.
      * @returns {null} Always returns null.
+     * @category Display
      */
     subtitle () {
         //return this.zeroPaddedMonthNumber()
@@ -122,6 +133,7 @@
     /**
      * @description Used by UI tile views to browse into next column.
      * @returns {BMMonthNode} The current instance.
+     * @category Navigation
      */
     nodeTileLink () {
         return this
@@ -129,6 +141,7 @@
 
     /**
      * @description Prepares the node for syncing to view by populating subnodes if necessary.
+     * @category View Synchronization
      */
     prepareToSyncToView () {
         // called after Node is selected

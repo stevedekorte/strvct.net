@@ -15,10 +15,12 @@
     
     /**
      * @description Initializes the prototype slots for the BMStyleSheet class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {CSSStyleSheet} sheetElement - The CSSStyleSheet element.
+         * @category Properties
          */
         {
             const slot = this.newSlot("sheetElement", null);
@@ -29,6 +31,7 @@
     /**
      * @description Gets the href of the stylesheet.
      * @returns {string} The href of the stylesheet.
+     * @category Getters
      */
     href () {
         return this.sheetElement().href
@@ -40,6 +43,7 @@
      * @param {string} property - The CSS property to change.
      * @param {string} value - The new value for the CSS property.
      * @returns {BMStyleSheet} The current BMStyleSheet instance.
+     * @category Manipulation
      */
     changeStylesheetRule (selector, property, value) {
         const sheet = this.sheetElement()
@@ -64,6 +68,7 @@
 
     /**
      * @description Displays the sheetElement in the console.
+     * @category Debugging
      */
     show () {
         console.log("sheetElement:", this.sheetElement())

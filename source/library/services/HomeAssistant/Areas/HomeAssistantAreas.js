@@ -10,12 +10,14 @@
 (class HomeAssistantAreas extends HomeAssistantGroup {
   /**
    * @description Initializes prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
    * @description Initializes the HomeAssistantAreas instance.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -25,6 +27,7 @@
 
   /**
    * @description Performs final initialization steps.
+   * @category Initialization
    */
   finalInit() {
     super.finalInit();
@@ -33,6 +36,7 @@
 
   /**
    * @description Completes the setup process for the HomeAssistantAreas instance.
+   * @category Setup
    */
   completeSetup () {
     super.completeSetup();

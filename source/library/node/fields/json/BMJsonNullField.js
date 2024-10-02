@@ -11,12 +11,14 @@
     /**
      * @description Initializes prototype slots for the class.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype with default values and settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setNodeCanEditTitle(true)
@@ -36,6 +38,7 @@
     /**
      * @description Returns the JSON archive representation of this field.
      * @returns {null} Always returns null for this field type.
+     * @category Serialization
      */
     jsonArchive () {
         return null
@@ -45,6 +48,7 @@
      * @description Sets the JSON representation of this field.
      * @param {*} json - The JSON data to set (ignored in this implementation).
      * @returns {BMJsonNullField} Returns this instance for method chaining.
+     * @category Serialization
      */
     setJson (json) {
         return this
@@ -54,6 +58,7 @@
      * @description Overrides the setValueIsEditable method to always set it to false.
      * @param {boolean} aBool - The boolean value (ignored in this implementation).
      * @returns {BMJsonNullField} Returns this instance for method chaining.
+     * @category Configuration
      */
     setValueIsEditable (aBool) {
         /*

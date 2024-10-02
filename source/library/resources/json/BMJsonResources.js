@@ -12,6 +12,7 @@
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -19,6 +20,7 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -26,6 +28,7 @@
     /**
      * @description Initializes the prototype with default values.
      * @returns {BMJsonResources} The instance of BMJsonResources.
+     * @category Initialization
      */
     initPrototype () {
         this.setTitle("Json");
@@ -36,6 +39,7 @@
     /**
      * @description Sets up the resource classes and subnode classes.
      * @returns {BMJsonResources} The instance of BMJsonResources.
+     * @category Setup
      */
     setup () {
         super.setup();

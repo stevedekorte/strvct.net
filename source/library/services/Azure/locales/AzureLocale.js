@@ -12,12 +12,14 @@
 (class AzureLocale extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the AzureLocale class.
+   * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
    * @description Initializes the prototype for the AzureLocale class.
+   * @category Initialization
    */
   initPrototype () {
     this.setNodeSubtitleIsChildrenSummary(true)
@@ -28,6 +30,7 @@
 
   /**
    * @description Initializes a new instance of the AzureLocale class.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -38,6 +41,7 @@
    * @description Adds a voice to the Azure Locale.
    * @param {Object} aVoice - The voice to be added.
    * @returns {AzureLocale} - The current instance of AzureLocale.
+   * @category Voice Management
    */
   addVoice (aVoice) {
     this.addSubnode(aVoice.duplicate())

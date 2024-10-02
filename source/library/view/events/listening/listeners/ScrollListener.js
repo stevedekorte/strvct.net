@@ -12,6 +12,7 @@
     /**
      * @description Initializes prototype slots for the ScrollListener.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -20,6 +21,7 @@
     /**
      * @description Initializes the ScrollListener.
      * @returns {ScrollListener} The initialized ScrollListener instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -29,6 +31,7 @@
     /**
      * @description Sets up the event listeners for the ScrollListener.
      * @returns {ScrollListener} The ScrollListener instance with listeners set up.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("scroll",   "onScroll");

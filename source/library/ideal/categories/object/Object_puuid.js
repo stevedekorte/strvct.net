@@ -11,6 +11,7 @@
     /**
      * Generates a new UUID.
      * @returns {string} A new UUID.
+     * @category Identification
      */
     static newUuid () {
         const length = 10
@@ -31,6 +32,7 @@
      * Gets the PUUID (Persistent Universally Unique Identifier) of the object.
      * If the object doesn't have a PUUID, it generates a new one.
      * @returns {string} The PUUID of the object.
+     * @category Identification
      */
     puuid () {
         if (!this.hasPuuid()) {
@@ -43,6 +45,7 @@
     /**
      * Checks if the object has a PUUID.
      * @returns {boolean} True if the object has a PUUID, false otherwise.
+     * @category Identification
      */
     hasPuuid () {
         return Object.prototype.hasOwnProperty.call(this, "_puuid");
@@ -53,6 +56,7 @@
      * @param {string} puuid - The PUUID to set.
      * @throws {Error} If the provided PUUID is null or undefined.
      * @returns {Object_puuid} This object.
+     * @category Identification
      */
     setPuuid (puuid) {
         assert(!Type.isNullOrUndefined(puuid));
@@ -67,6 +71,7 @@
     /**
      * Gets the type-specific PUUID of the object.
      * @returns {string} The type-specific PUUID.
+     * @category Identification
      */
     typePuuid () {
         const puuid = this.puuid()
@@ -79,6 +84,7 @@
     /**
      * Gets the type ID of the object.
      * @returns {string} The type ID.
+     * @category Identification
      */
     typeId () {
         return this.typePuuid()
@@ -87,6 +93,7 @@
     /**
      * Gets a debug-friendly type ID of the object.
      * @returns {string} A debug-friendly type ID.
+     * @category Debugging
      */
     debugTypeId () {
         const puuid = this.puuid().substr(0,3)
@@ -100,6 +107,7 @@
     /**
      * Gets the spacer used in debug type IDs.
      * @returns {string} The debug type ID spacer.
+     * @category Debugging
      */
     debugTypeIdSpacer () {
         return " -> "

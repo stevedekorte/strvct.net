@@ -16,6 +16,7 @@
   initPrototypeSlots () {
     /**
      * @member {AiRequest} request - The associated request object.
+     * @category Data
      */
     {
       const slot = this.newSlot("request", null);
@@ -29,6 +30,7 @@
 
     /**
      * @member {Class} requestClass - The class of the request object.
+     * @category Data
      */
     {
       const slot = this.newSlot("requestClass", null);
@@ -42,6 +44,7 @@
 
     /**
      * @member {boolean} isResponse - Indicates if this is a response message.
+     * @category Status
      */
     {
       const slot = this.newSlot("isResponse", false);
@@ -53,6 +56,7 @@
 
     /**
      * @member {number} retryCount - The number of retry attempts.
+     * @category Status
      */
     {
       const slot = this.newSlot("retryCount", 0);
@@ -64,6 +68,7 @@
 
     /**
      * @member {string} summaryMessage - A summary of the message.
+     * @category Data
      */
     {
       const slot = this.newSlot("summaryMessage", null);
@@ -74,6 +79,7 @@
 
     /**
      * @member {number} temperature - The temperature parameter for AI generation.
+     * @category Configuration
      */
     {
       // See: https://aipromptskit.com/openai-temperature-parameter/
@@ -86,6 +92,7 @@
 
     /**
      * @member {number} topP - The top_p parameter for AI generation.
+     * @category Configuration
      */
     {
       // See: https://aipromptskit.com/openai-temperature-parameter/
@@ -98,6 +105,7 @@
 
     /**
      * @member {Promise} completionPromise - A promise that resolves when the response is complete.
+     * @category Async
      */
     {
       const slot = this.newSlot("completionPromise", null);
@@ -111,6 +119,7 @@
   /**
    * Initializes the AiResponseMessage instance.
 
+   * @category Initialization
    */
   init () {
     super.init();
@@ -125,6 +134,7 @@
   /**
    * Performs final initialization of the AiResponseMessage instance.
 
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -138,6 +148,7 @@
    * Gets the request class from the parent chain.
 
    * @returns {Class} The request class.
+   * @category Data
    */
   requestClass () {
     const node = this.firstParentChainNodeThatRespondsTo("chatRequestClass");
@@ -148,6 +159,7 @@
    * Checks if this is a response message.
 
    * @returns {boolean} True if this is a response message.
+   * @category Status
    */
   isResponse () {
     return true;
@@ -163,6 +175,7 @@
    * Checks if the value is editable.
 
    * @returns {boolean} Always returns false for response messages.
+   * @category Status
    */
   valueIsEditable () {
     return false;
@@ -172,6 +185,7 @@
    * Gets the AI speaker name.
 
    * @returns {string} The AI speaker name.
+   * @category Data
    */
   aiSpeakerName () {
     return "OpenAI"
@@ -181,6 +195,7 @@
    * Throws an error as send should not be called on a response.
 
    * @throws {Error} Always throws an error.
+   * @category Error Handling
    */
   send () {
     throw new Error("shouldn't call send on a response");
@@ -191,6 +206,7 @@
    * Throws an error as requestResponse should not be called on a response.
 
    * @throws {Error} Always throws an error.
+   * @category Error Handling
    */
   requestResponse () {
     throw new Error("shouldn't call requestResponse on a response");
@@ -200,6 +216,7 @@
    * Gets the chat model from the conversation.
 
    * @returns {Object} The chat model.
+   * @category Data
    */
   chatModel () {
     return this.conversation().chatModel()
@@ -209,6 +226,7 @@
    * Gets the service from the conversation.
 
    * @returns {Object} The service.
+   * @category Data
    */
   service () {
     return this.conversation().service()
@@ -218,6 +236,7 @@
    * Gets the API key from the service.
 
    * @returns {string} The API key.
+   * @category Data
    */
   apiKey () {
     return this.service().apiKey()
@@ -227,6 +246,7 @@
    * Makes a new request and starts streaming the response.
 
    * @returns {AiResponseMessage} This instance.
+   * @category Communication
    */
   makeRequest () {
     this.setError(null);
@@ -240,6 +260,7 @@
    * Gets the JSON history for the request.
 
    * @returns {Array} An array of message JSON objects.
+   * @category Data
    */
   jsonHistory () {
     // subclasses can override this to modify the history sent with the request
@@ -255,6 +276,7 @@
    * Creates a new request object.
 
    * @returns {AiRequest} The new request object.
+   * @category Communication
    */
   newRequest () {
     const request = this.requestClass().clone();
@@ -275,6 +297,7 @@
   /**
    * Shows request information.
 
+   * @category Debugging
    */
   showRequestInfo () {
 
@@ -284,6 +307,7 @@
    * Gets the visible previous messages for the AI.
 
    * @returns {Array} An array of visible previous messages.
+   * @category Data
    */
   visiblePreviousMessages () {
     // give conversation a chance to control this
@@ -296,6 +320,7 @@
    * Handles the beginning of a request.
 
    * @param {AiRequest} aRequest - The request object.
+   * @category Event Handling
    */
   onRequestBegin (aRequest) {
 
@@ -305,6 +330,7 @@
    * Handles request errors.
 
    * @param {AiRequest} aRequest - The request object.
+   * @category Error Handling
    */
   onRequestError (aRequest) {
     console.log("ERROR: ", aRequest.error().message);
@@ -324,6 +350,7 @@
    * Gets the value error message.
 
    * @returns {string|null} The error message or null if no error.
+   * @category Error Handling
    */
   valueError () {
     const e = this.error();
@@ -333,6 +360,7 @@
   /**
    * Handles the completion of the response.
 
+   * @category Event Handling
    */
   onComplete () {
     super.onComplete() // sends a delegate message
@@ -344,6 +372,7 @@
    * Handles the completion of a request.
 
    * @param {AiRequest} aRequest - The request object.
+   * @category Event Handling
    */
   onRequestComplete (aRequest) {
    // debugger;
@@ -357,6 +386,7 @@
    * Checks if the content begins with a response tag.
 
    * @returns {boolean} True if the content begins with a response tag.
+   * @category Content Analysis
    */
   beginsWithResponseTag () {
     return this.fullContent().startsWith("<response>");
@@ -366,6 +396,7 @@
    * Checks if the content ends with a response tag.
 
    * @returns {boolean} True if the content ends with a response tag.
+   * @category Content Analysis
    */
   endsWithResponseTag () {
     return this.fullContent().endsWith("</response>");
@@ -375,6 +406,7 @@
    * Handles the start of a stream.
 
    * @param {AiRequest} request - The request object.
+   * @category Event Handling
    */
   onStreamStart (request) {
   }
@@ -384,6 +416,7 @@
 
    * @param {AiRequest} request - The request object.
    * @param {string} newContent - The new content received.
+   * @category Event Handling
    */
   onStreamData (request, newContent) {
     this.setContent(request.fullContent())
@@ -394,6 +427,7 @@
    * Handles the end of a stream.
 
    * @param {AiRequest} request - The request object.
+   * @category Event Handling
    */
   onStreamEnd (request) {
     //debugger;
@@ -405,6 +439,7 @@
   /**
    * Handles value input.
 
+   * @category Event Handling
    */
   onValueInput () {
     this.requestResponse();
@@ -413,6 +448,7 @@
   /**
    * Shuts down the response message.
 
+   * @category Lifecycle
    */
   shutdown () {
     if (this.request()) {
@@ -425,6 +461,7 @@
    * Deletes the response message.
 
    * @returns {*} The result of the parent class's delete method.
+   * @category Lifecycle
    */
   delete () {
     this.shutdown();

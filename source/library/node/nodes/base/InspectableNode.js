@@ -16,10 +16,12 @@
 
     /**
      * @description Initializes the prototype slots for the InspectableNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} nodeCanInspect
+         * @category Inspection
          */
         {
             const slot = this.newSlot("nodeCanInspect", true);
@@ -29,6 +31,7 @@
 
         /**
          * @member {BMNode} nodeInspector
+         * @category Inspection
          */
         {
             const slot = this.newSlot("nodeInspector", null);
@@ -39,6 +42,7 @@
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -48,6 +52,7 @@
     /**
      * @description Gets or creates the node inspector.
      * @returns {BMNode} The node inspector.
+     * @category Inspection
      */
     nodeInspector () {
         if (!this._nodeInspector) {
@@ -60,6 +65,7 @@
     /**
      * @description Initializes the node inspector.
      * @returns {InspectableNode} This instance.
+     * @category Inspection
      */
     initNodeInspector () {  // TODO: merge with setupInspectorFromSlots?
         this.setupInspectorFromSlots()
@@ -69,6 +75,7 @@
     /**
      * @description Sets up the inspector from slots.
      * @returns {InspectableNode} This instance.
+     * @category Inspection
      */
     setupInspectorFromSlots () {
         const slotsMap = this.thisPrototype().allSlotsMap();
@@ -123,6 +130,7 @@
      * @param {string} aPath - The path to create.
      * @param {string} [pathSubnodeType="BMFolderNode"] - The type of subnodes to create.
      * @returns {Array} An array of path nodes.
+     * @category Path
      */
     createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
         const pathNodes = [this];
@@ -162,6 +170,7 @@
      * @description Adds a field to the node.
      * @param {Object} aField - The field to add.
      * @throws {Error} Should not be called directly.
+     * @category Field
      */
     addField (aField) {
         throw new Error("addField shouldn't be called - use BMFieldSetNode")
@@ -171,6 +180,7 @@
     /**
      * @description Gets the node tile link.
      * @returns {InspectableNode} This instance.
+     * @category UI
      */
     nodeTileLink () {
         // used by UI tile views to browse into next column
@@ -197,6 +207,7 @@
     /**
      * @description Gets this node.
      * @returns {InspectableNode} This instance.
+     * @category UI
      */
     thisNode () {
         return this
@@ -205,6 +216,7 @@
     /**
      * @description Gets the node tile link methods.
      * @returns {Array} An array of method names.
+     * @category UI
      */
     nodeTileLinkMethods () {
         return ["thisNode"]
@@ -212,6 +224,7 @@
 
     /**
      * @description Gets the default node tile link method.
+     * @category UI
      */
     defaultNodeTileLinkMethod () {
 
@@ -222,6 +235,7 @@
     /**
      * @description Adds subnode fields for the given slots.
      * @param {Array} slots - An array of slots to add fields for.
+     * @category Field
      */
     addSubnodeFieldsForSlots (slots) {
         slots.forEach(slot => {
@@ -233,6 +247,7 @@
      * @description Adds a subnode field for the given slot.
      * @param {Object} slot - The slot to add a field for.
      * @returns {InspectableNode} This instance.
+     * @category Field
      */
     addSubnodeFieldForSlot (slot) {
         const name = slot.name();
@@ -289,6 +304,7 @@
      * @description Creates an inspector node path.
      * @param {string} aPath - The path to create.
      * @returns {Array} An array of path nodes.
+     * @category Path
      */
     createInspectorNodePath (aPath) {
         const pathNodes = this.createNodePath(aPath);

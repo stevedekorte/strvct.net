@@ -17,6 +17,7 @@
   initPrototypeSlots () {
     /**
      * @member {Object} delegate - Optional reference to service object that owns request.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -25,6 +26,7 @@
 
     /**
      * @member {String} requestId - Unique identifier for the request.
+     * @category Identification
      */
     {
       const slot = this.newSlot("requestId", null);
@@ -33,6 +35,7 @@
 
     /**
      * @member {String} apiUrl - The URL for the OpenAI API endpoint.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("apiUrl", null);
@@ -47,6 +50,7 @@
 
     /**
      * @member {Object} bodyJson - Contains the model choice and messages for the API request.
+     * @category Request Data
      */
     {
       const slot = this.newSlot("bodyJson", null);
@@ -55,6 +59,7 @@
 
     /**
      * @member {String} body - The stringified version of bodyJson.
+     * @category Request Data
      */
     {
       const slot = this.newSlot("body", null); 
@@ -71,6 +76,7 @@
 
     /**
      * @member {Object} fetchRequest - The fetch request object.
+     * @category Networking
      */
     {
       const slot = this.newSlot("fetchRequest", null);
@@ -79,6 +85,7 @@
 
     /**
      * @member {Boolean} isFetchActive - Indicates if a fetch is currently active.
+     * @category State
      */
     {
       const slot = this.newSlot("isFetchActive", false);
@@ -87,6 +94,7 @@
 
     /**
      * @member {Object} fetchAbortController - The AbortController for the fetch request.
+     * @category Networking
      */
     {
       const slot = this.newSlot("fetchAbortController", null);
@@ -95,6 +103,7 @@
 
     /**
      * @member {Error} error - Stores any error that occurs during the request.
+     * @category Error Handling
      */
     {
       const slot = this.newSlot("error", null);
@@ -103,6 +112,7 @@
 
     /**
      * @member {String} status - The current status of the request.
+     * @category State
      */
     {
       const slot = this.newSlot("status", "");
@@ -117,6 +127,7 @@
 
     /**
      * @member {Promise} fetchPromise - The promise for the fetch operation.
+     * @category Networking
      */
     {
       const slot = this.newSlot("fetchPromise", null);
@@ -125,6 +136,7 @@
 
     /**
      * @member {Blob} audioBlob - The audio data received from the API.
+     * @category Response Data
      */
     {
       const slot = this.newSlot("audioBlob", null);
@@ -133,6 +145,7 @@
 
     /**
      * @member {WASound} sound - The WASound object for the received audio.
+     * @category Audio
      */
     {
       const slot = this.newSlot("sound", null);
@@ -145,6 +158,7 @@
 
   /**
    * @description Initializes the OpenAiTtsRequest instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -160,6 +174,7 @@
   /**
    * @description Returns the OpenAI service instance.
    * @returns {OpenAiService} The shared OpenAI service instance.
+   * @category Service
    */
   service () {
     return OpenAiService.shared();
@@ -168,6 +183,7 @@
   /**
    * @description Returns the subtitle for the request, which is the current status.
    * @returns {String} The current status of the request.
+   * @category UI
    */
   subtitle () {
     return this.status();
@@ -177,6 +193,7 @@
    * @description Sets the service object for the request.
    * @param {Object} anObject - The service object to set.
    * @returns {OpenAiTtsRequest} The current instance.
+   * @category Configuration
    */
   setService (anObject) {
     debugger;
@@ -187,6 +204,7 @@
   /**
    * @description Returns the stringified version of the bodyJson.
    * @returns {String} The stringified body of the request.
+   * @category Request Data
    */
   body () {
     return JSON.stringify(this.bodyJson(), 2, 2);
@@ -195,6 +213,7 @@
   /**
    * @description Prepares the request options for the API call.
    * @returns {Object} The request options object.
+   * @category Request Preparation
    */
   requestOptions () {
     const apiKey = this.service().apiKey();
@@ -211,6 +230,7 @@
   /**
    * @description Asserts that the request is valid before sending.
    * @throws {Error} If the API key or URL is missing.
+   * @category Validation
    */
   assertValid () {
     assert(this.service().hasApiKey(), this.type() + " apiKey missing");
@@ -219,6 +239,7 @@
 
   /**
    * @description Logs the request details for debugging.
+   * @category Debugging
    */
   showRequest () {
     this.debugLog(
@@ -234,6 +255,7 @@
 
   /**
    * @description Logs the response details for debugging.
+   * @category Debugging
    */
   showResponse () {
     const json = this.json();
@@ -246,6 +268,7 @@
   /**
    * @description Sends the request to the OpenAI API asynchronously.
    * @returns {Promise<void>}
+   * @category Networking
    */
   async asyncSend () {
     try {
@@ -284,6 +307,7 @@
   /**
    * @description Aborts the current fetch request if it's active.
    * @returns {OpenAiTtsRequest} The current instance.
+   * @category Networking
    */
   abort () {
     if (this.isFetchActive()) {
@@ -299,6 +323,7 @@
   /**
    * @description Shuts down the request by aborting any active fetch.
    * @returns {OpenAiTtsRequest} The current instance.
+   * @category Lifecycle
    */
   shutdown () {
     this.abort();
@@ -308,6 +333,7 @@
   /**
    * @description Handles errors that occur during the request.
    * @param {Error} error - The error that occurred.
+   * @category Error Handling
    */
   onError (error) {
     this.sendDelegate("onRequestError", [this, error]);
@@ -319,6 +345,7 @@
    * @param {String} methodName - The name of the method to call on the delegate.
    * @param {Array} args - The arguments to pass to the delegate method.
    * @returns {Boolean} True if the delegate method was called, false otherwise.
+   * @category Delegation
    */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate()

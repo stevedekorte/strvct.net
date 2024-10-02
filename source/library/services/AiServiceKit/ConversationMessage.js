@@ -19,6 +19,7 @@
 
     /**
      * @member {String} key - The key of the message.
+     * @category Data
      */
     {
       const slot = this.overrideSlot("key");
@@ -29,6 +30,7 @@
 
     /**
      * @member {String} value - The value or content of the message.
+     * @category Data
      */
     {
       const slot = this.overrideSlot("value");
@@ -41,6 +43,7 @@
 
     /**
      * @member {Conversation} conversation - The conversation this message belongs to.
+     * @category Relationship
      */
     {
       const slot = this.newSlot("conversation", null);
@@ -51,6 +54,7 @@
 
     /**
      * @member {String} messageId - The unique identifier of the message.
+     * @category Identification
      */
     {
       const slot = this.newSlot("messageId", null);
@@ -63,6 +67,7 @@
 
     /**
      * @member {String} senderId - The identifier of the sender.
+     * @category Identification
      */
     {
       const slot = this.newSlot("senderId", null);
@@ -76,6 +81,7 @@
 
     /**
      * @member {String} inReplyToMessageId - The identifier of the message this is replying to.
+     * @category Relationship
      */
     {
       const slot = this.newSlot("inReplyToMessageId", null);
@@ -90,6 +96,7 @@
 
     /**
      * @member {Number} timestamp - The timestamp of the message.
+     * @category Metadata
      */
     {
       const slot = this.newSlot("timestamp", null);
@@ -111,6 +118,7 @@
 
     /**
      * @member {Boolean} isComplete - Indicates if the message is complete.
+     * @category State
      */
     {
       const slot = this.newSlot("isComplete", false);
@@ -125,6 +133,7 @@
 
     /**
      * @member {Error} error - Any error associated with the message.
+     * @category Error Handling
      */
     {
       const slot = this.newSlot("error", null);
@@ -135,6 +144,7 @@
 
     /**
      * @member {Boolean} isVisibleToUser - Indicates if the message is visible to the user.
+     * @category UI
      */
     {
       const slot = this.newSlot("isVisibleToUser", true);
@@ -147,6 +157,7 @@
 
     /**
      * @member {Object} delegate - The delegate object for the message.
+     * @category Delegate
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -157,6 +168,7 @@
 
     /**
      * @member {Action} deleteAction - The action to delete the message.
+     * @category Action
      */
     {
       const slot = this.newSlot("deleteAction", null);
@@ -171,6 +183,7 @@
 
     /**
      * @member {Action} deleteFollowingMessagesAction - The action to delete following messages.
+     * @category Action
      */
     {
       const slot = this.newSlot("deleteFollowingMessagesAction", null);
@@ -211,6 +224,7 @@
   /**
    * Create a message ID if it doesn't exist.
 
+   * @category Initialization
    */
   createIdIfAbsent () {
     if (!this.messageId()) {
@@ -222,6 +236,7 @@
    * Get the message this message is replying to.
 
    * @returns {ConversationMessage|null} The message being replied to, or null if none.
+   * @category Relationship
    */
   inReplyToMessage () {
     const id = this.inReplyToMessageId();
@@ -235,6 +250,7 @@
    * Get the replies to this message.
 
    * @returns {Array} An array of messages that are replies to this message.
+   * @category Relationship
    */
   replies () {
     const mid = this.messageId()
@@ -246,6 +262,7 @@
 
    * @param {*} oldValue - The old value of isComplete.
    * @param {*} newValue - The new value of isComplete.
+   * @category State
    */
   didUpdateSlotIsComplete (oldValue, newValue) {
     //debugger;
@@ -257,6 +274,7 @@
   /**
    * Handle completion of the message.
 
+   * @category State
    */
   onComplete () {
     // to be overridden by subclasses
@@ -267,6 +285,7 @@
    * Check if the value is editable.
 
    * @returns {Boolean} True if the value is editable, false otherwise.
+   * @category UI
    */
   valueIsEditable () {
     debugger;
@@ -277,6 +296,7 @@
    * Set whether to send in conversation.
 
    * @param {*} v - The value to set.
+   * @category UI
    */
   setSendInConversation (v) {
     debugger;
@@ -286,6 +306,7 @@
    * Check if the value is editable.
 
    * @returns {Boolean} Always returns true.
+   * @category UI
    */
   valueIsEditable () {
     return true
@@ -295,6 +316,7 @@
    * Get the content of the message.
 
    * @returns {String} The content of the message.
+   * @category Data
    */
   content () {
     return this.value()
@@ -305,6 +327,7 @@
 
    * @param {String} s - The value to set.
    * @returns {ConversationMessage} The ConversationMessage instance.
+   * @category Data
    */
   setValue (s) {
     super.setValue(s)
@@ -317,6 +340,7 @@
 
    * @param {String} s - The content to set.
    * @returns {ConversationMessage} The ConversationMessage instance.
+   * @category Data
    */
   setContent (s) {
     this.setValue(s)
@@ -328,6 +352,7 @@
    * Get the subtitle of the message.
 
    * @returns {String} The subtitle of the message.
+   * @category UI
    */
   subtitle () {
     let s = this.content()
@@ -342,6 +367,7 @@
    * Get the speaker name.
 
    * @returns {String} The speaker name.
+   * @category Data
    */
   speakerName () {
     return this.key()
@@ -352,6 +378,7 @@
 
    * @param {String} s - The speaker name to set.
    * @returns {ConversationMessage} The ConversationMessage instance.
+   * @category Data
    */
   setSpeakerName (s) {
     return this.setKey(s)
@@ -361,6 +388,7 @@
    * Get visible previous messages.
 
    * @returns {Array} An array of visible previous messages.
+   * @category Relationship
    */
   visiblePreviousMessages () {
     // subclasses should override for different behaviors
@@ -371,6 +399,7 @@
    * Get previous messages.
 
    * @returns {Array} An array of previous messages.
+   * @category Relationship
    */
   previousMessages () {
     const msgs = this.conversation().messages();
@@ -382,6 +411,7 @@
    * Get previous messages including this message.
 
    * @returns {Array} An array of previous messages including this message.
+   * @category Relationship
    */
   previousMessagesIncludingSelf () {
     const messages = this.previousMessages();
@@ -393,6 +423,7 @@
    * Get the previous message.
 
    * @returns {ConversationMessage|null} The previous message or null if none.
+   * @category Relationship
    */
   previousMessage () {
     const messages = this.conversation().messages()
@@ -407,6 +438,7 @@
    * Get following messages.
 
    * @returns {Array} An array of following messages.
+   * @category Relationship
    */
   followingMessages () {
     return this.conversation().messages().after(this);
@@ -416,6 +448,7 @@
    * Get following messages including this message.
 
    * @returns {Array} An array of following messages including this message.
+   * @category Relationship
    */
   followingMessagesIncludingSelf () {
     const messages = this.followingMessages();
@@ -427,6 +460,7 @@
    * Delete following messages.
 
    * @returns {ConversationMessage} The ConversationMessage instance.
+   * @category Action
    */
   deleteFollowingMessages () {
     const messages = this.followingMessages();
@@ -437,6 +471,7 @@
   /**
    * Send the message.
 
+   * @category Action
    */
   send () {
   }
@@ -445,6 +480,7 @@
    * Get the value error.
 
    * @returns {String|null} The error message or null if no error.
+   * @category Error Handling
    */
   valueError () {
     const e = this.error()
@@ -454,6 +490,7 @@
   /**
    * Handle value input.
 
+   * @category UI
    */
   onValueInput () {
     this.requestResponse()
@@ -463,6 +500,7 @@
    * Get the delegate.
 
    * @returns {Object} The delegate object.
+   * @category Delegate
    */
   delegate () {
     if (!this._delegate) {
@@ -477,6 +515,7 @@
    * @param {String} methodName - The name of the method to call.
    * @param {Array} args - The arguments to pass to the method.
    * @returns {Boolean} True if the method was called successfully, false otherwise.
+   * @category Delegate
    */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate()
@@ -493,6 +532,7 @@
   /**
    * Clean up if the message is incomplete.
 
+   * @category Maintenance
    */
   cleanupIfIncomplete () {
     // called on startup to clean up any incomplete messages

@@ -48,6 +48,7 @@
   
     /**
      * @description Initializes the prototype properties for the HeaderNode.
+     * @category Initialization
      */
     initPrototype() {
         this.setNodeCanReorderSubnodes(true);
@@ -63,6 +64,7 @@
 
     /**
      * @description Handles the tap event on the node by focusing and expanding the breadcrumb subnode.
+     * @category Event Handling
      */
     onTapOfNode() {
         super.onTapOfNode();

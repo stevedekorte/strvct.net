@@ -16,6 +16,7 @@
   /**
    * @static
    * @description Initializes the class as a singleton.
+   * @category Initialization
    */
   static initClass () {
     this.setIsSingleton(true);
@@ -23,10 +24,12 @@
   
   /**
    * @description Initializes the prototype slots.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {Promise} frameReadyPromise
+     * @category State
      */
     {
       const slot = this.newSlot("frameReadyPromise", null);
@@ -38,6 +41,7 @@
 
   /**
    * @description Initializes the instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -52,6 +56,7 @@
   /**
    * @description Returns the frame ready promise, creating it if it doesn't exist.
    * @returns {Promise}
+   * @category State
    */
   frameReadyPromise () {
     if (!this._frameReadyPromise) {
@@ -64,6 +69,7 @@
   /**
    * @description Sets up the YouTube IFrame Player API.
    * @private
+   * @category Setup
    */
   setup () {
       // Load the YouTube IFrame Player API asynchronously
@@ -77,6 +83,7 @@
   /**
    * @description Called when the YouTube API is loaded.
    * @private
+   * @category Callback
    */
   onLoaded () {
     this.debugLog("onLoaded()");
@@ -92,6 +99,7 @@
  * @param {*} arg1
  * @param {*} arg2
  * @param {*} arg3
+ * @category Callback
  */
 getGlobalThis().onYouTubeIframeAPIReady = function (arg1, arg2, arg3) {
   YouTubePlayerFrame.shared().onLoaded();

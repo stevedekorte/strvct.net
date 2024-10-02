@@ -10,11 +10,13 @@
     
     /**
      * Initializes the prototype slots for the BMTextNodeTile.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {TextField} textView - The text view for displaying and editing text.
+             * @category UI Components
              */
             const slot = this.newSlot("textView", null);
             slot.setSlotType("TextField");
@@ -24,6 +26,7 @@
     /**
      * Initializes the BMTextNodeTile.
      * @returns {BMTextNodeTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -57,6 +60,7 @@
     /**
      * Calculates the desired width of the tile.
      * @returns {number} The desired width.
+     * @category Layout
      */
     desiredWidth () {
         return this.calcWidth()
@@ -66,6 +70,7 @@
 
     /**
      * Handles input events.
+     * @category Event Handling
      */
     didInput () {
         this.scheduleSyncToNode();
@@ -76,6 +81,7 @@
     /**
      * Synchronizes the tile's content to the node.
      * @returns {BMTextNodeTile} The current instance.
+     * @category Data Synchronization
      */
     syncToNode () {   
         //console.log("syncToNode")
@@ -87,6 +93,7 @@
     /**
      * Synchronizes the tile's content from the node.
      * @returns {BMTextNodeTile} The current instance.
+     * @category Data Synchronization
      */
     syncFromNode () {
         const node = this.node()
@@ -103,6 +110,7 @@
     /**
      * Applies styles to the tile.
      * @returns {BMTextNodeTile} The current instance.
+     * @category Styling
      */
     applyStyles () {
         console.log(this.type() + " themeClassName ", this.node().themeClassName())

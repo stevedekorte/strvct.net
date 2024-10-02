@@ -12,10 +12,12 @@
     
     /**
      * @description Initializes the prototype slots for the CloseButton.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} isEnabled - Indicates whether the button is enabled.
+         * @category State
          */
         {
             const slot = this.newSlot("isEnabled", true);
@@ -23,6 +25,7 @@
         }
         /**
          * @member {SvgIconView} iconView - The icon view for the close button.
+         * @category View
          */
         {
             const slot = this.newSlot("iconView", null);
@@ -33,6 +36,7 @@
     /**
      * @description Initializes the CloseButton instance.
      * @returns {CloseButton} The initialized CloseButton instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -68,6 +72,7 @@
      * @description Sets the icon name for the button.
      * @param {string} aString - The name of the icon to set.
      * @returns {CloseButton} The CloseButton instance.
+     * @category View
      */
     setIconName (aString) {
         this.iconView().setIconName(aString)
@@ -80,6 +85,7 @@
      * @description Sets the enabled state of the button.
      * @param {boolean} aBool - The enabled state to set.
      * @returns {CloseButton} The CloseButton instance.
+     * @category State
      */
     setIsEnabled (aBool) {
         if (this._isEnabled !== aBool) {
@@ -93,6 +99,7 @@
     /**
      * @description Synchronizes the enabled state of the button.
      * @returns {CloseButton} The CloseButton instance.
+     * @category State
      */
     syncEnabled () {
         //this.setIsDisplayHidden(!this.isEnabled())
@@ -103,6 +110,7 @@
      * @description Handles the tap complete event.
      * @param {Object} aGesture - The gesture object.
      * @returns {boolean} False to indicate the event has been handled.
+     * @category Event
      */
     onTapComplete (aGesture) {
         //this.debugLog(".onTapComplete()")

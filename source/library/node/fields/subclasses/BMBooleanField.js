@@ -12,6 +12,7 @@
      * @static
      * @description Indicates if this field is available as a node primitive.
      * @returns {boolean} Always returns true.
+     * @category Metadata
      */
     static availableAsNodePrimitive () {
         return true
@@ -19,11 +20,13 @@
     
     /**
      * @description Initializes the prototype slots for this field.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} value
          * @description The boolean value of the field.
+         * @category Data
          */
         {
             const slot = this.overrideSlot("value", null);
@@ -34,6 +37,7 @@
         /**
          * @member {String} unsetVisibleValue
          * @description The visible value when the field is unset.
+         * @category Display
          */
         {
             const slot = this.newSlot("unsetVisibleValue", "unset");
@@ -43,6 +47,7 @@
 
     /**
      * @description Initializes the prototype of the field.
+     * @category Initialization
      */
     initPrototype () {
         this.setKeyIsEditable(false);
@@ -52,6 +57,7 @@
     /**
      * @description Checks if the current value is a boolean.
      * @returns {boolean} True if the value is a boolean, false otherwise.
+     * @category Validation
      */
     valueIsBool () {
         const b = this.value();
@@ -61,6 +67,7 @@
     /**
      * @description Validates the current value of the field.
      * @returns {boolean} True if the value is valid, false otherwise.
+     * @category Validation
      */
     validate () {
         const isValid = this.valueIsBool();
@@ -83,6 +90,7 @@
      * @description Normalizes the given value to a boolean.
      * @param {*} v - The value to normalize.
      * @returns {boolean} The normalized boolean value.
+     * @category Data Processing
      */
     normalizeThisValue (v) {
 	    if (v === true || v === "t" || v === "true" | v === 1) { 
@@ -94,6 +102,7 @@
     /**
      * @description Called after the node is updated.
      * @returns {*} The result of the parent class's didUpdateNode method.
+     * @category Lifecycle
      */
     didUpdateNode () {
         assert(this.hasDoneInit());
@@ -104,6 +113,7 @@
     /**
      * @description Creates a JSON archive of the field's value.
      * @returns {boolean} The boolean value of the field.
+     * @category Serialization
      */
     jsonArchive () {
         return this.value() ? true : false;
@@ -113,6 +123,7 @@
      * @description Sets the field's value from a JSON representation.
      * @param {boolean} json - The JSON boolean value to set.
      * @returns {BMBooleanField} This instance for method chaining.
+     * @category Serialization
      */
     setJson (json) {
         assert(Type.isBoolean(json));

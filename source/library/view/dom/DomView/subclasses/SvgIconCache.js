@@ -14,6 +14,7 @@
     /**
      * @static
      * @description Initializes the class as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -21,10 +22,12 @@
 
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Map} hashToElementMap - Map to store hash to element mappings.
+         * @category Storage
          */
         {
             const slot = this.newSlot("hashToElementMap", new Map());
@@ -32,6 +35,7 @@
         }
         /**
          * @member {Element} svgCacheElement - The SVG cache element.
+         * @category Storage
          */
         {
             const slot = this.newSlot("svgCacheElement", null);
@@ -43,6 +47,7 @@
      * @description Generates an SVG ID for a given string.
      * @param {string} s - The input string.
      * @returns {string} The generated SVG ID.
+     * @category Utility
      */
     svgIdForString (s) {
         return "SvgId-" + s.hashCode();
@@ -52,6 +57,7 @@
      * @description Generates an SVG content ID for a given string.
      * @param {string} s - The input string.
      * @returns {string} The generated SVG content ID.
+     * @category Utility
      */
     svgContentIdForString (s) {
         return "SvgContentId-" + s.hashCode();
@@ -61,6 +67,7 @@
      * @description Caches an SVG for a given string if it's not already cached.
      * @param {string} s - The input string.
      * @returns {Element} The cached SVG element.
+     * @category Caching
      */
     cacheSvgForStringIfNeeded (s) {
         const map = this.hashToElementMap()
@@ -79,6 +86,7 @@
     /**
      * @description Gets or creates the SVG cache element.
      * @returns {Element} The SVG cache element.
+     * @category Storage
      */
     svgCacheElement () {
         if (!this._svgCacheElement) {
@@ -95,6 +103,7 @@
      * @description Creates an SVG element from an SVG string.
      * @param {string} s - The SVG string.
      * @returns {Element} The created SVG element.
+     * @category Creation
      */
     elementForSvgString (s) {
         // NOTES: 
@@ -130,6 +139,7 @@
      * @description Creates a new link element for an SVG string.
      * @param {string} s - The SVG string.
      * @returns {Element} The created SVG link element.
+     * @category Creation
      */
     newLinkElementForSvgString (s) {
         const cachedSvg = this.cacheSvgForStringIfNeeded(s)
@@ -165,6 +175,7 @@
     /**
      * @description Returns a map of variable attributes for SVG elements.
      * @returns {Map} The variable attribute map.
+     * @category Configuration
      */
     variableAttributeMap () {
         const m = new Map()

@@ -13,12 +13,14 @@
     
     /**
      * @description Initializes the prototype slots for the BMThemeFolder class.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype of the BMThemeFolder class.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -34,6 +36,7 @@
     /**
      * @description Initializes a new instance of the BMThemeFolder class.
      * @returns {BMThemeFolder} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -44,6 +47,7 @@
     /**
      * @description Generates a style map for the theme folder.
      * @returns {Map} A map containing the styles for the theme folder and its subnodes.
+     * @category Styling
      */
     styleMap () {
         // this should be the same implementation of styleMap() as BMThemeClass

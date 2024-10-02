@@ -18,6 +18,7 @@
     /**
      * @static
      * @description Initializes the class as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -25,10 +26,12 @@
     
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {WindowListener} windowListener
+         * @category Window Management
          */
         {
             const slot = this.newSlot("windowListener", null);
@@ -37,6 +40,7 @@
 
         /**
          * @member {Range} storedSelectionRange
+         * @category Selection Management
          */
         {
             const slot = this.newSlot("storedSelectionRange", null);
@@ -47,6 +51,7 @@
     /**
      * @description Initializes the WebBrowserWindow instance.
      * @returns {WebBrowserWindow} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -57,6 +62,7 @@
     /**
      * @description Sets up the window listener.
      * @returns {WebBrowserWindow} The current instance.
+     * @category Window Management
      */
     setupWindowListener () {
         this.setWindowListener(WindowListener.clone().setDelegate(this).setIsListening(true))
@@ -66,6 +72,7 @@
     /**
      * @description Gets the shared DocumentBody instance.
      * @returns {DocumentBody} The shared DocumentBody instance.
+     * @category Document Management
      */
     documentBody () {
         return DocumentBody.shared()
@@ -74,6 +81,7 @@
     /**
      * @description Gets the width of the window.
      * @returns {number} The width of the window.
+     * @category Window Management
      */
     width () {
         return window.innerWidth
@@ -82,6 +90,7 @@
     /**
      * @description Gets the height of the window.
      * @returns {number} The height of the window.
+     * @category Window Management
      */
     height () {
         return window.innerHeight
@@ -90,6 +99,7 @@
     /**
      * @description Calculates the aspect ratio of the window.
      * @returns {number} The aspect ratio of the window.
+     * @category Window Management
      */
     aspectRatio () {
         return this.width() / this.height()
@@ -99,6 +109,7 @@
      * @description Sets the width of the window (unavailable in browser).
      * @param {number} w - The width to set.
      * @returns {WebBrowserWindow} The current instance.
+     * @category Window Management
      */
     setWidth (w) {
         console.warn("warning: WebBrowserWindow.setWidth() unavailable in browser")
@@ -109,6 +120,7 @@
      * @description Sets the height of the window (unavailable in browser).
      * @param {number} h - The height to set.
      * @returns {WebBrowserWindow} The current instance.
+     * @category Window Management
      */
     setHeight (h) {
         console.warn("warning: WebBrowserWindow.setHeight() unavailable in browser")
@@ -117,6 +129,7 @@
     
     /**
      * @description Logs the window size to the console.
+     * @category Debugging
      */
     show () {
         console.log("Window size " + this.width() + "x" + this.height())
@@ -124,6 +137,7 @@
 
     /**
      * @description Logs agent information to the console.
+     * @category Debugging
      */
     showAgent () {
         console.log("navigator.userAgent = ", navigator.userAgent);
@@ -137,6 +151,7 @@
     /**
      * @description Gets an array of mobile device names.
      * @returns {string[]} An array of mobile device names.
+     * @category Device Detection
      */
     mobileNames () {
         return ["android", "webos", "iphone", "ipad", "ipod", "blackBerry", "windows phone"]  
@@ -145,6 +160,7 @@
     /**
      * @description Gets the user agent string.
      * @returns {string} The user agent string.
+     * @category Device Detection
      */
     agent () {
         return navigator.userAgent.toLowerCase()
@@ -153,6 +169,7 @@
     /**
      * @description Gets the vendor string.
      * @returns {string} The vendor string.
+     * @category Device Detection
      */
     vendor () {
         return navigator.vendor.toLowerCase()
@@ -161,6 +178,7 @@
     /**
      * @description Checks if the agent is Firefox.
      * @returns {boolean} True if the agent is Firefox, false otherwise.
+     * @category Device Detection
      */
     agentIsFirefox () {
         const agent = navigator.userAgent;
@@ -170,6 +188,7 @@
     /**
      * @description Checks if the agent is Safari.
      * @returns {boolean} True if the agent is Safari, false otherwise.
+     * @category Device Detection
      */
     agentIsSafari () {
         const vendor = navigator.vendor;
@@ -186,6 +205,7 @@
     /**
      * @description Checks if the agent is Chrome.
      * @returns {boolean} True if the agent is Chrome, false otherwise.
+     * @category Device Detection
      */
     agentIsChrome () {
         const isChrome = Boolean(window.chrome)
@@ -195,6 +215,7 @@
     /**
      * @description Checks if the device is a mobile device.
      * @returns {boolean} True if the device is mobile, false otherwise.
+     * @category Device Detection
      */
     isOnMobile () { 
         const agent = this.agent();
@@ -205,6 +226,7 @@
     /**
      * @description Checks if the device is a touch device.
      * @returns {boolean} True if the device is a touch device, false otherwise.
+     * @category Device Detection
      */
     isTouchDevice () {
         let result = false 
@@ -216,6 +238,7 @@
     /**
      * @description Gets the URL hash.
      * @returns {string} The decoded URL hash.
+     * @category URL Management
      */
     urlHash () {
         return decodeURI(window.location.hash.substr(1))
@@ -225,6 +248,7 @@
      * @description Sets the URL hash.
      * @param {string} aString - The string to set as the URL hash.
      * @returns {WebBrowserWindow} The current instance.
+     * @category URL Management
      */
     setUrlHash (aString) {
         if (this.urlHash() !== aString) {
@@ -236,6 +260,7 @@
     /**
      * @description Gets a description dictionary of the browser window.
      * @returns {Object} A dictionary containing agent, size, and isOnMobile information.
+     * @category Debugging
      */
     descriptionDict () {
         const dict = {
@@ -249,6 +274,7 @@
     /**
      * @description Gets the full page URL including path and query.
      * @returns {URL} The full page URL.
+     * @category URL Management
      */
     pageUrl () {
         return new URL(window.location.href)
@@ -257,6 +283,7 @@
     /**
      * @description Gets the root URL without path or query.
      * @returns {string} The root URL.
+     * @category URL Management
      */
     rootUrl () {
         const urlWithoutPathOrQuery = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
@@ -266,6 +293,7 @@
     /**
      * @description Gets the base URL without parameters or hash.
      * @returns {string} The base URL.
+     * @category URL Management
      */
     baseUrl () {
         const url = new URL(window.location.href);
@@ -281,6 +309,7 @@
     /**
      * @description Gets the URL hostname.
      * @returns {string} The URL hostname.
+     * @category URL Management
      */
     urlHostname () {
         const parser = document.createElement("a")
@@ -296,6 +325,7 @@
      * @description Sets the document title.
      * @param {string} aName - The title to set.
      * @returns {WebBrowserWindow} The current instance.
+     * @category Document Management
      */
     setTitle (aName) {
         document.title = aName
@@ -305,6 +335,7 @@
     /**
      * @description Gets the document title.
      * @returns {string} The document title.
+     * @category Document Management
      */
     title () {
         return document.title
@@ -313,6 +344,7 @@
     /**
      * @description Gets the active DOM view.
      * @returns {DOMView|null} The active DOM view or null if not found.
+     * @category DOM Management
      */
     activeDomView () {
         const e = document.activeElement
@@ -325,6 +357,7 @@
     /**
      * @description Handles the document beforeunload event.
      * @param {Event} event - The beforeunload event.
+     * @category Event Handling
      */
     onDocumentBeforeUnload (event) {
         this.postNoteNamed("onDocumentBeforeUnload")
@@ -333,6 +366,7 @@
     /**
      * @description Handles the document unload event.
      * @param {Event} event - The unload event.
+     * @category Event Handling
      */
     onDocumentUnload (event) {
         this.postNoteNamed("onDocumentUnload")
@@ -341,6 +375,7 @@
     /**
      * @description Handles the page show event.
      * @param {Event} event - The page show event.
+     * @category Event Handling
      */
     onPageShow (event) {
         this.postNoteNamed("onPageShow")
@@ -349,6 +384,7 @@
     /**
      * @description Handles the page hide event.
      * @param {Event} event - The page hide event.
+     * @category Event Handling
      */
     onPageHide (event) {
         this.postNoteNamed("onPageHide")
@@ -357,6 +393,7 @@
     /**
      * @description Handles the form submit event.
      * @param {Event} event - The form submit event.
+     * @category Event Handling
      */
     onFormSubmit (event) {
         this.postNoteNamed("onFormSubmit")
@@ -365,6 +402,7 @@
     /**
      * @description Handles the browser online event.
      * @param {Event} event - The online event.
+     * @category Event Handling
      */
     onBrowserOnline (event) {
         this.postNoteNamed("onBrowserOnline")
@@ -373,6 +411,7 @@
     /**
      * @description Handles the browser offline event.
      * @param {Event} event - The offline event.
+     * @category Event Handling
      */
     onBrowserOffline (event) {
         this.postNoteNamed("onBrowserOffline")
@@ -381,6 +420,7 @@
     /**
      * @description Checks if the browser is online.
      * @returns {boolean} True if the browser is online, false otherwise.
+     * @category Network Management
      */
     isOnline () {
         return navigator.onLine
@@ -389,6 +429,7 @@
     /**
      * @description Gets the current selection range.
      * @returns {Range|null} The current selection range or null if not available.
+     * @category Selection Management
      */
     getSelectionRange () {
         if (window.getSelection) {
@@ -406,6 +447,7 @@
      * @description Sets the selection range.
      * @param {Range} range - The range to set as the selection.
      * @returns {WebBrowserWindow} The current instance.
+     * @category Selection Management
      */
     setSelectionRange (range) {
         if (range) {
@@ -425,6 +467,7 @@
     /**
      * @description Stores the current selection range.
      * @returns {boolean} True if a selection range was stored, false otherwise.
+     * @category Selection Management
      */
     storeSelectionRange () {
         const range = this.getSelectionRange();
@@ -439,6 +482,7 @@
     /**
      * @description Restores the stored selection range.
      * @returns {boolean} True if a selection range was restored, false otherwise.
+     * @category Selection Management
      */
     restoreSelectionRange () {
         if (this.storedSelectionRange()) {
@@ -455,6 +499,7 @@
      * @description Safely runs a block while restoring the selection.
      * @param {Function} aBlock - The block to run.
      * @returns {WebBrowserWindow} The current instance.
+     * @category Selection Management
      */
     safelyRunBlockWhileRestoringSelection (aBlock) {
         this.storeSelectionRange()

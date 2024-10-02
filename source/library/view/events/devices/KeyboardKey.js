@@ -14,6 +14,7 @@
     initPrototypeSlots () {
         /**
          * @member {Boolean} isDown - Indicates whether the key is pressed down.
+         * @category State
          */
         {
             const slot = this.newSlot("isDown", false);
@@ -21,6 +22,7 @@
         }
         /**
          * @member {Number} code - The key code.
+         * @category Identification
          */
         {
             const slot = this.newSlot("code", null);
@@ -28,6 +30,7 @@
         }
         /**
          * @member {String} name - The name of the key.
+         * @category Identification
          */
         {
             const slot = this.newSlot("name", "");
@@ -35,6 +38,7 @@
         }
         /**
          * @member {BMKeyboard} keyboard - The keyboard this key belongs to.
+         * @category Relationship
          */
         {
             const slot = this.newSlot("keyboard", null);
@@ -45,6 +49,7 @@
     /**
      * @description Initializes the KeyboardKey.
      * @returns {KeyboardKey} The initialized KeyboardKey instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -56,6 +61,7 @@
      * @description Handles the key down event.
      * @param {Event} event - The key down event.
      * @returns {boolean} Whether the event should propagate.
+     * @category Event Handling
      */
     onKeyDown (event) {
         let shouldPropogate = true
@@ -67,6 +73,7 @@
      * @description Handles the key up event.
      * @param {Event} event - The key up event.
      * @returns {boolean} Whether the event should propagate.
+     * @category Event Handling
      */
     onKeyUp (event) {
         let shouldPropogate = true
@@ -77,6 +84,7 @@
     /**
      * @description Checks if the key is up.
      * @returns {boolean} True if the key is up, false otherwise.
+     * @category State
      */
     isUp () {
         return !this.isDown()
@@ -85,6 +93,7 @@
     /**
      * @description Checks if this is the only key currently pressed down.
      * @returns {boolean} True if this is the only key down, false otherwise.
+     * @category State
      */
     isOnlyKeyDown () {
         return this.isDown() && this.keyboard().currentlyDownKeys().length
@@ -94,6 +103,7 @@
      * @description Checks if the key is alphabetical.
      * @param {Event} event - The keyboard event.
      * @returns {boolean} True if the key is alphabetical, false otherwise.
+     * @category Identification
      */
     isAlphabetical (event) {
         const c = this.code()

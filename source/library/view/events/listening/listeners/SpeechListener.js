@@ -14,6 +14,7 @@
     /**
      * @description Initializes prototype slots.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -21,6 +22,7 @@
     /**
      * @description Initializes the SpeechListener instance.
      * @returns {SpeechListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -31,6 +33,7 @@
     /**
      * @description Sets up event listeners for speech synthesis events.
      * @returns {SpeechListener} The instance with listeners set up.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("boundary", "onBoundary");

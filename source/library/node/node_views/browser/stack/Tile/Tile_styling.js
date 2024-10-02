@@ -13,6 +13,7 @@
      * @param {*} oldValue - The old parent view value.
      * @param {*} newValue - The new parent view value.
      * @returns {Tile_styling} The current instance.
+     * @category View Management
      */
     didUpdateSlotParentView (oldValue, newValue) {
         super.didUpdateSlotParentView(oldValue, newValue)
@@ -27,6 +28,7 @@
      * Sets the background color of the content view.
      * @param {string} s - The background color value.
      * @returns {Tile_styling} The current instance.
+     * @category Styling
      */
     setBackgroundColor (s) {
         this.contentView().setBackgroundColor(s)
@@ -37,6 +39,7 @@
      * Sets the color of the content view.
      * @param {string} s - The color value.
      * @returns {Tile_styling} The current instance.
+     * @category Styling
      */
     setColor (s) {
         this.contentView().setColor(s)
@@ -47,6 +50,7 @@
      * Sets the opacity of the content view.
      * @param {number} v - The opacity value.
      * @returns {Tile_styling} The current instance.
+     * @category Styling
      */
     setOpacity (v) {
         this.contentView().setOpacity(v)

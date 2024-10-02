@@ -10,6 +10,13 @@
 
 //(class JSON_ideal extends JSON {
     
+/**
+ * Counts the number of nodes in a JSON structure.
+ * @param {*} json - The JSON structure to count nodes for.
+ * @returns {number} The total number of nodes in the JSON structure.
+ * @memberof JSON
+ * @category Data Analysis
+ */
 JSON.nodeCount = function (json) {
     let count = 1; // Start with 1 to count the current node
     
@@ -29,6 +36,3 @@ JSON.nodeCount = function (json) {
 }
     
 //}).initThisCategory();
-
-
-

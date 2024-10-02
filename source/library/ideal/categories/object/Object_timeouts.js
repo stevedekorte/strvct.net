@@ -16,6 +16,7 @@
     /**
      * Gets or creates a Map to store timeout names and their corresponding IDs.
      * @returns {Map} A Map of timeout names to timeout IDs.
+     * @category Timeout Management
      */
     timeoutNameToIdMap () { // the name will be the timeoutId if no name is provided
         const slotName = "_timeoutNameToIdMap";
@@ -31,6 +32,7 @@
      * @param {number} msDelay - The delay in milliseconds before the function is executed.
      * @param {string} [optionalName] - An optional name for the timeout.
      * @returns {number} The timeout ID.
+     * @category Timeout Management
      */
     addTimeout (aFunc, msDelay, optionalName) { 
         // if no optionalName given, use the timeoutId for the name,
@@ -57,6 +59,7 @@
      * Removes a named timeout from the timeout map.
      * @param {string} name - The name of the timeout to remove.
      * @returns {Object_timeouts} This object.
+     * @category Timeout Management
      */
     removeTimeoutNamed (name) {
         const tids = this.timeoutNameToIdMap()
@@ -68,6 +71,7 @@
      * Clears a timeout by its ID.
      * @param {number} tid - The timeout ID to clear.
      * @returns {Object_timeouts} This object.
+     * @category Timeout Management
      */
     clearTimeout (tid) { 
         // IMPORTANT: (for now) we assume a given timeouts is either referred to by name or tid, but not both
@@ -81,6 +85,7 @@
      * Clears a named timeout.
      * @param {string} name - The name of the timeout to clear.
      * @returns {Object_timeouts} This object.
+     * @category Timeout Management
      */
     clearTimeoutNamed (name) {
         const tids = this.timeoutNameToIdMap()
@@ -95,6 +100,7 @@
      * Checks if a named timeout exists.
      * @param {string} name - The name of the timeout to check.
      * @returns {boolean} True if the named timeout exists, false otherwise.
+     * @category Timeout Management
      */
     hasTimeoutNamed (name) {
         const tids = this.timeoutNameToIdMap()
@@ -104,6 +110,7 @@
     /**
      * Cancels all timeouts associated with this object.
      * @returns {Object_timeouts} This object.
+     * @category Timeout Management
      */
     cancelAllTimeouts () {
         const tids = this.timeoutNameToIdMap()

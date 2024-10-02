@@ -12,10 +12,12 @@
 (class AzureService extends BMStorableNode {
   /**
    * @description Initializes the prototype slots for the AzureService
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {Array} regionOptions - Options for Azure regions
+     * @category Configuration
      */
     {
       const slot = this.newSlot("regionOptions", []);
@@ -24,6 +26,7 @@
 
     /**
      * @member {string} apiKey - API Key for Azure service
+     * @category Authentication
      */
     {
       const slot = this.newSlot("apiKey", "");
@@ -37,6 +40,7 @@
 
     /**
      * @member {string} region - Server Region for Azure service
+     * @category Configuration
      */
     {
       const slot = this.newSlot("region", "");
@@ -53,6 +57,7 @@
 
     /**
      * @member {AzureSpeakers} speakers - Speakers for Azure service
+     * @category Text-to-Speech
      */
     {
       const slot = this.newSlot("speakers", null);
@@ -64,6 +69,7 @@
 
     /**
      * @member {AzureVoices} voices - Voices for Azure service
+     * @category Text-to-Speech
      */
     {
       const slot = this.newSlot("voices", null);
@@ -79,6 +85,7 @@
 
   /**
    * @description Initializes the AzureService
+   * @category Initialization
    */
   init() {
     super.init();
@@ -89,6 +96,7 @@
   /**
    * @description Returns an array of valid Azure regions
    * @returns {Array} Array of valid Azure regions
+   * @category Configuration
    */
   validRegions () {
     return [
@@ -111,6 +119,7 @@
    * @description Validates the API key
    * @param {string} s - The API key to validate
    * @returns {boolean} True if the key is valid, false otherwise
+   * @category Authentication
    */
   validateKey(s) {
     if (!s) {
@@ -123,6 +132,7 @@
    * @description Validates the region
    * @param {string} s - The region to validate
    * @returns {boolean} True if the region is valid, false otherwise
+   * @category Configuration
    */
   validateRegion(s) {
     if (!s) {
@@ -138,6 +148,7 @@
   /**
    * @description Checks if the service has API access
    * @returns {boolean} True if the service has API access, false otherwise
+   * @category Authentication
    */
   hasApiAccess() {
     return (

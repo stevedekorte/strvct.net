@@ -11,12 +11,14 @@
     
     /**
      * @description Initializes prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
         this.setKeyIsEditable(false)
@@ -38,6 +40,7 @@
      * @param {string} methodName - The name of the method to call on the value object.
      * @param {*} defaultReturnValue - The default return value if the value object is null or undefined.
      * @returns {*} The result of calling the method on the value object, or the default return value.
+     * @category Utility
      */
     proxyGetter(methodName, defaultReturnValue = "") {
         const v = this.value()
@@ -47,6 +50,7 @@
     /**
      * @description Gets the title of the value object.
      * @returns {string} The title of the value object.
+     * @category Data Access
      */
     title () {
         const title = this.proxyGetter("title")
@@ -56,6 +60,7 @@
     /**
      * @description Gets the subtitle of the value object.
      * @returns {string} The subtitle of the value object.
+     * @category Data Access
      */
     subtitle () {
         return this.proxyGetter("subtitle")
@@ -64,6 +69,7 @@
     /**
      * @description Gets the note of the value object.
      * @returns {string} The note of the value object.
+     * @category Data Access
      */
     note () {
         return this.proxyGetter("note")
@@ -72,6 +78,7 @@
     /**
      * @description Gets the node tile link.
      * @returns {*} The value of the field.
+     * @category Data Access
      */
     nodeTileLink () {
         return this.value()
@@ -80,6 +87,7 @@
     /**
      * @description Gets the JSON archive of the value object.
      * @returns {*} The JSON archive of the value object, or undefined if not available.
+     * @category Data Access
      */
     jsonArchive () {
         if (this.value() && this.value().jsonArchive) {

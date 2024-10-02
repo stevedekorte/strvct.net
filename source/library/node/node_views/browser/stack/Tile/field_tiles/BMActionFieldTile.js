@@ -13,6 +13,7 @@
     initPrototypeSlots () {
         /**
          * @member {ButtonView} buttonView - The button view for this action field tile.
+         * @category UI
          */
         {
             const slot = this.newSlot("buttonView", null);
@@ -23,6 +24,7 @@
     /**
      * @description Initializes the BMActionFieldTile.
      * @returns {BMActionFieldTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -43,6 +45,7 @@
     /**
      * @description Updates the subviews of the BMActionFieldTile.
      * @returns {BMActionFieldTile} The updated instance.
+     * @category UI
      */
     updateSubviews () {	
         super.updateSubviews()
@@ -77,6 +80,7 @@
      * @description Handles the enter key up event.
      * @param {Event} event - The key up event.
      * @returns {boolean} Always returns false.
+     * @category Event Handling
      */
     onEnterKeyUp (event) {
         this.doAction()
@@ -86,6 +90,7 @@
     /**
      * @description Performs the action associated with this tile.
      * @returns {BMActionFieldTile} The instance.
+     * @category Action
      */
     doAction () {
         if (this.node().isEnabled()) { // check in node field?
@@ -97,6 +102,7 @@
     /**
      * @description Handles the button click event.
      * @returns {BMActionFieldTile} The instance.
+     * @category Event Handling
      */
     didClickButton () {
         this.doAction()
@@ -106,6 +112,7 @@
     /**
      * @description Synchronizes the tile with its associated node.
      * @returns {BMActionFieldTile} The instance.
+     * @category Data Synchronization
      */
     syncToNode () {
         this.node().setTitle(this.buttonView().title()) 
@@ -117,6 +124,7 @@
      * @description Handles the edit event.
      * @param {View} changedView - The view that was edited.
      * @returns {boolean} Always returns true.
+     * @category Event Handling
      */
     onDidEdit (changedView) {     
         this.scheduleSyncToNode()

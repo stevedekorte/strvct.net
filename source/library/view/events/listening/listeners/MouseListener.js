@@ -14,6 +14,7 @@
     /**
      * @description Initializes prototype slots.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -21,6 +22,7 @@
     /**
      * @description Initializes the MouseListener instance.
      * @returns {MouseListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -30,6 +32,7 @@
     /**
      * @description Sets up the mouse event listeners.
      * @returns {MouseListener} The current instance.
+     * @category Event Setup
      */
     setupListeners () {
         this.addEventNameAndMethodName("mousedown", "onMouseDown").setIsUserInteraction(true)

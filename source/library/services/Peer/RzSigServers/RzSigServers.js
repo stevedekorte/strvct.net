@@ -12,6 +12,7 @@
 (class RzSigServers extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the RzSigServers class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     this.setSubnodeClasses([RzSigServer]);
@@ -25,6 +26,7 @@
 
   /**
    * @description Performs final initialization tasks.
+   * @category Initialization
    */
   finalInit() {
     super.finalInit();
@@ -34,6 +36,7 @@
   /**
    * @description Sets up default servers.
    * @private
+   * @category Server Management
    */
   setupDefaultServers () {
     const map = this.jsonStringToServerMap() // TODO: use node hash support instead
@@ -52,6 +55,7 @@
    * @description Converts servers to a map with JSON string keys.
    * @returns {Map} A map of JSON strings to server objects.
    * @private
+   * @category Data Conversion
    */
   jsonStringToServerMap () {
     const m = new Map();
@@ -66,6 +70,7 @@
    * @description Returns an array of default server configurations.
    * @returns {Array} An array of server configuration objects.
    * @private
+   * @category Configuration
    */
   defaultServerDicts () {
     return [
@@ -112,6 +117,7 @@
   /**
    * @description Returns an array of server objects.
    * @returns {Array} An array of RzSigServer objects.
+   * @category Server Management
    */
   servers () {
     return this.subnodes();
@@ -126,6 +132,7 @@
   /**
    * @description Returns the parent service node.
    * @returns {Object} The parent service node.
+   * @category Node Hierarchy
    */
   service () {
     return this.parentNode()

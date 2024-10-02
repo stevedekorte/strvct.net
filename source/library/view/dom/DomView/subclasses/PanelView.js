@@ -18,6 +18,7 @@
     initPrototypeSlots () {
         /**
          * @member {TextField} titleView - The title view of the panel.
+         * @category UI Components
          */
         {
             const slot = this.newSlot("titleView", null);
@@ -25,6 +26,7 @@
         }
         /**
          * @member {TextField} subtitleView - The subtitle view of the panel.
+         * @category UI Components
          */
         {
             const slot = this.newSlot("subtitleView", null);
@@ -32,6 +34,7 @@
         }
         /**
          * @member {ButtonView} button1 - The primary button of the panel.
+         * @category UI Components
          */
         {
             const slot = this.newSlot("button1", null);
@@ -39,6 +42,7 @@
         }
         /**
          * @member {Boolean} isDragging - Indicates if the panel is currently being dragged.
+         * @category State
          */
         {
             const slot = this.newSlot("isDragging", false);
@@ -50,6 +54,7 @@
      * Set CSS properties on a subview.
      * @param {DomView} view - The subview to apply CSS to.
      * @returns {PanelView} - Returns this for chaining.
+     * @category Styling
      */
     setCssOnSubview (view) {
         //view.setPadding("10px");
@@ -66,6 +71,7 @@
     /**
      * Initialize the PanelView.
      * @returns {PanelView} - Returns this for chaining.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -123,6 +129,7 @@
      * Set the title of the panel.
      * @param {string} s - The title text.
      * @returns {PanelView} - Returns this for chaining.
+     * @category UI Manipulation
      */
     setTitle (s) {
         this.titleView().setValue(s)
@@ -132,6 +139,7 @@
     /**
      * Open the panel in the main window.
      * @returns {PanelView} - Returns this for chaining.
+     * @category Lifecycle
      */
     openInWindow () {
         App.shared().mainWindow().documentBody().addSubview(this);
@@ -143,6 +151,7 @@
      * @static
      * @param {Error} error - The error object to display.
      * @returns {PanelView} - The created error panel.
+     * @category Error Handling
      */
     static showError (error) {
         const panel = PanelView.clone().setTitle(error.message)
@@ -195,6 +204,7 @@
     /**
      * Handle the click event of the primary button.
      * @returns {PanelView} - Returns this for chaining.
+     * @category Event Handling
      */
     hitButton1 () {
         this.close()
@@ -204,6 +214,7 @@
     /**
      * Close the panel by removing it from its parent view.
      * @returns {PanelView} - Returns this for chaining.
+     * @category Lifecycle
      */
     close () {
         this.removeFromParentView()

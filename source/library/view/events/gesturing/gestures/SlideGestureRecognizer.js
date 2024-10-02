@@ -35,6 +35,7 @@
     initPrototypeSlots () {
         /**
          * @member {string} direction - The direction of the slide gesture
+         * @category Configuration
          */
         {
             const slot = this.newSlot("direction", "left");
@@ -42,6 +43,7 @@
         }
         /**
          * @member {Map} validDirectionsMap - Map of valid directions
+         * @category Configuration
          */
         {
             const slot = this.newSlot("validDirectionsMap", new Map([
@@ -54,6 +56,7 @@
         }
         /**
          * @member {number} maxPerpendicularDistToBegin - Maximum perpendicular distance to begin the gesture
+         * @category Configuration
          */
         {
             const slot = this.newSlot("maxPerpendicularDistToBegin", 10) // will not begin if this is exceeded
@@ -65,6 +68,7 @@
     /**
      * @description Initializes the SlideGestureRecognizer
      * @returns {SlideGestureRecognizer} The initialized instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -80,6 +84,7 @@
      * @description Sets the direction of the slide gesture
      * @param {string} directionName - The name of the direction
      * @returns {SlideGestureRecognizer} The instance
+     * @category Configuration
      */
     setDirection (directionName) {
         assert(this.validDirectionsMap().has(directionName));
@@ -91,6 +96,7 @@
      * @description Sets the number of touches required for the gesture
      * @param {number} n - The number of touches
      * @returns {SlideGestureRecognizer} The instance
+     * @category Configuration
      */
     setNumberOfTouchesRequired (n) {
         assert(n === 1) // need to add multi-touch support
@@ -101,6 +107,7 @@
     /**
      * @description Handles the down event
      * @param {Event} event - The down event
+     * @category Event Handling
      */
     onDown (event) {
         super.onDown(event)
@@ -118,6 +125,7 @@
      * @description Handles the move event
      * @param {Event} event - The move event
      * @returns {SlideGestureRecognizer} The instance
+     * @category Event Handling
      */
     onMove (event) {
         super.onMove(event)
@@ -145,6 +153,7 @@
      * @description Handles the up event
      * @param {Event} event - The up event
      * @returns {boolean} True
+     * @category Event Handling
      */
     onUp (event) {
         super.onUp(event)
@@ -163,6 +172,7 @@
     /**
      * @description Cancels the gesture
      * @returns {SlideGestureRecognizer} The instance
+     * @category Gesture Control
      */
     cancel () {
         if (this.isActive()) {
@@ -175,6 +185,7 @@
     /**
      * @description Finishes the gesture
      * @returns {SlideGestureRecognizer} The instance
+     * @category Gesture Control
      */
     finish () {
         //this.debugLog(".finish()")
@@ -188,6 +199,7 @@
     /**
      * @description Checks if the gesture has moved too much perpendicular to the intended direction
      * @returns {boolean} True if moved too much perpendicular
+     * @category Gesture Recognition
      */
     hasMovedTooMuchPerpendicular () {
         let m = this.maxPerpendicularDistToBegin()
@@ -207,6 +219,7 @@
     /**
      * @description Checks if the gesture has moved enough to be recognized
      * @returns {boolean} True if moved enough
+     * @category Gesture Recognition
      */
     hasMovedEnough () {
         let m = this.minDistToBegin()
@@ -226,6 +239,7 @@
     /**
      * @description Calculates the difference in position
      * @returns {Point} The difference in position
+     * @category Gesture Recognition
      */
     diffPos () {
         let cp = this.currentPosition()
@@ -251,6 +265,7 @@
     /**
      * @description Calculates the distance of the gesture
      * @returns {number} The distance of the gesture
+     * @category Gesture Recognition
      */
     distance () {
         let p = this.diffPos()

@@ -12,6 +12,7 @@
   /**
    * @static
    * @description Initializes the class and sets it as a singleton
+   * @category Initialization
    */
   static initClass () {
     this.setIsSingleton(true)
@@ -19,12 +20,14 @@
 
   /**
    * @description Initializes the prototype slots for the PeerService
+   * @category Initialization
    */
   initPrototypeSlots () {
 
     /**
      * @member {RzSigServers} servers
      * @description Servers slot for PeerService
+     * @category Configuration
      */
     {
       const slot = this.newSlot("servers", null)
@@ -40,6 +43,7 @@
 
   /**
    * @description Initializes the PeerService
+   * @category Initialization
    */
   init () {
     super.init();
@@ -47,6 +51,7 @@
 
   /**
    * @description Performs final initialization of the PeerService
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -57,6 +62,7 @@
   /**
    * @description Returns the default signal server
    * @returns {Object} The first subnode of the servers
+   * @category Server Management
    */
   defaultSignalServer () {
     return this.servers().subnodes().first();

@@ -21,6 +21,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} title
+         * @category Content
          */
         {
             const slot = this.newSlot("title", "");
@@ -29,6 +30,7 @@
 
         /**
          * @member {String} body
+         * @category Content
          */
         {
             const slot = this.newSlot("body", null);
@@ -37,6 +39,7 @@
 
         /**
          * @member {String} icon - a url to an image
+         * @category Content
          */
         {
             const slot = this.newSlot("icon", null);
@@ -46,6 +49,7 @@
 
         /**
          * @member {Array} actions
+         * @category Interaction
          */
         {
             const slot = this.newSlot("actions", null);
@@ -54,6 +58,7 @@
 
         /**
          * @member {BMNotification} notificationRef
+         * @category System
          */
         {
             const slot = this.newSlot("notificationRef", null);
@@ -62,6 +67,7 @@
 
         /**
          * @member {Error} error
+         * @category Error Handling
          */
         {
             const slot = this.newSlot("error", null);
@@ -70,6 +76,7 @@
 
         /**
          * @member {String} choice - Event.action
+         * @category Interaction
          */
         {
             const slot = this.newSlot("choice", null); // Event.action
@@ -80,6 +87,7 @@
     /**
      * @description Initializes the WebBrowserNotification instance
      * @returns {WebBrowserNotification}
+     * @category Initialization
      */
     init () {
         super.init();
@@ -91,6 +99,7 @@
     /**
      * @description Attempts to post the notification
      * @returns {WebBrowserNotification}
+     * @category Notification Management
      */
     tryToPost () {
         WebBrowserNotifications.shared().postNote(this);
@@ -101,6 +110,7 @@
      * @description Posts the notification (private - only WebBrowserNotifications should call this)
      * @returns {WebBrowserNotification}
      * @private
+     * @category Notification Management
      */
     justPost () {
         const ref = new Notification(this.title(), { 
@@ -122,6 +132,7 @@
 
     /**
      * @description Handler for the show event
+     * @category Event Handling
      */
     onShow () {
         this.debugLog("onShow");
@@ -129,6 +140,7 @@
 
     /**
      * @description Handler for the click event
+     * @category Event Handling
      */
     onClick () {
         this.debugLog("onClick");
@@ -136,6 +148,7 @@
 
     /**
      * @description Handler for the close event
+     * @category Event Handling
      */
     onClose () {
         this.debugLog("onClose");
@@ -144,6 +157,7 @@
     /**
      * @description Handler for the error event
      * @param {Error} error - The error object
+     * @category Error Handling
      */
     onError (error) {
         this.debugLog("onError " + error);
@@ -153,6 +167,7 @@
     /**
      * @description Handler for the action event
      * @param {Event} event - The action event
+     * @category Event Handling
      */
     onAction (event) {
         this.debugLog("onAction '" + event.action + "'");

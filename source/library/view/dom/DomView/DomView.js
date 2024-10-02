@@ -14,6 +14,7 @@
     /**
      * @description Initializes the prototype slots for the DomView class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
     }

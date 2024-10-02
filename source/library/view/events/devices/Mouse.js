@@ -21,6 +21,7 @@
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -28,10 +29,12 @@
     
     /**
      * @description Initializes the prototype slots for the Mouse class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} isDown - Indicates whether the mouse button is down.
+         * @category State
          */
         {
             const slot = this.newSlot("isDown", false);
@@ -39,6 +42,7 @@
         }
         /**
          * @member {MouseEvent} downEvent - Stores the mouse down event.
+         * @category State
          */
         {
             const slot = this.newSlot("downEvent", null);
@@ -46,6 +50,7 @@
         }
         /**
          * @member {MouseEvent} currentEvent - Stores the current mouse event.
+         * @category State
          */
         {
             const slot = this.newSlot("currentEvent", null);
@@ -53,6 +58,7 @@
         }
         /**
          * @member {MouseEvent} upEvent - Stores the mouse up event.
+         * @category State
          */
         {
             const slot = this.newSlot("upEvent", null);
@@ -60,6 +66,7 @@
         }
         /**
          * @member {MouseListener} mouseListener - The mouse listener instance.
+         * @category Event Handling
          */
         {
             const slot = this.newSlot("mouseListener", null);
@@ -67,6 +74,7 @@
         }
         /**
          * @member {MouseMoveListener} mouseMoveListener - The mouse move listener instance.
+         * @category Event Handling
          */
         {
             const slot = this.newSlot("mouseMoveListener", null);
@@ -77,6 +85,7 @@
     /**
      * @description Initializes the Mouse instance and starts listening for events.
      * @returns {Mouse} The initialized Mouse instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -95,6 +104,7 @@
     /**
      * @description Starts listening for mouse events.
      * @returns {Mouse} The Mouse instance.
+     * @category Event Handling
      */
     startListening () {
         this.setMouseListener(MouseListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
@@ -108,6 +118,7 @@
     /**
      * @description Gets the position of the mouse when the button was pressed down.
      * @returns {Point} The down position.
+     * @category Position
      */
     downPos () {
         return this.pointForEvent(this.downEvent())
@@ -116,6 +127,7 @@
     /**
      * @description Gets the current position of the mouse.
      * @returns {Point} The current position.
+     * @category Position
      */
     currentPos () {
         return this.pointForEvent(this.currentEvent())
@@ -124,6 +136,7 @@
     /**
      * @description Gets the position of the mouse when the button was released.
      * @returns {Point} The up position.
+     * @category Position
      */
     upPos () {
         return this.pointForEvent(this.upEvent())
@@ -133,6 +146,7 @@
      * @description Handles the mouse down event.
      * @param {MouseEvent} event - The mouse down event.
      * @returns {boolean} Always returns true.
+     * @category Event Handling
      */
     onMouseDownCapture (event) {
         this.setDownEvent(event)
@@ -145,6 +159,7 @@
      * @description Handles the mouse move event.
      * @param {MouseEvent} event - The mouse move event.
      * @returns {boolean} Always returns true.
+     * @category Event Handling
      */
     onMouseMoveCapture (event) {
         this.setCurrentEvent(event)
@@ -155,6 +170,7 @@
      * @description Handles the mouse up event.
      * @param {MouseEvent} event - The mouse up event.
      * @returns {boolean} Always returns true.
+     * @category Event Handling
      */
     onMouseUpCapture (event) {
         this.setCurrentEvent(event)
@@ -167,6 +183,7 @@
      * @description Converts a mouse event to a point.
      * @param {MouseEvent} event - The mouse event.
      * @returns {EventPoint} The converted point.
+     * @category Utilities
      */
     pointForEvent (event) {
         assert(event.__proto__.constructor === MouseEvent)
@@ -188,6 +205,7 @@
      * @description Calculates the drag vector.
      * @param {MouseEvent} event - The mouse event.
      * @returns {Point} The drag vector.
+     * @category Utilities
      */
     dragVector (event) {   
         if (this.downPos()) {
@@ -205,6 +223,7 @@
      * @description Gets the points for a given event.
      * @param {MouseEvent} event - The mouse event.
      * @returns {Array<EventPoint>} An array of points for the event.
+     * @category Utilities
      */
     pointsForEvent (event) {
         if (!event.hasCachedPoints()) {
@@ -218,6 +237,7 @@
     /**
      * @description Gets the current points.
      * @returns {Array<EventPoint>} An array of current points.
+     * @category Utilities
      */
     currentPoints () {
         if (this.currentEvent()) {
@@ -230,6 +250,7 @@
      * @description Gets the method name for the mouse down event.
      * @param {MouseEvent} event - The mouse event.
      * @returns {string} The method name for the mouse down event.
+     * @category Utilities
      */
     downMethodNameForEvent (event) {
         const s = BMKeyboard.shared().modsAndKeyNameForEvent(event)
@@ -240,6 +261,7 @@
      * @description Gets the method name for the mouse up event.
      * @param {MouseEvent} event - The mouse event.
      * @returns {string} The method name for the mouse up event.
+     * @category Utilities
      */
     upMethodNameForEvent (event) {
         const s = BMKeyboard.shared().modsAndKeyNameForEvent(event)

@@ -15,6 +15,7 @@
         // Targetable - target / action
         /**
          * @member {Object|null} target
+         * @category Target
          */
         {
             const slot = this.newSlot("target", null);
@@ -23,6 +24,7 @@
         }
         /**
          * @member {string|null} action
+         * @category Action
          */
         {
             const slot = this.newSlot("action", null);
@@ -43,6 +45,7 @@
     /**
      * @description Checks if both target and action are set
      * @returns {boolean}
+     * @category Validation
      */
     hasTargetAndAction () {
         return (this.target() !== null) && (this.action() !== null)
@@ -52,6 +55,7 @@
      * @description Sets the target and updates click registration
      * @param {Object} anObject - The target object
      * @returns {ControlDomView}
+     * @category Target
      */
     setTarget (anObject) {
         this._target = anObject
@@ -63,6 +67,7 @@
      * @description Sets the action and updates click registration
      * @param {string} anActionString - The action string
      * @returns {ControlDomView}
+     * @category Action
      */
     setAction (anActionString) {
         this._action = anActionString
@@ -76,6 +81,7 @@
      * @description Handles click event
      * @param {Event} event - The click event
      * @returns {boolean}
+     * @category Event Handling
      */
     onClick (event) {
         debugger;
@@ -89,6 +95,7 @@
      * @description Handles tap complete gesture
      * @param {Object} aGesture - The tap gesture object
      * @returns {ControlDomView}
+     * @category Event Handling
      */
     onTapComplete (aGesture) {
         this.debugLog(".onTapComplete()")
@@ -99,6 +106,7 @@
     /**
      * @description Sends the action to the target
      * @returns {*}
+     * @category Action
      */
     sendActionToTarget () {
         if (!this.action()) {
@@ -122,6 +130,7 @@
      * @description Handles double click event
      * @param {Event} event - The double click event
      * @returns {boolean}
+     * @category Event Handling
      */
     onDoubleClick (event) {
         return true

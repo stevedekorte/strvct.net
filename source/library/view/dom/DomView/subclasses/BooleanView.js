@@ -26,6 +26,7 @@
     initPrototypeSlots () {
         /**
          * @member {Boolean} doesClearOnReturn
+         * @category Configuration
          */
         {
             const slot = this.newSlot("doesClearOnReturn", false); // needed?
@@ -33,6 +34,7 @@
         }
         /**
          * @member {Boolean} doesHoldFocusOnReturn
+         * @category Configuration
          */
         {
             const slot = this.newSlot("doesHoldFocusOnReturn", false);  // needed?
@@ -40,6 +42,7 @@
         }
         /**
          * @member {Boolean} value
+         * @category State
          */
         {
             const slot = this.newSlot("value", false);
@@ -47,6 +50,7 @@
         }
         /**
          * @member {Boolean} isEditable
+         * @category State
          */
         {
             const slot = this.newSlot("isEditable", false);
@@ -54,6 +58,7 @@
         }
         /**
          * @member {DomView} innerCheckView
+         * @category View Components
          */
         {
             const slot = this.newSlot("innerCheckView", null);
@@ -61,6 +66,7 @@
         }
         /**
          * @member {DomView} outerCheckView
+         * @category View Components
          */
         {
             const slot = this.newSlot("outerCheckView", null);
@@ -71,6 +77,7 @@
     /**
      * @description Initializes the BooleanView.
      * @returns {BooleanView}
+     * @category Initialization
      */
     init () {
         super.init()
@@ -134,6 +141,7 @@
     /**
      * @description Returns the size of the checkbox.
      * @returns {string}
+     * @category Layout
      */
     checkboxSize () {
         return "1em"
@@ -143,6 +151,7 @@
      * @description Sets whether the checkbox is editable.
      * @param {boolean} aBool - Whether the checkbox should be editable.
      * @returns {BooleanView}
+     * @category State
      */
     setIsEditable (aBool) {        
         this._isEditable = aBool
@@ -162,6 +171,7 @@
     /**
      * @description Toggles the checkbox state.
      * @returns {BooleanView}
+     * @category User Interaction
      */
     toggle () {
         this.setValue(!this.value())
@@ -172,6 +182,7 @@
     /**
      * @description Activates the checkbox.
      * @returns {BooleanView}
+     * @category User Interaction
      */
     activate () {
         this.toggle()
@@ -182,6 +193,7 @@
      * @description Sets the value of the checkbox.
      * @param {boolean} v - The value to set.
      * @returns {BooleanView}
+     * @category State
      */
     setValue (v) {
         if (Type.isNullOrUndefined(v)) {
@@ -197,6 +209,7 @@
     /**
      * @description Gets the value of the checkbox.
      * @returns {boolean}
+     * @category State
      */
     value () {
 	    return this._value
@@ -205,6 +218,7 @@
     /**
      * @description Checks if the checkbox is checked.
      * @returns {boolean}
+     * @category State
      */
     isChecked () {
 	    return this.value()
@@ -214,6 +228,7 @@
      * @description Sets the background color.
      * @param {string} s - The color to set.
      * @returns {BooleanView}
+     * @category Appearance
      */
     setBackgroundColor (s) {
         // needed?
@@ -223,6 +238,7 @@
     /**
      * @description Updates the appearance of the checkbox.
      * @returns {BooleanView}
+     * @category Appearance
      */
     updateAppearance () {
         // sent by superview when it changes or syncs to a node
@@ -241,6 +257,7 @@
      * @description Handles the tap complete event.
      * @param {Object} aGesture - The gesture object.
      * @returns {boolean}
+     * @category User Interaction
      */
     onTapComplete (aGesture) {
         super.sendActionToTarget()

@@ -23,6 +23,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} dataUrl - The data URL for drop operations.
+         * @category Data
          */
         {
             const slot = this.newSlot("dataUrl", null);
@@ -30,6 +31,7 @@
         }
         /**
          * @member {String} transferMimeType - The MIME type for drag operations.
+         * @category Data
          */
         {
             const slot = this.newSlot("transferMimeType", "DownloadURL");
@@ -37,6 +39,7 @@
         }
         /**
          * @member {String} fileName - The file name for drag operations.
+         * @category Data
          */
         {
             const slot = this.newSlot("fileName", "file.txt");
@@ -44,6 +47,7 @@
         }
         /**
          * @member {String} mimeType - The MIME type of the data.
+         * @category Data
          */
         {
             const slot = this.newSlot("mimeType", null);
@@ -51,6 +55,7 @@
         }
         /**
          * @member {String} decodedData - The non-base64 version of the data.
+         * @category Data
          */
         {
             const slot = this.newSlot("decodedData", "");
@@ -61,6 +66,7 @@
     /**
      * @description Gets the description of the MIME type.
      * @returns {String|null} The description of the MIME type or null if not found.
+     * @category Data
      */
     mimeTypeDescription () {
         const mimeType = this.mimeType()
@@ -77,6 +83,7 @@
     /**
      * @description Checks if the MIME type is XML.
      * @returns {Boolean} True if the MIME type is XML, false otherwise.
+     * @category Data
      */
     isXml () {
         return this.mimeType() === "application/xml"
@@ -85,6 +92,7 @@
     /**
      * @description Checks if the MIME type is JSON.
      * @returns {Boolean} True if the MIME type is JSON, false otherwise.
+     * @category Data
      */
     isJson () {
         return this.mimeType() === "application/json"
@@ -93,6 +101,7 @@
     /**
      * @description Checks if the MIME type is plain text.
      * @returns {Boolean} True if the MIME type is plain text, false otherwise.
+     * @category Data
      */
     isText () {
         return this.mimeType() === "text/plain"
@@ -101,6 +110,7 @@
     /**
      * @description Checks if the MIME type is HTML.
      * @returns {Boolean} True if the MIME type is HTML, false otherwise.
+     * @category Data
      */
     isHtml () {
         return this.mimeType() === "text/html"
@@ -109,6 +119,7 @@
     /**
      * @description Returns a dictionary mapping MIME types to file suffixes.
      * @returns {Object} A dictionary of MIME types and their corresponding file suffixes.
+     * @category Data
      */
     mimeTypeToFileSuffixDict () {
         return {
@@ -124,6 +135,7 @@
     /**
      * @description Generates a data URL string.
      * @returns {String} The generated data URL string.
+     * @category Data
      */
     dataUrlString () {
         // e.g.: "application/json:hello.json:data:application/json;base64," + btoa("[1,2,3]"));
@@ -137,6 +149,7 @@
      * @description Sets the data URL string and parses its components.
      * @param {String} dataUrl - The data URL string to set and parse.
      * @returns {BMDataUrl} The current instance for method chaining.
+     * @category Data
      */
     setDataUrlString (dataUrl) {
         const type = dataUrl.before(":")

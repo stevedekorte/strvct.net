@@ -11,12 +11,14 @@
     
     /**
      * @description Initializes prototype slots for the BMFontTile.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype of the BMFontTile.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -24,6 +26,7 @@
     /**
      * @description Updates the subviews of the BMFontTile with font information from the associated node.
      * @returns {BMFontTile} Returns this BMFontTile instance.
+     * @category UI Update
      */
     updateSubviews () {
         super.updateSubviews();

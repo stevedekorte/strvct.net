@@ -13,6 +13,7 @@
     /**
      * @description Checks if navigation is allowed
      * @returns {boolean} True if cursor navigation is allowed
+     * @category Navigation
      */
     canNavigate () {
         return this.allowsCursorNavigation() 
@@ -35,6 +36,7 @@
     /**
      * @description Handles meta+backspace key down event
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onMetaBackspaceKeyDown (event) {
         console.log("meta backspace")
@@ -44,6 +46,7 @@
     /**
      * @description Handles meta+delete key down event
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onMetaDeleteKeyDown (event) {
         console.log("meta delete")
@@ -59,6 +62,7 @@
     /**
      * @description Handles meta key down event
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onMetaKeyDown (event) {
         // do we need to hook this to avoid meta being stolen by app? 
@@ -69,6 +73,7 @@
     /**
      * @description Handles meta+d key down event to duplicate selected tiles
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onMeta_d_KeyDown (event) {
         console.log("duplicate selection down")
@@ -80,6 +85,7 @@
     /**
      * @description Handles meta+n key down event to add a new item if possible
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onMeta_n_KeyDown (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onMeta_n_KeyDown")
@@ -91,6 +97,7 @@
     /**
      * @description Handles shift+backspace key up event to delete the selected tile
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
@@ -102,6 +109,7 @@
 
     /**
      * @description Adds a new subnode if possible
+     * @category Node
      */
     addIfPossible () {
         const node = this.node()
@@ -122,6 +130,7 @@
      * @description Handles alternate+d key up event to duplicate the selected tile
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onAlternate_d_KeyUp (event) {
         //this.debugLog(" onMetaLeft_d_KeyUp")
@@ -134,6 +143,7 @@
     /**
      * @description Handles meta+a key down event to select all tiles
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onMeta_a_KeyDown (event) {
         this.selectAllTiles()
@@ -145,6 +155,7 @@
     /**
      * @description Handles control+c key up event (currently empty)
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onControl_c_KeyUp (event) {
         // copy?
@@ -153,6 +164,7 @@
     /**
      * @description Handles control+p key up event (currently empty)
      * @param {Event} event - The keyboard event
+     * @category Keyboard
      */
     onControl_p_KeyUp (event) {
         // paste?
@@ -188,6 +200,7 @@
      * @description Handles alternate+up arrow key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onAlternateUpArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -204,6 +217,7 @@
      * @description Handles alternate+down arrow key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onAlternateDownArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -220,6 +234,7 @@
      * @description Handles alternate+left arrow key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onAlternateLeftArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -236,6 +251,7 @@
      * @description Handles alternate+right arrow key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onAlternateRightArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -255,6 +271,7 @@
      * @description Handles up arrow key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onUpArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -273,6 +290,7 @@
      * @description Handles down arrow key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onDownArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -291,6 +309,7 @@
      * @description Handles left arrow key up event
      * @param {Event} event - The keyboard event
      * @returns {TilesView_keyboard} This instance
+     * @category Keyboard
      */
     onLeftArrowKeyUp (event) {
         if (!this.canNavigate()) { 
@@ -307,6 +326,7 @@
      * @description Handles right arrow key up event
      * @param {Event} event - The keyboard event
      * @returns {TilesView_keyboard} This instance
+     * @category Keyboard
      */
     onRightArrowKeyUp (event) {
         if (!this.canNavigate()) { 
@@ -325,6 +345,7 @@
     /**
      * @description Moves selection to the left
      * @returns {TilesView_keyboard} This instance
+     * @category Navigation
      */
     moveLeft () {
         const pc = this.previousItemSet()	
@@ -347,6 +368,7 @@
     /**
      * @description Moves selection to the right
      * @returns {TilesView_keyboard} This instance
+     * @category Navigation
      */
     moveRight () {
         this.selectNextColumn()
@@ -356,6 +378,7 @@
     /**
      * @description Moves selection up
      * @returns {TilesView_keyboard} This instance
+     * @category Navigation
      */
     moveUp () {
         this.selectNextTile()
@@ -366,6 +389,7 @@
     /**
      * @description Moves selection down
      * @returns {TilesView_keyboard} This instance
+     * @category Navigation
      */
     moveDown () {
         this.selectPreviousTile()
@@ -379,6 +403,7 @@
      * @description Handles escape key down event
      * @param {Event} event - The keyboard event
      * @returns {TilesView_keyboard} This instance
+     * @category Keyboard
      */
     onEscapeKeyDown (event) {
         //this.setIsColumnInspecting(false)
@@ -397,6 +422,7 @@
      * @description Handles enter key up event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onEnterKeyUp (event) {        
         if (!this.canNavigate()) { 
@@ -419,6 +445,7 @@
      * @description Deletes a specific tile
      * @param {Object} aTile - The tile to delete
      * @returns {TilesView_keyboard} This instance
+     * @category Tile
      */
     deleteTile (aTile) {
         let sNode = aTile.node()
@@ -430,6 +457,7 @@
 
     /**
      * @description Deletes all selected tiles
+     * @category Tile
      */
     deleteSelectedTiles () {
         this.selectedTiles().forEach(r => this.deleteTile(r))
@@ -443,6 +471,7 @@
      * @description Handles plus key up event to add a new item
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
+     * @category Keyboard
      */
     onPlusKeyUp (event) {
         if (!this.canNavigate()) { 

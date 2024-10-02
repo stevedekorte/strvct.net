@@ -12,10 +12,12 @@
 (class SttMessage extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the SttMessage class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {string} result - The speech-to-text result.
+     * @category Data
      */
     {
       const slot = this.newSlot("result", "");      
@@ -33,6 +35,7 @@
 
   /**
    * @description Initializes the SttMessage instance.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -46,6 +49,7 @@
   /**
    * @description Gets the title of the SttMessage.
    * @returns {string} The result of the speech-to-text conversion.
+   * @category Data
    */
   title () {
     return this.result()
@@ -53,6 +57,7 @@
 
   /**
    * @description Performs final initialization tasks.
+   * @category Initialization
    */
   finalInit() {
     super.finalInit()

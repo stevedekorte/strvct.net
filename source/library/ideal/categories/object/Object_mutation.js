@@ -13,6 +13,7 @@
      * Returns a Set of mutator method names that should be hooked.
      * @throws {Error} If not implemented by the subclass.
      * @returns {Set<string>} A Set of mutator method names.
+     * @category Mutation
      */
     mutatorMethodNamesSet () {
         throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class")
@@ -23,6 +24,7 @@
      * This method copies each slot whose name is in mutatorMethodNamesSet
      * to unhooked_<slotName>, and implements a slot which calls the
      * unhooked version after calling this.willMutate(slotName).
+     * @category Mutation
      */
     setupMutatorHooks () {
         // this is to be called on a prototype
@@ -62,6 +64,7 @@
      * Sets the mutation observers for this object.
      * @param {Set} aSet - A Set of mutation observers.
      * @returns {Object_mutation} This object.
+     * @category Observers
      */
     setMutationObservers (aSet) {
         this._mutationObservers = aSet
@@ -71,6 +74,7 @@
     /**
      * Gets the mutation observers for this object.
      * @returns {Set} A Set of mutation observers.
+     * @category Observers
      */
     mutationObservers () {
         if (!this._mutationObservers) {
@@ -82,6 +86,7 @@
     /**
      * Checks if this object has any mutation observers.
      * @returns {boolean} True if there are mutation observers, false otherwise.
+     * @category Observers
      */
     hasMutationObservers () {
         const mos = this._mutationObservers
@@ -92,6 +97,7 @@
      * Adds a mutation observer to this object.
      * @param {Object} anObserver - The observer to add.
      * @returns {Object_mutation} This object.
+     * @category Observers
      */
     addMutationObserver (anObserver) {
         this.mutationObservers().add(anObserver)
@@ -102,6 +108,7 @@
      * Removes a mutation observer from this object.
      * @param {Object} anObserver - The observer to remove.
      * @returns {Object_mutation} This object.
+     * @category Observers
      */
     removeMutationObserver (anObserver) {
         assert(anObserver)
@@ -114,6 +121,7 @@
     /**
      * Called before a mutation occurs.
      * This method is currently empty but can be overridden or extended.
+     * @category Mutation
      */
     willMutate () {
         /*
@@ -130,6 +138,7 @@
      * Called after a mutation occurs.
      * Notifies all mutation observers.
      * @param {string} [optionalSlotName] - The name of the slot that was mutated, if applicable.
+     * @category Mutation
      */
     didMutate (optionalSlotName) {
         const mos = this._mutationObservers

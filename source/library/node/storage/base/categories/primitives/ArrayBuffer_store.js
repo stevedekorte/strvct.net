@@ -16,6 +16,7 @@
      * @param {Object} aStore - The store object.
      * @returns {ArrayBuffer_store} A new instance of ArrayBuffer_store.
      * @description Should only be called by Store.
+     * @category Initialization
      */
     static instanceFromRecordInStore (aRecord, aStore) {
         //assert(aRecord.type === "ArrayBuffer")
@@ -29,6 +30,7 @@
      * @param {Object} aRecord - The record containing the ArrayBuffer data.
      * @param {Object} aStore - The store object.
      * @returns {ArrayBuffer_store} This instance after loading the data.
+     * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
         assert(aRecord.bytes.length === this.length)
@@ -42,6 +44,7 @@
     /**
      * Converts the ArrayBuffer_store to an array of bytes.
      * @returns {number[]} An array of byte values.
+     * @category Data Conversion
      */
     bytes () {
         const bytes = []
@@ -56,6 +59,7 @@
      * @param {Object} aStore - The store object.
      * @returns {Object} A record object representing this ArrayBuffer_store.
      * @description Should only be called by Store.
+     * @category Data Storage
      */
     recordForStore (aStore) {
         return {
@@ -68,6 +72,7 @@
      * Returns a Set of persistent unique identifiers (PUIDs) for this ArrayBuffer_store.
      * @param {Set<string>} [puuids=new Set()] - A Set to store the PUIDs.
      * @returns {Set<string>} The Set of PUIDs.
+     * @category Identification
      */
     refsPidsForJsonStore (puuids = new Set()) {
         return puuids

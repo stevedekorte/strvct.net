@@ -27,6 +27,7 @@ const wss = new WebSocket.Server({ server });
  * Clips a string to a specified length and appends an ellipsis if necessary.
  * @param {number} length - The maximum length of the string.
  * @returns {string} The clipped string with an ellipsis if necessary.
+ * @category String Manipulation
  */
 String.clipWithEllipsis = function (length) {
     // Check if the length of the string is less than or equal to the specified length
@@ -40,6 +41,7 @@ String.clipWithEllipsis = function (length) {
 /**
  * Handles new WebSocket connections.
  * @param {WebSocket} ws - The WebSocket connection from the browser.
+ * @category WebSocket
  */
 wss.on('connection', async function(ws) {
   console.log('Got WS connection from browser and opening new connection to HomeAssistant...');
@@ -56,6 +58,7 @@ wss.on('connection', async function(ws) {
 
   /**
    * Handles the 'open' event of the WebSocket connection to HomeAssistant.
+   * @category WebSocket
    */
   wsClient.on('open', async function() {
     console.log('Connected to the HomeAssistant WS server');
@@ -74,6 +77,7 @@ wss.on('connection', async function(ws) {
   /**
    * Handles messages received from the browser.
    * @param {(string|Buffer)} message - The message received from the browser.
+   * @category WebSocket
    */
   ws.on('message', async function (message) {
     if (typeof(message) !== "string") {
@@ -92,6 +96,7 @@ wss.on('connection', async function(ws) {
   /**
    * Handles messages received from HomeAssistant.
    * @param {(string|Buffer)} message - The message received from HomeAssistant.
+   * @category WebSocket
    */
   wsClient.on('message', async function (message) {
     if (typeof(message) !== "string") {
@@ -104,6 +109,7 @@ wss.on('connection', async function(ws) {
 
   /**
    * Handles the 'close' event of the WebSocket connection from the browser.
+   * @category WebSocket
    */
   ws.on('close', function() {
     console.log('WSS client disconnected');
@@ -112,6 +118,7 @@ wss.on('connection', async function(ws) {
 
   /**
    * Handles the 'close' event of the WebSocket connection to HomeAssistant.
+   * @category WebSocket
    */
   wsClient.on('close', function() {
     console.log('WS server connection closed');
@@ -121,6 +128,7 @@ wss.on('connection', async function(ws) {
 
 /**
  * Starts the server listening on port 8124.
+ * @category Server
  */
 server.listen(8124, function() {
   console.log(`This is a secure WebSocket server running on port 8124

@@ -9,6 +9,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -16,10 +17,12 @@
 
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} lastSyncTime
+         * @category Data
          */
         {
             const slot = this.newSlot("lastSyncTime", 0);
@@ -29,6 +32,7 @@
 
     /**
      * @description Initializes the instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -38,6 +42,7 @@
     /**
      * @description Returns the subtitle for the data store
      * @returns {string}
+     * @category Display
      */
     subtitle () {
         return this.defaultStore().totalBytes().byteSizeDescription()
@@ -46,6 +51,7 @@
     /**
      * @description Checks if the store has changed
      * @returns {boolean}
+     * @category State Management
      */
     storeHasChanged () {
         return this.defaultStore().lastSyncTime() !== this.lastSyncTime()
@@ -53,6 +59,7 @@
 
     /**
      * @description Prepares to sync to view
+     * @category Synchronization
      */
     prepareToSyncToView () {
         if (this.subnodeCount() === 0 || this.storeHasChanged()) {
@@ -65,6 +72,7 @@
     /**
      * @description Returns the default store
      * @returns {Object}
+     * @category Data Access
      */
     store () {
         return this.defaultStore()
@@ -72,6 +80,7 @@
 
     /**
      * @description Refreshes the subnodes
+     * @category Data Management
      */
     refreshSubnodes () {
         this.removeAllSubnodes()
@@ -85,6 +94,7 @@
      * @description Returns or creates a subnode for a given class name
      * @param {string} aClassName
      * @returns {Object}
+     * @category Node Management
      */
     subnodeForClassName (aClassName) {
         let subnode = this.firstSubnodeWithTitle(aClassName)
@@ -99,6 +109,7 @@
      * @description Adds a record to the data store
      * @param {Object} aRecord
      * @returns {BMDataStore}
+     * @category Data Management
      */
     addRecord (aRecord) {
         const subnode = BMDataStoreRecord.clone()

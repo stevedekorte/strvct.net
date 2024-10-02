@@ -146,13 +146,13 @@ classmethods:before {
     font-size: 1.25em;
     font-style: normal;
     margin-left: var(--responsive-margin);
-    margin-bottom: 2.5em; /* Add this line to create space after the heading */
+    margin-bottom: 1.5em; /* Add this line to create space after the heading */
     display: block; /* Ensure the pseudo-element is a block to apply margin */
 }
 
 /* Adjust the first method under classmethods */
 classmethods > method:first-child {
-    margin-top: 2.5em; /* Add top margin to the first method */
+    margin-top: 2em; /* Add top margin to the first method */
 }
 
 /* --- instance methods --- */
@@ -167,13 +167,13 @@ instancemethods:before {
     font-size: 1.25em;
     font-style: normal;
     margin-left: var(--responsive-margin);
-    margin-bottom: 2.5em; /* Add this line to create space after the heading */
+    margin-bottom: 1.5em; /* Add this line to create space after the heading */
     display: block; /* Ensure the pseudo-element is a block to apply margin */
 }
 
 /* Adjust the first method under instancemethods */
 instancemethods > method:first-child {
-    margin-top: 2.5em; /* Add top margin to the first method */
+    margin-top: 2m; /* Add top margin to the first method */
 }
 
 /* --- method --- */
@@ -412,10 +412,16 @@ properties:before {
     margin-left:  var(--responsive-margin);
 }
 
+category > property:first-child {
+    margin-top: 1.5em;
+}
+
+/*
 property:first-of-type {
     margin-top: 2.5em;
     color: #333;
 }
+    */
 
 property {
     display: block;
@@ -573,7 +579,7 @@ method.collapsed {
 
 category {
     display: block;
-    margin-top: 2.5em;
+    margin-top: 1em;
     margin-bottom: 1em;
 }
 

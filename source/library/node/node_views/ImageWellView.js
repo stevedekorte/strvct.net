@@ -15,10 +15,12 @@
 
     /**
      * @description Initializes prototype slots for the ImageWellView.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {ImageView} imageView - The image view contained within this well.
+         * @category View Management
          */
         {
             const slot = this.newSlot("imageView", null);
@@ -26,6 +28,7 @@
         }
         /**
          * @member {Boolean} isEditable - Determines if the image well is editable.
+         * @category State Management
          */
         {
             const slot = this.newSlot("isEditable", true);
@@ -36,6 +39,7 @@
     /**
      * @description Initializes the ImageWellView.
      * @returns {ImageWellView} The initialized ImageWellView instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -64,6 +68,7 @@
     /**
      * @description Synchronizes the view with its associated node.
      * @returns {ImageWellView} The current ImageWellView instance.
+     * @category Synchronization
      */
     syncToNode () {
         super.syncToNode();
@@ -77,6 +82,7 @@
     /**
      * @description Checks if the image well is editable.
      * @returns {Boolean} True if editable, false otherwise.
+     * @category State Management
      */
     isEditable () {
         // we need this to override the normal isContentEditable return value
@@ -87,6 +93,7 @@
      * @description Sets the editable state of the image well.
      * @param {Boolean} aBool - The new editable state.
      * @returns {ImageWellView} The current ImageWellView instance.
+     * @category State Management
      */
     setIsEditable (aBool) {
         this._isEditable = aBool;
@@ -98,6 +105,7 @@
     
     /**
      * @description Highlights the image well during drag operations.
+     * @category Visual Feedback
      */
     dragHighlight () {
         this.setBackgroundColor("rgba(128, 128, 128, 0.5)");
@@ -105,6 +113,7 @@
     
     /**
      * @description Removes the highlight from the image well after drag operations.
+     * @category Visual Feedback
      */
     dragUnhighlight () {
         this.setBackgroundColor("transparent");
@@ -113,6 +122,7 @@
     /**
      * @description Checks if the image well is full (contains an image).
      * @returns {Boolean} True if full, false otherwise.
+     * @category State Management
      */
     isFull () {
         //console.log("this.imageView().dataURL()  = ", this.imageView().dataURL() );
@@ -123,6 +133,7 @@
      * @description Determines if the image well accepts drops.
      * @param {Event} event - The drop event.
      * @returns {Boolean} Always returns true in this implementation.
+     * @category Drag and Drop
      */
     acceptsDrop (event) {
         return true;
@@ -145,6 +156,7 @@
      * @description Sets the value of the image well (its image data URL).
      * @param {string} aValue - The image data URL.
      * @returns {ImageWellView} The current ImageWellView instance.
+     * @category Data Management
      */
     setValue (aValue) {
         this.setImageDataUrl(aValue)
@@ -154,6 +166,7 @@
     /**
      * @description Gets the value of the image well (its image data URL).
      * @returns {string|null} The image data URL or null if not set.
+     * @category Data Management
      */
     value () {
         return this.imageDataUrl()
@@ -163,6 +176,7 @@
      * @description Sets the image data URL for the image well.
      * @param {string} dataURL - The image data URL.
      * @returns {ImageWellView} The current ImageWellView instance.
+     * @category Data Management
      */
     setImageDataUrl (dataURL) {
         assert(!Type.isArray(dataURL)) 
@@ -196,6 +210,7 @@
      * @description Checks if the image well already has the given image URL.
      * @param {string} url - The URL to check.
      * @returns {Boolean} True if the image well has the URL, false otherwise.
+     * @category Data Management
      */
     hasImageUrl (url) {
         const v = this.imageView()
@@ -210,6 +225,7 @@
     /**
      * @description Gets the current image data URL.
      * @returns {string|null} The image data URL or null if not set.
+     * @category Data Management
      */
     imageDataUrl () {
         const v = this.imageView()
@@ -225,6 +241,7 @@
     /**
      * @description Handles browser drop of JPEG images.
      * @param {Object} dataChunk - The dropped image data.
+     * @category Drag and Drop
      */
     onBrowserDropImageJpeg (dataChunk) {
         this.droppedImageData(dataChunk)
@@ -233,6 +250,7 @@
     /**
      * @description Handles browser drop of GIF images.
      * @param {Object} dataChunk - The dropped image data.
+     * @category Drag and Drop
      */
     onBrowserDropImageGif (dataChunk) {
         this.droppedImageData(dataChunk)
@@ -241,6 +259,7 @@
     /**
      * @description Handles browser drop of PNG images.
      * @param {Object} dataChunk - The dropped image data.
+     * @category Drag and Drop
      */
     onBrowserDropImagePng (dataChunk) {
         this.droppedImageData(dataChunk)
@@ -252,6 +271,7 @@
      * @description Processes dropped image data.
      * @param {Object} dataChunk - The dropped image data.
      * @returns {ImageWellView} The current ImageWellView instance.
+     * @category Drag and Drop
      */
     droppedImageData (dataChunk) {
         this.setImageDataUrl(dataChunk.dataUrl())
@@ -263,6 +283,7 @@
      * @description Called before removing a subview.
      * @param {Object} aSubview - The subview being removed.
      * @returns {ImageWellView} The current ImageWellView instance.
+     * @category View Management
      */
     willRemoveSubview (aSubview) {
         super.willRemoveSubview(aSubview)

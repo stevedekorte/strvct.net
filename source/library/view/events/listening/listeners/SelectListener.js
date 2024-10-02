@@ -11,6 +11,7 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -18,6 +19,7 @@
     /**
      * @description Initializes the SelectListener.
      * @returns {SelectListener} The initialized SelectListener instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -28,6 +30,7 @@
      * @description Sets the listen target for the SelectListener.
      * @param {Element} anElement - The element to set as the listen target.
      * @returns {SelectListener} The SelectListener instance.
+     * @category Configuration
      */
     setListenTarget (anElement) {
         // is event only works on document or window?
@@ -39,6 +42,7 @@
     /**
      * @description Sets up the listeners for select events.
      * @returns {SelectListener} The SelectListener instance.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("selectstart", "onSelectStart");

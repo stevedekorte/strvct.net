@@ -12,6 +12,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
 
   /**
    * Creates an instance of EnumerableWeakMap.
+   * @category Initialization
    */
   constructor() {
     this._refs = new Map();
@@ -22,6 +23,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * @param {*} v - The value to assert.
    * @throws {Error} - If the value is undefined.
    * @description Throws an error if the provided value is undefined because unref returns undefined after collection.
+   * @category Validation
    */
   assertValidValue(v) {
     if (v === undefined) {
@@ -33,6 +35,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
   /**
    * Clears the EnumerableWeakMap instance.
    * @description Removes all key-value pairs from the EnumerableWeakMap instance.
+   * @category Modification
    */
   clear() {
     this._refs.clear();
@@ -43,6 +46,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * @param {*} k - The key to check.
    * @returns {boolean} - True if the key exists, false otherwise.
    * @description Returns true if the specified key exists in the EnumerableWeakMap instance, false otherwise.
+   * @category Lookup
    */
   has(k) {
     return this.get(k) !== undefined;
@@ -53,6 +57,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * @param {*} k - The key to retrieve the value for.
    * @returns {*} - The value associated with the key, or undefined if the key does not exist or the value has been garbage collected.
    * @description Retrieves the value associated with the specified key. If the key does not exist or the value has been garbage collected, it returns undefined.
+   * @category Lookup
    */
   get(k) {
     const refs = this._refs;
@@ -75,6 +80,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * @param {*} v - The value to set.
    * @returns {EnumerableWeakMap} - The EnumerableWeakMap instance.
    * @description Sets the value for the specified key. If the key already exists and the value is different, it creates a new WeakRef and updates the value.
+   * @category Modification
    */
   set(k, v) {
     this.assertValidValue(v);
@@ -90,6 +96,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * @param {*} k - The key to remove.
    * @returns {boolean} - True if the key existed and was removed, false otherwise.
    * @description Removes the specified key from the EnumerableWeakMap instance and returns a boolean indicating whether the key existed and was removed.
+   * @category Modification
    */
   delete(k) {
     const hasKey = this.has(k); // this may delete it if weakref is stale
@@ -103,6 +110,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * Executes the provided function once for each key-value pair in the EnumerableWeakMap instance.
    * @param {Function} fn - The function to execute for each key-value pair.
    * @description Executes the provided function once for each key-value pair in the EnumerableWeakMap instance. The function is passed the value, key, and the EnumerableWeakMap instance itself. Also removes collected keys during iteration.
+   * @category Iteration
    */
   forEach(fn) { // fn (value, key, map)
     // also removes collected keys
@@ -130,6 +138,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
   /**
    * Removes collected values from the EnumerableWeakMap instance.
    * @description Removes collected values (values that have been garbage collected) from the EnumerableWeakMap instance.
+   * @category Maintenance
    */
   removeCollectedValues() {
     const refs = this._refs;
@@ -149,6 +158,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * Returns the number of key-value pairs in the EnumerableWeakMap instance.
    * @returns {number} - The number of key-value pairs in the EnumerableWeakMap instance.
    * @description Returns the number of key-value pairs in the EnumerableWeakMap instance. Note that since WeakRefs are only removed after a collection cycle, the actual size of reachable objects may be lower than this.
+   * @category Information
    */
   count() {
     this.removeCollectedValues();
@@ -161,6 +171,7 @@ getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
    * Returns an array of keys in the EnumerableWeakMap instance.
    * @returns {Array} - An array of keys in the EnumerableWeakMap instance.
    * @description Returns an array of keys in the EnumerableWeakMap instance.
+   * @category Information
    */
   keysArray() {
     const keys = [];

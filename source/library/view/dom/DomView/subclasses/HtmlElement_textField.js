@@ -38,6 +38,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
     /**
      * @description Clone.
      * @returns {HTMLElement} The cloned element.
+     * @category Element Manipulation
      */
     clone () {
         const newNode = document.createElement(this.tagName);
@@ -52,6 +53,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      * @description Merge from.
      * @param {HTMLElement} remoteElement - The remote element.
      * @returns {void}
+     * @category Element Manipulation
      */
     mergeFrom (remoteElement) {
         if (this.innerHTML === remoteElement.innerHTML) {
@@ -129,6 +131,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      * @param {String} textContent - The text content.
      * @param {String} className - The class name.
      * @returns {HTMLElement} The element.
+     * @category Element Search
      */
     findElementWithTextContent (textContent, className) {
         const children = Array.from(this.childNodes);
@@ -168,6 +171,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      * @description Get all subelements with class.
      * @param {String} className - The class name.
      * @returns {Array} The subelements.
+     * @category Element Search
      */
     getAllSubelementsWithClass (className) {
         return this.getAllSubelementsWithAnyOfClass([className]);
@@ -179,6 +183,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      * @description Get all subelements with any of class.
      * @param {Array} classNames - The class names.
      * @returns {Array} The subelements.
+     * @category Element Search
      */
     getAllSubelementsWithAnyOfClass (classNames) {
         let allSubelements = [];
@@ -201,6 +206,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      * @description Elements of tag.
      * @param {String} tagName - The tag name.
      * @returns {Array} The elements.
+     * @category Element Search
      */
     elementsOfTag (tagName) {
         assert(Type.isString(tagName));
@@ -211,6 +217,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      * @description Elements of tags.
      * @param {Array} tagNames - The tag names.
      * @returns {Array} The elements.
+     * @category Element Search
      */
     elementsOfTags (tagNames) {
         assert(Type.isArray(tagNames));

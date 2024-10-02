@@ -9,6 +9,7 @@
     /**
      * @description Initializes the prototype slots for the BMPointerFieldTile class.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -17,6 +18,7 @@
     /**
      * @description Initializes the BMPointerFieldTile instance.
      * @returns {BMPointerFieldTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -29,6 +31,7 @@
     /**
      * @description Updates the subviews of the BMPointerFieldTile.
      * @returns {BMPointerFieldTile} The instance after updating subviews.
+     * @category UI Update
      */
     updateSubviews () {	
         super.updateSubviews()

@@ -15,6 +15,7 @@
     /**
      * @description Initializes the TileNoteView with specific styling.
      * @returns {TileNoteView} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -30,6 +31,7 @@
      * @description Sets the background color of the TileNoteView to transparent.
      * @param {string} s - The color string (ignored in this implementation).
      * @returns {TileNoteView} The current instance.
+     * @category Styling
      */
     setBackgroundColor (s) {
         super.setBackgroundColor("tranparent")
@@ -40,6 +42,7 @@
      * @description Sets the transition for the TileNoteView.
      * @param {string} s - The transition string.
      * @returns {*} The result of the super class's setTransition method.
+     * @category Animation
      */
     setTransition (s) {
         //debugger;

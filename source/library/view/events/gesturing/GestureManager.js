@@ -30,6 +30,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -37,10 +38,12 @@
     
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Gesture} activeGesture
+         * @category State
          */
         {
             const slot = this.newSlot("activeGesture", null);
@@ -48,6 +51,7 @@
         }
         /**
          * @member {Map} begunGesturesMap
+         * @category State
          */
         {
             const slot = this.newSlot("begunGesturesMap", null) 
@@ -55,6 +59,7 @@
         }
         /**
          * @member {Boolean} isPaused - used to pause gestures while editing text fields
+         * @category State
          */
         {
             const slot = this.newSlot("isPaused", false);
@@ -65,6 +70,7 @@
     /**
      * @description Initializes the instance
      * @returns {GestureManager} The instance
+     * @category Initialization
      */
     init () {
         super.init();
@@ -75,6 +81,7 @@
     /**
      * @description Checks if there's an active gesture
      * @returns {Boolean} True if there's an active gesture, false otherwise
+     * @category State
      */
     hasActiveGesture () {
         return this.activeGesture() && this.activeGesture().isActive();
@@ -83,6 +90,7 @@
     /**
      * @description Pauses the gesture manager
      * @returns {GestureManager} The instance
+     * @category Control
      */
     pause () {
         this.setIsPaused(true);
@@ -92,6 +100,7 @@
     /**
      * @description Unpauses the gesture manager
      * @returns {GestureManager} The instance
+     * @category Control
      */
     unpause () {
         this.setIsPaused(false);
@@ -102,6 +111,7 @@
      * @description Sets the paused state of the gesture manager
      * @param {Boolean} aBool - The paused state
      * @returns {GestureManager} The instance
+     * @category Control
      */
     setIsPaused (aBool) {
         if (this._isPaused !== aBool) {
@@ -118,6 +128,7 @@
 
     /**
      * @description Cancels all gestures
+     * @category Control
      */
     cancelAllGestures () {
         this.cancelAllBegunGestures();
@@ -131,6 +142,7 @@
      * @description Requests to set the active gesture
      * @param {Gesture} aGesture - The gesture requesting to be active
      * @returns {Boolean} True if the request was accepted, false otherwise
+     * @category Control
      */
     requestActiveGesture (aGesture) {
         this.debugLog("requestActiveGesture(" + aGesture.description() + ")");
@@ -169,6 +181,7 @@
      * @description Accepts a gesture as the active gesture
      * @param {Gesture} aGesture - The gesture to accept
      * @returns {GestureManager} The instance
+     * @category Control
      */
     acceptGesture (aGesture) {
         aGesture.viewTarget().cancelAllGesturesExcept(aGesture);
@@ -183,6 +196,7 @@
      * @description Rejects a gesture from becoming the active gesture
      * @param {Gesture} aGesture - The gesture to reject
      * @returns {GestureManager} The instance
+     * @category Control
      */
     rejectGesture (aGesture) {
         this.debugLog("rejectGesture(" + aGesture.description() + ")");
@@ -194,6 +208,7 @@
      * @description Deactivates a gesture
      * @param {Gesture} aGesture - The gesture to deactivate
      * @returns {GestureManager} The instance
+     * @category Control
      */
     deactivateGesture (aGesture) {
         if (this.activeGesture() === aGesture) {
@@ -206,6 +221,7 @@
      * @description Adds a gesture to the begun gestures map
      * @param {Gesture} aGesture - The gesture to add
      * @returns {GestureManager} The instance
+     * @category Management
      */
     addBegunGesture (aGesture) {
         this.begunGesturesMap().set(aGesture.typeId(), aGesture);
@@ -216,6 +232,7 @@
      * @description Removes a gesture from the begun gestures map
      * @param {Gesture} aGesture - The gesture to remove
      * @returns {GestureManager} The instance
+     * @category Management
      */
     removeBegunGesture (aGesture) {
         this.begunGesturesMap().delete(aGesture.typeId());
@@ -225,6 +242,7 @@
     /**
      * @description Cancels all begun gestures
      * @returns {GestureManager} The instance
+     * @category Control
      */
     cancelAllBegunGestures () {
         this.begunGesturesMap().forEachV(g => g.requestCancel());
@@ -235,6 +253,7 @@
      * @description Cancels all begun gestures except the specified one
      * @param {Gesture} aGesture - The gesture to exclude from cancellation
      * @returns {GestureManager} The instance
+     * @category Control
      */
     cancelBegunGesturesExcept (aGesture) {
         this.begunGesturesMap().forEachV(g => {
@@ -248,6 +267,7 @@
     /**
      * @description Returns a debug type ID
      * @returns {string} The debug type ID
+     * @category Debugging
      */
     debugTypeId () {
         const s = this.isPaused() ? "(paused)" : "(not paused)";

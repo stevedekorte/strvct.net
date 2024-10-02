@@ -37,11 +37,13 @@
     
     /**
      * @description Initializes the prototype slots for the StyledDomView.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {String} themeClassName
+             * @category Theme
              */
             const slot = this.newSlot("themeClassName", null);
             slot.setSlotType("String");
@@ -49,6 +51,7 @@
         {
             /**
              * @member {Boolean} isSelected
+             * @category State
              */
             const slot = this.newSlot("isSelected", false);
             slot.setOwnsSetter(true);
@@ -58,6 +61,7 @@
         {
             /**
              * @member {Boolean} isActive
+             * @category State
              */
             const slot = this.newSlot("isActive", false);
             slot.setOwnsSetter(true);
@@ -67,6 +71,7 @@
         {
             /**
              * @member {Boolean} isDisabled
+             * @category State
              */
             const slot = this.newSlot("isDisabled", false);
             slot.setOwnsSetter(true);
@@ -76,6 +81,7 @@
         {
             /**
              * @member {Set} lockedStyleAttributeSet
+             * @category Style
              */
             const slot = this.newSlot("lockedStyleAttributeSet", null);
             slot.setSlotType("Set");
@@ -85,6 +91,7 @@
     /**
      * @description Initializes the StyledDomView.
      * @returns {StyledDomView}
+     * @category Initialization
      */
     init () {
         super.init()
@@ -97,6 +104,7 @@
      * @description Synchronizes the state from another view.
      * @param {StyledDomView} aView - The view to sync from.
      * @returns {StyledDomView}
+     * @category State
      */
     syncStateFrom (aView) {
         this.setIsSelected(aView.isSelected())
@@ -107,6 +115,7 @@
     /**
      * @description Returns the theme class name path.
      * @returns {Array|null}
+     * @category Theme
      */
     themeClassNamePath () {
         // search up the view ancestors and compose a path
@@ -129,6 +138,7 @@
     /**
      * @description Applies styles to the view.
      * @returns {StyledDomView}
+     * @category Style
      */
     applyStyles () {
         // we default to using the current theme, but 
@@ -147,6 +157,7 @@
      * @param {*} oldValue - The old value of the slot.
      * @param {*} newValue - The new value of the slot.
      * @returns {StyledDomView}
+     * @category State
      */
     didUpdateSlotIsActive (oldValue, newValue) {
         // sent by hooked setter
@@ -156,6 +167,7 @@
 
     /**
      * @description Activates the view.
+     * @category State
      */
     activate () {
         this.select()
@@ -166,6 +178,7 @@
     /**
      * @description Handles the activation of a view.
      * @param {StyledDomView} aView - The view that was activated.
+     * @category Event
      */
     onActivateView (aView) {
         if (aView !== this & this.isActive()) {
@@ -178,6 +191,7 @@
      * @param {*} oldValue - The old value of the slot.
      * @param {*} newValue - The new value of the slot.
      * @returns {StyledDomView}
+     * @category State
      */
     didUpdateSlotIsSelected (oldValue, newValue) {
         // sent by hooked setter
@@ -188,6 +202,7 @@
     /**
      * @description Toggles the selection state of the view.
      * @returns {StyledDomView}
+     * @category State
      */
     toggleSelection () {
         if (this.isSelected()) {
@@ -201,6 +216,7 @@
     /**
      * @description Selects the view.
      * @returns {StyledDomView}
+     * @category State
      */
     select () {
         this.setIsSelected(true)
@@ -210,6 +226,7 @@
     /**
      * @description Unselects the view.
      * @returns {StyledDomView}
+     * @category State
      */
     unselect () {
         if (this.isSelected()) { // for debugging 
@@ -221,6 +238,7 @@
     /**
      * @description Returns the theme path array.
      * @returns {Array}
+     * @category Theme
      */
     themePathArray () {
         const path = []
@@ -241,6 +259,7 @@
     /**
      * @description Returns the theme path string.
      * @returns {string}
+     * @category Theme
      */
     themePathString () {
         return this.themePathArray().join(" / ")
@@ -249,6 +268,7 @@
     /**
      * @description Returns the current theme class.
      * @returns {*|null}
+     * @category Theme
      */
     currentThemeClass () {
         const theme = BMThemeResources.shared().activeTheme()
@@ -263,6 +283,7 @@
     /**
      * @description Returns the current theme state name.
      * @returns {string}
+     * @category Theme
      */
     currentThemeStateName () {
         let stateName = "unselected"
@@ -285,6 +306,7 @@
     /**
      * @description Returns the current theme state.
      * @returns {*|null}
+     * @category Theme
      */
     currentThemeState () {
         const tc = this.currentThemeClass() 
@@ -301,6 +323,7 @@
      * @description Returns the theme value for a given attribute.
      * @param {string} attributeName - The name of the attribute.
      * @returns {*|null}
+     * @category Theme
      */
     themeValueForAttribute (attributeName) {
         const stateNode = this.currentThemeState()
@@ -322,6 +345,7 @@
     /**
      * @description Returns the current color.
      * @returns {string}
+     * @category Style
      */
     currentColor () {
         const v = this.themeValueForAttribute("color")
@@ -334,6 +358,7 @@
     /**
      * @description Returns the current background color.
      * @returns {string}
+     * @category Style
      */
     currentBgColor () {
         const v = this.themeValueForAttribute("backgroundColor")
@@ -346,6 +371,7 @@
     /**
      * @description Resyncs all views.
      * @returns {StyledDomView}
+     * @category Synchronization
      */
     resyncAllViews () {
         this.syncStylesToSubviews()
@@ -357,6 +383,7 @@
     /**
      * @description Syncs styles to subviews.
      * @returns {StyledDomView}
+     * @category Synchronization
      */
     syncStylesToSubviews () {
         return this

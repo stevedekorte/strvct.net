@@ -12,6 +12,7 @@
 (class AzureSpeakers extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the AzureSpeakers class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     this.setShouldStore(true)
@@ -21,6 +22,7 @@
   /**
    * @description Initializes the AzureSpeakers instance.
    * @returns {AzureSpeakers} The initialized instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -30,6 +32,7 @@
 
   /**
    * @description Performs final initialization for the AzureSpeakers instance.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -42,6 +45,7 @@
   /**
    * @description Gets the parent service node.
    * @returns {Object} The parent service node.
+   * @category Hierarchy
    */
   service () {
     return this.parentNode()

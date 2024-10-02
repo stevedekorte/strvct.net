@@ -12,6 +12,7 @@
      * @description Creates a record for storing the object's data
      * @param {Object} aStore - The store object
      * @returns {Object} The record object containing the object's data
+     * @category Storage
      */
     recordForStore (aStore) { // should only be called by Store
         const aRecord = {
@@ -40,6 +41,7 @@
      * @description Collects lazy PIDs (Persistent Identifiers) for the object
      * @param {Set} puuids - Set to store the collected PIDs
      * @returns {Set} The set of collected PIDs
+     * @category Storage
      */
     lazyPids (puuids = new Set()) {
         // when doing Store.collect() will need to check for lazy slot pids on active objects
@@ -58,6 +60,7 @@
      * @param {Object} aRecord - The record containing the object's data
      * @param {Object} aStore - The store object
      * @returns {Object} The current object instance
+     * @category Storage
      */
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {

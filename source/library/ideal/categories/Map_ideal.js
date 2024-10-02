@@ -12,6 +12,7 @@
      * Creates a deep copy of the map
      * @param {Map} [refMap=new Map()] - A map to handle circular references
      * @returns {Map_ideal} A new Map_ideal instance with deeply copied entries
+     * @category Copying
      */
     deepCopy (refMap = new Map()) {
         const m = new this.constructor();
@@ -26,6 +27,7 @@
     /**
      * Creates a shallow copy of the map
      * @returns {Map_ideal} A new Map_ideal instance with the same entries
+     * @category Copying
      */
     shallowCopy () {
         return new Map(this)
@@ -34,6 +36,7 @@
     /**
      * Returns the number of entries in the map
      * @returns {number} The number of entries
+     * @category Information
      */
     count () {
         return this.size
@@ -43,6 +46,7 @@
      * Gets the value associated with the specified key
      * @param {*} k - The key to look up
      * @returns {*} The value associated with the key, or undefined if the key doesn't exist
+     * @category Access
      */
     at (k) {
         return this.get(k)
@@ -53,6 +57,7 @@
      * @param {*} k - The key to set
      * @param {*} v - The value to set
      * @returns {Map_ideal} This map instance
+     * @category Modification
      */
     atIfAbsentPut (k, v) {
         if (!this.has(k)) {
@@ -65,6 +70,7 @@
      * Checks if the map has a specific key
      * @param {*} k - The key to check
      * @returns {boolean} True if the key exists, false otherwise
+     * @category Information
      */
     hasKey (k) {
         return this.has(k)
@@ -75,6 +81,7 @@
      * @param {*} k - The key to set
      * @param {*} v - The value to set
      * @returns {Map_ideal} This map instance
+     * @category Modification
      */
     atPut (k, v) {
         this.set(k, v)
@@ -85,6 +92,7 @@
      * Removes a key-value pair from the map
      * @param {*} k - The key to remove
      * @returns {Map_ideal} This map instance
+     * @category Modification
      */
     removeKey (k) {
         this.delete(k)
@@ -94,6 +102,7 @@
     /**
      * Iterates over the map, calling a function for each key-value pair
      * @param {function(*, *, Map_ideal): void} fn - The function to call for each entry
+     * @category Iteration
      */
     forEachKV (fn) {
         this.forEach((v, k, self) => fn(k, v, self));
@@ -102,6 +111,7 @@
     /**
      * Iterates over the map, calling a function for each key
      * @param {function(*): void} fn - The function to call for each key
+     * @category Iteration
      */
     forEachK (fn) {
         this.forEach((v, k) => fn(k));
@@ -110,6 +120,7 @@
     /**
      * Iterates over the map, calling a function for each value
      * @param {function(*): void} fn - The function to call for each value
+     * @category Iteration
      */
     forEachV (fn) {
         this.forEach((v, k) => fn(v));
@@ -118,6 +129,7 @@
     /**
      * Returns an array of all keys in the map
      * @returns {Array} An array containing all keys
+     * @category Conversion
      */
     keysArray () {
         return Array.fromIterator(this.keys());
@@ -126,6 +138,7 @@
     /**
      * Returns a set of all keys in the map
      * @returns {Set} A set containing all keys
+     * @category Conversion
      */
     keysSet () {
         return Set.fromIterator(this.keys());
@@ -134,6 +147,7 @@
     /**
      * Returns an array of all values in the map
      * @returns {Array} An array containing all values
+     * @category Conversion
      */
     valuesArray () {
         return Array.fromIterator(this.values());
@@ -142,6 +156,7 @@
     /**
      * Returns a set of all values in the map
      * @returns {Set} A set containing all values
+     * @category Conversion
      */
     valuesSet () {
         return Set.fromIterator(this.values());
@@ -150,6 +165,7 @@
     /**
      * Merges this map's entries into another map
      * @param {Map} aMap - The map to merge into
+     * @category Modification
      */
     mergeInto (aMap) {
         this.forEachKV((k, v) => aMap.set(k, v));
@@ -158,6 +174,7 @@
     /**
      * Merges another map's entries into this map
      * @param {Map} aMap - The map to merge from
+     * @category Modification
      */
     merge (aMap) {
         aMap.forEachKV((k, v) => this.set(k, v));
@@ -167,6 +184,7 @@
      * Filters the map in-place, keeping only entries that satisfy the given predicate
      * @param {function(*, *): boolean} fn - The predicate function
      * @returns {Map_ideal} This map instance
+     * @category Filtering
      */
     selectInPlaceKV (fn) {
         const keys = this.keysArray();
@@ -183,6 +201,7 @@
      * Creates a new map with entries that satisfy the given predicate
      * @param {function(*, *): boolean} fn - The predicate function
      * @returns {Map_ideal} A new filtered map
+     * @category Filtering
      */
     select (fn) {
         const m = new this.constructor()
@@ -198,6 +217,7 @@
      * Checks if this map is equal to another map
      * @param {Map} aMap - The map to compare with
      * @returns {boolean} True if the maps are equal, false otherwise
+     * @category Comparison
      */
     isEqual (aMap) {
         if (this.count() !== aMap.count()) {
@@ -218,6 +238,7 @@
     /**
      * Checks if the map is empty
      * @returns {boolean} True if the map is empty, false otherwise
+     * @category Information
      */
     isEmpty () {
         return this.size === 0        
@@ -226,6 +247,7 @@
     /**
      * Converts the map to a plain object
      * @returns {Object} A plain object representation of the map
+     * @category Conversion
      */
     asDict () {
         const dict = {}
@@ -237,6 +259,7 @@
      * Populates the map from a plain object
      * @param {Object} aDict - The object to populate from
      * @returns {Map_ideal} This map instance
+     * @category Conversion
      */
     fromDict (aDict) {
         this.clear()
@@ -247,6 +270,7 @@
     /**
      * Returns a string description of the map
      * @returns {string} A JSON string representation of the map
+     * @category Conversion
      */
     description () {
         return JSON.stableStringify(this.asDict(), null, 2) // may throw error if values aren't json compatible
@@ -257,6 +281,7 @@
      * @param {*} keyToMove - The key to move
      * @param {*} beforeKey - The key to move before
      * @returns {Map_ideal} This map instance
+     * @category Reordering
      */
     reorderKeyToBeBefore (keyToMove, beforeKey) {
         if (!this.has(keyToMove) || !this.has(beforeKey)) {
@@ -288,6 +313,7 @@
      * @param {*} keyToMove - The key to move
      * @param {*} afterKey - The key to move after
      * @returns {Map_ideal} This map instance
+     * @category Reordering
      */
     reorderKeyToBeAfter (keyToMove, afterKey) {
         if (!this.has(keyToMove) || !this.has(afterKey)) {
@@ -314,6 +340,7 @@
      * Creates an index of the map's values based on a method call
      * @param {string} methodName - The name of the method to call on each value
      * @returns {Map} A new map where keys are method results and values are sets of matching entries
+     * @category Indexing
      */
     indexedByMethod (methodName) {
         const index = new Map();
@@ -332,6 +359,7 @@
     /**
      * Creates a new map with keys and values swapped
      * @returns {Map_ideal} A new map with inverted key-value pairs
+     * @category Conversion
      */
     inverted () {
         const invertedMap = new this.constructor();
@@ -342,5 +370,3 @@
     }
 
 }).initThisCategory();
-
-    

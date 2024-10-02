@@ -17,66 +17,79 @@
     initPrototypeSlots () {
         /**
          * @member {object} dbFolder - Database folder object
+         * @category Database
          */
         this.newSlot("dbFolder", null)
 
         /**
          * @member {object} objectStore - IndexedDB object store
+         * @category Database
          */
         this.newSlot("objectStore", null)
 
         /**
          * @member {object} tx - IndexedDB transaction object
+         * @category Transaction
          */
         this.newSlot("tx", null)
 
         /**
          * @member {Array} requests - Array of transaction requests
+         * @category Transaction
          */
         this.newSlot("requests", [])
 
         /**
          * @member {boolean} isCommitted - Flag indicating if transaction is committed
+         * @category Transaction
          */
         this.newSlot("isCommitted", false) // set to true when tx.commit() is called
 
         /**
          * @member {boolean} isAborted - Flag indicating if transaction is aborted
+         * @category Transaction
          */
         this.newSlot("isAborted", false)
 
         /**
          * @member {boolean} isCompleted - Flag indicating if transaction is completed
+         * @category Transaction
          */
         this.newSlot("isCompleted", false) // set to true after tx commit onsuccess callback received 
 
         /**
          * @member {Error} txRequestStack - Stack trace of transaction request
+         * @category Debugging
          */
         this.newSlot("txRequestStack", null)
 
         /**
          * @member {object} options - Transaction options
+         * @category Transaction
          */
         this.newSlot("options", { "durability": "strict" })
 
         /**
          * @member {string} txId - Transaction ID
+         * @category Transaction
          */
         this.newSlot("txId", null)
 
         /**
          * @member {Promise} promiseForCommit - Promise for transaction commit
+         * @category Transaction
          */
         this.newSlot("promiseForCommit", null)
 
         /**
          * @member {Promise} promiseForFinished - Promise for transaction finish
+         * @category Transaction
          */
         this.newSlot("promiseForFinished", null)
 
         /**
          * @member {number} timeoutInMs - Transaction timeout in milliseconds
+         * @category Transaction
          */
         this.newSlot("timeoutInMs", 1000);
     }
@@ -86,6 +99,7 @@
 
     /**
      * Initialize the instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -96,6 +110,7 @@
     /**
      * Mark the transaction as completed
      * @returns {IndexedDBTx}
+     * @category Transaction
      */
     markCompleted () {
         assert(!this.isCompleted());
@@ -108,6 +123,7 @@
      * Mark the transaction as rejected
      * @param {Error} error - The error that caused the rejection
      * @returns {IndexedDBTx}
+     * @category Transaction
      */
     markRejected (error) {
         this.promiseForFinished().callRejectFunc(error);
@@ -117,6 +133,7 @@
     /**
      * Mark the transaction as resolved
      * @returns {IndexedDBTx}
+     * @category Transaction
      */
     markResolved () {
         this.promiseForFinished().callResolveFunc();
@@ -132,6 +149,7 @@
     /**
      * Get the database object
      * @returns {object}
+     * @category Database
      */
     db () {
         return this.dbFolder().db()
@@ -140,6 +158,7 @@
     /**
      * Get the store name
      * @returns {string}
+     * @category Database
      */
     storeName () {
         return this.dbFolder().storeName()
@@ -149,6 +168,7 @@
 
     /**
      * Assert that the transaction is not committed
+     * @category Transaction
      */
     assertNotCommitted () {
 	    assert(this.isCommitted() === false)
@@ -157,6 +177,7 @@
     /**
      * Create a new transaction
      * @returns {object}
+     * @category Transaction
      */
     newTx () {
         assert(this.tx() === null)
@@ -172,6 +193,7 @@
     /**
      * Begin the transaction
      * @returns {IndexedDBTx}
+     * @category Transaction
      */
     begin () {
         this.debugLog(this.dbFolder().path() + " TX BEGIN ")
@@ -186,6 +208,7 @@
     /**
      * Abort the transaction
      * @returns {IndexedDBTx}
+     * @category Transaction
      */
     abort () {
 	    this.assertNotCommitted();
@@ -199,6 +222,7 @@
 
     /**
      * Show transaction details
+     * @category Debugging
      */
     show () {
         console.log(this.description())
@@ -208,6 +232,7 @@
     /**
      * Get transaction description
      * @returns {string}
+     * @category Debugging
      */
     description () {
         let s = "db: " + this.dbFolder().path() + " tx:\n"
@@ -219,6 +244,7 @@
 
     /**
      * Show transaction request stack
+     * @category Debugging
      */
     showTxRequestStack () {
         const rs = this.txRequestStack()
@@ -232,6 +258,7 @@
     /**
      * Check if the transaction is finished
      * @returns {boolean}
+     * @category Transaction
      */
     isFinished () {
         return this.isAborted() || this.isCompleted()
@@ -240,6 +267,7 @@
     /**
      * Promise to commit the transaction
      * @returns {Promise}
+     * @category Transaction
      */
     promiseCommit () {
         assert(!this.isFinished())
@@ -268,6 +296,7 @@
      * Push a request to the transaction
      * @param {object} aRequest - The request to push
      * @returns {IndexedDBTx}
+     * @category Transaction
      */
     pushRequest (aRequest) {
 	    this.assertNotCommitted()
@@ -291,6 +320,7 @@
      * Assert that the key and value are valid
      * @param {string} key - The key
      * @param {string|ArrayBuffer} value - The value
+     * @category Validation
      */
     assertValidKeyValue (key, value) {
         assert(typeof(key) === "string")
@@ -302,6 +332,7 @@
      * @param {string} key - The key
      * @param {string|ArrayBuffer} value - The value
      * @returns {object}
+     * @category Utility
      */
     entryForKeyAndValue (key, value) {
         this.assertValidKeyValue(key, value)
@@ -315,6 +346,7 @@
      * @param {string} key - The key
      * @param {string|ArrayBuffer} value - The value
      * @returns {IndexedDBTx}
+     * @category Database Operations
      */
     atAdd (key, value) {
         this.assertValidKeyValue(key, value)
@@ -336,6 +368,7 @@
      * @param {string} key - The key
      * @param {string|ArrayBuffer} value - The value
      * @returns {IndexedDBTx}
+     * @category Database Operations
      */
     atUpdate (key, value) {
         this.assertValidKeyValue(key, value)
@@ -356,6 +389,7 @@
      * Remove an entry from the object store
      * @param {string} key - The key
      * @returns {IndexedDBTx}
+     * @category Database Operations
      */
     removeAt (key) {
 	    this.assertNotCommitted()
@@ -372,6 +406,7 @@
     /**
      * Get debug type ID
      * @returns {string}
+     * @category Debugging
      */
     debugTypeId () {
         return this.dbFolder().debugTypeId() + " " + this.txId() //super.debugTypeId()

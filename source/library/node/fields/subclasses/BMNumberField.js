@@ -15,6 +15,7 @@
     /**
      * @static
      * @returns {boolean} True if available as a node primitive
+     * @category Utility
      */
     static availableAsNodePrimitive () {
         return true
@@ -22,10 +23,12 @@
 
     /**
      * @description Initialize prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {string} unsetVisibleValue
+         * @category UI
          */
         {
             const slot = this.newSlot("unsetVisibleValue", "unset");
@@ -34,6 +37,7 @@
 
         /**
          * @member {boolean} isInteger
+         * @category Configuration
          */
         {
             const slot = this.newSlot("isInteger", false)
@@ -49,6 +53,7 @@
 
         /**
          * @member {boolean} hasLimits
+         * @category Configuration
          */
         {
             const slot = this.newSlot("hasLimits", false)
@@ -64,6 +69,7 @@
 
         /**
          * @member {number} minValue
+         * @category Configuration
          */
         {
             const slot = this.newSlot("minValue", 0)
@@ -79,6 +85,7 @@
 
         /**
          * @member {number} maxValue
+         * @category Configuration
          */
         {
             const slot = this.newSlot("maxValue", 1)
@@ -95,6 +102,7 @@
 
     /**
      * @description Initialize prototype
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -105,6 +113,7 @@
 
     /**
      * @description Handle update of isInteger slot
+     * @category Validation
      */
     didUpdateSlotIsInteger () {
         this.validate()
@@ -112,6 +121,7 @@
 
     /**
      * @description Handle update of hasLimits slot
+     * @category Validation
      */
     didUpdateSlotHasLimits () {
         this.validate()
@@ -119,6 +129,7 @@
 
     /**
      * @description Handle update of minValue slot
+     * @category Validation
      */
     didUpdateSlotMinValue () {
         this.validate()
@@ -126,6 +137,7 @@
 
     /**
      * @description Handle update of maxValue slot
+     * @category Validation
      */
     didUpdateSlotMaxValue () {
         this.validate()
@@ -135,6 +147,7 @@
 
     /**
      * @description Initialize the instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -148,6 +161,7 @@
      * @description Set the value of the field
      * @param {*} v - The value to set
      * @returns {BMNumberField} The instance
+     * @category Data Manipulation
      */
     setValue (v) {
         if (!Type.isNumber(v)) {
@@ -168,6 +182,7 @@
     /**
      * @description Check if the value is numeric
      * @returns {boolean} True if the value is numeric
+     * @category Validation
      */
     valueIsNumeric () {
         const n = this.value();
@@ -177,6 +192,7 @@
     /**
      * @description Validate the field value
      * @returns {boolean} True if the value is valid
+     * @category Validation
      */
     validate () {
         const v = Number(this.value())

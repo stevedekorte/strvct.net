@@ -17,6 +17,7 @@
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -24,6 +25,7 @@
 
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /*
@@ -34,6 +36,7 @@
         */
         /**
          * @member {BMFontResources} fonts
+         * @category Resources
          */
         {
             const slot = this.newSlot("fonts", null);
@@ -41,6 +44,7 @@
         }
         /**
          * @member {BMSoundResources} sounds
+         * @category Resources
          */
         {
             const slot = this.newSlot("sounds", null);
@@ -48,6 +52,7 @@
         }
         /**
          * @member {BMImageResources} images
+         * @category Resources
          */
         {
             const slot = this.newSlot("images", null);
@@ -55,6 +60,7 @@
         }
         /**
          * @member {BMIconResources} icons
+         * @category Resources
          */
         {
             const slot = this.newSlot("icons", null);
@@ -62,6 +68,7 @@
         }
         /**
          * @member {BMJsonResources} json
+         * @category Resources
          */
         {
             const slot = this.newSlot("json", null);
@@ -69,6 +76,7 @@
         }
         /**
          * @member {BMFileResources} files
+         * @category Resources
          */
         {
             const slot = this.newSlot("files", null);
@@ -78,6 +86,7 @@
 
     /**
      * @description Initializes the prototype with default values.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(false);
@@ -87,6 +96,7 @@
 
     /**
      * @description Initializes the instance and sets up subnodes.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -97,6 +107,7 @@
     /**
      * @description Sets up the subnodes for various resource types.
      * @returns {BMResources} The current instance.
+     * @category Setup
      */
     setupSubnodes () {
         //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources);
@@ -131,6 +142,7 @@
      * @description Returns an array of resource classes for a given file extension.
      * @param {string} extension - The file extension.
      * @returns {Array} An array of resource classes.
+     * @category Resource Lookup
      */
     resourceClassesForFileExtension (extension) {
         return this.subnodes().map(sn => sn.resourceClassesForFileExtension(extension)).flat()
@@ -140,6 +152,7 @@
      * @description Returns the first resource class for a given file extension.
      * @param {string} extension - The file extension.
      * @returns {Function|null} The resource class or null if not found.
+     * @category Resource Lookup
      */
     resourceClassForFileExtension (extension) {
         return this.resourceClassesForFileExtension(extension).first()
@@ -149,6 +162,7 @@
      * @description Returns a resource for a given path.
      * @param {string} aPath - The path to the resource.
      * @returns {Object|null} The resource object or null if not found.
+     * @category Resource Lookup
      */
     resourceForPath (aPath) {
         const rClass = this.resourceClassForFileExtension(aPath.pathExtension())
@@ -169,6 +183,7 @@
     /**
      * @description Precaches resources where appropriate.
      * @returns {Promise} A promise that resolves when precaching is complete.
+     * @category Caching
      */
     async prechacheWhereAppropriate () {
         console.log(this.type() + ".prechacheWhereAppropriate()");

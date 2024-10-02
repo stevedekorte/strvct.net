@@ -39,7 +39,7 @@
 (class AzureSpeaker extends BMSummaryNode {
   /**
    * Initializes the prototype slots for the AzureSpeaker class.
-
+   * @category Initialization
    */
   initPrototypeSlots () {
     /*
@@ -50,6 +50,7 @@
 
     /**
      * @member {string} localeName - The language/locale name for the speaker.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("localeName", "English (United States)");
@@ -69,6 +70,7 @@
 
     /**
      * @member {string} displayName - The display name for the speaker.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("displayName", null);
@@ -88,6 +90,7 @@
 
     /**
      * @member {string} voiceStyle - The style of the voice for the speaker.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("voiceStyle", null);
@@ -106,6 +109,7 @@
     
     /**
      * @member {string} volume - The volume setting for the speaker.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("volume", "soft");
@@ -124,6 +128,7 @@
     
     /**
      * @member {number} rate - The rate adjustment percentage for the speaker.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("rate", 10);
@@ -139,6 +144,7 @@
 
     /**
      * @member {number} pitch - The pitch adjustment percentage for the speaker.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("pitch", -10);
@@ -154,6 +160,7 @@
 
     /**
      * @member {boolean} isMuted - Indicates whether the speaker is muted.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("isMuted", false);
@@ -168,6 +175,7 @@
 
     /**
      * @member {Object} currentAudio - The current audio object.
+     * @category Audio
      */
     {
       const slot = this.newSlot("currentAudio", null);
@@ -184,6 +192,7 @@
 
     /**
      * @member {Object} audioQueue - The audio queue object.
+     * @category Audio
      */
     {
       const slot = this.newSlot("audioQueue", null);
@@ -191,6 +200,7 @@
 
     /**
      * @member {Array} audioBlobQueue - The queue of audio blobs.
+     * @category Audio
      */
     {
       const slot = this.newSlot("audioBlobQueue", null);
@@ -198,6 +208,7 @@
 
     /**
      * @member {Object} requests - The Azure TTS requests object.
+     * @category Requests
      */
     {
       const slot = this.newSlot("requests", null)
@@ -234,7 +245,7 @@
 
   /**
    * Initializes the AzureSpeaker instance.
-
+   * @category Initialization
    */
   init () {
     super.init();
@@ -246,7 +257,7 @@
 
   /**
    * Performs final initialization of the AzureSpeaker instance.
-
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -258,7 +269,7 @@
 
   /**
    * Gets the parent speakers object.
-
+   * @category Helpers
    * @returns {Object} The parent speakers object.
    */
   speakers () {
@@ -267,7 +278,7 @@
 
   /**
    * Gets the Azure service object.
-
+   * @category Helpers
    * @returns {Object} The Azure service object.
    */
   service () {
@@ -276,7 +287,7 @@
 
   /**
    * Gets the available voices.
-
+   * @category Helpers
    * @returns {Array} The available voices.
    */
   voices () {
@@ -287,7 +298,7 @@
 
   /**
    * Gets the valid locale names.
-
+   * @category Configuration
    * @returns {Array} The valid locale names.
    */
   validLocaleNames () {
@@ -296,7 +307,7 @@
 
   /**
    * Gets the valid display names for the current locale.
-
+   * @category Configuration
    * @returns {Array} The valid display names.
    */
   validDisplayNames () {
@@ -307,7 +318,7 @@
 
   /**
    * Gets the selected voice based on the current locale and display name.
-
+   * @category Configuration
    * @returns {Object} The selected voice object.
    */
   selectedVoice () {
@@ -320,7 +331,7 @@
 
   /**
    * Gets the short name of the selected voice.
-
+   * @category Configuration
    * @returns {string} The short name of the selected voice.
    */
   shortName () {
@@ -332,7 +343,7 @@
 
   /**
    * Gets the valid volume settings.
-
+   * @category Configuration
    * @returns {Array} The valid volume settings.
    */
   validVolumes () {
@@ -351,7 +362,7 @@
 
   /**
    * Gets the valid voice styles for the selected voice.
-
+   * @category Configuration
    * @returns {Array} The valid voice styles.
    */
   validVoiceStyles () {
@@ -363,7 +374,7 @@
 
   /**
    * Sets the muted state of the audio queue.
-
+   * @category Audio
    * @param {boolean} aBool - The muted state to set.
    * @returns {Object} The AzureSpeaker instance.
    */
@@ -374,7 +385,7 @@
 
   /**
    * Gets the muted state of the audio queue.
-
+   * @category Audio
    * @returns {boolean} The muted state of the audio queue.
    */
   isMuted () {
@@ -385,7 +396,7 @@
 
   /**
    * Gets the locale of the selected voice.
-
+   * @category Configuration
    * @returns {string} The locale of the selected voice.
    */
   locale () {
@@ -395,7 +406,7 @@
 
   /**
    * Gets the pitch as a string with a percentage symbol.
-
+   * @category Configuration
    * @returns {string} The pitch as a string with a percentage symbol.
    */
   pitchString () {
@@ -404,7 +415,7 @@
 
   /**
    * Gets the rate as a string with a percentage symbol.
-
+   * @category Configuration
    * @returns {string} The rate as a string with a percentage symbol.
    */
   rateString () {
@@ -415,7 +426,7 @@
 
   /**
    * Generates an SSML request for the given text.
-
+   * @category Requests
    * @param {string} text - The text to generate SSML for.
    * @returns {string} The SSML request string.
    */
@@ -442,7 +453,7 @@
 
   /**
    * Queues an audio blob in the audio queue.
-
+   * @category Audio
    * @param {Blob} audioBlob - The audio blob to queue.
    * @returns {Object} The AzureSpeaker instance.
    */
@@ -453,7 +464,7 @@
   
   /**
    * Pauses the audio queue.
-
+   * @category Audio
    */
   pause() {
     this.debugLog("pause()");
@@ -462,7 +473,7 @@
 
   /**
    * Resumes the audio queue.
-
+   * @category Audio
    */
   resume () {
     this.debugLog("resume()");

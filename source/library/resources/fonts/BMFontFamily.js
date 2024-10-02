@@ -16,6 +16,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} name - The name of the font family.
+         * @category Properties
          */
         {
             const slot = this.newSlot("name", null);
@@ -23,6 +24,7 @@
         }
         /**
          * @member {Array} fonts - The array of fonts in the family.
+         * @category Properties
          */
         {
             const slot = this.newSlot("fonts", null);
@@ -40,6 +42,7 @@
     /**
      * Get the title of the font family.
      * @returns {string} The name of the font family.
+     * @category Getters
      */
     title () {
         return this.name()
@@ -55,6 +58,7 @@
      * Add a font to the family.
      * @param {Object} aFont - The font to add.
      * @returns {BMFontFamily} The current instance for method chaining.
+     * @category Modification
      */
     addFont (aFont) {
         //debugger

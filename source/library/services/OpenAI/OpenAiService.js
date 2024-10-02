@@ -19,6 +19,7 @@
   /**
    * @static
    * @description Initializes the class and sets it as a singleton.
+   * @category Initialization
    */
   static initClass () {
     this.setIsSingleton(true);
@@ -27,6 +28,7 @@
   /**
    * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model objects with name, note, and contextWindow properties.
+   * @category Model Configuration
    */
   modelsJson () {
     return [
@@ -53,10 +55,12 @@
   
   /**
    * @description Initializes the prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {OpenAiImagePrompts} imagesPrompts
+     * @category Image Generation
      */
     {
       const slot = this.overrideSlot("imagesPrompts", null);
@@ -66,6 +70,7 @@
 
     /**
      * @member {OpenAiTtsSessions} ttsSessions
+     * @category Text-to-Speech
      */
     {
       const slot = this.overrideSlot("ttsSessions", null);
@@ -76,6 +81,7 @@
 
   /**
    * @description Initializes the instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -83,6 +89,7 @@
 
   /**
    * @description Performs final initialization steps for the instance.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -96,6 +103,7 @@
    * @description Validates the API key.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the key is valid, false otherwise.
+   * @category Authentication
    */
   validateKey (s) {
     return s.length === 51 && s.startsWith("sk-");
@@ -104,6 +112,7 @@
   /**
    * @description Checks if a valid API key is set.
    * @returns {boolean} True if a valid API key is set, false otherwise.
+   * @category Authentication
    */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());

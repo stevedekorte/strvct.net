@@ -13,6 +13,7 @@
      * @param {Object} aRecord - The record containing the date information.
      * @param {Object} aStore - The store object.
      * @returns {Date_store} The current instance.
+     * @category Data Loading
      */
     loadFromRecord(aRecord, aStore) {
         this.setTime(aRecord.time)
@@ -23,6 +24,7 @@
      * Creates a record for storage.
      * @param {Object} aStore - The store object.
      * @returns {Object} An object containing the type and time of the date.
+     * @category Data Storage
      */
     recordForStore(aStore) { // should only be called by Store
         return {
@@ -34,6 +36,7 @@
     /**
      * Determines if the date should be stored.
      * @returns {boolean} Always returns true.
+     * @category Data Storage
      */
     shouldStore() {
         return true
@@ -43,6 +46,7 @@
      * Returns the set of persistent unique identifiers for JSON storage.
      * @param {Set} puuids - A set of persistent unique identifiers.
      * @returns {Set} The input set of persistent unique identifiers.
+     * @category Data Storage
      */
     refsPidsForJsonStore(puuids = new Set()) {
         return puuids

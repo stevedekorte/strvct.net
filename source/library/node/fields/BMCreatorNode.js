@@ -10,10 +10,12 @@
     
     /**
      * @description Initializes the prototype slots for the BMCreatorNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Array} subnodes - Overrides the subnodes slot.
+         * @category Data Structure
          */
         {
             const slot = this.overrideSlot("subnodes");
@@ -23,6 +25,7 @@
 
         /**
          * @member {Array} typeChoices - An array of type choices.
+         * @category Data Structure
          */
         {
             const slot = this.newSlot("typeChoices", []);
@@ -33,6 +36,7 @@
   
     /**
      * @description Initializes the prototype with default values and settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setNodeCanEditTitle(false);
@@ -46,6 +50,7 @@
 
     /**
      * @description Prepares the node for first access by setting up subnodes.
+     * @category Initialization
      */
     prepareForFirstAccess () {
         super.prepareForFirstAccess();
@@ -56,6 +61,7 @@
      * @description Returns an array of field types.
      * @returns {string[]} An array of field type names.
      * @static
+     * @category Data Structure
      */
     static fieldTypes () {
         return [
@@ -81,6 +87,7 @@
     /**
      * @description Returns an array of prototype objects.
      * @returns {Array} An empty array (commented out code suggests it could return prototype objects).
+     * @category Data Structure
      */
     protoObjects () {
         return []
@@ -95,6 +102,7 @@
     /**
      * @description Sets up subnodes if they don't exist.
      * @returns {BMCreatorNode} The current instance.
+     * @category Initialization
      */
     setupSubnodes () {
         if (this.subnodes().length == 0) {
@@ -107,6 +115,7 @@
     /**
      * @description Adds subnodes for the given objects.
      * @param {Array} objects - An array of objects to create subnodes for.
+     * @category Initialization
      */
     addSubnodesForObjects (objects) {
         const newSubnodes = objects.map((aClass) => {
@@ -126,6 +135,7 @@
      * @description Handles the choice of a new node type.
      * @param {Object} actionNode - The node that was chosen.
      * @returns {BMCreatorNode} The current instance.
+     * @category User Interaction
      */
    didChoose (actionNode) {
         const obj = actionNode.info()
@@ -138,6 +148,7 @@
     /**
      * @description Replaces this node with a new node in the parent's subnodes.
      * @param {Object} newNode - The new node to replace this one with.
+     * @category Data Structure
      */
     replaceSelfWithNode (newNode) {
         const parentNode = this.parentNode()
@@ -149,6 +160,7 @@
     /**
      * @description Returns a summary of the node.
      * @returns {string} An empty string.
+     * @category Data Retrieval
      */
     nodeSummary () {
         return ""

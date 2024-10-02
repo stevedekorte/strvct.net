@@ -16,6 +16,7 @@
      * @static
      * @description Indicates if this node is available as a node primitive.
      * @returns {boolean} True if available as a node primitive.
+     * @category Node Properties
      */
     static availableAsNodePrimitive () {
         return true
@@ -24,11 +25,13 @@
     /**
      * @description Initializes the prototype slots for the BMFolderNode.
      * These slots are useful for implementing menus.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {string} label
          * @description The label of the folder node.
+         * @category Node Properties
          */
         {
             const slot = this.newSlot("label", "");
@@ -38,6 +41,7 @@
         /**
          * @member {Object} target
          * @description The target object for the folder node.
+         * @category Node Properties
          */
         {
             const slot = this.newSlot("target", null);
@@ -46,6 +50,7 @@
         /**
          * @member {string} methodName
          * @description The method name to be called on the target.
+         * @category Node Properties
          */
         {
             const slot = this.newSlot("methodName", null);
@@ -54,6 +59,7 @@
         /**
          * @member {Object} info
          * @description Additional information for the folder node.
+         * @category Node Properties
          */
         {
             const slot = this.newSlot("info", null);
@@ -63,6 +69,7 @@
 
     /**
      * @description Initializes the prototype with default settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setCanDelete(true);
@@ -79,6 +86,7 @@
 
     /**
      * @description Initializes the BMFolderNode instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -89,6 +97,7 @@
     /**
      * @description Gets the title of the node.
      * @returns {string} The label of the node.
+     * @category Node Properties
      */
     title () {
         return this.label()
@@ -98,6 +107,7 @@
      * @description Sets the title of the node.
      * @param {string} aString - The new title to set.
      * @returns {BMFolderNode} The current instance for method chaining.
+     * @category Node Properties
      */
     setTitle (aString) {
         this.setLabel(aString)
@@ -107,6 +117,7 @@
     /**
      * @description Gets the accepted subnode types.
      * @returns {Array} An array of accepted field types from BMCreatorNode.
+     * @category Node Properties
      */
     acceptedSubnodeTypes () {
         return BMCreatorNode.fieldTypes()
@@ -114,6 +125,7 @@
 
     /**
      * @description Sends the menu action to the target.
+     * @category Actions
      */
     sendMenuAction () {
        const t = this.target()
@@ -127,6 +139,7 @@
      * @description Handles the tap event on the node.
      * @param {BMNode} aNode - The node that was tapped.
      * @returns {BMFolderNode} The current instance for method chaining.
+     * @category Event Handling
      */
     onTapOfNode (aNode) {
         super.onTapOfNode()
@@ -138,6 +151,7 @@
      * @description Callback for when the parentNode slot is updated.
      * @param {*} oldValue - The old value of the parentNode.
      * @param {*} newValue - The new value of the parentNode.
+     * @category Event Handling
      */
     didUpdateSlotParentNode (oldValue, newValue) {
         this.scheduleSyncToView()

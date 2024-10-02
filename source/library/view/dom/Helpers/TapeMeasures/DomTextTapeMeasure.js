@@ -26,6 +26,7 @@
         {
             /**
              * @member {Document} document - The document object.
+             * @category Document
              */
             const slot = this.newSlot("document", null);
             slot.setSlotType("Document");
@@ -33,6 +34,7 @@
         {
             /**
              * @member {Element} testElement - The test element used for measurements.
+             * @category Measurement
              */
             const slot = this.newSlot("testElement", null);
             slot.setSlotType("Element");
@@ -41,6 +43,7 @@
         {
             /**
              * @member {Array} stylesToCopy - Array of style properties to copy.
+             * @category Styling
              */
             const slot = this.newSlot("stylesToCopy", [
                 "fontSize",
@@ -57,6 +60,7 @@
         {
             /**
              * @member {Map} cache - Cache for storing measurement results.
+             * @category Caching
              */
             const slot = this.newSlot("cache", new Map());
             slot.setSlotType("Map");
@@ -64,6 +68,7 @@
         {
             /**
              * @member {Array} cacheKeys - Array to store cache keys.
+             * @category Caching
              */
             const slot = this.newSlot("cacheKeys", new Array());
             slot.setSlotType("Array");
@@ -71,6 +76,7 @@
         {
             /**
              * @member {Number} maxCacheKeys - Maximum number of cache keys to store.
+             * @category Caching
              */
             const slot = this.newSlot("maxCacheKeys", 100);
             slot.setSlotType("Number");
@@ -80,6 +86,7 @@
     /**
      * @description Gets or creates the document object.
      * @returns {Document} The document object.
+     * @category Document
      */
     document () {
         // return document
@@ -92,6 +99,7 @@
     /**
      * @description Gets or creates the test element.
      * @returns {Element} The test element.
+     * @category Measurement
      */
     testElement () {
         if (!this._testElement) {
@@ -103,6 +111,7 @@
     /**
      * @description Creates and sets up the test element.
      * @returns {Element} The created test element.
+     * @category Measurement
      */
     createTestElement () {
         const e = document.createElement("div");
@@ -121,6 +130,7 @@
      * @description Adds a key-value pair to the cache.
      * @param {*} k - The key to add.
      * @param {*} v - The value to add.
+     * @category Caching
      */
     addToCache (k, v) {
         const keys = this.cacheKeys()
@@ -140,6 +150,7 @@
      * @param {Element} element - The element to measure.
      * @param {string} text - The HTML string to measure.
      * @returns {Object} An object containing width and height measurements.
+     * @category Measurement
      */
     sizeOfElementWithHtmlString (element, text) {
         if (this.cache().has(text)) {
@@ -172,6 +183,7 @@
     /**
      * @description Cleans the test element by resetting its properties.
      * @returns {DomTextTapeMeasure} The current instance.
+     * @category Measurement
      */
     clean () {
         const e = this.testElement()

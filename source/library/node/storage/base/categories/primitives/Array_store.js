@@ -13,6 +13,7 @@
      * @description Gets the length of the array in the record object.
      * @param {Object} aRecordObj - The record object containing the array values.
      * @returns {number} The length of the array in the record object.
+     * @category Utility
      */
     static lengthOfRecord (aRecordObj) {
         return aRecordObj.values.length
@@ -22,6 +23,7 @@
      * @description Prepares the array for storage by creating a record object.
      * @param {Object} aStore - The store object to use for reference handling.
      * @returns {Object} A record object representing the array for storage.
+     * @category Serialization
      */
     recordForStore (aStore) { // should only be called by Store
         const dict = {
@@ -37,6 +39,7 @@
      * @param {Object} aRecord - The record object to load from.
      * @param {Object} aStore - The store object to use for reference handling.
      * @returns {Array_store} The current instance after loading the values.
+     * @category Deserialization
      */
     loadFromRecord (aRecord, aStore) {
         const loadedValues = aRecord.values.map(v => aStore.unrefValue(v))
@@ -52,6 +55,7 @@
      * @description Collects PIDs for all non-null elements in the array.
      * @param {Set} [puuids=new Set()] - A Set to store the collected PIDs.
      * @returns {Set} A Set of PIDs (Persistent Unique Identifiers) for JSON storage.
+     * @category Serialization
      */
     refsPidsForJsonStore (puuids = new Set()) {
         this.forEach(v => { 

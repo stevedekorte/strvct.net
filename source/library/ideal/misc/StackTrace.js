@@ -24,6 +24,7 @@
             slot.setSlotType("String");
             /**
              * @member {string} functionName - The name of the function in the stack frame.
+             * @category Stack Information
              */
         }
         {
@@ -31,6 +32,7 @@
             slot.setSlotType("String");
             /**
              * @member {string} url - The URL or file path of the script containing the function.
+             * @category Stack Information
              */
         }
         {
@@ -38,6 +40,7 @@
             slot.setSlotType("Number");
             /**
              * @member {number} lineNumber - The line number in the script where the function was called.
+             * @category Stack Information
              */
         }
         {
@@ -45,6 +48,7 @@
             slot.setSlotType("Number");
             /**
              * @member {number} characterNumber - The character position on the line where the function was called.
+             * @category Stack Information
              */
         }
     }
@@ -56,6 +60,7 @@
      * @description Parses a single line from a stack trace and sets the properties of the StackFrame object accordingly.
      * @param {string} line - A single line from a JavaScript stack trace.
      * @returns {StackFrame} The current StackFrame instance.
+     * @category Parsing
      */
     fromLine (line) {
         line = line.after("at ")
@@ -86,6 +91,7 @@
     /**
      * @description Returns a string representation of the StackFrame object.
      * @returns {string} A string describing the stack frame.
+     * @category Utility
      */
     description () {
         return "  " + this.functionName() + "() line " + this.lineNumber()
@@ -93,6 +99,7 @@
 
     /**
      * @description Logs the string representation of the StackFrame object to the console.
+     * @category Utility
      */
     show () {
         console.log(this.description())
@@ -117,6 +124,7 @@
             slot.setSlotType("Error");
             /**
              * @member {Error} error - The Error object associated with the stack trace.
+             * @category Stack Information
              */
         }
         {
@@ -124,12 +132,14 @@
             slot.setSlotType("Array");
             /**
              * @member {StackFrame[]} stackFrames - An array of StackFrame objects representing the stack trace.
+             * @category Stack Information
              */
         }
     }
 
     /**
      * @description Initializes the StackTrace instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -139,6 +149,7 @@
      * @description Sets the Error object associated with the stack trace and parses the stack trace into an array of StackFrame objects.
      * @param {Error} error - The Error object to associate with the stack trace.
      * @returns {StackTrace} The current StackTrace instance.
+     * @category Parsing
      */
     setError (error) {
         this._error = error
@@ -156,6 +167,7 @@
 
     /**
      * @description Logs a string representation of the stack trace to the console.
+     * @category Utility
      */
     show () {
         console.log(this.type() + ": '" + this.error().message + "'")
@@ -164,6 +176,7 @@
 
     /**
      * @description Tests the functionality of the StackTrace class by generating an Error and logging its stack trace.
+     * @category Testing
      */
     test () {
         const f1 = function () {

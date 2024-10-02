@@ -23,6 +23,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @param {Object} aRecord - The record to create the instance from.
      * @param {Object} aStore - The store object.
      * @returns {Object|null} The created instance or null if shouldStore is false.
+     * @category Initialization
      */
     static instanceFromRecordInStore (aRecord, aStore) {
         if(!this.shouldStore()) {
@@ -42,6 +43,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @param {Object} aRecord - The record to load from.
      * @param {Object} aStore - The store object.
      * @returns {Object} The loaded object.
+     * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
@@ -56,6 +58,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @description Creates a record for the store. Should only be called by Store.
      * @param {Object} aStore - The store object.
      * @returns {Object} The created record.
+     * @category Data Storage
      */
     recordForStore (aStore) {
         // NOTES: this is (typically) only for dictionaries, not for objects.
@@ -95,6 +98,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @description Gets the persistent unique identifiers for JSON store.
      * @param {Set} puuids - Set of persistent unique identifiers.
      * @returns {Set} The set of persistent unique identifiers.
+     * @category Data Storage
      */
     refsPidsForJsonStore (puuids = new Set()) {
         if (this.hasOwnProperty("*")) {
@@ -108,6 +112,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     /**
      * @description Gets the default store.
      * @returns {Object} The default store.
+     * @category Data Storage
      */
     defaultStore () {
         const store = PersistentObjectPool.sharedPool();
@@ -117,6 +122,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     /**
      * @description Called after the object is loaded from the store. Here for subclasses to override.
      * @returns {Object} This object.
+     * @category Data Loading
      */
     didLoadFromStore () { 
         // See Object_init notes for docs on when/how to use this properly.
@@ -128,6 +134,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @description Sets whether the object should be stored.
      * @param {boolean} aBool - Whether the object should be stored.
      * @returns {Object} This object.
+     * @category Configuration
      */
     setShouldStore (aBool) {
         if (aBool != this._shouldStore) {
@@ -142,6 +149,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     /**
      * @description Gets whether the object should be stored.
      * @returns {boolean} Whether the object should be stored.
+     * @category Configuration
      */
     shouldStore () {
         return this._shouldStore;

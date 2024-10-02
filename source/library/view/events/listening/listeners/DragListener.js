@@ -12,6 +12,7 @@
     /**
      * @description Initializes prototype slots
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -20,6 +21,7 @@
     /**
      * @description Initializes the DragListener
      * @returns {DragListener} The initialized DragListener instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -29,6 +31,7 @@
     /**
      * @description Sets up the drag event listeners
      * @returns {DragListener} The DragListener instance
+     * @category Event Setup
      */
     setupListeners () {
         // fired on draggable element
@@ -41,6 +44,7 @@
     /**
      * @description Starts the DragListener
      * @returns {DragListener} The DragListener instance
+     * @category Lifecycle
      */
     start () {
         super.start()

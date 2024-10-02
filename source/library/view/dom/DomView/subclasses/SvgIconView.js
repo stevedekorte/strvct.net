@@ -23,6 +23,7 @@
     /**
      * @static
      * @description Initializes the class by creating a new class slot.
+     * @category Initialization
      */
     static initClass () {
         this.newClassSlot("sharedSvgMap", new Map()) // svgStringHash -> hidden svg element defined in document
@@ -30,10 +31,12 @@
 
     /**
      * @description Initializes the prototype slots for the SvgIconView.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Element} svgElement
+         * @category SVG
          */
         {
             const slot = this.newSlot("svgElement", null);
@@ -41,6 +44,7 @@
         }
         /**
          * @member {String} svgString
+         * @category SVG
          */
         {
             const slot = this.newSlot("svgString", "");
@@ -48,6 +52,7 @@
         }
         /**
          * @member {URL} url
+         * @category Resource
          */
         {
             const slot = this.newSlot("url", null);
@@ -55,6 +60,7 @@
         }
         /**
          * @member {String} iconName
+         * @category Icon
          */
         {
             const slot = this.newSlot("iconName", null);
@@ -62,6 +68,7 @@
         }
         /**
          * @member {Boolean} doesMatchParentColor
+         * @category Styling
          */
         {
             const slot = this.newSlot("doesMatchParentColor", false);
@@ -70,6 +77,7 @@
         }
         /**
          * @member {String} strokeColor
+         * @category Styling
          */
         {
             const slot = this.newSlot("strokeColor", "white");
@@ -78,6 +86,7 @@
         }
         /**
          * @member {String} fillColor
+         * @category Styling
          */
         {
             const slot = this.newSlot("fillColor", "white");
@@ -86,6 +95,7 @@
         }
         /**
          * @member {Number} strokeWidth
+         * @category Styling
          */
         {
             const slot = this.newSlot("strokeWidth", 1);
@@ -97,6 +107,7 @@
     /**
      * @description Initializes the SvgIconView.
      * @returns {SvgIconView}
+     * @category Initialization
      */
     init () {
         super.init()
@@ -118,6 +129,7 @@
     /**
      * @description Returns a debug type ID for the icon.
      * @returns {string}
+     * @category Debugging
      */
     debugTypeId () {
         const name = this.iconName()
@@ -126,6 +138,7 @@
 
     /**
      * @description Clears the SVG string and hides the display.
+     * @category SVG
      */
     clear () {
         this.setSvgString(null)
@@ -136,6 +149,7 @@
      * @description Sets the icon name and updates the SVG string.
      * @param {string} name - The name of the icon.
      * @returns {SvgIconView}
+     * @category Icon
      */
     setIconName (name) {
         if (this._iconName !== name) {
@@ -169,6 +183,7 @@
     /**
      * @description Returns the SVG ID.
      * @returns {string}
+     * @category SVG
      */
     svgId () {
         return "svgid-" + this.iconName() 
@@ -178,6 +193,7 @@
      * @description Sets the SVG string and updates the element.
      * @param {string} s - The SVG string.
      * @returns {SvgIconView}
+     * @category SVG
      */
     setSvgString (s) {
         this._svgString = s
@@ -201,6 +217,7 @@
      * @description Sets both fill and stroke colors.
      * @param {string} aColor - The color to set.
      * @returns {SvgIconView}
+     * @category Styling
      */
     setColor (aColor) {
         this.setFillColor(aColor)
@@ -210,6 +227,7 @@
         
     /**
      * @description Synchronizes the colors with the CSS properties.
+     * @category Styling
      */
     syncColors () {
         const style = this.element().style
@@ -222,6 +240,7 @@
      * @description Updates the fill color CSS property.
      * @param {string} oldValue - The old fill color.
      * @param {string} newValue - The new fill color.
+     * @category Styling
      */
     didUpdateSlotFillColor (oldValue, newValue) {
         this.setCssProperty("--fillColor", newValue)
@@ -231,6 +250,7 @@
      * @description Updates the stroke color CSS property.
      * @param {string} oldValue - The old stroke color.
      * @param {string} newValue - The new stroke color.
+     * @category Styling
      */
     didUpdateSlotStrokeColor (oldValue, newValue) {
         this.setCssProperty("--strokeColor", newValue)
@@ -240,6 +260,7 @@
      * @description Updates the stroke width CSS property.
      * @param {number} oldValue - The old stroke width.
      * @param {number} newValue - The new stroke width.
+     * @category Styling
      */
     didUpdateSlotStrokeWidth (oldValue, newValue) {
         this.setCssProperty("--strokeWidth", newValue)
@@ -248,6 +269,7 @@
     /**
      * @description Returns a map of variable attributes.
      * @returns {Map}
+     * @category Styling
      */
     variableAttributeMap () {
         const m = new Map()
@@ -261,6 +283,7 @@
     /**
      * @description Returns a map of parent variable attributes.
      * @returns {Map}
+     * @category Styling
      */
     parentVariableAttributeMap () {
         const m = new Map()

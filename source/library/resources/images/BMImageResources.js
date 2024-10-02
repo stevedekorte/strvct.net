@@ -12,6 +12,7 @@
     /**
      * @description Initializes the BMImageResources instance.
      * @returns {BMImageResources} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -23,6 +24,7 @@
     /**
      * @description Sets up the BMImageResources instance.
      * @returns {BMImageResources} The set up instance.
+     * @category Initialization
      */
     setup () {
         super.setup();

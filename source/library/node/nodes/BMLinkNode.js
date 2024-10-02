@@ -12,6 +12,7 @@
      * @static
      * @description Indicates if this node is available as a primitive
      * @returns {boolean} True if available as a node primitive
+     * @category Utility
      */
     static availableAsNodePrimitive () {
         return true;
@@ -19,11 +20,13 @@
 
     /**
      * @description Initializes the prototype slots for the BMLinkNode
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {BMNode} linkedNode
          * @description The node that this link points to
+         * @category Link Management
          */
         {
             const slot = this.newSlot("linkedNode", null);
@@ -35,6 +38,7 @@
         /**
          * @member {boolean} willDuplicateLinkedObject
          * @description Indicates if the linked object should be duplicated when this node is duplicated
+         * @category Link Management
          */
         {
             const slot = this.newSlot("willDuplicateLinkedObject", false);
@@ -48,6 +52,7 @@
 
     /**
      * @description Initializes the prototype of the BMLinkNode
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true)
@@ -84,6 +89,7 @@
      * @description Checks if this node accepts a drop of another node
      * @param {BMNode} aNode - The node being dropped
      * @returns {boolean} True if the node accepts the drop
+     * @category Drop Handling
      */
     nodeAcceptsDrop (aNode) {
         return true
@@ -92,6 +98,7 @@
     /**
      * @description Handles the event when a node is dropped onto this node
      * @param {BMNode} aNode - The node that was dropped
+     * @category Drop Handling
      */
     nodeDropped (aNode) {
         this.setLinkedNode(aNode)
@@ -100,6 +107,7 @@
     /**
      * @description Creates a duplicate of this node
      * @returns {BMLinkNode} The duplicated node
+     * @category Node Operations
      */
     duplicate () {
         const obj = super.duplicate()
@@ -115,6 +123,7 @@
     /**
      * @description Gets the title of the node
      * @returns {string} The title of the linked node or "Unlinked" if no node is linked
+     * @category Node Information
      */
     title () {
         const ln = this.linkedNode()
@@ -137,6 +146,7 @@
     /**
      * @description Gets the subtitle of the node
      * @returns {string} The subtitle of the linked node or a default message if no node is linked
+     * @category Node Information
      */
     subtitle () {
         const ln = this.linkedNode()
@@ -159,6 +169,7 @@
     /**
      * @description Gets the accepted subnode types for this node
      * @returns {Array} An empty array as this node doesn't accept subnodes
+     * @category Node Structure
      */
     acceptedSubnodeTypes () { 
         // TODO: have browser use nodeTileLink for this protocol?
@@ -168,6 +179,7 @@
     /**
      * @description Gets the note of the linked node
      * @returns {string|null} The note of the linked node or null if no node is linked
+     * @category Node Information
      */
     note () {
         if (this.linkedNode()) {
@@ -180,6 +192,7 @@
     /**
      * @description Gets the note icon name
      * @returns {string|null} The note icon name (currently always null)
+     * @category Node Information
      */
     noteIconName () {
         //return this.nodeTileLink() ? "double right caret" : null
@@ -189,6 +202,7 @@
     /**
      * @description Gets the linked node
      * @returns {BMNode|null} The linked node
+     * @category Link Management
      */
     nodeTileLink () {
         return this.linkedNode()
@@ -197,6 +211,7 @@
     /**
      * @description Checks if the linked node can reorder subnodes
      * @returns {boolean} True if the linked node can reorder subnodes, false otherwise
+     * @category Node Structure
      */
     nodeCanReorderSubnodes () {
         const ln = this.linkedNode()
@@ -208,6 +223,7 @@
      * @param {BMNode} aSubnode - The subnode to add
      * @param {number} anIndex - The index at which to add the subnode
      * @returns {BMLinkNode} This node instance
+     * @category Node Structure
      */
     addSubnodeAt (aSubnode, anIndex) {
         return super.addSubnodeAt(aSubnode, anIndex)

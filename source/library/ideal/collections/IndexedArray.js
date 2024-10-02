@@ -19,6 +19,7 @@
     /**
      * Initialize prototype slots
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
         Object.defineSlot(this, "_index", null);
@@ -28,6 +29,7 @@
 
     /**
      * Initialize the IndexedArray
+     * @category Initialization
      */
     init () {
         super.init();
@@ -38,6 +40,7 @@
      * Set the index Map
      * @param {Map} aMap - The Map to use as the index
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Index Management
      */
     setIndex (aMap) {
         this._index = aMap;
@@ -47,6 +50,7 @@
     /**
      * Get the current index, reindexing if necessary
      * @returns {Map} - The current index
+     * @category Index Management
      */
     index () {
         if (this._needsReindex) {
@@ -59,6 +63,7 @@
      * Set the index closure function
      * @param {Function} aFunction - The function to use for indexing
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Index Management
      */
     setIndexClosure (aFunction) {
         if (aFunction !== this._indexClosure) {
@@ -71,6 +76,7 @@
     /**
      * Get the current index closure function
      * @returns {Function|null} - The current index closure function
+     * @category Index Management
      */
     indexClosure () {
         return this._indexClosure;
@@ -79,6 +85,7 @@
     /**
      * Check if the array is indexed
      * @returns {boolean} - True if the array has an index closure function
+     * @category Index Management
      */
     isIndexed () {
         return Type.isFunction(this._indexClosure);
@@ -88,6 +95,7 @@
      * Set whether the array needs reindexing
      * @param {boolean} aBool - Whether reindexing is needed
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Index Management
      */
     setNeedsReindex (aBool) {
         this._needsReindex = aBool;
@@ -97,6 +105,7 @@
     /**
      * Check if the array needs reindexing
      * @returns {boolean} - True if reindexing is needed
+     * @category Index Management
      */
     needsReindex () {
         return this._needsReindex;
@@ -105,6 +114,7 @@
     /**
      * Reindex the array
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Index Management
      */
     reindex () {
         this.setNeedsReindex(false); // do this first to avoid infinite loop
@@ -117,6 +127,7 @@
      * Check if an item is in the index
      * @param {*} anObject - The item to check
      * @returns {boolean} - True if the item is in the index
+     * @category Index Query
      */
     hasIndexedItem (anObject) {
         const key = this.indexKeyForItem(anObject);
@@ -127,6 +138,7 @@
      * Handle mutations to the array
      * @param {string} slotName - The name of the slot that was mutated
      * @param {*} optionalValue - The value involved in the mutation
+     * @category Mutation Handling
      */
     didMutate (slotName, optionalValue) {
         super.didMutate(slotName, optionalValue);
@@ -167,6 +179,7 @@
      * Get an item from the index by its key
      * @param {string} key - The index key
      * @returns {*} - The item corresponding to the key
+     * @category Index Query
      */
     itemForIndexKey (key) {
         return this.index().get(key);
@@ -176,6 +189,7 @@
      * Check if an item is in the index
      * @param {*} v - The item to check
      * @returns {boolean} - True if the item is in the index
+     * @category Index Query
      */
     indexHasItem (v) {
         assert(this.isIndexed());
@@ -188,6 +202,7 @@
      * @private
      * @param {string} key - The key to check
      * @returns {boolean} - True if the key exists in the index
+     * @category Index Query
      */
     hasIndexKey (key) {
         return this._index.has(key);
@@ -198,6 +213,7 @@
      * @private
      * @param {*} v - The item to get the key for
      * @returns {string} - The index key for the item
+     * @category Index Management
      */
     indexKeyForItem (v) {
         const key = this.indexClosure()(v);
@@ -209,6 +225,7 @@
      * @private
      * @param {*} v - The item to add
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Index Management
      */
     addItemToIndex (v) {
         const key = this.indexKeyForItem(v);
@@ -222,6 +239,7 @@
      * @private
      * @param {*} v - The item to remove
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Index Management
      */
     removeItemFromIndex (v) {
         const key = this.indexKeyForItem(v);
@@ -232,6 +250,7 @@
     /**
      * Run self-test for IndexedArray
      * @returns {IndexedArray} - Returns this for chaining
+     * @category Testing
      */
     static selfTest () {
         let ia = IndexedArray.clone();

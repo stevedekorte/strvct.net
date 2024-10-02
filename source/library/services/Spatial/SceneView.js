@@ -15,6 +15,7 @@
         this.setElementType("canvas");
         /**
          * @member {String} dataUrl - The data URL for the scene
+         * @category Data
          */
         {
             const slot = this.newSlot("dataUrl", null);
@@ -22,6 +23,7 @@
         }
         /**
          * @member {Object} ajs - AssimpJS object
+         * @category Rendering
          */
         {
             const slot = this.newSlot("ajs", null);
@@ -29,6 +31,7 @@
         }
         /**
          * @member {Object} engine - Babylon.js engine instance
+         * @category Rendering
          */
         {
             const slot = this.newSlot("engine", null);
@@ -36,6 +39,7 @@
         }
         /**
          * @member {Object} scene - Babylon.js scene instance
+         * @category Rendering
          */
         {
             const slot = this.newSlot("scene", null);
@@ -43,6 +47,7 @@
         }
         /**
          * @member {Object} camera - Babylon.js camera instance
+         * @category Rendering
          */
         {
             const slot = this.newSlot("camera", null);
@@ -54,6 +59,7 @@
         }
         /**
          * @member {DomView} closeButtonView - Close button view
+         * @category UI
          */
         {
             const slot = this.newSlot("closeButtonView", null);
@@ -61,6 +67,7 @@
         }
         /**
          * @member {Boolean} isEditable - Indicates if the scene is editable
+         * @category State
          */
         {
             const slot = this.newSlot("isEditable", false);
@@ -71,6 +78,7 @@
     /**
      * @description Initializes the SceneView
      * @returns {SceneView} The initialized SceneView instance
+     * @category Initialization
      */
     init () {
         super.init();
@@ -97,6 +105,7 @@
     /**
      * @description Creates a new close button view
      * @returns {ButtonView} The created close button view
+     * @category UI
      */
     newCloseButtonView () {
         const v = ButtonView.clone().setElementClassName("ImageCloseButton")
@@ -114,6 +123,7 @@
      * @description Sets whether the view is registered for browser drop events
      * @param {Boolean} aBool - Whether to register for browser drop events
      * @throws {Error} Always throws an error as this method shouldn't be called
+     * @category Events
      */
     setIsRegisteredForBrowserDrop(aBool) {
         throw new Error("shouldn't be called")
@@ -123,6 +133,7 @@
      * @description Sets whether the scene is editable
      * @param {Boolean} aBool - Whether the scene is editable
      * @returns {SceneView} The SceneView instance
+     * @category State
      */
     setIsEditable (aBool) {
         this.closeButtonView().setIsDisplayHidden(!aBool)
@@ -133,6 +144,7 @@
      * @description Sets whether the scene is editable (placeholder method)
      * @param {Boolean} aBool - Whether the scene is editable
      * @returns {SceneView} The SceneView instance
+     * @category State
      */
     setEditable (aBool) {
         // to avoid editable content?
@@ -142,6 +154,7 @@
     /**
      * @description Checks if the view accepts drops
      * @returns {Boolean} Always returns false
+     * @category Events
      */
     acceptsDrop () {
         return false
@@ -149,6 +162,7 @@
 
     /**
      * @description Collapses the view
+     * @category UI
      */
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null)
@@ -165,6 +179,7 @@
     
     /**
      * @description Closes the view with animation
+     * @category UI
      */
     close () {
         const seconds = 0.3
@@ -182,6 +197,7 @@
     /**
      * @description Gets the canvas element
      * @returns {HTMLCanvasElement} The canvas element
+     * @category Rendering
      */
     canvas () {
         return this.element();
@@ -189,6 +205,7 @@
 
     /**
      * @description Sets up the scene view
+     * @category Initialization
      */
     async setup () {
         const AssimpJS = await assimpjs();
@@ -200,6 +217,7 @@
 
     /**
      * @description Sets up the Babylon.js engine
+     * @category Initialization
      */
     async setupEngine () {
         const engine = new BABYLON.Engine(this.canvas(), true);
@@ -218,6 +236,7 @@
 
     /**
      * @description Sets up the Babylon.js scene
+     * @category Initialization
      */
     async setupScene () {
         const scene = new BABYLON.Scene(this.engine());
@@ -230,6 +249,7 @@
 
     /**
      * @description Sets up the Babylon.js camera
+     * @category Initialization
      */
     async setupCamera () {
         const camera = new BABYLON.FreeCamera('camera', new BABYLON.Vector3(-500, 200, 800), this.scene());
@@ -241,6 +261,7 @@
 
     /**
      * @description Sets up the Babylon.js light
+     * @category Initialization
      */
     async setupLight () {
         const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene());
@@ -250,6 +271,7 @@
      * @description Fetches an array buffer for a given file path
      * @param {String} path - The file path
      * @returns {Promise<ArrayBuffer>} The array buffer of the file
+     * @category Data
      */
     async arrayBufferForFilePath (path) {
         const response = await fetch(path);
@@ -259,6 +281,7 @@
 
     /**
      * @description Loads the 3D model
+     * @category Rendering
      */
     async loadModel () {
         const filePaths = ["main house.obj", "main house.mtl"];
@@ -401,6 +424,7 @@
 
     /**
      * @description Sets up event listeners for the scene
+     * @category Events
      */
     async setupEvents () {
         // need to do this through our own event system
@@ -410,6 +434,7 @@
     /**
      * @description Handles wheel events for zooming
      * @param {WheelEvent} event - The wheel event object
+     * @category Events
      */
     onWheel (event) {
         event.preventDefault(); // Prevent the default scroll behavior
@@ -423,6 +448,7 @@
     /**
      * @description Handles keydown events for camera movement
      * @param {KeyboardEvent} event - The keydown event object
+     * @category Events
      */
 
     onKeyDown (event) {
@@ -433,21 +459,4 @@
         if (event.key === "w") {
             camera.position.y -= speed; // Move camera forward
         } else if (event.key === "s") {
-            camera.position.y += speed; // Move camera backward
-        }
-
-        // Calculate the right vector
-        const forward = camera.getForwardRay().direction;
-        const up = BABYLON.Vector3.Up();
-        const right = BABYLON.Vector3.Cross(forward, up);
-
-        if (event.key === "a") {
-            //if (event.key === "ArrowLeft") {
-            camera.position.subtractInPlace(right.scale(-speed)); // Move camera to the left
-        } else if (event.key === "d") {
-            camera.position.addInPlace(right.scale(-speed)); // Move camera to the right
-        }
-        //}, { passive: false }); // Prevent the default scroll behavior
-    }
-    
-}.initThisClass());
+            camera.position.y += spee

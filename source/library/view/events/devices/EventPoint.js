@@ -22,6 +22,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} id - The id of the event point.
+         * @category Identification
          */
         {
             const slot = this.newSlot("id", null);
@@ -29,6 +30,7 @@
         }
         /**
          * @member {String} state - The state of the event point.
+         * @category State
          */
         {
             const slot = this.newSlot("state", null);
@@ -36,6 +38,7 @@
         }
         /**
          * @member {Element} target - The target element of the event point.
+         * @category DOM
          */
         {
             const slot = this.newSlot("target", null);
@@ -43,6 +46,7 @@
         }
         /**
          * @member {Boolean} isDown - Indicates if the event point is in a down state.
+         * @category State
          */
         {
             const slot = this.newSlot("isDown", false);
@@ -50,6 +54,7 @@
         }
         /**
          * @member {DomView} overView - The view the event point is over.
+         * @category DOM
          */
         {
             const slot = this.newSlot("overView", null);
@@ -57,6 +62,7 @@
         }
         /**
          * @member {Event} event - The associated event object.
+         * @category Event
          */
         {
             const slot = this.newSlot("event", null);
@@ -76,6 +82,7 @@
      * @param {EventPoint} p - The EventPoint to copy from.
      * @param {Object} copyDict - The dictionary used for copying.
      * @returns {EventPoint} This instance.
+     * @category Data Manipulation
      */
     copyFrom (p, copyDict) {
         super.copyFrom(p, copyDict)
@@ -88,6 +95,7 @@
     /**
      * @description Gets the view the event point is over.
      * @returns {DomView|null} The view or null if not found.
+     * @category DOM
      */
     overView () {
         if (this._overView === null) {
@@ -99,6 +107,7 @@
     /**
      * @description Finds the view the event point is over by traversing the DOM.
      * @returns {DomView|null} The found view or null if not found.
+     * @category DOM
      */
     findOverview () {
         debugger;
@@ -121,6 +130,7 @@
     /**
      * @description Gets the viewport position of the event point.
      * @returns {Point} The viewport position.
+     * @category Viewport
      */
     viewportPosition () {
         const e = this.event()
@@ -131,6 +141,7 @@
     /**
      * @description Gets the viewport height.
      * @returns {number} The viewport height.
+     * @category Viewport
      */
     viewportHeight () {
         return window.innerHeight
@@ -139,6 +150,7 @@
     /**
      * @description Gets the viewport width.
      * @returns {number} The viewport width.
+     * @category Viewport
      */
     viewportWidth () {
         return window.innerWidth
@@ -147,6 +159,7 @@
     /**
      * @description Gets the distance from the top of the viewport.
      * @returns {number} The distance from the top of the viewport.
+     * @category Viewport
      */
     distFromTopOfViewport () {
         return this.event().clientY
@@ -155,6 +168,7 @@
     /**
      * @description Gets the distance from the bottom of the viewport.
      * @returns {number} The distance from the bottom of the viewport.
+     * @category Viewport
      */
     distFromBottomOfViewport () {
         return this.viewportHeight() - this.distFromTopOfViewport()
@@ -163,6 +177,7 @@
     /**
      * @description Gets the distance from the left of the viewport.
      * @returns {number} The distance from the left of the viewport.
+     * @category Viewport
      */
     distFromLeftOfViewport () {
         return this.event().clientX
@@ -171,6 +186,7 @@
     /**
      * @description Gets the distance from the right of the viewport.
      * @returns {number} The distance from the right of the viewport.
+     * @category Viewport
      */
     distFromRightOfViewport () {
         return this.viewportWidth() - this.distFromLeftOfViewport()

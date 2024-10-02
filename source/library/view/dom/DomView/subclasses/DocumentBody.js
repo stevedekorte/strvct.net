@@ -12,6 +12,7 @@
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -19,6 +20,7 @@
     
     /**
      * @description Initializes prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -27,6 +29,7 @@
     /**
      * @description Initializes the DocumentBody.
      * @returns {DocumentBody} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -44,6 +47,7 @@
      * @description Handles drop events to prevent dropping on the window.
      * @param {Event} event - The drop event.
      * @returns {boolean} Always returns false to prevent default behavior.
+     * @category Event Handling
      */
     acceptsDrop (event) { // to avoid dropping on window
         event.preventDefault();
@@ -53,6 +57,7 @@
     /**
      * @description Sets up the element for the DocumentBody.
      * @returns {DocumentBody} The current instance.
+     * @category Initialization
      */
     setupElement () {
         //document.body.setDomView(this)
@@ -65,6 +70,7 @@
     /**
      * @description Gets the document body element.
      * @returns {HTMLElement} The document body element.
+     * @category DOM Interaction
      */
     element () {
         return document.body
@@ -73,6 +79,7 @@
     /**
      * @description Calculates the zoom-adjusted width of the document body.
      * @returns {number} The zoom-adjusted width.
+     * @category Layout
      */
     zoomAdjustedWidth () {
         return WebBrowserWindow.shared().width() * this.zoomRatio()
@@ -81,6 +88,7 @@
     /**
      * @description Calculates the zoom-adjusted height of the document body.
      * @returns {number} The zoom-adjusted height.
+     * @category Layout
      */
     zoomAdjustedHeight () {
         return WebBrowserWindow.shared().width() * this.zoomRatio()
@@ -89,6 +97,7 @@
     /**
      * @description Calculates the zoom-adjusted size of the document body.
      * @returns {Object} An object containing the zoom-adjusted width and height.
+     * @category Layout
      */
     zoomAdjustedSize () { // TODO: move to Point
         return { width: this.zoomAdjustedWidth(), height: this.zoomAdjustedHeight() }
@@ -97,6 +106,7 @@
     /**
      * @description Gets all DOM elements in the document.
      * @returns {NodeList} A list of all DOM elements.
+     * @category DOM Interaction
      */
     allDomElements () {
         const domElements = this.element().getElementsByTagName("*");
@@ -107,6 +117,7 @@
      * @description Gets all views under a specific point.
      * @param {Point} aPoint - The point to check.
      * @returns {Array} An array of views under the specified point.
+     * @category View Management
      */
     viewsUnderPoint (aPoint) {
         const elements = document.elementsFromPoint(aPoint.x(), aPoint.y())
@@ -118,6 +129,7 @@
      * @description Finds the first view associated with a given DOM element.
      * @param {HTMLElement} e - The DOM element to start searching from.
      * @returns {DomView|null} The first view found, or null if none is found.
+     * @category View Management
      */
     firstViewForElement (e) {
         // search up the dom element parents to find one

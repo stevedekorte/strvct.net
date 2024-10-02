@@ -34,6 +34,7 @@
     initPrototypeSlots () {
         /**
          * @member {TextField} titleView - The view for displaying the button's title.
+         * @category UI Components
          */
         {
             const slot = this.newSlot("titleView", null);
@@ -41,6 +42,7 @@
         }
         /**
          * @member {TextField} subtitleView - The view for displaying the button's subtitle.
+         * @category UI Components
          */
         {
             const slot = this.newSlot("subtitleView", null);
@@ -48,6 +50,7 @@
         }
         /**
          * @member {Boolean} isEnabled - Indicates whether the button is enabled or disabled.
+         * @category State
          */
         {
             const slot = this.newSlot("isEnabled", true);
@@ -55,6 +58,7 @@
         }
         /**
          * @member {SvgIconView} iconView - The view for displaying an icon on the button.
+         * @category UI Components
          */
         {
             const slot = this.newSlot("iconView", null);
@@ -62,6 +66,7 @@
         }
         /**
          * @member {Object} info - Additional information associated with the button.
+         * @category Data
          */
         {
             const slot = this.newSlot("info", null);
@@ -72,6 +77,7 @@
     /**
      * @description Initializes the ButtonView.
      * @returns {ButtonView} The initialized ButtonView instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -141,6 +147,7 @@
      * @description Sets the icon name for the button.
      * @param {string} aName - The name of the icon to set.
      * @returns {ButtonView} The ButtonView instance.
+     * @category UI Customization
      */
     setIconName (aName) {
         this.iconView().setIconName(aName)
@@ -151,6 +158,7 @@
      * @description Sets the title of the button.
      * @param {string} s - The title to set.
      * @returns {ButtonView} The ButtonView instance.
+     * @category UI Customization
      */
     setTitle (s) {
         if (s === "" || Type.isNullOrUndefined(s)) { 
@@ -164,6 +172,7 @@
     /**
      * @description Gets the title of the button.
      * @returns {string} The current title of the button.
+     * @category Data Access
      */
     title () {
         return this.titleView().value()
@@ -173,6 +182,7 @@
      * @description Sets the subtitle of the button.
      * @param {string} s - The subtitle to set.
      * @returns {ButtonView} The ButtonView instance.
+     * @category UI Customization
      */
     setSubtitle (s) {
         const isEmpty = (s === "" || Type.isNullOrUndefined(s));
@@ -184,6 +194,7 @@
     /**
      * @description Gets the subtitle of the button.
      * @returns {string} The current subtitle of the button.
+     * @category Data Access
      */
     subtitle () {
         return this.subtitleView().value()
@@ -193,6 +204,7 @@
      * @description Sets whether the button has an outline.
      * @param {boolean} aBool - True to add an outline, false to remove it.
      * @returns {ButtonView} The ButtonView instance.
+     * @category UI Customization
      */
     setHasOutline (aBool) {
         if (aBool) {
@@ -207,6 +219,7 @@
      * @description Sets the visibility of the button's title.
      * @param {boolean} aBool - True to show the title, false to hide it.
      * @returns {ButtonView} The ButtonView instance.
+     * @category UI Customization
      */
     setTitleIsVisible (aBool) {
         this.titleView().setIsDisplayHidden(!aBool)
@@ -217,6 +230,7 @@
      * @description Sets whether the button is editable.
      * @param {boolean} aBool - True to make the button editable, false otherwise.
      * @returns {ButtonView} The ButtonView instance.
+     * @category State
      */
     setIsEditable (aBool) {
         this.titleView().setIsEditable(aBool)
@@ -226,6 +240,7 @@
     /**
      * @description Checks if the button is editable.
      * @returns {boolean} True if the button is editable, false otherwise.
+     * @category State
      */
     isEditable () {
         return this.titleView().isEditable()
@@ -234,6 +249,7 @@
     /**
      * @description Sends an action to the target if the button is not editable.
      * @returns {ButtonView} The ButtonView instance.
+     * @category Action
      */
     sendActionToTarget () {
         if (!this.isEditable()) {
@@ -245,6 +261,7 @@
     /**
      * @description Handles the tap begin event.
      * @param {Object} aGesture - The gesture object.
+     * @category Event Handling
      */
     onTapBegin (aGesture) {
         if (!this.isEnabled()) {
@@ -257,6 +274,7 @@
     /**
      * @description Handles the tap cancelled event.
      * @param {Object} aGesture - The gesture object.
+     * @category Event Handling
      */
     onTapCancelled (aGesture) {
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
@@ -266,6 +284,7 @@
      * @description Handles the tap complete event.
      * @param {Object} aGesture - The gesture object.
      * @returns {boolean} False to prevent default behavior.
+     * @category Event Handling
      */
     onTapComplete (aGesture) {
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)")

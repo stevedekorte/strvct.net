@@ -36,7 +36,7 @@
 (class HomeAssistantEntity extends HomeAssistantObject {
   /**
    * @description Initializes prototype slots for the HomeAssistantEntity.
-
+   * @category Initialization
    */
   initPrototypeSlots () {
     /*
@@ -56,7 +56,7 @@
 
   /**
    * @description Initializes the HomeAssistantEntity.
-
+   * @category Initialization
    */
   init() {
     super.init();
@@ -66,7 +66,7 @@
 
   /**
    * @description Performs final initialization steps for the HomeAssistantEntity.
-
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -75,7 +75,7 @@
 
   /**
    * @description Gets the area ID of the entity.
-
+   * @category Information
    * @returns {string|null} The area ID.
    */
   areaId () {
@@ -84,7 +84,7 @@
 
   /**
    * @description Gets the device ID of the entity.
-
+   * @category Information
    * @returns {string} The device ID.
    */
   deviceId () {
@@ -93,7 +93,7 @@
 
   /**
    * @description Gets the entity ID.
-
+   * @category Information
    * @returns {string} The entity ID.
    */
   id () {
@@ -102,7 +102,7 @@
 
   /**
    * @description Gets the states node of the entity.
-
+   * @category Information
    * @returns {Object} The states node.
    */
   statesNode () {
@@ -111,7 +111,7 @@
 
   /**
    * @description Gets the count of states for the entity.
-
+   * @category Information
    * @returns {number} The number of states.
    */
   statesCount () {
@@ -120,7 +120,7 @@
 
   /**
    * @description Gets the owner ID of the entity.
-
+   * @category Information
    * @returns {string} The owner ID.
    */
   ownerId () {
@@ -129,7 +129,7 @@
 
   /**
    * @description Gets the owner group of the entity.
-
+   * @category Information
    * @returns {Object} The owner group.
    */
   ownerGroup () {
@@ -138,7 +138,7 @@
 
   /**
    * @description Updates the titles of the entity.
-
+   * @category Updates
    */
   updateTitles () {
     const json = this.haJson();
@@ -153,7 +153,7 @@
 
   /**
    * @description Gets the state of the entity.
-
+   * @category Information
    * @returns {*} The state of the entity.
    */
   state () {
@@ -165,7 +165,7 @@
 
   /**
    * @description Updates the name of the entity.
-
+   * @category Updates
    * @returns {HomeAssistantEntity} The current instance.
    */
   updateName () {

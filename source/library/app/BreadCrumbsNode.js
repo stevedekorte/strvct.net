@@ -10,6 +10,7 @@
     /**
      * Initializes the prototype slots of the BreadCrumbsNode class.
      * @description This method is used to initialize the prototype slots of the BreadCrumbsNode class.
+     * @category Initialization
      */
     initPrototypeSlots() {
         /*
@@ -25,6 +26,7 @@
     /**
      * Initializes the prototype of the BreadCrumbsNode class.
      * @description This method is used to initialize the prototype of the BreadCrumbsNode class.
+     * @category Initialization
      */
     initPrototype() {
         this.setNodeTileClassName("BreadCrumbsTile");

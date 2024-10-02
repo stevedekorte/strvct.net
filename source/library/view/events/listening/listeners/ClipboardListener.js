@@ -11,6 +11,7 @@
     
     /**
      * @description Initializes the prototype slots for the ClipboardListener class.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -19,6 +20,7 @@
     /**
      * @description Initializes the ClipboardListener instance.
      * @returns {ClipboardListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -28,6 +30,7 @@
     /**
      * @description Sets up the listeners for clipboard events.
      * @returns {ClipboardListener} The instance with setup listeners.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("copy", "onCopy");

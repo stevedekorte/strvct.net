@@ -14,6 +14,7 @@
     /**
      * @description Synchronizes the orientation of the TilesView.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Orientation
      */
     syncOrientation () {
         if (this.isVertical()) {
@@ -26,6 +27,7 @@
 
     /**
      * @description Sets the orientation to right (vertical).
+     * @category Orientation
      */
     makeOrientationRight () { 
         // stack left to right columns, so top to bottom items
@@ -50,6 +52,7 @@
 
     /**
      * @description Sets the orientation to down (horizontal).
+     * @category Orientation
      */
     makeOrientationDown () { 
         // stackview is down, so items are left to right
@@ -76,6 +79,7 @@
     /**
      * @description Checks if the orientation is vertical.
      * @returns {boolean|null} True if vertical, false if horizontal, null if no stackView.
+     * @category Orientation
      */
     isVertical () {
         const sv = this.stackView()
@@ -90,6 +94,7 @@
     /**
      * @description Stacks the tiles based on the current orientation.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Stacking
      */
     stackTiles () {
         if (this.isVertical()) {
@@ -103,6 +108,7 @@
     /**
      * @description Unstacks the tiles based on the current orientation.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Stacking
      */
     unstackTiles () {
         if (this.isVertical()) {
@@ -118,6 +124,7 @@
     /**
      * @description Stacks the tiles vertically.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Stacking
      */
     stackTilesVertically () {
         const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
@@ -145,6 +152,7 @@
     /**
      * @description Unstacks the tiles vertically.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Stacking
      */
     unstackTilesVertically  () {
         const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
@@ -162,6 +170,7 @@
     /**
      * @description Stacks the tiles horizontally.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Stacking
      */
     stackTilesHorizontally () {
         const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx") 
@@ -185,6 +194,7 @@
     /**
      * @description Unstacks the tiles horizontally.
      * @returns {TilesView_orientation} The instance of TilesView_orientation.
+     * @category Stacking
      */
     unstackTilesHorizontally () {
         const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx")

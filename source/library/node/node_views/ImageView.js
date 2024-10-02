@@ -11,6 +11,7 @@
     initPrototypeSlots () {
         /**
          * @member {FlexDomView} imageContainer - Container for the image
+         * @category UI Components
          */
         {
             const slot = this.newSlot("imageContainer", null);
@@ -18,6 +19,7 @@
         }
         /**
          * @member {FlexDomView} rawImageView - View for the raw image
+         * @category UI Components
          */
         {
             const slot = this.newSlot("rawImageView", null);
@@ -25,6 +27,7 @@
         }
         /**
          * @member {FlexDomView} closeButtonView - View for the close button
+         * @category UI Components
          */
         {
             const slot = this.newSlot("closeButtonView", null);
@@ -32,6 +35,7 @@
         }
         /**
          * @member {String} srcUrl - Source URL of the image
+         * @category Data
          */
         {
             const slot = this.newSlot("srcUrl", null);
@@ -39,6 +43,7 @@
         }
         /**
          * @member {String} dataURL - Data URL of the image
+         * @category Data
          */
         {
             const slot = this.newSlot("dataURL", null);
@@ -47,6 +52,7 @@
         }
         /**
          * @member {Boolean} isEditable - Indicates if the image view is editable
+         * @category State
          */
         {
             const slot = this.newSlot("isEditable", false);
@@ -60,6 +66,7 @@
     /**
      * @description Initializes the ImageView
      * @returns {ImageView} The initialized ImageView instance
+     * @category Initialization
      */
     init () {
         super.init();
@@ -91,6 +98,7 @@
     /**
      * @description Creates a new close button view
      * @returns {ButtonView} The created close button view
+     * @category UI Components
      */
     newCloseButtonView () {
         const v = ButtonView.clone().setElementClassName("ImageCloseButton");
@@ -107,6 +115,7 @@
     /**
      * @description Creates a new image view container
      * @returns {FlexDomView} The created image view container
+     * @category UI Components
      */
     newImageViewContainer () {
         const v = FlexDomView.clone().setElementClassName("ImageViewImageContainer");
@@ -124,6 +133,7 @@
      * @description Sets whether the view is registered for browser drop (not implemented)
      * @param {Boolean} aBool - Whether to register for browser drop
      * @throws {Error} Always throws an error as this method shouldn't be called
+     * @category Uncategorized
      */
     setIsRegisteredForBrowserDrop(aBool) {
         throw new Error("shouldn't be called");
@@ -133,6 +143,7 @@
      * @description Sets whether the image view is editable
      * @param {Boolean} aBool - Whether the image view is editable
      * @returns {ImageView} The ImageView instance
+     * @category State
      */
     setIsEditable (aBool) {
         this.closeButtonView().setIsDisplayHidden(!aBool);
@@ -143,6 +154,7 @@
      * @description Sets whether the image view is editable (placeholder method)
      * @param {Boolean} aBool - Whether the image view is editable
      * @returns {ImageView} The ImageView instance
+     * @category State
      */
     setEditable (aBool) {
         // to avoid editable content?
@@ -152,6 +164,7 @@
     /**
      * @description Checks if the view accepts drops
      * @returns {Boolean} Always returns false
+     * @category Drag and Drop
      */
     acceptsDrop () {
         return false;
@@ -159,6 +172,7 @@
 
     /**
      * @description Collapses the image view
+     * @category UI Operations
      */
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null);
@@ -175,6 +189,7 @@
     
     /**
      * @description Closes the image view with an animation
+     * @category UI Operations
      */
     close () {
         const seconds = 0.3;
@@ -193,6 +208,7 @@
      * @description Checks if the view has a specific image URL
      * @param {String} url - The URL to check
      * @returns {Boolean} Whether the view has the specified image URL
+     * @category Data
      */
     hasImageUrl (url) {
         return (url === v.dataURL() || url === v.srcUrl());
@@ -201,6 +217,7 @@
     /**
      * @description Removes the raw image view
      * @returns {ImageView} The ImageView instance
+     * @category UI Operations
      */
     removeRawImageView () {
         if (this.rawImageView()) {
@@ -214,6 +231,7 @@
      * @description Fetches the data URL from a source URL
      * @param {String} src - The source URL
      * @returns {ImageView} The ImageView instance
+     * @category Data
      */
     fetchDataURLFromSrc (src) {
         if (src.startsWith("data:")) {
@@ -232,6 +250,7 @@
      * @description Callback for when the data URL is fetched
      * @param {String} dataURL - The fetched data URL
      * @returns {ImageView} The ImageView instance
+     * @category Data
      */
     didFetchDataUrl (dataURL) {
         this.setFromDataURL(dataURL);
@@ -242,6 +261,7 @@
      * @description Creates a new raw image view for a given image
      * @param {Image} image - The image to create a view for
      * @returns {FlexDomView} The created raw image view
+     * @category UI Components
      */
     newRawImageViewForImage (image) {
         const v = FlexDomView.clone().setElement(image).setElementClassName("RawImageView");
@@ -260,6 +280,7 @@
      * @description Sets the image from a data URL
      * @param {String} dataURL - The data URL of the image
      * @returns {ImageView} The ImageView instance
+     * @category Data
      */
     setFromDataURL (dataURL) {
         //console.log("setFromDataURL: ", dataURL);

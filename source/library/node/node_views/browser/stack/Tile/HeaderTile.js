@@ -8,6 +8,7 @@
     
     /**
      * @description Initializes prototype slots for the HeaderTile class.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -15,6 +16,7 @@
     /**
      * @description Initializes the HeaderTile instance.
      * @returns {HeaderTile} The initialized HeaderTile instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -26,6 +28,7 @@
     /**
      * @description Configures the tile for a downward orientation.
      * @returns {HeaderTile} The HeaderTile instance with downward orientation.
+     * @category Configuration
      */
     makeOrientationDown () {
         super.makeOrientationDown()
@@ -37,6 +40,7 @@
     /**
      * @description Applies styles to the HeaderTile.
      * @returns {HeaderTile} The HeaderTile instance with applied styles.
+     * @category Styling
      */
     applyStyles () {
         //debugger

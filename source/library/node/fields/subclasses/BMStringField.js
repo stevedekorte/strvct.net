@@ -15,6 +15,7 @@
      * @static
      * @returns {boolean} True if available as a node primitive.
      * @description Determines if the field is available as a node primitive.
+     * @category Availability
      */
     static availableAsNodePrimitive () {
         return true
@@ -22,11 +23,13 @@
 
     /**
      * @description Initializes the prototype slots for the BMStringField.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {string} unsetVisibleValue
          * @description The visible value when the field is unset.
+         * @category Display
          */
         {
             const slot = this.newSlot("unsetVisibleValue", "");
@@ -36,6 +39,7 @@
 
     /**
      * @description Initializes the prototype with default values.
+     * @category Initialization
      */
     initPrototype () {
         this.setKey("String title");
@@ -50,6 +54,7 @@
     /**
      * @description Synchronizes the field from the node.
      * @returns {*} The result of the super class's syncFromNode method.
+     * @category Synchronization
      */
     syncFromNode () {
         return super.syncFromNode()

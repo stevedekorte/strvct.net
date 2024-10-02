@@ -24,6 +24,7 @@
 
   /**
    * @description Initializes the BMThemeClass instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -40,6 +41,7 @@
 
   /**
    * @description Performs final initialization of the BMThemeClass instance.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -52,6 +54,7 @@
   /**
    * @description Returns the parent theme class of this instance.
    * @returns {BMThemeClass|null} The parent theme class or null if it's a root theme class.
+   * @category Hierarchy
    */
   parentThemeClass () {
     const parentChildrenNode = this.parentNode()
@@ -69,6 +72,7 @@
   /**
    * @description Sets up this instance as the default theme class.
    * @returns {BMThemeClass} This instance.
+   * @category Setup
    */
   setupAsDefault() {
     this.setTitle("Tile");
@@ -83,6 +87,7 @@
    * @description Returns the state with the given name.
    * @param {string} name - The name of the state to retrieve.
    * @returns {BMThemeState} The state with the given name.
+   * @category State Management
    */
   stateWithName (name) {
     return this.states().stateWithName(name);
@@ -91,6 +96,7 @@
   /**
    * @description Returns the states subnode of this theme class.
    * @returns {BMThemeStates} The states subnode.
+   * @category State Management
    */
   states () {
     return this.firstSubnodeWithTitle("states");
@@ -99,6 +105,7 @@
   /**
    * @description Returns the children subnode of this theme class.
    * @returns {BMThemeClassChildren} The children subnode.
+   * @category Hierarchy
    */
   children () {
     return this.firstSubnodeWithTitle("children");
@@ -107,6 +114,7 @@
   /**
    * @description Returns an array containing this theme class and all its descendant theme classes.
    * @returns {BMThemeClass[]} An array of theme classes.
+   * @category Hierarchy
    */
   selfAndAllThemeChildren () {
     const children = this.children().subnodes().map(themeClass => themeClass.selfAndAllThemeChildren())

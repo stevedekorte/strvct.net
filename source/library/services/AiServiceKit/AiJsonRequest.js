@@ -15,6 +15,7 @@
   initPrototypeSlots () {
     /**
      * @member {JsonStreamReader|null} jsonStreamReader
+     * @category Data
      */
     {
       const slot = this.newSlot("jsonStreamReader", null);
@@ -22,6 +23,7 @@
 
     /**
      * @member {number} containerChunkLevel - depth of json to call onStreamJsonChunk(json)
+     * @category Configuration
      */
     {
       const slot = this.newSlot("containerChunkLevel", 2);
@@ -30,6 +32,7 @@
 
   /**
    * @description Initializes the AiJsonRequest
+   * @category Initialization
    */
   init () {
     super.init();
@@ -43,6 +46,7 @@
   /**
    * @description Sets up the request for streaming
    * @returns {AiJsonRequest} The current instance
+   * @category Setup
    */
   setupForStreaming () {
     return this;
@@ -51,6 +55,7 @@
   /**
    * @description Asynchronously sends the request and streams the response
    * @returns {Promise}
+   * @category Network
    */
   async asyncSendAndStreamResponse () {
     if (!this.isContinuation()) {
@@ -62,6 +67,7 @@
   /**
    * @description Reads XHR lines and processes them
    * @private
+   * @category Data Processing
    */
   readXhrLines () {
     try {
@@ -79,6 +85,7 @@
    * @description Handles JSON stream reader errors
    * @param {JsonStreamReader} reader - The JSON stream reader
    * @param {Error} error - The error that occurred
+   * @category Error Handling
    */
   onJsonStreamReaderError (reader, error) {
     this.setError(error);
@@ -90,6 +97,7 @@
    * @param {JsonStreamReader} reader - The JSON stream reader
    * @param {Object} json - The JSON object popped from the container
    * @throws {Error} Throws an error if not overridden by subclass
+   * @category Data Processing
    */
   onJsonStreamReaderPopContainer (reader, json) {
     throw new Error(this.type() + " onJsonStreamReaderPopContainer(reader, json) should be overridden by subclass");

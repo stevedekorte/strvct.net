@@ -39,6 +39,7 @@
 
   /**
    * @description Initializes the prototype slots for the HomeAssistantState.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
@@ -78,6 +79,7 @@
 
   /**
    * @description Initializes the HomeAssistantState.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -91,6 +93,7 @@
   
   /**
    * @description Performs final initialization tasks.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();
@@ -111,6 +114,7 @@
   /**
    * @description Gets the ID of the state.
    * @returns {string} The ID of the state.
+   * @category Information
    */
   id () {
     return this.haJson().context.id; // is this correct?
@@ -119,6 +123,7 @@
   /**
    * @description Gets the entity ID of the state.
    * @returns {string} The entity ID of the state.
+   * @category Information
    */
   entityId () {
     return this.haJson().entity_id;
@@ -134,6 +139,7 @@
   /**
    * @description Gets the owner ID of the state.
    * @returns {string} The owner ID of the state.
+   * @category Information
    */
   ownerId () {
     return this.entityId();
@@ -142,6 +148,7 @@
   /**
    * @description Gets the owner group of the state.
    * @returns {Object} The owner group of the state.
+   * @category Information
    */
   ownerGroup () {
     return this.homeAssistant().entitiesNode();
@@ -149,6 +156,7 @@
 
   /**
    * @description Updates the titles of the state.
+   * @category Update
    */
   updateTitles () {
     this.setName(this.name());
@@ -159,6 +167,7 @@
   /**
    * @description Gets the name of the state.
    * @returns {string} The name of the state.
+   * @category Information
    */
   name () {
     const json = this.haJson();
@@ -180,6 +189,7 @@
   /**
    * @description Gets the current state.
    * @returns {string} The current state.
+   * @category Information
    */
   state () {
     return this.haJson().state;

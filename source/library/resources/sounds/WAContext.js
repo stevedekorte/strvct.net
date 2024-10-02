@@ -20,6 +20,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -31,6 +32,7 @@
      * @static
      * @description Handles the first user event
      * @param {Object} anEventListener - The event listener object
+     * @category Event Handling
      */
     static firstUserEvent (anEventListener) {
         Broadcaster.shared().removeListenerForName(this, "firstUserEvent")
@@ -39,10 +41,12 @@
 
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {AudioContext} - audioContext
+         * @category Audio
          */
         {
             const slot = this.newSlot("audioContext", null);
@@ -50,6 +54,7 @@
         }
         /**
          * @member {Promise} - setupPromise
+         * @category Setup
          */
         {
             const slot = this.newSlot("setupPromise", null);
@@ -59,12 +64,14 @@
 
     /**
      * @description Initializes the prototype
+     * @category Initialization
      */
     initPrototype () {
     }
 
     /**
      * @description Initializes the instance
+     * @category Initialization
      */
     init () {
         super.init();
@@ -74,6 +81,7 @@
     /**
      * @description Returns the title of the context
      * @returns {string} The title
+     * @category Metadata
      */
     title () {
         return "WebAudio Context"
@@ -82,6 +90,7 @@
     /**
      * @description Returns the subtitle of the context
      * @returns {null} Always returns null
+     * @category Metadata
      */
     subtitle () {
         return null
@@ -90,6 +99,7 @@
     /**
      * @description Checks if the context is set up
      * @returns {boolean} True if set up, false otherwise
+     * @category Setup
      */
     isSetup () {
         return !Type.isNull(this.audioContext())
@@ -98,6 +108,7 @@
     /**
      * @description Sets up the context if needed
      * @returns {WAContext} The instance
+     * @category Setup
      */
     setupIfNeeded () {
         if (!this.isSetup()) {
@@ -113,6 +124,7 @@
      * @description Decodes an array buffer
      * @param {ArrayBuffer} audioArrayBuffer - The audio array buffer to decode
      * @returns {Promise} A promise that resolves with the decoded buffer
+     * @category Audio Processing
      */
     async promiseDecodeArrayBuffer (audioArrayBuffer) {
         // NOTE: may mutate audioArrayBuffer!!!!!!!!!!

@@ -11,6 +11,7 @@
     /**
      * Rethrows the error, setting the cause if it's undefined.
      * @throws {Error} This error
+     * @category Error Handling
      */
     rethrow () {
         if (this.cause === undefined && typeof(Error.cause) === 'function') {
@@ -26,6 +27,7 @@
      * @param {string} [errorName] - The name of the error
      * @returns {*} The asserted value
      * @throws {Error} If the assertion fails
+     * @category Assertion
      */
     static assert (v, errorMessage, errorName) {
         if (!Boolean(v)) {
@@ -51,6 +53,7 @@
      * @param {*} v - The value to check
      * @returns {*} The asserted value
      * @throws {Error} If the value is undefined
+     * @category Assertion
      */
     static assertDefined (v) {
         if (v === undefined) {
@@ -61,6 +64,7 @@
 
     /**
      * Logs the current stack trace to the console.
+     * @category Debugging
      */
     static showCurrentStack () {
         const e = new Error();
@@ -73,6 +77,7 @@
      * Asserts that a function throws an error when called.
      * @param {Function} func - The function to test
      * @throws {Error} If the function doesn't throw
+     * @category Assertion
      */
     static assertThrows (func) {
         assert(Type.isFunction(func));
@@ -96,6 +101,7 @@
     /**
      * Executes a function and shows any error that occurs.
      * @param {Function} func - The function to execute
+     * @category Error Handling
      */
     static try (func) {
         try {
@@ -108,13 +114,16 @@
     /**
      * Gets the URL of the calling script.
      * @returns {string} The URL of the calling script
+     * @category Debugging
      */
     static callingScriptURL () {
         const urls = new Error().stackURLs();
         return urls[1];
     }
 
-    
+    /**
+     * @category Debugging
+     */
     stackURLs () {
         let urls = this.stack.split("at");
         urls.removeFirst();
@@ -137,6 +146,7 @@
     /**
      * Generates a formatted description of the error.
      * @returns {string} A formatted description of the error
+     * @category Error Handling
      */
     description () {
         const error = this;
@@ -180,6 +190,7 @@
 	
     /**
      * Logs the error description to the console.
+     * @category Error Handling
      */
     show () {
         console.warn(this.description());
@@ -195,6 +206,7 @@
  * @param {string|function} [errorMessage] - The error message or a function that returns it
  * @returns {*} The asserted value
  * @throws {Error} If the assertion fails
+ * @category Assertion
  */
 getGlobalThis().assert = function assert(v, errorMessage) {
     return Error.assert(v, errorMessage);
@@ -206,6 +218,7 @@ getGlobalThis().assert = function assert(v, errorMessage) {
  * @param {string|function} [errorMessage] - The error message or a function that returns it
  * @returns {*} The asserted value
  * @throws {Error} If the value is undefined
+ * @category Assertion
  */
 getGlobalThis().assertDefined = function assertDefined(v, errorMessage) {
     return Error.assertDefined(v, errorMessage);
@@ -215,6 +228,7 @@ getGlobalThis().assertDefined = function assertDefined(v, errorMessage) {
  * Global assertThrows function.
  * @param {Function} func - The function to test
  * @throws {Error} If the function doesn't throw
+ * @category Assertion
  */
 getGlobalThis().assertThrows = function assertThrows(func) {
     Error.assertThrows(func);

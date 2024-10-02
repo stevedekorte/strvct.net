@@ -23,6 +23,7 @@
             slot.setSlotType("String");
             /**
              * @member {string} name - The name of the blob.
+             * @category Metadata
              */
         }
 
@@ -34,6 +35,7 @@
             slot.setSlotType("String");
             /**
              * @member {string} valueHash - The hash value of the blob's data.
+             * @category Data
              */
         }
 
@@ -45,6 +47,7 @@
             slot.setSlotType("Number");
             /**
              * @member {number} valueSize - The size of the blob's data in bytes.
+             * @category Data
              */
         }
 
@@ -56,6 +59,7 @@
             slot.setSlotType("Number");
             /**
              * @member {number} lastModifiedTime - The timestamp of the last modification to the blob's data.
+             * @category Metadata
              */
         }
 
@@ -67,6 +71,7 @@
             slot.setSlotType("Date");
             /**
              * @member {Date} expirationDate - The date when the blob's data expires.
+             * @category Metadata
              */
         }
 
@@ -78,6 +83,7 @@
             slot.setSlotType("ArrayBuffer");
             /**
              * @member {ArrayBuffer} value - The binary data of the blob.
+             * @category Data
              */
         }
     }
@@ -94,6 +100,7 @@
     /**
      * @description Calculates the age of the blob in milliseconds based on its last modified time.
      * @returns {number} The age of the blob in milliseconds.
+     * @category Utility
      */
     age() {
         return new Date().getTime() - this.lastModifiedTime()
@@ -101,6 +108,7 @@
 
     /**
      * @description Prepares the BMBlob for first access by setting up the value field.
+     * @category Initialization
      */
     prepareForFirstAccess() {
         super.prepareForFirstAccess()
@@ -109,6 +117,7 @@
 
     /**
      * @description Sets up the value field for the BMBlob.
+     * @category Initialization
      */
     async setupValueField() {
         const field = BMTextAreaField.clone().setKey("value");
@@ -126,6 +135,7 @@
 
     /**
      * @description Performs any necessary actions after reading the value of the BMBlob.
+     * @category Data
      */
     didReadValue() {
     }
@@ -133,6 +143,7 @@
     /**
      * @description Returns the title of the BMBlob, which is its name.
      * @returns {string} The name of the BMBlob.
+     * @category Metadata
      */
     title() {
         return this.name()
@@ -141,6 +152,7 @@
     /**
      * @description Returns the subtitle of the BMBlob, which is the size of its data in a human-readable format.
      * @returns {string|null} The size of the BMBlob's data in a human-readable format, or null if the size is not available.
+     * @category Metadata
      */
     subtitle() {
         const size = this.valueSize()
@@ -153,6 +165,7 @@
     /**
      * @description Returns the hash value of the BMBlob, which is used as the key for subnode lookup.
      * @returns {string} The hash value of the BMBlob.
+     * @category Data
      */
     hash() {
         return this.valueHash() // for subnode lookup
@@ -163,6 +176,7 @@
      * @param {*} oldValue The old value of the slot.
      * @param {*} newValue The new value of the slot.
      * @returns {BMBlob} The current instance of BMBlob.
+     * @category Data
      */
     didUpdateSlotValue(oldValue, newValue) {
         if (newValue) {
@@ -176,6 +190,7 @@
     /**
      * @description Returns the store associated with the BMBlob's parent node.
      * @returns {*} The store associated with the BMBlob's parent node.
+     * @category Storage
      */
     store() {
         return this.parentNode().store()
@@ -183,6 +198,7 @@
 
     /**
      * @description Promises to write the value of the BMBlob to the store.
+     * @category Storage
      */
     async promiseWriteValue() {
         // what about number or null values?
@@ -198,6 +214,7 @@
      * @description Promises to write the value and hash of the BMBlob to the store.
      * @param {ArrayBuffer|string} v The value to be written.
      * @param {string} h The hash value of the value.
+     * @category Storage
      */
     async promiseWriteValueWithHash(v, h) {
         this.setValueHash(h);
@@ -221,6 +238,7 @@
 
     /**
      * @description Promises to read the value of the BMBlob from the store.
+     * @category Storage
      */
     async promiseReadValue() {
         if (this.value()) {
@@ -237,6 +255,7 @@
     /**
      * @description Checks if the BMBlob is valid based on its properties.
      * @returns {boolean} True if the BMBlob is valid, false otherwise.
+     * @category Validation
      */
     isValid() {
         if (Type.isNull(this.name())) {
@@ -261,6 +280,7 @@
     /**
      * @description Returns a string description of the BMBlob, including its type ID and slot values.
      * @returns {string} A string description of the BMBlob.
+     * @category Utility
      */
     description() {
         const slotNames = ["name", "valueHash", "valueSize", "lastModifiedTime"]
@@ -273,6 +293,7 @@
 
     /**
      * @description Tests the hash function by comparing the calculated hash of a string with a known hash value.
+     * @category Testing
      */
     static async testHash() {
         // This is a test to make sure browser JS and node JS hashes match.

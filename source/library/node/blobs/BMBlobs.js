@@ -38,6 +38,7 @@
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -45,6 +46,7 @@
 
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
@@ -52,6 +54,7 @@
              * @member
              * @type {PersistentObjectPool}
              * @description The store for the blobs.
+             * @category Storage
              */
             const slot = this.newSlot("store", null);
             slot.setSlotType("PersistentObjectPool");
@@ -60,6 +63,7 @@
 
     /**
      * @description Initializes the prototype properties for the class.
+     * @category Initialization
      */
     initPrototype () {
         this.setTitle("Blobs");
@@ -72,6 +76,7 @@
     /**
      * @description Initializes the instance by setting the store.
      * @returns {BMBlobs} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -82,6 +87,7 @@
     /**
      * @description Promises to open the store.
      * @returns {Promise} A promise that resolves when the store is open.
+     * @category Storage
      */
     promiseOpen () {
         debugger;
@@ -94,6 +100,7 @@
      * @description Retrieves a blob subnode with the given name.
      * @param {string} aName The name of the blob to retrieve.
      * @returns {BMBlob|undefined} The blob subnode with the given name, or undefined if not found.
+     * @category Lookup
      */
     blobWithName (aName) {
         return this.subnodes().detect(sn => sn.title() === aName)
@@ -104,6 +111,7 @@
      * @description Checks if a blob subnode with the given name exists.
      * @param {string} aName The name of the blob to check for.
      * @returns {boolean} True if a blob subnode with the given name exists, false otherwise.
+     * @category Lookup
      */
     hasBlobWithName (aName) {
         return !Type.isNullOrUndefined(this.blobWithName(aName))
@@ -115,6 +123,7 @@
      * @description Checks if a blob subnode with the given value hash exists.
      * @param {string} h The value hash of the blob to check for.
      * @returns {boolean} True if a blob subnode with the given value hash exists, false otherwise.
+     * @category Lookup
      */
     hasBlobWithValueHash (h) {
         return !Type.isNullOrUndefined(this.blobWithValueHash(h))
@@ -124,6 +133,7 @@
      * @description Retrieves a blob subnode with the given value hash.
      * @param {string} h The value hash of the blob to retrieve.
      * @returns {BMBlob|undefined} The blob subnode with the given value hash, or undefined if not found.
+     * @category Lookup
      */
     blobWithValueHash (h) {
         //debugger
@@ -138,6 +148,7 @@
      * @param {string} aName The name of the blob to create or update.
      * @param {*} aValue The value of the blob to create or update.
      * @returns {BMBlob} The created or updated blob subnode.
+     * @category Creation
      */
     createBlobWithNameAndValue (aName, aValue) {
         //debugger
@@ -158,6 +169,7 @@
     /**
      * @description Collects garbage by removing invalid blob subnodes and unreferenced store entries.
      * @returns {Promise} A promise that resolves when the garbage collection is complete.
+     * @category Maintenance
      */
     async collectGarbage () {
         // remove invalid Blob subnodes (thbose with null meta data)
@@ -186,6 +198,7 @@
      * @static
      * @description Performs a self-test by creating and storing a test blob.
      * @returns {Promise} A promise that resolves when the self-test is complete.
+     * @category Testing
      */
     static async selfTest () {
         this.addTimeout(async () => {

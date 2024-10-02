@@ -11,6 +11,7 @@
     
     /**
      * @description Initializes prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -18,6 +19,7 @@
     /**
      * @description Initializes the BMChatInputTile instance.
      * @returns {BMChatInputTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -31,6 +33,7 @@
     /**
      * @description Returns speakable elements.
      * @returns {Array} An array of speakable elements.
+     * @category Speech
      */
     speakableElements () {
         return this.valueView().element().elementsOfTags(this.node().tagsToSpeak());
@@ -40,6 +43,7 @@
      * @description Finds a speakable element with the given text.
      * @param {string} text - The text to search for.
      * @returns {Element|undefined} The found element or undefined.
+     * @category Speech
      */
     speakableElementWithText (text) {
         return this.speakableElements().detect(e => e.textContent === text || e.textContent.trim() === text);
@@ -48,6 +52,7 @@
     /**
      * @description Handles the speaking text event.
      * @param {Object} aNote - The notification object.
+     * @category Speech
      */
     onSpeakingText (aNote) {
         const text = aNote.info();
@@ -65,6 +70,7 @@
     /**
      * @description Unhighlights all sentences.
      * @returns {BMChatInputTile} The current instance.
+     * @category UI
      */
     unhighlightAllSentences () {
         this.speakableElements().forEach(el => this.unhighlightElement(el));
@@ -74,6 +80,7 @@
     /**
      * @description Handles the spoke text event.
      * @param {Object} aNote - The notification object.
+     * @category Speech
      */
     onSpokeText (aNote) {
         const text = aNote.info();
@@ -91,6 +98,7 @@
      * @description Highlights the given element.
      * @param {Element} e - The element to highlight.
      * @returns {BMChatInputTile} The current instance.
+     * @category UI
      */
     highlightElement (e) {
         e.style.opacity = 1;
@@ -102,6 +110,7 @@
      * @description Unhighlights the given element.
      * @param {Element} e - The element to unhighlight.
      * @returns {BMChatInputTile} The current instance.
+     * @category UI
      */
     unhighlightElement (e) {
         e.style.fontWeight = "";
@@ -113,6 +122,7 @@
     /**
      * @description Creates and configures the value view.
      * @returns {TextField} The configured value view.
+     * @category UI
      */
     createValueView () {
         const v = TextField.clone().setElementClassName("BMChatInputTileValueView");
@@ -168,6 +178,7 @@
      * @description Handles the updated node event.
      * @param {Object} aNote - The notification object.
      * @returns {*} The result of the super call.
+     * @category Event
      */
     onUpdatedNode (aNote) {
         return super.onUpdatedNode(aNote)
@@ -176,6 +187,7 @@
     /**
      * @description Synchronizes the tile with its node.
      * @returns {BMChatInputTile} The current instance.
+     * @category Synchronization
      */
     syncFromNode () {
         const node = this.node();
@@ -188,6 +200,7 @@
     /**
      * @description Synchronizes the dots display based on the node's state.
      * @returns {BMChatInputTile} The current instance.
+     * @category Synchronization
      */
     syncDotsFromNode () {
         const node = this.node();
@@ -206,6 +219,7 @@
     /**
      * @description Shows the animated dots.
      * @returns {BMChatInputTile} The current instance.
+     * @category UI
      */
     showDots () {
         const view = this.valueView();
@@ -217,6 +231,7 @@
     /**
      * @description Hides the animated dots.
      * @returns {BMChatInputTile} The current instance.
+     * @category UI
      */
     hideDots () {
         const view = this.valueView();

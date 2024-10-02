@@ -14,8 +14,8 @@
 (class CanvasTextTapeMeasure extends ProtoClass {
     
     /**
-
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /*
@@ -26,6 +26,7 @@
         */
         /**
          * @member {Element} canvas - The canvas element used for measuring text.
+         * @category Rendering
          */
         {
             const slot = this.newSlot("canvas", null);
@@ -33,6 +34,7 @@
         }
         /**
          * @member {CanvasRenderingContext2D} context - The 2D rendering context of the canvas.
+         * @category Rendering
          */
         {
             const slot = this.newSlot("context", null);
@@ -41,9 +43,9 @@
     }
 	
     /**
-
      * @description Initializes the CanvasTextTapeMeasure instance.
      * @returns {CanvasTextTapeMeasure} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -53,11 +55,11 @@
     }
 
     /**
-
      * @description Measures the width of the given text with the specified font.
      * @param {string} text - The text to measure.
      * @param {string} fontString - The css font descriptor that text is to be rendered with (e.g. "14px verdana").
      * @returns {number} The width of the text.
+     * @category Measurement
      */
     getTextWidth (text, fontString) {
         const context = this.context()
@@ -67,10 +69,10 @@
     }       
 
     /**
-
      * @static
      * @description Performs a self-test of the CanvasTextTapeMeasure class.
      * @returns {CanvasTextTapeMeasure} The class itself.
+     * @category Testing
      */
     static selfTest () {
         const tape = CanvasTextTapeMeasure.clone()

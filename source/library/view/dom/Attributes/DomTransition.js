@@ -14,6 +14,7 @@
     /**
      * @static
      * @description Initializes the class with global values for transitions.
+     * @category Initialization
      */
     static initClass () {
         const globalValues = ["inherit", "initial", "revert", "revert-layer", "unset"].asSet();
@@ -24,6 +25,7 @@
      * @static
      * @description Returns an array of valid CSS properties for transitions.
      * @returns {string[]} Array of valid CSS properties.
+     * @category Validation
      */
     static validPropertyValues () {
         return [  "background-color",  "background-position",  "border-color",  "border-width",  "border-spacing",  
@@ -36,10 +38,12 @@
 
     /**
      * @description Initializes the prototype slots for the DomTransition class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Object|null} global - Global transition value.
+         * @category Properties
          */
         {
             const slot = this.newSlot("global", null);
@@ -48,6 +52,7 @@
         }
         /**
          * @member {string} property - The CSS property to transition.
+         * @category Properties
          */
         {
             const slot = this.newSlot("property", "");
@@ -55,6 +60,7 @@
         }
         /**
          * @member {number} duration - The duration of the transition in seconds.
+         * @category Properties
          */
         {
             const slot = this.newSlot("duration", 0);
@@ -62,6 +68,7 @@
         }
         /**
          * @member {string} timingFunction - The timing function of the transition.
+         * @category Properties
          */
         {
             const slot = this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
@@ -69,6 +76,7 @@
         }
         /**
          * @member {number} delay - The delay before the transition starts in seconds.
+         * @category Properties
          */
         {
             const slot = this.newSlot("delay", 0) // set to number type (unit = seconds)
@@ -76,6 +84,7 @@
         }
         /**
          * @member {DomTransitions|null} transitions - The parent DomTransitions object.
+         * @category Properties
          */
         {
             const slot = this.newSlot("transitions", null);
@@ -93,6 +102,7 @@
     /**
      * @description Clears all transition properties.
      * @returns {DomTransition} The current instance.
+     * @category Manipulation
      */
     clear () {
         this.setGlobal(null)
@@ -107,6 +117,7 @@
      * @description Updates the duration of the transition.
      * @param {number|string} s - The new duration value.
      * @returns {DomTransition} The current instance.
+     * @category Manipulation
      */
     updateDuration (s) {
         if (Type.isNumber(s)) {
@@ -121,6 +132,7 @@
      * @description Updates the delay of the transition.
      * @param {number|string} s - The new delay value.
      * @returns {DomTransition} The current instance.
+     * @category Manipulation
      */
     updateDelay (s) {
         this.setDelay(s)
@@ -132,6 +144,7 @@
      * @description Updates the timing function of the transition.
      * @param {string} s - The new timing function value.
      * @returns {DomTransition} The current instance.
+     * @category Manipulation
      */
     updateTimingFunction (s) {
         this.setTimingFunction(s)
@@ -142,6 +155,7 @@
     /**
      * @description Returns the duration as a string with 's' appended if it's a number.
      * @returns {string} The duration string.
+     * @category Utility
      */
     durationString () {
         const v = this.duration()
@@ -154,6 +168,7 @@
     /**
      * @description Returns the delay as a string with 's' appended if it's a number.
      * @returns {string} The delay string.
+     * @category Utility
      */
     delayString () {
         const v = this.delay()
@@ -166,6 +181,7 @@
     /**
      * @description Converts the transition to a string representation.
      * @returns {string} The string representation of the transition.
+     * @category Conversion
      */
     asString () {
         if (this.global()) {
@@ -188,6 +204,7 @@
      * @description Sets the transition properties from a string.
      * @param {string} aString - The string representation of the transition.
      * @returns {DomTransition} The current instance.
+     * @category Manipulation
      */
     setFromString (aString) {
         // ordering of parts: 
@@ -242,6 +259,7 @@
     /**
      * @description Synchronizes the transition with the DOM view.
      * @returns {DomTransition} The current instance.
+     * @category Synchronization
      */
     syncToDomView () {
         this.transitions().syncToDomView()

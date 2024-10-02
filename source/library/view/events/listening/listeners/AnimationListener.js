@@ -21,6 +21,7 @@
     /**
      * @description Initializes the prototype slots for the AnimationListener class.
      * @returns {void}
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -29,6 +30,7 @@
     /**
      * @description Initializes the AnimationListener instance.
      * @returns {AnimationListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -39,6 +41,7 @@
     /**
      * @description Sets up the event listeners for animation events.
      * @returns {AnimationListener} The current instance.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("animationend", "onAnimationEnd");

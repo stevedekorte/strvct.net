@@ -13,10 +13,12 @@
     
     /**
      * @description Initializes the prototype slots for the SpatialModelNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {string|null} dataURL - The URL of the 3D model data.
+         * @category Data
          */
         {
             const slot = this.newSlot("dataURL", null)
@@ -26,6 +28,7 @@
 
     /**
      * @description Initializes the prototype with default values and settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setNodeCanEditTitle(true)
@@ -39,6 +42,7 @@
 
     /**
      * @description Initializes the SpatialModelNode.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -46,6 +50,7 @@
     
     /**
      * @description Handles the event when the node is edited.
+     * @category Event Handling
      */
     onDidEditNode () {
         this.debugLog(" onDidEditNode")
@@ -54,6 +59,7 @@
     /**
      * @description Creates a JSON archive of the SpatialModelNode.
      * @returns {undefined}
+     * @category Data Serialization
      */
     jsonArchive () {
         debugger;

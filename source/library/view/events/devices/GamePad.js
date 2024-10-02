@@ -14,10 +14,12 @@
     /**
      * @description Initializes the prototype slots for the GamePad class.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {GamePadManager} gamePadManager
+         * @category Configuration
          */
         {
             const slot = this.newSlot("gamePadManager", null);
@@ -25,6 +27,7 @@
         }
         /**
          * @member {Number} index
+         * @category Identification
          */
         {
             const slot = this.newSlot("index", null);
@@ -32,6 +35,7 @@
         }
         /**
          * @member {String} id
+         * @category Identification
          */
         {
             const slot = this.newSlot("id", null);
@@ -39,6 +43,7 @@
         }
         /**
          * @member {Number} timestamp
+         * @category State
          */
         {
             const slot = this.newSlot("timestamp", null);
@@ -46,6 +51,7 @@
         }
         /**
          * @member {Array} buttons
+         * @category Input
          */
         {
             const slot = this.newSlot("buttons", null);
@@ -53,6 +59,7 @@
         }
         /**
          * @member {Array} axes
+         * @category Input
          */
         {
             const slot = this.newSlot("axes", null);
@@ -60,6 +67,7 @@
         }
         /**
          * @member {Boolean} isConnected
+         * @category State
          */
         {
             const slot = this.newSlot("isConnected", false);
@@ -67,6 +75,7 @@
         }
         /**
          * @member {Boolean} shouldSendNotes
+         * @category Configuration
          */
         {
             const slot = this.newSlot("shouldSendNotes", false);
@@ -77,6 +86,7 @@
     /**
      * @description Initializes the GamePad instance.
      * @returns {GamePad} The initialized GamePad instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -89,6 +99,7 @@
     /**
      * @description Updates the GamePad data.
      * @param {Object} gp - The gamepad object to update from.
+     * @category Update
      */
     updateData (gp) {
         assert(gp.id() === this.id()) // quick sanity check
@@ -104,6 +115,7 @@
      * @description Updates the buttons of the GamePad.
      * @param {Array} newButtons - The new button states.
      * @returns {GamePad} The current GamePad instance.
+     * @category Update
      */
     updateButtons (newButtons) {
         // make sure number of buttons is correct
@@ -132,6 +144,7 @@
      * @param {Number} index - The index of the changed button.
      * @param {Boolean} isDown - The new state of the button.
      * @returns {GamePad} The current GamePad instance.
+     * @category Event
      */
     changedButtonIndexTo (index, isDown) {
         const note = BMNotificationCenter.shared().newNote().setSender(this)
@@ -145,6 +158,7 @@
      * @description Updates the axes of the GamePad.
      * @param {Array} newAxes - The new axes values.
      * @returns {GamePad} The current GamePad instance.
+     * @category Update
      */
     updateAxes (newAxes) {
         // make sure number of buttons is correct
@@ -173,6 +187,7 @@
      * @param {Number} index - The index of the changed axis.
      * @param {Number} value - The new value of the axis.
      * @returns {GamePad} The current GamePad instance.
+     * @category Event
      */
     changedAxesIndexTo (index, value) {
         const note = BMNotificationCenter.shared().newNote().setSender(this)
@@ -185,6 +200,7 @@
     /**
      * @description Handles the connected event for the GamePad.
      * @returns {GamePad} The current GamePad instance.
+     * @category Event
      */
     onConnected () {
         this.setIsConnected(true)
@@ -197,6 +213,7 @@
     /**
      * @description Handles the disconnected event for the GamePad.
      * @returns {GamePad} The current GamePad instance.
+     * @category Event
      */
     onDisconnected () {
         this.setIsConnected(false)

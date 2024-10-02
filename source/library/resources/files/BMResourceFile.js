@@ -17,6 +17,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} path - Path from _index.json entry
+         * @category File Properties
          */
         {
             const slot = this.newSlot("path", ".");
@@ -25,6 +26,7 @@
 
         /**
          * @member {String} resourceHash - Hash from _index.json entry
+         * @category File Properties
          */
         {
             const slot = this.newSlot("resourceHash", null);
@@ -33,6 +35,7 @@
 
         /**
          * @member {Number} resourceSize - Size from _index.json entry
+         * @category File Properties
          */
         {
             const slot = this.newSlot("resourceSize", null);
@@ -41,6 +44,7 @@
 
         /**
          * @member {Object} data - Raw data of the resource
+         * @category Data Management
          */
         {
             const slot = this.newSlot("data", null);
@@ -49,6 +53,7 @@
 
         /**
          * @member {Object} value - The value decoded from the data, e.g., value = JSON.parse(data)
+         * @category Data Management
          */
         {
             const slot = this.newSlot("value", null);
@@ -57,6 +62,7 @@
 
         /**
          * @member {Error} error - Error object if any error occurs during processing
+         * @category Error Handling
          */
         {
             const slot = this.newSlot("error", null);
@@ -65,6 +71,7 @@
 
         /**
          * @member {Promise} promiseForLoad - Holds promise used for reading from URL request or indexedDB
+         * @category Loading
          */
         {
             const slot = this.newSlot("promiseForLoad", null); 
@@ -74,6 +81,7 @@
 
         /**
          * @member {Boolean} isLoading - Indicates if the resource is currently loading
+         * @category Loading
          */
         {
             const slot = this.newSlot("isLoading", false);
@@ -82,6 +90,7 @@
 
         /**
          * @member {Boolean} isLoaded - Indicates if the resource has been loaded
+         * @category Loading
          */
         {
              const slot = this.newSlot("isLoaded", false);
@@ -90,6 +99,7 @@
 
         /**
          * @member {String} loadState - Represents the current load state of the resource
+         * @category Loading
          */
         {
             const slot = this.newSlot("loadState", null);
@@ -109,6 +119,7 @@
     /**
      * @description Initializes the BMResourceFile instance.
      * @returns {BMResourceFile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -119,6 +130,7 @@
     /**
      * @description Gets the name of the resource file.
      * @returns {String} The file name.
+     * @category File Properties
      */
     name () {
         return this.path().lastPathComponent();
@@ -127,6 +139,7 @@
     /**
      * @description Gets the title of the resource file.
      * @returns {String} The file name as the title.
+     * @category File Properties
      */
     title () {
         return this.name();
@@ -135,6 +148,7 @@
     /**
      * @description Gets the file extension of the resource file.
      * @returns {String} The file extension.
+     * @category File Properties
      */
     pathExtension () {
         return this.path().pathExtension();
@@ -143,6 +157,7 @@
     /**
      * @description Sets up subnodes for the resource file.
      * @returns {BMResourceFile} The current instance.
+     * @category Initialization
      */
     setupSubnodes () {
         return this;
@@ -151,6 +166,7 @@
     /**
      * @description Checks if the resource file has data.
      * @returns {Boolean} True if data is present, false otherwise.
+     * @category Data Management
      */
     hasData () {
         return this.data() !== null;
@@ -159,6 +175,7 @@
     /**
      * @description Gets the URL resource for the file.
      * @returns {UrlResource} The URL resource object.
+     * @category Loading
      */
     urlResource () {
         return UrlResource.with(this.path());
@@ -167,6 +184,7 @@
     /**
      * @description Loads the resource file asynchronously.
      * @returns {Promise<BMResourceFile>} A promise that resolves with the current instance after loading.
+     * @category Loading
      */
     async promiseLoad () {
         const url = this.urlResource();
@@ -181,6 +199,7 @@
     /**
      * @description Gets a promise that resolves with the file data.
      * @returns {Promise<Object>} A promise that resolves with the file data.
+     * @category Data Management
      */
     async dataPromise () {
         if (!this.hasData()) {
@@ -192,6 +211,7 @@
     /**
      * @description Gets the list of file extensions to precache.
      * @returns {String[]} An array of file extensions to precache.
+     * @category Caching
      */
     precacheExtensions () {
         return ["json", "txt", "ttf", "woff", "woff2"];
@@ -200,6 +220,7 @@
     /**
      * @description Precaches the resource file if appropriate based on its extension.
      * @returns {Promise<BMResourceFile>} A promise that resolves with the current instance after precaching.
+     * @category Caching
      */
     async prechacheWhereAppropriate () {
         if (this.precacheExtensions().includes(this.pathExtension())) {
@@ -211,6 +232,7 @@
     /**
      * @description Asynchronously gets the value from the file data.
      * @returns {Promise<*>} A promise that resolves with the parsed value from the file data.
+     * @category Data Management
      */
     async asyncValueFromData () {
         try {

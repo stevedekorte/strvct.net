@@ -19,6 +19,7 @@
   /**
    * @description Returns an array of model information.
    * @returns {Array} An array of model information.
+   * @category Models
    */
   modelsJson () {
     return [];
@@ -26,11 +27,13 @@
 
   /**
    * @description Initializes the prototype slots for the AiService.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
     /**
      * @member {Object} serviceInfo - Information about the service.
+     * @category Service Information
      */
     {
       const slot = this.newSlot("serviceInfo", null);
@@ -43,6 +46,7 @@
 
     /**
      * @member {string} chatEndpoint - The URL endpoint for chat.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("chatEndpoint", null);
@@ -55,6 +59,7 @@
 
     /**
      * @member {string} apiKey - The API key for the service.
+     * @category Authentication
      */
     {
       const slot = this.newSlot("apiKey", "")
@@ -67,6 +72,7 @@
 
     /**
      * @member {string} systemRoleName - The name of the system role.
+     * @category Roles
      */
     {
       const slot = this.newSlot("systemRoleName", "system");
@@ -75,6 +81,7 @@
 
     /**
      * @member {string} assistantRoleName - The name of the assistant role.
+     * @category Roles
      */
     {
       const slot = this.newSlot("assistantRoleName", "assistant");
@@ -83,6 +90,7 @@
 
     /**
      * @member {string} userRoleName - The name of the user role.
+     * @category Roles
      */
     {
       const slot = this.newSlot("userRoleName", "user");
@@ -91,6 +99,7 @@
 
     /**
      * @member {AiChatModels} models - The AI chat models.
+     * @category Models
      */
     {
       const slot = this.newSlot("models", null);
@@ -102,6 +111,7 @@
 
     /**
      * @member {AiConversations} conversations - The AI conversations.
+     * @category Conversations
      */
     {
       const slot = this.newSlot("conversations", null);
@@ -113,6 +123,7 @@
 
     /**
      * @member {OpenAiImagePrompts} imagesPrompts - The OpenAI image prompts.
+     * @category Image Generation
      */
     {
       const slot = this.newSlot("imagesPrompts", null);
@@ -123,6 +134,7 @@
 
     /**
      * @member {OpenAiTtsSessions} ttsSessions - The OpenAI TTS sessions.
+     * @category Text-to-Speech
      */
     {
       const slot = this.newSlot("ttsSessions", null);
@@ -137,6 +149,7 @@
 
   /**
    * @description Initializes the AiService.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -144,6 +157,7 @@
 
   /**
    * @description Performs final initialization of the AiService.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -158,6 +172,7 @@
   /**
    * @description Returns the default chat model.
    * @returns {AiChatModel} The default chat model.
+   * @category Models
    */
   defaultChatModel () {
     return this.models().subnodes().first();
@@ -167,6 +182,7 @@
    * @description Validates the API key.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the API key is valid, false otherwise.
+   * @category Authentication
    */
   validateKey (s) {
     return s.startsWith("sk-");
@@ -175,6 +191,7 @@
   /**
    * @description Checks if the API key is set and valid.
    * @returns {boolean} True if the API key is set and valid, false otherwise.
+   * @category Authentication
    */
   hasApiKey () {
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
@@ -183,6 +200,7 @@
   /**
    * @description Returns the name of the default chat model.
    * @returns {string} The name of the default chat model.
+   * @category Models
    */
   defaultChatModelName () {
     return this.defaultChatModel().modelName();
@@ -193,6 +211,7 @@
    * @param {string} role - The role to get the service-specific name for.
    * @returns {string} The service-specific role name.
    * @throws {Error} If the role is unknown.
+   * @category Roles
    */
   serviceRoleNameForRole (role) {
     if (role === "system") {
@@ -214,6 +233,7 @@
    * @description Prepares the service to send a request.
    * @param {Object} aRequest - The request to prepare.
    * @returns {AiService} The AiService instance.
+   * @category Request Handling
    */
   prepareToSendRequest (aRequest) {
     return this;
@@ -222,6 +242,7 @@
   /**
    * @description Fetches and sets up the service information.
    * @returns {Promise<void>}
+   * @category Service Information
    */
   async fetchAndSetupInfo () {
     let info;
@@ -238,6 +259,7 @@
 
   /**
    * @description Sets up the service from the fetched information.
+   * @category Service Information
    */
   setupFromInfo () {
     const info = this.serviceInfo();
@@ -259,6 +281,7 @@
    * @description Sets up the models from JSON data.
    * @param {Array} json - The JSON data containing model information.
    * @returns {AiService} The AiService instance.
+   * @category Models
    */
   setModelsJson (json) {
     this.models().removeAllSubnodes();
@@ -272,6 +295,7 @@
   /**
    * @description Returns the URL for fetching service information.
    * @returns {string} The URL for fetching service information.
+   * @category Service Information
    */
   fetchInfoUrl () {
     const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
@@ -282,6 +306,7 @@
   /**
    * @description Fetches the service information.
    * @returns {Promise<Object>} A promise that resolves to the service information.
+   * @category Service Information
    */
   async fetchInfo () {
     return fetch(this.fetchInfoUrl())
@@ -295,6 +320,7 @@
    * @description Returns the chat request class for the service.
    * @returns {Function} The chat request class.
    * @throws {Error} If the chat request class is not found.
+   * @category Request Handling
    */
   chatRequestClass () {
     const className = this.type().split("Service")[0] + "Request";

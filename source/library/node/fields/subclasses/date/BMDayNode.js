@@ -10,10 +10,12 @@
     
     /**
      * @description Initializes the prototype slots for the BMDayNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} value - The day value, starting from 1.
+         * @category Data
          */
         {
             const slot = this.newSlot("value", 1);
@@ -24,6 +26,7 @@
 
     /**
      * @description Initializes the prototype with default settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setCanDelete(false);
@@ -37,6 +40,7 @@
      * @description Sets the value of the day.
      * @param {Number} v - The day value to set.
      * @returns {BMDayNode} The instance of BMDayNode.
+     * @category Data Manipulation
      */
     setValue (v) {
         assert(Number.isInteger(v) && v > 0 && v < 32);
@@ -47,6 +51,7 @@
     /**
      * @description Gets the name of the day with its ordinal suffix.
      * @returns {string} The day name with ordinal suffix.
+     * @category Data Retrieval
      */
     dayName () {
         const v = this.value();
@@ -56,6 +61,7 @@
     /**
      * @description Gets the title of the node, which is the day name.
      * @returns {string} The day name.
+     * @category Data Retrieval
      */
     title () {
         return this.dayName();
@@ -64,6 +70,7 @@
     /**
      * @description Gets the subtitle of the node.
      * @returns {null} Always returns null.
+     * @category Data Retrieval
      */
     subtitle () {
         return null;
@@ -72,6 +79,7 @@
     /**
      * @description Gets the note for the node.
      * @returns {null} Always returns null.
+     * @category Data Retrieval
      */
     note () {
         return null;
@@ -80,6 +88,7 @@
     /**
      * @description Gets the tile link for the node.
      * @returns {null} Always returns null.
+     * @category UI
      */
     nodeTileLink () {
         // used by UI tile views to browse into next column

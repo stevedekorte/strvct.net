@@ -24,6 +24,7 @@
 
     /**
      * Initializes prototype slots and sets up mutator hooks.
+     * @category Initialization
      */
     initPrototypeSlots () {
         //Object.defineSlot(this, "_allowsNulls", false)
@@ -36,6 +37,7 @@
 
     /**
      * @returns {Set<string>} A set of method names that mutate the array
+     * @category Mutation
      */
     mutatorMethodNamesSet () {
         // we can't hook []= or delete[] but we can hook these
@@ -54,6 +56,7 @@
 
     /**
      * @returns {HookedArray} A read-only shallow copy of the array
+     * @category Array Operations
      */
     asReadOnlyShalowCopy () {
         const obj = this.thisClass().withArray(this)
@@ -66,6 +69,7 @@
     /**
      * Performs a self-test of the HookedArray class
      * @returns {typeof HookedArray} The HookedArray class
+     * @category Testing
      */
     static selfTest () {
         const a = this.clone()

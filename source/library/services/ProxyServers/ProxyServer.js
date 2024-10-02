@@ -18,10 +18,12 @@
 (class ProxyServer extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the ProxyServer class.
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {boolean} isSecure - Indicates if the server is secure (https).
+     * @category Configuration
      */
     {
       const slot = this.newSlot("isSecure", true);
@@ -38,6 +40,7 @@
 
     /**
      * @member {string} subdomain - The subdomain of the proxy server.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("subdomain", "");
@@ -54,6 +57,7 @@
 
     /**
      * @member {string} domain - The domain of the proxy server.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("domain", "");
@@ -70,6 +74,7 @@
 
     /**
      * @member {number} port - The port number of the proxy server.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("port", 0);
@@ -86,6 +91,7 @@
 
     /**
      * @member {string} path - The path of the proxy server.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("path", "");
@@ -102,6 +108,7 @@
 
     /**
      * @member {string|null} parameterName - The name of the parameter used in the proxy URL.
+     * @category Configuration
      */
     {
       const slot = this.newSlot("parameterName", null);
@@ -118,6 +125,7 @@
 
     /**
      * @member {string} error - The error message, if any.
+     * @category Error Handling
      */
     {
       const slot = this.newSlot("error", "");
@@ -147,6 +155,7 @@
   /**
    * @description Returns the protocol string based on the isSecure property.
    * @returns {string} The protocol string ("https" or "http").
+   * @category URL Generation
    */
   protocolString() {
     return this.isSecure() ? "https" : "http";
@@ -155,6 +164,7 @@
   /**
    * @description Returns the full hostname of the proxy server.
    * @returns {string} The full hostname.
+   * @category URL Generation
    */
   hostname() {
     const s = this.subdomain();
@@ -174,6 +184,7 @@
    * @description Sets the hostname by splitting it into subdomain and domain.
    * @param {string} hostname - The full hostname to set.
    * @returns {ProxyServer} The current instance for method chaining.
+   * @category Configuration
    */
   setHostname(hostname) {
       const parts = hostname.split('.');
@@ -194,6 +205,7 @@
   /**
    * @description Validates the current state of the proxy server.
    * @returns {string[]} An array of validation error messages.
+   * @category Validation
    */
   validationErrors() {
     const errors = []
@@ -216,6 +228,7 @@
   /**
    * @description Returns the subtitle for the proxy server.
    * @returns {string|null} The proxy URL for the "targetUrl" parameter.
+   * @category UI
    */
   subtitle() {
     return this.proxyUrlForUrl("targetUrl")
@@ -225,6 +238,7 @@
    * @description Generates a proxy URL for the given target URL.
    * @param {string} targetUrl - The target URL to be proxied.
    * @returns {string|null} The generated proxy URL or null if there's an error.
+   * @category URL Generation
    */
   proxyUrlForUrl(targetUrl) {
     assert(targetUrl);
@@ -267,6 +281,7 @@
   /**
    * @description Displays the current error message in the console.
    * @returns {ProxyServer} The current instance for method chaining.
+   * @category Error Handling
    */
   showError() {
     console.warn(this.type() + " ERROR: " + this.error());

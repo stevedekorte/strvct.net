@@ -17,6 +17,7 @@
 
     /**
      * @member {string} imageUrl - The URL of the generated image.
+     * @category Image Data
      */
     {
       const slot = this.newSlot("imageUrl", null);
@@ -33,6 +34,7 @@
 
     /**
      * @member {string} revisedPrompt - The revised prompt used for image generation.
+     * @category Prompt
      */
     {
       const slot = this.newSlot("revisedPrompt", null);
@@ -49,6 +51,7 @@
 
     /**
      * @member {string} url - The URL of the image.
+     * @category Image Data
      */
     {
       const slot = this.newSlot("url", null);
@@ -65,6 +68,7 @@
 
     /**
      * @member {Action} fetchAction - The action to fetch the image.
+     * @category Actions
      */
     {
       const slot = this.newSlot("fetchAction", null);
@@ -80,6 +84,7 @@
 
     /**
      * @member {string} error - Error message if any.
+     * @category Error Handling
      */
     {
       const slot = this.newSlot("error", ""); // String
@@ -94,6 +99,7 @@
 
     /**
      * @member {string} status - Current status of the image.
+     * @category Status
      */
     {
       const slot = this.newSlot("status", ""); // String
@@ -108,6 +114,7 @@
 
     /**
      * @member {boolean} isLoading - Indicates if the image is currently loading.
+     * @category Status
      */
     {
       const slot = this.newSlot("isLoading", false); // String
@@ -127,6 +134,7 @@
   /**
    * @description Gets the subtitle for the image.
    * @returns {string} The status of the image.
+   * @category UI
    */
   subtitle () {
     return this.status();
@@ -135,6 +143,7 @@
   /**
    * @description Gets the parent node containing the images.
    * @returns {Object} The parent node.
+   * @category Hierarchy
    */
   images () {
     return this.parentNode();
@@ -143,6 +152,7 @@
   /**
    * @description Gets the service used for image generation.
    * @returns {Object} The OpenAI service.
+   * @category Service
    */
   service () {
     //return this.images().service()
@@ -152,6 +162,7 @@
   /**
    * @description Gets the image prompt.
    * @returns {string} The image prompt.
+   * @category Prompt
    */
   imagePrompt () {
     return this.images().imagePrompt();
@@ -160,6 +171,7 @@
   /**
    * @description Checks if the image is loaded.
    * @returns {boolean} True if the image is loaded, false otherwise.
+   * @category Status
    */
   isLoaded () {
     return this.imageUrl() !== null;
@@ -168,6 +180,7 @@
   /**
    * @description Checks if there's an error.
    * @returns {boolean} True if there's an error, false otherwise.
+   * @category Error Handling
    */
   hasError () {
     return this.error() !== "" && this.error() !== null;
@@ -176,6 +189,7 @@
   /**
    * @description Checks if the image can be fetched.
    * @returns {boolean} True if the image can be fetched, false otherwise.
+   * @category Actions
    */
   canFetch () {
     return Type.isString(this.url());
@@ -184,6 +198,7 @@
   /**
    * @description Gets the fetch action information.
    * @returns {Object} An object containing fetch action information.
+   * @category Actions
    */
   fetchActionInfo () {
     return {
@@ -196,6 +211,7 @@
   /**
    * @description Gets the proxy URL for the image.
    * @returns {string} The proxy URL.
+   * @category Networking
    */
   getProxyUrl () {
     const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
@@ -208,6 +224,7 @@
   /**
    * @description Fetches the image.
    * @returns {Promise<void>}
+   * @category Actions
    */
   async fetch () {
     this.setIsLoading(true);
@@ -237,6 +254,7 @@
   /**
    * @description Shuts down the image fetching process.
    * @returns {OpenAiImage} The current instance.
+   * @category Lifecycle
    */
   shutdown () {
     /*
@@ -250,6 +268,7 @@
   /**
    * @description Handles the successful loading of the image.
    * @param {string} imageDataUrl - The data URL of the loaded image.
+   * @category Image Processing
    */
   onLoaded (imageDataUrl) {
     this.setIsLoading(false)
@@ -262,6 +281,7 @@
   /**
    * @description Handles errors during image loading.
    * @param {Error} error - The error that occurred.
+   * @category Error Handling
    */
   onError (error) {
     this.setIsLoading(false)
@@ -275,6 +295,7 @@
   /**
    * @description Gets the delegate for this image.
    * @returns {Object} The delegate object.
+   * @category Delegation
    */
   delegate () {
     return this.imagePrompt()
@@ -285,6 +306,7 @@
    * @param {string} methodName - The name of the method to call.
    * @param {Array} args - The arguments to pass to the method.
    * @returns {boolean} True if the method was called successfully, false otherwise.
+   * @category Delegation
    */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate();

@@ -47,6 +47,7 @@
     /**
      * @description Initializes prototype slots
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -55,6 +56,7 @@
     /**
      * @description Initializes the OrientGestureRecognizer
      * @returns {OrientGestureRecognizer} The initialized instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -71,6 +73,7 @@
     /**
      * @description Handles the down event
      * @param {Event} event - The down event
+     * @category Event Handling
      */
     onDown (event) {
         super.onDown(event)
@@ -91,6 +94,7 @@
     /**
      * @description Handles the move event
      * @param {Event} event - The move event
+     * @category Event Handling
      */
     onMove (event) {
         super.onMove(event)
@@ -120,6 +124,7 @@
     /**
      * @description Handles the up event
      * @param {Event} event - The up event
+     * @category Event Handling
      */
     onUp (event) {
         super.onUp(event)
@@ -136,6 +141,7 @@
     /**
      * @description Cancels the gesture
      * @returns {OrientGestureRecognizer} The instance
+     * @category Gesture Control
      */
     cancel () {
         if (this.isActive()) {
@@ -148,6 +154,7 @@
     /**
      * @description Finishes the gesture
      * @returns {OrientGestureRecognizer} The instance
+     * @category Gesture Control
      */
     didFinish () {
         super.didFinish()
@@ -160,6 +167,7 @@
     /**
      * @description Gets the down points
      * @returns {Array} The down points
+     * @category Point Calculation
      */
     downPoints () {
         const p = this.pointsForEvent(this.downEvent())
@@ -170,6 +178,7 @@
      * @description Gets the active points for an event
      * @param {Event} event - The event
      * @returns {Array} The active points
+     * @category Point Calculation
      */
     activeForEvent (event) {
         // looks for two points whose id matchs those of the two down points
@@ -181,6 +190,7 @@
     /**
      * @description Gets the begin points
      * @returns {Array} The begin points
+     * @category Point Calculation
      */
     beginPoints () {
         return this.activeForEvent(this.beginEvent())
@@ -189,6 +199,7 @@
     /**
      * @description Gets the last points
      * @returns {Array} The last points
+     * @category Point Calculation
      */
     lastPoints () {
         return this.activeForEvent(this.lastEvent())
@@ -197,6 +208,7 @@
     /**
      * @description Gets the active points
      * @returns {Array} The active points
+     * @category Point Calculation
      */
     activePoints () { // current points that were in down points
         return this.activeForEvent(this.currentEvent())
@@ -206,6 +218,7 @@
      * @description Gets the center for points
      * @param {Array} p - The points
      * @returns {Point} The center point
+     * @category Point Calculation
      */
     centerForPoints (p) {
         return p[0].midpointTo(p[1])
@@ -214,6 +227,7 @@
     /**
      * @description Gets the down center position
      * @returns {Point} The down center position
+     * @category Position Calculation
      */
     downCenterPosition () {
         return this.centerForPoints(this.downPoints())
@@ -222,6 +236,7 @@
     /**
      * @description Gets the begin center position
      * @returns {Point} The begin center position
+     * @category Position Calculation
      */
     beginCenterPosition () {
         return this.centerForPoints(this.beginPoints())
@@ -230,6 +245,7 @@
     /**
      * @description Gets the current center position
      * @returns {Point} The current center position
+     * @category Position Calculation
      */
     currentCenterPosition () {
         return this.centerForPoints(this.activePoints())
@@ -238,6 +254,7 @@
     /**
      * @description Gets the difference position
      * @returns {Point} The difference position
+     * @category Position Calculation
      */
     diffPosition () {
         return this.currentCenterPosition().subtract(this.beginCenterPosition())
@@ -247,6 +264,7 @@
      * @description Gets the angle in degrees for points
      * @param {Array} p - The points
      * @returns {number} The angle in degrees
+     * @category Angle Calculation
      */
     angleInDegreesForPoints (p) {
         return p[0].angleInDegreesTo(p[1])
@@ -255,6 +273,7 @@
     /**
      * @description Gets the down angle in degrees
      * @returns {number} The down angle in degrees
+     * @category Angle Calculation
      */
     downAngleInDegress () {
         return this.angleInDegreesForPoints(this.downPoints())
@@ -263,6 +282,7 @@
     /**
      * @description Gets the begin angle in degrees
      * @returns {number} The begin angle in degrees
+     * @category Angle Calculation
      */
     beginAngleInDegress () {
         return this.angleInDegreesForPoints(this.beginPoints())
@@ -271,6 +291,7 @@
     /**
      * @description Gets the active angle in degrees
      * @returns {number} The active angle in degrees
+     * @category Angle Calculation
      */
     activeAngleInDegress () {
         return this.angleInDegreesForPoints(this.activePoints())
@@ -279,6 +300,7 @@
     /**
      * @description Gets the rotation in degrees
      * @returns {number} The rotation in degrees
+     * @category Angle Calculation
      */
     rotationInDegrees () {
         // difference between initial angle between 1st two fingers down and their current angle
@@ -291,6 +313,7 @@
      * @description Gets the spread for points
      * @param {Array} p - The points
      * @returns {number} The spread
+     * @category Spread Calculation
      */
     spreadForPoints (p) {
         return p[0].distanceFrom(p[1])
@@ -299,6 +322,7 @@
     /**
      * @description Gets the down spread
      * @returns {number} The down spread
+     * @category Spread Calculation
      */
     downSpread () {
         // initial distance between first two fingers down
@@ -308,6 +332,7 @@
     /**
      * @description Gets the begin spread
      * @returns {number} The begin spread
+     * @category Spread Calculation
      */
     beginSpread () {
         // initial distance between first two fingers down
@@ -317,6 +342,7 @@
     /**
      * @description Gets the current spread
      * @returns {number} The current spread
+     * @category Spread Calculation
      */
     currentSpread () {
         // current distance between first two fingers down
@@ -326,6 +352,7 @@
     /**
      * @description Gets the spread
      * @returns {number} The spread
+     * @category Spread Calculation
      */
     spread () {
         const s = this.currentSpread() - this.beginSpread();
@@ -336,6 +363,7 @@
     /**
      * @description Gets the down spread X
      * @returns {number} The down spread X
+     * @category Spread Calculation
      */
     downSpreadX () {
         const p = this.downPoints()
@@ -345,6 +373,7 @@
     /**
      * @description Gets the down spread Y
      * @returns {number} The down spread Y
+     * @category Spread Calculation
      */
     downSpreadY () {
         const p = this.downPoints()
@@ -354,6 +383,7 @@
     /**
      * @description Gets the current spread X
      * @returns {number} The current spread X
+     * @category Spread Calculation
      */
     currentSpreadX () {
         const p = this.activePoints()
@@ -363,6 +393,7 @@
     /**
      * @description Gets the current spread Y
      * @returns {number} The current spread Y
+     * @category Spread Calculation
      */
     currentSpreadY () {
         const p = this.activePoints()
@@ -372,6 +403,7 @@
     /**
      * @description Gets the spread X
      * @returns {number} The spread X
+     * @category Spread Calculation
      */
     spreadX () {
         return this.currentSpreadX() - this.downSpreadX()
@@ -380,6 +412,7 @@
     /**
      * @description Gets the spread Y
      * @returns {number} The spread Y
+     * @category Spread Calculation
      */
     spreadY () {
         return this.currentSpreadY() - this.downSpreadY()
@@ -388,6 +421,7 @@
     /**
      * @description Gets the scale
      * @returns {number} The scale
+     * @category Scale Calculation
      */
     scale () {
         const s = this.currentSpread() / this.beginSpread();
@@ -398,6 +432,7 @@
     /**
      * @description Gets the debug JSON
      * @returns {Object} The debug JSON
+     * @category Debugging
      */
     debugJson () {
         const dp = this.diffPosition()
@@ -412,6 +447,7 @@
 
     /**
      * @description Shows the debug information
+     * @category Debugging
      */
     show () {
         console.log(this.debugJson())

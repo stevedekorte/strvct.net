@@ -21,7 +21,8 @@
   initPrototypeSlots () {
     {
         /**
-         * @type {htmlparser2.Parser}
+         * @member {htmlparser2.Parser}
+         * @category Parser
          */
         const slot = this.newSlot("parser", null);
         slot.setSlotType("htmlparser2.Parser");
@@ -29,7 +30,8 @@
 
     {
         /**
-         * @type {StreamElementNode}
+         * @member {StreamElementNode}
+         * @category DOM
          */
         const slot = this.newSlot("currentNode", null);
         slot.setSlotType("StreamElementNode");
@@ -37,7 +39,8 @@
 
     {
       /**
-       * @type {Object}
+       * @member {Object}
+       * @category Delegation
        */
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
@@ -45,7 +48,8 @@
 
     {
       /**
-       * @type {Error}
+       * @member {Error}
+       * @category Error Handling
        */
       const slot = this.newSlot("error", null);
       slot.setSlotType("Error");
@@ -64,6 +68,7 @@
   /**
    * @description Creates a new htmlparser2 parser instance with custom event handlers
    * @returns {htmlparser2.Parser}
+   * @category Parser
    */
   newParser () {
       const self = this;
@@ -114,6 +119,7 @@
   /**
    * @description Shuts down the HtmlStreamReader instance
    * @returns {HtmlStreamReader}
+   * @category Lifecycle
    */
   shutdown () {
     this.setParser(null);
@@ -123,6 +129,7 @@
   /**
    * @description Creates a new StreamElementNode instance
    * @returns {StreamElementNode}
+   * @category DOM
    */
   newElement () {
     return StreamElementNode.clone();
@@ -130,6 +137,7 @@
 
   /**
    * @description Pushes a new top node to the stream
+   * @category DOM
    */
   pushTopNode () {
     const topNode = this.newElement().setName("top").onOpen();
@@ -139,6 +147,7 @@
   /**
    * @description Returns the real DOM node of the root element
    * @returns {Node}
+   * @category DOM
    */
   rootElement () {
     return this.rootNode().domNode();
@@ -146,6 +155,7 @@
 
   /**
    * @description Starts the HTML stream
+   * @category Stream Control
    */
   beginHtmlStream () {
     this.pushTopNode();
@@ -155,6 +165,7 @@
   /**
    * @description Processes a chunk of HTML stream
    * @param {string} chunk - The HTML chunk
+   * @category Stream Control
    */
   onStreamHtml (chunk) {
     this.parser().write(chunk);
@@ -163,6 +174,7 @@
   /**
    * @description Checks if the current node is a valid end node
    * @returns {boolean}
+   * @category Validation
    */
   isValidEnd () {
     let endNode = this.currentNode();
@@ -174,6 +186,7 @@
 
   /**
    * @description Ends the HTML stream
+   * @category Stream Control
    */
   endHtmlStream () {
     /*
@@ -192,6 +205,7 @@
    * @description Pushes a new node to the stream
    * @param {StreamElementNode} newNode - The new node to push
    * @returns {StreamElementNode}
+   * @category DOM
    */
   pushNode (newNode) {
     const currentNode = this.currentNode();
@@ -206,6 +220,7 @@
   /**
    * @description Pops the current node from the stream
    * @returns {StreamElementNode}
+   * @category DOM
    */
   popNode () {
     const n = this.currentNode();
@@ -224,6 +239,7 @@
   /**
    * @description Returns the root node of the stream
    * @returns {StreamElementNode}
+   * @category DOM
    */
   rootNode () {
     return this.currentNode().rootNode();
@@ -231,6 +247,7 @@
 
   /**
    * @description Logs the current state of the stream
+   * @category Debugging
    */
   show () {
     const line = "-".repeat(20);
@@ -243,6 +260,7 @@
   /**
    * @description Returns the previous tag node
    * @returns {StreamElementNode}
+   * @category DOM
    */
   previousTag () {
     return this.currentNode().parent();
@@ -250,6 +268,7 @@
 
   /**
    * @description Pops the current node if it is a text node
+   * @category DOM
    */
   popIfCurrentNodeIsText () {
     const n = this.currentNode();
@@ -262,6 +281,7 @@
    * @description Handles the opening of an element
    * @param {string} tagName - The name of the opening tag
    * @param {Object} attributes - The attributes of the opening tag
+   * @category Parser
    */
   onOpenElement (tagName, attributes) {
     //console.log("onOpenElement(" + tagName + ", " + JSON.stringify(attributes) + ")");
@@ -280,6 +300,7 @@
   /**
    * @description Handles the closing of an element
    * @param {string} tagName - The name of the closing tag
+   * @category Parser
    */
   onCloseElement (tagName) {
     //console.log("onCloseElement(" + tagName + ")");
@@ -299,6 +320,7 @@
   /**
    * @description Handles text nodes
    * @param {string} text - The text content
+   * @category Parser
    */
   onText (text) {
     //console.log("onText '" + text + "'");
@@ -315,6 +337,7 @@
   /**
    * @description Opens a new text node
    * @param {string} text - The text content
+   * @category Parser
    */
   onOpenText (text) {
     //console.log("onOpenText '" + text + "'");
@@ -324,6 +347,7 @@
 
   /**
    * @description Closes the current text node
+   * @category Parser
    */
   onCloseText () {
     const n = this.currentNode();
@@ -334,6 +358,7 @@
 
   /**
    * @description Handles the end of the stream
+   * @category Parser
    */
   onEnd () {
     this.popIfCurrentNodeIsText();
@@ -344,6 +369,7 @@
    * @param {string} methodName - The name of the delegate method
    * @param {Array} [args=[this]] - Additional arguments to pass to the delegate method
    * @returns {boolean} - Returns true if the delegate method was called successfully, false otherwise
+   * @category Delegation
    */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate();
@@ -376,6 +402,7 @@
 
 /**
  * @description Test function for HtmlStreamReader
+ * @category Testing
  */
 const testSentenceReader = function () {
 

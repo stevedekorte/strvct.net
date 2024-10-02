@@ -15,12 +15,14 @@
 (class AiConversations extends BMSummaryNode {
   /**
    * @description Initializes prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
    * @description Initializes the AiConversations instance.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -33,6 +35,7 @@
 
   /**
    * @description Performs final initialization steps.
+   * @category Initialization
    */
   finalInit() {
     super.finalInit();
@@ -45,6 +48,7 @@
   /**
    * @description Determines if subviews scroll sticks to bottom.
    * @returns {boolean} False, indicating subviews do not stick to bottom when scrolling.
+   * @category UI Behavior
    */
   subviewsScrollSticksToBottom () {
     return false;
@@ -53,6 +57,7 @@
   /**
    * @description Gets the parent service.
    * @returns {Object} The parent node, which is assumed to be the service.
+   * @category Service Management
    */
   service () {
     return this.parentNode();

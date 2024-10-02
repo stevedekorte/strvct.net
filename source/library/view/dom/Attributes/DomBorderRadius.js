@@ -20,6 +20,7 @@
     initPrototypeSlots () {
         /**
          * @member {DomView} divView - The associated DomView.
+         * @category View
          */
         {
             const slot = this.newSlot("divView", null);
@@ -27,6 +28,7 @@
         }
         /**
          * @member {Number} topLeft - The top-left border radius.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("topLeft", 0);
@@ -34,6 +36,7 @@
         }
         /**
          * @member {Number} topRight - The top-right border radius.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("topRight", 0);
@@ -41,6 +44,7 @@
         }
         /**
          * @member {Number} bottomRight - The bottom-right border radius.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("bottomRight", 0);
@@ -48,6 +52,7 @@
         }
         /**
          * @member {Number} bottomLeft - The bottom-left border radius.
+         * @category Geometry
          */
         {
             const slot = this.newSlot("bottomLeft", 0);
@@ -55,6 +60,7 @@
         }
         /**
          * @member {Array} partNames - The names of the border radius parts.
+         * @category Configuration
          */
         {
             const slot = this.newSlot("partNames", ["topLeft", "topRight", "bottomRight", "bottomLeft"]);
@@ -71,6 +77,7 @@
     /**
      * @description Clears all border radius values.
      * @returns {DomBorderRadius} The current instance.
+     * @category Manipulation
      */
     clear () {
         this.setAll(0)
@@ -81,6 +88,7 @@
      * @description Sets all border radius values to the specified value.
      * @param {Number} v - The value to set for all border radii.
      * @returns {DomBorderRadius} The current instance.
+     * @category Manipulation
      */
     setAll (v) {
         if (!v) {
@@ -96,6 +104,7 @@
     /**
      * @description Gets an array of setter method names for all parts.
      * @returns {Array} An array of setter method names.
+     * @category Utility
      */
     partSetters () {
         return this.partNames().map(k => k.asSetter())
@@ -104,6 +113,7 @@
     /**
      * @description Gets an array of current values for all parts.
      * @returns {Array} An array of current border radius values.
+     * @category Utility
      */
     partValues () {
         return this.partNames().map(k => this[k].apply(this))
@@ -112,6 +122,7 @@
     /**
      * @description Converts the border radius values to a string representation.
      * @returns {string} A string representation of the border radius values.
+     * @category Conversion
      */
     asString (aString) {
         return this.partValues().map(v => v + "px").join(" ")
@@ -121,6 +132,7 @@
      * @description Sets the border radius values from a string representation.
      * @param {string} aString - The string representation of border radius values.
      * @returns {DomBorderRadius} The current instance.
+     * @category Manipulation
      */
     setFromString (aString) {
         const parts = aString.split(" ").select(part => part !== "")
@@ -159,6 +171,7 @@
     /**
      * @description Synchronizes the border radius values to the associated DomView.
      * @returns {DomBorderRadius} The current instance.
+     * @category Synchronization
      */
     syncToDomView () {
         this.divView().setBorderRadius(this.asString())
@@ -168,6 +181,7 @@
     /**
      * @description Synchronizes the border radius values from the associated DomView.
      * @returns {DomBorderRadius} The current instance.
+     * @category Synchronization
      */
     syncFromDomView () {
         const s = this.divView().borderRadius()

@@ -13,10 +13,12 @@
     
     /**
      * @description Initializes the prototype slots for the DragBarView.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {boolean} isEnabled - Determines if the drag bar is enabled.
+         * @category State
          */
         {
             const slot = this.newSlot("isEnabled", true);
@@ -24,6 +26,7 @@
         }
         /**
          * @member {boolean} isHighlighted - Determines if the drag bar is highlighted.
+         * @category State
          */
         {
             const slot = this.newSlot("isHighlighted", false);
@@ -31,6 +34,7 @@
         }
         /**
          * @member {boolean} isDragging - Determines if the drag bar is currently being dragged.
+         * @category State
          */
         {
             const slot = this.newSlot("isDragging", false);
@@ -38,6 +42,7 @@
         }
         /**
          * @member {string} normalColor - The color of the drag bar in its normal state.
+         * @category Appearance
          */
         {
             const slot = this.newSlot("normalColor", "#333");
@@ -45,6 +50,7 @@
         }
         /**
          * @member {string} highlightColor - The color of the drag bar when highlighted.
+         * @category Appearance
          */
         {
             const slot = this.newSlot("highlightColor", "#555");
@@ -52,6 +58,7 @@
         }
         /**
          * @member {string} dragColor - The color of the drag bar when being dragged.
+         * @category Appearance
          */
         {
             const slot = this.newSlot("dragColor", "#999");
@@ -59,6 +66,7 @@
         }
         /**
          * @member {Object} delegate - The delegate object for the drag bar view.
+         * @category Delegation
          */
         {
             const slot = this.newSlot("delegate", null);
@@ -66,6 +74,7 @@
         }
         /**
          * @member {number} thickness - The thickness of the drag bar.
+         * @category Appearance
          */
         {
             const slot = this.newSlot("thickness", 2);
@@ -73,6 +82,7 @@
         }
         /**
          * @member {boolean} isVerticalDrag - Determines if the drag bar is for vertical dragging.
+         * @category Behavior
          */
         {
             const slot = this.newSlot("isVerticalDrag", true);
@@ -83,6 +93,7 @@
     /**
      * @description Initializes the DragBarView.
      * @returns {DragBarView} The initialized DragBarView instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -113,6 +124,7 @@
     /**
      * @description Returns the appropriate cursor type for hovering.
      * @returns {string} The cursor type.
+     * @category Appearance
      */
     hoverCursorType () {
         if (this.isVerticalDrag()) {
@@ -126,6 +138,7 @@
      * @description Sets whether the drag bar is vertical or horizontal.
      * @param {boolean} aBool - True for vertical, false for horizontal.
      * @returns {DragBarView} The DragBarView instance.
+     * @category Behavior
      */
     setIsVertical (aBool) {
         if (this._isVertical !== aBool) {
@@ -140,6 +153,7 @@
      * @description Sets whether the drag bar is enabled.
      * @param {boolean} aBool - True to enable, false to disable.
      * @returns {DragBarView} The DragBarView instance.
+     * @category State
      */
     setIsEnabled (aBool) {
         if (this._isEnabled !== aBool) {
@@ -153,6 +167,7 @@
     /**
      * @description Synchronizes the enabled state of the drag bar.
      * @returns {DragBarView} The DragBarView instance.
+     * @category State
      */
     syncEnabled () {
         this.setIsDisplayHidden(!this.isEnabled())
@@ -163,6 +178,7 @@
      * @description Sets whether the drag bar is highlighted.
      * @param {boolean} aBool - True to highlight, false to unhighlight.
      * @returns {DragBarView} The DragBarView instance.
+     * @category State
      */
     setIsHighlighted (aBool) {
         if (this._isHighlighted !== aBool) {
@@ -176,6 +192,7 @@
     /**
      * @description Synchronizes the highlighted state of the drag bar.
      * @returns {DragBarView} The DragBarView instance.
+     * @category State
      */
     syncHighlighted () {
         if (this.isDragging()) {
@@ -195,6 +212,7 @@
     /**
      * @description Synchronizes the cursor style based on the highlighted state.
      * @returns {DragBarView} The DragBarView instance.
+     * @category Appearance
      */
     syncCursor () {
         if (this.isHighlighted()) {
@@ -208,6 +226,7 @@
     /**
      * @description Handles mouse move events during dragging.
      * @param {MouseEvent} event - The mouse move event.
+     * @category Event Handling
      */
     mouseMoveTracker (event) {
         //console.log("mouse pos: ", event.clientX, " x ", event.clientY)
@@ -219,6 +238,7 @@
     /**
      * @description Handles mouse up events during dragging.
      * @param {MouseEvent} event - The mouse up event.
+     * @category Event Handling
      */
     mouseUpTracker (event) {
         //console.log("mouse pos: ", event.clientX, " x ", event.clientY)
@@ -229,6 +249,7 @@
      * @description Sets the dragging state of the drag bar.
      * @param {boolean} b - True if dragging, false otherwise.
      * @returns {DragBarView} The DragBarView instance.
+     * @category State
      */
     setIsDragging (b) {
         this._isDragging = b;
@@ -246,6 +267,7 @@
      * @description Handles mouse down events.
      * @param {MouseEvent} event - The mouse down event.
      * @returns {boolean} False to prevent default behavior.
+     * @category Event Handling
      */
     onMouseDown (event) {
         //this.debugLog(" onMouseDown")
@@ -258,6 +280,7 @@
     /**
      * @description Adds event listeners for mouse tracking to the parent view.
      * @returns {DragBarView} The DragBarView instance.
+     * @category Event Handling
      */
     addParentTracking () {
         const r = this.documentBodyView()
@@ -269,6 +292,7 @@
     /**
      * @description Removes event listeners for mouse tracking from the parent view.
      * @returns {DragBarView} The DragBarView instance.
+     * @category Event Handling
      */
     removeParentTracking () {
         const r = this.documentBodyView()
@@ -281,6 +305,7 @@
      * @description Handles mouse move events.
      * @param {MouseEvent} event - The mouse move event.
      * @returns {boolean} False to prevent default behavior.
+     * @category Event Handling
      */
     onMouseMove (event) {
         return false
@@ -290,6 +315,7 @@
      * @description Handles mouse over events.
      * @param {MouseEvent} event - The mouse over event.
      * @returns {boolean} False to prevent default behavior.
+     * @category Event Handling
      */
     onMouseOver (event) {
         //this.debugLog(" onMouseOver")
@@ -301,6 +327,7 @@
      * @description Handles mouse leave events.
      * @param {MouseEvent} event - The mouse leave event.
      * @returns {boolean} False to prevent default behavior.
+     * @category Event Handling
      */
     onMouseLeave (event) {
         //this.debugLog(" onMouseLeave")
@@ -312,6 +339,7 @@
      * @description Handles mouse up events.
      * @param {MouseEvent} event - The mouse up event.
      * @returns {boolean} False to prevent default behavior.
+     * @category Event Handling
      */
     onMouseUp (event) {
         this.setIsDragging(false)

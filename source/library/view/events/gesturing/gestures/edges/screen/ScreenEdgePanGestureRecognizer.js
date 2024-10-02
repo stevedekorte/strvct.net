@@ -30,11 +30,13 @@
     
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {String} edgeName - The name of the edge.
+             * @category Configuration
              */
             const slot = this.newSlot("edgeName", null);
             slot.setSlotType("String");
@@ -42,6 +44,7 @@
         {
             /**
              * @member {Number} maxStartDistance - The maximum distance from the edge to start the gesture.
+             * @category Configuration
              */
             const slot = this.newSlot("maxStartDistance", 15);
             slot.setSlotType("Number");
@@ -51,6 +54,7 @@
     /**
      * @description Initializes the gesture recognizer.
      * @returns {ScreenEdgePanGestureRecognizer} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -63,6 +67,7 @@
     /**
      * @description Starts the gesture recognizer.
      * @returns {ScreenEdgePanGestureRecognizer} The instance.
+     * @category Lifecycle
      */
     start () {
         this.startDocListeners() // only want to listen to the document
@@ -72,6 +77,7 @@
     /**
      * @description Handles the finish of the gesture.
      * @returns {ScreenEdgePanGestureRecognizer} The instance.
+     * @category Lifecycle
      */
     didFinish () {
         super.didFinish()
@@ -82,6 +88,7 @@
     /**
      * @description Checks if the gesture is ready to begin.
      * @returns {boolean} True if the gesture is ready to begin, false otherwise.
+     * @category Gesture Recognition
      */
     isReadyToBegin () {
         return this.hasOkFingerCount() &&
@@ -91,6 +98,7 @@
     /**
      * @description Calculates the distance from the specified edge.
      * @returns {number} The distance from the edge.
+     * @category Calculation
      */
     distanceFromEdge () {
         const name = this.edgeName()
@@ -103,6 +111,7 @@
     /**
      * @description Returns the maximum edge distance.
      * @returns {number} The maximum edge distance.
+     * @category Configuration
      */
     maxEdgeDistance () {
         return 100000
@@ -111,6 +120,7 @@
     /**
      * @description Calculates the current distances from all edges.
      * @returns {Object} An object containing distances from all edges.
+     * @category Calculation
      */
     currentEdgeDistances () {
         const max = this.maxEdgeDistance()

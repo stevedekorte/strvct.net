@@ -12,6 +12,7 @@
      * @static
      * @description Indicates if this field is available as a node primitive.
      * @returns {boolean} True if available as a node primitive.
+     * @category Metadata
      */
     static availableAsNodePrimitive () {
         return true
@@ -19,10 +20,12 @@
     
     /**
      * @description Initializes the prototype slots for the BMColorField.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Number} red - The red component of the color.
+         * @category Color Components
          */
         {
             const slot = this.newSlot("red", null)
@@ -34,6 +37,7 @@
 
         /**
          * @member {Number} green - The green component of the color.
+         * @category Color Components
          */
         {
             const slot = this.newSlot("green", null)
@@ -45,6 +49,7 @@
 
         /**
          * @member {Number} blue - The blue component of the color.
+         * @category Color Components
          */
         {
             const slot = this.newSlot("blue", null)
@@ -56,6 +61,7 @@
 
         /**
          * @member {Number} alpha - The alpha (opacity) component of the color.
+         * @category Color Components
          */
         {
             const slot = this.newSlot("alpha", null)
@@ -68,6 +74,7 @@
 
     /**
      * @description Initializes the prototype of the BMColorField.
+     * @category Initialization
      */
     initPrototype () {
         this.setNodeCanEditTitle(true);
@@ -82,6 +89,7 @@
     /**
      * @description Converts the color field to a CSS color object.
      * @returns {CssColor} A CSS color object representing the current color.
+     * @category Conversion
      */
     asCssColor () {
         return CssColor.clone().set(this.red(), this.green(), this.blue(), this.alpha())
@@ -91,6 +99,7 @@
      * @description Sets the color field from a CSS color object.
      * @param {CssColor} aCssColor - The CSS color object to set the field from.
      * @returns {BMColorField} The current instance for method chaining.
+     * @category Conversion
      */
     fromCssColor (aCssColor) {
         return this

@@ -32,6 +32,7 @@
      * Sets whether didInit should be scheduled.
      * @param {boolean} aBool - Whether to schedule didInit.
      * @returns {Object_init} This object.
+     * @category Initialization
      */
     setShouldScheduleDidInit (aBool) {
         this._shouldScheduleDidInit = aBool
@@ -41,6 +42,7 @@
     /**
      * Checks if didInit should be scheduled.
      * @returns {boolean} Whether didInit should be scheduled.
+     * @category Initialization
      */
     shouldScheduleDidInit () {
         return this._shouldScheduleDidInit
@@ -49,6 +51,7 @@
     /**
      * Initializes the object. Called by Object.clone().
      * @returns {Object_init} This object.
+     * @category Initialization
      */
     init () { 
         return this
@@ -57,6 +60,7 @@
     /**
      * Performs final initialization. Called after deserialization or after init().
      * @returns {Object_init} This object.
+     * @category Initialization
      */
     finalInit () {
         return this
@@ -64,6 +68,7 @@
 
     /**
      * Performs actions after initialization.
+     * @category Initialization
      */
     afterInit () {
         if (this.thisClass().isSingleton === undefined || !this.thisClass().isSingleton()) {
@@ -79,6 +84,7 @@
 
     /**
      * Called when initialization is complete.
+     * @category Initialization
      */
     didInit () {
         if (this.thisClass().isSingleton === undefined || !this.thisClass().isSingleton()) {
@@ -90,6 +96,7 @@
     /**
      * Checks if initialization has been completed.
      * @returns {boolean} Whether initialization has been completed.
+     * @category State
      */
     hasDoneInit () {
         return this._hasDoneInit === true // hasDoneInit only set after serialization
@@ -99,6 +106,7 @@
      * Sets whether initialization has been completed.
      * @param {boolean} aBool - Whether initialization has been completed.
      * @returns {Object_init} This object.
+     * @category State
      */
     setHasDoneInit (aBool) {
         this._hasDoneInit = aBool;
@@ -107,6 +115,7 @@
     
     /**
      * Schedules the didInit method to be called.
+     * @category Initialization
      */
     scheduleDidInit () {
         assert(this.shouldScheduleDidInit())

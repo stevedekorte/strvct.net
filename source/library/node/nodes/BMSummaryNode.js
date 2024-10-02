@@ -18,12 +18,14 @@
     
     /**
      * @description Initializes the prototype slots for the BMSummaryNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
 
         /**
          * @member {string} nodeSummarySuffix
          * @description The suffix to be added to the node summary.
+         * @category Summary
          */
         {
             const slot = this.newSlot("nodeSummarySuffix", " ");
@@ -39,6 +41,7 @@
         /**
          * @member {boolean} nodeSubtitleIsChildrenSummary
          * @description Determines if the node subtitle is the children summary.
+         * @category Summary
          */
         {
             const slot = this.newSlot("nodeSubtitleIsChildrenSummary", false);
@@ -54,6 +57,7 @@
         /**
          * @member {boolean} hasNewlineBeforeSummary
          * @description Determines if there should be a newline before the summary.
+         * @category Summary
          */
         {
             const slot = this.newSlot("hasNewlineBeforeSummary", false);
@@ -69,6 +73,7 @@
         /**
          * @member {boolean} hasNewlineAfterSummary
          * @description Determines if there should be a newline after the summary.
+         * @category Summary
          */
         {
             const slot = this.newSlot("hasNewlineAfterSummary", false);
@@ -84,6 +89,7 @@
         /**
          * @member {boolean} hasNewLineSeparator
          * @description Determines if there should be a newline separator between key and value.
+         * @category Summary
          */
         {
             const slot = this.newSlot("hasNewLineSeparator", false);
@@ -99,6 +105,7 @@
         /**
          * @member {string} summaryFormat
          * @description The format of the summary.
+         * @category Summary
          */
         {
             const slot = this.newSlot("summaryFormat", "value");
@@ -115,6 +122,7 @@
         /**
          * @member {string} hidePolicy
          * @description The policy for hiding the summary.
+         * @category Summary
          */
         {
             const slot = this.newSlot("hidePolicy", "none");
@@ -131,6 +139,7 @@
         /**
          * @member {boolean} subtitleIsSubnodeCount
          * @description Determines if the subtitle is the subnode count.
+         * @category Summary
          */
         {
             const slot = this.overrideSlot("subtitleIsSubnodeCount", false);
@@ -146,6 +155,7 @@
         /**
          * @member {boolean} noteIsSubnodeCount
          * @description Determines if the note is the subnode count.
+         * @category Summary
          */
         {
             const slot = this.overrideSlot("noteIsSubnodeCount", false);
@@ -161,6 +171,7 @@
 
     /**
      * @description Initializes the prototype of the BMSummaryNode.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -170,6 +181,7 @@
 
     /**
      * @description Initializes the BMSummaryNode.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -177,6 +189,7 @@
 
     /**
      * @description Called when the summaryFormat slot is updated.
+     * @category Update
      */
     didUpdateSlotSummaryFormat () {
         this.didUpdateNodeIfInitialized();
@@ -185,6 +198,7 @@
     /**
      * @description Returns the summary key.
      * @returns {string} The summary key.
+     * @category Summary
      */
     summaryKey () {
         return this.title();
@@ -193,6 +207,7 @@
     /**
      * @description Returns the summary value.
      * @returns {string} The summary value.
+     * @category Summary
      */
     summaryValue () {
         return this.subtitle();
@@ -201,6 +216,7 @@
     /**
      * @description Returns the subtitle of the node.
      * @returns {string} The subtitle.
+     * @category Summary
      */
     subtitle () {
         if (this.nodeSubtitleIsChildrenSummary()) {
@@ -218,6 +234,7 @@
      * @description Called when the nodeSubtitleIsChildrenSummary slot is updated.
      * @param {boolean} oldValue - The old value.
      * @param {boolean} newValue - The new value.
+     * @category Update
      */
     didUpdateSlotNodeSubtitleIsChildrenSummary (oldValue, newValue) {
         if (oldValue === true) {
@@ -228,6 +245,7 @@
     /**
      * @description Returns the summary of the node.
      * @returns {string} The summary.
+     * @category Summary
      */
     summary () {
         const k = this.summaryKey();
@@ -303,6 +321,7 @@
     /**
      * @description Returns the summary of all child nodes.
      * @returns {string} The children summary.
+     * @category Summary
      */
     childrenSummary () {
         return this.subnodes().map(subnode => subnode.summary()).filter(s => s.length).join("");
@@ -311,6 +330,7 @@
     /**
      * @description Returns the formatted node summary suffix.
      * @returns {string} The formatted suffix.
+     * @category Summary
      */
     nodeSummarySuffixOut () {
         let s = this._nodeSummarySuffix;
@@ -326,6 +346,7 @@
 
     /**
      * @description Called when the node is updated.
+     * @category Update
      */
     didUpdateNode () {
         super.didUpdateNode();

@@ -1,10 +1,17 @@
-
 class Worker {
 
+    /**
+     * @member {function}
+     * @category Initialization
+     */
     init () {
 
     }
 
+    /**
+     * @member {function}
+     * @category Service Worker Registration
+     */
     async registerServiceWorker () {
         // doesn't work
         // "/source/ServiceWorker.js"
@@ -21,10 +28,18 @@ class Worker {
         }
     }
 
+    /**
+     * @member {function}
+     * @category Service Worker Registration
+     */
     onRegistered () {
         console.log("Service worker successfully registered on scope ", registration.scope);
     }
 
+    /**
+     * @member {function}
+     * @category Error Handling
+     */
     onError (error) {
         console.log("Service worker error:\n",
             "  typeof(error): ", typeof(error), "\n", 

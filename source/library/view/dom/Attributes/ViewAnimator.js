@@ -16,6 +16,7 @@
     initPrototypeSlots () {
         /**
          * @member {Number} startValue - The initial value of the animation.
+         * @category Animation
          */
         {
             const slot = this.newSlot("startValue", 0);
@@ -23,6 +24,7 @@
         }
         /**
          * @member {Number} targetValue - The final value of the animation.
+         * @category Animation
          */
         {
             const slot = this.newSlot("targetValue", 0);
@@ -30,6 +32,7 @@
         }
         /**
          * @member {String} viewProperty - The name of the view property to animate.
+         * @category Animation
          */
         {
             const slot = this.newSlot("viewProperty", "");
@@ -37,6 +40,7 @@
         }
         /**
          * @member {Number} duration - The duration of the animation in milliseconds.
+         * @category Animation
          */
         {
             const slot = this.newSlot("duration", 200);
@@ -45,6 +49,7 @@
         }
         /**
          * @member {String} easing - The easing function to use for the animation.
+         * @category Animation
          */
         {
             const slot = this.newSlot("easing", "linear");
@@ -52,6 +57,7 @@
         }
         /**
          * @member {DomView} view - The view to animate.
+         * @category Animation
          */
         {
             const slot = this.newSlot("view", null);
@@ -62,6 +68,7 @@
     /**
      * @description Gets the current value of the animated property.
      * @returns {*} The current value of the animated property.
+     * @category Animation
      */
     currentValue () {
         const view = this.view()
@@ -71,6 +78,7 @@
     /**
      * @description Starts the animation.
      * @returns {ViewAnimator} The ViewAnimator instance.
+     * @category Animation
      */
     start () {
         this.setStartValue(this.currentValue())
@@ -82,6 +90,7 @@
     /**
      * @description Calculates the ratio of time elapsed in the animation.
      * @returns {number} A value between 0 and 1 representing the progress of the animation.
+     * @category Animation
      */
     timeRatioDone () {
         const now = new Date().getTime();
@@ -91,6 +100,7 @@
     /**
      * @description Gets the setter name for the animated property.
      * @returns {string} The setter name.
+     * @category Utility
      */
     setterName () {
         if (!this._setterName) {
@@ -103,6 +113,7 @@
      * @description Sets the value of the animated property.
      * @param {*} v - The value to set.
      * @returns {ViewAnimator} The ViewAnimator instance.
+     * @category Animation
      */
     setValue (v) {
         view[this.setterName()].call(view, v)
@@ -112,6 +123,7 @@
     /**
      * @description Processes the next animation frame.
      * @returns {ViewAnimator} The ViewAnimator instance.
+     * @category Animation
      */
     nextFrame () {
         const tr = this.timeRatioDone()
@@ -128,6 +140,7 @@
 
     /**
      * @description Called when the animation completes.
+     * @category Animation
      */
     didComplete () {
 

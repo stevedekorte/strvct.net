@@ -22,6 +22,7 @@
     initPrototypeSlots () {
         /**
          * @member {DomView} titleView
+         * @category UI
          */
         {
             const slot = this.newSlot("titleView", null);
@@ -29,6 +30,7 @@
         }
         /**
          * @member {DomView} subtitleView
+         * @category UI
          */
         {
             const slot = this.newSlot("subtitleView", null);
@@ -36,6 +38,7 @@
         }
         /**
          * @member {DomView} noteView
+         * @category UI
          */
         {
             const slot = this.newSlot("noteView", null);
@@ -43,6 +46,7 @@
         }
         /**
          * @member {DomView} noteIconView - created lazily
+         * @category UI
          */
         {
             const slot = this.newSlot("noteIconView", null);
@@ -50,6 +54,7 @@
         }
         /**
          * @member {DomView} thumbnailView
+         * @category UI
          */
         {
             const slot = this.newSlot("thumbnailView", null);
@@ -61,6 +66,7 @@
      * @static
      * @description Returns the left padding for the title
      * @returns {string}
+     * @category Layout
      */
     static titleLeftPadding () {
         return "30px"
@@ -69,6 +75,7 @@
     /**
      * @description Returns the top content area
      * @returns {DomView}
+     * @category Layout
      */
     topContentArea () {
         let lv = this.contentView().subviews().at(0)
@@ -78,6 +85,7 @@
     /**
      * @description Returns the bottom content area
      * @returns {DomView}
+     * @category Layout
      */
     bottomContentArea () {
         let lv = this.contentView().subviews().at(1)
@@ -87,6 +95,7 @@
     /**
      * @description Initializes the TitledTile
      * @returns {TitledTile}
+     * @category Initialization
      */
     init () {
         super.init()
@@ -144,6 +153,7 @@
     /**
      * @description Sets up the thumbnail view if it doesn't exist
      * @returns {TitledTile}
+     * @category UI
      */
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
@@ -176,6 +186,7 @@
     /**
      * @description Checks if the tile has a subtitle
      * @returns {boolean}
+     * @category State
      */
     hasSubtitle () {
         const node = this.node()
@@ -196,6 +207,7 @@
     /**
      * @description Updates the subviews of the tile
      * @returns {TitledTile}
+     * @category UI
      */
     updateSubviews () {
         super.updateSubviews()
@@ -244,6 +256,7 @@
     /**
      * @description Synchronizes styles to subviews
      * @returns {TitledTile}
+     * @category UI
      */
     syncStylesToSubviews () {
         const b = this.isSelected()
@@ -260,6 +273,7 @@
 
     /**
      * @description Shows the note view
+     * @category UI
      */
     showNoteView () {
         this.noteView().unhideDisplay()   
@@ -268,6 +282,7 @@
 
     /**
      * @description Hides the note view
+     * @category UI
      */
     hideNoteView () {
         this.noteView().hideDisplay()     
@@ -275,6 +290,7 @@
 
     /**
      * @description Shows the note icon view
+     * @category UI
      */
     showNoteIconView () {
         const v = this.noteIconView()
@@ -296,6 +312,7 @@
 
     /**
      * @description Hides the note icon view
+     * @category UI
      */
     hideNoteIconView () {
         this.noteIconView().hideDisplay()  
@@ -304,6 +321,7 @@
     /**
      * @description Calculates the desired width of the tile
      * @returns {number}
+     * @category Layout
      */
     desiredWidth () {
         /*
@@ -318,6 +336,7 @@
 
     /**
      * @description Handles input events
+     * @category Event
      */
     didInput () {
         this.scheduleSyncToNode()
@@ -326,6 +345,7 @@
     /**
      * @description Handles edit events
      * @param {DomView} aView - The view that was edited
+     * @category Event
      */
     onDidEdit (aView) {
         super.onDidEdit() 
@@ -334,6 +354,7 @@
     /**
      * @description Synchronizes the tile to its node
      * @returns {TitledTile}
+     * @category Data
      */
     syncToNode () {   
         //console.log("syncToNode")
@@ -346,6 +367,7 @@
     /**
      * @description Synchronizes the tile from its node
      * @returns {TitledTile}
+     * @category Data
      */
     syncFromNode () {
         super.syncFromNode()
@@ -363,6 +385,7 @@
     /**
      * @description Makes the note view a right arrow
      * @returns {TitledTile}
+     * @category UI
      */
     makeNoteRightArrow () {
         //debugger;
@@ -380,6 +403,7 @@
     /**
      * @description Handles the enter key up event
      * @param {Event} event - The keyboard event
+     * @category Event
      */
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")

@@ -26,6 +26,7 @@
     /**
      * @description Initializes prototype slots
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -34,6 +35,7 @@
     /**
      * @description Initializes the RotationGestureRecognizer
      * @returns {RotationGestureRecognizer} The initialized instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -45,6 +47,7 @@
     /**
      * @description Checks if the rotation has moved enough to begin recognition
      * @returns {boolean} True if the rotation has moved enough, false otherwise
+     * @category Gesture Recognition
      */
     hasMovedEnough () {
         const ma = this.minRotatationInDegreesToBegin()

@@ -36,6 +36,7 @@
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true)
@@ -43,12 +44,14 @@
 
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype with default settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setTitle("Themes")
@@ -66,6 +69,7 @@
 
     /**
      * @description Performs final initialization, adding a default theme if no subnodes exist.
+     * @category Initialization
      */
     finalInit () {
         super.finalInit();
@@ -77,6 +81,7 @@
     /**
      * @description Returns the active theme.
      * @returns {BMTheme} The first subnode, which is considered the active theme.
+     * @category Theme Management
      */
     activeTheme () {
         return this.subnodes().first()
@@ -85,6 +90,7 @@
     /**
      * @description Returns the default theme class.
      * @returns {ThemeClass} The first subnode of the active theme.
+     * @category Theme Management
      */
     defaultThemeClass () {
         return this.activeTheme().subnodes().first()

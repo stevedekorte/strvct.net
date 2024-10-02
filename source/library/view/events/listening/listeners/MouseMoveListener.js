@@ -15,6 +15,7 @@
     
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -29,6 +30,7 @@
     /**
      * @description Sets up the event listeners for mouse move events.
      * @returns {MouseMoveListener} The current instance of the MouseMoveListener.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("mousemove", "onMouseMove");

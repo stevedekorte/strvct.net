@@ -13,6 +13,7 @@
      * Applies styles to the tiles view.
      * @description This method applies styles to the tiles view and its components.
      * @returns {TilesView_styling} Returns the instance of TilesView_styling.
+     * @category Styling
      */
     applyStyles () {
         //this.debugLog(".applyStyles()")

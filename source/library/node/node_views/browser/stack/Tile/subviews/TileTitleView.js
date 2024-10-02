@@ -12,12 +12,14 @@
     
     /**
      * @description Initializes prototype slots for the TileTitleView.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype for the TileTitleView.
+     * @category Initialization
      */
     initPrototype () {
 
@@ -26,6 +28,7 @@
     /**
      * @description Initializes the TileTitleView instance.
      * @returns {TileTitleView} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -53,6 +56,7 @@
     /**
      * @description Selects the next key view.
      * @returns {boolean} Always returns true.
+     * @category Navigation
      */
     selectNextKeyView () {
         /*

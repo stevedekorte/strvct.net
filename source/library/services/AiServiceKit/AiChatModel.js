@@ -12,11 +12,12 @@
 (class AiChatModel extends BMSummaryNode {
   /**
    * Initializes the prototype slots for the AiChatModel.
-
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {AiService} service - The AI service associated with this model.
+     * @category Service
      */
     {
       const slot = this.newSlot("service", null);
@@ -25,6 +26,7 @@
 
     /**
      * @member {string} modelName - The name of the AI model.
+     * @category Model Information
      */
     {
       const slot = this.newSlot("modelName", null);
@@ -37,6 +39,7 @@
 
     /**
      * @member {number} maxContextTokenCount - The maximum number of input tokens allowed by the model.
+     * @category Model Configuration
      */
     {
       const slot = this.newSlot("maxContextTokenCount", 8000);
@@ -53,7 +56,7 @@
 
   /**
    * Initializes the AiChatModel.
-
+   * @category Initialization
    */
   init () {
     super.init();
@@ -61,7 +64,7 @@
 
   /**
    * Performs final initialization of the AiChatModel.
-
+   * @category Initialization
    */
   finalInit () {
     super.finalInit()
@@ -72,8 +75,8 @@
 
   /**
    * Gets the service associated with this model.
-
    * @returns {AiService|Object} The service or parent node's parent node.
+   * @category Service
    */
   service () {
     if (this._service) {
@@ -84,8 +87,8 @@
 
   /**
    * Gets the subtitle for the model.
-
    * @returns {string} The model name.
+   * @category Model Information
    */
   subtitle () {
     return this.modelName();
@@ -93,9 +96,9 @@
 
   /**
    * Validates the API key.
-
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the key is valid, false otherwise.
+   * @category Authentication
    */
   validateKey (s) {
     return s.startsWith("sk-");
@@ -103,8 +106,8 @@
 
   /**
    * Checks if the model has a valid API key.
-
    * @returns {boolean} True if the API key is valid, false otherwise.
+   * @category Authentication
    */
   hasApiKey () {
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
@@ -112,9 +115,9 @@
 
   /**
    * Sets the model properties from a JSON object.
-
    * @param {Object} json - The JSON object containing model properties.
    * @returns {AiChatModel} The current instance.
+   * @category Model Configuration
    */
   setJson (json) {
     assert(json.name);
@@ -134,8 +137,8 @@
 
   /**
    * Generates a summary of the model.
-
    * @returns {string} A formatted string containing the model name and context window size.
+   * @category Model Information
    */
   summary () {
     const cw = NumberFormatter.clone().setValue(this.maxContextTokenCount()).setSignificantDigits(2).formattedValue();

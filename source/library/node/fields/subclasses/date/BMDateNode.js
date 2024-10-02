@@ -11,6 +11,7 @@
     /**
      * @static
      * @returns {boolean} True if this node is available as a primitive.
+     * @category Utility
      */
     static availableAsNodePrimitive () {
         return true;
@@ -18,11 +19,13 @@
     
     /**
      * @description Initializes the prototype slots for the BMDateNode.
+     * @category Initialization
      */
     initPrototypeSlots () {        
 
         /**
          * @member {Array} subnodes
+         * @category Data
          */
         {
             const slot = this.overrideSlot("subnodes");
@@ -32,6 +35,7 @@
 
         /**
          * @member {Number} year
+         * @category Data
          */
         {
             const slot = this.newSlot("year", null);
@@ -43,6 +47,7 @@
 
         /**
          * @member {Number} month
+         * @category Data
          */
         {
             const slot = this.newSlot("month", null);
@@ -54,6 +59,7 @@
 
         /**
          * @member {Number} day
+         * @category Data
          */
         {
             const slot = this.newSlot("day", null);
@@ -65,6 +71,7 @@
 
         /**
          * @member {Number} startYear
+         * @category Configuration
          */
         {
             const slot = this.newSlot("startYear", 2000);
@@ -77,6 +84,7 @@
 
         /**
          * @member {Number} yearRange
+         * @category Configuration
          */
         {
             const slot = this.newSlot("yearRange", 20);
@@ -90,6 +98,7 @@
 
     /**
      * @description Initializes the prototype of the BMDateNode.
+     * @category Initialization
      */
     initPrototype () {
         
@@ -109,6 +118,7 @@
     /**
      * @description Checks if a date has been set.
      * @returns {boolean} True if a date has been set, false otherwise.
+     * @category Utility
      */
     hasDate () {
         return !Type.isNull(this.year())
@@ -117,6 +127,7 @@
     /**
      * @description Creates a JavaScript Date object from the stored date.
      * @returns {Date|null} A Date object if a date has been set, null otherwise.
+     * @category Utility
      */
     jsDate () {
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
@@ -131,6 +142,7 @@
     /**
      * @description Generates a subtitle for the node.
      * @returns {string} A string representation of the date or "No date selected".
+     * @category Display
      */
     subtitle () {
         if (this.hasDate()) {
@@ -146,6 +158,7 @@
 
     /**
      * @description Prepares the node for syncing to view.
+     * @category View
      */
     prepareToSyncToView () {
         // called after DateNode is selected
@@ -156,6 +169,7 @@
 
     /**
      * @description Sets up the subnodes for year selection.
+     * @category Initialization
      */
     setupSubnodes () {
         this.removeAllSubnodes()
@@ -176,6 +190,7 @@
      * @description Handles tap events on descendant nodes.
      * @param {Object} aNode - The tapped node.
      * @returns {boolean} Always returns true.
+     * @category Event
      */
     onTapOfDecendantNode (aNode) {
         if (aNode.type() === "BMDayNode") {
@@ -194,6 +209,7 @@
     /**
      * @description Calculates the end year based on start year and range.
      * @returns {number} The end year.
+     * @category Utility
      */
     endYear () {
         return this.startYear() + this.yearRange()
@@ -202,6 +218,7 @@
     /**
      * @description Checks if the year range is valid.
      * @returns {boolean} True if the year range is valid, false otherwise.
+     * @category Validation
      */
     yearRangeOk () {
         return this.startYear() <= this.endYear()
@@ -209,6 +226,7 @@
 
     /**
      * @description Handles updates to the startYear slot.
+     * @category Event
      */
     didUpdateSlotStartYear () {
         if (!this.hasDoneInit()) { // so we ignore the initial setup as a change
@@ -223,6 +241,7 @@
 
     /**
      * @description Handles updates to the endYear slot.
+     * @category Event
      */
     didUpdateSlotEndYear () {
         if (!this.hasDoneInit()) {
@@ -238,6 +257,7 @@
     /**
      * @description Creates a JSON archive of the date.
      * @returns {string|null} A string representation of the date or null if no date is set.
+     * @category Serialization
      */
     jsonArchive () {
         const d = this.jsDate()

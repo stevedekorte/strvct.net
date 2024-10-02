@@ -14,6 +14,7 @@
     /**
      * @description Initializes prototype slots for the Device class.
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -21,6 +22,7 @@
     /**
      * @description Initializes the Device instance.
      * @returns {Device} The initialized Device instance.
+     * @category Initialization
      */
     init () {
         super.init()

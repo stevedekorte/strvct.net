@@ -15,6 +15,7 @@
 
     /**
      * Initializes the prototype slots and sets up mutator hooks.
+     * @category Initialization
      */
     initPrototypeSlots () {
         this.setupMutatorHooks()
@@ -23,6 +24,7 @@
     /**
      * Returns a Set of mutator method names that should be hooked.
      * @returns {Set<string>} A Set containing the names of mutator methods.
+     * @category Configuration
      */
     mutatorMethodNamesSet () {
         return new Set([
@@ -35,6 +37,7 @@
     /**
      * Performs a self-test of the HookedMap class.
      * @returns {HookedMap} Returns the class itself after the test.
+     * @category Testing
      */
     static selfTest () {
         const a = this.clone()
@@ -59,4 +62,3 @@
     }
 
 }.initThisClass()); //.selfTest()
-

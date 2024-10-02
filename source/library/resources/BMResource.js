@@ -17,6 +17,7 @@
      * @static
      * @description Returns a set of supported MIME types.
      * @returns {Set} A set of supported MIME types.
+     * @category MIME Types
      */
     static supportedMimeTypes () {
         //throw new Error("subclasses should override this method")
@@ -28,6 +29,7 @@
      * @description Checks if the given MIME type is supported.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} True if the MIME type is supported, false otherwise.
+     * @category MIME Types
      */
     static canOpenMimeType (mimeType) {
         return this.supportedMimeTypes().has(mimeType);
@@ -38,6 +40,7 @@
      * @description Opens a data chunk with the given MIME type.
      * @param {Object} dataChunk - The data chunk to open.
      * @throws {Error} Throws an error if not implemented by subclasses.
+     * @category MIME Types
      */
     static openMimeChunk (dataChunk) {
          throw new Error("subclasses should override this method");
@@ -54,6 +57,7 @@
      * @description Returns an array of supported file extensions.
      * @returns {Array} An array of supported file extensions.
      * @throws {Error} Throws an error if not implemented by subclasses.
+     * @category File Extensions
      */
     static supportedExtensions () {
         throw new Error("subclasses should override this method");
@@ -65,6 +69,7 @@
      * @description Checks if the given file extension is supported.
      * @param {string} extension - The file extension to check.
      * @returns {boolean} True if the extension is supported, false otherwise.
+     * @category File Extensions
      */
     static canHandleExtension (extension) {
         return this.supportedExtensions().contains(extension);
@@ -74,11 +79,13 @@
 
     /**
      * @description Initializes the prototype slots for the BMResource class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {string} path - The path of the resource.
+             * @category Resource Properties
              */
             const slot = this.newSlot("path", "");
             slot.setSlotType("String");
@@ -86,6 +93,7 @@
         {
             /**
              * @member {Object} data - The data of the resource.
+             * @category Resource Properties
              */
             const slot = this.newSlot("data", null);
             slot.setSlotType("Object");
@@ -94,6 +102,7 @@
         {
             /**
              * @member {Error} error - Any error that occurred during resource handling.
+             * @category Resource Properties
              */
             const slot = this.newSlot("error", null);
             slot.setSlotType("Error");
@@ -101,6 +110,7 @@
         {
             /**
              * @member {string} loadState - The current load state of the resource.
+             * @category Resource Properties
              */
             const slot = this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
             slot.setSlotType("String");
@@ -108,6 +118,7 @@
         {
             /**
              * @member {boolean} isLoaded - Indicates if the resource is loaded.
+             * @category Resource Properties
              */
             const slot = this.newSlot("isLoaded", false);
             slot.setSlotType("Boolean");
@@ -115,6 +126,7 @@
         {
             /**
              * @member {BMUrlResource} urlResource - The URL resource associated with this resource.
+             * @category Resource Properties
              */
             const slot = this.newSlot("urlResource", null);
             slot.setSlotType("BMUrlResource");
@@ -123,6 +135,7 @@
         {
             /**
              * @member {Promise} loadDataPromise - Promise for loading data.
+             * @category Resource Properties
              */
             const slot = this.newSlot("loadDataPromise", null);
             slot.setSlotType("Promise");
@@ -131,6 +144,7 @@
         {
             /**
              * @member {Promise} decodeDataPromise - Promise for decoding data.
+             * @category Resource Properties
              */
             const slot = this.newSlot("decodeDataPromise", null);
             slot.setSlotType("Promise");
@@ -139,6 +153,7 @@
         {
             /**
              * @member {Object} value - The value of the resource.
+             * @category Resource Properties
              */
             const slot = this.newSlot("value", null);
             slot.setSlotType("Object");
@@ -147,6 +162,7 @@
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -154,6 +170,7 @@
     /**
      * @description Gets the title of the resource.
      * @returns {string} The title of the resource.
+     * @category Resource Information
      */
     title () {
         return this.name();
@@ -162,6 +179,7 @@
     /**
      * @description Gets the subtitle of the resource.
      * @returns {string} The subtitle of the resource.
+     * @category Resource Information
      */
     subtitle () {
         return this.path().pathExtension();
@@ -170,6 +188,7 @@
     /**
      * @description Gets the subtitle of the resource including the load state.
      * @returns {string} The subtitle of the resource.
+     * @category Resource Information
      */
     subtitle () {
         return this.path().pathExtension() + ", " + this.loadState();
@@ -178,6 +197,7 @@
     /**
      * @description Gets the name of the resource.
      * @returns {string} The name of the resource.
+     * @category Resource Information
      */
     name () {
         return this.path().lastPathComponent().sansExtension();
@@ -188,6 +208,7 @@
     /**
      * @description Gets the promise for loading data.
      * @returns {Promise} The promise for loading data.
+     * @category Resource Loading
      */
     loadDataPromise () {
         if (!this._loadDataPromise) {
@@ -199,6 +220,7 @@
     /**
      * @description Gets the promise for decoding data.
      * @returns {Promise} The promise for decoding data.
+     * @category Resource Loading
      */
     decodeDataPromise () {
         if (!this._decodeDataPromise) {
@@ -241,6 +263,7 @@
     /**
      * @description Loads the resource if it hasn't been loaded yet.
      * @returns {BMResource} The resource instance.
+     * @category Resource Loading
      */
     loadIfNeeded () {
         if (this.loadState() === "unloaded") {
@@ -252,6 +275,7 @@
     /**
      * @description Loads the resource.
      * @throws {Error} Throws an error indicating that asyncLoad should be used instead.
+     * @category Resource Loading
      */
     load () {
         throw new Error("deprecated - use asyncLoad instead");
@@ -260,6 +284,7 @@
     /**
      * @description Asynchronously loads and decodes the resource.
      * @returns {Promise<BMResource>} A promise that resolves to the resource instance.
+     * @category Resource Loading
      */
     async asyncLoad () {
         try {
@@ -289,6 +314,7 @@
     /**
      * @description Asynchronously loads the URL resource.
      * @returns {Promise<void>} A promise that resolves when the URL resource is loaded.
+     * @category Resource Loading
      */
     async asyncLoadUrlResource () {
         const url = this.urlResource()
@@ -302,6 +328,7 @@
     /**
      * @description Called when the resource has finished loading.
      * @returns {Promise<void>} A promise that resolves when post-load operations are complete.
+     * @category Resource Loading
      */
     async onDidLoad () {
         this.setIsLoaded(true);
@@ -311,6 +338,7 @@
     /**
      * @description Asynchronously decodes the data.
      * @returns {Promise<BMResource>} A promise that resolves to the resource instance.
+     * @category Resource Loading
      */
     async asyncDecodeData () {
         // for subclasses to override
@@ -320,6 +348,7 @@
     /**
      * @description Precaches the resource where appropriate.
      * @returns {Promise<void>} A promise that resolves when precaching is complete.
+     * @category Resource Loading
      */
     async prechacheWhereAppropriate () {
     }

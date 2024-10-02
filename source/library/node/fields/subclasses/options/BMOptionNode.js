@@ -13,10 +13,12 @@
     
     /**
      * @description Initializes the prototype slots for the BMOptionNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {string} label - The title of the option.
+         * @category Data
          */
         {
             const slot = this.newSlot("label", "Option Title");
@@ -26,6 +28,7 @@
         }
         /**
          * @member {Object} value - The value associated with the option.
+         * @category Data
          */
         {
             const slot = this.newSlot("value", null);
@@ -35,6 +38,7 @@
         }
         /**
          * @member {boolean} isPicked - Indicates whether the option is selected.
+         * @category State
          */
         {
             const slot = this.newSlot("isPicked", false);
@@ -46,6 +50,7 @@
 
     /**
      * @description Initializes the prototype of the BMOptionNode.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -58,6 +63,7 @@
     /**
      * @description Returns a debug type identifier for the node.
      * @returns {string} The debug type identifier.
+     * @category Debugging
      */
     debugTypeId () {
         return this.typeId() + "_'" + this.label() + "'";
@@ -67,6 +73,7 @@
      * @description Sets the isPicked property without triggering side effects.
      * @param {boolean} aBool - The boolean value to set.
      * @returns {BMOptionNode} The current instance.
+     * @category State
      */
     justSetIsPicked (aBool) {
         assert(Type.isBoolean(aBool));
@@ -77,6 +84,7 @@
     /**
      * @description Retrieves the parent BMOptionsNode.
      * @returns {BMOptionsNode|null} The parent BMOptionsNode or null if not found.
+     * @category Hierarchy
      */
     optionsNode () {
         return this.firstParentChainNodeOfClass(BMOptionsNode);
@@ -86,6 +94,7 @@
      * @description Handles the update of the isPicked slot.
      * @param {boolean} oldValue - The previous value of isPicked.
      * @param {boolean} newValue - The new value of isPicked.
+     * @category State
      */
     didUpdateSlotIsPicked (oldValue, newValue) {
         const optionsNode = this.optionsNode();
@@ -108,6 +117,7 @@
     /**
      * @description Toggles the isPicked state of the option.
      * @returns {BMOptionNode} The current instance.
+     * @category State
      */
     toggle () { 
         // The OptionNodeTile knows to call this
@@ -119,6 +129,7 @@
      * @description Sets the title (label) of the option.
      * @param {string} aString - The new title.
      * @returns {BMOptionNode} The current instance.
+     * @category Data
      */
     setTitle (aString) {
         this.setLabel(aString);
@@ -128,6 +139,7 @@
     /**
      * @description Retrieves the title (label) of the option.
      * @returns {string} The title of the option.
+     * @category Data
      */
     title () {
         return this.label();
@@ -136,6 +148,7 @@
     /**
      * @description Retrieves the value of the option.
      * @returns {string} The title of the option.
+     * @category Data
      */
     value () {
         return this.title();
@@ -144,6 +157,7 @@
     /**
      * @description Retrieves a summary of the option.
      * @returns {string} The title of the option.
+     * @category Data
      */
     summary () {
         return this.title();
@@ -152,6 +166,7 @@
     /**
      * @description Retrieves a note indicating whether the option is picked.
      * @returns {string} A checkmark if the option is picked, otherwise an empty string.
+     * @category State
      */
     note () {
         return this.isPicked() ? "✓" : "";

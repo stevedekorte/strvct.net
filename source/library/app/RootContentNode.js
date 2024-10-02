@@ -21,6 +21,7 @@
 (class RootContentNode extends BMFolderNode {
     /**
      * @description Initializes prototype slots for the RootContentNode class.
+     * @category Initialization
      */
     initPrototypeSlots() {
         {
@@ -33,6 +34,7 @@
 
     /**
      * @description Initializes the prototype for the RootContentNode class.
+     * @category Initialization
      */
     initPrototype() {
         this.setTitle("Root Content Node");

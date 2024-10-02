@@ -18,6 +18,8 @@
          * The number to be formatted.
          * @type {number}
          * @default 0
+         * @member {number}
+         * @category Data
          */
         {
             const slot = this.newSlot("value", 0);
@@ -30,6 +32,8 @@
          * The number of significant digits to use in the formatted output.
          * @type {number}
          * @default 2
+         * @member {number}
+         * @category Configuration
          */
         {
             const slot = this.newSlot("significantDigits", 2);
@@ -45,6 +49,8 @@
     /**
      * Formats the number value into a human-readable string.
      * @returns {string} The formatted number value.
+     * @method
+     * @category Formatting
      */
     formattedValue () {
         const number = this.value();

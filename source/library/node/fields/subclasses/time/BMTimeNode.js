@@ -14,6 +14,7 @@
      * @static
      * @description Indicates if this node is available as a primitive.
      * @returns {boolean} True if available as a node primitive.
+     * @category Metadata
      */
     static availableAsNodePrimitive () {
         return true
@@ -21,12 +22,14 @@
 
     /**
      * @description Initializes the prototype slots for the BMTimeNode.
+     * @category Initialization
      */
     initPrototypeSlots () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
         /**
          * @member {Number} hour - The hour value of the time.
+         * @category Time
          */
         {
             const slot = this.newSlot("hour", null);
@@ -35,6 +38,7 @@
         }
         /**
          * @member {Number} minute - The minute value of the time.
+         * @category Time
          */
         {
             const slot = this.newSlot("minute", null);
@@ -43,6 +47,7 @@
         }
         /**
          * @member {String} timezone - The timezone of the time.
+         * @category Time
          */
         {
             const slot = this.newSlot("timezone", null);
@@ -51,6 +56,7 @@
         }
         /**
          * @member {TimeFormatter} formatter - The formatter for the time.
+         * @category Formatting
          */
         {
             const slot = this.newSlot("formatter", null);
@@ -62,6 +68,7 @@
 
     /**
      * @description Initializes the prototype of the BMTimeNode.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -79,6 +86,7 @@
     /**
      * @description Checks if the time has been set.
      * @returns {boolean} True if the time has been set, false otherwise.
+     * @category Time
      */
     hasTime () {
         return !Type.isNull(this.hour())
@@ -87,6 +95,7 @@
     /**
      * @description Converts the stored time to a JavaScript Date object.
      * @returns {Date|null} A Date object representing the time, or null if no time is set.
+     * @category Time
      */
     jsDate () {
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
@@ -100,6 +109,7 @@
     /**
      * @description Formats the time as a string.
      * @returns {string} The formatted time string.
+     * @category Formatting
      */
     timeString () {
         if (!this.formatter()) { //tmp hack to deal with bug
@@ -112,6 +122,7 @@
     /**
      * @description Gets the subtitle for the node.
      * @returns {string} The formatted time string or a message if no time is selected.
+     * @category Display
      */
     subtitle () {
         if (this.hasTime()) {
@@ -123,6 +134,7 @@
 
     /**
      * @description Prepares the node for syncing to view.
+     * @category View
      */
     prepareToSyncToView () {
         // called after clicked
@@ -133,6 +145,7 @@
 
     /**
      * @description Sets up the hour nodes as subnodes.
+     * @category Initialization
      */
     setupHourNodes () {
         for (let i = 0; i < 23; i++) {
@@ -145,6 +158,7 @@
      * @description Handles the tap event on a descendant node.
      * @param {Object} aNode - The node that was tapped.
      * @returns {boolean} Always returns true.
+     * @category Event
      */
     onTapOfDecendantNode (aNode) {
         if (aNode.type() === "BMMinuteNode") {
@@ -161,6 +175,7 @@
     /**
      * @description Creates a JSON archive of the time.
      * @returns {string|null} A string representation of the time, or null if no time is set.
+     * @category Serialization
      */
     jsonArchive () {
         const d = this.jsDate()

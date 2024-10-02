@@ -13,6 +13,7 @@
      * @static
      * @description Returns an array of supported file extensions for images.
      * @returns {string[]} An array of supported file extensions.
+     * @category File Management
      */
     static supportedExtensions () {
         return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"]
@@ -20,6 +21,7 @@
 
     /**
      * @description Initializes the prototype slots for the BMImage class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /*
@@ -30,6 +32,7 @@
         */
         /**
          * @member {string} dataURL - The data URL of the image.
+         * @category Data
          */
         {
             const slot = this.newSlot("dataURL", "");
@@ -39,6 +42,7 @@
 
     /**
      * @description Initializes the prototype for the BMImage class.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -46,6 +50,7 @@
     /**
      * @description Gets the title of the image, which is the file name.
      * @returns {string} The file name of the image.
+     * @category Metadata
      */
     title () {
         return this.path().fileName()
@@ -54,6 +59,7 @@
     /**
      * @description Gets the subtitle of the image, which is the file extension.
      * @returns {string} The file extension of the image.
+     * @category Metadata
      */
     subtitle () {
         return this.path().pathExtension()
@@ -62,6 +68,7 @@
     /**
      * @description Called when the image has finished loading.
      * @returns {BMImage} The current BMImage instance.
+     * @category Lifecycle
      */
     onDidLoad () {
         super.onDidLoad()

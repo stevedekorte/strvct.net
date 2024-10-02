@@ -13,6 +13,7 @@
     
     /**
      * @description Initializes prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -20,6 +21,7 @@
     /**
      * @description Initializes the KeyboardListener instance.
      * @returns {KeyboardListener} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -30,6 +32,7 @@
     /**
      * @description Sets up the event listeners for keyboard events.
      * @returns {KeyboardListener} The instance with setup listeners.
+     * @category Event Setup
      */
     setupListeners () {
         this.addEventNameAndMethodName("keyup", "onKeyUp").setIsUserInteraction(true)

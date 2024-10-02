@@ -80,6 +80,7 @@
     /**
      * @static
      * @description Initializes the class
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -87,10 +88,12 @@
     
     /**
      * @description Initializes the prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Map} actions
+         * @category State
          */
         {
             const slot = this.newSlot("actions", new Map());
@@ -99,6 +102,7 @@
 
         /**
          * @member {Boolean} hasTimeout
+         * @category State
          */
         {
             const slot = this.newSlot("hasTimeout", false);
@@ -107,6 +111,7 @@
 
         /**
          * @member {Boolean} isProcessing
+         * @category State
          */
         {
             const slot = this.newSlot("isProcessing", false);
@@ -115,6 +120,7 @@
 
         /**
          * @member {SyncAction} currentAction
+         * @category State
          */
         {
             const slot = this.newSlot("currentAction", null);
@@ -123,6 +129,7 @@
 
         /**
          * @member {Boolean} isPaused
+         * @category State
          */
         {
             const slot = this.newSlot("isPaused", false);
@@ -132,6 +139,7 @@
 
     /**
      * @description Initializes the prototype
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -139,6 +147,7 @@
     /**
      * @description Pauses the scheduler
      * @returns {SyncScheduler} The instance
+     * @category Control
      */
     pause () {
         this.setIsPaused(true);
@@ -148,6 +157,7 @@
     /**
      * @description Resumes the scheduler
      * @returns {SyncScheduler} The instance
+     * @category Control
      */
     resume () {
         this.setIsPaused(false);
@@ -161,6 +171,7 @@
      * @param {string} syncMethod - The sync method name
      * @param {number} [order] - The order of execution
      * @returns {SyncAction} The new SyncAction instance
+     * @category Action Management
      */
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
@@ -172,6 +183,7 @@
      * @param {string} syncMethod - The sync method name
      * @param {number} [optionalOrder] - The optional order of execution
      * @returns {boolean} True if scheduled, false if already scheduled
+     * @category Scheduling
      */
     scheduleTargetAndMethod (target, syncMethod, optionalOrder) { // higher order performed last
         if (!this.hasScheduledTargetAndMethod(target, syncMethod)) {
@@ -205,6 +217,7 @@
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
      * @returns {boolean} True if syncing or scheduled, false otherwise
+     * @category Query
      */
     isSyncingOrScheduledTargetAndMethod(target, syncMethod) {
         const sc = this.hasScheduledTargetAndMethod(target, syncMethod) 
@@ -217,6 +230,7 @@
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
      * @returns {boolean} True if scheduled, false otherwise
+     * @category Query
      */
     hasScheduledTargetAndMethod (target, syncMethod) {
         const actionKey = SyncAction.ActionKeyForTargetAndMethod(target, syncMethod)
@@ -228,6 +242,7 @@
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
      * @returns {boolean} True if syncing, false otherwise
+     * @category Query
      */
     isSyncingTargetAndMethod (target, syncMethod) {
         const ca = this.currentAction()
@@ -242,6 +257,7 @@
      * @description Gets all actions for a target
      * @param {Object} target - The target object
      * @returns {Array} An array of actions for the target
+     * @category Query
      */
     actionsForTarget (target) {
         return this.actions().valuesArray().select(action => action.target() === target)
@@ -251,6 +267,7 @@
      * @description Checks if there are actions for a target
      * @param {Object} target - The target object
      * @returns {boolean} True if there are actions, false otherwise
+     * @category Query
      */
     hasActionsForTarget (target) {
         return this.actions().valuesArray().canDetect(action => action.target() === target)
@@ -260,6 +277,7 @@
      * @description Unschedules all actions for a target
      * @param {Object} target - The target object
      * @returns {SyncScheduler} The instance
+     * @category Scheduling
      */
     unscheduleTarget (target) {
         if (this.hasActionsForTarget(target)) {
@@ -283,6 +301,7 @@
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
      * @returns {SyncScheduler} The instance
+     * @category Scheduling
      */
     unscheduleTargetAndMethod (target, syncMethod) {
         const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey()
@@ -294,6 +313,7 @@
      * @description Removes an action by its key
      * @param {string} k - The action key
      * @returns {SyncScheduler} The instance
+     * @category Action Management
      */
     removeActionKey (k) {
         const action = this.actions().at(k)
@@ -307,6 +327,7 @@
     /**
      * @description Sets a timeout if needed
      * @returns {SyncScheduler} The instance
+     * @category Control
      */
     setTimeoutIfNeeded () {
 	    if (!this.hasTimeout() && !this.isPaused() && this.actions().size > 0) {
@@ -322,6 +343,7 @@
     /**
      * @description Gets the ordered actions
      * @returns {Array} An array of ordered actions
+     * @category Query
      */
     orderedActions () {
         const sorter = function (a1, a2) { return a1.order() - a2.order() }
@@ -331,6 +353,7 @@
     /**
      * @description Processes the sets of actions
      * @returns {SyncScheduler} The instance
+     * @category Processing
      */
     processSets () {
         if (this.isPaused()) {
@@ -377,6 +400,7 @@
     /**
      * @description Gets the count of actions
      * @returns {number} The number of actions
+     * @category Query
      */
     actionCount () {
         return this.actions().size
@@ -385,6 +409,7 @@
     /**
      * @description Performs a full sync now
      * @returns {SyncScheduler} The instance
+     * @category Processing
      */
     fullSyncNow () {
         if (this.isPaused()) {
@@ -426,6 +451,7 @@
     /**
      * @description Gets a description of the actions
      * @returns {string} A string describing the actions
+     * @category Query
      */
     actionsDescription () {
         if (this.orderedActions().length === 0) {
@@ -436,6 +462,7 @@
 
     /**
      * @description Shows the scheduler's current state
+     * @category Debugging
      */
     show () {
         console.log(this.type() + ":")

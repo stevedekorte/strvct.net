@@ -11,10 +11,12 @@
     
     /**
      * @description Initializes the prototype slots for the VisibleDomView.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} isRegisteredForVisibility
+         * @category State
          */
         {
             const slot = this.newSlot("isRegisteredForVisibility", false);
@@ -22,6 +24,7 @@
         }
         /**
          * @member {IntersectionObserver} intersectionObserver
+         * @category Observation
          */
         {
             const slot = this.newSlot("intersectionObserver", null);
@@ -29,6 +32,7 @@
         }
         /**
          * @member {Function} onVisibilityCallback
+         * @category Event Handling
          */
         {
             const slot = this.newSlot("onVisibilityCallback", null);
@@ -39,6 +43,7 @@
     /**
      * @description Handles the visibility event.
      * @returns {boolean}
+     * @category Event Handling
      */
     onVisibility () {
         //this.debugLog(".onVisibility()")
@@ -54,6 +59,7 @@
     /**
      * @description Checks if the view is registered for visibility.
      * @returns {boolean}
+     * @category State
      */
     isRegisteredForVisibility () {
         return !Type.isNull(this.intersectionObserver())
@@ -63,6 +69,7 @@
      * @description Sets the registration for visibility.
      * @param {boolean} aBool - Whether to register or unregister for visibility.
      * @returns {VisibleDomView}
+     * @category State
      */
     setIsRegisteredForVisibility (aBool) {
         if (aBool !== this.isRegisteredForVisibility()) {
@@ -78,6 +85,7 @@
     /**
      * @description Unregisters the view from visibility observation.
      * @returns {VisibleDomView}
+     * @category Observation
      */
     unregisterForVisibility () {
         const obs = this.intersectionObserver()
@@ -92,6 +100,7 @@
     /**
      * @description Returns the root element for visibility observation.
      * @returns {HTMLElement}
+     * @category DOM
      */
     visibilityRoot () {
         // our element must be a decendant of the visibility root element
@@ -107,6 +116,7 @@
     /**
      * @description Registers the view for visibility observation.
      * @returns {VisibleDomView}
+     * @category Observation
      */
     registerForVisibility () { // this is a oneShot event, as onVisibility() unregisters
         if (this.isRegisteredForVisibility()) {
@@ -135,6 +145,7 @@
      * @description Handles the intersection observation.
      * @param {IntersectionObserverEntry[]} entries - The intersection entries.
      * @param {IntersectionObserver} observer - The intersection observer.
+     * @category Event Handling
      */
     handleIntersection (entries, observer) {
         entries.forEach(entry => {

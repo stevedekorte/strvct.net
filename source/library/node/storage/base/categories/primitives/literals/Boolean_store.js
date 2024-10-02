@@ -12,6 +12,7 @@
      * @description Returns the set of persistent unique identifiers (puuids) for JSON store references.
      * @param {Set} puuids - Set of persistent unique identifiers.
      * @returns {Set} The input set of puuids.
+     * @category Storage
      */
     refsPidsForJsonStore(puuids = new Set()) {
         return puuids

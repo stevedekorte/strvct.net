@@ -13,6 +13,7 @@
      * @description Checks if the node can open a specific MIME type.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} Always returns false for this class.
+     * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
         return false;
@@ -22,6 +23,7 @@
      * @static
      * @description Checks if the node is available as a primitive.
      * @returns {boolean} Always returns true for this class.
+     * @category Node Properties
      */
     static availableAsNodePrimitive () {
         return true;
@@ -31,6 +33,7 @@
      * @static
      * @description Returns the default JSON value for this node type.
      * @returns {Array} An empty array.
+     * @category JSON Operations
      */
     static jsonDefaultValue () {
         return [];
@@ -41,6 +44,7 @@
      * @description Generates a JSON schema for this node type.
      * @param {Set} refSet - A set of references.
      * @returns {Object} The JSON schema object.
+     * @category JSON Schema
      */
     static asJsonSchema (refSet) {
         assert(Type.isSet(refSet));
@@ -59,6 +63,7 @@
      * @description Generates a JSON schema for subnodes.
      * @param {Set} refSet - A set of references.
      * @returns {Object} The JSON schema object for subnodes.
+     * @category JSON Schema
      */
     jsonSchemaForSubnodes (refSet) { // NOTE: method on prototype, not class
         assert(refSet);
@@ -78,12 +83,14 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -91,6 +98,7 @@
     /**
      * @description Sets up the subnodes slot with a specific item type.
      * @param {Function} aClass - The class to use for subnodes.
+     * @category Subnode Management
      */
     setupSubnodesSlotWithItemType (aClass) {
         const slot = this.overrideSlot("subnodes");
@@ -103,6 +111,7 @@
     /**
      * @description Returns the subtitle for the node.
      * @returns {string} The subtitle.
+     * @category UI
      */
     subtitle () {
         if (this.thisClass().type() === "BMJsonArrayNode") {
@@ -117,6 +126,7 @@
      * @param {BMJsonNode} oldNode - The node to replace.
      * @param {BMJsonNode} newNode - The new node to insert.
      * @returns {BMJsonNode} The prepared new node.
+     * @category Subnode Management
      */
     replaceSubnodeWith (oldNode, newNode) {
         newNode = this.prepareSubnode(newNode);
@@ -128,6 +138,7 @@
      * @param {BMJsonNode} aSubnode - The subnode to add.
      * @param {number} anIndex - The index at which to add the subnode.
      * @returns {BMJsonNode} The added subnode.
+     * @category Subnode Management
      */
     addSubnodeAt (aSubnode, anIndex) {
         return super.addSubnodeAt(this.prepareSubnode(aSubnode), anIndex);
@@ -137,6 +148,7 @@
      * @description Prepares a subnode for addition to this node.
      * @param {BMJsonNode} aSubnode - The subnode to prepare.
      * @returns {BMJsonNode} The prepared subnode.
+     * @category Subnode Management
      */
     prepareSubnode (aSubnode) {
         aSubnode.setCanDelete(true);
@@ -158,6 +170,7 @@
     /**
      * @description Creates a JSON archive of this node.
      * @returns {Array} The JSON archive.
+     * @category JSON Operations
      */
     jsonArchive () {
         return this.subnodes().map(sn => sn.jsonArchive());
@@ -167,6 +180,7 @@
      * @description Creates a new subnode for a given JSON object.
      * @param {Object} json - The JSON object to create a subnode for.
      * @returns {BMJsonNode} The new subnode.
+     * @category Subnode Management
      */
     newSubnodeForJson (json) {
         let aNode = null;
@@ -183,6 +197,7 @@
      * @description Sets the JSON for this node.
      * @param {Array} json - The JSON array to set.
      * @returns {BMJsonArrayNode} This node.
+     * @category JSON Operations
      */
     setJson (json) {
         if (this.doesMatchJson(json)) {
@@ -239,6 +254,7 @@
     /**
      * @description Calculates the JSON representation of this node.
      * @returns {Array} The JSON representation.
+     * @category JSON Operations
      */
     calcJson () {
         return this.subnodes().map(sn => sn.asJson());
@@ -247,6 +263,7 @@
     /**
      * @description Gets the BMDataUrl for this node.
      * @returns {BMDataUrl} The BMDataUrl object.
+     * @category Data Operations
      */
     getBMDataUrl () {
         const json = this.jsonArchive();

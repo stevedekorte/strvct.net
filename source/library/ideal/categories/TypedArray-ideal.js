@@ -20,6 +20,9 @@ Type.typedArrayTypeNames().forEach((name) => {
     */
 
     Object.defineSlots(aClass.prototype, { // instance methods
+        /**
+         * @category Encoding
+         */
         base64Encoded: function(aRecord, aStore) {
             return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
         },
@@ -28,10 +31,16 @@ Type.typedArrayTypeNames().forEach((name) => {
 });
 
 Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
+    /**
+     * @category Encoding
+     */
     base64Encoded: function (aRecord, aStore) {
         return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
     },
 
+    /**
+     * @category Cryptography
+     */
     promiseSha256Digest: function () {
         return crypto.subtle.digest("SHA-256", this);
      }

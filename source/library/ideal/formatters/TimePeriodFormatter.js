@@ -23,6 +23,8 @@
          * The number of seconds to format.
          * @type {number}
          * @default 0
+         * @member {number}
+         * @category Data
          */
         {
             const slot = this.newSlot("valueInSeconds", 0);
@@ -32,6 +34,8 @@
         /**
          * A map of time periods to their abbreviated forms.
          * @type {Map<string, string>}
+         * @member {Map<string, string>}
+         * @category Configuration
          */
         {
             const slot = this.newSlot("periodsMap", new Map(Object.entries({ 
@@ -49,6 +53,8 @@
     /**
      * Formats the time period into a compact string representation.
      * @returns {string} The formatted time period string.
+     * @method
+     * @category Formatting
      */
     formattedValue () {
         const periods = this.periodsMap();

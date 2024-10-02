@@ -15,6 +15,7 @@
     {
       /**
        * @member {Map} codesMap - A map of HTTP response codes and their corresponding information.
+       * @category Data Storage
        */
       const slot = this.newSlot("codesMap", null);
       slot.setSlotType("Map");
@@ -41,6 +42,7 @@
    * Creates a Map of HTTP response codes and their corresponding information.
    * @returns {Map} A Map object containing HTTP response codes as keys and their corresponding information as values.
    * @private
+   * @category Data Processing
    */
   codesAsMap() {
     const m = new Map();
@@ -57,6 +59,7 @@
    * @param {number} code - The HTTP response code.
    * @returns {Object} An object containing the type and description of the HTTP response code, or undefined if the code is not found.
    * @static
+   * @category Data Retrieval
    */
   infoForCode(code) {
     const info = this.codesMap().get("" + code);
@@ -69,6 +72,7 @@
    * @returns {string} A string containing the HTTP response code, type, and description.
    * @static
    * @description Retrieves the information for a given HTTP response code and formats it as a string.
+   * @category Formatting
    */
   stringForCode(code) {
     const info = this.infoForCode(code);
@@ -84,6 +88,7 @@
    * @returns {string} A string containing the type and description of the HTTP response code.
    * @static
    * @description Retrieves the information for a given HTTP response code and formats it as a shorter string.
+   * @category Formatting
    */
   shortStringForCode(code) {
     const info = this.infoForCode(code);
@@ -98,6 +103,7 @@
    * @returns {Object} A JSON object containing HTTP response codes as keys and their corresponding information as values.
    * @static
    * @private
+   * @category Data Storage
    */
   jsonCodes() {
     return {

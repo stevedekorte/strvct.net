@@ -15,6 +15,7 @@
      * @description Checks if the given MIME type can be opened.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} True if the MIME type can be opened, false otherwise.
+     * @category File Handling
      */
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
@@ -23,11 +24,13 @@
 
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         {
             /**
              * @member {Class} dataViewClass
+             * @category View
              */
             const slot = this.newSlot("dataViewClass", SceneView);
             slot.setSlotType("Class");
@@ -37,6 +40,7 @@
     /**
      * @description Initializes the SceneViewWellFieldTile instance.
      * @returns {SceneViewWellFieldTile} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -55,6 +59,7 @@
     /**
      * @description Creates the value view for the SceneViewWellFieldTile.
      * @returns {Object} The created value view instance.
+     * @category View
      */
     createValueView () {
         const instance = this.dataViewClass().clone();
@@ -65,6 +70,7 @@
     /**
      * @description Synchronizes the SceneViewWellFieldTile with its node.
      * @returns {SceneViewWellFieldTile} The synchronized instance.
+     * @category Synchronization
      */
     syncFromNode () {
         super.syncFromNode()
@@ -82,6 +88,7 @@
     /**
      * @description Synchronizes the SceneViewWellFieldTile to its node.
      * @returns {SceneViewWellFieldTile} The synchronized instance.
+     * @category Synchronization
      */
     syncToNode () {
         const field = this.node()
@@ -103,6 +110,7 @@
     /**
      * @description Gets the data URL of the value view.
      * @returns {string|null} The data URL of the value view.
+     * @category Data
      */
     dataUrl () {
         return this.valueView().dataUrl()
@@ -111,6 +119,7 @@
     /**
      * @description Checks if the SceneViewWellFieldTile is empty.
      * @returns {boolean} True if empty, false otherwise.
+     * @category State
      */
     isEmpty () {
         return Type.isNull(this.dataUrl())

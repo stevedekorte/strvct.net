@@ -13,6 +13,7 @@
     
     /**
      * @description Initializes prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
@@ -20,6 +21,7 @@
     /**
      * @description Initializes the TouchListener instance.
      * @returns {TouchListener} The initialized TouchListener instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -29,6 +31,7 @@
     /**
      * @description Sets up the touch event listeners.
      * @returns {TouchListener} The TouchListener instance.
+     * @category Event Handling
      */
     setupListeners () {
         this.addEventNameAndMethodName("touchstart",  "onTouchStart").setIsUserInteraction(true)

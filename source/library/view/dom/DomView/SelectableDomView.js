@@ -13,10 +13,12 @@
     
     /**
      * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Range} storedSelectionRange - The stored selection range.
+         * @category Selection
          */
         {
             const slot = this.newSlot("storedSelectionRange", null);
@@ -27,6 +29,7 @@
     /**
      * @description Gets the selected text.
      * @returns {string} The selected text or an empty string if no selection.
+     * @category Selection
      */
     getSelectedText () {
         if (this.containsSelection()) { // this.isFocused() should be true
@@ -41,6 +44,7 @@
     /**
      * @description Stores the current selection range.
      * @returns {boolean} True if a range was stored, false otherwise.
+     * @category Selection
      */
     storeSelectionRange () {
         const range = this.getSelectionRange();
@@ -55,6 +59,7 @@
     /**
      * @description Restores the previously stored selection range.
      * @returns {boolean} True if a range was restored, false otherwise.
+     * @category Selection
      */
     restoreSelectionRange () {
         if (this.storedSelectionRange()) {
@@ -70,6 +75,7 @@
     /**
      * @description Gets the current window selection range.
      * @returns {Range|null} The current window selection range or null if not available.
+     * @category Selection
      */
     getWindowSelectionRange () {
         if (window.getSelection) {
@@ -88,6 +94,7 @@
      * @description Sets the window selection range.
      * @param {Range} range - The range to set as the window selection.
      * @returns {SelectableDomView} The instance for method chaining.
+     * @category Selection
      */
     setWindowSelectionRange (range) {
         if (range) {
@@ -105,6 +112,7 @@
     /**
      * @description Gets the current selection range if it's contained within this view.
      * @returns {Range|null} The current selection range or null if not contained.
+     * @category Selection
      */
     getSelectionRange () {
         if (!this.containsSelection()) {
@@ -118,6 +126,7 @@
      * @description Sets the selection range if it's contained within this view.
      * @param {Range} range - The range to set as the selection.
      * @returns {SelectableDomView|null} The instance for method chaining or null if not contained.
+     * @category Selection
      */
     setSelectionRange (range) {
         if (!this.isContainedBySelectionRange(range)) {
@@ -131,6 +140,7 @@
     /**
      * @description Places the caret at the end of the content.
      * @returns {SelectableDomView} The instance for method chaining.
+     * @category Caret
      */
     placeCaretAtEnd () {
         const el = this.element()
@@ -155,6 +165,7 @@
     /**
      * @description Moves the caret to the end of the content.
      * @returns {SelectableDomView} The instance for method chaining.
+     * @category Caret
      */
     moveCaretToEnd () {
         const contentEditableElement = this.element()
@@ -181,6 +192,7 @@
 
     /**
      * @description Selects all content within the view.
+     * @category Selection
      */
     selectAll () {
         if (document.selection) {
@@ -200,6 +212,7 @@
      * @description Replaces the selected text with the provided replacement text.
      * @param {string} replacementText - The text to replace the selection with.
      * @returns {SelectableDomView} The instance for method chaining.
+     * @category Selection
      */
      replaceSelectedText (replacementText) {
         let range;
@@ -231,6 +244,7 @@
     /**
      * @description Gets the current caret position.
      * @returns {number} The caret position.
+     * @category Caret
      */
     getCaretPosition () {
         const editableElement = this.element()
@@ -260,6 +274,7 @@
     /**
      * @description Sets the caret position.
      * @param {number} caretPos - The desired caret position.
+     * @category Caret
      */
     setCaretPosition (caretPos) {
         const e = this.element();
@@ -284,6 +299,7 @@
     /**
      * @description Clears the selection if it's contained within this view.
      * @returns {SelectableDomView} The instance for method chaining.
+     * @category Selection
      */
     clearSelection () { // only clear it if the selection is in this view
         if (!this.containsSelection()) {
@@ -302,6 +318,7 @@
      * @description Checks if the given range is contained within this view.
      * @param {Range} range - The range to check.
      * @returns {boolean} True if the range is contained, false otherwise.
+     * @category Selection
      */
     isContainedBySelectionRange (range) {
         if (range) {
@@ -314,6 +331,7 @@
     /**
      * @description Checks if this view is in the window selection.
      * @returns {boolean} True if the view is in the window selection, false otherwise.
+     * @category Selection
      */
     isInWindowSelection () {
         const selection = window.getSelection();
@@ -324,6 +342,7 @@
     /**
      * @description Checks if this view contains the current selection.
      * @returns {boolean} True if the view contains the selection, false otherwise.
+     * @category Selection
      */
     containsSelection () {
         const selection = window.getSelection();

@@ -11,6 +11,7 @@
 
     /**
      * Prepares the object for retirement by removing notification observers and scheduled actions.
+     * @category Lifecycle
      */
     prepareToRetire () { 
         // opportunity to remove notification observers, event listeners, etc
@@ -23,6 +24,7 @@
  
     /**
      * Removes all notification observations for this object.
+     * @category Notification
      */
     removeAllNotificationObservations () {
         if (getGlobalThis()["BMNotificationCenter"]) {
@@ -32,6 +34,7 @@
  
     /**
      * Removes all scheduled actions for this object.
+     * @category Scheduling
      */
     removeScheduledActions () {
         if (getGlobalThis()["SyncScheduler"]) {
@@ -45,6 +48,7 @@
      * Watches a specific sender for all notifications.
      * @param {Object} sender - The sender to watch.
      * @returns {Object} The observation object.
+     * @category Notification
      */
     watchSender (sender) {
         const obs = BMNotificationCenter.shared().newObservation()
@@ -60,6 +64,7 @@
      * @param {string} aNoteName - The name of the notification to watch for.
      * @param {Object} sender - The sender to watch.
      * @returns {Object} The observation object.
+     * @category Notification
      */
     watchForNoteFrom (aNoteName, sender) {
         const obs = BMNotificationCenter.shared().newObservation()
@@ -75,6 +80,7 @@
      * Watches for a specific notification from any sender.
      * @param {string} aNoteName - The name of the notification to watch for.
      * @returns {Object} The observation object.
+     * @category Notification
      */
     watchForNote (aNoteName) {
         const obs = BMNotificationCenter.shared().newObservation()
@@ -90,6 +96,7 @@
      * Watches for a specific notification once from any sender.
      * @param {string} aNoteName - The name of the notification to watch for.
      * @returns {Object} The observation object.
+     * @category Notification
      */
     watchOnceForNote (aNoteName) {
         return this.watchForNote(aNoteName).setIsOneShot(true)
@@ -100,6 +107,7 @@
      * @param {string} aNoteName - The name of the notification to watch for.
      * @param {Object} sender - The sender to watch.
      * @returns {Object} The observation object.
+     * @category Notification
      */
     watchOnceForNoteFrom (aNoteName, sender) {
         return this.watchOnceForNote(aNoteName).setSender(sender) // does it work to set sender after it's started watching?
@@ -109,6 +117,7 @@
      * Creates a new notification with this object as the sender.
      * @param {string} aNoteName - The name of the notification.
      * @returns {Object} The new notification object.
+     * @category Notification
      */
     newNoteNamed (aNoteName) {
         const note = BMNotificationCenter.shared().newNote()
@@ -121,6 +130,7 @@
      * Posts a new notification with this object as the sender.
      * @param {string} aNoteName - The name of the notification.
      * @returns {Object} The posted notification object.
+     * @category Notification
      */
     postNoteNamed (aNoteName) {
         const note = this.newNoteNamed(aNoteName)
@@ -134,6 +144,7 @@
      * @param {string} aMethodName - The name of the method to schedule.
      * @param {number} milliseconds - The delay in milliseconds.
      * @returns {*} The result of scheduling the method.
+     * @category Scheduling
      */
     scheduleSelfFor (aMethodName, milliseconds) {
         return SyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
@@ -144,6 +155,7 @@
     /**
      * Gets the objects that are watching this object for notifications.
      * @returns {Array} An array of objects watching this object.
+     * @category Notification
      */
     watchers () {
         // objects we are watching for notifications from 
@@ -153,6 +165,7 @@
     /**
      * Gets the observations registered by this object.
      * @returns {Array} An array of observations registered by this object.
+     * @category Notification
      */
     ourObservations () {
         // observations we have registered
@@ -162,6 +175,7 @@
     /**
      * Gets the specific senders this object is watching.
      * @returns {Array} An array of unique senders this object is watching.
+     * @category Notification
      */
     specificSendersWatched () {
         // senders we are watching

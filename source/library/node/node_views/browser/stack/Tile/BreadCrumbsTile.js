@@ -17,6 +17,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} path
+         * @category Data
          */
         {
             const slot = this.newSlot("path", null);
@@ -25,6 +26,7 @@
 
         /**
          * @member {String} separatorString
+         * @category Display
          */
         {
             const slot = this.newSlot("separatorString", "/");
@@ -33,6 +35,7 @@
 
         /**
          * @member {BMObservation} onStackViewPathChangeObs
+         * @category Observation
          */
         {
             const slot = this.newSlot("onStackViewPathChangeObs", null);
@@ -41,6 +44,7 @@
 
         /**
          * @member {Array} crumbObservations
+         * @category Observation
          */
         {
             const slot = this.newSlot("crumbObservations", null);
@@ -51,6 +55,7 @@
     /**
      * @description Initializes the BreadCrumbsTile
      * @returns {BreadCrumbsTile}
+     * @category Initialization
      */
     init () {
         super.init();
@@ -66,6 +71,7 @@
     /**
      * @description Makes the orientation down and sets the width to 100%
      * @returns {BreadCrumbsTile}
+     * @category Layout
      */
     makeOrientationDown () {
         super.makeOrientationDown()
@@ -77,6 +83,7 @@
     /**
      * @description Gets the root stack view
      * @returns {StackView|null}
+     * @category View Hierarchy
      */
     rootStackView () {
         return this.parentView() ? this.parentView().stackView().rootStackView() : null
@@ -85,6 +92,7 @@
     /**
      * @description Gets the target stack view
      * @returns {StackView|null}
+     * @category View Hierarchy
      */
     targetStackView () {
         const col = this.column()
@@ -100,6 +108,7 @@
 
     /**
      * @description Watches the root stack view
+     * @category Observation
      */
     watchRootStackView () {
         const obs = this.onStackViewPathChangeObs()
@@ -117,6 +126,7 @@
     /**
      * @description Gets the path nodes
      * @returns {Array}
+     * @category Data
      */
     pathNodes () {
         if (this.targetStackView()) {
@@ -128,6 +138,7 @@
 
     /**
      * @description Synchronizes the path to the stack
+     * @category Synchronization
      */
     syncPathToStack () {
         this.scheduleMethod("setupPathViews")
@@ -137,6 +148,7 @@
      * @description Sets the height of the tile
      * @param {string|number} v - The height value
      * @returns {BreadCrumbsTile}
+     * @category Layout
      */
     setHeight (v) {
         if (v === "100%") {
@@ -150,6 +162,7 @@
      * @param {*} oldValue - The old value of the slot
      * @param {*} newValue - The new value of the slot
      * @returns {BreadCrumbsTile}
+     * @category Event Handling
      */
     didUpdateSlotParentView (oldValue, newValue) {
         super.didUpdateSlotParentView(oldValue, newValue)
@@ -163,6 +176,7 @@
     /**
      * @description Handles the stack view path change notification
      * @param {*} aNote - The notification object
+     * @category Event Handling
      */
     onStackViewPathChange (aNote) {
         this.syncPathToStack()
@@ -172,6 +186,7 @@
      * @description Handles the click event on a path component
      * @param {*} aPathComponentView - The clicked path component view
      * @returns {BreadCrumbsTile}
+     * @category Event Handling
      */
     onClickPathComponent (aPathComponentView) {
         const nodePathArray = aPathComponentView.info()
@@ -189,6 +204,7 @@
      * @description Handles the window resize event
      * @param {Event} event - The resize event
      * @returns {BreadCrumbsTile}
+     * @category Event Handling
      */
     onWindowResize (event) {
         this.updateCompaction()
@@ -198,6 +214,7 @@
     /**
      * @description Handles the click event on the back button
      * @param {*} backButton - The back button object
+     * @category Event Handling
      */
     onClickBackButton (backButton) {
         const crumb = this.previousCrumb()
@@ -209,6 +226,7 @@
     /**
      * @description Gets the previous crumb
      * @returns {*|null}
+     * @category Data
      */
     previousCrumb () {
         const crumbs = this.crumbs().select(crumb => crumb.title() !== "/")
@@ -221,6 +239,7 @@
     /**
      * @description Gets all the crumbs
      * @returns {Array}
+     * @category Data
      */
     crumbs () {
         return this.subviews().first().subviews()
@@ -229,6 +248,7 @@
     /**
      * @description Gets the hidden crumbs
      * @returns {Array}
+     * @category Data
      */
     hiddenCrumbs () {
         return this.crumbs().detect(sv => sv._isCrumb && sv.isDisplayHidden())
@@ -237,6 +257,7 @@
     /**
      * @description Gets the last hidden crumb
      * @returns {*|null}
+     * @category Data
      */
     lastHiddenCrumb () {
         return this.hiddenCrumbs().last()
@@ -245,6 +266,7 @@
     /**
      * @description Creates a new unpadded button
      * @returns {ButtonView}
+     * @category View Creation
      */
     newUnpaddedButton () {
         const v = ButtonView.clone()
@@ -263,6 +285,7 @@
      * @description Creates a button for a given name
      * @param {string} aName - The name for the button
      * @returns {ButtonView}
+     * @category View Creation
      */
     buttonForName (aName) {
         const v = this.newUnpaddedButton()
@@ -276,6 +299,7 @@
     /**
      * @description Creates a new back button
      * @returns {ButtonView}
+     * @category View Creation
      */
     newBackButton () {
         const v = this.newUnpaddedButton()
@@ -290,6 +314,7 @@
     /**
      * @description Creates a new separator view
      * @returns {ButtonView}
+     * @category View Creation
      */
     newSeparatorView () {
         const v = this.newUnpaddedButton()
@@ -305,6 +330,7 @@
      * @param {number} i - The index of the node
      * @param {Array} pathNodes - The array of path nodes
      * @returns {ButtonView}
+     * @category View Creation
      */
     crumbViewForNode (node, i, pathNodes) {
         const name = node.title()
@@ -320,6 +346,7 @@
     /**
      * @description Creates new path component views
      * @returns {Array}
+     * @category View Creation
      */
     newPathComponentViews () {
         const pathNodes = this.pathNodes()
@@ -331,6 +358,7 @@
     /**
      * @description Sets up the path views
      * @returns {BreadCrumbsTile}
+     * @category View Setup
      */
     setupPathViews () {
         const views = this.newPathComponentViews()
@@ -348,6 +376,7 @@
      * @description Calculates the width of given views
      * @param {Array} views - The array of views
      * @returns {number}
+     * @category Layout
      */
     widthOfViews (views) {
         return views.sum(v => v.calcWidth())
@@ -356,6 +385,7 @@
     /**
      * @description Gets the crumb views
      * @returns {Array}
+     * @category Data
      */
     crumbViews () {
         return this.contentView().subviews()
@@ -365,6 +395,7 @@
      * @description Calculates the sum of path widths
      * @returns {number}
      * @private
+     * @category Layout
      */
     sumOfPathWidths () {
         const rightMargin = 15
@@ -380,6 +411,7 @@
 
     /**
      * @description Updates the compaction of the bread crumbs
+     * @category Layout
      */
     updateCompaction () {
         const padding = 20
@@ -413,6 +445,7 @@
     /**
      * @description Gets the desired width
      * @returns {number}
+     * @category Layout
      */
     desiredWidth () {
         return Number.MAX_VALUE
@@ -421,6 +454,7 @@
     /**
      * @description Handles the updated node notification
      * @param {*} aNote - The notification object
+     * @category Event Handling
      */
     onUpdatedNode (aNote) {
         this.scheduleMethod("setupPathViews")
@@ -429,6 +463,7 @@
     /**
      * @description Watches the path nodes
      * @returns {BreadCrumbsTile}
+     * @category Observation
      */
     watchPathNodes () {
         this.unwatchPathNodes()
@@ -442,6 +477,7 @@
     /**
      * @description Unwatches the path nodes
      * @returns {BreadCrumbsTile}
+     * @category Observation
      */
     unwatchPathNodes () {
         this.crumbObservations().forEach(obs => {

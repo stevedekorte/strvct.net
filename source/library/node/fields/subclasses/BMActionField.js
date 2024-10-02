@@ -12,6 +12,7 @@
     /**
      * @static
      * @returns {boolean} True if the class is available as a node primitive
+     * @category Availability
      */
     static availableAsNodePrimitive () {
         return true
@@ -19,11 +20,13 @@
     
     /**
      * @description Initializes the prototype slots for the class
+     * @category Initialization
      */
     initPrototypeSlots () {
 
         /**
          * @member {string} title - The title of the action field
+         * @category Configuration
          */
         {
             const slot = this.overrideSlot("title", null);
@@ -35,6 +38,7 @@
 
         /**
          * @member {string} methodName - The name of the method to be called
+         * @category Configuration
          */
         {
             const slot = this.newSlot("methodName", null);
@@ -44,6 +48,7 @@
 
         /**
          * @member {Object} info - Additional information for the action field
+         * @category Configuration
          */
         {
             const slot = this.newSlot("info", null);
@@ -54,6 +59,7 @@
 
     /**
      * @description Initializes the prototype
+     * @category Initialization
      */
     initPrototype () {
         // inherits isEnabled and isEditable slots from Field
@@ -68,6 +74,7 @@
      * @description Sets the title of the action field
      * @param {string} s - The title to set
      * @returns {BMActionField} This instance
+     * @category Configuration
      */
     setTitle (s) {
         super.setTitle(s)
@@ -77,6 +84,7 @@
     /**
      * @description Returns a summary of the action field
      * @returns {string} An empty string
+     * @category Information
      */
     summary () {
         return ""
@@ -85,6 +93,7 @@
     /**
      * @description Gets the target of the action
      * @returns {Object} The target object
+     * @category Action
      */
     target () {
         const t = this._target;
@@ -94,6 +103,7 @@
     /**
      * @description Checks if the action can be performed
      * @returns {boolean} True if the action can be performed
+     * @category Action
      */
     canDoAction () {
         const t = this.target()
@@ -104,6 +114,7 @@
     /**
      * @description Performs the action
      * @returns {BMActionField} This instance
+     * @category Action
      */
     doAction () {
         if (this.canDoAction()) {
@@ -123,6 +134,7 @@
 
     /**
      * @description Synchronizes the action field with its target
+     * @category Synchronization
      */
     syncFromTarget () {
         super.syncFromTarget()
@@ -141,6 +153,7 @@
     /**
      * @description Prepares the action field for access
      * @returns {BMActionField} This instance
+     * @category Lifecycle
      */
     prepareToAccess () {
         super.prepareToAccess()
@@ -152,6 +165,7 @@
      * @description Sets the action info
      * @param {Object} infoDict - The action info dictionary
      * @returns {BMActionField} This instance
+     * @category Configuration
      */
     setActionInfo (infoDict) {
         {
@@ -196,6 +210,7 @@
     /**
      * @description Gets the action info
      * @returns {Object} The action info dictionary
+     * @category Information
      */
     actionInfo () {
         return {

@@ -19,6 +19,7 @@
     /**
      * @description Initializes prototype slots
      * @private
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -27,6 +28,7 @@
     /**
      * @description Initializes the TopEdgePanGestureRecognizer
      * @returns {TopEdgePanGestureRecognizer} The initialized instance
+     * @category Initialization
      */
     init () {
         super.init()

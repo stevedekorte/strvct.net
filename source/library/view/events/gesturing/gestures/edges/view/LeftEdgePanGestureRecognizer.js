@@ -18,6 +18,7 @@
     
     /**
      * @description Initializes prototype slots
+     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -26,6 +27,7 @@
     /**
      * @description Initializes the LeftEdgePanGestureRecognizer
      * @returns {LeftEdgePanGestureRecognizer} The initialized instance
+     * @category Initialization
      */
     init () {
         super.init()

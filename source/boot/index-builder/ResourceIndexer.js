@@ -1,4 +1,3 @@
-
 /*
 
     ResourceIndexer
@@ -26,25 +25,40 @@ const nodePath = require("path");
 const process = require('process');
 
 class Folder {
+    /**
+     * @category Initialization
+     */
     init () {
         this._path = null
         this._isDebugging = true
     }
 
+    /**
+     * @category Debugging
+     */
     isDebugging () {
         return this._isDebugging
     }
 
+    /**
+     * @category Debugging
+     */
     debugLog (s) {
         if (this.isDebugging()) {
             console.log(s)
         }
     }
 
+    /**
+     * @category Path Management
+     */
     path () {
         return this._path
     }
 
+    /**
+     * @category Path Management
+     */
     setPath (aString) {
         this._path = aString
         return this
@@ -52,6 +66,9 @@ class Folder {
 
     // --- general purpose ---
 
+    /**
+     * @category File Operations
+     */
     fileNames () {
         const allNames = fs.readdirSync(this.path()).filter(name => name !== ".DS_Store")
         const names = allNames.filter(name => {
@@ -62,6 +79,9 @@ class Folder {
         return names
     }
 
+    /**
+     * @category Folder Operations
+     */
     subfolderNames () {
         const allNames = fs.readdirSync(this.path()).filter(name => name !== ".DS_Store")
         const names = allNames.filter(name => {
@@ -72,6 +92,9 @@ class Folder {
         return names
     }
 
+    /**
+     * @category Folder Operations
+     */
     subfolders () {
         return this.subfolderNames().map(name => {
             const itemPath = nodePath.join(this.path(), name)
@@ -99,6 +122,9 @@ class Folder {
 
     // -- imports specific ---
 
+    /**
+     * @category Resource Management
+     */
     resourceFileNames () {
         let files = this.fileNames()
         files = files.filter(name => name.indexOf(".") !== 0) // doesn't begin with dot
@@ -107,6 +133,9 @@ class Folder {
         return files
     }
 
+    /**
+     * @category Import Generation
+     */
     recursivelyCreateImports () {
         const isRecursive = true
         this.writeRecursiveImportFile()
@@ -120,6 +149,9 @@ class Folder {
     }
     */
 
+    /**
+     * @category Import Generation
+     */
     writeRecursiveImportFile () {
         const fileNames = this.resourceFileNames()
         const folderImports = this.subfolderNames().map(name => {
@@ -130,6 +162,9 @@ class Folder {
         return this
     }
 
+    /**
+     * @category Import Generation
+     */
     setImportsArray (anArray) {
         const jsonString = JSON.stringify(anArray, 2, 2)
         const path = nodePath.join(this.path(), "_imports.json")
@@ -151,5 +186,3 @@ args.forEach(dirPathCommandLineArg => {
 })
 //process.exitCode = 0 // vscode wants an explicit exit code for prelaunch tasks
 //process.exit(); // this may stop process before file ops complete
-
-

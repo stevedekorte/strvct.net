@@ -13,12 +13,14 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype with default settings.
+     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(true)
@@ -35,6 +37,7 @@
      * @description Finds a theme class by its name.
      * @param {string} name - The name of the theme class to find.
      * @returns {BMThemeClass|undefined} The found theme class or undefined if not found.
+     * @category Search
      */
     themeClassNamed (name) {
         return this.subnodes().detect(sn => sn.title() === name)

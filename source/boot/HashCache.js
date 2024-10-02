@@ -13,22 +13,26 @@
 (class HashCache extends Base {
     /**
      * @description Initializes the prototype slots for the HashCache class.
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {IndexedDBFolder|null} idb - The IndexedDBFolder instance used for storage.
+         * @category Storage
          */
         this.newSlot("idb", null);
     }
   
     /**
      * @description Initializes the prototype for the HashCache class.
+     * @category Initialization
      */
     initPrototype () {
     }
 
     /**
      * @description Initializes the HashCache instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -42,6 +46,7 @@
      * @description Sets the path for the HashCache.
      * @param {string} aString - The path to set.
      * @returns {HashCache} - The current HashCache instance.
+     * @category Configuration
      */
     setPath (aString) {
         this.idb().setPath(aString)
@@ -52,6 +57,7 @@
      * @description Checks if a hash exists in the cache.
      * @param {string} hash - The hash to check.
      * @returns {Promise<boolean>} - A promise that resolves to true if the hash exists, false otherwise.
+     * @category Query
      */
     promiseHasHash (hash) {
         return this.idb().promiseHasKey(hash)
@@ -60,6 +66,7 @@
     /**
      * @description Returns the count of items in the cache.
      * @returns {Promise<number>} - A promise that resolves to the number of items in the cache.
+     * @category Query
      */
     async promiseCount () {
         //debugger;
@@ -70,6 +77,7 @@
      * @description Asserts that a value is valid.
      * @param {*} v - The value to check.
      * @throws {Error} Throws an error if the value is invalid.
+     * @category Validation
      */
     assertValidValue (v) {
         if (typeof(v) !== "undefined") {
@@ -85,6 +93,7 @@
      * @description Checks if a key exists in the cache.
      * @param {string} key - The key to check.
      * @returns {Promise<boolean>} - A promise that resolves to true if the key exists, false otherwise.
+     * @category Query
      */
     promiseHasKey (key) {
         //console.log("promiseHasKey(" + key + ")");
@@ -97,6 +106,7 @@
      * @param {string} url - The URL to load from if the hash is not found.
      * @returns {Promise<*>} - A promise that resolves to the content.
      * @throws {Error} Throws an error if the hash is not provided or if the URL cannot be loaded.
+     * @category Data Retrieval
      */
     async promiseContentForHashOrUrl (hash, url) {
         if (!hash) {
@@ -120,6 +130,7 @@
      * @param {string} hash - The hash to use as the key.
      * @returns {Promise<*>} - A promise that resolves to the loaded data.
      * @throws {Error} Throws an error if the URL cannot be loaded.
+     * @category Data Retrieval
      */
     async promiseLoadUrlAndWriteToHash (url, hash) {
         const resource = await UrlResource.with(url).promiseLoad();
@@ -138,6 +149,7 @@
      * @description Retrieves the value for a given hash.
      * @param {string} hash - The hash to retrieve the value for.
      * @returns {Promise<*>} - A promise that resolves to the value associated with the hash.
+     * @category Data Retrieval
      */
     promiseAt (hash) {
         return this.idb().promiseAt(hash);
@@ -149,6 +161,7 @@
      * @param {*} data - The data to store.
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
      * @throws {Error} Throws an error if the hash key does not match the hash of the value.
+     * @category Data Storage
      */
     async promiseAtPut (hash, data) {
         this.assertValidValue(data);
@@ -175,6 +188,7 @@
      * @description Generates a hash key for the given data.
      * @param {string|Uint8Array} data - The data to hash.
      * @returns {Promise<string>} - A promise that resolves to the hash key.
+     * @category Utility
      */
     async promiseHashKeyForData (data) {
         if (typeof(data) === "string") {
@@ -189,6 +203,7 @@
     /**
      * @description Clears all data from the cache.
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+     * @category Data Management
      */
     promiseClear () {
         //debugger
@@ -198,6 +213,7 @@
     /**
      * @description Removes all invalid records from the cache.
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+     * @category Data Management
      */
     async removeInvalidRecords () {
         const keys = await this.idb().promiseAllKeys();
@@ -212,6 +228,7 @@
      * @description Verifies a key and deletes it if invalid.
      * @param {string} key - The key to verify.
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+     * @category Data Management
      */
     async promiseVerifyOrDeleteKey (key) {
         const value = this.idb().promiseAt(key);

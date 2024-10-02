@@ -27,6 +27,7 @@
     initPrototypeSlots () {
         /**
          * @member {Number} timePeriod - milliseconds
+         * @category Configuration
          */
         {
             const slot = this.newSlot("timePeriod", 500);
@@ -36,6 +37,7 @@
         /**
          * @member {Number} timeoutId
          * @private
+         * @category Internal
          */
         {
             const slot = this.newSlot("timeoutId", null);
@@ -47,6 +49,7 @@
     /**
      * @description Initializes the LongPressGestureRecognizer
      * @returns {LongPressGestureRecognizer}
+     * @category Initialization
      */
     init () {
         super.init();
@@ -64,6 +67,7 @@
     /**
      * @description Starts the timer for long press recognition
      * @returns {LongPressGestureRecognizer}
+     * @category Timer Management
      */
     startTimer () {
         if (this.hasTimer()) {
@@ -79,6 +83,7 @@
     /**
      * @description Stops the timer for long press recognition
      * @returns {LongPressGestureRecognizer}
+     * @category Timer Management
      */
     stopTimer () {
         if (this.hasTimer()) {
@@ -91,6 +96,7 @@
     /**
      * @description Checks if the timer is active
      * @returns {boolean}
+     * @category Timer Management
      */
     hasTimer () {
         return this.timeoutId() !== null
@@ -100,6 +106,7 @@
     
     /**
      * @description Handles the long press event
+     * @category Gesture Recognition
      */
     onLongPress () {
         this.setTimeoutId(null)
@@ -119,6 +126,7 @@
     /**
      * @description Handles the down event
      * @param {Event} event - The down event
+     * @category Event Handling
      */
     onDown (event) {
         super.onDown(event)
@@ -136,6 +144,7 @@
     /**
      * @description Handles the move event
      * @param {Event} event - The move event
+     * @category Event Handling
      */
     onMove (event) {
         super.onMove(event)
@@ -153,6 +162,7 @@
     /**
      * @description Handles the up event
      * @param {Event} event - The up event
+     * @category Event Handling
      */
     onUp (event) {
         super.onUp(event)
@@ -165,6 +175,7 @@
     /**
      * @description Cancels the long press gesture
      * @returns {LongPressGestureRecognizer}
+     * @category Gesture Control
      */
     cancel () {
         if (this.hasTimer()) {

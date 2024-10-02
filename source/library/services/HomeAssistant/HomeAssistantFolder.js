@@ -12,6 +12,7 @@
 (class HomeAssistantFolder extends BMSummaryNode {
   /**
    * @description Initializes the prototype slots for the HomeAssistantFolder.
+   * @category Initialization
    */
   initPrototypeSlots () {
     this.setTitle("folder");
@@ -27,6 +28,7 @@
 
   /**
    * @description Performs final initialization tasks for the HomeAssistantFolder.
+   * @category Initialization
    */
   finalInit () {
     super.finalInit();

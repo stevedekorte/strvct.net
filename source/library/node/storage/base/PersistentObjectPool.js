@@ -14,6 +14,7 @@
     /**
      * @static
      * @description Initializes the class.
+     * @category Initialization
      */
     static initClass () {
         this.setIsSingleton(true);
@@ -21,12 +22,14 @@
     
     /**
      * @description Initializes the prototype slots.
+     * @category Initialization
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype.
+     * @category Initialization
      */
     initPrototype () {
     }
@@ -35,6 +38,7 @@
      * @static
      * @description Returns the shared pool instance.
      * @returns {PersistentObjectPool} The shared pool instance.
+     * @category Instance Management
      */
     static sharedPool () {
         return this.shared();
@@ -43,6 +47,7 @@
     /**
      * @description Initializes the PersistentObjectPool.
      * @returns {PersistentObjectPool} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init();
@@ -55,6 +60,7 @@
     /**
      * @description Throws an error as synchronous open is not available.
      * @throws {Error} Indicates that synchronous open is not available.
+     * @category Operation
      */
     open () {
         throw new Error(this.type() + " synchronous open not available - use promiseOpen()");
@@ -63,6 +69,7 @@
     /**
      * @description Performs a self-test asynchronously.
      * @returns {Promise<void>}
+     * @category Testing
      */
     async promiseSelfTest () {
         console.log(this.type() + " --- self test start --- ");
@@ -74,6 +81,7 @@
     /**
      * @description Performs a self-test on the given store.
      * @param {PersistentObjectPool} store - The store to test.
+     * @category Testing
      */
     selfTestOnStore (store) {
         store.rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
@@ -91,6 +99,7 @@
      * @static
      * @description Schedules a self-test to run after a delay.
      * @returns {Promise<void>}
+     * @category Testing
      */
     static async promiseSelfTest () {
         this.addTimeout(() => { 

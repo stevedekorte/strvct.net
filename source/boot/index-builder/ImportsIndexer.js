@@ -48,27 +48,44 @@ const process = require('process');
 
 
 class IndexBuilder { 
+    /**
+     * @constructor
+     * @category Initialization
+     */
     constructor () {
         this._paths = [] 
         this._isDebugging = true
     }
 
+    /**
+     * @returns {boolean}
+     * @category Debugging
+     */
     isDebugging () {
         return this._isDebugging
     }
 
+    /**
+     * @param {string} s
+     * @category Debugging
+     */
     debugLog (s) {
         if (this.isDebugging()) {
             console.log(s)
         }
     }
 
+    /**
+     * @returns {string[]}
+     * @category Data Access
+     */
     paths () {
         return this._paths
     }
 
-    // --- build ---
-
+    /**
+     * @category Execution
+     */
     run () {
         this.readImports()
         this.makeBuildFolder()
@@ -79,16 +96,25 @@ class IndexBuilder {
         process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
     }
 
-    // --- imports ---
-
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     importsFileName () {
         return "_imports.json"
     }
 
+    /**
+     * @category File Operations
+     */
     readImports () {
         this.readImportsPath(this.importsFileName())
     }
 
+    /**
+     * @param {string} importsPath
+     * @category File Operations
+     */
     readImportsPath (importsPath) {
         const folder = nodePath.dirname(importsPath)
         const s = fs.readFileSync(importsPath,  "utf8")
@@ -108,12 +134,18 @@ class IndexBuilder {
         })
     }
 
-    // --- out files ---
-
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     buildFolderPath () {
         return nodePath.join(process.cwd(), "build")
     }
 
+    /**
+     * @returns {IndexBuilder}
+     * @category File Operations
+     */
     makeBuildFolder () {
         const path = this.buildFolderPath()
         if (!fs.existsSync(path)) {
@@ -122,20 +154,33 @@ class IndexBuilder {
         return this
     }
 
-    // --- index ---
-
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     indexFileName () {
         return "_index.json"
     }
 
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     outIndexPath () {
         return nodePath.join(this.buildFolderPath(), this.indexFileName())
     }
 
+    /**
+     * @returns {Object[]}
+     * @category Data Processing
+     */
     computeIndex () {
         return this.paths().map(path => this.indexEntryForPath(path))
     }
 
+    /**
+     * @category File Operations
+     */
     writeIndex () {
         const outPath = this.outIndexPath()
         const index = this.computeIndex()
@@ -144,6 +189,11 @@ class IndexBuilder {
         this.writeHashForPath(outPath)
     }
 
+    /**
+     * @param {string} path
+     * @returns {Object}
+     * @category Data Processing
+     */
     indexEntryForPath (path) {
         const fullPath = nodePath.join(process.cwd(), path)
 
@@ -164,16 +214,26 @@ class IndexBuilder {
         return entry
     }
 
-    // --- out cam file ---
-
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     camFileName () {
         return "_cam.json"
     }
 
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     outCamPath () {
         return nodePath.join(this.buildFolderPath(), this.camFileName())
     }
 
+    /**
+     * @returns {Object}
+     * @category Data Processing
+     */
     computeCam () {
         const paths = this.pathsWithExtensions(["js", "css", "svg", "json", "txt"]); // file extensions to include in cam
         const cam = {}
@@ -186,12 +246,20 @@ class IndexBuilder {
         return cam
     }
 
+    /**
+     * @category File Operations
+     */
     writeCam () {
         const cam = this.computeCam()
         const data = JSON.stringify(cam, 2, 2)
         fs.writeFileSync(this.outCamPath(), data, "utf8")
     }
 
+    /**
+     * @param {string[]} exts
+     * @returns {string[]}
+     * @category Data Processing
+     */
     pathsWithExtensions (exts) {
         return this.paths().filter(path => {
             const pathExt = path.split(".").pop().toLowerCase()
@@ -199,34 +267,25 @@ class IndexBuilder {
         })
     }
 
+    /**
+     * @returns {string}
+     * @category File Operations
+     */
     compressedCamPath () {
         return this.outCamPath() + ".zip"
     }
 
+    /**
+     * @category File Operations
+     */
     compressCam () {
         this.compressPath(this.outCamPath())
     }
 
-    // --- package ---
-
-    /*
-    outPackagePath () {
-        return nodePath.join(this.buildFolderPath(), "_package.json")
-    }
-
-    writePackage () {
-        const outPath = this.outPackagePath()
-        const dict = {}
-        dict._cam = this.computeCam()
-        dict._index = this.computeIndex()
-        const outString = JSON.stringify(dict, 2, 2)
-        fs.writeFileSync(outPath, outString, "utf8")
-        this.compressPath(outPath)
-    }
-    */
-
-    // --- helpers ---
-
+    /**
+     * @param {string} path
+     * @category File Operations
+     */
     compressPath (path) {
         const outPath = path + ".zip"
         const inputData = fs.readFileSync(path,  "utf8")
@@ -241,12 +300,21 @@ class IndexBuilder {
         });
     }
 
+    /**
+     * @param {string|Buffer} data
+     * @returns {string}
+     * @category Data Processing
+     */
     hashForData (data) {
         //const hash = await crypto.subtle.digest("SHA-256", this);
         const hash = crypto.createHash('sha256').update(data).digest("base64");
         return hash
     }
 
+    /**
+     * @param {string} path
+     * @category File Operations
+     */
     writeHashForPath (path) {
         const outPath = path + ".hash"
         const inputData = fs.readFileSync(path)
@@ -258,5 +326,3 @@ class IndexBuilder {
 new IndexBuilder().run();
 //process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
 //process.exit(); // this may stop process before file ops complete
-
-

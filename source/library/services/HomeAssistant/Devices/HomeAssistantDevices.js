@@ -10,6 +10,7 @@
 (class HomeAssistantDevices extends HomeAssistantGroup {
   /**
    * @description Initializes the prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
@@ -17,6 +18,7 @@
 
   /**
    * @description Initializes the HomeAssistantDevices instance.
+   * @category Initialization
    */
   init() {
     super.init();
@@ -26,6 +28,7 @@
 
   /**
    * @description Performs final initialization steps for the HomeAssistantDevices instance.
+   * @category Initialization
    */
   finalInit() {
     super.finalInit();

@@ -24,6 +24,7 @@
 (class FirewallProxy extends ObservableProxy {
     /**
      * @description Initializes prototype slots
+     * @category Initialization
      */
     initPrototypeSlots() {
         {
@@ -31,6 +32,7 @@
              * @member protectedTraps
              * @type {Set}
              * @description Set of protected traps
+             * @category Configuration
              */
             const slot = this.newSlot("protectedTraps", null);
             slot.setSlotType("Set");
@@ -40,6 +42,7 @@
              * @member protectedMethods
              * @type {Set}
              * @description Set of protected methods
+             * @category Configuration
              */
             const slot = this.newSlot("protectedMethods", null);
             slot.setSlotType("Set");
@@ -48,6 +51,7 @@
 
     /**
      * @description Initializes the prototype
+     * @category Initialization
      */
     initPrototype() {
     }
@@ -55,6 +59,7 @@
     /**
      * @description Initializes the instance
      * @returns {FirewallProxy} The initialized instance
+     * @category Initialization
      */
     init() {
         super.init()
@@ -67,6 +72,7 @@
     /**
      * @description Returns the default set of protected traps
      * @returns {Set} The set of protected traps
+     * @category Configuration
      */
     defaultProtectedTraps() {
         return new Set([
@@ -81,6 +87,7 @@
     /**
      * @description Returns the default set of protected methods
      * @returns {Set} The set of protected methods
+     * @category Configuration
      */
     defaultProtectedMethods() {
         return new Set([
@@ -92,6 +99,7 @@
      * @param {string} trapName - The name of the trap
      * @param {string} propertyName - The name of the property
      * @returns {boolean} True if the trap is not protected, false otherwise
+     * @category Trap Handling
      */
     postForTrap(trapName, propertyName) {
         // instead of posting to observers,
@@ -112,6 +120,7 @@
      * @description Called when a protected method is called
      * @param {string} propertyName - The name of the method
      * @param {Arguments} argsList - The arguments passed to the method
+     * @category Error Handling
      */
     onProtectedMethodCall(propertyName, argsList) {
         const msg = " blocked method call '" + propertyName + "' "
@@ -124,6 +133,7 @@
      * @param {Object} target - The target object
      * @param {string} propertyName - The name of the property
      * @returns {*} The value of the property
+     * @category Trap Handling
      */
     get(target, propertyName) {
         if (propertyName === "observable") {
@@ -151,6 +161,7 @@
 
     /**
      * @description Self-test for FirewallProxy
+     * @category Testing
      */
     static selfTest() {
         // test array
@@ -195,6 +206,7 @@ Object.defineSlots(Object.prototype, {
     /**
      * @description Returns a set of mutator method names
      * @returns {Set} A set of mutator method names
+     * @category Configuration
      */
     mutatorMethodNamesSet() {
         return new Set([
@@ -209,6 +221,7 @@ Object.defineSlots(Set.prototype, {
     /**
      * @description Returns a set of mutator method names
      * @returns {Set} A set of mutator method names
+     * @category Configuration
      */
     mutatorMethodNamesSet() {
         return new Set([
@@ -225,6 +238,7 @@ Object.defineSlots(Map.prototype, {
     /**
      * @description Returns a set of mutator method names
      * @returns {Set} A set of mutator method names
+     * @category Configuration
      */
     mutatorMethodNamesSet() {
         return new Set([
@@ -241,6 +255,7 @@ Object.defineSlots(Array.prototype, {
     /**
      * @description Returns a set of mutator method names
      * @returns {Set} A set of mutator method names
+     * @category Configuration
      */
     mutatorMethodNamesSet() {
         return new Set([
@@ -262,6 +277,7 @@ Object.defineSlots(Date.prototype, {
     /**
      * @description Returns a set of mutator method names
      * @returns {Set} A set of mutator method names
+     * @category Configuration
      */
     mutatorMethodNamesSet() {
         return new Set([
@@ -291,6 +307,7 @@ Object.defineSlots(Object.prototype, {
     /**
      * @description Creates a read-only proxy for the object
      * @returns {FirewallProxy} A read-only proxy for the object
+     * @category Proxy Creation
      */
     asReadOnly() {
         const obj = FirewallProxy.newProxyFor(this)

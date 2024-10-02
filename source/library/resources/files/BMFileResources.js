@@ -30,6 +30,7 @@
     initPrototypeSlots () {
         /**
          * @member {String} rootPath - The root path for file resources.
+         * @category File System
          */
         {
             const slot = this.newSlot("rootPath", ".");
@@ -38,6 +39,7 @@
 
         /**
          * @member {Boolean} hasSetupSubnodes - Indicates whether subnodes have been set up.
+         * @category Initialization
          */
         {
             const slot = this.newSlot("hasSetupSubnodes", false);
@@ -56,6 +58,7 @@
     /**
      * @description Initializes the instance.
      * @returns {BMFileResources} The initialized instance.
+     * @category Initialization
      */
     init () {
         super.init()
@@ -64,6 +67,7 @@
 
     /**
      * @description Handles the app initialization.
+     * @category Initialization
      */
     async appDidInit () {
         await this.setupSubnodesIfNeeded();
@@ -71,6 +75,7 @@
 
     /**
      * @description Shows the paths of all resource files.
+     * @category Debugging
      */
     showPaths () {
         const paths = this.rootFolder().allResourceFiles().map(file => file.path());
@@ -80,6 +85,7 @@
     /**
      * @description Sets up subnodes if they haven't been set up yet.
      * @returns {Promise<BMFileResources>} A promise that resolves to the instance.
+     * @category Initialization
      */
     async setupSubnodesIfNeeded () {
         if (!this.hasSetupSubnodes()) {
@@ -108,6 +114,7 @@
     /**
      * @description Gets the root folder.
      * @returns {BMResourceFolder} The root folder.
+     * @category File System
      */
     rootFolder () {
         this.setupSubnodesIfNeeded();
@@ -117,6 +124,7 @@
     /**
      * @description Gets all JSON files.
      * @returns {Array} An array of JSON files.
+     * @category File System
      */
     jsonFiles () {
         const jsonFiles = this.rootFolder().allResourceFiles().select(file => file.pathExtension() === "json");
@@ -126,6 +134,7 @@
     /**
      * @description Precaches resources where appropriate.
      * @returns {Promise<void>} A promise that resolves when precaching is complete.
+     * @category Caching
      */
     async prechacheWhereAppropriate () {
         this.setupSubnodesIfNeeded();

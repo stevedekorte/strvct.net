@@ -13,6 +13,7 @@ class BMImageWellField extends BMField {
      * @static
      * @description Indicates if this class is available as a node primitive.
      * @returns {boolean} True if available as a node primitive.
+     * @category Initialization
      */
     static availableAsNodePrimitive() {
         return true
@@ -22,6 +23,7 @@ class BMImageWellField extends BMField {
      * @static
      * @description Returns a set of supported MIME types for this image well field.
      * @returns {Set<string>} A set of supported MIME types.
+     * @category Configuration
      */
     static supportedMimeTypes() {
         return new Set(["image/jpeg", "image/gif", "image/png"])
@@ -32,6 +34,7 @@ class BMImageWellField extends BMField {
      * @description Checks if the given MIME type is supported.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} True if the MIME type is supported.
+     * @category Validation
      */
     static canOpenMimeType(mimeType) {
         return this.supportedMimeTypes().has(mimeType)
@@ -42,6 +45,7 @@ class BMImageWellField extends BMField {
      * @description Opens a data chunk with the given MIME type.
      * @param {Object} dataChunk - The data chunk to open.
      * @returns {BMImageWellField} A new instance of BMImageWellField with the opened data.
+     * @category Data Handling
      */
     static openMimeChunk(dataChunk) {
         const newNode = this.clone()
@@ -55,11 +59,13 @@ class BMImageWellField extends BMField {
 
     /**
      * @description Initializes the prototype slots for this class.
+     * @category Initialization
      */
     initPrototypeSlots() {
         /**
          * @member {boolean} onlyShowsKeyWhenEmpty
          * @description Determines if the key should only be shown when the field is empty.
+         * @category Display
          */
         {
             const slot = this.newSlot("onlyShowsKeyWhenEmpty", false);
@@ -68,6 +74,7 @@ class BMImageWellField extends BMField {
         /**
          * @member {boolean} isEditable
          * @description Determines if the field is editable.
+         * @category Editing
          */
         {
             const slot = this.newSlot("isEditable", true);
@@ -76,6 +83,7 @@ class BMImageWellField extends BMField {
         /**
          * @member {*} nodeMinTileHeight
          * @description The minimum tile height for the node.
+         * @category Display
          */
         {
             const slot = this.overrideSlot("nodeMinTileHeight");
@@ -85,6 +93,7 @@ class BMImageWellField extends BMField {
 
     /**
      * @description Initializes the prototype with default values.
+     * @category Initialization
      */
     initPrototype() {
         this.setKey("Image title");
@@ -96,6 +105,7 @@ class BMImageWellField extends BMField {
     /**
      * @description Returns a summary value for this field.
      * @returns {string} An empty string as the summary value.
+     * @category Data Handling
      */
     summaryValue() {
         return ""

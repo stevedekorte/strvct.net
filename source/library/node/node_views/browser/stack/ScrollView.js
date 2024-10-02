@@ -27,10 +27,12 @@
     
     /**
      * @description Initializes the prototype slots for the ScrollView
+     * @category Initialization
      */
     initPrototypeSlots () {
         /**
          * @member {Boolean} sticksToBottom - Determines if the view should stick to the bottom
+         * @category Configuration
          */
         {
             const slot = this.newSlot("sticksToBottom", false);
@@ -39,6 +41,7 @@
 
         /**
          * @member {Boolean} wasAtBottom - Tracks if the view was at the bottom before content change
+         * @category State
          */
         {
             const slot = this.newSlot("wasAtBottom", false);
@@ -47,6 +50,7 @@
 
         /**
          * @member {Number} lastScrollHeight - Stores the last scroll height
+         * @category State
          */
         {
             const slot = this.newSlot("lastScrollHeight", 0);
@@ -57,6 +61,7 @@
     /**
      * @description Initializes the ScrollView
      * @returns {ScrollView} The initialized ScrollView instance
+     * @category Initialization
      */
     init () {
         super.init()
@@ -72,6 +77,7 @@
     /**
      * @description Returns the first subview as the scroll content view
      * @returns {DomView} The scroll content view
+     * @category View Hierarchy
      */
     scrollContentView () {
         return this.subviews().first()
@@ -79,6 +85,7 @@
 
     /**
      * @description Starts listening for scroll events
+     * @category Event Handling
      */
     listenForScroll () {
         this.scrollListener().setIsListening(true)
@@ -87,6 +94,7 @@
     /**
      * @description Returns the first subview as the content view
      * @returns {DomView} The content view
+     * @category View Hierarchy
      */
     contentView () {
         return this.subviews().first();
@@ -95,6 +103,7 @@
     /**
      * @description Sets whether the view should stick to the bottom
      * @param {Boolean} aBool - Whether to stick to the bottom
+     * @category Configuration
      */
     setSticksToBottom (aBool) {
         if (this._sticksToBottom !== aBool) {
@@ -110,6 +119,7 @@
     /**
      * @description Handles scroll events
      * @param {Event} event - The scroll event
+     * @category Event Handling
      */
     onScroll (event) {
         this.updateScrollTracking()
@@ -118,6 +128,7 @@
     /**
      * @description Handles content view mutations
      * @param {MutationRecord[]} mutations - The mutations that occurred
+     * @category Event Handling
      */
     onContentViewMutations (mutations) {
         if (this.sticksToBottom()) {
@@ -132,6 +143,7 @@
     /**
      * @description Checks if the view is currently at the bottom
      * @returns {Boolean} Whether the view is at the bottom
+     * @category State
      */
     isAtBottom () {
         const e = this.element();
@@ -143,6 +155,7 @@
     /**
      * @description Computes the scroll tolerance
      * @returns {Number} The computed scroll tolerance
+     * @category Calculation
      */
     computeScrollTolerance () {
         return 10;
@@ -152,6 +165,7 @@
      * @description Sets the scroll height and updates scroll tracking
      * @param {Number} v - The new scroll height
      * @returns {ScrollView} The ScrollView instance
+     * @category State
      */
     setScrollHeight (v) {
         super.setScrollHeight(v)
@@ -162,6 +176,7 @@
     /**
      * @description Updates scroll tracking
      * @returns {ScrollView} The ScrollView instance
+     * @category State
      */
     updateScrollTracking () {
         this.updateLastScrollHeight()
@@ -172,6 +187,7 @@
     /**
      * @description Updates the last scroll height
      * @returns {ScrollView} The ScrollView instance
+     * @category State
      */
     updateLastScrollHeight () {
         this.setLastScrollHeight(this.scrollHeight())
@@ -181,6 +197,7 @@
     /**
      * @description Updates whether the view was at the bottom
      * @returns {ScrollView} The ScrollView instance
+     * @category State
      */
     updateWasAtBottom () {
         if (this.wasAtBottom() !== this.isAtBottom()) {

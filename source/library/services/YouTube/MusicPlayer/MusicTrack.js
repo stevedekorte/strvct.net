@@ -13,11 +13,12 @@
 
   /**
    * Initializes the prototype slots for the MusicTrack class.
-
+   * @category Initialization
    */
   initPrototypeSlots () {
     /**
      * @member {string} name - The name of the music track.
+     * @category Properties
      */
     {
       const slot = this.newSlot("name", "unnamed");
@@ -31,6 +32,7 @@
 
     /**
      * @member {string} trackId - The ID of the music track.
+     * @category Properties
      */
     {
       const slot = this.newSlot("trackId", null);
@@ -44,6 +46,7 @@
 
     /**
      * @member {Object} togglePlayAction - The action to toggle play/stop.
+     * @category Actions
      */
     {
       const slot = this.newSlot("togglePlayAction", null);
@@ -58,6 +61,7 @@
 
     /**
      * @member {boolean} shouldPlayOnAccess - Whether the track should play on access.
+     * @category Playback
      */
     {
       const slot = this.newSlot("shouldPlayOnAccess", true);
@@ -66,6 +70,7 @@
 
     /**
      * @member {boolean} isPlaying - Indicates if the track is currently playing.
+     * @category Playback
      */
     {
       const slot = this.newSlot("isPlaying", false);
@@ -75,6 +80,7 @@
 
     /**
      * @member {Set} delegateSet - The set of delegates for this track.
+     * @category Delegation
      */
     {
       const slot = this.newSlot("delegateSet", null);
@@ -87,7 +93,7 @@
 
   /**
    * Initializes the MusicTrack instance.
-
+   * @category Initialization
    */
   init() {
     super.init();
@@ -96,7 +102,7 @@
 
   /**
    * Performs final initialization of the MusicTrack instance.
-
+   * @category Initialization
    */
   finalInit () {   
     this.setShouldStore(true);
@@ -107,7 +113,7 @@
 
   /**
    * Returns the title of the music track.
-
+   * @category Properties
    * @returns {string} The name of the track.
    */
   title () {
@@ -116,7 +122,7 @@
 
   /**
    * Returns the subtitle of the music track.
-
+   * @category Properties
    * @returns {string} "playing" if the track is playing, otherwise an empty string.
    */
   subtitle () {
@@ -125,7 +131,7 @@
 
   /**
    * Returns the parent library of this track.
-
+   * @category Hierarchy
    * @returns {MusicLibrary} The parent music library.
    */
   library () {
@@ -134,7 +140,7 @@
 
   /**
    * Returns the parent folder of this track.
-
+   * @category Hierarchy
    * @returns {MusicFolder} The parent music folder.
    */
   folder () {
@@ -143,7 +149,7 @@
 
   /**
    * Plays the music track.
-
+   * @category Playback
    * @async
    */
   async play () {
@@ -162,7 +168,7 @@
 
   /**
    * Stops the music track.
-
+   * @category Playback
    * @async
    */
   async stop () {
@@ -175,7 +181,7 @@
 
   /**
    * Checks if this is a music track.
-
+   * @category Type Check
    * @returns {boolean} Always returns true.
    */
   isMusicTrack () {
@@ -184,7 +190,7 @@
 
   /**
    * Toggles the play state of the track.
-
+   * @category Playback
    * @returns {MusicTrack} This instance.
    */
   togglePlay () {
@@ -198,7 +204,7 @@
 
   /**
    * Returns information about the toggle play action.
-
+   * @category Actions
    * @returns {Object} An object containing action information.
    */
   togglePlayActionInfo () {
@@ -211,7 +217,7 @@
 
   /**
    * Posts a note and sends it to delegates.
-
+   * @category Delegation
    * @param {string} methodName - The name of the method to post.
    * @returns {MusicTrack} This instance.
    */
@@ -223,7 +229,7 @@
 
   /**
    * Adds a delegate to the delegate set.
-
+   * @category Delegation
    * @param {Object} d - The delegate to add.
    * @returns {MusicTrack} This instance.
    */
@@ -234,7 +240,7 @@
 
   /**
    * Removes a delegate from the delegate set.
-
+   * @category Delegation
    * @param {Object} d - The delegate to remove.
    * @returns {MusicTrack} This instance.
    */
@@ -245,7 +251,7 @@
 
   /**
    * Sends a method call to all delegates.
-
+   * @category Delegation
    * @param {string} methodName - The name of the method to call on delegates.
    * @param {Array} [args=[this]] - The arguments to pass to the delegate method.
    */

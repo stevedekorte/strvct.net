@@ -49,6 +49,7 @@
 
   /**
    * @description Initializes prototype slots for the class.
+   * @category Initialization
    */
   initPrototypeSlots () {
 
@@ -56,6 +57,7 @@
 
   /**
    * @description Initializes the instance.
+   * @category Initialization
    */
   init () {
     super.init();
@@ -65,6 +67,7 @@
   /**
    * @description Gets the API key for OpenAI service.
    * @returns {string} The API key.
+   * @category Authentication
    */
   apiKey () {
     return OpenAiService.shared().apiKey();
@@ -73,6 +76,7 @@
   /**
    * @description Prepares and returns the request options.
    * @returns {Object} The request options.
+   * @category API Request
    */
   requestOptions () {
     const apiKey = this.apiKey();
@@ -95,6 +99,7 @@
 
   /**
    * @description Reads and processes XHR lines.
+   * @category Streaming
    */
   readXhrLines () {
     try {
@@ -133,6 +138,7 @@
   /**
    * @description Processes a JSON chunk from the stream.
    * @param {Object} json - The JSON chunk to process.
+   * @category Streaming
    */
   onStreamJsonChunk (json) {
     if (json.error) {
@@ -170,6 +176,7 @@
   /**
    * @description Returns an array of acceptable stop reasons.
    * @returns {Array} An array of acceptable stop reasons.
+   * @category Request Completion
    */
   okStopReasons () {
     return [null, "stop"];
@@ -178,6 +185,7 @@
   /**
    * @description Returns a dictionary of stop reasons and their descriptions.
    * @returns {Object} A dictionary of stop reasons and their descriptions.
+   * @category Request Completion
    */
   stopReasonDict () {
     return {
@@ -190,6 +198,7 @@
   /**
    * @description Checks if the request stopped due to reaching maximum tokens.
    * @returns {boolean} True if stopped due to maximum tokens, false otherwise.
+   * @category Request Completion
    */
   stoppedDueToMaxTokens () {
     const b = this.stopReason() === "length";

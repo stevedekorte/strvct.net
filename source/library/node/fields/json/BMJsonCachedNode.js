@@ -17,6 +17,7 @@
             /**
              * @member {String} jsonId
              * @description A unique id for this json node. We'll need this in order to merge json changes properly.
+             * @category Identification
              */
             const slot = this.newSlot("jsonId", null);
             slot.setIsInJsonSchema(true);
@@ -32,6 +33,7 @@
             /**
              * @member {Object} jsonCache
              * @description The json that this node represents. We update this when the node is edited. The node is the truth and the json is derived from it.
+             * @category Data
              */
             const slot = this.newSlot("jsonCache", null);
             slot.setSlotType("JSON Object");
@@ -41,6 +43,7 @@
             /**
              * @member {String} jsonHash
              * @description A hash of JSON.stableStrigify(jsonCache).
+             * @category Data
              */
             const slot = this.newSlot("jsonHash", null);
             slot.setSlotType("String");
@@ -66,6 +69,7 @@
     /**
      * @description Creates a JSON ID if it's absent.
      * @returns {BMJsonCachedNode} The current instance.
+     * @category Initialization
      */
     createJsonIdIfAbsent () {
         if (this.jsonId() === null) {
@@ -77,6 +81,7 @@
     /**
      * @description Creates a new JSON ID.
      * @returns {BMJsonCachedNode} The current instance.
+     * @category Initialization
      */
     createJsonId () {
         assert(this.jsonId() === null);
@@ -87,6 +92,7 @@
     /**
      * @description Updates the JSON hash.
      * @returns {BMJsonCachedNode} The current instance.
+     * @category Data Management
      */
     updateJsonHash () {
         this.setJsonHash(JSON.stableStringify(this.asJson()).hashCode());
@@ -97,6 +103,7 @@
      * @description Sets the JSON cache and updates the hash.
      * @param {Object} json - The JSON object to cache.
      * @returns {BMJsonCachedNode} The current instance.
+     * @category Data Management
      */
     setJsonCache (json) {
         this._jsonCache = json;
@@ -111,6 +118,7 @@
     /**
      * @description Removes JSON caches.
      * @returns {BMJsonCachedNode} The current instance.
+     * @category Data Management
      */
     removeJsonCaches () {
         this.setJsonHash(null); 
@@ -120,6 +128,7 @@
 
     /**
      * @description Called when the node is updated.
+     * @category Lifecycle
      */
     didUpdateNode () {
         super.didUpdateNode();
@@ -130,6 +139,7 @@
      * @description Checks if the given JSON matches the cached JSON.
      * @param {Object} json - The JSON object to compare.
      * @returns {boolean} True if the JSON matches, false otherwise.
+     * @category Data Comparison
      */
     doesMatchJson (json) {
         const a = JSON.stableStringify(json); 
@@ -143,6 +153,7 @@
     /**
      * @description Returns the JSON representation of the node.
      * @returns {Object} The JSON object.
+     * @category Data Retrieval
      */
     asJson () {
         if (this.jsonCache() !== null) {
@@ -156,6 +167,7 @@
     /**
      * @description Computes JSON patches between the last and current JSON.
      * @returns {Array} An array of JSON patch operations.
+     * @category Data Comparison
      */
     computeJsonPatches () {
         const lastJson = this.lastJson() ? this.lastJson() : {};
@@ -169,6 +181,7 @@
      * @description Applies JSON patches to the current JSON.
      * @param {Array} jsonPatches - An array of JSON patch operations.
      * @returns {BMJsonCachedNode} The current instance.
+     * @category Data Modification
      */
     applyJsonPatches (jsonPatches) {
         assert(Type.isDeepJsonType(jsonPatches));
@@ -197,6 +210,7 @@
      * @param {Object} obj - The JSON object to check.
      * @param {string} path - The path to check.
      * @returns {boolean} True if the path exists, false otherwise.
+     * @category Data Validation
      */
     jsonHasPath (obj, path) {
         const properties = path.split('/').slice(1);
