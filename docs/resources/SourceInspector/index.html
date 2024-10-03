@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Code Inspector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="filename-banner"></div>
+    <div id="source-container">
+        <pre id="source-code"></pre>
+    </div>
+    <script src="SourceInspector.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inspector = new SourceInspector('source-code', 'filename-banner');
+            inspector.loadAndDisplaySource();
+        });
+    </script>
+</body>
+</html>

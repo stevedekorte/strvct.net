@@ -1,0 +1,56 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+#filename-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f0f0f0;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    z-index: 1000;
+}
+
+#source-container {
+    overflow: auto;
+    max-width: 100%;
+    margin-top: 40px; /* Adjust this value based on the height of your banner */
+}
+
+#source-code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    padding: 0;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    margin-left: 1em;
+    margin-right: 1em;
+    white-space: pre;
+    word-wrap: break-word;
+}
+
+.line {
+    display: block;
+    width: 100%;
+    padding: 0 2em;
+    box-sizing: border-box;
+    min-height: 1.5em;
+}
+
+.highlight {
+    background-color: #f0f0f0;  /* Light grey highlight */
+}
+
+.error {
+    color: #ff0000;
+    font-weight: bold;
+}

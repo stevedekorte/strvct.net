@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Start Live Server",
+            "type": "process",
+            "command": "${command:liveServer.start}",
+            "problemMatcher": []
+        }
+    ]
+}
