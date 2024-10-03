@@ -279,7 +279,7 @@ parameter > description {
 /* --- method --- */
 
 method > description {
-    display: inline-block;
+    display: block;
     margin-top: 0em;
     /*margin-bottom: 0.25em;*/
     font-style: normal;
@@ -603,4 +603,30 @@ methodinfo > category {
 category:not(:has(> name)) {
     margin-top: 0;
 }
+
+methodinfo viewSource {
+    display: block;
+    width: fit-content;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #ccc;
+    border-radius: 5px;
+}
+
+methodinfo > viewSource > a:link {
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+methodinfo > viewSource > a:visited {
+    color: white;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+methodinfo > viewSource:hover {
+    background-color: #888;
+}
+
 

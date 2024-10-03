@@ -582,10 +582,6 @@ function generateMethodXml(method, filePath) {
     xml += `      <lineNumberStart>${method.lineNumberStart}</lineNumberStart>\n`;
     xml += `      <lineNumberEnd>${method.lineNumberEnd}</lineNumberEnd>\n`;
     
-    // Add the "view source" link, ensuring the path starts with a forward slash
-    const sourceInspectorUrl = `/docs/resources/SourceInspector/index.html?path=/${encodeURIComponent(filePath.replace(/^\//, ''))}&beginLine=${method.lineNumberStart}&endLine=${method.lineNumberEnd}`;
-    xml += `      <viewSource><a href="${sourceInspectorUrl}" target="_blank">View Source</a></viewSource>\n`;
-
     // Output params first
     if (method.parameters && method.parameters.length > 0) {
         xml += '  <params>\n';
@@ -637,6 +633,11 @@ function generateMethodXml(method, filePath) {
         xml += `  <throws>${method.throws}</throws>\n`;
     }
     xml += `  <category>${escapeHtml(method.category)}</category>\n`;
+    
+    // Add the "view source" link at the end of methodinfo
+    const sourceInspectorUrl = `/docs/resources/SourceInspector/index.html?path=/${encodeURIComponent(filePath.replace(/^\//, ''))}&beginLine=${method.lineNumberStart}&endLine=${method.lineNumberEnd}`;
+    xml += `      <viewSource><a href="${sourceInspectorUrl}">source</a></viewSource>\n`;
+    
     xml += `    </methodinfo>\n`;
     xml += `  </div>\n`;
     xml += '</method>\n';
