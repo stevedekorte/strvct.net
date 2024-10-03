@@ -539,15 +539,15 @@ function displayClassInfo(result) {
                 <filePath><a href="${escapeXml(result.classInfo.filePath)}">${escapeXml(result.classInfo.filePath)}</a></filePath>
                 <description>${escapeXmlPreserveWhitespace(result.classInfo.description)}</description>
             </classInfo>
-            ${generateCategorizedXml('properties', result.propertyCategories)}
-            ${generateCategorizedXml('classMethods', classMethods)}
-            ${generateCategorizedXml('instanceMethods', instanceMethods)}
+            ${generateCategorizedXml('properties', result.propertyCategories, result.classInfo.filePath)}
+            ${generateCategorizedXml('classMethods', classMethods, result.classInfo.filePath)}
+            ${generateCategorizedXml('instanceMethods', instanceMethods, result.classInfo.filePath)}
         </class>
     `;
     outputElement.innerHTML = xmlOutput;
 }
 
-function generateCategorizedXml(sectionName, items) {
+function generateCategorizedXml(sectionName, items, filePath) {
     const categories = {};
     if (sectionName === 'properties') {
         Object.assign(categories, items);
@@ -565,7 +565,7 @@ function generateCategorizedXml(sectionName, items) {
             <category>
                 ${category !== 'Uncategorized' ? `<name>${escapeXml(category)}</name>` : ''}
                 ${categoryItems.map(item => 
-                    sectionName === 'properties' ? generatePropertyXml(item) : generateMethodXml(item)
+                    sectionName === 'properties' ? generatePropertyXml(item) : generateMethodXml(item, filePath)
                 ).join('')}
             </category>
         `).join('');
@@ -573,7 +573,7 @@ function generateCategorizedXml(sectionName, items) {
     return categoryXml ? `<${sectionName}>${categoryXml}</${sectionName}>` : '';
 }
 
-function generateMethodXml(method) {
+function generateMethodXml(method, filePath) {
     let xml = '<method>\n';
     xml += `  <name class="collapsible">${escapeHtml(method.methodName)}</name>\n`;
     xml += `  <fullMethodName class="collapsible">${escapeHtml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>\n`;
@@ -581,9 +581,11 @@ function generateMethodXml(method) {
     xml += `    <methodinfo>\n`;
     xml += `      <lineNumberStart>${method.lineNumberStart}</lineNumberStart>\n`;
     xml += `      <lineNumberEnd>${method.lineNumberEnd}</lineNumberEnd>\n`;
-    //xml += `      <source>${escapeHtml(method.source)}</source>\n`;  // Ensure this line is correct
-
     
+    // Add the "view source" link, ensuring the path starts with a forward slash
+    const sourceInspectorUrl = `/docs/resources/SourceInspector/index.html?path=/${encodeURIComponent(filePath.replace(/^\//, ''))}&beginLine=${method.lineNumberStart}&endLine=${method.lineNumberEnd}`;
+    xml += `      <viewSource><a href="${sourceInspectorUrl}" target="_blank">View Source</a></viewSource>\n`;
+
     // Output params first
     if (method.parameters && method.parameters.length > 0) {
         xml += '  <params>\n';
