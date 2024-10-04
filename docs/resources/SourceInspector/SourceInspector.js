@@ -22,6 +22,7 @@ class SourceInspector {
             sourceCode = await response.text();
             this.displaySource(sourceCode);
             this.displayFilename(path);
+            this.scrollToHighlight();
         } catch (error) {
             this.displayError(`Failed to load source: ${error.message}`);
         }
@@ -37,7 +38,7 @@ class SourceInspector {
             const highlightClass = (lineNumber >= beginLine && lineNumber <= endLine) ? 'highlight' : '';
             // Replace empty lines with a non-breaking space
             const lineContent = line.length === 0 ? '&nbsp;' : this.escapeHtml(line);
-            return `<div class="line ${highlightClass}">${lineContent}</div>`;
+            return `<div class="line ${highlightClass}" data-line="${lineNumber}">${lineContent}</div>`;
         }).join('');
 
         this.element.innerHTML = formattedCode;
@@ -60,5 +61,15 @@ class SourceInspector {
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+    }
+
+    scrollToHighlight() {
+        const beginLine = parseInt(this.urlParams.get('beginLine')) || 1;
+        const highlightedElement = this.element.querySelector(`.line[data-line="${beginLine}"]`);
+        if (highlightedElement) {
+            setTimeout(() => {
+                highlightedElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
     }
 }

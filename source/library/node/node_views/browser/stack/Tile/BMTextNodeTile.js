@@ -1,10 +1,11 @@
+"use strict";
+
 /**
  * @module library.node.node_views.browser.stack.Tile
  * @class BMTextNodeTile
  * @extends Tile
  * @classdesc BMTextNodeTile represents a tile for displaying and editing text nodes.
  */
-"use strict";
 
 (class BMTextNodeTile extends Tile {
     

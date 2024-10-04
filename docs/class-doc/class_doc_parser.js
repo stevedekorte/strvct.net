@@ -579,6 +579,7 @@ function generateMethodXml(method, filePath) {
     xml += `  <fullMethodName class="collapsible">${escapeHtml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>\n`;
     xml += `  <div class="collapsible-content">\n`;
     xml += `    <methodinfo>\n`;
+    xml += `      <div class="method-info-content">\n`; // Add this line
     xml += `      <lineNumberStart>${method.lineNumberStart}</lineNumberStart>\n`;
     xml += `      <lineNumberEnd>${method.lineNumberEnd}</lineNumberEnd>\n`;
     
@@ -634,9 +635,16 @@ function generateMethodXml(method, filePath) {
     }
     xml += `  <category>${escapeHtml(method.category)}</category>\n`;
     
-    // Add the "view source" link at the end of methodinfo
-    const sourceInspectorUrl = `/docs/resources/SourceInspector/index.html?path=/${encodeURIComponent(filePath.replace(/^\//, ''))}&beginLine=${method.lineNumberStart}&endLine=${method.lineNumberEnd}`;
-    xml += `      <viewSource><a href="${sourceInspectorUrl}">source</a></viewSource>\n`;
+    // Escape the source code content
+    const escapedSource = escapeHtml(method.source);
+    
+    // Add the method source code with a collapsible wrapper
+    xml += `      <div class="source-wrapper">\n`;
+    xml += `        <div class="source-toggle collapsible">source</div>\n`;
+    xml += `        <methodsource class="collapsible-content">${escapedSource}</methodsource>\n`;
+    xml += `      </div>\n`;
+    
+    xml += `      </div>\n`; // Add this line
     
     xml += `    </methodinfo>\n`;
     xml += `  </div>\n`;

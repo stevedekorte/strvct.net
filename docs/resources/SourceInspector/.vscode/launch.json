@@ -6,10 +6,7 @@
             "request": "launch",
             "name": "Open index.html with TestClass.js (file://)",
             "url": "file://${workspaceFolder}/index.html?path=${workspaceFolder}/test/TestClass.js&beginLine=6&endLine=8",
-            "webRoot": "${workspaceFolder}",
-            "args": [
-                "--allow-file-access-from-files"
-            ]
+            "webRoot": "${workspaceFolder}"
         },
         {
             "type": "chrome",

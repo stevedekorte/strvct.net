@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @module library.node.node_views.browser.stack.Tile.subviews
  * @class TileNoteView

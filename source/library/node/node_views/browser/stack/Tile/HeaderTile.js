@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @module browser.stack.Tile
  * @class HeaderTile
