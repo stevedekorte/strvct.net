@@ -17,6 +17,18 @@
     }
 
     /**
+     * Makes the forEach method safe by saving the original method and replacing it with safeForEach.
+     * See the safeForEach method for more information.
+     */
+    static makeForEachSafe () {
+        if (this.prototype._forEachMethod === undefined) {
+            // save the original method
+            this.prototype._forEachMethod = this.prototype.forEach;
+        }
+        this.prototype.forEach = this.prototype.safeForEach;
+    }
+
+    /**
      * Creates a new array from an iterator.
      * @param {Iterator} iterator - The iterator to create the array from.
      * @returns {Array} A new array containing the values from the iterator.
