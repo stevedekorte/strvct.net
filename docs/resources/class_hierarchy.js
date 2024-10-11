@@ -5,6 +5,18 @@ const path = require('path');
 const acorn = require('acorn');
 const walk = require('acorn-walk');
 
+// Add these lines
+const CLASS_DOC_PATH = './docs/resources/class-doc/class_doc.html';
+const OUTPUT_DIR = 'docs/reference';
+
+function ensureLeadingSlash(path) {
+  return path.startsWith('/') ? path : '/' + path;
+}
+
+function composeClassDocUrl(path) {
+  return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
+}
+
 async function findJsFiles(dir) {
   const files = await fs.readdir(dir, { withFileTypes: true });
   const jsFiles = [];
@@ -113,8 +125,8 @@ function printHierarchy(hierarchy, classFiles, indent = '', isRoot = true) {
 
   for (const [name, cls] of entries) {
     if (cls) {
-      const encodedPath = classFiles[name] ? encodeURIComponent(classFiles[name]) : '';
-      const link = classFiles[name] ? `[${name}](./class_doc.html?path=${encodedPath})` : name;
+      const encodedPath = classFiles[name] ? ensureLeadingSlash(classFiles[name]) : '';
+      const link = classFiles[name] ? `[${name}](${composeClassDocUrl(encodedPath)})` : name;
       if (isRoot && name !== 'Object') {
         // For root-level classes that aren't Object, indent them under Object
         output += `${indent}- Object\n`;
@@ -133,7 +145,7 @@ function printHierarchy(hierarchy, classFiles, indent = '', isRoot = true) {
 function createClassLink(className, filePath) {
     const link = document.createElement('a');
     link.textContent = className;
-    link.href = `./class_doc.html?path=${encodeURIComponent(filePath)}`;
+    link.href = composeClassDocUrl(filePath);
     return link;
 }
 
@@ -174,14 +186,18 @@ async function main(folderPath) {
     // Add H1 header to the markdown content without the period
     const markdownContent = `# Classes\n\n${markdownHierarchy}`;
 
-    // Write the markdown hierarchy to a file
-    await fs.writeFile(path.join(folderPath, 'class_hierarchy.md'), markdownContent);
-    console.log('Class hierarchy has been written to class_hierarchy.md');
+    // Create the output directory if it doesn't exist
+    const outputDir = path.join(folderPath, OUTPUT_DIR);
+    await fs.mkdir(outputDir, { recursive: true });
 
-    // Write warnings to a file if there are any
+    // Write the markdown hierarchy to a file in the output directory
+    await fs.writeFile(path.join(outputDir, 'class_hierarchy.md'), markdownContent);
+    console.log(`Class hierarchy has been written to ${path.join(OUTPUT_DIR, 'class_hierarchy.md')}`);
+
+    // Write warnings to a file in the output directory if there are any
     if (warnings) {
-      await fs.writeFile(path.join(folderPath, 'hierarchy_warnings.log'), warnings);
-      console.log('Warnings have been written to hierarchy_warnings.log');
+      await fs.writeFile(path.join(outputDir, 'hierarchy_warnings.log'), warnings);
+      console.log(`Warnings have been written to ${path.join(OUTPUT_DIR, 'hierarchy_warnings.log')}`);
     }
   } catch (error) {
     console.error('An error occurred:', error);

@@ -4,6 +4,18 @@ const acorn = require('acorn');
 const walk = require('acorn-walk');
 const doctrine = require('doctrine');
 
+// Add these lines
+const CLASS_DOC_PATH = './docs/resources/class-doc/class_doc.html';
+const OUTPUT_DIR = 'docs/reference';
+
+function ensureLeadingSlash(path) {
+  return path.startsWith('/') ? path : '/' + path;
+}
+
+function composeClassDocUrl(path) {
+  return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
+}
+
 async function findJsFiles(dir) {
   const files = await fs.readdir(dir, { withFileTypes: true });
   const jsFiles = [];
@@ -122,8 +134,8 @@ function printHierarchy(hierarchy, classFiles, indent = '') {
 
     if (module.items && module.items.length > 0) {
       for (const item of module.items.sort()) {
-        const encodedPath = classFiles[item] ? encodeURIComponent(classFiles[item]) : '';
-        const link = classFiles[item] ? `[${item}](./class_doc.html?path=${encodedPath})` : item;
+        const encodedPath = classFiles[item] ? ensureLeadingSlash(classFiles[item]) : '';
+        const link = classFiles[item] ? `[${item}](${composeClassDocUrl(encodedPath)})` : item;
         output += `${indent}  - ${link}\n`;
       }
     }
@@ -164,8 +176,13 @@ async function main(folderPath) {
 
     const markdownContent = `# Modules\n\n${markdownHierarchy}`;
 
-    await fs.writeFile(path.join(folderPath, 'module_hierarchy.md'), markdownContent);
-    console.log('Module hierarchy has been written to module_hierarchy.md');
+    // Create the output directory if it doesn't exist
+    const outputDir = path.join(folderPath, OUTPUT_DIR);
+    await fs.mkdir(outputDir, { recursive: true });
+
+    // Write the file to the output directory
+    await fs.writeFile(path.join(outputDir, 'module_hierarchy.md'), markdownContent);
+    console.log(`Module hierarchy has been written to ${path.join(OUTPUT_DIR, 'module_hierarchy.md')}`);
   } catch (error) {
     console.error('An error occurred:', error);
   }

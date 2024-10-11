@@ -4,6 +4,18 @@ const acorn = require('acorn');
 const walk = require('acorn-walk');
 const doctrine = require('doctrine');
 
+// Add these lines
+const CLASS_DOC_PATH = './docs/resources/class-doc/class_doc.html';
+const OUTPUT_DIR = 'docs/reference';
+
+function ensureLeadingSlash(path) {
+  return path.startsWith('/') ? path : '/' + path;
+}
+
+function composeClassDocUrl(path) {
+  return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
+}
+
 class ProtocolAnalyzer {
   constructor(folderPath) {
     this.folderPath = folderPath;
@@ -180,8 +192,8 @@ class ProtocolAnalyzer {
           // Skip the Protocol class itself
           if (item === 'Protocol') continue;
 
-          const encodedPath = this.protocolFiles[item] ? encodeURIComponent(this.protocolFiles[item]) : '';
-          const link = this.protocolFiles[item] ? `[${item}](./class_doc.html?path=${encodedPath})` : item;
+          const encodedPath = this.protocolFiles[item] ? ensureLeadingSlash(this.protocolFiles[item]) : '';
+          const link = this.protocolFiles[item] ? `[${item}](${composeClassDocUrl(encodedPath)})` : item;
           const implementors = this.implementors.get(item);
           const implementorsStr = implementors ? ` (implemented by: ${Array.from(implementors).join(', ')})` : '';
           output += `${indent}  - ${link}${implementorsStr}\n`;
@@ -197,8 +209,13 @@ class ProtocolAnalyzer {
   }
 
   async writeOutput(content) {
-    await fs.writeFile(path.join(this.folderPath, 'protocols.md'), content);
-    console.log('Protocol hierarchy has been written to protocols.md');
+    // Create the output directory if it doesn't exist
+    const outputDir = path.join(this.folderPath, OUTPUT_DIR);
+    await fs.mkdir(outputDir, { recursive: true });
+
+    // Write the file to the output directory
+    await fs.writeFile(path.join(outputDir, 'protocols.md'), content);
+    console.log(`Protocol hierarchy has been written to ${path.join(OUTPUT_DIR, 'protocols.md')}`);
   }
 }
 
