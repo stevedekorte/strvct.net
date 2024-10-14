@@ -1,4 +1,5 @@
 [
+    "Object-helpers.js",
     "Object_copying.js",
     "Object_class.js",
     "Object_ideal.js",

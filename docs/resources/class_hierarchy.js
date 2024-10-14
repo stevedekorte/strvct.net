@@ -6,7 +6,7 @@ const acorn = require('acorn');
 const walk = require('acorn-walk');
 
 // Add these lines
-const CLASS_DOC_PATH = './docs/resources/class-doc/class_doc.html';
+const CLASS_DOC_PATH = '../resources/class-doc/class_doc.html';
 const OUTPUT_DIR = 'docs/reference';
 
 function ensureLeadingSlash(path) {

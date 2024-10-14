@@ -101,7 +101,7 @@ async function loadAndRenderMarkdown() {
     }
 
     renderer.link = function(href, title, text) {
-      let transformedHref = href; //transformLocalPath(href);
+      let transformedHref = transformLocalPath(href);
       
       if (title) {
         return `<a href="${transformedHref}" title="${title}">${text}</a>`;
