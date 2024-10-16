@@ -4,12 +4,17 @@
   - STRVCT
     - [StrvctApp](../resources/class-doc/class_doc.html?path=%2Fsource%2Fapps%2FSTRVCT%2FStrvctApp.js)
 - boot
-  - [BootLoadingView](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
+  - [Array_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
+  - [Base](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBase.js)
+  - [BootLoader](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBootLoader.js)
+  - [BootLoadingView](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBootLoadingView.js)
   - [HashCache](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHashCache.js)
   - [IndexedDBFolder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FIndexedDBFolder.js)
   - [IndexedDBTx](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FIndexedDBTx.js)
-  - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
-  - [UrlResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
+  - [Promise_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FPromise_ideal.js)
+  - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FResourceManager.js)
+  - [URL_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
+  - [UrlResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FUrlResource.js)
 - browser
   - stack
     - Tile
@@ -24,18 +29,12 @@
         - [BMActionFieldTile](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
         - [BMStringFieldTile](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
-  - [Base](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBase.js)
-  - [BootLoader](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBootLoader.js)
-  - [BootLoadingView](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
   - [Folder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourceIndexer.js)
   - [IndexBuilder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FImportsIndexer.js)
   - [Mirror](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
   - [ProtoClass](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
-  - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
   - [RootContentNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FRootContentNode.js)
   - [Slot](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FSlot.js)
-  - [URL_helpers](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
-  - [UrlResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
   - [Worker](../resources/class-doc/class_doc.html?path=%2Fsource%2FServiceWorker%2FWorker.js)
 - HomeAssistant
   - States

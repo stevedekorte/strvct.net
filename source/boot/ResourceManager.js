@@ -1,19 +1,46 @@
 "use strict";
 
+/**
+ * @module boot
+ */
+
+/**
+ * Manages the loading and evaluation of resources for the application.
+ */
 class ResourceManager {
 
+    /**
+     * @category Static Methods
+     * Returns the boot path for resources.
+     * @returns {string} The boot path.
+     */
     static bootPath () {
-        return "strvct/source/boot/"
+        return "strvct/source/boot/";
     }
 
+    /**
+     * @category Instance Methods
+     * Returns the type of the manager.
+     * @returns {string} The type "ResourceManager".
+     */
     type () {
         return "ResourceManager";
     }
 
+    /**
+     * @category Instance Methods
+     * Returns the boot path for this instance.
+     * @returns {string} The boot path.
+     */
     bootPath () {
         return ResourceManager.bootPath();
     }
 
+    /**
+     * @category Static Methods
+     * Returns a shared instance of ResourceManager.
+     * @returns {ResourceManager} The shared instance.
+     */
     static shared () {
         if (!Object.hasOwn(this, "_shared")) {
             const obj = new this();
@@ -23,40 +50,48 @@ class ResourceManager {
         return this._shared;
     }
 
-    /*
-    static shared () {
-        if (!this._shared) {
-            this._shared = (new this).init();
-        }
-        return this._shared;
-    }
-    */
-
+    /**
+     * @category Utility Methods
+     * Checks if the code is running in a browser environment.
+     * @returns {boolean} True if in a browser, false otherwise.
+     */
     isInBrowser () {
         return (typeof(document) !== 'undefined');
     }
 
+    /**
+     * @category Initialization
+     * Initializes the ResourceManager instance.
+     * @returns {ResourceManager} The initialized instance.
+     */
     init () {
         this._index = null;
         this._indexResources = null;
         this._idb = null;
         this._evalCount = 0;
-		this._doneTime = null;
+        this._doneTime = null;
         this._promiseForLoadCam = null;
         return this;
     }
 
+    /**
+     * @category Core Functionality
+     * Runs the resource loading and evaluation process.
+     * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
+     */
     async run () {
         this.onProgress("", 0);
-        // load the boot resource index and start loading/evaling js files
         await this.promiseLoadIndex();
         await this.promiseLoadCamIfNeeded();
         await this.evalIndexResources();
         return this;
     }
 
-    // --- load index ---
-
+    /**
+     * @category Resource Loading
+     * Loads the resource index.
+     * @returns {Promise<void>}
+     */
     async promiseLoadIndex () {
         const path = "build/_index.json"
         const resource = await UrlResource.with(path).promiseLoad();
@@ -69,12 +104,20 @@ class ResourceManager {
         });
     }
 
+    /**
+     * @category Resource Access
+     * Returns the index resources.
+     * @returns {Array<UrlResource>} The index resources.
+     */
     indexResources () {
         return this._indexResources
     }
 
-    // --- load cam ---
-
+    /**
+     * @category Resource Loading
+     * Loads the CAM (Compressed Asset Manager) if needed.
+     * @returns {Promise<void>}
+     */
     async promiseLoadCamIfNeeded () {
         // if hashCache is empty, load the compressed cam and add it to the cache first
         // as this will be much faster than loading the files individually
@@ -88,6 +131,11 @@ class ResourceManager {
         }
     }
 
+    /**
+     * @category Resource Loading
+     * Loads the CAM.
+     * @returns {Promise<void>}
+     */
     async promiseLoadCam () {
         // cache the promise so if we call this multiple times we don't load it again
         if (!this._promiseForLoadCam) {
@@ -110,33 +158,61 @@ class ResourceManager {
         return this._promiseForLoadCam
     }
 
-    // --- index resources ---
-
+    /**
+     * @category Resource Access
+     * Finds a resource for a given path.
+     * @param {string} path - The path to search for.
+     * @returns {UrlResource|undefined} The found resource or undefined.
+     */
     resourceForPath (path) {
         return this.indexResources().find(r => r.path() === path)
     }
 
+    /**
+     * @category Resource Access
+     * Filters resources by file extension.
+     * @param {string} ext - The file extension to filter by.
+     * @returns {Array<UrlResource>} Filtered resources.
+     */
     resourcesWithExtension (ext) {
         return this.indexResources().filter(r => r.pathExtension() === ext)
     }
 
-    //example use: ResourceManager.shared().asyncDataForResourceAtPath(path);
+    /**
+     * @category Resource Loading
+     * Asynchronously retrieves data for a resource at a given path.
+     * @param {string} path - The path of the resource.
+     * @returns {Promise<*>} The data of the resource.
+     */
     async asyncDataForResourceAtPath (path) {
         const resourceUrl = UrlResource.clone().setPath(ResourceManager.bootPath() + "/" + path);
         await resourceUrl.promiseLoad();
         return resourceUrl.data();
     }
 
+    /**
+     * @category Resource Access
+     * Returns all JavaScript resources.
+     * @returns {Array<UrlResource>} JavaScript resources.
+     */
     jsResources () {
         return this.resourcesWithExtension("js")
     }
 
+    /**
+     * @category Resource Access
+     * Returns all CSS resources.
+     * @returns {Array<UrlResource>} CSS resources.
+     */
     cssResources () {
         return this.resourcesWithExtension("css")
     }
 
-    // --- eval ---
-
+    /**
+     * @category Resource Evaluation
+     * Evaluates all index resources (CSS and JS).
+     * @returns {Promise<void>}
+     */
     async evalIndexResources () {
         //debugger
         // promiseSerialForEach promiseSerialTimeoutsForEach
@@ -160,27 +236,11 @@ class ResourceManager {
         this.onDone();
     }
 
-    // --- browser specific ---
-
-    isInBrowser () {
-        return (typeof(document) !== 'undefined')
-    }
-
-    /*
-    postEvent (eventName, detail) {
-        if (this.isInBrowser()) {
-            const myEvent = new CustomEvent(eventName, {
-                detail: detail,
-                bubbles: true,
-                cancelable: true,
-                composed: false,
-              });
-              window.dispatchEvent(myEvent); // only called in Browser
-        }
-        return this
-    }
-    */
-    
+    /**
+     * @category Event Handling
+     * Handles progress updates during resource loading.
+     * @param {string} path - The path of the current resource being loaded.
+     */
     onProgress (path) {
         this._evalCount ++
         //bootLoadingView.setBarToNofM(this._evalCount, 100);
@@ -189,10 +249,19 @@ class ResourceManager {
         //this.postEvent("resourceLoaderProgress", detail)
     }
 
+    /**
+     * @category Event Handling
+     * Handles errors during resource loading.
+     * @param {Error} error - The error that occurred.
+     */
     onError (error) {
         //this.postEvent("resourceLoaderError", { error: error }) 
     }
 
+    /**
+     * @category Event Handling
+     * Handles completion of resource loading.
+     */
     onDone () {
         // not really done yet
         getGlobalThis().bootLoadingView = bootLoadingView;
@@ -203,10 +272,19 @@ class ResourceManager {
         //debugger;
     }
 
+    /**
+     * @category Performance Tracking
+     * Marks the page load time.
+     */
     markPageLoadTime() {
         this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
     }
 
+    /**
+     * @category Performance Tracking
+     * Returns a description of the load time.
+     * @returns {string} A formatted string describing the load time and resources.
+     */
     loadTimeDescription () {
         return "" + 
             Math.round(this._pageLoadTime/100)/10 + "s, " + 
@@ -214,43 +292,51 @@ class ResourceManager {
             UrlResource._totalUrlsLoaded + " files";
     }
 
-    // --- public API ---
+    /**
+     * @category Resource Access
+     * Returns the index entries.
+     * @returns {Array<Object>} The index entries.
+     */
+    entries () {
+        return this._index
+    }
 
-	entries () {
-		// each entry contains a path, size, and hash (base base64 encoded string of sha256)
-		return this._index
-	}
-
+    /**
+     * @category Resource Access
+     * Returns all resource file paths.
+     * @returns {Array<string>} The resource file paths.
+     */
     resourceFilePaths () {
         return this._index.map(entry => entry.path)
     }
 
-    // --- index entries ---
-
-    /*
-    extForPath (path) {
-        const parts = path.split(".")
-        return parts.length ? parts[parts.length -1] : undefined
-    }
-    */
-
+    /**
+     * @category Resource Access
+     * Filters URL resources by multiple file extensions.
+     * @param {Array<string>} extensions - The file extensions to filter by.
+     * @returns {Array<UrlResource>} Filtered URL resources.
+     */
     urlResourcesWithExtensions (extensions) {
 		const extSet = extensions.asSet()
         return this.indexResources().filter(r => extSet.has(r.pathExtension()))
     }
         
-    /*
-    resourceEntriesWithExtensions (extensions) {
-		const extSet = extensions.asSet()
-        return this._index.filter(entry => extSet.has(this.extForPath(entry.path)))
-    }
-    */
-
+    /**
+     * @category Resource Access
+     * Returns resource file paths filtered by multiple file extensions.
+     * @param {Array<string>} extensions - The file extensions to filter by.
+     * @returns {Array<string>} Filtered resource file paths.
+     */
     resourceFilePathsWithExtensions (extensions) {
         return this.urlResourcesWithExtensions(extensions).map(r => r.path())
         //return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
     }
 
+    /**
+     * @category Core Functionality
+     * Sets up and runs the ResourceManager.
+     * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
+     */
     async setupAndRun () {
         //console.log("ResourcesManager.setupAndRun()");
         const bp = this.bootPath();

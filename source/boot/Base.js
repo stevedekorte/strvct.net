@@ -1,5 +1,12 @@
 "use strict";
 
+/**
+ * @module boot
+ * @class Base
+ * @extends Object
+ * @description Base class with helpful methods for cloning and slot creation.
+ */
+    
 Object.defineSlot = function (obj, slotName, slotValue) {
     const descriptor = {
         configurable: true,
@@ -28,7 +35,7 @@ if (!String.prototype.capitalized) {
 /**
  * Base class with helpful methods for cloning and slot creation.
  */
-(class Base {
+(class Base extends Object {
     /**
      * Checks if the code is running in a browser environment.
      * @returns {boolean} True if running in a browser, false otherwise.

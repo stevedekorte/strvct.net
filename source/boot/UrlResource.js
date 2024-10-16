@@ -1,24 +1,62 @@
 "use strict";
 
-class UrlResource extends Object {
+/**
+ * @module boot
+ */
 
-    static _totalBytesLoaded = 0;
-    static _totalUrlsLoaded = 0;
+/**
+ * @class UrlResource
+ * @extends Object
+ * @classdesc Represents a resource identified by a URL.
+ */
 
+(class UrlResource extends Object {
+
+    static initThisClass () {
+        /** @type {number} Total bytes loaded across all instances */
+        this._totalBytesLoaded = 0;
+
+        /** @type {number} Total number of URLs loaded across all instances */
+        this._totalUrlsLoaded = 0;
+
+        getGlobalThis().UrlResource = UrlResource;
+    }
+
+    /**
+     * Creates a new UrlResource instance with the given URL.
+     * @param {string} url - The URL of the resource.
+     * @returns {UrlResource} A new UrlResource instance.
+     * @category Factory Methods
+     */
     static with (url) {
         return this.clone().setPath(url);
     }
 
+    /**
+     * Creates a clone of the UrlResource class.
+     * @returns {UrlResource} A new instance of UrlResource.
+     * @category Factory Methods
+     */
     static clone () {
         const obj = new this();
         obj.init();
         return obj;
     }
 	
+    /**
+     * Returns the type of the resource.
+     * @returns {string} The type of the resource.
+     * @category Metadata
+     */
     type () {
         return "UrlResource";
     }
 
+    /**
+     * Initializes the UrlResource instance.
+     * @returns {UrlResource} The initialized instance.
+     * @category Lifecycle
+     */
     init () {
         this._path = null;
         this._resourceHash = null;
@@ -27,28 +65,60 @@ class UrlResource extends Object {
         return this;
     }
 
+    /**
+     * Sets the path of the resource.
+     * @param {string} aPath - The path to set.
+     * @returns {UrlResource} The instance for chaining.
+     * @category Path Management
+     */
     setPath (aPath) {
         this._path = aPath;
         return this;
     }
 
+    /**
+     * Gets the path of the resource.
+     * @returns {string|null} The path of the resource.
+     * @category Path Management
+     */
     path () {
         return this._path;
     }
 
+    /**
+     * Gets the file extension of the resource path.
+     * @returns {string} The file extension.
+     * @category Path Management
+     */
     pathExtension () {
         return this.path().split(".").pop();
     }
 
+    /**
+     * Sets the resource hash.
+     * @param {string} h - The hash to set.
+     * @returns {UrlResource} The instance for chaining.
+     * @category Hash Management
+     */
     setResourceHash (h) {
         this._resourceHash = h;
         return this;
     }
 
+    /**
+     * Gets the resource hash.
+     * @returns {string|null} The resource hash.
+     * @category Hash Management
+     */
     resourceHash () {
         return this._resourceHash;
     }
 
+    /**
+     * Loads the resource asynchronously.
+     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @category Loading
+     */
     async promiseLoad () {
         // load unzipper if needed
         if (this.isZipFile()) {
@@ -57,17 +127,32 @@ class UrlResource extends Object {
         return await this.asyncLoadFromCache();
     }
 
+    /**
+     * Checks if debugging is enabled.
+     * @returns {boolean} True if debugging is enabled, false otherwise.
+     * @category Debugging
+     */
     isDebugging () {
         return false;
     }
 
+    /**
+     * Logs a debug message if debugging is enabled.
+     * @param {string} s - The message to log.
+     * @category Debugging
+     */
     debugLog (s) {
         if (this.isDebugging()) {
             console.log(s);
         }
     }
 
-   async asyncLoadFromCache () {
+    /**
+     * Loads the resource from the cache if available, otherwise loads it from the network.
+     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @category Loading
+     */
+    async asyncLoadFromCache () {
         if (this._data) {
             return this;
         }
@@ -112,6 +197,11 @@ class UrlResource extends Object {
         }
     }
 
+    /**
+     * Loads the resource from the network.
+     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @category Loading
+     */
     async promiseJustLoad () {
         try {
             const data = await URL.with(this.path()).promiseLoad();
@@ -127,12 +217,22 @@ class UrlResource extends Object {
         return this;
     }
 
+    /**
+     * Loads the resource from the network and evaluates it.
+     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @category Loading and Evaluation
+     */
     async promiseLoadAndEval () {
         //console.log("promiseLoadAndEval " + this.path())
         await this.promiseLoad();
         this.eval();
     }
 
+    /**
+     * Evaluates the resource as javascript or CSS.
+     * @returns {UrlResource} The instance for chaining.
+     * @category Evaluation
+     */
     eval () {
         if (this.pathExtension() === "js") {
             this.evalDataAsJS();
@@ -141,12 +241,22 @@ class UrlResource extends Object {
         }
     }
 
+    /**
+     * Evaluates the resource as javascript.
+     * @returns {UrlResource} The instance for chaining.
+     * @category Evaluation
+     */
     evalDataAsJS () {
         //console.log("UrlResource eval ", this.path())
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }
 
+    /**
+     * Evaluates the resource as CSS.
+     * @returns {UrlResource} The instance for chaining.
+     * @category Evaluation
+     */
     evalDataAsCss () {
         const cssString = this.dataAsText(); // default decoding is to utf8
         const sourceUrl = "\n\n//# sourceURL=" + this.path() + " \n";
@@ -158,10 +268,20 @@ class UrlResource extends Object {
         document.head.appendChild(element);
     }
 
+    /**
+     * Gets the data of the resource.
+     * @returns {Uint8Array} The data of the resource.
+     * @category Data Access
+     */
     data () {
         return this._data;
     }
 
+    /**
+     * Gets the data of the resource as a text string.
+     * @returns {string} The data of the resource as a text string.
+     * @category Data Access
+     */
     dataAsText () {
         let data = this.data()
         if (typeof(data) === "string") {
@@ -175,25 +295,41 @@ class UrlResource extends Object {
         return new TextDecoder().decode(data); // default decoding is to utf8
     }
 
+    /**
+     * Gets the data of the resource as a JSON object.
+     * @returns {object} The data of the resource as a JSON object.
+     * @category Data Access
+     */
     dataAsJson () {
         return JSON.parse(this.dataAsText());
     }
 
-    // --- zip ---
-
+    /**
+     * Checks if the resource is a zip file.
+     * @returns {boolean} True if the resource is a zip file, false otherwise.
+     * @category Zip Handling
+     */
     isZipFile () {
         return this.pathExtension() === "zip";
     }
 
+    /**
+     * Unzips the data of the resource.
+     * @returns {Uint8Array} The unzipped data.
+     * @category Zip Handling
+     */
     unzippedData () {
         return pako.inflate(this.data());
     }
 
+    /**
+     * Loads the unzip library if needed.
+     * @returns {Promise<void>} A promise that resolves when the unzip library is loaded.
+     * @category Zip Handling
+     */
     async promiseLoadUnzipIfNeeded () {
         if (!getGlobalThis().pako) {
             await UrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }
-}
-
-getGlobalThis().UrlResource = UrlResource;
+}).initThisClass();

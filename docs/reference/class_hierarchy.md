@@ -3,6 +3,7 @@
 - Object
   - Array
     - [Array_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FArray_ideal.js)
+    - [Array_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
     - [Array_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
     - [HookedArray](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedArray.js)
       - [IndexedArray](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FIndexedArray.js)
@@ -25,7 +26,7 @@
     - [Boolean_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FBoolean_ideal.js)
     - [Boolean_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
   - [BootLoader](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBootLoader.js)
-  - [BootLoadingView](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
+  - [BootLoadingView](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FBootLoadingView.js)
   - Date
     - [Date_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FDate_ideal.js)
     - [Date_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FDate_store.js)
@@ -60,6 +61,7 @@
   - [Object_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FObject_store.js)
   - [Object_timeouts](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
   - [PersistentAtomicMap](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fstorage%2FPersistentAtomicMap.js)
+  - [Promise_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FPromise_ideal.js)
   - [ProtoClass](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
     - [AtomicMap](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fmap%2FAtomicMap.js)
     - [BMDataUrl](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
@@ -398,7 +400,7 @@
   - [ProtocolAnalyzer](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2Fprotocols.js)
   - Range
     - [Range_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FRange_ideal.js)
-  - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
+  - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FResourceManager.js)
   - Set
     - [HookedSet](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedSet.js)
     - [ImmutableSet](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FImmutableSet.js)
@@ -412,6 +414,6 @@
     - [String_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
   - [TestClass](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2FSourceInspector%2Ftest%2FTestClass.js)
   - [Type](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FType.js)
-  - [URL_helpers](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
-  - [UrlResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2F_old%2FResourceManager.js)
+  - [URL_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
+  - [UrlResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FUrlResource.js)
   - [Worker](../resources/class-doc/class_doc.html?path=%2Fsource%2FServiceWorker%2FWorker.js)

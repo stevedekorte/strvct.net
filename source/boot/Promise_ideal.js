@@ -18,57 +18,76 @@
  * promise.callRejectFunc();
  */
 
-/**
- * @method clone
- * @memberof Promise
- * @description Clones a new Promise with additional methods and properties.
- * @returns {Promise} A new Promise instance with extended functionality.
- * @category Creation
- */
-Object.defineSlot(Promise, "clone", function () { // add a class method
-      let resolveFunc = null;
-      let rejectFunc = null;
-      const promise = new Promise((resolve, reject) => {
-        resolveFunc = resolve;
-        rejectFunc = reject;
-      });
-      promise._resolveFunc = resolveFunc;
-      promise._rejectFunc = rejectFunc;
-      promise._status = "pending";
-      promise._awaiterCount = 0;
-      promise._timeoutMs = null;
-      promise._timeoutId = null;
-      promise._onAwaitFunc = null;
-      promise._hasCalledAwaitFunc = false;
-      promise._label = "unlabed";
-      return promise ;
-});
 
 
-// on await 
+/*
+Object.defineSlot(Promise.prototype, "originalThen", Promise.prototype.then); // private
+delete Promise.prototype.then; // so initThisCategory() can set it
+*/
 
-/**
- * @method setOnAwaitFunc
- * @memberof Promise
- * @description Sets a function to be called when the promise is awaited.
- * @param {Function} aFunc - The function to be called on await.
- * @returns {Promise} The promise instance.
- * @category Await
- */
-Object.defineSlot(Promise.prototype, "setOnAwaitFunc", function (aFunc) {
-    this._onAwaitFunc = aFunc;
-    return this;
-});
+(class Promise_ideal extends Promise {
 
-/**
- * @method onAwait
- * @memberof Promise
- * @description Handles the await operation on the promise.
- * @category Await
- */
-Object.defineSlot(Promise.prototype, "onAwait", function () {
-    if (this.isPending()) {
-        this._awaiterCount ++;    
+    /**
+     * @method initThisCategory
+     * @static
+     * @description The original then method of the Promise prototype. We need this in order to be able to override the 'then' method without losing the original method.
+     * @category initialization
+     * @returns {Promise_ideal} The Promise_ideal class.
+     */
+    static initThisCategory () {
+        Object.defineSlot(Promise.prototype, "originalThen", Promise.prototype.then); // private
+        delete Promise.prototype.then; // so initThisCategory() can set it
+        super.initThisCategory();
+        return this;
+    }
+
+    /**
+     * @static
+     * @description Clones a new Promise with additional methods and properties.
+     * @returns {Promise} A new Promise instance with extended functionality.
+     * @category Creation
+     */
+    static clone () { // add a class method
+        let resolveFunc = null;
+        let rejectFunc = null;
+        const promise = new Promise((resolve, reject) => {
+            resolveFunc = resolve;
+            rejectFunc = reject;
+        });
+        promise._resolveFunc = resolveFunc;
+        promise._rejectFunc = rejectFunc;
+        promise._status = "pending";
+        promise._awaiterCount = 0;
+        promise._timeoutMs = null;
+        promise._timeoutId = null;
+        promise._onAwaitFunc = null;
+        promise._hasCalledAwaitFunc = false;
+        promise._label = "unlabed";
+        return promise ;
+    }
+
+    /**
+     * @method setOnAwaitFunc
+     * @memberof Promise
+     * @description Sets a function to be called when the promise is awaited.
+     * @param {Function} aFunc - The function to be called on await.
+     * @returns {Promise} The promise instance.
+     * @category Await
+     */
+    setOnAwaitFunc (aFunc) {
+        this._onAwaitFunc = aFunc;
+        return this;
+    }
+
+    /**
+     * @method onAwait
+     * @memberof Promise
+     * @description Handles the await operation on the promise.
+     * @category Await
+     */
+    onAwait () {
+        if (this.isPending()) {
+            this._awaiterCount ++;    
         
         if (!this._hasCalledAwaitFunc) {
             const f = this._onAwaitFunc;
@@ -76,8 +95,8 @@ Object.defineSlot(Promise.prototype, "onAwait", function () {
                 f(this);
             }
         }
-    } 
-});
+        } 
+    }
 
 // label
 
@@ -89,10 +108,10 @@ Object.defineSlot(Promise.prototype, "onAwait", function () {
  * @returns {Promise} The promise instance.
  * @category Labeling
  */
-Object.defineSlot(Promise.prototype, "setLabel", function (s) {
-    this._label = s;
-    return this;
-});
+    setLabel (s) {
+        this._label = s;
+        return this;
+    }
 
 /**
  * @method label
@@ -101,9 +120,9 @@ Object.defineSlot(Promise.prototype, "setLabel", function (s) {
  * @returns {string} The promise label.
  * @category Labeling
  */
-Object.defineSlot(Promise.prototype, "label", function () {
-    return this._label;
-});
+    label () {
+        return this._label;
+    }
 
 // timeouts
 
@@ -115,15 +134,15 @@ Object.defineSlot(Promise.prototype, "label", function () {
  * @returns {Promise} The promise instance.
  * @category Timeout
  */
-Object.defineSlot(Promise.prototype, "beginTimeout", function (ms) {
-    assert(this.isPending());
-    assert(this._timeoutId === null);
-    this._timeoutMs = ms;
-    this._timeoutId = setTimeout(() => { 
-        this.onTimeout() 
-    }, ms);
-    return this;
-});
+    beginTimeout (ms) {
+        assert(this.isPending());
+        assert(this._timeoutId === null);
+        this._timeoutMs = ms;
+        this._timeoutId = setTimeout(() => { 
+            this.onTimeout() 
+        }, ms);
+        return this;
+    }
 
 /**
  * @method cancelTimeout
@@ -132,16 +151,16 @@ Object.defineSlot(Promise.prototype, "beginTimeout", function (ms) {
  * @returns {Promise} The promise instance.
  * @category Timeout
  */
-Object.defineSlot(Promise.prototype, "cancelTimeout", function () {
-    const tid = this._timeoutId;
-    if (tid) {
-        clearTimeout(tid);
-        //console.log("Promise cancelTimeout() label: ", this.label().clipWithEllipsis(40) );
-        //debugger;
-        this._timeoutId = null;
+    cancelTimeout () {
+        const tid = this._timeoutId;
+        if (tid) {
+            clearTimeout(tid);
+            //console.log("Promise cancelTimeout() label: ", this.label().clipWithEllipsis(40) );
+            //debugger;
+            this._timeoutId = null;
+        }
+        return this;
     }
-    return this;
-});
 
 /**
  * @method onTimeout
@@ -150,9 +169,10 @@ Object.defineSlot(Promise.prototype, "cancelTimeout", function () {
  * @private
  * @category Timeout
  */
-Object.defineSlot(Promise.prototype, "onTimeout", function () { // private
-    this.callRejectFunc(this.label() + " promise timeout of " + this._timeoutMs + "ms expired");
-});
+    onTimeout () { // private
+        this.callRejectFunc(this.label() + " promise timeout of " + this._timeoutMs + "ms expired");
+    }
+
 
 // resolve / reject
 
@@ -166,13 +186,13 @@ Object.defineSlot(Promise.prototype, "onTimeout", function () { // private
  * @returns {*} The result of calling the resolve function.
  * @category Resolution
  */
-Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, arg3) {
-    assert(!this.isRejected(), "promise resolve call on already rejected promise");
-    this._status = "resolved";
-    this.clearAwaiterCount();
-    this.cancelTimeout();
-    return this._resolveFunc(arg1, arg2, arg3);
-});
+    callResolveFunc (arg1, arg2, arg3) {
+        assert(!this.isRejected(), "promise resolve call on already rejected promise");
+        this._status = "resolved";
+        this.clearAwaiterCount();
+        this.cancelTimeout();
+        return this._resolveFunc(arg1, arg2, arg3);
+    }
 
 /**
  * @method callRejectFunc
@@ -184,13 +204,13 @@ Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, ar
  * @returns {*} The result of calling the reject function.
  * @category Resolution
  */
-Object.defineSlot(Promise.prototype, "callRejectFunc", function (arg1, arg2, arg3) { 
-    assert(!this.isResolved(), "promise reject call on already resolved promise");
-    this._status = "rejected";
-    this.clearAwaiterCount();
-    this.cancelTimeout();
-    return this._rejectFunc(arg1, arg2, arg3);
-});
+    callRejectFunc (arg1, arg2, arg3) { 
+        assert(!this.isResolved(), "promise reject call on already resolved promise");
+        this._status = "rejected";
+        this.clearAwaiterCount();
+        this.cancelTimeout();
+        return this._rejectFunc(arg1, arg2, arg3);
+    }
 
 // status
 
@@ -201,9 +221,9 @@ Object.defineSlot(Promise.prototype, "callRejectFunc", function (arg1, arg2, arg
  * @returns {boolean} True if the promise is resolved, false otherwise.
  * @category Status
  */
-Object.defineSlot(Promise.prototype, "isResolved", function () { 
-    return this._status === "resolved";
-});
+    isResolved () { 
+        return this._status === "resolved";
+    }
 
 /**
  * @method isRejected
@@ -212,9 +232,9 @@ Object.defineSlot(Promise.prototype, "isResolved", function () {
  * @returns {boolean} True if the promise is rejected, false otherwise.
  * @category Status
  */
-Object.defineSlot(Promise.prototype, "isRejected", function () { 
-    return this._status === "rejected";
-});
+    isRejected () { 
+        return this._status === "rejected";
+    }
 
 /**
  * @method isPending
@@ -223,9 +243,9 @@ Object.defineSlot(Promise.prototype, "isRejected", function () {
  * @returns {boolean} True if the promise is pending, false otherwise.
  * @category Status
  */
-Object.defineSlot(Promise.prototype, "isPending", function () { 
-    return this._status === "pending";
-});
+    isPending () { 
+        return this._status === "pending";
+    }
 
 // awaiters
 
@@ -236,9 +256,9 @@ Object.defineSlot(Promise.prototype, "isPending", function () {
  * @returns {boolean} True if the promise has awaiters, false otherwise.
  * @category Await
  */
-Object.defineSlot(Promise.prototype, "hasAwaiters", function () { 
-    return this._awaiterCount !== 0;
-});
+    hasAwaiters () { 
+        return this._awaiterCount !== 0;
+    }
 
 /**
  * @method clearAwaiterCount
@@ -247,18 +267,9 @@ Object.defineSlot(Promise.prototype, "hasAwaiters", function () {
  * @private
  * @category Await
  */
-Object.defineSlot(Promise.prototype, "clearAwaiterCount", function () { // private
-    this._awaiterCount = 0;
-});
-
-/**
- * @method originalThen
- * @memberof Promise
- * @description The original then method of the Promise prototype.
- * @private
- * @category Uncategorized
- */
-Object.defineSlot(Promise.prototype, "originalThen", Promise.prototype.then); // private
+    clearAwaiterCount () { // private
+        this._awaiterCount = 0;
+    }
 
 /**
  * @method then
@@ -269,24 +280,9 @@ Object.defineSlot(Promise.prototype, "originalThen", Promise.prototype.then); //
  * @returns {Promise} A new Promise instance.
  * @category Chaining
  */
-Object.defineSlot(Promise.prototype, "then", function (onFulfilled, onRejected) { 
-    this.onAwait();
-    return this.originalThen(onFulfilled, onRejected);
-});
-
-
-/*
-need to make Promise a subclass of Object first?
-
-(class Promise_ideal extends Promise {
-
-    resolveFunc () {
-        return this._resolveFunc;
+    then (onFulfilled, onRejected) { 
+        this.onAwait();
+        return this.originalThen(onFulfilled, onRejected);
     }
-
-    resolveFunc () {
-        return this._rejectFunc;
-    }
-    
 }).initThisCategory();
-*/
+

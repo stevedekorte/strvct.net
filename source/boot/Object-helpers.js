@@ -1,7 +1,10 @@
 "use strict"; 
 
+/**
+ * @module boot
+ */
+
 /*
-    @module library.ideal.object
 
     Weird JS things:
 
@@ -28,7 +31,9 @@
         Number,
         Range,
         String,
-        ArrayBuffer
+        ArrayBuffer,
+        URL,
+        Promise
     ]
     classesToFix.forEach(aClass => aClass.__proto__ = Object)
 }
