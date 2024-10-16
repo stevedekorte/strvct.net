@@ -5,6 +5,7 @@
  * @class BootLoader
  * @extends Object
  * @description Manages the loading of JavaScript files in a specific order during the boot process.
+ * Files are loaded in parallel and then evaluated sequentially.
  */
 
 class BootLoader extends Object {
