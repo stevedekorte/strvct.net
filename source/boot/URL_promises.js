@@ -1,13 +1,24 @@
 "use strict";
 
-
+/**
+ * Extends the built-in URL class with additional promise-based methods.
+ */
 (class URL_promises extends URL {
 
-    static with (path) {
+    /**
+     * Creates a new URL object with the given path relative to the current window location.
+     * @param {string} path - The path to append to the current window location.
+     * @returns {URL_promises} A new URL_promises instance.
+     */
+    static with(path) {
         return new URL(path, new URL(window.location.href));
     }
 
-    promiseLoad () {
+    /**
+     * Loads the content of the URL using XMLHttpRequest.
+     * @returns {Promise<ArrayBuffer>} A promise that resolves with the response as an ArrayBuffer.
+     */
+    promiseLoad() {
         const path = this.href
         console.log("URL.promiseLoad() (over NETWORK) ", path)
         return new Promise((resolve, reject) => {

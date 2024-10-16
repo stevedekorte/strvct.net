@@ -3,7 +3,7 @@
 - Object
   - Array
     - [Array_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FArray_ideal.js)
-    - [Array_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
+    - [Array_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FArray_promises.js)
     - [Array_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
     - [HookedArray](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedArray.js)
       - [IndexedArray](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FIndexedArray.js)
@@ -414,6 +414,6 @@
     - [String_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
   - [TestClass](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2FSourceInspector%2Ftest%2FTestClass.js)
   - [Type](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FType.js)
-  - [URL_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FHelpers.js)
+  - [URL_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FURL_promises.js)
   - [UrlResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FUrlResource.js)
   - [Worker](../resources/class-doc/class_doc.html?path=%2Fsource%2FServiceWorker%2FWorker.js)

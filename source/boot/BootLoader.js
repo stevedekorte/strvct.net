@@ -31,6 +31,7 @@ class BootLoader extends Object {
 
   /**
    * @method setFiles
+   * @category Configuration
    * @param {string[]} filePaths - An array of file paths to be loaded.
    * @throws {Error} If filePaths is not an array.
    * @returns {BootLoader} The current BootLoader instance for chaining.
@@ -45,6 +46,7 @@ class BootLoader extends Object {
 
   /**
    * @method setBootPath
+   * @category Configuration
    * @param {string} path - The base path for loading files.
    * @throws {Error} If path is not a string.
    * @returns {BootLoader} The current BootLoader instance for chaining.
@@ -59,6 +61,7 @@ class BootLoader extends Object {
 
   /**
    * @method loadFile
+   * @category File Loading
    * @param {string} filePath - The path of the file to load.
    * @returns {Promise<void>} A promise that resolves when the file is loaded.
    */
@@ -86,6 +89,7 @@ class BootLoader extends Object {
 
   /**
    * @method loadSequentially
+   * @category File Loading
    * @description Loads all files in the _files array sequentially.
    * @returns {Promise<void>} A promise that resolves when all files are loaded.
    */
@@ -104,6 +108,7 @@ class BootLoader extends Object {
   /**
    * @static
    * @method boot
+   * @category Boot Process
    * @description Initializes and runs the boot sequence.
    * @returns {Promise<void>} A promise that resolves when the boot sequence is complete.
    */
@@ -134,6 +139,7 @@ class BootLoader extends Object {
   /**
    * @static
    * @method bootOnWindowLoad
+   * @category Boot Process
    * @description Sets up an event listener to start the boot sequence when the window is fully loaded.
    */
   static bootOnWindowLoad() {

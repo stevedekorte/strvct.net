@@ -5,13 +5,25 @@
  */
 
 /**
- * Manages the loading and evaluation of resources for the application.
+ * @class ResourceManager
+ * @extends Object
+ * @classdesc Supports loading, caching and evaluation of resources for the application.
  */
-class ResourceManager {
+(class ResourceManager extends Object {
 
     /**
-     * @category Static Methods
-     * Returns the boot path for resources.
+     * @category Initialization
+     * @description Initializes the ResourceManager class.
+     * @returns {ResourceManager} The initialized class.
+     */
+    static initThisClass () {
+        getGlobalThis().ResourceManager = ResourceManager;
+        return this;
+    }
+
+    /**
+     * @category Configuration
+     * @description Returns the boot path for resources.
      * @returns {string} The boot path.
      */
     static bootPath () {
@@ -20,7 +32,7 @@ class ResourceManager {
 
     /**
      * @category Instance Methods
-     * Returns the type of the manager.
+     * @description Returns the type of the manager.
      * @returns {string} The type "ResourceManager".
      */
     type () {
@@ -29,7 +41,7 @@ class ResourceManager {
 
     /**
      * @category Instance Methods
-     * Returns the boot path for this instance.
+     * @description Returns the boot path for this instance.
      * @returns {string} The boot path.
      */
     bootPath () {
@@ -38,7 +50,7 @@ class ResourceManager {
 
     /**
      * @category Static Methods
-     * Returns a shared instance of ResourceManager.
+     * @description Returns a shared instance of ResourceManager.
      * @returns {ResourceManager} The shared instance.
      */
     static shared () {
@@ -52,7 +64,7 @@ class ResourceManager {
 
     /**
      * @category Utility Methods
-     * Checks if the code is running in a browser environment.
+     * @description Checks if the code is running in a browser environment.
      * @returns {boolean} True if in a browser, false otherwise.
      */
     isInBrowser () {
@@ -61,7 +73,7 @@ class ResourceManager {
 
     /**
      * @category Initialization
-     * Initializes the ResourceManager instance.
+     * @description Initializes the ResourceManager instance.
      * @returns {ResourceManager} The initialized instance.
      */
     init () {
@@ -76,7 +88,7 @@ class ResourceManager {
 
     /**
      * @category Core Functionality
-     * Runs the resource loading and evaluation process.
+     * @description Runs the resource loading and evaluation process.
      * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
      */
     async run () {
@@ -89,7 +101,7 @@ class ResourceManager {
 
     /**
      * @category Resource Loading
-     * Loads the resource index.
+     * @description Loads the resource index.
      * @returns {Promise<void>}
      */
     async promiseLoadIndex () {
@@ -106,7 +118,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Returns the index resources.
+     * @description Returns the index resources.
      * @returns {Array<UrlResource>} The index resources.
      */
     indexResources () {
@@ -115,7 +127,7 @@ class ResourceManager {
 
     /**
      * @category Resource Loading
-     * Loads the CAM (Compressed Asset Manager) if needed.
+     * @description Loads the CAM (Compressed Asset Manager) if needed.
      * @returns {Promise<void>}
      */
     async promiseLoadCamIfNeeded () {
@@ -133,7 +145,7 @@ class ResourceManager {
 
     /**
      * @category Resource Loading
-     * Loads the CAM.
+     * @description Loads the CAM.
      * @returns {Promise<void>}
      */
     async promiseLoadCam () {
@@ -160,7 +172,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Finds a resource for a given path.
+     * @description Finds a resource for a given path.
      * @param {string} path - The path to search for.
      * @returns {UrlResource|undefined} The found resource or undefined.
      */
@@ -170,7 +182,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Filters resources by file extension.
+     * @description Filters resources by file extension.
      * @param {string} ext - The file extension to filter by.
      * @returns {Array<UrlResource>} Filtered resources.
      */
@@ -180,7 +192,7 @@ class ResourceManager {
 
     /**
      * @category Resource Loading
-     * Asynchronously retrieves data for a resource at a given path.
+     * @description Asynchronously retrieves data for a resource at a given path.
      * @param {string} path - The path of the resource.
      * @returns {Promise<*>} The data of the resource.
      */
@@ -192,7 +204,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Returns all JavaScript resources.
+     * @description Returns all JavaScript resources.
      * @returns {Array<UrlResource>} JavaScript resources.
      */
     jsResources () {
@@ -201,7 +213,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Returns all CSS resources.
+     * @description Returns all CSS resources.
      * @returns {Array<UrlResource>} CSS resources.
      */
     cssResources () {
@@ -210,7 +222,7 @@ class ResourceManager {
 
     /**
      * @category Resource Evaluation
-     * Evaluates all index resources (CSS and JS).
+     * @description Evaluates all index resources (CSS and JS).
      * @returns {Promise<void>}
      */
     async evalIndexResources () {
@@ -238,7 +250,7 @@ class ResourceManager {
 
     /**
      * @category Event Handling
-     * Handles progress updates during resource loading.
+     * @description Handles progress updates during resource loading.
      * @param {string} path - The path of the current resource being loaded.
      */
     onProgress (path) {
@@ -251,7 +263,7 @@ class ResourceManager {
 
     /**
      * @category Event Handling
-     * Handles errors during resource loading.
+     * @description Handles errors during resource loading.
      * @param {Error} error - The error that occurred.
      */
     onError (error) {
@@ -260,7 +272,7 @@ class ResourceManager {
 
     /**
      * @category Event Handling
-     * Handles completion of resource loading.
+     * @description Handles completion of resource loading.
      */
     onDone () {
         // not really done yet
@@ -274,7 +286,7 @@ class ResourceManager {
 
     /**
      * @category Performance Tracking
-     * Marks the page load time.
+     * @description Marks the page load time.
      */
     markPageLoadTime() {
         this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
@@ -282,7 +294,7 @@ class ResourceManager {
 
     /**
      * @category Performance Tracking
-     * Returns a description of the load time.
+     * @description Returns a description of the load time.
      * @returns {string} A formatted string describing the load time and resources.
      */
     loadTimeDescription () {
@@ -294,7 +306,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Returns the index entries.
+     * @description Returns the index entries.
      * @returns {Array<Object>} The index entries.
      */
     entries () {
@@ -303,7 +315,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Returns all resource file paths.
+     * @description Returns all resource file paths.
      * @returns {Array<string>} The resource file paths.
      */
     resourceFilePaths () {
@@ -312,7 +324,7 @@ class ResourceManager {
 
     /**
      * @category Resource Access
-     * Filters URL resources by multiple file extensions.
+     * @description Filters URL resources by multiple file extensions.
      * @param {Array<string>} extensions - The file extensions to filter by.
      * @returns {Array<UrlResource>} Filtered URL resources.
      */
@@ -323,7 +335,7 @@ class ResourceManager {
         
     /**
      * @category Resource Access
-     * Returns resource file paths filtered by multiple file extensions.
+     * @description Returns resource file paths filtered by multiple file extensions.
      * @param {Array<string>} extensions - The file extensions to filter by.
      * @returns {Array<string>} Filtered resource file paths.
      */
@@ -334,7 +346,7 @@ class ResourceManager {
 
     /**
      * @category Core Functionality
-     * Sets up and runs the ResourceManager.
+     * @description Sets up and runs the ResourceManager.
      * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
      */
     async setupAndRun () {
@@ -358,14 +370,5 @@ class ResourceManager {
         //debugger;
         return this
     }
-}
+}).initThisClass();
 
-// ---------------------------------------------------------------------------------------------
-
-/*
-window.addEventListener('load', function() {
-    // This event is fired when the entire page, including all dependent resources such as stylesheets and images, is fully loaded.
-    //console.log('window.load event: other resources finished loading, starting ResourcesManager now.');
-    ResourceManager.shared().setupAndRun()
-});
-*/

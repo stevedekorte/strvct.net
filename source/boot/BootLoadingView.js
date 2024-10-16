@@ -10,6 +10,8 @@
 class BootLoadingView extends Object {
 
   /**
+   * @method isAvailable
+   * @category State
    * @returns {boolean} True if the loading view element is available in the DOM.
    */
   isAvailable() {
@@ -17,6 +19,8 @@ class BootLoadingView extends Object {
   }
 
   /**
+   * @method element
+   * @category DOM
    * @returns {HTMLElement|null} The main loading view element.
    */
   element() {
@@ -24,6 +28,8 @@ class BootLoadingView extends Object {
   }
   
   /**
+   * @method titleElement
+   * @category DOM
    * @returns {HTMLElement|null} The title element of the loading view.
    */
   titleElement() {
@@ -31,6 +37,8 @@ class BootLoadingView extends Object {
   }
 
   /**
+   * @method barElement
+   * @category DOM
    * @returns {HTMLElement|null} The progress bar element of the loading view.
    */
   barElement() {
@@ -40,7 +48,8 @@ class BootLoadingView extends Object {
   // Commented out methods remain unchanged
 
   /**
-   * Sets the title of the loading view.
+   * @method setTitle
+   * @category UI Update
    * @param {string} s - The title text to set.
    * @returns {BootLoadingView} The current instance for chaining.
    */
@@ -53,6 +62,8 @@ class BootLoadingView extends Object {
   }
 
   /**
+   * @method title
+   * @category UI State
    * @returns {string} The current title of the loading view.
    */
   title() {
@@ -60,7 +71,8 @@ class BootLoadingView extends Object {
   }
 
   /**
-   * Sets an error message as the title and changes its color to red.
+   * @method setErrorMessage
+   * @category UI Update
    * @param {string} s - The error message to display.
    */
   setErrorMessage(s) {
@@ -69,7 +81,8 @@ class BootLoadingView extends Object {
   }
 
   /**
-   * Sets the progress bar ratio.
+   * @method setBarRatio
+   * @category UI Update
    * @param {number} r - The ratio to set (between 0 and 1).
    * @returns {BootLoadingView} The current instance for chaining.
    * @throws {Error} If the ratio is invalid.
@@ -85,7 +98,8 @@ class BootLoadingView extends Object {
   }
 
   /**
-   * Sets the progress bar based on the current step and total steps.
+   * @method setBarToNofM
+   * @category UI Update
    * @param {number} n - The current step.
    * @param {number} count - The total number of steps.
    * @returns {BootLoadingView} The current instance for chaining.
@@ -100,7 +114,9 @@ class BootLoadingView extends Object {
   }
 
   /**
-   * Removes the loading view element from the DOM.
+   * @method close
+   * @category Lifecycle
+   * @description Removes the loading view element from the DOM.
    */
   close() {
     if (!this.isAvailable()) {
