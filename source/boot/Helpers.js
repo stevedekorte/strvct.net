@@ -40,6 +40,8 @@ function evalStringFromSourceUrl(codeString, path) {
     return result;
 };
 
+getGlobalThis().evalStringFromSourceUrl = evalStringFromSourceUrl;
+
 // --- Object defineSlot ---
 
 Object.defineSlot = function (obj, slotName, slotValue) {

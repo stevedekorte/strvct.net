@@ -63,7 +63,7 @@ class BootLoader extends Object {
    * @method loadFile
    * @category File Loading
    * @param {string} filePath - The path of the file to load.
-   * @returns {Promise<void>} A promise that resolves when the file is loaded.
+   * @returns {Promise<{path: string, content: string}>} A promise that resolves with the file path and content.
    */
   loadFile(filePath) {
     const fullPath = this._bootPath
@@ -72,37 +72,56 @@ class BootLoader extends Object {
     
     console.log(`Attempting to load: ${fullPath}`);
     
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = fullPath;
-      script.onload = () => {
+    return fetch(fullPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load file: ${fullPath}`);
+        }
+        return response.text();
+      })
+      .then(content => {
         console.log(`Successfully loaded: ${fullPath}`);
-        resolve();
-      };
-      script.onerror = () => {
-        console.error(`Failed to load: ${fullPath}`);
-        reject(new Error(`Failed to load file: ${fullPath}`));
-      };
-      document.head.appendChild(script);
-    });
+        return { path: filePath, content: content };
+      })
+      .catch(error => {
+        console.error(`Failed to load: ${fullPath}`, error);
+        throw error;
+      });
   }
 
   /**
-   * @method loadSequentially
+   * @method loadParallelEvalSequential
    * @category File Loading
-   * @description Loads all files in the _files array sequentially.
-   * @returns {Promise<void>} A promise that resolves when all files are loaded.
+   * @description Loads all files in the _files array in parallel, then evaluates them sequentially.
+   * @returns {Promise<void>} A promise that resolves when all files are loaded and evaluated.
    */
-  loadSequentially() {
-    console.log('Starting sequential file loading...');
-    return this._files.reduce((promise, filePath) => {
-      return promise.then(() => this.loadFile(filePath));
-    }, Promise.resolve()).then(() => {
-      console.log('All files loaded successfully');
-    }).catch((error) => {
-      console.error('Error during file loading:', error);
-      throw error;
-    });
+  loadParallelEvalSequential() {
+    console.log('Starting parallel file loading...');
+    
+    // Load all files in parallel
+    const loadPromises = this._files.map(filePath => this.loadFile(filePath));
+    
+    return Promise.all(loadPromises)
+      .then(fileContents => {
+        console.log('All files loaded successfully, starting sequential evaluation...');
+        
+        // Evaluate files sequentially
+        return fileContents.reduce((promise, { path, content }) => {
+          return promise.then(() => {
+            console.log(`Evaluating file: ${path}`);
+            const evalFunc = new Function(content);
+            evalFunc.call(window); // Execute in the global scope
+            console.log(`Finished evaluating: ${path}`);
+          });
+        }, Promise.resolve());
+      })
+      .then(() => {
+        console.log('All files loaded and evaluated successfully');
+      })
+      .catch((error) => {
+        console.error('Error during file loading or evaluation:', error);
+        throw error;
+      });
   }
 
   /**
@@ -133,7 +152,7 @@ class BootLoader extends Object {
       //"pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
       */
     ]);
-    return bootLoader.loadSequentially()
+    return bootLoader.loadParallelEvalSequential()
   }
 
   /**
