@@ -51,6 +51,8 @@
   - Number
     - [Number_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
     - [Number_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
+  - [Object_boot](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FObject_boot.js)
+  - [Object_categorySupport](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FObject_categorySupport.js)
   - [Object_class](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)
   - [Object_copying](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
   - [Object_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_ideal.js)

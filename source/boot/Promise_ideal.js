@@ -5,7 +5,8 @@
 "use strict";
 
 /**
- * @class Promise
+ * @class Promise_ideal
+ * @extends Promise
  * @classdesc Some extra methods for the Javascript Promise primitive.
  * 
  * Example usage:

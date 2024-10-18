@@ -1,7 +1,13 @@
 "use strict";
 
 /**
- * Extends the built-in URL class with additional promise-based methods.
+ * @module boot
+ */
+
+/**
+ * @class URL_promises
+ * @extends URL
+ * @classdesc Extends the built-in URL class with additional promise-based methods.
  */
 (class URL_promises extends URL {
 

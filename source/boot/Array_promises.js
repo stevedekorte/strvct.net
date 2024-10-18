@@ -1,8 +1,15 @@
 "use strict";
+/**
+ * @module boot
+ */
+
 
 /**
- * Extends the built-in Array class with additional promise-based methods.
+ * @class Array_promises
+ * @extends Array
+ * @classdesc Extends the built-in Array class with additional promise-based methods.
  */
+
 (class Array_promises extends Array {
 
     /**
