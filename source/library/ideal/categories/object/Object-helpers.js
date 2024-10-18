@@ -46,7 +46,7 @@
  * @category Property
  */
 Object.defineSlot = function (obj, slotName, slotValue) {
-    if (Object.getOwnPropertyDescriptor(slotName)) {
+    if (Object.getOwnPropertyDescriptor(obj, slotName)) {
         // TODO: raise exception if it exists? Safer for categories?
         this[slotName] = slotValue
     } else {

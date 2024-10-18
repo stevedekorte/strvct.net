@@ -137,23 +137,23 @@ class BootLoader extends Object {
     bootLoader.setBootPath("strvct/source/boot/");
     bootLoader.setFiles([
       "getGlobalThis.js",
-      "Object-helpers.js",
+      "Object_categorySupport.js",
+      "Object_boot.js",
       "Helpers.js",
       "URL_promises.js",
       "Array_promises.js",
       "UrlResource.js",
       "BootLoadingView.js",
-      "ResourceManager.js"
-      /*
+      "ResourceManager.js",
+
       "Base.js",
       "Promise_ideal.js",
       "IndexedDBFolder.js",
       "IndexedDBTx.js",
       "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
       //"pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
-      */
     ]);
-    return bootLoader.loadParallelEvalSequential()
+    return bootLoader.loadParallelEvalSequential();
   }
 
   /**
@@ -162,14 +162,14 @@ class BootLoader extends Object {
    * @category Boot Process
    * @description Sets up an event listener to start the boot sequence when the window is fully loaded.
    */
-  static bootOnWindowLoad() {
+  static async bootOnWindowLoad() {
     window.addEventListener('load', () => {
       // This event is fired when the entire page, including all dependent resources such as stylesheets and images, is fully loaded.
       //console.log('window.load event: other resources finished loading, starting ResourcesManager now.');
 
-      BootLoader.boot().then(() => {
+      return BootLoader.boot().then(async () => {
         console.log("Boot sequence complete");
-        ResourceManager.shared().setupAndRun()
+        await ResourceManager.shared().setupAndRun()
       });
     });
   }

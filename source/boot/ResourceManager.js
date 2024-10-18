@@ -7,8 +7,10 @@
 /**
  * @class ResourceManager
  * @extends Object
- * @classdesc Supports loading, caching and evaluation of resources for the application.
+ * @classdesc Singleton that supports loading, caching and evaluation of resources for the application.
+ * Resources are primarily JS and CSS files, but can also include images, JSON, SVG, and other assets.
  */
+
 (class ResourceManager extends Object {
 
     /**
@@ -351,6 +353,8 @@
      */
     async setupAndRun () {
         //console.log("ResourcesManager.setupAndRun()");
+        /*
+        // BootLoader now loads these so this is no longer needed
         const bp = this.bootPath();
         const urls = [
             //"source/boot/getGlobalThis.js",
@@ -366,9 +370,11 @@
         const loadedResources = await urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad());
         // but we have to eval the JS serially as order matters
         loadedResources.forEach(resource => resource.evalDataAsJS());
+        */
         await this.run();
         //debugger;
         return this
     }
+
 }).initThisClass();
 

@@ -7,30 +7,6 @@
  * @description Base class with helpful methods for cloning and slot creation.
  */
     
-Object.defineSlot = function (obj, slotName, slotValue) {
-    const descriptor = {
-        configurable: true,
-        enumerable: false,
-        value: slotValue,
-        writable: true,
-    }
-
-    if (typeof(slotValue) === "function") {
-        slotValue.displayName = slotName
-    }
-    
-    Object.defineProperty(obj, slotName, descriptor)
-}
-
-if (!String.prototype.capitalized) {
-    Object.defineSlot(String.prototype, "capitalized",
-        function () {
-            return this.replace(/\b[a-z]/g, function (match) {
-                return match.toUpperCase();
-            });
-        }
-    )
-}
 
 /**
  * Base class with helpful methods for cloning and slot creation.
@@ -77,12 +53,51 @@ if (!String.prototype.capitalized) {
         return this.name
     }
 
+    static defineStringCapitalized () {
+        if (!String.prototype.capitalized) {
+            Object.defineSlot(String.prototype, "capitalized",
+                function () {
+                    return this.replace(/\b[a-z]/g, function (match) {
+                        return match.toUpperCase();
+                    });
+                }
+            )
+        }
+        return this;
+    }
+
+    /**
+     * Sets up the Object.defineSlot method for defining slots on objects.
+     * @returns {typeof Base} The class itself.
+     * @category Initialization
+     */
+    static setupDefineSlot () {
+        Object.defineSlot = function (obj, slotName, slotValue) {
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: slotValue,
+                writable: true,
+            }
+        
+            if (typeof(slotValue) === "function") {
+                slotValue.displayName = slotName
+            }
+            
+            Object.defineProperty(obj, slotName, descriptor)
+        }
+        this.defineStringCapitalized();
+        return this;
+    }
+
     /**
      * Initializes the class by setting up prototype slots and methods.
      * @returns {typeof Base} The class itself.
      * @category Initialization
      */
     static initThisClass () {
+        this.setupDefineSlot();
+
         // initPrototypeSlots is split from initPrototype as initPrototype may need to 
         // access slots that are created in initPrototypeSlots. We can't just put the slot definitions at the top
         // as subclasses may *override* the slot definitions.
