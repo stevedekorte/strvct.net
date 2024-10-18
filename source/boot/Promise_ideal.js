@@ -8,7 +8,7 @@
  * @class Promise
  * @classdesc Some extra methods for the Javascript Promise primitive.
  * 
- * Use:
+ * Example usage:
  * 
  * const promise = Promise.clone();
  * 
@@ -18,12 +18,6 @@
  * promise.callRejectFunc();
  */
 
-
-
-/*
-Object.defineSlot(Promise.prototype, "originalThen", Promise.prototype.then); // private
-delete Promise.prototype.then; // so initThisCategory() can set it
-*/
 
 (class Promise_ideal extends Promise {
 

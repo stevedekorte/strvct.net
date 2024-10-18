@@ -7,7 +7,9 @@
 /**
  * @class UrlResource
  * @extends Object
- * @classdesc Represents a resource identified by a URL.
+ * @classdesc Represents a resource identified by a URL. Supports automatic
+ * loading from network or cache, and unzipping of zip files. To use the cache, 
+ * the resourceHash must be specified.
  */
 
 (class UrlResource extends Object {
