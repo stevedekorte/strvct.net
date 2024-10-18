@@ -62,7 +62,7 @@ For example, a Server class might have a guestConnections property referencing a
 
 ### Indirect UI Coupling
 
-The domain model operates independently of UI, allowing for "headless" execution. It can however, use annotations to provide optional UI hints without direct coupling. This is possible because model objects hold no references to UI objects and can only communicate with them via notifications.
+The domain model operates independently of UI, allowing for "headless" execution. It can, however, use annotations to provide optional UI hints without direct coupling. This is possible because model objects hold no references to UI objects and can only communicate with them via notifications.
 
 ## User Interface
 
@@ -167,7 +167,7 @@ Collapsed<object type="image/svg+xml" data="diagrams/svg/collapsed.svg">[SVG dia
 
 #### Navigation Path
 
-Tiles on the selected are highlighted, and the focused tile - which represents the most recently selected location - is distinguished with a unique highlight.
+Tiles on the selected are highlighted, and the focused tile (which represents the most recently selected location) is distinguished with a unique highlight.
 
 These highlights and other visual attributes are customizable via themes.
 
@@ -207,11 +207,11 @@ Themes can be used to customize the appearance of the UI. Domain objects can als
 ### Importing and Exporting
 
 Drag and drop of domain objects into the UI and out of it for export is also supported.
-Domain objects can register for which MIME type they can exported to and imported from. For example, if a domain object supports it, it can be dragged out of one browser window unto a user's desktop, or even dropped into another Strvct app that accepts that MIME type. Domain objects have a standard property which lists it's valid subnode types, and this can be used validate drops and auto generate subnodes for imported data.
+Domain objects can register for which MIME type they can exported to and imported from. For example, if a domain object supports it, it can be dragged out of one browser window onto a user's desktop, or even dropped into another Strvct app that accepts that MIME type. Domain objects have a standard property which lists its valid subnode types, and this can be used to validate drops and auto generate subnodes for imported data.
 
 ### JSON Schema
 
-Domain objects can automatically generate JSON Schema for themselves based on their properties and annotations. These schemas are be used to export meta data about the domain model, which is particularly usefule when interacting with Large Language Models.
+Domain objects can automatically generate JSON Schema for themselves based on their properties and annotations. These schemas are be used to export metadata about the domain model, which is particularly usefull when interacting with Large Language Models.
 
 ### UI Synchronization
 
@@ -223,7 +223,7 @@ Bidirectional sync stops automatically as property changes trigger sync operatio
 
 #### Reference Loop Avoidance
 
-Observations use weak references, allowing garbage collection of both posters and listeners. The Notification system automatically removes observerations when the listener is collected.
+Observations use weak references, allowing garbage collection of both posters and listeners. The Notification system automatically removes observations when the listener is collected.
 
 ## Storage
 
