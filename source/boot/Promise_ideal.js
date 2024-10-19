@@ -134,7 +134,7 @@
         assert(this._timeoutId === null);
         this._timeoutMs = ms;
         this._timeoutId = setTimeout(() => { 
-            this.onTimeout() 
+            this.onTimeout();
         }, ms);
         return this;
     }
@@ -279,5 +279,6 @@
         this.onAwait();
         return this.originalThen(onFulfilled, onRejected);
     }
+    
 }).initThisCategory();
 

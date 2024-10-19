@@ -110,27 +110,27 @@ A notable feature of the Tiles is their ability to generate summaries that refle
 
 A **Tile Stack** is a scrollable stacks of **Tiles** which are used to present the subnodes of a domain object. They support flexible orientation, and gestures for adding, removing, and reordering tiles. Optional support for grid or outline layouts could be added, but are not currently supported.
 
-<diagram>
-Tile Stack
-<object type="image/svg+xml" data="diagrams/svg/tiles.svg">[SVG diagram]</object>
+<diagram style="display: flex; flex-direction: column; align-items: center;">
+<div style="display: flex;">Tile Stack</div>
+<object type="image/svg+xml" data="diagrams/svg/tiles.svg" style="display: flex; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
 </diagram>
 
 ### Master-Detail Views
 
 A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view. The master section supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The divider between the master and detail sections can also be dragged to resize the sections if the domain object allows it.
 
-<diagram>
-Master-Detail View
-<object type="image/svg+xml" data="diagrams/svg/master-detail.svg">[SVG diagram]</object>
+<diagram style="display: flex; flex-direction: column; align-items: center;">
+<div>Master-Detail View</div>
+<object type="image/svg+xml" data="diagrams/svg/master-detail.svg" style="display: flex; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Flexible Orientation
 
 Detail Views can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
-<diagram>
+<diagram style="display: flex; flex-direction: column; align-items: center;">
 Master-Detail Orientations
-<object type="image/svg+xml" data="diagrams/svg/orientations.svg">[SVG diagram]</object>
+<object type="image/svg+xml" data="diagrams/svg/orientations.svg" style="display: block; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Nesting
@@ -139,7 +139,7 @@ Nesting of master-detail views with flexible orientations allows for navigation 
 
 <diagram>
   <div style="display: inline-block; height: fit-content; width: 30%;">
-  Vertical<br>
+Vertical
   <object type="image/svg+xml" data="diagrams/svg/vertical-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
   <div style="display: inline-block; height: fit-content; width: 30%;">
@@ -152,18 +152,31 @@ Nesting of master-detail views with flexible orientations allows for navigation 
   </div>
 </diagram>
 
+</div>
+
 #### Auto Collapsing and Expanding
 
 Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use of display space across a wide range of viewport sizes.
 
-<diagram>
-Expanded
-<object type="image/svg+xml" data="diagrams/svg/expanded.svg">[SVG diagram]</object>
-</diagram>
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em; margin: 0; text-align: center; max-height: 1.7em;">
+    Expanded
+  </div>
+  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
+    <object type="image/svg+xml" data="diagrams/svg/expanded.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
+  </div>
+</div>
+<br>
 
-<diagram>
-Collapsed<object type="image/svg+xml" data="diagrams/svg/collapsed.svg">[SVG diagram]</object>
-</diagram>
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em; margin: 0; text-align: center; max-height: 1.7em;">
+    Collapsed
+  </div>
+  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
+  <object type="image/svg+xml" data="diagrams/svg/collapsed.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
+  </div>
+</div>
+<br>
 
 #### Navigation Path
 
@@ -171,28 +184,43 @@ Tiles on the selected are highlighted, and the focused tile (which represents th
 
 These highlights and other visual attributes are customizable via themes.
 
-<diagram>
-Navigation Path
-<object type="image/svg+xml" data="diagrams/svg/path.svg">[SVG diagram]</object>
-</diagram>
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em; margin: 0; text-align: center; max-height: 1.7em;">
+    Navigation Path
+  </div>
+  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
+  <object type="image/svg+xml" data="diagrams/svg/path.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
+  </div>
+</div>
+<br>
 
 #### Breadcrumbs
 
 A BreadcrumbTile can be used to represent the current navigation path. It automatically compacts and expands to reveal more of the path based on the current viewport size, replacing the compacted path with a back arrow.
 
-<diagram style="width: 50%; height: auto;">
-Breadcrumbs
-<object type="image/svg+xml" data="diagrams/svg/breadcrumbs.svg">[SVG diagram]</object>
-</diagram>
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em; margin: 0; text-align: center; max-height: 1.7em;">
+    Breadcrumbs
+  </div>
+  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
+  <object type="image/svg+xml" data="diagrams/svg/breadcrumbs.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
+  </div>
+</div>
+<br>
 
 #### Menus
 
 Tile navigation is very similar to menu navigation, and multiple levels of traditional menus can be constructed using various orientations of master-detail views.
 
-<diagram style="width: 50%; height: auto;">
-Horizontal Menus
-<object type="image/svg+xml" data="diagrams/svg/horizontal-menus.svg">[SVG diagram]</object>
-</diagram>
+<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+  <div style="padding: 0.2em; margin: 0; text-align: center; max-height: 1.7em;">
+    Horizontal Menus
+  </div>
+  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
+  <object type="image/svg+xml" data="diagrams/svg/horizontal-menus.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
+  </div>
+</div>
+<br>
 
 ### Screenshots
 

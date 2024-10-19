@@ -371,10 +371,12 @@
         // but we have to eval the JS serially as order matters
         loadedResources.forEach(resource => resource.evalDataAsJS());
         */
+
         await this.run();
-        //debugger;
+
         return this
     }
 
 }).initThisClass();
+
 

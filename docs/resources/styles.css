@@ -141,6 +141,7 @@ a:hover {
   margin-bottom: 0.5em;
 }
 
+/*
 diagram {
   display: flex;
   justify-content: center;
@@ -162,18 +163,68 @@ diagram {
 object {
   display: flex;
   border: 0px none red;
-  /*
-  height: auto;
-  width: fit-content;
-  */
   max-width: 100%;
   max-height: 100%;
 
+  
   width: 100%; 
   height: fit-content;
-  margin: 0em;
-  padding: 0em;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
 }
+*/
+
+diagram {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  padding: 0;
+  border: 0px solid #333;
+  overflow: visible;
+  height: fit-content;
+  width: 100%;
+  margin: 2em auto 2.5em;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+object {
+  display: block;
+  border: 0;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+/* New styles for the container divs */
+diagram > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 30%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Style for the text above SVGs */
+diagram > div > :first-child {
+  margin-bottom: 0.5em;
+}
+
+  /*
+
+.standard-diagram {
+  display: block;
+  height: 100%; 
+  max-height: auto; 
+  width: auto;
+}
+  */
 
 table-of-contents {
   font-family: "Blender Pro", "Helvetica", sans-serif;
