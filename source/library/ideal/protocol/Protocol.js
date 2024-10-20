@@ -33,6 +33,17 @@
 
 (class Protocol extends ProtoClass {
 
+  /**
+   * @description Initializes the protocol.
+   * @category Initialization
+   */
+  static initThisProtocol () {
+    // check to make sure the class name ends with "Protocol"
+    assert(this.className().endsWith("Protocol"), "Protocol class name must end with 'Protocol'");
+
+    this.initThisClass();
+  }
+
   static initClass () {
     /**
      * @member {Set} implementers - A set of all implementers of the protocol.

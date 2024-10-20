@@ -377,6 +377,8 @@
     - [Protocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fprotocol%2FProtocol.js)
       - [AudioClipDelegateProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Faudio%2FAudioClipDelegateProtocol.js)
       - [AudioClipProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Faudio%2FAudioClipProtocol.js)
+      - [DragDestinationProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FDragDestinationProtocol.js)
+      - [DragSourceProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FDragSourceProtocol.js)
     - [Rectangle](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
     - [SimpleSynth](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Faudio%2FSimpleSynth.js)
     - [StackFrame](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)

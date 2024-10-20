@@ -192,6 +192,8 @@
               - [TileSubtitleView](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileSubtitleView.js)
               - [TileTitleView](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileTitleView.js)
           - TilesView
+            - [DragDestinationProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FDragDestinationProtocol.js)
+            - [DragSourceProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FDragSourceProtocol.js)
             - [TilesView](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView.js)
             - [TilesView_dragViewProtocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_dragViewProtocol.js)
             - [TilesView_gestures](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_gestures.js)
