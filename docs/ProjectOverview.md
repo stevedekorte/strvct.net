@@ -226,7 +226,7 @@ Tile navigation is very similar to menu navigation, and multiple levels of tradi
 
 Strvct framework as used in an AI based interactive fiction game.
 
-<img src="docs/resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 100%; height: auto;">
+<a href="docs/resources/images/screenshot-1.png" target="_blank"><img src="docs/resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 100%; height: auto;"></a>
 
 ### Themes
 

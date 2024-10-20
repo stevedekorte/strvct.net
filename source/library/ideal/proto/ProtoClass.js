@@ -1,17 +1,21 @@
 "use strict";
 
-/*
-
-    ProtoClass
-    
-    A place for adding Smalltalk like features to the base object
-    that we don't want to add to all Object (and Object decendants) yet,
-    as I'm not sure how they might effect the rest of the system.
-
-*/
+/**
+ * @module library.ideal.proto
+ * @class ProtoClass
+ * @extends Object
+ * @classdesc A place for adding Smalltalk-like features to the base object
+ * that we don't want to add to all Object (and Object descendants) yet,
+ * as I'm not sure how they might affect the rest of the system.
+ */
 
 (class ProtoClass extends Object {
 
+    /**
+     * Creates a new subclass with the given name.
+     * @param {string} newClassName - The name of the new subclass.
+     * @returns {Class} The newly created subclass.
+     */
     static newSubclassWithName (newClassName) {
         const newClass = class extends this {
           static name = newClassName;
@@ -91,6 +95,10 @@
 
     // --- init ---
 
+    /**
+     * Initializes the class.
+     * @returns {Class} The initialized class.
+     */
     static initClass () { // called only once when class is created
 
         //console.log(this.type() + " initThisClass");
@@ -128,6 +136,11 @@
     }
     */
 
+    /**
+     * Checks if this class is a subclass of the given class.
+     * @param {Class} aClass - The class to check against.
+     * @returns {boolean} True if this class is a subclass of aClass, false otherwise.
+     */
     static isSubclassOf (aClass) {
         //assert(aClass.isClass())
         return this.ancestorClassesIncludingSelf().contains(aClass);
@@ -139,6 +152,11 @@
         return results;
     }
 
+    /**
+     * Gets all descendant classes.
+     * @param {Array<Class>} [results=[]] - An array to store the results.
+     * @returns {Array<Class>} An array of descendant classes.
+     */
     static descendantClasses (results = []) {
         const children = this.childClasses();
         children.forEach(child => {
@@ -148,10 +166,20 @@
         return results;
     }
 
+    /**
+     * Gets the superclass of this class.
+     * @returns {Class} The superclass.
+     */
     static superClass () {
         return Object.getPrototypeOf(this);
     }
 
+    /**
+     * Generates a description of the class hierarchy.
+     * @param {number} [level=0] - The current level in the hierarchy.
+     * @param {Set} [traversed=new Set()] - A set of already traversed classes.
+     * @returns {string} A string representation of the class hierarchy.
+     */
     static subclassesDescription (level, traversed) {
 
         if (Type.isUndefined(level)) {
@@ -198,6 +226,9 @@
 
     // --- instance ---
 
+    /**
+     * Initializes the prototype slots.
+     */
     initPrototypeSlots () {
         {
             /**
@@ -231,6 +262,10 @@
         }
     }
 
+    /**
+     * Gets the lazy references map.
+     * @returns {Map} The lazy references map.
+     */
     lazyRefsMap () {
         if (!this._lazyRefsMap) {
             this._lazyRefsMap = new Map();
@@ -238,6 +273,11 @@
         return this._lazyRefsMap;
     }
 
+    /**
+     * Sets the type of the instance.
+     * @param {string} aString - The type name.
+     * @returns {ProtoClass} This instance.
+     */
     setType (aString) {
         this.constructor.name = aString;
         return this;
@@ -245,11 +285,22 @@
 
     // --- slots ---
 
+    /**
+     * Gets slots with a specific annotation.
+     * @param {string} key - The annotation key.
+     * @param {*} value - The annotation value.
+     * @returns {Array<Slot>} An array of slots with the specified annotation.
+     */
     slotsWithAnnotation (key, value) {
         assert(this.isPrototype());
         return this.allSlotsMap().valuesArray().select(slot => slot.getAnnotation(key) === value);
     }
 
+    /**
+     * Gets a slot by name, including inherited slots.
+     * @param {string} slotName - The name of the slot.
+     * @returns {Slot|null} The slot object or null if not found.
+     */
     slotNamed (slotName) {
         assert(this.isPrototype())
 
@@ -268,6 +319,11 @@
         return null
     }
 
+    /**
+     * Gets an own slot by name, not including inherited slots.
+     * @param {string} slotName - The name of the slot.
+     * @returns {Slot|null} The slot object or null if not found.
+     */
     ownSlotNamed (slotName) {
         assert(this.isPrototype())
 
@@ -321,6 +377,12 @@
 
     // -------------------------------------
 
+    /**
+     * Creates a new slot if it doesn't already exist.
+     * @param {string} slotName - The name of the slot.
+     * @param {*} initialValue - The initial value of the slot.
+     * @returns {Slot} The new or existing slot.
+     */
     newSlotIfAbsent (slotName, initialValue) {
         const slot = this.getSlot(slotName);
         if (slot) {
@@ -329,6 +391,14 @@
         return this.justNewSlot(slotName, initialValue);
     }
 
+    /**
+     * Creates a new slot.
+     * @param {string} slotName - The name of the slot.
+     * @param {*} initialValue - The initial value of the slot.
+     * @param {boolean} [allowOnInstance=false] - Whether to allow creating the slot on an instance.
+     * @returns {Slot} The newly created slot.
+     * @throws {Error} If the slot already exists.
+     */
     newSlot (slotName, initialValue, allowOnInstance=false) {
         /*
         if (Reflect.ownKeys(this).contains(slotName)) {
@@ -352,6 +422,14 @@
     }
 
 
+    /**
+     * Overrides an existing slot.
+     * @param {string} slotName - The name of the slot to override.
+     * @param {*} initialValue - The new initial value of the slot.
+     * @param {boolean} [allowOnInstance=false] - Whether to allow overriding the slot on an instance.
+     * @returns {Slot} The overridden slot.
+     * @throws {Error} If the slot doesn't exist to be overridden.
+     */
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
         const oldSlot = this.getSlot(slotName);
         if (Type.isUndefined(oldSlot)) {
@@ -392,6 +470,12 @@
         });
     }
 
+    /**
+     * Creates a new weak slot.
+     * @param {string} slotName - The name of the slot.
+     * @param {*} initialValue - The initial value of the slot.
+     * @returns {Slot} The newly created weak slot.
+     */
     newWeakSlot (slotName, initialValue) {
         const slot = this.newSlot(slotName, initialValue);
         slot.setIsWeak(true);
@@ -400,6 +484,10 @@
 
     // --- weak slot ---
 
+    /**
+     * Handles finalization of a weak slot.
+     * @param {Slot} aSlot - The slot being finalized.
+     */
     onFinalizedSlot (aSlot) {
         this[aSlot.privateName()] = undefined; // replace the weak ref with undefined
 
@@ -411,6 +499,11 @@
         }
     }
 
+    /**
+     * Gets the value of a weak slot.
+     * @param {Slot} aSlot - The weak slot.
+     * @returns {*} The value of the weak slot.
+     */
     getWeakSlotValue (aSlot) {
         const privateName = aSlot.privateName(); // fix this value
         const weakRef = this[privateName];
@@ -432,6 +525,12 @@
         return v;
     }
 
+    /**
+     * Sets the value of a weak slot.
+     * @param {Slot} aSlot - The weak slot.
+     * @param {*} newValue - The new value to set.
+     * @returns {ProtoClass} This instance.
+     */
     setWeakSlotValue (aSlot, newValue) {
         const privateName = aSlot.privateName()  // fix this value
         const oldValue = this.getWeakSlotValue(aSlot) // doesn't trigger willGetSlot() but may call onFinalizedSlot()
@@ -537,6 +636,9 @@
         */
     }
 
+    /**
+     * Initializes the instance.
+     */
     init () { 
         super.init();
         // subclasses should override to do initialization
@@ -548,6 +650,9 @@
         this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this));
     }
 
+    /**
+     * Performs final initialization of the instance.
+     */
     finalInit () {
         super.finalInit();
         this.finalInitSlots();
@@ -569,15 +674,33 @@
         return Array.prototype.slice.call(args);
     }
 
+    /**
+     * Checks if the instance responds to a given method.
+     * @param {string} methodName - The name of the method.
+     * @returns {boolean} True if the instance responds to the method, false otherwise.
+     */
     respondsTo (methodName) {
         const f = this[methodName] 
         return typeof(f) === "function";
     }
 
+    /**
+     * Performs a method with an array of arguments.
+     * @param {string} message - The name of the method to perform.
+     * @param {Array} argList - An array of arguments to pass to the method.
+     * @returns {*} The result of the method call.
+     */
     performWithArgList (message, argList) {
         return this[message].apply(this, argList);
     }
 
+    /**
+     * Performs a method with variable arguments.
+     * @param {string} message - The name of the method to perform.
+     * @param {...*} args - Arguments to pass to the method.
+     * @returns {*} The result of the method call.
+     * @throws {Error} If the method doesn't exist.
+     */
     perform (message) { // will apply any extra arguments to call
         if (this[message] && this[message].apply) {
             return this[message].apply(this, this.argsAsArray(arguments).slice(1));
@@ -587,6 +710,11 @@
         return this;
     }
 
+    /**
+     * Gets the setter name for a given slot.
+     * @param {string} name - The name of the slot.
+     * @returns {string} The setter name for the slot.
+     */
     setterNameForSlot (name) {
         return "set" + name.capitalized()
         /*
@@ -604,6 +732,11 @@
 
     // --- ancestors ---
 
+    /**
+     * Finds the first ancestor class with a given postfix.
+     * @param {string} aPostfix - The postfix to search for.
+     * @returns {Class|null} The first ancestor class with the given postfix, or null if not found.
+     */
     firstAncestorClassWithPostfix (aPostfix) {
         // not a great name but this walks back the ancestors (including self) and tries to find an
         // existing class with the same name as the ancestor + the given postfix
@@ -631,6 +764,11 @@
 
     // debugging
 
+    /**
+     * Logs a debug message if debugging is enabled.
+     * @param {string|Function} s - The message to log or a function that returns the message.
+     * @returns {ProtoClass} This instance.
+     */
     debugLog (s) {
         if (this.isDebugging()) {
             if (Type.isFunction(s)) {
@@ -651,12 +789,13 @@
 
     // --- other ---
 
+    /**
+     * Freezes the object, preventing further modifications.
+     * @returns {ProtoClass} This instance.
+     */
     freeze () {
         Object.freeze(this)
         return this
     }
 
 }.initThisClass());
-
-
-

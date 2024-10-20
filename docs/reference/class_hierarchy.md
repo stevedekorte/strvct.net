@@ -36,11 +36,10 @@
     - [Error_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FError_ideal.js)
     - [Error_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
     - [MissingSlotError](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
-  - [Folder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourceIndexer.js)
   - [HTMLElement_textField](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FHtmlElement_textField.js)
   - Image
     - [Image_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FImage_ideal.js)
-  - [IndexBuilder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FImportsIndexer.js)
+  - [ImportsIndexer](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FImportsIndexer.js)
   - [JsClassParser](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2Fclass-doc%2Fclass_doc_parser.js)
   - [JsonSchema](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchema.js)
   - Map
@@ -402,7 +401,9 @@
   - [ProtocolAnalyzer](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2Fprotocols.js)
   - Range
     - [Range_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FRange_ideal.js)
+  - [ResourceIndexer](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourceIndexer.js)
   - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FResourceManager.js)
+  - [ResourcesFolder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourcesFolder.js)
   - Set
     - [HookedSet](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedSet.js)
     - [ImmutableSet](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FImmutableSet.js)

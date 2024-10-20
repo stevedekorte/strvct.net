@@ -31,24 +31,17 @@
         - [BMActionFieldTile](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
         - [BMStringFieldTile](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
-  - [Folder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourceIndexer.js)
-  - [IndexBuilder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FImportsIndexer.js)
-  - [Mirror](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
-  - [ProtoClass](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
-  - [RootContentNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FRootContentNode.js)
-  - [Slot](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FSlot.js)
   - [Worker](../resources/class-doc/class_doc.html?path=%2Fsource%2FServiceWorker%2FWorker.js)
-- HomeAssistant
-  - States
-    - [HomeAssistantState](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
-    - [HomeAssistantStates](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
-- icons
-  - [BMIconResources](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2Ficons%2FBMIconResources.js)
+- IndexBuilder
+  - [ImportsIndexer](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FImportsIndexer.js)
+  - [ResourceIndexer](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourceIndexer.js)
+  - [ResourcesFolder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourcesFolder.js)
 - library
   - app
     - [BMSettingsNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FBMSettingsNode.js)
     - [BreadCrumbsNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FBreadCrumbsNode.js)
     - [HeaderNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FHeaderNode.js)
+    - [RootContentNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FRootContentNode.js)
   - audio
     - [SimpleSynth](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Faudio%2FSimpleSynth.js)
   - ideal
@@ -65,6 +58,8 @@
     - [Set_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FSet_ideal.js)
     - [String_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FString_ideal.js)
     - [Type](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FType.js)
+    - categories
+      - [Mirror](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
     - collections
       - [HookedArray](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedArray.js)
       - [HookedMap](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedMap.js)
@@ -107,6 +102,9 @@
       - [Object_notification](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
       - [Object_puuid](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
       - [Object_timeouts](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
+    - proto
+      - [ProtoClass](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
+      - [Slot](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fproto%2FSlot.js)
     - protocol
       - [ProtoClass_protocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fprotocol%2FProtoClass_protocol.js)
       - [Protocol](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fprotocol%2FProtocol.js)
@@ -255,7 +253,6 @@
       - [BMObservation](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FBMObservation.js)
   - resources
     - [BMResource](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FBMResource.js)
-    - [BMResourceGroup](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FBMResourceGroup.js)
     - [BMResources](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FBMResources.js)
     - [MimeExtensions](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FMimeExtensions.js)
     - files
@@ -268,6 +265,8 @@
       - [BMFontResources](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2Ffonts%2FBMFontResources.js)
       - [BMFontTile](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2Ffonts%2FBMFontTile.js)
     - icons
+      - [BMIconResources](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2Ficons%2FBMIconResources.js)
+      - [BMResourceGroup](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FBMResourceGroup.js)
       - [SvgIconNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2Ficons%2FSvgIconNode.js)
     - images
       - [BMImage](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2Fimages%2FBMImage.js)
@@ -346,6 +345,9 @@
       - Entities
         - [HomeAssistantEntities](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntities.js)
         - [HomeAssistantEntity](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntity.js)
+      - States
+        - [HomeAssistantState](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
+        - [HomeAssistantStates](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
     - OpenAI
       - [OpenAiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
       - [OpenAiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FOpenAI%2FOpenAiService.js)

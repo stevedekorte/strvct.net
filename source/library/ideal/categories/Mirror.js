@@ -1,13 +1,11 @@
-/*
-
-	An object wrapper for the Reflect functions
-
+/**
+ * @module library.ideal.categories
 */
 
 /**
- * An object wrapper for the Reflect functions.
  * @class Mirror
  * @extends Object
+ * @classdesc An object wrapper for the Reflect functions.
  */
 getGlobalThis().Mirror = class Mirror extends Object {
 	

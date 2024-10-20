@@ -1,11 +1,14 @@
 "use strict";
 
-/*
-
-   ImportsIndexer.js  (runs in node.js)
-
-   Recursively walks _imports.json files
-   to construct top level _imports_index.json file with format:
+/**
+ * @module IndexBuilder
+ * @class ImportsIndexer
+ * @extends Object
+ * @classdesc Builds an index of resources from _imports.json files.
+ *  Runs in node.js.
+ *  
+ *  Recursively walks _imports.json files
+ *  to construct top level _imports_index.json file with format:
 
        [
             {
@@ -47,7 +50,7 @@ const zlib = require("zlib");
 const process = require('process');
 
 
-class IndexBuilder { 
+class ImportsIndexer { 
     /**
      * @constructor
      * @category Initialization
@@ -143,7 +146,7 @@ class IndexBuilder {
     }
 
     /**
-     * @returns {IndexBuilder}
+     * @returns {ImportsIndexer}
      * @category File Operations
      */
     makeBuildFolder () {
@@ -323,6 +326,6 @@ class IndexBuilder {
     }
 }
 
-new IndexBuilder().run();
+new ImportsIndexer().run();
 //process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
 //process.exit(); // this may stop process before file ops complete

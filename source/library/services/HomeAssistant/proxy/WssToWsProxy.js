@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module services.HomeAssistant.proxy.WssToWsProxy
+ * @module library.services.HomeAssistant.proxy.WssToWsProxy
  */
 
 /**

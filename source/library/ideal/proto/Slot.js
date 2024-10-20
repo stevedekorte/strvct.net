@@ -1,31 +1,36 @@
+
+ /**
+  * @module library.ideal.proto
+ */
+
 "use strict";
 
-/*
-
-    Slot
-
-    Abstraction for a slot on a prototype. 
-    An array of these are stored in each prototype.
-    
-    - stores slot related data, such as:
-        - default value
-        - cloning policy 
-        - persistent policy
-        - comment
-        - whether slot can be:
-            - edited
-            - inspected
-        - isPrivate
-        - slotType
-    - handles auto generating getter/setter
-
-    NOTE:
-
-        TODO: hooks code is a mess, need to cleanup and modularize
-*/
+/**
+ * @class Slot
+ * @extends Object
+ * @classdesc Abstraction for a slot on a prototype. 
+ * 
+ * An array of these are stored in each prototype.
+ * 
+ * - stores slot related data, such as:
+ *   - default value
+ *   - cloning policy 
+ *   - persistent policy
+ *   - comment
+ *   - whether slot can be:
+ *   - edited
+ *   - inspected
+ *   - isPrivate
+ *   - slotType
+ * - handles auto generating getter/setter
+ * 
+ * NOTE:
+ * 
+ * TODO: hooks code is a mess, need to cleanup and modularize
+ */
 
 if (!getGlobalThis().ideal) {
-    getGlobalThis().ideal = {} 
+    getGlobalThis().ideal = {};
 }
 
 getGlobalThis().ideal.Slot = (class Slot extends Object { 

@@ -1,5 +1,7 @@
+"use strict";
+
 /**
- * @module
+ * @module library.app
  * @class RootContentNode
  * @extends BMFolderNode
  * @classdesc Root node to use for app persistent store.
@@ -16,7 +18,7 @@
  *
  * (if not already set up after loading from store)
  */
-"use strict";
+
 
 (class RootContentNode extends BMFolderNode {
     /**

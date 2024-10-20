@@ -1,5 +1,5 @@
 /**
- * @module icons
+ * @module library.resources.icons
  */
 
 /**

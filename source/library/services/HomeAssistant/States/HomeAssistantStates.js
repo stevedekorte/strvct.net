@@ -1,5 +1,5 @@
 /**
- * @module HomeAssistant.States
+ * @module library.services.HomeAssistant.States
  */
 
 /**
