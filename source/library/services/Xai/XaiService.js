@@ -95,6 +95,7 @@
    * @category Request Handling
    */
   prepareToSendRequest (aRequest) {
+    /*
     const bodyJson = aRequest.bodyJson();
     let messages = bodyJson.messages;
 
@@ -139,6 +140,7 @@
     if (mergedMessageCount) {
       //console.log("XaiService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
     }
+  */
     return this;
   }
 

@@ -76,6 +76,7 @@ curl https://api.x.ai/v1/chat/completions \
   init () {
     super.init();
     this.setIsDebugging(true);
+    this.setIsStreaming(true);
   }
 
   /**
