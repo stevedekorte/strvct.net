@@ -55,6 +55,8 @@
      */
     {
       const slot = this.newSlot("jsonStreamReader", null);
+      slot.setSlotType(JsonStreamReader);
+
     }
     
     /**
@@ -63,6 +65,7 @@
      */
     {
       const slot = this.newSlot("usageOutputTokenCount", null);
+      slot.setSlotType(Number);
     }
   }
 

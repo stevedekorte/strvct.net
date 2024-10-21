@@ -50,6 +50,19 @@
       slot.setIsSubnodeField(true);
     }
 
+    /**
+     * @member {number} outputTokenLimit - The maximum number of output tokens allowed by the model.
+     * @category Model Configuration
+     */
+        {
+          const slot = this.newSlot("outputTokenLimit", 8000);
+          slot.setLabel("output token limit");
+          slot.setShouldStoreSlot(true);
+          slot.setDuplicateOp("duplicate");
+          slot.setSlotType("Number");
+          slot.setIsSubnodeField(true);
+        }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
@@ -132,6 +145,13 @@
     const cw = json.contextWindow;
     assert(Type.isNumber(cw));
     this.setMaxContextTokenCount(cw);
+
+    const otl = json.outputTokenLimit;
+    if (!Type.isUndefined(otl)) {
+      assert(Type.isNumber(otl));
+      this.setOutputTokenLimit(otl);
+    }
+
     return this;
   }
 

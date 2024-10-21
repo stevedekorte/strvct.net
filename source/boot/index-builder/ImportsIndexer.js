@@ -56,8 +56,8 @@ class ImportsIndexer {
      * @category Initialization
      */
     constructor () {
-        this._paths = [] 
-        this._isDebugging = true
+        this._paths = [];
+        this._isDebugging = true;
     }
 
     /**
@@ -65,7 +65,7 @@ class ImportsIndexer {
      * @category Debugging
      */
     isDebugging () {
-        return this._isDebugging
+        return this._isDebugging;
     }
 
     /**
@@ -74,7 +74,7 @@ class ImportsIndexer {
      */
     debugLog (s) {
         if (this.isDebugging()) {
-            console.log(s)
+            console.log(s);
         }
     }
 
@@ -83,20 +83,20 @@ class ImportsIndexer {
      * @category Data Access
      */
     paths () {
-        return this._paths
+        return this._paths;
     }
 
     /**
      * @category Execution
      */
     run () {
-        this.readImports()
-        this.makeBuildFolder()
-        this.writeIndex()
-        this.writeCam()
-        this.compressCam()
-        //this.writePackage()
-        process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
+        this.readImports();
+        this.makeBuildFolder();
+        this.writeIndex();
+        this.writeCam();
+        this.compressCam();
+        //this.writePackage();
+        process.exitCode = 0;  // vscode wants an explicit exit for prelaunch tasks
     }
 
     /**
@@ -104,14 +104,14 @@ class ImportsIndexer {
      * @category File Operations
      */
     importsFileName () {
-        return "_imports.json"
+        return "_imports.json";
     }
 
     /**
      * @category File Operations
      */
     readImports () {
-        this.readImportsPath(this.importsFileName())
+        this.readImportsPath(this.importsFileName());
     }
 
     /**
@@ -119,10 +119,10 @@ class ImportsIndexer {
      * @category File Operations
      */
     readImportsPath (importsPath) {
-        const folder = nodePath.dirname(importsPath)
-        const s = fs.readFileSync(importsPath,  "utf8")
-        const json = JSON.parse(s)
-        const fullPaths = json.map(path => nodePath.join(folder, path))
+        const folder = nodePath.dirname(importsPath);
+        const s = fs.readFileSync(importsPath,  "utf8");
+        const json = JSON.parse(s);
+        const fullPaths = json.map(path => nodePath.join(folder, path));
 
         // put all paths in the list of paths
 
@@ -130,9 +130,9 @@ class ImportsIndexer {
         fullPaths.forEach(fullPath => {
             //this.paths().push(fullPath)
             if (nodePath.basename(fullPath) === this.importsFileName()) {
-                this.readImportsPath(fullPath)
+                this.readImportsPath(fullPath);
             } else {
-                this.paths().push(fullPath)
+                this.paths().push(fullPath);
             }
         })
     }
@@ -142,7 +142,7 @@ class ImportsIndexer {
      * @category File Operations
      */
     buildFolderPath () {
-        return nodePath.join(process.cwd(), "build")
+        return nodePath.join(process.cwd(), "build");
     }
 
     /**
@@ -150,11 +150,11 @@ class ImportsIndexer {
      * @category File Operations
      */
     makeBuildFolder () {
-        const path = this.buildFolderPath()
+        const path = this.buildFolderPath();
         if (!fs.existsSync(path)) {
-            fs.mkdirSync(path)
+            fs.mkdirSync(path);
         }
-        return this
+        return this;
     }
 
     /**
@@ -170,7 +170,7 @@ class ImportsIndexer {
      * @category File Operations
      */
     outIndexPath () {
-        return nodePath.join(this.buildFolderPath(), this.indexFileName())
+        return nodePath.join(this.buildFolderPath(), this.indexFileName());
     }
 
     /**
@@ -178,18 +178,18 @@ class ImportsIndexer {
      * @category Data Processing
      */
     computeIndex () {
-        return this.paths().map(path => this.indexEntryForPath(path))
+        return this.paths().map(path => this.indexEntryForPath(path));
     }
 
     /**
      * @category File Operations
      */
     writeIndex () {
-        const outPath = this.outIndexPath()
-        const index = this.computeIndex()
-        const data = JSON.stringify(index, 2, 2)
-        fs.writeFileSync(outPath, data, "utf8")
-        this.writeHashForPath(outPath)
+        const outPath = this.outIndexPath();
+        const index = this.computeIndex();
+        const data = JSON.stringify(index, 2, 2);
+        fs.writeFileSync(outPath, data, "utf8");
+        this.writeHashForPath(outPath);
     }
 
     /**
@@ -198,23 +198,23 @@ class ImportsIndexer {
      * @category Data Processing
      */
     indexEntryForPath (path) {
-        const fullPath = nodePath.join(process.cwd(), path)
+        const fullPath = nodePath.join(process.cwd(), path);
 
         if (!fs.existsSync(path)) {
             throw new Error("missing path '" + path + "'");
         }
 
-        const data = fs.readFileSync(fullPath)
-        const size = fs.statSync(fullPath).size
-        const hash = this.hashForData(data)
+        const data = fs.readFileSync(fullPath);
+        const size = fs.statSync(fullPath).size;
+        const hash = this.hashForData(data);
 
         const entry = {
             path: path,
             size: size,
             hash: hash
-        }
+        };
 
-        return entry
+        return entry;
     }
 
     /**
@@ -222,7 +222,7 @@ class ImportsIndexer {
      * @category File Operations
      */
     camFileName () {
-        return "_cam.json"
+        return "_cam.json";
     }
 
     /**
@@ -230,7 +230,7 @@ class ImportsIndexer {
      * @category File Operations
      */
     outCamPath () {
-        return nodePath.join(this.buildFolderPath(), this.camFileName())
+        return nodePath.join(this.buildFolderPath(), this.camFileName());
     }
 
     /**
@@ -239,23 +239,23 @@ class ImportsIndexer {
      */
     computeCam () {
         const paths = this.pathsWithExtensions(["js", "css", "svg", "json", "txt"]); // file extensions to include in cam
-        const cam = {}
+        const cam = {};
         paths.forEach(path => {
-            const fullPath = nodePath.join(process.cwd(), path)
-            const value = fs.readFileSync(fullPath,  "utf8") // TODO: encode this in case it's binary?
-            const hash = this.hashForData(value)
-            cam[hash] = value
+            const fullPath = nodePath.join(process.cwd(), path);
+            const value = fs.readFileSync(fullPath,  "utf8"); // TODO: encode this in case it's binary?
+            const hash = this.hashForData(value);
+            cam[hash] = value;
         })
-        return cam
+        return cam;
     }
 
     /**
      * @category File Operations
      */
     writeCam () {
-        const cam = this.computeCam()
-        const data = JSON.stringify(cam, 2, 2)
-        fs.writeFileSync(this.outCamPath(), data, "utf8")
+        const cam = this.computeCam();
+        const data = JSON.stringify(cam, 2, 2);
+        fs.writeFileSync(this.outCamPath(), data, "utf8");
     }
 
     /**
@@ -265,8 +265,8 @@ class ImportsIndexer {
      */
     pathsWithExtensions (exts) {
         return this.paths().filter(path => {
-            const pathExt = path.split(".").pop().toLowerCase()
-            return exts.indexOf(pathExt) !== -1
+            const pathExt = path.split(".").pop().toLowerCase();
+            return exts.indexOf(pathExt) !== -1;
         })
     }
 
@@ -275,14 +275,14 @@ class ImportsIndexer {
      * @category File Operations
      */
     compressedCamPath () {
-        return this.outCamPath() + ".zip"
+        return this.outCamPath() + ".zip";
     }
 
     /**
      * @category File Operations
      */
     compressCam () {
-        this.compressPath(this.outCamPath())
+        this.compressPath(this.outCamPath());
     }
 
     /**
@@ -290,15 +290,15 @@ class ImportsIndexer {
      * @category File Operations
      */
     compressPath (path) {
-        const outPath = path + ".zip"
-        const inputData = fs.readFileSync(path,  "utf8")
+        const outPath = path + ".zip";
+        const inputData = fs.readFileSync(path,  "utf8");
 
         zlib.gzip(inputData, (error, zippedData) => {
             if (!error) {
-                fs.writeFileSync(outPath, zippedData)
-                this.writeHashForPath(outPath)
+                fs.writeFileSync(outPath, zippedData);
+                this.writeHashForPath(outPath);
             } else {
-                throw new Error(error)
+                throw new Error(error);
             }
         });
     }
@@ -311,7 +311,7 @@ class ImportsIndexer {
     hashForData (data) {
         //const hash = await crypto.subtle.digest("SHA-256", this);
         const hash = crypto.createHash('sha256').update(data).digest("base64");
-        return hash
+        return hash;
     }
 
     /**
@@ -319,10 +319,10 @@ class ImportsIndexer {
      * @category File Operations
      */
     writeHashForPath (path) {
-        const outPath = path + ".hash"
-        const inputData = fs.readFileSync(path)
-        const hash = this.hashForData(inputData)
-        fs.writeFileSync(outPath, hash)
+        const outPath = path + ".hash";
+        const inputData = fs.readFileSync(path);
+        const hash = this.hashForData(inputData);
+        fs.writeFileSync(outPath, hash);
     }
 }
 

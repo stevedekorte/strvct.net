@@ -1,20 +1,23 @@
 "use strict";
 
 /**
- * @module library.services.Anthropic
+ * @module library.services.Xai
  */
 
 /**
- * @class AnthropicService
+ * @class XaiService
  * @extends AiService
- * @classdesc A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
+ * @classdesc 
  * 
  * @example
- * AnthropicService.shared().setApiKey("...");
- * const hasApiKey = AnthropicService.shared().hasApiKey();
+ * XaiService.shared().setApiKey("...");
+ * const hasApiKey = XaiService.shared().hasApiKey();
+ * 
+ * NOTES: Grok doesn't require alternate user and assistant roles, so we don't need to merge messages like Xai does.
+ * - No docs on whether system messages must be placed at the beginning of the messages array.
 */
 
-(class AnthropicService extends AiService {
+(class XaiService extends AiService {
 
   /**
    * @static
@@ -33,32 +36,10 @@
   modelsJson () {
     return [
       {
-        "name": "claude-3-5-sonnet-20240620",
-        "title": "Claude 3.5 Sonnet",
-        "subtitle": "Better than 3 with same context size.",
-        "contextWindow": 200000,
-        "notes": ""
-      },
-      {
-          "name": "claude-3-opus-20240229",
-          "title": "Claude 3 Opus",
-          "subtitle": "Largest/Slowest",
-          "contextWindow": 200000,
-          "notes": ""
-      },
-      {
-          "name": "claude-3-sonnet-20240229",
-          "title": "Claude 3 Sonnet",
-          "subtitle": "Medium size and speed",
-          "contextWindow": 200000,
-          "notes": "This model is missing opening description, doesn't make roll request json with required fields"
-      },
-      {
-          "name": "claude-3-haiku-20240307",
-          "title": "Claude 3 Haiku",
-          "subtitle": "Smallest/Fastest",
-          "contextWindow": 200000,
-          "notes": "This model also doesn't make roll request json with required fields"
+        "name": "grok-beta",
+        "title": "grok-beta",
+        "contextWindow": 131072,
+        "outputTokenLimit": 8192 // jsut a guess as I can't find it in the docs
       }
     ];
   }
@@ -84,7 +65,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle("Anthropic");
+    this.setTitle("Xai");
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
 
@@ -110,7 +91,7 @@
   /**
    * @description Prepares the request before sending it to the API.
    * @param {Object} aRequest - The request object to prepare.
-   * @returns {AnthropicService} The service instance.
+   * @returns {XaiService} The service instance.
    * @category Request Handling
    */
   prepareToSendRequest (aRequest) {
@@ -156,7 +137,7 @@
     aRequest.setBodyJson(bodyJson);
 
     if (mergedMessageCount) {
-      //console.log("AnthropicService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
+      //console.log("XaiService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
     }
     return this;
   }

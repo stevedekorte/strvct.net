@@ -1,13 +1,14 @@
 "use strict";
 
 /**
- * ByteFormatter takes a number of bytes and returns a string with the order of magnitude in 
+ * @module library.ideal.formatters
+ * @class ByteFormatter
+ * @extends ProtoClass
+ * @classdesc ByteFormatter takes a number of bytes and returns a string with the order of magnitude in 
  * standard SI decimal digital information format.
- *
- * @example
+ * Example:
  * const stringVersion = ByteFormatter.clone().setValue(aNumberOfBytes).formattedValue()
  *
- * @example
  * // Output examples:
  * // if aNumberOfBytes was 300, stringVersion would be 300 bytes.
  * // if aNumberOfBytes was 3,000, stringVersion would be 3 kB.
@@ -15,17 +16,14 @@
  * // if aNumberOfBytes was 300,000, stringVersion would be 300 kB.
  * // if aNumberOfBytes was 3,000,000, stringVersion would be 3 MB.
  *
- * @todo Move to power notation after max order name exceeded
- * @module library.ideal.formatters
- * @class ByteFormatter
- * @extends ProtoClass
+ * Todo: Move to power notation after max order name exceeded
  */
 
 (class ByteFormatter extends ProtoClass {
     initPrototypeSlots () {
 
         /**
-         * The number of bytes to format.
+         * @description The number of bytes to format.
          * @type {number}
          * @default 0
          * @member {number}
@@ -39,7 +37,7 @@
         }
 
         /**
-         * Whether to use a postfix in the formatted output.
+         * @description Whether to use a postfix in the formatted output.
          * @type {boolean}
          * @default true
          * @member {boolean}
@@ -53,7 +51,7 @@
         }
 
         /**
-         * Whether to use a space between the number and the unit in the formatted output.
+         * @description Whether to use a space between the number and the unit in the formatted output.
          * @type {boolean}
          * @default false
          * @member {boolean}
@@ -67,7 +65,7 @@
         }
 
         /**
-         * Whether to use long names for units in the formatted output.
+         * @description Whether to use long names for units in the formatted output.
          * @type {boolean}
          * @default false
          * @member {boolean}
@@ -81,7 +79,7 @@
         }
 
         /**
-         * Array of short unit names.
+         * @description Array of short unit names.
          * @type {string[]}
          * @member {string[]}
          * @category Data
@@ -102,7 +100,7 @@
         }
         
         /**
-         * Array of long unit names.
+         * @description Array of long unit names.
          * @type {string[]}
          * @member {string[]}
          * @category Data
@@ -127,7 +125,7 @@
     }
 
     /**
-     * Formats the byte value into a human-readable string.
+     * @description Formats the byte value into a human-readable string.
      * @returns {string} The formatted byte value.
      * @category Formatting
      */

@@ -26,6 +26,7 @@
  *   request.error()
  * 
  */
+
 (class AiRequest extends BMStorableNode {
 
   /**
@@ -373,7 +374,7 @@
         "Authorization": `Bearer ${apiKey}`,
         'Accept-Encoding': 'identity'
       },
-      body: JSON.stringify(this.bodyJson())
+      body: this.body()
     };
   }
 

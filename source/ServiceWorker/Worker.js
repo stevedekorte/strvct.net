@@ -1,4 +1,10 @@
-class Worker {
+/**
+ * @class Worker
+ * @extends Object
+ * @classdesc A service worker abstract class.
+ */
+
+class Worker extends Object {
 
     /**
      * @member {function}

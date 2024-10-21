@@ -74,6 +74,18 @@
             slot.setSlotType("GeminiService");
         }
 
+                /**
+         * @member {XaiService} xaiService
+         * @category AI Service
+         */
+                {
+                    const slot = this.newSlot("xaiService", null);
+                    slot.setShouldStoreSlot(true);
+                    slot.setFinalInitProto(XaiService);
+                    slot.setIsSubnode(true);
+                    slot.setSlotType("XaiService");
+                }
+
         /*
         {
             const slot = this.newSlot("midjourneyService", null)
