@@ -20,10 +20,10 @@
 (class TimePeriodFormatter extends ProtoClass {
     initPrototypeSlots () {
         /**
-         * The number of seconds to format.
+         * @description The number of seconds to format.
          * @type {number}
          * @default 0
-         * @member {number}
+         * @member {number} valueInSeconds
          * @category Data
          */
         {
@@ -32,9 +32,9 @@
         }
 
         /**
-         * A map of time periods to their abbreviated forms.
+         * @description A map of time periods to their abbreviated forms.
          * @type {Map<string, string>}
-         * @member {Map<string, string>}
+         * @member {Map<string, string>} periodsMap
          * @category Configuration
          */
         {

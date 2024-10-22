@@ -15,10 +15,10 @@
     initPrototypeSlots () {
 
         /**
-         * The number to be formatted.
+         * @description The number to be formatted.
          * @type {number}
          * @default 0
-         * @member {number}
+         * @member {number} value
          * @category Data
          */
         {
@@ -29,10 +29,10 @@
         }
 
         /**
-         * The number of significant digits to use in the formatted output.
+         * @description The number of significant digits to use in the formatted output.
          * @type {number}
          * @default 2
-         * @member {number}
+         * @member {number} significantDigits
          * @category Configuration
          */
         {

@@ -26,10 +26,10 @@
 (class TimeFormatter extends ProtoClass {
     initPrototypeSlots () {
         /**
-         * The date to be formatted.
+         * @description The date to be formatted.
          * @type {Date}
          * @default null
-         * @member {Date}
+         * @member {Date} date
          * @category Data
          */
         {
@@ -40,10 +40,10 @@
         }
 
         /**
-         * Whether to use 24-hour format.
+         * @description Whether to use 24-hour format.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} is24Hour
          * @category Formatting
          */
         {
@@ -54,10 +54,10 @@
         }
 
         /**
-         * Whether to show meridiem (AM/PM).
+         * @description Whether to show meridiem (AM/PM).
          * @type {boolean}
          * @default true
-         * @member {boolean}
+         * @member {boolean} showsMeridiem
          * @category Formatting
          */
         {
@@ -68,10 +68,10 @@
         }
 
         /**
-         * Whether to uppercase the meridiem.
+         * @description Whether to uppercase the meridiem.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} uppercaseMeridem
          * @category Formatting
          */
         {
@@ -82,10 +82,10 @@
         }
             
         /**
-         * The string to use for AM.
+         * @description The string to use for AM.
          * @type {string}
          * @default "am"
-         * @member {string}
+         * @member {string} amString
          * @category Formatting
          */
         {
@@ -96,10 +96,10 @@
         }
                 
         /**
-         * The string to use for PM.
+         * @description The string to use for PM.
          * @type {string}
          * @default "pm"
-         * @member {string}
+         * @member {string} pmString
          * @category Formatting
          */
         {
@@ -110,10 +110,10 @@
         }
                 
         /**
-         * Whether to pad hours with zeros.
+         * @description Whether to pad hours with zeros.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} doesPadHours
          * @category Formatting
          */
         {
@@ -124,10 +124,10 @@
         }
                 
         /**
-         * Whether to show hours.
+         * @description Whether to show hours.
          * @type {boolean}
          * @default true
-         * @member {boolean}
+         * @member {boolean} showsHours
          * @category Formatting
          */
         {
@@ -138,10 +138,10 @@
         }
                 
         /**
-         * The spacer between hours and minutes.
+         * @description The spacer between hours and minutes.
          * @type {string}
          * @default ":"
-         * @member {string}
+         * @member {string} hourMinuteSpacer
          * @category Formatting
          */
         {
@@ -152,10 +152,10 @@
         }
                 
         /**
-         * Whether to show minutes.
+         * @description Whether to show minutes.
          * @type {boolean}
          * @default true
-         * @member {boolean}
+         * @member {boolean} showsMinutes
          * @category Formatting
          */
         {
@@ -166,10 +166,10 @@
         }
                 
         /**
-         * Whether to show seconds.
+         * @description Whether to show seconds.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} showsSeconds
          * @category Formatting
          */
         {
@@ -180,10 +180,10 @@
         }
                 
         /**
-         * Whether to show milliseconds.
+         * @description Whether to show milliseconds.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} showsMilliseconds
          * @category Formatting
          */
         {

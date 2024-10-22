@@ -26,11 +26,11 @@
          * @description The number of bytes to format.
          * @type {number}
          * @default 0
-         * @member {number}
+         * @member {number} value
          * @category Data
          */
         {
-            const slot = this.newSlot("value", 0);
+            const slot = this.newSlot("≈", 0);
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Number");
             slot.setCanInspect(false);
@@ -40,7 +40,7 @@
          * @description Whether to use a postfix in the formatted output.
          * @type {boolean}
          * @default true
-         * @member {boolean}
+         * @member {boolean} usePostfix
          * @category Formatting
          */
         {
@@ -54,7 +54,7 @@
          * @description Whether to use a space between the number and the unit in the formatted output.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} useSpace
          * @category Formatting
          */
         {
@@ -68,7 +68,7 @@
          * @description Whether to use long names for units in the formatted output.
          * @type {boolean}
          * @default false
-         * @member {boolean}
+         * @member {boolean} useLongNames
          * @category Formatting
          */
         {
@@ -81,7 +81,7 @@
         /**
          * @description Array of short unit names.
          * @type {string[]}
-         * @member {string[]}
+         * @member {string[]} orderNamesShort
          * @category Data
          */
         {
@@ -102,7 +102,7 @@
         /**
          * @description Array of long unit names.
          * @type {string[]}
-         * @member {string[]}
+         * @member {string[]} orderNamesLong
          * @category Data
          */
         {

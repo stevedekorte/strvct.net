@@ -1,11 +1,18 @@
-class JsClassParser {
+/**
+ * @class JsClassParser
+ * @extends Object
+ * @classdesc This class is used to parse JavaScript classes and extract their documentation.
+ */
+
+class JsClassParser extends Object {
     constructor(code, filePath) {
+        super(); // Add this line to call the parent constructor
         this.code = code;
         this.lines = code.split('\n'); 
         this.filePath = filePath;
         this.comments = [];
         this.properties = [];
-        this.propertyCategories = {}; // Add this line
+        this.propertyCategories = {};
     }
 
     parse() {
@@ -24,9 +31,17 @@ class JsClassParser {
                 }
             });
         } catch (error) {
-            console.error("Parsing error:", error);
-            console.error("Error location:", error.loc);
-            console.error("Problematic code:", this.code.split('\n')[error.loc.line - 1]);
+            console.error("Parsing error:", error.message);
+            if (error.loc) {
+                console.error(`Error location: Line ${error.loc.line}, Column ${error.loc.column}`);
+                console.error("Problematic code:", this.code.split('\n')[error.loc.line - 1]);
+            }
+            
+            // Check if the error is about missing super() call
+            if (error.message.includes("'super()' must be called")) {
+                console.warn("The class being parsed might be missing a super() call in its constructor.");
+                console.warn("Class content:", this.code);
+            }
             
             // If parsing fails, try to extract the class definition
             const classMatch = this.code.match(/\/\*\*([\s\S]*?)\*\/\s*\(class\s+(\w+)[\s\S]*?{([\s\S]*?)}\s*\)\s*\.initThisCategory\(\);/);
@@ -34,6 +49,9 @@ class JsClassParser {
                 const classComment = classMatch[1];
                 const className = classMatch[2];
                 const classBody = classMatch[3];
+                
+                console.log(`Extracted class name: ${className}`);
+                console.log(`Class body:`, classBody);
                 
                 // Create a valid class syntax for parsing
                 const validClassCode = `
@@ -53,72 +71,91 @@ class JsClassParser {
                         }
                     });
                 } catch (innerError) {
-                    console.error("Failed to parse extracted class:", innerError);
+                    console.error("Failed to parse extracted class:", innerError.message);
+                    if (innerError.loc) {
+                        console.error(`Error location: Line ${innerError.loc.line}, Column ${innerError.loc.column}`);
+                        console.error("Problematic code:", validClassCode.split('\n')[innerError.loc.line - 1]);
+                    }
                     return this.fallbackParse();
                 }
             } else {
+                console.warn("Could not extract class definition. Falling back to basic parsing.");
                 return this.fallbackParse();
             }
         }
 
-        const result = {
-            classInfo: {
-                className: '',
-                extends: '',
-                filePath: this.filePath,
-                description: 'Undocumented'
-            },
-            methods: [],
-            propertyCategories: {},
-            categories: {},
-        };
+        try {
+            const result = {
+                classInfo: {
+                    className: '',
+                    extends: '',
+                    filePath: this.filePath,
+                    description: 'Undocumented'
+                },
+                methods: [],
+                propertyCategories: {},
+                categories: {},
+            };
 
-        // Find the class declaration or expression
-        let classNode = null;
-        acorn.walk.simple(ast, {
-            ClassDeclaration: (node) => {
-                if (!classNode) classNode = node;
-            },
-            ClassExpression: (node) => {
-                if (!classNode) classNode = node;
-            }
-        });
-
-        if (classNode) {
-            this.handleClassNode(classNode, result);
-        }
-
-        // Parse methods
-        acorn.walk.simple(ast, {
-            MethodDefinition: (node) => {
-                this.handleMethodNode(node, result);
-            },
-            Property: (node) => {
-                // Handle methods defined as properties (e.g., arrow functions)
-                if (typeof node.value === 'function' || node.value.type === 'FunctionExpression' || node.value.type === 'ArrowFunctionExpression') {
-                    this.handleMethodNode(node, result);
+            // Find the class declaration or expression
+            let classNode = null;
+            acorn.walk.simple(ast, {
+                ClassDeclaration: (node) => {
+                    if (!classNode) classNode = node;
+                },
+                ClassExpression: (node) => {
+                    if (!classNode) classNode = node;
                 }
+            });
+
+            if (classNode) {
+                this.handleClassNode(classNode, result);
             }
-        });
 
-        // After parsing methods, add this block to parse properties
-        this.parseProperties();
-        result.propertyCategories = this.propertyCategories;
+            // Parse methods
+            acorn.walk.simple(ast, {
+                MethodDefinition: (node) => {
+                    try {
+                        this.handleMethodNode(node, result);
+                    } catch (error) {
+                        console.error(`Error parsing method: ${node.key.name}`, error);
+                    }
+                },
+                Property: (node) => {
+                    // Handle methods defined as properties (e.g., arrow functions)
+                    if (typeof node.value === 'function' || node.value.type === 'FunctionExpression' || node.value.type === 'ArrowFunctionExpression') {
+                        try {
+                            this.handleMethodNode(node, result);
+                        } catch (error) {
+                            console.error(`Error parsing property method: ${node.key.name}`, error);
+                        }
+                    }
+                }
+            });
 
-        // After parsing all methods and properties, categorize them
-        this.categorizeMethods(result);
+            // After parsing methods, add this block to parse properties
+            this.parseProperties();
+            result.propertyCategories = this.propertyCategories;
 
-        console.log("Final JSON output:", JSON.stringify(result, null, 2));
-        return result;
+            // After parsing all methods and properties, categorize them
+            this.categorizeMethods(result);
+
+            console.log("Final JSON output:", JSON.stringify(result, null, 2));
+            return result;
+        } catch (error) {
+            console.error("Error in parse method:", error);
+            return this.fallbackParse();
+        }
     }
 
     fallbackParse() {
+        console.log("Entering fallback parsing mode");
         const result = {
             classInfo: {
                 className: 'Unknown',
                 extends: '',
                 filePath: this.filePath,
-                description: `Unable to fully parse the class due to syntax errors: ${this.parseError}`
+                description: `Unable to fully parse the class due to syntax errors. Fallback parsing applied.`
             },
             methods: []
         };
@@ -127,6 +164,9 @@ class JsClassParser {
         const classMatch = this.code.match(/class\s+(\w+)/);
         if (classMatch) {
             result.classInfo.className = classMatch[1];
+            console.log(`Fallback parsing: Found class name ${result.classInfo.className}`);
+        } else {
+            console.warn("Fallback parsing: Could not determine class name");
         }
 
         const methodRegex = /(static\s+)?(\w+)\s*\(([^)]*)\)\s*{/g;
@@ -135,6 +175,7 @@ class JsClassParser {
             const isStatic = !!match[1];
             const methodName = match[2];
             const parameters = match[3].split(',').map(param => param.trim()).filter(param => param);
+            console.log(`Fallback parsing: Found method ${methodName}`);
             result.methods.push({
                 methodName: methodName,
                 fullMethodName: `${isStatic ? 'static ' : ''}${methodName}(${match[3]})`,
@@ -143,13 +184,14 @@ class JsClassParser {
                     paramType: 'unknown',
                     description: 'Parameter extracted during fallback parsing.'
                 })),
-                description: `Parse error: ${this.parseError}. Method extracted during fallback parsing.`,
+                description: `Method extracted during fallback parsing.`,
                 isAsync: false,
                 access: isStatic ? 'static' : 'public',
                 isStatic: isStatic
             });
         }
 
+        console.log("Fallback parsing complete");
         return result;
     }
 
@@ -271,8 +313,10 @@ class JsClassParser {
             since: null, 
             description: null, 
             classdesc: null,
-            property: null,  // Add this line to support @member tags
-            category: null  // Add this line to support @category tags
+            member: null,
+            category: null,
+            default: null,  // Add this line
+            type: null  // Add this line
         };
         let currentTag = null;
         let currentTagContent = [];
@@ -308,15 +352,15 @@ class JsClassParser {
             case 'param':
                 const [paramType, paramName, ...paramDesc] = content.split(/\s+/);
                 entries.params.push({
-                    paramName: paramName.replace('-', '').trim(),
-                    paramType: escapeXml(paramType.replace(/[{}]/g, '').trim()),
+                    paramName: paramName ? paramName.replace('-', '').trim() : 'unnamed',
+                    paramType: escapeXml((paramType || '').replace(/[{}]/g, '').trim()),
                     description: escapeXml(paramDesc.join(' ').trim().replace(/^- /, '')) // Remove leading "- "
                 });
                 break;
             case 'returns':
                 const [returnType, ...returnDesc] = content.split(/\s+/);
                 entries.returns = {
-                    returnType: escapeXml(returnType.replace(/[{}]/g, '').trim()),
+                    returnType: escapeXml((returnType || '').replace(/[{}]/g, '').trim()),
                     description: escapeXml(returnDesc.join(' ').trim()) || null
                 };
                 break;
@@ -332,62 +376,59 @@ class JsClassParser {
             case 'classdesc':
                 entries[tag] = content.trim();
                 break;
-            case 'member':  // Change 'property' to 'member'
-                const [propertyType, propertyName, ...propertyDesc] = content.split(/\s+/);
-                entries.property = {
-                    propertyName: propertyName.trim(),
-                    propertyType: escapeXml(propertyType.replace(/[{}]/g, '').trim()),
-                    description: escapeXml(propertyDesc.join(' ').trim())
+            case 'member':
+                const [memberType, memberName, ...memberDesc] = content.split(/\s+/);
+                entries.member = {
+                    propertyName: memberName || (entries.type ? entries.type.propertyName : 'unnamed'),
+                    propertyType: escapeXml((memberType || '').replace(/[{}]/g, '').trim()),
+                    description: escapeXml(memberDesc.join(' ').trim())
                 };
                 break;
+            case 'type':
+                const [typeValue, typeName] = content.split(/\s+/);
+                entries.type = {
+                    propertyName: typeName ? typeName.trim() : 'unnamed',
+                    propertyType: escapeXml((typeValue || '').replace(/[{}]/g, '').trim())
+                };
+                break;
+            case 'default':
+                entries.default = content.trim();
+                break;
             case 'category':
-                entries[tag] = content.trim();
+                entries.category = content.trim();
+                break;
+            case 'description':
+                entries.description = content.trim();
+                break;
+            default:
+                console.warn(`Unknown tag: @${tag}`);
                 break;
         }
     }
 
     // Add this new method to parse properties
     parseProperties() {
-        const propertyRegex = /@member\s+{([^}]+)}\s+([^\s]+)\s+(.*)/g;
+        const propertyRegex = /\/\*\*\s*([\s\S]*?)\s*\*\//g;
         let match;
         while ((match = propertyRegex.exec(this.code)) !== null) {
-            const [, propertyType, propertyName, description] = match;
-            const propertyComments = this.getPropertyComments(match.index);
+            const propertyComments = match[1];
             const { entries } = this.extractJSDocInfo(propertyComments);
             
-            const property = {
-                propertyName: propertyName.trim(),
-                propertyType: escapeXml(propertyType.trim()),
-                description: escapeXml(description.trim()
-                    .replace(/^-\s*/, '')  // Remove leading dash and spaces
-                    .replace(/@description\s*/g, '')
-                    .replace(/^\*\s*/, '')),
-                category: entries.category || 'Uncategorized'  // Use the category from JSDoc if available
-            };
+            if (entries.member) {
+                const property = {
+                    propertyName: entries.member.propertyName,
+                    propertyType: entries.member.propertyType,
+                    description: entries.description || entries.member.description || 'Undocumented',
+                    category: entries.category || 'Uncategorized',
+                    default: entries.default || null
+                };
 
-            if (!this.propertyCategories[property.category]) {
-                this.propertyCategories[property.category] = [];
+                if (!this.propertyCategories[property.category]) {
+                    this.propertyCategories[property.category] = [];
+                }
+                this.propertyCategories[property.category].push(property);
             }
-            this.propertyCategories[property.category].push(property);
         }
-    }
-
-    getPropertyComments(propertyStart) {
-        const relevantComments = this.comments
-            .filter(comment => 
-                comment.end < propertyStart && 
-                comment.value.trim().startsWith('*')
-            )
-            .sort((a, b) => b.end - a.end);
-
-        if (relevantComments.length > 0) {
-            const closestComment = relevantComments[0];
-            // Remove the comment from the list to avoid reusing it for other properties
-            this.comments = this.comments.filter(comment => comment !== closestComment);
-            return closestComment.value;
-        }
-
-        return '';
     }
 
     // Add this new method to extract the source code
@@ -656,10 +697,13 @@ function generateMethodXml(method, filePath) {
 // Add this new function to generate XML for properties
 function generatePropertyXml(property) {
     let xml = '<property>\n';
-    xml += `  <propertyname>${property.propertyName}</propertyname>\n`;
-    xml += `  <propertytype>${property.propertyType}</propertytype>\n`;
-    xml += `  <description>${property.description}</description>\n`;
-    xml += `  <category>${escapeHtml(property.category)}</category>\n`;
+    xml += `  <propertyname>${escapeXml(property.propertyName)}</propertyname>\n`;
+    xml += `  <propertytype>${escapeXml(property.propertyType)}</propertytype>\n`;
+    xml += `  <description>${escapeXmlPreserveWhitespace(property.description)}</description>\n`;
+    xml += `  <category>${escapeXml(property.category)}</category>\n`;
+    if (property.default !== null) {
+        xml += `  <default>${escapeXml(property.default)}</default>\n`;
+    }
     xml += '</property>\n';
     return xml;
 }
@@ -719,3 +763,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error(`Error loading class file from ${path}:`, error);  // Modify this line
     }
 });
+
