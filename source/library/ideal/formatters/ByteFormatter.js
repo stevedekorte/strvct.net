@@ -30,7 +30,7 @@
          * @category Data
          */
         {
-            const slot = this.newSlot("≈", 0);
+            const slot = this.newSlot("value", 0);
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Number");
             slot.setCanInspect(false);
