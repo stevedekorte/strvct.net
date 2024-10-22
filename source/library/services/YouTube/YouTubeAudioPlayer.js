@@ -302,7 +302,9 @@
 
     const startSeconds = 0.0;
     if (this.videoId()) {
-      this.resolvePlayPromise();
+      await this.resolvePlayPromise();
+      await this.promiseUpdateVolume();
+
 
       this.setPlayPromise(Promise.clone().setLabel(this.type() + ".playPromise"));
       this.player().loadVideoById(this.videoId(), startSeconds);
@@ -410,7 +412,7 @@
    */
   onPlayerReady (event) {
     this.debugLog("onPlayerReady()");
-    this.updateVolume();
+    this.promiseUpdateVolume();
 
     assert(this._playerPromise);
     this.playerPromise().callResolveFunc();
@@ -505,13 +507,13 @@
       assert(v >= 0 && v <= 1.0);
       this._volume = v;
       if (this._playerPromise) {
-        this.updateVolume();
+        await this.promiseUpdateVolume();
       }
     }
     return this;
   }
 
-  async updateVolume () {
+  async promiseUpdateVolume () {
     await this.playerPromise();
     const v = this.volume() * 100;
     if (this.isReady()) {

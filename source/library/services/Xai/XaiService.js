@@ -76,7 +76,7 @@
    * @category Authentication
    */
   validateKey (s) {
-    return s.startsWith("sk-");
+    return true;
   }
 
   /**

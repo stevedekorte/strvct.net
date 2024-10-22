@@ -28,7 +28,8 @@
       {
         "name": "llama-3.1-405b-reasoning",
         "contextWindow": 131072 
-      },
+      }
+      /*
       {
           "name": "llama-3.1-70b-versatile",
           "contextWindow": 131072
@@ -45,6 +46,7 @@
           "name": "gemma-7b-it",
           "contextWindow": 8192
       }
+      */
     ];
   }
     

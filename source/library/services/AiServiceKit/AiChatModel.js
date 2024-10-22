@@ -67,13 +67,6 @@
     this.setShouldStoreSubnodes(false);
   }
 
-  /**
-   * Initializes the AiChatModel.
-   * @category Initialization
-   */
-  init () {
-    super.init();
-  }
 
   /**
    * Performs final initialization of the AiChatModel.

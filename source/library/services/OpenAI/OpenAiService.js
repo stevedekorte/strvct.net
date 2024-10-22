@@ -33,10 +33,11 @@
   modelsJson () {
     return [
       {
-          "name": "gpt-4o",
-          "note": "Cheaper and faster than GPT-4 Turbo.",
+          "name": "chatgpt-4o-latest",
+          "note": "Dynamic model continuously updated to the current version of GPT-4o in ChatGPT.",
           "contextWindow": 128000
-      },
+      }
+      /*
       {
           "name": "gpt-4-1106-preview",
           "note": "better instruction following",
@@ -50,6 +51,7 @@
           "name": "gpt-4-turbo-2024-04-09",
           "contextWindow": 128000
       }
+      */
     ];
   }
   

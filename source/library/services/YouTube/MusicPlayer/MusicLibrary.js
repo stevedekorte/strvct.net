@@ -530,7 +530,11 @@
         "Sleeping Dragon": "51pRMJpjYvk",
         "Heavenly Crystal Bells": "9Q4DzzV2PW8",
 
-        "Meditative Oud Music": "dRU494VecTw"
+        "Meditative Oud Music": "dRU494VecTw",
+        "Upbeat Solo Oud Music": "a8W98IMtASU",
+        "Causal Medium Paced Oud Music": "MOMfKe0RyN8",
+        "Active Oud Music": "eA193gp5_j4",
+        "Desert Oud Music": "NSnkRU0xpRM"
       },
 
       "Harry Potter": {

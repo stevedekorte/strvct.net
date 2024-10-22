@@ -33,6 +33,14 @@
   modelsJson () {
     return [
       {
+        "name": "claude-3-5-sonnet-20241022",
+        "title": "Claude 3.5 Sonnet",
+        "subtitle": "Better than 3 with same context size.",
+        "contextWindow": 200000,
+        "notes": ""
+      }
+      /*
+      {
         "name": "claude-3-5-sonnet-20240620",
         "title": "Claude 3.5 Sonnet",
         "subtitle": "Better than 3 with same context size.",
@@ -60,6 +68,7 @@
           "contextWindow": 200000,
           "notes": "This model also doesn't make roll request json with required fields"
       }
+      */
     ];
   }
   

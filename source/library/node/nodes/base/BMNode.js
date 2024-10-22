@@ -942,7 +942,7 @@
             if (this.type() === "HwLocations") {
                 if (!BMNotificationCenter.shared().hasNotification(note)) {
                     console.log(this.typeId() + " '" + this.title() + "' POST didUpdateNode - subnodesCount: " + this.subnodesCount());
-                    debugger;
+                    //debugger;
                 }
             }
             note.post();
