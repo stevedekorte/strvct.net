@@ -55,12 +55,9 @@ async function loadAndRenderMarkdown() {
     const renderer = new marked.Renderer();
 
     function processCitations(text) {
-      const citationRegex = /\[(\d+)\]/g;
-      return text.replace(citationRegex, (match, p1) => {
-        if (referenceMap.has(p1)) {
-          return `<a href="#ref-${p1}" style="text-decoration: none;">${match}</a>`;
-        }
-        return match;
+      const citationRegex = /(<a href="[^"]*" title="[^"]*">)(\d+)(<\/a>)/g;
+      return text.replace(citationRegex, (match, openTag, number, closeTag) => {
+        return `<a href="#ref-${number}" class="citation-link" title="Jump to reference">[${number}]</a>`;
       });
     }
 
@@ -187,6 +184,9 @@ async function loadAndRenderMarkdown() {
 
     let content = marked.parse(preprocessedMarkdown);
 
+    // Apply processCitations to the entire rendered content
+    content = processCitations(content);
+
     content = content.replace(/{{SVG_PLACEHOLDER_(\d+):([^}]+)}}/g, (match, id, path) => {
       const originalTag = svgMap.get(parseInt(id));
       if (originalTag) {
@@ -220,7 +220,8 @@ async function loadAndRenderMarkdown() {
            <h2 id="references">References</h2>
            ${referenceList.map(({ key, url, title }) => `
              <div class="reference-item" id="ref-${key}">
-               ${key}. <a href="${url}" target="_blank">${title || decodeURL(url)}</a>
+               <a href="#ref-${key}" class="reference-number">[${key}]</a> 
+               <a href="${url}" target="_blank" class="reference-link">${title || decodeURL(url)}</a>
              </div>`).join('')}
          </div>`
       : '';
@@ -264,6 +265,48 @@ async function loadAndRenderMarkdown() {
     }, 0);
 
     document.getElementById('content').innerHTML += '<div class="footer-spacer"></div>';
+
+    // Add event listener for smooth scrolling to references
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('citation-link')) {
+        e.preventDefault();
+        const targetId = e.target.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+
+    // Update the style
+    const style = document.createElement('style');
+    style.textContent = `
+      .citation-link {
+        text-decoration: none;
+        color: #0000EE;
+        cursor: pointer;
+      }
+      .citation-link:hover {
+        text-decoration: underline;
+      }
+      .reference-item {
+        margin-bottom: 10px;
+      }
+      .reference-number {
+        font-weight: bold;
+        margin-right: 5px;
+        color: #0000EE;
+        text-decoration: none;
+      }
+      .reference-link {
+        color: #0000EE;
+        text-decoration: none;
+      }
+      .reference-link:hover {
+        text-decoration: underline;
+      }
+    `;
+    document.head.appendChild(style);
 
   } catch (error) {
     console.error('Error loading Markdown:', error);
