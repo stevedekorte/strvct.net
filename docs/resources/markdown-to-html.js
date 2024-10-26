@@ -220,7 +220,7 @@ async function loadAndRenderMarkdown() {
            <h2 id="references">References</h2>
            ${referenceList.map(({ key, url, title }) => `
              <div class="reference-item" id="ref-${key}">
-               <a href="#ref-${key}" class="reference-number">[${key}]</a> 
+               ${key}.
                <a href="${url}" target="_blank" class="reference-link">${title || decodeURL(url)}</a>
              </div>`).join('')}
          </div>`
@@ -293,7 +293,7 @@ async function loadAndRenderMarkdown() {
         margin-bottom: 10px;
       }
       .reference-number {
-        font-weight: bold;
+        font-weight: normal;
         margin-right: 5px;
         color: #0000EE;
         text-decoration: none;
