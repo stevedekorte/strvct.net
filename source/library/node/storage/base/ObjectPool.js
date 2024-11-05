@@ -845,6 +845,8 @@
             debugger;
             return null;
         }
+
+        
         const obj = aClass.instanceFromRecordInStore(aRecord, this);
         if (obj === null) {
             // maybe the class shouldStore is false?
@@ -862,12 +864,14 @@
 
         this.loadingPids().delete(obj.puuid()) // need to do this to get object to ber marked as dirty if it's slots are updated in finalInit
 
+        //assert(!obj._hasDoneInit); // if the class is a singleton, _hasDoneInit may already be true. Should init be called in that case?
+
         if (obj.finalInit) {
             obj.finalInit();
         }
-        
+
         if (obj.afterInit) {
-            obj.afterInit();
+            obj.afterInit(); // called didInit, which sets _hasDoneInit to true
         }
         return obj
     }

@@ -9,7 +9,7 @@
 */
 
 //(class JSON_ideal extends JSON {
-    
+
 /**
  * Counts the number of nodes in a JSON structure.
  * @param {*} json - The JSON structure to count nodes for.
@@ -34,5 +34,72 @@ JSON.nodeCount = function (json) {
     
     return count;
 }
-    
+
+/**
+ * Stringifies only the JSON compatible values in an object.
+ * @param {*} obj - The object to stringify.
+ * @returns {string} The stringified object.
+ * @memberof JSON
+ * @category Data Analysis
+ */
+JSON.stringifyOnlyJson = function (obj) {
+    function filterJsonCompatible(value) {
+        if (Array.isArray(value)) {
+            return value
+                .filter(Type.isJsonType)
+                .map(item => filterJsonCompatible(item));
+        } else if (typeof value === 'object' && value !== null) {
+            return Object.keys(value).reduce((acc, key) => {
+                if (Type.isJsonType(value[key])) {
+                    acc[key] = filterJsonCompatible(value[key]);
+                }
+                return acc;
+            }, {});
+        } else {
+            return value;
+        }
+    }
+
+    const filteredObj = filterJsonCompatible(obj);
+    return JSON.stringify(filteredObj);
+};
+
+/**
+ * Stringifies only the JSON compatible values in an object, with stable key order.
+ * @param {*} obj - The object to stringify.
+ * @returns {string} The stringified object.
+ * @memberof JSON
+ * @category Data Analysis
+ */
+JSON.stableStringifyOnlyJson = function (obj) {
+    const seen = new WeakSet();  // Track objects to prevent circular references
+
+    function filterJsonCompatible(value) {
+        if (typeof value === 'object' && value !== null) {
+            if (seen.has(value)) return undefined;  // Avoid circular reference
+            seen.add(value);
+
+            if (Array.isArray(value)) {
+                return value
+                    .filter(Type.isJsonType)
+                    .map(item => filterJsonCompatible(item));
+            } else {
+                // Sort object keys and process each property recursively
+                return Object.keys(value).sort().reduce((acc, key) => {
+                    const propValue = value[key];
+                    if (Type.isJsonType(propValue)) {
+                        acc[key] = filterJsonCompatible(propValue);
+                    }
+                    return acc;
+                }, {});
+            }
+        } else {
+            return value;
+        }
+    }
+
+    const filteredObj = filterJsonCompatible(obj);
+    return JSON.stringify(filteredObj);
+};
+
 //}).initThisCategory();

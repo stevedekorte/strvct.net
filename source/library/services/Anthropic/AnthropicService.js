@@ -97,6 +97,13 @@
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
 
+  /*
+  setHasDoneInit (aBool) {
+    debugger;
+    return super.setHasDoneInit(aBool);
+  }
+  */
+
   /**
    * @description Validates the API key format.
    * @param {string} s - The API key to validate.

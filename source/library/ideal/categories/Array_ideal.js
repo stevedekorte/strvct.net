@@ -138,7 +138,7 @@
     }
 
     /**
-     * Checks if the array is empty.
+     * @description Checks if the array is empty.
      * @returns {boolean} True if the array is empty, false otherwise.
      */
     isEmpty() {
@@ -150,14 +150,30 @@
      * @param {Array} otherArray - The array to compare with.
      * @returns {boolean} True if the arrays are equal, false otherwise.
      */
-    isEqual(otherArray) {
+    isEqual (otherArray) {
+        if (Type.isNullOrUndefined(otherArray)) {
+            return false;
+        }
+
+        if (otherArray.length === undefined) {
+            return false;
+        }
+
         if (this.length !== otherArray.length) {
             return false;
         }
 
         for (let i = 0; i < this.length; i++) {
-            if (this[i] !== otherArray[i]) {
-                return false;
+            const v1 = this[i];
+            const v2 = otherArray[i];
+            if (v1 !== v2) {
+                if (v1.isEqual && v2.isEqual) {
+                    if (!v1.isEqual(v2)) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
             }
         }
 
@@ -1378,6 +1394,25 @@
             }
         }
         return true;
+    }
+
+    /**
+     * Returns a 64-bit hash code for the array
+     * @returns {number} A 64-bit hash code
+     * @category Information
+     */
+    hashCode64 () {
+        let h1 = 0xdeadbeef ^ 0;
+        let h2 = 0x41c6ce57 ^ 0;
+        for (let i = 0; i < this.length; i++) {
+            const v = this.at(i);
+            const h = Type.hashCode64(v);
+            h1 = Math.imul(h1 ^ h, 2654435761);
+            h2 = Math.imul(h2 ^ h, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        return 4294967296 * (2097151 & h2) + (h1 >>> 0);
     }
 
 }).initThisCategory();

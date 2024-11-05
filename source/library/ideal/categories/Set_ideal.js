@@ -350,4 +350,20 @@
         return new ImmutableSet(this);
     }
 
+    /**
+     * Returns a 64-bit hash code for the set
+     * @returns {number} A 64-bit hash code
+     * @category Information
+     */
+    hashCode64 () {
+        const prime = 31;
+        let result = 0;
+    
+        for (const item of this) {
+            result = (result + Type.hashCode64(item) * prime) | 0;  // Accumulate hash with prime multiplier
+        }
+    
+        return result;
+    }
+
 }).initThisCategory();

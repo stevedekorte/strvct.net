@@ -74,6 +74,16 @@ const Base64 = (function () {
     }
 
     /**
+     * Checks if the number is equal to another number
+     * @param {number} other - The other number to compare
+     * @returns {boolean} True if the numbers are equal, false otherwise
+     * @category Comparison
+     */
+    isEqual (other) {
+        return this === other;
+    }
+
+    /**
      * Repeats a function the number of times specified by this number
      * @param {function(number): (boolean|void)} func - The function to repeat
      * @returns {Number_ideal} This number instance
@@ -258,6 +268,15 @@ const Base64 = (function () {
         const max = Math.max(this, other);
         const randomValue = Math.random() * (max - min) + min;
         return randomValue;
+    }
+
+
+    hashCode () {
+        return this;
+    }
+
+    hashCode64 () {
+        return this;
     }
     
 }).initThisCategory();

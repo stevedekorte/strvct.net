@@ -1,7 +1,45 @@
 "use strict";
 
 /**
- * Initialization related behavior, and some important notes related to initialization.
+ * @module library.ideal.object
+ * @class Object_init
+ * @extends Object
+ * @classdesc Initialization related behavior.
+ * 
+ * Notes:
+ * 
+ * Init outside of deserialization looks like this:
+ * 
+ *     static clone () {
+        const obj = this.preClone();
+        obj.init();
+        obj.finalInit();
+        obj.afterInit(); // calls didInit, which sets _hasDoneInit to true
+        //this.allInstancesWeakSet().add(obj)
+        return obj;
+    }
+
+ * Init inside of deserialization looks like this (within ObjectPool):
+ * 
+       obj.loadFromRecord(aRecord, this)
+
+        this.loadingPids().delete(obj.puuid()) // need to do this to get object to ber marked as dirty if it's slots are updated in finalInit
+
+        assert(!obj._hasDoneInit);
+        if (obj.finalInit) {
+            obj.finalInit();
+        }
+        if(!obj._hasDoneInit) {
+            debugger;
+            obj.finalInit();
+        }
+
+        if (obj.afterInit) {
+            obj.afterInit(); // calls didInit, which sets _hasDoneInit to true
+        }
+
+    And didInit (which sets _hasDoneInit to true) is called from Object_init.afterInit.
+
  * 
  * Some initialization may have to wait until other objects have initialized. 
  * 
@@ -21,9 +59,6 @@
  * - appDidInit (when the Application posts an appDidInit notification)
  *   Implement an appDidInit() method, and in init() call this.listenForAppDidInit().
  * 
- * @module library.ideal.object
- * @class Object_init
- * @extends Object
  */
 
 (class Object_init extends Object {
@@ -35,8 +70,8 @@
      * @category Initialization
      */
     setShouldScheduleDidInit (aBool) {
-        this._shouldScheduleDidInit = aBool
-        return this
+        this._shouldScheduleDidInit = aBool;
+        return this;
     }
 
     /**
@@ -45,7 +80,7 @@
      * @category Initialization
      */
     shouldScheduleDidInit () {
-        return this._shouldScheduleDidInit
+        return this._shouldScheduleDidInit;
     }
 
     /**
@@ -54,7 +89,7 @@
      * @category Initialization
      */
     init () { 
-        return this
+        return this;
     }
 
     /**
@@ -63,7 +98,13 @@
      * @category Initialization
      */
     finalInit () {
-        return this
+        return this;
+    }
+
+    isSingleton () {
+        const aClass = this.thisClass();
+        assert(aClass !== this);
+        return aClass._isSingleton === true;
     }
 
     /**
@@ -71,14 +112,18 @@
      * @category Initialization
      */
     afterInit () {
-        if (this.thisClass().isSingleton === undefined || !this.thisClass().isSingleton()) {
-            assert(!this.hasDoneInit()) // sanity check
+        if (this.isSingleton()) {
+            if (this.hasDoneInit()) {
+                return; // no need to call didInit again (but what if we updated slots when reading from the store?)
+            }
+        } else {
+            assert(!this.hasDoneInit()); // sanity check
         }
 
         if (this.shouldScheduleDidInit()) {
-            this.scheduleDidInit()
+            this.scheduleDidInit();
         } else {
-            this.didInit()
+            this.didInit();
         }
     }
 
@@ -87,10 +132,10 @@
      * @category Initialization
      */
     didInit () {
-        if (this.thisClass().isSingleton === undefined || !this.thisClass().isSingleton()) {
+        if (!this.isSingleton()) {
             assert(!this.hasDoneInit()); 
         }
-        this.setHasDoneInit(true)
+        this.setHasDoneInit(true);
     }
 
     /**
@@ -99,7 +144,7 @@
      * @category State
      */
     hasDoneInit () {
-        return this._hasDoneInit === true // hasDoneInit only set after serialization
+        return this._hasDoneInit === true; // hasDoneInit only set after serialization
     }
     
     /**
@@ -110,7 +155,7 @@
      */
     setHasDoneInit (aBool) {
         this._hasDoneInit = aBool;
-        return this
+        return this;
     }
     
     /**
@@ -118,9 +163,9 @@
      * @category Initialization
      */
     scheduleDidInit () {
-        assert(this.shouldScheduleDidInit())
-        assert(!this.hasDoneInit())
-        this.scheduleMethod("didInit") 
+        assert(this.shouldScheduleDidInit());
+        assert(!this.hasDoneInit());
+        this.scheduleMethod("didInit");
     }
 
 }).initThisCategory();

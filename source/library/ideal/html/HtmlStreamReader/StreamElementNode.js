@@ -7,30 +7,39 @@
 "use strict";
 
 (class StreamElementNode extends StreamNode {
+    
     /**
      * Initializes the prototype slots for the class.
      * @category Initialization
      */
     initPrototypeSlots() {
         {
+            /**
+             * @member {string} name
+             * @description The name of the HTML element.
+             */
             const slot = this.newSlot("name", ""); // string
             slot.setSlotType("String");
         }
 
         {
+            /**
+             * @member {Object} attributes
+             * @description A dictionary of attributes for the HTML element.
+             */
             const slot = this.newSlot("attributes", null); // dictionary TODO: make this a Map
             slot.setSlotType("Object");
         }
 
         {
+            /**
+             * @member {string} text
+             * @description The text content of the HTML element.
+             */
             const slot = this.newSlot("text", ""); // string
             slot.setSlotType("String");
         }
 
-        {
-            const slot = this.newSlot("children", null); // array of child tags and strings
-            slot.setSlotType("Array");
-        }
     }
 
     /**

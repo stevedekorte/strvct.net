@@ -12,6 +12,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         {
             const slot = this.newSlot("isInTx", false);
             /**
+             * @category Data Retrieval
              * @description Public read, private write. Boolean, true during a transaction.
              * @type {Boolean}
              */
@@ -20,7 +21,9 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         {
             const slot = this.newSlot("map", null);
             /**
-             * @description Public read, private write - Map, contains current state of map
+             * @private
+             * @category Data Retrieval
+             * @description Private internal Map which contains current state.
              * @type {Map}
              */
             slot.setSlotType("Map");
@@ -28,6 +31,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         {
             const slot = this.newSlot("snapshot", null);
             /**
+             * @category Data Retrieval
              * @description Private - Map, contains shallow copy of map before transaction which we can revert to if transaction is cancelled
              * @type {Map}
              * @private
@@ -35,25 +39,28 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
             slot.setSlotType("Map");
         }
         {
-            const slot = this.newSlot("isOpen", true);
             /**
+             * @category Data Retrieval
              * @description Public read, private write
              * @type {Boolean}
              */
+            const slot = this.newSlot("isOpen", true);
             slot.setSlotType("Boolean");
         }
         {
-            const slot = this.newSlot("changedKeySet", null);
             /**
+             * @category Data Retrieval
              * @description Private method
              * @type {Set}
              * @private
              */
+            const slot = this.newSlot("changedKeySet", null);
             slot.setSlotType("Set");
         }
         {
             const slot = this.newSlot("keysAndValuesAreStrings", true);
             /**
+             * @category Configuration
              * @description Private method - Bool, if true, runs assertString on all input keys and values
              * @type {Boolean}
              * @private
@@ -63,7 +70,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         {
             const slot = this.newSlot("totalBytesCache", null);
             /**
-             * @description Private
+             * @category Data Retrieval
+             * @description total bytes storedin map
              * @type {Number|null}
              * @private
              */
@@ -73,6 +81,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         {
             const slot = this.newSlot("beginPromiseFifoQueue", null);
             /**
+             * @category Transaction Management
              * @description First-in-first-out queue of promises, last in queue is was the earliest promise added
              * @type {Array}
              * @private
@@ -84,6 +93,10 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     initPrototype () {
     }
 
+    /**
+     * @category Initialization
+     * @description Initializes the AtomicMap.
+     */
     init () {
         super.init();
         this.setMap(new Map());
@@ -94,6 +107,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Opens the AtomicMap for operations.
      * @returns {AtomicMap} This instance of AtomicMap.
      */
@@ -102,11 +116,17 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         return this;
     }
 
+    /**
+     * @category Assertion
+     * @description Asserts that the AtomicMap is open for operations.
+     * @throws {Error} If the AtomicMap is not open.
+     */
     assertAccessible () {
         this.assertOpen();
     }
 
     /**
+     * @category Assertion
      * @description Asserts that the AtomicMap is open for operations.
      * @throws {Error} If the AtomicMap is not open.
      */
@@ -115,6 +135,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @async
+     * @category Promise
      * @description Promises to open the AtomicMap for operations.
      * @returns {Promise} A Promise that resolves when the AtomicMap is open.
      */
@@ -123,6 +145,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Closes the AtomicMap for operations.
      * @returns {AtomicMap} This instance of AtomicMap.
      */
@@ -132,6 +155,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Throws an error because the method is deprecated. Use promiseBegin instead.
      * @throws {Error} An error indicating that the method is deprecated.
      */
@@ -140,6 +164,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
     
     /**
+     * @async
+     * @category Promise
      * @description Begins a transaction on the AtomicMap.
      * @returns {Promise} A Promise that resolves when the transaction has begun.
      */
@@ -161,6 +187,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Reverts the changes made during the current transaction.
      * @returns {AtomicMap} This instance of AtomicMap.
      */
@@ -176,6 +203,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @async
+     * @category Promise
      * @description Applies the changes made during the current transaction.
      * @returns {Promise} A Promise that resolves when the changes have been applied.
      */
@@ -184,6 +213,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @async
+     * @category Promise
      * @description Commits the changes made during the current transaction.
      * @returns {Promise} A Promise that resolves when the changes have been committed.
      */
@@ -199,6 +230,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Events
      * @description Handles the completion of a transaction.
      * @private
      */
@@ -209,6 +241,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Checks if there are any changes made during the current transaction.
      * @returns {boolean} True if there are changes, false otherwise.
      */
@@ -217,6 +250,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Applies the changes made during the current transaction to the snapshot.
      * @private
      */
@@ -226,6 +260,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Assertion
      * @description Asserts that the AtomicMap is in a transaction.
      * @throws {Error} If the AtomicMap is not in a transaction.
      * @private
@@ -235,6 +270,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Assertion
      * @description Asserts that the AtomicMap is not in a transaction.
      * @throws {Error} If the AtomicMap is in a transaction.
      * @private
@@ -244,6 +280,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns an array of keys in the map.
      * @returns {Array} An array of keys.
      */
@@ -252,6 +289,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns a set of keys in the map.
      * @returns {Set} A set of keys.
      */
@@ -260,6 +298,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns an array of values in the map.
      * @returns {Array} An array of values.
      */
@@ -268,6 +307,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns a set of values in the map.
      * @returns {Set} A set of values.
      */
@@ -276,6 +316,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Checks if the map contains the given key.
      * @param {*} k The key to check.
      * @returns {boolean} True if the map contains the key, false otherwise.
@@ -285,6 +326,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Checks if the map contains the given key.
      * @param {*} k The key to check.
      * @returns {boolean} True if the map contains the key, false otherwise.
@@ -294,6 +336,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns the value associated with the given key.
      * @param {*} k The key to retrieve the value for.
      * @returns {*} The value associated with the key, or undefined if the key is not found.
@@ -303,6 +346,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Clears all key-value pairs from the map.
      * @returns {AtomicMap} This instance of AtomicMap.
      */
@@ -312,6 +356,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Sets the value associated with the given key in the map.
      * @param {*} k The key to set the value for.
      * @param {*} v The value to set.
@@ -322,6 +367,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Sets the value associated with the given key in the map.
      * @param {*} k The key to set the value for.
      * @param {*} v The value to set.
@@ -342,6 +388,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Removes the key-value pair associated with the given key from the map.
      * @param {*} k The key to remove.
      * @returns {AtomicMap} This instance of AtomicMap.
@@ -360,6 +407,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Iteration
      * @description Iterates over the key-value pairs in the map and calls the provided function for each pair.
      * @param {Function} fn The function to call for each key-value pair. The function takes three arguments: key, value, and the map instance.
      */
@@ -370,6 +418,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Iteration
      * @description Iterates over the keys in the map and calls the provided function for each key.
      * @param {Function} fn The function to call for each key. The function takes one argument: key.
      */
@@ -379,6 +428,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Iteration
      * @description Iterates over the values in the map and calls the provided function for each value.
      * @param {Function} fn The function to call for each value. The function takes one argument: value.
      */
@@ -389,6 +439,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns an array of keys in the map.
      * @returns {Array} An array of keys.
      */
@@ -397,6 +448,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 	
     /**
+     * @category Data Retrieval
      * @description Returns an array of values in the map.
      * @returns {Array} An array of values.
      */
@@ -405,6 +457,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns the number of key-value pairs in the map.
      * @returns {number} The number of key-value pairs.
      */
@@ -413,6 +466,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }	
 
     /**
+     * @category Mutation
      * @description Clears the total bytes cache.
      * @returns {AtomicMap} This instance of AtomicMap.
      */
@@ -422,6 +476,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns the total number of bytes used by the keys and values in the map.
      * @returns {number} The total number of bytes used by the keys and values.
      */
@@ -443,6 +498,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Data Retrieval
      * @description Returns the map as a JSON object.
      * @returns {Object} The map as a JSON object.
      */
@@ -451,6 +507,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Mutation
      * @description Populates the map from a JSON object.
      * @param {Object} json The JSON object to populate the map from.
      * @returns {AtomicMap} This instance of AtomicMap.
@@ -462,6 +519,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     /**
+     * @category Testing
      * @description Runs a self-test on the AtomicMap class.
      * @returns {Promise<boolean>} A Promise that resolves to true if the self-test passes, false otherwise.
      * @static

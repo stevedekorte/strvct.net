@@ -1,6 +1,6 @@
-
- /**
-  * @module library.ideal.proto
+/**
+ * @module library.ideal.proto
+ * @category Core
  */
 
 "use strict";
@@ -35,43 +35,9 @@ if (!getGlobalThis().ideal) {
 
 getGlobalThis().ideal.Slot = (class Slot extends Object { 
 
-    setShouldStore (aBool) {
-        throw new Error("Slot.setShouldStore should not be called on Slot");
-    }
-
-    shouldStore () {
-        throw new Error("Slot.shouldStore should not be called on Slot");
-    }
-
-    simpleNewSlot (slotName, initialValue) {  
-        // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
-        const privateName = "_" + slotName;
-        Object.defineSlot(this, privateName, initialValue);
-
-        if (!this[slotName]) {
-            const simpleGetter = function () {
-                return this[privateName];
-            }
-
-            Object.defineSlot(this, slotName, simpleGetter);
-        }
-
-        const setterName = "set" + slotName.capitalized();
-
-        if (!this[setterName]) {
-            const simpleSetter = function (newValue) {
-                this[privateName] = newValue;
-                return this;
-            }
-
-            Object.defineSlot(this, setterName, simpleSetter);
-        }
-
-        this._slotNames.add(slotName);
-        
-        return this;
-    }
-
+    /**
+     * @category Initialization
+     */
     initPrototypeSlots () {
         Object.defineSlot(this, "_slotNames", new Set());
         
@@ -152,6 +118,55 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("fieldInspectorClassName", null);
     }
 
+    /**
+     * @category Value Storage
+     */
+    setShouldStore (aBool) {
+        throw new Error("Slot.setShouldStore should not be called on Slot");
+    }
+
+    /**
+     * @category Value Storage
+     */
+    shouldStore () {
+        throw new Error("Slot.shouldStore should not be called on Slot");
+    }
+
+    /**
+     * @category Slot Creation
+     */
+    simpleNewSlot (slotName, initialValue) {  
+        // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
+        const privateName = "_" + slotName;
+        Object.defineSlot(this, privateName, initialValue);
+
+        if (!this[slotName]) {
+            const simpleGetter = function () {
+                return this[privateName];
+            }
+
+            Object.defineSlot(this, slotName, simpleGetter);
+        }
+
+        const setterName = "set" + slotName.capitalized();
+
+        if (!this[setterName]) {
+            const simpleSetter = function (newValue) {
+                this[privateName] = newValue;
+                return this;
+            }
+
+            Object.defineSlot(this, setterName, simpleSetter);
+        }
+
+        this._slotNames.add(slotName);
+        
+        return this;
+    }
+
+    /**
+     * @category Initialization
+     */
     setFinalInitProto (aProto) {
         this._finalInitProto = aProto;
         if (aProto && this.slotType() === null) {
@@ -159,8 +174,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
         return this;
     }
-    // --- label ---
 
+    /**
+     * @category Labels & Display
+     */
     setLabelToCapitalizedSlotName () {
         let s = this.name().capitalized();
         // If the name was camel case, we want to split it into words.
@@ -169,8 +186,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
-    // --- annotations ---
-
+    /**
+     * @category Validation
+     */
     setValidValues (v) {
         this._validValues = v;
 
@@ -191,8 +209,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this
     }
 
-    // --- annotations ---
-
+    /**
+     * @category Annotations
+     */
     annotations () {
         if (!this._annotations) {
             this._annotations = new Map();
@@ -200,112 +219,161 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this._annotations;
     }
 
+    /**
+     * @category Annotations
+     */
     setAnnotation (key, value) {
         this.annotations().set(key, value);
         return this;
     }
 
+    /**
+     * @category Annotations
+     */
     hasAnnotation (key) {
         return this.annotations().has(key);
     }
 
+    /**
+     * @category Annotations
+     */
     getAnnotation (key) {
         return this.annotations().get(key);
     }
 
+    /**
+     * @category Annotations
+     */
     removeAnnotation () {
         this.annotations().delete(key);
         return this
     }
 
-    // --- value placeholder ---
-
+    /**
+     * @category Value Placeholders
+     */
     setValuePlaceholder (s) {
         this.setAnnotation("valuePlaceholder", s);
         return this;
     }
 
+    /**
+     * @category Value Placeholders
+     */
     valuePlaceholder () {
         return this.getAnnotation("valuePlaceholder");
     }
 
-    // --- subnode field helpers ---
-
+    /**
+     * @category Subnode Configuration
+     */
     setNodeFillsRemainingWidth (aBool) {
         this.setAnnotation("nodeFillsRemainingWidth", aBool);
         return this;
     }
 
+    /**
+     * @category Subnode Configuration
+     */
     nodeFillsRemainingWidth () {
         return this.getAnnotation("nodeFillsRemainingWidth") === true;
     }
 
+    /**
+     * @category Subnode Configuration
+     */
     setKeyIsVisible (aBool) {
         this.setAnnotation("keyIsVisible", aBool);
         return this
     }
 
+    /**
+     * @category Subnode Configuration
+     */
     keyIsVisible () {
         return this.getAnnotation("keyIsVisible") !== false;
     }
 
-    // --- standard annotations ---
-
+    /**
+     * @category Standard Annotations
+     */
     setShouldJsonArchive (aBool) {
         this.setAnnotation("shouldJsonArchive", aBool);
         return this
     }
 
+    /**
+     * @category Standard Annotations
+     */
     shouldJsonArchive () {
         return this.getAnnotation("shouldJsonArchive");
     }
 
-    // --- description ---
-
+    /**
+     * @category Standard Annotations
+     */
     setDescription (s) {
         this.setAnnotation("description", s);
         return this;
     }
 
+    /**
+     * @category Standard Annotations
+     */
     description () {
         return this.getAnnotation("description");
     }
 
+    /**
+     * @category Standard Annotations
+     */
     setDescriptionAndPlaceholder (s) {
         this.setDescription(s);
         this.setValuePlaceholder(s);
         return this;
     }
 
-    // --- examples ---
-
+    /**
+     * @category Examples
+     */
     setExamples (anArray) {
         this.setAnnotation("examples", anArray);
         return this;
     }
 
+    /**
+     * @category Examples
+     */
     examples () {
         return this.getAnnotation("examples");
     }
 
-    // --- read only ---
-
+    /**
+     * @category Read Only
+     */
     setIsReadOnly (aBool) {
         this.setAnnotation("readOnly", aBool);
         return this;
     }
 
+    /**
+     * @category Read Only
+     */
     isReadOnly () {
         return this.getAnnotation("readOnly");
     }
-    
-    // --- required ---
 
+    /**
+     * @category Required
+     */
     setIsRequired (b) {
         this.setAnnotation("isRequired", b);
         return this;
     }
 
+    /**
+     * @category Required
+     */
     isRequired () {
         const b = this.getAnnotation("isRequired");
         if (b === undefined) {
@@ -314,24 +382,32 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return b;
     }
 
-    // --- json schema (to set directly) if value is raw json ---
-
+    /**
+     * @category JSON Schema (to set directly) if value is raw json
+     */
     setJsonSchema (schema) {
         this.setAnnotation("jsonSchema", schema);
         return this;
     }
 
+    /**
+     * @category JSON Schema (to set directly) if value is raw json
+     */
     jsonSchema () {
         return this.getAnnotation("jsonSchema");
     }
 
-    // --- items type ---
-
+    /**
+     * @category Items Type
+     */
     validJsonSchemaItemsTypes () {
         const validItemsTypes = ["null", "boolean", "object", "array", "number", "string", "integer"];
         return validItemsTypes;
     }
 
+    /**
+     * @category Items Type
+     */
     setJsonSchemaItemsType (s) {
         assert(Type.isString("string"));
         //assert(this.validJsonSchemaItemsTypes().contains(s));
@@ -339,56 +415,76 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
+    /**
+     * @category Items Type
+     */
     jsonSchemaItemsType () {
         return this.getAnnotation("jsonSchemaItemsType");
     }
 
-    // --- items description ---
-
+    /**
+     * @category Items Description
+     */
     setJsonSchemaItemsDescription (s) {
         this.setAnnotation("jsonSchemaItemsDescription", s);
         return this;
     }
 
+    /**
+     * @category Items Description
+     */
     jsonSchemaItemsDescription () {
         return this.getAnnotation("jsonSchemaItemsDescription");
     }
 
-    // --- items ref ---
-
+    /**
+     * @category Items Ref
+     */
     setJsonSchemaItemsRef (s) {
         this.setAnnotation("jsonSchemaItemsRef", s);
         return this;
     }
 
+    /**
+     * @category Items Ref
+     */
     jsonSchemaItemsRef () {
         return this.getAnnotation("jsonSchemaItemsRef");
     }
 
-    // --- items is unique ---
-
+    /**
+     * @category Items Is Unique
+     */
     setJsonSchemaItemsIsUnique (b) {
         this.setAnnotation("jsonSchemaItemsIsUnique", b);
         return this;
     }
 
+    /**
+     * @category Items Is Unique
+     */
     jsonSchemaItemsIsUnique () {
         return this.getAnnotation("jsonSchemaItemsIsUnique");
     }
 
-    // --- is in json schema ---
-
+    /**
+     * @category Is In JSON Schema
+     */
     setIsInJsonSchema (b) {
         this.setAnnotation("isInJsonSchema", b);
         return this;
     }
 
+    /**
+     * @category Is In JSON Schema
+     */
     isInJsonSchema () {
         return this.getAnnotation("isInJsonSchema");
     }
 
-    // --- inspector ---
-
+    /**
+     * @category Inspector
+     */
     fieldInspectorClassName () {
         if (Type.isString(this._fieldInspectorClassName)) {
             return this._fieldInspectorClassName;
@@ -396,6 +492,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this.defaultFieldInspectorClassName();
     }
 
+    /**
+     * @category Inspector
+     */
     defaultFieldInspectorClassName () {
         const slotType = this.slotType();
         assert(!Type.isNull(slotType), "slotType is null for slot: " + this.name());
@@ -408,6 +507,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return fieldName;
     }
 
+    /**
+     * @category Inspector
+     */
     newInspectorField () {
         const slotType = this.slotType();
         if (slotType /*&& this.canInspect()*/) {
@@ -461,6 +563,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return null;
     }
 
+    /**
+     * @category Value Validation
+     */
     computedValidValues () {
         if (this.validValues()) {
             return this.validValues();
@@ -470,35 +575,25 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return null;
     }
 
+    /**
+     * @category Value Validation
+     */
     validDuplicateOps () {
         return new Set(["nop", "copyValue", "duplicate"]);
     }
-    
+
+    /**
+     * @category Value Validation
+     */
     setDuplicateOp (aString) {
         assert(this.validDuplicateOps().has(aString));
         this._duplicateOp = aString;
         return this;
     }
 
-    /*
-    onInstanceGetDuplicateValue (anInstance) {
-        const v = this.onInstanceGetValue(anInstance)
-        const dop = this.duplicateOp()
-
-        if (v === null) {
-            return null
-        } else if (dop === "nop") {
-            return v
-        } else if (dop === "copyValue") {
-            return v
-        } else if (dop === "duplicate" && v && v.duplicate) {
-            return v.duplicate()
-        }
-
-        throw new Error("unable to duplicate")
-    }
-    */
-
+    /**
+     * @category Initialization
+     */
     setName (aName) {
         assert(Type.isString(aName) && aName.trim().length > 0);
         this._name = aName;
@@ -518,35 +613,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
-    // --- method name cache ---
-
-    /*
-    addCachedMethodName (k) {
-        this.methodNameCache().set(k, k + this.name().capitalized());
-        return this
-    }
-
-    updateCachedMethodNames () {
-        this.addCachedMethodName("directSet" );
-        this.addCachedMethodName("willGetSlot");
-        this.addCachedMethodName("didUpdateSlot");
-        this.addCachedMethodName("willUpdateSlot");
-        this.addCachedMethodName("onUndefinedGet") ;// for lazy slots
-        this.addCachedMethodName("onFinalizedSlot"); // for weak slots
-        this.addCachedMethodName("shouldStoreSlot") ;// for weak slots
-    }
-
-    getCachedMethodNameFor (k) {
-        const result = this.methodNameCache().set(k, v);
-        if(typeof(result) === "string") {
-            throw new Error("missing method name cache for '" + k + "'");
-        }
-        return result;
-    }
-    */
-
-    // ---
-
+    /**
+     * @category Method Name Cache
+     */
     copyFrom (aSlot) {
         // This is used by overrideSlot().
         // Need to be careful about non json slot values.
@@ -576,18 +645,27 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
+    /**
+     * @category Initialization
+     */
     autoSetGetterSetterOwnership () {
         this.setOwnsGetter(!this.alreadyHasGetter());
         this.setOwnsSetter(!this.alreadyHasSetter());
         return this;
     }
 
+    /**
+     * @category Hooks
+     */
     hookNames () {
         const hookMethodNames = this._slotNames.filter(n => n.beginsWith("methodFor"));
         const hookNames = hookMethodNames.map(n => this[n].apply(this));
         return hookNames;
     }
 
+    /**
+     * @category Hooks
+     */
     ownerImplemnentsdHooks () {
         return true
         /*
@@ -596,6 +674,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         */
     }
 
+    /**
+     * @category Hooks
+     */
     setDoesHookSetter (aBool) {
         if (this._doesHookSetter !== aBool) {
             this._doesHookSetter = aBool;
@@ -612,8 +693,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
-    // setup
-
+    /**
+     * @category Setup
+     */
     setupInOwner () {
         this.autoSetGetterSetterOwnership();
         this.setupValue();
@@ -622,17 +704,24 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
+    /**
+     * @category Setup
+     */
     setupValue () {
         Object.defineSlot(this.owner(), this.privateName(), this.initValue());
         return this;
     }
 
-    // getter
-
+    /**
+     * @category Getter
+     */
     alreadyHasGetter () {
         return this.owner().hasOwnProperty(this.getterName()); // TODO: hasOwnProperty? 
     }
 
+    /**
+     * @category Setup
+     */
     setupGetter () {
         if (this.ownsGetter()) {
             if (this.ownerImplemnentsdHooks()) {
@@ -644,10 +733,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
+    /**
+     * @category Getter
+     */
     alreadyHasSetter () {
         return this.owner().hasOwnProperty(this.setterName());  // TODO: hasOwnProperty? 
     }
 
+    /**
+     * @category Setup
+     */
     setupSetter () {
         if (this.ownsSetter()) {
             if (this.ownerImplemnentsdHooks()) {
@@ -659,19 +754,24 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
     }
 
-    // --- getter ---
-
+    /**
+     * @category Getter
+     */
     getterName () {
         return this.name();
     }
 
-    // direct getter
-
+    /**
+     * @category Getter
+     */
     makeDirectGetter () {
         Object.defineSlot(this.owner(), this.getterName(), this.directGetter());
         return this;
     }
 
+    /**
+     * @category Getter
+     */
     directGetter () {
         assert(arguments.length === 0);
         const privateName = this.privateName();
@@ -681,15 +781,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return func;
     }
 
-    // hooked getter
-
+    /**
+     * @category Getter
+     */
     makeDirectGetterOnInstance (anInstance) {
         Object.defineSlot(anInstance, this.getterName(), this.directGetter());
         return this;
     }
 
-    // ----------------------------------------
-
+    /**
+     * @category Getter
+     */
     autoGetter () {
         const slot = this;
         return function (arg) { 
@@ -698,6 +800,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
     }
 
+    /**
+     * @category Value Validation
+     */
     validateValue (v) {
         if (v === null && this.allowsNullValue() === true) {
             return true;
@@ -735,6 +840,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return false;
     }
 
+    /**
+     * @category Setter
+     */
     autoSetter () {
         const slot = this;
         return function (newValue) {
@@ -757,13 +865,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         };
     }
 
-    // --- setter ---
-
+    /**
+     * @category Setter
+     */
     makeDirectSetter () {
         Object.defineSlot(this.owner(), this.setterName(), this.directSetter());
         return this;
     }
 
+    /**
+     * @category Setter
+     */
     directSetter () {
         const privateName = this.privateName();
         const func = function (newValue) {
@@ -773,16 +885,23 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return func;
     }
 
-    // call helpers
-
+    /**
+     * @category Call Helpers
+     */
     onInstanceRawGetValue (anInstance) {
         return anInstance[this.privateName()];
     }
 
+    /**
+     * @category Call Helpers
+     */
     onInstanceGetValue (anInstance) {
         return anInstance[this.getterName()].apply(anInstance);
     }
 
+    /**
+     * @category Call Helpers
+     */
     onInstanceSetValue (anInstance, aValue) {
         const m = anInstance[this._setterName];
         if (Type.isUndefined(m)) {
@@ -791,22 +910,32 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return m.call(anInstance, aValue); // not consistent with rawset to return this...
     }
 
+    /**
+     * @category Call Helpers
+     */
     onInstanceRawSetValue (anInstance, aValue) {
         anInstance[this._privateName] = aValue;
         return this;
     }
 
-    // --- StoreRefs for lazy slots ---
-
+    /**
+     * @category StoreRefs for lazy slots
+     */
     onInstanceSetValueRef (anInstance, aRef) {
         anInstance.lazyRefsMap().set(this.name(), aRef);
         return this;
     }
 
+    /**
+     * @category StoreRefs for lazy slots
+     */
     onInstanceGetValueRef (anInstance, aRef) {
         return anInstance.lazyRefsMap().get(this.name());
     }
 
+    /**
+     * @category Call Helpers
+     */
     copyValueFromInstanceTo (anInstance, otherInstance) {
         /*
         if (this.isLazy()) {
@@ -823,8 +952,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
-    // -----------------------------------------------------
-
+    /**
+     * @category Initialization
+     */
     finalInitProtoClass () {
         let finalInitProto = this._finalInitProto;
         if (typeof(finalInitProto) === "string") {
@@ -835,6 +965,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return finalInitProto;
     }
 
+    /**
+     * @category Initialization
+     */
     onInstanceFinalInitSlot (anInstance) {
         assert(this.slotType() !== null, " slotType is null for " + anInstance.type() + "." + this.name());
 
@@ -911,6 +1044,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
     }
 
+    /**
+     * @category Initialization
+     */
     onInstanceInitSlot (anInstance) {
         //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
         let defaultValue = anInstance[this._privateName];
@@ -979,6 +1115,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         */
     }
 
+    /**
+     * @category Call Helpers
+     */
     onInstanceLoadRef (anInstance) {
         const storeRef = this.onInstanceGetValueRef(anInstance);
         if (storeRef) {
@@ -1003,12 +1142,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
     }
 
+    /**
+     * @category Call Helpers
+     */
     hasSetterOnInstance (anInstance) {
         return Type.isFunction(anInstance[this.setterName()]);
     }
 
-    // --- should store on instance ---
-
+    /**
+     * @category Should Store On Instance
+     */
     shouldStoreSlotOnInstance (anInstance) {
         const methodName = this.methodForShouldStoreSlot();
         const method = anInstance[methodName];
@@ -1021,50 +1164,18 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this.shouldStoreSlot();
     }
 
-    /*
+    /**
+     * @category Should Store On Instance
+     */
     setShouldStoreSlotOnInstance (anInstance, aBool) {
         const k = this.shouldStoreSlotOnInstancePrivateName();
         Object.defineSlot(anInstance, k, aBool);
         return aBool;
     }
-    */
 
-    // --- JSON schema ---
-
-    /*
-        Valid JSON schema properties:
-
-        [
-        "$id",
-        "$schema",
-        "$ref",
-        "$comment",
-        "title",
-        "description",
-        "type",
-        "properties",
-        "items",
-        "required",
-        "additionalProperties",
-        "definitions",
-        "pattern",
-        "minLength",
-        "maxLength",
-        "minimum",
-        "maximum",
-        "enum",
-        "format",
-        "default",
-        "examples",
-        "dependencies",
-        "patternProperties",
-        "minItems",
-        "maxItems",
-        "uniqueItems",
-        "multipleOf"
-    ];
-    */
-
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaType () {
         //const validJsonTypeValues = ["null", "boolean", "object", "array", "number", "string", "integer"];
 
@@ -1085,18 +1196,30 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return "object";
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaTitle () {
         return this.name(); // slot name
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaDescription () {
         return this.description();
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaExamples () {
         return this.examples();
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemeAddRanges (schema) {
         const a = this.jsonSchemaEnum();
         if (a) {
@@ -1126,6 +1249,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaEnum () {
         const enumArray = [];
 
@@ -1148,6 +1274,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return enumArray.length ? enumArray : undefined;
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaProperties (refSet) {
         assert(refSet);
         const proto = this.finalInitProtoClass();
@@ -1166,6 +1295,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return undefined;
     }
 
+    /**
+     * @category JSON Schema
+     */
     jsonSchemaRequired () {
         const proto = this.finalInitProto();
         if (proto) {
@@ -1174,26 +1306,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return undefined;
     }
 
-    /*
-    setJsonSchemaTitle (title) {
-        debugger;
-        this.setName(title); // can't do this after initPrototype
-        return this;
-    }
-
-    setJsonSchema (schema) {
-        this.setJsonSchemaTitle(schema.description);
-        this.setJsonSchemaDescription(schema.description);
-        this.setJsonSchemaExamples(schema.examples);
-        this.setJsonSchemaEnum(schema.enum);
-        assert(!schema.properties); // only definitions schemas should have properties
-
-        //this.setSlotType(schema.type);
-        return this;
-    }
-    */
-
-
+    /**
+     * @category JSON Schema
+     */
     asJsonSchema (refSet) {
         assert(refSet);
         if (this.jsonSchema()) {
@@ -1271,8 +1386,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return schema;
     }
 
-    // ----------------------------------------------------------
-
+    /**
+     * @category Value Validation
+     */
     acceptsValue (v) {
         //const typeNames = Type.typeNamesForValue(value);
         const valueType = Type.typeName(v);
@@ -1344,6 +1460,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return false;
     }
 
+    /**
+     * @category Value Validation
+     */
     onInstanceSetValueWithJsonSchemaTypeCheck (anInstance, v) {
         const slot = this;
         const value = slot.valueFromJson(jsonValue);
@@ -1363,6 +1482,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
+    /**
+     * @category Value Validation
+     */
     assertValidValueOnInstance (anInstance) {
         assert(this.slotType() !== null, "slotType is null for slot: " + this.name());
         const v = this.onInstanceGetValue(anInstance);

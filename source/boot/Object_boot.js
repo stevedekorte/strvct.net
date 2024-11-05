@@ -129,7 +129,7 @@
      * @category Initialization
      * @returns {void}
      */
-    setupAllSlotsMap() { 
+    setupAllSlotsMap () { 
         if (!this.isPrototype()) {
             throw new Error("setupAllSlotsMap called on non-prototype");
         }
@@ -189,9 +189,23 @@
             throw new Error("setupPrototype called on non-prototype");
         }
 
+        if (Object.hasOwn(this, "_slotsMap")) {
+            debugger;
+        }
+
+        if (Object.hasOwn(this, "_allSlotsMap")) {
+            debugger;
+        }
         /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(this, "_slotsMap", new Map()); // slots for just this proto
         Object.defineSlot(this, "_allSlotsMap", new Map()); // slots for this proto and all protos in the proto chain
+        if (getGlobalThis()["ProtoClass"]) {
+            if (this !== ProtoClass.prototype) {
+                if(this._allSlotsMap === ProtoClass.prototype._allSlotsMap) {
+                    debugger;
+                }
+            }
+        }
         this.setupAllSlotsMap();
 
         // We need to separate initPrototypeSlots, initSlots, initPrototype as

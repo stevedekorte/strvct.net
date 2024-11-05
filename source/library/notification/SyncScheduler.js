@@ -346,8 +346,8 @@
      * @category Query
      */
     orderedActions () {
-        const sorter = function (a1, a2) { return a1.order() - a2.order() }
-        return this.actions().valuesArray().sort(sorter)
+        const sorter = function (a1, a2) { return a1.order() - a2.order(); };
+        return this.actions().valuesArray().sort(sorter);
     }
 	
     /**
@@ -361,40 +361,41 @@
         }
 
         if (this.isProcessing()) {
-            console.warn("WARNING: SynScheduler attempt to processSets before last set is completed")
-            return this
+            console.warn("WARNING: SynScheduler attempt to processSets before last set is completed");
+            return this;
         }
-        assert(!this.isProcessing())
+        assert(!this.isProcessing());
 
-        this.setIsProcessing(true)
-        let error = null
+        this.setIsProcessing(true);
+        let error = null;
 
-        this.debugLog("Sync")
+        this.debugLog("Sync");
         
-        const actions = this.orderedActions()
-        this.actions().clear()
+        const actions = this.orderedActions();
+        this.actions().clear();
  
         actions.forEach((action) => {
             if (action.isUnscheduled()) {
                debugger;
             } else {
-                this.setCurrentAction(action)
-                const actionError = action.tryToSend()
+                this.setCurrentAction(action);
+                const actionError = action.tryToSend();
                 if (actionError) {
-                    error = actionError
+                    error = actionError;
                 }
-                this.setCurrentAction(null)
+                this.setCurrentAction(null);
             }
-        })
+        });
         
-        this.setCurrentAction(null)
-        this.setIsProcessing(false)
+        this.setCurrentAction(null);
+        this.setIsProcessing(false);
         
         if (error) {
+            console.log("SyncScheduler processSets actions count: " + this.actionCount());
             error.rethrow();
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -403,7 +404,7 @@
      * @category Query
      */
     actionCount () {
-        return this.actions().size
+        return this.actions().size;
     }
 
     /**

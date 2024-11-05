@@ -2,8 +2,10 @@
 
 /** 
  * @module library.ideal
-    Some code for adding categories to all the typed array types. 
-
+ * @description Some code for adding categories to all the typed array types.
+ * TODO: this adds methods to all the typed array types, so we'll need to document
+ * each separately to get the jsdoc to work.
+ *
 */
 
 Type.typedArrayTypeNames().forEach((name) => {
@@ -21,6 +23,9 @@ Type.typedArrayTypeNames().forEach((name) => {
 
     Object.defineSlots(aClass.prototype, { // instance methods
         /**
+         * @memberof TypedArray.prototype
+         * @method base64Encoded
+         * @returns {string} The base64 encoded string.
          * @category Encoding
          */
         base64Encoded: function(aRecord, aStore) {
@@ -32,6 +37,9 @@ Type.typedArrayTypeNames().forEach((name) => {
 
 Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
     /**
+     * @memberof ArrayBuffer.prototype
+     * @method base64Encoded
+     * @returns {string} The base64 encoded string.
      * @category Encoding
      */
     base64Encoded: function (aRecord, aStore) {

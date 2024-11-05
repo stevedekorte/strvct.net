@@ -233,6 +233,17 @@
         return SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority);
     }
 
+    /**
+     * Returns a 64-bit hash code for the object.
+     * Default implementation assumes we are using the object's own properties, as we would a Dictionary.
+     * Descendants of ProtoClass override this to include all prototype properties. (TODO)
+     * @returns {number} A 64-bit hash code
+     * @category Information
+     */
+    hashCode64 () {
+        return Object.entries(this).hashCode64(); // Object.entries only has own properties
+    }
+
 }).initThisCategory();
 
 Object.prototype.initPrototypeSlots()

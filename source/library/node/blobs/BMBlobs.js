@@ -167,6 +167,7 @@
     }
 
     /**
+     * @async
      * @description Collects garbage by removing invalid blob subnodes and unreferenced store entries.
      * @returns {Promise} A promise that resolves when the garbage collection is complete.
      * @category Maintenance
@@ -196,6 +197,7 @@
 
     /**
      * @static
+     * @async
      * @description Performs a self-test by creating and storing a test blob.
      * @returns {Promise} A promise that resolves when the self-test is complete.
      * @category Testing

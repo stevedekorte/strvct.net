@@ -3,7 +3,7 @@
 
 
 if (!getGlobalThis().Image) {
-    console.log("WARNING: no Image object found - maybe we are not in browser?")
+    console.log("WARNING: no Image object found - maybe we are not in browser?");
 } else {
 
     /**
@@ -21,8 +21,8 @@ if (!getGlobalThis().Image) {
          * @category Delegation
          */
         setDelegate (anObject) {
-            Object.defineSlot(this, "_delegate", anObject)
-            return this
+            Object.defineSlot(this, "_delegate", anObject);
+            return this;
         }
 
         /**
@@ -31,7 +31,7 @@ if (!getGlobalThis().Image) {
          * @category Delegation
          */
         delegate () {
-            return this._delegate
+            return this._delegate;
         }
 
         /**
@@ -43,14 +43,14 @@ if (!getGlobalThis().Image) {
         loadUrl (url) {
             this.crossOrigin = "Anonymous";
             this.onload = () => { 
-                this.onDidLoad() 
+                this.onDidLoad();
             }
             this.onerror = () => { 
-                console.warn("error loading image " + url)
+                console.warn("error loading image " + url);
             }
 
             this.src = url;
-            return this
+            return this;
         }
 
         /**
@@ -80,10 +80,10 @@ if (!getGlobalThis().Image) {
                  * @param {string} data - The image data URL
                  * @category Image Processing
                  */
-                this._delegate.didFetchDataUrl(data)
+                this._delegate.didFetchDataUrl(data);
             }
 
-            return this
+            return this;
         }
 
     }).initThisCategory();

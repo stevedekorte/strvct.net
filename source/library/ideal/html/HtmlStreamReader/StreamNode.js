@@ -1,32 +1,42 @@
 /**
  * @module library.ideal.html.HtmlStreamReader
  * @class StreamNode
- * @classdesc Base class for StreamTextNode and StreamElementNode
- * @extends ProtoClass
+ * @classdesc StreamNode represents a generic node in a stream of HTML elements.
  */
 "use strict";
 
 (class StreamNode extends ProtoClass {
 
     /**
-     * Initializes the prototype slots.
+     * Initializes the prototype slots for the class.
      * @category Initialization
      */
     initPrototypeSlots() {
         {
-            const slot = this.newSlot("parent", null); // parent tag
+            /**
+             * @member {string} id
+             * @description The unique identifier for the node.
+             */
+            const slot = this.newSlot("id", ""); // string
+            slot.setSlotType("String");
+        }
+
+        {
+            /**
+             * @member {StreamNode|null} parent
+             * @description The parent node of the current node.
+             */
+            const slot = this.newSlot("parent", null); // StreamNode
             slot.setSlotType("StreamNode");
-            slot.setAllowsNullValue(true);
         }
 
         {
-            const slot = this.newSlot("domNode", null); // HTMLElement or TextNode
-            slot.setSlotType("HTMLElement");
-        }
-
-        {
-            const slot = this.newSlot("isClosed", false); // true if the stream has read the closing of the node
-            slot.setSlotType("Boolean");
+            /**
+             * @member {Array} children
+             * @description An array of child nodes.
+             */
+            const slot = this.newSlot("children", []); // array of StreamNode
+            slot.setSlotType("Array");
         }
     }
 

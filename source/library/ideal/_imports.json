@@ -3,7 +3,6 @@
     "categories/_imports.json",
     "proto/_imports.json",
     "protocol/_imports.json",
-    "proxies/_imports.json",
     "collections/_imports.json",
     "map/_imports.json",
     "formatters/_imports.json",

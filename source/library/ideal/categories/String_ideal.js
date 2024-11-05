@@ -12,6 +12,7 @@
     /**
      * Returns the string itself
      * @returns {string} The string
+     * @category Basic Operations
      */
     asString () {
         return this;
@@ -21,6 +22,7 @@
      * Counts the occurrences of a substring in the string
      * @param {string} substring - The substring to count
      * @returns {number} The number of occurrences
+     * @category Search
      */
     countOccurances (substring) {
         return this.split(substring).length - 1;
@@ -29,22 +31,35 @@
     /**
      * Creates a shallow copy of the string (which is the string itself for primitives)
      * @returns {string} The string
+     * @category Basic Operations
      */
     shallowCopy () {
-        return this
+        return this;
     }
 
     /**
      * Returns a duplicate of the string (which is the string itself for primitives)
      * @returns {string} The string
+     * @category Basic Operations
      */
     duplicate () {
-        return this
+        return this;
+    }
+
+    /**
+     * Checks if two strings are equal
+     * @param {string} other - String to compare with
+     * @returns {boolean} True if strings are equal
+     * @category Comparison
+     */
+    isEqual (other) {
+        return this === other;
     }
     
     /**
      * Checks if the string is empty
      * @returns {boolean} True if the string is empty, false otherwise
+     * @category Information
      */
     isEmpty () {
         return this.length === 0;
@@ -53,6 +68,7 @@
     /**
      * Returns the length of the string
      * @returns {number} The length of the string
+     * @category Information
      */
     size () {
         return this.length;
@@ -62,6 +78,7 @@
      * Checks if the string begins with the given prefix
      * @param {string} prefix - The prefix to check
      * @returns {boolean} True if the string begins with the prefix, false otherwise
+     * @category Search
      */
     beginsWith (prefix) {
         if (!prefix || this.length < prefix.length) {
@@ -318,17 +335,18 @@
     lineCount () {
         let count = 0
         for (let i = 0; i < this.length; i++) {
-            const c = this.charAt(i)
+            const c = this.charAt(i);
             if (c === "\n") {
-                count ++
+                count ++;
             }
         }
-        return count
+        return count;
     }
 
     /**
      * Returns an array of single character strings
      * @returns {string[]} An array of characters
+     * @category Transformation
      */
     characters () {
         return Array.from(this);
@@ -337,6 +355,7 @@
     /**
      * Returns an array of character codes
      * @returns {number[]} An array of character codes
+     * @category Transformation
      */
     characterCodes () {
         return Array.from(this, char => char.charCodeAt(0));
@@ -345,22 +364,24 @@
     /**
      * Iterates over each character in the string
      * @param {function(string): void} fn - Function to call for each character
+     * @category Iteration
      */
     forEachCharacter (fn) {
         for (let i = 0; i < this.length; i++) {
-            const c = this.charAt(i)
-            fn(c)
+            const c = this.charAt(i);
+            fn(c);
         }
     }
 
     /**
      * Iterates over each character in the string with its index
      * @param {function(number, string): void} fn - Function to call for each character and its index
+     * @category Iteration
      */
     forEachKV (fn) {
         for (let i = 0; i < this.length; i++) {
-            const c = this.charAt(i)
-            fn(i, c)
+            const c = this.charAt(i);
+            fn(i, c);
         }
     }
 
@@ -368,20 +389,21 @@
      * Splits the string by multiple delimiters
      * @param {string[]} splitters - Array of delimiter strings
      * @returns {(string|null)[]} Array of split substrings or null if a splitter wasn't found
+     * @category Transformation
      */
     splitArray (splitters) {
-        let s = this
-        const results = []
+        let s = this;
+        const results = [];
         splitters.forEach( (splitter) => {
             if (s.contains(splitter)) {
-                const before = s.before(splitter)
-                s = s.after(splitter)
-                results.push(before)
+                const before = s.before(splitter);
+                s = s.after(splitter);
+                results.push(before);
             } else {
-                results.push(null)
+                results.push(null);
             }
         })
-        return results
+        return results;
     }
 
     /**
@@ -400,6 +422,7 @@
     /**
      * Splits the string into path components
      * @returns {string[]} Array of path components
+     * @category Path Operations
      */
     pathComponents () {
         if (this === "/") {
@@ -416,9 +439,10 @@
     /**
      * Returns the string without its last path component
      * @returns {string} The string without the last path component
+     * @category Path Operations
      */
     sansLastPathComponent () {
-        const c = this.pathComponents()
+        const c = this.pathComponents();
         c.removeLast();
         return c.join("/");
     }
@@ -426,21 +450,23 @@
     /**
      * Returns the last path component of the string
      * @returns {string} The last path component
+     * @category Path Operations
      */
     lastPathComponent () {
-        const components = this.pathComponents()
+        const components = this.pathComponents();
         if (components.length) {
             return this.pathComponents().last();
         }
-        return ""
+        return "";
     }
 
     /**
      * Returns the filename part of the path (last component without extension)
      * @returns {string} The filename
+     * @category Path Operations
      */
     fileName () {
-        return this.lastPathComponent().sansExtension()
+        return this.lastPathComponent().sansExtension();
     }
 
     /**
@@ -448,11 +474,11 @@
      * @returns {string} The string without the file extension
      */
     sansExtension () {
-        const parts = this.split(".")
+        const parts = this.split(".");
         if (parts.length > 1) {
-            parts.pop()
+            parts.pop();
         }
-        return parts.join(".")
+        return parts.join(".");
     }
 
     /**
@@ -469,6 +495,7 @@
      * @param {number} n - Number of indentation units
      * @param {string} [spacer=" "] - The indentation character
      * @returns {string} The indented string
+     * @category Formatting
      */
     indent (n, spacer = " ") {
         const indentation = spacer.repeat(n);
@@ -480,6 +507,7 @@
      * @param {number} length - The desired length
      * @param {string} padding - The padding character
      * @returns {string} The padded string
+     * @category Formatting
      */
     padLeft (length, padding) {
         let str = this;
@@ -526,18 +554,18 @@
      * @returns {string} The setter method name
      */
     asSetter () {
-        const cache = this.thisPrototype()._setterCacheMap 
-        let result = cache[this]
+        const cache = this.thisPrototype()._setterCacheMap;
+        let result = cache[this];
         if (!result) {
-             result = "set" + this.capitalized()
-             cache.set(this, result)
+             result = "set" + this.capitalized();
+             cache.set(this, result);
              // test for highwater mark
              if (cache.size > 50000) {
-                console.warn("setter cache is getting big! clearing...")
-                cache.clear()
+                console.warn("setter cache is getting big! clearing...");
+                cache.clear();
              }
         }
-        return result
+        return result;
     }
 
     /**
@@ -583,6 +611,7 @@
      * @param {number} [minWordCount=10] - Minimum number of words
      * @param {number} [maxWordCount=40] - Maximum number of words
      * @returns {string} Generated Lorem Ipsum text
+     * @category Utility
      */
     loremIpsum (minWordCount, maxWordCount) {
         // ... (implementation)
@@ -591,6 +620,7 @@
     /**
      * Escapes HTML special characters in the string
      * @returns {string} The HTML-escaped string
+     * @category HTML Operations
      */
     escapeHtml () {
         return this.replace(/[&<>"'\/]/g, function (s) {
@@ -609,6 +639,7 @@
     /**
      * Checks if the string contains HTML tags
      * @returns {boolean} True if the string contains HTML tags, false otherwise
+     * @category HTML Operations
      */
     containsHtml () {
         return /<(\w+)[^>]*>/.test(this);
@@ -617,6 +648,7 @@
     /**
      * Generates a GUID (Globally Unique Identifier)
      * @returns {string} A GUID
+     * @category Utility
      */
     GUID () {
         function s4() {
@@ -631,6 +663,7 @@
     /**
      * Calculates the byte length of the UTF-8 encoded string
      * @returns {number} The byte length
+     * @category Size & Length
      */
     byteLength () {
         let s = this.length;
@@ -651,14 +684,16 @@
     /**
      * Returns a human-readable description of the string's byte size
      * @returns {string} A formatted string describing the byte size
+     * @category Size & Length
      */
     byteSizeDescription () {
-        return this.byteLength().byteSizeDescription()
+        return this.byteLength().byteSizeDescription();
     }
 
     /**
      * Computes a hash code for the string
      * @returns {number} The hash code
+     * @category Hashing
      */
     hashCode () {
         return this.hashCode64();
@@ -667,6 +702,7 @@
     /**
      * Computes a 32-bit hash code for the string
      * @returns {number} The 32-bit hash code
+     * @category Hashing
      */
     hashCode32() {
         let hash = 0;
@@ -681,13 +717,15 @@
     /**
      * Computes a 64-bit hash code for the string
      * @returns {number} The 64-bit hash code
+     * @category Information
      */
     hashCode64 () {
-        let h1 = 0xdeadbeef ^ 0, h2 = 0x41c6ce57 ^ 0;
+        let h1 = 0xdeadbeef ^ 0;
+        let h2 = 0x41c6ce57 ^ 0;
         for (let i = 0; i < this.length; i++) {
-        const chr = this.charCodeAt(i);
-        h1 = Math.imul(h1 ^ chr, 2654435761);
-        h2 = Math.imul(h2 ^ chr, 1597334677);
+            const chr = this.charCodeAt(i);
+            h1 = Math.imul(h1 ^ chr, 2654435761);
+            h2 = Math.imul(h2 ^ chr, 1597334677);
         }
         h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
         h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
@@ -700,7 +738,7 @@
      */
     promiseSha256Digest () {
         const uint8Array = new TextEncoder("utf-8").encode(this);    
-        return crypto.subtle.digest("SHA-256", uint8Array.buffer)
+        return crypto.subtle.digest("SHA-256", uint8Array.buffer);
     }
 
     /**
@@ -758,6 +796,7 @@
     /**
      * Returns a normalized version of the HTML string
      * @returns {string} The normalized HTML string
+     * @category HTML Operations
      */
     asNormalizedHtml () {
         const element = document.createElement("div");        
@@ -769,6 +808,7 @@
      * Extracts the content of elements with a specific tag
      * @param {string} tagName - The tag name to search for
      * @returns {string[]} An array of content strings from matching elements
+     * @category HTML Operations
      */
     contentOfElementsOfTag (tagName) {
         function Element_hasParentWithTag (element, tagName) {
@@ -796,7 +836,6 @@
 
 String.prototype._setterCacheMap = new Map();
 
-String.prototype._setterCacheMap = new Map();
 
 
 

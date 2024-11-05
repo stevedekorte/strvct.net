@@ -15,6 +15,8 @@
      * Creates a new subclass with the given name.
      * @param {string} newClassName - The name of the new subclass.
      * @returns {Class} The newly created subclass.
+     * @category Class Creation
+     * @static
      */
     static newSubclassWithName (newClassName) {
         const newClass = class extends this {
@@ -32,6 +34,12 @@
 
    // --- clone ---
 
+   /**
+    * Performs pre-clone operations.
+    * @returns {ProtoClass} The pre-cloned object.
+    * @category Cloning
+    * @static
+    */
    static preClone () {
         if (this.isSingleton() && this.hasShared()) {
             // kinda weird dealing with shared in clone like this
@@ -47,6 +55,12 @@
         return obj;
     }
     
+    /**
+     * Creates a clone of this class instance.
+     * @returns {ProtoClass} The cloned object.
+     * @category Cloning
+     * @static
+     */
     static clone () {
         const obj = this.preClone();
         obj.init();
@@ -58,15 +72,34 @@
 
     // --- shared ---
 
+    /**
+     * Gets the shared context for this class.
+     * @returns {Class} The shared context.
+     * @category Shared State
+     * @static
+     */
     static sharedContext () {
         return this
     }
 
+    /**
+     * Checks if this class has a shared instance.
+     * @returns {boolean} True if the class has a shared instance.
+     * @category Shared State
+     * @static
+     */
     static hasShared () {
         return Object.hasOwn(this.sharedContext(), "_shared")
         //return !Type.isNullOrUndefined(this.sharedContext()._shared)
     }
     
+    /**
+     * Gets the shared instance of this class.
+     * @returns {ProtoClass} The shared instance.
+     * @throws {Error} If the class is not declared as a singleton.
+     * @category Shared State
+     * @static
+     */
     static shared () {
         if (!this.isSingleton()) {
             console.warn("WARNING: called " + this.type() + ".shared() but class not declared a singleton!");
@@ -88,6 +121,13 @@
         return this._shared;
     }
 
+    /**
+     * Sets the shared instance of this class.
+     * @param {ProtoClass} v - The instance to set as shared.
+     * @returns {Class} This class.
+     * @category Shared State
+     * @static
+     */
     static setShared (v) {
         this.sharedContext()._shared = v;
         return this;
@@ -98,6 +138,8 @@
     /**
      * Initializes the class.
      * @returns {Class} The initialized class.
+     * @category Class Initialization
+     * @static
      */
     static initClass () { // called only once when class is created
 
@@ -106,7 +148,6 @@
         //this.newClassSlot("shared", undefined);
         this.newClassSlot("isSingleton", false);
         this.newClassSlot("setterNameMap", new Map()); // TODO: share this between all classes
-        this.newClassSlot("allProtoSlotsMap", new Map());
         this.newClassSlot("jsonSchemaDescription", null);
 
         //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet());
@@ -115,10 +156,22 @@
     // --- class slots and variables ---
 
 
+    /**
+     * Gets all ancestor class types including this class.
+     * @returns {Array<string>} Array of class type names.
+     * @category Class Hierarchy
+     * @static
+     */
     static ancestorClassesTypesIncludingSelf () {
         return this.ancestorClassesIncludingSelf().map(c => c.type());
     }
 
+    /**
+     * Gets all ancestor class types excluding this class.
+     * @returns {Array<string>} Array of class type names.
+     * @category Class Hierarchy
+     * @static
+     */
     static ancestorClassesTypes () {
         return this.ancestorClasses().map(c => c.type());
     }
@@ -140,12 +193,20 @@
      * Checks if this class is a subclass of the given class.
      * @param {Class} aClass - The class to check against.
      * @returns {boolean} True if this class is a subclass of aClass, false otherwise.
+     * @category Class Hierarchy
+     * @static
      */
     static isSubclassOf (aClass) {
         //assert(aClass.isClass())
         return this.ancestorClassesIncludingSelf().contains(aClass);
     }
 
+    /**
+     * Gets all ancestor classes including this class.
+     * @returns {Array<Class>} An array of ancestor classes.
+     * @category Class Hierarchy
+     * @static
+     */
     static ancestorClassesIncludingSelf () {
         const results = this.ancestorClasses().shallowCopy();
         results.atInsert(0, this);
@@ -156,6 +217,8 @@
      * Gets all descendant classes.
      * @param {Array<Class>} [results=[]] - An array to store the results.
      * @returns {Array<Class>} An array of descendant classes.
+     * @category Class Hierarchy
+     * @static
      */
     static descendantClasses (results = []) {
         const children = this.childClasses();
@@ -179,6 +242,8 @@
      * @param {number} [level=0] - The current level in the hierarchy.
      * @param {Set} [traversed=new Set()] - A set of already traversed classes.
      * @returns {string} A string representation of the class hierarchy.
+     * @category Class Hierarchy
+     * @static
      */
     static subclassesDescription (level, traversed) {
 
@@ -228,11 +293,13 @@
 
     /**
      * Initializes the prototype slots.
+     * @category Slots
      */
     initPrototypeSlots () {
         {
             /**
              * @member {boolean} isDebugging - Whether debugging is enabled.
+             * @category Slots
              */
             const slot = this.newSlot("isDebugging", false);
             slot.setSlotType("Boolean");
@@ -240,6 +307,7 @@
         {
             /**
              * @member {Map} lazyRefsMap - A map of lazy references.
+             * @category Slots
              */
             const slot = this.newSlot("lazyRefsMap", null);
             slot.setSlotType("Map");
@@ -255,6 +323,7 @@
         {
             /**
              * @member {Map} timeoutNameToIdMap - A map of timeout names to IDs.
+             * @category Slots
              */
             //const slot = this.newSlot("_timeoutNameToIdMap", null);
             //slot.setSlotType("Map");
@@ -265,6 +334,7 @@
     /**
      * Gets the lazy references map.
      * @returns {Map} The lazy references map.
+     * @category Slots
      */
     lazyRefsMap () {
         if (!this._lazyRefsMap) {
@@ -277,6 +347,7 @@
      * Sets the type of the instance.
      * @param {string} aString - The type name.
      * @returns {ProtoClass} This instance.
+     * @category Slots
      */
     setType (aString) {
         this.constructor.name = aString;
@@ -290,6 +361,7 @@
      * @param {string} key - The annotation key.
      * @param {*} value - The annotation value.
      * @returns {Array<Slot>} An array of slots with the specified annotation.
+     * @category Finding Slot
      */
     slotsWithAnnotation (key, value) {
         assert(this.isPrototype());
@@ -300,78 +372,98 @@
      * Gets a slot by name, including inherited slots.
      * @param {string} slotName - The name of the slot.
      * @returns {Slot|null} The slot object or null if not found.
+     * @category FindingSlots
      */
     slotNamed (slotName) {
-        assert(this.isPrototype())
+        assert(this.isPrototype());
 
-        const slot = this.ownSlotNamed(slotName)
+        const slot = this.ownSlotNamed(slotName);
         
         if (slot) {
-            return slot
+            return slot;
         }
 
         // look in parent
-        const p = this.__proto__ 
+        const p = this.__proto__;
         if (p && p.ownSlotNamed) {
-            return p.slotNamed(slotName)
+            return p.slotNamed(slotName);
         }
 
-        return null
+        return null;
     }
 
     /**
      * Gets an own slot by name, not including inherited slots.
      * @param {string} slotName - The name of the slot.
      * @returns {Slot|null} The slot object or null if not found.
+     * @category Finding Slots
      */
     ownSlotNamed (slotName) {
-        assert(this.isPrototype())
+        assert(this.isPrototype());
 
-        const slot = this.slotsMap().at(slotName)
+        const slot = this.slotsMap().at(slotName);
         if (slot) {
-            return slot
+            return slot;
         }
         
-        return null
+        return null;
     }
 
     // slot objects
 
+    /**
+     * Gets a slot by name.
+     * @param {string} slotName - The name of the slot.
+     * @returns {Slot|undefined} The slot object or undefined if not found.
+     * @category Finding Slots
+     */
     getSlot (slotName) {
-        return this.allSlotsMap().get(slotName)
+        return this.allSlotsMap().get(slotName); // this.allSlotsMap().keysArray().sort()
     }
 
+    /**
+     * Checks if the instance has a slot by name.
+     * @param {string} slotName - The name of the slot.
+     * @returns {boolean} True if the slot exists, false otherwise.
+     * @category Finding Slots
+     */
     hasSlot (slotName) {
         //return this.hasOwnProperty(slotName);
         return this.getSlot(slotName) !== undefined;
     }
 
+    /**
+     * Detects a slot that matches a given condition.
+     * @param {Function} fn - The condition function.
+     * @returns {Slot|undefined} The matching slot or undefined if no match.
+     * @category Finding Slots
+     */
     detectSlot (fn) { // returns undefined if no match
         // TODO: Optimize - this should stop search on match
         let matchingSlot = undefined
         this.forEachSlot(slot =>  {
             if (matchingSlot === undefined && fn(slot)) {
-                matchingSlot = slot 
+                matchingSlot = slot;
             }
         })
-        return matchingSlot
+        return matchingSlot;
     }
 
     /*
     allSlotsRawValueMap () { // what about action slots?
-        const map = new Map()
+        const map = new Map();
         this.forEachSlotKV((slotName, slot) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
-        return map
+        return map;
     }
 
     isEqual (anObject) {
         // Should this test Type equality?
         if (this.type() !== obj2.type()) {
-            return false
+            return false;
         }
-        const sm1 = this.allSlotsRawValueMap()
-        const sm2 = anObject.allSlotsRawValueMap()
-        return sm1.isEqual(sm2)
+        const sm1 = this.allSlotsRawValueMap();
+        const sm2 = anObject.allSlotsRawValueMap();
+        return sm1.isEqual(sm2);
     }
     */
 
@@ -382,6 +474,7 @@
      * @param {string} slotName - The name of the slot.
      * @param {*} initialValue - The initial value of the slot.
      * @returns {Slot} The new or existing slot.
+     * @category Slot Creation
      */
     newSlotIfAbsent (slotName, initialValue) {
         const slot = this.getSlot(slotName);
@@ -398,6 +491,7 @@
      * @param {boolean} [allowOnInstance=false] - Whether to allow creating the slot on an instance.
      * @returns {Slot} The newly created slot.
      * @throws {Error} If the slot already exists.
+     * @category Slot Creation
      */
     newSlot (slotName, initialValue, allowOnInstance=false) {
         /*
@@ -416,6 +510,7 @@
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists";
             console.log(msg);
             debugger;
+            this.hasSlot(slotName);
             throw new Error(msg);
         }
         return this.justNewSlot(slotName, initialValue, allowOnInstance);
@@ -429,6 +524,7 @@
      * @param {boolean} [allowOnInstance=false] - Whether to allow overriding the slot on an instance.
      * @returns {Slot} The overridden slot.
      * @throws {Error} If the slot doesn't exist to be overridden.
+     * @category Slot Creation
      */
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
         const oldSlot = this.getSlot(slotName);
@@ -444,6 +540,14 @@
         return slot;
     }
 
+    /**
+     * Creates a new slot.
+     * @param {string} slotName - The name of the slot.
+     * @param {*} initialValue - The initial value of the slot.
+     * @param {boolean} [allowOnInstance=false] - Whether to allow creating the slot on an instance.
+     * @returns {Slot} The newly created slot.
+     * @category Slot Creation
+     */
     justNewSlot (slotName, initialValue, allowOnInstance=false) { // private
         if (!allowOnInstance) {
             assert(this.isPrototype());
@@ -461,9 +565,14 @@
         slot.setOwner(this);
         this.slotsMap().set(slotName, slot);
         this.allSlotsMap().set(slotName, slot);
+
         return slot;
     }
 
+    /**
+     * Asserts that the prototype slots have a type.
+     * @category Assertions
+     */
     assertProtoSlotsHaveType () {
         this.slotsMap().forEachKV((slotName, slot) => {
             assert(Type.isString(slot.slotType()), () => { return this.type() + " slot " + slotName + " has no type" });
@@ -475,6 +584,7 @@
      * @param {string} slotName - The name of the slot.
      * @param {*} initialValue - The initial value of the slot.
      * @returns {Slot} The newly created weak slot.
+     * @category Weak Slots
      */
     newWeakSlot (slotName, initialValue) {
         const slot = this.newSlot(slotName, initialValue);
@@ -487,6 +597,7 @@
     /**
      * Handles finalization of a weak slot.
      * @param {Slot} aSlot - The slot being finalized.
+     * @category Weak Slots
      */
     onFinalizedSlot (aSlot) {
         this[aSlot.privateName()] = undefined; // replace the weak ref with undefined
@@ -503,6 +614,7 @@
      * Gets the value of a weak slot.
      * @param {Slot} aSlot - The weak slot.
      * @returns {*} The value of the weak slot.
+     * @category Weak Slots
      */
     getWeakSlotValue (aSlot) {
         const privateName = aSlot.privateName(); // fix this value
@@ -530,23 +642,30 @@
      * @param {Slot} aSlot - The weak slot.
      * @param {*} newValue - The new value to set.
      * @returns {ProtoClass} This instance.
+     * @category Slots
      */
     setWeakSlotValue (aSlot, newValue) {
-        const privateName = aSlot.privateName()  // fix this value
-        const oldValue = this.getWeakSlotValue(aSlot) // doesn't trigger willGetSlot() but may call onFinalizedSlot()
+        const privateName = aSlot.privateName();  // fix this value
+        const oldValue = this.getWeakSlotValue(aSlot); // doesn't trigger willGetSlot() but may call onFinalizedSlot()
 
         if (newValue !== oldValue) {
             if (newValue === null) {
-                this[privateName] = null
+                this[privateName] = null;
             } else {
-                this[privateName] = new WeakRef(newValue)
+                this[privateName] = new WeakRef(newValue);
             }
         }
-        return this
+        return this;
     }
 
     // --- base getter setter ---
 
+    /**
+     * Gets the value of a slot.
+     * @param {Slot} aSlot - The slot being accessed.
+     * @returns {*} The value of the slot.
+     * @category Getter Construction
+     */
     baseGetSlotValue (aSlot) {
         if (aSlot.isWeak()) {
             return this.getWeakSlotValue(aSlot);
@@ -557,6 +676,13 @@
         }
     }
 
+    /**
+     * Sets the value of a slot.
+     * @param {Slot} aSlot - The slot being set.
+     * @param {*} newValue - The new value to set.
+     * @returns {ProtoClass} This instance.
+     * @category Setter Construction
+     */
     baseSetSlotValue (aSlot, newValue) {
         const privateName = aSlot.privateName();
         if (aSlot.isWeak()) {
@@ -570,6 +696,12 @@
 
     // --- auto getter setter ---
 
+    /**
+     * Gets the value of a slot.
+     * @param {Slot} aSlot - The slot being accessed.
+     * @returns {*} The value of the slot.
+     * @category Getter Construction
+     */
     getSlotValue (aSlot) { //testing this
         const v = this.baseGetSlotValue(aSlot);
 
@@ -586,20 +718,25 @@
     /*
     onUndefinedGetSlot (aSlot) {
         // get undefined hook
-        // e.g.: slot "subnodes" -> onUndefinedGetSubnodes()
+        // e.g.: slot "subnodes" -> onUndefinedGetSubnodes();
 
         if (aSlot.isLazy()) {
-            aSlot.onInstanceLoadRef(this)
+            aSlot.onInstanceLoadRef(this);
         }
 
-        const undefHook = aSlot.methodForUndefinedGet()
-        const m = this[undefHook]
+        const undefHook = aSlot.methodForUndefinedGet();
+        const m = this[undefHook];
         if (m) {
-            m.apply(this)
+            m.apply(this);
         }
     }
     */
    
+    /**
+     * Handles the will get slot event.
+     * @category Slot Hooks
+     * @param {Slot} aSlot - The slot being accessed.
+     */
     willGetSlot (aSlot) {
         // e.g.: slot "subnodes" -> willGetSlotSubnodes()
         const s = aSlot.methodForWillGet();
@@ -611,17 +748,31 @@
 
     // --- setter ---
 
+    /**
+     * Sets the value of a slot.
+     * @param {Slot} aSlot - The slot being set.
+     * @param {*} newValue - The new value to set.
+     * @returns {ProtoClass} This instance.
+     * @category Setter Construction
+     */
     setSlotValue (aSlot, newValue) {
-        const oldValue = this.baseGetSlotValue(aSlot)
+        const oldValue = this.baseGetSlotValue(aSlot);
         if (oldValue !== newValue) {
-            this.baseSetSlotValue(aSlot, newValue)
-            this.didUpdateSlot(aSlot, oldValue, newValue)
+            this.baseSetSlotValue(aSlot, newValue);
+            this.didUpdateSlot(aSlot, oldValue, newValue);
         }
-        return this
+        return this;
     }
 
     // ----
 
+    /**
+     * Handles the did update slot event.
+     * @param {Slot} aSlot - The slot being updated.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     * @category Slot Hooks
+     */
     didUpdateSlot (aSlot, oldValue, newValue) {
         const methodName = aSlot.methodForDidUpdate();
         const method = this[methodName];
@@ -638,6 +789,7 @@
 
     /**
      * Initializes the instance.
+     * @category Initialization
      */
     init () { 
         super.init();
@@ -646,6 +798,10 @@
         this.initializeSlots();
     }
 
+    /**
+     * Initializes the slots of the instance.
+     * @category Initialization
+     */
     initializeSlots () {
         this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this));
     }
@@ -658,18 +814,39 @@
         this.finalInitSlots();
     }
 
+    /**
+     * Performs final initialization of the slots of the instance.
+     * @category Initialization
+     */
     finalInitSlots () {
         this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this));
     }
 
+    /**
+     * Converts the instance to a string.
+     * @returns {string} The string representation of the instance.
+     * @category Information
+     */
     toString () {
         return this.type();
     }
 
+    /**
+     * Checks if the instance owns a given slot.
+     * @param {string} name - The name of the slot.
+     * @returns {boolean} True if the instance owns the slot, false otherwise.
+     * @category Information
+     */
     ownsSlot (name) {
         return this.hasOwnProperty(name);
     }
 
+    /**
+     * Converts arguments to an array.
+     * @param {Array} args - The arguments to convert.
+     * @returns {Array} The array of arguments.
+     * @category Internal Helpers
+     */
     argsAsArray (args) {
         return Array.prototype.slice.call(args);
     }
@@ -678,9 +855,10 @@
      * Checks if the instance responds to a given method.
      * @param {string} methodName - The name of the method.
      * @returns {boolean} True if the instance responds to the method, false otherwise.
+     * @category Information
      */
     respondsTo (methodName) {
-        const f = this[methodName] 
+        const f = this[methodName];
         return typeof(f) === "function";
     }
 
@@ -689,6 +867,7 @@
      * @param {string} message - The name of the method to perform.
      * @param {Array} argList - An array of arguments to pass to the method.
      * @returns {*} The result of the method call.
+     * @category Helpers
      */
     performWithArgList (message, argList) {
         return this[message].apply(this, argList);
@@ -700,13 +879,14 @@
      * @param {...*} args - Arguments to pass to the method.
      * @returns {*} The result of the method call.
      * @throws {Error} If the method doesn't exist.
+     * @category Helpers
      */
     perform (message) { // will apply any extra arguments to call
         if (this[message] && this[message].apply) {
             return this[message].apply(this, this.argsAsArray(arguments).slice(1));
         }
 
-        throw new Error(this, ".perform(" + message + ") missing method")
+        throw new Error(this, ".perform(" + message + ") missing method");
         return this;
     }
 
@@ -714,18 +894,24 @@
      * Gets the setter name for a given slot.
      * @param {string} name - The name of the slot.
      * @returns {string} The setter name for the slot.
+     * @category Helpers
      */
     setterNameForSlot (name) {
-        return "set" + name.capitalized()
+        return "set" + name.capitalized();
         /*
         // cache these as there aren't too many and it will avoid extra string operations
         if (!m.has(name)) {
-            m.set(name, "set" + name.capitalized())
+            m.set(name, "set" + name.capitalized());
         }
-        return m.get(name)
+        return m.get(name);
         */
     }
 
+    /**
+     * Converts the instance to a string.
+     * @returns {string} The string representation of the instance.
+     * @category Information
+     */
     toString () {
         return this.typeId();
     }
@@ -742,24 +928,24 @@
         // existing class with the same name as the ancestor + the given postfix
         // useful for things like type + "View" or type + "Tile", etc
         //this.debugLog(" firstAncestorClassWithPostfix(" + aPostfix + ")")
-        const classes = this.thisClass().ancestorClassesIncludingSelf()
+        const classes = this.thisClass().ancestorClassesIncludingSelf();
         for (let i = 0; i < classes.length; i++) {
-            const aClass = classes[i]
+            const aClass = classes[i];
 
-            const name = aClass.type() + aPostfix
-            const proto = Object.getClassNamed(name)
+            const name = aClass.type() + aPostfix;
+            const proto = Object.getClassNamed(name);
             if (proto) {
-                return proto
+                return proto;
             }
-            const sansName = name.sansPrefix("BM") // TODO: remove this hack
+            const sansName = name.sansPrefix("BM"); // TODO: remove this hack
             //console.log("sansName:", sansName)
-            const sansProto = Object.getClassNamed(sansName) // hack to deal with nodeViewClass issues
+            const sansProto = Object.getClassNamed(sansName); // hack to deal with nodeViewClass issues
             if (sansProto) {
               //  debugger;
-                return sansProto
+                return sansProto;
             }
         }
-        return null
+        return null;
     }
 
     // debugging
@@ -768,23 +954,24 @@
      * Logs a debug message if debugging is enabled.
      * @param {string|Function} s - The message to log or a function that returns the message.
      * @returns {ProtoClass} This instance.
+     * @category Debugging
      */
     debugLog (s) {
         if (this.isDebugging()) {
             if (Type.isFunction(s)) {
-                s = s()
+                s = s();
             }
 
             //const tid = this.thisClass().hasShared() ? this.type() + "(shared)" : this.debugTypeId();
             const tid = this.thisClass().hasShared() ? this.debugTypeId() + "(shared)" : this.debugTypeId();
 
             if (arguments.length == 1) {
-                console.log(tid + " " + s)
+                console.log(tid + " " + s);
             } else {
-                console.log(tid + " ", arguments[0], arguments[1])
+                console.log(tid + " ", arguments[0], arguments[1]);
             }
         }
-        return this
+        return this;
     }
 
     // --- other ---
@@ -792,10 +979,185 @@
     /**
      * Freezes the object, preventing further modifications.
      * @returns {ProtoClass} This instance.
+     * @category Immutability
      */
     freeze () {
-        Object.freeze(this)
-        return this
+        Object.freeze(this);
+        return this;
+    }
+
+    /**
+     * Returns a 64-bit hash code for the proto class.
+     * This uses the puuid as the hash code, not the properties, so it compares identities, not values.
+     * @returns {number} A 64-bit hash code
+     * @category Information
+     */
+    hashCode64 () {
+        return this.puuid().hashCode64();
+    }
+
+    /**
+     * Gets the shared instance of this class.
+     * @returns {ProtoClass} The shared instance.
+     * @throws {Error} If the class is not declared as a singleton.
+     * @category Singletons
+     */
+    shared () {
+        if (!this.isSingleton()) {
+            console.warn("WARNING: called " + this.type() + ".shared() but class not declared a singleton!");
+            /*
+                // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
+                
+                static initClass () {
+                    this.setIsSingleton(true)
+                    return this
+                }
+            */
+            debugger;
+        }
+
+        if (!this.hasShared()) {
+            this.setShared(this.clone());
+        }
+        //assert(this.isKindOf(this._shared.thisClass()), this.type() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().type());
+        return this._shared;
+    }
+
+    /**
+     * Gets the shared context for this class.
+     * @returns {Class} The shared context.
+     * @category Singletons
+     */
+    sharedContext () {
+        return this;
+    }
+
+    /**
+     * Checks if this class has a shared instance.
+     * @returns {boolean} True if the class has a shared instance.
+     * @category Shared State
+     */
+    hasShared () {
+        return Object.hasOwn(this.sharedContext(), "_shared");
+        //return !Type.isNullOrUndefined(this.sharedContext()._shared);
+    }
+
+    /**
+     * Sets the shared instance of this class.
+     * @param {ProtoClass} v - The instance to set as shared.
+     * @returns {Class} This class.
+     * @category Shared State
+     */
+    setShared (v) {
+        this.sharedContext()._shared = v;
+        return this;
+    }
+
+    /**
+     * Gets all ancestor class types including this class.
+     * @returns {Array<string>} Array of class type names.
+     * @category Class Hierarchy
+     */
+    ancestorClassesTypesIncludingSelf () {
+        return this.ancestorClassesIncludingSelf().map(c => c.type());
+    }
+
+    /**
+     * Gets all ancestor class types excluding this class.
+     * @returns {Array<string>} Array of class type names.
+     * @category Class Hierarchy
+     */
+    ancestorClassesTypes () {
+        return this.ancestorClasses().map(c => c.type());
+    }
+
+    /**
+     * Gets all ancestor classes including this class.
+     * @returns {Array<Class>} Array of ancestor classes.
+     * @category Class Hierarchy
+     */
+    ancestorClassesIncludingSelf () {
+        const results = this.ancestorClasses().shallowCopy();
+        results.atInsert(0, this);
+        return results;
+    }
+
+    /**
+     * Gets the timeout name to ID map.
+     * @returns {Map} The map of timeout names to IDs.
+     * @category Timeouts
+     */
+    timeoutNameToIdMap () {
+        if (!this._timeoutNameToIdMap) {
+            this._timeoutNameToIdMap = new Map();
+        }
+        return this._timeoutNameToIdMap;
+    }
+
+    /**
+     * Gets the type of this instance.
+     * @returns {string} The type name.
+     * @category Information
+     */
+    type () {
+        return this.constructor.name;
+    }
+
+    /**
+     * Gets the slots map.
+     * @returns {Map} Map of slots.
+     * @category Slots
+     */
+    slotsMap () {
+        if (!this._slotsMap) {
+            this._slotsMap = new Map();
+        }
+        return this._slotsMap;
+    }
+
+    /**
+     * Checks if this is a prototype.
+     * @returns {boolean} True if this is a prototype.
+     * @category Information
+     */
+    isPrototype () {
+        return this.constructor.prototype === this;
+    }
+
+    /**
+     * Gets the prototype of this instance.
+     * @returns {ProtoClass} The prototype.
+     * @category Information
+     */
+    thisPrototype () {
+        return Object.getPrototypeOf(this);
+    }
+
+    /**
+     * Gets the class of this instance.
+     * @returns {Class} The class.
+     * @category Information
+     */
+    thisClass () {
+        return this.constructor;
+    }
+
+    /**
+     * Gets a unique identifier for debugging.
+     * @returns {string} The debug type ID.
+     * @category Debugging
+     */
+    debugTypeId () {
+        return this.type() + "_" + this.shortId();
+    }
+
+    /**
+     * Gets a short identifier.
+     * @returns {string} The short ID.
+     * @category Information
+     */
+    shortId () {
+        return this.puuid().slice(-4);
     }
 
 }.initThisClass());

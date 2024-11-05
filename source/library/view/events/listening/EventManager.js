@@ -36,7 +36,7 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     /**
@@ -120,12 +120,12 @@
      */
     onReceivedUserEvent () {
         if (!this.hasReceivedUserEvent()) {
-            this.setHasReceivedUserEvent(true)
-            Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this)
+            this.setHasReceivedUserEvent(true);
+            Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this);
             this.firstUserEventPromise().callResolveFunc();
         }
         
-        return this
+        return this;
     }
 
     /**
@@ -135,9 +135,9 @@
      * @category State Management
      */
     setEventLevelCount (n) {
-        assert(n > -1)
-        this._eventLevelCount = n
-        return this
+        assert(n > -1);
+        this._eventLevelCount = n;
+        return this;
     }
 
     /**
@@ -146,9 +146,9 @@
      * @category State Management
      */
     incrementEventLevelCount () {
-        const count = this.eventLevelCount()
-        this.setEventLevelCount(count + 1)
-        return this
+        const count = this.eventLevelCount();
+        this.setEventLevelCount(count + 1);
+        return this;
     }
 
     /**
@@ -157,9 +157,9 @@
      * @category State Management
      */
     decrementEventLevelCount () {
-        const count = this.eventLevelCount()
-        this.setEventLevelCount(count - 1)
-        return this
+        const count = this.eventLevelCount();
+        this.setEventLevelCount(count - 1);
+        return this;
     }
 
     /**
@@ -170,19 +170,19 @@
      * @category Event Handling
      */
     safeWrapEvent (callback, event) {
-        assert(event)
-        this.setCurrentEvent(event)
-        let result = undefined
-        let eventCountBefore = this.eventLevelCount()
-        this.incrementEventLevelCount()
-        result = callback()
+        assert(event);
+        this.setCurrentEvent(event);
+        let result = undefined;
+        let eventCountBefore = this.eventLevelCount();
+        this.incrementEventLevelCount();
+        result = callback();
 
-        this.decrementEventLevelCount()
-        assert(this.eventLevelCount() === eventCountBefore)
+        this.decrementEventLevelCount();
+        assert(this.eventLevelCount() === eventCountBefore);
 
-        this.syncIfAppropriate()
-        this.setCurrentEvent(null)
-        return result
+        this.syncIfAppropriate();
+        this.setCurrentEvent(null);
+        return result;
     }
 
     /**
@@ -193,10 +193,10 @@
     syncIfAppropriate () {
         if (getGlobalThis().SyncScheduler) {
            if (EventManager.shared().eventLevelCount() === 0) { 
-                SyncScheduler.shared().fullSyncNow()
+                SyncScheduler.shared().fullSyncNow();
            }
         }
-        return this
+        return this;
     }
 
 }.initThisClass());

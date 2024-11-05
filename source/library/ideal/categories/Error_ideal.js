@@ -21,6 +21,16 @@
     }
 
     /**
+     * Logs console.warn message if aBool is true.
+     * @category Error Handling
+     */
+    static warn (aBool, errorMessage) {
+        if (aBool) {
+            console.warn("WARNING: ", errorMessage);
+        }
+    }
+
+    /**
      * Asserts that a value is truthy, throwing an error if it's not.
      * @param {*} v - The value to assert
      * @param {string|function} [errorMessage] - The error message or a function that returns it

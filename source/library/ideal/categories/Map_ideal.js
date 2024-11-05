@@ -136,6 +136,16 @@
     }
 
     /**
+     * Returns an array of all keys in the map, sorted
+     * @returns {Array} An array containing all keys
+     * @category Conversion
+     */
+    sortedKeysArray () {
+        // TODO: implement caching?
+        return this.keysArray().sort();
+    }
+
+    /**
      * Returns a set of all keys in the map
      * @returns {Set} A set containing all keys
      * @category Conversion
@@ -219,20 +229,34 @@
      * @returns {boolean} True if the maps are equal, false otherwise
      * @category Comparison
      */
-    isEqual (aMap) {
-        if (this.count() !== aMap.count()) {
-            return false
+    isEqual (otherMap) {
+        if (Type.isNullOrUndefined(otherMap)) {
+            return false;
+        }
+
+        if (otherMap.count === undefined || otherMap.get === undefined) {
+            return false;
+        }
+
+        if (this.count() !== otherMap.count()) {
+            return false;
         }
 
         for (let k of this.keys()) {
-            const v1 = this.get(k)
-            const v2 = aMap.get(k)
+            const v1 = this.get(k);
+            const v2 = otherMap.get(k);
             if (v1 !== v2) {
-                return false
+                if (v1.isEqual && v2.isEqual) {
+                    if (!v1.isEqual(v2)) {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
             }
         }
         
-        return true
+        return true;
     }
 
     /**
@@ -241,7 +265,7 @@
      * @category Information
      */
     isEmpty () {
-        return this.size === 0        
+        return this.size === 0;    
     }
 
     /**
@@ -250,9 +274,9 @@
      * @category Conversion
      */
     asDict () {
-        const dict = {}
-        this.forEachKV((k, v) => dict[k] = v)
-        return dict
+        const dict = {};
+        this.forEachKV((k, v) => dict[k] = v);
+        return dict;
     }
     
     /**
@@ -262,9 +286,9 @@
      * @category Conversion
      */
     fromDict (aDict) {
-        this.clear()
-        Object.entries(aDict).forEach(([k, v]) => this.set(k, v))
-        return this
+        this.clear();
+        Object.entries(aDict).forEach(([k, v]) => this.set(k, v));
+        return this;
     }
 
     /**
@@ -273,7 +297,7 @@
      * @category Conversion
      */
     description () {
-        return JSON.stableStringify(this.asDict(), null, 2) // may throw error if values aren't json compatible
+        return JSON.stableStringify(this.asDict(), null, 2); // may throw error if values aren't json compatible
     }
 
     /**
@@ -368,5 +392,24 @@
         });
         return invertedMap;
     }
+
+    /**
+     * Returns a 64-bit hash code for the map
+     * @returns {number} A 64-bit hash code
+     * @category Information
+     */
+    hashCode64 () {
+        const prime = 31;
+        let result = 0;
+    
+        for (const [key, value] of this) {
+            const keyHash = Type.hashCode64(key);
+            const valueHash = Type.hashCode64(value);
+            const entryHash = (keyHash + (valueHash * prime)) | 0;  // Combine key and value hashes
+            result = (result + entryHash * prime) | 0;  // Update result with entryHash
+        }
+    
+        return result;
+    };
 
 }).initThisCategory();

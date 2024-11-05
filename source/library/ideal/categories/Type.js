@@ -76,8 +76,8 @@ getGlobalThis().Type = (class Type extends Object {
             "BigUint64Array",
             //"TypedArray",
             "Undefined",
-            "Object", // put object last so other types have preference
-        ]
+            "Object" // put object last so other types have preference
+        ];
     }
 
     /**
@@ -96,8 +96,8 @@ getGlobalThis().Type = (class Type extends Object {
             "Float32Array",
             "Float64Array",
             "BigInt64Array",
-            "BigUint64Array",
-        ]
+            "BigUint64Array"
+        ];
     }
 
     /**
@@ -109,7 +109,7 @@ getGlobalThis().Type = (class Type extends Object {
         const result = typeof(v) === "function"
             && /^class\s/.test(Function.prototype.toString.call(v));
 
-        return result
+        return result;
     }
 
     /**
@@ -143,7 +143,7 @@ getGlobalThis().Type = (class Type extends Object {
         return !Type.isNull(value) && 
                 Type.isObject(value) && 
                 value.__proto__ === ([]).__proto__ &&
-                !Type.isUndefined(value.length)
+                !Type.isUndefined(value.length);
     }
 
     /**
@@ -154,7 +154,7 @@ getGlobalThis().Type = (class Type extends Object {
     static isSet (value) {
         return !Type.isNull(value) && 
             Type.isObject(value) && 
-            value.__proto__ === Set.prototype 
+            value.__proto__ === Set.prototype;
     }
 
     /**
@@ -165,7 +165,7 @@ getGlobalThis().Type = (class Type extends Object {
     static isMap (value) {
         return !Type.isNull(value) && 
             Type.isObject(value) && 
-            value.__proto__ === Map.prototype 
+            value.__proto__ === Map.prototype;
     }  
 
     /**
@@ -185,7 +185,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is a boolean, false otherwise.
      */
     static isBoolean (value) {
-        return typeof(value) === "boolean"
+        return typeof(value) === "boolean";
     }   
 
     /**
@@ -194,7 +194,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is a function, false otherwise.
      */
     static isFunction (value) {
-        return typeof(value) === "function"
+        return typeof(value) === "function";
     }  
 
     /**
@@ -203,7 +203,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is undefined, false otherwise.
      */
     static isUndefined (value) {
-        return value === undefined // safe in modern browsers, even safe in older browsers if undefined is not redefined
+        return value === undefined; // safe in modern browsers, even safe in older browsers if undefined is not redefined
     }
 
     /**
@@ -212,7 +212,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is null, false otherwise.
      */
     static isNull (value) {
-        return value === null
+        return value === null;
     }
 
     /**
@@ -221,7 +221,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is null or undefined, false otherwise.
      */
     static isNullOrUndefined (value) {
-        return this.isUndefined(value) || this.isNull(value)
+        return this.isUndefined(value) || this.isNull(value);
     }
 
     /**
@@ -230,7 +230,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is NaN, false otherwise.
      */
     static isNaN (value) {
-        return isNaN(value)
+        return isNaN(value);
     }
 
     /**
@@ -239,7 +239,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is a number, false otherwise.
      */
     static isNumber (value) {
-        return typeof(value) === "number"
+        return typeof(value) === "number";
     }
 
     /**
@@ -258,7 +258,7 @@ getGlobalThis().Type = (class Type extends Object {
      */
     static isObject (value) { 
         // WARNING: true for array and dictionary too!
-        return typeof(value) === "object" 
+        return typeof(value) === "object";
     }
 
     /**
@@ -272,7 +272,7 @@ getGlobalThis().Type = (class Type extends Object {
         }
         // WARNING: a good guess for our use cases, but not always correct!
         // e.g. 3rd party libraries and code may use Object instances as or like Objects instead of as Dictionaries (such as in JSON)
-        return this.isObject(value) && (value.constructor === Object) 
+        return this.isObject(value) && (value.constructor === Object);
     }
 
     /**
@@ -281,7 +281,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is a string, false otherwise.
      */
     static isString (value) {
-        return typeof(value) === "string"
+        return typeof(value) === "string";
     } 
 
     /**
@@ -290,7 +290,7 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is a symbol, false otherwise.
      */
     static isSymbol (value) {
-        return typeof(value) === "symbol"
+        return typeof(value) === "symbol";
     } 
 
     /**
@@ -456,6 +456,10 @@ getGlobalThis().Type = (class Type extends Object {
             return "Null";
         }
 
+        if (Type.isClass(value)) {
+            return value.name;
+        }
+
         if (Type.isObject(value)) {
             //return value.type()
             return value.constructor.name;
@@ -508,21 +512,21 @@ getGlobalThis().Type = (class Type extends Object {
      * @throws {Error} If the value's type names don't match the valid type names.
      */
     static assertValueTypeNames (v, validTypeNames) {
-        let doesMatch = true
-        const foundTypeNames = this.typeNamesForValue(v)
+        let doesMatch = true;
+        const foundTypeNames = this.typeNamesForValue(v);
         if (foundTypeNames.length === validTypeNames.length) {
             for (let i = 0; i < foundTypeNames.length; i ++) {
-                const name = foundTypeNames[i]
+                const name = foundTypeNames[i];
                 if (!validTypeNames.includes(name)) {
                     doesMatch = false;
                     break;
                 }
             }
         } else {
-            doesMatch = false
+            doesMatch = false;
         }
         if (!doesMatch) {
-            throw new Error(JSON.stringify(validTypeNames) + " != " + JSON.stringify(foundTypeNames) )
+            throw new Error(JSON.stringify(validTypeNames) + " != " + JSON.stringify(foundTypeNames) );
         }
     }
 
@@ -534,9 +538,15 @@ getGlobalThis().Type = (class Type extends Object {
      * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
      */
     static isJsonType (value) {
-        // Note: this doesn't walk the collection types to see if their values are also JSON
-        const jsonTypes = new Set(["String", "Number", "Object", "Array", "Boolean", "Null"]);
-        return jsonTypes.has(Type.typeName(value));
+        return (
+            value === null ||
+            typeof value === 'string' ||
+            typeof value === 'number' ||
+            typeof value === 'boolean' ||
+            (Array.isArray(value) && value.every(Type.isJsonType)) ||
+            (typeof value === 'object' && value !== null && 
+             Object.values(value).every(v => Type.isJsonType(v)))
+        );
     }
 
     /**
@@ -552,7 +562,9 @@ getGlobalThis().Type = (class Type extends Object {
       
           const type = typeof v;
       
-          if (['string', 'number', 'boolean'].includes(type)) return true;
+          if (['string', 'number', 'boolean'].includes(type)) {
+            return true;
+          }
       
           if (type === 'object') {
             if (seen.has(v)) return false; // Circular reference
@@ -606,6 +618,25 @@ getGlobalThis().Type = (class Type extends Object {
         }
 
         throw new Error("unhandled type '" + Type.typeName(value) + "'");
+    }
+
+    static hashCode64 (value) {
+        // null and undefined can't respond to hashCode64(), so we need to handle them first
+        if (Type.isUndefined(value)) {
+            return 0xdeadbeef;
+        }
+
+        if (Type.isNull(value)) {
+            return 0xabad1dea;
+        }
+
+        if (value.hashCode64) {
+            // Note: For objects used as dictionaries, we want hashes to test equality, not identity.
+            // But for non-dictionary objects, we typically(? want identity comparison.
+            return value.hashCode64();
+        }
+
+        throw new TypeError("Unsupported type for hashing");
     }
 
     // --- copying ---

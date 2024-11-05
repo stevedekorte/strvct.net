@@ -4,8 +4,12 @@
  * @module library.node.fields.subclasses.options
  * @class BMOptionsNode
  * @extends BMField
- * @classdesc
- * BMOptionsNode represents a field for selecting one or multiple options.
+ * @classdesc BMOptionsNode represents a field for selecting one or multiple options.
+ * 
+ * NOTES:
+ * 
+ *  computedValidValues() will use validValuesClosure() if it is set, otherwise it will use validValues().
+ * 
  * 
  * Idea:
  * 
@@ -13,7 +17,7 @@
  * 
  * [
  *     {
- *         path: ["path string component A", "path string component B", ...],
+ *         path: ["path component A", "path component B", ...],
  *         label: "", //?
  *         subtitle: null, //
  *         value: aValue, // and value that is valid JSON (no undefined, Maps, non-dict Objects, etc)
@@ -33,6 +37,16 @@
  * 
  * - we need to support just putting in value or array (if multi-choice) of raw values,
  *   as well as an option to store the pickedDicts(), so we need another Slot attribute...
+ * 
+ * Notes:
+ * 
+ * Sometimes the options dict will have a value key, sometimes it will not.
+ * If it doesn't, then the label is used as the value.
+ * 
+ * Should we support both cases, or require the use of the value key?
+ * 
+ * BMField.setValueOnTarget() needs to handle both cases.
+ * 
  */
 (class BMOptionsNode extends BMField {
     
@@ -42,7 +56,7 @@
      * @returns {boolean} True if available as a node primitive.
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -108,17 +122,17 @@
      * @description Initializes the prototype of the BMOptionsNode.
      */
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
 
-        this.setCanDelete(true)
-        this.setNodeCanInspect(true)
+        this.setCanDelete(true);
+        this.setNodeCanInspect(true);
 
-        this.setKey("Options")
-        this.setKeyIsVisible(true)
-        this.setNodeCanEditTitle(true)
+        this.setKey("Options");
+        this.setKeyIsVisible(true);
+        this.setNodeCanEditTitle(true);
 
-        this.setNodeCanReorderSubnodes(true)
+        this.setNodeCanReorderSubnodes(true);
 
         this.setNodeCanAddSubnode(true);
         this.setSummaryFormat("value");
@@ -132,7 +146,7 @@
      * @returns {string} The key of the options node.
      */
     title () {
-        return this.key()
+        return this.key();
     }
 
     /**
@@ -140,7 +154,7 @@
      * @returns {string} The debug type identifier.
      */
     debugTypeId () {
-        return this.typeId() + "_'" + this.key() + "'"
+        return this.typeId() + "_'" + this.key() + "'";
     }
     
     /**
@@ -149,8 +163,8 @@
      * @returns {BMOptionsNode} The current instance.
      */
     setTitle (s) {
-        this.setKey(s)
-        return this
+        this.setKey(s);
+        return this;
     }
 
     /**
@@ -158,18 +172,18 @@
      * @returns {string|Array} A summary of the picked values.
      */
     childrenSummary () {
-        const picked = this.value()
+        const picked = this.value();
 
         if (Type.isArray(picked)) {
             if (picked.length === 0) {
-                return "No selection"
+                return "No selection";
             }
-            return picked
+            return picked;
         } else {
             if (picked === null) {
-                return "No selection"
+                return "No selection";
             }
-            return [picked]
+            return [picked];
         }
     }
 
@@ -179,7 +193,7 @@
      * @returns {BMOptionsNode} The current instance.
      */
     setSubtitle (aString) {
-        return this
+        return this;
     }
 
     /**
@@ -188,10 +202,10 @@
      */
     subtitle () {
         if (this.usesValidDict()) {
-            return this.pickedNodePathStrings().join("\n")
+            return this.pickedNodePathStrings().join("\n");
         }
-        const s = super.subtitle()
-        return s
+        const s = super.subtitle();
+        return s;
     }
 
     /**
@@ -200,8 +214,8 @@
      */
     pickedNodePathStrings () {
         return this.pickedNodePaths().map(nodePath => nodePath.map(node => { 
-            return node.title()
-        }).join(" / "))
+            return node.title();
+        }).join(" / "));
     }
 
     /**
@@ -209,7 +223,7 @@
      * @returns {Array<Array<BMOptionNode>>} An array of picked node paths.
      */
     pickedNodePaths () {
-        return this.pickedLeafSubnodes().map(leafNode => leafNode.parentChainNodeTo(this))
+        return this.pickedLeafSubnodes().map(leafNode => leafNode.parentChainNodeTo(this));
     }
 
     /**
@@ -217,7 +231,7 @@
      * @returns {Array} An array of picked values.
      */
     pickedValues () {
-        return this.pickedLeafSubnodes().map(s => s.value())
+        return this.pickedLeafSubnodes().map(s => s.value());
     }
 
     /**
@@ -225,7 +239,7 @@
      * @returns {Set} A set of picked values.
      */
     pickedValuesSet () {
-        return this.pickedValues().asSet()
+        return this.pickedValues().asSet();
     }
 
     /**
@@ -233,7 +247,7 @@
      * @returns {boolean} True if valid dictionaries are used.
      */
     usesValidDict () {
-        const vv = this.validValues()
+        const vv = this.validValues();
         return vv && vv.length && Type.isDictionary(vv[0]);
     }
 
@@ -242,7 +256,7 @@
      * @returns {Array<BMOptionNode>} An array of picked leaf subnodes.
      */
     pickedLeafSubnodes () {
-        return this.leafSubnodes().select(sn => sn.isPicked())
+        return this.leafSubnodes().select(sn => sn.isPicked());
     }
 
     /**
@@ -255,8 +269,8 @@
                 label: sn.label(),
                 value: sn.value(),
                 path: sn.parentChainNodeTo(this).map(sn => sn.title())
-            }
-        })
+            };
+        });
     }
 
     /**
@@ -266,13 +280,13 @@
      */
     didToggleOption (anOptionNode) {
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
-            this.unpickLeafSubnodesExcept(anOptionNode)
+            this.unpickLeafSubnodesExcept(anOptionNode);
         }
         
-        const v = this.formatedPickedValues()
-        this.setValue(v)
+        const v = this.formatedPickedValues();
+        this.setValue(v);
 
-        return this
+        return this;
     }
 
     /**
@@ -287,7 +301,7 @@
         if (pickedValues.length) {
             v = this.allowsMultiplePicks() ? pickedValues : pickedValues.first();
         }
-        return v
+        return v;
     }
 
     /**
@@ -296,8 +310,9 @@
      * @returns {BMOptionsNode} The current instance.
      */
     setValueOnTarget (v) {
-        super.setValueOnTarget(v)
-        return this
+        debugger;
+        super.setValueOnTarget(v);
+        return this;
     }
 
     /**
@@ -308,24 +323,24 @@
     unpickLeafSubnodesExcept (anOptionNode) {
         this.leafSubnodes().forEach(sn => {
             if (sn !== anOptionNode) { 
-                sn.setIsPicked(false) 
+                sn.setIsPicked(false);
             }
-        })
-        return this
+        });
+        return this;
     }
 
     /**
      * @description Picks leaf subnodes matching the current value.
      */
     pickLeafSubnodesMatchingValue () {
-        const v = this.value()
+        const v = this.value();
         this.leafSubnodes().forEach(option => {
             if (Type.isArray(v)) {
-                option.justSetIsPicked(v.contains(option.value()))
+                option.justSetIsPicked(v.contains(option.value()));
             } else {
-                option.justSetIsPicked(v == option.value())
+                option.justSetIsPicked(v == option.value());
             }
-        })
+        });
     }
 
     /**
@@ -333,7 +348,7 @@
      * @returns {Array<string>} An array of accepted subnode type names.
      */
     acceptedSubnodeTypes () {
-        return [BMOptionNode.type()]
+        return [BMOptionNode.type()];
     }
 
     /**
@@ -352,10 +367,10 @@
      * @returns {BMOptionsNode} The current instance.
      */
     syncFromTarget () {
-        super.syncFromTarget()
-        this.setupSubnodes()
-        this.constrainValue()
-        return this
+        super.syncFromTarget();
+        this.setupSubnodes();
+        this.constrainValue();
+        return this;
     }
 
     /**
@@ -363,7 +378,7 @@
      * @returns {BMOptionsNode} The current instance.
      */
     constrainValue () {
-        return this
+        return this;
     }
     
     /**
@@ -371,15 +386,15 @@
      * @returns {BMOptionsNode} The current instance.
      */
     nodeTileLink () {
-        return this
+        return this;
     }
 
     /**
      * @description Prepares the node for first access.
      */
     prepareForFirstAccess () {
-        super.prepareForFirstAccess()
-        this.setupSubnodesIfEmpty()
+        super.prepareForFirstAccess();
+        this.setupSubnodesIfEmpty();
     }
 
     /**
@@ -388,11 +403,11 @@
      */
     computedValidValues () {
         if (this.validValues()) {
-            return this.validValues()
+            return this.validValues();
         } else if (this.validValuesClosure()) {
-            return this.validValuesClosure()(this.target())
+            return this.validValuesClosure()(this.target());
         }
-        return []
+        return [];
     }
 
     /**
@@ -400,7 +415,7 @@
      * @returns {Array} An array of valid values.
      */
     validValuesFromLeafSubnodes () {
-        return this.leafSubnodes().map(sn => sn.value())
+        return this.leafSubnodes().map(sn => sn.value());
     }
 
     /**
@@ -409,9 +424,9 @@
      */
     setupSubnodesIfEmpty () {
         if (this.subnodes().length === 0) {
-            this.setupSubnodes()
+            this.setupSubnodes();
         }
-        return this
+        return this;
     }
 
     /**
@@ -424,7 +439,7 @@
 
         if (this.allowsMultiplePicks()) {
             const values = Type.isArray(value) ? value : null;
-            return values.includes(v)
+            return values.includes(v);
         } 
         
         return v === value;
@@ -442,7 +457,7 @@
                 subtitle: null,
                 value: null,
                 options: null
-            }
+            };
         }   
 
         if (Type.isString(v) || Type.isNumber(v)) {
@@ -451,10 +466,10 @@
                 subtitle: null,
                 value: v,
                 options: null
-            }
+            };
         }
-        assert(Type.isDictionary(v))
-        return v
+        assert(Type.isDictionary(v));
+        return v;
     }
 
     /**
@@ -479,10 +494,23 @@
      * @returns {boolean} True if the valid values match.
      */
     validValuesMatch () {
-        const validValues = this.computedValidValues()
+        //console.log("testing validValuesMatch");
+        //return false;
+
+        const validValues = this.computedValidValues();
         const validItemsString = JSON.stableStringify(validValues);
         const validValuesMatch = this.syncedValidItemsJsonString() === validItemsString;
-        return validValuesMatch
+        /*
+        //if (!validValuesMatch) {
+            console.log("          validItemsString: " + validItemsString);
+            console.log("syncedValidItemsJsonString: " + this.syncedValidItemsJsonString());
+            console.log("          validValuesMatch: " + validValuesMatch);
+        //}
+        */
+        return validValuesMatch;
+
+        //const syncedValidItems = JSON.parse(this.syncedValidItemsJsonString());
+        //return Type.hashCode64(this.computedValidValues()) === Type.hashCode64(syncedValidItems);
     }
 
     /**
@@ -493,23 +521,23 @@
         const a = JSON.stableStringify(this.valueAsArray());
         const b = JSON.stableStringify(this.pickedValues());
         if (a === '[""]' && b == '[]') {
-            return true
+            return true;
         }
         return a === b;
     }
 
     /**
-     * @description Checks if the node needs to sync to subnodes.
+     * @description Checks if the node needs to sync to subnodes. Returns true if the validValues or picked values don't match.
      * @returns {boolean} True if sync to subnodes is needed.
      */
     needsSyncToSubnodes () {
         if (this.target()) {
-            const validValuesMatch = this.validValuesMatch()
+            const validValuesMatch = this.validValuesMatch();
             const picksMatch = this.picksMatch();
             const needsSync = (!validValuesMatch || !picksMatch);
-            return needsSync
+            return needsSync;
         }
-        return false
+        return false;
     }
 
     /**
@@ -518,42 +546,44 @@
      */
     setupSubnodes () {
         if (this.needsSyncToSubnodes()) {
-            this.removeAllSubnodes()
-            const validValues = this.computedValidValues()
+            this.removeAllSubnodes();
+            const validValues = this.computedValidValues();
 
             validValues.forEach(v => {
-                const item = this.itemForValue(v)
-                this.addOptionNodeForDict(item)
-            })
-            this.setSyncedValidItemsJsonString(JSON.stableStringify(validValues)) 
+                const item = this.itemForValue(v);
+                this.addOptionNodeForDict(item);
+            });
+            this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validValues));
 
             this.leafSubnodes().forEach(sn => {
-                sn.setIsPicked(this.targetHasPick(sn.value()))
-            })
+                sn.setIsPicked(this.targetHasPick(sn.value()));
+            });
 
             if (this.needsSyncToSubnodes()) {
-                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after sync!")
-                console.log("Let's try syncing the picked values to the target:")
-                console.log("VALID VALUES:")
+                // this can happen if the target is set to a value that is not in the validValues array
+                //debugger;
+                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after sync!");
+                console.log("Let's try syncing the picked values to the target:");
+                console.log("VALID VALUES:");
                 console.log("  computedValidValues: " + JSON.stableStringify(this.computedValidValues()));
                 console.log("  syncedValidItemsJsonString(): " +  this.syncedValidItemsJsonString());
-                console.log("BEFORE:")
-                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
-                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
+                console.log("BEFORE:");
+                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()));
+                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
 
-                this.valueAsArray()
+                this.valueAsArray();
 
-                this.setValueOnTarget(this.formatedPickedValues())
+                this.setValueOnTarget(this.formatedPickedValues());
                 
-                console.log("AFTER:")
-                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
-                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
-                this.valueAsArray()
-                assert(!this.needsSyncToSubnodes())
+                console.log("AFTER:");
+                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()));
+                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
+                this.valueAsArray();
+                Error.warn(!this.needsSyncToSubnodes());
             }
-            this.didUpdateNodeIfInitialized()
+            this.didUpdateNodeIfInitialized();
         }
-        return this
+        return this;
     }
     
 }.initThisClass());

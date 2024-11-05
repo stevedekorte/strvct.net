@@ -107,6 +107,7 @@
     }
 
     /**
+     * @async
      * @description Prepares the BMBlob for first access by setting up the value field.
      * @category Initialization
      */
@@ -197,6 +198,7 @@
     }
 
     /**
+     * @async
      * @description Promises to write the value of the BMBlob to the store.
      * @category Storage
      */
@@ -211,6 +213,7 @@
     }
 
     /**
+     * @async
      * @description Promises to write the value and hash of the BMBlob to the store.
      * @param {ArrayBuffer|string} v The value to be written.
      * @param {string} h The hash value of the value.
@@ -253,6 +256,7 @@
     }
 
     /**
+     * @async
      * @description Checks if the BMBlob is valid based on its properties.
      * @returns {boolean} True if the BMBlob is valid, false otherwise.
      * @category Validation
@@ -292,6 +296,8 @@
     }
 
     /**
+     * @static
+     * @async
      * @description Tests the hash function by comparing the calculated hash of a string with a known hash value.
      * @category Testing
      */

@@ -305,6 +305,17 @@ async function loadAndRenderMarkdown() {
       .reference-link:hover {
         text-decoration: underline;
       }
+
+      .toc-content {
+        transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+        opacity: 1;
+        overflow: hidden;
+      }
+
+      .toc-content.collapsed {
+        max-height: 0;
+        opacity: 0;
+      }
     `;
     document.head.appendChild(style);
 

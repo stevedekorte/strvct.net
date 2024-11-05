@@ -81,7 +81,7 @@
      * @category Identification
      */
     senderId () {
-        return this.sender().debugTypeId()
+        return this.sender().debugTypeId();
     }
 
     /**
@@ -91,10 +91,10 @@
      * @category Identification
      */
     setSender (obj) {
-        assert(Type.isObject(obj))
-        this._sender = obj
-        this.clearNoteHash()
-        return this
+        assert(Type.isObject(obj));
+        this._sender = obj;
+        this.clearNoteHash();
+        return this;
     }
 
     /**
@@ -105,8 +105,8 @@
      */
     setName (aName) {
         this._name = aName;
-        this.clearNoteHash()
-        return this
+        this.clearNoteHash();
+        return this;
     }
     
     /**
@@ -117,10 +117,10 @@
      */
     isEqual (obs) {
         if (this === obs) { 
-            return true 
+            return true;
         }
 
-        return this.noteHash() === obs.noteHash()
+        return this.noteHash() === obs.noteHash();
     }
 
     /**
@@ -143,7 +143,7 @@
             const id = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender());
             this._noteHash = id.hashCode64();
         }
-        return this._noteHash
+        return this._noteHash;
     }
 
     /**
@@ -152,7 +152,7 @@
      * @category Status
      */
     isPosted () {
-        return this.center().hasNotification(this)
+        return this.center().hasNotification(this);
     }
     
     /**
@@ -162,14 +162,14 @@
      */
     post () {
         if (this.center().isDebugging()) {
-            const e = new Error()
-            e.name = ""
-            e.message = this.senderId() + " posting note '" + this.name() + "'" 
+            const e = new Error();
+            e.name = "";
+            e.message = this.senderId() + " posting note '" + this.name() + "'";
             this.setSenderStack(e.stack);
         }
        
-        this.center().addNotification(this)
-        return this
+        this.center().addNotification(this);
+        return this;
     }
     
     /**
@@ -178,9 +178,9 @@
      * @category Utility
      */
     description () {
-        const s = this.senderId() ? this.senderId() : "null"
-        const n = this.name() ? this.name() : "null"
-        return s + " " + n
+        const s = this.senderId() ? this.senderId() : "null";
+        const n = this.name() ? this.name() : "null";
+        return s + " " + n;
     }
 
     /**
@@ -189,7 +189,7 @@
      * @category Management
      */
     newObservation () {
-        return BMNotificationCenter.shared().newObservation().setName(this.name()).setSender(this.sender())
+        return BMNotificationCenter.shared().newObservation().setName(this.name()).setSender(this.sender());
     }
 
 }.initThisClass());

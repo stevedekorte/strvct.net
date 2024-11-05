@@ -1,19 +1,20 @@
 "use strict";
 
-/*
-    
-    BreadCrumbButton
-
-    A button view that can get (and keep up to date) it's title from
-    a node is helpful for breadcrumbs as node names can change.
-    
-*/
-
+/**
+ * @class BreadCrumbButton
+ * @extends NodeView
+ * @category UI Components
+ * 
+ * A button view that can get (and keep up to date) its title from
+ * a node. This is helpful for breadcrumbs as node names can change.
+ */
 (class BreadCrumbButton extends NodeView {
     
     // --- copied from ButtonView ---
 
-
+    /**
+     * Initializes prototype slots for the BreadCrumbButton.
+     */
     initPrototypeSlots () {
         this.newSlot("titleView", null)
         this.newSlot("isEnabled", true)
@@ -21,6 +22,10 @@
         this.newSlot("info", null)
     }
 
+    /**
+     * Initializes the BreadCrumbButton instance.
+     * @returns {BreadCrumbButton} The initialized instance.
+     */
     init () {
         super.init()
         this.setDisplay("flex")
@@ -50,13 +55,11 @@
             tv.setMinHeight("1em")
             tv.setWhiteSpace("nowrap")
             tv.setTextOverflow("ellipsis")
-
-            
         }
 
         this.setTitle("")
 
-        const icon = SvgIconView.clone() //.setElementClassName("RightActionView")
+        const icon = SvgIconView.clone()
         icon.setMinAndMaxWidth(12)
         icon.setMinAndMaxHeight(15)
         icon.setFillColor("white")
@@ -70,25 +73,43 @@
         return this
     }
 
+    /**
+     * Sets the icon name for the button.
+     * @param {string} aName - The name of the icon.
+     * @returns {BreadCrumbButton} The instance for chaining.
+     */
     setIconName (aName) {
         this.iconView().setIconName(aName)
         return this
     }
 
+    /**
+     * Sets the title of the button.
+     * @param {string} s - The title to set.
+     * @returns {BreadCrumbButton} The instance for chaining.
+     */
     setTitle (s) {
         if (s === "" || Type.isNullOrUndefined(s)) { 
-            s = " "; //"&nbsp;" // to avoid weird html layout issues
+            s = " ";
         }
 
         this.titleView().setValue(s)
-        //this.titleView().setDisplayIsHidden(!s)
         return this
     }
 
+    /**
+     * Gets the title of the button.
+     * @returns {string} The current title.
+     */
     title () {
         return this.titleView().value()
     }
 
+    /**
+     * Sets whether the button has an outline.
+     * @param {boolean} aBool - True to set an outline, false otherwise.
+     * @returns {BreadCrumbButton} The instance for chaining.
+     */
     setHasOutline (aBool) {
         if (aBool) {
             this.setBoxShadow("0px 0px 1px 1px rgba(255, 255, 255, 0.2)")
@@ -98,20 +119,38 @@
         return this
     }
 
+    /**
+     * Sets the visibility of the title.
+     * @param {boolean} aBool - True to make the title visible, false to hide it.
+     * @returns {BreadCrumbButton} The instance for chaining.
+     */
     setTitleIsVisible (aBool) {
         this.titleView().setDisplayIsHidden(!aBool)
         return this
     }
 
+    /**
+     * Sets whether the title is editable.
+     * @param {boolean} aBool - True to make the title editable, false otherwise.
+     * @returns {BreadCrumbButton} The instance for chaining.
+     */
     setIsEditable (aBool) {
         this.titleView().setIsEditable(aBool)
         return this
     }
 
+    /**
+     * Checks if the title is editable.
+     * @returns {boolean} True if the title is editable, false otherwise.
+     */
     isEditable () {
         return this.titleView().isEditable()
     }
 
+    /**
+     * Sends an action to the target if the button is not editable.
+     * @returns {BreadCrumbButton} The instance for chaining.
+     */
     sendActionToTarget () {
         if (!this.isEditable()) {
             super.sendActionToTarget()
@@ -119,8 +158,12 @@
         return this
     }
 
+    /**
+     * Handles the tap complete gesture.
+     * @param {Gesture} aGesture - The gesture object.
+     * @returns {boolean} False to indicate the gesture is handled.
+     */
     onTapComplete (aGesture) {
-        //this.debugLog(".onTapComplete()")
         this.sendActionToTarget()
         return false
     }

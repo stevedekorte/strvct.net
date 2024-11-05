@@ -73,4 +73,9 @@
         return true;
     }
 
+    didInit() {
+        super.didInit();
+        assert(this.hasDoneInit());
+    }
+
 }.initThisClass());

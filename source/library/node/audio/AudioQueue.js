@@ -23,6 +23,10 @@
 
 (class AudioQueue extends BMSummaryNode {
 
+  /**
+   * @category Initialization
+   * @description Initializes the prototype slots for the audio queue.
+   */
   initPrototypeSlots () {
     /**
      * @member {boolean} isMuted - Whether the audio queue is muted.
@@ -52,6 +56,10 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @category Initialization
+   * @description Initializes the prototype by adding required protocols.
+   */
   initPrototype () {
     /*
     const slot = this.slotNamed("shortName")
@@ -61,12 +69,20 @@
   }
 
 
+  /**
+   * @category Initialization
+   * @description Initializes the audio queue.
+   */
   init () {
     super.init();
     this.setTitle("Audio Queue");
     this.setQueue([]);
   }
 
+  /**
+   * @category Initialization
+   * @description Performs final initialization steps.
+   */
   finalInit () {
     super.finalInit();
     this.setCanDelete(true);
@@ -75,6 +91,7 @@
   /**
    * @description Returns the subtitle of the audio queue.
    * @returns {string} The subtitle.
+   * @category Information
    */
   subtitle () {
     const lines = [];
@@ -98,6 +115,7 @@
   /**
    * @description Returns the size of the queue.
    * @returns {number} The size of the queue.
+   * @category Information
    */
   queueSize () {
     return this.queue().length;
@@ -106,6 +124,7 @@
   // ---
 
   /**
+   * @category Mutation
    * @description Sets the muted state of the audio queue.
    * @param {boolean} aBool - The muted state.
    */
@@ -122,6 +141,7 @@
   // -----------------------------------
 
   /**
+   * @category Queue Management
    * @description Queues an audio blob.
    * @param {Blob} audioBlob - The audio blob.
    * @returns {WASound} The sound.
@@ -134,6 +154,7 @@
   }
 
   /**
+   * @category Queue Management
    * @description Queues a WASound.
    * @param {WASound} sound - The WASound.
    */
@@ -154,7 +175,9 @@
   }
 
   /**
-   * @description Processes the queue.
+   * @category Queue Management
+   * @description Processes the next item in the queue if no sound is currently playing.
+   * @returns {AudioQueue} The audio queue instance.
    */
   processQueue () {
     if (!this.currentSound()) {
@@ -170,6 +193,7 @@
 
   /**
    * @async
+   * @category Playback Control
    * @description Plays a sound.
    * @param {WASound} sound - The sound.
    */
@@ -187,6 +211,7 @@
   }
 
   /**
+   * @category Playback Control
    * @description Handles the end of a sound.
    * @param {WASound} waSound - The sound.
    */
@@ -199,7 +224,9 @@
   }
   
   /**
-   * @description Pauses the audio queue.
+   * @category Playback Control
+   * @description Pauses the current sound if one is playing.
+   * @throws {Error} Pause is not currently supported.
    */
   pause () {
     throw new Error("pause not supported");
@@ -215,7 +242,8 @@
   }
 
   /**
-   * @description Resumes the audio queue.
+   * @category Playback Control
+   * @description Resumes playing the current sound if one is paused.
    */
   resume () {
     this.debugLog("resume()");
@@ -230,7 +258,8 @@
   }
 
   /**
-   * @description Stops and clears the queue.
+   * @category Queue Management
+   * @description Stops the current sound and removes all items from the queue.
    */
   stopAndClearQueue () {
     const audio = this.currentSound();
@@ -239,6 +268,15 @@
         // this.onSoundEnded(audio); // needed?
     }
     this.setQueue([]);
+  }
+
+  /**
+   * @category Debug
+   * @description Returns a debug description of the audio queue.
+   * @returns {string} The debug description.
+   */
+  debugDescription () {
+    return this.type() + " " + this.id();
   }
 
 }.initThisClass());

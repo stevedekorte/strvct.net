@@ -239,8 +239,8 @@
         });
 
         await this.jsResources().promiseSerialForEach(async (r) => {
-        //await this.jsResources().promiseSerialTimeoutsForEach(r => {
-                count ++;
+        //await this.jsResources().promiseSerialTimeoutsForEach(async (r) => {
+            count ++;
             bootLoadingView.setBarToNofM(count, this.jsResources().length);
             //debugger;
             //console.log("count: " + count + " / " + this.jsResources().length)

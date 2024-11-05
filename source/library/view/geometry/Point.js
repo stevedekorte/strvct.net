@@ -52,7 +52,7 @@
      * @category Data Representation
      */
     valueArray () {
-        return [this._x, this._y, this._z]
+        return [this._x, this._y, this._z];
     }
 
     /**
@@ -63,7 +63,7 @@
     setTimeToNow () {
         const d = new Date();
         this._t = d.getTime();
-        return this
+        return this;
     }
 
     /**
@@ -74,11 +74,11 @@
      * @category Data Manipulation
      */
     copyFrom (p, copyDict) {
-        this._x = p._x
-        this._y = p._y
-        this._z = p._z
-        this._t = p._t
-        return this
+        this._x = p._x;
+        this._y = p._y;
+        this._z = p._z;
+        this._t = p._t;
+        return this;
     }
 
     /**
@@ -91,7 +91,7 @@
     setXY (x, y) {
         this._x = x;
         this._y = y;
-        return this
+        return this;
     }
     
     /**
@@ -107,12 +107,12 @@
         this._x = x;
         this._y = y;
         if (Type.isNumber(z)) {
-            this._z = z
+            this._z = z;
         }
         if (Type.isNumber(t)) {
-            this._t = t
+            this._t = t;
         }
-        return this
+        return this;
     }
 
     /**
@@ -122,11 +122,11 @@
      * @category Arithmetic
      */
     addInPlace (p) {
-        this._x += p._x
-        this._y += p._y
-        this._z += p._z
-        this._t += p._t
-        return this
+        this._x += p._x;
+        this._y += p._y;
+        this._z += p._z;
+        this._t += p._t;
+        return this;
     }
 
     /**
@@ -136,11 +136,11 @@
      * @category Arithmetic
      */
     subtractInPlace (p) {
-        this._x -= p._x
-        this._y -= p._y
-        this._z -= p._z
-        this._t -= p._t
-        return this
+        this._x -= p._x;
+        this._y -= p._y;
+        this._z -= p._z;
+        this._t -= p._t;
+        return this;
     }
 
     /**
@@ -149,10 +149,10 @@
      * @category Arithmetic
      */
     floorInPlace () {
-        this._x = Math.floor(this._x)
-        this._y = Math.floor(this._y)
-        this._z = Math.floor(this._z)
-        return this
+        this._x = Math.floor(this._x);
+        this._y = Math.floor(this._y);
+        this._z = Math.floor(this._z);
+        return this;
     }
 
     /**
@@ -161,7 +161,7 @@
      * @category Data Manipulation
      */
     copy () {
-        return this.thisClass().clone().copyFrom(this)
+        return this.thisClass().clone().copyFrom(this);
     }
 
     /**
@@ -171,7 +171,7 @@
      * @category Arithmetic
      */
     add (p) {
-        return this.copy().addInPlace(p)
+        return this.copy().addInPlace(p);
     }
 
     /**
@@ -181,7 +181,7 @@
      * @category Arithmetic
      */
     subtract (p) {
-        return this.copy().subtractInPlace(p)
+        return this.copy().subtractInPlace(p);
     }
 
     /**
@@ -190,10 +190,10 @@
      * @category Data Representation
      */
     asString () {
-        let s = this.type() + "(" + this._x + ", " + this._y 
+        let s = this.type() + "(" + this._x + ", " + this._y ;
 
         if (this._z) { 
-            s += ", " + this._z
+            s += ", " + this._z;
         }
 
         /*
@@ -202,7 +202,7 @@
         }
         */
 
-        return s + ")"
+        return s + ")";
     }
 
     /**
@@ -211,8 +211,8 @@
      * @category Geometry
      */
     distanceFromOrigin () {
-        const ds = Math.pow(this.x(), 2) + Math.pow(this.y(), 2) + Math.pow(this.z(), 2)
-        return Math.sqrt(ds)
+        const ds = Math.pow(this.x(), 2) + Math.pow(this.y(), 2) + Math.pow(this.z(), 2);
+        return Math.sqrt(ds);
     }
 
     /**
@@ -222,7 +222,7 @@
      * @category Geometry
      */
     dxFrom (p) {
-        return this.x() - p.x()
+        return this.x() - p.x();
     }
 
     /**
@@ -232,7 +232,7 @@
      * @category Geometry
      */
     dyFrom (p) {
-        return this.y() - p.y()
+        return this.y() - p.y();
     }
 
     /**
@@ -242,7 +242,7 @@
      * @category Geometry
      */
     dzFrom (p) {
-        return this.z() - p.z()
+        return this.z() - p.z();
     }
 
     /**
@@ -252,7 +252,7 @@
      * @category Time
      */
     dtFrom (p) {
-        return this.t() - p.t()
+        return this.t() - p.t();
     }
 
     /**
@@ -262,10 +262,10 @@
      * @category Geometry
      */
     distanceFrom (p) {
-        const dx = this.dxFrom(p)
-        const dy = this.dyFrom(p)
-        const dz = this.dzFrom(p)
-        return Math.sqrt(dx*dx + dy*dy + dz*dz)
+        const dx = this.dxFrom(p);
+        const dy = this.dyFrom(p);
+        const dz = this.dzFrom(p);
+        return Math.sqrt(dx*dx + dy*dy + dz*dz);
     }
 
     /**
@@ -275,7 +275,10 @@
      * @category Comparison
      */
     isEqual (p) {
-        return (this.x() === p.x()) && (this.y() === p.y()) && (this.z() === p.z()) // && (this.t() === p.t())
+        if (Type.isNullOrUndefined(p)) {
+            return false;
+        }
+        return (this.x() === p.x()) && (this.y() === p.y()) && (this.z() === p.z()); // && (this.t() === p.t())
     }
 
     /**
@@ -285,7 +288,7 @@
      * @category Comparison
      */
     isEqualWithTime (p) { // not ideal
-        return (this.x() === p.x()) && (this.y() === p.y()) && (this.z() === p.z()) && (this.t() === p.t())
+        return (this.x() === p.x()) && (this.y() === p.y()) && (this.z() === p.z()) && (this.t() === p.t());
     }
 
     /**
@@ -295,7 +298,7 @@
      * @category Comparison
      */
     isGreaterThan (p) {
-        return this.x() > p.x() && this.y() > p.y()
+        return this.x() > p.x() && this.y() > p.y();
     }
 
     /**
@@ -305,7 +308,7 @@
      * @category Comparison
      */
     isLessThan (p) {
-        return this.x() < p.x() && this.y() < p.y()
+        return this.x() < p.x() && this.y() < p.y();
     }
 
     /**
@@ -315,7 +318,7 @@
      * @category Comparison
      */
     isGreaterThanOrEqualTo (p) {
-        return this.x() >= p.x() && this.y() >= p.y()
+        return this.x() >= p.x() && this.y() >= p.y();
     }
 
     /**
@@ -325,7 +328,7 @@
      * @category Comparison
      */
     isLessThanOrEqualTo (p) {
-        return this.x() <= p.x() && this.y() <= p.y()
+        return this.x() <= p.x() && this.y() <= p.y();
     }
 
     /**
@@ -353,7 +356,7 @@
      * @category Geometry
      */
     angleInRadiansTo (p) {
-        return p.subtract(this).angleInRadians()
+        return p.subtract(this).angleInRadians();
     }
 
     /**
@@ -363,7 +366,7 @@
      * @category Geometry
      */
     angleInDegreesTo (p) {
-        return p.subtract(this).angleInDegrees()
+        return p.subtract(this).angleInDegrees();
     }
 
     /**
@@ -373,7 +376,7 @@
      * @category Geometry
      */
     midpointTo (p) {
-        return this.add(p).divideByScalar(2)
+        return this.add(p).divideByScalar(2);
     }
 
     /**
@@ -383,9 +386,9 @@
      * @category Arithmetic
      */
     multiplyByScalar (v) {
-        const p = Point.clone()
-        p.set(this.x() * v, this.y() * v, this.z() * v)
-        return p
+        const p = Point.clone();
+        p.set(this.x() * v, this.y() * v, this.z() * v);
+        return p;
     }
 
     /**
@@ -395,7 +398,7 @@
      * @category Arithmetic
      */
     divideByScalar (v) {
-        return this.multiplyByScalar(1/v)
+        return this.multiplyByScalar(1/v);
     }
 
     /**
@@ -404,7 +407,7 @@
      * @category Arithmetic
      */
     negated (p) {
-        return this.multiplyByScalar(-1)
+        return this.multiplyByScalar(-1);
     }
 
     /**
@@ -416,11 +419,11 @@
      */
     asCssStringWithUnitSuffix (name, unitSuffix) {
         if (!unitSuffix) { 
-            unitSuffix = ""
+            unitSuffix = "";
         }
 
         const us = unitSuffix;
-        return name + "(" + this._x + us + "," + this._y + us + "," + this._z + us + ")"
+        return name + "(" + this._x + us + "," + this._y + us + "," + this._z + us + ")";
         //const s = this.valueArray().map(v => v + unitSuffix).join(",")
         //return name + "(" + s + ")"
     }
@@ -431,7 +434,7 @@
      * @category CSS
      */
     asCssTranslate3dString () {
-        return this.asCssStringWithUnitSuffix("translate3d", "px")
+        return this.asCssStringWithUnitSuffix("translate3d", "px");
     }
 
     /**
@@ -440,7 +443,7 @@
      * @category CSS
      */
     asCssRotate3dDegreesString () {
-        return this.asCssStringWithUnitSuffix("rotate3d", "deg")
+        return this.asCssStringWithUnitSuffix("rotate3d", "deg");
     }
 
     /**
@@ -449,7 +452,7 @@
      * @category CSS
      */
     asCssScale3dString () {
-        return this.asCssStringWithUnitSuffix("scale3d", "")
+        return this.asCssStringWithUnitSuffix("scale3d", "");
     }
 
     /**
@@ -458,7 +461,7 @@
      * @category Dimensions
      */
     width () {
-        return this.x()
+        return this.x();
     }
 
     /**
@@ -467,7 +470,7 @@
      * @category Dimensions
      */
     height () {
-        return this.y()
+        return this.y();
     }
     
 }.initThisClass());

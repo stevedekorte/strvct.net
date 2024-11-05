@@ -151,6 +151,18 @@
      * @category Data
      */
     value () {
+        /*
+        if (this._value) {
+            if (this._value !== this.title()) {
+                console.warn("OptionNode value does not match title: ", this.title());
+                console.log("value: ", this._value);
+                console.log("title: ", this.title());
+                debugger;
+            }
+            return this._value;
+        }
+        */
+
         return this.title();
     }
 

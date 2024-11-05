@@ -15,6 +15,14 @@
     * @category Comparison
     */
    isEqual (otherRange) {
+    if (Type.isNullOrUndefined(otherRange)) {
+      return false;
+    }
+
+    if (otherRange.startContainer === undefined) {
+      return false;
+    }
+
     if (this === otherRange) {
       return true;
     }
@@ -30,5 +38,14 @@
   
     return true;
   };
+
+  /**
+   * Returns a 64-bit hash code for the range
+   * @returns {number} A 64-bit hash code
+   * @category Information
+   */
+  hashCode64 () {
+    return [this.startContainer, this.startOffset, this.endContainer, this.endOffset].hashCode64();
+  }
 
 }).initThisCategory();

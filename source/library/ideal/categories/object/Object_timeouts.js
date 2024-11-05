@@ -37,22 +37,22 @@
     addTimeout (aFunc, msDelay, optionalName) { 
         // if no optionalName given, use the timeoutId for the name,
         // as timeout ids should be unique
-        const tids = this.timeoutNameToIdMap()
+        const tids = this.timeoutNameToIdMap();
 
         if (optionalName && tids.has(optionalName)) {
             // clear existing timeout with this name, if there is one
-            this.clearTimeoutNamed(optionalName)
+            this.clearTimeoutNamed(optionalName);
         }
 
         const tidInfo = new Array(2) // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
         const tid = setTimeout(() => { 
-            this.removeTimeoutNamed(tidInfo[0])
-            EventManager.shared().safeWrapEvent(aFunc, "TimeoutEvent")
-        }, msDelay)
-        tidInfo[0] = optionalName ? optionalName : tid
-        tidInfo[1] = tid
-        this.timeoutNameToIdMap().set(optionalName, tid)
-        return tid
+            this.removeTimeoutNamed(tidInfo[0]);
+            EventManager.shared().safeWrapEvent(aFunc, "TimeoutEvent");
+        }, msDelay);
+        tidInfo[0] = optionalName ? optionalName : tid;
+        tidInfo[1] = tid;
+        this.timeoutNameToIdMap().set(optionalName, tid);
+        return tid;
     }
 
     /**
@@ -62,9 +62,9 @@
      * @category Timeout Management
      */
     removeTimeoutNamed (name) {
-        const tids = this.timeoutNameToIdMap()
-        tids.delete(name)
-        return this
+        const tids = this.timeoutNameToIdMap();
+        tids.delete(name);
+        return this;
     }
 
     /**
@@ -76,9 +76,9 @@
     clearTimeout (tid) { 
         // IMPORTANT: (for now) we assume a given timeouts is either referred to by name or tid, but not both
         // in which case, if the tid is called here, it was used at the key in the timeoutNameToIdMap
-        this.removeTimeoutNamed(tid)
-        clearTimeout(tid)
-        return this
+        this.removeTimeoutNamed(tid);
+        clearTimeout(tid);
+        return this;
     }
 
     /**

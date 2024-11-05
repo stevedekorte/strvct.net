@@ -44,6 +44,7 @@
 (class BMKeyboard extends Device {
 
     /**
+     * @category Initialization
      * @static
      * @description Initializes the class
      */
@@ -52,6 +53,7 @@
     }
     
     /**
+     * @category Initialization
      * @description Initializes the prototype slots
      */
     initPrototypeSlots () {
@@ -81,6 +83,7 @@
     }
 
     /**
+     * @category Initialization
      * @description Initializes the keyboard
      * @returns {BMKeyboard} The keyboard instance
      */
@@ -94,6 +97,7 @@
     }
 
     /**
+     * @category Event Handling
      * @description Starts listening for keyboard events
      * @returns {BMKeyboard} The keyboard instance
      */
@@ -105,6 +109,7 @@
     }
 
     /**
+     * @category Initialization
      * @description Sets up the code to keys map
      * @returns {BMKeyboard} The keyboard instance
      */
@@ -121,6 +126,7 @@
     }
 
     /**
+     * @category Key Lookup
      * @description Gets the key for a given code
      * @param {number} aCode - The key code
      * @returns {KeyboardKey} The keyboard key
@@ -130,6 +136,7 @@
     }
 
     /**
+     * @category Key Lookup
      * @description Gets the key for a given name
      * @param {string} aName - The key name
      * @returns {KeyboardKey} The keyboard key
@@ -140,6 +147,7 @@
     }
 
     /**
+     * @category Key Lookup
      * @description Gets the name for a given key code
      * @param {number} aCode - The key code
      * @returns {string|null} The key name
@@ -153,6 +161,7 @@
     }
 
     /**
+     * @category Key Mapping
      * @description Gets the inverted key codes to names map
      * @returns {Map} The inverted map
      */
@@ -164,6 +173,7 @@
     }
 
     /**
+     * @category Key Lookup
      * @description Gets the key code for a given name
      * @param {string} aName - The key name
      * @returns {number} The key code
@@ -173,6 +183,7 @@
     }
     
     /**
+     * @category Event Handling
      * @description Checks if the event is just a modifier key
      * @param {Event} event - The keyboard event
      * @returns {boolean} True if the event is just a modifier key
@@ -183,6 +194,7 @@
     }
 
     /**
+     * @category Key Mapping
      * @description Gets the key codes to names map
      * @returns {Map} The key codes to names map
      */
@@ -290,38 +302,8 @@
           ]);
     }
 
-    /*
-    shiftChangingKeysDict () {
-        // Based on a Macbook Pro keyboard. 
-        // Not sure if this is platform specific.
-
-        return {
-            "\`": ["Tilda", "~"],
-            "1": ["ExclaimationPoint", "!"],
-            "2": ["AtSymbol", "@"],
-            "3": ["Hash", "#"],
-            "4": ["DollarSign", "$"],
-            "5": ["Percent", "%"],
-            "6": ["Carot"],
-            "7": ["Ampersand", "&"],
-            "8": ["Asterisk", "*"],
-            "9": ["OpenParenthesis", "("],
-            "0": ["CloseParenthesis", ")"],
-            "-": ["Underscore", "_"],
-            "=": ["Plus", "+"],
-            "[": ["OpenCurlyBracket", "{"],
-            "]": ["CloseCurlyBracket", "}"],
-            "\\": ["Pipe", "|"],
-            ";": ["Colon", ":"],
-            "'": ["DoubleQuote", "\""],
-            ",": ["LessThan", "<"],
-            ".": ["GreaterThan", ">"],
-            "/": ["QuestionMark", "?"],
-        }
-    }
-    */
-
     /**
+     * @category Key Mapping
      * @description Gets the shift dictionary
      * @returns {Object} The shift dictionary
      */
@@ -354,32 +336,8 @@
         }
     }
 
-    /*
-    specialKeyCodes () { 
-        return {
-            8:  "delete", // "delete" on Apple keyboard
-            9:  "tab", 
-            13: "enter", 
-            16: "shift", 
-            17: "control", 
-            18: "alt", 
-            20: "capsLock", 
-            27: "escape", 
-            33: "pageUp", 
-            34: "pageDown", 
-            37: "leftArrow",  
-            38: "upArrow",  
-            39: "rightArrow", 
-            40: "downArrow",  
-            46: "delete", 
-
-        }
-    }
-    */
-
-    // -- events ---
-
     /**
+     * @category Debugging
      * @description Shows the code to keys map
      * @returns {BMKeyboard} The keyboard instance
      */
@@ -404,6 +362,7 @@
     }
 
     /**
+     * @category Event Handling
      * @description Gets the key for a given event
      * @param {Event} event - The keyboard event
      * @returns {KeyboardKey} The keyboard key
@@ -415,6 +374,7 @@
     }
 
     /**
+     * @category Event Handling
      * @description Handles the key down event
      * @param {Event} event - The keyboard event
      * @returns {boolean} True if the event should propagate
@@ -441,6 +401,7 @@
     }
 
     /**
+     * @category Event Handling
      * @description Handles the key up event
      * @param {Event} event - The keyboard event
      * @returns {boolean} True if the event should propagate
@@ -462,9 +423,8 @@
         return shouldPropogate
     }
     
-    // --- event handling method names ---
-
     /**
+     * @category Event Handling
      * @description Gets the down method name for a given event
      * @param {Event} event - The keyboard event
      * @returns {string} The down method name
@@ -474,16 +434,17 @@
     }
 
     /**
+     * @category Event Handling
      * @description Gets the up method name for a given event
      * @param {Event} event - The keyboard event
      * @returns {string} The up method name
      */
-
     upMethodNameForEvent (event) {
         return "on" + this.modsAndKeyNameForEvent(event) + "KeyUp";
     }
 
     /**
+     * @category Key State
      * @description Checks if the event is an alphabetical key
      * @param {Event} event - The keyboard event
      * @returns {boolean} True if the event is alphabetical
@@ -494,6 +455,7 @@
     }
 
     /**
+     * @category Key State
      * @description Checks if the event is a numeric key
      * @param {Event} event - The keyboard event
      * @returns {boolean} True if the event is numeric
@@ -504,6 +466,7 @@
     }
 
     /**
+     * @category Event Handling
      * @description Gets the mods and key name for an event
      * @param {Event} event - The keyboard event
      * @returns {string} The mods and key name
@@ -556,11 +519,8 @@
         return modifiers.join("") + keyName
     }
 
-    // --- special ---
-
-    // get key helpers
-
     /**
+     * @category Special Keys
      * @description Gets the shift key
      * @returns {KeyboardKey} The shift key
      */
@@ -569,6 +529,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the control key
      * @returns {KeyboardKey} The control key
      */
@@ -577,6 +538,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the alternate key
      * @returns {KeyboardKey} The alternate key
      */
@@ -585,6 +547,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the left command key
      * @returns {KeyboardKey} The left command key
      */
@@ -593,6 +556,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the right command key
      * @returns {KeyboardKey} The right command key
      */
@@ -600,13 +564,17 @@
         return this.keyForName("MetaRight")
     }
 
-    // get key state helpers
-
+    /**
+     * @category Key State
+     * @description Checks if the shift key is down
+     * @returns {boolean} True if the shift key is down
+     */
     shiftIsDown () {
         return this.shiftKey().isDown()
     }
 
     /**
+     * @category Key State
      * @description Checks if the command key is down
      * @returns {boolean} True if the command key is down
      */
@@ -615,6 +583,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the equals sign key
      * @returns {KeyboardKey} The equals sign key
      */
@@ -623,6 +592,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the minus key
      * @returns {KeyboardKey} The minus key
      */
@@ -631,6 +601,7 @@
     }
 
     /**
+     * @category Special Keys
      * @description Gets the plus key
      * @returns {KeyboardKey} The plus key
      */
@@ -639,6 +610,7 @@
     }
 
     /**
+     * @category Key State
      * @description Checks if the plus key is down
      * @returns {boolean} True if the plus key is down
      */
@@ -647,6 +619,7 @@
     }
 
     /**
+     * @category Key State
      * @description Gets the currently down keys
      * @returns {Array} The currently down keys
      */
@@ -655,6 +628,7 @@
     }
 
     /**
+     * @category Key State
      * @description Gets the currently up keys
      * @returns {Array} The currently up keys
      */
@@ -663,6 +637,7 @@
     }
 
     /**
+     * @category Key State
      * @description Checks if there are any keys currently down
      * @returns {boolean} True if there are any keys down
      */
@@ -671,6 +646,7 @@
     }
 
     /**
+     * @category Key State
      * @description Gets the names of the currently down keys
      * @returns {Array} The names of the currently down keys
      */
@@ -679,6 +655,7 @@
     }
 
     /**
+     * @category Debugging
      * @description Shows the currently down keys
      */
     showDownKeys () {
@@ -686,6 +663,7 @@
     }
 
     /**
+     * @category Key Mapping
      * @description Gets all modifier names
      * @returns {Array} The modifier names
      */
@@ -701,6 +679,7 @@
     }
 
     /**
+     * @category Event Handling
      * @description Gets the modifier names for an event
      * @param {Event} event - The keyboard event
      * @returns {Array} The modifier names
@@ -740,6 +719,7 @@
     }
 
     /**
+     * @category Debugging
      * @description Shows the event details
      * @param {Event} event - The keyboard event
      */

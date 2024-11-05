@@ -66,6 +66,7 @@
             Set, 
             String,
             URL,
+            JSON
         ];
         classesToFix.forEach(aClass => aClass.__proto__ = Object);
         return this;

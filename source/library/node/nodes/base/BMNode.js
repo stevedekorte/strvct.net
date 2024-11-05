@@ -715,6 +715,7 @@
      * @returns {boolean} Whether this instance is equal to the other instance.
      */
     isEqual (aNode) {
+        //return this.puuid() === aNode.puuid();
 	    return this === aNode;
     }
 
@@ -1936,7 +1937,7 @@
 
         if (refSet.size) {
             json.definitions = this.jsonSchemaDefinitionsForRefSet(refSet);
-            console.log("Object.keys(json.definitions).length = ", Object.keys(json.definitions).length);
+            //console.log("Object.keys(json.definitions).length = ", Object.keys(json.definitions).length);
         }
 
         return json;
