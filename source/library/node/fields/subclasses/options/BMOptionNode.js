@@ -163,7 +163,8 @@
         }
         */
 
-        return this.title();
+        //return this.title();
+        return this._value;
     }
 
     /**

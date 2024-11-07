@@ -58,12 +58,12 @@
      * @returns {string[]} Array of valid letter spacing values.
      */
     static validLetterSpacingValues () {
-        const values = ["inherit"]
+        const values = ["inherit"];
         for (let i = 0; i < 0.51; i += 0.01) {
-            const s = (i + "").slice(0, 4)
-            values.push(s + "em")
+            const s = (i + "").slice(0, 4);
+            values.push(s + "em");
         }
-        return values
+        return values;
     }
 
     /**
@@ -72,12 +72,12 @@
      * @returns {string[]} Array of valid line height values.
      */
     static validLineHeightValues () {
-        const values = ["inherit"]
+        const values = ["inherit"];
         for (let i = 1; i < 3; i += 0.1) {
-            const s = (i + "").slice(0, 3)
-            values.push(s + "em")
+            const s = (i + "").slice(0, 3);
+            values.push(s + "em");
         }
-        return values
+        return values;
     }
 
     /**
@@ -86,7 +86,7 @@
      * @returns {string[]} Array of valid color values.
      */
     static validColors () {
-        return ["inherit", "", "transparent", "white", "black", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
+        return ["inherit", "", "transparent", "white", "black", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"];
     }
 
     /**
@@ -95,11 +95,11 @@
      * @returns {string[]} Array of valid padding values.
      */
     static validPaddingValues () {
-        const values = ["inherit"]
+        const values = ["inherit"];
         for (let i = 0; i < 41; i ++) {
-            values.push(i + "px")
+            values.push(i + "px");
         }
-        return values
+        return values;
     }
 
     /**
@@ -108,9 +108,9 @@
      * @returns {string[]} Array of valid border width values.
      */
     static validBorderWidthValues () {
-        const values = ["inherit"]
+        const values = ["inherit"];
         for (let i = 0; i < 10; i ++) {
-            values.push(i + "px")
+            values.push(i + "px");;
         }
         return values
     }
@@ -121,7 +121,7 @@
      * @returns {string[]} Array of valid border style values.
      */
     static validBorderStyleValues () {
-        return ["inherit", "none", "dotted", "dashed", "solid", /*"groove", "inset"*/]
+        return ["inherit", "none", "dotted", "dashed", "solid", /*"groove", "inset"*/];
     }
 
     /**
@@ -130,11 +130,11 @@
      * @returns {string[]} Array of valid font sizes.
      */
     static validFontSizes () {
-        const values = ["inherit"]
+        const values = ["inherit"];
         for (let i = 6; i < 80; i ++) {
-            values.push(i + "px")
+            values.push(i + "px");
         }
-        return values
+        return values;
     }
 
     /**
@@ -154,93 +154,94 @@
         // -----------------
 
         const addSlot = (name, path, label, values) => {
-            const slot = this.newSlot(name, "")
-            slot.setInspectorPath(path)
-            slot.setLabel(label)
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
+            const slot = this.newSlot(name, "");
+            slot.setInspectorPath(path);
+            slot.setLabel(label);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            //slot.setInitValue("inherit");
 
             //slot.setValidValues(values)
             
             if (values) {
                 const initValue = values.first();
                 //console.log("BMThemeState setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
-                slot.setInitValue(initValue) // first value is typically "inherit"
-                slot.setValidValues(values)
+                slot.setInitValue(initValue); // first value is typically "inherit"
+                slot.setValidValues(values);
             }
             
-            styleSlots.push(slot)
+            styleSlots.push(slot);
         }
 
         // --- colors ---
 
-        addSlot("color", "colors", "color", this.thisClass().validColors())
-        addSlot("backgroundColor", "colors", "background", this.thisClass().validColors())
-        addSlot("opacity", "colors", "opacity", ["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", ""])
+        addSlot("color", "colors", "color", this.thisClass().validColors());
+        addSlot("backgroundColor", "colors", "background", this.thisClass().validColors());
+        addSlot("opacity", "colors", "opacity", ["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", ""]);
 
         // --- font ---
 
-        addSlot("fontFamily", "font", "family", null)
-        addSlot("fontSize", "font", "size", this.thisClass().validFontSizes())
+        addSlot("fontFamily", "font", "family", ["inherit"]);
+        addSlot("fontSize", "font", "size", this.thisClass().validFontSizes());
 
         // weight and style don't work with some good fonts like
         // helvetica as it uses a different font for each,
         // so hold off on these until we have a UI to manage this stuff
-        //addSlot("fontWeight", "font", "weight", ["inherit", "normal", "bold"])
-        //addSlot("fontStyle", "font", "style", ["inherit", "normal", "italic", "oblique"])
+        //addSlot("fontWeight", "font", "weight", ["inherit", "normal", "bold"]);
+        //addSlot("fontStyle", "font", "style", ["inherit", "normal", "italic", "oblique"]);
 
-        addSlot("letterSpacing", "font", "letter spacing", this.thisClass().validLetterSpacingValues())
-        addSlot("lineHeight", "font", "line height", this.thisClass().validLineHeightValues())
+        addSlot("letterSpacing", "font", "letter spacing", this.thisClass().validLetterSpacingValues());
+        addSlot("lineHeight", "font", "line height", this.thisClass().validLineHeightValues());
 
 
         // --- padding ---
 
         {
-            const paddings = this.thisClass().validPaddingValues()
-            addSlot("paddingLeft", "padding", "left", paddings)
-            addSlot("paddingRight", "padding", "right", paddings)
-            addSlot("paddingTop", "padding", "top", paddings)
-            addSlot("paddingBottom", "padding", "bottom", paddings)
+            const paddings = this.thisClass().validPaddingValues();
+            addSlot("paddingLeft", "padding", "left", paddings);
+            addSlot("paddingRight", "padding", "right", paddings);
+            addSlot("paddingTop", "padding", "top", paddings);
+            addSlot("paddingBottom", "padding", "bottom", paddings);
         }
 
         // --- margin ---
 
         {
-            const margins = this.thisClass().validPaddingValues()
-            addSlot("marginLeft", "margin", "left", margins)
-            addSlot("marginRight", "margin", "right", margins)
-            addSlot("marginTop", "margin", "top", margins)
-            addSlot("marginBottom", "margin", "bottom", margins)
+            const margins = this.thisClass().validPaddingValues();
+            addSlot("marginLeft", "margin", "left", margins);
+            addSlot("marginRight", "margin", "right", margins);
+            addSlot("marginTop", "margin", "top", margins);
+            addSlot("marginBottom", "margin", "bottom", margins);
         }
         
 
         // --- border ---
         
         {
-            const styles = this.thisClass().validBorderStyleValues()
-            addSlot("borderLeftStyle", "border/left", "style", styles)
-            addSlot("borderRightStyle", "border/right", "style", styles)
-            addSlot("borderTopStyle", "border/top", "style", styles)
-            addSlot("borderBottomStyle", "border/bottom", "style", styles)
+            const styles = this.thisClass().validBorderStyleValues();
+            addSlot("borderLeftStyle", "border/left", "style", styles);
+            addSlot("borderRightStyle", "border/right", "style", styles);
+            addSlot("borderTopStyle", "border/top", "style", styles);
+            addSlot("borderBottomStyle", "border/bottom", "style", styles);
 
-            const widths = this.thisClass().validBorderWidthValues()
-            addSlot("borderLeftWidth", "border/left", "width", widths)
-            addSlot("borderRightWidth", "border/right", "width", widths)
-            addSlot("borderTopWidth", "border/top", "width", widths)
-            addSlot("borderBottomWidth", "border/bottom", "width", widths)
+            const widths = this.thisClass().validBorderWidthValues();
+            addSlot("borderLeftWidth", "border/left", "width", widths);
+            addSlot("borderRightWidth", "border/right", "width", widths);
+            addSlot("borderTopWidth", "border/top", "width", widths);
+            addSlot("borderBottomWidth", "border/bottom", "width", widths);
 
-            const colors = this.thisClass().validColors()
-            addSlot("borderLeftColor", "border/left", "color", colors)
-            addSlot("borderRightColor", "border/right", "color", colors)
-            addSlot("borderTopColor", "border/top", "color", colors)
-            addSlot("borderBottomColor", "border/bottom", "color", colors)
+            const colors = this.thisClass().validColors();
+            addSlot("borderLeftColor", "border/left", "color", colors);
+            addSlot("borderRightColor", "border/right", "color", colors);
+            addSlot("borderTopColor", "border/top", "color", colors);
+            addSlot("borderBottomColor", "border/bottom", "color", colors);
 
-            const radii = this.thisClass().validBorderWidthValues()
-            addSlot("borderLeftRadius", "border/left", "radius", radii)
-            addSlot("borderRightRadius", "border/right", "radius", radii)
-            addSlot("borderTopRadius", "border/top", "radius", radii)
-            addSlot("borderBottomRadius", "border/bottom", "radius", radii)
+            const radii = this.thisClass().validBorderWidthValues();
+            addSlot("borderLeftRadius", "border/left", "radius", radii);
+            addSlot("borderRightRadius", "border/right", "radius", radii);
+            addSlot("borderTopRadius", "border/top", "radius", radii);
+            addSlot("borderBottomRadius", "border/bottom", "radius", radii);
         }
 
         // ---------------------
@@ -334,13 +335,13 @@
      * @description Prepares for first access.
      */
     prepareForFirstAccess () {
-        const fields = this.getFields()
+        const fields = this.getFields();
         if (fields.length) {
             fields.forEach(field => {
                 if (field.pickLeafSubnodesMatchingValue) {
-                    field.pickLeafSubnodesMatchingValue() 
+                    field.pickLeafSubnodesMatchingValue() ;
                 }
-            })
+            });
         }
     }
 
@@ -350,23 +351,25 @@
      */
     getFields () {
         return this.selectSubnodesRecursively(sn => {
-            return sn.thisClass().isKindOf(BMField)
-        })
+            return sn.thisClass().isKindOf(BMField);
+        });
     }
 
     /**
      * @description Sets up subnodes.
      */
     setupSubnodes () {
-        this.removeAllSubnodes()
+        this.removeAllSubnodes();
 
         // need this because the fonts typically aren't loaded until after this prototype is initialized
         this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((instance) => { 
             //debugger;
-            return BMResources.shared().fonts().allFontNames() 
-        })
+            const values = BMResources.shared().fonts().allFontNames();
+            values.unshift("inherit");
+            return values;
+        });
 
-        this.addSubnodeFieldsForSlots(this.styleSlots())
+        this.addSubnodeFieldsForSlots(this.styleSlots());
     }
 
     /**
@@ -374,9 +377,9 @@
      * @returns {BMThemeState} The instance.
      */
     clearStyleCache () {
-        this.setStyleCacheMap(null)
-        //console.log("clearStyleCache")
-        return this
+        this.setStyleCacheMap(null);
+        //console.log("clearStyleCache");
+        return this;
     }
 
     /**
@@ -385,7 +388,7 @@
      * @returns {*} The cached style value.
      */
     getCachedStyleValueNamed (name) {
-        return this.getStyleCacheMap().at(name)
+        return this.getStyleCacheMap().at(name);
     }
 
     /**
@@ -394,9 +397,9 @@
      */
     getStyleCacheMap () {
         if (!this.styleCacheMap()) {
-            this.setStyleCacheMap(this.computeStyleCacheMap())
+            this.setStyleCacheMap(this.computeStyleCacheMap());
         }
-        return this.styleCacheMap()
+        return this.styleCacheMap();
     }
 
     /**
@@ -404,13 +407,13 @@
      * @returns {Map} The computed style cache map.
      */
     computeStyleCacheMap () {
-        const map = new Map()
+        const map = new Map();
         this.styleSlots().forEach(slot => { 
-            const name = slot.name()
-            const v = this.getStyleValueNamed(name)
-            map.set(name, v)
+            const name = slot.name();
+            const v = this.getStyleValueNamed(name);
+            map.set(name, v);
         })
-        return map
+        return map;
     }
 
     /**
@@ -418,7 +421,7 @@
      * @returns {*} The theme class.
      */
     themeClass () {
-        return this.themeStates().parentNode()
+        return this.themeStates().parentNode();
     }
 
     /**
@@ -426,7 +429,7 @@
      * @returns {*} The parent theme class.
      */
     parentThemeClass () {
-        return this.themeClass().parentThemeClass()
+        return this.themeClass().parentThemeClass();
     }
 
     /**
@@ -434,7 +437,7 @@
      * @returns {*} The theme states.
      */
     themeStates () {
-        return this.parentNode()
+        return this.parentNode();
     }
 
     /**
@@ -443,7 +446,7 @@
      */
     
     parentThemeState () {
-        return this.themeStates().subnodeBefore(this)
+        return this.themeStates().subnodeBefore(this);
     }
 
     /*
@@ -457,56 +460,56 @@
      * @returns {*} The style value.
      */
     getStyleValueNamed (name, depth = 1) {
-        assert(depth < 20)
+        assert(depth < 20);
 
-        const getterMethod = this[name]
+        const getterMethod = this[name];
 
         /*
-            const themeClassName = this.themeClass().title()
-            const stateName = this.title()
-            const spacer = "-".repeat(depth)
-            console.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')")
+            const themeClassName = this.themeClass().title();
+            const stateName = this.title();
+            const spacer = "-".repeat(depth);
+            console.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')");
             //debugger
         */
         
-        let v = null
+        let v = null;
 
         if (getterMethod) {
-            v = getterMethod.apply(this)
+            v = getterMethod.apply(this);
             if (v === "" || v === "inherit") { 
-                v = null
+                v = null;
             }
         } else {
-            const errorMsg = "missing getter method: " + this.type() + "." + name + "()"
-            console.warn(errorMsg)
-            //throw new Error(errorMsg)
+            const errorMsg = "missing getter method: " + this.type() + "." + name + "()";
+            console.warn(errorMsg);
+            //throw new Error(errorMsg);
         }
 
         // lookup in ThemeClass's parent
         if (v === null) {
-            const parent = this.parentThemeClass() // parent theme class eg: Default -(child)-> Tile -(child)-> TextTile
-            assert(parent !== this.themeClass())
+            const parent = this.parentThemeClass(); // parent theme class eg: Default -(child)-> Tile -(child)-> TextTile
+            assert(parent !== this.themeClass());
             if (parent) {
-                const stateName = this.title()
-                const state = parent.stateWithName(stateName)
-                v = state.getStyleValueNamed(name, depth+1) // will recurse through themeClass parents
+                const stateName = this.title();
+                const state = parent.stateWithName(stateName);
+                v = state.getStyleValueNamed(name, depth+1); // will recurse through themeClass parents
             }
         }
 
         // lookup in ThemeState's parent
         if (v === null) {
-            const parent = this.parentThemeState()// parent theme state eg: active -(child)-> selected -(child)-> unselected
-            assert(parent !== this)
+            const parent = this.parentThemeState(); // parent theme state eg: active -(child)-> selected -(child)-> unselected
+            assert(parent !== this);
             if (parent) {
-                v = parent.getStyleValueNamed(name, depth+1) // will recurse through themeStates and each state will recurse themeClass parents
+                v = parent.getStyleValueNamed(name, depth+1); // will recurse through themeStates and each state will recurse themeClass parents
             }
         }
 
         if (v) {
-            //console.log("found: '" + v + "'")
+            //console.log("found: '" + v + "'");
         }
 
-        return v
+        return v;
     }
 
     // --- apply style  ---
@@ -517,8 +520,8 @@
      * @returns {BMThemeState} The instance.
      */
     applyToView (aView) {
-        this.applyStyleSlotsToView(this.styleSlots(), aView)
-        return this
+        this.applyStyleSlotsToView(this.styleSlots(), aView);
+        return this;
     }
 
     /**
@@ -527,9 +530,9 @@
      * @returns {BMThemeState} The instance.
      */
     applyNonBorderStylesToView (aView) {
-        //debugger
-        this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView)
-        return this
+        //debugger;
+        this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView);
+        return this;
     }
 
     /**
@@ -538,8 +541,8 @@
      * @returns {BMThemeState} The instance.
      */
     applyBorderStylesToView (aView) {
-        this.applyStyleSlotsToView(this.borderStyleSlots(), aView)
-        return this
+        this.applyStyleSlotsToView(this.borderStyleSlots(), aView);
+        return this;
     }
 
     // --- apply styles slots ---
@@ -552,25 +555,25 @@
      */
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
-        //console.log("applyStyleSlotsToView ", aView.debugTypeId())
+        //console.log("applyStyleSlotsToView ", aView.debugTypeId());
         styleSlots.forEach(slot => { 
-            const name = slot.name()
+            const name = slot.name();
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
-                const v = this.getCachedStyleValueNamed(name)
+                const v = this.getCachedStyleValueNamed(name);
                 /*
                 if (v) {
-                    const themeClassName = this.themeClass().title()
-                    const stateName = this.title()
-                    console.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node())
+                    const themeClassName = this.themeClass().title();
+                    const stateName = this.title();
+                    console.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node());
                 }
                 */
-                aView.performIfResponding(aView.setterNameForSlot(name), v)
+                aView.performIfResponding(aView.setterNameForSlot(name), v);
             } else {
-                console.log("style " + name + " locked on view " + aView.type())
+                console.log("style " + name + " locked on view " + aView.type());
             }
         })
-        return this
+        return this;
     }
 
     // --- changes ---
@@ -580,8 +583,8 @@
      * @returns {boolean} False.
      */
     onDidEdit () {
-        console.log(this.typeId() + " onDidEdit")
-        this.setStyleCacheMap(null)
+        console.log(this.typeId() + " onDidEdit");
+        this.setStyleCacheMap(null);
         debugger;
         return false
     }
@@ -596,11 +599,11 @@
     didUpdateSlot (aSlot, oldValue, newValue) {
         if (this.hasDoneInit()) {
             if (aSlot.name() !== "styleCacheMap") { // hack
-                DocumentBody.shared().resyncAllViews() // this will apply any new styles
-                this.scheduleCacheClears()
+                DocumentBody.shared().resyncAllViews(); // this will apply any new styles
+                this.scheduleCacheClears();
             }
         }
-        return super.didUpdateSlot(aSlot, oldValue, newValue) 
+        return super.didUpdateSlot(aSlot, oldValue, newValue);
     }
 
     /**
@@ -609,14 +612,14 @@
     scheduleCacheClears () {
         // need to clear our sibling caches as there is inheritance between states,
         // so our change may invalidate attributes of states that inherit from us
-        this.parentNode().subnodes().forEach(sn => sn.scheduleMethod("clearStyleCache"))
+        this.parentNode().subnodes().forEach(sn => sn.scheduleMethod("clearStyleCache"));
     }
     
     /**
      * @description Did reorder parent subnodes.
      */
     didReorderParentSubnodes () {
-        this.scheduleMethod("clearStyleCache")
+        this.scheduleMethod("clearStyleCache");
     }
 
     /**
@@ -624,16 +627,16 @@
      * @returns {Map} The style map.
      */
     styleMap () {
-        const map = new Map()
-        const title = this.title()
+        const map = new Map();
+        const title = this.title();
         this.styleSlots().forEach(slot => { 
-            const name = slot.name()
-            //const v = this.getCachedStyleValueNamed(name)
-            const v = this.getStyleValueNamed(name)
-            map.set(title + ". " + name, v)
+            const name = slot.name();
+            //const v = this.getCachedStyleValueNamed(name);
+            const v = this.getStyleValueNamed(name);
+            map.set(title + ". " + name, v);
             // these look like: disabled.backgroundColor: "black"
         })
-        return map
+        return map;
     }
 
     // --- helpers ---
@@ -644,7 +647,7 @@
      * @returns {BMView} The attribute.
      */
     attributeNamed (name) {
-        return this.firstSubnodeWithTitle(name)
+        return this.firstSubnodeWithTitle(name);
     }
 
     // --- defaults ----
@@ -654,10 +657,10 @@
      * @returns {BMThemeState} The instance.
      */
     setupAsDefault () {
-        const title = this.title()
-        const methodName = "setupAsDefault" + this.title().capitalized() + "State"
-        this[methodName].call(this)
-        return this
+        const title = this.title();
+        const methodName = "setupAsDefault" + this.title().capitalized() + "State";
+        this[methodName].call(this);
+        return this;
     }
 
     /**
@@ -665,8 +668,8 @@
      * @returns {BMThemeState} The instance.
      */
     setupAsDefaultActiveState () {
-        //this.setColor("white")
-        //this.setBackgroundColor("#333")
+        //this.setColor("white");
+        //this.setBackgroundColor("#333");
         this.setThemeAttribute("color", "white");
         this.setThemeAttribute("backgroundColor", "#333");
         //this.setThemeAttribute("fontWeight", "normal");

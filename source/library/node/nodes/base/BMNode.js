@@ -1376,7 +1376,7 @@
      */
     onDidMutateObject (anObject) {
         if (anObject === this._subnodes) {
-            //assert(!this.subnodes().hasDuplicates())
+            //assert(!this.subnodes().hasDuplicates());
             this.didChangeSubnodeList();
         }
     }
@@ -1427,32 +1427,32 @@
         } else {
             /*
             if (this.hasNullSubnodes()) {
-                console.warn(this.debugTypeId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes())
-                this.subnodes().removeOccurancesOf(null)
-                //debugger
+                console.warn(this.debugTypeId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes());
+                this.subnodes().removeOccurancesOf(null);
+                //debugger;
             }
             */
 
             if(this.hasDuplicateSubnodes()) {
-                console.warn(this.debugTypeId() + " hasDuplicateSubnodes - removing duplicates and continuing")
-                debugger
-                newValue.removeDuplicates()
+                console.warn(this.debugTypeId() + " hasDuplicateSubnodes - removing duplicates and continuing");
+                debugger;
+                newValue.removeDuplicates();
             }
         }
 
-        assert(newValue.owner() === null)
-        newValue.setOwner(this)
+        assert(newValue.owner() === null);
+        newValue.setOwner(this);
 
-        this.watchSubnodes()
+        this.watchSubnodes();
         if (this._subnodes.contains(null)) { // what would cause this?
             //debugger;
-            console.warn("found null in subnodes array - removing")
-            this._subnodes.filterInPlace(sn => !(sn === null) )
+            console.warn("found null in subnodes array - removing");
+            this._subnodes.filterInPlace(sn => !(sn === null) );
         }
         
-        this._subnodes.forEach(sn => sn.setParentNode(this)) // TODO: isn't this done elsewhere?
-        this.didChangeSubnodeList() // not handled automatically
-        return this
+        this._subnodes.forEach(sn => sn.setParentNode(this)); // TODO: isn't this done elsewhere?
+        this.didChangeSubnodeList(); // not handled automatically
+        return this;
     }
     
     /**
@@ -1461,11 +1461,11 @@
      * @returns {BMNode} This instance.
      */
     assertSubnodesHaveParentNodes () {
-        const missing = this.subnodes().detect(subnode => !subnode.parentNode())
+        const missing = this.subnodes().detect(subnode => !subnode.parentNode());
         if (missing) {
-            throw new Error("missing parent node on subnode " + missing.type())
+            throw new Error("missing parent node on subnode " + missing.type());
         }
-        return this
+        return this;
     }
 
     // --- subnode sorting ---
@@ -1477,8 +1477,8 @@
      * @returns {BMNode} This instance.
      */
     setSubnodeSortFunc (f) {
-        this.subnodes().setSortFunc(f)
-	    return this
+        this.subnodes().setSortFunc(f);
+	    return this;
     }
     
     /**
@@ -1487,7 +1487,7 @@
      * @returns {boolean} True if the subnodes are sorted, false otherwise.
      */
     doesSortSubnodes () {
-	    return this.subnodes().doesSort()
+	    return this.subnodes().doesSort();
     }
     
     // --- subnode indexing ---
@@ -1499,9 +1499,9 @@
      */
     lazyIndexedSubnodes () {
         if (!this.subnodes().indexClosure()) {
-            this.subnodes().setIndexClosure( sn => sn.hash() )
+            this.subnodes().setIndexClosure( sn => sn.hash() );
         }
-	    return this.subnodes()
+	    return this.subnodes();
     }
 	
     /**
@@ -1511,7 +1511,7 @@
      * @returns {BMNode|null} The subnode with the given hash, or null if not found.
      */
     subnodeWithHash (h) {
-        return this.lazyIndexedSubnodes().itemForIndexKey(h)
+        return this.lazyIndexedSubnodes().itemForIndexKey(h);
     }
 	
     /**
@@ -1521,11 +1521,11 @@
      * @returns {BMNode} This instance.
      */
     removeSubnodeWithHash (h) {
-	    const subnode = this.subnodeWithHash(h)
+	    const subnode = this.subnodeWithHash(h);
 	    if (subnode) {
-	        this.removeSubnode(subnode)
+	        this.removeSubnode(subnode);
 	    }
-	    return this
+	    return this;
     }
 	
     /**
@@ -1535,7 +1535,7 @@
      * @returns {boolean} True if the subnode exists, false otherwise.
      */
     hasSubnodeWithHash (h) {
-	    return this.lazyIndexedSubnodes().hasIndexKey(h)
+	    return this.lazyIndexedSubnodes().hasIndexKey(h);
     }
 	
     // visibility
@@ -1546,7 +1546,7 @@
      * @returns {BMNode} This instance.
      */
     nodeBecameVisible () {
-	    return this
+	    return this;
     }
 
     // -- view selection request events ---
@@ -1557,7 +1557,7 @@
      * @returns {boolean} False to allow propogation up the parentNode line.
      */
     onRequestSelectionOfDecendantNode () {
-        return false // allow propogation up the parentNode line
+        return false; // allow propogation up the parentNode line
     }
 
     /**
@@ -1566,8 +1566,8 @@
      * @returns {BMNode} This instance.
      */
     onRequestSelectionOfNode () {
-        this.tellParentNodes("onRequestSelectionOfDecendantNode", this)
-        return this
+        this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
+        return this;
     }
 
     /** 
@@ -1576,8 +1576,8 @@
      * @returns {BMNode} This instance.
      */
     onTapOfNode () {
-        this.tellParentNodes("onTapOfDecendantNode", this)
-        return this
+        this.tellParentNodes("onTapOfDecendantNode", this);
+        return this;
     }
 
     /**
@@ -1586,7 +1586,7 @@
      * @returns {string} The debug type ID.
      */
     debugTypeId () {
-        return this.typeId() + " '" + this.title() + "'"
+        return this.typeId() + " '" + this.title() + "'";
     }
 
     // ----
@@ -1596,31 +1596,31 @@
         // if there's a method for this particular slot use it, 
         // otherwise fail back on the validValues declared in the Slot
 
-        const getterName = "validValuesForSlot" + slotName.capitalized()
-        const m = this[getterName]
+        const getterName = "validValuesForSlot" + slotName.capitalized();
+        const m = this[getterName];
         if (m) {
-            const validValues = m.call(this)
+            const validValues = m.call(this);
             if (validValues !== undefined) {
-                return validValues
+                return validValues;
             }
         } 
         
-        const slot = this.thisPrototype().slotNamed(slotName)
-        assert(slot)
-        return slot.validValues()
+        const slot = this.thisPrototype().slotNamed(slotName);
+        assert(slot);
+        return slot.validValues();
     }
     */
 
     /*
     moveSubnodeToNode (aSubnode, aNode) {
-        this.removeSubnode(aSubnode)
-        aNode.addSubnode(aSubnode)
-        return this
+        this.removeSubnode(aSubnode);
+        aNode.addSubnode(aSubnode);
+        return this;
     }
 
     moveSubnodesToNode (aNode) {
         this.subnodes().shallowCopy().forEach(sn => {
-            this.moveSubnodeToNode(sn, aNode)
+            this.moveSubnodeToNode(sn, aNode);
         })
     }
     */
@@ -1636,14 +1636,14 @@
             const noSiblings = this.subnodes().length == 1 && sn.subnodes().length > 0;
             const oneChild = sn.subnodes().length == 1;
 
-            const sns = sn.subnodes().shallowCopy()
-            sns.forEach(node => node.removeFromParentNode())
+            const sns = sn.subnodes().shallowCopy();
+            sns.forEach(node => node.removeFromParentNode());
 
             if (noSiblings || oneChild) {
-                this.replaceSubnodeWithSubnodes(sn, sns)
+                this.replaceSubnodeWithSubnodes(sn, sns);
             }
         })
-        return this
+        return this;
     }
 
     /**
@@ -1654,7 +1654,7 @@
      */
     leafSubnodes (results = []) {
          this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
-         return results
+         return results;
     }
 
     /**
@@ -1666,11 +1666,11 @@
 
     leafSubnodesIncludingSelf (results = []) {
         if (!this.hasSubnodes()) {
-            results.push(this)
+            results.push(this);
         } else {
             this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
         }
-        return results
+        return results;
     }
 
     // --- options helper ---- TODO: move elsewhere
@@ -1682,27 +1682,27 @@
      * @returns {BMNode} The new node.
      */
     addOptionNodeForDict (item) {
-        const hasSubnodes = item.options && item.options.length
+        const hasSubnodes = item.options && item.options.length;
         const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
-        const newNode = nodeClass.clone().setTitle(item.label)
+        const newNode = nodeClass.clone().setTitle(item.label);
         
         if (!hasSubnodes) {
-            newNode.setValue(item.value ? item.value : item.label)
-            newNode.justSetIsPicked(item.isPicked === true)
-            newNode.setNodeCanEditTitle(false)
+            newNode.setValue(item.value ? item.value : item.label);
+            newNode.justSetIsPicked(item.isPicked === true);
+            newNode.setNodeCanEditTitle(false);
         }
 
         if (item.subtitle) {
-            newNode.setSubtitle(item.subtitle)
+            newNode.setSubtitle(item.subtitle);
         }
 
-        this.addSubnode(newNode)
+        this.addSubnode(newNode);
 
         if (hasSubnodes) {
-            newNode.addOptionNodesForArray(item.options)
+            newNode.addOptionNodesForArray(item.options);
         }
 
-        return newNode
+        return newNode;
     }
 
     /**
@@ -1714,10 +1714,10 @@
     addOptionNodesForArray (itemDicts) {
         if (itemDicts) {
             itemDicts.forEach(subitemDict => {
-                this.addOptionNodeForDict(subitemDict)
+                this.addOptionNodeForDict(subitemDict);
             })
         }
-        return this   
+        return this;
     }
 
     // --- jsonArchive ---
@@ -1768,20 +1768,20 @@
      * @returns {object} The JSON archive.
      */
     jsonArchive () {
-        const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true) 
+        const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
         const dict = {
             type: this.type()
-        }
+        };
 
         jsonArchiveSlots.forEach(slot => {
-            const k = slot.getterName()
-            const v = slot.onInstanceGetValue(this)
+            const k = slot.getterName();
+            const v = slot.onInstanceGetValue(this);
             dict[k] = v;
-        })
+        });
 
         //console.log(this.typeId() + ".jsonArchive() = " + JSON.stableStringify(dict, 2, 2));
 
-        return dict
+        return dict;
     }
     
     /**
@@ -1797,8 +1797,8 @@
         const aClass = getGlobalThis()[className];
         assert(aClass.isKindOf(this)); // sanity check
 
-        const instance = aClass.clone().setJsonArchive(json)
-        return instance
+        const instance = aClass.clone().setJsonArchive(json);
+        return instance;
     }
 
     // --- JSON schema properties ---

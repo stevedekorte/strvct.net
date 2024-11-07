@@ -177,6 +177,9 @@
      * @category Comparison
      */
     isEqual (anObject) {
+        if (!Type.isObject(anObject)) {
+            return false;
+        }
         const entries = Object.entries(this);
         const otherEntries = Object.entries(anObject);
         if (entries.length !== otherEntries.length) {

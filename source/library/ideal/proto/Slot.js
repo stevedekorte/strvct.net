@@ -852,12 +852,20 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     const validValues = slot.validValues();
                     const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with invalid argument value (" + Type.typeName(newValue) + ") '" + newValue + "' not in valid values: " + validValues;
                     console.log(errorMsg);
-                    let initValue = slot.initValue();
-                    //assert(initValue);
+                    const initValue = slot.initValue();
                     console.log("RESOLUTION: setting value to initValue: ", initValue);
                     //debugger;
+                    let resolvedValue = initValue;
+                    //debugger;
+                    if (!slot.validateValue(resolvedValue)) {
+                        console.log("RESOLUTION: setting value to initValue: ", resolvedValue);
+                        resolvedValue = validValues.first();
+                        if (!slot.validateValue(resolvedValue)) {
+                            console.log("RESOLUTION: setting value to validValues.first(): ", resolvedValue);
+                            throw new Error(errorMsg);
+                        }
+                    }
                     newValue = initValue; //validValues.first(); // not safe
-                    //throw new Error(errorMsg);
                 }
             }
 

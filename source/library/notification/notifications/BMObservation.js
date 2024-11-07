@@ -225,6 +225,9 @@
      * @category Comparison
      */
     isEqual (obs) {
+        if (!Type.isObject(anObject)) {
+            return false;
+        }
         return this.obsHash() === obs.obsHash();
     }
 

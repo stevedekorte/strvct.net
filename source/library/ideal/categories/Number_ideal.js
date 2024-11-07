@@ -278,5 +278,9 @@ const Base64 = (function () {
     hashCode64 () {
         return this;
     }
+
+    asString () {
+        return this.toString();
+    }
     
 }).initThisCategory();

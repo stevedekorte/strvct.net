@@ -112,6 +112,21 @@ getGlobalThis().Type = (class Type extends Object {
         return result;
     }
 
+    static valuesAreEqual (a, b) {
+        if (a === b) {
+            return true;
+        }
+
+        if (Type.isObject(a)) {
+            return a.isEqual(b);
+        }
+
+        if (Type.isNullOrUndefined(a) || Type.isNullOrUndefined(b)) {
+            return a === b;
+        }
+        throw new Error("valuesAreEqual does not know how to compare values of type " + Type.typeName(a) + " and " + Type.typeName(b));
+    }
+
     /**
      * Checks if the given value is a Promise.
      * @param {*} v - The value to check.

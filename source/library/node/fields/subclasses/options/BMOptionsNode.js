@@ -10,14 +10,13 @@
  * 
  *  computedValidValues() will use validValuesClosure() if it is set, otherwise it will use validValues().
  * 
- * 
  * Idea:
  * 
- * have pickedValues() always return an array of the form:
+ * have pickedValues() always return an array of (option leaf nodes) the form:
  * 
  * [
  *     {
- *         path: ["path component A", "path component B", ...],
+ *         path: ["path component A", "path component B", ...], // the UI will construct folders to allow user to browse this options path
  *         label: "", //?
  *         subtitle: null, //
  *         value: aValue, // and value that is valid JSON (no undefined, Maps, non-dict Objects, etc)
@@ -76,6 +75,7 @@
         /**
          * @member {boolean} allowsMultiplePicks
          * @description Determines if multiple options can be selected.
+         * When true, pickedValues() returns an array of values.
          */
         {
             const slot = this.newSlot("allowsMultiplePicks", false);
@@ -266,11 +266,22 @@
     pickedItems () {
         return this.pickedLeafSubnodes().map(sn => {
             return {
+                path: sn.parentChainNodeTo(this).map(sn => sn.title()),
                 label: sn.label(),
-                value: sn.value(),
-                path: sn.parentChainNodeTo(this).map(sn => sn.title())
+                value: sn.value()
             };
         });
+    }
+
+    pickedValue () {
+        assert(!this.allowsMultiplePicks());
+        const pickedValues = this.pickedValues();
+        if (pickedValues.length === 0) {
+            return null;
+        } else if (pickedValues.length === 1) {
+            return pickedValues.first();
+        }
+        throw Error.exception("BMOptionsNode.pickedValue() called with multiple picks");
     }
 
     /**
@@ -283,8 +294,11 @@
             this.unpickLeafSubnodesExcept(anOptionNode);
         }
         
-        const v = this.formatedPickedValues();
-        this.setValue(v);
+        if (this.allowsMultiplePicks()) {
+            this.setValue(this.formatedPickedValues());
+        } else {
+            this.setValue(this.pickedValue());
+        }
 
         return this;
     }
@@ -294,14 +308,8 @@
      * @returns {*} The formatted picked values.
      */
     formatedPickedValues () {
-        const pickedValues = this.pickedValues();
-        
-        let v = null;
-
-        if (pickedValues.length) {
-            v = this.allowsMultiplePicks() ? pickedValues : pickedValues.first();
-        }
-        return v;
+        const pickedValues = this.pickedValues(); // always an array
+        return pickedValues;
     }
 
     /**
@@ -311,6 +319,18 @@
      */
     setValueOnTarget (v) {
         debugger;
+        if (this.allowsMultiplePicks()) {
+            if (!Type.isArray(v)) {
+                console.warn("ERROR: BMOptionsNode.setValueOnTarget() called with non array value when allowsMultiplePicks is true");
+                debugger;
+            }
+        } else {
+            if (Type.isArray(v)) {
+                // this isn't necessarily an error, but it is unexpected
+                console.warn("WARNING: BMOptionsNode.setValueOnTarget() called with array when allowsMultiplePicks is true");
+                debugger;
+            }
+        }
         super.setValueOnTarget(v);
         return this;
     }
@@ -435,14 +455,13 @@
      * @returns {boolean} True if the target has the pick.
      */
     targetHasPick (v) {
-        const value = this.value();
-
         if (this.allowsMultiplePicks()) {
-            const values = Type.isArray(value) ? value : null;
-            return values.includes(v);
-        } 
-        
-        return v === value;
+            const values = this.value();
+            assert(Type.isArray(values));
+            return values.includes(v); // should we check for identity or equality?
+        } else {
+            return v === this.value();
+        }
     }
 
     /**
@@ -451,6 +470,10 @@
      * @returns {Object} An object representing the item.
      */
     itemForValue (v) {
+        if (Type.isDictionary(v)) {
+            return v;
+        }
+
         if (Type.isNull(v)) {
             return {
                 label: "null",
@@ -468,25 +491,8 @@
                 options: null
             };
         }
-        assert(Type.isDictionary(v));
-        return v;
-    }
-
-    /**
-     * @description Gets the value as an array.
-     * @returns {Array} The value as an array.
-     */
-    valueAsArray () {
-        const target = this.target();
-        const value = target ? this.value() : undefined;
-
-        if (value === null || value === undefined) {
-            return [];
-        } else if (this.allowsMultiplePicks()) {
-            return value;
-        } else {
-            return [value];
-        }
+        
+        throw Error.exception("BMOptionsNode.itemForValue() called with invalid value: " + v);
     }
 
     /**
@@ -518,12 +524,11 @@
      * @returns {boolean} True if the picks match.
      */
     picksMatch () {
-        const a = JSON.stableStringify(this.valueAsArray());
-        const b = JSON.stableStringify(this.pickedValues());
-        if (a === '[""]' && b == '[]') {
-            return true;
+        if (this.allowsMultiplePicks()) {
+            return Type.valuesAreEqual(this.value(), this.pickedValues());
+        } else {
+            return Type.valuesAreEqual(this.value(), this.pickedValue());
         }
-        return a === b;
     }
 
     /**
@@ -547,39 +552,80 @@
     setupSubnodes () {
         if (this.needsSyncToSubnodes()) {
             this.removeAllSubnodes();
-            const validValues = this.computedValidValues();
+            const validItems = this.computedValidValues();
 
-            validValues.forEach(v => {
+            validItems.forEach(v => {
                 const item = this.itemForValue(v);
                 this.addOptionNodeForDict(item);
             });
-            this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validValues));
+            this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validItems));
 
             this.leafSubnodes().forEach(sn => {
                 sn.setIsPicked(this.targetHasPick(sn.value()));
             });
 
             if (this.needsSyncToSubnodes()) {
-                // this can happen if the target is set to a value that is not in the validValues array
+                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after setupSubnodes!");
+
+                /*
+                if (this.allowsMultiplePicks()) {
+                    console.log("  value: ", JSON.stableStringify(this.value()));
+                    console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
+                    debugger;
+                } else {
+                    console.log("  value: ", JSON.stableStringify(this.value()));
+                    console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
+                }
+                */
+
+                // this can happen if the target has a value that is not in the validItems array
                 //debugger;
                 console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after sync!");
                 console.log("Let's try syncing the picked values to the target:");
                 console.log("VALID VALUES:");
                 console.log("  computedValidValues: " + JSON.stableStringify(this.computedValidValues()));
+                console.log("  validValuesMatch: " + this.validValuesMatch());
+                console.log("  picksMatch: " + this.picksMatch());
+
                 console.log("  syncedValidItemsJsonString(): " +  this.syncedValidItemsJsonString());
                 console.log("BEFORE:");
-                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()));
-                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
-
-                this.valueAsArray();
-
-                this.setValueOnTarget(this.formatedPickedValues());
+                console.log("  value: ", JSON.stableStringify(this.value()));
                 
+                if (this.allowsMultiplePicks()) {
+                    console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
+                } else {
+                    console.log("  pickedValue: ", JSON.stableStringify(this.pickedValue()));
+                }
+
+                // In this case, let's set it to the first valid value.
+
+                let resolvedValue = undefined;
+
+                if (this.allowsMultiplePicks()) {
+                    resolvedValue = this.pickedValues();
+                    console.log("  allowsMultiplePicks so using pickedValues: ", resolvedValue);
+                } else {
+                    if (!this.pickedValue()) {
+                        if (validItems.length > 0) {
+                            resolvedValue = validItems.first().value;
+                            assert(!Type.isUndefined(resolvedValue));
+                            console.log("  no pickedValue so using first valid value: ", resolvedValue);
+                        } else {
+                            console.warn("  no validItems so no valid values to use!");
+                            debugger;
+                        }
+                    } else {
+                        resolvedValue = this.pickedValue();
+                        console.log("  has pickedValue so using it: ", resolvedValue);
+                    }
+                }
+                this.setValueOnTarget(resolvedValue);
+
                 console.log("AFTER:");
-                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()));
-                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
-                this.valueAsArray();
-                Error.warn(!this.needsSyncToSubnodes());
+                console.log("  value: ", this.value());
+
+                Error.warn(!this.needsSyncToSubnodes(), "OptionsNode '" + this.key() + "' not synced with target after sync!");
+                debugger;
             }
             this.didUpdateNodeIfInitialized();
         }
