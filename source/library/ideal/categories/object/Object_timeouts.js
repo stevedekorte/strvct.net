@@ -47,7 +47,8 @@
         const tidInfo = new Array(2) // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
         const tid = setTimeout(() => { 
             this.removeTimeoutNamed(tidInfo[0]);
-            EventManager.shared().safeWrapEvent(aFunc, "TimeoutEvent");
+            const event = new Event('Custom_addTimeoutEvent', { bubbles: false, cancelable: true }); // not sure about these options settings
+            EventManager.shared().safeWrapEvent(aFunc, event);
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
         tidInfo[1] = tid;

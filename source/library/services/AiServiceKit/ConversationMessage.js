@@ -26,6 +26,7 @@
       slot.setShouldJsonArchive(true);
       slot.setCanInspect(true);
       slot.setSlotType("String");
+      slot.setAllowsNullValue(true);
     }
 
     /**

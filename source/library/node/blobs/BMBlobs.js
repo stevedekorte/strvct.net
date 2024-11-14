@@ -57,7 +57,8 @@
              * @category Storage
              */
             const slot = this.newSlot("store", null);
-            slot.setSlotType("PersistentObjectPool");
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("PersistentAsyncMap");
         }
     }
 

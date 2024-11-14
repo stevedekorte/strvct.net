@@ -1684,7 +1684,7 @@
     addOptionNodeForDict (item) {
         const hasSubnodes = item.options && item.options.length;
         const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
-        const newNode = nodeClass.clone().setTitle(item.label);
+        const newNode = nodeClass.clone().setTitle(String(item.label));
         
         if (!hasSubnodes) {
             newNode.setValue(item.value ? item.value : item.label);

@@ -142,6 +142,7 @@ let listenCount = 0;
         {
             const slot = this.newSlot("isUserInteraction", null); // set to match eventName
             slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
         }
         /**
          * @member {Boolean} useCapture - Whether the event will be dispatched to the listener before reaching the event target.

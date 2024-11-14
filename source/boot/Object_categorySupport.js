@@ -30,6 +30,45 @@
         Object.defineSlotSafely = this.defineSlotSafely;
         Object.defineSlotsSafelyFromMap = this.defineSlotsSafelyFromMap;
         Object.initThisCategory = this.initThisCategory; // we can't use initThisCategory as it with throw an error because defineSlot etc already exist
+
+        Object.typeNameForClassName = this.typeNameForClassName;
+        Object.typeNameForInstanceOfClassName = this.typeNameForInstanceOfClassName;
+        Object.typeName = this.typeName;
+        Object.instanceTypeName = this.instanceTypeName;
+        Object.prototype.typeName = this.prototype.typeName;
+    }
+
+    static typeNameForClassName (className) {
+        return className + " class";
+    }
+
+    static typeNameForInstanceOfClassName (className) {
+        return className;
+    }
+
+    /**
+     * @description This method returns the object's class name with " class" appended.
+     * @returns {string} The class' type name.
+    */
+    static typeName () {
+        return this.typeNameForClassName(this.name);
+    }
+
+    /**
+     * @description This method returns the type name of an instance of the class.
+     * @returns {string} The type name of an instance.
+    */
+    static instanceTypeName () {
+        return this.typeNameForInstanceOfClassName(this.name);
+    }
+
+    /**
+     * @description This method returns the type name of the instance.
+     * @returns {string} The type name of the instance.
+    */
+    typeName () {
+        const aClass = this.__proto__;
+        return aClass.instanceTypeName();
     }
 
     /**
@@ -52,21 +91,24 @@
 
         */
         const classesToFix = [
-            Array, 
+            Array,
             ArrayBuffer,
-            Boolean, 
+            BigInt,
             Blob,
-            Date, 
-            Error, 
-            Image, 
-            Map, 
+            Boolean,
+            Date,
+            Error,
+            Image,
+            JSON,
+            Map,
             Number,
             Promise,
             Range,
-            Set, 
+            RegExp,
+            Set,
             String,
-            URL,
-            JSON
+            Symbol,
+            URL
         ];
         classesToFix.forEach(aClass => aClass.__proto__ = Object);
         return this;

@@ -182,7 +182,7 @@
 
         // --- font ---
 
-        addSlot("fontFamily", "font", "family", ["inherit"]);
+        addSlot("fontFamily", "font", "family", ["inherit", ""]);
         addSlot("fontSize", "font", "size", this.thisClass().validFontSizes());
 
         // weight and style don't work with some good fonts like

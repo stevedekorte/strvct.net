@@ -513,7 +513,11 @@
             this.hasSlot(slotName);
             throw new Error(msg);
         }
-        return this.justNewSlot(slotName, initialValue, allowOnInstance);
+        const slot = this.justNewSlot(slotName, initialValue, allowOnInstance);
+        if (Type.isNull(initialValue)) {
+            slot.setAllowsNullValue(true);
+        }
+        return slot;
     }
 
 

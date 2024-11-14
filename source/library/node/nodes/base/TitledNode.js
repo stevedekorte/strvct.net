@@ -52,7 +52,7 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("copyValue");
             slot.setShouldStoreSlot(true);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("String");
         }
 
         /**

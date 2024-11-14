@@ -129,7 +129,7 @@
              * @category Resource Properties
              */
             const slot = this.newSlot("urlResource", null);
-            slot.setSlotType("BMUrlResource");
+            slot.setSlotType("UrlResource");
         }
 
         {

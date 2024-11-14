@@ -66,6 +66,7 @@
         {
             const slot = this.newWeakSlot("observer", null);
             slot.setSlotType("Object"); // TODO: add observer protocol
+            slot.setAllowsNullValue(true);
         }
         /**
          * @member {Object|null} sender - WeakRef to sender
@@ -102,9 +103,9 @@
      */
     init () {
         super.init()
-        this.setSender(null)
-        this.setObserver(null)
-        this.setIsDebugging(false)
+        this.setSender(null);
+        this.setObserver(null);
+        this.setIsDebugging(false);
     }
 
     /**

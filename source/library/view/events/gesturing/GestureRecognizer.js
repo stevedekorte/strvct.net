@@ -78,7 +78,7 @@
          */
         {
             const slot = this.newSlot("viewTarget", null);
-            slot.setSlotType("DomeView");
+            slot.setSlotType("DomView");
         }
 
         /**

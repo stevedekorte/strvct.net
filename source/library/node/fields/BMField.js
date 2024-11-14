@@ -210,6 +210,7 @@
         {
             const slot = this.newSlot("keyError", null);
             slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
             slot.setSyncsToView(true);
         }
         
@@ -219,6 +220,7 @@
         {
             const slot = this.newSlot("valueError", null);
             slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
             slot.setSyncsToView(true);
         }
         

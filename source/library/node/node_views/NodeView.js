@@ -29,7 +29,7 @@
          */
         {
             const slot = this.newSlot("defaultSubviewProto", null);
-            slot.setSlotType("Class");
+            slot.setSlotType("DomView class");
         }
 
         /**
@@ -38,7 +38,7 @@
          */
         {
             const slot = this.newSlot("overrideSubviewProto", null);
-            slot.setSlotType("Class");
+            slot.setSlotType("DomView class");
         }
 
         /**

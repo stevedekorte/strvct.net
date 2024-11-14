@@ -1,0 +1,56 @@
+Defining a class:
+
+{
+  "type": "object",
+  "class": "User",
+  "classProperties": {
+    "foo": { "type": "string" },
+    "bar": { "type": "integer" }
+  },
+  "instanceProperties": {
+    "name": { "type": "string" },
+    "age": { "type": "integer" }
+  }
+}
+
+a property holding a class:
+
+{
+  "type": "object",
+  "class": "User"
+}
+
+a property holding an instance:
+
+{
+  "type": "object",
+  "instance": "User"
+}
+
+a property holding either a class, an instance, or null:
+
+{
+  "type": "object",
+  "anyOf": [
+    { "class": "User" },
+    { "instance": "User" },
+    { "type": "null" }
+  ]
+}
+
+NOTES:
+
+Primitive types are usually not capitalized in JSON schema format, 
+but this is awkward as built-in types are capitalized, as are classes.
+
+If we followed the rule that instances are lowercase and classes are capitalized,
+and considered the primitives to be instances, then it would be consistent.
+But that would involve some string manipulation to check for type names, though we
+could define a typeName method on prototypes that returned the class name with a lowercase first letter.
+We still need to special case null and undefined, as they don't respond to method calls.
+
+Person.typeName() would return "Person" (a class variable).
+aPerson.typeName() would return "person" (an prototype variable).
+
+What about types like JSON Object
+

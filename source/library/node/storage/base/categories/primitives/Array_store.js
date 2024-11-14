@@ -16,7 +16,7 @@
      * @category Utility
      */
     static lengthOfRecord (aRecordObj) {
-        return aRecordObj.values.length
+        return aRecordObj.values.length;
     }
 
     /**
@@ -29,9 +29,9 @@
         const dict = {
             type: Type.typeName(this), 
             values: this.map(v => aStore.refValue(v))
-        }
+        };
 
-        return dict
+        return dict;
     }
 
     /**
@@ -42,13 +42,13 @@
      * @category Deserialization
      */
     loadFromRecord (aRecord, aStore) {
-        const loadedValues = aRecord.values.map(v => aStore.unrefValue(v))
+        const loadedValues = aRecord.values.map(v => aStore.unrefValue(v));
         if (this.unhooked_push) {
-            loadedValues.forEach( v => this.unhooked_push(v) )
+            loadedValues.forEach( v => this.unhooked_push(v) );
         } else {
-            loadedValues.forEach( v => this.push(v) )
+            loadedValues.forEach( v => this.push(v) );
         }
-        return this
+        return this;
     }
 
     /**
@@ -60,10 +60,10 @@
     refsPidsForJsonStore (puuids = new Set()) {
         this.forEach(v => { 
             if (!Type.isNull(v)) { 
-                v.refsPidsForJsonStore(puuids)
+                v.refsPidsForJsonStore(puuids);
             } 
         })
-        return puuids
+        return puuids;
     }
 
 }).initThisCategory();

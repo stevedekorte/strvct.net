@@ -27,7 +27,7 @@
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
-      slot.setSlotType("ImageWell")
+      slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
     }

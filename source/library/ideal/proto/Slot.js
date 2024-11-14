@@ -99,12 +99,20 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         // slotType is a string value, eg: "Boolean", "String", "Number", "Action" - can be used to find a class 
         // to create an inspector node for the slotValue
         this.simpleNewSlot("slotType", null);
+        this.simpleNewSlot("slotTypeDict", null); // a dictionary with kind (instance, class, primitive (null or undefined)), and name (class name if instance or class, or the primitive name if primitive)
         this.simpleNewSlot("canInspect", false);
         this.simpleNewSlot("canEditInspection", true);
         this.simpleNewSlot("label", null); // visible label on inspector
         this.simpleNewSlot("allowsNullValue", false); // used for validation
+
+        // valid values 
         this.simpleNewSlot("validValues", null); // used for options field and validation
         this.simpleNewSlot("validValuesClosure", null);
+
+        this.simpleNewSlot("validItems", null); // array of dictionaries with label, subtitle, value
+        this.simpleNewSlot("validItemsClosure", null);
+
+
         this.simpleNewSlot("validatesOnSet", true);
         this.simpleNewSlot("allowsMultiplePicks", false);
         this.simpleNewSlot("inspectorPath", null); // if non-null, uses to create a path for the slot inspector
@@ -116,6 +124,129 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("actionMethodName", null); // used by slots that will be represented by ActionFields to store the methodName
         this.simpleNewSlot("annotations", null);
         this.simpleNewSlot("fieldInspectorClassName", null);
+    }
+
+    /*
+    slotTypeDict() and setSlotTypeDict() are deprecated
+
+    */
+
+    setSlotType (s) {
+        this.setSlotTypeDict({ 
+            kind: "instance",
+            name: s
+        });
+        return this;
+    }
+
+    slotType () {
+        // compose the slotType string from the dictionary
+        const dict = this.slotTypeDict();
+        if (dict) {
+            assert(Type.isString(dict.name));
+            return dict.name;
+        }
+        return null
+    }
+
+    /*
+    slotTypeDict () {
+        if (this._slotType) {
+            // parse the slotType string into a dictionary
+            const parts = this._slotType.split(" ");
+            return {
+                kind: parts[0],
+                name: parts[1]
+            };
+        }
+        return null
+    }
+
+    setSlotTypeDict (aDict) {
+        this._slotTypeDict = aDict;
+        assert(Type.isDictionary(aDict));
+        assert(Type.isString(aDict.kind));
+        assert(Type.isString(aDict.name));
+        this._slotType = aDict.kind + " " + aDict.name;
+        return this;
+    }
+    */
+
+    /**
+     * @private
+     * @category Valid Items
+     * @description Converts a value into an item.
+     * @param {*} v - The value to convert.
+     * @returns {Object} An item.
+     */
+    itemForValue (v) {
+        if (Type.isDictionary(v)) {
+            // make sure value is set
+            if (Type.isUndefined(v.value)) {
+                v.value = v.label;
+            }
+            return v;
+        }
+
+        if (Type.isNull(v)) {
+            return {
+                label: "null",
+                subtitle: null,
+                value: null
+            };
+        }   
+
+        if (Type.isString(v) || Type.isNumber(v)) {
+            return {
+                label: v,
+                subtitle: null,
+                value: v
+            };
+        }
+        
+        throw Error.exception(this.type() + ".itemForValue() called with invalid value: " + v);
+    }
+
+    /**
+     * @private
+     * @category Valid Items
+     * @description Converts an array of values into an array of dictionaries with label and value
+     */
+    itemsForValues (values) {
+        return values.map(v => {
+            return this.itemForValue(v);
+        });
+    }
+
+    /**
+     * @category Valid Items
+     * @description returns an array of dictionaries with label and value. 
+     * If _validItems is available, returns that, otherwise uses validValues if available, otherwise uses validValuesClosure if available, otherwise returns null.
+     */
+    validItems () {
+        if (this._validItems) {
+            return this._validItems;
+        } else if (this._validValues) {
+            return this.itemsForValues(this._validValues);
+        }
+        return null;
+    }
+
+    /**
+     * @category Valid Items
+     * @description returns a closure which returns an array of dictionaries with label, subtitle and value. 
+     * If _validItemsClosure is available, returns that, otherwise if validValuesClosure is available, uses that to convert values to items, otherwise returns null.
+     */
+    validItemsClosure () {
+        if (this._validItemsClosure) {
+            return this._validItemsClosure;
+        } else if (this._validValuesClosure) {
+            const self = this;
+            return (context) => {
+                return self.itemsForValues(self._validValuesClosure(context));
+            }
+        }
+        return null;
     }
 
     /**
@@ -548,12 +679,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     }
                 }
 
-                if (this.validValues()) {
-                    field.setValidValues(this.validValues());
+                if (this.validItems()) {
+                    field.setValidItems(this.validItems());
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks());
                     field.setNodeSubtitleIsChildrenSummary(true);
-                } else if (this.validValuesClosure()) {
-                    field.setValidValuesClosure(this.validValuesClosure());
+                } else if (this.validItemsClosure()) {
+                    field.setValidItemsClosure(this.validItemsClosure());
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks());
                     field.setNodeSubtitleIsChildrenSummary(true);
                 }
@@ -564,13 +695,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     /**
-     * @category Value Validation
+     * @private
+     * @category Valid Items
+     * @description Computes the valid items for the slot.
+     * @returns {Array|null} The valid items, or null if neither validItems nor validItemsClosure are set.
      */
-    computedValidValues () {
-        if (this.validValues()) {
-            return this.validValues();
-        } else if (this.validValuesClosure()) {
-            return this.validValuesClosure()();
+    computedValidItems () {
+        if (this.validItems()) {
+            return this.validItems();
+        } else if (this.validItemsClosure()) {
+            return this.validItemsClosure()();
         }
         return null;
     }
@@ -802,39 +936,40 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     /**
      * @category Value Validation
+     * @description Validates a value against the slot's valid items and type.
+     * @param {any} v - The value to validate.
+     * @returns {boolean} True if the value is valid, false otherwise.
      */
     validateValue (v) {
-        if (v === null && this.allowsNullValue() === true) {
-            return true;
+        if (v === null) {
+            //debugger;
+            return this.allowsNullValue();
         }
 
-        //const validValues = this.computedValidValues(); // closure may reference unloaded classes...
-        const validValues = this.validValues();
-        
-        if (validValues === null) {
-            return true;
-        }
-        
-        if (validValues.includes(v)) {
-            return true;
+        // check valid items first (to support multiple valid slot types)
+
+        //const validItems = this.computedValidItems(); // closure may reference unloaded classes...
+        const validItems = this.validItems();
+        if (validItems !== null) {
+            return validItems.detect(item => {
+                return Type.valuesAreEqual(item.value, v);
+            });
         }
 
-        function ValidValue_hasLabel (self, label) {
-            if (self.label === label) {
-                return true;
+        const slotType = this.slotType();
+        if (slotType) {
+            if (slotType === "JSON Object") {
+                return Type.isDeepJsonType(v);
+            } else {
+                let result = Type.typeNameIsKindOf(Type.typeName(v), slotType);
+                //let result = Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
+                if (result) {
+                    return true;
+                }
+                console.log("Slot '" +this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
+                //debugger;
+                Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
             }
-            if (self.options) {
-                return ValidValues_haveLabel(self.options, label);
-            }
-            return false;
-        }
-
-        function ValidValues_haveLabel (validValues, label) {
-            return validValues.detect(vv => ValidValue_hasLabel(vv, v));
-        }
-
-        if (ValidValues_haveLabel(validValues, v)) {
-            return true;
         }
 
         return false;
@@ -849,9 +984,22 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
                 if (!isValid) {
-                    const validValues = slot.validValues();
-                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with invalid argument value (" + Type.typeName(newValue) + ") '" + newValue + "' not in valid values: " + validValues;
+                    //const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with invalid argument value (" + Type.typeName(newValue) + ") '" + newValue + "' not in valid items: " + validItems;
+                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with (" + Type.typeName(newValue) + ") '" + String(newValue).slice(0, 20) + "...' expected: '" + slot.slotType() + "'";
                     console.log(errorMsg);
+
+                    if (slot.slotType() === "String" && Type.isNumber(newValue)) {
+                        console.log("RESOLUTION: converting value to string");
+                        newValue = String(newValue);
+                    } else if (slot.slotType() === "Number" && Type.isString(newValue)) {
+                        console.log("RESOLUTION: converting value to number");
+                        newValue = Number(newValue);
+                    } else {
+                        debugger;
+                    }
+
+                    slot.validateValue(newValue); // so we can step into it
+
                     const initValue = slot.initValue();
                     console.log("RESOLUTION: setting value to initValue: ", initValue);
                     //debugger;
@@ -859,13 +1007,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     //debugger;
                     if (!slot.validateValue(resolvedValue)) {
                         console.log("RESOLUTION: setting value to initValue: ", resolvedValue);
-                        resolvedValue = validValues.first();
-                        if (!slot.validateValue(resolvedValue)) {
-                            console.log("RESOLUTION: setting value to validValues.first(): ", resolvedValue);
-                            throw new Error(errorMsg);
+                        const validItems = slot.validItems();
+                        if (!Type.isNull(validItems)) {
+                            resolvedValue = validItems.first();
+                            if (!slot.validateValue(resolvedValue)) {
+                                console.log("RESOLUTION: setting value to validItems.first(): ", resolvedValue);
+                                throw new Error(errorMsg);
+                            }
                         }
                     }
-                    newValue = initValue; //validValues.first(); // not safe
+                    newValue = resolvedValue;
                 }
             }
 
@@ -1263,9 +1414,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     jsonSchemaEnum () {
         const enumArray = [];
 
-        const validValues = this.computedValidValues();
-        if (validValues) {
-            validValues.forEach(v => {
+        const validItems = this.computedValidItems();
+        if (validItems) {
+            validItems.forEach(v => {
                 assert(Type.isDeepJsonType(v));
                 if (!Type.isNull(v) && v.label) {
                     enumArray.push(v.label);
@@ -1274,7 +1425,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
             });
 
-            if (this.allowsNullValue() && !validValues.includes(null)) {
+            if (this.allowsNullValue() && !validItems.detect(item => Type.isNull(item.value))) {
                 enumArray.push(null);
             }
         }
@@ -1398,7 +1549,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      * @category Value Validation
      */
     acceptsValue (v) {
-        //const typeNames = Type.typeNamesForValue(value);
         const valueType = Type.typeName(v);
         const slotType = this.slotType();
 

@@ -75,7 +75,7 @@
      * @category Gesture Management
      */
     hasGestureRecognizer (gr) {
-        return this.gestureRecognizers().contains(gr)
+        return this.gestureRecognizers().contains(gr);
     }
 
     /**
@@ -85,11 +85,11 @@
      * @category Gesture Management
      */
     addGestureRecognizer (gr) {
-        assert(!this.hasGestureRecognizer(gr))
-        this.gestureRecognizers().append(gr)
-        gr.setViewTarget(this)
-        gr.start()
-        return gr
+        assert(!this.hasGestureRecognizer(gr));
+        this.gestureRecognizers().append(gr);
+        gr.setViewTarget(this);
+        gr.start();
+        return gr;
     }
 
     /**
@@ -100,11 +100,11 @@
      */
     removeGestureRecognizer (gr) {
         if (this.gestureRecognizers()) {
-            gr.stop()
-            gr.setViewTarget(null)
-            this.gestureRecognizers().remove(gr)
+            gr.stop();
+            gr.setViewTarget(null);
+            this.gestureRecognizers().remove(gr);
         }
-        return this
+        return this;
     }
 
     /**
@@ -113,11 +113,11 @@
      * @category Gesture Management
      */
     removeAllGestureRecognizers () {
-        const grs = this.gestureRecognizers()
+        const grs = this.gestureRecognizers();
         if (grs.length) {
-            grs.shallowCopy().forEach(gr => this.removeGestureRecognizer(gr))
+            grs.shallowCopy().forEach(gr => this.removeGestureRecognizer(gr));
         }
-        return this
+        return this;
     }
 
     /**
@@ -128,11 +128,11 @@
      */
     setHasDefaultTapGesture (aBool) {
         if (aBool) {
-            this.addDefaultTapGesture()
+            this.addDefaultTapGesture();
         } else {
-            this.removeDefaultTapGesture()
+            this.removeDefaultTapGesture();
         }
-        return this
+        return this;
     }
 
     /**
@@ -142,11 +142,11 @@
      */
     addDefaultTapGesture () {
         if (!this.defaultTapGesture()) {
-            const g = this.addGestureRecognizer(TapGestureRecognizer.clone())
-            g.setShouldRequestActivation(true)
-            this.setDefaultTapGesture(g)
+            const g = this.addGestureRecognizer(TapGestureRecognizer.clone());
+            g.setShouldRequestActivation(true);
+            this.setDefaultTapGesture(g);
         }
-        return this.defaultTapGesture()
+        return this.defaultTapGesture();
     }
 
     /**
@@ -156,10 +156,10 @@
      */
     removeDefaultTapGesture () {
         if (this.defaultTapGesture()) {
-            this.removeGestureRecognizer(this.defaultTapGesture())
-            this.setDefaultTapGesture(null)
+            this.removeGestureRecognizer(this.defaultTapGesture());
+            this.setDefaultTapGesture(null);
         }
-        return this
+        return this;
     }
 
     /**
@@ -247,10 +247,10 @@
     cancelAllGesturesExcept (aGesture) {
         this.gestureRecognizers().forEach((gr) => {
             if (gr !== aGesture) {
-                gr.cancel()
+                gr.cancel();
             }
-        })
-        return this
+        });
+        return this;
     }
 
 }.initThisClass());

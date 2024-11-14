@@ -142,7 +142,7 @@
       slot.setFinalInitProto(OpenAiImages)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
-      slot.setSlotType("Array");
+      slot.setSlotType("OpenAiImages");
     }
 
     /**

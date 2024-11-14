@@ -1,3 +1,5 @@
+// NOTE: moved this functionality into Object_categorySupport.js and boot code
+
 "use strict"; 
 
 /*
@@ -28,9 +30,12 @@
         Number,
         Range,
         String,
-        ArrayBuffer
+        ArrayBuffer,
+        RegExp,
+        BigInt
     ]
-    classesToFix.forEach(aClass => aClass.__proto__ = Object)
+    classesToFix.forEach(aClass => aClass.__proto__ = Object);
+    debugger;
 }
 
 /*

@@ -38,7 +38,7 @@
       slot.setLabel("Request Class");
       slot.setShouldStoreSlot(false);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("AiRequest Class");
+      slot.setSlotType("AiRequest class");
       slot.setCanInspect(false);
     }
 

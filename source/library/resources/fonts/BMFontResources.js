@@ -19,7 +19,7 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     /**
@@ -35,7 +35,7 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setTitle("Fonts")
+        this.setTitle("Fonts");
     }
 
     /**
@@ -44,9 +44,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        //this.setExtensions(["ttf", "woff", "woff2"])
-        return this
+        super.init();
+        //this.setExtensions(["ttf", "woff", "woff2"]);
+        return this;
     }
 
     /**
@@ -66,16 +66,16 @@
      * @category Resource Management
      */
     addResource (aResource) {
-        const aPath = aResource.path()
-        const components = aPath.split("/")
+        const aPath = aResource.path();
+        const components = aPath.split("/");
 
-        const fontFileName = components.pop()
-        const familyName = components.pop()
+        const fontFileName = components.pop();
+        const familyName = components.pop();
 
-        const family = this.fontFamilyNamed(familyName) 
-        family.addFont(aResource)
+        const family = this.fontFamilyNamed(familyName);
+        family.addFont(aResource);
 
-        return this
+        return this;
     }
 
     /**
@@ -85,8 +85,8 @@
      * @category Resource Management
      */
     addFamily (aFontFamily) {
-        this.addSubnode(aFontFamily)
-        return this
+        this.addSubnode(aFontFamily);
+        return this;
     }
 
     /**
@@ -95,7 +95,7 @@
      * @category Resource Retrieval
      */
     families () {
-        return this.subnodes()
+        return this.subnodes();
     }
 
     /**
@@ -121,11 +121,11 @@
      * @category Resource Retrieval
      */
     allFonts () {
-        const fonts = []
+        const fonts = [];
         this.subnodes().forEach(fontFamily => {
-            fontFamily.subnodes().forEach(font => fonts.push(font))
+            fontFamily.subnodes().forEach(font => fonts.push(font));
         })
-        return fonts
+        return fonts;
     }
 
     /**
@@ -134,7 +134,7 @@
      * @category Resource Retrieval
      */
     allFontNames () {
-        return this.allFonts().map(font => font.title())
+        return this.allFonts().map(font => font.title());
     }
 
     /**
@@ -143,13 +143,13 @@
      * @category Resource Management
      */
     newFontOptions () {
-        const options = BMOptionsNode.clone()
+        const options = BMOptionsNode.clone();
         this.allFonts().forEach(font => {
-            const name = font.title()
-            const option = BMOptionNode.clone().setLabel(name).setValue(name)
-            options.addSubnode(option)
+            const name = font.title();
+            const option = BMOptionNode.clone().setLabel(name).setValue(name);
+            options.addSubnode(option);
         })
-        return options
+        return options;
     }
 
     /**

@@ -7,6 +7,9 @@
     "Map_store.js",
     "Set_store.js",
     "Object_store.js",
+    "Boolean_store.js",
+    "Regex_store.js",
+    "Symbol_store.js",
     "TypedArray-store.js",
     "literals/_imports.json"
 ]

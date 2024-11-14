@@ -174,7 +174,11 @@
      * @category Action Management
      */
     newActionForTargetAndMethod (target, syncMethod, order) {
-        return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
+        const newAction = SyncAction.clone();
+        newAction.setTarget(target);
+        newAction.setMethod(syncMethod);
+        newAction.setOrder(order ? order : 0);
+        return newAction;
     }
 	
     /**
@@ -187,9 +191,8 @@
      */
     scheduleTargetAndMethod (target, syncMethod, optionalOrder) { // higher order performed last
         if (!this.hasScheduledTargetAndMethod(target, syncMethod)) {
-            const newAction = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder)
-
-            this.debugLog(() => "    -> scheduling " + newAction.description())
+            const newAction = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder);
+            this.debugLog(() => "    -> scheduling " + newAction.description());
             
             if (syncMethod !== "processPostQueue") {
                 if (this.currentAction() && this.currentAction().equals(newAction)) {
@@ -197,19 +200,19 @@
                         this.type() + " LOOP DETECTED: ",
                         "  scheduleTargetAndMethod: (" + newAction.description() + ")",
                         "  while processing: (" + this.currentAction().description() + ")"
-                    ].join("\n")
-                    console.log(error)
-                    debugger
-                    throw new Error(error)
+                    ].join("\n");
+                    console.log(error);
+                    debugger;
+                    throw new Error(error);
                 }
             }
 
-            this.actions().atIfAbsentPut(newAction.actionsKey(), newAction)
-	    	this.setTimeoutIfNeeded()
-            return true
+            this.actions().atIfAbsentPut(newAction.actionsKey(), newAction);
+	    	this.setTimeoutIfNeeded();
+            return true;
         }
 		
-        return false
+        return false;
     }
 
     /**

@@ -8,7 +8,7 @@
  * 
  * NOTES:
  * 
- *  computedValidValues() will use validValuesClosure() if it is set, otherwise it will use validValues().
+ *  computedValidItems() will use validItemsClosure() if it is set, otherwise it will use validItems().
  * 
  * Idea:
  * 
@@ -96,22 +96,22 @@
         }
 
         /**
-         * @member {Array} validValues
+         * @member {Array} validItems
          * @description An array of valid values for the options.
          */
         {
-            const slot = this.newSlot("validValues", null);
+            const slot = this.newSlot("validItems", null);
             slot.setShouldStoreSlot(false);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Array");
         }
 
         /**
-         * @member {Function} validValuesClosure
+         * @member {Function} validItemsClosure
          * @description A function that returns valid values for the options.
          */
         {
-            const slot = this.newSlot("validValuesClosure", null);
+            const slot = this.newSlot("validItemsClosure", null);
             slot.setShouldStoreSlot(false);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Function");
@@ -141,6 +141,13 @@
 
     }
     
+    /*
+    init () {
+        super.init();
+        debugger;
+    }
+    */
+
     /**
      * @description Gets the title of the options node.
      * @returns {string} The key of the options node.
@@ -201,9 +208,11 @@
      * @returns {string} The subtitle of the options node.
      */
     subtitle () {
+        /*
         if (this.usesValidDict()) {
             return this.pickedNodePathStrings().join("\n");
         }
+        */
         const s = super.subtitle();
         return s;
     }
@@ -235,6 +244,23 @@
     }
 
     /**
+     * @description Gets the picked value.
+     * @returns {*} The picked value.
+     */
+    pickedValue () {
+        const item = this.pickedItems().first();
+        return item ? item.value : null; // should this be null or undefined?
+    }
+
+    /**
+     * @description Gets the picked items.
+     * @returns {Array<Object>} An array of picked item dictionaries.
+     */
+    pickedItems () {
+        return this.pickedLeafSubnodes().map(s => s.itemDict());
+    }
+
+    /**
      * @description Gets a set of picked values.
      * @returns {Set} A set of picked values.
      */
@@ -247,8 +273,11 @@
      * @returns {boolean} True if valid dictionaries are used.
      */
     usesValidDict () {
-        const vv = this.validValues();
+        /*
+        const vv = this.validItem();
         return vv && vv.length && Type.isDictionary(vv[0]);
+        */
+        return true;
     }
 
     /**
@@ -281,7 +310,7 @@
         } else if (pickedValues.length === 1) {
             return pickedValues.first();
         }
-        throw Error.exception("BMOptionsNode.pickedValue() called with multiple picks");
+        throw Error.exception(this.type() + ".pickedValue() called with multiple picks");
     }
 
     /**
@@ -318,16 +347,16 @@
      * @returns {BMOptionsNode} The current instance.
      */
     setValueOnTarget (v) {
-        debugger;
+        //debugger;
         if (this.allowsMultiplePicks()) {
             if (!Type.isArray(v)) {
-                console.warn("ERROR: BMOptionsNode.setValueOnTarget() called with non array value when allowsMultiplePicks is true");
+                console.warn(this.type() + ".setValueOnTarget() called with non array value when allowsMultiplePicks is true");
                 debugger;
             }
         } else {
             if (Type.isArray(v)) {
                 // this isn't necessarily an error, but it is unexpected
-                console.warn("WARNING: BMOptionsNode.setValueOnTarget() called with array when allowsMultiplePicks is true");
+                console.warn(this.type() + ".setValueOnTarget() called with array when allowsMultiplePicks is true");
                 debugger;
             }
         }
@@ -372,17 +401,6 @@
     }
 
     /**
-     * @description Handles the update of the validValues slot.
-     * @param {*} oldValue - The old value of the slot.
-     * @param {*} newValue - The new value of the slot.
-     */
-    didUpdateSlotValidValues (oldValue, newValue) {
-        if (newValue) {
-            // No action needed
-        }
-    }
-
-    /**
      * @description Syncs the options node from the target.
      * @returns {BMOptionsNode} The current instance.
      */
@@ -422,21 +440,24 @@
      * @returns {Array} An array of valid values.
      */
     computedValidValues () {
-        if (this.validValues()) {
-            return this.validValues();
-        } else if (this.validValuesClosure()) {
-            return this.validValuesClosure()(this.target());
-        }
-        return [];
+        debugger;
+        return this.computedValidItems().map(item => item.value);
     }
 
     /**
-     * @description Gets the valid values from leaf subnodes.
-     * @returns {Array} An array of valid values.
+     * @private
+     * @category Valid Items
+     * @description Computes the valid items for the slot.
+     * @returns {Array|null} The valid items, or null if neither validItems nor validItemsClosure are set.
      */
-    validValuesFromLeafSubnodes () {
-        return this.leafSubnodes().map(sn => sn.value());
-    }
+        computedValidItems () {
+            if (this.validItems()) {
+                return this.validItems();
+            } else if (this.validItemsClosure()) {
+                return this.validItemsClosure()();
+            }
+            return null;
+        }
 
     /**
      * @description Sets up subnodes if they are empty.
@@ -465,6 +486,8 @@
     }
 
     /**
+     * @private
+     * @category Valid Items
      * @description Gets the item for a specific value.
      * @param {*} v - The value to get the item for.
      * @returns {Object} An object representing the item.
@@ -479,7 +502,6 @@
                 label: "null",
                 subtitle: null,
                 value: null,
-                options: null
             };
         }   
 
@@ -488,35 +510,38 @@
                 label: v,
                 subtitle: null,
                 value: v,
-                options: null
             };
         }
         
-        throw Error.exception("BMOptionsNode.itemForValue() called with invalid value: " + v);
+        throw Error.exception(this.type() + ".itemForValue() called with invalid value: " + v);
     }
 
     /**
-     * @description Checks if the valid values match.
-     * @returns {boolean} True if the valid values match.
+     * @private
+     * @category Valid Items
+     * @description Checks if the computed valid items match the (local copy of the) valid items. Used to detect if the valid items need to be updated.
+     * @returns {boolean} True if the computed valid items match the valid items.
      */
-    validValuesMatch () {
-        //console.log("testing validValuesMatch");
-        //return false;
+    validItemsMatch () {
+        const computedValidItems = this.computedValidItems();
+        const validItems = this.validItems();
+        return Type.valuesAreEqual(computedValidItems, validItems);
+    }
 
-        const validValues = this.computedValidValues();
-        const validItemsString = JSON.stableStringify(validValues);
-        const validValuesMatch = this.syncedValidItemsJsonString() === validItemsString;
-        /*
-        //if (!validValuesMatch) {
-            console.log("          validItemsString: " + validItemsString);
-            console.log("syncedValidItemsJsonString: " + this.syncedValidItemsJsonString());
-            console.log("          validValuesMatch: " + validValuesMatch);
-        //}
-        */
-        return validValuesMatch;
-
-        //const syncedValidItems = JSON.parse(this.syncedValidItemsJsonString());
-        //return Type.hashCode64(this.computedValidValues()) === Type.hashCode64(syncedValidItems);
+    /**
+     * @private
+     * @category Valid Items
+     * @description Copies an array of items.
+     * @param {Array} items - The items to copy.
+     * @returns {Array} An array of copied items.
+     */
+    copyValidItems (items) {
+        assert(Type.isArray(items));
+        const copiedItems = items.map(item => {
+            assert(Type.isDictionary(item));
+            return item.shallowCopy();
+        });
+        return copiedItems;
     }
 
     /**
@@ -524,22 +549,23 @@
      * @returns {boolean} True if the picks match.
      */
     picksMatch () {
+        const v = this.value();
         if (this.allowsMultiplePicks()) {
-            return Type.valuesAreEqual(this.value(), this.pickedValues());
+            return Type.valuesAreEqual(v, this.pickedValues());
         } else {
-            return Type.valuesAreEqual(this.value(), this.pickedValue());
+            return Type.valuesAreEqual(v, this.pickedValue());
         }
     }
 
     /**
-     * @description Checks if the node needs to sync to subnodes. Returns true if the validValues or picked values don't match.
+     * @description Checks if the node needs to sync to subnodes. Returns true if the valid items or picked values don't match.
      * @returns {boolean} True if sync to subnodes is needed.
      */
     needsSyncToSubnodes () {
         if (this.target()) {
-            const validValuesMatch = this.validValuesMatch();
+            const validItemsMatch = this.validItemsMatch();
             const picksMatch = this.picksMatch();
-            const needsSync = (!validValuesMatch || !picksMatch);
+            const needsSync = (!validItemsMatch || !picksMatch);
             return needsSync;
         }
         return false;
@@ -552,7 +578,7 @@
     setupSubnodes () {
         if (this.needsSyncToSubnodes()) {
             this.removeAllSubnodes();
-            const validItems = this.computedValidValues();
+            const validItems = this.computedValidItems();
 
             validItems.forEach(v => {
                 const item = this.itemForValue(v);
@@ -583,8 +609,8 @@
                 console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after sync!");
                 console.log("Let's try syncing the picked values to the target:");
                 console.log("VALID VALUES:");
-                console.log("  computedValidValues: " + JSON.stableStringify(this.computedValidValues()));
-                console.log("  validValuesMatch: " + this.validValuesMatch());
+                console.log("  computedValidValues: " + JSON.stableStringify(validItems));
+                console.log("  validItemsMatch: " + this.validItemsMatch());
                 console.log("  picksMatch: " + this.picksMatch());
 
                 console.log("  syncedValidItemsJsonString(): " +  this.syncedValidItemsJsonString());

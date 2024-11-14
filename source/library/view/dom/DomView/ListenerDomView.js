@@ -385,7 +385,7 @@
      * @param {boolean} useCapture - Whether to use event capture
      * @returns {ListenerDomView} The current instance
      */
-    setIsRegisteredForKeyboard (aBool, useCapture) {
+    setIsRegisteredForKeyboard (aBool, useCapture=false) {
         this.keyboardListener().setUseCapture(useCapture).setIsListening(aBool)
 
         const e = this.element()

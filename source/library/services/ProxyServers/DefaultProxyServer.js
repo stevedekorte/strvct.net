@@ -43,7 +43,7 @@
    */
   setupForPage () {
     this.setHostname(window.location.hostname);
-    this.setPort(window.location.port);
+    this.setPort(Number(window.location.port));
     this.setIsSecure(window.location.protocol === "https:");
   }
 

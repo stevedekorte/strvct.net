@@ -68,7 +68,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("listenersMap", null)
+            const slot = this.newSlot("listenersMap", null);
             slot.setSlotType("Map");
         }
     }
@@ -95,7 +95,7 @@
 
     /*
     view () {
-        return this.listenTarget().domView()
+        return this.listenTarget().domView();
     }
     */
 
@@ -105,7 +105,7 @@
      * @category Accessors
      */
     allEventListeners () {
-        return this.listenersMap().valuesArray()
+        return this.listenersMap().valuesArray();
     }
 
     /* --- updates --- */
@@ -116,8 +116,8 @@
      * @category Updates
      */
     didUpdateSlotDelegate () {
-        this.resync()
-        return this
+        this.resync();
+        return this;
     }
 
     /**
@@ -126,8 +126,8 @@
      * @category Updates
      */
     didUpdateSlotListenTarget () {
-        this.resync()
-        return this
+        this.resync();
+        return this;
     }
 
     /**
@@ -136,8 +136,8 @@
      * @category Updates
      */
     didUpdateSlotUseCapture () {
-        this.resync()
-        return this
+        this.resync();
+        return this;
     }
 
     /**
@@ -146,8 +146,8 @@
      * @category Updates
      */
     didUpdateSlotMethodSuffix () {
-        this.resync()
-        return this
+        this.resync();
+        return this;
     }
 
     /**
@@ -157,15 +157,15 @@
      */
     resync () {
         if (this.isListening()) {
-            console.warn(this.type() + " resyncing while listening")
+            console.warn(this.type() + " resyncing while listening");
             debugger;
-            this.stop()
-            this.syncToListeners()
-            this.start()
+            this.stop();
+            this.syncToListeners();
+            this.start();
         } else {
-            this.syncToListeners()
+            this.syncToListeners();
         }
-        return this
+        return this;
     }
 
     // --- listeners ---
@@ -176,9 +176,9 @@
      * @category Listeners
      */
     newListener () {
-        const listener = EventListener.clone()
-        this.syncToListener(listener)
-        return listener
+        const listener = EventListener.clone();
+        this.syncToListener(listener);
+        return listener;
     }
 
     /**
@@ -188,7 +188,7 @@
      * @category Listeners
      */
     hasListenerForEventName (eventName) {
-        return this.listenersMap().has(eventName)
+        return this.listenersMap().has(eventName);
     }
 
     /**
@@ -199,19 +199,18 @@
      * @returns {EventListener}
      * @category Listeners
      */
-    addEventNameAndMethodName (eventName, methodName, isUserInteraction) {
-        assert(!isUserInteraction)
-        assert(!this.isListening()) // TODO: handle this later
+    addEventNameAndMethodName (eventName, methodName) {
+        assert(!this.isListening()); // TODO: handle this later
         // TODO: make sure there's not already a listener for this eventName
 
-        assert(!this.hasListenerForEventName(eventName))
+        assert(!this.hasListenerForEventName(eventName));
 
-        const listener = this.newListener()
-        listener.setEventName(eventName)
-        listener.setMethodName(methodName)
-        listener.setIsUserInteraction(isUserInteraction)
-        this.listenersMap().set(eventName, listener)
-        return listener
+        const listener = this.newListener();
+        listener.setEventName(eventName);
+        listener.setMethodName(methodName);
+        //listener.setIsUserInteraction(isUserInteraction);
+        this.listenersMap().set(eventName, listener);
+        return listener;
     }
 
     /**
@@ -221,11 +220,11 @@
      * @category Listeners
      */
     syncToListener (aListener) {
-        aListener.setListenTarget(this.listenTarget())
-        aListener.setDelegate(this.delegate())
-        aListener.setUseCapture(this.useCapture())
-        aListener.setIsDebugging(this.isDebugging())
-        return this
+        aListener.setListenTarget(this.listenTarget());
+        aListener.setDelegate(this.delegate());
+        aListener.setUseCapture(this.useCapture());
+        aListener.setIsDebugging(this.isDebugging());
+        return this;
     }
 
     /**
@@ -234,8 +233,8 @@
      * @category Listeners
      */
     syncToListeners () {
-        this.forEachListener(listener => this.syncToListener(listener))
-        return this
+        this.forEachListener(listener => this.syncToListener(listener));
+        return this;
     }
 
     /**
@@ -244,7 +243,7 @@
      * @category Listeners
      */
     forEachListener (fn) {
-        this.listenersMap().forEachV(listener => fn(listener))
+        this.listenersMap().forEachV(listener => fn(listener));
     }
 
     // --- listening ---
@@ -257,11 +256,11 @@
      */
     setIsListening (aBool) {
         if (aBool) {
-            this.start()
+            this.start();
         } else {
-            this.stop()
+            this.stop();
         }
-        return this
+        return this;
     }
 
     /**
@@ -271,11 +270,11 @@
      */
     start () {
         if (!this.isListening()) {
-            this.syncToListeners()
-            this.forEachListener(listener => listener.start())
+            this.syncToListeners();
+            this.forEachListener(listener => listener.start());
             this._isListening = true; // can't use setter here as it would cause a loop
         }
-        return this
+        return this;
     }
 
     /**
@@ -285,10 +284,10 @@
      */
     stop () {
         if (this.isListening()) {
-            this.forEachListener(listener => listener.stop())
+            this.forEachListener(listener => listener.stop());
             this._isListening = false; // can't use setter here as it would cause a loop
         }
-        return this
+        return this;
     }   
 
 }.initThisClass());

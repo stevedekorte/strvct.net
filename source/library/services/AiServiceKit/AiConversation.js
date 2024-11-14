@@ -41,7 +41,7 @@
      */
     {
       const slot = this.newSlot("responseMsgClass", null); 
-      slot.setSlotType("AiResponseMessage");
+      slot.setSlotType("AiResponseMessage class");
     }
 
     /**

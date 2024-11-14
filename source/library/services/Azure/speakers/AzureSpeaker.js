@@ -31,7 +31,7 @@
     "en-US-SaraNeural",
     "en-US-TonyNeural"
 
-    fetch voice options:
+  fetch voice options example:
 
     curl --location --request GET 'https://YOUR_RESOURCE_REGION.tts.speech.microsoft.com/cognitiveservices/voices/list' \
 --header 'Ocp-Apim-Subscription-Key: YOUR_RESOURCE_KEY'

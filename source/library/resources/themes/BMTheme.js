@@ -69,7 +69,7 @@
    * @category Retrieval
    */
   themeClassNamed (name) {
-    return this.firstSubnodeWithTitle(name)
+    return this.firstSubnodeWithTitle(name);
   }
 
   /**
@@ -78,7 +78,7 @@
    * @category Retrieval
    */
   themeClassNames () {
-    return this.subnodes().map(themeClass => themeClass.title())
+    return this.subnodes().map(themeClass => themeClass.title());
   }
 
   /**
@@ -87,11 +87,11 @@
    * @category Creation
    */
   newThemeClassOptions () {
-    const options = BMOptionsNode.clone()
+    const options = BMOptionsNode.clone();
     this.subnodes().forEach(themeClass => {
-        const name = themeClass.title()
-        const option = BMOptionNode.clone().setLabel(name).setValue(name)
-        options.addSubnode(option)
+        const name = themeClass.title();
+        const option = BMOptionNode.clone().setLabel(name).setValue(name);
+        options.addSubnode(option);
     })
     return options
   }
@@ -103,13 +103,13 @@
    * @category Retrieval
    */
   themeClassNamed (name) {
-    return this.allThemeClasses().detect(themeClass => themeClass.title() === name)
+    return this.allThemeClasses().detect(themeClass => themeClass.title() === name);
 /*
-    const themeClass = this.firstSubnodeWithTitle(className)
+    const themeClass = this.firstSubnodeWithTitle(className);
     if (themeClass) {
-      return themeClass.themeClassNamed(name)
+      return themeClass.themeClassNamed(name);
     }
-    return null
+    return null;
     */
   }
 
@@ -119,7 +119,7 @@
    * @category Retrieval
    */
   allThemeClasses () {
-    return this.subnodes().map(themeClass => themeClass.selfAndAllThemeChildren()).flat()
+    return this.subnodes().map(themeClass => themeClass.selfAndAllThemeChildren()).flat();
   }
 
   /**
@@ -129,7 +129,7 @@
    */
   allThemeClassesMap () {
     const map = new Map()
-    this.allThemeClasses().forEach(themeClass => map.set(themeClass.title(), themeClass))
+    this.allThemeClasses().forEach(themeClass => map.set(themeClass.title(), themeClass));
     return map
   }
 
@@ -140,7 +140,7 @@
    * @category Retrieval
    */
   stateWithName (name) {
-    return this.states().stateWithName(name)
+    return this.states().stateWithName(name);
   }
 
 }.initThisClass());

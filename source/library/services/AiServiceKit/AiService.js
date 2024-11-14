@@ -76,6 +76,7 @@
      */
     {
       const slot = this.newSlot("systemRoleName", "system");
+      slot.setAllowsNullValue(true);
       slot.setSlotType("String");
     }
 
