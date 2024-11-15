@@ -140,7 +140,12 @@ getGlobalThis().Type = (class Type extends Object {
 
     static classForClassTypeName (typeName) {
         const className = typeName.split(" ")[0];
-        return getGlobalThis()[className];
+        let aClass = getGlobalThis()[className];
+        if (aClass === undefined) {
+            console.warn("Type.classForClassTypeName: unable to find class for type name: " + typeName + " using Object instead");
+            aClass = Object;
+        }
+        return aClass;
     }
 
     static classForInstanceTypeName (typeName) {
