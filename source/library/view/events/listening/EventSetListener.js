@@ -28,7 +28,7 @@
          */
         {
             const slot = this.newSlot("listenTarget", null)
-            slot.setSlotType("Element");
+            slot.setSlotType("EventTarget"); 
         }
         /**
          * @member {Object} delegate

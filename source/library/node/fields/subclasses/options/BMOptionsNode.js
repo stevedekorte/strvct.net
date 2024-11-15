@@ -67,10 +67,12 @@
          * @member {string} syncedValidItemsJsonString
          * @description Stores the JSON string of synced valid items.
          */
+        /*
         {
             const slot = this.newSlot("syncedValidItemsJsonString", null);
             slot.setSlotType("String");
         }
+        */
 
         /**
          * @member {boolean} allowsMultiplePicks
@@ -450,14 +452,14 @@
      * @description Computes the valid items for the slot.
      * @returns {Array|null} The valid items, or null if neither validItems nor validItemsClosure are set.
      */
-        computedValidItems () {
-            if (this.validItems()) {
-                return this.validItems();
-            } else if (this.validItemsClosure()) {
-                return this.validItemsClosure()();
-            }
-            return null;
+    computedValidItems () {
+        if (this.validItems()) {
+            return this.validItems();
+        } else if (this.validItemsClosure()) {
+            return this.validItemsClosure()();
         }
+        return null;
+    }
 
     /**
      * @description Sets up subnodes if they are empty.
@@ -571,6 +573,7 @@
         return false;
     }
 
+
     /**
      * @description Sets up the subnodes.
      * @returns {BMOptionsNode} The current instance.
@@ -580,18 +583,22 @@
             this.removeAllSubnodes();
             const validItems = this.computedValidItems();
 
+            // setup the subnodes
             validItems.forEach(v => {
                 const item = this.itemForValue(v);
                 this.addOptionNodeForDict(item);
             });
-            this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validItems));
+
+            this.setValidItems(validItems);
+            //this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validItems));
 
             this.leafSubnodes().forEach(sn => {
                 sn.setIsPicked(this.targetHasPick(sn.value()));
             });
 
             if (this.needsSyncToSubnodes()) {
-                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after setupSubnodes!");
+                console.log("--------------------------------");
+                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after setupSubnodes!\n");
 
                 /*
                 if (this.allowsMultiplePicks()) {
@@ -606,22 +613,26 @@
 
                 // this can happen if the target has a value that is not in the validItems array
                 //debugger;
-                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after sync!");
                 console.log("Let's try syncing the picked values to the target:");
-                console.log("VALID VALUES:");
-                console.log("  computedValidValues: " + JSON.stableStringify(validItems));
-                console.log("  validItemsMatch: " + this.validItemsMatch());
-                console.log("  picksMatch: " + this.picksMatch());
 
-                console.log("  syncedValidItemsJsonString(): " +  this.syncedValidItemsJsonString());
+                console.log("VALID VALUES:");
+                console.log("  computedValidValues: " + JSON.stableStringify(validItems) + "\n");
+                console.log("  validItemsMatch: " + this.validItemsMatch() + "\n");
+
+                //console.log("  syncedValidItemsJsonString(): " +  this.syncedValidItemsJsonString() + "\n");
+
+                console.log("PICKS:");
+                console.log("  allowsMultiplePicks: " + this.allowsMultiplePicks() + "\n");
                 console.log("BEFORE:");
-                console.log("  value: ", JSON.stableStringify(this.value()));
+                console.log("  value: ", JSON.stableStringify(this.value()) + "\n");
                 
                 if (this.allowsMultiplePicks()) {
-                    console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()));
+                    console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()) + "\n");
                 } else {
-                    console.log("  pickedValue: ", JSON.stableStringify(this.pickedValue()));
+                    console.log("  pickedValue: ", JSON.stableStringify(this.pickedValue()) + "\n");
                 }
+
+                console.log("  pickedItems: ", this.pickedItems(), "\n");
 
                 // In this case, let's set it to the first valid value.
 
@@ -629,20 +640,20 @@
 
                 if (this.allowsMultiplePicks()) {
                     resolvedValue = this.pickedValues();
-                    console.log("  allowsMultiplePicks so using pickedValues: ", resolvedValue);
+                    console.log("  allowsMultiplePicks so using pickedValues: ", resolvedValue + "\n");
                 } else {
                     if (!this.pickedValue()) {
                         if (validItems.length > 0) {
                             resolvedValue = validItems.first().value;
                             assert(!Type.isUndefined(resolvedValue));
-                            console.log("  no pickedValue so using first valid value: ", resolvedValue);
+                            console.log("  no pickedValue so using first valid value: ", resolvedValue + "\n");
                         } else {
-                            console.warn("  no validItems so no valid values to use!");
+                            console.warn("  no validItems so no valid values to use!\n");
                             debugger;
                         }
                     } else {
                         resolvedValue = this.pickedValue();
-                        console.log("  has pickedValue so using it: ", resolvedValue);
+                        console.log("  has pickedValue so using it: ", resolvedValue + "\n");
                     }
                 }
                 this.setValueOnTarget(resolvedValue);
@@ -650,8 +661,18 @@
                 console.log("AFTER:");
                 console.log("  value: ", this.value());
 
-                Error.warn(!this.needsSyncToSubnodes(), "OptionsNode '" + this.key() + "' not synced with target after sync!");
-                debugger;
+                // sync the picked state of the leaf subnodes
+                this.leafSubnodes().forEach(sn => {
+                    sn.setIsPicked(this.targetHasPick(sn.value()));
+                });
+
+                //Error.warn(this.needsSyncToSubnodes(), "OptionsNode '" + this.key() + "' not synced with target after sync!");
+                if (this.needsSyncToSubnodes()) {
+                    debugger;
+                    this.needsSyncToSubnodes()
+                }
+                console.log("--------------------------------");
+
             }
             this.didUpdateNodeIfInitialized();
         }

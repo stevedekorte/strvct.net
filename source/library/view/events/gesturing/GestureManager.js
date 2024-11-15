@@ -47,7 +47,7 @@
          */
         {
             const slot = this.newSlot("activeGesture", null);
-            slot.setSlotType("Gesture");
+            slot.setSlotType("GestureRecognizer");
         }
         /**
          * @member {Map} begunGesturesMap

@@ -58,7 +58,7 @@
 
         this.setMinFingersRequired(1);
         this.setMaxFingersAllowed(1);
-        this.setMinDistToBegin(null);
+        this.setMinDistToBegin(0);
         return this;
     }
 

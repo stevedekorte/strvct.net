@@ -417,36 +417,36 @@
      */
     fullSyncNow () {
         if (this.isPaused()) {
-            return this
+            return this;
             
         }
         if (this.isProcessing()) {
-            this.debugLog(() => "fullSyncNow called while isProcessing so SKIPPING")
-            return this
+            this.debugLog(() => "fullSyncNow called while isProcessing so SKIPPING");
+            return this;
         }
 
         if (this.actionCount()) {
-            this.debugLog(" --- fullSyncNow start --- ")
-            let count = 0
-            const maxCount = 10
+            this.debugLog(" --- fullSyncNow start --- ");
+            let count = 0;
+            const maxCount = 10;
 
             while (this.actionCount()) {
-                this.processSets()
-                count ++
+                this.processSets();
+                count ++;
 
                 if (count > 6) {
                     this.setIsDebugging(true)
-                    console.log("\n\nSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?")
-                    console.log(" --- processSets # " + count + " --- ")
-                    console.log("\nSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription())
-                    console.log("\n" + BMNotificationCenter.shared().shortDescription() + ":\n" + BMNotificationCenter.shared().notesDescription())
-                    console.log(" --- ")
+                    console.log("\n\nSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?");
+                    console.log(" --- processSets # " + count + " --- ");
+                    console.log("\nSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());
+                    console.log("\n" + BMNotificationCenter.shared().shortDescription() + ":\n" + BMNotificationCenter.shared().notesDescription());
+                    console.log(" --- ");
                     debugger
                 }
                 assert (count < maxCount)
             }
 
-            this.debugLog(" --- fullSyncNow end --- ")
+            this.debugLog(" --- fullSyncNow end --- ");
         }
 
         return this
@@ -461,7 +461,7 @@
         if (this.orderedActions().length === 0) {
             return "none";
         }
-        return this.orderedActions().map(action => "    " + action.description() ).join("\n")
+        return this.orderedActions().map(action => "    " + action.description() ).join("\n");
     }
 
     /**
@@ -469,8 +469,8 @@
      * @category Debugging
      */
     show () {
-        console.log(this.type() + ":")
-        console.log(this.actionsDescription())
+        console.log(this.type() + ":");
+        console.log(this.actionsDescription());
     }
 
 }.initThisClass());
