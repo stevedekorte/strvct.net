@@ -206,4 +206,5 @@
     dataNote() {
         return this.attributes()["data-note"];
     }
+
 }.initThisClass());

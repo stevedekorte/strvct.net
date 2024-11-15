@@ -35,7 +35,7 @@
         Object.typeNameForInstanceOfClassName = this.typeNameForInstanceOfClassName;
         Object.typeName = this.typeName;
         Object.instanceTypeName = this.instanceTypeName;
-        Object.prototype.typeName = this.prototype.typeName;
+        //Object.prototype.typeName = this.prototype.typeName;
     }
 
     static typeNameForClassName (className) {
@@ -61,15 +61,13 @@
     static instanceTypeName () {
         return this.typeNameForInstanceOfClassName(this.name);
     }
-
-    /**
-     * @description This method returns the type name of the instance.
-     * @returns {string} The type name of the instance.
-    */
+    
+    /*
     typeName () {
         const aClass = this.__proto__;
         return aClass.instanceTypeName();
     }
+    */
 
     /**
      * @method makePrimitivesInheritFromObject

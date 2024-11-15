@@ -28,6 +28,7 @@
              */
             const slot = this.newSlot("parent", null); // StreamNode
             slot.setSlotType("StreamNode");
+            slot.setAllowsNullValue(true);
         }
 
         {
@@ -37,6 +38,25 @@
              */
             const slot = this.newSlot("children", []); // array of StreamNode
             slot.setSlotType("Array");
+        }
+
+        {
+            /**
+             * @member {DomNode|null} domNode
+             * @description The DOM node associated with the current node.
+             */
+            const slot = this.newSlot("domNode", null); 
+            slot.setSlotType("Node"); // Object/EventTarget/Node/Element|CharacterData|DocumentFragment|Document|DocumentType|Attr
+            slot.setAllowsNullValue(true);
+        }
+
+        {
+            /**
+             * @member {boolean} isClosed
+             * @description Whether the HTML element is closed.
+             */
+            const slot = this.newSlot("isClosed", false); // boolean
+            slot.setSlotType("Boolean");
         }
     }
 

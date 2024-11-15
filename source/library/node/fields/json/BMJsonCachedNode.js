@@ -41,12 +41,13 @@
 
         {
             /**
-             * @member {String} jsonHash
+             * @member {String} jsonHashCode
              * @description A hash of JSON.stableStrigify(jsonCache).
              * @category Data
              */
-            const slot = this.newSlot("jsonHash", null);
-            slot.setSlotType("String");
+            const slot = this.newSlot("jsonHashCode", null);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
         }
 
     }
@@ -95,7 +96,7 @@
      * @category Data Management
      */
     updateJsonHash () {
-        this.setJsonHash(JSON.stableStringify(this.asJson()).hashCode());
+        this.setJsonHashCode(JSON.stableStringify(this.asJson()).hashCode());
         return this;
     }
 
@@ -108,9 +109,9 @@
     setJsonCache (json) {
         this._jsonCache = json;
         if (json === null) {
-            this.setJsonHash(null);
+            this.setJsonHashCode(null);
         } else {
-            this.setJsonHash(JSON.stableStringify(json).hashCode());
+            this.setJsonHashCode(JSON.stableStringify(json).hashCode());
         }
         return this;
     }
@@ -121,7 +122,7 @@
      * @category Data Management
      */
     removeJsonCaches () {
-        this.setJsonHash(null); 
+        this.setJsonHashCode(null); 
         this.setJsonCache(null);  
         return this;
     }
@@ -143,8 +144,8 @@
      */
     doesMatchJson (json) {
         const a = JSON.stableStringify(json); 
-        if (this.jsonHash()) {
-            return this.jsonHash() === a.hashCode();
+        if (this.jsonHashCode()) {
+            return this.jsonHashCode() === a.hashCode();
         }
         const b = JSON.stableStringify(this.asJson());
         return a === b;

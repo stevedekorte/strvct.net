@@ -25,7 +25,7 @@
          * @category Parser
          */
         const slot = this.newSlot("parser", null);
-        slot.setSlotType("htmlparser2.Parser");
+        slot.setSlotType("Parser"); //"htmlparser2.Parser"
     }
 
     {
@@ -34,7 +34,7 @@
          * @category DOM
          */
         const slot = this.newSlot("currentNode", null);
-        slot.setSlotType("StreamElementNode");
+        slot.setSlotType("StreamNode"); // StreamElementNode or StreamTextNode
     }
 
     {

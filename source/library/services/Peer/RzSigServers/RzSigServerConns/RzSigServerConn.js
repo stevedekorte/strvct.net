@@ -756,7 +756,7 @@
     //debugger
     console.log("error: " + error.message);
     this.setStatus(error.message);
-    this.setError(error.message);
+    this.setError(error);
 
     const etype =  error.type
     let errorMethodRoot = etype.split("-").map(s => s.capitalized()).join("") //+ "Error";
