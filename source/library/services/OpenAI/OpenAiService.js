@@ -34,21 +34,25 @@
     return [
       {
           "name": "chatgpt-4o-latest",
+          "title": "OpenAI ChatGPT 4o",
           "note": "Dynamic model continuously updated to the current version of GPT-4o in ChatGPT.",
           "contextWindow": 128000
       }
       /*
       {
           "name": "gpt-4-1106-preview",
+          "title": "OpenAI ChatGPT 4o",
           "note": "better instruction following",
           "contextWindow": 128000
       },
       {
           "name": "gpt-4-turbo",
+          "title": "OpenAI ChatGPT 4 Turbo",
           "contextWindow": 128000
       },
       {
           "name": "gpt-4-turbo-2024-04-09",
+          "title": "OpenAI ChatGPT 4 Turbo",
           "contextWindow": 128000
       }
       */

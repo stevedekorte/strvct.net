@@ -24,7 +24,7 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     /**
@@ -95,9 +95,9 @@
 
     /*
     setCurrentEvent (event) {
-        this._currentEvent = event
-        //Devices.shared().setCurrentEvent(event)
-        return this
+        this._currentEvent = event;
+        //Devices.shared().setCurrentEvent(event);
+        return this;
     }
     */
 
@@ -107,12 +107,12 @@
      * @category Event Handling
      */
     startListening () {
-        this.setMouseListener(MouseListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
-        this.mouseListener().setIsListening(true)
+        this.setMouseListener(MouseListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this));
+        this.mouseListener().setIsListening(true);
 
-        this.setMouseMoveListener(MouseMoveListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
-        this.mouseMoveListener().setIsListening(true)
-        return this
+        this.setMouseMoveListener(MouseMoveListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this));
+        this.mouseMoveListener().setIsListening(true);
+        return this;
     }
 
     /**
@@ -121,7 +121,7 @@
      * @category Position
      */
     downPos () {
-        return this.pointForEvent(this.downEvent())
+        return this.pointForEvent(this.downEvent());
     }
 
     /**
@@ -130,7 +130,7 @@
      * @category Position
      */
     currentPos () {
-        return this.pointForEvent(this.currentEvent())
+        return this.pointForEvent(this.currentEvent());
     }
 
     /**
@@ -139,7 +139,7 @@
      * @category Position
      */
     upPos () {
-        return this.pointForEvent(this.upEvent())
+        return this.pointForEvent(this.upEvent());
     }
 
     /**
@@ -149,8 +149,8 @@
      * @category Event Handling
      */
     onMouseDownCapture (event) {
-        this.setDownEvent(event)
-        this.setCurrentEvent(event)
+        this.setDownEvent(event);
+        this.setCurrentEvent(event);
         this.setIsDown(true);
         return true
     }
@@ -162,8 +162,8 @@
      * @category Event Handling
      */
     onMouseMoveCapture (event) {
-        this.setCurrentEvent(event)
-        return true
+        this.setCurrentEvent(event);
+        return true;
     }
 
     /**
@@ -173,10 +173,10 @@
      * @category Event Handling
      */
     onMouseUpCapture (event) {
-        this.setCurrentEvent(event)
-        this.setUpEvent(event)
+        this.setCurrentEvent(event);
+        this.setUpEvent(event);
         this.setIsDown(false);
-        return true
+        return true;
     }  
 
     /**
@@ -186,19 +186,19 @@
      * @category Utilities
      */
     pointForEvent (event) {
-        assert(event.__proto__.constructor === MouseEvent)
+        assert(event.__proto__.constructor === MouseEvent);
 
-        const p = EventPoint.clone()
-        p.set(event.pageX, event.pageY) // document position
-        p.setTarget(event.target)
-        p.setTimeToNow()
-        p.setId("mouse")
-        p.setState(event.buttons)
-        p.setIsDown(event.buttons !== 0)
-        p.setEvent(event)
-        //p.findOverview()
+        const p = EventPoint.clone();
+        p.set(event.pageX, event.pageY); // document position
+        p.setTarget(event.target);
+        p.setTimeToNow();
+        p.setId("mouse");
+        p.setState(event.buttons);
+        p.setIsDown(event.buttons !== 0);
+        p.setEvent(event);
+        //p.findOverview();
 
-        return p
+        return p;
     }
 
     /**
@@ -209,14 +209,14 @@
      */
     dragVector (event) {   
         if (this.downPos()) {
-            return this.currentPos().subtract(this.downPos())
+            return this.currentPos().subtract(this.downPos());
         }
         /*  
         if (this.isDown()) {
-            return this.currentPos().subtract(this.downPos())
+            return this.currentPos().subtract(this.downPos());
         }
         */
-        return Point.clone()
+        return Point.clone();
     }
 
     /**
@@ -227,11 +227,11 @@
      */
     pointsForEvent (event) {
         if (!event.hasCachedPoints()) {
-            const points = [this.pointForEvent(event)]
-            event.setCachedPoints(points)
+            const points = [this.pointForEvent(event)];
+            event.setCachedPoints(points);
         }
 
-        return event.cachedPoints()
+        return event.cachedPoints();
     }
 
     /**
@@ -241,9 +241,9 @@
      */
     currentPoints () {
         if (this.currentEvent()) {
-            return this.pointsForEvent(this.currentEvent())
+            return this.pointsForEvent(this.currentEvent());
         }
-        return []
+        return [];
     }
 
     /**
@@ -253,8 +253,8 @@
      * @category Utilities
      */
     downMethodNameForEvent (event) {
-        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event)
-        return "on" + s + "MouseDown"
+        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event);
+        return "on" + s + "MouseDown";
     }
 
     /**
@@ -264,8 +264,8 @@
      * @category Utilities
      */
     upMethodNameForEvent (event) {
-        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event)
-        return "on" + s + "MouseUp"
+        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event);
+        return "on" + s + "MouseUp";
     }
     
 }.initThisClass());

@@ -760,10 +760,10 @@
      * @category Setter Construction
      */
     setSlotValue (aSlot, newValue) {
-        const oldValue = this.baseGetSlotValue(aSlot);
+        const oldValue = this.baseGetSlotValue(aSlot); // handles unwrapping weak slots
         if (oldValue !== newValue) {
-            this.baseSetSlotValue(aSlot, newValue);
-            this.didUpdateSlot(aSlot, oldValue, newValue);
+            this.baseSetSlotValue(aSlot, newValue); // handles unwrapping weak slots
+            this.didUpdateSlot(aSlot, oldValue, newValue); // StorableNode overrides this to call didMutate which sends onDidMutateObject to mutation observers
         }
         return this;
     }

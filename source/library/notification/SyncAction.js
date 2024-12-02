@@ -18,7 +18,7 @@
      * @returns {string} The generated action key.
      * @category Key Generation
      */
-    static ActionKeyForTargetAndMethod(target, method) {
+    static actionKeyForTargetAndMethod(target, method) {
         return target.typeId() + "." + method;
     }
 
@@ -127,7 +127,7 @@
      * @category Key Generation
      */
     actionsKey() {
-        return SyncAction.ActionKeyForTargetAndMethod(this.target(), this.method())
+        return SyncAction.actionKeyForTargetAndMethod(this.target(), this.method())
     }
 	
     /**

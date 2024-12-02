@@ -16,7 +16,7 @@
      * @category Mutation
      */
     mutatorMethodNamesSet () {
-        throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class")
+        throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class");
     }
 
     /**
@@ -33,28 +33,28 @@
         // unhooked version after calling this.willMutate(slotName)
         
         this.mutatorMethodNamesSet().forEach((slotName) => {
-            const unhookedName = "unhooked_" + slotName
-            const unhookedFunction = this[slotName]
+            const unhookedName = "unhooked_" + slotName;
+            const unhookedFunction = this[slotName];
     
-            Object.defineSlot(this, unhookedName, unhookedFunction)
+            Object.defineSlot(this, unhookedName, unhookedFunction);
     
             const hookedFunction = function () {
-                this.willMutate(slotName, arguments)
-                const result = this[unhookedName].apply(this, arguments)
-                this.didMutate(slotName)
+                this.willMutate(slotName, arguments);
+                const result = this[unhookedName].apply(this, arguments);
+                this.didMutate(slotName);
     
-                //let argsString = []
+                //let argsString = [];
                 //for (let i=0; i < arguments.length; i++) {
                 //    if (i !== 0) { argsString += ", " }
-                //    argsString += String(arguments[i])
+                //    argsString += String(arguments[i]);
                 //}
-                //console.log("hooked Array " + slotName + "(" + argsString + ")") 
-                //console.log("result = " + result)
+                //console.log("hooked Array " + slotName + "(" + argsString + ")") ;
+                //console.log("result = " + result);
     
-                return result
+                return result;
             }
     
-            Object.defineSlot(this, slotName, hookedFunction)
+            Object.defineSlot(this, slotName, hookedFunction);
         })
     }
 
@@ -67,8 +67,8 @@
      * @category Observers
      */
     setMutationObservers (aSet) {
-        this._mutationObservers = aSet
-        return this
+        this._mutationObservers = aSet;
+        return this;
     }
 
     /**
@@ -78,9 +78,9 @@
      */
     mutationObservers () {
         if (!this._mutationObservers) {
-            this.setMutationObservers(new Set())
+            this.setMutationObservers(new Set());
         }
-        return this._mutationObservers
+        return this._mutationObservers;
     }
 
     /**
@@ -89,8 +89,8 @@
      * @category Observers
      */
     hasMutationObservers () {
-        const mos = this._mutationObservers
-        return mos && mos.size > 0
+        const mos = this._mutationObservers;
+        return mos && mos.size > 0;
     }
 
     /**
@@ -100,8 +100,8 @@
      * @category Observers
      */
     addMutationObserver (anObserver) {
-        this.mutationObservers().add(anObserver)
-        return this
+        this.mutationObservers().add(anObserver);
+        return this;
     }
 
     /**
@@ -111,9 +111,9 @@
      * @category Observers
      */
     removeMutationObserver (anObserver) {
-        assert(anObserver)
-        this.mutationObservers().delete(anObserver)
-        return this
+        assert(anObserver);
+        this.mutationObservers().delete(anObserver);
+        return this;
     }
 
     // ------
@@ -125,10 +125,10 @@
      */
     willMutate () {
         /*
-        const mos = this._mutationObservers
+        const mos = this._mutationObservers;
         if (mos) {
             mos.forEach(v => { 
-                v.onWillMutateObject(this)
+                v.onWillMutateObject(this);
             })
         }
         */
@@ -141,12 +141,12 @@
      * @category Mutation
      */
     didMutate (optionalSlotName) {
-        const mos = this._mutationObservers
+        const mos = this._mutationObservers;
         if (mos) {
             //console.log("" + this.debugTypeId() + ".didMutate()")
             mos.forEach(obs => {
-                obs.onDidMutateObject(this, optionalSlotName)
-            })
+                obs.onDidMutateObject(this, optionalSlotName);
+            });
         }
     }
 

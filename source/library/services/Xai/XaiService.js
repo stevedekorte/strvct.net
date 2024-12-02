@@ -37,7 +37,7 @@
     return [
       {
         "name": "grok-beta",
-        "title": "grok-beta",
+        "title": "Grok Beta",
         "contextWindow": 131072,
         "outputTokenLimit": 8192 // jsut a guess as I can't find it in the docs
       }

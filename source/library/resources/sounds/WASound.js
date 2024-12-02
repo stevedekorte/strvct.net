@@ -428,8 +428,8 @@
      * @returns {WASound} the sound
      */
     onError (e) {
-        console.warn(this.type() + " onDecodeError ", e.error, " " + this.path());
-        this.setError(e.error);
+        console.warn(this.type() + " onDecodeError ", e.message, " " + this.path());
+        this.setError(e);
     }
 
     // --- decode ---
@@ -455,8 +455,8 @@
      * @returns {WASound} the sound
      */
     onDecodeError (e) {
-        console.warn(this.type() + " onDecodeError ", e.error, " " + this.path());
-        this.setError(e.error);
+        console.warn(this.type() + " onDecodeError ", e.message, " " + this.path());
+        this.setError(e);
     }
 
     // --- audio source ---

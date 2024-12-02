@@ -237,6 +237,17 @@
     }
 
     /**
+     * Schedules a method to be called at the end of the next event loop cycle.
+     * @param {string} methodName - The name of the method to schedule.
+     * @param {number} priority - The priority of the scheduled method.
+     * @returns {*} The result of scheduling the method.
+     * @category Scheduling
+     */
+    scheduleMethodForNextCycle (methodName, priority) {
+        return SyncScheduler.shared().scheduleTargetAndMethodForNextCycle(this, methodName, priority);
+    }
+
+    /**
      * Returns a 64-bit hash code for the object.
      * Default implementation assumes we are using the object's own properties, as we would a Dictionary.
      * Descendants of ProtoClass override this to include all prototype properties. (TODO)

@@ -59,6 +59,24 @@
 
 getGlobalThis().Type = (class Type extends Object {
 
+    static typeDescription (value) {
+        let s;
+        if (typeof(value) === "string") {
+            if (value.length > 10) {
+                s = value.clipWithEllipsis(10).quoted();
+            } else {
+                s = value.quoted();
+            }
+        } else if (typeof(value) === "number") {
+            s = value.toString();
+        } else if (Type.isDeepJsonType(value)) {
+            s = JSON.stableStringify(value).clipWithEllipsis(50);
+        } else {
+            s = "<" + typeof(value) + ">";
+        }
+        return this.typeName(value) + " " + JSON.stableStringify(value);
+    }
+
     /**
      * A typeName is a string that describes the "type" of a value.
      * For a class, this is the class name.
@@ -1095,4 +1113,4 @@ getGlobalThis().Type = (class Type extends Object {
 });
 
 
-Type.test();
+//Type.test();

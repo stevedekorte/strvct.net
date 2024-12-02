@@ -33,21 +33,21 @@
          */
         {
             const addSlot = (name, path, label, values) => {
-                const slot = this.newSlot(name, "")
-                slot.setInspectorPath(path)
-                slot.setLabel(label)
-                slot.setShouldStoreSlot(true)
-                slot.setDuplicateOp("copyValue")
-                slot.setSlotType("String")
-                slot.setValidValues(values)
-                slot.setCanInspect(true)
-                slot.setInspectorPath("Node/Viewable")
+                const slot = this.newSlot(name, "");
+                slot.setInspectorPath(path);
+                slot.setLabel(label);
+                slot.setShouldStoreSlot(true);
+                slot.setDuplicateOp("copyValue");
+                slot.setSlotType("String");
+                slot.setValidValues(values);
+                slot.setCanInspect(true);
+                slot.setInspectorPath("Node/Viewable");
 
-                return slot
+                return slot;
             }
             addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((instance) => { 
-                //return BMThemeResources.shared().activeTheme().themeClassNames()
-                return Tile.allSubclasses().map(aClass => aClass.type())
+                //return BMThemeResources.shared().activeTheme().themeClassNames();
+                return Tile.allSubclasses().map(aClass => aClass.type());
             })
 
             //BMThemeResources.shared().activeTheme().newThemeClassOptions()

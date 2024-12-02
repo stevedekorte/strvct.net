@@ -243,10 +243,10 @@
      * @returns {TilesView_dragViewProtocol} The current instance
      */
     syncTilePlaceHolderSize (dragView) {
-        const ph = this.tilePlaceHolder()
+        const ph = this.tilePlaceHolder();
         //const period = 0.1
         if (this.isVertical()) {
-            ph.setMinAndMaxWidth(this.computedWidth())
+            ph.setMinAndMaxWidth(this.computedWidth());
             ph.setMinAndMaxHeight(dragView.minHeight())
             //ph.setMinAndMaxHeight(dragView.maxHeightPx() + 1) // all tiles seem to shrink while dragging, not just place holder
             //ph.transitions().at("top").updateDuration(0)

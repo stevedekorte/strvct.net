@@ -27,23 +27,28 @@
     return [
       {
         "name": "llama-3.1-405b-reasoning",
+        "title": "Groq Llama 3.1 405B Reasoning",
         "contextWindow": 131072 
       }
       /*
       {
           "name": "llama-3.1-70b-versatile",
+          "title": "Groq Llama 3.1 70B Versatile",
           "contextWindow": 131072
       },
       {
           "name": "llama-3.1-8b-instant",
+          "title": "Groq Llama 3.1 8B Instant",
           "contextWindow": 131072
       },
       {
           "name": "mixtral-8x7b-32768",
+          "title": "Groq Mixtral 8x7B",
           "contextWindow": 32768
       },
       {
           "name": "gemma-7b-it",
+          "title": "Groq Gemma 7B IT",
           "contextWindow": 8192
       }
       */

@@ -606,6 +606,10 @@
         return this.substring(0, length) + '...';
     }
 
+    quoted () {
+        return '"' + this + '"';
+    }
+
     /**
      * Generates Lorem Ipsum text
      * @param {number} [minWordCount=10] - Minimum number of words

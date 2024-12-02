@@ -198,7 +198,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         if (Type.isString(v) || Type.isNumber(v)) {
             return {
-                label: v,
+                label: v.toString(),
                 subtitle: null,
                 value: v
             };
@@ -247,6 +247,76 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             }
         }
         return null;
+    }
+
+
+    /**
+     * @category Validation
+     * @description Sets the valid values array.
+     * @param {Array} v - The valid values array.
+     * @returns {Slot} The slot instance.
+     */
+    setValidValues (v) {
+        if (this.thisClass().valueIsItems(v)) {
+            throw new Error("Slot.setValidValues: called with items instead of values. Use setValidItems for dictionary items.");
+        }
+
+        this._validValues = v;
+
+        // sanity check
+        if (v) {
+            const isValid = this.validateValue(this.initValue());
+            if (!isValid) {
+                debugger;
+                this.validateValue(this.initValue());
+
+                throw new Error(Type.typeDescription(this.initValue()) + " not in valid values: " + JSON.stableStringify(this._validValues));
+            }
+        }
+        return this;
+    }
+
+    static assertValidItems (items) {
+        assert(items);
+        assert(Type.isArray(items));
+        assert(items.length);
+        assert(items.every(item => Type.isDictionary(item)));
+        assert(items.every(item => Type.isString(item.label)));
+        assert(items.every(item => Type.isString(item.value)));
+    }
+
+    static fixValidItems (items) {
+        items.forEach(item => {
+            assert(Type.isDictionary(item));
+            assert(Type.isString(item.label));
+            if (item.value === undefined) {
+                item.value = item.label;
+            }
+        });
+        return items;
+    }
+
+    static valueIsItems (v) {
+        return v && Type.isArray(v) && v.length && Type.isDictionary(v.first());
+    }
+
+    setValidItems (items) {
+        items = this.thisClass().fixValidItems(items); // should this be done on a copy?
+        try {
+            this.thisClass().assertValidItems(items);
+        } catch (e) {
+            items = this.thisClass().fixValidItems(items);
+            this.thisClass().assertValidItems(items);
+        }
+        this._validItems = items;
+        return this;
+    }
+
+    valueIsValid (v) {
+        if (this.thisClass().valueIsItems(v)) {
+            return this.validItems().some(dv => dv.value === v);
+        }
+        return this._validValues.includes(v);
     }
 
     /**
@@ -317,28 +387,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
-    /**
-     * @category Validation
-     */
-    setValidValues (v) {
-        this._validValues = v;
-
-        // sanity check
-        if (v) {
-            const isValid = this._validValues.includes(this.initValue());
-            if (!isValid) {
-                const isOptionsDict = Type.isArray(v) && v.length && v.first().label;
-                if (!isOptionsDict) {
-                    console.log("ERROR Slot.setValidValues:")
-                    const s = "this._validValues: " + JSON.stableStringify(this._validValues) + " doesn't contain '" + this.initValue() + "'";
-                    console.log(s)
-                    debugger;
-                    //throw new Error("valid values constraint not met: " + s)
-                }
-            }
-        }
-        return this
-    }
 
     /**
      * @category Annotations
@@ -631,7 +679,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         assert(!Type.isNull(slotType), "slotType is null for slot: " + this.name());
         let fieldName = "BM" + slotType + "Field";
 
-        if (this.validValues() || this.validValuesClosure()) {
+        if (this.validValues() || this.validValuesClosure() || this.validItems() || this.validItemsClosure()) {
             fieldName = "BMOptionsNode";
         }
         
@@ -680,6 +728,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
 
                 if (this.validItems()) {
+                    if (field.setValidItems === undefined) {
+                        debugger;
+                        throw new Error("field " + field.type() + " does not support setValidItems.");
+                    }
                     field.setValidItems(this.validItems());
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks());
                     field.setNodeSubtitleIsChildrenSummary(true);
@@ -946,14 +998,33 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             return this.allowsNullValue();
         }
 
+        const validItems = this.validItems();
+        const valueIsInValidItems = function (v) {
+            if (validItems !== null) {
+                return validItems.detect(item => {
+                    return Type.valuesAreEqual(item.value, v);
+                });
+            }
+            return false;
+        };
+
+
+        if (this.allowsMultiplePicks()) {
+            if(!Type.isArray(v)) {
+                assert(!Type.isArray(v));
+                console.warn("slot '" + this.name() + "' allows multiple picks, but value is not an array: " + Type.typeDescription(v));
+                debugger;
+                return false;
+            }
+            return v.every(value => valueIsInValidItems(value));
+        }
+
         // check valid items first (to support multiple valid slot types)
 
         //const validItems = this.computedValidItems(); // closure may reference unloaded classes...
-        const validItems = this.validItems();
-        if (validItems !== null) {
-            return validItems.detect(item => {
-                return Type.valuesAreEqual(item.value, v);
-            });
+
+        if (valueIsInValidItems(v)) {
+            return true;
         }
 
         const slotType = this.slotType();
@@ -981,42 +1052,65 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     autoSetter () {
         const slot = this;
         return function (newValue) {
+            const valueDescription = function (v) {
+                let vString = String(v);
+                vString = vString.length < 20 ? vString : (vString.slice(0, 20) + "...");
+                if (Type.isString(v)) {
+                    vString = "'" + vString + "'";
+                }
+                return Type.typeName(v) + " " + vString;
+            }
+
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
                 if (!isValid) {
-                    //const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with invalid argument value (" + Type.typeName(newValue) + ") '" + newValue + "' not in valid items: " + validItems;
-                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with (" + Type.typeName(newValue) + ") '" + String(newValue).slice(0, 20) + "...' expected: '" + slot.slotType() + "'";
+                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + "' expected (" + slot.slotType() + ")";
                     console.log(errorMsg);
 
+                    const initValue = slot.initValue();
+                    if (initValue) {
+                        if (!slot.validateValue(initValue)) {
+                            console.log("RESOLUTION: initValue is not valid, so we can't use it");
+                        debugger;
+                        }
+                    }
+
+                    //debugger;
                     if (slot.slotType() === "String" && Type.isNumber(newValue)) {
                         console.log("RESOLUTION: converting value to string");
                         newValue = String(newValue);
                     } else if (slot.slotType() === "Number" && Type.isString(newValue)) {
                         console.log("RESOLUTION: converting value to number");
                         newValue = Number(newValue);
-                    } else {
-                        debugger;
-                    }
+                    } else { // It's not just a type conversion issue...
+                       // debugger;
+                        slot.validateValue(newValue); // so we can step into it
 
-                    slot.validateValue(newValue); // so we can step into it
-
-                    const initValue = slot.initValue();
-                    console.log("RESOLUTION: setting value to initValue: ", initValue);
-                    //debugger;
-                    let resolvedValue = initValue;
-                    //debugger;
-                    if (!slot.validateValue(resolvedValue)) {
-                        console.log("RESOLUTION: setting value to initValue: ", resolvedValue);
-                        const validItems = slot.validItems();
-                        if (!Type.isNull(validItems)) {
-                            resolvedValue = validItems.first();
-                            if (!slot.validateValue(resolvedValue)) {
-                                console.log("RESOLUTION: setting value to validItems.first(): ", resolvedValue);
-                                throw new Error(errorMsg);
+                        console.log("RESOLUTION: setting value to initValue: ", initValue);
+                        let resolvedValue = initValue;
+                        if (!slot.validateValue(resolvedValue)) { // try valid items next
+                            console.log("RESOLUTION: setting value to initValue: ", resolvedValue);
+                            const validItems = slot.validItems();
+                            if (!Type.isNull(validItems)) {
+                                resolvedValue = validItems.first();
+                                if (!slot.validateValue(resolvedValue)) {
+                                    console.log("RESOLUTION: setting value to validItems.first(): ", resolvedValue);
+                                    throw new Error(errorMsg);
+                                }
                             }
                         }
+                        newValue = resolvedValue;
                     }
-                    newValue = resolvedValue;
+                    //this.scheduleMethod("didMutate", slot.name()); // got a stack overflow for this
+                    if (this.shouldStore()) {
+                        const store = this.defaultStore();
+                        if (store.hasActiveObject(this)) {
+                            //debugger;
+                            store.forceAddDirtyObject(this); // not ideal, but let's see if it works
+                        }
+                    }
+
+                    console.log("RESOLUTION: setting value to " + valueDescription(newValue) + "\n\n");
                 }
             }
 

@@ -135,6 +135,16 @@
             const slot = this.newSlot("isPaused", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * Actions added now, but will be processed in the next event loop cycle.
+         * @member {Map} nextCycleActions
+         * @category State
+         */
+        {
+            const slot = this.newSlot("nextCycleActions", null);
+            slot.setSlotType("Map");
+        }
     }
 
     /**
@@ -142,6 +152,12 @@
      * @category Initialization
      */
     initPrototype () {
+
+    }
+
+    init () {
+        super.init();
+        this.setNextCycleActions(new Map());
     }
 
     /**
@@ -179,6 +195,27 @@
         newAction.setMethod(syncMethod);
         newAction.setOrder(order ? order : 0);
         return newAction;
+    }
+
+    /**
+     * @description Schedules a target and method for the next event loop cycle
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @param {number} [optionalOrder] - The optional order of execution
+     * @returns {SyncScheduler} The instance
+     * @category Scheduling
+     */
+    scheduleTargetAndMethodForNextCycle (target, syncMethod, optionalOrder) {
+        const action = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder);
+        this.nextCycleActions().atIfAbsentPut(action.actionsKey(), action);
+        return this;
+    }
+
+    pushNextCycleActions () {
+        assert(this.actions().isEmpty());
+        this.actions().merge(this.nextCycleActions());
+        this.nextCycleActions().clear();
+        return this;
     }
 	
     /**
@@ -223,8 +260,8 @@
      * @category Query
      */
     isSyncingOrScheduledTargetAndMethod(target, syncMethod) {
-        const sc = this.hasScheduledTargetAndMethod(target, syncMethod) 
-        const sy = this.isSyncingTargetAndMethod(target, syncMethod) 
+        const sc = this.hasScheduledTargetAndMethod(target, syncMethod);
+        const sy = this.isSyncingTargetAndMethod(target, syncMethod);
         return sc || sy;
     }
 
@@ -236,8 +273,8 @@
      * @category Query
      */
     hasScheduledTargetAndMethod (target, syncMethod) {
-        const actionKey = SyncAction.ActionKeyForTargetAndMethod(target, syncMethod)
-    	return this.actions().hasKey(actionKey)
+        const actionKey = SyncAction.actionKeyForTargetAndMethod(target, syncMethod);
+    	return this.actions().hasKey(actionKey);
     }
 
     /**
@@ -250,10 +287,10 @@
     isSyncingTargetAndMethod (target, syncMethod) {
         const ca = this.currentAction()
         if (ca) {
-            const action = this.newActionForTargetAndMethod(target, syncMethod)
-    		return ca.equals(action)
+            const action = this.newActionForTargetAndMethod(target, syncMethod);
+    		return ca.equals(action);
         }
-        return false
+        return false;
     }
     
     /**
@@ -263,7 +300,7 @@
      * @category Query
      */
     actionsForTarget (target) {
-        return this.actions().valuesArray().select(action => action.target() === target)
+        return this.actions().valuesArray().select(action => action.target() === target);
     }
 
     /**
@@ -273,7 +310,7 @@
      * @category Query
      */
     hasActionsForTarget (target) {
-        return this.actions().valuesArray().canDetect(action => action.target() === target)
+        return this.actions().valuesArray().canDetect(action => action.target() === target);
     }
 
     /**
@@ -284,19 +321,19 @@
      */
     unscheduleTarget (target) {
         if (this.hasActionsForTarget(target)) {
-            console.log("unscheduling target " + target.debugTypeId())
+            console.log("unscheduling target " + target.debugTypeId());
 
             if (this.isProcessing()) {
                 console.warn("WARNING: SynScheduler unscheduleTarget while processing actions set - will unschedule action")
             }
 
             this.actionsForTarget(target).forEach(action => {
-                this.removeActionKey(action.actionsKey())
+                this.removeActionKey(action.actionsKey());
             })
         }
 
-        assert(!this.hasActionsForTarget()) // todo: remove this sanity check
-        return this
+        assert(!this.hasActionsForTarget()); // todo: remove this sanity check
+        return this;
     }
 
     /**
@@ -307,9 +344,9 @@
      * @category Scheduling
      */
     unscheduleTargetAndMethod (target, syncMethod) {
-        const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey()
-        this.removeActionKey(k)
-        return this
+        const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey();
+        this.removeActionKey(k);
+        return this;
     }
 
     /**
@@ -319,12 +356,12 @@
      * @category Action Management
      */
     removeActionKey (k) {
-        const action = this.actions().at(k)
+        const action = this.actions().at(k);
         if (action) {
-            action.setIsUnscheduled(true)
-            this.actions().removeKey(k)
+            action.setIsUnscheduled(true);
+            this.actions().removeKey(k);
         }
-        return this
+        return this;
     }
 	
     /**
@@ -349,7 +386,9 @@
      * @category Query
      */
     orderedActions () {
-        const sorter = function (a1, a2) { return a1.order() - a2.order(); };
+        const sorter = function (a1, a2) { 
+            return a1.order() - a2.order(); 
+        };
         return this.actions().valuesArray().sort(sorter);
     }
 	
@@ -449,7 +488,8 @@
             this.debugLog(" --- fullSyncNow end --- ");
         }
 
-        return this
+        this.pushNextCycleActions();
+        return this;
     }
 
     /**

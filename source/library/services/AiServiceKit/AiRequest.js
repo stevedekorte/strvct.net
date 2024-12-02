@@ -548,27 +548,31 @@
     
     // why false arg? see https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
     xhr.addEventListener("progress", (event) => {
-     EventManager.shared().safeWrapEvent(() => { this.onXhrProgress(event) }, event)
-     //this.onXhrProgress(event)
+      EventManager.shared().safeWrapEvent(() => {
+        this.onXhrProgress(event);
+      }, event)
     }, false);
 
     xhr.addEventListener("loadend", (event) => {
       try { 
-        EventManager.shared().safeWrapEvent(() => { this.onXhrLoadEnd(event) }, event);
+        EventManager.shared().safeWrapEvent(() => { 
+          this.onXhrLoadEnd(event);
+        }, event);
       } catch (error) {
        this.onError(error); 
       }
-      //this.onXhrLoadEnd(event)
     });
 
     xhr.addEventListener("error", (event) => {
-      EventManager.shared().safeWrapEvent(() => { this.onXhrError(event) }, event)
-      //this.onXhrError(event)
+      EventManager.shared().safeWrapEvent(() => { 
+        this.onXhrError(event);
+      }, event)
     });
 
     xhr.addEventListener("abort", (event) => {
-      EventManager.shared().safeWrapEvent(() => { this.onXhrAbort(event) }, event)
-      //this.onXhrAbort(event)
+      EventManager.shared().safeWrapEvent(() => { 
+        this.onXhrAbort(event);
+      }, event)
     });
 
     //  EventManager.shared().safeWrapEvent(() => { ... })

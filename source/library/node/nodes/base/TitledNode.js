@@ -125,10 +125,10 @@
      */
     subtitle () {
         if (this.subtitleIsSubnodeCount() && this.subnodesCount()) {
-            return this.subnodesCount()
+            return this.subnodesCount();
         }
         
-        return this._subtitle
+        return this._subtitle;
     }
 
     /**
@@ -145,15 +145,15 @@
      */
     note () {
         if (this.noteIsSubnodeCount()) {
-            const count = this.noteSubnodesCount()
+            const count = this.noteSubnodesCount();
             if (count) {
-                return count
+                return String(count);
             }
 
-            return ""
+            return "";
         }
         
-        return this._note
+        return this._note;
     }
 
     /**
