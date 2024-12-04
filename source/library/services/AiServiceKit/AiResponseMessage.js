@@ -22,7 +22,7 @@
       const slot = this.newSlot("request", null);
       slot.setAllowsNullValue(true);
       slot.setLabel("request");
-      slot.setShouldStoreSlot(true); // TODO: remove when not debugging
+      slot.setShouldStoreSlot(false); // TODO: remove when not debugging
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("AiRequest");
       slot.setCanInspect(true);

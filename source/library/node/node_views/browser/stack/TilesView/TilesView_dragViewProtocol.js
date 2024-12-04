@@ -14,6 +14,7 @@
  * - acceptsDrop
  * - onDragDestinationDropped
  * And can optionally implement the methods:
+ * - acceptsDropHover
  * - onDragDestinationEnter
  * - onDragDestinationExit
  * - onDragDestinationEnd
@@ -22,7 +23,6 @@
  * the insertion point and animate the tiles moving into place.
  * 
  * To support draggings a tile, the tile must implement the methods:
- * - acceptsDrag
  * - onDragSourceBegin
  * - onDragSourceCancelled
  * - onDragSourceEnter

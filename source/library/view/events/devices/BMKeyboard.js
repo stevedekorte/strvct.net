@@ -37,6 +37,7 @@
  *
  *     Newer JS browser APIs might have better ways to do
  *     key code to name mappings. TODO: look into whether this is well supported across browsers.
+ * 
  */
 
 "use strict";
@@ -102,10 +103,10 @@
      * @returns {BMKeyboard} The keyboard instance
      */
     startListening () {
-        const listener = KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this)
-        this.setKeyboardListener(listener)
-        this.keyboardListener().setIsListening(true)
-        return this
+        const listener = KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this);
+        this.setKeyboardListener(listener);
+        this.keyboardListener().setIsListening(true);
+        return this;
     }
 
     /**
@@ -189,8 +190,8 @@
      * @returns {boolean} True if the event is just a modifier key
      */
     eventIsJustModifierKey (event) {
-        const name = this.nameForKeyCode(event.keyCode)
-        return this.allModifierNames().contains(name)
+        const name = this.nameForKeyCode(event.keyCode);
+        return this.allModifierNames().contains(name);
     }
 
     /**
@@ -333,7 +334,7 @@
             "<": "LessThan",
             ">": "GreaterThan",
             "?": "QuestionMark",
-        }
+        };
     }
 
     /**
@@ -407,20 +408,20 @@
      * @returns {boolean} True if the event should propagate
      */
     onKeyUpCapture (event) {
-        const shouldPropogate = true
-        const key = this.keyForEvent(event)
+        const shouldPropogate = true;
+        const key = this.keyForEvent(event);
         if (!key) {
-            console.log("]]]]]]]]]]] WARNING: missing key for event: ", event)
-            return
+            console.log("]]]]]]]]]]] WARNING: missing key for event: ", event);
+            return;
         }
-        key.onKeyUp(event)
+        key.onKeyUp(event);
 
         if (this.isDebugging()) {
-            this.debugLog(" " + this.upMethodNameForEvent(event))
-            //this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp")
+            this.debugLog(" " + this.upMethodNameForEvent(event));
+            //this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp");
         }
 
-        return shouldPropogate
+        return shouldPropogate;
     }
     
     /**
@@ -472,51 +473,63 @@
      * @returns {string} The mods and key name
      */
     modsAndKeyNameForEvent (event) {
-        // examples: AltB AltShiftB
-        // Note that shift is explicit and the B key is always uppercase
+        /*
+            Examples: Alt_b Alt_B, AltShift_1
+            Note: shift is explicit if the key is not alphabetical.
+
+            Control_c - typical copy command on Windows
+            MetaLeft_c/MetaRight_c - typical copy command on MacOS
+
+            Control_v - typical paste command on Windows
+            MetaLeft_v/MetaRight_v - typical paste command on MacOS
+        */
 
         if (Type.isUndefined(event.keyCode)) {
-            return ""
+            return "";
         }
         
-        const key = this.keyForCode(event.keyCode)
-        const isJustModifier = this.eventIsJustModifierKey(event)
-        const modifiers = this.modifierNamesForEvent(event)
-        const isAlpabetical = this.eventIsAlphabetical(event);
+        const key = this.keyForCode(event.keyCode);
+        const isJustModifier = this.eventIsJustModifierKey(event);
+        const modifiers = this.modifierNamesForEvent(event); // may include Shift
+        const isAlpabetical = this.eventIsAlphabetical(event);;
         const isNumeric = this.eventIsNumeric(event);
-        let keyName = key ? key.name() : event.code
+        let keyName = key ? key.name() : event.code;
 
         
         if (isJustModifier) {
-            return keyName
+            return keyName;
         }
 
         if (event.shiftKey) {
             // Note: if another modifier besides the shift key is down, 
-            // the non-shift version of event.key is use e.g.
+            // the non-shift version of event.key is used. For example:
             // shift-equals is "Plus"
             // control-shift-equals is "ControlShiftEquals"
             // this follows the Javascript event.key convention
 
-            const shiftName = this.shiftDict()[event.key]
+            const shiftName = this.shiftDict()[event.key];
             if (shiftName) {
-                keyName = shiftName
+                keyName = shiftName;
             }
         }
 
         if (isAlpabetical) {
             if (event.shiftKey) {
-                keyName = keyName.capitalized()
-                modifiers.remove("Shift")
+                keyName = keyName.capitalized();
+                modifiers.remove("Shift");
             }
-            keyName = "_" + keyName + "_"
+            keyName = "_" + keyName + "_";
         }
 
         if (isNumeric) {
             keyName = "_" + keyName + "_";
         }
 
-        return modifiers.join("") + keyName
+        if (modifiers.includes("MetaLeft")) {
+            debugger;
+        }
+
+        return modifiers.join("") + keyName; // examples: "Control_1_", "MetaLeft_c_"
     }
 
     /**
@@ -525,7 +538,7 @@
      * @returns {KeyboardKey} The shift key
      */
     shiftKey () {
-        return this.keyForName("Shift")
+        return this.keyForName("Shift");
     }
 
     /**
@@ -534,7 +547,7 @@
      * @returns {KeyboardKey} The control key
      */
     controlKey () {
-        return this.keyForName("Control")
+        return this.keyForName("Control");
     }
 
     /**
@@ -543,7 +556,7 @@
      * @returns {KeyboardKey} The alternate key
      */
     alternateKey () {
-        return this.keyForName("Alternate")
+        return this.keyForName("Alternate");
     }
 
     /**
@@ -552,7 +565,7 @@
      * @returns {KeyboardKey} The left command key
      */
     leftCommandKey () {
-        return this.keyForName("MetaLeft")
+        return this.keyForName("MetaLeft");
     }
 
     /**
@@ -561,7 +574,7 @@
      * @returns {KeyboardKey} The right command key
      */
     rightCommandKey () {
-        return this.keyForName("MetaRight")
+        return this.keyForName("MetaRight");
     }
 
     /**
@@ -570,7 +583,7 @@
      * @returns {boolean} True if the shift key is down
      */
     shiftIsDown () {
-        return this.shiftKey().isDown()
+        return this.shiftKey().isDown();
     }
 
     /**
@@ -579,7 +592,7 @@
      * @returns {boolean} True if the command key is down
      */
     commandIsDown () {
-        return this.leftCommandKey().isDown() || this.rightCommandKey().isDown()
+        return this.leftCommandKey().isDown() || this.rightCommandKey().isDown();
     }
 
     /**
@@ -588,7 +601,7 @@
      * @returns {KeyboardKey} The equals sign key
      */
     equalsSignKey () {
-        return this.keyForName("EqualsSign")
+        return this.keyForName("EqualsSign");
     }
 
     /**
@@ -597,7 +610,7 @@
      * @returns {KeyboardKey} The minus key
      */
     minusKey () {
-        return this.keyForName("Dash")
+        return this.keyForName("Dash");
     }
 
     /**
@@ -606,7 +619,7 @@
      * @returns {KeyboardKey} The plus key
      */
     plusKey () {
-        return this.keyForName("Plus")
+        return this.keyForName("Plus");
     }
 
     /**
@@ -615,7 +628,7 @@
      * @returns {boolean} True if the plus key is down
      */
     plusIsDown () {
-        return this.plusKey().isDown()
+        return this.plusKey().isDown();
     }
 
     /**
@@ -685,37 +698,37 @@
      * @returns {Array} The modifier names
      */
     modifierNamesForEvent (event) {
-        let modifierNames = []
+        let modifierNames = [];
 
         // event names are ordered alphabetically to avoid ambiguity
 
         if (event.altKey) {
-            modifierNames.push("Alternate")
+            modifierNames.push("Alternate");
         } 
         
         if (event.ctrlKey) {
-            modifierNames.push("Control")
+            modifierNames.push("Control");
         }
         
         if (event.metaKey) {
-            const n = event.location
+            const n = event.location;
 
             //console.log("event.location = ", event.location)
 
             if (n === 1) {
-                modifierNames.push("MetaLeft")
+                modifierNames.push("MetaLeft");
             } else if (n === 2) {
-                modifierNames.push("MetaRight")
+                modifierNames.push("MetaRight");
             } else {
-                modifierNames.push("Meta")
+                modifierNames.push("Meta");
             }
         } 
         
         if (event.shiftKey) {
-            modifierNames.push("Shift")
+            modifierNames.push("Shift");
         }
 
-        return modifierNames
+        return modifierNames;
     }
 
     /**
@@ -724,15 +737,15 @@
      * @param {Event} event - The keyboard event
      */
     showEvent (event) {
-        const kb = BMKeyboard.shared()
-        console.log("---")
-        console.log("BMKeyboard.showEvent():")
-        console.log("  code: ", event.keyCode)
-        console.log("  name: ", kb.nameForKeyCode(event.keyCode))
-        console.log("  is modifier: ", kb.eventIsJustModifierKey(event))
-        console.log("  modifierNames: ", kb.modifierNamesForEvent(event))
-        console.log("  modsAndKeyName: ", kb.modsAndKeyNameForEvent(event))
-        console.log("---")
+        const kb = BMKeyboard.shared();
+        console.log("---");
+        console.log("BMKeyboard.showEvent():");
+        console.log("  code: ", event.keyCode);
+        console.log("  name: ", kb.nameForKeyCode(event.keyCode));
+        console.log("  is modifier: ", kb.eventIsJustModifierKey(event));
+        console.log("  modifierNames: ", kb.modifierNamesForEvent(event));
+        console.log("  modsAndKeyName: ", kb.modsAndKeyNameForEvent(event));
+        console.log("---");
     }
     
 }.initThisClass());

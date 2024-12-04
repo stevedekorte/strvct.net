@@ -136,6 +136,10 @@
         return this.path().lastPathComponent();
     }
 
+    nameWithoutExtension () {
+        return this.name().before(".");
+    }
+
     /**
      * @description Gets the title of the resource file.
      * @returns {String} The file name as the title.
@@ -201,7 +205,7 @@
      * @returns {Promise<Object>} A promise that resolves with the file data.
      * @category Data Management
      */
-    async dataPromise () {
+    async promiseData () {
         if (!this.hasData()) {
             await this.promiseLoad();
         }

@@ -20,7 +20,7 @@
      * @category Gesture
      */
     acceptsTapBegin (aGesture) {
-        return true
+        return true;
     }
 
     /**
@@ -33,13 +33,13 @@
         this.setLastTapDate(new Date())
         const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
 
-        const methodName = "just" + keyModifiers.join("") + "Tap"
+        const methodName = "just" + keyModifiers.join("") + "Tap";
         if (this[methodName]) {
-            this[methodName].apply(this)
-            return this
+            this[methodName].apply(this);
+            return this;
         }
 
-        return this
+        return this;
     }
 
     // -- just taps ---
@@ -49,17 +49,17 @@
      * @category Gesture
      */
     justTap () {
-        this.setIsInspecting(false)
+        this.setIsInspecting(false);
 
         if (this.column()) {
-            this.column().didTapItem(this)
+            this.column().didTapItem(this);
         }
 
         if (this.isSelectable()) {
-            const node = this.node()
+            const node = this.node();
             if (node) {
-                node.onTapOfNode()
-                node.onRequestSelectionOfNode(this)
+                node.onTapOfNode();
+                node.onRequestSelectionOfNode(this);
             }
         }
     }
@@ -69,8 +69,8 @@
      * @category Gesture
      */
     justShiftTap () {
-        this.setIsInspecting(false)
-        this.column().didShiftTapItem(this)
+        this.setIsInspecting(false);
+        this.column().didShiftTapItem(this);
     }
 
     /**
@@ -78,10 +78,10 @@
      * @category Gesture
      */
     justAlternateTap () {
-        this.debugLog(".justInspect()")
+        this.debugLog(".justInspect()");
         if (this.node().nodeCanInspect()) { 
-            this.setIsInspecting(true)
-            this.column().didTapItem(this)
+            this.setIsInspecting(true);
+            this.column().didTapItem(this);
         }
     }
 
@@ -90,8 +90,8 @@
      * @category Gesture
      */
     justMetaTap () {
-        this.setIsInspecting(false)
-        this.toggleSelection()
+        this.setIsInspecting(false);
+        this.toggleSelection();
     }
 
     // --- tap hold ---
@@ -103,13 +103,13 @@
      */
     acceptsLongPress () {
         if (!this.column()) {
-            console.log("missing parent view on: " + this.typeId())
+            console.log("missing parent view on: " + this.typeId());
         }
 
         if (this.column()) {
-            return this.column().canReorderTiles()
+            return this.column().canReorderTiles(); // what about dragging out of the column or browser?
         }
-        return false
+        return false;
     }
     
     /**
@@ -119,7 +119,7 @@
      */
     onLongPressBegin (aGesture) {
         if (this.isRegisteredForBrowserDrag()) {
-            aGesture.cancel()
+            aGesture.cancel();
         }
     }
 
@@ -137,18 +137,18 @@
      * @category Gesture
      */
     isTapLongPress () {
-        const maxDt = 0.7
-        let isTapTapHold = false
-        const t1 = this.lastTapDate()
-        const t2 = new Date()
+        const maxDt = 0.7;
+        let isTapTapHold = false;
+        const t1 = this.lastTapDate();
+        const t2 = new Date();
         if (t1) {
-            const dtSeconds = (t2.getTime() - t1.getTime())/1000
+            const dtSeconds = (t2.getTime() - t1.getTime())/1000;
             
             if (dtSeconds < maxDt) {
-                isTapTapHold = true
+                isTapTapHold = true;
             }
         }
-        return isTapTapHold
+        return isTapTapHold;
     }
 
     /**
@@ -157,24 +157,24 @@
      * @category Gesture
      */
     onLongPressComplete (longPressGesture) {
-        longPressGesture.deactivate()
+        longPressGesture.deactivate();
 
-        const isTapLongPress = this.isTapLongPress()
+        const isTapLongPress = this.isTapLongPress();
 
         if (!this.isSelected()) {
-            this.column().unselectAllTilesExcept(this)
+            this.column().unselectAllTilesExcept(this);
         }
 
         this.activate()
-        const dv = DragView.clone().setItems(this.column().selectedTiles()).setSource(this.column())
+        const dv = DragView.clone().setItems(this.column().selectedTiles()).setSource(this.column());
 
         if (isTapLongPress) {
-            dv.setDragOperation("copy")
+            dv.setDragOperation("copy");
         } else {
-            dv.setDragOperation("move")
+            dv.setDragOperation("move");
         }
         
-        dv.openWithEvent(longPressGesture.currentEvent())
+        dv.openWithEvent(longPressGesture.currentEvent());
     }
 
     // --- handle pan gesture ---
@@ -185,7 +185,7 @@
      * @category Gesture
      */
     acceptsPan () {
-        return this._isReordering
+        return this._isReordering;
     }
 
 
@@ -199,10 +199,10 @@
     acceptsBottomEdgePan () {
         if (this.node().nodeCanEditTileHeight) {
             if (this.node().nodeCanEditTileHeight()) {
-                return true
+                return true;
             }
         }
-        return false
+        return false;
     }
 
     /**
@@ -211,9 +211,9 @@
      * @category Gesture
      */
     onBottomEdgePanBegin (aGesture) {
-        this._beforeEdgePanBorderBottom = this.borderBottom()
-        this.setBorderBottom("1px dashed red")
-        this.setTransition("min-height 0s, max-height 0s")
+        this._beforeEdgePanBorderBottom = this.borderBottom();
+        this.setBorderBottom("1px dashed red");
+        this.setTransition("min-height 0s, max-height 0s");
     }
 
     /**
@@ -223,17 +223,17 @@
      * @category Gesture
      */
     onBottomEdgePanMove (aGesture) {
-        const p = aGesture.currentPosition()
-        const f = this.frameInDocument()
-        const newHeight = p.y() - f.y()
+        const p = aGesture.currentPosition();
+        const f = this.frameInDocument();
+        const newHeight = p.y() - f.y();
         const minHeight = this.node() ? this.node().nodeMinTileHeight() : 10;
         if (newHeight < 10) {
             newHeight = 10;
         }
-        this.node().setNodeMinTileHeight(newHeight)
-        this.updateSubviews()
+        this.node().setNodeMinTileHeight(newHeight);
+        this.updateSubviews();
 
-        return this
+        return this;
     }
 
     /**
@@ -242,7 +242,7 @@
      * @category Gesture
      */
     onBottomEdgePanComplete (aGesture) {
-        this.setBorderBottom(this._beforeEdgePanBorderBottom)
+        this.setBorderBottom(this._beforeEdgePanBorderBottom);
     }
 
 }.initThisCategory());

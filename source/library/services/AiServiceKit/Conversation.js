@@ -17,15 +17,6 @@
   initPrototypeSlots () {
 
     {
-      /**
-       * @member {BMNode} footerNode - The footer node for the conversation.
-       * @category UI
-       */
-      const slot = this.newSlot("footerNode", null);
-      slot.setSlotType("BMNode");
-    }
-
-    {
       //const slot = this.newSlot("delegate", null);
       //slot.setSlotType("Object");
     }

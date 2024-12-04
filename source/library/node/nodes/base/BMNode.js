@@ -209,6 +209,15 @@
             slot.setSlotType("Boolean");
             slot.setSyncsToView(true);
         }
+
+        {
+            /**
+             * @member {BMNode} footerNode - The footer node placed at the bottom of the subnodes view.
+             * @category UI
+             */
+            const slot = this.newSlot("footerNode", null);
+            slot.setSlotType("BMNode");
+        }
     }
 
     /**

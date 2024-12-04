@@ -253,7 +253,7 @@
      * @category Utilities
      */
     downMethodNameForEvent (event) {
-        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event);
+        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event); // e.g. "Alternate", "Control", "MetaLeft", "MetaRight"
         return "on" + s + "MouseDown";
     }
 
