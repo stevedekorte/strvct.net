@@ -61,6 +61,7 @@
             const slot = this.newSlot("nodeThumbnailUrl", null);
             slot.setAllowsNullValue(true);
             slot.setSlotType("String");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -75,6 +76,7 @@
             slot.setSlotType("Boolean");
             slot.setInspectorPath("Node/Viewable/Children Layout");
             slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -90,6 +92,7 @@
             slot.setValidValues(["flex-start", "center", "flex-end", "space-between", "space-around"]);
             slot.setInspectorPath("Node/Viewable/Children Layout");
             slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -100,6 +103,7 @@
             const slot = this.newSlot("nodeTileIsSelectable", true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -120,6 +124,7 @@
             const slot = this.newSlot("nodeNavBorderHint", true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -132,6 +137,7 @@
             slot.setShouldStoreSlot(true);
             slot.setInspectorPath("Node/Viewable/Style");
             slot.setSlotType("Number");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -144,6 +150,7 @@
             slot.setShouldStoreSlot(true);
             slot.setInspectorPath("Node/Viewable/Style");
             slot.setSlotType("Number");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -153,6 +160,7 @@
         {
             const slot = this.newSlot("acceptsFileDrop", false);
             slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -163,6 +171,7 @@
             const slot = this.newSlot("nodeInputFieldMethod", null);
             slot.setAllowsNullValue(true);
             slot.setSlotType("String");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -177,6 +186,7 @@
             slot.setCanEditInspection(false);
             slot.setCanInspect(false);
             slot.setInspectorPath("Node/Viewable/Children Layout");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -191,6 +201,7 @@
             slot.setCanInspect(true);
             slot.setShouldStoreSlot(true);
             slot.setInspectorPath("Node/Viewable/Children Layout");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -201,6 +212,7 @@
             const slot = this.newSlot("nodeCanEditTileHeight", false);
             slot.setDuplicateOp("copyValue"); // TODO: change to NavHeight
             slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -211,6 +223,7 @@
             const slot = this.newSlot("nodeCanEditColumnWidth", false);
             slot.setDuplicateOp("copyValue"); // TODO: change to NavWidth
             slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
         }
 
     }
@@ -225,8 +238,9 @@
     finalInit () {
         super.finalInit()
         if (this.nodeChildrenAlignment() === "Start") {
-            this.setNodeChildrenAlignment("flex-start")
+            this.setNodeChildrenAlignment("flex-start");
         }
+        this.setNodeMinTileHeight(80);
     }
 
     /**
@@ -235,7 +249,7 @@
      * @category Layout
      */
     nodeOrientation () {
-        return this.nodeIsVertical() ? "right" : "down" 
+        return this.nodeIsVertical() ? "right" : "down";
     }
 
     /**
@@ -244,17 +258,17 @@
      * @category View
      */
     nodeViewClass () {
-        const name = this.nodeViewClassName()
+        const name = this.nodeViewClassName();
         if (name) {
-            const proto = Object.getClassNamed(name)
+            const proto = Object.getClassNamed(name);
             if (proto) {
-                return proto
+                return proto;
             }
-            console.warn("no class found for nodeViewClassName:'" + name + "'")
-            debugger 
+            console.warn("no class found for nodeViewClassName:'" + name + "'");
+            debugger;
         }
         
-	  	return this.firstAncestorClassWithPostfix("View") 
+	  	return this.firstAncestorClassWithPostfix("View");
     }
 
     /**

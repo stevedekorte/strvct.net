@@ -253,7 +253,7 @@
         const name = slot.name();
         const field = slot.newInspectorField();
         if (!field) {
-            const className = slot.fieldInspectorClassName();
+            const className = slot.fieldInspectorViewClassName();
             throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'");
         }
 

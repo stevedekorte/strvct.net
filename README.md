@@ -2,7 +2,7 @@
 
 Strvct is a client-side JavaScript framework for creating single page web applications using a [naked objects](https://en.wikipedia.org/wiki/Naked_objects) system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
 
-**NOTE:** This project is currently under active development and is not yet ready for production use.
+**NOTE:** This project is currently under active development, has very limited documentation, and is not yet ready for production use.
 
 ### Guides
 

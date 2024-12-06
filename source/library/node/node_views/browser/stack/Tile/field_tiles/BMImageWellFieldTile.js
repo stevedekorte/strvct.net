@@ -16,7 +16,7 @@
      */
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
-        return mimeType.startsWith("image/")
+        return mimeType.startsWith("image/");
     }
 
     /**
@@ -33,17 +33,17 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.valueViewContainer().flexCenterContent()
-        this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px")
-        this.valueView().setPaddingTop("0px").setPaddingBottom("0px")
+        super.init();
+        this.valueViewContainer().flexCenterContent();
+        this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px");
+        this.valueView().setPaddingTop("0px").setPaddingBottom("0px");
 
-        //this.keyView().setElementClassName("BMImageWellKeyField")
-        //this.valueView().setIsEditable(false)
-        this.turnOffUserSelect()
-        this.keyView().setTransition("color 0.3s")
-        //this.valueViewContainer().setPadding("0px")
-        return this
+        //this.keyView().setElementClassName("BMImageWellKeyField");
+        //this.valueView().setIsEditable(false);
+        this.turnOffUserSelect();
+        this.keyView().setTransition("color 0.3s");
+        //this.valueViewContainer().setPadding("0px");
+        return this;
     }
 
     /**
@@ -52,9 +52,19 @@
      * @category View Creation
      */
     createValueView () {
-        const imageWellView = ImageWellView.clone()
-        //imageWellView.setWidth("100%").setHeight("fit-content")
-        return imageWellView
+        /*
+            Note: if we drop an image on the ImageWellView, it will send a didUpdateImageWellView to it's parents
+            which we respond to and use to call setValue
+        */
+        const imageWellView = ImageWellView.clone();
+        //imageWellView.setWidth("100%").setHeight("fit-content");
+        return imageWellView;
+    }
+
+    setDataUrl (dataUrl) {
+        debugger;
+        this.setValue(dataUrl);
+        return this;
     }
 	
     /**
@@ -63,7 +73,7 @@
      * @category View Access
      */
     imageWellView () {
-        return this.valueView()
+        return this.valueView();
     }
 
     /**
@@ -72,16 +82,16 @@
      * @category Synchronization
      */
     syncFromNode () {
-        super.syncFromNode()
+        super.syncFromNode();
 
-        const field = this.node()
-        this.setMaxWidth("100em") // get this from node instead?
+        const field = this.node();
+        this.setMaxWidth("100em"); // get this from node instead?
         
-        this.applyStyles() // normally this would happen in updateSubviews
-        this.imageWellView().setImageDataUrl(field.value())
-        this.imageWellView().setIsEditable(field.valueIsEditable())
+        this.applyStyles(); // normally this would happen in updateSubviews
+        this.imageWellView().setImageDataUrl(field.value());
+        this.imageWellView().setIsEditable(field.valueIsEditable());
 
-        return this
+        return this;
     }
 
     /**
@@ -90,20 +100,20 @@
      * @category Synchronization
      */
     syncToNode () {
-        const field = this.node()
+        const field = this.node();
 				
-        //this.updateKeyView()
+        //this.updateKeyView();
         
-        field.setKey(this.keyView().value())
+        field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
-            const data = this.imageWellView().imageDataUrl()
-            //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"))
-        	field.setValue(data)
+            const data = this.imageWellView().imageDataUrl();
+            //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"));
+        	field.setValue(data);
         }
         
-        //super.suncToNode()
-        return this
+        //super.suncToNode();
+        return this;
     }
 
     /**
@@ -112,7 +122,7 @@
      * @category Data Access
      */
     dataUrl () {
-        return this.imageWellView().imageDataUrl()
+        return this.imageWellView().imageDataUrl();
     }
 
     /**
@@ -121,7 +131,7 @@
      * @category State Check
      */
     isEmpty () {
-        return Type.isNull(this.dataUrl())
+        return Type.isNull(this.dataUrl());
     }
     
     /**
@@ -131,9 +141,9 @@
      * @category Event Handling
      */
     didUpdateImageWellView (anImageWell) {
-        //this.debugLog(".didUpdateImageWellView()")
-        this.scheduleSyncToNode() 
-        return this
+        //this.debugLog(".didUpdateImageWellView()");
+        this.scheduleSyncToNode();
+        return this;
     }
     
 }.initThisClass());

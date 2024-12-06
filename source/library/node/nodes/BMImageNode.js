@@ -21,6 +21,9 @@
             const slot = this.newSlot("dataURL", null);
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
+            // BMImageWellField
         }
     }
 
@@ -35,14 +38,21 @@
         this.setSubtitle(null);
         this.setCanDelete(true);
         this.setNodeCanAddSubnode(true);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
     }
 
+    finalInit () {
+        super.finalInit();
+        this.setNodeViewClassName("ImageWellView");
+    }
+    
     /**
      * @description Handles the event when the node is edited.
      * @category Event Handling
      */
     onDidEditNode () {
-        this.debugLog(" onDidEditNode")
+        this.debugLog(" onDidEditNode");
     }
 
     /**
@@ -53,6 +63,21 @@
     jsonArchive () {
         debugger;
         return undefined;
+    }
+
+    key () {
+        return this.title();
+    }
+
+    value () {
+        debugger;
+        return this.dataURL();
+    }
+
+    setValue (value) {
+        debugger;
+        this.setDataURL(value);
+        return this;
     }
     
 }.initThisClass());

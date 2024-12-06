@@ -34,7 +34,7 @@
          */
         {
             const slot = this.newSlot("state", null);
-            slot.setSlotType("String");
+            slot.setSlotType("Number");
         }
         /**
          * @member {Element} target - The target element of the event point.

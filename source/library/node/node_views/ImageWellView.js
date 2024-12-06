@@ -72,11 +72,11 @@
      */
     syncToNode () {
         super.syncToNode();
-        if (this.imageView()) {
+        if (this.imageView() && this.node()) {
             this.node().setDataUrl(this.imageView().dataURL()); // untested
         }
         this.tellParentViews("didUpdateImageWellView", this);
-        return this
+        return this;
     }
     
     /**
@@ -159,8 +159,8 @@
      * @category Data Management
      */
     setValue (aValue) {
-        this.setImageDataUrl(aValue)
-        return this
+        this.setImageDataUrl(aValue);
+        return this;
     }
 
     /**
@@ -169,7 +169,7 @@
      * @category Data Management
      */
     value () {
-        return this.imageDataUrl()
+        return this.imageDataUrl();
     }
     
     /**
@@ -179,31 +179,31 @@
      * @category Data Management
      */
     setImageDataUrl (dataURL) {
-        assert(!Type.isArray(dataURL)) 
+        assert(!Type.isArray(dataURL));
 
         if (this.hasImageUrl(dataURL)) {
-            return this
+            return this;
         }
         
-        this.removeAllSubviews()
+        this.removeAllSubviews();
 
-        const v = ImageView.clone()
-        this.setImageView(v)
-        this.addSubview(v)
+        const v = ImageView.clone();
+        this.setImageView(v);
+        this.addSubview(v);
 
         if (!Type.isNullOrUndefined(dataURL) && Type.isString(dataURL)) {
             /*
-            const v = ImageView.clone()
-            this.setImageView(v)
-            this.addSubview(v)
+            const v = ImageView.clone();
+            this.setImageView(v);
+            this.addSubview(v);
             */
 
-            v.fetchDataURLFromSrc(dataURL)
-            v.autoFitChildHeight()
-            v.autoFitParentWidth()
+            v.fetchDataURLFromSrc(dataURL);
+            v.autoFitChildHeight();
+            v.autoFitParentWidth();
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -213,13 +213,13 @@
      * @category Data Management
      */
     hasImageUrl (url) {
-        const v = this.imageView()
+        const v = this.imageView();
         if (v) {
             if (url === v.dataURL() || url === v.srcUrl()) {
-                return true
+                return true;
             }
         }
-        return false
+        return false;
     }
     
     /**
@@ -228,11 +228,11 @@
      * @category Data Management
      */
     imageDataUrl () {
-        const v = this.imageView()
+        const v = this.imageView();
         if (v && v.dataURL()) {
-            return v.dataURL()
+            return v.dataURL();
         }
-        return null
+        return null;
     }
     
 
@@ -244,7 +244,7 @@
      * @category Drag and Drop
      */
     onBrowserDropImageJpeg (dataChunk) {
-        this.droppedImageData(dataChunk)
+        this.droppedImageData(dataChunk);
     }
 
     /**
@@ -253,7 +253,7 @@
      * @category Drag and Drop
      */
     onBrowserDropImageGif (dataChunk) {
-        this.droppedImageData(dataChunk)
+        this.droppedImageData(dataChunk);
     }
 
     /**
@@ -262,7 +262,7 @@
      * @category Drag and Drop
      */
     onBrowserDropImagePng (dataChunk) {
-        this.droppedImageData(dataChunk)
+        this.droppedImageData(dataChunk);
     }
 
     // image data chunk
@@ -274,9 +274,9 @@
      * @category Drag and Drop
      */
     droppedImageData (dataChunk) {
-        this.setImageDataUrl(dataChunk.dataUrl())
+        this.setImageDataUrl(dataChunk.dataUrl());
         this.scheduleSyncToNode();
-        return this        
+        return this;   
     }
     
     /**
@@ -286,12 +286,12 @@
      * @category View Management
      */
     willRemoveSubview (aSubview) {
-        super.willRemoveSubview(aSubview)
+        super.willRemoveSubview(aSubview);
 
         if (aSubview === this.imageView()) {
-            this.setImageView(null)
+            this.setImageView(null);
         }
-        return this
+        return this;
     }
     
 }.initThisClass());
