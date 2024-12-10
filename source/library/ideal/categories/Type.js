@@ -3,6 +3,7 @@
 /** 
  * @module library.ideal
  * @class Type
+ * @extends Object
  * @description A collection of functions for type checking and type name related functions.
 
     Example use:
@@ -56,8 +57,8 @@
 
 */
 
-
-getGlobalThis().Type = (class Type extends Object {
+//getGlobalThis().Type = (class Type extends Object {
+class Type extends Object {
 
     static typeDescription (value) {
         let s;
@@ -1032,6 +1033,7 @@ getGlobalThis().Type = (class Type extends Object {
         //assert(Type.isNullOrUndefined(null));
     }
 
+    /*
     static test () {
         // Helper function to run a single test
         function test(value, expected, description = '') {
@@ -1083,6 +1085,9 @@ getGlobalThis().Type = (class Type extends Object {
         test(new String(''), 'String', 'String instance');
         test(new Number(1), 'Number', 'Number instance');
         test(new Boolean(true), 'Boolean', 'Boolean instance');
+
+        // these class definitions were confusing the documentation parser
+        // so comment out test for now
       
         // Array subclass cases
         class MyArray extends Array {}
@@ -1108,9 +1113,10 @@ getGlobalThis().Type = (class Type extends Object {
         test(new MyClass(), 'MyClass', 'class instance');
       
         console.log('All tests passed!');
-      }
+    }
+    */
+}
 
-});
-
+getGlobalThis().Type = Type;
 
 //Type.test();
