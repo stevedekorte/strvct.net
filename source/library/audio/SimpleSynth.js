@@ -3,7 +3,8 @@
  * @class SimpleSynth
  * @extends ProtoClass
  * @classdesc
- * SimpleSynth
+ * SimpleSynth is a simple audio synthesizer for playing sequences of notes in the browser.
+ * You can play either a simple note sequence, or a sequence of notes with individual pitch, length, oscillator, delay, and volume details.
  *
  * Example usess:
  *
