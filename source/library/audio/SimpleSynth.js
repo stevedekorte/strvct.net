@@ -7,14 +7,25 @@
  *
  * Example usess:
  *
- * SimpleSynth.clone().playSendBeep()
- * SimpleSynth.clone().playReceiveBeep()
+ * const synth = SimpleSynth.shared();
+ * 
+ * Play by method name:
+ * synth.playSendBeep();
+ * synth.playReceiveBeep();
+ * synth.playButtonTap();
+ * synth.playButtonDown();
+ * synth.playButtonUp();
+ * synth.playButtonCancelled();
+ * 
+ * Play by track name string:
+ * synth.playTrackNamed("buttonPress");
  *
- * SimpleSynth.clone().playButtonTap()
+ * Play by track notes array:
+ * synth.playNotes([440, 330, 220, 110]);
+ * 
+ * Play by track dict notes array:
+ * synth.playTrackNotes([{pitch: 440, lengthMs: 1000, oscillator: "sine", delayMs: 100, volume: 0.7}]);
  *
- * SimpleSynth.clone().playButtonDown()
- * SimpleSynth.clone().playButtonUp()
- * SimpleSynth.clone().playButtonCancelled()
  */
 "use strict";
 
