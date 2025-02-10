@@ -42,7 +42,7 @@ JSON.nodeCount = function (json) {
  * @memberof JSON
  * @category Data Analysis
  */
-JSON.stringifyOnlyJson = function (obj) {
+JSON.stringifyOnlyJson = function (obj, replacer, space) {
     function filterJsonCompatible(value) {
         if (Array.isArray(value)) {
             return value
@@ -61,7 +61,7 @@ JSON.stringifyOnlyJson = function (obj) {
     }
 
     const filteredObj = filterJsonCompatible(obj);
-    return JSON.stringify(filteredObj);
+    return JSON.stringify(filteredObj, replacer, space);
 };
 
 /**
@@ -71,7 +71,7 @@ JSON.stringifyOnlyJson = function (obj) {
  * @memberof JSON
  * @category Data Analysis
  */
-JSON.stableStringifyOnlyJson = function (obj) {
+JSON.stableStringifyOnlyJson = function (obj, replacer, space) {
     const seen = new WeakSet();  // Track objects to prevent circular references
 
     function filterJsonCompatible(value) {
@@ -99,7 +99,27 @@ JSON.stableStringifyOnlyJson = function (obj) {
     }
 
     const filteredObj = filterJsonCompatible(obj);
-    return JSON.stringify(filteredObj);
+    return JSON.stringify(filteredObj, replacer, space);
 };
+
+
+
+JSON.stableStringifyWithStdOptions = function (obj, replacer, space) {
+    const opts = {};
+    if (replacer) {
+        opts.replacer = replacer;
+    }
+    if (space) {
+        opts.space = space;
+    }
+    /*
+    if (Object.keys(opts).length === 0) {
+        return JSON.stableStringify(obj);
+    }
+    */
+    return JSON.stableStringify(obj, opts);
+};
+
+
 
 //}).initThisCategory();

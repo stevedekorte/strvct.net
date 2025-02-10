@@ -88,7 +88,14 @@
     if (this._service) {
       return this._service;
     }
-    return this.parentNode().parentNode();
+    const models = this.parentNode();
+    if (models) {
+      const service = models.parentNode();
+      if (service) {
+        return service;
+      }
+    }
+    return null;
   }
 
   /**
@@ -97,7 +104,12 @@
    * @category Model Information
    */
   subtitle () {
-    return this.modelName();
+    const service = this.service();
+    if (service) {
+      const serviceName = service.title().before("Service");
+      return serviceName + " - " + this.modelName();
+    }
+    return "no service!";
   }
 
   /**

@@ -131,7 +131,14 @@
         // parent node, subnodes
 
         {
-            const slot = this.newSlot("parentNode", null);
+            const slot = this.newSlot("parentNode", null); // parent node is set if this node is a subnode of the parent
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("BMNode");
+        }
+
+
+        {
+            const slot = this.newSlot("ownerNode", null); // owner node is the node that owns this node but this node is not a subnode of the owner
             slot.setAllowsNullValue(true);
             slot.setSlotType("BMNode");
         }
@@ -242,6 +249,22 @@
 
         this.setSubnodeClasses(this.thisPrototype().subnodeClasses().shallowCopy());
         return this
+    }
+
+    /**
+     * @description Get the ownership chain for this instance, following ownerNode and parentNode links .
+     * @param {Array} chain - The chain to populate.
+     * @returns {Array} The ownership chain.
+     */
+    ownershipChain (chain = []) {
+        if (this.ownerNode() !== null) {
+          chain.push(this.ownerNode());
+          this.ownerNode().ownershipChain(chain);
+        } else if (this.parentNode() !== null) {
+          chain.push(this.parentNode());
+          this.parentNode().ownershipChain(chain);
+        }
+        return chain;
     }
 
     /**
@@ -1740,7 +1763,7 @@
     setJsonArchive (json) {
         // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
         
-        //console.log(this.typeId() + ".setJsonArchive(" + JSON.stableStringify(json, 2, 2) + ")");
+        //console.log(this.typeId() + ".setJsonArchive(" + JSON.stableStringifyWithStdOptions(json, null, 2) + ")");
 
         const keys = Object.keys(json).select(key => key !== "type");
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
@@ -1788,7 +1811,7 @@
             dict[k] = v;
         });
 
-        //console.log(this.typeId() + ".jsonArchive() = " + JSON.stableStringify(dict, 2, 2));
+        //console.log(this.typeId() + ".jsonArchive() = " + JSON.stableStringifyWithStdOptions(dict, null, 2));
 
         return dict;
     }
@@ -1819,8 +1842,16 @@
      */
     static jsonSchemaString () {
         const schema = this.asRootJsonSchema();
-        const s = JSON.stableStringify(schema, 2, 2);
+        const s = JSON.stableStringifyWithStdOptions(schema, null, 2);
         return s;
+    }
+
+    /*
+     * @description Get the tagged JSON schema string for this instance inside a <json-schema> tag.
+     * @returns {string} The tagged JSON schema string.
+     */
+    static taggedJsonSchemaString () {
+        return "<json-schema>\n" + this.jsonSchemaString() + "\n</json-schema>";
     }
 
     /**
@@ -1902,8 +1933,12 @@
      */
     static asRootJsonSchemaString (definitionsOnly = false) {
         const json = this.asRootJsonSchema(definitionsOnly);
-        const s = JSON.stableStringify(json, 4, 4);
+        const s = JSON.stableStringifyWithStdOptions(json, null, 4);
         return s;
+    }
+
+    asRootJsonSchemaString () {
+        return this.thisClass().asRootJsonSchemaString();
     }
 
     /**
@@ -2104,7 +2139,7 @@
                         if (hasValidSubnodeClass) {
                             this.addSubnode(subnode);
                         } else {
-                            console.warn("fromJsonSchema subnode class '" + subnode.type() + "' not in subnodeClasses " + JSON.stableStringify(this.subnodeClasses().map(c => c.type())));
+                            console.warn("fromJsonSchema subnode class '" + subnode.type() + "' not in subnodeClasses " + JSON.stableStringifyWithStdOptions(this.subnodeClasses().map(c => c.type())));
                             debugger;
                         }
                     });

@@ -116,7 +116,7 @@
         subnode.setTitle(aRecord.id)
         subnode.setKey(aRecord.id)
         subnode.setStore(this.store())
-        const size = JSON.stableStringify(aRecord).length
+        const size = JSON.stableStringifyWithStdOptions(aRecord).length
         subnode.setSubtitle(size.byteSizeDescription())
 
         const classNode = this.subnodeForClassName(aRecord.type)

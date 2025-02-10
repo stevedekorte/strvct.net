@@ -8,6 +8,7 @@
     "ChatInputNode.js",
     "AiMessage.js",
     "AiResponseMessage.js",
+    "ApiCalls/_imports.json",
     "AiConversation.js",
     "AiConversations.js",
     "AiService.js"

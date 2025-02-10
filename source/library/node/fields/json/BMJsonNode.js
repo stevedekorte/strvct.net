@@ -34,7 +34,7 @@
 
         try {
             json = JSON.parse(data)
-            //console.log("drop json = " + JSON.stableStringify(json, 2, 2) + "")
+            //console.log("drop json = " + JSON.stableStringifyWithStdOptions(json, null, 2) + "")
         } catch (error) {
             // return an error node instead?
         }

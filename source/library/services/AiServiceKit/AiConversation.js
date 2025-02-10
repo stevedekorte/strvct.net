@@ -72,8 +72,18 @@
     }
 
     /**
-     * @member {Object} tagDelegate - Delegate to receive tag messages from responses
+     * @member {String} aiSpeakerName - Name of the AI speaker
      * @category Configuration
+     */
+      {
+        const slot = this.newSlot("aiSpeakerName", null);
+        slot.setSlotType("String");
+      }
+
+        
+    /**
+     * @member {Object} tagDelegate - Delegate to receive tag messages from responses. 
+     * @category Delegates
      */
     {
       const slot = this.newSlot("tagDelegate", null);
@@ -81,15 +91,48 @@
     }
 
     /**
-     * @member {String} aiSpeakerName - Name of the AI speaker
-     * @category Configuration
+     * @member {Object} clientStateDelegate - Delegate to receive getJson, asRootJsonSchemaString messages 
+     * @category Delegates
      */
     {
-      const slot = this.newSlot("aiSpeakerName", null);
-      slot.setSlotType("String");
+      const slot = this.newSlot("clientStateDelegate", null);
+      slot.setSlotType("Object");
     }
 
+    /**
+     * @member {Object} promptDelegate - Delegate from which we get the system prompt for the conversation.
+     * @category Delegates
+     */
+    {
+      const slot = this.newSlot("promptDelegate", null); // on start, we send a systemPromptString message to the delegate.
+      slot.setSlotType("Object");
+    }
+
+    {
+      const slot = this.newSlot("jsonHistoryString", null);
+      slot.setSlotType("String");
+      slot.setAllowsNullValue(true);
+      slot.setCanInspect(false);
+    }
+
+    {
+      const slot = this.newSlot("assistantApiCalls", null);
+      slot.setSlotType("AssistantApiCalls");
+      slot.setFinalInitProto(AssistantApiCalls);
+      slot.setCanInspect(true);
+    }
   }
+
+  jsonHistoryString () {
+    const lastMessage = this.messages().last();
+    if (lastMessage) {
+      const jsonHistory = lastMessage.jsonHistory();
+      const s = JSON.stableStringifyWithStdOptions(jsonHistory, null, 2);
+      return s;
+    }
+    return "[no messages]";
+  }
+
 
   /**
    * @description Initializes the prototype of the AiConversation class.
@@ -98,6 +141,7 @@
   initPrototype () {
     this.setSubnodeClasses([AiMessage]);
     this.setResponseMsgClass(AiResponseMessage);
+    //this.setApiCallClasses([RollDiceApiCall,PlayMusicApiCall, PlaySoundFxApiCall]);
   }
 
   /**
@@ -262,12 +306,44 @@
   }
 
   /**
+   * @description Composes the API specification prompt.
+   * @returns {String} The API specification prompt.
+   * @category Configuration
+   */
+  composeApiSpecPrompt () {
+    let s = "The following APIs are available for you to use:\n\n";
+    const apiCallClasses = this.apiCallClasses();
+    const apiSpecPrompt = apiCallClasses.map(c => c.apiSpecPrompt()).join("\n\n");
+    s += apiSpecPrompt;
+    return s;
+  }
+
+  /**
+   * @description Starts the conversation after fetching the system prompt from the promptDelegate.
+   * @returns {AiResponseMessage} The response message.
+   * @category Interaction
+   */
+  start () {
+    const promptDelegate = this.promptDelegate();
+    if (promptDelegate) {
+      const systemPrompt = promptDelegate.assistantSystemPromptString();
+      const apiPrompt = this.composeApiSpecPrompt();
+      const prompt = systemPrompt + "\n\n" + apiPrompt;
+      debugger;
+      return this.startWithPrompt(prompt);
+    } else {
+      throw new Error("no promptDelegate to get system prompt from");
+    }
+  }
+
+  /**
    * @description Starts the conversation with a prompt.
    * @param {String} prompt - The initial prompt.
    * @returns {AiResponseMessage} The response message.
    * @category Interaction
    */
   startWithPrompt (prompt) {
+    debugger;
     this.clear();
     const promptMsg = this.newSystemMessage();
     promptMsg.setContent(prompt);
@@ -389,33 +465,44 @@
     return !this.hasIncompleteMessages();
   }
 
-  /**
-   * @description Gets the session state tag names.
-   * @returns {Array} The session state tag names.
-   * @category Session State
-   */
-  sessionStateTagNames () {
-    return ["session-json", "session-update"];
-  }
+  /* --- Client State --- */
+
 
   /**
    * @description Gets the session state tag map.
    * @returns {Map} The session state tag map.
    * @category Session State
    */
-  sessionStateTagMap () {
+  clientStateTagMap () {
     const m = new Map();
-    m.set("session-json", "{content removed as it has been outdated. See session-json tag in the last message of the conversation for the latest session state}");
-    m.set("session-update", "{content removed as the patch is already applied. See session-json tag in the last message of the conversation for the latest session state}");
+    m.set("client-state",       "{Content removed as it has been outdated. See client-state tag in the last message of the conversation for the latest client state.}");
+    m.set("client-state-patch", "{Content removed as the patch is already applied. See client-state tag in the last message of the conversation for the latest client state.}");
     return m;
   }
 
   /**
-   * @description Gets the session JSON.
+   * @description Gets the session JSON. This gets inserted into the last message of the conversation. Note: session JSON gets removed from all but the last message.
    * @returns {Object|null} The session JSON or null.
    * @category Session State
    */
-  sessionJson () {
+  clientStateJson () {
+    const delegate = this.clientStateDelegate();
+    if (delegate) {
+      return delegate.asJsonString();
+    }
+    return null;
+  }
+
+  /**
+   * @description Gets the client state schema.
+   * @returns {String} The client state schema.
+   * @category Client State
+   */
+  clientStateJsonSchema () {
+    const delegate = this.clientStateDelegate();
+    if (delegate) {
+      return delegate.asRootJsonSchemaString();
+    }
     return null;
   }
 
@@ -423,20 +510,25 @@
    * @description Filters the JSON history of messages.
    * @param {Array} messages - The messages to filter.
    * @returns {Array} The filtered messages.
-   * @category Message Handling
+   * @category Session State
    */
   onFilterJsonHistory (messages) {
-    const json = this.sessionJson();
+    const json = this.clientStateJson();
+
     if (json) {
+      const tagMap = this.clientStateTagMap();
 
       const lastMessage = messages.last();
       const jsonHistory = messages.map(m => {
         if (m !== lastMessage) {
-          m.content = m.content.replaceContentOfHtmlTagMap(this.sessionStateTagMap());
+          m.content = m.content.replaceContentOfHtmlTagMap(tagMap);
+          // or should we just remove the tags entirely, or replace them with a note that they were removed?
         } else {
-            const sessionJsonString = JSON.stableStringify(json, 2, 2);
-            m.content = m.content + "\n\n" +"<session-json>" + sessionJsonString + "</session-json>";
-          }
+          const schema = this.clientStateJsonSchema();
+          const schemaString = JSON.stableStringifyWithStdOptions(schema, null, 2);
+          const jsonString = JSON.stableStringifyWithStdOptions(json, null, 2);
+          m.content = m.content + "\n\n" +"<client-state><schema>" + schemaString + "</schema><payload>" + jsonString + "</payload></client-state>";
+        }
         return m;
       });
       return jsonHistory;

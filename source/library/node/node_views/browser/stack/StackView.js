@@ -422,7 +422,7 @@
             console.log("debug info:");
             console.log("  looking for node: ", node.debugTypeId());
             const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId());
-            console.log("  subnodes:" + JSON.stableStringify(subnodeIds) );
+            console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds) );
 
             debugger;
             return false;

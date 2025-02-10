@@ -665,18 +665,18 @@
         console.log("Let's try syncing the picked values to the target:");
 
         console.log("VALID VALUES:");
-        console.log("  computedValidItems: " + JSON.stableStringify(this.computedValidItems()) + "\n");
+        console.log("  computedValidItems: " + JSON.stableStringifyWithStdOptions(this.computedValidItems()) + "\n");
         console.log("  validItemsMatch: " + this.validItemsMatch() + "\n");
 
         console.log("PICKS:");
         console.log("  allowsMultiplePicks: " + this.allowsMultiplePicks() + "\n");
         console.log("BEFORE:");
-        console.log("  value: ", JSON.stableStringify(this.value()) + "\n");
+        console.log("  value: ", JSON.stableStringifyWithStdOptions(this.value()) + "\n");
         
         if (this.allowsMultiplePicks()) {
-            console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()) + "\n");
+            console.log("  pickedValues: ", JSON.stableStringifyWithStdOptions(this.pickedValues()) + "\n");
         } else {
-            console.log("  pickedValue: ", JSON.stableStringify(this.pickedValue()) + "\n");
+            console.log("  pickedValue: ", JSON.stableStringifyWithStdOptions(this.pickedValue()) + "\n");
         }
 
         console.log("  pickedItems: ", this.pickedItems(), "\n");

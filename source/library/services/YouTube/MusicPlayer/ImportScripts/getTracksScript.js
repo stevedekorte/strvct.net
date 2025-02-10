@@ -32,7 +32,7 @@ function getVideoslist() {
     }
     dict[k] = v;
   }
-  return JSON.stringify(dict, 2, 2);
+  return JSON.stringify(dict, null, 2);
 }
 getVideoslist();
 
@@ -68,7 +68,7 @@ function getPlaylist() {
     }
     dict[k] = v;
   }
-  return JSON.stringify(dict, 2, 2);
+  return JSON.stringify(dict, null, 2);
 }
 getPlaylist();
 

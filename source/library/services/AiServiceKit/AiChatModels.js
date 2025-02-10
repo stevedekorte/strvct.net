@@ -37,6 +37,7 @@
     this.setSubnodeClasses([AiChatModel]);
     this.setNodeSubtitleIsChildrenSummary(true);
     this.setTitle("Models");
+    this.setNodeCanAddSubnode(false);
   }
 
   /**
@@ -55,6 +56,17 @@
    */
   service () {
     return this.parentNode();
+  }
+
+  justRemoveSubnode (aSubnode) {
+    super.justRemoveSubnode(aSubnode);
+  }
+
+  subtitle () {
+    if (this.subnodes().length === 0) {
+      return "no models";
+    }
+    return super.subtitle();
   }
 
 }.initThisClass());

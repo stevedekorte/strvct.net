@@ -133,7 +133,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle("Gemini");
+    this.setTitle(this.type().before("Service"));
 
     this.setSystemRoleName(null); // only replaced in outbound request json
     this.setUserRoleName("USER");
@@ -247,7 +247,7 @@
             }
           ]
         }
-        firstMessage.content = "Please begin the game now.";
+        firstMessage.content = "Please begin the conversation now.";
       }
     }
 

@@ -292,7 +292,7 @@
       activeUrl: this.activeUrl(),
       body: this.body()
     };
-    return JSON.stringify(json, 2, 2);
+    return JSON.stringify(json, null, 2);
   }
 
   // --- streaming response --- 

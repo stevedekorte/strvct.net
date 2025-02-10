@@ -247,7 +247,7 @@
      */
     endFrame () {
         if (this.enabled() && this.reflowCount()) {
-            console.log(">>> " +  this.type() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), 2, 2))
+            console.log(">>> " +  this.type() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), null, 2))
         }
     }
 

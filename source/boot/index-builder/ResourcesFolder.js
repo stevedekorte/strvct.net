@@ -150,7 +150,7 @@ class ResourcesFolder extends Object {
      * @category Import Generation
      */
     setImportsArray (anArray) {
-        const jsonString = JSON.stringify(anArray, 2, 2);
+        const jsonString = JSON.stringify(anArray, null, 2);
         const path = nodePath.join(this.path(), "_imports.json");
         fs.writeFileSync(path, jsonString);
         return this

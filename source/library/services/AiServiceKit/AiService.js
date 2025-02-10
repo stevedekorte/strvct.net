@@ -164,11 +164,12 @@
     super.finalInit()
     this.setTitle("AI Service");
     this.setSubtitle("ai services");
-    this.setModels(AiChatModels.clone());
+    //this.setModels(AiChatModels.clone());
     this.setModelsJson(this.modelsJson());
 
     this.fetchAndSetupInfo();
   }
+
 
   /**
    * @description Returns the default chat model.
@@ -278,7 +279,7 @@
     }
   }
 
-  /**
+  /** 
    * @description Sets up the models from JSON data.
    * @param {Array} json - The JSON data containing model information.
    * @returns {AiService} The AiService instance.
@@ -290,6 +291,7 @@
       const model = AiChatModel.clone().setJson(modelInfo).setService(this);
       this.models().addSubnode(model);
     });
+    //console.log(this.type() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
     return this;
   }
 

@@ -36,8 +36,8 @@
   modelsJson () {
     return [
       {
-        "name": "grok-beta",
-        "title": "Grok Beta",
+        "name": "grok-2-latest",
+        "title": "Grok 2 Latest",
         "contextWindow": 131072,
         "outputTokenLimit": 8192 // jsut a guess as I can't find it in the docs
       }

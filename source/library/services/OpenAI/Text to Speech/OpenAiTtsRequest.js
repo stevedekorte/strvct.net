@@ -207,7 +207,7 @@
    * @category Request Data
    */
   body () {
-    return JSON.stringify(this.bodyJson(), 2, 2);
+    return JSON.stringify(this.bodyJson(), null, 2);
   }
 
   /**

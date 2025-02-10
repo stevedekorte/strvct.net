@@ -270,7 +270,7 @@
         const d = BMDataUrl.clone();
         d.setMimeType("application/json");
         d.setFileName(this.title() + ".json");
-        d.setDecodedData(JSON.stableStringify(json, null, 4));
+        d.setDecodedData(JSON.stableStringifyWithStdOptions(json, null, 4));
         return d;
     }
 

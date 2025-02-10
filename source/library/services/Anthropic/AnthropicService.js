@@ -93,7 +93,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle("Anthropic");
+    this.setTitle(this.type().before("Service"));
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
 
@@ -139,8 +139,7 @@
       const firstMessage = messages.first();
       if (firstMessage.role === this.systemRoleName()) {
         bodyJson.system = firstMessage.content;
-        //firstMessage.content = "Please begin the game now. Remember to not make action decisions for the players, to use roll requests (instead of making up roll results), and to ask for initiative rolls before combat.";
-        firstMessage.content = "Please begin our session now.";
+        firstMessage.content = "Please begin the conversation now.";
         //messages.shift();
       }
     }

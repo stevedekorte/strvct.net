@@ -41,7 +41,7 @@
   setupDefaultServers () {
     const map = this.jsonStringToServerMap() // TODO: use node hash support instead
     this.defaultServerDicts().forEach(dict => {
-      const jsonString = JSON.stableStringify(dict);
+      const jsonString = JSON.stableStringifyWithStdOptions(dict);
       const server = map.at(jsonString)
       if (!server) {
         const newServer = RzSigServer.clone().setDict(dict)
@@ -60,7 +60,7 @@
   jsonStringToServerMap () {
     const m = new Map();
     this.servers().forEach(server => {
-      const k = JSON.stableStringify(server.dict());
+      const k = JSON.stableStringifyWithStdOptions(server.dict());
       m.atPut(k, server);
     });
     return m;

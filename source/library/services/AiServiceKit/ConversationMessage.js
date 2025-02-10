@@ -248,6 +248,23 @@
   }
 
   /**
+   * Gets the JSON history for the request.
+
+   * @returns {Array} An array of message JSON objects.
+   * @category Data
+   */
+  jsonHistory () {
+    // subclasses can override this to modify the history sent with the request
+    const messages = this.visiblePreviousMessages();
+    let jsonHistory = messages.map(m => m.messagesJson());
+    if (this.conversation().onFilterJsonHistory) {
+      jsonHistory = this.conversation().onFilterJsonHistory(jsonHistory);
+    }
+    return jsonHistory;
+  }
+
+
+  /**
    * Get the replies to this message.
 
    * @returns {Array} An array of messages that are replies to this message.

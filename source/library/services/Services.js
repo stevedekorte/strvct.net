@@ -51,6 +51,19 @@
         }
 
         /**
+         * @member {DeepSeekService} deepSeekService
+         * @category AI Service
+         */  
+        {
+            const slot = this.newSlot("deepSeekService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(DeepSeekService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("DeepSeekService");
+        }
+        
+
+        /**
          * @member {GroqService} groqService
          * @category AI Service
          */
@@ -74,17 +87,17 @@
             slot.setSlotType("GeminiService");
         }
 
-                /**
-         * @member {XaiService} xaiService
-         * @category AI Service
-         */
-                {
-                    const slot = this.newSlot("xaiService", null);
-                    slot.setShouldStoreSlot(true);
-                    slot.setFinalInitProto(XaiService);
-                    slot.setIsSubnode(true);
-                    slot.setSlotType("XaiService");
-                }
+        /**
+ * @member {XaiService} xaiService
+ * @category AI Service
+ */
+        {
+            const slot = this.newSlot("xaiService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(XaiService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("XaiService");
+        }
 
         /*
         {

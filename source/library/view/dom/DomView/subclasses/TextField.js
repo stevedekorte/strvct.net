@@ -231,41 +231,41 @@
     }
 
     init () {
-        super.init()
-        this.setDisplay("flex")
-        this.setJustifyContent("flex-start")
-        this.setAlignItems("flex-start")
-        this.turnOffUserSelect()
-        this.setWhiteSpace("pre-wrap")
-        this.setWordWrap("normal")
-        this.setOverflow("hidden")
-        this.setOverflowWrap("normal")
-        this.setTextOverflow("ellipsis")
-        this.setWordBreak("keep-all")
-        this.setSpellCheck(false)
-        this.setMinWidth(10)
-        this.setPaddingLeft("0.5em")
-        this.setPaddingRight("0.5em")
-        this.setPaddingTop("0.3em")
-        this.setPaddingBottom("0.3em")
-        this.setLineHeight("1.15em")
-        //this.setMinHeight("2.07em")
+        super.init();
+        this.setDisplay("flex");
+        this.setJustifyContent("flex-start");
+        this.setAlignItems("flex-start");
+        this.turnOffUserSelect();
+        this.setWhiteSpace("pre-wrap");
+        this.setWordWrap("normal");
+        this.setOverflow("hidden");
+        this.setOverflowWrap("normal");
+        this.setTextOverflow("ellipsis");
+        this.setWordBreak("keep-all");
+        this.setSpellCheck(false);
+        this.setMinWidth(10);
+        this.setPaddingLeft("0.5em");
+        this.setPaddingRight("0.5em");
+        this.setPaddingTop("0.3em");
+        this.setPaddingBottom("0.3em");
+        this.setLineHeight("1.15em");;
+        //this.setMinHeight("2.07em");
         this.setMinHeight("1em");
         this.setCssProperty("outline", "none");
 		
-        this.setIsRegisteredForFocus(true) // need this to call unpauseGestures when editing ends
+        this.setIsRegisteredForFocus(true); // need this to call unpauseGestures when editing ends
 
-        //this.setUnfocusOnEnterKey(true)
-        //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
-        //this.formatValue()
+        //this.setUnfocusOnEnterKey(true);
+        //this.setIsRegisteredForKeyboard(true); // gets set by setContentEditable()
+        //this.formatValue();
 
-        //this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
-        //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
+        //this.setDidTextInputNote(this.newNoteNamed("didTextInput"));
+        //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"));
 
-        this.setIsDebugging(false)
-        //this.lockedStyleAttributeSet().add("backgroundColor")
+        this.setIsDebugging(false);
+        //this.lockedStyleAttributeSet().add("backgroundColor");
         this.selectListener().setIsListening(true);
-        return this
+        return this;
     }
 
     /**
@@ -273,9 +273,9 @@
      * @returns {TextField} The text field.
      */
     setupElement () {
-        super.setupElement()
-        //this.scheduleRegisterForFocus() // TODO: make this lazy
-        return this
+        super.setupElement();
+        //this.scheduleRegisterForFocus(); // TODO: make this lazy
+        return this;
     }
 
     // --- sub-element mutation observer ---
@@ -298,9 +298,9 @@
 
             const obs = new MutationObserver((mutationList, observer) => this.onDomMutation(mutationList, observer));
             obs.observe(this.element(), config);
-            this.setMutationObserver(obs)
+            this.setMutationObserver(obs);
         }
-        return this
+        return this;
     }
 
     /**
@@ -308,12 +308,12 @@
      * @returns {TextField} The text field.
      */
     stopMutationObserver () {
-        const obs = this.mutationObserver()
+        const obs = this.mutationObserver();
         if (obs) {
-            obs.disconnect()
-            this.setMutationObserver(null)
+            obs.disconnect();
+            this.setMutationObserver(null);
         }
-        return this
+        return this;
     }
 
     /**
@@ -323,11 +323,11 @@
      * @returns {void}
      */
     onDomMutation (mutationList, observer) {
-     //   console.log("onDomMutation --------------> ", mutationList)
+     //   console.log("onDomMutation --------------> ", mutationList);
 
         for(const mutation of mutationList) {
             if (mutation.type === 'characterData') {
-                this.onCharacterDataMutation(mutation)
+                this.onCharacterDataMutation(mutation);
             }
             /*
             if (mutation.type === 'childList') {
@@ -346,7 +346,7 @@
      * @returns {void}
      */
     onCharacterDataMutation (mutation) {
-        console.log("onCharacterDataMutation --------------> ", mutation)
+        console.log("onCharacterDataMutation --------------> ", mutation);
     }
 
     /**
@@ -355,20 +355,20 @@
      * @returns {TextField} The text field.
      */
     setContentEditable (aBool) {
-        super.setContentEditable(aBool)
+        super.setContentEditable(aBool);
 
         /*
         if (aBool) {
-            this.startMutationObserver()
+            this.startMutationObserver();
         } else {
-            this.stopMutationObserver()
+            this.stopMutationObserver();
         }
         */
 
-        //this.debugLog(".setContentEditable(" + aBool + ") = ", this.contentEditable())
-        //this.setIsRegisteredForClicks(this.contentEditable())  // is this needed after move to tap?
+        //this.debugLog(".setContentEditable(" + aBool + ") = ", this.contentEditable());
+        //this.setIsRegisteredForClicks(this.contentEditable());  // is this needed after move to tap?
 
-        return this
+        return this;
     }
 
     // ---
@@ -378,15 +378,15 @@
     /*
     setIsEditable (aBool) {
         if (this._isEditable !== aBool) {
-            this._isEditable = aBool
-            this.syncEditingControl()
+            this._isEditable = aBool;
+            this.syncEditingControl();
         }
-        return this
+        return this;
     }
 
     
     isEditable () {
-        return this._isEditable
+        return this._isEditable;
     }
     */
     
@@ -395,7 +395,7 @@
      * @returns {void}
      */
     didUpdateSlotDoesInput () {
-        this.syncEditingControl()
+        this.syncEditingControl();
     }
 
     /**
@@ -403,7 +403,7 @@
      * @returns {void}
      */
     didUpdateSlotCanHitEnter () {
-        this.syncEditingControl()
+        this.syncEditingControl();
     }
     
     /**
@@ -411,7 +411,7 @@
      * @returns {void}
      */
     didUpdateSlotIsEditable () {
-        this.syncEditingControl()
+        this.syncEditingControl();
     }
 
     /**
@@ -421,10 +421,10 @@
      */
     setUsesDoubleTapToEdit (aBool) {
         if (this._usesDoubleTapToEdit !== aBool) {
-            this._usesDoubleTapToEdit = aBool
-            this.syncEditingControl()
+            this._usesDoubleTapToEdit = aBool;
+            this.syncEditingControl();
         }
-        return this
+        return this;
     }
 
     /**
@@ -432,15 +432,15 @@
      * @returns {TextField} The text field.
      */
     syncBorder () {
-        let b = this.uneditableBorder()
+        let b = this.uneditableBorder();
 
         if (this.isEditable()) {
             if (this.showsBorderWhenEditable()) {
-                b = this.editableBorder()
+                b = this.editableBorder();
             }
         }
-        this.setBorder(b)
-        return this
+        this.setBorder(b);
+        return this;
     }
 
     /**
@@ -470,16 +470,16 @@
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {
                 //debugger;
-                this.addDefaultDoubleTapGesture()
-                this.setContentEditable(false)
+                this.addDefaultDoubleTapGesture();
+                this.setContentEditable(false);
             } else {
-                this.setContentEditable(true)
+                this.setContentEditable(true);
             }
         } else {
             if (this.usesDoubleTapToEdit()) {
-                this.removeDefaultDoubleTapGesture()
+                this.removeDefaultDoubleTapGesture();
             }
-            this.setContentEditable(false)
+            this.setContentEditable(false);
         }
 
         if (this.doesInput() && !this.canHitEnter()) {
@@ -492,7 +492,7 @@
             //this.setColor("rgba(0, 0, 0, 0.5)");
         }
 
-        return this
+        return this;
     }
 
 
@@ -502,7 +502,7 @@
      * @returns {void}
      */
     onDoubleTapCancelled (aGesture) {
-        //console.log(this.value() + " onDoubleTapCancelled")
+        //console.log(this.value() + " onDoubleTapCancelled");
     }
 
     /**
@@ -512,21 +512,21 @@
      */
     onDoubleTapComplete (aGesture) {
         //debugger;
-        //console.log(this.value() + " onDoubleTapComplete")
+        //console.log(this.value() + " onDoubleTapComplete");
         // make content editable and select text
-        //this.debugLog(".onDoubleTapComplete()")
+        //this.debugLog(".onDoubleTapComplete()");
         if (this.contentEditable()) {
-            return this
+            return this;
         }
 
         
-        this.setContentEditable(true)
-        this.focus()
-        this.selectAll()
-        this.pauseGestures()
+        this.setContentEditable(true);
+        this.focus();
+        this.selectAll();
+        this.pauseGestures();
 
-        //this.setBorder("1px dashed white")
-        return this
+        //this.setBorder("1px dashed white");
+        return this;
     }
 
     /**
@@ -534,7 +534,7 @@
      * @returns {void}
      */
     pauseGestures () {
-        GestureManager.shared().pause() // so things like text selection don't trigger gestures
+        GestureManager.shared().pause(); // so things like text selection don't trigger gestures
     }
 
     /**
@@ -542,7 +542,7 @@
      * @returns {void}
      */
     unpauseGestures () {
-        GestureManager.shared().unpause() // so things like text selection don't trigger gestures
+        GestureManager.shared().unpause(); // so things like text selection don't trigger gestures
     }
 
     // --- onFocusIn / onFocusOut ---
@@ -555,10 +555,10 @@
     onFocusIn (event) {
         // sent before focus and bubbles up the parent chain
 
-        super.onFocusIn()
+        super.onFocusIn();
         //console.log(this.typeId() + " '" + this.string() + "' onFocusIn")
         if (this.contentEditable()) {
-            this.pauseGestures()
+            this.pauseGestures();
         }
     }
 
@@ -573,9 +573,9 @@
         //const isFocused = this.isActiveElementAndEditable();
         this.storeSelectionRange();
 
-        super.onFocusOut()
+        super.onFocusOut();
         //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
-        this.unpauseGestures() // do we need to check for (!this.contentEditable())?
+        this.unpauseGestures(); // do we need to check for (!this.contentEditable())?
     }
 
     // --- onFocus / onBlur ---
@@ -586,11 +586,11 @@
      * @returns {void}
      */
     onFocus (event) {
-       // console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()")
+       // console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()");
         if (this.onBlurSelection()) {
             this.restoreSelectionRange();
         } else {
-            //console.log("--- NO blur selection ---")
+            //console.log("--- NO blur selection ---");
         }
     }
 
@@ -599,9 +599,9 @@
      * @returns {TextField} The text field.
      */
     blur () {
-        //debugger
-        //console.log(this.value() + " blur")
-        return super.blur()
+        //debugger;
+        //console.log(this.value() + " blur");
+        return super.blur();
     }
 
     /**
@@ -610,13 +610,13 @@
      * @returns {void}
      */
     onBlur (event) {
-        super.onBlur()
+        super.onBlur();
         if (this.usesDoubleTapToEdit()) {
-            this.setContentEditable(false)
-            this.setBorder("none")
-            this.turnOffUserSelect()
+            this.setContentEditable(false);
+            this.setBorder("none");
+            this.turnOffUserSelect();
         }
-        this.unpauseGestures()
+        this.unpauseGestures();
     }
 
     // --------------------------------
@@ -627,10 +627,10 @@
      * @returns {TextField} The text field.
      */
     setPxFontSize (aNumber) {
-        super.setPxFontSize(aNumber)
-        this.setMinAndMaxHeight(aNumber + 2) // make sure TextfField can fit font size
-        this.didEdit()
-        return this
+        super.setPxFontSize(aNumber);
+        this.setMinAndMaxHeight(aNumber + 2); // make sure TextfField can fit font size
+        this.didEdit();
+        return this;
     }
 	
     /**
@@ -638,7 +638,7 @@
      * @returns {Array} The strings.
      */
     returnStrings () {
-        return ["<div><br></div>", "<br><br>"]
+        return ["<div><br></div>", "<br><br>"];
     }
 	
     /**
@@ -646,8 +646,8 @@
      * @returns {Boolean} True if it contains returns, false otherwise.
      */
     containsReturns () {
-        const value = this.value() // correct?
-        return returnStrings.canDetect(returnString => value.contains(returnString))		
+        const value = this.value(); // correct?
+        return returnStrings.canDetect(returnString => value.contains(returnString));	
     }
 	
     // ------------------
@@ -658,7 +658,7 @@
      * @returns {TextField} The text field.
      */
     setInnerHtml (s) {
-        return super.setInnerHtml(s)
+        return super.setInnerHtml(s);
     }
 
     /**
@@ -667,7 +667,7 @@
      * @returns {TextField} The text field.
      */
     setInnerText (s) {
-        return super.setInnerText(s)
+        return super.setInnerText(s);
     }
 
     /**
@@ -746,7 +746,7 @@
      */
     value () {
         // this.element().text ?
-        return this.string()
+        return this.string();
     }
 
     // allowsHtml
@@ -759,12 +759,12 @@
     setNewValue (v) { // private method
         //console.log("setNewValue(" + v.substring(0, 10) + "...)");
         if (this.allowsHtml()) {
-            this.setInnerHtml(v)
+            this.setInnerHtml(v);
         } else {
-            super.setString(v)
+            super.setString(v);
         }
-        this.setLastMergeValue(v);
-        return this
+        this.setLastMergeValue(v);;
+        return this;
     }
 
     /**
@@ -774,11 +774,11 @@
      */
     cleanseNewValue (newValue) {
         if (Type.isNullOrUndefined(newValue)) {
-            newValue = ""
+            newValue = "";
         }
 
         if (!Type.isString(newValue)) {
-            newValue = newValue.toString()
+            newValue = newValue.toString();
         }
 
         return newValue;
@@ -792,8 +792,8 @@
     setString (newValue) {
         newValue = this.cleanseNewValue(newValue);
 
-        const oldValue = this.string()
-        //let oldValue = this.visibleValue()
+        const oldValue = this.string();
+        //let oldValue = this.visibleValue();
         if (oldValue !== newValue) {
 
             if (this.isFocused()) {
@@ -802,20 +802,20 @@
                     this.setNewValue(newValue);
                     //this.focus();
                 //} 
-                //throw new Error("attempt to call TextField.setString while it's focused")
+                //throw new Error("attempt to call TextField.setString while it's focused");
             } else {
-                //this.isFocused()
-                this.setNewValue(newValue)
+                //this.isFocused();
+                this.setNewValue(newValue);
             }
             
             /*
-            console.log(" setString(")
-            console.log("    old: '" + oldValue + "'")
-            console.log("    new: '" + newValue + "'")
-            console.log("---")
+            console.log(" setString(");
+            console.log("    old: '" + oldValue + "'");
+            console.log("    new: '" + newValue + "'");
+            console.log("---");
             */            
         }
-        return this
+        return this;
     }
 
     // ------------------
@@ -825,24 +825,24 @@
      * @returns {TextField} The text field.
      */
     adjustFontSizeWithKeyboard () {
-        const kb = BMKeyboard.shared()
-        const controlDown   = kb.controlKey().isDown()
-        const equalSignDown = kb.equalsSignKey().isDown()
-        const minusDown     = kb.minusKey().isDown()
+        const kb = BMKeyboard.shared();
+        const controlDown   = kb.controlKey().isDown();
+        const equalSignDown = kb.equalsSignKey().isDown();
+        const minusDown     = kb.minusKey().isDown();
 
-        // adjust font size (testing this out)
+        // adjust font size (testing this out);
         if (controlDown) {
-            const fontSize = this.computedFontSize()
+            const fontSize = this.computedFontSize();
 
             if (equalSignDown) {
-                this.setPxFontSize(fontSize + 1)
+                this.setPxFontSize(fontSize + 1);
             } else if (minusDown) {
                 if (fontSize > 1) { 
-                    this.setPxFontSize(fontSize - 1)
+                    this.setPxFontSize(fontSize - 1);
                 }
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -851,9 +851,9 @@
      * @returns {void}
      */
     onAlternateEnterKeyUp (event) {
-        console.log(this.typeId() + " onAlternateEnterKeyDown")
-        //this.insertEnterAtCursor()
-        //this.afterEnter()
+        console.log(this.typeId() + " onAlternateEnterKeyDown");
+        //this.insertEnterAtCursor();
+        //this.afterEnter();
     }
 
     /**
@@ -863,9 +863,9 @@
      */
     insertEnterAtCursor (event) {
         if (this.isFocused()) {
-            //this.insertTextAtCursor("\n")
-            this.insertTextAtCursorSimple("\n")
-            this.placeCaretAtEnd()
+            //this.insertTextAtCursor("\n");
+            this.insertTextAtCursorSimple("\n");
+            this.placeCaretAtEnd();
         }   
     }
 
@@ -903,15 +903,15 @@
      */
     onKeyDown (event) {
         // sent before the content is changed
-        let result = super.onKeyDown(event)
-        //const keyName = BMKeyboard.shared().keyForEvent(event)
-        //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
+        let result = super.onKeyDown(event);
+        //const keyName = BMKeyboard.shared().keyForEvent(event);
+        //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode);
 
         if (this.shouldMuteEvent(event)) {
-            event.preventDefault()
+            event.preventDefault();
         }
 
-        return true
+        return true;
     }
 
     /**
@@ -929,14 +929,14 @@
         }
 
         //event.preventDefault();
-        // return result
+        //return result;
 
         //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
         //this.debugLog(" onKeyUp value: [" + this.value() + "]")
 
         if (this.doesInput()) {
             event.preventDefault();
-            //this.insertEnterAtCursor()
+            //this.insertEnterAtCursor();
             return true; // prevent default
         }
         return false;
@@ -972,18 +972,18 @@
      */
     onEnterKeyUp (event) {
         if (!this.isContentEditable()) {
-            return 
+            return;
         }
         
-	    //this.debugLog(".onEnterKeyUp()")
-	    //this.didEdit()
+	    //this.debugLog(".onEnterKeyUp()");
+	    //this.didEdit();
 
-        this.formatValue()
-        this.afterEnter()
+        this.formatValue();
+        this.afterEnter();
 
         if (this.doesInput()) {
-            //this.insertEnterAtCursor()
-            return false
+            //this.insertEnterAtCursor();
+            return false;
         }
     }
 
@@ -996,8 +996,8 @@
      */
     onAlternateEnterKeyDown (event) {
         if (this.doesInput() && this.isMultiline()) {
-            this.insertTextAtCursorAndConsolidate("\n")
-            //this.formatValue()
+            this.insertTextAtCursorAndConsolidate("\n");
+            //this.formatValue();
         }
     }
 
@@ -1007,9 +1007,9 @@
      * @returns {void}
      */
     onEscapeKeyDown (event) {
-        this.releaseFirstResponder()
-        event.stopPropagation()
-        return false
+        this.releaseFirstResponder();
+        event.stopPropagation();
+        return false;
     }
 
     /**
@@ -1021,36 +1021,36 @@
 
         if (this.doesInput()) {
             if (this.canHitEnter()) {
-                this.tellParentViews("didInput", this) 
+                this.tellParentViews("didInput", this);
             } else {
                 SimpleSynth.clone().playButtonCancelled();
                 return;
             }
         }
 
-        //this.tellParentViews("didInput", this) 
+        //this.tellParentViews("didInput", this);
             
         if (!this.doesHoldFocusOnReturn()) {
-            this.releaseFirstResponder()
+            this.releaseFirstResponder();
         }
         
         if (this.doesClearOnReturn()) {
-            this.setTextContent("")
-            //this.setInnerHtml("")
-            //this.focusAfterDelay(.125) // hack to get focus back after chat view scrolling - TODO: fix this
+            this.setTextContent("");
+            //this.setInnerHtml("");
+            //this.focusAfterDelay(.125); // hack to get focus back after chat view scrolling - TODO: fix this
         }
 
         /*
         if (this.didTextInputNote()) {
-            this.didTextInputNote().post()
+            this.didTextInputNote().post();
         }
         */
         
         if (event) {
-            event.stopPropagation()
+            event.stopPropagation();
         }
 
-        return false
+        return false;
     }
 	
     /**
@@ -1058,41 +1058,41 @@
      * @returns {TextField} The text field.
      */
     formatValue () {
-        this.setTextContent(this.textContent()) // removes formatting?
+        this.setTextContent(this.textContent()); // removes formatting?
         /*
-	    const oldValue = this.innerHtml()
-	    let newValue = this.innerText() // removes returns
+	    const oldValue = this.innerHtml();
+	    let newValue = this.innerText(); // removes returns
         
         if (this.doesTrim()) {
-            newValue = newValue.trim()
+            newValue = newValue.trim();
         } 
 
         if (true) {
-            //newValue.replaceAll("\n", "<br>")
+            //newValue.replaceAll("\n", "<br>");
         }
         
         if (newValue !== oldValue) {
-            this.debugLog("formatValue newValue !== oldValue")
-            this.debugLog(" newValue: [" + newValue + "]")
-            this.setInnerHtml(newValue)
-            this.didEdit()
+            this.debugLog("formatValue newValue !== oldValue");
+            this.debugLog(" newValue: [" + newValue + "]");
+            this.setInnerHtml(newValue);
+            this.didEdit();
         }
         */
 	    //console.trace(this.type() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
-        //this.debugLog(" after formatValue: '" + this.innerHtml() + "'")
-        return this
+        //this.debugLog(" after formatValue: '" + this.innerHtml() + "'");
+        return this;
     }
     
     /*
     setInput (s) {
-        const n = this.node()
+        const n = this.node();
         if (n) {
-            const m = n.nodeInputFieldMethod()
+            const m = n.nodeInputFieldMethod();
             if (m) {
-                n[m].apply(n, [s])
+                n[m].apply(n, [s]);
             }
         }
-        return this
+        return this;
     }
     */
 
@@ -1106,11 +1106,11 @@
             debugger;
         }
 
-        super.setThemeClassName(aName)
+        super.setThemeClassName(aName);
         if (aName === "FieldKey") {
-            assert(this.themeClassName() === "FieldKey")
+            assert(this.themeClassName() === "FieldKey");
         }
-         return this
+         return this;
     }
 
     /**
@@ -1123,8 +1123,8 @@
             debugger;
         }
         */
-        super.applyStyles()
-        return this
+        super.applyStyles();
+        return this;
     }
 
     /**
@@ -1133,11 +1133,11 @@
      */
     activate () {
         if (this.usesDoubleTapToEdit()) {
-            this.onDoubleTapComplete()
+            this.onDoubleTapComplete();
         } else {
-            this.focus()
+            this.focus();
         }
-        return this
+        return this;
     }
     
     /**
@@ -1150,12 +1150,12 @@
         //this.debugLog(".onClick()")
 
         if (this.contentEditable()) {
-            this.sendActionToTarget()
-            event.stopPropagation()
-            return false
+            this.sendActionToTarget();
+            event.stopPropagation();
+            return false;
         }
 
-        return super.onClick(event)
+        return super.onClick(event);
     }
     
     /**
@@ -1166,10 +1166,10 @@
     setBorder (v) {
         /*
         if (this.value() === "a") {
-            console.log("break")
+            console.log("break");
         }
         */
-        return super.setBorder(v)
+        return super.setBorder(v);
     }
 
     /**
@@ -1178,8 +1178,8 @@
      * @returns {TextField} The text field.
      */
     setBackgroundColor (aColor) {
-        super.setBackgroundColor(aColor)
-        return this
+        super.setBackgroundColor(aColor);
+        return this;
     }
 
     // --- speech to text input -----------------------------------------------------------------------
@@ -1192,11 +1192,11 @@
     onAlternate_l_KeyDown (event) {
         if (this.hasFocus()) {
             if (!event.repeat) {
-                this.startSpeechToText()
+                this.startSpeechToText();
             }
             event.stopPropagation();
             event.preventDefault();
-            //return true
+            //return true;
         }
     }
 
@@ -1207,7 +1207,7 @@
      */
     onAlternate_l_KeyUp(event) {
         if (this.hasFocus()) {
-            this.stopSpeechToText()
+            this.stopSpeechToText();
             event.stopPropagation();
         } else {
             debugger;
@@ -1219,20 +1219,20 @@
      * @returns {void}
      */
     startSpeechToText () {
-        console.log("=== start speech to text ===")
+        console.log("=== start speech to text ===");
         if (this._speechSession) {
-            this._speechSession.stop()
-            this._speechSession = null
+            this._speechSession.stop();
+            this._speechSession = null;
         }
 
         // TODO: add visual indicator?
         if (!this._speechSession) {
             if (getGlobalThis()["SpeechToTextSession"]) {
-                this._speechSession = SpeechToTextSession.clone().setDelegate(this)
-                //debugger
-                this._speechSession.start()
+                this._speechSession = SpeechToTextSession.clone().setDelegate(this);
+                //debugger;
+                this._speechSession.start();
             } else {
-                console.warn("no SpeechToTextSession class available")
+                console.warn("no SpeechToTextSession class available");
             }
         }
     }
@@ -1243,10 +1243,10 @@
      * @returns {void}
      */
     onSpeechInterimResult (speechSession) {
-        //const s = speechSession.intermFullTranscript()
-        const s = speechSession.fullTranscript()
-        //console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'")
-        //this.insertTextAtCursorSimple(s)
+        //const s = speechSession.intermFullTranscript();
+        const s = speechSession.fullTranscript();
+        //console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'");
+        //this.insertTextAtCursorSimple(s);
     }
 
     /**
@@ -1255,10 +1255,10 @@
      * @returns {void}
      */
     onSpeechEnd (speechSession) {
-        const s = speechSession.fullTranscript()
-        console.log("onSpeechEnd full: '" + s + "'")
-        this.insertTextAtCursorSimple(s)
-        this._speechSession = null
+        const s = speechSession.fullTranscript();
+        console.log("onSpeechEnd full: '" + s + "'");
+        this.insertTextAtCursorSimple(s);
+        this._speechSession = null;
     }
 
     /**
@@ -1266,11 +1266,11 @@
      * @returns {void}
      */
     stopSpeechToText () {
-        console.log("==== stop speech to text ====") 
+        console.log("==== stop speech to text ====");
         // TODO: add visual indicator?
-        const speech = this._speechSession
+        const speech = this._speechSession;
         if (speech) {
-            speech.stop()
+            speech.stop();
         }
     }
 
@@ -1283,10 +1283,10 @@
      */
     onUpArrowKeyDown (event) { // why down and not up?
         if (this.isFocused()) { 
-            return false
+            return false;
         }
         
-        return super.onUpArrowKeyDown(event)
+        return super.onUpArrowKeyDown(event);
     }
 	
     /**
@@ -1296,10 +1296,10 @@
      */
     onDownArrowKeyDown (event) { // why down and not up?
         if (this.isFocused()) { 
-            return false
+            return false;
         }
 
-        return super.onDownArrowKeyDown(event)
+        return super.onDownArrowKeyDown(event);
     }
 	
     /**
@@ -1309,10 +1309,10 @@
      */
     onLeftArrowKeyUp (event) {
         if (this.isFocused()) { 
-            return false          
+            return false;  
         }
         
-        return super.onLeftArrowKeyUp(event)
+        return super.onLeftArrowKeyUp(event);
     }
 	
     /**
@@ -1322,10 +1322,10 @@
      */
     onRightArrowKeyUp (event) {
         if (this.isFocused()) { 
-            return false
+            return false;
         }
         
-        return super.onRightArrowKeyUp(event)
+        return super.onRightArrowKeyUp(event);
     }
 
     // --- select ---
@@ -1336,7 +1336,7 @@
      * @returns {void}
      */
     onSelectStart (event) {
-        console.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()")
+        console.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()");
     }
 
 }.initThisClass());

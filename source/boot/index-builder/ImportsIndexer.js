@@ -187,7 +187,7 @@ class ImportsIndexer {
     writeIndex () {
         const outPath = this.outIndexPath();
         const index = this.computeIndex();
-        const data = JSON.stringify(index, 2, 2);
+        const data = JSON.stringify(index, null, 2);
         fs.writeFileSync(outPath, data, "utf8");
         this.writeHashForPath(outPath);
     }
@@ -254,7 +254,7 @@ class ImportsIndexer {
      */
     writeCam () {
         const cam = this.computeCam();
-        const data = JSON.stringify(cam, 2, 2);
+        const data = JSON.stringify(cam, null, 2);
         fs.writeFileSync(this.outCamPath(), data, "utf8");
     }
 

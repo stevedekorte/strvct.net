@@ -193,7 +193,7 @@
    * @category Debugging
    */
   show() {
-    const s = JSON.stableStringify(this.rootContainer());
+    const s = JSON.stableStringifyWithStdOptions(this.rootContainer());
     console.log("root: ", s);
   }
 
@@ -219,7 +219,7 @@
     this.containerStack().push(container);
     this.sendDelegate("onJsonStreamReaderPushContainer", [this, container]);
 
-    //this.debugLog("push ", JSON.stableStringify(container));
+    //this.debugLog("push ", JSON.stableStringifyWithStdOptions(container));
     //this.show();
     return this;
   }
@@ -308,7 +308,7 @@
       container[this.currentKey()] = v;
       this.popKey();
     }
-    //this.debugLog("v " + JSON.stableStringify(v));
+    //this.debugLog("v " + JSON.stableStringifyWithStdOptions(v));
   }
 
   /**
@@ -331,7 +331,7 @@
   onCloseObject() {
     assert(this.containerStack().length > 1, "can't close root object");
     const item = this.popContainer();
-    //this.debugLog("onCloseObject ", JSON.stableStringify(item));
+    //this.debugLog("onCloseObject ", JSON.stableStringifyWithStdOptions(item));
   }
 
   /**
@@ -352,7 +352,7 @@
   onCloseArray() {
     assert(this.containerStack().length > 1, "can't close root array");
     const item = this.popContainer();
-    //this.debugLog("onCloseArray ", JSON.stableStringify(item));
+    //this.debugLog("onCloseArray ", JSON.stableStringifyWithStdOptions(item));
   }
 
   /**
@@ -412,13 +412,13 @@ const testJsonReader = function () {
 
   // Simulate random breaks in the HTML content
   reader.beginJsonStream();
-  const s = JSON.stableStringify(jsonInput);
+  const s = JSON.stableStringifyWithStdOptions(jsonInput);
   reader.onStreamJson(s);
   reader.endJsonStream();
   //reader.show();
 
-  console.log("input: ", JSON.stableStringify(jsonInput));
-  console.log("output: ", JSON.stableStringify(reader.rootContainer()));
+  console.log("input: ", JSON.stableStringifyWithStdOptions(jsonInput));
+  console.log("output: ", JSON.stableStringifyWithStdOptions(reader.rootContainer()));
   debugger;
 
   console.log(

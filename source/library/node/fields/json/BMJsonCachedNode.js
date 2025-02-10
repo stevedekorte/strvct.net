@@ -96,7 +96,7 @@
      * @category Data Management
      */
     updateJsonHash () {
-        this.setJsonHashCode(JSON.stableStringify(this.asJson()).hashCode());
+        this.setJsonHashCode(JSON.stableStringifyWithStdOptions(this.asJson()).hashCode());
         return this;
     }
 
@@ -111,7 +111,7 @@
         if (json === null) {
             this.setJsonHashCode(null);
         } else {
-            this.setJsonHashCode(JSON.stableStringify(json).hashCode());
+            this.setJsonHashCode(JSON.stableStringifyWithStdOptions(json).hashCode());
         }
         return this;
     }
@@ -143,11 +143,11 @@
      * @category Data Comparison
      */
     doesMatchJson (json) {
-        const a = JSON.stableStringify(json); 
+        const a = JSON.stableStringifyWithStdOptions(json); 
         if (this.jsonHashCode()) {
             return this.jsonHashCode() === a.hashCode();
         }
-        const b = JSON.stableStringify(this.asJson());
+        const b = JSON.stableStringifyWithStdOptions(this.asJson());
         return a === b;
     }
 
@@ -201,7 +201,7 @@
         }
 
         this.setJson(newJson);
-        assert(JSON.stableStringify(newJson) === JSON.stableStringify(this.asJson()), "Character.applyJsonPatches() setJson() did not apply correctly");
+        assert(JSON.stableStringifyWithStdOptions(newJson) === JSON.stableStringifyWithStdOptions(this.asJson()), "Character.applyJsonPatches() setJson() did not apply correctly");
         this.setLastJson(newJson);
         return this;
     }

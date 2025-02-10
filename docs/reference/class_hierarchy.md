@@ -20,6 +20,7 @@
     - [MimeExtensions](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FMimeExtensions.js)
     - [StrvctHttpsServer](../resources/class-doc/class_doc.html?path=%2Flocal-web-server%2FStrvctHttpsServer.js)
     - [StrvctHttpsServerRequest](../resources/class-doc/class_doc.html?path=%2Flocal-web-server%2FStrvctHttpsServerRequest.js)
+  - [BigInt_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBigInt_store.js)
   - Blob
     - [Blob_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBlob_store.js)
   - Boolean
@@ -36,6 +37,7 @@
     - [Error_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FError_ideal.js)
     - [Error_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
     - [MissingSlotError](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
+  - [Function_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Funused%2FFunction_store.js)
   - [HTMLElement_textField](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FHtmlElement_textField.js)
   - Image
     - [Image_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FImage_ideal.js)
@@ -46,6 +48,7 @@
     - [HookedMap](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcollections%2FHookedMap.js)
     - [Map_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FMap_ideal.js)
     - [Map_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FMap_store.js)
+  - [MarkdownToc](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fmarkdown%2FMarkdownToc.js)
   - [Mirror](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
   - Number
     - [Number_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
@@ -108,6 +111,7 @@
                   - [GeminiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGemini%2FGeminiRequest.js)
                   - [OpenAiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
                     - [GroqRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGroq%2FGroqRequest.js)
+                    - [XaiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FXai%2FXaiRequest.js)
                 - [AzureService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAzure%2FAzureService.js)
                 - [AzureTtsRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequest.js)
                 - [BMBlobs](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fblobs%2FBMBlobs.js)
@@ -129,6 +133,8 @@
                     - [GeminiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGemini%2FGeminiService.js)
                     - [GroqService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
                     - [OpenAiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FOpenAI%2FOpenAiService.js)
+                    - [XaiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FXai%2FXaiService.js)
+                  - [AssistantApiCalls](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FAssistantApiCalls.js)
                   - [AudioQueue](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
                   - [AzureLocale](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocale.js)
                   - [AzureLocales](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocales.js)
@@ -166,6 +172,13 @@
                     - [BMJsonNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonNode.js)
                       - [BMJsonArrayNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonArrayNode.js)
                       - [BMJsonDictionaryNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonDictionaryNode.js)
+                        - [HwJsonDictionaryNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FHwJsonDictionaryNode.js)
+                          - [AssistantApiCall](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FAssistantApiCall.js)
+                            - [PlayMusicApiCall](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FPlayMusic%2FPlayMusicApiCall.js)
+                            - [PlaySoundFxApiCall](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FPlaySoundFx%2FPlaySoundFxApiCall.js)
+                            - [RollDiceApiCall](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FRollDice%2FRollDiceApiCall.js)
+                          - [AssistantApiResponse](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FAssistantApiResponse.js)
+                            - [RollDiceApiResponse](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FApiCalls%2FRollDice%2FRollDiceApiResponse.js)
                   - [BMLinkNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnodes%2FBMLinkNode.js)
                   - [BMTimeNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Ftime%2FBMTimeNode.js)
                   - [HomeAssistant](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FHomeAssistant%2FAssistants%2FHomeAssistant.js)
@@ -403,6 +416,7 @@
   - [ProtocolAnalyzer](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2Fprotocols.js)
   - Range
     - [Range_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FRange_ideal.js)
+  - [RegExp_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FRegex_store.js)
   - [ResourceIndexer](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourceIndexer.js)
   - [ResourceManager](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FResourceManager.js)
   - [ResourcesFolder](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2Findex-builder%2FResourcesFolder.js)
@@ -417,6 +431,7 @@
   - String
     - [String_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FString_ideal.js)
     - [String_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
+  - [Symbol_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FSymbol_store.js)
   - [TestClass](../resources/class-doc/class_doc.html?path=%2Fdocs%2Fresources%2FSourceInspector%2Ftest%2FTestClass.js)
   - [Type](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FType.js)
   - [URL_promises](../resources/class-doc/class_doc.html?path=%2Fsource%2Fboot%2FURL_promises.js)

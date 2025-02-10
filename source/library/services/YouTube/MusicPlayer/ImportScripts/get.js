@@ -20,7 +20,7 @@ async function scrapeYouTubeVideos(searchTerm) {
 
 async function run () {
     const allItems = await scrapeYouTubeVideos("dungeon music");
-    console.log(JSON.stringify(allItems, 2, 2));
+    console.log(JSON.stringify(allItems, null, 2));
     //console.log("allItems.length:", allItems.length);
 }
 

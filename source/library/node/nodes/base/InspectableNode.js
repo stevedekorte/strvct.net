@@ -78,6 +78,9 @@
      * @category Inspection
      */
     setupInspectorFromSlots () {
+        if (this.thisClass().isKindOf(AssistantApiCalls)) {
+            debugger;
+        }
         const slotsMap = this.thisPrototype().allSlotsMap();
         const slotNames = slotsMap.keysArray();
         
@@ -94,11 +97,19 @@
         
         slotNames.forEachV(slotName => {
             const slot = slotsMap.get(slotName);
+
+            if (slot.inspectorPath() === "API") {
+                debugger;
+            }
+
             if (slot.canInspect()) {
                 const field = slot.newInspectorField();
                 let pathNodes = null;
 
+
+
                 if (field) {
+                    field.setOwnerNode(this);
                     field.setTarget(this);
                     field.setCanDelete(false);
                     pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());
@@ -256,6 +267,8 @@
             const className = slot.fieldInspectorViewClassName();
             throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'");
         }
+
+        field.setOwnerNode(this);
 
         if (field.setFieldSlotName) {
             field.setFieldSlotName(slot.name()); //is this used?

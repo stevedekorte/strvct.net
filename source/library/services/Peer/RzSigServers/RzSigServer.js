@@ -435,7 +435,7 @@
         options.headers['x-peer-key'] = this.key();
       }
 
-      console.log("headers: ", JSON.stringify(options, 2, 2));
+      console.log("headers: ", JSON.stringify(options, null, 2));
 
       const promise = fetch(url, options);
       const response = await promise;

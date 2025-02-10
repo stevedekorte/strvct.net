@@ -22,7 +22,7 @@
       const slot = this.newSlot("request", null);
       slot.setAllowsNullValue(true);
       slot.setLabel("request");
-      slot.setShouldStoreSlot(false); // TODO: remove when not debugging
+      slot.setShouldStoreSlot(true); // TODO: set to false when not debugging
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("AiRequest");
       slot.setCanInspect(true);
@@ -254,22 +254,6 @@
     this.setRequest(request);
     request.asyncSendAndStreamResponse();
     return this
-  }
-
-  /**
-   * Gets the JSON history for the request.
-
-   * @returns {Array} An array of message JSON objects.
-   * @category Data
-   */
-  jsonHistory () {
-    // subclasses can override this to modify the history sent with the request
-    const messages = this.visiblePreviousMessages();
-    let jsonHistory = messages.map(m => m.messagesJson());
-    if (this.conversation().filterJsonHistory) {
-      jsonHistory = this.conversation().onFilterJsonHistory(jsonHistory);
-    }
-    return jsonHistory;
   }
 
   /**

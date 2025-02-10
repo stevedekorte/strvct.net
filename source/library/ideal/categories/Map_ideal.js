@@ -297,7 +297,7 @@
      * @category Conversion
      */
     description () {
-        return JSON.stableStringify(this.asDict(), null, 2); // may throw error if values aren't json compatible
+        return JSON.stableStringifyWithStdOptions(this.asDict(), null, 2); // may throw error if values aren't json compatible
     }
 
     /**

@@ -72,6 +72,7 @@
         v.setOverflowY("scroll");
         v.setDoesInput(false);
         v.setIsMultiline(true);
+        v.setValueWhiteSpace("pre-wrap");
         return v;
     }
 

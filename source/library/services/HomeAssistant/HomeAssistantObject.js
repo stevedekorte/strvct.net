@@ -103,7 +103,7 @@
    * @category Data
    */
   jsonString () {
-    return JSON.stringify(this.haJson(), 2, 2);
+    return JSON.stringify(this.haJson(), null, 2);
   }
 
   /**

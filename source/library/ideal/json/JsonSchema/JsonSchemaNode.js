@@ -110,7 +110,7 @@
   didInit () {
     super.didInit()
     const json = this.thisClass().asRootJsonSchema(); //TODO
-    this.setSchemaString(JSON.stableStringify(json, 2, 2)); //TODO
+    this.setSchemaString(JSON.stableStringifyWithStdOptions(json, null, 2)); //TODO
     return this;
   }
 
@@ -211,7 +211,7 @@
    * @category Data Conversion
    */
   jsonString () {
-    return JSON.stableStringify(this.asJson(), 2, 2);
+    return JSON.stableStringifyWithStdOptions(this.asJson(), null, 2);
   }
 
   /**
@@ -227,7 +227,7 @@
     const json = super.jsonSchemaProperties(refSet);
     /*
     if (!Type.isUndefined(json)) {
-      const s = JSON.stableStringify(json, 2, 2);
+      const s = JSON.stableStringifyWithStdOptions(json, null, 2);
       assert(!s.includes("schemaString"));
     }
     */

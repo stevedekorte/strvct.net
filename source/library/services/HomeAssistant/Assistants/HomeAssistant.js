@@ -593,7 +593,7 @@
       }
 
     } else {
-      console.warn(this.typeId() + " WARNING: unhandled message [[" + JSON.stringify(message, 2, 2) + "]]");
+      console.warn(this.typeId() + " WARNING: unhandled message [[" + JSON.stringify(message, null, 2) + "]]");
     }
     this.updateStatus();
   }

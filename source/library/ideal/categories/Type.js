@@ -71,11 +71,11 @@ class Type extends Object {
         } else if (typeof(value) === "number") {
             s = value.toString();
         } else if (Type.isDeepJsonType(value)) {
-            s = JSON.stableStringify(value).clipWithEllipsis(50);
+            s = JSON.stableStringifyWithStdOptions(value).clipWithEllipsis(50);
         } else {
             s = "<" + typeof(value) + ">";
         }
-        return this.typeName(value) + " " + JSON.stableStringify(value);
+        return this.typeName(value) + " " + JSON.stableStringifyWithStdOptions(value);
     }
 
     /**

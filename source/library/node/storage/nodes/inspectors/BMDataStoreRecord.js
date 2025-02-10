@@ -80,7 +80,7 @@
      * @category Data Access
      */
     recordString () {
-        return JSON.stableStringify(this.record(), null, 2)
+        return JSON.stableStringifyWithStdOptions(this.record(), null, 2)
     }
 
     /**
@@ -114,7 +114,7 @@
         //subnode.setTitle(aRecord.id)
         subnode.setKey(aRecord.id)
         subnode.setStore(this.defaultStore()) //// <-------------------- avoid this?
-        const size = JSON.stableStringify(aRecord).length
+        const size = JSON.stableStringifyWithStdOptions(aRecord).length
         subnode.setSubtitle(size.byteSizeDescription())
         return subnode
     }

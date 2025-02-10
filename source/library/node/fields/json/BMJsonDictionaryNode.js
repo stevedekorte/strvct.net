@@ -176,7 +176,7 @@
         const bdd = BMDataUrl.clone();
         bdd.setMimeType("application/json");
         bdd.setFileName(this.title() + ".json");
-        bdd.setDecodedData(JSON.stableStringify(json, null, 4));
+        bdd.setDecodedData(JSON.stableStringifyWithStdOptions(json, null, 4));
         return bdd;
     }
 

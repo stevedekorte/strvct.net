@@ -270,7 +270,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 debugger;
                 this.validateValue(this.initValue());
 
-                throw new Error(Type.typeDescription(this.initValue()) + " not in valid values: " + JSON.stableStringify(this._validValues));
+                throw new Error(Type.typeDescription(this.initValue()) + " not in valid values: " + JSON.stableStringifyWithStdOptions(this._validValues));
             }
         }
         return this;
@@ -426,6 +426,21 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     removeAnnotation () {
         this.annotations().delete(key);
         return this
+    }
+
+    /**
+     * @category Appearance
+     */
+    setValueWhiteSpace (s) {
+        this.setAnnotation("valueWhiteSpace", s);
+        return this;
+    }
+
+    /**
+     * @category Appearance
+     */
+    valueWhiteSpace () {
+        return this.getAnnotation("valueWhiteSpace");
     }
 
     /**
@@ -709,6 +724,11 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 field.setValueMethod(this.name());
                 field.setValueIsEditable(this.canEditInspection());
                 field.setCanDelete(false);
+                /*
+                if (this.valueWhiteSpace()) {
+                    field.setValueWhiteSpace(this.valueWhiteSpace());
+                }
+                */
 
                 if (field.setValuePlaceholderText) {
                     const p = this.valuePlaceholder();
@@ -1265,6 +1285,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
                 const newValue = finalInitProto.clone();
                 this.onInstanceSetValue(anInstance, newValue);
+                newValue.setOwnerNode(anInstance); // should this be inside the setter? Maybe if slot.doesOwnValue(true)?
 
                 /*
                 if (this.shouldFinalInitAsSubnode()) {
@@ -1286,7 +1307,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             // sanity check - we don't typically want to add it automatically if subnodes are stored
             assert(anInstance.shouldStoreSubnodes() === false);
             const value = this.onInstanceGetValue(anInstance);
-            assert(value);
+            assert(value, "ivar is null/undefined for " + anInstance.type() + "." + this.name());
             anInstance.assertValidSubnodeType(value); // tmp - this is also done in addSubnode
             anInstance.addSubnode(value);
         }

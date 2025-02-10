@@ -312,7 +312,7 @@
       slot.setActionMethodName("copyMessages");
     }
 
-    this.setShouldStore(false);
+    this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
 
@@ -358,7 +358,7 @@
    * @returns {string}
    */
   body () {
-    return JSON.stringify(this.bodyJson(), 2, 2);
+    return JSON.stringify(this.bodyJson(), null, 2);
   }
 
   /**
@@ -470,7 +470,7 @@
       apiUrl:  this.apiUrl(),
       body: this.bodyJson()
     };
-    return JSON.stringify(json, 2, 2);
+    return JSON.stringify(json, null, 2);
   }
 
   /**
@@ -582,7 +582,7 @@
       this.sendDelegate("onStreamStart");
     }
 
-    //const s = JSON.stringify(options, 2, 2);
+    //const s = JSON.stringify(options, null, 2);
     //this.debugLog("SENDING REQUEST BODY:", options.body);
     xhr.send(options.body);
 
@@ -653,7 +653,7 @@
     console.log(this.typeId() + " onXhrLoadEnd()");
 
     //const completionDict = this.bodyJson();
-    //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, 2, 2)); // no usage property!
+    //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, null, 2)); // no usage property!
   }
 
   /**
@@ -728,7 +728,7 @@
    */
   copyMessages () {
     const messages = this.bodyJson().messages;
-    const content = JSON.stringify(messages, 2, 2);
+    const content = JSON.stringify(messages, null, 2);
     content.copyToClipboard();
     return this;
   }

@@ -35,7 +35,13 @@
       {
           "name": "chatgpt-4o-latest",
           "title": "OpenAI ChatGPT 4o",
-          "note": "Dynamic model continuously updated to the current version of GPT-4o in ChatGPT.",
+          "note": "The chatgpt-4o-latest model version continuously points to the version of GPT-4o used in ChatGPT, and is updated frequently, when there are significant changes.",
+          "contextWindow": 128000
+      },
+      {
+          "name": "o1-preview",
+          "title": "OpenAI ChatGPT o1-preview",
+          "note": "Points to the most recent snapshot of the o1 model.",
           "contextWindow": 128000
       }
       /*
@@ -99,7 +105,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle("OpenAI");
+    this.setTitle(this.type().before("Service"));
 
     // model and other info is set via OpenAiService.json file
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4

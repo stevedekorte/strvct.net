@@ -1139,11 +1139,11 @@
             const kvPromise = this.kvPromiseForObject(obj);
             this.recordsMap().asyncQueueSetKvPromise(kvPromise);
         } else {
-            console.log("storeObject " + obj.typeId());
+            //console.log("storeObject " + obj.typeId());
 
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);
-            this.debugLog(() => "store " + puuid + " <- " + record.type )
+            //this.debugLog(() => "store " + puuid + " <- " + record.type )
             this.recordsMap().set(puuid, jsonString);
             //this.storeRecord(puuid, record);
         }

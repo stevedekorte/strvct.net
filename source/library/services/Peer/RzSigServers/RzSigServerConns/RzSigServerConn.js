@@ -598,7 +598,7 @@
    * @returns {RzSigServerConn} The current instance.
    */
   attemptToConnect () {
-    this.debugLog("connecting to peerjs signal server: ", JSON.stringify(this.peerOptions(), 2, 2) )
+    this.debugLog("connecting to peerjs signal server: ", JSON.stringify(this.peerOptions(), null, 2) )
 
     let requestedPeerId = undefined;
     if (this.peerIdPrefix().length) {

@@ -2,7 +2,7 @@
  * @module library.node.fields.subclasses
  */
 
-"use strict";
+"use strict"; 
 
 /**
  * @class BMStringField
