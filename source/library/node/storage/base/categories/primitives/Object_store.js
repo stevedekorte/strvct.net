@@ -47,11 +47,11 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
-            const k = entry[0]
-            const v = entry[1]
-            this[k] = aStore.unrefValue(v)
-        })
-        return this
+            const k = entry[0];
+            const v = entry[1];
+            this[k] = aStore.unrefValue(v);
+        });
+        return this;
     }
 
     /**
@@ -78,11 +78,16 @@ Object.defineSlots(typedArrayClass.prototype, {
             type = this.type();
         }
 
+        if (Type.isDictionary(this)) { // Hack to deal with Json
+            debugger;
+            //return JsonObject.clone().setJson(this).recordForStore(aStore);
+        }
+
         const entries = [];
 
         Object.keys(this).forEach((k) => {
-            const v = this[k]
-            entries.push([k, aStore.refValue(v)])
+            const v = this[k];
+            entries.push([k, aStore.refValue(v)]);
         });
 
         // need to special case objects as they can also be used as JSON dictionaries.
@@ -91,7 +96,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         return {
             type: type, 
             entries: entries, 
-        }
+        };
     }
 
     /**
@@ -102,11 +107,11 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     refsPidsForJsonStore (puuids = new Set()) {
         if (this.hasOwnProperty("*")) {
-            puuids.add(this["*"])
+            puuids.add(this["*"]);
         } else {
-            throw new Error("dictionaries are reserved for pointers, but we found a non-pointer")
+            throw new Error("dictionaries are reserved for pointers, but we found a non-pointer");
         }
-        return puuids
+        return puuids;
     }
     
     /**
@@ -127,7 +132,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     didLoadFromStore () { 
         // See Object_init notes for docs on when/how to use this properly.
         // Here for subclasses to override.
-        return this
+        return this;
     }
 
     /**
@@ -138,12 +143,12 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     setShouldStore (aBool) {
         if (aBool != this._shouldStore) {
-            //this.willMutate("shouldStore")
+            //this.willMutate("shouldStore");
             assert(this !== getGlobalThis());
-            Object.defineSlot(this, "_shouldStore", aBool)
-            //this.didMutate("shouldStore")
+            Object.defineSlot(this, "_shouldStore", aBool);
+            //this.didMutate("shouldStore");
         }
-        return this
+        return this;
     }
  
     /**
@@ -153,7 +158,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     shouldStore () {
         return this._shouldStore;
-        //return Object.getOwnProperty(this._shouldStore)
+        //return Object.getOwnProperty(this._shouldStore);
     }
     
 }).initThisCategory();

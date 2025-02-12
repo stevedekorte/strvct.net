@@ -33,33 +33,49 @@
   modelsJson () {
     return [
       {
-          "name": "chatgpt-4o-latest",
-          "title": "OpenAI ChatGPT 4o",
-          "note": "The chatgpt-4o-latest model version continuously points to the version of GPT-4o used in ChatGPT, and is updated frequently, when there are significant changes.",
-          "contextWindow": 128000
+        "name": "chatgpt-4o-latest",
+        "title": "OpenAI ChatGPT 4o",
+        "note": "Latest.",
+        "contextWindow": 128000
       },
-      {
-          "name": "o1-preview",
-          "title": "OpenAI ChatGPT o1-preview",
-          "note": "Points to the most recent snapshot of the o1 model.",
-          "contextWindow": 128000
-      }
+
+      // we can't handle these non-streaming models yet (see AiRequest.js)
       /*
       {
-          "name": "gpt-4-1106-preview",
-          "title": "OpenAI ChatGPT 4o",
-          "note": "better instruction following",
-          "contextWindow": 128000
+        "name": "o1",
+        "title": "OpenAI ChatGPT o1",
+        "note": "Latest.",
+        "contextWindow": 200000,
+        "supportsTemperature": false, // o1 does not support temperature
+        "supportsTopP": false, // o1 does not support top_p
+        "canStream": false // o1 does not support streaming
       },
       {
-          "name": "gpt-4-turbo",
-          "title": "OpenAI ChatGPT 4 Turbo",
-          "contextWindow": 128000
+        "name": "o1-preview",
+        "title": "OpenAI ChatGPT o1-preview",
+        "note": "Latest.",
+        "contextWindow": 128000,
+        "supportsTemperature": false, // o1 does not support temperature
+        "supportsTopP": false, // o1 does not support top_p
+        "canStream": false // o1 does not support streaming
       },
       {
-          "name": "gpt-4-turbo-2024-04-09",
-          "title": "OpenAI ChatGPT 4 Turbo",
-          "contextWindow": 128000
+        "name": "o1-mini",
+        "title": "OpenAI ChatGPT o1-mini",
+        "note": "Latest",
+        "contextWindow": 128000,
+        "supportsTemperature": false, // o1 does not support temperature
+        "supportsTopP": false, // o1 does not support top_p
+        "canStream": false // o1 does not support streaming
+      },
+      {
+        "name": "o3-mini",
+        "title": "OpenAI ChatGPT o3-mini",
+        "note": "Latest",
+        "contextWindow": 200000,
+        "supportsTemperature": false, // o3 does not support temperature
+        "supportsTopP": false, // o3 does not support top_p
+        "canStream": false // o3 does not support streaming
       }
       */
     ];

@@ -21,15 +21,16 @@
      */
     {
       const slot = this.newSlot("imageUrl", null);
-      slot.setShouldJsonArchive(true)
-      slot.setInspectorPath("")
-      slot.setLabel("image")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setLabel("image");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      slot.setFieldInspectorViewClassName("BMImageWellField"); // field inspector view class
     }
 
     /**
@@ -38,15 +39,15 @@
      */
     {
       const slot = this.newSlot("revisedPrompt", null);
-      slot.setShouldJsonArchive(true)
-      slot.setInspectorPath("")
-      slot.setLabel("revised prompt")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setLabel("revised prompt");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     /**

@@ -526,7 +526,9 @@
      */
     addActiveObject (anObject) {
         assert(!anObject.isClass());
-
+        if (Type.isDictionary(anObject)) {
+            debugger;
+        }
         /*
         if (anObject.type() === "Error") {
             debugger;
@@ -1123,6 +1125,10 @@
      * @returns {Object}
      */
     storeObject (obj) {
+        if (Type.isDictionary(obj)) {
+            debugger;
+        }
+        
         //assert(obj.shouldStore());
         const puuid = obj.puuid();
         assert(!Type.isNullOrUndefined(puuid));

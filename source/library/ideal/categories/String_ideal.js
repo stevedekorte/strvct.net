@@ -324,7 +324,7 @@
      * @param {string} str - The substring to count
      * @returns {number} The number of occurrences
      */
-    stringCount (str) {
+    occurenceCount (str) {
         return this.split(str).length - 1;
     }
 
@@ -780,6 +780,7 @@
         const doc = parser.parseFromString(this, 'text/html');
     
         tagNameToContentMap.forEach((newContent, tagName) => {
+            assert(this.verifyTagClosed(tagName), `Tag <${tagName}> is not properly closed`);
             doc.querySelectorAll(tagName).forEach(el => {
                 el.innerHTML = newContent;
             });
@@ -787,6 +788,18 @@
     
         return doc.body.innerHTML;
     }
+
+    /**
+     * Verifies that a tag is properly closed
+     * @param {string} tagName - The name of the tag to verify
+     * @throws {Error} If the tag is not properly closed
+     */
+    verifyTagClosed (tagName) {
+        const openMatches = (this.match(new RegExp(`<${tagName}(\\s[^>]*?)?>`, 'gi')) || []).filter(m => !/\/\s*>$/.test(m.trim()));
+        const closeMatches = this.match(new RegExp(`</${tagName}>`, 'gi')) || [];
+        return openMatches.length === closeMatches.length;
+    }
+      
 
     /**
      * Computes the difference between this string and another string

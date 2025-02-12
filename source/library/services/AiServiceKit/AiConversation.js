@@ -521,6 +521,7 @@
       const lastMessage = messages.last();
       const jsonHistory = messages.map(m => {
         if (m !== lastMessage) {
+          assert(m.content.occurenceCount("<client-state>") < 2, "too many client-state tags!");
           m.content = m.content.replaceContentOfHtmlTagMap(tagMap);
           // or should we just remove the tags entirely, or replace them with a note that they were removed?
         } else {

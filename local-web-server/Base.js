@@ -38,14 +38,14 @@
     setupPrototype () { 
         if (this.hasOwnProperty("initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
-            this.initPrototypeSlots()
+            this.initPrototypeSlots();
         }
 
         // this.initSlots();
 
         if (this.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            this.initPrototype()
+            this.initPrototype();
         }
     }
 

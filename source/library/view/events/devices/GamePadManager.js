@@ -55,6 +55,7 @@
         {
             const slot = this.newSlot("pollPeriod", 1000);
             slot.setComment("milliseconds");
+            slot.setSlotType("Number");
         }
     }
 

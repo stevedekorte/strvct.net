@@ -132,6 +132,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     */
 
     setSlotType (s) {
+        assert(Type.isString(s));
         this.setSlotTypeDict({ 
             kind: "instance",
             name: s
@@ -373,6 +374,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (aProto && this.slotType() === null) {
             this.setSlotType(aProto.type()); // hack
         }
+        //this.setSyncsToView(true); // TODO: this ok? (added to make sure fields get updated when we call the slot setter)
         return this;
     }
 
@@ -1246,6 +1248,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         const finalInitProto = this.finalInitProtoClass(); //this._finalInitProto;
         if (finalInitProto) {
+
             let oldValue = this.onInstanceGetValue(anInstance);
 
             if (oldValue && oldValue.type() !== finalInitProto.type()) {

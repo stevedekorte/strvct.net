@@ -86,6 +86,7 @@
      */
     {
       const slot = this.newSlot("peer", null);
+      slot.setSlotType("RzPeer"); 
     }
 
     this.setShouldStoreSubnodes(false);

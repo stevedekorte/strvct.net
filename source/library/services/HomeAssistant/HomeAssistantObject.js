@@ -23,6 +23,7 @@
     {
       const slot = this.newSlot("group", null)
       slot.setShouldStoreSlot(true);
+      slot.setSlotType("HomeAssistantGroup");
     }
 
     /**
@@ -32,6 +33,7 @@
     {
       const slot = this.newSlot("owner", null)
       slot.setShouldStoreSlot(true);
+      slot.setSlotType("Object");
     }
 
     /**
@@ -41,6 +43,7 @@
     {
       const slot = this.newSlot("name", "")
       slot.setShouldStoreSlot(true);
+      slot.setSlotType("String");
     }
 
     /**
@@ -50,6 +53,7 @@
     {
       const slot = this.newSlot("haJson", null)
       slot.setShouldStoreSlot(false);
+      slot.setSlotType("JSON Object");
     }
 
     /**

@@ -30,7 +30,15 @@
                     throw new Error(this.type() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
                 }
                 //assert(!Type.isUndefined(v));
-                aRecord.entries.push([slotName, aStore.refValue(v)]);
+
+                let valueToRecord;
+                if (slot.slotType() === "JSON Object") {
+                    valueToRecord = JSON.stableStringify(v);
+                } else {
+                    valueToRecord = aStore.refValue(v);
+                }
+                aRecord.entries.push([slotName, valueToRecord]);
+
             }
         });
 
@@ -84,9 +92,12 @@
                         //console.log(this.typeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
                         slot.onInstanceSetValueRef(this, storeRef);
                     } else */
-                    {
-                        const unrefValue = aStore.unrefValue(v);
-                        slot.onInstanceSetValue(this, unrefValue);
+                    if (slot.slotType() === "JSON Object") {
+                        const unrefedValue = JSON.parse(v);
+                        slot.onInstanceSetValue(this, unrefedValue);
+                    } else {
+                        const unrefedValue = aStore.unrefValue(v);
+                        slot.onInstanceSetValue(this, unrefedValue);
                     }
                 }
             } else {

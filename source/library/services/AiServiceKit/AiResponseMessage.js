@@ -269,12 +269,21 @@
     request.setDelegate(this);
     //request.setStreamTarget(this); // unify with delegate
 
-    request.setBodyJson({
-      model: this.chatModel().modelName(),
-      temperature: this.temperature(), 
-      top_p: this.topP(),
-      messages: this.jsonHistory()
-    });
+    const json = {};
+
+    json.model = this.chatModel().modelName();
+
+    if (this.chatModel().supportsTemperature()) {
+      json.temperature = this.temperature();
+    }
+
+    if (this.chatModel().supportsTopP()) {
+      json.top_p = this.topP();
+    }
+
+    json.messages = this.jsonHistory();
+
+    request.setBodyJson(json);
     return request;
   }
 

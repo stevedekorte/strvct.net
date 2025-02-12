@@ -211,6 +211,7 @@
      */
     {
       const slot = this.newSlot("socket", null);
+      slot.setSlotType("WebSocket");
     }
 
     /**
@@ -218,6 +219,7 @@
      */
     {
       const slot = this.newSlot("sentMessageCount", 0);
+      slot.setSlotType("Number");
     }
 
     /**
@@ -225,6 +227,7 @@
      */
     {
       const slot = this.newSlot("messagePromises", null);
+      slot.setSlotType("Map");
     }
 
     this.setShouldStore(true);

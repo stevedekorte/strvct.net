@@ -62,7 +62,8 @@
 
   initPrototypeSlots () {
     {
-      const slot = this.newSlot("delegate", null); // optional ref
+      const slot = this.newSlot("delegate", null); // optional reference to delegate object
+      slot.setSlotType("Object"); // TODO: set to XhrWrapperDelegateProtocol
     }
 
     {

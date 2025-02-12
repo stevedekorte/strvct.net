@@ -218,7 +218,9 @@
         if (this.hasOwnProperty("initPrototypeSlots")) {
             // Only called if method defined on this class.
             this.initPrototypeSlots();// This method should NOT call super
+            this.assertAllSlotsHaveTypes();
         }
+
 
         this.initSlots();
 
@@ -239,6 +241,12 @@
 
         //console.log("\n\n" + this.type() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
         return this;
+    }
+
+    assertAllSlotsHaveTypes () {
+        this.forEachSlot(slot => {
+            assert(slot.slotType() !== null, this.type() + " missing slot type for " + slot.name());
+        });
     }
 
 }).initThisCategory();

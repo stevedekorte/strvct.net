@@ -144,6 +144,8 @@
       }
     }
 
+    bodyJson.reorderKeyFirst("system");
+
     // remove messages with empy content
     messages = messages.filter((message) => { return message.content.length > 0; });
 
@@ -166,6 +168,8 @@
       lastRole = message.role;
       mergedMessageCount += 1;
     });
+
+    this.reorderKeyFirst("system");
 
     bodyJson.messages = newMessages;
     aRequest.setBodyJson(bodyJson);

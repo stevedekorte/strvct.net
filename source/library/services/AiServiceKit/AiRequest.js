@@ -74,6 +74,7 @@
     {
       const slot = this.newSlot("bodyJson", null);
       slot.setSlotType("JSON Object");
+      slot.setShouldStoreSlot(true);
     }
 
     /**
@@ -589,7 +590,6 @@
     return this.xhrPromise();
   }
 
-
   /**
    * @category XHR
    * @description Called when the XHR progress event is fired
@@ -680,7 +680,7 @@
     return {
       role: "assistant",
       content: this.fullContent()
-    }
+    };
   }
 
   /**

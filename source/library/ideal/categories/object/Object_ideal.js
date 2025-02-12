@@ -258,6 +258,28 @@
         return Object.entries(this).hashCode64(); // Object.entries only has own properties
     }
 
+    /**
+     * Reorders the object with the specified key moved to the first position.
+     * @param {string} key - The key to move to the first position.
+     * @category Object Operations
+     */
+    reorderKeyFirst (key) {
+        if (!(key in this)) return;
+        let keys = Object.keys(this), vals = {};
+        for (let k of keys) {
+            vals[k] = this[k];
+        }
+        for (let k of keys) {
+            delete this[k];
+        }
+        this[key] = vals[key];
+        for (let k of keys) {
+            if (k !== key) {
+                this[k] = vals[k];
+            }
+        }
+      }
+
 }).initThisCategory();
 
 Object.prototype.initPrototypeSlots()

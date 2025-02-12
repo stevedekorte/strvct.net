@@ -54,14 +54,50 @@
      * @member {number} outputTokenLimit - The maximum number of output tokens allowed by the model.
      * @category Model Configuration
      */
-        {
-          const slot = this.newSlot("outputTokenLimit", 8000);
-          slot.setLabel("output token limit");
-          slot.setShouldStoreSlot(true);
-          slot.setDuplicateOp("duplicate");
-          slot.setSlotType("Number");
-          slot.setIsSubnodeField(true);
-        }
+    {
+      const slot = this.newSlot("outputTokenLimit", 8000);
+      slot.setLabel("output token limit");
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {number} temperature - The temperature parameter for AI generation.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("supportsTemperature", true); // 0-1, higher = more creative // default 0.7
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {number} topP - The top_p parameter for AI generation.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("supportsTopP", true); // 0-1, higher = more diverse // top_p on Claude3 // default 0.8
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {boolean} canStream - Whether the model supports streaming.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("canStream", true);
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+    }
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -147,16 +183,35 @@
       this.setTitle(json.name);
     }
 
+    if (json.note) {
+      this.setSubtitle(json.note);
+    }
+
     const cw = json.contextWindow;
-    assert(Type.isNumber(cw));
     this.setMaxContextTokenCount(cw);
 
     const otl = json.outputTokenLimit;
     if (!Type.isUndefined(otl)) {
-      assert(Type.isNumber(otl));
       this.setOutputTokenLimit(otl);
     }
 
+    const t = json.supportsTemperature;
+    if (!Type.isUndefined(t)) {
+      this.setSupportsTemperature(t);
+    }
+
+    const tp = json.supportsTopP;
+    if (!Type.isUndefined(tp)) {
+      this.setSupportsTopP(tp);
+    }
+
+    const cs = json.canStream;
+    if (!Type.isUndefined(cs)) {
+      this.setCanStream(cs);
+    }
+
+    console.log("--------------" + this.title() + " " + this.supportsTemperature() + " " + this.supportsTopP());
+    //debugger;
     return this;
   }
 
@@ -167,7 +222,6 @@
    */
   summary () {
     const cw = NumberFormatter.clone().setValue(this.maxContextTokenCount()).setSignificantDigits(2).formattedValue();
-
     return this.modelName() + " (" + cw + ")\n";
   }
 
