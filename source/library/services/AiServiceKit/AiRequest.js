@@ -468,8 +468,8 @@
       requestId: this.requestId(),
       options: this.requestOptions(),
       activeApiUrl:  this.activeApiUrl(),
-      apiUrl:  this.apiUrl(),
-      body: this.bodyJson()
+      apiUrl:  this.apiUrl()
+      //body: this.bodyJson()
     };
     return JSON.stringify(json, null, 2);
   }

@@ -41,6 +41,8 @@
      * @returns {boolean} Returns false.
      * @category Keyboard Interaction
      */
+
+    /*
     onMeta_a_KeyDown (event) {
         // only select subnodes if this tile can have them,
         // otherwise, like the column handle this event
@@ -51,6 +53,7 @@
         event.stopPropagation()
         return false 
     }
+    */
 
     /**
      * @description Handles the D key down event.

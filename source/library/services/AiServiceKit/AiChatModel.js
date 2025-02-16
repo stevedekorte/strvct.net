@@ -210,8 +210,7 @@
       this.setCanStream(cs);
     }
 
-    console.log("--------------" + this.title() + " " + this.supportsTemperature() + " " + this.supportsTopP());
-    //debugger;
+    //console.log("--------------" + this.title() + " supportsTemperature:" + this.supportsTemperature() + " supportsTopP:" + this.supportsTopP());
     return this;
   }
 

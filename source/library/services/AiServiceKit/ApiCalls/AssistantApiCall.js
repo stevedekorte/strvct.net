@@ -24,6 +24,7 @@
   static jsonSchemaDescription () {
     return "Format for Assistant API call to make an '" + this.type() + "' API call.";
   }
+  
   /**
    * Initializes the prototype slots.
    * @category Initialization
