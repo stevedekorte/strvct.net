@@ -193,8 +193,8 @@
    * @returns {Number} The maximum context token count.
    * @category Configuration
    */
-  maxContextTokenCount () {
-    return this.chatModel().maxContextTokenCount();
+  inputTokenLimit () {
+    return this.chatModel().inputTokenLimit();
   }
 
   /**
@@ -213,7 +213,7 @@
   checkTokenCount () {
     this.updateTokenCount()
     const tc = this.tokenCount()
-    if (tc > this.maxContextTokenCount() * 0.9) {
+    if (tc > this.inputTokenLimit() * 0.9) {
       this.compactTokens()
     }
   }

@@ -38,7 +38,7 @@
       {
         "name": "grok-2-latest",
         "title": "Grok 2 Latest",
-        "contextWindow": 131072,
+        "inputTokenLimit": 131072,
         "outputTokenLimit": 8192 // jsut a guess as I can't find it in the docs
       }
     ];

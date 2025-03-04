@@ -36,14 +36,14 @@
       {
           "name": "deepseek-chat",
           "title": "DeepSeek Chat",
-          "contextWindow": 64000,
+          "inputTokenLimit": 64000,
           "outputTokenLimit": 8000,
           "maxChainOfThoughtTokens": 8000
       },
       {
           "name": "deepseek-reasoner",
           "title": "DeepSeek Reasoner",
-          "contextWindow": 64000,
+          "inputTokenLimit": 64000,
           "outputTokenLimit": 8000,
           "maxChainOfThoughtTokens": 8000
       }

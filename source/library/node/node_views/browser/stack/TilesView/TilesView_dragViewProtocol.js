@@ -377,6 +377,7 @@
      * @returns {Object} The document frame
      */
     dropCompleteDocumentFrame () {
+        assert(this.tilePlaceHolder());
         return this.tilePlaceHolder().frameInDocument();
     }
 

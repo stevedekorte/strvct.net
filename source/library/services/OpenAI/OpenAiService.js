@@ -33,11 +33,20 @@
   modelsJson () {
     return [
       {
+        "name": "gpt-4.5-preview",
+        "title": "OpenAI ChatGPT 4.5 Preview",
+        "note": "Latest.",
+        "inputTokenLimit": 128000,
+        "outputTokenLimit": 16384
+      },
+      {
         "name": "chatgpt-4o-latest",
         "title": "OpenAI ChatGPT 4o",
         "note": "Latest.",
-        "contextWindow": 128000
+        "inputTokenLimit": 128000,
+        "outputTokenLimit": 16384
       },
+        
 
       // we can't handle these non-streaming models yet (see AiRequest.js)
       /*
@@ -45,7 +54,7 @@
         "name": "o1",
         "title": "OpenAI ChatGPT o1",
         "note": "Latest.",
-        "contextWindow": 200000,
+        "inputTokenLimit": 200000,
         "supportsTemperature": false, // o1 does not support temperature
         "supportsTopP": false, // o1 does not support top_p
         "canStream": false // o1 does not support streaming
@@ -54,7 +63,7 @@
         "name": "o1-preview",
         "title": "OpenAI ChatGPT o1-preview",
         "note": "Latest.",
-        "contextWindow": 128000,
+        "inputTokenLimit": 128000,
         "supportsTemperature": false, // o1 does not support temperature
         "supportsTopP": false, // o1 does not support top_p
         "canStream": false // o1 does not support streaming
@@ -63,7 +72,7 @@
         "name": "o1-mini",
         "title": "OpenAI ChatGPT o1-mini",
         "note": "Latest",
-        "contextWindow": 128000,
+        "inputTokenLimit": 128000,
         "supportsTemperature": false, // o1 does not support temperature
         "supportsTopP": false, // o1 does not support top_p
         "canStream": false // o1 does not support streaming
@@ -72,7 +81,7 @@
         "name": "o3-mini",
         "title": "OpenAI ChatGPT o3-mini",
         "note": "Latest",
-        "contextWindow": 200000,
+        "inputTokenLimit": 200000,
         "supportsTemperature": false, // o3 does not support temperature
         "supportsTopP": false, // o3 does not support top_p
         "canStream": false // o3 does not support streaming
@@ -144,6 +153,15 @@
    */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
+  }
+
+  /**
+   * @description Fetches the models URL.
+   * @returns {string} The URL for fetching models.
+   * @category Models
+   */
+  fetchModelsUrl () {
+    return "https://api.openai.com/v1/models";
   }
 
 }.initThisClass());

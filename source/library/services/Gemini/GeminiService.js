@@ -49,13 +49,13 @@
       {
           "name": "gemini-1.5-pro-latest",
           "title": "Gemini 1.5 Pro",
-          "contextWindow": 2097152,
+          "inputTokenLimit": 2097152,
           "outputTokenLimit": 8192
       },
       {
           "name": "gemini-2.0-flash",
           "title": "Gemini 2.0 Flash",
-          "contextWindow": 1048576,
+          "inputTokenLimit": 1048576,
           "outputTokenLimit": 8192
       }
     ];
@@ -145,7 +145,7 @@
   /*
   setupDefault () {
     this.defaultChatModel().setModelName("gemini-1.5-pro");
-    this.defaultChatModel().setMaxContextTokenCount(1000000); // wow!
+    this.defaultChatModel().setInputTokenLimit(1000000); // wow!
   }
   */
 
@@ -229,7 +229,7 @@
       "temperature": bodyJson.temperature,
       "topP": bodyJson.top_p,
       "topK": 40,
-      "maxOutputTokens": 100000,
+      "outputTokenLimit": 100000,
     }
 
     let messages = bodyJson.messages;

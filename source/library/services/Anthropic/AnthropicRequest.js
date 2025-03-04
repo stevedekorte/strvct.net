@@ -105,20 +105,11 @@
    * @category Request Preparation
    */
   requestOptions () {
-    const apiKey = this.apiKey();
-    const json = {
-      method: "POST",
-      headers: {
-        //"Content-Type": "application/json",
-        "Content-Type": "application/json; charset=UTF-8",
-        "anthropic-version": "2023-06-01",
-        "anthropic-beta": this.betaVersion(),
-        "x-api-key": apiKey,
-        'Accept-Encoding': "identity",
-        'anthropic-dangerous-direct-browser-access': true
-      },
-      body: JSON.stringify(this.bodyJson()),
-    };
+    const json = super.requestOptions();
+
+    // remove Authorization propety and use x-api-key instead
+    delete json.headers["Authorization"];
+    json.headers["x-api-key"] = this.apiKey();
     return json;
   }
 
@@ -131,7 +122,7 @@
     // subclasses should override this method to set up the request for streaming
     const body = this.bodyJson();
     body.stream = true;
-    body.max_tokens = 4096; // current max output tokens allowed by anthropic (as of Claude 3 Opus)
+    body.max_tokens = this.model().outputTokenLimit(); // current max output tokens allowed by Groq
     return this;
   }
 

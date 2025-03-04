@@ -41,7 +41,7 @@
  *       "topP": TOP_P,
  *       "topK": TOP_K,
  *       "candidateCount": 1,
- *       "maxOutputTokens": MAX_OUTPUT_TOKENS,
+ *       "outputTokenLimit": MAX_OUTPUT_TOKENS,
  *       "stopSequences": STOP_SEQUENCES,
  *     }
  *   }

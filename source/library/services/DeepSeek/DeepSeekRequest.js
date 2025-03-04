@@ -53,7 +53,7 @@
     // subclasses should override this method to set up the request for streaming
     const body = this.bodyJson();
     body.stream = true;
-    body.max_tokens = 4096; // current max output tokens allowed by DeepSeek
+    body.max_tokens = this.model().outputTokenLimit(); // current max output tokens allowed by Groq
     return this;
   }
 

@@ -54,6 +54,14 @@
     }
 
     /**
+     * @member {AiChatModel} model - The model the request is for.
+     */
+    {
+      const slot = this.newSlot("model", null);
+      slot.setSlotType("AiChatModel");
+    }
+
+    /**
      * @member {Boolean} needsProxy - Whether the request needs a proxy.
      */
     {
@@ -368,7 +376,7 @@
    */
   requestOptions () {
     const apiKey = this.apiKey();
-    return {
+    const json = {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -377,6 +385,16 @@
       },
       body: this.body()
     };
+
+    const extraHeaders = this.model().extraHeaders();
+    if (extraHeaders) {
+      Object.keys(extraHeaders).forEach((key) => {
+        json.headers[key] = extraHeaders[key];
+      });
+    }
+
+    debugger;
+    return json;
   }
 
   /**
@@ -521,6 +539,7 @@
     //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
     //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
 
+    debugger;
     this.setIsStreaming(true);
     this.setStatus("streaming");
 

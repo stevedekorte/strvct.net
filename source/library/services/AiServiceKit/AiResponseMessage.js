@@ -269,6 +269,8 @@
     request.setDelegate(this);
     //request.setStreamTarget(this); // unify with delegate
 
+    request.setModel(this.chatModel());
+    
     const json = {};
 
     json.model = this.chatModel().modelName();

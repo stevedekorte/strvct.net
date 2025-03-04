@@ -144,6 +144,13 @@
       slot.setSlotType("OpenAiTtsSessions");
     }
 
+    {
+      const slot = this.newSlot("fetchModelsPromise", null);
+      slot.setFinalInitProto(Promise);
+      slot.setSlotType("Promise");
+      slot.setShouldStoreSlot(false);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
@@ -166,7 +173,8 @@
     this.setSubtitle("ai services");
     //this.setModels(AiChatModels.clone());
     this.setModelsJson(this.modelsJson());
-
+    //this.setFetchModelsPromise(Promise.clone());
+    this.fetchModelsPromise().setLabel("Fetch models promise");
     this.fetchAndSetupInfo();
   }
 
@@ -292,6 +300,7 @@
       this.models().addSubnode(model);
     });
     //console.log(this.type() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
+    this.fetchModelsPromise().callResolveFunc();
     return this;
   }
 
@@ -332,6 +341,44 @@
       throw new Error("chatRequestClass " + className + " not found");
     }
     return requestClass;
+  }
+
+  // ----------- fetching models -------------
+
+  canFetchModels () {
+    return this.fetchModelsUrl() !== null;
+  }
+
+  /**
+   * @description Fetches and sets up the models.
+   * @returns {Promise<void>}
+   * @category Models
+   */
+  async asyncFetchAndSetupModels () {
+    const modelsJson = await this.fetchModelsJson();
+    this.setModelsJson(modelsJson);
+  }
+
+  /**
+   * @description Returns the URL for fetching models. Returns null if models API is not available.
+   * @returns {string} The URL for fetching models.
+   * @category Models
+   */
+  fetchModelsUrl () {
+    return null;
+  }
+
+  /**
+   * @description Fetches the models JSON.
+   * @returns {Promise<Object>} A promise that resolves to the models JSON.
+   * @category Models
+   */
+  async asyncFetchModelsJson () {
+    return fetch(this.fetchModelsUrl())
+      .then(response => response.json())
+      .then(json => {
+        return json.data;
+      });
   }
 
 }.initThisClass());

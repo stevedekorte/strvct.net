@@ -1288,7 +1288,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
                 const newValue = finalInitProto.clone();
                 this.onInstanceSetValue(anInstance, newValue);
-                newValue.setOwnerNode(anInstance); // should this be inside the setter? Maybe if slot.doesOwnValue(true)?
+                if (newValue.setOwnerNode) { // it might not be a BMNode
+                    newValue.setOwnerNode(anInstance); // should this be inside the setter? Maybe if slot.doesOwnValue(true)?
+                }
 
                 /*
                 if (this.shouldFinalInitAsSubnode()) {

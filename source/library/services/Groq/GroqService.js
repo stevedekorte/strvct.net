@@ -29,34 +29,34 @@
       {
         "name": "deepseek-r1-distill-llama-70b",
         "title": "DeepSeek R1 Distill Llama 70B",
-        "contextWindow": 128000,
-        "maxOutputTokens": 128000 // just a guess, not specified
+        "inputTokenLimit": 128000,
+        "outputTokenLimit": 128000 // just a guess, not specified
       },
       /*
       {
         "name": "llama-3.1-405b-reasoning",
         "title": "Groq Llama 3.1 405B Reasoning",
-        "contextWindow": 131072 
+        "inputTokenLimit": 131072 
       }
       {
           "name": "llama-3.1-70b-versatile",
           "title": "Groq Llama 3.1 70B Versatile",
-          "contextWindow": 131072
+          "inputTokenLimit": 131072
       },
       {
           "name": "llama-3.1-8b-instant",
           "title": "Groq Llama 3.1 8B Instant",
-          "contextWindow": 131072
+          "inputTokenLimit": 131072
       },
       {
           "name": "mixtral-8x7b-32768",
           "title": "Groq Mixtral 8x7B",
-          "contextWindow": 32768
+          "inputTokenLimit": 32768
       },
       {
           "name": "gemma-7b-it",
           "title": "Groq Gemma 7B IT",
-          "contextWindow": 8192
+          "inputTokenLimit": 8192
       }
       */
     ];

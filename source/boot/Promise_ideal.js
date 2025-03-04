@@ -46,13 +46,13 @@
         let resolveFunc = null;
         let rejectFunc = null;
         const promise = new Promise((resolve, reject) => {
-            resolveFunc = resolve;
-            rejectFunc = reject;
+            resolveFunc = resolve; // sets the outer resolve function
+            rejectFunc = reject; // sets the outer reject function
         });
-        promise._resolveFunc = resolveFunc;
-        promise._rejectFunc = rejectFunc;
-        promise._status = "pending";
-        promise._awaiterCount = 0;
+        promise._resolveFunc = resolveFunc; // record the resolve function so the promise can access it 
+        promise._rejectFunc = rejectFunc; // record the reject function so the promise can access it
+        promise._status = "pending"; 
+        promise._awaiterCount = 0; 
         promise._timeoutMs = null;
         promise._timeoutId = null;
         promise._onAwaitFunc = null;

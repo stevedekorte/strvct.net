@@ -33,39 +33,58 @@
   modelsJson () {
     return [
       {
+        "name": "claude-3-7-sonnet-20250219",
+        "title": "Claude 3.7 Sonnet",
+        "subtitle": "",
+        "inputTokenLimit": 200000,
+        "notes": "",
+        "beta": "output-128k-2025-02-19",
+        "outputTokenLimit": 128000,
+        "extraHeaders": {
+          "anthropic-version": "2023-06-01",
+          "anthropic-beta": "output-128k-2025-02-19",
+          'anthropic-dangerous-direct-browser-access': true
+        }
+      },
+      {
         "name": "claude-3-5-sonnet-20241022",
         "title": "Claude 3.5 Sonnet",
-        "subtitle": "Better than 3 with same context size.",
-        "contextWindow": 200000,
-        "notes": ""
-      }
+        "subtitle": "",
+        "inputTokenLimit": 200000,
+        "notes": "",
+        "outputTokenLimit": 8192,
+        "extraHeaders": {
+          "anthropic-version": "2023-06-01",
+          'anthropic-dangerous-direct-browser-access': true
+        }
+      },
       /*
       {
         "name": "claude-3-5-sonnet-20240620",
         "title": "Claude 3.5 Sonnet",
         "subtitle": "Better than 3 with same context size.",
-        "contextWindow": 200000,
+        "inputTokenLimit": 200000,
         "notes": ""
       },
       {
           "name": "claude-3-opus-20240229",
           "title": "Claude 3 Opus",
           "subtitle": "Largest/Slowest",
-          "contextWindow": 200000,
+          "inputTokenLimit": 200000,
           "notes": ""
       },
       {
           "name": "claude-3-sonnet-20240229",
           "title": "Claude 3 Sonnet",
           "subtitle": "Medium size and speed",
-          "contextWindow": 200000,
+          "inputTokenLimit": 200000,
           "notes": "This model is missing opening description, doesn't make roll request json with required fields"
       },
       {
           "name": "claude-3-haiku-20240307",
           "title": "Claude 3 Haiku",
           "subtitle": "Smallest/Fastest",
-          "contextWindow": 200000,
+          "inputTokenLimit": 200000,
           "notes": "This model also doesn't make roll request json with required fields"
       }
       */
@@ -179,5 +198,15 @@
     }
     return this;
   }
+
+  /**
+ * @description Returns the URL for fetching models. 
+ * @returns {string} The URL for fetching models.
+ * @category Models
+ */
+  fetchModelsUrl () {
+    return "https://api.anthropic.com/v1/models";
+  }
+
 
 }.initThisClass());
