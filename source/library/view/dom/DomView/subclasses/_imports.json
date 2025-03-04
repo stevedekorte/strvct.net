@@ -8,7 +8,7 @@
     "PanelView.js",
     "SvgIconCache.js",
     "SvgIconView.js",
-    "HTMLElement_textField.js",
+    "HtmlElement_textField.js",
     "TextField.js"
 ]
 
