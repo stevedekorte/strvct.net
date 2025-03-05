@@ -91,7 +91,7 @@
      * @category Layout
      */
     zoomAdjustedHeight () {
-        return WebBrowserWindow.shared().width() * this.zoomRatio()
+        return WebBrowserWindow.shared().height() * this.zoomRatio()
     }
     
     /**

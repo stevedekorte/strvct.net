@@ -832,17 +832,30 @@
      * @returns {StackView} The stack view.
      */
     compactNavAsNeeded () {
+        // this method is called on each stack view in the chain, from left to right (earliest to last view), 
+        // in order to compact them as needed to fit the available width.
+        // So each will see the current compaction state (via sumOfNavWidths()) of all previous views in the chain when it makes its decision.
+
         if (this.direction() === "right") {
             //console.log("StackView " + this.node().title() + " compactNavAsNeeded");
 
-            const maxWidth = this.topViewWidth();
-            const sum = this.sumOfNavWidths();
-
+            const maxWidth = this.topViewWidth(); // our subviews need to fit into this width
+            
+            // Calculate the sum WITHOUT this nav view
+            const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
+            let sum = this.sumOfNavWidths();
+            
+            /*
+            // if this is the last view, we don't need to check if it can fit
+            if (this.nextStackView() === null) {
+                sum -= this.navView().targetWidth();
+            }
+            */
+                        
             if (sum > maxWidth) {
                 //console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE");
                 //debugger;
                 //this.topViewWidth();
-
                 this.navView().collapse();
             } else {
                 //console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE");
