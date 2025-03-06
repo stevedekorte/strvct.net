@@ -147,7 +147,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             assert(Type.isString(dict.name));
             return dict.name;
         }
-        return null
+        return null;
     }
 
     /*
@@ -427,7 +427,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      */
     removeAnnotation () {
         this.annotations().delete(key);
-        return this
+        return this;
     }
 
     /**
@@ -480,7 +480,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      */
     setKeyIsVisible (aBool) {
         this.setAnnotation("keyIsVisible", aBool);
-        return this
+        return this;
     }
 
     /**

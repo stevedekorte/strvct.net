@@ -203,7 +203,7 @@
    * @category State
    */
   updateTokenCount () {
-    return this
+    return this;
   }
 
   /**
@@ -211,10 +211,10 @@
    * @category State
    */
   checkTokenCount () {
-    this.updateTokenCount()
-    const tc = this.tokenCount()
+    this.updateTokenCount();
+    const tc = this.tokenCount();
     if (tc > this.inputTokenLimit() * 0.9) {
-      this.compactTokens()
+      this.compactTokens();
     }
   }
 
@@ -287,7 +287,7 @@
     if (this._aiSpeakerName) {
       return this._aiSpeakerName;
     }
-    return this.chatModel().title().toUpperCase()
+    return this.chatModel().title().toUpperCase();
   }
 
   /**

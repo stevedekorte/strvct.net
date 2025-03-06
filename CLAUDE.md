@@ -343,3 +343,9 @@
 - Notification-based synchronization between layers
 - Automatic UI generation from node structure
 - NodeView connects nodes to their visual representation
+
+## Coding Style
+
+- Always use semicolons at the end of statements in JavaScript
+- Follow the formatting examples in existing code
+- Use consistent indentation (2 spaces) for all code blocks

@@ -367,13 +367,13 @@
         this.applyStyles();
 
         if (this.isVertical()) {
-            const w = this.node().nodeMinTileWidth()
+            const w = this.node().nodeMinTileWidth();
             if (w && !Type.isNullOrUndefined(w)) {
                 this.setMinWidth(w);
                 this.setMinAndMaxHeight("100%");
             } 
         } else {
-            const h = this.node().nodeMinTileHeight()
+            const h = this.node().nodeMinTileHeight();
             if (h && !Type.isNullOrUndefined(h)) {
                 this.setMinAndMaxWidth("100%");
                 this.setMinAndMaxHeight(h);
@@ -450,7 +450,7 @@
      * @category Gesture Handling
      */
     onRightEdgePanComplete (aGesture) {
-        this.onRightEdgePanMove(aGesture)
+        this.onRightEdgePanMove(aGesture);
         this.setBorderRight(this.beforeEdgePanBorderRight());
         this.setBeforeEdgePanBorderBottom(null);
         this.unhideTransition();
