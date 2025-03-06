@@ -19,7 +19,7 @@
      * @category Drop Registration
      */
     isRegisteredForBrowserDrop () {
-        return this.dropListener().isListening()
+        return this.dropListener().isListening();
     }
 
     /**
@@ -29,8 +29,8 @@
      * @category Drop Registration
      */
     setIsRegisteredForBrowserDrop (aBool) {
-        this.dropListener().setIsListening(aBool)
-        return this
+        this.dropListener().setIsListening(aBool);
+        return this;
     }
 
     /**

@@ -36,7 +36,7 @@ let listenCount = 0;
      * @returns {Array} Array of active listeners for the owner.
      */
     static activeListenersForOwner (owner) { // tmp debugging
-        return this.activeListeners().filter(v => v.owner() === owner)
+        return this.activeListeners().filter(v => v.owner() === owner);
     }
 
     /**
@@ -45,9 +45,9 @@ let listenCount = 0;
      * @returns {Set} Set of active owners.
      */
     static activeOwners () { // tmp debugging
-        const owners = new Set()
-        this.activeListeners().forEach(v => owners.add(v.owner()))
-        return owners
+        const owners = new Set();
+        this.activeListeners().forEach(v => owners.add(v.owner()));
+        return owners;
     }
 
     /**

@@ -154,30 +154,30 @@
      */
     sizeOfElementWithHtmlString (element, text) {
         if (this.cache().has(text)) {
-            return this.cache().get(text)
+            return this.cache().get(text);
         }
 
-        const e = this.testElement()
+        const e = this.testElement();
         //e.cssText = element.cssText // this would force reflow?
 		
         this.stylesToCopy().forEach(function (styleName) {
-            const v = element.style[styleName]
+            const v = element.style[styleName];
             if (v) {
-                e.style[styleName] = v
+                e.style[styleName] = v;
             } else {
-                delete e.style[styleName]
+                delete e.style[styleName];
             }
-        })
+        });
 		
-        e.innerHTML = element.innerHTML
+        e.innerHTML = element.innerHTML;
 		
-        const width = (e.clientWidth + 1) 
-        const height = (e.clientHeight + 1) 
-        this.clean()
+        const width = (e.clientWidth + 1); 
+        const height = (e.clientHeight + 1); 
+        this.clean();
 
-        const result = { width: width, height: height }
-        this.addToCache(text, result)
-        return result
+        const result = { width: width, height: height };
+        this.addToCache(text, result);
+        return result;
     }
 	
     /**
@@ -186,11 +186,11 @@
      * @category Measurement
      */
     clean () {
-        const e = this.testElement()
-        e.innerHTML = ""
-        e.className = ""
-        this.stylesToCopy().forEach(styleName => delete e.style[styleName] )
-        return this	
+        const e = this.testElement();
+        e.innerHTML = "";
+        e.className = "";
+        this.stylesToCopy().forEach(styleName => delete e.style[styleName]);
+        return this;
     }
 	
 }.initThisClass());

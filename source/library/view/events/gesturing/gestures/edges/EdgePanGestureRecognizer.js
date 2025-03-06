@@ -45,7 +45,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setListenerClasses(this.defaultListenerClasses());
         this.setMinDistToBegin(5);
         this.setIsDebugging(false);

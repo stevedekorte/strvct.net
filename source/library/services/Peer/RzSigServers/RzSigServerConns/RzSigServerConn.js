@@ -466,7 +466,7 @@
   disconnectActionInfo () {
     return {
       isEnabled: this.isConnected()
-    }
+    };
   }
 
   /**
@@ -476,10 +476,10 @@
    */
   destroy () {
     if (this.peer()) {
-      this.setStatus("destroying")
-      this.peer().destroy()
+      this.setStatus("destroying");
+      this.peer().destroy();
     }
-    return this
+    return this;
   }
 
   /**

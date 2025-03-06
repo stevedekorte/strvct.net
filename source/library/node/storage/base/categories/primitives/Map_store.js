@@ -17,12 +17,12 @@
      */
     loadFromRecord(aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
-            const key = entry[0]
-            const value = aStore.unrefValue(entry[1])
-            this.atPut(key, value)
-        })
+            const key = entry[0];
+            const value = aStore.unrefValue(entry[1]);
+            this.atPut(key, value);
+        });
 
-        return this
+        return this;
     }
 
     /**

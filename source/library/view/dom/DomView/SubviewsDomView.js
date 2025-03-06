@@ -29,9 +29,9 @@
     }
 
     init () {
-        super.init()
-        this.setSubviews([])
-        return this
+        super.init();
+        this.setSubviews([]);
+        return this;
     }
 
     // --- parentView ---

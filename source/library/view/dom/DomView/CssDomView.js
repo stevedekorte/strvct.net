@@ -105,35 +105,35 @@
 
     pushedAttributes () {
         if (Type.isUndefined(this._pushedAttributes)) {
-            this._pushedAttributes = new Map()
+            this._pushedAttributes = new Map();
         }
-        return this._pushedAttributes
+        return this._pushedAttributes;
     }
 
     pushedAttributesAt (name) {
-        const p = this.pushedAttributes()
+        const p = this.pushedAttributes();
         if (!p.has(name)) {
-            p.set(name, [])
+            p.set(name, []);
         }
-        return p.get(name)
+        return p.get(name);
     }
 
     pushAttribute (name, newValue) {
-        const stack = this.pushedAttributesAt(name)
-        const oldValue = this.getCssProperty(name)
-        stack.push(oldValue)
-        this.setCssProperty(name, newValue) // NOTE: bypasses css change callbacks
-        return this
+        const stack = this.pushedAttributesAt(name);
+        const oldValue = this.getCssProperty(name);
+        stack.push(oldValue);
+        this.setCssProperty(name, newValue); // NOTE: bypasses css change callbacks
+        return this;
     }
 
     popAttribute (name) {
-        const a = this.pushedAttributesAt(name)
+        const a = this.pushedAttributesAt(name);
         if (a.length === 0) {
-            throw new Error("attempt to pop empty css attribute stack")
+            throw new Error("attempt to pop empty css attribute stack");
         }
-        const oldValue = a.pop()
-        this.setCssProperty(name, oldValue) // NOTE: bypasses css change callbacks
-        return this
+        const oldValue = a.pop();
+        this.setCssProperty(name, oldValue); // NOTE: bypasses css change callbacks
+        return this;
     }
     */
 
@@ -142,10 +142,10 @@
     /*    
     applyCSS (ruleName) {
         if (ruleName == null) { 
-            ruleName = this.elementClassName()
+            ruleName = this.elementClassName();
         }
-        CSS.ruleAt(ruleName).applyToElement(this.element())
-        return this
+        CSS.ruleAt(ruleName).applyToElement(this.element());
+        return this;
     }
     */
 
