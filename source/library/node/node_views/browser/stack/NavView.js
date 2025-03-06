@@ -252,7 +252,7 @@
             return (this.node().nodeFillsRemainingWidth() && this.isLastNavView());
         }
         return false;
-    }
+    };
 
     /**
      * @description Sets the orientation of the NavView to right (vertical)

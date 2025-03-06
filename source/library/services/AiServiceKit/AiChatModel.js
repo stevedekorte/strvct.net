@@ -178,7 +178,7 @@
    */
   hasApiKey () {
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  }
+  };
 
   /**
    * Sets the model properties from a JSON object.

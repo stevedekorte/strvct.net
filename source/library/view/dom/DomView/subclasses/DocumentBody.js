@@ -144,7 +144,7 @@
         }
 
         return null
-    }
+    };
 
    
 }.initThisClass());

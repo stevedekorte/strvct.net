@@ -41,7 +41,7 @@
      * @returns {boolean} True if the view has a parent view, false otherwise.
      */
     hasParentView () {
-        return Type.isNullOrUndefined(this.parentView()) === false
+        return Type.isNullOrUndefined(this.parentView()) === false;
     }
     
     /**
@@ -51,7 +51,7 @@
      * @returns {SubviewsDomView} The updated view.
      */
     didUpdateSlotParentView (oldValue, newValue) {
-        return this
+        return this;
     }
     
     /*
@@ -90,17 +90,17 @@
      * @returns {boolean} True if the view has a parent view ancestor, false otherwise.
      */
     hasParentViewAncestor (aView) {
-        const pv = this.parentView()
+        const pv = this.parentView();
         
         if (!pv) {
-            return false
+            return false;
         }
 
         if (pv === aView) {
-            return true
+            return true;
         }
 
-        return pv.hasParentViewAncestor(aView)
+        return pv.hasParentViewAncestor(aView);
     }
 
     /**
@@ -921,13 +921,13 @@
      * @returns {SubviewsDomView} The updated view.
      */
     absoluteOrganizeSubviewsHorizontally () {
-        let left = 0
+        let left = 0;
         this.subviews().shallowCopy().forEach((sv) => {
-            const w = sv.clientWidth()
-            sv.setLeftPx(left)
-            sv.setTopPx(0)
-            left += x
-        })
+            const w = sv.clientWidth();
+            sv.setLeftPx(left);
+            sv.setTopPx(0);
+            left += w;
+        });
     }
 
     // html duplicates
@@ -1064,7 +1064,7 @@
 
          NOTES:
          The problem is that layout is dependent on ordering and adding a subview to the end of the subviews
-         may change layout. So it's usually better to use setIsDisplayHidden() instead. But 
+         may change layout. So it's usually better to use setIsDisplayHidden() instead.
         */
 
         if (aBool) {

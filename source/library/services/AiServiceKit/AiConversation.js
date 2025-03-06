@@ -491,7 +491,7 @@
       return delegate.asJsonString();
     }
     return null;
-  }
+  };
 
   /**
    * @description Gets the client state schema.

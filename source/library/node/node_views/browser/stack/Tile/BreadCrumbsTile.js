@@ -487,6 +487,6 @@
         })
         this.setCrumbObservations([])
         return this
-    }
+    };
 
 }.initThisClass());

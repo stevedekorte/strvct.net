@@ -877,7 +877,7 @@
         }
 
         return false;
-    }
+    };
 
     // --- caching during dragging ---
 
