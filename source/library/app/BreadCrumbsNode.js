@@ -37,4 +37,9 @@
         this.setNodeCanAddSubnode(false);
     }
 
+    finalInit () {
+        super.finalInit();
+        this.setTitle("bread crumbs");
+    }
+
 }.initThisClass());

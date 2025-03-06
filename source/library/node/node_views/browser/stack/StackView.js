@@ -77,7 +77,10 @@
 
         /**
          * @member {String} direction
-         * @description The direction of the stack.
+         * @description The direction of the stack. That is, the direction of the other view relative to the navigation view.
+         * So if the direction is "right", the other view is on the right of the navigation view.
+         * And if the direction is "down", the other view is on the bottom of the navigation view.
+         * Remember that the navigation view displays the subnodes of the current node, and the other view displays the selected node.
          */
         {
             const slot = this.newSlot("direction", "down");
@@ -852,15 +855,25 @@
             }
             */
                         
-            if (sum > maxWidth) {
-                //console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE");
-                //debugger;
-                //this.topViewWidth();
-                this.navView().collapse();
-            } else {
-                //console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE");
-                this.navView().uncollapse();
+            if (this.node().title() === "bread crumbs") {
+          //      debugger;
             }
+
+            //this.topViewWidth();
+
+
+            const thisWidth = this.navView().targetWidth();
+            const cw = this.navView().clientWidth();
+
+            if (sum < maxWidth) {
+                this.navView().uncollapse();
+                console.log(" -> '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum " + sum + " < win " + maxWidth); // + " UNCOLLAPSE " + this.direction());
+            } else {
+                this.navView().collapse();
+                console.log(" <- '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum:" + sum + " > win " + maxWidth); //+ " COLLAPSE " + this.direction());
+            }
+        } else {
+            console.log(" X '" + this.node().title()); // + "' skip " + this.direction());
         }
 
         return false;

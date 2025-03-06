@@ -5,6 +5,15 @@
  * @class NavView
  * @extends NodeView
  * @classdesc NavView is a component for navigation in a stack-based layout. It includes header, footer, and scrollable content areas.
+ * 
+ * 
+ * Notes: NavView instances have their width set in several ways:
+ * 
+ * 1. In makeOrientationRight(): Sets default width using minAndMaxWidth("17em")
+ * 2. In targetWidth(): Calculates desired width starting from 400px, using the node's minimum tile width as a reference
+ * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
+ * 4. Via StackView width management: The parent StackView can compact and expand NavViews based on available space
+ * 5. The width can also be adapted using setWidth("-webkit-fill-available") when a NavView needs to fill remaining space
  */
 (class NavView extends NodeView {
 
@@ -99,7 +108,7 @@
      * @category Layout
      */
     targetWidth () {
-        const defaultWidth = 400;
+        const defaultWidth = 270;
         if (this.node()) {
             const minWidth = this.node().nodeMinTileWidth();
             const maxWidth = 600;
@@ -120,12 +129,12 @@
      */
     targetHeight () {
         if (this.node()) {
-            const h = this.node().nodeMinTileHeight()
+            const h = this.node().nodeMinTileHeight();
             if (h) {
-                return h
+                return h;
             }
         }
-        return 64
+        return 64;
     }
 
     /**
@@ -135,41 +144,41 @@
      */
     init () {
         super.init()
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setFlexDirection("column")
-        this.setFlexGrow(1)
-        this.setOverflow("hidden")
-        this.setUserSelect("none")
-        this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setFlexDirection("column");
+        this.setFlexGrow(1);
+        this.setOverflow("hidden");
+        this.setUserSelect("none");
+        this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s");
 
-        const borderStyle = "1px solid rgba(255, 255, 255, 0.1)"
-        const backgroundColor = "rgba(255, 255, 255, 0.03)"
-
-        {
-            const v = TileContainer.clone()
-            v.setBorderBottom(borderStyle)
-            v.setBackgroundColor(backgroundColor)
-            this.setHeaderView(v)
-            this.addSubview(v)
-        }
-
-        this.setScrollView(StackScrollView.clone())
-        this.addSubview(this.scrollView())
+        const borderStyle = "1px solid rgba(255, 255, 255, 0.1)";
+        const backgroundColor = "rgba(255, 255, 255, 0.03)";
 
         {
-            const v = TileContainer.clone()
-            v.setBorderTop(borderStyle)
-            v.setBackgroundColor(backgroundColor)
-            this.setFooterView(v)
-            this.addSubview(v)
+            const v = TileContainer.clone();
+            v.setBorderBottom(borderStyle);
+            v.setBackgroundColor(backgroundColor);
+            this.setHeaderView(v);
+            this.addSubview(v);
         }
 
-        this.setTilesView(TilesView.clone())
-        this.scrollView().addSubview(this.tilesView())
+        this.setScrollView(StackScrollView.clone());
+        this.addSubview(this.scrollView());
 
-        this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width
-        this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height
+        {
+            const v = TileContainer.clone();
+            v.setBorderTop(borderStyle);
+            v.setBackgroundColor(backgroundColor);
+            this.setFooterView(v);
+            this.addSubview(v);
+        }
+
+        this.setTilesView(TilesView.clone());
+        this.scrollView().addSubview(this.tilesView());
+
+        this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()); // for adjusting width
+        this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()); // for adjusting height
 
         return this
     }
@@ -180,11 +189,11 @@
      * @category Layout
      */
     isVertical () {
-        const sv = this.stackView()
+        const sv = this.stackView();
         if (!sv) {
-            return null
+            return null;
         }
-        return sv.direction() === "right"
+        return sv.direction() === "right";
     }
 
     /**
@@ -194,11 +203,11 @@
      */
     syncOrientation () {
         if (this.isVertical()) {
-            this.makeOrientationRight()
+            this.makeOrientationRight();
         } else {
-            this.makeOrientationDown()
+            this.makeOrientationDown();
         }
-        return this
+        return this;
     }
 
     /**
@@ -207,7 +216,7 @@
      * @category Styling
      */
     borderColor () {
-        return "rgba(255, 255, 255, 0.3)"
+        return "rgba(255, 255, 255, 0.3)";
     }
 
     /**
@@ -216,14 +225,14 @@
      * @category Styling
      */
     hasBorder () {
-        const node = this.node()
+        const node = this.node();
         if (node) {
-            const hint = node.nodeNavBorderHint()
+            const hint = node.nodeNavBorderHint();
             if (Type.isBoolean(hint)) {
                 return hint
             }
         }
-        return true
+        return true;
     }
 
     /**
@@ -233,9 +242,16 @@
      */
     borderStyle () {
         if (this.hasBorder()) {
-            return "0px solid " + this.borderColor() + " inset"
+            return "0px solid " + this.borderColor() + " inset";
         }
-        return null
+        return null;
+    }
+
+    shouldCurrentlyFillAvailble () {
+        if (this.node()) {
+            return (this.node().nodeFillsRemainingWidth() && this.isLastNavView());
+        }
+        return false;
     }
 
     /**
@@ -243,36 +259,35 @@
      * @category Layout
      */
     makeOrientationRight () {
-        this.setFlexDirection("column")
-        this.setFlexGrow(0)
-        this.setFlexShrink(0)
+        this.setFlexDirection("column");
+        this.setFlexGrow(0);
+        this.setFlexShrink(0);
 
-        this.setMinAndMaxWidth("17em")
-        this.setMinAndMaxHeight("100%")
+        //this.setMinAndMaxWidth("17em");
+        this.setMinAndMaxWidth(this.targetWidth());
+        this.setMinAndMaxHeight("100%");
 
-        if (this.node()) {
-            if (this.node().nodeFillsRemainingWidth() && this.isLastNavView()) {
-                this.setMinWidth("17em")
-                this.setWidth("-webkit-fill-available")
-                this.setMaxWidth("-webkit-fill-available")
-            }
+        if (this.shouldCurrentlyFillAvailble()) {
+            this.setMinWidth("17em");
+            this.setWidth("-webkit-fill-available");
+            this.setMaxWidth("-webkit-fill-available");
         }
 
-        this.setBorderRight("1px solid #333")
-        this.setBorderBottom(null)
+        this.setBorderRight("1px solid #333");
+        this.setBorderBottom(null);
 
-        this.scrollView().setIsVertical(true)
+        this.scrollView().setIsVertical(true);
 
         if (this.headerView()) {
-            const v = this.headerView()
-            v.setWidth("fit-content")
-            v.setHeight("100%")
+            const v = this.headerView();
+            v.setWidth("fit-content");
+            v.setHeight("100%");
         }
 
         if (this.footerView()) {
-            const v = this.footerView()
-            v.setWidth("fit-content")
-            v.setHeight("100%")
+            const v = this.footerView();
+            v.setWidth("fit-content");
+            v.setHeight("100%");
         }
     }
 
@@ -281,12 +296,12 @@
      * @category Layout
      */
     makeOrientationDown () {
-        this.setFlexDirection("row")
-        this.setFlexGrow(0)
-        this.setFlexShrink(0)
+        this.setFlexDirection("row");
+        this.setFlexGrow(0);
+        this.setFlexShrink(0);
 
-        this.setMinAndMaxWidth("100%")
-        this.setMinAndMaxHeight("5em")
+        this.setMinAndMaxWidth("100%");
+        this.setMinAndMaxHeight("5em");
 
         if (this.node()) {
             if (this.node().nodeFillsRemainingWidth()) {
@@ -294,21 +309,21 @@
             }
         }
 
-        this.setBorderRight(null)
-        this.setBorderBottom("1px solid #333")
+        this.setBorderRight(null);
+        this.setBorderBottom("1px solid #333");
 
-        this.scrollView().setIsVertical(false)
+        this.scrollView().setIsVertical(false);
 
         if (this.headerView()) {
-            const v = this.headerView()
-            v.setWidth("100%")
-            v.setHeight("fit-content")
+            const v = this.headerView();
+            v.setWidth("100%");
+            v.setHeight("fit-content");
         }
 
         if (this.footerView()) {
-            const v = this.footerView()
-            v.setWidth("100%")
-            v.setHeight("fit-content")
+            const v = this.footerView();
+            v.setWidth("100%");
+            v.setHeight("fit-content");
         }
     }
 
@@ -320,17 +335,17 @@
      */
     setNode (aNode) {
         super.setNode(aNode)
-        this.tilesView().setNode(aNode)
+        this.tilesView().setNode(aNode);
 
         if (aNode.headerNode) {
-            this.headerView().setNode(aNode.headerNode())
+            this.headerView().setNode(aNode.headerNode());
         }
 
         if (aNode.footerNode) {
-            this.footerView().setNode(aNode.footerNode())
+            this.footerView().setNode(aNode.footerNode());
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -339,7 +354,7 @@
      * @category Layout
      */
     isLastNavView () {
-        return Type.isNullOrUndefined(this.stackView().nextStackView())
+        return Type.isNullOrUndefined(this.stackView().nextStackView());
     }
 
     /**
@@ -348,26 +363,26 @@
      * @category Node Management
      */
     syncFromNode () {
-        this.syncOrientation()
-        this.applyStyles()
+        this.syncOrientation();
+        this.applyStyles();
 
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth()
             if (w && !Type.isNullOrUndefined(w)) {
-                this.setMinWidth(w)
-                this.setMinAndMaxHeight("100%")
+                this.setMinWidth(w);
+                this.setMinAndMaxHeight("100%");
             } 
         } else {
             const h = this.node().nodeMinTileHeight()
             if (h && !Type.isNullOrUndefined(h)) {
-                this.setMinAndMaxWidth("100%")
-                this.setMinAndMaxHeight(h)
+                this.setMinAndMaxWidth("100%");
+                this.setMinAndMaxHeight(h);
             }
         }
 
-        this.headerView().syncFromNode()
-        this.footerView().syncFromNode()
-        return this
+        this.headerView().syncFromNode();
+        this.footerView().syncFromNode();
+        return this;
     }
 
     /**
@@ -376,9 +391,10 @@
      */
     collapse () {
         if (!this.isCollapsed()) {
-            this.hideDisplay()
-           this.setIsCollapsed(true)
+            this.hideDisplay();
+           this.setIsCollapsed(true);
         }
+        assert(this.isDisplayHidden());
     }
 
     /**
@@ -387,10 +403,11 @@
      */
     uncollapse () {
         if (this.isCollapsed()) {
-            this.unhideDisplay()
-            this.syncOrientation()
-            this.setIsCollapsed(false)
+            this.unhideDisplay();
+            this.syncOrientation();
+            this.setIsCollapsed(false);
         }
+        assert(!this.isDisplayHidden());
     }
 
     /**
@@ -399,7 +416,7 @@
      * @category Styling
      */
     edgeMoveBorderStyle () {
-        return "1px rgba(255, 255, 255, 0.5) inset"
+        return "1px rgba(255, 255, 255, 0.5) inset";
     }
 
     /**
@@ -408,8 +425,8 @@
      * @category Gesture Handling
      */
     onRightEdgePanBegin (aGesture) {
-        this.setBeforeEdgePanBorderRight(this.borderRight())
-        this.setBorderRight(this.edgeMoveBorderStyle())
+        this.setBeforeEdgePanBorderRight(this.borderRight());
+        this.setBorderRight(this.edgeMoveBorderStyle());
     }
 
     /**
@@ -419,12 +436,12 @@
      * @category Gesture Handling
      */
     onRightEdgePanMove (aGesture) {
-        const p = aGesture.currentPosition()
-        const f = this.frameInDocument()
-        const nw = Math.max(10, p.x() - f.x())
-        this.node().setNodeMinTileWidth(nw)
+        const p = aGesture.currentPosition();
+        const f = this.frameInDocument();
+        const nw = Math.max(10, p.x() - f.x());
+        this.node().setNodeMinTileWidth(nw);
         this.scheduleSyncToNode();
-        return this
+        return this;
     }
 
     /**
@@ -434,9 +451,9 @@
      */
     onRightEdgePanComplete (aGesture) {
         this.onRightEdgePanMove(aGesture)
-        this.setBorderRight(this.beforeEdgePanBorderRight())
-        this.setBeforeEdgePanBorderBottom(null)
-        this.unhideTransition()
+        this.setBorderRight(this.beforeEdgePanBorderRight());
+        this.setBeforeEdgePanBorderBottom(null);
+        this.unhideTransition();
     }
 
     /**
@@ -445,9 +462,9 @@
      * @category Gesture Handling
      */
     onBottomEdgePanBegin (aGesture) {
-        this.setBeforeEdgePanBorderBottom(this.borderBottom())
-        this.setBorderBottom(this.edgeMoveBorderStyle())
-        this.hideTransition()
+        this.setBeforeEdgePanBorderBottom(this.borderBottom());
+        this.setBorderBottom(this.edgeMoveBorderStyle());
+        this.hideTransition();
     }
 
     /**
@@ -457,12 +474,12 @@
      * @category Gesture Handling
      */
     onBottomEdgePanMove (aGesture) {
-        const p = aGesture.currentPosition()
-        const f = this.frameInDocument()
-        const newHeight = Math.max(10, p.y() - f.y())
-        this.node().setNodeMinTileHeight(newHeight)
+        const p = aGesture.currentPosition();
+        const f = this.frameInDocument();
+        const newHeight = Math.max(10, p.y() - f.y());
+        this.node().setNodeMinTileHeight(newHeight);
         this.scheduleSyncToNode();
-        return this
+        return this;
     }
 
     /**
@@ -471,10 +488,10 @@
      * @category Gesture Handling
      */
     onBottomEdgePanComplete (aGesture) {
-        this.onBottomEdgePanMove(aGesture)
-        this.setBorderBottom(this.beforeEdgePanBorderBottom())
-        this.setBeforeEdgePanBorderBottom(null)
-        this.unhideTransition()
+        this.onBottomEdgePanMove(aGesture);
+        this.setBorderBottom(this.beforeEdgePanBorderBottom());
+        this.setBeforeEdgePanBorderBottom(null);
+        this.unhideTransition();
     }
 
 }.initThisClass());
