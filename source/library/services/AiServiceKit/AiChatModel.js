@@ -208,7 +208,7 @@
     if (!Type.isUndefined(otl)) {
       this.setOutputTokenLimit(otl);
     }
-    console.log(">>>>>>>>>>>>>>>> " + this.title() + " outputTokenLimit:" + this.outputTokenLimit());
+    //console.log(">>>>>>>>>>>>>>>> " + this.title() + " outputTokenLimit:" + this.outputTokenLimit());
 
 
     const t = json.supportsTemperature;
@@ -217,7 +217,7 @@
     } else {
       this.setSupportsTemperature(true);
     }
-    console.log(">>>>>>>>>>>>>>>> " + this.title() + " supportsTemperature:" + this.supportsTemperature());
+    //console.log(">>>>>>>>>>>>>>>> " + this.title() + " supportsTemperature:" + this.supportsTemperature());
 
     const tp = json.supportsTopP;
     if (!Type.isUndefined(tp)) {

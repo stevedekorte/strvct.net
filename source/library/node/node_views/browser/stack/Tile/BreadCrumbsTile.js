@@ -206,10 +206,12 @@
      * @returns {BreadCrumbsTile}
      * @category Event Handling
      */
+    /*
     onWindowResize (event) {
         this.updateCompaction()
         return this
     }
+    */
 
     /**
      * @description Handles the click event on the back button
