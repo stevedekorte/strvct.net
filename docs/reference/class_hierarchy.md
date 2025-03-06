@@ -37,7 +37,6 @@
     - [Error_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FError_ideal.js)
     - [Error_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
     - [MissingSlotError](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
-  - [Function_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Funused%2FFunction_store.js)
   - [HTMLElement_textField](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FHtmlElement_textField.js)
   - Image
     - [Image_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FImage_ideal.js)
@@ -110,6 +109,7 @@
                   - [AnthropicRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAnthropic%2FAnthropicRequest.js)
                   - [GeminiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGemini%2FGeminiRequest.js)
                   - [OpenAiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
+                    - [DeepSeekRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FDeepSeek%2FDeepSeekRequest.js)
                     - [GroqRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGroq%2FGroqRequest.js)
                     - [XaiRequest](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FXai%2FXaiRequest.js)
                 - [AzureService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAzure%2FAzureService.js)
@@ -130,6 +130,7 @@
                   - [AiConversations](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversations.js)
                   - [AiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FAiService.js)
                     - [AnthropicService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAnthropic%2FAnthropicService.js)
+                    - [DeepSeekService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FDeepSeek%2FDeepSeekService.js)
                     - [GeminiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGemini%2FGeminiService.js)
                     - [GroqService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
                     - [OpenAiService](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FOpenAI%2FOpenAiService.js)
