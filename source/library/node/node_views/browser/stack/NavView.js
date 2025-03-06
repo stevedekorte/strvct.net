@@ -19,7 +19,7 @@
 
     initPrototypeSlots () {
         /**
-         * @member {StackView} stackView
+         * @member {StackView} stackView - pointer to parent StackView
          * @category Layout
          */
         {
@@ -28,7 +28,7 @@
         }
             
         /**
-         * @member {DomView} headerView - Placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
+         * @member {DomView} headerView - A subview placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
          * @category Layout
          */
         {
@@ -37,7 +37,7 @@
         }
 
         /**
-         * @member {ScrollView} scrollView - ScrollView fits NavView size, and contains TilesView which may be larger
+         * @member {ScrollView} scrollView - A subview which is a scrollView, fills the NavView (between headerView and footerView), and contains TilesView which may be larger.
          * @category Layout
          */
         {
@@ -46,7 +46,7 @@
         }
 
         /**
-         * @member {DomView} footerView - Placed in bottom of NavView, set to display:none if no node.footerNode()
+         * @member {DomView} footerView - A subview laced in bottom of NavView, set to display:none if no node.footerNode().
          * @category Layout
          */
         {
@@ -258,7 +258,7 @@
      * @description Sets the orientation of the NavView to right (vertical)
      * @category Layout
      */
-    makeOrientationRight () {
+    makeOrientationRight () { // nav view is on left, other view is on right
         this.setFlexDirection("column");
         this.setFlexGrow(0);
         this.setFlexShrink(0);
@@ -280,14 +280,14 @@
 
         if (this.headerView()) {
             const v = this.headerView();
-            v.setWidth("fit-content");
-            v.setHeight("100%");
+            v.setWidth("100%");
+            v.setHeight("fit-content");
         }
 
         if (this.footerView()) {
             const v = this.footerView();
-            v.setWidth("fit-content");
-            v.setHeight("100%");
+            v.setWidth("100%");
+            v.setHeight("fit-content");
         }
     }
 
@@ -316,14 +316,14 @@
 
         if (this.headerView()) {
             const v = this.headerView();
-            v.setWidth("100%");
-            v.setHeight("fit-content");
+            v.setWidth("fit-content");
+            v.setHeight("100%");
         }
 
         if (this.footerView()) {
             const v = this.footerView();
-            v.setWidth("100%");
-            v.setHeight("fit-content");
+            v.setWidth("fit-content");
+            v.setHeight("100%");
         }
     }
 
