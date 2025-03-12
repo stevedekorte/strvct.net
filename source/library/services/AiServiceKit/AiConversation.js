@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.AiServiceKit
+ * @module library.services.AiServiceKit 
  */
 
 /**
