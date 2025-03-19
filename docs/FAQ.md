@@ -2,11 +2,17 @@
 
 #### How does Strvct differ from React?
 
-1. Strvct uses a "Naked Objects" pattern where model objects automatically generate UI, while React uses components that explicitly define their UI with JSX.
-2. In Strvct, the model hierarchy directly determines the view hierarchy. React requires manual composition of components.
-3. Strvct uses a slot system with notifications for reactivity, while React uses immutable state with Virtual DOM diffing.
-4. Strvct has built-in persistence with IndexedDB, while React requires external libraries.
-5. Strvct directly manipulates the DOM through NodeView objects, while React abstracts DOM operations through reconciliation.
+# Strvct vs React Comparison
+
+| Feature           | Strvct                                                                     | React                                                                                  |
+| ----------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **Architecture**  | Uses "Naked Objects" pattern where model objects automatically generate UI | Uses components that explicitly define their UI with JSX                               |
+| **UI Definition** | Developer never touches HTML directly. Uses view objects.                  | HTML-like JSX syntax to define component structure                                     |
+| **Composition**   | Model structure directly determines the view hierarchy                     | Requires manual composition of components                                              |
+| **Reactivity**    | Uses a slot system with notifications with automatic reactivity            | Uses immutable state with Virtual DOM diffing                                          |
+| **Persistence**   | Has built-in persistence with IndexedDB                                    | Requires external libraries                                                            |
+| **Rendering**     | Directly manipulates the DOM through NodeView objects                      | Abstracts DOM operations through reconciliation                                        |
+| **Packaging**     | Built-in resource packaging and client-side caching                        | Requires external tools like Webpack/Vite for bundling and Service Workers for caching |
 
 #### What does Strvct do for you that you'd need to implement yourself in React?
 
