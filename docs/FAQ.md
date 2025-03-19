@@ -39,8 +39,8 @@
   </thead>
   <tbody>
     <tr>
-      <td class="feature-name">Navigation and Layout</td>
-      <td class="strvct">Dynamically generated from model</td>
+      <td class="feature-name" style="width:fit-content;">Navigation & Layout</td>
+      <td class="strvct">Dynamically generated from model with hints</td>
       <td class="react">Hand coded JSX</td>
     </tr>
     <tr>
@@ -50,7 +50,7 @@
     </tr>
     <tr>
       <td class="feature-name">Reactivity</td>
-      <td class="strvct">slot annotations for auto syncing</td>
+      <td class="strvct">slots can be marked to auto sync between model and view</td>
       <td class="react">Immutable state with Virtual DOM diffing</td>
     </tr>
     <tr>
@@ -60,7 +60,7 @@
     </tr>
     <tr>
       <td class="feature-name">Persistence</td>
-      <td class="strvct">slot annotations for auto persistence</td>
+      <td class="strvct">slots can be marked to auto persistence</td>
       <td class="react">Requires external libraries</td>
     </tr>
     <tr>
@@ -69,13 +69,17 @@
       <td class="react">Requires external tools</td>
     </tr>
     <tr>
-      <td class="feature-name">Client-side Caching</td>
+      <td class="feature-name">Resource Caching</td>
       <td class="strvct">Built-in</td>
       <td class="react">Requires Service Workers</td>
     </tr>
   </tbody>
 </table>
 
+<br><br>
+<br><br>
+
+<!--
 #### What does Strvct do for you that you'd need to implement yourself in React?
 
 1. **Automatic UI Generation**: Strvct creates complete UI components from your model objects with no additional code.
@@ -115,3 +119,5 @@
 5. **Centralized Notification System**: Built-in observer pattern for cross-component communication without prop drilling.
 
 In React, you'd need separate libraries and manual code for each of these features (Redux/MobX, React Router, form libraries, persistence adapters, etc.).
+
+-->
