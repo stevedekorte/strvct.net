@@ -23,7 +23,6 @@
     text-align: left;
   }
   tr:nth-child(even) {
-    background-color: rgba(255, 255, 255, 0.1);
   }
   tr:hover {
     background-color: #rgba(255, 255, 255, 0.1);
@@ -40,7 +39,7 @@
   </thead>
   <tbody>
     <tr>
-      <td class="feature-name">UI NAv/Layout</td>
+      <td class="feature-name">UI Nav/Layout</td>
       <td class="strvct">dynamically auto generated from model objects</td>
       <td class="react">hand coded with JSX</td>
     </tr>
@@ -55,14 +54,14 @@
       <td class="react">Immutable state with Virtual DOM diffing</td>
     </tr>
     <tr>
+      <td class="feature-name">Rendering</td>
+      <td class="strvct">NodeViews abstract directly manipulation of DOM</td>
+      <td class="react">Abstracts DOM operations through reconciliation</td>
+    </tr>
+    <tr>
       <td class="feature-name">Persistence</td>
       <td class="strvct">slot annotations guide auto persistence</td>
       <td class="react">Requires external libraries</td>
-    </tr>
-    <tr>
-      <td class="feature-name">Rendering</td>
-      <td class="strvct">Directly manipulates the DOM through NodeView objects</td>
-      <td class="react">Abstracts DOM operations through reconciliation</td>
     </tr>
     <tr>
       <td class="feature-name">Packaging</td>
