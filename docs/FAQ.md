@@ -2,21 +2,7 @@
 
 #### How does Strvct differ from React?
 
-# Strvct vs React Comparison
-
-# Strvct vs React Comparison
-
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    color: #2c3e50;
-    text-align: center;
-    margin-bottom: 30px;
-  }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -43,19 +29,7 @@
   tr:hover {
     background-color: #f1f1f1;
   }
-  .feature-name {
-    font-weight: bold;
-    width: 15%;
-  }
-  .strvct {
-    width: 42.5%;
-  }
-  .react {
-    width: 42.5%;
-  }
 </style>
-
-<h1>Strvct vs React Comparison</h1>
 
 <table>
   <thead>
@@ -67,7 +41,7 @@
   </thead>
   <tbody>
     <tr>
-      <td class="feature-name">UI Architecture</td>
+      <td class="feature-name">UI Implementation</td>
       <td class="strvct">UI dynamically auto generated from model objects</td>
       <td class="react">UI hand coded with JSX</td>
     </tr>
