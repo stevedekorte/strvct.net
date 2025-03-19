@@ -15,11 +15,11 @@
     padding: 12px 15px;
     font-weight: bold;
     vertical-align: top;
-    border-bottom: 1px solid rgba(1, 1, 1, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   td {
     padding: 12px 15px;
-    border-bottom: 1px solid rgba(1, 1, 1, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     vertical-align: top;
     text-align: left;
   }
@@ -27,7 +27,7 @@
     background-color: #f9f9f9;
   }
   tr:hover {
-    background-color: #f1f1f1;
+    background-color: #rgba(255, 255, 255, 0.1);
   }
 </style>
 
@@ -41,28 +41,23 @@
   </thead>
   <tbody>
     <tr>
-      <td class="feature-name">UI Implementation</td>
-      <td class="strvct">UI dynamically auto generated from model objects</td>
-      <td class="react">UI hand coded with JSX</td>
+      <td class="feature-name">UI NAv/Layout</td>
+      <td class="strvct">dynamically auto generated from model objects</td>
+      <td class="react">hand coded with JSX</td>
     </tr>
     <tr>
       <td class="feature-name">Custom UI Elements</td>
-      <td class="strvct">Developer writes view objects.</td>
-      <td class="react">Developer writes HTML-like JSX syntax.</td>
-    </tr>
-    <tr>
-      <td class="feature-name">Composition</td>
-      <td class="strvct">Model structure directly determines UI navigation and layout</td>
-      <td class="react">Manual composition of navigation and layout</td>
+      <td class="strvct">Implement view objects</td>
+      <td class="react">write HTML-like JSX syntax</td>
     </tr>
     <tr>
       <td class="feature-name">Reactivity</td>
-      <td class="strvct">Uses a slot system with notifications for reactivity</td>
-      <td class="react">Uses immutable state with Virtual DOM diffing</td>
+      <td class="strvct">slot annotations guide notifications to auto update UI</td>
+      <td class="react">Immutable state with Virtual DOM diffing</td>
     </tr>
     <tr>
       <td class="feature-name">Persistence</td>
-      <td class="strvct">Has built-in persistence with IndexedDB</td>
+      <td class="strvct">slot annotations guide auto persistence</td>
       <td class="react">Requires external libraries</td>
     </tr>
     <tr>
@@ -73,7 +68,7 @@
     <tr>
       <td class="feature-name">Packaging</td>
       <td class="strvct">Built-in resource packaging and client-side caching</td>
-      <td class="react">Requires external tools like Webpack/Vite for bundling and Service Workers for caching</td>
+      <td class="react">Requires external tools for bundling and Service Workers for caching</td>
     </tr>
   </tbody>
 </table>
