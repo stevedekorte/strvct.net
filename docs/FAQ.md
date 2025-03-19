@@ -10,16 +10,16 @@
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   }
   th {
-    background-color: #3498db;
     color: white;
     text-align: left;
     padding: 12px 15px;
     font-weight: bold;
     vertical-align: top;
+    border-bottom: 1px solid rgba(1, 1, 1, 0.1);
   }
   td {
     padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid rgba(1, 1, 1, 0.1);
     vertical-align: top;
     text-align: left;
   }
