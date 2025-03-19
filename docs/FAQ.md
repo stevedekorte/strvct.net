@@ -10,7 +10,6 @@
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   }
   th {
-    color: white;
     text-align: left;
     padding: 12px 15px;
     font-weight: bold;
@@ -24,7 +23,7 @@
     text-align: left;
   }
   tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: rgba(255, 255, 255, 0.1);
   }
   tr:hover {
     background-color: #rgba(255, 255, 255, 0.1);
