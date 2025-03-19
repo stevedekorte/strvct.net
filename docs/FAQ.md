@@ -39,34 +39,39 @@
   </thead>
   <tbody>
     <tr>
-      <td class="feature-name">UI Nav/Layout</td>
-      <td class="strvct">dynamically auto generated from model objects</td>
-      <td class="react">hand coded with JSX</td>
+      <td class="feature-name">Navigation and Layout</td>
+      <td class="strvct">Dynamically generated from model</td>
+      <td class="react">Hand coded JSX</td>
     </tr>
     <tr>
-      <td class="feature-name">Custom UI Elements</td>
-      <td class="strvct">Implement view objects</td>
-      <td class="react">write HTML-like JSX syntax</td>
+      <td class="feature-name">Custom Elements</td>
+      <td class="strvct">Write View objects</td>
+      <td class="react">Write HTML-like JSX syntax</td>
     </tr>
     <tr>
       <td class="feature-name">Reactivity</td>
-      <td class="strvct">slot annotations guide notifications to auto update UI</td>
+      <td class="strvct">slot annotations for auto syncing</td>
       <td class="react">Immutable state with Virtual DOM diffing</td>
     </tr>
     <tr>
       <td class="feature-name">Rendering</td>
-      <td class="strvct">NodeViews abstract directly manipulation of DOM</td>
+      <td class="strvct">NodeViews abstract DOM</td>
       <td class="react">Abstracts DOM operations through reconciliation</td>
     </tr>
     <tr>
       <td class="feature-name">Persistence</td>
-      <td class="strvct">slot annotations guide auto persistence</td>
+      <td class="strvct">slot annotations for auto persistence</td>
       <td class="react">Requires external libraries</td>
     </tr>
     <tr>
       <td class="feature-name">Packaging</td>
-      <td class="strvct">Built-in resource packaging and client-side caching</td>
-      <td class="react">Requires external tools for bundling and Service Workers for caching</td>
+      <td class="strvct">Built-in</td>
+      <td class="react">Requires external tools</td>
+    </tr>
+    <tr>
+      <td class="feature-name">Client-side Caching</td>
+      <td class="strvct">Built-in</td>
+      <td class="react">Requires Service Workers</td>
     </tr>
   </tbody>
 </table>
