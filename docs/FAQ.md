@@ -1,4 +1,4 @@
-# Frequently Asked Questions
+# FAQ
 
 #### How does Strvct differ from React?
 
