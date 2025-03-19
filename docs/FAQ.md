@@ -1,4 +1,4 @@
-# FAQ
+# <a href="../index.html">STRVCT</a> / FAQ
 
 #### How does Strvct differ from React?
 
