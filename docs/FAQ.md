@@ -41,27 +41,27 @@
   <tbody>
     <tr>
       <td class="feature-name" style="width:fit-content;">Navigation & Layout</td>
-      <td class="strvct">Dynamically generated from model with hints</td>
+      <td class="strvct">Runtime generated from model w/hints</td>
       <td class="react">Hand coded JSX</td>
     </tr>
     <tr>
       <td class="feature-name">Custom Elements</td>
-      <td class="strvct">Write View objects</td>
+      <td class="strvct">Write View objects in JS</td>
       <td class="react">Write HTML-like JSX syntax</td>
     </tr>
     <tr>
       <td class="feature-name">Reactivity</td>
-      <td class="strvct">slots can be marked to auto sync between model and view</td>
+      <td class="strvct">Slots auto sync model and view</td>
       <td class="react">Immutable state with Virtual DOM diffing</td>
     </tr>
     <tr>
       <td class="feature-name">Rendering</td>
-      <td class="strvct">NodeViews abstract DOM</td>
-      <td class="react">Abstracts DOM operations through reconciliation</td>
+      <td class="strvct">NodeViews abstract DOM ops</td>
+      <td class="react">Abstracts DOM ops via reconciliation</td>
     </tr>
     <tr>
       <td class="feature-name">Persistence</td>
-      <td class="strvct">slots can be marked to auto persistence</td>
+      <td class="strvct">Built-in<br> via annotations</td>
       <td class="react">Requires external libraries</td>
     </tr>
     <tr>
