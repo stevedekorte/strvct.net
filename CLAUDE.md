@@ -51,7 +51,7 @@
 
 - Properties declared with `this.newSlot("propertyName", defaultValue)`
 - Configure slots with additional methods:
-  - `setSlotType("String")` - Document expected type
+  - `setSlotType("String")` - Document expected type. This is used for type checking.
   - `setFinalInitProto(SomeClass)` - Auto-initialize property during object initialization
   - `setSyncsToView(true)` - Updates views when property changes
   - `setShouldStoreSlot(true)` - Persist property to storage
@@ -349,3 +349,5 @@
 - Always use semicolons at the end of statements in JavaScript
 - Follow the formatting examples in existing code
 - Use consistent indentation (2 spaces) for all code blocks
+- Use the Map class instead of dictionaries for maps.
+- When declaring a method, put a space between the method name and the ().

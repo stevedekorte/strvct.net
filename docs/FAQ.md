@@ -15,6 +15,7 @@
     font-weight: bold;
     vertical-align: top;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-transform: uppercase;
   }
   td {
     padding: 12px 15px;
