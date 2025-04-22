@@ -867,13 +867,13 @@
 
             if (sum < maxWidth) {
                 this.navView().uncollapse();
-                console.log(" -> '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum " + sum + " < win " + maxWidth); // + " UNCOLLAPSE " + this.direction());
+                //console.log(" -> '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum " + sum + " < win " + maxWidth); // + " UNCOLLAPSE " + this.direction());
             } else {
                 this.navView().collapse();
-                console.log(" <- '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum:" + sum + " > win " + maxWidth); //+ " COLLAPSE " + this.direction());
+                //console.log(" <- '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum:" + sum + " > win " + maxWidth); //+ " COLLAPSE " + this.direction());
             }
         } else {
-            console.log(" X '" + this.node().title()); // + "' skip " + this.direction());
+            //console.log(" X '" + this.node().title()); // + "' skip " + this.direction());
         }
 
         return false;

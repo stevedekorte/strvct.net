@@ -252,6 +252,14 @@
     }
 
     /**
+     * @member {Error} stopError - The error object.
+     */
+    {
+      const slot = this.newSlot("stopError", null);
+      slot.setSlotType("Error");
+    }
+
+    /**
      * @member {String} status - The status of the request.
      */
     {
@@ -393,7 +401,7 @@
       });
     }
 
-    debugger;
+    //debugger;
     return json;
   }
 
@@ -539,7 +547,7 @@
     //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
     //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
 
-    debugger;
+    //debugger;
     this.setIsStreaming(true);
     this.setStatus("streaming");
 

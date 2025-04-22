@@ -33,20 +33,40 @@
   modelsJson () {
     return [
       {
-        "name": "gpt-4.5-preview",
-        "title": "OpenAI ChatGPT 4.5 Preview",
-        "note": "Latest.",
-        "inputTokenLimit": 128000,
-        "outputTokenLimit": 16384
+        "name": "gpt-4.1-2025-04-14",
+        "title": "OpenAI ChatGPT 4.1",
+        "inputTokenLimit": 1047576,
+        "outputTokenLimit": 32768
       },
       {
-        "name": "chatgpt-4o-latest",
-        "title": "OpenAI ChatGPT 4o",
-        "note": "Latest.",
-        "inputTokenLimit": 128000,
-        "outputTokenLimit": 16384
+        "name": "gpt-4.1-mini-2025-04-14",
+        "title": "OpenAI ChatGPT 4.1 mini",
+        "inputTokenLimit": 1047576,
+        "outputTokenLimit": 32768
       },
-        
+      {
+        "name": "gpt-4.1-nano-2025-04-14",
+        "title": "OpenAI ChatGPT 4.1 nano",
+        "inputTokenLimit": 1047576,
+        "outputTokenLimit": 32768
+      },
+      {
+        "name": "o3-2025-04-16",
+        "title": "OpenAI ChatGPT o3",
+        "inputTokenLimit": 200000,
+        "outputTokenLimit": 100000,
+        "supportsTemperature": false,
+        "supportsTopP": false
+      },
+      {
+        "name": "o3-mini-2025-01-31",
+        "title": "OpenAI ChatGPT o3 mini",
+        "inputTokenLimit": 128000,
+        "outputTokenLimit": 16384,
+        "supportsTemperature": false,
+        "supportsTopP": false
+      }
+
 
       // we can't handle these non-streaming models yet (see AiRequest.js)
       /*
@@ -134,6 +154,18 @@
 
     // model and other info is set via OpenAiService.json file
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
+
+   // this.setupModelsFromFetch();
+  }
+
+  async setupModelsFromFetch () {
+    try {
+      const modelsJson = await this.fetchAllModelsDetails();
+      console.log(modelsJson);
+      debugger;
+    } catch (error) {
+      console.error("Error fetching models:", error);
+    }
   }
 
   /**
@@ -163,5 +195,46 @@
   fetchModelsUrl () {
     return "https://api.openai.com/v1/models";
   }
+
+  fetchModelDetailsUrl (modelId) {
+    return `https://api.openai.com/v1/models/${modelId}`;
+  }
+
+  /**
+   * @description Fetches the model details.
+   * @param {string} apiKey - The API key to use.
+   * @returns {Promise<Object>} A promise that resolves to the model details.
+   * @category Models
+   */
+  async fetchAllModelsDetails() {
+    const apiKey = this.apiKey();
+    const headers = {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json"
+    };
+  
+    // Step 1: Fetch the list of model IDs
+    const listResp = await fetch(this.fetchModelsUrl(), { headers: headers });
+    debugger;
+    if (!listResp.ok) throw new Error(`Model list fetch failed: ${listResp.statusText}`);
+    const listData = await listResp.json();
+  
+    // Step 2: Fetch extended info on each model
+    const detailedModels = {};
+    for (const model of listData.data) {
+      const id = model.id;
+      try {
+        const detailResp = await fetch(this.fetchModelDetailsUrl(id), { headers: headers });
+        if (!detailResp.ok) throw new Error(`Fetch failed for ${id}: ${detailResp.statusText}`);
+        const detailData = await detailResp.json();
+        detailedModels[id] = detailData;
+      } catch (err) {
+        console.warn(`Skipping model ${id} due to error:`, err.message);
+      }
+    }
+  
+    return detailedModels;
+  }
+  
 
 }.initThisClass());

@@ -7,7 +7,7 @@
  * @extends AiMessage
  * @classdesc Represents an AI response message in a conversation.
  */
-(class AiResponseMessage extends AiMessage {
+(class AiResponseMessage extends AiMessage { 
 
   /**
    * Initializes the prototype slots for the AiResponseMessage class.

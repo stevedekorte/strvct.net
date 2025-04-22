@@ -11,6 +11,38 @@
 
 (class ProtoClass extends Object {
 
+    getInheritedMethodSet() {
+        const methodSet = new Set();
+        const processedMethods = new Set();
+
+        // Get prototype chain
+        let currentProto = Object.getPrototypeOf(this);
+        const prototypeChain = [];
+
+        // Build prototype chain from bottom to top
+        while (currentProto !== null) {
+            prototypeChain.push(currentProto);
+            currentProto = Object.getPrototypeOf(currentProto);
+        }
+
+        // Process the chain from top to bottom (most ancestral to most specific)
+        for (let i = prototypeChain.length - 1; i >= 0; i--) {
+            const proto = prototypeChain[i];
+
+            // Get all property descriptors in the current prototype
+            const descriptors = Object.getOwnPropertyDescriptors(proto);
+
+            for (const [name, descriptor] of Object.entries(descriptors)) {
+                if (processedMethods.has(name)) continue;
+                if (typeof descriptor.value === 'function') {
+                    methodSet.add(descriptor.value);
+                }
+                processedMethods.add(name);
+            }
+        }
+        return methodSet;
+    }
+
     /**
      * Creates a new subclass with the given name.
      * @param {string} newClassName - The name of the new subclass.
@@ -1105,6 +1137,45 @@
      */
     type () {
         return this.constructor.name;
+    }
+
+    /**
+     * Gets a method by name.
+     * @param {string} methodName - The name of the method.
+     * @returns {Function} The method.
+     * @category Methods
+     */
+    methodNamed (methodName) {
+        // create a slot named methodName
+        const value = this[methodName];
+        if (!value) {
+            throw new Error("Method " + methodName + " not found on " + this.type());
+        }
+        if (!Type.isFunction(value)) {
+            throw new Error("Method " + methodName + " is not a function on " + this.type());
+        }
+        return value;
+    } 
+
+    /**
+     * Gets the methods map.
+     * @returns {Map} Map of methods.
+     * @category Methods
+     */
+    methodsMap () {
+        if (!this._methodsMap) {
+            this._methodsMap = new Map();
+        }
+        return this._methodsMap;
+    }
+
+    registerMethodNamed (name) {
+        const method = this.methodNamed(name);
+        assert(method, "Method " + name + " not found on " + this.type());
+        method.setMetaProperty("name", name);
+        method.setMetaProperty("ownerObject", this);
+        this.methodsMap().set(name, method);
+        return method;
     }
 
     /**

@@ -1777,7 +1777,7 @@
             } else {
                 console.warn("no dict key '" + k + "' for archive slot " + k);
             }
-        })
+        });
 
         /*
         keys.forEach(key => {
@@ -2085,6 +2085,9 @@
      * @returns {string} The JSON schema reference.
      */
     static jsonSchemaRefForTypeName (typeName, refSet) {
+        if (!refSet.has(this)) {
+            this.asJsonSchema(refSet); // so we add references within the referenced type
+        }
         assert(Type.isSet(refSet));
         assert(this.asJsonSchema); // sanity check - we'll need this 
         assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.type());

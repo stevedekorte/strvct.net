@@ -7,6 +7,25 @@
  * Extends the native Array with additional utility methods.
  */
 (class Array_ideal extends Array {
+
+    /**
+     * @returns {string} The JSON type for an Array which is "array".
+     */
+    static jsonType () {
+        return "array";
+    }
+
+    /**
+     * @returns {Object} The JSON Schema reference for the Array class.
+     */
+    static jsonSchemaRef (refSet) {
+        refSet.add(this);
+        return {
+            "type": this.jsonType() // is this correct??????????????
+        };
+    }
+
+
     /**
      * Creates a new instance of Array_ideal and copies the elements from the provided array.
      * @param {Array} anArray - The array to copy elements from.

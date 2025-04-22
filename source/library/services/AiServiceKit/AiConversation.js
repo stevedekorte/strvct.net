@@ -7,8 +7,25 @@
 /**
  * @class AiConversation
  * @extends Conversation
- * @classdesc Represents an AI conversation with methods to manage messages, tokens, and chat interactions.
+ * @classdesc Represents an AI conversation. It adds state for:
+ *  - chat model
+ *  - ai speaker name
+ *  - token count
+ *  - response message class
+ * 
+ * Delgates:
+ *  - prompt delegate (to get the system prompt)
+ *  - tag delegate (to send tag messages to the client)
+ *  - client state delegate (to read and write client state)
+ * 
+ * History:
+ *  - jsonHistoryString (stringified json of the chat history)
+ * 
+ * Tools:
+ *  - assistantApiCalls (list of tool apis available to the assistant)
+ * 
  */
+
 (class AiConversation extends Conversation {
 
   /**
@@ -27,15 +44,6 @@
     }
 
     /**
-     * @member {Number} initialMessagesCount - Number of initial messages to always keep
-     * @category Configuration
-     */
-    {
-      const slot = this.newSlot("initialMessagesCount", 3);
-      slot.setSlotType("Number");
-    }
-
-    /**
      * @member {AiResponseMessage} responseMsgClass - Class for response messages
      * @category Configuration
      */
@@ -45,21 +53,13 @@
     }
 
     /**
-     * @member {Number} tokenCount - Sum of tokens of all messages
+     * @member {Number} tokenCount - Sum of tokens of all messages. A null value means we need to update the token count. We set to null on each new message so we can lazy update the token count.
      * @category State
      */
     {
       const slot = this.newSlot("tokenCount", 0);
       slot.setSlotType("Number");
-    }
-
-    /**
-     * @member {Number} tokenBuffer - Buffer to ensure approximation doesn't exceed limit
-     * @category Configuration
-     */
-    {
-      const slot = this.newSlot("tokenBuffer", 400);
-      slot.setSlotType("Number");
+      slot.setAllowsNullValue(true); 
     }
 
     /**
@@ -79,7 +79,6 @@
         const slot = this.newSlot("aiSpeakerName", null);
         slot.setSlotType("String");
       }
-
         
     /**
      * @member {Object} tagDelegate - Delegate to receive tag messages from responses. 
@@ -91,11 +90,11 @@
     }
 
     /**
-     * @member {Object} clientStateDelegate - Delegate to receive getJson, asRootJsonSchemaString messages 
+     * @member {Object} assistantModel - Delegate to receive getJson, asRootJsonSchemaString, assistantPromptString messages
      * @category Delegates
      */
     {
-      const slot = this.newSlot("clientStateDelegate", null);
+      const slot = this.newSlot("assistantModel", null);
       slot.setSlotType("Object");
     }
 
@@ -108,6 +107,10 @@
       slot.setSlotType("Object");
     }
 
+    /**
+     * @member {String} jsonHistoryString - The JSON history string of the conversation.
+     * @category State
+     */
     {
       const slot = this.newSlot("jsonHistoryString", null);
       slot.setSlotType("String");
@@ -115,12 +118,20 @@
       slot.setCanInspect(false);
     }
 
+    /**
+     * @member {AssistantToolKit} assistantToolKit - The tool kit for the assistant.
+     * @category Configuration
+     */
     {
-      const slot = this.newSlot("assistantApiCalls", null);
-      slot.setSlotType("AssistantApiCalls");
-      slot.setFinalInitProto(AssistantApiCalls);
+      const slot = this.newSlot("assistantToolKit", null);
+      slot.setFinalInitProto(AssistantToolKit);
       slot.setCanInspect(true);
     }
+  }
+
+  finalInit () {
+    super.finalInit();
+    this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
   }
 
   jsonHistoryString () {
@@ -141,7 +152,6 @@
   initPrototype () {
     this.setSubnodeClasses([AiMessage]);
     this.setResponseMsgClass(AiResponseMessage);
-    //this.setApiCallClasses([RollDiceApiCall,PlayMusicApiCall, PlaySoundFxApiCall]);
   }
 
   /**
@@ -203,6 +213,14 @@
    * @category State
    */
   updateTokenCount () {
+    // need to count the tokens in the chat history
+    // and update the token count
+    const chatHistory = this.jsonHistoryString();
+    // conact all the messages and the system prompt
+    const allMessagesString = this.messages().map(m => m.content).join("\n");
+    // estimate the token count
+    const tokenCount = allMessagesString.length / 4;
+    this.setTokenCount(tokenCount);
     return this;
   }
 
@@ -319,14 +337,14 @@
   }
 
   /**
-   * @description Starts the conversation after fetching the system prompt from the promptDelegate.
+   * @description Starts the conversation after fetching the system prompt from the assistantModel.
    * @returns {AiResponseMessage} The response message.
    * @category Interaction
    */
-  start () {
-    const promptDelegate = this.promptDelegate();
-    if (promptDelegate) {
-      const systemPrompt = promptDelegate.assistantSystemPromptString();
+  async start () {
+    const assistantModel = this.assistantModel();
+    if (assistantModel) {
+      const systemPrompt = await assistantModel.composeSystemPrompt();
       const apiPrompt = this.composeApiSpecPrompt();
       const prompt = systemPrompt + "\n\n" + apiPrompt;
       debugger;
@@ -343,7 +361,7 @@
    * @category Interaction
    */
   startWithPrompt (prompt) {
-    debugger;
+    //debugger;
     this.clear();
     const promptMsg = this.newSystemMessage();
     promptMsg.setContent(prompt);
@@ -389,6 +407,7 @@
    */
   onMessageComplete (aMsg) {
     super.onMessageComplete(aMsg);
+    this.assistantToolKit().onMessageComplete(aMsg);
     return this;
   } 
 
@@ -486,7 +505,7 @@
    * @category Session State
    */
   clientStateJson () {
-    const delegate = this.clientStateDelegate();
+    const delegate = this.assistantModel();
     if (delegate) {
       return delegate.asJsonString();
     }
@@ -499,7 +518,7 @@
    * @category Client State
    */
   clientStateJsonSchema () {
-    const delegate = this.clientStateDelegate();
+    const delegate = this.assistantModel();
     if (delegate) {
       return delegate.asRootJsonSchemaString();
     }
@@ -512,6 +531,7 @@
    * @returns {Array} The filtered messages.
    * @category Session State
    */
+
   onFilterJsonHistory (messages) {
     const json = this.clientStateJson();
 
@@ -519,23 +539,32 @@
       const tagMap = this.clientStateTagMap();
 
       const lastMessage = messages.last();
-      const jsonHistory = messages.map(m => {
-        if (m !== lastMessage) {
-          assert(m.content.occurenceCount("<client-state>") < 2, "too many client-state tags!");
-          m.content = m.content.replaceContentOfHtmlTagMap(tagMap);
-          // or should we just remove the tags entirely, or replace them with a note that they were removed?
-        } else {
-          const schema = this.clientStateJsonSchema();
-          const schemaString = JSON.stableStringifyWithStdOptions(schema, null, 2);
-          const jsonString = JSON.stableStringifyWithStdOptions(json, null, 2);
-          m.content = m.content + "\n\n" +"<client-state><schema>" + schemaString + "</schema><payload>" + jsonString + "</payload></client-state>";
-        }
-        return m;
+
+      // modify the content of all messages except the last 20
+      const messagesToModify = messages.slice(0, -20);
+      messagesToModify.forEach(m => {
+          // find all the tool-call-result tags which are for getClientState or patchClientState 
+          // and replace them with a note that they were removed
+          m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
+            if (content.includes("getClientState" || content.includes("patchClientState"))) {
+              const json = JSON.parse(content);
+              if (json.toolName === "getClientState" || json.toolName === "patchClientState") {
+                json.result = "result removed to save tokens";
+                return JSON.stableStringifyWithStdOptions(json, null, 2);
+              }
+            }
+            return content;
+          });
       });
-      return jsonHistory;
     }
 
     return messages;
   }
+
+  /*
+  const schemaString = JSON.stableStringifyWithStdOptions(schema, null, 2);
+  const jsonString = JSON.stableStringifyWithStdOptions(json, null, 2);
+*/
+
 
 }.initThisClass());

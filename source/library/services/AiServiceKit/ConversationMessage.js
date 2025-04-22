@@ -182,6 +182,17 @@
       slot.setActionMethodName("delete");
     }
 
+    {
+      const slot = this.newSlot("markAsCompleteAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Mark as Complete");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setCanInspect(true)
+      slot.setActionMethodName("markAsComplete");
+    }
+
     /**
      * @member {Action} deleteFollowingMessagesAction - The action to delete following messages.
      * @category Action
@@ -231,6 +242,16 @@
     if (!this.messageId()) {
       this.setMessageId(Object.newUuid());
     }
+  }
+
+  /**
+   * Mark the message as complete.
+
+   * @category Action
+   */
+  markAsComplete () {
+    this.setIsComplete(true);
+    return this;
   }
 
   /**
@@ -348,6 +369,7 @@
    * @category Data
    */
   setValue (s) {
+    //assert(Type.isString(s), this.type() + " setValue() requires a string");
     super.setValue(s)
     this.directDidUpdateNode() // so updates trigger UI refresh
     return this

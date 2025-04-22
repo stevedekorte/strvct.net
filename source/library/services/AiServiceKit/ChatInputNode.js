@@ -81,6 +81,7 @@
    * @category Input
    */
   setValue (v) {
+    assert(Type.isString(v), this.type() + " setValue() requires a string");
     super.setValue(v);
     return this;
   }

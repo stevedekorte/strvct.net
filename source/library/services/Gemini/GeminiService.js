@@ -47,16 +47,16 @@
   modelsJson () {
     return [
       {
-          "name": "gemini-1.5-pro-latest",
-          "title": "Gemini 1.5 Pro",
-          "inputTokenLimit": 2097152,
-          "outputTokenLimit": 8192
+        "name": "gemini-2.5-flash-preview-04-17",
+        "title": "Gemini 2.5 Flash Preview",
+        "inputTokenLimit": 1048576,
+        "outputTokenLimit": 65536
       },
       {
-          "name": "gemini-2.0-flash",
-          "title": "Gemini 2.0 Flash",
-          "inputTokenLimit": 1048576,
-          "outputTokenLimit": 8192
+        "name": "gemini-2.5-pro-preview-03-25",
+        "title": "Gemini 2.5 Pro Preview",
+        "inputTokenLimit": 1048576,
+        "outputTokenLimit": 65536
       }
     ];
   }

@@ -1,0 +1,274 @@
+"use strict";
+
+/**
+ * @module library.services.AiServiceKit.Composer
+ * @classdesc A utility for composing AI prompts. 
+ * It will replace occurrences of:
+ * - {{file$fileName}} with the contents of the file 
+ * - {{$tableOfContents}} with the table of contents of the prompt.
+ * - {{$methodName}} with the result of the method call on the promptTarget.
+ */
+
+/**
+ * @class AiPromptComposer
+ * @extends BMSummaryNode
+ * @classdesc A BMSummaryNode that composes an AI prompt.
+ * 
+ * Example:
+ * 
+ * const composer = new AiPromptComposer();
+ * composer.setPromptTarget(targetForMethodReplacements);
+ * composer.setInputString(anInputString);
+ * const prompt = composer.compose();
+ */
+
+(class AiPromptComposer extends BMSummaryNode {
+
+  initPrototypeSlots () {
+
+    /**
+     * @member {Object} promptTarget - object on which methods will be called to compose the prompt
+     * @category Prompt Target
+     */
+    {
+      const slot = this.newSlot("promptTarget", null);
+      slot.setLabel("Prompt Target");
+      slot.setShouldStoreSlot(false);
+      slot.setSlotType("Object");
+      slot.setIsSubnodeField(false);
+      slot.setAllowsNullValue(true);
+    }
+
+    /**
+     * @member {Object} promptDictionary - dictionary of key/value replacements
+     * @category Prompt Dictionary
+     */
+    {
+      const slot = this.newSlot("promptMap", null);
+      slot.setLabel("Prompt Dictionary");
+      slot.setShouldStoreSlot(false);
+      slot.setSlotType("Map");
+      slot.setIsSubnodeField(false);
+      slot.setAllowsNullValue(true);
+      slot.setFinalInitProto(Map);
+    }
+
+    /**
+     * @member {Object} inputString - string to compose the prompt from
+     * @category Input
+     */
+    {
+      const slot = this.newSlot("inputString", null);
+      slot.setLabel("Input String");
+      slot.setShouldStoreSlot(false);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(false);
+      slot.setAllowsNullValue(true);
+    }
+
+    /**
+     * @member {Object} outputString - the composed prompt (used during compose)
+     * @category Output
+     */
+    {
+      const slot = this.newSlot("outputString", null);
+      slot.setLabel("Output String");
+      slot.setShouldStoreSlot(false);
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(false);
+      slot.setAllowsNullValue(true);
+    }
+
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
+  }
+
+  setInputFileName (fileName) {
+    this.setInputString(this.contentsOfFileNamed(fileName));
+    return this;
+  }
+
+  // --- utility methods ---
+
+  contentsOfFileNamed (fileName) {
+    const file = BMFileResources.shared().rootFolder().resourceWithName(fileName);
+    if (!file) {
+      throw new Error(`File not found: ${fileName}`);
+    }
+    const contents = file.value();
+    if (contents === null || contents === undefined) {
+      throw new Error(`Could not read contents of file: ${fileName}`);
+    }
+    return contents;
+  }
+
+  // --- compose ---
+
+  compose () {
+    this.setOutputString(this.inputString());
+
+    this.replaceFiles();
+    this.convertToAbsoluteMarkdown();
+    this.replaceTableOfContents(); // so it's not treated as a method
+    this.replaceMethods(); // this ordering prevents methods from containing string with {{file$fileName}}
+
+    return this.outputString();
+  }
+
+  // --- replace files ---
+
+  replaceFiles () {
+    // file all file names of the form {{file$fileName}} and replace them with the contents of the file using .contentsOfFileNamed()
+    // repeat on inputString until no more {{file$fileName}} are found
+    // limit to 1000 iterations
+    for (let i = 0; i < 1000; i++) {
+      if (!this.replaceNextFile()) {
+        return;
+      }
+    }
+    throw new Error("Too many iterations during replaceFiles");
+  }
+
+  replaceNextFile () {
+    let string = this.outputString();
+    // console.log("\n=== Debug replaceNextFile ===");
+    // console.log("Full string:", string);
+    
+    if (string.includes("{{file$")) {
+      // console.log("\nFound {{file$ in string");
+      // First find the complete pattern
+      const fullPattern = /\{\{file\$([^{}]+?)\}\}/;
+      // console.log("Using pattern:", fullPattern);
+      const match = string.match(fullPattern);
+      // console.log("Match result:", match);
+      
+      if (!match) {
+        // If no match, let's check what parts we do have
+        const lines = string.split('\n');
+        const problematicLineIndex = lines.findIndex(line => line.includes('{{file$'));
+        const lineNumber = problematicLineIndex + 1;
+        const problematicLine = lines[problematicLineIndex];
+        
+        // console.log("\nAnalyzing problematic line:");
+        // console.log("Line content:", JSON.stringify(problematicLine));
+        // console.log("Line length:", problematicLine.length);
+        // console.log("Character codes:", [...problematicLine].map(c => c.charCodeAt(0)));
+        
+        // Check specific parts of the pattern
+        const openingBrace = problematicLine.includes('{{');
+        const filePrefix = problematicLine.includes('{{file$');
+        const closingBrace = problematicLine.includes('}}');
+        
+        // console.log("Pattern parts found:");
+        // console.log("- Opening braces {{:", openingBrace);
+        // console.log("- file$ prefix:", filePrefix);
+        // console.log("- Closing braces }}:", closingBrace);
+        
+        let detailedError = `Invalid file reference format found on line ${lineNumber}:\n` +
+                           `  ${problematicLine}\n` +
+                           'Pattern analysis:\n';
+        
+        if (!openingBrace) detailedError += '  - Missing opening braces "{{"\n';
+        if (!filePrefix) detailedError += '  - Missing "file$" prefix\n';
+        if (!closingBrace) detailedError += '  - Missing closing braces "}}"\n';
+        
+        detailedError += '\nThe file reference must be in the format {{file$filename.txt}} with matching opening and closing braces.';
+        
+        throw new Error(detailedError);
+      }
+      
+      const fileName = match[1];
+      // console.log("\nExtracted filename:", fileName);
+      
+      try {
+        const fileContents = this.contentsOfFileNamed(fileName);
+        // console.log("Successfully read file contents, length:", fileContents.length);
+        string = string.replaceAll(`{{file$${fileName}}}`, fileContents);
+        this.setOutputString(string);
+        return true;
+      } catch (error) {
+        // console.log("Error reading file:", error);
+        const lines = string.split('\n');
+        const problematicLineIndex = lines.findIndex(line => line.includes(`{{file$${fileName}}}`));
+        const lineNumber = problematicLineIndex + 1;
+        
+        throw new Error(
+          `Error processing file reference on line ${lineNumber}:\n` +
+          `  ${lines[problematicLineIndex]}\n` +
+          `${error.message}`
+        );
+      }
+    }
+    return false;
+  }
+
+  // --- replace methods ---
+
+  replaceMethods () {
+    // next, find all {{$methodName}} and replace them with the result of the method call on the promptTarget
+    // repeat on inputString until no more {{$methodName}} are found
+    // limit to 1000 iterations
+    for (let i = 0; i < 1000; i++) {
+      if (!this.replaceNextMethod()) {
+        return;
+      }
+    }
+    throw new Error("Too many iterations during replaceMethods");
+  }
+
+  replaceNextMethod () {
+    const string = this.outputString();
+    if (string.includes("{{$")) {
+      const matches = string.match(/{{\$([^}]+)}}/);
+      if (matches && matches[1]) {
+        // call method on promptTarget if it exists
+        const methodName = matches[1];
+        let method = null;
+        if (this.promptTarget()) {
+          method = this.promptTarget()[methodName];
+        }
+        if (method) {
+          const methodResult = method.apply(this.promptTarget());
+          this.setOutputString(string.replaceAll(`{{$${methodName}}}`, methodResult));
+          return true;
+        } else {
+          const map = this.promptMap();
+          // otherwise, use the prompt dictionary
+          if (map.has(methodName)) {
+            const value = map.get(methodName);
+            this.setOutputString(string.replaceAll(`{{$${methodName}}}`, value));
+            return true;
+          } else {
+            throw new Error(`Method ${methodName} not found on promptTarget or in promptDictionary`);
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  // --- convert relative to absolute markdown ---
+
+  convertToAbsoluteMarkdown () {
+    const absoluteHeaders = new MarkdownRelative().setInputString(this.outputString()).convertRelativeToAbsolute().outputString();
+    this.setOutputString(absoluteHeaders);
+  }
+
+  // --- table of contents ---
+
+  tableOfContentsString () {
+    const toc = new MarkdownToc().setIndentString("      ").setMarkdown(this.outputString()).getTextToc();
+    return toc;
+  }
+
+  replaceTableOfContents () {
+    // find all {{$tableOfContents}} and replace them with the table of contents
+    let string = this.outputString();
+    if (string.includes("{{$tableOfContents}}")) {
+      string = string.replaceAll("{{$tableOfContents}}", this.tableOfContentsString());
+      this.setOutputString(string);
+    }
+  }
+
+}.initThisClass());

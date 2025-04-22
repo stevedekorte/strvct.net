@@ -10,6 +10,13 @@
 (class String_ideal extends String {
 
     /**
+     * @returns {string} The JSON type for a String which is "string".
+     */
+    static jsonType () {
+        return "string";
+    }
+
+    /**
      * Returns the string itself
      * @returns {string} The string
      * @category Basic Operations
@@ -595,6 +602,18 @@
     }
 
     /**
+     * Checks if the string is capitalized
+     * @returns {boolean} True if the string is capitalized, false otherwise
+     */
+    isCapitalized () {
+        // deal with empty string
+        if (this.length === 0) {
+            return false;
+        }
+        return this.charAt(0).match(/[A-Z]/);
+    }
+
+    /**
      * Clips the string to a specified length and adds an ellipsis if necessary
      * @param {number} length - The maximum length
      * @returns {string} The clipped string
@@ -784,6 +803,23 @@
             doc.querySelectorAll(tagName).forEach(el => {
                 el.innerHTML = newContent;
             });
+        });
+    
+        return doc.body.innerHTML;
+    }
+
+    /**
+     * Replaces the content of specified HTML tags with a function
+     * @param {string} tagName - The name of the tag to replace
+     * @param {function} replaceFunction - The function to replace the content. It takes the innerHTML of the tag as a parameter and returns the new innerHTML.
+     * @returns {string} The HTML string with replaced content
+     */
+    mapContentOfTagsWithName (tagName, replaceFunction) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(this, 'text/html');
+    
+        doc.querySelectorAll(tagName).forEach(el => {
+            el.innerHTML = replaceFunction(el.innerHTML);
         });
     
         return doc.body.innerHTML;

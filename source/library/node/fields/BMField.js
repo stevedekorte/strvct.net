@@ -596,9 +596,9 @@
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
         if (!didSet) {
             if (this.target()) {
-                console.warn("Field unabled to set value using " + this.target().typeId() + "' '" + this.key() + "' setJson(" + json + ") failed to set value");
+                console.warn("Field unable to set value using " + this.target().typeId() + "' '" + this.key() + "' setJson(" + json + ")");
             } else {
-                console.warn("Field '" + this.key() + "' setJson(" + json + ") failed to set value");
+                console.warn("Field unable to set value using '" + this.key() + "' setJson(" + json + ")");
             }
             debugger;
             this.setValue(json);

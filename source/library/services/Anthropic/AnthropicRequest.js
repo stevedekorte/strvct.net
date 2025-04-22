@@ -306,6 +306,7 @@
     if (s.endsWith("Internal Server Error")) {
       this.setStopReason("internal_server_error");
       this.setStopError(new Error("Anthropic Internal Server Error"));
+      // /this.onError(this.stopError());
     }
     return super.onXhrLoadEnd(event);
   }

@@ -78,9 +78,6 @@
      * @category Inspection
      */
     setupInspectorFromSlots () {
-        if (this.thisClass().isKindOf(AssistantApiCalls)) {
-            debugger;
-        }
         const slotsMap = this.thisPrototype().allSlotsMap();
         const slotNames = slotsMap.keysArray();
         

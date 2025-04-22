@@ -30,7 +30,7 @@ function evalStringFromSourceUrl(codeString, path) {
 
     // Combine the code string with the sourceURL comment
     const debugCode = codeString + sourceUrlComment;
-    console.log("eval path: ", path);
+    //console.log("eval path: ", path);
     //console.log("sourceURL: ", sourceURL, "\n");
     
     // Evaluate the code

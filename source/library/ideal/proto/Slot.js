@@ -22,7 +22,7 @@
  *   - inspected
  *   - isPrivate
  *   - slotType
- * - handles auto generating getter/setter
+ * - handles auto generating getter/setter 
  * 
  * NOTE:
  * 

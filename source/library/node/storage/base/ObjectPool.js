@@ -669,6 +669,9 @@
      * @returns {ObjectPool}
      */
     addDirtyObject (anObject) { // private
+        if (anObject.thisClass && anObject.thisClass().isKindOf(ObjectPool)) {
+            throw new Error("attempt to addDirtyObject " + anObject.typeId() + " which is an ObjectPool");
+        }
         if (!this.hasActiveObject(anObject)) {
             console.log("looks like it hasn't been referenced yet");
             throw new Error("not referenced yet");

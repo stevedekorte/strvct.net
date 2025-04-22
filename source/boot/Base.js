@@ -12,6 +12,18 @@
  * Base class with helpful methods for cloning and slot creation.
  */
 (class Base extends Object {
+
+    /**
+     * @returns {string} The JSON type for an Object which is "object", unless the type method is defined.
+     */
+    static jsonType () {
+        /// check if type is a function
+        if (typeof this.type === "function") {
+            return this.type();
+        }
+        return "object";
+    }
+
     /**
      * Checks if the code is running in a browser environment.
      * @returns {boolean} True if running in a browser, false otherwise.

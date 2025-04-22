@@ -25,6 +25,21 @@
         return results
     }
 
+    addAll (anObject) {
+        // we should support arrays, sets, and map values, and iterators
+        if (anObject instanceof Array) {
+            anObject.forEach(v => this.add(v));
+        } else if (anObject instanceof Set) {
+            anObject.forEach(v => this.add(v));
+        } else if (anObject instanceof Map) {
+            anObject.forEach((v, k) => this.add(k, v));
+        } else if (anObject instanceof Iterator) {
+            anObject.forEach(v => this.add(v));
+        } else {
+            throw new Error("Invalid argument type");
+        }
+    }
+
     /**
      * Checks if this set is equal to another set
      * @param {Set} aSet - The set to compare with

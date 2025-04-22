@@ -47,6 +47,13 @@ const Base64 = (function () {
 (class Number_ideal extends Number {
 
     /**
+     * @returns {string} The JSON type for a Number which is "number".
+     */
+    static jsonType () {
+        return "number";
+    }
+
+    /**
      * Returns a duplicate of the number (which is the number itself for primitives)
      * @returns {number} The number
      * @category Duplication

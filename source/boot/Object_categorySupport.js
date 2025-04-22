@@ -234,9 +234,11 @@
         // This is a bit of a hack to implement class categories in Javascript
         // sanity check: check name to ensure we're only using this on a category
 
-        const hasTwoPartName = this.name.split("_").length === 2;
+        let nameParts = this.name.split("_");
+        let hasTwoPartName = nameParts.length === 2;
         if (!hasTwoPartName) {
-            const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName_categoryName.";
+            const msg = "category class name '" + this.name + "' doesn't match expected pattern of ClassName_categoryName.";
+            debugger;
             throw new Error(msg);
         }
 
@@ -302,6 +304,23 @@
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super
         }
 
+        // call the initPrototypeSlots method for the category, if it exists
+        let catName = nameParts[1];
+        let catInitMethodName = "initPrototypeSlots_" + catName;
+        let hasCatInitMethod = this.prototype.hasOwnProperty(catInitMethodName);
+        //console.log("catInitMethod: '" + catInitMethodName + "' exists: ", hasCatInitMethod);
+
+        let parentProto = parentClass.prototype;
+        let parentProtoHasCatInitMethod = parentProto.hasOwnProperty(catInitMethodName);
+
+        if (hasCatInitMethod) {
+            if (!parentProtoHasCatInitMethod) {
+                let msg = "parent class prototype '" + this.name + "' does not have categoryInitMethod '" + catInitMethodName + "'";
+                debugger;
+                throw new Error(msg);
+            }
+            parentProto[catInitMethodName].apply(parentProto);
+        }
         return this;
     }
 

@@ -9,6 +9,13 @@
 (class Boolean_ideal extends Boolean {
 
     /**
+     * @returns {string} The JSON type for a Boolean which is "boolean".
+     */
+    static jsonType () {
+        return "boolean";
+    }
+
+    /**
      * @returns {boolean} Returns the boolean value itself.
      * @category Utility
      */

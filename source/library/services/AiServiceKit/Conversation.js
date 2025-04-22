@@ -9,6 +9,7 @@
  * @extends BMStorableNode
  * @classdesc Represents a conversation with messages and chat input functionality.
  */
+
 (class Conversation extends BMStorableNode {
   /**
    * @description Initializes the prototype slots for the Conversation class.
