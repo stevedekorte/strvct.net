@@ -132,37 +132,54 @@ The following formats will be used for tool calls and responses:
 
   onToolCallAdded (toolCall) {
     if (toolCall.isOnStreamTool()) {
-      if (toolCall.isQueued() && toolCall.isOnStreamTool()) {
-        toolCall.makeCall();
-      }
+      assert(toolCall.isQueued());
+      toolCall.makeCall();
     }
   }
 
   onMessageComplete (aMsg) {
-    debugger;
-    if (aMsg.isResponse()) {
+    console.log(this.type() + ".onMessageComplete('" + aMsg.messageId() + "')");
+    //debugger;
+    if (aMsg.isResponse()) { // should we only call the tools from this message?
+        /*
         const queuedOnCompletionCalls = this.toolCalls().queuedOnCompletionCalls();
         queuedOnCompletionCalls.forEach((toolCall) => {
           toolCall.makeCall();
         });
         this.sendCompletedToolCallResponses();
+        */
+       this.processQueuedToolCalls();
       }
   }
 
   onToolCallComplete (toolCall) {
-    // a place to add a hook for when a tool call is complete
+    this.scheduleMethod("sendCompletedToolCallResponses", 0);
   }
 
+  processQueuedToolCalls () {
+    const queuedCalls = this.toolCalls().queuedCalls();
+    queuedCalls.forEach((toolCall) => {
+      assert(toolCall.isQueued());
+      if (!toolCall.isOnNarrationTool()) {
+        toolCall.makeCall();
+      }
+    });
+    this.scheduleMethod("sendCompletedToolCallResponses", 0);
+  }
 
   sendCompletedToolCallResponses () {
     const completedCalls = this.toolCalls().completedCalls();
     if (completedCalls.length > 0) {
-      const m = this.conversation().newUserMessage();
-      const content = this.composeResponseForToolCalls(completedCalls);
-      m.setContent(content);
-      m.setIsVisibleToUser(false);
-      m.setIsComplete(true);
-      assert(!m.isVisibleToUser());
+      if (completedCalls.filter((toolCall) => toolCall.toolResult().doesRequireResponse()).length > 0) {
+        debugger;
+        const m = this.conversation().newUserMessage();
+        m.setSpeakerName("Tool Call Results");
+        const content = this.composeResponseForToolCalls(completedCalls);
+        m.setContent(content);
+        m.setIsVisibleToUser(false);
+        m.setIsComplete(true);
+        assert(!m.isVisibleToUser());
+      }
       this.toolCalls().removeCalls(completedCalls);
     }
   }
@@ -170,7 +187,7 @@ The following formats will be used for tool calls and responses:
   composeResponseForToolCalls (completedCalls) {
     const parts = [];
     completedCalls.forEach((toolCall) => {
-      if (toolCall.toolResult().doesRequireResponse()) {
+      if (toolCall.toolResult().doesRequireResponse()) { // will skip silent responses
         parts.push(toolCall.toolResult().composeResponseString());
       }
     });

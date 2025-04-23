@@ -372,9 +372,8 @@
   onRequestComplete (aRequest) {
    // debugger;
     //this.setRequest(null)
-    //this.setStatus("complete")
-    this.setIsComplete(true);
-    this.sendDelegate("onMessageComplete");
+    //this.setStatus("complete");
+    this.markAsComplete();
   }
 
   /**

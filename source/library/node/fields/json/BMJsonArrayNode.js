@@ -237,7 +237,7 @@
             } else {
                 const aNode = this.newSubnodeForJson(v);
                 newSubnodes.push(aNode);
-                console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
+                //console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
         });
 

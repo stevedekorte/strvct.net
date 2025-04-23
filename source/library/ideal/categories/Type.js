@@ -395,6 +395,10 @@ class Type extends Object {
         throw new Error("valuesAreEqual does not know how to compare values of type " + Type.typeName(a) + " and " + Type.typeName(b));
     }
 
+    static isError (v) {
+        return v instanceof Error;
+    }
+
     /**
      * Checks if the given value is a Promise.
      * @category Type Checking
@@ -829,15 +833,20 @@ class Type extends Object {
      * @param {*} value - The value to check.
      * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
      */
-    static isJsonType (value) {
+    static isJsonType (value, seenSet = new Set()) {
+        if (seenSet.has(value)) {
+            return false; // JSON types can't contain circular references
+        }
+        seenSet.add(value);
+
         const vType = typeof(value);
         return (
             value === null ||
             vType === 'string' ||
             vType === 'number' ||
             vType === 'boolean' ||
-            (Array.isArray(value) && value.every(Type.isJsonType)) ||
-            (vType === 'object' && Object.values(value).every(v => Type.isJsonType(v)))
+            (Array.isArray(value) && value.every(v => Type.isJsonType(v, seenSet))) ||
+            (vType === 'object' && Object.values(value).every(v => Type.isJsonType(v, seenSet)))
         );
     }
 

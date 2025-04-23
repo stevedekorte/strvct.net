@@ -34,6 +34,7 @@
     this.setHasNewlineAfterSummary(true);
     */
     this.setNoteIsSubnodeCount(true);
+    this.setShouldStoreSubnodes(true);
   }
 
   init () {
@@ -61,11 +62,14 @@
     toolCall.setCallString(innerTagString);
 
     if (toolCall.toolName()) { // might not have one if there's a parse error
-      const toolDef = this.assistantToolKit().toolDefinitions().toolWithName(toolCall.toolName());
+      const toolDef = this.assistantToolKit().toolDefinitions().toolDefinitionWithName(toolCall.toolName());
+      toolDef.assertMethodExists();
       assert(toolDef, "Tool definition not found for tool call: " + toolCall.toolName()); // should the tool call report the error
       // this.toolCall().reportErrorToAssistant(new Error("Tool definition not found for tool call: " + toolCall.toolName()));
       toolCall.setToolDefinition(toolDef);
     }
+
+    toolCall.assertValidCall();
 
     if (!toolCall.hasError()) {
       // check if the tool call id is already in the tool calls
@@ -102,6 +106,10 @@
 
   completedCalls () {
     return this.subnodes().filter((toolCall) => toolCall.isCompleted());
+  }
+
+  queuedCalls () {
+    return this.subnodes().filter((toolCall) => toolCall.isQueued());
   }
 
   queuedOnCompletionCalls () {

@@ -250,7 +250,10 @@
    * @category Action
    */
   markAsComplete () {
-    this.setIsComplete(true);
+    if (!this.isComplete()) {
+      this.setIsComplete(true); // will send onMessageComplete
+      //this.sendDelegate("onMessageComplete");
+    }
     return this;
   }
 
@@ -317,7 +320,7 @@
    */
   onComplete () {
     // to be overridden by subclasses
-    this.sendDelegate("onCompletedMessage");
+    this.sendDelegate("onMessageComplete");
   }
 
   /**

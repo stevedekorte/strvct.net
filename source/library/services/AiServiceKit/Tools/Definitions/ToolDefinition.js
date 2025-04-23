@@ -28,6 +28,7 @@
       slot.setIsSubnodeField(false);
       slot.setCanEditInspection(false);
       slot.setIsInJsonSchema(true);
+      slot.setShouldStoreSlot(true);
     }
 
     {
@@ -39,6 +40,7 @@
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
       slot.setIsInJsonSchema(true);
+      slot.setShouldStoreSlot(true);
     }
 
     {
@@ -50,22 +52,10 @@
       slot.setShouldJsonArchive(true);
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
-      slot.setIsInJsonSchema(false);
-    }
+      slot.setIsInJsonSchema(false);      
+      slot.setShouldStoreSlot(true);
 
-    /*
-    {
-      const slot = this.newSlot("referencedSpecsString", null);
-      slot.setLabel("Referenced Specs");
-      slot.setDescription("Stringified JSON Schema for the classes referenced by the tool definition.");
-      slot.setSlotType("String");
-      slot.setAllowsNullValue(true);
-      slot.setShouldJsonArchive(true);
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-      slot.setIsInJsonSchema(false);
     }
-    */
 
     {
       const slot = this.newSlot("referencedSchemas", null);
@@ -116,19 +106,19 @@
     return this.toolTarget().methodNamed(this.name());
   }
 
-  validate () {
+  assertMethodExists () {
     const method = this.toolTarget().methodNamed(this.name());
     assert(method, "Method named " + this.name() + " not found in class " + this.toolTarget().type());
   }
 
-  toolSpecJson (refSet = new Set()) {
-    this.validate();
-    const json = this.toolMethod().toolSpecJson(refSet);
+  toolJsonSchema (refSet = new Set()) {
+    this.assertMethodExists();
+    const json = this.toolMethod().asJsonSchema(refSet);
     return json;
   }
 
   jsonSchemaString () {
-    const json = this.toolSpecJson();
+    const json = this.toolJsonSchema();
     const s = JSON.stableStringifyWithStdOptions(json, null, 2);
     this.setupComponents();
     return s;
@@ -136,7 +126,7 @@
 
   classSetReferencedByDefinition () {
     const refSet = new Set();
-    this.toolSpecJson(refSet);
+    this.toolJsonSchema(refSet);
     return refSet;
   }
 

@@ -168,7 +168,7 @@
    * @param {*} aMsg - The completed message.
    * @category Event Handling
    */
-  onCompletedMessage (aMsg) {
+  onMessageComplete (aMsg) {
   }
 
   /**

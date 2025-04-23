@@ -1,4 +1,5 @@
+
 [
-    "ajv.js",
+    "jsonschema.js",
     "JsonValidator.js"
 ]

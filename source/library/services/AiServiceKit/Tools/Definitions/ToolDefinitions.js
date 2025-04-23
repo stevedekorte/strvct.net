@@ -30,6 +30,7 @@
     this.setNodeCanReorderSubnodes(false);
     this.setCanDelete(false);
 
+    this.setShouldStoreSubnodes(true);
     /*
     this.setSummaryFormat("value");
     this.setHasNewlineAfterSummary(true);
@@ -55,7 +56,7 @@
     for (const method of methodSet) {
       //console.log(instance.type() + " " + method.name + " isToolable: " + method.isToolable());
       if (method.isToolable && method.isToolable()) {
-        if (!this.toolWithName(method.name)) {
+        if (!this.toolDefinitionWithName(method.name)) {
           const toolDef = ToolDefinition.clone();
           toolDef.setToolTarget(instance);
           toolDef.setName(method.name);
@@ -71,7 +72,7 @@
     return this;
   }
   
-  toolWithName (name) {
+  toolDefinitionWithName (name) {
     return this.toolDefinitions().find(toolDef => toolDef.name() === name);
   }
 
@@ -91,7 +92,7 @@ The following tools are available for you to use:
 
   toolSpecsJson () {
     const refSet = new Set();
-    const tools = this.toolDefinitions().map(toolDef => toolDef.toolSpecJson(refSet));
+    const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonSchema(refSet));
     /*
     const types = refSet.map(type => type.jsonSchemaRef());
     const json = {
@@ -109,7 +110,7 @@ The following tools are available for you to use:
 
   classesReferencedByToolTypes () {
     const refSet = new Set();
-    const tools = this.toolDefinitions().map(toolDef => toolDef.toolSpecJson(refSet));
+    const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonSchema(refSet));
     return refSet;
   }
 

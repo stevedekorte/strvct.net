@@ -9,5 +9,5 @@
     "htmlparser2/_imports.json",
     "stream/stream.js",
     "clarinet/clarinet.js",
-    "ajv/_imports.json"
+    "jsonschema/_imports.json"
 ]

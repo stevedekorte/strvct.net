@@ -12,7 +12,7 @@ Example Tool call format:
 {
   "toolName": "<tool_name>",
   "parameters": {
-    ... // key-value pairs specific to the tool<tool-call><![CDATA[
+    ... // key-value pairs specific to the tool
   {
     "toolName": "getWeather",
     "parameters": {
@@ -105,6 +105,9 @@ Example Tool call format:
       slot.setIsInJsonSchema(true);
       slot.setShouldStoreSlot(true);
       slot.setValidValues(["queued", "calling", "completed"]);
+      // queued: tool is queued to be called
+      // calling: tool is waiting for a setResult() call from the receiver of the tool call
+      // completed: set once setResult() is called
     }
 
     // ---- END ToolCall JSON schema ----
@@ -183,6 +186,10 @@ Example Tool call format:
     return this.status() === "queued";
   }
 
+  isCalling () {
+    return this.status() === "calling";
+  }
+
   isCompleted () {
     return this.status() === "completed";
   }
@@ -225,10 +232,29 @@ Example Tool call format:
     }
   }
 
-  validateJsonSchema () {
+  assertValidCall () {
+    /*
+    this.assertValidToolCallSchema();
+    this.assertValidParametersSchema();
+    */
+  }
+
+  assertValidToolCallSchema () {
     const validator = new JsonValidator();
-    validator.setJsonSchema(this.toolDefinition().jsonSchema());
+    const toolCallSchema = this.toolDefinition().toolMethod().asJsonSchema();
+    validator.setJsonSchema(toolCallSchema);
     const isValid = validator.validate(this.callJson());
+    if (!isValid) {
+      const e = new Error(validator.errorMessageForLLM());
+      this.handleCallError(e);
+    }
+  }
+
+  assertValidParametersSchema () {
+    const validator = new JsonValidator();
+    const paramsSchema = this.toolDefinition().toolMethod().paramsSchema(new Set());
+    validator.setJsonSchema(paramsSchema);
+    const isValid = validator.validate(this.parametersDict());
     if (!isValid) {
       const e = new Error(validator.errorMessageForLLM());
       this.handleCallError(e);
@@ -250,15 +276,6 @@ Example Tool call format:
 
     this.handleCallError(e);
   }
-
-  /*
-  onMessageComplete () {
-  // have AssistantToolKit manage this instead as it requires coordination
-    if (this.doesWaitForMessageCompletion()) {
-      this.makeCall();
-    }
-  }
-  */
 
   toolTarget () {
     return this.toolDefinition().toolTarget();
@@ -294,6 +311,7 @@ Example Tool call format:
       const methodName = this.toolDefinition().name();
       const method = toolTarget.methodNamed(methodName);
       const parametersDict = this.parametersDict();
+
       // should we instantiate the parameter objects and replace them as values in the json, or just pass the json?
       // we should probably do the latter as it's more flexible
 
@@ -307,12 +325,14 @@ Example Tool call format:
       //   - unknown parameters
       //   - etc.
 
-      let resultValue = method.apply(toolTarget, [parametersDict, this]);
+      method.apply(toolTarget, [this]);
+      /*
+      let resultValue = method.apply(toolTarget, [this]);
       if (Type.isUndefined(resultValue)) {
         resultValue = null; // should we make this more strict and throw an error?
       }
-      assert(Type.isJsonType(resultValue));
       this.handleCallSuccess(resultValue);
+      */
     } catch (e) {
       this.handleCallError(e);
     }
@@ -327,6 +347,7 @@ Example Tool call format:
   }
 
   handleCallSuccess (resultValue) {
+    assert(Type.isJsonType(resultValue));
     this.setStatus("completed");
 
     const r = this.newToolResult();
@@ -337,6 +358,7 @@ Example Tool call format:
   }
   
   handleCallError (e) {
+    assert(Type.isError(e), "handleCallError requires an Error instance");
     this.setStatus("completed");
 
     const r = this.newToolResult();
@@ -350,6 +372,12 @@ Example Tool call format:
   hasError () {
     const r = this.toolResult();
     return r !== null && r.hasError(); 
+  }
+
+  setCallResult (json) {
+    debugger;
+    this.handleCallSuccess(json);
+    return this;
   }
 
   // --- Extract callId from invalid JSON ---

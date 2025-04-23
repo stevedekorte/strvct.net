@@ -267,7 +267,17 @@ Function.isKindOf = function(superclass) {
       }
   },
 */
-    Function.prototype.toolSpecJson = function(refSet = new Set()) {
+
+Function.prototype.asRootJsonSchema = function(refSet = new Set()) {
+    const json = {
+        "$id": this.assistantToolName(),
+        "$schema": "http://json-schema.org/draft-07/schema#",
+    };
+    Object.assign(json, this.asJsonSchema(refSet));
+    return json;
+}
+
+    Function.prototype.asJsonSchema = function(refSet = new Set()) {
         const name = this.assistantToolName();
 
         assert(name, "Assistant tool name is required");
@@ -275,6 +285,29 @@ Function.isKindOf = function(superclass) {
         const description = this.description();
         assert(description, "Assistant tool description is required");
 
+        const paramsSchema = this.paramsSchema(refSet); 
+
+        /*
+        // add return type refs
+        this.returnTypes().forEach(typeName => {
+            refTypeName(paramDict.type, refSet);
+        });
+        */
+
+        return {
+            "$id": name,
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "toolName": name,
+            "description": description,
+            "parameters": paramsSchema,
+            "returns": this.returnsJsonSchema(refSet),
+            "silentSuccess": this.silentSuccess(),
+            "silentError": this.silentError()
+        };
+    }
+
+    Function.prototype.paramsSchema = function(refSet) {
+        assert(Type.isSet(refSet), "refSet is required");
         const parameters = this.parameters();
         assert(parameters, "Assistant tool parameters are required");
 
@@ -305,25 +338,11 @@ Function.isKindOf = function(superclass) {
             dict.description = paramDict.description;
         });
 
-        /*
-        // add return type refs
-        this.returnTypes().forEach(typeName => {
-            refTypeName(paramDict.type, refSet);
-        });
-        */
-
-        return {
-            "toolName": name,
-            "description": description,
-            "parameters": paramsSchema,
-            "returns": this.returnsJsonSchema(refSet),
-            "silentSuccess": this.silentSuccess(),
-            "silentError": this.silentError()
-        };
+        return paramsSchema;
     }
 
     Function.prototype.toolSpecPrompt = function() {
-        const json = this.toolSpecJson();
+        const json = this.asJsonSchema();
         return JSON.stringify(json, null, 2);
     };
 
