@@ -171,7 +171,7 @@ The following formats will be used for tool calls and responses:
     const completedCalls = this.toolCalls().completedCalls();
     if (completedCalls.length > 0) {
       if (completedCalls.filter((toolCall) => toolCall.toolResult().doesRequireResponse()).length > 0) {
-        debugger;
+        //debugger;
         const m = this.conversation().newUserMessage();
         m.setSpeakerName("Tool Call Results");
         const content = this.composeResponseForToolCalls(completedCalls);

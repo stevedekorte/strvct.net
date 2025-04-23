@@ -850,6 +850,36 @@ class Type extends Object {
         );
     }
 
+    static assertIsJsonType (value, seenSet = new Set()) {
+
+        const vType = typeof(value);
+        const isSimpleType = (
+            value === null ||
+            vType === 'string' ||
+            vType === 'number' ||
+            vType === 'boolean');
+
+        if (isSimpleType) {
+            return true;
+        }
+
+        if (seenSet.has(value)) {
+            throw new Error("JSON types can't contain circular references");
+        }
+        seenSet.add(value); // place here so we don't add simple types
+
+        if (Array.isArray(value)) {
+            value.every(v => Type.assertIsJsonType(v, seenSet));
+            return true;
+        }
+
+        if (vType === 'object') {
+             Object.values(value).every(v => Type.assertIsJsonType(v, seenSet));
+             return true;
+        }
+        return false;
+    }
+
     /**
      * Checks if the given value is a deep JSON-compatible type.
      * @category Type Checking / JSON

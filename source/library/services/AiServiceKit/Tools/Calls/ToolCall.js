@@ -347,7 +347,7 @@ Example Tool call format:
   }
 
   handleCallSuccess (resultValue) {
-    assert(Type.isJsonType(resultValue));
+    Type.assertIsJsonType(resultValue);
     this.setStatus("completed");
 
     const r = this.newToolResult();
@@ -375,7 +375,7 @@ Example Tool call format:
   }
 
   setCallResult (json) {
-    debugger;
+    //debugger;
     this.handleCallSuccess(json);
     return this;
   }
