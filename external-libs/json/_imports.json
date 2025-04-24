@@ -1,0 +1,10 @@
+[
+    "stream/stream.js",
+    "clarinet/clarinet.js",
+
+    "fast-json-patch/_imports.json",
+    "json-stable-stringify/_imports.json",
+    "jsondiffpatch/_imports.json",
+    "jsonrepair/_imports.json",
+    "jsonschema/_imports.json"
+]

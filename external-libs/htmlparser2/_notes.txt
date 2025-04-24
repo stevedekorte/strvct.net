@@ -1,0 +1,10 @@
+
+what:
+HTML/XML streaming parser
+
+Core Dependencies
+domhandler – Handles the creation of the DOM tree from the parsed data. This is the default handler used by htmlparser2 if you want a DOM-style result instead of streaming events.
+
+domelementtype – Provides constants that define the types of DOM nodes (e.g., Text, Tag, Comment, etc.).
+
+entities – Handles decoding of HTML entities like &amp; or &#x1F600;.

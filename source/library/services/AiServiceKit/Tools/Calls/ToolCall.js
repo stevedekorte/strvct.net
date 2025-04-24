@@ -214,10 +214,22 @@ Example Tool call format:
     try {
       // do we need to remove CDATA header and footer?
       if (this.callString().startsWith("<![CDATA[")) {
-        debugger;
         callString = this.callString().substring(9, this.callString().length - 3);
       }
-      const json = JSON.parse(callString);
+
+      let json = undefined;
+      try {
+        json = JSON.parse(callString);
+      } catch (error1) {
+        try {
+          debugger;
+          console.error("Error parsing tool call - attempting to fix by adding closing brace");
+          json = JSON.parse(callString + "}"); // try to fix the json by adding a closing brace, as this is a common error
+        } catch (error2) {
+          console.error("Tool call fix failed - rethrowing original error");
+          throw error1; // rethrow the original error
+        }
+      }
       this.setCallJson(json);
     } catch (e) {
       this.handleParseError(e);
