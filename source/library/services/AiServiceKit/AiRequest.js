@@ -833,7 +833,7 @@
     }
 
     console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
-    //debugger;
+    debugger;
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {

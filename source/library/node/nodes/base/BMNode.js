@@ -31,6 +31,10 @@
  */
 
 (class BMNode extends ProtoClass {
+
+    static initClass () {
+        this.newClassSlot("additionalProperties", false);
+    }
     
     /**
      * @static
@@ -2054,7 +2058,8 @@
             type: "object",
             description: this.jsonSchemaDescription(),
             properties: this.jsonSchemaProperties(refSet),
-            required: this.jsonSchemaRequired()
+            required: this.jsonSchemaRequired(),
+            additionalProperties: this.additionalProperties()
         };
 
         const title = this.jsonSchemaTitle();

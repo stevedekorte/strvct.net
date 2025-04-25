@@ -68,15 +68,20 @@
     jsonSchemaForSubnodes (refSet) { // NOTE: method on prototype, not class
         assert(refSet);
         const items = {};
-        const refs = this.subnodeClasses().map(subnodeClass => {
-            return { 
-                "$ref": subnodeClass.jsonSchemaRef(refSet)
-            };
-        });
-        if (refs.length > 0) {
-            items.anyOf = refs;
+
+        if (this.subnodeClasses().length === 1) {
+            items["$ref"] = this.subnodeClasses().first().jsonSchemaRef(refSet);
         } else {
-            throw new Error("BMJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype.");
+            const refs = this.subnodeClasses().map(subnodeClass => {
+                return { 
+                    "$ref": subnodeClass.jsonSchemaRef(refSet)
+                };
+            });
+            if (refs.length > 0) {
+                items.anyOf = refs;
+            } else {
+                throw new Error("BMJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype.");
+            }
         }
         return items;
     }
@@ -214,6 +219,8 @@
         const newSubnodes = [];
 
         const seenJsonIds = new Set();
+
+        assert(Type.isArray(json), "Expected array for JSON path '" + this.nodePathString().after("Sessions/") + "'");
 
         json.forEach((v) => {
             const jsonId = v.jsonId;

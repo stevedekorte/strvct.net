@@ -47,16 +47,22 @@
   modelsJson () {
     return [
       {
+        "name": "gemini-2.5-pro-preview-03-25",
+        "title": "Gemini 2.5 Pro Preview",
+        "inputTokenLimit": 1048576,
+        "outputTokenLimit": 65536
+      },
+      {
         "name": "gemini-2.5-flash-preview-04-17",
         "title": "Gemini 2.5 Flash Preview",
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 65536
       },
       {
-        "name": "gemini-2.5-pro-preview-03-25",
-        "title": "Gemini 2.5 Pro Preview",
+        "name": "gemini-2.0-flash",
+        "title": "Gemini 2.0 Flash",
         "inputTokenLimit": 1048576,
-        "outputTokenLimit": 65536
+        "outputTokenLimit": 8192
       }
     ];
   }
@@ -134,12 +140,9 @@
     super.finalInit()
     this.setTitle(this.type().before("Service"));
 
-    this.setSystemRoleName(null); // only replaced in outbound request json
-    this.setUserRoleName("USER");
-    this.setAssistantRoleName("MODEL");
-
-    this.setChatEndpoint(null);
-    this.setSystemRoleName("user"); // only replaced in outbound request json
+    this.setUserRoleName("user");
+    this.setAssistantRoleName("model");
+    this.setSystemRoleName("system");
   }
 
   /*
@@ -211,57 +214,96 @@
     this.setupChatEndpoint();
   }
 
+  /*
+
+  curl https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY \
+  -H 'Content-Type: application/json' \
+  -X POST \
+  -d '{
+    "contents": [
+      {
+        "parts": [
+          {
+            "text": "Explain how AI works"
+          }
+        ]
+      }
+    ],
+    "generationConfig": {
+      "stopSequences": [
+        "Title"
+      ],
+      "temperature": 1.0,
+      "maxOutputTokens": 800,
+      "topP": 0.8,
+      "topK": 10
+    }
+  }'
+  */
+
   /**
    * @description Prepares the request before sending it.
    * @param {Object} aRequest - The request object to prepare.
    * @category API Communication
    */
   prepareToSendRequest (aRequest) {
+    //debugger;
     const bodyJson = aRequest.bodyJson();
     const geminiBody = {};
 
-    geminiBody.safety_settings = {
-      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-      "threshold": "BLOCK_LOW_AND_ABOVE"
-    }
+    geminiBody.safety_settings = [
+      {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_ONLY_HIGH"},
+      {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_ONLY_HIGH"},
+      {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_ONLY_HIGH"}
+    ];
 
     geminiBody.generation_config = {
       "temperature": bodyJson.temperature,
       "topP": bodyJson.top_p,
-      "topK": 40,
-      "outputTokenLimit": 100000,
+      "topK": 40
+      //"maxOutputTokens": 100000,
     }
 
     let messages = bodyJson.messages;
     
     // remove initial system message and place it in the request json
 
+    //debugger;
     if (messages.length > 0) {
       const firstMessage = messages.first();
       if (firstMessage.role === this.systemRoleName()) {
-        bodyJson.system_instruction = {
+        geminiBody.system_instruction = {
           parts: [ 
             { 
               text: firstMessage.content
             }
           ]
-        }
+        };
+        firstMessage.role = this.userRoleName();
         firstMessage.content = "Please begin the conversation now.";
       }
     }
 
+    assert(geminiBody.system_instruction, "System instruction is required");
+
     geminiBody.contents = messages.map((message) => {
+      let role = message.role.toLowerCase();
+      assert([this.assistantRoleName(), this.userRoleName()].includes(role), "Invalid message role: " + message.role);
       return {
-        role: message.role,
+        role: role,
         parts: { 
           text: message.content 
         }
-      }
+      };
     });
+    //debugger;
 
     // remove messages with empy content
     messages = messages.filter((message) => { return message.content.length > 0; });
 
+    console.log("geminiBody", JSON.stringify(geminiBody, null, 2));
+    //debugger;
+  
     aRequest.setBodyJson(geminiBody);
   }
 

@@ -283,6 +283,7 @@
       json.top_p = this.topP();
     }
 
+    //debugger;
     json.messages = this.jsonHistory();
 
     request.setBodyJson(json);

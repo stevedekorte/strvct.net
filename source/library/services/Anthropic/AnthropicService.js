@@ -45,7 +45,8 @@
           "anthropic-beta": "output-128k-2025-02-19",
           'anthropic-dangerous-direct-browser-access': true
         }
-      },
+      }
+      /*
       {
         "name": "claude-3-5-sonnet-20241022",
         "title": "Claude 3.5 Sonnet",
@@ -58,7 +59,6 @@
           'anthropic-dangerous-direct-browser-access': true
         }
       },
-      /*
       {
         "name": "claude-3-5-sonnet-20240620",
         "title": "Claude 3.5 Sonnet",

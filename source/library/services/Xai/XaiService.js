@@ -42,17 +42,19 @@
         "outputTokenLimit": 16384
       },
       {
-        "name": "ggrok-3-mini",
+        "name": "grok-3-mini",
         "title": "Grok 3 Mini",
         "inputTokenLimit": 131072,
         "outputTokenLimit": 16384 // just a guess as I can't find it in the docs
-      },
+      }
+      /*
       {
         "name": "grok-2-latest",
         "title": "Grok 2 Latest",
         "inputTokenLimit": 131072,
         "outputTokenLimit": 8192 // jsut a guess as I can't find it in the docs
       }
+      */
     ];
   }
   

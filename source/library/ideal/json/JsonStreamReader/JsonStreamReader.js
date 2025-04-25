@@ -164,7 +164,7 @@
    */
   onStreamJson(data) {
     assert(Type.isString(data), "data must be a string");
-    console.log("onStreamJson('" + data + "')");
+    //console.log("onStreamJson('" + data + "')");
     this.parser().write(data);
     return this;
   }
