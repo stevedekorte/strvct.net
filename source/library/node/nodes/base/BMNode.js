@@ -1141,6 +1141,10 @@
         return null;
     }
 
+    firstOwnerChainNodeOfClass (aClass) {
+        return this.ownershipChain().detect(node => node.thisClass().isSubclassOf(aClass));
+    }
+
     /**
 
      * @description Get the first parent node that responds to a given method in this instance's parent chain.

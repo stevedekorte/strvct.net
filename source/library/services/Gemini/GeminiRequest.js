@@ -199,9 +199,11 @@
         }
       }
 
+      /*
       if (candidate.safetyRatings) {
         console.log("candidate.safetyRatings: ", candidate.safetyRatings);
       }
+      */
     }
 
     if (json.usageMetadata) {

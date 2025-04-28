@@ -850,6 +850,28 @@ class Type extends Object {
         );
     }
 
+    /**
+     * Checks if the given value is a primitive JSON type.
+     * @category Type Checking / JSON
+     * @param {*} value - The value to check.
+     * @returns {boolean} True if the value is a primitive JSON type, false otherwise.
+     */
+    static isPrimitiveJsonType (value) {
+        return (
+            value === null ||
+            typeof value === 'string' ||
+            typeof value === 'number' ||
+            typeof value === 'boolean'
+        );
+    }
+
+    /**
+     * Asserts that the given value is a JSON-compatible type.
+     * Raises an error if the value is not a JSON-compatible type - helpful for debugging.
+     * @category Type Checking / JSON
+     * @param {*} value - The value to check.
+     * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
+     */
     static assertIsJsonType (value, seenSet = new Set()) {
 
         const vType = typeof(value);

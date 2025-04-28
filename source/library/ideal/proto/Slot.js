@@ -371,8 +371,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      */
     setFinalInitProto (aProto) {
         this._finalInitProto = aProto;
-        if (aProto && this.slotType() === null) {
-            this.setSlotType(aProto.type()); // hack
+        if (aProto) {
+            this.setOwnsValue(true);
+
+            if (this.slotType() === null) {
+                this.setSlotType(aProto.type()); // hack
+            }
         }
         //this.setSyncsToView(true); // TODO: this ok? (added to make sure fields get updated when we call the slot setter)
         return this;
@@ -1097,7 +1101,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                         }
                     }
 
-                    //debugger;
+                    // Type Checking and Conversion
+
                     if (slot.slotType() === "String" && Type.isNumber(newValue)) {
                         console.log("RESOLUTION: converting value to string");
                         newValue = String(newValue);
@@ -1105,7 +1110,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                         console.log("RESOLUTION: converting value to number");
                         newValue = Number(newValue);
                     } else { // It's not just a type conversion issue...
-                       // debugger;
                         slot.validateValue(newValue); // so we can step into it
 
                         console.log("RESOLUTION: setting value to initValue: ", initValue);
@@ -1133,6 +1137,21 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     }
 
                     console.log("RESOLUTION: setting value to " + valueDescription(newValue) + "\n\n");
+                }
+            }
+
+            if (slot.ownsValue()) {
+                if (Type.isNullOrUndefined(newValue)) {
+                    const oldValue = slot.onInstanceRawGetValue(this);
+                    if (oldValue && oldValue.setOwnerNode) {
+                        if (oldValue.ownerNode() === this) { // safety check
+                            oldValue.setOwnerNode(null);
+                        }
+                    }
+                } else if (newValue.setOwnerNode) {
+                    // this is a Node specific feature so might not belong here
+                    // but it's fundamental enough that we might want to support it elsewhere
+                    newValue.setOwnerNode(this); // this is the instance 
                 }
             }
 
