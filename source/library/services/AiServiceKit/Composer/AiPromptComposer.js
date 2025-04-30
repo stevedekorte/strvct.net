@@ -19,7 +19,7 @@
  * const composer = new AiPromptComposer();
  * composer.setPromptTarget(targetForMethodReplacements);
  * composer.setInputString(anInputString);
- * const prompt = composer.compose();
+ * const prompt = composer.compose(); 
  */
 
 (class AiPromptComposer extends BMSummaryNode {

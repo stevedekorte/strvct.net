@@ -26,7 +26,7 @@
  * 
  */
 
-(class AiConversation extends Conversation {
+(class AiConversation extends Conversation { 
 
   /**
    * @description Initializes the prototype slots for the AiConversation class.

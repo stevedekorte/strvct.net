@@ -2,7 +2,7 @@
 
 /*
 * @module library.services.AiServiceKit.Tools
-* @class AssistantToolKit
+* @class AssistantToolKit 
 * @extends BMSummaryNode
 * @classdesc Manages the tool definitions and calls for an AiConversation.
 * Notes:

@@ -370,7 +370,14 @@ Example Tool call format:
   }
   
   handleCallError (e) {
-    assert(Type.isError(e), "handleCallError requires an Error instance");
+    if (!Type.isError(e)) {
+      e = new Error("handleCallError requires an Error instance");
+      debugger;
+    }
+
+    console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
+    debugger;
+
     this.setStatus("completed");
 
     const r = this.newToolResult();
