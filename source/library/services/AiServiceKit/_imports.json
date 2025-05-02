@@ -10,6 +10,7 @@
     "AiResponseMessage.js",
     "Composer/_imports.json",
     "Tools/_imports.json",
+    "Parsing/_imports.json",
     "AiConversation.js",
     "AiConversations.js",
     "AiService.js"

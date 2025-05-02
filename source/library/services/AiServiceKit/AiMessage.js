@@ -279,15 +279,6 @@
   }
 
   /**
-   * @description Called when the message is complete.
-   * @category Lifecycle
-   */
-  onComplete () {
-    super.onComplete() // sends a delegate message
-    // to be overridden by subclasses
-  }
-  
-  /**
    * @description Handles input value changes.
    * @category Event Handling
    */

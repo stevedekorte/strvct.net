@@ -150,6 +150,7 @@
    * @category Event Handling
    */
   onMessageComplete (aMsg) {
+    //super.onMessageComplete(aMsg);
     this.footerNode().setValueIsEditable(true)
     if (aMsg.error() === null) {
       const pmsg = aMsg.previousMessage() 
@@ -161,14 +162,6 @@
       */
       this.checkTokenCount()
     }
-  }
-
-  /**
-   * @description Handles a completed message. To be overridden by subclasses.
-   * @param {*} aMsg - The completed message.
-   * @category Event Handling
-   */
-  onMessageComplete (aMsg) {
   }
 
   /**

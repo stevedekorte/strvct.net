@@ -71,7 +71,7 @@ class BootLoader extends Object {
       ? `${this._bootPath}/${filePath.replace(/^\//, '')}`
       : filePath;
     
-    console.log(`Attempting to load: ${fullPath}`);
+    //console.log(`Attempting to load: ${fullPath}`);
     
     return fetch(fullPath)
       .then(response => {
@@ -81,7 +81,7 @@ class BootLoader extends Object {
         return response.text();
       })
       .then(content => {
-        console.log(`Successfully loaded: ${fullPath}`);
+        //console.log(`Successfully loaded: ${fullPath}`);
         return { path: filePath, content: content };
       })
       .catch(error => {
@@ -109,17 +109,17 @@ class BootLoader extends Object {
         // Evaluate files sequentially
         return fileContents.reduce((promise, { path, content }) => {
           return promise.then(() => {
-            console.log(`Evaluating file: ${path}`);
+            //console.log(`Evaluating file: ${path}`);
             // Add sourceURL directive for better debugging
             const sourceWithReference = content + `\n//# sourceURL=${this._bootPath}/${path}`;
             const evalFunc = new Function(sourceWithReference);
             evalFunc.call(window); // Execute in the global scope
-            console.log(`Finished evaluating: ${path}`);
+            //console.log(`Finished evaluating: ${path}`);
           });
         }, Promise.resolve());
       })
       .then(() => {
-        console.log('All files loaded and evaluated successfully');
+        console.log('All boot files loaded and evaluated successfully');
       })
       .catch((error) => {
         console.error('Error during file loading or evaluation:', error);

@@ -282,4 +282,16 @@
         return d;
     }
 
+    descendantWithJsonId (jsonId) {
+        if (this.jsonId() === jsonId) {
+          return this;
+        }
+        return this.subnodes().detect(sn => {
+          if (sn.descendantWithJsonId) {
+            return sn.descendantWithJsonId(jsonId);
+          }
+          return false;
+        });
+    }
+
 }.initThisClass());

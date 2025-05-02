@@ -324,6 +324,17 @@
     // --- instance ---
 
     /**
+     * Checks if the superclass has a method by name.
+     * @param {string} methodName - The name of the method to check.
+     * @returns {boolean} True if the method exists, false otherwise.
+     * @category Instance Methods
+     */
+    superHasMethodName(methodName) {
+        const superProto = Object.getPrototypeOf(Object.getPrototypeOf(this));
+        return typeof superProto?.[methodName] === 'function';
+    }
+
+    /**
      * Initializes the prototype slots.
      * @category Slots
      */

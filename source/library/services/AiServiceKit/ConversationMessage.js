@@ -309,9 +309,15 @@
   didUpdateSlotIsComplete (oldValue, newValue) {
     //debugger;
     if(newValue && this.conversation()) { // so not called during deserialization
+      //debugger;
       this.scheduleMethod("onComplete");
     }
   }
+
+  shouldRequestResponseOnComplete () {
+    return this.role() === "user";
+  }
+
 
   /**
    * Handle completion of the message.
@@ -321,6 +327,9 @@
   onComplete () {
     // to be overridden by subclasses
     this.sendDelegate("onMessageComplete");
+    if (this.shouldRequestResponseOnComplete()) {
+      this.requestResponse();
+    }
   }
 
   /**

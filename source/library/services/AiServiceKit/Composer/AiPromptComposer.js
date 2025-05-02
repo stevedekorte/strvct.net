@@ -16,10 +16,11 @@
  * 
  * Example:
  * 
- * const composer = new AiPromptComposer();
+ * const composer = AiPromptComposer.clone();
  * composer.setPromptTarget(targetForMethodReplacements);
  * composer.setInputString(anInputString);
- * const prompt = composer.compose(); 
+ * composer.compose(); 
+ * const prompt = composer.outputString();
  */
 
 (class AiPromptComposer extends BMSummaryNode {
@@ -33,7 +34,7 @@
     {
       const slot = this.newSlot("promptTarget", null);
       slot.setLabel("Prompt Target");
-      slot.setShouldStoreSlot(false);
+      slot.setShouldStoreSlot(true);
       slot.setSlotType("Object");
       slot.setIsSubnodeField(false);
       slot.setAllowsNullValue(true);
@@ -46,7 +47,7 @@
     {
       const slot = this.newSlot("promptMap", null);
       slot.setLabel("Prompt Dictionary");
-      slot.setShouldStoreSlot(false);
+      slot.setShouldStoreSlot(true);
       slot.setSlotType("Map");
       slot.setIsSubnodeField(false);
       slot.setAllowsNullValue(true);
@@ -58,13 +59,16 @@
      * @category Input
      */
     {
-      const slot = this.newSlot("inputString", null);
-      slot.setLabel("Input String");
-      slot.setShouldStoreSlot(false);
+      const slot = this.newSlot("inputString", "");
+      slot.setInspectorPath("prompt template");
+      slot.setKeyIsVisible(false);
+      slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setIsSubnodeField(false);
-      slot.setAllowsNullValue(true);
+      slot.setIsSubnodeField(true);
+      slot.setSyncsToView(true);
+      slot.setCanEditInspection(false);
+      slot.setNodeFillsRemainingWidth(true);
     }
 
     /**
@@ -72,16 +76,54 @@
      * @category Output
      */
     {
-      const slot = this.newSlot("outputString", null);
-      slot.setLabel("Output String");
-      slot.setShouldStoreSlot(false);
+      const slot = this.newSlot("outputString", "");
+      slot.setInspectorPath("completed prompt");
+      slot.setKeyIsVisible(false);
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setIsSubnodeField(false);
-      slot.setAllowsNullValue(true);
+      slot.setIsSubnodeField(true);
+      slot.setSyncsToView(true);
+      slot.setCanEditInspection(false);
+      slot.setNodeFillsRemainingWidth(true);
     }
+
+
+    {
+      const slot = this.newSlot("composeAction", null);
+      slot.setCanInspect(true);
+      slot.setInspectorPath("");
+      slot.setLabel("Compose Prompt");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("compose");
+    }
+
+    {
+      const slot = this.newSlot("copyPromptAction", null);
+      slot.setCanInspect(true);
+      slot.setInspectorPath("");
+      slot.setLabel("Copy Prompt");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("copyPrompt");
+    }
+
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
+  }
+
+  title () {
+    return "Prompt Composer";
+  }
+
+  copyPrompt () {
+    this.outputString().copyToClipboard();
   }
 
   setInputFileName (fileName) {
@@ -235,7 +277,7 @@
         } else {
           const map = this.promptMap();
           // otherwise, use the prompt dictionary
-          if (map.has(methodName)) {
+          if (map && map.has(methodName)) {
             const value = map.get(methodName);
             this.setOutputString(string.replaceAll(`{{$${methodName}}}`, value));
             return true;

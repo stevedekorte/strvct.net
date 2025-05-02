@@ -130,5 +130,5 @@
             this.setSubnodeClasses(this.jsonClasses());
         }
     }
-    
+
 }.initThisClass());

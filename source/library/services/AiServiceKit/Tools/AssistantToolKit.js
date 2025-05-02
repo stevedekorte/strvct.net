@@ -141,13 +141,6 @@ The following formats will be used for tool calls and responses:
     console.log(this.type() + ".onMessageComplete('" + aMsg.messageId() + "')");
     //debugger;
     if (aMsg.isResponse()) { // should we only call the tools from this message?
-        /*
-        const queuedOnCompletionCalls = this.toolCalls().queuedOnCompletionCalls();
-        queuedOnCompletionCalls.forEach((toolCall) => {
-          toolCall.makeCall();
-        });
-        this.sendCompletedToolCallResponses();
-        */
        this.processQueuedToolCalls();
       }
   }
@@ -167,7 +160,7 @@ The following formats will be used for tool calls and responses:
     this.scheduleMethod("sendCompletedToolCallResponses", 0);
   }
 
-  sendCompletedToolCallResponses () {
+  async sendCompletedToolCallResponses () {
     const completedCalls = this.toolCalls().completedCalls();
     if (completedCalls.length > 0) {
       if (completedCalls.filter((toolCall) => toolCall.toolResult().doesRequireResponse()).length > 0) {
@@ -177,7 +170,11 @@ The following formats will be used for tool calls and responses:
         const content = this.composeResponseForToolCalls(completedCalls);
         m.setContent(content);
         m.setIsVisibleToUser(false);
-        m.setIsComplete(true);
+        //debugger;
+        m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
+        //const responseMessage = m.requestResponse();
+        //await responseMessage.completionPromise();
+        //debugger;
         assert(!m.isVisibleToUser());
       }
       this.toolCalls().removeCalls(completedCalls);

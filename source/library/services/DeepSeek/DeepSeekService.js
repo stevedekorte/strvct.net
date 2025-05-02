@@ -112,7 +112,7 @@
 
   setModelsJson (json) {
     super.setModelsJson(json);
-    console.log(this.type() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
+    //console.log(this.type() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
     this.assertHasModels();
     //debugger;
     return this;

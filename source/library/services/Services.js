@@ -25,6 +25,18 @@
      * @category Initialization
      */
     initPrototypeSlots () {
+                
+        /**
+         * @member {GeminiService} geminiService
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("geminiService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(GeminiService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("GeminiService");
+        }
 
         /**
          * @member {XaiService} xaiService
@@ -73,19 +85,6 @@
             slot.setIsSubnode(true);
             slot.setSlotType("DeepSeekService");
         }
-        
-        /**
-         * @member {GeminiService} geminiService
-         * @category AI Service
-         */
-        {
-            const slot = this.newSlot("geminiService", null);
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(GeminiService);
-            slot.setIsSubnode(true);
-            slot.setSlotType("GeminiService");
-        }
-
 
         /*
         {

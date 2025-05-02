@@ -90,11 +90,11 @@
     }
 
     /**
-     * @member {Object} assistantModel - Delegate to receive getJson, asRootJsonSchemaString, assistantPromptString messages
+     * @member {Object} assistedObject - Delegate to receive getJson, asRootJsonSchemaString, assistantPromptString messages
      * @category Delegates
      */
     {
-      const slot = this.newSlot("assistantModel", null);
+      const slot = this.newSlot("assistedObject", null);
       slot.setSlotType("Object");
     }
 
@@ -127,11 +127,19 @@
       slot.setFinalInitProto(AssistantToolKit);
       slot.setCanInspect(true);
     }
+
+    this.initToolSlots();
   }
 
   finalInit () {
     super.finalInit();
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
+    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    this.setResponseMsgClass(AiParsedResponseMessage);
+  }
+
+  initToolSlots () {
+    // placeholder for subclasses to override
   }
 
   jsonHistoryString () {
@@ -151,7 +159,7 @@
    */
   initPrototype () {
     this.setSubnodeClasses([AiMessage]);
-    this.setResponseMsgClass(AiResponseMessage);
+    this.setResponseMsgClass(AiParsedResponseMessage);
   }
 
   /**
@@ -317,10 +325,9 @@
   onChatInputValue (v) {
     const userMsg = this.newUserMessage();
     userMsg.setContent(v);
-    userMsg.setIsComplete(true);
-    const responseMessage = userMsg.requestResponse();
+    userMsg.setIsComplete(true); // this should trigger a requestResponse 
+    //userMsg.requestResponse();
     SimpleSynth.clone().playSendBeep();
-    return responseMessage; 
   }
 
   /**
@@ -334,24 +341,6 @@
     const apiSpecPrompt = apiCallClasses.map(c => c.apiSpecPrompt()).join("\n\n");
     s += apiSpecPrompt;
     return s;
-  }
-
-  /**
-   * @description Starts the conversation after fetching the system prompt from the assistantModel.
-   * @returns {AiResponseMessage} The response message.
-   * @category Interaction
-   */
-  async start () {
-    const assistantModel = this.assistantModel();
-    if (assistantModel) {
-      const systemPrompt = await assistantModel.composeSystemPrompt();
-      const apiPrompt = this.composeApiSpecPrompt();
-      const prompt = systemPrompt + "\n\n" + apiPrompt;
-      debugger;
-      return this.startWithPrompt(prompt);
-    } else {
-      throw new Error("no promptDelegate to get system prompt from");
-    }
   }
 
   /**
@@ -505,7 +494,7 @@
    * @category Session State
    */
   clientStateJson () {
-    const delegate = this.assistantModel();
+    const delegate = this.assistedObject();
     if (delegate) {
       return delegate.asJsonString();
     }
@@ -518,7 +507,7 @@
    * @category Client State
    */
   clientStateJsonSchema () {
-    const delegate = this.assistantModel();
+    const delegate = this.assistedObject();
     if (delegate) {
       return delegate.asRootJsonSchemaString();
     }
@@ -565,6 +554,13 @@
   const schemaString = JSON.stableStringifyWithStdOptions(schema, null, 2);
   const jsonString = JSON.stableStringifyWithStdOptions(json, null, 2);
 */
+
+  // --- tool calls ---
+
+  onStream_toolCall_TagText (innerTagString) { // sent by AiParsedResponseMessage
+    //debugger;
+    this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, this);
+  }
 
 
 }.initThisClass());

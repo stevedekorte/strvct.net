@@ -230,4 +230,22 @@
         return true;
     }
 
+    /**
+     * @description Finds a descendant node (including self) with the given JSON ID.
+     * @param {string} jsonId - The JSON ID to search for.
+     * @returns {BMJsonNode|null} The descendant node with the matching JSON ID, or null if no such node is found.
+     * @category Node Search
+     */
+    descendantWithJsonId (jsonId) {
+        if (this.jsonId() === jsonId) {
+          return this;
+        }
+        return this.subnodes().detect(sn => {
+          if (sn.descendantWithJsonId) {
+            return sn.descendantWithJsonId(jsonId);
+          }
+          return false;
+        });
+    }
+
 }.initThisClass());
