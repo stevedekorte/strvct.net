@@ -114,4 +114,8 @@ The following tools are available for you to use:
     return refSet;
   }
 
+  description () {
+    return this.subnodes().map(toolDef => toolDef.description()).join("\n\n");
+  }
+
 }.initThisClass());

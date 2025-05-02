@@ -37,10 +37,6 @@
     this.setShouldStoreSubnodes(true);
   }
 
-  init () {
-    super.init();
-  }
-
   finalInit () {
     super.finalInit();
     this.setTitle("Tool Calls");

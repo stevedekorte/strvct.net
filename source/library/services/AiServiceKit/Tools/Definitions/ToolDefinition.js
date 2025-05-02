@@ -176,4 +176,8 @@
     });
   }
 
+  description () {
+    return this.toolMethod().name();
+  }
+
 }.initThisClass());

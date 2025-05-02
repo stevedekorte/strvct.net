@@ -133,6 +133,7 @@
 
   finalInit () {
     super.finalInit();
+    this.setTagDelegate(this); // needed to get tool calls
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
     this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
     this.setResponseMsgClass(AiParsedResponseMessage);
