@@ -41,7 +41,7 @@
     el.innerHTML = this.content();
     let matches = el.elementsOfTag(tagName);    
     const results = [];
-    matches = matches.select(e => !Element_hasParentWithTag(e, "thinking"));
+    matches = matches.select(e => !Element_hasParentWithTag(e, "think"));
     matches.forEach((e) => results.push(e.innerHTML));
     return results;
   }

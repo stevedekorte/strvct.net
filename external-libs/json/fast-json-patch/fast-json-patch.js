@@ -976,7 +976,7 @@ JsonPatch.ensurePathExists = function (jsonObject, path) {
     for (let i = 0; i < pathSegments.length; i++) {
         let segment = pathSegments[i];
         if (Type.isNumber(segment)) {
-            segnment = Number(segnment);
+            segment = Number(segment);
         }
         if (Type.isUndefined(currentObject[segment])) {
             const currentPath = pathSegments.slice(0, i + 1).join('/'); // doesn't include i+1 index

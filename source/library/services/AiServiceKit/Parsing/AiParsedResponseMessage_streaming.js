@@ -116,7 +116,7 @@
   }
 
   tagsToIgnoreInsideSet () {
-    return new Set(["thinking", "scene-description"]);
+    return new Set(["think", "scene-description"]);
   }
 
   onHtmlStreamReaderPopNode (reader, streamNode) {

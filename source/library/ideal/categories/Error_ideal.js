@@ -53,7 +53,7 @@
             if (errorMessage) {
                 console.warn("assert failed: " + errorMessage);
             }
-            throw e;
+        throw e;
         }
         return v;
     }
