@@ -50,7 +50,7 @@
      * @returns {BMJsonNullField} Returns this instance for method chaining.
      * @category Serialization
      */
-    setJson (json) {
+    setJson (json, jsonPathComponents = []) {
         return this
     }
 

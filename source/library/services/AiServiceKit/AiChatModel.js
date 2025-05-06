@@ -186,8 +186,8 @@
    * @returns {AiChatModel} The current instance.
    * @category Model Configuration
    */
-  setJson (json) {
-    assert(json.name);
+  setJson (json, jsonPathComponents = []) {
+    assert(json.name, "Expected name property available at JSON path: " + jsonPathComponents.join("/"));
     this.setModelName(json.name);
 
     if (json.title) {

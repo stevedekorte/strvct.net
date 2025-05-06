@@ -125,8 +125,8 @@
      * @returns {BMBooleanField} This instance for method chaining.
      * @category Serialization
      */
-    setJson (json) {
-        assert(Type.isBoolean(json));
+    setJson (json, jsonPathComponents = []) {
+        assert(Type.isBoolean(json), "Expected boolean for JSON path: " + jsonPathComponents.join("/"));
         this.setValue(json);
         return this;
     }

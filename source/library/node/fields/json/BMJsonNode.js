@@ -17,7 +17,7 @@
      * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
-        return mimeType === "application/json"
+        return mimeType === "application/json";
     }
 
     /**
@@ -28,19 +28,19 @@
      * @category Data Parsing
      */
     static openMimeChunk (dataChunk) {
-        const data = dataChunk.decodedData()
-        //console.log("data = '" + data + "'")
-        let json = null
+        const data = dataChunk.decodedData();
+        //console.log("data = '" + data + "'");
+        let json = null;
 
         try {
-            json = JSON.parse(data)
-            //console.log("drop json = " + JSON.stableStringifyWithStdOptions(json, null, 2) + "")
+            json = JSON.parse(data);
+            //console.log("drop json = " + JSON.stableStringifyWithStdOptions(json, null, 2) + "");
         } catch (error) {
             // return an error node instead?
         }
 
-        const aNode = this.nodeForJson(json)
-        return aNode
+        const aNode = this.nodeForJson(json, []);
+        return aNode;
     }
 
     /**
@@ -83,13 +83,13 @@
      * @returns {BMJsonNode|null} A node instance representing the JSON data, or null if no matching prototype is found.
      * @category Node Creation
      */
-    static nodeForJson(json) {
+    static nodeForJson (json, jsonPathComponents = []) {
         const t = Type.typeName(json)
         const protoName = this.jsonToProtoNameDict()[t]  
         if (protoName) {
             const proto = Object.getClassNamed(protoName)
             if (proto) {
-                const instance = proto.clone().setJson(json)
+                const instance = proto.clone().setJson(json, jsonPathComponents)
                 return instance
             }
         }

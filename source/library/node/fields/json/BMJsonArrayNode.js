@@ -187,13 +187,13 @@
      * @returns {BMJsonNode} The new subnode.
      * @category Subnode Management
      */
-    newSubnodeForJson (json) {
+    newSubnodeForJson (json, jsonPathComponents = []) {
         let aNode = null;
         if (this.subnodeClasses().length === 1) {
             const aClass = this.subnodeClasses().first();
-            aNode = aClass.clone().setJson(json);
+            aNode = aClass.clone().setJson(json, jsonPathComponents);
         } else {
-            aNode = BMJsonNode.nodeForJson(json);
+            aNode = BMJsonNode.nodeForJson(json, jsonPathComponents);
         }
         return aNode;
     }
@@ -204,7 +204,7 @@
      * @returns {BMJsonArrayNode} This node.
      * @category JSON Operations
      */
-    setJson (json) {
+    setJson (json, jsonPathComponents = []) {
         if (this.doesMatchJson(json)) {
             return this;
         }
@@ -220,9 +220,10 @@
 
         const seenJsonIds = new Set();
 
-        assert(Type.isArray(json), "Expected array for JSON path '" + this.nodePathString().after("Sessions/") + "'");
+        //assert(Type.isArray(json), "Expected array for JSON path: '" + this.nodePathString().after("Sessions/") + "'");
+        assert(Type.isArray(json), "Expected array for JSON path: " + jsonPathComponents.join("/"));
 
-        json.forEach((v) => {
+        json.forEachKV((index, v) => {
             const jsonId = v.jsonId;
 
             if (seenJsonIds.has(jsonId)) {
@@ -239,10 +240,10 @@
             const existingNode = jsonIdToSubnodeMap.get(jsonId);
 
             if (existingNode) {
-                existingNode.setJson(v);
+                existingNode.setJson(v, jsonPathComponents.concat(index));
                 newSubnodes.push(existingNode);
             } else {
-                const aNode = this.newSubnodeForJson(v);
+                const aNode = this.newSubnodeForJson(v, jsonPathComponents.concat(index));
                 newSubnodes.push(aNode);
                 //console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }

@@ -591,14 +591,14 @@
      * @description Sets the JSON of the field.
      * @param {Object} json - The JSON.
      */
-    setJson (json) {
+    setJson (json, jsonPathComponents = []) {
         this.setValue(json);
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
         if (!didSet) {
             if (this.target()) {
-                console.warn("Field unable to set value using " + this.target().typeId() + "' '" + this.key() + "' setJson(" + json + ")");
+                console.warn("Field unable to set value using " + this.target().typeId() + "' '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
             } else {
-                console.warn("Field unable to set value using '" + this.key() + "' setJson(" + json + ")");
+                console.warn("Field unable to set value using '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
             }
             debugger;
             this.setValue(json);
@@ -618,23 +618,6 @@
         // separate fron jsonArchive 
         return this.value();
     }
-
-    /*
-    setJson (json) {
-        this.setKey(json.key);
-        this.setValue(json.value);
-        return this;
-    }
-
-    asJson () {
-        // test used for Character sheet atm
-        // separate fron jsonArchive 
-        return {
-            key: this.key(),
-            value: this.value()
-        };
-    }
-    */
 
     // ----------------
     
