@@ -17,11 +17,7 @@
    */
 
   session () {
-    const chain = this.ownershipChain();
-    const session = chain.detect(node => node instanceof HwSession);
-    return session;
+    return this.firstOwnerChainNodeOfClass(HwSession);
   }
-
-
 
 }.initThisClass());
