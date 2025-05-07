@@ -322,7 +322,7 @@ Example Tool call format:
       const toolTarget = this.toolTarget();
       const methodName = this.toolDefinition().name();
       const method = toolTarget.methodNamed(methodName);
-      const parametersDict = this.parametersDict();
+      //const parametersDict = this.parametersDict();
 
       // should we instantiate the parameter objects and replace them as values in the json, or just pass the json?
       // we should probably do the latter as it's more flexible

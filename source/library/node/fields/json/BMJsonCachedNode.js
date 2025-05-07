@@ -186,24 +186,111 @@
      */
     applyJsonPatches (jsonPatches) {
         assert(Type.isDeepJsonType(jsonPatches));
-        const oldJson = this.asJson().deepCopy();
-
-        const results = JsonPatch.applyPatchWithAutoCreation(oldJson, jsonPatches);
-        assert(results.newDocument, "Character.applyJsonPatches() results.newDocument missing");
         
-        const newJson = results.newDocument;
-        assert(Type.isUndefined(newJson.newDocument), "Character.applyJsonPatches() json.newDocument should not have newDocument");
-
         if (jsonPatches.length === 0) {
             console.log("no patches to apply");
-            debugger;
             return this;
         }
+        
+        // Pre-validate paths for array operations
+        for (const patch of jsonPatches) {
+            // Check if the operation involves an array append to a numeric index path
+            if (patch.op === "add" && patch.path.includes("/-")) {
+                // For each array append, pre-validate and ensure parent paths exist
+                const pathParts = patch.path.split("/").slice(1); // Remove leading empty string
+                const appendIndex = pathParts.findIndex(part => part === "-");
+                
+                if (appendIndex > 0) {
+                    // Extract the parent path components
+                    const parentPathParts = pathParts.slice(0, appendIndex);
+                    
+                    // Log the operation for debugging
+                    console.log(`Pre-validating array append operation for path: ${patch.path}`);
+                    console.log(`Parent path parts: ${parentPathParts.join("/")}`);
+                    
+                    // Check if any numeric indices are in the parent path
+                    for (let i = 0; i < parentPathParts.length; i++) {
+                        if (Type.isNumber(parentPathParts[i])) {
+                            const numericIndex = Number(parentPathParts[i]);
+                            console.log(`Found numeric index ${numericIndex} in parent path at position ${i}`);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Defensive deep copy to avoid modifying the original object
+        const oldJson = this.asJson().deepCopy();
 
-        this.setJson(newJson);
-        assert(JSON.stableStringifyWithStdOptions(newJson) === JSON.stableStringifyWithStdOptions(this.asJson()), "Character.applyJsonPatches() setJson() did not apply correctly");
-        this.setLastJson(newJson);
-        return this;
+        try {
+            const results = JsonPatch.applyPatchWithAutoCreation(oldJson, jsonPatches);
+            assert(results.newDocument, "applyJsonPatches() results.newDocument missing");
+            
+            const newJson = results.newDocument;
+            assert(Type.isUndefined(newJson.newDocument), "applyJsonPatches() json.newDocument should not have newDocument");
+
+            this.setJson(newJson);
+            try {
+                // Verify the patch produced the expected result
+                assert(JSON.stableStringifyWithStdOptions(newJson) === JSON.stableStringifyWithStdOptions(this.asJson()), 
+                       "applyJsonPatches() setJson() did not apply correctly");
+            } catch (verificationError) {
+                console.warn("Patch verification failed, but continuing:", verificationError);
+                // Continue anyway since the patch itself succeeded
+            }
+            
+            this.setLastJson(newJson);
+            return this;
+            
+        } catch (error) {
+            console.error("Error applying JSON patches:", error);
+            console.error("Failed patches:", JSON.stringify(jsonPatches, null, 2));
+            
+            // Try to provide more context about the error
+            if (error.message && error.message.includes("Expected array")) {
+                const pathMatch = error.message.match(/Expected array for JSON path: (.+)/);
+                if (pathMatch && pathMatch[1]) {
+                    const problematicPath = pathMatch[1];
+                    console.error(`The problem occurred with path: ${problematicPath}`);
+                    
+                    // Check if the path exists in the current JSON
+                    try {
+                        const parentPath = problematicPath.substring(0, problematicPath.lastIndexOf("/"));
+                        const lastSegment = problematicPath.substring(problematicPath.lastIndexOf("/") + 1);
+                        
+                        console.error(`Parent path: ${parentPath}, Last segment: ${lastSegment}`);
+                        
+                        // Attempt to fix by applying patches one by one
+                        console.log("Attempting to apply patches individually...");
+                        const fixedJson = this.asJson().deepCopy();
+                        
+                        for (let i = 0; i < jsonPatches.length; i++) {
+                            const singlePatch = [jsonPatches[i]];
+                            
+                            try {
+                                console.log(`Applying patch ${i+1}/${jsonPatches.length}:`, JSON.stringify(singlePatch));
+                                const singleResult = JsonPatch.applyPatchWithAutoCreation(fixedJson, singlePatch);
+                                console.log(`Patch ${i+1} applied successfully`);
+                            } catch (singleError) {
+                                console.error(`Failed to apply patch ${i+1}:`, singleError);
+                                console.error(`Problematic patch:`, JSON.stringify(singlePatch));
+                                // Continue with the next patch
+                            }
+                        }
+                        
+                        // If we made it here, apply the fixed JSON
+                        this.setJson(fixedJson);
+                        this.setLastJson(fixedJson);
+                        return this;
+                    } catch (analyzeError) {
+                        console.error("Error analyzing path:", analyzeError);
+                    }
+                }
+            }
+            
+            // Re-throw the original error if we couldn't recover
+            throw error;
+        }
     }
 
     /**

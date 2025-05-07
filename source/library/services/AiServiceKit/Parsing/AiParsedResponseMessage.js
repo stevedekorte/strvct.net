@@ -229,7 +229,7 @@
     const textMethodName = "on" + phase + "_" + this.convertTagToCamelCase(tagName) + "_TagText";
     if (this.tagDelegate().respondsTo(textMethodName)) {
       console.warn("tagDelegate calling method: " + textMethodName);
-      return this.tagDelegate()[textMethodName](tagText);
+      return this.tagDelegate()[textMethodName](tagText, this);
     } else if (tagName.includes("-")) { // only warn if it has a dash as it's a special tag
       if (!ignoreMissingMethodsForTags.includes(tagName)) {
         console.warn("tagDelegate (" + this.tagDelegate().type() + ") missing method: " + textMethodName + " for tag: " + tagName);

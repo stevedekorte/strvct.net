@@ -53,8 +53,13 @@
   handleToolCallTagFromMessage (innerTagString, aMessage) {
     const toolCall = ToolCall.clone();
 
+
     toolCall.setToolCalls(this);
+
+    //assert(aMessage);
     toolCall.setMessage(aMessage);
+    //assert(toolCall.message());
+
     toolCall.setCallString(innerTagString);
 
     if (toolCall.toolName()) { // might not have one if there's a parse error

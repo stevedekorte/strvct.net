@@ -15,7 +15,7 @@
      * @returns {boolean} Always returns false for this class.
      * @category MIME Handling
      */
-    static canOpenMimeType (mimeType) {
+    static canOpenMimeType (/*mimeType*/) {
         return false;
     }
 
@@ -109,8 +109,8 @@
         const slot = this.overrideSlot("subnodes");
         slot.setIsInJsonSchema(true);
         slot.setShouldJsonArchive(true);
-        slot.setJsonSchemaItemsType("CharacterClass");
-        this.setSubnodeClasses([CharacterClass]);
+        slot.setJsonSchemaItemsType(aClass.type());
+        this.setSubnodeClasses([aClass]);
     }
 
     /**
@@ -221,7 +221,7 @@
         const seenJsonIds = new Set();
 
         //assert(Type.isArray(json), "Expected array for JSON path: '" + this.nodePathString().after("Sessions/") + "'");
-        assert(Type.isArray(json), "Expected array for JSON path: " + jsonPathComponents.join("/"));
+        assert(Type.isArray(json), "Expected array for JSON path '" + jsonPathComponents.join("/") + "' but got: " + JSON.stringify(json));
 
         json.forEachKV((index, v) => {
             const pathString = jsonPathComponents.concat(index).join("/");

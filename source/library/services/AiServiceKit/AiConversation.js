@@ -189,9 +189,6 @@
       assert(model, "no default chat model");
       return model;
     }
-
-    throw new Error("no chatModel");
-    return null;
   }
 
   /**
@@ -224,7 +221,7 @@
   updateTokenCount () {
     // need to count the tokens in the chat history
     // and update the token count
-    const chatHistory = this.jsonHistoryString();
+    //const chatHistory = this.jsonHistoryString();
     // conact all the messages and the system prompt
     const allMessagesString = this.messages().map(m => m.content).join("\n");
     // estimate the token count
@@ -364,7 +361,7 @@
    * @param {AiMessage} newMsg - The new message.
    * @category Message Handling
    */
-  onNewMessageFromUpdate (newMsg) {
+  onNewMessageFromUpdate (/*newMsg*/) {
   }
 
   /**
@@ -500,7 +497,7 @@
       return delegate.asJsonString();
     }
     return null;
-  };
+  }
 
   /**
    * @description Gets the client state schema.
@@ -526,13 +523,15 @@
     const json = this.clientStateJson();
 
     if (json) {
-      const tagMap = this.clientStateTagMap();
-
-      const lastMessage = messages.last();
+      //const tagMap = this.clientStateTagMap();
+      //const lastMessage = messages.last();
 
       // modify the content of all messages except the last 20
       const messagesToModify = messages.slice(0, -20);
-      messagesToModify.forEach(m => {
+      messagesToModify.forEachKV((index, m) => {
+        if (index === 0) {
+          return; // skip the first message (might be a system message)
+        }
           // find all the tool-call-result tags which are for getClientState or patchClientState 
           // and replace them with a note that they were removed
           m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
@@ -558,9 +557,9 @@
 
   // --- tool calls ---
 
-  onStream_toolCall_TagText (innerTagString) { // sent by AiParsedResponseMessage
-    //debugger;
-    this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, this);
+  onStream_toolCall_TagText (innerTagString, aMessage) { // sent by AiParsedResponseMessage
+    assert(aMessage);
+    this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, aMessage);
   }
 
 

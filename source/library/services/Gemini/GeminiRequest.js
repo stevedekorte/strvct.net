@@ -106,7 +106,6 @@
    * @category Request Preparation
    */
   requestOptions () {
-    const apiKey = this.apiKey();
     return {
       method: "POST",
       headers: {
@@ -144,16 +143,6 @@
       this.xhrPromise().callRejectFunc(new Error(error));      
     }
   }
-
-  /**
-   * @description Checks if the request stopped due to reaching the maximum token limit.
-   * @returns {boolean} Always returns false for this implementation.
-   * @category Request State
-   */
-  stoppedDueToMaxTokens () {
-    return false; // stopped due to max output tokens per request
-  }
-
   /**
    * @description Handles errors from the JSON stream reader.
    * @param {JsonStreamReader} reader - The JSON stream reader instance.
@@ -187,7 +176,7 @@
 
     if (candidates) {
       const candidate = candidates[0];
-      if (candidate.content) {
+      if (candidate.content && candidate.content.parts) {
         const text = candidate.content.parts[0].text;
         this.onNewContent(text);
       }

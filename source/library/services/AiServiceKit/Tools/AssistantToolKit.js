@@ -145,7 +145,7 @@ The following formats will be used for tool calls and responses:
       }
   }
 
-  onToolCallComplete (toolCall) {
+  onToolCallComplete (/*toolCall*/) {
     this.scheduleMethod("sendCompletedToolCallResponses", 0);
   }
 

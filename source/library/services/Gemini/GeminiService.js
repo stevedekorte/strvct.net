@@ -287,7 +287,7 @@
     // remove messages with empy content
     messages = messages.filter((message) => { return message.content.length > 0; });
 
-    console.log("geminiBody", JSON.stringify(geminiBody, null, 2));
+    //console.log("geminiBody", JSON.stringify(geminiBody, null, 2));
     //debugger;
   
     aRequest.setBodyJson(geminiBody);
