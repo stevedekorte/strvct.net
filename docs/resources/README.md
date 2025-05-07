@@ -5,6 +5,14 @@ The documentation for this project is automatically constructed by parsing the s
 The source files of this project is formatted with jsdoc comments.
 This allows us to automatically extract them to build reference documentation.
 
+## Top level
+
+The root index.html file contains code to open .md files and format them as html.
+It will automatically convert the md style links to references to itself with a path parameter added.
+For example, navigating to the Project Overview page will open:
+
+    http://localhost:8001/index.html?path=docs%2FProjectOverview.md
+
 ## Module and Class Hierarchy
 
 Running:
@@ -33,4 +41,10 @@ and apply the CSS style found in that same folder.
 ## Testing
 
 Since class-doc.html needs to load the related source file (and browsers don't allow dynamic loads of file:// files),
-you'll need to run a web server locally (with strvct as it's root folder) to test it.
+you'll need to run a web server locally (with strvct as it's root folder) to test it. For example:
+
+    node local-web-server/main.js --port 8001
+
+and in your browser, open:
+
+    http://localhost:8001/index.html
