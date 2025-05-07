@@ -8,15 +8,15 @@ const doctrine = require('doctrine');
 const CLASS_DOC_PATH = '../resources/class-doc/class_doc.html';
 const OUTPUT_DIR = 'docs/reference';
 
-function ensureLeadingSlash(path) {
+function ensureLeadingSlash (path) {
   return path.startsWith('/') ? path : '/' + path;
 }
 
-function composeClassDocUrl(path) {
+function composeClassDocUrl (path) {
   return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
 }
 
-async function findJsFiles(dir) {
+async function findJsFiles (dir) {
   const files = await fs.readdir(dir, { withFileTypes: true });
   const jsFiles = [];
 
@@ -35,7 +35,7 @@ async function findJsFiles(dir) {
   return jsFiles;
 }
 
-function parseModules(content, fileName) {
+function parseModules (content, fileName) {
   const comments = [];
   try {
     const ast = acorn.parse(content, {
@@ -51,12 +51,12 @@ function parseModules(content, fileName) {
     const modules = new Map();
 
     walk.simple(ast, {
-      ClassDeclaration(node) {
+      ClassDeclaration (node) {
         const className = node.id.name;
         const moduleName = getModuleName(node, comments) || 'globals';
         addToModule(modules, moduleName, className);
       },
-      ClassExpression(node) {
+      ClassExpression (node) {
         if (node.id) {
           const className = node.id.name;
           const moduleName = getModuleName(node, comments) || 'globals';
@@ -74,7 +74,7 @@ function parseModules(content, fileName) {
   }
 }
 
-function getModuleName(node, comments) {
+function getModuleName (node, comments) {
   // Find all comments before the node
   const relevantComments = comments.filter(comment => comment.loc.end.line <= node.loc.start.line);
 
@@ -91,14 +91,14 @@ function getModuleName(node, comments) {
   return null;
 }
 
-function addToModule(modules, moduleName, itemName) {
+function addToModule (modules, moduleName, itemName) {
   if (!modules.has(moduleName)) {
     modules.set(moduleName, new Set());
   }
   modules.get(moduleName).add(itemName);
 }
 
-function buildHierarchy(modules) {
+function buildHierarchy (modules) {
   const hierarchy = {};
 
   for (const [moduleName, items] of modules) {
@@ -123,7 +123,7 @@ function buildHierarchy(modules) {
   return hierarchy;
 }
 
-function printHierarchy(hierarchy, classFiles, indent = '') {
+function printHierarchy (hierarchy, classFiles, indent = '') {
   let output = '';
   const entries = Object.entries(hierarchy);
 
@@ -148,7 +148,7 @@ function printHierarchy(hierarchy, classFiles, indent = '') {
   return output;
 }
 
-async function main(folderPath) {
+async function main (folderPath) {
   try {
     const jsFiles = await findJsFiles(folderPath);
     const allModules = new Map();

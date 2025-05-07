@@ -23,6 +23,7 @@
   - [BigInt_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBigInt_store.js)
   - Blob
     - [Blob_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBlob_store.js)
+  - [BMModelReference](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fjson%2FBMModelReference.js)
   - Boolean
     - [Boolean_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FBoolean_ideal.js)
     - [Boolean_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
@@ -168,6 +169,11 @@
                       - [ConversationMessage](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FConversationMessage.js)
                         - [AiMessage](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FAiMessage.js)
                           - [AiResponseMessage](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FAiResponseMessage.js)
+                            - [AiParsedResponseMessage](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2FAiParsedResponseMessage.js)
+                              - [AiParsedResponseMessage_parsing](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2FAiParsedResponseMessage_parsing.js)
+                              - [AiParsedResponseMessage_streaming](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2FAiParsedResponseMessage_streaming.js)
+                              - [AiParsedResponseMessage_tagEvents](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2F-unused%2FAiParsedResponseMessage_tagEvents.js)
+                              - [AiParsedResponseMessage_voiceNarration](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2FAiParsedResponseMessage_voiceNarration.js)
                     - [BMUrlField](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMUrlField.js)
                   - [BMFolderNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fnodes%2FBMFolderNode.js)
                     - [BreadCrumbsNode](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fapp%2FBreadCrumbsNode.js)
