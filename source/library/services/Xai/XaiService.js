@@ -40,14 +40,15 @@
         "title": "Grok 3",
         "inputTokenLimit": 131072,
         "outputTokenLimit": 16384
-      },
+      }
+      /*
+      // these other models may not be good enough to work properly
       {
         "name": "grok-3-mini",
         "title": "Grok 3 Mini",
         "inputTokenLimit": 131072,
         "outputTokenLimit": 16384 // just a guess as I can't find it in the docs
-      }
-      /*
+      },
       {
         "name": "grok-2-latest",
         "title": "Grok 2 Latest",

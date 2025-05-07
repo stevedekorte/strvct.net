@@ -224,17 +224,21 @@
         assert(Type.isArray(json), "Expected array for JSON path: " + jsonPathComponents.join("/"));
 
         json.forEachKV((index, v) => {
+            const pathString = jsonPathComponents.concat(index).join("/");
+
+            assert(!Type.isNullOrUndefined(v), "Expected non-null value for JSON path: " + pathString);
+
             const jsonId = v.jsonId;
 
             if (seenJsonIds.has(jsonId)) {
-                console.warn("BMJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId);
+                console.warn("BMJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId, " at path: " + pathString);
                 return;
             } else {
                 seenJsonIds.add(jsonId);
             }
 
             if (hasOldSubnodes && !jsonId) {
-                console.warn("BMJsonArrayNode.setJson() missing jsonId: ", v);
+                console.warn("BMJsonArrayNode.setJson() missing jsonId: ", v, " at path: " + pathString);
             }
 
             const existingNode = jsonIdToSubnodeMap.get(jsonId);

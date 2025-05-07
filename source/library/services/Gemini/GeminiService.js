@@ -47,6 +47,14 @@
   modelsJson () {
     return [
       {
+        "name": "gemini-2.5-pro-preview-05-06",
+        "title": "Gemini 2.5 Pro Preview (I/O Edition)",
+        "inputTokenLimit": 1048576,
+        "outputTokenLimit": 65536
+      }
+      /*
+      // these other models may not be good enough to work properly
+      {
         "name": "gemini-2.5-pro-preview-03-25",
         "title": "Gemini 2.5 Pro Preview",
         "inputTokenLimit": 1048576,
@@ -64,6 +72,7 @@
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 8192
       }
+      */
     ];
   }
   
@@ -169,29 +178,6 @@
    */
   hasApiKey () {
     return this.apiKey().length > 0; // && this.validateKey(this.apiKey());
-  }
-
-  /**
-   * @description Validates the token.
-   * @param {string} token - The token to validate.
-   * @category Authentication
-   */
-  validateKey (token) {
-    /*
-    // 1. Split on Dots:
-    const tokenParts = token.split('.');
-
-    // 2. Check for Three Parts:
-    if (tokenParts.length !== 3) {
-      return false; // A JWT must have header, payload, and signature
-    }
-
-    // 3. Validate Base64URL Encoding:
-    const isValidEncoding = /^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$/.test(token);
-
-    // 4. Combined Result:
-    return isValidEncoding;
-    */
   }
 
   /**
