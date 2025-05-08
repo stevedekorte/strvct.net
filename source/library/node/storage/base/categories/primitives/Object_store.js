@@ -25,7 +25,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Object|null} The created instance or null if shouldStore is false.
      * @category Initialization
      */
-    static instanceFromRecordInStore (aRecord, aStore) {
+    static instanceFromRecordInStore (/*aRecord, aStore*/) {
         if(!this.shouldStore()) {
             console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
             return null;

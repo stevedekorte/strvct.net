@@ -15,7 +15,7 @@
      * @category Type Checking
      * @returns {string} The type name of the object
      */
-    static type() { 
+    static type () { 
         return this.name;
     }
 
@@ -24,7 +24,7 @@
      * @category Type Checking
      * @returns {string} The type name of the object
      */
-    type() { 
+    type () { 
         return this.constructor.name;
     }
 
@@ -34,7 +34,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a class, false otherwise
      */
-    static isClass() { 
+    static isClass () { 
         return true;
     }
 
@@ -43,7 +43,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a class, false otherwise
      */
-    isClass() { 
+    isClass () { 
         return false;
     }
 
@@ -53,7 +53,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a prototype, false otherwise
      */
-    static isPrototype() { 
+    static isPrototype () { 
         return false;
     }
 
@@ -62,7 +62,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a prototype, false otherwise
      */
-    isPrototype() { 
+    isPrototype () { 
         return this.constructor.prototype === this;
     }
 
@@ -72,7 +72,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is an instance, false otherwise
      */
-    static isInstance() { 
+    static isInstance () { 
         return false;
     }
 
@@ -81,7 +81,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is an instance, false otherwise
      */
-    isInstance() { 
+    isInstance () { 
         return !this.isPrototype();
     }
 
@@ -90,7 +90,7 @@
      * @category Enumeration
      * @param {function} fn - The function to call for each prototype
      */
-    forEachPrototype(fn) { 
+    forEachPrototype (fn) { 
         let proto = this;
 
         if (this.isInstance()) {
@@ -102,7 +102,7 @@
             //console.log("proto is ", proto.type())
             if (proto === proto.__proto__) {
                 throw new Error("__proto__ loop detected in " + proto.type());
-                break;
+                //break;
             } else {
                 proto = proto.__proto__;
             }
@@ -114,10 +114,10 @@
      * @category Enumeration
      * @param {function} fn - The function to call for each slot
      */
-    forEachSlot(fn) { 
+    forEachSlot (fn) { 
         this.forEachPrototype(proto => {
             if (Object.hasOwn(proto, "_slotsMap")) {
-                proto._slotsMap.forEach((slot, key, map) => {
+                proto._slotsMap.forEach((slot /*, key, map*/) => {
                     fn(slot);
                 })
             }
@@ -151,7 +151,7 @@
      * @category Accessors
      * @returns {Map} The all slots map
      */
-    allSlotsMap() { 
+    allSlotsMap () { 
         return this._allSlotsMap;
     }
 
@@ -160,7 +160,7 @@
      * @category Accessors
      * @returns {Map} The slots map
      */
-    slotsMap() { 
+    slotsMap () { 
         return this._slotsMap;
     }
 

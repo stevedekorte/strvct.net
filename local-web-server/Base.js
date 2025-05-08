@@ -119,14 +119,14 @@
      * @returns {Base} The instance itself for method chaining
      * @throws {Error} If the slot name is not a string
      */
-    newSlot(slotName, initialValue) {
+    newSlot (slotName, initialValue) {
         if (typeof(slotName) !== "string") {
             throw new Error("slot name must be a string"); 
         }
 
         if (initialValue === undefined) { 
             initialValue = null;
-        };
+        }
 
         const privateName = "_" + slotName;
         this[privateName] = initialValue;

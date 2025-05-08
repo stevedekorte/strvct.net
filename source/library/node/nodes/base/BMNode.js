@@ -35,14 +35,15 @@
     static initClass () {
         this.newClassSlot("additionalProperties", false);
     }
-    
+
     /**
      * @static
      * @returns {boolean} Whether this class is available as a node primitive.
      */
     static availableAsNodePrimitive () {
-        return true;
+        return false;
     }
+
 
     /**
      * @static
@@ -65,14 +66,6 @@
         name = name.sansSuffix("Field");
         name = name.sansSuffix("Node");
         return name;
-    }
-
-    /**
-     * @static
-     * @returns {boolean} Whether this class is available as a node primitive.
-     */
-    static availableAsNodePrimitive () {
-        return false;
     }
 
     /**
@@ -100,7 +93,7 @@
      * @param {string} mimeTypeString - The MIME type to check.
      * @returns {boolean} Whether this class can open the given MIME type.
      */
-    static canOpenMimeType (mimeTypeString) {
+    static canOpenMimeType (/*mimeTypeString*/) {
         return false;
     }
 
@@ -109,7 +102,7 @@
      * @param {*} dataChunk - The data chunk to open.
      * @returns {*} The result of opening the data chunk.
      */
-    static openMimeChunk (dataChunk) {
+    static openMimeChunk (/*dataChunk*/) {
         return null;
     }
 
@@ -417,7 +410,7 @@
      * @param {BMNode} oldValue - The old parent node.
      * @param {BMNode} newValue - The new parent node.
      */
-    didUpdateSlotParentNode (oldValue, newValue) {
+    didUpdateSlotParentNode (/*oldValue, newValue*/) {
         // for subclasses to override
     }
 
@@ -618,20 +611,6 @@
         subnodes.forEach(subnode => this.addSubnodeIfAbsent(subnode));
         return this;
     }
-    
-    /**
-
-     * @description Add a subnode to this instance if it is not already present.
-     * @param {BMNode} aSubnode - The subnode to add.
-     * @returns {boolean} Whether the subnode was added.
-     */
-    addSubnodeIfAbsent (aSubnode) {
-        if (!this.hasSubnode(aSubnode)) {
-            this.addSubnode(aSubnode);
-            return true;
-        }
-        return false;
-    }
 
     /**
 
@@ -719,14 +698,15 @@
     /**
 
      * @description Add a subnode to this instance if it is not already present.
-     * @param {BMNode} aNode - The subnode to add.
-     * @returns {BMNode} This instance.
+     * @param {BMNode} aSubnode - The subnode to add.
+     * @returns {boolean} Whether the subnode was added.
      */
-    addSubnodeIfAbsent (aNode) {
-        if (!this.hasSubnode(aNode)) {
-            this.addSubnode(aNode);
+    addSubnodeIfAbsent (aSubnode) {
+        if (!this.hasSubnode(aSubnode)) {
+            this.addSubnode(aSubnode);
+            return true;
         }
-        return this;
+        return false;
     }
 
     /**
@@ -752,7 +732,7 @@
      */
     isEqual (aNode) {
         //return this.puuid() === aNode.puuid();
-	    return this === aNode;
+        return this === aNode;
     }
 
     /**
@@ -837,11 +817,10 @@
      * @returns {BMNode} This instance.
      */
     removeAllSubnodes () {
-	    if (this.subnodeCount()) {
-    		this.subnodes().slice().forEach((subnode) => {
-    			this.justRemoveSubnode(subnode);
-    		})
-    		
+        if (this.subnodeCount()) {
+            this.subnodes().slice().forEach((subnode) => {
+                this.justRemoveSubnode(subnode);
+            })
             //this.didChangeSubnodeList() handled by hooked array but this could be more efficient
         }
         return this;
@@ -1184,7 +1163,7 @@
     log (msg) {
         //const s = this.nodePathString() + " --  " + msg
         if (this.isDebugging()) {
-        	console.log("[" +  this.nodePathString() + "] " + msg);
+            console.log("[" +  this.nodePathString() + "] " + msg);
         }
     }
 
@@ -1247,7 +1226,7 @@
      * @description Add a new subnode at the end of the subnode list without any checks.
      * @returns {BMNode|null} The added subnode, or null if no subnode was added.
      */
-    justAdd (anIndex) {  
+    justAdd () {  
         return this.justAddAt(this.subnodeCount());
     }
 
@@ -1327,7 +1306,7 @@
      * @returns {Array} An array of parent nodes.
      */
     parentNodes () {
-        const node = this.parentNode();
+        let node = this.parentNode();
         const results = [];
 		
         while (node) {
@@ -1355,7 +1334,7 @@
      * @returns {Array} An array of subnodes excluding the given subnode.
      */
     subnodesSans (aSubnode) {
-	    return this.subnodes().select(subnode => subnode !== aSubnode);
+        return this.subnodes().select(subnode => subnode !== aSubnode);
     }
     
     /**
@@ -1518,7 +1497,7 @@
      */
     setSubnodeSortFunc (f) {
         this.subnodes().setSortFunc(f);
-	    return this;
+        return this;
     }
     
     /**
@@ -1527,7 +1506,7 @@
      * @returns {boolean} True if the subnodes are sorted, false otherwise.
      */
     doesSortSubnodes () {
-	    return this.subnodes().doesSort();
+        return this.subnodes().doesSort();
     }
     
     // --- subnode indexing ---
@@ -1541,7 +1520,7 @@
         if (!this.subnodes().indexClosure()) {
             this.subnodes().setIndexClosure( sn => sn.hash() );
         }
-	    return this.subnodes();
+        return this.subnodes();
     }
 	
     /**
@@ -1561,11 +1540,11 @@
      * @returns {BMNode} This instance.
      */
     removeSubnodeWithHash (h) {
-	    const subnode = this.subnodeWithHash(h);
-	    if (subnode) {
-	        this.removeSubnode(subnode);
-	    }
-	    return this;
+        const subnode = this.subnodeWithHash(h);
+        if (subnode) {
+            this.removeSubnode(subnode);
+        }
+        return this;
     }
 	
     /**
@@ -1575,7 +1554,7 @@
      * @returns {boolean} True if the subnode exists, false otherwise.
      */
     hasSubnodeWithHash (h) {
-	    return this.lazyIndexedSubnodes().hasIndexKey(h);
+        return this.lazyIndexedSubnodes().hasIndexKey(h);
     }
 	
     // visibility
@@ -1586,7 +1565,7 @@
      * @returns {BMNode} This instance.
      */
     nodeBecameVisible () {
-	    return this;
+        return this;
     }
 
     // -- view selection request events ---
@@ -1773,7 +1752,7 @@
         
         //console.log(this.typeId() + ".setJsonArchive(" + JSON.stableStringifyWithStdOptions(json, null, 2) + ")");
 
-        const keys = Object.keys(json).select(key => key !== "type");
+        //const keys = Object.keys(json).select(key => key !== "type");
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
         //assert(keys.length === jsonArchiveSlots.length); // or should we assume a diff if missing?
         

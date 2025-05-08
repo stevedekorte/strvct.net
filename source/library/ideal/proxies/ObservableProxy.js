@@ -40,7 +40,7 @@
      * @description Initializes the prototype slots for the class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         {
             /**
              * @member {Array} observers
@@ -106,7 +106,7 @@
      * @description Initializes the prototype.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
         this.setIsDebugging(false);
     }
 
@@ -115,7 +115,7 @@
      * @returns {ObservableProxy} The initialized instance.
      * @category Initialization
      */
-    init() {
+    init () {
         super.init();
         this.setObservers([]);
         this.setupNoteNames();
@@ -128,7 +128,7 @@
      * @returns {Proxy} The created proxy object.
      * @category Proxy
      */
-    newProxyFor(aTarget) {
+    newProxyFor (aTarget) {
         const handler = this.thisClass().clone();
         handler.setTarget(aTarget);
         //const proxy = new Proxy(aTarget, handler)
@@ -141,7 +141,7 @@
      * @returns {Proxy} The proxy object.
      * @category Proxy
      */
-    proxy() {
+    proxy () {
         return this.revocable().proxy;
     }
 
@@ -150,7 +150,7 @@
      * @returns {ObservableProxy} The current instance.
      * @category Proxy
      */
-    revoke() {
+    revoke () {
         this.postForTrap("revoke", null);
         this._revocable.revoke();
         return this;
@@ -161,7 +161,7 @@
      * @returns {ObservableProxy} The current instance.
      * @category Initialization
      */
-    setupNoteNames() {
+    setupNoteNames () {
         this._noteNamesDict = {};
         this.trapNames().map((name) => {
             // examples: "onObservedGet", "onObservedSet"
@@ -177,7 +177,7 @@
      * @returns {Object} The added observer object.
      * @category Observers
      */
-    addObserver(obs) {
+    addObserver (obs) {
         this.observers().appendIfAbsent(obs);
         return obs
     }
@@ -188,7 +188,7 @@
      * @returns {Object} The removed observer object.
      * @category Observers
      */
-    removeObserver(obs) {
+    removeObserver (obs) {
         this.observers().remove(obs);
         return obs;
     }
@@ -200,7 +200,7 @@
      * @returns {boolean} True if the notification was posted.
      * @category Observers
      */
-    postForTrap(trapName, propertyName) {
+    postForTrap (trapName, propertyName) {
         const noteName = this.noteNamesDict()[trapName];
 
         this._observers.forEach((obs) => {
@@ -237,7 +237,7 @@
      * @returns {Object} The result of defining the property.
      * @category Traps
      */
-    defineProperty(target, propertyName, descriptor) {
+    defineProperty (target, propertyName, descriptor) {
         this.postForTrap("defineProperty", propertyName);
         return Object.defineProperty(target, propertyName, descriptor);
     }
@@ -249,7 +249,7 @@
      * @returns {boolean} True if the property was successfully deleted.
      * @category Traps
      */
-    deleteProperty(target, propertyName) {
+    deleteProperty (target, propertyName) {
         this.postForTrap("deleteProperty", propertyName);
         return delete target[propertyName];
     }
@@ -261,7 +261,7 @@
      * @returns {*} The value of the property.
      * @category Traps
      */
-    get(target, propertyName) {
+    get (target, propertyName) {
         if (propertyName === "observable") {
             const self = this;
             return () => { return self; }
@@ -288,7 +288,7 @@
      * @returns {Object} The property descriptor.
      * @category Traps
      */
-    getOwnPropertyDescriptor(target, propertyName) {
+    getOwnPropertyDescriptor (target, propertyName) {
         this.postForTrap("getOwnPropertyDescriptor", propertyName);
         return Object.getOwnPropertyDescriptor(target, propertyName);
     }
@@ -299,7 +299,7 @@
      * @returns {Object} The prototype of the target object.
      * @category Traps
      */
-    getPrototypeOf(target) {
+    getPrototypeOf (target) {
         this.postForTrap("getPrototypeOf", null);
         return Object.getPrototypeOf(target);
     }
@@ -311,7 +311,7 @@
      * @returns {boolean} True if the target object is extensible.
      * @category Traps
      */
-    isExtensible(target, propertyName) {
+    isExtensible (target, propertyName) {
         this.postForTrap("isExtensible", propertyName);
         return Reflect.isExtensible(target);
     }
@@ -323,7 +323,7 @@
      * @returns {boolean} True if the target object has the property.
      * @category Traps
      */
-    has(target, propertyName) {
+    has (target, propertyName) {
         this.postForTrap("has", propertyName);
         return Reflect.has( target, propertyName );
     }
@@ -335,7 +335,7 @@
      * @returns {Array} An array of the own property keys of the target object.
      * @category Traps
      */
-    ownKeys(target, propertyName) {
+    ownKeys (target, propertyName) {
         this.postForTrap("ownKeys", propertyName);
         return Reflect.ownKeys(target);
     }
@@ -347,7 +347,7 @@
      * @returns {boolean} True if the target object is now non-extensible.
      * @category Traps
      */
-    preventExtensions(target, propertyName) {
+    preventExtensions (target, propertyName) {
         this.postForTrap("preventExtensions", propertyName);
         return Reflect.preventExtensions(target);
     }
@@ -360,7 +360,7 @@
      * @returns {boolean} True if the property was successfully set.
      * @category Traps
      */
-    set(target, propertyName, newValue) {
+    set (target, propertyName, newValue) {
         this.postForTrap("set", propertyName);
         return Reflect.set(target, propertyName, newValue);
     }
@@ -372,7 +372,7 @@
      * @returns {Object} The target object with the new prototype.
      * @category Traps
      */
-    setPrototypeOf(target, prototype) {
+    setPrototypeOf (target, prototype) {
         this.postForTrap("setPrototypeOf", null);
         return Object.setPrototypeOf(target, prototype);
     }
@@ -384,7 +384,7 @@
      * @returns {boolean} True if the self-test passed.
      * @category Testing
      */
-    static selfTest() {
+    static selfTest () {
         const resultsDict = {};
 
         const noteNamesDict = ObservableProxy.clone().noteNamesDict();

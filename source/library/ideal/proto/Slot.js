@@ -323,7 +323,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     /**
      * @category Value Storage
      */
-    setShouldStore (aBool) {
+    setShouldStore (/*aBool*/) {
         throw new Error("Slot.setShouldStore should not be called on Slot");
     }
 
@@ -1006,8 +1006,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      */
     autoGetter () {
         const slot = this;
-        return function (arg) { 
-           // assert(Type.isUndefined(arg)); // TODO: remove this
+        return function (/*arg*/) { 
+            // assert(Type.isUndefined(arg)); // TODO: remove this
             return this.getSlotValue(slot);
         }
     }
@@ -1223,7 +1223,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     /**
      * @category StoreRefs for lazy slots
      */
-    onInstanceGetValueRef (anInstance, aRef) {
+    onInstanceGetValueRef (anInstance) {
         return anInstance.lazyRefsMap().get(this.name());
     }
 
@@ -1347,7 +1347,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      */
     onInstanceInitSlot (anInstance) {
         //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
-        let defaultValue = anInstance[this._privateName];
+        //let defaultValue = anInstance[this._privateName];
 
         /*
         const op = this.initOp();
@@ -1629,7 +1629,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             return properties;
         }
 
-        const type = this.jsonSchemaType();
+        //const type = this.jsonSchemaType();
 
         // it's probably a base type
         const schema = {

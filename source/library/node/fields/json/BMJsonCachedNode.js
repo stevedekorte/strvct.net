@@ -106,7 +106,7 @@
      * @returns {BMJsonCachedNode} The current instance.
      * @category Data Management
      */
-    setJsonCache (json, jsonPathComponents = []) {
+    setJsonCache (json /*, jsonPathComponents = []*/) {
         this._jsonCache = json;
         if (json === null) {
             this.setJsonHashCode(null);

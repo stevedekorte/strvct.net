@@ -178,7 +178,7 @@
 
         if (initialValue === undefined) {
             initialValue = null;
-        };
+        }
 
         const privateName = "_" + slotName;
         this[privateName] = initialValue;
@@ -233,7 +233,7 @@
 }.initThisClass());
 
 getGlobalThis().assert = function (v, errorMessage) {
-    if (!Boolean(v)) {
+    if (!v) {
         if (typeof(errorMessage) === "function") {
             errorMessage = errorMessage();
         }
@@ -245,7 +245,7 @@ getGlobalThis().assert = function (v, errorMessage) {
 }
 
 getGlobalThis().debugAssert = function (v, errorMessage) {
-    if (!Boolean(v)) {
+    if (!v) {
         const m = errorMessage ? errorMessage : "assert failed - false value";
         console.warn(m);
         debugger;

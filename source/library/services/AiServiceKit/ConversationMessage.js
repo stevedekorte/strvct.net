@@ -349,18 +349,8 @@
    * @param {*} v - The value to set.
    * @category UI
    */
-  setSendInConversation (v) {
+  setSendInConversation (/*v*/) {
     debugger;
-  }
-
-  /**
-   * Check if the value is editable.
-
-   * @returns {Boolean} Always returns true.
-   * @category UI
-   */
-  valueIsEditable () {
-    return true
   }
 
   /**

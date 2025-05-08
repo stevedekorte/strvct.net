@@ -74,7 +74,7 @@
      * @description This method makes a number of primitive types inherit from Object.
      * @returns {void}
     */
-    static makePrimitivesInheritFromObject() {
+    static makePrimitivesInheritFromObject () {
 
         /*
             Weird JS things:

@@ -11,7 +11,7 @@
 
 (class ProtoClass extends Object {
 
-    getInheritedMethodSet() {
+    getInheritedMethodSet () {
         const methodSet = new Set();
         const processedMethods = new Set();
 
@@ -52,12 +52,11 @@
      */
     static newSubclassWithName (newClassName) {
         const newClass = class extends this {
-          static name = newClassName;
-          
-          constructor(...args) {
+          constructor (...args) {
             super(...args);
           }
         };
+        Object.defineProperty(newClass, 'name', { value: newClassName });
         //getGlobalThis()[newClassName] = newClass; // initThisClass() will do this, don't do it here so it doesn't throw an error
 
         // NOTE: the caller will need to add any slots (or add an initPrototype method) and then call initThisClass() on the new class
@@ -329,7 +328,7 @@
      * @returns {boolean} True if the method exists, false otherwise.
      * @category Instance Methods
      */
-    superHasMethodName(methodName) {
+    superHasMethodName (methodName) {
         const superProto = Object.getPrototypeOf(Object.getPrototypeOf(this));
         return typeof superProto?.[methodName] === 'function';
     }
@@ -750,7 +749,7 @@
      * @category Getter Construction
      */
     getSlotValue (aSlot) { //testing this
-        const v = this.baseGetSlotValue(aSlot);
+        //const v = this.baseGetSlotValue(aSlot);
 
         /*
         if (v === undefined) {
@@ -870,15 +869,6 @@
     }
 
     /**
-     * Converts the instance to a string.
-     * @returns {string} The string representation of the instance.
-     * @category Information
-     */
-    toString () {
-        return this.type();
-    }
-
-    /**
      * Checks if the instance owns a given slot.
      * @param {string} name - The name of the slot.
      * @returns {boolean} True if the instance owns the slot, false otherwise.
@@ -934,7 +924,6 @@
         }
 
         throw new Error(this, ".perform(" + message + ") missing method");
-        return this;
     }
 
     /**

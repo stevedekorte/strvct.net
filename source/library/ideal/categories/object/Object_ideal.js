@@ -154,7 +154,7 @@
      * @returns {Object_ideal} This object.
      * @category Iteration
      */
-    ownForEachKey(fn) {
+    ownForEachKey (fn) {
         Object.entries(this).forEach(entry => fn(entry[0])); 
         return this;
     }

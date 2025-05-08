@@ -5,7 +5,7 @@
  */
 
 class JsClassParser extends Object {
-    constructor(code, filePath) {
+    constructor (code, filePath) {
         super(); // Add this line to call the parent constructor
         this.code = code;
         this.lines = code.split('\n'); 
@@ -15,7 +15,7 @@ class JsClassParser extends Object {
         this.propertyCategories = {};
     }
 
-    parse() {
+    parse () {
         let ast;
         try {
             // First, try to parse the entire file
@@ -148,7 +148,7 @@ class JsClassParser extends Object {
         }
     }
 
-    fallbackParse() {
+    fallbackParse () {
         console.log("Entering fallback parsing mode");
         const result = {
             classInfo: {
@@ -195,7 +195,7 @@ class JsClassParser extends Object {
         return result;
     }
 
-    handleClassNode(node, result) {
+    handleClassNode (node, result) {
         if (node.id) {
             result.classInfo.className = node.id.name;
         }
@@ -217,7 +217,7 @@ class JsClassParser extends Object {
         result.classInfo.filePath = this.filePath;
     }
 
-    handleMethodNode(node, result) {
+    handleMethodNode (node, result) {
         const methodName = node.key ? node.key.name : node.method ? node.method.name : 'anonymous';
         const methodComments = this.getMethodComments(node.start);
 
@@ -263,14 +263,14 @@ class JsClassParser extends Object {
         result.methods.push(methodInfo);
     }
 
-    getAccessModifier(node) {
+    getAccessModifier (node) {
         if (node.kind === 'constructor') return 'constructor';
         if (node.static) return 'static';
         if (node.key && node.key.name.startsWith('_')) return 'private';
         return 'public';
     }
 
-    getClassComments(classStart) {
+    getClassComments (classStart) {
         const relevantComments = this.comments
             .filter(comment => comment.end <= classStart)
             .sort((a, b) => b.end - a.end);
@@ -282,7 +282,7 @@ class JsClassParser extends Object {
         return '';
     }
 
-    getMethodComments(methodStart) {
+    getMethodComments (methodStart) {
         const relevantComments = this.comments
             .filter(comment => 
                 comment.end < methodStart && 
@@ -300,7 +300,7 @@ class JsClassParser extends Object {
         return '';
     }
 
-    extractJSDocInfo(comment) {
+    extractJSDocInfo (comment) {
         const lines = comment.split('\n');
         
         let description = [];
@@ -347,7 +347,7 @@ class JsClassParser extends Object {
         };
     }
 
-    processTag(tag, content, entries) {
+    processTag (tag, content, entries) {
         switch (tag) {
             case 'param':
                 const [paramType, paramName, ...paramDesc] = content.split(/\s+/);
@@ -407,7 +407,7 @@ class JsClassParser extends Object {
     }
 
     // Add this new method to parse properties
-    parseProperties() {
+    parseProperties () {
         const propertyRegex = /\/\*\*\s*([\s\S]*?)\s*\*\//g;
         let match;
         while ((match = propertyRegex.exec(this.code)) !== null) {
@@ -432,7 +432,7 @@ class JsClassParser extends Object {
     }
 
     // Add this new method to extract the source code
-    getMethodSource(node) {
+    getMethodSource (node) {
         const startLine = node.loc.start.line - 1;  // Adjust for 0-based array index
         const endLine = node.loc.end.line;
         
@@ -455,7 +455,7 @@ class JsClassParser extends Object {
         return trimmedLines.join('\n');
     }
 
-    categorizeMethods(result) {
+    categorizeMethods (result) {
         result.methods.forEach(method => {
             const category = method.category || 'Uncategorized';
             if (!result.categories[category]) {
@@ -469,7 +469,7 @@ class JsClassParser extends Object {
     // categorizeProperties(result) { ... }
 }
 
-function jsonToXml(json) {
+function jsonToXml (json) {
     let xml = '';
     for (const key in json) {
         if (Object.hasOwn(json, key)) {
@@ -527,7 +527,7 @@ function jsonToXml(json) {
     return xml;
 }
 
-function escapeXml(unsafe) {
+function escapeXml (unsafe) {
     if (unsafe === undefined || unsafe === null) {
         return '';
     }
@@ -539,7 +539,7 @@ function escapeXml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-function escapeXmlPreserveWhitespace(unsafe) {
+function escapeXmlPreserveWhitespace (unsafe) {
     if (unsafe === undefined || unsafe === null) {
         return '';
     }
@@ -555,7 +555,7 @@ function escapeXmlPreserveWhitespace(unsafe) {
         });
 }
 
-function displayClassInfo(result) {
+function displayClassInfo (result) {
     const outputElement = document.getElementById('output');
     
     // Set the page title to the class name
@@ -588,7 +588,7 @@ function displayClassInfo(result) {
     outputElement.innerHTML = xmlOutput;
 }
 
-function generateCategorizedXml(sectionName, items, filePath) {
+function generateCategorizedXml (sectionName, items, filePath) {
     const categories = {};
     if (sectionName === 'properties') {
         Object.assign(categories, items);
@@ -614,7 +614,7 @@ function generateCategorizedXml(sectionName, items, filePath) {
     return categoryXml ? `<${sectionName}>${categoryXml}</${sectionName}>` : '';
 }
 
-function generateMethodXml(method, filePath) {
+function generateMethodXml (method, filePath) {
     let xml = '<method>\n';
     xml += `  <name class="collapsible">${escapeHtml(method.methodName)}</name>\n`;
     xml += `  <fullMethodName class="collapsible">${escapeHtml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>\n`;
@@ -695,7 +695,7 @@ function generateMethodXml(method, filePath) {
 }
 
 // Add this new function to generate XML for properties
-function generatePropertyXml(property) {
+function generatePropertyXml (property) {
     let xml = '<property>\n';
     xml += `  <propertyname>${escapeXml(property.propertyName)}</propertyname>\n`;
     xml += `  <propertytype>${escapeXml(property.propertyType)}</propertytype>\n`;
@@ -709,7 +709,7 @@ function generatePropertyXml(property) {
 }
 
 // Add this new function to escape HTML
-function escapeHtml(unsafe) {
+function escapeHtml (unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -749,7 +749,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Add event listeners for collapsible elements
         const collapsibles = document.querySelectorAll('.collapsible');
         collapsibles.forEach(collapsible => {
-            collapsible.addEventListener('click', function() {
+            collapsible.addEventListener('click', function () {
                 const content = this.nextElementSibling;
                 content.classList.toggle('show');
                 const methodElement = this.closest('method');
