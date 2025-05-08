@@ -106,7 +106,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @category Data Storage
      */
     refsPidsForJsonStore (puuids = new Set()) {
-        if (this.hasOwnProperty("*")) {
+        if (Object.hasOwn(this, "*")) {
             puuids.add(this["*"]);
         } else {
             throw new Error("dictionaries are reserved for pointers, but we found a non-pointer");

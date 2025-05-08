@@ -928,7 +928,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      * @category Getter
      */
     alreadyHasGetter () {
-        return this.owner().hasOwnProperty(this.getterName()); // TODO: hasOwnProperty? 
+        return Object.hasOwn(this.owner(), this.getterName()); // TODO: hasOwnProperty? 
     }
 
     /**
@@ -949,7 +949,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
      * @category Getter
      */
     alreadyHasSetter () {
-        return this.owner().hasOwnProperty(this.setterName());  // TODO: hasOwnProperty? 
+        return Object.hasOwn(this.owner(), this.setterName());  // TODO: hasOwnProperty? 
     }
 
     /**

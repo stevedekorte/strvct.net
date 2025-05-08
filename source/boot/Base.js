@@ -114,12 +114,12 @@
         // access slots that are created in initPrototypeSlots. We can't just put the slot definitions at the top
         // as subclasses may *override* the slot definitions.
         
-        if (this.prototype.hasOwnProperty("initPrototypeSlots")) {
+        if (Object.hasOwn(this.prototype, "initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
             this.prototype.initPrototypeSlots();
         }
 
-        if (this.prototype.hasOwnProperty("initPrototype")) {
+        if (Object.hasOwn(this.prototype, "initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
             this.prototype.initPrototype();
         }

@@ -472,7 +472,7 @@ class JsClassParser extends Object {
 function jsonToXml(json) {
     let xml = '';
     for (const key in json) {
-        if (json.hasOwnProperty(key)) {
+        if (Object.hasOwn(json, key)) {
             const value = json[key];
             if (key === 'methods') {
                 xml += '<methods>\n';

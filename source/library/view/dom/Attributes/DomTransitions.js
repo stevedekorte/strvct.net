@@ -66,7 +66,7 @@
      */
     at (aName) {
         const d = this.properties();
-        if (!d.hasOwnProperty(name)) {
+        if (!Object.hasOwn(d, name)) {
             d[name] = DomTransition.clone().setProperty(aName).setTransitions(this);
         }
         return d[name];

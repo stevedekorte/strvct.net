@@ -175,7 +175,9 @@
 
         this.slotsMap().forEach((slot) => {
             slot.setupInOwner();
-            assert(this.hasOwnProperty([slot.name()]) && this.hasOwnProperty(["_" + slot.name()]), this.type() + " missing " + slot.name() + " slot");
+            const hasIvar = Object.hasOwn(this, "_" + slot.name());
+            const hasGetter = Object.hasOwn(this, slot.name());
+            assert(hasIvar && hasGetter, this.type() + " missing " + slot.name() + " slot");
         });
     }
 
@@ -215,7 +217,7 @@
         // an array with a name->slot map used as an index.
 
         
-        if (this.hasOwnProperty("initPrototypeSlots")) {
+        if (Object.hasOwn(this, "initPrototypeSlots")) {
             // Only called if method defined on this class.
             this.initPrototypeSlots();// This method should NOT call super
             this.assertAllSlotsHaveTypes();
@@ -224,7 +226,7 @@
 
         this.initSlots();
 
-        if (this.hasOwnProperty("initPrototype")) {
+        if (Object.hasOwn(this, "initPrototype")) {
             this.initPrototype(); // This method should NOT call super
 
             if (this.assertProtoSlotsHaveType) {

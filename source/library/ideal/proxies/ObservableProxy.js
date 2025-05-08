@@ -269,7 +269,7 @@
 
         /*
         const proxyMethods = { "methodName": true }
-        if (proxyMethods.hasOwnProperty(propertyName)) {
+        if (Object.hasOwn(proxyMethods, propertyName)) {
             let self = this
             return () => {
                 return self[propertyName].apply(self, arguments)

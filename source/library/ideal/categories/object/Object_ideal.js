@@ -200,7 +200,7 @@
      * @category Property Access
      */
     getOwnProperty (key) {
-        if (this.hasOwnProperty(key)) {
+        if (Object.hasOwn(this, key)) {
             return this[key];
         }
         return undefined;

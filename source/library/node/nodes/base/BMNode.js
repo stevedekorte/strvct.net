@@ -1780,7 +1780,7 @@
         jsonArchiveSlots.forEach(slot => {
             const k = slot.getterName();
             const v = json[k];
-            if (json.hasOwnProperty(k)) {
+            if (Object.hasOwn(json, k)) {
                 slot.onInstanceSetValue(this, v);
             } else {
                 console.warn("no dict key '" + k + "' for archive slot " + k);

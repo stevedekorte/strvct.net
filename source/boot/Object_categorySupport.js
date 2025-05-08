@@ -184,7 +184,7 @@
         const nameForObj = function (obj) {
             let name = "?";
             try {
-                if (obj.hasOwnProperty("name")) {
+                if (Object.hasOwn(obj, "name")) {
                     name = obj.name + "";
                 } else {
                     name = obj.constructor.name + ".prototype";
@@ -195,7 +195,7 @@
             return name;
         }
     
-        if (obj.hasOwnProperty(slotName) && !slotName.startsWith("_")) {
+        if (Object.hasOwn(obj, slotName) && !slotName.startsWith("_")) {
             if(typeof(slotValue) === "function" && obj[slotName + "_isOptional"] !== undefined) {
                 return null;
             }
@@ -307,11 +307,11 @@
         // call the initPrototypeSlots method for the category, if it exists
         let catName = nameParts[1];
         let catInitMethodName = "initPrototypeSlots_" + catName;
-        let hasCatInitMethod = this.prototype.hasOwnProperty(catInitMethodName);
+        let hasCatInitMethod = Object.hasOwn(this.prototype, catInitMethodName);
         //console.log("catInitMethod: '" + catInitMethodName + "' exists: ", hasCatInitMethod);
 
         let parentProto = parentClass.prototype;
-        let parentProtoHasCatInitMethod = parentProto.hasOwnProperty(catInitMethodName);
+        let parentProtoHasCatInitMethod = Object.hasOwn(parentProto, catInitMethodName);
 
         if (hasCatInitMethod) {
             if (!parentProtoHasCatInitMethod) {

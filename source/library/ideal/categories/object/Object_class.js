@@ -217,7 +217,7 @@
             p.addChildClass(this);
         }
 
-        if (this.hasOwnProperty("initClass")) {
+        if (Object.hasOwn(this, "initClass")) {
             // Only called if method defined on this class.
             // This method should *not* call super.initClass().
             this.initClass();

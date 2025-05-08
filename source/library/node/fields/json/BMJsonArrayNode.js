@@ -253,13 +253,13 @@
             }
         });
 
-        if (true) {
+        //if (true) {
             this.subnodes().clear();
             this.subnodes().appendItems(newSubnodes);
             newSubnodes.forEach(sn => sn.setParentNode(this));
-        } else {
-            this.setSubnodes(newSubnodes);
-        }
+        //} else {
+        //    this.setSubnodes(newSubnodes);
+        //}
 
         return this;
     }

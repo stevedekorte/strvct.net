@@ -82,7 +82,7 @@
      * @category Support
      */
     isSupported () {
-        return window.hasOwnProperty("Notification");
+        return Object.hasOwn(window, "Notification");
     }
 
     // --- posting ---

@@ -36,14 +36,14 @@
      * @description Sets up the prototype by calling initPrototypeSlots and initPrototype if they exist
      */
     setupPrototype () { 
-        if (this.hasOwnProperty("initPrototypeSlots")) {
+        if (Object.hasOwn(this, "initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
             this.initPrototypeSlots();
         }
 
         // this.initSlots();
 
-        if (this.hasOwnProperty("initPrototype")) {
+        if (Object.hasOwn(this, "initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
             this.initPrototype();
         }
@@ -68,7 +68,7 @@
      * @returns {Base} The shared instance of the class
      */
     static shared () {
-        if (!Object.hasOwnProperty(this, "_shared")) {
+        if (!Object.hasOwn(this, "_shared")) {
             const obj = new this();
             this._shared = obj;
             obj.init();

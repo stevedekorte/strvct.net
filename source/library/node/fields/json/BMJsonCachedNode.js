@@ -173,7 +173,7 @@
     computeJsonPatches () {
         const lastJson = this.lastJson() ? this.lastJson() : {};
         const currentJson = this.asJson();
-        const patch = JsonPatch.compare(obj, updatedObj);
+        const patch = JsonPatch.compare(lastJson, currentJson);
         this.setLastJson(currentJson);
         return patch;
     }
@@ -307,7 +307,7 @@
         for (let i = 0; i < properties.length; i++) {
             const prop = properties[i];
 
-            if (currentObj.hasOwnProperty(prop)) {
+            if (Object.hasOwn(currentObj, prop)) {
                 currentObj = currentObj[prop];
             } else {
                 return false;

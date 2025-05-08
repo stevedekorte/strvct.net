@@ -471,7 +471,7 @@
      * @category Finding Slots
      */
     hasSlot (slotName) {
-        //return this.hasOwnProperty(slotName);
+        //return Object.hasOwn(this, slotName);
         return this.getSlot(slotName) !== undefined;
     }
 
@@ -885,7 +885,7 @@
      * @category Information
      */
     ownsSlot (name) {
-        return this.hasOwnProperty(name);
+        return Object.hasOwn(this, name);
     }
 
     /**
