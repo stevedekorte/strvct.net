@@ -15,9 +15,10 @@ function evalStringFromSourceUrl (codeString, path) {
 };
 */
 
-function evalStringFromSourceUrl(codeString, path) {
+function evalStringFromSourceUrl (codeString, path) {
     // Sanitize the path to ensure it's safe for use in the sourceURL comment
-    const sanitizedPath = path.replace(/[^a-zA-Z0-9\/\-_.]/g, ''); // Remove any characters that might break the comment
+    //const sanitizedPath = path.replace(/[^a-zA-Z0-9\/\-_.]/g, ''); // Remove any characters that might break the comment
+    const sanitizedPath = path.replace(/[^a-zA-Z0-9/\-_.]/g, ''); // Remove any characters that might break the comment
 
     // Ensure the path doesn't start with a slash if it doesn't have a protocol
     const normalizedPath = !/^https?:\/\//i.test(sanitizedPath) 
@@ -38,7 +39,7 @@ function evalStringFromSourceUrl(codeString, path) {
 
     // Return the result of the evaluation
     return result;
-};
+}
 
 getGlobalThis().evalStringFromSourceUrl = evalStringFromSourceUrl;
 

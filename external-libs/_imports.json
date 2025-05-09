@@ -4,5 +4,6 @@
     "json/_imports.json",
     "pako/_imports.json",
     "htmlparser2/_imports.json",
-    "simple-peer/_imports.json"
+    "simple-peer/_imports.json",
+    "jwt-decode/_imports.json"
 ]

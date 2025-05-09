@@ -1,0 +1,2 @@
+  const token = window.jsonwebtoken.createToken({data: 'test'}, 'secret');
+  const result = window.jsonwebtoken.verifyToken(token, 'secret');
