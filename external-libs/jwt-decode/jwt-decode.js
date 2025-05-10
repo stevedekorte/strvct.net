@@ -104,7 +104,7 @@ assert(window.jwt_decode, "jwt-decode is not available");
   import { jwtDecode } from "jwt-decode";
 
   const token = "eyJ0eXAiO.../// jwt token";
-  const decoded = jwtDecode(token);
+  const decoded = jwt_decode.jwtDecode(token);
 
   console.log(decoded);
 
@@ -117,7 +117,7 @@ assert(window.jwt_decode, "jwt-decode is not available");
 
 
   // decode header by passing in options (useful for when you need `kid` to verify a JWT):
-  const decodedHeader = jwtDecode(token, { header: true });
+  const decodedHeader = jwt_decode.jwtDecode(token, { header: true });
   console.log(decodedHeader);
 
   prints:
