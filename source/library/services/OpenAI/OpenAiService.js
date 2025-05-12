@@ -25,6 +25,12 @@
     this.setIsSingleton(true);
   }
 
+  serviceInfo () {
+    return {
+      "chatEndpoint": "https://api.openai.com/v1/chat/completions"
+    };
+  }
+
   /**
    * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model objects with name, note, and contextWindow properties.

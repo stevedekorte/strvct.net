@@ -78,6 +78,18 @@
   }
 
   /**
+   * @description Returns the service information.
+   * @returns {Object} The service information.
+   * @category Service Information
+   */
+  serviceInfo () {
+    return {
+      "source": "https://api-docs.deepseek.com",
+      "chatEndpoint": "https://api.deepseek.com/chat/completions"
+    };
+  }
+
+  /**
    * @description Performs final initialization steps for the instance.
    * @category Initialization
    */

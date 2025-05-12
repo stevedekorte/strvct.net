@@ -171,13 +171,12 @@
     super.finalInit()
     this.setTitle("AI Service");
     this.setSubtitle("ai services");
-    //this.setModels(AiChatModels.clone());
     this.setModelsJson(this.modelsJson());
     //this.setFetchModelsPromise(Promise.clone());
     this.fetchModelsPromise().setLabel("Fetch models promise");
-    this.fetchAndSetupInfo();
+    //this.fetchAndSetupInfo();
+    this.setupFromInfo();
   }
-
 
   /**
    * @description Returns the default chat model.
@@ -285,6 +284,18 @@
     if (info.models) {
       this.setModelsJson(info.models);
     }
+  }
+
+  /**
+   * @description Returns the API key for the service.
+   * @returns {string} The API key.
+   * @category Authentication
+   */
+  apiKey () {
+    if (!this._apiKey) {
+      return SvCredentialManager.shared().bearerTokenForService(this.type());
+    }
+    return this._apiKey;
   }
 
   /** 

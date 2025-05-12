@@ -2,9 +2,6 @@
 
 /**
  * @module library.services.Anthropic
- */
-
-/**
  * @class AnthropicRequest
  * @extends AiRequest
  * @classdesc Handles requests to the Anthropic API for AI interactions.

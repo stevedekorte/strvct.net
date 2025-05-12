@@ -106,6 +106,12 @@
     super.init();
   }
 
+  serviceInfo () {
+    return {
+      "chatEndpoint": "https://api.anthropic.com/v1/messages"
+    };
+  }
+
   /**
    * @description Performs final initialization steps.
    * @category Initialization

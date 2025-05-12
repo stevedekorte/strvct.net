@@ -75,6 +75,14 @@
       */
     ];
   }
+
+  serviceInfo () {
+    // need these to construct the endpoint url
+    return {
+      "projectId": "precise-blend-419917",
+      "locationId": "us-central1"
+    };
+  }
   
   /**
    * @description Initializes the prototype slots for the class.

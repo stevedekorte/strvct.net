@@ -28,6 +28,12 @@
     this.setIsSingleton(true);
   }
 
+  serviceInfo () {
+    return {
+      "chatEndpoint": "https://api.x.ai/v1/chat/completions"
+    };
+  }
+
   /**
    * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model configuration objects.

@@ -18,6 +18,12 @@
     this.setIsSingleton(true);
   }
 
+  serviceInfo () {
+    return {
+      "chatEndpoint": "https://api.groq.com/openai/v1/chat/completions"
+    };
+  }
+
   /**
    * @description Returns the JSON representation of available models
    * @returns {Array} An array of model objects

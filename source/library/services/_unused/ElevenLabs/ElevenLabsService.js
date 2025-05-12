@@ -12,6 +12,13 @@
     this.setIsSingleton(true);
   }
 
+  serviceInfo () {
+    return {
+      "source": "https://elevenlabs.io/docs/api-reference/sound-generation",
+      "chatEndpoint": "https://api.elevenlabs.io/v1/sound-generation"
+    };
+  }
+
   modelsJson () {
     return [
     ];
