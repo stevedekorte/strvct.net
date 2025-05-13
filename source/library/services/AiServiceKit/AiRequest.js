@@ -622,7 +622,7 @@
    * @description Called when the XHR progress event is fired
    * @param {ProgressEvent} event 
    */
-  onXhrProgress (event) {
+  onXhrProgress (/*event*/) {
     /*
     const txt = event.currentTarget.responseText;
     const latestString = txt.substr(txt.length - event.loaded, event.loaded);
@@ -638,7 +638,7 @@
    * @description Called when the XHR loadend event is fired
    * @param {Event} event 
    */
-  onXhrLoadEnd (event) {
+  onXhrLoadEnd (/*event*/) {
     if (this.didAbort()) {
       return;
     }
@@ -847,7 +847,7 @@
    * @description Called when the XHR error event is fired
    * @param {Event} event 
    */
-  onXhrError (event) {
+  onXhrError (/*event*/) {
     debugger;
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
@@ -869,7 +869,7 @@
    * @returns {string}
    */
 	nameForXhrStatusCode (statusCode) {
-		/**
+  /**
 		   * This function returns a brief description of an XHR status code.
 		   * 
 		   * @param {number} statusCode - The XHR status code.
@@ -877,22 +877,22 @@
 		   */
 	
 		const xhrStatuses = {
-		  0: "Not started: Network Error, Request Blocked, or CORS issue",
-		  100: "Continue",
-		  101: "Switching protocols",
-		  200: "OK - Request successful",
-		  201: "Created - Resource created",
-		  301: "Moved permanently",
-		  304: "Not modified",
-		  400: "Bad request", 
-		  401: "Unauthorized",
-		  403: "Forbidden",
-		  404: "Not found",
-		  500: "Internal server error" 
+      0: "Not started: Network Error, Request Blocked, or CORS issue",
+      100: "Continue",
+      101: "Switching protocols",
+      200: "OK - Request successful",
+      201: "Created - Resource created",
+      301: "Moved permanently",
+      304: "Not modified",
+      400: "Bad request", 
+      401: "Unauthorized",
+      403: "Forbidden",
+      404: "Not found",
+      500: "Internal server error" 
 		};
 	
 		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
-	  }
+  }
 
   /**
    * @category XHR
@@ -924,7 +924,7 @@
    * @description Called when the XHR abort event is fired
    * @param {Event} event 
    */
-  onXhrAbort (event) {
+  onXhrAbort (/*event*/) {
     this.setDidAbort(true);
     this.setStatus("aborted");
     this.sendDelegate("onStreamEnd");
@@ -1006,7 +1006,7 @@
    * @description Called when a JSON chunk is streamed
    * @param {Object} json 
    */
-  onStreamJsonChunk (json) {
+  onStreamJsonChunk (/*json*/) {
     throw new Error(this.type() + " onStreamJsonChunk not implemented");
   }
 

@@ -157,7 +157,7 @@
    * @returns {string} The protocol string ("https" or "http").
    * @category URL Generation
    */
-  protocolString() {
+  protocolString () {
     return this.isSecure() ? "https" : "http";
   }
 
@@ -166,7 +166,7 @@
    * @returns {string} The full hostname.
    * @category URL Generation
    */
-  hostname() {
+  hostname () {
     const s = this.subdomain();
     const d = this.domain();
     
@@ -186,7 +186,7 @@
    * @returns {ProxyServer} The current instance for method chaining.
    * @category Configuration
    */
-  setHostname(hostname) {
+  setHostname (hostname) {
       const parts = hostname.split('.');
   
       if (parts.length < 2) {
@@ -207,7 +207,7 @@
    * @returns {string[]} An array of validation error messages.
    * @category Validation
    */
-  validationErrors() {
+  validationErrors () {
     const errors = []
 
     if (!Type.isString(this.hostname())) {
@@ -230,7 +230,7 @@
    * @returns {string|null} The proxy URL for the "targetUrl" parameter.
    * @category UI
    */
-  subtitle() {
+  subtitle () {
     return this.proxyUrlForUrl("targetUrl")
   }
 
@@ -240,7 +240,7 @@
    * @returns {string|null} The generated proxy URL or null if there's an error.
    * @category URL Generation
    */
-  proxyUrlForUrl(targetUrl) {
+  proxyUrlForUrl (targetUrl) {
     assert(targetUrl);
 
     const errors = this.validationErrors()
@@ -283,7 +283,7 @@
    * @returns {ProxyServer} The current instance for method chaining.
    * @category Error Handling
    */
-  showError() {
+  showError () {
     console.warn(this.type() + " ERROR: " + this.error());
     return this;
   }

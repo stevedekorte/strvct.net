@@ -241,6 +241,8 @@
    * @category API Communication
    */
   prepareToSendRequest (aRequest) {
+    this.setupChatEndpoint(); // in case user's auth token has changed
+
     //debugger;
     const bodyJson = aRequest.bodyJson();
     const geminiBody = {};

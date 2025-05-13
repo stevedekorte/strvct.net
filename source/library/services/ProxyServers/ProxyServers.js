@@ -1,8 +1,5 @@
 /**
  * @module library.services.ProxyServers
- */
-
-/**
  * @class ProxyServers
  * @extends BMSummaryNode
  * @classdesc ProxyServers class for managing proxy servers.
@@ -73,7 +70,7 @@
    * @description Performs final initialization and adds a default proxy if needed.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit()
     this.addDefaultIfNeeded()
   }
