@@ -83,7 +83,7 @@ const https = require('https');
 	}
 
 	logPrefix () {
-		return this.server().name() + " request: ";
+		return this.server().name() + ": ";
 	}
 
 	/**
