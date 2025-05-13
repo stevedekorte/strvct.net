@@ -22,11 +22,20 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("userAuthToken", "");
+            slot.setLabelToCapitalizedSlotName();
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setAllowsNullValue(true);
-        } 
+        }
+
+        {
+            const slot = this.newSlot("credentials", null);
+            slot.setLabelToCapitalizedSlotName();
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(SvCredential);
+            slot.setIsSubnode(true);
+        }
     }
 
     initPrototype () {
@@ -34,6 +43,7 @@
         this.setNodeCanReorderSubnodes(false);
         this.setShouldStoreSubnodes(false);
         this.setNodeCanAddSubnode(false);
+        this.setSubnodeClasses([SvCredential]);
     }
 
     finalInit () {

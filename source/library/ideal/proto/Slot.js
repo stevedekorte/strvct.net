@@ -1331,7 +1331,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             // sanity check - we don't typically want to add it automatically if subnodes are stored
             assert(anInstance.shouldStoreSubnodes() === false);
             const value = this.onInstanceGetValue(anInstance);
-            assert(!Type.isNullOrUndefined(value), anInstance.type() + "." + this.name() + "ivar is undefined for *subnode* slot - maybe you meant to use setIsSubnodeField(true)?");
+            assert(!Type.isNullOrUndefined(value), anInstance.type() + "." + this.name() + " ivar is undefined for *subnode* slot - maybe you meant to use setIsSubnodeField(true)?");
             anInstance.assertValidSubnodeType(value); // tmp - this is also done in addSubnode
             anInstance.addSubnode(value);
         }

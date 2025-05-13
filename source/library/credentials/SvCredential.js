@@ -13,24 +13,24 @@
 
   initPrototypeSlots () {
     {
-      const slot = this.newSlot("serviceName", null);
+      const slot = this.newSlot("serviceName", "");
       slot.setShouldStoreSlot(true);
       slot.setSlotType("String");
-      slot.setIsSubnode(true);
+      slot.setIsSubnodeField(true);
     }
 
     {
-        const slot = this.newSlot("userName", null);
+        const slot = this.newSlot("userName", "");
         slot.setShouldStoreSlot(true);
         slot.setSlotType("String");
-        slot.setIsSubnode(true);
+        slot.setIsSubnodeField(true);
     } 
 
     {
-        const slot = this.newSlot("password", null);
+        const slot = this.newSlot("password", "");
         slot.setShouldStoreSlot(true);
         slot.setSlotType("String");
-        slot.setIsSubnode(true);
+        slot.setIsSubnodeField(true);
     } 
   }
 
