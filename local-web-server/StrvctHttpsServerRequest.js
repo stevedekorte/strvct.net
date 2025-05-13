@@ -82,11 +82,15 @@ const https = require('https');
 	initPrototype () {
 	}
 
+	logPrefix () {
+		return this.server().name() + " request: ";
+	}
+
 	/**
 	 * @description Processes the incoming request.
 	 */
 	process () {
-		console.log("request url:" + this.request().url)
+		this.log(this.request().url)
 		this.setUrlObject(this.getUrlObject())
 	
 		this.setQueryMap(this.getQueryMap())
@@ -102,12 +106,12 @@ const https = require('https');
 			if (error._code) {
 				this.response().writeHead(error._code, {});
 				this.response().end();
-				console.log(error.message);
+				this.log(error.message);
 			} else {
 				if (error.cause === undefined && typeof(Error.cause) === 'function') {
                     error.cause = error;
                 }
-				console.log("ERROR: ", error.message);
+				this.log("ERROR: ", error.message);
 			}
 		}
 	}
@@ -123,13 +127,13 @@ const https = require('https');
 		commandParts.push("curl  --insecure '" + url + "'");
 		const headers = options.headers;
 	
-		 Object.keys(headers).forEach((key) => {
-		  const value = headers[key];
-		  commandParts.push(" --header '" + key + ": " + value + "'");
+		Object.keys(headers).forEach((key) => {
+			const value = headers[key];
+			commandParts.push(" --header '" + key + ": " + value + "'");
 		});
 	
 		return commandParts.join(" \\\n");
-	  }
+	}
 
 	/**
 	 * @description Handles proxy requests.
@@ -140,7 +144,7 @@ const https = require('https');
 			const res = this.response();
 
 			const url = this.queryMap().get("proxyUrl");
-			console.log("proxy request for: " + url + "");
+			this.log("PROXY REQUEST: " + url + "");
 
 			const parsedUrl = new URL(url);
 			const hostname = parsedUrl.hostname;
@@ -187,11 +191,11 @@ const https = require('https');
 				});
 	
 				proxyRes.on('end', () => {
-					const contentType = proxyRes.headers['content-type'];
-					const contentEncoding = proxyRes.headers['content-encoding'];
+					//const contentType = proxyRes.headers['content-type'];
+					//const contentEncoding = proxyRes.headers['content-encoding'];
 					const responseBuffer = Buffer.concat(responseBody);
-					console.log('proxyRes responseBuffer.byteLength: ', responseBuffer.byteLength, " bytes in " + contentEncoding + " encoding");
-			
+					//this.log('proxy responseBuffer.byteLength: ' + responseBuffer.byteLength + " bytes in " + contentEncoding + " encoding");
+					this.log("PROXY RESPONSE: " + responseBuffer.byteLength + " bytes");
 					res.end();
 				});
 			
@@ -199,8 +203,8 @@ const https = require('https');
 					console.error(`Error: ${error.message}`);
 
 					const errorMessage = "proxy request error: '" + error.message + "' " + this.nameForXhrStatusCode(proxyReq.statusCode) + " for url: " + url + "";
-					console.log(errorMessage);
-					console.log("responseBody: '" + responseBody + "'");
+					this.log(errorMessage);
+					this.log("responseBody: '" + responseBody + "'");
 
 					res.statusCode = 500;
 					res.end('Internal Server Error');
@@ -220,9 +224,9 @@ const https = require('https');
 					if (contentType) {
 						const isText = contentType.startsWith('text') || contentType.startsWith('application/json') || contentType.startsWith('application/javascript');
 						if (isText) {
-							console.log("  request body is text of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
+							this.log("  request body is text of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
 						} else {
-							console.log("  request body is binary of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
+							this.log("  request body is binary of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
 						}
 					}
 				}
@@ -239,7 +243,7 @@ const https = require('https');
 	 * @param {Error} error - The error object.
 	 */
 	onProxyRequestError (error) {
-		console.error('proxy request error:', error.message);
+		this.log('proxy request error:', error.message);
 	}
 
 	/**
@@ -389,7 +393,7 @@ const https = require('https');
 
 			if (!contentType) {
 				contentType = "application/octet-stream";
-				console.log("  WARNING: no known mime type for extension: '" + ext + "' so we'll assume " + contentType);
+				this.log("  WARNING: no known mime type for extension: '" + ext + "' so we'll assume " + contentType);
 			}
 
 			if (path.startsWith(this.localAcmePath())) {
@@ -414,9 +418,9 @@ const https = require('https');
 			if (error._code) {
 				this.response().writeHead(error._code, {'Content-Type': 'text/plain'});
 				this.response().end(error.message);
-				console.log("ERROR CODE: " + error._code + " MESSAGE:" + error.message);
+				this.log("ERROR CODE: " + error._code + " MESSAGE:" + error.message);
 			} else {
-				console.log("ERROR: ", error.message);
+				this.log("ERROR: ", error.message);
 			}
 		}
 	}
@@ -447,21 +451,21 @@ const https = require('https');
 	 */
 	nameForXhrStatusCode (statusCode) {
 		const xhrStatuses = {
-		  0: "Not started: Network Error, Request Blocked, or CORS issue",
-		  100: "Continue",
-		  101: "Switching protocols",
-		  200: "OK - Request successful",
-		  201: "Created - Resource created",
-		  301: "Moved permanently",
-		  304: "Not modified",
-		  400: "Bad request", 
-		  401: "Unauthorized",
-		  403: "Forbidden",
-		  404: "Not found",
-		  500: "Internal server error" 
+			0: "Not started: Network Error, Request Blocked, or CORS issue",
+			100: "Continue",
+			101: "Switching protocols",
+			200: "OK - Request successful",
+			201: "Created - Resource created",
+			301: "Moved permanently",
+			304: "Not modified",
+			400: "Bad request", 
+			401: "Unauthorized",
+			403: "Forbidden",
+			404: "Not found",
+			500: "Internal server error" 
 		};
 	
 		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
-	  }
+	}
 
 }.initThisClass());

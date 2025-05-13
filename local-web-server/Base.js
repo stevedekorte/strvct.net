@@ -149,6 +149,15 @@
         return this;
     }
 
+    logPrefix () {
+        return this.type() + " ";
+    }
+
+    log (...args) {
+        const s = this.logPrefix() + args.map(String).join('')
+        console.log(s);
+    }    
+
 }.initThisClass());
 
 Base.setupCapitalized(); // so we don't run it on every class

@@ -24,6 +24,8 @@ const nodePath = require('path');
 	 * Initializes the prototype slots for the StrvctHttpsServer.
 	 */
 	initPrototypeSlots () {
+		this.newSlot("name", "WebServer");
+
 		/**
 		 * @member {Object} server - The server instance.
 		 */
@@ -115,7 +117,11 @@ const nodePath = require('path');
 		console.log("      cwd: '" + sandboxPath + "'")
 		console.log("     port: " + this.port())
 		console.log(" isSecure: " + this.isSecure())
-		console.log("      url: " + this.protocol() + "://" + this.hostname() + ":" + this.port() + "/index.html")
+		console.log("      url: " + this.origin() + "/index.html")
+	}
+
+	origin () {
+		return this.protocol() + "://" + this.hostname() + ":" + this.port();
 	}
 
 	/**
