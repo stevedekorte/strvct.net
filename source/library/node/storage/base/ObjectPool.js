@@ -777,7 +777,7 @@
         let totalStoreCount = 0;
         this.setStoringPids(new Set());
 
-        while (true) { // easier to express clearly than do/while in this case
+        for (;;) { // easier to express clearly than do/while in this case
             let thisLoopStoreCount = 0;
             const dirtyBucket = this.dirtyObjects();
             this.setDirtyObjects(new Map());
@@ -1025,8 +1025,10 @@
      * @returns {Object}
      */
     refForPid (aPid) {
+        debugger;
         return { 
-            "*": this.pid()
+            "*": aPid.pid()
+            //"*": this.pid()
         };
     }
 
@@ -1289,6 +1291,14 @@
     sweep () {
         const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()); // allPids doesn't contain rootKey
 
+        unmarkedPidSet.forEach(pid => {
+            this.debugLog(() => "--- sweeping --- deletePid(" + pid + ") ");
+            this.recordsMap().removeKey(pid); // this will remove the pid from the recordsMap
+        });
+
+        return unmarkedPidSet.count();
+
+        /*
         // delete all unmarked records
         let deleteCount = 0;
         const recordsMap = this.recordsMap();
@@ -1303,6 +1313,7 @@
             }
         })
         return deleteCount;
+        */
     }
 
     /**
