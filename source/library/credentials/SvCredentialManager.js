@@ -7,6 +7,8 @@
  * @classdesc A shared global object to manage passwords.
  * Used by Service APIs. Examples:
  * 
+ * SvCredentialManager.shared().setUserAuthToken("..."); // set the user auth token for the current user
+ * 
  * const bearerToken = SvCredentialManager.shared().bearerTokenForService("OpenAI");
  * const bearerToken = SvCredentialManager.shared().bearerTokenForEndpoint("https://api.openai.com/v1/chat/completions");
  * 
@@ -53,11 +55,13 @@
 
     // these implementations are temporary - will be replaced with actual implementations
 
-    bearerTokenForService (serviceName) {
-        return this.userAuthToken();
+    bearerTokenForService (/*serviceName*/) {
+      // TODO: implement this for credentials
+      return this.userAuthToken();
     }
     
-    bearerTokenForEndpoint (endpoint) {
+    bearerTokenForEndpoint (/*endpoint*/) {
+        // TODO: implement this for credentials
         return this.userAuthToken();
     }
 
