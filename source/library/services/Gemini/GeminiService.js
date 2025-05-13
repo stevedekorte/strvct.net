@@ -145,7 +145,7 @@
     let url = this.endPointUrlFormat();
     url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
     url = url.replaceAll("{generate response method}", "streamGenerateContent");
-    url = url.replaceAll("{api key}", this.apiKey());
+    url = url.replaceAll("{api key}", this.apiKeyOrUserAuthToken());
     this.setChatEndpoint(url);
   }
 
@@ -177,15 +177,6 @@
    */
   validateKey (s) {
     return s.startsWith("sk-");
-  }
-
-  /**
-   * @description Checks if the API key is set.
-   * @returns {boolean} True if the API key is set, false otherwise.
-   * @category Authentication
-   */
-  hasApiKey () {
-    return this.apiKey().length > 0; // && this.validateKey(this.apiKey());
   }
 
   /**

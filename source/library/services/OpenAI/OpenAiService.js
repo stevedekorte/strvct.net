@@ -186,14 +186,7 @@
     return s.length === 51 && s.startsWith("sk-");
   }
 
-  /**
-   * @description Checks if a valid API key is set.
-   * @returns {boolean} True if a valid API key is set, false otherwise.
-   * @category Authentication
-   */
-  hasApiKey () {
-    return this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  }
+
 
   /**
    * @description Fetches the models URL.
@@ -215,7 +208,7 @@
    * @category Models
    */
   async fetchAllModelsDetails() {
-    const apiKey = this.apiKey();
+    const apiKey = this.apiKeyOrUserAuthToken();
     const headers = {
       "Authorization": `Bearer ${apiKey}`,
       "Content-Type": "application/json"

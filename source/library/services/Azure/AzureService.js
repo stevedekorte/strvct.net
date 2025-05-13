@@ -145,6 +145,14 @@
     return isLowercaseOrUnderscore(s);
   }
 
+  apiKeyOrUserAuthToken () {
+    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.type())
+    if (userAuthToken) {
+      return userAuthToken;
+    }
+    return this.apiKey();
+  }
+
   /**
    * @description Checks if the service has API access
    * @returns {boolean} True if the service has API access, false otherwise
@@ -152,7 +160,7 @@
    */
   hasApiAccess() {
     return (
-      this.validateKey(this.apiKey()) && this.validateRegion(this.region())
+      this.apiKeyOrUserAuthToken() && this.validateRegion(this.region())
     );
   }
   

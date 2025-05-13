@@ -113,14 +113,6 @@
     return true;
   }
 
-  /**
-   * @description Checks if a valid API key is set.
-   * @returns {boolean} True if a valid API key is set, false otherwise.
-   * @category Authentication
-   */
-  hasApiKey () {
-    return this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  }
 
   setModelsJson (json) {
     super.setModelsJson(json);

@@ -265,7 +265,7 @@
     this.setStatus("fetching response...");
     this.sendDelegate("onImagePromptStart", [this]);
 
-    const apiKey = this.service().apiKey(); // Replace with your actual API key
+    const apiKey = this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
     
     const bodyJson = {

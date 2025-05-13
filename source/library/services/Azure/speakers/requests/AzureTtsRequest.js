@@ -171,7 +171,7 @@
    * @category Validation
    */
   canSpeak () {
-    const hasKey = speaker.service().apiKey() !== null;
+    const hasKey = speaker.service().apiKeyOrUserAuthToken() !== null;
     const hasText = this.cleanedText().length > 0;
     return hasKey && hasText;
   }
@@ -203,7 +203,7 @@
       {
         method: "POST",
         headers: {
-          "Ocp-Apim-Subscription-Key": speaker.service().apiKey(),
+          "Ocp-Apim-Subscription-Key": speaker.service().apiKeyOrUserAuthToken(),
           "Content-Type": "application/ssml+xml",
           "X-Microsoft-OutputFormat": "riff-24khz-16bit-mono-pcm",
         },

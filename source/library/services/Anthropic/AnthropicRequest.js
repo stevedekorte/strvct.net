@@ -92,8 +92,8 @@
    * @returns {String} The API key.
    * @category Authentication
    */
-  apiKey () {
-    return AnthropicService.shared().apiKey();
+  apiKeyOrUserAuthToken () {
+    return this.service().apiKeyOrUserAuthToken();
   }
 
   /**
@@ -106,7 +106,7 @@
 
     // remove Authorization propety and use x-api-key instead
     delete json.headers["Authorization"];
-    json.headers["x-api-key"] = this.apiKey();
+    json.headers["x-api-key"] = this.apiKeyOrUserAuthToken();
     return json;
   }
 

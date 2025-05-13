@@ -41,7 +41,7 @@
    * @category Authentication
    */
   apiKey () {
-    return GroqService.shared().apiKey();
+    return GroqService.shared().apiKeyOrUserAuthToken();
   }
 
   /**

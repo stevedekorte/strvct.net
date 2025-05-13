@@ -172,15 +172,6 @@
   }
 
   /**
-   * Checks if the model has a valid API key.
-   * @returns {boolean} True if the API key is valid, false otherwise.
-   * @category Authentication
-   */
-  hasApiKey () {
-    return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  };
-
-  /**
    * Sets the model properties from a JSON object.
    * @param {Object} json - The JSON object containing model properties.
    * @returns {AiChatModel} The current instance.

@@ -203,7 +203,7 @@
    * @category Authentication
    */
   hasApiKey () {
-    return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
+    return this.apiKeyOrUserAuthToken() && this.apiKeyOrUserAuthToken().length > 0;
   }
 
   /**
@@ -244,7 +244,7 @@
    * @returns {AiService} The AiService instance.
    * @category Request Handling
    */
-  prepareToSendRequest (aRequest) {
+  prepareToSendRequest (/*aRequest*/) {
     return this;
   }
 
@@ -287,15 +287,17 @@
   }
 
   /**
-   * @description Returns the API key for the service.
-   * @returns {string} The API key.
+   * @description Returns user auth token if available, otherwise returns the API key.
+   * @returns {string} The API key or user auth token.
    * @category Authentication
    */
-  apiKey () {
-    if (!this._apiKey) {
-      return SvCredentialManager.shared().bearerTokenForService(this.type());
+
+  apiKeyOrUserAuthToken () {
+    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.type())
+    if (userAuthToken) {
+      return userAuthToken;
     }
-    return this._apiKey;
+    return this.apiKey();
   }
 
   /** 

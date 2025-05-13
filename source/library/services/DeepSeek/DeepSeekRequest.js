@@ -41,7 +41,7 @@
    * @category Authentication
    */
   apiKey () {
-    return DeepSeekService.shared().apiKey();
+    return DeepSeekService.shared().apiKeyOrUserAuthToken();
   }
 
   /**

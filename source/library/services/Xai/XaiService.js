@@ -106,7 +106,7 @@
    * @category Authentication
    */
   hasApiKey () {
-    return this.apiKey().length > 0 && this.validateKey(this.apiKey());
+    return this.hasApiKey().length > 0;
   }
 
   /**

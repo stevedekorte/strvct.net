@@ -239,7 +239,7 @@
    * @category Data
    */
   apiKey () {
-    return this.service().apiKey()
+    return this.service().apiKeyOrUserAuthToken()
   }
 
   /**

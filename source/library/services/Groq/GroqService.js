@@ -94,15 +94,6 @@
   }
 
   /**
-   * @description Checks if the API key is present and valid
-   * @returns {boolean} True if the API key is present and valid, false otherwise
-   * @category Authentication
-   */
-  hasApiKey () {
-    return this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  }
-
-  /**
    * @description Validates the API key
    * @param {string} s - The API key to validate
    * @returns {boolean} True if the API key is valid, false otherwise

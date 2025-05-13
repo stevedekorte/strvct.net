@@ -84,8 +84,8 @@ curl https://api.x.ai/v1/chat/completions \
    * @returns {string} The API key for Xai service.
    * @category Authentication
    */
-  apiKey () {
-    return XaiService.shared().apiKey();
+  apiKeyOrUserAuthToken () {
+    return XaiService.shared().apiKeyOrUserAuthToken();
   }
 
   /**

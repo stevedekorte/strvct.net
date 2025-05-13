@@ -88,7 +88,7 @@
    * @category Authentication
    */
   apiKey () {
-    return GeminiService.shared().apiKey();
+    return GeminiService.shared().apiKeyOrUserAuthToken();
   }
 
   /**

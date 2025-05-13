@@ -366,8 +366,8 @@
    * @description Returns the API key
    * @returns {string}
    */
-  apiKey () {
-    return this.service().apiKey();
+  apiKeyOrUserAuthToken () {
+    return this.service().apiKeyOrUserAuthToken();
   }
 
   /**
@@ -383,7 +383,7 @@
    * @returns {Object}
    */
   requestOptions () {
-    const apiKey = this.apiKey();
+    const apiKey = this.apiKeyOrUserAuthToken();
     const json = {
       method: "POST",
       headers: {
@@ -413,8 +413,8 @@
       throw new Error(this.type() + " apiUrl missing");
     }
 
-    if (!this.apiKey()) {
-      throw new Error(this.type() + " apiKey missing");
+    if (!this.apiKeyOrUserAuthToken()) {
+      throw new Error(this.type() + " apiKeyOrUserAuthToken missing");
     }
   }
 

@@ -216,7 +216,7 @@
    * @category Request Preparation
    */
   requestOptions () {
-    const apiKey = this.service().apiKey();
+    const apiKey = this.service().apiKeyOrUserAuthToken();
     return {
       method: "POST",
       headers: {

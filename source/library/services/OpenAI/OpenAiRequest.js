@@ -69,8 +69,8 @@
    * @returns {string} The API key.
    * @category Authentication
    */
-  apiKey () {
-    return OpenAiService.shared().apiKey();
+  apiKeyOrUserAuthToken () {
+    return OpenAiService.shared().apiKeyOrUserAuthToken();
   }
 
   /**
@@ -79,7 +79,7 @@
    * @category API Request
    */
   requestOptions () {
-    const apiKey = this.apiKey();
+    const apiKey = this.apiKeyOrUserAuthToken();
     const bodyJson = this.bodyJson();
     bodyJson.stream = true;
     //bodyJson.usage = true;
