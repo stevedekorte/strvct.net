@@ -43,8 +43,9 @@
   }
 
   shouldVoiceNarrate () {
-    if (this.session) {
-      const settings = this.session().settings();
+    const session = this.session();
+    if (session && session.settings) {
+      const settings = session.settings();
       const voiceNarrationOn = settings.shouldVoiceNarrate();
       return !this.isDoneSpeaking() && this.session().isHost() && voiceNarrationOn;
     }
@@ -56,7 +57,6 @@
     this.speaker().stopAndClearQueue();
     return this;
   }
-
 
   session () {
     return this.conversation().firstOwnerChainNodeOfClass(HwSession);

@@ -376,7 +376,7 @@ Example Tool call format:
     }
 
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
-    debugger;
+    //debugger;
 
     this.setStatus("completed");
 
