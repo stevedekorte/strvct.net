@@ -334,7 +334,7 @@
         this.postNoteNamed("appDidInit");
 
         if (this.runTests) {
-		    this.runTests();
+            this.runTests();
         }
 
         bootLoadingView.setTitle("");
@@ -363,7 +363,7 @@
      * @returns {App} The app instance
      * @category Utility
      */
-    handleSearchParams (searchParams) {
+    handleSearchParams (/* searchParams */) {
         // for subclasses to implement
         return this
     }
