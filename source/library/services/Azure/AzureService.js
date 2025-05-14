@@ -87,7 +87,7 @@
    * @description Initializes the AzureService
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setTitle("Azure Text to Speech");
     this.setSubtitle("text-to-speech service");
@@ -121,7 +121,7 @@
    * @returns {boolean} True if the key is valid, false otherwise
    * @category Authentication
    */
-  validateKey(s) {
+  validateKey (s) {
     if (!s) {
       return false;
     }
@@ -134,7 +134,7 @@
    * @returns {boolean} True if the region is valid, false otherwise
    * @category Configuration
    */
-  validateRegion(s) {
+  validateRegion (s) {
     if (!s) {
       return false;
     }
@@ -158,7 +158,7 @@
    * @returns {boolean} True if the service has API access, false otherwise
    * @category Authentication
    */
-  hasApiAccess() {
+  hasApiAccess () {
     return (
       this.apiKeyOrUserAuthToken() && this.validateRegion(this.region())
     );

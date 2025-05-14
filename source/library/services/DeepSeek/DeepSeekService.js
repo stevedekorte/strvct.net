@@ -109,7 +109,7 @@
    * @returns {boolean} True if the key is valid, false otherwise.
    * @category Authentication
    */
-  validateKey (s) {
+  validateKey (/*s*/) {
     return true;
   }
 

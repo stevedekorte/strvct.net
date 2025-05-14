@@ -202,7 +202,7 @@
    * @description Performs final initialization.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit()
     this.setCanDelete(true)
   }

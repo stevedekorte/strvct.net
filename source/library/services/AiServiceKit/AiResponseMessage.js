@@ -318,7 +318,7 @@
    * @param {AiRequest} aRequest - The request object.
    * @category Event Handling
    */
-  onRequestBegin (aRequest) {
+  onRequestBegin (/*aRequest*/) {
 
   }
 
@@ -332,6 +332,7 @@
     console.log("ERROR: ", aRequest.error().message);
     this.setError(aRequest.error());
     const msg = aRequest.error().message;
+    console.warn("ERROR: ", msg);
     /*
     if (msg.includes("Please try again in 6ms.")) {
       this.setRetryCount(this.retryCount() + 1);
@@ -370,7 +371,7 @@
    * @param {AiRequest} aRequest - The request object.
    * @category Event Handling
    */
-  onRequestComplete (aRequest) {
+  onRequestComplete (/*aRequest*/) {
    // debugger;
     //this.setRequest(null)
     //this.setStatus("complete");
@@ -403,7 +404,7 @@
    * @param {AiRequest} request - The request object.
    * @category Event Handling
    */
-  onStreamStart (request) {
+  onStreamStart (/*request*/) {
   }
   
   /**
@@ -413,7 +414,7 @@
    * @param {string} newContent - The new content received.
    * @category Event Handling
    */
-  onStreamData (request, newContent) {
+  onStreamData (request, /*newContent*/) {
     this.setContent(request.fullContent())
     this.sendDelegate("onMessageUpdate")
   }
@@ -424,7 +425,7 @@
    * @param {AiRequest} request - The request object.
    * @category Event Handling
    */
-  onStreamEnd (request) {
+  onStreamEnd (/*request*/) {
     //debugger;
     //this.setContent(request.fullContent()); // all data has already been sent
     this.setIsComplete(true);

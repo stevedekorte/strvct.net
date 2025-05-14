@@ -96,7 +96,7 @@
    * @returns {boolean} True if the API key is valid, false otherwise.
    * @category Authentication
    */
-  validateKey (s) {
+  validateKey (/*s*/) {
     return true;
   }
 
@@ -115,7 +115,7 @@
    * @returns {XaiService} The service instance.
    * @category Request Handling
    */
-  prepareToSendRequest (aRequest) {
+  prepareToSendRequest (/*aRequest*/) {
     /*
     const bodyJson = aRequest.bodyJson();
     let messages = bodyJson.messages;

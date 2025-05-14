@@ -207,7 +207,7 @@
    * @returns {Promise<Object>} A promise that resolves to the model details.
    * @category Models
    */
-  async fetchAllModelsDetails() {
+  async fetchAllModelsDetails () {
     const apiKey = this.apiKeyOrUserAuthToken();
     const headers = {
       "Authorization": `Bearer ${apiKey}`,

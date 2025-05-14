@@ -59,6 +59,7 @@
      */
     {
       const slot = this.newSlot("error", null);
+      slot.setSlotType("String");
     }
   }
 
@@ -75,7 +76,7 @@
    * Initializes the AzureTtsRequest instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setNodeCanAddSubnode(true);
     this.setCanDelete(true);
@@ -89,7 +90,7 @@
    * Performs final initialization of the AzureTtsRequest instance.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
@@ -101,7 +102,7 @@
    * @returns {*} The parent requests node.
    * @category Hierarchy
    */
-  requests() {
+  requests () {
     return this.parentNode();
   }
 
@@ -181,7 +182,7 @@
    * @async
    * @category Action
    */
-  async start() {
+  async start () {
     const speaker = this.speaker();
     const text = this.cleanedText();
 

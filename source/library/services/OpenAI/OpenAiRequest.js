@@ -86,7 +86,7 @@
     return {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        //"Content-Type": "application/json",
         "Content-Type": "application/json; charset=UTF-8",
         "Authorization": `Bearer ${apiKey}`,
         'Accept-Encoding': 'identity', // to avoid dealing with gzip
