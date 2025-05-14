@@ -23,12 +23,12 @@
 console.log("running ResourceIndexer.js");
 
 const ResourcesFolder = require('./ResourcesFolder.js');
-console.log("ResourcesFolder:", ResourcesFolder);
+//console.log("ResourcesFolder:", ResourcesFolder);
 const process = require('process');
 
 
 class ResourceIndexer extends Object {
-    constructor() {
+    constructor () {
         super();
     }
 
@@ -38,7 +38,7 @@ class ResourceIndexer extends Object {
      * @returns {void}
      */
 
-    run() {
+    run () {
         const args = process.argv;
         args.shift(); // remove node executable path
         args.shift(); // remove path to this script

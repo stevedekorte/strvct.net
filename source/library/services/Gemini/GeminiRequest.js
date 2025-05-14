@@ -100,13 +100,17 @@
     return this;
   }
 
+  isUsingUserAuthToken () {
+    return GeminiService.shared().isUsingUserAuthToken();
+  }
+
   /**
    * @description Prepares the request options for the API call.
    * @returns {Object} The request options.
    * @category Request Preparation
    */
   requestOptions () {
-    return {
+    const dict = {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
@@ -114,6 +118,12 @@
       },
       body: JSON.stringify(this.bodyJson())
     };
+
+    if (this.isUsingUserAuthToken()) {
+      dict.headers.Authorization = `Bearer ${this.apiKeyOrUserAuthToken()}`;
+    }
+
+    return dict;
   }
 
   /**

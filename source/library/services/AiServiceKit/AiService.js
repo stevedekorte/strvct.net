@@ -287,17 +287,35 @@
   }
 
   /**
+   * @description Returns the user auth token for the service.
+   * @returns {string} The user auth token.
+   * @category Authentication
+   */
+  userAuthToken () {
+    return SvCredentialManager.shared().bearerTokenForService(this.type());
+  }
+
+  /**
    * @description Returns user auth token if available, otherwise returns the API key.
    * @returns {string} The API key or user auth token.
    * @category Authentication
    */
 
   apiKeyOrUserAuthToken () {
-    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.type())
+    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.type());
     if (userAuthToken) {
       return userAuthToken;
     }
     return this.apiKey();
+  }
+
+  /**
+   * @description Returns true if the service is using the user auth token.
+   * @returns {boolean} True if the service is using the user auth token, false otherwise.
+   * @category Authentication
+   */
+  isUsingUserAuthToken () {
+    return this.userAuthToken() !== null && this.apiKeyOrUserAuthToken() === this.userAuthToken();
   }
 
   /** 
