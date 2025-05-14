@@ -59,7 +59,7 @@
 
 
   session () {
-    return this.conversation().session();
+    return this.conversation().firstOwnerChainNodeOfClass(HwSession);
   }
 
   speaker () {
