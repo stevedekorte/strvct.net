@@ -86,11 +86,12 @@
     }
 
     /**
-     * @description Enumerate the prototypes
+     * @description Enumerate the prototypes, starting with the instance's prototype and going up the prototype chain
      * @category Enumeration
      * @param {function} fn - The function to call for each prototype
      */
     forEachPrototype (fn) { 
+    
         let proto = this;
 
         if (this.isInstance()) {
@@ -109,6 +110,14 @@
         }
     }
 
+    reverseForEachPrototype (fn) {
+        const protos = [];
+        this.forEachPrototype(proto => {
+            protos.push(proto);
+        });
+        protos.reverse().forEach(fn);
+    }
+
     /**
      * @description Enumerate the slots
      * @category Enumeration
@@ -125,6 +134,19 @@
     }
 
     /**
+     * @description Enumerate the slots in reverse order
+     * @category Enumeration
+     * @param {function} fn - The function to call for each slot
+     */
+    reverseForEachSlot (fn) {
+        const slots = [];
+        this.forEachSlot(slot => {
+            slots.push(slot);
+        });
+        slots.reverse().forEach(fn);
+    }
+
+    /**
      * @description Setup the all slots map (_allSlotsMap property)
      * @category Initialization
      * @returns {void}
@@ -138,12 +160,21 @@
         //console.log("*** " + this.type() + " setupAllSlotsMap");
 
         //assert(this.isPrototype())
+
+        // reverse order so m.keysArray() will return the slots in the order in which they are defined
+        this.reverseForEachSlot(slot => { 
+            const k = slot.name();
+            m.set(k, slot);
+        });
+
+        /*
         this.forEachSlot(slot => {
             const k = slot.name();
         if (!m.has(k)) { // to handle overrides 
                 m.set(k, slot);
             }
         });
+        */
     }
 
     /**

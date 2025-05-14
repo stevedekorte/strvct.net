@@ -849,7 +849,15 @@
      * @category Initialization
      */
     initializeSlots () {
-        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this));
+        //debugger;
+        this.thisPrototype().allSlotsMap().forEach(slot => {
+            /*
+            if (slot.name() === "subnodes") {
+                debugger;
+            }
+            */
+            slot.onInstanceInitSlot(this);
+        });
     }
 
     /**
@@ -865,7 +873,19 @@
      * @category Initialization
      */
     finalInitSlots () {
-        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this));
+        /*
+        const keys = this.thisPrototype().allSlotsMap().keysArray();
+        keys.forEach((slotName) => {
+            const slot = this.thisPrototype().allSlotsMap().get(slotName);
+            if (keys.includes("sessions") && keys.includes("subnodes")) {
+                if (["sessions", "subnodes"].includes(slotName)) {
+                    debugger;
+                }
+            }
+            slot.onInstanceFinalInitSlot(this);
+        });
+        */
+       this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this));
     }
 
     /**

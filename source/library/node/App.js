@@ -217,6 +217,7 @@
      * @category Initialization
      */
     init () {
+        super.init();
         this.setDidInitPromise(Promise.clone());
     }
 
