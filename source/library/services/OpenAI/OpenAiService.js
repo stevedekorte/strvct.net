@@ -39,13 +39,13 @@
   modelsJson () {
     return [
       {
-        "name": "gpt-4.1-2025-04-14",
+        "name": "gpt-4.1",
         "title": "OpenAI ChatGPT 4.1",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
       {
-        "name": "gpt-4.1-mini-2025-04-14",
+        "name": "gpt-4.1-mini",
         "title": "OpenAI ChatGPT 4.1 mini",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
