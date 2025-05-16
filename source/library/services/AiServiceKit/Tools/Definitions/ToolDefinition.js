@@ -70,7 +70,7 @@
       slot.setCanEditInspection(false);
       slot.setFinalInitProto(BMSummaryNode);
       //slot.setValidValues(values);
-    };
+    }
     
 
 
@@ -103,11 +103,27 @@
   }
 
   toolMethod () {
-    return this.toolTarget().methodNamed(this.name());
+    //const method = this.toolTarget().methodNamed(this.name());
+
+    // we may need to follow the prototype chain to find the method with the tool info on it
+    // we check func.isToolable() to see if the method is toolable
+
+    const slotName = this.name();
+    const protoChain = this.toolTarget().prototypeChain();
+
+    const method = protoChain.detectAndReturnValue(proto => {
+      const method = proto[slotName];
+      if (method && Type.isFunction(method) && method.isToolable()) {
+        return method;
+      }
+      return false;
+    });
+
+    return method;
   }
 
   assertMethodExists () {
-    const method = this.toolTarget().methodNamed(this.name());
+    const method = this.toolMethod();
     assert(method, "Method named " + this.name() + " not found in class " + this.toolTarget().type());
   }
 

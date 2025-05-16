@@ -11,19 +11,21 @@
 
 (class ProtoClass extends Object {
 
+    prototypeChain () { // returns an array of prototypes from most specific to most ancestral
+        const chain = [this]; // include the receiver in the chain
+        let currentProto = Object.getPrototypeOf(this); // does this apply to an instance or a class?
+        while (currentProto !== null) {
+            chain.push(currentProto);
+            currentProto = Object.getPrototypeOf(currentProto);
+        }
+        return chain;
+    }
+
     getInheritedMethodSet () {
         const methodSet = new Set();
         const processedMethods = new Set();
 
-        // Get prototype chain
-        let currentProto = Object.getPrototypeOf(this);
-        const prototypeChain = [];
-
-        // Build prototype chain from bottom to top
-        while (currentProto !== null) {
-            prototypeChain.push(currentProto);
-            currentProto = Object.getPrototypeOf(currentProto);
-        }
+        const prototypeChain = this.prototypeChain();
 
         // Process the chain from top to bottom (most ancestral to most specific)
         for (let i = prototypeChain.length - 1; i >= 0; i--) {

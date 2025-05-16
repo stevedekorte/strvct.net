@@ -18,7 +18,6 @@
   initPrototypeSlots () {
 
     {
-      const slot = this.newSlot("conversation", null);
       const slot = this.newSlot("conversation", null); // a reference to the conversation which owns this object
       slot.setSlotType("Conversation");
       slot.setShouldJsonArchive(false);
