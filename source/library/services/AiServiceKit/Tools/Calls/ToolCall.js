@@ -114,6 +114,7 @@ Example Tool call format:
 
     {
       const slot = this.newSlot("callString", null); // do this at the string level in case there is a parse error and we need to ask for a correction
+      slot.setInspectorPath("callString");
       slot.setDescription("JSON string for the call.");
       slot.setSlotType("String");
       slot.setAllowsNullValue(true);
@@ -376,12 +377,15 @@ Example Tool call format:
     }
 
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
-    //debugger;
+    debugger;
 
     this.setStatus("completed");
 
     const r = this.newToolResult();
     r.setError(e.message);
+    if (e.extraMessage) {
+      r.setExtraMessage(e.extraMessage);
+    }
     r.setStatus("error");
     this.setToolResult(r);
     this.toolCalls().onToolCallComplete(this);

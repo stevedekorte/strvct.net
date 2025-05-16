@@ -276,8 +276,10 @@
         size: this.imageSize()
     };
     
+    const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
+
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(proxyEndpoint, {
           method: 'POST',
           headers: {
               'Authorization': `Bearer ` + apiKey,
