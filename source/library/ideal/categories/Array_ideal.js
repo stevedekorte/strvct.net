@@ -226,10 +226,12 @@
      * @returns {Array_ideal} The current array after removing the element.
      */
     removeAt (index) {
-        const v = this[index];
-        this.willMutate("removeAt", v);
-        delete this[index];
-        this.didMutate("removeAt", v);
+        if (index >= 0 && index < this.length) {
+            const v = this[index];
+            this.willMutate("removeAt", v);
+            this.splice(index, 1);
+            this.didMutate("removeAt", v);
+        }
         return this;
     }
 
@@ -617,18 +619,6 @@
     }
 
     /**
-     * Removes the element at the specified index.
-     * @param {number} i - The index of the element to remove.
-     * @returns {Array_ideal} The current array after removing the element.
-     */
-    removeAt (i) {
-        this.willMutate("removeAt");
-        this.splice(i, 1);
-        this.didMutate("removeAt");
-        return this;
-    }
-
-    /**
      * Removes the specified element from the array.
      * @param {*} e - The element to remove.
      * @returns {Array_ideal} The current array after removing the element.
@@ -944,7 +934,7 @@
      */
     detectPerform (functionName) {
         const args = this.slice.call(arguments).slice(1);
-        return this.detect((value, index) => {
+        return this.detect((value /*, index*/) => {
             return value[functionName].apply(value, args);
         });
     }
@@ -1038,7 +1028,11 @@
      * @returns {*} The value of the maximum element.
      */
     maxValue (optionalFunc, theDefault) {
-        return this.maxEntry(optionalFunc)[1];
+        const entry = this.maxEntry(optionalFunc);
+        if (entry[1] === undefined) {
+            return theDefault;
+        }
+        return entry[1];
     }
 
     /**
