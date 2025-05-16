@@ -123,8 +123,8 @@
    */
   setJsonArchive (json) {
     debugger;
-    this.setJson(json)
-    return this
+    this.setJson(json);
+    return this;
   }
 
   /**
@@ -134,14 +134,17 @@
    * @returns {JsonSchemaNode} This instance
    * @category Data Management
    */
-  updateJson (json) {
+  updateJson (/*json*/) {
+    throw new Error(this.type() + ".updateJson() is no longer implemented. applyJsonPatches() is the new method to use.");
+    /*
     // we assume it's a patch if it's an array
     if (Type.isArray(json)) { 
-      this.applyJsonPatches(json)
+      this.applyJsonPatches(json);
     } else {
-      super.updateJson(json)
+      super.updateJson(json);
     }
-    return this
+    return this;
+    */
   }
 
   /**

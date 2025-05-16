@@ -42,8 +42,8 @@
   modelsJson () {
     return [
       {
-        "name": "grok-3",
-        "title": "Grok 3",
+        "name": "grok-3-beta",
+        "title": "Grok 3 Beta",
         "inputTokenLimit": 131072,
         "outputTokenLimit": 16384
       }
