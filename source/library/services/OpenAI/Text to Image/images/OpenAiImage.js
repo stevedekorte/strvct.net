@@ -234,9 +234,27 @@
     this.setStatus("fetching...");
     //console.log("fetch url " + this.url());
     console.log(this.type() + " fetch proxy url: " + url);
+    const urlObject = new URL(url);
+    // now change the port to 8000
+    urlObject.port = "8000";
+    const proxyUrl = urlObject.toString(); // send it to the old proxy server
+
+
+    const apiKey = OpenAiService.shared().apiKeyOrUserAuthToken();
 
     try {
-      const response = await fetch(url);
+      const response = await fetch(proxyUrl);
+      /*
+      const response = await fetch(proxyUrl, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ` + apiKey,
+            'Content-Type': 'application/json'
+        },
+    });
+      */
+
+
 
       if (!response.ok) {
           const error = new Error(`HTTP error! Status: ${response.status}`);

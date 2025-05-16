@@ -41,18 +41,20 @@
       {
         "name": "gpt-4.1",
         "title": "OpenAI ChatGPT 4.1",
+        "title": "OpenAI GPT 4.1",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
       {
         "name": "gpt-4.1-mini",
-        "title": "OpenAI ChatGPT 4.1 mini",
+        "title": "OpenAI GPT 4.1 mini",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
       /*
       {
         "name": "gpt-4.1-nano-2025-04-14",
+        "name": "gpt-4.1-nano",
         "title": "OpenAI ChatGPT 4.1 nano",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
@@ -74,6 +76,7 @@
         "supportsTemperature": false,
         "supportsTopP": false
       }
+      */
 
 
       // we can't handle these non-streaming models yet (see AiRequest.js)
