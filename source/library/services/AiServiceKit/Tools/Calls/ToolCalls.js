@@ -125,5 +125,9 @@
     this.removeSubnodes(subnodes);
   }
 
+  addCalls (subnodes) {
+    this.addSubnodes(subnodes);
+  }
+
 
 }.initThisClass());

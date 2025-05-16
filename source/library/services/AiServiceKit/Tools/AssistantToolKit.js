@@ -18,7 +18,7 @@
   initPrototypeSlots () {
 
     {
-      const slot = this.newSlot("conversation", null);
+      const slot = this.newSlot("conversation", null); // a reference to the conversation which owns this object
       slot.setSlotType("Conversation");
       slot.setShouldJsonArchive(false);
       slot.setIsSubnodeField(false);
@@ -39,6 +39,16 @@
 
     {
       const slot = this.newSlot("toolCalls", null);
+      slot.setFinalInitProto(ToolCalls);
+      slot.setShouldJsonArchive(false);
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      slot.setIsInJsonSchema(false);
+      slot.setShouldStoreSlot(true);
+    }
+
+    {
+      const slot = this.newSlot("errors", null);
       slot.setFinalInitProto(ToolCalls);
       slot.setShouldJsonArchive(false);
       slot.setIsSubnodeField(true);
@@ -78,6 +88,7 @@
     super.finalInit();
     this.setTitle("AssistantToolKit");
     this.toolCalls().setAssistantToolKit(this);
+    this.errors().setTitle("Tool Call Errors");
   }
 
   handleToolCallTagFromMessage (innerTagString, aMessage) {
@@ -178,6 +189,7 @@ The following formats will be used for tool calls and responses:
         assert(!m.isVisibleToUser());
       }
       this.toolCalls().removeCalls(completedCalls);
+      this.errors().addCalls(completedCalls.filter((toolCall) => toolCall.hasError()));
     }
   }
 

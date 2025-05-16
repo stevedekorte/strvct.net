@@ -243,9 +243,15 @@
             return this;
             
         } catch (error) {
+
+
             console.error("Error applying JSON patches:", error);
             console.error("Failed patches:", JSON.stringify(jsonPatches, null, 2));
-            
+
+            console.error("--- state and patches copied to clip board ---");
+            const dataString = ["DATA", JSON.stringify(oldJson, null, 2), "PATCHES", JSON.stringify(jsonPatches, null, 2)].join("-------------");
+            error.extraMessage = dataString;
+
             // Try to provide more context about the error
             if (error.message && error.message.includes("Expected array")) {
                 const pathMatch = error.message.match(/Expected array for JSON path: (.+)/);
