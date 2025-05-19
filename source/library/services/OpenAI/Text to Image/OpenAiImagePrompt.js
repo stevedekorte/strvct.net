@@ -78,13 +78,14 @@
       //slot.setIsSubnodeField(true)
     }
 
+    
     /**
      * @member {string} imageSize
      * @description The size of the generated image.
      * @category Configuration
      */
     {
-      const slot = this.newSlot("imageSize", "1792x1024");
+      const slot = this.newSlot("imageSize", "1536x1024");
       slot.setInspectorPath("")
       slot.setLabel("image size")
       slot.setShouldStoreSlot(true)
@@ -92,9 +93,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setValidValues([
-        "1024x1024", // 1:1 (square)
-        "1792x1024", // 16:9 (wide)
-        "1024x1792"  // 9:16 (tall)
+        '1024x1024', '1024x1536', '1536x1024', 'auto'
       ])
       slot.setIsSubnodeField(true)
     }
@@ -308,7 +307,7 @@
       }
 
       // convert the base64 data to a data URL
-      const base64Data = response.data[0].b64_json;
+      const base64Data = resultData.data[0].b64_json;
       const byteCharacters = atob(base64Data);
       const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
       const byteArray = new Uint8Array(byteNumbers);
@@ -333,18 +332,10 @@
    * @category Process
    */
   onSuccess (json) {
-    this.sendDelegate("onImagePromptLoading", [this]);
-    /*
-      json format:
+    this.onEnd();
 
-      {
-        created: date,
-        data: [
-          {
-            revised_prompt: "...",
-            url: "...",
-        ]
-    */
+/*
+    this.sendDelegate("onImagePromptLoading", [this]);
 
     if (json.error) {
       this.setStatus("ERROR: " + json.error.message);
@@ -363,6 +354,7 @@
 
     this.updateStatus()
     console.log('Success:', json.data);
+    */
   }
 
   /**
