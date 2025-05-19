@@ -192,42 +192,108 @@
             return this;
         }
         
-        // Pre-validate paths for array operations
+        // Defensive deep copy to avoid modifying the original object
+        const oldJson = this.asJson().deepCopy();
+
+        // sanity check to make sure current json is valid 
+        this.setJson(oldJson);
+
+
+        // NOTE: We've disabled the pre-validation and auto-creation code to let the
+        // library raise exceptions when using "/-" on non-existent arrays.
+        // This aligns with the JSON Patch spec (RFC 6902).
+        
+        /* 
+        // DISABLED: Pre-validation and preparation for array operations
+        // First pass: identify and prepare paths for array operations
+        const arrayParentPaths = new Set();
         for (const patch of jsonPatches) {
-            // Check if the operation involves an array append to a numeric index path
+            // Check if the operation involves an array append using "/-" path
             if (patch.op === "add" && patch.path.includes("/-")) {
-                // For each array append, pre-validate and ensure parent paths exist
                 const pathParts = patch.path.split("/").slice(1); // Remove leading empty string
                 const appendIndex = pathParts.findIndex(part => part === "-");
                 
                 if (appendIndex > 0) {
-                    // Extract the parent path components
+                    // Extract the parent path that should contain an array
                     const parentPathParts = pathParts.slice(0, appendIndex);
+                    const parentPath = "/" + parentPathParts.join("/");
+                    arrayParentPaths.add(parentPath);
                     
-                    // Log the operation for debugging
-                    console.log(`Pre-validating array append operation for path: ${patch.path}`);
-                    console.log(`Parent path parts: ${parentPathParts.join("/")}`);
+                    // Get current value at parent path, if it exists
+                    let currentObj = oldJson;
+                    let pathExists = true;
                     
-                    // Check if any numeric indices are in the parent path
                     for (let i = 0; i < parentPathParts.length; i++) {
-                        if (Type.isNumber(parentPathParts[i])) {
-                            const numericIndex = Number(parentPathParts[i]);
-                            console.log(`Found numeric index ${numericIndex} in parent path at position ${i}`);
+                        const part = parentPathParts[i];
+                        if (currentObj === undefined || currentObj === null) {
+                            pathExists = false;
+                            break;
+                        }
+                        
+                        // If a numeric index exists in the parent path, ensure objects along the way
+                        // Note: isInteger is defined in Type.js
+                        if (Type.isInteger(part) && !Array.isArray(currentObj)) {
+                            console.warn(`Converting object to array at: ${parentPathParts.slice(0, i).join("/")}`);
+                            // This is just for warning/log purposes
+                        }
+                        
+                        currentObj = currentObj[part];
+                    }
+                    
+                    // If the parent path doesn't exist or isn't an array, create prep patches
+                    if (!pathExists || !Array.isArray(currentObj)) {
+                        console.log(`Ensuring array at path: ${parentPath}`);
+                        
+                        // Create a patch to ensure the parent path exists as an array
+                        const ensureArrayPatch = {
+                            op: "test",
+                            path: parentPath,
+                            value: []
+                        };
+                        
+                        try {
+                            // Test if path exists and is an array
+                            JsonPatch.applyOperation(oldJson, ensureArrayPatch);
+                        } catch (e) {
+                            // Path doesn't exist or isn't an array, so create it
+                            // Create all parent paths if needed
+                            this.ensureParentPathsExist(oldJson, parentPathParts);
+                            
+                            // Force the target path to be an array
+                            let current = oldJson;
+                            for (let i = 0; i < parentPathParts.length - 1; i++) {
+                                const part = parentPathParts[i];
+                                if (current[part] === undefined || current[part] === null) {
+                                    // Create intermediate object if needed
+                                    current[part] = {};
+                                }
+                                current = current[part];
+                            }
+                            
+                            // Set the final part to be an array
+                            const finalPart = parentPathParts[parentPathParts.length - 1];
+                            if (current[finalPart] === undefined || current[finalPart] === null || !Array.isArray(current[finalPart])) {
+                                // Force it to be an array
+                                current[finalPart] = [];
+                            }
                         }
                     }
                 }
             }
         }
+        */
         
-        // Defensive deep copy to avoid modifying the original object
-        const oldJson = this.asJson().deepCopy();
-
         try {
-            const results = JsonPatch.applyPatchWithAutoCreation(oldJson, jsonPatches);
+            // Apply all patches to the JSON object
+            const results = JsonPatch.applyPatch(oldJson, jsonPatches);
             assert(results.newDocument, "applyJsonPatches() results.newDocument missing");
             
             const newJson = results.newDocument;
             assert(Type.isUndefined(newJson.newDocument), "applyJsonPatches() json.newDocument should not have newDocument");
+            
+            // We still keep the post-processing fix to ensure any objects with numeric keys
+            // are converted to arrays, as this doesn't interfere with the spec-compliant behavior
+            this.fixNumericKeyObjectsToArrays(newJson);
 
             this.setJson(newJson);
             try {
@@ -246,6 +312,12 @@
             console.error("Error applying JSON patches:", error);
             console.error("Failed patches:", JSON.stringify(jsonPatches, null, 2));
             
+            // Re-throw the error - we're no longer attempting automatic recovery
+            // to align with the JSON Patch specification
+            throw error;
+            
+            /* 
+            // DISABLED: Error recovery code
             // Try to provide more context about the error
             if (error.message && error.message.includes("Expected array")) {
                 const pathMatch = error.message.match(/Expected array for JSON path: (.+)/);
@@ -264,10 +336,33 @@
                         console.log("Attempting to apply patches individually...");
                         const fixedJson = this.asJson().deepCopy();
                         
+                        // For each patch, ensure paths exist with proper types
                         for (let i = 0; i < jsonPatches.length; i++) {
-                            const singlePatch = [jsonPatches[i]];
+                            const patch = jsonPatches[i];
+                            const singlePatch = [patch];
                             
                             try {
+                                // If it's an array operation, ensure parent path is an array
+                                if (patch.op === "add" && patch.path.includes("/-")) {
+                                    const pathParts = patch.path.split("/").slice(1);
+                                    const appendIndex = pathParts.findIndex(part => part === "-");
+                                    if (appendIndex > 0) {
+                                        const parentPathParts = pathParts.slice(0, appendIndex);
+                                        this.ensureParentPathsExist(fixedJson, parentPathParts);
+                                        
+                                        // Force array at parent path
+                                        let current = fixedJson;
+                                        for (let j = 0; j < parentPathParts.length - 1; j++) {
+                                            current = current[parentPathParts[j]];
+                                        }
+                                        
+                                        const finalPart = parentPathParts[parentPathParts.length - 1];
+                                        if (!Array.isArray(current[finalPart])) {
+                                            current[finalPart] = [];
+                                        }
+                                    }
+                                }
+                                
                                 console.log(`Applying patch ${i+1}/${jsonPatches.length}:`, JSON.stringify(singlePatch));
                                 const singleResult = JsonPatch.applyPatchWithAutoCreation(fixedJson, singlePatch);
                                 console.log(`Patch ${i+1} applied successfully`);
@@ -278,6 +373,9 @@
                             }
                         }
                         
+                        // Fix any objects with numeric keys
+                        this.fixNumericKeyObjectsToArrays(fixedJson);
+                        
                         // If we made it here, apply the fixed JSON
                         this.setJson(fixedJson);
                         this.setLastJson(fixedJson);
@@ -287,10 +385,103 @@
                     }
                 }
             }
-            
-            // Re-throw the original error if we couldn't recover
-            throw error;
+            */
         }
+    }
+    
+    /**
+     * Helper method to ensure all parent paths exist in a JSON object
+     * @param {Object} json - The JSON object to modify
+     * @param {Array} pathParts - Array of path segments
+     */
+    ensureParentPathsExist (json, pathParts) {
+        let current = json;
+        
+        for (let i = 0; i < pathParts.length; i++) {
+            const part = pathParts[i];
+            
+            // If we need to create a part and the next part is an integer or "-",
+            // create an array; otherwise create an object
+            const nextPartIsArrayIndex = 
+                i + 1 < pathParts.length && 
+                (Type.isInteger(pathParts[i + 1]) || pathParts[i + 1] === "-");
+            
+            if (current[part] === undefined || current[part] === null) {
+                // Create a new object or array based on the next path part
+                current[part] = nextPartIsArrayIndex ? [] : {};
+            } else if (nextPartIsArrayIndex && !Array.isArray(current[part])) {
+                // Convert to array if needed
+                console.warn(`Converting object to array at path: /${pathParts.slice(0, i + 1).join("/")}`);
+                current[part] = [];
+            }
+            
+            current = current[part];
+        }
+        
+        return current;
+    }
+    
+    /**
+     * Recursively fix objects with numeric keys by converting them to arrays
+     * @param {Object} obj - The object to fix
+     */
+    fixNumericKeyObjectsToArrays (obj) {
+        if (!obj || typeof obj !== 'object') return;
+        
+        // Process all properties of the object
+        Object.keys(obj).forEach(key => {
+            const value = obj[key];
+            
+            // Recursively process nested objects
+            if (value && typeof value === 'object') {
+                // Check if this object should be an array (has only numeric keys in sequence)
+                const shouldBeArray = this.shouldBeArray(value);
+                
+                if (shouldBeArray) {
+                    // Convert the object to an array
+                    const array = this.objectToArray(value);
+                    obj[key] = array;
+                    
+                    // Recursively process each array element
+                    array.forEach(item => {
+                        if (item && typeof item === 'object') {
+                            this.fixNumericKeyObjectsToArrays(item);
+                        }
+                    });
+                } else {
+                    // Just recursively process this object
+                    this.fixNumericKeyObjectsToArrays(value);
+                }
+            }
+        });
+    }
+    
+    /**
+     * Check if an object should actually be an array
+     * @param {Object} obj - The object to check
+     * @returns {boolean} - True if the object should be an array
+     */
+    shouldBeArray (obj) {
+        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return false;
+        
+        const keys = Object.keys(obj);
+        if (keys.length === 0) return false;
+        
+        // Check if all keys are numeric and sequential starting from 0
+        return keys.every((key, index) => {
+            const n = Number(key);
+            return !isNaN(n) && n === index;
+        });
+    }
+    
+    /**
+     * Convert an object with numeric keys to an array
+     * @param {Object} obj - The object to convert
+     * @returns {Array} - The resulting array
+     */
+    objectToArray (obj) {
+        const keys = Object.keys(obj).sort((a, b) => Number(a) - Number(b));
+        return keys.map(key => obj[key]);
     }
 
     /**

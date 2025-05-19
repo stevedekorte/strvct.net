@@ -40,13 +40,13 @@
     return [
       {
         "name": "gpt-4.1",
-        "title": "OpenAI GPT 4.1",
+        "title": "ChatGPT 4.1",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
       {
         "name": "gpt-4.1-mini",
-        "title": "OpenAI GPT 4.1 mini",
+        "title": "ChatGPT 4.1 mini",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
@@ -57,6 +57,8 @@
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
+      */
+     /*
       {
         "name": "o3-2025-04-16",
         "title": "OpenAI ChatGPT o3",

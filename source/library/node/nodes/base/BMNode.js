@@ -466,7 +466,7 @@
      * @returns {BMNode} The added subnode.
      */
     justAddSubnodeAt (aSubnode, anIndex) {
-        assert(aSubnode);
+        assert(!Type.isNullOrUndefined(aSubnode));
         assert(!this.hasSubnode(aSubnode));
         this.subnodes().atInsert(anIndex, aSubnode);
         aSubnode.setParentNode(this);
@@ -755,6 +755,22 @@
         this.subnodes().setIndexClosure( v => v.hash());
         return this
     }
+
+    cleanSubnodes () {
+        const subnodes = this.subnodes();
+        for (let index = subnodes.length - 1; index > -1; index--) {
+            const sn = subnodes.at(index);
+            if (Type.isNullOrUndefined(sn)) {
+                debugger;
+                const beforeCount = subnodes.length;
+                subnodes.removeAt(index); // raw removal
+                const afterCount = subnodes.length;
+                if (beforeCount === afterCount) {
+                    debugger;
+                }
+            }
+        }
+    }
 	
     /**
 
@@ -769,7 +785,16 @@
             return subnodes.indexHasItem(aSubnode);
         }
         //return subnodes.detect(subnode => subnode === aSubnode);
-        return subnodes.detect(subnode => subnode.isEqual(aSubnode));
+        //this.cleanSubnodes(); // TODO: remove after debugging
+        return subnodes.detect(subnode => {
+            /*
+            if (Type.isNullOrUndefined(subnode)) {
+                debugger;
+                this.cleanSubnodes();
+            }
+            */
+            return subnode.isEqual(aSubnode);
+        });
     }
     
     /**
