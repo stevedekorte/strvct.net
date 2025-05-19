@@ -34,15 +34,15 @@
      * @category Configuration
      */
     {
-      const slot = this.newSlot("model", "dall-e-3");
-      slot.setInspectorPath("")
-      //slot.setLabel("prompt")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(["dall-e-3", "dall-e-2"])
-      slot.setIsSubnodeField(true)
+      const slot = this.newSlot("model", "gpt-image-1"); //"dall-e-3");
+      slot.setInspectorPath("");
+      //slot.setLabel("prompt");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setValidValues(["gpt-image-1"]); //, "dall-e-3"])
+      slot.setIsSubnodeField(true);
     }
 
     /**
@@ -267,12 +267,21 @@
 
     const apiKey = this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
-    
+    /*
+    // dall-e 3
+    const bodyJson = {
+      model: this.model(), // not sure this is valid, but it's used in the python API
+      prompt: this.prompt(),
+      n: this.imageCount(), 
+      size: this.imageSize(),
+      quality: this.quality()
+    };
+    */
+
+    // gpt-image-1
     const bodyJson = {
         model: this.model(), // not sure this is valid, but it's used in the python API
-        quality: this.quality(), // not sure this is valid, but it's used in the python API
         prompt: this.prompt(),
-        n: this.imageCount(), 
         size: this.imageSize()
     };
     
@@ -289,6 +298,28 @@
       });
 
       const resultData = await response.json();
+
+      // throw if the response is not ok
+      // add a detailed error message
+      if (!response.ok) {
+        const error = new Error(`HTTP error! Type: ${response.type}, Status: ${response.status}, Status Text:${response.statusText}`);
+        debugger;
+        throw error;
+      }
+
+      // convert the base64 data to a data URL
+      const base64Data = response.data[0].b64_json;
+      const byteCharacters = atob(base64Data);
+      const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/png' });
+      const dataUrl = await blob.asyncToDataUrl();
+
+      // create the image node and set the data URL
+      const image = this.images().add();
+      image.setTitle("image " + this.images().subnodeCount());
+      image.onLoaded(dataUrl);
+
       this.onSuccess(resultData);
     } catch (error) {
       this.onError(error);
