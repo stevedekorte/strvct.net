@@ -100,7 +100,7 @@
   }
   
   initPrototype () {
-    this.setNodeTileClassName("HwChatInputTile");
+    this.setNodeTileClassName("UoChatInputTile");
     this.setCanDelete(false);
   }
 

@@ -319,7 +319,7 @@
    */
   cleanupAssistantMessage () {
     if (this.type() === "AiResponseMessage") {
-    //if (this.type() !== "HwRollRequestMessage" && this.type() !== "HwImageMessage") {
+    //if (this.type() !== "UoRollRequestMessage" && this.type() !== "UoImageMessage") {
       //debugger;
       // TODO: add sanity check before deleting
       this.deleteFollowingMessages(); 

@@ -571,7 +571,7 @@
             /*
             if (showDebug) {
                 //console.log(" >>> " + this.type() + " " + note.name() + " matches obs: " + obs.description());
-                if (obs.observer.type() === "HwChatInputTile") {
+                if (obs.observer.type() === "UoChatInputTile") {
                     console.log(" >>> " +this.type() + " sending ", note.name() + " to observer " + obs.observer().typeId());
                 }
             }

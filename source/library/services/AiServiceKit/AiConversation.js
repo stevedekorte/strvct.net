@@ -414,7 +414,7 @@
    * @category Message Filtering
    */
   nonImageMessages () {
-    return this.messages().select(m => !m.thisClass().isKindOf(HwImageMessage));
+    return this.messages().select(m => !m.thisClass().isKindOf(UoImageMessage));
   }
 
   /**

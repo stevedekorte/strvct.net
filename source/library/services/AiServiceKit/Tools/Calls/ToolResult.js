@@ -6,7 +6,7 @@
 * @classdesc A specific response to a tool call.
 */
 
-//HwJsonDictionaryNode
+//UoJsonDictionaryNode
 (class ToolResult extends BMSummaryNode {
 
   static enclosingTagName () {

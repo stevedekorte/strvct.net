@@ -59,7 +59,7 @@
   }
 
   session () {
-    return this.conversation().firstOwnerChainNodeOfClass(HwSession);
+    return this.conversation().firstOwnerChainNodeOfClass(UoSession);
   }
 
   speaker () {
@@ -84,7 +84,7 @@
 
     //debugger;
     if (this.session().isHost() /*&& this.session().hasClients() */) {
-      const audioMsg = HwAudioMessage.clone()
+      const audioMsg = UoAudioMessage.clone()
         .setInReplyToMessageId(this.messageId())
         .setSound(sound);
       audioMsg.promisePrepareDataUrl().then(() => {

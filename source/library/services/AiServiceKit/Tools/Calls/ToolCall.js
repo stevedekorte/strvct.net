@@ -24,7 +24,7 @@ Example Tool call format:
 
 */
 
-(class ToolCall extends HwJsonDictionaryNode {
+(class ToolCall extends UoJsonDictionaryNode {
 
   static jsonSchemaDescription () {
     return "Format for Assistant API call to make an '" + this.type() + "' API call.";

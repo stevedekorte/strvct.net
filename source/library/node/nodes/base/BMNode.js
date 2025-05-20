@@ -980,7 +980,7 @@
         const note = this.didUpdateNodeNote();
 
         if (note) {
-            if (this.type() === "HwLocations") {
+            if (this.type() === "UoLocations") {
                 if (!BMNotificationCenter.shared().hasNotification(note)) {
                     console.log(this.typeId() + " '" + this.title() + "' POST didUpdateNode - subnodesCount: " + this.subnodesCount());
                     //debugger;

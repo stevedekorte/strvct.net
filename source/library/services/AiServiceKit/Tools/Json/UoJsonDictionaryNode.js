@@ -2,22 +2,22 @@
 
 /*
 * @module library.services.AiServiceKit.ApiCalls
-* @class HwJsonDictionaryNode
+* @class UoJsonDictionaryNode
 * @extends BMJsonDictionaryNode
 * @classdesc Adds some methods to access the session.
 * 
 */
 
-(class HwJsonDictionaryNode extends BMJsonDictionaryNode {
+(class UoJsonDictionaryNode extends BMJsonDictionaryNode {
 
   /*
    * @description Returns the session.
-   * @returns {HwSession}
+   * @returns {UoSession}
    * @category Accessors
    */
 
   session () {
-    return this.firstOwnerChainNodeOfClass(HwSession);
+    return this.firstOwnerChainNodeOfClass(UoSession);
   }
 
 }.initThisClass());

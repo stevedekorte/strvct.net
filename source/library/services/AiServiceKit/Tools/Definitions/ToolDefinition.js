@@ -7,7 +7,7 @@
 * @classdesc Describes what a tool can do.
 */
 
-(class ToolDefinition extends HwJsonDictionaryNode {
+(class ToolDefinition extends UoJsonDictionaryNode {
 
   static jsonSchemaDescription () {
     return "Format for Assistant API call to make an '" + this.type() + "' API call.";
