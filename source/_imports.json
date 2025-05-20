@@ -1,6 +1,6 @@
 [
     "boot/_imports.json",
     "library/_imports.json",
-    "apps/_imports.json"
+    "app/_imports.json"
 ]
 

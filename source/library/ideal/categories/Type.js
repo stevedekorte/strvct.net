@@ -61,21 +61,20 @@
 class Type extends Object {
 
     static typeDescription (value) {
-        let s;
         if (typeof(value) === "string") {
             if (value.length > 10) {
-                s = value.clipWithEllipsis(10).quoted();
+                return value.clipWithEllipsis(10).quoted();
             } else {
-                s = value.quoted();
+                return value.quoted();
             }
         } else if (typeof(value) === "number") {
-            s = value.toString();
+            return value.toString();
         } else if (Type.isDeepJsonType(value)) {
-            s = JSON.stableStringifyWithStdOptions(value).clipWithEllipsis(50);
+            return JSON.stableStringifyWithStdOptions(value).clipWithEllipsis(50);
         } else {
-            s = "<" + typeof(value) + ">";
+            return "<" + typeof(value) + ">";
         }
-        return this.typeName(value) + " " + JSON.stableStringifyWithStdOptions(value);
+        //return this.typeName(value) + " " + JSON.stableStringifyWithStdOptions(value);
     }
 
     /**
@@ -100,7 +99,7 @@ class Type extends Object {
         if (value === undefined) {
           return 'undefined';
         }
-        const baseType = typeof(value);
+        //const baseType = typeof(value);
       
         /*
         // Handle functions
@@ -180,7 +179,7 @@ class Type extends Object {
             return false;
         }
         return aClass.isKindOf(bClass);
-    };
+    }
     
     static typeNameIsKindOf (typeA, typeB) {
         assert(Type.isString(typeA));
@@ -911,7 +910,7 @@ class Type extends Object {
     static isDeepJsonType (value) {
         const seen = new Set();
       
-        function checkValue(v) {
+        function checkValue (v) {
           if (v === null) return true;
       
           const type = typeof(v);
