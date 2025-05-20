@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.subclasses.date
- * @class BMDateNode
- * @extends BMSummaryNode
+ * @class SvDateNode
+ * @extends SvSummaryNode
  * @classdesc BMDateNode represents a date field in the application. It provides functionality to select and display dates.
  */
-(class BMDateNode extends BMSummaryNode {
+(class SvDateNode extends SvSummaryNode {
     
     /**
      * @static
@@ -18,7 +18,7 @@
     }
     
     /**
-     * @description Initializes the prototype slots for the BMDateNode.
+     * @description Initializes the prototype slots for the SvDateNode.
      * @category Initialization
      */
     initPrototypeSlots () {        

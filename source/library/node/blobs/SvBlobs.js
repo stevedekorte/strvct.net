@@ -3,7 +3,7 @@
 
 /**
  * @module library.node.blobs
- * @class BMBlobs
+ * @class SvBlobs
  * @classdesc Async storage for larger values.
  *
  * Motivation:
@@ -32,9 +32,9 @@
  * creating a BMBlobs before reading it out of the store would create a
  * conflicting instance.
  *
- * @extends BMStorableNode
+ * @extends SvStorableNode
  */
-(class BMBlobs extends BMStorableNode {
+(class SvBlobs extends SvStorableNode {
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
@@ -76,7 +76,7 @@
 
     /**
      * @description Initializes the instance by setting the store.
-     * @returns {BMBlobs} The initialized instance.
+     * @returns {SvBlobs} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -148,7 +148,7 @@
      * @description Creates a new blob subnode with the given name and value, or updates an existing blob with the same name.
      * @param {string} aName The name of the blob to create or update.
      * @param {*} aValue The value of the blob to create or update.
-     * @returns {BMBlob} The created or updated blob subnode.
+     * @returns {SvBlob} The created or updated blob subnode.
      * @category Creation
      */
     createBlobWithNameAndValue (aName, aValue) {

@@ -1,14 +1,14 @@
 /**
  * @module library.node.nodes
- * @class BMTextNode
- * @extends BMStorableNode
+ * @class SvTextNode
+ * @extends SvStorableNode
  * @classdesc A node that contains Text, stores its:
  *    content, color, font, padding, margin
  *    and has an inspector for these attributes
  */
 "use strict";
 
-(class BMTextNode extends BMStorableNode {
+(class SvTextNode extends SvStorableNode {
     /**
      * @static
      * @description Indicates if this node is available as a node primitive
@@ -20,7 +20,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMTextNode
+     * @description Initializes the prototype slots for the SvTextNode
      * @category Initialization
      */
     initPrototypeSlots () {

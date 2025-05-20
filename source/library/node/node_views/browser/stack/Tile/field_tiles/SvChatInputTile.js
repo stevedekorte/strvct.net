@@ -1,13 +1,13 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class BMChatInputTile
+ * @class SvChatInputTile
  * @extends BMTextAreaFieldTile
  * @classdesc BMChatInputTile is a specialized tile for chat input functionality.
  */
 
 "use strict";
 
-(class BMChatInputTile extends BMTextAreaFieldTile {
+(class SvChatInputTile extends BMTextAreaFieldTile {
     
     /**
      * @description Initializes prototype slots.
@@ -18,7 +18,7 @@
 
     /**
      * @description Initializes the BMChatInputTile instance.
-     * @returns {BMChatInputTile} The initialized instance.
+     * @returns {SvChatInputTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -69,7 +69,7 @@
 
     /**
      * @description Unhighlights all sentences.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     unhighlightAllSentences () {
@@ -97,7 +97,7 @@
     /**
      * @description Highlights the given element.
      * @param {Element} e - The element to highlight.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     highlightElement (e) {
@@ -109,7 +109,7 @@
     /**
      * @description Unhighlights the given element.
      * @param {Element} e - The element to unhighlight.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     unhighlightElement (e) {
@@ -186,7 +186,7 @@
 
     /**
      * @description Synchronizes the tile with its node.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category Synchronization
      */
     syncFromNode () {
@@ -199,7 +199,7 @@
 
     /**
      * @description Synchronizes the dots display based on the node's state.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category Synchronization
      */
     syncDotsFromNode () {
@@ -218,7 +218,7 @@
 
     /**
      * @description Shows the animated dots.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     showDots () {
@@ -230,7 +230,7 @@
 
     /**
      * @description Hides the animated dots.
-     * @returns {BMChatInputTile} The current instance.
+     * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     hideDots () {

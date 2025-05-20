@@ -5,14 +5,14 @@
  */
 
 /**
- * @class BMThemeFolder
- * @extends BMStorableNode
+ * @class SvThemeFolder
+ * @extends SvStorableNode
  * @classdesc Represents a folder for organizing themes in the application.
  */
-(class BMThemeFolder extends BMStorableNode {
+(class SvThemeFolder extends SvStorableNode {
     
     /**
-     * @description Initializes the prototype slots for the BMThemeFolder class.
+     * @description Initializes the prototype slots for the SvThemeFolder class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -35,7 +35,7 @@
 
     /**
      * @description Initializes a new instance of the BMThemeFolder class.
-     * @returns {BMThemeFolder} The initialized instance.
+     * @returns {SvThemeFolder} The initialized instance.
      * @category Initialization
      */
     init () {

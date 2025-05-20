@@ -1,19 +1,19 @@
 /**
  * @module library.app
- * @class BMSettingsNode
- * @extends BMStorableNode
+ * @class SvSettingsNode
+ * @extends SvStorableNode
  * @classdesc Represents a settings node in the application.
  */
 "use strict";
 
-(class BMSettingsNode extends BMStorableNode {
+(class SvSettingsNode extends SvStorableNode {
     /**
      * Initializes the prototype slots for the settings node.
      * @category Initialization
      */
     initPrototypeSlots() {
         {
-            const slot = this.addSubnodeSlot("prototypes", BMNode);
+            const slot = this.addSubnodeSlot("prototypes", SvNode);
         }
 
         {

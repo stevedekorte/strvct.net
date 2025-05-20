@@ -3,14 +3,14 @@
  */
 
 /**
- * @class BMNotification
+ * @class SvNotification
  * @extends ProtoClass
  * @classdesc Represents a notification in the system.
  */
-(class BMNotification extends ProtoClass {
+(class SvNotification extends ProtoClass {
 
     /**
-     * Initializes the prototype slots for the BMNotification class.
+     * Initializes the prototype slots for the SvNotification class.
      */
     initPrototypeSlots () {
         /**
@@ -87,7 +87,7 @@
     /**
      * Sets the sender of the notification.
      * @param {Object} obj - The sender object.
-     * @returns {BMNotification} The current instance.
+     * @returns {SvNotification} The current instance.
      * @category Identification
      */
     setSender (obj) {
@@ -100,7 +100,7 @@
     /**
      * Sets the name of the notification.
      * @param {string} aName - The name to set.
-     * @returns {BMNotification} The current instance.
+     * @returns {SvNotification} The current instance.
      * @category Identification
      */
     setName (aName) {
@@ -111,7 +111,7 @@
     
     /**
      * Checks if this notification is equal to another.
-     * @param {BMNotification} obs - The notification to compare with.
+     * @param {SvNotification} obs - The notification to compare with.
      * @returns {boolean} True if equal, false otherwise.
      * @category Comparison
      */
@@ -125,7 +125,7 @@
 
     /**
      * Clears the note hash.
-     * @returns {BMNotification} The current instance.
+     * @returns {SvNotification} The current instance.
      * @category Identification
      */
     clearNoteHash () {
@@ -157,7 +157,7 @@
     
     /**
      * Posts the notification.
-     * @returns {BMNotification} The current instance.
+     * @returns {SvNotification} The current instance.
      * @category Management
      */
     post () {
@@ -185,7 +185,7 @@
 
     /**
      * Creates a new observation for this notification.
-     * @returns {BMObservation} A new observation instance.
+     * @returns {SvObservation} A new observation instance.
      * @category Management
      */
     newObservation () {

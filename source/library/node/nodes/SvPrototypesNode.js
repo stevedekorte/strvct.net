@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.nodes
- * @class BMPrototypesNode
- * @extends BMStorableNode
+ * @class SvPrototypesNode
+ * @extends SvStorableNode
  * @classdesc Represents a node for managing prototypes.
  */
-(class BMPrototypesNode extends BMStorableNode {
+(class SvPrototypesNode extends SvStorableNode {
     
     /**
      * @description Initializes prototype slots.
@@ -26,7 +26,7 @@
 
     /**
      * @description Initializes the node.
-     * @returns {BMPrototypesNode} The initialized node.
+     * @returns {SvPrototypesNode} The initialized node.
      * @category Initialization
      */
     init () {
@@ -38,7 +38,7 @@
 
     /**
      * @description Sets up subnodes.
-     * @returns {BMPrototypesNode} The current instance.
+     * @returns {SvPrototypesNode} The current instance.
      * @category Node Management
      */
     setupSubnodes () {

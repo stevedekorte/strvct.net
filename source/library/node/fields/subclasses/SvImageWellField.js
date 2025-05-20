@@ -2,7 +2,7 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMImageWellField
+ * @class SvImageWellField
  * @extends BMField
  * @classdesc Represents an image well field in the application.
  * This class handles image-related operations and supports specific mime types.
@@ -44,7 +44,7 @@ class BMImageWellField extends BMField {
      * @static
      * @description Opens a data chunk with the given MIME type.
      * @param {Object} dataChunk - The data chunk to open.
-     * @returns {BMImageWellField} A new instance of BMImageWellField with the opened data.
+     * @returns {SvImageWellField} A new instance of BMImageWellField with the opened data.
      * @category Data Handling
      */
     static openMimeChunk(dataChunk) {

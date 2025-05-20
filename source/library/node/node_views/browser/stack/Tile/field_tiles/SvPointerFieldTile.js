@@ -1,13 +1,13 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class BMPointerFieldTile
+ * @class SvPointerFieldTile
  * @extends TitledTile
  * @classdesc Represents a pointer field tile in the browser stack.
  */
-(class BMPointerFieldTile extends TitledTile {
+(class SvPointerFieldTile extends TitledTile {
     
     /**
-     * @description Initializes the prototype slots for the BMPointerFieldTile class.
+     * @description Initializes the prototype slots for the SvPointerFieldTile class.
      * @private
      * @category Initialization
      */
@@ -17,7 +17,7 @@
 
     /**
      * @description Initializes the BMPointerFieldTile instance.
-     * @returns {BMPointerFieldTile} The initialized instance.
+     * @returns {SvPointerFieldTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -30,7 +30,7 @@
 
     /**
      * @description Updates the subviews of the BMPointerFieldTile.
-     * @returns {BMPointerFieldTile} The instance after updating subviews.
+     * @returns {SvPointerFieldTile} The instance after updating subviews.
      * @category UI Update
      */
     updateSubviews () {	

@@ -2,7 +2,7 @@
 
 /**
  * @module library.node.fields.subclasses.options
- * @class BMOptionsNode
+ * @class SvOptionsNode
  * @extends BMField
  * @classdesc BMOptionsNode represents a field for selecting one or multiple options.
  * 
@@ -47,7 +47,7 @@
  * BMField.setValueOnTarget() needs to handle both cases.
  * 
  */
-(class BMOptionsNode extends BMField {
+(class SvOptionsNode extends BMField {
     
     /**
      * @static
@@ -59,7 +59,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMOptionsNode.
+     * @description Initializes the prototype slots for the SvOptionsNode.
      */
     initPrototypeSlots () {
 
@@ -158,7 +158,7 @@
     /**
      * @description Sets the title of the options node.
      * @param {string} s - The new title.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     setTitle (s) {
         this.setKey(s);
@@ -188,7 +188,7 @@
     /**
      * @description Sets the subtitle of the options node.
      * @param {string} aString - The subtitle to set.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     setSubtitle (aString) {
         return this;
@@ -314,8 +314,8 @@
 
     /**
      * @description Handles the toggling of an option.
-     * @param {BMOptionNode} anOptionNode - The option node that was toggled.
-     * @returns {BMOptionsNode} The current instance.
+     * @param {SvOptionNode} anOptionNode - The option node that was toggled.
+     * @returns {SvOptionsNode} The current instance.
      */
     didToggleOption (anOptionNode) {
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
@@ -343,7 +343,7 @@
     /**
      * @description Sets the value on the target.
      * @param {*} v - The value to set.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     setValueOnTarget (v) {
         //debugger;
@@ -365,8 +365,8 @@
 
     /**
      * @description Unpicks all leaf subnodes except the specified one.
-     * @param {BMOptionNode} anOptionNode - The option node to exclude from unpicking.
-     * @returns {BMOptionsNode} The current instance.
+     * @param {SvOptionNode} anOptionNode - The option node to exclude from unpicking.
+     * @returns {SvOptionsNode} The current instance.
      */
     unpickLeafSubnodesExcept (anOptionNode) {
         this.leafSubnodes().forEach(sn => {
@@ -401,7 +401,7 @@
 
     /**
      * @description Syncs the options node from the target.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     syncFromTarget () {
         super.syncFromTarget();
@@ -412,7 +412,7 @@
 
     /**
      * @description Constrains the value to valid options.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     constrainValue () {
         return this;
@@ -420,7 +420,7 @@
     
     /**
      * @description Gets the node tile link.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     nodeTileLink () {
         return this;
@@ -460,7 +460,7 @@
 
     /**
      * @description Sets up subnodes if they are empty.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     setupSubnodesIfEmpty () {
         if (this.subnodes().length === 0) {
@@ -605,7 +605,7 @@
 
     /**
      * @description Sets up the subnodes.
-     * @returns {BMOptionsNode} The current instance.
+     * @returns {SvOptionsNode} The current instance.
      */
     setupSubnodes () {
         if (this.needsSyncToSubnodes()) {

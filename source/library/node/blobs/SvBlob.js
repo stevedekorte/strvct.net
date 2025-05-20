@@ -2,16 +2,16 @@
 
 /**
  * @module library.node.blobs
- * @class BMBlob
+ * @class SvBlob
  * @extends BaseNode
  * @classdesc
  * BMBlob is a class that represents a binary blob in the system.
  * It extends the BaseNode class and provides functionality for managing and storing binary data.
  */
-(class BMBlob extends BaseNode {
+(class SvBlob extends BaseNode {
 
     /**
-     * Initializes the prototype slots for the BMBlob class.
+     * Initializes the prototype slots for the SvBlob class.
      */
     initPrototypeSlots() {
 
@@ -89,7 +89,7 @@
     }
 
     /**
-     * Initializes the prototype for the BMBlob class.
+     * Initializes the prototype for the SvBlob class.
      */
     initPrototype() {
         this.setShouldStore(true);
@@ -117,7 +117,7 @@
     }
 
     /**
-     * @description Sets up the value field for the BMBlob.
+     * @description Initializes the prototype slots for the SvBlob.
      * @category Initialization
      */
     async setupValueField() {
@@ -176,7 +176,7 @@
      * @description Performs any necessary actions when a slot value is updated.
      * @param {*} oldValue The old value of the slot.
      * @param {*} newValue The new value of the slot.
-     * @returns {BMBlob} The current instance of BMBlob.
+     * @returns {SvBlob} The current instance of BMBlob.
      * @category Data
      */
     didUpdateSlotValue(oldValue, newValue) {

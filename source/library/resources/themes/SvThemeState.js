@@ -10,7 +10,7 @@
  * @extends BMThemeFolder
  * @classdesc Represents a theme state with various style attributes.
  */
-(class BMThemeState extends BMThemeFolder {
+(class SvThemeState extends BMThemeFolder {
     
     /**
      * @static
@@ -315,7 +315,7 @@
      * @description Sets a theme attribute.
      * @param {string} key - The attribute key.
      * @param {*} value - The attribute value.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     setThemeAttribute (key, value) {
         this[key.asSetter()].apply(this, [value])
@@ -325,7 +325,7 @@
 
     /**
      * @description Syncs from view style.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     syncFromViewStyle () {
         return this
@@ -374,7 +374,7 @@
 
     /**
      * @description Clears the style cache.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     clearStyleCache () {
         this.setStyleCacheMap(null);
@@ -516,8 +516,8 @@
 
     /**
      * @description Applies the style to view.
-     * @param {BMView} aView - The view.
-     * @returns {BMThemeState} The instance.
+     * @param {SvView} aView - The view.
+     * @returns {SvThemeState} The instance.
      */
     applyToView (aView) {
         this.applyStyleSlotsToView(this.styleSlots(), aView);
@@ -526,8 +526,8 @@
 
     /**
      * @description Applies the non border styles to view.
-     * @param {BMView} aView - The view.
-     * @returns {BMThemeState} The instance.
+     * @param {SvView} aView - The view.
+     * @returns {SvThemeState} The instance.
      */
     applyNonBorderStylesToView (aView) {
         //debugger;
@@ -537,8 +537,8 @@
 
     /**
      * @description Applies the border styles to view.
-     * @param {BMView} aView - The view.
-     * @returns {BMThemeState} The instance.
+     * @param {SvView} aView - The view.
+     * @returns {SvThemeState} The instance.
      */
     applyBorderStylesToView (aView) {
         this.applyStyleSlotsToView(this.borderStyleSlots(), aView);
@@ -550,8 +550,8 @@
     /**
      * @description Applies the style slots to view.
      * @param {Array} styleSlots - The style slots.
-     * @param {BMView} aView - The view.
-     * @returns {BMThemeState} The instance.
+     * @param {SvView} aView - The view.
+     * @returns {SvThemeState} The instance.
      */
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
@@ -591,7 +591,7 @@
 
     /**
      * @description Did update slot.
-     * @param {BMSlot} aSlot - The slot.
+     * @param {SvSlot} aSlot - The slot.
      * @param {*} oldValue - The old value.
      * @param {*} newValue - The new value.
      * @returns {boolean} False.
@@ -644,7 +644,7 @@
     /**
      * @description Attribute named.
      * @param {string} name - The attribute name.
-     * @returns {BMView} The attribute.
+     * @returns {SvView} The attribute.
      */
     attributeNamed (name) {
         return this.firstSubnodeWithTitle(name);
@@ -654,7 +654,7 @@
 
     /**
      * @description Sets up as default.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     setupAsDefault () {
         const title = this.title();
@@ -665,7 +665,7 @@
 
     /**
      * @description Sets up as default active state.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     setupAsDefaultActiveState () {
         //this.setColor("white");
@@ -677,7 +677,7 @@
     
     /**
      * @description Sets up as default unselected state.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     setupAsDefaultUnselectedState () {
         this.setThemeAttribute("color", "#bbb");
@@ -687,7 +687,7 @@
     
     /**
      * @description Sets up as default selected state.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     setupAsDefaultSelectedState () {
         this.setThemeAttribute("color", "white");
@@ -697,7 +697,7 @@
     
     /**
      * @description Sets up as default disabled state.
-     * @returns {BMThemeState} The instance.
+     * @returns {SvThemeState} The instance.
      */
     setupAsDefaultDisabledState () {
         this.setThemeAttribute("color", "#ccc");

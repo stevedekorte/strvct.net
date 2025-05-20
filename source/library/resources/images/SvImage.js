@@ -3,11 +3,11 @@
  */
 
 /**
- * @class BMImage
- * @extends BMResource
+ * @class SvImage
+ * @extends SvResource
  * @classdesc Represents an image resource.
  */
-(class BMImage extends BMResource {
+(class SvImage extends BMResource {
     
     /**
      * @static
@@ -20,7 +20,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMImage class.
+     * @description Initializes the prototype slots for the SvImage class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -41,7 +41,7 @@
     }
 
     /**
-     * @description Initializes the prototype for the BMImage class.
+     * @description Initializes the prototype slots for the SvImage class.
      * @category Initialization
      */
     initPrototype () {
@@ -67,7 +67,7 @@
 
     /**
      * @description Called when the image has finished loading.
-     * @returns {BMImage} The current BMImage instance.
+     * @returns {SvImage} The current BMImage instance.
      * @category Lifecycle
      */
     onDidLoad () {

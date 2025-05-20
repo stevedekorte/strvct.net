@@ -3,17 +3,17 @@
  */
 
 /**
- * @class BMIconResources
- * @extends BMResourceGroup
+ * @class SvIconResources
+ * @extends SvResourceGroup
  * @classdesc BMIconResources
  * 
  * Hack to put SVG files into Javascript strings to avoid cross site loading issues.
  */
-(class BMIconResources extends BMResourceGroup {
+(class SvIconResources extends BMResourceGroup {
 
     /**
      * @description Initializes the BMIconResources instance.
-     * @returns {BMIconResources} The initialized instance.
+     * @returns {SvIconResources} The initialized instance.
      * @category Initialization
      */
     init() {
@@ -38,7 +38,7 @@
      * @description Adds an icon to the resources.
      * @param {string} aName - The name of the icon.
      * @param {string} svgString - The SVG string representation of the icon.
-     * @returns {BMIconResources} The current instance.
+     * @returns {SvIconResources} The current instance.
      * @category Icon Management
      */
     addIcon(aName, svgString) {

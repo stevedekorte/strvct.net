@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.json
- * @class BMJsonNullField
+ * @class SvJsonNullField
  * @extends BMField
  * @classdesc Represents a JSON null field in the application.
  */
-(class BMJsonNullField extends BMField {
+(class SvJsonNullField extends BMField {
     
     /**
      * @description Initializes prototype slots for the class.
@@ -47,7 +47,7 @@
     /**
      * @description Sets the JSON representation of this field.
      * @param {*} json - The JSON data to set (ignored in this implementation).
-     * @returns {BMJsonNullField} Returns this instance for method chaining.
+     * @returns {SvJsonNullField} Returns this instance for method chaining.
      * @category Serialization
      */
     setJson (json, jsonPathComponents = []) {
@@ -57,7 +57,7 @@
     /**
      * @description Overrides the setValueIsEditable method to always set it to false.
      * @param {boolean} aBool - The boolean value (ignored in this implementation).
-     * @returns {BMJsonNullField} Returns this instance for method chaining.
+     * @returns {SvJsonNullField} Returns this instance for method chaining.
      * @category Configuration
      */
     setValueIsEditable (aBool) {

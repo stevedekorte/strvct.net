@@ -2,15 +2,15 @@
 
 /**
  * @module library.node.storage.nodes
- * @class BMStorableNode
+ * @class SvStorableNode
  * @extends StyledNode
- * @classdesc BMStorableNode is a thin subclass that overrides some slots and marks them as shouldStore.
+ * @classdesc SvStorableNode is a thin subclass that overrides some slots and marks them as shouldStore.
  * It also hooks didUpdateSlot() to didMutate so ObjectPool (if observing mutations) gets told it needs to store the change.
  */
-(class BMStorableNode extends StyledNode {
+(class SvStorableNode extends StyledNode {
 
     /**
-     * @description Initializes the prototype slots for the BMStorableNode.
+     * @description Initializes the prototype slots for the SvStorableNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -25,7 +25,7 @@
          */
         {
             const slot = this.overrideSlot("canDelete", false)
-            slot.setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
+            slot.setShouldStoreSlot(true)  // defined in SvNode, but we want to store it
         }
 
         /**
@@ -140,7 +140,7 @@
 
     /**
      * @description Handles changes to the subnode list.
-     * @returns {BMStorableNode} Returns this instance.
+     * @returns {SvStorableNode} Returns this instance.
      * @category Node Structure
      */
     didChangeSubnodeList () {
@@ -163,7 +163,7 @@
 
     /**
      * @description Prepares the node for first access.
-     * @returns {BMStorableNode} Returns this instance.
+     * @returns {SvStorableNode} Returns this instance.
      * @category Initialization
      */
     prepareForFirstAccess () {

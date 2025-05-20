@@ -3,7 +3,7 @@
  */
 
 /**
- * @class BMKeyboard
+ * @class SvKeyboard
  * @extends Device
  * @classdesc Keyboard
  *
@@ -42,7 +42,7 @@
 
 "use strict";
 
-(class BMKeyboard extends Device {
+(class SvKeyboard extends Device {
 
     /**
      * @category Initialization
@@ -86,7 +86,7 @@
     /**
      * @category Initialization
      * @description Initializes the keyboard
-     * @returns {BMKeyboard} The keyboard instance
+     * @returns {SvKeyboard} The keyboard instance
      */
     init () {
         super.init();
@@ -100,7 +100,7 @@
     /**
      * @category Event Handling
      * @description Starts listening for keyboard events
-     * @returns {BMKeyboard} The keyboard instance
+     * @returns {SvKeyboard} The keyboard instance
      */
     startListening () {
         const listener = KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this);
@@ -112,7 +112,7 @@
     /**
      * @category Initialization
      * @description Sets up the code to keys map
-     * @returns {BMKeyboard} The keyboard instance
+     * @returns {SvKeyboard} The keyboard instance
      */
     setupCodeToKeys () {
         const map = new Map();
@@ -340,7 +340,7 @@
     /**
      * @category Debugging
      * @description Shows the code to keys map
-     * @returns {BMKeyboard} The keyboard instance
+     * @returns {SvKeyboard} The keyboard instance
      */
     showCodeToKeys () {
         const c2k = this.keyCodesToNamesMap();

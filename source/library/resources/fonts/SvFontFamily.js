@@ -3,14 +3,14 @@
  */
 
 /**
- * @class BMFontFamily
+ * @class SvFontFamily
  * @extends BaseNode
  * @classdesc Represents a font family containing multiple fonts.
  */
-(class BMFontFamily extends BaseNode {
+(class SvFontFamily extends BaseNode {
     
     /**
-     * Initialize prototype slots for the BMFontFamily.
+     * Initialize prototype slots for the SvFontFamily.
      * @private
      */
     initPrototypeSlots () {
@@ -57,7 +57,7 @@
     /**
      * Add a font to the family.
      * @param {Object} aFont - The font to add.
-     * @returns {BMFontFamily} The current instance for method chaining.
+     * @returns {SvFontFamily} The current instance for method chaining.
      * @category Modification
      */
     addFont (aFont) {

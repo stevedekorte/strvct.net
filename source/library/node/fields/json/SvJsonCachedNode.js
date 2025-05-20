@@ -2,14 +2,14 @@
 
 /**
  * @module library.node.fields.json
- * @class BMJsonCachedNode
- * @extends BMSummaryNode
+ * @class SvJsonCachedNode
+ * @extends SvSummaryNode
  * @classdesc BMJsonCachedNode represents a node that caches JSON data and provides methods for managing and updating the JSON cache.
  */
-(class BMJsonCachedNode extends BMSummaryNode {
+(class SvJsonCachedNode extends SvSummaryNode {
 
     /**
-     * @description Initializes the prototype slots for the BMJsonCachedNode.
+     * @description Initializes the prototype slots for the SvJsonCachedNode.
      */
     initPrototypeSlots () {
 
@@ -69,7 +69,7 @@
 
     /**
      * @description Creates a JSON ID if it's absent.
-     * @returns {BMJsonCachedNode} The current instance.
+     * @returns {SvJsonCachedNode} The current instance.
      * @category Initialization
      */
     createJsonIdIfAbsent () {
@@ -81,7 +81,7 @@
 
     /**
      * @description Creates a new JSON ID.
-     * @returns {BMJsonCachedNode} The current instance.
+     * @returns {SvJsonCachedNode} The current instance.
      * @category Initialization
      */
     createJsonId () {
@@ -92,7 +92,7 @@
 
     /**
      * @description Updates the JSON hash.
-     * @returns {BMJsonCachedNode} The current instance.
+     * @returns {SvJsonCachedNode} The current instance.
      * @category Data Management
      */
     updateJsonHash () {
@@ -103,7 +103,7 @@
     /**
      * @description Sets the JSON cache and updates the hash.
      * @param {Object} json - The JSON object to cache.
-     * @returns {BMJsonCachedNode} The current instance.
+     * @returns {SvJsonCachedNode} The current instance.
      * @category Data Management
      */
     setJsonCache (json /*, jsonPathComponents = []*/) {
@@ -118,7 +118,7 @@
 
     /**
      * @description Removes JSON caches.
-     * @returns {BMJsonCachedNode} The current instance.
+     * @returns {SvJsonCachedNode} The current instance.
      * @category Data Management
      */
     removeJsonCaches () {
@@ -181,7 +181,7 @@
     /**
      * @description Applies JSON patches to the current JSON.
      * @param {Array} jsonPatches - An array of JSON patch operations.
-     * @returns {BMJsonCachedNode} The current instance.
+     * @returns {SvJsonCachedNode} The current instance.
      * @category Data Modification
      */
     applyJsonPatches (jsonPatches) {
@@ -511,7 +511,7 @@
     /**
      * @description Finds a descendant node (including self) with the given JSON ID.
      * @param {string} jsonId - The JSON ID to search for.
-     * @returns {BMJsonNode|null} The descendant node with the matching JSON ID, or null if no such node is found.
+     * @returns {SvJsonNode|null} The descendant node with the matching JSON ID, or null if no such node is found.
      * @category Node Search
      */
     descendantWithJsonId (jsonId) {

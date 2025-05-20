@@ -6,7 +6,7 @@
 "use strict";
 
 /**
- * @class BMNotificationCenter
+ * @class SvNotificationCenter
  * @extends ProtoClass
  * @description 
     
@@ -65,7 +65,7 @@
 
         See Broadcaster class.
 
-    Helper methods available to subclasses of BMNode:
+    Helper methods available to subclasses of SvNode:
 
         this.postNoteNamed("hello")
         this.watchOnceForNote("hello")
@@ -88,7 +88,7 @@
         BMNotificationCenter.shared().resume();
 */
 
-(class BMNotificationCenter extends ProtoClass {
+(class SvNotificationCenter extends ProtoClass {
 
     /**
      * @static
@@ -144,7 +144,7 @@
 
         /**
          * @member currentNote
-         * @type {BMNotification}
+         * @type {SvNotification}
          * @description the current note being processed
          */
         {
@@ -258,7 +258,7 @@
 
     /**
      * @description pauses the notification center
-     * @returns {BMNotificationCenter} the notification center
+     * @returns {SvNotificationCenter} the notification center
      */
     pause () {
         this.setIsPaused(true);
@@ -267,7 +267,7 @@
 
     /**
      * @description resumes the notification center
-     * @returns {BMNotificationCenter} the notification center
+     * @returns {SvNotificationCenter} the notification center
      */
     resume () {
         this.setIsPaused(false);
@@ -302,7 +302,7 @@
     
     /**
      * @description checks if the observation is in the observations map
-     * @param {BMObservation} obs the observation to check
+     * @param {SvObservation} obs the observation to check
      * @returns {Boolean} whether the observation is in the observations map
      */
     hasObservation (obs) {
@@ -312,8 +312,8 @@
     
     /**
      * @description adds an observation to the observations map
-     * @param {BMObservation} obs the observation to add
-     * @returns {BMNotificationCenter} the notification center
+     * @param {SvObservation} obs the observation to add
+     * @returns {SvNotificationCenter} the notification center
      */
     addObservation (obs) {
         if (!this.hasObservation(obs)) {
@@ -325,7 +325,7 @@
 
     /**
      * @description creates a new observation
-     * @returns {BMObservation} the new observation
+     * @returns {SvObservation} the new observation
      */
     newObservation () {
         return BMObservation.clone().setCenter(this);
@@ -333,7 +333,7 @@
 
     /**
      * @description returns the observers of the sender
-     * @param {BMNode} sender the sender
+     * @param {SvNode} sender the sender
      * @returns {Array} the observers
      */
     observersOfSender (sender) {
@@ -342,7 +342,7 @@
 
     /**
      * @description returns the observations with the sender
-     * @param {BMNode} sender the sender
+     * @param {SvNode} sender the sender
      * @returns {Array} the observations
      */
     observationsWithSender (sender) {
@@ -351,7 +351,7 @@
 
     /**
      * @description checks if the sender has observations
-     * @param {BMNode} sender the sender
+     * @param {SvNode} sender the sender
      * @returns {Boolean} whether the sender has observations
      */
     hasObservationsForSender (sender) {
@@ -360,7 +360,7 @@
 
     /**
      * @description returns the observations with the observer
-     * @param {BMNode} observer the observer
+     * @param {SvNode} observer the observer
      * @returns {Array} the observations
      */
     observationsWithObserver (observer) {
@@ -369,7 +369,7 @@
 
     /**
      * @description checks if the observer has observations
-     * @param {BMNode} observer the observer
+     * @param {SvNode} observer the observer
      * @returns {Boolean} whether the observer has observations
      */
     hasObservationsForObserver (observer) {
@@ -385,8 +385,8 @@
     
     /**
      * @description removes an observation from the observations map
-     * @param {BMObservation} anObservation the observation to remove
-     * @returns {BMNotificationCenter} the notification center
+     * @param {SvObservation} anObservation the observation to remove
+     * @returns {SvNotificationCenter} the notification center
      */
     removeObservation (anObservation) {
         this.observationsMap().delete(anObservation.obsHash());
@@ -399,8 +399,8 @@
     
     /**
      * @description removes an observer from the observations map
-     * @param {BMNode} anObserver the observer to remove
-     * @returns {BMNotificationCenter} the notification center
+     * @param {SvNode} anObserver the observer to remove
+     * @returns {SvNotificationCenter} the notification center
      */
     removeObserver (anObserver) {        
         this.observationsMap().selectInPlaceKV((key, obs) => obs.observer() !== anObserver);
@@ -411,7 +411,7 @@
     
     /**
      * @description checks if the notification is in the note set
-     * @param {BMNotification} note the notification to check
+     * @param {SvNotification} note the notification to check
      * @returns {Boolean} whether the notification is in the note set
      */
     hasNotification (note) {
@@ -425,8 +425,8 @@
     
     /**
      * @description adds a notification to the note set
-     * @param {BMNotification} note the notification to add
-     * @returns {BMNotificationCenter} the notification center
+     * @param {SvNotification} note the notification to add
+     * @returns {SvNotificationCenter} the notification center
      */
     addNotification (note) {
         if (!this.hasNotification(note)) {
@@ -444,7 +444,7 @@
 
     /**
      * @description creates a new notification
-     * @returns {BMNotification} the new notification
+     * @returns {SvNotification} the new notification
      */
     newNote () {
         return BMNotification.clone().setCenter(this);
@@ -454,7 +454,7 @@
     
     /**
      * @description processes the post queue
-     * @returns {BMNotificationCenter} the notification center
+     * @returns {SvNotificationCenter} the notification center
      */
     processPostQueue () {
         if (this.isPaused()) {
@@ -500,8 +500,8 @@
 
     /**
      * @description tries to post a notification now
-     * @param {BMNotification} note the notification to post
-     * @returns {BMNotificationCenter} the notification center
+     * @param {SvNotification} note the notification to post
+     * @returns {SvNotificationCenter} the notification center
      */
     tryToPostNotificationNow (note) {
         try { 
@@ -516,7 +516,7 @@
 
     /**
      * @description checks if the note should be debugged
-     * @param {BMNotification} note the notification to check
+     * @param {SvNotification} note the notification to check
      * @returns {Boolean} whether the note should be debugged
      */
     shouldDebugNote (note) {
@@ -525,7 +525,7 @@
 
     /**
      * @description calculates the indexes
-     * @returns {BMNotificationCenter} the notification center
+     * @returns {SvNotificationCenter} the notification center
      */
     calcIndexes () {
         const senderIndex = this.observationsMap().indexedByMethod("sender");
@@ -545,8 +545,8 @@
     
     /**
      * @description posts a notification now
-     * @param {BMNotification} note the notification to post
-     * @returns {BMNotificationCenter} the notification center
+     * @param {SvNotification} note the notification to post
+     * @returns {SvNotificationCenter} the notification center
      */
     postNotificationNow (note) {
         // use a copy of the observations list in 
@@ -586,7 +586,7 @@
 
     /**
      * @description returns the observations matching the notification
-     * @param {BMNotification} note the notification to match
+     * @param {SvNotification} note the notification to match
      * @returns {ImmutableSet} the observations matching the notification
      */
     observationsMatchingNotification (note) {
@@ -613,7 +613,7 @@
 
     /**
      * @description shows the notification center
-     * @returns {BMNotificationCenter} the notification center
+     * @returns {SvNotificationCenter} the notification center
      */
     show () {
         console.log(this.type() + ":");
@@ -641,7 +641,7 @@
     
     /**
      * @description shows the current note stack
-     * @returns {BMNotificationCenter} the notification center
+     * @returns {SvNotificationCenter} the notification center
      */
     showCurrentNoteStack () {
         if (this.currentNote() === null) {

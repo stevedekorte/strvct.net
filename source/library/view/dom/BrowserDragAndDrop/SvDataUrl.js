@@ -5,7 +5,7 @@
 "use strict";
 
 /**
- * @class BMDataUrl
+ * @class SvDataUrl
  * @extends ProtoClass
  * @classdesc
  * BMDataUrl class for handling data URLs in drag and drop operations.
@@ -15,10 +15,10 @@
  * event.dataTransfer.setData("DownloadURL", "application/json:hello.json:data:application/json;base64," + btoa("[1,2,3]"));
  * event.dataTransfer.setData("DownloadURL", "text/plain:hello.txt:data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D");
  */
-(class BMDataUrl extends ProtoClass {
+(class SvDataUrl extends ProtoClass {
     
     /**
-     * @description Initializes the prototype slots for the BMDataUrl class.
+     * @description Initializes the prototype slots for the SvDataUrl class.
      */
     initPrototypeSlots () {
         /**
@@ -148,7 +148,7 @@
     /**
      * @description Sets the data URL string and parses its components.
      * @param {String} dataUrl - The data URL string to set and parse.
-     * @returns {BMDataUrl} The current instance for method chaining.
+     * @returns {SvDataUrl} The current instance for method chaining.
      * @category Data
      */
     setDataUrlString (dataUrl) {

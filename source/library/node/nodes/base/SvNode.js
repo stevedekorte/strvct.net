@@ -2,12 +2,12 @@
 
 /**
  * @module library.node.nodes.base
- * @class BMNode
+ * @class SvNode
  * @extends ProtoClass
  * @classdesc The base class of model objects that supports the protocol 
  * used to sync with views (subclasses of NodeView).
  * State and behavior here are focused on managing subnodes.
- * The BMStorableNode subclass is used to sync the model to
+ * The SvStorableNode subclass is used to sync the model to
  * the persistence system.
  * 
  * Notifications (intended for views):
@@ -30,7 +30,7 @@
  * - watchOnceForNote(aNote) // typically used to watch for appDidInit
  */
 
-(class BMNode extends ProtoClass {
+(class SvNode extends ProtoClass {
 
     static initClass () {
         this.newClassSlot("additionalProperties", false);
@@ -50,7 +50,7 @@
      * @returns {Array} An array of all primitive node classes.
      */
     static primitiveNodeClasses () {
-        const classes = BMNode.allSubclasses();
+        const classes = SvNode.allSubclasses();
         return classes.filter(aClass => aClass.availableAsNodePrimitive());
     }
 
@@ -70,10 +70,10 @@
 
     /**
      * @static
-     * @returns {BMNode} A new instance of this node.
+     * @returns {SvNode} A new instance of this node.
      */
     static nodeCreate () {
-        // we implemnet this on BMNode class and prototype so 
+        // we implemnet this on SvNode class and prototype so 
         // it works for both instance and class creator prototypes
         return this.clone();
     }
@@ -130,14 +130,14 @@
         {
             const slot = this.newSlot("parentNode", null); // parent node is set if this node is a subnode of the parent
             slot.setAllowsNullValue(true);
-            slot.setSlotType("BMNode");
+            slot.setSlotType("SvNode");
         }
 
 
         {
             const slot = this.newSlot("ownerNode", null); // owner node is the node that owns this node but this node is not a subnode of the owner
             slot.setAllowsNullValue(true);
-            slot.setSlotType("BMNode");
+            slot.setSlotType("SvNode");
         }
 
         {
@@ -216,11 +216,11 @@
 
         {
             /**
-             * @member {BMNode} footerNode - The footer node placed at the bottom of the subnodes view.
+             * @member {SvNode} footerNode - The footer node placed at the bottom of the subnodes view.
              * @category UI
              */
             const slot = this.newSlot("footerNode", null);
-            slot.setSlotType("BMNode");
+            slot.setSlotType("SvNode");
         }
     }
 
@@ -235,7 +235,7 @@
     /**
 
      * @description Initialize this instance.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     init () {
         super.init();
@@ -268,7 +268,7 @@
 
      * @description Set the subnodes for this instance.
      * @param {Array} subnodes - The new subnodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     setSubnodes (subnodes) {
         if (this._subnodes === null) {
@@ -326,10 +326,10 @@
     /**
 
      * @description Create a new instance of this node.
-     * @returns {BMNode} A new instance of this node.
+     * @returns {SvNode} A new instance of this node.
      */
     nodeCreate () {
-        // we implemnet this on BMNode class and prototype so 
+        // we implemnet this on SvNode class and prototype so 
         // it works for both instance and class creator prototypes
         return this.duplicate();
     }
@@ -346,7 +346,7 @@
     /**
 
      * @description Create a duplicate of this instance.
-     * @returns {BMNode} A duplicate of this instance.
+     * @returns {SvNode} A duplicate of this instance.
      */
     duplicate () {
         const dup = super.duplicate();
@@ -385,8 +385,8 @@
     /**
 
      * @description Set the parent node for this instance.
-     * @param {BMNode} aNode - The new parent node.
-     * @returns {BMNode} This instance.
+     * @param {SvNode} aNode - The new parent node.
+     * @returns {SvNode} This instance.
      */
     setParentNode (aNode) {
         assert(aNode !== this); // sanity check
@@ -407,8 +407,8 @@
     /**
 
      * @description Handle the update of the parent node slot.
-     * @param {BMNode} oldValue - The old parent node.
-     * @param {BMNode} newValue - The new parent node.
+     * @param {SvNode} oldValue - The old parent node.
+     * @param {SvNode} newValue - The new parent node.
      */
     didUpdateSlotParentNode (/*oldValue, newValue*/) {
         // for subclasses to override
@@ -417,7 +417,7 @@
     /**
 
      * @description Get the root node of this instance's parent chain.
-     * @returns {BMNode} The root node.
+     * @returns {SvNode} The root node.
      */
     rootNode () {
         const pn = this.parentNode();
@@ -450,8 +450,8 @@
     /**
 
      * @description Add a subnode to this instance without any checks.
-     * @param {BMNode} aSubnode - The subnode to add.
-     * @returns {BMNode} The added subnode.
+     * @param {SvNode} aSubnode - The subnode to add.
+     * @returns {SvNode} The added subnode.
      */
     justAddSubnode (aSubnode) {
         assert(!this.hasSubnode(aSubnode));
@@ -461,9 +461,9 @@
     /**
 
      * @description Add a subnode to this instance at a specific index without any checks.
-     * @param {BMNode} aSubnode - The subnode to add.
+     * @param {SvNode} aSubnode - The subnode to add.
      * @param {number} anIndex - The index at which to add the subnode.
-     * @returns {BMNode} The added subnode.
+     * @returns {SvNode} The added subnode.
      */
     justAddSubnodeAt (aSubnode, anIndex) {
         assert(!Type.isNullOrUndefined(aSubnode));
@@ -476,18 +476,18 @@
     /**
 
      * @description Assert that a given subnode is a valid type.
-     * @param {BMNode} aSubnode - The subnode to check.
+     * @param {SvNode} aSubnode - The subnode to check.
      */
     assertValidSubnodeType (aSubnode) {
-        assert(aSubnode.thisClass().isKindOf(BMNode), "Attempt to add subnode of type '" + aSubnode.type() + "' which does not inherit from BMNode (as subnodes are required to do)");
+        assert(aSubnode.thisClass().isKindOf(SvNode), "Attempt to add subnode of type '" + aSubnode.type() + "' which does not inherit from SvNode (as subnodes are required to do)");
     }
 
     /**
 
      * @description Add a subnode to this instance at a specific index.
-     * @param {BMNode} aSubnode - The subnode to add.
+     * @param {SvNode} aSubnode - The subnode to add.
      * @param {number} anIndex - The index at which to add the subnode.
-     * @returns {BMNode} The added subnode.
+     * @returns {SvNode} The added subnode.
      */
     addSubnodeAt (aSubnode, anIndex) {
         assert(!this.hasSubnode(aSubnode));
@@ -502,8 +502,8 @@
     /**
 
      * @description Get the subnode before a given subnode.
-     * @param {BMNode} aSubnode - The reference subnode.
-     * @returns {BMNode|null} The subnode before the reference subnode, or null if it's the first subnode.
+     * @param {SvNode} aSubnode - The reference subnode.
+     * @returns {SvNode|null} The subnode before the reference subnode, or null if it's the first subnode.
      */
     subnodeBefore (aSubnode) {
         const index = this.indexOfSubnode(aSubnode);
@@ -517,9 +517,9 @@
     /**
 
      * @description Replace a subnode with another subnode.
-     * @param {BMNode} aSubnode - The subnode to replace.
-     * @param {BMNode} newSubnode - The new subnode.
-     * @returns {BMNode} The new subnode.
+     * @param {SvNode} aSubnode - The subnode to replace.
+     * @param {SvNode} newSubnode - The new subnode.
+     * @returns {SvNode} The new subnode.
      */
     replaceSubnodeWith (aSubnode, newSubnode) {
         assert(!this.hasSubnode(newSubnode));
@@ -534,9 +534,9 @@
     /**
 
      * @description Replace a subnode with multiple subnodes.
-     * @param {BMNode} aSubnode - The subnode to replace.
+     * @param {SvNode} aSubnode - The subnode to replace.
      * @param {Array} newSubnodes - The new subnodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     replaceSubnodeWithSubnodes (aSubnode, newSubnodes) {
         let index = this.indexOfSubnode(aSubnode);
@@ -555,7 +555,7 @@
      * @description Move multiple subnodes to a specific index.
      * @param {Array} movedSubnodes - The subnodes to move.
      * @param {number} anIndex - The index to which to move the subnodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     moveSubnodesToIndex (movedSubnodes, anIndex) {
         this.subnodes().moveItemsToIndex(movedSubnodes, anIndex)
@@ -565,8 +565,8 @@
     /**
 
      * @description Add a subnode to this instance.
-     * @param {BMNode} aSubnode - The subnode to add.
-     * @returns {BMNode} The added subnode.
+     * @param {SvNode} aSubnode - The subnode to add.
+     * @returns {SvNode} The added subnode.
      */
     addSubnode (aSubnode) {
         assert(!this.hasSubnode(aSubnode));
@@ -576,8 +576,8 @@
     /**
 
      * @description Add a link subnode to this instance.
-     * @param {BMNode} aNode - The node to link to.
-     * @returns {BMLinkNode} The created link subnode.
+     * @param {SvNode} aNode - The node to link to.
+     * @returns {SvLinkNode} The created link subnode.
      */
     addLinkSubnode (aNode) {
         /*
@@ -594,7 +594,7 @@
 
      * @description Add multiple subnodes to this instance.
      * @param {Array} subnodes - The subnodes to add.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     addSubnodes (subnodes) {
         subnodes.forEach(subnode => this.addSubnode(subnode));
@@ -605,7 +605,7 @@
 
      * @description Add multiple subnodes to this instance if they are not already present.
      * @param {Array} subnodes - The subnodes to add.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     addSubnodesIfAbsent (subnodes) {
         subnodes.forEach(subnode => this.addSubnodeIfAbsent(subnode));
@@ -625,7 +625,7 @@
 
      * @description Set the prototype for creating new subnodes.
      * @param {Function} aProto - The prototype for creating new subnodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     setSubnodeProto (aProto) {
         this.subnodeClasses().removeAll();
@@ -647,7 +647,7 @@
     /**
 
      * @description Check if this instance accepts adding a given subnode.
-     * @param {BMNode} aSubnode - The subnode to check.
+     * @param {SvNode} aSubnode - The subnode to check.
      * @returns {boolean} Whether this instance accepts adding the subnode.
      */
     acceptsAddingSubnode (aSubnode) {
@@ -698,7 +698,7 @@
     /**
 
      * @description Add a subnode to this instance if it is not already present.
-     * @param {BMNode} aSubnode - The subnode to add.
+     * @param {SvNode} aSubnode - The subnode to add.
      * @returns {boolean} Whether the subnode was added.
      */
     addSubnodeIfAbsent (aSubnode) {
@@ -712,8 +712,8 @@
     /**
 
      * @description Remove a subnode from this instance if it is present.
-     * @param {BMNode} aNode - The subnode to remove.
-     * @returns {BMNode} This instance.
+     * @param {SvNode} aNode - The subnode to remove.
+     * @returns {SvNode} This instance.
      */
     removeSubnodeIfPresent (aNode) {
         if (this.hasSubnode(aNode)) {
@@ -727,7 +727,7 @@
     /**
 
      * @description Check if this instance is equal to another instance.
-     * @param {BMNode} aNode - The instance to compare.
+     * @param {SvNode} aNode - The instance to compare.
      * @returns {boolean} Whether this instance is equal to the other instance.
      */
     isEqual (aNode) {
@@ -749,7 +749,7 @@
     /**
 
      * @description Create an index for the subnodes array.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     createSubnodesIndex () {
         this.subnodes().setIndexClosure( v => v.hash());
@@ -775,7 +775,7 @@
     /**
 
      * @description Check if this instance has a given subnode.
-     * @param {BMNode} aSubnode - The subnode to check.
+     * @param {SvNode} aSubnode - The subnode to check.
      * @returns {boolean} Whether this instance has the subnode.
      */
     hasSubnode (aSubnode) {
@@ -800,8 +800,8 @@
     /**
 
      * @description Remove a subnode from this instance without any checks.
-     * @param {BMNode} aSubnode - The subnode to remove.
-     * @returns {BMNode} The removed subnode.
+     * @param {SvNode} aSubnode - The subnode to remove.
+     * @returns {SvNode} The removed subnode.
      */
     justRemoveSubnode (aSubnode) { // private method 
         this.subnodes().remove(aSubnode);
@@ -816,8 +816,8 @@
     /**
 
      * @description Remove a subnode from this instance.
-     * @param {BMNode} aSubnode - The subnode to remove.
-     * @returns {BMNode} The removed subnode.
+     * @param {SvNode} aSubnode - The subnode to remove.
+     * @returns {SvNode} The removed subnode.
      */
     removeSubnode (aSubnode) {
         this.justRemoveSubnode(aSubnode);
@@ -829,7 +829,7 @@
 
      * @description Remove multiple subnodes from this instance.
      * @param {Array} subnodeList - The subnodes to remove.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     removeSubnodes (subnodeList) {
         subnodeList.forEach(sn => this.removeSubnode(sn));
@@ -839,7 +839,7 @@
     /**
 
      * @description Remove all subnodes from this instance.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     removeAllSubnodes () {
         if (this.subnodeCount()) {
@@ -869,7 +869,7 @@
     /**
 
      * @description Handle the change of the subnode list.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     didChangeSubnodeList () {
         //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)); // TODO: remove after debugging
@@ -885,7 +885,7 @@
 
      * @description Copy subnodes from another instance.
      * @param {Array} newSubnodes - The new subnodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     copySubnodes (newSubnodes) {
         this.subnodes().copyFrom(newSubnodes);
@@ -896,7 +896,7 @@
 
      * @description Reorder the subnodes of this instance.
      * @param {Array} newSubnodes - The new order of subnodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     nodeReorderSudnodesTo (newSubnodes) {
         this.copySubnodes(newSubnodes);
@@ -906,7 +906,7 @@
     /**
 
      * @description Move this instance to the first position in its parent's subnode list.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     orderFirst () {
         this.parentNode().orderSubnodeFirst(this);
@@ -916,7 +916,7 @@
     /**
 
      * @description Move this instance to the last position in its parent's subnode list.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     orderLast () {
         this.parentNode().orderSubnodeLast(this);
@@ -926,8 +926,8 @@
     /**
 
      * @description Move a subnode to the first position in this instance's subnode list.
-     * @param {BMNode} aSubnode - The subnode to move.
-     * @returns {BMNode} This instance.
+     * @param {SvNode} aSubnode - The subnode to move.
+     * @returns {SvNode} This instance.
      */
     orderSubnodeFirst (aSubnode) {
         assert(aSubnode);
@@ -942,8 +942,8 @@
     /**
 
      * @description Move a subnode to the last position in this instance's subnode list.
-     * @param {BMNode} aSubnode - The subnode to move.
-     * @returns {BMNode} This instance.
+     * @param {SvNode} aSubnode - The subnode to move.
+     * @returns {SvNode} This instance.
      */
     orderSubnodeLast (aSubnode) {
         assert(this.hasSubnode(aSubnode));
@@ -1011,7 +1011,7 @@
     /**
 
      * @description Get the index of a subnode in this instance's subnode list.
-     * @param {BMNode} aSubnode - The subnode to find.
+     * @param {SvNode} aSubnode - The subnode to find.
      * @returns {number} The index of the subnode, or -1 if not found.
      */
     indexOfSubnode (aSubnode) {
@@ -1110,7 +1110,7 @@
     /**
 
      * @description Get the parent chain from this instance to a given node.
-     * @param {BMNode} node - The target node.
+     * @param {SvNode} node - The target node.
      * @param {Array} [chain=[]] - The current parent chain.
      * @returns {Array} The parent chain from this instance to the target node.
      */
@@ -1129,7 +1129,7 @@
 
      * @description Get the first parent node of a given class in this instance's parent chain.
      * @param {Function} aClass - The class to search for.
-     * @returns {BMNode|null} The first parent node of the given class, or null if not found.
+     * @returns {SvNode|null} The first parent node of the given class, or null if not found.
      */
     firstParentChainNodeOfClass (aClass) {
         //return this.firstParentChainNodeDetect(node => node.thisClass().isSubclassOf(aClass));
@@ -1153,7 +1153,7 @@
 
      * @description Get the first parent node that responds to a given method in this instance's parent chain.
      * @param {string} methodName - The method name to search for.
-     * @returns {BMNode|null} The first parent node that responds to the given method, or null if not found.
+     * @returns {SvNode|null} The first parent node that responds to the given method, or null if not found.
      */
     firstParentChainNodeThatRespondsTo (methodName) {
         return this.firstParentChainNodeDetect(node => node.respondsTo(methodName));
@@ -1163,7 +1163,7 @@
 
      * @description Get the first parent node that satisfies a given condition in this instance's parent chain.
      * @param {Function} func - The condition function.
-     * @returns {BMNode|null} The first parent node that satisfies the condition, or null if not found.
+     * @returns {SvNode|null} The first parent node that satisfies the condition, or null if not found.
      */
     firstParentChainNodeDetect (func) {
         // return this.parentChainNodes().detect(func);
@@ -1197,8 +1197,8 @@
     /**
 
      * @description Post the shouldFocusSubnode notification.
-     * @param {BMNode} aSubnode - The subnode to focus.
-     * @returns {BMNode} This instance.
+     * @param {SvNode} aSubnode - The subnode to focus.
+     * @returns {SvNode} This instance.
      */
     postShouldFocusSubnode (aSubnode) {
         assert(aSubnode);
@@ -1209,8 +1209,8 @@
     /**
 
      * @description Post the shouldFocusAndExpandSubnode notification.
-     * @param {BMNode} aSubnode - The subnode to focus and expand.
-     * @returns {BMNode} This instance.
+     * @param {SvNode} aSubnode - The subnode to focus and expand.
+     * @returns {SvNode} This instance.
      */
     postShouldFocusAndExpandSubnode (aSubnode) {
         //debugger
@@ -1225,7 +1225,7 @@
 
      * @description Add a new subnode at a given index without any checks.
      * @param {number} anIndex - The index at which to add the subnode.
-     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
     justAddAt (anIndex) {
         const classes = this.subnodeClasses().shallowCopy();
@@ -1249,7 +1249,7 @@
     /**
 
      * @description Add a new subnode at the end of the subnode list without any checks.
-     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
     justAdd () {  
         return this.justAddAt(this.subnodeCount());
@@ -1259,7 +1259,7 @@
 
      * @description Add a new subnode at a given index.
      * @param {number} anIndex - The index at which to add the subnode.
-     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
     addAt (anIndex) {
         const newSubnode = this.justAddAt(anIndex);
@@ -1273,7 +1273,7 @@
     /**
 
      * @description Add a new subnode at the end of the subnode list.
-     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
     add (noArg) {  
         assert(noArg === undefined);
@@ -1283,7 +1283,7 @@
     /**
 
      * @description Remove this instance from its parent node.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     removeFromParentNode () {
         const pn = this.parentNode();
@@ -1298,7 +1298,7 @@
     /**
 
      * @description Remove this instance from its parent node and destroy it.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     delete () {
         this.removeFromParentNode();
@@ -1311,7 +1311,7 @@
 
      * @description Get the first parent node of a given class.
      * @param {string} className - The class name to search for.
-     * @returns {BMNode|null} The first parent node of the given class, or null if not found.
+     * @returns {SvNode|null} The first parent node of the given class, or null if not found.
      */
     parentNodeOfType (className) {
         if (this.type() === className) {
@@ -1355,7 +1355,7 @@
     /**
 
      * @description Get all subnodes of this instance except for a given subnode.
-     * @param {BMNode} aSubnode - The subnode to exclude.
+     * @param {SvNode} aSubnode - The subnode to exclude.
      * @returns {Array} An array of subnodes excluding the given subnode.
      */
     subnodesSans (aSubnode) {
@@ -1366,7 +1366,7 @@
 
      * @description Get the first subnode of a given class.
      * @param {string|object} obj - The class or prototype to search for.
-     * @returns {BMNode|null} The first subnode of the given class or prototype, or null if not found.
+     * @returns {SvNode|null} The first subnode of the given class or prototype, or null if not found.
      */
     firstSubnodeOfType (obj) {
         // obj could be clas, prototype, or instance
@@ -1377,7 +1377,7 @@
 
      * @description Ensure a subnode of a given class exists and add it if not.
      * @param {string|object} aClass - The class or prototype to search for.
-     * @returns {BMNode} The found or created subnode.
+     * @returns {SvNode} The found or created subnode.
      */
     setupSubnodeOfType (aClass) {
         let subnode = this.firstSubnodeOfType(aClass);
@@ -1392,7 +1392,7 @@
      * @description Send a method to all subnodes that respond to it.
      * @param {string} aMethodName - The method name to send.
      * @param {Array} argumentList - The arguments to pass to the method.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     sendRespondingSubnodes (aMethodName, argumentList) {
         this.subnodes().forEach((subnode) => { 
@@ -1428,7 +1428,7 @@
     /**
 
      * @description Watch the subnodes of this instance for changes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     watchSubnodes () {
         this._subnodes.addMutationObserver(this);
@@ -1449,7 +1449,7 @@
      * @description Handle the update of the subnodes slot.
      * @param {Array} oldValue - The old subnodes array.
      * @param {Array} newValue - The new subnodes array.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
@@ -1502,7 +1502,7 @@
     /**
 
      * @description Assert that all subnodes have a parent node.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     assertSubnodesHaveParentNodes () {
         const missing = this.subnodes().detect(subnode => !subnode.parentNode());
@@ -1518,7 +1518,7 @@
 
      * @description Set the sorting function for the subnodes.
      * @param {function} f - The sorting function.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     setSubnodeSortFunc (f) {
         this.subnodes().setSortFunc(f);
@@ -1552,7 +1552,7 @@
 
      * @description Get the subnode with a given hash.
      * @param {string} h - The hash to search for.
-     * @returns {BMNode|null} The subnode with the given hash, or null if not found.
+     * @returns {SvNode|null} The subnode with the given hash, or null if not found.
      */
     subnodeWithHash (h) {
         return this.lazyIndexedSubnodes().itemForIndexKey(h);
@@ -1562,7 +1562,7 @@
 
      * @description Remove the subnode with a given hash.
      * @param {string} h - The hash to search for.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     removeSubnodeWithHash (h) {
         const subnode = this.subnodeWithHash(h);
@@ -1587,7 +1587,7 @@
     /**
 
      * @description Handle the node becoming visible.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     nodeBecameVisible () {
         return this;
@@ -1607,7 +1607,7 @@
     /**
 
      * @description Handle the request to select this node.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     onRequestSelectionOfNode () {
         this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
@@ -1617,7 +1617,7 @@
     /** 
 
      * @description Handle the tap on this node.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     onTapOfNode () {
         this.tellParentNodes("onTapOfDecendantNode", this);
@@ -1672,7 +1672,7 @@
     /**
 
      * @description Collapse unbranching nodes.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     collapseUnbranchingNodes () {
         this.subnodes().forEach(sn => sn.collapseUnbranchingNodes());
@@ -1723,7 +1723,7 @@
 
      * @description Add an option node for a dictionary.
      * @param {object} item - The dictionary containing node information.
-     * @returns {BMNode} The new node.
+     * @returns {SvNode} The new node.
      */
     addOptionNodeForDict (item) {
         const hasSubnodes = (item.options !== undefined) && (item.options.length > 0);
@@ -1753,7 +1753,7 @@
 
      * @description Add option nodes for an array of dictionaries.
      * @param {Array} itemDicts - The array of dictionaries.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     addOptionNodesForArray (itemDicts) {
         if (itemDicts) {
@@ -1770,7 +1770,7 @@
 
      * @description Set the JSON archive for this instance.
      * @param {object} json - The JSON object to set.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     setJsonArchive (json) {
         // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
@@ -1832,7 +1832,7 @@
 
      * @description Create an instance from a JSON archive.
      * @param {object} json - The JSON object to create the instance from.
-     * @returns {BMNode} The new instance.
+     * @returns {SvNode} The new instance.
      */
     static fromJsonArchive (json) {
         const className = json.type;
@@ -2112,7 +2112,7 @@
 
      * @description Create an instance from a JSON object.
      * @param {object} json - The JSON object.
-     * @returns {BMNode} The new instance.
+     * @returns {SvNode} The new instance.
      */
     static instanceFromJson (json) {
         const properties = json.properties;
@@ -2132,7 +2132,7 @@
 
      * @description Set the instance from a JSON object.
      * @param {object} json - The JSON object.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     fromJsonSchema (json) {
         const slots = this.slotsWithAnnotation("isInJsonSchema", true);
@@ -2150,7 +2150,7 @@
                     const subnodes = json[key];
                     this.removeAllSubnodes();
                     subnodes.forEach(subnodeJson => {
-                        const subnode = BMNode.instanceFromJson(subnodeJson);
+                        const subnode = SvNode.instanceFromJson(subnodeJson);
                         const hasValidSubnodeClass = this.subnodeClasses().length === 0 || this.subnodeClasses().includes(subnode.thisClass());
                         if (hasValidSubnodeClass) {
                             this.addSubnode(subnode);
@@ -2185,7 +2185,7 @@
 
      * @description Shutdown the node.
      * @param {Set} visited - The visited set.
-     * @returns {BMNode} This instance.
+     * @returns {SvNode} This instance.
      */
     nodeShutdown (visited = new Set()) {
         // need to check for loops

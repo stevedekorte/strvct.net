@@ -5,8 +5,8 @@
 "use strict";
 
 /**
- * @class BMThemeResources
- * @extends BMStorableNode
+ * @class SvThemeResources
+ * @extends SvStorableNode
  * @classdesc
  * BMThemeResources
  *
@@ -31,7 +31,7 @@
  * Should ThemeClass implement a defaultSubnode() method for failed lookups?
  * Should it ask subnodes isDefault()? 
  */
-(class BMThemeResources extends BMStorableNode {
+(class SvThemeResources extends SvStorableNode {
     
     /**
      * @static
@@ -80,7 +80,7 @@
 
     /**
      * @description Returns the active theme.
-     * @returns {BMTheme} The first subnode, which is considered the active theme.
+     * @returns {SvTheme} The first subnode, which is considered the active theme.
      * @category Theme Management
      */
     activeTheme () {

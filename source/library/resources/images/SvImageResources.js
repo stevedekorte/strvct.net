@@ -3,15 +3,15 @@
  */
 
 /**
- * @class BMImageResources
- * @extends BMResourceGroup
+ * @class SvImageResources
+ * @extends SvResourceGroup
  * @classdesc Represents a group of image resources.
  */
-(class BMImageResources extends BMResourceGroup {
+(class SvImageResources extends BMResourceGroup {
     
     /**
      * @description Initializes the BMImageResources instance.
-     * @returns {BMImageResources} The initialized instance.
+     * @returns {SvImageResources} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -23,7 +23,7 @@
 
     /**
      * @description Sets up the BMImageResources instance.
-     * @returns {BMImageResources} The set up instance.
+     * @returns {SvImageResources} The set up instance.
      * @category Initialization
      */
     setup () {

@@ -5,14 +5,14 @@
 "use strict";
 
 /**
- * @class BMMonthNode
+ * @class SvMonthNode
  * @extends BaseNode
  * @classdesc Represents a month node in a date hierarchy. This class handles month-specific operations and properties.
  */
-(class BMMonthNode extends BaseNode {
+(class SvMonthNode extends BaseNode {
     
     /**
-     * @description Initializes the prototype slots for the BMMonthNode.
+     * @description Initializes the prototype slots for the SvMonthNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -50,7 +50,7 @@
     /**
      * @description Sets the value of the month.
      * @param {Number} v - The month value to set (1-12).
-     * @returns {BMMonthNode} - The current instance.
+     * @returns {SvMonthNode} - The current instance.
      * @category Data Manipulation
      */
     setValue (v) {
@@ -132,7 +132,7 @@
     
     /**
      * @description Used by UI tile views to browse into next column.
-     * @returns {BMMonthNode} The current instance.
+     * @returns {SvMonthNode} The current instance.
      * @category Navigation
      */
     nodeTileLink () {

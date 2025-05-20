@@ -2,12 +2,12 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMTextAreaField
+ * @class SvTextAreaField
  * @extends BMField
  * @classdesc BMTextAreaField is a specialized field class for handling text area input.
  * It provides functionality for working with plain text data and can be used as a node primitive.
  */
-(class BMTextAreaField extends BMField {
+(class SvTextAreaField extends BMField {
     
     /**
      * @static
@@ -34,7 +34,7 @@
      * @static
      * @description Creates a new instance of BMTextAreaField from a data chunk.
      * @param {Object} dataChunk - The data chunk to open.
-     * @returns {BMTextAreaField} A new instance of BMTextAreaField with the decoded data.
+     * @returns {SvTextAreaField} A new instance of BMTextAreaField with the decoded data.
      * @category Initialization
      */
     static openMimeChunk (dataChunk) {
@@ -73,7 +73,7 @@
     /**
      * @description Appends text to the current value of the text area.
      * @param {string} text - The text to append.
-     * @returns {BMTextAreaField} The instance of the class for method chaining.
+     * @returns {SvTextAreaField} The instance of the class for method chaining.
      * @category Data Manipulation
      */
     appendToValue (text) {
@@ -83,7 +83,7 @@
 
     /**
      * @description Synchronizes the field with its target.
-     * @returns {BMTextAreaField} The instance of the class for method chaining.
+     * @returns {SvTextAreaField} The instance of the class for method chaining.
      * @category Synchronization
      */
     syncFromTarget () {

@@ -1,15 +1,15 @@
 /**
  * @module library.node.fields.subclasses.time
- * @class BMMeridiemNode
+ * @class SvMeridiemNode
  * @extends BaseNode
  * @classdesc BMMeridiemNode represents a meridiem (AM/PM) node in a time-related structure.
  */
 "use strict";
 
-(class BMMeridiemNode extends BaseNode {
+(class SvMeridiemNode extends BaseNode {
     
     /**
-     * Initializes the prototype slots for the BMMeridiemNode.
+     * Initializes the prototype slots for the SvMeridiemNode.
      * @category Initialization
      */
     initPrototypeSlots () {

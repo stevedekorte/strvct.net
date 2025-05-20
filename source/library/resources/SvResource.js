@@ -3,13 +3,13 @@
  */
 
 /**
- * @class BMResource
+ * @class SvResource
  * @extends BaseNode
  * @classdesc Represents a resource with loading and decoding capabilities.
  */
 "use strict";
 
-(class BMResource extends BaseNode {
+(class SvResource extends BaseNode {
     
     // --- supported mime types ---
 
@@ -78,7 +78,7 @@
     // ---
 
     /**
-     * @description Initializes the prototype slots for the BMResource class.
+     * @description Initializes the prototype slots for the SvResource class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -262,7 +262,7 @@
 
     /**
      * @description Loads the resource if it hasn't been loaded yet.
-     * @returns {BMResource} The resource instance.
+     * @returns {SvResource} The resource instance.
      * @category Resource Loading
      */
     loadIfNeeded () {

@@ -2,8 +2,8 @@
 
 /**
  * @module library.node.fields
- * @class BMFieldSetNode
- * @extends BMStorableNode
+ * @class SvFieldSetNode
+ * @extends SvStorableNode
  * @classdesc Useful for nodes which are to be viewed and interacted with as forms.
  * Child nodes are of type BMField and should only be added via addFieldNamed().
  * This method sets the target of the field to this and the method to the field name.
@@ -24,10 +24,10 @@
  *         this.setCanDelete(true)
  *     }
  */
-(class BMFieldSetNode extends BMStorableNode {
+(class SvFieldSetNode extends SvStorableNode {
     
     /**
-     * @description Initializes prototype slots for the BMFieldSetNode.
+     * @description Initializes the prototype slots for the SvFieldSetNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -59,7 +59,7 @@
     
     /**
      * @description Called when a field is updated.
-     * @param {BMField} aField - The field that was updated.
+     * @param {SvField} aField - The field that was updated.
      * @category Event Handling
      */
     didUpdateField (aField) {
@@ -70,8 +70,8 @@
 
     /**
      * @description Adds a field to the field set.
-     * @param {BMField} aField - The field to add.
-     * @returns {BMField} The added field.
+     * @param {SvField} aField - The field to add.
+     * @returns {SvField} The added field.
      * @category Field Management
      */
     addField (aField) {
@@ -84,7 +84,7 @@
     /**
      * @description Adds a field with the given name to the field set.
      * @param {string} name - The name of the field to add.
-     * @returns {BMField} The added field.
+     * @returns {SvField} The added field.
      * @category Field Management
      */
     addFieldNamed (name) {	

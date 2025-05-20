@@ -3,11 +3,11 @@
  */
 
 /**
- * @class BMJsonResources
- * @extends BMResourceGroup
+ * @class SvJsonResources
+ * @extends SvResourceGroup
  * @classdesc BMJsonResources class for managing JSON resources.
  */
-(class BMJsonResources extends BMResourceGroup {
+(class SvJsonResources extends BMResourceGroup {
     
     /**
      * @static
@@ -27,7 +27,7 @@
 
     /**
      * @description Initializes the prototype with default values.
-     * @returns {BMJsonResources} The instance of BMJsonResources.
+     * @returns {SvJsonResources} The instance of BMJsonResources.
      * @category Initialization
      */
     initPrototype () {
@@ -38,7 +38,7 @@
 
     /**
      * @description Sets up the resource classes and subnode classes.
-     * @returns {BMJsonResources} The instance of BMJsonResources.
+     * @returns {SvJsonResources} The instance of BMJsonResources.
      * @category Setup
      */
     setup () {

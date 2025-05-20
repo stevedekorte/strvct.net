@@ -8,10 +8,10 @@
  * BMFontResources
  * 
  * @class
- * @extends BMResourceGroup
+ * @extends SvResourceGroup
  * @classdesc Manages font resources. Can be accessed via BMResources.shared().fonts().newFontOptions()
  */
-(class BMFontResources extends BMResourceGroup {
+(class SvFontResources extends BMResourceGroup {
     
     /**
      * @static
@@ -40,7 +40,7 @@
 
     /**
      * @description Initializes the instance
-     * @returns {BMFontResources} The instance
+     * @returns {SvFontResources} The instance
      * @category Initialization
      */
     init () {
@@ -62,7 +62,7 @@
     /**
      * @description Adds a resource
      * @param {Object} aResource - The resource to add
-     * @returns {BMFontResources} The instance
+     * @returns {SvFontResources} The instance
      * @category Resource Management
      */
     addResource (aResource) {
@@ -80,8 +80,8 @@
 
     /**
      * @description Adds a font family
-     * @param {BMFontFamily} aFontFamily - The font family to add
-     * @returns {BMFontResources} The instance
+     * @param {SvFontFamily} aFontFamily - The font family to add
+     * @returns {SvFontResources} The instance
      * @category Resource Management
      */
     addFamily (aFontFamily) {
@@ -101,7 +101,7 @@
     /**
      * @description Gets a font family by name
      * @param {string} aName - The name of the font family
-     * @returns {BMFontFamily} The font family
+     * @returns {SvFontFamily} The font family
      * @category Resource Retrieval
      */
     fontFamilyNamed (aName) {
@@ -139,7 +139,7 @@
 
     /**
      * @description Creates new font options
-     * @returns {BMOptionsNode} The font options
+     * @returns {SvOptionsNode} The font options
      * @category Resource Management
      */
     newFontOptions () {

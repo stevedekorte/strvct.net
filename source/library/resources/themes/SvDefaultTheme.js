@@ -3,15 +3,15 @@
  */
 
 /**
- * @class BMDefaultTheme
+ * @class SvDefaultTheme
  * @extends BMTheme
  * @classdesc Represents the default theme for the application.
  */
-(class BMDefaultTheme extends BMTheme {
+(class SvDefaultTheme extends BMTheme {
 
     /**
      * @description Initializes the BMDefaultTheme instance.
-     * @returns {BMDefaultTheme} The initialized instance.
+     * @returns {SvDefaultTheme} The initialized instance.
      * @category Initialization
      */
     init() {
@@ -20,7 +20,7 @@
     }
 
     /**
-     * @description Performs final initialization steps for the BMDefaultTheme instance.
+     * @description Initializes the prototype slots for the SvDefaultTheme instance.
      * @category Initialization
      */
     finalInit() {
@@ -30,7 +30,7 @@
 
     /**
      * @description Sets up the theme as the default theme.
-     * @returns {BMDefaultTheme} The current instance.
+     * @returns {SvDefaultTheme} The current instance.
      * @category Configuration
      */
     setupAsDefault() {

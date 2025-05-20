@@ -2,12 +2,12 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMPointerField
+ * @class SvPointerField
  * @extends BMField
  * @classdesc A field that's a pointer to another node.
  * (sometimes the other node is used as a list of items, but not always)
  */
-(class BMPointerField extends BMField {
+(class SvPointerField extends BMField {
     
     /**
      * @description Initializes prototype slots.

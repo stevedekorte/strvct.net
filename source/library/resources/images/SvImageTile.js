@@ -3,16 +3,16 @@
  */
 
 /**
- * @class BMImageTile
+ * @class SvImageTile
  * @extends TitledTile
  * @classdesc Represents an image tile component.
  */
 "use strict";
 
-(class BMImageTile extends TitledTile {
+(class SvImageTile extends TitledTile {
     
     /**
-     * @description Initializes the prototype slots for the BMImageTile class.
+     * @description Initializes the prototype slots for the SvImageTile class.
      * @returns {void}
      * @category Initialization
      */
@@ -20,7 +20,7 @@
     }
 
     /**
-     * @description Initializes the prototype for the BMImageTile class.
+     * @description Initializes the prototype slots for the SvImageTile class.
      * @returns {void}
      * @category Initialization
      */
@@ -29,7 +29,7 @@
     
     /**
      * @description Updates the subviews of the BMImageTile.
-     * @returns {BMImageTile} Returns the instance of BMImageTile.
+     * @returns {SvImageTile} Returns the instance of BMImageTile.
      * @category View Management
      */
     updateSubviews () {

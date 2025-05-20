@@ -1,16 +1,16 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles.options
- * @class BMOptionNodeTile
+ * @class SvOptionNodeTile
  * @extends TitledTile
  * @classdesc BMOptionNodeTile represents an option node tile in the browser stack.
  */
 "use strict";
 
-(class BMOptionNodeTile extends TitledTile {
+(class SvOptionNodeTile extends TitledTile {
     
     /**
      * @description Toggles the option state if editable
-     * @returns {BMOptionNodeTile} Returns this instance
+     * @returns {SvOptionNodeTile} Returns this instance
      * @category User Interaction
      */
     toggle () {
@@ -24,7 +24,7 @@
     /**
      * @description Handles the enter key up event
      * @param {Event} event - The key up event
-     * @returns {BMOptionNodeTile} Returns this instance
+     * @returns {SvOptionNodeTile} Returns this instance
      * @category Event Handling
      */
     onEnterKeyUp (event) {
@@ -37,7 +37,7 @@
     /**
      * @description Handles the tap complete gesture
      * @param {Object} aGesture - The tap gesture object
-     * @returns {BMOptionNodeTile} Returns this instance
+     * @returns {SvOptionNodeTile} Returns this instance
      * @category Event Handling
      */
     onTapComplete (aGesture) {
@@ -48,7 +48,7 @@
 
     /**
      * @description Synchronizes the tile with its node
-     * @returns {BMOptionNodeTile} Returns this instance
+     * @returns {SvOptionNodeTile} Returns this instance
      * @category Data Synchronization
      */
     syncToNode () {

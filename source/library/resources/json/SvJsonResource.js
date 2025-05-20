@@ -5,11 +5,11 @@
 "use strict";
 
 /**
- * @class BMJsonResource
- * @extends BMResource
+ * @class SvJsonResource
+ * @extends SvResource
  * @classdesc Represents a JSON resource.
  */
-(class BMJsonResource extends BMResource {
+(class SvJsonResource extends BMResource {
     
     /**
      * @static

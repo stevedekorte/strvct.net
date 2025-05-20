@@ -3,11 +3,11 @@
  */
 
 /**
- * @class BMSoundResources
- * @extends BMResourceGroup
+ * @class SvSoundResources
+ * @extends SvResourceGroup
  * @classdesc Represents a collection of sound resources.
  */
-(class BMSoundResources extends BMResourceGroup {
+(class SvSoundResources extends BMResourceGroup {
 
     /**
      * @description Initializes the BMSoundResources instance.
@@ -21,7 +21,7 @@
 
     /**
      * @description Sets up the BMSoundResources instance.
-     * @returns {BMSoundResources} The current instance.
+     * @returns {SvSoundResources} The current instance.
      * @member {function}
      * @category Initialization
      */
@@ -35,7 +35,7 @@
     /**
      * @description Adds a sound to the collection.
      * @param {WASound} aSound - The sound to add.
-     * @returns {BMSoundResources} The current instance.
+     * @returns {SvSoundResources} The current instance.
      * @member {function}
      * @category SoundManagement
      */

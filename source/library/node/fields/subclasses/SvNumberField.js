@@ -5,12 +5,12 @@
 "use strict";
 
 /**
- * @class BMNumberField
+ * @class SvNumberField
  * @extends BMField
  * @classdesc A named number field that validates that the 
  * value is a number and shows an appropraite error message.
  */
-(class BMNumberField extends BMField {
+(class SvNumberField extends BMField {
     
     /**
      * @static
@@ -160,7 +160,7 @@
     /**
      * @description Set the value of the field
      * @param {*} v - The value to set
-     * @returns {BMNumberField} The instance
+     * @returns {SvNumberField} The instance
      * @category Data Manipulation
      */
     setValue (v) {

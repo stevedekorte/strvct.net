@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.json
- * @class BMJsonDictionaryNode
- * @extends BMJsonNode
- * @classdesc Represents a JSON dictionary node in the BM (Blockchain Modeling) system.
+ * @class SvJsonDictionaryNode
+ * @extends SvJsonNode
+ * @classdesc Represents a JSON dictionary node in the Sv (STRVCT) system.
  */
-(class BMJsonDictionaryNode extends BMJsonNode {
+(class SvJsonDictionaryNode extends SvJsonNode {
     
     /**
      * @static
@@ -85,7 +85,7 @@
     /**
      * @description Sets the JSON for this node, updating its structure accordingly.
      * @param {Object} json - The JSON object to set.
-     * @returns {BMJsonDictionaryNode} Returns this node after updating.
+     * @returns {SvJsonDictionaryNode} Returns this node after updating.
      * @category Data Operations
      */
     setJson (json, jsonPathComponents = []) {
@@ -187,9 +187,9 @@
 
     /**
      * @description Adds a subnode at a specific index after preparing it.
-     * @param {BMJsonNode} newNode - The new node to add.
+     * @param {SvJsonNode} newNode - The new node to add.
      * @param {number} anIndex - The index at which to add the new node.
-     * @returns {BMJsonNode} The added subnode.
+     * @returns {SvJsonNode} The added subnode.
      * @category Node Operations
      */
     addSubnodeAt (newNode, anIndex) {
@@ -199,9 +199,9 @@
 
     /**
      * @description Replaces an existing subnode with a new one after preparing it.
-     * @param {BMJsonNode} oldNode - The node to be replaced.
-     * @param {BMJsonNode} newNode - The new node to replace with.
-     * @returns {BMJsonNode} The new subnode that replaced the old one.
+     * @param {SvJsonNode} oldNode - The node to be replaced.
+     * @param {SvJsonNode} newNode - The new node to replace with.
+     * @returns {SvJsonNode} The new subnode that replaced the old one.
      * @category Node Operations
      */
     replaceSubnodeWith (oldNode, newNode) {
@@ -211,8 +211,8 @@
 
     /**
      * @description Prepares a subnode by setting its properties.
-     * @param {BMJsonNode} aSubnode - The subnode to prepare.
-     * @returns {BMJsonNode} The prepared subnode.
+     * @param {SvJsonNode} aSubnode - The subnode to prepare.
+     * @returns {SvJsonNode} The prepared subnode.
      * @category Node Operations
      */
     prepareSubnode (aSubnode) {
@@ -230,7 +230,7 @@
 
     /**
      * @description Gets the BMDataUrl for this node.
-     * @returns {BMDataUrl} The BMDataUrl object for this node.
+     * @returns {SvDataUrl} The BMDataUrl object for this node.
      * @category Data Operations
      */
     getBMDataUrl () {
@@ -245,7 +245,7 @@
     /**
      * @description Sets the editable state of this node and its subnodes.
      * @param {boolean} aBool - The editable state to set.
-     * @returns {BMJsonDictionaryNode} This node after setting the editable state.
+     * @returns {SvJsonDictionaryNode} This node after setting the editable state.
      * @category Node Operations
      */
     setIsEditable (aBool) {

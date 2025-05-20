@@ -1,10 +1,10 @@
 /**
  * @module library.node.nodes
- * @class BMImageResourcesNode
- * @extends BMStorableNode
+ * @class SvImageResourcesNode
+ * @extends SvStorableNode
  * @classdesc Represents a node for managing image resources.
  */
-(class BMImageResourcesNode extends BMStorableNode {
+(class SvImageResourcesNode extends SvStorableNode {
     
     /**
      * @description Initializes the prototype slots for the node.

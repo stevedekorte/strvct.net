@@ -3,13 +3,13 @@
 /**
  * @module library.credentials
  * @class SvCredential
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc An individual credential for a service.
  * 
  */
 
 
-(class SvCredential extends BMSummaryNode {
+(class SvCredential extends SvSummaryNode {
 
   initPrototypeSlots () {
     {

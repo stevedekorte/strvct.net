@@ -5,11 +5,11 @@
  */
 
 /**
- * @class BMThemeClassChildren
+ * @class SvThemeClassChildren
  * @extends BMThemeFolder
  * @classdesc Represents a folder for theme class children.
  */
-(class BMThemeClassChildren extends BMThemeFolder {
+(class SvThemeClassChildren extends BMThemeFolder {
     
     /**
      * @description Initializes the prototype slots.

@@ -3,7 +3,7 @@
 /**
  * @module library.app
  * @class CredentialManager
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc A shared global object to manage passwords.
  * Used by Service APIs. Examples:
  * 
@@ -15,7 +15,7 @@
  */
 
 
-(class SvCredentialManager extends BMSummaryNode {
+(class SvCredentialManager extends SvSummaryNode {
 
     static initClass () {
         this.setIsSingleton(true);

@@ -1,12 +1,12 @@
 /**
  * @module library.node.nodes
- * @class BMLinkNode
- * @extends BMSummaryNode
+ * @class SvLinkNode
+ * @extends SvSummaryNode
  * @classdesc A node that represents a link to another node, which is not a subnode
  */
 "use strict";
 
-(class BMLinkNode extends BMSummaryNode {
+(class SvLinkNode extends SvSummaryNode {
     
     /**
      * @static
@@ -19,12 +19,12 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMLinkNode
+     * @description Initializes the prototype slots for the SvLinkNode
      * @category Initialization
      */
     initPrototypeSlots () {
         /**
-         * @member {BMNode} linkedNode
+         * @member {SvNode} linkedNode
          * @description The node that this link points to
          * @category Link Management
          */
@@ -32,7 +32,7 @@
             const slot = this.newSlot("linkedNode", null);
             slot.setShouldStoreSlot(true);
             slot.setDuplicateOp("copyValue");
-            slot.setSlotType("BMNode");
+            slot.setSlotType("SvNode");
         }
         
         /**
@@ -76,7 +76,7 @@
         assert(Type.isNull(newValue) || Type.isObject(newValue));
 
         if (Type.isObject(newValue)) {
-            const isNode = newValue.thisClass().isKindOf(BMNode);
+            const isNode = newValue.thisClass().isKindOf(SvNode);
             assert(isNode);
         }
 
@@ -87,7 +87,7 @@
 
     /**
      * @description Checks if this node accepts a drop of another node
-     * @param {BMNode} aNode - The node being dropped
+     * @param {SvNode} aNode - The node being dropped
      * @returns {boolean} True if the node accepts the drop
      * @category Drop Handling
      */
@@ -97,7 +97,7 @@
 
     /**
      * @description Handles the event when a node is dropped onto this node
-     * @param {BMNode} aNode - The node that was dropped
+     * @param {SvNode} aNode - The node that was dropped
      * @category Drop Handling
      */
     nodeDropped (aNode) {
@@ -106,7 +106,7 @@
 
     /**
      * @description Creates a duplicate of this node
-     * @returns {BMLinkNode} The duplicated node
+     * @returns {SvLinkNode} The duplicated node
      * @category Node Operations
      */
     duplicate () {
@@ -201,7 +201,7 @@
 
     /**
      * @description Gets the linked node
-     * @returns {BMNode|null} The linked node
+     * @returns {SvNode|null} The linked node
      * @category Link Management
      */
     nodeTileLink () {
@@ -220,9 +220,9 @@
 
     /**
      * @description Adds a subnode at a specific index
-     * @param {BMNode} aSubnode - The subnode to add
+     * @param {SvNode} aSubnode - The subnode to add
      * @param {number} anIndex - The index at which to add the subnode
-     * @returns {BMLinkNode} This node instance
+     * @returns {SvLinkNode} This node instance
      * @category Node Structure
      */
     addSubnodeAt (aSubnode, anIndex) {

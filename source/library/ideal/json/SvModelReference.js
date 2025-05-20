@@ -2,14 +2,14 @@
 
 /*
 
-    BMModelReference
+    SvModelReference
     
     A reference to a model object instance that is owned by another part of the model tree.
     Used when we need to refer to objects without duplicating them or transferring ownership.
 
 */
 
-(class BMModelReference extends JsonGroup {
+(class SvModelReference extends JsonGroup {
     
     static jsonSchemaDescription () {
         return "A reference to a model object instance";

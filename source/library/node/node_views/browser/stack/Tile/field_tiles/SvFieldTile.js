@@ -2,7 +2,7 @@
 
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class BMFieldTile
+ * @class SvFieldTile
  * @extends Tile
  * @classdesc
 
@@ -15,7 +15,7 @@
 */
 
 
-(class BMFieldTile extends Tile {
+(class SvFieldTile extends Tile {
     
     initPrototypeSlots () {
         {
@@ -140,7 +140,7 @@
 
     /**
      * @description Sets up the content view for the tile.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     setupTileContentView () {
         super.setupTileContentView();
@@ -156,7 +156,7 @@
 
     /**
      * @description Initializes the tile.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     init () {
         super.init()
@@ -389,7 +389,7 @@
      * @description Updates the slot isSelected.
      * @param {boolean} oldValue - The old value.
      * @param {boolean} newValue - The new value.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     didUpdateSlotIsSelected (oldValue, newValue) {
         super.didUpdateSlotIsSelected(oldValue, newValue)
@@ -399,7 +399,7 @@
 
     /**
      * @description Syncs from the node.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
 
     syncFromNode () {
@@ -419,7 +419,7 @@
 
     /**
      * @description Syncs the key from the node.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     syncKeyFromNode () {
         const node = this.node()
@@ -434,7 +434,7 @@
 
     /**
      * @description Syncs the value from the node.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     syncValueFromNode () {
         const node = this.node()
@@ -498,7 +498,7 @@
 
     /**
      * @description Syncs the error from the node.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     syncErrorFromNode () {
         const node = this.node()
@@ -528,7 +528,7 @@
 
     /**
      * @description Syncs the note from the node.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     syncNoteFromNode () {
         const node = this.node()
@@ -556,7 +556,7 @@
     
     /**
      * @description Syncs to the node.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     syncToNode () {
         const node = this.node()
@@ -576,7 +576,7 @@
     /**
      * @description Called when an edit occurs.
      * @param {DomView} changedView - The changed view.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     onDidEdit (changedView) { // sent up subview chain when an edit occurs
         this.scheduleSyncToNode();
@@ -592,7 +592,7 @@
     /**
      * @description Called when an input occurs.
      * @param {DomView} changedView - The changed view.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     onDidInput (changedView) { // sent up subview chain when an input occurs
         if (changedView === this.valueView()) {
@@ -606,7 +606,7 @@
 
     /**
      * @description Syncs styles to subviews.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     syncStylesToSubviews () {
         super.syncStylesToSubviews()
@@ -617,7 +617,7 @@
 
     /**
      * @description Updates the subviews.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     updateSubviews () {
         super.updateSubviews()
@@ -642,7 +642,7 @@
 
     /**
      * @description Applies styles to the tile.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     applyStyles () {
         super.applyStyles()
@@ -654,7 +654,7 @@
     /**
      * @description Called when the enter key is pressed.
      * @param {Event} event - The event.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")
@@ -667,7 +667,7 @@
     /**
      * @description Sets the background color.
      * @param {string} c - The color.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     setBackgroundColor (c) {
         /*
@@ -682,7 +682,7 @@
 
     /**
      * @description Becomes the key view.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     becomeKeyView () {
         this.valueView().becomeKeyView()
@@ -691,7 +691,7 @@
 
     /**
      * @description Unselects the tile.
-     * @returns {BMFieldTile} The current instance.
+     * @returns {SvFieldTile} The current instance.
      */
     unselect () {
         super.unselect()

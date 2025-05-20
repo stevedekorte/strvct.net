@@ -1,7 +1,7 @@
 /**
  * @module library.node.nodes
- * @class BMSummaryNode
- * @extends BMStorableNode
+ * @class SvSummaryNode
+ * @extends SvStorableNode
  * @classdesc A node that contains Text, stores its:
  * - content
  * - color
@@ -14,10 +14,10 @@
  */
 "use strict";
 
-(class BMSummaryNode extends BMStorableNode {
+(class SvSummaryNode extends SvStorableNode {
     
     /**
-     * @description Initializes the prototype slots for the BMSummaryNode.
+     * @description Initializes the prototype slots for the SvSummaryNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -170,7 +170,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMSummaryNode.
+     * @description Initializes the prototype of the SvSummaryNode.
      * @category Initialization
      */
     initPrototype () {
@@ -180,7 +180,7 @@
     }
 
     /**
-     * @description Initializes the BMSummaryNode.
+     * @description Initializes the SvSummaryNode.
      * @category Initialization
      */
     init () {

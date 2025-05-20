@@ -5,14 +5,14 @@
 "use strict";
 
 /**
- * @class BMResources
- * @extends BMStorableNode
+ * @class SvResources
+ * @extends SvStorableNode
  * @classdesc BMResources class for managing various resource types.
  * 
  * Usage example:
  * BMResources.shared().files().resourceForPath("./app/info/.../data.txt")
  */
-(class BMResources extends BMStorableNode {
+(class SvResources extends SvStorableNode {
     
     /**
      * @static
@@ -106,7 +106,7 @@
 
     /**
      * @description Sets up the subnodes for various resource types.
-     * @returns {BMResources} The current instance.
+     * @returns {SvResources} The current instance.
      * @category Setup
      */
     setupSubnodes () {

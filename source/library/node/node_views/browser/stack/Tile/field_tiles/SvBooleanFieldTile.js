@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class BMBooleanFieldTile
+ * @class SvBooleanFieldTile
  * @extends BMFieldTile
  * @classdesc Represents a boolean field tile in the browser stack.
  */
-(class BMBooleanFieldTile extends BMFieldTile {
+(class SvBooleanFieldTile extends BMFieldTile {
     
     /*
     initPrototypeSlots () {
@@ -15,7 +15,7 @@
 
     /**
      * @description Initializes the BMBooleanFieldTile.
-     * @returns {BMBooleanFieldTile} The initialized instance.
+     * @returns {SvBooleanFieldTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -66,7 +66,7 @@
 
     /**
      * @description Synchronizes the tile with its associated node and updates the appearance.
-     * @returns {BMBooleanFieldTile} The current instance.
+     * @returns {SvBooleanFieldTile} The current instance.
      * @category Synchronization
      */
     syncFromNode () {

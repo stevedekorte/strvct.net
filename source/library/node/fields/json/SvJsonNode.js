@@ -2,12 +2,12 @@
 
 /**
  * @module library.node.fields.json
- * @class BMJsonNode
+ * @class SvJsonNode
  * @extends BMJsonCachedNode
  * @classdesc Represents a JSON node in the application. This class handles JSON data and provides methods for parsing and creating nodes from JSON.
  */
 
-(class BMJsonNode extends BMJsonCachedNode {
+(class SvJsonNode extends BMJsonCachedNode {
     
     /**
      * @static
@@ -24,7 +24,7 @@
      * @static
      * @description Opens and parses a chunk of JSON data.
      * @param {Object} dataChunk - The data chunk containing JSON.
-     * @returns {BMJsonNode|null} A node representing the parsed JSON, or null if parsing fails.
+     * @returns {SvJsonNode|null} A node representing the parsed JSON, or null if parsing fails.
      * @category Data Parsing
      */
     static openMimeChunk (dataChunk) {
@@ -80,7 +80,7 @@
      * @static
      * @description Creates a node instance based on the given JSON data.
      * @param {*} json - The JSON data to create a node for.
-     * @returns {BMJsonNode|null} A node instance representing the JSON data, or null if no matching prototype is found.
+     * @returns {SvJsonNode|null} A node instance representing the JSON data, or null if no matching prototype is found.
      * @category Node Creation
      */
     static nodeForJson (json, jsonPathComponents = []) {

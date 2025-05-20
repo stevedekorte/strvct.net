@@ -3,11 +3,11 @@
  */
 
 /**
- * @class BMThemeStates
+ * @class SvThemeStates
  * @extends BMThemeFolder
  * @classdesc Represents a collection of theme states.
  */
-(class BMThemeStates extends BMThemeFolder {
+(class SvThemeStates extends BMThemeFolder {
   /**
    * @description Initializes the prototype slots for the class.
    * @category Initialization
@@ -73,7 +73,7 @@
   /**
    * @description Retrieves a state with the given name.
    * @param {string} name - The name of the state to retrieve.
-   * @returns {BMThemeState} The theme state with the given name.
+   * @returns {SvThemeState} The theme state with the given name.
    * @category State Retrieval
    */
   stateWithName (name) {
@@ -83,7 +83,7 @@
 
   /**
    * @description Retrieves the active theme state.
-   * @returns {BMThemeState} The active theme state.
+   * @returns {SvThemeState} The active theme state.
    * @category State Retrieval
    */
   activeThemeState () {
@@ -92,7 +92,7 @@
 
   /**
    * @description Retrieves the unselected theme state.
-   * @returns {BMThemeState} The unselected theme state.
+   * @returns {SvThemeState} The unselected theme state.
    * @category State Retrieval
    */
   unselectedThemeState () {
@@ -101,7 +101,7 @@
 
   /**
    * @description Retrieves the selected theme state.
-   * @returns {BMThemeState} The selected theme state.
+   * @returns {SvThemeState} The selected theme state.
    * @category State Retrieval
    */
   selectedThemeState () {
@@ -110,7 +110,7 @@
 
   /**
    * @description Retrieves the disabled theme state.
-   * @returns {BMThemeState} The disabled theme state.
+   * @returns {SvThemeState} The disabled theme state.
    * @category State Retrieval
    */
   disabledThemeState () {
@@ -119,7 +119,7 @@
 
   /**
    * @description Sets up the instance as default.
-   * @returns {BMThemeStates} The instance.
+   * @returns {SvThemeStates} The instance.
    * @category Initialization
    */
   setupAsDefault () {

@@ -5,12 +5,12 @@
  */
 
 /**
- * @class BMField
- * @extends BMSummaryNode
+ * @class SvField
+ * @extends SvSummaryNode
  * @classdesc A BMStorageNode that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
  */
 
-(class BMField extends BMSummaryNode {
+(class SvField extends SvSummaryNode {
     
     initPrototypeSlots () {
 
@@ -225,11 +225,11 @@
         }
         
         /**
-         * @member {BMNode} target - The target of the field.
+         * @member {SvNode} target - The target of the field.
          */
         {
             const slot = this.newSlot("target", null);
-            slot.setSlotType("BMNode");
+            slot.setSlotType("SvNode");
             slot.setSyncsToView(true);
         }
 
@@ -243,7 +243,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMField class.
+     * @description Initializes the prototype slots for the SvField class.
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -262,7 +262,7 @@
     /**
      * @static
      * @description Creates a new node.
-     * @returns {BMField} The new node.
+     * @returns {SvField} The new node.
      */
     static nodeCreate () {
         const newNode = super.nodeCreate()
@@ -346,7 +346,7 @@
 
     /**
      * @description Called when the node is updated.
-     * @param {BMSummaryNode} aNote - The note.
+     * @param {SvSummaryNode} aNote - The note.
      */
     onUpdatedNode (aNote) {
         /*

@@ -2,14 +2,14 @@
 
 /**
  * @module library.node.fields.subclasses.time
- * @class BMMinuteNode
+ * @class SvMinuteNode
  * @extends BaseNode
  * @classdesc Represents a minute node in a time-related structure.
  */
-(class BMMinuteNode extends BaseNode {
+(class SvMinuteNode extends BaseNode {
     
     /**
-     * Initializes the prototype slots for the BMMinuteNode.
+     * Initializes the prototype slots for the SvMinuteNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -37,7 +37,7 @@
     /**
      * Sets the value of the minute.
      * @param {Number} v - The minute value to set.
-     * @returns {BMMinuteNode} The instance of BMMinuteNode.
+     * @returns {SvMinuteNode} The instance of BMMinuteNode.
      * @category Data Manipulation
      */
     setValue (v) {

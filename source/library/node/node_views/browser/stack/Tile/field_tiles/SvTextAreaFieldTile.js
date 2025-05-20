@@ -1,6 +1,6 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class BMTextAreaFieldTile
+ * @class SvTextAreaFieldTile
  * @extends BMFieldTile
  * @classdesc BMTextAreaFieldTile is a specialized field tile for text area input.
  * It includes functionality for speech-to-text input.
@@ -8,10 +8,10 @@
 
 "use strict";
 
-(class BMTextAreaFieldTile extends BMFieldTile {
+(class SvTextAreaFieldTile extends BMFieldTile {
     
     /**
-     * Initializes the prototype slots for the BMTextAreaFieldTile.
+     * Initializes the prototype slots for the SvTextAreaFieldTile.
      */
     initPrototypeSlots () {
         /**
@@ -41,7 +41,7 @@
 
     /**
      * Initializes the BMTextAreaFieldTile instance.
-     * @returns {BMTextAreaFieldTile} The initialized instance.
+     * @returns {SvTextAreaFieldTile} The initialized instance.
      * @category Initialization
      */
     init () {

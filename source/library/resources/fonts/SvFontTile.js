@@ -3,14 +3,14 @@
  */
 
 /**
- * @class BMFontTile
+ * @class SvFontTile
  * @extends TitledTile
  * @classdesc Represents a BMFontTile, which is a specialized TitledTile for displaying font information.
  */
-(class BMFontTile extends TitledTile {
+(class SvFontTile extends TitledTile {
     
     /**
-     * @description Initializes prototype slots for the BMFontTile.
+     * @description Initializes the prototype slots for the SvFontTile.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -25,7 +25,7 @@
     
     /**
      * @description Updates the subviews of the BMFontTile with font information from the associated node.
-     * @returns {BMFontTile} Returns this BMFontTile instance.
+     * @returns {SvFontTile} Returns this BMFontTile instance.
      * @category UI Update
      */
     updateSubviews () {

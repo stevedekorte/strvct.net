@@ -2,14 +2,14 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMStampField
+ * @class SvStampField
  * @extends BMField
  * @classdesc BMStampField class for handling stamp fields.
  */
-(class BMStampField extends BMField {
+(class SvStampField extends BMField {
     
     /**
-     * @description Initializes prototype slots for the BMStampField.
+     * @description Initializes the prototype slots for the SvStampField.
      * @category Initialization
      */
     initPrototypeSlots () {

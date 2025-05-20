@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMColorField
+ * @class SvColorField
  * @extends BMField
  * @classdesc BMColorField represents a color field with red, green, blue, and alpha components.
  */
-(class BMColorField extends BMField {
+(class SvColorField extends BMField {
     
     /**
      * @static
@@ -19,7 +19,7 @@
     }
     
     /**
-     * @description Initializes the prototype slots for the BMColorField.
+     * @description Initializes the prototype slots for the SvColorField.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -98,7 +98,7 @@
     /**
      * @description Sets the color field from a CSS color object.
      * @param {CssColor} aCssColor - The CSS color object to set the field from.
-     * @returns {BMColorField} The current instance for method chaining.
+     * @returns {SvColorField} The current instance for method chaining.
      * @category Conversion
      */
     fromCssColor (aCssColor) {

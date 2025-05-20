@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMUrlField
+ * @class SvUrlField
  * @extends BMField
  * @classdesc BMUrlField is a specialized field for handling URL data.
  */
-(class BMUrlField extends BMField {
+(class SvUrlField extends BMField {
     
     /**
      * @static
@@ -30,7 +30,7 @@
     /**
      * @static
      * @param {Object} dataChunk - The data chunk to open.
-     * @returns {BMUrlField} A new BMUrlField instance with the opened data.
+     * @returns {SvUrlField} A new BMUrlField instance with the opened data.
      * @category Data Opening
      */
     static openMimeChunk (dataChunk) {
@@ -57,7 +57,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMUrlField.
+     * @description Initializes the prototype slots for the SvUrlField.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -291,7 +291,7 @@
     
     /**
      * @description Parses the current value and updates the individual URL components.
-     * @returns {BMUrlField} This instance.
+     * @returns {SvUrlField} This instance.
      * @category URL Manipulation
      */
     parseValue () {
@@ -333,7 +333,7 @@
 
     /**
      * @description Updates the href value based on the current component values.
-     * @returns {BMUrlField} This instance.
+     * @returns {SvUrlField} This instance.
      * @category URL Manipulation
      */
     unparseValue () {

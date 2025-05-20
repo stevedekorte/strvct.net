@@ -5,11 +5,11 @@
 "use strict";
 
 /**
- * @class BMURLImage
- * @extends BMResource
+ * @class SvURLImage
+ * @extends SvResource
  * @classdesc Represents an image resource loaded from a URL.
  */
-(class BMURLImage extends BMResource {
+(class SvURLImage extends BMResource {
     
     /**
      * @static
@@ -22,7 +22,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMURLImage class.
+     * @description Initializes the prototype slots for the SvURLImage class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -64,7 +64,7 @@
 
     /**
      * @description Loads the image data.
-     * @returns {BMURLImage} The current instance.
+     * @returns {SvURLImage} The current instance.
      * @category Data Loading
      */
     load () {
@@ -105,7 +105,7 @@
     /**
      * @description Sets the data URL after it has been fetched.
      * @param {string} dataURL - The fetched data URL.
-     * @returns {BMURLImage} The current instance.
+     * @returns {SvURLImage} The current instance.
      * @category Data Loading
      */
     didFetchDataUrl (dataURL) {

@@ -1,6 +1,6 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles.options
- * @class BMOptionsNodeTile
+ * @class SvOptionsNodeTile
  * @extends TitledTile
  * @classdesc View for BMOptionsNode
  * 
@@ -11,7 +11,7 @@
 
 "use strict";
 
-(class BMOptionsNodeTile extends TitledTile {
+(class SvOptionsNodeTile extends TitledTile {
     
     /*
     initPrototypeSlots () {
@@ -28,7 +28,7 @@
 
     /**
      * @description Synchronizes the tile with its associated node
-     * @returns {BMOptionsNodeTile} Returns this instance for method chaining
+     * @returns {SvOptionsNodeTile} Returns this instance for method chaining
      * @category Synchronization
      */
     syncFromNode () {

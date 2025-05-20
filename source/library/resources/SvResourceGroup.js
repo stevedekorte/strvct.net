@@ -3,11 +3,11 @@
  */
 
 /**
- * @class BMResourceGroup
+ * @class SvResourceGroup
  * @extends BaseNode
  * @classdesc Represents a group of resources.
  */
-(class BMResourceGroup extends BaseNode {
+(class SvResourceGroup extends BaseNode {
     
     /**
      * @static
@@ -156,7 +156,7 @@
     /**
      * @description Adds a resource.
      * @param {Object} aResource - The resource to add.
-     * @returns {BMResourceGroup}
+     * @returns {SvResourceGroup}
      * @category Resource Management
      */
     addResource (aResource) {

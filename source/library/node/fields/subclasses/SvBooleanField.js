@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMBooleanField
+ * @class SvBooleanField
  * @extends BMField
  * @classdesc BMBooleanField represents a boolean field in the system.
  */
-(class BMBooleanField extends BMField {
+(class SvBooleanField extends BMField {
     
     /**
      * @static
@@ -122,7 +122,7 @@
     /**
      * @description Sets the field's value from a JSON representation.
      * @param {boolean} json - The JSON boolean value to set.
-     * @returns {BMBooleanField} This instance for method chaining.
+     * @returns {SvBooleanField} This instance for method chaining.
      * @category Serialization
      */
     setJson (json, jsonPathComponents = []) {

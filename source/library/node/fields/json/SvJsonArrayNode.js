@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.fields.json
- * @class BMJsonArrayNode
- * @extends BMJsonNode
+ * @class SvJsonArrayNode
+ * @extends SvJsonNode
  * @classdesc Represents a JSON array node in the object tree.
  */
-(class BMJsonArrayNode extends BMJsonNode {
+(class SvJsonArrayNode extends SvJsonNode {
     
     /**
      * @static
@@ -128,9 +128,9 @@
 
     /**
      * @description Replaces a subnode with a new one.
-     * @param {BMJsonNode} oldNode - The node to replace.
-     * @param {BMJsonNode} newNode - The new node to insert.
-     * @returns {BMJsonNode} The prepared new node.
+     * @param {SvJsonNode} oldNode - The node to replace.
+     * @param {SvJsonNode} newNode - The new node to insert.
+     * @returns {SvJsonNode} The prepared new node.
      * @category Subnode Management
      */
     replaceSubnodeWith (oldNode, newNode) {
@@ -140,9 +140,9 @@
 
     /**
      * @description Adds a subnode at a specific index.
-     * @param {BMJsonNode} aSubnode - The subnode to add.
+     * @param {SvJsonNode} aSubnode - The subnode to add.
      * @param {number} anIndex - The index at which to add the subnode.
-     * @returns {BMJsonNode} The added subnode.
+     * @returns {SvJsonNode} The added subnode.
      * @category Subnode Management
      */
     addSubnodeAt (aSubnode, anIndex) {
@@ -151,8 +151,8 @@
 
     /**
      * @description Prepares a subnode for addition to this node.
-     * @param {BMJsonNode} aSubnode - The subnode to prepare.
-     * @returns {BMJsonNode} The prepared subnode.
+     * @param {SvJsonNode} aSubnode - The subnode to prepare.
+     * @returns {SvJsonNode} The prepared subnode.
      * @category Subnode Management
      */
     prepareSubnode (aSubnode) {
@@ -184,7 +184,7 @@
     /**
      * @description Creates a new subnode for a given JSON object.
      * @param {Object} json - The JSON object to create a subnode for.
-     * @returns {BMJsonNode} The new subnode.
+     * @returns {SvJsonNode} The new subnode.
      * @category Subnode Management
      */
     newSubnodeForJson (json, jsonPathComponents = []) {
@@ -193,7 +193,7 @@
             const aClass = this.subnodeClasses().first();
             aNode = aClass.clone().setJson(json, jsonPathComponents);
         } else {
-            aNode = BMJsonNode.nodeForJson(json, jsonPathComponents);
+            aNode = SvJsonNode.nodeForJson(json, jsonPathComponents);
         }
         return aNode;
     }
@@ -201,7 +201,7 @@
     /**
      * @description Sets the JSON for this node.
      * @param {Array} json - The JSON array to set.
-     * @returns {BMJsonArrayNode} This node.
+     * @returns {SvJsonArrayNode} This node.
      * @category JSON Operations
      */
     setJson (json, jsonPathComponents = []) {
@@ -275,7 +275,7 @@
 
     /**
      * @description Gets the BMDataUrl for this node.
-     * @returns {BMDataUrl} The BMDataUrl object.
+     * @returns {SvDataUrl} The BMDataUrl object.
      * @category Data Operations
      */
     getBMDataUrl () {

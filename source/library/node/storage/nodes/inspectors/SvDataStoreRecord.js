@@ -1,15 +1,15 @@
 /**
  * @module library.node.storage.nodes.inspectors
- * @class BMDataStoreRecord
+ * @class SvDataStoreRecord
  * @extends BMFieldSetNode
  * @classdesc A visible representation of a storage record.
  */
 "use strict";
 
-(class BMDataStoreRecord extends BMFieldSetNode {
+(class SvDataStoreRecord extends BMFieldSetNode {
     
     /**
-     * Initializes the prototype slots for the BMDataStoreRecord.
+     * Initializes the prototype slots for the SvDataStoreRecord.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -105,7 +105,7 @@
      * Creates a BMDataStoreRecord for a given record.
      * @static
      * @param {Object} aRecord - The record to create a BMDataStoreRecord for.
-     * @returns {BMDataStoreRecord} The created BMDataStoreRecord.
+     * @returns {SvDataStoreRecord} The created BMDataStoreRecord.
      * @category Factory
      */
     static forRecord (aRecord) {

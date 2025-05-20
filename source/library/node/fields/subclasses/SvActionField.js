@@ -2,12 +2,12 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMActionField
+ * @class SvActionField
  * @extends BMField
  * @classdesc An abstraction of a UI visible action that can be performed on an object.
  * The value is the action method name, the target is the field owner.
  */
-(class BMActionField extends BMField {
+(class SvActionField extends BMField {
     
     /**
      * @static
@@ -73,7 +73,7 @@
     /**
      * @description Sets the title of the action field
      * @param {string} s - The title to set
-     * @returns {BMActionField} This instance
+     * @returns {SvActionField} This instance
      * @category Configuration
      */
     setTitle (s) {
@@ -113,7 +113,7 @@
 
     /**
      * @description Performs the action
-     * @returns {BMActionField} This instance
+     * @returns {SvActionField} This instance
      * @category Action
      */
     doAction () {
@@ -152,7 +152,7 @@
 
     /**
      * @description Prepares the action field for access
-     * @returns {BMActionField} This instance
+     * @returns {SvActionField} This instance
      * @category Lifecycle
      */
     prepareToAccess () {
@@ -164,7 +164,7 @@
     /**
      * @description Sets the action info
      * @param {Object} infoDict - The action info dictionary
-     * @returns {BMActionField} This instance
+     * @returns {SvActionField} This instance
      * @category Configuration
      */
     setActionInfo (infoDict) {

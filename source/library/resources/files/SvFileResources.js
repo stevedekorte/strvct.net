@@ -5,8 +5,8 @@
 "use strict";
 
 /**
- * @class BMFileResources
- * @extends BMResourceGroup
+ * @class SvFileResources
+ * @extends SvResourceGroup
  * @classdesc
  * BMFileResources is a class for managing file resources.
  * 
@@ -22,7 +22,7 @@
  *     ...
  * });
  */
-(class BMFileResources extends BMResourceGroup {
+(class SvFileResources extends BMResourceGroup {
     
     /**
      * @description Initializes the prototype slots for the class.
@@ -57,7 +57,7 @@
 
     /**
      * @description Initializes the instance.
-     * @returns {BMFileResources} The initialized instance.
+     * @returns {SvFileResources} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -113,7 +113,7 @@
 
     /**
      * @description Gets the root folder.
-     * @returns {BMResourceFolder} The root folder.
+     * @returns {SvResourceFolder} The root folder.
      * @category File System
      */
     rootFolder () {

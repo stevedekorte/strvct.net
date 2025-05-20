@@ -2,15 +2,15 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMIdentityField
+ * @class SvIdentityField
  * @extends BMField
  * @classdesc Represents an identity field for Bitcoin-related operations.
  * This field is used to handle and validate Bitcoin public keys.
  */
-(class BMIdentityField extends BMField {
+(class SvIdentityField extends BMField {
     
     /**
-     * @description Initializes prototype slots for the BMIdentityField.
+     * @description Initializes the prototype slots for the SvIdentityField.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -43,7 +43,7 @@
      * @description Sets the value of the field.
      * Processes the input value to extract a valid Bitcoin public key.
      * @param {*} inValue - The input value to be set.
-     * @returns {BMIdentityField} Returns the instance of the field.
+     * @returns {SvIdentityField} Returns the instance of the field.
      * @category Data Management
      */
     setValue (inValue) { // called by View on edit

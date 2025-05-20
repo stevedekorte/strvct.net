@@ -1,14 +1,14 @@
 /**
  * @module library.node.fields.subclasses.time
- * @class BMTimeNode
- * @extends BMSummaryNode
+ * @class SvTimeNode
+ * @extends SvSummaryNode
  * @classdesc BMTimeNode represents a time node in the application.
  * It handles the storage and formatting of time information.
  */
 
 "use strict";
 
-(class BMTimeNode extends BMSummaryNode {
+(class SvTimeNode extends SvSummaryNode {
     
     /**
      * @static
@@ -21,7 +21,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMTimeNode.
+     * @description Initializes the prototype slots for the SvTimeNode.
      * @category Initialization
      */
     initPrototypeSlots () {

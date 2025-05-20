@@ -1,6 +1,6 @@
 /**
  * @module browser.stack.Tile.field_tiles
- * @class BMActionFieldTile
+ * @class SvActionFieldTile
  * @extends Tile
  * @classdesc BMActionFieldTile is a specialized Tile class for action fields.
  * It includes a button view and handles user interactions.
@@ -8,7 +8,7 @@
 
 "use strict";
 
-(class BMActionFieldTile extends Tile {
+(class SvActionFieldTile extends Tile {
     
     initPrototypeSlots () {
         /**
@@ -23,7 +23,7 @@
 
     /**
      * @description Initializes the BMActionFieldTile.
-     * @returns {BMActionFieldTile} The initialized instance.
+     * @returns {SvActionFieldTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -44,7 +44,7 @@
 
     /**
      * @description Updates the subviews of the BMActionFieldTile.
-     * @returns {BMActionFieldTile} The updated instance.
+     * @returns {SvActionFieldTile} The updated instance.
      * @category UI
      */
     updateSubviews () {	
@@ -89,7 +89,7 @@
     
     /**
      * @description Performs the action associated with this tile.
-     * @returns {BMActionFieldTile} The instance.
+     * @returns {SvActionFieldTile} The instance.
      * @category Action
      */
     doAction () {
@@ -101,7 +101,7 @@
     
     /**
      * @description Handles the button click event.
-     * @returns {BMActionFieldTile} The instance.
+     * @returns {SvActionFieldTile} The instance.
      * @category Event Handling
      */
     didClickButton () {
@@ -111,7 +111,7 @@
 
     /**
      * @description Synchronizes the tile with its associated node.
-     * @returns {BMActionFieldTile} The instance.
+     * @returns {SvActionFieldTile} The instance.
      * @category Data Synchronization
      */
     syncToNode () {

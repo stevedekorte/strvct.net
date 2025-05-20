@@ -5,14 +5,14 @@
  */
 
 /**
- * @class BMResourceFile
+ * @class SvResourceFile
  * @extends BaseNode
  * @classdesc Represents a resource file with methods for loading and managing file data.
  */
-(class BMResourceFile extends BaseNode {
+(class SvResourceFile extends BaseNode {
 
     /**
-     * @description Initializes the prototype slots for the BMResourceFile class.
+     * @description Initializes the prototype slots for the SvResourceFile class.
      */
     initPrototypeSlots () {
         /**
@@ -118,7 +118,7 @@
 
     /**
      * @description Initializes the BMResourceFile instance.
-     * @returns {BMResourceFile} The initialized instance.
+     * @returns {SvResourceFile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -160,7 +160,7 @@
 
     /**
      * @description Sets up subnodes for the resource file.
-     * @returns {BMResourceFile} The current instance.
+     * @returns {SvResourceFile} The current instance.
      * @category Initialization
      */
     setupSubnodes () {

@@ -7,10 +7,10 @@
 /**
  * BMFont class for managing font resources.
  * @class
- * @extends BMResource
+ * @extends SvResource
  * @classdesc Managed by BMFontResources.
  */
-(class BMFont extends BMResource {
+(class SvFont extends BMResource {
     
     /**
      * @static
@@ -47,7 +47,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMFont class.
+     * @description Initializes the prototype slots for the SvFont class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -202,7 +202,7 @@
     /**
      * @description Handles load errors.
      * @param {Error} error - The error object.
-     * @returns {BMFont} The BMFont instance.
+     * @returns {SvFont} The BMFont instance.
      * @category Error Handling
      */
     onLoadError (error) {

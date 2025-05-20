@@ -5,14 +5,14 @@
 "use strict";
 
 /**
- * @class BMYearNode
+ * @class SvYearNode
  * @extends BaseNode
  * @classdesc Represents a year node in a date-related structure.
  */
-(class BMYearNode extends BaseNode {
+(class SvYearNode extends BaseNode {
     
     /**
-     * @description Initializes the prototype slots for the BMYearNode.
+     * @description Initializes the prototype slots for the SvYearNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -75,7 +75,7 @@
     
     /**
      * @description Returns the node to be used as a link in tile views.
-     * @returns {BMYearNode} The current node instance.
+     * @returns {SvYearNode} The current node instance.
      * @category UI
      */
     nodeTileLink () {

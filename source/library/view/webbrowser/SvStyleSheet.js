@@ -3,7 +3,7 @@
  */
 
 /**
- * @class BMStyleSheet
+ * @class SvStyleSheet
  * @extends ProtoClass
  * @classdesc
  * BMStyleSheet
@@ -11,10 +11,10 @@
  * const sheet = DocumentBody.shared().styleSheets().first()
  * sheet.setSelectorProperty("body", "color", "red")
  */
-(class BMStyleSheet extends ProtoClass {
+(class SvStyleSheet extends ProtoClass {
     
     /**
-     * @description Initializes the prototype slots for the BMStyleSheet class.
+     * @description Initializes the prototype slots for the SvStyleSheet class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -42,7 +42,7 @@
      * @param {string} selector - The CSS selector to target.
      * @param {string} property - The CSS property to change.
      * @param {string} value - The new value for the CSS property.
-     * @returns {BMStyleSheet} The current BMStyleSheet instance.
+     * @returns {SvStyleSheet} The current BMStyleSheet instance.
      * @category Manipulation
      */
     changeStylesheetRule (selector, property, value) {

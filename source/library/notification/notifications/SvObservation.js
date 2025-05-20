@@ -5,16 +5,16 @@
  */
 
 /**
- * @class BMObservation
+ * @class SvObservation
  * @extends ProtoClass
  * @classdesc An abstraction for a NotificationCenter observation. 
  * Holds references to which notification message a given observer wants
  * notifications for.
  */
-(class BMObservation extends ProtoClass {
+(class SvObservation extends ProtoClass {
 
     /**
-     * @description Initializes the prototype slots for the BMObservation class.
+     * @description Initializes the prototype slots for the SvObservation class.
      */
     initPrototypeSlots () {
     
@@ -164,7 +164,7 @@
 
     /**
      * @description Clears both note and observation hashes.
-     * @returns {BMObservation} The current instance.
+     * @returns {SvObservation} The current instance.
      * @category State Management
      */
     clearHashes () {
@@ -175,7 +175,7 @@
 
     /**
      * @description Clears the observation hash.
-     * @returns {BMObservation} The current instance.
+     * @returns {SvObservation} The current instance.
      * @category State Management
      */
     clearObsHash () {
@@ -198,7 +198,7 @@
 
     /**
      * @description Clears the note hash.
-     * @returns {BMObservation} The current instance.
+     * @returns {SvObservation} The current instance.
      * @category State Management
      */
     clearNoteHash () {
@@ -221,7 +221,7 @@
 
     /**
      * @description Checks if this observation is equal to another.
-     * @param {BMObservation} obs - The observation to compare with.
+     * @param {SvObservation} obs - The observation to compare with.
      * @returns {Boolean} True if equal, false otherwise.
      * @category Comparison
      */
@@ -286,7 +286,7 @@
 
     /**
      * @description Checks if a notification matches this observation.
-     * @param {BMNotification} note - The notification to check.
+     * @param {SvNotification} note - The notification to check.
      * @returns {Boolean} True if the notification matches, false otherwise.
      * @category Matching
      */
@@ -300,7 +300,7 @@
 
     /**
      * @description Attempts to send a notification, catching and logging any errors.
-     * @param {BMNotification} note - The notification to send.
+     * @param {SvNotification} note - The notification to send.
      * @returns {null}
      * @category Notification Handling
      */
@@ -323,7 +323,7 @@
 
     /**
      * @description Sends a notification to the observer.
-     * @param {BMNotification} note - The notification to send.
+     * @param {SvNotification} note - The notification to send.
      * @category Notification Handling
      */
     sendNotification (note) {
@@ -355,7 +355,7 @@
 
     /**
      * @description Starts watching for notifications.
-     * @returns {BMObservation} The current instance.
+     * @returns {SvObservation} The current instance.
      * @category Lifecycle
      */
     startWatching () {
@@ -374,7 +374,7 @@
 
     /**
      * @description Stops watching for notifications.
-     * @returns {BMObservation} The current instance.
+     * @returns {SvObservation} The current instance.
      * @category Lifecycle
      */
     stopWatching () {

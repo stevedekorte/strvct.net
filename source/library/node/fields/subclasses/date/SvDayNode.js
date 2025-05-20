@@ -2,14 +2,14 @@
 
 /**
  * @module library.node.fields.subclasses.date
- * @class BMDayNode
+ * @class SvDayNode
  * @extends BaseNode
  * @classdesc Represents a day node in a calendar or date system. It handles the representation and manipulation of a single day value.
  */
-(class BMDayNode extends BaseNode {
+(class SvDayNode extends BaseNode {
     
     /**
-     * @description Initializes the prototype slots for the BMDayNode.
+     * @description Initializes the prototype slots for the SvDayNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -39,7 +39,7 @@
     /**
      * @description Sets the value of the day.
      * @param {Number} v - The day value to set.
-     * @returns {BMDayNode} The instance of BMDayNode.
+     * @returns {SvDayNode} The instance of BMDayNode.
      * @category Data Manipulation
      */
     setValue (v) {

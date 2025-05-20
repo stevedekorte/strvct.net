@@ -5,14 +5,14 @@
 "use strict";
 
 /**
- * @class BMOptionNode
- * @extends BMStorableNode
+ * @class SvOptionNode
+ * @extends SvStorableNode
  * @classdesc A single option from a set of options choices.
  */
-(class BMOptionNode extends BMStorableNode {
+(class SvOptionNode extends SvStorableNode {
     
     /**
-     * @description Initializes the prototype slots for the BMOptionNode.
+     * @description Initializes the prototype slots for the SvOptionNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -72,7 +72,7 @@
     /**
      * @description Sets the isPicked property without triggering side effects.
      * @param {boolean} aBool - The boolean value to set.
-     * @returns {BMOptionNode} The current instance.
+     * @returns {SvOptionNode} The current instance.
      * @category State
      */
     justSetIsPicked (aBool) {
@@ -116,7 +116,7 @@
 
     /**
      * @description Toggles the isPicked state of the option.
-     * @returns {BMOptionNode} The current instance.
+     * @returns {SvOptionNode} The current instance.
      * @category State
      */
     toggle () { 
@@ -128,7 +128,7 @@
     /**
      * @description Sets the title (label) of the option.
      * @param {string} aString - The new title.
-     * @returns {BMOptionNode} The current instance.
+     * @returns {SvOptionNode} The current instance.
      * @category Data
      */
     setTitle (aString) {

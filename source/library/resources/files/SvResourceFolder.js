@@ -5,12 +5,12 @@
 "use strict";
 
 /**
- * @class BMResourceFolder
+ * @class SvResourceFolder
  * @extends BaseNode
  * @classdesc An abstraction for an individual file folder.
  * BMFileResources will setup all BMResourceFolders.
  */
-(class BMResourceFolder extends BaseNode {
+(class SvResourceFolder extends BaseNode {
     
     /**
      * @description Initializes prototype slots for the class.
@@ -34,7 +34,7 @@
 
     /**
      * @description Initializes the instance.
-     * @returns {BMResourceFolder} The initialized instance.
+     * @returns {SvResourceFolder} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -62,7 +62,7 @@
 
     /**
      * @description Sets up subnodes for the folder.
-     * @returns {BMResourceFolder} The current instance.
+     * @returns {SvResourceFolder} The current instance.
      * @category Node Management
      */
     setupSubnodes () {
@@ -134,7 +134,7 @@
     /**
      * @description Adds a subfolder with the given name, or returns an existing one.
      * @param {string} subfolderName - The name of the subfolder to add or retrieve.
-     * @returns {BMResourceFolder} The subfolder.
+     * @returns {SvResourceFolder} The subfolder.
      * @category Node Management
      */
     addSubnodeForFolderNameCreateIfAbsent (subfolderName) {
@@ -148,7 +148,7 @@
     /**
      * @description Adds a new subfolder with the given name.
      * @param {string} aName - The name of the subfolder to add.
-     * @returns {BMResourceFolder} The newly added subfolder.
+     * @returns {SvResourceFolder} The newly added subfolder.
      * @throws {Error} If the folder name is empty or contains a slash.
      * @category Node Management
      */
@@ -224,7 +224,7 @@
     /**
      * @description Adds a new file with the given name.
      * @param {string} fileName - The name of the file to add.
-     * @returns {BMResourceFile} The newly added file.
+     * @returns {SvResourceFile} The newly added file.
      * @category Node Management
      */
     addSubnodeForFileName (fileName) {
@@ -320,7 +320,7 @@
     /**
      * @description Gets a single resource with the given name.
      * @param {string} aName - The name of the resource to retrieve.
-     * @returns {BMResourceFile} The resource with the given name.
+     * @returns {SvResourceFile} The resource with the given name.
      * @throws {Error} If more than one resource is found with the given name.
      * @category Resource Management
      */

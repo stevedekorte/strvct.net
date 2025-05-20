@@ -5,23 +5,23 @@
 "use strict";
 
 /**
- * @class BMTheme
+ * @class SvTheme
  * @extends BMThemeFolder
  * @classdesc BMTheme class represents a theme in the application.
  * 
  * BMThemeResources.shared().activeTheme().newThemeClassOptions()
  */
-(class BMTheme extends BMThemeFolder {
+(class SvTheme extends BMThemeFolder {
   
   /**
-   * @description Initializes the prototype slots for the BMTheme class.
+   * @description Initializes the prototype slots for the SvTheme class.
    * @category Initialization
    */
   initPrototypeSlots () {
   }
 
   /**
-   * @description Initializes the prototype for the BMTheme class.
+   * @description Initializes the prototype slots for the SvTheme class.
    * @category Initialization
    */
   initPrototype () {
@@ -49,7 +49,7 @@
 
   /**
    * @description Sets up the theme as the default theme.
-   * @returns {BMTheme} The current instance.
+   * @returns {SvTheme} The current instance.
    * @category Setup
    */
   setupAsDefault () {
@@ -83,7 +83,7 @@
 
   /**
    * @description Creates new theme class options.
-   * @returns {BMOptionsNode} The options node containing theme class options.
+   * @returns {SvOptionsNode} The options node containing theme class options.
    * @category Creation
    */
   newThemeClassOptions () {

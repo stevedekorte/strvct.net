@@ -3,7 +3,7 @@
  */
 
 /**
- * @class BMThemeClass
+ * @class SvThemeClass
  * @extends BMThemeFolder
  * @classdesc
  * BMThemeClass represents a theme class in the theming system.
@@ -20,7 +20,7 @@
  *   TextTile/unselected -> Tile/unselected -> Default->unselected
  *   TextTile/disabled   -> Tile/disabled   -> Default->disabled
  */
-(class BMThemeClass extends BMThemeFolder {
+(class SvThemeClass extends BMThemeFolder {
 
   /**
    * @description Initializes the BMThemeClass instance.
@@ -71,7 +71,7 @@
 
   /**
    * @description Sets up this instance as the default theme class.
-   * @returns {BMThemeClass} This instance.
+   * @returns {SvThemeClass} This instance.
    * @category Setup
    */
   setupAsDefault() {
@@ -86,7 +86,7 @@
   /**
    * @description Returns the state with the given name.
    * @param {string} name - The name of the state to retrieve.
-   * @returns {BMThemeState} The state with the given name.
+   * @returns {SvThemeState} The state with the given name.
    * @category State Management
    */
   stateWithName (name) {
@@ -95,7 +95,7 @@
 
   /**
    * @description Returns the states subnode of this theme class.
-   * @returns {BMThemeStates} The states subnode.
+   * @returns {SvThemeStates} The states subnode.
    * @category State Management
    */
   states () {
@@ -104,7 +104,7 @@
 
   /**
    * @description Returns the children subnode of this theme class.
-   * @returns {BMThemeClassChildren} The children subnode.
+   * @returns {SvThemeClassChildren} The children subnode.
    * @category Hierarchy
    */
   children () {

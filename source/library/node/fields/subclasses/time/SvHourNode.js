@@ -1,15 +1,15 @@
 /**
  * @module library.node.fields.subclasses.time
- * @class BMHourNode
+ * @class SvHourNode
  * @extends BaseNode
  * @classdesc Represents an hour node in a time-related structure. Handles hours from 0 to 23.
  */
 "use strict";
 
-(class BMHourNode extends BaseNode {
+(class SvHourNode extends BaseNode {
     
     /**
-     * Initializes the prototype slots for the BMHourNode.
+     * Initializes the prototype slots for the SvHourNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -41,7 +41,7 @@
     /**
      * Sets the value of the hour.
      * @param {Number} v - The hour value to set (0-23).
-     * @returns {BMHourNode} The instance for method chaining.
+     * @returns {SvHourNode} The instance for method chaining.
      * @category Data
      */
     setValue (v) {

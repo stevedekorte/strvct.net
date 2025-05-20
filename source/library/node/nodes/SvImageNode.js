@@ -2,14 +2,14 @@
 
 /**
  * @module library.node.nodes
- * @class BMImageNode
- * @extends BMStorableNode
+ * @class SvImageNode
+ * @extends SvStorableNode
  * @classdesc BMImageNode class for handling image nodes.
  */
-(class BMImageNode extends BMStorableNode {
+(class SvImageNode extends SvStorableNode {
     
     /**
-     * @description Initializes the prototype slots for the BMImageNode.
+     * @description Initializes the prototype slots for the SvImageNode.
      * @category Initialization
      */
     initPrototypeSlots () {

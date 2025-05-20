@@ -1,12 +1,12 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class BMImageWellFieldTile
+ * @class SvImageWellFieldTile
  * @extends BMFieldTile
  * @classdesc Represents an image well field tile in the browser stack.
  */
 "use strict";
 
-(class BMImageWellFieldTile extends BMFieldTile {
+(class SvImageWellFieldTile extends BMFieldTile {
     
     /**
      * @description Checks if the given mime type can be opened.
@@ -29,7 +29,7 @@
 
     /**
      * @description Initializes the BMImageWellFieldTile.
-     * @returns {BMImageWellFieldTile} The initialized instance.
+     * @returns {SvImageWellFieldTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -78,7 +78,7 @@
 
     /**
      * @description Synchronizes the tile from the node.
-     * @returns {BMImageWellFieldTile} The synchronized instance.
+     * @returns {SvImageWellFieldTile} The synchronized instance.
      * @category Synchronization
      */
     syncFromNode () {
@@ -96,7 +96,7 @@
 
     /**
      * @description Synchronizes the tile to the node.
-     * @returns {BMImageWellFieldTile} The synchronized instance.
+     * @returns {SvImageWellFieldTile} The synchronized instance.
      * @category Synchronization
      */
     syncToNode () {
@@ -137,7 +137,7 @@
     /**
      * @description Handles the update of the image well view.
      * @param {ImageWellView} anImageWell - The updated image well view.
-     * @returns {BMImageWellFieldTile} The current instance.
+     * @returns {SvImageWellFieldTile} The current instance.
      * @category Event Handling
      */
     didUpdateImageWellView (anImageWell) {

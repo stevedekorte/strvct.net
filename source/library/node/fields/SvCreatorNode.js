@@ -2,14 +2,14 @@
 
 /**
  * @module library.node.fields
- * @class BMCreatorNode
- * @extends BMStorableNode
+ * @class SvCreatorNode
+ * @extends SvStorableNode
  * @classdesc A stand-in node that lets the user select a field to replace it with.
  */
-(class BMCreatorNode extends BMStorableNode {
+(class SvCreatorNode extends SvStorableNode {
     
     /**
-     * @description Initializes the prototype slots for the BMCreatorNode.
+     * @description Initializes the prototype slots for the SvCreatorNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -101,12 +101,12 @@
 
     /**
      * @description Sets up subnodes if they don't exist.
-     * @returns {BMCreatorNode} The current instance.
+     * @returns {SvCreatorNode} The current instance.
      * @category Initialization
      */
     setupSubnodes () {
         if (this.subnodes().length == 0) {
-            this.addSubnodesForObjects(BMNode.primitiveNodeClasses())
+            this.addSubnodesForObjects(SvNode.primitiveNodeClasses())
             //this.addSubnodesForObjects(this.protoObjects())
         }
         return this
@@ -134,7 +134,7 @@
     /**
      * @description Handles the choice of a new node type.
      * @param {Object} actionNode - The node that was chosen.
-     * @returns {BMCreatorNode} The current instance.
+     * @returns {SvCreatorNode} The current instance.
      * @category User Interaction
      */
    didChoose (actionNode) {

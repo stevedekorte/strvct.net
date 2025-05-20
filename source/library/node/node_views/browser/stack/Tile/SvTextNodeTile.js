@@ -2,15 +2,15 @@
 
 /**
  * @module library.node.node_views.browser.stack.Tile
- * @class BMTextNodeTile
+ * @class SvTextNodeTile
  * @extends Tile
  * @classdesc BMTextNodeTile represents a tile for displaying and editing text nodes.
  */
 
-(class BMTextNodeTile extends Tile {
+(class SvTextNodeTile extends Tile {
     
     /**
-     * Initializes the prototype slots for the BMTextNodeTile.
+     * Initializes the prototype slots for the SvTextNodeTile.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -26,7 +26,7 @@
 
     /**
      * Initializes the BMTextNodeTile.
-     * @returns {BMTextNodeTile} The initialized instance.
+     * @returns {SvTextNodeTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -81,7 +81,7 @@
 
     /**
      * Synchronizes the tile's content to the node.
-     * @returns {BMTextNodeTile} The current instance.
+     * @returns {SvTextNodeTile} The current instance.
      * @category Data Synchronization
      */
     syncToNode () {   
@@ -93,7 +93,7 @@
     
     /**
      * Synchronizes the tile's content from the node.
-     * @returns {BMTextNodeTile} The current instance.
+     * @returns {SvTextNodeTile} The current instance.
      * @category Data Synchronization
      */
     syncFromNode () {
@@ -110,7 +110,7 @@
 
     /**
      * Applies styles to the tile.
-     * @returns {BMTextNodeTile} The current instance.
+     * @returns {SvTextNodeTile} The current instance.
      * @category Styling
      */
     applyStyles () {

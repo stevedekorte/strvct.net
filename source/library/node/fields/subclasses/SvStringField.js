@@ -5,11 +5,11 @@
 "use strict"; 
 
 /**
- * @class BMStringField
+ * @class SvStringField
  * @extends BMField
  * @classdesc Represents a string field in the application.
  */
-(class BMStringField extends BMField {
+(class SvStringField extends BMField {
     
     /**
      * @static
@@ -22,7 +22,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the BMStringField.
+     * @description Initializes the prototype slots for the SvStringField.
      * @category Initialization
      */
     initPrototypeSlots () {

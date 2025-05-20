@@ -2,25 +2,25 @@
 
 /**
  * @module library.node.fields.subclasses
- * @class BMJsonField
+ * @class SvJsonField
  * @extends BMField
  * @classdesc BMJsonField is a specialized field for handling JSON data.
- * It provides functionality to set and retrieve JSON values, and interact with BMJsonNode.
+ * It provides functionality to set and retrieve JSON values, and interact with SvJsonNode.
  */
-(class BMJsonField extends BMField {
+(class SvJsonField extends BMField {
     
     /**
-     * @description Initializes the prototype slots for the BMJsonField.
+     * @description Initializes the prototype slots for the SvJsonField.
      * @category Initialization
      */
     initPrototypeSlots () {
         /**
-         * @member {BMJsonNode} nodeTileLink - The associated BMJsonNode for this field.
+         * @member {SvJsonNode} nodeTileLink - The associated SvJsonNode for this field.
          * @category Data
          */
         {
             const slot = this.newSlot("nodeTileLink", null);
-            slot.setSlotType("BMJsonNode");
+            slot.setSlotType("SvJsonNode");
         }
     }
 
@@ -37,14 +37,14 @@
     }
 
     /**
-     * @description Sets the value of the field by creating a BMJsonNode.
+     * @description Sets the value of the field by creating a SvJsonNode.
      * @param {*} v - The value to set.
-     * @returns {BMJsonField} - Returns this instance for method chaining.
+     * @returns {SvJsonField} - Returns this instance for method chaining.
      * @category Data Manipulation
      */
     setValue (v) {
         console.warn("WARNING: BMJsonField setValue '" + v + "'")
-        const node = BMJsonNode.nodeForJson(v)
+        const node = SvJsonNode.nodeForJson(v)
         this.setNodeTileLink(node)
         return this
     }

@@ -1,17 +1,17 @@
 /**
  * @module library.node.storage.base.categories
- * @class BMNode_store
- * @extends BMNode
- * @classdesc Placeholder for store related methods. This state/behavior is currently in BMStorableNode.
+ * @class SvNode_store
+ * @extends SvNode
+ * @classdesc Placeholder for store related methods. This state/behavior is currently in SvStorableNode.
  */
 "use strict";
 
-(class BMNode_store extends BMNode {
+(class SvNode_store extends SvNode {
     
     /*
 
         Placeholder for store related methods. 
-        This state/behavor is currently in BMStorableNode.
+        This state/behavor is currently in SvStorableNode.
 
     */
 

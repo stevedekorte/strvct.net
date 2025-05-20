@@ -1,10 +1,10 @@
 /**
  * @module library.node.storage.nodes.inspectors
- * @class BMDataStore
+ * @class SvDataStore
  * @extends BaseNode
  * @classdesc A visible representation of the storage system
  */
-(class BMDataStore extends BaseNode {
+(class SvDataStore extends BaseNode {
     
     /**
      * @static
@@ -108,7 +108,7 @@
     /**
      * @description Adds a record to the data store
      * @param {Object} aRecord
-     * @returns {BMDataStore}
+     * @returns {SvDataStore}
      * @category Data Management
      */
     addRecord (aRecord) {

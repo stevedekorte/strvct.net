@@ -5,12 +5,12 @@
 "use strict";
 
 /**
- * @class BMFolderNode
- * @extends BMSummaryNode
+ * @class SvFolderNode
+ * @extends SvSummaryNode
  * @classdesc A node that supports adding, reordering, and managing other nodes within the UI.
- * Extends BMSummaryNode.
+ * Extends SvSummaryNode.
  */
-(class BMFolderNode extends BMSummaryNode {
+(class SvFolderNode extends SvSummaryNode {
     
     /**
      * @static
@@ -23,7 +23,7 @@
     }
     
     /**
-     * @description Initializes the prototype slots for the BMFolderNode.
+     * @description Initializes the prototype slots for the SvFolderNode.
      * These slots are useful for implementing menus.
      * @category Initialization
      */
@@ -91,7 +91,7 @@
     init () {
         super.init()
         this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses(BMNode.primitiveNodeClasses())
+        this.setSubnodeClasses(SvNode.primitiveNodeClasses())
     }
 
     /**
@@ -106,7 +106,7 @@
     /**
      * @description Sets the title of the node.
      * @param {string} aString - The new title to set.
-     * @returns {BMFolderNode} The current instance for method chaining.
+     * @returns {SvFolderNode} The current instance for method chaining.
      * @category Node Properties
      */
     setTitle (aString) {
@@ -137,8 +137,8 @@
 
     /**
      * @description Handles the tap event on the node.
-     * @param {BMNode} aNode - The node that was tapped.
-     * @returns {BMFolderNode} The current instance for method chaining.
+     * @param {SvNode} aNode - The node that was tapped.
+     * @returns {SvFolderNode} The current instance for method chaining.
      * @category Event Handling
      */
     onTapOfNode (aNode) {
