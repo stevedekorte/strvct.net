@@ -293,11 +293,10 @@ Example Tool call format:
     
     // Report parse error to the server if SvApp is available
     try {
-      const app = SvApp.shared();
-      if (app && typeof app.postErrorReport === "function") {
         const errorData = {
           name: "ToolCallParseError",
           message: e.message,
+          extraMessage: e.extraMessage,
           stack: e.stack,
           toolCall: {
             toolName: this.toolName(),
@@ -308,11 +307,10 @@ Example Tool call format:
         
         // Don't block execution - use setTimeout to post error asynchronously
         setTimeout(() => {
-          app.postErrorReport(e, errorData).catch(error => {
+          UndreamedOfApp.shared().postErrorReport(e, errorData).catch(error => {
             console.error("Failed to report tool call parse error:", error);
           });
         }, 0);
-      }
     } catch (reportError) {
       console.error("Error while trying to report tool call parse error:", reportError);
     }
