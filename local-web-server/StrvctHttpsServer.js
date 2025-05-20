@@ -55,6 +55,11 @@ const nodePath = require('path');
 		 * @member {boolean} isSecure - Indicates whether the server should use HTTPS.
 		 */
 		this.newSlot("isSecure", true);
+
+		/**
+		 * @member {string} logsPath - The path to store error logs.
+		 */
+		this.newSlot("logsPath", "logs/errors");
 	}
   
 	/**

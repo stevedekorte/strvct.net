@@ -102,12 +102,31 @@ const https = require('https');
 		this.setPath(this.getPath())
 
 		try {
-			if (this.queryMap().get("proxyUrl")) {
-				this.onProxyRequest()
-			} else if (this.path() === "./log_error" && this.request().method === "POST") {
-				this.onLogErrorRequest()
+			// First check for direct API endpoints by URL path
+			if (this.urlObject().pathname === "/log_error") {
+				// Handle API endpoint
+				if (this.request().method === "OPTIONS") {
+					// Handle CORS preflight requests
+					this.response().writeHead(200, {
+						"Access-Control-Allow-Origin": "*",
+						"Access-Control-Allow-Methods": "POST, OPTIONS",
+						"Access-Control-Allow-Headers": "Content-Type"
+					});
+					this.response().end();
+					return;
+				} else if (this.request().method === "POST") {
+					this.onLogErrorRequest();
+					return;
+				} else {
+					// Method not allowed
+					this.response().writeHead(405, {"Content-Type": "application/json"});
+					this.response().end(JSON.stringify({ error: "Method not allowed" }));
+					return;
+				}
+			} else if (this.queryMap().get("proxyUrl")) {
+				this.onProxyRequest();
 			} else {
-				this.onFileRequest(); // may throw exception for missing file, unathorized path, etc
+				this.onFileRequest(); // may throw exception for missing file, unauthorized path, etc
 			}
 		} catch (error) {
 			if (error._code) {
@@ -271,6 +290,11 @@ const https = require('https');
 			path = "./index.html";
 		}
 
+		// Handle API endpoints like log_error
+		if (path === "./log_error") {
+			return path;
+		}
+
 		const acmePath = ".well-known/acme-challenge/"
 		if (path.startsWith(acmePath)) {
 			path = path.replace(acmePath, this.localAcmePath())
@@ -284,6 +308,11 @@ const https = require('https');
 	 * @returns {string|undefined} The file extension or undefined if not found.
 	 */
 	getPathExtension () {
+		// Special handling for API endpoints
+		if (this.path() === "./log_error") {
+			return "api"; // Use a pseudo-extension for API endpoints
+		}
+		
 		if (this.path().indexOf(".") !== -1) {
 			return this.path().split('.').pop();
 		}
@@ -385,9 +414,117 @@ const https = require('https');
 	 * @description Handles file requests.
 	 * @async
 	 */
+	/**
+	 * @description Handles the log_error API endpoint
+	 */
+	async onLogErrorRequest() {
+		this.log("Handling /log_error API request");
+		const req = this.request();
+		const res = this.response();
+		
+		// Set CORS headers for all responses
+		const corsHeaders = {
+			"Content-Type": "application/json",
+			"Access-Control-Allow-Origin": "*",
+			"Access-Control-Allow-Methods": "POST, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type"
+		};
+		
+		// Collect request body
+		const bodyChunks = [];
+		
+		req.on('data', (chunk) => {
+			bodyChunks.push(chunk);
+		});
+		
+		req.on('end', () => {
+			try {
+				// Parse the JSON data
+				const body = Buffer.concat(bodyChunks).toString();
+				this.log(`Received error log data: ${body.substring(0, 100)}...`);
+				
+				let jsonData;
+				try {
+					jsonData = JSON.parse(body);
+				} catch (parseError) {
+					this.log("Error parsing JSON:", parseError.message);
+					res.writeHead(400, corsHeaders);
+					res.end(JSON.stringify({ 
+						success: false, 
+						error: "Invalid JSON: " + parseError.message
+					}));
+					return;
+				}
+				
+				// Ensure logs directory exists
+				const logsDir = this.logErrorsPath();
+				try {
+					if (!fs.existsSync(logsDir)) {
+						this.log(`Creating logs directory: ${logsDir}`);
+						fs.mkdirSync(logsDir, { recursive: true });
+					}
+				} catch (dirError) {
+					this.log("Error creating logs directory:", dirError.message);
+					res.writeHead(500, corsHeaders);
+					res.end(JSON.stringify({ 
+						success: false, 
+						error: "Failed to create logs directory: " + dirError.message 
+					}));
+					return;
+				}
+				
+				// Format date and time for filename: YYYY_MM_DD_HHMMSS
+				const now = new Date();
+				const year = now.getFullYear();
+				const month = String(now.getMonth() + 1).padStart(2, '0');
+				const day = String(now.getDate()).padStart(2, '0');
+				const hours = String(now.getHours()).padStart(2, '0');
+				const minutes = String(now.getMinutes()).padStart(2, '0');
+				const seconds = String(now.getSeconds()).padStart(2, '0');
+				const randomId = Math.floor(Math.random() * 100000000).toString().padStart(8, '0');
+				
+				// Create filename with fixed length
+				const filename = `${year}_${month}_${day}_${hours}${minutes}${seconds}_${randomId}.json`;
+				const filePath = nodePath.join(logsDir, filename);
+				
+				// Write the JSON data to file
+				try {
+					fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+					this.log(`Successfully wrote error log to ${filePath}`);
+				} catch (writeError) {
+					this.log("Error writing log file:", writeError.message);
+					res.writeHead(500, corsHeaders);
+					res.end(JSON.stringify({ 
+						success: false, 
+						error: "Failed to write log file: " + writeError.message 
+					}));
+					return;
+				}
+				
+				// Respond with success
+				res.writeHead(200, corsHeaders);
+				res.end(JSON.stringify({ 
+					success: true, 
+					message: "Error logged successfully",
+					filename: filename 
+				}));
+				
+				this.log(`Completed error logging to ${filePath}`);
+			} catch (error) {
+				// Handle unexpected errors
+				this.log("Unexpected error processing log_error request:", error.message);
+				res.writeHead(500, corsHeaders);
+				res.end(JSON.stringify({ 
+					success: false, 
+					error: "Unexpected error: " + error.message 
+				}));
+			}
+		});
+	}
+
 	async onFileRequest () {
 		try {
-			const path = this.path()
+			const path = this.path();
 
 			const ext = this.getPathExtension()
 

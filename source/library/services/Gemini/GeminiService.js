@@ -271,7 +271,7 @@
       }
     }
 
-    assert(geminiBody.system_instruction, "System instruction is required");
+    //assert(geminiBody.system_instruction, "System instruction is required");
 
     geminiBody.contents = messages.map((message) => {
       let role = message.role.toLowerCase();

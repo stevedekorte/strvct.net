@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error Logging Test</title>
+    <style>
+        body { 
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.5;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0055aa;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow: auto;
+        }
+        .error {
+            color: #cc0000;
+        }
+        .success {
+            color: #00cc00;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        h1 { margin-top: 0; }
+        .test-section { 
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .test-section h2 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error Logging System Test</h1>
+    <p>This page tests the error logging system by generating various types of errors and sending them to the server.</p>
+
+    <div id="status"></div>
+
+    <div class="test-section">
+        <h2>1. Basic Error Logging</h2>
+        <p>Test sending a simple error message to the server.</p>
+        <button id="testBasicError">Test Basic Error</button>
+        <pre id="basicErrorResult"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Exception Logging</h2>
+        <p>Test catching and reporting a JavaScript exception.</p>
+        <button id="testException">Throw Exception</button>
+        <pre id="exceptionResult"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Custom Error Data</h2>
+        <p>Test including additional custom data with the error report.</p>
+        <button id="testCustomData">Test Custom Data</button>
+        <pre id="customDataResult"></pre>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Global Error Handler</h2>
+        <p>Test the global error handler by triggering an uncaught exception.</p>
+        <button id="testGlobalError">Trigger Uncaught Error</button>
+        <p><i>Note: This test will show an error notification and should send the error via the global handler.</i></p>
+    </div>
+
+    <script>
+        // Helper to display results
+        function updateResult(elementId, isSuccess, message, data) {
+            const element = document.getElementById(elementId);
+            element.textContent = message + (data ? '\n\n' + JSON.stringify(data, null, 2) : '');
+            element.className = isSuccess ? 'success' : 'error';
+        }
+
+        // Helper to update status
+        function updateStatus(isSuccess, message) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = isSuccess ? 'success' : 'error';
+            status.style.backgroundColor = isSuccess ? '#e6ffe6' : '#ffe6e6';
+        }
+
+        // Check if the error logging endpoint is available
+        async function checkEndpoint() {
+            try {
+                // Use a simple fetch with HEAD method to check if the endpoint exists
+                const response = await fetch('/log_error', { 
+                    method: 'HEAD',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    updateStatus(true, "✓ Error logging endpoint is available");
+                    return true;
+                } else {
+                    updateStatus(false, "✗ Error logging endpoint returned status: " + response.status);
+                    return false;
+                }
+            } catch (error) {
+                updateStatus(false, "✗ Could not connect to error logging endpoint: " + error.message);
+                return false;
+            }
+        }
+
+        // Basic direct error reporting without SvApp
+        async function sendErrorDirectly(error, additionalData = null) {
+            try {
+                const errorData = {
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    url: window.location.href,
+                    referrer: document.referrer || null,
+                    message: error.message || error,
+                    name: error.name || 'DirectError',
+                    stack: error.stack,
+                    testSource: 'Error Logging Test Page'
+                };
+
+                if (additionalData) {
+                    errorData.additionalData = additionalData;
+                }
+
+                const response = await fetch('/log_error', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(errorData)
+                });
+
+                return await response.json();
+            } catch (err) {
+                console.error('Error sending error report:', err);
+                return { success: false, error: err.message };
+            }
+        }
+
+        // Test 1: Basic error
+        document.getElementById('testBasicError').addEventListener('click', async () => {
+            try {
+                const testError = new Error('Test basic error message');
+                testError.name = 'TestBasicError';
+                
+                const result = await sendErrorDirectly(testError);
+                updateResult('basicErrorResult', result.success, 
+                    result.success ? '✓ Basic error logged successfully' : '✗ Failed to log basic error', 
+                    result);
+            } catch (error) {
+                updateResult('basicErrorResult', false, '✗ Exception during test: ' + error.message);
+            }
+        });
+
+        // Test 2: Exception
+        document.getElementById('testException').addEventListener('click', async () => {
+            try {
+                // Deliberately cause an exception
+                try {
+                    const obj = null;
+                    obj.nonExistentMethod(); // This will throw
+                } catch (error) {
+                    const result = await sendErrorDirectly(error, { 
+                        testType: 'exception-test',
+                        capturePoint: 'Exception handler'
+                    });
+                    
+                    updateResult('exceptionResult', result.success, 
+                        result.success ? '✓ Exception logged successfully' : '✗ Failed to log exception', 
+                        result);
+                }
+            } catch (error) {
+                updateResult('exceptionResult', false, '✗ Error in exception test: ' + error.message);
+            }
+        });
+
+        // Test 3: Custom data
+        document.getElementById('testCustomData').addEventListener('click', async () => {
+            try {
+                const testError = new Error('Test error with custom data');
+                testError.name = 'CustomDataError';
+
+                const customData = {
+                    testId: Date.now(),
+                    componentName: 'ErrorTestingComponent',
+                    operationType: 'custom-data-test',
+                    sessionInfo: {
+                        browser: navigator.userAgent,
+                        screenSize: `${window.innerWidth}x${window.innerHeight}`,
+                        timestamp: new Date().toISOString()
+                    }
+                };
+                
+                const result = await sendErrorDirectly(testError, customData);
+                updateResult('customDataResult', result.success, 
+                    result.success ? '✓ Error with custom data logged successfully' : '✗ Failed to log error with custom data', 
+                    result);
+            } catch (error) {
+                updateResult('customDataResult', false, '✗ Error in custom data test: ' + error.message);
+            }
+        });
+
+        // Test 4: Global handler (uncaught exception)
+        document.getElementById('testGlobalError').addEventListener('click', () => {
+            // This will trigger the global error handler
+            setTimeout(() => {
+                nonExistentFunction(); // This will cause an uncaught ReferenceError
+            }, 100);
+        });
+
+        // Check if endpoint is available when page loads
+        window.addEventListener('DOMContentLoaded', checkEndpoint);
+    </script>
+</body>
+</html>
