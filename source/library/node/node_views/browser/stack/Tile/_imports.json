@@ -6,7 +6,7 @@
     "Tile_slideGesture.js",
     "Tile_styling.js",
     "TitledTile.js",
-    "BMTextNodeTile.js",
+    "SvTextNodeTile.js",
     "BreadCrumbsTile.js",
     "HeaderTile.js",
     "subviews/_imports.json",

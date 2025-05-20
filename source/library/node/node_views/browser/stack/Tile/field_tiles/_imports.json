@@ -1,12 +1,12 @@
 [
     "_css.css",
-    "BMFieldTile.js",
-    "BMActionFieldTile.js",
-    "BMBooleanFieldTile.js",
-    "BMStringFieldTile.js",
-    "BMTextAreaFieldTile.js",
-    "BMChatInputTile.js",
-    "BMImageWellFieldTile.js",
+    "SvFieldTile.js",
+    "SvActionFieldTile.js",
+    "SvBooleanFieldTile.js",
+    "SvStringFieldTile.js",
+    "SvTextAreaFieldTile.js",
+    "SvChatInputTile.js",
+    "SvImageWellFieldTile.js",
     "options/_imports.json",
-    "BMPointerFieldTile.js"
+    "SvPointerFieldTile.js"
 ]

@@ -5,7 +5,7 @@
     "storage/_imports.json",
     "nodes/_imports.json",
     "fields/_imports.json",
-    "storage/nodes/inspectors/BMDataStoreRecord.js", 
+    "storage/nodes/inspectors/SvDataStoreRecord.js", 
     
     "node_views/_imports.json",
 

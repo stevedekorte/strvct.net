@@ -1,5 +1,5 @@
 [
-    "BMSoundResources.js",
+    "SvSoundResources.js",
     "WASound.js",
     "WAContext.js",
     "WAQueue.js"

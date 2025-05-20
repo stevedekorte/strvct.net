@@ -1,5 +1,5 @@
 [
-    "BMNotification.js",
-    "BMNotificationCenter.js",
-    "BMObservation.js"
+    "SvNotification.js",
+    "SvNotificationCenter.js",
+    "SvObservation.js"
 ]

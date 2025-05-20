@@ -1,6 +1,6 @@
 [
-    "BMFontResources.js",
-    "BMFontFamily.js",
-    "BMFont.js",
-    "BMFontTile.js"
+    "SvFontResources.js",
+    "SvFontFamily.js",
+    "SvFont.js",
+    "SvFontTile.js"
 ]

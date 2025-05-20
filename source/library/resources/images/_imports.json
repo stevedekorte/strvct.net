@@ -1,6 +1,6 @@
 [
-    "BMImage.js",
-    "BMURLImage.js",
-    "BMImageResources.js",
-    "BMImageTile.js"
+    "SvImage.js",
+    "SvURLImage.js",
+    "SvImageResources.js",
+    "SvImageTile.js"
 ]

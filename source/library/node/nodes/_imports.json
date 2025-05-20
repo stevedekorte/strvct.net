@@ -1,8 +1,8 @@
 [
-    "BMSummaryNode.js",
-    "BMFolderNode.js",
-    "BMImageNode.js",
-    "BMTextNode.js",
-    "BMLinkNode.js",
-    "BMPrototypesNode.js"
+    "SvSummaryNode.js",
+    "SvFolderNode.js",
+    "SvImageNode.js",
+    "SvTextNode.js",
+    "SvLinkNode.js",
+    "SvPrototypesNode.js"
 ]

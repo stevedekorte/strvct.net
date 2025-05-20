@@ -1,7 +1,7 @@
 [
-    "BMJsonCachedNode.js",
-    "BMJsonNode.js",
-    "BMJsonArrayNode.js",
-    "BMJsonDictionaryNode.js",
-    "BMJsonNullField.js"
+    "SvJsonCachedNode.js",
+    "SvJsonNode.js",
+    "SvJsonArrayNode.js",
+    "SvJsonDictionaryNode.js",
+    "SvJsonNullField.js"
 ]

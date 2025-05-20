@@ -1,10 +1,10 @@
 [
-    "BMThemeFolder.js",
-    "BMThemeClass.js",
-    "BMTheme.js",
-    "BMDefaultTheme.js",
-    "BMThemeResources.js",
-    "BMThemeState.js",
-    "BMThemeStates.js",
-    "BMThemeClassChildren.js"
+    "SvThemeFolder.js",
+    "SvThemeClass.js",
+    "SvTheme.js",
+    "SvDefaultTheme.js",
+    "SvThemeResources.js",
+    "SvThemeState.js",
+    "SvThemeStates.js",
+    "SvThemeClassChildren.js"
 ]

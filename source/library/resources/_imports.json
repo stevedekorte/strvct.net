@@ -1,7 +1,7 @@
 [
-    "BMResource.js",
-    "BMResources.js",
-    "BMResourceGroup.js",
+    "SvResource.js",
+    "SvResources.js",
+    "SvResourceGroup.js",
     "MimeExtensions.js",
     "files/_imports.json",
     "fonts/_imports.json",

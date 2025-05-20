@@ -1,6 +1,6 @@
 [
-    "BMTimeNode.js",
-    "BMHourNode.js",
-    "BMMinuteNode.js",
-    "BMMeridiemNode.js"
+    "SvTimeNode.js",
+    "SvHourNode.js",
+    "SvMinuteNode.js",
+    "SvMeridiemNode.js"
 ]
