@@ -21,7 +21,8 @@ const argv = yargs(hideBin(process.argv)).options({
   port: { type: 'number', demandOption: false, describe: 'Port number' },
   key: { type: 'string', demandOption: false, describe: 'Key file path' },
   cert: { type: 'string', demandOption: false, describe: 'Cert file path' },
-  secure: { type: 'boolean', demandOption: false, default: false, describe: 'Is secure (set to true for HTTPS, false for HTTP)' }
+  secure: { type: 'boolean', demandOption: false, default: false, describe: 'Is secure (set to true for HTTPS, false for HTTP)' },
+  logsPath: { type: 'string', demandOption: false, describe: 'Path to store error logs' }
 }).argv;
 
 //console.log(argv);
@@ -46,6 +47,11 @@ if (argv.key) {
 server.setIsSecure(argv.secure);
 //console.log("========= argv.secure:", argv.secure);
 //console.log("========= server.isSecure():", server.isSecure());
+
+if (argv.logsPath) {
+    server.setLogsPath(argv.logsPath);
+    console.log("     logs: '" + argv.logsPath + "'");
+}
 
 server.run();
 

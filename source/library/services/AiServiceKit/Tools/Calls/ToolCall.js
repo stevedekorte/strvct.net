@@ -287,6 +287,36 @@ Example Tool call format:
     assert(toolName !== undefined);
     this.setToolName(toolName);
 
+    // Add parse-specific information to the error
+    e.extraMessage = "Error parsing tool call JSON";
+    e.name = "ToolCallParseError";
+    
+    // Report parse error to the server if UndreamedOfApp is available
+    try {
+      const app = UndreamedOfApp.shared();
+      if (app && typeof app.postErrorReport === "function") {
+        const errorData = {
+          name: "ToolCallParseError",
+          message: e.message,
+          stack: e.stack,
+          toolCall: {
+            toolName: this.toolName(),
+            callId: this.callId(),
+            callString: this.callString()
+          }
+        };
+        
+        // Don't block execution - use setTimeout to post error asynchronously
+        setTimeout(() => {
+          app.postErrorReport(e, errorData).catch(error => {
+            console.error("Failed to report tool call parse error:", error);
+          });
+        }, 0);
+      }
+    } catch (reportError) {
+      console.error("Error while trying to report tool call parse error:", reportError);
+    }
+
     this.handleCallError(e);
   }
 
@@ -390,6 +420,38 @@ Example Tool call format:
     this.setToolResult(r);
     this.toolCalls().onToolCallComplete(this);
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
+    
+    // Report error to the server if UndreamedOfApp is available
+    try {
+      const app = UndreamedOfApp.shared();
+      if (app && typeof app.postErrorReport === "function") {
+        const errorData = {
+          name: "ToolCallError",
+          message: e.message,
+          extraMessage: e.extraMessage,
+          stack: e.stack,
+          toolCall: {
+            toolName: this.toolName(),
+            callId: this.callId(),
+            status: this.status()
+          }
+        };
+        
+        // Add call JSON if available
+        if (this.callJson()) {
+          errorData.toolCall.parameters = this.callJson().parameters;
+        }
+        
+        // Don't block execution - use setTimeout to post error asynchronously
+        setTimeout(() => {
+          app.postErrorReport(e, errorData).catch(error => {
+            console.error("Failed to report tool call error:", error);
+          });
+        }, 0);
+      }
+    } catch (reportError) {
+      console.error("Error while trying to report tool call error:", reportError);
+    }
   }
 
   hasError () {

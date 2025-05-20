@@ -136,10 +136,26 @@ const nodePath = require('path');
 			r.setServer(this);
 			r.setRequest(request);
 			r.setResponse(response);
+			
+			// Set custom logs path if provided
+			if (this._logsPath) {
+				r.setLogErrorsPath(this._logsPath);
+			}
+			
 			r.process();
 		} catch (error) {
 			console.warn("Caught StrvctHttpsServerRequest exception:", error);
 		}
+	}
+	
+	/**
+	 * Sets the path for error logs.
+	 * @param {string} path - The path for error logs.
+	 * @returns {StrvctHttpsServer} This instance.
+	 */
+	setLogsPath(path) {
+		this._logsPath = path;
+		return this;
 	}
 
 	/**
