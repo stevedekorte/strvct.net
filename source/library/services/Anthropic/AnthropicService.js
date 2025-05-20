@@ -7,7 +7,7 @@
 /**
  * @class AnthropicService
  * @extends AiService
- * @classdesc A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
+ * @classdesc A SvSummaryNode that holds the API key and subnodes for the various Anthropic services.
  * 
  * @example
  * AnthropicService.shared().setApiKey("...");

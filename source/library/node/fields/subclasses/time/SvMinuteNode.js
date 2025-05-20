@@ -24,7 +24,7 @@
     }
 
     /**
-     * Initializes the prototype of the BMMinuteNode.
+     * Initializes the prototype of the SvMinuteNode.
      * @category Initialization
      */
     initPrototype () {
@@ -37,7 +37,7 @@
     /**
      * Sets the value of the minute.
      * @param {Number} v - The minute value to set.
-     * @returns {SvMinuteNode} The instance of BMMinuteNode.
+     * @returns {SvMinuteNode} The instance of SvMinuteNode.
      * @category Data Manipulation
      */
     setValue (v) {

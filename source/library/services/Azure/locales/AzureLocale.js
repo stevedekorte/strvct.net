@@ -6,10 +6,10 @@
 
 /**
  * @class AzureLocale
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents an Azure Locale node in the application.
  */
-(class AzureLocale extends BMSummaryNode {
+(class AzureLocale extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the AzureLocale class.
    * @category Initialization

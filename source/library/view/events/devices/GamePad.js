@@ -147,7 +147,7 @@
      * @category Event
      */
     changedButtonIndexTo (index, isDown) {
-        const note = BMNotificationCenter.shared().newNote().setSender(this)
+        const note = SvNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadButton" + index + (isDown ? "Down" : "Up")) // TODO: optimize
         note.setInfo(isDown)
         note.post()
@@ -190,7 +190,7 @@
      * @category Event
      */
     changedAxesIndexTo (index, value) {
-        const note = BMNotificationCenter.shared().newNote().setSender(this)
+        const note = SvNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadAxis" + index + "Changed") // TODO: optimize?
         note.setInfo(value)
         note.post()
@@ -204,7 +204,7 @@
      */
     onConnected () {
         this.setIsConnected(true)
-        const note = BMNotificationCenter.shared().newNote().setSender(this)
+        const note = SvNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadConnected")
         note.post()
         return this
@@ -217,7 +217,7 @@
      */
     onDisconnected () {
         this.setIsConnected(false)
-        const note = BMNotificationCenter.shared().newNote().setSender(this)
+        const note = SvNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadDisconnected")
         note.post()
         return this

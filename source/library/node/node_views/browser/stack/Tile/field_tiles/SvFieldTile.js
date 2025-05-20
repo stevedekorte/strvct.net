@@ -208,7 +208,7 @@
      * @returns {DomView} The key view.
      */
     setupKeyView () {
-        const v = TextField.clone().setElementClassName("BMFieldKeyView")
+        const v = TextField.clone().setElementClassName("SvFieldKeyView")
         if (!v.themeClassName()) {
             v.setThemeClassName("FieldKey")
         }
@@ -258,7 +258,7 @@
      * @returns {DomView} The note view.
      */
     setupNoteView () {
-        const v = DomView.clone().setElementClassName("BMFieldTileNoteViewView")
+        const v = DomView.clone().setElementClassName("SvFieldTileNoteViewView")
         v.setDisplay("block")
         v.setPosition("relative")
         v.setOverflow("hidden")
@@ -280,7 +280,7 @@
      * @returns {DomView} The error view.
      */
     setupErrorView () {
-        const v = DomView.clone().setElementClassName("BMFieldTileErrorView")
+        const v = DomView.clone().setElementClassName("SvFieldTileErrorView")
         v.setUserSelect("text")
         v.setSpellCheck(false)
         //v.setInnerHtml("error")
@@ -297,7 +297,7 @@
      * @returns {DomView} The value view.
      */
     createValueView () {
-        const v = TextField.clone().setElementClassName("BMFieldValueView")
+        const v = TextField.clone().setElementClassName("SvFieldValueView")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setWidth("100%")
@@ -464,7 +464,7 @@
 
         /*
         if (this.node().type() === "ChatInputNode" && newValue === "") {
-            console.log("BMChatInputTile syncValueFromNode(BMChatInputNode) newValue = [" + newValue + "]");
+            console.log("SvChatInputTile syncValueFromNode(SvChatInputNode) newValue = [" + newValue + "]");
             valueView.setValue(newValue);
         }
         */

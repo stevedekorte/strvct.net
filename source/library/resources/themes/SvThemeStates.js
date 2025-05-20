@@ -4,10 +4,10 @@
 
 /**
  * @class SvThemeStates
- * @extends BMThemeFolder
+ * @extends SvThemeFolder
  * @classdesc Represents a collection of theme states.
  */
-(class SvThemeStates extends BMThemeFolder {
+(class SvThemeStates extends SvThemeFolder {
   /**
    * @description Initializes the prototype slots for the class.
    * @category Initialization
@@ -41,7 +41,7 @@
     this.setTitle("States");
     this.setSubtitle("")
     this.setCanDelete(true);
-    this.setSubnodeClasses([BMThemeState]);
+    this.setSubnodeClasses([SvThemeState]);
     this.setNodeCanReorderSubnodes(true);
   }
 
@@ -133,7 +133,7 @@
 
   /*
   setupColumnsDefault () {
-    const columns = BMThemeFolder.clone().setTitle("columns");
+    const columns = SvThemeFolder.clone().setTitle("columns");
     this.addSubnode(columns);
 
     const colors = [
@@ -146,7 +146,7 @@
 
     colors.forEach((c) => {
       const cssColorString = "rgb(" + c.join(",") + ")";
-      const field = BMStringField.clone()
+      const field = SvStringField.clone()
         .setKey("backgroundColor")
         .setValue(cssColorString);
       columns.addSubnode(field);

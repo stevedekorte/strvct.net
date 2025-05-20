@@ -3,7 +3,7 @@
  * @class StyledNode
  * @extends ViewableNode
  * @classdesc StyledNode extends ViewableNode and is part of the inheritance chain:
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  * 
  * This class is responsible for state and behavior specific to styling of views.
  */
@@ -33,7 +33,7 @@
             slot.setInspectorPath("Node/Styled")
             slot.setSyncsToView(true)
             slot.setValidValuesClosure((instance) => { 
-                return BMThemeResources.shared().activeTheme().themeClassNames()
+                return SvThemeResources.shared().activeTheme().themeClassNames()
             })   
         }
     }

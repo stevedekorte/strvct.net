@@ -7,7 +7,7 @@
 /**
  * Represents an Azure Speaker with various voice and speech settings.
  * @class
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc AzureSpeaker
 
   Rate: Controls the speed of the speech. Allowed values are x-slow, slow, medium, fast, x-fast, or a percentage. 
@@ -36,7 +36,7 @@
     curl --location --request GET 'https://YOUR_RESOURCE_REGION.tts.speech.microsoft.com/cognitiveservices/voices/list' \
 --header 'Ocp-Apim-Subscription-Key: YOUR_RESOURCE_KEY'
  */
-(class AzureSpeaker extends BMSummaryNode {
+(class AzureSpeaker extends SvSummaryNode {
   /**
    * Initializes the prototype slots for the AzureSpeaker class.
    * @category Initialization

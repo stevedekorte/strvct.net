@@ -426,7 +426,7 @@
      * @private
      */
     currentOperation () {
-        const keyboard = BMKeyboard.shared()
+        const keyboard = SvKeyboard.shared()
 
         if (keyboard.alternateKey().isDown()) {
             return "copy"

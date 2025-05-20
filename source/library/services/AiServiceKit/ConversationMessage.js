@@ -6,10 +6,10 @@
 
 /**
  * @class ConversationMessage
- * @extends BMTextAreaField
+ * @extends SvTextAreaField
  * @classdesc Represents a message in a conversation.
  */
-(class ConversationMessage extends BMTextAreaField {
+(class ConversationMessage extends SvTextAreaField {
 
   /**
    * Initialize prototype slots for the ConversationMessage class.
@@ -214,7 +214,7 @@
 
    */
   initPrototype () {
-    this.setNodeTileClassName("BMChatInputTile");
+    this.setNodeTileClassName("SvChatInputTile");
     //this.setOverrideSubviewProto(this.nodeTileClass());
     this.setKeyIsVisible(true);
     this.setValueIsEditable(false);
@@ -230,7 +230,7 @@
   finalInit () {
     super.finalInit();
     this.createIdIfAbsent();
-    //this. (BMTextAreaFieldTile);
+    //this. (SvTextAreaFieldTile);
   }
 
   /**

@@ -2,14 +2,12 @@
 
 /**
  * @module library.services.OpenAI.Text_to_Speech
- */
-
-/**
  * @class OpenAiTtsSessions
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Manages Text to Speech Sessions for OpenAI service.
  */
-(class OpenAiTtsSessions extends BMSummaryNode {
+
+(class OpenAiTtsSessions extends SvSummaryNode {
   
   /**
    * Initializes the prototype slots for the OpenAiTtsSessions class.

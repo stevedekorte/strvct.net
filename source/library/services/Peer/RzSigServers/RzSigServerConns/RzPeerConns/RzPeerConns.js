@@ -6,10 +6,10 @@
 
 /**
  * @class RzPeerConns
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents connections to peers.
  */
-(class RzPeerConns extends BMSummaryNode {
+(class RzPeerConns extends SvSummaryNode {
   /**
    * Initializes the prototype slots for the RzPeerConns class.
 

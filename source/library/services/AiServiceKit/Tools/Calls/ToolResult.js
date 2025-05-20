@@ -2,12 +2,12 @@
 /*
 * @module library.services.AiServiceKit.Tools.Calls
 * @class ToolResult
-* @extends BMJsonDictionaryNode
+* @extends SvJsonDictionaryNode
 * @classdesc A specific response to a tool call.
 */
 
 //UoJsonDictionaryNode
-(class ToolResult extends BMSummaryNode {
+(class ToolResult extends SvSummaryNode {
 
   static enclosingTagName () {
     return "tool-call-result";

@@ -105,7 +105,7 @@
         // called after clicked
         if (!this.hasSubnodes()) {
             for (let i = 0; i < 60; i += 5) {
-                const minute = BMMinuteNode.clone().setValue(i)
+                const minute = SvMinuteNode.clone().setValue(i)
                 this.addSubnode(minute)
             }
         }

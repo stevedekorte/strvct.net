@@ -6,10 +6,10 @@
 
 /**
  * @class AzureService
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc AzureService for text-to-speech functionality
  */
-(class AzureService extends BMStorableNode {
+(class AzureService extends SvStorableNode {
   /**
    * @description Initializes the prototype slots for the AzureService
    * @category Initialization

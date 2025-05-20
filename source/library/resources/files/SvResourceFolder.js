@@ -8,7 +8,7 @@
  * @class SvResourceFolder
  * @extends BaseNode
  * @classdesc An abstraction for an individual file folder.
- * BMFileResources will setup all BMResourceFolders.
+ * SvFileResources will setup all SvResourceFolders.
  */
 (class SvResourceFolder extends BaseNode {
     
@@ -28,7 +28,7 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setTitle("BMFileSystemFolder");
+        this.setTitle("SvFileSystemFolder");
         this.setNoteIsSubnodeCount(true);
     }
 
@@ -83,7 +83,7 @@
     /**
      * @description Adds a relative resource path to the folder.
      * @param {string} aPath - The relative path to add.
-     * @returns {BMResourceFolder|BMResourceFile} The added resource.
+     * @returns {SvResourceFolder|SvResourceFile} The added resource.
      * @category Resource Management
      */
     addRelativeResourcePath (aPath) {
@@ -93,7 +93,7 @@
     /**
      * @description Adds a relative resource path array to the folder.
      * @param {string[]} pathArray - The relative path array to add.
-     * @returns {BMResourceFolder|BMResourceFile} The added resource.
+     * @returns {SvResourceFolder|SvResourceFile} The added resource.
      * @category Resource Management
      */
     addRelativeResourcePathArray (pathArray) {
@@ -160,7 +160,7 @@
             throw new Error("folder name contains /")
         }
         const fullPath = this.path() + "/" + aName
-        const subfolder = BMResourceFolder.clone().setPath(fullPath)
+        const subfolder = SvResourceFolder.clone().setPath(fullPath)
         this.addSubnode(subfolder)
         return subfolder
     }
@@ -180,12 +180,12 @@
      * @category Information
      */
     folderClassName () {
-        return "BMResourceFolder"
+        return "SvResourceFolder"
     }
 
     /**
      * @description Gets all subfolders.
-     * @returns {BMResourceFolder[]} An array of subfolders.
+     * @returns {SvResourceFolder[]} An array of subfolders.
      * @category Node Management
      */
     subfolders () {
@@ -194,7 +194,7 @@
 
     /**
      * @description Alias for subfolders().
-     * @returns {BMResourceFolder[]} An array of subfolders.
+     * @returns {SvResourceFolder[]} An array of subfolders.
      * @category Node Management
      */
     folders () {
@@ -204,7 +204,7 @@
     /**
      * @description Gets a subfolder with the given name.
      * @param {string} aName - The name of the subfolder to retrieve.
-     * @returns {BMResourceFolder|null} The subfolder, or null if not found.
+     * @returns {SvResourceFolder|null} The subfolder, or null if not found.
      * @category Node Management
      */
     subfolderWithName (aName) {
@@ -214,7 +214,7 @@
     /**
      * @description Alias for subfolderWithName().
      * @param {string} aName - The name of the subfolder to retrieve.
-     * @returns {BMResourceFolder|null} The subfolder, or null if not found.
+     * @returns {SvResourceFolder|null} The subfolder, or null if not found.
      * @category Node Management
      */
     folderAt (aName) {
@@ -228,7 +228,7 @@
      * @category Node Management
      */
     addSubnodeForFileName (fileName) {
-        const file = BMResourceFile.clone().setPath(this.path() + "/" + fileName)
+        const file = SvResourceFile.clone().setPath(this.path() + "/" + fileName)
         this.addSubnode(file)
         return file
     }
@@ -239,16 +239,16 @@
      * @category Information
      */
     fileClassName () {
-        return "BMResourceFile"
+        return "SvResourceFile"
     }
 
     /**
      * @description Gets all files in the folder.
-     * @returns {BMResourceFile[]} An array of files.
+     * @returns {SvResourceFile[]} An array of files.
      * @category Node Management
      */
     files () {
-        return this.subnodes().filter(sn => sn.thisClass().isKindOf(BMResourceFile));
+        return this.subnodes().filter(sn => sn.thisClass().isKindOf(SvResourceFile));
     }
     
     /**
@@ -263,7 +263,7 @@
     /**
      * @description Gets a file with the given name.
      * @param {string} aName - The name of the file to retrieve.
-     * @returns {BMResourceFile|null} The file, or null if not found.
+     * @returns {SvResourceFile|null} The file, or null if not found.
      * @category Node Management
      */
     fileWithName (aName) {
@@ -273,7 +273,7 @@
     /**
      * @description Alias for fileWithName().
      * @param {string} aName - The name of the file to retrieve.
-     * @returns {BMResourceFile|null} The file, or null if not found.
+     * @returns {SvResourceFile|null} The file, or null if not found.
      * @category Node Management
      */
     fileAt (aName) {
@@ -282,17 +282,17 @@
 
     /**
      * @description Gets all resource files in the folder and its subfolders.
-     * @returns {BMResourceFile[]} An array of all resource files.
+     * @returns {SvResourceFile[]} An array of all resource files.
      * @category Resource Management
      */
     allResourceFiles () {
-        return this.leafSubnodes().filter(node => node.thisClass().isKindOf(BMResourceFile));
+        return this.leafSubnodes().filter(node => node.thisClass().isKindOf(SvResourceFile));
     }
 
     /**
      * @description Gets a resource at the given path.
      * @param {string} aPath - The path of the resource to retrieve.
-     * @returns {BMResourceFile|BMResourceFolder|null} The resource, or null if not found.
+     * @returns {SvResourceFile|SvResourceFolder|null} The resource, or null if not found.
      * @category Resource Management
      */
     resourceAtPath (aPath) {
@@ -310,7 +310,7 @@
     /**
      * @description Gets all resources with the given name.
      * @param {string} aName - The name of the resources to retrieve.
-     * @returns {BMResourceFile[]} An array of resources with the given name.
+     * @returns {SvResourceFile[]} An array of resources with the given name.
      * @category Resource Management
      */
     resourcesWithName (aName) {

@@ -100,7 +100,7 @@
 
     /**
      * @description Sets up the subnodes.
-     * @returns {Promise<BMResourceGroup>}
+     * @returns {Promise<SvResourceGroup>}
      * @category Resource Management
      */
     async setupSubnodes () {

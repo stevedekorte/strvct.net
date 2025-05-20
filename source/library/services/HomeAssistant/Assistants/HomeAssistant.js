@@ -6,10 +6,10 @@
 
 /**
  * @class HomeAssistant
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a Home Assistant connection and manages various Home Assistant related nodes.
  */
-(class HomeAssistant extends BMSummaryNode {
+(class HomeAssistant extends SvSummaryNode {
   /**
    * Initialize the prototype slots for the HomeAssistant class.
 

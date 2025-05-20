@@ -6,10 +6,10 @@
 
 /**
  * @class RzSigServerConn
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc Wrapper for PeerJS Peer object.
  */
-(class RzSigServerConn extends BMStorableNode {
+(class RzSigServerConn extends SvStorableNode {
   /**
    * @description Initializes the prototype slots for the RzSigServerConn class.
 

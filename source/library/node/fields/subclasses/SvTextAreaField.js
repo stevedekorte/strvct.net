@@ -3,11 +3,11 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvTextAreaField
- * @extends BMField
- * @classdesc BMTextAreaField is a specialized field class for handling text area input.
+ * @extends SvField
+ * @classdesc SvTextAreaField is a specialized field class for handling text area input.
  * It provides functionality for working with plain text data and can be used as a node primitive.
  */
-(class SvTextAreaField extends BMField {
+(class SvTextAreaField extends SvField {
     
     /**
      * @static
@@ -32,9 +32,9 @@
 
     /**
      * @static
-     * @description Creates a new instance of BMTextAreaField from a data chunk.
+     * @description Creates a new instance of SvTextAreaField from a data chunk.
      * @param {Object} dataChunk - The data chunk to open.
-     * @returns {SvTextAreaField} A new instance of BMTextAreaField with the decoded data.
+     * @returns {SvTextAreaField} A new instance of SvTextAreaField with the decoded data.
      * @category Initialization
      */
     static openMimeChunk (dataChunk) {

@@ -41,12 +41,12 @@
         }
         */
         /**
-         * @member {BMKeyboard} keyboard
+         * @member {SvKeyboard} keyboard
          * @category Input Devices
          */
         {
             const slot = this.newSlot("keyboard", null);
-            slot.setSlotType("BMKeyboard");
+            slot.setSlotType("SvKeyboard");
         }
         /**
          * @member {Mouse} mouse
@@ -101,7 +101,7 @@
     setupIfNeeded () {
         if (!this.isSetup()) {
             Mouse.shared()
-            BMKeyboard.shared()
+            SvKeyboard.shared()
             TouchScreen.shared()
             //GamePadManager.shared()
             this.setIsSetup(true)

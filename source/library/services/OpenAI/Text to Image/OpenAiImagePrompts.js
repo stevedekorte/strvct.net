@@ -4,10 +4,10 @@
 
 /**
  * @class OpenAiImagePrompts
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of OpenAI image prompts for text-to-image conversion.
  */
-(class OpenAiImagePrompts extends BMSummaryNode {
+(class OpenAiImagePrompts extends SvSummaryNode {
   
   /**
    * Initializes the prototype slots for the OpenAiImagePrompts class.

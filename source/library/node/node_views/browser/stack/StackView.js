@@ -99,12 +99,12 @@
         }
 
         /**
-         * @member {BMNotification} onStackViewPathChangeNote
+         * @member {SvNotification} onStackViewPathChangeNote
          * @description The notification that is posted when the stack view path changes.
          */
         {
             const slot = this.newSlot("onStackViewPathChangeNote", null);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         /**

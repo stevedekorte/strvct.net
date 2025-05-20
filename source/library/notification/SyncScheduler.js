@@ -478,7 +478,7 @@
                     console.log("\n\nSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?");
                     console.log(" --- processSets # " + count + " --- ");
                     console.log("\nSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());
-                    console.log("\n" + BMNotificationCenter.shared().shortDescription() + ":\n" + BMNotificationCenter.shared().notesDescription());
+                    console.log("\n" + SvNotificationCenter.shared().shortDescription() + ":\n" + SvNotificationCenter.shared().notesDescription());
                     console.log(" --- ");
                     debugger
                 }

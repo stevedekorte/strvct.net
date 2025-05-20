@@ -7,29 +7,29 @@
  * @extends SvResourceGroup
  * @classdesc Represents a group of image resources.
  */
-(class SvImageResources extends BMResourceGroup {
+(class SvImageResources extends SvResourceGroup {
     
     /**
-     * @description Initializes the BMImageResources instance.
+     * @description Initializes the SvImageResources instance.
      * @returns {SvImageResources} The initialized instance.
      * @category Initialization
      */
     init () {
         super.init();
         this.setTitle("Images");
-        this.setSubnodeClasses([BMURLImage]);
+        this.setSubnodeClasses([SvURLImage]);
         return this
     }
 
     /**
-     * @description Sets up the BMImageResources instance.
+     * @description Sets up the SvImageResources instance.
      * @returns {SvImageResources} The set up instance.
      * @category Initialization
      */
     setup () {
         super.setup();
-        this.setResourceClasses([BMURLImage]);
-        this.setSubnodeClasses([BMURLImage]);
+        this.setResourceClasses([SvURLImage]);
+        this.setSubnodeClasses([SvURLImage]);
         return this;
     }
 

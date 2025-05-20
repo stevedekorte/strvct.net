@@ -2,11 +2,11 @@
  * @module library.node.node_views.browser.stack.Tile.field_tiles.options
  * @class SvOptionsNodeTile
  * @extends TitledTile
- * @classdesc View for BMOptionsNode
+ * @classdesc View for SvOptionsNode
  * 
- * BMOptionsNode -> BMOptionsNodeTile
- *     BMOption -> BMSingleOptionTile
- *     BMMultiOption -> BMMultiOptionTile
+ * SvOptionsNode -> SvOptionsNodeTile
+ *     SvOption -> SvSingleOptionTile
+ *     SvMultiOption -> SvMultiOptionTile
  */
 
 "use strict";

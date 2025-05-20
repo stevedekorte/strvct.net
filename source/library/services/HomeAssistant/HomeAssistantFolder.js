@@ -6,10 +6,10 @@
 
 /**
  * @class HomeAssistantFolder
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a folder in the Home Assistant structure.
  */
-(class HomeAssistantFolder extends BMSummaryNode {
+(class HomeAssistantFolder extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the HomeAssistantFolder.
    * @category Initialization

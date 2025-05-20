@@ -393,7 +393,7 @@
                 this.debugLog(" " + this.downMethodNameForEvent(event));
             }
         } else {
-            console.warn("BMKeyboard.shared() no key found for event ", event);
+            console.warn("SvKeyboard.shared() no key found for event ", event);
             debugger;
             this.keyForEvent(event);
         }
@@ -664,7 +664,7 @@
      * @returns {Array} The names of the currently down keys
      */
     downKeyNames () {
-        return BMKeyboard.shared().currentlyDownKeys().map(k => k.name());
+        return SvKeyboard.shared().currentlyDownKeys().map(k => k.name());
     }
 
     /**
@@ -737,9 +737,9 @@
      * @param {Event} event - The keyboard event
      */
     showEvent (event) {
-        const kb = BMKeyboard.shared();
+        const kb = SvKeyboard.shared();
         console.log("---");
-        console.log("BMKeyboard.showEvent():");
+        console.log("SvKeyboard.showEvent():");
         console.log("  code: ", event.keyCode);
         console.log("  name: ", kb.nameForKeyCode(event.keyCode));
         console.log("  is modifier: ", kb.eventIsJustModifierKey(event));

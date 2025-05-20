@@ -57,12 +57,12 @@
         }
 
         /**
-         * @member {BMNotification} notificationRef
+         * @member {SvNotification} notificationRef
          * @category System
          */
         {
             const slot = this.newSlot("notificationRef", null);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         /**

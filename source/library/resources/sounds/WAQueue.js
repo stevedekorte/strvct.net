@@ -4,7 +4,7 @@
 
 /**
  * @class WAQueue
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc WAQueue for managing audio playback queue.
  * 
  * Use:
@@ -17,7 +17,7 @@
  */
 "use strict";
 
-(class WAQueue extends BMSummaryNode {
+(class WAQueue extends SvSummaryNode {
 
   /**
    * @description Initializes the prototype slots for the WAQueue.

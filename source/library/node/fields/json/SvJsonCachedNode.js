@@ -4,7 +4,7 @@
  * @module library.node.fields.json
  * @class SvJsonCachedNode
  * @extends SvSummaryNode
- * @classdesc BMJsonCachedNode represents a node that caches JSON data and provides methods for managing and updating the JSON cache.
+ * @classdesc SvJsonCachedNode represents a node that caches JSON data and provides methods for managing and updating the JSON cache.
  */
 (class SvJsonCachedNode extends SvSummaryNode {
 

@@ -3,14 +3,14 @@
 /*
 * @module library.services.AiServiceKit.Tools
 * @class AssistantToolKit 
-* @extends BMSummaryNode
+* @extends SvSummaryNode
 * @classdesc Manages the tool definitions and calls for an AiConversation.
 * Notes:
 * - toolCalls is the queue of tool calls to be made.
 * - each call has a link to it's toolResult
 */
 
-(class AssistantToolKit extends BMSummaryNode {
+(class AssistantToolKit extends SvSummaryNode {
   /*
    * Initializes the prototype slots.
    * @category Initialization

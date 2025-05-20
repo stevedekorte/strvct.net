@@ -2,7 +2,7 @@
  * @module browser.stack.Tile.field_tiles
  * @class SvActionFieldTile
  * @extends Tile
- * @classdesc BMActionFieldTile is a specialized Tile class for action fields.
+ * @classdesc SvActionFieldTile is a specialized Tile class for action fields.
  * It includes a button view and handles user interactions.
  */
 
@@ -22,7 +22,7 @@
     }
 
     /**
-     * @description Initializes the BMActionFieldTile.
+     * @description Initializes the SvActionFieldTile.
      * @returns {SvActionFieldTile} The initialized instance.
      * @category Initialization
      */
@@ -32,7 +32,7 @@
         const cv = this.contentView();
         cv.flexCenterContent();
 		
-        const bv = ButtonView.clone().setElementClassName("BMActionFieldView");
+        const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
         this.setButtonView(bv);
 	    bv.setTarget(this).setAction("didClickButton");
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
@@ -43,7 +43,7 @@
     }
 
     /**
-     * @description Updates the subviews of the BMActionFieldTile.
+     * @description Updates the subviews of the SvActionFieldTile.
      * @returns {SvActionFieldTile} The updated instance.
      * @category UI
      */

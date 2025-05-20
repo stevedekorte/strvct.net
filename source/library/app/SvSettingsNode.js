@@ -17,15 +17,15 @@
         }
 
         {
-            const slot = this.addSubnodeSlot("resources", BMResources);
+            const slot = this.addSubnodeSlot("resources", SvResources);
         }
 
         {
-            const slot = this.addSubnodeSlot("storage", BMDataStore);
+            const slot = this.addSubnodeSlot("storage", SvDataStore);
         }
 
         {
-            const slot = this.addSubnodeSlot("blobs", BMBlobs);
+            const slot = this.addSubnodeSlot("blobs", SvBlobs);
         }
     }
 

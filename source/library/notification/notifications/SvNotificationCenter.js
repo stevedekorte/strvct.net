@@ -30,16 +30,16 @@
     Observing notifications:
 
         // start watching for "changed" message from sender object
-        this._obs = BMNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setSender(sender).startWatching()
+        this._obs = SvNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setSender(sender).startWatching()
     
         // start watching for "changedStoredSlot" message from any sender object
-        this._obs = BMNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).startWatching()
+        this._obs = SvNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).startWatching()
 
         // stop watching this observation
         this._obs.stopWatching()
         
         // stop watching all
-        BMNotificationCenter.shared().removeObserver(this)
+        SvNotificationCenter.shared().removeObserver(this)
 
         // watch only for first note named "appDidInit"
         this.watchOnceForNote("appDidInit")
@@ -84,8 +84,8 @@
 
         Example use:
 
-        BMNotificationCenter.shared().pause();
-        BMNotificationCenter.shared().resume();
+        SvNotificationCenter.shared().pause();
+        SvNotificationCenter.shared().resume();
 */
 
 (class SvNotificationCenter extends ProtoClass {
@@ -149,7 +149,7 @@
          */
         {
             const slot = this.newSlot("currentNote", null);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         /**
@@ -328,7 +328,7 @@
      * @returns {SvObservation} the new observation
      */
     newObservation () {
-        return BMObservation.clone().setCenter(this);
+        return SvObservation.clone().setCenter(this);
     }
 
     /**
@@ -447,7 +447,7 @@
      * @returns {SvNotification} the new notification
      */
     newNote () {
-        return BMNotification.clone().setCenter(this);
+        return SvNotification.clone().setCenter(this);
     }
     
     // --- timeout & posting ---
@@ -458,7 +458,7 @@
      */
     processPostQueue () {
         if (this.isPaused()) {
-            console.log("WARNING: BMNotificationCenter.processPostQueue() called while paused - SKIPPING");
+            console.log("WARNING: SvNotificationCenter.processPostQueue() called while paused - SKIPPING");
             return this;
         }
 
@@ -645,7 +645,7 @@
      */
     showCurrentNoteStack () {
         if (this.currentNote() === null) {
-            //console.log("BMNotificationCenter.showCurrentNoteStack() warning - no current post")
+            //console.log("SvNotificationCenter.showCurrentNoteStack() warning - no current post")
         } else {
             console.log("current post sender stack: ", this.currentNote().senderStack());
         }

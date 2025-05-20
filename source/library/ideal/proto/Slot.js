@@ -698,10 +698,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     defaultFieldInspectorClassName () {
         const slotType = this.slotType();
         assert(!Type.isNull(slotType), "slotType is null for slot: " + this.name());
-        let fieldName = "BM" + slotType + "Field";
+        let fieldName = "Sv" + slotType + "Field";
 
         if (this.validValues() || this.validValuesClosure() || this.validItems() || this.validItemsClosure()) {
-            fieldName = "BMOptionsNode";
+            fieldName = "SvOptionsNode";
         }
         
         return fieldName;
@@ -717,8 +717,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             let proto = getGlobalThis()[fieldName];
 
             if (!proto) {
-                //let nodeName = "BM" + slotType + "Node";
-                const nodeName = "BMPointerField";
+                //let nodeName = "Sv" + slotType + "Node";
+                const nodeName = "SvPointerField";
                 proto = getGlobalThis()[nodeName];
             }
 
@@ -1307,7 +1307,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
                 const newValue = finalInitProto.clone();
                 this.onInstanceSetValue(anInstance, newValue);
-                if (newValue.setOwnerNode) { // it might not be a BMNode
+                if (newValue.setOwnerNode) { // it might not be a SvNode
                     newValue.setOwnerNode(anInstance); // should this be inside the setter? Maybe if slot.doesOwnValue(true)?
                 }
 
@@ -1581,7 +1581,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (proto) {
             if (Type.isString(proto)) {
                 return {
-                    "$ref": BMNode.jsonSchemaRefForTypeName(proto, refSet)
+                    "$ref": SvNode.jsonSchemaRefForTypeName(proto, refSet)
                 };
             } else {
                 return {

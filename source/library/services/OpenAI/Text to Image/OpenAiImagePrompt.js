@@ -6,10 +6,10 @@
 
 /**
  * @class OpenAiImagePrompt
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents an OpenAI image prompt for generating images using DALL-E models.
  */
-(class OpenAiImagePrompt extends BMSummaryNode {
+(class OpenAiImagePrompt extends SvSummaryNode {
   initPrototypeSlots () {
 
     /**

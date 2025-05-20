@@ -41,13 +41,13 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @member {BMNotificationCenter|null} center - The NotificationCenter that owns this notification.
+         * @member {SvNotificationCenter|null} center - The NotificationCenter that owns this notification.
          * @category Management
          */
         {
             const slot = this.newSlot("center", null);
             slot.setAllowsNullValue(true);
-            slot.setSlotType("BMNotificationCenter");
+            slot.setSlotType("SvNotificationCenter");
         }
         /**
          * @member {Object|null} senderStack - The stack trace of the sender.
@@ -189,7 +189,7 @@
      * @category Management
      */
     newObservation () {
-        return BMNotificationCenter.shared().newObservation().setName(this.name()).setSender(this.sender());
+        return SvNotificationCenter.shared().newObservation().setName(this.name()).setSender(this.sender());
     }
 
 }.initThisClass());

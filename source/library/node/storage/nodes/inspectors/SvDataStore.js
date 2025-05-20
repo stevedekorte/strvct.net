@@ -112,7 +112,7 @@
      * @category Data Management
      */
     addRecord (aRecord) {
-        const subnode = BMDataStoreRecord.clone()
+        const subnode = SvDataStoreRecord.clone()
         subnode.setTitle(aRecord.id)
         subnode.setKey(aRecord.id)
         subnode.setStore(this.store())

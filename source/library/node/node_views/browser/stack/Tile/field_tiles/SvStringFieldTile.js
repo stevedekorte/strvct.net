@@ -1,10 +1,10 @@
 /**
  * @module browser.stack.Tile.field_tiles
  * @class SvStringFieldTile
- * @extends BMFieldTile
- * @classdesc BMStringFieldTile class for handling string field tiles.
+ * @extends SvFieldTile
+ * @classdesc SvStringFieldTile class for handling string field tiles.
  */
-(class SvStringFieldTile extends BMFieldTile {
+(class SvStringFieldTile extends SvFieldTile {
     
     /*
     initPrototypeSlots () {

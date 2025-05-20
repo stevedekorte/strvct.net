@@ -6,10 +6,10 @@
 
 /**
  * @class HomeAssistantObject
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a HomeAssistant object with various properties and methods for managing its state and relationships.
  */
-(class HomeAssistantObject extends BMSummaryNode {
+(class HomeAssistantObject extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the HomeAssistantObject.
    * @category Initialization

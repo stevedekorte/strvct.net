@@ -49,7 +49,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMOptionNode.
+     * @description Initializes the prototype of the SvOptionNode.
      * @category Initialization
      */
     initPrototype () {
@@ -82,12 +82,12 @@
     }
 
     /**
-     * @description Retrieves the parent BMOptionsNode.
-     * @returns {BMOptionsNode|null} The parent BMOptionsNode or null if not found.
+     * @description Retrieves the parent SvOptionsNode.
+     * @returns {SvOptionsNode|null} The parent SvOptionsNode or null if not found.
      * @category Hierarchy
      */
     optionsNode () {
-        return this.firstParentChainNodeOfClass(BMOptionsNode);
+        return this.firstParentChainNodeOfClass(SvOptionsNode);
     }
 
     /**
@@ -108,9 +108,9 @@
             console.log("parent: ", this.parentNode().title());
             console.log("grand parent: ", this.parentNode().parentNode().title());
             console.log("great grand parent: ", this.parentNode().parentNode().parentNode().title());
-            const result = this.firstParentChainNodeOfClass(BMOptionsNode);
+            const result = this.firstParentChainNodeOfClass(SvOptionsNode);
             console.log("result: ", result.title());
-            throw new Error("missing BMOptionsNode");
+            throw new Error("missing SvOptionsNode");
         }
     }
 

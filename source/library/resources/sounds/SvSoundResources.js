@@ -7,10 +7,10 @@
  * @extends SvResourceGroup
  * @classdesc Represents a collection of sound resources.
  */
-(class SvSoundResources extends BMResourceGroup {
+(class SvSoundResources extends SvResourceGroup {
 
     /**
-     * @description Initializes the BMSoundResources instance.
+     * @description Initializes the SvSoundResources instance.
      * @member {function}
      * @category Initialization
      */
@@ -20,7 +20,7 @@
     }
 
     /**
-     * @description Sets up the BMSoundResources instance.
+     * @description Sets up the SvSoundResources instance.
      * @returns {SvSoundResources} The current instance.
      * @member {function}
      * @category Initialization

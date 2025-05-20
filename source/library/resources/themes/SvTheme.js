@@ -6,12 +6,12 @@
 
 /**
  * @class SvTheme
- * @extends BMThemeFolder
- * @classdesc BMTheme class represents a theme in the application.
+ * @extends SvThemeFolder
+ * @classdesc SvTheme class represents a theme in the application.
  * 
- * BMThemeResources.shared().activeTheme().newThemeClassOptions()
+ * SvThemeResources.shared().activeTheme().newThemeClassOptions()
  */
-(class SvTheme extends BMThemeFolder {
+(class SvTheme extends SvThemeFolder {
   
   /**
    * @description Initializes the prototype slots for the SvTheme class.
@@ -33,13 +33,13 @@
     //this.setSubtitle("Theme")
     this.setCanDelete(true);
     this.setNodeCanAddSubnode(true);
-    //this.setSubnodeClasses([BMThemeLevel]);
-    this.setSubnodeClasses([BMThemeClass]);
+    //this.setSubnodeClasses([SvThemeLevel]);
+    this.setSubnodeClasses([SvThemeClass]);
     this.setNodeCanReorderSubnodes(true);
   }
 
   /**
-   * @description Initializes a new instance of the BMTheme class.
+   * @description Initializes a new instance of the SvTheme class.
    * @category Initialization
    */
   init () {
@@ -55,7 +55,7 @@
   setupAsDefault () {
     debugger
     this.setTitle("DefaultTheme");
-    const defaultThemeClass = BMThemeClass.clone().setupAsDefault();
+    const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
     this.addSubnode(defaultThemeClass);
     return this;
   }
@@ -65,7 +65,7 @@
   /**
    * @description Retrieves a theme class by its name.
    * @param {string} name - The name of the theme class to retrieve.
-   * @returns {BMThemeClass|null} The theme class with the given name, or null if not found.
+   * @returns {SvThemeClass|null} The theme class with the given name, or null if not found.
    * @category Retrieval
    */
   themeClassNamed (name) {
@@ -87,10 +87,10 @@
    * @category Creation
    */
   newThemeClassOptions () {
-    const options = BMOptionsNode.clone();
+    const options = SvOptionsNode.clone();
     this.subnodes().forEach(themeClass => {
         const name = themeClass.title();
-        const option = BMOptionNode.clone().setLabel(name).setValue(name);
+        const option = SvOptionNode.clone().setLabel(name).setValue(name);
         options.addSubnode(option);
     })
     return options
@@ -99,7 +99,7 @@
   /**
    * @description Retrieves a theme class by its name from all theme classes.
    * @param {string} name - The name of the theme class to retrieve.
-   * @returns {BMThemeClass|undefined} The theme class with the given name, or undefined if not found.
+   * @returns {SvThemeClass|undefined} The theme class with the given name, or undefined if not found.
    * @category Retrieval
    */
   themeClassNamed (name) {
@@ -115,7 +115,7 @@
 
   /**
    * @description Gets an array of all theme classes, including nested ones.
-   * @returns {BMThemeClass[]} An array of all theme classes.
+   * @returns {SvThemeClass[]} An array of all theme classes.
    * @category Retrieval
    */
   allThemeClasses () {
@@ -124,7 +124,7 @@
 
   /**
    * @description Creates a map of all theme classes, with their titles as keys.
-   * @returns {Map<string, BMThemeClass>} A map of all theme classes.
+   * @returns {Map<string, SvThemeClass>} A map of all theme classes.
    * @category Creation
    */
   allThemeClassesMap () {
@@ -136,7 +136,7 @@
   /**
    * @description Retrieves a state by its name.
    * @param {string} name - The name of the state to retrieve.
-   * @returns {BMState|undefined} The state with the given name, or undefined if not found.
+   * @returns {SvState|undefined} The state with the given name, or undefined if not found.
    * @category Retrieval
    */
   stateWithName (name) {

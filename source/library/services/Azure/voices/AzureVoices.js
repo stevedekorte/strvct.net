@@ -6,7 +6,7 @@
 
 /**
  * @class AzureVoices
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Manages Azure voices.
 
     Sample:
@@ -27,7 +27,7 @@
 
 */
 
-(class AzureVoices extends BMSummaryNode {
+(class AzureVoices extends SvSummaryNode {
 
   initPrototypeSlots () {
 
@@ -107,7 +107,7 @@
    */
   setupLocalesFolder () {
     const localeNames = this.localeNames()
-    const root = this // BMFolderNode.clone().setTitle("By Locale")
+    const root = this // SvFolderNode.clone().setTitle("By Locale")
     const allVoices = this.voices() //[this.voices().first()]
     allVoices.forEach(voice => {
       const path = voice.localePathComponents(allVoices).join("/")

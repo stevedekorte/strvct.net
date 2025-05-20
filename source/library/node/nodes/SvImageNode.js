@@ -4,7 +4,7 @@
  * @module library.node.nodes
  * @class SvImageNode
  * @extends SvStorableNode
- * @classdesc BMImageNode class for handling image nodes.
+ * @classdesc SvImageNode class for handling image nodes.
  */
 (class SvImageNode extends SvStorableNode {
     
@@ -23,7 +23,7 @@
             slot.setSlotType("String");
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
-            // BMImageWellField
+            // SvImageWellField
         }
     }
 

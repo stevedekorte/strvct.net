@@ -3,10 +3,10 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvUrlField
- * @extends BMField
- * @classdesc BMUrlField is a specialized field for handling URL data.
+ * @extends SvField
+ * @classdesc SvUrlField is a specialized field for handling URL data.
  */
-(class SvUrlField extends BMField {
+(class SvUrlField extends SvField {
     
     /**
      * @static
@@ -30,7 +30,7 @@
     /**
      * @static
      * @param {Object} dataChunk - The data chunk to open.
-     * @returns {SvUrlField} A new BMUrlField instance with the opened data.
+     * @returns {SvUrlField} A new SvUrlField instance with the opened data.
      * @category Data Opening
      */
     static openMimeChunk (dataChunk) {
@@ -149,7 +149,7 @@
     }
 
     /**
-     * @description Initializes the BMUrlField.
+     * @description Initializes the SvUrlField.
      * @category Initialization
      */
     init () {

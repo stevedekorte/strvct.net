@@ -6,10 +6,10 @@
 
 /**
  * @class SpeechToTextSession
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc A class representing a speech-to-text session.
  */
-(class SpeechToTextSession extends BMSummaryNode {
+(class SpeechToTextSession extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the SpeechToTextSession class.
    */

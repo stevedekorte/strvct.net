@@ -6,10 +6,10 @@
 
 /**
  * @class OpenAiTtsSession
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc OpenAiTtsSession manages Text to Speech operations.
  */
-(class OpenAiTtsSession extends BMSummaryNode {
+(class OpenAiTtsSession extends SvSummaryNode {
 
   /**
    * @description Returns an array of speed options.

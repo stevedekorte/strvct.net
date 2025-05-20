@@ -6,10 +6,10 @@
 
 /**
  * @class HomeAssistants
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of home assistants for home automation.
  */
-(class HomeAssistants extends BMSummaryNode {
+(class HomeAssistants extends SvSummaryNode {
   
   /**
    * @description Initializes the prototype slots for the HomeAssistants class.

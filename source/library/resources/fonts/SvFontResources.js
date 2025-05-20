@@ -5,13 +5,13 @@
  */
 
 /**
- * BMFontResources
+ * SvFontResources
  * 
  * @class
  * @extends SvResourceGroup
- * @classdesc Manages font resources. Can be accessed via BMResources.shared().fonts().newFontOptions()
+ * @classdesc Manages font resources. Can be accessed via SvResources.shared().fonts().newFontOptions()
  */
-(class SvFontResources extends BMResourceGroup {
+(class SvFontResources extends SvResourceGroup {
     
     /**
      * @static
@@ -55,8 +55,8 @@
      */
     setup () {
         super.setup();
-        this.setResourceClasses([BMFont]);
-        this.setSubnodeClasses([BMFontFamily]);
+        this.setResourceClasses([SvFont]);
+        this.setSubnodeClasses([SvFontFamily]);
     }
 
     /**
@@ -110,7 +110,7 @@
             return family;
         }
 
-        const newFamily = BMFontFamily.clone().setName(aName)
+        const newFamily = SvFontFamily.clone().setName(aName)
         this.addFamily(newFamily)
         return newFamily
     }
@@ -143,10 +143,10 @@
      * @category Resource Management
      */
     newFontOptions () {
-        const options = BMOptionsNode.clone();
+        const options = SvOptionsNode.clone();
         this.allFonts().forEach(font => {
             const name = font.title();
-            const option = BMOptionNode.clone().setLabel(name).setValue(name);
+            const option = SvOptionNode.clone().setLabel(name).setValue(name);
             options.addSubnode(option);
         })
         return options;

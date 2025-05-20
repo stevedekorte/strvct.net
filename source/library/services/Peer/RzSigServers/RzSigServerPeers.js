@@ -6,10 +6,10 @@
 
 /**
  * @class RzSigServerPeers
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of RzSigServer peers.
  */
-(class RzSigServerPeers extends BMSummaryNode {
+(class RzSigServerPeers extends SvSummaryNode {
   
   /**
    * Initializes the prototype slots for the RzSigServerPeers class.

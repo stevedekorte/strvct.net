@@ -6,10 +6,10 @@
 
 /**
  * @class AiChatModel
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents an AI chat model with configurable properties and methods.
  */
-(class AiChatModel extends BMSummaryNode {
+(class AiChatModel extends SvSummaryNode {
   /**
    * Initializes the prototype slots for the AiChatModel.
    * @category Initialization

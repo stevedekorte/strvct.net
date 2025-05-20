@@ -7,10 +7,10 @@
 /**
  * @class SvResources
  * @extends SvStorableNode
- * @classdesc BMResources class for managing various resource types.
+ * @classdesc SvResources class for managing various resource types.
  * 
  * Usage example:
- * BMResources.shared().files().resourceForPath("./app/info/.../data.txt")
+ * SvResources.shared().files().resourceForPath("./app/info/.../data.txt")
  */
 (class SvResources extends SvStorableNode {
     
@@ -31,56 +31,56 @@
         /*
         {
             const slot = this.newSlot("themes", null);
-            slot.setSlotType("BMThemeResources");
+            slot.setSlotType("SvThemeResources");
         }
         */
         /**
-         * @member {BMFontResources} fonts
+         * @member {SvFontResources} fonts
          * @category Resources
          */
         {
             const slot = this.newSlot("fonts", null);
-            slot.setSlotType("BMFontResources");
+            slot.setSlotType("SvFontResources");
         }
         /**
-         * @member {BMSoundResources} sounds
+         * @member {SvSoundResources} sounds
          * @category Resources
          */
         {
             const slot = this.newSlot("sounds", null);
-            slot.setSlotType("BMSoundResources");
+            slot.setSlotType("SvSoundResources");
         }
         /**
-         * @member {BMImageResources} images
+         * @member {SvImageResources} images
          * @category Resources
          */
         {
             const slot = this.newSlot("images", null);
-            slot.setSlotType("BMImageResources");
+            slot.setSlotType("SvImageResources");
         }
         /**
-         * @member {BMIconResources} icons
+         * @member {SvIconResources} icons
          * @category Resources
          */
         {
             const slot = this.newSlot("icons", null);
-            slot.setSlotType("BMIconResources");
+            slot.setSlotType("SvIconResources");
         }
         /**
-         * @member {BMJsonResources} json
+         * @member {SvJsonResources} json
          * @category Resources
          */
         {
             const slot = this.newSlot("json", null);
-            slot.setSlotType("BMJsonResources");
+            slot.setSlotType("SvJsonResources");
         }
         /**
-         * @member {BMFileResources} files
+         * @member {SvFileResources} files
          * @category Resources
          */
         {
             const slot = this.newSlot("files", null);
-            slot.setSlotType("BMFileResources");
+            slot.setSlotType("SvFileResources");
         }
     }
 
@@ -110,29 +110,29 @@
      * @category Setup
      */
     setupSubnodes () {
-        //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources);
+        //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", SvThemeResources);
         //themes.setNodeCanReorderSubnodes(true);
         //this.addSubnode(themes);
         //let link = this.addLinkSubnode(themes);
         //this.setThemes(themes);
         //console.log("themes link = ", link.debugTypeId());
 
-        this.setFiles(BMFileResources.shared());
+        this.setFiles(SvFileResources.shared());
         this.addSubnode(this.files());
 
-        this.setFonts(BMFontResources.shared());
+        this.setFonts(SvFontResources.shared());
         this.addSubnode(this.fonts());
 
-        this.setSounds(BMSoundResources.shared());
+        this.setSounds(SvSoundResources.shared());
         this.addSubnode(this.sounds());
 
-        this.setImages(BMImageResources.shared());
+        this.setImages(SvImageResources.shared());
         this.addSubnode(this.images());
 
-        this.setIcons(BMIconResources.shared());
+        this.setIcons(SvIconResources.shared());
         this.addSubnode(this.icons());
 
-        this.setJson(BMJsonResources.shared());
+        this.setJson(SvJsonResources.shared());
         this.addSubnode(this.json());
 
         return this;
@@ -170,7 +170,7 @@
         if (!rClass) {
             // do we want this behavior?
             // What's the typical use case for this method
-            rClass = BMResourceFile; 
+            rClass = SvResourceFile; 
         }
         */
         if (rClass) {

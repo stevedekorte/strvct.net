@@ -1,12 +1,12 @@
 /**
  * @module library.app
  * @class BreadCrumbsNode
- * @extends BMFolderNode
- * @classdesc BreadCrumbsNode is a class that extends BMFolderNode and represents a breadcrumb node.
+ * @extends SvFolderNode
+ * @classdesc BreadCrumbsNode is a class that extends SvFolderNode and represents a breadcrumb node.
  */
 "use strict";
 
-(class BreadCrumbsNode extends BMFolderNode {
+(class BreadCrumbsNode extends SvFolderNode {
     /**
      * Initializes the prototype slots of the BreadCrumbsNode class.
      * @description This method is used to initialize the prototype slots of the BreadCrumbsNode class.
@@ -16,7 +16,7 @@
         /*
         {
             const slot = this.newSlot("blobs", null)
-            slot.setFinalInitProto(BMBlobs)
+            slot.setFinalInitProto(SvBlobs)
             slot.setShouldStoreSlot(true)
             slot.setCanInspect(true)
         }

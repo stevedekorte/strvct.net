@@ -3,8 +3,8 @@
 /**
  * @module library.node.fields.subclasses.options
  * @class SvOptionsNode
- * @extends BMField
- * @classdesc BMOptionsNode represents a field for selecting one or multiple options.
+ * @extends SvField
+ * @classdesc SvOptionsNode represents a field for selecting one or multiple options.
  * 
  * NOTES:
  * 
@@ -44,10 +44,10 @@
  * 
  * Should we support both cases, or require the use of the value key?
  * 
- * BMField.setValueOnTarget() needs to handle both cases.
+ * SvField.setValueOnTarget() needs to handle both cases.
  * 
  */
-(class SvOptionsNode extends BMField {
+(class SvOptionsNode extends SvField {
     
     /**
      * @static
@@ -110,7 +110,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMOptionsNode.
+     * @description Initializes the prototype of the SvOptionsNode.
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -128,7 +128,7 @@
         this.setNodeCanAddSubnode(true);
         this.setSummaryFormat("value");
         this.setNoteIconName("right-arrow");
-        this.setSubnodeProto(BMOptionNode);
+        this.setSubnodeProto(SvOptionNode);
 
     }
     
@@ -228,7 +228,7 @@
 
     /**
      * @description Gets the picked node paths.
-     * @returns {Array<Array<BMOptionNode>>} An array of picked node paths.
+     * @returns {Array<Array<SvOptionNode>>} An array of picked node paths.
      */
     pickedNodePaths () {
         return this.pickedLeafSubnodes().map(leafNode => leafNode.parentChainNodeTo(this));
@@ -281,7 +281,7 @@
 
     /**
      * @description Gets the picked leaf subnodes.
-     * @returns {Array<BMOptionNode>} An array of picked leaf subnodes.
+     * @returns {Array<SvOptionNode>} An array of picked leaf subnodes.
      */
     pickedLeafSubnodes () {
         return this.leafSubnodes().select(sn => sn.isPicked());
@@ -396,7 +396,7 @@
      * @returns {Array<string>} An array of accepted subnode type names.
      */
     acceptedSubnodeTypes () {
-        return [BMOptionNode.type()];
+        return [SvOptionNode.type()];
     }
 
     /**

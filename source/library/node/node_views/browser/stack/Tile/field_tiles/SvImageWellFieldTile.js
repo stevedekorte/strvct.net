@@ -1,12 +1,12 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
  * @class SvImageWellFieldTile
- * @extends BMFieldTile
+ * @extends SvFieldTile
  * @classdesc Represents an image well field tile in the browser stack.
  */
 "use strict";
 
-(class SvImageWellFieldTile extends BMFieldTile {
+(class SvImageWellFieldTile extends SvFieldTile {
     
     /**
      * @description Checks if the given mime type can be opened.
@@ -28,7 +28,7 @@
     }
 
     /**
-     * @description Initializes the BMImageWellFieldTile.
+     * @description Initializes the SvImageWellFieldTile.
      * @returns {SvImageWellFieldTile} The initialized instance.
      * @category Initialization
      */
@@ -38,7 +38,7 @@
         this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px");
         this.valueView().setPaddingTop("0px").setPaddingBottom("0px");
 
-        //this.keyView().setElementClassName("BMImageWellKeyField");
+        //this.keyView().setElementClassName("SvImageWellKeyField");
         //this.valueView().setIsEditable(false);
         this.turnOffUserSelect();
         this.keyView().setTransition("color 0.3s");

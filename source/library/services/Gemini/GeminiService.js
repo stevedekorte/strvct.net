@@ -7,7 +7,7 @@
 /**
  * @class GeminiService
  * @extends AiService
- * @classdesc GeminiService is a BMSummaryNode that holds the API key and subnodes for the various Groq services.
+ * @classdesc GeminiService is a SvSummaryNode that holds the API key and subnodes for the various Groq services.
  * 
  * REST:
  * 

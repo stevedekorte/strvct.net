@@ -6,10 +6,10 @@
 
 /**
  * @class RzMsgs
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of peer messages.
  */
-(class RzMsgs extends BMSummaryNode {
+(class RzMsgs extends SvSummaryNode {
   
   /**
    * Initializes the prototype slots for the RzMsgs class.

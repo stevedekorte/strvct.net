@@ -43,7 +43,7 @@
      */
     setupSubnodes () {
         /*
-        let primitives = BMFolderNode.clone().setTitle("Primitives")
+        let primitives = SvFolderNode.clone().setTitle("Primitives")
         primitives.setShouldStoreSubnodes(false)
 
         this.addSubnode(primitives)

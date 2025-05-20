@@ -5,7 +5,7 @@
 /**
  * @class DeepSeekService
  * @extends AiService
- * @classdesc DeepSeekService is a BMSummaryNode that holds the API key and subnodes for the various OpenAI services.
+ * @classdesc DeepSeekService is a SvSummaryNode that holds the API key and subnodes for the various OpenAI services.
  * 
  * Example:
  * 

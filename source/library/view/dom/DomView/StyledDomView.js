@@ -12,14 +12,14 @@
  * (a step towards eliminating the remaining css files)
  *
  * A base view to handle styles in a uniform way. 
- * Holds an instance of BMViewStyles which holds a set of BMViewStyle instances, one for each style.
+ * Holds an instance of SvViewStyles which holds a set of SvViewStyle instances, one for each style.
  *
  * Overview:
  *
  *     StyledDomView
- *       styles -> BMViewStyles
- *                     selected -> BMViewStyle
- *                     unselected -> BMViewStyle
+ *       styles -> SvViewStyles
+ *                     selected -> SvViewStyle
+ *                     unselected -> SvViewStyle
  *                                     color
  *                                     backgroundColor
  *                                     opacity
@@ -271,7 +271,7 @@
      * @category Theme
      */
     currentThemeClass () {
-        const theme = BMThemeResources.shared().activeTheme()
+        const theme = SvThemeResources.shared().activeTheme()
         if (!theme) {
             return null
         }

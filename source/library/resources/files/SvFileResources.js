@@ -8,21 +8,21 @@
  * @class SvFileResources
  * @extends SvResourceGroup
  * @classdesc
- * BMFileResources is a class for managing file resources.
+ * SvFileResources is a class for managing file resources.
  * 
  * Usage examples:
  * 
- * BMFileResources.shared().setupSubnodesIfNeeded();
+ * SvFileResources.shared().setupSubnodesIfNeeded();
  * 
- * const fileOrFolderResource = BMFileResources.shared().rootFolder().resourceAtPath("path/to/resource");
+ * const fileOrFolderResource = SvFileResources.shared().rootFolder().resourceAtPath("path/to/resource");
  * 
  * const resources = MResourceFiles.shared().rootFolder().allResourceFiles().resourcesWithName(aName);
  * 
- * BMFileResources.shared().rootFolder().allResourceFiles().forEach(file => {
+ * SvFileResources.shared().rootFolder().allResourceFiles().forEach(file => {
  *     ...
  * });
  */
-(class SvFileResources extends BMResourceGroup {
+(class SvFileResources extends SvResourceGroup {
     
     /**
      * @description Initializes the prototype slots for the class.
@@ -84,12 +84,12 @@
     
     /**
      * @description Sets up subnodes if they haven't been set up yet.
-     * @returns {Promise<BMFileResources>} A promise that resolves to the instance.
+     * @returns {Promise<SvFileResources>} A promise that resolves to the instance.
      * @category Initialization
      */
     async setupSubnodesIfNeeded () {
         if (!this.hasSetupSubnodes()) {
-            const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
+            const rootFolder = SvResourceFolder.clone().setPath(this.rootPath())
             this.addSubnode(rootFolder)
 
             const entries = ResourceManager.shared().entries()

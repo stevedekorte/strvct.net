@@ -6,10 +6,10 @@
 
 /**
  * @class MusicTrack
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a music track in the music player.
  */
-(class MusicTrack extends BMSummaryNode {
+(class MusicTrack extends SvSummaryNode {
 
   /**
    * Initializes the prototype slots for the MusicTrack class.

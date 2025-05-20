@@ -7,7 +7,7 @@
  * @extends SvResource
  * @classdesc Represents an image resource.
  */
-(class SvImage extends BMResource {
+(class SvImage extends SvResource {
     
     /**
      * @static
@@ -67,7 +67,7 @@
 
     /**
      * @description Called when the image has finished loading.
-     * @returns {SvImage} The current BMImage instance.
+     * @returns {SvImage} The current SvImage instance.
      * @category Lifecycle
      */
     onDidLoad () {

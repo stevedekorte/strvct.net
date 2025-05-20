@@ -3,11 +3,11 @@
 /*
 * @module library.services.AiServiceKit.Tools.Calls
 * @class ToolCalls
-* @extends BMSummaryNode
+* @extends SvSummaryNode
 * @classdesc A collection of ToolCall instances.
 */
 
-(class ToolCalls extends BMSummaryNode {
+(class ToolCalls extends SvSummaryNode {
   /*
    * Initializes the prototype slots.
    * @category Initialization

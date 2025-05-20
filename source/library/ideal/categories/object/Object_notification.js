@@ -27,8 +27,8 @@
      * @category Notification
      */
     removeAllNotificationObservations () {
-        if (getGlobalThis()["BMNotificationCenter"]) {
-            BMNotificationCenter.shared().removeObserver(this)
+        if (getGlobalThis()["SvNotificationCenter"]) {
+            SvNotificationCenter.shared().removeObserver(this)
         }
     }
  
@@ -51,7 +51,7 @@
      * @category Notification
      */
     watchSender (sender) {
-        const obs = BMNotificationCenter.shared().newObservation()
+        const obs = SvNotificationCenter.shared().newObservation()
         obs.setObserver(this)
         obs.setIsOneShot(false)
         obs.setSender(sender)
@@ -67,7 +67,7 @@
      * @category Notification
      */
     watchForNoteFrom (aNoteName, sender) {
-        const obs = BMNotificationCenter.shared().newObservation()
+        const obs = SvNotificationCenter.shared().newObservation()
         obs.setObserver(this)
         //obs.setIsOneShot(false)
         obs.setSender(sender)
@@ -83,7 +83,7 @@
      * @category Notification
      */
     watchForNote (aNoteName) {
-        const obs = BMNotificationCenter.shared().newObservation()
+        const obs = SvNotificationCenter.shared().newObservation()
         obs.setName(aNoteName)
         obs.setObserver(this)
         obs.startWatching()
@@ -120,7 +120,7 @@
      * @category Notification
      */
     newNoteNamed (aNoteName) {
-        const note = BMNotificationCenter.shared().newNote()
+        const note = SvNotificationCenter.shared().newNote()
         note.setSender(this)
         note.setName(aNoteName)
         return note
@@ -159,7 +159,7 @@
      */
     watchers () {
         // objects we are watching for notifications from 
-        return BMNotificationCenter.shared().observersOfSender(this);
+        return SvNotificationCenter.shared().observersOfSender(this);
     }
 
     /**
@@ -169,7 +169,7 @@
      */
     ourObservations () {
         // observations we have registered
-        return BMNotificationCenter.shared().observationsWithObserver(this);
+        return SvNotificationCenter.shared().observationsWithObserver(this);
     }
 
     /**

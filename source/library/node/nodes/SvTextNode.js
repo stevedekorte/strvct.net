@@ -53,7 +53,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMTextNode
+     * @description Initializes the prototype of the SvTextNode
      * @category Initialization
      */
     initPrototype () {

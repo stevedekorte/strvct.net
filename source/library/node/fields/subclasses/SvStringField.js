@@ -6,10 +6,10 @@
 
 /**
  * @class SvStringField
- * @extends BMField
+ * @extends SvField
  * @classdesc Represents a string field in the application.
  */
-(class SvStringField extends BMField {
+(class SvStringField extends SvField {
     
     /**
      * @static

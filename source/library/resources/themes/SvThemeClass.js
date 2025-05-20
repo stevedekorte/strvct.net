@@ -4,9 +4,9 @@
 
 /**
  * @class SvThemeClass
- * @extends BMThemeFolder
+ * @extends SvThemeFolder
  * @classdesc
- * BMThemeClass represents a theme class in the theming system.
+ * SvThemeClass represents a theme class in the theming system.
  * 
  * Notes on attribute lookup:
  * 
@@ -20,10 +20,10 @@
  *   TextTile/unselected -> Tile/unselected -> Default->unselected
  *   TextTile/disabled   -> Tile/disabled   -> Default->disabled
  */
-(class SvThemeClass extends BMThemeFolder {
+(class SvThemeClass extends SvThemeFolder {
 
   /**
-   * @description Initializes the BMThemeClass instance.
+   * @description Initializes the SvThemeClass instance.
    * @category Initialization
    */
   init () {
@@ -35,25 +35,25 @@
     this.setTitle("Untitled " + this.thisClass().visibleClassName());
     this.setSubtitle("class")
     this.setCanDelete(true);
-    this.setSubnodeClasses([BMThemeState, BMThemeFolder]);
+    this.setSubnodeClasses([SvThemeState, SvThemeFolder]);
     this.setNodeCanReorderSubnodes(true);
   }
 
   /**
-   * @description Performs final initialization of the BMThemeClass instance.
+   * @description Performs final initialization of the SvThemeClass instance.
    * @category Initialization
    */
   finalInit () {
     super.finalInit();
     if (!this.hasSubnodes()) {
-      this.subnodeWithTitleIfAbsentInsertProto("states", BMThemeStates);
-      this.subnodeWithTitleIfAbsentInsertProto("children", BMThemeClassChildren);
+      this.subnodeWithTitleIfAbsentInsertProto("states", SvThemeStates);
+      this.subnodeWithTitleIfAbsentInsertProto("children", SvThemeClassChildren);
     }
   }
 
   /**
    * @description Returns the parent theme class of this instance.
-   * @returns {BMThemeClass|null} The parent theme class or null if it's a root theme class.
+   * @returns {SvThemeClass|null} The parent theme class or null if it's a root theme class.
    * @category Hierarchy
    */
   parentThemeClass () {
@@ -78,8 +78,8 @@
     this.setTitle("Tile");
     //this.setupSubnodes();
     this.states().setupAsDefault()
-    this.children().addSubnode(BMThemeClass.clone().setTitle("HeaderTile"));
-    this.children().addSubnode(BMThemeClass.clone().setTitle("BreadCrumbsTile"));
+    this.children().addSubnode(SvThemeClass.clone().setTitle("HeaderTile"));
+    this.children().addSubnode(SvThemeClass.clone().setTitle("BreadCrumbsTile"));
     return this;
   }
 
@@ -113,7 +113,7 @@
 
   /**
    * @description Returns an array containing this theme class and all its descendant theme classes.
-   * @returns {BMThemeClass[]} An array of theme classes.
+   * @returns {SvThemeClass[]} An array of theme classes.
    * @category Hierarchy
    */
   selfAndAllThemeChildren () {

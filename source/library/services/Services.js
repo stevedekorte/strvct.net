@@ -6,10 +6,10 @@
 
 /**
  * @class Services
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Services class that manages various AI and other services.
  */
-(class Services extends BMSummaryNode {
+(class Services extends SvSummaryNode {
     
     /**
      * @static

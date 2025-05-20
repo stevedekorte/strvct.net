@@ -4,13 +4,13 @@
 
 /**
  * @class SvDefaultTheme
- * @extends BMTheme
+ * @extends SvTheme
  * @classdesc Represents the default theme for the application.
  */
-(class SvDefaultTheme extends BMTheme {
+(class SvDefaultTheme extends SvTheme {
 
     /**
-     * @description Initializes the BMDefaultTheme instance.
+     * @description Initializes the SvDefaultTheme instance.
      * @returns {SvDefaultTheme} The initialized instance.
      * @category Initialization
      */
@@ -37,7 +37,7 @@
         if (!this.hasSubnodes()) {
             //debugger
             this.setTitle("DefaultTheme")
-            const defaultThemeClass = BMThemeClass.clone().setupAsDefault()
+            const defaultThemeClass = SvThemeClass.clone().setupAsDefault()
             this.addSubnode(defaultThemeClass)
         }
         return this

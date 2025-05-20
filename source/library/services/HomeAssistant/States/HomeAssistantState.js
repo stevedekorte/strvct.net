@@ -51,7 +51,7 @@
 
     {
       const slot = this.newSlot("jsonString", null)
-      //slot.setFinalInitProto(BMTextAreaField);
+      //slot.setFinalInitProto(SvTextAreaField);
       slot.setShouldStoreSlot(false);
       //slot.setIsSubnode(true);
     }

@@ -1,19 +1,19 @@
 /**
  * @module library.node.nodes.base
  * @class TitledNode
- * @extends BMNode
+ * @extends SvNode
  * @classdesc Class for handling a node's:
  *     title
  *     subtitle
  *     summary
  *     icon/thumbnail (move to viewable?)
  * 
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  */
 
 "use strict";
 
-(class TitledNode extends BMNode {
+(class TitledNode extends SvNode {
 
     /**
      * @description Initializes the prototype slots for the TitledNode class.
@@ -44,7 +44,7 @@
         }
 
         /**
-         * @member {BMNotification} note
+         * @member {SvNotification} note
          */
         {
             const slot = this.newSlot("note", null);
@@ -65,7 +65,7 @@
             slot.setCanInspect(true);
             slot.setLabel("icon");
             slot.setSlotType("String");
-            slot.setValidValuesClosure((instance) => BMIconResources.shared().iconNames());
+            slot.setValidValuesClosure((instance) => SvIconResources.shared().iconNames());
             slot.setInspectorPath("Node/Note");
         }
 

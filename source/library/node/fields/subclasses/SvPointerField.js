@@ -3,11 +3,11 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvPointerField
- * @extends BMField
+ * @extends SvField
  * @classdesc A field that's a pointer to another node.
  * (sometimes the other node is used as a list of items, but not always)
  */
-(class SvPointerField extends BMField {
+(class SvPointerField extends SvField {
     
     /**
      * @description Initializes prototype slots.
@@ -30,7 +30,7 @@
 
     /*
     setValue (v) {
-        console.warn("WARNING: BMPointerField setValue '" + v + "'")
+        console.warn("WARNING: SvPointerField setValue '" + v + "'")
         return this
     }
     */

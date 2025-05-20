@@ -6,10 +6,10 @@
 
 /**
  * @class RzSigServerConns
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents connections to sigserver
  */
-(class RzSigServerConns extends BMSummaryNode {
+(class RzSigServerConns extends SvSummaryNode {
   /**
    * @description Initializes prototype slots
    * @category Initialization

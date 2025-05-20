@@ -68,7 +68,7 @@
 
     /*
     addFontWithResource (aResource) {
-        const font = BMFont.clone().setResource(aResource)
+        const font = SvFont.clone().setResource(aResource)
         font.load()
         this.addSubnode(font)
         return this

@@ -7,7 +7,7 @@
 /**
  * @class SvField
  * @extends SvSummaryNode
- * @classdesc A BMStorageNode that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
+ * @classdesc A SvStorageNode that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
  */
 
 (class SvField extends SvSummaryNode {
@@ -234,11 +234,11 @@
         }
 
         /**
-         * @member {BMObservation} didUpdateNodeObs - The observation of the didUpdateNode.
+         * @member {SvObservation} didUpdateNodeObs - The observation of the didUpdateNode.
          */
         {
             const slot = this.newSlot("didUpdateNodeObs", null);
-            slot.setSlotType("BMObservation");
+            slot.setSlotType("SvObservation");
         }
     }
 

@@ -6,15 +6,15 @@
 
 /**
  * @class AiService
- * @extends BMSummaryNode
- * @classdesc A BMSummaryNode that holds the API key and subnodes related to the service.
+ * @extends SvSummaryNode
+ * @classdesc A SvSummaryNode that holds the API key and subnodes related to the service.
  * 
  * Example:
  * 
  * AiService.shared().setApiKey("sk-1234567890");
  * const hasApiKey = AiService.shared().hasApiKey();
  */
-(class AiService extends BMSummaryNode {
+(class AiService extends SvSummaryNode {
 
   /**
    * @description Returns an array of model information.

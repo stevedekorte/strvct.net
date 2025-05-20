@@ -3,12 +3,12 @@
 /**
  * @module library.services.YouTube.MusicPlayer
  * @class MusicLibrary
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @description A music library.
  * All tracks are under a Creative Commons License.
  */
 
-(class MusicLibrary extends BMSummaryNode {
+(class MusicLibrary extends SvSummaryNode {
 
   initPrototypeSlots () {
 

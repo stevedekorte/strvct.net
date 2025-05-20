@@ -4,10 +4,10 @@
 
 /**
  * @class HomeAssistantGroup
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a group of Home Assistant devices or entities.
  */
-(class HomeAssistantGroup extends BMSummaryNode {
+(class HomeAssistantGroup extends SvSummaryNode {
 
   /**
    * @description Initializes the prototype slots for the HomeAssistantGroup.

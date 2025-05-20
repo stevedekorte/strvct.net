@@ -6,10 +6,10 @@
 
 /**
  * @class MusicFolder
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a folder for organizing music tracks.
  */
-(class MusicFolder extends BMSummaryNode {
+(class MusicFolder extends SvSummaryNode {
 
   /**
    * Initializes the prototype slots for the MusicFolder class.

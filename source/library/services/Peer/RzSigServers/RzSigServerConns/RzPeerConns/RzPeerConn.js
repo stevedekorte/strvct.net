@@ -6,7 +6,7 @@
 
 /**
  * @class RzPeerConn
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Wrapper for PeerJS DataConnection.
  * 
  * Delegate messages:
@@ -16,7 +16,7 @@
  * - onPeerData (peerConn, data)
  * - onPeerError (peerConn)
  */
-(class RzPeerConn extends BMSummaryNode {
+(class RzPeerConn extends SvSummaryNode {
 
   /**
    * @description Returns the default connection options.

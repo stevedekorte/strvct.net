@@ -34,12 +34,12 @@
         }
 
         /**
-         * @member {BMObservation} onStackViewPathChangeObs
+         * @member {SvObservation} onStackViewPathChangeObs
          * @category Observation
          */
         {
             const slot = this.newSlot("onStackViewPathChangeObs", null);
-            slot.setSlotType("BMObservation");
+            slot.setSlotType("SvObservation");
         }
 
         /**
@@ -60,7 +60,7 @@
     init () {
         super.init();
         this.setThemeClassName("BreadCrumbsTile");
-        this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this));
+        this.setOnStackViewPathChangeObs(SvNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this));
         this.setWidth("100%");
         this.setIsSelectable(true);
         this.setIsRegisteredForWindowResize(true);

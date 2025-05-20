@@ -9,7 +9,7 @@
  * @extends SvResource
  * @classdesc Represents a JSON resource.
  */
-(class SvJsonResource extends BMResource {
+(class SvJsonResource extends SvResource {
     
     /**
      * @static
@@ -38,7 +38,7 @@
     /**
      * @async
      * @description Asynchronously decodes the JSON data.
-     * @returns {Promise<BMJsonResource>} A promise that resolves with the current instance.
+     * @returns {Promise<SvJsonResource>} A promise that resolves with the current instance.
      * @category Data Processing
      */
     async asyncDecodeData () {

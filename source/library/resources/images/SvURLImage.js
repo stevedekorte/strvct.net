@@ -9,7 +9,7 @@
  * @extends SvResource
  * @classdesc Represents an image resource loaded from a URL.
  */
-(class SvURLImage extends BMResource {
+(class SvURLImage extends SvResource {
     
     /**
      * @static
@@ -37,7 +37,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMURLImage class.
+     * @description Initializes the prototype of the SvURLImage class.
      * @category Initialization
      */
     initPrototype () {
@@ -74,7 +74,7 @@
 
     /**
      * @description Asynchronously loads the data URL of the image.
-     * @returns {Promise<BMURLImage>} A promise that resolves to the current instance.
+     * @returns {Promise<SvURLImage>} A promise that resolves to the current instance.
      * @category Data Loading
      */
     async loadDataURL () {
@@ -116,4 +116,4 @@
 
 }.initThisClass());
 
-//console.log("BMURLImage: ", BMURLImage)
+//console.log("SvURLImage: ", SvURLImage)

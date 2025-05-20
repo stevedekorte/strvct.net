@@ -6,10 +6,10 @@
 
 /**
  * @class AzureTtsRequest
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc Represents a Text-to-Speech request for Azure TTS service.
  */
-(class AzureTtsRequest extends BMStorableNode {
+(class AzureTtsRequest extends SvStorableNode {
   /**
    * Initializes the prototype slots for the AzureTtsRequest class.
    * @category Initialization

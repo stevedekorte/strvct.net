@@ -4,7 +4,7 @@
 
 /**
  * @class AiConversations
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Manages AI conversations.
  * 
  * conversations
@@ -12,7 +12,7 @@
  * - - requests
  * - - - request, response
  */
-(class AiConversations extends BMSummaryNode {
+(class AiConversations extends SvSummaryNode {
   /**
    * @description Initializes prototype slots for the class.
    * @category Initialization

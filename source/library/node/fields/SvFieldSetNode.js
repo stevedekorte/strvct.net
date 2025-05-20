@@ -5,12 +5,12 @@
  * @class SvFieldSetNode
  * @extends SvStorableNode
  * @classdesc Useful for nodes which are to be viewed and interacted with as forms.
- * Child nodes are of type BMField and should only be added via addFieldNamed().
+ * Child nodes are of type SvField and should only be added via addFieldNamed().
  * This method sets the target of the field to this and the method to the field name.
  * 
  * Example use in subclass:
  * 
- * In BMCustomFormNode class:
+ * In SvCustomFormNode class:
  * 
  *     init () {
  *         super.init()
@@ -50,7 +50,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMFieldSetNode.
+     * @description Initializes the prototype of the SvFieldSetNode.
      * @category Initialization
      */
     initPrototype () {
@@ -88,7 +88,7 @@
      * @category Field Management
      */
     addFieldNamed (name) {	
-        const field = BMField.clone().setKey(name)
+        const field = SvField.clone().setKey(name)
         field.setTarget(this)
         field.setValueMethod(name)
         this.addStoredField(field)
@@ -98,7 +98,7 @@
     /**
      * @description Finds a field by name.
      * @param {string} aName - The name of the field to find.
-     * @returns {BMField|undefined} The found field or undefined if not found.
+     * @returns {SvField|undefined} The found field or undefined if not found.
      * @category Field Management
      */
     fieldNamed (aName) {
@@ -126,7 +126,7 @@
 
     /**
      * @description Gets all invalid subnodes (fields) in the field set.
-     * @returns {BMField[]} An array of invalid fields.
+     * @returns {SvField[]} An array of invalid fields.
      * @category Validation
      */
     invalidSubnodes () {

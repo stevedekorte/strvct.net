@@ -408,9 +408,9 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onKeyDown (event) {
-        //BMKeyboard.shared().showEvent(event)
+        //SvKeyboard.shared().showEvent(event)
         // expand the method name to include combinations of meta keys (e.g. shift, function, control, option, command, etc)
-        const methodName = BMKeyboard.shared().downMethodNameForEvent(event);
+        const methodName = SvKeyboard.shared().downMethodNameForEvent(event);
         //console.log(" onKeyDown ", methodName);
         //assert(methodName !== "onKeyDown");
         const result = this.invokeMethodNameForEvent(methodName, event);
@@ -431,7 +431,7 @@
     onKeyUp (event) {
         let shouldPropogate = true
         //this.debugLog(" onKeyUp ", event._id)
-        const methodName = BMKeyboard.shared().upMethodNameForEvent(event)
+        const methodName = SvKeyboard.shared().upMethodNameForEvent(event)
         //console.log(this.typeId() + " onKeyUp methodName: ", methodName)
         shouldPropogate = this.invokeMethodNameForEvent(methodName, event)
         return shouldPropogate

@@ -28,7 +28,7 @@
             const p = aGesture.downPosition() // there may not be an up position on windows?
             //this.debugLog(".onTapComplete() ", aGesture.upEvent())
             if (p.event().target === this.element()) {
-                const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
+                const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
                 const isAltTap = keyModifiers.contains("Alternate");
                 if (isAltTap) {
                     // inspect parent node

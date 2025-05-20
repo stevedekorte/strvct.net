@@ -4,7 +4,7 @@
 
 /**
  * @class YouTubeAudioPlayer
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc YouTubeAudioPlayer
  * 
  * One shot use example:
@@ -16,7 +16,7 @@
  *   await player.play();
  *   await player.shutdown();
  */
-(class YouTubeAudioPlayer extends BMStorableNode {
+(class YouTubeAudioPlayer extends SvStorableNode {
 
   /**
    * @description Initializes the prototype slots for the YouTubeAudioPlayer.

@@ -31,7 +31,7 @@
      */
     onTapComplete (aGesture) {
         this.setLastTapDate(new Date())
-        const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
+        const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
 
         const methodName = "just" + keyModifiers.join("") + "Tap";
         if (this[methodName]) {

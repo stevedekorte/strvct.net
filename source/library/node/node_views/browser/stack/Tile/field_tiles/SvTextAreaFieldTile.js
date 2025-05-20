@@ -1,14 +1,14 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
  * @class SvTextAreaFieldTile
- * @extends BMFieldTile
- * @classdesc BMTextAreaFieldTile is a specialized field tile for text area input.
+ * @extends SvFieldTile
+ * @classdesc SvTextAreaFieldTile is a specialized field tile for text area input.
  * It includes functionality for speech-to-text input.
  */
 
 "use strict";
 
-(class SvTextAreaFieldTile extends BMFieldTile {
+(class SvTextAreaFieldTile extends SvFieldTile {
     
     /**
      * Initializes the prototype slots for the SvTextAreaFieldTile.
@@ -40,7 +40,7 @@
     }
 
     /**
-     * Initializes the BMTextAreaFieldTile instance.
+     * Initializes the SvTextAreaFieldTile instance.
      * @returns {SvTextAreaFieldTile} The initialized instance.
      * @category Initialization
      */
@@ -60,7 +60,7 @@
      * @category UI
      */
     createValueView () {
-        const v = TextField.clone().setElementClassName("BMTextAreaFieldValueView");
+        const v = TextField.clone().setElementClassName("SvTextAreaFieldValueView");
         v.setDisplay("block");
         v.setPosition("relative");
         v.setWordWrap("normal");
@@ -83,7 +83,7 @@
     setupValueViewButton () {
         this.valueViewContainer().setGap("1em");
 
-        const bv = ButtonView.clone().setElementClassName("BMActionFieldView");
+        const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
         bv.setBorderRadius("0.4em");
         bv.setMaxHeight("2.1em");
         bv.setHeight("2.1em");

@@ -4,10 +4,10 @@
 
 /**
  * @class RzPeer
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc Represents a peer in the RzSigServers system.
  */
-(class RzPeer extends BMStorableNode {
+(class RzPeer extends SvStorableNode {
 
   /**
    * @description Initializes the prototype slots for the RzPeer class.

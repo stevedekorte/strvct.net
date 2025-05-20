@@ -3,7 +3,7 @@
 /*
 * @module library.services.AiServiceKit.Tools.Calls
 * @class ToolCall
-* @extends BMJsonDictionaryNode
+* @extends SvJsonDictionaryNode
 * @classdesc A specific tool invocation.
 
 Example Tool call format:

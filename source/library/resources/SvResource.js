@@ -125,7 +125,7 @@
         }
         {
             /**
-             * @member {BMUrlResource} urlResource - The URL resource associated with this resource.
+             * @member {SvUrlResource} urlResource - The URL resource associated with this resource.
              * @category Resource Properties
              */
             const slot = this.newSlot("urlResource", null);
@@ -233,7 +233,7 @@
 
     /*
     fileResource () {
-        return BMFileResources.shared().rootFolder().nodeAtSubpathString(this.path());
+        return SvFileResources.shared().rootFolder().nodeAtSubpathString(this.path());
     }
 
     async asyncLoadFileResource () {        
@@ -283,7 +283,7 @@
 
     /**
      * @description Asynchronously loads and decodes the resource.
-     * @returns {Promise<BMResource>} A promise that resolves to the resource instance.
+     * @returns {Promise<SvResource>} A promise that resolves to the resource instance.
      * @category Resource Loading
      */
     async asyncLoad () {
@@ -337,7 +337,7 @@
 
     /**
      * @description Asynchronously decodes the data.
-     * @returns {Promise<BMResource>} A promise that resolves to the resource instance.
+     * @returns {Promise<SvResource>} A promise that resolves to the resource instance.
      * @category Resource Loading
      */
     async asyncDecodeData () {

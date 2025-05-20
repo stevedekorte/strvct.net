@@ -995,7 +995,7 @@
             if (proto) {
                 return proto;
             }
-            const sansName = name.sansPrefix("BM"); // TODO: remove this hack
+            const sansName = name.sansPrefix("Sv"); // TODO: remove this hack
             //console.log("sansName:", sansName)
             const sansProto = Object.getClassNamed(sansName); // hack to deal with nodeViewClass issues
             if (sansProto) {

@@ -6,7 +6,7 @@
 
 /**
  * @class XhrWrapper
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc 
 
 
@@ -58,7 +58,7 @@
 
 */
 
-(class XhrWrapper extends BMStorableNode {
+(class XhrWrapper extends SvStorableNode {
 
   initPrototypeSlots () {
     {

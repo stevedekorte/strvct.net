@@ -6,10 +6,10 @@
 
 /**
  * @class SpatialModelNode
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc Represents a spatial model node for 3D models.
  */
-(class SpatialModelNode extends BMStorableNode {
+(class SpatialModelNode extends SvStorableNode {
     
     /**
      * @description Initializes the prototype slots for the SpatialModelNode.

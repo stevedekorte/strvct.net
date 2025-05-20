@@ -6,7 +6,7 @@
  * @class SvStyleSheet
  * @extends ProtoClass
  * @classdesc
- * BMStyleSheet
+ * SvStyleSheet
  *
  * const sheet = DocumentBody.shared().styleSheets().first()
  * sheet.setSelectorProperty("body", "color", "red")
@@ -42,7 +42,7 @@
      * @param {string} selector - The CSS selector to target.
      * @param {string} property - The CSS property to change.
      * @param {string} value - The new value for the CSS property.
-     * @returns {SvStyleSheet} The current BMStyleSheet instance.
+     * @returns {SvStyleSheet} The current SvStyleSheet instance.
      * @category Manipulation
      */
     changeStylesheetRule (selector, property, value) {

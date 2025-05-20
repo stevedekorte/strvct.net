@@ -3,11 +3,11 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvActionField
- * @extends BMField
+ * @extends SvField
  * @classdesc An abstraction of a UI visible action that can be performed on an object.
  * The value is the action method name, the target is the field owner.
  */
-(class SvActionField extends BMField {
+(class SvActionField extends SvField {
     
     /**
      * @static

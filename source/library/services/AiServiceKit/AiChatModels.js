@@ -4,10 +4,10 @@
 
 /**
  * @class AiChatModels
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of AI chat models.
  */
-(class AiChatModels extends BMSummaryNode {
+(class AiChatModels extends SvSummaryNode {
   /**
    * @description Initializes prototype slots for the class.
    * @category Initialization

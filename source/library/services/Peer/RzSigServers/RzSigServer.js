@@ -6,10 +6,10 @@
 
 /**
  * @class RzSigServer
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc RzSigServer represents a signal server for peer-to-peer connections.
  */
-(class RzSigServer extends BMStorableNode {
+(class RzSigServer extends SvStorableNode {
 
   /**
    * @static

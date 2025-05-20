@@ -62,7 +62,7 @@
      */
     static visibleClassName () {
         let name = this.type();
-        name = name.sansPrefix("BM");
+        name = name.sansPrefix("Sv");
         name = name.sansSuffix("Field");
         name = name.sansSuffix("Node");
         return name;
@@ -172,19 +172,19 @@
         {
             const slot = this.newSlot("didUpdateNodeNote", null); // private
             slot.setAllowsNullValue(true);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         {
             const slot = this.newSlot("shouldFocusSubnodeNote", null); // private
             slot.setAllowsNullValue(true);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         {
             const slot = this.newSlot("shouldFocusAndExpandSubnodeNote", null); // private
             slot.setAllowsNullValue(true);
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         // view related, but computed on node
@@ -377,7 +377,7 @@
             return this._nodeVisibleClassName;
         }
 		
-        return this.type().sansPrefix("BM");
+        return this.type().sansPrefix("Sv");
     }
 
     // --- subnodes ----------------------------------------
@@ -585,7 +585,7 @@
             console.warn("adding a link subnode to a node with no parent (yet)")
         }
         */
-        const link = BMLinkNode.clone().setLinkedNode(aNode);
+        const link = SvLinkNode.clone().setLinkedNode(aNode);
         this.addSubnode(link);
         return link;
     }
@@ -981,7 +981,7 @@
 
         if (note) {
             if (this.type() === "UoLocations") {
-                if (!BMNotificationCenter.shared().hasNotification(note)) {
+                if (!SvNotificationCenter.shared().hasNotification(note)) {
                     console.log(this.typeId() + " '" + this.title() + "' POST didUpdateNode - subnodesCount: " + this.subnodesCount());
                     //debugger;
                 }
@@ -1236,7 +1236,7 @@
         } else if (classes.length === 1) {
             newSubnode = classes.first().clone();
         } else {
-            newSubnode = BMCreatorNode.clone();
+            newSubnode = SvCreatorNode.clone();
             newSubnode.addSubnodesForObjects(classes);
         }
 
@@ -1727,7 +1727,7 @@
      */
     addOptionNodeForDict (item) {
         const hasSubnodes = (item.options !== undefined) && (item.options.length > 0);
-        const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
+        const nodeClass = hasSubnodes ? SvFolderNode : SvOptionNode;
         const newNode = nodeClass.clone().setTitle(String(item.label));
         
         if (!hasSubnodes) {

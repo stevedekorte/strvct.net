@@ -3,7 +3,7 @@
 /**
  * @module library.node.audio
  * @class AudioQueue
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @implements {AudioClipDelegateProtocol}
  * @classdesc Manages a queue of audio clips.
  * 
@@ -21,7 +21,7 @@
  * - stop()
  */
 
-(class AudioQueue extends BMSummaryNode {
+(class AudioQueue extends SvSummaryNode {
 
   /**
    * @category Initialization

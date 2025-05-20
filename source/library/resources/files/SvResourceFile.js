@@ -117,7 +117,7 @@
     }
 
     /**
-     * @description Initializes the BMResourceFile instance.
+     * @description Initializes the SvResourceFile instance.
      * @returns {SvResourceFile} The initialized instance.
      * @category Initialization
      */
@@ -187,7 +187,7 @@
 
     /**
      * @description Loads the resource file asynchronously.
-     * @returns {Promise<BMResourceFile>} A promise that resolves with the current instance after loading.
+     * @returns {Promise<SvResourceFile>} A promise that resolves with the current instance after loading.
      * @category Loading
      */
     async promiseLoad () {
@@ -223,7 +223,7 @@
 
     /**
      * @description Precaches the resource file if appropriate based on its extension.
-     * @returns {Promise<BMResourceFile>} A promise that resolves with the current instance after precaching.
+     * @returns {Promise<SvResourceFile>} A promise that resolves with the current instance after precaching.
      * @category Caching
      */
     async prechacheWhereAppropriate () {

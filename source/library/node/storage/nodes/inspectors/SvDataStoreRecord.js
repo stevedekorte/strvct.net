@@ -1,12 +1,12 @@
 /**
  * @module library.node.storage.nodes.inspectors
  * @class SvDataStoreRecord
- * @extends BMFieldSetNode
+ * @extends SvFieldSetNode
  * @classdesc A visible representation of a storage record.
  */
 "use strict";
 
-(class SvDataStoreRecord extends BMFieldSetNode {
+(class SvDataStoreRecord extends SvFieldSetNode {
     
     /**
      * Initializes the prototype slots for the SvDataStoreRecord.
@@ -45,18 +45,18 @@
      */
     prepareForFirstAccess () {
         super.prepareForFirstAccess()
-        const jsonField = BMTextAreaField.clone().setKey("recordString")
+        const jsonField = SvTextAreaField.clone().setKey("recordString")
         jsonField.setValueMethod("recordString").setValueIsEditable(false).setIsMono(true)
         this.addField(jsonField)
 
         this.referencedRecords().forEach((aRecord) => {
-            const node = BMDataStoreRecord.forRecord(aRecord)
+            const node = SvDataStoreRecord.forRecord(aRecord)
             this.addSubnode(node)
         })
     }
 
     /**
-     * Returns the record associated with this BMDataStoreRecord.
+     * Returns the record associated with this SvDataStoreRecord.
      * @returns {Object} The associated record.
      * @category Data Access
      */
@@ -102,14 +102,14 @@
     }
 
     /**
-     * Creates a BMDataStoreRecord for a given record.
+     * Creates a SvDataStoreRecord for a given record.
      * @static
-     * @param {Object} aRecord - The record to create a BMDataStoreRecord for.
-     * @returns {SvDataStoreRecord} The created BMDataStoreRecord.
+     * @param {Object} aRecord - The record to create a SvDataStoreRecord for.
+     * @returns {SvDataStoreRecord} The created SvDataStoreRecord.
      * @category Factory
      */
     static forRecord (aRecord) {
-        const subnode = BMDataStoreRecord.clone()
+        const subnode = SvDataStoreRecord.clone()
         subnode.setTitle(aRecord.type + " " + aRecord.id)
         //subnode.setTitle(aRecord.id)
         subnode.setKey(aRecord.id)

@@ -37,12 +37,12 @@
             slot.setSlotType("String");
         }
         /**
-         * @member {BMKeyboard} keyboard - The keyboard this key belongs to.
+         * @member {SvKeyboard} keyboard - The keyboard this key belongs to.
          * @category Relationship
          */
         {
             const slot = this.newSlot("keyboard", null);
-            slot.setSlotType("BMKeyboard");
+            slot.setSlotType("SvKeyboard");
         }
     }
 

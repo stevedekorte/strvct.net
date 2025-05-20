@@ -3,7 +3,7 @@
 /**
  * @module library.app
  * @class HeaderNode
- * @extends BMFolderNode
+ * @extends SvFolderNode
  * @classdesc This singleton sets up:
  *   - themes (inspectable) slot
  *   - blobs (inspectable) slot
@@ -12,27 +12,27 @@
  */
 
 
-(class HeaderNode extends BMFolderNode {
+(class HeaderNode extends SvFolderNode {
     
     initPrototypeSlots() {
 
         {
             const slot = this.newSlot("blobs", null);
-            slot.setFinalInitProto(BMBlobs);
+            slot.setFinalInitProto(SvBlobs);
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
         }
 
         {
             const slot = this.newSlot("themes", null);
-            slot.setFinalInitProto(BMThemeResources);
+            slot.setFinalInitProto(SvThemeResources);
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
         }        
         
         {
             const slot = this.newSlot("prototypes", null);
-            slot.setFinalInitProto(BMPrototypesNode);
+            slot.setFinalInitProto(SvPrototypesNode);
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
         }

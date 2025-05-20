@@ -4,7 +4,7 @@
  * @module library.node.node_views.browser.stack.Tile
  * @class SvTextNodeTile
  * @extends Tile
- * @classdesc BMTextNodeTile represents a tile for displaying and editing text nodes.
+ * @classdesc SvTextNodeTile represents a tile for displaying and editing text nodes.
  */
 
 (class SvTextNodeTile extends Tile {
@@ -25,7 +25,7 @@
     }
 
     /**
-     * Initializes the BMTextNodeTile.
+     * Initializes the SvTextNodeTile.
      * @returns {SvTextNodeTile} The initialized instance.
      * @category Initialization
      */

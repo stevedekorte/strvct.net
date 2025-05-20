@@ -712,9 +712,9 @@
      */
     hasAcceptableKeyboardState () {
         if (!this.allowsKeyboardKeys()) {
-            if (BMKeyboard.shared().hasKeysDown()) {
+            if (SvKeyboard.shared().hasKeysDown()) {
                 // make exception for shift key since we use it to emulate multi-touch
-                if (BMKeyboard.shared().shiftKey().isOnlyKeyDown()) {
+                if (SvKeyboard.shared().shiftKey().isOnlyKeyDown()) {
                     return true
                 }
                 return false

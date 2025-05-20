@@ -177,7 +177,7 @@
 
                 if (mimeType) {
                     dataTransferItem.getAsString((s) => {
-                        const chunk = BMDataUrl.clone()
+                        const chunk = SvDataUrl.clone()
                         chunk.setMimeType(mimeType)
                         chunk.setDecodedData(s)
                         console.log("Drag mimeType: '" + mimeType + "'")
@@ -209,13 +209,13 @@
      * @category Drop Handling
      */
     onBrowserDropMimeTypeAndRawData (mimeType, dataUrl) {
-        const dd = BMDataUrl.clone().setDataUrlString(dataUrl)
+        const dd = SvDataUrl.clone().setDataUrlString(dataUrl)
         this.onBrowserDropChunk(dd)
     }
 
     /**
      * @description Handles the browser drop chunk.
-     * @param {BMDataUrl} dataChunk - The data chunk.
+     * @param {SvDataUrl} dataChunk - The data chunk.
      * @category Drop Handling
      */
     onBrowserDropChunk (dataChunk) {

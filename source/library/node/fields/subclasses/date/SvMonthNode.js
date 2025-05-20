@@ -41,10 +41,10 @@
         this.setTitle("a month")
         this.setNodeCanEditTitle(true)
 
-        //this.setSubnodeProto(BMOptionNode)
+        //this.setSubnodeProto(SvOptionNode)
         //this.setNodeCanReorderSubnodes(false)
 
-        //this.setNodeViewClassName("BMOptionsNodeView")
+        //this.setNodeViewClassName("SvOptionsNodeView")
     }
 
     /**
@@ -148,7 +148,7 @@
         if (!this.subnodeCount()) {
 
             for (let i = 1; i < this.daysThisMonth() + 1; i++) {
-                const day = BMDayNode.clone().setValue(i)
+                const day = SvDayNode.clone().setValue(i)
                 day.setCanDelete(false)
                 this.addSubnode(day)
             }

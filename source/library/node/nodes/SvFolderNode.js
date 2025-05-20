@@ -85,7 +85,7 @@
     }
 
     /**
-     * @description Initializes the BMFolderNode instance.
+     * @description Initializes the SvFolderNode instance.
      * @category Initialization
      */
     init () {
@@ -116,11 +116,11 @@
 
     /**
      * @description Gets the accepted subnode types.
-     * @returns {Array} An array of accepted field types from BMCreatorNode.
+     * @returns {Array} An array of accepted field types from SvCreatorNode.
      * @category Node Properties
      */
     acceptedSubnodeTypes () {
-        return BMCreatorNode.fieldTypes()
+        return SvCreatorNode.fieldTypes()
     }
 
     /**

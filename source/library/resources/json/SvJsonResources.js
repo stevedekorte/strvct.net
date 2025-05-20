@@ -5,9 +5,9 @@
 /**
  * @class SvJsonResources
  * @extends SvResourceGroup
- * @classdesc BMJsonResources class for managing JSON resources.
+ * @classdesc SvJsonResources class for managing JSON resources.
  */
-(class SvJsonResources extends BMResourceGroup {
+(class SvJsonResources extends SvResourceGroup {
     
     /**
      * @static
@@ -27,7 +27,7 @@
 
     /**
      * @description Initializes the prototype with default values.
-     * @returns {SvJsonResources} The instance of BMJsonResources.
+     * @returns {SvJsonResources} The instance of SvJsonResources.
      * @category Initialization
      */
     initPrototype () {
@@ -38,13 +38,13 @@
 
     /**
      * @description Sets up the resource classes and subnode classes.
-     * @returns {SvJsonResources} The instance of BMJsonResources.
+     * @returns {SvJsonResources} The instance of SvJsonResources.
      * @category Setup
      */
     setup () {
         super.setup();
-        this.setResourceClasses([BMJsonResource]);
-        this.setSubnodeClasses([BMJsonResource]);
+        this.setResourceClasses([SvJsonResource]);
+        this.setSubnodeClasses([SvJsonResource]);
         return this;
     }
 

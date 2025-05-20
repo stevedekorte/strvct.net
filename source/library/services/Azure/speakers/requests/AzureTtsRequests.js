@@ -4,10 +4,10 @@
 
 /**
  * @class AzureTtsRequests
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of Azure TTS requests for a speaker.
  */
-(class AzureTtsRequests extends BMSummaryNode {
+(class AzureTtsRequests extends SvSummaryNode {
   /**
    * Initializes the prototype slots for the class.
    * @category Initialization

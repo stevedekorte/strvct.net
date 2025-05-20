@@ -3,7 +3,7 @@
 /**
  * @module library.app
  * @class RootContentNode
- * @extends BMFolderNode
+ * @extends SvFolderNode
  * @classdesc Root node to use for app persistent store.
  * The app is responsible for loading this from the store or creating it if it doesn't exist.
  *
@@ -20,7 +20,7 @@
  */
 
 
-(class RootContentNode extends BMFolderNode {
+(class RootContentNode extends SvFolderNode {
     /**
      * @description Initializes prototype slots for the RootContentNode class.
      * @category Initialization

@@ -84,7 +84,7 @@
      * @category Testing
      */
     selfTestOnStore (store) {
-        store.rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
+        store.rootOrIfAbsentFromClosure(() => SvStorableNode.clone())
         //store.flushIfNeeded()
         console.log("store:", store.asJson())
         console.log(" --- ")

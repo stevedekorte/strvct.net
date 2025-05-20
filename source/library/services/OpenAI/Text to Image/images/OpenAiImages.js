@@ -6,10 +6,10 @@
 
 /**
  * @class OpenAiImages
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of OpenAI generated images.
  */
-(class OpenAiImages extends BMSummaryNode {
+(class OpenAiImages extends SvSummaryNode {
 
   /**
    * @description Initializes the prototype slots for the OpenAiImages class.

@@ -6,11 +6,11 @@
 
 /**
  * @class SvNumberField
- * @extends BMField
+ * @extends SvField
  * @classdesc A named number field that validates that the 
  * value is a number and shows an appropraite error message.
  */
-(class SvNumberField extends BMField {
+(class SvNumberField extends SvField {
     
     /**
      * @static

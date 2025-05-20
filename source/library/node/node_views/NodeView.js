@@ -15,12 +15,12 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {BMNode} node
+         * @member {SvNode} node
          * @description The node associated with this view.
          */
         {
             const slot = this.newSlot("node", null); 
-            slot.setSlotType("BMNode")
+            slot.setSlotType("SvNode")
         }
 
         /**
@@ -42,12 +42,12 @@
         }
 
         /**
-         * @member {BMObservation} nodeObservation
+         * @member {SvObservation} nodeObservation
          * @description The observation object for the node.
          */
         {
             const slot = this.newSlot("nodeObservation", null);
-            slot.setSlotType("BMObservation");
+            slot.setSlotType("SvObservation");
         }
 
         /**
@@ -66,14 +66,14 @@
      */
     init () {
         super.init()
-        this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this))
+        this.setNodeObservation(SvNotificationCenter.shared().newObservation().setObserver(this))
         this.updateSubnodeToSubviewMap()
         return this
     }
     
     /**
      * @description Sets the node for this view.
-     * @param {BMNode} aNode - The node to set.
+     * @param {SvNode} aNode - The node to set.
      * @returns {NodeView} The current instance.
      */
     setNode (aNode) {
@@ -172,7 +172,7 @@
 
     /**
      * @description Gets the subview for a given node.
-     * @param {BMNode} aNode - The node to get the subview for.
+     * @param {SvNode} aNode - The node to get the subview for.
      * @returns {NodeView} The subview for the node.
      */
     subviewForNode (aNode) {
@@ -197,7 +197,7 @@
 
     /**
      * @description Gets the subview prototype for a subnode.
-     * @param {BMNode} aSubnode - The subnode to get the prototype for.
+     * @param {SvNode} aSubnode - The subnode to get the prototype for.
      * @returns {Class} The subview prototype.
      */
     subviewProtoForSubnode (aSubnode) {
@@ -216,7 +216,7 @@
 
     /**
      * @description Creates a new subview for a subnode.
-     * @param {BMNode} aSubnode - The subnode to create a subview for.
+     * @param {SvNode} aSubnode - The subnode to create a subview for.
      * @returns {NodeView} The new subview.
      */
     newSubviewForSubnode (aSubnode) {
@@ -247,7 +247,7 @@
     /**
      * @description Gets the flattened subnodes.
      * @param {number} [depth=0] - The depth to flatten to.
-     * @returns {Array<BMNode>} The flattened subnodes.
+     * @returns {Array<SvNode>} The flattened subnodes.
      */
     flattenedSubnodes (depth) {
         if (Type.isUndefined(depth)) {
@@ -267,7 +267,7 @@
     
     /**
      * @description Gets the visible subnodes.
-     * @returns {Array<BMNode>} The visible subnodes.
+     * @returns {Array<SvNode>} The visible subnodes.
      */
     visibleSubnodes () {
         const node = this.node();

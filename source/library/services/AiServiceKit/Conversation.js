@@ -6,11 +6,11 @@
 
 /**
  * @class Conversation
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc Represents a conversation with messages and chat input functionality.
  */
 
-(class Conversation extends BMStorableNode {
+(class Conversation extends SvStorableNode {
   /**
    * @description Initializes the prototype slots for the Conversation class.
    * @category Initialization

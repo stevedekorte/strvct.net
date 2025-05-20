@@ -54,7 +54,7 @@
 
     /**
      * @description Selects a node.
-     * @param {BMNode} aNode - The node to select.
+     * @param {SvNode} aNode - The node to select.
      * @returns {TilesView_selection} The current instance.
      */
     selectNode (aNode) {
@@ -188,7 +188,7 @@
 
     /**
      * @description Gets the selected nodes.
-     * @returns {Array<BMNode>} An array of selected nodes.
+     * @returns {Array<SvNode>} An array of selected nodes.
      */
     selectedNodes () {
         return this.selectedTiles().map(tile => tile.node())
@@ -196,7 +196,7 @@
 
     /**
      * @description Gets the selected node.
-     * @returns {BMNode|null} The selected node, or null if none is selected.
+     * @returns {SvNode|null} The selected node, or null if none is selected.
      */
     selectedNode () {
         const r = this.selectedTile()
@@ -230,7 +230,7 @@
   
     /**
      * @description Gets the index of the tile with the specified node.
-     * @param {BMNode} aNode - The node to find the tile for.
+     * @param {SvNode} aNode - The node to find the tile for.
      * @returns {number} The index of the tile, or -1 if not found.
      */
     indexOfTileWithNode (aNode) {
@@ -257,7 +257,7 @@
 
     /**
      * @description Selects the tile with the specified node.
-     * @param {BMNode} aNode - The node to select the tile for.
+     * @param {SvNode} aNode - The node to select the tile for.
      * @returns {Tile|null} The selected tile, or null if not found.
      */
     selectTileWithNode (aNode) {
@@ -367,7 +367,7 @@
 
     /**
      * @description Focuses and expands a subnode.
-     * @param {BMNotification} aNote - The notification containing the subnode info.
+     * @param {SvNotification} aNote - The notification containing the subnode info.
      * @returns {TilesView_selection} The current instance.
      */
     shouldFocusAndExpandSubnode (aNote) {
@@ -396,7 +396,7 @@
 
     /**
      * @description Focuses a subnode without expanding it.
-     * @param {BMNotification} aNote - The notification containing the subnode info.
+     * @param {SvNotification} aNote - The notification containing the subnode info.
      * @returns {TilesView_selection} The current instance.
      */
     shouldFocusSubnode (aNote) {
@@ -435,7 +435,7 @@
 	
     /**
      * @description Scrolls to a specific subnode.
-     * @param {BMNode} aSubnode - The subnode to scroll to.
+     * @param {SvNode} aSubnode - The subnode to scroll to.
      * @returns {TilesView_selection} The current instance.
      */
     scrollToSubnode (aSubnode) {
@@ -488,7 +488,7 @@
 
     /**
      * @description Selects and focuses on specified nodes.
-     * @param {Array<BMNode>} nodes - The nodes to select and focus.
+     * @param {Array<SvNode>} nodes - The nodes to select and focus.
      * @returns {TilesView_selection} The current instance.
      */
     selectAndFocusNodes (nodes) {

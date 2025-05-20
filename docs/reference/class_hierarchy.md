@@ -23,7 +23,7 @@
   - [BigInt_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBigInt_store.js)
   - Blob
     - [Blob_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBlob_store.js)
-  - [BMModelReference](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fjson%2FBMModelReference.js)
+  - [SvModelReference](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fjson%2FSvModelReference.js)
   - Boolean
     - [Boolean_ideal](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fideal%2Fcategories%2FBoolean_ideal.js)
     - [Boolean_store](../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)

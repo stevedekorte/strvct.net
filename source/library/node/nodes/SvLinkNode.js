@@ -51,7 +51,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMLinkNode
+     * @description Initializes the prototype of the SvLinkNode
      * @category Initialization
      */
     initPrototype () {

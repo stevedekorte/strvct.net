@@ -4,10 +4,10 @@
 
 /**
  * @class ChatInputNode
- * @extends BMTextAreaField
+ * @extends SvTextAreaField
  * @classdesc ChatInputNode for handling chat input functionality.
  */
-(class ChatInputNode extends BMTextAreaField {
+(class ChatInputNode extends SvTextAreaField {
   /**
    * Initialize prototype slots
    * @private
@@ -61,7 +61,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
 
-    this.setNodeTileClassName("BMChatInputTile");
+    this.setNodeTileClassName("SvChatInputTile");
     this.setKeyIsVisible(false);
     this.setValue("");
     this.setCanDelete(true);

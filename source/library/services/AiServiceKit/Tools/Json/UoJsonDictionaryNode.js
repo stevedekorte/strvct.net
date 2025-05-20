@@ -3,12 +3,12 @@
 /*
 * @module library.services.AiServiceKit.ApiCalls
 * @class UoJsonDictionaryNode
-* @extends BMJsonDictionaryNode
+* @extends SvJsonDictionaryNode
 * @classdesc Adds some methods to access the session.
 * 
 */
 
-(class UoJsonDictionaryNode extends BMJsonDictionaryNode {
+(class UoJsonDictionaryNode extends SvJsonDictionaryNode {
 
   /*
    * @description Returns the session.

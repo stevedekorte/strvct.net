@@ -3,11 +3,11 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvJsonField
- * @extends BMField
- * @classdesc BMJsonField is a specialized field for handling JSON data.
+ * @extends SvField
+ * @classdesc SvJsonField is a specialized field for handling JSON data.
  * It provides functionality to set and retrieve JSON values, and interact with SvJsonNode.
  */
-(class SvJsonField extends BMField {
+(class SvJsonField extends SvField {
     
     /**
      * @description Initializes the prototype slots for the SvJsonField.
@@ -43,7 +43,7 @@
      * @category Data Manipulation
      */
     setValue (v) {
-        console.warn("WARNING: BMJsonField setValue '" + v + "'")
+        console.warn("WARNING: SvJsonField setValue '" + v + "'")
         const node = SvJsonNode.nodeForJson(v)
         this.setNodeTileLink(node)
         return this

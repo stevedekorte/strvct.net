@@ -6,10 +6,10 @@
 
 /**
  * @class RzSigServers
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc RzSigServers manages a collection of PeerJS Signalling Servers.
  */
-(class RzSigServers extends BMSummaryNode {
+(class RzSigServers extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the RzSigServers class.
    * @category Initialization

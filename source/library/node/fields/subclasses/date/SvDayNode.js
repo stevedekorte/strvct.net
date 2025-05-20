@@ -39,7 +39,7 @@
     /**
      * @description Sets the value of the day.
      * @param {Number} v - The day value to set.
-     * @returns {SvDayNode} The instance of BMDayNode.
+     * @returns {SvDayNode} The instance of SvDayNode.
      * @category Data Manipulation
      */
     setValue (v) {

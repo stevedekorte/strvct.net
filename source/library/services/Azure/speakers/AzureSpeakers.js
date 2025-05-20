@@ -6,10 +6,10 @@
 
 /**
  * @class AzureSpeakers
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a collection of Azure Speakers.
  */
-(class AzureSpeakers extends BMSummaryNode {
+(class AzureSpeakers extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the AzureSpeakers class.
    * @category Initialization

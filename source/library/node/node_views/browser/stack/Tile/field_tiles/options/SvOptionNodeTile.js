@@ -2,7 +2,7 @@
  * @module library.node.node_views.browser.stack.Tile.field_tiles.options
  * @class SvOptionNodeTile
  * @extends TitledTile
- * @classdesc BMOptionNodeTile represents an option node tile in the browser stack.
+ * @classdesc SvOptionNodeTile represents an option node tile in the browser stack.
  */
 "use strict";
 

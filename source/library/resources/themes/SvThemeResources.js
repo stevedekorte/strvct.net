@@ -8,11 +8,11 @@
  * @class SvThemeResources
  * @extends SvStorableNode
  * @classdesc
- * BMThemeResources
+ * SvThemeResources
  *
  * hierarchy:
  *
- *     BMThemeResources -> Theme -> ThemeClass -> ThemeState -> ThemeAttribute
+ *     SvThemeResources -> Theme -> ThemeClass -> ThemeState -> ThemeAttribute
  *
  * example:
  * 
@@ -20,7 +20,7 @@
  *
  * Example use by views:
  *
- *     BMThemeResources.shared().currentTheme().classNamed("x").attributeNamed("y").value()
+ *     SvThemeResources.shared().currentTheme().classNamed("x").attributeNamed("y").value()
  *
  * We'd like to implement some form  of inheritance system.
  * Example:
@@ -61,10 +61,10 @@
 
         this.setNoteIsSubnodeCount(true)
         this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses([BMTheme, BMDefaultTheme])
+        this.setSubnodeClasses([SvTheme, SvDefaultTheme])
         this.setNodeCanReorderSubnodes(true)
 
-        //this.setSubnodes([BMDefaultTheme.clone()]) // hack
+        //this.setSubnodes([SvDefaultTheme.clone()]) // hack
     }
 
     /**
@@ -74,7 +74,7 @@
     finalInit () {
         super.finalInit();
         if (!this.hasSubnodes()) {
-            this.addSubnode(BMDefaultTheme.clone()) // hack
+            this.addSubnode(SvDefaultTheme.clone()) // hack
         }
     }
 

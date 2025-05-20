@@ -5,7 +5,7 @@
  * @class SvBlob
  * @extends BaseNode
  * @classdesc
- * BMBlob is a class that represents a binary blob in the system.
+ * SvBlob is a class that represents a binary blob in the system.
  * It extends the BaseNode class and provides functionality for managing and storing binary data.
  */
 (class SvBlob extends BaseNode {
@@ -108,7 +108,7 @@
 
     /**
      * @async
-     * @description Prepares the BMBlob for first access by setting up the value field.
+     * @description Prepares the SvBlob for first access by setting up the value field.
      * @category Initialization
      */
     prepareForFirstAccess() {
@@ -121,7 +121,7 @@
      * @category Initialization
      */
     async setupValueField() {
-        const field = BMTextAreaField.clone().setKey("value");
+        const field = SvTextAreaField.clone().setKey("value");
         field.setValueMethod("value");
         field.setValueIsEditable(false);
         field.setIsMono(true);
@@ -135,15 +135,15 @@
     }
 
     /**
-     * @description Performs any necessary actions after reading the value of the BMBlob.
+     * @description Performs any necessary actions after reading the value of the SvBlob.
      * @category Data
      */
     didReadValue() {
     }
 
     /**
-     * @description Returns the title of the BMBlob, which is its name.
-     * @returns {string} The name of the BMBlob.
+     * @description Returns the title of the SvBlob, which is its name.
+     * @returns {string} The name of the SvBlob.
      * @category Metadata
      */
     title() {
@@ -151,8 +151,8 @@
     }
 
     /**
-     * @description Returns the subtitle of the BMBlob, which is the size of its data in a human-readable format.
-     * @returns {string|null} The size of the BMBlob's data in a human-readable format, or null if the size is not available.
+     * @description Returns the subtitle of the SvBlob, which is the size of its data in a human-readable format.
+     * @returns {string|null} The size of the SvBlob's data in a human-readable format, or null if the size is not available.
      * @category Metadata
      */
     subtitle() {
@@ -164,8 +164,8 @@
     }
 
     /**
-     * @description Returns the hash value of the BMBlob, which is used as the key for subnode lookup.
-     * @returns {string} The hash value of the BMBlob.
+     * @description Returns the hash value of the SvBlob, which is used as the key for subnode lookup.
+     * @returns {string} The hash value of the SvBlob.
      * @category Data
      */
     hash() {
@@ -176,7 +176,7 @@
      * @description Performs any necessary actions when a slot value is updated.
      * @param {*} oldValue The old value of the slot.
      * @param {*} newValue The new value of the slot.
-     * @returns {SvBlob} The current instance of BMBlob.
+     * @returns {SvBlob} The current instance of SvBlob.
      * @category Data
      */
     didUpdateSlotValue(oldValue, newValue) {
@@ -189,8 +189,8 @@
     }
 
     /**
-     * @description Returns the store associated with the BMBlob's parent node.
-     * @returns {*} The store associated with the BMBlob's parent node.
+     * @description Returns the store associated with the SvBlob's parent node.
+     * @returns {*} The store associated with the SvBlob's parent node.
      * @category Storage
      */
     store() {
@@ -199,7 +199,7 @@
 
     /**
      * @async
-     * @description Promises to write the value of the BMBlob to the store.
+     * @description Promises to write the value of the SvBlob to the store.
      * @category Storage
      */
     async promiseWriteValue() {
@@ -214,7 +214,7 @@
 
     /**
      * @async
-     * @description Promises to write the value and hash of the BMBlob to the store.
+     * @description Promises to write the value and hash of the SvBlob to the store.
      * @param {ArrayBuffer|string} v The value to be written.
      * @param {string} h The hash value of the value.
      * @category Storage
@@ -240,7 +240,7 @@
     }
 
     /**
-     * @description Promises to read the value of the BMBlob from the store.
+     * @description Promises to read the value of the SvBlob from the store.
      * @category Storage
      */
     async promiseReadValue() {
@@ -257,8 +257,8 @@
 
     /**
      * @async
-     * @description Checks if the BMBlob is valid based on its properties.
-     * @returns {boolean} True if the BMBlob is valid, false otherwise.
+     * @description Checks if the SvBlob is valid based on its properties.
+     * @returns {boolean} True if the SvBlob is valid, false otherwise.
      * @category Validation
      */
     isValid() {
@@ -282,8 +282,8 @@
     }
 
     /**
-     * @description Returns a string description of the BMBlob, including its type ID and slot values.
-     * @returns {string} A string description of the BMBlob.
+     * @description Returns a string description of the SvBlob, including its type ID and slot values.
+     * @returns {string} A string description of the SvBlob.
      * @category Utility
      */
     description() {
@@ -318,4 +318,4 @@
 
 }.initThisClass());
 
-//BMBlob.testHash()
+//SvBlob.testHash()

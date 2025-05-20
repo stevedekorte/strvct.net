@@ -160,7 +160,7 @@
                 return this
             }
 
-            const icons = BMIconResources.shared()
+            const icons = SvIconResources.shared()
             const iconNode = icons.firstSubnodeWithTitle(name)
 
             if (iconNode) {

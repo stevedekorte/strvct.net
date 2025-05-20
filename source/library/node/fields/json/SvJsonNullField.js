@@ -3,10 +3,10 @@
 /**
  * @module library.node.fields.json
  * @class SvJsonNullField
- * @extends BMField
+ * @extends SvField
  * @classdesc Represents a JSON null field in the application.
  */
-(class SvJsonNullField extends BMField {
+(class SvJsonNullField extends SvField {
     
     /**
      * @description Initializes prototype slots for the class.

@@ -1,14 +1,14 @@
 /**
  * @module library.services.ProxyServers
  * @class ProxyServers
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc ProxyServers class for managing proxy servers.
  * 
  * example use:
  * 
  * const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(targetUrl);
  */
-(class ProxyServers extends BMSummaryNode {
+(class ProxyServers extends SvSummaryNode {
       
   /**
    * @static

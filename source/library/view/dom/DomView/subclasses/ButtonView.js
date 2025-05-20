@@ -8,7 +8,7 @@
  * @classdesc A simple push button view with a TextView label.
  * 
  * CSS Styles:
- * .BMActionFieldView {
+ * .SvActionFieldView {
  *     min-height: 28px;
  *     padding-top: 8px;
  *     padding-bottom: 8px;
@@ -22,7 +22,7 @@
  *     vertical-align: center;
  * }
  * 
- * .BMActionFieldView:hover {
+ * .SvActionFieldView:hover {
  *     color: white;
  *     background-color: #888;
  * }

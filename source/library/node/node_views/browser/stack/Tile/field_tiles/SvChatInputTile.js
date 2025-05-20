@@ -1,13 +1,13 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
  * @class SvChatInputTile
- * @extends BMTextAreaFieldTile
- * @classdesc BMChatInputTile is a specialized tile for chat input functionality.
+ * @extends SvTextAreaFieldTile
+ * @classdesc SvChatInputTile is a specialized tile for chat input functionality.
  */
 
 "use strict";
 
-(class SvChatInputTile extends BMTextAreaFieldTile {
+(class SvChatInputTile extends SvTextAreaFieldTile {
     
     /**
      * @description Initializes prototype slots.
@@ -17,7 +17,7 @@
     }
 
     /**
-     * @description Initializes the BMChatInputTile instance.
+     * @description Initializes the SvChatInputTile instance.
      * @returns {SvChatInputTile} The initialized instance.
      * @category Initialization
      */
@@ -26,7 +26,7 @@
         this.keyView().hideDisplay();
         this.setValueUneditableBorder("none");
         this.setValueEditableBorder("none");
-        this.setElementClassName("BMChatInputTile");
+        this.setElementClassName("SvChatInputTile");
         return this
     }
 
@@ -62,7 +62,7 @@
         }
 
         const e = this.speakableElementWithText(text);
-        assert(e, "BMChatInputTile.onSpeakingText(aNote) missing div for text [" + text + "]");
+        assert(e, "SvChatInputTile.onSpeakingText(aNote) missing div for text [" + text + "]");
         this.unhighlightAllSentences();
         this.highlightElement(e);
     }
@@ -125,7 +125,7 @@
      * @category UI
      */
     createValueView () {
-        const v = TextField.clone().setElementClassName("BMChatInputTileValueView");
+        const v = TextField.clone().setElementClassName("SvChatInputTileValueView");
         
         v.setIsMergeable(true);
         v.setDisplay("block")

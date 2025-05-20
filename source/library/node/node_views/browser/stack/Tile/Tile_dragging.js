@@ -181,14 +181,14 @@
      * @category Dragging
      */
     onBrowserDragStart (event) {  
-        let dKey = BMKeyboard.shared().keyForName("d")
+        let dKey = SvKeyboard.shared().keyForName("d")
         if (!dKey.isDown()) {
             return false
         }
 
         const node = this.node()
-        if (node && node.getBMDataUrl) {
-            const bdd = node.getBMDataUrl()
+        if (node && node.getSvDataUrl) {
+            const bdd = node.getSvDataUrl()
             if (bdd) {
                 event.dataTransfer.setData(bdd.transferMimeType(), bdd.dataUrlString())
                 return true;

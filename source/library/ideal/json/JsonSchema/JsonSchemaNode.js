@@ -3,11 +3,11 @@
 /**
  * @module library.ideal.json.JsonSchema
  * @class JsonSchemaNode
- * @extends BMSummaryNode
- * @classdesc JsonSchemaNode is a class that extends BMSummaryNode and is used to manage JSON schema representations and related operations.
+ * @extends SvSummaryNode
+ * @classdesc JsonSchemaNode is a class that extends SvSummaryNode and is used to manage JSON schema representations and related operations.
  */
 
-(class JsonSchemaNode extends BMSummaryNode {
+(class JsonSchemaNode extends SvSummaryNode {
 
   /**
    * Initializes the class

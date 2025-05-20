@@ -2,7 +2,7 @@
  * @module library.node.fields.subclasses.time
  * @class SvMeridiemNode
  * @extends BaseNode
- * @classdesc BMMeridiemNode represents a meridiem (AM/PM) node in a time-related structure.
+ * @classdesc SvMeridiemNode represents a meridiem (AM/PM) node in a time-related structure.
  */
 "use strict";
 
@@ -35,10 +35,10 @@
         this.setTitle("a month")
         this.setNodeCanEditTitle(true)
 
-        //this.setSubnodeProto(BMOptionNode)
+        //this.setSubnodeProto(SvOptionNode)
         //this.setNodeCanReorderSubnodes(false)
 
-        //this.setNodeViewClassName("BMOptionsNodeView")
+        //this.setNodeViewClassName("SvOptionsNodeView")
     }
 
     setValue (v) {
@@ -93,7 +93,7 @@
         if (!this.subnodeCount()) {
 
             for (let i = 1; i < this.daysThisMonth() + 1; i++) {
-                this.addSubnode(BMDayNode.clone().setValue(i))
+                this.addSubnode(SvDayNode.clone().setValue(i))
             }
         }
     }

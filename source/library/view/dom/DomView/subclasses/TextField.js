@@ -7,7 +7,7 @@
  * @description A view for a single line of text. 
  * For multi-line text, use TextArea.
  * On input, sends didEdit up parent view chain.
- * This typically goes to a BMFieldTile.onDidEdit(changedView) which sends this.scheduleSyncToNode().
+ * This typically goes to a SvFieldTile.onDidEdit(changedView) which sends this.scheduleSyncToNode().
  * Behavior:
  * (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent. 
  * 
@@ -825,7 +825,7 @@
      * @returns {TextField} The text field.
      */
     adjustFontSizeWithKeyboard () {
-        const kb = BMKeyboard.shared();
+        const kb = SvKeyboard.shared();
         const controlDown   = kb.controlKey().isDown();
         const equalSignDown = kb.equalsSignKey().isDown();
         const minusDown     = kb.minusKey().isDown();
@@ -904,7 +904,7 @@
     onKeyDown (event) {
         // sent before the content is changed
         let result = super.onKeyDown(event);
-        //const keyName = BMKeyboard.shared().keyForEvent(event);
+        //const keyName = SvKeyboard.shared().keyForEvent(event);
         //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode);
 
         if (this.shouldMuteEvent(event)) {

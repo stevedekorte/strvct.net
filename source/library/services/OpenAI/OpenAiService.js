@@ -5,7 +5,7 @@
 /**
  * @class OpenAiService
  * @extends AiService
- * @classdesc OpenAiService is a BMSummaryNode that holds the API key and subnodes for the various OpenAI services.
+ * @classdesc OpenAiService is a SvSummaryNode that holds the API key and subnodes for the various OpenAI services.
  * 
  * Example:
  * 

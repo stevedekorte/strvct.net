@@ -6,10 +6,10 @@
 
 /**
  * @class RzMsg
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a message in the RzMsg system.
  */
-(class RzMsg extends BMSummaryNode {
+(class RzMsg extends SvSummaryNode {
 
   initPrototypeSlots () {
 

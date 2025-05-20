@@ -6,7 +6,7 @@
 
 /**
  * @class AiRequest
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc Wrapper for request to API service that manages streaming the response and checking for various errors.
  * 
  * Delegate protocol:
@@ -27,7 +27,7 @@
  * 
  */
 
-(class AiRequest extends BMStorableNode {
+(class AiRequest extends SvStorableNode {
 
   /**
    * Test static method.

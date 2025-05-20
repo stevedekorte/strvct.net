@@ -3,10 +3,10 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvColorField
- * @extends BMField
- * @classdesc BMColorField represents a color field with red, green, blue, and alpha components.
+ * @extends SvField
+ * @classdesc SvColorField represents a color field with red, green, blue, and alpha components.
  */
-(class SvColorField extends BMField {
+(class SvColorField extends SvField {
     
     /**
      * @static
@@ -73,7 +73,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMColorField.
+     * @description Initializes the prototype of the SvColorField.
      * @category Initialization
      */
     initPrototype () {

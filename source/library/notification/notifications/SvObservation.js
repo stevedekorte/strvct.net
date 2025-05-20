@@ -19,12 +19,12 @@
     initPrototypeSlots () {
     
         /**
-         * @member {BMNotificationCenter} center - NotificationCenter that owns this
+         * @member {SvNotificationCenter} center - NotificationCenter that owns this
          * @category Configuration
          */
         {
             const slot = this.newSlot("center", null);
-            slot.setSlotType("BMNotificationCenter");
+            slot.setSlotType("SvNotificationCenter");
         }
         /**
          * @member {String|null} name
@@ -98,7 +98,7 @@
     }
 
     /**
-     * @description Initializes the BMObservation instance.
+     * @description Initializes the SvObservation instance.
      * @category Initialization
      */
     init () {
@@ -213,7 +213,7 @@
      */
     noteHash () {
         if (!this._noteHash) {
-            const id = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender()); // must be implemented the same by BMNotification
+            const id = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender()); // must be implemented the same by SvNotification
             this._noteHash = id.hashCode64();
         }
         return this._noteHash
@@ -399,10 +399,10 @@
     static testWeakRefs () {
         const observer = new Object()
         const sender = new Object()
-        const observation = BMNotificationCenter.shared().newObservation().setName("weakRefTest").setObserver(observer).setSender(sender).startWatching()
+        const observation = SvNotificationCenter.shared().newObservation().setName("weakRefTest").setObserver(observer).setSender(sender).startWatching()
         // let's see if this onFinalizedSlotObserver or onFinalizedSlotSender get called and it auto stops watching 
     }
 
 }.initThisClass());
 
-//BMObservation.testWeakRefs()
+//SvObservation.testWeakRefs()

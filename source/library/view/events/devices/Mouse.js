@@ -253,7 +253,7 @@
      * @category Utilities
      */
     downMethodNameForEvent (event) {
-        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event); // e.g. "Alternate", "Control", "MetaLeft", "MetaRight"
+        const s = SvKeyboard.shared().modsAndKeyNameForEvent(event); // e.g. "Alternate", "Control", "MetaLeft", "MetaRight"
         return "on" + s + "MouseDown";
     }
 
@@ -264,7 +264,7 @@
      * @category Utilities
      */
     upMethodNameForEvent (event) {
-        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event);
+        const s = SvKeyboard.shared().modsAndKeyNameForEvent(event);
         return "on" + s + "MouseUp";
     }
     

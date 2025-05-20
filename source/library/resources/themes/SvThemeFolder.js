@@ -19,7 +19,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMThemeFolder class.
+     * @description Initializes the prototype of the SvThemeFolder class.
      * @category Initialization
      */
     initPrototype () {
@@ -34,13 +34,13 @@
     }
 
     /**
-     * @description Initializes a new instance of the BMThemeFolder class.
+     * @description Initializes a new instance of the SvThemeFolder class.
      * @returns {SvThemeFolder} The initialized instance.
      * @category Initialization
      */
     init () {
         super.init();
-        this.setSubnodeClasses([this.thisClass(), BMThemeClass, BMStringField, BMNumberField]);
+        this.setSubnodeClasses([this.thisClass(), SvThemeClass, SvStringField, SvNumberField]);
         return this;
     }
 
@@ -50,7 +50,7 @@
      * @category Styling
      */
     styleMap () {
-        // this should be the same implementation of styleMap() as BMThemeClass
+        // this should be the same implementation of styleMap() as SvThemeClass
         const map = new Map()
         const title = this.title()
         this.subnodes().forEach(sn => { 

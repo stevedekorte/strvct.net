@@ -137,11 +137,11 @@
     /**
      * @static
      * @description Returns the root node prototype
-     * @returns {BMStorableNode} The root node prototype
+     * @returns {SvStorableNode} The root node prototype
      * @category Data Management
      */
     static rootNodeProto () {
-        return BMStorableNode;
+        return SvStorableNode;
     }
 
     /**
@@ -253,7 +253,7 @@
      */
     async setup () {
         SyncScheduler.shared().pause();
-        BMNotificationCenter.shared().pause();
+        SvNotificationCenter.shared().pause();
 
         await this.asyncLogTimeToRun(async () => { 
             await this.setupModel();
@@ -268,7 +268,7 @@
         }, "appDidInit");
 
         SyncScheduler.shared().resume();
-        BMNotificationCenter.shared().resume();
+        SvNotificationCenter.shared().resume();
 
         setTimeout(() => {
             console.log("All synchronous operations completed");

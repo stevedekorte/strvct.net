@@ -28,8 +28,8 @@
     }
     
     /**
-     * @description Updates the subviews of the BMImageTile.
-     * @returns {SvImageTile} Returns the instance of BMImageTile.
+     * @description Updates the subviews of the SvImageTile.
+     * @returns {SvImageTile} Returns the instance of SvImageTile.
      * @category View Management
      */
     updateSubviews () {

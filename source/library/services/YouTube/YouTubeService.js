@@ -6,10 +6,10 @@
 
 /**
  * @class YouTubeService
- * @extends BMStorableNode
+ * @extends SvStorableNode
  * @classdesc YouTubeService class for managing YouTube-related functionality.
  */
-(class YouTubeService extends BMStorableNode {
+(class YouTubeService extends SvStorableNode {
   /**
    * @description Initializes the prototype slots for the YouTubeService.
    * @category Initialization

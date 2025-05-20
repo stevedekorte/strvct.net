@@ -152,7 +152,7 @@
             if (this.shouldMerge() && sn) {
                 sn.setJson(v);
             } else {
-                console.log("BMJsonArrayNode.setJson() creating new node for hash: ", hash);
+                console.log("SvJsonArrayNode.setJson() creating new node for hash: ", hash);
                 const aNode = this.thisClass().nodeForJson(v, jsonPathComponents.concat(k));
                 aNode.setTitle(k);
                 if (aNode.setKey) {
@@ -229,13 +229,13 @@
     }
 
     /**
-     * @description Gets the BMDataUrl for this node.
-     * @returns {SvDataUrl} The BMDataUrl object for this node.
+     * @description Gets the SvDataUrl for this node.
+     * @returns {SvDataUrl} The SvDataUrl object for this node.
      * @category Data Operations
      */
-    getBMDataUrl () {
+    getSvDataUrl () {
         const json = this.jsonArchive();
-        const bdd = BMDataUrl.clone();
+        const bdd = SvDataUrl.clone();
         bdd.setMimeType("application/json");
         bdd.setFileName(this.title() + ".json");
         bdd.setDecodedData(JSON.stableStringifyWithStdOptions(json, null, 4));

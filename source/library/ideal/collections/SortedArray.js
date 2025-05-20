@@ -33,7 +33,7 @@
 
     /**
      * Sets the sort function for the array.
-     * The sort function should take two arguments of type BMNode and 
+     * The sort function should take two arguments of type SvNode and 
      * return a negative value if the first argument is less than the second,
      * Changing the sort function will cause the array to be resorted.
      * To disable sorting, pass null as the sort function.

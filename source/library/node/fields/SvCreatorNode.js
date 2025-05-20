@@ -65,22 +65,22 @@
      */
     static fieldTypes () {
         return [
-            "BMActionField", 
-            "BMBooleanField", 
-            "BMDateNode",
-            "BMImageWellField", 
-            "BMJsonDictionaryNode",
-            "BMJsonArrayNode",
-            "BMFolderNode", 
-            "BMNumberField", 
-            "BMOptionsNode",
-            "BMStringField",
-            "BMTextAreaField",
-            //"BMChatField",
-            //"BMTextNode",
-            "BMTimeNode",
-            "BMLinkNode",
-            "BMUrlField",
+            "SvActionField", 
+            "SvBooleanField", 
+            "SvDateNode",
+            "SvImageWellField", 
+            "SvJsonDictionaryNode",
+            "SvJsonArrayNode",
+            "SvFolderNode", 
+            "SvNumberField", 
+            "SvOptionsNode",
+            "SvStringField",
+            "SvTextAreaField",
+            //"SvChatField",
+            //"SvTextNode",
+            "SvTimeNode",
+            "SvLinkNode",
+            "SvUrlField",
         ];
     }
 
@@ -119,7 +119,7 @@
      */
     addSubnodesForObjects (objects) {
         const newSubnodes = objects.map((aClass) => {
-            const newNode = BMFolderNode.clone()
+            const newNode = SvFolderNode.clone()
             newNode.setTitle(aClass.nodeCreateName())
             newNode.setNodeCanEditTitle(false)
             newNode.setNodeCanEditSubtitle(false)

@@ -6,7 +6,7 @@
 
 /**
  * @class ProxyServer
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc ProxyServer
  * 
  * NOTES:
@@ -15,7 +15,7 @@
  * Use another class or subclass to handle more complex proxy request, such as passing 
  * an XML/JSON body with auth and/or other info.
  */
-(class ProxyServer extends BMSummaryNode {
+(class ProxyServer extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the ProxyServer class.
    * @category Initialization

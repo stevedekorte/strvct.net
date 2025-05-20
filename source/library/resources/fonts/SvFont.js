@@ -5,12 +5,12 @@
  */
 
 /**
- * BMFont class for managing font resources.
+ * SvFont class for managing font resources.
  * @class
  * @extends SvResource
- * @classdesc Managed by BMFontResources.
+ * @classdesc Managed by SvFontResources.
  */
-(class SvFont extends BMResource {
+(class SvFont extends SvResource {
     
     /**
      * @static
@@ -80,7 +80,7 @@
              * @member {Map} weightMap - Map of font weight names to numeric values.
              * @category Font Properties
              */
-            const slot = this.newSlot("weightMap", BMFont.fontWeightMap());
+            const slot = this.newSlot("weightMap", SvFont.fontWeightMap());
             slot.setSlotType("Map");
         }
     }
@@ -94,7 +94,7 @@
     }
 
     /**
-     * @description Initializes the BMFont instance.
+     * @description Initializes the SvFont instance.
      * @category Initialization
      */
     init () {
@@ -169,7 +169,7 @@
     /**
      * @description Asynchronously loads the font from the data.
      * @async
-     * @returns {Promise<BMFont>} A promise that resolves to the BMFont instance.
+     * @returns {Promise<SvFont>} A promise that resolves to the SvFont instance.
      * @category Font Loading
      */
     async asyncLoadFontFromData () {
@@ -202,7 +202,7 @@
     /**
      * @description Handles load errors.
      * @param {Error} error - The error object.
-     * @returns {SvFont} The BMFont instance.
+     * @returns {SvFont} The SvFont instance.
      * @category Error Handling
      */
     onLoadError (error) {

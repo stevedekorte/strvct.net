@@ -16,7 +16,7 @@
     }
 
     /**
-     * @description Initializes the BMPointerFieldTile instance.
+     * @description Initializes the SvPointerFieldTile instance.
      * @returns {SvPointerFieldTile} The initialized instance.
      * @category Initialization
      */
@@ -29,7 +29,7 @@
     }
 
     /**
-     * @description Updates the subviews of the BMPointerFieldTile.
+     * @description Updates the subviews of the SvPointerFieldTile.
      * @returns {SvPointerFieldTile} The instance after updating subviews.
      * @category UI Update
      */

@@ -170,7 +170,7 @@
         */
 
         /**
-         * @member {BMNotification} nodeStoreDidOpenNote
+         * @member {SvNotification} nodeStoreDidOpenNote
          * @description Notification sent after pool opens
          * @default null
          */
@@ -178,7 +178,7 @@
         {
             const slot = this.newSlot("nodeStoreDidOpenNote", null);
             slot.setDescription("Notification sent after pool opens");
-            slot.setSlotType("BMNotification");
+            slot.setSlotType("SvNotification");
         }
 
         /**
@@ -819,7 +819,7 @@
     classNameConversionMap () {
         const m = new Map()
         /*
-        m.set("BMMenuNode", "BMFolderNode")
+        m.set("SvMenuNode", "SvFolderNode")
         */
        return m;
     }
@@ -1398,7 +1398,7 @@
         const aTypedArray = Float64Array.from([1.2, 3.4, 4.5]);
         const aSet = new Set("sv1", "sv2");
         const aMap = new Map([ ["mk1", "mv1"], ["mk2", "mv2"] ]);
-        const aNode = BMStorableNode.clone();
+        const aNode = SvStorableNode.clone();
         const a = [1, 2, [3, null], { foo: "bar", b: true }, aSet, aMap, new Date(), aTypedArray, aNode];
         return a;
     }
@@ -1408,7 +1408,7 @@
         const store = ObjectPool.clone()
         store.open();;
 
-        store.rootOrIfAbsentFromClosure(() => BMStorableNode.clone());
+        store.rootOrIfAbsentFromClosure(() => SvStorableNode.clone());
         store.flushIfNeeded();
         console.log("store:", store.asJson());
         console.log(" --- ");

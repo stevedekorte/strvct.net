@@ -8,7 +8,7 @@
  * @class SvDataUrl
  * @extends ProtoClass
  * @classdesc
- * BMDataUrl class for handling data URLs in drag and drop operations.
+ * SvDataUrl class for handling data URLs in drag and drop operations.
  * 
  * Examples of setting up a dataTransfer for a drag out of browser event:
  * 

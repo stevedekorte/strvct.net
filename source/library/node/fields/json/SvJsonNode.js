@@ -3,11 +3,11 @@
 /**
  * @module library.node.fields.json
  * @class SvJsonNode
- * @extends BMJsonCachedNode
+ * @extends SvJsonCachedNode
  * @classdesc Represents a JSON node in the application. This class handles JSON data and provides methods for parsing and creating nodes from JSON.
  */
 
-(class SvJsonNode extends BMJsonCachedNode {
+(class SvJsonNode extends SvJsonCachedNode {
     
     /**
      * @static
@@ -50,12 +50,12 @@
      */
     jsonClasses () {
         return [
-            BMJsonArrayNode, 
-            BMBooleanField, 
-            BMJsonNullField, 
-            BMNumberField, 
-            BMJsonDictionaryNode, 
-            BMStringField
+            SvJsonArrayNode, 
+            SvBooleanField, 
+            SvJsonNullField, 
+            SvNumberField, 
+            SvJsonDictionaryNode, 
+            SvStringField
         ];
     }
 
@@ -67,12 +67,12 @@
      */
     static jsonToProtoNameDict () {
         return {
-            "Array"   : "BMJsonArrayNode",
-            "Boolean" : "BMBooleanField",
-            "Null"    : "BMJsonNullField",
-            "Number"  : "BMNumberField",
-            "Object"  : "BMJsonDictionaryNode",
-            "String"  : "BMStringField",
+            "Array"   : "SvJsonArrayNode",
+            "Boolean" : "SvBooleanField",
+            "Null"    : "SvJsonNullField",
+            "Number"  : "SvNumberField",
+            "Object"  : "SvJsonDictionaryNode",
+            "String"  : "SvStringField",
         }
     }
     

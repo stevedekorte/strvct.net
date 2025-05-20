@@ -3,12 +3,12 @@
 /**
  * @module library.node.fields.subclasses
  * @class SvImageWellField
- * @extends BMField
+ * @extends SvField
  * @classdesc Represents an image well field in the application.
  * This class handles image-related operations and supports specific mime types.
  */
 
-class BMImageWellField extends BMField {
+class SvImageWellField extends SvField {
     /**
      * @static
      * @description Indicates if this class is available as a node primitive.
@@ -44,7 +44,7 @@ class BMImageWellField extends BMField {
      * @static
      * @description Opens a data chunk with the given MIME type.
      * @param {Object} dataChunk - The data chunk to open.
-     * @returns {SvImageWellField} A new instance of BMImageWellField with the opened data.
+     * @returns {SvImageWellField} A new instance of SvImageWellField with the opened data.
      * @category Data Handling
      */
     static openMimeChunk(dataChunk) {
@@ -113,4 +113,4 @@ class BMImageWellField extends BMField {
    
 }
 
-BMImageWellField.initThisClass();
+SvImageWellField.initThisClass();

@@ -2,7 +2,7 @@
  * @module library.node.fields.subclasses.time
  * @class SvTimeNode
  * @extends SvSummaryNode
- * @classdesc BMTimeNode represents a time node in the application.
+ * @classdesc SvTimeNode represents a time node in the application.
  * It handles the storage and formatting of time information.
  */
 
@@ -67,7 +67,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the BMTimeNode.
+     * @description Initializes the prototype of the SvTimeNode.
      * @category Initialization
      */
     initPrototype () {
@@ -149,7 +149,7 @@
      */
     setupHourNodes () {
         for (let i = 0; i < 23; i++) {
-            const hour = BMHourNode.clone().setValue(i)
+            const hour = SvHourNode.clone().setValue(i)
             this.addSubnode(hour)
         }
     }
@@ -161,7 +161,7 @@
      * @category Event
      */
     onTapOfDecendantNode (aNode) {
-        if (aNode.type() === "BMMinuteNode") {
+        if (aNode.type() === "SvMinuteNode") {
             const minuteNode = aNode
             const hourNode = minuteNode.parentNode()
             this.setHour(hourNode.value())

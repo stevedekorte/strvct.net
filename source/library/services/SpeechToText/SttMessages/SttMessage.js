@@ -6,10 +6,10 @@
 
 /**
  * @class SttMessage
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a speech-to-text message.
  */
-(class SttMessage extends BMSummaryNode {
+(class SttMessage extends SvSummaryNode {
   /**
    * @description Initializes the prototype slots for the SttMessage class.
    * @category Initialization

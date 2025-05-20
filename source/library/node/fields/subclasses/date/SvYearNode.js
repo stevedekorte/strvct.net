@@ -41,7 +41,7 @@
     initPrototype () {
         this.setCanDelete(true);
         this.setNodeCanEditTitle(true);
-        this.setSubnodeProto(BMOptionNode);
+        this.setSubnodeProto(SvOptionNode);
         this.setNodeCanReorderSubnodes(true);
     }
 
@@ -89,7 +89,7 @@
     prepareToSyncToView () {
         if (!this.subnodeCount()) {
             for (let i = 1; i < 12 + 1; i++) {
-                const month = this.addSubnode(BMMonthNode.clone().setValue(i));
+                const month = this.addSubnode(SvMonthNode.clone().setValue(i));
                 month.setCanDelete(false);
             }
         }

@@ -6,10 +6,10 @@
 
 /**
  * @class OpenAiTtsRequest
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc Represents a Text-to-Speech request to the OpenAI API.
  */
-(class OpenAiTtsRequest extends BMSummaryNode {
+(class OpenAiTtsRequest extends SvSummaryNode {
  
   /**
    * @description Initializes the prototype slots for the OpenAiTtsRequest class.

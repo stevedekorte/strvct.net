@@ -28,8 +28,8 @@
  *
  * The Blobs object and it's subnodes should be stored in the app's
  * store, so there will need to be a path from the app's root node to
- * the BMBlobs singleton instance. It may be tricky to get this right as
- * creating a BMBlobs before reading it out of the store would create a
+ * the SvBlobs singleton instance. It may be tricky to get this right as
+ * creating a SvBlobs before reading it out of the store would create a
  * conflicting instance.
  *
  * @extends SvStorableNode
@@ -100,7 +100,7 @@
     /**
      * @description Retrieves a blob subnode with the given name.
      * @param {string} aName The name of the blob to retrieve.
-     * @returns {BMBlob|undefined} The blob subnode with the given name, or undefined if not found.
+     * @returns {SvBlob|undefined} The blob subnode with the given name, or undefined if not found.
      * @category Lookup
      */
     blobWithName (aName) {
@@ -133,7 +133,7 @@
     /**
      * @description Retrieves a blob subnode with the given value hash.
      * @param {string} h The value hash of the blob to retrieve.
-     * @returns {BMBlob|undefined} The blob subnode with the given value hash, or undefined if not found.
+     * @returns {SvBlob|undefined} The blob subnode with the given value hash, or undefined if not found.
      * @category Lookup
      */
     blobWithValueHash (h) {
@@ -160,7 +160,7 @@
         }
 
         assert(!this.hasBlobWithName(aName));
-        const blob = BMBlob.clone();
+        const blob = SvBlob.clone();
         blob.setName(aName);
         blob.setValue(aValue); // this will trigger an async compute of valueHash and store of value
         this.addSubnode(blob);
@@ -205,7 +205,7 @@
      */
     static async selfTest () {
         this.addTimeout(async () => {
-            const blob = BMBlobs.shared().blobForKey("http://test.com/");
+            const blob = SvBlobs.shared().blobForKey("http://test.com/");
             blob.setValue("test content");
             await blob.promiseWrite();
         })

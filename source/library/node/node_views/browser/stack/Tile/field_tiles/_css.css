@@ -1,10 +1,10 @@
 
 
-.BMFieldValueView br {
+SvFieldValueView br {
     display: none;
 }
 
-.BMFieldValueView * {
+.SvFieldValueView * {
     display: inline;
     white-space: nowrap;
 }

@@ -6,10 +6,10 @@
 
 /**
  * @class AzureVoice
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc A wrapper around a json dictionary describing an Azure TTS Voice.
  */
-(class AzureVoice extends BMSummaryNode {
+(class AzureVoice extends SvSummaryNode {
 
   /**
    * @description Returns a sample entry for an Azure voice.

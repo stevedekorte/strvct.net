@@ -4,10 +4,10 @@
 
 /**
  * @class PeerService
- * @extends BMSummaryNode
+ * @extends SvSummaryNode
  * @classdesc PeerService for WebRTC peer-to-peer networking
  */
-(class PeerService extends BMSummaryNode {
+(class PeerService extends SvSummaryNode {
   
   /**
    * @static

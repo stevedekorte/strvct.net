@@ -6,10 +6,10 @@
 
 /**
  * @class SceneViewWellFieldTile
- * @extends BMFieldTile
+ * @extends SvFieldTile
  * @classdesc SceneViewWellFieldTile class for handling scene view well fields.
  */
-(class SceneViewWellFieldTile extends BMFieldTile {
+(class SceneViewWellFieldTile extends SvFieldTile {
     
     /**
      * @description Checks if the given MIME type can be opened.
@@ -48,7 +48,7 @@
         this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px");
         this.valueView().setPaddingTop("0px").setPaddingBottom("0px");
 
-        //this.keyView().setElementClassName("BMImageWellKeyField");
+        //this.keyView().setElementClassName("SvImageWellKeyField");
         //this.valueView().setIsEditable(false);
         this.turnOffUserSelect();
         this.keyView().setTransition("color 0.3s");

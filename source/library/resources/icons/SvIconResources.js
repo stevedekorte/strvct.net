@@ -5,14 +5,14 @@
 /**
  * @class SvIconResources
  * @extends SvResourceGroup
- * @classdesc BMIconResources
+ * @classdesc SvIconResources
  * 
  * Hack to put SVG files into Javascript strings to avoid cross site loading issues.
  */
-(class SvIconResources extends BMResourceGroup {
+(class SvIconResources extends SvResourceGroup {
 
     /**
-     * @description Initializes the BMIconResources instance.
+     * @description Initializes the SvIconResources instance.
      * @returns {SvIconResources} The initialized instance.
      * @category Initialization
      */
@@ -23,7 +23,7 @@
     }
 
     /**
-     * @description Sets up the BMIconResources instance.
+     * @description Sets up the SvIconResources instance.
      * @category Initialization
      */
     setup() {

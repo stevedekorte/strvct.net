@@ -3,7 +3,7 @@
 /*
 * @module library.services.AiServiceKit.Tools.Definitions
 * @class ToolDefinition
-* @extends BMJsonDictionaryNode
+* @extends SvJsonDictionaryNode
 * @classdesc Describes what a tool can do.
 */
 
@@ -66,9 +66,9 @@
       slot.setDuplicateOp("duplicate");
       slot.setIsSubnodeField(true);
       slot.setSyncsToView(true);
-      slot.setSlotType("BMSummaryNode"); // the node contains the component nodes
+      slot.setSlotType("SvSummaryNode"); // the node contains the component nodes
       slot.setCanEditInspection(false);
-      slot.setFinalInitProto(BMSummaryNode);
+      slot.setFinalInitProto(SvSummaryNode);
       //slot.setValidValues(values);
     }
     
@@ -154,7 +154,7 @@
 
   addPathComponent (name, value) {
     const pathNodes = this.componentsRoot().createNodePath(name);
-    const node = BMStringField.clone().setTitle(name).setValue(value);
+    const node = SvStringField.clone().setTitle(name).setValue(value);
     node.setKeyIsVisible(false);
     pathNodes.last().setNodeFillsRemainingWidth(true);
     pathNodes.last().addSubnode(node);

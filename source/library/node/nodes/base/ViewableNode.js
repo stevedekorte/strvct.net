@@ -12,7 +12,7 @@
  * Views can query nodes for info or tell them to take actions, but otherwise 
  * nodes should only communicate with views via notfications.
  * 
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  */
 (class ViewableNode extends InspectableNode {
     
@@ -46,11 +46,11 @@
                 return slot;
             }
             addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((instance) => { 
-                //return BMThemeResources.shared().activeTheme().themeClassNames();
+                //return SvThemeResources.shared().activeTheme().themeClassNames();
                 return Tile.allSubclasses().map(aClass => aClass.type());
             })
 
-            //BMThemeResources.shared().activeTheme().newThemeClassOptions()
+            //SvThemeResources.shared().activeTheme().newThemeClassOptions()
         }
         
         /**
@@ -299,7 +299,7 @@
      */
     onBrowserDropChunk (dataChunk) {
         const mimeType = dataChunk.mimeType();
-        const canOpenNodes = BMNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
+        const canOpenNodes = SvNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
         const okTypes = this.acceptedSubnodeTypes();
         const canUseNodes = canOpenNodes; /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
 

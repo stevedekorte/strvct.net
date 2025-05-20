@@ -10,7 +10,7 @@
  * Slot has some logic for this too.
  * 
  * Inheritance chain:
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  */
 (class InspectableNode extends TitledNode {
 
@@ -30,13 +30,13 @@
         }
 
         /**
-         * @member {BMNode} nodeInspector
+         * @member {SvNode} nodeInspector
          * @category Inspection
          */
         {
             const slot = this.newSlot("nodeInspector", null);
             slot.setDuplicateOp("nop");
-            slot.setSlotType("BMNode");
+            slot.setSlotType("SvNode");
         }
     }
 
@@ -51,7 +51,7 @@
 
     /**
      * @description Gets or creates the node inspector.
-     * @returns {BMNode} The node inspector.
+     * @returns {SvNode} The node inspector.
      * @category Inspection
      */
     nodeInspector () {
@@ -113,8 +113,8 @@
                     pathNodes.last().addSubnode(field);
                 } else {
                     const node = slot.onInstanceGetValue(this);
-                    if (node === null || (Type.isObject(node) && node.thisClass().isKindOf(BMNode))) {
-                        const linkNode = BMLinkNode.clone().setLinkedNode(node);
+                    if (node === null || (Type.isObject(node) && node.thisClass().isKindOf(SvNode))) {
+                        const linkNode = SvLinkNode.clone().setLinkedNode(node);
                         linkNode.setCanDelete(false) ;
                         pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());
                         pathNodes.last().addSubnode(linkNode);
@@ -136,11 +136,11 @@
     /**
      * @description Creates a node path.
      * @param {string} aPath - The path to create.
-     * @param {string} [pathSubnodeType="BMFolderNode"] - The type of subnodes to create.
+     * @param {string} [pathSubnodeType="SvFolderNode"] - The type of subnodes to create.
      * @returns {Array} An array of path nodes.
      * @category Path
      */
-    createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
+    createNodePath (aPath, pathSubnodeType = "SvFolderNode") {
         const pathNodes = [this];
 
         if (aPath) {
@@ -169,7 +169,7 @@
     
     /*
     addLinkFieldForNode (aNode) {
-        const field = BMLinkField.clone().setName(aNode.title()).setValue(aNode)
+        const field = SvLinkField.clone().setName(aNode.title()).setValue(aNode)
         return this.addStoredField(field)
     }
     */
@@ -181,7 +181,7 @@
      * @category Field
      */
     addField (aField) {
-        throw new Error("addField shouldn't be called - use BMFieldSetNode")
+        throw new Error("addField shouldn't be called - use SvFieldSetNode")
         return this.addSubnode(aField)
     }
     

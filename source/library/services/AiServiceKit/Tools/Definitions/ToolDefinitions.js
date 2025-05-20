@@ -3,11 +3,11 @@
 /*
 * @module library.services.AiServiceKit.Tools.Definitions
 * @class ToolDefinitions
-* @extends BMSummaryNode
+* @extends SvSummaryNode
 * @classdesc A collection of ToolDefinition instances.
 */
 
-(class ToolDefinitions extends BMSummaryNode {
+(class ToolDefinitions extends SvSummaryNode {
   /*
    * Initializes the prototype slots.
    * @category Initialization

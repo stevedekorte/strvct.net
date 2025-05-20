@@ -6,10 +6,10 @@
 
 /**
  * @class SvThemeClassChildren
- * @extends BMThemeFolder
+ * @extends SvThemeFolder
  * @classdesc Represents a folder for theme class children.
  */
-(class SvThemeClassChildren extends BMThemeFolder {
+(class SvThemeClassChildren extends SvThemeFolder {
     
     /**
      * @description Initializes the prototype slots.
@@ -29,14 +29,14 @@
         this.setTitle("children")
         this.setCanDelete(true)
         this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses([BMThemeClass])
+        this.setSubnodeClasses([SvThemeClass])
         this.setNodeCanReorderSubnodes(true)
     }
 
     /**
      * @description Finds a theme class by its name.
      * @param {string} name - The name of the theme class to find.
-     * @returns {BMThemeClass|undefined} The found theme class or undefined if not found.
+     * @returns {SvThemeClass|undefined} The found theme class or undefined if not found.
      * @category Search
      */
     themeClassNamed (name) {

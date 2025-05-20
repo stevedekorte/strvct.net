@@ -9,7 +9,7 @@
  * @extends SvResource
  * @classdesc Represents an SVG icon node resource.
  */
-(class SvgIconNode extends BMResource {
+(class SvgIconNode extends SvResource {
 
   /**
    * @static

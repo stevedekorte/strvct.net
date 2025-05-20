@@ -81,7 +81,7 @@
     async setupUi () {
         await super.setupUi();
         await this.setupModel();
-        BMResources.shared(); // load resources
+        SvResources.shared(); // load resources
         
         const browser = BrowserView.clone();
         this.rootNode().setTitle("root node");
@@ -111,7 +111,7 @@
     async setupModel () {
         await this.setupModel()
         // settings
-        //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
+        //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", SvSettingsNode)
         //this.setSettings(settings)
         return this
     }

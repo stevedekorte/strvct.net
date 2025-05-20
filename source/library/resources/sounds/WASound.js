@@ -3,7 +3,7 @@
 /**
  * @module library.resources.sounds
  * @class WASound
- * @extends BMResource
+ * @extends SvResource
  * @description A sound resource.
 
     Note: 
@@ -19,7 +19,7 @@
 
 */
 
-(class WASound extends BMResource {
+(class WASound extends SvResource {
 
     /**
      * @static

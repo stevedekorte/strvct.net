@@ -5,12 +5,12 @@
  */
 
 /**
- * BMThemeState class replaces BMStyle.
+ * SvThemeState class replaces SvStyle.
  * @class
- * @extends BMThemeFolder
+ * @extends SvThemeFolder
  * @classdesc Represents a theme state with various style attributes.
  */
-(class SvThemeState extends BMThemeFolder {
+(class SvThemeState extends SvThemeFolder {
     
     /**
      * @static
@@ -166,7 +166,7 @@
             
             if (values) {
                 const initValue = values.first();
-                //console.log("BMThemeState setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
+                //console.log("SvThemeState setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
                 slot.setInitValue(initValue); // first value is typically "inherit"
                 slot.setValidValues(values);
             }
@@ -279,7 +279,7 @@
     }
 
     /**
-     * @description Initializes the BMThemeState instance.
+     * @description Initializes the SvThemeState instance.
      */
     init () {
         super.init()
@@ -297,7 +297,7 @@
         this.setNodeCanAddSubnode(false)
         this.setSubtitle("state")
 
-        //this.setSubnodeClasses([BMStringField])
+        //this.setSubnodeClasses([SvStringField])
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
@@ -351,7 +351,7 @@
      */
     getFields () {
         return this.selectSubnodesRecursively(sn => {
-            return sn.thisClass().isKindOf(BMField);
+            return sn.thisClass().isKindOf(SvField);
         });
     }
 
@@ -364,7 +364,7 @@
         // need this because the fonts typically aren't loaded until after this prototype is initialized
         this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((instance) => { 
             //debugger;
-            const values = BMResources.shared().fonts().allFontNames();
+            const values = SvResources.shared().fonts().allFontNames();
             values.unshift("inherit");
             return values;
         });

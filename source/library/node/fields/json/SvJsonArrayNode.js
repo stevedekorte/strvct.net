@@ -80,7 +80,7 @@
             if (refs.length > 0) {
                 items.anyOf = refs;
             } else {
-                throw new Error("BMJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype.");
+                throw new Error("SvJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype.");
             }
         }
         return items;
@@ -119,7 +119,7 @@
      * @category UI
      */
     subtitle () {
-        if (this.thisClass().type() === "BMJsonArrayNode") {
+        if (this.thisClass().type() === "SvJsonArrayNode") {
             return "Array"; // so we know it's an array when using the UI to assembly JSON
         }
 
@@ -162,7 +162,7 @@
             aSubnode.setKey("");
             aSubnode.setKeyIsVisible(false);
             aSubnode.setKeyIsEditable(false);
-            const editableValueTypes = ["BMStringField", "BMNumberField", "BMBooleanField"];
+            const editableValueTypes = ["SvStringField", "SvNumberField", "SvBooleanField"];
             if (editableValueTypes.contains(aSubnode.type())) {
                 aSubnode.setValueIsEditable(true);
             }
@@ -231,14 +231,14 @@
             const jsonId = v.jsonId;
 
             if (seenJsonIds.has(jsonId)) {
-                console.warn("BMJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId, " at path: " + pathString);
+                console.warn("SvJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId, " at path: " + pathString);
                 return;
             } else {
                 seenJsonIds.add(jsonId);
             }
 
             if (hasOldSubnodes && !jsonId) {
-                console.warn("BMJsonArrayNode.setJson() missing jsonId: ", v, " at path: " + pathString);
+                console.warn("SvJsonArrayNode.setJson() missing jsonId: ", v, " at path: " + pathString);
             }
 
             const existingNode = jsonIdToSubnodeMap.get(jsonId);
@@ -249,7 +249,7 @@
             } else {
                 const aNode = this.newSubnodeForJson(v, jsonPathComponents.concat(index));
                 newSubnodes.push(aNode);
-                //console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
+                //console.log("SvJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
         });
 
@@ -274,13 +274,13 @@
     }
 
     /**
-     * @description Gets the BMDataUrl for this node.
-     * @returns {SvDataUrl} The BMDataUrl object.
+     * @description Gets the SvDataUrl for this node.
+     * @returns {SvDataUrl} The SvDataUrl object.
      * @category Data Operations
      */
-    getBMDataUrl () {
+    getSvDataUrl () {
         const json = this.jsonArchive();
-        const d = BMDataUrl.clone();
+        const d = SvDataUrl.clone();
         d.setMimeType("application/json");
         d.setFileName(this.title() + ".json");
         d.setDecodedData(JSON.stableStringifyWithStdOptions(json, null, 4));

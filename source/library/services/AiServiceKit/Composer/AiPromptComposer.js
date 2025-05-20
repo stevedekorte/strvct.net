@@ -11,8 +11,8 @@
 
 /**
  * @class AiPromptComposer
- * @extends BMSummaryNode
- * @classdesc A BMSummaryNode that composes an AI prompt.
+ * @extends SvSummaryNode
+ * @classdesc A SvSummaryNode that composes an AI prompt.
  * 
  * Example:
  * 
@@ -23,7 +23,7 @@
  * const prompt = composer.outputString();
  */
 
-(class AiPromptComposer extends BMSummaryNode {
+(class AiPromptComposer extends SvSummaryNode {
 
   initPrototypeSlots () {
 
@@ -134,7 +134,7 @@
   // --- utility methods ---
 
   contentsOfFileNamed (fileName) {
-    const file = BMFileResources.shared().rootFolder().resourceWithName(fileName);
+    const file = SvFileResources.shared().rootFolder().resourceWithName(fileName);
     if (!file) {
       throw new Error(`File not found: ${fileName}`);
     }
