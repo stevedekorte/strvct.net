@@ -13,5 +13,5 @@
     "network/_imports.json",
     "audio/_imports.json",
 
-    "App.js"
+    "SvApp.js"
 ]

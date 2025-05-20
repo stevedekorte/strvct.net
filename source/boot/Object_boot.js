@@ -103,7 +103,6 @@
             //console.log("proto is ", proto.type())
             if (proto === proto.__proto__) {
                 throw new Error("__proto__ loop detected in " + proto.type());
-                //break;
             } else {
                 proto = proto.__proto__;
             }

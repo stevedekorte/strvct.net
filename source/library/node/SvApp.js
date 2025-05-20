@@ -5,7 +5,7 @@
  */
 
 /**
- * @class App
+ * @class SvApp
  * @extends TitledNode
  * @classdesc A shared instance that represents the application. 
  *
@@ -17,12 +17,12 @@
  *
  * NOTES
  *
- * Originally planned to have a shared instance of App that would be the root of the object graph,
- * so we'd load the store and then call run on the App instance loaded from it.
+ * Originally planned to have a shared instance of SvApp that would be the root of the object graph,
+ * so we'd load the store and then call run on the SvApp instance loaded from it.
  *
  * But that felt difficult so instead we create an instance now, and ask it to load the object pool the store.
  */
-(class App extends TitledNode {
+(class SvApp extends TitledNode {
     
     /**
      * @static
@@ -36,7 +36,7 @@
     /**
      * @static
      * @description Returns the shared instance of the class
-     * @returns {App} The shared instance
+     * @returns {SvApp} The shared instance
      * @category Instance Management
      */
     static shared () {
@@ -46,19 +46,19 @@
     /**
      * @static
      * @description Returns the shared context
-     * @returns {App} The shared context
+     * @returns {SvApp} The shared context
      * @category Instance Management
      */
     static sharedContext () {
         // We override sharedContext so all subclasses use the same shared value
-        // and anyone can call App.shared() to access it
-        return App;
+        // and anyone can call SvApp.shared() to access it
+        return SvApp;
     }
 
     /**
      * @static
      * @description Loads and runs the shared instance
-     * @returns {App} The shared instance
+     * @returns {SvApp} The shared instance
      * @category Initialization
      */
     static loadAndRunShared () {
@@ -294,7 +294,7 @@
 
     /**
      * @description Hides the root view
-     * @returns {App} The app instance
+     * @returns {SvApp} The app instance
      * @category UI
      */
     hideRootView () {
@@ -306,7 +306,7 @@
 
     /**
      * @description Unhides the root view
-     * @returns {App} The app instance
+     * @returns {SvApp} The app instance
      * @category UI
      */
     unhideRootView () {
@@ -360,7 +360,7 @@
     /**
      * @description Handles search parameters
      * @param {URLSearchParams} searchParams - The search parameters
-     * @returns {App} The app instance
+     * @returns {SvApp} The app instance
      * @category Utility
      */
     handleSearchParams (/* searchParams */) {
@@ -398,7 +398,7 @@
     /**
      * @description Sets the name of the app
      * @param {string} aString - The new name
-     * @returns {App} The app instance
+     * @returns {SvApp} The app instance
      * @category Metadata
      */
     setName (aString) {
@@ -447,5 +447,88 @@
         doc.setFontWeight("Medium");
         doc.setFontSizeAndLineHeight("16px")
    }
+
+    /**
+     * Posts an error report to the server's /log_error endpoint
+     * @param {Error|Object} error - Error object or error-like object with message property
+     * @param {Object} [json=null] - Additional JSON data to include in the report
+     * @returns {Promise<Object>} - Server response
+     * @category Error Handling
+     */
+    async postErrorReport(error, json = null) {
+        // Get the base URL from the current window location
+        const protocol = window.location.protocol; // "http:" or "https:"
+        const host = window.location.hostname;
+        const port = window.location.port || (protocol === "https:" ? "443" : "80");
+        const baseUrl = `${protocol}//${host}:${port}`;
+        
+        // Prepare error data
+        const errorData = {
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            url: window.location.href,
+            referrer: document.referrer || null,
+            app: this.name(),
+            version: this.versionsString()
+        };
+        
+        // Add error information
+        if (error instanceof Error) {
+            errorData.message = error.message;
+            errorData.name = error.name;
+            errorData.stack = error.stack;
+        } else if (typeof error === "object") {
+            // Handle error-like objects
+            Object.assign(errorData, error);
+        } else if (typeof error === "string") {
+            // Handle string errors
+            errorData.message = error;
+        }
+        
+        // Add additional JSON data if provided
+        if (json && typeof json === "object") {
+            errorData.additionalData = json;
+        }
+        
+        try {
+            // Post the error data to the server
+            const response = await fetch(`${baseUrl}/log_error`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(errorData)
+            });
+            
+            // Parse and return the response
+            const responseData = await response.json();
+            console.log("Error report sent successfully:", responseData);
+            return responseData;
+        } catch (err) {
+            console.error("Failed to send error report:", err);
+            return { success: false, error: err.message };
+        }
+    }
+
+    /**
+     * Test method to verify error reporting functionality
+     * @param {string} [message="Test error message"] - Test error message
+     * @returns {Promise<Object>} - Server response
+     * @category Error Handling
+     */
+    async testErrorReporting(message = "Test error message") {
+        console.log("Testing error reporting with message:", message);
+        
+        const testError = new Error(message);
+        testError.name = "TestError";
+        
+        const additionalData = {
+            isTest: true,
+            testTime: Date.now(),
+            component: "ErrorReportingSystem"
+        };
+        
+        return await this.postErrorReport(testError, additionalData);
+    }
 
 }.initThisClass());

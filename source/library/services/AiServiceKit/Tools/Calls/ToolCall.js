@@ -291,9 +291,9 @@ Example Tool call format:
     e.extraMessage = "Error parsing tool call JSON";
     e.name = "ToolCallParseError";
     
-    // Report parse error to the server if UndreamedOfApp is available
+    // Report parse error to the server if SvApp is available
     try {
-      const app = UndreamedOfApp.shared();
+      const app = SvApp.shared();
       if (app && typeof app.postErrorReport === "function") {
         const errorData = {
           name: "ToolCallParseError",
@@ -421,9 +421,9 @@ Example Tool call format:
     this.toolCalls().onToolCallComplete(this);
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
     
-    // Report error to the server if UndreamedOfApp is available
+    // Report error to the server if SvApp is available
     try {
-      const app = UndreamedOfApp.shared();
+      const app = SvApp.shared();
       if (app && typeof app.postErrorReport === "function") {
         const errorData = {
           name: "ToolCallError",
