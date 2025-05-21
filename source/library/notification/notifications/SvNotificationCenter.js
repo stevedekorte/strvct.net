@@ -437,7 +437,7 @@
             */
             this.noteSet().add(note);
             this.notifications().push(note);
-		    SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1);
+            SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1);
         }
         return this;
     }

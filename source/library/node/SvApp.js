@@ -40,7 +40,7 @@
      * @category Instance Management
      */
     static shared () {
-        return super.shared();
+        return super.shared(); // See sharedContext - this ensures only one app instance is returned, even for subclasses
     }
     
     /**
@@ -455,7 +455,7 @@
      * @returns {Promise<Object>} - Server response
      * @category Error Handling
      */
-    async postErrorReport(error, json = null) {
+    async postErrorReport (error, json = null) {
         // Get the base URL from the current window location
         const protocol = window.location.protocol; // "http:" or "https:"
         const host = window.location.hostname;
@@ -516,7 +516,7 @@
      * @returns {Promise<Object>} - Server response
      * @category Error Handling
      */
-    async testErrorReporting(message = "Test error message") {
+    async testErrorReporting (message = "Test error message") {
         console.log("Testing error reporting with message:", message);
         
         const testError = new Error(message);

@@ -157,12 +157,23 @@
      * @category Data Retrieval
      */
     asJson () {
+        return this.calcJson();
+        /*
         if (this.jsonCache() !== null) {
+            /// sanity check to make sure the jsonCache is valid
+            const json = this.calcJson();
+            const diff = JsonPatch.compare(this.jsonCache(), json);
+            if (diff.length > 0) {
+                console.error("jsonCache is invalid:\n" + JSON.stringify(diff, null, 2));
+                debugger;
+            }
+
             return this.jsonCache();
         }
         const json = this.calcJson();
         this.setJsonCache(json);
         return json;
+        */
     }
 
     /**
@@ -185,7 +196,8 @@
      * @category Data Modification
      */
     applyJsonPatches (jsonPatches) {
-        assert(Type.isDeepJsonType(jsonPatches));
+        assert(Type.isArray(jsonPatches), "applyJsonPatches() jsonPatches is not an array");
+        assert(Type.isDeepJsonType(jsonPatches), "applyJsonPatches() jsonPatches is not a deep json type");
         
         if (jsonPatches.length === 0) {
             console.log("no patches to apply");
@@ -197,6 +209,12 @@
 
         // sanity check to make sure current json is valid 
         this.setJson(oldJson);
+
+        const diff = JsonPatch.compare(this.asJson(), oldJson);
+        if (diff.length > 0) {
+            console.error("there shouldn't be a diff between the current and old json:\n" + JSON.stringify(diff, null, 2));
+            debugger;
+        }
 
 
         // NOTE: We've disabled the pre-validation and auto-creation code to let the
@@ -298,8 +316,17 @@
             this.setJson(newJson);
             try {
                 // Verify the patch produced the expected result
-                assert(JSON.stableStringifyWithStdOptions(newJson) === JSON.stableStringifyWithStdOptions(this.asJson()), 
-                       "applyJsonPatches() setJson() did not apply correctly");
+                const matches = JSON.stableStringifyWithStdOptions(newJson) === JSON.stableStringifyWithStdOptions(this.asJson());
+                if (!matches) {
+                    // ok, to produce a more useful error message, we'll need to
+                    // find the first difference between the newJson and the asJson()
+                    // and report that.
+                    const diff = JsonPatch.compare(this.asJson(), newJson);
+                    const msg = "applyJsonPatches() setJson() might not have applied correctly diff (though if these are computed values, or added propeties, we would expect to see them in this diff):\n" + JSON.stringify(diff, null, 2);
+                    console.warn(msg);
+                    //debugger;
+                    //throw new Error(msg);
+                }
             } catch (verificationError) {
                 console.warn("Patch verification failed, but continuing:", verificationError);
                 // Continue anyway since the patch itself succeeded

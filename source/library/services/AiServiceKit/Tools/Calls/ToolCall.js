@@ -305,12 +305,10 @@ Example Tool call format:
           }
         };
         
-        // Don't block execution - use setTimeout to post error asynchronously
-        setTimeout(() => {
-          UndreamedOfApp.shared().postErrorReport(e, errorData).catch(error => {
-            console.error("Failed to report tool call parse error:", error);
-          });
-        }, 0);
+        debugger;
+        UndreamedOfApp.shared().postErrorReport(e, errorData).catch(error => {
+          console.error("Failed to report tool call parse error:", error);
+        });
     } catch (reportError) {
       console.error("Error while trying to report tool call parse error:", reportError);
     }
@@ -431,7 +429,9 @@ Example Tool call format:
           toolCall: {
             toolName: this.toolName(),
             callId: this.callId(),
-            status: this.status()
+            status: this.status(),
+            toolTarget: this.toolTarget().type(),
+            toolTargetJson: this.toolTarget().asJson()
           }
         };
         
@@ -441,11 +441,10 @@ Example Tool call format:
         }
         
         // Don't block execution - use setTimeout to post error asynchronously
-        setTimeout(() => {
+
           app.postErrorReport(e, errorData).catch(error => {
             console.error("Failed to report tool call error:", error);
           });
-        }, 0);
       }
     } catch (reportError) {
       console.error("Error while trying to report tool call error:", reportError);
