@@ -96,6 +96,7 @@
     {
       const slot = this.newSlot("projectId", null);
       slot.setSlotType("String");
+      slot.setShouldStoreSlot(true);
     }
 
     /**
@@ -105,7 +106,16 @@
     {
       const slot = this.newSlot("locationId", null);
       slot.setSlotType("String");
+      slot.setShouldStoreSlot(true);
     }
+
+    {
+      const slot = this.newSlot("textToVideo", null);
+      slot.setFinalInitProto(GeminiVideoPrompts);
+      slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
+    }
+
   }
 
   /**

@@ -122,6 +122,9 @@ class ImportsIndexer {
         const folder = nodePath.dirname(importsPath);
         const s = fs.readFileSync(importsPath,  "utf8");
         const json = JSON.parse(s);
+        if (!Array.isArray(json)) {
+            throw new Error("imports.json file at '" + importsPath + "' must contain an array");
+        }
         const fullPaths = json.map(path => nodePath.join(folder, path));
 
         // put all paths in the list of paths
