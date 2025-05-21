@@ -125,6 +125,14 @@ const https = require('https');
 				}
 			} else if (this.queryMap().get("proxyUrl")) {
 				this.onProxyRequest();
+			} else if (this.path() === "chrome-devtools-json") {
+				// Silently ignore Chrome DevTools requests with an empty JSON response
+				this.response().writeHead(200, {
+					'Content-Type': 'application/json',
+					'Cache-Control': 'no-cache',
+					'Access-Control-Allow-Origin': '*',
+				});
+				this.response().end('{}');
 			} else {
 				this.onFileRequest(); // may throw exception for missing file, unauthorized path, etc
 			}
@@ -299,6 +307,12 @@ const https = require('https');
 		if (path.startsWith(acmePath)) {
 			path = path.replace(acmePath, this.localAcmePath())
 		}
+		
+		// Silently ignore Chrome DevTools specific requests
+		if (path.includes(".well-known/appspecific/com.chrome.devtools.json")) {
+			// Return a special path to handle later
+			return "chrome-devtools-json";
+		}
 
 		return path;
 	}
@@ -311,6 +325,11 @@ const https = require('https');
 		// Special handling for API endpoints
 		if (this.path() === "./log_error") {
 			return "api"; // Use a pseudo-extension for API endpoints
+		}
+		
+		// Special handling for Chrome DevTools requests
+		if (this.path() === "chrome-devtools-json") {
+			return "json";
 		}
 		
 		if (this.path().indexOf(".") !== -1) {
@@ -623,76 +642,6 @@ const https = require('https');
 			result += Math.floor(Math.random() * 10);
 		}
 		return result;
-	}
-	
-	/**
-	 * @description Handles log error requests
-	 */
-	onLogErrorRequest() {
-		const req = this.request();
-		const res = this.response();
-		
-		// Collect request body
-		const bodyChunks = [];
-		
-		req.on('data', (chunk) => {
-			bodyChunks.push(chunk);
-		});
-		
-		req.on('end', () => {
-			try {
-				// Parse the JSON data
-				const body = Buffer.concat(bodyChunks).toString();
-				const jsonData = JSON.parse(body);
-				
-				// Create directory if it doesn't exist
-				const logsDir = this.logErrorsPath();
-				if (!fs.existsSync(logsDir)) {
-					fs.mkdirSync(logsDir, { recursive: true });
-				}
-				
-				// Format date and time for filename: YYYY_MM_DD_HHMMSS
-				const now = new Date();
-				const year = now.getFullYear();
-				const month = String(now.getMonth() + 1).padStart(2, '0');
-				const day = String(now.getDate()).padStart(2, '0');
-				const hours = String(now.getHours()).padStart(2, '0');
-				const minutes = String(now.getMinutes()).padStart(2, '0');
-				const seconds = String(now.getSeconds()).padStart(2, '0');
-				const randomId = this.generateRandomId(8);
-				
-				// Create filename with fixed length
-				const filename = `${year}_${month}_${day}_${hours}${minutes}${seconds}_${randomId}.json`;
-				const filePath = nodePath.join(logsDir, filename);
-				
-				// Write the JSON data to file
-				fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
-				
-				// Respond with success
-				res.writeHead(200, {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*'
-				});
-				res.end(JSON.stringify({ 
-					success: true, 
-					message: "Error logged successfully",
-					filename: filename 
-				}));
-				
-				this.log(`Logged error to ${filePath}`);
-			} catch (error) {
-				// Handle errors
-				this.log("Error processing log_error request:", error.message);
-				res.writeHead(500, {
-					'Content-Type': 'application/json',
-					'Access-Control-Allow-Origin': '*'
-				});
-				res.end(JSON.stringify({ 
-					success: false, 
-					error: "Failed to process error log: " + error.message 
-				}));
-			}
-		});
 	}
 
 }.initThisClass());
