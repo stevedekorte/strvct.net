@@ -132,11 +132,12 @@
      * @returns {Object} The posted notification object.
      * @category Notification
      */
-    postNoteNamed (aNoteName) {
-        const note = this.newNoteNamed(aNoteName)
-        note.post()
-        //this.debugLog(".postNoteNamed('" + aNoteName + "')")
-        return note
+    postNoteNamed (aNoteName, info = null) {
+        const note = this.newNoteNamed(aNoteName);
+        note.setInfo(info);
+        note.post();
+        //this.debugLog(".postNoteNamed('" + aNoteName + "')");
+        return note;
     }
 
     /**

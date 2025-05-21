@@ -6,7 +6,7 @@
 
 require("./getGlobalThis.js")
 require("./Base.js")
-require("./StrvctHttpsServerRequest.js")
+require("./SvHttpsServerRequest.js")
 
 const https = require('https');
 const http = require('http');
@@ -14,14 +14,14 @@ const fs = require('fs');
 const nodePath = require('path');
 
 /**
- * @class StrvctHttpsServer
+ * @class SvHttpsServer
  * @extends Base
  * @classdesc Represents an HTTPS server with optional HTTP support.
  */
-(class StrvctHttpsServer extends Base {
+(class SvHttpsServer extends Base {
 	
 	/**
-	 * Initializes the prototype slots for the StrvctHttpsServer.
+	 * Initializes the prototype slots for the SvHttpsServer.
 	 */
 	initPrototypeSlots () {
 		this.newSlot("name", "WebServer");
@@ -69,8 +69,8 @@ const nodePath = require('path');
 	}
 
 	/**
-	 * Initializes the StrvctHttpsServer instance.
-	 * @returns {StrvctHttpsServer} The initialized instance.
+	 * Initializes the SvHttpsServer instance.
+	 * @returns {SvHttpsServer} The initialized instance.
 	 */
 	init () {
 		super.init();
@@ -104,12 +104,12 @@ const nodePath = require('path');
 	 */
 	run () {
 		if (this.isSecure()) {
-			console.log("running HTTPS");
+			//console.log("running HTTPS");
 			this._server = https.createServer(this.options(), (request, response) => { 
 				this.onRequest(request, response) 
 			});
 		} else {
-			console.log("running HTTP");
+			//console.log("running HTTP");
 			this._server = http.createServer((request, response) => {
 				this.onRequest(request, response) 
 			});
@@ -118,7 +118,7 @@ const nodePath = require('path');
 		this._server.listen(this.port());
 
 		const sandboxPath =  process.cwd()
-		console.log(this.type() + ":")
+		console.log(this.name() + ":")
 		console.log("      cwd: '" + sandboxPath + "'")
 		console.log("     port: " + this.port())
 		console.log(" isSecure: " + this.isSecure())
@@ -137,7 +137,7 @@ const nodePath = require('path');
 	onRequest (request, response) {
 		//console.log("got request ", request)
 		try {
-			const r = StrvctHttpsServerRequest.clone();
+			const r = SvHttpsServerRequest.clone();
 			r.setServer(this);
 			r.setRequest(request);
 			r.setResponse(response);
@@ -149,16 +149,16 @@ const nodePath = require('path');
 			
 			r.process();
 		} catch (error) {
-			console.warn("Caught StrvctHttpsServerRequest exception:", error);
+			console.warn("Caught SvHttpsServerRequest exception:", error);
 		}
 	}
 	
 	/**
 	 * Sets the path for error logs.
 	 * @param {string} path - The path for error logs.
-	 * @returns {StrvctHttpsServer} This instance.
+	 * @returns {SvHttpsServer} This instance.
 	 */
-	setLogsPath(path) {
+	setLogsPath (path) {
 		this._logsPath = path;
 		return this;
 	}

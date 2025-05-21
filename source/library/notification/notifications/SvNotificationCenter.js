@@ -30,32 +30,32 @@
     Observing notifications:
 
         // start watching for "changed" message from sender object
-        this._obs = SvNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setSender(sender).startWatching()
+        this._obs = SvNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setSender(sender).startWatching();
     
         // start watching for "changedStoredSlot" message from any sender object
-        this._obs = SvNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).startWatching()
+        this._obs = SvNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).startWatching();
 
         // stop watching this observation
-        this._obs.stopWatching()
+        this._obs.stopWatching();
         
         // stop watching all
-        SvNotificationCenter.shared().removeObserver(this)
+        SvNotificationCenter.shared().removeObserver(this);
 
         // watch only for first note named "appDidInit"
-        this.watchOnceForNote("appDidInit")
+        this.watchOnceForNote("appDidInit");
         // WARNING: in this case, if app has already done init, this will never be called!
 
     If the source object has an accessor for a notification it uses, we can do:
 
-        sourceObject.didLoadNote().newObservation().setObserver(this).startWatching()
+        sourceObject.didLoadNote().newObservation().setObserver(this).startWatching();
         
     Posting notifications:
 
         // post a notification
-        const note = this.newNoteNamed("hello").post()
+        const note = this.newNoteNamed("hello").post();
 
         // repost same notification
-        note.post()
+        note.post();
 
     Broadcasting notifications:
 
@@ -67,12 +67,12 @@
 
     Helper methods available to subclasses of SvNode:
 
-        this.postNoteNamed("hello")
-        this.watchOnceForNote("hello")
-        this.watchOnceForNoteFrom("hello", sourceObject)
+        this.postNoteNamed("hello");
+        this.watchOnceForNote("hello");
+        this.watchOnceForNoteFrom("hello", sourceObject);
 
-        this.observeNote(aFileLoader.doneNote()) // still need to handle observation removal
-        this.observeNoteOnce(aFileLoader.doneNote()) 
+        this.observeNote(aFileLoader.doneNote()); // still need to handle observation removal
+        this.observeNoteOnce(aFileLoader.doneNote());
 
         note: I think nodes try remove their observations when removed?
 

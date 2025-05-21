@@ -27,9 +27,9 @@ const argv = yargs(hideBin(process.argv)).options({
 
 //console.log(argv);
 
-require("./StrvctHttpsServer.js");
+require("./SvHttpsServer.js");
 
-const server = StrvctHttpsServer.clone();
+const server = SvHttpsServer.clone();
 
 // apply command line arguments
 if (argv.port) {

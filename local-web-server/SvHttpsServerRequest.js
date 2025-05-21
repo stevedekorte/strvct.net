@@ -5,7 +5,7 @@
 "use strict";
 
 /**
- * @class StrvctHttpsServerRequest
+ * @class SvHttpsServerRequest
  * @extends Base
  * @classdesc Handles HTTPS server requests, including file and proxy requests.
 
@@ -36,11 +36,11 @@ const nodePath = require('path');
 const https = require('https');
 
 /**
- * @class StrvctHttpsServerRequest
+ * @class SvHttpsServerRequest
  * @extends Base
  * @classdesc Handles HTTPS server requests, including file and proxy requests.
  */
-(class StrvctHttpsServerRequest extends Base {
+(class SvHttpsServerRequest extends Base {
 	
 	initPrototypeSlots () {
 		/**
@@ -573,7 +573,7 @@ const https = require('https');
 	 * @description Streams file content to the response.
 	 * @param {string} path - The file path.
 	 * @param {Object} response - The response object.
-	 * @returns {StrvctHttpsServerRequest} This instance.
+	 * @returns {SvHttpsServerRequest} This instance.
 	 */
 	streamFileContentToResponse (path, response) {
 		const readStream = fs.createReadStream(path);

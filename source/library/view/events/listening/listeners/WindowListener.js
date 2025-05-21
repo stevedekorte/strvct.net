@@ -52,7 +52,7 @@
         this.addEventNameAndMethodName("online", "onBrowserOnline"); // Window specific
         this.addEventNameAndMethodName("offline", "onBrowserOffline"); // Window specific
 
-        //this.addEventNameAndMethodName("error", "onBrowserResourceLoadError");
+        this.addEventNameAndMethodName("error", "onWindowError");
 
         return this
     }

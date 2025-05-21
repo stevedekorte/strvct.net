@@ -37,7 +37,7 @@
 
       using xhr:
         AiRequest
-        StrvctHttpsServerRequest?
+        SvHttpsServerRequest?
         AnthropicRequest
         OpenAiRequest
         OpenAiImage

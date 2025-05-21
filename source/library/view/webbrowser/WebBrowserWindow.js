@@ -21,7 +21,7 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     /**
@@ -54,9 +54,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setupWindowListener()
-        return this
+        super.init();
+        this.setupWindowListener();
+        return this;
     }
 
     /**
@@ -65,8 +65,8 @@
      * @category Window Management
      */
     setupWindowListener () {
-        this.setWindowListener(WindowListener.clone().setDelegate(this).setIsListening(true))
-        return this
+        this.setWindowListener(WindowListener.clone().setDelegate(this).setIsListening(true));
+        return this;
     }
 
     /**
@@ -75,7 +75,7 @@
      * @category Document Management
      */
     documentBody () {
-        return DocumentBody.shared()
+        return DocumentBody.shared();
     }
     
     /**
@@ -84,7 +84,7 @@
      * @category Window Management
      */
     width () {
-        return window.innerWidth
+        return window.innerWidth;
     }
 
     /**
@@ -93,7 +93,7 @@
      * @category Window Management
      */
     height () {
-        return window.innerHeight
+        return window.innerHeight;
     }
     
     /**
@@ -102,7 +102,7 @@
      * @category Window Management
      */
     aspectRatio () {
-        return this.width() / this.height()
+        return this.width() / this.height();
     }
     
     /**
@@ -111,9 +111,9 @@
      * @returns {WebBrowserWindow} The current instance.
      * @category Window Management
      */
-    setWidth (w) {
-        console.warn("warning: WebBrowserWindow.setWidth() unavailable in browser")
-        return this
+    setWidth (/*w*/) {
+        console.warn("warning: WebBrowserWindow.setWidth() unavailable in browser");
+        return this;
     }
     
     /**
@@ -122,9 +122,9 @@
      * @returns {WebBrowserWindow} The current instance.
      * @category Window Management
      */
-    setHeight (h) {
-        console.warn("warning: WebBrowserWindow.setHeight() unavailable in browser")
-        return this
+    setHeight (/*h*/) {
+        console.warn("warning: WebBrowserWindow.setHeight() unavailable in browser");
+        return this;
     }
     
     /**
@@ -132,7 +132,7 @@
      * @category Debugging
      */
     show () {
-        console.log("Window size " + this.width() + "x" + this.height())
+        console.log("Window size " + this.width() + "x" + this.height());
     }
 
     /**
@@ -141,11 +141,11 @@
      */
     showAgent () {
         console.log("navigator.userAgent = ", navigator.userAgent);
-        console.log("   agentIsSafari: ", this.agentIsSafari())
-        console.log("   agentIsChrome: ", this.agentIsChrome())
-        console.log("  agentIsFirefox: ", this.agentIsFirefox())
-        console.log("      isOnMobile: ", this.isOnMobile())
-        console.log("   isTouchDevice: ", this.isTouchDevice())
+        console.log("   agentIsSafari: ", this.agentIsSafari());
+        console.log("   agentIsChrome: ", this.agentIsChrome());
+        console.log("  agentIsFirefox: ", this.agentIsFirefox());
+        console.log("      isOnMobile: ", this.isOnMobile());
+        console.log("   isTouchDevice: ", this.isTouchDevice());
     }
     
     /**
@@ -154,7 +154,7 @@
      * @category Device Detection
      */
     mobileNames () {
-        return ["android", "webos", "iphone", "ipad", "ipod", "blackBerry", "windows phone"]  
+        return ["android", "webos", "iphone", "ipad", "ipod", "blackBerry", "windows phone"];  
     }
 
     /**
@@ -163,7 +163,7 @@
      * @category Device Detection
      */
     agent () {
-        return navigator.userAgent.toLowerCase()
+        return navigator.userAgent.toLowerCase();
     }
 
     /**
@@ -172,7 +172,7 @@
      * @category Device Detection
      */
     vendor () {
-        return navigator.vendor.toLowerCase()
+        return navigator.vendor.toLowerCase();
     }
 
     /**
@@ -182,7 +182,7 @@
      */
     agentIsFirefox () {
         const agent = navigator.userAgent;
-        return agent.contains("Firefox")
+        return agent.contains("Firefox");
     }
 
     /**
@@ -199,7 +199,7 @@
                 !Type.isNullOrUndefined(agent) &&
                 !agent.contains("CriOS") &&
                 !agent.contains("FxiOS");
-        return isSafari
+        return isSafari;
     }
 
     /**
@@ -208,8 +208,8 @@
      * @category Device Detection
      */
     agentIsChrome () {
-        const isChrome = Boolean(window.chrome)
-        return isChrome
+        const isChrome = Boolean(window.chrome);
+        return isChrome;
     }
     
     /**
@@ -267,8 +267,8 @@
             agent: this.agent(),
             size: this.width() + "x" + this.height(),
             isOnMobile: this.isOnMobile()
-        }
-        return dict
+        };
+        return dict;
     }
 
     /**
@@ -277,7 +277,7 @@
      * @category URL Management
      */
     pageUrl () {
-        return new URL(window.location.href)
+        return new URL(window.location.href);
     }
 
     /**
@@ -287,7 +287,7 @@
      */
     rootUrl () {
         const urlWithoutPathOrQuery = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-        return urlWithoutPathOrQuery
+        return urlWithoutPathOrQuery;
     }
 
     /**
@@ -312,13 +312,13 @@
      * @category URL Management
      */
     urlHostname () {
-        const parser = document.createElement("a")
-        parser.href = window.location.href
-        let name = parser.hostname
+        const parser = document.createElement("a");
+        parser.href = window.location.href;
+        let name = parser.hostname;
         if (!name) {
-		    name = ""
+            name = "";
         }
-        return name
+        return name;
     }
 
     /**
@@ -328,8 +328,8 @@
      * @category Document Management
      */
     setTitle (aName) {
-        document.title = aName
-        return this
+        document.title = aName;
+        return this;
     }
 
     /**
@@ -338,7 +338,7 @@
      * @category Document Management
      */
     title () {
-        return document.title
+        return document.title;
     }
     
     /**
@@ -349,9 +349,9 @@
     activeDomView () {
         const e = document.activeElement
         if (e && e.domView()) {
-            return e.domView()
+            return e.domView();
         }
-        return null
+        return null;
     }
 
     /**
@@ -360,7 +360,7 @@
      * @category Event Handling
      */
     onDocumentBeforeUnload (event) {
-        this.postNoteNamed("onDocumentBeforeUnload")
+        this.postNoteNamed("onDocumentBeforeUnload", event);
     }
 
     /**
@@ -369,7 +369,7 @@
      * @category Event Handling
      */
     onDocumentUnload (event) {
-        this.postNoteNamed("onDocumentUnload")
+        this.postNoteNamed("onDocumentUnload", event);
     }
 
     /**
@@ -378,7 +378,7 @@
      * @category Event Handling
      */
     onPageShow (event) {
-        this.postNoteNamed("onPageShow")
+        this.postNoteNamed("onPageShow", event);
     }
     
     /**
@@ -387,7 +387,7 @@
      * @category Event Handling
      */
     onPageHide (event) {
-        this.postNoteNamed("onPageHide")
+        this.postNoteNamed("onPageHide", event);
     }
 
     /**
@@ -396,7 +396,7 @@
      * @category Event Handling
      */
     onFormSubmit (event) {
-        this.postNoteNamed("onFormSubmit")
+        this.postNoteNamed("onFormSubmit", event);
     }
 
     /**
@@ -405,7 +405,7 @@
      * @category Event Handling
      */
     onBrowserOnline (event) {
-        this.postNoteNamed("onBrowserOnline")
+        this.postNoteNamed("onBrowserOnline", event);
     }
 
     /**
@@ -414,7 +414,7 @@
      * @category Event Handling
      */
     onBrowserOffline (event) {
-        this.postNoteNamed("onBrowserOffline")
+        this.postNoteNamed("onBrowserOffline", event);
     }
 
     /**
@@ -423,7 +423,7 @@
      * @category Network Management
      */
     isOnline () {
-        return navigator.onLine
+        return navigator.onLine;
     }
 
     /**
@@ -472,7 +472,7 @@
     storeSelectionRange () {
         const range = this.getSelectionRange();
         if (range) {
-            console.log(this.typeId() + "--- storing selection ---")
+            console.log(this.typeId() + "--- storing selection ---");
             this.setStoredSelectionRange(range);
             return true;
         }
@@ -502,15 +502,19 @@
      * @category Selection Management
      */
     safelyRunBlockWhileRestoringSelection (aBlock) {
-        this.storeSelectionRange()
+        this.storeSelectionRange();
         try {
-            aBlock()
+            aBlock();
         } catch (error) {
-            this.restoreSelectionRange()
+            this.restoreSelectionRange();
             console.error("error running block while restoring selection:", error);
             error.rethrow();
         }
-        return this
+        return this;
+    }
+
+    onWindowError (event) {
+        this.postNoteNamed("onWindowError", event);
     }
 
 }.initThisClass());
