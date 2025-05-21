@@ -8,14 +8,14 @@
  * This class handles image-related operations and supports specific mime types.
  */
 
-class SvImageWellField extends SvField {
+(class SvImageWellField extends SvField {
     /**
      * @static
      * @description Indicates if this class is available as a node primitive.
      * @returns {boolean} True if available as a node primitive.
      * @category Initialization
      */
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     
@@ -25,7 +25,7 @@ class SvImageWellField extends SvField {
      * @returns {Set<string>} A set of supported MIME types.
      * @category Configuration
      */
-    static supportedMimeTypes() {
+    static supportedMimeTypes () {
         return new Set(["image/jpeg", "image/gif", "image/png"])
     }
 
@@ -36,7 +36,7 @@ class SvImageWellField extends SvField {
      * @returns {boolean} True if the MIME type is supported.
      * @category Validation
      */
-    static canOpenMimeType(mimeType) {
+    static canOpenMimeType (mimeType) {
         return this.supportedMimeTypes().has(mimeType)
     }
 
@@ -47,7 +47,7 @@ class SvImageWellField extends SvField {
      * @returns {SvImageWellField} A new instance of SvImageWellField with the opened data.
      * @category Data Handling
      */
-    static openMimeChunk(dataChunk) {
+    static openMimeChunk (dataChunk) {
         const newNode = this.clone()
         newNode.setValue(dataChunk.dataUrl())
         //newNode.setValue(dataChunk.decodedData())
@@ -61,7 +61,7 @@ class SvImageWellField extends SvField {
      * @description Initializes the prototype slots for this class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         /**
          * @member {boolean} onlyShowsKeyWhenEmpty
          * @description Determines if the key should only be shown when the field is empty.
@@ -95,7 +95,7 @@ class SvImageWellField extends SvField {
      * @description Initializes the prototype with default values.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
         this.setKey("Image title");
         this.setKeyIsEditable(false);
         this.setValueIsEditable(false);
@@ -107,10 +107,9 @@ class SvImageWellField extends SvField {
      * @returns {string} An empty string as the summary value.
      * @category Data Handling
      */
-    summaryValue() {
+    summaryValue () {
         return ""
     }
    
-}
+}).initThisClass();
 
-SvImageWellField.initThisClass();

@@ -1,12 +1,12 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvImageWellFieldTile
+ * @class SvVideoWellFieldTile
  * @extends SvFieldTile
- * @classdesc Represents an image well field tile in the browser stack.
+ * @classdesc Represents a video well field tile in the browser stack.
  */
 "use strict";
 
-(class SvImageWellFieldTile extends SvFieldTile {
+(class SvVideoWellFieldTile extends SvFieldTile {
     
     /**
      * @description Checks if the given mime type can be opened.
@@ -15,8 +15,7 @@
      * @category File Handling
      */
     canOpenMimeType (mimeType) {
-        // TODO: add checks for browser supported image types?
-        return mimeType.startsWith("image/");
+        return mimeType.startsWith("video/");
     }
 
     /**
@@ -28,8 +27,8 @@
     }
 
     /**
-     * @description Initializes the SvImageWellFieldTile.
-     * @returns {SvImageWellFieldTile} The initialized instance.
+     * @description Initializes the SvVideoWellFieldTile.
+     * @returns {SvVideoWellFieldTile} The initialized instance.
      * @category Initialization
      */
     init () {
@@ -38,47 +37,42 @@
         this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px");
         this.valueView().setPaddingTop("0px").setPaddingBottom("0px");
 
-        //this.keyView().setElementClassName("SvImageWellKeyField");
-        //this.valueView().setIsEditable(false);
         this.turnOffUserSelect();
         this.keyView().setTransition("color 0.3s");
-        //this.valueViewContainer().setPadding("0px");
         return this;
     }
 
     /**
      * @description Creates and returns a value view.
-     * @returns {ImageWellView} The created image well view.
+     * @returns {VideoWellView} The created video well view.
      * @category View Creation
      */
     createValueView () {
         /*
-            Note: if we drop an image on the ImageWellView, it will send a didUpdateImageWellView to it's parents
+            Note: if we drop a video on the VideoWellView, it will send a didUpdateVideoWellView to it's parents
             which we respond to and use to call setValue
         */
-        const imageWellView = ImageWellView.clone();
-        //imageWellView.setWidth("100%").setHeight("fit-content");
-        return imageWellView;
+        const videoWellView = VideoWellView.clone();
+        return videoWellView;
     }
 
     setDataUrl (dataUrl) {
-        debugger;
         this.setValue(dataUrl);
         return this;
     }
 	
     /**
-     * @description Returns the image well view.
-     * @returns {ImageWellView} The image well view.
+     * @description Returns the video well view.
+     * @returns {VideoWellView} The video well view.
      * @category View Access
      */
-    imageWellView () {
+    videoWellView () {
         return this.valueView();
     }
 
     /**
      * @description Synchronizes the tile from the node.
-     * @returns {SvImageWellFieldTile} The synchronized instance.
+     * @returns {SvVideoWellFieldTile} The synchronized instance.
      * @category Synchronization
      */
     syncFromNode () {
@@ -88,45 +82,41 @@
         this.setMaxWidth("100em"); // get this from node instead?
         
         this.applyStyles(); // normally this would happen in updateSubviews
-        this.imageWellView().setImageDataUrl(field.value());
-        this.imageWellView().setIsEditable(field.valueIsEditable());
+        this.videoWellView().setVideoDataUrl(field.value());
+        this.videoWellView().setIsEditable(field.valueIsEditable());
 
         return this;
     }
 
     /**
      * @description Synchronizes the tile to the node.
-     * @returns {SvImageWellFieldTile} The synchronized instance.
+     * @returns {SvVideoWellFieldTile} The synchronized instance.
      * @category Synchronization
      */
     syncToNode () {
         const field = this.node();
 				
-        //this.updateKeyView();
-        
         field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
-            const data = this.imageWellView().imageDataUrl();
-            //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"));
+            const data = this.videoWellView().videoDataUrl();
             field.setValue(data);
         }
         
-        //super.suncToNode();
         return this;
     }
 
     /**
-     * @description Returns the data URL of the image.
-     * @returns {string|null} The data URL of the image.
+     * @description Returns the data URL of the video.
+     * @returns {string|null} The data URL of the video.
      * @category Data Access
      */
     dataUrl () {
-        return this.imageWellView().imageDataUrl();
+        return this.videoWellView().videoDataUrl();
     }
 
     /**
-     * @description Checks if the image well is empty.
+     * @description Checks if the video well is empty.
      * @returns {boolean} True if empty, false otherwise.
      * @category State Check
      */
@@ -135,13 +125,12 @@
     }
     
     /**
-     * @description Handles the update of the image well view.
-     * @param {ImageWellView} anImageWell - The updated image well view.
-     * @returns {SvImageWellFieldTile} The current instance.
+     * @description Handles the update of the video well view.
+     * @param {VideoWellView} aVideoWell - The updated video well view.
+     * @returns {SvVideoWellFieldTile} The current instance.
      * @category Event Handling
      */
-    didUpdateImageWellView (/*anImageWell*/) {
-        //this.debugLog(".didUpdateImageWellView()");
+    didUpdateVideoWellView (/*aVideoWell*/) {
         this.scheduleSyncToNode();
         return this;
     }

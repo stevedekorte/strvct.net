@@ -7,6 +7,7 @@
     "SvTextAreaFieldTile.js",
     "SvChatInputTile.js",
     "SvImageWellFieldTile.js",
+    "SvVideoWellFieldTile.js",
     "options/_imports.json",
     "SvPointerFieldTile.js"
 ]

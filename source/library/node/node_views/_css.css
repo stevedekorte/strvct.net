@@ -28,3 +28,48 @@
 .ImageCloseButton:hover {
 	opacity: 1;
 }
+
+/* VideoView styles */
+.VideoCloseButton {
+	display: flex;
+	position: absolute;
+	
+	color: rgba(128, 128, 128, 0.5);
+	align-items: center;
+	justify-content: center;
+
+	top: 0px;
+	right: 0px;
+	margin: 0px;
+	padding: 0px;	
+
+	max-width: 30px;
+	min-width: 30px;
+
+	min-height: 30px;
+	max-height: 30px;
+
+	opacity: 0.3;
+	z-index: 2;
+	border: none;
+	box-shadow: none;
+}
+
+.VideoCloseButton:hover {
+	opacity: 1;
+}
+
+.RawVideoView {
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 200px;
+}
+
+/* Ensure video element aspect ratio is maintained */
+.RawVideoView video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16/9;
+    background-color: #000;
+    border-radius: 3px;
+}
