@@ -33,6 +33,7 @@
             slot.setSlotType("String");
             slot.setDescription("The text prompt to use for generating the video");
             slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
         }
 
         {
@@ -41,6 +42,7 @@
             slot.setDescription("The duration of the video in seconds");
             slot.setIsSubnodeField(true);
             slot.setValidValues([5, 6, 7, 8]);
+            slot.setShouldStoreSlot(true);
         }
 
         /*
@@ -68,9 +70,12 @@
         */
 
         {
-            const slot = this.newSlot("model", "veo-2.0-generate-001");
+            const slot = this.newSlot("model", "veo-3.0-generate-preview");
             slot.setSlotType("String");
             slot.setDescription("The Gemini model to use for video generation via Veo");
+            slot.setValidValues(["veo-3.0-generate-preview", "veo-2.0-generate-001"]);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
         }
 
         // waiting for completion uses this
@@ -78,7 +83,7 @@
             const slot = this.newSlot("operationId", null);
             slot.setSlotType("String");
             slot.setDescription("The operation ID for the Gemini API");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
             slot.setShouldStoreSlot(true);
         }
 
@@ -86,7 +91,7 @@
             const slot = this.newSlot("checkIntervalMs", 10000);
             slot.setSlotType("Number");
             slot.setDescription("The interval in milliseconds to check the status of the operation");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
             slot.setShouldStoreSlot(false);
         }
 
@@ -94,7 +99,7 @@
             const slot = this.newSlot("maxAttempts", 12);
             slot.setSlotType("Number");
             slot.setDescription("The maximum number of attempts to check the status of the operation");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
             slot.setShouldStoreSlot(false);
         }
 
@@ -102,7 +107,7 @@
             const slot = this.newSlot("attempts", 0);
             slot.setSlotType("Number");
             slot.setDescription("The number of attempts to check the status of the operation");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
             slot.setShouldStoreSlot(false);
         }
 
@@ -112,7 +117,7 @@
             slot.setInspectorPath("Fetch Options");
             slot.setSlotType("String");
             slot.setDescription("The fetch options as a string");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
             slot.setCanEditInspection(false);
             slot.setSyncsToView(true);
         }
@@ -232,7 +237,7 @@
     // Build the request body for the Gemini Video API
     requestBody () {
         // Base structure for Vertex AI LLM API
-        const endpoint = this.apiUrl().split("/v1")[1]
+        const endpoint = `projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.model()}`
         const body = {
             "endpoint": endpoint,
             "instances": [
@@ -317,7 +322,6 @@
             return await this.checkOperationStatus();
 
         } catch (error) {
-            debugger;
             const errorMessage = `API request error: ${error.message}`;
             this.setStatus("Request failed");
             this.setError(errorMessage);
@@ -331,26 +335,27 @@
         return this.startGeneration();
     }
 
+    host () {
+        return `${this.locationId()}-aiplatform.googleapis.com`
+    }
+
     // Check the status of a long-running operation
     async checkOperationStatus () {
         this.setAttempts(this.attempts() + 1);
         this.setStatus(`Fetch attempt ${this.attempts()} of ${this.maxAttempts()}...`);
 
-        const projectId = this.projectId();
-        const locationId = this.locationId();
-        const apiUrl = `https://${locationId}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${locationId}/operations/${this.operationId()}`;
+        // Use the correct API endpoint pattern that matches the working veo.js
+        const apiUrl = `https://${this.host()}/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.model()}:fetchPredictOperation`;
         const proxyApiUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(apiUrl);
 
-        //this.setStatus(`Checking status of operation ${operationName}...`);
-        
         try {
-            debugger;
             const options = {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${this.apiKey()}`
-                }
+                },
+                body: JSON.stringify({ operationName: this.operationId() })
             };
 
             console.log("GeminiVideoPrompt: checking operation status at:\n[", proxyApiUrl, "]\nwith options: ", JSON.stringify(options, null, 2));
@@ -391,7 +396,6 @@
                 // do we need to convert it to a data url?
                 const dataUrl = "data:video/mp4;base64," + data.response.videos[0].bytesBase64Encoded;
                 console.log("GeminiVideoPrompt: video data url:" + dataUrl.length + " bytes");
-                debugger;
                 this.setVideoDataUrl(dataUrl);
 
                 this.setStatus("Video generation complete");
@@ -399,13 +403,12 @@
                 if (data.metadata && data.metadata.progressPercentage) {
                     this.setStatus(`Video generation: ${data.metadata.progressPercentage}% complete`);
                 } else {
-                    this.setStatus("Video generation in progress");
+                    this.setStatus("In progress...");
                 }
                 this.waitAndCheckAgainIfNeeded();
             }
             
         } catch (error) {
-            debugger;
             const errorMessage = `Operation error: ${error.message}`;
             this.setStatus("Status check failed");
             this.setError(errorMessage);
@@ -421,9 +424,7 @@
         
         if (this.attempts() < this.maxAttempts()) {
             setTimeout(() => {
-                debugger;
                 this.checkOperationStatus();
-                debugger;
             }, this.checkIntervalMs());
         } else {
             const errorMessage = `Operation did not complete after ${attempts} attempts`;

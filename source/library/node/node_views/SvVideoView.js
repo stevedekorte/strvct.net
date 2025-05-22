@@ -34,6 +34,14 @@
             slot.setSlotType("FlexDomView");
         }
         /**
+         * @member {FlexDomView} downloadButtonView - View for the download button
+         * @category UI Components
+         */
+        {
+            const slot = this.newSlot("downloadButtonView", null);
+            slot.setSlotType("FlexDomView");
+        }
+        /**
          * @member {String} srcUrl - Source URL of the video
          * @category Data
          */
@@ -120,6 +128,11 @@
         this.setCloseButtonView(cb);
         this.addSubview(cb);
 
+        // download button
+        const db = this.newDownloadButtonView();
+        this.setDownloadButtonView(db);
+        this.addSubview(db);
+
         this.setIsEditable(false);
         this.dragUnhighlight();
         this.turnOffUserSelect();
@@ -140,6 +153,23 @@
         v.setRightPx(0);
         v.setTarget(this).setAction("close");
         v.setIconName("close");
+        return v;
+    }
+
+    /**
+     * @description Creates a new download button view
+     * @returns {ButtonView} The created download button view
+     * @category UI Components
+     */
+    newDownloadButtonView () {
+        const v = ButtonView.clone().setElementClassName("VideoDownloadButton");
+        v.setDisplay("flex");
+        v.setPosition("absolute");
+        v.setTitleIsVisible(false);
+        v.setTopPx(0);
+        v.setRightPx(30); // Position next to close button
+        v.setTarget(this).setAction("downloadVideo");
+        v.setIconName("download"); // This might need to be a different icon name based on available icons
         return v;
     }
 
@@ -169,6 +199,7 @@
     setIsEditable (aBool) {
         this._isEditable = aBool;
         this.closeButtonView().setIsDisplayHidden(!aBool);
+        this.downloadButtonView().setIsDisplayHidden(!aBool);
         return this;
     }
 
@@ -315,6 +346,20 @@
         video.loop = this.loop();
         video.muted = this.muted();
         
+        // Ensure video controls are interactive
+        video.style.userSelect = "auto";
+        video.style.pointerEvents = "auto";
+        
+        // Enable dragging for desktop save
+        video.draggable = true;
+        video.setAttribute("download", "video.mp4");
+        
+        // Handle drag events to enable drag-to-desktop
+        video.addEventListener("dragstart", (event) => {
+            event.dataTransfer.setData("text/uri-list", srcURL);
+            event.dataTransfer.effectAllowed = "copy";
+        });
+        
         const v = this.newRawVideoViewForVideo(video);
         this.setRawVideoView(v);
         this.videoContainer().addSubview(v);
@@ -341,6 +386,22 @@
         video.autoplay = this.autoplay();
         video.loop = this.loop();
         video.muted = this.muted();
+
+        // Ensure video controls are interactive
+        video.style.userSelect = "auto";
+        video.style.pointerEvents = "auto";
+        
+        // Enable dragging for desktop save
+        video.draggable = true;
+        video.setAttribute("download", "generated-video.mp4");
+        
+        // Handle drag events to enable drag-to-desktop
+        video.addEventListener("dragstart", (event) => {
+            // For data URLs, we need to provide the data differently
+            event.dataTransfer.setData("application/octet-stream", dataURL);
+            event.dataTransfer.setData("text/uri-list", dataURL);
+            event.dataTransfer.effectAllowed = "copy";
+        });
 
         const v = this.newRawVideoViewForVideo(video);
         this.setRawVideoView(v);
@@ -458,6 +519,48 @@
                 video.currentTime = 0;
             }
         }
+        return this;
+    }
+
+    /**
+     * @description Downloads the video to the user's computer
+     * @returns {VideoView} The VideoView instance
+     * @category File Operations
+     */
+    downloadVideo() {
+        const dataURL = this.dataURL();
+        if (!dataURL) {
+            console.warn("No video data available for download");
+            return this;
+        }
+
+        try {
+            // Create a temporary anchor element for download
+            const link = document.createElement("a");
+            link.href = dataURL;
+            link.download = "generated-video.mp4";
+            link.style.display = "none";
+            
+            // Add to DOM, click, and remove
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            console.log("Video download initiated");
+        } catch (error) {
+            console.error("Failed to download video:", error);
+            
+            // Fallback: try to open in new window
+            try {
+                const newWindow = window.open(dataURL, "_blank");
+                if (!newWindow) {
+                    console.warn("Popup blocked. Please allow popups or try right-clicking the video and selecting 'Save as...'");
+                }
+            } catch (fallbackError) {
+                console.error("Fallback download also failed:", fallbackError);
+            }
+        }
+        
         return this;
     }
     

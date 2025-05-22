@@ -21,6 +21,7 @@
    * @category Initialization
    */
   initPrototypeSlots () {
+
     /**
      * @member {boolean} isSecure - Indicates if the server is secure (https).
      * @category Configuration
