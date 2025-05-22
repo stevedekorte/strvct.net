@@ -11,14 +11,6 @@
 
     initPrototypeSlots () {
 
-        /*
-        {
-            const slot = this.newSlot("service", null);
-            slot.setSlotType("AiService");
-            slot.setDescription("The Gemini service to use for video generation");
-        }
-        */
-
         {
             const slot = this.newSlot("videoData", null);
             slot.setSlotType("String");
@@ -41,18 +33,6 @@
         }
 
         /*
-            "resolution": {
-                "presets": {
-                    "720p": {
-                    "width": 1280,
-                    "height": 720
-                    },
-                    "1080p": {
-                    "width": 1920,
-                    "height": 1080
-                    }
-                },
-      */
         {
             const slot = this.newSlot("width", 1280);
             slot.setSlotType("Number");
@@ -74,9 +54,10 @@
             slot.setIsSubnodeField(true);
             slot.setValidValues([24]);
         }
+        */
 
         {
-            const slot = this.newSlot("model", "videomaker");
+            const slot = this.newSlot("model", "veo-2.0-generate-001");
             slot.setSlotType("String");
             slot.setDescription("The Gemini model to use for video generation via Veo");
         }
@@ -85,6 +66,39 @@
             const slot = this.newSlot("response", null);
             slot.setSlotType("Object");
             slot.setDescription("The response from the Gemini API");
+        }
+
+        // waiting for completion uses this
+        {
+            const slot = this.newSlot("operationId", null);
+            slot.setSlotType("String");
+            slot.setDescription("The operation ID for the Gemini API");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+        }
+
+        {
+            const slot = this.newSlot("checkIntervalMs", 10000);
+            slot.setSlotType("Number");
+            slot.setDescription("The interval in milliseconds to check the status of the operation");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        {
+            const slot = this.newSlot("maxAttempts", 12);
+            slot.setSlotType("Number");
+            slot.setDescription("The maximum number of attempts to check the status of the operation");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        {
+            const slot = this.newSlot("attempts", 0);
+            slot.setSlotType("Number");
+            slot.setDescription("The number of attempts to check the status of the operation");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
         }
 
         {
@@ -123,7 +137,7 @@
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("startGeneration");
-          }
+        }
     }
 
     initPrototype () {
@@ -142,13 +156,15 @@
     subtitle () {
         const prompt = this.prompt().length > 0 ? this.prompt().slice(0, 40) + "..." : "No prompt yet";
         const duration = this.duration();
+        /*
         const width = this.width();
         const height = this.height();
         const frameRate = this.frameRate();
+        */
         const model = this.model();
         const status = this.status();
     
-        let s = `${prompt}\n${duration}s ${width}x${height} ${frameRate}fps\n${model}`;
+        let s = `${prompt}\n${duration}seconds, ${model}`;
         if (status.length > 0) {
             s += `\n${status}`;
         }
@@ -187,7 +203,7 @@
             return null;
         }
 
-        return `https://${this.locationId()}-aiplatform.googleapis.com/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/veo-3.0-generate-preview:predict`;
+        return `https://${this.locationId()}-aiplatform.googleapis.com/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.model()}:predictLongRunning`;
     }
 
     activeApiUrl () {
@@ -201,83 +217,31 @@
     // Build the request body for the Gemini Video API
     requestBody () {
         // Base structure for Vertex AI LLM API
+        const endpoint = this.apiUrl().split("/v1")[1]
         const body = {
-            contents: [
-              {
-                role: 'user',
-                parts: [
-                  {
-                    text: this.prompt()
-                  }
-                ]
-              }
-            ],
-            generation_config: {
-              duration: this.duration(),
-              // Optional parameters
-              video_resolution: {
-                width: this.width(),
-                height: this.height()
-              },
-              frame_rate: this.frameRate()
-              // Add other parameters as needed
-              //sampleCount: 1
-              //enhancePrompt: true
-            }
-          };
-
-        // Add reference image/video data if provided
-        if (this.videoData()) {
-            const videoPart = this.prepareVideoPart();
-            if (videoPart) {
-                if (videoPart.image.uri) {
-                    body.instances[0].image_url = videoPart.image.uri;
-                } else if (videoPart.image.data) {
-                    body.instances[0].image_bytes = videoPart.image.data;
+            "endpoint": endpoint,
+            "instances": [
+                {
+                "prompt": this.prompt()
                 }
+            ],
+            "parameters": {
+                "aspectRatio": "16:9",
+                "sampleCount": 1,
+                "durationSeconds": this.duration(),
+                "fps": "",
+                "personGeneration": "allow_adult",
+                "enablePromptRewriting": true,
+                "addWatermark": true,
+                "includeRaiReason": true,
             }
-        }
+        };
+
+        // TODO: Add reference image/video data if provided
+        // looks like it should go in instances info
+            
 
         return body;
-    }
-
-    // Prepare the video/image part of the request
-    prepareVideoPart () {
-        const videoData = this.videoData();
-        
-        if (!videoData) {
-            return null; // Video/image data is optional
-        }
-
-        // Handle URL or base64 encoded data
-        if (videoData.startsWith("http")) {
-            return {
-                image: {
-                    uri: videoData
-                }
-            };
-        } else {
-            // Assume it's base64 encoded data
-            // Check if it has the data URL prefix and remove it if needed
-            let base64Data = videoData;
-            const dataUrlPrefixes = ["data:image/", "data:video/"];
-            
-            for (const prefix of dataUrlPrefixes) {
-                if (base64Data.startsWith(prefix)) {
-                    const commaIndex = base64Data.indexOf(",");
-                    if (commaIndex !== -1) {
-                        base64Data = base64Data.substring(commaIndex + 1);
-                        break;
-                    }
-                }
-            }
-
-            return {
-                image: {
-                    data: base64Data
-                }
-            };
-        }
     }
 
     // Step 1: Start the video generation process
@@ -338,7 +302,10 @@
             }
             
             this.setStatus("Video generation started. Operation ID: " + operationData.name);
-            return operationData;
+
+            this.setOperationId(operationData.name);
+            return await this.waitForVideoCompletion();
+
         } catch (error) {
             const errorMessage = `API request error: ${error.message}`;
             this.setStatus("Request failed");
@@ -353,85 +320,17 @@
         return this.startGeneration();
     }
 
-
-    // Helper method to extract text content from the response
-    extractText () {
-        if (!this.response()) {
-            return "";
-        }
-
-        try {
-            // For Vertex AI LLM API responses
-            if (this.response().predictions && this.response().predictions.length > 0) {
-                const prediction = this.response().predictions[0];
-                if (prediction.content && prediction.content.text) {
-                    return prediction.content.text;
-                }
-            }
-            
-            // For completed long-running operations
-            if (this.response().result && this.response().result.predictions) {
-                const predictions = this.response().result.predictions;
-                if (predictions && predictions.length > 0 && predictions[0].content) {
-                    return predictions[0].content.text || "";
-                }
-            }
-            
-            // Fall back to original format if still using it
-            const candidates = this.response().candidates;
-            if (candidates && candidates.length > 0) {
-                const content = candidates[0].content;
-                if (content && content.parts) {
-                    let result = "";
-                    for (const part of content.parts) {
-                        if (part.text) {
-                            result += part.text;
-                        }
-                    }
-                    return result;
-                }
-            }
-
-            return "";
-        } catch (error) {
-            console.error("Error extracting text from response:", error);
-            return "";
-        }
-    }
-    
     // Check the status of a long-running operation
-    async checkOperationStatus (operationId) {
-        this.setStatus("Checking operation status...");
-        
-        // No need to call setupApiKey as we're getting the API key from the service
-        // method directly through the apiKey() method
-        
-        if (!this.apiKey()) {
-            this.setStatus("Authentication error");
-            this.setError("No API key available");
-            return null;
-        }
-        
+    async checkOperationStatus () {
         const projectId = this.projectId();
         const locationId = this.locationId();
-        
-        if (!projectId) {
-            this.setStatus("Configuration error");
-            this.setError("No project ID available. Please check GeminiService configuration.");
-            return null;
-        }
-        
-        // Operation name is often returned as a full path, so extract just the ID if needed
-        let operationName = operationId;
-        if (operationId.includes('/')) {
-            operationName = operationId.split('/').pop();
-        }
-        
-        const apiUrl = `https://${locationId}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${locationId}/operations/${operationName}`;
-        this.setStatus(`Checking status of operation ${operationName}...`);
+        const apiUrl = `https://${locationId}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${locationId}/operations/${this.operationId()}`;
+        const proxyApiUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(apiUrl);
+
+        //this.setStatus(`Checking status of operation ${operationName}...`);
         
         try {
-            const response = await fetch(apiUrl, {
+            const response = await fetch(proxyApiUrl, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${this.apiKey()}`
@@ -473,143 +372,19 @@
         }
     }
     
-    // Helper method to extract video URL from the response
-    extractVideoUrl () {
-        if (!this.response()) {
-            return null;
-        }
-
-        try {
-            // Check for long-running operation response format
-            if (this.response().name) {
-                // This is the initial response with an operation ID
-                const operationId = this.response().name;
-                console.log("Long-running operation started:", operationId);
-                return `Operation ID: ${operationId} - Check status with getOperation API`;
-            }
-            
-            // If the response has predictions, look for video URL there
-            if (this.response().predictions && this.response().predictions.length > 0) {
-                const prediction = this.response().predictions[0];
-                
-                // Check for video URLs in the prediction
-                if (prediction.videoUrl) {
-                    return prediction.videoUrl;
-                }
-                
-                if (prediction.content && prediction.content.video && prediction.content.video.uri) {
-                    return prediction.content.video.uri;
-                }
-                
-                // Look for URLs in the text content
-                if (prediction.content && prediction.content.text) {
-                    const urlPattern = /(https?:\/\/[^\s]+)/g;
-                    const matches = prediction.content.text.match(urlPattern);
-                    if (matches && matches.length > 0) {
-                        return matches[0]; // Return the first URL found
-                    }
-                }
-            }
-            
-            // For complete operations
-            if (this.response().result && this.response().result.predictions) {
-                const predictions = this.response().result.predictions;
-                if (predictions && predictions.length > 0) {
-                    // Same checks as above for the completed operation
-                    const prediction = predictions[0];
-                    
-                    if (prediction.videoUrl) {
-                        return prediction.videoUrl;
-                    }
-                    
-                    if (prediction.content && prediction.content.video && prediction.content.video.uri) {
-                        return prediction.content.video.uri;
-                    }
-                    
-                    if (prediction.content && prediction.content.text) {
-                        const urlPattern = /(https?:\/\/[^\s]+)/g;
-                        const matches = prediction.content.text.match(urlPattern);
-                        if (matches && matches.length > 0) {
-                            return matches[0];
-                        }
-                    }
-                }
-            }
-
-            return null;
-        } catch (error) {
-            console.error("Error extracting video URL from response:", error);
-            return null;
-        }
-    }
-
-    // Step 1a: Start video generation from a text prompt
-    async generateVideo (promptText) {
-        this.setStatus("Initializing text-to-video generation...");
-        this.setVideoData(null); // No reference image for basic generation
-        this.setPrompt(promptText || "Create a short video of a sunset over mountains.");
-        this.setStatus(`Preparing to generate video: "${this.prompt().slice(0, 30)}..."`);
-        return await this.startGeneration();
-    }
-
-    // Step 1b: Start video generation with a reference image
-    async generateVideoWithImage (imageUrlOrBlob, promptText) {
-        this.setStatus("Initializing image-to-video generation...");
-        
-        if (typeof imageUrlOrBlob === 'string' && imageUrlOrBlob.startsWith('http')) {
-            // It's a URL
-            this.setStatus("Using reference image from URL");
-            this.setVideoData(imageUrlOrBlob);
-            this.setPrompt(promptText || "Create a video based on this reference image.");
-            this.setStatus(`Preparing image-to-video with prompt: "${this.prompt().slice(0, 30)}..."`);
-            return await this.startGeneration();
-        } else {
-            // It's a blob/file
-            this.setStatus("Processing reference image file...");
-            
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                
-                reader.onload = async (event) => {
-                    this.setStatus("Reference image loaded successfully");
-                    this.setVideoData(event.target.result);
-                    this.setPrompt(promptText || "Create a video based on this reference image.");
-                    this.setStatus(`Preparing image-to-video with prompt: "${this.prompt().slice(0, 30)}..."`);
-                    const result = await this.startGeneration();
-                    resolve(result);
-                };
-                
-                reader.onerror = (error) => {
-                    const errorMessage = `Error reading image file: ${error}`;
-                    this.setStatus("Failed to load reference image");
-                    this.setError(errorMessage);
-                    reject(error);
-                };
-                
-                this.setStatus("Reading image data...");
-                reader.readAsDataURL(imageUrlOrBlob);
-            });
-        }
-    }
-    
     // Step 2: Get the final result by waiting for the operation to complete
-    async waitForVideoCompletion (operation, checkIntervalMs = 10000, maxAttempts = null) {
+    async waitForVideoCompletion () {
+        const checkIntervalMs = this.checkIntervalMs();
+        const maxAttempts = this.maxAttempts();
+        const operationId = this.operationId();
         this.setStatus("Waiting for video generation to complete...");
-        const operationId = typeof operation === 'string' ? operation : operation?.name;
         
-        if (!operationId) {
-            this.setStatus("Invalid operation");
-            this.setError("Invalid operation ID");
-            return null;
-        }
+        //this.setStatus(`Monitoring generation progress (poll interval: ${checkIntervalMs/1000}s)`);
         
-        let attempts = 0;
-        this.setStatus(`Monitoring generation progress (poll interval: ${checkIntervalMs/1000}s)`);
-        
-        while (maxAttempts === null || attempts < maxAttempts) {
-            attempts++;
+        while (maxAttempts === null || this.attempts() < maxAttempts) {
+            this.setAttempts(this.attempts() + 1);
             
-            this.setStatus(`Checking progress (attempt ${attempts}${maxAttempts ? '/' + maxAttempts : ''})...`);
+            this.setStatus(`Checking progress (attempt ${this.attempts()}${maxAttempts ? '/' + maxAttempts : ''})...`);
             const status = await this.checkOperationStatus(operationId);
             
             if (!status) {
@@ -646,6 +421,7 @@
         return null;
     }
     
+    /*
     // Convenience method that combines generation and waiting
     async generateAndWaitForVideo (promptText, checkIntervalMs = 10000, maxAttempts = null) {
         this.setStatus("Starting end-to-end video generation process");
@@ -671,170 +447,6 @@
         this.setStatus("Image-to-video generation started, now waiting for completion");
         return this.waitForVideoCompletion(operation, checkIntervalMs, maxAttempts);
     }
-
-    // Show a demonstration of how to use this class
-    static example () {
-        console.log("To use GeminiVideoPrompt:");
-        console.log(`
-// Create a new instance
-const videoPrompt = GeminiVideoPrompt.clone();
-
-// APPROACH 1: Explicit two-step process with manual polling
-// Step 1: Start the video generation process
-videoPrompt.generateVideo("Create a cinematic video of a spaceship flying through an asteroid field")
-    .then(operation => {
-        // The operation contains an ID for the long-running process
-        const operationId = operation.name;
-        console.log("Generation started:", operationId);
-        
-        // Step 2: Poll for the operation status
-        const checkStatus = () => {
-            videoPrompt.checkOperationStatus(operationId)
-                .then(status => {
-                    if (status.done) {
-                        console.log("Video generation complete!");
-                        const videoUrl = videoPrompt.extractVideoUrl();
-                        console.log("Generated video URL:", videoUrl);
-                        
-                        // Do something with the URL, like displaying the video
-                        document.getElementById('resultVideo').src = videoUrl;
-                    } else {
-                        console.log("Still processing... will check again in 10 seconds");
-                        setTimeout(checkStatus, 10000);
-                    }
-                })
-                .catch(error => {
-                    console.error("Status check error:", error);
-                });
-        };
-        
-        // Start polling after a short delay
-        setTimeout(checkStatus, 5000);
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
-
-// APPROACH 2: Using the built-in wait method
-videoPrompt.generateVideo("Create a sci-fi cityscape at night with flying cars")
-    .then(operation => {
-        console.log("Generation started with operation ID:", operation.name);
-        
-        // Wait for completion with the helper method
-        return videoPrompt.waitForVideoCompletion(operation, 10000);
-    })
-    .then(result => {
-        if (result) {
-            const videoUrl = videoPrompt.extractVideoUrl();
-            console.log("Generation complete! Video URL:", videoUrl);
-        }
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
-
-// APPROACH 3: Using a reference image with the convenience method
-// Assuming you have an image input element with id "imageInput"
-document.getElementById("imageInput").addEventListener("change", (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        videoPrompt.generateWithImageAndWait(
-            file, 
-            "Create a video that starts with this image and shows it coming to life",
-            10000  // Check every 10 seconds
-        )
-        .then(result => {
-            if (result) {
-                const videoUrl = videoPrompt.extractVideoUrl();
-                console.log("Video generated from image! URL:", videoUrl);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-    }
-});
-
-// APPROACH 4: All-in-one method
-// This combines the entire process into one convenient method call
-videoPrompt.generateAndWaitForVideo(
-    "Create a whimsical animation of floating lanterns rising into a night sky",
-    15000, // Check every 15 seconds
-    12     // Max of 12 attempts (3 minutes total)
-)
-.then(result => {
-    if (result) {
-        const videoUrl = videoPrompt.extractVideoUrl();
-        console.log("Video ready:", videoUrl);
-        
-        // Display the video
-        const videoElement = document.createElement('video');
-        videoElement.src = videoUrl;
-        videoElement.controls = true;
-        document.body.appendChild(videoElement);
-    }
-})
-.catch(error => {
-    console.error("Process failed:", error);
-});
-
-// Advanced example with async/await
-async function generateCustomVideo() {
-    try {
-        // Step 1: Start the operation
-        const operation = await videoPrompt.generateVideo(
-            "Create a photorealistic video of ocean waves crashing on a beach at sunset"
-        );
-        
-        if (!operation) {
-            throw new Error("Failed to start video generation");
-        }
-        
-        console.log("Operation started:", operation.name);
-        
-        // Step 2: Wait for completion with progress updates
-        let attempts = 0;
-        let complete = false;
-        
-        while (!complete && attempts < 30) { // Max 5 minutes at 10s intervals
-            attempts++;
-            
-            await new Promise(resolve => setTimeout(resolve, 10000)); // Wait 10 seconds
-            
-            const status = await videoPrompt.checkOperationStatus(operation.name);
-            
-            if (!status) {
-                console.error("Failed to check operation status");
-                break;
-            }
-            
-            if (status.done) {
-                complete = true;
-                const videoUrl = videoPrompt.extractVideoUrl();
-                console.log("Generation complete after", attempts, "attempts!");
-                console.log("Video URL:", videoUrl);
-                
-                // Return the URL for further processing
-                return videoUrl;
-            } else {
-                console.log("Progress update:", attempts, "checks completed...");
-                
-                // You can report progress percentage if the API provides it
-                if (status.metadata && status.metadata.progressPercentage) {
-                    console.log("Progress:", status.metadata.progressPercentage, "%");
-                }
-            }
-        }
-        
-        if (!complete) {
-            throw new Error("Operation timed out");
-        }
-    } catch (error) {
-        console.error("Error generating video:", error);
-        throw error;
-    }
-}
-`);
-    }
+    */
 
 }.initThisClass());

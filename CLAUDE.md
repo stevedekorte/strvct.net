@@ -351,4 +351,4 @@
 - Use consistent indentation (2 spaces) for all code blocks
 - Use the Map class instead of dictionaries for maps
 - When declaring a method, put a space between the method name and the ()
-- All custom Strvct classes (not including categories of JS classes) should generally have the "Sv" prefix
+- All custom Strvct framework classes (not including categories of JS classes) should have the "Sv" prefix to indicate they are part of the STRVCT framework. External code in the external-libs folder is exempt from this naming convention.

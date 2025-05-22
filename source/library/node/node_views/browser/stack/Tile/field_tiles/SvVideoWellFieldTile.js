@@ -52,7 +52,7 @@
             Note: if we drop a video on the VideoWellView, it will send a didUpdateVideoWellView to it's parents
             which we respond to and use to call setValue
         */
-        const videoWellView = VideoWellView.clone();
+        const videoWellView = SvVideoWellView.clone();
         return videoWellView;
     }
 

@@ -3,8 +3,8 @@
     "NodeView.js",
     "ImageWellView.js",
     "ImageView.js",
-    "VideoWellView.js",
-    "VideoView.js",
+    "SvVideoWellView.js",
+    "SvVideoView.js",
     "browser/_imports.json"
 ]
 

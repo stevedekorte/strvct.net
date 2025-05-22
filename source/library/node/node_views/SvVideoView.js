@@ -1,12 +1,12 @@
 /**
  * @module library.node.node_views
- * @class VideoView
+ * @class SvVideoView
  * @extends NodeView
- * @classdesc VideoView is a specialized view for displaying videos with additional features like a close button, playback controls, and editability.
+ * @classdesc SvVideoView is a specialized view for displaying videos with additional features like a close button, playback controls, and editability.
  */
 "use strict";
 
-(class VideoView extends NodeView {
+(class SvVideoView extends NodeView {
     
     initPrototypeSlots () {
         /**

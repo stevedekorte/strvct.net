@@ -1,10 +1,10 @@
 /**
  * @module library.node.node_views
- * @class VideoWellView
+ * @class SvVideoWellView
  * @extends NodeView
- * @classdesc VideoWellView
+ * @classdesc SvVideoWellView
  * 
- * - designed to contain a VideoView
+ * - designed to contain a SvVideoView
  * - can have its own frame and decoration
  * - supports drag & drop of videos
  * - supports standard video controls and playback
@@ -12,7 +12,7 @@
 
 "use strict";
 
-(class VideoWellView extends NodeView {
+(class SvVideoWellView extends NodeView {
 
     /**
      * @description Initializes prototype slots for the VideoWellView.
@@ -20,12 +20,12 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {VideoView} videoView - The video view contained within this well.
+         * @member {SvVideoView} videoView - The video view contained within this well.
          * @category View Management
          */
         {
             const slot = this.newSlot("videoView", null);
-            slot.setSlotType("VideoView");
+            slot.setSlotType("SvVideoView");
         }
         /**
          * @member {Boolean} isEditable - Determines if the video well is editable.
@@ -173,7 +173,7 @@
         
         this.removeAllSubviews();
 
-        const v = VideoView.clone();
+        const v = SvVideoView.clone();
         this.setVideoView(v);
         this.addSubview(v);
 
