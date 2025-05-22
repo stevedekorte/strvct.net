@@ -12,9 +12,20 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("videoData", null);
+            const slot = this.newSlot("videoDataUrl", null);
+            slot.setDescription("The output video data");
+
+            slot.setShouldJsonArchive(true);
+            slot.setInspectorPath("");
+            slot.setLabel("video");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
-            slot.setDescription("Optional reference image data or initial frame in the form of a base64 encoded string or a URL");
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setFieldInspectorViewClassName("SvVideoWellField"); // field inspector view class
+
         }
 
         {
@@ -60,12 +71,6 @@
             const slot = this.newSlot("model", "veo-2.0-generate-001");
             slot.setSlotType("String");
             slot.setDescription("The Gemini model to use for video generation via Veo");
-        }
-
-        {
-            const slot = this.newSlot("response", null);
-            slot.setSlotType("Object");
-            slot.setDescription("The response from the Gemini API");
         }
 
         // waiting for completion uses this
@@ -138,6 +143,16 @@
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("startGeneration");
         }
+
+        {
+            const slot = this.newSlot("checkAction", null);
+            slot.setLabel("Check");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("checkOperationStatus");
+        }
     }
 
     initPrototype () {
@@ -164,7 +179,7 @@
         const model = this.model();
         const status = this.status();
     
-        let s = `${prompt}\n${duration}seconds, ${model}`;
+        let s = `${prompt}\n${duration}s, ${model}`;
         if (status.length > 0) {
             s += `\n${status}`;
         }
@@ -244,8 +259,18 @@
         return body;
     }
 
+    clearStatus () {
+        this.setAttempts(0);
+        this.setOperationId(null);
+        this.setVideoDataUrl(null);
+        this.setStatus("");
+        this.setError(null);
+    }
+
     // Step 1: Start the video generation process
     async startGeneration () {
+        this.clearStatus();
+        
         this.setStatus("Preparing to generate video...");
         this.setError(null); // Clear any previous errors
 
@@ -266,19 +291,11 @@
                 body: JSON.stringify(body)
             };
 
-            this.setFetchOptionsString(["url:", apiUrl, "headers:", JSON.stringify(fetchOptions.headers, null, 2), "body:", JSON.stringify(body, null, 2)].join("\n\n"));
-
-            if (this.isDebugging()) {
-                console.log("GeminiVideoPrompt: Initiating video generation at", apiUrl);
-                // Log the body without the actual video data for debugging
-                const debugBody = JSON.parse(JSON.stringify(body));
-                if (debugBody.instances && debugBody.instances[0]) {
-                    if (debugBody.instances[0].image_bytes) {
-                        debugBody.instances[0].image_bytes = "[BASE64_IMAGE_DATA]";
-                    }
-                }
-                console.log("Request body:", JSON.stringify(debugBody, null, 2));
-            }
+            this.setFetchOptionsString([
+                "url:", apiUrl, 
+                "headers:", JSON.stringify(fetchOptions.headers, null, 2), 
+                "body:", JSON.stringify(body, null, 2)].join("\n\n")
+            );
 
             // Make the initial request to start the generation process
             this.setStatus("Connecting to Gemini API...");
@@ -293,20 +310,14 @@
             }
             
             // Parse the operation response
-            this.setStatus("Processing API response...");
-            const operationData = await response.json();
-            this.setResponse(operationData);
-            
-            if (this.isDebugging()) {
-                console.log("Operation started:", operationData.name);
-            }
-            
-            this.setStatus("Video generation started. Operation ID: " + operationData.name);
-
+            this.setStatus("Getting Operation ID...");
+            const operationData = await response.json();                
+            this.setStatus("Got operation ID: " + operationData.name.slice(0, 8) + "...");
             this.setOperationId(operationData.name);
-            return await this.waitForVideoCompletion();
+            return await this.checkOperationStatus();
 
         } catch (error) {
+            debugger;
             const errorMessage = `API request error: ${error.message}`;
             this.setStatus("Request failed");
             this.setError(errorMessage);
@@ -322,6 +333,9 @@
 
     // Check the status of a long-running operation
     async checkOperationStatus () {
+        this.setAttempts(this.attempts() + 1);
+        this.setStatus(`Fetch attempt ${this.attempts()} of ${this.maxAttempts()}...`);
+
         const projectId = this.projectId();
         const locationId = this.locationId();
         const apiUrl = `https://${locationId}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${locationId}/operations/${this.operationId()}`;
@@ -330,13 +344,20 @@
         //this.setStatus(`Checking status of operation ${operationName}...`);
         
         try {
-            const response = await fetch(proxyApiUrl, {
-                method: "GET",
+            debugger;
+            const options = {
+                method: "POST",
                 headers: {
+                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${this.apiKey()}`
                 }
-            });
-            
+            };
+
+            console.log("GeminiVideoPrompt: checking operation status at:\n[", proxyApiUrl, "]\nwith options: ", JSON.stringify(options, null, 2));
+
+            const response = await fetch(proxyApiUrl, options);
+            this.setStatus(`Completed fetch attempt ${this.attempts()} of ${this.maxAttempts()}...`);
+
             if (!response.ok) {
                 const errorText = await response.text();
                 const errorMessage = `API error: ${response.status} ${response.statusText} - ${errorText}`;
@@ -346,107 +367,70 @@
             }
             
             const data = await response.json();
-            this.setResponse(data);
             
             // Check for percentage completion if available in metadata
-            if (data.metadata && data.metadata.progressPercentage) {
-                this.setStatus(`Video generation: ${data.metadata.progressPercentage}% complete`);
-            } else if (data.done) {
+            if (data.done) {
+
+                /*
+                example response:
+                {
+                    "name": "projects/precise-blend-419917/locations/us-central1/publishers/google/models/veo-2.0-generate-001/operations/5f0489e6-17a3-4052-ade1-57117ab607a4",
+                    "done": true,
+                    "response": {
+                    "@type": "type.googleapis.com/cloud.ai.large_models.vision.GenerateVideoResponse",
+                    "raiMediaFilteredCount": 0,
+                    "videos": [
+                        {
+                        "bytesBase64Encoded": "{data}"
+                        }
+                    ]
+                    }
+                }
+                */
+
+                // do we need to convert it to a data url?
+                const dataUrl = "data:video/mp4;base64," + data.response.videos[0].bytesBase64Encoded;
+                console.log("GeminiVideoPrompt: video data url:" + dataUrl.length + " bytes");
+                debugger;
+                this.setVideoDataUrl(dataUrl);
+
                 this.setStatus("Video generation complete");
             } else {
-                this.setStatus("Video generation in progress");
+                if (data.metadata && data.metadata.progressPercentage) {
+                    this.setStatus(`Video generation: ${data.metadata.progressPercentage}% complete`);
+                } else {
+                    this.setStatus("Video generation in progress");
+                }
+                this.waitAndCheckAgainIfNeeded();
             }
             
-            return {
-                done: data.done || false,
-                result: data.result || null,
-                error: data.error || null,
-                metadata: data.metadata || null
-            };
         } catch (error) {
-            const errorMessage = `Operation status check error: ${error.message}`;
+            debugger;
+            const errorMessage = `Operation error: ${error.message}`;
             this.setStatus("Status check failed");
             this.setError(errorMessage);
             console.error("GeminiVideoPrompt operation status error:", error);
-            return null;
+            return false;
         }
     }
-    
-    // Step 2: Get the final result by waiting for the operation to complete
-    async waitForVideoCompletion () {
-        const checkIntervalMs = this.checkIntervalMs();
-        const maxAttempts = this.maxAttempts();
-        const operationId = this.operationId();
-        this.setStatus("Waiting for video generation to complete...");
-        
-        //this.setStatus(`Monitoring generation progress (poll interval: ${checkIntervalMs/1000}s)`);
-        
-        while (maxAttempts === null || this.attempts() < maxAttempts) {
-            this.setAttempts(this.attempts() + 1);
-            
-            this.setStatus(`Checking progress (attempt ${this.attempts()}${maxAttempts ? '/' + maxAttempts : ''})...`);
-            const status = await this.checkOperationStatus(operationId);
-            
-            if (!status) {
-                // Error checking status - the checkOperationStatus method will have set the error
-                this.setStatus("Failed to check operation status");
-                return null;
-            }
-            
-            if (status.done) {
-                // Operation completed
-                if (status.error) {
-                    const errorMessage = `Operation failed: ${status.error.message || JSON.stringify(status.error)}`;
-                    this.setStatus("Video generation failed");
-                    this.setError(errorMessage);
-                    return null;
-                }
-                
-                this.setStatus("Video generation successfully completed");
-                return status;
-            }
-            
-            // Status message updated in checkOperationStatus
-            
-            // Operation still in progress, wait before checking again
-            if (maxAttempts === null || attempts < maxAttempts) {
-                this.setStatus(`Waiting ${checkIntervalMs/1000}s before next status check...`);
-                await new Promise(resolve => setTimeout(resolve, checkIntervalMs));
-            }
+
+    waitAndCheckAgainIfNeeded () {
+        if (this.videoDataUrl() || this.error()) {
+            return;
         }
         
-        const errorMessage = `Operation did not complete after ${attempts} attempts`;
-        this.setStatus("Generation timed out");
-        this.setError(errorMessage);
+        if (this.attempts() < this.maxAttempts()) {
+            setTimeout(() => {
+                debugger;
+                this.checkOperationStatus();
+                debugger;
+            }, this.checkIntervalMs());
+        } else {
+            const errorMessage = `Operation did not complete after ${attempts} attempts`;
+            this.setStatus("Generation timed out");
+            this.setError(errorMessage);
+        }
         return null;
     }
-    
-    /*
-    // Convenience method that combines generation and waiting
-    async generateAndWaitForVideo (promptText, checkIntervalMs = 10000, maxAttempts = null) {
-        this.setStatus("Starting end-to-end video generation process");
-        const operation = await this.generateVideo(promptText);
-        if (!operation) {
-            this.setStatus("Failed to start generation process");
-            return null;
-        }
-        
-        this.setStatus("Generation started, now waiting for completion");
-        return this.waitForVideoCompletion(operation, checkIntervalMs, maxAttempts);
-    }
-    
-    // Convenience method that combines generation with image and waiting
-    async generateWithImageAndWait (imageUrlOrBlob, promptText, checkIntervalMs = 10000, maxAttempts = null) {
-        this.setStatus("Starting end-to-end image-to-video generation process");
-        const operation = await this.generateVideoWithImage(imageUrlOrBlob, promptText);
-        if (!operation) {
-            this.setStatus("Failed to start image-to-video generation");
-            return null;
-        }
-        
-        this.setStatus("Image-to-video generation started, now waiting for completion");
-        return this.waitForVideoCompletion(operation, checkIntervalMs, maxAttempts);
-    }
-    */
 
 }.initThisClass());

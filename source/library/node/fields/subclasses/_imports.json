@@ -12,6 +12,7 @@
     "SvStringField.js",
     "SvTextAreaField.js",
     "SvUrlField.js",
+    "SvVideoWellField.js",
     "options/_imports.json",
     "date/_imports.json",
     "time/_imports.json"   
