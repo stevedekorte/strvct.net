@@ -2,9 +2,9 @@
 
 STRVCT is a naked objects JavaScript framework for building dynamic web applications.
 
-> **⚠️ IMPORTANT: This framework is still under active development and is NOT ready for external use by non-core developers. It is currently being published to npm primarily for internal use and development purposes. APIs may change without notice, and documentation is incomplete.**
->
-> For more information and documentation, visit [strvct.net](https://strvct.net)
+IMPORTANT: This framework is still under active development and is NOT ready for external use by non-core developers. 
+It is currently being published to npm primarily for internal use and development purposes. 
+APIs may change without notice, and documentation is incomplete.
 
 ## Installation
 
