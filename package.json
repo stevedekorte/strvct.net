@@ -30,5 +30,8 @@
     "build/**/*",
     "LICENSE.txt",
     "README.md"
-  ]
+  ],
+  "dependencies": {
+    "yargs": "^17.7.2"
+  }
 }
