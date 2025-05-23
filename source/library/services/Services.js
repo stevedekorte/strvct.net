@@ -25,7 +25,19 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-                
+               
+        /**
+         * @member {AnthropicService} anthropicService
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("anthropicService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(AnthropicService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("AnthropicService");
+        }
+
         /**
          * @member {GeminiService} geminiService
          * @category AI Service
@@ -50,17 +62,6 @@
             slot.setSlotType("XaiService");
         }
 
-        /**
-         * @member {AnthropicService} anthropicService
-         * @category AI Service
-         */
-        {
-            const slot = this.newSlot("anthropicService", null);
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(AnthropicService);
-            slot.setIsSubnode(true);
-            slot.setSlotType("AnthropicService");
-        }
         
         /**
          * @member {OpenAiService} openAiService
@@ -198,7 +199,9 @@
      * @category AI Service
      */
     defaultChatModel () {
-        return this.aiServices().first().defaultChatModel();
+        return this.geminiService().defaultChatModel();
+        //return this.anthropicService().defaultChatModel();
+        //return this.aiServices().first().defaultChatModel();
     }
 
     /**

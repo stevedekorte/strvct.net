@@ -32,6 +32,27 @@
    */
   modelsJson () {
     return [
+
+      {
+        "name": "claude-opus-4-20250514",
+        "title": "Claude 4 Opus",
+        "subtitle": "",
+        "inputTokenLimit": 200000,
+        "notes": "",
+        "beta": "output-128k-2025-02-19",
+        "outputTokenLimit": 32000,
+      },
+
+      {
+        "name": "claude-sonnet-4-20250514",
+        "title": "Claude 4 Sonnet",
+        "subtitle": "",
+        "inputTokenLimit": 200000,
+        "notes": "",
+        "beta": "output-128k-2025-02-19",
+        "outputTokenLimit": 64000,
+      },
+
       {
         "name": "claude-3-7-sonnet-20250219",
         "title": "Claude 3.7 Sonnet",

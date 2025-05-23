@@ -169,7 +169,7 @@
             } else {
                 const error = "can't find icon '" + name + "'"
                 console.log(error)
-                debugger;
+                //debugger;
                 this.clear()
                 return this
             }

@@ -847,7 +847,7 @@
    * @description Called when the XHR error event is fired
    * @param {Event} event 
    */
-  onXhrError (/*event*/) {
+  onXhrError (event) {
     debugger;
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened

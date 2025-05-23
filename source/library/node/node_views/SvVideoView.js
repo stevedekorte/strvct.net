@@ -350,15 +350,8 @@
         video.style.userSelect = "auto";
         video.style.pointerEvents = "auto";
         
-        // Enable dragging for desktop save
-        video.draggable = true;
-        video.setAttribute("download", "video.mp4");
-        
-        // Handle drag events to enable drag-to-desktop
-        video.addEventListener("dragstart", (event) => {
-            event.dataTransfer.setData("text/uri-list", srcURL);
-            event.dataTransfer.effectAllowed = "copy";
-        });
+        // Note: Drag-to-desktop for binary files is severely limited by browser security.
+        // Instead, we rely on the download button and right-click "Save video as..." options.
         
         const v = this.newRawVideoViewForVideo(video);
         this.setRawVideoView(v);
@@ -391,17 +384,8 @@
         video.style.userSelect = "auto";
         video.style.pointerEvents = "auto";
         
-        // Enable dragging for desktop save
-        video.draggable = true;
-        video.setAttribute("download", "generated-video.mp4");
-        
-        // Handle drag events to enable drag-to-desktop
-        video.addEventListener("dragstart", (event) => {
-            // For data URLs, we need to provide the data differently
-            event.dataTransfer.setData("application/octet-stream", dataURL);
-            event.dataTransfer.setData("text/uri-list", dataURL);
-            event.dataTransfer.effectAllowed = "copy";
-        });
+        // Note: Drag-to-desktop for binary files is severely limited by browser security.
+        // Instead, we rely on the download button and right-click "Save video as..." options.
 
         const v = this.newRawVideoViewForVideo(video);
         this.setRawVideoView(v);
@@ -522,6 +506,25 @@
         return this;
     }
 
+
+    /**
+     * @description Gets file extension from MIME type
+     * @param {String} mimeType - The MIME type
+     * @returns {String} The file extension
+     * @category File Operations
+     */
+    getFileExtensionFromMimeType(mimeType) {
+        const mimeToExt = {
+            "video/mp4": "mp4",
+            "video/webm": "webm",
+            "video/ogg": "ogv",
+            "video/avi": "avi",
+            "video/mov": "mov",
+            "video/quicktime": "mov"
+        };
+        return mimeToExt[mimeType] || "mp4";
+    }
+
     /**
      * @description Downloads the video to the user's computer
      * @returns {VideoView} The VideoView instance
@@ -535,10 +538,40 @@
         }
 
         try {
+            // Determine file extension and filename
+            let filename = "video.mp4";
+            let downloadUrl = dataURL;
+            
+            if (dataURL.startsWith("data:")) {
+                const mimeMatch = dataURL.match(/^data:([^;]+)/);
+                const mimeType = mimeMatch ? mimeMatch[1] : "video/mp4";
+                const extension = this.getFileExtensionFromMimeType(mimeType);
+                filename = `video.${extension}`;
+                
+                // For large data URLs, convert to blob URL for better browser support
+                try {
+                    const base64Data = dataURL.split(',')[1];
+                    const byteCharacters = atob(base64Data);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: mimeType });
+                    downloadUrl = URL.createObjectURL(blob);
+                    
+                    // Clean up blob URL after download
+                    setTimeout(() => URL.revokeObjectURL(downloadUrl), 30000);
+                } catch (blobError) {
+                    console.warn("Failed to create blob URL, using data URL directly:", blobError);
+                    // downloadUrl remains as dataURL
+                }
+            }
+
             // Create a temporary anchor element for download
             const link = document.createElement("a");
-            link.href = dataURL;
-            link.download = "generated-video.mp4";
+            link.href = downloadUrl;
+            link.download = filename;
             link.style.display = "none";
             
             // Add to DOM, click, and remove
@@ -546,7 +579,7 @@
             link.click();
             document.body.removeChild(link);
             
-            console.log("Video download initiated");
+            console.log("Video download initiated:", filename);
         } catch (error) {
             console.error("Failed to download video:", error);
             
