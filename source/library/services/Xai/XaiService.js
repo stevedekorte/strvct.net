@@ -86,7 +86,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle("Xai");
+    this.setTitle("xAi");
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
 

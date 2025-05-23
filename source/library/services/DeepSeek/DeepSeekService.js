@@ -180,9 +180,11 @@
   assert(this.models().subnodes().length > 0, "DeepSeekService must have at least one model");
  }
 
+ /*
  title () {
   this.assertHasModels();
   return super.title() + " (" + this.models().subnodes().length + " models)";
  }
+*/
 
 }.initThisClass());
