@@ -24,7 +24,7 @@ const nodePath = require('path');
 	 * Initializes the prototype slots for the SvHttpsServer.
 	 */
 	initPrototypeSlots () {
-		this.newSlot("name", "WebServer");
+		this.newSlot("name", "GameServer");
 
 		/**
 		 * @member {Object} server - The server instance.
