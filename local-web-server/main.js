@@ -27,9 +27,9 @@ const argv = yargs(hideBin(process.argv)).options({
 
 //console.log(argv);
 
-require("./SvHttpsServer.js");
+const GameHttpsServer = require("./GameHttpsServer.js");
 
-const server = SvHttpsServer.clone();
+const server = GameHttpsServer.clone();
 
 // apply command line arguments
 if (argv.port) {
