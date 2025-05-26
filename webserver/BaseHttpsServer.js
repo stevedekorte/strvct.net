@@ -92,6 +92,11 @@ const nodePath = require('path');
         this.newSlot("serverName", "BaseServer");
         
         /**
+         * @member {string} logsPath - The path where log files should be stored.
+         */
+        this.newSlot("logsPath", null);
+        
+        /**
          * @member {Object} config - Parsed configuration object.
          * @description This contains the request classes and the server name, and can be used for other things in the future.
          * Request classes can access the config object via this.server().config();
