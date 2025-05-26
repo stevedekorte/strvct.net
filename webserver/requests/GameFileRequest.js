@@ -14,6 +14,14 @@ require("../../../../../../Servers/WebServer/requests/FileRequest.js");
  */
 (class GameFileRequest extends FileRequest {
     
+    initPrototypeSlots () {
+        super.initPrototypeSlots();
+        
+        // Set the web root to the site directory (parent of strvct)
+        const nodePath = require('path');
+        this.setWebRoot(nodePath.resolve(__dirname, '../../../'));
+    }
+    
     // Inherits all functionality from FileRequest
     // Can override methods here for game-specific behavior
     
