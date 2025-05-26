@@ -27,9 +27,14 @@ const argv = yargs(hideBin(process.argv)).options({
 
 //console.log(argv);
 
-const GameHttpsServer = require("./GameHttpsServer.js");
+const { BaseHttpsServer } = require("../../../../../Servers/WebServer");
+const nodePath = require('path');
 
-const server = GameHttpsServer.clone();
+const server = BaseHttpsServer.clone();
+
+// Set the config path - go up 3 levels to GameServer/site dir, then to GameServer root
+const configPath = nodePath.resolve(__dirname, '..', '..', '..', 'game-server-config.json');
+server.setConfigPath(configPath);
 
 // apply command line arguments
 if (argv.port) {
