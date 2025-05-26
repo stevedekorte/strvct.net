@@ -72,7 +72,7 @@
             "request": "launch",
             "name": "RUN node HTTPS server",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/local-web-server/main.js"
+            "program": "${workspaceFolder}/webserver/main.js"
         },
 
         {

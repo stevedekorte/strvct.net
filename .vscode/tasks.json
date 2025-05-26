@@ -8,7 +8,7 @@
             "type": "shell",
             "command": "node",
             "args": [
-                "local-web-server/main.js"
+                "webserver/main.js"
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
