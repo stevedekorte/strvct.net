@@ -1,58 +1,87 @@
+# WebServer - Shared Base Classes
 
-# local web server
+This folder contains the shared base classes used by both the GameServer and AccountServer implementations.
 
-## command line to run the server
+## Architecture
 
-This is a minimal HTTPS web server for local testing. 
-The command to run in the console is (if running from a parent folder containing the strvct/local-wab-server):
+The WebServer module provides a common foundation for building HTTPS/HTTP servers with request handling capabilities. Both GameServer and AccountServer extend these base classes to add their specific functionality.
 
-  node strvct/local-web-server/main.js --secure true --port 8000 --async-stack-traces 
+## Classes
 
-Note: this should be run in the root of the folder which the web server is allowed access to as
-the server will not allow access to paths that are parents of the current working directory of the web server process.
+### BaseHttpsServer
+The base server class that provides:
+- HTTPS/HTTP server setup with configurable SSL certificates
+- Request routing to handler classes
+- Configurable hostname and port
+- Protocol detection (HTTP vs HTTPS)
 
-The server will look for it's https cert and keys in the keys folder of the folder that main.js is in (via __dirname).
+### BaseHttpsServerRequest  
+The base request handler class that provides:
+- URL parsing and query parameter extraction
+- Path-based routing with customizable handlers
+- File serving with MIME type detection
+- ACME challenge support for SSL certificate validation
+- Helper methods for JSON responses
+- Request body reading and parsing
+- Error handling utilities
 
-## notes on SSL/TLS certificates (for https)
+### Supporting Classes
+- **Base.js** - Base class with slot/property management
+- **MimeExtensions.js** - MIME type detection for file extensions
+- **AutoRelaunch.js** - Server auto-restart mechanism
+- **getGlobalThis.js** - Cross-platform global object helper
 
-## using self signed certs with browsers
+## Usage
 
-You may need to run your web browser in a special mode (such as --disable-web-security for Chrome) to get it to accept a self generated cert.
-Here's an example Visual Studio Code browser debugger launch script:
+### GameServer
+```javascript
+const { BaseHttpsServer } = require("../../../../../../WebServer");
 
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "FILE index",
-            "url": "file:///${workspaceFolder}/index.html",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--disable-web-security"
-            ],
-            "preLaunchTask": "create index.html",
-        },
+class SvHttpsServer extends BaseHttpsServer {
+    serverName() {
+        return "GameServer";
+    }
+    
+    requestClass() {
+        return SvHttpsServerRequest;
+    }
+}
+```
 
-In Chrome, the first time you open the page, you'll get a warning and need click the "advanced" link and then click the "Proceed to localhost (unsafe)" link.
+### AccountServer
+```javascript
+const { BaseHttpsServer } = require("../../WebServer");
 
-## creating a self signed certificate
+class StrvctHttpsServer extends BaseHttpsServer {
+    serverName() {
+        return "AccountServer";
+    }
+    
+    requestClass() {
+        return StrvctHttpsServerRequest;
+    }
+}
+```
 
-There should already be a self signed cerififcate in this folder,
-but if not, or if it's expired, here's how to generate a new one:
+## Extension Points
 
-In the local-web-server/keys folder, run the following in your shell:
+When extending the base classes, override these methods:
 
-  openssl req \
-    -newkey rsa:2048 \
-    -x509 \
-    -new \
-    -nodes \
-    -keyout server.key \
-    -out server.crt  \
-    -subj /CN=test1   \
-    -sha256  \
-    -days 3650 
-  
-  
-This key doesn't need to be kept secret as it's just to run a local web server for testing. 
-You can ignore github warnings about it for your local development purposes.
-  
+### In your Server class:
+- `serverName()` - Return your server's display name
+- `requestClass()` - Return your custom request handler class
+
+### In your Request handler class:
+- `shouldHandleFileRequest(path)` - Determine if a path should be handled as a file
+- `handleCustomRequest()` - Handle non-file requests (APIs, proxies, etc.)
+- Add any custom routing logic by overriding the `process()` method
+
+## Features
+
+- **SSL/TLS Support** - Built-in HTTPS with certificate management
+- **Static File Serving** - Automatic MIME type detection and caching headers
+- **ACME Challenge** - Support for Let's Encrypt certificate validation
+- **Extensible Routing** - Easy to add custom endpoints and handlers
+- **Error Handling** - Consistent error responses with customizable messages
+- **Request Body Parsing** - Built-in JSON body parsing utilities
+- **CORS Support** - Can be added in subclasses as needed

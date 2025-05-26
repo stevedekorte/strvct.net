@@ -1,0 +1,12 @@
+{
+  "requestClasses": [
+    {
+      "className": "AcmeChallengeRequest",
+      "path": "./requests/AcmeChallengeRequest.js"
+    },
+    {
+      "className": "FileRequest",
+      "path": "./requests/FileRequest.js"
+    }
+  ]
+}

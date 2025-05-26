@@ -253,6 +253,11 @@
 
 ## Resource Loading System
 
+- CRITICAL: STRVCT does not use npm
+  - Strvct does not use a conventional JS import/require system, so when writing/editing strvct files, do *not* convert them to use import/require. 
+  - The npm-pkg is only used for allowing external build systems to easily include enough of strvct to "boot" the rest using strvct's own resource loading system.
+  - The package.json & package-lock.json files are only used for building strvct's own npm package and should contain *no external npm dependencies*
+  - All dependencies are contained as source in external-libs, are part of the repo, and are in a form which can be loaded and evaled in a browser.
 - Two-file architecture for efficient loading:
   - `_index.json`: Metadata catalog with paths and content hashes
   - `_cam.json.zip`: Compressed content-addressable memory bundle

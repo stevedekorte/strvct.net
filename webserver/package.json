@@ -1,18 +1,17 @@
 {
-  "name": "local-web-server",
+  "name": "@undreamedof/web-server",
   "version": "1.0.0",
-  "description": "## command line to run the server",
-  "main": "main.js",
-  "directories": {
-    "test": "tests"
-  },
+  "description": "Shared base classes for undreamedof.ai web servers",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "web-server",
+    "https",
+    "base-classes"
+  ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "yargs": "^17.7.2"
-  }
+  "dependencies": {}
 }
