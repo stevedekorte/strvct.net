@@ -23,17 +23,13 @@ const nodePath = require('path');
  * - Add support for --config command line argument that points to a JSON configuration file
  * - Config file format:
  *   {
+ *     "serverName": "MyServer",
  *     "requestClasses": [
- *       {
- *         "className": "AcmeChallengeRequest",
- *         "path": "./requests/AcmeChallengeRequest.js"
- *       },
- *       {
- *         "className": "FileRequest",
- *         "path": "./requests/FileRequest.js"
- *       }
+ *       "./requests/AcmeChallengeRequest.js",
+ *       "./requests/FileRequest.js"
  *     ]
  *   }
+ * - The server infers the class name from the filename (e.g., "FileRequest" from "FileRequest.js")
  * - Load and evaluate the JS files for request classes (if not already loaded)
  * - When handling requests, iterate through loaded request classes in order
  * - Call static method canHandleUrl(urlObject) on each class
@@ -214,10 +210,15 @@ const nodePath = require('path');
         const requestClasses = [];
         if (config.requestClasses) {
             for (const classInfo of config.requestClasses) {
+                // Handle both formats: object with path or just a path string
+                const classPath = typeof classInfo === 'string' ? classInfo : classInfo.path;
                 const requestClass = this.loadRequestClass(classInfo);
+                
                 if (requestClass) {
                     requestClasses.push(requestClass);
-                    console.log(this.serverName() + ": Loaded request handler: " + classInfo.className);
+                    // Get class name from path if not specified
+                    const className = classInfo.className || nodePath.basename(classPath, '.js');
+                    console.log(this.serverName() + ": Loaded request handler: " + className);
                 }
             }
         }
@@ -226,11 +227,16 @@ const nodePath = require('path');
     
     /**
      * Loads a single request class from the given class info.
-     * @param {Object} classInfo - Object with className and path properties
+     * @param {Object|string} classInfo - Either an object with path property or a path string
      * @returns {Class} The loaded class or null if already loaded
      */
     loadRequestClass (classInfo) {
-        const { className, path: classPath } = classInfo;
+        // Get class path - either from object or directly if string was provided
+        const classPath = typeof classInfo === 'string' ? classInfo : classInfo.path;
+        
+        // Extract className from the filename (remove path and extension)
+        const fileName = nodePath.basename(classPath, '.js');
+        const className = classInfo.className || fileName;
         
         // Check if class is already loaded
         if (getGlobalThis()[className]) {
@@ -244,7 +250,14 @@ const nodePath = require('path');
         // Load the module using require instead of eval for better error handling
         try {
             require(fullPath);
-            return getGlobalThis()[className];
+            const RequestClass = getGlobalThis()[className];
+            
+            if (!RequestClass) {
+                throw new Error(`Class ${className} not found in ${fullPath}. Make sure the class name matches the filename.`);
+            }
+            
+            // Return the class (actual initialization will be handled by CliWebServer)
+            return RequestClass;
         } catch (error) {
             console.error(this.serverName() + ": Failed to load " + className + " from " + fullPath + ":", error.message);
             return null;
