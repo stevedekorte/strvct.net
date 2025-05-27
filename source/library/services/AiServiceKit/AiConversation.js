@@ -178,6 +178,8 @@
    * @category Configuration
    */
   chatModel () {
+    
+    debugger;
     if (this._chatModel) {
       return this._chatModel;
     }
