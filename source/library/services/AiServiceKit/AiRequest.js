@@ -849,6 +849,7 @@
    */
   onXhrError (event) {
     debugger;
+    console.log("onXhrError:", event);
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
     //let s = "Error on Xhr requestId " + this.requestId() + " ";
