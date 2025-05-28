@@ -82,7 +82,7 @@ class BootLoader extends Object {
       })
       .then(content => {
         //console.log(`Successfully loaded: ${fullPath}`);
-        return { path: filePath, content: content };
+        return { path: filePath, fullPath: fullPath, content: content };
       })
       .catch(error => {
         console.error(`Failed to load: ${fullPath}`, error);
@@ -107,11 +107,11 @@ class BootLoader extends Object {
         console.log('All files loaded successfully, starting sequential evaluation...');
         
         // Evaluate files sequentially
-        return fileContents.reduce((promise, { path, content }) => {
+        return fileContents.reduce((promise, { path, fullPath, content }) => {
           return promise.then(() => {
             //console.log(`Evaluating file: ${path}`);
-            // Add sourceURL directive for better debugging
-            const sourceWithReference = content + `\n//# sourceURL=${this._bootPath}/${path}`;
+            // Add sourceURL directive for better debugging - use the actual URL that was fetched
+            const sourceWithReference = content + `\n//# sourceURL=${fullPath}`;
             const evalFunc = new Function(sourceWithReference);
             evalFunc.call(window); // Execute in the global scope
             //console.log(`Finished evaluating: ${path}`);
