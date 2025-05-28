@@ -1,46 +1,23 @@
-# STRVCT Framework
+# Strvct
 
-STRVCT is a naked objects JavaScript framework for building dynamic web applications.
+Strvct is a client-side JavaScript framework for creating single page web applications using a [naked objects](https://en.wikipedia.org/wiki/Naked_objects) system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
 
-IMPORTANT: This framework is still under active development and is NOT ready for external use by non-core developers. 
-It is currently being published to npm primarily for internal use and development purposes. 
-APIs may change without notice, and documentation is incomplete.
+**NOTE:** This project is currently under active development, has very limited documentation, and is not yet ready for production use.
 
-## Installation
+### Guides
 
-```bash
-npm install strvct
-```
+[Project Overview](./docs/ProjectOverview.md)<br>
+[Getting Started Guide](./docs/GettingStartedGuide.md)<br>
+[FAQ](./docs/FAQ.md)<br>
 
-## Usage
+<!--
+[Developer Documentation](./docs/Developer.md)<br>
+[Case Study](./docs/CaseStudy.md)<br>
+-->
 
-```javascript
-// ES Modules
-import StrvctFramework from 'strvct';
+### Reference
 
-// CommonJS
-const StrvctFramework = require('strvct');
-
-// Initialize the framework
-const framework = new StrvctFramework({
-  rootPath: 'path/to/strvct' // defaults to 'strvct'
-});
-
-// Wait for initialization to complete
-framework.initialize().then(() => {
-  console.log('STRVCT framework initialized');
-  // Start using the framework
-});
-```
-
-## Framework Features
-
-- Naked objects pattern - domain models auto-generate their UI
-- Resource loading system with content-addressable memory
-- Hierarchical import system using _imports.json files
-- Built-in persistence with IndexedDB
-- Event handling and view system
-
-## License
-
-MIT
+[Modules](./docs/reference/module_hierarchy.md)<br>
+[Classes](./docs/reference/class_hierarchy.md)<br>
+[Protocols](./docs/reference/protocols.md)<br>
+[Source Code](https://github.com/stevedekorte/Strvct.net/)
