@@ -477,7 +477,6 @@
         "Call of the Forest": "rf2GmdwFw80",
         "Tavern/Inn": "roABNwbjZf4",
         "The Adventure Begins": "q8R4MxLoOZM", // eh
-        "Knight Tournament": "Kws7g5Qqae0", // eh
 
         // from https://www.youtube.com/@AjsDnDMusic/videos
         "Auril Rises Once More": "T4tCCZN_h5Q",
