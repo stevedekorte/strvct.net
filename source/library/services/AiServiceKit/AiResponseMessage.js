@@ -219,7 +219,7 @@
    * @category Data
    */
   chatModel () {
-    return this.conversation().chatModel()
+    return this.conversation().chatModel();
   }
 
   /**
@@ -229,7 +229,7 @@
    * @category Data
    */
   service () {
-    return this.conversation().service()
+    return this.conversation().service();
   }
 
   /**
