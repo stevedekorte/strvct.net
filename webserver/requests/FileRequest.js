@@ -106,47 +106,136 @@ const nodePath = require('path');
     process () {
         // Call parent to do common setup first
         super.process();
-        
+
         // Get the requested path
         let requestPath = this.path();
-        if (requestPath === '/') {
-            requestPath = '/index.html';
+        if (requestPath === "/") {
+        requestPath = "/index.html";
         }
-        
+
         // Remove query string from file path
-        const questionIndex = requestPath.indexOf('?');
+        const questionIndex = requestPath.indexOf("?");
         if (questionIndex > -1) {
-            requestPath = requestPath.substring(0, questionIndex);
+        requestPath = requestPath.substring(0, questionIndex);
         }
-        
+
         // Decode URL encoding (e.g., %20 -> space)
         const decodedPath = decodeURIComponent(requestPath);
-        
+
         // Normalize the path to prevent directory traversal
         const normalizedPath = nodePath.normalize(decodedPath);
-        
+
         // Remove leading slash for join
-        const relativePath = normalizedPath.startsWith('/') ? normalizedPath.substring(1) : normalizedPath;
-        
-        // Construct the full file path
-        const filePath = nodePath.join(this.webRoot(), relativePath);
-        
-        // Validate the path is safe
-        if (!this.isPathSafe(filePath)) {
+        const relativePath = normalizedPath.startsWith("/")
+        ? normalizedPath.substring(1)
+        : normalizedPath;
+
+        // Determine what file to serve based on path resolution rules
+        this.resolveAndServeFile(relativePath);
+    }
+
+    /**
+     * Resolves the actual file to serve and serves it.
+     * @param {string} relativePath - The relative path from the web root
+     */
+    resolveAndServeFile (relativePath) {
+        // Construct the base file path
+        const basePath = nodePath.join(this.webRoot(), relativePath);
+
+        // Validate the base path is safe
+        if (!this.isPathSafe(basePath)) {
+        this.sendForbidden();
+        return;
+        }
+
+        // Check if the requested path has an extension
+        const hasExtension = nodePath.extname(basePath) !== "";
+
+        if (hasExtension) {
+        // Path has extension, serve directly
+        this.serveFile(basePath);
+        } else {
+        // Path has no extension, implement the fallback logic
+        this.handlePathWithoutExtension(basePath);
+        }
+    }
+
+    /**
+     * Handles paths without extensions by checking directory/index.html, no extension file, then .html file.
+     * @param {string} basePath - The base path without extension
+     */
+    handlePathWithoutExtension (basePath) {
+        // Step 1: Check if it's a directory with index.html
+        fs.stat(basePath, (error, stats) => {
+        if (!error && stats.isDirectory()) {
+            // It's a directory, look for index.html inside
+            const indexPath = nodePath.join(basePath, "index.html");
+
+            // Validate the index.html path is safe
+            if (!this.isPathSafe(indexPath)) {
             this.sendForbidden();
             return;
+            }
+
+            fs.access(indexPath, fs.constants.F_OK, (indexError) => {
+            if (!indexError) {
+                // index.html exists in the directory
+                this.serveFile(indexPath);
+            } else {
+                // Directory exists but no index.html - return 404
+                this.sendNotFound();
+            }
+            });
+            return;
         }
-        
+
+        // Step 2: Check for file without extension
+        fs.access(basePath, fs.constants.F_OK, (noExtError) => {
+            if (!noExtError) {
+            // File without extension exists
+            this.serveFile(basePath);
+            return;
+            }
+
+            // Step 3: Check for file with .html extension
+            const htmlPath = basePath + ".html";
+
+            // Validate the .html path is safe
+            if (!this.isPathSafe(htmlPath)) {
+            this.sendForbidden();
+            return;
+            }
+
+            fs.access(htmlPath, fs.constants.F_OK, (htmlError) => {
+            if (!htmlError) {
+                // File with .html extension exists
+                this.serveFile(htmlPath);
+            } else {
+                // Step 4: Nothing found, return 404
+                this.sendNotFound();
+            }
+            });
+        });
+        });
+    }
+
+    /**
+     * Serves a file with appropriate content type.
+     * @param {string} filePath - The path to the file to serve
+     */
+    serveFile(filePath) {
         // Get content type
         const extname = nodePath.extname(filePath);
-        const contentType = MimeExtensions.shared().mimeTypeForPathExtension(extname) || 'application/octet-stream';
+        const contentType =
+        MimeExtensions.shared().mimeTypeForPathExtension(extname) ||
+        "application/octet-stream";
         
         // Read and serve the file
         fs.readFile(filePath, (error, content) => {
             if (error) {
-                if (error.code === 'ENOENT') {
+                if (error.code === "ENOENT") {
                     this.sendNotFound();
-                } else if (error.code === 'EACCES' || error.code === 'EPERM') {
+                } else if (error.code === "EACCES" || error.code === "EPERM") {
                     this.sendForbidden();
                 } else {
                     console.error(`FileRequest: Error reading file ${filePath}:`, error);
