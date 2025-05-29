@@ -110,6 +110,7 @@
    * @returns {MusicLibrary} The music library.
    */
   async setupPlaylists () {
+    debugger;
     await this.loadPlaylistsFromJson();
     const playlistNames = Object.keys(this.playlistDicts());
     playlistNames.forEach((name) => {

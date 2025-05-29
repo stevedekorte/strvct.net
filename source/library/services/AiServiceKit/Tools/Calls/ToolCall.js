@@ -403,7 +403,7 @@ Example Tool call format:
     }
 
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
-    debugger;
+    //debugger;
 
     this.setStatus("completed");
 
@@ -412,7 +412,7 @@ Example Tool call format:
     if (e.extraMessage) {
       r.setExtraMessage(e.extraMessage);
     }
-    r.setStatus("error");
+    r.setStatus("failure");
     this.setToolResult(r);
     this.toolCalls().onToolCallComplete(this);
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
@@ -454,6 +454,10 @@ Example Tool call format:
   hasError () {
     const r = this.toolResult();
     return r !== null && r.hasError(); 
+  }
+
+  hasToolDefinition () {
+    return this.toolDefinition() !== null;
   }
 
   setCallResult (json) {

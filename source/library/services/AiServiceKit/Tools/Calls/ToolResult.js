@@ -161,7 +161,16 @@
       return !this.silentSuccess();
     } 
     if (this.hasError()) {
-      return !this.silentError();
+      // For errors, check if we have a valid tool definition first
+      // If not (e.g., JSON parse errors), always report the error
+      const toolCall = this.toolCall();
+      if (toolCall && toolCall.hasToolDefinition()) {
+        return !this.silentError();
+      } else {
+        // No tool definition means this is likely a parse error
+        // Always report these errors back to the AI
+        return true;
+      }
     }
     throw new Error("Invalid tool result status: " + this.status());
   }

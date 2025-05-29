@@ -210,7 +210,7 @@
      * @returns {Array<UrlResource>} JavaScript resources.
      */
     jsResources () {
-        return this.resourcesWithExtension("js")
+        return this.resourcesWithExtension("js");
     }
 
     /**
@@ -219,7 +219,7 @@
      * @returns {Array<UrlResource>} CSS resources.
      */
     cssResources () {
-        return this.resourcesWithExtension("css")
+        return this.resourcesWithExtension("css");
     }
 
     /**
@@ -255,7 +255,7 @@
      * @description Handles progress updates during resource loading.
      * @param {string} path - The path of the current resource being loaded.
      */
-    onProgress (path) {
+    onProgress (/*path*/) {
         this._evalCount ++
         //bootLoadingView.setBarToNofM(this._evalCount, 100);
         //const detail = { path: path, progress: this._evalCount / this.jsEntries().length }
@@ -268,7 +268,7 @@
      * @description Handles errors during resource loading.
      * @param {Error} error - The error that occurred.
      */
-    onError (error) {
+    onError (/*error*/) {
         //this.postEvent("resourceLoaderError", { error: error }) 
     }
 
@@ -290,7 +290,7 @@
      * @category Performance Tracking
      * @description Marks the page load time.
      */
-    markPageLoadTime() {
+    markPageLoadTime () {
         this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
     }
 

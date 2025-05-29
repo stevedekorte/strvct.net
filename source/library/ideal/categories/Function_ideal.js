@@ -24,7 +24,7 @@
 }).initThisCategory();
 */
 
-Function.isKindOf = function(superclass) {
+Function.isKindOf = function (superclass) {
     if (typeof superclass !== 'function') {
         return false;
     }
@@ -148,7 +148,7 @@ Function.prototype.addParameter = function(name, type, description) {
     return this;
 };
 
-Function.prototype.parametersCallDescription = function() {
+Function.prototype.parametersCallDescription = function () {
     const parameters = this.parameters();
     let parts = [];
     Object.keys(parameters).map(key => {
@@ -160,12 +160,12 @@ Function.prototype.parametersCallDescription = function() {
 
 // return type
 
-Function.prototype.setReturnTypes = function(types) {
+Function.prototype.setReturnTypes = function (types) {
     this.setMetaProperty("returnTypes", types);
     return this;
 };
 
-Function.prototype.returnTypes = function() {
+Function.prototype.returnTypes = function () {
     return this.getMetaProperty("returnTypes");
 };
 
@@ -193,7 +193,7 @@ Function.prototype.setSilentError = function(aBool) {
 };
 
 Function.prototype.silentError = function() {
-    return this.getMetaProperty("silentError") == true;
+    return this.getMetaProperty("silentError") === true;
 };
 
 // json schema for tool call use
