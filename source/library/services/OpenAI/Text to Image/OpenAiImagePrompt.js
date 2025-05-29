@@ -29,14 +29,14 @@
     }
 
     /**
-     * @member {string} model
-     * @description The DALL-E model to use for image generation.
+     * @member {string} ttiModel
+     * @description The model to use for text-to-image generation.
      * @category Configuration
      */
     {
-      const slot = this.newSlot("model", "gpt-image-1"); //"dall-e-3");
+      const slot = this.newSlot("ttiModel", "gpt-image-1");
       slot.setInspectorPath("");
-      //slot.setLabel("prompt");
+      slot.setLabel("Text to Image Model");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -269,7 +269,7 @@
     /*
     // dall-e 3
     const bodyJson = {
-      model: this.model(), // not sure this is valid, but it's used in the python API
+      model: this.ttiModel(), // not sure this is valid, but it's used in the python API
       prompt: this.prompt(),
       n: this.imageCount(), 
       size: this.imageSize(),
@@ -279,7 +279,7 @@
 
     // gpt-image-1
     const bodyJson = {
-        model: this.model(), // not sure this is valid, but it's used in the python API
+        model: this.ttiModel(), // not sure this is valid, but it's used in the python API
         prompt: this.prompt(),
         size: this.imageSize()
     };
@@ -331,7 +331,7 @@
    * @param {Object} json - The response JSON from the API.
    * @category Process
    */
-  onSuccess (json) {
+  onSuccess (/*json*/) {
     this.onEnd();
 
 /*

@@ -29,13 +29,6 @@
 
 (class AiRequest extends SvStorableNode {
 
-  /**
-   * Test static method.
-   */
-  static testStaticMethod () {
-    console.log("testStaticMethod");
-  }
-
   initPrototypeSlots () {
     /**
      * @member {Object} delegate - Optional reference to object that owns request
@@ -46,21 +39,10 @@
     }
 
     /**
-     * @member {AiService} service - The service the request is for.
-     */
-    /*
-    // we get this from the model object now
-    {
-      const slot = this.newSlot("service", null);
-      slot.setSlotType("AiService");
-    }
-    */
-
-    /**
      * @member {AiChatModel} model - The model the request is for.
      */
     {
-      const slot = this.newSlot("model", null);
+      const slot = this.newSlot("chatModel", null);
       slot.setSlotType("AiChatModel");
     }
 
@@ -348,7 +330,7 @@
   }
 
   service () {
-    return this.model().service();
+    return this.chatModel().service();
   }
 
   /**
@@ -401,7 +383,7 @@
       body: this.body()
     };
 
-    const extraHeaders = this.model().extraHeaders();
+    const extraHeaders = this.chatModel().extraHeaders();
     if (extraHeaders) {
       Object.keys(extraHeaders).forEach((key) => {
         json.headers[key] = extraHeaders[key];
@@ -575,7 +557,7 @@
 
     // let's print the url and headers here to the console
     console.log("--------------------------------");
-    console.log("model:", this.model().title());
+    console.log("model:", this.chatModel().title());
     console.log("url:", this.activeApiUrl());
     console.log("headers:", options.headers);
     console.log("--------------------------------");

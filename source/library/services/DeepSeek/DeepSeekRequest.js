@@ -53,7 +53,7 @@
     // subclasses should override this method to set up the request for streaming
     const body = this.bodyJson();
     body.stream = true;
-    body.max_tokens = this.model().outputTokenLimit(); // current max output tokens allowed by Groq
+    body.max_tokens = this.chatModel().outputTokenLimit(); // current max output tokens allowed by Groq
     return this;
   }
 

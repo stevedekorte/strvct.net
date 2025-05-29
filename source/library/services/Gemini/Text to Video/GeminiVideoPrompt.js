@@ -45,34 +45,10 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /*
         {
-            const slot = this.newSlot("width", 1280);
-            slot.setSlotType("Number");
-            slot.setDescription("The width of the video in pixels");
-            slot.setIsSubnodeField(true);
-        }
-
-        {
-            const slot = this.newSlot("height", 1080);
-            slot.setSlotType("Number");
-            slot.setDescription("The height of the video in pixels");
-            slot.setIsSubnodeField(true);
-        }
-
-        {
-            const slot = this.newSlot("frameRate", 24);
-            slot.setSlotType("Number");
-            slot.setDescription("The frame rate of the video in frames per second");
-            slot.setIsSubnodeField(true);
-            slot.setValidValues([24]);
-        }
-        */
-
-        {
-            const slot = this.newSlot("model", "veo-2.0-generate-001");
+            const slot = this.newSlot("ttvModel", "veo-2.0-generate-001");
             slot.setSlotType("String");
-            slot.setDescription("The Gemini model to use for video generation via Veo");
+            slot.setDescription("The Gemini model to use for text to video generation via Veo");
             slot.setValidValues(["veo-3.0-generate-preview", "veo-2.0-generate-001"]);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
@@ -187,10 +163,9 @@
         const height = this.height();
         const frameRate = this.frameRate();
         */
-        const model = this.model();
         const status = this.status();
     
-        let s = `${prompt}\n${duration}s, ${model}`;
+        let s = `${prompt}\n${duration}s, ${this.ttvModel()}`;
         if (status.length > 0) {
             s += `\n${status}`;
         }
@@ -229,7 +204,7 @@
             return null;
         }
 
-        return `https://${this.locationId()}-aiplatform.googleapis.com/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.model()}:predictLongRunning`;
+        return `https://${this.locationId()}-aiplatform.googleapis.com/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.ttvModel()}:predictLongRunning`;
     }
 
     activeApiUrl () {
@@ -243,7 +218,7 @@
     // Build the request body for the Gemini Video API
     requestBody () {
         // Base structure for Vertex AI LLM API
-        const endpoint = `projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.model()}`
+        const endpoint = `projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.ttvModel()}`
         const body = {
             "endpoint": endpoint,
             "instances": [
@@ -354,7 +329,7 @@
         this.setStatus(`Fetch attempt ${this.attempts()} of ${this.maxAttempts()}...`);
 
         // Use the correct API endpoint pattern that matches the working veo.js
-        const apiUrl = `https://${this.host()}/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.model()}:fetchPredictOperation`;
+        const apiUrl = `https://${this.host()}/v1/projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.ttvModel()}:fetchPredictOperation`;
         const proxyApiUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(apiUrl);
 
         try {

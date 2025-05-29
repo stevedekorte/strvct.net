@@ -263,7 +263,7 @@
    */
   newRequest () {
     const request = this.requestClass().clone(); // AiRequest class
-    request.setModel(this.chatModel());
+    request.setChatModel(this.chatModel());
     //request.setService(this.service());
 
     request.setDelegate(this);

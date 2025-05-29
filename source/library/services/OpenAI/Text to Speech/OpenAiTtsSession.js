@@ -55,7 +55,6 @@
        */
       const slot = this.newSlot("prompt", "");
       slot.setInspectorPath("");
-      //slot.setLabel("prompt");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -67,19 +66,19 @@
     {
       const validModels = ["tts-1", "tts-1-hd"];
       /**
-       * @member {string} model
+       * @member {string} ttsModel
        * @description The TTS model to use.
        */
-      const slot = this.newSlot("model", validModels.first());
-      slot.setInspectorPath("")
-      //slot.setLabel("prompt")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(validModels)
-      slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("none")
+      const slot = this.newSlot("ttsModel", validModels.first());
+      slot.setInspectorPath("");
+      slot.setLabel("Text to Speech Model");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setValidValues(validModels);
+      slot.setIsSubnodeField(true);
+      slot.setSummaryFormat("none");
     }
 
     {
@@ -158,11 +157,11 @@
        * @description Stores any error messages.
        */
       const slot = this.newSlot("error", ""); // null or String
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(false)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
       //slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false);
     }
@@ -175,13 +174,13 @@
        * @description Indicates if the audio is muted.
        */
       const slot = this.newSlot("isMuted", false);
-      slot.setInspectorPath("")
-      slot.setLabel("is muted")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setLabel("is muted");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
       slot.setSummaryFormat("none");
     }
 
@@ -191,7 +190,7 @@
        * @description Queue for TTS requests.
        */
       const slot = this.newSlot("ttsRequestQueue", null);
-      slot.setDuplicateOp("copyValue")
+      slot.setDuplicateOp("copyValue");
       slot.setShouldStoreSlot(false);
       slot.setSummaryFormat("none");
       slot.setSlotType("Array");
@@ -204,7 +203,7 @@
        * @description Queue for audio playback.
        */
       const slot = this.newSlot("audioQueue", null);
-      slot.setDuplicateOp("copyValue")
+      slot.setDuplicateOp("copyValue");
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
       slot.setSlotType("AudioQueue");
@@ -287,7 +286,7 @@
   }
 
   subtitle () {
-    return this.status()
+    return this.status();
   }
   */
 
@@ -296,7 +295,7 @@
    * @returns {Object} The parent TTS sessions.
    */
   ttsSessions () {
-    return this.parentNode()
+    return this.parentNode();
   }
 
   /**
@@ -349,7 +348,7 @@
         isEnabled: this.canGenerate(),
         //title: this.title(),
         isVisible: true
-    }
+    };
   }
 
   // --- fetch ---
@@ -372,7 +371,7 @@
     request.setDelegate(this)
 
     const bodyJson = {
-      model: this.model(), 
+      model: this.ttsModel(), 
       voice: this.voice(), 
       input: this.prompt(),
       response_format: this.responseFormat(), 
@@ -430,15 +429,14 @@
    * @description Callback for when a request begins.
    * @param {OpenAiTtsRequest} request - The request that began.
    */
-  onRequestBegin (request) {
-
+  onRequestBegin (/*request*/) {
   }
 
   /**
    * @description Callback for when a request completes successfully.
    * @param {OpenAiTtsRequest} request - The completed request.
    */
-  async onRequestComplete (request) {
+  async onRequestComplete (/*request*/) {
     this.setStatus("success");    
     //this.onEnd();
     //console.log('Success: got audio blob of size: ' + audioBlob.size);
@@ -471,15 +469,15 @@
    * @returns {boolean} True if the delegate method was called, false otherwise.
    */
   sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
+    const d = this.delegate();
     if (d) {
-      const f = d[methodName]
+      const f = d[methodName];
       if (f) {
-        f.apply(d, args)
-        return true
+        f.apply(d, args);
+        return true;
       }
     }
-    return false
+    return false;
   }
 
   // --- playing audio ---- 
@@ -494,7 +492,7 @@
   /**
    * @description Pauses audio playback.
    */
-  pause() {
+  pause () {
     this.debugLog("pause()");
     this.audioQueue().pause();
   }
