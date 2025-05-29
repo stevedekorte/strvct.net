@@ -48,10 +48,13 @@
     /**
      * @member {AiService} service - The service the request is for.
      */
+    /*
+    // we get this from the model object now
     {
       const slot = this.newSlot("service", null);
       slot.setSlotType("AiService");
     }
+    */
 
     /**
      * @member {AiChatModel} model - The model the request is for.
@@ -344,6 +347,10 @@
     this.setIsDebugging(true);
   }
 
+  service () {
+    return this.model().service();
+  }
+
   /**
    * Returns the subtitle for the request
    * @returns {string}
@@ -565,6 +572,13 @@
       const value = options.headers[header];
       xhr.setRequestHeader(header, value);
     }
+
+    // let's print the url and headers here to the console
+    console.log("--------------------------------");
+    console.log("model:", this.model().title());
+    console.log("url:", this.activeApiUrl());
+    console.log("headers:", options.headers);
+    console.log("--------------------------------");
 
     xhr.responseType = ""; // "" or "text" is required for streams
 

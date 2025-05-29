@@ -229,7 +229,7 @@
    * @category Data
    */
   service () {
-    return this.conversation().service();
+    return this.chatModel().service();
   }
 
   /**
@@ -258,18 +258,17 @@
 
   /**
    * Creates a new request object.
-
    * @returns {AiRequest} The new request object.
    * @category Communication
    */
   newRequest () {
-    const request = this.requestClass().clone();
-    request.setService(this.service());
+    const request = this.requestClass().clone(); // AiRequest class
+    request.setModel(this.chatModel());
+    //request.setService(this.service());
 
     request.setDelegate(this);
     //request.setStreamTarget(this); // unify with delegate
 
-    request.setModel(this.chatModel());
     
     const json = {};
 

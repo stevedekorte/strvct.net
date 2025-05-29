@@ -1145,8 +1145,31 @@
         return null;
     }
 
+    /**
+     * @description Get the first owner node of a given class in this instance's ownership chain.
+     * @param {Function} aClass - The class to search for.
+     * @returns {SvNode|null} The first owner node of the given class, or null if not found.
+     */
+
     firstOwnerChainNodeOfClass (aClass) {
         return this.ownershipChain().detect(node => node.thisClass().isSubclassOf(aClass));
+    }
+
+    /**
+     * @description Get the first owner node that responds to a given method in this instance's ownership chain.
+     * @param {string} methodName - The method name to search for.
+     * @returns {SvNode|null} The first owner node that responds to the given method, or null if not found.
+     */
+    firstOwnerChainNodeThatRespondsTo (methodName) {
+        return this.ownershipChain().detect(node => node.respondsTo(methodName));
+    }
+
+    responseFromFirstOwnerChainNodeThatRespondsTo (methodName) {
+        const node = this.firstOwnerChainNodeThatRespondsTo(methodName);
+        if (node) {
+            return node[methodName]();
+        }
+        return undefined;
     }
 
     /**

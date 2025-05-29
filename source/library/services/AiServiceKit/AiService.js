@@ -188,6 +188,15 @@
   }
 
   /**
+   * @description Returns the default assistant chat model.
+   * @returns {AiChatModel} The default assistant chat model.
+   * @category Models
+   */
+  assistantChatModel () {
+    return this.defaultChatModel();
+  }
+
+  /**
    * @description Validates the API key.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the API key is valid, false otherwise.

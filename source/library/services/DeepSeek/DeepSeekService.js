@@ -56,17 +56,6 @@
    */
   initPrototypeSlots () {
 
-    {
-      const slot = this.newSlot("repairAction", null);
-      slot.setShouldJsonArchive(false);
-      slot.setLabel("Repair Models");
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(true);
-      //slot.setCanInspect(true)
-      slot.setActionMethodName("repairModels");
-    }
   }
 
   /**

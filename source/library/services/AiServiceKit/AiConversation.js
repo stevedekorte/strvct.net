@@ -179,10 +179,17 @@
    */
   chatModel () {
     
-    debugger;
+    //debugger;
     if (this._chatModel) {
       return this._chatModel;
     }
+
+    /*
+    const ownerNode = this.firstOwnerChainNodeThatRespondsTo("chatModel");
+    if (ownerNode) {
+      return ownerNode.chatModel();
+    }
+    */
 
     if (this.conversations()) {
       return this.conversations().service().defaultChatModel();
