@@ -138,6 +138,14 @@
     if (!file) {
       throw new Error(`File not found: ${fileName}`);
     }
+    
+    // Try to load the file synchronously from CAM
+    if (!file.hasData() && !file.value()) {
+      if (!file.attemptSyncLoad()) {
+        throw new Error(`Could not load file from CAM: ${fileName}`);
+      }
+    }
+    
     const contents = file.value();
     if (contents === null || contents === undefined) {
       throw new Error(`Could not read contents of file: ${fileName}`);

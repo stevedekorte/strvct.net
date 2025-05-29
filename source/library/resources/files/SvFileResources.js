@@ -61,8 +61,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -89,24 +89,24 @@
      */
     async setupSubnodesIfNeeded () {
         if (!this.hasSetupSubnodes()) {
-            const rootFolder = SvResourceFolder.clone().setPath(this.rootPath())
-            this.addSubnode(rootFolder)
+            const rootFolder = SvResourceFolder.clone().setPath(this.rootPath());
+            this.addSubnode(rootFolder);
 
-            const entries = ResourceManager.shared().entries()
+            const entries = ResourceManager.shared().entries();
             entries.forEach(entry => {
-                const aPath = entry.path
-                const pathArray = aPath.split("/")
+                const aPath = entry.path;
+                const pathArray = aPath.split("/");
                 while (pathArray.first() === ".") {
-                    pathArray.shift()
+                    pathArray.shift();
                 }
-                const file = rootFolder.addRelativeResourcePathArray(pathArray)
-                file.setResourceHash(entry.hash)
-                file.setResourceSize(entry.size)
+                const file = rootFolder.addRelativeResourcePathArray(pathArray);
+                file.setResourceHash(entry.hash);
+                file.setResourceSize(entry.size);
                 if (!file) {
-                    throw new Error("no file added")
+                    throw new Error("no file added");
                 }
-            })
-            this.setHasSetupSubnodes(true)
+            });
+            this.setHasSetupSubnodes(true);
         }
         return this;
     }

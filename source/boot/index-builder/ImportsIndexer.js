@@ -248,7 +248,7 @@ class ImportsIndexer {
             const value = fs.readFileSync(fullPath,  "utf8"); // TODO: encode this in case it's binary?
             const hash = this.hashForData(value);
             cam[hash] = value;
-        })
+        });
         return cam;
     }
 

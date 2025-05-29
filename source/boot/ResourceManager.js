@@ -85,6 +85,7 @@
         this._evalCount = 0;
         this._doneTime = null;
         this._promiseForLoadCam = null;
+        this._camContent = null; // Store CAM content in memory for sync access
         return this;
     }
 
@@ -107,11 +108,11 @@
      * @returns {Promise<void>}
      */
     async promiseLoadIndex () {
-        const path = "build/_index.json"
+        const path = "build/_index.json";
         const resource = await UrlResource.with(path).promiseLoad();
-        this._index = resource.dataAsJson()
+        this._index = resource.dataAsJson();
         this._indexResources = this._index.map((entry) => {
-            const resource = UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash)
+            const resource = UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash);
             assert(resource.path() === entry.path);
             assert(resource.resourceHash() === entry.hash);
             return resource;
@@ -124,7 +125,7 @@
      * @returns {Array<UrlResource>} The index resources.
      */
     indexResources () {
-        return this._indexResources
+        return this._indexResources;
     }
 
     /**
@@ -133,13 +134,7 @@
      * @returns {Promise<void>}
      */
     async promiseLoadCamIfNeeded () {
-        // if hashCache is empty, load the compressed cam and add it to the cache first
-        // as this will be much faster than loading the files individually
-        //debugger
-        //await this.hashCache().promiseClear();
         const count = await HashCache.shared().promiseCount();
-
-        //console.log(this.type() + " hashcache count: ", count)
         if (!count) {
             await this.promiseLoadCam();
         }
@@ -151,16 +146,18 @@
      * @returns {Promise<void>}
      */
     async promiseLoadCam () {
-        // cache the promise so if we call this multiple times we don't load it again
         if (!this._promiseForLoadCam) {
             this._promiseForLoadCam = Promise.clone();
             try {
-                const path = "build/_cam.json.zip"
+                const path = "build/_cam.json.zip";
                 const resource = await UrlResource.clone().setPath(path).promiseLoad();
                 const cam = resource.dataAsJson();
-                // this._cam = cam
-                await Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel? the UI progress works with this serial version
-                //await Reflect.ownKeys(cam).promiseSerialTimeoutsForEach((k) => { 
+                
+                // Store CAM content in memory for synchronous access
+                this._camContent = cam;
+                
+                // Also store in HashCache for async access
+                await Reflect.ownKeys(cam).promiseSerialForEach((k) => {
                     const v = cam[k];
                     return HashCache.shared().promiseAtPut(k, v);
                 });
@@ -169,7 +166,7 @@
                 this._promiseForLoadCam.callRejectFunc();
             }
         }
-        return this._promiseForLoadCam
+        return this._promiseForLoadCam;
     }
 
     /**
@@ -179,7 +176,34 @@
      * @returns {UrlResource|undefined} The found resource or undefined.
      */
     resourceForPath (path) {
-        return this.indexResources().find(r => r.path() === path)
+        return this.indexResources().find(r => r.path() === path);
+    }
+
+    /**
+     * @category Resource Access
+     * @description Synchronously gets content from the CAM by hash.
+     * @param {string} hash - The hash of the content.
+     * @returns {string|null} The content or null if not in CAM.
+     */
+    syncContentForHash (hash) {
+        if (!this._camContent) {
+            return null;
+        }
+        return this._camContent[hash] || null;
+    }
+
+    /**
+     * @category Resource Access
+     * @description Synchronously gets content from the CAM by path.
+     * @param {string} path - The path of the resource.
+     * @returns {string|null} The content or null if not in CAM.
+     */
+    syncContentForPath (path) {
+        const entry = this._index ? this._index.find(e => e.path === path) : null;
+        if (!entry || !entry.hash) {
+            return null;
+        }
+        return this.syncContentForHash(entry.hash);
     }
 
     /**
@@ -189,7 +213,7 @@
      * @returns {Array<UrlResource>} Filtered resources.
      */
     resourcesWithExtension (ext) {
-        return this.indexResources().filter(r => r.pathExtension() === ext)
+        return this.indexResources().filter(r => r.pathExtension() === ext);
     }
 
     /**
@@ -228,23 +252,16 @@
      * @returns {Promise<void>}
      */
     async evalIndexResources () {
-        //debugger
-        // promiseSerialForEach promiseSerialTimeoutsForEach
-        let count = 0
+        let count = 0;
 
-        //await this.cssResources().promiseSerialTimeoutsForEach(r => {
         await this.cssResources().promiseSerialForEach(async (r) => {
-                // NOTE: can't do in parallel as the order in which CSS files are loaded matters
             return await r.promiseLoadAndEval();
         });
 
         await this.jsResources().promiseSerialForEach(async (r) => {
-        //await this.jsResources().promiseSerialTimeoutsForEach(async (r) => {
-            count ++;
+            count++;
             bootLoadingView.setBarToNofM(count, this.jsResources().length);
-            //debugger;
-            //console.log("count: " + count + " / " + this.jsResources().length)
-            return await r.promiseLoadAndEval()
+            return await r.promiseLoadAndEval();
         });
 
         this.onDone();
@@ -256,11 +273,7 @@
      * @param {string} path - The path of the current resource being loaded.
      */
     onProgress (/*path*/) {
-        this._evalCount ++
-        //bootLoadingView.setBarToNofM(this._evalCount, 100);
-        //const detail = { path: path, progress: this._evalCount / this.jsEntries().length }
-        //this.postEvent("resourceLoaderLoadUrl", detail)
-        //this.postEvent("resourceLoaderProgress", detail)
+        this._evalCount++;
     }
 
     /**
@@ -269,7 +282,7 @@
      * @param {Error} error - The error that occurred.
      */
     onError (/*error*/) {
-        //this.postEvent("resourceLoaderError", { error: error }) 
+        //this.postEvent("resourceLoaderError", { error: error }); 
     }
 
     /**
@@ -277,13 +290,8 @@
      * @description Handles completion of resource loading.
      */
     onDone () {
-        // not really done yet
         getGlobalThis().bootLoadingView = bootLoadingView;
-        //bootLoadingView.close();
         this.markPageLoadTime();
-		//window.document.title = this.loadTimeDescription();
-		//this.postEvent("resourceLoaderDone", {});
-        //debugger;
     }
 
     /**
@@ -312,7 +320,7 @@
      * @returns {Array<Object>} The index entries.
      */
     entries () {
-        return this._index
+        return this._index;
     }
 
     /**
@@ -321,7 +329,7 @@
      * @returns {Array<string>} The resource file paths.
      */
     resourceFilePaths () {
-        return this._index.map(entry => entry.path)
+        return this._index.map(entry => entry.path);
     }
 
     /**
@@ -331,8 +339,8 @@
      * @returns {Array<UrlResource>} Filtered URL resources.
      */
     urlResourcesWithExtensions (extensions) {
-		const extSet = extensions.asSet()
-        return this.indexResources().filter(r => extSet.has(r.pathExtension()))
+        const extSet = extensions.asSet();
+        return this.indexResources().filter(r => extSet.has(r.pathExtension()));
     }
         
     /**
@@ -342,8 +350,7 @@
      * @returns {Array<string>} Filtered resource file paths.
      */
     resourceFilePathsWithExtensions (extensions) {
-        return this.urlResourcesWithExtensions(extensions).map(r => r.path())
-        //return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
+        return this.urlResourcesWithExtensions(extensions).map(r => r.path());
     }
 
     /**
@@ -352,28 +359,8 @@
      * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
      */
     async setupAndRun () {
-        //console.log("ResourcesManager.setupAndRun()");
-        /*
-        // BootLoader now loads these so this is no longer needed
-        const bp = this.bootPath();
-        const urls = [
-            //"source/boot/getGlobalThis.js",
-            bp + "Base.js",
-            bp + "Promise_ideal.js",
-            bp + "IndexedDBFolder.js",
-            bp + "IndexedDBTx.js",
-            bp + "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
-            //bp + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
-        ];
-        
-        // we can load the JS resource in parallel
-        const loadedResources = await urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad());
-        // but we have to eval the JS serially as order matters
-        loadedResources.forEach(resource => resource.evalDataAsJS());
-        */
-
         await this.run();
-        return this
+        return this;
     }
 
 }).initThisClass();

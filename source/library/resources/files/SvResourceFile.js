@@ -186,6 +186,67 @@
     }
 
     /**
+     * @description Attempts to load the resource synchronously from the CAM.
+     * This only works if the resource content is already in the CAM and has been loaded.
+     * @returns {boolean} True if successfully loaded synchronously, false otherwise.
+     * @category Loading
+     */
+    attemptSyncLoad () {
+        // First check if we already have data loaded
+        if (this.hasData()) {
+            // Data is already loaded, parse value if needed
+            try {
+                const value = this.syncValueFromData();
+                this.setValue(value);
+                return true;
+            } catch (error) {
+                console.error("Error parsing data synchronously:", error);
+                return false;
+            }
+        }
+
+        // Try to get content from ResourceManager's synchronous CAM cache
+        const content = ResourceManager.shared().syncContentForPath(this.path());
+        if (content !== null) {
+            // Content found in CAM! Set it as data
+            this._data = {
+                asString: function() { return content; }
+            };
+            
+            try {
+                const value = this.syncValueFromData();
+                this.setValue(value);
+                this.promiseForLoad().callResolveFunc(); // Mark promise as resolved
+                return true;
+            } catch (error) {
+                console.error("Error parsing CAM content synchronously:", error);
+                this._data = null;
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @description Synchronously gets the value from the file data.
+     * @returns {*} The parsed value from the file data.
+     * @category Data Management
+     */
+    syncValueFromData () {
+        const ext = this.pathExtension();
+        const data = this.data();
+        if (ext === "json") {
+            const jsonString = data.asString();
+            return JSON.parse(jsonString);
+        } else if (["js", "css", "txt"].includes(ext)) {
+            const textString = data.asString();
+            return textString;
+        }
+        return this.data();
+    }
+
+    /**
      * @description Loads the resource file asynchronously.
      * @returns {Promise<SvResourceFile>} A promise that resolves with the current instance after loading.
      * @category Loading
@@ -228,7 +289,11 @@
      */
     async prechacheWhereAppropriate () {
         if (this.precacheExtensions().includes(this.pathExtension())) {
-            await this.promiseLoad();
+            // Try synchronous load from CAM first
+            if (!this.attemptSyncLoad()) {
+                // Fall back to async load if not in CAM (shouldn't happen for these extensions)
+                await this.promiseLoad();
+            }
         }
         return this;
     }

@@ -101,18 +101,17 @@
 
   finalInit () {
     super.finalInit();
-    this.setupPlaylists();
     this.folder().setName("Playlists");
+    this.setupPlaylists();
   }
 
   /**
    * @description Sets up the playlists.
    * @returns {MusicLibrary} The music library.
    */
-  async setupPlaylists () {
-    debugger;
-    await this.loadPlaylistsFromJson();
-    const playlistNames = Object.keys(this.playlistDicts());
+  setupPlaylists () {
+    this.loadPlaylistsFromJson();
+    const playlistNames = Object.keys(this.playlistDicts() || {});
     playlistNames.forEach((name) => {
       const playlist = MusicFolder.clone();
       playlist.setName(name);
@@ -126,14 +125,19 @@
    * @description Loads the playlists from JSON.
    * @returns {MusicLibrary} The music library.
    */
-  async loadPlaylistsFromJson () {
+  loadPlaylistsFromJson () {
     const resourceFolder = SvFileResources.shared().rootFolder().resourceAtPath("app/resources/json/music");
     const resourceFile = resourceFolder.fileWithName("playlists.json");
-    //const jsonResource = SvResources.shared().resourceForPath("app/resources/json/music/playlists.json");
+    
     if (resourceFile) {
-      const data = await resourceFile.promiseData();
-      const json = JSON.parse(data.asString());
-      this.setPlaylistDicts(json);
+      // Load synchronously from CAM
+      if (resourceFile.attemptSyncLoad()) {
+        this.setPlaylistDicts(resourceFile.value());
+      } else {
+        console.error(this.type() + " failed to load playlists.json from CAM!");
+        debugger;
+        this.setPlaylistDicts({});
+      }
     } else {
       console.warn(this.type() + " couldn't find playlists.json");
       debugger;
