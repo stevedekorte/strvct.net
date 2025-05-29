@@ -102,7 +102,17 @@
   finalInit () {
     super.finalInit();
     this.folder().setName("Playlists");
-    this.setupPlaylists();
+  }
+
+  hasLoadedPlaylists () {
+    return this.playlistDicts() !== null;
+  }
+
+  playlistDicts () {
+    if (!this._playlistDicts) {
+      this.setupPlaylists();
+    }
+    return this._playlistDicts;
   }
 
   /**
@@ -110,13 +120,19 @@
    * @returns {MusicLibrary} The music library.
    */
   setupPlaylists () {
+    if (this._hasAttemptedToLoadPlaylists) {
+      throw new Error("playlists already attempted to load");
+    }
+    this._hasAttemptedToLoadPlaylists = true;
     this.loadPlaylistsFromJson();
-    const playlistNames = Object.keys(this.playlistDicts() || {});
+    const playlistDicts = this._playlistDicts;
+
+    const playlistNames = Object.keys(playlistDicts || {});
     playlistNames.forEach((name) => {
       const playlist = MusicFolder.clone();
       playlist.setName(name);
       this.folder().addSubnode(playlist);
-      playlist.setJson(this.playlistDicts()[name]);
+      playlist.setJson(playlistDicts[name]);
     });
     return this;
   }
@@ -126,23 +142,14 @@
    * @returns {MusicLibrary} The music library.
    */
   loadPlaylistsFromJson () {
-    const resourceFolder = SvFileResources.shared().rootFolder().resourceAtPath("app/resources/json/music");
-    const resourceFile = resourceFolder.fileWithName("playlists.json");
+    const resourceFile = SvFileResources.shared().rootFolder().resourceWithName("music-playlists.json");
+    assert(resourceFile, "no resource file found for music-playlists.json");
     
-    if (resourceFile) {
-      // Load synchronously from CAM
-      if (resourceFile.attemptSyncLoad()) {
-        this.setPlaylistDicts(resourceFile.value());
-      } else {
-        console.error(this.type() + " failed to load playlists.json from CAM!");
-        debugger;
-        this.setPlaylistDicts({});
-      }
-    } else {
-      console.warn(this.type() + " couldn't find playlists.json");
-      debugger;
-      this.setPlaylistDicts({});
-    }
+    //const resourceFolder = SvFileResources.shared().rootFolder().resourceAtPath("app/resources/json/music");
+    //const resourceFile = resourceFolder.fileWithName("playlists.json");
+    assert(resourceFile, "no resource file found for music-playlists.json");
+    assert(resourceFile.hasData(), "no data found for music-playlists.json");
+    this.setPlaylistDicts(resourceFile.value());
     return this;
   }
 
@@ -250,6 +257,7 @@
    * @returns {Array} The tracks.
    */
   tracksForPlaylistsWithNames (playlistNames) {
+    assert(this.hasLoadedPlaylists(), "playlists not loaded");
     const playlists = playlistNames.map(pName => this.playlistWithName(pName));
     return playlists.map(playlist => playlist.tracks()).flat();
   }

@@ -123,7 +123,7 @@
      */
     resourceClassesForFileExtension (ext) {
         const extension = ext.toLowerCase();
-        return this.resourceClasses().select(rClass => rClass.canHandleExtension(ext));
+        return this.resourceClasses().select(rClass => rClass.canHandleExtension(extension));
     }
 
     /**
@@ -148,7 +148,7 @@
             debugger;
             this.resourceClassForFileExtension(aPath.pathExtension());
             return null;
-        };
+        }
         const aResource = rClass.clone().setPath(aPath);
         return aResource;
     }
@@ -189,7 +189,12 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        await this.resources().promiseParallelMap(this.resources(), async (r) => r.prechacheWhereAppropriate());
+        console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        await this.resources().promiseParallelMap(async (r) => {
+            console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
+            await r.prechacheWhereAppropriate();
+        });
+        return this;
     }
 
 }.initThisClass());

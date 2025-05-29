@@ -42,7 +42,7 @@
      * @throws {Error} Throws an error if not implemented by subclasses.
      * @category MIME Types
      */
-    static openMimeChunk (dataChunk) {
+    static openMimeChunk (/*dataChunk*/) {
          throw new Error("subclasses should override this method");
         //const aNode = this.clone();
         //setValue(dataChunk);
@@ -61,7 +61,7 @@
      */
     static supportedExtensions () {
         throw new Error("subclasses should override this method");
-        return [];
+        //return [];
     }
 
     /**
@@ -174,15 +174,6 @@
      */
     title () {
         return this.name();
-    }
-
-    /**
-     * @description Gets the subtitle of the resource.
-     * @returns {string} The subtitle of the resource.
-     * @category Resource Information
-     */
-    subtitle () {
-        return this.path().pathExtension();
     }
 
     /**
@@ -351,6 +342,7 @@
      * @category Resource Loading
      */
     async prechacheWhereAppropriate () {
+        throw new Error("subclasses should override this method");
     }
 
 }.initThisClass());

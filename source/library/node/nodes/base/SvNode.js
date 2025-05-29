@@ -280,6 +280,13 @@
     }
 
     /**
+     * @description See registerForAppDidInit().
+     */
+    appDidInit () {
+        // for subclasses to override
+    }
+
+    /**
 
      * @description Register this instance to receive the appDidInit notification.
      */

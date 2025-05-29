@@ -88,7 +88,6 @@
       slot.setNodeFillsRemainingWidth(true);
     }
 
-
     {
       const slot = this.newSlot("composeAction", null);
       slot.setCanInspect(true);
@@ -135,21 +134,10 @@
 
   contentsOfFileNamed (fileName) {
     const file = SvFileResources.shared().rootFolder().resourceWithName(fileName);
-    if (!file) {
-      throw new Error(`File not found: ${fileName}`);
-    }
-    
-    // Try to load the file synchronously from CAM
-    if (!file.hasData() && !file.value()) {
-      if (!file.attemptSyncLoad()) {
-        throw new Error(`Could not load file from CAM: ${fileName}`);
-      }
-    }
-    
+    assert(file, `File not found: ${fileName}`);
+
     const contents = file.value();
-    if (contents === null || contents === undefined) {
-      throw new Error(`Could not read contents of file: ${fileName}`);
-    }
+    assert(contents, `Could not read contents of file: ${fileName}`);
     return contents;
   }
 

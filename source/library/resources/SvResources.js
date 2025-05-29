@@ -145,7 +145,7 @@
      * @category Resource Lookup
      */
     resourceClassesForFileExtension (extension) {
-        return this.subnodes().map(sn => sn.resourceClassesForFileExtension(extension)).flat()
+        return this.subnodes().map(sn => sn.resourceClassesForFileExtension(extension)).flat();
     }
 
     /**
@@ -155,7 +155,7 @@
      * @category Resource Lookup
      */
     resourceClassForFileExtension (extension) {
-        return this.resourceClassesForFileExtension(extension).first()
+        return this.resourceClassesForFileExtension(extension).first();
     }
 
     /**
@@ -165,7 +165,7 @@
      * @category Resource Lookup
      */
     resourceForPath (aPath) {
-        const rClass = this.resourceClassForFileExtension(aPath.pathExtension())
+        const rClass = this.resourceClassForFileExtension(aPath.pathExtension());
         /*
         if (!rClass) {
             // do we want this behavior?
@@ -174,8 +174,8 @@
         }
         */
         if (rClass) {
-            const aResource = rClass.clone().setPath(aPath).load()
-            return aResource
+            const aResource = rClass.clone().setPath(aPath).load();
+            return aResource;
         }
         return null
     }
@@ -187,7 +187,12 @@
      */
     async prechacheWhereAppropriate () {
         console.log(this.type() + ".prechacheWhereAppropriate()");
-        await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
+        await this.subnodes().promiseParallelMap(async (node) => {
+            console.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
+            //debugger;
+            await node.prechacheWhereAppropriate();
+        });
+        return this;
     }
 
 }.initThisClass());

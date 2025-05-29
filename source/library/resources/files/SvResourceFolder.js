@@ -99,7 +99,7 @@
     addRelativeResourcePathArray (pathArray) {
         pathArray = pathArray.slice()
 
-        const fullPath = this.path() + "/" + pathArray.join("/")
+        //const fullPath = this.path() + "/" + pathArray.join("/")
 
         if (pathArray.length === 1) { // it's a file
             const fileName = pathArray.first()
@@ -277,7 +277,7 @@
      * @category Node Management
      */
     fileAt (aName) {
-        return this.subnodes().detect(sn => sn.name() === name)
+        return this.subnodes().detect(sn => sn.name() === aName)
     }
 
     /**
@@ -335,7 +335,8 @@
      * @returns {Promise<void>} A promise that resolves when precaching is complete.
      * @category Resource Management
      */
-    async prechacheWhereAppropriate() {
+    async prechacheWhereAppropriate () {
+        debugger;
         console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }

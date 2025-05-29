@@ -138,7 +138,11 @@
      */
     async prechacheWhereAppropriate () {
         this.setupSubnodesIfNeeded();
-        await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => file.prechacheWhereAppropriate());
+        await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => {
+            console.log("file: " + file.type() + ".prechacheWhereAppropriate()");
+            await file.prechacheWhereAppropriate();
+        });
+        return this;
     }
 
 }.initThisClass());
