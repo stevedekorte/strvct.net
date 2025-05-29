@@ -43,6 +43,13 @@
       slot.setSlotType("AiChatModel");
     }
 
+    /*
+    {
+      const slot = this.newSlot("systemPrompt", null); 
+      slot.setSlotType("String");
+    }
+      */
+
     /**
      * @member {AiResponseMessage} responseMsgClass - Class for response messages
      * @category Configuration
@@ -359,6 +366,7 @@
   startWithPrompt (prompt) {
     //debugger;
     this.clear();
+    //this.setSystemPrompt(prompt);
     const promptMsg = this.newSystemMessage();
     promptMsg.setContent(prompt);
     const responseMessage = promptMsg.requestResponse();
