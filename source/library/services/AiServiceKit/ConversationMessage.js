@@ -560,15 +560,15 @@
    * @category Delegate
    */
   sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
+    const d = this.delegate();
     if (d) {
-      const f = d[methodName]
+      const f = d[methodName];
       if (f) {
-        f.apply(d, args)
-        return true
+        f.apply(d, args);
+        return true;
       }
     }
-    return false
+    return false;
   }
 
   /**

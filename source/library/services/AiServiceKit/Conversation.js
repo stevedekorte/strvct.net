@@ -45,7 +45,7 @@
    * @description Initializes a new Conversation instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
 
     {
@@ -63,7 +63,7 @@
    * @param {*} v - The value to be handled.
    * @category Event Handling
    */
-  onChatEditValue (v) {
+  onChatEditValue (/*v*/) {
     // for subclasses to override
   }
 
@@ -139,7 +139,7 @@
    * @param {*} aMsg - The updated message.
    * @category Event Handling
    */
-  onMessageUpdate (aMsg) {
+  onMessageUpdate (/*aMsg*/) {
     // e.g. sent by OpenAiMessage for things like streaming updates
     // can be useful for sharing the changes with other clients
   }
@@ -153,7 +153,7 @@
     //super.onMessageComplete(aMsg);
     this.footerNode().setValueIsEditable(true)
     if (aMsg.error() === null) {
-      const pmsg = aMsg.previousMessage() 
+      //const pmsg = aMsg.previousMessage() 
       /*
       if (pmsg && pmsg.value() === this.summaryRequestPrompt()) {
         // it's a response to a summary request
@@ -321,7 +321,7 @@
    * @param {*} newMsg - The new message.
    * @category Event Handling
    */
-  onNewMessageFromUpdate (newMsg) {
+  onNewMessageFromUpdate (/*newMsg*/) {
     // for subclasses to override
   }
 
