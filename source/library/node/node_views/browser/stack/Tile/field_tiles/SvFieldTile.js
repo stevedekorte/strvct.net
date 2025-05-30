@@ -531,7 +531,7 @@
      * @returns {SvFieldTile} The current instance.
      */
     syncNoteFromNode () {
-        const node = this.node()
+        //const node = this.node()
         const noteView = this.noteView()
         
         if (this.visibleNote()) {
@@ -562,11 +562,11 @@
         const node = this.node()
 
         if (node.keyIsEditable()) {
-        	node.setKey(this.keyView().value())
+            node.setKey(this.keyView().value())
         }
 	
         if (node.valueIsEditable()) {
-        	node.setValue(this.valueView().value())
+            node.setValue(this.valueView().value())
         }
 		
         super.syncToNode()
@@ -656,7 +656,7 @@
      * @param {Event} event - The event.
      * @returns {SvFieldTile} The current instance.
      */
-    onEnterKeyUp (event) {
+    onEnterKeyUp (/*event*/) {
         //this.debugLog(".onEnterKeyUp()")
         if (this.valueView().activate) {
             this.valueView().activate()
