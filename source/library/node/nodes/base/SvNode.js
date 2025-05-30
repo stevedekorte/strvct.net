@@ -150,6 +150,7 @@
             slot.setInitProto(SubnodesArray);
             slot.setDoesHookSetter(true);
             slot.setSlotType("SubnodesArray");
+            //slot.setIsRequired(true);
         }
 
         {
@@ -2084,6 +2085,10 @@
         return definitions;
     }
 
+    static jsonSchemaIsReadOnly () {
+        return false;
+    }
+
     /**
 
      * @description Get the JSON schema for this instance.
@@ -2099,6 +2104,10 @@
             required: this.jsonSchemaRequired(),
             additionalProperties: this.additionalProperties()
         };
+
+        if (this.jsonSchemaIsReadOnly()) {
+            schema.readOnly = true;
+        }
 
         const title = this.jsonSchemaTitle();
         if (title != this.type()) {

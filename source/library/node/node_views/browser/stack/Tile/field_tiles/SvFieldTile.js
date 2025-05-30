@@ -374,6 +374,119 @@
     visibleValue () {
         return this.node().visibleValue()
     }
+
+    /**
+     * @description Checks if the key is complete (no dots animation).
+     * @returns {boolean} True if complete, false if should show dots.
+     */
+    keyIsComplete () {
+        const node = this.node();
+        if (node && node.keyIsComplete) {
+            return node.keyIsComplete();
+        }
+        return true; // default to complete (no dots)
+    }
+
+    /**
+     * @description Checks if the value is complete (no dots animation).
+     * @returns {boolean} True if complete, false if should show dots.
+     */
+    valueIsComplete () {
+        const node = this.node();
+        if (node && node.valueIsComplete) {
+            return node.valueIsComplete();
+        }
+        return true; // default to complete (no dots)
+    }
+
+    /**
+     * @description Synchronizes the dots display based on the node's state.
+     * @returns {SvFieldTile} The current instance.
+     * @category Synchronization
+     */
+    syncDotsFromNode () {
+        const node = this.node();
+        if (node) {
+            // Check key completion
+            if (node.keyIsComplete) {
+                if (node.keyIsComplete()) {
+                    this.hideKeyDots();
+                } else {
+                    this.showKeyDots();
+                }
+            } else {
+                this.hideKeyDots();
+            }
+            
+            // Check value completion
+            if (node.valueIsComplete) {
+                if (node.valueIsComplete()) {
+                    this.hideValueDots();
+                } else {
+                    this.showValueDots();
+                }
+            } else {
+                this.hideValueDots();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * @description Shows the animated dots on the key view.
+     * @returns {SvFieldTile} The current instance.
+     * @category UI
+     */
+    showKeyDots () {
+        const view = this.keyView();
+        if (view && view.setCssProperty) {
+            view.setCssProperty("--key-after-display", "inline-block");
+            view.setCssProperty("--key-after-animation", "dotty steps(1,end) 1s infinite");
+        }
+        return this;
+    }
+
+    /**
+     * @description Hides the animated dots on the key view.
+     * @returns {SvFieldTile} The current instance.
+     * @category UI
+     */
+    hideKeyDots () {
+        const view = this.keyView();
+        if (view && view.setCssProperty) {
+            view.setCssProperty("--key-after-display", "none");
+            view.setCssProperty("--key-after-animation", "none");
+        }
+        return this;
+    }
+
+    /**
+     * @description Shows the animated dots on the value view.
+     * @returns {SvFieldTile} The current instance.
+     * @category UI
+     */
+    showValueDots () {
+        const view = this.valueView();
+        if (view && view.setCssProperty) {
+            view.setCssProperty("--div-after-display", "inline-block");
+            view.setCssProperty("--div-after-animation", "dotty steps(1,end) 1s infinite");
+        }
+        return this;
+    }
+
+    /**
+     * @description Hides the animated dots on the value view.
+     * @returns {SvFieldTile} The current instance.
+     * @category UI
+     */
+    hideValueDots () {
+        const view = this.valueView();
+        if (view && view.setCssProperty) {
+            view.setCssProperty("--div-after-display", "none");
+            view.setCssProperty("--div-after-animation", "none");
+        }
+        return this;
+    }
 	
     /**
      * @description Gets the visible key.
@@ -414,6 +527,7 @@
         this.syncValueFromNode()
         this.syncErrorFromNode()
         this.syncNoteFromNode()
+        this.syncDotsFromNode()
         return this
     }
 

@@ -1134,7 +1134,11 @@
             debugger;
         }
         
-        //assert(obj.shouldStore());
+        // --- sanity checks ---
+        assert(obj.shouldStore(), "object " + obj.type() + " shouldStore is false");
+
+        // --- store ---
+
         const puuid = obj.puuid();
         assert(!Type.isNullOrUndefined(puuid));
 
@@ -1155,6 +1159,19 @@
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);
             //this.debugLog(() => "store " + puuid + " <- " + record.type )
+
+
+            {
+                // sanity checks
+                // object should have a type and a class
+                const recordType = record.type;
+                assert(!Type.isNullOrUndefined(recordType), "object has no type property");
+
+                const recordClass = getGlobalThis()[recordType];
+                assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
+            }
+
+
             this.recordsMap().set(puuid, jsonString);
             //this.storeRecord(puuid, record);
         }

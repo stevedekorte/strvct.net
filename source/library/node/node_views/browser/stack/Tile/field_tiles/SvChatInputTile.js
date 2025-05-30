@@ -192,52 +192,34 @@
     syncFromNode () {
         const node = this.node();
         this.watchSender(node);
-        this.syncDotsFromNode();
-        super.syncFromNode();
-        return this;
-    }
-
-    /**
-     * @description Synchronizes the dots display based on the node's state.
-     * @returns {SvChatInputTile} The current instance.
-     * @category Synchronization
-     */
-    syncDotsFromNode () {
-        const node = this.node();
-        if (node) {
-            if (node.isComplete) {
-                if (node.isComplete()) {
-                    this.hideDots();
-                } else {
-                    this.showDots();
-                }
+        super.syncFromNode(); // This now includes syncDotsFromNode
+        // Check for backward compatibility with isComplete
+        if (node && node.isComplete && !node.valueIsComplete) {
+            if (node.isComplete()) {
+                this.hideValueDots();
+            } else {
+                this.showValueDots();
             }
         }
         return this;
     }
 
     /**
-     * @description Shows the animated dots.
+     * @description Shows the animated dots (calls showValueDots for backward compatibility).
      * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     showDots () {
-        const view = this.valueView();
-        view.setCssProperty("--div-after-display", "inline-block");
-        view.setCssProperty("--div-after-animation", "dotty steps(1,end) 1s infinite");
-        return this;
+        return this.showValueDots();
     }
 
     /**
-     * @description Hides the animated dots.
+     * @description Hides the animated dots (calls hideValueDots for backward compatibility).
      * @returns {SvChatInputTile} The current instance.
      * @category UI
      */
     hideDots () {
-        const view = this.valueView();
-        view.setCssProperty("--div-after-display", "none");
-        view.setCssProperty("--div-after-animation", "none");
-        return this;
+        return this.hideValueDots();
     }
     
 }.initThisClass());
