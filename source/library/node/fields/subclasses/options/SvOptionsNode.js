@@ -235,20 +235,36 @@
     }
 
     /**
-     * @description Gets the picked values.
-     * @returns {Array} An array of picked values.
+     * @description Gets the selected values as an array.
+     * @returns {Array} An array of selected values.
      */
-    pickedValues () {
+    selectedValues () {
         return this.pickedLeafSubnodes().map(s => s.value());
     }
 
     /**
-     * @description Gets the picked value.
+     * @description Gets the selected value (first selected item).
+     * @returns {*} The selected value or null.
+     */
+    selectedValue () {
+        const values = this.selectedValues();
+        return values.length > 0 ? values[0] : null;
+    }
+
+    /**
+     * @description Gets the picked values (alias for selectedValues).
+     * @returns {Array} An array of picked values.
+     */
+    pickedValues () {
+        return this.selectedValues();
+    }
+
+    /**
+     * @description Gets the picked value (alias for selectedValue).
      * @returns {*} The picked value.
      */
     pickedValue () {
-        const item = this.pickedItems().first();
-        return item ? item.value : null; // should this be null or undefined?
+        return this.selectedValue();
     }
 
     /**
@@ -301,16 +317,6 @@
         });
     }
 
-    pickedValue () {
-        assert(!this.allowsMultiplePicks());
-        const pickedValues = this.pickedValues();
-        if (pickedValues.length === 0) {
-            return null;
-        } else if (pickedValues.length === 1) {
-            return pickedValues.first();
-        }
-        throw Error.exception(this.type() + ".pickedValue() called with multiple picks");
-    }
 
     /**
      * @description Handles the toggling of an option.
@@ -318,26 +324,39 @@
      * @returns {SvOptionsNode} The current instance.
      */
     didToggleOption (anOptionNode) {
+        // This is called when the user toggles an option
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
             this.unpickLeafSubnodesExcept(anOptionNode);
         }
         
-        if (this.allowsMultiplePicks()) {
-            this.setValue(this.formatedPickedValues());
-        } else {
-            this.setValue(this.pickedValue());
-        }
-
+        this.updateTargetValue();
         return this;
     }
 
     /**
-     * @description Formats the picked values.
-     * @returns {*} The formatted picked values.
+     * @description Updates the target value based on current selection.
+     * Only called from user interactions, not during syncing.
+     * @returns {SvOptionsNode} The current instance.
      */
-    formatedPickedValues () {
-        const pickedValues = this.pickedValues(); // always an array
-        return pickedValues;
+    updateTargetValue () {
+        if (this.allowsMultiplePicks()) {
+            this.setValue(this.selectedValues());
+        } else {
+            this.setValue(this.selectedValue());
+        }
+        return this;
+    }
+
+    /**
+     * @description Gets the normalized value for the target.
+     * @returns {*} Array for multi-pick, single value for single-pick.
+     */
+    normalizedValue () {
+        if (this.allowsMultiplePicks()) {
+            return this.selectedValues();
+        } else {
+            return this.selectedValue();
+        }
     }
 
     /**
@@ -475,12 +494,17 @@
      * @returns {boolean} True if the target has the pick.
      */
     targetHasPick (v) {
+        const targetValue = this.value();
+        
         if (this.allowsMultiplePicks()) {
-            const values = this.value();
-            assert(Type.isArray(values));
-            return values.includes(v); // should we check for identity or equality?
+            // For multi-pick, target value should be an array
+            if (!Type.isArray(targetValue)) {
+                return false;
+            }
+            return targetValue.includes(v);
         } else {
-            return v === this.value();
+            // For single-pick, compare directly
+            return v === targetValue;
         }
     }
 
@@ -547,12 +571,47 @@
      * @description Checks if the picks match.
      * @returns {boolean} True if the picks match.
      */
+    /**
+     * @description Checks if the selected values match the target value.
+     * @returns {boolean} True if they match.
+     */
     picksMatch () {
-        const v = this.value();
+        const targetValue = this.value();
+        const selectedVals = this.selectedValues();
+        
         if (this.allowsMultiplePicks()) {
-            return Type.valuesAreEqual(v, this.pickedValues());
+            // For multiple picks, compare arrays (order doesn't matter)
+            if (!Type.isArray(targetValue)) {
+                return selectedVals.length === 0;
+            }
+            return targetValue.length === selectedVals.length && 
+                   targetValue.every(val => selectedVals.includes(val)) &&
+                   selectedVals.every(val => targetValue.includes(val));
         } else {
-            return Type.valuesAreEqual(v, this.pickedValue());
+            // For single pick, compare values
+            const selectedVal = this.selectedValue();
+            return targetValue === selectedVal;
+        }
+    }
+
+    /**
+     * @description Checks if a value is valid for this options node.
+     * @param {*} value - The value to check.
+     * @returns {boolean} True if the value is valid.
+     */
+    isValidValue (value) {
+        const validItems = this.computedValidItems();
+        const validValues = validItems.map(item => item.value);
+        
+        if (this.allowsMultiplePicks()) {
+            if (!Type.isArray(value)) {
+                return false;
+            }
+            // All values in the array must be valid
+            return value.every(v => validValues.includes(v));
+        } else {
+            // Single value must be in valid values or null
+            return value === null || validValues.includes(value);
         }
     }
 
@@ -570,36 +629,28 @@
         return false;
     }
 
-    resolvedValue () {
-        // Return the first valid value(s).
-
-        let resolvedValue = undefined;
-
+    /**
+     * @description Gets a default value when current value is invalid.
+     * @returns {*} A valid default value.
+     */
+    defaultValue () {
+        const validItems = this.computedValidItems();
+        
         if (this.allowsMultiplePicks()) {
-            resolvedValue = this.pickedValues();
-            console.log("  allowsMultiplePicks so using pickedValues: ", resolvedValue + "\n");
+            return []; // Empty array for multi-pick
         } else {
-            if (!this.pickedValue()) {
-                const validItems = this.validItems();
-                if (validItems.length > 0) {
-                    resolvedValue = validItems.first().value;
-                    assert(!Type.isUndefined(resolvedValue));
-                    console.log("  no pickedValue so using first valid value: ", resolvedValue + "\n");
-                } else {
-                    console.warn("  no validItems so no valid values to use!\n");
-                    debugger;
-                }
-            } else {
-                resolvedValue = this.pickedValue();
-                console.log("  has pickedValue so using it: ", resolvedValue + "\n");
-            }
+            // First valid value for single-pick
+            return validItems.length > 0 ? validItems.first().value : null;
         }
-        return resolvedValue; // could be an Array of values, or a single value
     }
 
     syncPicksToSubnodes () {
+        // Sync UI to reflect target value without triggering updates back to target
         this.leafSubnodes().forEach(sn => {
-            sn.setIsPicked(this.targetHasPick(sn.value()));
+            // Use justSetIsPicked to update UI without triggering didToggleOption
+            sn.justSetIsPicked(this.targetHasPick(sn.value()));
+            // Manually trigger UI update
+            sn.didUpdateNodeIfInitialized();
         });
     }
 
@@ -628,30 +679,8 @@
 
             this.syncPicksToSubnodes();
 
-            if (this.needsSyncToSubnodes()) {
-                //debugger;
-                this.value();
-                const resolvedValue = this.resolvedValue();
-                console.log(this.target().typeId() + "." + this.valueMethod() + " needsSyncToSubnodes so setting value to resolvedValue: ", resolvedValue);
-                this.setValueOnTarget(resolvedValue);
-                //this.target().scheduleMethod("didMutate");
-
-                this.target().scheduleMethodForNextCycle("didMutate");
-                //this.defaultStore().forceAddDirtyObject(this.target());
-
-                //console.log("  resolvedValue: ", this.value());
-                
-                this.syncPicksToSubnodes();
-
-                if (this.needsSyncToSubnodes()) {
-                    console.warn("OptionsNode '" + this.key() + "' not synced with target after sync!");
-                    debugger; // debug so we can step into what's going on
-                    const newNode = this.addOptionNodeForDict(validItems.first());
-                    console.log("  added new node value: ", newNode.value());
-                    this.syncPicksToSubnodes();
-                    this.needsSyncToSubnodes();
-                }
-            }
+            // No need to force value updates here - just sync the UI
+            this.didUpdateNodeIfInitialized();
             this.didUpdateNodeIfInitialized();
         }
         return this;
@@ -670,13 +699,13 @@
 
         console.log("PICKS:");
         console.log("  allowsMultiplePicks: " + this.allowsMultiplePicks() + "\n");
-        console.log("BEFORE:");
+        console.log("TARGET VALUE:");
         console.log("  value: ", JSON.stableStringifyWithStdOptions(this.value()) + "\n");
         
-        if (this.allowsMultiplePicks()) {
-            console.log("  pickedValues: ", JSON.stableStringifyWithStdOptions(this.pickedValues()) + "\n");
-        } else {
-            console.log("  pickedValue: ", JSON.stableStringifyWithStdOptions(this.pickedValue()) + "\n");
+        console.log("SELECTED VALUES:");
+        console.log("  selectedValues: ", JSON.stableStringifyWithStdOptions(this.selectedValues()) + "\n");
+        if (!this.allowsMultiplePicks()) {
+            console.log("  selectedValue: ", JSON.stableStringifyWithStdOptions(this.selectedValue()) + "\n");
         }
 
         console.log("  pickedItems: ", this.pickedItems(), "\n");
