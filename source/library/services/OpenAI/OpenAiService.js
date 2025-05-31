@@ -43,14 +43,14 @@
         "title": "ChatGPT 4.1",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
-      },
+      }
+      /*
       {
         "name": "gpt-4.1-mini",
         "title": "ChatGPT 4.1 mini",
         "inputTokenLimit": 1047576,
         "outputTokenLimit": 32768
       },
-      /*
       {
         "name": "gpt-4.1-nano",
         "title": "OpenAI ChatGPT 4.1 nano",
