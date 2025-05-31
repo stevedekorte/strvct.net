@@ -31,22 +31,31 @@
    * @category Model Configuration
    */
   modelsJson () {
-    //debugger;
     return [
+      {
+        "name": "deepseek-coder",
+        "title": "DeepSeek Coder",
+        "inputTokenLimit": 128000,
+        "outputTokenLimit": 32000,
+        "maxChainOfThoughtTokens": 32000
+      }
+      /*
       {
           "name": "deepseek-chat",
           "title": "DeepSeek Chat",
-          "inputTokenLimit": 64000,
-          "outputTokenLimit": 8000,
+          "inputTokenLimit": 65536,
+          "outputTokenLimit": 8192,
           "maxChainOfThoughtTokens": 8000
       },
+
       {
           "name": "deepseek-reasoner",
           "title": "DeepSeek Reasoner",
           "inputTokenLimit": 64000,
-          "outputTokenLimit": 8000,
-          "maxChainOfThoughtTokens": 8000
+          "outputTokenLimit": 32000,
+          "maxChainOfThoughtTokens": 32000
       }
+      */
     ];
   }
   

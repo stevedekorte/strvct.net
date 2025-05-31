@@ -654,12 +654,28 @@
         });
     }
 
+    didUpdateNode () {
+        // lets see if this prevents the sync loop
+        //super.didUpdateNode();
+    }
+    
+    didChangeSubnodeList () {
+        // Only propagate subnode list changes if we're not setting up
+        if (!this._isSettingUpSubnodes) {
+            super.didChangeSubnodeList();
+        }
+        return this;
+    }
+
     /**
      * @description Sets up the subnodes.
      * @returns {SvOptionsNode} The current instance.
      */
     setupSubnodes () {
         if (this.needsSyncToSubnodes()) {
+            // Prevent notifications during setup
+            this._isSettingUpSubnodes = true;
+            
             this.removeAllSubnodes();
             const validItems = this.computedValidItems();
 
@@ -678,6 +694,9 @@
             //this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validItems));
 
             this.syncPicksToSubnodes();
+            
+            // Re-enable notifications
+            this._isSettingUpSubnodes = false;
 
             // No need to force value updates here - just sync the UI
             this.didUpdateNodeIfInitialized();
