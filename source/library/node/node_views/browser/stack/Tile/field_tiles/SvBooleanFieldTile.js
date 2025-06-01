@@ -19,30 +19,30 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         
-        this.turnOffUserSelect()
-        this.keyView().setTransition("color 0.3s")
-        this.keyView().setPaddingLeft("0.5em")
+        this.turnOffUserSelect();
+        this.keyView().setTransition("color 0.3s");
+        this.keyView().setPaddingLeft("0.5em");
 
-        this.valueView().parentView().flexCenterContent()
-        this.valueView().setPaddingBottom("0em")
+        this.valueView().parentView().flexCenterContent();
+        this.valueView().setPaddingBottom("0em");
 
-        this.keyView().setPaddingTop("0em")
-        this.keyView().setPaddingBottom("0.35em")
+        this.keyView().setPaddingTop("0em");
+        this.keyView().setPaddingBottom("0.35em");
 
-        //this.contentView().debugBorders()
-        this.kvSection().subviews().at(1).flexCenterContent()
-        //this.contentView().setFlexDirection("column")
-        this.kvSection().setFlexDirection("row").makeSubviewsReverseOrdered()
-        //this.kvSection().subviews().forEach(sv => sv.setAlignItems("center"))
-        this.kvSection().subviews().forEach(sv => sv.flexCenterContent())
-        //this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())
+        //this.contentView().debugBorders();
+        this.kvSection().subviews().at(1).flexCenterContent();
+        //this.contentView().setFlexDirection("column");
+        this.kvSection().setFlexDirection("row").makeSubviewsReverseOrdered();
+        //this.kvSection().subviews().forEach(sv => sv.setAlignItems("center"));
+        this.kvSection().subviews().forEach(sv => sv.flexCenterContent());
+        //this.keyView().parentView().swapSubviews(this.keyView(), this.valueView());
 
-        this.setValueEditableBorder("none")
-        this.setValueUneditableBorder("none")
+        this.setValueEditableBorder("none");
+        this.setValueUneditableBorder("none");
 
-        return this
+        return this;
     }
 
     /**
@@ -51,8 +51,12 @@
      * @category View Creation
      */
     createValueView () {
-        const bv = BooleanView.clone()
-        return bv
+        const bv = BooleanView.clone();
+        // Ensure the view starts with the field's initial value
+        if (this.node() && this.node().value !== undefined) {
+            bv.setValue(this.node().value());
+        }
+        return bv;
     }
 	
     /**
@@ -61,7 +65,7 @@
      * @category Accessors
      */
     booleanView () {
-        return this.valueView()
+        return this.valueView();
     }
 
     /**
@@ -70,9 +74,9 @@
      * @category Synchronization
      */
     syncFromNode () {
-        super.syncFromNode()
-        this.booleanView().updateAppearance()
-        return this
+        super.syncFromNode();
+        this.booleanView().updateAppearance();
+        return this;
     }
     
 }.initThisClass());

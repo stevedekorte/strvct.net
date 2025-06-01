@@ -131,4 +131,30 @@
         return this;
     }
 
+    /*
+    init () {
+        super.init();
+        debugger;
+        return this;
+    }
+
+    didUpdateSlotValue (oldValue, newValue) {  // setValue() is called by View on edit
+        debugger;
+        super.didUpdateSlotValue(oldValue, newValue);
+        return this;
+    }
+    */
+
+    syncFromTarget () {
+        this.setValue(this.getValueFromTarget());
+        return this
+    }
+    /*
+    setValue (v) {
+        debugger;
+        super.setValue(v);
+        return this;
+    }
+        */
+
 }.initThisClass());

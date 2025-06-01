@@ -385,6 +385,7 @@
         //this.value(); // triggers didUpdateNodeIfInitialized
 
         // up to subclasses to implement
+        //throw new Error("syncFromTarget not implemented for " + this.type());
         return this
     }
 

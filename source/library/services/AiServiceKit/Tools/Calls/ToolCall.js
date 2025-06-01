@@ -148,9 +148,10 @@ Example Tool call format:
       slot.setShouldStoreSlot(true);
     }
 
+    /*
     {
-      const slot = this.newSlot("doesWaitForMessageCompletion", null);
-      slot.setDescription("If true, the tool call will wait for the message to complete notification before returning.");
+      const slot = this.newSlot("doesWaitForMessageCompletion", false);
+      slot.setDescription("If true, the tool call will wait for the message complete notification before returning.");
       slot.setSlotType("Boolean");
       slot.setShouldJsonArchive(false);
       slot.setIsSubnodeField(true);
@@ -158,6 +159,7 @@ Example Tool call format:
       slot.setIsInJsonSchema(false);
       slot.setShouldStoreSlot(true);
     }
+    */
 
 
     {

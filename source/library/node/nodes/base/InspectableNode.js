@@ -275,7 +275,7 @@
         field.setShouldStore(false);
         field.setShouldStoreSubnodes(false);
 
-        field.setTarget(this);
+        field.setTarget(this); // redundant?
         field.setNodeCanEditTitle(false);
         field.setValueIsEditable(slot.canEditInspection());
         field.setNodeCanReorderSubnodes(false);
@@ -285,6 +285,15 @@
         field.setCanDelete(false);
         field.setIsVisible(slot.isSubnodeFieldVisible());
         
+
+        //field.syncFromTarget(); // new: to fix boolean sync issues
+
+        if (field.type() === "SvBooleanField") {
+            //debugger;
+            //const v = slot.onInstanceGetValue(this);
+            field.syncFromTarget();
+            assert(field.value() === slot.onInstanceGetValue(this));
+        }
         /*
         if (name === "isAvailable") {
             debugger;

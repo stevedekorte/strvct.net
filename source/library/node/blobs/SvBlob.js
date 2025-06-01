@@ -126,7 +126,7 @@
         field.setValueIsEditable(false);
         field.setIsMono(true);
         field.setTarget(this);
-        field.getValueFromTarget();
+        field.getValueFromTarget(); // this doesn't do anything with the returned value?
         this.addSubnode(field);
 
         await this.promiseReadValue();

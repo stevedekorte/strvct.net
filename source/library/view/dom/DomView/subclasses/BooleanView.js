@@ -80,22 +80,22 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setFilter("blur(0.2px)")
-        this.flexCenterContent()
+        super.init();
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setFilter("blur(0.2px)");
+        this.flexCenterContent();
         //this.setBorder("1px dashed red")
        
-        this.turnOffUserSelect()
-        this.setSpellCheck(false)
-        this.setContentEditable(false)
+        this.turnOffUserSelect();
+        this.setSpellCheck(false);
+        this.setContentEditable(false);
 
-        const size = this.checkboxSize()
-        this.setMinAndMaxWidthAndHeight(size)
+        const size = this.checkboxSize();
+        this.setMinAndMaxWidthAndHeight(size);
         //this.setMinAndMaxWidthAndHeight("fit-content")
 
-        this.setOverflow("hidden")
+        this.setOverflow("hidden");
 
         /*
         const iconSetView = DomView.clone().setElementClassName("IconSetView")
@@ -108,12 +108,12 @@
         */
 
         {
-            const inner = SvgIconView.clone().setIconName("inner-checkbox")
+            const inner = SvgIconView.clone().setIconName("inner-checkbox");
             //inner.setBorder("1px dashed blue")
-            inner.setDisplay("flex")
-            inner.setPosition("absolute")
-            inner.setTopPx(0)
-            inner.setLeftPx(0)
+            inner.setDisplay("flex");
+            inner.setPosition("absolute");
+            inner.setTopPx(0);
+            inner.setLeftPx(0);
             inner.setMinAndMaxWidthAndHeight(size)
             inner.setStrokeColor("transparent")
             this.setInnerCheckView(inner)
@@ -121,21 +121,24 @@
         }
 
         {
-            const outer = SvgIconView.clone().setIconName("outer-checkbox")
+            const outer = SvgIconView.clone().setIconName("outer-checkbox");
             //outer.setBorder("1px dashed green")
-            outer.setDisplay("flex")
-            outer.setPosition("absolute")
-            outer.setTopPx(0)
-            outer.setLeftPx(0)
-            outer.setMinAndMaxWidthAndHeight(size)
-            outer.setFillColor("transparent")
-            this.setOuterCheckView(outer)
-            this.addSubview(outer)
+            outer.setDisplay("flex");
+            outer.setPosition("absolute");
+            outer.setTopPx(0);
+            outer.setLeftPx(0);
+            outer.setMinAndMaxWidthAndHeight(size);
+            outer.setFillColor("transparent");
+            this.setOuterCheckView(outer);
+            this.addSubview(outer);
         }
         
-        this.setIsEditable(this.isEditable())
+        this.setIsEditable(this.isEditable());
+        
+        // Ensure initial appearance is updated with the default value
+        this.updateAppearance();
 
-        return this
+        return this;
     }
 
     /**
@@ -144,7 +147,7 @@
      * @category Layout
      */
     checkboxSize () {
-        return "1em"
+        return "1em";
     }
 
     /**
@@ -154,18 +157,18 @@
      * @category State
      */
     setIsEditable (aBool) {        
-        this._isEditable = aBool
+        this._isEditable = aBool;
         
         if (this._isEditable) {
-            const g = this.addDefaultTapGesture()
-            g.setShouldRequestActivation(false) // so the tile doesn't block the initial tap
+            const g = this.addDefaultTapGesture();
+            g.setShouldRequestActivation(false); // so the tile doesn't block the initial tap
         } else {
-            this.removeDefaultTapGesture()
+            this.removeDefaultTapGesture();
         }
         
-        this.updateAppearance()
+        this.updateAppearance();
         
-        return this
+        return this;
     }
     
     /**
@@ -174,9 +177,9 @@
      * @category User Interaction
      */
     toggle () {
-        this.setValue(!this.value())
-        this.didEdit()
-        return this
+        this.setValue(!this.value());
+        this.didEdit();
+        return this;
     }
     
     /**
@@ -185,8 +188,8 @@
      * @category User Interaction
      */
     activate () {
-        this.toggle()
-        return this
+        this.toggle();
+        return this;
     }
     
     /**
@@ -200,10 +203,10 @@
             v = false;
         }
         
-	    this._value = v
+	    this._value = v;
 
-        this.updateAppearance()
-        return this
+        this.updateAppearance();
+        return this;
     }
 	
     /**
@@ -212,7 +215,7 @@
      * @category State
      */
     value () {
-	    return this._value
+	    return this._value;
     }
 	
     /**
@@ -221,7 +224,7 @@
      * @category State
      */
     isChecked () {
-	    return this.value()
+	    return this.value();
     }
     
     /**
@@ -232,7 +235,7 @@
      */
     setBackgroundColor (s) {
         // needed?
-        return this
+        return this;
     }
 	
     /**
@@ -245,12 +248,12 @@
         // so we can update our appearance to match changes to the parent view's style
 
         //const color = this.getComputedCssProperty("color") // this can cause a reflow, so avoid it
-        const color = "white"
+        const color = "white";
 
-        this.outerCheckView().setStrokeColor(color)
-        this.innerCheckView().setFillColor(this.value() ? color : "transparent")
+        this.outerCheckView().setStrokeColor(color);
+        this.innerCheckView().setFillColor(this.value() ? color : "transparent");
         
-        return this
+        return this;
     }
 
     /**
@@ -260,9 +263,9 @@
      * @category User Interaction
      */
     onTapComplete (aGesture) {
-        super.sendActionToTarget()
-        this.toggle()
-        return false
+        super.sendActionToTarget();
+        this.toggle();
+        return false;
     }
     
 }.initThisClass());
