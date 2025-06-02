@@ -646,13 +646,15 @@
     return statusCode + " (" + this.nameForXhrStatusCode(statusCode) + ")";
   }
 
-    /**
+  /**
    * @category Stopping
    * @description Returns true if the error is recoverable
    * @returns {boolean}
    */
   shouldAutoRetryForCurrentError () {
-      const e = this.error();
+      //const e = this.error();
+      // higher level code should probably hand the decision to retry based on the error message
+      // but we'll just use the status code for now
       return this.shouldAutoRetryForXhrStatusCode(this.xhr().status);
     }
   

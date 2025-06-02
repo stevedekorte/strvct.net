@@ -199,7 +199,7 @@
      * @category AI Service
      */
     defaultChatModel () {
-        return this.geminiService().defaultChatModel();
+        return this.deepSeekService().defaultChatModel();
         //return this.anthropicService().defaultChatModel();
         //return this.aiServices().first().defaultChatModel();
     }

@@ -36,7 +36,7 @@
         "name": "deepseek-coder",
         "title": "DeepSeek Coder",
         "inputTokenLimit": 128000,
-        "outputTokenLimit": 32000,
+        "outputTokenLimit": 8192,
         "maxChainOfThoughtTokens": 32000
       }
       /*
