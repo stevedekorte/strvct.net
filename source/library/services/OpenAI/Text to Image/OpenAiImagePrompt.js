@@ -9,7 +9,7 @@
  * @extends SvSummaryNode
  * @classdesc Represents an OpenAI image prompt for generating images using DALL-E models.
  */
-(class OpenAiImagePrompt extends SvSummaryNode {
+(class OpenAiImagePrompt extends SvSummaryNode {  
   initPrototypeSlots () {
 
     /**
@@ -286,8 +286,10 @@
     
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
 
+    let response; // so we can access it in the onError handler
+    
     try {
-      const response = await fetch(proxyEndpoint, {
+      response = await fetch(proxyEndpoint, {
           method: 'POST',
           headers: {
               'Authorization': `Bearer ` + apiKey,

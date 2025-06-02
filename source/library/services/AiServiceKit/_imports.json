@@ -1,8 +1,7 @@
 [
-    "XhrWrapper.js",
+    "Requests/_imports.json",
     "AiChatModel.js",
     "AiChatModels.js",
-    "AiRequest.js",
     "Conversation.js",
     "ConversationMessage.js",
     "ChatInputNode.js",
