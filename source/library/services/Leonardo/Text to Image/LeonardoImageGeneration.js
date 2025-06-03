@@ -5,76 +5,26 @@
  */
 
 /**
- * @class LeonardoImagePrompt
+ * @class LeonardoImageGeneration
  * @extends SvSummaryNode
- * @classdesc Represents an Leonardo image prompt for generating images using Leonardo models.
-
-Overview:
-
-LeonardoImagePrompt:
- - we compose the request body (including character and style references)
-- we send a POST request to the /generations endpoint
-- we get a generation id in the response
-- we create a LeonardoImageGeneration to poll for the status of the generation
-
-LeonardoImageGeneration:
-- polls for the status of the generation
-- when the generation is complete, we get the image urls
-- we create LeonardoImage nodes and add set their urls
-
-LeonardoImage:
-- fetches the image url
-
-
-
-Example generation request curl command:
-
-curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
-  -H "Authorization: Bearer $LEONARDO_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "modelId": "leonardo-vision-xl",
-    "presetStyle": "PhotoReal",
-    "initImageId": "<INIT_IMAGE_ID>",
-    "initImageType": "UPLOADED",
-
-    "characterReferences": [
-      {
-        "initImageId": "<INIT_IMAGE_ID>",
-        "initImageType": "UPLOADED",
-        "strengthType": "Mid"
-      }
-    ],
-
-    "styleReferences": [
-      {
-        "initImageId": "<INIT_IMAGE_ID>",
-        "initImageType": "UPLOADED",
-        "strengthType": "High"
-      }
-    ],
-
-    "prompt": "That same knight standing atop a ruined castle at dusk, with flickering torchlight and stormy skies",
-    "width": 1024,
-    "height": 1024,
-    "numOutputs": 1
-  }'
-
-  Example response:
-
-  {
-  "sdGenerationJob": {
-    "generationId": "bc01981-3312-4229-a2de-fa7d52988290",
-    "apiCreditCost": 11
-  }
-}
-
-  Next, create a LeonardoImageGeneration node with the generation id
-  and poll for the status of the generation:
-
-  GET /generations/5ea7492a-8499-4706-9e04-1a0bcb5cf6e8
-
-  Example response:
+ * @classdesc Polls for the status of an image generation request.
+ * 
+ * The LeonardoImagePrompt node creates a LeonardoImageGeneration node with the generation id
+ * and polls for the status of the generation.
+ * 
+ * When the generation is complete, the LeonardoImagePrompt node creates LeonardoImage nodes
+ * and sets their urls.
+ * 
+ * To poll, we use the /generations/{generationId} endpoint.
+ * 
+ * Example request curl command:
+ * 
+ * curl -X GET \
+ *   "https://cloud.leonardo.ai/api/rest/v1/generations/5ea7492a-8499-4706-9e04-1a0bcb5cf6e8" \
+ *   -H "Authorization: Bearer $LEONARDO_API_KEY"
+ * 
+ * Example response:
+ * 
 
   {
     "generations_by_pk": {
@@ -103,7 +53,7 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
   Next, we create LeonardoImage nodes, set their urls, and fetch them.
 
   */
-(class LeonardoImagePrompt extends SvSummaryNode {  
+(class LeonardoImageGeneration extends SvSummaryNode {  
   initPrototypeSlots () {
 
     /**
@@ -112,7 +62,7 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
      * @category Input
      */
     {
-      const slot = this.newSlot("prompt", "");
+      const slot = this.newSlot("generationId", "");
       slot.setInspectorPath("")
       //slot.setLabel("prompt")
       slot.setShouldStoreSlot(true)
@@ -123,96 +73,10 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
     }
 
     /**
-     * @member {string} ttiModel
-     * @description The model to use for text-to-image generation.
-     * @category Configuration
-     */
-    {
-      const validValues = ["leonardo-vision-xl"];
-      const slot = this.newSlot("ttiModel", null);
-      slot.setInspectorPath("");
-      slot.setLabel("Text to Image Model");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setValidValues(validValues); 
-      slot.setInitValue(validValues.first());
-      slot.setIsSubnodeField(true);
-    }
-
-
-    {
-      const slot = this.newSlot("presetStyle", "Unspecified");
-      slot.setInspectorPath("");
-      slot.setLabel("preset style");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-    }
-
-    /**
-     * @member {number} imageCount
-     * @description The number of images to generate.
-     * @category Configuration
-     */
-    {
-      const slot = this.newSlot("imageCount", 1);
-      slot.setInspectorPath("")
-      slot.setLabel("image count")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Number")
-      slot.setValidValues([1]) // dall-e-3 only supports 1
-      //slot.setIsSubnodeField(true)
-    }
-
-    //  512, 1024
-
-    /**
-     * @member {string} imageWidth
-     * @description The width of the generated image.
-     * @category Configuration
-     */
-    {
-      const validValues = [512, 1024];
-      const slot = this.newSlot("imageWidth", null);
-      slot.setInspectorPath("");
-      slot.setLabel("image width");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Number");
-      slot.setValidValues(validValues);
-      slot.setInitValue(validValues.first());
-      slot.setIsSubnodeField(true);
-    }
-
-    /**
-     * @member {string} imageHeight
-     * @description The height of the generated image.
-     * @category Configuration
-     */
-    {
-      const validValues = [512, 1024];
-      const slot = this.newSlot("imageHeight", null);
-      slot.setInspectorPath("");
-      slot.setLabel("image height");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Number");
-      slot.setValidValues(validValues);
-      slot.setInitValue(validValues.first());
-      slot.setIsSubnodeField(true);
-    }
-
-      /**
    * @member {SvXhrRequest} xhrRequest - The request to fetch the generation json response.
    * @category Networking
    */
-      {
+    {
       const slot = this.newSlot("xhrRequest", null);
       slot.setShouldJsonArchive(true);
       slot.setInspectorPath("");
@@ -224,6 +88,50 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
       slot.setCanEditInspection(false)
     }
 
+    // we need isPolling, pollCount and maxPollCount, and a pollIntervalSeconds
+    {
+      const slot = this.newSlot("isPolling", false);
+      slot.setSlotType("Boolean");
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {number} pollCount
+     * @description The number of times we have polled for the generation status.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("pollCount", 0);
+      slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {number} maxPollCount
+     * @description The maximum number of times we will poll for the generation status.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("maxPollCount", 30);
+      slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {number} pollIntervalSeconds
+     * @description The interval in seconds between polling for the generation status.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("pollIntervalSeconds", 2); // just for the generation response, images take longer
+      slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnodeField(true);
+    }
+
       
     /**
      * @member {Action} generateAction
@@ -231,15 +139,15 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
      * @category Action
      */
     {
-      const slot = this.newSlot("generateAction", null);
+      const slot = this.newSlot("startPollingAction", null);
       slot.setInspectorPath("");
-      slot.setLabel("Generate");
+      slot.setLabel("Start Polling");
       //slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
       slot.setIsSubnodeField(true);
-      slot.setActionMethodName("generate");
+      slot.setActionMethodName("startPolling");
     }
 
     /**
@@ -254,8 +162,21 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      //slot.setIsSubnodeField(true)
+      //slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+    }
+
+    /**
+     * @member {LeonardoImages} images
+     * @description The generated images.
+     * @category Output
+     */
+    {
+      const slot = this.newSlot("images", null);
+      slot.setFinalInitProto(LeonardoImages);
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+      slot.setSlotType("LeonardoImages");
     }
 
     /**
@@ -284,19 +205,6 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
       slot.setSlotType("Object");
     }
 
-    /**
-     * @member {LeonardoImageGeneration} generation
-     * @description The generation node.
-     * @category Output
-     */
-    {
-      const slot = this.newSlot("generation", null);
-      slot.setFinalInitProto(LeonardoImageGeneration);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-      slot.setSlotType("LeonardoImageGeneration");
-    }
-
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
@@ -311,8 +219,7 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
    * @category Metadata
    */
   title () {
-    const p = this.prompt().clipWithEllipsis(15);
-    return p ? p : "Image Prompt";
+    return this.generationId();
   }
 
   /**
@@ -321,7 +228,7 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
    * @category Metadata
    */
   subtitle () {
-    return this.type() + "\n" + this.status();
+    return this.status()
   }
 
   /**
@@ -344,21 +251,17 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
 
   // --- action button ---
 
+  hasGenerationId () {
+    return this.generationId().length > 0;
+  }
+
   /**
    * @description Checks if image generation can be performed.
    * @returns {boolean} True if generation can be performed, false otherwise.
    * @category Validation
    */
-  canGenerate () {
-    return this.prompt().length !== 0;
-  }
-
-  /**
-   * @description Initiates the image generation process.
-   * @category Action
-   */
-  generate () {
-    this.start();
+  canStartPolling () {
+    return this.hasGenerationId() !== 0 && !this.isPolling();
   }
 
   /**
@@ -368,7 +271,7 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
    */
   generateActionInfo () {
     return {
-        isEnabled: this.canGenerate(),
+        isEnabled: this.canStartPolling(),
         //title: this.title(),
         isVisible: true
     }
@@ -377,82 +280,127 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
   // --- start generation ---
 
   setupXhrRequest () {
-    const endpoint = 'https://cloud.leonardo.ai/api/rest/v1/generations';
+    const endpoint = 'https://cloud.leonardo.ai/api/rest/v1/generations/' + this.generationId();
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
     const apiKey = this.service().apiKeyOrUserAuthToken();
 
     const xhr = this.xhrRequest();
     xhr.setUrl(proxyEndpoint);
-    xhr.setMethod("POST");
+    xhr.setMethod("GET");
     xhr.setHeaders({
       "Authorization": `Bearer ` + apiKey,
       "Content-Type": 'application/json'
     });
-
-    const body = {
-      model: this.ttiModel(),
-      prompt: this.prompt(),
-      imageWidth: this.imageWidth(),
-      imageHeight: this.imageHeight(),
-      numOutputs: this.imageCount()
-    }
-
-    if (this.presetStyle() !== "Unspecified") {
-      body.presetStyle = this.presetStyle(); // this is optional
-    }
-
-    xhr.setBody(body);
   }
+  
 
   /**
    * @description Starts the image generation process.
    * @category Process
    */
-  async start () {
+  async startPolling () {
+    assert(!this.isPolling(), "already polling");
+    assert(this.generationId(), "generationId is required");
+
+    this.setIsPolling(true);
+    this.setXhrRequest(SvXhrRequest.clone());
     this.setError("");
     this.setStatus("fetching response...");
     this.sendDelegate("onImagePromptStart", [this]);
-
+    this.xhrRequest().clear();
     this.setupXhrRequest();
+    this.poll();
+  }
+
+  async poll () {
+    if (this.pollCount() >= this.maxPollCount()) {
+      this.setIsPolling(false);
+      this.onError("Max poll count reached");
+      return;
+    }
+    this.setPollCount(this.pollCount() + 1);
 
     try {
-      await this.xhrRequest().asyncSend(); // we use onRequestError instead of throwing an error
-      // handle the rest in the delegate methods
-      // but just in case there is an unhandled error, we'll catch it here
+      await this.xhrRequest().asyncSend();
+      // we use onRequestError/onRequestFailure should cover normal cases
     } catch (error) {
       this.onError(error);
-      // this error was unhandled, so we'll rethrow it so it gets logged and doesn't go unnoticed
-      error.rethrow();
     }
   }
 
   // -- delegate methods from SvXhrRequest --
 
-  onRequestSuccess (request) {
-    /*
-      HTTP/1.1 200 OK
-      content-type: application/json
+  async onRequestSuccess (request) {
+    const text = request.responseText();
+    const json = JSON.parse(text);
 
-      {
-        "sdGenerationJob": {
-          "generationId": "5ea7492a-8499-4706-9e04-1a0bcb5cf6e8",
-          "apiCreditCost": 11          // how many credits this request just burned
-        }
-      }
-  */
-    const resultData = request.responseText();
-    const json = JSON.parse(resultData);
+    // "status": "PENDING" | "STARTED" | "COMPLETE" | "FAILED",
+
+    const status = json.generations_by_pk.status;
+
+    this.setStatus("Generation " + status.toLowerCase().asCapitalized());
+
+    if (status === "COMPLETE") {
+      this.setIsPolling(false);
+      this.spawnImageNodes();
+      return;
+    }
 
     if (json.error) {
       this.onError(json.error);
       return;
     }
 
-    const generationId = json.sdGenerationJob.generationId;
-    const generationNode = this.generation();
-    generationNode.setGenerationId(generationId);
-    generationNode.setDelegate(this);
-    generationNode.startPolling();
+    await this.spawnImageNodes(json);
+  }
+
+  async spawnImageNodes () {
+  /*
+    {
+      "generations_by_pk": {
+        "generated_images": [
+          {
+            "url": "https://cdn.leonardo.ai/users/.../cat_0.jpg",
+            "nsfw": false,
+            "id": "170bcef8-6b69-47eb-a7d7-f63b6c242323",
+            "likeCount": 0,
+            "generated_image_variation_generics": []
+          },
+          …
+        ],
+        "modelId": "6bef9f1b-29cb-40c7-b9df-32b51c1f67d3",
+        "prompt": "An oil painting of a cat",
+        "imageHeight": 512,
+        "imageWidth": 512,
+        "inferenceSteps": 30,
+        "seed": 465788672,
+        "guidanceScale": 7,
+        "status": "COMPLETE",
+        "id": "fbc01981-3312-4229-a2de-fa7d52988290",
+        "createdAt": "2023-12-03T13:41:38.253"
+      }
+    }
+  */
+
+    const text = this.xhrRequest().responseText();
+    const json = JSON.parse(text);
+
+    if (json.error) {
+      this.onError(json.error);
+      return;
+    }
+
+    const images = json.generations_by_pk.generated_images;
+    assert(Type.isArray(images), "images is not an array");
+
+    this.setStatus("Generating images...");
+
+    for (const imageJson of images) {
+      const imageNode = this.images().add();
+      imageNode.setJsonInfo(imageJson);
+      imageNode.setDelegate(this);
+      await imageNode.asyncFetch();  // this will parallelize the fetches
+    }
   }
 
   /**
@@ -469,14 +417,18 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
     this.onEnd();
   }
 
-  // -- poll for generation status --
-
-  pollForGenerationStatus () {
-    const status = this.status();
-    if (status === "fetching response...") {
-      this.pollForGenerationStatus();
+  updateStatus () {
+    const allImagesLoaded = this.images().subnodes().every(image => image.isLoaded());
+    if (allImagesLoaded) {
+      this.setStatus("Generation complete");
+    } else {
+      // N of M images loaded
+      const n = this.images().subnodes().filter(image => image.isLoaded()).length;
+      const m = this.images().subnodes().length;
+      this.setStatus(`${n} of ${m} images loaded...`);
     }
   }
+
   // -- delegate methods from LeonardoImage --
 
   /**

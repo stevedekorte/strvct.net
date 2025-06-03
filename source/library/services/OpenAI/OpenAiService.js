@@ -125,14 +125,16 @@
    * @category Initialization
    */
   initPrototypeSlots () {
+    
     /**
      * @member {OpenAiImagePrompts} imagesPrompts
      * @category Image Generation
      */
     {
-      const slot = this.overrideSlot("imagesPrompts", null);
+      const slot = this.newSlot("imagesPrompts", null);
       slot.setFinalInitProto(OpenAiImagePrompts);
       slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
     }
 
     /**
@@ -140,9 +142,10 @@
      * @category Text-to-Speech
      */
     {
-      const slot = this.overrideSlot("ttsSessions", null);
+      const slot = this.newSlot("ttsSessions", null);
       slot.setFinalInitProto(OpenAiTtsSessions);
       slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
     }
   }
 

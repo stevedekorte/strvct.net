@@ -54,7 +54,7 @@
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
+      slot.setIsSubnodeField(false);
     }
 
     /**
@@ -67,7 +67,7 @@
       slot.setShouldStoreSlot(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      slot.setIsSubnodeField(false)
     }
 
     /**
@@ -122,27 +122,6 @@
       slot.setSlotType("AiConversations");
     }
 
-    /**
-     * @member {OpenAiImagePrompts} imagesPrompts - The OpenAI image prompts.
-     * @category Image Generation
-     */
-    {
-      const slot = this.newSlot("imagesPrompts", null);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(false);
-      slot.setSlotType("OpenAiImagePrompts");
-    }
-
-    /**
-     * @member {OpenAiTtsSessions} ttsSessions - The OpenAI TTS sessions.
-     * @category Text-to-Speech
-     */
-    {
-      const slot = this.newSlot("ttsSessions", null);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(false);
-      slot.setSlotType("OpenAiTtsSessions");
-    }
 
     {
       const slot = this.newSlot("fetchModelsPromise", null);

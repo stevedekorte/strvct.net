@@ -45,8 +45,8 @@
      * @category Image Generation
      */
     {
-      const slot = this.overrideSlot("imagesPrompts", null);
-      slot.setFinalInitProto(OpenAiImagePrompts);
+      const slot = this.newSlot("imagesPrompts", null);
+      slot.setFinalInitProto(LeonardoImagePrompts);
       slot.setIsSubnode(true);
     }
 
@@ -55,6 +55,7 @@
       slot.setFinalInitProto(LeonardoRefImages);
       slot.setIsSubnode(true);
     }
+
   }
 
   /**
@@ -62,7 +63,7 @@
    * @category Initialization
    */
   finalInit () {
-    super.finalInit()
+    super.finalInit();
     this.setTitle("Leonardo.ai");
   }
 
@@ -76,5 +77,4 @@
     return s.length === 51 && s.startsWith("sk-");
   }
   
-
 }.initThisClass());

@@ -185,7 +185,7 @@
    */
   title () {
     const p = this.prompt().clipWithEllipsis(15);
-    return p ? p : "Image Prompt";
+    return p ? p : this.type() + " Image Prompt";
   }
 
   /**

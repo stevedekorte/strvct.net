@@ -1,5 +1,6 @@
 [
     "images/_imports.json",
+    "LeonardoImageGeneration.js",
     "LeonardoImagePrompt.js",
     "LeonardoImagePrompts.js"
 ]

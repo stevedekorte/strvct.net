@@ -15,6 +15,9 @@
    * @category Initialization
    */
   initPrototypeSlots () {
+  }
+
+  initPrototype () {
     /**
      * @member {boolean} shouldStore - Indicates whether the node should be stored.
      * @category Storage
@@ -31,7 +34,7 @@
      * @member {Array} subnodeClasses - The classes of subnodes that can be added to this node.
      * @category Node Structure
      */
-    this.setSubnodeClasses([OpenAiImagePrompt]);
+    this.setSubnodeClasses([LeonardoImagePrompt]);
 
     /**
      * @member {boolean} nodeCanAddSubnode - Indicates whether subnodes can be added to this node.
@@ -49,13 +52,18 @@
      * @member {string} title - The title of the node.
      * @category Display
      */
-    this.setTitle("Text to Image");
+    this.setTitle("Text to Image Prompts");
 
     /**
      * @member {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.
      * @category Display
      */
     this.setNoteIsSubnodeCount(true);
+  }
+
+  finalInit () {
+    super.finalInit();
+    this.initPrototype();
   }
 
   /**

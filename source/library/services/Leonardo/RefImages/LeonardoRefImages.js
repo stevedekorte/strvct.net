@@ -8,6 +8,21 @@
  * @class LeonardoRefImages
  * @extends SvSummaryNode
  * @classdesc Represents a collection of Leonardo generated images.
+ * 
+ * 
+  Notes on managing reference images:
+  
+  POST /init‐image → upload (generate a new initImageId)
+  GET /init‐image/{id} → fetch metadata for a single image by its ID
+  DELETE /init‐image/{id} → remove a single image by its ID
+
+  Check for exiting ref images and use them as character references
+
+curl -X GET \
+  "https://cloud.leonardo.ai/api/rest/v1/init-image/<INIT_IMAGE_ID>" \
+  -H "Authorization: Bearer $LEONARDO_API_KEY"
+
+
  */
 (class LeonardoRefImages extends SvSummaryNode {
 
@@ -24,6 +39,11 @@
     this.setNodeCanReorderSubnodes(false);
     this.setNoteIsSubnodeCount(true);
     this.setNodeSubtitleIsChildrenSummary(true);
+  }
+
+  finalInit () {
+    super.finalInit();
+    this.setTitle("Reference Images");
   }
 
   /**

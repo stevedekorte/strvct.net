@@ -26,6 +26,20 @@
      */
     initPrototypeSlots () {
                
+
+        /**
+         * @member {LeonardoService} leonardoService
+         * @category AI Service
+         */
+
+        {
+            const slot = this.newSlot("leonardoService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(LeonardoService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("LeonardoService");
+        }
+        
         /**
          * @member {AnthropicService} anthropicService
          * @category AI Service

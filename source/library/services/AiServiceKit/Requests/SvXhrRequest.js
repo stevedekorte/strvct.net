@@ -23,9 +23,13 @@
  * 
  *   onRequestBegin(request)
  *   onRequestProgress(request)
- *   onRequestComplete(request) // send whether success, error, or aborted
+ * 
+ *   onRequestSuccess(request)
+ *   onRequestFailure(request)
  *   onRequestAbort(request)
  *   onRequestError(request, error)
+ * 
+ *   onRequestComplete(request) // send whether success, error, or aborted
  * 
  * Delegate can get info via:
  * 
@@ -360,6 +364,16 @@
    * @returns {Promise}
    */
   
+  clear () {
+    // clear such that we can reuse the request
+    this.setError(null);
+    this.setXhr(null);
+    this.setXhrPromise(Promise.clone());
+    this.setStatus("");
+    this.setDidAbort(false);
+    this.setRetryCount(0);
+  }
+
   async asyncSend () {
 
     this.setError(null); // clear error (in case we are retrying)
@@ -428,7 +442,15 @@
 
     xhr.send(options.body);
 
-    return this.xhrPromise();
+    await this.xhrPromise(); // wait for the request to complete
+
+    if (this.hasError()) {
+      this.sendDelegate("onRequestFailue", [this]);
+    } else {
+      this.sendDelegate("onRequestSuccess", [this]);
+    }
+
+    this.sendDelegate("onRequestComplete", [this]);
   }
 
   /**
@@ -445,6 +467,14 @@
     this.sendDelegate("onRequestProgress", [this]);
   }
 
+  hasErrorStatusCode () {
+    const xhr = this.xhr();
+    if (!xhr) {
+      return false;
+    }
+    return xhr.status >= 300;
+  }
+
   /**
    * @category XHR
    * @description Called when the XHR loadend event is fired
@@ -455,16 +485,10 @@
       return;
     }
 
-    const isError = this.xhr().status >= 300;
-    if (isError) {
+    if (this.hasErrorStatusCode()) {
       console.log(this.description());
-      console.error(this.xhr().responseText);
-      const json = JSON.parse(this.xhr().responseText);
-      if (json.error) {
-        this.onError(new Error(json.error.message));
-      } else {
-        this.onError(new Error("request error code:" + this.xhr().status + ")"));
-      }
+      this.onError(new Error("request error code:" + this.xhr().status + ")"));
+      //console.error(this.xhr().responseText);
     }
 
     this.sendDelegate("onRequestComplete")
@@ -475,13 +499,16 @@
     console.log(this.typeId() + " onXhrLoadEnd()");
   }
 
+  responseText () {
+    return this.xhr().responseText;
+  }
+
   /**
    * @category XHR
    * @description Retries the request
    */
   retryRequest () {
     this.setRetryCount(this.retryCount() + 1);
-
     this.setError(null);
     this.setXhr(null);
     this.setXhrPromise(null);
@@ -510,6 +537,16 @@
     }
   }
 
+  // --- retry helpers ---
+
+  retryIfApplicable () {
+    if (this.shouldAutoRetryForCurrentError() && !this.hasExceededMaxRetries()) {
+      this.retryWithDelay(this.currentRetryDelaySeconds());
+      const ts = TimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
+      e.message = "retrying in " + ts;
+    }
+  }
+
   /**
    * @description Retries the request with a delay
    * @param {number} seconds 
@@ -525,23 +562,24 @@
     return this.retryCount() < this.maxRetries();
   }
 
+  currentRetryDelaySeconds () {
+    // calculate the current retry delay based on the retry count and the retry delay seconds
+    const count = this.retryCount();  
+    const d = this.retryDelaySeconds();
+    const f = 2; // exponential backoff factor
+    const nd = (d*f).randomBetween(d*f*count); // random spot between the next two exponential points
+    return nd;
+  }
+
+  // -----------------------------------------------------------------------------
+
   /**
-   * @description Called when the error slot is updated
+   * @category XHR
+   * @description Called when the XHR error event is fired
    * @param {Error} e 
    */
-  onError (e) {
+  onXhrError (e) {
     this.setError(e);
-
-    if (this.shouldAutoRetryForCurrentError() && !this.hasExceededMaxRetries()) {
-      const d = this.retryDelaySeconds();
-      const f = 2; // exponential backoff factor
-      const nd = (d*f).randomBetween(d*f*f); // random spot between the next two exponential points
-      this.retryWithDelay(nd);
-      this.setRetryDelaySeconds(nd);
-      const ts = TimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
-      e.message = "retrying in " + ts;
-    }
-
     console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
     debugger;
     this.sendDelegate("onRequestError", [this, e]);
@@ -552,27 +590,21 @@
     return this;
   }
 
+
   /**
    * @category XHR
-   * @description Called when the XHR error event is fired
+   * @description Called when the XHR abort event is fired
    * @param {Event} event 
    */
-  onXhrError (event) {
-    debugger;
-    console.log("onXhrError:", event);
-    const xhr = this.xhr();
-    // error events don't contain messages - need to look at xhr and guess at what happened
-    //let s = "Error on Xhr requestId " + this.requestId() + " ";
-    let s = "Xhr error: " + this.description() + " ";
-    s += " status: " + this.fullNameForXhrStatusCode(xhr.status); // e.g. 404 = file not found
-    s += ", statusText: '" + xhr.statusText + "'";
-    s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
-    const error = new Error(s);
-    this.onError(error);
+  onXhrAbort (/*event*/) {
+    this.setDidAbort(true);
+    this.setStatus("aborted");
     this.sendDelegate("onRequestComplete");
-    this.sendDelegate("onRequestError", [this, error]);
-    this.xhrPromise().callRejectFunc(error);
+    this.sendDelegate("onRequestAbort");
+    this.xhrPromise().callRejectFunc(new Error("aborted"));
   }
+
+  // -----------------------------------------------------------------------------
 
   readableStatus () {
     const xhr = this.xhr();
@@ -652,11 +684,11 @@
    * @returns {boolean}
    */
   shouldAutoRetryForCurrentError () {
-      //const e = this.error();
-      // higher level code should probably hand the decision to retry based on the error message
-      // but we'll just use the status code for now
-      return this.shouldAutoRetryForXhrStatusCode(this.xhr().status);
-    }
+    //const e = this.error();
+    // higher level code should probably hand the decision to retry based on the error message
+    // but we'll just use the status code for now
+    return this.shouldAutoRetryForXhrStatusCode(this.xhr().status);
+  }
   
 
   /**
@@ -721,18 +753,7 @@
     return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
   }
 
-  /**
-   * @category XHR
-   * @description Called when the XHR abort event is fired
-   * @param {Event} event 
-   */
-  onXhrAbort (/*event*/) {
-    this.setDidAbort(true);
-    this.setStatus("aborted");
-    this.sendDelegate("onRequestComplete");
-    this.sendDelegate("onRequestAbort");
-    this.xhrPromise().callRejectFunc(new Error("aborted"));
-  }
+  // -----------------------------------------------------------------------------
 
 
   /**

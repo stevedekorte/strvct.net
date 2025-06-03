@@ -68,6 +68,22 @@
     }
 
 
+    /**
+     * @member {SvXhrRequest} xhrRequest - The request to fetch the image.
+     * @category Networking
+     */
+    {
+      const slot = this.newSlot("xhrRequest", null);
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setLabel("xhr request");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("SvXhrRequest");
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
 
     /**
      * @member {Action} fetchAction - The action to fetch the image.
@@ -132,6 +148,21 @@
     this.setNodeCanReorderSubnodes(false);
     this.setCanDelete(true);
     this.setNodeFillsRemainingWidth(true);
+  }
+
+  setJsonInfo (json) {
+  /*
+    {
+      "id": "482a8f60-75cc-4911-94cf-10d624a62c76",
+      "url": "https://cdn.leonardo.ai/users/.../Leonardo_Phoenix_oil_cat_0.jpg",
+      "nsfw": false,
+      "likeCount": 0,
+      "motionMP4URL": null,
+      "generated_image_variation_generics": []
+    }
+    */
+    this.setUrl(json.url);
+    this.setTitle(json.id);
   }
 
   /**
@@ -216,10 +247,7 @@
    * @category Networking
    */
   getProxyUrl () {
-    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
-    console.log(this.type() + " url: '" + this.url() + "'");
-    console.log(this.type() + " proxy url: '" + proxyUrl + "'");
-    return proxyUrl;
+    return ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
   }
 
   /**
@@ -227,7 +255,7 @@
    * @returns {Promise<void>}
    * @category Actions
    */
-  async fetch () {
+  async asyncFetch () {
     this.setIsLoading(true);
 
     const url = this.getProxyUrl();
