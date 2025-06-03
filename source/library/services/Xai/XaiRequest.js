@@ -80,15 +80,6 @@ curl https://api.x.ai/v1/chat/completions \
   }
 
   /**
-   * @description Retrieves the API key for Xai service.
-   * @returns {string} The API key for Xai service.
-   * @category Authentication
-   */
-  apiKeyOrUserAuthToken () {
-    return XaiService.shared().apiKeyOrUserAuthToken();
-  }
-
-  /**
    * @description Sets up the request for streaming.
    * @returns {XaiRequest} The current XaiRequest instance.
    * @category Configuration

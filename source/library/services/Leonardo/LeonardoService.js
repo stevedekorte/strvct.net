@@ -1,20 +1,15 @@
 /**
- * @module library.services.OpenAI
+ * @module library.services.Leonardo
  */
 
 /**
- * @class OpenAiService
+ * @class LeonardoService
  * @extends AiService
- * @classdesc OpenAiService is a SvSummaryNode that holds the API key and subnodes for the various OpenAI services.
- * 
- * Example:
- * 
- * OpenAiService.shared().setApiKey("sk-1234567890");
- * const hasApiKey = OpenAiService.shared().hasApiKey();
+ * @classdesc LeonardoService manages the Leonardo.ai API key and subnodes for the various Leonardo services.
  */
 "use strict";
 
-(class OpenAiService extends AiService {
+(class LeonardoService extends AiService {
 
   /**
    * @static
@@ -52,6 +47,12 @@
     {
       const slot = this.overrideSlot("imagesPrompts", null);
       slot.setFinalInitProto(OpenAiImagePrompts);
+      slot.setIsSubnode(true);
+    }
+
+    {
+      const slot = this.newSlot("refImages", null);
+      slot.setFinalInitProto(LeonardoRefImages);
       slot.setIsSubnode(true);
     }
   }

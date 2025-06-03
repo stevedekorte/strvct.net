@@ -65,15 +65,6 @@
   }
 
   /**
-   * @description Gets the API key for OpenAI service.
-   * @returns {string} The API key.
-   * @category Authentication
-   */
-  apiKeyOrUserAuthToken () {
-    return OpenAiService.shared().apiKeyOrUserAuthToken();
-  }
-
-  /**
    * @description Prepares and returns the request options.
    * @returns {Object} The request options.
    * @category API Request

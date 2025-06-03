@@ -88,15 +88,6 @@
   }
 
   /**
-   * @description Retrieves the API key for Anthropic service.
-   * @returns {String} The API key.
-   * @category Authentication
-   */
-  apiKeyOrUserAuthToken () {
-    return this.service().apiKeyOrUserAuthToken();
-  }
-
-  /**
    * @description Prepares the request options for the Anthropic API call.
    * @returns {Object} The request options.
    * @category Request Preparation

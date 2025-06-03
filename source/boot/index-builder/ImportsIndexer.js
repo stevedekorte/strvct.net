@@ -120,6 +120,15 @@ class ImportsIndexer {
      */
     readImportsPath (importsPath) {
         const folder = nodePath.dirname(importsPath);
+        // check if file exists
+        if (!fs.existsSync(importsPath)) {
+            // let's show the current working directory
+            console.log("current working directory: " + process.cwd());
+            console.log("file does not exist: " + importsPath);
+            // and the full path
+            console.log("full path: " + nodePath.join(process.cwd(), importsPath));
+            throw new Error("file does not exist: " + importsPath);
+        }
         const s = fs.readFileSync(importsPath,  "utf8");
         const json = JSON.parse(s);
         if (!Array.isArray(json)) {

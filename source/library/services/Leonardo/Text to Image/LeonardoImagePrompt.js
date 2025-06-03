@@ -53,7 +53,12 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
   }'
 
 
-  
+
+  POST /init‐image → upload (generate a new initImageId)
+GET /init‐image/{id} → fetch metadata for a single image by its ID
+DELETE /init‐image/{id} → remove a single image by its ID
+
+
   */
 (class LeonardoImagePrompt extends SvSummaryNode {  
   initPrototypeSlots () {
@@ -291,8 +296,7 @@ curl -X POST https://cloud.leonardo.ai/api/rest/v1/generations \
    * @category Service
    */
   service () {
-    //return this.imagePrompts().service()
-    return UndreamedOfApp.shared().services().openAiService()
+    return LeonardoService.shared();
   }
 
   /**

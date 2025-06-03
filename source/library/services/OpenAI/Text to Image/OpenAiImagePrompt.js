@@ -221,8 +221,7 @@
    * @category Service
    */
   service () {
-    //return this.imagePrompts().service()
-    return UndreamedOfApp.shared().services().openAiService()
+    return OpenAiService.shared();
   }
 
   /**

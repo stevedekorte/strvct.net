@@ -1,16 +1,16 @@
 /**
- * @module library.services.OpenAI.Text_to_Image
+ * @module library.services.Leonardo.Text_to_Image
  */
 
 /**
- * @class OpenAiImagePrompts
+ * @class LeonardoImagePrompts
  * @extends SvSummaryNode
- * @classdesc Represents a collection of OpenAI image prompts for text-to-image conversion.
+ * @classdesc Represents a collection of Leonardo image prompts for text-to-image conversion.
  */
-(class OpenAiImagePrompts extends SvSummaryNode {
+(class LeonardoImagePrompts extends SvSummaryNode {
   
   /**
-   * Initializes the prototype slots for the OpenAiImagePrompts class.
+   * Initializes the prototype slots for the LeonardoImagePrompts class.
    * @description Sets up the storage, subnode classes, and other properties for the OpenAiImagePrompts node.
    * @category Initialization
    */
