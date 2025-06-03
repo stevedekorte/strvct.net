@@ -17,12 +17,12 @@ function evalStringFromSourceUrl (codeString, path) {
 
 function evalStringFromSourceUrl (codeString, path) {
     // Sanitize the path to ensure it's safe for use in the sourceURL comment
-    //const sanitizedPath = path.replace(/[^a-zA-Z0-9\/\-_.]/g, ''); // Remove any characters that might break the comment
     const sanitizedPath = path.replace(/[^a-zA-Z0-9/\-_.]/g, ''); // Remove any characters that might break the comment
 
-    // Ensure the path doesn't start with a slash if it doesn't have a protocol
-    const normalizedPath = !/^https?:\/\//i.test(sanitizedPath) 
-        ? sanitizedPath.replace(/^\/+/, '') // Remove leading slashes
+    // Keep absolute paths intact for proper debugger source mapping
+    // Only remove leading slashes if it's clearly a relative path without protocol
+    const normalizedPath = !/^https?:\/\//i.test(sanitizedPath) && !sanitizedPath.startsWith('/') 
+        ? sanitizedPath
         : sanitizedPath;
 
     // Construct the sourceURL comment
@@ -31,8 +31,6 @@ function evalStringFromSourceUrl (codeString, path) {
 
     // Combine the code string with the sourceURL comment
     const debugCode = codeString + sourceUrlComment;
-    //console.log("eval path: ", path);
-    //console.log("sourceURL: ", sourceURL, "\n");
     
     // Evaluate the code
     const result = eval(debugCode);

@@ -54,6 +54,7 @@
 
   */
 (class LeonardoImageGeneration extends SvSummaryNode {  
+
   initPrototypeSlots () {
 
     /**
@@ -83,7 +84,7 @@
       slot.setLabel("xhr request");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
-      slot.setSlotType("SvXhrRequest");
+      slot.setFinalInitProto(SvXhrRequest);
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
     }
@@ -219,7 +220,7 @@
    * @category Metadata
    */
   title () {
-    return this.generationId();
+    return "Generation";
   }
 
   /**
@@ -228,7 +229,7 @@
    * @category Metadata
    */
   subtitle () {
-    return this.status()
+    return [this.generationId(), this.status()].join("\n");
   }
 
   /**
@@ -261,7 +262,7 @@
    * @category Validation
    */
   canStartPolling () {
-    return this.hasGenerationId() !== 0 && !this.isPolling();
+    return this.hasGenerationId() && !this.isPolling();
   }
 
   /**
@@ -269,7 +270,7 @@
    * @returns {Object} The action information.
    * @category Action
    */
-  generateActionInfo () {
+  startPollingActionInfo () {
     return {
         isEnabled: this.canStartPolling(),
         //title: this.title(),
@@ -291,6 +292,8 @@
       "Authorization": `Bearer ` + apiKey,
       "Content-Type": 'application/json'
     });
+    xhr.setBody("");
+    xhr.assertValid();
   }
   
 
@@ -307,7 +310,6 @@
     this.setError("");
     this.setStatus("fetching response...");
     this.sendDelegate("onImagePromptStart", [this]);
-    this.xhrRequest().clear();
     this.setupXhrRequest();
     this.poll();
   }

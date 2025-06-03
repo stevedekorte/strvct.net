@@ -178,7 +178,7 @@
             } else {
                 // otherwise, load normally and cache result
                 this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                console.log("UrlResource.asyncLoadFromCache() (over NETWORK)" + this.path())
+                console.log("UrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
                 console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
@@ -249,7 +249,7 @@
      * @category Evaluation
      */
     evalDataAsJS () {
-        //console.log("UrlResource eval ", this.path())
+        console.log("UrlResource eval ", this.path())
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }

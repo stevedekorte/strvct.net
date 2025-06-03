@@ -79,7 +79,7 @@
       slot.setLabel("xhr request");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
-      slot.setSlotType("SvXhrRequest");
+      slot.setFinalInitProto(SvXhrRequest);
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
     }

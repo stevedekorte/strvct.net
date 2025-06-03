@@ -52,7 +52,7 @@
      * @member {string} title - The title of the node.
      * @category Display
      */
-    this.setTitle("Text to Image Prompts");
+    this.setTitle("Text to Image");
 
     /**
      * @member {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.

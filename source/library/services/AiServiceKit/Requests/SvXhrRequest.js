@@ -11,7 +11,7 @@
  * 
  * Caller sets:
  *   - delegate
- *   - endpoint
+ *   - url
  *   - headers
  *   - body
  *   - json
@@ -48,14 +48,16 @@
     {
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
+      slot.setShouldStoreSlot(true);
     }
 
     /**
-     * @member {String} endpoint - The URL endpoint for the request.
+     * @member {String} url - The URL string for the request.
      */
     {
-      const slot = this.newSlot("endpoint", null);
+      const slot = this.newSlot("url", null);
       slot.setSlotType("String");
+      slot.setShouldStoreSlot(true);
     }
 
     /**
@@ -64,6 +66,7 @@
     {
       const slot = this.newSlot("requestOptions", null);
       slot.setSlotType("Object");
+      slot.setShouldStoreSlot(true);
     }
 
     /**
@@ -72,6 +75,7 @@
     {
       const slot = this.newSlot("xhr", null);
       slot.setSlotType("XMLHttpRequest");
+      slot.setShouldStoreSlot(true);
     }
 
     /**
@@ -209,9 +213,12 @@
     super.init();
     this.setIsDebugging(false);
     this.setRequestId(this.puuid());
+    this.setRequestOptions({});
     this.setTitle("Request");
     this.setIsDebugging(true);
+    this.setTitle("XHR Request");
   }
+
 
   // --- request options helpers ---
 
@@ -323,7 +330,7 @@
    */
   curlCommand () {
     const parts = [
-      `curl  --insecure "` + this.endpoint() + '"',
+      `curl  --insecure "` + this.url() + '"',
     ];
     const headers = this.requestOptions().headers;
 
@@ -351,7 +358,7 @@
 
     const json = {
       requestId: this.requestId(),
-      endpoint: this.endpoint(),
+      url: this.url(),
       options: this.requestOptions(),
       readableState: this.readbleJsonState()
     };
@@ -374,7 +381,19 @@
     this.setRetryCount(0);
   }
 
+  assertValid () {
+    assert(this.url(), "url is required");
+
+    const options = this.requestOptions();
+    assert(options.method, "method is required");
+    assert(options, "requestOptions is required");
+    assert(options.headers, "headers is required");
+    assert(Type.isDictionary(options.headers), "headers must be a dictionary");
+    assert(Type.isString(options.body), "body must be a string");
+  }
+
   async asyncSend () {
+    this.setXhrPromise(Promise.clone());
 
     this.setError(null); // clear error (in case we are retrying)
     assert(!this.xhr());
@@ -388,7 +407,7 @@
 
     const xhr = new XMLHttpRequest();
     this.setXhr(xhr);
-    xhr.open(this.method(), this.endpoint());
+    xhr.open(this.method(), this.url());
 
     // set headers
     const options = this.requestOptions();
@@ -400,7 +419,7 @@
 
     // let's print the url and headers here to the console
     console.log("--------------------------------");
-    console.log("url:", this.endpoint());
+    console.log("url:", this.url());
     console.log("headers:", options.headers);
     console.log("--------------------------------");
 
@@ -467,6 +486,10 @@
     this.sendDelegate("onRequestProgress", [this]);
   }
 
+  hasError () {
+    return this.error() !== null || this.hasErrorStatusCode();
+  }
+
   hasErrorStatusCode () {
     const xhr = this.xhr();
     if (!xhr) {
@@ -475,25 +498,51 @@
     return xhr.status >= 300;
   }
 
+  responseJsonError () {
+    const text = this.responseText();
+    try {
+      // see if there is a json error message
+      if (text.length < 1024) { // so we don't try to parse a huge response
+        const json = JSON.parse(text);
+        const errorMessage = json.error;
+        if (errorMessage) {
+          return errorMessage;
+        }
+      }
+    } catch (error) {
+      // ignore
+    }
+    return null;
+  }
+
   /**
    * @category XHR
    * @description Called when the XHR loadend event is fired
    * @param {Event} event 
    */
   onXhrLoadEnd (/*event*/) {
+    //debugger;
     if (this.didAbort()) {
       return;
     }
 
     if (this.hasErrorStatusCode()) {
+      const statusCode = this.xhr().status;
+      const fullStatus = this.fullNameForXhrStatusCode(statusCode);
+
       console.log(this.description());
-      this.onError(new Error("request error code:" + this.xhr().status + ")"));
-      //console.error(this.xhr().responseText);
+
+      const errorMessageInJson = this.responseJsonError();
+      if (errorMessageInJson) {
+        this.onXhrError(new Error(fullStatus + " json.error: " + errorMessageInJson));
+      }
+      this.sendDelegate("onRequestFailure");
+    } else {
+      this.sendDelegate("onRequestSuccess");
     }
 
     this.sendDelegate("onRequestComplete")
 
-    this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this); 
 
     console.log(this.typeId() + " onXhrLoadEnd()");
@@ -580,6 +629,7 @@
    */
   onXhrError (e) {
     this.setError(e);
+    this.setStatus("ERROR: " + e.message);
     console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
     debugger;
     this.sendDelegate("onRequestError", [this, e]);
