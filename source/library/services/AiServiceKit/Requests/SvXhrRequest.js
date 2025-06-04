@@ -386,6 +386,7 @@
    */
   
   clear () {
+    assert(!this.isActive(), "attempting to clear an active request");
     // clear such that we can reuse the request
     this.setError(null);
     this.setXhr(null);

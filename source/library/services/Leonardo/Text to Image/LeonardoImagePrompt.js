@@ -405,13 +405,17 @@ Example generation body json:
 
   // --- action button ---
 
+  hasPrompt () {
+    return this.prompt().length !== 0;
+  }
+
   /**
    * @description Checks if image generation can be performed.
    * @returns {boolean} True if generation can be performed, false otherwise.
    * @category Validation
    */
   canGenerate () {
-    return this.prompt().length !== 0;
+    return !this.xhr().isActive() && this.hasPrompt();
   }
 
   /**
@@ -443,6 +447,7 @@ Example generation body json:
     const apiKey = this.service().apiKeyOrUserAuthToken();
 
     const xhr = this.xhrRequest();
+    xhr.clear();
     xhr.setDelegate(this);
     xhr.setUrl(proxyEndpoint);
     xhr.setMethod("POST");

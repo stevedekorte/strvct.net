@@ -18,46 +18,12 @@
   }
 
   initPrototype () {
-    /**
-     * @member {boolean} shouldStore - Indicates whether the node should be stored.
-     * @category Storage
-     */
     this.setShouldStore(true);
-
-    /**
-     * @member {boolean} shouldStoreSubnodes - Indicates whether subnodes should be stored.
-     * @category Storage
-     */
     this.setShouldStoreSubnodes(true);
-
-    /**
-     * @member {Array} subnodeClasses - The classes of subnodes that can be added to this node.
-     * @category Node Structure
-     */
     this.setSubnodeClasses([LeonardoImagePrompt]);
-
-    /**
-     * @member {boolean} nodeCanAddSubnode - Indicates whether subnodes can be added to this node.
-     * @category Node Structure
-     */
     this.setNodeCanAddSubnode(true);
-
-    /**
-     * @member {boolean} nodeCanReorderSubnodes - Indicates whether subnodes can be reordered.
-     * @category Node Structure
-     */
     this.setNodeCanReorderSubnodes(true);
-
-    /**
-     * @member {string} title - The title of the node.
-     * @category Display
-     */
     this.setTitle("Text to Image");
-
-    /**
-     * @member {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.
-     * @category Display
-     */
     this.setNoteIsSubnodeCount(true);
   }
 
