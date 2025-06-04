@@ -140,6 +140,18 @@
       slot.setSlotType("Boolean");
     }
 
+    /**
+     * @member {Delegate} delegate - The delegate for the image.
+     * @category Delegation
+     */
+    {
+      const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Delegate");
+      slot.setIsSubnodeField(true);
+    }
+  }
+
+  initPrototype () {
     this.setTitle("Image");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);

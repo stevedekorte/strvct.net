@@ -119,6 +119,15 @@
       slot.setSlotType("Boolean");
     }
 
+    // add a delegate slot
+    {
+      const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Delegate");
+      slot.setIsSubnodeField(true);
+    }
+  }
+
+  initPrototype () {
     this.setTitle("Reference Image");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);

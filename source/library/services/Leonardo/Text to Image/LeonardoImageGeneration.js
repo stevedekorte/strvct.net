@@ -286,6 +286,7 @@
     const apiKey = this.service().apiKeyOrUserAuthToken();
 
     const xhr = this.xhrRequest();
+    xhr.clear();
     xhr.setUrl(proxyEndpoint);
     xhr.setMethod("GET");
     xhr.setHeaders({
@@ -293,6 +294,7 @@
       "Content-Type": 'application/json'
     });
     xhr.setBody("");
+    xhr.setDelegate(this);
     xhr.assertValid();
   }
   
@@ -302,16 +304,22 @@
    * @category Process
    */
   async startPolling () {
+    //debugger;
     assert(!this.isPolling(), "already polling");
     assert(this.generationId(), "generationId is required");
 
     this.setIsPolling(true);
     this.setXhrRequest(SvXhrRequest.clone());
     this.setError("");
-    this.setStatus("fetching response...");
+    this.setStatus("Start polling...");
     this.sendDelegate("onImagePromptStart", [this]);
-    this.setupXhrRequest();
-    this.poll();
+    await this.poll();
+  }
+
+  async pollAfterDelay () {
+    setTimeout(() => {
+      this.poll();
+    }, this.pollIntervalSeconds() * 1000);
   }
 
   async poll () {
@@ -321,39 +329,59 @@
       return;
     }
     this.setPollCount(this.pollCount() + 1);
+    this.setStatus("Poll " + this.pollCount() + " of " + this.maxPollCount());
+
 
     try {
+      this.setupXhrRequest();
       await this.xhrRequest().asyncSend();
+      //debugger;
       // we use onRequestError/onRequestFailure should cover normal cases
     } catch (error) {
       this.onError(error);
+    }
+
+    // delegate messages should handle everything
+
+  }
+
+  apiPollStatus () {
+    // "status": "PENDING" | "STARTED" | "COMPLETE" | "FAILED",
+    try {
+      const text = this.xhrRequest().responseText();
+      const json = JSON.parse(text);
+      return json.generations_by_pk.status;
+    } catch (error) {
+      debugger;
+      return undefined;
     }
   }
 
   // -- delegate methods from SvXhrRequest --
 
   async onRequestSuccess (request) {
+    //debugger;
     const text = request.responseText();
     const json = JSON.parse(text);
 
     // "status": "PENDING" | "STARTED" | "COMPLETE" | "FAILED",
 
-    const status = json.generations_by_pk.status;
+    const status = this.apiPollStatus();
 
-    this.setStatus("Generation " + status.toLowerCase().asCapitalized());
+    this.setStatus("Generation " + status);
 
     if (status === "COMPLETE") {
       this.setIsPolling(false);
       this.spawnImageNodes();
-      return;
-    }
-
-    if (json.error) {
+    } else if (status === "FAILED") {
+      this.onError("Generation failed");
+    } else if (json.error) {
       this.onError(json.error);
-      return;
+    } else if (status === "PENDING" || status === "STARTED") {
+      await this.pollAfterDelay();
+    } else {
+      this.onError("Unknown status: " + status);
     }
-
-    await this.spawnImageNodes(json);
   }
 
   async spawnImageNodes () {

@@ -202,9 +202,23 @@
       slot.setActionMethodName("copyBody");
     }
 
+    /**
+     * @member {Action} copyResponseTextAction - The action to copy the response text.
+     */
+    {
+      const slot = this.newSlot("copyResponseTextAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Copy Response Text");
+      slot.setSyncsToView(false);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("copyResponseText");
+    }
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
+
 
   /**
    * Initializes the AiRequest instance
@@ -403,7 +417,7 @@
     //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
     //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
 
-    this.setStatus("streaming");
+    this.setStatus("sending request...");
 
     const xhr = new XMLHttpRequest();
     this.setXhr(xhr);
@@ -462,10 +476,12 @@
     xhr.send(options.body);
 
     await this.xhrPromise(); // wait for the request to complete
-
+    //debugger;
     if (this.hasError()) {
+      this.setStatus("Failed: " + this.error().message);
       this.sendDelegate("onRequestFailue", [this]);
     } else {
+      this.setStatus("Succeeded");
       this.sendDelegate("onRequestSuccess", [this]);
     }
 
@@ -483,6 +499,8 @@
     const latestString = txt.substr(txt.length - event.loaded, event.loaded);
     console.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
     */
+    this.setStatus("progress: " + this.contentByteCount() + " bytes");
+
     this.sendDelegate("onRequestProgress", [this]);
   }
 
@@ -536,16 +554,11 @@
       if (errorMessageInJson) {
         this.onXhrError(new Error(fullStatus + " json.error: " + errorMessageInJson));
       }
-      this.sendDelegate("onRequestFailure");
-    } else {
-      this.sendDelegate("onRequestSuccess");
     }
 
-    this.sendDelegate("onRequestComplete")
-
-    this.xhrPromise().callResolveFunc(this); 
-
     console.log(this.typeId() + " onXhrLoadEnd()");
+    this.xhrPromise().callResolveFunc();
+
   }
 
   responseText () {
@@ -572,6 +585,16 @@
    */
   copyBody () {
     this.body().copyToClipboard();
+    return this;
+  }
+
+  /**
+   * @category XHR
+   * @description Copies the response text to the clipboard
+   * @returns {AiRequest}
+   */
+  copyResponseText () {
+    this.responseText().copyToClipboard();
     return this;
   }
 
@@ -649,7 +672,6 @@
   onXhrAbort (/*event*/) {
     this.setDidAbort(true);
     this.setStatus("aborted");
-    this.sendDelegate("onRequestComplete");
     this.sendDelegate("onRequestAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
   }

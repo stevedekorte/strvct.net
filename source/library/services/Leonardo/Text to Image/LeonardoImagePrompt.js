@@ -475,7 +475,7 @@ Example generation body json:
    */
   async start () {
     this.setError("");
-    this.setStatus("fetching response...");
+    this.setStatus("Sending Generation Request...");
     this.sendDelegate("onImagePromptStart", [this]);
 
     this.setupXhrRequest();
@@ -512,6 +512,7 @@ Example generation body json:
       this.onError(json.error);
       return;
     }
+    this.setStatus("Generation Response Received");
 
     const generationId = json.sdGenerationJob.generationId;
     const generationNode = this.generation();

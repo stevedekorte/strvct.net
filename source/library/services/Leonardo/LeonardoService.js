@@ -7,7 +7,7 @@
  * @extends AiService
  * @classdesc LeonardoService manages the Leonardo.ai API key and subnodes for the various Leonardo services.
  */
-"use strict";
+"use strict"; 
 
 (class LeonardoService extends AiService {
 
