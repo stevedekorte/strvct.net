@@ -110,8 +110,10 @@ class BootLoader extends Object {
         return fileContents.reduce((promise, { path, fullPath, content }) => {
           return promise.then(() => {
             //console.log(`Evaluating file: ${path}`);
-            // Add sourceURL directive for better debugging - use the actual URL that was fetched
-            const sourceWithReference = content + `\n//# sourceURL=${fullPath}`;
+            // Add sourceURL directive for better debugging - use leading slash for VSCode
+            // URL encode the path to handle spaces and special characters
+            const encodedPath = encodeURI("/" + fullPath);
+            const sourceWithReference = content + `\n//# sourceURL=${encodedPath}`;
             const evalFunc = new Function(sourceWithReference);
             evalFunc.call(window); // Execute in the global scope
             //console.log(`Finished evaluating: ${path}`);

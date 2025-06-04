@@ -178,10 +178,10 @@
             } else {
                 // otherwise, load normally and cache result
                 this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                console.log("UrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
+                //console.log("UrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
-                console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                //console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
         } else {
@@ -249,7 +249,7 @@
      * @category Evaluation
      */
     evalDataAsJS () {
-        console.log("UrlResource eval ", this.path())
+        //console.log("UrlResource eval ", this.path())
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }
@@ -261,7 +261,10 @@
      */
     evalDataAsCss () {
         const cssString = this.dataAsText(); // default decoding is to utf8
-        const sourceUrl = "\n\n//# sourceURL=" + this.path() + " \n";
+        // Based on git history, adding a leading slash fixed VSCode breakpoints
+        // URL encode the path to handle spaces and special characters
+        const encodedPath = encodeURI("/" + this.path());
+        const sourceUrl = "\n\n//# sourceURL=" + encodedPath + " \n";
         const debugCssString = cssString + sourceUrl;
         //console.log("eval css: " +  entry.path)
         const element = document.createElement('style');

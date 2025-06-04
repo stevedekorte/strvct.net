@@ -342,6 +342,45 @@
    - View → Model: Action methods on nodes triggered by user interactions (command)
    - Between models: Notification center for loose coupling (publish/subscribe)
 
+## Debugging STRVCT Applications
+
+### Dynamic Code Evaluation and Source Mapping
+STRVCT uses a custom resource loading system that evaluates JavaScript and CSS at runtime. For debugging to work properly:
+
+1. **SourceURL Comments**: All dynamically evaluated code must include sourceURL comments:
+   ```javascript
+   //# sourceURL=/path/to/file.js
+   ```
+
+2. **Format Requirements**:
+   - **Leading slash required**: `/path/to/file.js` (not `path/to/file.js`)
+   - **URL encoding required**: Use `encodeURI()` for paths with spaces or special characters
+   - **No quotes**: Chrome DevTools fails if the path is quoted
+
+3. **Implementation**: The boot system handles this in three locations:
+   - `source/boot/Helpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
+   - `source/boot/UrlResource.js` - `evalDataAsJS()` and `evalDataAsCss()` for resources
+   - `source/boot/BootLoader.js` - Boot file evaluation
+
+### VSCode Debugging Configuration
+The framework works with VSCode's Chrome debugger extension:
+
+1. **Path Mapping**: Configure `.vscode/launch.json` with appropriate `pathMapping`:
+   ```json
+   "pathMapping": {
+       "*": "${workspaceFolder}/Servers/GameServer/site/*"
+   }
+   ```
+
+2. **Source Maps**: Enable `"sourceMaps": true` in the launch configuration
+
+3. **Certificate Handling**: For HTTPS development servers, use:
+   ```json
+   "runtimeArgs": ["--ignore-certificate-errors"]
+   ```
+
+This setup ensures breakpoints work correctly regardless of where the project is located on disk.
+
 ## Key Patterns
 
 - Node hierarchy for model representation

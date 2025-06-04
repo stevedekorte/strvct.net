@@ -16,26 +16,16 @@ function evalStringFromSourceUrl (codeString, path) {
 */
 
 function evalStringFromSourceUrl (codeString, path) {
-    // Sanitize the path to ensure it's safe for use in the sourceURL comment
-    const sanitizedPath = path.replace(/[^a-zA-Z0-9/\-_.]/g, ''); // Remove any characters that might break the comment
-
-    // Keep absolute paths intact for proper debugger source mapping
-    // Only remove leading slashes if it's clearly a relative path without protocol
-    const normalizedPath = !/^https?:\/\//i.test(sanitizedPath) && !sanitizedPath.startsWith('/') 
-        ? sanitizedPath
-        : sanitizedPath;
-
-    // Construct the sourceURL comment
-    const sourceURL = encodeURI(normalizedPath);
-    const sourceUrlComment = `\n//# sourceURL=${sourceURL}`;
-
-    // Combine the code string with the sourceURL comment
+    // Based on git history, adding a leading slash fixed VSCode breakpoints in May 2022
+    // Chrome doesn't like quotes around the path (fixed Dec 2023)
+    // Rich Collins added encodeURI in Aug 2024 to handle spaces and special characters
+    const sourceURL = "/" + path;
+    const encodedURL = encodeURI(sourceURL);
+    const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
     const debugCode = codeString + sourceUrlComment;
     
     // Evaluate the code
     const result = eval(debugCode);
-
-    // Return the result of the evaluation
     return result;
 }
 
