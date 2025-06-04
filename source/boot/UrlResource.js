@@ -261,9 +261,9 @@
      */
     evalDataAsCss () {
         const cssString = this.dataAsText(); // default decoding is to utf8
-        // Based on git history, adding a leading slash fixed VSCode breakpoints
+        // Use relative path for VSCode compatibility (no leading slash)
         // URL encode the path to handle spaces and special characters
-        const encodedPath = encodeURI("/" + this.path());
+        const encodedPath = encodeURI(this.path());
         const sourceUrl = "\n\n//# sourceURL=" + encodedPath + " \n";
         const debugCssString = cssString + sourceUrl;
         //console.log("eval css: " +  entry.path)

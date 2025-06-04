@@ -349,13 +349,14 @@ STRVCT uses a custom resource loading system that evaluates JavaScript and CSS a
 
 1. **SourceURL Comments**: All dynamically evaluated code must include sourceURL comments:
    ```javascript
-   //# sourceURL=/path/to/file.js
+   //# sourceURL=strvct/path/to/file.js
    ```
 
 2. **Format Requirements**:
-   - **Leading slash required**: `/path/to/file.js` (not `path/to/file.js`)
+   - **No leading slash**: `strvct/path/to/file.js` (not `/strvct/path/to/file.js`)
    - **URL encoding required**: Use `encodeURI()` for paths with spaces or special characters
    - **No quotes**: Chrome DevTools fails if the path is quoted
+   - **Relative to site directory**: Paths should be relative to the webRoot for VSCode mapping
 
 3. **Implementation**: The boot system handles this in three locations:
    - `source/boot/Helpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
@@ -368,18 +369,19 @@ The framework works with VSCode's Chrome debugger extension:
 1. **Path Mapping**: Configure `.vscode/launch.json` with appropriate `pathMapping`:
    ```json
    "pathMapping": {
-       "*": "${workspaceFolder}/Servers/GameServer/site/*"
-   }
+       "/": "${webRoot}/"
+   },
+   "webRoot": "${workspaceFolder}/Servers/GameServer/site"
    ```
 
-2. **Source Maps**: Enable `"sourceMaps": true` in the launch configuration
+2. **No Source Maps**: Do NOT enable `sourceMaps` - STRVCT uses sourceURL comments, not source maps
 
-3. **Certificate Handling**: For HTTPS development servers, use:
-   ```json
-   "runtimeArgs": ["--ignore-certificate-errors"]
-   ```
+3. **Certificate Handling**: Modern Chrome no longer supports `--ignore-certificate-errors`
+   - Trust certificates in system keychain, or
+   - Click through security warnings, or  
+   - Use HTTP for local development
 
-This setup ensures breakpoints work correctly regardless of where the project is located on disk.
+This setup ensures eval'd code files are editable in the debugger regardless of where the project is located on disk.
 
 ## Key Patterns
 
