@@ -106,11 +106,11 @@ Example generation body json:
 
   validModelIdItems () {
     return [
+      { "value": "aa77f04e-3eec-4034-9c07-d0f619684628", "label": "Kino XL",            "subtitle": "Cinematic SDXL finetune" }, // better at Frazetta
       { "value": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3", "label": "Phoenix 1.0",        "subtitle": "Flagship founder model" },
      // { "value": "6b645e3a-d64f-4341-a6d8-7a3690fbf042", "label": "Phoenix 0.9",        "subtitle": "Earlier Phoenix preview" },
       //{ "value": "b2614463-296c-462a-9586-aafdb8f00e36", "label": "Flux Dev",           "subtitle": "Fast SDXL-based dev build" },
       //{ "value": "1dd50843-d653-4516-a8e3-f0238ee453ff", "label": "Flux Schnell",       "subtitle": "Ultra-speed draft mode" },
-      { "value": "aa77f04e-3eec-4034-9c07-d0f619684628", "label": "Kino XL",            "subtitle": "Cinematic SDXL finetune" },
       { "value": "1e60896f-3c26-4296-8ecc-53e2afecc132", "label": "Diffusion XL",       "subtitle": "Versatile SDXL core" },
       { "value": "5c232a9e-9061-4777-980a-ddc8e65647c6", "label": "Vision XL",          "subtitle": "Photoreal-leaning SDXL" },
       { "value": "e71a1c2f-4f80-4800-934f-2c68979d8cc8", "label": "Anime XL",           "subtitle": "Stylised anime output" },
@@ -126,11 +126,11 @@ Example generation body json:
 
   validPresetStyleItems () {
     return [
+      { "value": "DYNAMIC",            "label": "Dynamic",     "subtitle": "High-energy, vivid colors" },
       { "value": "NONE",               "label": "None",        "subtitle": "Default, no stylistic bias" },
       { "value": "LEONARDO",           "label": "Leonardo",    "subtitle": "Balanced house visual style" },
       { "value": "ANIME",              "label": "Anime",       "subtitle": "Manga-inspired cel shading" },
       { "value": "CREATIVE",           "label": "Creative",    "subtitle": "Looser, experimental visuals" },
-      { "value": "DYNAMIC",            "label": "Dynamic",     "subtitle": "High-energy, vivid colors" },
       { "value": "ENVIRONMENT",        "label": "Environment", "subtitle": "Scenic landscapes emphasis" },
       { "value": "GENERAL",            "label": "General",     "subtitle": "Versatile all-purpose look" },
       { "value": "ILLUSTRATION",       "label": "Illustration","subtitle": "Painterly 2D artwork feel" },
@@ -168,7 +168,7 @@ Example generation body json:
      * @category Input
      */
     {
-      const slot = this.newSlot("prompt", "cat on a beach");
+      const slot = this.newSlot("prompt", "Barbarian fighting a red dragon. Frank Frazetta paintingstyle.");
       slot.setInspectorPath("")
       //slot.setLabel("prompt")
       slot.setShouldStoreSlot(true)
@@ -202,7 +202,7 @@ Example generation body json:
       const validItems = this.validPresetStyleItems();
       const slot = this.newSlot("presetStyle", null);
       slot.setInspectorPath("");
-      slot.setLabel("preset style");
+      slot.setLabel("Preset Style");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -220,7 +220,7 @@ Example generation body json:
     {
       const slot = this.newSlot("imageCount", 1);
       slot.setInspectorPath("")
-      slot.setLabel("image count")
+      slot.setLabel("Image Count")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -240,7 +240,7 @@ Example generation body json:
       const validValues = [512, 1024];
       const slot = this.newSlot("imageWidth", null);
       slot.setInspectorPath("");
-      slot.setLabel("image width");
+      slot.setLabel("Image Width");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -259,13 +259,35 @@ Example generation body json:
       const validValues = [512, 1024];
       const slot = this.newSlot("imageHeight", null);
       slot.setInspectorPath("");
-      slot.setLabel("image height");
+      slot.setLabel("Image Height");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Number");
       slot.setValidValues(validValues);
       slot.setInitValue(validValues.first());
+      slot.setIsSubnodeField(true);
+    }
+
+    // inference steps
+    // guidance scale
+    // seed
+
+    /**
+     * @member {number} inferenceSteps
+     * @description The number of inference steps to use for image generation.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("inferenceSteps", 30);
+      slot.setInspectorPath("");
+      slot.setLabel("Inference Steps");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setValidValues([10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]);
+      slot.setInitValue(30);
       slot.setIsSubnodeField(true);
     }
 
@@ -414,8 +436,8 @@ Example generation body json:
    * @returns {boolean} True if generation can be performed, false otherwise.
    * @category Validation
    */
-  canGenerate () {
-    return !this.xhr().isActive() && this.hasPrompt();
+  canGenerate () {   
+    return !this.xhrRequest().isActive() && this.hasPrompt();
   }
 
   /**

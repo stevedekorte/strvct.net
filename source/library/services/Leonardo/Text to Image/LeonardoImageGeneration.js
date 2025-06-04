@@ -299,6 +299,15 @@
   }
   
 
+  clear (){
+    this.setPollCount(0);
+    this.setIsPolling(false);
+    this.xhrRequest().abort();
+    this.xhrRequest().clear();
+    this.setError("");
+    this.setStatus("");
+  }
+
   /**
    * @description Starts the image generation process.
    * @category Process
@@ -308,6 +317,8 @@
     assert(!this.isPolling(), "already polling");
     assert(this.generationId(), "generationId is required");
 
+    this.clear();
+    this.setPollCount(0);
     this.setIsPolling(true);
     this.setXhrRequest(SvXhrRequest.clone());
     this.setError("");
