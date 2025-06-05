@@ -31,7 +31,6 @@
          * @member {LeonardoService} leonardoService
          * @category AI Service
          */
-
         {
             const slot = this.newSlot("leonardoService", null);
             slot.setShouldStoreSlot(true);
@@ -44,6 +43,7 @@
          * @member {AnthropicService} anthropicService
          * @category AI Service
          */
+        
         {
             const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);
@@ -182,18 +182,20 @@
         }
     }
 
-    /**
-     * @description Initializes the Services instance.
-     * @returns {Services} The initialized Services instance.
-     * @category Initialization
-     */
-    init () {
-        super.init()
+    initPrototype () {
         this.setTitle("Services");
         this.setNodeCanReorderSubnodes(false);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
-        return this;
+
+        if (this.isPrototype()) {
+            this.slotNamed("leonardoService").setShouldStoreSlot(true).setupSetter();
+        }
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.thisPrototype().initPrototype();
     }
 
     /**

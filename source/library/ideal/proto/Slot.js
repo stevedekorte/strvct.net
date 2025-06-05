@@ -844,7 +844,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 // ok to copy this
             //} else if (!Type.isDeepJsonType(value)) {
             } else {
-                value = Type.deepCopyForValue(value);
+                if (Type.isDeepJsonType(value)) {
+                    value = Type.deepCopyForValue(value);
+                } else {
+                    // we'll use the value - but this may be dangerous!
+                    debugger;
+                }
             }
             
             this[privateName] = value;
@@ -964,6 +969,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             }
             //Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter());
         }
+        return this;
     }
 
     /**

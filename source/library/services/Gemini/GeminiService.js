@@ -7,28 +7,11 @@
 /**
  * @class GeminiService
  * @extends AiService
- * @classdesc GeminiService is a SvSummaryNode that holds the API key and subnodes for the various Groq services.
+ * @classdesc GeminiService manages classes related to the Google Gemini and Vertex AI APIs.
  * 
- * REST:
- * 
- * POST https://{location id}-aiplatform.googleapis.com/v1/projects/{project id}/locations/{location id}/publishers/google/models/{model id}:{generate response method}
- * 
- * Example:
- * 
- * GeminiService.shared().setApiKey("sk-1234567890");
- * const hasApiKey = GeminiService.shared().hasApiKey();
- * 
- * Models:
- * 
- *     Model ID: gemini-1.5-pro
- *     Max total tokens (input and output): 1M
- *     Max output tokens: 8,192
- * 
- *     Model ID: gemini-1.0-pro
- *     Max total tokens (input and output): 32,760
- *     Max output tokens: 8,192
  */
-(class GeminiService extends AiService {
+
+(class GeminiService extends AiService { 
 
   /**
    * @static
@@ -95,6 +78,7 @@
      */
     {
       const slot = this.newSlot("projectId", null);
+      slot.setAllowsNullValue(true);
       slot.setSlotType("String");
       slot.setShouldStoreSlot(true);
     }
@@ -105,6 +89,7 @@
      */
     {
       const slot = this.newSlot("locationId", null);
+      slot.setAllowsNullValue(true);
       slot.setSlotType("String");
       slot.setShouldStoreSlot(true);
     }

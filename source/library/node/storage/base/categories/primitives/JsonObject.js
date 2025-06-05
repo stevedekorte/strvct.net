@@ -4,18 +4,43 @@
  * @extends Object
  * @classdesc A bit of a hack to deal with slots containing JSON objects.
  * 
- * This solution to JSON storage runs into problems such as:
- * - dealing with shouldStore()
- * and might better be handled at the slot level.
+ * Serializing:
+ * ObjectPool will test to see if the object is a JSON object, and if so, will call:
+ * record = JsonObject.instanceForObject(anObject).recordForStore(aStore);
+ * 
+ * Unserializing:
+ * ObjectPool will call instanceFromRecordInStore() which will return a JSON object.
+ * 
+ * NOTES:
+ * We need to deal with special ivars like _mutationObservers and _puuid.
+ * - we don't want to store them in the JSON string.
+ * - we need to make sure those properties are not enumerable so they don't corrupt collections like Sets, Maps, Dictionaries, Arrays, etc.
+ * 
  */
 
 "use strict";
 
-
 (class JsonObject extends ProtoClass {
 
+    static objectIsJson (anObject) {
+        return Type.isDeepJsonType(anObject);
+    }
+
+    static instanceForObject (anObject) {
+        const instance = new this();
+        instance.setJsonString(JSON.stringify(anObject));
+        return instance;
+    }
+
+    static instanceFromRecordInStore (aRecord, aStore) {
+        // this is just a hack to deal with JSON objects
+        const instance = JSON.parse(aRecord.jsonString);
+        return instance;
+    }
+
     initPrototypeSlots () {
-        this.addSlot("jsonValue", null);
+        const slot = this.newSlot("jsonString", null);
+        slot.setSlotType("string");
     }
 
     /**
@@ -26,8 +51,7 @@
      * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
-        const jsonValue = JSON.parse(aRecord.jsonString);
-        this.setJsonString(jsonValue);
+        // instance is already loaded by instanceFromRecordInStore()
         return this;
     }
 
@@ -87,4 +111,4 @@
         return true;
     }
     
-}).initThisCategory();
+}).initThisClass();

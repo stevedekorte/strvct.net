@@ -100,6 +100,10 @@
      * @category Observers
      */
     addMutationObserver (anObserver) {
+        if (this.isDirectObject()) {
+            // no support for mutation observers on JSON objects... yet.
+            return this
+        }
         this.mutationObservers().add(anObserver);
         return this;
     }

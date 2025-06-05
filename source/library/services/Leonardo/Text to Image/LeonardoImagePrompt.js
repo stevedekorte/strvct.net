@@ -269,9 +269,62 @@ Example generation body json:
       slot.setIsSubnodeField(true);
     }
 
-    // inference steps
-    // guidance scale
-    // seed
+      // ultra upscale
+
+    /**
+     * @member {boolean} ultraUpscale
+     * @description Whether to use ultra upscale for image generation.
+     * @category Configuration
+     */
+    /*
+    {
+      const slot = this.newSlot("ultraUpscale", true);
+      slot.setInspectorPath("");
+      slot.setLabel("Ultra Upscale");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+    }
+    */
+
+    /**
+     * @member {string} enhancePrompt
+     * @description The enhance prompt for image generation.
+     * @category Configuration
+     */
+    /*
+    {
+      const slot = this.newSlot("enhancePrompt", false);   
+      slot.setInspectorPath("");
+      slot.setLabel("Enhance Prompt");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+    }
+    */
+
+    /**
+     * @member {boolean} alchemy
+     * @description Whether to use alchemy for image generation.
+     * @category Configuration
+     */
+    /*
+    {
+      const slot = this.newSlot("alchemy", true);
+      slot.setInspectorPath("");
+      slot.setLabel("Alchemy");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setInitValue(true);
+      slot.setIsSubnodeField(true);
+    }
+      */
 
     /**
      * @member {number} inferenceSteps
@@ -484,7 +537,11 @@ Example generation body json:
       presetStyle: this.presetStyle(),
       width: this.imageWidth(),
       height: this.imageHeight(),
-      num_images: this.imageCount()
+      num_images: this.imageCount(),
+      //alchemy: this.alchemy(), // didn't work well with Frazetta
+      num_inference_steps: this.inferenceSteps()
+      //ultra: this.ultraUpscale(), // not supported on Kino XL
+      //enhancePrompt: this.enhancePrompt()
     }
 
     /*

@@ -25,7 +25,19 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Object|null} The created instance or null if shouldStore is false.
      * @category Initialization
      */
-    static instanceFromRecordInStore (/*aRecord, aStore*/) {
+    static instanceFromRecordInStoreForObject (aRecord, aStore) {
+        // special case for direct instances of Object
+        const instance = JSON.parse(aRecord.jsonString);
+        return instance;
+    }
+    
+
+    static instanceFromRecordInStore (aRecord, aStore) {
+
+        if (aRecord.type === "Object") {
+            return this.instanceFromRecordInStoreForObject(aRecord, aStore);
+        }
+
         if(!this.shouldStore()) {
             console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
             return null;
@@ -46,12 +58,20 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
+        // we assume that instances of Object (but not subclasses of Object) are JSON objects
+        // and they will already be loaded via instanceFromRecordInStore()
+        /*
         aRecord.entries.forEach((entry) => {
             const k = entry[0];
             const v = entry[1];
             this[k] = aStore.unrefValue(v);
         });
+        */ 
         return this;
+    }
+
+    isDirectObject () {
+        return Object.getPrototypeOf(this) === Object.prototype;
     }
 
     /**
@@ -63,31 +83,43 @@ Object.defineSlots(typedArrayClass.prototype, {
     recordForStore (aStore) {
         // NOTES: this is (typically) only for dictionaries, not for objects.
         // generic storage of (non ProtoClass subclass) objects is not supported.
-        
-        assert(this.shouldStore());
+        const isDirectObject =this.isDirectObject();
+        assert(isDirectObject, "Object_store.recordForStore() called with a non direct Object instance");
+        //assert(this.shouldStore(), "Object_store.recordForStore() called with an object that shouldStore is false");
 
         // Any ProtoClass subclass will not call this method as it will use the ProtoClass_store.recordForStore method.
         // We just need to handle dictionaries here i.e.JSON dictionaries.
         // which *might* overide the type property.
 
-        // QUESTION: why would shouldStore be true for a dictionary?
+        assert(Type.isDeepJsonType(this), "Object_store.recordForStore() on direct Object instance that is not a deep JSON object");
 
+        return {
+            type: "Object", 
+            jsonString: JSON.stableStringify(this) // so we can avoid duplicate writes (if the persistent store checks if the value has changed)
+        };
+
+/*
         let type = "Object";
 
-        if (Type.isFunction(this.type)) {
+        if (Type.isFunction(this.type)) { // if we have a type method, use it to get the type
             type = this.type();
         }
 
-        if (Type.isDictionary(this)) { // Hack to deal with Json
-            debugger;
-            //return JsonObject.clone().setJson(this).recordForStore(aStore);
+        // Arrays, Maps, and Sets already support recordForStore() ,
+        // but we typically want to handle Object instances (but not subclasses of Object) as JSON when possible.
+        if (type === "Object" && JsonObject.objectIsJson(this)) { // Hack to deal with Json
+            const jsonObject = JsonObject.instanceForObject(this);
+            return jsonObject.recordForStore(aStore);
         }
 
         const entries = [];
 
         Object.keys(this).forEach((k) => {
-            const v = this[k];
-            entries.push([k, aStore.refValue(v)]);
+            const hiddenKeys = new Set(["_mutationObservers", "_puuid"]);
+            if (!hiddenKeys.has(k)) {
+                const v = this[k];
+                entries.push([k, aStore.refValue(v)]);
+            }
         });
 
         // need to special case objects as they can also be used as JSON dictionaries.
@@ -97,6 +129,7 @@ Object.defineSlots(typedArrayClass.prototype, {
             type: type, 
             entries: entries, 
         };
+        */
     }
 
     /**

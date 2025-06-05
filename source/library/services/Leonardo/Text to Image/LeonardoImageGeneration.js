@@ -93,6 +93,7 @@
     {
       const slot = this.newSlot("isPolling", false);
       slot.setSlotType("Boolean");
+      slot.setCanEditInspection(false);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnodeField(true);
     }
@@ -105,6 +106,7 @@
     {
       const slot = this.newSlot("pollCount", 0);
       slot.setSlotType("Number");
+      slot.setCanEditInspection(false);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnodeField(true);
     }
@@ -117,6 +119,7 @@
     {
       const slot = this.newSlot("maxPollCount", 30);
       slot.setSlotType("Number");
+      slot.setCanEditInspection(false);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnodeField(true);
     }
@@ -129,6 +132,7 @@
     {
       const slot = this.newSlot("pollIntervalSeconds", 2); // just for the generation response, images take longer
       slot.setSlotType("Number");
+      slot.setCanEditInspection(false);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnodeField(true);
     }
@@ -229,7 +233,8 @@
    * @category Metadata
    */
   subtitle () {
-    return [this.generationId(), this.status()].join("\n");
+    return this.status();
+    //return [this.generationId(), this.status()].join("\n");
   }
 
   /**
@@ -379,13 +384,14 @@
 
     const status = this.apiPollStatus();
 
-    this.setStatus("Generation " + status);
+    this.setStatus(status.toLowerCase());
 
     if (status === "COMPLETE") {
       this.setIsPolling(false);
+      this.setStatus("loading images...");
       this.spawnImageNodes();
     } else if (status === "FAILED") {
-      this.onError("Generation failed");
+      this.onError("failed");
     } else if (json.error) {
       this.onError(json.error);
     } else if (status === "PENDING" || status === "STARTED") {
@@ -461,7 +467,7 @@
   updateStatus () {
     const allImagesLoaded = this.images().subnodes().every(image => image.isLoaded());
     if (allImagesLoaded) {
-      this.setStatus("Generation complete");
+      this.setStatus("complete");
     } else {
       // N of M images loaded
       const n = this.images().subnodes().filter(image => image.isLoaded()).length;

@@ -526,9 +526,12 @@
      */
     addActiveObject (anObject) {
         assert(!anObject.isClass());
+
+        /*
         if (Type.isDictionary(anObject)) {
             debugger;
         }
+        */
         /*
         if (anObject.type() === "Error") {
             debugger;
@@ -536,7 +539,19 @@
         }
         */
 
-        if (anObject.type() === "PersistentObjectPool") {
+        /*
+        if (Type.typeName(anObject).startsWith("Services")) {
+            console.log("addActiveObject() called with Services");
+            debugger;
+        }
+
+        if (Type.typeName(anObject).startsWith("Leonardo")) {
+            console.log("addActiveObject() called with Leonardo*");
+            debugger;
+        }
+        */
+
+        if (Type.typeName(anObject) === "PersistentObjectPool") {
             console.log("addActiveObject() called with PersistentObjectPool");
             debugger;
             return false;
@@ -556,8 +571,6 @@
             anObject.isKindOf(ProtoClass);
             throw new Error(msg);
         }
-
-        //debugger;
 
         if (!this.hasActiveObject(anObject)) {
             //const title = anObject.title ? anObject.title() : "-";
@@ -854,6 +867,19 @@
 
         const aClass = this.classForName(className);
 
+        /*
+        if (className.startsWith("Leonardo")) {
+            console.log("objectForRecord() called with Leonardo*");
+            debugger;
+        }
+
+
+        if (className.startsWith("Anthropic")) {
+            console.log("objectForRecord() called with Leonardo*");
+            debugger;
+        }
+        */
+
         if (!aClass) {
             const error = "missing class '" + className + "'";
             console.warn(error);
@@ -876,7 +902,7 @@
             return null;
         }
 
-        assert(!this.hasActiveObject(obj));
+        assert(!this.hasActiveObject(obj)); // if it's already active in memory, we shouldn't be asking for it's record to load it into memory
         obj.setPuuid(aRecord.id);
         this.addActiveObject(obj);
         if (obj.puuid() === this.rootPid()) {
@@ -1071,6 +1097,19 @@
      * @returns {Object}
      */
     refValue (v) {
+
+        /*
+        if (Type.typeName(v).startsWith("Services")) {
+            console.log("refValue() called with Services");
+            debugger;
+        }
+
+        if (Type.typeName(v).startsWith("Leonardo")) {
+            console.log("refValue() called with Leonardo*");
+            debugger;
+        }
+            */
+
         assert(!Type.isPromise(v));
 
         if (Type.isLiteral(v)) {
@@ -1130,9 +1169,11 @@
      * @returns {Object}
      */
     storeObject (obj) {
+        /*
         if (Type.isDictionary(obj)) {
             debugger;
         }
+        */
         
         // --- sanity checks ---
         assert(obj.shouldStore(), "object " + obj.type() + " shouldStore is false");
@@ -1159,7 +1200,6 @@
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);
             //this.debugLog(() => "store " + puuid + " <- " + record.type )
-
 
             {
                 // sanity checks

@@ -107,7 +107,6 @@
       slot.setFinalInitProto(AiChatModels);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
-      slot.setSlotType("AiChatModels");
     }
 
     /**
@@ -119,7 +118,6 @@
       slot.setFinalInitProto(AiConversations);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
-      slot.setSlotType("AiConversations");
     }
 
 
@@ -130,6 +128,9 @@
       slot.setShouldStoreSlot(false);
     }
 
+  }
+
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }

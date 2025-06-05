@@ -75,7 +75,7 @@
     {
       const slot = this.newSlot("xhr", null);
       slot.setSlotType("XMLHttpRequest");
-      slot.setShouldStoreSlot(true);
+      slot.setShouldStoreSlot(false);
     }
 
     /**

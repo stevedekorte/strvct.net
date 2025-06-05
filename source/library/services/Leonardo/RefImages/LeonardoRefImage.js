@@ -143,7 +143,9 @@
     {
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Delegate");
-      slot.setIsSubnodeField(true);
+      //slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+
     }
   }
 

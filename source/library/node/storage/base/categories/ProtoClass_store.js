@@ -8,6 +8,29 @@
 
 (class ProtoClass_store extends ProtoClass {
 
+
+    /**
+     * @static
+     * @description Creates an instance from a record in the store. Should only be called by Store.
+     * @param {Object} aRecord - The record to create the instance from.
+     * @param {Object} aStore - The store object.
+     * @returns {Object|null} The created instance or null if shouldStore is false.
+     * @category Initialization
+     */
+    static instanceFromRecordInStore (aRecord, aStore) {
+
+        if(!this.shouldStore()) {
+            console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
+            return null;
+        }
+
+        //debugger;
+        const instance = this.preClone ? this.preClone() : new this();
+        instance.init();
+        // caller needs to call finalInit and afterInit
+        return instance;
+    }
+
     /**
      * @description Creates a record for storing the object's data
      * @param {Object} aStore - The store object
@@ -17,19 +40,28 @@
     recordForStore (aStore) { // should only be called by Store
         const aRecord = {
             type: this.type(), 
-            entries: [], 
+            entries: []
         };
 
-        this.allSlotsMap().forEachKV((slotName, slot) => {
-        //this.forEachSlotKV((slotName, slot) => {
+        /*
+        if (Type.typeName(this).startsWith("Services")) {
+            console.log("recordForStore() called with Services*");
+            debugger;
+        }
 
-            //if (slot.shouldStoreSlot()) {
+        if (Type.typeName(this).startsWith("Leonardo")) {
+            console.log("recordForStore() called with Leonardo*");
+            debugger;
+        }
+            */
+
+        this.allSlotsMap().forEachKV((slotName, slot) => {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this);
                 if (Type.isPromise(v)) {
                     throw new Error(this.type() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
                 }
-                //assert(!Type.isUndefined(v));
+                assert(!Type.isUndefined(v), this.type() + " slot '" + slotName + "' is set to shouldStore, but is undefined");
 
                 let valueToRecord;
                 if (slot.slotType() === "JSON Object") {
@@ -37,6 +69,12 @@
                 } else {
                     valueToRecord = aStore.refValue(v);
                 }
+
+                if (slotName === "leonardoService") {
+                    console.log("recordForStore() called with leonardoService");
+                    debugger;
+                }
+
                 aRecord.entries.push([slotName, valueToRecord]);
 
             }

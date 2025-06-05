@@ -47,15 +47,39 @@
     {
       const slot = this.newSlot("imagesPrompts", null);
       slot.setFinalInitProto(LeonardoImagePrompts);
+      slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
+
+    /**
+     * @member {LeonardoRefImages} refImages
+     * @category Ref Images
+     */
 
     {
       const slot = this.newSlot("refImages", null);
       slot.setFinalInitProto(LeonardoRefImages);
+      slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
 
+    /*
+    {
+      const slot = this.overrideSlot("conversations", null);
+      slot.setIsVisible(true);
+    }
+
+    {
+      const slot = this.overrideSlot("models", null);
+      slot.setIsVisible(true);
+    }
+    */
+
+  }
+
+  initPrototype () {
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
   }
 
   /**
@@ -65,6 +89,10 @@
   finalInit () {
     super.finalInit();
     this.setTitle("Leonardo.ai");
+    this.initPrototype();
+
+    this.conversations().setIsVisible(false);
+    this.models().setIsVisible(false);
   }
 
   /**
@@ -74,7 +102,7 @@
    * @category Authentication
    */
   validateKey (s) {
-    return s.length === 51 && s.startsWith("sk-");
+    return true;
   }
   
 }.initThisClass());
