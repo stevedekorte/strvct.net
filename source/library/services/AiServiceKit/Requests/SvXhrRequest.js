@@ -228,11 +228,14 @@
     this.setIsDebugging(false);
     this.setRequestId(this.puuid());
     this.setRequestOptions({});
-    this.setTitle("Request");
     this.setIsDebugging(true);
-    this.setTitle("XHR Request");
   }
 
+
+  finalInit () {
+    super.finalInit();
+    this.setTitle("XHR Request");
+  }
 
   // --- request options helpers ---
 

@@ -57,6 +57,7 @@
             which we respond to and use to call setValue
         */
         const imageWellView = ImageWellView.clone();
+        //imageWellView.setDelegate(this);
         //imageWellView.setWidth("100%").setHeight("fit-content");
         return imageWellView;
     }
@@ -89,6 +90,7 @@
         
         this.applyStyles(); // normally this would happen in updateSubviews
         this.imageWellView().setImageDataUrl(field.value());
+
         this.imageWellView().setIsEditable(field.valueIsEditable());
 
         // Hide the value view if we're still generating (showing dots in key)

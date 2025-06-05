@@ -53,6 +53,7 @@
      */
     {
       const slot = this.newSlot("dataUrl", null);
+      slot.setCanEditInspection(true);
       slot.setShouldJsonArchive(true);
       slot.setInspectorPath("");
       slot.setLabel("image");
@@ -61,7 +62,6 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
       slot.setFieldInspectorViewClassName("SvImageWellField"); // field inspector view class
     }
 
@@ -77,10 +77,28 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("JSON Object");
+      slot.setIsSubnodeField(false);
+      slot.setCanEditInspection(false);
+    }
+
+    // special field for the init image id
+    // we'll override the initImageId() method to return the id from the initImageDict()
+    {
+      const slot = this.newSlot("initImageId", null);
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @member {SvXhrRequest} xhrRequest - The XHR request for the image.
+     * @category Networking
+     */
     {
       const slot = this.newSlot("xhrRequest", null);
       slot.setShouldJsonArchive(true);
@@ -89,7 +107,7 @@
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setSlotType("SvXhrRequest");
-      slot.setIsSubnodeField(true)
+      slot.setIsSubnodeField(false)
       slot.setCanEditInspection(false)
     }
 
@@ -159,6 +177,14 @@
     this.setCanDelete(true);
     this.setNodeFillsRemainingWidth(true);
   }
+
+  /*
+  setDataUrl (dataUrl) {
+    debugger;
+    this._dataUrl = dataUrl;
+    return this;
+  }
+  */
 
   /**
    * @description Gets the subtitle for the image.
@@ -262,7 +288,7 @@
 
     const xhr = new SvXhrRequest();
     this.setXhrRequest(xhr);
-    xhr.setEndpoint(url);
+    xhr.setEndpoint(proxyInitUrl);
     xhr.setMethod("POST");
     xhr.setHeaders({
       "Authorization": `Bearer ` + apiKey,

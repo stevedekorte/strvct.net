@@ -724,7 +724,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
             if (proto) {
                 const field = proto.clone();
-
                 field.setKey(this.name());
                 field.setKeyIsEditable(false);
                 field.setValueMethod(this.name());
@@ -848,7 +847,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     value = Type.deepCopyForValue(value);
                 } else {
                     // we'll use the value - but this may be dangerous!
-                    debugger;
+                    if (!Type.isUndefined(value)) {
+                        debugger;
+                    }
                 }
             }
             

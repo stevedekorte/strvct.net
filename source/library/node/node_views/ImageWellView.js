@@ -75,6 +75,7 @@
         if (this.imageView() && this.node()) {
             this.node().setDataUrl(this.imageView().dataURL()); // untested
         }
+        debugger;
         this.tellParentViews("didUpdateImageWellView", this);
         return this;
     }
@@ -136,8 +137,8 @@
      * @category Drag and Drop
      */
     acceptsDrop (event) {
-        return true;
-        //return this.isEditable();     
+        //return true;
+        return this.isEditable();     
     }
 
     /*
