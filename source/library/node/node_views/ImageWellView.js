@@ -75,7 +75,6 @@
         if (this.imageView() && this.node()) {
             this.node().setDataUrl(this.imageView().dataURL()); // untested
         }
-        debugger;
         this.tellParentViews("didUpdateImageWellView", this);
         return this;
     }

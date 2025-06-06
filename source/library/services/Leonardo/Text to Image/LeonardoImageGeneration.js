@@ -388,7 +388,6 @@
 
     if (status === "COMPLETE") {
       this.setIsPolling(false);
-      this.setStatus("loading images...");
       this.spawnImageNodes();
     } else if (status === "FAILED") {
       this.onError("failed");
@@ -402,6 +401,8 @@
   }
 
   async spawnImageNodes () {
+    this.setStatus("loading images...");
+
   /*
     {
       "generations_by_pk": {

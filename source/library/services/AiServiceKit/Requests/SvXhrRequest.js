@@ -834,6 +834,17 @@
 
   /**
    * @category XHR
+   * @description Returns true if the request is successful
+   * @returns {boolean}
+   */
+  isSuccess () {
+    const isStatusCodeSuccess = this.xhr().status >= 200 && this.xhr().status < 300;
+    const isReadyStateSuccess = this.xhr().readyState === 4;
+    return isStatusCodeSuccess && isReadyStateSuccess;
+  }
+
+  /**
+   * @category XHR
    * @description Returns true if the request is active
    * @returns {boolean}
    */

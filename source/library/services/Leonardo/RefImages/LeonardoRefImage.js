@@ -116,16 +116,32 @@
      * @category Actions
      */
     {
-      const slot = this.newSlot("uploadAction", null);
+      const slot = this.newSlot("getInitImageIdAction", null);
       slot.setInspectorPath("");
-      slot.setLabel("Upload");
+      slot.setLabel("Get Init Image ID");
       //slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
       slot.setIsSubnodeField(true);
-      slot.setActionMethodName("upload");
+      slot.setActionMethodName("getInitImageId");
     }
+
+        /**
+     * @member {Action} fetchAction - The action to fetch the image.
+     * @category Actions
+     */
+        {
+          const slot = this.newSlot("uploadInitImageToS3Action", null);
+          slot.setInspectorPath("");
+          slot.setLabel("Upload");
+          //slot.setShouldStoreSlot(true)
+          slot.setSyncsToView(true);
+          slot.setDuplicateOp("duplicate");
+          slot.setSlotType("Action");
+          slot.setIsSubnodeField(true);
+          slot.setActionMethodName("uploadInitImageToS3");
+        }
 
     /**
      * @member {string} error - Error message if any.
@@ -220,12 +236,12 @@
   }
 
   /**
-   * @description Checks if the image can be fetched.
-   * @returns {boolean} True if the image can be fetched, false otherwise.
+   * @description Checks if the image can be uploaded to S3.
+   * @returns {boolean} True if the image can be uploaded to S3, false otherwise.
    * @category Actions
    */
-  canUpload () {
-    return Type.isString(this.dataUrl()) && this.dataUrl().length > 0 && this.initImageId() === null;
+  canUploadInitImageToS3 () {
+    return Type.isString(this.dataUrl()) && this.dataUrl().length > 0 && this.initImageId() !== null;
   }
 
   /**
@@ -233,9 +249,9 @@
    * @returns {Object} An object containing fetch action information.
    * @category Actions
    */
-  uploadActionInfo () {
+  uploadInitImageToS3ActionInfo () {
     return {
-        isEnabled: this.canUpload(),
+        isEnabled: this.canUploadInitImageToS3(),
         //title: this.title(),
         isVisible: true
     };
@@ -251,7 +267,7 @@
   }
 
 
-  async asynInitRequestBody () {
+  async asynInitRequestBodyJson () {
     const dataUrl = this.dataUrl();
     return new Promise((resolve, reject) => {
       const m = dataUrl.match(/^data:([^;,]+)?(?:;[^,]+)?,/);
@@ -263,12 +279,18 @@
   
       const img = new Image();
       img.onload  = () =>
-        resolve({ extension: ext || "bin", width: img.naturalWidth, height: img.naturalHeight });
+        resolve({ extension: ext || "bin" });
+      //resolve({ extension: ext || "bin", width: img.naturalWidth, height: img.naturalHeight });
       img.onerror = () => reject(new Error("Image failed to load"));
       img.src = dataUrl;
     });
   }
 
+
+  async getIdAndUpload () {
+    await this.getInitImageId();
+    await this.uploadInitImageToS3();
+  }
 
   /**
    * @description Fetches the image.
@@ -280,28 +302,44 @@
     await this.uploadInitImageToS3();
   }
 
-  async getInitImageId () {
+  canGetInitImageId () {
+    return Type.isString(this.dataUrl()) && this.dataUrl().length > 0 && this.initImageId() === null;
+  }
 
-    const initUrl = "/init-image";
+  getInitImageIdActionInfo () {
+    return {
+      isEnabled: this.canGetInitImageId(),
+      isVisible: true
+    };
+  }
+
+  async getInitImageId () {
+    this.setStatus("getting init image id...");
+
+    const initUrl = "https://cloud.leonardo.ai/api/rest/v1/init-image";
     const proxyInitUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(initUrl);
     const apiKey = this.service().apiKeyOrUserAuthToken();
 
-    const xhr = new SvXhrRequest();
+    const xhr = SvXhrRequest.clone();
     this.setXhrRequest(xhr);
-    xhr.setEndpoint(proxyInitUrl);
+    xhr.setUrl(proxyInitUrl);
     xhr.setMethod("POST");
     xhr.setHeaders({
       "Authorization": `Bearer ` + apiKey,
       "Content-Type": "application/json"
     });
     xhr.setDelegate(this);
-    const body = await this.asynInitRequestBody();
-    xhr.setBody(body);
+    const bodyJson = await this.asynInitRequestBodyJson();
+    const bodyString = JSON.stringify(bodyJson);
+    xhr.setBody(bodyString);
     await xhr.asyncSend();
 
     if (xhr.isSuccess()) {
+      debugger;
       const json = JSON.parse(xhr.responseText());
-      this.initImageDict(json.uploadInitImage);
+
+      debugger;
+      this.setInitImageDict(json.uploadInitImage);
     } else {
       this.setError(xhr.responseText());
     }
@@ -316,11 +354,19 @@
     }
   }
 
+
   async uploadInitImageToS3() {
-    //{ dataUrl, presigned }
+    this.setStatus("uploading image to S3...");
+
+    debugger;
     const initImageDict = this.initImageDict();
+    // hack to deal with storage bug
+    if (Type.isString(initImageDict.fields)) {
+      initImageDict.fields = JSON.parse(initImageDict.fields);
+    }
+
     const dataUrl = this.dataUrl();
-    const presigned = { uploadUrl: initImageDict.uploadUrl, fields: initImageDict.fields };
+    const presigned = { uploadUrl: initImageDict.url, fields: initImageDict.fields };
 
     // presigned = { uploadUrl, fields } from POST /init-image
     // 1. Turn the data-URL into a Blob (raw bytes)
@@ -333,6 +379,9 @@
   
     // 3. POST it to S3
     const res = await fetch(presigned.uploadUrl, { method: "POST", body: form });
+
+    this.setStatus("uploaded image to S3");
+
     if (!res.ok) {
       this.setError(`S3 upload failed: ${res.status}`);
       this.setStatus("failed");
