@@ -474,6 +474,11 @@ class Type extends Object {
             value.__proto__ === BigInt.prototype;
     }
 
+    static isFormData (value) {
+        return !Type.isNull(value) && 
+        Type.isObject(value) && 
+        value.__proto__ === FormData.prototype; // should we use instanceof instead?
+    }
 
     /**
      * Checks if the given value is a Map.

@@ -12,7 +12,6 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-
     }
 
     /**
@@ -21,11 +20,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-
-        this.makeNoteRightArrow()
-		
-        return this
+        super.init();
+        this.makeNoteRightArrow();
+        return this;
     }
 
     /**
@@ -34,19 +31,19 @@
      * @category UI Update
      */
     updateSubviews () {	
-        super.updateSubviews()
+        super.updateSubviews();
 		
-        let node = this.node()
+        //let node = this.node()
 
         if (this.isSelected()) {
-            this.noteView().setOpacity(1)	
+            this.noteView().setOpacity(1);
         } else {
-            this.noteView().setOpacity(0.4)	
+            this.noteView().setOpacity(0.4);
         }
 
-        this.applyStyles()
+        this.applyStyles();
 		
-        return this
+        return this;
     }
     
 }.initThisClass());

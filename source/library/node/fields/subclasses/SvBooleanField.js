@@ -93,10 +93,10 @@
      * @category Data Processing
      */
     normalizeThisValue (v) {
-	    if (v === true || v === "t" || v === "true" | v === 1) { 
+        if (v === true || v === "t" || v === "true" || v === 1) { 
             return true; 
         }
-	    return false;
+        return false;
     }
 	
     /**

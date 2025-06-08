@@ -2,6 +2,7 @@
     "SvActionField.js",
     "SvBooleanField.js",
     "SvColorField.js",
+    "SvDateField.js",
     "SvIdentityField.js",
     "SvImageWellField.js",
     "SvNumberField.js",

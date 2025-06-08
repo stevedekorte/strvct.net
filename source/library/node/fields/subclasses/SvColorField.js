@@ -101,7 +101,7 @@
      * @returns {SvColorField} The current instance for method chaining.
      * @category Conversion
      */
-    fromCssColor (aCssColor) {
+    fromCssColor (/*aCssColor*/) {
         return this
     }
     

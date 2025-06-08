@@ -43,7 +43,6 @@
          * @member {AnthropicService} anthropicService
          * @category AI Service
          */
-        
         {
             const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);
@@ -196,6 +195,11 @@
     finalInit () {
         super.finalInit();
         this.thisPrototype().initPrototype();
+        this.scheduleMethod("markAsMutated", 1000);
+    }
+
+    markAsMutated () {
+        this.defaultStore().onDidMutateObject(this);
     }
 
     /**

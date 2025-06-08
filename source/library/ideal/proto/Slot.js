@@ -716,6 +716,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             const fieldName = this.fieldInspectorViewClassName();
             let proto = getGlobalThis()[fieldName];
 
+            /*
+            if (fieldName.includes("Date")) {
+                debugger;
+            }
+            */
+            
             if (!proto) {
                 //let nodeName = "Sv" + slotType + "Node";
                 const nodeName = "SvPointerField";

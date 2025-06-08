@@ -275,7 +275,7 @@
    */
   setHeaders (headers) {
     assert(Type.isDictionary(headers) && Type.isDeepJsonType(headers));
-    this.requestOptions().headers = headers;
+    this.requestOptions().headers = headers; // replace them entirelly
     return this;
   }
 
@@ -289,7 +289,7 @@
    * @returns {SvXhrRequest}
    */
   setBody (body) {
-    assert(Type.isString(body));
+    assert(Type.isString(body) || Type.isFormData(body));
     this.requestOptions().body = body;
     return this;
   }
@@ -407,7 +407,8 @@
     assert(options, "requestOptions is required");
     assert(options.headers, "headers is required");
     assert(Type.isDictionary(options.headers), "headers must be a dictionary");
-    assert(Type.isString(options.body), "body must be a string");
+    const body = options.body;
+    assert(Type.isString(body) || Type.isFormData(body), "body must be a string");
   }
 
   async asyncSend () {
@@ -476,13 +477,15 @@
       }, event)
     });
 
-
     xhr.send(options.body);
 
     await this.xhrPromise(); // wait for the request to complete
-    //debugger;
-    if (this.hasError()) {
-      this.setStatus("Failed: " + this.error().message);
+
+    // only have a status error
+    if (this.hasErrorStatusCode() || this.error()) {
+      const m = JSON.stringify(this.readbleJsonState(), null, 2);
+      this.setError(new Error(m));
+      this.setStatus("Failed: " + m);
       this.sendDelegate("onRequestFailue", [this]);
     } else {
       this.setStatus("Succeeded");
@@ -504,8 +507,15 @@
     console.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
     */
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
-
     this.sendDelegate("onRequestProgress", [this]);
+  }
+
+  errorFromStatusCode () {
+    const xhr = this.xhr();
+    if (!xhr) {
+      return null;
+    }
+    return xhr.status;
   }
 
   hasError () {
@@ -518,6 +528,26 @@
       return false;
     }
     return xhr.status >= 300;
+  }
+
+  responseXmlError () {
+    const text = this.responseText();
+    try {
+      if (text.startsWith("<?xml")) {
+        if (text.includes("<Error>")) { // TODO: be more careful about response size...
+          // parse XML and extract error message
+          const xml = new DOMParser().parseFromString(text, "text/xml");
+          const errorMessage = xml.querySelector("Error").textContent;
+          if (errorMessage) {
+            return errorMessage;
+          }
+          return false;
+        }
+      }
+    } catch (error) {
+      // ignore
+    }
+    return null;
   }
 
   responseJsonError () {
@@ -554,9 +584,24 @@
 
       console.log(this.description());
 
-      const errorMessageInJson = this.responseJsonError();
-      if (errorMessageInJson) {
-        this.onXhrError(new Error(fullStatus + " json.error: " + errorMessageInJson));
+      // try to extract an error message from the response, if it has one
+
+      const xhr = this.xhr();
+      const contentType = xhr.getResponseHeader("Content-Type");
+      if (contentType.includes("application/json")) {
+        const errorMessageInJson = this.responseJsonError();
+        if (errorMessageInJson) {
+          const errorMessage = fullStatus + " json.error: " + errorMessageInJson;
+          this.onXhrError(new Error(errorMessage));
+        }
+      } else if (contentType.includes("text/xml")) {
+        const errorMessageInXml = this.responseXmlError();
+        if (errorMessageInXml) {
+          const errorMessage = fullStatus + " xml.error: " + errorMessageInXml;
+          this.onXhrError(new Error(errorMessage));
+        }
+      } else {
+        this.onXhrError(new Error(fullStatus));
       }
     }
 
@@ -655,10 +700,11 @@
    * @param {Error} e 
    */
   onXhrError (e) {
+    const msg = e.message;
     this.setError(e);
-    this.setStatus("ERROR: " + e.message);
+    this.setStatus("ERROR: " + msg);
     console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
-    debugger;
+    //debugger;
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {
@@ -710,6 +756,11 @@
       readableStatus: this.readableStatus(),
       statusText: xhr.statusText
     };
+
+    if (this.error()) {
+      json.error = this.error().message;
+    }
+
 
     if (xhr.responseText) {
       const maxLength = 1000;

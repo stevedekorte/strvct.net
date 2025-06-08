@@ -47,6 +47,17 @@
    */
   initPrototypeSlots () {
 
+    // add a hasUploaded slot
+    {
+      const slot = this.newSlot("hasUploaded", false);
+      slot.setSlotType("Boolean");
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+    } 
+  
     /**
      * @member {string} dataUrl - The URL of the generated image.
      * @category Image Data
@@ -95,6 +106,20 @@
       slot.setCanEditInspection(false);
     }
 
+    // need a slot for the date when the init image id was obtained
+    // as we only have 2 minutes to upload the image
+    {
+      const slot = this.newSlot("idObtainedDate", null);
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("Date");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
+
     /**
      * @member {SvXhrRequest} xhrRequest - The XHR request for the image.
      * @category Networking
@@ -127,21 +152,21 @@
       slot.setActionMethodName("getInitImageId");
     }
 
-        /**
-     * @member {Action} fetchAction - The action to fetch the image.
-     * @category Actions
-     */
-        {
-          const slot = this.newSlot("uploadInitImageToS3Action", null);
-          slot.setInspectorPath("");
-          slot.setLabel("Upload");
-          //slot.setShouldStoreSlot(true)
-          slot.setSyncsToView(true);
-          slot.setDuplicateOp("duplicate");
-          slot.setSlotType("Action");
-          slot.setIsSubnodeField(true);
-          slot.setActionMethodName("uploadInitImageToS3");
-        }
+    /**
+ * @member {Action} fetchAction - The action to fetch the image.
+ * @category Actions
+ */
+    {
+      const slot = this.newSlot("uploadInitImageToS3Action", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Upload");
+      //slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("uploadInitImageToS3");
+    }
 
     /**
      * @member {string} error - Error message if any.
@@ -154,7 +179,7 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      //slot.setIsSubnodeField(true);
+      slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
 
@@ -171,6 +196,18 @@
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+    }
+
+    {
+      const slot = this.newSlot("copyErrorToClipboardAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Copy Error to Clipboard");
+      //slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("copyErrorToClipboard");
     }
 
     // add a delegate slot
@@ -235,13 +272,21 @@
     return this.error() !== "" && this.error() !== null;
   }
 
+  hasDataUrl () {
+    return Type.isString(this.dataUrl()) && this.dataUrl().length > 0;
+  }
+
+  hasInitImageId () {
+    return this.initImageId() !== null;
+  }
+
   /**
    * @description Checks if the image can be uploaded to S3.
    * @returns {boolean} True if the image can be uploaded to S3, false otherwise.
    * @category Actions
    */
   canUploadInitImageToS3 () {
-    return Type.isString(this.dataUrl()) && this.dataUrl().length > 0 && this.initImageId() !== null;
+    return !this.uploadTimeIsExpired() && this.hasInitImageId() && this.hasDataUrl();
   }
 
   /**
@@ -302,8 +347,18 @@
     await this.uploadInitImageToS3();
   }
 
+  hasExpiredId () {
+    return this.idObtainedDate() === null || this.uploadTimeIsExpired();
+  }
+
   canGetInitImageId () {
-    return Type.isString(this.dataUrl()) && this.dataUrl().length > 0 && this.initImageId() === null;
+    if (!this.hasDataUrl()) {
+      return false;
+    } else if (this.hasExpiredId()) {
+      return true;
+    } else {
+      return this.initImageId() === null;
+    }
   }
 
   getInitImageIdActionInfo () {
@@ -313,34 +368,35 @@
     };
   }
 
+  proxyXhrForUrl (url, method, bodyString) {
+    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+    const xhr = SvXhrRequest.clone();
+    xhr.setUrl(proxyUrl);
+    xhr.setMethod(method);
+    xhr.setHeaders({
+      "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
+    });
+    xhr.setDelegate(this);
+    xhr.setBody(bodyString);
+    return xhr;
+  }
+
   async getInitImageId () {
     this.setStatus("getting init image id...");
 
     const initUrl = "https://cloud.leonardo.ai/api/rest/v1/init-image";
-    const proxyInitUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(initUrl);
-    const apiKey = this.service().apiKeyOrUserAuthToken();
-
-    const xhr = SvXhrRequest.clone();
-    this.setXhrRequest(xhr);
-    xhr.setUrl(proxyInitUrl);
-    xhr.setMethod("POST");
-    xhr.setHeaders({
-      "Authorization": `Bearer ` + apiKey,
-      "Content-Type": "application/json"
-    });
-    xhr.setDelegate(this);
     const bodyJson = await this.asynInitRequestBodyJson();
     const bodyString = JSON.stringify(bodyJson);
-    xhr.setBody(bodyString);
+    const xhr = this.proxyXhrForUrl(initUrl, "POST", bodyString);
     await xhr.asyncSend();
 
     if (xhr.isSuccess()) {
-      debugger;
       const json = JSON.parse(xhr.responseText());
-
-      debugger;
+      this.setStatus("got init image id");
       this.setInitImageDict(json.uploadInitImage);
+      this.setIdObtainedDate(new Date());
     } else {
+      this.setStatus("error getting init image id");
       this.setError(xhr.responseText());
     }
   }
@@ -354,22 +410,33 @@
     }
   }
 
+  uploadTimeIsExpired () {
+    const idObtainedDate = this.idObtainedDate();
+    if (!idObtainedDate) {
+      return false;
+    }
+    return idObtainedDate.getTime() + 2 * 60 * 1000 < Date.now();
+  }
 
-  async uploadInitImageToS3() {
+
+  async uploadInitImageToS3 () {
     this.setStatus("uploading image to S3...");
 
-    debugger;
+    //debugger;
     const initImageDict = this.initImageDict();
     // hack to deal with storage bug
     if (Type.isString(initImageDict.fields)) {
       initImageDict.fields = JSON.parse(initImageDict.fields);
     }
 
+    const url = initImageDict.url;
+    console.log("S3 URL: [" + url + "]");
+    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     const dataUrl = this.dataUrl();
-    const presigned = { uploadUrl: initImageDict.url, fields: initImageDict.fields };
+    const presigned = { uploadUrl: proxyUrl, fields: initImageDict.fields };
 
     // presigned = { uploadUrl, fields } from POST /init-image
-    // 1. Turn the data-URL into a Blob (raw bytes)
+    // 1. Turn the data-URL into a Blob (raw bytes) - no network request
     const blob = await (await fetch(dataUrl)).blob();      // keeps correct MIME type
   
     // 2. Build the multipart/form-data payload
@@ -377,16 +444,35 @@
     Object.entries(presigned.fields).forEach(([k, v]) => form.append(k, v));
     form.append("file", blob);  // the part name must be "file"
   
-    // 3. POST it to S3
-    const res = await fetch(presigned.uploadUrl, { method: "POST", body: form });
+        // 3. POST it to S3
+    //const res = await fetch(proxyUrl, { method: "POST", body: form });
 
+    const xhr = this.proxyXhrForUrl(url, "POST", form);
+    // Keep Authorization for proxy server authentication
+    // IMPORTANT: Do NOT set Content-Type header for multipart/form-data
+    // The browser will automatically set it with the correct boundary parameter
+    xhr.setHeaders({
+      "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
+      // Removed "Content-Type": "multipart/form-data" - browser must set this with boundary
+    });
+    await xhr.asyncSend();
     this.setStatus("uploaded image to S3");
 
-    if (!res.ok) {
-      this.setError(`S3 upload failed: ${res.status}`);
-      this.setStatus("failed");
-    } else {
+
+    if (xhr.isSuccess()) {
+      this.setHasUploaded(true);
       this.setStatus("complete");
+    } else {
+      this.setHasUploaded(false);
+      this.setError(`S3 upload failed: ${xhr.error().message}`);
+      this.setStatus("failed");
+    }
+  }
+
+  copyErrorToClipboard () {
+    const error = this.error();
+    if (error) {
+      navigator.clipboard.writeText(error);
     }
   }
 
