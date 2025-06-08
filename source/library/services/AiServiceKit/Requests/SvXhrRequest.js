@@ -431,15 +431,33 @@
     // set headers
     const options = this.requestOptions();
     
+    // Special handling for FormData - never set Content-Type manually
+    const isFormData = Type.isFormData(options.body);
+    
     for (const header in options.headers) {
       const value = options.headers[header];
+      
+      // Skip Content-Type header for FormData - browser must set it with boundary
+      if (isFormData && header.toLowerCase() === 'content-type') {
+        console.warn("Skipping Content-Type header for FormData - browser will set it with boundary");
+        continue;
+      }
+      
       xhr.setRequestHeader(header, value);
     }
 
     // let's print the url and headers here to the console
     console.log("--------------------------------");
     console.log("url:", this.url());
+    console.log("method:", this.method());
     console.log("headers:", options.headers);
+    if (isFormData) {
+      console.log("body type: FormData (multipart/form-data)");
+      console.log("Content-Type will be set automatically by browser with boundary");
+    } else if (Type.isString(options.body)) {
+      console.log("body type: String");
+      console.log("body preview:", options.body.substring(0, 200) + (options.body.length > 200 ? "..." : ""));
+    }
     console.log("--------------------------------");
 
     xhr.responseType = ""; // "" or "text" is required for streams

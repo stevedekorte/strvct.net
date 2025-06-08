@@ -119,6 +119,17 @@
       slot.setCanEditInspection(false);
     }
 
+    {
+      const slot = this.newSlot("updloadedDate", null);
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("Date");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
 
     /**
      * @member {SvXhrRequest} xhrRequest - The XHR request for the image.
@@ -245,12 +256,19 @@
    * @category UI
    */
   subtitle () {
-    const id = this.initImageId();
-    if (id) {
-      return `ID: ${id}\n${this.status()}`;
-    } else {
-      return this.status();
+    if (this.hasUploaded()) {
+      return `uploaded`;
     }
+
+    if (this.hasInitImageId()) {
+      return "got id";
+    }
+
+    if (this.hasDataUrl()) {
+      return "has image";
+    }
+
+    return "no image";
   }
 
 
@@ -276,6 +294,10 @@
     return Type.isString(this.dataUrl()) && this.dataUrl().length > 0;
   }
 
+  hasUploaded () {
+    return this.updloadedDate() !== null;
+  }
+
   hasInitImageId () {
     return this.initImageId() !== null;
   }
@@ -286,7 +308,11 @@
    * @category Actions
    */
   canUploadInitImageToS3 () {
-    return !this.uploadTimeIsExpired() && this.hasInitImageId() && this.hasDataUrl();
+    if (this.hasUploaded()) {
+      return false;
+    } else {
+      return !this.uploadTimeIsExpired() && this.hasInitImageId() && this.hasDataUrl();
+    }
   }
 
   /**
@@ -354,11 +380,17 @@
   canGetInitImageId () {
     if (!this.hasDataUrl()) {
       return false;
-    } else if (this.hasExpiredId()) {
+    } 
+    
+    if (this.hasUploaded()) {
+      return false;
+    } 
+
+    if (this.hasExpiredId()) {
       return true;
-    } else {
-      return this.initImageId() === null;
-    }
+    } 
+
+    return this.initImageId() === null;
   }
 
   getInitImageIdActionInfo () {
@@ -461,6 +493,7 @@
 
     if (xhr.isSuccess()) {
       this.setHasUploaded(true);
+      this.setUpdloadedDate(new Date());
       this.setStatus("complete");
     } else {
       this.setHasUploaded(false);
@@ -474,6 +507,13 @@
     if (error) {
       navigator.clipboard.writeText(error);
     }
+  }
+
+  copyErrorToClipboardActionInfo () {
+    return {
+      isEnabled: this.hasError(),
+      isVisible: this.hasError()
+    };
   }
 
   /**
