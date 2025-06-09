@@ -63,6 +63,17 @@
       slot.setIsSubnode(true);
     }
 
+    /**
+     * @member {LeonardoRefImages} styleTransfers
+     * @category Style Transfers
+     */
+    {
+      const slot = this.newSlot("styleTransfers", null);
+      slot.setFinalInitProto(LeoStyleTransfers);
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+    }
+
     /*
     {
       const slot = this.overrideSlot("conversations", null);
@@ -101,7 +112,7 @@
    * @returns {boolean} True if the key is valid, false otherwise.
    * @category Authentication
    */
-  validateKey (s) {
+  validateKey (/*s*/) {
     return true;
   }
   

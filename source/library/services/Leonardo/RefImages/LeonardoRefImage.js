@@ -47,6 +47,19 @@
    */
   initPrototypeSlots () {
 
+    // and an imageLabel
+    {
+      const slot = this.newSlot("imageLabel", "");
+      slot.setSlotType("String");
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setCanEditInspection(true);
+      slot.setIsSubnodeField(true);
+    }
+
     // add a hasUploaded slot
     {
       const slot = this.newSlot("hasUploaded", false);

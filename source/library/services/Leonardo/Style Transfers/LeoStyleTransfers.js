@@ -5,14 +5,14 @@
 "use strict";
 
 /**
- * @class LeonardoRefImages
+ * @class LeoStyleTransfers
  * @extends SvSummaryNode
- * @classdesc Represents a collection of Leonardo generated images.
+ * @classdesc Represents a collection of style transfers.
  * 
  * 
  */
 
-(class LeonardoRefImages extends SvSummaryNode {
+(class LeoStyleTransfers extends SvSummaryNode {
 
   /**
    * @description Initializes the prototype.
@@ -21,25 +21,16 @@
   initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([LeonardoRefImage]);
+    this.setSubnodeClasses([LeoStyleTransfer]);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
-    this.setTitle("Reference Images");
+    this.setTitle("Style Transfers");
     this.setNoteIsSubnodeCount(true);
   }
 
   finalInit () {
     super.finalInit();
     this.initPrototype();
-  }
-
-  validItems () {
-    return this.subnodes().map(subnode => {
-      return { 
-        label: subnode.imageLabel(),
-        value: subnode.initImageId()
-      };
-    });
   }
 
 }.initThisClass());

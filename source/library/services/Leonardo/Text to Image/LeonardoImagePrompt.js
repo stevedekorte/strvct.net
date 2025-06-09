@@ -97,34 +97,62 @@ Example generation body json:
 
   Next, we create LeonardoImage nodes, set their urls, and fetch them.
 
-  */
-(class LeonardoImagePrompt extends SvSummaryNode {  
 
-  usableModelNames () {
-    return ["Phoenix 1.0", "Phoenix 0.9", "Kino XL", "Diffusion XL", "Vision XL", "Anime XL", "Lightning XL", "SDXL 1.0", "SDXL 0.9", "AlbedoBase XL", "RPG v5", "3D Animation", "DreamShaper v7"];
+  Example style transfer request:
+
+  POST https://cloud.leonardo.ai/api/rest/v1/generations
+  Authorization: Bearer YOUR_API_KEY
+  Content-Type: application/json
+
+  {
+    "prompt": "A serene mountain landscape at dawn",
+    "initImageId": "INIT_IMAGE_ID_FROM_OPENAI_UPLOAD",
+    "initImageStrength": 0.6,
+    "initImageType": "UPLOADED",
+    "styleImageIds": ["STYLE_IMAGE_ID"],
+    "styleStrength": 0.7,
+    "modelId": "ecom-6a1c7c4b-6826-49d5-ae76-d68bc3c8d9b9",  
+    "presetStyle": "LEONARDO",
+    "photoReal": false,
+    "num_images": 1,
+    "width": 768,
+    "height": 512,
+    "guidanceScale": 7,
+    "inferenceSteps": 30
   }
 
-  validModelIdItems () {
-    return [
-      { "value": "aa77f04e-3eec-4034-9c07-d0f619684628", "label": "Kino XL",            "subtitle": "Cinematic SDXL finetune" }, // better at Frazetta
-      { "value": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3", "label": "Phoenix 1.0",        "subtitle": "Flagship founder model" },
-     // { "value": "6b645e3a-d64f-4341-a6d8-7a3690fbf042", "label": "Phoenix 0.9",        "subtitle": "Earlier Phoenix preview" },
-      //{ "value": "b2614463-296c-462a-9586-aafdb8f00e36", "label": "Flux Dev",           "subtitle": "Fast SDXL-based dev build" },
-      //{ "value": "1dd50843-d653-4516-a8e3-f0238ee453ff", "label": "Flux Schnell",       "subtitle": "Ultra-speed draft mode" },
-      { "value": "1e60896f-3c26-4296-8ecc-53e2afecc132", "label": "Diffusion XL",       "subtitle": "Versatile SDXL core" },
-      { "value": "5c232a9e-9061-4777-980a-ddc8e65647c6", "label": "Vision XL",          "subtitle": "Photoreal-leaning SDXL" },
-      { "value": "e71a1c2f-4f80-4800-934f-2c68979d8cc8", "label": "Anime XL",           "subtitle": "Stylised anime output" },
-      { "value": "b24e16ff-06e3-43eb-8d33-4416c2d75876", "label": "Lightning XL",       "subtitle": "Low-step, fast drafts" },
-      { "value": "16e7060a-803e-4df3-97ee-edcfa5dc9cc8", "label": "SDXL 1.0",           "subtitle": "Vanilla SDXL baseline" },
-      { "value": "b63f7119-31dc-4540-969b-2a9df997e173", "label": "SDXL 0.9",           "subtitle": "Legacy SDXL beta" },
-      { "value": "2067ae52-33fd-4a82-bb92-c2c55e7d2786", "label": "AlbedoBase XL",      "subtitle": "PBR texture generator" },
-      { "value": "f1929ea3-b169-4c18-a16c-5d58b4292c69", "label": "RPG v5",             "subtitle": "Comic-style RPG art" },
-      { "value": "d69c8273-6b17-4a30-a13e-d6637ae1c644", "label": "3D Animation",       "subtitle": "Toon-shaded renders" },
-      { "value": "ac614f96-1082-45bf-be9d-757f2d31c174", "label": "DreamShaper v7",     "subtitle": "Popular SD1.5 finetune" }
-    ]
-  }    
+  */
+(class LeonardoImagePrompt extends SvSummaryNode {
 
-  validPresetStyleItems () {
+  static validModelIdItems () {
+    return [
+      { "value": "aa77f04e-3eec-4034-9c07-d0f619684628", "label": "Kino XL",        "subtitle": "Cinematic SDXL finetune",   "preprocessorId": 67  },  // SDXL ➜ 67
+      { "value": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3", "label": "Phoenix 1.0",    "subtitle": "Flagship foundation model", "preprocessorId": 166 },  // Phoenix ➜ 166
+      //{ "value": "6b645e3a-d64f-4341-a6d8-7a3690fbf042", "label": "Phoenix 0.9",    "subtitle": "Earlier Phoenix preview",   "preprocessorId": 166 },  // Phoenix ➜ 166
+      //{ "value": "b2614463-296c-462a-9586-aafdb8f00e36", "label": "Flux Dev",       "subtitle": "Fast SDXL-based dev build", "preprocessorId": 299 },  // Flux Dev ➜ 299
+      //{ "value": "1dd50843-d653-4516-a8e3-f0238ee453ff", "label": "Flux Schnell",   "subtitle": "Ultra-speed draft mode",    "preprocessorId": 298 },  // Flux Schnell ➜ 298
+    
+      { "value": "1e60896f-3c26-4296-8ecc-53e2afecc132", "label": "Diffusion XL",   "subtitle": "Versatile SDXL core",       "preprocessorId": 67  },
+      { "value": "5c232a9e-9061-4777-980a-ddc8e65647c6", "label": "Vision XL",      "subtitle": "Photoreal-leaning SDXL",    "preprocessorId": 67  },
+      { "value": "e71a1c2f-4f80-4800-934f-2c68979d8cc8", "label": "Anime XL",       "subtitle": "Stylised anime output",     "preprocessorId": 67  },
+      { "value": "b24e16ff-06e3-43eb-8d33-4416c2d75876", "label": "Lightning XL",   "subtitle": "Low-step, fast drafts",      "preprocessorId": 67  },
+      { "value": "16e7060a-803e-4df3-97ee-edcfa5dc9cc8", "label": "SDXL 1.0",       "subtitle": "Vanilla SDXL baseline",     "preprocessorId": 67  },
+      { "value": "b63f7119-31dc-4540-969b-2a9df997e173", "label": "SDXL 0.9",       "subtitle": "Legacy SDXL beta",          "preprocessorId": 67  },
+      { "value": "2067ae52-33fd-4a82-bb92-c2c55e7d2786", "label": "AlbedoBase XL",  "subtitle": "PBR texture generator",     "preprocessorId": 67  },
+    
+      /* SD-1.5 based models — Style Reference not supported */
+      { "value": "f1929ea3-b169-4c18-a16c-5d58b4292c69", "label": "RPG v5",         "subtitle": "Comic-style RPG art",       "preprocessorId": null },
+      { "value": "d69c8273-6b17-4a30-a13e-d6637ae1c644", "label": "3D Animation",   "subtitle": "Toon-shaded renders",       "preprocessorId": null },
+      { "value": "ac614f96-1082-45bf-be9d-757f2d31c174", "label": "DreamShaper v7", "subtitle": "Popular SD-1.5 finetune",   "preprocessorId": null }
+    ];
+  }
+
+  static preprocessorIdForModelId (modelId) {
+    const model = this.validModelIdItems().find(item => item.value === modelId);
+    return model ? model.preprocessorId : null;
+  }
+
+  static validPresetStyleItems () {
     return [
       { "value": "DYNAMIC",            "label": "Dynamic",     "subtitle": "High-energy, vivid colors" },
       { "value": "NONE",               "label": "None",        "subtitle": "Default, no stylistic bias" },
@@ -160,6 +188,10 @@ Example generation body json:
     ]
   }
 
+  static validRefImageItems () {
+    return LeonardoService.shared().refImages().validItems();
+  }
+
   initPrototypeSlots () {
 
     /**
@@ -184,7 +216,7 @@ Example generation body json:
      * @category Configuration
      */
     {
-      const validItems = this.validModelIdItems();
+      const validItems = LeonardoImagePrompt.validModelIdItems();
       const slot = this.newSlot("ttiModel", null);
       slot.setInspectorPath("");
       slot.setLabel("Text to Image Model");
@@ -199,7 +231,7 @@ Example generation body json:
 
 
     {
-      const validItems = this.validPresetStyleItems();
+      const validItems = LeonardoImagePrompt.validPresetStyleItems();
       const slot = this.newSlot("presetStyle", null);
       slot.setInspectorPath("");
       slot.setLabel("Preset Style");
@@ -210,6 +242,78 @@ Example generation body json:
       slot.setValidItems(validItems);
       slot.setInitValue(validItems.first().value);
       slot.setIsSubnodeField(true);
+    }
+
+    // ------------- style transfer -------------
+
+    // initImageId
+    {
+      const slot = this.newSlot("initImageType", "UPLOADED");
+      slot.setInspectorPath("");
+      slot.setLabel("Init Image Type");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+    }
+
+    const refItemsClosure = () => { 
+      return this.thisClass().validRefImageItems();
+    };
+
+    {
+      const slot = this.newSlot("initImageId", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Init Image ID");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setValidItemsClosure(refItemsClosure);
+    }
+
+    // initImageStrength
+
+    {
+      const slot = this.newSlot("initImageStrength", 0.95);
+      slot.setInspectorPath("");
+      slot.setLabel("Init Image Strength");
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("Number");
+      slot.setValidValues([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0]);
+      slot.setInitValue(0.95);
+      slot.setIsSubnodeField(true);
+    }
+
+    // strengthType for style transfer
+    {
+      const slot = this.newSlot("strengthType", "High");
+      slot.setInspectorPath("");
+      slot.setLabel("Style Image Strength Type");
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("String");
+      slot.setValidItems([
+        { value: "Low", label: "Low" },
+        { value: "Mid", label: "Mid" },
+        { value: "High", label: "High" }
+      ]);
+      slot.setIsSubnodeField(true);
+    }
+
+    // styleImageIds
+
+    {
+      const slot = this.newSlot("styleImageId", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Style Image ID");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setValidItemsClosure(refItemsClosure);
     }
 
     /**
@@ -227,6 +331,18 @@ Example generation body json:
       slot.setSlotType("Number")
       slot.setValidValues([1, 2, 3, 4]) 
       //slot.setIsSubnodeField(true)
+    }
+
+    // styleStrength
+    {
+      const slot = this.newSlot("styleStrength", 0.7);
+      slot.setInspectorPath("");
+      slot.setLabel("Style Strength");
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("Number");
+      slot.setValidValues([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]);
+      slot.setInitValue(0.7);
+      slot.setIsSubnodeField(true);
     }
 
     //  512, 1024
@@ -490,7 +606,9 @@ Example generation body json:
    * @category Validation
    */
   canGenerate () {   
-    return !this.xhrRequest().isActive() && this.hasPrompt();
+    const hasPrompt = this.hasPrompt();
+    const isStyleTransfer = this.initImageId() !== null && this.styleImageId() !== null;
+    return !this.xhrRequest().isActive() && (hasPrompt || isStyleTransfer);
   }
 
   /**
@@ -529,26 +647,46 @@ Example generation body json:
     xhr.setHeaders({
       "Authorization": `Bearer ` + apiKey,
       "Content-Type": 'application/json'
-    });
+    }); 
+
+    let prompt = this.prompt();
+    if (prompt.length === 0) {
+      prompt = "."; // need a non-empty prompt for style transfer
+    }
 
     const body = {
       modelId: this.ttiModel(),
-      prompt: this.prompt(),
-      presetStyle: this.presetStyle(),
+      prompt: prompt,
       width: this.imageWidth(),
       height: this.imageHeight(),
       num_images: this.imageCount(),
       //alchemy: this.alchemy(), // didn't work well with Frazetta
-      num_inference_steps: this.inferenceSteps()
+      //num_inference_steps: this.inferenceSteps()
       //ultra: this.ultraUpscale(), // not supported on Kino XL
       //enhancePrompt: this.enhancePrompt()
     }
 
-    /*
-    if (this.presetStyle() !== "NONE") {
-      body.presetStyle = this.presetStyle(); // this is optional
+    // content image (what you’re restyling) 
+    if (this.initImageId()) {
+      //body.isInitImage = true;
+      body.init_image_id = this.initImageId(); 
+      body.init_strength = this.initImageStrength();
     }
-    */
+
+    // style image (what you’re using to restyle) 
+    if (this.styleImageId()) {
+      body.controlnets = [
+        {
+          "initImageId": this.styleImageId(),
+          "initImageType": this.initImageType(),
+          "preprocessorId": this.thisClass().preprocessorIdForModelId(this.ttiModel()),
+          "strengthType": this.strengthType()
+        }
+      ];
+      body.photoReal = false; // turn off photo realism for style transfer
+    } else{
+      body.presetStyle = this.presetStyle();
+    }
 
     xhr.setBody(JSON.stringify(body));
   }
@@ -572,6 +710,10 @@ Example generation body json:
       this.onError(error);
       // this error was unhandled, so we'll rethrow it so it gets logged and doesn't go unnoticed
       error.rethrow();
+    }
+
+    if (!this.xhrRequest().isSuccess()) {
+      this.setStatus(this.xhrRequest().readableStatus());
     }
   }
 
