@@ -98,36 +98,23 @@ Example generation body json:
   Next, we create LeonardoImage nodes, set their urls, and fetch them.
 
 
-  Example style transfer request:
-
-  POST https://cloud.leonardo.ai/api/rest/v1/generations
-  Authorization: Bearer YOUR_API_KEY
-  Content-Type: application/json
-
-  {
-    "prompt": "A serene mountain landscape at dawn",
-    "initImageId": "INIT_IMAGE_ID_FROM_OPENAI_UPLOAD",
-    "initImageStrength": 0.6,
-    "initImageType": "UPLOADED",
-    "styleImageIds": ["STYLE_IMAGE_ID"],
-    "styleStrength": 0.7,
-    "modelId": "ecom-6a1c7c4b-6826-49d5-ae76-d68bc3c8d9b9",  
-    "presetStyle": "LEONARDO",
-    "photoReal": false,
-    "num_images": 1,
-    "width": 768,
-    "height": 512,
-    "guidanceScale": 7,
-    "inferenceSteps": 30
-  }
-
   */
 (class LeonardoImagePrompt extends SvSummaryNode {
 
+  static modelIdForName (name) {
+    const model = this.validModelIdItems().find(item => item.label === name);
+    return model ? model.value : null;
+  }
+
+  static modelNameForId (id) {
+    const model = this.validModelIdItems().find(item => item.value === id);
+    return model ? model.label : null;
+  }
+
   static validModelIdItems () {
     return [
-      { "value": "aa77f04e-3eec-4034-9c07-d0f619684628", "label": "Kino XL",        "subtitle": "Cinematic SDXL finetune",   "preprocessorId": 67  },  // SDXL ➜ 67
       { "value": "de7d3faf-762f-48e0-b3b7-9d0ac3a3fcf3", "label": "Phoenix 1.0",    "subtitle": "Flagship foundation model", "preprocessorId": 166 },  // Phoenix ➜ 166
+      { "value": "aa77f04e-3eec-4034-9c07-d0f619684628", "label": "Kino XL",        "subtitle": "Cinematic SDXL finetune",   "preprocessorId": 67  },  // SDXL ➜ 67
       //{ "value": "6b645e3a-d64f-4341-a6d8-7a3690fbf042", "label": "Phoenix 0.9",    "subtitle": "Earlier Phoenix preview",   "preprocessorId": 166 },  // Phoenix ➜ 166
       //{ "value": "b2614463-296c-462a-9586-aafdb8f00e36", "label": "Flux Dev",       "subtitle": "Fast SDXL-based dev build", "preprocessorId": 299 },  // Flux Dev ➜ 299
       //{ "value": "1dd50843-d653-4516-a8e3-f0238ee453ff", "label": "Flux Schnell",   "subtitle": "Ultra-speed draft mode",    "preprocessorId": 298 },  // Flux Schnell ➜ 298
@@ -200,7 +187,7 @@ Example generation body json:
      * @category Input
      */
     {
-      const slot = this.newSlot("prompt", "Barbarian fighting a red dragon. Frank Frazetta paintingstyle.");
+      const slot = this.newSlot("prompt", " ");
       slot.setInspectorPath("")
       //slot.setLabel("prompt")
       slot.setShouldStoreSlot(true)
@@ -331,18 +318,6 @@ Example generation body json:
       slot.setSlotType("Number")
       slot.setValidValues([1, 2, 3, 4]) 
       //slot.setIsSubnodeField(true)
-    }
-
-    // styleStrength
-    {
-      const slot = this.newSlot("styleStrength", 0.7);
-      slot.setInspectorPath("");
-      slot.setLabel("Style Strength");
-      slot.setShouldStoreSlot(true);
-      slot.setSlotType("Number");
-      slot.setValidValues([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]);
-      slot.setInitValue(0.7);
-      slot.setIsSubnodeField(true);
     }
 
     //  512, 1024
@@ -549,6 +524,15 @@ Example generation body json:
       slot.setSlotType("LeonardoImageGeneration");
     }
 
+    // completedPromise
+    {
+      const slot = this.newSlot("completedPromise", null);
+      slot.setSlotType("Promise");
+    }
+
+  }
+
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
@@ -615,8 +599,8 @@ Example generation body json:
    * @description Initiates the image generation process.
    * @category Action
    */
-  generate () {
-    this.start();
+  async generate () {
+    await this.start();
   }
 
   /**
@@ -715,6 +699,9 @@ Example generation body json:
     if (!this.xhrRequest().isSuccess()) {
       this.setStatus(this.xhrRequest().readableStatus());
     }
+
+    this.setCompletedPromise(Promise.clone());
+    return this.completedPromise();
   }
 
   // -- delegate methods from SvXhrRequest --
@@ -761,14 +748,6 @@ Example generation body json:
     this.onEnd();
   }
 
-  // -- poll for generation status --
-
-  pollForGenerationStatus () {
-    const status = this.status();
-    if (status === "fetching response...") {
-      this.pollForGenerationStatus();
-    }
-  }
   // -- delegate methods from LeonardoImage --
 
   /**
@@ -795,12 +774,18 @@ Example generation body json:
     this.onEnd();
   }
 
+  onImageGenerationEnd (/*generation*/) {
+    this.onEnd();
+  }
+
   /**
    * @description Handles the end of the image generation process.
    * @category Process
    */
   onEnd () {
     this.sendDelegate("onImagePromptEnd", [this]);
+    //debugger;
+    this.completedPromise().callResolveFunc();
   }
 
 

@@ -319,7 +319,7 @@
    */
   async startPolling () {
     //debugger;
-    assert(!this.isPolling(), "already polling");
+    //assert(!this.isPolling(), "already polling");
     assert(this.generationId(), "generationId is required");
 
     this.clear();
@@ -366,7 +366,11 @@
     try {
       const text = this.xhrRequest().responseText();
       const json = JSON.parse(text);
-      return json.generations_by_pk.status;
+      const gens = json.generations_by_pk;
+      if (gens) {
+        return gens.status;
+      }
+      return "missing generations_by_pk.status";
     } catch (error) {
       debugger;
       return undefined;
@@ -398,6 +402,13 @@
     } else {
       this.onError("Unknown status: " + status);
     }
+  }
+
+  onError (error) {
+    this.setError(error);
+    this.setStatus("Error: " + error);
+    this.sendDelegate("onImagePromptError", [this]);
+    this.onEnd();
   }
 
   async spawnImageNodes () {
@@ -508,7 +519,8 @@
    * @category Process
    */
   onEnd () {
-    this.sendDelegate("onImagePromptEnd", [this]);
+    //debugger;
+    this.sendDelegate("onImageGenerationEnd", [this]);
   }
 
 

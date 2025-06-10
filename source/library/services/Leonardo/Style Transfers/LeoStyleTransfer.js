@@ -1,39 +1,28 @@
 "use strict";
 
 /**
- * @module library.services.Leonardo.RefImages
+ * @module library.services.Leonardo.StyleTransfers
  */
 
 /**
  * @class LeoStyleTransfer
  * @extends SvSummaryNode
- * @classdesc Represents a style transfer.
+ * @classdesc How it works:
+ * - takes a prompt
+ * - uses OpenAiImagePrompt to generate an image
+ * - uses LeonardoImagePrompt to perform a style transfer on the image
+ * - stores the style transferred image as a urlData
+ * - disposes of the OpenAiImagePrompt and the LeonardoImagePrompt objects
  * 
-
-Example style transfer request:
-
-  POST https://cloud.leonardo.ai/api/rest/v1/generations
-  Authorization: Bearer YOUR_API_KEY
-  Content-Type: application/json
-
-  {
-    "prompt": "A serene mountain landscape at dawn",
-    "initImageId": "INIT_IMAGE_ID_FROM_OPENAI_UPLOAD",
-    "initImageStrength": 0.6,
-    "initImageType": "UPLOADED",
-    "styleImageIds": ["STYLE_IMAGE_ID"],
-    "styleStrength": 0.7,
-    "modelId": "ecom-6a1c7c4b-6826-49d5-ae76-d68bc3c8d9b9",  
-    "presetStyle": "LEONARDO",
-    "photoReal": false,
-    "num_images": 1,
-    "width": 768,
-    "height": 512,
-    "guidanceScale": 7,
-    "inferenceSteps": 30
-  }
-
-*/
+ * 
+ * We need to send the following delegate messages:
+ * - onImageGenerationPromptLoading
+ * - onImageGenerationPromptError
+ * - onImageGenerationPromptImageLoaded
+ * - onImageGenerationPromptImageError
+ * 
+ * (the delegate will typically be a UoImageMessage)
+ */
 
 
 (class LeoStyleTransfer extends SvSummaryNode {
@@ -42,33 +31,57 @@ Example style transfer request:
    */
   initPrototypeSlots () {
 
-    // need slots for LeonardoImagePrompt
+    // prompt
     {
-      const slot = this.newSlot("imagePrompt", null);
-      slot.setSlotType("LeonardoImagePrompt");
+      const slot = this.newSlot("prompt", "");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+    }
+
+    // OpenAI image generation prompt
+    {
+      const slot = this.newSlot("openAiPrompt", null);
+      slot.setFinalInitProto(OpenAiImagePrompt);
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+    }
+
+    // Leonardo style transfer prompt
+    {
+      const slot = this.newSlot("leonardoPrompt", null);
       slot.setFinalInitProto(LeonardoImagePrompt);
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
     }
 
-    // an image we generated on openai (or elsewhere)
-    // which we want to perform a style transfer on
+    // Reference image for init
     {
       const slot = this.newSlot("initRefImage", null);
-      slot.setSlotType("LeonardoRefImage");
+      slot.setFinalInitProto(LeonardoRefImage);
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
     }
 
-    // an image we want to use as a style
+    // Reference image for style
     {
       const slot = this.newSlot("styleRefImage", null);
-      slot.setSlotType("LeonardoRefImage");
+      slot.setFinalInitProto(LeonardoRefImage);
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
     }
 
-    // NOTE: the output image will be stored in the imagePrompt object
+    // Final result data URL
+    {
+      const slot = this.newSlot("resultDataUrl", null);
+      slot.setSlotType("String");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setIsSubnodeField(true);
+      slot.setFieldInspectorViewClassName("SvImageWellField");
+    }
 
     /**
      * @member {string} error - Error message if any.
@@ -100,6 +113,36 @@ Example style transfer request:
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @member {Action} startAction - The action to start style transfer.
+     * @category Actions
+     */
+    {
+      const slot = this.newSlot("startAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Start Style Transfer");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("start");
+    }
+
+    /**
+     * @member {Action} setStyleImageAction - The action to set style image.
+     * @category Actions
+     */
+    {
+      const slot = this.newSlot("setStyleImageAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Set Style Image");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("selectStyleImage");
+    }
+
     {
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Delegate");
@@ -122,24 +165,46 @@ Example style transfer request:
 
 
   /**
-   * @description Gets the subtitle for the image.
-   * @returns {string} The status of the image.
-   * @category UI
-   */
-  subtitle () {
-    return this.status();
-  }
-
-
-  /**
-   * @description Gets the service used for image generation.
+   * @description Gets the Leonardo service used for style transfer.
    * @returns {Object} The service.
    * @category Service
    */
-  service () {
+  leonardoService () {
     return LeonardoService.shared();
   }
 
+  /**
+   * @description Gets the OpenAI service used for initial generation.
+   * @returns {Object} The service.
+   * @category Service
+   */
+  openAiService () {
+    return OpenAiService.shared();
+  }
+
+
+  setupInitialPrompt () {
+    const openAiPrompt = this.openAiPrompt();
+    openAiPrompt.setPrompt(this.prompt());
+    openAiPrompt.setTtiModel("gpt-image-1");
+    //openAiPrompt.setImageSize("1536x1024");
+    openAiPrompt.setQuality("standard");
+    openAiPrompt.setImageCount(1);
+    return openAiPrompt;
+  }
+
+  setupLeonardoPrompt () {
+    const leonardoPrompt = this.leonardoPrompt();
+    leonardoPrompt.setPrompt(this.prompt());
+    const modelId = LeonardoImagePrompt.modelIdForName("Phoenix 1.0");
+    leonardoPrompt.setTtiModel(modelId);
+    leonardoPrompt.setImageWidth(1024);
+    leonardoPrompt.setImageHeight(512);
+    leonardoPrompt.setImageCount(1);
+    leonardoPrompt.setInitImageStrength(0.5); // Medium strength for style transfer
+    leonardoPrompt.setStrengthType("Mid");
+    return leonardoPrompt;
+  }
   /**
    * @description Checks if there's an error.
    * @returns {boolean} True if there's an error, false otherwise.
@@ -151,55 +216,138 @@ Example style transfer request:
 
 
   /**
-   * @description Gets the proxy URL for the image.
-   * @returns {string} The proxy URL.
-   * @category Networking
-   */
-  getProxyUrl () {
-    return ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
-  }
-
-  proxyXhrForUrl (url, method, bodyString) {
-    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
-    const xhr = SvXhrRequest.clone();
-    xhr.setUrl(proxyUrl);
-    xhr.setMethod(method);
-    xhr.setHeaders({
-      "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
-    });
-    xhr.setDelegate(this);
-    xhr.setBody(bodyString);
-    return xhr;
-  }
-
-  /**
-   * @description Starts the style transfer.
+   * @description Starts the style transfer process.
    * @returns {Promise<void>}
    * @category Actions
    */
   async start () {
-    this.setStatus("starting...");
-  
-    const imagePrompt = this.imagePrompt();
-    const initRefImage = this.initRefImage();
-    const styleRefImage = this.styleRefImage();
+    try {
+      this.setError("");
+      this.setStatus("starting style transfer...");
+      
+      // Validate we have a prompt
+      if (!this.prompt() || this.prompt().trim() === "") {
+        throw new Error("Prompt is required");
+      }
 
-    assert(imagePrompt, "imagePrompt is required");
-    assert(initRefImage, "initRefImage is required");
-    assert(styleRefImage, "styleRefImage is required");
+      // Setup prompts
+      const openAiPrompt = this.setupInitialPrompt();
+      const leonardoPrompt = this.setupLeonardoPrompt();
 
-    const initImageId = initRefImage.initImageId();
-    const styleImageId = styleRefImage.initImageId();
+      // Step 1: Generate initial image with OpenAI
+      this.setStatus("generating initial image with OpenAI...");
+      this.sendDelegate("onImageGenerationPromptLoading");
+      
+      openAiPrompt.setDelegate(this);
+      await openAiPrompt.generate();
+      
+      if (!openAiPrompt.images() || openAiPrompt.images().subnodeCount() === 0) {
+        throw new Error("Failed to generate initial image");
+      }
 
-    assert(initImageId, "initImageId is required");
-    assert(styleImageId, "styleImageId is required");
+      // Get the generated image data URL
+      const openAiImage = openAiPrompt.images().subnodes().last();
+      const initialDataUrl = openAiImage.imageUrl();
+      
+      if (!initialDataUrl) {
+        throw new Error("Failed to get image data URL from OpenAI");
+      }
 
-    imagePrompt.setInitImageId(initImageId);
-    imagePrompt.setStyleImageIds([styleImageId]);
+      // Step 2: Upload initial image to Leonardo as reference
+      this.setStatus("uploading initial image to Leonardo...");
+      const initRefImage = this.initRefImage();
+      initRefImage.setDataUrl(initialDataUrl);
+      initRefImage.setImageLabel("Initial image from OpenAI");
+      
+      await initRefImage.getIdAndUpload();
+      
+      if (!initRefImage.hasInitImageId()) {
+        throw new Error("Failed to upload initial image to Leonardo");
+      }
 
-    await imagePrompt.generate();
+      // Step 3: Generate style reference if we have a style ref image
+      let styleImageId = null;
+      if (this.styleRefImage() && this.styleRefImage().hasDataUrl()) {
+        this.setStatus("uploading style reference image...");
+        const styleRefImage = this.styleRefImage();
+        await styleRefImage.getIdAndUpload();
+        
+        if (!styleRefImage.hasInitImageId()) {
+          throw new Error("Failed to upload style reference image");
+        }
+        styleImageId = styleRefImage.initImageId();
+      }
 
-    this.setStatus(imagePrompt.status());
+      // Step 4: Perform style transfer with Leonardo
+      this.setStatus("performing style transfer with Leonardo...");
+      leonardoPrompt.setInitImageId(initRefImage.initImageId());
+      
+      if (styleImageId) {
+        leonardoPrompt.setStyleImageId(styleImageId);
+      }
+      
+      leonardoPrompt.setDelegate(this);
+      await leonardoPrompt.generate();
+      
+      if (!leonardoPrompt.generation()) {
+        throw new Error("Failed to generate style transfer image");
+      }
+
+      // Step 5: Get the final result
+      const leonardoGeneration = leonardoPrompt.generation();
+      if (!leonardoGeneration) {
+        throw new Error("No generation object found");
+      }
+      
+      // Wait for images to be loaded
+      const finalImage = leonardoGeneration.images().subnodes().last();
+      if (!finalImage) {
+        throw new Error("No images found in generation");
+      }
+      
+      //debugger;
+
+      if (finalImage && finalImage.imageUrl()) {
+        this.setResultDataUrl(finalImage.imageUrl());
+        this.setStatus("style transfer complete");
+        
+        //this.sendDelegate("onImageGenerationPromptImageLoaded");
+      } else {
+        throw new Error("Failed to get final image data URL from Leonardo");
+      }
+      this.sendDelegate("onImagePromptImageLoaded", [this, finalImage]);
+      this.sendDelegate("onImagePromptEnd", [this]);
+
+    } catch (error) {
+      this.setError(error.message);
+      this.setStatus("failed");
+      
+      this.sendDelegate("onImagePromptError");
+    }
+  }
+
+  // Delegate methods from OpenAI prompt
+  onImagePromptCompleted (/*prompt*/) {
+    // Called when OpenAI finishes generating
+    console.log("OpenAI image generation completed");
+  }
+
+  onImagePromptError (prompt) {
+    // Called if OpenAI fails
+    this.setError("OpenAI generation failed: " + prompt.error());
+    this.setStatus("failed");
+  }
+
+  // Delegate methods from Leonardo prompt  
+  onLeonardoImagePromptCompleted (/*prompt*/) {
+    // Called when Leonardo finishes
+    console.log("Leonardo style transfer completed");
+  }
+
+  onLeonardoImagePromptError (prompt) {
+    // Called if Leonardo fails
+    this.setError("Leonardo style transfer failed: " + prompt.error());
+    this.setStatus("failed");
   }
 
   copyErrorToClipboard () {
@@ -217,13 +365,165 @@ Example style transfer request:
   }
 
   /**
-   * @description Shuts down the image fetching process.
+   * @description Checks if the style transfer process can be started.
+   * @returns {boolean} True if can start, false otherwise.
+   * @category Status
+   */
+  canStart () {
+    return this.prompt() !== null && this.prompt().trim() !== "" && this.status() !== "processing";
+  }
+
+  /**
+   * @description Checks if the style transfer has a result.
+   * @returns {boolean} True if has result, false otherwise.
+   * @category Status
+   */
+  hasResult () {
+    return this.resultDataUrl() !== null;
+  }
+
+  /**
+   * @description Shuts down the style transfer process.
    * @returns {this} The current instance.
    * @category Lifecycle
    */
   shutdown () {
-    this.imagePrompt().shutdown();
-   return this;
+    if (this.openAiPrompt()) {
+      this.openAiPrompt().shutdown();
+    }
+    if (this.leonardoPrompt()) {
+      this.leonardoPrompt().shutdown();
+    }
+    return this;
+  }
+
+  /**
+   * @description Selects a style image from file.
+   * @returns {Promise<void>}
+   * @category Actions
+   */
+  async selectStyleImage () {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      
+      const fileSelected = new Promise((resolve, reject) => {
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          } else {
+            reject(new Error('No file selected'));
+          }
+        };
+      });
+      
+      input.click();
+      const dataUrl = await fileSelected;
+      
+      if (!this.styleRefImage()) {
+        this.setStyleRefImage(LeonardoRefImage.clone());
+      }
+      
+      this.styleRefImage().setDataUrl(dataUrl);
+      this.styleRefImage().setImageLabel("Style reference image");
+      
+    } catch (error) {
+      console.error("Failed to select style image:", error);
+    }
+  }
+
+  /**
+   * @description Gets action info for the start action.
+   * @returns {Object} Action info.
+   * @category Actions
+   */
+  startActionInfo () {
+    return {
+      isEnabled: this.canStart(),
+      isVisible: true
+    };
+  }
+
+  /**
+   * @description Gets action info for the set style image action.
+   * @returns {Object} Action info.
+   * @category Actions
+   */
+  setStyleImageActionInfo () {
+    return {
+      isEnabled: true,
+      isVisible: true
+    };
+  }
+
+  /**
+   * @description Resets the style transfer for a new attempt.
+   * @returns {this} The current instance.
+   * @category Actions
+   */
+  reset () {
+    this.setError("");
+    this.setStatus("");
+    this.setResultDataUrl(null);
+    
+    if (this.openAiPrompt()) {
+      this.openAiPrompt().shutdown();
+    }
+    
+    if (this.leonardoPrompt()) {
+      this.leonardoPrompt().shutdown();
+    }
+    
+    return this;
+  }
+
+  /**
+   * @description Gets a descriptive subtitle based on current state.
+   * @returns {string} The subtitle.
+   * @category UI
+   */
+  subtitle () {
+    if (this.hasError()) {
+      return "Error: " + this.error();
+    }
+    
+    if (this.hasResult()) {
+      return "Complete";
+    }
+    
+    if (this.status()) {
+      return this.status();
+    }
+    
+    if (this.styleRefImage() && this.styleRefImage().hasDataUrl()) {
+      return "Style image ready";
+    }
+    
+    return "Ready";
+  }
+
+  /**
+   * @description Sends a delegate method call.
+   * @param {string} methodName - The name of the method to call.
+   * @param {Array} args - The arguments to pass to the method.
+   * @returns {boolean} True if the delegate method was called, false otherwise.
+   * @category Delegation
+   */
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate();
+    if (d) {
+      const f = d[methodName];
+      if (f) {
+        f.apply(d, args);
+        return true;
+      }
+    }
+    return false;
   }
 
 }.initThisClass());

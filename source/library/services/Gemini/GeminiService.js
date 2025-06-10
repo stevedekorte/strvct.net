@@ -28,10 +28,12 @@
    * @category Model Management
    */
   modelsJson () {
+    //gemini-2.5-flash-preview-05-20 
+    // gemini-2.5-pro-preview-06-05
     return [
       {
-        "name": "gemini-2.5-pro-preview-05-06",
-        "title": "Gemini 2.5 Pro Preview (I/O Edition)",
+        "name": "gemini-2.5-pro-preview-06-05",
+        "title": "Gemini 2.5 Pro Preview",
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 65536
       }

@@ -128,8 +128,7 @@
         } else {
             this.debugLog(" can't perform action ", this.methodName(), " on ", this.target())
         }
-	    
-	    return this
+        return this
     }
 
     /**

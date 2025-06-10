@@ -237,8 +237,8 @@
    * @description Initiates the image generation process.
    * @category Action
    */
-  generate () {
-    this.start()
+  async generate () {
+    await this.start();
   }
 
   /**
