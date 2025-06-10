@@ -817,7 +817,7 @@ Example generation body json:
     if (this.xhrRequest()) {
       this.xhrRequest().abort();
     }
-    this.images().subnodes().forEach(image => image.shutdown());
+    this.generation().shutdown();
     return this;
   }
 
