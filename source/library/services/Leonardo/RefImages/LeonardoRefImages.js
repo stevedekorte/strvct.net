@@ -42,4 +42,9 @@
     });
   }
 
+  refImageForImageLabel (label) {
+    const subnode = this.subnodes().find(subnode => subnode.imageLabel() === label);
+    return subnode ? subnode : null;
+  }
+
 }.initThisClass());

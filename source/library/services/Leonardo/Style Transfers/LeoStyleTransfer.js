@@ -266,17 +266,9 @@
       }
 
       // Step 3: Generate style reference if we have a style ref image
-      let styleImageId = null;
-      if (this.styleRefImage() && this.styleRefImage().hasDataUrl()) {
-        this.setStatus("uploading style reference image...");
-        const styleRefImage = this.styleRefImage();
-        await styleRefImage.getIdAndUpload();
-        
-        if (!styleRefImage.hasInitImageId()) {
-          throw new Error("Failed to upload style reference image");
-        }
-        styleImageId = styleRefImage.initImageId();
-      }
+      assert(this.styleRefImage(), "Style reference image is required");
+      assert(this.styleRefImage().hasInitImageId(), "Style reference image must have an init image id");
+      const styleImageId = this.styleRefImage().initImageId();
 
       // Step 4: Perform style transfer with Leonardo
       this.setStatus("performing style transfer with Leonardo...");
@@ -430,7 +422,6 @@
       }
       
       this.styleRefImage().setDataUrl(dataUrl);
-      this.styleRefImage().setImageLabel("Style reference image");
       
     } catch (error) {
       console.error("Failed to select style image:", error);
