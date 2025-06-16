@@ -1570,8 +1570,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (validItems) {
             validItems.forEach(v => {
                 assert(Type.isDeepJsonType(v));
-                if (!Type.isNull(v) && v.label) {
-                    enumArray.push(v.label);
+                if (!Type.isNull(v) && v.value !== undefined) {
+                    enumArray.push(v.value);
                 } else {
                     enumArray.push(v);
                 }
