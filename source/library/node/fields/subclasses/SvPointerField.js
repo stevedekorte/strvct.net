@@ -96,4 +96,21 @@
         return undefined;
     }
 
+    /**
+     * @description Returns the value of the field.
+     * @returns {Object} The value.
+     */
+    summaryValue () {
+        const v = this.value();
+        if (v && v.summaryValue) {
+            const summaryValue = v.summaryValue();
+            // if summaryValue is a string with multiple lines, add a newline prefix
+            if (Type.isString(summaryValue) && summaryValue.includes("\n")) {
+                return "\n" + summaryValue;
+            }
+            return summaryValue;
+        }
+        return "(no value)";
+    }
+
 }.initThisClass());
