@@ -71,7 +71,6 @@
                 }
 
                 aRecord.entries.push([slotName, valueToRecord]);
-
             }
         });
 
