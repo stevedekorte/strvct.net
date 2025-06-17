@@ -57,6 +57,47 @@
   - `setShouldStoreSlot(true)` - Persist property to storage
 - Class properties with `this.newClassSlot()`
 
+### Subnodes vs. Subnode Fields
+
+The framework provides two different ways to handle child objects:
+
+1. **Stored Subnodes** (`setIsSubnode(true)`):
+   - Creates a permanent parent-child relationship
+   - The child object is added to the parent's subnodes array
+   - Typically used with `shouldStoreSubnodes(true)` for collections
+   - Best for arrays of similar objects (e.g., items in a list)
+   - Common pattern: Classes extending `SvJsonArrayNode`
+
+2. **Subnode Fields** (`setIsSubnodeField(true)`):
+   - Creates temporary UI navigation tiles
+   - The actual data remains in the parent's slot
+   - Field objects are non-stored (`shouldStore(false)`)
+   - Provides clickable navigation in the UI inspector
+   - Best for structured objects with named properties
+   - Common pattern: Classes extending `BMStorableNode` with `shouldStoreSubnodes(false)`
+
+Example distinction:
+```javascript
+// For collections - use stored subnodes
+class ItemList extends SvJsonArrayNode {
+    initPrototype() {
+        this.setShouldStoreSubnodes(true); // Stores actual items
+    }
+}
+
+// For structured objects - use subnode fields
+class ConfigObject extends BMStorableNode {
+    initPrototypeSlots() {
+        const slot = this.newSlot("settings", null);
+        slot.setFinalInitProto(SettingsObject);
+        slot.setIsSubnodeField(true); // Creates UI navigation
+    }
+    initPrototype() {
+        this.setShouldStoreSubnodes(false); // Data in slots, not subnodes
+    }
+}
+```
+
 ### Slot Definition Guidelines
 
 - Declare instance properties in `initPrototypeSlots()` with `this.newSlot()`
@@ -74,7 +115,7 @@
 
   ```javascript
   {
-    const slot = this.newSubnodeSlot("propertyName", PropertyClass);
+    const slot = this.newSubnodeFieldSlot("propertyName", PropertyClass);
     // Additional slot configuration...
   }
   ```
