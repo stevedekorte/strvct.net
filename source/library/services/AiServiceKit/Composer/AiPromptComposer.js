@@ -278,7 +278,7 @@
             this.setOutputString(string.replaceAll(`{{$${methodName}}}`, value));
             return true;
           } else {
-            throw new Error(`Method ${methodName} not found on promptTarget or in promptDictionary`);
+            throw new Error(`Method '${methodName}' not found on promptTarget or in promptDictionary`);
           }
         }
       }

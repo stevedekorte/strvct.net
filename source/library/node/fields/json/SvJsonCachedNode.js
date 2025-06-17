@@ -16,7 +16,7 @@
         {
             /**
              * @member {String} jsonId
-             * @description A unique id for this json node. We'll need this in order to merge json changes properly.
+             * @description A unique id for this json node. We'll need this in order to merge json changes properly (e.g. items in arrays).
              * @category Identification
              */
             const slot = this.newSlot("jsonId", null);

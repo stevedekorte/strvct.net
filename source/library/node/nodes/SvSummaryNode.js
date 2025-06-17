@@ -236,7 +236,7 @@
      * @param {boolean} newValue - The new value.
      * @category Update
      */
-    didUpdateSlotNodeSubtitleIsChildrenSummary (oldValue, newValue) {
+    didUpdateSlotNodeSubtitleIsChildrenSummary (oldValue/*, newValue*/) {
         if (oldValue === true) {
             this.setSubtitle(null);
         }
@@ -247,7 +247,7 @@
      * @returns {string} The summary.
      * @category Summary
      */
-    summary () {
+    summary () { 
         const k = this.summaryKey();
         let v = this.summaryValue();
 
