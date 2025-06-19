@@ -34,7 +34,7 @@
      * @param {Object} anEventListener - The event listener object
      * @category Event Handling
      */
-    static firstUserEvent (anEventListener) {
+    static firstUserEvent (/*anEventListener*/) {
         Broadcaster.shared().removeListenerForName(this, "firstUserEvent")
         WAContext.shared().setupIfNeeded() // need user input to do this
     }
@@ -131,17 +131,37 @@
         await this.setupPromise(); // should we throw an error instead? 
 
         const promise = Promise.clone();
-        //assert(audioArrayBuffer.byteLength);
+        assert(audioArrayBuffer instanceof ArrayBuffer, "audioArrayBuffer must be an ArrayBuffer");
+        // what else should we assert to ensure it can be decoded?
+        // assert correct length
+        assert(audioArrayBuffer.byteLength > 0, "audioArrayBuffer must have a byteLength");
+        // assert correct format
+        //assert(audioArrayBuffer.format === "audio/wav", "audioArrayBuffer must be a WAV file"); // this may not be true
+
+        // let's log a bunch of info about the buffer
+        console.log("audioArrayBuffer: " + JSON.stringify(this.jsonInfoForBuffer(audioArrayBuffer), null, 2));
+
         this.audioContext().decodeAudioData(audioArrayBuffer,
-            decodedBuffer => { 
+            (decodedBuffer) => { 
                 //assert(audioArrayBuffer.byteLength);
                 promise.callResolveFunc(decodedBuffer);
             },
-            error => { 
+            (error) => { 
+                console.log("error decodingaudioArrayBuffer: ", error.message);
+
                 promise.callRejectFunc(error);
             }
         );
         return promise;
+    }
+
+    jsonInfoForBuffer (audioArrayBuffer) {
+        return {
+            byteLength: audioArrayBuffer.byteLength,
+            format: audioArrayBuffer.format,
+            sampleRate: audioArrayBuffer.sampleRate,
+            channels: audioArrayBuffer.channels
+        }
     }
 
     /*

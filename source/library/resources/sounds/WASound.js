@@ -335,7 +335,7 @@
      */
     length () { 
         throw new Error("use sampleCount method instead");
-        return this.sampleCount();
+        //return this.sampleCount();
     }
 
     /**
@@ -395,6 +395,8 @@
         }
 
         try {
+            debugger;
+            
             if (this.path()) {
                 //debugger;
                 //console.log(this.typeId() + " path: ", this.path());

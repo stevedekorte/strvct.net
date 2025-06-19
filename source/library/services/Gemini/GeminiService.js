@@ -37,15 +37,14 @@
         "title": "Gemini 2.5 Pro",
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 65536
-      }
-      /*
-      // these other models may not be good enough to work properly
+      },
       {
-        "name": "gemini-2.5-flash  ",
+        "name": "gemini-2.5-flash",
         "title": "Gemini 2.5 Flash",
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 65536
-      },
+      }
+      /*,
       {
         "name": "gemini-2.0-flash",
         "title": "Gemini 2.0 Flash",

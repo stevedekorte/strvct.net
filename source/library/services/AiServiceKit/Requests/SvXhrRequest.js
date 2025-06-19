@@ -215,6 +215,32 @@
       slot.setIsSubnodeField(true);
       slot.setActionMethodName("copyResponseText");
     }
+
+    /**
+     * @member {String} responseType - The XMLHttpRequest responseType ('', 'arraybuffer', 'blob', 'document', 'json', 'text')
+     */
+    {
+      const slot = this.newSlot("responseType", "");
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setDescription("The XMLHttpRequest responseType. Use 'blob' for binary data like images or audio.");
+    }
+
+    /**
+     * @member {Promise} completionPromise - Promise that resolves when the XHR request completes (success, error, or abort)
+     */
+    {
+      const slot = this.newSlot("completionPromise", null);
+      slot.setSlotType("Promise");
+      slot.setShouldStoreSlot(false);
+      slot.setDescription("Promise that resolves when the XHR request completes, regardless of outcome");
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
@@ -228,6 +254,7 @@
     this.setIsDebugging(false);
     this.setRequestId(this.puuid());
     this.setRequestOptions({});
+    this.setCompletionPromise(Promise.clone());
     this.setIsDebugging(true);
   }
 
@@ -304,9 +331,19 @@
    */
   contentByteCount () {
     const xhr = this.xhr();
-    if (xhr && xhr.responseText) {
+    if (!xhr) {
+      return 0;
+    }
+    
+    // Handle different response types
+    if (this.responseType() === 'blob' && xhr.response) {
+      return xhr.response.size || 0;
+    } else if (this.responseType() === 'arraybuffer' && xhr.response) {
+      return xhr.response.byteLength || 0;
+    } else if ((this.responseType() === '' || this.responseType() === 'text') && xhr.responseText) {
       return xhr.responseText.length;
     }
+    
     return 0;
   }
 
@@ -337,7 +374,7 @@
    * @returns {string}
    */
   responseSizeDescription () {
-    const size = this.xhr() ? this.xhr().responseText.length : 0;
+    const size = this.contentByteCount();
     return ByteFormatter.clone().setValue(size).formattedValue();
   }
 
@@ -383,17 +420,13 @@
     return JSON.stringify(json, null, 2);
   }
 
-  /**
-   * Sends the request and streams the response
-   * @returns {Promise}
-   */
-  
   clear () {
     assert(!this.isActive(), "attempting to clear an active request");
     // clear such that we can reuse the request
     this.setError(null);
     this.setXhr(null);
     this.setXhrPromise(Promise.clone());
+    this.setCompletionPromise(Promise.clone());
     this.setStatus("");
     this.setDidAbort(false);
     this.setRetryCount(0);
@@ -411,8 +444,15 @@
     assert(Type.isString(body) || Type.isFormData(body), "body must be a string");
   }
 
+  /**
+   * Sends the request and streams the response
+   * @returns {Promise}
+   */
+  
+
   async asyncSend () {
     this.setXhrPromise(Promise.clone());
+    this.setCompletionPromise(Promise.clone());
 
     this.setError(null); // clear error (in case we are retrying)
     assert(!this.xhr());
@@ -460,7 +500,7 @@
     }
     console.log("--------------------------------");
 
-    xhr.responseType = ""; // "" or "text" is required for streams
+    xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" for binary data
     
     const em = EventManager.shared();
 
@@ -511,6 +551,9 @@
     }
 
     this.sendDelegate("onRequestComplete", [this]);
+    
+    // Resolve the completion promise to signal the request is done
+    this.completionPromise().callResolveFunc();
   }
 
   /**
@@ -526,6 +569,16 @@
     */
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
     this.sendDelegate("onRequestProgress", [this]);
+  }
+
+  statusCode () {
+    const xhr = this.xhr();
+    return xhr ? xhr.status : null;
+  }
+
+  statusText () {
+    const xhr = this.xhr();
+    return xhr ? xhr.statusText : null;
   }
 
   errorFromStatusCode () {
@@ -629,7 +682,24 @@
   }
 
   responseText () {
-    return this.xhr().responseText;
+    const xhr = this.xhr();
+    if (!xhr) {
+      return null;
+    }
+    
+    // Only access responseText for text-based responses
+    if (this.responseType() === '' || this.responseType() === 'text') {
+      return xhr.responseText;
+    }
+    
+    // For other response types, return a description
+    if (this.responseType() === 'blob') {
+      return "[Binary blob data]";
+    } else if (this.responseType() === 'arraybuffer') {
+      return "[Binary array buffer]";
+    }
+    
+    return null;
   }
 
   /**
@@ -641,6 +711,7 @@
     this.setError(null);
     this.setXhr(null);
     this.setXhrPromise(null);
+    this.setCompletionPromise(null);
     this.setStatus("retrying");
     this.asyncSend();
   }
@@ -742,6 +813,9 @@
     this.setStatus("aborted");
     this.sendDelegate("onRequestAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
+    
+    // Also resolve the completion promise when aborted
+    this.completionPromise().callResolveFunc();
   }
 
   // -----------------------------------------------------------------------------
@@ -780,16 +854,29 @@
     }
 
 
-    if (xhr.responseText) {
-      const maxLength = 1000;
-      if (xhr.responseText.length < maxLength) {
-        json.responseText = xhr.responseText;
+    // Handle response based on responseType
+    if (this.responseType() === '' || this.responseType() === 'text') {
+      if (xhr.responseText) {
+        const maxLength = 1000;
+        if (xhr.responseText.length < maxLength) {
+          json.responseText = xhr.responseText;
+        } else {
+          json.responseText = xhr.responseText.substring(0, maxLength) + "...";
+        }
+        json.responseByteCount = xhr.responseText.length;
       } else {
-        json.responseText = xhr.responseText.substring(0, maxLength) + "...";
+        json.note = "[no response text yet]";
       }
-      json.responseByteCount = xhr.responseText.length;
+    } else if (this.responseType() === 'blob' && xhr.response) {
+      json.responseType = "blob";
+      json.responseByteCount = xhr.response.size || 0;
+      json.note = `[Binary blob: ${xhr.response.type || 'unknown type'}]`;
+    } else if (this.responseType() === 'arraybuffer' && xhr.response) {
+      json.responseType = "arraybuffer";
+      json.responseByteCount = xhr.response.byteLength || 0;
+      json.note = "[Binary array buffer]";
     } else {
-      json.note = "[no response text yet]";
+      json.note = "[no response data yet]";
     }
 
     return json;

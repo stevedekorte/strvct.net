@@ -21,7 +21,7 @@
  * - stop()
  */
 
-(class AudioQueue extends SvSummaryNode {
+(class AudioQueue extends SvSummaryNode { 
 
   /**
    * @category Initialization

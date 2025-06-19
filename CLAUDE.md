@@ -439,3 +439,7 @@ This setup ensures eval'd code files are editable in the debugger regardless of 
 - Use the Map class instead of dictionaries for maps
 - When declaring a method, put a space between the method name and the ()
 - All custom Strvct framework classes (not including categories of JS classes) should have the "Sv" prefix to indicate they are part of the STRVCT framework. External code in the external-libs folder is exempt from this naming convention.
+
+# Important
+
+- Strvct is an independent framework and you should avoid making any changes that include information about the applications using it (i.e. maintain separation of concerns).

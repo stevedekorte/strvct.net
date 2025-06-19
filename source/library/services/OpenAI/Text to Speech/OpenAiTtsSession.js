@@ -370,7 +370,7 @@
     request.setApiUrl(this.endpoint());
     request.setDelegate(this)
 
-    const bodyJson = {
+    const bodyJson = { 
       model: this.ttsModel(), 
       voice: this.voice(), 
       input: this.prompt(),

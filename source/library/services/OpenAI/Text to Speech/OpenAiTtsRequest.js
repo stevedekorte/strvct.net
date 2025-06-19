@@ -72,34 +72,8 @@
       slot.setCanEditInspection(false);
     }
 
-    // fetching
+    // request state
 
-    /**
-     * @member {Object} fetchRequest - The fetch request object.
-     * @category Networking
-     */
-    {
-      const slot = this.newSlot("fetchRequest", null);
-      slot.setSlotType("Object");
-    }
-
-    /**
-     * @member {Boolean} isFetchActive - Indicates if a fetch is currently active.
-     * @category State
-     */
-    {
-      const slot = this.newSlot("isFetchActive", false);
-      slot.setSlotType("Boolean");
-    }
-
-    /**
-     * @member {Object} fetchAbortController - The AbortController for the fetch request.
-     * @category Networking
-     */
-    {
-      const slot = this.newSlot("fetchAbortController", null);
-      slot.setSlotType("Object");
-    }
 
     /**
      * @member {Error} error - Stores any error that occurs during the request.
@@ -125,14 +99,6 @@
       slot.setCanEditInspection(false);
     }
 
-    /**
-     * @member {Promise} fetchPromise - The promise for the fetch operation.
-     * @category Networking
-     */
-    {
-      const slot = this.newSlot("fetchPromise", null);
-      slot.setSlotType("Promise");
-    }
 
     /**
      * @member {Blob} audioBlob - The audio data received from the API.
@@ -152,6 +118,15 @@
       slot.setSlotType("WASound");
     }
 
+    /**
+     * @member {SvXhrRequest} svXhrRequest - The XHR request instance when using proxy.
+     * @category Networking
+     */
+    {
+      const slot = this.newSlot("svXhrRequest", null);
+      slot.setSlotType("SvXhrRequest");
+    }
+
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
   }
@@ -166,9 +141,16 @@
     this.setRequestId(this.puuid());
     this.setTitle("Request");
 
-    this.setFetchPromise(Promise.clone());
-    this.setSound(WASound.clone());
-    this.sound().setFetchPromise(this.fetchPromise());
+    const sound = WASound.clone();
+    this.setSound(sound);
+    
+    // Create and set the fetchPromise immediately
+    // This ensures the sound has a promise to wait on before it's queued
+    const fetchPromise = Promise.clone();
+    sound.setFetchPromise(fetchPromise);
+    
+    // Store the promise so we can resolve/reject it later
+    this._fetchPromise = fetchPromise;
   }
 
   /**
@@ -211,21 +193,38 @@
   }
 
   /**
-   * @description Prepares the request options for the API call.
-   * @returns {Object} The request options object.
+   * @description Returns the proxied URL if a proxy server is configured.
+   * @returns {string} The proxied URL or the original URL if no proxy is available.
    * @category Request Preparation
    */
-  requestOptions () {
-    const apiKey = this.service().apiKeyOrUserAuthToken();
-    return {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(this.bodyJson()),
-    };
+  proxyUrl () {
+    const ProxyServers = getGlobalThis().ProxyServers;
+    if (ProxyServers && ProxyServers.shared().defaultServer()) {
+      return ProxyServers.shared().defaultServer().proxyUrlForUrl(this.apiUrl());
+    }
+    return this.apiUrl();
   }
+
+  /**
+   * @description Creates a proxy XHR request for the given URL.
+   * @returns {SvXhrRequest} An XHR request configured for proxy.
+   * @category Request Preparation
+   */
+  proxyXhrForUrl () {
+    const SvXhrRequest = getGlobalThis().SvXhrRequest;
+    const xhr = SvXhrRequest.clone();
+    xhr.setUrl(this.proxyUrl());
+    xhr.setMethod("POST");
+    xhr.setHeaders({
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${this.service().apiKeyOrUserAuthToken()}`
+    });
+    xhr.setDelegate(this);
+    xhr.setBody(JSON.stringify(this.bodyJson()));
+    xhr.setResponseType("blob"); // Set to blob for binary audio data
+    return xhr;
+  }
+
 
   /**
    * @description Asserts that the request is valid before sending.
@@ -271,57 +270,120 @@
    * @category Networking
    */
   async asyncSend () {
+    // Use the fetchPromise that was already set on the sound in init()
+    const fetchPromise = this._fetchPromise;
+    
     try {
-      this.setStatus("fetching");
+      this.setStatus("sending");
       this.sendDelegate("onRequestBegin");
 
-      this.assertValid();
+      this.assertValid(); 
       if (this.isDebugging()) {
         this.showRequest();
       }
 
-      const options = this.requestOptions();
-      const controller = new AbortController();
-      this.setFetchAbortController(controller);
-      options.signal = controller.signal;
+      // Create XHR request with proxy support
+      const xhrRequest = this.proxyXhrForUrl();
+      this.setSvXhrRequest(xhrRequest);
+      
+      // Send the request
+      await xhrRequest.asyncSend();
+      
+      // Check if successful
+      if (!xhrRequest.isSuccess()) {
+        const statusCode = xhrRequest.statusCode();
+        const statusText = xhrRequest.statusText();
+        throw new Error(`TTS API error: ${statusCode} - ${statusText}`);
+      }
 
-      const response = await fetch(this.apiUrl(), options);
-      this.setIsFetchActive(false);
-      this.setFetchAbortController(null);
-
-      const audioBlob = await response.blob();
-      this.fetchPromise().callResolveFunc();
+      // Log the full request details for debugging
+      console.log("OpenAiTtsRequest: Request completed\n" + xhrRequest.description());
+      
+      // Get the audio blob from the response
+      const xhr = xhrRequest.xhr();
+      const audioBlob = xhr.response;
+      
+      if (!audioBlob) {
+        throw new Error("No response blob received from TTS API");
+      }
+      
+      console.log(`TTS Response: size=${audioBlob.size}, type=${audioBlob.type}`);
+      
+      // Check if blob is suspiciously small (less than 1KB is likely an error)
+      if (audioBlob.size < 1000) {
+        const text = await audioBlob.text();
+        console.warn("TTS response too small, content:", text);
+        
+        // Try to parse as JSON error
+        try {
+          const errorJson = JSON.parse(text);
+          if (errorJson.error) {
+            throw new Error(`TTS API error: ${errorJson.error.message || errorJson.error}`);
+          }
+        } catch (e) {
+          // Not JSON, continue
+        }
+        
+        throw new Error(`TTS response too small (${audioBlob.size} bytes) - may be an error response`);
+      }
+      
+      // Check if we got an HTML error page instead of audio
+      if (audioBlob.type && audioBlob.type.includes('text/html')) {
+        const text = await audioBlob.text();
+        console.error("Received HTML instead of audio:", text.substring(0, 500));
+        throw new Error("Received HTML error page instead of audio data");
+      }
+      
       this.setAudioBlob(audioBlob);
-
-      this.sound().asyncLoadFromDataBlob(audioBlob);
+      
+      try {
+        const sound = this.sound();
+        console.log("OpenAiTtsRequest: Loading audio blob into WASound...");
+        await sound.asyncLoadFromDataBlob(audioBlob);
+        console.log("OpenAiTtsRequest: Audio loaded", JSON.stringify({
+          data: sound.data(),
+          hasData: sound.hasData(),
+          dataByteLength: sound.data() ? sound.data().byteLength : null,
+          loadState: sound.loadState()
+        }, null, 2));
+      } catch (error) {
+        console.error("Failed to load audio data into WASound:", error);
+        throw new Error(`Failed to decode audio: ${error.message}`);
+      }
 
       this.sendDelegate("onRequestComplete");
+      
+      // Resolve the fetchPromise now that everything is complete
+      fetchPromise.callResolveFunc();
+      
+      // Clean up
+      this.setSvXhrRequest(null);
 
     } catch (error) {
-      this.setIsFetchActive(false);
       console.error('Error:', error);
       this.onError(error);
+      this.setSvXhrRequest(null);
+      
+      // Reject the fetchPromise on error
+      fetchPromise.callRejectFunc(error);
     }
   }
 
   /**
-   * @description Aborts the current fetch request if it's active.
+   * @description Aborts the current request if it's active.
    * @returns {OpenAiTtsRequest} The current instance.
    * @category Networking
    */
   abort () {
-    if (this.isFetchActive()) {
-      if (this.fetchAbortController()) {
-        this.fetchAbortController().abort();
-      }
-      return this;
-    } 
-
+    if (this.svXhrRequest()) {
+      this.svXhrRequest().abort();
+      this.setSvXhrRequest(null);
+    }
     return this;
   }
 
   /**
-   * @description Shuts down the request by aborting any active fetch.
+   * @description Shuts down the request by aborting any active request.
    * @returns {OpenAiTtsRequest} The current instance.
    * @category Lifecycle
    */
@@ -337,7 +399,7 @@
    */
   onError (error) {
     this.sendDelegate("onRequestError", [this, error]);
-    this.fetchPromise().callRejectFunc(error);
+    this.setError(error);
   }
 
   /**

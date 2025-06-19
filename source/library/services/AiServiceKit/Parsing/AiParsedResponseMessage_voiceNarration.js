@@ -69,7 +69,7 @@
   }
 
   voiceNarrateText (text) {
-    const speaker = this.speaker();
+    const speaker = this.speaker(); // this is anOpenAiTtsSession
     speaker.setPrompt(text);
     //speaker.setPrompt(this.spokenContentOfText(text));
     const sound = speaker.generate(); // this will add it to the speaker's tts queue, and then audio queue
