@@ -1,5 +1,6 @@
 [
     "WebBrowserScreen.js",
+    "cookies/_imports.json",
     "WebBrowserWindow.js",
     "WebBrowserCookie.js",
     "WebBrowserNotification.js",
