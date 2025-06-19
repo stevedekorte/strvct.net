@@ -24,6 +24,15 @@
  * WbCookieManager.shared().clear();
  *
  * WbCookieManager.shared().cookieCount();
+ * 
+ * const newCookie = WbCookie.clone();
+ * newCookie.setPath("/");
+ * newCookie.setDomain("mydomain.com");
+ * newCookie.setMaxAge(3600);
+ * newCookie.setSecure(true);
+ * newCookie.setHttpOnly(true);
+ * WbCookieManager.shared().addCookie(newCookie);
+ * 
  */
 (class WbCookieManager extends ProtoClass {
     
@@ -114,6 +123,7 @@
     addCookie (cookie) {
         cookie.setCookieManager(this);
         this.cookiesMap().set(cookie.name(), cookie);
+        cookie.save();
         return this;
     }
 
