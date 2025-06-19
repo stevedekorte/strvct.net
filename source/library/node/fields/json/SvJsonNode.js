@@ -84,17 +84,17 @@
      * @category Node Creation
      */
     static nodeForJson (json, jsonPathComponents = []) {
-        const t = Type.typeName(json)
-        const protoName = this.jsonToProtoNameDict()[t]  
+        const t = Type.typeName(json);
+        const protoName = this.jsonToProtoNameDict()[t];
         if (protoName) {
-            const proto = Object.getClassNamed(protoName)
+            const proto = Object.getClassNamed(protoName);
             if (proto) {
-                const instance = proto.clone().setJson(json, jsonPathComponents)
-                return instance
+                const instance = proto.clone().setJson(json, jsonPathComponents);
+                return instance;
             }
         }
 
-        return null
+        return null;
     }
 
     /**
