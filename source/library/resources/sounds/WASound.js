@@ -394,9 +394,7 @@
             return Promise.resolve();
         }
 
-        try {
-            debugger;
-            
+        try {            
             if (this.path()) {
                 //debugger;
                 //console.log(this.typeId() + " path: ", this.path());
