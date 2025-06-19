@@ -25,6 +25,11 @@
      * @category Initialization
      */
     initPrototypeSlots () {
+
+        {
+            const slot = this.newSlot("cookieManager", WbCookieManager.shared());
+            slot.setSlotType("WbCookieManager");
+        }
     }
 
     /**
