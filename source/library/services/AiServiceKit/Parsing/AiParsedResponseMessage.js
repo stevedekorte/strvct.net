@@ -232,6 +232,13 @@
       return this.tagDelegate()[textMethodName](tagText, this);
     } else if (tagName.includes("-")) { // only warn if it has a dash as it's a special tag
       if (!ignoreMissingMethodsForTags.includes(tagName)) {
+        if (tagName === "tool-call-result") {
+          console.warn("AI is mistakingly sending a tool-call-result tag. This is not allowed. Ignoring.");
+          // TODO: add a feature to attach a error message about this to the next user response message
+          // maybe via the tool call result object?
+          debugger;
+          return;
+        }
         console.warn("tagDelegate (" + this.tagDelegate().type() + ") missing method: " + textMethodName + " for tag: " + tagName);
         debugger;
       }
