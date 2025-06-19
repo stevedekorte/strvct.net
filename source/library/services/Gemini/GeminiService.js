@@ -32,22 +32,17 @@
     // gemini-2.5-pro-preview-06-05
     return [
       {
-        "name": "gemini-2.5-pro-preview-06-05",
-        "title": "Gemini 2.5 Pro Preview",
+        //"name": "gemini-2.5-pro-preview-06-05",
+        "name": "gemini-2.5-pro",
+        "title": "Gemini 2.5 Pro",
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 65536
       }
       /*
       // these other models may not be good enough to work properly
       {
-        "name": "gemini-2.5-pro-preview-03-25",
-        "title": "Gemini 2.5 Pro Preview",
-        "inputTokenLimit": 1048576,
-        "outputTokenLimit": 65536
-      },
-      {
-        "name": "gemini-2.5-flash-preview-04-17",
-        "title": "Gemini 2.5 Flash Preview",
+        "name": "gemini-2.5-flash  ",
+        "title": "Gemini 2.5 Flash",
         "inputTokenLimit": 1048576,
         "outputTokenLimit": 65536
       },
