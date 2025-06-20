@@ -160,9 +160,17 @@
     this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
     this.setCanDelete(true);
-    this.setNodeFillsRemainingWidth(true);
+    this.setNodeFillsRemainingWidth(false);
   }
 
+  finalInit () {
+    super.finalInit();
+    this.openAiPrompt().setTitle("OpenAI Image Generation");
+    this.leonardoPrompt().setTitle("Leonardo Style Transfer");
+    this.initRefImage().setTitle("Initial Image");
+    this.styleRefImage().setTitle("Style Image");
+    this.setNodeFillsRemainingWidth(false);
+  }
 
   /**
    * @description Gets the Leonardo service used for style transfer.
@@ -265,10 +273,14 @@
         throw new Error("Failed to upload initial image to Leonardo");
       }
 
+
+      /*
       // Step 3: Generate style reference if we have a style ref image
       assert(this.styleRefImage(), "Style reference image is required");
       assert(this.styleRefImage().hasInitImageId(), "Style reference image must have an init image id");
       const styleImageId = this.styleRefImage().initImageId();
+      */
+      const styleImageId = "621a5144-ecfd-4a28-8cca-d8541319a728"; // make this static for now using a hardcoded id
 
       // Step 4: Perform style transfer with Leonardo
       this.setStatus("performing style transfer with Leonardo...");
