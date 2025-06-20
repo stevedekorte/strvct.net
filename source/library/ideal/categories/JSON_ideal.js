@@ -106,12 +106,19 @@ JSON.stableStringifyOnlyJson = function (obj, replacer, space) {
 
 JSON.stableStringifyWithStdOptions = function (obj, replacer, space) {
     const opts = {};
+
     if (replacer) {
+        assert(Type.isFunction(replacer));
         opts.replacer = replacer;
     }
+
     if (space) {
+        assert(Type.isNumber(space));
         opts.space = space;
+    } else {
+        opts.space = 2;
     }
+    
     /*
     if (Object.keys(opts).length === 0) {
         return JSON.stableStringify(obj);

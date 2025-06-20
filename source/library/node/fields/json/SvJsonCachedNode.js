@@ -96,7 +96,7 @@
      * @category Data Management
      */
     updateJsonHash () {
-        this.setJsonHashCode(JSON.stableStringifyWithStdOptions(this.asJson()).hashCode());
+        this.setJsonHashCode(JSON.stableStringifyWithStdOptions(this.asJson(), null, 2).hashCode());
         return this;
     }
 
@@ -111,7 +111,7 @@
         if (json === null) {
             this.setJsonHashCode(null);
         } else {
-            this.setJsonHashCode(JSON.stableStringifyWithStdOptions(json).hashCode());
+            this.setJsonHashCode(JSON.stableStringifyWithStdOptions(json, null, 2).hashCode());
         }
         return this;
     }
@@ -143,11 +143,11 @@
      * @category Data Comparison
      */
     doesMatchJson (json) {
-        const a = JSON.stableStringifyWithStdOptions(json); 
+        const a = JSON.stableStringifyWithStdOptions(json, null, 2); 
         if (this.jsonHashCode()) {
             return this.jsonHashCode() === a.hashCode();
         }
-        const b = JSON.stableStringifyWithStdOptions(this.asJson());
+        const b = JSON.stableStringifyWithStdOptions(this.asJson(), null, 2);
         return a === b;
     }
 

@@ -85,7 +85,7 @@ Some of the referenced type definitions may be defined at the end of this prompt
 
 The following tools are available for you to use:
 `);
-    parts.push("<tools>\n" + JSON.stringify(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
+    parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
     //parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // includes tools and type definitions
     return parts.join("\n\n");
   }

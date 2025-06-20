@@ -127,7 +127,7 @@
 
   composeResponseString () {
     const json = this.jsonArchive();
-    let content = JSON.stableStringify(json);
+    let content = JSON.stableStringifyWithStdOptions(json, null, 2);
     //content = "![CDATA[${" + content + "]]>";
     const tagName = this.thisClass().enclosingTagName();
     content = `<${tagName}>` + content + `</${tagName}>`;
