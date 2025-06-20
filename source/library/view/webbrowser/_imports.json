@@ -3,8 +3,7 @@
     "cookies/_imports.json",
     "WebBrowserWindow.js",
     "WebBrowserCookie.js",
-    "WebBrowserNotification.js",
-    "WebBrowserNotifications.js",
+    "notifications/_imports.json",
     "WebDocument.js",
     "SvStyleSheet.js",
     "ThrashDetector.js"
