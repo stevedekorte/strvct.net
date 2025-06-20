@@ -195,7 +195,12 @@
      * @returns {SvJsonCachedNode} The current instance.
      * @category Data Modification
      */
-    applyJsonPatches (jsonPatches) {
+    applyJsonPatches (/*jsonPatches*/) {
+        throw new Error("applyJsonPatches() is no longer implemented. use applyJsonPatches() on the parent JsonGroup instead.");
+    }
+
+    /*
+    applyJsonPatches_old (jsonPatches) {
         assert(Type.isArray(jsonPatches), "applyJsonPatches() jsonPatches is not an array");
         assert(Type.isDeepJsonType(jsonPatches), "applyJsonPatches() jsonPatches is not a deep json type");
         
@@ -221,85 +226,6 @@
         // library raise exceptions when using "/-" on non-existent arrays.
         // This aligns with the JSON Patch spec (RFC 6902).
         
-        /* 
-        // DISABLED: Pre-validation and preparation for array operations
-        // First pass: identify and prepare paths for array operations
-        const arrayParentPaths = new Set();
-        for (const patch of jsonPatches) {
-            // Check if the operation involves an array append using "/-" path
-            if (patch.op === "add" && patch.path.includes("/-")) {
-                const pathParts = patch.path.split("/").slice(1); // Remove leading empty string
-                const appendIndex = pathParts.findIndex(part => part === "-");
-                
-                if (appendIndex > 0) {
-                    // Extract the parent path that should contain an array
-                    const parentPathParts = pathParts.slice(0, appendIndex);
-                    const parentPath = "/" + parentPathParts.join("/");
-                    arrayParentPaths.add(parentPath);
-                    
-                    // Get current value at parent path, if it exists
-                    let currentObj = oldJson;
-                    let pathExists = true;
-                    
-                    for (let i = 0; i < parentPathParts.length; i++) {
-                        const part = parentPathParts[i];
-                        if (currentObj === undefined || currentObj === null) {
-                            pathExists = false;
-                            break;
-                        }
-                        
-                        // If a numeric index exists in the parent path, ensure objects along the way
-                        // Note: isInteger is defined in Type.js
-                        if (Type.isInteger(part) && !Array.isArray(currentObj)) {
-                            console.warn(`Converting object to array at: ${parentPathParts.slice(0, i).join("/")}`);
-                            // This is just for warning/log purposes
-                        }
-                        
-                        currentObj = currentObj[part];
-                    }
-                    
-                    // If the parent path doesn't exist or isn't an array, create prep patches
-                    if (!pathExists || !Array.isArray(currentObj)) {
-                        console.log(`Ensuring array at path: ${parentPath}`);
-                        
-                        // Create a patch to ensure the parent path exists as an array
-                        const ensureArrayPatch = {
-                            op: "test",
-                            path: parentPath,
-                            value: []
-                        };
-                        
-                        try {
-                            // Test if path exists and is an array
-                            JsonPatch.applyOperation(oldJson, ensureArrayPatch);
-                        } catch (e) {
-                            // Path doesn't exist or isn't an array, so create it
-                            // Create all parent paths if needed
-                            this.ensureParentPathsExist(oldJson, parentPathParts);
-                            
-                            // Force the target path to be an array
-                            let current = oldJson;
-                            for (let i = 0; i < parentPathParts.length - 1; i++) {
-                                const part = parentPathParts[i];
-                                if (current[part] === undefined || current[part] === null) {
-                                    // Create intermediate object if needed
-                                    current[part] = {};
-                                }
-                                current = current[part];
-                            }
-                            
-                            // Set the final part to be an array
-                            const finalPart = parentPathParts[parentPathParts.length - 1];
-                            if (current[finalPart] === undefined || current[finalPart] === null || !Array.isArray(current[finalPart])) {
-                                // Force it to be an array
-                                current[finalPart] = [];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        */
         
         try {
             // Apply all patches to the JSON object
@@ -342,79 +268,9 @@
             // Re-throw the error - we're no longer attempting automatic recovery
             // to align with the JSON Patch specification
             throw error;
-            
-            /* 
-            // DISABLED: Error recovery code
-            // Try to provide more context about the error
-            if (error.message && error.message.includes("Expected array")) {
-                const pathMatch = error.message.match(/Expected array for JSON path: (.+)/);
-                if (pathMatch && pathMatch[1]) {
-                    const problematicPath = pathMatch[1];
-                    console.error(`The problem occurred with path: ${problematicPath}`);
-                    
-                    // Check if the path exists in the current JSON
-                    try {
-                        const parentPath = problematicPath.substring(0, problematicPath.lastIndexOf("/"));
-                        const lastSegment = problematicPath.substring(problematicPath.lastIndexOf("/") + 1);
-                        
-                        console.error(`Parent path: ${parentPath}, Last segment: ${lastSegment}`);
-                        
-                        // Attempt to fix by applying patches one by one
-                        console.log("Attempting to apply patches individually...");
-                        const fixedJson = this.asJson().deepCopy();
-                        
-                        // For each patch, ensure paths exist with proper types
-                        for (let i = 0; i < jsonPatches.length; i++) {
-                            const patch = jsonPatches[i];
-                            const singlePatch = [patch];
-                            
-                            try {
-                                // If it's an array operation, ensure parent path is an array
-                                if (patch.op === "add" && patch.path.includes("/-")) {
-                                    const pathParts = patch.path.split("/").slice(1);
-                                    const appendIndex = pathParts.findIndex(part => part === "-");
-                                    if (appendIndex > 0) {
-                                        const parentPathParts = pathParts.slice(0, appendIndex);
-                                        this.ensureParentPathsExist(fixedJson, parentPathParts);
-                                        
-                                        // Force array at parent path
-                                        let current = fixedJson;
-                                        for (let j = 0; j < parentPathParts.length - 1; j++) {
-                                            current = current[parentPathParts[j]];
-                                        }
-                                        
-                                        const finalPart = parentPathParts[parentPathParts.length - 1];
-                                        if (!Array.isArray(current[finalPart])) {
-                                            current[finalPart] = [];
-                                        }
-                                    }
-                                }
-                                
-                                console.log(`Applying patch ${i+1}/${jsonPatches.length}:`, JSON.stringify(singlePatch));
-                                const singleResult = JsonPatch.applyPatchWithAutoCreation(fixedJson, singlePatch);
-                                console.log(`Patch ${i+1} applied successfully`);
-                            } catch (singleError) {
-                                console.error(`Failed to apply patch ${i+1}:`, singleError);
-                                console.error(`Problematic patch:`, JSON.stringify(singlePatch));
-                                // Continue with the next patch
-                            }
-                        }
-                        
-                        // Fix any objects with numeric keys
-                        this.fixNumericKeyObjectsToArrays(fixedJson);
-                        
-                        // If we made it here, apply the fixed JSON
-                        this.setJson(fixedJson);
-                        this.setLastJson(fixedJson);
-                        return this;
-                    } catch (analyzeError) {
-                        console.error("Error analyzing path:", analyzeError);
-                    }
-                }
-            }
-            */
         }
     }
+    */
     
     /**
      * Helper method to ensure all parent paths exist in a JSON object

@@ -47,6 +47,80 @@
 - Return `this` from all initialization methods to support method chaining
 - Remember to call parent methods with `super.methodName()`
 
+### Category System
+
+STRVCT supports a category system that allows extending existing classes with additional functionality without modifying the original class files. This promotes clean separation of concerns and modular code organization.
+
+#### Creating Category Classes
+
+Categories are implemented as classes that extend the target class and use `.initThisCategory()` instead of `.initThisClass()`:
+
+```javascript
+// Base class
+(class MyClass extends ParentClass {
+    initPrototypeSlots() {
+        // Core functionality slots
+    }
+    
+    coreMethod() {
+        // Core functionality
+    }
+}.initThisClass());
+
+// Category class extending MyClass
+(class MyClass_patches extends MyClass {
+    // Additional functionality
+    patchMethod() {
+        // Patch-related functionality
+    }
+}.initThisCategory());
+```
+
+#### Loading Order Requirements
+
+**CRITICAL**: Base classes must be loaded before their categories. In `_imports.json` files:
+
+```json
+[
+    "MyClass.js",           // Base class first
+    "MyClass_patches.js",   // Category second
+    "MyClass_utilities.js"  // Additional categories after
+]
+```
+
+#### Category Naming Convention
+
+- Use underscore to separate the base class name from the category name
+- Examples: `JsonGroup_patches.js`, `SvJsonArrayNode_patches.js`, `JsonGroup_clientState.js`
+- Category names should describe the functionality they add
+
+#### Benefits of Categories
+
+1. **Separation of Concerns**: Keep different types of functionality in separate files
+2. **Maintainability**: Easier to locate and modify specific functionality
+3. **Clean Base Classes**: Core classes remain focused on essential functionality
+4. **Modularity**: Categories can be added or removed independently
+5. **Framework Organization**: Distinguish between core framework and extended functionality
+
+#### Example Usage
+
+```javascript
+// JsonGroup.js - Core JSON functionality
+(class JsonGroup extends SvJsonCachedNode {
+    asJson() { /* core JSON methods */ }
+}.initThisClass());
+
+// JsonGroup_patches.js - JSON Patch functionality
+(class JsonGroup_patches extends JsonGroup {
+    applyJsonPatches(patches) { /* patch methods */ }
+}.initThisCategory());
+
+// JsonGroup_clientState.js - Tool call functionality  
+(class JsonGroup_clientState extends JsonGroup {
+    patchClientState(toolCall) { /* tool methods */ }
+}.initThisCategory());
+```
+
 ### Slot System
 
 - Properties declared with `this.newSlot("propertyName", defaultValue)`

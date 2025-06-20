@@ -1,7 +1,12 @@
 [
+    "JsonPatchError.js",
     "SvJsonCachedNode.js",
     "SvJsonNode.js",
     "SvJsonArrayNode.js",
+    "SvJsonArrayNode_patches.js",
     "SvJsonDictionaryNode.js",
-    "SvJsonNullField.js"
+    "SvJsonNullField.js",
+    "JsonGroup.js",
+    "JsonGroup_patches.js",
+    "JsonGroup_clientState.js"
 ]
