@@ -151,6 +151,7 @@
     this.replaceTableOfContents(); // so it's not treated as a method
     this.replaceMethods(); // this ordering prevents methods from containing string with {{file$fileName}}
 
+    this.assertValidOutputString();
     return this.outputString();
   }
 
@@ -278,7 +279,12 @@
             this.setOutputString(string.replaceAll(`{{$${methodName}}}`, value));
             return true;
           } else {
-            throw new Error(`Method '${methodName}' not found on promptTarget or in promptDictionary`);
+            let dict = {
+              "message": `Method '${methodName}' not found on either of:`,
+              "promptTarget": this.promptTarget() ? this.promptTarget().type() : "null",
+              "promptDictionary": this.promptMap() ? this.promptMap().keysArray() : "null" 
+            };
+            throw new Error(JSON.stringify(dict, null, 2));
           }
         }
       }
@@ -307,6 +313,16 @@
       string = string.replaceAll("{{$tableOfContents}}", this.tableOfContentsString());
       this.setOutputString(string);
     }
+  }
+  
+  assertValidOutputString () {
+    const string = this.outputString();
+    const invalidStrings = ["file$", "{{$"];
+    invalidStrings.forEach(invalidString => {
+      if (string.includes(invalidString)) {
+        throw new Error(`Found '` + invalidString + `' in output string which looks like a misformatted prompt variable.`);
+      }
+    });
   }
 
 }.initThisClass());
