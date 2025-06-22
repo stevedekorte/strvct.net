@@ -26,6 +26,7 @@
      * @category Initialization
      */
     initPrototypeSlots () {
+        // No need to override slots - we'll use String type from parent
     }
 
     /**
@@ -41,6 +42,7 @@
         this.setValueIsVisible(true);
         this.setValueIsEditable(true);
     }
+
 
     /**
      * @description Synchronizes the field from the node.

@@ -43,6 +43,24 @@
             const slot = this.newSlot("autocompleteType", "current-password");
             slot.setSlotType("String");
         }
+
+        /**
+         * @member {String} emptyPlaceholder
+         * @description Placeholder text when password is empty
+         */
+        {
+            const slot = this.newSlot("emptyPlaceholder", "Enter password");
+            slot.setSlotType("String");
+        }
+
+        /**
+         * @member {String} filledPlaceholder
+         * @description Placeholder text when password has a value (typically dots)
+         */
+        {
+            const slot = this.newSlot("filledPlaceholder", "••••••••");
+            slot.setSlotType("String");
+        }
     }
 
     /**
@@ -66,18 +84,38 @@
         super.setupElement();
         
         const e = this.element();
-        e.type = "password";
-        e.autocomplete = this.autocompleteType();
+        if (e) {
+            e.setAttribute("type", "password");
+            e.setAttribute("autocomplete", this.autocompleteType());
+            
+            // Apply consistent styling
+            this.setStyleIfUnset("appearance", "none");
+            this.setStyleIfUnset("-webkit-appearance", "none");
+            this.setStyleIfUnset("border", "none");
+            this.setStyleIfUnset("outline", "none");
+            this.setStyleIfUnset("box-sizing", "border-box");
+            this.setStyleIfUnset("display", "block");
+            this.setStyleIfUnset("width", "100%");
+            
+            // Ensure we're registered for input events
+            this.setIsRegisteredForKeyboard(true);
+        }
         
-        // Apply consistent styling
-        this.setStyleIfUnset("appearance", "none");
-        this.setStyleIfUnset("-webkit-appearance", "none");
-        this.setStyleIfUnset("border", "none");
-        this.setStyleIfUnset("outline", "none");
-        this.setStyleIfUnset("box-sizing", "border-box");
-        this.setStyleIfUnset("display", "block");
-        this.setStyleIfUnset("width", "100%");
-        
+        return this;
+    }
+
+    /**
+     * @description Sets a style property only if it hasn't been set already
+     * @param {String} property - The CSS property name
+     * @param {String} value - The CSS property value
+     * @returns {SvPasswordView}
+     * @category Styling
+     */
+    setStyleIfUnset (property, value) {
+        const e = this.element();
+        if (e && !e.style[property]) {
+            e.style[property] = value;
+        }
         return this;
     }
 
@@ -88,14 +126,28 @@
      * @category Value Management
      */
     setString (newValue) {
+        console.log("SvPasswordView.setString called with:", newValue, "type:", typeof newValue);
+        
         if (Type.isNullOrUndefined(newValue)) {
             newValue = "";
         }
         
         const e = this.element();
-        if (e.value !== newValue) {
-            e.value = newValue;
-            this.didEdit();
+        if (e) {
+            console.log("Setting input element value to:", newValue, "current value:", e.value);
+            if (e.value !== newValue) {
+                e.value = newValue;
+                this.didEdit();
+            }
+            
+            // Update placeholder to indicate if password is set
+            if (newValue && newValue.length > 0) {
+                console.log("Setting filled placeholder");
+                e.placeholder = this.filledPlaceholder();  // Show dots as placeholder when password exists
+            } else {
+                console.log("Setting empty placeholder");
+                e.placeholder = this.emptyPlaceholder();
+            }
         }
         
         return this;
@@ -107,7 +159,14 @@
      * @category Value Management
      */
     string () {
-        return this.element().value || "";
+        const e = this.element();
+        if (e) {
+            const value = e.value || "";
+            console.log("SvPasswordView.string() returning:", value);
+            return value;
+        }
+        console.log("SvPasswordView.string() no element, returning empty string");
+        return "";
     }
 
     /**
@@ -209,6 +268,28 @@
             this.element().autocomplete = type;
         }
         return this;
+    }
+
+    /**
+     * @description Sets the value (alias for setString for compatibility)
+     * @param {String|Password} newValue - The password value
+     * @returns {SvPasswordView}
+     * @category Value Management
+     */
+    setValue (newValue) {
+        console.log("SvPasswordView.setValue called with:", newValue, "type:", typeof newValue, "constructor:", newValue?.constructor?.name);
+        return this.setString(newValue);
+    }
+
+    /**
+     * @description Gets the value (alias for string for compatibility)
+     * @returns {String} The password value
+     * @category Value Management
+     */
+    value () {
+        const val = this.string();
+        console.log("SvPasswordView.value() returning:", val);
+        return val;
     }
 
 }.initThisClass());
