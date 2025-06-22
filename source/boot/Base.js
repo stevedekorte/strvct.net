@@ -150,6 +150,8 @@
 
     /**
      * Initializes the prototype. Subclasses should override this method.
+     * IMPORTANT: This method should NEVER call super as each class is responsible for
+     * initializing only its own prototype. The framework handles prototype inheritance automatically.
      * @category Initialization
      */
     initPrototype () {

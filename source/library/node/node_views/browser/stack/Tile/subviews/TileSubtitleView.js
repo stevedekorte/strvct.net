@@ -3,10 +3,10 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.subviews
  * @class TileSubtitleView
- * @extends TextField
- * @classdesc TileSubtitleView is a specialized TextField for displaying subtitles in a Tile.
+ * @extends SvTextView
+ * @classdesc TileSubtitleView is a specialized SvTextView for displaying subtitles in a Tile.
  */
-(class TileSubtitleView extends TextField {
+(class TileSubtitleView extends SvTextView {
     
     /**
      * @description Initializes the prototype slots for the TileSubtitleView.

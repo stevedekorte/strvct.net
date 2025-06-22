@@ -109,8 +109,9 @@
     // ----
 
     /**
-
      * @description Initialize the prototype slots for this class.
+     * IMPORTANT: This method should NEVER call super as each class is responsible for
+     * initializing only its own slots. The framework handles slot inheritance automatically.
      */
     initPrototypeSlots () {
  
@@ -228,6 +229,8 @@
     /**
 
      * @description Initialize the prototype for this class.
+     * IMPORTANT: This method should NEVER call super as each class is responsible for
+     * initializing only its own prototype. The framework handles prototype inheritance automatically.
      */
     initPrototype () {
 

@@ -9,6 +9,7 @@
     "SvgIconCache.js",
     "SvgIconView.js",
     "HtmlElement_textField.js",
-    "TextField.js"
+    "SvTextView.js",
+    "SvPasswordView.js"
 ]
 

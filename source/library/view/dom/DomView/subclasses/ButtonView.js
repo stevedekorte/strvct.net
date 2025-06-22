@@ -33,20 +33,20 @@
     
     initPrototypeSlots () {
         /**
-         * @member {TextField} titleView - The view for displaying the button's title.
+         * @member {SvTextView} titleView - The view for displaying the button's title.
          * @category UI Components
          */
         {
             const slot = this.newSlot("titleView", null);
-            slot.setSlotType("TextField");
+            slot.setSlotType("SvTextView");
         }
         /**
-         * @member {TextField} subtitleView - The view for displaying the button's subtitle.
+         * @member {SvTextView} subtitleView - The view for displaying the button's subtitle.
          * @category UI Components
          */
         {
             const slot = this.newSlot("subtitleView", null);
-            slot.setSlotType("TextField");
+            slot.setSlotType("SvTextView");
         }
         /**
          * @member {Boolean} isEnabled - Indicates whether the button is enabled or disabled.
@@ -98,7 +98,7 @@
         this.setBorderRadiusPx(1)
 
         {
-            const view = TextField.clone()
+            const view = SvTextView.clone()
             this.setTitleView(view)
             this.addSubview(view)
             view.fillParentView()
@@ -112,7 +112,7 @@
         }
 
         {
-            const view = TextField.clone()
+            const view = SvTextView.clone()
             this.setSubtitleView(view)
             this.addSubview(view)
             view.fillParentView()

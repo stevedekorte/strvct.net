@@ -4,6 +4,7 @@
     "SvActionFieldTile.js",
     "SvBooleanFieldTile.js",
     "SvStringFieldTile.js",
+    "SvPasswordFieldTile.js",
     "SvTextAreaFieldTile.js",
     "SvChatInputTile.js",
     "SvImageWellFieldTile.js",

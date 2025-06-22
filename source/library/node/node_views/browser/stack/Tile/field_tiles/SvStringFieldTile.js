@@ -4,7 +4,7 @@
  * @extends SvFieldTile
  * @classdesc SvStringFieldTile class for handling string field tiles.
  */
-(class SvStringFieldTile extends SvFieldTile {
+(class SvStringFieldTile extends SvFieldTile { 
     
     /*
     initPrototypeSlots () {
@@ -26,17 +26,17 @@
      * @category UI
      */
     createValueView () {
-        const v = TextField.clone()
-        v.setDisplay("block")
-        v.setPosition("relative")
-        v.setWordWrap("normal")
-        v.setHeight("auto")
-        v.setWidth("-webkit-fill-available")
-        v.setTextAlign("left")
-        v.setMargin("0em")
-        v.setOverflowX("hidden")
-        v.setBorderRadius("0.2em")
-        return v
+        const v = SvTextView.clone();
+        v.setDisplay("block");
+        v.setPosition("relative");
+        v.setWordWrap("normal");
+        v.setHeight("auto");
+        v.setWidth("-webkit-fill-available");
+        v.setTextAlign("left");
+        v.setMargin("0em");
+        v.setOverflowX("hidden");
+        v.setBorderRadius("0.2em");
+        return v;
     }
     
 }.initThisClass());

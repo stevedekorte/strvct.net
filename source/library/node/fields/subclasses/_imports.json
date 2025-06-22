@@ -11,6 +11,7 @@
     "SvArrayField.js",
     "SvStampField.js",
     "SvStringField.js",
+    "SvPasswordField.js",
     "SvTextAreaField.js",
     "SvUrlField.js",
     "SvVideoWellField.js",

@@ -13,6 +13,8 @@
     
     /**
      * @description Initializes the prototype slots for the DomView class.
+     * IMPORTANT: This method should NEVER call super as each class is responsible for
+     * initializing only its own slots. The framework handles slot inheritance automatically.
      * @returns {void}
      * @category Initialization
      */

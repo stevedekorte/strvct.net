@@ -60,7 +60,7 @@
      * @category UI
      */
     createValueView () {
-        const v = TextField.clone().setElementClassName("SvTextAreaFieldValueView");
+        const v = SvTextView.clone().setElementClassName("SvTextAreaFieldValueView");
         v.setDisplay("block");
         v.setPosition("relative");
         v.setWordWrap("normal");

@@ -121,11 +121,11 @@
 
     /**
      * @description Creates and configures the value view.
-     * @returns {TextField} The configured value view.
+     * @returns {SvTextView} The configured value view.
      * @category UI
      */
     createValueView () {
-        const v = TextField.clone().setElementClassName("SvChatInputTileValueView");
+        const v = SvTextView.clone().setElementClassName("SvChatInputTileValueView");
         
         v.setIsMergeable(true);
         v.setDisplay("block")

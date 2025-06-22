@@ -3,14 +3,14 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.subviews
  * @class TileTitleView
- * @extends TextField
+ * @extends SvTextView
  * @classdesc A title element in a Tile. 
  * 
- * Reasons not to just use setElementClassName() on a TextField instead:
+ * Reasons not to just use setElementClassName() on a SvTextView instead:
  * - to automatically get the full class hierarchy in the div name
  * - a place to (potentially) override interaction behaviors
  */
-(class TileTitleView extends TextField {
+(class TileTitleView extends SvTextView {
     
     /**
      * @description Initializes prototype slots for the TileTitleView.

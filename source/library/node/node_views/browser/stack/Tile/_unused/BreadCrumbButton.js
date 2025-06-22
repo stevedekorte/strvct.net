@@ -44,7 +44,7 @@
         this.setBorderRadiusPx(1)
         
         {
-            const tv = TextField.clone()
+            const tv = SvTextView.clone()
             this.setTitleView(tv)
             this.addSubview(tv)
             tv.fillParentView()

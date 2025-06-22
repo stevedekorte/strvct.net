@@ -18,7 +18,6 @@ const nodePath = require('path');
 (class FileRequest extends BaseHttpsServerRequest {
     
     initPrototypeSlots () {
-        super.initPrototypeSlots();
         
         /**
          * @member {string} webRoot - The root directory for serving files

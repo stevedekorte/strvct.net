@@ -208,7 +208,7 @@
      * @returns {DomView} The key view.
      */
     setupKeyView () {
-        const v = TextField.clone().setElementClassName("SvFieldKeyView")
+        const v = SvTextView.clone().setElementClassName("SvFieldKeyView")
         if (!v.themeClassName()) {
             v.setThemeClassName("FieldKey")
         }
@@ -297,7 +297,7 @@
      * @returns {DomView} The value view.
      */
     createValueView () {
-        const v = TextField.clone().setElementClassName("SvFieldValueView")
+        const v = SvTextView.clone().setElementClassName("SvFieldValueView")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setWidth("100%")

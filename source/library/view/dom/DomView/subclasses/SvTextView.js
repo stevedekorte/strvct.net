@@ -2,7 +2,7 @@
 
 /**
  * @module library.view.dom.DomView.subclasses
- * @class TextField
+ * @class SvTextView
  * @extends StyledDomView
  * @description A view for a single line of text. 
  * For multi-line text, use TextArea.
@@ -13,7 +13,7 @@
  * 
  */
 
-(class TextField extends StyledDomView {
+(class SvTextView extends StyledDomView {
     
     initPrototypeSlots () {
 
@@ -270,7 +270,7 @@
 
     /**
      * @description Sets up the element.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setupElement () {
         super.setupElement();
@@ -282,7 +282,7 @@
 
     /**
      * @description Starts the mutation observer.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     startMutationObserver () {
         debugger;
@@ -305,7 +305,7 @@
 
     /**
      * @description Stops the mutation observer.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     stopMutationObserver () {
         const obs = this.mutationObserver();
@@ -352,7 +352,7 @@
     /**
      * @description Sets the content editable.
      * @param {Boolean} aBool - The boolean.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setContentEditable (aBool) {
         super.setContentEditable(aBool);
@@ -417,7 +417,7 @@
     /**
      * @description Sets the uses double tap to edit.
      * @param {Boolean} aBool - The boolean.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setUsesDoubleTapToEdit (aBool) {
         if (this._usesDoubleTapToEdit !== aBool) {
@@ -429,7 +429,7 @@
 
     /**
      * @description Syncs the border.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     syncBorder () {
         let b = this.uneditableBorder();
@@ -445,7 +445,7 @@
 
     /**
      * @description Syncs the placeholder text.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     syncPlaceholderText () {
         const pt = this.placeholderText();
@@ -461,7 +461,7 @@
 
     /**
      * @description Syncs the editing control.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     syncEditingControl () {
         this.syncBorder();
@@ -508,7 +508,7 @@
     /**
      * @description On double tap complete.
      * @param {GestureRecognizer} aGesture - The gesture.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     onDoubleTapComplete (aGesture) {
         //debugger;
@@ -596,7 +596,7 @@
 
     /**
      * @description Blurs the text field.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     blur () {
         //debugger;
@@ -624,7 +624,7 @@
     /**
      * @description Sets the pixel font size.
      * @param {Number} aNumber - The number.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setPxFontSize (aNumber) {
         super.setPxFontSize(aNumber);
@@ -655,7 +655,7 @@
     /**
      * @description Sets the inner HTML.
      * @param {String} s - The string.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setInnerHtml (s) {
         return super.setInnerHtml(s);
@@ -664,7 +664,7 @@
     /**
      * @description Sets the inner text.
      * @param {String} s - The string.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setInnerText (s) {
         return super.setInnerText(s);
@@ -673,7 +673,7 @@
     /**
      * @description Sets the value.
      * @param {String} newValue - The new value.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setValue (newValue) {
         newValue = this.cleanseNewValue(newValue);
@@ -704,7 +704,7 @@
     /**
      * @description Sets the value with merge.
      * @param {String} newValue - The new value.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setValueWithMerge (newValue) {
         //const oldValue = this.element().innerHTML;
@@ -754,7 +754,7 @@
     /**
      * @description Sets the new value.
      * @param {String} v - The value.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setNewValue (v) { // private method
         //console.log("setNewValue(" + v.substring(0, 10) + "...)");
@@ -787,7 +787,7 @@
     /**
      * @description Sets the string.
      * @param {String} newValue - The new value.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setString (newValue) {
         newValue = this.cleanseNewValue(newValue);
@@ -802,7 +802,7 @@
                     this.setNewValue(newValue);
                     //this.focus();
                 //} 
-                //throw new Error("attempt to call TextField.setString while it's focused");
+                //throw new Error("attempt to call SvTextView.setString while it's focused");
             } else {
                 //this.isFocused();
                 this.setNewValue(newValue);
@@ -822,7 +822,7 @@
 
     /**
      * @description Adjusts the font size with keyboard.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     adjustFontSizeWithKeyboard () {
         const kb = SvKeyboard.shared();
@@ -1055,7 +1055,7 @@
 	
     /**
      * @description Format value.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     formatValue () {
         this.setTextContent(this.textContent()); // removes formatting?
@@ -1099,7 +1099,7 @@
     /**
      * @description Set theme class name.
      * @param {String} aName - The name.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setThemeClassName (aName) {
         if (this.themeClassName() === "FieldKey") {
@@ -1115,7 +1115,7 @@
 
     /**
      * @description Apply styles.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     applyStyles () {
         /*
@@ -1129,7 +1129,7 @@
 
     /**
      * @description Activate.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     activate () {
         if (this.usesDoubleTapToEdit()) {
@@ -1161,7 +1161,7 @@
     /**
      * @description Set border.
      * @param {Boolean} v - The value.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setBorder (v) {
         /*
@@ -1175,7 +1175,7 @@
     /**
      * @description Set background color.
      * @param {String} aColor - The color.
-     * @returns {TextField} The text field.
+     * @returns {SvTextView} The text field.
      */
     setBackgroundColor (aColor) {
         super.setBackgroundColor(aColor);

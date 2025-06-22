@@ -17,20 +17,20 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {TextField} titleView - The title view of the panel.
+         * @member {SvTextView} titleView - The title view of the panel.
          * @category UI Components
          */
         {
             const slot = this.newSlot("titleView", null);
-            slot.setSlotType("TextField");
+            slot.setSlotType("SvTextView");
         }
         /**
-         * @member {TextField} subtitleView - The subtitle view of the panel.
+         * @member {SvTextView} subtitleView - The subtitle view of the panel.
          * @category UI Components
          */
         {
             const slot = this.newSlot("subtitleView", null);
-            slot.setSlotType("TextField");
+            slot.setSlotType("SvTextView");
         }
         /**
          * @member {ButtonView} button1 - The primary button of the panel.
@@ -91,7 +91,7 @@
 
         {
             // title view
-            const view = TextField.clone().setElementClassName("PanelTitleView");
+            const view = SvTextView.clone().setElementClassName("PanelTitleView");
             this.setTitleView(view);
             this.addSubview(view);
             view.setTextAlign("center")
@@ -103,7 +103,7 @@
             this.setCssOnSubview(view);
         }
 
-        //this.setSubtitleView(TextField.clone().setElementClassName("PanelSubtitleView"))
+        //this.setSubtitleView(SvTextView.clone().setElementClassName("PanelSubtitleView"))
         //this.addSubview(this.subtitleView())
 
         {

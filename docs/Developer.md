@@ -35,13 +35,13 @@ Object (non-method) properties:
 
 Categories are classes which server as a way to add methods to a class from an external files, or group related methods together into an external file.
 
-Categories naming convention: Class + "\_" + category name. e.g. `BMNode_Subnodes`
+Categories naming convention: Class + "\_" + category name. e.g. `SvNode_Subnodes`
 
 ### Protocols
 
 Protocols are a way to define a set of methods that a class must implement. They are used to create a common interface for a set of classes, and to allow for runtime checks to ensure that a class implements the required methods. Protocols are declared by creating a subclass of `Protocol` and adding (empty, but documented) instance methods for each of the required methods.
 
-Protocols naming convention: protocol name + `Protocol` e.g. `BMNodeProtocol`
+Protocols naming convention: protocol name + `Protocol` e.g. `SvNodeProtocol`
 
 ## Build System
 
@@ -59,24 +59,24 @@ Protocols naming convention: protocol name + `Protocol` e.g. `BMNodeProtocol`
 
 ## Key Model Classes
 
-- `BMNode`
-- `BMSummaryNode`
+- `SvNode`
+- `SvSummaryNode`
 
 Fields:
 
-- `BMStringField`
-- `BMNumberField`
-- `BMImageWellField`
+- `SvStringField`
+- `SvNumberField`
+- `SvImageWellField`
 
 Synchronization:
 
 - `SyncScheduler`
-- `BMNotificationCenter`
+- `SvNotificationCenter`
 - `Broadcaster`
 
 Storage:
 
-- `BMPersistentObjectPool`
+- `SvPersistentObjectPool`
 
 ## Key View Classes
 
@@ -86,7 +86,7 @@ Storage:
 
 ### Model
 
-- The model is composed of a graph of objects which inherit from BMNode (we'll call these "nodes").
+- The model is composed of a graph of objects which inherit from SvNode (we'll call these "nodes").
 - The UI is largely a mirror of this graph structure.
 - The nodes are the unit of storage (one record per node).
 - views can have refs to nodes, but nodes have no refs to views
@@ -96,15 +96,15 @@ Storage:
 ### UI
 
 - The UI is (primarily) composed of `NodeView` (and subclasses) instances.
-- Each `NodeView` points to a `BMNode` and watches for notifications from it.
-- Multiple `NodeViews` may (and often do) point to the same `BMNode` instance.
+- Each `NodeView` points to a `SvNode` and watches for notifications from it.
+- Multiple `NodeViews` may (and often do) point to the same `SvNode` instance.
 - Slots on Views can be marked such that changes to them will schedule the view to sync it's state with the node.
 
 ### Storage
 
 The app has a `PersistentObjectPool` which automatically:
 
-- Monitors model (`BMNode` instance) mutations and stores changes.
+- Monitors model (`SvNode` instance) mutations and stores changes.
 - Bundles changes within an event loop into transactions which are stored atomically.
 - Handles automatic garbage collection on the stored object graph.
 
@@ -121,7 +121,7 @@ Strvct has a unified UI model based on `StackViews`.
 ### Fields
 
 Fields are a type of node that can sync to a slot value via their `target` and `valueMethod` slots.
-Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
+Examples: `SvStringField`, `SvNumberField`, `SvImageWellField`
 
 ### Node Subnodes
 
@@ -149,7 +149,7 @@ Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
 
 ## Synchronization
 
-- BMNotificationCenter
+- SvNotificationCenter
 - SyncScheduler
 - Broadcaster
 

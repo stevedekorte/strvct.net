@@ -3,10 +3,10 @@
 /**
  * @module library.node.node_views.browser.stack.Tile.subviews
  * @class TileNoteView
- * @extends TextField
- * @classdesc TileNoteView is a specialized TextField for displaying notes in a Tile.
+ * @extends SvTextView
+ * @classdesc TileNoteView is a specialized SvTextView for displaying notes in a Tile.
  */
-(class TileNoteView extends TextField {
+(class TileNoteView extends SvTextView {
 
     initPrototypeSlots () {
     }

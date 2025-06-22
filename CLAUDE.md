@@ -45,7 +45,8 @@
   4. `finalInit()` - Post-initialization setup
 
 - Return `this` from all initialization methods to support method chaining
-- Remember to call parent methods with `super.methodName()`
+- **IMPORTANT**: `initPrototypeSlots()` and `initPrototype()` should NEVER call `super`. The framework automatically calls these methods on the entire class hierarchy from base to derived class.
+- Other initialization methods (`init()`, `finalInit()`, etc.) SHOULD call their parent methods with `super.methodName()`
 
 ### Category System
 

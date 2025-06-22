@@ -16,11 +16,11 @@
     initPrototypeSlots () {
         {
             /**
-             * @member {TextField} textView - The text view for displaying and editing text.
+             * @member {SvTextView} textView - The text view for displaying and editing text.
              * @category UI Components
              */
             const slot = this.newSlot("textView", null);
-            slot.setSlotType("TextField");
+            slot.setSlotType("SvTextView");
         }
     }
 
@@ -35,7 +35,7 @@
         const cv = this.contentView()
         cv.setMinHeight("1em")
 
-        const tv = TextField.clone()
+        const tv = SvTextView.clone()
         this.setTextView(tv)
         this.contentView().addSubview(tv)
 
