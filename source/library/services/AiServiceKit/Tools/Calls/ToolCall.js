@@ -308,7 +308,7 @@ Example Tool call format:
         };
         
         debugger;
-        UndreamedOfApp.shared().postErrorReport(e, errorData).catch(error => {
+        UoApp.shared().postErrorReport(e, errorData).catch(error => {
           console.error("Failed to report tool call parse error:", error);
         });
     } catch (reportError) {

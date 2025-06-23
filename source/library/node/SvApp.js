@@ -374,7 +374,8 @@
      */
     afterFirstRender () {
         ResourceManager.shared().markPageLoadTime();
-        document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
+        //document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
+        document.title = this.name();;
     }
         
     /**
