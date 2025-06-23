@@ -79,7 +79,7 @@
    * @category UI
    */
   subviewsScrollSticksToBottom () {
-    return true;
+    return false;
   }
 
   /**

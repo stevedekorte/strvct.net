@@ -55,7 +55,7 @@
         }
 
         /**
-         * @member {TilesView} tilesView - Is inside scrollView
+         * @member {TilesView} tilesView - Is inside scrollView, contains the tiles that are displayed in the NavView
          * @category Layout
          */
         {
@@ -64,7 +64,7 @@
         }
 
         /**
-         * @member {Boolean} isCollapsed
+         * @member {Boolean} isCollapsed - Whether the NavView is collapsed
          * @category State
          */
         {
@@ -73,7 +73,7 @@
         }
 
         /**
-         * @member {Boolean} animatesCollapse
+         * @member {Boolean} animatesCollapse - Whether the NavView should animate when collapsing or uncollapsing
          * @category Animation
          */
         {
@@ -82,7 +82,7 @@
         }
 
         /**
-         * @member {String} beforeEdgePanBorderBottom
+         * @member {String} beforeEdgePanBorderBottom - The border style before a bottom edge pan gesture 
          * @private
          * @category State
          */
@@ -92,13 +92,23 @@
         }
 
         /**
-         * @member {String} beforeEdgePanBorderRight
+         * @member {String} beforeEdgePanBorderRight - The border style before a right edge pan gesture - 
          * @private
          * @category State
          */
         {
             const slot = this.newSlot("beforeEdgePanBorderRight", null);
             slot.setSlotType("String");
+        }
+
+        /**
+         * @member {DomView} clickToAddView - A view that is displayed when the NavView is empty and the user clicks to add an item. Only a subview when the NavView is empty.
+         * @private
+         * @category State
+         */
+        {
+            const slot = this.newSlot("clickToAddView", null);  
+            slot.setSlotType("DomView");
         }
     }
 
@@ -180,7 +190,47 @@
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()); // for adjusting width
         this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()); // for adjusting height
 
+        this.setupClickToAddViewIfNeeded();
         return this
+    }
+
+    /**
+     * @description Sets up the click to add view if it is not already set
+     * @category Layout
+     */
+    setupClickToAddViewIfNeeded () {
+        if (this.clickToAddView()) {
+            return;
+        }
+
+        // - create a absolute positioned view that stays centered vertically and horizontally in the NavView
+        //  - it should contain the text "click to add item" and have no borders or decorations
+        // - it should have a transparent background
+
+        const view = DomView.clone();
+
+        view.setPosition("absolute");
+        view.setTop("50%");
+        view.setLeft("50%");
+        view.setTransform("translate(-50%, -50%)");
+        view.setBackgroundColor("transparent");
+        view.setBorder("none");
+        view.setPadding("0");
+
+        view.setInnerText("click to add item");
+        view.setFontSize("inherit");
+        view.setColor("rgba(255, 255, 255, 0.5)");
+        view.setFontFamily("inherit");
+        view.setFontWeight("normal");
+        view.setTextAlign("center");
+        view.setLineHeight("1.5");
+        view.setWidth("fit-content");
+        view.setHeight("fit-content");
+
+        // make sure all events pass through to the NavView
+        view.setPointerEvents("none");
+
+        this.setClickToAddView(view);
     }
 
     /**
@@ -382,7 +432,24 @@
 
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
+        this.syncClickToAddView();
         return this;
+    }
+
+
+    /**
+     * @description Synchronizes the click to add view
+     * @category Node Management
+     */
+    syncClickToAddView () {
+        const v = this.clickToAddView();
+        if (this.node().subnodesCount() === 0) {
+            this.addSubviewIfAbsent(v);
+            //v.unhideDisplay();
+        } else {
+            this.removeSubviewIfPresent(v);
+            //v.hideDisplay();
+        }
     }
 
     /**
@@ -461,7 +528,7 @@
      * @param {Object} aGesture - The gesture object
      * @category Gesture Handling
      */
-    onBottomEdgePanBegin (aGesture) {
+    onBottomEdgePanBegin (/*aGesture*/) {
         this.setBeforeEdgePanBorderBottom(this.borderBottom());
         this.setBorderBottom(this.edgeMoveBorderStyle());
         this.hideTransition();
