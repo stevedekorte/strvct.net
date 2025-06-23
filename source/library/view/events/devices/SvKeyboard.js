@@ -92,7 +92,7 @@
         super.init();
         this.setupCodeToKeys();
         this.startListening();
-        this.setIsDebugging(false);
+        this.setIsDebugging(true);
         this.setAllModifierKeys(this.allModifierNames().map(kn => this.keyForName(kn)));
         return this;
     }
@@ -418,7 +418,7 @@
 
         if (this.isDebugging()) {
             this.debugLog(" " + this.upMethodNameForEvent(event));
-            //this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp");
+            this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp");
         }
 
         return shouldPropogate;

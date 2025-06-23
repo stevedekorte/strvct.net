@@ -82,8 +82,6 @@
       slot.setActionMethodName("processStreamContent");
     }
 
-    // ------------------------------
-
     // --- voice narration ---
     
     {
@@ -112,7 +110,7 @@
 
   isVisible () {
     //debugger;
-    return super.isVisible() && (this.role() !== "system" /*|| this.session().settings().developerMode()*/);
+    return super.isVisible() && (this.role() !== "system" /*|| SvApp.shared().developerMode() */);
   }
 
   tagDelegate () {

@@ -87,12 +87,4 @@
     }
     */
 
-    onOptionShift_d_KeyDown (event) {
-        const app = SvApp.shared();
-        const developerMode = app.developerMode();
-        app.setDeveloperMode(!developerMode);
-        this.debugLog(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", developerMode);
-        return true;
-    }
-
 }.initThisCategory());

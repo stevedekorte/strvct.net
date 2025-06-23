@@ -549,9 +549,14 @@
 
     // developer mode
 
+    toggleDeveloperMode () {
+        const devMode = this.developerMode();
+        this.setDeveloperMode(!devMode);
+        return this;
+    }
+
     didUpdateSlotDeveloperMode (oldValue, newValue) {
-        const noteName = newValue ? "onAppDeveloperModeOnNote" : "onAppDeveloperModeOffNote";
-        this.postNoteNamed(noteName);
+        this.postNoteNamed("onAppDeveloperModeChangedNote");
     }
     
 

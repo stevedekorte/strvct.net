@@ -67,6 +67,7 @@
         super.init()
         this.scheduleMethod("moveToBase")
         //this.scheduleMethod("pullPathFromUrlHash")
+        this.setIsRegisteredForKeyboard(true); // to get special keys like Option shift D
         return this
     }
 
@@ -114,10 +115,21 @@
      * @category Navigation
      */
     moveToBase () {
-        assert(this.browserHeaderNode())
-        assert(this.breadCrumbsNode())
-        this.selectNodePathArray([this.browserHeaderNode(), this.breadCrumbsNode()])
+        assert(this.browserHeaderNode());
+        assert(this.breadCrumbsNode());
+        this.selectNodePathArray([this.browserHeaderNode(), this.breadCrumbsNode()]);
         return this
+    }
+
+
+    onAlternate_D_KeyUp (event) {
+        return true;
+    }
+
+    onAlternate_D_KeyDown (event) {
+        SvApp.shared().toggleDeveloperMode();
+        this.debugLog(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", SvApp.shared().developerMode());
+        return true;
     }
 
 }.initThisClass());
