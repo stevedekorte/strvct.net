@@ -205,9 +205,11 @@
      * @category JSON Operations
      */
     setJson (json, jsonPathComponents = []) {
+        /*
         if (this.doesMatchJson(json)) {
             return this;
         }
+        */
 
         const jsonIdToSubnodeMap = new Map();
         this.subnodes().forEach(sn => {

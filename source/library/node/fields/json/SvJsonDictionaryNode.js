@@ -15,7 +15,7 @@
      * @returns {boolean} Always returns false for this class.
      * @category File Operations
      */
-    static canOpenMimeType (mimeType) {
+    static canOpenMimeType (/*mimeType*/) {
         return false;
     }
 
@@ -112,8 +112,6 @@
             // as we are using this object as a free form dictionary
         } else {
             // otherwise, we need to make sure we have the correct keys
-
-            const requiredSlotNames = this.requiredSlotNamesSet();
 
             // Check if json has invalid keys
             const invalidSlotNames = Set.difference(newKeys,  this.jsonSchemaSlotNamesSet());

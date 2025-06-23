@@ -302,7 +302,7 @@
             return (this.node().nodeFillsRemainingWidth() && this.isLastNavView());
         }
         return false;
-    };
+    }
 
     /**
      * @description Sets the orientation of the NavView to right (vertical)
@@ -491,7 +491,7 @@
      * @param {Object} aGesture - The gesture object
      * @category Gesture Handling
      */
-    onRightEdgePanBegin (aGesture) {
+    onRightEdgePanBegin (/*aGesture*/) {
         this.setBeforeEdgePanBorderRight(this.borderRight());
         this.setBorderRight(this.edgeMoveBorderStyle());
     }

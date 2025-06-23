@@ -3,12 +3,12 @@
 /* 
     @module app/json
     @class JsonGroup
-    @extends SvJsonCachedNode
+    @extends SvJsonIdNode
     @classdesc A JsonGroup is a node that supports importing and exporting itself as JSON dictionary data.
 
 */
 
-(class JsonGroup extends SvJsonCachedNode {
+(class JsonGroup extends SvJsonIdNode {
 
   initPrototypeSlots () {
     {
@@ -127,16 +127,11 @@
   }
   
   setJson (dict, jsonPathComponents = []) {
-    if (this.doesMatchJson(dict)) {
-      return this;
-    }
-
     if (this.shouldStoreSubnodes()) {
       this.setSubnodesJson(dict, jsonPathComponents);
     } else {
       this.setSlotsJson(dict, jsonPathComponents);
     }
-    this.setJsonCache(dict, jsonPathComponents); // didUpdateNode will also update jsonCache
     return this;
   }
 

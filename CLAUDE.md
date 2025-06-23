@@ -107,7 +107,7 @@ Categories are implemented as classes that extend the target class and use `.ini
 
 ```javascript
 // JsonGroup.js - Core JSON functionality
-(class JsonGroup extends SvJsonCachedNode {
+(class JsonGroup extends SvJsonIdNode {
     asJson() { /* core JSON methods */ }
 }.initThisClass());
 

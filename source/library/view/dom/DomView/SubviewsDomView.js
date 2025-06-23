@@ -50,7 +50,7 @@
      * @param {DomView} newValue - The new parent view.
      * @returns {SubviewsDomView} The updated view.
      */
-    didUpdateSlotParentView (oldValue, newValue) {
+    didUpdateSlotParentView (/*oldValue, newValue*/) {
         return this;
     }
     
@@ -468,15 +468,6 @@
     }
 
     /**
-     * @description Checks if the view has a subview.
-     * @param {DomView} aSubview - The subview to check.
-     * @returns {boolean} True if the view has the subview, false otherwise.
-     */
-    hasSubview (aSubview) {
-        return this.subviews().indexOf(aSubview) !== -1;
-    }
-
-    /**
      * @description Checks if the view has a child element.
      * @param {Element} anElement - The element to check.
      * @returns {boolean} True if the view has the element, false otherwise.
@@ -497,7 +488,7 @@
      * @param {DomView} aSubview - The subview to add.
      * @returns {SubviewsDomView} The updated view.
      */
-    willAddSubview (aSubview) {
+    willAddSubview (/*aSubview*/) {
         // for subclasses to over-ride
     }
 
@@ -506,7 +497,7 @@
      * @param {DomView} aSubview - The subview to remove.
      * @returns {SubviewsDomView} The updated view.
      */
-    willRemoveSubview (aSubview) {
+    willRemoveSubview (/*aSubview*/) {
         // for subclasses to over-ride
     }
 
@@ -535,7 +526,7 @@
             const msg = this.type() + " removeSubview " + aSubview.typeId() + " failed - no child found among: " + this.subviews().map(view => view.typeId())
             //Error.showCurrentStack()
             throw new Error(msg)
-            return aSubview
+            //return aSubview
         }
 
         if (aSubview.parentView() !== this) {

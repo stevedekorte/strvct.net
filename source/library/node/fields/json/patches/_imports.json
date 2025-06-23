@@ -1,0 +1,6 @@
+[
+    "JsonPatchError.js",
+    "SvJsonArrayNode_patches.js",
+    "JsonGroup_patches.js",
+    "JsonGroup_clientState.js"
+]
