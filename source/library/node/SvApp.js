@@ -211,11 +211,11 @@
             const slot = this.newSlot("developerMode", false);
             slot.setInspectorPath("");
             slot.setLabel("developer mode");
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Boolean");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
           }
     }
   
@@ -546,5 +546,13 @@
         
         return await this.postErrorReport(testError, additionalData);
     }
+
+    // developer mode
+
+    didUpdateSlotDeveloperMode (oldValue, newValue) {
+        const noteName = newValue ? "onAppDeveloperModeOnNote" : "onAppDeveloperModeOffNote";
+        this.postNoteNamed(noteName);
+    }
+    
 
 }.initThisClass());

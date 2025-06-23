@@ -17,8 +17,8 @@
      */
     onEnterKeyUp () {
         //this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
-        this.justTap()
-        return false // stop propagation
+        this.justTap();
+        return false; // stop propagation
     }
 
     /**
@@ -27,10 +27,10 @@
      * @returns {boolean} Returns false to stop propagation.
      * @category Keyboard Interaction
      */
-    onShiftBackspaceKeyUp (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onBackspaceKeyUp")
-        this.delete()
-        return false // stop propagation
+    onShiftBackspaceKeyUp (/*event*/) {
+        this.debugLog(this.type() + " for " + this.node().title() + " onBackspaceKeyUp");
+        this.delete();
+        return false; // stop propagation
     }
 
     // --- dragging key ---
@@ -46,12 +46,12 @@
     onMeta_a_KeyDown (event) {
         // only select subnodes if this tile can have them,
         // otherwise, like the column handle this event
-        const c = this.column().nextColumn()
+        const c = this.column().nextColumn();
         if (c) {
-            c.selectAllTiles()
+            c.selectAllTiles();
         }
-        event.stopPropagation()
-        return false 
+        event.stopPropagation();
+        return false;
     }
     */
 
@@ -62,9 +62,9 @@
      * @category Keyboard Interaction
      */
     on_d_KeyDown (event) {
-        this.debugLog(" on_d_KeyDown ", event._id)
-        this.setIsRegisteredForBrowserDrag(true)
-        return true
+        this.debugLog(" on_d_KeyDown ", event._id);
+        this.setIsRegisteredForBrowserDrag(true);
+        return true;
     }
 
     /**
@@ -74,17 +74,25 @@
      * @category Keyboard Interaction
      */
     on_d_KeyUp (event) {
-        this.debugLog(" on_d_KeyUp ", event._id)
-        this.setIsRegisteredForBrowserDrag(false)
-        return true
+        this.debugLog(" on_d_KeyUp ", event._id);
+        this.setIsRegisteredForBrowserDrag(false);
+        return true;
     }
 
     /*
     onEscapeKeyDown (event) {
-        console.log(" onEscapeKeyDown ", event._id)
-        this.column().onLeftArrowKeyUp()
-        return true
+        console.log(" onEscapeKeyDown ", event._id);
+        this.column().onLeftArrowKeyUp();
+        return true;
     }
     */
+
+    onOptionShift_d_KeyDown (event) {
+        const app = SvApp.shared();
+        const developerMode = app.developerMode();
+        app.setDeveloperMode(!developerMode);
+        this.debugLog(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", developerMode);
+        return true;
+    }
 
 }.initThisCategory());

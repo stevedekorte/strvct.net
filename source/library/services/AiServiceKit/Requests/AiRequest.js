@@ -403,6 +403,8 @@
     }
 
     if (!this.apiKeyOrUserAuthToken()) {
+      debugger;
+      this.apiKeyOrUserAuthToken();
       throw new Error(this.type() + " apiKeyOrUserAuthToken missing");
     }
   }

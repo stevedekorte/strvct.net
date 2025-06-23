@@ -217,15 +217,16 @@
         view.setBorder("none");
         view.setPadding("0");
 
-        view.setInnerText("click to add item");
+        view.setInnerText("add item");
         view.setFontSize("inherit");
-        view.setColor("rgba(255, 255, 255, 0.5)");
+        view.setColor("rgba(255, 255, 255, 0.3)");
         view.setFontFamily("inherit");
         view.setFontWeight("normal");
         view.setTextAlign("center");
         view.setLineHeight("1.5");
         view.setWidth("fit-content");
         view.setHeight("fit-content");
+        //view.setFontStyle("italic");
 
         // make sure all events pass through to the NavView
         view.setPointerEvents("none");
