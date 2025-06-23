@@ -202,6 +202,21 @@
             const slot = this.newSlot("didInitPromise", null);
             slot.setSlotType("Promise");
         }
+
+        /**
+         * @member {Boolean} developerMode - Whether the developer mode is enabled
+         * @category State Management
+         */
+        {
+            const slot = this.newSlot("developerMode", false);
+            slot.setInspectorPath("");
+            slot.setLabel("developer mode");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Boolean");
+            slot.setIsSubnodeField(true);
+          }
     }
   
     /**
@@ -375,7 +390,7 @@
     afterFirstRender () {
         ResourceManager.shared().markPageLoadTime();
         //document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        document.title = this.name();;
+        document.title = this.name();
     }
         
     /**
