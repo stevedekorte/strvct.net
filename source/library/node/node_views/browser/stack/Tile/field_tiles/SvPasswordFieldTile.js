@@ -3,7 +3,16 @@
  * @class SvPasswordFieldTile
  * @extends SvStringFieldTile
  * @classdesc SvPasswordFieldTile class for handling password field tiles. Uses SvPasswordView for native password input behavior.
+ * 
+ * NOTES:
+ * other attributes of the password input element we could make use of:
+ * 
+    - maxlength: Limits number of characters.
+    - required: Prevents form submission if left empty.
+    - autocomplete="off" or "new-password": Helps control browser autofill behavior.
+    - pattern: Can be used for client-side validation (e.g., pattern=".{8,}" for minimum 8 characters).
  */
+
 (class SvPasswordFieldTile extends SvStringFieldTile {
     
     /**
@@ -12,9 +21,7 @@
      * @category Initialization
      */
     init () {
-        console.log("SvPasswordFieldTile.init() - Starting initialization");
         super.init();
-        console.log("SvPasswordFieldTile.init() - Initialization complete");
         return this;
     }
     
@@ -25,9 +32,7 @@
      * @category UI
      */
     createValueView () {
-        console.log("SvPasswordFieldTile.createValueView() - Creating SvPasswordView");
         const v = SvPasswordView.clone();
-        console.log("SvPasswordFieldTile.createValueView() - SvPasswordView cloned:", v);
         v.setDisplay("block");
         v.setPosition("relative");
         v.setWordWrap("normal");
@@ -37,7 +42,6 @@
         v.setMargin("0em");
         v.setOverflowX("hidden");
         v.setBorderRadius("0.2em");
-        console.log("SvPasswordFieldTile.createValueView() - Returning configured view:", v);
         return v;
     }
     

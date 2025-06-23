@@ -160,7 +160,6 @@
      */
     init () {
         super.init()
-        console.log("SvFieldTile.init() - Initializing field tile");
         this.makeCursorDefault()
         this.setSpellCheck(false)
 
@@ -185,7 +184,6 @@
 
             this.setValueViewContainer(this.kvSection().newFlexSubview().setElementClassName("ValueViewContainer"))
             this.valueViewContainer().setAlignItems("flex-start")
-            console.log("SvFieldTile.init() - About to setup value view");
             this.setupValueView()
 
             this.setNoteViewContainer(this.contentView().newFlexSubview().setElementClassName("NoteViewContainer"))
@@ -238,9 +236,7 @@
      * @returns {DomView} The value view.
      */
     setupValueView () {
-        console.log("SvFieldTile.setupValueView() - Starting setup for node:", this.node() ? this.node().type() : "no node");
         const v = this.createValueView()
-        console.log("SvFieldTile.setupValueView() - Created value view:", v, "type:", v.type());
         if (!v.themeClassName()) {
             v.setThemeClassName("FieldValue")
         }
@@ -254,7 +250,6 @@
         this.setValueView(v)
         this.valueViewContainer().addSubview(v)  
         //this.valueSectionView().addSubview(v)  
-        console.log("SvFieldTile.setupValueView() - Value view setup complete");
         return v
     }
 
@@ -523,7 +518,6 @@
     syncFromNode () {
         super.syncFromNode()
         //this.debugLog(" syncFromNode")
-        console.log("SvFieldTile.syncFromNode() - Starting sync for node:", this.node() ? this.node().type() : "no node", "key:", this.node() ? this.node().key() : "no key");
 		
         const node = this.node()
         node.prepareToSyncToView()
@@ -534,7 +528,6 @@
         this.syncErrorFromNode()
         this.syncNoteFromNode()
         this.syncDotsFromNode()
-        console.log("SvFieldTile.syncFromNode() - Sync complete");
         return this
     }
 
@@ -560,17 +553,12 @@
     syncValueFromNode () {
         const node = this.node()
         const valueView = this.valueView()
-        console.log("SvFieldTile.syncValueFromNode() - Starting value sync");
-        console.log("  - node:", node ? node.type() : "no node", "key:", node ? node.key() : "no key");
-        console.log("  - valueView:", valueView, "type:", valueView ? valueView.type() : "no valueView");
 
         const newValue = this.visibleValue()
-        console.log("  - newValue:", newValue, "length:", newValue ? newValue.length : 0);
 
         valueView.setValue(newValue)
         valueView.setIsEditable(node.valueIsEditable())
         valueView.setIsDisplayHidden(!node.valueIsVisible())
-        console.log("  - valueIsEditable:", node.valueIsEditable(), "valueIsVisible:", node.valueIsVisible());
 
         /*
         if (this.keyView().innerText() === "Additional Notes") {
@@ -686,23 +674,18 @@
      */
     syncToNode () {
         const node = this.node()
-        console.log("SvFieldTile.syncToNode() - Starting sync to node");
-        console.log("  - node:", node ? node.type() : "no node", "key:", node ? node.key() : "no key");
 
         if (node.keyIsEditable()) {
             const keyValue = this.keyView().value();
-            console.log("  - Setting key:", keyValue);
             node.setKey(keyValue)
         }
 	
         if (node.valueIsEditable()) {
             const valueViewValue = this.valueView().value();
-            console.log("  - Setting value from view:", valueViewValue, "length:", valueViewValue ? valueViewValue.length : 0);
             node.setValue(valueViewValue)
         }
 		
         super.syncToNode()
-        console.log("SvFieldTile.syncToNode() - Sync to node complete");
         return this
     }
     

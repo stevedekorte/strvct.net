@@ -126,15 +126,12 @@
      * @category Value Management
      */
     setString (newValue) {
-        console.log("SvPasswordView.setString called with:", newValue, "type:", typeof newValue);
-        
         if (Type.isNullOrUndefined(newValue)) {
             newValue = "";
         }
         
         const e = this.element();
         if (e) {
-            console.log("Setting input element value to:", newValue, "current value:", e.value);
             if (e.value !== newValue) {
                 e.value = newValue;
                 this.didEdit();
@@ -142,10 +139,8 @@
             
             // Update placeholder to indicate if password is set
             if (newValue && newValue.length > 0) {
-                console.log("Setting filled placeholder");
                 e.placeholder = this.filledPlaceholder();  // Show dots as placeholder when password exists
             } else {
-                console.log("Setting empty placeholder");
                 e.placeholder = this.emptyPlaceholder();
             }
         }
@@ -161,11 +156,8 @@
     string () {
         const e = this.element();
         if (e) {
-            const value = e.value || "";
-            console.log("SvPasswordView.string() returning:", value);
-            return value;
+            return e.value || "";
         }
-        console.log("SvPasswordView.string() no element, returning empty string");
         return "";
     }
 
@@ -277,7 +269,6 @@
      * @category Value Management
      */
     setValue (newValue) {
-        console.log("SvPasswordView.setValue called with:", newValue, "type:", typeof newValue, "constructor:", newValue?.constructor?.name);
         return this.setString(newValue);
     }
 
@@ -288,7 +279,6 @@
      */
     value () {
         const val = this.string();
-        console.log("SvPasswordView.value() returning:", val);
         return val;
     }
 

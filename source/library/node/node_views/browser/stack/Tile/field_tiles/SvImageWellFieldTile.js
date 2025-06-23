@@ -117,7 +117,6 @@
 
         if (field.valueIsEditable()) {
             const data = this.imageWellView().imageDataUrl();
-            //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"));
             field.setValue(data);
         }
         
