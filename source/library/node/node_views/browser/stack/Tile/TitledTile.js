@@ -69,7 +69,7 @@
      * @category Layout
      */
     static titleLeftPadding () {
-        return "30px"
+        return "30px";
     }
 
     /**
@@ -78,8 +78,8 @@
      * @category Layout
      */
     topContentArea () {
-        let lv = this.contentView().subviews().at(0)
-        return lv
+        let lv = this.contentView().subviews().at(0);
+        return lv;
     }
 
     /**
@@ -88,8 +88,8 @@
      * @category Layout
      */
     bottomContentArea () {
-        let lv = this.contentView().subviews().at(1)
-        return lv
+        let lv = this.contentView().subviews().at(1);
+        return lv;
     }
 
     /**
@@ -98,56 +98,56 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        const cv = this.contentView()
+        super.init();
+        const cv = this.contentView();
 
-        cv.setMinHeight("5em")
-        cv.flexSplitIntoColumns(2)
+        cv.setMinHeight("5em");
+        cv.flexSplitIntoColumns(2);
 
-        const lv = this.topContentArea()
+        const lv = this.topContentArea();
 
-        lv.setDisplay("flex")
-        lv.setFlex("10")
-        lv.setAlignItems("flex-start") // alignment in direction of flex
-        lv.setJustifyContent("center") // alignment perpendicutal to flex
-        lv.setFlexDirection("column")
+        lv.setDisplay("flex");
+        lv.setFlex("10");
+        lv.setAlignItems("flex-start"); // alignment in direction of flex
+        lv.setJustifyContent("center"); // alignment perpendicutal to flex
+        lv.setFlexDirection("column");
 
-        const tv = TileTitleView.clone()
-        lv.addSubview(tv)
-        this.setTitleView(tv)
-        tv.setThemeClassName("TileTitle")
-        tv.setUsesDoubleTapToEdit(true)
+        const tv = TileTitleView.clone();
+        lv.addSubview(tv);
+        this.setTitleView(tv);
+        tv.setThemeClassName("TileTitle");
+        tv.setUsesDoubleTapToEdit(true);
         //tv.setOverflow("visible")
-        tv.setPaddingLeft("0em")
+        tv.setPaddingLeft("0em");
 
-        const st = TileSubtitleView.clone()
-        lv.addSubview(st)
-        this.setSubtitleView(st)
-        st.setThemeClassName("TileSubtitle")
-        st.setPaddingLeft("0em")
-        st.setPaddingTop("0em")
-        st.setOpacity(0.6)
+        const st = TileSubtitleView.clone();
+        lv.addSubview(st);
+        this.setSubtitleView(st);
+        st.setThemeClassName("TileSubtitle");
+        st.setPaddingLeft("0em");
+        st.setPaddingTop("0em");
+        st.setOpacity(0.6);
 
 
-        const rv = this.bottomContentArea()
-        rv.setDisplay("flex")
-        rv.setAlignItems("center")
-        this.setNoteView(rv.addSubview(TileNoteView.clone()))
-        rv.setMinWidth("3em")
-        rv.setJustifyContent("center")
+        const rv = this.bottomContentArea();
+        rv.setDisplay("flex");
+        rv.setAlignItems("center");
+        this.setNoteView(rv.addSubview(TileNoteView.clone()));
+        rv.setMinWidth("3em");
+        rv.setJustifyContent("center");
 
-        const icon = SvgIconView.clone()
+        const icon = SvgIconView.clone();
         //icon.setElementClassName("NoteIconView")
-        icon.setMinAndMaxWidth(12)
-        icon.setMinAndMaxHeight(15)
+        icon.setMinAndMaxWidth(12);
+        icon.setMinAndMaxHeight(15);
         //icon.setFillColor("white")
-        icon.setStrokeColor("white") // use currentColor?
-        icon.setOpacity(0.2)
-        this.setNoteIconView(rv.addSubview(icon))
+        icon.setStrokeColor("white"); // use currentColor?
+        icon.setOpacity(0.2);
+        this.setNoteIconView(rv.addSubview(icon));
         
-        this.updateSubviews()
-        this.setIsSelectable(true)
-        return this
+        this.updateSubviews();
+        this.setIsSelectable(true);
+        return this;
     }
 
     /**
@@ -157,30 +157,30 @@
      */
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
-            const tv = DomView.clone().setElementClassName("TileThumbnailView")
-            tv.setDisplay("block")
-            tv.setLeftPx(10)
-            tv.setTopPx(5)
-            tv.setMinHeight("40px")
-            tv.setMinWidth("40px")
-            tv.setBorderRadiusPx(7)
-            tv.setBackgroundColor("transparent")
-            tv.setBorder("0px solid #aaa")
+            const tv = DomView.clone().setElementClassName("TileThumbnailView");
+            tv.setDisplay("block");
+            tv.setLeftPx(10);
+            tv.setTopPx(5);
+            tv.setMinHeight("40px");
+            tv.setMinWidth("40px");
+            tv.setBorderRadiusPx(7);
+            tv.setBackgroundColor("transparent");
+            tv.setBorder("0px solid #aaa");
 
-    		tv.makeBackgroundNoRepeat()
-            tv.makeBackgroundCentered()
+            tv.makeBackgroundNoRepeat();
+            tv.makeBackgroundCentered();
             //tv.makeBackgroundContain()
-            tv.setBackgroundSizeWH(50, 50)
+            tv.setBackgroundSizeWH(50, 50);
 
-            this.setThumbnailView(tv)
-            this.addSubview(tv)
+            this.setThumbnailView(tv);
+            this.addSubview(tv);
             
             // TODO: make this dynamic with subview for title & subtitle
-            const offset = 60
-            this.titleView().setLeftPx(offset)
-            this.subtitleView().setLeftPx(offset)
+            const offset = 60;
+            this.titleView().setLeftPx(offset);
+            this.subtitleView().setLeftPx(offset);
         }
-        return this
+        return this;
     }
     
     /**
@@ -189,19 +189,19 @@
      * @category State
      */
     hasSubtitle () {
-        const node = this.node()
+        const node = this.node();
 
         if (node) {
             if (node.subtitle() !== null && node.subtitle() !== "") {
-                return true
+                return true;
             }
 
             if (node.nodeCanEditSubtitle()) {
-                return true
+                return true;
             }
         }
 
-        return false
+        return false;
     }
 
     /**
@@ -210,37 +210,37 @@
      * @category UI
      */
     updateSubviews () {
-        super.updateSubviews()
+        super.updateSubviews();
 	
-        const node = this.node()
+        const node = this.node();
 
         if (node) {
-            this.titleView().setIsEditable(node.nodeCanEditTitle())
-            this.subtitleView().setIsEditable(node.nodeCanEditSubtitle())
-            this.subtitleView().setIsDisplayHidden(!this.hasSubtitle())
+            this.titleView().setIsEditable(node.nodeCanEditTitle());
+            this.subtitleView().setIsEditable(node.nodeCanEditSubtitle());
+            this.subtitleView().setIsDisplayHidden(!this.hasSubtitle());
     
             if (node) {
-                const imageUrl = node.nodeThumbnailUrl()
+                const imageUrl = node.nodeThumbnailUrl();
                 if (imageUrl) {
-                    this.setupThumbnailViewIfAbsent()
-                    this.thumbnailView().setBackgroundImageUrlPath(imageUrl)
+                    this.setupThumbnailViewIfAbsent();
+                    this.thumbnailView().setBackgroundImageUrlPath(imageUrl);
                 }
             } 
 
             if (node.noteIconName()) {
-                this.hideNoteView()
-                this.showNoteIconView()
+                this.hideNoteView();
+                this.showNoteIconView();
             } else {
-                this.showNoteView()
-                this.hideNoteIconView()
+                this.showNoteView();
+                this.hideNoteIconView();
             }
         } else {
-            this.titleView().setIsEditable(false)
-            this.subtitleView().setIsEditable(false)
-            this.subtitleView().setIsDisplayHidden(true) 
+            this.titleView().setIsEditable(false);
+            this.subtitleView().setIsEditable(false);
+            this.subtitleView().setIsDisplayHidden(true); 
         }
 
-        this.syncStylesToSubviews()
+        this.syncStylesToSubviews();
 
         /*
         const state = this.currentThemeState()
@@ -250,7 +250,7 @@
         }
         */
 
-        return this
+        return this;
     }
 
     /**
@@ -259,16 +259,16 @@
      * @category UI
      */
     syncStylesToSubviews () {
-        const b = this.isSelected()
-        this.titleView().syncStateFrom(this)
-        this.subtitleView().syncStateFrom(this)
-        this.noteView().syncStateFrom(this)
+        //const b = this.isSelected()
+        this.titleView().syncStateFrom(this);
+        this.subtitleView().syncStateFrom(this);
+        this.noteView().syncStateFrom(this);
         /*
         this.titleView().setIsSelected(b)
         this.subtitleView().setIsSelected(b)
         this.noteView().setIsSelected(b)
         */
-        return this
+        return this;
     }
 
     /**
@@ -276,8 +276,8 @@
      * @category UI
      */
     showNoteView () {
-        this.noteView().unhideDisplay()   
-        this.noteView().setString(this.node().note())
+        this.noteView().unhideDisplay();   
+        this.noteView().setString(this.node().note());
     }
 
     /**
@@ -285,7 +285,7 @@
      * @category UI
      */
     hideNoteView () {
-        this.noteView().hideDisplay()     
+        this.noteView().hideDisplay();     
     }
 
     /**
@@ -293,19 +293,19 @@
      * @category UI
      */
     showNoteIconView () {
-        const v = this.noteIconView()
+        const v = this.noteIconView();
         if (v.iconName() != this.node().noteIconName()) {
-            v.unhideDisplay()    
-            v.setIconName(this.node().noteIconName())
+            v.unhideDisplay();    
+            v.setIconName(this.node().noteIconName());
             //v.setDoesMatchParentColor(true)
 
         }
         //const color = this.currentColor()
-        const color = this.getComputedCssProperty("color")
+        const color = this.getComputedCssProperty("color");
 
-        v.setColor(color)
-        v.setFillColor(color)
-        v.setOpacity(0.95)
+        v.setColor(color);
+        v.setFillColor(color);
+        v.setOpacity(0.95);
         //console.log( this.node().title() + " - " + color)
         //v.updateAppearance()
     }
@@ -315,7 +315,7 @@
      * @category UI
      */
     hideNoteIconView () {
-        this.noteIconView().hideDisplay()  
+        this.noteIconView().hideDisplay();  
     }
 
     /**
@@ -331,7 +331,7 @@
         //console.log("calcCssWidth of tile title '" + this.node().title() + "' = " + w)
         return w + 50
         */
-        return this.calcWidth()
+        return this.calcWidth();
     }
 
     /**
@@ -339,7 +339,7 @@
      * @category Event
      */
     didInput () {
-        this.scheduleSyncToNode()
+        this.scheduleSyncToNode();
     }
 
     /**
@@ -347,8 +347,8 @@
      * @param {DomView} aView - The view that was edited
      * @category Event
      */
-    onDidEdit (aView) {
-        super.onDidEdit() 
+    onDidEdit (/*aView*/) {
+        super.onDidEdit(); 
     }
 
     /**
@@ -358,10 +358,10 @@
      */
     syncToNode () {   
         //console.log("syncToNode")
-        const node = this.node()
-        node.setTitle(this.titleView().innerText())
-        node.setSubtitle(this.subtitleView().innerText())
-        return this
+        const node = this.node();
+        node.setTitle(this.titleView().innerText());
+        node.setSubtitle(this.subtitleView().innerText());
+        return this;
     }
 
     /**
@@ -370,16 +370,16 @@
      * @category Data
      */
     syncFromNode () {
-        super.syncFromNode()
-        const node = this.node()
-        this.titleView().setString(node.title())
-        this.subtitleView().setString(node.subtitle())
+        super.syncFromNode();
+        const node = this.node();
+        this.titleView().setString(node.title());
+        this.subtitleView().setString(node.subtitle());
         //this.noteView().setString(this.node().note())
-        this.updateSubviews()
+        this.updateSubviews();
 
-        this.setIsDisplayHidden(!node.isVisible())
+        this.setIsDisplayHidden(!node.isVisible());
         
-        return this
+        return this;
     }
     
     /**
@@ -389,15 +389,15 @@
      */
     makeNoteRightArrow () {
         //debugger;
-        const nv = this.noteView()
+        const nv = this.noteView();
         
-        nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"))        
-        nv.setBackgroundSizeWH(10, 10)
-        nv.setBackgroundRepeat("no-repeat")
+        nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"));        
+        nv.setBackgroundSizeWH(10, 10);
+        nv.setBackgroundRepeat("no-repeat");
         
-        nv.setMinAndMaxWidth(10)
-        nv.setMinAndMaxHeight(10)
-        return this		
+        nv.setMinAndMaxWidth(10);
+        nv.setMinAndMaxHeight(10);
+        return this;		
     }
 
     /**
@@ -409,13 +409,13 @@
         //this.debugLog(".onEnterKeyUp()")
 
         if (this.titleView().isEditable()) {
-            this.titleView().activate()
-            event.stopPropagation()
+            this.titleView().activate();
+            event.stopPropagation();
         } else if (this.subtitleView().isEditable()) {
-            this.subtitleView().activate()
-            event.stopPropagation()
+            this.subtitleView().activate();
+            event.stopPropagation();
         } else {
-            super.onEnterKeyUp(event)
+            super.onEnterKeyUp(event);
         }        
     }
 

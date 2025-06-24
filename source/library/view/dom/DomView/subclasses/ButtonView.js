@@ -80,67 +80,67 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setDisplay("flex")
-        this.setFlexDirection("column")
-        this.flexCenterContent()
-        this.setHeight("fit-content")
-        this.setWidth("100%")
-        this.setMinHeight("1em")
+        super.init();
+        this.setDisplay("flex");
+        this.setFlexDirection("column");
+        this.flexCenterContent();
+        this.setHeight("fit-content");
+        this.setWidth("100%");
+        this.setMinHeight("1em");
 
-        this.setPaddingTop("0.75em")
-        this.setPaddingBottom("0.85em")
+        this.setPaddingTop("0.75em");
+        this.setPaddingBottom("0.85em");
 
-        this.setPaddingLeft("1em")
-        this.setPaddingRight("1em")
+        this.setPaddingLeft("1em");
+        this.setPaddingRight("1em");
 
-        this.turnOffUserSelect()
-        this.setBorderRadiusPx(1)
+        this.turnOffUserSelect();
+        this.setBorderRadiusPx(1);
 
         {
-            const view = SvTextView.clone()
-            this.setTitleView(view)
-            this.addSubview(view)
-            view.fillParentView()
-            view.setPaddingTop("0.1em").setPaddingBottom("0.1em")
-            view.setPaddingLeft("1em").setPaddingRight("1em")
-            view.flexCenterContent()
-            view.setTextAlign("center")
-            view.setMinHeight("1em")
-            view.setWhiteSpace("nowrap")
-            view.setTextOverflow("ellipsis")
+            const view = SvTextView.clone();
+            this.setTitleView(view);
+            this.addSubview(view);
+            view.fillParentView();
+            view.setPaddingTop("0.1em").setPaddingBottom("0.1em");
+            view.setPaddingLeft("1em").setPaddingRight("1em");
+            view.flexCenterContent();
+            view.setTextAlign("center");
+            view.setMinHeight("1em");
+            view.setWhiteSpace("nowrap");
+            view.setTextOverflow("ellipsis");
         }
 
         {
-            const view = SvTextView.clone()
-            this.setSubtitleView(view)
-            this.addSubview(view)
-            view.fillParentView()
-            view.setPaddingTop("0.1em").setPaddingBottom("0.1em")
-            view.setPaddingLeft("1em").setPaddingRight("1em")
-            view.flexCenterContent()
-            view.setTextAlign("center")
-            view.setMinHeight("fit-content")
-            view.setWhiteSpace("pre-wrap")
-            view.setTextOverflow("ellipsis")
-            view.setFontSize("80%")
+            const view = SvTextView.clone();
+            this.setSubtitleView(view);
+            this.addSubview(view);
+            view.fillParentView();
+            view.setPaddingTop("0.1em").setPaddingBottom("0.1em");
+            view.setPaddingLeft("1em").setPaddingRight("1em");
+            view.flexCenterContent();
+            view.setTextAlign("center");
+            view.setMinHeight("fit-content");
+            view.setWhiteSpace("pre-wrap");
+            view.setTextOverflow("ellipsis");
+            view.setFontSize("80%");
             view.setIsDisplayHidden(true);
         }
 
-        this.setTitle("")
+        this.setTitle("");
 
-        const icon = SvgIconView.clone() //.setElementClassName("RightActionView")
-        icon.setMinAndMaxWidth(12)
-        icon.setMinAndMaxHeight(15)
-        icon.setFillColor("white")
-        icon.setStrokeColor("white")
-        icon.setOpacity(1)
-        icon.hideDisplay()
-        this.setIconView(this.addSubview(icon))
+        const icon = SvgIconView.clone(); //.setElementClassName("RightActionView")
+        icon.setMinAndMaxWidth(12);
+        icon.setMinAndMaxHeight(15);
+        icon.setFillColor("white");
+        icon.setStrokeColor("white");
+        icon.setOpacity(1);
+        icon.hideDisplay();
+        this.setIconView(this.addSubview(icon));
 
-        this.addDefaultTapGesture()
+        this.addDefaultTapGesture();
 
-        return this
+        return this;
     }
 
     /**
@@ -150,8 +150,8 @@
      * @category UI Customization
      */
     setIconName (aName) {
-        this.iconView().setIconName(aName)
-        return this
+        this.iconView().setIconName(aName);
+        return this;
     }
 
     /**
@@ -165,8 +165,8 @@
             s = " "; // to avoid weird html layout issues
         }
 
-        this.titleView().setValue(s)
-        return this
+        this.titleView().setValue(s);
+        return this;
     }
 
     /**
@@ -175,7 +175,7 @@
      * @category Data Access
      */
     title () {
-        return this.titleView().value()
+        return this.titleView().value();
     }
 
     /**
@@ -186,9 +186,9 @@
      */
     setSubtitle (s) {
         const isEmpty = (s === "" || Type.isNullOrUndefined(s));
-        this.subtitleView().setValue(s)
-        this.subtitleView().setIsDisplayHidden(isEmpty)
-        return this
+        this.subtitleView().setValue(s);
+        this.subtitleView().setIsDisplayHidden(isEmpty);
+        return this;
     }
 
     /**
@@ -197,7 +197,7 @@
      * @category Data Access
      */
     subtitle () {
-        return this.subtitleView().value()
+        return this.subtitleView().value();
     }
 
     /**
@@ -208,11 +208,11 @@
      */
     setHasOutline (aBool) {
         if (aBool) {
-            this.setBoxShadow("0px 0px 1px 1px rgba(255, 255, 255, 0.2)")
+            this.setBoxShadow("0px 0px 1px 1px rgba(255, 255, 255, 0.2)");
         } else {
-            this.setBoxShadow("none")
+            this.setBoxShadow("none");
         }
-        return this
+        return this;
     }
 
     /**
@@ -222,8 +222,8 @@
      * @category UI Customization
      */
     setTitleIsVisible (aBool) {
-        this.titleView().setIsDisplayHidden(!aBool)
-        return this
+        this.titleView().setIsDisplayHidden(!aBool);
+        return this;
     }
 
     /**
@@ -233,8 +233,8 @@
      * @category State
      */
     setIsEditable (aBool) {
-        this.titleView().setIsEditable(aBool)
-        return this
+        this.titleView().setIsEditable(aBool);
+        return this;
     }
 
     /**
@@ -243,7 +243,7 @@
      * @category State
      */
     isEditable () {
-        return this.titleView().isEditable()
+        return this.titleView().isEditable();
     }
 
     /**
@@ -253,9 +253,9 @@
      */
     sendActionToTarget () {
         if (!this.isEditable()) {
-            super.sendActionToTarget()
+            super.sendActionToTarget();
         }
-        return this
+        return this;
     }
 
     /**
@@ -265,10 +265,10 @@
      */
     onTapBegin (aGesture) {
         if (!this.isEnabled()) {
-            aGesture.cancel()
-            return
+            aGesture.cancel();
+            return;
         }
-        this.setBackgroundColor("rgba(255, 255, 255, 0.1)")
+        this.setBackgroundColor("rgba(255, 255, 255, 0.1)");
     }
 
     /**
@@ -277,7 +277,7 @@
      * @category Event Handling
      */
     onTapCancelled (aGesture) {
-        this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
+        this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
     }
 
     /**
@@ -287,10 +287,10 @@
      * @category Event Handling
      */
     onTapComplete (aGesture) {
-        this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
-        this.sendActionToTarget()
-        SimpleSynth.clone().playButtonTap()
-        return false
+        this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
+        this.sendActionToTarget();
+        SimpleSynth.clone().playButtonTap();
+        return false;
     }
     
 }.initThisClass());

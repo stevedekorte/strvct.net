@@ -555,9 +555,8 @@
         return this;
     }
 
-    didUpdateSlotDeveloperMode (oldValue, newValue) {
+    didUpdateSlotDeveloperMode (/*oldValue, newValue*/) {
         this.postNoteNamed("onAppDeveloperModeChangedNote");
     }
-    
 
 }.initThisClass());

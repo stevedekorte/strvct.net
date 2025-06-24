@@ -2,11 +2,11 @@
 
 /**
  * @module library.node.node_views.browser.stack.Tile.subviews
- * @class TileNoteView
- * @extends SvTextView
- * @classdesc TileNoteView is a specialized SvTextView for displaying notes in a Tile.
+ * @class TileNoteButtonView
+ * @extends ButtonView
+ * @classdesc Aa specialized ButtonView for displaying abutton in the notes section of a Tile.
  */
-(class TileNoteView extends SvTextView {
+(class TileNoteButtonView extends ButtonView {
 
     initPrototypeSlots () {
     }
@@ -21,14 +21,17 @@
      */
     init () {
         super.init();
-        this.setFontSize("80%");
-        this.setFontWeight("normal");
-        this.setWhiteSpace("nowrap");
-        this.setTextAlign("right");
-        this.setTextOverflow("ellipsis");
+        // style it for a note button
         return this;
-    } 
-    
+    }
+
+    syncFromNode () {
+        // get the button name from the node and set it
+        
+        return this;
+    }
+
+
     /**
      * @description Sets the background color of the TileNoteView to transparent.
      * @param {string} s - The color string (ignored in this implementation).
