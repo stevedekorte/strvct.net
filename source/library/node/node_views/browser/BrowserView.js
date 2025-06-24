@@ -64,11 +64,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.scheduleMethod("moveToBase")
+        super.init();
+        this.scheduleMethod("moveToBase");
         //this.scheduleMethod("pullPathFromUrlHash")
         this.setIsRegisteredForKeyboard(true); // to get special keys like Option shift D
-        return this
+        return this;
     }
 
     /*
@@ -97,7 +97,7 @@
      * @category Node Access
      */
     browserHeaderNode () {
-        return this.node().subnodes().first()
+        return this.node().subnodes().first();
     }
 
     /**
@@ -106,7 +106,7 @@
      * @category Node Access
      */
     breadCrumbsNode () {
-        return this.browserHeaderNode().subnodes().first()
+        return this.browserHeaderNode().subnodes().first();
     }
 
     /**
@@ -118,17 +118,16 @@
         assert(this.browserHeaderNode());
         assert(this.breadCrumbsNode());
         this.selectNodePathArray([this.browserHeaderNode(), this.breadCrumbsNode()]);
-        return this
+        return this;
     }
 
-
-    onAlternate_D_KeyUp (event) {
+    onAlternate_D_KeyUp (/*event*/) {
         return true;
     }
 
-    onAlternate_D_KeyDown (event) {
+    onAlternate_D_KeyDown (/*event*/) {
         SvApp.shared().toggleDeveloperMode();
-        this.debugLog(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", SvApp.shared().developerMode());
+        //this.debugLog(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", SvApp.shared().developerMode());
         return true;
     }
 

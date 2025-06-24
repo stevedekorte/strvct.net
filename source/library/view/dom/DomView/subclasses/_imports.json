@@ -10,6 +10,7 @@
     "SvgIconView.js",
     "HtmlElement_textField.js",
     "SvTextView.js",
-    "SvPasswordView.js"
+    "SvPasswordView.js",
+    "WindowErrorPanel.js"
 ]
 

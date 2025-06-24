@@ -276,7 +276,7 @@
      * @param {Object} aGesture - The gesture object.
      * @category Event Handling
      */
-    onTapCancelled (aGesture) {
+    onTapCancelled (/*aGesture*/) {
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
     }
 
@@ -286,7 +286,7 @@
      * @returns {boolean} False to prevent default behavior.
      * @category Event Handling
      */
-    onTapComplete (aGesture) {
+    onTapComplete (/*aGesture*/) {
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
         this.sendActionToTarget();
         SimpleSynth.clone().playButtonTap();

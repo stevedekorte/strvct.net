@@ -500,4 +500,14 @@
         return this
     }
 
+    /**
+     * @description Prevents BreadCrumbsTile from being draggable
+     * BreadCrumbs should not participate in drag/reorder operations
+     * @returns {boolean} Always returns false to disable dragging
+     * @category Event Handling
+     */
+    acceptsLongPress () {
+        return false
+    }
+
 }.initThisClass());
