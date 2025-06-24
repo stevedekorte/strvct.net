@@ -487,6 +487,17 @@
         })
         this.setCrumbObservations([])
         return this
-    };
+    }
+
+    /**
+     * @description Overrides justTap to prevent background clicks from changing path
+     * Background clicks should be ignored - only path component clicks should navigate
+     * @category Event Handling
+     */
+    justTap () {
+        // Do nothing - prevent background clicks from triggering navigation
+        // Path components have their own click handlers via onClickPathComponent()
+        return this
+    }
 
 }.initThisClass());
