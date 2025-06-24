@@ -471,7 +471,7 @@
      * @returns {Promise<Object>} - Server response
      * @category Error Handling
      */
-    async postErrorReport (error, json = null) {
+    async asyncPostErrorReport (error, json = null) {
         // Get the base URL from the current window location
         const protocol = window.location.protocol; // "http:" or "https:"
         const host = window.location.hostname;
@@ -544,7 +544,7 @@
             component: "ErrorReportingSystem"
         };
         
-        return await this.postErrorReport(testError, additionalData);
+        return await this.asyncPostErrorReport(testError, additionalData);
     }
 
     // developer mode

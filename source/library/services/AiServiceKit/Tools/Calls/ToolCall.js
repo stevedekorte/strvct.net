@@ -308,7 +308,7 @@ Example Tool call format:
         };
         
         debugger;
-        UoApp.shared().postErrorReport(e, errorData).catch(error => {
+        UoApp.shared().asyncPostErrorReport(e, errorData).catch(error => {
           console.error("Failed to report tool call parse error:", error);
         });
     } catch (reportError) {
@@ -422,7 +422,7 @@ Example Tool call format:
     // Report error to the server if SvApp is available
     try {
       const app = SvApp.shared();
-      if (app && typeof app.postErrorReport === "function") {
+      if (app && typeof app.asyncPostErrorReport === "function") {
         const errorData = {
           name: "ToolCallError",
           message: e.message,
@@ -444,7 +444,7 @@ Example Tool call format:
         
         // Don't block execution - use setTimeout to post error asynchronously
 
-          app.postErrorReport(e, errorData).catch(error => {
+          app.asyncPostErrorReport(e, errorData).catch(error => {
             console.error("Failed to report tool call error:", error);
           });
       }

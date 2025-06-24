@@ -178,11 +178,14 @@
         errorDiv.style.fontFamily = 'monospace';
         errorDiv.style.fontSize = '12px';
         errorDiv.style.textAlign = 'center';
+
+        const errorSource = errorInfo.source.split('/').pop();
+        const column = errorInfo.colno ? `:${errorInfo.colno}` : "";
+        const line = errorInfo.lineno ? `:${errorInfo.lineno}` : "";
         errorDiv.innerHTML = `<strong>JS Error:</strong> ${errorInfo.message}<br>
-                             <strong>File:</strong> ${errorInfo.source.split('/').pop()}<br>
-                             <strong>Line: Col:</strong> ${errorInfo.lineno}:${errorInfo.colno}<br>
-                             <button onclick="this.parentNode.remove()">Dismiss</button>
-                             <button onclick="WindowErrorPanel.shared().showErrors()">Show All Errors</button>`;
+                             <strong>File:</strong> ${errorSource}<br>
+                             <strong>Line: Col:</strong> ${line}${column}<br>
+                             <button onclick="this.parentNode.remove()">Dismiss</button>`;
         
         document.body.appendChild(errorDiv);
     }
@@ -196,12 +199,7 @@
         // Send the error to the server if the app is initialized
         if (UoApp.shared()) {
             try {
-                // Use setTimeout to avoid blocking the error handler
-                setTimeout(() => {
-                    UoApp.shared().postErrorReport(errorInfo).catch(e => {
-                        console.error("Failed to send error report:", e);
-                    });
-                }, 0);
+                UoApp.shared().asyncPostErrorReport(errorInfo);
             } catch (e) {
                 console.error("Error while trying to send error report:", e);
             }
