@@ -14,7 +14,7 @@
 
 (class HeaderNode extends SvFolderNode {
     
-    initPrototypeSlots() {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("blobs", null);
@@ -50,8 +50,8 @@
      * @description Initializes the prototype properties for the HeaderNode.
      * @category Initialization
      */
-    initPrototype() {
-        this.setNodeCanReorderSubnodes(true);
+    initPrototype () {
+        this.setNodeCanReorderSubnodes(false);
         this.setNodeTileClassName("HeaderTile");
         this.setNodeMinTileHeight(100);
         this.setTitle("my app header");
@@ -66,7 +66,7 @@
      * @description Handles the tap event on the node by focusing and expanding the breadcrumb subnode.
      * @category Event Handling
      */
-    onTapOfNode() {
+    onTapOfNode () {
         super.onTapOfNode();
         setTimeout(() => this.postShouldFocusAndExpandSubnode(this.breadCrumbsNode()), 0);
     }
