@@ -356,5 +356,5 @@
 
 WindowErrorPanel.shared(); // will register for window errors
 
-WindowErrorPanel.shared().test();
+//WindowErrorPanel.shared().test();
 
