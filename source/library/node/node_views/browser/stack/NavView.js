@@ -445,7 +445,7 @@
     shouldShowClickToAddView () {
         const node = this.node();
         if (node) {
-            return node.canAddSubnode() && node.subnodesCount() === 0;
+            return node.nodeCanAddSubnode() && node.subnodesCount() === 0;
         }
         return false;
     }
