@@ -437,6 +437,18 @@
         return this;
     }
 
+    /**
+     * @description Checks if the click to add view should be shown
+     * @returns {boolean} True if the click to add view should be shown, false otherwise
+     * @category Node Management
+     */
+    shouldShowClickToAddView () {
+        const node = this.node();
+        if (node) {
+            return node.canAddSubnode() && node.subnodesCount() === 0;
+        }
+        return false;
+    }
 
     /**
      * @description Synchronizes the click to add view
@@ -444,7 +456,7 @@
      */
     syncClickToAddView () {
         const v = this.clickToAddView();
-        if (this.node().subnodesCount() === 0) {
+        if (this.shouldShowClickToAddView()) {
             this.addSubviewIfAbsent(v);
             //v.unhideDisplay();
         } else {
