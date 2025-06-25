@@ -158,6 +158,7 @@
         console.error('Error object:', errorInfo.error);
     }
 
+    /*
     warningSvgIcon () {
         return `<svg width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -187,6 +188,7 @@
 </svg>
 `;
     }
+*/
 
 
     /**
@@ -202,15 +204,16 @@
             style.top = '50%';
             style.left = '50%';
             style.transform = 'translate(-50%, -50%)';
-            style.backgroundColor = 'white';
+            style.backgroundColor = 'rgb(25, 25, 25)';
             style.color = 'black';
             style.zIndex = '10000';
             style.width = 'fit-content';
             style.height = 'fit-content';
-            style.fontFamily = 'sans-serif';
-            style.fontSize = '0.8em';
-            style.borderRadius = '0.5em';
+            style.fontFamily = 'inherit';
+            style.fontSize = '1em';
+            style.borderRadius = '0em';
             style.overflow = 'hidden';
+            style.border = '1px solid #444';
         }
 
         const messageDiv = document.createElement('div');
@@ -236,10 +239,10 @@
         // Create error message content
         const parts = errorInfo.message.split(":").map(part => part.trim());
         //const errorTitle = parts[0];
-        const errorMessage = parts[1];
+        const errorMessage = '"' + parts[1] + '"';
         //const location = `on ${errorSource} line${line}`;
         let html = "";
-        html += "<div style='color:black; font-weight:bold; padding-bottom:0.4em;'>Sorry, there was an error.</div>";
+        html += "<div style='color:white; padding-bottom:0.4em;'>Sorry, there was an error.</div>";
         //html += `<div style='color:black; font-weight:bold; padding-bottom:0.5em;'>${this.warningSvgIcon()}</div>`;
         //html += `<div style="color:black">${errorTitle}</div>`;
         html += `<div style="color:#888; padding-bottom:0.5em;">${errorMessage}</div>`;
@@ -251,28 +254,27 @@
         {
             const style = dismissButton.style;
             style.fontFamily = 'inherit';
-            style.fontSize = '1em';
             style.textAlign = 'center';
             style.cursor = 'pointer';
             style.transition = 'all 0.2s ease';
-            style.width = '100%';
-            style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
-            style.color = 'white';
+            style.width = '100% - 2em';
+            style.backgroundColor = 'rgb(25, 25, 25)';
+            style.color = '#aaa';
             style.border = 'none';
             style.borderRadius = '0';
             style.padding = '0.5em 1em';
-            style.marginTop = '1em';
-            style.fontWeight = '600';
+            style.margin = '1em';
+            style.border = '1px solid #444';
             dismissButton.textContent = 'Report and Continue';
         }
         
         // Add hover effects
         dismissButton.addEventListener('mouseenter', () => {
-            dismissButton.style.backgroundColor = 'red';
+            dismissButton.style.backgroundColor = '#333';
         });
         
         dismissButton.addEventListener('mouseleave', () => {
-            dismissButton.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
+            dismissButton.style.backgroundColor = 'transparent';
         });
         
         // Add click handler
@@ -354,5 +356,5 @@
 
 WindowErrorPanel.shared(); // will register for window errors
 
-//WindowErrorPanel.shared().test();
+WindowErrorPanel.shared().test();
 
