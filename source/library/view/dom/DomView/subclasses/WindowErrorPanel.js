@@ -345,14 +345,14 @@
     }
 
     test () {
-        throw new Error("Missing Service API Key");
+        setTimeout(() => {
+            throw new Error("Missing Service API Key");
+        }, 300);
     }
 
 }.initThisClass());
 
 WindowErrorPanel.shared(); // will register for window errors
 
-setTimeout(() => {
-    WindowErrorPanel.shared().test();
-}, 300);
+//WindowErrorPanel.shared().test();
 
