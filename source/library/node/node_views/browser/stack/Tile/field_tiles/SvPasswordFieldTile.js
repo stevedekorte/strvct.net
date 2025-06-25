@@ -36,8 +36,10 @@
         v.setDisplay("block");
         v.setPosition("relative");
         v.setWordWrap("normal");
-        v.setHeight("auto");
-        v.setWidth("-webkit-fill-available");
+        v.setFontSize("1em");
+        v.setMinHeight("1.9em");
+        v.setHeight("1.9em");
+        v.setWidth("100%");
         v.setTextAlign("left");
         v.setMargin("0em");
         v.setOverflowX("hidden");
