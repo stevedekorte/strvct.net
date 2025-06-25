@@ -8,6 +8,30 @@
  */
 (class Date_ideal extends Date {
 
+    static looksLikeAStandardDateFormat (str) {
+        const patterns = [
+          // ISO
+          /^YYYY[-/]MM[-/]DD$/,
+          /^YYYY[-/]MM[-/]DD HH:mm:ss$/,
+          // US
+          /^MM\/DD\/YYYY$/,
+          /^M\/D\/YY$/,
+          /^MM\/DD\/YYYY h:mm A$/,    // e.g. 03/05/2025 8:30 PM
+          // European
+          /^DD\.MM\.YYYY$/,
+          /^D\.M\.YY$/,
+          // Hybrid with time
+          /^YYYY[-/]MM[-/]DD[T ]HH:mm:ss$/,  // e.g. 2025-06-25T14:30:00 or space
+          // Locale‐agnostic numeric
+          /^YYYYMMDD$/,
+          // RFC‐style tokens (lowercase)
+          /^yyyy[-/]MM[-/]dd$/,
+          /^dd[-/]MM[-/]yyyy$/,
+        ];
+      
+        return patterns.some(rx => rx.test(str));
+    }
+
     /**
      * @returns {Date} A shallow copy of the current Date object.
      * @category Utility
@@ -113,5 +137,6 @@
     zeroPaddedUSDate () {
         return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes())
     }
+
 
 }).initThisCategory();

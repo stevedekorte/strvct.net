@@ -80,6 +80,7 @@
                     event.colno,
                     event.error
                 );
+                //throw event.error; // so the debugger will break
             });
             
             // Also register for unhandled promise rejections
@@ -91,6 +92,7 @@
                     0,
                     event.reason
                 );
+                //throw event.reason; // so the debugger will break
             });
             
             this.setIsRegistered(true);
@@ -287,6 +289,7 @@
         errorPanelDiv.appendChild(dismissButton);
         
         document.body.appendChild(errorPanelDiv);
+        debugger;
     }
 
     /**
@@ -296,6 +299,10 @@
      */
     sendErrorReport (errorInfo) {
         // Send the error to the server if the app is initialized
+        if (!globalThis()["UoApp"]) {
+            console.warn("UoApp not initialized, skipping error report");
+            return;
+        }
         if (UoApp.shared()) {
             try {
                 UoApp.shared().asyncPostErrorReport(errorInfo);
