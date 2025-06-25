@@ -751,7 +751,7 @@ TODO:
 	
 	Prototypes
 	- way to link a top node to it's prototype
-	- special stored property BMStorableNode.viewPrototype
+	- special stored property SvStorableNode.viewPrototype
 								  	
 	
 	

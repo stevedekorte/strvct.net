@@ -149,7 +149,7 @@ The framework provides two different ways to handle child objects:
    - Field objects are non-stored (`shouldStore(false)`)
    - Provides clickable navigation in the UI inspector
    - Best for structured objects with named properties
-   - Common pattern: Classes extending `BMStorableNode` with `shouldStoreSubnodes(false)`
+   - Common pattern: Classes extending `SvStorableNode` with `shouldStoreSubnodes(false)`
 
 Example distinction:
 ```javascript
@@ -161,7 +161,7 @@ class ItemList extends SvJsonArrayNode {
 }
 
 // For structured objects - use subnode fields
-class ConfigObject extends BMStorableNode {
+class ConfigObject extends SvStorableNode {
     initPrototypeSlots() {
         const slot = this.newSlot("settings", null);
         slot.setFinalInitProto(SettingsObject);
@@ -306,7 +306,7 @@ class ConfigObject extends BMStorableNode {
 
 ### Persistence System
 
-- Based on `PersistentObjectPool` and `BMStorableNode`
+- Based on `PersistentObjectPool` and `SvStorableNode`
 - IndexedDB with cache layer (`PersistentAtomicMap`)
 - Object references via persistent unique IDs (puuids)
 - Changes auto-commit at the end of event loop
@@ -314,7 +314,7 @@ class ConfigObject extends BMStorableNode {
 
 ## Persistence System
 
-- Based on `PersistentObjectPool` and `BMStorableNode`
+- Based on `PersistentObjectPool` and `SvStorableNode`
 - Uses IndexedDB with a cache layer (`PersistentAtomicMap`)
 - Key configuration steps:
   - Enable persistence with `this.setShouldStore(true)` on node classes
@@ -408,7 +408,7 @@ class ConfigObject extends BMStorableNode {
   /**
    * A class that represents a player character.
    * @class Character
-   * @extends BMStorableNode
+   * @extends SvStorableNode
    * @category Characters
    */
   ```
@@ -433,7 +433,7 @@ class ConfigObject extends BMStorableNode {
 - `ProtoClass`: Base class with slot system
 - `BMNode`: Base node class
 - `ViewableNode`: Node with view capabilities
-- `BMStorableNode`: Persistent node
+- `SvStorableNode`: Persistent node
 
 ### View System
 
