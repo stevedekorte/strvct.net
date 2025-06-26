@@ -44,12 +44,12 @@
      */
     {
       const slot = this.newSlot("role", "user"); 
-      slot.setShouldJsonArchive(true)
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(this.validRoles())
+      slot.setShouldJsonArchive(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setValidValues(this.validRoles());
       slot.setCanInspect(true);
       slot.setInspectorPath(this.type());
     }
