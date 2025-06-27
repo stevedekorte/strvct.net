@@ -27,7 +27,7 @@
             // add a subnode if tapping on empty area
             const p = aGesture.downPosition() // there may not be an up position on windows?
             //this.debugLog(".onTapComplete() ", aGesture.upEvent())
-            if (p.event().target === this.element()) {
+            if (p && p.event() && p.event().target === this.element()) {
                 const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
                 const isAltTap = keyModifiers.contains("Alternate");
                 if (isAltTap) {

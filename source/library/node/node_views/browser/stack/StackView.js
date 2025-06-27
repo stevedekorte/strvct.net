@@ -322,6 +322,11 @@
         ov.setFlexGrow(1);
         ov.setFlexShrink(1);
         
+        // On mobile, make sure the otherView is visible when it has content
+        if (WebBrowserWindow.shared().isOnMobile()) {
+            ov.unhideDisplay();
+        }
+        
         /*
         if (ov.subviews().length) {
             const names = ov.subviews().map(ov => ov.typeId());
@@ -343,6 +348,11 @@
         ov.setFlexBasis("0px");
         ov.setFlexGrow(0);
         ov.setFlexShrink(0);
+
+        // On mobile, also hide the otherView completely
+        if (WebBrowserWindow.shared().isOnMobile()) {
+            ov.hideDisplay();
+        }
 
         /*
         if (ov.subviews().length) {
