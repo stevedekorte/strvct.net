@@ -8,7 +8,6 @@
  * @class WindowErrorPanel
  * @extends ProtoClass
  * @classdesc WindowErrorPanel handles JavaScript window errors and provides error reporting functionality.
- * This class replaces the window.onerror approach with addEventListener for better error handling.
  */
 (class WindowErrorPanel extends ProtoClass {
     
@@ -299,13 +298,14 @@
      */
     sendErrorReport (errorInfo) {
         // Send the error to the server if the app is initialized
-        if (!globalThis()["UoApp"]) {
-            console.warn("UoApp not initialized, skipping error report");
+        const app = SvApp.shared();
+        if (!app) {
+            console.warn("SvApp not initialized, skipping error report");
             return;
         }
-        if (UoApp.shared()) {
+        if (app) {
             try {
-                UoApp.shared().asyncPostErrorReport(errorInfo);
+                app.asyncPostErrorReport(errorInfo);
             } catch (e) {
                 console.error("Error while trying to send error report:", e);
             }

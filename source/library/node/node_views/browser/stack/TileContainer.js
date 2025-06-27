@@ -71,7 +71,7 @@
      * @category Layout
      */
     makeOrientationRight () {
-        this.setWidth("-webkit-fill-available")
+        this.setWidth("fill-available")
         this.setHeight("fit-content")
     }
 
@@ -81,7 +81,7 @@
      */
     makeOrientationDown () {
         this.setWidth("fit-content")
-        this.setHeight("-webkit-fill-available")
+        this.setHeight("fill-available")
     }
 
     /**

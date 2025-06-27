@@ -132,7 +132,7 @@
         v.setPosition("relative")
         v.setWordWrap("normal")
         v.setHeight("auto")
-        v.setWidth("-webkit-fill-available")
+        v.setWidth("fill-available")
         v.setTextAlign("left")
         v.setMargin("0em")
         v.setOverflowX("hidden")
