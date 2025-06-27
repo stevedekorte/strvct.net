@@ -96,19 +96,36 @@
             Boolean,
             Date,
             Error,
-            Image,
             JSON,
             Map,
             Number,
             Promise,
-            Range,
             RegExp,
             Set,
             String,
             Symbol,
             URL
         ];
-        classesToFix.forEach(aClass => aClass.__proto__ = Object);
+
+        classesToFix.forEach(aClass => {
+            aClass.__proto__ = Object;
+        });
+
+        // these may not be available in node.js
+        const nonNodeClassNamesToFix = [
+            "Range",
+            "Image"
+        ];
+
+        nonNodeClassNamesToFix.forEach(className => {
+            const aClass = getGlobalThis()[className];
+            if (aClass) {
+                aClass.__proto__ = Object;
+            } else {
+                console.warn("Object_categorySupport.makePrimitivesInheritFromObject: class '" + className + "' not found");
+            }
+        });
+        
         return this;
     }
 
