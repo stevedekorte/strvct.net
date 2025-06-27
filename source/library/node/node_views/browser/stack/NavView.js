@@ -13,7 +13,7 @@
  * 2. In targetWidth(): Calculates desired width starting from 400px, using the node's minimum tile width as a reference
  * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
  * 4. Via StackView width management: The parent StackView can compact and expand NavViews based on available space
- * 5. The width can also be adapted using setWidth("fill-available") when a NavView needs to fill remaining space
+ * 5. The width can also be adapted using setWidth("-webkit-fill-available") when a NavView needs to fill remaining space
  */
 (class NavView extends NodeView {
 
@@ -320,8 +320,8 @@
 
         if (this.shouldCurrentlyFillAvailble()) {
             this.setMinWidth("17em");
-            this.setWidth("fill-available");
-            this.setMaxWidth("fill-available");
+            this.setWidth("-webkit-fill-available");
+            this.setMaxWidth("-webkit-fill-available");
         }
 
         this.setBorderRight("1px solid #333");

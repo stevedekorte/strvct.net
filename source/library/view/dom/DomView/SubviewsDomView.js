@@ -835,8 +835,8 @@
      */
     autoFitParentWidth () {
         this.setDisplay("block")
-        this.setWidth("fill-available")
-        //this.setHeight("fill-available")
+        this.setWidth("-webkit-fill-available")
+        //this.setHeight("-webkit-fill-available")
         return this
     }
 
@@ -861,8 +861,8 @@
     autoFitParentHeight () {
         this.setPosition("absolute")
         //this.setHeightPercentage(100)
-        this.setHeight("fill-available")
-        //this.setHeight("fill-available")
+        this.setHeight("-webkit-fill-available")
+        //this.setHeight("-webkit-fill-available")
         return this
     }
 

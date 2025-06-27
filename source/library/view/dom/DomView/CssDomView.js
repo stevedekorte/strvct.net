@@ -2370,14 +2370,14 @@
 
     setMinHeight (newValue) {
         assert(Type.isString(newValue) || Type.isNull(newValue))
-        // <length> | <percentage> | auto | max-content | min-content | fit-content | fill-available
+        // <length> | <percentage> | auto | max-content | min-content | fit-content | -webkit-fill-available
         this.setCssProperty("min-height", newValue, () => { this.didChangeHeight() })
         return this
     }
 
     setMaxHeight (newValue) {
         assert(Type.isString(newValue) || Type.isNull(newValue))
-        // <length> | <percentage> | none | max-content | min-content | fit-content | fill-available
+        // <length> | <percentage> | none | max-content | min-content | fit-content | -webkit-fill-available
         this.setCssProperty("max-height", newValue, () => { this.didChangeHeight() })
         return this
     }

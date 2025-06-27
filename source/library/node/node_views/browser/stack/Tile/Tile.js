@@ -561,7 +561,7 @@
 
         this.setMinAndMaxWidth("17em")
         //this.setWidth("fit-content")
-        this.setWidth("fill-available")
+        this.setWidth("-webkit-fill-available")
 
         this.setMaxWidth(null)
 
