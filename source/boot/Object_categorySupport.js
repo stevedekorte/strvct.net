@@ -122,7 +122,7 @@
             if (aClass) {
                 aClass.__proto__ = Object;
             } else {
-                console.warn("Object_categorySupport.makePrimitivesInheritFromObject: class '" + className + "' not found");
+                //console.warn("Object_categorySupport.makePrimitivesInheritFromObject: class '" + className + "' not found");
             }
         });
         
