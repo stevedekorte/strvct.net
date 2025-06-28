@@ -361,7 +361,7 @@
 
 }.initThisClass());
 
-WindowErrorPanel.shared(); // will register for window errors
+//WindowErrorPanel.shared(); // Move to app init until this class is extracted from Strvct
 
 //WindowErrorPanel.shared().test();
 
