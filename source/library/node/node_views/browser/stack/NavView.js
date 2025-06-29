@@ -314,17 +314,31 @@
         this.setFlexGrow(0);
         this.setFlexShrink(0);
 
-        //this.setMinAndMaxWidth("17em");
-        this.setMinAndMaxWidth(this.targetWidth());
+        // On mobile, make the NavView fill the full width
+        if (WebBrowserWindow.shared().isOnMobile()) {
+            this.setMinWidth("100%");
+            this.setWidth("100%");
+            this.setMaxWidth("100%");
+            this.setFlexGrow(1);
+        } else {
+            //this.setMinAndMaxWidth("17em");
+            this.setMinAndMaxWidth(this.targetWidth());
+
+            if (this.shouldCurrentlyFillAvailble()) {
+                this.setMinWidth("17em");
+                this.setWidth("-webkit-fill-available");
+                this.setMaxWidth("-webkit-fill-available");
+            }
+        }
+        
         this.setMinAndMaxHeight("100%");
 
-        if (this.shouldCurrentlyFillAvailble()) {
-            this.setMinWidth("17em");
-            this.setWidth("-webkit-fill-available");
-            this.setMaxWidth("-webkit-fill-available");
+        // Only show border when not on mobile
+        if (!WebBrowserWindow.shared().isOnMobile()) {
+            this.setBorderRight("1px solid #333");
+        } else {
+            this.setBorderRight(null);
         }
-
-        this.setBorderRight("1px solid #333");
         this.setBorderBottom(null);
 
         this.scrollView().setIsVertical(true);
@@ -361,7 +375,12 @@
         }
 
         this.setBorderRight(null);
-        this.setBorderBottom("1px solid #333");
+        // Only show border when not on mobile
+        if (!WebBrowserWindow.shared().isOnMobile()) {
+            this.setBorderBottom("1px solid #333");
+        } else {
+            this.setBorderBottom(null);
+        }
 
         this.scrollView().setIsVertical(false);
 
