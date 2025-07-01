@@ -13,6 +13,80 @@
 
 (class Object_ideal extends Object {
     
+    static newSubclassWithName (className) {
+        const SuperClass = this;
+        
+        const NewClass = {
+            [className]: class extends SuperClass {
+                constructor (...args) {
+                    super(...args);
+                }
+            }
+        }[className];
+        
+        getGlobalThis()[className] = NewClass;
+        
+        return NewClass;
+    }
+
+    static classWithName (className) {
+        return getGlobalThis()[className];
+    }
+
+    classWithName (className) {
+        return getGlobalThis()[className];
+    }
+
+    static isValidIdentifier (name) {
+        const reservedWords = ['class', 'function', 'import', 'export', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default', 'break',
+     'continue', 'return', 'try', 'catch', 'finally', 'throw', 'new', 'this', 'super', 'extends', 'implements', 'interface', 'package', 'private', 'protected',
+    'public', 'static'];
+  
+        // Check if it's a valid identifier pattern
+        if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) return false;
+  
+        // Check if it's a reserved word
+        if (reservedWords.includes(name)) return false;
+  
+        return true;
+    }
+
+    addClassMethod (name, fn) {
+        assert(this.isClass(), "addStaticMethod must be called on a class");
+        assert(name.isString(), "name must be a string");
+        assert(fn.isFunction(), "fn must be a function");
+        
+        if (!this.isValidIdentifier(name)) {
+            throw new Error("invalid class method name: " + name);
+        }
+
+        // first check if the method already exists
+        if (this[name]) {
+            throw new Error("class method already exists: " + name);
+        }
+
+        this[name] = fn;
+        return this;
+    }
+
+    addMethod (name, fn) {
+        assert(this.isPrototype(), "addMethod must be called on a prototype");
+        assert(name.isString(), "name must be a string");
+        assert(fn.isFunction(), "fn must be a function");
+
+        if (!this.isValidIdentifier(name)) {
+            throw new Error("invalid prototype method name: " + name);
+        }
+
+        // first check if the method already exists
+        if (this[name]) {
+            throw new Error("prototype method already exists: " + name);
+        }
+
+        this[name] = fn;
+        return this;
+    }
+
     /**
      * Initializes prototype slots.
      * @category Initialization

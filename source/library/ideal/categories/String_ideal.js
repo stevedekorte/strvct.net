@@ -209,6 +209,15 @@
     }
 
     /**
+     * Returns a new string with the prefix added
+     * @param {string} prefix - The prefix to add
+     * @returns {string} The new string
+     */
+    withPrefix (prefix) {
+        return prefix + this;
+    }
+
+    /**
      * Removes specified suffixes from the string
      * @param {string[]} aStringList - An array of suffixes to remove
      * @returns {string} The string with the suffixes removed
@@ -231,6 +240,27 @@
         else {
             return this;
         }
+    }
+
+    /**
+     * Returns a new string with the suffix added
+     * @param {string} suffix - The suffix to add
+     * @returns {string} The new string
+     */
+    withSuffix (suffix) {
+        return this + suffix;
+    }
+
+    /**
+     * Returns a new string with the suffix added if it is not already present
+     * @param {string} suffix - The suffix to add
+     * @returns {string} The new string
+     */
+    withSuffixIfNotPresent (suffix) {
+        if (!this.endsWith(suffix)) {
+            return this + suffix;
+        }
+        return this;
     }
 
     /**
@@ -637,7 +667,10 @@
      * @category Utility
      */
     loremIpsum (minWordCount, maxWordCount) {
-        // ... (implementation)
+        // implement a lorem ipsum generator
+        const words = ["lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore", "magna", "aliqua"];
+        const wordCount = Math.floor(Math.random() * (maxWordCount - minWordCount + 1)) + minWordCount;
+        return words.slice(0, wordCount).join(" ");
     }
 
     /**
@@ -646,7 +679,7 @@
      * @category HTML Operations
      */
     escapeHtml () {
-        return this.replace(/[&<>"'\/]/g, function (s) {
+        return this.replace(/[&<>"'/]/g, function (s) {
             const entityMap = {
                 "&": "&amp;",
                 "<": "&lt;",
@@ -674,7 +707,7 @@
      * @category Utility
      */
     GUID () {
-        function s4() {
+        function s4 () {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
                 .substring(1);
@@ -727,7 +760,7 @@
      * @returns {number} The 32-bit hash code
      * @category Hashing
      */
-    hashCode32() {
+    hashCode32 () {
         let hash = 0;
         for (let i = 0; i < this.length; i++) {
         const chr = this.charCodeAt(i);
@@ -843,7 +876,15 @@
      * @returns {Object[]} An array of difference objects
      */
     diff (otherString) {
-        // ... (implementation)
+        // implement a minimal diff algorithm
+        const diff = [];
+        const maxLength = Math.max(this.length, otherString.length);
+        for (let i = 0; i < maxLength; i++) {
+            if (this[i] !== otherString[i]) {
+                diff.push({ index: i, char: this[i], otherChar: otherString[i] });
+            }
+        }
+        return diff;
     }
 
     /**
@@ -864,19 +905,6 @@
      * @category HTML Operations
      */
     contentOfElementsOfTag (tagName) {
-        function Element_hasParentWithTag (element, tagName) {
-          tagName = tagName.toLowerCase();
-          
-          while (element) {
-            if (element.tagName && element.tagName.toLowerCase() === tagName.toLowerCase()) {
-              return true;
-            }
-            element = element.parentNode;
-          }
-          
-          return false;
-        }
-    
         const el = document.createElement("div");
         el.innerHTML = this;
         let matches = el.elementsOfTag(tagName);    

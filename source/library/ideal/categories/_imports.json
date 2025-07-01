@@ -16,6 +16,7 @@
     "Image_ideal.js",
     "TypedArray-ideal.js",
     "ImmutableSet.js",
-    "JSON_ideal.js"
+    "JSON_ideal.js",
+    "FifoMap.js"
 ]
 
