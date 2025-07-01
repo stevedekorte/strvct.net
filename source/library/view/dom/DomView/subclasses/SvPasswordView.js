@@ -89,13 +89,16 @@
             e.setAttribute("autocomplete", this.autocompleteType());
             
             // Apply consistent styling
-            this.setStyleIfUnset("appearance", "none");
+            this.setStyleIfUnset("appearance", "none"); // as opposed to "button", which is the default
             this.setStyleIfUnset("-webkit-appearance", "none");
             this.setStyleIfUnset("border", "none");
             this.setStyleIfUnset("outline", "none");
             this.setStyleIfUnset("box-sizing", "border-box");
             this.setStyleIfUnset("display", "block");
             this.setStyleIfUnset("width", "100%");
+            this.setFontSize("1em");
+            this.setFontFamily("inherit");
+            this.setFontStyle("italic");
             
             // Ensure we're registered for input events
             this.setIsRegisteredForKeyboard(true);
@@ -269,7 +272,9 @@
      * @category Value Management
      */
     setValue (newValue) {
-        return this.setString(newValue);
+        this.setString(newValue);
+        this.updateFontStyle();
+        return this;
     }
 
     /**
@@ -281,5 +286,30 @@
         const val = this.string();
         return val;
     }
+
+    syncEditingControl () {
+        super.syncEditingControl();
+        this.updateFontStyle();
+        return this;
+    }
+
+    updateFontStyle () {
+        // make the placeholder text italic when the field is empty, and normal when it's not
+        if (this.string().length > 0) {
+            this.setFontStyle("normal");
+        } else {
+            this.setFontStyle("italic"); 
+        }
+    }
+
+    /*
+    setFontStyle (style) {
+        if (style === "normal") {
+            debugger;
+        }
+        super.setFontStyle(style);
+        return this;
+    }
+    */
 
 }.initThisClass());
