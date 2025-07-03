@@ -68,6 +68,10 @@ const SvGlobals = (class SvGlobals extends Object {
 		this.globals()[key] = value;
 	}
 
+	static has (key) {
+		return this.globals()[key] !== undefined;
+	}
+
 	static asMap () {
 		const dict = this.globals();	
 		const map = new Map(Object.entries(dict));

@@ -9,7 +9,6 @@
  * as I'm not sure how they might affect the rest of the system.
  */
 
-debugger;
 (class ProtoClass extends Object {
 
     prototypeChain () { // returns an array of prototypes from most specific to most ancestral

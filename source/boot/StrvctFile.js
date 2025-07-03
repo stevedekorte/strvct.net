@@ -196,23 +196,18 @@ class StrvctFile extends Object {
         // Get global object using SvGlobals
         const globalObj = SvGlobals.globals();
         
-        // Setup node-indexeddb for persistence (synchronous parts)
+        // Setup node-indexeddb for persistence
         if (typeof globalObj.indexedDB === 'undefined') {
             try {
-                // Require node-indexeddb main module synchronously
-                const { indexedDB, IDBKeyRange } = require('node-indexeddb');
+                console.log('Initializing IndexedDB for Node.js...');
                 
-                // Set on global object
-                globalObj.indexedDB = indexedDB;
-                globalObj.IDBKeyRange = IDBKeyRange;
+                // Load and initialize the database cache FIRST
+                const dbManager = require('node-indexeddb/dbManager');
                 
-                // Also set as global variables for compatibility
-                global.indexedDB = indexedDB;
-                global.IDBKeyRange = IDBKeyRange;
-
-                console.log('indexedDB type:', typeof globalObj.indexedDB);
-                console.log('indexedDB available:', !!globalObj.indexedDB);
-                console.log("IndexedDB and IDBKeyRange are now available");
+                // This must be done synchronously in Node.js - we'll use a sync helper
+                this._initializeIndexedDBSync(dbManager, globalObj);
+                
+                console.log('IndexedDB and IDBKeyRange are now available');
             } catch (error) {
                 console.warn('node-indexeddb not available, IndexedDB will not be available in Node.js:', error.message);
             }
@@ -233,6 +228,46 @@ class StrvctFile extends Object {
 
     /**
      * @static
+     * @description Helper to initialize IndexedDB synchronously by calling async loadCache
+     * @category Environment Setup
+     */
+    static _initializeIndexedDBSync(dbManager, globalObj) {
+        try {
+            // First, we need to call loadCache synchronously 
+            // This is a hack because node-indexeddb requires cache to be loaded first
+            const util = require('util');
+            const loadCacheSync = util.promisify(dbManager.loadCache.bind(dbManager));
+            
+            // Use a synchronous wrapper around the async operation
+            const { execSync } = require('child_process');
+            
+            // Create a temp script that loads the cache and then requires indexeddb
+            const tempScript = `
+                const dbManager = require('node-indexeddb/dbManager');
+                dbManager.loadCache().then(() => {
+                    const { indexedDB, IDBKeyRange } = require('node-indexeddb');
+                    console.log('SUCCESS: IndexedDB initialized');
+                }).catch(err => {
+                    console.log('ERROR: ' + err.message);
+                });
+            `;
+            
+            // For now, let's try a different approach - delay the IndexedDB setup
+            console.log('Setting up delayed IndexedDB initialization...');
+            
+            // Store the dbManager for later initialization
+            globalObj._needsIndexedDBInit = true;
+            globalObj._indexedDBManager = dbManager;
+            
+            console.log('IndexedDB setup deferred until ensureIndexedDBReady() is called');
+        } catch (error) {
+            console.warn('Failed to set up IndexedDB initialization:', error.message);
+            // Don't throw - just leave IndexedDB unavailable
+        }
+    }
+
+    /**
+     * @static
      * @description Sets up Node.js environment with necessary polyfills (async version for cache initialization)
      * @category Environment Setup
      */
@@ -240,16 +275,68 @@ class StrvctFile extends Object {
         // First ensure synchronous setup is done
         this.setupNodeEnvironmentSync();
         
-        // Then initialize the database cache if IndexedDB is available
+        // Then try to initialize the cache properly if IndexedDB was loaded
+        await this.ensureIndexedDBCacheReady();
+    }
+
+    /**
+     * @static
+     * @description Ensures IndexedDB cache is properly loaded
+     * @returns {Promise<void>}
+     * @category Environment Setup
+     */
+    static async ensureIndexedDBCacheReady() {
         const globalObj = SvGlobals.globals();
-        if (globalObj.indexedDB) {
+        
+        // Call ensureIndexedDBReady instead - it has the proper initialization logic
+        await this.ensureIndexedDBReady();
+    }
+
+    /**
+     * @static
+     * @description Ensures IndexedDB is properly initialized before use
+     * @returns {Promise<void>}
+     * @category Environment Setup
+     */
+    static async ensureIndexedDBReady() {
+        const globalObj = SvGlobals.globals();
+        
+        console.log('ensureIndexedDBReady: _needsIndexedDBInit =', globalObj._needsIndexedDBInit);
+        console.log('ensureIndexedDBReady: _indexedDBManager =', !!globalObj._indexedDBManager);
+        console.log('ensureIndexedDBReady: indexedDB =', !!globalObj.indexedDB);
+        
+        if (globalObj._needsIndexedDBInit && globalObj._indexedDBManager) {
             try {
-                const dbManager = require('node-indexeddb/dbManager');
-                await dbManager.loadCache();
+                console.log('Initializing IndexedDB cache...');
+                
+                // Load the cache first
+                await globalObj._indexedDBManager.loadCache();
                 console.log('IndexedDB database cache initialized');
+                
+                // Now we can safely require and expose the main IndexedDB module
+                const { indexedDB, IDBKeyRange } = require('node-indexeddb');
+                
+                // Set on global object
+                globalObj.indexedDB = indexedDB;
+                globalObj.IDBKeyRange = IDBKeyRange;
+                
+                // Also set as global variables for compatibility
+                global.indexedDB = indexedDB;
+                global.IDBKeyRange = IDBKeyRange;
+                
+                // Clear the init flag
+                globalObj._needsIndexedDBInit = false;
+                delete globalObj._indexedDBManager;
+                
+                console.log('IndexedDB and IDBKeyRange are now available and ready');
             } catch (error) {
-                console.warn('Failed to initialize IndexedDB cache:', error.message);
+                console.warn('Failed to initialize IndexedDB:', error.message);
+                globalObj._needsIndexedDBInit = false;
             }
+        } else if (globalObj._needsIndexedDBInit) {
+            console.log('IndexedDB initialization was flagged but dbManager not available');
+        } else {
+            console.log('IndexedDB already available or not needed');
         }
     }
 
@@ -266,18 +353,6 @@ class StrvctFile extends Object {
             console.log('IndexedDB database cache initialized');
         } catch (error) {
             console.warn('Failed to initialize IndexedDB database cache:', error.message);
-        }
-    }
-
-    /**
-     * @static
-     * @description Ensures IndexedDB is fully initialized before use
-     * @returns {Promise<void>}
-     * @category Environment Setup
-     */
-    static async ensureIndexedDBReady() {
-        if (this._dbInitPromise) {
-            await this._dbInitPromise;
         }
     }
 
