@@ -4,7 +4,7 @@
 
 */
 
-getGlobalThis().Mixin = class Mixin extends Object {
+SvGlobals.globals().Mixin = class Mixin extends Object {
 	
 	static mixIntoClass (aClass) {
 		// copy class methods (except initClass) into aClass, 

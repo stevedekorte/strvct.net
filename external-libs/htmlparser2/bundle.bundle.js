@@ -29,7 +29,7 @@
     for (var o = 0; o < r.length; o++) s(r[o]);
     return s;
   })({ 1: [function(require2, module, exports) {
-    getGlobalThis().htmlparser2 = require2("htmlparser2");
+    SvGlobals.globals().htmlparser2 = require2("htmlparser2");
   }, { "htmlparser2": 25 }], 2: [function(require2, module, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });

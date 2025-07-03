@@ -154,7 +154,7 @@ MemoryUsage.shared() //.setup()
             countOfClass (aClass) {
         let total = 0
         this.snapshot().forEachKV((className, instanceCount) => {
-            const instClass = getGlobalThis()[className]
+            const instClass = SvGlobals.globals()[className]
             if (instClass.isKindOf(aClass)) {
                 total += instanceCount
             }

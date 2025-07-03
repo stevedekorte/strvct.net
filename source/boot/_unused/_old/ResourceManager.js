@@ -25,38 +25,6 @@
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
 
-function getGlobalThis () {
-	const isDef = function (v) {
-		return typeof(v) !== "undefined"
-	}
-
-	if (isDef(globalThis)) {
-        return globalThis;
-    }
-
-	if (isDef(self)) {
-        return self;
-    }
-
-	if (isDef(window)) {
-		window.global = window;
-		return window;
-	}
-
-	if (isDef(global)) {
-		global.window = global;
-		return global;
-	}
-
-	// Note: this might still return the wrong result!
-	if (isDef(this) && this.Math === Math) {
-        return this;
-    }
-    
-	throw new Error("Unable to locate global `this`");
-  };
-
-  getGlobalThis().getGlobalThis = getGlobalThis;
 
 // --- eval source url --------------------------------
 
@@ -249,7 +217,7 @@ class UrlResource extends Object {
 
         //console.log("UrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
-        if (h && getGlobalThis().HashCache) {
+        if (h && SvGlobals.globals().HashCache) {
             const hc = HashCache.shared();
             //await hc.promiseClear(); // clear cache for now
             const hasKey = await hc.promiseHasKey(h);
@@ -278,7 +246,7 @@ class UrlResource extends Object {
                 console.log("  no hash for " + this.path())
                 //debugger;
             }
-            if (!getGlobalThis().HashCache) {
+            if (!SvGlobals.globals().HashCache) {
                 console.log("  no HashCache")
             }
             console.log("loading normally " + this.path() + " " + h)
@@ -365,7 +333,7 @@ class UrlResource extends Object {
     }
 
     async promiseLoadUnzipIfNeeded () {
-        if (!getGlobalThis().pako) {
+        if (!SvGlobals.globals().pako) {
             await UrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }
@@ -446,7 +414,7 @@ class BootLoadingView {
   }
 }
 
-getGlobalThis().bootLoadingView = new BootLoadingView();
+SvGlobals.globals().bootLoadingView = new BootLoadingView();
 
 // ------------------------------------------------------------------------
 
@@ -645,7 +613,7 @@ class ResourceManager {
 
     onDone () {
         // not really done yet
-        getGlobalThis().bootLoadingView = bootLoadingView;
+        SvGlobals.globals().bootLoadingView = bootLoadingView;
         //bootLoadingView.close();
         this.markPageLoadTime();
 		//window.document.title = this.loadTimeDescription();

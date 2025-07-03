@@ -18,7 +18,7 @@
         console.log(lm.pop());      // → undefined
   */
 
-getGlobalThis().FifoMap = class FifoMap extends Map {
+SvGlobals.globals().FifoMap = class FifoMap extends Map {
 
     constructor (iterable) {
       super();

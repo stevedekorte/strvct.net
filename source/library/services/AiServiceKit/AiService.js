@@ -356,7 +356,7 @@
    */
   chatRequestClass () {
     const className = this.type().split("Service")[0] + "Request";
-    const requestClass = getGlobalThis()[className];
+    const requestClass = SvGlobals.globals()[className];
     if (!requestClass) {
       throw new Error("chatRequestClass " + className + " not found");
     }

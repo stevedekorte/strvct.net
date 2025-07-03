@@ -4,7 +4,7 @@
 
 "use strict";
 
-require("../getGlobalThis.js");
+require("../SvGlobals.js");
 require("../BaseHttpsServerRequest.js");
 require("../MimeExtensions.js");
 const fs = require('fs');

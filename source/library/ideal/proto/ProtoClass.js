@@ -59,7 +59,7 @@
           }
         };
         Object.defineProperty(newClass, 'name', { value: newClassName });
-        //getGlobalThis()[newClassName] = newClass; // initThisClass() will do this, don't do it here so it doesn't throw an error
+        //SvGlobals.globals()[newClassName] = newClass; // initThisClass() will do this, don't do it here so it doesn't throw an error
 
         // NOTE: the caller will need to add any slots (or add an initPrototype method) and then call initThisClass() on the new class
         return newClass;

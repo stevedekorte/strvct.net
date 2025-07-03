@@ -6732,6 +6732,6 @@
   
   })));
 
-getGlobalThis().pako = pako
+SvGlobals.globals().pako = pako
 
 

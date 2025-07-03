@@ -35,7 +35,7 @@
    */
   static protocolWithName (protocolClassName) {
     Type.assertString(protocolClassName);
-      const protocolClass = getGlobalThis()[protocol];
+      const protocolClass = SvGlobals.globals()[protocol];
       if (protocolClass) {
         if (protocolClass.isKindOf(Protocol)) {
             return protocolClass;

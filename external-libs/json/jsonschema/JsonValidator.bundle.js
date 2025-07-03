@@ -1,6 +1,6 @@
 (() => {
   // json/jsonschema/JsonValidator.js
-  if (getGlobalThis().jsonschema === void 0) {
+  if (SvGlobals.globals().jsonschema === void 0) {
     throw new Error("jsonschema is not defined");
   }
   var JsonValidator = class _JsonValidator {
@@ -9,7 +9,7 @@
      * @param {Object} [options] - jsonschema options
      */
     constructor(options = {}) {
-      if (!getGlobalThis().jsonschema || !getGlobalThis().jsonschema.Validator) {
+      if (!SvGlobals.globals().jsonschema || !SvGlobals.globals().jsonschema.Validator) {
         throw new Error("jsonschema library not properly loaded. Validator class not found.");
       }
       const defaultOptions = {
@@ -32,7 +32,7 @@
       };
       this._options = { ...defaultOptions, ...options };
       this._jsonSchema = null;
-      const Validator = getGlobalThis().jsonschema.Validator;
+      const Validator = SvGlobals.globals().jsonschema.Validator;
       this._validator = new Validator();
       if (!this._validator) {
         throw new Error("Failed to create validator instance");
@@ -178,11 +178,11 @@
      */
     static test() {
       console.log("Running JsonValidator tests...");
-      if (!getGlobalThis().jsonschema) {
+      if (!SvGlobals.globals().jsonschema) {
         console.error("jsonschema is not available in global scope");
         return false;
       }
-      if (!getGlobalThis().jsonschema.Validator) {
+      if (!SvGlobals.globals().jsonschema.Validator) {
         console.error("jsonschema.Validator is not available");
         return false;
       }
@@ -234,6 +234,6 @@
       }
     }
   };
-  getGlobalThis().JsonValidator = JsonValidator;
+  SvGlobals.globals().JsonValidator = JsonValidator;
 })();
 //# sourceMappingURL=JsonValidator.bundle.js.map

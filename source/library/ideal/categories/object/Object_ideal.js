@@ -24,17 +24,17 @@
             }
         }[className];
         
-        getGlobalThis()[className] = NewClass;
+        SvGlobals.globals()[className] = NewClass;
         
         return NewClass;
     }
 
     static classWithName (className) {
-        return getGlobalThis()[className];
+        return SvGlobals.globals()[className];
     }
 
     classWithName (className) {
-        return getGlobalThis()[className];
+        return SvGlobals.globals()[className];
     }
 
     static isValidIdentifier (name) {

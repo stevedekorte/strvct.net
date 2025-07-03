@@ -9,7 +9,7 @@
  */
 "use strict";
 
-if (getGlobalThis()["Node"]) { // DOM Node
+if (SvGlobals.globals()["Node"]) { // DOM Node
 
     Object.defineSlots(Node.prototype, {
 

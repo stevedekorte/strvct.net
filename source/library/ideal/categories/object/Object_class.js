@@ -73,7 +73,7 @@
         if (Type.isNullOrUndefined(aName)) {
             return undefined;
         }
-        return getGlobalThis()[aName];
+        return SvGlobals.globals()[aName];
     }
 
     /**
@@ -108,7 +108,7 @@
      * @category Global Access
      */
     static globals () {
-        return getGlobalThis();
+        return SvGlobals.globals();
     }
 
     /**
@@ -262,7 +262,7 @@
         if (Type.isUndefined(this.globals()[className])) {
             this.globals()[className] = this;
         } else if (this.type() !== "Object") {
-            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + className + "']";
+            const msg = "WARNING: Attempt to redefine SvGlobals.globals()['" + className + "']";
             console.warn(msg);
             throw new Error(msg);
         }

@@ -218,7 +218,7 @@
  * @throws {Error} If the assertion fails
  * @category Assertion
  */
-getGlobalThis().assert = function assert (v, errorMessage) {
+SvGlobals.globals().assert = function assert (v, errorMessage) {
     return Error.assert(v, errorMessage);
 }
 
@@ -230,7 +230,7 @@ getGlobalThis().assert = function assert (v, errorMessage) {
  * @throws {Error} If the value is undefined
  * @category Assertion
  */
-getGlobalThis().assertDefined = function assertDefined (v, errorMessage) {
+SvGlobals.globals().assertDefined = function assertDefined (v, errorMessage) {
     return Error.assertDefined(v, errorMessage);
 }
 
@@ -240,6 +240,6 @@ getGlobalThis().assertDefined = function assertDefined (v, errorMessage) {
  * @throws {Error} If the function doesn't throw
  * @category Assertion
  */
-getGlobalThis().assertThrows = function assertThrows (func) {
+SvGlobals.globals().assertThrows = function assertThrows (func) {
     Error.assertThrows(func);
 }

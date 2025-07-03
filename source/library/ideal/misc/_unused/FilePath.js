@@ -8,7 +8,7 @@
 */
 
 
-getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
+SvGlobals.globals().ideal.FilePath = class FilePath extends ProtoClass {
 
     static with (pathString) {
         return FilePath.clone().setPathString(pathString)

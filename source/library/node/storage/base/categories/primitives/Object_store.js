@@ -177,7 +177,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     setShouldStore (aBool) {
         if (aBool != this._shouldStore) {
             //this.willMutate("shouldStore");
-            assert(this !== getGlobalThis());
+            assert(this !== SvGlobals.globals());
             Object.defineSlot(this, "_shouldStore", aBool);
             //this.didMutate("shouldStore");
         }

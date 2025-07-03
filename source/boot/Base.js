@@ -124,7 +124,7 @@
             this.prototype.initPrototype();
         }
 
-        getGlobalThis()[this.type()] = this; // This isn't done automatically by JS class deifintions, so we do it here
+        SvGlobals.globals()[this.type()] = this; // This isn't done automatically by JS class deifintions, so we do it here
         return this;
     }
 
@@ -234,7 +234,7 @@
 
 }.initThisClass());
 
-getGlobalThis().assert = function (v, errorMessage) {
+SvGlobals.globals().assert = function (v, errorMessage) {
     if (!v) {
         if (typeof(errorMessage) === "function") {
             errorMessage = errorMessage();
@@ -246,7 +246,7 @@ getGlobalThis().assert = function (v, errorMessage) {
     return v
 }
 
-getGlobalThis().debugAssert = function (v, errorMessage) {
+SvGlobals.globals().debugAssert = function (v, errorMessage) {
     if (!v) {
         const m = errorMessage ? errorMessage : "assert failed - false value";
         console.warn(m);

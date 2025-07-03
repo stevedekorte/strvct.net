@@ -49,7 +49,7 @@
       
       // verify that these are all subclasses of JsonGroup
       classNames.forEach(className => {
-        const aClass = getGlobalThis()[className];
+        const aClass = SvGlobals.globals()[className];
         assert(aClass !== undefined, "missing class '" + className + "'");
         assert(aClass.isClass && aClass.isClass(), "'" + className + "' is not a class");
       });

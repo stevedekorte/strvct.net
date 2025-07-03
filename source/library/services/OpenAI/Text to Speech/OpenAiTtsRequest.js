@@ -198,7 +198,7 @@
    * @category Request Preparation
    */
   proxyUrl () {
-    const ProxyServers = getGlobalThis().ProxyServers;
+    const ProxyServers = SvGlobals.globals().ProxyServers;
     if (ProxyServers && ProxyServers.shared().defaultServer()) {
       return ProxyServers.shared().defaultServer().proxyUrlForUrl(this.apiUrl());
     }
@@ -211,7 +211,7 @@
    * @category Request Preparation
    */
   proxyXhrForUrl () {
-    const SvXhrRequest = getGlobalThis().SvXhrRequest;
+    const SvXhrRequest = SvGlobals.globals().SvXhrRequest;
     const xhr = SvXhrRequest.clone();
     xhr.setUrl(this.proxyUrl());
     xhr.setMethod("POST");

@@ -3594,6 +3594,6 @@
   });
 
   // htmlparser2/main.js
-  getGlobalThis().htmlparser2 = require_lib6();
+  SvGlobals.globals().htmlparser2 = require_lib6();
 })();
 //# sourceMappingURL=main.bundle.js.map

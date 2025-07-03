@@ -9,7 +9,7 @@
 */
 
 Type.typedArrayTypeNames().forEach((name) => {
-    const aClass = getGlobalThis()[name]
+    const aClass = SvGlobals.globals()[name]
 
     if (Type.isUndefined(aClass)) {
         console.warn("TypeArray-store error: missing type " + name);

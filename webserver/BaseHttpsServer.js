@@ -4,7 +4,7 @@
 
 "use strict";
 
-require("./getGlobalThis.js");
+require("./SvGlobals.js");
 require("./Base.js");
 require("./BaseHttpsServerRequest.js");
 
@@ -239,8 +239,8 @@ const nodePath = require('path');
         const className = classInfo.className || fileName;
         
         // Check if class is already loaded
-        if (getGlobalThis()[className]) {
-            return getGlobalThis()[className];
+        if (SvGlobals.globals()[className]) {
+            return SvGlobals.globals()[className];
         }
         
         // Resolve the path relative to the config file directory
@@ -250,7 +250,7 @@ const nodePath = require('path');
         // Load the module using require instead of eval for better error handling
         try {
             require(fullPath);
-            const RequestClass = getGlobalThis()[className];
+            const RequestClass = SvGlobals.globals()[className];
             
             if (!RequestClass) {
                 throw new Error(`Class ${className} not found in ${fullPath}. Make sure the class name matches the filename.`);

@@ -30,7 +30,7 @@ function evalStringFromSourceUrl (codeString, path) {
     return result;
 }
 
-getGlobalThis().evalStringFromSourceUrl = evalStringFromSourceUrl;
+SvGlobals.globals().evalStringFromSourceUrl = evalStringFromSourceUrl;
 
 // --- Object defineSlot ---
 

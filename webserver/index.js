@@ -5,7 +5,7 @@
 "use strict";
 
 // Load base dependencies
-require("./getGlobalThis.js");
+require("./SvGlobals.js");
 require("./Base.js");
 
 // Export main classes

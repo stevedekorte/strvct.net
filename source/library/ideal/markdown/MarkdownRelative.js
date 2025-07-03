@@ -121,4 +121,4 @@ class MarkdownRelative extends Object {
 
 }
 
-getGlobalThis().MarkdownRelative = MarkdownRelative;
+SvGlobals.globals().MarkdownRelative = MarkdownRelative;

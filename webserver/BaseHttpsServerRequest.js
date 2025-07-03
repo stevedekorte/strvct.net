@@ -43,7 +43,7 @@ using the contents of:
 
 */
 
-require("./getGlobalThis.js");
+require("./SvGlobals.js");
 require("./Base.js");
 require("./MimeExtensions.js");
 const fs = require('fs');

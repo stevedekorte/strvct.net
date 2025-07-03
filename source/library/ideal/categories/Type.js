@@ -57,7 +57,7 @@
 
 */
 
-//getGlobalThis().Type = (class Type extends Object {
+//SvGlobals.globals().Type = (class Type extends Object {
 class Type extends Object {
 
     static typeDescription (value) {
@@ -158,7 +158,7 @@ class Type extends Object {
 
     static classForClassTypeName (typeName) {
         const className = typeName.split(" ")[0];
-        let aClass = getGlobalThis()[className];
+        let aClass = SvGlobals.globals()[className];
         if (aClass === undefined) {
             console.warn("Type.classForClassTypeName: unable to find class for type name: " + typeName + " using Object instead");
             aClass = Object;
@@ -169,7 +169,7 @@ class Type extends Object {
     static classForInstanceTypeName (typeName) {
         //const className = typeName.split(" ")[0];
         const className = typeName;
-        return getGlobalThis()[className];
+        return SvGlobals.globals()[className];
     }
 
     static classNameIsKindOfClassName (typeA, typeB) {
@@ -1182,6 +1182,6 @@ class Type extends Object {
     */
 }
 
-getGlobalThis().Type = Type;
+SvGlobals.globals().Type = Type;
 
 //Type.test();

@@ -201,7 +201,7 @@ Function.prototype.silentError = function() {
 Function.prototype.jsonSchemaForParameter = function(parameter, refSet) {
     assert(refSet, "refSet is required");
     if (parameter.type.isCapitalized()) {
-        const aClass = getGlobalThis()[parameter.type];
+        const aClass = SvGlobals.globals()[parameter.type];
         return aClass.jsonSchemaRef(refSet);
     }
     return { 
@@ -217,7 +217,7 @@ Function.prototype.returnsJsonSchema = function(refSet) {
     
     this.returnTypes().forEach(type => {
         if (type.isCapitalized()) {
-            const aClass = getGlobalThis()[type];
+            const aClass = SvGlobals.globals()[type];
             //refSet.add(aClass); // needed or added by jsonSchemaRef
             oneOf.push(aClass.jsonSchemaRef(refSet));
         } else {
@@ -318,7 +318,7 @@ Function.prototype.paramsSchema = function(refSet) {
 
     const refTypeName = function (typeName, refSet) {
         assert(refSet);
-        const aClass = getGlobalThis()[typeName];
+        const aClass = SvGlobals.globals()[typeName];
         assert(aClass,  "missing referenced class '" + typeName + "'");
         return aClass.jsonSchemaRef(refSet);
     };

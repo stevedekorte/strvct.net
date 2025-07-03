@@ -7,7 +7,7 @@
   // json/clarinet/clarinet.js
   var require_clarinet = __commonJS({
     "json/clarinet/clarinet.js"(exports) {
-      getGlobalThis().clarinet = {};
+      SvGlobals.globals().clarinet = {};
       var exports = clarinet;
       (function(clarinet2) {
         "use strict";

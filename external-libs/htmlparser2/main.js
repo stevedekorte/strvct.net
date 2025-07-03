@@ -1,1 +1,1 @@
-getGlobalThis().htmlparser2 = require("htmlparser2");
+SvGlobals.globals().htmlparser2 = require("htmlparser2");

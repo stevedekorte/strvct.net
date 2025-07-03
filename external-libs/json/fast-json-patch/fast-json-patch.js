@@ -937,4 +937,4 @@ exports.compare = compare;
 /***/ })
 /******/ ]);
 
-getGlobalThis().JsonPatch = jsonpatch; // NOTE: added by SLD to make globally avaialble
+SvGlobals.globals().JsonPatch = jsonpatch; // NOTE: added by SLD to make globally avaialble

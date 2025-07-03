@@ -2,7 +2,7 @@
 
 
 
-if (!getGlobalThis().Image) {
+if (!SvGlobals.globals().Image) {
     console.log("WARNING: no Image object found - maybe we are not in browser?");
 } else {
 
