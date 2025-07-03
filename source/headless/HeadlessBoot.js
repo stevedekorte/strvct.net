@@ -13,6 +13,14 @@ if (fs.existsSync(getGlobalThisPath)) {
     eval(getGlobalThisContent);
 }
 
+// Load node-indexeddb for Node.js IndexedDB support
+const { indexedDB, IDBKeyRange } = require('node-indexeddb');
+const dbManager = require('node-indexeddb/dbManager');
+
+// Add IndexedDB globals to global scope
+getGlobalThis()["indexedDB"] = indexedDB;
+getGlobalThis()["IDBKeyRange"] = IDBKeyRange;
+
 /**
  * @class HeadlessBoot
  * @extends Object
@@ -58,6 +66,22 @@ const HeadlessBoot = class HeadlessBoot extends Object {
      */
     init () {
         this._loadedFiles = new Set(); // Track loaded files to avoid duplicates
+        this._dbInitialized = false; // Track if IndexedDB is initialized
+        return this;
+    }
+
+    /**
+     * @description Initializes the IndexedDB database manager
+     * @returns {Promise<HeadlessBoot>} The boot instance
+     * @category Database
+     */
+    async initDatabase () {
+        if (!this._dbInitialized) {
+            console.log("Initializing IndexedDB database...");
+            await dbManager.loadCache().catch(console.error);
+            this._dbInitialized = true;
+            console.log("IndexedDB database initialized");
+        }
         return this;
     }
 
@@ -72,6 +96,9 @@ const HeadlessBoot = class HeadlessBoot extends Object {
     async loadFromPath (importsPath) {
         const fs = require('fs');
         const path = require('path');
+
+        // Initialize IndexedDB database first
+        await this.initDatabase();
 
         console.log(`Loading from imports file: ${importsPath}`);
 

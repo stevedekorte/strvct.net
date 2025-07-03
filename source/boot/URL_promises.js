@@ -16,7 +16,7 @@
      * @param {string} path - The path to append to the current window location.
      * @returns {URL_promises} A new URL_promises instance.
      */
-    static with(path) {
+    static with (path) {
         return new URL(path, new URL(window.location.href));
     }
 
@@ -24,7 +24,7 @@
      * Loads the content of the URL using XMLHttpRequest.
      * @returns {Promise<ArrayBuffer>} A promise that resolves with the response as an ArrayBuffer.
      */
-    promiseLoad() {
+    promiseLoad () {
         const path = this.href
         console.log("URL.promiseLoad() (over NETWORK) ", path)
         return new Promise((resolve, reject) => {
@@ -32,7 +32,7 @@
             rq.responseType = "arraybuffer";
             rq.open('GET', path, true);
     
-            rq.onload  = (event) => { 
+            rq.onload  = (/*event*/) => { 
                 if (rq.status >= 400 && rq.status <= 599) {
                     reject(new Error(rq.status + " " + rq.statusText + " error loading " + path + " "))
                 }
@@ -42,7 +42,7 @@
                 resolve(rq.response) 
             }
     
-            rq.onerror = (event) => { 
+            rq.onerror = (/*event*/) => { 
                 console.log("URL error loading ", path)
                 reject(undefined) 
             }
