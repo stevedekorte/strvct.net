@@ -62,32 +62,47 @@
         this.setIsDebugging(true)
     }
 
-    /**
-     * Sets the path of the folder.
-     * @param {string} aString - The new path to set.
-     * @returns {IndexedDBFolder} - Returns this instance.
-     */
-    setPath (aString) {
-        assert(!this.isOpen())
-        this._path = aString
-        return this
+    indexedDB () {
+        const idb = SvGlobals.globals()["indexedDB"];
+        assert(idb, "indexedDB is not available");
+        return idb;
+    }
+
+    navigator () {
+        return SvGlobals.globals()["navigator"];
     }
 
     /**
      * Checks if IndexedDB is available.
      * @returns {boolean} - True if IndexedDB is available, false otherwise.
      */
-    hasIndexedDB () {
-        return ("indexedDB" in window);
-    }
+        hasIndexedDB () {
+            return this.indexedDB() !== undefined;
+        }
+    
+        /**
+         * Checks if the Storage API is available.
+         * @returns {boolean} - True if the Storage API is available, false otherwise.
+         */
+        hasStorageApi () {
+            const nav = this.navigator()
+            if (nav) {
+                return nav.storage && nav.storage.persist;
+            }
+            return false;
+        }
 
     /**
-     * Checks if the Storage API is available.
-     * @returns {boolean} - True if the Storage API is available, false otherwise.
+     * Sets the path of the folder.
+     * @param {string} aString - The new path to set.
+     * @returns {IndexedDBFolder} - Returns this instance.
      */
-    hasStorageApi () {
-        return navigator.storage && navigator.storage.persist
+    setPath (aString) {
+        assert(!this.isOpen(), "IndexedDBFolder is open")
+        this._path = aString
+        return this
     }
+
 
     /**
      * Returns a promise for persistence.
@@ -100,12 +115,20 @@
         return this.promiseForPersistence()
     }
 
+    isOnNodeJs () {
+        return typeof process !== 'undefined';
+    }
+
     /**
      * Creates a new promise for persistence.
      * @async
      * @returns {Promise<boolean>} - A promise that resolves to true if persistence is granted, false otherwise.
      */
     async newPromisePersistence () {
+        if (this.isOnNodeJs()) {
+            return true;
+        }
+
         if (!this.hasStorageApi()) {
             throw new Error("Missing navigator.storage API.");
         }
@@ -157,7 +180,7 @@
      * @returns {Promise} - A promise that resolves when the database is opened.
      */
     newPromiseOpen () {
-        assert(this.hasIndexedDB());
+        assert(this.hasIndexedDB(), "IndexedDB is not available");
 
         if (this.isOpen()) {
             throw new Error("this should not happen as we should only have a single openPromise instance");
@@ -165,7 +188,7 @@
 
         const openPromise = Promise.clone();
 
-        const request = window.indexedDB.open(this.path(), this.version());
+        const request = this.indexedDB().open(this.path(), this.version());
 
         request.onsuccess = (event) => {
             this.setDb(event.target.result)
@@ -213,7 +236,7 @@
         this.setDb(db);
 
         const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);
-        const idbIndex = objectStore.createIndex("key", "key", { unique: true });
+        /*const idbIndex = */ objectStore.createIndex("key", "key", { unique: true });
     }
 
     /**
@@ -221,8 +244,8 @@
      * @returns {IndexedDBFolder} - Returns this instance.
      */
     close () {
-        if (this.isOpen()) {;
-            this.db().close()
+        if (this.isOpen()) {
+            this.db().close();
             this.setDb(null);
             this.setPromiseForOpen(null);
         }
@@ -235,9 +258,9 @@
      * @returns {IndexedDBFolder} - A new IndexedDBFolder instance.
      */
     folderAt (pathComponent) {
-        assert(!pathComponent.contains(this.pathSeparator()))
-        const db = IndexedDBFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator())
-        return db
+        assert(!pathComponent.contains(this.pathSeparator()), "pathComponent contains pathSeparator");
+        const db = IndexedDBFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator());
+        return db;
     }
 
     /**
@@ -257,13 +280,13 @@
     readOnlyObjectStore () {
         const tx = this.db().transaction([this.storeName()], "readonly");
 
-        tx.onerror = (event) => {
+        tx.onerror = (/*event*/) => {
             const m = "readOnlyObjectStore tx error"
             console.error(m)
             throw new Error(m)
         };
 
-        tx.oncomplete = (event) => {
+        tx.oncomplete = (/*event*/) => {
         }
 
         const objectStore = tx.objectStore(this.storeName())
@@ -278,13 +301,13 @@
     readWriteObjectStore () {
         const tx = this.db().transaction([this.storeName()], "readwrite");
         
-        tx.onerror = (event) => {
+        tx.onerror = (/*event*/) => {
             const m = "readWriteObjectStore tx error"
             console.error(m)
             throw new Error(m)
         };
 
-        tx.oncomplete = (event) => {
+        tx.oncomplete = (/*event*/) => {
             console.log("readWriteObjectStore tx oncomplete ", tx._note)
         }
 
@@ -301,7 +324,6 @@
      */
     async promiseHasKey (key) {
         await this.promiseOpen();
-        const promise = Promise.clone();
         const count = await this.promiseCount(key);
         const hasKey = count !== 0;
         return hasKey;
@@ -330,7 +352,7 @@
         const request = objectStore.get(key);
         const stack = this.currentStack()
 
-        request.onsuccess = (event) => {
+        request.onsuccess = (/*event*/) => {
             try {
                 if (typeof(request.result) !== "undefined") {
                     const entry = request.result
@@ -345,7 +367,7 @@
             }
         }
         
-        request.onerror = (event) => {
+        request.onerror = (/*event*/) => {
             console.log("promiseAt('" + key + "') onerror", event.target.error);
             atPromise.callResolveFunc(undefined);
         }
@@ -366,7 +388,7 @@
         const request = objectStore.count(optionalKey);
         const stack = this.currentStack();
 
-        request.onsuccess = (event) => {
+        request.onsuccess = (/*event*/) => {
             const count = request.result;
             let a = false; 
             if (a) {
@@ -377,7 +399,7 @@
             countPromise.callResolveFunc(count);
         }
         
-        request.onerror = (event) => {
+        request.onerror = (/*event*/) => {
             console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack);
             countPromise.callRejectFunc(event);
         }
@@ -398,12 +420,12 @@
         const request = objectStore.getAllKeys();
         const stack = this.currentStack();
 
-        request.onsuccess = (event) => {
+        request.onsuccess = (/*event*/) => {
             const keysArray = request.result;
             promise.callResolveFunc(keysArray);
         }
         
-        request.onerror = (event) => {
+        request.onerror = (/*event*/) => {
             console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack);
             promise.callRejectFunc(event);
         }
@@ -422,9 +444,9 @@
 
         const objectStore = this.readOnlyObjectStore();
         const request = objectStore.getAll();
-        const stack = this.currentStack();
+        //const stack = this.currentStack();
 
-        request.onsuccess = (event) => {
+        request.onsuccess = (/*event*/) => {
             const results = event.target.result;
             const map = new Map();
             results.forEach(result => {
@@ -433,7 +455,7 @@
             promise.callResolveFunc(map);
         }
 
-        request.onerror = (event) => {
+        request.onerror = (/*event*/) => {
             promise.callRejectFunc(event);
         }
 
@@ -462,18 +484,18 @@
         objectStore._tx._note = "promiseClear";
         
         const request = objectStore.clear();
-        const stack = this.currentStack();
+        //const stack = this.currentStack();
 
-        objectStore._tx.oncomplete = (event) => {
+        objectStore._tx.oncomplete = (/*event*/) => {
             console.log("db promiseClear tx oncomplete");
             clearPromise.callResolveFunc(event);
         };
 
-        request.onsuccess = (event) => {
+        request.onsuccess = (/*event*/) => {
             console.log("db promiseClear request onsuccess");
         };
 
-        request.onerror = (event) => {
+        request.onerror = (/*event*/) => {
             console.log("db promiseClear request error");
             clearPromise.callRejectFunc(event);
         };
@@ -487,10 +509,10 @@
      * @returns {Promise} - A promise that resolves when the database is deleted.
      */
     async promiseDelete () {
-        assert(!this.isOpen());
+        assert(!this.isOpen(), "IndexedDBFolder is open");
         const deletePromise = Promise.clone();
 
-        const request = window.indexedDB.deleteDatabase(this.storeName());
+        const request = this.indexedDB().deleteDatabase(this.storeName());
 
         request.onerror = (error) => {
             this.debugLog("Error deleting '" + this.storeName() + "'");
@@ -513,12 +535,12 @@
      */
     async assertLastTxCommitedOrAborted () {
         const tx = this.lastTx()
-        assert(tx)
+        assert(tx, "lastTx is null")
         const isOk = tx.isAborted() || tx.isCommitted();
         if (!isOk) {
             tx.show()
         }
-        assert(isOk)
+        assert(isOk, "lastTx is not committed or aborted")
     }
 
     /**
@@ -527,7 +549,7 @@
      * @returns {Promise<IndexedDBTx>} - A promise that resolves to a new transaction object.
      */
     async promiseNewTx () {
-        assert(this.isOpen())
+        assert(this.isOpen(), "IndexedDBFolder is not open")
         //debugger;
         this.debugLog(this.path() + " promiseNewTx")
         //debugger;
@@ -683,6 +705,10 @@
         console.log("read ", v);
     }
 
+    static async usage () {
+        return estimateAllIndexedDBUsage(); // TODO inline this
+    }
+
 }.initThisClass());
 
 
@@ -694,8 +720,8 @@
  * @async
  * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
  */
-async function estimateAllIndexedDBUsage() {
-    const databases = await indexedDB.databases();
+async function estimateAllIndexedDBUsage () {
+    const databases = await this.indexedDB().databases();
     let totalUsage = 0;
   
     for (const database of databases) {
@@ -710,9 +736,9 @@ async function estimateAllIndexedDBUsage() {
   }
   
   // Function to estimate the usage of a single IndexedDB database
-  function estimateIndexedDBUsage(databaseName) {
+async function estimateIndexedDBUsage (databaseName) {
     return new Promise((resolve, reject) => {
-      const request = window.indexedDB.open(databaseName);
+      const request = this.indexedDB().open(databaseName);
       request.onerror = () => {
         reject(request.error);
       };
@@ -750,29 +776,8 @@ async function estimateAllIndexedDBUsage() {
   }
   
   // Function to estimate the size of an object
-  function estimateObjectSize(object) {
+function estimateObjectSize (object) {
     const jsonString = JSON.stringify(object);
     const bytes = new TextEncoder().encode(jsonString).length;
     return bytes;
-  }
-
-  function deleteDatabase(databaseName) {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.deleteDatabase(databaseName);
-  
-      request.onerror = (event) => {
-        console.error('Error deleting database:', event.target.error);
-        reject(event.target.error);
-      };
-  
-      request.onsuccess = (event) => {
-        console.log(`Database "${databaseName}" deleted successfully.`);
-        resolve();
-      };
-  
-      request.onblocked = (event) => {
-        console.warn('Deleting database blocked:', event);
-        reject(new Error('Deleting database blocked'));
-      };
-    });
-  }
+}

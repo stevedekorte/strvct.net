@@ -131,6 +131,6 @@
       }
     }
   };
-  getGlobalThis().JsonRepairShop = JsonRepairShop;
+  SvGlobals.globals().JsonRepairShop = JsonRepairShop;
 })();
 //# sourceMappingURL=JsonRepairShop.bundle.js.map

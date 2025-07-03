@@ -6,7 +6,7 @@
  * @extends ProtoClass
  * @classdesc The AtomicMap class provides a way to manage a Map object with atomic transactions. It allows you to begin a transaction, make changes to the Map, and then either commit or revert the changes. This ensures data consistency and prevents partial updates in case of errors or exceptions.
  */
-getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
+SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     initPrototypeSlots () {
         {

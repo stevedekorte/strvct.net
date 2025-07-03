@@ -21,7 +21,7 @@
         /** @type {number} Total number of URLs loaded across all instances */
         this._totalUrlsLoaded = 0;
 
-        getGlobalThis().UrlResource = UrlResource;
+        SvGlobals.globals().UrlResource = UrlResource;
     }
 
     /**
@@ -161,7 +161,7 @@
 
         //console.log("UrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
-        if (h && getGlobalThis().HashCache) {
+        if (h && SvGlobals.globals().HashCache) {
             const hc = HashCache.shared();
             //await hc.promiseClear(); // clear cache for now
             const hasKey = await hc.promiseHasKey(h);
@@ -190,7 +190,7 @@
                 console.log("  no hash for " + this.path())
                 //debugger;
             }
-            if (!getGlobalThis().HashCache) {
+            if (!SvGlobals.globals().HashCache) {
                 console.log("  no HashCache")
             }
             console.log("loading normally " + this.path() + " " + h)
@@ -206,7 +206,7 @@
      */
     async promiseJustLoad () {
         try {
-            const data = await URL.with(this.path()).promiseLoad();
+            const data = await StrvctFile.with(this.path()).loadArrayBuffer();
             this._data = data;
             this.constructor._totalBytesLoaded += data.byteLength;
             this.constructor._totalUrlsLoaded += 1;
@@ -225,7 +225,7 @@
      * @category Loading and Evaluation
      */
     async promiseLoadAndEval () {
-        //console.log("promiseLoadAndEval " + this.path())
+        console.log("promiseLoadAndEval " + this.path())
         await this.promiseLoad();
         this.eval();
     }
@@ -333,7 +333,7 @@
      * @category Zip Handling
      */
     async promiseLoadUnzipIfNeeded () {
-        if (!getGlobalThis().pako) {
+        if (!SvGlobals.globals().pako) {
             await UrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }

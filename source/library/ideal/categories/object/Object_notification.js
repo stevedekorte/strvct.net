@@ -27,7 +27,7 @@
      * @category Notification
      */
     removeAllNotificationObservations () {
-        if (getGlobalThis()["SvNotificationCenter"]) {
+        if (SvGlobals.globals()["SvNotificationCenter"]) {
             SvNotificationCenter.shared().removeObserver(this)
         }
     }
@@ -37,7 +37,7 @@
      * @category Scheduling
      */
     removeScheduledActions () {
-        if (getGlobalThis()["SyncScheduler"]) {
+        if (SvGlobals.globals()["SyncScheduler"]) {
             SyncScheduler.shared().unscheduleTarget(this)
         }
     }

@@ -66,7 +66,8 @@ function getGlobalThis () {
    */
   static initThisClass () {
     this.prototype.setupPrototype();
-    getGlobalThis()[this.type()] = this;
+    console.log(" --- " + this.type() + ".initThisClass() ---");
+    SvGlobals.globals()[this.type()] = this;
     return this;
   }
 

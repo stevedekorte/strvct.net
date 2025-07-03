@@ -1207,7 +1207,7 @@
                 const recordType = record.type;
                 assert(!Type.isNullOrUndefined(recordType), "object has no type property");
 
-                const recordClass = getGlobalThis()[recordType];
+                const recordClass = SvGlobals.globals()[recordType];
                 assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
             }
 

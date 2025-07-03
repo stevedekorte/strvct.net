@@ -6,48 +6,56 @@
 
 /**
  * @class URL_promises
- * @extends URL
- * @classdesc Extends the built-in URL class with additional promise-based methods.
+ * @classdesc A StrvctFile-based replacement for URL handling that works in both browser and Node.js.
  */
-(class URL_promises extends URL {
+(class URL_promises extends Object {
 
     /**
-     * Creates a new URL object with the given path relative to the current window location.
-     * @param {string} path - The path to append to the current window location.
+     * Creates a new URL_promises instance with the given path.
+     * @param {string} path - The file path to load.
      * @returns {URL_promises} A new URL_promises instance.
      */
     static with (path) {
-        return new URL(path, new URL(window.location.href));
+        const instance = new URL_promises();
+        instance.href = path;
+        instance.pathname = path;
+        return instance;
     }
 
     /**
-     * Loads the content of the URL using XMLHttpRequest.
+     * Constructor for URL_promises.
+     */
+    constructor () {
+        super();
+        
+        this.href = '';
+        this.pathname = '';
+        this.response = null;
+    }
+
+    /**
+     * Loads the content of the URL using StrvctFile.
      * @returns {Promise<ArrayBuffer>} A promise that resolves with the response as an ArrayBuffer.
      */
-    promiseLoad () {
+    async promiseLoad () {
         const path = this.href
         console.log("URL.promiseLoad() (over NETWORK) ", path)
-        return new Promise((resolve, reject) => {
-            const rq = new XMLHttpRequest();
-            rq.responseType = "arraybuffer";
-            rq.open('GET', path, true);
-    
-            rq.onload  = (/*event*/) => { 
-                if (rq.status >= 400 && rq.status <= 599) {
-                    reject(new Error(rq.status + " " + rq.statusText + " error loading " + path + " "))
-                }
-                this.response = rq.response
-                //console.log("URL loaded ", path)
-                //debugger
-                resolve(rq.response) 
-            }
-    
-            rq.onerror = (/*event*/) => { 
-                console.log("URL error loading ", path)
-                reject(undefined) 
-            }
-            rq.send()
-        })
+        
+        try {
+            const file = new StrvctFile().setPath(path);
+            const textContent = await file.load();
+            
+            // Convert text to ArrayBuffer to maintain API compatibility
+            const encoder = new TextEncoder();
+            const arrayBuffer = encoder.encode(textContent).buffer;
+            
+            this.response = arrayBuffer;
+            //console.log("URL loaded ", path)
+            return arrayBuffer;
+        } catch (error) {
+            console.log("URL error loading ", path, error);
+            throw new Error(`Error loading ${path}: ${error.message}`);
+        }
     }
     
 }).initThisCategory();

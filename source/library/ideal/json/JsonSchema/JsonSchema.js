@@ -7,7 +7,7 @@
  * @extends Object
  */
 
-getGlobalThis().JsonSchema = (class JsonSchema extends Object {
+SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
 
     /**
      * @description Finds all definition references in a given JSON schema.
@@ -102,7 +102,7 @@ getGlobalThis().JsonSchema = (class JsonSchema extends Object {
      * @category Class Resolution
      */
     static classForClassName(className) {
-        const aClass = getGlobalThis()[className];
+        const aClass = SvGlobals.globals()[className];
         return aClass;
     }
 

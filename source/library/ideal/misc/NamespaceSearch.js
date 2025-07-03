@@ -77,6 +77,8 @@
     find (searchString) {
         this.clear()
 
+        throw new Error("Not implemented")
+        /*
         if (searchString) {
             this.setSlotMatchClosure((slotOwner, slotName, slotValue, slotPath) => {
                 return slotName === s
@@ -84,8 +86,9 @@
         }
 
         //this.findOnObject(globalThis, ["globalThis"])
-        this.findOnObject(getGlobalThis(), ["globalThis"])
+        this.findOnObject(SvGlobals.globals(), ["globalThis"])
         return this
+        */
     }
 
     /**

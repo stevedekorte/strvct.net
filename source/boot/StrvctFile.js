@@ -10,7 +10,7 @@
  * @classdesc Unified file loading abstraction that works in both browser and Node.js environments.
  * 
  * Usage:
- *   const file = new StrvctFile().setPath('source/boot/getGlobalThis.js');
+ *   const file = new StrvctFile().setPath('source/boot/MyFile.js');
  *   const content = await file.load();
  *   await file.loadAndEval();
  * 
@@ -24,7 +24,12 @@
  * 
  * Also handles IndexedDB polyfilling for Node.js environments.
  */
-class StrvctFile {
+
+if (SvGlobals === undefined) {
+    throw new Error("SvGlobals is not defined");
+}
+
+class StrvctFile extends Object {
 
     /**
      * @static
@@ -43,10 +48,19 @@ class StrvctFile {
     static _workingPath = '';
 
     /**
+     * @static
+     * @private
+     * @type {boolean}
+     * @description Flag to track if environment has been set up
+     */
+    static _didSetupEnvironment = false;
+
+    /**
      * @constructor
      * @description Initializes a new StrvctFile instance
      */
     constructor() {
+        super();
         /**
          * @private
          * @type {string}
@@ -87,6 +101,17 @@ class StrvctFile {
     static setWorkingPath(path) {
         this._workingPath = path;
         return this;
+    }
+
+    /**
+     * @static
+     * @description Creates a new StrvctFile instance with the given path
+     * @param {string} pathOrUrl - Path or URL to the file
+     * @returns {StrvctFile} A new StrvctFile instance
+     * @category Factory Methods
+     */
+    static with(pathOrUrl) {
+        return new this().setPath(pathOrUrl);
     }
 
     /**
@@ -148,31 +173,111 @@ class StrvctFile {
      * @category Environment Setup
      */
     static setupEnvironment() {
+        if (this._didSetupEnvironment) {
+            return;
+        }
+        this._didSetupEnvironment = true;
+        
         if (this.isNodeEnvironment()) {
-            this.setupNodeEnvironment();
+            // Call the synchronous parts immediately
+            this.setupNodeEnvironmentSync();
         }
         // Browser environment doesn't need setup - native APIs available
     }
 
     /**
      * @static
-     * @description Sets up Node.js environment with necessary polyfills
+     * @description Sets up Node.js environment synchronously with basic polyfills
      * @category Environment Setup
      */
-    static setupNodeEnvironment() {
-        // Setup fake-indexeddb for persistence
-        if (typeof indexedDB === 'undefined') {
-            require('fake-indexeddb/auto');
+    static setupNodeEnvironmentSync() {
+        console.log("StrvctFile setupNodeEnvironmentSync");
+        
+        // Get global object using SvGlobals
+        const globalObj = SvGlobals.globals();
+        
+        // Setup node-indexeddb for persistence (synchronous parts)
+        if (typeof globalObj.indexedDB === 'undefined') {
+            try {
+                // Require node-indexeddb main module synchronously
+                const { indexedDB, IDBKeyRange } = require('node-indexeddb');
+                
+                // Set on global object
+                globalObj.indexedDB = indexedDB;
+                globalObj.IDBKeyRange = IDBKeyRange;
+                
+                // Also set as global variables for compatibility
+                global.indexedDB = indexedDB;
+                global.IDBKeyRange = IDBKeyRange;
+
+                console.log('indexedDB type:', typeof globalObj.indexedDB);
+                console.log('indexedDB available:', !!globalObj.indexedDB);
+                console.log("IndexedDB and IDBKeyRange are now available");
+            } catch (error) {
+                console.warn('node-indexeddb not available, IndexedDB will not be available in Node.js:', error.message);
+            }
+        } else {
+            console.log("IndexedDB already available");
         }
 
         // Setup basic performance API if not available
-        if (!global.performance) {
-            global.performance = {
+        if (!globalObj.performance) {
+            globalObj.performance = {
                 now: () => Date.now(),
                 timing: {
                     navigationStart: Date.now()
                 }
             };
+        }
+    }
+
+    /**
+     * @static
+     * @description Sets up Node.js environment with necessary polyfills (async version for cache initialization)
+     * @category Environment Setup
+     */
+    static async setupNodeEnvironment() {
+        // First ensure synchronous setup is done
+        this.setupNodeEnvironmentSync();
+        
+        // Then initialize the database cache if IndexedDB is available
+        const globalObj = SvGlobals.globals();
+        if (globalObj.indexedDB) {
+            try {
+                const dbManager = require('node-indexeddb/dbManager');
+                await dbManager.loadCache();
+                console.log('IndexedDB database cache initialized');
+            } catch (error) {
+                console.warn('Failed to initialize IndexedDB cache:', error.message);
+            }
+        }
+    }
+
+    /**
+     * @static
+     * @description Initializes the node-indexeddb database cache
+     * @returns {Promise<void>}
+     * @category Environment Setup
+     */
+    static async initializeNodeIndexedDB() {
+        try {
+            const dbManager = require('node-indexeddb/dbManager');
+            await dbManager.loadCache();
+            console.log('IndexedDB database cache initialized');
+        } catch (error) {
+            console.warn('Failed to initialize IndexedDB database cache:', error.message);
+        }
+    }
+
+    /**
+     * @static
+     * @description Ensures IndexedDB is fully initialized before use
+     * @returns {Promise<void>}
+     * @category Environment Setup
+     */
+    static async ensureIndexedDBReady() {
+        if (this._dbInitPromise) {
+            await this._dbInitPromise;
         }
     }
 
@@ -194,6 +299,23 @@ class StrvctFile {
     }
 
     /**
+     * @description Loads the file content as an ArrayBuffer, automatically choosing the right method for the environment
+     * @returns {Promise<ArrayBuffer>} Promise that resolves with file content as ArrayBuffer
+     * @category File Loading
+     */
+    async loadArrayBuffer() {
+        if (!this._path) {
+            throw new Error('No file path set. Use setPath() first.');
+        }
+
+        if (StrvctFile.isNodeEnvironment()) {
+            return this.loadArrayBufferNode();
+        } else {
+            return this.loadArrayBufferBrowser();
+        }
+    }
+
+    /**
      * @description Loads the file using Node.js fs module
      * @returns {Promise<string>} Promise that resolves with file content as text
      * @category File Loading
@@ -206,6 +328,7 @@ class StrvctFile {
             // Use working path if set, otherwise resolve relative to current directory
             const basePath = StrvctFile.workingPath() || process.cwd();
             const fullPath = path.resolve(basePath, this._path);
+            console.log("fs.readFile loading fullPath [" + fullPath + "]");
             const content = await fs.readFile(fullPath, 'utf8');
             return content;
         } catch (error) {
@@ -232,6 +355,50 @@ class StrvctFile {
             return await response.text();
         } catch (error) {
             throw new Error(`Failed to load file in browser: ${fullUrl} - ${error.message}`);
+        }
+    }
+
+    /**
+     * @description Loads the file as ArrayBuffer using Node.js fs module
+     * @returns {Promise<ArrayBuffer>} Promise that resolves with file content as ArrayBuffer
+     * @category File Loading
+     */
+    async loadArrayBufferNode() {
+        const fs = require('fs').promises;
+        const path = require('path');
+        
+        try {
+            // Use working path if set, otherwise resolve relative to current directory
+            const basePath = StrvctFile.workingPath() || process.cwd();
+            const fullPath = path.resolve(basePath, this._path);
+            const buffer = await fs.readFile(fullPath);
+            
+            // Convert Node.js Buffer to ArrayBuffer
+            return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+        } catch (error) {
+            throw new Error(`Failed to load file as ArrayBuffer in Node.js: ${this._path} - ${error.message}`);
+        }
+    }
+
+    /**
+     * @description Loads the file as ArrayBuffer using browser fetch API
+     * @returns {Promise<ArrayBuffer>} Promise that resolves with file content as ArrayBuffer
+     * @category File Loading
+     */
+    async loadArrayBufferBrowser() {
+        const baseUrl = StrvctFile.baseUrl();
+        const fullUrl = baseUrl ? 
+            `${baseUrl}/${this._path.replace(/^\//, '')}` : 
+            this._path;
+        
+        try {
+            const response = await fetch(fullUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return await response.arrayBuffer();
+        } catch (error) {
+            throw new Error(`Failed to load file as ArrayBuffer in browser: ${fullUrl} - ${error.message}`);
         }
     }
 
@@ -267,19 +434,23 @@ class StrvctFile {
      * @category Code Execution
      */
     evalWithSourceUrl(code) {
-        // Use relative path for VSCode compatibility (no leading slash)
-        // URL encode the path to handle spaces and special characters
-        const encodedPath = encodeURI(this._path);
-        const sourceUrlComment = `\n//# sourceURL=${encodedPath}`;
-        const debugCode = code + sourceUrlComment;
-        
         if (StrvctFile.isNodeEnvironment()) {
-            // In Node.js, eval runs in current scope by default
-            eval(debugCode);
+            // Use absolute path for better Node.js debugging
+            const path = require('path');
+            const basePath = StrvctFile.workingPath() || process.cwd();
+            const absolutePath = path.resolve(basePath, this._path);
+            const sourceUrlComment = `\n//# sourceURL=${absolutePath}`;
+            console.log("eval sourceURL: " + absolutePath);
+            eval(code + sourceUrlComment);
         } else {
-            // In browser, use Function constructor for global scope execution
-            const evalFunc = new Function(debugCode);
-            evalFunc.call(window);
+            // Browser: use relative path for VSCode compatibility (no leading slash)
+            // URL encode the path to handle spaces and special characters
+            const encodedPath = encodeURI(this._path);
+            const sourceUrlComment = `\n//# sourceURL=${encodedPath}`;
+            console.log("eval sourceURL: " + encodedPath);
+            eval(code + sourceUrlComment);
+            //const evalFunc = new Function(code + sourceUrlComment);
+            //evalFunc.call(window);
         }
     }
 

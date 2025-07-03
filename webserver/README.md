@@ -29,7 +29,7 @@ The base request handler class that provides:
 - **Base.js** - Base class with slot/property management
 - **MimeExtensions.js** - MIME type detection for file extensions
 - **AutoRelaunch.js** - Server auto-restart mechanism
-- **getGlobalThis.js** - Cross-platform global object helper
+- **SvGlobals.js** - Cross-platform global object helper
 
 ## Usage
 

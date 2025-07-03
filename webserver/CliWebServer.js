@@ -10,7 +10,7 @@
 
 "use strict";
 
-require("./getGlobalThis.js");
+require("./SvGlobals.js");
 require("./Base.js");
 const BaseHttpsServer = require("./BaseHttpsServer.js");
 const yargs = require("yargs/yargs");

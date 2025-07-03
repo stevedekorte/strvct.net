@@ -101,6 +101,6 @@
  * @param {*} arg3
  * @category Callback
  */
-getGlobalThis().onYouTubeIframeAPIReady = function (arg1, arg2, arg3) {
+SvGlobals.globals().onYouTubeIframeAPIReady = function (arg1, arg2, arg3) {
   YouTubePlayerFrame.shared().onLoaded();
 };

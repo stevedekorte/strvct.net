@@ -127,4 +127,4 @@ class BootLoadingView extends Object {
   }
 }
 
-getGlobalThis().bootLoadingView = new BootLoadingView();
+SvGlobals.globals().bootLoadingView = new BootLoadingView();

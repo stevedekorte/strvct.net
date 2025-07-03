@@ -10,7 +10,7 @@
  * Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
  * implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
  */
-getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
+SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
 
   /**
    * @constructor

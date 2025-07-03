@@ -15,7 +15,7 @@
  * 
  */
 
-if (getGlobalThis().jsonschema === undefined) {
+if (SvGlobals.globals().jsonschema === undefined) {
   throw new Error("jsonschema is not defined");
 }
 
@@ -26,7 +26,7 @@ class JsonValidator {
    */
   constructor(options = {}) {
     // Check if jsonschema is properly loaded
-    if (!getGlobalThis().jsonschema || !getGlobalThis().jsonschema.Validator) {
+    if (!SvGlobals.globals().jsonschema || !SvGlobals.globals().jsonschema.Validator) {
       throw new Error("jsonschema library not properly loaded. Validator class not found.");
     }
     
@@ -47,7 +47,7 @@ class JsonValidator {
     
     // Internal properties
     this._jsonSchema = null;
-    const Validator = getGlobalThis().jsonschema.Validator;
+    const Validator = SvGlobals.globals().jsonschema.Validator;
     this._validator = new Validator();
     if (!this._validator) { // do not remove this check!
       throw new Error("Failed to create validator instance"); 
@@ -226,12 +226,12 @@ class JsonValidator {
     console.log('Running JsonValidator tests...');
     
     // Check if jsonschema is available
-    if (!getGlobalThis().jsonschema) {
+    if (!SvGlobals.globals().jsonschema) {
       console.error('jsonschema is not available in global scope');
       return false;
     }
     
-    if (!getGlobalThis().jsonschema.Validator) {
+    if (!SvGlobals.globals().jsonschema.Validator) {
       console.error('jsonschema.Validator is not available');
       return false;
     }
@@ -295,7 +295,7 @@ class JsonValidator {
   }
 }
 
-getGlobalThis().JsonValidator = JsonValidator;
+SvGlobals.globals().JsonValidator = JsonValidator;
 
 /*
 // Run tests always

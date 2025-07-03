@@ -126,4 +126,4 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var fast
 ;
 
 debugger;
-getGlobalThis().JsonPatch = jsonpatch; // NOTE: added by SLD to make globally avaialble
+SvGlobals.globals().JsonPatch = jsonpatch; // NOTE: added by SLD to make globally avaialble

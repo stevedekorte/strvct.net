@@ -184,4 +184,4 @@ class JsonRepairShop {
   }
 }
 
-getGlobalThis().JsonRepairShop = JsonRepairShop;
+SvGlobals.globals().JsonRepairShop = JsonRepairShop;

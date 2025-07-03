@@ -113,5 +113,5 @@ class MarkdownToc extends Object {
 
 }
 
-getGlobalThis().MarkdownToc = MarkdownToc;
+SvGlobals.globals().MarkdownToc = MarkdownToc;
 

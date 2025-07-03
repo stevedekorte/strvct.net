@@ -1938,8 +1938,8 @@ module.exports = Validator;
       if (jsonschema === void 0) {
         throw new Error("local jsonschema is undefined");
       }
-      getGlobalThis().jsonschema = jsonschema;
-      if (getGlobalThis().jsonschema === void 0) {
+      SvGlobals.globals().jsonschema = jsonschema;
+      if (SvGlobals.globals().jsonschema === void 0) {
         throw new Error("global jsonschema is undefined");
       }
     }

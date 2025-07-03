@@ -10,9 +10,9 @@
  * @classdesc A headless version of SvApp that runs in Node.js without DOM/browser dependencies.
  * 
  * Replaces browser-specific functionality:
- * - HTTP resource loading with filesystem reads
+ * - HTTP resource loading with filesystem reads via StrvctFile
  * - DOM manipulation with no-ops
- * - IndexedDB with fake-indexeddb
+ * - IndexedDB with node-indexeddb
  * - Document/window references with mocks
  * 
  * To use:
@@ -205,20 +205,21 @@
     }
 
     /**
-     * @description Sets up and runs the headless app using HeadlessBoot
+     * @description Sets up and runs the headless app using the regular boot system
      * @param {string} [importsPath] - Optional path to root _imports.json file for loading framework
      * @returns {Promise<SvHeadlessApp>} The initialized app
      * @category Lifecycle
      */
     async setupAndRun (importsPath = null) {
         try {
-            // Use HeadlessBoot to setup environment and load framework
+            // Configure StrvctFile for headless environment
+            if (this.rootPath()) {
+                StrvctFile.setWorkingPath(this.rootPath());
+            }
+            
             if (importsPath) {
-                // Load framework from _imports.json file
-                await HeadlessBoot.setupAndLoadFrom(importsPath);
-            } else {
-                // Just setup environment and bootstrap core files
-                await HeadlessBoot.setupAndRun();
+                // Load framework from _imports.json file using StrvctFile
+                await this.loadFrameworkFrom(importsPath);
             }
             
             // Then run the app setup
@@ -239,9 +240,52 @@
      * @category Lifecycle
      */
     async loadFrameworkFrom (importsPath) {
-        const boot = HeadlessBoot.shared();
-        await boot.loadFromPath(importsPath);
+        // Use a simple recursive loader that follows _imports.json files
+        await this.loadImportsRecursively(importsPath);
         return this;
+    }
+
+    /**
+     * @description Recursively loads JavaScript files from _imports.json files
+     * @param {string} importsPath - Path to _imports.json file
+     * @returns {Promise<void>}
+     * @category Helper Methods
+     */
+    async loadImportsRecursively (importsPath) {
+        const fs = require('fs').promises;
+        const path = require('path');
+
+        // Read the _imports.json file
+        const fullImportsPath = path.resolve(importsPath);
+        const baseDir = path.dirname(fullImportsPath);
+        
+        let imports;
+        try {
+            const importsContent = await fs.readFile(fullImportsPath, 'utf8');
+            imports = JSON.parse(importsContent);
+        } catch (error) {
+            throw new Error(`Failed to read imports file ${importsPath}: ${error.message}`);
+        }
+
+        if (!Array.isArray(imports)) {
+            throw new Error(`Imports file ${importsPath} must contain a JSON array`);
+        }
+
+        // Process each import
+        for (const importPath of imports) {
+            const fullPath = path.resolve(baseDir, importPath);
+            
+            if (importPath.endsWith('_imports.json')) {
+                // Recursively load another imports file
+                await this.loadImportsRecursively(fullPath);
+            } else if (importPath.endsWith('.js')) {
+                // Load and evaluate JavaScript file
+                const relativePath = path.relative(this.rootPath() || process.cwd(), fullPath);
+                const file = new StrvctFile().setPath(relativePath);
+                await file.loadAndEval();
+            }
+            // Skip non-JS files in headless mode
+        }
     }
 
 }.initThisClass());

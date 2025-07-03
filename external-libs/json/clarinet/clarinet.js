@@ -1,4 +1,4 @@
-getGlobalThis().clarinet = {};
+SvGlobals.globals().clarinet = {};
 var exports = clarinet;
 
 //var Stream = stream;

@@ -29,11 +29,11 @@
  * TODO: hooks code is a mess, need to cleanup and modularize
  */
 
-if (!getGlobalThis().ideal) {
-    getGlobalThis().ideal = {};
+if (!SvGlobals.globals().ideal) {
+    SvGlobals.globals().ideal = {};
 }
 
-getGlobalThis().ideal.Slot = (class Slot extends Object { 
+SvGlobals.globals().ideal.Slot = (class Slot extends Object { 
 
     /**
      * @category Initialization
@@ -714,7 +714,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         const slotType = this.slotType();
         if (slotType /*&& this.canInspect()*/) {
             const fieldName = this.fieldInspectorViewClassName();
-            let proto = getGlobalThis()[fieldName];
+            let proto = SvGlobals.globals()[fieldName];
 
             /*
             if (fieldName.includes("Date")) {
@@ -725,7 +725,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             if (!proto) {
                 //let nodeName = "Sv" + slotType + "Node";
                 const nodeName = "SvPointerField";
-                proto = getGlobalThis()[nodeName];
+                proto = SvGlobals.globals()[nodeName];
             }
 
             if (proto) {
@@ -1265,7 +1265,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     finalInitProtoClass () {
         let finalInitProto = this._finalInitProto;
         if (typeof(finalInitProto) === "string") {
-            const finalInitClass = getGlobalThis()[finalInitProto];
+            const finalInitClass = SvGlobals.globals()[finalInitProto];
             assert(finalInitClass, "missing finalInitProto class '" + finalInitProto + "'");
             finalInitProto = finalInitClass;
         }
@@ -1312,7 +1312,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
                 /*
                 if (typeof(finalInitProto) === "string") {
-                    const finalInitClass = getGlobalThis()[finalInitProto];
+                    const finalInitClass = SvGlobals.globals()[finalInitProto];
                     assert(finalInitClass, "missing finalInitProto class '" + finalInitProto + "'");
                     finalInitProto = finalInitClass;
                 }
@@ -1682,7 +1682,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 schema.items.type = itemsType; // it's a json type
            } else {
                 // it's a class 
-                const aClass = getGlobalThis()[itemsType];
+                const aClass = SvGlobals.globals()[itemsType];
                 assert(aClass && aClass.isClass());
                 schema.items["$ref"] = aClass.jsonSchemaRef(refSet);
             }
@@ -1727,7 +1727,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             return true;
         }
 
-        const slotTypeClass = getGlobalThis()[slotType];
+        const slotTypeClass = SvGlobals.globals()[slotType];
 
         /*
         if (v.thisClass().classNameSet().has(slotType)) {

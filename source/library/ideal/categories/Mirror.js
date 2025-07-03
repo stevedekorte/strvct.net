@@ -7,7 +7,7 @@
  * @extends Object
  * @classdesc An object wrapper for the Reflect functions.
  */
-getGlobalThis().Mirror = class Mirror extends Object {
+SvGlobals.globals().Mirror = class Mirror extends Object {
 	
 	/**
 	 * Creates a Mirror instance for the given target.

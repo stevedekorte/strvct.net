@@ -1227,7 +1227,7 @@
 
         // TODO: add visual indicator?
         if (!this._speechSession) {
-            if (getGlobalThis()["SpeechToTextSession"]) {
+            if (SvGlobals.globals()["SpeechToTextSession"]) {
                 this._speechSession = SpeechToTextSession.clone().setDelegate(this);
                 //debugger;
                 this._speechSession.start();

@@ -7,7 +7,7 @@
  * @extends Error
  */
 
-getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
+SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
     constructor(message) {
       super(message);
       this.name = "MissingSlotError";

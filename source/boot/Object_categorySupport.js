@@ -21,8 +21,11 @@
      * @description This method is called to initialize the class. It makes the 
      * primitives inherit from Object and defines the slots for defining slots.
     */
-    static initThisClass () {
+    static initThisClass_justForCategories () {
         this.makePrimitivesInheritFromObject();
+
+        // we'll manually do our category setup here instead of calling initThisCategory
+        // as it will throw an error if the slots already exist
 
         // We'll need these to be able to define slots in categories
         Object.defineSlot = this.defineSlot;
@@ -36,6 +39,9 @@
         Object.typeName = this.typeName;
         Object.instanceTypeName = this.instanceTypeName;
         //Object.prototype.typeName = this.prototype.typeName;
+
+        //SvGlobals.set(this.name, Object);
+        return this;
     }
 
     static typeNameForClassName (className) {
@@ -118,7 +124,7 @@
         ];
 
         nonNodeClassNamesToFix.forEach(className => {
-            const aClass = getGlobalThis()[className];
+            const aClass = SvGlobals.globals()[className];
             if (aClass) {
                 aClass.__proto__ = Object;
             } else {
@@ -245,11 +251,11 @@
      * class and its prototype inherit from the superclass and superclass prototype.
     */
     static initThisCategory () { 
-        // define this first, so we can use it to more cleanly define our
-        // Object categories.
+        // define this first, so we can use it to more cleanly define our Object categories.
         //
         // This is a bit of a hack to implement class categories in Javascript
-        // sanity check: check name to ensure we're only using this on a category
+        // sanity check: check name to ensure we're only using this on a category 
+        // following the naming convention of ClassName_categoryName
 
         let nameParts = this.name.split("_");
         let hasTwoPartName = nameParts.length === 2;
@@ -260,7 +266,7 @@
         }
 
         // assert(this.isClass());
-        // setup slots (would normally be done ny initThisClass)
+        // setup slots (would normally be done by initThisClass)
 
         //////////////////////////////////////////////////////////////////////
         //this.prototype.setupPrototype(); /////////////////////////////////// FIXME: we should be able to do this and be able to support initPrototypeSlots & initPrototype in categories, right?
@@ -282,7 +288,7 @@
                 */
             })
             return map;
-        }
+        };
 
         // get the parent class
         const parentClass = this.__proto__;
@@ -294,6 +300,13 @@
         classSlotsMap.delete("length"); // FIXME: hack for collection types
         classSlotsMap.delete("name");
         classSlotsMap.delete("prototype");
+
+        /*
+        if (this === Object) {
+            classSlotsMap.delete("initThisClass");
+            classSlotsMap.delete("initThisCategory");
+        }
+        */
         Object.defineSlotsSafelyFromMap(parentClass, classSlotsMap); // throws if slot already exists
 
         // copy prototype slots to parent prototype
@@ -341,6 +354,8 @@
         return this;
     }
 
-}).initThisClass();
+}).initThisClass_justForCategories();
 
-
+if (Object.initThisCategory === undefined) {
+    throw new Error("Object.initThisCategory is not defined");
+}

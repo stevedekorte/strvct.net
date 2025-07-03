@@ -48,7 +48,7 @@ class StrvctFramework {
     await this._bootLoader.loadParallelEvalSequential();
     
     // Initialize ResourceManager
-    this._resourceManager = getGlobalThis().ResourceManager.shared();
+    this._resourceManager = SvGlobals.globals().ResourceManager.shared();
     await this._resourceManager.setupAndRun();
     
     this._isInitialized = true;
@@ -78,7 +78,7 @@ class StrvctFramework {
     const bootLoader = new BootLoader();
     bootLoader.setBootPath(`${this._options.rootPath}/source/boot/`);
     bootLoader.setFiles([
-      "getGlobalThis.js", // Include again for completeness
+      "SvGlobals.js", // Include again for completeness
       "Object_categorySupport.js",
       "Object_boot.js",
       "Helpers.js",

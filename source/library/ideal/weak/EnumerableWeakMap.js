@@ -8,7 +8,7 @@
  * All values should be objects (or null, numbers, strings) but cannot be undefined.
  * @extends Map
  */
-getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
+SvGlobals.globals().EnumerableWeakMap = (class EnumerableWeakMap {
 
   /**
    * Creates an instance of EnumerableWeakMap.

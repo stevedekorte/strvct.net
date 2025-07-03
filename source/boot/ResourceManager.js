@@ -19,7 +19,7 @@
      * @returns {ResourceManager} The initialized class.
      */
     static initThisClass () {
-        getGlobalThis().ResourceManager = ResourceManager;
+        SvGlobals.globals().ResourceManager = ResourceManager;
         return this;
     }
 
@@ -290,7 +290,7 @@
      * @description Handles completion of resource loading.
      */
     onDone () {
-        getGlobalThis().bootLoadingView = bootLoadingView;
+        SvGlobals.globals().bootLoadingView = bootLoadingView;
         this.markPageLoadTime();
     }
 

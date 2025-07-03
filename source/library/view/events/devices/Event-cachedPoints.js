@@ -8,7 +8,7 @@
  * @class
  * @classdesc Extends the Event prototype with methods for caching points.
  */
-if (!getGlobalThis().Event) {
+if (!SvGlobals.globals().Event) {
     console.log("WARNING: no Event object found - maybe we are not in browser?")
 } else {
     Object.defineSlots(Event.prototype, {

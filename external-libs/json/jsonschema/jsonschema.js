@@ -169,8 +169,8 @@ if (jsonschema === undefined) {
     throw new Error("local jsonschema is undefined");
 }
 
-getGlobalThis().jsonschema = jsonschema;
+SvGlobals.globals().jsonschema = jsonschema;
 
-if (getGlobalThis().jsonschema === undefined) {
+if (SvGlobals.globals().jsonschema === undefined) {
     throw new Error("global jsonschema is undefined");
 }

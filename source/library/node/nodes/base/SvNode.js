@@ -1872,7 +1872,7 @@
         const className = json.type;
         assert(className); // sanity check
         
-        const aClass = getGlobalThis()[className];
+        const aClass = SvGlobals.globals()[className];
         assert(aClass.isKindOf(this)); // sanity check
 
         const instance = aClass.clone().setJsonArchive(json);
@@ -2163,7 +2163,7 @@
         const className = properties.className;
         assert(className, "missing className in json");
 
-        const aClass = getGlobalThis()[className];
+        const aClass = SvGlobals.globals()[className];
         assert(aClass, "missing class for className '" + className + "'");
         const instance = aClass.fromJsonSchema(json);
 
