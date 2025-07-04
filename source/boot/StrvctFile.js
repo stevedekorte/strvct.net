@@ -59,7 +59,7 @@ class StrvctFile extends Object {
      * @constructor
      * @description Initializes a new StrvctFile instance
      */
-    constructor() {
+    constructor () {
         super();
         /**
          * @private
@@ -87,7 +87,7 @@ class StrvctFile extends Object {
      * @returns {string} The base URL
      * @category Class Configuration
      */
-    static baseUrl() {
+    static baseUrl () {
         return this._baseUrl;
     }
 
@@ -110,7 +110,7 @@ class StrvctFile extends Object {
      * @returns {StrvctFile} A new StrvctFile instance
      * @category Factory Methods
      */
-    static with(pathOrUrl) {
+    static with (pathOrUrl) {
         return new this().setPath(pathOrUrl);
     }
 
@@ -120,7 +120,7 @@ class StrvctFile extends Object {
      * @returns {string} The working directory path
      * @category Class Configuration
      */
-    static workingPath() {
+    static workingPath () {
         return this._workingPath;
     }
 
@@ -130,7 +130,7 @@ class StrvctFile extends Object {
      * @returns {StrvctFile} This instance for chaining
      * @category Instance Configuration
      */
-    setPath(path) {
+    setPath (path) {
         this._path = path;
         return this;
     }
@@ -150,7 +150,7 @@ class StrvctFile extends Object {
      * @returns {boolean} True if running in Node.js
      * @category Environment Detection
      */
-    static isNodeEnvironment() {
+    static isNodeEnvironment () {
         return (typeof process !== 'undefined' && 
                 process.versions && 
                 process.versions.node);
@@ -162,7 +162,7 @@ class StrvctFile extends Object {
      * @returns {boolean} True if running in browser
      * @category Environment Detection
      */
-    static isBrowserEnvironment() {
+    static isBrowserEnvironment () {
         return (typeof window !== 'undefined' && 
                 typeof document !== 'undefined');
     }
@@ -172,7 +172,7 @@ class StrvctFile extends Object {
      * @description Sets up environment-specific polyfills and globals
      * @category Environment Setup
      */
-    static setupEnvironment() {
+    static setupEnvironment () {
         if (this._didSetupEnvironment) {
             return;
         }
@@ -190,7 +190,7 @@ class StrvctFile extends Object {
      * @description Sets up Node.js environment synchronously with basic polyfills
      * @category Environment Setup
      */
-    static setupNodeEnvironmentSync() {
+    static setupNodeEnvironmentSync () {
         console.log("StrvctFile setupNodeEnvironmentSync");
         
         // Get global object using SvGlobals
@@ -231,7 +231,7 @@ class StrvctFile extends Object {
      * @description Helper to initialize IndexedDB synchronously by calling async loadCache
      * @category Environment Setup
      */
-    static _initializeIndexedDBSync(dbManager, globalObj) {
+    static _initializeIndexedDBSync (dbManager, globalObj) {
         try {
             // First, we need to call loadCache synchronously 
             // This is a hack because node-indexeddb requires cache to be loaded first
@@ -271,7 +271,7 @@ class StrvctFile extends Object {
      * @description Sets up Node.js environment with necessary polyfills (async version for cache initialization)
      * @category Environment Setup
      */
-    static async setupNodeEnvironment() {
+    static async setupNodeEnvironment () {
         // First ensure synchronous setup is done
         this.setupNodeEnvironmentSync();
         
@@ -285,7 +285,7 @@ class StrvctFile extends Object {
      * @returns {Promise<void>}
      * @category Environment Setup
      */
-    static async ensureIndexedDBCacheReady() {
+    static async ensureIndexedDBCacheReady () {
         const globalObj = SvGlobals.globals();
         
         // Call ensureIndexedDBReady instead - it has the proper initialization logic
@@ -298,7 +298,7 @@ class StrvctFile extends Object {
      * @returns {Promise<void>}
      * @category Environment Setup
      */
-    static async ensureIndexedDBReady() {
+    static async ensureIndexedDBReady () {
         const globalObj = SvGlobals.globals();
         
         console.log('ensureIndexedDBReady: _needsIndexedDBInit =', globalObj._needsIndexedDBInit);
@@ -346,7 +346,7 @@ class StrvctFile extends Object {
      * @returns {Promise<void>}
      * @category Environment Setup
      */
-    static async initializeNodeIndexedDB() {
+    static async initializeNodeIndexedDB () {
         try {
             const dbManager = require('node-indexeddb/dbManager');
             await dbManager.loadCache();
@@ -361,7 +361,7 @@ class StrvctFile extends Object {
      * @returns {Promise<string>} Promise that resolves with file content as text
      * @category File Loading
      */
-    async load() {
+    async load () {
         if (!this._path) {
             throw new Error('No file path set. Use setPath() first.');
         }
@@ -378,7 +378,7 @@ class StrvctFile extends Object {
      * @returns {Promise<ArrayBuffer>} Promise that resolves with file content as ArrayBuffer
      * @category File Loading
      */
-    async loadArrayBuffer() {
+    async loadArrayBuffer () {
         if (!this._path) {
             throw new Error('No file path set. Use setPath() first.');
         }
@@ -395,7 +395,7 @@ class StrvctFile extends Object {
      * @returns {Promise<string>} Promise that resolves with file content as text
      * @category File Loading
      */
-    async loadNode() {
+    async loadNode () {
         const fs = require('fs').promises;
         const path = require('path');
         
@@ -403,7 +403,7 @@ class StrvctFile extends Object {
             // Use working path if set, otherwise resolve relative to current directory
             const basePath = StrvctFile.workingPath() || process.cwd();
             const fullPath = path.resolve(basePath, this._path);
-            console.log("fs.readFile loading fullPath [" + fullPath + "]");
+            console.log("fs.readFile [" + fullPath.split("/").pop() + "]");
             const content = await fs.readFile(fullPath, 'utf8');
             return content;
         } catch (error) {
@@ -416,7 +416,7 @@ class StrvctFile extends Object {
      * @returns {Promise<string>} Promise that resolves with file content as text
      * @category File Loading
      */
-    async loadBrowser() {
+    async loadBrowser () {
         const baseUrl = StrvctFile.baseUrl();
         const fullUrl = baseUrl ? 
             `${baseUrl}/${this._path.replace(/^\//, '')}` : 
@@ -438,7 +438,7 @@ class StrvctFile extends Object {
      * @returns {Promise<ArrayBuffer>} Promise that resolves with file content as ArrayBuffer
      * @category File Loading
      */
-    async loadArrayBufferNode() {
+    async loadArrayBufferNode () {
         const fs = require('fs').promises;
         const path = require('path');
         
@@ -460,7 +460,7 @@ class StrvctFile extends Object {
      * @returns {Promise<ArrayBuffer>} Promise that resolves with file content as ArrayBuffer
      * @category File Loading
      */
-    async loadArrayBufferBrowser() {
+    async loadArrayBufferBrowser () {
         const baseUrl = StrvctFile.baseUrl();
         const fullUrl = baseUrl ? 
             `${baseUrl}/${this._path.replace(/^\//, '')}` : 
@@ -482,7 +482,7 @@ class StrvctFile extends Object {
      * @returns {string} File content as text
      * @category File Loading
      */
-    loadSync() {
+    loadSync () {
         if (!StrvctFile.isNodeEnvironment()) {
             throw new Error('Synchronous file loading is only available in Node.js');
         }
@@ -515,14 +515,14 @@ class StrvctFile extends Object {
             const basePath = StrvctFile.workingPath() || process.cwd();
             const absolutePath = path.resolve(basePath, this._path);
             const sourceUrlComment = `\n//# sourceURL=${absolutePath}`;
-            console.log("eval sourceURL: " + absolutePath);
+            console.log("eval: " + absolutePath.split("/").pop());
             eval(code + sourceUrlComment);
         } else {
             // Browser: use relative path for VSCode compatibility (no leading slash)
             // URL encode the path to handle spaces and special characters
             const encodedPath = encodeURI(this._path);
             const sourceUrlComment = `\n//# sourceURL=${encodedPath}`;
-            console.log("eval sourceURL: " + encodedPath);
+            console.log("eval [" + encodedPath.split("/").pop() + "]");
             eval(code + sourceUrlComment);
             //const evalFunc = new Function(code + sourceUrlComment);
             //evalFunc.call(window);
@@ -534,7 +534,7 @@ class StrvctFile extends Object {
      * @returns {Promise<void>} Promise that resolves when file is loaded and evaluated
      * @category File Loading
      */
-    async loadAndEval() {
+    async loadAndEval () {
         const content = await this.load();
         this.evalWithSourceUrl(content);
     }
@@ -543,7 +543,7 @@ class StrvctFile extends Object {
      * @description Loads and evaluates the JavaScript file synchronously (Node.js only)
      * @category File Loading
      */
-    loadAndEvalSync() {
+    loadAndEvalSync () {
         if (!StrvctFile.isNodeEnvironment()) {
             throw new Error('Synchronous loading is only available in Node.js');
         }
@@ -557,7 +557,7 @@ class StrvctFile extends Object {
      * @returns {Promise<boolean>} Promise that resolves with true if file exists
      * @category File System
      */
-    async exists() {
+    async exists () {
         if (!this._path) {
             throw new Error('No file path set. Use setPath() first.');
         }
@@ -645,14 +645,43 @@ class StrvctFile extends Object {
         const file = new StrvctFile().setPath(filePath);
         return await file.loadAndEval();
     }
+
+    /**
+     * @description Determines if this file should be used in the current environment based on path conventions
+     * @returns {boolean} True if the file should be loaded in the current environment
+     * @category Environment Detection
+     */
+    canUseInCurrentEnv() {
+        const path = this._path;
+        if (!path) {
+            return true; // No path set, assume it's usable
+        }
+        
+        const pathComponents = path.split('/');
+        const isNodeEnvironment = StrvctFile.isNodeEnvironment();
+        
+        // Check for browser-only resources
+        const isBrowserOnly = pathComponents.some(component => 
+            component === 'web-only'
+        );
+        
+        // Check for Node.js-only resources
+        const isNodeOnly = pathComponents.some(component => 
+            component === 'server-only'
+        );
+        
+        // Apply filtering logic
+        if (isNodeEnvironment) {
+            // In Node.js: exclude browser-only resources
+            return !isBrowserOnly;
+        } else {
+            // In Browser: exclude Node.js-only resources
+            return !isNodeOnly;
+        }
+    }
 }
 
 // Auto-setup environment when this file is loaded
 StrvctFile.setupEnvironment();
 
-// Make StrvctFile globally available
-if (typeof global !== 'undefined') {
-    global.StrvctFile = StrvctFile;
-} else if (typeof window !== 'undefined') {
-    window.StrvctFile = StrvctFile;
-}
+SvGlobals.set("StrvctFile", StrvctFile);

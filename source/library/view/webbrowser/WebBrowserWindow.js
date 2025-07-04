@@ -5,7 +5,7 @@
 /**
  * @class WebBrowserWindow
  * @extends ProtoClass
- * @classdesc Abstraction for the main web browser window. 
+ * @classdesc Abstraction for the main web browser window
  * Owns a DocumentBody view.
  * 
  * Usage example:

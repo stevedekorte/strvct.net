@@ -39,7 +39,14 @@
      */
     async promiseSerialForEach (aBlock) {
         for (let i = 0; i < this.length; i++) {
-            await aBlock(this[i]);
+            try {
+                await aBlock(this[i]);
+            } catch (error) {
+                console.error(`❌ Error in promiseSerialForEach at index ${i}:`, error);
+                console.error(`Element:`, this[i]);
+                console.error(`Error type:`, typeof error);
+                throw error;
+            }
         }
     }
 

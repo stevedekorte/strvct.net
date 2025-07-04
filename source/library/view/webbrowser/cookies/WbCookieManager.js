@@ -75,7 +75,9 @@
      */
     finalInit () {
         super.finalInit();
-        this.readCookies();
+        if (StrvctFile.isBrowserEnvironment()) {
+            this.readCookies();
+        }
         return this;
     }
 
@@ -188,3 +190,6 @@
     }
 
 }.initThisClass());
+
+assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
+console.log("WbCookieManager is defined!");

@@ -16,7 +16,7 @@
   \******************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jsonrepair__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jsonrepair */ \"../../../node_modules/jsonrepair/lib/esm/index.js\");\n \nwindow.jsonrepair = jsonrepair__WEBPACK_IMPORTED_MODULE_0__;\n\n\n//# sourceURL=webpack:///./entry.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jsonrepair__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jsonrepair */ \"../../../node_modules/jsonrepair/lib/esm/index.js\");\n \nSvGlobals.set(\"jsonrepair\", jsonrepair__WEBPACK_IMPORTED_MODULE_0__);\n\n\n//# sourceURL=webpack:///./entry.js?");
 
 /***/ }),
 

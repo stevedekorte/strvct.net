@@ -17,7 +17,7 @@
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! stream */ \"../../node_modules/stream/index.js\");\n/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_0__);\n \nwindow.stream = stream__WEBPACK_IMPORTED_MODULE_0__;\n\n\n//# sourceURL=webpack:///./entry.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! stream */ \"../../node_modules/stream/index.js\");\n/* harmony import */ var stream__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(stream__WEBPACK_IMPORTED_MODULE_0__);\n \nSvGlobals.set(\"Stream\", stream__WEBPACK_IMPORTED_MODULE_0__);\n\n\n//# sourceURL=webpack:///./entry.js?");
 
 /***/ }),
 
@@ -117,5 +117,3 @@ eval("// Copyright Joyent, Inc. and other Node contributors.\n//\n// Permission 
 /******/ 	
 /******/ })()
 ;
-
-window.Stream = stream;

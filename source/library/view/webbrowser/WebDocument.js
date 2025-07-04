@@ -9,6 +9,8 @@
  */
 "use strict";
 
+assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
+
 (class WebDocument extends ProtoClass {
     
     /**

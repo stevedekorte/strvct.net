@@ -14,7 +14,7 @@ class BootLoadingView extends Object {
    * @category State
    * @returns {boolean} True if the loading view element is available in the DOM.
    */
-  isAvailable() {
+  isAvailable () {
     return this.element() !== null;
   }
 
@@ -23,8 +23,11 @@ class BootLoadingView extends Object {
    * @category DOM
    * @returns {HTMLElement|null} The main loading view element.
    */
-  element() {
-    return document.getElementById("loadingView");
+  element () {
+    if (SvGlobals.has("document")) {
+      return document.getElementById("loadingView");
+    }
+    return null;
   }
   
   /**
@@ -32,7 +35,7 @@ class BootLoadingView extends Object {
    * @category DOM
    * @returns {HTMLElement|null} The title element of the loading view.
    */
-  titleElement() {
+  titleElement () {
     return document.getElementById("loadingViewTitle");
   }
 
@@ -41,7 +44,7 @@ class BootLoadingView extends Object {
    * @category DOM
    * @returns {HTMLElement|null} The progress bar element of the loading view.
    */
-  barElement() {
+  barElement () {
     return document.getElementById("innerLoadingView");
   }
 
@@ -53,7 +56,7 @@ class BootLoadingView extends Object {
    * @param {string} s - The title text to set.
    * @returns {BootLoadingView} The current instance for chaining.
    */
-  setTitle(s) {
+  setTitle (s) {
     if (!this.isAvailable()) {
       return this;
     }
@@ -66,7 +69,7 @@ class BootLoadingView extends Object {
    * @category UI State
    * @returns {string} The current title of the loading view.
    */
-  title() {
+  title  () {
     return this.titleElement().innerText;
   }
 
@@ -75,7 +78,7 @@ class BootLoadingView extends Object {
    * @category UI Update
    * @param {string} s - The error message to display.
    */
-  setErrorMessage(s) {
+  setErrorMessage (s) {
     this.setTitle(s);
     this.titleElement().style.color = "red";
   }
@@ -87,7 +90,7 @@ class BootLoadingView extends Object {
    * @returns {BootLoadingView} The current instance for chaining.
    * @throws {Error} If the ratio is invalid.
    */
-  setBarRatio(r) {
+  setBarRatio (r) {
     if (r < 0 || r > 1) {
       throw new Error("invalid ratio");
     }
@@ -104,7 +107,7 @@ class BootLoadingView extends Object {
    * @param {number} count - The total number of steps.
    * @returns {BootLoadingView} The current instance for chaining.
    */
-  setBarToNofM(n, count) {
+  setBarToNofM (n, count) {
     if (!this.isAvailable()) {
       return this;
     }
@@ -118,7 +121,7 @@ class BootLoadingView extends Object {
    * @category Lifecycle
    * @description Removes the loading view element from the DOM.
    */
-  close() {
+  close () {
     if (!this.isAvailable()) {
       return;
     }

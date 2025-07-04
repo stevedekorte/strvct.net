@@ -260,6 +260,12 @@
      * @category Evaluation
      */
     evalDataAsCss () {
+        // Skip CSS evaluation in Node.js since there's no DOM
+        if (StrvctFile.isNodeEnvironment()) {
+            // console.log("⏭️  Skipping CSS evaluation in Node.js:", this.path());
+            return;
+        }
+        
         const cssString = this.dataAsText(); // default decoding is to utf8
         // Use relative path for VSCode compatibility (no leading slash)
         // URL encode the path to handle spaces and special characters
@@ -297,6 +303,17 @@
             data = this.unzippedData();
         } 
 
+        // Handle invalid data types in Node.js gracefully
+        if (StrvctFile.isNodeEnvironment()) {
+            if (!data || (typeof data !== 'object') || (!data.constructor || (data.constructor.name !== 'Uint8Array' && data.constructor.name !== 'ArrayBuffer'))) {
+                // Gracefully handle non-ArrayBuffer data in Node.js
+                if (typeof data === 'object' && data !== null) {
+                    return JSON.stringify(data);
+                }
+                return String(data || '');
+            }
+        }
+
         return new TextDecoder().decode(data); // default decoding is to utf8
     }
 
@@ -324,6 +341,10 @@
      * @category Zip Handling
      */
     unzippedData () {
+        const pako = SvGlobals.globals().pako;
+        if (!pako) {
+            throw new Error("pako library not loaded - call promiseLoadUnzipIfNeeded() first");
+        }
         return pako.inflate(this.data());
     }
 

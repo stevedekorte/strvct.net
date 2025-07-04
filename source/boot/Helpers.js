@@ -25,9 +25,39 @@ function evalStringFromSourceUrl (codeString, path) {
     const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
     const debugCode = codeString + sourceUrlComment;
     
-    // Evaluate the code
-    const result = eval(debugCode);
-    return result;
+    // Evaluate the code with error handling
+    try {
+        let result;
+        
+        // In Node.js, we need to ensure eval runs in global context for UMD modules to work
+        if (StrvctFile.isNodeEnvironment()) {
+            // Node.js: Use indirect eval to run in global scope
+            // This ensures 'this' points to the global object like it does in browser
+            const globalObj = SvGlobals.globals();
+            
+            // Provide polyfills for external libraries that expect browser/Node.js APIs
+            if (!globalObj.require) {
+                globalObj.require = require;
+            }
+            
+            const globalEval = eval;
+            result = globalEval.call(globalObj, debugCode);
+        } else {
+            // Browser: Direct eval (runs in global scope already)
+            result = eval(debugCode);
+        }
+        
+        //console.log("✅ Successfully evaluated:", path);
+        return result;
+    } catch (evalError) {
+        console.error("❌ Error evaluating", path + ":", evalError);
+        console.error("Error type:", typeof evalError);
+        console.error("Error constructor:", evalError.constructor.name);
+        if (evalError && evalError.stack) {
+            console.error("Stack:", evalError.stack);
+        }
+        throw evalError;
+    }
 }
 
 SvGlobals.globals().evalStringFromSourceUrl = evalStringFromSourceUrl;

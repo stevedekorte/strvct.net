@@ -15,8 +15,10 @@
  * 
  */
 
+// Check if jsonschema is available, but don't throw immediately
+// The global might not be set yet if this file loads before jsonschema.js
 if (SvGlobals.globals().jsonschema === undefined) {
-  throw new Error("jsonschema is not defined");
+  console.warn("jsonschema is not yet available in globals - it may load later");
 }
 
 class JsonValidator {
@@ -27,7 +29,7 @@ class JsonValidator {
   constructor(options = {}) {
     // Check if jsonschema is properly loaded
     if (!SvGlobals.globals().jsonschema || !SvGlobals.globals().jsonschema.Validator) {
-      throw new Error("jsonschema library not properly loaded. Validator class not found.");
+      throw new Error("jsonschema library not properly loaded. Validator class not found. Make sure jsonschema.js loads before JsonValidator.js");
     }
     
     // Default options

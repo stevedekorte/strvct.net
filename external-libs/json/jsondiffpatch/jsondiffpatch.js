@@ -16,7 +16,7 @@
   \******************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jsondiffpatch */ \"../../node_modules/jsondiffpatch/lib/index.js\");\n \nwindow.jsondiffpatch = jsondiffpatch__WEBPACK_IMPORTED_MODULE_0__;\n\n\n//# sourceURL=webpack:///./entry.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jsondiffpatch__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jsondiffpatch */ \"../../node_modules/jsondiffpatch/lib/index.js\");\n \nSvGlobals.set(\"jsondiffpatch\", jsondiffpatch__WEBPACK_IMPORTED_MODULE_0__);\n\n\n//# sourceURL=webpack:///./entry.js?");
 
 /***/ }),
 

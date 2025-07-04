@@ -1,9 +1,7 @@
 "use strict";
 
-
-
-if (!SvGlobals.globals().Image) {
-    console.log("WARNING: no Image object found - maybe we are not in browser?");
+if (!SvGlobals.has("Image")) {
+    console.log("Skipping Image_ideal category as no Image object found");
 } else {
 
     /**

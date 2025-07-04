@@ -134,9 +134,15 @@
      * @returns {Promise<void>}
      */
     async promiseLoadCamIfNeeded () {
+        console.log("🔍 Checking if CAM loading is needed...");
         const count = await HashCache.shared().promiseCount();
+        console.log("📊 HashCache count:", count);
         if (!count) {
+            console.log("💾 Loading CAM...");
             await this.promiseLoadCam();
+            console.log("✅ CAM loading completed");
+        } else {
+            console.log("✅ CAM already loaded (cache count > 0)");
         }
     }
 
@@ -163,7 +169,8 @@
                 });
                 this._promiseForLoadCam.callResolveFunc();
             } catch (error) {
-                this._promiseForLoadCam.callRejectFunc();
+                console.error("❌ Error in promiseLoadCam:", error);
+                this._promiseForLoadCam.callRejectFunc(error);
             }
         }
         return this._promiseForLoadCam;
@@ -230,20 +237,39 @@
 
     /**
      * @category Resource Access
-     * @description Returns all JavaScript resources.
+     * @description Returns all JavaScript resources filtered by environment.
      * @returns {Array<UrlResource>} JavaScript resources.
      */
     jsResources () {
-        return this.resourcesWithExtension("js");
+        return this.resourcesWithExtension("js").filter(r => this.shouldLoadResourceInCurrentEnvironment(r));
     }
 
     /**
      * @category Resource Access
-     * @description Returns all CSS resources.
+     * @description Returns all CSS resources filtered by environment.
      * @returns {Array<UrlResource>} CSS resources.
      */
     cssResources () {
-        return this.resourcesWithExtension("css");
+        return this.resourcesWithExtension("css").filter(r => this.shouldLoadResourceInCurrentEnvironment(r));
+    }
+
+    /**
+     * @category Resource Filtering
+     * @description Determines if a resource should be loaded in the current environment using StrvctFile.
+     * @param {UrlResource} resource - The resource to check.
+     * @returns {boolean} True if the resource should be loaded.
+     */
+    shouldLoadResourceInCurrentEnvironment (resource) {
+        const path = resource.path();
+        const canUse = StrvctFile.with(path).canUseInCurrentEnv();
+        
+        if (!canUse) {
+            const envName = StrvctFile.isNodeEnvironment() ? 'Node.js' : 'browser';
+            const skipReason = StrvctFile.isNodeEnvironment() ? 'browser-only' : 'server-only';
+            console.log(`⏭️  Skipping ${skipReason} resource in ${envName}: ${path}`);
+        }
+        
+        return canUse;
     }
 
     /**
@@ -254,17 +280,52 @@
     async evalIndexResources () {
         let count = 0;
 
-        await this.cssResources().promiseSerialForEach(async (r) => {
-            return await r.promiseLoadAndEval();
-        });
+        console.log("📋 CSS Resources:", this.cssResources().length);
+        // this.cssResources().forEach((r, i) => console.log(`  ${i}: ${r.path()}`));
+        
+        console.log("📋 JS Resources:", this.jsResources().length);
+        // this.jsResources().forEach((r, i) => console.log(`  ${i}: ${r.path()}`));
 
+        // Load all files in parallel first
+        console.log("🔄 Loading all resources in parallel...");
+        
+        // Load CSS resources in parallel
+        const cssLoadPromises = this.cssResources().map(async (r) => {
+            await r.promiseLoad();
+            return r;
+        });
+        
+        // Load JS resources in parallel  
+        const jsLoadPromises = this.jsResources().map(async (r) => {
+            await r.promiseLoad();
+            return r;
+        });
+        
+        // Wait for all loads to complete
+        await Promise.all([...cssLoadPromises, ...jsLoadPromises]);
+        console.log("✅ All resources loaded");
+
+        // Now evaluate CSS in sequence (order matters for cascading)
+        console.log("🔄 Evaluating CSS resources in sequence...");
+        await this.cssResources().promiseSerialForEach(async (r) => {
+            //console.log("🎨 Evaluating CSS:", r.path());
+            return r.eval();
+        });
+        console.log("✅ CSS resources evaluated");
+
+        // Evaluate JS in sequence (dependency order matters)
+        console.log("🔄 Evaluating JS resources in sequence...");
         await this.jsResources().promiseSerialForEach(async (r) => {
             count++;
+            console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
             bootLoadingView.setBarToNofM(count, this.jsResources().length);
-            return await r.promiseLoadAndEval();
+            return r.eval();
         });
+        console.log("✅ JS resources evaluated");
 
+        console.log("🏁 Calling onDone...");
         this.onDone();
+        console.log("✅ onDone completed");
     }
 
     /**
@@ -299,7 +360,18 @@
      * @description Marks the page load time.
      */
     markPageLoadTime () {
-        this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
+        try {
+            console.log("markPageLoadTime: performance =", !!performance);
+            console.log("markPageLoadTime: performance.timing =", !!performance.timing);
+            console.log("markPageLoadTime: navigationStart =", performance.timing.navigationStart);
+            this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
+            console.log("markPageLoadTime: calculated pageLoadTime =", this._pageLoadTime);
+        } catch (error) {
+            console.error("❌ Error in markPageLoadTime:", error);
+            console.error("Error type:", typeof error);
+            this._pageLoadTime = 0; // fallback
+            throw error;
+        }
     }
 
     /**

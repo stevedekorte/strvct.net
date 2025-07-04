@@ -16,7 +16,7 @@
   \******************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-eval("var jsonschema__WEBPACK_IMPORTED_MODULE_0___namespace_cache;\n__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jsonschema__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jsonschema */ \"../../../node_modules/jsonschema/lib/index.js\");\n \nwindow.jsonschema = /*#__PURE__*/ (jsonschema__WEBPACK_IMPORTED_MODULE_0___namespace_cache || (jsonschema__WEBPACK_IMPORTED_MODULE_0___namespace_cache = __webpack_require__.t(jsonschema__WEBPACK_IMPORTED_MODULE_0__, 2)));\n\n\n//# sourceURL=webpack:///./entry.js?");
+eval("var jsonschema__WEBPACK_IMPORTED_MODULE_0___namespace_cache;\n__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jsonschema__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jsonschema */ \"../../../node_modules/jsonschema/lib/index.js\");\n \nSvGlobals.set(\"jsonschema\", /*#__PURE__*/ (jsonschema__WEBPACK_IMPORTED_MODULE_0___namespace_cache || (jsonschema__WEBPACK_IMPORTED_MODULE_0___namespace_cache = __webpack_require__.t(jsonschema__WEBPACK_IMPORTED_MODULE_0__, 2))));\n\n\n//# sourceURL=webpack:///./entry.js?");
 
 /***/ }),
 

@@ -499,6 +499,53 @@ The framework works with VSCode's Chrome debugger extension:
 
 This setup ensures eval'd code files are editable in the debugger regardless of where the project is located on disk.
 
+## Node.js Headless Execution
+
+The STRVCT framework supports headless execution in Node.js environments for testing and server-side usage.
+
+### Browser API Polyfills
+
+When running in Node.js, some browser APIs are not available. The framework handles this through minimal polyfills located in `strvct/source/boot/ShimsForNode/`:
+
+**Available Shims:**
+- `RangeShim.js` - Minimal DOM Range API polyfill
+- `FileReaderShim.js` - Basic FileReader API polyfill for file operations
+
+**Important Guidelines:**
+- **DO NOT** create polyfills for `document`, `window`, or other major DOM objects
+- **DO NOT** attempt to simulate a complete browser environment in Node.js
+- **DO** create minimal shims only for specific APIs that are essential for framework operation
+- **DO** place all Node.js-specific polyfills in `strvct/source/boot/ShimsForNode/`
+- **DO** check for existence before defining: `if (typeof SomeAPI === 'undefined')`
+
+The framework is designed to gracefully handle the absence of browser APIs in headless environments. Most browser-specific functionality should be conditionally executed based on environment detection using `StrvctFile.isNodeEnvironment()`.
+
+### Environment-Specific Resource Loading
+
+The framework includes a path-based convention system to automatically exclude environment-specific resources:
+
+**Path Component Conventions:**
+- `web-only` - Excluded in Node.js environments
+- `server-only` - Excluded in browser environments
+
+**Usage:**
+```javascript
+// Check if a file should be loaded in current environment
+StrvctFile.with('path/to/web-only/SomeClass.js').canUseInCurrentEnv() // false in Node.js
+
+// Automatic filtering in ResourceManager
+this.jsResources() // Returns only environment-appropriate resources
+this.cssResources() // Returns only environment-appropriate resources
+```
+
+**Directory Structure Examples:**
+```
+strvct/source/library/view/web-only/    # Excluded in Node.js
+strvct/source/library/testing/server-only/ # Excluded in browser
+```
+
+This system prevents browser-specific code from causing errors in Node.js and allows for clean separation of environment-specific functionality.
+
 ## Key Patterns
 
 - Node hierarchy for model representation

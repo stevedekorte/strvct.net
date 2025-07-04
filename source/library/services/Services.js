@@ -136,6 +136,7 @@
          * @member {PeerService} peerService
          * @category Networking
          */
+        /*
         {
             const slot = this.newSlot("peerService", null)
             slot.setShouldStoreSlot(true);
@@ -143,6 +144,7 @@
             slot.setIsSubnode(true);
             slot.setSlotType("PeerService");
         }
+        */
 
         /**
          * @member {SpeechToTextSessions} speechToTextSessions

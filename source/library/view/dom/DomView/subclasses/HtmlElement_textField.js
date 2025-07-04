@@ -31,6 +31,10 @@
 
 */
 
+if (StrvctFile.isNodeEnvironment()) {
+    console.log("Skipping HTMLElement_textField category as we are in Node.js");
+} else {
+
 assert(HTMLElement.prototype.clone === undefined);
 
 const newClass = (class HTMLElement_textField extends HTMLElement {
@@ -243,6 +247,8 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
 }); //.initThisCategory();
 
 Object.initThisCategory.apply(newClass);
+
+}
 
 /*
 
