@@ -151,8 +151,19 @@
      * @returns {Promise<*>} - A promise that resolves to the value associated with the hash.
      * @category Data Retrieval
      */
-    promiseAt (hash) {
-        return this.idb().promiseAt(hash);
+    async promiseAt (hash) {
+        const idb = this.idb();
+        const data = await idb.promiseAt(hash);
+        if (data === undefined) {
+            return undefined;
+        }
+        assert(typeof(data) === "string", "data is not a string");
+        const dataHash = await this.promiseHashKeyForData(data);
+        if (dataHash !== hash) {
+            throw new Error("hash key does not match hash of value");
+        }
+
+        return data;
     }
 
     /**
@@ -195,6 +206,8 @@
             data = new TextEncoder("utf-8").encode(data);    
         }
 
+        // check if data is a valid type 
+        assert(data.constructor.name === "Uint8Array" || data.constructor.name === "ArrayBuffer", "data is not a valid type");
         const hashArrayBuffer = await crypto.subtle.digest("SHA-256", data);
         const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)));
         return hashString;
@@ -205,9 +218,9 @@
      * @returns {Promise<void>} - A promise that resolves when the operation is complete.
      * @category Data Management
      */
-    promiseClear () {
+    async promiseClear () {
         //debugger
-        return this.idb().promiseClear()
+        return await this.idb().promiseClear();
     }
 
     /**

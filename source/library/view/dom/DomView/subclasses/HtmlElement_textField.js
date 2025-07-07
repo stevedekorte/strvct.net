@@ -31,7 +31,7 @@
 
 */
 
-if (StrvctFile.isNodeEnvironment()) {
+if (SvPlatform.isNodePlatform()) {
     console.log("Skipping HTMLElement_textField category as we are in Node.js");
 } else {
 

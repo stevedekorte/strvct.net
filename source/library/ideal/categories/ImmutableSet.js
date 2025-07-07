@@ -99,6 +99,6 @@
         assert(didThrow);
     }
 
-}).initThisClass();
+}.initThisClass());
 
 //ImmutableSet.selfTest();

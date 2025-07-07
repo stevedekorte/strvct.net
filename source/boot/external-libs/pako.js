@@ -6732,38 +6732,4 @@
   
   })));
 
-// Make pako available through SvGlobals - access from global scope since UMD assigns it there
-console.log("Pako.js: Setting up pako in SvGlobals...");
-
-// Try multiple ways to access the pako object that was created by the UMD module
-const globalObj = SvGlobals.globals();
-console.log("Pako.js: typeof pako =", typeof pako);
-console.log("Pako.js: globalObj.pako exists =", !!globalObj.pako);
-console.log("Pako.js: global.pako exists =", typeof global !== 'undefined' && !!global.pako);
-console.log("Pako.js: globalThis.pako exists =", typeof globalThis !== 'undefined' && !!globalThis.pako);
-
-// Check different locations where UMD might have put pako
-let foundPako = null;
-if (globalObj.pako) {
-    foundPako = globalObj.pako;
-    console.log("Pako.js: ✅ Found pako in SvGlobals.globals()");
-} else if (typeof global !== 'undefined' && global.pako) {
-    foundPako = global.pako;
-    console.log("Pako.js: ✅ Found pako in global");
-} else if (typeof globalThis !== 'undefined' && globalThis.pako) {
-    foundPako = globalThis.pako;
-    console.log("Pako.js: ✅ Found pako in globalThis");
-} else if (typeof pako !== 'undefined') {
-    foundPako = pako;
-    console.log("Pako.js: ✅ Found pako in local scope");
-} else {
-    console.log("Pako.js: ❌ pako not found in any scope");
-}
-
-if (foundPako) {
-    globalObj.pako = foundPako;
-    console.log("Pako.js: ✅ Successfully assigned pako to SvGlobals");
-    console.log("Pako.js: pako.inflate available =", typeof foundPako.inflate === 'function');
-}
-
-
+assert(SvGlobals.has("pako"), "pako not found in SvGlobals");

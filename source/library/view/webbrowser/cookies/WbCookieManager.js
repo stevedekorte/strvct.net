@@ -75,7 +75,7 @@
      */
     finalInit () {
         super.finalInit();
-        if (StrvctFile.isBrowserEnvironment()) {
+        if (SvPlatform.isBrowserPlatform()) {
             this.readCookies();
         }
         return this;
@@ -89,7 +89,8 @@
     readCookies () {
         const cookiesMap = new Map();
         
-        if (document.cookie) {
+        // Only access document.cookie in browser environment
+        if (typeof document !== 'undefined' && document.cookie) {
             const cookieStrings = document.cookie.split(';');
             
             for (let cookieString of cookieStrings) {
@@ -191,5 +192,5 @@
 
 }.initThisClass());
 
+WbCookieManager.shared();
 assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
-console.log("WbCookieManager is defined!");

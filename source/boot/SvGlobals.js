@@ -72,6 +72,12 @@ const SvGlobals = (class SvGlobals extends Object {
 		return this.globals()[key] !== undefined;
 	}
 
+	static assertHas (key) {
+		if (!this.has(key)) {
+			throw new Error(`SvGlobals.assertHas("${key}") is not defined`);
+		}
+	}
+
 	static asMap () {
 		const dict = this.globals();	
 		const map = new Map(Object.entries(dict));
@@ -85,5 +91,3 @@ SvGlobals.set("SvGlobals", SvGlobals);
 if (SvGlobals.globals().SvGlobals === undefined) {
 	throw new Error("SvGlobals is not defined");
 }
-
-console.log("--- setup SvGlobals ---");

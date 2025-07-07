@@ -42,8 +42,8 @@
         console.log("URL.promiseLoad() (over NETWORK) ", path)
         
         try {
-            const file = new StrvctFile().setPath(path);
-            const textContent = await file.load();
+            const file = StrvctFile.with(path);
+            const textContent = await file.asyncLoad();
             
             // Convert text to ArrayBuffer to maintain API compatibility
             const encoder = new TextEncoder();

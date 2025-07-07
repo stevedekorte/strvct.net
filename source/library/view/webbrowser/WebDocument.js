@@ -9,8 +9,6 @@
  */
 "use strict";
 
-assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
-
 (class WebDocument extends ProtoClass {
     
     /**
@@ -43,18 +41,31 @@ assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
         return DocumentBody.shared();
     }
 
+    setTitle (title) {
+        if (typeof document !== 'undefined') {
+            document.title = title;
+        }
+        return this;
+    }
+
     /**
      * @description Retrieves all style sheets in the document.
      * @returns {Array<StyleSheet>} An array of StyleSheet objects.
      * @category Styling
      */
     styleSheets () {
-        const elements = document.styleSheets;
         const sheets = [];
 
-        for (let i = 0; i < elements.length; i ++) {
-            const sheetElement = elements[i];
-            sheets.push(StyleSheet.clone().setSheetElement(sheetElement));
+        // Only access document.styleSheets in browser environment
+        if (typeof document !== 'undefined' && document.styleSheets) {
+            const elements = document.styleSheets;
+
+            for (let i = 0; i < elements.length; i ++) {
+                const sheetElement = elements[i];
+                sheets.push(StyleSheet.clone().setSheetElement(sheetElement));
+            }
+        } else {
+            console.log("styleSheets: not in browser environment - returning empty array");
         }
 
         return sheets;
@@ -67,9 +78,17 @@ assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
      * @category Styling
      */
     addStyleSheetString (cssCode) {
-        const styleElement = document.createElement('style');
-        styleElement.innerHTML = cssCode;
-        document.head.appendChild(styleElement);
+        //console.log("addStyleSheetString", cssCode);
+        
+        // Only manipulate DOM in browser environment
+        if (typeof document !== 'undefined' && document.createElement) {
+            const styleElement = document.createElement('style');
+            styleElement.innerHTML = cssCode;
+            document.head.appendChild(styleElement);
+        } else {
+            console.log("addStyleSheetString: not in browser environment - ignoring");
+        }
+        
         return this;
     }
 
@@ -84,4 +103,6 @@ assert(SvGlobals.has("WbCookieManager"), "WbCookieManager is not defined");
         return this;
     }
 
-}.initThisClass());
+}).initThisClass();
+
+WebDocument.shared();

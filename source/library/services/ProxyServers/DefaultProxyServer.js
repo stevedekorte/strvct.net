@@ -42,9 +42,24 @@
    * @category Configuration
    */
   setupForPage () {
-    this.setHostname(window.location.hostname);
-    this.setPort(Number(window.location.port));
-    this.setIsSecure(window.location.protocol === "https:");
+    if (SvPlatform.isNodePlatform()) {
+      return;
+    } else {
+      const loc = window.location;  
+      this.setHostname(loc.hostname);
+      this.setPort(Number(loc.port));
+      this.setIsSecure(loc.protocol === "https:");
+    }
   }
+
+  /*
+  getWindowLocationURL () {
+    if (window) {
+      return new URL(window.location.href);
+    } else {
+      return null;
+    }
+  }
+  */
 
 }.initThisClass());

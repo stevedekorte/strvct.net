@@ -20,6 +20,7 @@ function evalStringFromSourceUrl (codeString, path) {
     // However, as of 2025, VSCode requires relative paths (no leading slash) for proper file mapping
     // Chrome doesn't like quotes around the path (fixed Dec 2023)  
     // Rich Collins added encodeURI in Aug 2024 to handle spaces and special characters
+    console.log("🟡 HELPER: evalStringFromSourceUrl", path);
     const sourceURL = path; // Relative path for VSCode compatibility
     const encodedURL = encodeURI(sourceURL);
     const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
@@ -30,7 +31,7 @@ function evalStringFromSourceUrl (codeString, path) {
         let result;
         
         // In Node.js, we need to ensure eval runs in global context for UMD modules to work
-        if (StrvctFile.isNodeEnvironment()) {
+        if (SvPlatform.isNodePlatform()) {
             // Node.js: Use indirect eval to run in global scope
             // This ensures 'this' points to the global object like it does in browser
             const globalObj = SvGlobals.globals();
@@ -50,12 +51,8 @@ function evalStringFromSourceUrl (codeString, path) {
         //console.log("✅ Successfully evaluated:", path);
         return result;
     } catch (evalError) {
-        console.error("❌ Error evaluating", path + ":", evalError);
-        console.error("Error type:", typeof evalError);
-        console.error("Error constructor:", evalError.constructor.name);
-        if (evalError && evalError.stack) {
-            console.error("Stack:", evalError.stack);
-        }
+        // Add context to error and re-throw (error will be handled by ResourceManager)
+        evalError.evalPath = path;
         throw evalError;
     }
 }

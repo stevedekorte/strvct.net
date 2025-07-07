@@ -19,6 +19,8 @@
      * @category Key Generation
      */
     static actionKeyForTargetAndMethod(target, method) {
+        assert(target, "target is null");
+        assert(target.typeId, Type.typeName(target) + " class missing typeId");
         return target.typeId() + "." + method;
     }
 

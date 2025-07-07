@@ -60,7 +60,7 @@
     init () {
         super.init();
         this.setAppErrors([]);
-        if (StrvctFile.isBrowserEnvironment()) {
+        if (SvPlatform.isBrowserPlatform()) {
             this.registerForWindowErrors();
         }
         return this;

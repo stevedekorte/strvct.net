@@ -505,7 +505,7 @@ The STRVCT framework supports headless execution in Node.js environments for tes
 
 ### Browser API Polyfills
 
-When running in Node.js, some browser APIs are not available. The framework handles this through minimal polyfills located in `strvct/source/boot/ShimsForNode/`:
+When running in Node.js, some browser APIs are not available. The framework handles this through minimal polyfills:
 
 **Available Shims:**
 - `RangeShim.js` - Minimal DOM Range API polyfill

@@ -95,7 +95,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var jwt_
 /******/ })()
 ;
 
-assert(window.jwt_decode, "jwt-decode is not available");
+assert(SvGlobals.get("jwt_decode"), "jwt-decode is not available");
 
 
 /*

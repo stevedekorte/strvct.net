@@ -261,6 +261,18 @@
         const className = this.type();
         if (Type.isUndefined(this.globals()[className])) {
             this.globals()[className] = this;
+            
+            // Also make the class available in global scope for direct access
+            // This is especially important in Node.js where eval context might be isolated
+            if (typeof global !== 'undefined') {
+                global[className] = this;
+            }
+            if (typeof window !== 'undefined') {
+                window[className] = this;
+            }
+            if (typeof globalThis !== 'undefined') {
+                globalThis[className] = this;
+            }
         } else if (this.type() !== "Object") {
             const msg = "WARNING: Attempt to redefine SvGlobals.globals()['" + className + "']";
             console.warn(msg);

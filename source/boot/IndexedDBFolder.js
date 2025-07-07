@@ -450,7 +450,7 @@
         const request = objectStore.getAll();
         //const stack = this.currentStack();
 
-        request.onsuccess = (/*event*/) => {
+        request.onsuccess = (event) => {
             const results = event.target.result;
             const map = new Map();
             results.forEach(result => {
@@ -459,7 +459,7 @@
             promise.callResolveFunc(map);
         }
 
-        request.onerror = (/*event*/) => {
+        request.onerror = (event) => {
             promise.callRejectFunc(event);
         }
 
@@ -490,7 +490,7 @@
         const request = objectStore.clear();
         //const stack = this.currentStack();
 
-        objectStore._tx.oncomplete = (/*event*/) => {
+        objectStore._tx.oncomplete = (event) => {
             console.log("db promiseClear tx oncomplete");
             clearPromise.callResolveFunc(event);
         };
@@ -499,7 +499,7 @@
             console.log("db promiseClear request onsuccess");
         };
 
-        request.onerror = (/*event*/) => {
+        request.onerror = (event) => {
             console.log("db promiseClear request error");
             clearPromise.callRejectFunc(event);
         };

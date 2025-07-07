@@ -171,6 +171,7 @@
             if (hasKey) {
                 // if hashcache is available and has data, use it
                 const data = await hc.promiseAt(h);
+
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
                 //console.log("UrlResource.asyncLoadFromCache() (from cache) " + this.path())
@@ -206,7 +207,7 @@
      */
     async promiseJustLoad () {
         try {
-            const data = await StrvctFile.with(this.path()).loadArrayBuffer();
+            const data = await StrvctFile.with(this.path()).asyncLoadArrayBuffer();
             this._data = data;
             this.constructor._totalBytesLoaded += data.byteLength;
             this.constructor._totalUrlsLoaded += 1;
@@ -261,7 +262,7 @@
      */
     evalDataAsCss () {
         // Skip CSS evaluation in Node.js since there's no DOM
-        if (StrvctFile.isNodeEnvironment()) {
+        if (SvPlatform.isNodePlatform()) {
             // console.log("⏭️  Skipping CSS evaluation in Node.js:", this.path());
             return;
         }
@@ -294,7 +295,7 @@
      * @category Data Access
      */
     dataAsText () {
-        let data = this.data()
+        let data = this.data();
         if (typeof(data) === "string") {
             return data;
         }
@@ -304,15 +305,18 @@
         } 
 
         // Handle invalid data types in Node.js gracefully
-        if (StrvctFile.isNodeEnvironment()) {
+        
+        if (SvPlatform.isNodePlatform()) {
             if (!data || (typeof data !== 'object') || (!data.constructor || (data.constructor.name !== 'Uint8Array' && data.constructor.name !== 'ArrayBuffer'))) {
                 // Gracefully handle non-ArrayBuffer data in Node.js
+                debugger;
                 if (typeof data === 'object' && data !== null) {
                     return JSON.stringify(data);
                 }
                 return String(data || '');
             }
         }
+        
 
         return new TextDecoder().decode(data); // default decoding is to utf8
     }

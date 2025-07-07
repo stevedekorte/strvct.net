@@ -86,6 +86,8 @@
         this._doneTime = null;
         this._promiseForLoadCam = null;
         this._camContent = null; // Store CAM content in memory for sync access
+        this._filteredJsResources = null; // Cache filtered JS resources
+        this._filteredCssResources = null; // Cache filtered CSS resources
         return this;
     }
 
@@ -135,6 +137,12 @@
      */
     async promiseLoadCamIfNeeded () {
         console.log("🔍 Checking if CAM loading is needed...");
+        
+        if (SvPlatform.isNodePlatform()) {
+            console.log("🔍 Clearing HashCache on Node.js...");
+            await HashCache.shared().promiseClear();
+        }
+
         const count = await HashCache.shared().promiseCount();
         console.log("📊 HashCache count:", count);
         if (!count) {
@@ -241,7 +249,10 @@
      * @returns {Array<UrlResource>} JavaScript resources.
      */
     jsResources () {
-        return this.resourcesWithExtension("js").filter(r => this.shouldLoadResourceInCurrentEnvironment(r));
+        if (!this._filteredJsResources) {
+            this._filteredJsResources = this.resourcesWithExtension("js").filter(r => this.shouldLoadResourceInCurrentEnvironment(r));
+        }
+        return this._filteredJsResources;
     }
 
     /**
@@ -250,7 +261,10 @@
      * @returns {Array<UrlResource>} CSS resources.
      */
     cssResources () {
-        return this.resourcesWithExtension("css").filter(r => this.shouldLoadResourceInCurrentEnvironment(r));
+        if (!this._filteredCssResources) {
+            this._filteredCssResources = this.resourcesWithExtension("css").filter(r => this.shouldLoadResourceInCurrentEnvironment(r));
+        }
+        return this._filteredCssResources;
     }
 
     /**
@@ -264,8 +278,8 @@
         const canUse = StrvctFile.with(path).canUseInCurrentEnv();
         
         if (!canUse) {
-            const envName = StrvctFile.isNodeEnvironment() ? 'Node.js' : 'browser';
-            const skipReason = StrvctFile.isNodeEnvironment() ? 'browser-only' : 'server-only';
+            const envName = SvPlatform.isNodePlatform() ? 'Node.js' : 'browser';
+            const skipReason = SvPlatform.isNodePlatform() ? 'browser-only' : 'server-only';
             console.log(`⏭️  Skipping ${skipReason} resource in ${envName}: ${path}`);
         }
         
@@ -307,20 +321,28 @@
 
         // Now evaluate CSS in sequence (order matters for cascading)
         console.log("🔄 Evaluating CSS resources in sequence...");
-        await this.cssResources().promiseSerialForEach(async (r) => {
+        this.cssResources().forEach((r) => {
             //console.log("🎨 Evaluating CSS:", r.path());
-            return r.eval();
+            r.eval();
         });
         console.log("✅ CSS resources evaluated");
 
         // Evaluate JS in sequence (dependency order matters)
         console.log("🔄 Evaluating JS resources in sequence...");
-        await this.jsResources().promiseSerialForEach(async (r) => {
+        for (const r of this.jsResources()) {
             count++;
             console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
             bootLoadingView.setBarToNofM(count, this.jsResources().length);
-            return r.eval();
-        });
+            try {
+                r.eval();
+            } catch (error) {
+                // Add context to the error and re-throw to stop the entire process
+                error.fileName = r.path();
+                error.fileIndex = count;
+                error.totalFiles = this.jsResources().length;
+                throw error;
+            }
+        }
         console.log("✅ JS resources evaluated");
 
         console.log("🏁 Calling onDone...");
@@ -360,6 +382,10 @@
      * @description Marks the page load time.
      */
     markPageLoadTime () {
+        if (SvPlatform.isNodePlatform()) {
+            return;
+        }
+
         try {
             console.log("markPageLoadTime: performance =", !!performance);
             console.log("markPageLoadTime: performance.timing =", !!performance.timing);
@@ -380,6 +406,10 @@
      * @returns {string} A formatted string describing the load time and resources.
      */
     loadTimeDescription () {
+        if (SvPlatform.isNodePlatform()) {
+            return "N/A";
+        }
+        
         return "" + 
             Math.round(this._pageLoadTime/100)/10 + "s, " + 
             Math.round(UrlResource._totalBytesLoaded/1000) + "k, " + 

@@ -234,7 +234,7 @@
 
 }.initThisClass());
 
-SvGlobals.globals().assert = function (v, errorMessage) {
+const assert = function (v, errorMessage) {
     if (!v) {
         if (typeof(errorMessage) === "function") {
             errorMessage = errorMessage();
@@ -246,7 +246,9 @@ SvGlobals.globals().assert = function (v, errorMessage) {
     return v
 }
 
-SvGlobals.globals().debugAssert = function (v, errorMessage) {
+SvGlobals.set("assert", assert);
+
+const debugAssert = function (v, errorMessage) {
     if (!v) {
         const m = errorMessage ? errorMessage : "assert failed - false value";
         console.warn(m);
@@ -255,3 +257,5 @@ SvGlobals.globals().debugAssert = function (v, errorMessage) {
     }
     return v
 }
+
+SvGlobals.set("debugAssert", debugAssert);

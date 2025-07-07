@@ -12,7 +12,6 @@ if (SvGlobals === undefined) {
     throw new Error("SvGlobals is not defined");
 }
 
-
 class BootLoader extends Object {
   /**
    * @constructor
@@ -65,63 +64,31 @@ class BootLoader extends Object {
     return this;
   }
 
-  /**
-   * @method loadFile
-   * @category File Loading
-   * @param {string} filePath - The path of the file to load.
-   * @returns {Promise<{path: string, content: string}>} A promise that resolves with the file path and content.
-   */
-  async loadFile (filePath) {
-    const fullPath = this._bootPath
-      ? `${this._bootPath}/${filePath.replace(/^\//, '')}`
-      : filePath;
-    
-    //console.log(`Attempting to load: ${fullPath}`);
-    
-    try {
-      const file = new StrvctFile().setPath(fullPath);
-      const content = await file.load();
-      //console.log(`Successfully loaded: ${fullPath}`);
-      return { path: filePath, fullPath: fullPath, content: content };
-    } catch (error) {
-      console.error(`Failed to load: ${fullPath}`, error);
-      throw error;
-    }
-  }
 
   /**
-   * @method loadParallelEvalSequential
+   * @method loadAndEvalAllFiles
    * @category File Loading
-   * @description Loads all files in the _files array in parallel, then evaluates them sequentially.
+   * @description Loads all files in the _files array and evaluates them using StrvctFile methods.
    * @returns {Promise<void>} A promise that resolves when all files are loaded and evaluated.
    */
-  loadParallelEvalSequential () {
-    console.log('Starting parallel file loading...');
+  async loadAndEvalAllFiles () {
+    console.log('Starting boot file loading and evaluation...');
     
-    // Load all files in parallel
-    const loadPromises = this._files.map(filePath => this.loadFile(filePath));
+    // Build full paths
+    const fullPaths = this._files.map(filePath => {
+      return this._bootPath
+        ? `${this._bootPath}/${filePath.replace(/^\//, '')}`
+        : filePath;
+    });
     
-    return Promise.all(loadPromises)
-      .then(fileContents => {
-        console.log('All files loaded successfully, starting sequential evaluation...');
-        
-        // Evaluate files sequentially
-        return fileContents.reduce((promise, { path, fullPath, content }) => {
-          return promise.then(() => {
-            //console.log(`Evaluating file: ${path}`);
-            const file = new StrvctFile().setPath(fullPath);
-            file.evalWithSourceUrl(content);
-            //console.log(`Finished evaluating: ${path}`);
-          });
-        }, Promise.resolve());
-      })
-      .then(() => {
-        console.log('All boot files loaded and evaluated successfully');
-      })
-      .catch((error) => {
-        console.error('Error during file loading or evaluation:', error);
-        throw error;
-      });
+    try {
+      // Use StrvctFile's batch loading method
+      await StrvctFile.asyncLoadAndSequentiallyEvalPaths(fullPaths);
+      console.log('All boot files loaded and evaluated successfully');
+    } catch (error) {
+      console.error('Error during file loading or evaluation:', error);
+      throw error;
+    }
   }
 
   /**
@@ -132,6 +99,8 @@ class BootLoader extends Object {
    * @returns {Promise<void>} A promise that resolves when the boot sequence is complete.
    */
   static boot () {
+    console.log("BootLoader.boot: starting boot sequence");
+    //debugger;
     const bootLoader = new BootLoader();
     bootLoader.setBootPath("strvct/source/boot/");
     bootLoader.setFiles([
@@ -143,7 +112,6 @@ class BootLoader extends Object {
       "UrlResource.js",
       "BootLoadingView.js",
       "ResourceManager.js",
-
       "Base.js",
       "Promise_ideal.js",
       "IndexedDBFolder.js",
@@ -151,7 +119,7 @@ class BootLoader extends Object {
       "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
       //"pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
     ]);
-    return bootLoader.loadParallelEvalSequential();
+    return bootLoader.loadAndEvalAllFiles();
   }
 
   // start when ready
@@ -169,16 +137,19 @@ class BootLoader extends Object {
   }
 
   static async startWhenReadyOnNode () {
-    // if on node, wait for process.ready event
-    if (typeof process !== 'undefined' && process.ready) {
-      process.ready.then(() => {
-        this.justStart();
-      });
-    } 
+    //console.log("startWhenReadyOnNode: starting BootLoader on Node");
+    // In Node.js, we can start immediately since the process is already ready
+    // Wait for next tick to ensure all modules are loaded
+    process.nextTick(() => {
+      //debugger;
+      //console.log("Node.js ready: starting BootLoader");
+      this.justStart();
+    });
   }
 
 
   static async startWhenReadyInBrowser () {
+    console.log("startWhenReadyInBrowser: starting BootLoader in browser");
     window.addEventListener('load', () => {
       // This event is fired when the entire page, including all dependent resources such as stylesheets and images, is fully loaded.
       //console.log('window.load event: other resources finished loading, starting ResourcesManager now.');
@@ -192,7 +163,8 @@ class BootLoader extends Object {
       await ResourceManager.shared().setupAndRun()
     });
   }
-
 }
+
+SvGlobals.set("BootLoader", BootLoader);
 
 BootLoader.startWhenReady();

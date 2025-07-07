@@ -85,5 +85,3 @@ SvGlobals.set("SvGlobals", SvGlobals);
 if (SvGlobals.globals().SvGlobals === undefined) {
 	throw new Error("SvGlobals is not defined");
 }
-
-console.log("--- setup SvGlobals ---");

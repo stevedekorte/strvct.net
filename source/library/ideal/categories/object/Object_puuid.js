@@ -1,5 +1,4 @@
 "use strict";
-
 /**
  * Extends Object with UUID (Universally Unique Identifier) functionality.
  * @module library.ideal.object
@@ -18,7 +17,21 @@
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         const charactersLength = characters.length;
         const randomValues = new Uint8Array(length);
-        window.crypto.getRandomValues(randomValues);
+        
+        // Use appropriate crypto API based on environment
+        if (typeof window !== 'undefined' && window.crypto) {
+            // Browser environment
+            window.crypto.getRandomValues(randomValues);
+        } else if (typeof require !== 'undefined') {
+            // Node.js environment
+            const crypto = require('crypto');
+            crypto.getRandomValues(randomValues);
+        } else {
+            // Fallback to Math.random (less secure)
+            for (let i = 0; i < length; i++) {
+                randomValues[i] = Math.floor(Math.random() * 256);
+            }
+        }
         const result = new Array(length);
     
         for (let i = 0; i < length; i++) {
@@ -114,3 +127,5 @@
     }
 
 }).initThisCategory();
+
+assert(Object.typeId, "Object.typeId is not defined");
