@@ -55,7 +55,11 @@
      */
     init () {
         super.init();
-        this.setupWindowListener();
+        if (SvPlatform.isBrowserPlatform()) {
+            this.setupWindowListener();
+        } else {
+            console.log("🟡 WebBrowserWindow: init: not in browser environment - skipping setupWindowListener");
+        }
         return this;
     }
 

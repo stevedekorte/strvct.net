@@ -139,7 +139,7 @@
     async prechacheWhereAppropriate () {
         this.setupSubnodesIfNeeded();
         await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => {
-            console.log("file: " + file.type() + ".prechacheWhereAppropriate()");
+            //console.log("file: " + file.type() + ".prechacheWhereAppropriate()");
             await file.prechacheWhereAppropriate();
         });
         return this;

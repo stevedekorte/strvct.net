@@ -119,8 +119,9 @@
 
         // these may not be available in node.js
         const nonNodeClassNamesToFix = [
-            "Range",
-            "Image"
+            "FileReader",
+            "Range"
+            //"Image" // need to fix this in ImageShim.js
         ];
 
         nonNodeClassNamesToFix.forEach(className => {

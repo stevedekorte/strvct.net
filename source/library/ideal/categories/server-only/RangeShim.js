@@ -4,7 +4,7 @@
  * @description Range polyfill for Node.js environments where Range DOM API is not available.
  * This file is only executed when running in a Node.js environment.
  */
-console.log("🟡 RANGESHIM: evaluating RangeShim.js");
+
 // Complete Range polyfill for DOM range functionality
 class Range extends Object {
     constructor() {
@@ -279,6 +279,3 @@ Range.END_TO_END = 2;
 Range.END_TO_START = 3;
     
 SvGlobals.set("Range", Range);
-
-console.log("defined Range");
-assert(global.Range, "Range should be available globally");

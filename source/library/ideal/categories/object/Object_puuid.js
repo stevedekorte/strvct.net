@@ -25,7 +25,7 @@
         } else if (typeof require !== 'undefined') {
             // Node.js environment
             const crypto = require('crypto');
-            crypto.getRandomValues(randomValues);
+            crypto.randomFillSync(randomValues);
         } else {
             // Fallback to Math.random (less secure)
             for (let i = 0; i < length; i++) {

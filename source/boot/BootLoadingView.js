@@ -24,7 +24,7 @@ class BootLoadingView extends Object {
    * @returns {HTMLElement|null} The main loading view element.
    */
   element () {
-    if (SvGlobals.has("document")) {
+    if (SvPlatform.isBrowserPlatform()) {
       return document.getElementById("loadingView");
     }
     return null;

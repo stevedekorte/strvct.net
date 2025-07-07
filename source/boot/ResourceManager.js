@@ -331,7 +331,7 @@
         console.log("🔄 Evaluating JS resources in sequence...");
         for (const r of this.jsResources()) {
             count++;
-            console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
+            //console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
             bootLoadingView.setBarToNofM(count, this.jsResources().length);
             try {
                 r.eval();
@@ -345,9 +345,9 @@
         }
         console.log("✅ JS resources evaluated");
 
-        console.log("🏁 Calling onDone...");
-        this.onDone();
-        console.log("✅ onDone completed");
+        //console.log("🏁 Calling onDone...");
+        this.onDone(); 
+        //console.log("✅ onDone completed");
     }
 
     /**

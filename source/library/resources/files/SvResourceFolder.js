@@ -337,7 +337,7 @@
      */
     async prechacheWhereAppropriate () {
         debugger;
-        console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
+       // console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }
 

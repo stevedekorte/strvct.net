@@ -99,6 +99,11 @@
      * @category Setup
      */
     setupIfNeeded () {
+        if (SvPlatform.isNodePlatform()) {
+            console.log("🟡 DEVICES: setupIfNeeded: not in browser environment - ignoring");
+            return this;
+        }
+
         if (!this.isSetup()) {
             Mouse.shared()
             SvKeyboard.shared()

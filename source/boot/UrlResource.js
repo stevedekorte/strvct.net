@@ -312,7 +312,6 @@
         // Handle invalid data types in Node.js gracefully
         
         if (SvPlatform.isNodePlatform()) {
-            debugger;
             if (!data || (typeof data !== 'object') || (!data.constructor || (data.constructor.name !== 'Uint8Array' && data.constructor.name !== 'ArrayBuffer'))) {
                 // Gracefully handle non-ArrayBuffer data in Node.js
                 debugger;

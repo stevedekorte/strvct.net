@@ -38,7 +38,11 @@
         Devices.shared().setupIfNeeded();
         
         //this.documentListener().setIsListening(true)
-        this.setIsRegisteredForBrowserDrop(true); // to avoid dropping on window
+        if (SvPlatform.isNodePlatform()) {
+            console.log("🟡 DocumentBody: init: not in browser environment - skipping setIsRegisteredForBrowserDrop");
+        } else {
+            this.setIsRegisteredForBrowserDrop(true); // to avoid dropping on window
+        }
 
         return this;
     }

@@ -189,9 +189,9 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        //console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
         await this.resources().promiseParallelMap(async (r) => {
-            console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
+            //console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
             await r.prechacheWhereAppropriate();
         });
         return this;

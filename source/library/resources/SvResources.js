@@ -186,9 +186,9 @@
      * @category Caching
      */
     async prechacheWhereAppropriate () {
-        console.log(this.type() + ".prechacheWhereAppropriate()");
+        //console.log(this.type() + ".prechacheWhereAppropriate()");
         await this.subnodes().promiseParallelMap(async (node) => {
-            console.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
+            //console.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
             //debugger;
             await node.prechacheWhereAppropriate();
         });

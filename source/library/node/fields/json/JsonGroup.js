@@ -199,7 +199,9 @@
                 node.setJson(v, jsonPathComponents.concat(k));
               } else {
                 // if not, something is wrong
-                console.warn(this.type() + ".setJson() found slot with jsonId mismatch: " + node.jsonId() + " !== " + v.jsonId, " at path: " + jsonPathComponents.concat(k).join("/"));
+
+                // since jsonId is created on finalInit, this could be set even if it really should be null
+                //console.warn(this.type() + ".setJson() found slot with jsonId mismatch: " + node.jsonId() + " !== " + v.jsonId, " at path: " + jsonPathComponents.concat(k).join("/"));
                 //debugger;
                 node.setJson(v, jsonPathComponents.concat(k));
               }

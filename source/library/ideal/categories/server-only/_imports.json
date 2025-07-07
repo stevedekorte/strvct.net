@@ -1,4 +1,5 @@
 [
     "RangeShim.js",
-    "FileReaderShim.js"
+    "FileReaderShim.js",
+    "ImageShim.js"
 ]

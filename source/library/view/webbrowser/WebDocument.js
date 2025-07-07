@@ -78,6 +78,10 @@
      * @category Styling
      */
     addStyleSheetString (cssCode) {
+        if (SvPlatform.isNodePlatform()) {
+            return this;
+        }
+
         //console.log("addStyleSheetString", cssCode);
         
         // Only manipulate DOM in browser environment

@@ -20,7 +20,7 @@ function evalStringFromSourceUrl (codeString, path) {
     // However, as of 2025, VSCode requires relative paths (no leading slash) for proper file mapping
     // Chrome doesn't like quotes around the path (fixed Dec 2023)  
     // Rich Collins added encodeURI in Aug 2024 to handle spaces and special characters
-    console.log("🟡 HELPER: evalStringFromSourceUrl", path);
+    //console.log("🟡 HELPER: evalStringFromSourceUrl", path);
     const sourceURL = path; // Relative path for VSCode compatibility
     const encodedURL = encodeURI(sourceURL);
     const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
