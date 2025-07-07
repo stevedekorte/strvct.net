@@ -68,6 +68,12 @@ const SvGlobals = (class SvGlobals extends Object {
 		this.globals()[key] = value;
 	}
 
+	static setIfAbsent (key, value) {
+		if (!this.has(key)) {
+			this.globals()[key] = value;
+		}
+	}
+
 	static has (key) {
 		return this.globals()[key] !== undefined;
 	}
