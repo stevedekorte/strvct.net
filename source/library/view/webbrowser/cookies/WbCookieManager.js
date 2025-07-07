@@ -25,13 +25,13 @@
  *
  * WbCookieManager.shared().cookieCount();
  * 
- * const newCookie = WbCookie.clone();
+ * const newCookie = WbCookieManager.shared().newCookieNamed("myCookie");
  * newCookie.setPath("/");
  * newCookie.setDomain("mydomain.com");
  * newCookie.setMaxAge(3600);
  * newCookie.setSecure(true);
  * newCookie.setHttpOnly(true);
- * WbCookieManager.shared().addCookie(newCookie);
+ * newCookie.save();
  * 
  */
 (class WbCookieManager extends ProtoClass {
@@ -118,6 +118,23 @@
     }
 
     /**
+     * @description Creates a new cookie with the given name. If the cookie already exists, it returns the existing cookie.
+     * @param {string} name - The name of the cookie to create.
+     * @returns {WbCookie} The created cookie.
+     * @category Cookie Management
+     */
+    newCookieNamed (name) {
+        const existingCookie = this.cookieNamed(name);
+        if (existingCookie) {
+            return existingCookie;
+        }
+        const newCookie = WbCookie.new();
+        newCookie.setName(name);
+        this.addCookie(newCookie);
+        return newCookie;
+    }
+
+    /**
      * @description Adds a cookie to the collection.
      * @param {WbCookie} cookie - The cookie to add.
      * @returns {WbCookieManager} The current instance.
@@ -125,6 +142,7 @@
      */
     addCookie (cookie) {
         cookie.setCookieManager(this);
+        assert(cookie.name(), "Cookie name is required");
         this.cookiesMap().set(cookie.name(), cookie);
         cookie.save();
         return this;

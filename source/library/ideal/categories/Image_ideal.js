@@ -4,6 +4,7 @@ if (!SvGlobals.has("Image")) {
     console.log("Skipping Image_ideal category as no Image object found");
 } else {
 
+    Image.__proto__ = Object; 
     /**
      * @module library.ideal
      * @class Image_ideal

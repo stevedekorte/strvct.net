@@ -174,10 +174,10 @@
      */
     close () {
         if (this.isOpen()) {
-            this.idb().close()
+            this.idb().close();
         }
-        super.close()
-        return this
+        super.close();
+        return this;
     }
 	
     /**

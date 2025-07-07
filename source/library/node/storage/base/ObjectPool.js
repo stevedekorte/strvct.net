@@ -287,6 +287,14 @@
         }
     }
 
+    async promiseClose () {
+        const map = this.recordsMap();
+        if (map.isOpen()) {
+            map.close(); // this is synchronous in indexeddb
+            //await map.promiseClose();
+        }
+    }
+
     /**
      * @async
      * @description called when the pool opens successfully

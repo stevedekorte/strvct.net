@@ -187,14 +187,16 @@
         const face = new FontFace(name, this.data(), this.options()); 
         this.setFontFace(face);
 
-        try {
-            const loadedFace = await face.load();
-            assert(loadedFace === face);
-            document.fonts.add(loadedFace);
-            this.setData(null);
-        } catch (error) {
-            this.onLoadError(error);
-            error.rethrow();
+        if (SvPlatform.isBrowserPlatform()) {
+            try {
+                const loadedFace = await face.load();
+                assert(loadedFace === face);
+                document.fonts.add(loadedFace);
+                this.setData(null);
+            } catch (error) {
+                this.onLoadError(error);
+                error.rethrow();
+            }
         }
         return this;
     }

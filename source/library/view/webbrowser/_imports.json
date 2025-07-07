@@ -2,7 +2,6 @@
     "WebBrowserScreen.js",
     "cookies/_imports.json",
     "WebBrowserWindow.js",
-    "WebBrowserCookie.js",
     "notifications/_imports.json",
     "WebDocument.js",
     "SvStyleSheet.js",
