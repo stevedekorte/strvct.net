@@ -15,7 +15,7 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     /**
@@ -32,15 +32,15 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
 
         // setup shared devices for later use
-        Devices.shared().setupIfNeeded()
+        Devices.shared().setupIfNeeded();
         
         //this.documentListener().setIsListening(true)
-        this.setIsRegisteredForBrowserDrop(true) // to avoid dropping on window
+        this.setIsRegisteredForBrowserDrop(true); // to avoid dropping on window
 
-        return this
+        return this;
     }
 
     /**
@@ -51,7 +51,7 @@
      */
     acceptsDrop (event) { // to avoid dropping on window
         event.preventDefault();
-        return false
+        return false;
     }
     
     /**
@@ -60,11 +60,15 @@
      * @category Initialization
      */
     setupElement () {
+        if (SvPlatform.isNodePlatform()) {
+            return this;
+        }
+
         //document.body.setDomView(this)
-        this._element = document.body
-        this._element.setDomView(this)
+        this._element = document.body;
+        this._element.setDomView(this);
         // get this from element override
-        return this
+        return this;
     }
     
     /**
@@ -73,7 +77,7 @@
      * @category DOM Interaction
      */
     element () {
-        return document.body
+        return document.body;
     }
     
     /**
@@ -82,7 +86,7 @@
      * @category Layout
      */
     zoomAdjustedWidth () {
-        return WebBrowserWindow.shared().width() * this.zoomRatio()
+        return WebBrowserWindow.shared().width() * this.zoomRatio();
     }
     
     /**
@@ -91,7 +95,7 @@
      * @category Layout
      */
     zoomAdjustedHeight () {
-        return WebBrowserWindow.shared().height() * this.zoomRatio()
+        return WebBrowserWindow.shared().height() * this.zoomRatio();
     }
     
     /**
@@ -100,7 +104,7 @@
      * @category Layout
      */
     zoomAdjustedSize () { // TODO: move to Point
-        return { width: this.zoomAdjustedWidth(), height: this.zoomAdjustedHeight() }
+        return { width: this.zoomAdjustedWidth(), height: this.zoomAdjustedHeight() };
     }
 
     /**
@@ -110,7 +114,7 @@
      */
     allDomElements () {
         const domElements = this.element().getElementsByTagName("*");
-        return domElements
+        return domElements;
     }
 
     /**
@@ -120,9 +124,9 @@
      * @category View Management
      */
     viewsUnderPoint (aPoint) {
-        const elements = document.elementsFromPoint(aPoint.x(), aPoint.y())
-        const views = elements.map(e => this.firstViewForElement(e)).nullsRemoved()
-        return views
+        const elements = document.elementsFromPoint(aPoint.x(), aPoint.y());
+        const views = elements.map(e => this.firstViewForElement(e)).nullsRemoved();
+        return views;
     }
 
     /**
@@ -136,15 +140,15 @@
         // associated with a DomView instance 
 
         while (e) {
-            const view = e.domView()
+            const view = e.domView();
             if (view) {
-                return view
+                return view;
             }
-            e = e.parentElement
+            e = e.parentElement;
         }
 
-        return null
-    };
+        return null;
+    }
 
    
 }.initThisClass());

@@ -151,13 +151,24 @@
      * @returns {Promise<*>} - A promise that resolves to the value associated with the hash.
      * @category Data Retrieval
      */
-    async promiseAt (hash) {
+    async promiseAt (hash, optionalPathForDebugging) {
         const idb = this.idb();
         const data = await idb.promiseAt(hash);
         if (data === undefined) {
             return undefined;
         }
-        assert(typeof(data) === "string", "data is not a string");
+        const typeIsOk = typeof(data) === "string" || data instanceof ArrayBuffer;
+
+        if (!typeIsOk) {
+            console.warn("data is a " + typeof(data) + ", but we except a string or ArrayBuffer. Path: " + optionalPathForDebugging);
+            if (typeof(data) === "object") {
+                console.warn("data is an object: " + JSON.stringify(data, null, 2));
+            }
+            debugger;
+
+            return undefined;
+        }
+
         const dataHash = await this.promiseHashKeyForData(data);
         if (dataHash !== hash) {
             throw new Error("hash key does not match hash of value");

@@ -180,11 +180,16 @@ class StrvctFile extends Object {
             throw new Error('No file path set. Use setPath() first.');
         }
 
+        let content;
         if (SvPlatform.isNodePlatform()) {
-            return this.asyncLoadArrayBufferNode();
+            content = await this.asyncLoadArrayBufferNode();
         } else {
-            return this.asyncLoadArrayBufferBrowser();
+            content = await this.asyncLoadArrayBufferBrowser();
         }
+        
+        this._content = content;
+        assert(content instanceof ArrayBuffer, "content is a " + typeof(content) + ", but we except a ArrayBuffer");
+        return content;
     }
 
     /**
@@ -224,8 +229,7 @@ class StrvctFile extends Object {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            this._content = await response.text();
-            return this._content;
+            return await response.text();
         } catch (error) {
             throw new Error(`Failed to load file in browser: ${fullUrl} - ${error.message}`);
         }
@@ -247,8 +251,9 @@ class StrvctFile extends Object {
             const buffer = await fs.readFile(fullPath);
             
             // Convert Node.js Buffer to ArrayBuffer
-            this._content = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
-            return this._content;
+            const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+            assert(arrayBuffer instanceof ArrayBuffer, "arrayBuffer is a " + typeof(arrayBuffer) + ", but we except a ArrayBuffer");
+            return arrayBuffer;
         } catch (error) {
             throw new Error(`Failed to load file as ArrayBuffer in Node.js: ${this._path} - ${error.message}`);
         }
@@ -270,8 +275,9 @@ class StrvctFile extends Object {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            this._content = await response.arrayBuffer();
-            return this._content;
+            const arrayBuffer = await response.arrayBuffer();
+            assert(arrayBuffer instanceof ArrayBuffer, "arrayBuffer is a " + typeof(arrayBuffer) + ", but we except a ArrayBuffer");
+            return arrayBuffer;
         } catch (error) {
             throw new Error(`Failed to load file as ArrayBuffer in browser: ${fullUrl} - ${error.message}`);
         }

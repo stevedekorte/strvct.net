@@ -240,6 +240,7 @@ const assert = function (v, errorMessage) {
             errorMessage = errorMessage();
         }
         const m = errorMessage ? errorMessage : "assert failed - false value";
+        console.error(m);
         debugger;
         throw new Error(m);
     }

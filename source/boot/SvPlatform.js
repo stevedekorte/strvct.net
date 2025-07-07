@@ -83,6 +83,13 @@ class SvPlatform extends Object {
             });
         }
     }
+
+    static getWindowLocationURL () {
+        if (SvPlatform.isNodePlatform()) {
+            return new URL("file://" + this.getWorkingDirectory() + "/index.js");
+        }
+        return new URL(window.location.href);
+    }
 }
 
 SvGlobals.set("SvPlatform", SvPlatform);

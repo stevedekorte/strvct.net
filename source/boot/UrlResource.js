@@ -170,7 +170,12 @@
             //if (data !== undefined) {
             if (hasKey) {
                 // if hashcache is available and has data, use it
-                const data = await hc.promiseAt(h);
+                const data = await hc.promiseAt(h, this.path());
+                if (data === undefined) {
+                    console.warn("hashcache has undefined data for " + h + " " + this.path());
+                    debugger; // there's a bug here, so just load normally
+                    return this.promiseJustLoad();
+                }
 
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
@@ -307,6 +312,7 @@
         // Handle invalid data types in Node.js gracefully
         
         if (SvPlatform.isNodePlatform()) {
+            debugger;
             if (!data || (typeof data !== 'object') || (!data.constructor || (data.constructor.name !== 'Uint8Array' && data.constructor.name !== 'ArrayBuffer'))) {
                 // Gracefully handle non-ArrayBuffer data in Node.js
                 debugger;
