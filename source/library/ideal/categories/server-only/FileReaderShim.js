@@ -4,7 +4,7 @@
  * @description FileReader polyfill for Node.js environments where FileReader API is not available.
  * This file is only executed when running in a Node.js environment.
  */
-console.log("evaluating FileReaderShim.js");
+//console.log("evaluating FileReaderShim.js");
 
 class FileReader extends Object {
     constructor() {
@@ -52,6 +52,4 @@ class FileReader extends Object {
 };
 
 SvGlobals.set("FileReader", FileReader);
-
-console.log("defined FileReader");
-assert(global.FileReader, "FileReader should be available globally");
+//assert(global.FileReader, "FileReader should be available globally");

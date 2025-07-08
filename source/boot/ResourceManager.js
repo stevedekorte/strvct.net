@@ -88,7 +88,12 @@
         this._camContent = null; // Store CAM content in memory for sync access
         this._filteredJsResources = null; // Cache filtered JS resources
         this._filteredCssResources = null; // Cache filtered CSS resources
+        this._promiseCompleted = Promise.clone();
         return this;
+    }
+
+    promiseCompleted () {
+        return this._promiseCompleted;
     }
 
     /**
@@ -375,6 +380,7 @@
     onDone () {
         SvGlobals.globals().bootLoadingView = bootLoadingView;
         this.markPageLoadTime();
+        this._promiseCompleted.callResolveFunc();
     }
 
     /**

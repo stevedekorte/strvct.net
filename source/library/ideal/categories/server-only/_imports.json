@@ -2,5 +2,6 @@
     "RangeShim.js",
     "FileReaderShim.js",
     "ImageShim.js",
-    "FontFaceShim.js"
+    "FontFaceShim.js",
+    "XMLHttpRequestShim.js"
 ]

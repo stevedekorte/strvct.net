@@ -142,7 +142,7 @@
         if (existingCookie) {
             return existingCookie;
         }
-        const newCookie = WbCookie.new();
+        const newCookie = WbCookie.clone();
         newCookie.setName(name);
         this.addCookie(newCookie);
         return newCookie;

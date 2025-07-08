@@ -40,6 +40,8 @@ class SvPlatform extends Object {
      */
     static _didSetupEnvironment = false;
 
+    static _promiseReady = null;
+
     static async asyncSetup () {
         if (this.isNodePlatform()) {
             await this.asyncSetupForNode();
@@ -55,7 +57,18 @@ class SvPlatform extends Object {
     static async asyncSetupForNode () {
         //console.log("SvPlatform asyncSetupForNode");
         this.setupPerformance();
+        this.setupNodeTLS();
         await this.asyncSetupNodeIndexedDB();
+    }
+
+    /**
+     * @static
+     * @description Sets up TLS configuration for Node.js development environment
+     * @category Node.js Setup
+     */
+    static setupNodeTLS () {
+        // Allow self-signed certificates for local development
+        process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
     }
 
     static async asyncSetupNodeIndexedDB () {
@@ -90,6 +103,44 @@ class SvPlatform extends Object {
         }
         return new URL(window.location.href);
     }
+    
+
+    // --- ready ---
+
+  static async promiseReady () {
+    if (this._promiseReady === null) {
+        if (SvPlatform.isNodePlatform()) {
+            this._promiseReady = this.promiseReadyOnNode();
+        } else {
+        this._promiseReady = this.promiseReadyInBrowser();
+        }
+    }
+    return this._promiseReady;
+  }
+
+  static async promiseReadyOnNode () {
+    //console.log("promiseReadyOnNode: starting BootLoader on Node");
+    // In Node.js, we can start immediately since the process is already ready
+    // Wait for next tick to ensure all modules are loaded
+    await new Promise(resolve => {
+      process.nextTick(() => {
+        resolve();
+      });
+    });
+  }
+
+  static async promiseReadyInBrowser() {
+    // Wrap the load event in a Promise
+    await new Promise(resolve => {
+      if (document.readyState === 'complete') {
+        resolve();
+      } else {
+        window.addEventListener('load', () => {
+          resolve();
+        });
+      }
+    });
+  }
 }
 
 SvGlobals.set("SvPlatform", SvPlatform);

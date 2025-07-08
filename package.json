@@ -34,6 +34,7 @@
   "dependencies": {
     "canvas": "^3.1.2",
     "node-indexeddb": "^6.0.3",
+    "xmlhttprequest": "^1.8.0",
     "yargs": "^17.7.2"
   }
 }
