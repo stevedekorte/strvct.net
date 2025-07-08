@@ -174,18 +174,14 @@
      * @category Cookie Management
      */
     save () {
-        document.cookie = this.cookieString();
+        this.cookieManager().requestSaveCookie(this);
         return this;
     }
 
-    /**
-     * @description Deletes the cookie from the browser's cookie storage.
-     * @returns {WbCookie} The current instance.
-     * @category Cookie Management
-     */
-    delete () {
+    deleteCookieString () {
         // To delete a cookie, we need to set it with an expired date
         // We'll preserve the path and domain to ensure we're deleting the right cookie
+
         let deleteStr = `${encodeURIComponent(this.name())}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
         
         if (this.path()) {
@@ -196,9 +192,48 @@
             deleteStr += `; Domain=${this.domain()}`;
         }
         
-        document.cookie = deleteStr;
-        this.cookieManager().onDidDeleteCookie(this);
+        return deleteStr;
+    }
+
+    /**
+     * @description Deletes the cookie from the browser's cookie storage.
+     * @returns {WbCookie} The current instance.
+     * @category Cookie Management
+     */
+    delete () {
+        // To delete a cookie, we need to set it with an expired date
+        // We'll preserve the path and domain to ensure we're deleting the right cookie
+
+        this.cookieManager().requestDeleteCookie(this);
         return this;
+    }
+
+    asJson () {
+        return {
+            name: this.name(),
+            value: this.value(),
+            maxAge: this.maxAge(),
+            expires: this.expires(),
+            path: this.path(),
+            domain: this.domain(),
+            secure: this.secure(),
+            sameSite: this.sameSite(),
+            httpOnly: this.httpOnly(),
+        };
+    }
+
+    static fromJson (json) {
+        const cookie = this.clone();
+        cookie.setName(json.name);
+        cookie.setValue(json.value);
+        cookie.setMaxAge(json.maxAge);
+        cookie.setExpires(json.expires);
+        cookie.setPath(json.path);
+        cookie.setDomain(json.domain);
+        cookie.setSecure(json.secure);
+        cookie.setSameSite(json.sameSite);
+        cookie.setHttpOnly(json.httpOnly);
+        return cookie;
     }
 
 }.initThisClass());

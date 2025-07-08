@@ -56,6 +56,12 @@
             slot.setSlotType("Map");
             slot.setFinalInitProto(Map);
         }
+
+        {
+            const slot = this.newSlot("idb", null);
+            slot.setSlotType("IndexedDbFolder");
+            //slot.setFinalInitProto(IndexedDbFolder);
+        }
     }
     
     /**
@@ -75,9 +81,7 @@
      */
     finalInit () {
         super.finalInit();
-        if (SvPlatform.isBrowserPlatform()) {
-            this.readCookies();
-        }
+        this.readCookies();
         return this;
     }
 
@@ -87,24 +91,34 @@
      * @category Cookie Management
      */
     readCookies () {
-        const cookiesMap = new Map();
-        
-        // Only access document.cookie in browser environment
-        if (typeof document !== 'undefined' && document.cookie) {
-            const cookieStrings = document.cookie.split(';');
-            
-            for (let cookieString of cookieStrings) {
-                const trimmedCookie = cookieString.trim();
-                if (trimmedCookie) {
-                    const cookie = WbCookie.fromCookieString(trimmedCookie);
-                    cookie.setCookieManager(this);
-                    cookiesMap.set(cookie.name(), cookie);
-                }
-            }
+        if (SvPlatform.isBrowserPlatform()) {
+           this.readBrowserCookies();
+        } else {
+            this.loadFromIdb();
         }
         
-        this.setCookiesMap(cookiesMap);
         return this;
+    }
+
+    /**
+     * @description Reads cookies from document.cookie and populates the cookies map.
+     * @returns {WbCookieManager} The current instance.
+     * @category Cookie Management
+     */
+    readBrowserCookies () {
+        // Only access document.cookie in browser environment
+        const cookiesMap = new Map();
+        const cookieStrings = document.cookie.split(';');
+        
+        for (let cookieString of cookieStrings) {
+            const trimmedCookie = cookieString.trim();
+            if (trimmedCookie) {
+                const cookie = WbCookie.fromCookieString(trimmedCookie);
+                cookie.setCookieManager(this);
+                cookiesMap.set(cookie.name(), cookie);
+            }
+        }
+        this.setCookiesMap(cookiesMap);
     }
 
     /**
@@ -206,6 +220,80 @@
      */
     onDidDeleteCookie (cookie) {
         this.cookiesMap().delete(cookie.name());
+    }
+
+    onDidSaveCookie (cookie) {
+        const map = this.cookiesMap();
+        const existingCookie = map.get(cookie.name());
+        if (existingCookie) {
+            assert(existingCookie === cookie, "Cookie already exists in map");
+        } else {
+            this.addCookie(cookie);
+        }
+        return this;
+    }
+
+    asJson () {
+        return {
+            type: "WbCookieManager",
+            cookies: this.cookiesArray().map(cookie => cookie.asJson())
+        };
+    }
+
+    setJson (json) {
+        assert(json.type === "WbCookieManager", "Invalid JSON type");
+        assert(Type.isArray(json.cookies), "cookies property must be an array");
+        json.cookies.forEach(cookieJson => {
+            const cookie = WbCookie.fromJson(cookieJson);
+            this.addCookie(cookie);
+        });
+        return this;
+    }
+
+    requestDeleteCookie (wbCookie) {
+        if (SvPlatform.isBrowserPlatform()) {
+            document.cookie = wbCookie.deleteCookieString();
+        } else {
+            this.idb().saveToIdb();
+        }
+        this.onDidDeleteCookie(wbCookie);
+        return this;
+    }
+
+    requestSaveCookie (wbCookie) {
+        if (SvPlatform.isBrowserPlatform()) {
+            document.cookie = wbCookie.cookieString();
+        }
+        this.onDidSaveCookie(wbCookie);
+        return this;
+    }
+
+    idb () {
+        if (this._idb === null) {
+            const idb = IndexedDBFolder.clone();
+            idb.setIsDebugging(false);
+            idb.setPath(this.type());
+            this._idb = idb;
+        }
+        return this._idb;
+    }
+
+    async loadFromIdb () {
+        const idb = this.idb();
+        const data = await idb.promiseAt("cookies");
+        if (data) {
+            const json = JSON.parse(data);
+            this.setJson(json);
+        }
+        return this;
+    }
+
+    async saveToIdb () {
+        const idb = this.idb();
+        const json = this.asJson();
+        const data = JSON.stringify(json);
+        await idb.promiseAtPut("cookies", data);
+        return this;
     }
 
 }.initThisClass());
