@@ -8,5 +8,6 @@
     "resources/_imports.json",
     "credentials/_imports.json",
     "services/_imports.json",
-    "app/_imports.json"
+    "app/_imports.json",
+    "cli/_imports.json"
 ]
