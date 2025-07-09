@@ -375,7 +375,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             this.setOwnsValue(true);
 
             if (this.slotType() === null) {
-                this.setSlotType(aProto.type()); // hack
+                if (aProto.type() === "String") {
+                    this.setSlotType(aProto);
+                } else {
+                    this.setSlotType(aProto.type()); // hack
+                }
             }
         }
         //this.setSyncsToView(true); // TODO: this ok? (added to make sure fields get updated when we call the slot setter)
