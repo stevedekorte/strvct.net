@@ -170,12 +170,13 @@
      */
     nodePath () {
         if (this.parentNode()) {
-            const parts = this.parentNode().nodePath()
-            parts.push(this)
-            return parts
+            const parts = this.parentNode().nodePath();
+            parts.push(this);
+            return parts;
         }
-        return [this]
+        return [this];
     }
+
 
     /**
      * @description Gets the node path array for given path components.
@@ -184,21 +185,21 @@
      * @returns {Array} The node path array.
      */
     nodePathArrayForPathComponents (pathComponents, results = []) {
-        results.push(this)
+        results.push(this);
 
         const link = this.nodeTileLink()
         if (link && link !== this) {
-            return link.nodePathArrayForPathComponents(pathComponents) 
+            return link.nodePathArrayForPathComponents(pathComponents);
         }
 
-        const pathComponent = pathComponents.first()
+        const pathComponent = pathComponents.first();
         if (pathComponent) {
-            const nextNode = this.firstSubnodeWithTitle(pathComponent)
+            const nextNode = this.firstSubnodeWithTitle(pathComponent);
             if (nextNode) {
-                return nextNode.nodePathArrayForPathComponents(pathComponents.rest())
+                return nextNode.nodePathArrayForPathComponents(pathComponents.rest());
             }
         }
-        return results
+        return results;
     }
     
     /**
