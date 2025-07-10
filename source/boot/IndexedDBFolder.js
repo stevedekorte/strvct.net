@@ -239,7 +239,7 @@
         
         // Check if index already exists before creating it (node-indexeddb compatibility)
         if (!objectStore.indexNames.contains("key")) {
-            /*const idbIndex = */ objectStore.createIndex("key", "key", { unique: true });
+            objectStore.createIndex("key", "key", { unique: true });
         }
     }
 

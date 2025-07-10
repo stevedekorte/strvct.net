@@ -85,10 +85,10 @@ class SvPlatform extends Object {
         //console.log('Initializing IndexedDB for Node.js...');
         
         // Load and initialize the database cache FIRST
-        const dbManager = require('node-indexeddb/dbManager');
+        const dbManager = require('node-indexeddb-lmdb/dbManager');
         await dbManager.loadCache();
 
-        const { indexedDB, IDBKeyRange } = require('node-indexeddb');                
+        const { indexedDB, IDBKeyRange } = require('node-indexeddb-lmdb');                
         SvGlobals.set("indexedDB", indexedDB);
         SvGlobals.set("IDBKeyRange", IDBKeyRange);
 
