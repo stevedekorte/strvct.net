@@ -270,14 +270,22 @@
   async asyncFetch () {
     this.setIsLoading(true);
 
+    /*
+    // don't need a proxy for the image as the server is: 
+    
+     - access-control-allow-origin: * (allows all origins)
+     - access-control-allow-methods: GET,HEAD
+
     const proxyUrl = this.getProxyUrl();
     this.setStatus("fetching...");
     console.log(this.type() + " fetch proxy url: " + proxyUrl);
+  */
 
     //const apiKey = LeonardoService.shared().apiKeyOrUserAuthToken();
-
+    const url = this.url();
+    console.log(this.type() + " fetching url: " + url);
     try {
-      const response = await fetch(proxyUrl);
+      const response = await fetch(url, { method: 'GET' });
       /*
       const response = await fetch(proxyUrl, {
         method: 'GET',
