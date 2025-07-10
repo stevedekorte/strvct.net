@@ -612,6 +612,7 @@
      * @param {*} value - The value to put.
      * @returns {Promise} - A promise that resolves when the value is put.
      */
+    /*
     async promiseAtPut (key, value) {
         await this.promiseOpen();
 
@@ -628,6 +629,85 @@
 
         //console.log("idb NO hasKey promiseAdd", key)
         return this.promiseAdd(key, value)
+    }
+    */
+
+    async promiseAtPut (key, value) {
+        await this.promiseOpen();
+  
+        if (typeof(value) === "undefined") {
+            return this.promiseRemoveAt(key)
+        }
+  
+        // Create a single readwrite transaction for the entire operation
+        // This ensures atomicity between the count check and the add/put operation
+        const putPromise = Promise.clone();
+        const objectStore = this.readWriteObjectStore();
+        objectStore._tx._note = "promiseAtPut";
+        const stack = this.currentStack();
+  
+        try {
+            // Check if key exists within the same transaction
+            const countRequest = objectStore.count(key);
+  
+            countRequest.onsuccess = async () => {
+                try {
+                    const count = countRequest.result;
+                    const hasKey = count !== 0;
+  
+                    let request;
+                    if (hasKey) {
+                        // Key exists, use put() to update
+                        this.debugLog("idb YES hasKey using put", key);
+                        request = objectStore.put({ key: key, value: value });
+                    } else {
+                        // Key doesn't exist, use add() to enforce uniqueness constraint
+                        this.debugLog("idb NO hasKey using add", key);
+                        request = objectStore.add({ key: key, value: value });
+                    }
+  
+                    request.onsuccess = () => {
+                        this.debugLog("promiseAtPut operation successful for key:", key);
+                    };
+  
+                    request.onerror = (event) => {
+                        console.error("promiseAtPut operation error for key:", key, event.target.error);
+                        putPromise.callRejectFunc(event.target.error);
+                    };
+  
+                } catch (error) {
+                    console.error("promiseAtPut error in count success handler:", error, "stack:", stack);
+                    putPromise.callRejectFunc(error);
+                }
+            };
+  
+            countRequest.onerror = (event) => {
+                console.error("promiseAtPut count error:", event.target.error, "stack:", stack);
+                putPromise.callRejectFunc(event.target.error);
+            };
+  
+            // Handle transaction completion
+            objectStore._tx.oncomplete = (event) => {
+                this.debugLog("promiseAtPut tx oncomplete for key:", key);
+                putPromise.callResolveFunc(event);
+            };
+  
+            objectStore._tx.onerror = (event) => {
+                console.error("promiseAtPut tx error:", event.target.error, "stack:", stack);
+                putPromise.callRejectFunc(event.target.error);
+            };
+  
+            objectStore._tx.onabort = (event) => {
+                console.error("promiseAtPut tx aborted:", event, "stack:", stack);
+                putPromise.callRejectFunc(new Error("Transaction aborted"));
+            };
+  
+        } catch (error) {
+            console.error("promiseAtPut caught error:", error, "stack:", stack);
+            putPromise.callRejectFunc(error);
+        }
+  
+        return putPromise;
     }
 
     /**
