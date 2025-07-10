@@ -612,7 +612,7 @@
      * @param {*} value - The value to put.
      * @returns {Promise} - A promise that resolves when the value is put.
      */
-    /*
+    
     async promiseAtPut (key, value) {
         await this.promiseOpen();
 
@@ -630,8 +630,9 @@
         //console.log("idb NO hasKey promiseAdd", key)
         return this.promiseAdd(key, value)
     }
-    */
 
+
+    /*
     async promiseAtPut (key, value) {
         await this.promiseOpen();
   
@@ -640,7 +641,6 @@
         }
   
         // Create a single readwrite transaction for the entire operation
-        // This ensures atomicity between the count check and the add/put operation
         const putPromise = Promise.clone();
         const objectStore = this.readWriteObjectStore();
         objectStore._tx._note = "promiseAtPut";
@@ -650,10 +650,12 @@
             // Check if key exists within the same transaction
             const countRequest = objectStore.count(key);
   
-            countRequest.onsuccess = async () => {
+            countRequest.onsuccess = () => {
                 try {
                     const count = countRequest.result;
                     const hasKey = count !== 0;
+  
+                    this.debugLog(`promiseAtPut: key="${key}", count=${count}, hasKey=${hasKey}`);
   
                     let request;
                     if (hasKey) {
@@ -671,35 +673,56 @@
                     };
   
                     request.onerror = (event) => {
-                        console.error("promiseAtPut operation error for key:", key, event.target.error);
-                        putPromise.callRejectFunc(event.target.error);
+                        console.error("promiseAtPut operation error for key:", key, "error:", event.target.error);
+                        console.error("Error name:", event.target.error?.name);
+                        console.error("Error message:", event.target.error?.message);
+  
+                        // Don't call reject here - let the transaction handle it
+                        // The transaction will abort and we'll handle it in onabort
                     };
   
                 } catch (error) {
                     console.error("promiseAtPut error in count success handler:", error, "stack:", stack);
-                    putPromise.callRejectFunc(error);
+                    // Don't call reject here either - let transaction abort
                 }
             };
   
             countRequest.onerror = (event) => {
                 console.error("promiseAtPut count error:", event.target.error, "stack:", stack);
-                putPromise.callRejectFunc(event.target.error);
+                // Don't call reject here - let transaction handle it
             };
   
-            // Handle transaction completion
+            // Handle transaction completion - this is where we resolve
             objectStore._tx.oncomplete = (event) => {
                 this.debugLog("promiseAtPut tx oncomplete for key:", key);
                 putPromise.callResolveFunc(event);
             };
   
+            // Handle transaction error - this will give us more details
             objectStore._tx.onerror = (event) => {
-                console.error("promiseAtPut tx error:", event.target.error, "stack:", stack);
-                putPromise.callRejectFunc(event.target.error);
+                console.error("promiseAtPut tx error for key:", key);
+                console.error("Transaction error:", event.target?.error);
+                console.error("Error name:", event.target?.error?.name);
+                console.error("Error message:", event.target?.error?.message);
+                console.error("Stack:", stack);
+                putPromise.callRejectFunc(event.target?.error || new Error("Transaction error"));
             };
   
+            // Handle transaction abort - this will tell us why it was aborted
             objectStore._tx.onabort = (event) => {
-                console.error("promiseAtPut tx aborted:", event, "stack:", stack);
-                putPromise.callRejectFunc(new Error("Transaction aborted"));
+                console.error("promiseAtPut tx aborted for key:", key);
+                console.error("Abort event:", event);
+                console.error("Transaction error:", event.target?.error);
+                console.error("Error name:", event.target?.error?.name);
+                console.error("Error message:", event.target?.error?.message);
+                console.error("Stack:", stack);
+  
+                // If it's a constraint error, we might want to handle it differently
+                if (event.target?.error?.name === 'ConstraintError') {
+                    console.error("This is a constraint error - the count() check might not be working correctly");
+                }
+  
+                putPromise.callRejectFunc(event.target?.error || new Error("Transaction aborted"));
             };
   
         } catch (error) {
@@ -709,7 +732,9 @@
   
         return putPromise;
     }
+    */
 
+    
     /**
      * Asserts that a key exists in the database.
      * @async
