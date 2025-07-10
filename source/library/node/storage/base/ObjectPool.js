@@ -1255,6 +1255,7 @@
      * @returns {Number}
      */
     async promiseCollect () {
+        //console.log(this.type() + " --- promiseCollect ---");
         //debugger;
         if (Type.isUndefined(this.rootPid())) {
             console.log("---- NO ROOT PID FOR COLLECT - clearing! ----");

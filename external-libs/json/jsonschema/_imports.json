@@ -1,5 +1,6 @@
 
 [
     "jsonschema.js",
-    "JsonValidator.js"
+    "JsonValidator.js",
+    "UiAttribution.json"
 ]

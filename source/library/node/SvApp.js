@@ -75,11 +75,14 @@
      */
     async loadFromStore () {
         let clearFirst = false;
+        /*
         if (SvPlatform.isNodePlatform()) {
             clearFirst = true;
         }
+        */
 
         if (clearFirst) {
+            console.log("--- clearing store ---");
             await this.clearStore();
             await this.store().promiseClose();
             this.scheduleMethod("justOpen"); // is this needed to wait for tx to commit?

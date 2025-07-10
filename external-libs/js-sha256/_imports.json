@@ -1,4 +1,5 @@
 
 [
-    "src/sha256.js"
+    "src/sha256.js",
+    "UiAttribution.json"
 ]

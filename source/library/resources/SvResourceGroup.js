@@ -184,6 +184,16 @@
     }
 
     /**
+     * @description Gets resources with a given name.
+     * @param {string} name - The name of the resources.
+     * @returns {Array} Array of resources.
+     * @category Resource Management
+     */
+    resourcesWithName (name) {
+        return this.resources().select(r => r.name() == name);
+    }
+
+    /**
      * @description Precaches resources where appropriate.
      * @returns {Promise<void>}
      * @category Resource Management

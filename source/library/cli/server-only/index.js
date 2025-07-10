@@ -1,4 +1,4 @@
-const CliBrowser = require('./CliBrowser');
+const SvCliBrowser = require('./SvCliBrowser');
 const data = require('./SampleData');
 
-const browser = new CliBrowser(data, { columnWidth: 45 });
+const browser = new SvCliBrowser(data, { columnWidth: 45 });

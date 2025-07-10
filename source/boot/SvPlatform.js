@@ -9,6 +9,8 @@
 
 class SvPlatform extends Object {
 
+    static _isNodePlatform = null;
+
     /**
      * @static
      * @description Detects if running in Node.js platform
@@ -16,9 +18,13 @@ class SvPlatform extends Object {
      * @category Environment Detection
      */
     static isNodePlatform () {
-        return (typeof process !== 'undefined' && 
-                process.versions && 
-                process.versions.node);
+        if (this._isNodePlatform === null) {
+            // we'll assume no polyfills at this point, so this should be a valid test
+            this._isNodePlatform = (typeof process !== 'undefined' && 
+                    process.versions && 
+                    process.versions.node);
+        }
+        return this._isNodePlatform;
     }
 
     /**
@@ -28,8 +34,12 @@ class SvPlatform extends Object {
      * @category Environment Detection
      */
     static isBrowserPlatform () {
+        return !this.isNodePlatform();
+        /*
+        // we might have polyfills
         return (typeof window !== 'undefined' && 
                 typeof document !== 'undefined');
+        */
     }
 
     /**

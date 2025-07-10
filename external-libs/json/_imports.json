@@ -1,6 +1,8 @@
 [
     "stream/stream.js",
+    "stream/UiAttribution.json",
     "clarinet/clarinet.js",
+    "clarinet/UiAttribution.json",
 
     "fast-json-patch/_imports.json",
     "json-stable-stringify/_imports.json",
