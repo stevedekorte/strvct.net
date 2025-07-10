@@ -5,7 +5,7 @@
 "use strict";
 
 /**
- * @class PersistentAtomicMap
+ * @class PersistentAtomicMap 
  * @extends ideal.AtomicMap
  * @classdesc An persistent atomic Map implemented as 
  * a read & write cache on top of IndexedDB.
@@ -78,23 +78,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIsOpen(false)
-        this.setIdb(IndexedDBFolder.clone())
-        this.setIsDebugging(false)
-        this.setName("PersistentAtomicMap")
-    }
-
-    /**
-     * @description Sets the name of the map and updates the IDB path.
-     * @param {string} aString - The new name for the map.
-     * @returns {PersistentAtomicMap} - Returns this instance.
-     * @category Configuration
-     */
-    setName (aString) {
-        this._name = aString
-        this.idb().setPath(this.name())
-        return this
+        super.init();
+        this.setIsOpen(false);
+        this.setIdb(IndexedDBFolder.clone());
+        this.setIsDebugging(false);
+        this.setName("PersistentAtomicMap");
     }
 
     /**
@@ -103,7 +91,7 @@
      * @category State
      */
     isOpen () {
-        return this.idb().isOpen()
+        return this.idb().isOpen();
     }
 
     /**
@@ -112,8 +100,7 @@
      * @category Operation
      */
     open () {
-        throw new Error(this.type() + " synchronous open not supported")
-        return this
+        throw new Error(this.type() + " synchronous open not supported");
     }
 
     /**
@@ -123,9 +110,9 @@
      * @category Configuration
      */
     setName (aString) {
-        this._name = aString
-        this.idb().setPath(this.name())
-        return this
+        this._name = aString;
+        this.idb().setPath(this.name());
+        return this;
     }
 
     /**
@@ -145,12 +132,13 @@
      * @category Operation
      */
     async promiseOnOpen () {
+        /*
         if (false) {
             debugger;
             this.debugLog("onOpen() - CLEARING BEFORE OPEN");
              await this.promiseClear();
         } 
-
+        */
         this.debugLog("onOpen() - loading cache");
         await this.promiseLoadMap();
     }
@@ -196,10 +184,10 @@
      * @category Transaction
      */
     newTxId () {
-        const count = this.txCount()
-        const s = "TX_" + count
-        this.setTxCount(count + 1)
-        return s
+        const count = this.txCount();
+        const s = "TX_" + count;
+        this.setTxCount(count + 1);
+        return s;
     }
 
     /**
@@ -208,7 +196,7 @@
      * @category Data Manipulation
      */
     async promiseApplyChanges () {
-        const count = this.changedKeySet().size
+        //const count = this.changedKeySet().size;
         const tx = this.idb().privateNewTx();
         await this.applyChangesToTx(tx);
     }
@@ -220,27 +208,27 @@
      * @category Data Manipulation
      */
     async applyChangesToTx (tx) {
-        assert(!this.isApplying())
-        this.setIsApplying(true)
+        assert(!this.isApplying());
+        this.setIsApplying(true);
 
-        tx.setTxId(this.newTxId())
-        tx.setIsDebugging(this.isDebugging())
-        tx.begin()
+        tx.setTxId(this.newTxId());
+        tx.setIsDebugging(this.isDebugging());
+        tx.begin();
         this.changedKeySet().forEachK((k) => {
-            const v = this.at(k)
+            const v = this.at(k);
             if (!this.has(k)) {
-                tx.removeAt(k)
+                tx.removeAt(k);
             } else {
-                const isUpdate = this.snapshot().has(k)
+                const isUpdate = this.snapshot().has(k);
                 if (isUpdate) {
-                    tx.atUpdate(k, v)
+                    tx.atUpdate(k, v);
                 } else {
-                    tx.atAdd(k, v)
+                    tx.atAdd(k, v);
                 }                
             }
-        })
+        });
         
-        super.applyChanges() // do this last as it will clear the snapshot
+        super.applyChanges(); // do this last as it will clear the snapshot
         
         this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----");
 
@@ -262,7 +250,6 @@
             this.debugLog(".verifySync() SUCCEEDED");
         } else {
             throw new Error(this.debugTypeId() + ".verifySync() FAILED");
-            debugger;
         }
     }
     

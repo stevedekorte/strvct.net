@@ -279,14 +279,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 	    assert(!this.isInTx());
     }
 
-    /**
-     * @category Data Retrieval
-     * @description Returns an array of keys in the map.
-     * @returns {Array} An array of keys.
-     */
-    keysArray () {
-        return this.map().keysArray();
-    }
+    // --- sets ---
 
     /**
      * @category Data Retrieval
@@ -295,15 +288,6 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
      */
     keysSet () {
         return this.map().keysSet();
-    }
-
-    /**
-     * @category Data Retrieval
-     * @description Returns an array of values in the map.
-     * @returns {Array} An array of values.
-     */
-    valuesArray () {
-        return this.map().valuesArray();
     }
 
     /**
