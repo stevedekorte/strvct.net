@@ -220,6 +220,7 @@
     return proxyUrl;
   }
 
+  // NOTE: the fetch is now done by the prompt as it only returns one image
   /**
    * @description Fetches the image.
    * @returns {Promise<void>}
