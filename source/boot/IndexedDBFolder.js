@@ -293,8 +293,8 @@
         tx.oncomplete = (/*event*/) => {
         }
 
-        const objectStore = tx.objectStore(this.storeName())
-        return objectStore
+        const objectStore = tx.objectStore(this.storeName());
+        return objectStore;
     }
 
     /**

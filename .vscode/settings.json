@@ -1,10 +1,22 @@
 {
     "github.copilot.enable": {
-
         "*": true,
         "plaintext": false,
         "markdown": false,
         "scminput": false
     },
-    "github.copilot.advanced": {}
+    "github.copilot.advanced": {},
+    "eslint.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact"
+    ],
+    "eslint.workingDirectories": [
+        {
+            "mode": "auto"
+        }
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    }
 }
