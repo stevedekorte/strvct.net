@@ -24,7 +24,7 @@
             slot.setSlotType("String");
         }
         {
-            const slot = this.newSlot("maxAge", null);
+            const slot = this.newSlot("maxAge", 34560000);
             slot.setSlotType("Number");
         }
         {
@@ -64,6 +64,12 @@
      */
     init () {
         super.init();
+        return this;
+    }
+
+    setMaxAgeToMax () {
+        const maxAgeSeconds = 34560000; // 400 days (maximum allowed by modern browsers)
+        this.setMaxAge(maxAgeSeconds);
         return this;
     }
 
@@ -163,6 +169,7 @@
      * @category Cookie Parsing
      */
     static fromCookieString (cookieString) {
+        //debugger;
         const cookie = this.clone();
         cookie.setCookieString(cookieString);
         return cookie;
@@ -177,6 +184,7 @@
         this.cookieManager().requestSaveCookie(this);
         return this;
     }
+
 
     deleteCookieString () {
         // To delete a cookie, we need to set it with an expired date

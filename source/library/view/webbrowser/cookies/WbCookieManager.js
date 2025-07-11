@@ -11,6 +11,7 @@
  * Usage example:
  * const cookie = WbCookieManager.shared().cookieNamed("myCookie");
  * if (cookie) {
+ *     cookie.setValue("myValue");
  *     cookie.setPath("/");
  *     cookie.setDomain("mydomain.com");
  *     cookie.setMaxAge(3600);
@@ -36,14 +37,49 @@
  */
 (class WbCookieManager extends ProtoClass {
     
-        /**
-     * @static
-     * @description Initializes the class as a singleton.
-     * @category Initialization
-     */
-        static initClass () {
-            this.setIsSingleton(true);
+    static valueOfCookieNamed (name) {
+        const cookie = WbCookieManager.shared().cookieNamed(name);
+        if (cookie) {
+            return cookie.value();
         }
+        return null;
+    }
+
+    static setValueOfCookieNamed (name, value) {
+        assert(name.length < 100, "sanity check");
+        const existingCookie = WbCookieManager.shared().cookieNamed(name);
+        if (existingCookie) {
+            if (Type.isNullOrUndefined(value)) {
+                existingCookie.delete();
+            } else {
+                existingCookie.setValue(value);
+                existingCookie.save();
+            }
+        } else {
+            const newCookie = WbCookieManager.shared().newCookieNamed(name);
+            newCookie.setName(name);
+            newCookie.setValue(value);
+            newCookie.save();
+        }
+        const newValue = WbCookieManager.valueOfCookieNamed(name);
+        if(newValue !== value) {
+            console.log("[" + newValue + "] != [" + value + "]");
+            debugger;
+            console.log("let's debugg this!");
+            WbCookieManager.valueOfCookieNamed(name);
+            this.setValueOfCookieNamed(name, value);
+        }
+        return this;
+    }
+
+    /**
+ * @static
+ * @description Initializes the class as a singleton.
+ * @category Initialization
+ */
+    static initClass () {
+        this.setIsSingleton(true);
+    }
     
         
     /**
@@ -108,6 +144,7 @@
     readBrowserCookies () {
         // Only access document.cookie in browser environment
         const cookiesMap = new Map();
+        this.setCookiesMap(cookiesMap);
         const cookieStrings = document.cookie.split(';');
         
         for (let cookieString of cookieStrings) {
@@ -117,6 +154,13 @@
                 cookie.setCookieManager(this);
                 cookiesMap.set(cookie.name(), cookie);
             }
+        }
+        if (cookiesMap.keysArray().detect(key => key.length > 50)) {
+            console.log("found crazy cookie names: ", cookiesMap.keysArray());
+            debugger;
+            console.log("cookie look hosed - deleting all cookies");
+            this.deleteAllCookies();
+            this.readCookies();
         }
         this.setCookiesMap(cookiesMap);
     }
@@ -128,7 +172,8 @@
      * @category Cookie Management
      */
     cookieNamed (name) {
-        return this.cookiesMap().get(name) || null;
+        const cookie =  this.cookiesMap().get(name) || null;
+        return cookie;
     }
 
     /**
@@ -201,6 +246,7 @@
      */
     deleteAllCookies () {
         this.cookiesArray().forEach(cookie => cookie.delete());
+        assert(this.cookiesMap().size === 0, "cookiesMap should be empty");
         return this;
     }
 
@@ -253,6 +299,7 @@
     requestDeleteCookie (wbCookie) {
         if (SvPlatform.isBrowserPlatform()) {
             document.cookie = wbCookie.deleteCookieString();
+            console.log("deleted cookie: ", wbCookie.name());   
         } else {
             this.idb().saveToIdb();
         }
@@ -262,6 +309,7 @@
 
     requestSaveCookie (wbCookie) {
         if (SvPlatform.isBrowserPlatform()) {
+            assert(wbCookie.name().length < 100, "sanity check");
             document.cookie = wbCookie.cookieString();
         }
         this.onDidSaveCookie(wbCookie);

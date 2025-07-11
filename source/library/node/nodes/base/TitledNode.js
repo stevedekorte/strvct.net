@@ -65,7 +65,7 @@
             slot.setCanInspect(true);
             slot.setLabel("icon");
             slot.setSlotType("String");
-            slot.setValidValuesClosure((instance) => SvIconResources.shared().iconNames());
+            slot.setValidValuesClosure((/*instance*/) => SvIconResources.shared().iconNames());
             slot.setInspectorPath("Node/Note");
         }
 
