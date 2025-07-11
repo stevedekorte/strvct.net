@@ -95,7 +95,8 @@
         let didThrow = false;
         try {
             func();
-        } catch(e) {
+        } catch (e) {
+            console.warn("assertThrows(" + func.toString() + ") failed: " + e.message);
             didThrow = true;
         }
 

@@ -252,20 +252,30 @@
         return this
     }
 
+    ownerOrParentNode () {
+        if (this.ownerNode()) {
+            return this.ownerNode();
+        }
+        return this.parentNode();
+    }
+
     /**
      * @description Get the ownership chain for this instance, following ownerNode and parentNode links .
      * @param {Array} chain - The chain to populate.
      * @returns {Array} The ownership chain.
      */
     ownershipChain (chain = []) {
-        if (this.ownerNode() !== null) {
-          chain.push(this.ownerNode());
-          this.ownerNode().ownershipChain(chain);
-        } else if (this.parentNode() !== null) {
-          chain.push(this.parentNode());
-          this.parentNode().ownershipChain(chain);
+        const ownerOrParent = this.ownerOrParentNode();
+        if (ownerOrParent) {
+            chain.push(ownerOrParent);
+            ownerOrParent.ownershipChain(chain);
         }
         return chain;
+    }
+
+    ownershipChainPathString () {
+        const chain = this.ownershipChain();
+        return chain.map(node => node.title()).join(".");
     }
 
     /**

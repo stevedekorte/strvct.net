@@ -45,7 +45,7 @@
   }
 
   addToolsForInstance (instance) {
-    const ownerPath = this.ownerPathString();
+    const ownerPath = this.ownershipChainPathString();
     console.log("addToolsForInstance: " + instance.type() + " ownerPath: " + ownerPath);
 
     if (this.toolTargetInstances().has(instance)) {

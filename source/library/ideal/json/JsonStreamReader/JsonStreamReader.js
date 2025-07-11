@@ -25,7 +25,7 @@
  */
 
 (class JsonStreamReader extends ProtoClass {
-  initPrototypeSlots() {
+  initPrototypeSlots () { 
     /**
      * @type {clarinet.parser}
      * @category Parser
@@ -90,7 +90,7 @@
    * @returns {clarinet.parser}
    * @category Parser
    */
-  newParser() {
+  newParser () {
     const parser = clarinet.parser();
 
     parser.onerror = (e) => {
@@ -139,7 +139,7 @@
    * @description Begins a new JSON stream.
    * @category Stream Control
    */
-  beginJsonStream() {
+  beginJsonStream () {
     this.setParser(this.newParser());
     this.setContainerStack([]);
     this.setKeyStack([]);
@@ -150,7 +150,7 @@
    * @description Ends the current JSON stream.
    * @category Stream Control
    */
-  endJsonStream() {
+  endJsonStream () {
     // check stack is empty?
     //this.popContainer();
     //this.rootContainer(); // should be an array of all the json objects we've read
@@ -162,7 +162,7 @@
    * @returns {JsonStreamReader} The instance of JsonStreamReader.
    * @category Stream Control
    */
-  onStreamJson(data) {
+  onStreamJson (data) {
     assert(Type.isString(data), "data must be a string");
     //console.log("onStreamJson('" + data + "')");
     this.parser().write(data);
@@ -174,7 +174,7 @@
    * @returns {JsonStreamReader} The instance of JsonStreamReader.
    * @category Lifecycle
    */
-  shutdown() {
+  shutdown () {
     this.setParser(null);
     return this;
   }
@@ -184,7 +184,7 @@
    * @returns {*} The root container.
    * @category Data Access
    */
-  rootContainer() {
+  rootContainer () {
     return this.containerStack().first();
   }
 
@@ -192,7 +192,7 @@
    * @description Logs the root container to the console.
    * @category Debugging
    */
-  show() {
+  show () {
     const s = JSON.stableStringifyWithStdOptions(this.rootContainer());
     console.log("root: ", s);
   }
@@ -204,7 +204,7 @@
    * @returns {Object|Array|null} The current container, or null if none.
    * @category Data Access
    */
-  currentContainer() {
+  currentContainer () {
     return this.containerStack().last();
   }
 
@@ -214,7 +214,7 @@
    * @returns {JsonStreamReader} The instance of JsonStreamReader.
    * @category Data Structure
    */
-  pushContainer(container) {
+  pushContainer (container) {
     assert(container, "container is null");
     this.containerStack().push(container);
     this.sendDelegate("onJsonStreamReaderPushContainer", [this, container]);
@@ -229,7 +229,7 @@
    * @returns {Object|Array} The popped container.
    * @category Data Structure
    */
-  popContainer() {
+  popContainer () {
     assert(this.containerStack().length > 1, "can't close root array");
     const item = this.containerStack().pop();
     this.sendDelegate("onJsonStreamReaderPopContainer", [this, item]);
@@ -243,7 +243,7 @@
    * @returns {string|null} The current key, or null if none.
    * @category Data Access
    */
-  currentKey() {
+  currentKey () {
     return this.keyStack().last();
   }
 
@@ -253,7 +253,7 @@
    * @returns {JsonStreamReader} The instance of JsonStreamReader.
    * @category Data Structure
    */
-  pushKey(key) {
+  pushKey (key) {
     assert(Type.isString(key), "key must be a string");
     this.keyStack().push(key);
     return this;
@@ -264,7 +264,7 @@
    * @returns {JsonStreamReader} The instance of JsonStreamReader.
    * @category Data Structure
    */
-  popKey() {
+  popKey () {
     assert(this.keyStack().length > 0, "can't pop empty key stack");
     this.keyStack().pop();
     return this;
@@ -277,7 +277,7 @@
    * @param {Error} e - The error that occurred.
    * @category Error Handling
    */
-  onError(e) {
+  onError (e) {
     console.log(this.type() + " error: " + e);
     debugger;
     this.sendDelegate("onJsonStreamReaderError", [this, e]);
@@ -288,7 +288,7 @@
    * @param {string} key - The key that was encountered.
    * @category Parsing
    */
-  onKey(key) {
+  onKey (key) {
     this.pushKey(key);
     //this.debugLog("k '" + key + "'");
   }
@@ -298,7 +298,7 @@
    * @param {*} v - The value that was encountered.
    * @category Parsing
    */
-  onValue(v) {
+  onValue (v) {
     const container = this.currentContainer();
     assert(container, "no current container");
     if (Type.isArray(container)) {
@@ -316,7 +316,7 @@
    * @param {string} key - The key of the opened object.
    * @category Parsing
    */
-  onOpenObject(key) {
+  onOpenObject (key) {
     const item = {};
     this.onValue(item);
     this.pushContainer(item);
@@ -328,9 +328,9 @@
    * @description Handles a close object event from the clarinet parser.
    * @category Parsing
    */
-  onCloseObject() {
+  onCloseObject () {
     assert(this.containerStack().length > 1, "can't close root object");
-    const item = this.popContainer();
+    this.popContainer();
     //this.debugLog("onCloseObject ", JSON.stableStringifyWithStdOptions(item));
   }
 
@@ -338,7 +338,7 @@
    * @description Handles an open array event from the clarinet parser.
    * @category Parsing
    */
-  onOpenArray() {
+  onOpenArray () {
     const item = [];
     this.onValue(item);
     this.pushContainer(item);
@@ -349,9 +349,9 @@
    * @description Handles a close array event from the clarinet parser.
    * @category Parsing
    */
-  onCloseArray() {
+  onCloseArray () {
     assert(this.containerStack().length > 1, "can't close root array");
-    const item = this.popContainer();
+    this.popContainer();
     //this.debugLog("onCloseArray ", JSON.stableStringifyWithStdOptions(item));
   }
 
@@ -359,7 +359,7 @@
    * @description Handles an end event from the clarinet parser.
    * @category Parsing
    */
-  onEnd() {
+  onEnd () {
     this.popIfCurrentNodeIsText();
   }
 
@@ -372,7 +372,7 @@
    * @returns {boolean} True if the delegate method was called successfully, false otherwise.
    * @category Delegation
    */
-  sendDelegate(methodName, args = [this]) {
+  sendDelegate (methodName, args = [this]) {
     const d = this.delegate();
 
     /*
