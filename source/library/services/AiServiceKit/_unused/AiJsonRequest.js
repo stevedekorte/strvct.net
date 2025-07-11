@@ -19,7 +19,7 @@
      */
     {
       const slot = this.newSlot("jsonStreamReader", null);
-      slot.setSlotType(JsonStreamReader);
+      slot.setSlotType("JsonStreamReader");
     }
 
     /**
@@ -28,7 +28,7 @@
      */
     {
       const slot = this.newSlot("containerChunkLevel", 2);
-      slot.setSlotType(Number);
+      slot.setSlotType("Number");
     }
   }
 
