@@ -132,7 +132,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     */
 
     setSlotType (s) {
-        assert(Type.isString(s));
+        assert(Type.isString(s), "Slot.setSlotType called with non-string: " + s);
         this.setSlotTypeDict({ 
             kind: "instance",
             name: s
