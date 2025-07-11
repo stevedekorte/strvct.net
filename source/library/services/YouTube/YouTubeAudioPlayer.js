@@ -410,7 +410,7 @@
    * @description Handles the player ready event.
    * @param {Object} event - The ready event.
    */
-  onPlayerReady (event) {
+  onPlayerReady (/*event*/) {
     this.debugLog("onPlayerReady()");
     this.promiseUpdateVolume();
 
@@ -463,7 +463,7 @@
    * @description Handles the end of the video playback.
    * @param {Object} event - The end event.
    */
-  onPlayerEnd (event) {
+  onPlayerEnd (/*event*/) {
     if (this.shouldRepeat()) {
       this.player().playVideo();
     } else {
@@ -488,7 +488,7 @@
    * @param {boolean} oldValue - The old mute value.
    * @param {boolean} newValue - The new mute value.
    */
-  didUpdateMute (oldValue, newValue) {
+  didUpdateMute (/*oldValue, newValue*/) {
     if (this.mute()) {
       this.stop();
     } 
@@ -541,18 +541,6 @@
     this.resolvePlayPromise();
   }
 
-  /**
-   * @async
-   * @description Shuts down the YouTube player.
-   */
-  async shutdown () {
-    await this.playerPromise();
-    const player = this.player();
-    player.stopVideo();
-    player.destroy();
-    this.setPlayer(null);
-    console.log("------------- shutdown YouTubePlayer ---------------");
-  }
 
   /**
    * @description Gets the seconds buffered by the player.
@@ -627,6 +615,17 @@
     };
   }
 
+/*
+  async shutdown () {
+    await this.playerPromise();
+    const player = this.player();
+    player.stopVideo();
+    player.destroy();
+    this.setPlayer(null);
+    console.log("------------- shutdown YouTubePlayer ---------------");
+  }
+    */
+   
   /**
    * @async
    * @description Shuts down the YouTube player.

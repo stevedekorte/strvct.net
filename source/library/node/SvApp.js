@@ -61,11 +61,11 @@
      * @returns {SvApp} The shared instance
      * @category Initialization
      */
-    static loadAndRunShared () {
+    static async loadAndRunShared () {
         const app = this.shared();
         app.setStore(this.defaultStore());
         app.store().setName(this.type()); // name of the database
-        app.loadFromStore();
+        await app.loadFromStore();
         return app;
     }
 
@@ -121,11 +121,18 @@
      */
     async justOpen () {
         try {
+            await this.store().promiseOpen(); 
+            this.store().rootOrIfAbsentFromClosure(() => {
+                return this.thisClass().rootNodeProto().clone();
+            });
+            await this.run();
+
+/*
             await this.asyncLogTimeToRun(async () => { 
                 await this.store().promiseOpen(); 
             }, "store open");
 
-            await this.asyncLogTimeToRun(async () => { 
+            await this.asyncLogTimeToRun(() => { 
                 this.store().rootOrIfAbsentFromClosure(() => {
                     return this.thisClass().rootNodeProto().clone();
                 });
@@ -134,7 +141,7 @@
             await this.asyncLogTimeToRun(async () => { 
                 await this.run();
             }, "app run");
-
+*/
         } catch (error) {
             console.warn("ERROR: ", error);
             debugger;
@@ -381,6 +388,7 @@
      * @category Lifecycle
      */
     afterAppUiDidInit () {
+        debugger;
         if (SvPlatform.isBrowserPlatform()) {
             const searchParams = WebBrowserWindow.shared().pageUrl().searchParams;
             if (searchParams.keys().length !== 0) {

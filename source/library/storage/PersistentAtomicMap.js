@@ -123,7 +123,7 @@
     async promiseOpen () {
         this.debugLog(() => "promiseOnOpen() '" + this.name() + "'");
         await this.idb().promiseOpen();
-        return this.promiseOnOpen(); // it can deal with multiple calls while it's opening
+        await this.promiseOnOpen(); // it can deal with multiple calls while it's opening
     }
 	
     /**

@@ -237,7 +237,7 @@
     // add a delegate slot
     {
       const slot = this.newSlot("delegate", null);
-      slot.setSlotType("Delegate");
+      slot.setSlotType("Object");
       //slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
 

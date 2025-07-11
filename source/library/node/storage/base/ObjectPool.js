@@ -76,7 +76,6 @@
             slot.setSlotType("String");
         }
 
-
         /**
          * @member {Object} rootObject
          * @description the root object of the object pool
@@ -264,7 +263,6 @@
     open () { // this class can also be used with synchronous AtomicMap
         this.recordsMap().setName(this.name());
         this.recordsMap().open();
-        debugger;
         this.onPoolOpenSuccess();
         return this
     }
@@ -276,7 +274,6 @@
      * @returns {Promise}
      */
     async promiseOpen () { 
-        //debugger;
         const map = this.recordsMap();
         map.setName(this.name());
         try {
@@ -301,7 +298,6 @@
      * @returns {Promise}
      */
     async onPoolOpenSuccess () {
-        //debugger;
         // here so subclasses can easily hook
         await this.onRecordsDictOpen();
     }
@@ -1256,7 +1252,6 @@
      */
     async promiseCollect () {
         //console.log(this.type() + " --- promiseCollect ---");
-        //debugger;
         if (Type.isUndefined(this.rootPid())) {
             console.log("---- NO ROOT PID FOR COLLECT - clearing! ----");
             await this.recordsMap().promiseBegin();
@@ -1351,14 +1346,15 @@
     // ------------------------
 
     /**
-     * @description sweep
-     * @returns {Number}
+     * @description Sweep unmarked pids. Called after marking is complete. Part of garbage collection.
+     * @returns {Number} The number of pids swept.
      */
     sweep () {
         const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()); // allPids doesn't contain rootKey
 
         unmarkedPidSet.forEach(pid => {
             this.debugLog(() => "--- sweeping --- deletePid(" + pid + ") ");
+            console.log("--- sweeping --- deletePid(" + pid + ") ");
             this.recordsMap().removeKey(pid); // this will remove the pid from the recordsMap
         });
 

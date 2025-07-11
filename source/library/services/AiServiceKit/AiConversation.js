@@ -142,8 +142,13 @@
     super.finalInit();
     this.setTagDelegate(this); // needed to get tool calls
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
-    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
     this.setResponseMsgClass(AiParsedResponseMessage);
+  }
+
+  afterInit () {
+    super.afterInit();
+    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
   }
 
   initToolSlots () {
@@ -552,7 +557,7 @@
           // find all the tool-call-result tags which are for getClientState or patchClientState 
           // and replace them with a note that they were removed
           m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
-            if (content.includes("getClientState" || content.includes("patchClientState"))) {
+            if (content.includes("getClientState") || content.includes("patchClientState")) {
               const json = JSON.parse(content);
               if (json.toolName === "getClientState" || json.toolName === "patchClientState") {
                 json.result = "result removed to save tokens";

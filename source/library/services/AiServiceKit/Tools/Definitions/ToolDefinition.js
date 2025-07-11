@@ -22,7 +22,7 @@
     {
       const slot = this.newSlot("toolTarget", null);
       slot.setDescription("Instance of the class whose instance the tool call will be made on.");
-      slot.setSlotType("Pointer");
+      slot.setSlotType("Object");
       slot.setAllowsNullValue(true);
       slot.setShouldJsonArchive(true);
       slot.setIsSubnodeField(false);

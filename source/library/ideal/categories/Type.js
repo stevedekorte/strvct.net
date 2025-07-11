@@ -160,11 +160,24 @@ class Type extends Object {
         const className = typeName.split(" ")[0];
         let aClass = SvGlobals.globals()[className];
         if (aClass === undefined) {
-            console.warn("Type.classForClassTypeName: unable to find class for type name: '" + typeName + "' using Object instead");
-            //debugger;
+            console.warn("--- Type.classForClassTypeName: unable to find class for type name: '" + typeName + "' using Object instead ---");
             aClass = Object;
         }
         return aClass;
+    }
+
+    static valueIsInstanceOfClass (value, classReference) {
+        if (value instanceof classReference) return true;
+    
+        // Handle known primitives with object wrappers
+        switch (classReference) {
+            case String: return typeof value === "string";
+            case Number: return typeof value === "number";
+            case Boolean: return typeof value === "boolean";
+            case Symbol: return typeof value === "symbol";
+            case BigInt: return typeof value === "bigint";
+        }
+        return Object(value) instanceof classReference;
     }
 
     static classForInstanceTypeName (typeName) {

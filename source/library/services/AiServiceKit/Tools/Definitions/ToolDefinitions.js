@@ -45,6 +45,9 @@
   }
 
   addToolsForInstance (instance) {
+    const ownerPath = this.ownerPathString();
+    console.log("addToolsForInstance: " + instance.type() + " ownerPath: " + ownerPath);
+
     if (this.toolTargetInstances().has(instance)) {
       throw new Error("Tool definitions already added for instance: " + instance.type());
     }
@@ -57,7 +60,7 @@
       if (method.isToolable && method.isToolable()) {
         if (!this.toolDefinitionWithName(method.name)) {
           const toolDef = ToolDefinition.clone();
-          console.log("adding tool for method: " + method.name);
+          //console.log("adding tool for method: " + method.name);
           toolDef.setToolTarget(instance);
           toolDef.setName(method.name);
           this.addTool(toolDef);
@@ -110,7 +113,7 @@ The following tools are available for you to use:
 
   classesReferencedByToolTypes () {
     const refSet = new Set();
-    const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonSchema(refSet));
+    this.toolDefinitions().map(toolDef => toolDef.toolJsonSchema(refSet));
     return refSet;
   }
 

@@ -306,6 +306,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         try {
             this.thisClass().assertValidItems(items);
         } catch (e) {
+            console.warn("Slot '" + this.name() + "' assertValidItems failed: " + e);
             items = this.thisClass().fixValidItems(items);
             this.thisClass().assertValidItems(items);
         }
@@ -1070,11 +1071,23 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             return true;
         }
 
+
         const slotType = this.slotType();
         if (slotType) {
+            // NOTE: need to handle special cases like:
+            // -"Classname class" (indicates it's a class reference)
+            // - "JSON Object" (indicates it's a JSON object type)
+
             if (slotType === "JSON Object") {
                 return Type.isDeepJsonType(v);
             } else {
+                // FAST BUT INCOMPLETE CHECK
+                let slotTypeClass = this.slotTypeClass();
+                if (Type.valueIsInstanceOfClass(v, slotTypeClass)) {
+                    return true;
+                }
+
+                // SLOW FULL CHECK
                 let result = Type.typeNameIsKindOf(Type.typeName(v), slotType);
                 //let result = Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
                 if (result) {
@@ -1087,6 +1100,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         }
 
         return false;
+    }
+
+    slotTypeClass () {
+        if (!this._slotTypeClass) {
+            this._slotTypeClass = Type.classForClassTypeName(this.slotType());
+        }
+        return this._slotTypeClass;
     }
 
     /**
