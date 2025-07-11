@@ -282,11 +282,13 @@
         const path = resource.path();
         const canUse = StrvctFile.with(path).canUseInCurrentEnv();
         
+        /*
         if (!canUse) {
             const envName = SvPlatform.isNodePlatform() ? 'Node.js' : 'browser';
             const skipReason = SvPlatform.isNodePlatform() ? 'browser-only' : 'server-only';
             console.log(`⏭️  Skipping ${skipReason} resource in ${envName}: ${path}`);
         }
+        */
         
         return canUse;
     }
@@ -299,14 +301,14 @@
     async evalIndexResources () {
         let count = 0;
 
-        console.log("📋 CSS Resources:", this.cssResources().length);
+        //console.log("📋 CSS Resources:", this.cssResources().length);
         // this.cssResources().forEach((r, i) => console.log(`  ${i}: ${r.path()}`));
         
-        console.log("📋 JS Resources:", this.jsResources().length);
+        //console.log("📋 JS Resources:", this.jsResources().length);
         // this.jsResources().forEach((r, i) => console.log(`  ${i}: ${r.path()}`));
 
         // Load all files in parallel first
-        console.log("🔄 Loading all resources in parallel...");
+        //console.log("🔄 Loading all resources in parallel...");
         
         // Load CSS resources in parallel
         const cssLoadPromises = this.cssResources().map(async (r) => {
@@ -322,18 +324,18 @@
         
         // Wait for all loads to complete
         await Promise.all([...cssLoadPromises, ...jsLoadPromises]);
-        console.log("✅ All resources loaded");
+        //console.log("✅ All resources loaded");
 
         // Now evaluate CSS in sequence (order matters for cascading)
-        console.log("🔄 Evaluating CSS resources in sequence...");
+        //console.log("🔄 Evaluating CSS resources in sequence...");
         this.cssResources().forEach((r) => {
             //console.log("🎨 Evaluating CSS:", r.path());
             r.eval();
         });
-        console.log("✅ CSS resources evaluated");
+        //console.log("✅ CSS resources evaluated");
 
         // Evaluate JS in sequence (dependency order matters)
-        console.log("🔄 Evaluating JS resources in sequence...");
+        //console.log("🔄 Evaluating JS resources in sequence...");
         for (const r of this.jsResources()) {
             count++;
             //console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
@@ -348,7 +350,7 @@
                 throw error;
             }
         }
-        console.log("✅ JS resources evaluated");
+        //console.log("✅ JS resources evaluated");
 
         //console.log("🏁 Calling onDone...");
         this.onDone(); 
@@ -393,11 +395,11 @@
         }
 
         try {
-            console.log("markPageLoadTime: performance =", !!performance);
-            console.log("markPageLoadTime: performance.timing =", !!performance.timing);
-            console.log("markPageLoadTime: navigationStart =", performance.timing.navigationStart);
+            //console.log("markPageLoadTime: performance =", !!performance);
+            //console.log("markPageLoadTime: performance.timing =", !!performance.timing);
+            //console.log("markPageLoadTime: navigationStart =", performance.timing.navigationStart);
             this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
-            console.log("markPageLoadTime: calculated pageLoadTime =", this._pageLoadTime);
+            //console.log("markPageLoadTime: calculated pageLoadTime =", this._pageLoadTime);
         } catch (error) {
             console.error("❌ Error in markPageLoadTime:", error);
             console.error("Error type:", typeof error);

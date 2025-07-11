@@ -81,7 +81,7 @@ class StrvctFile extends Object {
      * @returns {typeof StrvctFile} The class for chaining
      * @category Class Configuration
      */
-    static setBaseUrl(url) {
+    static setBaseUrl (url) {
         this._baseUrl = url.replace(/\/$/, ''); // Remove trailing slash
         return this;
     }
@@ -103,7 +103,7 @@ class StrvctFile extends Object {
      * @returns {typeof StrvctFile} The class for chaining
      * @category Class Configuration
      */
-    static setWorkingPath(path) {
+    static setWorkingPath (path) {
         this._workingPath = path;
         return this;
     }
@@ -145,7 +145,7 @@ class StrvctFile extends Object {
      * @returns {string} The file path
      * @category Instance Configuration
      */
-    path() {
+    path () {
         return this._path;
     }
 
@@ -305,7 +305,7 @@ class StrvctFile extends Object {
             // URL encode the path to handle spaces and special characters
             const encodedPath = encodeURI(this._path);
             const sourceUrlComment = `\n//# sourceURL=${encodedPath}`;
-            console.log("eval [" + encodedPath.split("/").pop() + "]");
+            //console.log("eval [" + encodedPath.split("/").pop() + "]");
             eval(this._content + sourceUrlComment);
             //const evalFunc = new Function(this._content + sourceUrlComment);
             //evalFunc.call(window);
@@ -371,7 +371,7 @@ class StrvctFile extends Object {
             return file.asyncLoad();
         });
         
-        const fileContents = await Promise.all(loadPromises);
+        await Promise.all(loadPromises);
         
         // Evaluate files sequentially to maintain order
         files.forEach(file => {

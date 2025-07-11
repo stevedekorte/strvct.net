@@ -160,7 +160,8 @@ class Type extends Object {
         const className = typeName.split(" ")[0];
         let aClass = SvGlobals.globals()[className];
         if (aClass === undefined) {
-            console.warn("Type.classForClassTypeName: unable to find class for type name: " + typeName + " using Object instead");
+            console.warn("Type.classForClassTypeName: unable to find class for type name: '" + typeName + "' using Object instead");
+            //debugger;
             aClass = Object;
         }
         return aClass;
@@ -207,8 +208,8 @@ class Type extends Object {
         if (aIsClass && bIsClass) {
             return this.classNameIsKindOfClassName(typeA, typeB);
         } else if (!aIsClass && !bIsClass) {
-            const aClassName = this.classNameForInstanceName(typeA);
-            const bClassName = this.classNameForInstanceName(typeB);
+            let aClassName = this.classNameForInstanceName(typeA);
+            let bClassName = this.classNameForInstanceName(typeB);
             return this.classNameIsKindOfClassName(aClassName, bClassName);
         }
 

@@ -47,7 +47,6 @@
   addToolsForInstance (instance) {
     if (this.toolTargetInstances().has(instance)) {
       throw new Error("Tool definitions already added for instance: " + instance.type());
-      return this;
     }
 
     this.toolTargetInstances().add(instance);
@@ -58,6 +57,7 @@
       if (method.isToolable && method.isToolable()) {
         if (!this.toolDefinitionWithName(method.name)) {
           const toolDef = ToolDefinition.clone();
+          console.log("adding tool for method: " + method.name);
           toolDef.setToolTarget(instance);
           toolDef.setName(method.name);
           this.addTool(toolDef);
