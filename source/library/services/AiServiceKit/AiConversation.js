@@ -148,7 +148,13 @@
 
   afterInit () {
     super.afterInit();
-    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+  }
+ 
+  prepareForFirstAccess () {
+    super.prepareForFirstAccess();
+    this.assistantToolKit().toolDefinitions().addToolsForInstance(this);
+    return this;
   }
 
   initToolSlots () {

@@ -178,30 +178,11 @@
     }
 
     /**
-     * @description Gets the owner path components.
-     * @returns {Array} The owner path components.
-     */
-    ownerPathComponents () {
-        const nodeSet = new Set(); // sanity check to detect cycles
-        const components = [];
-        let owner = this;
-        while (owner) {
-            components.unshift(owner);
-            owner = owner.ownerNode();
-            if (nodeSet.has(owner)) {
-                throw new Error("ownerPathComponents: cycle detected");
-            }
-            nodeSet.add(owner);
-        }
-        return components;
-    }
-
-    /**
      * @description Gets the owner path string.
      * @returns {string} The owner path string.
      */
-    ownerPathString () {
-        return this.ownerPathComponents().map(node => node.title()).join("/");
+    ownershipPathString () {
+        return this.ownershipChain().map(node => node.title()).join("/");
     }
 
     ownerRoot () {

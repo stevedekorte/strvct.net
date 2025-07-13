@@ -160,7 +160,10 @@ class Type extends Object {
         const className = typeName.split(" ")[0];
         let aClass = SvGlobals.globals()[className];
         if (aClass === undefined) {
-            console.warn("--- Type.classForClassTypeName: unable to find class for type name: '" + typeName + "' using Object instead ---");
+            const namesToIgnore = ["Parser", "clarinet.parser"];
+            if (!namesToIgnore.includes(className)) {
+                console.warn("--- Type.classForClassTypeName: unable to find class for type name: '" + typeName + "' using Object instead ---");
+            }
             aClass = Object;
         }
         return aClass;

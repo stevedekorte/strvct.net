@@ -1,18 +1,18 @@
 (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __commonJS = (cb, mod) => function __require() {
+  var __commonJS = (cb, mod) => function __require () {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
   // json/clarinet/clarinet.js
   var require_clarinet = __commonJS({
-    "json/clarinet/clarinet.js"(exports) {
+    "json/clarinet/clarinet.js" (exports) {
       SvGlobals.globals().clarinet = {};
       var exports = clarinet;
-      (function(clarinet2) {
+      (function (clarinet2) {
         "use strict";
         var env = typeof process === "object" && process.env ? process.env : self;
-        clarinet2.parser = function(opt) {
+        clarinet2.parser = function (opt) {
           return new CParser(opt);
         };
         clarinet2.CParser = CParser;
@@ -36,7 +36,7 @@
         var buffers = {
           textNode: void 0,
           numberNode: ""
-        }, streamWraps = clarinet2.EVENTS.filter(function(ev) {
+        }, streamWraps = clarinet2.EVENTS.filter(function (ev) {
           return ev !== "error" && ev !== "end";
         }), S = 0, Stream;
         clarinet2.STATE = {
@@ -127,8 +127,8 @@
           // }
         };
         if (!Object.create) {
-          Object.create = function(o) {
-            function f() {
+          Object.create = function (o) {
+            function f () {
               this["__proto__"] = o;
             }
             f.prototype = o;
@@ -136,18 +136,18 @@
           };
         }
         if (!Object.getPrototypeOf) {
-          Object.getPrototypeOf = function(o) {
+          Object.getPrototypeOf = function (o) {
             return o["__proto__"];
           };
         }
         if (!Object.keys) {
-          Object.keys = function(o) {
+          Object.keys = function (o) {
             var a = [];
             for (var i in o) if (o.hasOwnProperty(i)) a.push(i);
             return a;
           };
         }
-        function checkBufferLength(parser) {
+        function checkBufferLength (parser) {
           var maxAllowed = Math.max(clarinet2.MAX_BUFFER_LENGTH, 10), maxActual = 0;
           for (var buffer in buffers) {
             var len = parser[buffer] === void 0 ? 0 : parser[buffer].length;
@@ -164,13 +164,13 @@
           }
           parser.bufferCheckPosition = clarinet2.MAX_BUFFER_LENGTH - maxActual + parser.position;
         }
-        function clearBuffers(parser) {
+        function clearBuffers (parser) {
           for (var buffer in buffers) {
             parser[buffer] = buffers[buffer];
           }
         }
         var stringTokenPattern = /[\\"\n]/g;
-        function CParser(opt) {
+        function CParser (opt) {
           if (!(this instanceof CParser)) return new CParser(opt);
           var parser = this;
           clearBuffers(parser);
@@ -190,24 +190,24 @@
           emit(parser, "onready");
         }
         CParser.prototype = {
-          end: function() {
+          end: function () {
             end(this);
           },
           write,
-          resume: function() {
+          resume: function () {
             this.error = null;
             return this;
           },
-          close: function() {
+          close: function () {
             return this.write(null);
           }
         };
-        Stream = function() {
+        Stream = function () {
         };
-        function createStream(opt) {
+        function createStream (opt) {
           return new CStream(opt);
         }
-        function CStream(opt) {
+        function CStream (opt) {
           if (!(this instanceof CStream)) return new CStream(opt);
           this._parser = new CParser(opt);
           this.writable = true;
@@ -218,22 +218,22 @@
           this.string = "";
           var me = this;
           Stream.apply(me);
-          this._parser.onend = function() {
+          this._parser.onend = function () {
             me.emit("end");
           };
-          this._parser.onerror = function(er) {
+          this._parser.onerror = function (er) {
             me.emit("error", er);
             me._parser.error = null;
           };
-          streamWraps.forEach(function(ev) {
+          streamWraps.forEach(function (ev) {
             Object.defineProperty(
               me,
               "on" + ev,
               {
-                get: function() {
+                get: function () {
                   return me._parser["on" + ev];
                 },
-                set: function(h) {
+                set: function (h) {
                   if (!h) {
                     me.removeAllListeners(ev);
                     me._parser["on" + ev] = h;
@@ -251,7 +251,7 @@
           Stream.prototype,
           { constructor: { value: CStream } }
         );
-        CStream.prototype.write = function(data) {
+        CStream.prototype.write = function (data) {
           data = new Buffer(data);
           for (var i = 0; i < data.length; i++) {
             var n = data[i];
@@ -294,15 +294,15 @@
             continue;
           }
         };
-        CStream.prototype.end = function(chunk) {
+        CStream.prototype.end = function (chunk) {
           if (chunk && chunk.length) this._parser.write(chunk.toString());
           this._parser.end();
           return true;
         };
-        CStream.prototype.on = function(ev, handler) {
+        CStream.prototype.on = function (ev, handler) {
           var me = this;
           if (!me._parser["on" + ev] && streamWraps.indexOf(ev) !== -1) {
-            me._parser["on" + ev] = function() {
+            me._parser["on" + ev] = function () {
               var args = arguments.length === 1 ? [arguments[0]] : Array.apply(null, arguments);
               args.splice(0, 0, ev);
               me.emit.apply(me, args);
@@ -310,31 +310,31 @@
           }
           return Stream.prototype.on.call(me, ev, handler);
         };
-        CStream.prototype.destroy = function() {
+        CStream.prototype.destroy = function () {
           clearBuffers(this._parser);
           this.emit("close");
         };
-        function emit(parser, event, data) {
+        function emit (parser, event, data) {
           if (clarinet2.INFO) console.log("-- emit", event, data);
           if (parser[event]) parser[event](data);
         }
-        function emitNode(parser, event, data) {
+        function emitNode (parser, event, data) {
           closeValue(parser);
           emit(parser, event, data);
         }
-        function closeValue(parser, event) {
+        function closeValue (parser, event) {
           parser.textNode = textopts(parser.opt, parser.textNode);
           if (parser.textNode !== void 0) {
             emit(parser, event ? event : "onvalue", parser.textNode);
           }
           parser.textNode = void 0;
         }
-        function closeNumber(parser) {
+        function closeNumber (parser) {
           if (parser.numberNode)
             emit(parser, "onvalue", parseFloat(parser.numberNode));
           parser.numberNode = "";
         }
-        function textopts(opt, text) {
+        function textopts (opt, text) {
           if (text === void 0) {
             return text;
           }
@@ -342,7 +342,7 @@
           if (opt.normalize) text = text.replace(/\s+/g, " ");
           return text;
         }
-        function error(parser, er) {
+        function error (parser, er) {
           closeValue(parser);
           er += "\nLine: " + parser.line + "\nColumn: " + parser.column + "\nChar: " + parser.c;
           er = new Error(er);
@@ -350,7 +350,7 @@
           emit(parser, "onerror", er);
           return parser;
         }
-        function end(parser) {
+        function end (parser) {
           if (parser.state !== S.VALUE || parser.depth !== 0)
             error(parser, "Unexpected end");
           closeValue(parser);
@@ -360,10 +360,10 @@
           CParser.call(parser, parser.opt);
           return parser;
         }
-        function isWhitespace(c) {
+        function isWhitespace (c) {
           return c === Char.carriageReturn || c === Char.lineFeed || c === Char.space || c === Char.tab;
         }
-        function write(chunk) {
+        function write (chunk) {
           var parser = this;
           if (this.error) throw this.error;
           if (parser.closed) return error(
@@ -648,4 +648,3 @@
   });
   require_clarinet();
 })();
-//# sourceMappingURL=clarinet.bundle.js.map

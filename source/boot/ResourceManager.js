@@ -141,7 +141,7 @@
      * @returns {Promise<void>}
      */
     async promiseLoadCamIfNeeded () {
-        console.log("🔍 Checking if CAM loading is needed...");
+        //console.log("🔍 Checking if CAM loading is needed...");
         
         if (SvPlatform.isNodePlatform()) {
             console.log("🔍 Clearing HashCache on Node.js...");
@@ -149,13 +149,13 @@
         }
 
         const count = await HashCache.shared().promiseCount();
-        console.log("📊 HashCache count:", count);
+        //console.log("📊 HashCache count:", count);
         if (!count) {
-            console.log("💾 Loading CAM...");
+            //console.log("💾 Loading CAM...");
             await this.promiseLoadCam();
-            console.log("✅ CAM loading completed");
+            //console.log("✅ CAM loading completed");
         } else {
-            console.log("✅ CAM already loaded (cache count > 0)");
+            //console.log("✅ CAM already loaded (cache count > 0)");
         }
     }
 

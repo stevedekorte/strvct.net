@@ -1,12 +1,12 @@
 (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __commonJS = (cb, mod) => function __require() {
+  var __commonJS = (cb, mod) => function __require () {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
   // jwt-decode/jwt-decode.js
   var require_jwt_decode = __commonJS({
-    "jwt-decode/jwt-decode.js"(exports, module) {
+    "jwt-decode/jwt-decode.js" (exports, module) {
       (() => {
         "use strict";
         var __webpack_modules__ = {
@@ -33,7 +33,7 @@
           /******/
         };
         var __webpack_module_cache__ = {};
-        function __webpack_require__(moduleId) {
+        function __webpack_require__ (moduleId) {
           var cachedModule = __webpack_module_cache__[moduleId];
           if (cachedModule !== void 0) {
             return cachedModule.exports;
@@ -77,4 +77,3 @@
   });
   require_jwt_decode();
 })();
-//# sourceMappingURL=jwt-decode.bundle.js.map

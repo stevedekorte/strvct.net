@@ -1,12 +1,12 @@
 (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __commonJS = (cb, mod) => function __require() {
+  var __commonJS = (cb, mod) => function __require () {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
   // json/stream/stream.js
   var require_stream = __commonJS({
-    "json/stream/stream.js"(exports, module) {
+    "json/stream/stream.js" (exports, module) {
       (() => {
         var __webpack_modules__ = {
           /***/
@@ -160,7 +160,7 @@ Stream.prototype.pipe = function(dest, options) {
           /******/
         };
         var __webpack_module_cache__ = {};
-        function __webpack_require__(moduleId) {
+        function __webpack_require__ (moduleId) {
           var cachedModule = __webpack_module_cache__[moduleId];
           if (cachedModule !== void 0) {
             return cachedModule.exports;
@@ -217,4 +217,3 @@ Stream.prototype.pipe = function(dest, options) {
   });
   require_stream();
 })();
-//# sourceMappingURL=stream.bundle.js.map

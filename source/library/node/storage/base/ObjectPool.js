@@ -1354,7 +1354,6 @@
 
         unmarkedPidSet.forEach(pid => {
             this.debugLog(() => "--- sweeping --- deletePid(" + pid + ") ");
-            console.log("--- sweeping --- deletePid(" + pid + ") ");
             this.recordsMap().removeKey(pid); // this will remove the pid from the recordsMap
         });
 

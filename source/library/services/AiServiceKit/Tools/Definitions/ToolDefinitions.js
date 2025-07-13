@@ -15,7 +15,7 @@
   initPrototypeSlots () {
 
     {
-      const slot = this.newSlot("toolTargetInstances", null);
+      const slot = this.newSlot("toolTargetInstances", null); // is a Set of instances that have tools defined for them
       slot.setFinalInitProto(Set);
       slot.setShouldJsonArchive(true);
       slot.setCanEditInspection(false);
@@ -46,7 +46,7 @@
 
   addToolsForInstance (instance) {
     const ownerPath = this.ownershipChainPathString();
-    console.log("addToolsForInstance: " + instance.type() + " ownerPath: " + ownerPath);
+    console.log("addToolsForInstance: " + instance.type() + " ownershipPath: " + ownerPath);
 
     if (this.toolTargetInstances().has(instance)) {
       throw new Error("Tool definitions already added for instance: " + instance.type());
@@ -78,7 +78,6 @@
   toolDefinitionWithName (name) {
     return this.toolDefinitions().find(toolDef => toolDef.name() === name);
   }
-
 
   toolSpecPrompt () {
     const parts = [];

@@ -22,7 +22,7 @@ class Worker extends Object {
         // doesn't work
         // "/source/ServiceWorker.js"
         // "../ServiceWorker.js"
-        const path = "sj.js"
+        const path = "strvct/source/ServiceWorker/sj.js"
         console.log("registering service worker '" + path + "'")
         const promise = navigator.serviceWorker.register(path); //{ scope: ""../"}
 

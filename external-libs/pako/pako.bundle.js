@@ -1,21 +1,21 @@
 (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __commonJS = (cb, mod) => function __require() {
+  var __commonJS = (cb, mod) => function __require () {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
   // pako/pako.js
   var require_pako = __commonJS({
-    "pako/pako.js"(exports, module) {
-      (function(global, factory) {
+    "pako/pako.js" (exports, module) {
+      (function (global, factory) {
         typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.pako = {}));
-      })(exports, function(exports2) {
+      })(exports, function (exports2) {
         "use strict";
         const Z_FIXED$1 = 4;
         const Z_BINARY = 0;
         const Z_TEXT = 1;
         const Z_UNKNOWN$1 = 2;
-        function zero$1(buf) {
+        function zero$1 (buf) {
           let len = buf.length;
           while (--len >= 0) {
             buf[len] = 0;
@@ -65,7 +65,7 @@
         zero$1(base_length);
         const base_dist = new Array(D_CODES$1);
         zero$1(base_dist);
-        function StaticTreeDesc(static_tree, extra_bits, extra_base, elems, max_length) {
+        function StaticTreeDesc (static_tree, extra_bits, extra_base, elems, max_length) {
           this.static_tree = static_tree;
           this.extra_bits = extra_bits;
           this.extra_base = extra_base;
@@ -76,7 +76,7 @@
         let static_l_desc;
         let static_d_desc;
         let static_bl_desc;
-        function TreeDesc(dyn_tree, stat_desc) {
+        function TreeDesc (dyn_tree, stat_desc) {
           this.dyn_tree = dyn_tree;
           this.max_code = 0;
           this.stat_desc = stat_desc;
@@ -1257,7 +1257,7 @@
           }
           return BS_BLOCK_DONE;
         };
-        function Config(good_length, max_lazy, nice_length, max_chain, func) {
+        function Config (good_length, max_lazy, nice_length, max_chain, func) {
           this.good_length = good_length;
           this.max_lazy = max_lazy;
           this.nice_length = nice_length;
@@ -1302,7 +1302,7 @@
           s.match_available = 0;
           s.ins_h = 0;
         };
-        function DeflateState() {
+        function DeflateState () {
           this.strm = null;
           this.status = 0;
           this.pending_buf = null;
@@ -1794,7 +1794,7 @@
         const _has = (obj, key) => {
           return Object.prototype.hasOwnProperty.call(obj, key);
         };
-        var assign = function(obj) {
+        var assign = function (obj) {
           const sources = Array.prototype.slice.call(arguments, 1);
           while (sources.length) {
             const source = sources.shift();
@@ -1956,7 +1956,7 @@
           buf2string,
           utf8border
         };
-        function ZStream() {
+        function ZStream () {
           this.input = null;
           this.next_in = 0;
           this.avail_in = 0;
@@ -1983,7 +1983,7 @@
           Z_DEFAULT_STRATEGY,
           Z_DEFLATED: Z_DEFLATED$1
         } = constants$2;
-        function Deflate$1(options) {
+        function Deflate$1 (options) {
           this.options = common.assign({
             level: Z_DEFAULT_COMPRESSION,
             method: Z_DEFLATED$1,
@@ -2034,7 +2034,7 @@
             this._dict_set = true;
           }
         }
-        Deflate$1.prototype.push = function(data, flush_mode) {
+        Deflate$1.prototype.push = function (data, flush_mode) {
           const strm = this.strm;
           const chunkSize = this.options.chunkSize;
           let status, _flush_mode;
@@ -2086,10 +2086,10 @@
           }
           return true;
         };
-        Deflate$1.prototype.onData = function(chunk) {
+        Deflate$1.prototype.onData = function (chunk) {
           this.chunks.push(chunk);
         };
-        Deflate$1.prototype.onEnd = function(status) {
+        Deflate$1.prototype.onEnd = function (status) {
           if (status === Z_OK$2) {
             this.result = common.flattenChunks(this.chunks);
           }
@@ -2097,7 +2097,7 @@
           this.err = status;
           this.msg = this.strm.msg;
         };
-        function deflate$1(input, options) {
+        function deflate$1 (input, options) {
           const deflator = new Deflate$1(options);
           deflator.push(input, true);
           if (deflator.err) {
@@ -2105,12 +2105,12 @@
           }
           return deflator.result;
         }
-        function deflateRaw$1(input, options) {
+        function deflateRaw$1 (input, options) {
           options = options || {};
           options.raw = true;
           return deflate$1(input, options);
         }
-        function gzip$1(input, options) {
+        function gzip$1 (input, options) {
           options = options || {};
           options.gzip = true;
           return deflate$1(input, options);
@@ -2129,7 +2129,7 @@
         };
         const BAD$1 = 30;
         const TYPE$1 = 12;
-        var inffast = function inflate_fast(strm, start) {
+        var inffast = function inflate_fast (strm, start) {
           let _in;
           let last;
           let _out;
@@ -2712,7 +2712,7 @@
         const zswap32 = (q) => {
           return (q >>> 24 & 255) + (q >>> 8 & 65280) + ((q & 65280) << 8) + ((q & 255) << 24);
         };
-        function InflateState() {
+        function InflateState () {
           this.mode = 0;
           this.last = false;
           this.wrap = 0;
@@ -3887,7 +3887,7 @@
           inflateSetDictionary: inflateSetDictionary_1,
           inflateInfo
         };
-        function GZheader() {
+        function GZheader () {
           this.text = 0;
           this.time = 0;
           this.xflags = 0;
@@ -3911,7 +3911,7 @@
           Z_DATA_ERROR,
           Z_MEM_ERROR
         } = constants$2;
-        function Inflate$1(options) {
+        function Inflate$1 (options) {
           this.options = common.assign({
             chunkSize: 1024 * 64,
             windowBits: 15,
@@ -3961,7 +3961,7 @@
             }
           }
         }
-        Inflate$1.prototype.push = function(data, flush_mode) {
+        Inflate$1.prototype.push = function (data, flush_mode) {
           const strm = this.strm;
           const chunkSize = this.options.chunkSize;
           const dictionary = this.options.dictionary;
@@ -4031,10 +4031,10 @@
           }
           return true;
         };
-        Inflate$1.prototype.onData = function(chunk) {
+        Inflate$1.prototype.onData = function (chunk) {
           this.chunks.push(chunk);
         };
-        Inflate$1.prototype.onEnd = function(status) {
+        Inflate$1.prototype.onEnd = function (status) {
           if (status === Z_OK) {
             if (this.options.to === "string") {
               this.result = this.chunks.join("");
@@ -4046,13 +4046,13 @@
           this.err = status;
           this.msg = this.strm.msg;
         };
-        function inflate$1(input, options) {
+        function inflate$1 (input, options) {
           const inflator = new Inflate$1(options);
           inflator.push(input);
           if (inflator.err) throw inflator.msg || messages[inflator.err];
           return inflator.result;
         }
-        function inflateRaw$1(input, options) {
+        function inflateRaw$1 (input, options) {
           options = options || {};
           options.raw = true;
           return inflate$1(input, options);
@@ -4108,4 +4108,3 @@
   require_pako();
 })();
 /*! pako 2.0.4 https://github.com/nodeca/pako @license (MIT AND Zlib) */
-//# sourceMappingURL=pako.bundle.js.map

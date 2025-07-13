@@ -22,6 +22,12 @@
     }
 
     getInheritedMethodSet () {
+        const thisClass = this.thisClass();
+
+        if (thisClass._inheritedMethodSet) {
+            return thisClass._inheritedMethodSet;
+        }
+
         const methodSet = new Set();
         const processedMethods = new Set();
 
@@ -42,6 +48,8 @@
                 processedMethods.add(name);
             }
         }
+
+        thisClass._inheritedMethodSet = methodSet;
         return methodSet;
     }
 

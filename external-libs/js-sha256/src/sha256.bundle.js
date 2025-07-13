@@ -1,13 +1,13 @@
 (() => {
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __commonJS = (cb, mod) => function __require() {
+  var __commonJS = (cb, mod) => function __require () {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
 
   // js-sha256/src/sha256.js
   var require_sha256 = __commonJS({
-    "js-sha256/src/sha256.js"(exports, module) {
-      (function() {
+    "js-sha256/src/sha256.js" (exports, module) {
+      (function () {
         "use strict";
         var ERROR = "input is invalid type";
         var WINDOW = typeof window === "object";
@@ -97,29 +97,29 @@
         var OUTPUT_TYPES = ["hex", "array", "digest", "arrayBuffer"];
         var blocks = [];
         if (root.JS_SHA256_NO_NODE_JS || !Array.isArray) {
-          Array.isArray = function(obj) {
+          Array.isArray = function (obj) {
             return Object.prototype.toString.call(obj) === "[object Array]";
           };
         }
         if (ARRAY_BUFFER && (root.JS_SHA256_NO_ARRAY_BUFFER_IS_VIEW || !ArrayBuffer.isView)) {
-          ArrayBuffer.isView = function(obj) {
+          ArrayBuffer.isView = function (obj) {
             return typeof obj === "object" && obj.buffer && obj.buffer.constructor === ArrayBuffer;
           };
         }
-        var createOutputMethod = function(outputType, is2242) {
-          return function(message) {
+        var createOutputMethod = function (outputType, is2242) {
+          return function (message) {
             return new Sha256(is2242, true).update(message)[outputType]();
           };
         };
-        var createMethod = function(is2242) {
+        var createMethod = function (is2242) {
           var method2 = createOutputMethod("hex", is2242);
           if (NODE_JS) {
             method2 = nodeWrap(method2, is2242);
           }
-          method2.create = function() {
+          method2.create = function () {
             return new Sha256(is2242);
           };
-          method2.update = function(message) {
+          method2.update = function (message) {
             return method2.create().update(message);
           };
           for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
@@ -128,11 +128,11 @@
           }
           return method2;
         };
-        var nodeWrap = function(method, is224) {
+        var nodeWrap = function (method, is224) {
           var crypto = eval("require('crypto')");
           var Buffer = eval("require('buffer').Buffer");
           var algorithm = is224 ? "sha224" : "sha256";
-          var nodeMethod = function(message) {
+          var nodeMethod = function (message) {
             if (typeof message === "string") {
               return crypto.createHash(algorithm).update(message, "utf8").digest("hex");
             } else {
@@ -150,17 +150,17 @@
           };
           return nodeMethod;
         };
-        var createHmacOutputMethod = function(outputType, is2242) {
-          return function(key, message) {
+        var createHmacOutputMethod = function (outputType, is2242) {
+          return function (key, message) {
             return new HmacSha256(key, is2242, true).update(message)[outputType]();
           };
         };
-        var createHmacMethod = function(is2242) {
+        var createHmacMethod = function (is2242) {
           var method2 = createHmacOutputMethod("hex", is2242);
-          method2.create = function(key) {
+          method2.create = function (key) {
             return new HmacSha256(key, is2242);
           };
-          method2.update = function(key, message) {
+          method2.update = function (key, message) {
             return method2.create(key).update(message);
           };
           for (var i = 0; i < OUTPUT_TYPES.length; ++i) {
@@ -169,7 +169,7 @@
           }
           return method2;
         };
-        function Sha256(is2242, sharedMemory) {
+        function Sha256 (is2242, sharedMemory) {
           if (sharedMemory) {
             blocks[0] = blocks[16] = blocks[1] = blocks[2] = blocks[3] = blocks[4] = blocks[5] = blocks[6] = blocks[7] = blocks[8] = blocks[9] = blocks[10] = blocks[11] = blocks[12] = blocks[13] = blocks[14] = blocks[15] = 0;
             this.blocks = blocks;
@@ -200,7 +200,7 @@
           this.first = true;
           this.is224 = is2242;
         }
-        Sha256.prototype.update = function(message) {
+        Sha256.prototype.update = function (message) {
           if (this.finalized) {
             return;
           }
@@ -270,7 +270,7 @@
           }
           return this;
         };
-        Sha256.prototype.finalize = function() {
+        Sha256.prototype.finalize = function () {
           if (this.finalized) {
             return;
           }
@@ -290,7 +290,7 @@
           blocks2[15] = this.bytes << 3;
           this.hash();
         };
-        Sha256.prototype.hash = function() {
+        Sha256.prototype.hash = function () {
           var a = this.h0, b = this.h1, c = this.h2, d = this.h3, e = this.h4, f = this.h5, g = this.h6, h = this.h7, blocks2 = this.blocks, j, s0, s1, maj, t1, t2, ch, ab, da, cd, bc;
           for (j = 16; j < 64; ++j) {
             t1 = blocks2[j - 15];
@@ -362,7 +362,7 @@
           this.h6 = this.h6 + g << 0;
           this.h7 = this.h7 + h << 0;
         };
-        Sha256.prototype.hex = function() {
+        Sha256.prototype.hex = function () {
           this.finalize();
           var h0 = this.h0, h1 = this.h1, h2 = this.h2, h3 = this.h3, h4 = this.h4, h5 = this.h5, h6 = this.h6, h7 = this.h7;
           var hex = HEX_CHARS[h0 >> 28 & 15] + HEX_CHARS[h0 >> 24 & 15] + HEX_CHARS[h0 >> 20 & 15] + HEX_CHARS[h0 >> 16 & 15] + HEX_CHARS[h0 >> 12 & 15] + HEX_CHARS[h0 >> 8 & 15] + HEX_CHARS[h0 >> 4 & 15] + HEX_CHARS[h0 & 15] + HEX_CHARS[h1 >> 28 & 15] + HEX_CHARS[h1 >> 24 & 15] + HEX_CHARS[h1 >> 20 & 15] + HEX_CHARS[h1 >> 16 & 15] + HEX_CHARS[h1 >> 12 & 15] + HEX_CHARS[h1 >> 8 & 15] + HEX_CHARS[h1 >> 4 & 15] + HEX_CHARS[h1 & 15] + HEX_CHARS[h2 >> 28 & 15] + HEX_CHARS[h2 >> 24 & 15] + HEX_CHARS[h2 >> 20 & 15] + HEX_CHARS[h2 >> 16 & 15] + HEX_CHARS[h2 >> 12 & 15] + HEX_CHARS[h2 >> 8 & 15] + HEX_CHARS[h2 >> 4 & 15] + HEX_CHARS[h2 & 15] + HEX_CHARS[h3 >> 28 & 15] + HEX_CHARS[h3 >> 24 & 15] + HEX_CHARS[h3 >> 20 & 15] + HEX_CHARS[h3 >> 16 & 15] + HEX_CHARS[h3 >> 12 & 15] + HEX_CHARS[h3 >> 8 & 15] + HEX_CHARS[h3 >> 4 & 15] + HEX_CHARS[h3 & 15] + HEX_CHARS[h4 >> 28 & 15] + HEX_CHARS[h4 >> 24 & 15] + HEX_CHARS[h4 >> 20 & 15] + HEX_CHARS[h4 >> 16 & 15] + HEX_CHARS[h4 >> 12 & 15] + HEX_CHARS[h4 >> 8 & 15] + HEX_CHARS[h4 >> 4 & 15] + HEX_CHARS[h4 & 15] + HEX_CHARS[h5 >> 28 & 15] + HEX_CHARS[h5 >> 24 & 15] + HEX_CHARS[h5 >> 20 & 15] + HEX_CHARS[h5 >> 16 & 15] + HEX_CHARS[h5 >> 12 & 15] + HEX_CHARS[h5 >> 8 & 15] + HEX_CHARS[h5 >> 4 & 15] + HEX_CHARS[h5 & 15] + HEX_CHARS[h6 >> 28 & 15] + HEX_CHARS[h6 >> 24 & 15] + HEX_CHARS[h6 >> 20 & 15] + HEX_CHARS[h6 >> 16 & 15] + HEX_CHARS[h6 >> 12 & 15] + HEX_CHARS[h6 >> 8 & 15] + HEX_CHARS[h6 >> 4 & 15] + HEX_CHARS[h6 & 15];
@@ -372,7 +372,7 @@
           return hex;
         };
         Sha256.prototype.toString = Sha256.prototype.hex;
-        Sha256.prototype.digest = function() {
+        Sha256.prototype.digest = function () {
           this.finalize();
           var h0 = this.h0, h1 = this.h1, h2 = this.h2, h3 = this.h3, h4 = this.h4, h5 = this.h5, h6 = this.h6, h7 = this.h7;
           var arr = [
@@ -411,7 +411,7 @@
           return arr;
         };
         Sha256.prototype.array = Sha256.prototype.digest;
-        Sha256.prototype.arrayBuffer = function() {
+        Sha256.prototype.arrayBuffer = function () {
           this.finalize();
           var buffer = new ArrayBuffer(this.is224 ? 28 : 32);
           var dataView = new DataView(buffer);
@@ -427,7 +427,7 @@
           }
           return buffer;
         };
-        function HmacSha256(key, is2242, sharedMemory) {
+        function HmacSha256 (key, is2242, sharedMemory) {
           var i, type = typeof key;
           if (type === "string") {
             var bytes = [], length = key.length, index = 0, code;
@@ -482,7 +482,7 @@
           this.sharedMemory = sharedMemory;
         }
         HmacSha256.prototype = new Sha256();
-        HmacSha256.prototype.finalize = function() {
+        HmacSha256.prototype.finalize = function () {
           Sha256.prototype.finalize.call(this);
           if (this.inner) {
             this.inner = false;
@@ -504,7 +504,7 @@
           root.sha256 = exports.sha256;
           root.sha224 = exports.sha224;
           if (AMD) {
-            define(function() {
+            define(function () {
               return exports;
             });
           }
@@ -522,4 +522,3 @@
  * @copyright Chen, Yi-Cyuan 2014-2017
  * @license MIT
  */
-//# sourceMappingURL=sha256.bundle.js.map

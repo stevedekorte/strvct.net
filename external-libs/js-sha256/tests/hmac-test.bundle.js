@@ -1,7 +1,7 @@
 (() => {
   // js-sha256/tests/hmac-test.js
-  (function(sha2562, sha2242) {
-    Array.prototype.toHexString = ArrayBuffer.prototype.toHexString = function() {
+  (function (sha2562, sha2242) {
+    Array.prototype.toHexString = ArrayBuffer.prototype.toHexString = function () {
       var array = new Uint8Array(this);
       var hex = "";
       for (var i = 0; i < array.length; ++i) {
@@ -104,9 +104,9 @@
         ]
       };
     }
-    var errorTestCases = [null, void 0, { length: 0 }, 0, 1, false, true, NaN, Infinity, function() {
+    var errorTestCases = [null, void 0, { length: 0 }, 0, 1, false, true, NaN, Infinity, function () {
     }];
-    function runTestCases(name, algorithm) {
+    function runTestCases (name, algorithm) {
       var methods = [
         {
           name,
@@ -118,19 +118,19 @@
         },
         {
           name: name + ".array",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.array(key, message).toHexString();
           }
         },
         {
           name: name + ".digest",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.digest(key, message).toHexString();
           }
         },
         {
           name: name + ".arrayBuffer",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.arrayBuffer(key, message).toHexString();
           }
         }
@@ -138,43 +138,43 @@
       var classMethods = [
         {
           name: "create",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.create(key).update(message).toString();
           }
         },
         {
           name: "update",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.update(key, message).toString();
           }
         },
         {
           name: "hex",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.update(key, message).hex();
           }
         },
         {
           name: "array",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.update(key, message).array().toHexString();
           }
         },
         {
           name: "digest",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.update(key, message).digest().toHexString();
           }
         },
         {
           name: "arrayBuffer",
-          call: function(key, message) {
+          call: function (key, message) {
             return algorithm.update(key, message).arrayBuffer().toHexString();
           }
         },
         {
           name: "finalize",
-          call: function(key, message) {
+          call: function (key, message) {
             var hash = algorithm.update(key, message);
             hash.hex();
             hash.update(message);
@@ -183,16 +183,16 @@
         }
       ];
       var subTestCases = testCases[name];
-      describe(name, function() {
-        methods.forEach(function(method) {
-          describe("#" + method.name, function() {
+      describe(name, function () {
+        methods.forEach(function (method) {
+          describe("#" + method.name, function () {
             for (var testCaseName in subTestCases) {
-              (function(testCaseName2) {
+              (function (testCaseName2) {
                 var testCase = subTestCases[testCaseName2];
-                context("when " + testCaseName2, function() {
+                context("when " + testCaseName2, function () {
                   for (var hash in testCase) {
-                    (function(message, hash2) {
-                      it("should be equal", function() {
+                    (function (message, hash2) {
+                      it("should be equal", function () {
                         expect(method.call(message[0], message[1])).to.be(hash2);
                       });
                     })(testCase[hash], hash);
@@ -202,15 +202,15 @@
             }
           });
         });
-        classMethods.forEach(function(method) {
-          describe("#" + method.name, function() {
+        classMethods.forEach(function (method) {
+          describe("#" + method.name, function () {
             for (var testCaseName in subTestCases) {
-              (function(testCaseName2) {
+              (function (testCaseName2) {
                 var testCase = subTestCases[testCaseName2];
-                context("when " + testCaseName2, function() {
+                context("when " + testCaseName2, function () {
                   for (var hash in testCase) {
-                    (function(message, hash2) {
-                      it("should be equal", function() {
+                    (function (message, hash2) {
+                      it("should be equal", function () {
                         expect(method.call(message[0], message[1])).to.be(hash2);
                       });
                     })(testCase[hash], hash);
@@ -220,11 +220,11 @@
             }
           });
         });
-        describe("#" + name, function() {
-          errorTestCases.forEach(function(testCase) {
-            context("when " + testCase, function() {
-              it("should throw error", function() {
-                expect(function() {
+        describe("#" + name, function () {
+          errorTestCases.forEach(function (testCase) {
+            context("when " + testCase, function () {
+              it("should throw error", function () {
+                expect(function () {
                   algorithm(testCase, "");
                 }).to.throwError(/input is invalid type/);
               });
@@ -237,4 +237,3 @@
     runTestCases("sha224_hmac", sha2242.hmac);
   })(sha256, sha224);
 })();
-//# sourceMappingURL=hmac-test.bundle.js.map

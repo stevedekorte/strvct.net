@@ -275,7 +275,7 @@
 
     ownershipChainPathString () {
         const chain = this.ownershipChain();
-        return chain.map(node => node.title()).join(".");
+        return chain.map(node => node.title()).join("/");
     }
 
     /**

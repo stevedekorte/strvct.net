@@ -112,7 +112,7 @@
         await block();
         const end = performance.now();
         const time = end - start;
-        console.log(" --- " + label + " " + Math.round(time/100)/10 + "s --- ");
+        //console.log(" --- " + label + " " + Math.round(time/100)/10 + "s --- ");
     }
 
     /**
@@ -304,7 +304,7 @@
         SvNotificationCenter.shared().resume();
 
         setTimeout(() => {
-            console.log("All synchronous operations completed");
+            //console.log("All synchronous operations completed - ready to render");
             this.afterFirstRender();
         }, 2);
     }
@@ -323,6 +323,24 @@
      */
     async setupUi () {
         this.setupDocTheme();
+        await this.registerServiceWorker();
+    }
+
+    /**
+     * @description Registers the service worker for PWA functionality
+     * @category PWA
+     */
+    async registerServiceWorker () {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('strvct/source/ServiceWorker/sj.js');
+                console.log('Service worker registered:', registration.scope);
+            } catch (error) {
+                console.log('Service worker registration failed:', error);
+            }
+        } else {
+            console.log('Service worker not supported in this browser');
+        }
     }
 
     /**
