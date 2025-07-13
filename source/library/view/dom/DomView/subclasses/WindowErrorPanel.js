@@ -200,16 +200,30 @@
      * @category UI
      */
     showErrorNotification (errorInfo) {
+        // Create backdrop div that fills the window
+        const backdropDiv = document.createElement('div');
+        {
+            const style = backdropDiv.style;
+            style.position = 'fixed';
+            style.top = '0';
+            style.left = '0';
+            style.width = '100vw';
+            style.height = '100vh';
+            style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            style.backdropFilter = 'blur(8px)';
+            style.webkitBackdropFilter = 'blur(8px)'; // Safari support
+            style.zIndex = '9999';
+            style.display = 'flex';
+            style.justifyContent = 'center';
+            style.alignItems = 'center';
+        }
+
         const errorPanelDiv = document.createElement('div');
         {
             const style = errorPanelDiv.style;
-            style.position = 'fixed';
-            style.top = '50%';
-            style.left = '50%';
-            style.transform = 'translate(-50%, -50%)';
+            style.position = 'relative'; // Changed from fixed since it's now inside backdrop
             style.backgroundColor = 'rgb(25, 25, 25)';
             style.color = 'black';
-            style.zIndex = '10000';
             style.width = 'fit-content';
             style.height = 'fit-content';
             style.fontFamily = 'inherit';
@@ -282,14 +296,18 @@
         
         // Add click handler
         dismissButton.addEventListener('click', () => {
-            errorPanelDiv.remove();
+            backdropDiv.remove(); // Remove the entire backdrop instead of just the panel
         });
         
         // Assemble the error panel
         errorPanelDiv.appendChild(messageDiv);
         errorPanelDiv.appendChild(dismissButton);
         
-        document.body.appendChild(errorPanelDiv);
+        // Add error panel to backdrop
+        backdropDiv.appendChild(errorPanelDiv);
+        
+        // Add backdrop to document body
+        document.body.appendChild(backdropDiv);
         debugger;
     }
 
