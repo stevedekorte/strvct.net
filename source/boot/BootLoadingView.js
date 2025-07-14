@@ -9,6 +9,11 @@
 
 class BootLoadingView extends Object {
 
+  constructor() {
+    super();
+    this._isClosing = false;
+  }
+
   /**
    * @method isAvailable
    * @category State
@@ -16,6 +21,15 @@ class BootLoadingView extends Object {
    */
   isAvailable () {
     return this.element() !== null;
+  }
+
+  /**
+   * @method isClosing
+   * @category State
+   * @returns {boolean} True if the loading view is currently animating closed.
+   */
+  isClosing () {
+    return this._isClosing;
   }
 
   /**
@@ -57,7 +71,7 @@ class BootLoadingView extends Object {
    * @returns {BootLoadingView} The current instance for chaining.
    */
   setTitle (s) {
-    if (!this.isAvailable()) {
+    if (!this.isAvailable() || this.isClosing()) {
       return this;
     }
     this.titleElement().innerText = s;
@@ -95,6 +109,10 @@ class BootLoadingView extends Object {
       throw new Error("invalid ratio");
     }
 
+    if (!this.isAvailable() || this.isClosing()) {
+      return this;
+    }
+
     const v = Math.round(100 * r) / 100; // limit to 2 decimals
     this.barElement().style.width = 10 * v + "em";
     return this;
@@ -108,7 +126,7 @@ class BootLoadingView extends Object {
    * @returns {BootLoadingView} The current instance for chaining.
    */
   setBarToNofM (n, count) {
-    if (!this.isAvailable()) {
+    if (!this.isAvailable() || this.isClosing()) {
       return this;
     }
 
@@ -119,7 +137,7 @@ class BootLoadingView extends Object {
   /**
    * @method close
    * @category Lifecycle
-   * @description Removes the loading view element from the DOM.
+   * @description Removes the loading view element from the DOM immediately (legacy method).
    */
   close () {
     if (!this.isAvailable()) {
@@ -127,6 +145,44 @@ class BootLoadingView extends Object {
     }
     const e = this.element();
     e.parentNode.removeChild(e);
+  }
+
+  /**
+   * @method asyncClose
+   * @category Lifecycle
+   * @description Removes the loading view element from the DOM with a fade-out animation.
+   * @returns {Promise} A promise that resolves when the animation completes.
+   */
+  asyncClose () {
+    return new Promise((resolve) => {
+      if (!this.isAvailable()) {
+        resolve();
+        return;
+      }
+      
+      // Set closing flag to prevent further updates
+      this._isClosing = true;
+      
+      const e = this.element();
+      
+      // Add transition if not already present
+      if (!e.style.transition) {
+        e.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+      }
+      
+      // Start fade out animation
+      e.style.opacity = '0';
+      e.style.transform = 'scale(0.95)';
+      
+      // Remove element after animation completes
+      setTimeout(() => {
+        if (e.parentNode) {
+          e.parentNode.removeChild(e);
+        }
+        this._isClosing = false; // Reset flag
+        resolve();
+      }, 300); // Match the 0.3s transition duration
+    });
   }
 }
 

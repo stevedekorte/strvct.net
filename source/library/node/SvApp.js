@@ -388,7 +388,7 @@
             this.runTests();
         }
 
-        bootLoadingView.setTitle("");
+        await bootLoadingView.asyncClose();
 
         if (SvPlatform.isBrowserPlatform()) {
             document.body.style.display = "flex";
@@ -396,7 +396,6 @@
             console.log("🟡 SvApp: appDidInit: not in browser environment - skipping document.body.style.display");
         }
 
-        bootLoadingView.close();
         this.unhideRootView();
         this.afterAppUiDidInit();
     }
@@ -406,10 +405,9 @@
      * @category Lifecycle
      */
     afterAppUiDidInit () {
-        debugger;
         if (SvPlatform.isBrowserPlatform()) {
             const searchParams = WebBrowserWindow.shared().pageUrl().searchParams;
-            if (searchParams.keys().length !== 0) {
+            if (searchParams.size !== 0) {
                 this.handleSearchParams(searchParams);
             }
         }

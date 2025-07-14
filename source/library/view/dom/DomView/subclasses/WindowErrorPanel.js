@@ -209,13 +209,14 @@
             style.left = '0';
             style.width = '100vw';
             style.height = '100vh';
-            style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
-            style.backdropFilter = 'blur(8px)';
-            style.webkitBackdropFilter = 'blur(8px)'; // Safari support
+            style.backgroundColor = 'rgba(255, 255, 255, 0.01)'; // Reduced opacity to see blur effect
+            style.backdropFilter = 'blur(5px)';
+            style.webkitBackdropFilter = 'blur(5px)'; // Safari support
             style.zIndex = '9999';
             style.display = 'flex';
             style.justifyContent = 'center';
             style.alignItems = 'center';
+            style.transition = 'opacity 0.5s ease-out, backdrop-filter 0.5s ease-out, -webkit-backdrop-filter 0.5s ease-out';
         }
 
         const errorPanelDiv = document.createElement('div');
@@ -231,6 +232,7 @@
             style.borderRadius = '0em';
             style.overflow = 'hidden';
             style.border = '1px solid #444';
+            style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
         }
 
         const messageDiv = document.createElement('div');
@@ -254,9 +256,13 @@
         //const line = errorInfo.lineno ? ` ${errorInfo.lineno}` : "";
         
         // Create error message content
-        const parts = errorInfo.message.split(":").map(part => part.trim());
+        let errorMessage = errorInfo.message;
+        if (errorMessage.includes(":")) {
+            const parts = errorMessage.split(":").map(part => part.trim());
+            errorMessage = parts.last();
+        }
         //const errorTitle = parts[0];
-        const errorMessage = '"' + parts[1] + '"';
+        //const errorMessage = '"' + parts[1] + '"';
         //const location = `on ${errorSource} line${line}`;
         let html = "";
         html += "<div style='color:white; padding-bottom:0.4em;'>Sorry, there was an error.</div>";
@@ -296,7 +302,17 @@
         
         // Add click handler
         dismissButton.addEventListener('click', () => {
-            backdropDiv.remove(); // Remove the entire backdrop instead of just the panel
+            // Start fade out animation
+            backdropDiv.style.opacity = '0';
+            backdropDiv.style.backdropFilter = 'blur(0px)';
+            backdropDiv.style.webkitBackdropFilter = 'blur(0px)';
+            errorPanelDiv.style.opacity = '0';
+            errorPanelDiv.style.transform = 'scale(0.95)';
+            
+            // Remove element after animation completes
+            setTimeout(() => {
+                backdropDiv.remove();
+            }, 500); // Match the 0.5s transition duration
         });
         
         // Assemble the error panel
@@ -308,7 +324,7 @@
         
         // Add backdrop to document body
         document.body.appendChild(backdropDiv);
-        debugger;
+        //debugger;
     }
 
     /**
