@@ -142,20 +142,24 @@
     super.finalInit();
     this.setTagDelegate(this); // needed to get tool calls
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
-    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
     this.setResponseMsgClass(AiParsedResponseMessage);
+    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
   }
 
+  /*
   afterInit () {
     super.afterInit();
     //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
   }
- 
+  */
+  /*
   prepareForFirstAccess () {
     super.prepareForFirstAccess();
+    debugger;
     this.assistantToolKit().toolDefinitions().addToolsForInstance(this);
     return this;
   }
+  */
 
   initToolSlots () {
     // placeholder for subclasses to override

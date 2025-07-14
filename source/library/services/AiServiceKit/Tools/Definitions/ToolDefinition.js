@@ -193,7 +193,8 @@
   }
 
   description () {
-    return this.toolMethod().name();
+    //return this.toolMethod().name();
+    return "- " + this.name();
   }
 
 }.initThisClass());

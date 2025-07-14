@@ -221,7 +221,9 @@
      * @category AI Service
      */
     defaultChatModel () {
-        return this.geminiService().defaultChatModel(); // Gemini has a much larger context window!
+        return this.xaiService().defaultChatModel();
+
+        //return this.geminiService().defaultChatModel(); // Gemini has a much larger context window!
         //return this.deepSeekService().defaultChatModel();
         //return this.anthropicService().defaultChatModel();
         //return this.aiServices().first().defaultChatModel();

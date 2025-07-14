@@ -45,8 +45,8 @@
   }
 
   addToolsForInstance (instance) {
-    const ownerPath = this.ownershipChainPathString();
-    console.log("addToolsForInstance: " + instance.type() + " ownershipPath: " + ownerPath);
+    //const ownerPath = this.ownershipChainPathString();
+    //console.log("addToolsForInstance: " + instance.type() + " ownershipPath: " + ownerPath);
 
     if (this.toolTargetInstances().has(instance)) {
       throw new Error("Tool definitions already added for instance: " + instance.type());
@@ -67,6 +67,13 @@
         }
       }
     }
+
+    if (this.subnodeCount() === 0) {
+      console.warn("no tools found for instance: " + instance.typeId());
+    }
+    //console.log("--- " + instance.typeId() + " tools ---");
+    //console.log(this.description() + "\n");
+
     return this;
   }
 
@@ -117,7 +124,7 @@ The following tools are available for you to use:
   }
 
   description () {
-    return this.subnodes().map(toolDef => toolDef.description()).join("\n\n");
+    return this.subnodes().map(toolDef => toolDef.description()).join("\n");
   }
 
 }.initThisClass());

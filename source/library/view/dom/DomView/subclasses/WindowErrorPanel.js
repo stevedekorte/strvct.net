@@ -135,6 +135,7 @@
             return this;
         }
         
+        debugger;
         // Create visual error notification
         this.showErrorNotification(errorInfo);
         

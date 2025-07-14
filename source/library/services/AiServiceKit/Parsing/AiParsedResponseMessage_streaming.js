@@ -50,7 +50,7 @@
 
   // --- stream messages only handled on host ---
 
-  onStreamStart (request) {
+  onStreamStart (/*request*/) {
     //super.onStreamStart(request);
     this.setupHtmlStreamReader();
     this.htmlStreamReader().beginHtmlStream();
@@ -99,7 +99,7 @@
 
   // --- HtmlStreamReader delegate methods ---
 
-  onHtmlStreamReaderStart (reader) {
+  onHtmlStreamReaderStart (/*reader*/) {
     // ...
   }
 
@@ -109,7 +109,7 @@
     //this.postNoteNamed("onNarrationProgress").setInfo(""); // clear any progress notes
   }
 
-  onHtmlStreamReaderPushNode (reader, streamNode) {
+  onHtmlStreamReaderPushNode (reader /*, streamNode*/) {
     //console.log("PUSH " + streamNode.description());
     const html = reader.rootNode().innerHtml();
     this.updateContent(html);

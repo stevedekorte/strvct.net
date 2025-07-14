@@ -67,7 +67,7 @@ Function.isKindOf = function(superclass) {
 };
 */
 
-Function.prototype.isKindOf = function(superclass) {
+Function.prototype.isKindOf = function (superclass) {
     if (typeof superclass !== 'function') return false;
     let proto = this.prototype;
     while (proto) {
@@ -78,7 +78,7 @@ Function.prototype.isKindOf = function(superclass) {
 };
 
 
-Function.prototype.setMetaProperty = function(key, value) {
+Function.prototype.setMetaProperty = function (key, value) {
     /* notes:  
         - common keys:
             - "parameters" (dictionary of parameter names and their JSON Schema
@@ -95,35 +95,35 @@ Function.prototype.setMetaProperty = function(key, value) {
     return this;
 };
 
-Function.prototype.getMetaProperty = function(key) {
+Function.prototype.getMetaProperty = function (key) {
     return this._meta?.[key];
 };
 
 // name
 
-Function.prototype.assistantToolName = function() {
+Function.prototype.assistantToolName = function () {
     return this.name;
 };
 
 // description
 
-Function.prototype.setDescription = function(description) {
+Function.prototype.setDescription = function (description) {
     this.setMetaProperty("description", description);
     return this;
 };
-
-Function.prototype.description = function() {
+ 
+Function.prototype.description = function () {
     return this.getMetaProperty("description");
 };
 
 // parameters
 
-Function.prototype.setParameters = function(dict) {
+Function.prototype.setParameters = function (dict) {
     this.setMetaProperty("parameters", dict);
     return this;
 };
 
-Function.prototype.parameters = function() {
+Function.prototype.parameters = function () {
     const parameters = this.getMetaProperty("parameters");
     if (!parameters) {
         this.setParameters({});
@@ -133,7 +133,7 @@ Function.prototype.parameters = function() {
 
 // add parameter
 
-Function.prototype.addParameter = function(name, type, description) {
+Function.prototype.addParameter = function (name, type, description) {
     assert(name, "Name is required");
     assert(type, "Type is required");
     if (!name.isCapitalized()) {
@@ -174,31 +174,31 @@ Function.prototype.returnTypes = function () {
 
 // silent success
 
-Function.prototype.setSilentSuccess = function(aBool) {
+Function.prototype.setSilentSuccess = function (aBool) {
     assert(Type.isBoolean(aBool));
     this.setMetaProperty("silentSuccess", aBool);
     return this;
 };
 
-Function.prototype.silentSuccess = function() {
+Function.prototype.silentSuccess = function () {
     return this.getMetaProperty("silentSuccess") !== false;
 };
 
 // silent error
 
-Function.prototype.setSilentError = function(aBool) {
+Function.prototype.setSilentError = function (aBool) {
     assert(Type.isBoolean(aBool));
     this.setMetaProperty("silentError", aBool);
     return this;
 };
 
-Function.prototype.silentError = function() {
+Function.prototype.silentError = function () {
     return this.getMetaProperty("silentError") === true;
 };
 
 // json schema for tool call use
 
-Function.prototype.jsonSchemaForParameter = function(parameter, refSet) {
+Function.prototype.jsonSchemaForParameter = function (parameter, refSet) {
     assert(refSet, "refSet is required");
     if (parameter.type.isCapitalized()) {
         const aClass = SvGlobals.globals()[parameter.type];
@@ -210,7 +210,7 @@ Function.prototype.jsonSchemaForParameter = function(parameter, refSet) {
     };
 };
 
-Function.prototype.returnsJsonSchema = function(refSet) {
+Function.prototype.returnsJsonSchema = function (refSet) {
     assert(refSet, "refSet is required");
 
     const oneOf = [];
@@ -267,7 +267,7 @@ Example:
     }
 */
 
-Function.prototype.asRootJsonSchema = function(refSet = new Set()) {
+Function.prototype.asRootJsonSchema = function (refSet = new Set()) {
     const json = {
         "$id": this.assistantToolName(),
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -276,7 +276,7 @@ Function.prototype.asRootJsonSchema = function(refSet = new Set()) {
     return json;
 }
 
-Function.prototype.asJsonSchema = function(refSet = new Set()) {
+Function.prototype.asJsonSchema = function (refSet = new Set()) {
     const name = this.assistantToolName();
 
     assert(name, "Assistant tool name is required");
@@ -305,7 +305,7 @@ Function.prototype.asJsonSchema = function(refSet = new Set()) {
     };
 }
 
-Function.prototype.paramsSchema = function(refSet) {
+Function.prototype.paramsSchema = function (refSet) {
     assert(Type.isSet(refSet), "refSet is required");
     const parameters = this.parameters();
     assert(parameters, "Assistant tool parameters are required");
@@ -340,14 +340,14 @@ Function.prototype.paramsSchema = function(refSet) {
     return paramsSchema;
 }
 
-Function.prototype.toolSpecPrompt = function() {
+Function.prototype.toolSpecPrompt = function () {
     const json = this.asJsonSchema();
     return JSON.stringify(json, null, 2);
 };
 
 // isToolable
 
-Function.prototype.setIsToolable = function(aBool) {
+Function.prototype.setIsToolable = function (aBool) {
     assert(Type.isBoolean(aBool));
     this.setMetaProperty("isToolable", aBool);
     if (this.toolTiming() === null) {
@@ -357,20 +357,20 @@ Function.prototype.setIsToolable = function(aBool) {
     return this;
 };
 
-Function.prototype.isToolable = function() {
+Function.prototype.isToolable = function () {
     return this.getMetaProperty("isToolable") == true;
 };
 
 // Tool Call Timing - when to make the tool call (on stream, on completion, on narration)
 
-Function.prototype.setToolTiming = function(timing) {
+Function.prototype.setToolTiming = function (timing) {
     const validTimings = ["on stream", "on completion", "on narration"];
     assert(validTimings.includes(timing), "Invalid timing: " + timing);
     this.setMetaProperty("toolTiming", timing);
     return this;
 };
 
-Function.prototype.toolTiming = function() {
+Function.prototype.toolTiming = function () {
     const value = this.getMetaProperty("toolTiming");
     if (value) {
         return value;
@@ -380,37 +380,37 @@ Function.prototype.toolTiming = function() {
 
 // on completion 
 
-Function.prototype.setCallsOnCompletionTool = function(aBool) {
+Function.prototype.setCallsOnCompletionTool = function (aBool) {
     assert(Type.isBoolean(aBool));
     this.setToolTiming("on completion");
     return this;
 };
 
-Function.prototype.callsOnCompletionTool = function() {
+Function.prototype.callsOnCompletionTool = function () {
     return this.toolTiming() == "on completion";
 };
 
 // on stream
 
-Function.prototype.setCallsOnStreamTool = function(aBool) {
+Function.prototype.setCallsOnStreamTool = function (aBool) {
     assert(Type.isBoolean(aBool));
     this.setToolTiming("on stream");
     return this;
 };
 
-Function.prototype.callsOnStreamTool = function() {
+Function.prototype.callsOnStreamTool = function () {
     return this.toolTiming() == "on stream";
 };
 
 // on narration
 
-Function.prototype.setCallsOnNarrationTool = function(aBool) {
+Function.prototype.setCallsOnNarrationTool = function (aBool) {
     assert(Type.isBoolean(aBool));
     this.setToolTiming("on narration");
     return this;
 };
 
-Function.prototype.callsOnNarrationTool = function() {
+Function.prototype.callsOnNarrationTool = function () {
     return this.toolTiming() == "on narration";
 };
 

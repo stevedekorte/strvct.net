@@ -24,7 +24,7 @@
     getInheritedMethodSet () {
         const thisClass = this.thisClass();
 
-        if (thisClass._inheritedMethodSet) {
+        if (Object.hasOwn(thisClass, "_inheritedMethodSet")) { // don't want to use inherited cache here
             return thisClass._inheritedMethodSet;
         }
 
