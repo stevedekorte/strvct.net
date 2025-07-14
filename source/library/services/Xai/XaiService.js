@@ -112,7 +112,7 @@
    * @category Authentication
    */
   hasApiKey () {
-    return this.hasApiKey().length > 0;
+    return true; //this.apiKey().length > 0;
   }
 
   /**
