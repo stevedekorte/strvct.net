@@ -12,6 +12,7 @@ class BootLoadingView extends Object {
   constructor() {
     super();
     this._isClosing = false;
+    this._hasInitialized = false;
   }
 
   /**
@@ -30,6 +31,33 @@ class BootLoadingView extends Object {
    */
   isClosing () {
     return this._isClosing;
+  }
+
+  /**
+   * @method initializeFadeIn
+   * @category Lifecycle
+   * @description Initializes the loading view with a fade-in animation.
+   */
+  initializeFadeIn () {
+    if (this._hasInitialized || !this.isAvailable()) {
+      return;
+    }
+    
+    this._hasInitialized = true;
+    const e = this.element();
+    
+    // Set initial state (invisible and slightly scaled down)
+    e.style.opacity = '0';
+    e.style.transform = 'scale(0.95)';
+    e.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+    
+    // Start fade in animation after a brief moment
+    setTimeout(() => {
+      if (this.isAvailable() && !this.isClosing()) {
+        e.style.opacity = '1';
+        e.style.transform = 'scale(1)';
+      }
+    }, 50); // Small delay to ensure styles are applied
   }
 
   /**
@@ -74,6 +102,10 @@ class BootLoadingView extends Object {
     if (!this.isAvailable() || this.isClosing()) {
       return this;
     }
+    
+    // Initialize fade-in animation on first use
+    this.initializeFadeIn();
+    
     this.titleElement().innerText = s;
     return this;
   }
@@ -113,8 +145,18 @@ class BootLoadingView extends Object {
       return this;
     }
 
+    // Initialize fade-in animation on first use
+    this.initializeFadeIn();
+
+    const barElement = this.barElement();
+    
+    // Add smooth transition for width changes if not already present
+    if (!barElement.style.transition) {
+      barElement.style.transition = 'width 0.3s ease-out';
+    }
+
     const v = Math.round(100 * r) / 100; // limit to 2 decimals
-    this.barElement().style.width = 10 * v + "em";
+    barElement.style.width = 10 * v + "em";
     return this;
   }
 
@@ -187,3 +229,11 @@ class BootLoadingView extends Object {
 }
 
 SvGlobals.globals().bootLoadingView = new BootLoadingView();
+
+// Initialize fade-in animation immediately on browsers
+if (SvPlatform.isBrowserPlatform()) {
+  // Use setTimeout to ensure this runs after current execution context
+  setTimeout(() => {
+    SvGlobals.globals().bootLoadingView.initializeFadeIn();
+  }, 0);
+}
