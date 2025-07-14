@@ -43,10 +43,6 @@ body {
   box-sizing: content-box;
 }
 
-hr {
-  width: 100%;
-}
-
 h1,
 h2,
 h3,
@@ -91,6 +87,7 @@ h5 {
 }
 
 hr {
+  width: 100%;
   margin-top: 2em;
   margin-bottom: 2em;
   opacity: 0.2;
