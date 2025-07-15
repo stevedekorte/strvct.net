@@ -45,7 +45,7 @@
 
                 return slot;
             }
-            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((instance) => { 
+            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((/*instance*/) => { 
                 //return SvThemeResources.shared().activeTheme().themeClassNames();
                 return Tile.allSubclasses().map(aClass => aClass.type());
             })
@@ -189,10 +189,7 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @member {boolean} nodeFillsWindow
-         * @category Layout
-         */
+        /*
         {
             const slot = this.newSlot("nodeFillsWindow", false);
             slot.setSlotType("Boolean");
@@ -203,6 +200,7 @@
             slot.setInspectorPath("Node/Viewable/Children Layout");
             slot.setSyncsToView(true);
         }
+            */
 
         /**
          * @member {boolean} nodeCanEditTileHeight
@@ -300,7 +298,7 @@
     onBrowserDropChunk (dataChunk) {
         const mimeType = dataChunk.mimeType();
         const canOpenNodes = SvNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
-        const okTypes = this.acceptedSubnodeTypes();
+        const okTypes = this.acceptedSubnodeTypes(); // did we already check when accepting drop?
         const canUseNodes = canOpenNodes; /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
 
         if (canUseNodes.length) {
@@ -308,12 +306,15 @@
             if (canUseNodes.length === 1) {
                 const match = canUseNodes.first();
                 const newNode = match.openMimeChunk(dataChunk);
-                this.addSubnode(newNode);
 
+                if (okTypes.contains(newNode.type())) {
+                    this.addSubnode(newNode);
+                } else {
+                    WindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.type() });
+                }
                 //if (this.acceptsAddingSubnode(match)) {
                 //    this.addSubnode(match);
                 //}
-                
             } else {
                 // TODO: add CreatorNode with those types and
                 // hook to instantiate from mime data

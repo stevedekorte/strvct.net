@@ -882,6 +882,9 @@
                 this.navView().collapse();
                 //console.log(" <- '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum:" + sum + " > win " + maxWidth); //+ " COLLAPSE " + this.direction());
             }
+            
+            // Update NavView width constraints for window size
+            this.navView().updateWidthForWindow();
         } else {
             //console.log(" X '" + this.node().title()); // + "' skip " + this.direction());
         }

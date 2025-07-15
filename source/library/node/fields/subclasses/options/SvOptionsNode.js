@@ -190,7 +190,7 @@
      * @param {string} aString - The subtitle to set.
      * @returns {SvOptionsNode} The current instance.
      */
-    setSubtitle (aString) {
+    setSubtitle (/*aString*/) {
         return this;
     }
 
@@ -267,13 +267,11 @@
         return this.selectedValue();
     }
 
-    /**
-     * @description Gets the picked items.
-     * @returns {Array<Object>} An array of picked item dictionaries.
-     */
+    /*
     pickedItems () {
         return this.pickedLeafSubnodes().map(s => s.itemDict());
     }
+    */
 
     /**
      * @description Gets a set of picked values.

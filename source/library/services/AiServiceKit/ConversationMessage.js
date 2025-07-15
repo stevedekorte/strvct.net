@@ -230,7 +230,7 @@
   finalInit () {
     super.finalInit();
     this.createIdIfAbsent();
-    //this. (SvTextAreaFieldTile);
+    this.setCanDelete(false);
   }
 
   /**

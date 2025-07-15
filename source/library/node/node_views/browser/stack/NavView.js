@@ -121,7 +121,7 @@
         const defaultWidth = 270;
         if (this.node()) {
             const minWidth = this.node().nodeMinTileWidth();
-            const maxWidth = 600;
+            const maxWidth = WebBrowserWindow.shared().width() - 1;
             let w = defaultWidth;
             w = Math.max(defaultWidth, minWidth);
             w = Math.min(w, maxWidth);
@@ -258,6 +258,7 @@
         } else {
             this.makeOrientationDown();
         }
+        this.updateWidthForWindow();
         return this;
     }
 
@@ -322,7 +323,17 @@
             this.setFlexGrow(1);
         } else {
             //this.setMinAndMaxWidth("17em");
-            this.setMinAndMaxWidth(this.targetWidth());
+            const targetW = this.targetWidth();
+            const windowW = WebBrowserWindow.shared().width();
+            
+            // If our target width exceeds window width, constrain to window
+            if (targetW >= windowW) {
+                this.setMinWidth("17em");
+                this.setWidth("100%");
+                this.setMaxWidth("100%");
+            } else {
+                this.setMinAndMaxWidth(targetW);
+            }
 
             if (this.shouldCurrentlyFillAvailble()) {
                 this.setMinWidth("17em");
@@ -507,6 +518,27 @@
             this.setIsCollapsed(false);
         }
         assert(!this.isDisplayHidden());
+    }
+
+    /**
+     * @description Updates the width constraints based on window size
+     * @category Layout
+     */
+    updateWidthForWindow () {
+        if (!WebBrowserWindow.shared().isOnMobile() && this.isVertical()) {
+            const targetW = this.targetWidth();
+            const windowW = WebBrowserWindow.shared().width();
+            
+            // If our target width exceeds window width, constrain to window
+            if (targetW >= windowW) {
+                this.setMinWidth("17em");
+                this.setWidth("100%");
+                this.setMaxWidth("100%");
+            } else {
+                this.setMinAndMaxWidth(targetW);
+            }
+        }
+        return this;
     }
 
     /**

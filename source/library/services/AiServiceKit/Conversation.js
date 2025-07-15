@@ -38,6 +38,8 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
 
+    //this.setNodeFillsRemainingWidth(true);
+
     this.setSubnodeClasses([]);
     this.setNodeChildrenAlignment("flex-start"); // make the messages stick to the bottom
   }
