@@ -220,7 +220,7 @@
     this.setValueIsEditable(false);
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setCanDelete(true);
+    this.setCanDelete(false);
   }
 
   /**

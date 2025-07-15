@@ -144,7 +144,21 @@
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
     this.setResponseMsgClass(AiParsedResponseMessage);
     this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    //this.watchForNote("onBrowserOnline");
+    //this.watchForNote("onBrowserOffline");
   }
+
+  /*
+  onBrowserOnline () {
+    console.log("onBrowserOnline");
+    this.setChatInputIsEnabled(true);
+  }
+
+  onBrowserOffline () {
+    console.log("onBrowserOffline");
+    this.setChatInputIsEnabled(false);
+  }
+*/
 
   /*
   afterInit () {

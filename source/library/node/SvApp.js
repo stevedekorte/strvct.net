@@ -239,6 +239,8 @@
      */
     initPrototype () {
         this.setIsDebugging(true);
+        this.watchForNote("onBrowserOnline");
+        this.watchForNote("onBrowserOffline");
     }
 
     /**
@@ -248,6 +250,15 @@
     init () {
         super.init();
         this.setDidInitPromise(Promise.clone());
+    }
+
+    onBrowserOnline (/*aNote*/) {
+        console.log("onBrowserOnline");
+    }
+
+    onBrowserOffline (/*aNote*/) {
+        console.log("onBrowserOffline");
+        //WindowErrorPanel.shared().showPathWithInfo({ message: "Browser offline" });
     }
 
     /**

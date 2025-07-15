@@ -18,8 +18,9 @@
   initPrototypeSlots () {
 
     {
-      //const slot = this.newSlot("delegate", null);
-      //slot.setSlotType("Object");
+      const slot = this.newSlot("chatInputNode", null);
+      slot.setSlotType("ChatInputNode");
+      slot.setShouldStoreSlot(false);
     }
 
   }
@@ -48,14 +49,17 @@
   init () {
     super.init();
 
-    {
-      const f = ChatInputNode.clone();
-      f.setCanDelete(false);
-      f.setConversation(this);
-      f.setHasValueButton(true);
-      this.setFooterNode(f);
-    }
+    this.setupChatInputNode();
+    this.setFooterNode(this.chatInputNode());
+  }
 
+  setupChatInputNode () {
+    const f = ChatInputNode.clone();
+    f.setCanDelete(false);
+    f.setConversation(this);
+    f.setHasValueButton(true);
+    this.setChatInputNode(f);
+    return f;
   }
 
   /**
@@ -151,7 +155,7 @@
    */
   onMessageComplete (aMsg) {
     //super.onMessageComplete(aMsg);
-    this.footerNode().setValueIsEditable(true)
+    this.chatInputNode().setValueIsEditable(true);
     if (aMsg.error() === null) {
       //const pmsg = aMsg.previousMessage() 
       /*
@@ -211,7 +215,7 @@
     const m = this.newMessage();
     m.setContent(v);
     m.setIsComplete(true);
-    //this.footerNode().setValueIsEditable(false)
+    //this.chatInputNode().setValueIsEditable(false)
   }
 
   /**
@@ -221,7 +225,7 @@
    * @category Input Handling
    */
   setChatInputIsEnabled (aBool) {
-    this.footerNode().setValueIsEditable(aBool);
+    this.chatInputNode().setValueIsEditable(aBool);
     return this
   }
 
@@ -329,12 +333,12 @@
 
   /*
   disableInput () {
-    this.footerNode().disableEnter();
+    this.chatInputNode().disableEnter();
     return this
   }
 
   enableInput () {
-    this.footerNode().enableEnter();
+    this.chatInputNode().enableEnter();
     return this
   }
   */

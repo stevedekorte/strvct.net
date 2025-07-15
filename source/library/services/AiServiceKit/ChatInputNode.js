@@ -91,8 +91,8 @@
    * @param {Object} valueView - The view object
    * @category Event Handling
    */
-  onDidEditValue (valueView) {
-    this.conversation().onChatEditValue(this.value())
+  onDidEditValue (/*valueView*/) {
+    this.conversation().onChatEditValue(this.value());
   }
 
   /**
@@ -109,9 +109,9 @@
    * @param {Object} changedView - The changed view object
    * @category Event Handling
    */
-  onValueInput (changedView) {
+  onValueInput (/*changedView*/) {
     if (this.value()) {
-      this.send()
+      this.send();
     }
   }
 

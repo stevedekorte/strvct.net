@@ -135,16 +135,14 @@
             return this;
         }
         
-        debugger;
         // Create visual error notification
-        this.showErrorNotification(errorInfo);
+        this.showPathWithInfo(errorInfo);
         
         // Log the error
         console.error("JS Error:", errorInfo);
         
         // Send error report to server
         this.sendErrorReport(errorInfo);
-        
         return this;
     }
 
@@ -200,7 +198,7 @@
      * @param {Object} errorInfo - The error information object.
      * @category UI
      */
-    showErrorNotification (errorInfo) {
+    showPathWithInfo (errorInfo) {
         // Create backdrop div that fills the window
         const backdropDiv = document.createElement('div');
         {
@@ -251,10 +249,6 @@
             style.width = 'fit-content';
             style.height = 'fit-content';
         }
-
-        //const errorSource = errorInfo.source.split('/').pop();
-        //const column = errorInfo.colno ? `:${errorInfo.colno}` : "";
-        //const line = errorInfo.lineno ? ` ${errorInfo.lineno}` : "";
         
         // Create error message content
         let errorMessage = errorInfo.message;

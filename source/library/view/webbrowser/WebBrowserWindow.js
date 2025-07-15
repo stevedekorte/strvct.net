@@ -427,7 +427,11 @@
      * @category Network Management
      */
     isOnline () {
-        return navigator.onLine;
+        if (SvPlatform.isBrowserPlatform()) {
+            return navigator.onLine;
+        }
+        // assume online for non-browser platforms?
+        return true;
     }
 
     /**

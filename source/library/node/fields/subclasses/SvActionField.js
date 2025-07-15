@@ -143,8 +143,8 @@
             const infoMethodName = this.methodName() + "ActionInfo"
             const method = t[infoMethodName];
             if (method) {
-                const infoDict = method.apply(t, [])
-                this.setActionInfo(infoDict)
+                const infoDict = method.apply(t, []);
+                this.setActionInfo(infoDict);
             }
         }
     }

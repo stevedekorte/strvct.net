@@ -99,7 +99,7 @@
       //console.log("LINE: " + line);
 
       while (line !== undefined) {
-        line = line.trim()
+        line = line.trim();
         if (line.length) {
           if (line.startsWith("data:")) {
             const s = line.after("data:");
@@ -111,7 +111,7 @@
               }
             } else {
               // we should expect json
-              //console.log("LINE: " + s)
+              console.log("LINE: " + s)
               const json = JSON.parse(s);
               this.onStreamJsonChunk(json);
             }

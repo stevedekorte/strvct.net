@@ -81,9 +81,12 @@
       slot.setActionMethodName("requestResponse");
     }
 
+  }
+
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setCanDelete(true);
+    this.setCanDelete(false);
   }
 
   /**
