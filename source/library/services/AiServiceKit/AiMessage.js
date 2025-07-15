@@ -262,12 +262,11 @@
    * @category Actions
    */
   requestResponse () {
-    //debugger;
     const response = this.conversation().newMessageOfClass(this.responseMsgClass());
     this.conversation().addSubnode(response);
     response.setSpeakerName(this.conversation().aiSpeakerName());
     //this.conversation().postShouldFocusSubnode(responseMessage)
-    response.makeRequest();
+    response.asyncMakeRequest();
     return response;
   }
 
@@ -277,8 +276,8 @@
    * @category Error Handling
    */
   valueError () {
-    const e = this.error()
-    return e ? e.message : null
+    const e = this.error();
+    return e ? e.message : null;
   }
 
   /**
@@ -286,7 +285,7 @@
    * @category Event Handling
    */
   onValueInput () {
-    this.requestResponse()
+    this.requestResponse();
   }
 
   /**
@@ -298,7 +297,7 @@
     return {
       name: "updateAiChatMessage",
       payload: this.jsonArchive()
-    }
+    };
   }
 
   /**
@@ -327,7 +326,7 @@
       // TODO: add sanity check before deleting
       this.deleteFollowingMessages(); 
       this.setContent("");
-      this.makeRequest();
+      this.asyncMakeRequest();
     }
   }
 

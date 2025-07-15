@@ -112,7 +112,7 @@
         await block();
         const end = performance.now();
         const time = end - start;
-        //console.log(" --- " + label + " " + Math.round(time/100)/10 + "s --- ");
+        console.log(" --- " + label + " " + Math.round(time/100)/10 + "s --- ");
     }
 
     /**
@@ -258,7 +258,7 @@
 
     onBrowserOffline (/*aNote*/) {
         console.log("onBrowserOffline");
-        //WindowErrorPanel.shared().showPathWithInfo({ message: "Browser offline" });
+        //WindowErrorPanel.shared().showPanelWithInfo({ message: "Browser offline" });
     }
 
     /**

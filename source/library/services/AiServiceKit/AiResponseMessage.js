@@ -248,12 +248,12 @@
    * @returns {AiResponseMessage} This instance.
    * @category Communication
    */
-  makeRequest () {
+  async asyncMakeRequest () {
     this.setError(null);
     const request = this.newRequest();
     this.setRequest(request);
     request.asyncSendAndStreamResponse();
-    return this
+    return this;
   }
 
   /**
@@ -332,12 +332,16 @@
     this.setError(aRequest.error());
     const msg = aRequest.error().message;
     console.warn("ERROR: ", msg);
+
+    // TODO: look at error and retry if appropriate,
+    // otherwise show error panel
+    WindowErrorPanel.shared().showPanelWithInfo({ message: msg });
     /*
     if (msg.includes("Please try again in 6ms.")) {
       this.setRetryCount(this.retryCount() + 1);
       const seconds = Math.pow(2, this.retryCount());
       console.warn("WARNING: retrying openai request in " + seconds + " seconds");
-      this.addTimeout(() => this.makeRequest(), seconds*1000);
+      this.addTimeout(() => this.asyncMakeRequest(), seconds*1000);
     }
     */
   }

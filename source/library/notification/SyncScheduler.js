@@ -259,7 +259,7 @@
      * @returns {boolean} True if syncing or scheduled, false otherwise
      * @category Query
      */
-    isSyncingOrScheduledTargetAndMethod(target, syncMethod) {
+    isSyncingOrScheduledTargetAndMethod (target, syncMethod) {
         const sc = this.hasScheduledTargetAndMethod(target, syncMethod);
         const sy = this.isSyncingTargetAndMethod(target, syncMethod);
         return sc || sy;

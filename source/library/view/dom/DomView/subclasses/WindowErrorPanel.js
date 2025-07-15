@@ -136,7 +136,7 @@
         }
         
         // Create visual error notification
-        this.showPathWithInfo(errorInfo);
+        this.showPanelWithInfo(errorInfo);
         
         // Log the error
         console.error("JS Error:", errorInfo);
@@ -198,7 +198,7 @@
      * @param {Object} errorInfo - The error information object.
      * @category UI
      */
-    showPathWithInfo (errorInfo) {
+    showPanelWithInfo (errorInfo) {
         // Create backdrop div that fills the window
         const backdropDiv = document.createElement('div');
         {
@@ -254,8 +254,12 @@
         let errorMessage = errorInfo.message;
         if (errorMessage.includes(":")) {
             const parts = errorMessage.split(":").map(part => part.trim());
-            errorMessage = parts.last();
+            while (parts.length > 1 && parts.first().asLowercase().endsWith("error")) {
+                parts.shift();
+            }
         }
+        errorMessage = parts.last();
+
         //const errorTitle = parts[0];
         //const errorMessage = '"' + parts[1] + '"';
         //const location = `on ${errorSource} line${line}`;
