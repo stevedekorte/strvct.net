@@ -534,6 +534,11 @@
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
+            } else if (windowW < targetW * 2) {
+                // If window is between 1x and 2x the NavView width, make it fill 100%
+                this.setMinWidth("17em");
+                this.setWidth("100%");
+                this.setMaxWidth("100%");
             } else {
                 this.setMinAndMaxWidth(targetW);
             }
