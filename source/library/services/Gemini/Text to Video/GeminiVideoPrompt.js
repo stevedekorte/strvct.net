@@ -3,7 +3,7 @@
 /*
     GeminiVideoPrompt
     
-    A class to handle calls to Google's Gemini Text to Video API (Veo)
+    A class to handle calls to Google's Gemini Text to Video API (Veo 3)
     for generating videos from text prompts.
 */
 
@@ -46,10 +46,10 @@
         }
 
         {
-            const slot = this.newSlot("ttvModel", "veo-2.0-generate-001");
+            const slot = this.newSlot("ttvModel", "veo-3.0-generate-001");
             slot.setSlotType("String");
             slot.setDescription("The Gemini model to use for text to video generation via Veo");
-            slot.setValidValues(["veo-3.0-generate-preview", "veo-2.0-generate-001"]);
+            slot.setValidValues(["veo-3.0-generate-001"]);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
         }
@@ -364,7 +364,7 @@
                 /*
                 example response:
                 {
-                    "name": "projects/precise-blend-419917/locations/us-central1/publishers/google/models/veo-2.0-generate-001/operations/5f0489e6-17a3-4052-ade1-57117ab607a4",
+                    "name": "projects/precise-blend-419917/locations/us-central1/publishers/google/models/veo-3.0-generate-001/operations/5f0489e6-17a3-4052-ade1-57117ab607a4",
                     "done": true,
                     "response": {
                     "@type": "type.googleapis.com/cloud.ai.large_models.vision.GenerateVideoResponse",
