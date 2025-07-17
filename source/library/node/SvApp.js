@@ -373,6 +373,9 @@
      */
     unhideRootView () {
         if (this.rootView()) {
+            if (SvPlatform.isBrowserPlatform()) {
+                document.body.style.display = "flex";
+            }
             this.rootView().setIsDisplayHidden(false);
         }
         return this;
@@ -399,23 +402,22 @@
             this.runTests();
         }
 
-        await bootLoadingView.asyncClose();
-
-        if (SvPlatform.isBrowserPlatform()) {
-            document.body.style.display = "flex";
-        } else {
-            console.log("🟡 SvApp: appDidInit: not in browser environment - skipping document.body.style.display");
-        }
-
         this.unhideRootView();
-        this.afterAppUiDidInit();
+        await this.afterAppUiDidInit();
+
+        // /await this.asyncCloseLoadingView();
+    }
+
+    async asyncCloseLoadingView () {
+        await SvPlatform.asyncWaitForNextRender();
+        await BootLoadingView.shared().asyncClose();        
     }
 
     /**
      * @description Called after the app UI has initialized
      * @category Lifecycle
      */
-    afterAppUiDidInit () {
+    async afterAppUiDidInit () {
         if (SvPlatform.isBrowserPlatform()) {
             const searchParams = WebBrowserWindow.shared().pageUrl().searchParams;
             if (searchParams.size !== 0) {

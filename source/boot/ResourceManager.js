@@ -339,7 +339,7 @@
         for (const r of this.jsResources()) {
             count++;
             //console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
-            bootLoadingView.setBarToNofM(count, this.jsResources().length);
+            BootLoadingView.shared().setBarToNofM(count, this.jsResources().length);
             try {
                 r.eval();
             } catch (error) {
@@ -380,7 +380,6 @@
      * @description Handles completion of resource loading.
      */
     onDone () {
-        SvGlobals.globals().bootLoadingView = bootLoadingView;
         this.markPageLoadTime();
         this._promiseCompleted.callResolveFunc();
     }

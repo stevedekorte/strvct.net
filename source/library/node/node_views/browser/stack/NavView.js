@@ -464,6 +464,7 @@
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
         this.syncClickToAddView();
+        console.log(this.typeId(), " syncFromNode done");
         return this;
     }
 
@@ -528,14 +529,15 @@
         if (!WebBrowserWindow.shared().isOnMobile() && this.isVertical()) {
             const targetW = this.targetWidth();
             const windowW = WebBrowserWindow.shared().width();
+            const isLastNavView = this.stackView() && !this.stackView().nextStackView();
             
             // If our target width exceeds window width, constrain to window
             if (targetW >= windowW) {
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
-            } else if (windowW < targetW * 2) {
-                // If window is between 1x and 2x the NavView width, make it fill 100%
+            } else if (isLastNavView && windowW < targetW * 2) {
+                // Only for the last NavView: if window is between 1x and 2x the NavView width, make it fill 100%
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");

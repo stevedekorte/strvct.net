@@ -9,11 +9,41 @@
 
 class BootLoadingView extends Object {
 
-  constructor() {
+  constructor () {
     super();
     this._isClosing = false;
     this._hasInitialized = false;
+    //this._interval = null;
   }
+
+  static _shared = null;
+
+  /**
+   * @method shared
+   * @category Singleton
+   * @returns {BootLoadingView} The shared instance of the loading view.
+   */
+  static shared () {
+    if (this._shared === null) {
+      this._shared = new BootLoadingView();
+    }
+    return this._shared;
+  }
+
+  /*
+  startInterval () {
+    const fps = 30;
+    this._interval = setInterval(() => {
+      // let's force a DOM render here
+
+    }, 1000/fps);
+  }
+
+  stopInterval () {
+    clearInterval(this._interval);
+    this._interval = null;
+  }
+  */
 
   /**
    * @method isAvailable
@@ -157,6 +187,7 @@ class BootLoadingView extends Object {
 
     const v = Math.round(100 * r) / 100; // limit to 2 decimals
     barElement.style.width = 10 * v + "em";
+    //console.log("setBarRatio", v);
     return this;
   }
 
@@ -195,45 +226,47 @@ class BootLoadingView extends Object {
    * @description Removes the loading view element from the DOM with a fade-out animation.
    * @returns {Promise} A promise that resolves when the animation completes.
    */
-  asyncClose () {
-    return new Promise((resolve) => {
-      if (!this.isAvailable()) {
-        resolve();
-        return;
-      }
-      
-      // Set closing flag to prevent further updates
-      this._isClosing = true;
-      
-      const e = this.element();
-      
-      // Add transition if not already present
-      if (!e.style.transition) {
-        e.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
-      }
-      
-      // Start fade out animation
-      e.style.opacity = '0';
-      e.style.transform = 'scale(0.95)';
-      
-      // Remove element after animation completes
-      setTimeout(() => {
-        if (e.parentNode) {
-          e.parentNode.removeChild(e);
-        }
-        this._isClosing = false; // Reset flag
-        resolve();
-      }, 300); // Match the 0.3s transition duration
-    });
+  async asyncClose () {
+    if (!this.isAvailable()) {
+      return;
+    }
+
+    const e = this.element();
+
+    if (e.parentNode === null) {
+      return;  // already closed
+    }
+    
+    // Set closing flag to prevent further updates
+    this._isClosing = true;
+    
+    
+    // Add transition if not already present
+    if (!e.style.transition) {
+      e.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+    }
+    
+    // Start fade out animation
+    e.style.opacity = '0';
+    e.style.transform = 'scale(0.95)';
+    
+    // Wait for animation to complete
+    await new Promise(resolve => setTimeout(resolve, 300)); // Match the 0.3s transition duration
+    
+    if (e.parentNode) {
+      e.parentNode.removeChild(e);
+    }
+    this._isClosing = false; // Reset flag
   }
 }
 
-SvGlobals.globals().bootLoadingView = new BootLoadingView();
+SvGlobals.set("BootLoadingView", BootLoadingView);
+BootLoadingView.shared();
 
 // Initialize fade-in animation immediately on browsers
 if (SvPlatform.isBrowserPlatform()) {
   // Use setTimeout to ensure this runs after current execution context
   setTimeout(() => {
-    SvGlobals.globals().bootLoadingView.initializeFadeIn();
+    BootLoadingView.shared().initializeFadeIn();
   }, 0);
 }

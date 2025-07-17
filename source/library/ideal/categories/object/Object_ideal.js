@@ -306,7 +306,7 @@
      * @returns {*} The result of scheduling the method.
      * @category Scheduling
      */
-    scheduleMethod (methodName, priority) {
+    scheduleMethod (methodName, priority) { // high priority = scheduled later
         return SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority);
     }
 
@@ -317,7 +317,7 @@
      * @returns {*} The result of scheduling the method.
      * @category Scheduling
      */
-    scheduleMethodForNextCycle (methodName, priority) {
+    scheduleMethodForNextCycle (methodName, priority) { // high priority = scheduled later
         return SyncScheduler.shared().scheduleTargetAndMethodForNextCycle(this, methodName, priority);
     }
 

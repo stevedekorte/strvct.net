@@ -139,7 +139,7 @@ class SvPlatform extends Object {
     });
   }
 
-  static async promiseReadyInBrowser() {
+  static async promiseReadyInBrowser () {
     // Wrap the load event in a Promise
     await new Promise(resolve => {
       if (document.readyState === 'complete') {
@@ -151,8 +151,20 @@ class SvPlatform extends Object {
       }
     });
   }
+
+  static async asyncWaitForNextRender () {
+    if (SvPlatform.isNodePlatform()) {
+      return;
+    }
+    // in browser, we can wait for the next render
+    return new Promise(resolve => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(resolve); // Resolves after the paint
+      });
+    });
+  }
 }
 
 SvGlobals.set("SvPlatform", SvPlatform);
+//await SvPlatform.asyncSetup(); 
 
-//await SvPlatform.asyncSetup();

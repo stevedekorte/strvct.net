@@ -40,18 +40,31 @@ class BootLoader extends Object {
 
   static async asyncRun () {
     if (this._promiseCompleted === null) {
-      this._promiseCompleted = new Promise(async (resolve, reject) => {
-        await SvPlatform.promiseReady();
-        await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());
-        await ResourceManager.shared().setupAndRun();
-        resolve();
+      this._promiseCompleted = new Promise((resolve, reject) => {
+        this.asyncBegin().then(() => {
+          resolve();
+        }).catch(reject);
       });
     }
     return this._promiseCompleted;
+  }
+
+  static async asyncBegin () {
+    await SvPlatform.promiseReady();
+
+    if (SvPlatform.isBrowserPlatform()) {
+      console.log("document.body.style.backgroundColor = ", document.body.style.backgroundColor);
+      document.body.style.backgroundColor = "black";
+    }
+
+    await SvPlatform.asyncWaitForNextRender(); // let the background color get rendered first?
+    //debugger;
+    await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());
+    await ResourceManager.shared().setupAndRun();
   }
 
 }
 
 SvGlobals.set("BootLoader", BootLoader);
 
-BootLoader.asyncRun();
+//await BootLoader.asyncRun();

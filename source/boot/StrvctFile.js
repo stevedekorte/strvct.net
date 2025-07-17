@@ -72,6 +72,12 @@ class StrvctFile extends Object {
          * @description Cached file content after loading
          */
         this._content = null;
+    } 
+
+    static setup () {
+        if (SvPlatform.isNodePlatform()) {
+            this.setWorkingPath(process.cwd());
+        }
     }
 
     /**
@@ -418,3 +424,5 @@ class StrvctFile extends Object {
 }
 
 SvGlobals.set("StrvctFile", StrvctFile);
+
+StrvctFile.setup();

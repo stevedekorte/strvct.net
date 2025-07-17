@@ -310,7 +310,8 @@
         // who register for appDidInit
         // TODO: generalize this for all notifications somehow
         // maybe register for note with object directly
-        
+        assert(! (this instanceof SvApp), "registerForAppDidInit should not be called on SvApp");
+
         if (SvApp.hasShared() && SvApp.shared().hasDoneAppInit()) {
             this.appDidInit(); // may be async
         } else {

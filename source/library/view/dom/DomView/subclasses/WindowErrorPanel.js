@@ -254,7 +254,7 @@
         let errorMessage = errorInfo.message;
         if (errorMessage.includes(":")) {
             const parts = errorMessage.split(":").map(part => part.trim());
-            while (parts.length > 1 && parts.first().asLowercase().endsWith("error")) {
+            while (parts.length > 1 && parts.first().toLowerCase().endsWith("error")) {
                 parts.shift();
             }
         }
