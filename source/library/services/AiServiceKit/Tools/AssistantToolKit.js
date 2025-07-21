@@ -34,7 +34,7 @@
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
       slot.setIsInJsonSchema(false);
-      slot.setShouldStoreSlot(true);
+      slot.setShouldStoreSlot(false);
     }
 
     {

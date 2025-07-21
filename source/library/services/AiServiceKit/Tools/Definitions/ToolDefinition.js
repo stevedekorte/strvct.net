@@ -74,7 +74,7 @@
     
 
 
-    this.setShouldStore(true);
+    this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
     this.setNodeCanReorderSubnodes(false);
     this.setCanDelete(false);

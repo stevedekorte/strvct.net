@@ -21,21 +21,18 @@
       slot.setCanEditInspection(false);
     }
 
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
+
+  }
+
+  initPrototype () {
+    this.setCanDelete(false);
+    this.setShouldStore(false);
+    this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([ToolDefinition]);
 
     this.setSummaryFormat("value");
     this.setHasNewlineAfterSummary(true);
     this.setNodeCanReorderSubnodes(false);
-    this.setCanDelete(false);
-
-    this.setShouldStoreSubnodes(true);
-    /*
-    this.setSummaryFormat("value");
-    this.setHasNewlineAfterSummary(true);
-    */
-   //this.setNoteIsSubnodeCount(true);
   }
 
   finalInit () {
