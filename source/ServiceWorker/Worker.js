@@ -11,7 +11,24 @@ class Worker extends Object {
      * @category Initialization
      */
     init () {
+        this._isRegistered = false;
+        this._registration = null;
+    }
 
+    static _shared = null;
+
+    static shared () {
+        if (!Worker._shared) {
+            Worker._shared = new Worker();
+            Worker._shared.init();
+        }
+        return Worker._shared;
+    }
+
+    static register () {
+        const worker = Worker.shared();
+        worker.registerServiceWorker();
+        return worker;
     }
 
     /**
@@ -19,15 +36,21 @@ class Worker extends Object {
      * @category Service Worker Registration
      */
     async registerServiceWorker () {
-        // doesn't work
-        // "/source/ServiceWorker.js"
-        // "../ServiceWorker.js"
+        if (!SvPlatform.isBrowserPlatform()) {
+            return;
+        }
+
+        if (this._isRegistered) {
+            return;
+        }
+        this._isRegistered = true;
+
         const path = "strvct/source/ServiceWorker/sj.js"
         console.log("registering service worker '" + path + "'")
         const promise = navigator.serviceWorker.register(path); //{ scope: ""../"}
 
         try { 
-            await promise;
+            this._registration = await promise;
             this.onRegistered();
         } catch (error) {
             this.onError(error);
@@ -58,3 +81,5 @@ class Worker extends Object {
         );
     }
 }
+
+SvGlobals.set("Worker", Worker);

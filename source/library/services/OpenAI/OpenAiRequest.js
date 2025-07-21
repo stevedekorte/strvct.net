@@ -111,7 +111,7 @@
               }
             } else {
               // we should expect json
-              console.log("LINE: " + s)
+              //console.log("LINE: " + s)
               const json = JSON.parse(s);
               this.onStreamJsonChunk(json);
             }

@@ -21,17 +21,17 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(false)
-        this.setKeyIsVisible(true)
-        this.setValueIsVisible(true)
-        this.setNodeTileIsSelectable(true)
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(false);
+        this.setKeyIsVisible(true);
+        this.setValueIsVisible(true);
+        this.setNodeTileIsSelectable(true);
     }
 
     /*
     setValue (v) {
-        console.warn("WARNING: SvPointerField setValue '" + v + "'")
-        return this
+        console.warn("WARNING: SvPointerField setValue '" + v + "'");
+        return this;
     }
     */
 
@@ -43,8 +43,8 @@
      * @category Utility
      */
     proxyGetter (methodName, defaultReturnValue = "") {
-        const v = this.value()
-        return v ? v[methodName].apply(v) : defaultReturnValue
+        const v = this.value();
+        return v ? v[methodName].apply(v) : defaultReturnValue;
     }
 
     /**
@@ -53,8 +53,8 @@
      * @category Data Access
      */
     title () {
-        const title = this.proxyGetter("title")
-        return title
+        const title = this.proxyGetter("title");
+        return title;
     }
 	
     /**
@@ -63,7 +63,7 @@
      * @category Data Access
      */
     subtitle () {
-        return this.proxyGetter("subtitle")
+        return this.proxyGetter("subtitle");
     }
 	
     /**
@@ -72,7 +72,7 @@
      * @category Data Access
      */
     note () {
-        return this.proxyGetter("note")
+        return this.proxyGetter("note");
     }
 	
     /**
@@ -81,7 +81,7 @@
      * @category Data Access
      */
     nodeTileLink () {
-        return this.value()
+        return this.value();
     }
 
     /**
@@ -91,7 +91,7 @@
      */
     jsonArchive () {
         if (this.value() && this.value().jsonArchive) {
-            return this.value().jsonArchive()
+            return this.value().jsonArchive();
         }
         return undefined;
     }

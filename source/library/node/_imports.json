@@ -13,5 +13,9 @@
     "network/_imports.json",
     "audio/_imports.json",
 
+    "SvErrorReport.js",
+    "SvAsyncTimer.js",
+    "SvModel.js",
+    "SvUserInterface.js",
     "SvApp.js"
 ]

@@ -410,16 +410,57 @@
      * @returns {Object}
      */
     rootOrIfAbsentFromClosure (aClosure) {
-        //debugger;
         if (this.hasStoredRoot()) {
             this.readRoot();
         } else {
-         //   debugger
             const newRoot = aClosure();
             assert(newRoot);
             this.setRootObject(newRoot);
         }
         return this.rootObject();
+    }
+
+    // ok, if we want to use an already allocated Application root object,
+    // we need to do this:
+    setupForRootObject (appRootObject) {
+        if (this.hasStoredRoot()) {
+            this.readRoot();
+
+            // now let's do some sanity checks
+            assert(appRootObject.puuid() !== this.rootPid(), "appRootObject.puuid() === this.rootPid()");
+            assert(appRootObject !== this.rootObject(), "appRootObject.puuid() === this.rootPid()");
+
+            // now we need to map the stored root object to our app root object
+            // to do this, we'll get the pid of the current root and
+            // set the pid of the app root to it, then update our pid->object map
+
+            const storedRootPid = this.rootPid();
+            const appRootPid = appRootObject.puuid();
+
+            const map = this.recordsMap();
+
+            // Make sure there are no refs to this first
+            const refs = this.objectSetReferencingPid(appRootPid);
+            refs.delete(appRootObject);
+            assert(refs.size === 0, "there are still stored refs to the app root object");
+            // TODO:what about dirty objects?
+            
+            // read the old record into the new object
+            const oldRecord = this.recordForPid(storedRootPid);
+            appRootObject.loadFromRecord(oldRecord, this);
+
+            map.removeAt(appRootPid);
+            appRootObject.justSetPuuid(storedRootPid);
+            map.atPut(storedRootPid, appRootObject);
+
+            // now we need to update the active objects
+            this.addActiveObject(appRootObject);
+            this.addDirtyObject(obj);appRootObject
+
+        } else {
+            this.setRootObject(rootObject);
+        }
+        return this;
     }
 
     /**
@@ -439,7 +480,7 @@
     }
 
     /**
-     * @description check if the object pool knows about the object
+     * @description check if the object pool knows about the object. Does not check if the object is referenced within records, it should be in the recordsMap if it is.
      * @param {Object} obj - the object to check
      * @returns {Boolean}
      */
@@ -1341,6 +1382,17 @@
         }
         
         return puuids;
+    }
+
+    objectSetReferencingPid (pid) {
+        const objects = new Set();
+        this.recordsMap().keysSet().forEach(objPid => {
+            const obj = this.objectForPid(objPid);
+            if (obj.refSetForPuuid(pid).has(objPid)) {
+                objects.add(obj);
+            }
+        })
+        return objects;
     }
 
     // ------------------------

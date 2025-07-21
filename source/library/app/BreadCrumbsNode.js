@@ -12,7 +12,7 @@
      * @description This method is used to initialize the prototype slots of the BreadCrumbsNode class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         /*
         {
             const slot = this.newSlot("blobs", null)
@@ -28,7 +28,7 @@
      * @description This method is used to initialize the prototype of the BreadCrumbsNode class.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
         this.setNodeTileClassName("BreadCrumbsTile");
         this.setCanDelete(false);
         this.setNodeMinTileHeight(55);

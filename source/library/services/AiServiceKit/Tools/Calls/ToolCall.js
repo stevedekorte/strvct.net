@@ -308,7 +308,7 @@ Example Tool call format:
         };
         
         debugger;
-        UoApp.shared().asyncPostErrorReport(e, errorData).catch(error => {
+        SvErrorReport.asyncSend(e, errorData).catch(error => {
           console.error("Failed to report tool call parse error:", error);
         });
     } catch (reportError) {
@@ -420,37 +420,31 @@ Example Tool call format:
     console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
     
     // Report error to the server if SvApp is available
-    try {
-      const app = SvApp.shared();
-      if (app && typeof app.asyncPostErrorReport === "function") {
-        const errorData = {
-          name: "ToolCallError",
-          message: e.message,
-          extraMessage: e.extraMessage,
-          stack: e.stack,
-          toolCall: {
-            toolName: this.toolName(),
-            callId: this.callId(),
-            status: this.status(),
-            toolTarget: this.toolTarget().type(),
-            toolTargetJson: this.toolTarget().asJson()
-          }
-        };
-        
-        // Add call JSON if available
-        if (this.callJson()) {
-          errorData.toolCall.parameters = this.callJson().parameters;
+    const errorData = {
+        name: "ToolCallError",
+        message: e.message,
+        extraMessage: e.extraMessage,
+        stack: e.stack,
+        toolCall: {
+          toolName: this.toolName(),
+          callId: this.callId(),
+          status: this.status(),
+          toolTarget: this.toolTarget().type(),
+          toolTargetJson: this.toolTarget().asJson()
         }
-        
-        // Don't block execution - use setTimeout to post error asynchronously
-
-          app.asyncPostErrorReport(e, errorData).catch(error => {
-            console.error("Failed to report tool call error:", error);
-          });
+      };
+      
+      // Add call JSON if available
+      if (this.callJson()) {
+        errorData.toolCall.parameters = this.callJson().parameters;
       }
-    } catch (reportError) {
-      console.error("Error while trying to report tool call error:", reportError);
-    }
+      
+      // Don't block execution - use setTimeout to post error asynchronously
+
+      SvErrorReport.asyncSend(e, errorData).catch(error => {
+          console.error("Failed to report tool call error:", error);
+    });
+
   }
 
   hasError () {

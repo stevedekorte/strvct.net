@@ -19,7 +19,7 @@
      * @returns {boolean} Always returns true.
      * @category Gesture
      */
-    acceptsTapBegin (aGesture) {
+    acceptsTapBegin (/*aGesture*/) {
         return true;
     }
 
@@ -128,7 +128,7 @@
      * @param {Object} aGesture - The gesture object.
      * @category Gesture
      */
-    onLongPressCancelled (aGesture) {
+    onLongPressCancelled (/*aGesture*/) {
     }
 
     /**
@@ -210,7 +210,7 @@
      * @param {Object} aGesture - The gesture object.
      * @category Gesture
      */
-    onBottomEdgePanBegin (aGesture) {
+    onBottomEdgePanBegin (/*aGesture*/) {
         this._beforeEdgePanBorderBottom = this.borderBottom();
         this.setBorderBottom("1px dashed red");
         this.setTransition("min-height 0s, max-height 0s");
@@ -225,8 +225,8 @@
     onBottomEdgePanMove (aGesture) {
         const p = aGesture.currentPosition();
         const f = this.frameInDocument();
-        const newHeight = p.y() - f.y();
-        const minHeight = this.node() ? this.node().nodeMinTileHeight() : 10;
+        let newHeight = p.y() - f.y();
+        //const minHeight = this.node() ? this.node().nodeMinTileHeight() : 10;
         if (newHeight < 10) {
             newHeight = 10;
         }
@@ -241,7 +241,7 @@
      * @param {Object} aGesture - The gesture object.
      * @category Gesture
      */
-    onBottomEdgePanComplete (aGesture) {
+    onBottomEdgePanComplete (/*aGesture*/) {
         this.setBorderBottom(this._beforeEdgePanBorderBottom);
     }
 

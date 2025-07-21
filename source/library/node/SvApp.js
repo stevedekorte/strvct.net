@@ -22,6 +22,7 @@
  *
  * But that felt difficult so instead we create an instance now, and ask it to load the object pool the store.
  */
+
 (class SvApp extends TitledNode {
     
     /**
@@ -35,16 +36,6 @@
 
     /**
      * @static
-     * @description Returns the shared instance of the class
-     * @returns {SvApp} The shared instance
-     * @category Instance Management
-     */
-    static shared () {
-        return super.shared(); // See sharedContext - this ensures only one app instance is returned, even for subclasses
-    }
-    
-    /**
-     * @static
      * @description Returns the shared context
      * @returns {SvApp} The shared context
      * @category Instance Management
@@ -56,113 +47,16 @@
     }
 
     /**
-     * @static
-     * @description Loads and runs the shared instance
-     * @returns {SvApp} The shared instance
-     * @category Initialization
-     */
-    static async loadAndRunShared () {
-        const app = this.shared();
-        app.setStore(this.defaultStore());
-        app.store().setName(this.type()); // name of the database
-        await app.loadFromStore();
-        return app;
-    }
-
-    /**
-     * @description Loads the app from the store
-     * @category Initialization
-     */
-    async loadFromStore () {
-        let clearFirst = false;
-        /*
-        if (SvPlatform.isNodePlatform()) {
-            clearFirst = true;
-        }
-        */
-
-        if (clearFirst) {
-            console.log("--- clearing store ---");
-            await this.clearStore();
-            await this.store().promiseClose();
-            this.scheduleMethod("justOpen"); // is this needed to wait for tx to commit?
-        } else {
-            await this.justOpen();
-        }
-    }
-
-    /**
-     * @description Clears the store
-     * @category Data Management
-     */
-    async clearStore () {
-        console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<");
-        await this.store().promiseDeleteAll();
-        console.log(">>>>>>>>>>>>>>>> cleared db  <<<<<<<<<<<<<<<");
-    }
-
-    /**
-     * @description Logs the time taken to run a block of code
-     * @param {Function} block - The block of code to run
-     * @param {string} label - The label for the log
-     * @category Utility
-     */
-    async asyncLogTimeToRun (block, label) {
-        const start = performance.now();
-        await block();
-        const end = performance.now();
-        const time = end - start;
-        console.log(" --- " + label + " " + Math.round(time/100)/10 + "s --- ");
-    }
-
-    /**
-     * @description Opens the store and runs the app
-     * @category Initialization
-     */
-    async justOpen () {
-        try {
-            await this.store().promiseOpen(); 
-            this.store().rootOrIfAbsentFromClosure(() => {
-                return this.thisClass().rootNodeProto().clone();
-            });
-            await this.run();
-
-/*
-            await this.asyncLogTimeToRun(async () => { 
-                await this.store().promiseOpen(); 
-            }, "store open");
-
-            await this.asyncLogTimeToRun(() => { 
-                this.store().rootOrIfAbsentFromClosure(() => {
-                    return this.thisClass().rootNodeProto().clone();
-                });
-            }, "store read");
-
-            await this.asyncLogTimeToRun(async () => { 
-                await this.run();
-            }, "app run");
-*/
-        } catch (error) {
-            console.warn("ERROR: ", error);
-            debugger;
-        }
-    }
-
-    /**
-     * @static
-     * @description Returns the root node prototype
-     * @returns {SvStorableNode} The root node prototype
-     * @category Data Management
-     */
-    static rootNodeProto () {
-        return SvStorableNode;
-    }
-
-    /**
      * @description Initializes the prototype slots
      * @category Initialization
      */
     initPrototypeSlots () {
+
+        {
+            const slot = this.newSlot("isRunning", false);
+            slot.setSlotType("Boolean");
+        }
+
         /**
          * @member {PersistentObjectPool} store
          * @category Data Management
@@ -170,6 +64,26 @@
         {
             const slot = this.newSlot("store", null);
             slot.setSlotType("PersistentObjectPool");
+        }
+
+        /**
+         * @member {UoModel} model
+         * @category Model
+         */
+        {
+            const slot = this.newSlot("model", null);
+            slot.setSlotType("SvModel");
+            //slot.setFinalInitProto(SvModel);
+        }
+
+        /**
+         * @member {UoUserInterface} userInterface
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("userInterface", null);
+            //slot.setSlotType("SvUserInterface");
+            slot.setFinalInitProto(SvUserInterface);
         }
 
         /**
@@ -214,7 +128,8 @@
          */
         {
             const slot = this.newSlot("didInitPromise", null);
-            slot.setSlotType("Promise");
+            //slot.setSlotType("Promise");
+            slot.setFinalInitProto(Promise);
         }
 
         /**
@@ -239,8 +154,6 @@
      */
     initPrototype () {
         this.setIsDebugging(true);
-        this.watchForNote("onBrowserOnline");
-        this.watchForNote("onBrowserOffline");
     }
 
     /**
@@ -249,16 +162,11 @@
      */
     init () {
         super.init();
-        this.setDidInitPromise(Promise.clone());
+        //this.setDidInitPromise(Promise.clone());
     }
 
-    onBrowserOnline (/*aNote*/) {
-        console.log("onBrowserOnline");
-    }
-
-    onBrowserOffline (/*aNote*/) {
-        console.log("onBrowserOffline");
-        //WindowErrorPanel.shared().showPanelWithInfo({ message: "Browser offline" });
+    finalInit () {
+        super.finalInit();
     }
 
     /**
@@ -270,22 +178,65 @@
         return this.name();
     }
     
-    /**
-     * @description Checks if the browser is compatible
-     * @returns {boolean} True if compatible, false otherwise
-     * @category Utility
-     */
-    isBrowserCompatible () {
-        return true;
-    }
 
     /**
      * @description Runs the app
      * @category Lifecycle
      */
     async run () {
-        await this.setup()
+        if (this.isRunning()) {
+            return;
+        }
+        this.setIsRunning(true);
+        await this.initAndOpenStore(); // will create model
+        await this.setup();
     }
+
+    // --- open store ---
+    
+    modelClass () {
+        const className = this.thisPrototype().slotNamed("model").slotType();
+        return SvGlobals.get(className);
+    }
+
+     async initAndOpenStore () {
+        this.setStore(this.defaultStore());
+        this.store().setName(this.type()); // name of the database
+
+        let clearFirst = false; // SvPlatform.isNodePlatform())
+
+        if (clearFirst) {
+            await this.clearStoreThenClose();
+        }
+        await this.openStore();
+    }
+
+    /**
+     * @description Clears the store
+     * @category Data Management
+     */
+    async clearStoreThenClose () {
+        console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<");
+        await this.store().promiseDeleteAll();
+        console.log(">>>>>>>>>>>>>>>> cleared db  <<<<<<<<<<<<<<<");
+        await this.store().promiseClose();
+    }
+
+
+    /**
+     * @description Opens the store and runs the app
+     * @category Initialization
+     */
+    async openStore () {
+        await this.store().promiseOpen(); 
+        this.store().rootOrIfAbsentFromClosure(() => {
+            debugger;
+            return this.modelClass().clone();
+        });
+        this.setModel(this.store().rootObject());
+        this.model().setApp(this);
+    }
+
 
     /**
      * @description Sets up the app
@@ -295,21 +246,14 @@
         SyncScheduler.shared().pause();
         SvNotificationCenter.shared().pause();
 
-        await this.asyncLogTimeToRun(async () => { 
-            await this.setupModel();
-        }, "setupModel");
+        await this.model().setup();
 
         if (SvPlatform.isBrowserPlatform()) {
-            await this.asyncLogTimeToRun(async () => { 
-                await this.setupUi();
-            }, "setupUi");
-        } else {
-            console.log("🟡 SvApp: setup: not in browser environment - skipping setupUi");
+            this.userInterface().setApp(this);
+            await this.userInterface().setup();
         }
 
-        await this.asyncLogTimeToRun(async () => { 
-            await this.appDidInit();
-        }, "appDidInit");
+        await this.appDidInit();
 
         SyncScheduler.shared().resume();
         SvNotificationCenter.shared().resume();
@@ -320,75 +264,6 @@
         }, 2);
     }
 
-    /**
-     * @description Sets up the model
-     * @category Initialization
-     */
-    async setupModel () {
-        // for subclasses to override
-    }
-
-    /**
-     * @description Sets up the UI
-     * @category Initialization
-     */
-    async setupUi () {
-        this.setupDocTheme();
-        await this.registerServiceWorker();
-    }
-
-    /**
-     * @description Registers the service worker for PWA functionality
-     * @category PWA
-     */
-    async registerServiceWorker () {
-        if ('serviceWorker' in navigator) {
-            try {
-                const registration = await navigator.serviceWorker.register('strvct/source/ServiceWorker/sj.js');
-                console.log('Service worker registered:', registration.scope);
-            } catch (error) {
-                console.log('Service worker registration failed:', error);
-            }
-        } else {
-            console.log('Service worker not supported in this browser');
-        }
-    }
-
-    /**
-     * @description Hides the root view
-     * @returns {SvApp} The app instance
-     * @category UI
-     */
-    hideRootView () {
-        if (this.rootView()) {
-            this.rootView().setIsDisplayHidden(true);
-        }
-        return this;
-    }
-
-    /**
-     * @description Unhides the root view
-     * @returns {SvApp} The app instance
-     * @category UI
-     */
-    unhideRootView () {
-        if (this.rootView()) {
-            if (SvPlatform.isBrowserPlatform()) {
-                document.body.style.display = "flex";
-            }
-            this.rootView().setIsDisplayHidden(false);
-        }
-        return this;
-    }
-
-    /**
-     * @description Shows the classes
-     * @category Debugging
-     */
-    showClasses () {
-        const s = ProtoClass.subclassesDescription()
-        console.log(s)
-    }
 
     /**
      * @description Called when the app has finished initializing
@@ -396,21 +271,18 @@
      */
     async appDidInit () {
         this.setHasDoneAppInit(true);
-        this.postNoteNamed("appDidInit");
+        
+        this.model().appDidInit();
+        this.userInterface().appDidInit();
 
-        if (this.runTests) {
-            this.runTests();
-        }
-
-        this.unhideRootView();
-        await this.afterAppUiDidInit();
-
-        // /await this.asyncCloseLoadingView();
+        //this.postNoteNamed("appDidInit");
+        //await this.afterAppUiDidInit();
+        this.scheduleMethodForNextCycle("afterAppUiDidInit");
     }
 
-    async asyncCloseLoadingView () {
-        await SvPlatform.asyncWaitForNextRender();
-        await BootLoadingView.shared().asyncClose();        
+    postAppDidInit () {
+        this.postNoteNamed("appDidInit");
+        this.scheduleMethodForNextCycle("afterAppUiDidInit");
     }
 
     /**
@@ -418,24 +290,9 @@
      * @category Lifecycle
      */
     async afterAppUiDidInit () {
-        if (SvPlatform.isBrowserPlatform()) {
-            const searchParams = WebBrowserWindow.shared().pageUrl().searchParams;
-            if (searchParams.size !== 0) {
-                this.handleSearchParams(searchParams);
-            }
-        }
+        this.model().afterAppUiDidInit();
+        this.userInterface().afterAppUiDidInit();
         this.didInitPromise().callResolveFunc(this);
-    }
-
-    /**
-     * @description Handles search parameters
-     * @param {URLSearchParams} searchParams - The search parameters
-     * @returns {SvApp} The app instance
-     * @category Utility
-     */
-    handleSearchParams (/* searchParams */) {
-        // for subclasses to implement
-        return this
     }
 
     /**
@@ -449,33 +306,15 @@
     }
         
     /**
-     * @description Returns the main window
-     * @returns {WebBrowserWindow} The main window
-     * @category UI
-     */
-    mainWindow () {
-        return WebBrowserWindow.shared()
-    }
-
-    /**
-     * @description Returns the document body view
-     * @returns {DomView} The document body view
-     * @category UI
-     */
-    documentBodyView () {
-        return this.mainWindow().documentBody()
-    }
-
-    /**
      * @description Sets the name of the app
      * @param {string} aString - The new name
      * @returns {SvApp} The app instance
      * @category Metadata
      */
     setName (aString) {
-        this._name = aString
-        this.setTitle(aString)
-        return this
+        this._name = aString;
+        this.setTitle(aString);
+        return this;
     }
     
     /**
@@ -484,7 +323,7 @@
      * @category Metadata
      */
     versionsString () {
-        return this.version().join(".")
+        return this.version().join(".");
     }
 
     /**
@@ -501,10 +340,10 @@
      * @category UI
      */
     setupDocTheme () {
-        const doc = DocumentBody.shared()
-        doc.setColor("#f4f4ec")
-        doc.setBackgroundColor("rgb(25, 25, 25)")
-        this.setupNormalDocTheme()
+        const doc = DocumentBody.shared();
+        doc.setColor("#f4f4ec");
+        doc.setBackgroundColor("rgb(25, 25, 25)");
+        this.setupNormalDocTheme();
     }
 
     /**
@@ -512,95 +351,13 @@
      * @category UI
      */
     setupNormalDocTheme () {
-        const doc = DocumentBody.shared()
-        doc.setBackgroundColor("#191919")
-        doc.setFontFamily("EB Garamond");
+        const doc = DocumentBody.shared();
+        doc.setBackgroundColor("#191919");
+        //doc.setFontFamily("EB Garamond");
+        doc.setFontFamily("Helvetica");
         doc.setFontWeight("Medium");
-        doc.setFontSizeAndLineHeight("16px")
+        doc.setFontSizeAndLineHeight("16px");
    }
-
-    /**
-     * Posts an error report to the server's /log_error endpoint
-     * @param {Error|Object} error - Error object or error-like object with message property
-     * @param {Object} [json=null] - Additional JSON data to include in the report
-     * @returns {Promise<Object>} - Server response
-     * @category Error Handling
-     */
-    async asyncPostErrorReport (error, json = null) {
-        // Get the base URL from the current window location
-        const protocol = window.location.protocol; // "http:" or "https:"
-        const host = window.location.hostname;
-        const port = window.location.port || (protocol === "https:" ? "443" : "80");
-        const baseUrl = `${protocol}//${host}:${port}`;
-        
-        // Prepare error data
-        const errorData = {
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            url: window.location.href,
-            referrer: document.referrer || null,
-            app: this.name(),
-            version: this.versionsString()
-        };
-        
-        // Add error information
-        if (error instanceof Error) {
-            errorData.message = error.message;
-            errorData.name = error.name;
-            errorData.stack = error.stack;
-        } else if (typeof error === "object") {
-            // Handle error-like objects
-            Object.assign(errorData, error);
-        } else if (typeof error === "string") {
-            // Handle string errors
-            errorData.message = error;
-        }
-        
-        // Add additional JSON data if provided
-        if (json && typeof json === "object") {
-            errorData.additionalData = json;
-        }
-        
-        try {
-            // Post the error data to the server
-            const response = await fetch(`${baseUrl}/log_error`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(errorData)
-            });
-            
-            // Parse and return the response
-            const responseData = await response.json();
-            console.log("Error report sent successfully:", responseData);
-            return responseData;
-        } catch (err) {
-            console.error("Failed to send error report:", err);
-            return { success: false, error: err.message };
-        }
-    }
-
-    /**
-     * Test method to verify error reporting functionality
-     * @param {string} [message="Test error message"] - Test error message
-     * @returns {Promise<Object>} - Server response
-     * @category Error Handling
-     */
-    async testErrorReporting (message = "Test error message") {
-        console.log("Testing error reporting with message:", message);
-        
-        const testError = new Error(message);
-        testError.name = "TestError";
-        
-        const additionalData = {
-            isTest: true,
-            testTime: Date.now(),
-            component: "ErrorReportingSystem"
-        };
-        
-        return await this.asyncPostErrorReport(testError, additionalData);
-    }
 
     // developer mode
 
@@ -613,5 +370,14 @@
     didUpdateSlotDeveloperMode (/*oldValue, newValue*/) {
         this.postNoteNamed("onAppDeveloperModeChangedNote");
     }
+
+    /**
+     * @description Shows the classes
+     * @category Debugging
+     */
+    showClasses () {
+        const s = ProtoClass.subclassesDescription();
+        console.log(s);
+    }3
 
 }.initThisClass());

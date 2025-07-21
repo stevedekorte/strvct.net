@@ -180,9 +180,9 @@
      * @throws {Error} Should not be called directly.
      * @category Field
      */
-    addField (aField) {
-        throw new Error("addField shouldn't be called - use SvFieldSetNode")
-        return this.addSubnode(aField)
+    addField (/*aField*/) {
+        throw new Error("addField shouldn't be called - use SvFieldSetNode");
+        //return this.addSubnode(aField);
     }
     
     /**
@@ -258,7 +258,7 @@
      * @category Field
      */
     addSubnodeFieldForSlot (slot) {
-        const name = slot.name();
+        //const name = slot.name();
         const field = slot.newInspectorField();
         if (!field) {
             const className = slot.fieldInspectorViewClassName();

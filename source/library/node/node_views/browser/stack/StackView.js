@@ -205,7 +205,7 @@
      */
     syncOrientation () {
         const d = this.direction();
-        const nv = this.navView();
+        //const nv = this.navView();
         if (d === "right") {
             this.makeOrientationRight();
         } else if (d == "down") {
@@ -300,7 +300,7 @@
      * @param {Event} event The window resize event.
      * @returns {StackView} The stack view.
      */
-    onWindowResize (event) {
+    onWindowResize (/*event*/) {
         /*
         if (this.isRootStackView()) {
             this.safeUpdateCompactionChain();
@@ -408,7 +408,7 @@
         //console.warn("- popped '" + node.title() + "'");
 
         //this.syncFromNodeNow();
-        assert(node !== this.node());
+        //assert(node !== this.node());
 
         /*
         console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes());
@@ -855,7 +855,7 @@
             const maxWidth = this.topViewWidth(); // our subviews need to fit into this width
             
             // Calculate the sum WITHOUT this nav view
-            const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
+           // const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
             let sum = this.sumOfNavWidths();
             
             /*
@@ -872,8 +872,8 @@
             //this.topViewWidth();
 
 
-            const thisWidth = this.navView().targetWidth();
-            const cw = this.navView().clientWidth();
+            //const thisWidth = this.navView().targetWidth();
+            //const cw = this.navView().clientWidth();
 
             if (sum < maxWidth) {
                 this.navView().uncollapse();
@@ -915,7 +915,7 @@
      * @param {Note} aNote The note.
      * @returns {StackView} The stack view.
      */
-    onDragViewClose (aNote) {
+    onDragViewClose (/*aNote*/) {
         console.log(this.debugTypeId() + " onDragViewClose");
         //this.endCaching();
         this.rootStackView().endCaching();

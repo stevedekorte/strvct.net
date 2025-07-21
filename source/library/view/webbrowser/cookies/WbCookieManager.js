@@ -61,14 +61,16 @@
             newCookie.setValue(value);
             newCookie.save();
         }
+        /*
         const newValue = WbCookieManager.valueOfCookieNamed(name);
-        if(newValue !== value) {
+        if(newValue !== value && value !== null) {
             console.log("[" + newValue + "] != [" + value + "]");
             debugger;
             console.log("let's debugg this!");
             WbCookieManager.valueOfCookieNamed(name);
             this.setValueOfCookieNamed(name, value);
         }
+        */
         return this;
     }
 

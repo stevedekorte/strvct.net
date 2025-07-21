@@ -332,19 +332,7 @@
      * @category Error Reporting
      */
     sendErrorReport (errorInfo) {
-        // Send the error to the server if the app is initialized
-        const app = SvApp.shared();
-        if (!app) {
-            console.warn("SvApp not initialized, skipping error report");
-            return;
-        }
-        if (app) {
-            try {
-                app.asyncPostErrorReport(errorInfo);
-            } catch (e) {
-                console.error("Error while trying to send error report:", e);
-            }
-        }
+        SvErrorReport.asyncSend(new Error(errorInfo.message), errorInfo);
     }
 
     /**

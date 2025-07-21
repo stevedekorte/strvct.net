@@ -72,12 +72,24 @@
      * @category Identification
      */
     setPuuid (puuid) {
-        assert(!Type.isNullOrUndefined(puuid));
+        assert(!Type.isNullOrUndefined(puuid), "puuid cannot be null or undefined");
         if (this.hasPuuid()) {
             const oldPid = this["_puuid"];
             this.defaultStore().onObjectUpdatePid(this, oldPid, puuid);
+            this._puuid = puuid;
+        } else {
+            Object.defineSlot(this, "_puuid", puuid); // so _puuid isn't enumerable
         }
-        Object.defineSlot(this, "_puuid", puuid); // so _puuid isn't enumerable
+        return this;
+    }
+
+    justSetPuuid (puuid) {
+        if (this.hasPuuid()) {
+            // NOTE: Dangerous! Only ObjectPool should use this!
+            this._puuid = puuid;
+        } else {
+            Object.defineSlot(this, "_puuid", puuid); // so _puuid isn't enumerable
+        }
         return this;
     }
 

@@ -21,10 +21,10 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIsSelectable(true)
-        this.setThemeClassName("HeaderTile")
-        return this
+        super.init();
+        this.setIsSelectable(true);
+        this.setThemeClassName("HeaderTile");
+        return this;
     }
 
     /**
@@ -33,10 +33,10 @@
      * @category Configuration
      */
     makeOrientationDown () {
-        super.makeOrientationDown()
-        this.setMinAndMaxWidth(null)
-        this.setWidth("100%")
-        return this
+        super.makeOrientationDown();
+        this.setMinAndMaxWidth(null);
+        this.setWidth("100%");
+        return this;
     }
 
     /**
@@ -45,9 +45,7 @@
      * @category Styling
      */
     applyStyles () {
-        //debugger
         super.applyStyles()
-
         return this
     }
 

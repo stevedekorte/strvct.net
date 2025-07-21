@@ -74,10 +74,10 @@
      * @category Layout
      */
     makeOrientationDown () {
-        super.makeOrientationDown()
-        this.setMinAndMaxWidth(null)
-        this.setWidth("100%")
-        return this
+        super.makeOrientationDown();
+        this.setMinAndMaxWidth(null);
+        this.setWidth("100%");
+        return this;
     }
 
     /**
@@ -86,7 +86,7 @@
      * @category View Hierarchy
      */
     rootStackView () {
-        return this.parentView() ? this.parentView().stackView().rootStackView() : null
+        return this.parentView() ? this.parentView().stackView().rootStackView() : null;
     }
 
     /**
@@ -95,15 +95,15 @@
      * @category View Hierarchy
      */
     targetStackView () {
-        const col = this.column()
+        const col = this.column();
         if (col) {
-            const nc = col.nextColumn()
+            const nc = col.nextColumn();
             if (nc) {
-                const sv = nc.stackView()
-                return sv
+                const sv = nc.stackView();
+                return sv;
             }
         }
-        return null
+        return null;
     }
 
     /**
@@ -111,14 +111,14 @@
      * @category Observation
      */
     watchRootStackView () {
-        const obs = this.onStackViewPathChangeObs()
+        const obs = this.onStackViewPathChangeObs();
         if (!obs.isWatching()) {
-            const target = this.rootStackView()
+            const target = this.rootStackView();
             if (target) {
-                obs.setSender(target)
-                obs.startWatching()
+                obs.setSender(target);
+                obs.startWatching();
             } else {
-                obs.stopWatching()
+                obs.stopWatching();
             }
         }
     }
@@ -130,10 +130,10 @@
      */
     pathNodes () {
         if (this.targetStackView()) {
-            const nodes = this.targetStackView().selectedNodePathArray()
-            return nodes
+            const nodes = this.targetStackView().selectedNodePathArray();
+            return nodes;
         }
-        return []
+        return [];
     }
 
     /**
@@ -141,7 +141,7 @@
      * @category Synchronization
      */
     syncPathToStack () {
-        this.scheduleMethod("setupPathViews")
+        this.scheduleMethod("setupPathViews");
     }
 
     /**
@@ -154,7 +154,7 @@
         if (v === "100%") {
             debugger;
         }
-        return super.setHeight(v)
+        return super.setHeight(v);
     }
 
     /**
@@ -165,12 +165,12 @@
      * @category Event Handling
      */
     didUpdateSlotParentView (oldValue, newValue) {
-        super.didUpdateSlotParentView(oldValue, newValue)
+        super.didUpdateSlotParentView(oldValue, newValue);
         if (this.parentView()) {
-            this.watchRootStackView()
-            this.syncPathToStack()
+            this.watchRootStackView();
+            this.syncPathToStack();
         }
-        return this
+        return this;
     }
 
     /**
@@ -178,8 +178,8 @@
      * @param {*} aNote - The notification object
      * @category Event Handling
      */
-    onStackViewPathChange (aNote) {
-        this.syncPathToStack()
+    onStackViewPathChange (/*aNote*/) {
+        this.syncPathToStack();
     }
 
     /**
@@ -189,15 +189,15 @@
      * @category Event Handling
      */
     onClickPathComponent (aPathComponentView) {
-        const nodePathArray = aPathComponentView.info()
+        const nodePathArray = aPathComponentView.info();
         if (nodePathArray.length === 0) {
             debugger;
         }
-        console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
-        const t = this.targetStackView()
-        t.selectNodePathArray(nodePathArray)
-        this.setupPathViews()
-        return this
+        console.log("select path: " + nodePathArray.map(n => n.title()).join("/"));
+        const t = this.targetStackView();
+        t.selectNodePathArray(nodePathArray);
+        this.setupPathViews();
+        return this;
     }
 
     /**
@@ -218,10 +218,10 @@
      * @param {*} backButton - The back button object
      * @category Event Handling
      */
-    onClickBackButton (backButton) {
-        const crumb = this.previousCrumb()
+    onClickBackButton (/*backButton*/) {
+        const crumb = this.previousCrumb();
         if (crumb) {
-            crumb.sendActionToTarget()
+            crumb.sendActionToTarget();
         }
     }
 
@@ -231,11 +231,11 @@
      * @category Data
      */
     previousCrumb () {
-        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/")
+        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/");
         if (crumbs.length > 1) {
-            return crumbs[crumbs.length - 2]
+            return crumbs[crumbs.length - 2];
         }
-        return null
+        return null;
     }
 
     /**
@@ -244,7 +244,7 @@
      * @category Data
      */
     crumbs () {
-        return this.subviews().first().subviews()
+        return this.subviews().first().subviews();
     }
 
     /**
@@ -253,7 +253,7 @@
      * @category Data
      */
     hiddenCrumbs () {
-        return this.crumbs().detect(sv => sv._isCrumb && sv.isDisplayHidden())
+        return this.crumbs().detect(sv => sv._isCrumb && sv.isDisplayHidden());
     }
 
     /**
@@ -262,7 +262,7 @@
      * @category Data
      */
     lastHiddenCrumb () {
-        return this.hiddenCrumbs().last()
+        return this.hiddenCrumbs().last();
     }
     
     /**
@@ -271,16 +271,16 @@
      * @category View Creation
      */
     newUnpaddedButton () {
-        const v = ButtonView.clone()
-        v.setDisplay("inline-block")
-        v.titleView().setOverflow("visible")
-        v.setHeightPercentage(100)
-        v.setWidth("fit-content")
-        v.setPaddingLeft("0em")
-        v.setPaddingRight("0em")
-        v.titleView().setPaddingLeft("0em")
-        v.titleView().setPaddingRight("0em")
-        return v
+        const v = ButtonView.clone();
+        v.setDisplay("inline-block");
+        v.titleView().setOverflow("visible");
+        v.setHeightPercentage(100);
+        v.setWidth("fit-content");
+        v.setPaddingLeft("0em");
+        v.setPaddingRight("0em");
+        v.titleView().setPaddingLeft("0em");
+        v.titleView().setPaddingRight("0em");
+        return v;
     }
 
     /**
@@ -290,12 +290,12 @@
      * @category View Creation
      */
     buttonForName (aName) {
-        const v = this.newUnpaddedButton()
-        v.setTitle(aName)
-        v.setTarget(this)
-        v.setAction("onClickPathComponent")
-        v._isCrumb = true
-        return v
+        const v = this.newUnpaddedButton();
+        v.setTitle(aName);
+        v.setTarget(this);
+        v.setAction("onClickPathComponent");
+        v._isCrumb = true;
+        return v;
     }
 
     /**
@@ -304,13 +304,13 @@
      * @category View Creation
      */
     newBackButton () {
-        const v = this.newUnpaddedButton()
-        v.setTitle("←")
-        v.titleView().setPaddingLeft("0em")
-        v.titleView().setPaddingRight("0.5em")
-        v.setTarget(this)
-        v.setAction("onClickBackButton")
-        return v
+        const v = this.newUnpaddedButton();
+        v.setTitle("←");
+        v.titleView().setPaddingLeft("0em");
+        v.titleView().setPaddingRight("0.5em");
+        v.setTarget(this);
+        v.setAction("onClickBackButton");
+        return v;
     }
 
     /**
@@ -319,11 +319,11 @@
      * @category View Creation
      */
     newSeparatorView () {
-        const v = this.newUnpaddedButton()
-        v.titleView().setPaddingLeft("0.5em")
-        v.titleView().setPaddingRight("0.5em")
-        v.setTitle(this.separatorString())
-        return v
+        const v = this.newUnpaddedButton();
+        v.titleView().setPaddingLeft("0.5em");
+        v.titleView().setPaddingRight("0.5em");
+        v.setTitle(this.separatorString());
+        return v;
     }
 
     /**
@@ -335,14 +335,14 @@
      * @category View Creation
      */
     crumbViewForNode (node, i, pathNodes) {
-        const name = node.title()
-        const crumb = this.buttonForName(name)
+        const name = node.title();
+        const crumb = this.buttonForName(name);
         if (crumb.setNode) {
-            crumb.setNode(node)
+            crumb.setNode(node);
         }
-        const crumbNodePath = pathNodes.slice(0, i+1)
-        crumb.setInfo(crumbNodePath)
-        return crumb
+        const crumbNodePath = pathNodes.slice(0, i+1);
+        crumb.setInfo(crumbNodePath);
+        return crumb;
     }
 
     /**
@@ -351,10 +351,10 @@
      * @category View Creation
      */
     newPathComponentViews () {
-        const pathNodes = this.pathNodes()
-        pathNodes.shift()
-        const views = pathNodes.map((node, i, pathNodes) => this.crumbViewForNode(node, i, pathNodes))
-        return views
+        const pathNodes = this.pathNodes();
+        //pathNodes.shift();
+        const views = pathNodes.map((node, i, pathNodes) => this.crumbViewForNode(node, i, pathNodes));
+        return views;
     }
 
     /**
@@ -363,15 +363,15 @@
      * @category View Setup
      */
     setupPathViews () {
-        const views = this.newPathComponentViews()
-        const separatedViews = views.joinWithFunc((view, index) => this.newSeparatorView())
-        separatedViews.unshift(this.newSeparatorView())
-        separatedViews.unshift(this.newBackButton())
-        this.contentView().removeAllSubviews()
-        this.contentView().addSubviews(separatedViews)
-        this.updateCompaction()
-        this.watchPathNodes()
-        return this
+        const views = this.newPathComponentViews();
+        const separatedViews = views.joinWithFunc(() => this.newSeparatorView());
+        separatedViews.unshift(this.newSeparatorView());
+        separatedViews.unshift(this.newBackButton());
+        this.contentView().removeAllSubviews();
+        this.contentView().addSubviews(separatedViews);
+        this.updateCompaction();
+        this.watchPathNodes();
+        return this;
     }
 
     /**
@@ -381,7 +381,7 @@
      * @category Layout
      */
     widthOfViews (views) {
-        return views.sum(v => v.calcWidth())
+        return views.sum(v => v.calcWidth());
     }
 
     /**
@@ -390,7 +390,7 @@
      * @category Data
      */
     crumbViews () {
-        return this.contentView().subviews()
+        return this.contentView().subviews();
     }
 
     /**
@@ -400,15 +400,15 @@
      * @category Layout
      */
     sumOfPathWidths () {
-        const rightMargin = 15
+        const rightMargin = 15;
         return this.crumbViews().sum(view => { 
-            const w = view.cachedSize().width()
+            const w = view.cachedSize().width();
             if (Type.isNaN(w)) { 
                 debugger; 
-                throw new Error("invalid width value")
+                throw new Error("invalid width value");
             }
-            return w + rightMargin
-        })
+            return w + rightMargin;
+        });
     }
 
     /**
@@ -416,31 +416,31 @@
      * @category Layout
      */
     updateCompaction () {
-        const padding = 20
-        const maxWidth = this.frameInDocument().width()
-        const views = this.crumbViews()
-        views.forEach(view => view.unhideDisplay())
-        views.forEach(view => view.cacheClientSize())
+        const padding = 20;
+        const maxWidth = this.frameInDocument().width();
+        const views = this.crumbViews();
+        views.forEach(view => view.unhideDisplay());
+        views.forEach(view => view.cacheClientSize());
 
-        let didHide = false
+        let didHide = false;
         for (let i = 1; i < views.length -1; i++) {
-            const view = views[i]
-            const sum = this.sumOfPathWidths() + padding
-            const isSeparator = view.title() === "/"
+            const view = views[i];
+            const sum = this.sumOfPathWidths() + padding;
+            const isSeparator = view.title() === "/";
             if (isSeparator && views[i-1].isDisplayHidden()) {
-                view.hideDisplay()
+                view.hideDisplay();
             }
             if (sum > maxWidth) {
-                view.hideDisplay()
-                didHide = true
+                view.hideDisplay();
+                didHide = true;
             } else {
                 break;
             }
         }
 
         if (!didHide) {
-            const backButton = views.first()
-            backButton.hideDisplay()
+            const backButton = views.first();
+            backButton.hideDisplay();
         }
     }
 
@@ -450,7 +450,7 @@
      * @category Layout
      */
     desiredWidth () {
-        return Number.MAX_VALUE
+        return Number.MAX_VALUE;
     }
 
     /**
@@ -458,8 +458,8 @@
      * @param {*} aNote - The notification object
      * @category Event Handling
      */
-    onUpdatedNode (aNote) {
-        this.scheduleMethod("setupPathViews")
+    onUpdatedNode (/*aNote*/) {
+        this.scheduleMethod("setupPathViews");
     }
 
     /**
@@ -468,12 +468,12 @@
      * @category Observation
      */
     watchPathNodes () {
-        this.unwatchPathNodes()
+        this.unwatchPathNodes();
         this.pathNodes().forEach(node => {
-            const obs = this.watchSender(node)
-            this.crumbObservations().push(obs)
-        })
-        return this
+            const obs = this.watchSender(node);
+            this.crumbObservations().push(obs);
+        });
+        return this;
     }
 
     /**
@@ -483,10 +483,10 @@
      */
     unwatchPathNodes () {
         this.crumbObservations().forEach(obs => {
-            obs.stopWatching()
-        })
-        this.setCrumbObservations([])
-        return this
+            obs.stopWatching();
+        });
+        this.setCrumbObservations([]);
+        return this;
     }
 
     /**
@@ -497,7 +497,7 @@
     justTap () {
         // Do nothing - prevent background clicks from triggering navigation
         // Path components have their own click handlers via onClickPathComponent()
-        return this
+        return this;
     }
 
 }.initThisClass());

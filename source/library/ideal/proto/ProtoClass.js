@@ -897,7 +897,9 @@
             slot.onInstanceFinalInitSlot(this);
         });
         */
-       this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this));
+       this.thisPrototype().allSlotsMap().forEach(slot => {
+        slot.onInstanceFinalInitSlot(this);
+       });
     }
 
     /**
