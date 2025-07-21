@@ -98,11 +98,12 @@
      * @returns {IndexedDBFolder} - Returns this instance.
      */
     setPath (aString) {
-        assert(!this.isOpen(), "IndexedDBFolder is open")
-        this._path = aString
-        return this
+        if (this._path !== aString) {
+            assert(!this.isOpen(), "can't change the path on an open IndexedDBFolder instance");
+            this._path = aString;
+        }
+        return this;
     }
-
 
     /**
      * Returns a promise for persistence.

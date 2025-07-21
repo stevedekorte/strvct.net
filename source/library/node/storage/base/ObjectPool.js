@@ -210,6 +210,8 @@
             const slot = this.newSlot("collectablePidSet", null); // used during collection to store keys before tx begins
             slot.setSlotType("Set");
         }
+
+
     }
 
     initPrototype () {
@@ -275,6 +277,9 @@
      */
     async promiseOpen () { 
         const map = this.recordsMap();
+        if (map.isOpen() && map.name() === this.name()) {
+            return this;
+        }
         map.setName(this.name());
         try {
             await map.promiseOpen();
