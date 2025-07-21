@@ -6,7 +6,8 @@
  * @extends TitledTile
  * @classdesc HeaderTile is a specialized TitledTile that is selectable and has a specific theme class.
  */
-(class HeaderTile extends TitledTile {
+
+(class HeaderTile extends TitledTile { 
     
     /**
      * @description Initializes prototype slots for the HeaderTile class.

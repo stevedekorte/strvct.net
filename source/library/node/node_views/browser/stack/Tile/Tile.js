@@ -476,11 +476,14 @@
     }
 
     stackView () {
-        const scrollView = this.tilesView().parentView()
-        const navView = scrollView.parentView()
-        const stackView = navView.parentView()
-        if (stackView && stackView.thisClass().isKindOf(StackView)) {
-            return stackView
+        const tilesView = this.tilesView()
+        if (tilesView) {        
+            const scrollView = tilesView.parentView()
+            const navView = scrollView.parentView()
+            const stackView = navView.parentView()
+            if (stackView && stackView.thisClass().isKindOf(StackView)) {
+                return stackView
+            }
         }
         return null
         //return this.firstParentViewWithAncestorClass(StackView)

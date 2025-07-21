@@ -230,38 +230,63 @@
     async openStore () {
         await this.store().promiseOpen(); 
         this.store().rootOrIfAbsentFromClosure(() => {
-            debugger;
             return this.modelClass().clone();
         });
+
+        const isCorrectModel = this.store().rootObject().isKindOf(this.modelClass());
+        if (!isCorrectModel) { 
+            console.error("Model is not correct type: " + this.store().rootObject().thisClass().type());
+            if (this._attemptToResetStore === true) { 
+                throw new Error("Failed to open store with correct model after reset");
+            }
+            this._attemptToResetStore = true;
+            await this.clearStoreThenClose();
+            await this.openStore();
+            debugger;
+        }
         this.setModel(this.store().rootObject());
         this.model().setApp(this);
     }
 
+    pauseReactiveSystem () {
+        SyncScheduler.shared().pause();
+        SvNotificationCenter.shared().pause();
+    }
+
+    resumeReactiveSystem () {
+        SyncScheduler.shared().resume();
+        SvNotificationCenter.shared().resume();
+    }
 
     /**
      * @description Sets up the app
      * @category Initialization
      */
     async setup () {
-        SyncScheduler.shared().pause();
-        SvNotificationCenter.shared().pause();
+        this.pauseReactiveSystem();
 
-        await this.model().setup();
-
-        if (SvPlatform.isBrowserPlatform()) {
-            this.userInterface().setApp(this);
-            await this.userInterface().setup();
-        }
-
+        await this.setupModel();
+        await this.setupUserInterface();
         await this.appDidInit();
 
-        SyncScheduler.shared().resume();
-        SvNotificationCenter.shared().resume();
-
+        this.resumeReactiveSystem();
+        /*
         setTimeout(() => {
             //console.log("All synchronous operations completed - ready to render");
             this.afterFirstRender();
         }, 2);
+        */
+    }
+
+    async setupModel () {
+        await this.model().setup();
+    }
+
+    async setupUserInterface () {
+        if (SvPlatform.isBrowserPlatform()) {
+            this.userInterface().setApp(this);
+            await this.userInterface().setup();
+        }
     }
 
 
@@ -299,12 +324,14 @@
      * @description Called after the first render
      * @category Lifecycle
      */
+    /*
     afterFirstRender () {
         ResourceManager.shared().markPageLoadTime();
         //document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        document.title = this.name();
+        //document.title = this.name();
     }
-        
+    */
+   
     /**
      * @description Sets the name of the app
      * @param {string} aString - The new name
@@ -378,6 +405,6 @@
     showClasses () {
         const s = ProtoClass.subclassesDescription();
         console.log(s);
-    }3
+    }
 
 }.initThisClass());

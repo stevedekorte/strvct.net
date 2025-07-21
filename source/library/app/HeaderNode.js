@@ -12,7 +12,7 @@
  */
 
 
-(class HeaderNode extends SvFolderNode {
+(class HeaderNode extends SvFolderNode { 
     
     initPrototypeSlots () {
 
@@ -54,7 +54,7 @@
         this.setNodeCanReorderSubnodes(false);
         this.setNodeTileClassName("HeaderTile");
         this.setNodeMinTileHeight(100);
-        this.setTitle("my app header");
+        this.setTitle("Header");
         this.setNodeCanEditTitle(true);
         this.setNodeIsVertical(false);
         this.setCanDelete(false);

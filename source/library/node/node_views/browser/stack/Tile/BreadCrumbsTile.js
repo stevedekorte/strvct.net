@@ -12,7 +12,7 @@
  * Registers for onStackViewPathChange notifications (sent by top StackView) to auto update path.
  * TODO: register *only* for our own top stack view.
  */
-(class BreadCrumbsTile extends Tile {
+(class BreadCrumbsTile extends Tile { 
     
     initPrototypeSlots () {
         /**
@@ -77,6 +77,11 @@
         super.makeOrientationDown();
         this.setMinAndMaxWidth(null);
         this.setWidth("100%");
+        return this;
+    }
+
+    makeOrientationRight () {
+        super.makeOrientationRight();
         return this;
     }
 
