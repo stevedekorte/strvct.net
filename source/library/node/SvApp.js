@@ -73,7 +73,6 @@
         {
             const slot = this.newSlot("model", null);
             slot.setSlotType("SvModel");
-            //slot.setFinalInitProto(SvModel);
         }
 
         /**
@@ -82,7 +81,6 @@
          */
         {
             const slot = this.newSlot("userInterface", null);
-            //slot.setSlotType("SvUserInterface");
             slot.setFinalInitProto(SvUserInterface);
         }
 
@@ -111,15 +109,6 @@
         {
             const slot = this.newSlot("hasDoneAppInit", false);
             slot.setSlotType("Boolean");
-        }
-
-        /**
-         * @member {DomView} rootView
-         * @category UI
-         */
-        {
-            const slot = this.newSlot("rootView", null);
-            slot.setSlotType("DomView");
         }
 
         /**
@@ -302,6 +291,7 @@
 
         //this.postNoteNamed("appDidInit");
         //await this.afterAppUiDidInit();
+        this.postAppDidInit();
         this.scheduleMethodForNextCycle("afterAppUiDidInit");
     }
 
@@ -331,7 +321,7 @@
         //document.title = this.name();
     }
     */
-   
+
     /**
      * @description Sets the name of the app
      * @param {string} aString - The new name

@@ -200,6 +200,7 @@
         }
         console.log("select path: " + nodePathArray.map(n => n.title()).join("/"));
         const t = this.targetStackView();
+        nodePathArray.shift(); 
         t.selectNodePathArray(nodePathArray);
         this.setupPathViews();
         return this;
@@ -370,7 +371,7 @@
     setupPathViews () {
         const views = this.newPathComponentViews();
         const separatedViews = views.joinWithFunc(() => this.newSeparatorView());
-        separatedViews.unshift(this.newSeparatorView());
+        //separatedViews.unshift(this.newSeparatorView());
         separatedViews.unshift(this.newBackButton());
         this.contentView().removeAllSubviews();
         this.contentView().addSubviews(separatedViews);
