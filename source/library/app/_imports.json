@@ -1,6 +1,3 @@
 [
-    "SvSettingsNode.js",
-    "BreadCrumbsNode.js",
-    "HeaderNode.js",
-    "RootContentNode.js"
+    "BreadCrumbsNode.js"
 ]
