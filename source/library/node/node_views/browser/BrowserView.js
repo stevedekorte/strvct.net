@@ -96,18 +96,22 @@
      * @returns {Node} The browser header node.
      * @category Node Access
      */
+    /*
     browserHeaderNode () {
         return this.node().subnodes().first();
     }
+    */
 
     /**
      * @description Returns the breadcrumbs node.
      * @returns {Node} The breadcrumbs node.
      * @category Node Access
      */
+    /*
     breadCrumbsNode () {
         return this.browserHeaderNode().subnodes().first();
     }
+    */
 
     /**
      * @description Moves the view to the base state.
@@ -115,9 +119,10 @@
      * @category Navigation
      */
     moveToBase () {
-        assert(this.browserHeaderNode());
-        assert(this.breadCrumbsNode());
-        this.selectNodePathArray([this.browserHeaderNode(), this.breadCrumbsNode()]);
+        //assert(this.browserHeaderNode());
+        //assert(this.breadCrumbsNode());
+        //this.selectNodePathArray([this.browserHeaderNode(), this.breadCrumbsNode()]);
+        this.selectNodePathArray([this.node().firstVisibleSubnode()]);
         return this;
     }
 

@@ -352,29 +352,6 @@
         return "Application '" + this.name() + "' version " + this.versionsString();
     }
 
-    /**
-     * @description Sets up the document theme
-     * @category UI
-     */
-    setupDocTheme () {
-        const doc = DocumentBody.shared();
-        doc.setColor("#f4f4ec");
-        doc.setBackgroundColor("rgb(25, 25, 25)");
-        this.setupNormalDocTheme();
-    }
-
-    /**
-     * @description Sets up the normal document theme
-     * @category UI
-     */
-    setupNormalDocTheme () {
-        const doc = DocumentBody.shared();
-        doc.setBackgroundColor("#191919");
-        //doc.setFontFamily("EB Garamond");
-        doc.setFontFamily("Helvetica");
-        doc.setFontWeight("Medium");
-        doc.setFontSizeAndLineHeight("16px");
-   }
 
     // developer mode
 

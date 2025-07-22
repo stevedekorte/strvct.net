@@ -460,6 +460,10 @@
         return this._subnodes.length;
     }
 
+    firstVisibleSubnode () {
+        return this.subnodes().detect(sn => sn.isVisible());
+    }
+
     /**
 
      * @description Check if this instance has any subnodes.
