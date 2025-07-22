@@ -1566,7 +1566,7 @@
     /**
 
      * @description Set the sorting function for the subnodes.
-     * @param {function} f - The sorting function.
+     * @param {function} f - The sorting function. e.g. (a, b) => a.title().localeCompare(b.title())
      * @returns {SvNode} This instance.
      */
     setSubnodeSortFunc (f) {

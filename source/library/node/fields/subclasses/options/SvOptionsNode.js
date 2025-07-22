@@ -129,7 +129,6 @@
         this.setSummaryFormat("value");
         this.setNoteIconName("right-arrow");
         this.setSubnodeProto(SvOptionNode);
-
     }
     
     /*
@@ -686,6 +685,7 @@
                     assert(Type.isNumber(newNode.value()));
                     assert(newNode.value() === item.value);
                 }
+                assert(newNode.optionsNode() === this, "newNode.optionsNode() !== this");
             });
 
             this.setValidItems(validItems);

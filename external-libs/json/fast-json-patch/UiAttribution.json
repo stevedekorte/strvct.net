@@ -1,4 +1,5 @@
 {
+  "category": "libraries",
   "name": "fast-json-patch",
   "description": "Fast JSON patch implementation",
   "licenseType": "MIT",

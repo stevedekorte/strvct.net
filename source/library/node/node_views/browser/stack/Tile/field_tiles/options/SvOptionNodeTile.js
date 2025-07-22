@@ -16,9 +16,9 @@
     toggle () {
         const canToggle = this.node().optionsNode().valueIsEditable();
         if (canToggle) {
-            this.node().toggle()
+            this.node().toggle();
         }
-        return this
+        return this;
     }
 
     /**
@@ -28,10 +28,10 @@
      * @category Event Handling
      */
     onEnterKeyUp (event) {
-        super.onEnterKeyUp(event)
-        this.toggle()
-        event.stopPropagation()
-        return this
+        super.onEnterKeyUp(event);
+        this.toggle();
+        event.stopPropagation();
+        return this;
     }
     
     /**
@@ -41,9 +41,9 @@
      * @category Event Handling
      */
     onTapComplete (aGesture) {
-        super.onTapComplete(aGesture)
-        this.toggle()
-        return this
+        super.onTapComplete(aGesture);
+        this.toggle();
+        return this;
     }
 
     /**
@@ -52,9 +52,8 @@
      * @category Data Synchronization
      */
     syncToNode () {
-        super.syncToNode()
-        
-        return this
+        super.syncToNode();
+        return this;
     }
 
 }.initThisClass());
