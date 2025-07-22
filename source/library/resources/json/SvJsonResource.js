@@ -47,4 +47,8 @@
         return this;
     }
 
+    json () {
+        return this.value();
+    }
+
 }.initThisClass());

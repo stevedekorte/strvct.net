@@ -464,7 +464,7 @@
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
         this.syncClickToAddView();
-        console.log(this.typeId(), " syncFromNode done");
+        //console.log(this.typeId(), " syncFromNode done");
         return this;
     }
 

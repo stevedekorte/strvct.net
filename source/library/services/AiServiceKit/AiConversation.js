@@ -138,6 +138,12 @@
     this.initToolSlots();
   }
 
+  initPrototype () {
+    this.setNodeFillsRemainingWidth(false);
+    this.setNodeMinTileWidth(500);
+    this.setNodeCanEditColumnWidth(true);
+  }
+
   finalInit () {
     super.finalInit();
     this.setTagDelegate(this); // needed to get tool calls

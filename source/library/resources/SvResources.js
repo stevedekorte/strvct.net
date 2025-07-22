@@ -138,6 +138,29 @@
         return this;
     }
 
+    async asyncFinishSetup () {
+        await this.subnodes().promiseSerialForEach(async sn => {
+           // console.log("sn: " + sn.type() + " setupSubnodes");
+            await sn.setupSubnodes();
+            console.log("sn: " + sn.type() + " setupSubnodes done");
+            if (sn.type() !== "SvFileResources") {
+                assert(sn.subnodes().length > 0, "sn: " + sn.type() + " subnodes should have subnodes");
+            } else {
+                console.log("sn: " + sn.type() + " has subnodes");
+            }
+        });
+        /*
+        this.subnodes().forEach(sn => {
+            if(sn.subnodes().length === 0) {
+                console.warn("sn: " + sn.type() + " subnodes should have subnodes");
+                debugger;
+            }
+        });
+        */
+        await this.prechacheWhereAppropriate();
+        return this;
+    }
+
     /**
      * @description Returns an array of resource classes for a given file extension.
      * @param {string} extension - The file extension.
@@ -192,6 +215,7 @@
             //debugger;
             await node.prechacheWhereAppropriate();
         });
+        this.postNoteNamed("onResourcesDidPrechache");
         return this;
     }
 

@@ -278,14 +278,17 @@
      * @category Resource Loading
      */
     async asyncLoad () {
+        //console.log("asyncLoad: " + this.path());
         try {
             this.setLoadState("loading");
             await this.asyncLoadUrlResource();
             this.setLoadState("loaded");
-            this.postNoteNamed("resourceLoaded");
+            //this.postNoteNamed("resourceLoaded");
+            //console.log("asyncLoad: " + this.path() + " loaded");
+
         } catch (error) {
             this.setError(error);
-            this.postNoteNamed("loadError");
+            //this.postNoteNamed("loadError");
             throw error;
         }
 
@@ -293,10 +296,10 @@
             this.setLoadState("decoding");
             await this.asyncDecodeData();
             this.setLoadState("decoded");
-            this.postNoteNamed("resourceDecoded");
+            //this.postNoteNamed("resourceDecoded");
         } catch (error) {
             this.setError(error);
-            this.postNoteNamed("decodeError");
+            //this.postNoteNamed("decodeError");
             throw error;
         }
         return this;
@@ -308,7 +311,7 @@
      * @category Resource Loading
      */
     async asyncLoadUrlResource () {
-        const url = this.urlResource()
+        const url = this.urlResource();
         await url.promiseLoad();
         const data = url.data();
         assert(data.byteLength);
@@ -342,7 +345,9 @@
      * @category Resource Loading
      */
     async prechacheWhereAppropriate () {
-        throw new Error("subclasses should override this method");
+       if (!this.isLoaded()) {
+        console.warn("---- " + this.type() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
+       }
     }
 
 }.initThisClass());

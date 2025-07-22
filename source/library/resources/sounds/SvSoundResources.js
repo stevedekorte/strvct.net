@@ -54,4 +54,7 @@
         return this.resources()
     }
 
+    async prechacheWhereAppropriate () {
+    }
+
 }.initThisClass());

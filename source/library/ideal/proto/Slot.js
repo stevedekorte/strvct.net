@@ -858,7 +858,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     value = Type.deepCopyForValue(value);
                 } else {
                     // we'll use the value - but this may be dangerous!
-                    if (!Type.isUndefined(value)) {
+                    if (Type.isClass(value)) { 
+                        // ok to copy value
+                    } else if (!Type.isUndefined(value)) {
                         debugger;
                     }
                 }

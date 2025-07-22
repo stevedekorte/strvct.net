@@ -50,7 +50,7 @@
         this.setTitle(this.type());
         this.setResourceClasses([]);
         this.setup();
-        this.registerForAppDidInit();
+        //this.registerForAppDidInit();
     }
 
     /**
@@ -66,9 +66,11 @@
      * @returns {Promise<void>}
      * @category Initialization
      */
+    /*
     async appDidInit () {
         await this.setupSubnodes();
     }
+        */
 
     /**
      * @description Gets the supported extensions.
@@ -104,13 +106,17 @@
      * @category Resource Management
      */
     async setupSubnodes () {
-        await this.urlResources().promiseParallelMap(async (r) => {
+        await this.urlResources().promiseSerialForEach(async (r) => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
             const aResource = rClass.clone().setPath(r.path());
             aResource.setUrlResource(r);
-            aResource.asyncLoad(); // do this in parallel
+            await aResource.asyncLoad(); // do this in parallel
             this.addResource(aResource);
-        })
+        });
+
+        if (this.type() !== "SvFileResources") {
+            assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
+        }
 
         return this
     }
@@ -199,11 +205,14 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        //console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
         await this.resources().promiseParallelMap(async (r) => {
-            //console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
-            await r.prechacheWhereAppropriate();
+            console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
+            if (r.prechacheWhereAppropriate) {
+                await r.prechacheWhereAppropriate();
+            }
         });
+        console.log("resource group: " + this.type() + ".prechacheWhereAppropriate() done");
         return this;
     }
 
