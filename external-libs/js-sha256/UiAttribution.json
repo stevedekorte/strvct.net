@@ -1,5 +1,5 @@
 {
-  "category": "libraries",
+  "category": "Libraries",
   "name": "js-sha256",
   "description": "JavaScript SHA-256 hash",
   "licenseType": "MIT",

@@ -60,7 +60,7 @@
         }
         /**
          * @member {String} iconName
-         * @category Icon
+         * @category IconCreative
          */
         {
             const slot = this.newSlot("iconName", null);
@@ -111,19 +111,19 @@
      */
     init () {
         super.init()
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setElementClassName("SvgIconView")
-        this.turnOffUserSelect()
-        this.setOverflow("hidden")
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setElementClassName("SvgIconView");
+        this.turnOffUserSelect();
+        this.setOverflow("hidden");
 
-        this.setPadding("0em")
-        this.setMargin("0em")
+        this.setPadding("0em");
+        this.setMargin("0em");
         
-        this.setOverflow("visible")
-        this.syncColors()
+        this.setOverflow("visible");
+        this.syncColors();
 
-        return this
+        return this;
     }
 
     /**
@@ -132,8 +132,8 @@
      * @category Debugging
      */
     debugTypeId () {
-        const name = this.iconName()
-        return  super.debugTypeId() + (name ? " '" + name + "'" : "")
+        const name = this.iconName();
+        return  super.debugTypeId() + (name ? " '" + name + "'" : "");
     }
 
     /**
@@ -141,8 +141,8 @@
      * @category SVG
      */
     clear () {
-        this.setSvgString(null)
-        this.hideDisplay()
+        this.setSvgString(null);
+        this.hideDisplay();
     }
 
     /**
@@ -153,31 +153,31 @@
      */
     setIconName (name) {
         if (this._iconName !== name) {
-            this._iconName = name
+            this._iconName = name;
 
             if (name === null) {
-                this.clear()
-                return this
+                this.clear();
+                return this;
             }
 
-            const icons = SvIconResources.shared()
-            const iconNode = icons.firstSubnodeWithTitle(name)
+            const icons = SvIconResources.shared();
+            const iconNode = icons.firstSubnodeWithTitle(name);
 
             if (iconNode) {
-                this.setSvgString(iconNode.svgString())
-                this.unhideDisplay()
+                this.setSvgString(iconNode.svgString());
+                this.unhideDisplay();
             } else {
-                const error = "can't find icon '" + name + "'"
-                console.log(error)
+                const error = "can't find icon '" + name + "'";
+                console.log(error);
                 //debugger;
-                this.clear()
-                return this
+                this.clear();
+                return this;
             }
 
-            this.setElementId(this.debugTypeId() + " '" + this.svgId() + "'")
+            this.setElementId(this.debugTypeId() + " '" + this.svgId() + "'");
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -186,7 +186,7 @@
      * @category SVG
      */
     svgId () {
-        return "svgid-" + this.iconName() 
+        return "svgid-" + this.iconName();
     }
 
     /**
@@ -196,7 +196,7 @@
      * @category SVG
      */
     setSvgString (s) {
-        this._svgString = s
+        this._svgString = s;
 
         if (s) {
             // remove and old svg element
@@ -205,12 +205,12 @@
             }
 
             // add svg element
-            const e = SvgIconCache.shared().newLinkElementForSvgString(s)
-            this.element().appendChild(e)
-            this.setSvgElement(e)
+            const e = SvgIconCache.shared().newLinkElementForSvgString(s);
+            this.element().appendChild(e);
+            this.setSvgElement(e);
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -220,9 +220,9 @@
      * @category Styling
      */
     setColor (aColor) {
-        this.setFillColor(aColor)
-        this.setStrokeColor(aColor)
-        return this
+        this.setFillColor(aColor);
+        this.setStrokeColor(aColor);
+        return this;
     }
         
     /**
@@ -230,10 +230,10 @@
      * @category Styling
      */
     syncColors () {
-        const style = this.element().style
-        style.setProperty("--fillColor", this.fillColor())
-        style.setProperty("--strokeColor", this.strokeColor())
-        style.setProperty("--strokeWidth", this.strokeWidth())
+        const style = this.element().style;
+        style.setProperty("--fillColor", this.fillColor());
+        style.setProperty("--strokeColor", this.strokeColor());
+        style.setProperty("--strokeWidth", this.strokeWidth());
     }
 
     /**
@@ -243,7 +243,7 @@
      * @category Styling
      */
     didUpdateSlotFillColor (oldValue, newValue) {
-        this.setCssProperty("--fillColor", newValue)
+        this.setCssProperty("--fillColor", newValue);
     }
 
     /**
@@ -253,7 +253,7 @@
      * @category Styling
      */
     didUpdateSlotStrokeColor (oldValue, newValue) {
-        this.setCssProperty("--strokeColor", newValue)
+        this.setCssProperty("--strokeColor", newValue);
     }
 
     /**
@@ -263,7 +263,7 @@
      * @category Styling
      */
     didUpdateSlotStrokeWidth (oldValue, newValue) {
-        this.setCssProperty("--strokeWidth", newValue)
+        this.setCssProperty("--strokeWidth", newValue);
     }
 
     /**
@@ -272,12 +272,12 @@
      * @category Styling
      */
     variableAttributeMap () {
-        const m = new Map()
-        m.set("fill", "var(--fillColor)")
-        m.set("stroke", "var(--strokeColor)")
-        m.set("strokeWidth", "var(--strokeWidth)")
-        m.set("transition", "var(--transition)")
-        return m
+        const m = new Map();
+        m.set("fill", "var(--fillColor)");
+        m.set("stroke", "var(--strokeColor)");
+        m.set("strokeWidth", "var(--strokeWidth)");
+        m.set("transition", "var(--transition)");
+        return m;
     }
 
     /**
@@ -286,12 +286,12 @@
      * @category Styling
      */
     parentVariableAttributeMap () {
-        const m = new Map()
-        m.set("fill", "var(--color)")
-        m.set("stroke", "var(--color)")
-        m.set("strokeWidth", "var(--strokeWidth)")
-        m.set("transition", "var(--transition)")
-        return m
+        const m = new Map();
+        m.set("fill", "var(--color)");
+        m.set("stroke", "var(--color)");
+        m.set("strokeWidth", "var(--strokeWidth)");
+        m.set("transition", "var(--transition)");
+        return m;
     }
 
 }.initThisClass());

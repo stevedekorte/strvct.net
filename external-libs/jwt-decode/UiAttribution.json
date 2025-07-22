@@ -1,5 +1,5 @@
 {
-  "category": "libraries",
+  "category": "Libraries",
   "name": "jwt-decode",
   "description": "JWT token decoder",
   "licenseType": "MIT",

@@ -1,5 +1,5 @@
 {
-  "category": "libraries",
+  "category": "Libraries",
   "name": "jsondiffpatch",
   "description": "Diff and patch JSON objects",
   "licenseType": "MIT",

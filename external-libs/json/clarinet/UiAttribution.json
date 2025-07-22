@@ -1,5 +1,5 @@
 {
-  "category": "libraries",
+  "category": "Libraries",
   "name": "clarinet",
   "description": "Streaming JSON parser",
   "licenseType": "BSD",

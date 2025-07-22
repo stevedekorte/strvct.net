@@ -1,5 +1,5 @@
 {
-  "category": "libraries",
+  "category": "Libraries",
   "name": "json-stable-stringify",
   "description": "Deterministic JSON serialization",
   "licenseType": "MIT",
