@@ -11,21 +11,21 @@
      * Initializes the prototype slots for the settings node.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         {
-            const slot = this.addSubnodeSlot("prototypes", SvNode);
+            this.addSubnodeSlot("prototypes", SvNode);
         }
 
         {
-            const slot = this.addSubnodeSlot("resources", SvResources);
+            this.addSubnodeSlot("resources", SvResources);
         }
 
         {
-            const slot = this.addSubnodeSlot("storage", SvDataStore);
+            this.addSubnodeSlot("storage", SvDataStore);
         }
 
         {
-            const slot = this.addSubnodeSlot("blobs", SvBlobs);
+            this.addSubnodeSlot("blobs", SvBlobs);
         }
     }
 
@@ -36,11 +36,12 @@
      * @returns {Object} The added slot.
      * @category Configuration
      */
-    addSubnodeSlot(slotName, proto) {
+    addSubnodeSlot (slotName, proto) {
         const slot = this.newSlot(slotName, null);
-        slot.setShouldStoreSlot(true);
+        slot.setShouldStoreSlot(false);
         slot.setFinalInitProto(proto);
         slot.setIsSubnode(true);
+        debugger;
         return slot;
     }
 
@@ -48,7 +49,7 @@
      * Initializes the prototype for the settings node.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
         this.setNodeCanReorderSubnodes(false);
         this.setNodeCanAddSubnode(true);
 

@@ -13,14 +13,6 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-        /*
-        {
-            const slot = this.newSlot("blobs", null)
-            slot.setFinalInitProto(SvBlobs)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-        }
-        */
     }
 
     /**
@@ -35,11 +27,12 @@
         this.setNodeCanReorderSubnodes(false);
         this.setNodeIsVertical(false);
         this.setNodeCanAddSubnode(false);
+        this.setTitle("bread crumbs");
     }
 
     finalInit () {
         super.finalInit();
-        this.setTitle("bread crumbs");
-    };
+        this.initPrototype();
+    }
 
 }.initThisClass());
