@@ -337,6 +337,7 @@
 
             if (this.shouldCurrentlyFillAvailble()) {
                 this.setMinWidth("17em");
+                this.setMaxWidth(null);
                 this.setWidth("-webkit-fill-available");
                 this.setMaxWidth("-webkit-fill-available");
             }

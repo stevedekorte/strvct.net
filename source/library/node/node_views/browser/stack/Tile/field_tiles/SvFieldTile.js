@@ -15,7 +15,7 @@
 */
 
 
-(class SvFieldTile extends Tile {
+(class SvFieldTile extends Tile { 
     
     initPrototypeSlots () {
         {

@@ -453,5 +453,12 @@
         return this.title() + " " + this.subtitle()
     }
 
+    recursiveFilter (aFilter) {
+        const results = this.subnodes().select(aFilter);
+        this.subnodes().forEach(subnode => {
+            results.push(...subnode.recursiveFilter(aFilter));
+        });
+        return results;
+    }
     
 }.initThisClass());

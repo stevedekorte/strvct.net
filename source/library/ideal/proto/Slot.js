@@ -450,6 +450,21 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     /**
      * @category Appearance
      */
+    setValueAllowsHtml (aBool) {
+        this.setAnnotation("valueAllowsHtml", aBool);
+        return this;
+    }
+
+    /**
+     * @category Appearance
+     */
+    valueAllowsHtml () {
+        return this.getAnnotation("valueAllowsHtml");
+    }
+
+    /**
+     * @category Appearance
+     */
     valueWhiteSpace () {
         return this.getAnnotation("valueWhiteSpace");
     }
@@ -745,6 +760,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     field.setValueWhiteSpace(this.valueWhiteSpace());
                 }
                 */
+
+                if (Type.isBoolean(this.valueAllowsHtml())) {
+                    //debugger;
+                    field.setValueAllowsHtml(this.valueAllowsHtml());
+                }
 
                 if (field.setValuePlaceholderText) {
                     const p = this.valuePlaceholder();

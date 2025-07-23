@@ -213,8 +213,8 @@
         url.setResourceHash(this.resourceHash());
         const r = await url.promiseLoad();
         this._data = r.data();
-        this.promiseForLoad().callResolveFunc();
         this.setValue(await this.asyncValueFromData());
+        this.promiseForLoad().callResolveFunc();
         return this;
     }
 
@@ -237,6 +237,7 @@
      */
     precacheExtensions () {
         return [
+            "html",
             "json", 
             "txt", 
             "otf", "ttf", "woff", "woff2" // font formats
@@ -273,7 +274,7 @@
             if (ext === "json") {
                 const jsonString = data.asString();
                 return JSON.parse(jsonString);
-            } else if (["js", "css", "txt"].includes(ext)) {
+            } else if (["js", "css", "txt", "html"].includes(ext)) {
                 const textString = data.asString();
                 return textString;
             }

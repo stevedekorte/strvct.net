@@ -1,6 +1,6 @@
 /**
  * @module browser.stack.Tile.field_tiles
- * @class SvStringFieldTile
+ * @class SvStringFieldTile 
  * @extends SvFieldTile
  * @classdesc SvStringFieldTile class for handling string field tiles.
  */
@@ -37,6 +37,20 @@
         v.setOverflowX("hidden");
         v.setBorderRadius("0.2em");
         return v;
+    }
+
+    syncValueFromNode () {
+        const node = this.node();
+       
+        if (node.valueAllowsHtml && node.valueAllowsHtml()) {
+            const vv = this.valueView();
+            if (vv.allowsHtml) {
+                vv.setAllowsHtml(true);
+                vv.setIsEditable(false); // TODO: make sure this doesn't get overridden 
+            }
+        }
+
+        super.syncValueFromNode();
     }
     
 }.initThisClass());

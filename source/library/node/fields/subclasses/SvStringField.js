@@ -2,7 +2,7 @@
  * @module library.node.fields.subclasses
  */
 
-"use strict"; 
+"use strict";  
 
 /**
  * @class SvStringField
@@ -18,7 +18,7 @@
      * @category Availability
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**

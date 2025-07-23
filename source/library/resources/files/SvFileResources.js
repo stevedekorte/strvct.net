@@ -138,11 +138,33 @@
      */
     async prechacheWhereAppropriate () {
         this.setupSubnodesIfNeeded();
+        //debugger;
         await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => {
             //console.log("file: " + file.type() + ".prechacheWhereAppropriate()");
             await file.prechacheWhereAppropriate();
         });
         return this;
+    }
+
+    /**
+     * @description Gets a resource by name.
+     * @param {string} name - The name of the resource.
+     * @returns {Object|undefined} The resource if found, undefined otherwise.
+     * @category Resource Management
+     */
+    resourceNamed (name) {
+        const resource = this.resourcesWithName(name).first();
+        return resource;
+    }
+
+    /**
+     * @description Gets resources with a given name.
+     * @param {string} name - The name of the resources.
+     * @returns {Array} Array of resources.
+     * @category Resource Management
+     */
+    resourcesWithName (name) {
+        return this.recursiveFilter(r => r.name() == name);
     }
 
 }.initThisClass());

@@ -189,14 +189,14 @@
         if (newValue === oldValue) {
             return this;
         }
-
+/*
         if (this.isActiveElementAndEditable()) {
             //debugger;
         }
-
+*/
         updateElementHTML(this.element(), newValue);
 
-        return this
+        return this;
     }
 
     /**
@@ -206,13 +206,13 @@
      */
     forceRedisplay () {
         // NOTE: not sure this works
-        const p = this.parentView()
+        const p = this.parentView();
         if (p) {
-            const d = p.display()
-            p.setDisplay("none")
-            p.setDisplay(d)  
+            const d = p.display();
+            p.setDisplay("none");
+            p.setDisplay(d);  
         }
-        return this
+        return this;
     }
 
     /**
@@ -230,9 +230,9 @@
      * @category Event Handling
      */
     didEdit () {
-        this.debugLog("didEdit")
-        this.tellParentViews("onDidEdit", this)
-        return this
+        this.debugLog("didEdit");
+        this.tellParentViews("onDidEdit", this);
+        return this;
     }
 
     /**
@@ -256,7 +256,7 @@
     onTabKeyDown (event) {
         if (this.selectNextKeyView()) {
         }
-        return false
+        return false;
     }
 
     /**
@@ -275,8 +275,8 @@
      * @category Focus Management
      */
     becomeKeyView () { 
-        this.focus()
-        return this
+        this.focus();
+        return this;
     }
 
     /**
@@ -290,9 +290,9 @@
             nkv.becomeKeyView()
             return true
         } else {
-            const p = this.parentView()
+            const p = this.parentView();
             if (p) {
-                return p.selectNextKeyView()
+                return p.selectNextKeyView();
             }
         }
         return false
@@ -306,7 +306,7 @@
      * @category Validation
      */
     isValid () {
-        return true
+        return true;
     }
 
     // --- focus and blur event handling ---
@@ -326,7 +326,7 @@
      * @category Focus Management
      */
     didReleaseFirstResponder () {
-        return this
+        return this;
     }
 
     // --- firstResponder --- 
@@ -337,7 +337,7 @@
      * @category Focus Management
      */
     isFirstResponder () {
-        return document.activeElement === this.element()
+        return document.activeElement === this.element();
     }
 
     /**
@@ -359,7 +359,7 @@
         } else if (this.parentView()) {
             this.parentView().becomeFirstResponder()
         }
-        return this
+        return this;
     }
 
     /**
@@ -369,11 +369,11 @@
      */
     releaseFirstResponder () {
         if (this.isFocused()) { 
-            this.blur()
+            this.blur();
         }
 
-        this.tellParentViews("decendantReleasedFocus", this)
-        return this
+        this.tellParentViews("decendantReleasedFocus", this);
+        return this;
     }
 
     // ------------------------------------------------
@@ -389,7 +389,7 @@
         this.debugLog(" disabling pointer events")
 
         this.addTimeout(() => {
-            this.debugLog(" enabling pointer events")
+            this.debugLog(" enabling pointer events");
             this.setPointerEvents("inherit")
         }, ms)
 

@@ -112,6 +112,20 @@
         }
 
         /**
+         * @member {boolean} valueAllowsHtml - Whether the value allows html.
+         */
+        {
+            const slot = this.newSlot("valueAllowsHtml", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("editable");
+            slot.setInspectorPath("Node/Field/Value");
+        }
+
+        /**
          * @member {string} valuePlaceholderText - The placeholder text for the value.
          */
         {
