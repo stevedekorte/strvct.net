@@ -331,16 +331,19 @@
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
+            } else if (this.shouldCurrentlyFillAvailble()) {
+
+                this.setMinWidth("17em");
+                this.setWidth(null);
+                this.setMaxWidth("100%");
+
+                //this.setWidth("-webkit-fill-available");
+                //this.setMaxWidth("-webkit-fill-available");
+
             } else {
                 this.setMinAndMaxWidth(targetW);
             }
-
-            if (this.shouldCurrentlyFillAvailble()) {
-                this.setMinWidth("17em");
-                this.setMaxWidth(null);
-                this.setWidth("-webkit-fill-available");
-                this.setMaxWidth("-webkit-fill-available");
-            }
+            
         }
         
         this.setMinAndMaxHeight("100%");
@@ -543,7 +546,9 @@
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
             } else {
-                this.setMinAndMaxWidth(targetW);
+                if (!this.shouldCurrentlyFillAvailble()) {
+                    this.setMinAndMaxWidth(targetW);
+                }
             }
         }
         return this;

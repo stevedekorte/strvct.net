@@ -2255,11 +2255,15 @@
     }
 
     setMinAndMaxWidth (v) {
+        this.setMaxWidth(v);
+        this.setMinWidth(v);
+        /*
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
         this.setCssProperty("max-width", v, () => { this.didChangeWidth() })
         this.setCssProperty("min-width", v, () => { this.didChangeWidth() })
+        */
         if (!Type.isNull(v)) {
             this.setCssProperty("width", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
         }
