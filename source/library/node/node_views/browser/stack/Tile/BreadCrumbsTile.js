@@ -50,6 +50,20 @@
             const slot = this.newSlot("crumbObservations", null);
             slot.setSlotType("Array");
         }
+
+        /**
+         * @member {Array} previousPathNodes
+         * @category Data
+         */
+        {
+            const slot = this.newSlot("previousPathNodes", []);
+            slot.setSlotType("Array");
+        }
+    }
+
+    initPrototype () {
+        this.setupCss();
+        return this;
     }
 
     /**
@@ -67,6 +81,20 @@
         this.setCrumbObservations([]);
         return this;
     }
+
+    setupCss () {
+        WebDocument.shared().addStyleSheetString(`
+            .BreadCrumbsTile-fadeIn {
+                animation: breadcrumbFadeIn 0.3s ease-in-out forwards;
+            }
+
+            @keyframes breadcrumbFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+        `);
+    }
+
 
     /**
      * @description Makes the orientation down and sets the width to 100%
@@ -371,14 +399,134 @@
      * @category View Setup
      */
     setupPathViews () {
-        const views = this.newPathComponentViews();
-        const separatedViews = views.joinWithFunc(() => this.newSeparatorView());
-        //separatedViews.unshift(this.newSeparatorView());
-        separatedViews.unshift(this.newBackButton());
-        this.contentView().removeAllSubviews();
-        this.contentView().addSubviews(separatedViews);
+        const currentPathNodes = this.pathNodes();
+        const previousPathNodes = this.previousPathNodes();
+        
+        // Find the common prefix length
+        let commonPrefixLength = 0;
+        const minLength = Math.min(currentPathNodes.length, previousPathNodes.length);
+        for (let i = 0; i < minLength; i++) {
+            if (currentPathNodes[i] === previousPathNodes[i]) {
+                commonPrefixLength++;
+            } else {
+                break;
+            }
+        }
+        
+        const existingViews = this.contentView().subviews();
+        
+        // If we have no existing views or the path completely changed, do a full rebuild
+        if (existingViews.length === 0 || commonPrefixLength === 0) {
+            const views = this.newPathComponentViews();
+            const separatedViews = views.joinWithFunc(() => this.newSeparatorView());
+            separatedViews.unshift(this.newBackButton());
+            
+            this.contentView().removeAllSubviews();
+            this.contentView().addSubviews(separatedViews);
+            
+            // Mark all views except back button for fade-in animation
+            separatedViews.forEach((view, index) => {
+                if (index > 0) { // Skip back button
+                    this.applyFadeInAnimation(view);
+                }
+            });
+        } else {
+            // Differential update
+            this.performDifferentialUpdate(currentPathNodes, previousPathNodes, commonPrefixLength);
+        }
+        
+        this.setPreviousPathNodes(currentPathNodes.slice()); // Store a copy
         this.updateCompaction();
         this.watchPathNodes();
+        return this;
+    }
+
+    /**
+     * @description Performs differential update of path views
+     * @param {Array} currentPathNodes - Current path nodes
+     * @param {Array} previousPathNodes - Previous path nodes
+     * @param {number} commonPrefixLength - Length of common prefix
+     * @returns {BreadCrumbsTile}
+     * @category View Setup
+     */
+    performDifferentialUpdate (currentPathNodes, previousPathNodes, commonPrefixLength) {
+        const existingViews = this.contentView().subviews();
+        
+        // Calculate the view index where changes start
+        // Pattern: [back] [crumb] [sep] [crumb] [sep] [crumb]...
+        // The back button is at index 0
+        // First crumb at index 1, then alternating separators and crumbs
+        
+        let viewIndexOfFirstChange;
+        if (commonPrefixLength === 0) {
+            // Remove everything after back button
+            viewIndexOfFirstChange = 1;
+        } else {
+            // For the nth crumb (1-indexed), its position is: 1 + (n-1)*2
+            // We want to remove starting after the last common crumb
+            // If the last common crumb has a separator after it, we start from that separator
+            viewIndexOfFirstChange = 1 + (commonPrefixLength - 1) * 2 + 1;
+        }
+        
+        // Remove views after the common prefix
+        const viewsToRemove = existingViews.slice(viewIndexOfFirstChange);
+        viewsToRemove.forEach(view => view.removeFromParentView());
+        
+        // Create new views for the changed portion
+        const newNodes = currentPathNodes.slice(commonPrefixLength);
+        const newViews = newNodes.map((node, i) => {
+            const actualIndex = commonPrefixLength + i;
+            return this.crumbViewForNode(node, actualIndex, currentPathNodes);
+        });
+        
+        // Add new views with separators
+        const viewsToAdd = [];
+        
+        // If we have new views to add
+        if (newViews.length > 0) {
+            // Add separator before first new view if we have common prefix
+            if (commonPrefixLength > 0) {
+                viewsToAdd.push(this.newSeparatorView());
+            }
+            
+            // Add first new view
+            viewsToAdd.push(newViews[0]);
+            
+            // Add remaining views with separators before each
+            for (let i = 1; i < newViews.length; i++) {
+                viewsToAdd.push(this.newSeparatorView());
+                viewsToAdd.push(newViews[i]);
+            }
+        }
+        
+        // Add all new views and apply fade-in animation
+        this.contentView().addSubviews(viewsToAdd);
+        viewsToAdd.forEach(view => this.applyFadeInAnimation(view));
+        
+        return this;
+    }
+
+    /**
+     * @description Applies fade-in animation to a view
+     * @param {DomView} view - The view to animate
+     * @returns {BreadCrumbsTile}
+     * @category Animation
+     */
+    applyFadeInAnimation (view) {
+        // Set initial opacity to 0
+        view.setOpacity(0);
+        
+        // Add animation class after a brief delay to trigger the animation
+        setTimeout(() => {
+            view.addCssClass("BreadCrumbsTile-fadeIn");
+            view.setOpacity(1);
+        }, 10);
+        
+        // Remove the animation class after animation completes
+        setTimeout(() => {
+            view.removeCssClass("BreadCrumbsTile-fadeIn");
+        }, 310); // 300ms animation + 10ms buffer
+        
         return this;
     }
 

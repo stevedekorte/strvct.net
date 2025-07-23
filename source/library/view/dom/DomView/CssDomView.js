@@ -2836,5 +2836,14 @@
 
     // reflow thrash avoidance helpers
 
+    addCssClass (aClassName) {
+        this.element().classList.add(aClassName);
+        return this
+    }
 
+    removeCssClass (aClassName) {
+        this.element().classList.remove(aClassName);
+        return this;
+    }
+    
 }.initThisClass());

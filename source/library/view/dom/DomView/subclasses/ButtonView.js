@@ -289,7 +289,7 @@
     onTapComplete (/*aGesture*/) {
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)");
         this.sendActionToTarget();
-        SimpleSynth.clone().playButtonTap();
+        //SimpleSynth.clone().playButtonTap();
         return false;
     }
     
