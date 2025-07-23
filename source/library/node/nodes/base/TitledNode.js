@@ -214,6 +214,10 @@
         return results;
     }
     
+    nodePathArray () {
+        return this.nodePath();
+    }
+
     /**
      * @description Gets the node path as a string.
      * @returns {string} The node path string.
@@ -228,7 +232,7 @@
      * @returns {TitledNode} The node at the subpath.
      */
     nodeAtSubpathString (pathString) {
-        return this.nodeAtSubpath(pathString.split("/"));        
+        return this.nodeAtSubpathArray(pathString.split("/"));        
     }
     
     /**
@@ -236,7 +240,7 @@
      * @param {Array} subpathArray - The subpath array.
      * @returns {TitledNode} The node at the subpath.
      */
-    nodeAtSubpath (subpathArray) {
+    nodeAtSubpathArray (subpathArray) {
         if (subpathArray.length) {
             const t = subpathArray.first()
 
@@ -249,7 +253,7 @@
             }
 
             if (subnode) {
-                return subnode.nodeAtSubpath(subpathArray.rest())
+                return subnode.nodeAtSubpathArray(subpathArray.rest())
             }
             return null
         }        

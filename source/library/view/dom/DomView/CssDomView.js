@@ -165,7 +165,7 @@
                         }
                     }
                 } catch (e) {
-                    //console.log("couldn't add CSS rule: " + rule + "")
+                    console.log("couldn't add CSS rule: " + rule + " for class: " + className + " error: " + e);
                 }
             }
         }
@@ -247,16 +247,16 @@
             //return this
         }
 
-        const style = this.cssStyle()
-        const doesSanityCheck = false
+        const style = this.cssStyle();
+        const simpleSet = true;
+        //const doesSanityCheck = false
         //const oldValue = style.getPropertyValue(key)
 
         //if (String(oldValue) !== String(newValue)) {
-        if (true) {
-                if (newValue == null) {
+        if (simpleSet) {
+            if (newValue === null) {
                 this.removeCssProperty(key)
             } else {
-                //style[key] = newValue
                 style.setProperty(key, newValue)
                 //ThrashDetector.shared().didWrite(key, this)
 
@@ -294,30 +294,30 @@
             }
 
             if (didChangeCallbackFunc) {
-                didChangeCallbackFunc()
+                didChangeCallbackFunc();
             }
         }
 
         return this
     }
 
-    getCssProperty (key, errorCheck) {
+    getCssProperty (key /*, errorCheck*/) {
         /*
         if (errorCheck) {
-            throw new Error("getCssProperty called with 2 arguments")
+            throw new Error("getCssProperty called with 2 arguments");
         }
         */
 
         /*
         if (key[0] === "-") {
-            throw new Error("use getSpecialCssProperty instead")
-            return this.getSpecialCssProperty(key)
+            throw new Error("use getSpecialCssProperty instead");
+            return this.getSpecialCssProperty(key);
         }
         */
 
-        this.didDomRead(key)
+        this.didDomRead(key);
 
-        //return this.cssStyle()[key]
+        //return this.cssStyle()[key];
         return this.cssStyle().getPropertyValue(key)
     }
 
@@ -338,7 +338,7 @@
 
     // computed style
 
-    getComputedCssProperty (name, errorCheck) {
+    getComputedCssProperty (name /*, errorCheck*/) {
         //debugger; // getComputedStyle forces a layout - make sure it's needed 
         return window.getComputedStyle(this.element()).getPropertyValue(name)
     }
@@ -499,7 +499,7 @@
 
     // font weight
 
-    fontWeightValidatorFunction (v) {
+    fontWeightValidatorFunction () {
        return (v) => { Type.isNumber(v) || [null, "normal", "bold", "bolder", "lighter", "initial", "inherit"].contains(v) }
     }
 
@@ -1506,8 +1506,8 @@
         return this
     }
 
-    flex () {
-        return this.getCssProperty("flex-wrap")
+    flexWrap () {
+        return this.getCssProperty("flex-wrap");
     }
 
     // flex order
@@ -2246,11 +2246,11 @@
         return this
     }
 
-    setMaxWidth (v) {
+    setMaxWidth (v) { 
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
-        this.setCssProperty("max-width", v, () => { this.didChangeWidth() })
+        this.setCssProperty("max-width", v, () => { this.didChangeWidth() }) 
         return this
     }
 
@@ -2454,8 +2454,8 @@
     // --- innerText ---
 
     setInnerText (v) {
-        const e = this.element().innerText = v
-        return this
+        this.element().innerText = v;
+        return this;
     }
 
     innerText () {
@@ -2547,12 +2547,14 @@
 
     // view position helpers ----
 
+    /*
     setRelativePos (p) {
         // why not a 2d transform?
         this.setLeftPx(p.x())
         this.setTopPx(p.y())
         return this
     }
+    */
 
     containsPoint (aPoint) {
         // point must be in document coordinates
@@ -2804,7 +2806,7 @@
         const e = this.element()
         if (e.className.indexOf(uniqueClassName) === -1) {
             const newRuleKey = "DomView" + uniqueClassName + ":" + afterOrBefore
-            const newRuleValue = "content: \"" + aString + "\;"
+            const newRuleValue = "content: \"" + aString + "\";"
             //console.log("newRule '" + newRuleKey + "', '" + newRuleValue + "'")
             document.styleSheets[0].addRule(newRuleKey, newRuleValue);
             e.className += " " + uniqueClassName
@@ -2822,12 +2824,12 @@
         return this
     }
 
-    didDomRead (opName) {
+    didDomRead (/*opName*/) {
         //ThrashDetector.shared().didRead(opName, this)
         return this
     }
 
-    didDomWrite (opName) {
+    didDomWrite (/*opName*/) {
         //ThrashDetector.shared().didWrite(opName, this)
         return this
     }

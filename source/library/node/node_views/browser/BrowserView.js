@@ -113,6 +113,20 @@
     }
     */
 
+    selectNodePathString (aPath) {
+        const components = aPath.split("/");
+        components.shift(); // remove first component
+        const selectedNode = this.node().nodeAtSubpathArray(components);
+        if (selectedNode) {
+            const pathArray = selectedNode.nodePathArray(); 
+            pathArray.shift(); // remove first component
+            //this.selectNodePathArray(pathArray);
+        } else {
+            debugger;
+        }
+        return this;
+    }
+
     /**
      * @description Moves the view to the base state.
      * @returns {BrowserView} The current BrowserView instance.

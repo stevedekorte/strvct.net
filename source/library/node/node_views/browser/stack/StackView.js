@@ -473,6 +473,11 @@
         })
     }
 
+    selectedNodePathString () {
+        // WARNING: subnode titles may not be unique, so this *might* not be a unique path
+        return this.selectedNodePathArray().map(node => node.title()).join("/");
+    }
+
     /*
     selectedNodePathArray () {
         return this.stackViewSubchain().map(sv => {

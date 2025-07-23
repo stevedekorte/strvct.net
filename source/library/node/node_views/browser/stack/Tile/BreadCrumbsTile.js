@@ -185,6 +185,8 @@
      */
     onStackViewPathChange (/*aNote*/) {
         this.syncPathToStack();
+        const path = this.targetStackView().selectedNodePathString();
+        SvApp.shared().userInterface().updateQueryParameter("path", path);
     }
 
     /**
