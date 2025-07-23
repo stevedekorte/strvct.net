@@ -458,14 +458,26 @@
         // First crumb at index 1, then alternating separators and crumbs
         
         let viewIndexOfFirstChange;
+        let keepExistingSeparator = false;
+        
         if (commonPrefixLength === 0) {
             // Remove everything after back button
             viewIndexOfFirstChange = 1;
         } else {
             // For the nth crumb (1-indexed), its position is: 1 + (n-1)*2
-            // We want to remove starting after the last common crumb
-            // If the last common crumb has a separator after it, we start from that separator
-            viewIndexOfFirstChange = 1 + (commonPrefixLength - 1) * 2 + 1;
+            // Check if there's a separator after the last common crumb that we should keep
+            const lastCommonCrumbIndex = 1 + (commonPrefixLength - 1) * 2;
+            const potentialSeparatorIndex = lastCommonCrumbIndex + 1;
+            
+            // If there's a separator after the last common crumb and we have more nodes to add, keep it
+            if (potentialSeparatorIndex < existingViews.length && 
+                existingViews[potentialSeparatorIndex].title() === this.separatorString() &&
+                currentPathNodes.length > commonPrefixLength) {
+                keepExistingSeparator = true;
+                viewIndexOfFirstChange = potentialSeparatorIndex + 1;
+            } else {
+                viewIndexOfFirstChange = lastCommonCrumbIndex + 1;
+            }
         }
         
         // Remove views after the common prefix
@@ -484,8 +496,8 @@
         
         // If we have new views to add
         if (newViews.length > 0) {
-            // Add separator before first new view if we have common prefix
-            if (commonPrefixLength > 0) {
+            // Add separator before first new view if we have common prefix and didn't keep existing separator
+            if (commonPrefixLength > 0 && !keepExistingSeparator) {
                 viewsToAdd.push(this.newSeparatorView());
             }
             
