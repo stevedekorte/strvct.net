@@ -125,6 +125,16 @@
             slot.setInspectorPath("Node/Field/Value");
         }
 
+        {
+            const slot = this.newSlot("valueWhiteSpace", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("String");
+            slot.setInspectorPath("Node/Field/Value");
+        }
+
         /**
          * @member {string} valuePlaceholderText - The placeholder text for the value.
          */

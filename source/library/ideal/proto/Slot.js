@@ -755,11 +755,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 field.setValueMethod(this.name());
                 field.setValueIsEditable(this.canEditInspection());
                 field.setCanDelete(false);
-                /*
-                if (this.valueWhiteSpace()) {
+                
+                if (Type.isString(this.valueWhiteSpace())) {
                     field.setValueWhiteSpace(this.valueWhiteSpace());
                 }
-                */
+                
 
                 if (Type.isBoolean(this.valueAllowsHtml())) {
                     //debugger;

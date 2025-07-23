@@ -42,11 +42,22 @@
     syncValueFromNode () {
         const node = this.node();
        
-        if (node.valueAllowsHtml && node.valueAllowsHtml()) {
+        const valueAllowsHtml = (node.valueAllowsHtml ? node.valueAllowsHtml() : null);
+        if (!Type.isNull(valueAllowsHtml)) {
             const vv = this.valueView();
-            if (vv.allowsHtml) {
-                vv.setAllowsHtml(true);
-                vv.setIsEditable(false); // TODO: make sure this doesn't get overridden 
+            if (vv.setAllowsHtml) {
+                vv.setAllowsHtml(valueAllowsHtml);
+                if (valueAllowsHtml) {
+                    vv.setIsEditable(false); // TODO: make sure this doesn't get overridden 
+                }
+            }
+        }
+
+        const valueWhiteSpace = (node.valueWhiteSpace ? node.valueWhiteSpace() : null);
+        if (!Type.isNull(valueWhiteSpace)) {
+            const vv = this.valueView();
+            if (vv.setWhiteSpace) {
+                vv.setWhiteSpace(valueWhiteSpace);
             }
         }
 
