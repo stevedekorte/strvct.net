@@ -56,9 +56,10 @@
         const doc = DocumentBody.shared();
         doc.setBackgroundColor("#191919");
         doc.setFontFamily("EB Garamond");
+        //doc.setFontFamily("Lusitana");
         //doc.setFontFamily("BarlowCondensed");
-        doc.setFontWeight("Medium");
-        doc.setFontSizeAndLineHeight("18px");
+        doc.setFontWeight("medium");
+        doc.setFontSizeAndLineHeight("16px");
    }
 
 }.initThisClass());

@@ -226,7 +226,7 @@
     onClickPathComponent (aPathComponentView) {
         const nodePathArray = aPathComponentView.info();
         if (nodePathArray.length === 0) {
-            debugger;
+            //debugger;
         }
         console.log("select path: " + nodePathArray.map(n => n.title()).join("/"));
         const t = this.targetStackView();
