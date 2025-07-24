@@ -232,6 +232,7 @@
             style.overflow = 'hidden';
             style.border = '1px solid #444';
             style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+            style.maxWidth = '90%';
         }
 
         const messageDiv = document.createElement('div');
@@ -257,8 +258,8 @@
             while (parts.length > 1 && parts.first().toLowerCase().endsWith("error")) {
                 parts.shift();
             }
+            errorMessage = parts.last();
         }
-        errorMessage = parts.last();
 
         //const errorTitle = parts[0];
         //const errorMessage = '"' + parts[1] + '"';
