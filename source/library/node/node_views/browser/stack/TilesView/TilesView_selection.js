@@ -14,11 +14,11 @@
      * @returns {TilesView_selection} The current instance.
      */
     unselectTilesInNextColumn () {
-        const c = this.nextColumn()
+        const c = this.nextColumn();
         if (c) {
-            c.unselectAllTiles()
+            c.unselectAllTiles();
         }
-        return this
+        return this;
     }
 
     /**
@@ -26,7 +26,7 @@
      * @returns {Tile} The last selected tile.
      */
     lastSelectedTile () {
-        return this.selectedTiles().maxItem(tile => tile.lastSelectionDate().getTime())
+        return this.selectedTiles().maxItem(tile => tile.lastSelectionDate().getTime());
     }
 
     /**
@@ -37,19 +37,19 @@
      */
     didUpdateSlotIsSelected (oldValue, newValue) {
         debugger;
-        super.didUpdateSlotIsSelected(oldValue, newValue)
+        super.didUpdateSlotIsSelected(oldValue, newValue);
 
         if (this.isSelected()) {
-            const focusedView = WebBrowserWindow.shared().activeDomView()
+            const focusedView = WebBrowserWindow.shared().activeDomView();
 
             if (!focusedView || (focusedView && !this.hasFocusedDecendantView())) {
-                this.focus()    
+                this.focus();    
             }
         } else {
-            this.blur()
+            this.blur();
         }
 		
-        return this
+        return this;
     }
 
     /**
@@ -58,11 +58,11 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectNode (aNode) {
-        const sv = this.subviewForSubnode(aNode)
+        const sv = this.subviewForSubnode(aNode);
         if (sv) {
-            this.didTapItem(sv)
+            this.didTapItem(sv);
         }
-        return this
+        return this;
     }
 
     /**
@@ -70,13 +70,13 @@
      * @param {Tile} anItem - The tapped item.
      */
     didTapItem (anItem) {
-        anItem.activate() 
+        anItem.activate(); 
         if (!anItem.hasFocusedDecendantView()) {
-            anItem.focus()
+            anItem.focus();
         }
-        this.unselectAllTilesExcept(anItem)
-        this.unselectTilesInNextColumn()
-        this.didChangeNavSelection()
+        this.unselectAllTilesExcept(anItem);
+        this.unselectTilesInNextColumn();
+        this.didChangeNavSelection();
     }
     
     /**
@@ -85,27 +85,27 @@
      * @returns {TilesView_selection} The current instance.
      */
     didShiftTapItem (anItem) {
-        let lastItem = this.lastSelectedTile()
+        let lastItem = this.lastSelectedTile();
 
         if (!lastItem) {
-            lastItem = this.tiles().first()
+            lastItem = this.tiles().first();
         }
 
         if (lastItem) {
-            const r1 = this.indexOfTile(anItem)
-            const r2 = this.indexOfTile(lastItem)
-            assert(r1 !== -1 && r2 !== -1)
-            const i1 = Math.min(r1, r2)
-            const i2 = Math.max(r1, r2)
+            const r1 = this.indexOfTile(anItem);
+            const r2 = this.indexOfTile(lastItem);
+            assert(r1 !== -1 && r2 !== -1);
+            const i1 = Math.min(r1, r2);
+            const i2 = Math.max(r1, r2);
             for (let i = i1; i <= i2; i++) {
-                const item = this.tileAtIndex(i)
+                const item = this.tileAtIndex(i);
                 if (!item.isSelected()) {
-                    item.activate()
+                    item.activate();
                 }
             }
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -113,7 +113,7 @@
      * @param {Tile} anItem - The meta-tapped item.
      */
     didMetaTapItem (anItem) {
-        anItem.toggleSelection()
+        anItem.toggleSelection();
     }
 
     /**
@@ -122,19 +122,19 @@
      * @returns {TilesView_selection} The current instance.
      */
     unselectAllTilesExcept (selectedTile) {
-        const tiles = this.tiles()
+        const tiles = this.tiles();
 
         tiles.forEach(tile => {
             if (tile !== selectedTile) {
                 if (tile.unselect) {
-                    tile.unselect()
+                    tile.unselect();
                 } else {
                     //console.warn("=WARNING= " + this.typeId() + ".unselectAllTilesExcept() tile " + tile.typeId() + " missing unselect method")
                 }
             }
-        })
+        });
         
-        return this
+        return this;
     }
 
     /**
@@ -143,17 +143,17 @@
      * @returns {TilesView_selection} The current instance.
      */
     unselectAllTilesExceptTiles (tilesToSelect) {
-        const tiles = this.tiles()
+        const tiles = this.tiles();
 
         tiles.forEach(tile => {
             if (tilesToSelect.contains(tile)) {
-                tile.performIfResponding("select") 
+                tile.performIfResponding("select"); 
             } else {
-                tile.performIfResponding("unselect") 
+                tile.performIfResponding("unselect"); 
             }
-        })
+        });
         
-        return this
+        return this;
     }
 
     /**
@@ -161,7 +161,7 @@
      * @returns {boolean} True if there are multiple selections, false otherwise.
      */
     hasMultipleSelections () {
-        return this.selectedTiles().length > 0
+        return this.selectedTiles().length > 0;
     }
 
     /**
@@ -169,9 +169,9 @@
      * @returns {Array<Tile>} An array of selected tiles.
      */
     selectedTiles () {
-        let tiles = this.tiles().filter(tile => tile.thisClass().isSubclassOf(Tile))
-        const selected = tiles.filter(tile => tile.isSelected())
-        return selected
+        let tiles = this.tiles().filter(tile => tile.thisClass().isSubclassOf(Tile));
+        const selected = tiles.filter(tile => tile.isSelected());
+        return selected;
     }
 
     /**
@@ -179,11 +179,11 @@
      * @returns {Tile|null} The selected tile, or null if none or multiple are selected.
      */
     selectedTile () {
-        const sr = this.selectedTiles()
+        const sr = this.selectedTiles();
         if (sr.length === 1) {
-            return sr.first()
+            return sr.first();
         }
-        return null
+        return null;
     }
 
     /**
@@ -191,7 +191,7 @@
      * @returns {Array<SvNode>} An array of selected nodes.
      */
     selectedNodes () {
-        return this.selectedTiles().map(tile => tile.node())
+        return this.selectedTiles().map(tile => tile.node());
     }
 
     /**
@@ -199,8 +199,8 @@
      * @returns {SvNode|null} The selected node, or null if none is selected.
      */
     selectedNode () {
-        const r = this.selectedTile()
-        return r ? r.node() : null
+        const r = this.selectedTile();
+        return r ? r.node() : null;
     }
     
     /**
@@ -208,7 +208,7 @@
      * @returns {number} The index of the selected tile, or -1 if none is selected.
      */
     selectedTileIndex () { 
-        return this.tiles().indexOf(this.selectedTile())
+        return this.tiles().indexOf(this.selectedTile());
     }
 
     /**
@@ -217,15 +217,15 @@
      * @returns {TilesView_selection} The current instance.
      */
     setSelectedTileIndex (index) {
-        const oldIndex = this.selectedTileIndex()
+        const oldIndex = this.selectedTileIndex();
         if (index !== oldIndex) {
-            const tiles = this.tiles()
+            const tiles = this.tiles();
             if (index >= 0 && index < tiles.length) {
-                const tile = tiles[index]
-                this.didTapItem(tile)
+                const tile = tiles[index];
+                this.didTapItem(tile);
             }
         }
-        return this
+        return this;
     }
   
     /**
@@ -234,7 +234,7 @@
      * @returns {number} The index of the tile, or -1 if not found.
      */
     indexOfTileWithNode (aNode) {
-        return this.tiles().detectIndex(tile => tile.node() === aNode)
+        return this.tiles().detectIndex(tile => tile.node() === aNode);
     }
 
     /**
@@ -242,8 +242,8 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectAllTiles () {
-        this.tiles().forEachPerformIfResponds("select")
-        return this
+        this.tiles().forEachPerformIfResponds("select");
+        return this;
     }
 
     /**
@@ -251,8 +251,8 @@
      * @returns {TilesView_selection} The current instance.
      */
     unselectAllTiles () {
-        this.tiles().forEachPerformIfResponds("unselect")
-        return this
+        this.tiles().forEachPerformIfResponds("unselect");
+        return this;
     }
 
     /**
@@ -261,19 +261,19 @@
      * @returns {Tile|null} The selected tile, or null if not found.
      */
     selectTileWithNode (aNode) {
-        const selectedTile = this.tileWithNode(aNode)
-		
+        const selectedTile = this.tileWithNode(aNode);
+        
         if (selectedTile) {
-            selectedTile.setIsSelected(true)
-			
+            selectedTile.setIsSelected(true);
+            
             this.tiles().forEach((aTile) => {
                 if (aTile !== selectedTile) {
-                    aTile.unselect()
+                    aTile.unselect();
                 }
-            })
+            });
         }
 
-        return selectedTile
+        return selectedTile;
     }
     
     /**
@@ -281,11 +281,11 @@
      * @returns {string|null} The title of the selected tile, or null if none is selected.
      */
     selectedTileTitle () {
-        const tile = this.selectedTile()
+        const tile = this.selectedTile();
         if (tile) { 
-            return tile.title().innerHtml() 
+            return tile.title().innerHtml(); 
         }
-        return null
+        return null;
     }
 
     /**
@@ -293,7 +293,7 @@
      * @returns {TilesView_selection} The current instance.
      */
     showSelected () {
-        return this	    
+        return this;    
     }
 
     /**
@@ -301,12 +301,12 @@
      * @returns {Tile|null} The next tile, or null if there is no next tile.
      */
     nextTile () {
-        const si = this.selectedTileIndex()
+        const si = this.selectedTileIndex();
         if (si !== -1 && si < this.tiles().length) {
-            const nextTile = this.tiles()[si +1]
-            return nextTile
+            const nextTile = this.tiles()[si +1];
+            return nextTile;
         }
-        return null
+        return null;
     }
     
     /**
@@ -314,9 +314,29 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectFirstTile () {
-        this.setSelectedTileIndex(0)
-        return this
+        const i = this.indexOfFirstVisibleTile();
+        if (i !== -1) {
+            this.setSelectedTileIndex(i);
+        } else {
+            this.unselectAllTiles();
+        }
+        return this;
     }
+
+       /**
+     * @description Selects the last tile.
+     * @returns {TilesView_selection} The current instance.
+     */
+    selectLastTile () {
+        const i = this.indexOfLastVisibleTile();
+        if (i !== -1) {
+            this.setSelectedTileIndex(i);
+        } else {
+            this.unselectAllTiles();
+        }
+        return this;
+    }
+
 
     /**
      * @description Gets the first tile.
@@ -324,37 +344,74 @@
      */
     firstTile () {
         if (this.tiles().length > 0) {
-            return this.tiles()[0]
+            return this.tiles()[0];
         }
-        return null
+        return null;
     }
+
+    // --- find next and previous visible tiles ---
+
+    indexOfFirstVisibleTileBeforeIndex (index) {
+        for (let i = index - 1; i >= 0; i--) {
+            const tile = this.tiles()[i];
+            if (tile.nodeIsVisible()) {
+                return i;
+            }
+        }
+    }
+
+    indexOfFirstVisibleTileAfterIndex (index) {
+        for (let i = index + 1; i < this.tiles().length; i++) {
+            const tile = this.tiles()[i];
+            if (tile.nodeIsVisible()) {
+                return i;
+            }
+        }
+    }
+
+    indexOfFirstVisibleTile () {
+        return this.indexOfFirstVisibleTileAfterIndex(0);
+    }
+
+    indexOfLastVisibleTile () {
+        return this.indexOfFirstVisibleTileBeforeIndex(this.tiles().length);
+    }
+
+    indexOfNextVisibleTile () {
+        const si = this.selectedTileIndex();
+        return this.indexOfFirstVisibleTileAfterIndex(si);
+    }
+
+    indexOfPreviousVisibleTile () {
+        const si = this.selectedTileIndex();
+        return this.indexOfFirstVisibleTileBeforeIndex(si);
+    }
+
+    // --- select next and previous visible tiles ---
 
     /**
      * @description Selects the next tile.
      * @returns {TilesView_selection} The current instance.
      */
     selectNextTile () {
-        const si = this.selectedTileIndex()
-        if (si === -1) {
-            this.setSelectedTileIndex(0)
-        } else {
-            this.setSelectedTileIndex(si + 1)
+        const i = this.indexOfNextVisibleTile();
+        if (i !== -1) {
+            this.setSelectedTileIndex(i);
         }
-        return this
+        return this;
     }
-    
+
+
     /**
      * @description Selects the previous tile.
      * @returns {TilesView_selection} The current instance.
      */
     selectPreviousTile () {
-        const si = this.selectedTileIndex()
-        if (si === -1) {
-            this.setSelectedTileIndex(0)
-        } else {
-            this.setSelectedTileIndex(si - 1)
+        const i = this.indexOfPreviousVisibleTile();
+        if (i !== -1) {
+            this.setSelectedTileIndex(i);
         }
-        return this
+        return this;
     }
 
     /**
@@ -362,7 +419,7 @@
      * @returns {boolean} True if the view is in a browser, false otherwise.
      */
     isInBrowser () {
-        return !Type.isNull(this.parentView())
+        return !Type.isNull(this.parentView());
     }
 
     /**
@@ -372,26 +429,26 @@
      */
     shouldFocusAndExpandSubnode (aNote) {
         if (!this.isInBrowser()) {
-            return this
+            return this;
         }
 
-	    const subnode = aNote.info()
-	    let subview = this.subviewForNode(subnode)
-	    
+        const subnode = aNote.info();
+        let subview = this.subviewForNode(subnode);
+        
         if (!subview) {
-            this.syncFromNodeNow()
-	        subview = this.subviewForNode(subnode)
+            this.syncFromNodeNow();
+            subview = this.subviewForNode(subnode);
         } 
 
         if (subview) {
-            this.selectTileWithNode(subnode)
-            subview.scrollIntoView()
-            subview.justTap()
+            this.selectTileWithNode(subnode);
+            subview.scrollIntoView();
+            subview.justTap();
         } else {
-            console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())
-	    }
+            console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId());
+        }
 
-	    return this 
+        return this; 
     }
 
     /**
@@ -400,25 +457,25 @@
      * @returns {TilesView_selection} The current instance.
      */
     shouldFocusSubnode (aNote) {
-	    const subnode = aNote.info()
+        const subnode = aNote.info();
 
-	    let subview = this.subviewForNode(subnode)
-	    
+        let subview = this.subviewForNode(subnode);
+        
         if (!subview) {
-            this.syncFromNodeNow()
-	        subview = this.subviewForNode(subnode)
+            this.syncFromNodeNow();
+            subview = this.subviewForNode(subnode);
         } 
 
         if (subview) {
-            this.selectTileWithNode(subnode)
-            subview.scrollIntoView()
+            this.selectTileWithNode(subnode);
+            subview.scrollIntoView();
 
-            this.didChangeNavSelection()
+            this.didChangeNavSelection();
         } else {
-            console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId())
-	    }
+            console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId());
+        }
 
-	    return this 
+        return this; 
     }
 
     /**
@@ -426,11 +483,11 @@
      * @returns {TilesView_selection} The current instance.
      */
     didChangeNavSelection () {
-        const sv = this.stackView()
+        const sv = this.stackView();
         if (sv) {
-            sv.didChangeNavSelection()
+            sv.didChangeNavSelection();
         }
-        return this
+        return this;
     }
 	
     /**
@@ -439,10 +496,10 @@
      * @returns {TilesView_selection} The current instance.
      */
     scrollToSubnode (aSubnode) {
-	    const subview = this.subviewForNode(aSubnode)
-	    assert(subview)
-	    this.navView().scrollView().setScrollTop(subview.offsetTop())
-	    return this 	    
+        const subview = this.subviewForNode(aSubnode);
+        assert(subview);
+        this.navView().scrollView().setScrollTop(subview.offsetTop());
+        return this;     
     }
 
     /**
@@ -450,13 +507,13 @@
      * @returns {TilesView_selection} The current instance.
      */
     scrollToBottom () {
-        const last = this.tiles().last()
+        const last = this.tiles().last();
 
         if (last) { 
-            last.scrollIntoView()
+            last.scrollIntoView();
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -464,13 +521,13 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectNextColumn () {
-        const nextColumn = this.nextColumn()
+        const nextColumn = this.nextColumn();
         if (nextColumn) {
-            this.blur()
-            nextColumn.focus()
-            nextColumn.selectFirstTile()
+            this.blur();
+            nextColumn.focus();
+            nextColumn.selectFirstTile();
         }
-        return this
+        return this;
     }
 
     /**
@@ -478,12 +535,12 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectPreviousColumn () {
-        const prevColumn = this.previousItemSet()
+        const prevColumn = this.previousItemSet();
         if (prevColumn) {
-            this.blur()
-            prevColumn.focus()
+            this.blur();
+            prevColumn.focus();
         }
-        return this
+        return this;
     }
 
     /**
@@ -492,13 +549,13 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectAndFocusNodes (nodes) {
-        const selectTiles = this.tilesWithNodes(nodes)
-        this.unselectAllTilesExceptTiles(selectTiles)
+        const selectTiles = this.tilesWithNodes(nodes);
+        this.unselectAllTilesExceptTiles(selectTiles);
         if (nodes.length === 1) {
-            const focusNode = nodes.first()
-            focusNode.parentNode().postShouldFocusAndExpandSubnode(focusNode)
+            const focusNode = nodes.first();
+            focusNode.parentNode().postShouldFocusAndExpandSubnode(focusNode);
         }
-        return this
+        return this;
     }
 
     /**
@@ -506,40 +563,19 @@
      * @returns {TilesView_selection} The current instance.
      */
     selectNextKeyView () {
-        const nextTile = this.nextTile()
+        const nextTile = this.nextTile();
         if (nextTile) {
-            this.selectNextTile()
-            nextTile.becomeKeyView()
+            this.selectNextTile();
+            nextTile.becomeKeyView();
         } else {
-            const firstTile = this.firstTile()
+            const firstTile = this.firstTile();
             if (firstTile) {
-                this.selectFirstTile()
-                firstTile.becomeKeyView()
+                this.selectFirstTile();
+                firstTile.becomeKeyView();
             }
         }
-        return this
+        return this;
     }
 
-    /**
-     * @description Selects the first tile.
-     * @returns {TilesView_selection} The current instance.
-     */
-    selectFirstTile () {
-        if (this.subviews().length) {
-            this.setSelectedTileIndex(0)
-        }
-        return this
-    }
-
-    /**
-     * @description Selects the last tile.
-     * @returns {TilesView_selection} The current instance.
-     */
-    selectLastTile () {
-        const count = this.subviews().length
-        if (count) {
-            this.setSelectedTileIndex(count - 1)
-        }
-    }
-
+ 
 }.initThisCategory());

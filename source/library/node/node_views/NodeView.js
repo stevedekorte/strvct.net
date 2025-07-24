@@ -574,4 +574,12 @@
         return s;
     }
 
+    nodeIsVisible () {
+        const node = this.node();
+        if (node) {
+            return node.isVisible();
+        }
+        return false;
+    }
+
 }.initThisClass());

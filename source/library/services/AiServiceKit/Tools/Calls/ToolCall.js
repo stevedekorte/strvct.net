@@ -24,7 +24,7 @@ Example Tool call format:
 
 */
 
-(class ToolCall extends UoJsonDictionaryNode {
+(class ToolCall extends UoJsonDictionaryNode { 
 
   static jsonSchemaDescription () {
     return "Format for Assistant API call to make an '" + this.type() + "' API call.";
@@ -183,6 +183,14 @@ Example Tool call format:
     this.setSummaryFormat("value");
     this.setHasNewlineAfterSummary(true);
     */
+  }
+
+  findToolDefinition () {
+    if (this.toolDefinition() === null) {
+      const def = this.toolCalls().toolDefinitionWithName(this.toolName());
+      this.setToolDefinition(def);
+    }
+    return this.toolDefinition();
   }
 
   isQueued () {
