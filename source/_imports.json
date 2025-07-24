@@ -1,7 +1,6 @@
 [
     "boot/_imports.json",
     "library/_imports.json",
-    "ServiceWorker/_imports.json",
     "app/_imports.json"
 ]
 

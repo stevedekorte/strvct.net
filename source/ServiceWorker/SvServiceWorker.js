@@ -4,7 +4,7 @@
  * @classdesc A service worker abstract class.
  */
 
-class Worker extends Object {
+class SvServiceWorker extends Object {
 
     /**
      * @member {function}

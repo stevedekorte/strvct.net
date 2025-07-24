@@ -144,7 +144,12 @@
 
   toolMethod () {
     const toolCall = this.toolCall();
-    const toolDefinition = toolCall.toolDefinition();
+    const toolDefinition = toolCall.findToolDefinition();
+    if (toolDefinition === null) {
+      debugger;
+      toolCall.findToolDefinition();
+      throw new Error("Tool definition not found for tool call: " + toolCall.toolName());
+    }
     return toolDefinition.toolMethod();
   }
 

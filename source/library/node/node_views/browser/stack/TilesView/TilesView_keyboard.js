@@ -16,7 +16,7 @@
      * @category Navigation
      */
     canNavigate () {
-        return this.allowsCursorNavigation() 
+        return this.allowsCursorNavigation();
         //return this.allowsCursorNavigation() && this.isActiveElement()
     }
 
@@ -39,8 +39,8 @@
      * @category Keyboard
      */
     onMetaBackspaceKeyDown (event) {
-        console.log("meta backspace")
-        this.onMetaDeleteKeyDown(event)
+        console.log("meta backspace");
+        this.onMetaDeleteKeyDown(event);
     }
 
     /**
@@ -49,13 +49,13 @@
      * @category Keyboard
      */
     onMetaDeleteKeyDown (event) {
-        console.log("meta delete")
+        console.log("meta delete");
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
-        this.deleteSelectedTiles()
-        event.stopPropagation()
+        this.deleteSelectedTiles();
+        event.stopPropagation();
         event.preventDefault();
     }
 
@@ -66,7 +66,7 @@
      */
     onMetaKeyDown (event) {
         // do we need to hook this to avoid meta being stolen by app? 
-        event.stopPropagation()
+        event.stopPropagation();
         event.preventDefault();
     }
 
@@ -76,9 +76,9 @@
      * @category Keyboard
      */
     onMeta_d_KeyDown (event) {
-        console.log("duplicate selection down")
-        this.duplicateSelectedTiles()
-        event.stopPropagation()
+        console.log("duplicate selection down");
+        this.duplicateSelectedTiles();
+        event.stopPropagation();
         event.preventDefault();
     }
 
@@ -88,10 +88,10 @@
      * @category Keyboard
      */
     onMeta_n_KeyDown (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onMeta_n_KeyDown")
-        this.addIfPossible()
-        event.stopPropagation()
-        event.preventDefault()
+        this.debugLog(this.type() + " for " + this.node().title() + " onMeta_n_KeyDown");
+        this.addIfPossible();
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     /**
@@ -100,11 +100,11 @@
      * @category Keyboard
      */
     onShiftBackspaceKeyUp (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
+        this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp");
         if (this.selectedTile()) { 
-            this.selectedTile().delete()
+            this.selectedTile().delete();
         }
-        event.stopPropagation()
+        event.stopPropagation();
     }
 
     /**
@@ -112,14 +112,14 @@
      * @category Node
      */
     addIfPossible () {
-        const node = this.node()
+        const node = this.node();
 
         if (node.nodeCanAddSubnode()) {
-            const newNode = node.add()
+            const newNode = node.add();
             if (newNode) {
-                this.syncFromNode()
-                const newSubview = this.subviewForNode(newNode)
-                newSubview.justTap()
+                this.syncFromNode();
+                const newSubview = this.subviewForNode(newNode);
+                newSubview.justTap();
             }
         }
     }
@@ -132,10 +132,10 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onAlternate_d_KeyUp (event) {
+    onAlternate_d_KeyUp (/*event*/) {
         //this.debugLog(" onMetaLeft_d_KeyUp")
-        this.duplicateSelectedTile()
-        return false // stop propogation
+        this.duplicateSelectedTile();
+        return false; // stop propogation
     }
 
     // select all
@@ -146,8 +146,8 @@
      * @category Keyboard
      */
     onMeta_a_KeyDown (event) {
-        this.selectAllTiles()
-        event.stopPropagation()
+        this.selectAllTiles();
+        event.stopPropagation();
         event.preventDefault();
     }
 
@@ -157,7 +157,7 @@
      * @param {Event} event - The keyboard event
      * @category Keyboard
      */
-    onControl_c_KeyUp (event) {
+    onControl_c_KeyUp (/*event*/) {
         // copy?
     }
 
@@ -166,7 +166,7 @@
      * @param {Event} event - The keyboard event
      * @category Keyboard
      */
-    onControl_p_KeyUp (event) {
+    onControl_p_KeyUp (/*event*/) {
         // paste?
     }
 
@@ -202,15 +202,15 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onAlternateUpArrowKeyDown (event) { // why down and not up?
+    onAlternateUpArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
         if (this.isVertical()) {
-            this.selectFirstTile()
+            this.selectFirstTile();
         }
-        return false
+        return false;
     }
 
     /**
@@ -219,15 +219,15 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onAlternateDownArrowKeyDown (event) { // why down and not up?
+    onAlternateDownArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
         if (this.isVertical()) {
-            this.selectLastTile()
+            this.selectLastTile();
         } 
-        return false
+        return false;
     }
 
     /**
@@ -236,15 +236,15 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onAlternateLeftArrowKeyDown (event) { // why down and not up?
+    onAlternateLeftArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
         if (!this.isVertical()) {
-            this.selectFirstTile()
+            this.selectFirstTile();
         }
-        return false
+        return false;
     }
 
     /**
@@ -253,15 +253,15 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onAlternateRightArrowKeyDown (event) { // why down and not up?
+    onAlternateRightArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
         if (!this.isVertical()) {
-            this.selectLastTile()
+            this.selectLastTile();
         } 
-        return false
+        return false;
     }
 
 
@@ -273,17 +273,17 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onUpArrowKeyDown (event) { // why down and not up?
+    onUpArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
         if (this.isVertical()) {
-            this.moveDown()
+            this.moveDown();
         } else {
-            this.moveLeft()
+            this.moveLeft();
         }
-        return false
+        return false;
     }
 	
     /**
@@ -292,17 +292,17 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onDownArrowKeyDown (event) { // why down and not up?
+    onDownArrowKeyDown (/*event*/) { // why down and not up?
         if (!this.canNavigate()) { 
-            return 
+            return; 
         }
 
         if (this.isVertical()) {
-            this.moveUp()
+            this.moveUp();
         } else {
-            this.moveRight()
+            this.moveRight();
         }
-        return false
+        return false;
     }
 	
     /**
@@ -311,14 +311,14 @@
      * @returns {TilesView_keyboard} This instance
      * @category Keyboard
      */
-    onLeftArrowKeyUp (event) {
+    onLeftArrowKeyUp (/*event*/) {
         if (!this.canNavigate()) { 
-            return this
-        }	
+            return this;
+        }   
         if (this.isVertical()) {
-            this.moveLeft()
+            this.moveLeft();
         } else {
-            this.moveDown()
+            this.moveDown();
         }
     }
 	
@@ -328,15 +328,15 @@
      * @returns {TilesView_keyboard} This instance
      * @category Keyboard
      */
-    onRightArrowKeyUp (event) {
+    onRightArrowKeyUp (/*event*/) {
         if (!this.canNavigate()) { 
-            return this
-        }	
+            return this;
+        }   
 
         if (this.isVertical()) {
-            this.moveRight()
+            this.moveRight();
         } else {
-            this.moveUp()
+            this.moveUp();
         }
     }
 
@@ -348,21 +348,21 @@
      * @category Navigation
      */
     moveLeft () {
-        const pc = this.previousItemSet()	
+        const pc = this.previousItemSet();  
         if (pc) {
             if (this.selectedTile()) { 
-                this.selectedTile().unselect() 
+                this.selectedTile().unselect(); 
             }
-			
-            const newSelectedTile = pc.selectedTile()
-            newSelectedTile.setShouldShowFlash(true).updateSubviews()
-            pc.didTapItem(newSelectedTile)
-        	this.selectPreviousColumn()
+            
+            const newSelectedTile = pc.selectedTile();
+            newSelectedTile.setShouldShowFlash(true).updateSubviews();
+            pc.didTapItem(newSelectedTile);
+            this.selectPreviousColumn();
 
             //debugger;
-            pc.didChangeNavSelection()
+            pc.didChangeNavSelection();
         }
-        return this
+        return this;
     }
 
     /**
@@ -371,8 +371,8 @@
      * @category Navigation
      */
     moveRight () {
-        this.selectNextColumn()
-        return this
+        this.selectNextColumn();
+        return this;
     }
 
     /**
@@ -381,9 +381,9 @@
      * @category Navigation
      */
     moveUp () {
-        this.selectNextTile()
-        this.showSelected()
-        return this
+        this.selectNextTile();
+        this.showSelected();
+        return this;
     }
 
     /**
@@ -392,9 +392,9 @@
      * @category Navigation
      */
     moveDown () {
-        this.selectPreviousTile()
-        this.showSelected()
-        return this
+        this.selectPreviousTile();
+        this.showSelected();
+        return this;
     }
 
     // --- escape ---
@@ -405,14 +405,14 @@
      * @returns {TilesView_keyboard} This instance
      * @category Keyboard
      */
-    onEscapeKeyDown (event) {
+    onEscapeKeyDown (/*event*/) {
         //this.setIsColumnInspecting(false)
 
         if (!this.canNavigate()) { 
-            return this
-        }	
+            return this;
+        }   
 
-        this.moveLeft()
+        this.moveLeft();
         //return true
     }
 	
@@ -426,17 +426,17 @@
      */
     onEnterKeyUp (event) {        
         if (!this.canNavigate()) { 
-            return this
+            return this;
         }
-	
+    
         // carefull - if Tile is registered fro keyboard,
         // this may cause onEnterKeyUp to be sent twice
-        const tile = this.selectedTile()
+        const tile = this.selectedTile();
         if (tile) { 
-		    tile.onEnterKeyUp(event)
+            tile.onEnterKeyUp(event);
         }
 
-        return false
+        return false;
     }
 
     // --- keyboard controls, add and delete actions ---
@@ -448,11 +448,11 @@
      * @category Tile
      */
     deleteTile (aTile) {
-        let sNode = aTile.node()
+        let sNode = aTile.node();
         if (sNode && sNode.canDelete()) { 
-			sNode.performNodeAction("delete") 
-		}
-        return this
+            sNode.performNodeAction("delete"); 
+        }
+        return this;
     }
 
     /**
@@ -460,10 +460,10 @@
      * @category Tile
      */
     deleteSelectedTiles () {
-        this.selectedTiles().forEach(r => this.deleteTile(r))
+        this.selectedTiles().forEach(r => this.deleteTile(r));
 
         if (this.tiles().length === 0) {
-            this.selectPreviousColumn()
+            this.selectPreviousColumn();
         }
     }
 	
@@ -473,21 +473,20 @@
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onPlusKeyUp (event) {
+    onPlusKeyUp (/*event*/) {
         if (!this.canNavigate()) { 
-            return 
-        }		
+            return; 
+        }   
 
-        const sNode = this.selectedNode()
+        const sNode = this.selectedNode();
         if (sNode && sNode.hasNodeAction("add")) { 
-            const newNode = sNode.performNodeAction("add") 
-            this.selectNextColumn()
+            const newNode = sNode.performNodeAction("add"); 
+            this.selectNextColumn();
             if (this.nextColumn()) {
-                this.nextColumn().selectTileWithNode(newNode)
+                this.nextColumn().selectTileWithNode(newNode);
             }
         }
-        return false		
+        return false;   
     }
-	
 
 }.initThisCategory());

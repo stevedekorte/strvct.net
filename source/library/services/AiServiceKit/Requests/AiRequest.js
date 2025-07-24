@@ -649,7 +649,15 @@
       console.error(this.xhr().responseText);
       const json = JSON.parse(this.xhr().responseText);
       if (json.error) {
-        this.onError(new Error(json.error.message));
+        let msg = null;
+        if (Type.isString(json.error)) {
+          msg = json.error;
+        } else if (Type.isString(json.error.message)) {
+          msg = json.error.message;
+        } else {
+          msg = JSON.stringify(json.error, null, 2);
+        }
+        this.onError(new Error(msg));
       } else {
         this.onError(new Error("request error code:" + this.xhr().status + ")"));
       }

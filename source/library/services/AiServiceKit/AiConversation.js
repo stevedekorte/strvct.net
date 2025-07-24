@@ -139,13 +139,25 @@
   }
 
   initPrototype () {
-    this.setNodeFillsRemainingWidth(false);
-    this.setNodeMinTileWidth(500);
-    this.setNodeCanEditColumnWidth(true);
+    this.setSubnodeClasses([AiMessage]);
+    this.setResponseMsgClass(AiParsedResponseMessage);
+
+    //this.setNodeMinTileWidth(500);
+    //this.setNodeCanEditColumnWidth(true);
+
+    this.setNodeFillsRemainingWidth(true);
+    this.setNodeCanEditColumnWidth(false);
+    this.setNodeMinTileWidth(600);
   }
 
   finalInit () {
     super.finalInit();
+
+    // careful - could potentially override descendant initPrototype
+    this.setNodeFillsRemainingWidth(true);
+    this.setNodeCanEditColumnWidth(false);
+    this.setNodeMinTileWidth(600);
+
     this.setTagDelegate(this); // needed to get tool calls
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
     this.setResponseMsgClass(AiParsedResponseMessage);
@@ -196,14 +208,7 @@
   }
 
 
-  /**
-   * @description Initializes the prototype of the AiConversation class.
-   * @category Initialization
-   */
-  initPrototype () {
-    this.setSubnodeClasses([AiMessage]);
-    this.setResponseMsgClass(AiParsedResponseMessage);
-  }
+
 
   /**
    * @description Gets the service associated with the chat model.
