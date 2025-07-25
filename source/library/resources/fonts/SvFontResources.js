@@ -69,7 +69,7 @@
         const aPath = aResource.path();
         const components = aPath.split("/");
 
-        const fontFileName = components.pop();
+        /*const fontFileName =*/ components.pop(); 
         const familyName = components.pop();
 
         const family = this.fontFamilyNamed(familyName);

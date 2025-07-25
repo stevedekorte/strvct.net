@@ -278,7 +278,7 @@
      * @category Resource Loading
      */
     async asyncLoad () {
-        console.log("asyncLoad: " + this.path());
+        //console.log("asyncLoad: " + this.path());
         try {
             this.setLoadState("loading");
             await this.asyncLoadUrlResource();
