@@ -139,8 +139,9 @@
     }
 
     async asyncFinishSetup () {
-        await this.subnodes().promiseSerialForEach(async sn => {
-           // console.log("sn: " + sn.type() + " setupSubnodes");
+        //await this.subnodes().promiseSerialForEach(async sn => {
+        await this.subnodes().promiseParallelForEach(async sn => {
+                // console.log("sn: " + sn.type() + " setupSubnodes");
             await sn.setupSubnodes();
             console.log("sn: " + sn.type() + " setupSubnodes done");
             if (sn.type() !== "SvFileResources") {
