@@ -113,37 +113,41 @@
      * @category Error Handling
      */
     handleWindowError (message, source, lineno, colno, error) {
-        const errorInfo = {
-            message: message,
-            source: source,
-            lineno: lineno,
-            colno: colno,
-            stack: error ? error.stack : "No stack trace",
-            timestamp: new Date().toISOString()
-        };
-        
-        this.appErrors().push(errorInfo);
-        
-        // Limit size to prevent memory issues
-        if (this.appErrors().length > this.maxErrors()) {
-            this.appErrors().shift();
-        }
-        
-        // Check if the error occurred within the YouTube API's Web Worker
-        if (source.includes('www.youtube.com') || source.includes('www.google.com')) {
-            this.handleYouTubeError(errorInfo);
+        try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
+            const errorInfo = {
+                message: message,
+                source: source,
+                lineno: lineno,
+                colno: colno,
+                stack: error ? error.stack : "No stack trace",
+                timestamp: new Date().toISOString()
+            };
+            
+            this.appErrors().push(errorInfo);
+            
+            // Limit size to prevent memory issues
+            if (this.appErrors().length > this.maxErrors()) {
+                this.appErrors().shift();
+            }
+            
+            // Check if the error occurred within the YouTube API's Web Worker
+            if (source.includes('www.youtube.com') || source.includes('www.google.com')) {
+                this.handleYouTubeError(errorInfo);
+                return this;
+            }
+            
+            // Create visual error notification
+            this.showPanelWithInfo(errorInfo);
+            
+            // Log the error
+            console.error("JS Error:", errorInfo);
+            
+            // Send error report to server
+            this.sendErrorReport(errorInfo);
             return this;
+        } catch (e) {
+            console.error("Error in handleWindowError:", e);
         }
-        
-        // Create visual error notification
-        this.showPanelWithInfo(errorInfo);
-        
-        // Log the error
-        console.error("JS Error:", errorInfo);
-        
-        // Send error report to server
-        this.sendErrorReport(errorInfo);
-        return this;
     }
 
     /**
@@ -152,12 +156,16 @@
      * @category Error Handling
      */
     handleYouTubeError (errorInfo) {
-        console.error('Exception caught from YouTube API Web Worker:');
-        console.error('Message:', errorInfo.message);
-        console.error('Source:', errorInfo.source);
-        console.error('Line:', errorInfo.lineno);
-        console.error('Column:', errorInfo.colno);
-        console.error('Error object:', errorInfo.error);
+        try {
+            console.error('Exception caught from YouTube API Web Worker:');
+            console.error('Message:', errorInfo.message);
+            console.error('Source:', errorInfo.source);
+            console.error('Line:', errorInfo.lineno);
+            console.error('Column:', errorInfo.colno);
+            console.error('Error object:', errorInfo.error);
+        } catch (e) {
+            console.error("Error in handleYouTubeError:", e);
+        }
     }
 
     /*
