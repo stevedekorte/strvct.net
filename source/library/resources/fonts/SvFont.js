@@ -173,6 +173,11 @@
      * @category Font Loading
      */
     async asyncLoadFontFromData () {
+        debugger;
+        {
+            throw new Error("we're disbaling this for testing purposes");
+        }
+
         if (this.fontFace()) {
             return this;
         }

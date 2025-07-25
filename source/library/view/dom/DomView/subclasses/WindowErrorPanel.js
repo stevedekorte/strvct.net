@@ -207,132 +207,136 @@
      * @category UI
      */
     showPanelWithInfo (errorInfo) {
-        // Create backdrop div that fills the window
-        const backdropDiv = document.createElement('div');
-        {
-            const style = backdropDiv.style;
-            style.position = 'fixed';
-            style.top = '0';
-            style.left = '0';
-            style.width = '100vw';
-            style.height = '100vh';
-            style.backgroundColor = 'rgba(255, 255, 255, 0.01)'; // Reduced opacity to see blur effect
-            style.backdropFilter = 'blur(5px)';
-            style.webkitBackdropFilter = 'blur(5px)'; // Safari support
-            style.zIndex = '9999';
-            style.display = 'flex';
-            style.justifyContent = 'center';
-            style.alignItems = 'center';
-            style.transition = 'opacity 0.5s ease-out, backdrop-filter 0.5s ease-out, -webkit-backdrop-filter 0.5s ease-out';
-        }
-
-        const errorPanelDiv = document.createElement('div');
-        {
-            const style = errorPanelDiv.style;
-            style.position = 'relative'; // Changed from fixed since it's now inside backdrop
-            style.backgroundColor = 'rgb(25, 25, 25)';
-            style.color = 'black';
-            style.width = 'fit-content';
-            style.height = 'fit-content';
-            style.fontFamily = 'inherit';
-            style.fontSize = '1em';
-            style.borderRadius = '0em';
-            style.overflow = 'hidden';
-            style.border = '1px solid #444';
-            style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-            style.maxWidth = '90%';
-        }
-
-        const messageDiv = document.createElement('div');
-        {
-            const style = messageDiv.style;
-            style.fontFamily = 'inherit';
-            style.fontSize = '1em';
-            style.textAlign = 'center';
-            style.paddingLeft = '2em';
-            style.paddingRight = '2em';
-            style.paddingTop = '1em';
-            style.paddingBottom = '0';
-            style.lineHeight = '1.5em';
-            style.textAlign = 'center';
-            style.width = 'fit-content';
-            style.height = 'fit-content';
-        }
-        
-        // Create error message content
-        let errorMessage = errorInfo.message;
-        if (errorMessage.includes(":")) {
-            const parts = errorMessage.split(":").map(part => part.trim());
-            while (parts.length > 1 && parts.first().toLowerCase().endsWith("error")) {
-                parts.shift();
+        try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
+            // Create backdrop div that fills the window
+            const backdropDiv = document.createElement('div');
+            {
+                const style = backdropDiv.style;
+                style.position = 'fixed';
+                style.top = '0';
+                style.left = '0';
+                style.width = '100vw';
+                style.height = '100vh';
+                style.backgroundColor = 'rgba(255, 255, 255, 0.01)'; // Reduced opacity to see blur effect
+                style.backdropFilter = 'blur(5px)';
+                style.webkitBackdropFilter = 'blur(5px)'; // Safari support
+                style.zIndex = '9999';
+                style.display = 'flex';
+                style.justifyContent = 'center';
+                style.alignItems = 'center';
+                style.transition = 'opacity 0.5s ease-out, backdrop-filter 0.5s ease-out, -webkit-backdrop-filter 0.5s ease-out';
             }
-            errorMessage = parts.last();
-        }
 
-        //const errorTitle = parts[0];
-        //const errorMessage = '"' + parts[1] + '"';
-        //const location = `on ${errorSource} line${line}`;
-        let html = "";
-        html += "<div style='color:white; padding-bottom:0.4em;'>Sorry, there was an error.</div>";
-        //html += `<div style='color:black; font-weight:bold; padding-bottom:0.5em;'>${this.warningSvgIcon()}</div>`;
-        //html += `<div style="color:black">${errorTitle}</div>`;
-        html += `<div style="color:#888; padding-bottom:0.5em;">${errorMessage}</div>`;
-        //html += `<div style="color:#aaa;">${location}</div>`;
-        messageDiv.innerHTML = html;
-        
-        // Create styled dismiss button as a div
-        const dismissButton = document.createElement('div');
-        {
-            const style = dismissButton.style;
-            style.fontFamily = 'inherit';
-            style.textAlign = 'center';
-            style.cursor = 'pointer';
-            style.transition = 'all 0.2s ease';
-            style.width = '100% - 2em';
-            style.backgroundColor = 'rgb(25, 25, 25)';
-            style.color = '#aaa';
-            style.border = 'none';
-            style.borderRadius = '0';
-            style.padding = '0.5em 1em';
-            style.margin = '1em';
-            style.border = '1px solid #444';
-            dismissButton.textContent = 'Report and Continue';
-        }
-        
-        // Add hover effects
-        dismissButton.addEventListener('mouseenter', () => {
-            dismissButton.style.backgroundColor = '#333';
-        });
-        
-        dismissButton.addEventListener('mouseleave', () => {
-            dismissButton.style.backgroundColor = 'transparent';
-        });
-        
-        // Add click handler
-        dismissButton.addEventListener('click', () => {
-            // Start fade out animation
-            backdropDiv.style.opacity = '0';
-            backdropDiv.style.backdropFilter = 'blur(0px)';
-            backdropDiv.style.webkitBackdropFilter = 'blur(0px)';
-            errorPanelDiv.style.opacity = '0';
-            errorPanelDiv.style.transform = 'scale(0.95)';
+            const errorPanelDiv = document.createElement('div');
+            {
+                const style = errorPanelDiv.style;
+                style.position = 'relative'; // Changed from fixed since it's now inside backdrop
+                style.backgroundColor = 'rgb(25, 25, 25)';
+                style.color = 'black';
+                style.width = 'fit-content';
+                style.height = 'fit-content';
+                style.fontFamily = 'inherit';
+                style.fontSize = '1em';
+                style.borderRadius = '0em';
+                style.overflow = 'hidden';
+                style.border = '1px solid #444';
+                style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+                style.maxWidth = '90%';
+            }
+
+            const messageDiv = document.createElement('div');
+            {
+                const style = messageDiv.style;
+                style.fontFamily = 'inherit';
+                style.fontSize = '1em';
+                style.textAlign = 'center';
+                style.paddingLeft = '2em';
+                style.paddingRight = '2em';
+                style.paddingTop = '1em';
+                style.paddingBottom = '0';
+                style.lineHeight = '1.5em';
+                style.textAlign = 'center';
+                style.width = 'fit-content';
+                style.height = 'fit-content';
+            }
             
-            // Remove element after animation completes
-            setTimeout(() => {
-                backdropDiv.remove();
-            }, 500); // Match the 0.5s transition duration
-        });
-        
-        // Assemble the error panel
-        errorPanelDiv.appendChild(messageDiv);
-        errorPanelDiv.appendChild(dismissButton);
-        
-        // Add error panel to backdrop
-        backdropDiv.appendChild(errorPanelDiv);
-        
-        // Add backdrop to document body
-        document.body.appendChild(backdropDiv);
-        //debugger;
+            // Create error message content
+            let errorMessage = errorInfo.message;
+            if (errorMessage.includes(":")) {
+                const parts = errorMessage.split(":").map(part => part.trim());
+                while (parts.length > 1 && parts.first().toLowerCase().endsWith("error")) {
+                    parts.shift();
+                }
+                errorMessage = parts.last();
+            }
+
+            //const errorTitle = parts[0];
+            //const errorMessage = '"' + parts[1] + '"';
+            //const location = `on ${errorSource} line${line}`;
+            let html = "";
+            html += "<div style='color:white; padding-bottom:0.4em;'>Sorry, there was an error.</div>";
+            //html += `<div style='color:black; font-weight:bold; padding-bottom:0.5em;'>${this.warningSvgIcon()}</div>`;
+            //html += `<div style="color:black">${errorTitle}</div>`;
+            html += `<div style="color:#888; padding-bottom:0.5em;">${errorMessage}</div>`;
+            //html += `<div style="color:#aaa;">${location}</div>`;
+            messageDiv.innerHTML = html;
+            
+            // Create styled dismiss button as a div
+            const dismissButton = document.createElement('div');
+            {
+                const style = dismissButton.style;
+                style.fontFamily = 'inherit';
+                style.textAlign = 'center';
+                style.cursor = 'pointer';
+                style.transition = 'all 0.2s ease';
+                style.width = '100% - 2em';
+                style.backgroundColor = 'rgb(25, 25, 25)';
+                style.color = '#aaa';
+                style.border = 'none';
+                style.borderRadius = '0';
+                style.padding = '0.5em 1em';
+                style.margin = '1em';
+                style.border = '1px solid #444';
+                dismissButton.textContent = 'Report and Continue';
+            }
+            
+            // Add hover effects
+            dismissButton.addEventListener('mouseenter', () => {
+                dismissButton.style.backgroundColor = '#333';
+            });
+            
+            dismissButton.addEventListener('mouseleave', () => {
+                dismissButton.style.backgroundColor = 'transparent';
+            });
+            
+            // Add click handler
+            dismissButton.addEventListener('click', () => {
+                // Start fade out animation
+                backdropDiv.style.opacity = '0';
+                backdropDiv.style.backdropFilter = 'blur(0px)';
+                backdropDiv.style.webkitBackdropFilter = 'blur(0px)';
+                errorPanelDiv.style.opacity = '0';
+                errorPanelDiv.style.transform = 'scale(0.95)';
+                
+                // Remove element after animation completes
+                setTimeout(() => {
+                    backdropDiv.remove();
+                }, 500); // Match the 0.5s transition duration
+            });
+            
+            // Assemble the error panel
+            errorPanelDiv.appendChild(messageDiv);
+            errorPanelDiv.appendChild(dismissButton);
+            
+            // Add error panel to backdrop
+            backdropDiv.appendChild(errorPanelDiv);
+            
+            // Add backdrop to document body
+            document.body.appendChild(backdropDiv);
+            //debugger;
+        } catch (e) {
+            console.error("Error in showPanelWithInfo:", e);
+        }
     }
 
     /**
