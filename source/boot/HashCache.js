@@ -36,10 +36,10 @@
      */
     init () {
         super.init()
-        this.setIdb(IndexedDBFolder.clone())
-        this.setIsDebugging(false)
-        this.idb().setIsDebugging(false)
-        this.setPath("sharedHashCache")
+        this.setIdb(IndexedDBFolder.clone());
+        this.setIsDebugging(false);
+        this.idb().setIsDebugging(false);
+        this.setPath("sharedHashCache");
     }
 
     /**
@@ -49,8 +49,8 @@
      * @category Configuration
      */
     setPath (aString) {
-        this.idb().setPath(aString)
-        return this
+        this.idb().setPath(aString);
+        return this;
     }
 
     /**
@@ -82,9 +82,9 @@
     assertValidValue (v) {
         if (typeof(v) !== "undefined") {
             if (typeof(v) === "string") {
-                assert(v.length !== 0)
+                assert(v.length !== 0);
             } else {
-                assert(v.byteLength !== 0)
+                assert(v.byteLength !== 0);
             }
         }
     }
@@ -97,7 +97,7 @@
      */
     promiseHasKey (key) {
         //console.log("promiseHasKey(" + key + ")");
-        return this.idb().promiseHasKey(key)
+        return this.idb().promiseHasKey(key);
     }
 
     /**
@@ -114,7 +114,7 @@
         }
 
         const dataFromDb = await this.idb().promiseAt(hash);
-        if (typeof(v) !== "undefined") {
+        if (typeof(dataFromDb) !== "undefined") {
             // if we have the value, return it
             this.assertValidValue(dataFromDb);
             return dataFromDb;
@@ -171,6 +171,7 @@
 
         const dataHash = await this.promiseHashKeyForData(data);
         if (dataHash !== hash) {
+            debugger;
             throw new Error("hash key does not match hash of value");
         }
 
@@ -241,7 +242,7 @@
      */
     async removeInvalidRecords () {
         const keys = await this.idb().promiseAllKeys();
-        let promise = null;
+        //let promise = null;
         keys.forEach(async (key) => {
             await this.promiseVerifyOrDeleteKey(key);
         });
