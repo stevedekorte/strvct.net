@@ -207,6 +207,10 @@
      * @category UI
      */
     showPanelWithInfo (errorInfo) {
+        console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
+        debugger;
+        return;
+
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window
             const backdropDiv = document.createElement('div');
@@ -269,6 +273,9 @@
                 }
                 errorMessage = parts.last();
             }
+
+            errorMessage += "<br>Source: '" + errorInfo.source + "'";
+            errorMessage += "<br>Line: " + errorInfo.lineno;
 
             //const errorTitle = parts[0];
             //const errorMessage = '"' + parts[1] + '"';

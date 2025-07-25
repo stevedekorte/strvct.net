@@ -57,7 +57,7 @@
      * @category Information
      */
     title () {
-        return this.name()
+        return this.name();
     }
 
     /**
@@ -66,7 +66,7 @@
      * @category Node Management
      */
     setupSubnodes () {
-        return this
+        return this;
     }
 
     /**
@@ -76,8 +76,8 @@
      * @category Path Management
      */
     isParentOfPath (aPath) {
-        const checkPath = this.path() + "/"
-        return (checkPath.indexOf(aPath) === 0)
+        const checkPath = this.path() + "/";
+        return (checkPath.indexOf(aPath) === 0);
     }
 
     /**
@@ -97,25 +97,25 @@
      * @category Resource Management
      */
     addRelativeResourcePathArray (pathArray) {
-        pathArray = pathArray.slice()
+        pathArray = pathArray.slice();
 
         //const fullPath = this.path() + "/" + pathArray.join("/")
 
         if (pathArray.length === 1) { // it's a file
-            const fileName = pathArray.first()
-            const oldFile = this.fileWithName(fileName)
+            const fileName = pathArray.first();
+            const oldFile = this.fileWithName(fileName);
             if (oldFile) {
-                return oldFile
+                return oldFile;
             }
 
-            return this.addSubnodeForFileName(fileName) // we assume all paths are to files, not folders
+            return this.addSubnodeForFileName(fileName); // we assume all paths are to files, not folders
         } else {
 
             // must be a folder
-            const subfolderName = pathArray.first()
-            const subfolder = this.addSubnodeForFolderNameCreateIfAbsent(subfolderName)
-            pathArray.shift()
-            const file = subfolder.addRelativeResourcePathArray(pathArray)
+            const subfolderName = pathArray.first();
+            const subfolder = this.addSubnodeForFolderNameCreateIfAbsent(subfolderName);
+            pathArray.shift();
+            const file = subfolder.addRelativeResourcePathArray(pathArray);
             return file
         }
     }
@@ -127,8 +127,8 @@
      * @category Node Management
      */
     hasSubfolderNamed (aName) {
-        const subfolder = this.subfolderWithName(aName)
-        return subfolder !== null
+        const subfolder = this.subfolderWithName(aName);
+        return subfolder !== null;
     }
 
     /**
@@ -138,11 +138,11 @@
      * @category Node Management
      */
     addSubnodeForFolderNameCreateIfAbsent (subfolderName) {
-        const subfolder = this.subfolderWithName(subfolderName)
+        const subfolder = this.subfolderWithName(subfolderName);
         if (subfolder) {
-            return subfolder
+            return subfolder;
         }
-        return this.addSubnodeForFolderName(subfolderName)
+        return this.addSubnodeForFolderName(subfolderName);
     }
 
     /**
@@ -154,15 +154,15 @@
      */
     addSubnodeForFolderName (aName) {
         if (aName.length === 0) {
-            throw new Error("empty folder name")
+            throw new Error("empty folder name");
         }
         if (aName.indexOf("/") !== -1) {
-            throw new Error("folder name contains /")
+            throw new Error("folder name contains /");
         }
-        const fullPath = this.path() + "/" + aName
-        const subfolder = SvResourceFolder.clone().setPath(fullPath)
-        this.addSubnode(subfolder)
-        return subfolder
+        const fullPath = this.path() + "/" + aName;
+        const subfolder = SvResourceFolder.clone().setPath(fullPath);
+        this.addSubnode(subfolder);
+        return subfolder;
     }
 
     /**
@@ -180,7 +180,7 @@
      * @category Information
      */
     folderClassName () {
-        return "SvResourceFolder"
+        return "SvResourceFolder";
     }
 
     /**
@@ -198,7 +198,7 @@
      * @category Node Management
      */
     folders () {
-        return this.subfolders()
+        return this.subfolders();
     }
 
     /**
@@ -218,7 +218,7 @@
      * @category Node Management
      */
     folderAt (aName) {
-        return this.subfolderWithName(aName)
+        return this.subfolderWithName(aName);
     }
 
     /**
@@ -228,9 +228,9 @@
      * @category Node Management
      */
     addSubnodeForFileName (fileName) {
-        const file = SvResourceFile.clone().setPath(this.path() + "/" + fileName)
-        this.addSubnode(file)
-        return file
+        const file = SvResourceFile.clone().setPath(this.path() + "/" + fileName);
+        this.addSubnode(file);
+        return file;
     }
 
     /**
@@ -239,7 +239,7 @@
      * @category Information
      */
     fileClassName () {
-        return "SvResourceFile"
+        return "SvResourceFile";
     }
 
     /**
@@ -277,7 +277,7 @@
      * @category Node Management
      */
     fileAt (aName) {
-        return this.subnodes().detect(sn => sn.name() === aName)
+        return this.subnodes().detect(sn => sn.name() === aName);
     }
 
     /**

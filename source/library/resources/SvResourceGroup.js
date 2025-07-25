@@ -106,19 +106,30 @@
      * @category Resource Management
      */
     async setupSubnodes () {
+        console.log(this.type() + " setupSubnodes begin with " + this.urlResources().length + " url resources");
+
         await this.urlResources().promiseSerialForEach(async (r) => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
             const aResource = rClass.clone().setPath(r.path());
             aResource.setUrlResource(r);
+            console.log("loading resource: " + aResource.path());
             await aResource.asyncLoad(); // do this in parallel
+            console.log("loaded resource: " + aResource.path());
             this.addResource(aResource);
         });
+        console.log(this.type() + " setupSubnodes done");
 
         if (this.type() !== "SvFileResources") {
             //assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
+            /*
+            if (this.subnodes().length !== this.urlResources().length) {
+                console.warn(this.type() + " should have " + this.urlResources().length + " subnodes, but has " + this.subnodes().length);
+                debugger;
+            }
+            */
         }
 
-        return this
+        return this;
     }
 
     /**

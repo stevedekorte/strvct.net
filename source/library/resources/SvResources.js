@@ -139,26 +139,10 @@
     }
 
     async asyncFinishSetup () {
-        //await this.subnodes().promiseSerialForEach(async sn => {
-        await this.subnodes().promiseParallelForEach(async sn => {
-                // console.log("sn: " + sn.type() + " setupSubnodes");
+        await this.subnodes().promiseSerialForEach(async sn => {
+        //await this.subnodes().promiseParallelForEach(async sn => {
             await sn.setupSubnodes();
-            console.log("sn: " + sn.type() + " setupSubnodes done");
-            if (sn.type() !== "SvFileResources") {
-                //assert(sn.subnodes().length > 0, "sn: " + sn.type() + " subnodes should have subnodes");
-                console.warn("sn: " + sn.type() + " subnodes should *usually*have subnodes");
-            } else {
-                console.log("sn: " + sn.type() + " has subnodes");
-            }
         });
-        /*
-        this.subnodes().forEach(sn => {
-            if(sn.subnodes().length === 0) {
-                console.warn("sn: " + sn.type() + " subnodes should have subnodes");
-                debugger;
-            }
-        });
-        */
         await this.prechacheWhereAppropriate();
         return this;
     }

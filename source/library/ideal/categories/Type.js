@@ -545,6 +545,13 @@ class Type extends Object {
         return typeof(value) === "function";
     }  
 
+    static isAsyncFunction (func) {
+        if (Type.isFunction(func)) {
+            return func.constructor.name === 'AsyncFunction';
+        }
+        return false;
+    }
+
     /**
      * Checks if the given value is undefined.
      * @category Type Checking

@@ -52,11 +52,12 @@ class BootLoader extends Object {
   static async asyncBegin () {
     await SvPlatform.promiseReady();
 
+    /*
     if (SvPlatform.isBrowserPlatform()) {
       console.log("document.body.style.backgroundColor = ", document.body.style.backgroundColor);
       document.body.style.backgroundColor = "black";
     }
-
+    */
     await SvPlatform.asyncWaitForNextRender(); // let the background color get rendered first?
     //debugger;
     await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());

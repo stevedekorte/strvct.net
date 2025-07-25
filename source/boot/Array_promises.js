@@ -38,6 +38,7 @@
      * @returns {Promise<void>}
      */
     async promiseSerialForEach (aBlock) {
+        assert(aBlock.constructor.name === 'AsyncFunction', "aBlock must be an async function");
         for (let i = 0; i < this.length; i++) {
             try {
                 await aBlock(this[i]);
@@ -56,13 +57,14 @@
      * @returns {Promise<any[]>} A promise that resolves to an array of the results.
      */
     async promiseParallelMap (aBlock) {
+        assert(aBlock.constructor.name === 'AsyncFunction', "aBlock must be an async function");
         const promises = this.map(v => aBlock(v));
         const values = await Promise.all(promises);
         return values;
     }
 
     async promiseParallelForEach (aBlock) {
-        await Promise.all(this.map(v => aBlock(v)));
+        await this.promiseParallelMap(aBlock);
     }
 
 }).initThisCategory();
