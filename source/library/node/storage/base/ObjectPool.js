@@ -409,13 +409,24 @@
         return this.recordsMap().hasKey(this.rootKey());
     }
 
+    hasValidStoredRoot () {
+        if (this.hasStoredRoot()) {
+            const root = this.objectForPid(this.rootPid());
+            if (Type.isNullOrUndefined(root)) {
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @description get the root object or create it if it doesn't exist
      * @param {Function} aClosure - the closure to create the root object if it doesn't exist
      * @returns {Object}
      */
     rootOrIfAbsentFromClosure (aClosure) {
-        if (this.hasStoredRoot()) {
+        if (this.hasValidStoredRoot()) {
             this.readRoot();
         } else {
             const newRoot = aClosure();
@@ -476,11 +487,18 @@
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()); // this call will actually internally set this._rootObject as we may need it while loading the root's refs
-            assert(!Type.isNullOrUndefined(root));
-            //this._rootObject = root;
+            //assert(!Type.isNullOrUndefined(root), this.type() + " rootObject is null or undefined");
+            if (Type.isNullOrUndefined(root)) {
+                // this can happen is the root object class doesn't exist anymore
+                console.log("readRoot() rootObject is null or undefined");
+                // we'll let the caller handle this
+                return null;
+            }
+            this._rootObject = root;
             //this.setRootObject(root); // this is for setting up new root
             return this.rootObject();
         }
+        debugger;
         throw new Error("missing root object");
     }
 
@@ -931,10 +949,10 @@
         */
 
         if (!aClass) {
-            const error = "missing class '" + className + "'";
+            const error = "missing class '" + className + "' - returning null";
             console.warn(error);
             //throw new Error(error);
-            debugger;
+            //debugger;
             return null;
         }
         assert(!Type.isNullOrUndefined(aRecord.id))

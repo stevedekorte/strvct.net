@@ -100,58 +100,73 @@
      * @category Error Handling
      */
     async asyncSend () {
-        const error = this.error();
-        assert(error, "no error to report");
-        const json = this.json();
-
-        // Get the base URL from the current window location
-        const protocol = window.location.protocol; // "http:" or "https:"
-        const host = window.location.hostname;
-        const port = window.location.port || (protocol === "https:" ? "443" : "80");
-        const baseUrl = `${protocol}//${host}:${port}`;
-        
-        // Prepare error data
-        const errorData = {
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            url: window.location.href,
-            referrer: document.referrer || null,
-            app: this.name(),
-            version: this.versionsString()
-        };
-        
-        // Add error information
-        if (error instanceof Error) {
-            errorData.message = error.message;
-            errorData.name = error.name;
-            errorData.stack = error.stack;
-        } else if (typeof error === "object") {
-            // Handle error-like objects
-            Object.assign(errorData, error);
-        } else if (typeof error === "string") {
-            // Handle string errors
-            errorData.message = error;
-        }
-        
-        // Add additional JSON data if provided
-        if (json && typeof json === "object") {
-            errorData.additionalData = json;
-        }
-        
         try {
-            // Post the error data to the server
-            const response = await fetch(`${baseUrl}/log_error`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(errorData)
-            });
+            const error = this.error();
+            assert(error, "no error to report");
+            const json = this.json();
+
+ 
+            // Prepare error data
+            const errorData = {
+                timestamp: new Date().toISOString(),
+                app: SvApp.shared().name(),
+                version: SvApp.shared().versionsString()
+            };
+
+            if (SvPlatform.isBrowserPlatform()) {
+                errorData.userAgent = navigator.userAgent;
+                errorData.url = window.location.href;
+                errorData.referrer = document.referrer || null;
+            }
             
-            // Parse and return the response
-            const responseData = await response.json();
-            console.log("Error report sent successfully:", responseData);
-            return responseData;
+            // Add error information
+            if (error instanceof Error) {
+                errorData.message = error.message;
+                errorData.name = error.name;
+                errorData.stack = error.stack;
+            } else if (typeof error === "object") {
+                // Handle error-like objects
+                Object.assign(errorData, error);
+            } else if (typeof error === "string") {
+                // Handle string errors
+                errorData.message = error;
+            }
+            
+            // Add additional JSON data if provided
+            if (json && typeof json === "object") {
+                errorData.additionalData = json;
+            }
+            
+            try {
+
+                if (SvPlatform.isNodePlatform()) {
+                    console.warn("Not sure where to send error reports in node");
+                    return { success: false, error: "Not sure where to send error reports in node" };
+                }
+                // Get the base URL from the current window location
+                const protocol = window.location.protocol; // "http:" or "https:"
+                const host = window.location.hostname;
+                const port = window.location.port || (protocol === "https:" ? "443" : "80");
+                const baseUrl = `${protocol}//${host}:${port}`;
+
+                // Post the error data to the server
+                const response = await fetch(`${baseUrl}/log_error`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(errorData)
+                });
+                
+                // Parse and return the response
+                const responseData = await response.json();
+                console.log("Error report sent successfully:", responseData);
+                return responseData;
+            } catch (err) {
+                console.error("Failed to send error report:", err);
+                return { success: false, error: err.message };
+            }
+
         } catch (err) {
             console.error("Failed to send error report:", err);
             return { success: false, error: err.message };

@@ -222,7 +222,9 @@
             return this.modelClass().clone();
         });
 
-        const isCorrectModel = this.store().rootObject().isKindOf(this.modelClass());
+        const currentRootObject = this.store().rootObject();
+
+        const isCorrectModel = !Type.isNullOrUndefined(currentRootObject) && this.store().rootObject().isKindOf(this.modelClass());
         if (!isCorrectModel) { 
             console.error("Model is not correct type: " + this.store().rootObject().thisClass().type());
             if (this._attemptToResetStore === true) { 
