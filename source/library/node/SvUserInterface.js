@@ -55,10 +55,12 @@
     setupNormalDocTheme () {
         const doc = DocumentBody.shared();
         doc.setBackgroundColor("#191919");
-        doc.setFontFamily("EB Garamond");
+        //doc.setFontFamily("EB Garamond");
+        doc.setFontFamily("HoeflerTitling");
+        //doc.setFontFamily("IMFellEnglish");
         //doc.setFontFamily("Lusitana");
         //doc.setFontFamily("BarlowCondensed");
-        doc.setFontWeight("medium");
+        //doc.setFontWeight("medium");
         doc.setFontSizeAndLineHeight("16px");
    }
 
