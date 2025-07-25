@@ -135,7 +135,7 @@
      * @category Debugging
      */
     isDebugging () {
-        return false;
+        return true;
     }
 
     /**
