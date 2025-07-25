@@ -213,8 +213,14 @@
      */
     onStackViewPathChange (/*aNote*/) {
         this.syncPathToStack();
+        if (!this.targetStackView()) {
+            console.warn("no target stack view");
+            debugger;
+            return this;
+        }
         const path = this.targetStackView().selectedNodePathString();
         SvApp.shared().userInterface().updateQueryParameter("path", path);
+        return this;
     }
 
     /**

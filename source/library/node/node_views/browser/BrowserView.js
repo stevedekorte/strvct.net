@@ -120,7 +120,10 @@
         if (selectedNode) {
             const pathArray = selectedNode.nodePathArray(); 
             pathArray.shift(); // remove first component
-            //this.selectNodePathArray(pathArray);
+            //debugger;
+            if (pathArray.length > 1) {
+                this.selectNodePathArray(pathArray);
+            }
         } else {
             debugger;
         }
