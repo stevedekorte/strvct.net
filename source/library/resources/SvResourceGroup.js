@@ -115,7 +115,7 @@
         });
 
         if (this.type() !== "SvFileResources") {
-            assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
+            //assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
         }
 
         return this

@@ -370,7 +370,7 @@
     }
 
     indexOfFirstVisibleTile () {
-        return this.indexOfFirstVisibleTileAfterIndex(0);
+        return this.indexOfFirstVisibleTileAfterIndex(-1); // so we start at 0
     }
 
     indexOfLastVisibleTile () {

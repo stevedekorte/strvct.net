@@ -61,4 +61,8 @@
         return values;
     }
 
+    async promiseParallelForEach (aBlock) {
+        await Promise.all(this.map(v => aBlock(v)));
+    }
+
 }).initThisCategory();

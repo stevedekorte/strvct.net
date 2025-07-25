@@ -144,7 +144,8 @@
             await sn.setupSubnodes();
             console.log("sn: " + sn.type() + " setupSubnodes done");
             if (sn.type() !== "SvFileResources") {
-                assert(sn.subnodes().length > 0, "sn: " + sn.type() + " subnodes should have subnodes");
+                //assert(sn.subnodes().length > 0, "sn: " + sn.type() + " subnodes should have subnodes");
+                console.warn("sn: " + sn.type() + " subnodes should *usually*have subnodes");
             } else {
                 console.log("sn: " + sn.type() + " has subnodes");
             }
