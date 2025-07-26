@@ -176,7 +176,7 @@
                 this._camContent = cam;
                 
                 // Also store in HashCache for async access
-                await Reflect.ownKeys(cam).promiseSerialForEach(async (k) => {
+                await Reflect.ownKeys(cam).promiseParallelForEach(async (k) => {
                     const v = cam[k];
                     return HashCache.shared().promiseAtPut(k, v);
                 });

@@ -108,12 +108,16 @@
     async setupSubnodes () {
         console.log(this.type() + " setupSubnodes begin with " + this.urlResources().length + " url resources");
 
-        await this.urlResources().promiseSerialForEach(async (r) => {
+        await this.urlResources().promiseParallelForEach(async (r) => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
             const aResource = rClass.clone().setPath(r.path());
             aResource.setUrlResource(r);
             console.log("loading resource: " + aResource.path());
-            await aResource.asyncLoad(); // do this in parallel
+            if (aResource.canDeferLoad()) {
+                aResource.asyncLoad(); // don't wait for this one
+            } else {
+                await aResource.asyncLoad(); // do this in parallel
+            }
             console.log("loaded resource: " + aResource.path());
             this.addResource(aResource);
         });

@@ -220,6 +220,10 @@
         return this._decodeDataPromise;
     }
 
+    canDeferLoad () {
+        return this.path().split("/").includes("deferred");
+    }
+
     // --- resource file ---
 
     /*

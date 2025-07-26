@@ -139,7 +139,7 @@
     }
 
     async asyncFinishSetup () {
-        await this.subnodes().promiseSerialForEach(async sn => {
+        await this.subnodes().promiseParallelForEach(async sn => {
         //await this.subnodes().promiseParallelForEach(async sn => {
             await sn.setupSubnodes();
         });

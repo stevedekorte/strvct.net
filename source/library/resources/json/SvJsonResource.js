@@ -9,6 +9,7 @@
  * @extends SvResource
  * @classdesc Represents a JSON resource.
  */
+
 (class SvJsonResource extends SvResource {
     
     /**
