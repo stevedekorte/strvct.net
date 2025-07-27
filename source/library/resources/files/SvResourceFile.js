@@ -240,9 +240,10 @@
             "html",
             "json", 
             "txt", 
-            "otf", "ttf", "woff", "woff2" // font formats
-            //"js", // needed? should already be loaded
-            //"css" // needed? should already be loaded
+            "otf", "ttf", "woff", "woff2", // font formats
+            "svg"
+            //"js", // needed? should already be loaded at this point
+            //"css" // needed? should already be loaded at this point
         ];
         // not loading: wav, png, jpg, svg
     }

@@ -55,6 +55,12 @@
         this.setNoteIsSubnodeCount(true);
     }
 
+    finalInit () {
+        super.finalInit();
+        this.setTitle("Files");
+        return this;
+    }
+
     /**
      * @description Initializes the instance.
      * @returns {SvFileResources} The initialized instance.

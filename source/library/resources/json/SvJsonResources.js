@@ -36,6 +36,12 @@
         return this;
     }
 
+    finalInit () {
+        super.finalInit();
+        this.setTitle("Json");
+        return this;
+    }
+
     /**
      * @description Sets up the resource classes and subnode classes.
      * @returns {SvJsonResources} The instance of SvJsonResources.

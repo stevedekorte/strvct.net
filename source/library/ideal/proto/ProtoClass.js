@@ -53,6 +53,18 @@
         return methodSet;
     }
 
+    getInheritedToolMethodSet () {
+        const thisClass = this.thisClass();
+
+        if (Object.hasOwn(thisClass, "_inheritedToolMethodSet")) { // don't want to use inherited cache here
+            return thisClass._inheritedToolMethodSet;
+        }
+
+        const methodSet = this.getInheritedMethodSet().filter(method => method.isToolable && method.isToolable());
+        thisClass._inheritedToolMethodSet = methodSet;
+        return methodSet;
+      }
+
     /**
      * Creates a new subclass with the given name.
      * @param {string} newClassName - The name of the new subclass.

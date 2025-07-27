@@ -99,11 +99,21 @@
      * @category Identification
      */
     typePuuid () {
-        const puuid = this.puuid()
+        const puuid = this.puuid();
+        let typeName = null;
+
         if (Type.isFunction(this.type)) {
-            return this.type() + "_" + puuid
+            typeName = this.type();
+        } else {
+            typeName = Type.typeName(this);
         }
-        return Type.typeName(this) + "_" + puuid
+
+        if (this.isPrototype()) {
+            typeName += "_Prototype";
+        } else if (this.isClass()) {
+            typeName += "_Class";
+        }
+        return typeName + "_" + puuid;
     }
 
     /**
@@ -112,7 +122,7 @@
      * @category Identification
      */
     typeId () {
-        return this.typePuuid()
+        return this.typePuuid();
     }
 
     /**

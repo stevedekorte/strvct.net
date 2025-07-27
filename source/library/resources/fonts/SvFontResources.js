@@ -49,6 +49,12 @@
         return this;
     }
 
+    finalInit () {
+        super.finalInit();
+        this.setTitle("Fonts");
+        return this;
+    }
+
     /**
      * @description Sets up the resource
      * @category Initialization

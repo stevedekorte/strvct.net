@@ -135,7 +135,7 @@
       slot.setCanInspect(true);
     }
 
-    this.initToolSlots();
+    this.initPrototypeToolSlots();
   }
 
   initPrototype () {
@@ -161,9 +161,15 @@
     this.setTagDelegate(this); // needed to get tool calls
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
     this.setResponseMsgClass(AiParsedResponseMessage);
-    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
     //this.watchForNote("onBrowserOnline");
     //this.watchForNote("onBrowserOffline");
+  }
+
+  didInit () {
+    super.didInit();
+    this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    return this;
   }
 
   /*
@@ -193,7 +199,7 @@
   }
   */
 
-  initToolSlots () {
+  initPrototypeToolSlots () {
     // placeholder for subclasses to override
   }
 

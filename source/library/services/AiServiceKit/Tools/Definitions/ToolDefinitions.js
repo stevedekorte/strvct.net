@@ -42,8 +42,8 @@
   }
 
   addToolsForInstance (instance) {
-    //const ownerPath = this.ownershipChainPathString();
-    //console.log("addToolsForInstance: " + instance.type() + " ownershipPath: " + ownerPath);
+    const ownerPath = this.ownershipChainPathString();
+    console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.typeId() + " '" + instance.title() + "'");
 
     if (this.toolTargetInstances().has(instance)) {
       throw new Error("Tool definitions already added for instance: " + instance.type());
@@ -51,18 +51,17 @@
 
     this.toolTargetInstances().add(instance);
 
-    const methodSet = instance.getInheritedMethodSet();
+    const methodSet = instance.getInheritedToolMethodSet();
     for (const method of methodSet) {
       //console.log(instance.type() + " " + method.name + " isToolable: " + method.isToolable());
-      if (method.isToolable && method.isToolable()) {
-        if (!this.toolDefinitionWithName(method.name)) {
-          const toolDef = ToolDefinition.clone();
-          //console.log("adding tool for method: " + method.name);
-          toolDef.setToolTarget(instance);
-          toolDef.setName(method.name);
-          this.addTool(toolDef);
-        }
-      }
+      assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
+      //if (!this.toolDefinitionWithName(method.name)) {
+        const toolDef = ToolDefinition.clone();
+        console.log(" - tool: " + method.name);
+        toolDef.setToolTarget(instance);
+        toolDef.setName(method.name);
+        this.addTool(toolDef);
+      //}
     }
 
     if (this.subnodeCount() === 0) {
