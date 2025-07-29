@@ -85,7 +85,7 @@
    * @category UI
    */
   subviewsScrollSticksToBottom () {
-    return false;
+    return true;
   }
 
   /**
