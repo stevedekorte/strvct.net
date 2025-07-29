@@ -167,6 +167,10 @@
             const hasKey = await hc.promiseHasKey(h);
             //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
+            if (this.path().split("/").includes("deferred")) {
+                //debugger;
+                console.log("UrlResource loading a deferred resource: " + this.path());
+            }
             //if (data !== undefined) {
             if (hasKey) {
                 // if hashcache is available and has data, use it
@@ -174,12 +178,16 @@
                 if (data === undefined) {
                     console.warn("hashcache has undefined data for " + h + " " + this.path());
                     debugger; // there's a bug here, so just load normally
+                    console.log("UrlResource load from network: " + this.path());
                     return this.promiseJustLoad();
                 }
 
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
-                //console.log("UrlResource.asyncLoadFromCache() (from cache) " + this.path())
+                if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
+                    console.log("UrlResource load from cache: " + this.path());
+                    //debugger;
+                }
                 return this;
             } else {
                 // otherwise, load normally and cache result

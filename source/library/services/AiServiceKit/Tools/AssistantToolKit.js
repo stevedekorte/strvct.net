@@ -180,7 +180,9 @@ The following formats will be used for tool calls and responses:
         m.setSpeakerName("Tool Call Results");
         const content = this.composeResponseForToolCalls(completedCalls);
         m.setContent(content);
+        //debugger;
         m.setIsVisibleToUser(false);
+        assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");
         //debugger;
         m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
         //const responseMessage = m.requestResponse();

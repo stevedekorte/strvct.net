@@ -1007,12 +1007,14 @@
         const note = this.didUpdateNodeNote();
 
         if (note) {
+            /*
             if (this.type() === "UoLocations") {
                 if (!SvNotificationCenter.shared().hasNotification(note)) {
                     console.log(this.typeId() + " '" + this.title() + "' POST didUpdateNode - subnodesCount: " + this.subnodesCount());
                     //debugger;
                 }
             }
+            */
             note.post();
         }
         

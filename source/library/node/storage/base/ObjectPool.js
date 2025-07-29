@@ -254,7 +254,7 @@
     clearCache () {
         this.setActiveObjects(new Map());
         this.setDirtyObjects(new Map());
-        this.readRoot();
+        this.readRootObject();
         //this.setRootObject(this.objectForPid(this.rootObject().puuid()));
         return this;
     }
@@ -427,7 +427,7 @@
      */
     rootOrIfAbsentFromClosure (aClosure) {
         if (this.hasValidStoredRoot()) {
-            this.readRoot();
+            this.readRootObject();
         } else {
             const newRoot = aClosure();
             assert(newRoot);
@@ -440,7 +440,7 @@
     // we need to do this:
     setupForRootObject (appRootObject) {
         if (this.hasStoredRoot()) {
-            this.readRoot();
+            this.readRootObject();
 
             // now let's do some sanity checks
             assert(appRootObject.puuid() !== this.rootPid(), "appRootObject.puuid() === this.rootPid()");
@@ -483,14 +483,15 @@
      * @description read the root object
      * @returns {Object}
      */
-    readRoot () {
+    readRootObject () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
+        //debugger;
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()); // this call will actually internally set this._rootObject as we may need it while loading the root's refs
             //assert(!Type.isNullOrUndefined(root), this.type() + " rootObject is null or undefined");
             if (Type.isNullOrUndefined(root)) {
                 // this can happen is the root object class doesn't exist anymore
-                console.log("readRoot() rootObject is null or undefined");
+                console.log("readRootObject() rootObject is null or undefined");
                 // we'll let the caller handle this
                 return null;
             }

@@ -240,12 +240,16 @@
             "html",
             "json", 
             "txt", 
-            "otf", "ttf", "woff", "woff2", // font formats
-            "svg"
+            "otf", "ttf", "woff", "woff2" // font formats
+            //"svg"
             //"js", // needed? should already be loaded at this point
             //"css" // needed? should already be loaded at this point
         ];
         // not loading: wav, png, jpg, svg
+    }
+
+    canDeferLoad () {
+        return this.path().split("/").includes("deferred");
     }
 
     /**
@@ -255,8 +259,12 @@
      */
     async prechacheWhereAppropriate () {
         if (this.precacheExtensions().includes(this.pathExtension())) {
-            await this.promiseLoad();
-            assert(this.hasData(), "no data found for " + this.path());
+            if (!this.canDeferLoad()) {
+                await this.promiseLoad();
+                assert(this.hasData(), "no data found for " + this.path());
+            } else {
+                //console.log(this.type() + " deferring: " + this.path());
+            }
         } else {
             //console.log("------------------- file: " + this.path() + "  - not precaching");
         }

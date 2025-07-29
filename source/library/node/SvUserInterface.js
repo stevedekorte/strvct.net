@@ -62,6 +62,7 @@
         //doc.setFontFamily("BarlowCondensed");
         //doc.setFontWeight("medium");
         doc.setFontSizeAndLineHeight("16px");
+        doc.setLineHeight(1.3);
    }
 
 }.initThisClass());

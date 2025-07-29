@@ -16,7 +16,7 @@
      * @returns {SvIconResources} The initialized instance.
      * @category Initialization
      */
-    init() {
+    init () {
         super.init()
         this.setTitle("Icons")
         return this
@@ -26,7 +26,7 @@
      * @description Sets up the SvIconResources instance.
      * @category Initialization
      */
-    setup() {
+    setup () {
         super.setup();
         this.setResourceClasses([SvgIconNode]);
         this.setSubnodeClasses([SvgIconNode]);
@@ -41,7 +41,7 @@
      * @returns {SvIconResources} The current instance.
      * @category Icon Management
      */
-    addIcon(aName, svgString) {
+    addIcon (aName, svgString) {
         const node = SvgIconNode.clone().setTitle(aName).setSvgString(svgString)
         this.addSubnode(node)
         return this
@@ -53,7 +53,7 @@
      * @returns {Object|null} The SVG icon view if found, null otherwise.
      * @category Icon Retrieval
      */
-    iconWithName(aName) {
+    iconWithName (aName) {
         const node = this.firstSubnodeWithTitle(aName)
         if (node) {
             return node.svgIconView()
@@ -66,8 +66,12 @@
      * @returns {string[]} An array of icon names.
      * @category Icon Retrieval
      */
-    iconNames() {
+    iconNames () {
         return this.subnodes().map(sn => sn.title())
     }
+
+    preCacheWhereAppropriate () {
+        // no precaching for icons
+    }   
 
 }.initThisClass());

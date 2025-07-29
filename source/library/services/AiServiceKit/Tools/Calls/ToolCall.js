@@ -237,7 +237,7 @@ Example Tool call format:
           console.error("Error parsing tool call - attempting to fix by adding closing brace");
           json = JSON.parse(callString + "}"); // try to fix the json by adding a closing brace, as this is a common error
         } catch (error2) {
-          console.error("Tool call fix failed - rethrowing original error");
+          console.error("Tool call fix failed - rethrowing original error ", error2);
           throw error1; // rethrow the original error
         }
       }
@@ -432,7 +432,7 @@ Example Tool call format:
         name: "ToolCallError",
         message: e.message,
         extraMessage: e.extraMessage,
-        stack: e.stack,
+        stack: e.stack ? String(e.stack) : null,
         toolCall: {
           toolName: this.toolName(),
           callId: this.callId(),

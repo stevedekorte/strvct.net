@@ -220,9 +220,6 @@
         return this._decodeDataPromise;
     }
 
-    canDeferLoad () {
-        return this.path().split("/").includes("deferred");
-    }
 
     // --- resource file ---
 
@@ -343,15 +340,23 @@
         return this;
     }
 
+    canDeferLoad () {
+        return this.path().split("/").includes("deferred");
+    }
+
     /**
      * @description Precaches the resource where appropriate.
      * @returns {Promise<void>} A promise that resolves when precaching is complete.
      * @category Resource Loading
      */
     async prechacheWhereAppropriate () {
-       if (!this.isLoaded()) {
-        console.warn("---- " + this.type() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
-       }
+        if (!this.isLoaded()) {
+            if (!this.canDeferLoad()) {
+                console.log(this.type() + " prechacheWhereAppropriate: " + this.path());
+                await this.asyncLoad();
+                //console.warn("---- " + this.type() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
+            }
+        }
     }
 
 }.initThisClass());

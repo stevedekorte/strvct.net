@@ -208,8 +208,8 @@
      */
     showPanelWithInfo (errorInfo) {
         console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
-        debugger;
-        return;
+        //debugger;
+        //return;
 
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window

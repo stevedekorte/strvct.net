@@ -248,7 +248,7 @@
         this.setPaddingRight("0.5em");
         this.setPaddingTop("0.3em");
         this.setPaddingBottom("0.3em");
-        this.setLineHeight("1.15em");;
+        this.setLineHeight("1.3");
         //this.setMinHeight("2.07em");
         this.setMinHeight("1em");
         this.setCssProperty("outline", "none");
@@ -322,7 +322,7 @@
      * @param {MutationObserver} observer - The observer.
      * @returns {void}
      */
-    onDomMutation (mutationList, observer) {
+    onDomMutation (mutationList /*, observer*/) {
      //   console.log("onDomMutation --------------> ", mutationList);
 
         for(const mutation of mutationList) {
@@ -501,7 +501,7 @@
      * @param {GestureRecognizer} aGesture - The gesture.
      * @returns {void}
      */
-    onDoubleTapCancelled (aGesture) {
+    onDoubleTapCancelled (/*aGesture*/) {
         //console.log(this.value() + " onDoubleTapCancelled");
     }
 
@@ -510,7 +510,7 @@
      * @param {GestureRecognizer} aGesture - The gesture.
      * @returns {SvTextView} The text field.
      */
-    onDoubleTapComplete (aGesture) {
+    onDoubleTapComplete (/*aGesture*/) {
         //debugger;
         //console.log(this.value() + " onDoubleTapComplete");
         // make content editable and select text
@@ -552,7 +552,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onFocusIn (event) {
+    onFocusIn (/*event*/) {
         // sent before focus and bubbles up the parent chain
 
         super.onFocusIn();
@@ -567,7 +567,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onFocusOut (event) {
+    onFocusOut (/*event*/) {
         // sent before blur
         //console.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
         //const isFocused = this.isActiveElementAndEditable();
@@ -585,7 +585,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onFocus (event) {
+    onFocus (/*event*/) {
        // console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()");
         if (this.onBlurSelection()) {
             this.restoreSelectionRange();
@@ -609,7 +609,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onBlur (event) {
+    onBlur (/*event*/) {
         super.onBlur();
         if (this.usesDoubleTapToEdit()) {
             this.setContentEditable(false);
@@ -715,7 +715,7 @@
         }
         if (needsMerge) {
             //const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
-            const mergeableChange = (newValue.length > oldValue.length);
+            //const mergeableChange = (newValue.length > oldValue.length);
             //const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
             const shouldMerge = newValue.beginsWith(oldValue);
             if (shouldMerge) {
@@ -850,7 +850,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onAlternateEnterKeyUp (event) {
+    onAlternateEnterKeyUp (/*event*/) {
         console.log(this.typeId() + " onAlternateEnterKeyDown");
         //this.insertEnterAtCursor();
         //this.afterEnter();
@@ -861,7 +861,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    insertEnterAtCursor (event) {
+    insertEnterAtCursor (/*event*/) {
         if (this.isFocused()) {
             //this.insertTextAtCursor("\n");
             this.insertTextAtCursorSimple("\n");
@@ -903,7 +903,7 @@
      */
     onKeyDown (event) {
         // sent before the content is changed
-        let result = super.onKeyDown(event);
+        super.onKeyDown(event);
         //const keyName = SvKeyboard.shared().keyForEvent(event);
         //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode);
 
@@ -921,7 +921,7 @@
      */
     onInput (event) {
         // sent after the content is changed
-        const returnKeyCode = 13; 
+        //const returnKeyCode = 13; 
 
         if (!this.shouldMuteEvent(event)) {
             this.didEdit(); // we muted the return key down event so content is not changed
@@ -958,7 +958,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onEnterKeyDown (event) {    
+    onEnterKeyDown (/*event*/) {    
         // insert 2 returns as cursor won't go to the second line with 1
         // document.execCommand('insertHTML', false, "\n\n");
         // prevent the default behaviour of return key pressed
@@ -970,7 +970,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onEnterKeyUp (event) {
+    onEnterKeyUp (/*event*/) {
         if (!this.isContentEditable()) {
             return;
         }
@@ -994,7 +994,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onAlternateEnterKeyDown (event) {
+    onAlternateEnterKeyDown (/*event*/) {
         if (this.doesInput() && this.isMultiline()) {
             this.insertTextAtCursorAndConsolidate("\n");
             //this.formatValue();
@@ -1205,7 +1205,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onAlternate_l_KeyUp(event) {
+    onAlternate_l_KeyUp (event) {
         if (this.hasFocus()) {
             this.stopSpeechToText();
             event.stopPropagation();
@@ -1242,9 +1242,9 @@
      * @param {SpeechToTextSession} speechSession - The speech session.
      * @returns {void}
      */
-    onSpeechInterimResult (speechSession) {
+    onSpeechInterimResult (/*speechSession*/) {
         //const s = speechSession.intermFullTranscript();
-        const s = speechSession.fullTranscript();
+        //const s = speechSession.fullTranscript();
         //console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'");
         //this.insertTextAtCursorSimple(s);
     }
@@ -1335,7 +1335,7 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onSelectStart (event) {
+    onSelectStart (/*event*/) {
         console.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()");
     }
 

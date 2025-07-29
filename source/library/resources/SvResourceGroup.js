@@ -112,13 +112,13 @@
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
             const aResource = rClass.clone().setPath(r.path());
             aResource.setUrlResource(r);
-            console.log("loading resource: " + aResource.path());
+            //console.log("loading resource: " + aResource.path());
             if (aResource.canDeferLoad()) {
-                aResource.asyncLoad(); // don't wait for this one
+                //aResource.asyncLoad(); // don't wait for this one
             } else {
                 await aResource.asyncLoad(); // do this in parallel
+                console.log("asyncLoaded resource: " + aResource.path());
             }
-            console.log("loaded resource: " + aResource.path());
             this.addResource(aResource);
         });
         console.log(this.type() + " setupSubnodes done");
@@ -221,6 +221,7 @@
      */
     async prechacheWhereAppropriate () {
         console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        //debugger;
         await this.resources().promiseParallelMap(async (r) => {
             console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {

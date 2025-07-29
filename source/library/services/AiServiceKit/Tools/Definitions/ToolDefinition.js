@@ -72,9 +72,10 @@
       //slot.setValidValues(values);
     }
     
+  }
 
-
-    this.setShouldStore(false);
+  initPrototype () {
+    this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setNodeCanReorderSubnodes(false);
     this.setCanDelete(false);
