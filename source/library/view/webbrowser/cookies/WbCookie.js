@@ -22,6 +22,7 @@
         {
             const slot = this.newSlot("value", "");
             slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
         }
         {
             const slot = this.newSlot("maxAge", 34560000);
