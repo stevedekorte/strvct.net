@@ -165,15 +165,20 @@
     }
 
     /**
-     * @member {SvXhrRequest} request
+     * @member {SvXhrRequest} xhrRequest
      * @description The current XHR request object for debugging.
      * @category Request
      */
     {
-      const slot = this.newSlot("request", null);
-      slot.setSlotType("SvXhrRequest");
-      slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
+      const slot = this.newSlot("xhrRequest", null);
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setLabel("xhr request");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setFinalInitProto(SvXhrRequest);
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     this.setShouldStore(true);

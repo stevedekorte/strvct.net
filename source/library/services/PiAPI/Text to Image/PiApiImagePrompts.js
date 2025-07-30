@@ -26,7 +26,7 @@
    * @category Metadata
    */
   title () {
-    return "Image Prompts";
+    return "Text to Image";
   }
 
   /**
