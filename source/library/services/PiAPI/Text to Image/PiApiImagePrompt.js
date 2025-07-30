@@ -295,20 +295,20 @@
     request.setUrl(proxyEndpoint);
     request.setMethod("POST");
     request.setHeaders({
-      'x-api-key': apiKey,
+      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
     });
     request.setBody(JSON.stringify(bodyJson));
     
     // Store request for debugging
-    this.setRequest(request);
+    this.setXhrRequest(request);
 
     try {
-      await request.asyncSend();
+      await request.asyncSend(); // Delegate methods handle errors
       
       if (request.isSuccess()) {
         const responseText = request.responseText();
-        const resultData = JSON.parse(responseText);
+        const resultData = JSON.parse(responseText).data;
         
         // PiAPI returns a task_id for tracking
         if (resultData.task_id) {
@@ -319,11 +319,11 @@
           // or implement webhook handling. For now, we'll just record the task ID.
           this.onTaskSubmitted(resultData);
         } else {
-          throw new Error("No task_id returned from PiAPI");
+          const error = new Error("No task_id returned from PiAPI");
+          this.onError(error);
         }
-      } else {
-        throw new Error(`Request failed: ${request.status()}`);
       }
+      // Don't handle request failures here - let delegate methods handle them
     } catch (error) {
       this.onError(error);
       error.rethrow();
@@ -447,7 +447,7 @@
    * @category Request Delegation
    */
   onRequestFailure (request) {
-    const error = new Error(`Request failed: ${request.status()}`);
+    const error = request.error() || new Error(`Request failed: ${request.status()}`);
     this.onError(error);
   }
 

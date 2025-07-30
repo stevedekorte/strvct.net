@@ -274,7 +274,7 @@
    * @category Request Delegation
    */
   onRequestFailure (request) {
-    const error = new Error(`Image request failed: ${request.status()}`);
+    const error = request.error() || new Error(`Image request failed: ${request.status()}`);
     this.onError(error);
   }
 
