@@ -1,4 +1,4 @@
-Defining a class:
+Thoughts on defining a class:
 
 {
   "type": "object",
@@ -52,5 +52,5 @@ We still need to special case null and undefined, as they don't respond to metho
 Person.typeName() would return "Person" (a class variable).
 aPerson.typeName() would return "person" (an prototype variable).
 
-What about types like JSON Object
+What about types like JSON Object?
 

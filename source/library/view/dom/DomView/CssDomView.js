@@ -2580,6 +2580,22 @@
         return Point.clone().set(Math.round(box.width), Math.round(box.height));
     }
 
+    isInViewport () {
+        const rect = this.boundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        
+        // Check if any part of the element is in the viewport
+        const isInViewport = (
+            rect.top < viewportHeight &&
+            rect.bottom > 0 &&
+            rect.left < viewportWidth &&
+            rect.right > 0
+        );
+        
+        return isInViewport;
+    }
+
     // document coordinates helpers
 
     // --- document positioning ---

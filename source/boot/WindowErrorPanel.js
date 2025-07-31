@@ -9,47 +9,32 @@
  * @extends ProtoClass
  * @classdesc WindowErrorPanel handles JavaScript window errors and provides error reporting functionality.
  */
-(class WindowErrorPanel extends ProtoClass {
+
+
+class WindowErrorPanel extends Object {
     
-    /**
-     * @description Initialize prototype slots for the WindowErrorPanel.
-     * @category Initialization
-     */
-    initPrototypeSlots () {
-        /**
-         * @member {Array} appErrors - Array to store application errors.
-         * @category Data
-         */
-        {
-            const slot = this.newSlot("appErrors", null);
-            slot.setSlotType("Array");
+    static _shared = null;
+
+    static shared () {
+        if (!this._shared) {
+            this._shared = new WindowErrorPanel();
         }
-        
-        /**
-         * @member {Number} maxErrors - Maximum number of errors to store.
-         * @category Configuration
-         */
-        {
-            const slot = this.newSlot("maxErrors", 50);
-            slot.setSlotType("Number");
-        }
-        
-        /**
-         * @member {Boolean} isRegistered - Whether error listening is registered.
-         * @category State
-         */
-        {
-            const slot = this.newSlot("isRegistered", false);
-            slot.setSlotType("Boolean");
-        }
+        return this._shared;
     }
 
-    /**
-     * @description Initialize class as singleton.
-     * @category Initialization
-     */
-    static initClass () {
-        this.setIsSingleton(true);
+    constructor () {
+        super();
+        this._isRegistered = false;
+        this.init();
+    }
+
+    setIsRegistered (aBool) {
+        this._isRegistered = aBool;
+        return this;
+    }
+
+    isRegistered () {
+        return this._isRegistered;
     }
 
     /**
@@ -58,8 +43,6 @@
      * @category Initialization
      */
     init () {
-        super.init();
-        this.setAppErrors([]);
         if (SvPlatform.isBrowserPlatform()) {
             this.registerForWindowErrors();
         }
@@ -113,6 +96,7 @@
      * @category Error Handling
      */
     handleWindowError (message, source, lineno, colno, error) {
+        debugger;
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             const errorInfo = {
                 message: message,
@@ -122,13 +106,6 @@
                 stack: error ? error.stack : "No stack trace",
                 timestamp: new Date().toISOString()
             };
-            
-            this.appErrors().push(errorInfo);
-            
-            // Limit size to prevent memory issues
-            if (this.appErrors().length > this.maxErrors()) {
-                this.appErrors().shift();
-            }
             
             // Check if the error occurred within the YouTube API's Web Worker
             if (source.includes('www.youtube.com') || source.includes('www.google.com')) {
@@ -167,38 +144,6 @@
             console.error("Error in handleYouTubeError:", e);
         }
     }
-
-    /*
-    warningSvgIcon () {
-        return `<svg width="48" height="48" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <mask id="excl-mask">
-      <!-- white = show, black = hide -->
-      <rect width="100%" height="100%" fill="red"/>
-      <text
-        x="12" y="17"
-        text-anchor="middle"
-        font-size="12"
-        font-family="sans-serif"
-        font-weight="bold"
-        fill="black"
-      >!</text>
-    </mask>
-  </defs>
-
-  <!-- rounded triangle, masked to cut out the "!" -->
-  <path
-    d="M12 3.5 L3.5 19.5 H20.5 Z"
-    fill="currentColor"
-    stroke="currentColor"
-    stroke-linejoin="round"
-    stroke-width="2"
-    mask="url(#excl-mask)"
-  />
-</svg>
-`;
-    }
-*/
 
 
     /**
@@ -352,37 +297,11 @@
      * @category Error Reporting
      */
     sendErrorReport (errorInfo) {
-        SvErrorReport.asyncSend(new Error(errorInfo.message), errorInfo);
-    }
-
-    /**
-     * @description Debug helper to show all application errors.
-     * @returns {string} A formatted error report.
-     * @category Debug
-     */
-    showErrors () {
-        if (!this.appErrors() || this.appErrors().length === 0) {
-            console.log("No errors recorded");
-            return "No errors recorded";
+        if (SvGlobals.has("SvErrorReport")) {
+            SvErrorReport.asyncSend(new Error(errorInfo.message), errorInfo);
+        } else {
+            console.warn("SvErrorReport not defined yet, so we cannot send error report");
         }
-        
-        console.table(this.appErrors());
-        
-        // Create a simplified text report
-        let report = `--- JS Error Report (${this.appErrors().length} errors) ---\n\n`;
-        
-        this.appErrors().forEach((err, index) => {
-            report += `[${index + 1}] ${err.timestamp}\n`;
-            report += `Message: ${err.message}\n`;
-            report += `Location: ${err.source.split('/').pop()}:${err.lineno}:${err.colno}\n`;
-            if (err.stack) {
-                report += `Stack: ${err.stack.split('\n')[0]}\n`;
-            }
-            report += '\n';
-        });
-        
-        console.log(report);
-        return report;
     }
     
     /**
@@ -398,11 +317,15 @@
 
     test () {
         setTimeout(() => {
-            throw new Error("Missing Service API Key");
+            throw new Error("WindowErrorPanel test error");
         }, 300);
     }
 
-}.initThisClass());
+};
+
+SvGlobals.set("WindowErrorPanel", WindowErrorPanel);
+
+WindowErrorPanel.shared();
 
 //WindowErrorPanel.shared(); // Move to app init until this class is extracted from Strvct
 

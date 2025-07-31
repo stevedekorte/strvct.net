@@ -175,7 +175,7 @@
       payload: this.asJson() // special case JSON representation which we also share with AI
     }
     if (this.player()) {
-      json.playerId = this.player().playerId()
+      json.userId = this.player().userId()
     }
     return json;
   }

@@ -6,10 +6,10 @@
 
 /**
  * @class DomView
- * @extends EditableDomView
+ * @extends SvCoachableDomView
  * @classdesc DomView class for subclasses to extend. Ancestors of this class are organizational parts of DomView.
  */
-(class DomView extends EditableDomView {
+(class DomView extends SvCoachableDomView {
     
     /**
      * @description Initializes the prototype slots for the DomView class.
@@ -21,11 +21,6 @@
     initPrototypeSlots () {
     }
 
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
-
 }.initThisClass());
+
+//throw new Error("TEST!");

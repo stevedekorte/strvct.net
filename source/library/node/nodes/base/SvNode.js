@@ -224,6 +224,11 @@
             const slot = this.newSlot("footerNode", null);
             slot.setSlotType("SvNode");
         }
+
+        {
+            const slot = this.newSlot("didPrepareForFirstAccess", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**
@@ -1007,14 +1012,6 @@
         const note = this.didUpdateNodeNote();
 
         if (note) {
-            /*
-            if (this.type() === "UoLocations") {
-                if (!SvNotificationCenter.shared().hasNotification(note)) {
-                    console.log(this.typeId() + " '" + this.title() + "' POST didUpdateNode - subnodesCount: " + this.subnodesCount());
-                    //debugger;
-                }
-            }
-            */
             note.post();
         }
         
@@ -1083,8 +1080,8 @@
      */
     prepareToAccess () {
         // this should be called whenever subnodes need to be accessed? See willGetSlotSubnodes
-        if (!this._didPrepareForFirstAccess) {
-            this._didPrepareForFirstAccess = true;
+        if (!this.didPrepareForFirstAccess()) {
+            this.setDidPrepareForFirstAccess(true);
             this.prepareForFirstAccess();
         }
     }

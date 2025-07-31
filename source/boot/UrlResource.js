@@ -202,7 +202,7 @@
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
                 if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
-                    console.log("UrlResource load from cache: " + this.path());
+                    //console.log("UrlResource load from cache: " + this.path());
                     //debugger;
                 }
                 return this;
@@ -212,7 +212,8 @@
                 //console.log("UrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
-                //console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash() );
+                console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
         } else {

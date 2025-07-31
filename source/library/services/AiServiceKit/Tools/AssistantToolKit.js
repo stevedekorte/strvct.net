@@ -175,7 +175,6 @@ The following formats will be used for tool calls and responses:
     const completedCalls = this.toolCalls().completedCalls();
     if (completedCalls.length > 0) {
       if (completedCalls.filter((toolCall) => toolCall.toolResult().doesRequireResponse()).length > 0) {
-        //debugger;
         const m = this.conversation().newUserMessage();
         m.setSpeakerName("Tool Call Results");
         const content = this.composeResponseForToolCalls(completedCalls);
@@ -183,11 +182,9 @@ The following formats will be used for tool calls and responses:
         //debugger;
         m.setIsVisibleToUser(false);
         assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");
-        //debugger;
         m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
         //const responseMessage = m.requestResponse();
         //await responseMessage.completionPromise();
-        //debugger;
         assert(!m.isVisibleToUser());
       }
       this.toolCalls().removeCalls(completedCalls);

@@ -9,6 +9,7 @@
     "ControlDomView.js",
     "SelectableDomView.js",
     "EditableDomView.js",
+    "SvCoachableDomView.js",
     "DomView.js",
     "DomView_animations.js",
     "DomView_browserDragAndDrop.js",

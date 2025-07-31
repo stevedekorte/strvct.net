@@ -8,9 +8,9 @@
     "PanelView.js",
     "SvgIconCache.js",
     "SvgIconView.js",
-    "HtmlElement_textField.js",
+    "browser-only/_imports.json",
     "SvTextView.js",
     "SvPasswordView.js",
-    "WindowErrorPanel.js"
+    "coachmarks/_imports.json"
 ]
 

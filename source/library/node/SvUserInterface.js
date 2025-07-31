@@ -21,9 +21,6 @@
     init () {
         super.init();
         //WebDocument.shared().setTitle(this.app().name());
-
-        // Register for window errors
-        //WindowErrorPanel.shared().registerForWindowErrors();
         return this;
     }
 

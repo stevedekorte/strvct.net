@@ -1,5 +1,6 @@
 [
     "SvSummaryNode.js",
+    "SvCoachMarkManager.js",
     "SvFolderNode.js",
     "SvImageNode.js",
     "SvTextNode.js",

@@ -11,6 +11,7 @@
 class BootLoader extends Object {
 
   static _files = [
+    "WindowErrorPanel.js",
     "Object_categorySupport.js",
     "Object_boot.js",
     "Helpers.js",
