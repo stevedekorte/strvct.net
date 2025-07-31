@@ -345,7 +345,7 @@
 
         const jsResources = this.jsResources().slice();
         // Now evaluate JS resources in sequence (order matters for dependencies)
-        //await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => {
+        //await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => { // very slow this way!
         await jsResources.promiseSerialForEach(async (r /*, index*/) => {
             //this.updateBar();
             //BootLoadingView.shared().setSubtitle(n + " / " + ResourceManager.shared().updateUndeferredResourceCount());
