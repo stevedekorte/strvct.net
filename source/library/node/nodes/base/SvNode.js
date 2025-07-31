@@ -1023,6 +1023,8 @@
         if (this.parentNode()) {
             assert(this.parentNode() !== this);
             this.parentNode().didUpdateNodeIfInitialized();
+        } else if (this.ownerNode()) {
+            this.ownerNode().didUpdateNodeIfInitialized();
         }
 
         return true;

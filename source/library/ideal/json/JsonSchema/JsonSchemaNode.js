@@ -148,33 +148,6 @@
   }
 
   /**
-   * Handles post-update tasks
-   * @description Schedules a UI update if the update was triggered by user input and a player is associated with this instance
-   * @category Event Handling
-   */
-  didUpdateNode () {
-    super.didUpdateNode()
-
-    //console.log("Character '" + this.name() + "' didUpdateNode " + EventManager.shared().currentEventName() + " isUserInput:" + EventManager.shared().currentEventIsUserInput())
-    if (EventManager.shared().currentEventIsUserInput()) {
-      //console.log(this.type() + " '" + this.name() + "' didUpdateNode (FROM USER INPUT)")
-      if (this.player()) {
-        this.scheduleMethod("shareUiUpdate")
-      }
-    }
-  }
-
-  /**
-   * Shares the UI update with the player's session
-   * @description Shares the UI update with the player's session, if a player is associated with this instance
-   * @category UI Management
-   */
-  shareUiUpdate () {
-    console.log(this.type() + " '" + this.name() + "' shareUiUpdate")
-    this.player().session().onLocalUiUpdateCharacter(this)
-  }
-
-  /**
    * Sets up this instance as a sample
    * @description Sets up this instance and its subnodes as a sample
    * @returns {JsonSchemaNode} This instance
