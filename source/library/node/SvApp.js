@@ -177,6 +177,7 @@
             return;
         }
         this.setIsRunning(true);
+        this.userInterface().setApp(this);
         await this.userInterface().assertCanRun(); // e.g. check for other tabs
         await this.initAndOpenStore(); // will create model
         await this.setup();
