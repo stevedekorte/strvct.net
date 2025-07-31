@@ -6,15 +6,6 @@
 
 // --- eval source url --------------------------------
 
-/*
-function evalStringFromSourceUrl (codeString, path) {
-    const sourceUrl = `\n//# sourceURL=` + path + ``; // NOTE: this didn't work in Chrome if the path was inside single or double quotes
-    const debugCode = codeString + sourceUrl;
-    //console.log("eval: ", path);
-    eval(debugCode);
-};
-*/
-
 function evalStringFromSourceUrl (codeString, path) {
     // Based on git history, adding a leading slash fixed VSCode breakpoints in May 2022
     // However, as of 2025, VSCode requires relative paths (no leading slash) for proper file mapping
@@ -45,7 +36,8 @@ function evalStringFromSourceUrl (codeString, path) {
             result = globalEval.call(globalObj, debugCode);
         } else {
             // Browser: Direct eval (runs in global scope already)
-            result = eval(debugCode);
+            //result = eval(debugCode);
+            result = new Function(debugCode)();
         }
         
         //console.log("✅ Successfully evaluated:", path);

@@ -195,12 +195,18 @@
      * @category Caching
      */
     async prechacheWhereAppropriate () {
+        BootLoadingView.shared().setSubtitle("prechaching...");
+
         //console.log(this.type() + ".prechacheWhereAppropriate()");
-        await this.subnodes().promiseParallelMap(async (node) => {
+        //promiseSerialTimeoutsForEach
+        await this.subnodes().promiseSerialTimeoutsForEach(async (node) => {
             //console.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
             //debugger;
+            BootLoadingView.shared().setSubtitle("prechaching " + node.title());
             await node.prechacheWhereAppropriate();
         });
+        BootLoadingView.shared().setSubtitle("prechaching done");
+
         this.postNoteNamed("onResourcesDidPrechache");
         return this;
     }

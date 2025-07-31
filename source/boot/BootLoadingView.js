@@ -13,6 +13,7 @@ class BootLoadingView extends Object {
     super();
     this._isClosing = false;
     this._hasInitialized = false;
+    this._currentBarRatio = 0;
     //this._interval = null;
   }
 
@@ -203,16 +204,15 @@ class BootLoadingView extends Object {
       barElement.style.transition = 'width 0.3s ease-out';
     }
 
-    const v = Math.round(100 * r) / 100; // limit to 2 decimals
-    barElement.style.width = 10 * v + "em";
+    const v = Math.round(100 * r) / 100; 
+    if (v !== this._currentBarRatio) {
+      this._currentBarRatio = v;
+      barElement.style.width = 10 * v + "em";
+    }
     //console.log("setBarRatio", v);
     return this;
   }
 
-  setBarFraction (f) {
-    this.setBarToNofM(f, 1);
-    return this;
-  }
 
   /**
    * @method setBarToNofM
@@ -222,10 +222,6 @@ class BootLoadingView extends Object {
    * @returns {BootLoadingView} The current instance for chaining.
    */
   setBarToNofM (n, count) {
-    if (!this.isAvailable() || this.isClosing()) {
-      return this;
-    }
-
     this.setBarRatio(n / count);
     return this;
   }
@@ -253,6 +249,7 @@ class BootLoadingView extends Object {
     if (!this.isAvailable()) {
       return;
     }
+    this.setSubtitle("");
 
     const e = this.element();
 

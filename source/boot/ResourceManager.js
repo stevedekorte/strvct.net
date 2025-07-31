@@ -313,6 +313,7 @@
      */
     async evalIndexResources () {
         BootLoadingView.shared().setTitle("Loading...");
+        BootLoadingView.shared().setSubtitle("fetching resources");
 
         const undeferredPromises = this.undeferredResources().map(r => r.promiseLoad());
         await Promise.all(undeferredPromises);
@@ -333,26 +334,29 @@
 
         //const cssCount = this.cssResources().length;
         // Now evaluate CSS in sequence (order matters for cascading)
-        BootLoadingView.shared().setTitle("Evaluating CSS...");
-        this.cssResources().promiseSerialTimeoutsForEach(async (r /*, index*/) => {
+        BootLoadingView.shared().setSubtitle("compiling");
+        console.log("------------ Evaluating ------------");
+
+        //BootLoadingView.shared().setTitle("Evaluating CSS...");
+        this.cssResources().promiseSerialForEach(async (r /*, index*/) => {
             this.updateBar();
             r.eval();
         });
 
         const jsResources = this.jsResources().slice();
-        BootLoadingView.shared().setTitle("Evaluating JS...");
         // Now evaluate JS resources in sequence (order matters for dependencies)
-        await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => {
-            this.updateBar();
+        //await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => {
+        await jsResources.promiseSerialForEach(async (r /*, index*/) => {
+            //this.updateBar();
             //BootLoadingView.shared().setSubtitle(n + " / " + ResourceManager.shared().updateUndeferredResourceCount());
             r.eval();
         });
-        BootLoadingView.shared().setTitle("Initializing...");
+        BootLoadingView.shared().setSubtitle("Initializing...");
         console.log("------------ Initializing ------------");
         this.onDone();
     }
 
-    countOfLoadedUndeferredResources () {
+    countOfEvaledUndeferredResources () {
         let count = 0;
         this.undeferredResources().forEach(r => {
             if (r.didEval()) {
@@ -366,10 +370,10 @@
         if (this._indexResources === null) {
             return;
         }
-        const n = this.countOfLoadedUndeferredResources();
+        const n = this.countOfEvaledUndeferredResources();
         const m = this.undeferredResourceCount();   
-        BootLoadingView.shared().setBarFraction(n / m);
-        BootLoadingView.shared().setSubtitle(n + " / " + m);
+        BootLoadingView.shared().setBarRatio(n / m);
+        //BootLoadingView.shared().setSubtitle(n + " / " + m);
     }
 
     /**

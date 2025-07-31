@@ -29,7 +29,8 @@
 
                     const v = array[index];
                     await aPromiseBlock(v, index);
-                    setTimeout(() => nextFunc(array, index+1), 0);
+                    //setTimeout(() => nextFunc(array, index+1), 0);
+                    requestIdleCallback(() => nextFunc(array, index+1));
                 } catch (error) {
                     reject(error);
                 }

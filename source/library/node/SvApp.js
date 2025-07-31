@@ -191,6 +191,8 @@
     }
 
      async initAndOpenStore () {
+        BootLoadingView.shared().setSubtitle("open store");
+
         this.setStore(this.defaultStore());
         this.store().setName(this.type()); // name of the database
 
@@ -239,6 +241,8 @@
         }
         this.setModel(this.store().rootObject());
         this.model().setApp(this);
+        BootLoadingView.shared().setSubtitle("store opened");
+
     }
 
     pauseReactiveSystem () {
@@ -256,6 +260,8 @@
      * @category Initialization
      */
     async setup () {
+        BootLoadingView.shared().setSubtitle("app setup");
+
         this.pauseReactiveSystem();
 
         await this.setupModel();
@@ -263,6 +269,8 @@
         await this.appDidInit();
 
         this.resumeReactiveSystem();
+        BootLoadingView.shared().setSubtitle("app initialized");
+
         /*
         setTimeout(() => {
             //console.log("All synchronous operations completed - ready to render");
@@ -276,6 +284,8 @@
     }
 
     async setupUserInterface () {
+        BootLoadingView.shared().setSubtitle("user interface");
+
         if (SvPlatform.isBrowserPlatform()) {
             this.userInterface().setApp(this);
             await this.userInterface().setup();
