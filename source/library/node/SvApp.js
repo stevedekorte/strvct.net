@@ -191,7 +191,7 @@
     }
 
      async initAndOpenStore () {
-        BootLoadingView.shared().setSubtitle("open store");
+        BootLoadingView.shared().setSubtitle("open store", 0.3);
 
         this.setStore(this.defaultStore());
         this.store().setName(this.type()); // name of the database
@@ -232,17 +232,16 @@
         if (!isCorrectModel) { 
             console.error("Model is not correct type: " + this.store().rootObject().thisClass().type());
             if (this._attemptToResetStore === true) { 
+                debugger;
                 throw new Error("Failed to open store with correct model after reset");
             }
             this._attemptToResetStore = true;
             await this.clearStoreThenClose();
             await this.openStore();
-            debugger;
         }
         this.setModel(this.store().rootObject());
         this.model().setApp(this);
-        BootLoadingView.shared().setSubtitle("store opened");
-
+        BootLoadingView.shared().setSubtitle("store opened", 0.5);
     }
 
     pauseReactiveSystem () {
@@ -269,14 +268,7 @@
         await this.appDidInit();
 
         this.resumeReactiveSystem();
-        BootLoadingView.shared().setSubtitle("app initialized");
-
-        /*
-        setTimeout(() => {
-            //console.log("All synchronous operations completed - ready to render");
-            this.afterFirstRender();
-        }, 2);
-        */
+        BootLoadingView.shared().setSubtitle("app initialized", 0.7);
     }
 
     async setupModel () {
@@ -284,14 +276,13 @@
     }
 
     async setupUserInterface () {
-        BootLoadingView.shared().setSubtitle("user interface");
+        BootLoadingView.shared().setSubtitle("setup ui", 0.6);
 
         if (SvPlatform.isBrowserPlatform()) {
             this.userInterface().setApp(this);
             await this.userInterface().setup();
         }
     }
-
 
     /**
      * @description Called when the app has finished initializing
@@ -325,18 +316,6 @@
     }
 
     /**
-     * @description Called after the first render
-     * @category Lifecycle
-     */
-    /*
-    afterFirstRender () {
-        ResourceManager.shared().markPageLoadTime();
-        //document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        //document.title = this.name();
-    }
-    */
-
-    /**
      * @description Sets the name of the app
      * @param {string} aString - The new name
      * @returns {SvApp} The app instance
@@ -365,7 +344,6 @@
     fullVersionString () {
         return "Application '" + this.name() + "' version " + this.versionsString();
     }
-
 
     // developer mode
 

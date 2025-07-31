@@ -154,12 +154,15 @@ class BootLoadingView extends Object {
     return this.titleElement().innerText;
   }
 
-  setSubtitle (s) {
+  setSubtitle (s, ratio = null) {
     if (!this.isAvailable() || this.isClosing()) {
       return this;
     }
     this.subtitleElement().innerText = s;
     console.log("BootLoadingView setSubtitle: [" + s + "]");
+    if (ratio !== null) {
+      this.setBarRatio(ratio);
+    }
     return this;
   }
 
@@ -200,9 +203,10 @@ class BootLoadingView extends Object {
     const barElement = this.barElement();
     
     // Add smooth transition for width changes if not already present
-    if (!barElement.style.transition) {
-      barElement.style.transition = 'width 0.3s ease-out';
+    /*if (!barElement.style.transition) {
+      barElement.style.transition = 'width 1s ease-out';
     }
+      */
 
     const v = Math.round(100 * r) / 100; 
     if (v !== this._currentBarRatio) {

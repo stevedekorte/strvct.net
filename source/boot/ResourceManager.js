@@ -313,7 +313,7 @@
      */
     async evalIndexResources () {
         BootLoadingView.shared().setTitle("Loading...");
-        BootLoadingView.shared().setSubtitle("fetching resources");
+        BootLoadingView.shared().setSubtitle("fetching resources", 0);
 
         const undeferredPromises = this.undeferredResources().map(r => r.promiseLoad());
         await Promise.all(undeferredPromises);
@@ -334,7 +334,7 @@
 
         //const cssCount = this.cssResources().length;
         // Now evaluate CSS in sequence (order matters for cascading)
-        BootLoadingView.shared().setSubtitle("compiling");
+        BootLoadingView.shared().setSubtitle("compiling", 0.1);
         console.log("------------ Evaluating ------------");
 
         //BootLoadingView.shared().setTitle("Evaluating CSS...");
@@ -351,7 +351,7 @@
             //BootLoadingView.shared().setSubtitle(n + " / " + ResourceManager.shared().updateUndeferredResourceCount());
             r.eval();
         });
-        BootLoadingView.shared().setSubtitle("Initializing...");
+        BootLoadingView.shared().setSubtitle("Initializing...", 0.2);
         console.log("------------ Initializing ------------");
         this.onDone();
     }
