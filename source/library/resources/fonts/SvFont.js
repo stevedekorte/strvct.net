@@ -5,11 +5,17 @@
  */
 
 /**
- * SvFont class for managing font resources.
- * @class
+ * @class SvFont
  * @extends SvResource
- * @classdesc Managed by SvFontResources.
+ * @classdesc A class for managing font resources. Managed by SvFontResources.
+ * Supports the following file extensions: ttf, otf, woff, woff2.
+ * 
+ * When the font is loaded, it will infer the font family, weight, and style from the font name
+ * and use these to compose the name and options arguments for the FontFace constructor.
+ * e.g. Thin Italic will be 100 italic, Light Italic will be 300 italic, etc.
+ * 
  */
+
 (class SvFont extends SvResource {
     
     /**
@@ -19,7 +25,7 @@
      * @category File Operations
      */
     static supportedExtensions () {
-        return ["ttf", "woff", "woff2"];
+        return ["ttf", "otf", "woff", "woff2"];
     }
 
     /**

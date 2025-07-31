@@ -64,6 +64,8 @@
         this._resourceHash = null;
         this._request = null;
         this._data = null;
+        this._didEval = false;
+        this._canDefer = false;
         return this;
     }
 
@@ -75,7 +77,21 @@
      */
     setPath (aPath) {
         this._path = aPath;
+        this._canDefer = aPath.split("/").includes("deferred");
         return this;
+    }
+
+    setDidEval (didEval) {
+        this._didEval = didEval;
+        return this;
+    }
+
+    didEval () {
+        return this._didEval;
+    }
+
+    canDefer () {
+        return this._canDefer;
     }
 
     /**
@@ -158,6 +174,7 @@
         if (this._data) {
             return this;
         }
+        ResourceManager.shared().updateBar();
 
         //console.log("UrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
@@ -250,11 +267,17 @@
      * @category Evaluation
      */
     eval () {
+        if (this._didEval) {
+            console.warn("UrlResource already evaluated: " + this.path());
+            return this;
+        }
+
         if (this.pathExtension() === "js") {
             this.evalDataAsJS();
         } else if (this.pathExtension() === "css") {
             this.evalDataAsCss();
         }
+        this.setDidEval(true);
     }
 
     /**
@@ -375,4 +398,9 @@
             await UrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }
+
+    isLoaded () {
+        return this._data !== null;
+    }
+
 }).initThisClass();

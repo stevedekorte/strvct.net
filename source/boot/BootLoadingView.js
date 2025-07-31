@@ -111,6 +111,10 @@ class BootLoadingView extends Object {
     return document.getElementById("loadingViewTitle");
   }
 
+  subtitleElement () {
+    return document.getElementById("loadingViewSubtitle");
+  }
+
   /**
    * @method barElement
    * @category DOM
@@ -148,6 +152,20 @@ class BootLoadingView extends Object {
   title  () {
     return this.titleElement().innerText;
   }
+
+  setSubtitle (s) {
+    if (!this.isAvailable() || this.isClosing()) {
+      return this;
+    }
+    this.subtitleElement().innerText = s;
+    console.log("BootLoadingView setSubtitle: [" + s + "]");
+    return this;
+  }
+
+  subtitle () {
+    return this.subtitleElement().innerText;
+  }
+
 
   /**
    * @method setErrorMessage
@@ -188,6 +206,11 @@ class BootLoadingView extends Object {
     const v = Math.round(100 * r) / 100; // limit to 2 decimals
     barElement.style.width = 10 * v + "em";
     //console.log("setBarRatio", v);
+    return this;
+  }
+
+  setBarFraction (f) {
+    this.setBarToNofM(f, 1);
     return this;
   }
 

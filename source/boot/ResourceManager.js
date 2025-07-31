@@ -124,6 +124,19 @@
             assert(resource.resourceHash() === entry.hash);
             return resource;
         });
+        this.updateUndeferredResourceCount();
+    }
+
+    undeferredResources () {
+        return this._indexResources.filter(r => !r.canDefer());
+    }
+
+    updateUndeferredResourceCount () {
+        return this._undeferredResourceCount = this.undeferredResources().length;
+    }
+
+    undeferredResourceCount () {
+        return this._undeferredResourceCount;
     }
 
     /**
@@ -299,62 +312,64 @@
      * @returns {Promise<void>}
      */
     async evalIndexResources () {
-        let count = 0;
+        BootLoadingView.shared().setTitle("Loading...");
 
-        //console.log("📋 CSS Resources:", this.cssResources().length);
-        // this.cssResources().forEach((r, i) => console.log(`  ${i}: ${r.path()}`));
+        const undeferredPromises = this.undeferredResources().map(r => r.promiseLoad());
+        await Promise.all(undeferredPromises);
         
-        //console.log("📋 JS Resources:", this.jsResources().length);
-        // this.jsResources().forEach((r, i) => console.log(`  ${i}: ${r.path()}`));
-
-        // Load all files in parallel first
-        //console.log("🔄 Loading all resources in parallel...");
-        
+        /*
         // Load CSS resources in parallel
-        const cssLoadPromises = this.cssResources().map(async (r) => {
-            await r.promiseLoad();
-            return r;
-        });
+        const cssLoadPromises = this.cssResources().map(r => r.promiseLoad());
         
         // Load JS resources in parallel  
-        const jsLoadPromises = this.jsResources().map(async (r) => {
-            await r.promiseLoad();
-            return r;
-        });
+        const jsLoadPromises = this.jsResources().map(r => r.promiseLoad());
         
         // Wait for all loads to complete
         await Promise.all([...cssLoadPromises, ...jsLoadPromises]);
-        //console.log("✅ All resources loaded");
+        const cssCount = this.cssResources().length;
+        //console.log("✅ All CSS and JS resources loaded");
 
+        */
+
+        //const cssCount = this.cssResources().length;
         // Now evaluate CSS in sequence (order matters for cascading)
-        //console.log("🔄 Evaluating CSS resources in sequence...");
-        this.cssResources().forEach((r) => {
-            //console.log("🎨 Evaluating CSS:", r.path());
+        BootLoadingView.shared().setTitle("Evaluating CSS...");
+        this.cssResources().promiseSerialTimeoutsForEach(async (r /*, index*/) => {
+            this.updateBar();
             r.eval();
         });
-        //console.log("✅ CSS resources evaluated");
 
-        // Evaluate JS in sequence (dependency order matters)
-        //console.log("🔄 Evaluating JS resources in sequence...");
-        for (const r of this.jsResources()) {
-            count++;
-            //console.log(`📦 Evaluating JS ${count}/${this.jsResources().length}:`, r.path());
-            BootLoadingView.shared().setBarToNofM(count, this.jsResources().length);
-            try {
-                r.eval();
-            } catch (error) {
-                // Add context to the error and re-throw to stop the entire process
-                error.fileName = r.path();
-                error.fileIndex = count;
-                error.totalFiles = this.jsResources().length;
-                throw error;
+        const jsResources = this.jsResources().slice();
+        BootLoadingView.shared().setTitle("Evaluating JS...");
+        // Now evaluate JS resources in sequence (order matters for dependencies)
+        await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => {
+            this.updateBar();
+            //BootLoadingView.shared().setSubtitle(n + " / " + ResourceManager.shared().updateUndeferredResourceCount());
+            r.eval();
+        });
+        BootLoadingView.shared().setTitle("Initializing...");
+        console.log("------------ Initializing ------------");
+        this.onDone();
+    }
+
+    countOfLoadedUndeferredResources () {
+        let count = 0;
+        this.undeferredResources().forEach(r => {
+            if (r.didEval()) {
+                count ++;
             }
-        }
-        //console.log("✅ JS resources evaluated");
+        });
+        return count;
+    }
 
-        //console.log("🏁 Calling onDone...");
-        this.onDone(); 
-        //console.log("✅ onDone completed");
+    updateBar () {    
+        if (this._indexResources === null) {
+            return;
+        }
+        const n = this.countOfLoadedUndeferredResources();
+        const m = this.undeferredResourceCount();   
+        BootLoadingView.shared().setBarFraction(n / m);
+        BootLoadingView.shared().setSubtitle(n + " / " + m);
     }
 
     /**

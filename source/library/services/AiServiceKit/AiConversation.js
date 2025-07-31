@@ -161,46 +161,23 @@
     this.setTagDelegate(this); // needed to get tool calls
     this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
     this.setResponseMsgClass(AiParsedResponseMessage);
-    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
-    //this.watchForNote("onBrowserOnline");
-    //this.watchForNote("onBrowserOffline");
   }
 
   didInit () {
     super.didInit();
+    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+    return this;
+  }
+
+  prepareForFirstAccess () {
+    super.prepareForFirstAccess();
     this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
     return this;
   }
 
-  /*
-  onBrowserOnline () {
-    console.log("onBrowserOnline");
-    this.setChatInputIsEnabled(true);
-  }
-
-  onBrowserOffline () {
-    console.log("onBrowserOffline");
-    this.setChatInputIsEnabled(false);
-  }
-*/
-
-  /*
-  afterInit () {
-    super.afterInit();
-    //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
-  }
-  */
-  /*
-  prepareForFirstAccess () {
-    super.prepareForFirstAccess();
-    debugger;
-    this.assistantToolKit().toolDefinitions().addToolsForInstance(this);
-    return this;
-  }
-  */
-
-  initPrototypeToolSlots () {
+  initPrototypeToolSlots () { // no super initPrototypeToolSlots() because we are not an assistable JSON group?
     // placeholder for subclasses to override
+    assert(this.isPrototype(), "initPrototypeToolSlots() should only be called on a prototype");
   }
 
   jsonHistoryString () {
@@ -212,9 +189,6 @@
     }
     return "[no messages]";
   }
-
-
-
 
   /**
    * @description Gets the service associated with the chat model.

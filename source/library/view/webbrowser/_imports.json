@@ -1,4 +1,5 @@
 [
+    "SvWebBrowserTab.js",
     "WebBrowserScreen.js",
     "cookies/_imports.json",
     "WebBrowserWindow.js",

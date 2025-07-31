@@ -177,8 +177,16 @@
             return;
         }
         this.setIsRunning(true);
+        await this.checkForOtherTabs();
         await this.initAndOpenStore(); // will create model
         await this.setup();
+    }
+
+    async checkForOtherTabs () {
+        const tab = SvWebBrowserTab.clone();
+        tab.setAppName(this.name());
+        const hasOtherTabs = await tab.hasOtherTabsOpen();
+        assert(!hasOtherTabs, "Another tab running this application is already open.\nPlease close it before running this application again.");
     }
 
     // --- open store ---
