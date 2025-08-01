@@ -80,7 +80,7 @@ class WindowErrorPanel extends Object {
             });
             
             this.setIsRegistered(true);
-            console.log("WindowErrorPanel: Registered for window error events");
+            //console.log("WindowErrorPanel: Registered for window error events");
         }
         return this;
     }

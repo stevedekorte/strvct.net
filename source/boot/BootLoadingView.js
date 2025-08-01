@@ -14,6 +14,8 @@ class BootLoadingView extends Object {
     this._isClosing = false;
     this._hasInitialized = false;
     this._currentBarRatio = 0;
+    this._updateCount = 0;
+    this._maxUpdateCount = 9;
     //this._interval = null;
   }
 
@@ -154,15 +156,22 @@ class BootLoadingView extends Object {
     return this.titleElement().innerText;
   }
 
-  setSubtitle (s, ratio = null) {
+  setSubtitle (s) {
     if (!this.isAvailable() || this.isClosing()) {
       return this;
     }
+
+    let ratio = Math.min( this._updateCount / this._maxUpdateCount, 1);
+
     this.subtitleElement().innerText = s;
-    console.log("BootLoadingView setSubtitle: [" + s + "]");
+    
+    //console.log("-- BootLoadingView setSubtitle(\"" + s + "\") #" + this._updateCount);
+
     if (ratio !== null) {
       this.setBarRatio(ratio);
     }
+
+    this._updateCount ++;
     return this;
   }
 

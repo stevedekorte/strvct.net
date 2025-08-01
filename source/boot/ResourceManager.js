@@ -313,7 +313,7 @@
      */
     async evalIndexResources () {
         BootLoadingView.shared().setTitle("Loading...");
-        BootLoadingView.shared().setSubtitle("fetching resources", 0);
+        BootLoadingView.shared().setSubtitle("fetching resources");
 
         const undeferredPromises = this.undeferredResources().map(r => r.promiseLoad());
         await Promise.all(undeferredPromises);
@@ -334,8 +334,8 @@
 
         //const cssCount = this.cssResources().length;
         // Now evaluate CSS in sequence (order matters for cascading)
-        BootLoadingView.shared().setSubtitle("compiling", 0.1);
-        console.log("------------ Evaluating ------------");
+        BootLoadingView.shared().setSubtitle("compiling");
+        console.log("--- Evaluating CSS and JS ---");
 
         //BootLoadingView.shared().setTitle("Evaluating CSS...");
         this.cssResources().promiseSerialForEach(async (r /*, index*/) => {
@@ -351,8 +351,8 @@
             //BootLoadingView.shared().setSubtitle(n + " / " + ResourceManager.shared().updateUndeferredResourceCount());
             r.eval();
         });
-        BootLoadingView.shared().setSubtitle("Initializing...", 0.2);
-        console.log("------------ Initializing ------------");
+        BootLoadingView.shared().setSubtitle("running app");
+        console.log("--- Running App ---"); // _init.js has scheduled a timer to start the app when we return to event loop
         this.onDone();
     }
 

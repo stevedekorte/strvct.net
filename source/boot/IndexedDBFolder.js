@@ -76,21 +76,21 @@
      * Checks if IndexedDB is available.
      * @returns {boolean} - True if IndexedDB is available, false otherwise.
      */
-        hasIndexedDB () {
-            return this.indexedDB() !== undefined;
+    hasIndexedDB () {
+        return this.indexedDB() !== undefined;
+    }
+
+    /**
+     * Checks if the Storage API is available.
+     * @returns {boolean} - True if the Storage API is available, false otherwise.
+     */
+    hasStorageApi () {
+        const nav = this.navigator()
+        if (nav) {
+            return nav.storage && nav.storage.persist;
         }
-    
-        /**
-         * Checks if the Storage API is available.
-         * @returns {boolean} - True if the Storage API is available, false otherwise.
-         */
-        hasStorageApi () {
-            const nav = this.navigator()
-            if (nav) {
-                return nav.storage && nav.storage.persist;
-            }
-            return false;
-        }
+        return false;
+    }
 
     /**
      * Sets the path of the folder.
@@ -141,7 +141,7 @@
         if (granted) {
             console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
         } else {
-            console.warn("WARNING: IndexedDBFolder: Storage may be cleared by the browser under storage pressure.");
+            console.warn(this.type() + " " + this.path() + " WARNING: Storage may be cleared by the browser under storage pressure.");
         }
 
         return granted;

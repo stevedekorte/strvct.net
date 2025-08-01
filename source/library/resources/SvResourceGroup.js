@@ -106,7 +106,7 @@
      * @category Resource Management
      */
     async setupSubnodes () {
-        console.log(this.type() + " setupSubnodes begin with " + this.urlResources().length + " url resources");
+        //console.log(this.type() + " setupSubnodes begin with " + this.urlResources().length + " url resources");
 
         await this.urlResources().promiseParallelForEach(async (r) => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
@@ -117,11 +117,12 @@
                 //aResource.asyncLoad(); // don't wait for this one
             } else {
                 await aResource.asyncLoad(); // do this in parallel
-                console.log("asyncLoaded resource: " + aResource.path());
+                //console.log("asyncLoaded resource: " + aResource.path());
             }
             this.addResource(aResource);
         });
-        console.log(this.type() + " setupSubnodes done");
+        
+        //console.log(this.type() + " setupSubnodes done");
 
         if (this.type() !== "SvFileResources") {
             //assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
@@ -220,15 +221,15 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        //console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
         //debugger;
         await this.resources().promiseParallelMap(async (r) => {
-            console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
+            //console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {
                 await r.prechacheWhereAppropriate();
             }
         });
-        console.log("resource group: " + this.type() + ".prechacheWhereAppropriate() done");
+        //console.log("resource group: " + this.type() + ".prechacheWhereAppropriate() done");
         return this;
     }
 
