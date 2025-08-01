@@ -8,7 +8,12 @@
  * @classdesc Manages a collection of browser cookies.
  * Provides methods for reading and managing multiple cookies.
  * 
- * Usage example:
+ * Usage examples:
+ * 
+ * // simple example
+ * WbCookieManager.shared().setValueOfCookieNamed("returnUrl", window.location.href);
+ * 
+ * // more complex example
  * const cookie = WbCookieManager.shared().cookieNamed("myCookie");
  * if (cookie) {
  *     cookie.setValue("myValue");
