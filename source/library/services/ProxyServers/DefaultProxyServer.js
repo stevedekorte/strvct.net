@@ -22,7 +22,7 @@
    * @description Initializes the instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
   }
 
@@ -30,7 +30,7 @@
    * @description Performs final initialization steps.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit()
     this.setTitle("Default Proxy Server");
     this.setParameterName("proxyUrl");
@@ -51,15 +51,5 @@
       this.setIsSecure(loc.protocol === "https:");
     }
   }
-
-  /*
-  getWindowLocationURL () {
-    if (window) {
-      return new URL(window.location.href);
-    } else {
-      return null;
-    }
-  }
-  */
 
 }.initThisClass());

@@ -1,68 +1,43 @@
 /**
- * @module library.view.dom.DomView
+ * @module library.node.node_views
  */
 
 "use strict";
 
 /**
- * @class SvCoachableDomView
- * @extends EditableDomView
- * @classdesc Adds coach mark support to DomView. Views can register themselves with the
+ * @class SvCoachableView
+ * @extends NodeView
+ * @classdesc Adds coach mark support to NodeView. Views can register themselves with the
  * coach mark manager to provide contextual help to users.
  * 
- * @example
- * // In your view's init() method - simplest usage
- * init() {
- *     super.init();
- *     
- *     this.setupCoachMark({
- *         label: "Click here to add a new item"
- *     });
- *     
- *     return this;
+ * NOTES: At first, we'll stick to just supporting one coach mark at the view level.
+ * 
+ * e.g. A TileView whose node has canDelete() = true, might register a coach mark.
+ * 
+ * syncFromNode() {
+ *   ...
+ *   this.registerForCoachMark();
  * }
  * 
- * @example
- * // More complex example with conditions
- * init() {
- *     super.init();
- *     
- *     this.setupCoachMark({
- *         id: "save-button-hint",
- *         label: "Don't forget to save your changes!",
- *         priority: 100, // Show this before other hints
- *         condition: () => this.hasUnsavedChanges()
- *     });
- *     
- *     return this;
- * }
- * 
- * @example
- * // Dynamic coach mark based on user state
- * onUserLevelChanged() {
- *     if (this.userLevel() === 5) {
- *         this.setupCoachMark({
- *             id: "advanced-feature-unlock",
- *             label: "New feature unlocked! Try the advanced mode",
- *             priority: 200
- *         });
+ * registerForCoachMark () {
+ *   if (this.canDelete()) {
+ *     const cm = this.coachMarkManager();
+ *     const id = "TileView-canDelete";
+ *     if (!cm.hasRegisteredCoachMark(id)) {
+ *       cm.registerCoachMarkDict({
+ *         id: id, 
+ *         label: "You can delete this by left dragging it."
+ *       });
  *     }
+ *   }
  * }
  * 
- * @example
- * // Programmatically trigger coach mark check
- * onBecameVisible() {
- *     // Force a check when view becomes visible
- *     const manager = this.coachMarkManager();
- *     if (manager && this.coachMarkId()) {
- *         manager.checkCoachMark(this.coachMarkId());
- *     }
- * }
  */
-(class SvCoachableDomView extends EditableDomView {
+
+(class SvCoachableView extends NodeView {
     
     /**
-     * @description Initializes the prototype slots for the SvCoachableDomView
+     * @description Initializes the prototype slots for the SvCoachableView
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -132,7 +107,7 @@
      *   - label: Text to display
      *   - priority: Display priority (optional)
      *   - condition: Function that returns true when mark should be shown (optional)
-     * @returns {SvCoachableDomView} The instance for chaining
+     * @returns {SvCoachableView} The instance for chaining
      * @category Coach Mark
      */
     setupCoachMark (config) {
@@ -160,7 +135,7 @@
 
     /**
      * @description Registers this view with the coach mark manager
-     * @returns {SvCoachableDomView} The instance for chaining
+     * @returns {SvCoachableView} The instance for chaining
      * @category Coach Mark
      */
     registerForCoachMark () {
@@ -199,7 +174,7 @@
 
     /**
      * @description Unregisters this view from the coach mark manager
-     * @returns {SvCoachableDomView} The instance for chaining
+     * @returns {SvCoachableView} The instance for chaining
      * @category Coach Mark
      */
     unregisterForCoachMark () {
@@ -219,7 +194,7 @@
 
     /**
      * @description Called when the view becomes visible - checks if coach mark should be shown
-     * @returns {SvCoachableDomView} The instance for chaining
+     * @returns {SvCoachableView} The instance for chaining
      * @category Visibility
      */
     onVisibility () {
@@ -238,7 +213,7 @@
 
     /**
      * @description Cleanup when view is removed
-     * @returns {SvCoachableDomView} The instance for chaining
+     * @returns {SvCoachableView} The instance for chaining
      * @category Lifecycle
      */
     willRemove () {

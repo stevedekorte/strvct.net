@@ -141,7 +141,7 @@
         if (granted) {
             console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
         } else {
-            console.warn(this.type() + " " + this.path() + " WARNING: Storage may be cleared by the browser under storage pressure.");
+            console.warn(this.type() + " '" + this.path() + "' WARNING: Storage may be cleared by the browser under storage pressure.");
         }
 
         return granted;

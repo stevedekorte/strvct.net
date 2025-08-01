@@ -18,6 +18,7 @@
 
 
 (class SvWebBrowserTab extends ProtoClass {
+
   initPrototypeSlots () {
     {
         const slot = this.newSlot("appName", null);
@@ -43,12 +44,22 @@
   initPrototype () {
   }
 
+  getChannelName () {
+    // IndexedDB, sessionStorage, and localStorage are tied to the exact origin of the page.
+    // So we'll use the exact origin in our channel name as the purpose is to avoid
+    // storage synchronization issues.
+    // Note: cookies are tied to the domain, not the origin.
+
+    const origin = SvPlatform.getWindowLocationURL().explicitOrigin();
+    return `${origin}-${this.appName()}-tab`;
+  }
+
   getChannel () {
     if (!this.appName()) {
       throw new Error("setAppName must be called before using the channel.");
     }
     if (!this._channel) {
-      this.setChannel(new BroadcastChannel(`${this.appName()}-tab`));
+      this.setChannel(new BroadcastChannel(this.getChannelName()));
     }
     this.setupResponderIfNeeded();
     return this._channel;
@@ -73,6 +84,8 @@
   }
 
   async hasOtherTabsOpen () {
+    assert(SvPlatform.isBrowserPlatform(), "hasOtherTabsOpen is only supported in the browser");
+
     const channel = this.getChannel();
     return new Promise((resolve) => {
       let seenOther = false;
