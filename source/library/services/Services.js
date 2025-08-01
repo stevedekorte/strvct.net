@@ -75,6 +75,18 @@
             slot.setSlotType("XaiService");
         }
 
+        /**
+         * @member {PiApiService} piApiService
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("piApiService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(PiApiService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("PiApiService");
+        }
+
         
         /**
          * @member {OpenAiService} openAiService

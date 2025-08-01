@@ -6,6 +6,7 @@
     "Groq/_imports.json",
     "Gemini/_imports.json",
     "Leonardo/_imports.json",
+    "PiAPI/_imports.json",
     "Xai/_imports.json",
     "YouTube/_imports.json",
     "Peer/_imports.json",
