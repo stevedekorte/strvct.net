@@ -1,0 +1,97 @@
+Example E-Commerce Database Schema - Table Relationships
+════════════════════════════════════════════════════════
+
+                              ┌─────────────────────┐
+                              │      Customers      │
+                              │ ─────────────────── │
+                              │ • id (UUID, PK)     │
+                              │ • email             │
+                              │ • passwordHash      │
+                              │ • firstName         │
+                              │ • lastName          │
+                              │ • phoneNumber       │
+                              │ • createdAt         │
+                              │ • updatedAt         │
+                              └─────────┬───────────┘
+                                        │
+                                        │ 1
+                                        │
+                      ┌─────────────────┼─────────────────┐
+                      │                 │                 │
+                      │ *               │ *               │ *
+         ┌────────────▼─────────┐ ┌─────▼─────────┐ ┌─────▼──────────┐
+         │       Orders         │ │   Addresses   │ │    Reviews     │
+         │ ──────────────────── │ │ ────────────── │ │ ───────────────│
+         │ • id (UUID, PK)      │ │ • id (UUID,PK)│ │ • id (UUID,PK) │
+         │ • customerId (FK) ───┤ │ • customerId  │ │ • customerId   │
+         │ • orderNumber        │ │ • street      │ │ • productId    │
+         │ • totalAmount        │ │ • city        │ │ • rating       │
+         │ • status             │ │ • state       │ │ • comment      │
+         │ • shippingAddressId  │ │ • zipCode     │ │ • createdAt    │
+         │ • createdAt          │ │ • country     │ │ • updatedAt    │
+         │ • updatedAt          │ │ • isDefault   │ └────────────────┘
+         └──────────┬───────────┘ └───────────────┘
+                    │
+                    │ 1
+                    │
+                    │ *
+       ┌────────────▼─────────┐     ┌─────────────────────┐
+       │     OrderItems       │     │      Products       │
+       │ ──────────────────── │     │ ─────────────────── │
+       │ • id (UUID, PK)      │     │ • id (UUID, PK)     │
+       │ • orderId (FK) ──────┤     │ • name              │
+       │ • productId (FK) ────┼─────┤ • description       │
+       │ • quantity           │     │ • price             │
+       │ • unitPrice          │     │ • categoryId (FK)   │
+       │ • subtotal           │     │ • stockQuantity     │
+       └──────────────────────┘     │ • createdAt         │
+                                    │ • updatedAt         │
+                                    └──────────┬──────────┘
+                                               │
+                                               │ *
+                                               │
+              ┌─────────────────────┐          │ 1
+              │     Categories      │ ─────────┘
+              │ ─────────────────── │
+              │ • id (UUID, PK)     │
+              │ • name              │
+              │ • description       │
+              │ • parentCategoryId │
+              └─────────────────────┘
+
+              ┌─────────────────────┐
+              │    Inventories     │    (No direct relationships)
+              │ ─────────────────── │
+              │ • id (UUID, PK)     │    Tracks stock movements
+              │ • productId        │
+              │ • changeAmount     │
+              │ • changeType       │
+              │ • createdAt        │
+              └─────────────────────┘
+
+Relationship Legend:
+═══════════════════
+1    = One (Parent)
+*    = Many (Child)
+FK   = Foreign Key
+PK   = Primary Key
+──── = Foreign Key Reference
+
+Key Relationships:
+═════════════════
+Customer (1) ←→ (*) Order         - Customer has many orders
+Customer (1) ←→ (*) Address       - Customer has many addresses
+Customer (1) ←→ (*) Review        - Customer has many reviews
+Order (1) ←→ (*) OrderItem        - Order contains many items
+Product (1) ←→ (*) OrderItem      - Product appears in many order items
+Product (1) ←→ (*) Review         - Product has many reviews
+Category (1) ←→ (*) Product       - Category contains many products
+
+Business Logic:
+══════════════
+• Customers are the central entity for the e-commerce system
+• Orders track purchases with associated line items
+• Products are organized into categories with hierarchical structure
+• Reviews allow customers to rate and comment on products
+• Addresses can be reused across multiple orders
+• Inventory tracks stock changes over time
