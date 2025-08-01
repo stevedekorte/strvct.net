@@ -308,7 +308,7 @@
         // Use relative path for VSCode compatibility (no leading slash)
         // URL encode the path to handle spaces and special characters
         const encodedPath = encodeURI(this.path());
-        const sourceUrl = "\n\n//# sourceURL=" + encodedPath + " \n";
+        const sourceUrl = `\n//# sourceURL=${encodedPath}`;
         const debugCssString = cssString + sourceUrl;
         //console.log("eval css: " +  entry.path)
         const element = document.createElement('style');
