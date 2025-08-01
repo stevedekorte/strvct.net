@@ -1,5 +1,7 @@
 [
   "images/_imports.json",
+  "PiApiImageGeneration.js",
+  "PiApiImageGenerations.js",
   "PiApiImagePrompt.js",
   "PiApiImagePrompts.js"
 ]

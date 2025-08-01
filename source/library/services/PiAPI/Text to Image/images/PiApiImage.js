@@ -30,8 +30,25 @@
     }
 
     /**
+     * @member {string} imageUrl
+     * @description The data URL of the loaded image for display.
+     * @category Image Data
+     */
+    {
+      const slot = this.newSlot("imageUrl", "");
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false);
+      slot.setFieldInspectorViewClassName("SvImageWellField"); // This makes it display as an image
+    }
+
+    /**
      * @member {string} dataUrl
-     * @description The data URL of the loaded image.
+     * @description The data URL of the loaded image (alias for imageUrl).
      * @category Image Data
      */
     {
@@ -75,6 +92,16 @@
     }
 
     /**
+     * @member {Object} delegate
+     * @description The delegate object for handling image events.
+     * @category Delegation
+     */
+    {
+      const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
+    }
+
+    /**
      * @member {SvXhrRequest} request
      * @description The current XHR request object for debugging.
      * @category Request
@@ -83,7 +110,8 @@
       const slot = this.newSlot("request", null);
       slot.setSlotType("SvXhrRequest");
       slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     this.setShouldStore(true);
@@ -130,7 +158,16 @@
    * @category Status
    */
   hasLoaded () {
-    return this.dataUrl().length > 0;
+    return this.imageUrl().length > 0;
+  }
+
+  /**
+   * @description Alias for hasLoaded() to match Leonardo interface.
+   * @returns {boolean} True if loaded, false otherwise.
+   * @category Status
+   */
+  isLoaded () {
+    return this.hasLoaded();
   }
 
   /**
@@ -154,32 +191,32 @@
     this.setIsLoading(true);
     this.setError("");
 
-    // Create SvXhrRequest for image loading
-    const request = SvXhrRequest.clone();
-    request.setDelegate(this);
-    request.setUrl(this.url());
-    request.setMethod("GET");
-    request.setResponseType("blob"); // Important for binary image data
-    request.setHeaders({}); // No special headers needed for image loading
+    // Use regular fetch for image loading like Leonardo does
+    const url = this.url();
+    console.log(this.type() + " fetching url: " + url);
     
-    // Store request for debugging
-    this.setRequest(request);
-
     try {
-      await request.asyncSend();
-      
-      if (request.isSuccess()) {
-        const xhr = request.xhr();
-        const blob = xhr.response; // Get the blob response
-        const dataUrl = await blob.asyncToDataUrl();
-        
-        this.onLoaded(dataUrl);
-      } else {
-        throw new Error(`Image load failed: ${request.status()}`);
+      const response = await fetch(url, { method: 'GET' });
+
+      if (!response.ok) {
+          const error = new Error(`HTTP error! Status: ${response.status}`);
+          throw error;
       }
+
+      const blob = await response.blob();
+      const dataUrl = await blob.asyncToDataUrl();
+      this.onLoaded(dataUrl);
     } catch (error) {
       this.onError(error);
     }
+  }
+
+  /**
+   * @description Alias for fetch() to match the interface expected by generation classes.
+   * @category Loading
+   */
+  async asyncFetch () {
+    return await this.fetch();
   }
 
   /**
@@ -188,15 +225,15 @@
    * @category Loading
    */
   onLoaded (dataUrl) {
-    this.setDataUrl(dataUrl);
+    this.setImageUrl(dataUrl); // This is what displays the image in the UI
+    this.setDataUrl(dataUrl);  // Keep for compatibility
     this.setIsLoading(false);
     this.setError("");
     
-    // Notify parent prompt if it exists
-    const prompt = this.imagePrompt();
-    if (prompt) {
-      prompt.onImageLoaded(this);
-    }
+    console.log('PiAPI Image Data URL: ' + dataUrl.length + " bytes");
+    
+    // Notify delegate if it exists
+    this.sendDelegate("onImageLoaded", [this]);
   }
 
   /**
@@ -208,11 +245,8 @@
     this.setError(error.message);
     this.setIsLoading(false);
     
-    // Notify parent prompt if it exists
-    const prompt = this.imagePrompt();
-    if (prompt) {
-      prompt.onImageError(this);
-    }
+    // Notify delegate if it exists
+    this.sendDelegate("onImageError", [this]);
   }
 
   /**
@@ -226,6 +260,25 @@
       return images.parentNode();
     }
     return null;
+  }
+
+  /**
+   * @description Sends a delegate method call.
+   * @param {string} methodName - The name of the method to call.
+   * @param {Array} args - The arguments to pass to the method.
+   * @returns {boolean} True if the delegate method was called, false otherwise.
+   * @category Delegation
+   */
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate();
+    if (d) {
+      const f = d[methodName];
+      if (f) {
+        f.apply(d, args);
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

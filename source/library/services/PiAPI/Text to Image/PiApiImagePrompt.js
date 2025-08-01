@@ -155,6 +155,19 @@
     }
 
     /**
+     * @member {PiApiImageGenerations} generations
+     * @description The generations for tracking task status.
+     * @category Output
+     */
+    {
+      const slot = this.newSlot("generations", null);
+      slot.setFinalInitProto(PiApiImageGenerations);
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+      slot.setSlotType("PiApiImageGenerations");
+    }
+
+    /**
      * @member {Object} delegate
      * @description The delegate object for handling various events.
      * @category Delegation
@@ -339,9 +352,13 @@
     this.setStatus(`Task ${this.taskId()} submitted successfully`);
     this.sendDelegate("onImagePromptTaskSubmitted", [this, json]);
     
-    // In a full implementation, you would start polling here
-    // For now, we'll just mark it as submitted
-    this.onEnd();
+    // Create a generation object to track the task
+    const generation = this.generations().add();
+    generation.setTaskId(this.taskId());
+    generation.setDelegate(this);
+    
+    // Start polling for the task status
+    generation.startPolling();
   }
 
   /**
@@ -409,6 +426,86 @@
    */
   onEnd () {
     this.sendDelegate("onImagePromptEnd", [this]);
+  }
+
+  // --- Delegate methods from PiApiImageGeneration ---
+
+  /**
+   * @description Handles successful generation start.
+   * @param {Object} generation - The generation object.
+   * @category Delegation
+   */
+  onImageGenerationStart (generation) {
+    this.setStatus("Generation polling started...");
+    this.sendDelegate("onImagePromptGenerationStart", [this, generation]);
+  }
+
+  /**
+   * @description Handles generation completion with images.
+   * @param {Object} generation - The generation object.
+   * @category Delegation
+   */
+  onImageGenerationEnd (generation) {
+    // Check if generation was successful and has images
+    if (generation.status() === "complete" && generation.images().subnodes().length > 0) {
+      this.setStatus("Generation complete - copying images...");
+      
+      // Copy images from generation to our images collection
+      const generationImages = generation.images().subnodes();
+      for (const genImage of generationImages) {
+        const image = this.images().add();
+        image.setUrl(genImage.url());
+        if (genImage.hasLoaded()) {
+          // Copy the loaded image data
+          image.setImageUrl(genImage.imageUrl());
+          image.setDataUrl(genImage.dataUrl());
+        } else {
+          // Set up delegate and fetch if not loaded
+          image.setDelegate(this);
+          image.fetch();
+        }
+      }
+      
+      this.setStatus("Images copied from generation");
+      this.sendDelegate("onImagePromptSuccess", [this]);
+    } else if (generation.error()) {
+      this.onError(new Error(generation.error()));
+    } else {
+      this.setStatus("Generation ended without images");
+    }
+    
+    this.onEnd();
+  }
+
+  /**
+   * @description Handles generation errors.
+   * @param {Object} generation - The generation object.
+   * @category Delegation
+   */
+  onImageGenerationError (generation) {
+    this.onError(new Error(generation.error() || "Generation failed"));
+  }
+
+  /**
+   * @description Handles individual image loading from generation.
+   * @param {Object} generation - The generation object.
+   * @param {Object} aiImage - The loaded AI image object.
+   * @category Delegation
+   */
+  onImageGenerationImageLoaded (generation, aiImage) {
+    this.updateStatus();
+    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+  }
+
+  /**
+   * @description Handles individual image errors from generation.
+   * @param {Object} generation - The generation object.
+   * @param {Object} aiImage - The AI image object that failed to load.
+   * @category Delegation
+   */
+  onImageGenerationImageError (generation, aiImage) {
+    this.updateStatus();
+    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
   }
 
   // --- SvXhrRequest Delegate Methods ---
