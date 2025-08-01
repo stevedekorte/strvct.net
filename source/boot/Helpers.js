@@ -10,8 +10,8 @@ function evalStringFromSourceUrl (codeString, path) {
     // Based on git history, adding a leading slash fixed VSCode breakpoints in May 2022
     // Chrome doesn't like quotes around the path (fixed Dec 2023)  
     // Rich Collins added encodeURI in Aug 2024 to handle spaces and special characters
-    // Use absolute path (with leading slash) to ensure correct line number mapping in debugger
-    const sourceURL = '/' + path;
+    // Must NOT include leading slash for VSCode compatibility (makes sources editable)
+    const sourceURL = path;
     const encodedURL = encodeURI(sourceURL);
     
     const sourceUrlComment = `//# sourceURL=${encodedURL}`;
