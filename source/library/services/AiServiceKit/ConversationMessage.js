@@ -257,8 +257,14 @@
     return this;
   }
 
+  // --- error handling ---
+
   hasError () {
     return this.error() !== null;
+  }
+
+  didUpdateSlotError (/*oldValue, newValue*/) {
+    this.sendDelegate("onMessageError", this);
   }
 
   /**
