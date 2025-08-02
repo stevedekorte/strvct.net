@@ -430,7 +430,7 @@
      * @returns {boolean}
      * @category Events
      */
-    onDoubleClick (event) {
+    onDoubleClick (/*event*/) {
         //this.debugLog(".onDoubleClick()");
         return true;
     }
@@ -473,22 +473,22 @@
     
     // copy and paste keyboard events
 
-    onMetaLeft_c_KeyDown (event) {
+    onMetaLeft_c_KeyDown (/*event*/) {
         // MacOScopy
         this.debugLog("onMetaLeft_c_KeyDown");
     }
 
-    onMetaLeft_v_KeyDown (event) {
+    onMetaLeft_v_KeyDown (/*event*/) {
         // MacOS paste
         this.debugLog("onMetaLeft_v_KeyDown");
     }
 
-    onControl_c_KeyDown (event) {
+    onControl_c_KeyDown (/*event*/) {
         // Windows copy
         this.debugLog("onControl_c_KeyDown");
     }
 
-    onControl_v_KeyDown (event) {
+    onControl_v_KeyDown (/*event*/) {
         // Windows paste
         this.debugLog("onControl_v_KeyDown");
     }

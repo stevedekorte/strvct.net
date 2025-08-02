@@ -519,7 +519,7 @@
      * @description Called when the view is updated.
      * @param {Object} aFieldView - The field view.
      */
-    didUpdateView (aFieldView) {  
+    didUpdateView (/*aFieldView*/) {  
         debugger;      
         let parentNode = this.parentNode();
         if (!parentNode) {
@@ -651,7 +651,7 @@
      * @param {boolean} aBool - The is editable.
      */
     setIsEditable (aBool) {
-        this.setValueIsEditable(false);
+        this.setValueIsEditable(aBool);
         return this;
     }
     
