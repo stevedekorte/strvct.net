@@ -14,8 +14,9 @@ function evalStringFromSourceUrl (codeString, path) {
     const sourceURL = path;
     const encodedURL = encodeURI(sourceURL);
     
-    const sourceUrlComment = `//# sourceURL=${encodedURL}`;
-    const debugCode = codeString + '\n' + sourceUrlComment;
+    const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
+    // Add two blank lines at the beginning to fix the line number offset
+    const debugCode = '\n\n' + codeString + sourceUrlComment;
     
     // Evaluate the code with error handling
     try {

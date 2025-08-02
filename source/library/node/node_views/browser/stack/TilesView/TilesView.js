@@ -191,8 +191,11 @@
      * @category Data
      */
     tileWithNode (aNode) {
-        return this.tiles().detect(tile => tile.node() === aNode);
+        //return this.tiles().detect(tile => tile.node() === aNode);
+        return this.tiles().detect(tile => tile.nodeTileLink() === aNode);
+        //return this.tiles().detect(tile => tile.node().nodeTileLink() === aNode);
     }
+
 
     /**
      * @description Gets index of tile
@@ -215,17 +218,6 @@
     tileAtIndex (anIndex) {
         return this.subviews().at(anIndex);
     }
-
-    /**
-     * @description Gets tile with node
-     * @param {Node} aNode - The node
-     * @returns {Tile|undefined}
-     * @category Data
-     */
-    tileWithNode (aNode) {
-        return this.tiles().detect(tile => tile.node().nodeTileLink() === aNode);
-    }
-
     /**
      * @description Gets max tile width
      * @returns {number}

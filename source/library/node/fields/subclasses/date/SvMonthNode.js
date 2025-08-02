@@ -136,7 +136,7 @@
      * @category Navigation
      */
     nodeTileLink () {
-        return this
+        return this;
     }
 
     /**

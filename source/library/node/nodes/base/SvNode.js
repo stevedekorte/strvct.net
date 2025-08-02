@@ -216,6 +216,12 @@
             slot.setSyncsToView(true);
         }
 
+
+        {
+            const slot = this.newSlot("headerNode", null);
+            slot.setSlotType("SvNode");
+        }
+
         {
             /**
              * @member {SvNode} footerNode - The footer node placed at the bottom of the subnodes view.
@@ -224,6 +230,7 @@
             const slot = this.newSlot("footerNode", null);
             slot.setSlotType("SvNode");
         }
+
 
         {
             const slot = this.newSlot("didPrepareForFirstAccess", false);
