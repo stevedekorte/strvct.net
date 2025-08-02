@@ -257,6 +257,10 @@
     return this;
   }
 
+  hasError () {
+    return this.error() !== null;
+  }
+
   /**
    * Get the message this message is replying to.
 

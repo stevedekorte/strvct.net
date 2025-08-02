@@ -559,7 +559,7 @@
      * @returns {Object} The tile link.
      */
     nodeTileLink () {
-        return null;
+        return this;
     }
 
     /**

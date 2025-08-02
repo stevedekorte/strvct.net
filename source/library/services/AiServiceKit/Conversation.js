@@ -50,7 +50,6 @@
    */
   init () {
     super.init();
-
     this.setupChatInputNode();
     this.setFooterNode(this.chatInputNode());
   }

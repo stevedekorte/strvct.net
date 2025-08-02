@@ -398,13 +398,13 @@
             return true;
         }
 
-        nodePathArray = nodePathArray.shallowCopy();
+        const nextNodePathArray = nodePathArray.shallowCopy();
         // the path should start with the node *after* this one
         
         //const p = nodePathArray.map(n => n.title()).join("/");
         //console.log("--- selectNodePathArray ---");
         //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")");
-        const node = nodePathArray.shift(); // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
+        const node = nextNodePathArray.shift(); // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
         //console.warn("- popped '" + node.title() + "'");
 
         //this.syncFromNodeNow();
@@ -446,7 +446,7 @@
 
         const childStack = this.nextStackView();
         if (childStack) {
-            childStack.selectNodePathArray(nodePathArray);
+            childStack.selectNodePathArray(nextNodePathArray);
         }
         return true;
     }
