@@ -525,7 +525,16 @@
 
     xhr.addEventListener("error", (event) => {
       em.safeWrapEvent(() => { 
-        this.onXhrError(event);
+        // Get error details from XHR (event.error is usually null for XHR errors)
+        const status = event.target.status;
+        const statusText = event.target.statusText;
+        const responseText = event.target.responseText;
+        
+        // Create an Error object with detailed message like the parent class does
+        const errorMessage = `XHR error: status: ${status} (${statusText}), response: ${responseText || 'none'}`;
+        const error = new Error(errorMessage);
+        
+        this.onXhrError(error);
       }, event)
     });
 
@@ -617,6 +626,7 @@
       }
     } catch (error) {
       // ignore
+      console.log("responseXmlError() error: " + error.message);
     }
     return null;
   }
@@ -633,6 +643,7 @@
         }
       }
     } catch (error) {
+      console.log("responseXmlError() error: " + error.message);
       // ignore
     }
     return null;

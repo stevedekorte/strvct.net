@@ -413,10 +413,9 @@
     };
   }
 
-  proxyXhrForUrl (url, method, bodyString) {
-    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+  xhrForUrl (url, method, bodyString) {
     const xhr = SvXhrRequest.clone();
-    xhr.setUrl(proxyUrl);
+    xhr.setUrl(url);
     xhr.setMethod(method);
     xhr.setHeaders({
       "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
@@ -424,6 +423,11 @@
     xhr.setDelegate(this);
     xhr.setBody(bodyString);
     return xhr;
+  }
+
+  proxyXhrForUrl (url, method, bodyString) {
+    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+    return this.xhrForUrl(proxyUrl, method, bodyString);
   }
 
   async getInitImageId () {
@@ -489,19 +493,22 @@
     Object.entries(presigned.fields).forEach(([k, v]) => form.append(k, v));
     form.append("file", blob);  // the part name must be "file"
   
-        // 3. POST it to S3
+    // 3. POST it to S3
     //const res = await fetch(proxyUrl, { method: "POST", body: form });
 
     const xhr = this.proxyXhrForUrl(url, "POST", form);
+    //const xhr = this.xhrForUrl(url, "POST", form);
     // Keep Authorization for proxy server authentication
     // IMPORTANT: Do NOT set Content-Type header for multipart/form-data
     // The browser will automatically set it with the correct boundary parameter
+    
     xhr.setHeaders({
       "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
       // Removed "Content-Type": "multipart/form-data" - browser must set this with boundary
     });
+    
     await xhr.asyncSend();
-    this.setStatus("uploaded image to S3");
+    this.setStatus("uploading image to S3");
 
 
     if (xhr.isSuccess()) {
@@ -509,6 +516,7 @@
       this.setUpdloadedDate(new Date());
       this.setStatus("complete");
     } else {
+      debugger;
       this.setHasUploaded(false);
       this.setError(`S3 upload failed: ${xhr.error().message}`);
       this.setStatus("failed");

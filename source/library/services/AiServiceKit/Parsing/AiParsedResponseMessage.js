@@ -218,7 +218,7 @@
   } 
 
   async promiseSendDelegateTag (phase, tagName, tagText) { 
-    const ignoreMissingMethodsForTags = ["narration-progress", "content-warning", "session-name"];
+    const ignoreMissingMethodsForTags = ["narration-progress", "session-name"];
     // phase is "Stream" or "Complete"
     // note: need to be careful about async here. We use it do deal with json tags errors as
     // we make follow up network requests repair them, but some things need to be synchronous, 

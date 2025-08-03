@@ -185,7 +185,11 @@ The following formats will be used for tool calls and responses:
         m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
         //const responseMessage = m.requestResponse();
         //await responseMessage.completionPromise();
-        assert(!m.isVisibleToUser());
+        assert(m.isVisibleToUser() === false);
+        m.setIsVisibleToUser = function () {
+          assert(false, "Tool call results should not be visible to user");
+        };
+        console.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.type());
       }
       this.toolCalls().removeCalls(completedCalls);
       this.errors().addCalls(completedCalls.filter((toolCall) => toolCall.hasError()));
