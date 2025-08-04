@@ -55,22 +55,16 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setCanDelete(true)
-        this.setNodeCanInspect(true)
-        this.setNodeCanEditTitle(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setCanDelete(true);
+        this.setNodeCanInspect(true);
+        this.setNodeCanEditTitle(true);
 
-        this.setCanDelete(true)
-        this.setNodeCanInspect(true) 
+        this.setCanDelete(true);
+        this.setNodeCanInspect(true); 
     }
-
-    /*
-    init () {
-        super.init()
-    }
-    */
-
+    
     /*
     didUpdateSlotLinkedNode (oldValue, newValue) {
         assert(Type.isNull(newValue) || Type.isObject(newValue));
@@ -81,7 +75,7 @@
         }
 
         debugger;
-        return this
+        return this;
     }
     */
 
@@ -91,8 +85,8 @@
      * @returns {boolean} True if the node accepts the drop
      * @category Drop Handling
      */
-    nodeAcceptsDrop (aNode) {
-        return true
+    nodeAcceptsDrop (/*aNode*/) {
+        return true;
     }
 
     /**
@@ -101,7 +95,7 @@
      * @category Drop Handling
      */
     nodeDropped (aNode) {
-        this.setLinkedNode(aNode)
+        this.setLinkedNode(aNode);
     }
 
     /**
@@ -110,14 +104,14 @@
      * @category Node Operations
      */
     duplicate () {
-        const obj = super.duplicate()
+        const obj = super.duplicate();
         if (this.willDuplicateLinkedObject()) {
-            const ln = this.linkedNode()
+            const ln = this.linkedNode();
             if (ln) {
-                obj.setLinkedNode(ln.duplicate())
+                obj.setLinkedNode(ln.duplicate());
             }
         }
-        return obj
+        return obj;
     }
 
     /**
@@ -126,11 +120,11 @@
      * @category Node Information
      */
     title () {
-        const ln = this.linkedNode()
+        const ln = this.linkedNode();
         if (ln) {
-            return ln.title()
+            return ln.title();
         }
-        return "Unlinked"
+        return "Unlinked";
     }
 
     /*
@@ -149,11 +143,11 @@
      * @category Node Information
      */
     subtitle () {
-        const ln = this.linkedNode()
+        const ln = this.linkedNode();
         if (ln) {
-            return ln.subtitle()
+            return ln.subtitle();
         }
-        return "drop tile to link"    
+        return "drop tile to link";    
     }
 
     /*
@@ -173,7 +167,7 @@
      */
     acceptedSubnodeTypes () { 
         // TODO: have browser use nodeTileLink for this protocol?
-        return []
+        return [];
     }
     
     /**
@@ -183,10 +177,10 @@
      */
     note () {
         if (this.linkedNode()) {
-            return this.linkedNode().note()
+            return this.linkedNode().note();
         }
 
-        return null
+        return null;
     }
 
     /**
@@ -196,7 +190,7 @@
      */
     noteIconName () {
         //return this.nodeTileLink() ? "double right caret" : null
-        return null
+        return null;
     }
 
     /**
@@ -205,7 +199,7 @@
      * @category Link Management
      */
     nodeTileLink () {
-        return this.linkedNode()
+        return this.linkedNode();
     }
 
     /**
@@ -214,8 +208,8 @@
      * @category Node Structure
      */
     nodeCanReorderSubnodes () {
-        const ln = this.linkedNode()
-        return ln ? ln.nodeCanReorderSubnodes() : false // have this operation done in the browser?
+        const ln = this.linkedNode();
+        return ln ? ln.nodeCanReorderSubnodes() : false; // have this operation done in the browser?
     }
 
     /**
@@ -226,7 +220,7 @@
      * @category Node Structure
      */
     addSubnodeAt (aSubnode, anIndex) {
-        return super.addSubnodeAt(aSubnode, anIndex)
+        return super.addSubnodeAt(aSubnode, anIndex);
     }
 
 }.initThisClass());

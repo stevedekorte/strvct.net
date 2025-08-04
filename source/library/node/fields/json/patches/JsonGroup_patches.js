@@ -194,7 +194,7 @@
     } else {
       const slot = this.getSlot(segment);
       if (!slot) {
-        const availableSlots = this.thisClass().allSlots().map(s => s.name()).join(', ');
+        const availableSlots = Array.from(this.thisPrototype().allSlotsNamesSet()).join(', ');
         throw new Error(`Slot '${segment}' not found. Available slots: [${availableSlots}]`);
       }
       
@@ -270,7 +270,7 @@
     } else {
       const slot = this.getSlot(key);
       if (!slot) {
-        const availableSlots = this.thisClass().allSlots().map(s => s.name()).join(', ');
+        const availableSlots = Array.from(this.thisPrototype().allSlotsNamesSet()).join(', ');
         throw new Error(`Cannot remove slot '${key}': not found. Available slots: [${availableSlots}]`);
       }
       
@@ -305,7 +305,7 @@
     } else {
       const slot = this.getSlot(key);
       if (!slot) {
-        const availableSlots = this.thisClass().allSlots().map(s => s.name()).join(', ');
+        const availableSlots = Array.from(this.thisPrototype().allSlotsNamesSet()).join(', ');
         throw new Error(`Cannot replace slot '${key}': not found. Available slots: [${availableSlots}]`);
       }
       

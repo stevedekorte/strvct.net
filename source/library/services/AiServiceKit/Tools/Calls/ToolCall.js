@@ -438,7 +438,7 @@ Example Tool call format:
           callId: this.callId(),
           status: this.status(),
           toolTarget: this.toolTarget().type(),
-          toolTargetJson: this.toolTarget().asJson()
+          //toolTargetJson: this.toolTarget().asJson()
         }
       };
       
