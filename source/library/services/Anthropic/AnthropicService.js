@@ -34,16 +34,6 @@
     return [
 
       {
-        "name": "claude-opus-4-20250514",
-        "title": "Claude 4 Opus",
-        "subtitle": "",
-        "inputTokenLimit": 200000,
-        "notes": "",
-        "beta": "output-128k-2025-02-19",
-        "outputTokenLimit": 32000,
-      },
-
-      {
         "name": "claude-sonnet-4-20250514",
         "title": "Claude 4 Sonnet",
         "subtitle": "",
@@ -51,6 +41,16 @@
         "notes": "",
         "beta": "output-128k-2025-02-19",
         "outputTokenLimit": 64000,
+      },
+
+      {
+        "name": "claude-opus-4-20250514",
+        "title": "Claude 4 Opus",
+        "subtitle": "",
+        "inputTokenLimit": 200000,
+        "notes": "",
+        "beta": "output-128k-2025-02-19",
+        "outputTokenLimit": 32000,
       },
 
       {
