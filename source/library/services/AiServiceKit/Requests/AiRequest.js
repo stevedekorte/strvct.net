@@ -488,6 +488,7 @@
       apiUrl:  this.apiUrl()
       //body: this.bodyJson()
     };
+    json.options.body = json.options.body.substring(0, 200) + "..."; // cut off at 200 characters
     return JSON.stringify(json, null, 2);
   }
 
@@ -854,7 +855,6 @@
    * @param {Event} event 
    */
   onXhrError (event) {
-    debugger;
     console.log("onXhrError:", event);
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
@@ -863,6 +863,8 @@
     s += " status: " + this.nameForXhrStatusCode(xhr.status); // e.g. 404 = file not found
     s += ", statusText: '" + xhr.statusText + "'";
     s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
+    console.warn("onXhrError: " + s);
+    debugger;
     const error = new Error(s);
     this.onError(error);
     this.sendDelegate("onStreamEnd");
