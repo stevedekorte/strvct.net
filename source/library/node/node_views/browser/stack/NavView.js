@@ -315,12 +315,14 @@
         this.setFlexGrow(0);
         this.setFlexShrink(0);
 
-        // On mobile, make the NavView fill the full width
+        // On mobile, constrain width to viewport
         if (WebBrowserWindow.shared().isOnMobile()) {
-            this.setMinWidth("100%");
-            this.setWidth("100%");
-            this.setMaxWidth("100%");
-            this.setFlexGrow(1);
+            const targetW = this.targetWidth();
+            // Use min() to ensure we never exceed viewport width
+            this.setMinWidth(`min(${targetW}px, 100vw)`);
+            this.setWidth(`min(${targetW}px, 100vw)`);
+            this.setMaxWidth("100vw");
+            this.setFlexGrow(0);
         } else {
             //this.setMinAndMaxWidth("17em");
             const targetW = this.targetWidth();
@@ -431,6 +433,11 @@
             this.footerView().setNode(aNode.footerNode());
         }
 
+        // Force layout recalculation on mobile when node changes
+        if (WebBrowserWindow.shared().isOnMobile()) {
+            this.scheduleSyncToNode();
+        }
+
         return this;
     }
 
@@ -455,7 +462,16 @@
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth();
             if (w && !Type.isNullOrUndefined(w)) {
-                this.setMinWidth(w);
+                if (WebBrowserWindow.shared().isOnMobile()) {
+                    // On mobile, use calc to ensure we never exceed viewport width
+                    // but still respect the node's minimum width if viewport is larger
+                    const widthValue = Type.isNumber(w) ? `${w}px` : w;
+                    this.setMinWidth(`min(${widthValue}, 100vw)`);
+                    this.setWidth(`min(${widthValue}, 100vw)`);
+                    this.setMaxWidth("100vw");
+                } else {
+                    this.setMinWidth(w);
+                }
                 this.setMinAndMaxHeight("100%");
             } 
         } else {

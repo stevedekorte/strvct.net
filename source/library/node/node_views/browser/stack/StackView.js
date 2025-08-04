@@ -634,6 +634,16 @@
             if (!ovc || (ovc.node() !== oNode)) {
                 const ov = this.otherViewContentForNode(oNode);
                 this.setOtherViewContent(ov);
+                
+                // When we create a new view, ensure its NavView syncs orientation
+                if (ov && ov.navView) {
+                    // Schedule orientation sync after the view is added to DOM
+                    setTimeout(() => {
+                        if (ov.navView()) {
+                            ov.navView().syncOrientation();
+                        }
+                    }, 0);
+                }
             }
         } else {
             this.clearOtherView();
