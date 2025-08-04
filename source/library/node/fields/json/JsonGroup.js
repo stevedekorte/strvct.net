@@ -16,12 +16,14 @@
       slot.setSlotType("JSON Object");
     }
 
+    /*
     {
       const slot = this.newSlot("hasBeenLoaded", null);
       slot.setSlotType("Boolean");
       slot.setIsInJsonSchema(false);
       slot.setCanInspect(true);
     }
+    */
   }
 
   initPrototype () {
