@@ -14,8 +14,11 @@ function evalStringFromSourceUrl (codeString, path) {
     const sourceURL = path;
     const encodedURL = encodeURI(sourceURL);
     
-    // Put sourceURL on its own line at the very end, with nothing after it
-    const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
+    // Put sourceURL at the beginning to avoid line number offset in debugger
+    // const sourceUrlComment = `\n//# sourceURL=${encodedURL}`; // OLD: caused 2-line offset in debugger
+    // const sourceUrlComment = `//# sourceURL=${encodedURL}\n`; // NEW: should fix line offset
+    const sourceUrlComment = `//# sourceURL=${encodedURL}\n`;
+    //const debugCode = sourceUrlComment + codeString;
     const debugCode = codeString + sourceUrlComment;
     
     // Evaluate the code with error handling
@@ -33,10 +36,10 @@ function evalStringFromSourceUrl (codeString, path) {
                 globalObj.require = require;
             }
             
-            const globalEval = eval;
-            result = globalEval.call(globalObj, debugCode);
+            result = eval.call(globalObj, debugCode);
         } else {
-            result = new Function(debugCode)(); // new Function() is faster than eval()
+            result = eval(debugCode);
+           // result = new Function(debugCode)(); // new Function() is faster than eval() but causes 2-line offset in debugger
         }
         
         //console.log("✅ Successfully evaluated:", path);
