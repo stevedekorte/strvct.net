@@ -211,6 +211,9 @@
      */
     setEditable (aBool) {
         // to avoid editable content?
+        if (aBool) {
+            console.warn("setEditable is not implemented for " + this.type());
+        }
         return this;
     }
     
@@ -399,7 +402,7 @@
      * @returns {VideoView} The VideoView instance
      * @category UI Operations
      */
-    updateVideoControls() {
+    updateVideoControls () {
         if (this.rawVideoView()) {
             const video = this.rawVideoView().element();
             if (video) {
@@ -418,7 +421,7 @@
      * @returns {VideoView} The VideoView instance
      * @category State
      */
-    setHasControls(aBool) {
+    setHasControls (aBool) {
         this._hasControls = aBool;
         this.updateVideoControls();
         return this;
@@ -430,7 +433,7 @@
      * @returns {VideoView} The VideoView instance
      * @category State
      */
-    setAutoplay(aBool) {
+    setAutoplay (aBool) {
         this._autoplay = aBool;
         this.updateVideoControls();
         return this;
@@ -442,7 +445,7 @@
      * @returns {VideoView} The VideoView instance
      * @category State
      */
-    setLoop(aBool) {
+    setLoop (aBool) {
         this._loop = aBool;
         this.updateVideoControls();
         return this;
@@ -454,7 +457,7 @@
      * @returns {VideoView} The VideoView instance
      * @category State
      */
-    setMuted(aBool) {
+    setMuted (aBool) {
         this._muted = aBool;
         this.updateVideoControls();
         return this;
@@ -465,7 +468,7 @@
      * @returns {VideoView} The VideoView instance
      * @category Playback Control
      */
-    play() {
+    play () {
         if (this.rawVideoView()) {
             const video = this.rawVideoView().element();
             if (video) {
@@ -480,7 +483,7 @@
      * @returns {VideoView} The VideoView instance
      * @category Playback Control
      */
-    pause() {
+    pause () {
         if (this.rawVideoView()) {
             const video = this.rawVideoView().element();
             if (video) {
@@ -495,7 +498,7 @@
      * @returns {VideoView} The VideoView instance
      * @category Playback Control
      */
-    stop() {
+    stop () {
         if (this.rawVideoView()) {
             const video = this.rawVideoView().element();
             if (video) {
@@ -513,7 +516,7 @@
      * @returns {String} The file extension
      * @category File Operations
      */
-    getFileExtensionFromMimeType(mimeType) {
+    getFileExtensionFromMimeType (mimeType) {
         const mimeToExt = {
             "video/mp4": "mp4",
             "video/webm": "webm",
@@ -530,7 +533,7 @@
      * @returns {VideoView} The VideoView instance
      * @category File Operations
      */
-    downloadVideo() {
+    downloadVideo () {
         const dataURL = this.dataURL();
         if (!dataURL) {
             console.warn("No video data available for download");
@@ -561,7 +564,7 @@
                     downloadUrl = URL.createObjectURL(blob);
                     
                     // Clean up blob URL after download
-                    setTimeout(() => URL.revokeObjectURL(downloadUrl), 30000);
+                    this.addTimeout(() => URL.revokeObjectURL(downloadUrl), 30000);
                 } catch (blobError) {
                     console.warn("Failed to create blob URL, using data URL directly:", blobError);
                     // downloadUrl remains as dataURL

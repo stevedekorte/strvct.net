@@ -7,7 +7,8 @@
 //console.log("evaluating FileReaderShim.js");
 
 class FileReader extends Object {
-    constructor() {
+    constructor () {
+        super();
         this.readyState = 0; // EMPTY
         this.result = null;
         this.error = null;
@@ -18,7 +19,7 @@ class FileReader extends Object {
         this.onprogress = null;
     }
     
-    readAsText(blob, encoding) {
+    readAsText (blob /*, encoding*/) {
         setTimeout(() => {
             this.readyState = 2; // DONE
             this.result = blob.toString ? blob.toString() : String(blob);
@@ -27,7 +28,7 @@ class FileReader extends Object {
         }, 0);
     }
     
-    readAsDataURL(blob) {
+    readAsDataURL (blob) {
         setTimeout(() => {
             this.readyState = 2; // DONE
             this.result = "data:text/plain;base64," + Buffer.from(String(blob)).toString('base64');
@@ -36,7 +37,7 @@ class FileReader extends Object {
         }, 0);
     }
     
-    readAsArrayBuffer(blob) {
+    readAsArrayBuffer (blob) {
         setTimeout(() => {
             this.readyState = 2; // DONE
             this.result = Buffer.from(String(blob)).buffer;
@@ -45,7 +46,7 @@ class FileReader extends Object {
         }, 0);
     }
     
-    abort() {
+    abort () {
         this.readyState = 2; // DONE
         if (this.onloadend) this.onloadend({ target: this });
     }

@@ -29,7 +29,7 @@
 
                     const v = array[index];
                     await aPromiseBlock(v, index);
-                    setTimeout(() => nextFunc(array, index+1), 0);
+                    setTimeout(() => nextFunc(array, index+1), 0); // TODO: move to addTimeout?
                     //requestIdleCallback(() => nextFunc(array, index+1));
                 } catch (error) {
                     reject(error);
@@ -79,51 +79,6 @@
         await this.promiseParallelMap(aBlock);
         //await this.parallelForEachWithYield(aBlock);
         //await this.promiseSerialTimeoutsForEach(aBlock);
-    }
-
-    /*
-    async parallelForEachWithYield (asyncFn) {
-        if (asyncFn.constructor.name !== 'AsyncFunction') {
-            throw new Error("aBlock must be an async function");
-        }
-        const results = [];
-        let activePromises = 0;
-        const MAX_CONCURRENT = 20; // Limit concurrent operations
-        
-        for (let i = 0; i < this.length; i++) {
-          // Wait if too many active promises
-          while (activePromises >= MAX_CONCURRENT) {
-            await new Promise(resolve => setTimeout(resolve, 1));
-          }
-          
-          activePromises++;
-          
-          // Start the async operation
-          const promise = asyncFn(this[i], i, this).then(
-            result => {
-              activePromises--;
-              results[i] = result;
-              return result;
-            },
-            error => {
-              activePromises--;
-              throw error;
-            }
-          );
-          
-          // Force a micro-pause every single iteration
-          // This guarantees the browser gets a chance to render
-          await new Promise(resolve => setTimeout(resolve, 0));
-        }
-        
-        // Wait for remaining promises
-        while (activePromises > 0) {
-          await new Promise(resolve => setTimeout(resolve, 1));
-        }
-        
-        return results;
-      }
-      */
-      
+    } 
 
 }).initThisCategory();

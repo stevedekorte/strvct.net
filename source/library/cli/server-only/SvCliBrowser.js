@@ -12,6 +12,8 @@ const blessed = require('blessed');
 
 class SvCliBrowser extends Object {
   constructor (rootNode, options = {}) {
+    super();
+
     if (!rootNode) {
       throw new Error('SvCliBrowser requires a root node');
     }
@@ -618,6 +620,7 @@ class SvCliBrowser extends Object {
         return node.value();
       } catch (e) {
         // Silent fallback
+        console.error("Error getting field value for node: " + node.type() + " " + e.message);
       }
     }
     
@@ -1066,7 +1069,7 @@ class SvCliBrowser extends Object {
     this._messageBox.setFront();
     this._screen.render();
     
-    setTimeout(() => {
+    this.addTimeout(() => {
       if (this._messageBox) {
         this._screen.remove(this._messageBox);
         this._messageBox = null;

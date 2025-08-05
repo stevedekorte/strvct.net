@@ -115,7 +115,7 @@
 
     selectNodePathString (aPath) {
         const components = aPath.split("/");
-        components.shift(); // remove first component
+        //components.shift(); // remove first component
         const selectedNode = this.node().nodeAtSubpathArray(components);
         if (selectedNode) {
             const pathArray = selectedNode.nodePathArray(); 

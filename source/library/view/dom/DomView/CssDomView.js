@@ -21,6 +21,7 @@
         {
             const slot = this.newSlot("hiddenDisplayValue", null);
             slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
         }
         /*
         {
@@ -33,8 +34,9 @@
         }
         */
         {
-            const slot = this.newSlot("hiddenTransitionValue", undefined);
+            const slot = this.newSlot("hiddenTransitionValue", null);
             slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
         }
         /*
         {
@@ -50,6 +52,7 @@
         {
             const slot = this.newSlot("cachedSize", null);
             slot.setSlotType("Point");
+            slot.setAllowsNullValue(true);
         }
     }
 

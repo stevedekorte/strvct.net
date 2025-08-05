@@ -425,7 +425,7 @@
                // console.log("- so syncFromNodeNow and see if we can find it");
                 this.tilesView().syncFromNodeNow();
                 selectedTile = this.tilesView().selectTileWithNode(node);
-                assert(selectedTile);
+                assert(selectedTile, "failed to find tile for node: " + node.title());
             }
         }
 
@@ -638,7 +638,7 @@
                 // When we create a new view, ensure its NavView syncs orientation
                 if (ov && ov.navView) {
                     // Schedule orientation sync after the view is added to DOM
-                    setTimeout(() => {
+                    this.addTimeout(() => {
                         if (ov.navView()) {
                             ov.navView().syncOrientation();
                         }

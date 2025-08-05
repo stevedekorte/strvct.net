@@ -98,7 +98,7 @@
    * @returns {RzMsg} The initialized RzMsg instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setStatus("");
     this.setIsDebugging(true);
@@ -126,16 +126,12 @@
   // --- sending ---
 
   /**
-   * @description Sends a JSON message.
-   * @param {Object} json - The JSON object to send.
-   * @category MessageSending
-   */
-  send (json) {
-    if (!this.conn()) {
-      console.warn("attempt to send to closed connection ", this.peerId());
-      return;
-    }
-    this.conn().send(json);
+ * @description Sends the message content.
+ * @category MessageSending
+ */
+  send () {
+    this.peerConn().send(this.content()) // content should be valid JSON
+    this.setStatus("sent")
   }
 
   /**
@@ -145,7 +141,7 @@
    */
   sendThenClose (json) {
     this.send(json);
-    setTimeout(() => {
+    this.addTimeout(() => {
       this.shutdown();
     }, 500); // without delay, send doesn't occur
   }
@@ -180,15 +176,6 @@
   }
 
   // --- sending ---
-
-  /**
-   * @description Sends the message content.
-   * @category MessageSending
-   */
-  send () {
-    this.peerConn().send(this.content()) // content should be valid JSON
-    this.setStatus("sent")
-  }
 
   /**
    * @description Gets the send action information.

@@ -81,6 +81,15 @@
             const slot = this.newSlot("tapCount", 0);
             slot.setSlotType("Number");
         }
+        /**
+         * @member {Number} maxMovementDistance - maximum allowed movement during tap in pixels
+         * @category Configuration
+         */
+        {
+            const slot = this.newSlot("maxMovementDistance", 10);
+            slot.setComment("maximum allowed movement during tap in pixels");
+            slot.setSlotType("Number");
+        }
     }
 
     /**
@@ -114,7 +123,7 @@
      * @returns {TapGestureRecognizer} The instance.
      * @category Timer Management
      */
-    startTimer (event) {
+    startTimer (/*event*/) {
         if (this.timeoutId()) {
             this.stopTimer()
         }
@@ -172,6 +181,30 @@
     }
 
     /**
+     * @description Handles the move event for the tap gesture.
+     * @param {Event} event - The move event.
+     * @category Event Handling
+     */
+    onMove (event) {
+        super.onMove(event)
+        
+        // Cancel the tap if the finger/mouse has moved too far
+        if (this.hasTimer() && this.downEvent()) {
+            const currentPos = this.currentPosition()
+            const downPos = this.downPosition()
+            
+            if (currentPos && downPos) {
+                const distance = currentPos.distanceFrom(downPos)
+                
+                if (distance > this.maxMovementDistance()) {
+                    this.debugLog(".onMove() cancelling tap due to movement distance: " + distance)
+                    this.cancel()
+                }
+            }
+        }
+    }
+
+    /**
      * @description Handles the up event for the tap gesture.
      * @param {Event} event - The up event.
      * @category Event Handling
@@ -179,9 +212,7 @@
     onUp (event) {
         super.onUp(event)
  
-        if (true || this.isDebugging()) {
-            this.debugLog(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().typeId())
-        }
+        this.debugLog(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().typeId())
 
         if (this.hasTimer()) {
             if (this.tapCount() === this.numberOfTapsRequired()) {

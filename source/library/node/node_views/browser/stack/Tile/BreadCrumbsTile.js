@@ -535,13 +535,13 @@
         view.setOpacity(0);
         
         // Add animation class after a brief delay to trigger the animation
-        setTimeout(() => {
+        this.addTimeout(() => {
             view.addCssClass("BreadCrumbsTile-fadeIn");
             view.setOpacity(1);
         }, 10);
         
         // Remove the animation class after animation completes
-        setTimeout(() => {
+        this.addTimeout(() => {
             view.removeCssClass("BreadCrumbsTile-fadeIn");
         }, 310); // 300ms animation + 10ms buffer
         

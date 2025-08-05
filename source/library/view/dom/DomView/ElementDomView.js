@@ -296,7 +296,7 @@
      * @param {Element} e - The old element value
      * @returns {ElementDomView} The current instance
      */
-    didUpdateSlotElement (e) {
+    didUpdateSlotElement (/*e*/) {
         // for subclasses to override
         return this
     }
@@ -419,7 +419,7 @@
      * @returns {ElementDomView} The current instance
      */
     loremIpsum (maxWordCount) {
-        this.setInnerHtml("".loremIpsum(10, 40))
+        this.setInnerHtml("".loremIpsum(10, maxWordCount))
         return this
     }
 

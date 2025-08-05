@@ -333,7 +333,7 @@
   }
 
   async pollAfterDelay () {
-    setTimeout(() => {
+    this.addTimeout(() => {
       this.poll();
     }, this.pollIntervalSeconds() * 1000);
   }
@@ -372,6 +372,7 @@
       }
       return "missing generations_by_pk.status";
     } catch (error) {
+      console.warn("error parsing json: " + error.message);
       debugger;
       return undefined;
     }

@@ -317,7 +317,7 @@
   }
 
   async pollAfterDelay () {
-    setTimeout(() => {
+    this.addTimeout(() => {
       this.poll();
     }, this.pollIntervalSeconds() * 1000);
   }
@@ -353,6 +353,7 @@
       }
       return "missing status field";
     } catch (error) {
+      console.warn(this.typeId() + " error parsing json: " + error.message);
       debugger;
       return undefined;
     }

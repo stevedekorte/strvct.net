@@ -271,7 +271,7 @@ class WindowErrorPanel extends Object {
                 errorPanelDiv.style.transform = 'scale(0.95)';
                 
                 // Remove element after animation completes
-                setTimeout(() => {
+                this.addTimeout(() => {
                     backdropDiv.remove();
                 }, 500); // Match the 0.5s transition duration
             });

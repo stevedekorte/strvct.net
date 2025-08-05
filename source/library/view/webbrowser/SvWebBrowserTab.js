@@ -105,7 +105,7 @@
       channel.addEventListener('message', onMessage);
       channel.postMessage({ type: 'hello', appName: this._appName });
 
-      setTimeout(() => {
+      this.addTimeout(() => {
         cleanup();
         resolve(seenOther);
       }, this._timeoutMs);

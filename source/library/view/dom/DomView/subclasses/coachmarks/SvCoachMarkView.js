@@ -190,7 +190,7 @@
         this.setTransform("translateX(-50%) translateY(10px)");
         
         // Remove from DOM after animation completes
-        setTimeout(() => {
+        this.addTimeout(() => {
             if (this.element() && this.element().parentNode) {
                 this.element().parentNode.removeChild(this.element());
             }

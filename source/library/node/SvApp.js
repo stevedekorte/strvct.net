@@ -303,7 +303,9 @@
 
     postAppDidInit () {
         this.postNoteNamed("appDidInit");
-        this.scheduleMethodForNextCycle("afterAppUiDidInit");
+        setTimeout(() => {
+            this.scheduleMethodForNextCycle("afterAppUiDidInit");
+        }, 1000);
     }
 
     /**

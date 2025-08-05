@@ -410,7 +410,7 @@
         }
         
         if (this.attempts() < this.maxAttempts()) {
-            setTimeout(() => {
+            this.addTimeout(() => {
                 this.checkOperationStatus();
             }, this.checkIntervalMs());
         } else {

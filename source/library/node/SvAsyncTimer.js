@@ -13,7 +13,7 @@
  * 
  * // quick call to run a block
  * const timer =  SvAsyncTimer.runBlock(async () => {
- *     await new Promise(resolve => setTimeout(resolve, 1000));
+ *     await ...
  * }, "foo");
  * 
  * // more detailed call
@@ -21,7 +21,7 @@
  * timer.setLabel("foo");
  * timer.setDoesLog(true);
  * timer.setBlock(async () => {
- *     await new Promise(resolve => setTimeout(resolve, 1000));
+ *     await ...
  * });
  * await timer.run();
  */

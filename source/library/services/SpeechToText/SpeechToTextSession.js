@@ -222,7 +222,7 @@
   /**
    * @description Initializes the SpeechToTextSession.
    */
-  init() {
+  init () {
     super.init();
     this.setSubtitle("STT Session");
     this.setShouldStore(true);
@@ -234,7 +234,7 @@
   /**
    * @description Performs final initialization of the SpeechToTextSession.
    */
-  finalInit() {
+  finalInit () {
     super.finalInit()
     this.setNoteIsSubnodeCount(false);
     this.setCanDelete(true);
@@ -289,7 +289,7 @@
    * @param {boolean} oldValue - The old value of isRecording.
    * @param {boolean} newValue - The new value of isRecording.
    */
-  didUpdateSlotIsRecording (oldValue, newValue) {
+  didUpdateSlotIsRecording (/*oldValue, newValue*/) {
     if (this.recognition()) {
       this.didUpdateNode()
     }
@@ -352,7 +352,7 @@
   startInputTimeout () {
     this.clearInputTimeout()
     if (this.usesInputTimeout()) {
-      const tid = setTimeout(() => this.onInputTimeout(), this.inputTimeoutMs());
+      const tid = this.addTimeout(() => this.onInputTimeout(), this.inputTimeoutMs());
       this.setInputTimeoutId(tid)
     }
     return this
@@ -478,7 +478,7 @@
    * @description Handles the speech end event.
    * @param {Event} event - The speech end event.
    */
-  onSpeechEnd (event) {
+  onSpeechEnd (/*event*/) {
     this.sendDelegateMessage("onSpeechEnd", [this]);
   }
 
@@ -500,7 +500,7 @@
    * @description Handles the end event.
    * @param {Event} event - The end event.
    */
-  onEnd (event) {
+  onEnd (/*event*/) {
     this.setIsRecording(false)
     this.sendDelegateMessage("onSessionEnd", [this])
   }

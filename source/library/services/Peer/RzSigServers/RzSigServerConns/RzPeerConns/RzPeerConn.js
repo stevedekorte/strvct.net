@@ -36,7 +36,7 @@
         ]
       } // Allows passing a custom WebRTC configuration. 
       */
-    }
+    };
   }
 
   /**
@@ -135,7 +135,7 @@
       /**
        * @member {RzMsgs} peerMsgs
        */
-      const slot = this.newSlot("peerMsgs", null)
+      const slot = this.newSlot("peerMsgs", null);
       slot.setFinalInitProto(RzMsgs);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
@@ -261,7 +261,7 @@
 
 
     this.setShouldStoreSubnodes(false);
-    this.setCanDelete(true)
+    this.setCanDelete(true);
   }
 
   /**
@@ -281,7 +281,7 @@
    * @returns {string} The shortened peer id.
    */
   shortId () {
-    const id = this.id() 
+    const id = this.id(); 
     return id ? this.id().slice(0,5) + "..." : "null";
   }
 
@@ -297,7 +297,7 @@
    * @description Initializes the RzPeerConn instance.
    * @returns {RzPeerConn} The initialized instance.
    */
-  init() {
+  init () {
     super.init();
     this.setStatus("offline");
     this.setIsDebugging(false);
@@ -311,7 +311,7 @@
    * @returns {string} The peer id.
    */
   title () {
-    return this.peerId()
+    return this.peerId();
   }
 
   /**
@@ -320,10 +320,10 @@
    */
   subtitle () {
     if (this.isServerConn()) {
-      return "ourself"
+      return "ourself";
     }
 
-    return this.status()
+    return this.status();
   }
 
   /**
@@ -350,7 +350,7 @@
     conn.on("open", () => this.onOpen());
     conn.on("close", () => this.onClose());
     conn.on("error", (error) => this.onError(error));
-    this.setStatus("connected to peer")
+    this.setStatus("connected to peer");
   }
 
   /**
@@ -359,9 +359,9 @@
    */
   isServerConn () {
     if (this.sigServerConn()) {
-      return this.peerId() === this.sigServerConn().peerId()
+      return this.peerId() === this.sigServerConn().peerId();
     }
-    return false
+    return false;
   }
 
   /**
@@ -379,7 +379,7 @@
    * @returns {boolean} True if open, false otherwise.
    */
   isOpen () {
-    return !Type.isNullOrUndefined(this.conn()) && this.conn().open
+    return !Type.isNullOrUndefined(this.conn()) && this.conn().open;
   }
 
   // --- connection options ---
@@ -393,8 +393,8 @@
    */
   setConnLabel (s) {
     // the label we pass when we initiate a connection
-    this.connOptions().label = s
-    return this
+    this.connOptions().label = s;
+    return this;
   }
 
   /**
@@ -403,7 +403,7 @@
    */
   connLabel () {
     // the label we pass when we initiate a connection
-    return this.connOptions().label
+    return this.connOptions().label;
   }
 
   /**
@@ -412,7 +412,7 @@
    */
   peerLabel () {
     // the label we receive when we accept a connection
-    return this.conn().label
+    return this.conn().label;
   }
 
   // --- metadata ---
@@ -435,7 +435,7 @@
     if (this.conn()) {
       return this.conn().metadata;
     }
-    return null
+    return null;
   }
 
   // --------------------------------
@@ -445,19 +445,19 @@
    * @returns {RzPeerConn} The current instance.
    */
   connect () {
-    this.setDidInitiateConnection(true)
+    this.setDidInitiateConnection(true);
     if (this.isServerConn()) {
-      this.setStatus("can't connect to our own peer id")
-      return this
+      this.setStatus("can't connect to our own peer id");
+      return this;
     }
 
     const peer = this.sigServerConn().peer();
     if (peer) {
       const conn = peer.connect(this.peerId(), this.connOptions());
-      this.setConn(conn)
-      this.setDidInitiateConnection(true)
+      this.setConn(conn);
+      this.setDidInitiateConnection(true);
     } else {
-      this.setStatus("can't connect to peer when server connection is offline")
+      this.setStatus("can't connect to peer when server connection is offline");
     }
   }
 
@@ -482,23 +482,23 @@
    */
   onData (json) { // we set connection transmission format to JSON
     if (this.useMessageLog()) {
-      const msg = RzMsg.clone().setContent(json)
-      this.peerMsgs().addSubnode(msg)
+      const msg = RzMsg.clone().setContent(json);
+      this.peerMsgs().addSubnode(msg);
     }
 
     if (json.name === "RzPeerConnPing") {
-      this.onPing()
-      return
+      this.onPing();
+      return;
     } 
 
     if (json.name === "RzPeerConnPong") {
-      this.onPong()
-      return
+      this.onPong();
+      return;
     }
 
     if (json.name === "RzPeerChunk") {
-      this.onReceiveChunk(json)
-      return
+      this.onReceiveChunk(json);
+      return;
     }
 
     this.sendDelegateMessage("onPeerData", [this, json]);
@@ -509,8 +509,8 @@
    * @returns {RzPeerConn} The current instance.
    */
   clearChunks () {
-    this.chunks().clear()
-    return this
+    this.chunks().clear();
+    return this;
   }
 
   /**
@@ -542,7 +542,7 @@
       }
 
       const json = JSON.parse(s);
-      this.clearChunks()
+      this.clearChunks();
 
       //this.debugLog(this.type() + " completedChunks ", JSON.stringify(json));
 
@@ -555,15 +555,15 @@
    * @param {Error} error - The error object.
    */
   onError (error) {
-    this.setError(error)
+    this.setError(error);
     this.debugLog("onError:", error);
-    this.setStatus("error: " + error.message)
+    this.setStatus("error: " + error.message);
 
     this.sendDelegateMessage("onPeerError", [this, error]);
 
     const isDisconnect = this.disconnectErrorTypes().includes(error.type);
     if (isDisconnect) {
-      this.onUnexpectedDisconnect()
+      this.onUnexpectedDisconnect();
     }
   }
 
@@ -586,8 +586,8 @@
    */
   onClose () {
     this.debugLog("onClose");
-    this.setStatus("closed")
-    this.cancelNextPingTimeout()
+    this.setStatus("closed");
+    this.cancelNextPingTimeout();
 
     this.sigServerConn().removePeerConnection(this);
     this.setConn(null);
@@ -603,7 +603,7 @@
       const count = this.reconnectAttemptCount();
       this.setReconnectAttemptCount(this.reconnectAttemptCount() + 1);
       const delaySeconds = Math.pow(2, count);
-      this.addTimeout(() => { this.reconnect() }, delaySeconds * 1000);
+      this.addTimeout(() => { this.reconnect(); }, delaySeconds * 1000);
       console.log(this.typeId() + " will attempt reconnect in " + delaySeconds + " seconds");
 
     }
@@ -613,17 +613,17 @@
    * @description Attempts to reconnect to the peer.
    */
   reconnect () {
-    console.log(this.typeId() + " attempting reconnect")
-    this.connect()
+    console.log(this.typeId() + " attempting reconnect");
+    this.connect();
   }
 
   /**
    * @description Handles the document before unload event.
    * @param {Event} aNote - The event object.
    */
-  onDocumentBeforeUnload (aNote) {
-    console.log(this.typeId() + " onDocumentBeforeUnload shutdown")
-    this.shutdown()
+  onDocumentBeforeUnload (/*aNote*/) {
+    console.log(this.typeId() + " onDocumentBeforeUnload shutdown");
+    this.shutdown();
   }
 
   // --- delegate ---
@@ -658,7 +658,7 @@
     const conn = this.conn();
     if (conn.peerConnection) {
       const maxSize = conn.peerConnection._sctp.maxMessageSize;
-      return maxSize
+      return maxSize;
     }
     // assume default?
     return 65536; // in bytes
@@ -679,7 +679,7 @@
     // chunk message if it's too big
     const data = JSON.stringify(json);
     const mSize = data.length;
-    const maxSize = this.maxMessageSize()
+    const maxSize = this.maxMessageSize();
     if (mSize > maxSize) {
       const s = this.type() + " send() message size of " + mSize + " exceeds max of " + maxSize;
       console.warn(s);
@@ -719,7 +719,7 @@
    */
   sendThenClose (json) {
     this.send(json);
-    setTimeout(() => {
+    this.addTimeout(() => {
       this.shutdown();
     }, 500); // without delay, send doesn't occur
   }
@@ -752,9 +752,9 @@
    */
   serverIsConnected () {
     if (this.sigServerConn()) {
-      return this.sigServerConn().isConnected()
+      return this.sigServerConn().isConnected();
     }
-    return false
+    return false;
   }
 
   /**
@@ -784,12 +784,12 @@
    */
   sendPing () {
     if (!this.nextPingTimeout()) {
-      console.log(this.typeId() + " sendPing")
-      this.setGotPong(false)
-      this.send({ name: "RzPeerConnPing" })
-      this.setupNextPingTimeout()
+      console.log(this.typeId() + " sendPing");
+      this.setGotPong(false);
+      this.send({ name: "RzPeerConnPing" });
+      this.setupNextPingTimeout();
     } else {
-      debugger
+      debugger;
     }
   }
 
@@ -798,7 +798,7 @@
    */
   onPong () {
     //console.log(this.typeId() + " onPong")
-    this.setGotPong(true)
+    this.setGotPong(true);
   }
 
   // --- ping timeout ---
@@ -807,8 +807,8 @@
    * @description Sets up the next ping timeout.
    */
   setupNextPingTimeout () {
-    this.cancelNextPingTimeout()
-    const po = setTimeout(() => { this.onPingTimeout() }, this.nextPingTimeoutMs());
+    this.cancelNextPingTimeout();
+    const po = this.addTimeout(() => { this.onPingTimeout(); }, this.nextPingTimeoutMs());
     this.setNextPingTimeout(po);
   }
 
@@ -816,10 +816,10 @@
    * @description Cancels the next ping timeout.
    */
   cancelNextPingTimeout () {
-    const po = this.nextPingTimeout()
+    const po = this.nextPingTimeout();
     if (po) {
-      clearTimeout(po)
-      this.setNextPingTimeout(null)
+      clearTimeout(po);
+      this.setNextPingTimeout(null);
     }
   }
 
@@ -827,12 +827,12 @@
    * @description Handles the ping timeout event.
    */
   onPingTimeout () {
-    this.setNextPingTimeout(null)
+    this.setNextPingTimeout(null);
     if (this.gotPong()) {
-      this.sendPing()
+      this.sendPing();
     } else {
-      console.log(this.typeId() + " onPingTimeout shutdown")
-      this.shutdown()
+      console.log(this.typeId() + " onPingTimeout shutdown");
+      this.shutdown();
     }
   }
 
@@ -851,7 +851,7 @@
    */
   sendPong () {
     //console.log(this.typeId() + " sendPong")
-    this.send({ name: "RzPeerConnPong" })
+    this.send({ name: "RzPeerConnPong" });
   }
 
 }.initThisClass());
