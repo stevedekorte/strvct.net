@@ -113,8 +113,28 @@
     }
     */
 
+    /**
+     * @description Navigates to the specified node.
+     * @param {Node} aNode - The node to navigate to.
+     * @returns {BrowserView} The current BrowserView instance.
+     * @category Navigation
+     */
+    navigateToNode (aNode) {
+        const pathArray = aNode.nodePathArray(); 
+        pathArray.shift(); // remove first component
+        this.selectNodePathArray(pathArray);
+        return this;
+    }
+
     selectNodePathString (aPath) {
+        assert(Type.isString(aPath), "aPath must be a string");
         const components = aPath.split("/");
+
+        if (components.length === 1 && components[0] === "") {
+            this.moveToBase();
+            return this;
+        }
+
         //components.shift(); // remove first component
         const selectedNode = this.node().nodeAtSubpathArray(components);
         if (selectedNode) {
@@ -125,6 +145,7 @@
                 this.selectNodePathArray(pathArray);
             }
         } else {
+            console.warn("no node found for path: '" + aPath + "'");
             debugger;
         }
         return this;

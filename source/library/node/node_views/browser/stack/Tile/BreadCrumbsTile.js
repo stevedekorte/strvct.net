@@ -215,11 +215,11 @@
         this.syncPathToStack();
         if (!this.targetStackView()) {
             console.warn("no target stack view");
-            debugger;
+            //debugger;
             return this;
         }
-        const path = this.targetStackView().selectedNodePathString();
-        SvApp.shared().userInterface().updateQueryParameter("path", path);
+        //const path = this.targetStackView().selectedNodePathString();
+        //SvApp.shared().userInterface().onStackViewPathChange();
         return this;
     }
 
