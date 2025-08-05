@@ -13,7 +13,7 @@
  * // do stuff
  * WebBrowserWindow.shared().restoreSelectionRange();
  */
-(class WebBrowserWindow extends ProtoClass {
+(class WebBrowserWindow extends ProtoClass { 
     
     /**
      * @static
@@ -223,8 +223,8 @@
      */
     isOnMobile () { 
         const agent = this.agent();
-        const match = this.mobileNames().detect((name) => { return agent.contains(name); })
-        return match !== null
+        const match = this.mobileNames().detect((name) => { return agent.contains(name); });
+        return match !== null;
     }
 
     /**
@@ -233,10 +233,10 @@
      * @category Device Detection
      */
     isTouchDevice () {
-        let result = false 
+        let result = false; 
         if ("ontouchstart" in window) { result = true; }
         if (navigator.maxTouchPoints) { result = true; }
-        return result
+        return result;
     }
 
     /**
@@ -245,7 +245,7 @@
      * @category URL Management
      */
     urlHash () {
-        return decodeURI(window.location.hash.substr(1))
+        return decodeURI(window.location.hash.substr(1));
     }
     
     /**
@@ -256,9 +256,38 @@
      */
     setUrlHash (aString) {
         if (this.urlHash() !== aString) {
-            window.location.hash = encodeURI(aString)
+            window.location.hash = encodeURI(aString);
         }
-        return this
+        return this;
+    }
+
+    /**
+     * @description Pushes the URL hash.
+     * @param {string} aHash - The hash to push.
+     * @returns {WebBrowserWindow} The current instance.
+     * @category URL Management
+     */
+    pushUrlHash (aString) {
+        if (this.urlHash() !== aString) {
+            const hash = encodeURI(aString);
+            const newUrl = `${window.location.pathname}#${hash}`;
+            history.pushState(null, '', newUrl);
+        }
+        return this;
+    }
+
+    // --- search params ---
+
+    searchParams () {
+        return new URLSearchParams(window.location.search);
+    }
+
+    pushSearchParam (key, value) {
+        const params = new URLSearchParams(window.location.search);
+        params.set(key, value); 
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        history.replaceState(null, '', newUrl); // Or use pushState to keep history
+        return this;
     }
     
     /**
@@ -351,7 +380,7 @@
      * @category DOM Management
      */
     activeDomView () {
-        const e = document.activeElement
+        const e = document.activeElement;
         if (e && e.domView()) {
             return e.domView();
         }
@@ -432,6 +461,14 @@
         }
         // assume online for non-browser platforms?
         return true;
+    }
+
+    onHashChange (event) {
+        this.postNoteNamed("onHashChange", event);
+    }
+
+    onPopState (event) {
+        this.postNoteNamed("onPopState", event);
     }
 
     /**
