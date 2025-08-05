@@ -217,11 +217,13 @@
         this.setAcceptsFirstResponder(false)
         this.setupTileContentView()
 
+        /*
         if (TouchScreen.shared().isSupported() || true) { // testing 
             //
         } else {
             //this.addCloseButton()
         }
+        */
 
         this.setTransition(this.transitionStyle())
 
@@ -368,7 +370,7 @@
      * @param {any} oldValue - The old value.
      * @param {any} newValue - The new value.
      */
-    didUpdateSlotIsInspecting (oldValue, newValue) {
+    didUpdateSlotIsInspecting (/*oldValue, newValue*/) {
         //super.didUpdateSlotIsSelected (oldValue, newValue)
         this.tilesView().didChangeNavSelection()
         //this.updateSubviews()
@@ -390,8 +392,7 @@
             this.setLastSelectionDate(null)
         }
         
-
-        this.tilesView().didChangeNavSelection()
+        this.tilesView().didChangeNavSelection() // handed by onTap?
         //this.updateSubviews()
     }
     
@@ -445,7 +446,7 @@
     
     // -------------
     
-    onDidEdit (aView) {
+    onDidEdit (/*aView*/) {
         this.scheduleSyncToNode() 
         return true // stop propogation
     }
@@ -690,7 +691,7 @@
      * @param {DomView} aView - The view.
      * @returns {boolean} Whether the focus was released.
      */
-    decendantReleasedFocus (aView) {
+    decendantReleasedFocus (/*aView*/) {
         this.focus() // this doesn't seem right 
         return true
     }
@@ -777,22 +778,22 @@
 
     // copy and paste keyboard events
 
-    onMetaLeft_c_KeyDown (event) {
+    onMetaLeft_c_KeyDown (/*event*/) {
         // MacOScopy
         this.debugLog("onMetaLeft_c_KeyDown");
     }
 
-    onMetaLeft_v_KeyDown (event) {
+    onMetaLeft_v_KeyDown (/*event*/) {
         // MacOS paste
         this.debugLog("onMetaLeft_v_KeyDown");
     }
 
-    onControl_c_KeyDown (event) {
+    onControl_c_KeyDown (/*event*/) {
         // Windows copy
         this.debugLog("onControl_c_KeyDown");
     }
 
-    onControl_v_KeyDown (event) {
+    onControl_v_KeyDown (/*event*/) {
         // Windows paste
         this.debugLog("onControl_v_KeyDown");
     }
