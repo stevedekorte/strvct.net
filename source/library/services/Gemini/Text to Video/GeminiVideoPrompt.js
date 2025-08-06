@@ -37,19 +37,20 @@
         }
 
         {
-            const slot = this.newSlot("duration", 5);
+            const slot = this.newSlot("duration", 8);
             slot.setSlotType("Number");
             slot.setDescription("The duration of the video in seconds");
             slot.setIsSubnodeField(true);
-            slot.setValidValues([5, 6, 7, 8]);
+            slot.setValidValues([8]);
             slot.setShouldStoreSlot(true);
         }
 
         {
-            const slot = this.newSlot("ttvModel", "veo-3.0-generate-001");
+            const modelNames = ["veo-3.0-generate-preview", "veo-3.0-generate-001"];
+            const slot = this.newSlot("ttvModel", modelNames.first());
             slot.setSlotType("String");
             slot.setDescription("The Gemini model to use for text to video generation via Veo");
-            slot.setValidValues(["veo-3.0-generate-001"]);
+            slot.setValidValues(modelNames);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
         }
@@ -110,7 +111,11 @@
         {
             const slot = this.newSlot("error", null);
             slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
             slot.setDescription("Any error that occurred during the API call");
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setSyncsToView(true);
         }
 
         {
@@ -377,6 +382,13 @@
                     }
                 }
                 */
+
+                if (data.error) {
+                    this.setStatus("Error");
+                    this.setError(data.error.message);
+                    this.sendDelegate("onVideoPromptError", [this]);
+                    return null;
+                }
 
                 // do we need to convert it to a data url?
                 const dataUrl = "data:video/mp4;base64," + data.response.videos[0].bytesBase64Encoded;
