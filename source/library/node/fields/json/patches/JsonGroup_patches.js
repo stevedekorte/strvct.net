@@ -187,15 +187,19 @@
     if (this.shouldStoreSubnodes()) {
       const subnode = this.subnodeWithTitle(segment);
       if (!subnode) {
-        const availableKeys = this.subnodes().map(sn => sn.title()).join(', ');
-        throw new Error(`Property '${segment}' not found. Available properties: [${availableKeys}]`);
+        const pathString = this.nodePathString() + "/" + segment;
+        const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing subnode";
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
       return subnode;
     } else {
       const slot = this.getSlot(segment);
       if (!slot) {
-        const availableSlots = Array.from(this.thisPrototype().allSlotsNamesSet()).join(', ');
-        throw new Error(`Slot '${segment}' not found. Available slots: [${availableSlots}]`);
+        const pathString = this.nodePathString() + "/" + segment;
+        const errorMessage = "JSON Patch Error: invalid path: " + pathString + " - missing slot";
+        console.error(errorMessage);
+        throw new Error(errorMessage);
       }
       
       const value = slot.onInstanceGetValue(this);

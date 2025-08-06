@@ -937,6 +937,9 @@ class Type extends Object {
      * @returns {boolean} True if the value is a deep JSON-compatible type, false otherwise.
      */
     static isDeepJsonType (value) {
+        const error = this.errorWithJsonType(value);
+        return error === null;   
+        /*
         const seen = new Set();
       
         function checkValue (v) {
@@ -970,6 +973,77 @@ class Type extends Object {
         }
       
         return checkValue(value);
+        */
+    }
+
+    static errorWithJsonType (value) {
+        const seen = new Set();
+        let error = null;
+        let currentPath = [];
+
+        function currentPathString () {
+            let s = "";
+            for (let i = 0; i < currentPath.length; i++) {
+                const part = currentPath[i];
+                if (Type.isNumber(part)) {
+                    s += "[" + part + "]";
+                } else {
+                    s += part;
+                }
+                if (i < currentPath.length - 1) {
+                    s += ".";
+                }
+            }
+            return s;
+        }
+      
+        function checkValue (v) {
+          if (v === null) return true;
+      
+          const type = typeof(v);
+      
+          if (['string', 'number', 'boolean'].includes(type)) {
+            return true;
+          }
+      
+          if (type === 'object') {
+            if (seen.has(v)) {
+                error = "Circular reference at path: " + currentPathString();
+                return false; // Circular reference
+            }
+            seen.add(v);
+      
+            if (Array.isArray(v)) {
+              for (let i = 0; i < v.length; i++) {
+                currentPath.push(i);
+                const result = checkValue(v[i]);
+                currentPath.pop();
+                if (!result) return false;
+              }
+              return true;
+            } else {
+              for (const key of Object.keys(v)) {
+                if (typeof key !== 'string') {
+                    error = "Non-string key at path: " + currentPathString();
+                    return false;
+                }
+                currentPath.push(key);
+                const result = checkValue(v[key]);
+                currentPath.pop();
+                if (!result) return false;
+              }
+              return true;
+            }
+          }
+          error = "Unsupported type: '" + Type.typeName(v) + "' at path: " + currentPathString();
+          return false; // Functions, undefined, symbols, etc.
+        }
+      
+        checkValue(value);
+        if (error) {
+            return new Error(error);
+        }
+        return null;
     }
 
 

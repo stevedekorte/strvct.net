@@ -88,6 +88,7 @@
 Notes: tool definitions include a "returns" property which is a JSON Schema object describing the expected return value.\n
 Some of the referenced type definitions may be defined at the end of this prompt explanation document.
 
+>#> List of Tools
 The following tools are available for you to use:
 `);
     parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
