@@ -112,6 +112,18 @@
             slot.setSlotType("DeepSeekService");
         }
 
+        /**
+         * @member {GroqService} groqService
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("groqService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(GroqService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("GroqService");
+        }
+
         /*
         {
             const slot = this.newSlot("midjourneyService", null)
@@ -233,6 +245,7 @@
      * @category AI Service
      */
     defaultChatModel () {
+        //return this.groqService().defaultChatModel();
         //return this.xaiService().defaultChatModel();
         //return this.openAiService().defaultChatModel();
         return this.geminiService().defaultChatModel(); 

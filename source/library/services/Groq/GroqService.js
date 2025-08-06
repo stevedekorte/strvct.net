@@ -33,6 +33,24 @@
     // See: https://console.groq.com/docs/models
     return [
       {
+        "name": "openai/gpt-oss-120b",
+        "title": "Groq GPT OSS 120B",
+        "inputTokenLimit": 131072,
+        "outputTokenLimit": 32766  // though docs say 131072, API error says max is 32766
+      },
+      {
+        "name": "openai/gpt-oss-20b",
+        "title": "Groq GPT OSS 20B",
+        "inputTokenLimit": 131072,
+        "outputTokenLimit": 32766 
+      },
+      {
+        "name": "qwen/qwen3-32b",
+        "title": "Groq Qwen3 32B",
+        "inputTokenLimit": 131072,
+        "outputTokenLimit": 131072 
+      },
+      {
         "name": "deepseek-r1-distill-llama-70b",
         "title": "DeepSeek R1 Distill Llama 70B",
         "inputTokenLimit": 128000,
@@ -108,7 +126,7 @@
     let messages = bodyJson.messages;
 
     // remove initial system message and place it in the request json
-    debugger;
+    //debugger;
     if (messages.length == 1 && messages[0].role === this.systemRoleName()) {
       // if the last message is not a user message, we need to add a user message
       const userMessage = {
