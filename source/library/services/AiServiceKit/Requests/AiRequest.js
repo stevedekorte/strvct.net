@@ -857,15 +857,57 @@
   onXhrError (event) {
     console.log("onXhrError:", event);
     const xhr = this.xhr();
+    
+    // Get error information from the event
+    let eventErrorInfo = {};
+    if (event) {
+      eventErrorInfo = {
+        type: event.type,
+        target: event.target ? event.target.constructor.name : 'unknown',
+        // Note: XHR error events typically don't have a direct error message
+        // but we can check for any additional properties
+        hasError: event.error ? true : false,
+        errorType: event.error ? event.error.constructor.name : 'none'
+      };
+    }
+    
+    // Additional ways to get error information from the event:
+    // 1. Check if event has an error property (rare for XHR errors)
+    // if (event.error) {
+    //   console.log("Event error:", event.error);
+    // }
+    
+    // 2. Check if event has a message property
+    // if (event.message) {
+    //   console.log("Event message:", event.message);
+    // }
+    
+    // 3. Check if event has a detail property (used in some custom events)
+    // if (event.detail) {
+    //   console.log("Event detail:", event.detail);
+    // }
+    
+    // 4. Get the XHR object from the event target
+    // const xhrFromEvent = event.target;
+    // if (xhrFromEvent && xhrFromEvent.status) {
+    //   console.log("XHR from event status:", xhrFromEvent.status);
+    // }
+    
     // error events don't contain messages - need to look at xhr and guess at what happened
     //let s = "Error on Xhr requestId " + this.requestId() + " ";
-    let s = "Xhr error: " + this.description() + " ";
-    s += " status: " + this.nameForXhrStatusCode(xhr.status); // e.g. 404 = file not found
-    s += ", statusText: '" + xhr.statusText + "'";
-    s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
-    console.warn("onXhrError: " + s);
+    const info = {
+      activeApiUrl: this.activeApiUrl(),
+      //requestId: this.requestId(),
+      status: this.nameForXhrStatusCode(xhr.status), // e.g. 404 = file not found
+      statusText: xhr.statusText,
+      readyState: this.nameForXhrReadyState(xhr.readyState), // e.g.. 4 === DONE
+      //description: this.description(),
+      eventInfo: eventErrorInfo
+    }
+    const errorMessage = "onXhrError: " + JSON.stringify(info, null, 2);
+    console.warn(errorMessage);
     debugger;
-    const error = new Error(s);
+    const error = new Error(errorMessage);
     this.onError(error);
     this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);

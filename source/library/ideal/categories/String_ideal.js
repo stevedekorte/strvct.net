@@ -621,6 +621,14 @@
         return this.slice(-1);
     }
 
+    sansLastCharacter () {
+        return this.substring(0, this.length - 1);
+    }
+
+    sansFirstCharacter () {
+        return this.substring(1);
+    }
+
     /**
      * Capitalizes the first letter of each word in the string
      * @returns {string} The string with capitalized words
@@ -911,6 +919,19 @@
         const results = [];
         matches.forEach((e) => results.push(e.innerHTML));
         return results;
+    }
+
+    /**
+     * Checks if the string is valid JSON
+     * @returns {boolean} True if the string is valid JSON, false otherwise
+     */
+    isValidJson () {
+        try {
+            JSON.parse(this);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
 }).initThisCategory();

@@ -33,16 +33,18 @@
   modelsJson () {
     return [
 
+      // claude-opus-4-1-20250805
       {
-        "name": "claude-sonnet-4-20250514",
-        "title": "Claude 4 Sonnet",
+        "name": "claude-opus-4-1-20250805",
+        "title": "Claude 4.1 Opus",
         "subtitle": "",
         "inputTokenLimit": 200000,
         "notes": "",
         "beta": "output-128k-2025-02-19",
-        "outputTokenLimit": 64000,
+        "outputTokenLimit": 32000,
+        "supportsTemperature": true,
+        "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
       },
-
       {
         "name": "claude-opus-4-20250514",
         "title": "Claude 4 Opus",
@@ -51,7 +53,22 @@
         "notes": "",
         "beta": "output-128k-2025-02-19",
         "outputTokenLimit": 32000,
+        "supportsTemperature": true,
+        "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
       },
+
+      {
+        "name": "claude-sonnet-4-20250514",
+        "title": "Claude 4 Sonnet",
+        "subtitle": "",
+        "inputTokenLimit": 200000,
+        "notes": "",
+        "beta": "output-128k-2025-02-19",
+        "outputTokenLimit": 64000,
+        "supportsTemperature": true,
+        "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
+      },
+
 
       {
         "name": "claude-3-7-sonnet-20250219",
@@ -61,6 +78,8 @@
         "notes": "",
         "beta": "output-128k-2025-02-19",
         "outputTokenLimit": 128000,
+        "supportsTemperature": true,
+        "supportsTopP": false,  // Anthropic doesn't allow both temperature and top_p
         "extraHeaders": {
           "anthropic-version": "2023-06-01",
           "anthropic-beta": "output-128k-2025-02-19",

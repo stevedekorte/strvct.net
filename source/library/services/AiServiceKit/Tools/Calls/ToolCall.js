@@ -228,6 +228,80 @@ Example Tool call format:
         callString = this.callString().substring(9, this.callString().length - 3);
       }
 
+      if (!callString.isValidJson()) {  
+
+        // try to remove the first character if it's not a valid first character
+        const validFirstChars = ["{", "[", "\"", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "t", "f", "n"];
+        if (!validFirstChars.includes(callString.firstCharacter())) {
+          debugger;
+          // look at the next to last character
+          const secondChar = callString.charAt(1);
+          if (validFirstChars.includes(secondChar)) {
+            const s = callString.sansFirstCharacter();
+            if (s.isValidJson()) {
+              callString = s;
+            }
+          }
+        }
+
+        // try to remove the last character if it's not a valid last character
+        const validLastChars = ["]", "}", "\"", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "e", "l"];
+
+        if (!validLastChars.includes(callString.lastCharacter())) {
+
+          debugger;
+          
+          // look at the next to last character
+          const secondToLastChar = callString.charAt(callString.length - 2);
+          if (validLastChars.includes(secondToLastChar)) {
+            const s = callString.sansLastCharacter();
+            if (s.isValidJson()) {
+              callString = s;
+            }
+          }
+        }
+
+        // if the first character is a {, make sure the last character is a }
+        if (callString.firstCharacter() === "{") {
+          if (callString.lastCharacter() !== "}") {
+            callString = callString + "}";
+          }
+        }
+        // likewise, if the last character is a }, make sure the first character is a {
+        if (callString.lastCharacter() === "}") {
+          if (callString.firstCharacter() !== "{") {
+            callString = "{" + callString;
+          }
+        }
+
+        // if the first character is a [, make sure the last character is a ]
+        if (callString.firstCharacter() === "[") {
+          if (callString.lastCharacter() !== "]") {
+            callString = callString + "]";
+          }
+        }
+        // likewise, if the last character is a ], make sure the first character is a [
+        if (callString.lastCharacter() === "]") {
+          if (callString.firstCharacter() !== "[") {
+            callString = "[" + callString;
+          }
+        }
+
+        // if the first character is a ", make sure the last character is a "
+        if (callString.firstCharacter() === "\"") {
+          if (callString.lastCharacter() !== "\"") {
+            callString = callString + "\"";
+          }
+        }
+        // likewise, if the last character is a ", make sure the first character is a " 
+        if (callString.lastCharacter() === "\"") {
+          if (callString.firstCharacter() !== "\"") {
+            callString = "\"" + callString;
+          }
+        }
+
+      }
+
       let json = undefined;
       try {
         json = JSON.parse(callString);

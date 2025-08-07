@@ -95,9 +95,13 @@
   requestOptions () {
     const json = super.requestOptions();
 
-    // remove Authorization propety and use x-api-key instead
-    delete json.headers["Authorization"];
-    json.headers["x-api-key"] = this.apiKeyOrUserAuthToken();
+    // When using proxy, don't set API key headers - the proxy server handles auth
+    if (!this.needsProxy()) {
+      // Only set API key directly when not using proxy
+      // remove Authorization property and use x-api-key instead
+      delete json.headers["Authorization"];
+      json.headers["x-api-key"] = this.apiKeyOrUserAuthToken();
+    }
     return json;
   }
 
