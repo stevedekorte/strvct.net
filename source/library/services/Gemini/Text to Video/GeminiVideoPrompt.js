@@ -55,6 +55,14 @@
             slot.setShouldStoreSlot(true);
         }
 
+        {
+            const slot = this.newSlot("generateAudio", true);
+            slot.setSlotType("Boolean");
+            slot.setDescription("Whether to generate audio along with the video");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+        }
+
         // waiting for completion uses this
         {
             const slot = this.newSlot("operationId", null);
@@ -163,6 +171,7 @@
     subtitle () {
         const prompt = this.prompt().length > 0 ? this.prompt().slice(0, 40) + "..." : "No prompt yet";
         const duration = this.duration();
+        const audioString = this.generateAudio() ? " with audio" : "";
         /*
         const width = this.width();
         const height = this.height();
@@ -170,7 +179,7 @@
         */
         const status = this.status();
     
-        let s = `${prompt}\n${duration}s, ${this.ttvModel()}`;
+        let s = `${prompt}\n${duration}s${audioString}, ${this.ttvModel()}`;
         if (status.length > 0) {
             s += `\n${status}`;
         }
@@ -240,6 +249,7 @@
                 "enablePromptRewriting": true,
                 "addWatermark": true,
                 "includeRaiReason": true,
+                "generateAudio": this.generateAudio()
             }
         };
 
