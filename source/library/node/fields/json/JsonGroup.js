@@ -240,6 +240,7 @@
         }
       } else {
         console.warn("WARNING: " + this.type() + ".setJson() did not find slot: ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
+        debugger;
       }
     });
     return this;

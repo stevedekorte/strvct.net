@@ -930,6 +930,9 @@
             JSON.parse(this);
             return true;
         } catch (e) {
+            if (e.message) {
+                return false; // just here to avoid linter complaints about e not being used
+            }
             return false;
         }
     }
