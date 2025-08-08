@@ -64,6 +64,17 @@
       slot.setIsSubnode(true);
       slot.setShouldStoreSlot(true);
     }
+
+    /**
+     * @member {PiApiMidJourneyStyleTransfers} styleTransfers
+     * @category Style Transfers
+     */
+    {
+      const slot = this.newSlot("styleTransfers", null);
+      slot.setFinalInitProto(PiApiMidJourneyStyleTransfers);
+      slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
+    }
   }
 
   /**

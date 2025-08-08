@@ -283,7 +283,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         assert(items.length);
         assert(items.every(item => Type.isDictionary(item)));
         assert(items.every(item => Type.isString(item.label)));
-        assert(items.every(item => Type.isString(item.value)));
+        assert(items.every(item => Type.isString(item.value) || Type.isNumber(item.value)));
     }
 
     static fixValidItems (items) {
