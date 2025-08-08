@@ -10,14 +10,14 @@
 
 (class UoJsonDictionaryNode extends SvJsonDictionaryNode {
 
-  /*
-   * @description Returns the session.
-   * @returns {UoSession}
-   * @category Accessors
-   */
+    /*
+    * @description Returns the session.
+    * @returns {UoSession}
+    * @category Accessors
+    */
 
-  session () {
+    session () {
     return this.firstOwnerChainNodeOfClass(UoSession);
-  }
+    }
 
 }.initThisClass());

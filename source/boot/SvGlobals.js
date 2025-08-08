@@ -21,79 +21,79 @@
 const SvGlobals = (class SvGlobals extends Object {
 
     static globals () {
-		if (this._globals) {
-			return this._globals;
-		}
+        if (this._globals) {
+            return this._globals;
+        }
 
-		this._globals = this.privateSetupGlobals();
-		return this._globals;
+        this._globals = this.privateSetupGlobals();
+        return this._globals;
     }
 
     static privateSetupGlobals () {
-		if (typeof(globalThis) !== 'undefined') {
-			// should work in all modern browsers and node.js
-			return globalThis;
-		}
+        if (typeof(globalThis) !== 'undefined') {
+            // should work in all modern browsers and node.js
+            return globalThis;
+        }
 
-		if (typeof(self) !== 'undefined') {
-			// for browser and web workers
-			return self;
-		}
+        if (typeof(self) !== 'undefined') {
+            // for browser and web workers
+            return self;
+        }
 
-		if (typeof(window) !== 'undefined') { 
-			// for older browsers that don't support globalThis
-			window.global = window; 
-			return window;
-		}
+        if (typeof(window) !== 'undefined') { 
+            // for older browsers that don't support globalThis
+            window.global = window; 
+            return window;
+        }
 
-		if (typeof(global) !== 'undefined') { 
-			// for older node.js versions that don't support globalThis
-			global.window = global; 
-			return global;
-		}
+        if (typeof(global) !== 'undefined') { 
+            // for older node.js versions that don't support globalThis
+            global.window = global; 
+            return global;
+        }
 
-		// Note: this might still return the wrong result!
-		if (typeof(this) !== 'undefined' && this.Math === Math) {
-			return this;
-		}
-		
-		throw new Error('Unable to locate global `this`');
-	}
+        // Note: this might still return the wrong result!
+        if (typeof(this) !== 'undefined' && this.Math === Math) {
+            return this;
+        }
+        
+        throw new Error('Unable to locate global `this`');
+    }
 
-	static get (key) {
-		return this.globals()[key];
-	}
+    static get (key) {
+        return this.globals()[key];
+    }
 
-	static set (key, value) {
-		this.globals()[key] = value;
-	}
+    static set (key, value) {
+        this.globals()[key] = value;
+    }
 
-	static setIfAbsent (key, value) {
-		if (!this.has(key)) {
-			this.globals()[key] = value;
-		}
-	}
+    static setIfAbsent (key, value) {
+        if (!this.has(key)) {
+            this.globals()[key] = value;
+        }
+    }
 
-	static has (key) {
-		return this.globals()[key] !== undefined;
-	}
+    static has (key) {
+        return this.globals()[key] !== undefined;
+    }
 
-	static assertHas (key) {
-		if (!this.has(key)) {
-			throw new Error(`SvGlobals.assertHas("${key}") is not defined`);
-		}
-	}
+    static assertHas (key) {
+        if (!this.has(key)) {
+            throw new Error(`SvGlobals.assertHas("${key}") is not defined`);
+        }
+    }
 
-	static asMap () {
-		const dict = this.globals();	
-		const map = new Map(Object.entries(dict));
-		return map;
-	}
+    static asMap () {
+        const dict = this.globals();    
+        const map = new Map(Object.entries(dict));
+        return map;
+    }
 });
 
 // Make SvGlobals globally available
 SvGlobals.set("SvGlobals", SvGlobals);
 
 if (SvGlobals.globals().SvGlobals === undefined) {
-	throw new Error("SvGlobals is not defined");
+    throw new Error("SvGlobals is not defined");
 }
