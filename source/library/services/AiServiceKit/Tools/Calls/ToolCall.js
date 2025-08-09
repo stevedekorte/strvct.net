@@ -300,6 +300,14 @@ Example Tool call format:
           }
         }
 
+        // try removing the last character if it's a }
+        if (callString.lastCharacter() === "}") {
+          const s = callString.sansLastCharacter();
+          if (s.isValidJson()) {
+            callString = s;
+          }
+        }
+
       }
 
       let json = undefined;

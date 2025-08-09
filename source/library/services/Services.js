@@ -26,6 +26,13 @@
      */
     initPrototypeSlots () {
                
+        {
+            const slot = this.newSlot("firebaseStorageService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(FirebaseStorageService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("FirebaseStorageService");
+        }
 
         /**
          * @member {LeonardoService} leonardoService

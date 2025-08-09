@@ -115,7 +115,7 @@
             const tile = this.tile()
             if (tile) {
                 const tileClass = this.subviewProtoForSubnode(aNode);
-                if (tile.thisClass() !== aClass) {
+                if (tile.thisClass() !== tileClass) {
                     this.setupTile()
                 }   
             } else {

@@ -312,11 +312,11 @@
 
   /**
    * Sets the body for the request
-   * @param {string} body 
+   * @param {string|FormData|Blob|ArrayBuffer} body 
    * @returns {SvXhrRequest}
    */
   setBody (body) {
-    assert(Type.isString(body) || Type.isFormData(body));
+    assert(Type.isString(body) || Type.isFormData(body) || Type.isBlob(body) || Type.isArrayBuffer(body));
     this.requestOptions().body = body;
     return this;
   }
@@ -441,7 +441,7 @@
     assert(options.headers, "headers is required");
     assert(Type.isDictionary(options.headers), "headers must be a dictionary");
     const body = options.body;
-    assert(Type.isString(body) || Type.isFormData(body), "body must be a string");
+    assert(Type.isString(body) || Type.isFormData(body) || Type.isBlob(body) || Type.isArrayBuffer(body), "body must be a string, FormData, Blob, or ArrayBuffer");
   }
 
   /**
@@ -497,6 +497,13 @@
     } else if (Type.isString(options.body)) {
       console.log("body type: String");
       console.log("body preview:", options.body.substring(0, 200) + (options.body.length > 200 ? "..." : ""));
+    } else if (Type.isBlob(options.body)) {
+      console.log("body type: Blob");
+      console.log("blob size:", options.body.size, "bytes");
+      console.log("blob type:", options.body.type || "unknown");
+    } else if (Type.isArrayBuffer(options.body)) {
+      console.log("body type: ArrayBuffer");
+      console.log("buffer size:", options.body.byteLength, "bytes");
     }
     console.log("--------------------------------");
 

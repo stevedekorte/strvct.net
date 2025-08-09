@@ -446,8 +446,11 @@
    * @category Delegation
    */
   onImageGenerationEnd (generation) {
+    // Debug logging
+    console.log("onImageGenerationEnd - status:", generation.status(), "images:", generation.images().subnodes().length);
+    
     // Check if generation was successful and has images
-    if (generation.status() === "complete" && generation.images().subnodes().length > 0) {
+    if (generation.status() === "completed" && generation.images().subnodes().length > 0) {
       this.setStatus("Generation complete - copying images...");
       
       // Copy images from generation to our images collection
@@ -471,7 +474,10 @@
     } else if (generation.error()) {
       this.onError(new Error(generation.error()));
     } else {
-      this.setStatus("Generation ended without images");
+      // More detailed status message
+      const actualStatus = generation.status();
+      const imageCount = generation.images().subnodes().length;
+      this.setStatus(`Generation ended without images (status: ${actualStatus}, images: ${imageCount})`);
     }
     
     this.onEnd();

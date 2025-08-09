@@ -22,7 +22,7 @@
         this.setSubnodeClasses([PiApiMidJourneyStyleTransfer]);
         this.setNodeCanAddSubnode(true);
         this.setNodeCanReorderSubnodes(true);
-        this.setTitle("Midjourney Style Transfers");
+        this.setTitle("Style Transfers");
         this.setNoteIsSubnodeCount(true);
     }
 

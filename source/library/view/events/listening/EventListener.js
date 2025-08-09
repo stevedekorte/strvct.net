@@ -13,9 +13,10 @@
  * https://developer.mozilla.org/en-US/docs/Web/Events
  */
 
-let listenCount = 0;
 
 (class EventListener extends ProtoClass {
+
+    static listenCount = 0;
 
     /**
      * @static
@@ -297,7 +298,7 @@ let listenCount = 0;
      * @description Increments the listen count.
      */
     incrementListenCount () {
-        listenCount++
+        this.thisClass().listenCount++
         //EventListener.activeListeners().add(this)
         //console.log(this.listenerKey() + " START")
     }
@@ -306,7 +307,7 @@ let listenCount = 0;
      * @description Decrements the listen count.
      */
     decrementListenCount () {
-        listenCount--
+        this.thisClass().listenCount--
         //EventListener.activeListeners().delete(this)
         //console.log(this.listenerKey() + " STOP")
     }
@@ -447,7 +448,7 @@ let listenCount = 0;
      * @param {Event} event - The event being handled.
      * @returns {EventListener} The EventListener instance.
      */
-    onBeforeEvent (event) {
+    onBeforeEvent (/*event*/) {
         return this
     }
 
@@ -456,7 +457,7 @@ let listenCount = 0;
      * @param {Event} event - The event that was handled.
      * @returns {EventListener} The EventListener instance.
      */
-    onAfterEvent (event) {
+    onAfterEvent (/*event*/) {
         if (this.isUserInteraction()) {
             EventManager.shared().onReceivedUserEvent()
         }

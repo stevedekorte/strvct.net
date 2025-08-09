@@ -323,6 +323,12 @@
   }
 
   async poll () {
+    // Check if polling was stopped
+    if (!this.isPolling()) {
+      console.log("Polling stopped, not continuing");
+      return;
+    }
+    
     if (this.pollCount() >= this.maxPollCount()) {
       this.setIsPolling(false);
       this.onError("Max poll count reached");
@@ -366,17 +372,37 @@
     const text = request.responseText();
     const json = JSON.parse(text);
 
-    // "status": "completed" | "processing" | "pending" | "failed" | "staged"
+    // "status": "success" | "processing" | "pending" | "failed" | "staged"
 
     const status = this.apiPollStatus();
 
     this.setStatus(status.toLowerCase());
 
-    if (status === "completed") {
+    if (status === "success" || status === "completed") {
       this.setIsPolling(false);
-      this.spawnImageNodes();
+      this.setStatus("completed"); // Normalize to "completed" for consistency
+      await this.spawnImageNodes();
     } else if (status === "failed") {
-      this.onError("Task failed");
+      // Log the entire response for debugging
+      console.error("PIAPI_FAILED_RESPONSE: " + JSON.stringify(json));
+      
+      // Extract detailed error message from the response
+      let errorMessage = "Task failed";
+      if (json.data && json.data.error) {
+        const apiError = json.data.error;
+        errorMessage = apiError.message || apiError.raw_message || errorMessage;
+        if (apiError.detail) {
+          errorMessage += ` - ${apiError.detail}`;
+        }
+      } else if (json.message) {
+        errorMessage = json.message;
+      }
+      
+      this.setError(errorMessage);
+      this.setStatus("Error: " + errorMessage);
+      this.sendDelegate("onImageGenerationError", [this]);
+      this.onEnd();
+      return;
     } else if (json.error) {
       this.onError(json.error);
     } else if (status === "pending" || status === "processing" || status === "staged") {
@@ -451,6 +477,12 @@
       imageNode.setDelegate(this);
       await imageNode.asyncFetch();  // this will parallelize the fetches
     }
+    
+    // Set final status before notifying delegates
+    this.setStatus("completed");
+    
+    // Notify that generation is complete with images
+    this.onEnd();
   }
 
   /**
