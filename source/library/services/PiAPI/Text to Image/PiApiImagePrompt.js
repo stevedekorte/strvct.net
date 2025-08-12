@@ -521,7 +521,7 @@
    * @param {SvXhrRequest} request - The request object.
    * @category Request Delegation
    */
-  onRequestBegin (request) {
+  onRequestBegin (/*request*/) {
     this.setStatus("sending request...");
   }
 
@@ -539,7 +539,7 @@
    * @param {SvXhrRequest} request - The request object.
    * @category Request Delegation
    */
-  onRequestSuccess (request) {
+  onRequestSuccess (/*request*/) {
     // Success handling is done in the main start() method
     // This is called after the request completes successfully
   }
@@ -559,7 +559,7 @@
    * @param {SvXhrRequest} request - The request object.
    * @category Request Delegation
    */
-  onRequestAbort (request) {
+  onRequestAbort (/*request*/) {
     this.setStatus("request aborted");
     this.onEnd();
   }
@@ -579,7 +579,7 @@
    * @param {SvXhrRequest} request - The request object.
    * @category Request Delegation
    */
-  onRequestComplete (request) {
+  onRequestComplete (/*request*/) {
     // Final cleanup can be done here if needed
   }
 

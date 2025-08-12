@@ -147,6 +147,28 @@
       slot.setIsSubnode(true);
       slot.setShouldStoreSlot(true);
     }
+
+    /**
+     * @member {OpenAiStyleTransfers} styleTransfers
+     * @category Style Transfer
+     */
+    {
+      const slot = this.newSlot("styleTransfers", null);
+      slot.setFinalInitProto(OpenAiStyleTransfers);
+      slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
+    }
+
+    /**
+     * @member {OpenAiImageEvaluators} imageEvaluators
+     * @category Image Evaluation
+     */
+    {
+      const slot = this.newSlot("imageEvaluators", null);
+      slot.setFinalInitProto(OpenAiImageEvaluators);
+      slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
+    }
   }
 
   /**

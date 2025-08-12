@@ -7,7 +7,7 @@
 /**
  * @class OpenAiImagePrompt
  * @extends SvSummaryNode
- * @classdesc Represents an OpenAI image prompt for generating images using DALL-E models.
+ * @classdesc Represents an OpenAI image prompt for generating images using gpt-image-1 model (NOT DALL-E).
  */
 (class OpenAiImagePrompt extends SvSummaryNode {  
   initPrototypeSlots () {
@@ -41,7 +41,7 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setValidValues(["gpt-image-1"]); //, "dall-e-3"])
+      slot.setValidValues(["gpt-image-1"]); // We use gpt-image-1, NOT DALL-E
       slot.setIsSubnodeField(true);
     }
 
@@ -74,7 +74,7 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
-      slot.setValidValues([1]) // dall-e-3 only supports 1
+      slot.setValidValues([1]) // gpt-image-1 currently supports 1
       //slot.setIsSubnodeField(true)
     }
 
@@ -264,9 +264,9 @@
     this.sendDelegate("onImagePromptStart", [this]);
 
     const apiKey = this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
-    const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
+    const endpoint = 'https://api.openai.com/v1/images/generations'; // OpenAI image generation endpoint (gpt-image-1, NOT DALL-E)
     /*
-    // dall-e 3
+    // NOT USED - we use gpt-image-1, not dall-e
     const bodyJson = {
       model: this.ttiModel(), // not sure this is valid, but it's used in the python API
       prompt: this.prompt(),

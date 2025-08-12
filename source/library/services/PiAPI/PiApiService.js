@@ -75,6 +75,17 @@
       slot.setIsSubnode(true);
       slot.setShouldStoreSlot(true);
     }
+
+    /**
+     * @member {PiApiImageEvalPrompts} imageEvalPrompts
+     * @category Image Eval Prompts
+     */
+    {
+      const slot = this.newSlot("imageEvalPrompts", null);
+      slot.setFinalInitProto(PiApiImageEvalPrompts);
+      slot.setIsSubnode(true);
+      slot.setShouldStoreSlot(true);
+    }
   }
 
   /**

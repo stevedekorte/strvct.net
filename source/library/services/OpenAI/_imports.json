@@ -1,6 +1,8 @@
 [
     "Text to Image/_imports.json",
     "Text to Speech/_imports.json",
+    "Style Transfers/_imports.json",
+    "Image Evaluators/_imports.json",
     "OpenAiRequest.js",
     "OpenAiService.js"
 ]

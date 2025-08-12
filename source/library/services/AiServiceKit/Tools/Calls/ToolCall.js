@@ -270,33 +270,48 @@ Example Tool call format:
         // likewise, if the last character is a }, make sure the first character is a {
         if (callString.lastCharacter() === "}") {
           if (callString.firstCharacter() !== "{") {
-            callString = "{" + callString;
+            const s = "{" + callString;
+            if (s.isValidJson()) {
+              callString = s;
+            }
           }
         }
 
         // if the first character is a [, make sure the last character is a ]
         if (callString.firstCharacter() === "[") {
           if (callString.lastCharacter() !== "]") {
-            callString = callString + "]";
+            const s = callString + "]";
+            if (s.isValidJson()) {
+              callString = s;
+            }
           }
         }
         // likewise, if the last character is a ], make sure the first character is a [
         if (callString.lastCharacter() === "]") {
           if (callString.firstCharacter() !== "[") {
-            callString = "[" + callString;
+            const s = "[" + callString;
+            if (s.isValidJson()) {
+              callString = s;
+            }
           }
         }
 
         // if the first character is a ", make sure the last character is a "
         if (callString.firstCharacter() === "\"") {
           if (callString.lastCharacter() !== "\"") {
-            callString = callString + "\"";
+            const s = callString + "\"";
+            if (s.isValidJson()) {
+              callString = s;
+            }
           }
         }
         // likewise, if the last character is a ", make sure the first character is a " 
         if (callString.lastCharacter() === "\"") {
           if (callString.firstCharacter() !== "\"") {
-            callString = "\"" + callString;
+            const s = "\"" + callString;
+            if (s.isValidJson()) {
+              callString = s;
+            }
           }
         }
 

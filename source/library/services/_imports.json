@@ -1,12 +1,12 @@
 [
     "AiServiceKit/_imports.json",
+    "Firebase/_imports.json",
     "Anthropic/_imports.json",
     "OpenAI/_imports.json",
     "DeepSeek/_imports.json",
     "Groq/_imports.json",
     "Gemini/_imports.json",
     "Leonardo/_imports.json",
-    "Firebase/_imports.json",
     "PiAPI/_imports.json",
     "Xai/_imports.json",
     "YouTube/_imports.json",

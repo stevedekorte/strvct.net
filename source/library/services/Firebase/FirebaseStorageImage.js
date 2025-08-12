@@ -333,12 +333,19 @@
     }
 
     /**
-     * @description Converts a data URL to a Blob
+     * @description Converts a data URL to a Blob, stripping metadata
      * @param {string} dataUrl - The data URL
-     * @returns {Promise<Blob>} The blob
+     * @returns {Promise<Blob>} The blob without metadata
      * @category Helper
      */
     async dataUrlToBlob (dataUrl) {
+        // For PNG images, we could strip metadata by re-encoding through canvas
+        // This ensures no EXIF or other metadata is preserved
+        if (dataUrl.includes('image/png') || dataUrl.includes('image/jpeg')) {
+            return this.stripMetadataViaCanvas(dataUrl);
+        }
+        
+        // For other types, use the original method
         return new Promise((resolve) => {
             const arr = dataUrl.split(',');
             const mime = arr[0].match(/:(.*?);/)[1];
@@ -349,6 +356,40 @@
                 u8arr[n] = bstr.charCodeAt(n);
             }
             resolve(new Blob([u8arr], { type: mime }));
+        });
+    }
+    
+    /**
+     * @description Strips metadata from an image by re-encoding through canvas
+     * @param {string} dataUrl - The data URL
+     * @returns {Promise<Blob>} The blob without metadata
+     * @category Helper
+     */
+    async stripMetadataViaCanvas (dataUrl) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+                // Create canvas and draw the image
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                
+                // Convert back to blob (this strips all metadata)
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        console.log("Stripped metadata from image via canvas re-encoding");
+                        resolve(blob);
+                    } else {
+                        reject(new Error("Failed to convert canvas to blob"));
+                    }
+                }, 'image/png', 1.0); // Use PNG for lossless quality
+            };
+            img.onerror = () => {
+                reject(new Error("Failed to load image for metadata stripping"));
+            };
+            img.src = dataUrl;
         });
     }
 
