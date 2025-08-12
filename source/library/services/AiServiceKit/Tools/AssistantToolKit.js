@@ -171,29 +171,37 @@ The following formats will be used for tool calls and responses:
     this.scheduleMethod("sendCompletedToolCallResponses", 0);
   }
 
+  completedCallsRequiringResponse () {
+    return this.toolCalls().completedCalls().filter((toolCall) => toolCall.toolResult().doesRequireResponse());
+  }
+
   async sendCompletedToolCallResponses () {
     const completedCalls = this.toolCalls().completedCalls();
     if (completedCalls.length > 0) {
-      if (completedCalls.filter((toolCall) => toolCall.toolResult().doesRequireResponse()).length > 0) {
-        const m = this.conversation().newUserMessage();
-        m.setSpeakerName("Tool Call Results");
+      if (this.completedCallsRequiringResponse().length > 0) {
         const content = this.composeResponseForToolCalls(completedCalls);
-        m.setContent(content);
-        //debugger;
-        m.setIsVisibleToUser(false);
-        assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");
-        m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
-        //const responseMessage = m.requestResponse();
-        //await responseMessage.completionPromise();
-        assert(m.isVisibleToUser() === false);
-        m.setIsVisibleToUser = function () {
-          assert(false, "Tool call results should not be visible to user");
-        };
-        console.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.type());
+        this.newCallResponseMessage("Tool Call Results", content);
       }
       this.toolCalls().removeCalls(completedCalls);
       this.errors().addCalls(completedCalls.filter((toolCall) => toolCall.hasError()));
     }
+  }
+
+  newCallResponseMessage (speakerName, content) {
+    const m = this.conversation().newUserMessage();
+    m.setSpeakerName("Tool Call Results");
+    m.setContent(content);
+    m.setIsVisibleToUser(false);
+    assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");
+    m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
+    //const responseMessage = m.requestResponse();
+    //await responseMessage.completionPromise();
+    assert(m.isVisibleToUser() === false);
+    m.setIsVisibleToUser = function (value) {
+      assert(value === false, "Tool call results should not be visible to user");
+    };
+    //console.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.type());
+    return m;
   }
 
   composeResponseForToolCalls (completedCalls) {

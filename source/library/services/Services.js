@@ -255,9 +255,9 @@
         //return this.groqService().defaultChatModel();
         //return this.xaiService().defaultChatModel();
         //return this.openAiService().defaultChatModel();
-        //return this.geminiService().defaultChatModel(); 
+        return this.geminiService().defaultChatModel(); 
         //return this.deepSeekService().defaultChatModel();
-        return this.anthropicService().defaultChatModel();
+        //return this.anthropicService().defaultChatModel();
         //return this.aiServices().first().defaultChatModel();
     }
 

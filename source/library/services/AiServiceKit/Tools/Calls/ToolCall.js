@@ -233,7 +233,7 @@ Example Tool call format:
         // try to remove the first character if it's not a valid first character
         const validFirstChars = ["{", "[", "\"", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "t", "f", "n"];
         if (!validFirstChars.includes(callString.firstCharacter())) {
-          debugger;
+          //debugger;
           // look at the next to last character
           const secondChar = callString.charAt(1);
           if (validFirstChars.includes(secondChar)) {
@@ -249,7 +249,7 @@ Example Tool call format:
 
         if (!validLastChars.includes(callString.lastCharacter())) {
 
-          debugger;
+          //debugger;
           
           // look at the next to last character
           const secondToLastChar = callString.charAt(callString.length - 2);
@@ -480,7 +480,8 @@ Example Tool call format:
       this.handleCallSuccess(resultValue);
       */
     } catch (e) {
-      this.handleCallError(e);
+        debugger;
+        this.handleCallError(e);
     }
   }
 
@@ -528,7 +529,7 @@ Example Tool call format:
     const errorData = {
         name: "ToolCallError",
         message: e.message,
-        extraMessage: e.extraMessage,
+        extraMessage: e.extraMessage || null,
         stack: e.stack ? String(e.stack) : null,
         toolCall: {
           toolName: this.toolName(),

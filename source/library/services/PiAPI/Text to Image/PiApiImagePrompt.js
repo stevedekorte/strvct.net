@@ -321,10 +321,36 @@
       
       if (request.isSuccess()) {
         const responseText = request.responseText();
-        const resultData = JSON.parse(responseText).data;
+        const response = JSON.parse(responseText);
+        const resultData = response.data;
+        
+        // Check if the task immediately failed
+        if (resultData && resultData.status === "failed") {
+          let errorMsg = "Image generation failed";
+          if (resultData.error) {
+            // Check for content policy violations
+            if (resultData.error.raw_message && resultData.error.raw_message.includes("Banned Prompt")) {
+              // Extract the banned word(s) from the message
+              const bannedMatch = resultData.error.raw_message.match(/Banned Prompt: (.+)/);
+              if (bannedMatch && bannedMatch[1]) {
+                errorMsg = `Content filter triggered by word: "${bannedMatch[1]}". Try rephrasing without this term.`;
+              } else {
+                errorMsg = "Content policy violation: " + resultData.error.raw_message;
+              }
+            } else {
+              errorMsg += ": " + (resultData.error.message || resultData.error.raw_message || JSON.stringify(resultData.error));
+            }
+          } else if (response.message) {
+            errorMsg += ": " + response.message;
+          }
+          console.error("PiAPI immediate failure:", resultData);
+          const error = new Error(errorMsg);
+          this.onError(error);
+          return;
+        }
         
         // PiAPI returns a task_id for tracking
-        if (resultData.task_id) {
+        if (resultData && resultData.task_id) {
           this.setTaskId(resultData.task_id);
           this.setStatus("task submitted, awaiting completion...");
           
@@ -550,6 +576,23 @@
    * @category Request Delegation
    */
   onRequestFailure (request) {
+    // For 500 errors, try to extract more detail from the response
+    if (request.status() === 500 || request.status() === "500") {
+      try {
+        const responseText = request.responseText();
+        const response = JSON.parse(responseText);
+        if (response.data && response.data.status === "failed") {
+          // This is actually a "successful" API response that contains a failed task
+          // Let the normal flow handle it by treating it as success
+          this.onRequestSuccess(request);
+          return;
+        }
+      } catch (e) {
+        console.error("onRequestFailure - couldn't parse response:", e);
+        // Couldn't parse response, continue with normal error handling
+      }
+    }
+    
     const error = request.error() || new Error(`Request failed: ${request.status()}`);
     this.onError(error);
   }

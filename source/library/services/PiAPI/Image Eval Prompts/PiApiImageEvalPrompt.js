@@ -150,7 +150,9 @@
         }
         
         // Combine in Midjourney format
-        return `${content}, ${style}`;
+        // Clean up style if it ends with a period
+        const cleanStyle = style.replace(/\.$/, "");
+        return `${content}, in the style of ${cleanStyle}`;
     }
     
     /**
@@ -345,18 +347,33 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 if (jsonMatch) {
                     let scores = JSON.parse(jsonMatch[0]);
                     
-                    // OpenAI might return 1-based indices, convert to 0-based
-                    scores = scores.map(scoreObj => {
-                        // If all indices are >= 1, assume 1-based and convert to 0-based
-                        const adjustedIndex = scoreObj.index >= 1 ? scoreObj.index - 1 : scoreObj.index;
-                        return {
-                            ...scoreObj,
-                            index: adjustedIndex
-                        };
-                    });
+                    // Check if OpenAI is using 1-based indices (all indices >= 1 and no index 0)
+                    const hasIndexZero = scores.some(s => s.index === 0);
+                    const minIndex = Math.min(...scores.map(s => s.index));
                     
-                    this.setEvaluationScores(scores);
-                    console.log("Evaluation scores (adjusted to 0-based):", scores);
+                    if (!hasIndexZero && minIndex === 1) {
+                        // Convert from 1-based to 0-based
+                        console.log("Converting from 1-based to 0-based indices");
+                        scores = scores.map(scoreObj => ({
+                            ...scoreObj,
+                            index: scoreObj.index - 1
+                        }));
+                    }
+                    
+                    // Remove any duplicate indices (keep the first occurrence)
+                    const uniqueScores = [];
+                    const seenIndices = new Set();
+                    for (const score of scores) {
+                        if (!seenIndices.has(score.index)) {
+                            seenIndices.add(score.index);
+                            uniqueScores.push(score);
+                        } else {
+                            console.warn(`Duplicate index ${score.index} found in evaluation scores, skipping`);
+                        }
+                    }
+                    
+                    this.setEvaluationScores(uniqueScores);
+                    console.log("Evaluation scores (cleaned):", uniqueScores);
                 } else {
                     // Fallback: give all images equal scores
                     const defaultScores = imageNodes.map((node, idx) => ({

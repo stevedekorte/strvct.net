@@ -229,19 +229,60 @@
       console.warn("tagDelegate calling method: " + textMethodName);
       return this.tagDelegate()[textMethodName](tagText, this);
     } else if (tagName.includes("-")) { // only warn if it has a dash as it's a special tag
-      if (!ignoreMissingMethodsForTags.includes(tagName)) {
+      if (ignoreMissingMethodsForTags.includes(tagName)) {
+        // we can ignore missing methods for this tag
+      } else {
+        // otherwise, we need to report an error 
         if (tagName === "tool-call-result") {
-          console.warn("AI is mistakingly sending a tool-call-result tag. This is not allowed. Ignoring.");
-          // TODO: add a feature to attach a error message about this to the next user response message
-          // maybe via the tool call result object?
-          debugger;
-          return;
+            // if the the tag is a tool-call-result, let's compose a special error message 
+            // to remind the ai that tool call results can only be returned by the tool call itself.
+            const errorMessage = `You have mistakenly responded with a tool-call-result tag. 
+            Tool call results can only be returned by the tool call itself. `;
+            const extraNote = this.noteForToolJsonString(tagText);
+            this.reportErrorToAi("Error: " + errorMessage + extraNote);
+            return;
+        } else {
+            console.warn("tagDelegate (" + this.tagDelegate().type() + ") missing method: " + textMethodName + " for tag: " + tagName);
+            const errorMessage = "Error: you responded with a '" + tagName + "' tag which the client does not understand.";
+            this.reportErrorToAi(errorMessage);
+            debugger; 
         }
-        console.warn("tagDelegate (" + this.tagDelegate().type() + ") missing method: " + textMethodName + " for tag: " + tagName);
-        debugger;
       }
     }
+  }
 
+  noteForToolJsonString (jsonString) {
+    let note = "";
+    try {
+        const json = JSON.parse(jsonString);
+        const toolName = json.toolName;
+        const toolCall = this.conversation().assistantToolKit().toolCalls().toolCallWithName(toolName);
+        if (toolCall) {
+            const toolMethod = toolCall.toolMethod();
+            const silentSuccess = toolMethod.silentSuccess();
+            const silentError = toolMethod.silentError();
+            if (silentSuccess) {
+                note = "Note: the '" + toolName + "' has a silentSuccess value of " + silentSuccess + ". And a silentError value of " + silentError + ".";
+            }
+        } else {
+            note = "Note: the tool call with name '" + toolName + "' was not found. Please check the system prompt for the list of available tool calls.";
+        }
+    } catch (e) {
+        console.warn("Error parsing the tool-call-result tag: " + e.message);
+    }
+    return note;
+  }
+
+  reportErrorToAi (errorMessage) {
+    console.warn(this.type() + ".reportErrorToAi(\"" + errorMessage + "\")");
+    debugger;
+    if (this.conversation().assistantToolKit) {
+        // the assistant tool kit will send the error message after the AI's current response is complete
+        const assistantToolKit = this.conversation().assistantToolKit();
+        assistantToolKit.newCallResponseMessage("Error", errorMessage);
+    } else {
+        throw new Error("missing conversation.assistantToolKit");
+    }
   }
 
   // ----------------------------------------------------------------

@@ -158,7 +158,7 @@
      * @returns {Object|undefined} The resource if found, undefined otherwise.
      * @category Resource Management
      */
-    resourceNamed (name) {
+    resourceWithName (name) {
         const resource = this.resourcesWithName(name).first();
         return resource;
     }

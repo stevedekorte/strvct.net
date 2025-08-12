@@ -239,8 +239,12 @@
           }
         }
       } else {
-        console.warn("WARNING: " + this.type() + ".setJson() did not find slot: ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
-        debugger;
+        const errorMessage = "WARNING: " + this.type() + ".setJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/");
+        console.warn(errorMessage);
+        // also add the warning to the error log
+        debugger; 
+        throw new Error(errorMessage);
+        //debugger;
       }
     });
     return this;

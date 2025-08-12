@@ -27,6 +27,12 @@
     static async asyncSend (error, json = null) {
         const errorReport = SvErrorReport.clone();
         errorReport.setError(error);
+
+        if (!Type.isJsonType(json)) {
+            const errorMessage = Type.errorWithJsonType(json);
+            console.warn("SvErrorReport json argument is not a valid JSON type: " + errorMessage);
+            debugger;
+        }
         errorReport.setJson(json);
         return await errorReport.asyncSend();
     }

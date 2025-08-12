@@ -269,14 +269,14 @@
         }
         if (method) {
           const methodResult = method.apply(this.promptTarget());
-          this.setOutputString(string.replaceAll(`{{$${methodName}}}`, methodResult));
+          this.setOutputString(string.replaceAll(`{{$${methodName}}}`, this.formattedValue(methodResult)));
           return true;
         } else {
           const map = this.promptMap();
           // otherwise, use the prompt dictionary
           if (map && map.has(methodName)) {
             const value = map.get(methodName);
-            this.setOutputString(string.replaceAll(`{{$${methodName}}}`, value));
+            this.setOutputString(string.replaceAll(`{{$${methodName}}}`, this.formattedValue(value)));
             return true;
           } else {
             let dict = {
@@ -290,6 +290,16 @@
       }
     }
     return false;
+  }
+
+  formattedValue (value) {
+    if (Type.isString(value) || Type.isNumber(value) || Type.isBoolean(value)) {
+      return String(value);
+    } else if (Type.isJsonType(value)) {
+      return JSON.stringify(value, null, 2);
+    } else {
+      throw new Error(this.type() + "Unable to format value: " + value);
+    }
   }
 
   // --- convert relative to absolute markdown ---

@@ -43,8 +43,15 @@
      * @category Data Processing
      */
     async asyncDecodeData () {
-        const value = JSON.parse(this.data().asString());
-        this.setValue(value);
+        try {
+            const value = JSON.parse(this.data().asString());
+            this.setValue(value);
+        } catch (e) {
+            this.setValue(null);
+            console.warn("Error parsing JSON: " + e.message);
+            debugger;
+            this.setError(e);
+        }
         return this;
     }
 

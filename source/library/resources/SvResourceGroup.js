@@ -201,9 +201,15 @@
      * @returns {Object|undefined} The resource if found, undefined otherwise.
      * @category Resource Management
      */
+    resourceWithName (name) {
+        return this.resources().detect(r => r.name() == name);
+    }
+
+    /*
     resourceNamed (name) {
         return this.resources().detect(r => r.name() == name);
     }
+    */
 
     /**
      * @description Gets resources with a given name.
