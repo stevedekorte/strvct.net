@@ -221,124 +221,29 @@ Example Tool call format:
   }
 
   parseCallString () {
-    let callString = this.callString();
     try {
-      // do we need to remove CDATA header and footer?
-      if (this.callString().startsWith("<![CDATA[")) {
-        callString = this.callString().substring(9, this.callString().length - 3);
-      }
+        let callString = this.callString();
 
-      if (!callString.isValidJson()) {  
+        if (!callString.isValidJson()) {  
+            console.error("Error parsing tool call. Attempting to fix with BasicJsonRepairShop.");
 
-        // try to remove the first character if it's not a valid first character
-        const validFirstChars = ["{", "[", "\"", "-", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "t", "f", "n"];
-        if (!validFirstChars.includes(callString.firstCharacter())) {
-          //debugger;
-          // look at the next to last character
-          const secondChar = callString.charAt(1);
-          if (validFirstChars.includes(secondChar)) {
-            const s = callString.sansFirstCharacter();
-            if (s.isValidJson()) {
-              callString = s;
+            const repairShop = new BasicJsonRepairShop();
+            repairShop.setJsonString(callString);
+            repairShop.repair();
+            callString = repairShop.jsonString();
+
+            if (!repairShop.isValid()) {
+                const error = new Error(repairShop.errorString());
+                this.handleParseError(error);
+                return;
             }
-          }
+
+            callString = repairShop.jsonString();
         }
 
-        // try to remove the last character if it's not a valid last character
-        const validLastChars = ["]", "}", "\"", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "e", "l"];
+        const json = JSON.parse(callString);
+        this.setCallJson(json);
 
-        if (!validLastChars.includes(callString.lastCharacter())) {
-
-          //debugger;
-          
-          // look at the next to last character
-          const secondToLastChar = callString.charAt(callString.length - 2);
-          if (validLastChars.includes(secondToLastChar)) {
-            const s = callString.sansLastCharacter();
-            if (s.isValidJson()) {
-              callString = s;
-            }
-          }
-        }
-
-        // if the first character is a {, make sure the last character is a }
-        if (callString.firstCharacter() === "{") {
-          if (callString.lastCharacter() !== "}") {
-            callString = callString + "}";
-          }
-        }
-        // likewise, if the last character is a }, make sure the first character is a {
-        if (callString.lastCharacter() === "}") {
-          if (callString.firstCharacter() !== "{") {
-            const s = "{" + callString;
-            if (s.isValidJson()) {
-              callString = s;
-            }
-          }
-        }
-
-        // if the first character is a [, make sure the last character is a ]
-        if (callString.firstCharacter() === "[") {
-          if (callString.lastCharacter() !== "]") {
-            const s = callString + "]";
-            if (s.isValidJson()) {
-              callString = s;
-            }
-          }
-        }
-        // likewise, if the last character is a ], make sure the first character is a [
-        if (callString.lastCharacter() === "]") {
-          if (callString.firstCharacter() !== "[") {
-            const s = "[" + callString;
-            if (s.isValidJson()) {
-              callString = s;
-            }
-          }
-        }
-
-        // if the first character is a ", make sure the last character is a "
-        if (callString.firstCharacter() === "\"") {
-          if (callString.lastCharacter() !== "\"") {
-            const s = callString + "\"";
-            if (s.isValidJson()) {
-              callString = s;
-            }
-          }
-        }
-        // likewise, if the last character is a ", make sure the first character is a " 
-        if (callString.lastCharacter() === "\"") {
-          if (callString.firstCharacter() !== "\"") {
-            const s = "\"" + callString;
-            if (s.isValidJson()) {
-              callString = s;
-            }
-          }
-        }
-
-        // try removing the last character if it's a }
-        if (callString.lastCharacter() === "}") {
-          const s = callString.sansLastCharacter();
-          if (s.isValidJson()) {
-            callString = s;
-          }
-        }
-
-      }
-
-      let json = undefined;
-      try {
-        json = JSON.parse(callString);
-      } catch (error1) {
-        try {
-          debugger;
-          console.error("Error parsing tool call - attempting to fix by adding closing brace");
-          json = JSON.parse(callString + "}"); // try to fix the json by adding a closing brace, as this is a common error
-        } catch (error2) {
-          console.error("Tool call fix failed - rethrowing original error ", error2);
-          throw error1; // rethrow the original error
-        }
-      }
-      this.setCallJson(json);
     } catch (e) {
       this.handleParseError(e);
     }

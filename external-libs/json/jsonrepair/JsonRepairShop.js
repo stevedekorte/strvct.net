@@ -3,12 +3,14 @@
 /**
  * A utility class to extract properties from invalid JSON using the json-repair library
  */
-class JsonRepairShop {
+
+class JsonRepairShop extends Object {
   /**
    * Constructor
    * @param {string} jsonString - Optional initial JSON string
    */
-  constructor(jsonString = null) {
+  constructor (jsonString = null) {
+    super();
     this._jsonString = jsonString;
   }
 
@@ -16,7 +18,7 @@ class JsonRepairShop {
    * Set the JSON string to work with
    * @param {string} jsonString - The JSON string to process
    */
-  setJsonString(jsonString) {
+  setJsonString (jsonString) {
     this._jsonString = jsonString;
   }
 
@@ -25,7 +27,7 @@ class JsonRepairShop {
    * @param {string} propertyName - The name of the property to extract
    * @returns {any} The value of the property if found, or undefined otherwise
    */
-  extractProperty(propertyName) {
+  extractProperty (propertyName) {
     if (!this._jsonString) {
       return undefined;
     }
@@ -62,7 +64,7 @@ class JsonRepairShop {
    * @param {string} propertyName - The name of the property to extract
    * @returns {any} The value of the property, or undefined if not found
    */
-  _extractPropertyWithRegex(propertyName) {
+  _extractPropertyWithRegex (propertyName) {
     // This regex looks for "propertyName": followed by a string or number value
     const propertyRegex = new RegExp(`"${propertyName}"\\s*:\\s*(?:"([^"]*)"|(\\d+))`, 'i');
     const match = this._jsonString.match(propertyRegex);
@@ -81,7 +83,7 @@ class JsonRepairShop {
    * @param {string} propertyName - The name of the property to extract
    * @returns {any} The value of the property, or undefined if not found
    */
-  _robustPropertyExtractor(propertyName) {
+  _robustPropertyExtractor (propertyName) {
     // This approach handles nested structures better
     const propertyRegex = new RegExp(`"${propertyName}"\\s*:\\s*(("[^"]*")|([\\d]+)|true|false|null)`, 'i');
     const match = this._jsonString.match(propertyRegex);
@@ -111,7 +113,7 @@ class JsonRepairShop {
    * @private
    * @returns {object} An object containing all extracted properties
    */
-  extractTopLevelProperties() {
+  extractTopLevelProperties () {
     const result = {};
     
     // Match all top-level property definitions
@@ -141,7 +143,7 @@ class JsonRepairShop {
    * @param {string} propertyName - The name of the property to extract
    * @returns {any} The value of the property, or undefined if not found or on error
    */
-  _extractPropertyWithManualRepair(propertyName) {
+  _extractPropertyWithManualRepair (propertyName) {
     // Fix common JSON errors:
     
     // 1. Missing closing quotes for strings
@@ -169,7 +171,7 @@ class JsonRepairShop {
    * @param {string} propertyName - The name of the property to extract
    * @returns {any} The value of the property, or undefined if not found or on error
    */
-  _extractPropertyWithRepair(propertyName) {
+  _extractPropertyWithRepair (propertyName) {
     try {
       // Try to repair the JSON
       const repairedJson = jsonRepair(this._jsonString);
