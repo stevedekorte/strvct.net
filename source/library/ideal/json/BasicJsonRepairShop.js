@@ -25,6 +25,10 @@ class BasicJsonRepairShop extends Object {
     return this;
   }
 
+  jsonString () {
+    return this._jsonString;
+  }
+
   setLogEnabled (isLogEnabled) {
     this._isLogEnabled = isLogEnabled;
     return this;

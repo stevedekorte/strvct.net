@@ -352,7 +352,7 @@ Example Tool call format:
 
   // make call
 
-  makeCall () {
+  async makeCall () {
     assert(this.isQueued());
 
     try {
@@ -376,7 +376,15 @@ Example Tool call format:
       //   - unknown parameters
       //   - etc.
 
-      method.apply(toolTarget, [this]);
+      // Call the method and handle both sync and async functions
+      const result = method.apply(toolTarget, [this]);
+      
+      // Check if the result is a Promise (async function)
+      if (result && typeof result.then === 'function') {
+        // Wait for the async function to complete
+        await result;
+      }
+      
       /*
       let resultValue = method.apply(toolTarget, [this]);
       if (Type.isUndefined(resultValue)) {

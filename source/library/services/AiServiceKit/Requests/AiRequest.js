@@ -329,8 +329,28 @@
     this.setIsDebugging(true);
   }
 
+  // --- helper accessors ---
+
   service () {
     return this.chatModel().service();
+  }
+
+  // NOTE: it's not idea for the AiRequest to know about the ConversationMessage or Conversation class 
+  // TODO: refactor this later so the prepareToSendRequest() method somehow get the messaage reference
+  message () {
+    const delegate = this.delegate();
+    if (delegate && delegate.isKindOf(ConversationMessage)) {
+      return delegate;
+    }
+    return null;
+  }
+  
+  conversation () {
+    const message = this.message();
+    if (message) {
+      return message.conversation();
+    }
+    return null;
   }
 
   /**

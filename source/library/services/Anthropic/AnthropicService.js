@@ -195,6 +195,7 @@
    * @category Request Handling
    */
   prepareToSendRequest (aRequest) {
+
     const bodyJson = aRequest.bodyJson();
     let messages = bodyJson.messages;
 
@@ -242,6 +243,17 @@
     if (mergedMessageCount) {
       //console.log("AnthropicService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
     }
+
+    //const tools = this.toolCallSchemasForRequest(aRequest);
+    // ok, now let's add the tools property where will with specify the tool call JSON schemas
+
+    /*
+    if (tools.length > 0) {
+      bodyJson.tools = tools;
+      debugger;
+    }
+    */
+
     return this;
   }
 
@@ -252,6 +264,17 @@
  */
   fetchModelsUrl () {
     return "https://api.anthropic.com/v1/models";
+  }
+
+  toolCallSchemasForRequest (aRequest) {
+    const assistantToolKit = aRequest.conversation().assistantToolKit();
+    const toolDefs = assistantToolKit.toolDefinitions();
+
+    const schemas = toolDefs.toolDefinitions().map((toolDef) => {
+      return toolDef.asAnthropicToolCallSchema();
+    });
+
+    return schemas;
   }
 
 

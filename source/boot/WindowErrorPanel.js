@@ -96,7 +96,7 @@ class WindowErrorPanel extends Object {
      * @category Error Handling
      */
     handleWindowError (message, source, lineno, colno, error) {
-        debugger;
+        //debugger;
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             const errorInfo = {
                 message: message,

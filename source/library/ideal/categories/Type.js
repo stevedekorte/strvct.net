@@ -855,6 +855,21 @@ class Type extends Object {
 
     // --- type id ---
 
+    static isValidJsonString (value) {
+        if (!Type.isString(value)) {
+            return false;
+        }
+        try {
+            JSON.parse(value);
+            return true;
+        } catch (e) {
+            if (e.message) {
+                return false; // just to avoid linter complaining about unused error variable
+            }
+            return false;
+        }
+    }
+
     /**
      * Checks if the given value is a JSON-compatible type.
      * @category Type Checking / JSON

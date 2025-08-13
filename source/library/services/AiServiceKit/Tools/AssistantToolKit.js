@@ -141,10 +141,10 @@ The following formats will be used for tool calls and responses:
   */
 
 
-  onToolCallAdded (toolCall) {
+  async onToolCallAdded (toolCall) {
     if (toolCall.isOnStreamTool()) {
       assert(toolCall.isQueued());
-      toolCall.makeCall();
+      await toolCall.makeCall();
     }
   }
 
@@ -160,14 +160,14 @@ The following formats will be used for tool calls and responses:
     this.scheduleMethod("sendCompletedToolCallResponses", 0);
   }
 
-  processQueuedToolCalls () {
+  async processQueuedToolCalls () {
     const queuedCalls = this.toolCalls().queuedCalls();
-    queuedCalls.forEach((toolCall) => {
+    for (const toolCall of queuedCalls) {
       assert(toolCall.isQueued());
       if (!toolCall.isOnNarrationTool()) {
-        toolCall.makeCall();
+        await toolCall.makeCall();
       }
-    });
+    }
     this.scheduleMethod("sendCompletedToolCallResponses", 0);
   }
 

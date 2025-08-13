@@ -31,7 +31,7 @@
         if (!Type.isJsonType(json)) {
             const errorMessage = Type.errorWithJsonType(json);
             console.warn("SvErrorReport json argument is not a valid JSON type: " + errorMessage);
-            debugger;
+            //debugger;
         }
         errorReport.setJson(json);
         return await errorReport.asyncSend();
