@@ -25,7 +25,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Object|null} The created instance or null if shouldStore is false.
      * @category Initialization
      */
-    static instanceFromRecordInStoreForObject (aRecord, aStore) {
+    static instanceFromRecordInStoreForObject (aRecord /*, aStore*/) {
         // special case for direct instances of Object
         const instance = JSON.parse(aRecord.jsonString);
         return instance;
@@ -57,7 +57,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Object} The loaded object.
      * @category Data Loading
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (/*aRecord, aStore*/) {
         // we assume that instances of Object (but not subclasses of Object) are JSON objects
         // and they will already be loaded via instanceFromRecordInStore()
         /*
@@ -80,7 +80,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Object} The created record.
      * @category Data Storage
      */
-    recordForStore (aStore) {
+    recordForStore (/*aStore*/) {
         // NOTES: this is (typically) only for dictionaries, not for objects.
         // generic storage of (non ProtoClass subclass) objects is not supported.
         const isDirectObject =this.isDirectObject();
@@ -192,6 +192,19 @@ Object.defineSlots(typedArrayClass.prototype, {
     shouldStore () {
         return this._shouldStore;
         //return Object.getOwnProperty(this._shouldStore);
+    }
+
+    /**
+     * @description Marks the object as dirty.
+     * @returns {Object} This object.
+     * @category Data Storage
+     */
+    markAsDirty () {
+        const store = this.defaultStore();
+        if (store.hasActiveObject(this)) {
+            console.log("markAsDirty " + this.typeId());
+            store.forceAddDirtyObject(this); // not ideal, but let's see if it works
+        }
     }
     
 }).initThisCategory();

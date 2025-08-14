@@ -189,10 +189,12 @@
                 this._camContent = cam;
                 
                 // Also store in HashCache for async access
-                await Reflect.ownKeys(cam).promiseParallelForEach(async (k) => {
+                const camKeys = Reflect.ownKeys(cam);
+                await camKeys.promiseParallelForEach(async (k) => {
                     const v = cam[k];
                     return HashCache.shared().promiseAtPut(k, v);
                 });
+                HashCache.shared().promiseRemoveKeysNotInSet(camKeys); // collect garbage
                 this._promiseForLoadCam.callResolveFunc();
             } catch (error) {
                 console.error("❌ Error in promiseLoadCam:", error);

@@ -181,11 +181,11 @@
             if (node.setJson) {
               node.setJson(v, jsonPathComponents.concat(k));
             } else {
-              console.warn(this.type() + ".setJson() found slot with no setJson(): ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
+              console.warn(this.typeId() + ".setJson() found slot with no setJson(): ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
             }
           }
           else {
-            console.warn(this.type() + ".setJson() found slot with no node: ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
+            console.warn(this.typeId() + ".setJson() found slot with no node: ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
           }
         }
         else {
@@ -225,17 +225,20 @@
                 const initValue = slot.initValue();
                 console.warn(this.type() + ".setJson() slot '" + slot.name() + "' doesn't allow null, using initValue: " + initValue);
                 slot.onInstanceSetValue(this, initValue);
+                this.markAsDirty(); // save our type conversion
               }
             } else if (slot.slotType() !== Type.typeName(v)) {
-              const errorMessage = this.type() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
+              const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
               console.warn(errorMessage);
+
               //throw new Error(errorMessage);
 
-              
               if (slot.slotType() === "Number" && v && v.asNumber) {
                 slot.onInstanceSetValue(this, v.asNumber());
+                this.markAsDirty(); // save our type conversion
+
               } else {
-                const errorMessage = this.type() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
+                const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
                 console.warn(errorMessage);
                 if (slot.slotType() === "String" && Type.isNumber(v)) {
                     console.warn(`converting value from number ${v} to string '${v.asString()}'`);
@@ -249,6 +252,7 @@
                       newValue = "1/2";
                     }
                     slot.onInstanceSetValue(this, newValue);
+                    this.markAsDirty(); // save our type conversion
                 } else {
                     throw new Error(errorMessage);
                 }

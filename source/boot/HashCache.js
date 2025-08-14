@@ -263,4 +263,16 @@
         }
     }
 
+    async promiseRemoveKeysNotInSet (keepKeySet) {
+        const currentKeys = await this.idb().promiseAllKeys();
+        const currentKeysSet = new Set(currentKeys);
+        const keysToRemove = currentKeysSet.difference(keepKeySet);
+
+        const tx = this.idb().newTransaction();
+        keysToRemove.forEach(async (key) => {
+            tx.removeAt(key);
+        });
+        await tx.promiseCommit();
+    }
+
 }.initThisClass());

@@ -241,6 +241,7 @@
      */
     setIsDebugging (b) {
         if (b === false && this.isDebugging() === true) {
+            // make sure we're changing this for a good reason
             debugger;
         }
         super.setIsDebugging(b);
@@ -787,10 +788,12 @@
      * @returns {ObjectPool}
      */
     forceAddDirtyObject (anObject) {
-        console.log("forceAddDirtyObject " + anObject.puuid());
+        console.log("forceAddDirtyObject " + anObject.typeId());
         if (this.storingPids() !== null) {
+            // we might be in the middle of storing changes
             debugger;
             if (this.storingPids().has(anObject.puuid())) {
+                // looks like this object is already queued to be stored
                 debugger;
                 return this;
             }
