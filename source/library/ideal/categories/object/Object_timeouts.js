@@ -42,14 +42,14 @@
     addTimeout (aFunc, msDelay, optionalName) { 
         // if no optionalName given, use the timeoutId for the name,
         // as timeout ids should be unique
-        const tids = this.timeoutNameToIdMap();
 
+        const tids = this.timeoutNameToIdMap();
         if (optionalName && tids.has(optionalName)) {
             // clear existing timeout with this name, if there is one
             this.clearTimeoutNamed(optionalName);
         }
 
-        const tidInfo = new Array(2) // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
+        const tidInfo = new Array(2); // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
         const tid = setTimeout(() => { 
             this.removeTimeoutNamed(tidInfo[0]);
             const event = new Event('Custom_addTimeoutEvent', { bubbles: false, cancelable: true }); // not sure about these options settings
@@ -57,7 +57,12 @@
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
         tidInfo[1] = tid;
-        this.timeoutNameToIdMap().set(optionalName, tid);
+        if (!tids.has(tidInfo[0])) {
+            tids.set(tidInfo[0], tid);
+        } else {
+            console.warn("addTimeout('" + tidInfo[0] + "') timeout with that name already exists");
+            debugger;
+        }
         return tid;
     }
 
@@ -69,7 +74,11 @@
      */
     removeTimeoutNamed (name) {
         const tids = this.timeoutNameToIdMap();
-        tids.delete(name);
+        if (tids.has(name)) {
+            tids.delete(name);
+        } else {
+            console.warn("removeTimeoutNamed('" + name + "') no timeout with that name found");
+        }
         return this;
     }
 

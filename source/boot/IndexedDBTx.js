@@ -274,7 +274,7 @@
 
         const tx = this.tx()
         
-        tx.oncomplete = (event) => { 
+        tx.oncomplete = (/*event*/) => { 
             this.debugLog(" COMMIT COMPLETE")
             this.markCompleted()
         }

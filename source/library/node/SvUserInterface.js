@@ -24,7 +24,7 @@
         return this;
     }
 
-    async afterAppUiDidInit () {
+    async afterAppDidInit () {
         this.setupDocTheme();
         return this;
     }

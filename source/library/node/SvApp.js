@@ -296,15 +296,14 @@
         this.userInterface().appDidInit();
 
         //this.postNoteNamed("appDidInit");
-        //await this.afterAppUiDidInit();
+        //await this.afterAppDidInit();
         this.postAppDidInit();
-        this.scheduleMethodForNextCycle("afterAppUiDidInit");
     }
 
     postAppDidInit () {
         this.postNoteNamed("appDidInit");
         this.addTimeout(() => {
-            this.scheduleMethodForNextCycle("afterAppUiDidInit");
+            this.scheduleMethodForNextCycle("afterAppDidInit");
         }, 1000);
     }
 
@@ -312,9 +311,9 @@
      * @description Called after the app UI has initialized
      * @category Lifecycle
      */
-    async afterAppUiDidInit () {
-        this.model().afterAppUiDidInit();
-        this.userInterface().afterAppUiDidInit();
+    async afterAppDidInit () {
+        this.model().afterAppDidInit();
+        this.userInterface().afterAppDidInit();
         this.didInitPromise().callResolveFunc(this);
     }
 

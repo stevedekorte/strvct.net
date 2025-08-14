@@ -100,7 +100,7 @@ class WindowErrorPanel extends Object {
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             const errorInfo = {
                 message: message,
-                source: source,
+                source: Type.isString(source) ? source : Type.typeName(source),
                 lineno: lineno,
                 colno: colno,
                 stack: error ? error.stack : "No stack trace",

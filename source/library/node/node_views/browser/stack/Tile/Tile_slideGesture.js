@@ -16,7 +16,7 @@
      * @returns {boolean} True if the tile can be deleted, false otherwise.
      * @category Gesture
      */
-    acceptsSlide() {
+    acceptsSlide () {
         return this.canDelete()
     }
 
@@ -25,7 +25,7 @@
      * @returns {Tile_slideGesture} The current instance.
      * @category Gesture
      */
-    onSlideBegin() {
+    onSlideBegin () {
         this.setSlideDeleteOffset(this.clientWidth() * 0.5);
         this.contentView().setTransition("all 0s") 
         this.setupSlide() 
@@ -37,7 +37,7 @@
      * @returns {string} The color value.
      * @category Appearance
      */
-    underContentViewColor() {
+    underContentViewColor () {
         return "black"
     }
 
@@ -46,9 +46,9 @@
      * @returns {Tile_slideGesture} The current instance.
      * @category Gesture
      */
-    setupSlide() {
+    setupSlide () {
         if (!this.dragDeleteButtonView()) {
-            const h = this.clientHeight()
+            //const h = this.clientHeight()
 
             this.element().style.backgroundColor = this.underContentViewColor()
             const cb = CloseButton.clone().setOpacity(0).setTransition("opacity 0.1s").setPosition("absolute")
@@ -68,7 +68,7 @@
      * @description Cleans up the slide gesture elements.
      * @category Gesture
      */
-    cleanupSlide() {
+    cleanupSlide () {
         if (this.dragDeleteButtonView()) {
             this.dragDeleteButtonView().removeFromParentView()
             this.setDragDeleteButtonView(null)
@@ -81,7 +81,7 @@
      * @param {Object} slideGesture - The slide gesture object.
      * @category Gesture
      */
-    onSlideMove(slideGesture) {
+    onSlideMove (slideGesture) {
         const d = slideGesture.distance()
         const isReadyToDelete = d >= this._slideDeleteOffset
 
@@ -97,7 +97,7 @@
      * @param {number} v - The right position value.
      * @category Gesture
      */
-    setTouchRight(v) {
+    setTouchRight (v) {
         this.contentView().setRightPx(v)
     }
 	
@@ -106,7 +106,7 @@
      * @param {Object} slideGesture - The slide gesture object.
      * @category Gesture
      */
-    onSlideComplete(slideGesture) {
+    onSlideComplete (slideGesture) {
         const d = slideGesture.distance()
         const isReadyToDelete  = d >= this._slideDeleteOffset
 
@@ -124,7 +124,7 @@
      * @param {Object} aGesture - The gesture object.
      * @category Gesture
      */
-    onSlideCancelled(aGesture) {
+    onSlideCancelled (/*aGesture*/) {
         this.slideBack()
     }
 
@@ -132,7 +132,7 @@
      * @description Finishes the slide gesture and deletes the tile.
      * @category Gesture
      */
-    finishSlideAndDelete() {
+    finishSlideAndDelete () {
         this.setIsDeleting(true)
         const dt = 0.08 // seconds
         this.contentView().setTransition("right " + dt + "s")
@@ -151,7 +151,7 @@
      * @description Slides the tile back to its original position.
      * @category Gesture
      */
-    slideBack() {
+    slideBack () {
         this.disableTilesViewUntilTimeout(400)
 
         this.contentView().setTransition("left 0.2s ease, right 0.2s ease")
@@ -171,7 +171,7 @@
      * @param {number} ms - The duration in milliseconds.
      * @category Interaction
      */
-    disableTilesViewUntilTimeout(ms) {
+    disableTilesViewUntilTimeout (ms) {
         this.navView().disablePointerEventsUntilTimeout(ms) 
         this.setPointerEvents("none")
     }
@@ -180,7 +180,7 @@
      * @description Performs actions after completing the slide.
      * @category Gesture
      */
-    didCompleteSlide() {
+    didCompleteSlide () {
         this.cleanupSlide()
     }
     
@@ -189,7 +189,7 @@
      * @returns {boolean} True if the tile has a close button, false otherwise.
      * @category Appearance
      */
-    hasCloseButton() {
+    hasCloseButton () {
         return this.closeButtonView() && this.closeButtonView().target() != null
     }
     

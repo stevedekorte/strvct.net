@@ -33,7 +33,7 @@
         this.setNodeTileClassName("BreadCrumbsTile");
     }
 
-    async afterAppUiDidInit () {
+    async afterAppDidInit () {
         return this;
     }
 

@@ -621,15 +621,33 @@
             return this.promiseRemoveAt(key)
         }
 
-        const hasKey = await this.promiseHasKey(key);
-
-        if (hasKey) {
-            //console.log("idb YES hasKey promiseUpdate", key)
-            return this.promiseUpdate(key, value)
-        } 
-
-        //console.log("idb NO hasKey promiseAdd", key)
-        return this.promiseAdd(key, value)
+        // Use a single transaction for both checking and adding/updating
+        // This makes the operation atomic and prevents race conditions
+        const tx = await this.promiseNewTx();
+        tx.begin();
+        
+        // Check if key exists and add/update within the same transaction
+        const objectStore = tx.objectStore();
+        const countRequest = objectStore.count(key);
+        
+        return new Promise((resolve, reject) => {
+            countRequest.onsuccess = () => {
+                const hasKey = countRequest.result > 0;
+                
+                if (hasKey) {
+                    tx.atUpdate(key, value);
+                } else {
+                    tx.atAdd(key, value);
+                }
+                
+                // Commit the transaction
+                tx.promiseCommit().then(resolve).catch(reject);
+            };
+            
+            countRequest.onerror = (event) => {
+                reject(new Error(`Failed to check key existence: ${event.target.error}`));
+            };
+        });
     }
 
 

@@ -227,11 +227,31 @@
                 slot.onInstanceSetValue(this, initValue);
               }
             } else if (slot.slotType() !== Type.typeName(v)) {
-              console.warn(this.type() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v));
+              const errorMessage = this.type() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
+              console.warn(errorMessage);
+              //throw new Error(errorMessage);
+
+              
               if (slot.slotType() === "Number" && v && v.asNumber) {
                 slot.onInstanceSetValue(this, v.asNumber());
               } else {
-                throw new Error(this.type() + ".setJson() attempt to set slot '" + slot.name() + "' with slotType '" + slot.slotType() + "' to a value of type '" + Type.typeName(v) + "' at path: " + jsonPathComponents.concat(k).join("/"));
+                const errorMessage = this.type() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
+                console.warn(errorMessage);
+                if (slot.slotType() === "String" && Type.isNumber(v)) {
+                    console.warn(`converting value from number ${v} to string '${v.asString()}'`);
+                    let newValue = v.asString();
+                    // tmp hack for challenge rating
+                    if (v === 1/8) {
+                      newValue = "1/8";
+                    } else if (v === 1/4) {
+                      newValue = "1/4";
+                    } else if (v === 1/2) {
+                      newValue = "1/2";
+                    }
+                    slot.onInstanceSetValue(this, newValue);
+                } else {
+                    throw new Error(errorMessage);
+                }
               }
             } else {
               slot.onInstanceSetValue(this, v);
@@ -242,7 +262,7 @@
         const errorMessage = "WARNING: " + this.type() + ".setJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/");
         console.warn(errorMessage);
         // also add the warning to the error log
-        debugger; 
+        //debugger; 
         throw new Error(errorMessage);
         //debugger;
       }

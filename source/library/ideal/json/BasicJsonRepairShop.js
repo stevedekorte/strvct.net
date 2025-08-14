@@ -13,7 +13,7 @@ class BasicJsonRepairShop extends Object {
   constructor (jsonString = null) {
     super();
     this._jsonString = jsonString;
-    this._isLogEnabled = false;
+    this._isLogEnabled = true;
   }
 
   /**

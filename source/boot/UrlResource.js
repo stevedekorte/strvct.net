@@ -186,7 +186,7 @@
 
             if (this.path().split("/").includes("deferred")) {
                 //debugger;
-                console.log("UrlResource loading a deferred resource: " + this.path());
+                //console.log("UrlResource loading a deferred resource: " + this.path());
             }
             //if (data !== undefined) {
             if (hasKey) {
@@ -208,12 +208,12 @@
                 return this;
             } else {
                 // otherwise, load normally and cache result
-                this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                //this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
                 //console.log("UrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
                 assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash() );
-                console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                //console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
         } else {

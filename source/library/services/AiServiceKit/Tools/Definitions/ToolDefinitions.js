@@ -42,8 +42,8 @@
   }
 
   addToolsForInstance (instance) {
-    const ownerPath = this.ownershipChainPathString();
-    console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.typeId() + " '" + instance.title() + "'");
+    //const ownerPath = this.ownershipChainPathString();
+    //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.typeId() + " '" + instance.title() + "'");
 
     if (this.toolTargetInstances().has(instance)) {
       throw new Error("Tool definitions already added for instance: " + instance.type());
@@ -57,7 +57,7 @@
       assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
       //if (!this.toolDefinitionWithName(method.name)) {
         const toolDef = ToolDefinition.clone();
-        console.log(" - tool: " + method.name);
+        //console.log(" - tool: " + method.name);
         toolDef.setToolTarget(instance);
         toolDef.setName(method.name);
         this.addTool(toolDef);
