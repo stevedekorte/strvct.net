@@ -71,6 +71,17 @@
             slot.setCanEditInspection(false);
         }
 
+        {
+            const slot = this.newSlot("evaluationScoresString", "");
+            slot.setSlotType("String");
+            slot.setLabel("Evaluation Scores String");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setInitValue("");
+            slot.setCanEditInspection(false);
+        }
+
         // Best image index (0-3)
         {
             const slot = this.newSlot("bestImageIndex", null);
@@ -402,6 +413,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
      */
     async selectBestImage () {
         const scores = this.evaluationScores();
+        this.setEvaluationScoresString(JSON.stringify(scores, null, 2));
         const imageNodes = this.images().subnodes();
         
         if (!scores || scores.length === 0 || !imageNodes || imageNodes.length === 0) {
@@ -444,7 +456,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
             console.log(`Best image node title: ${bestImageNode.title()}`);
             
             // Try to get the same URL format we sent to OpenAI
-            const bestImageUrl = bestImageNode.imageUrl() || bestImageNode.url();
+            //const bestImageUrl = bestImageNode.imageUrl() || bestImageNode.url();
             const displayUrl = bestImageNode.imageUrl() || bestImageNode.dataUrl();
             
             console.log(`Best image URLs:`);
@@ -457,6 +469,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 console.log(`Setting result image URL (first 100 chars): ${displayUrl.substring(0, 100)}...`);
                 this.setResultImageUrlData(displayUrl);
                 console.log(`Selected best image: index ${bestIndex} with score ${bestScore}`);
+                this.sendDelegate("onImagePromptImageLoaded", [this, bestImageNode]);
             }
         }
     }

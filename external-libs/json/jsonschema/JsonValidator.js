@@ -26,7 +26,7 @@ class JsonValidator {
    * Constructor - creates a new JsonValidator instance
    * @param {Object} [options] - jsonschema options
    */
-  constructor(options = {}) {
+  constructor (options = {}) {
     // Check if jsonschema is properly loaded
     if (!SvGlobals.globals().jsonschema || !SvGlobals.globals().jsonschema.Validator) {
       throw new Error("jsonschema library not properly loaded. Validator class not found. Make sure jsonschema.js loads before JsonValidator.js");
@@ -62,7 +62,7 @@ class JsonValidator {
    * @param {Object} schema - JSON Schema object
    * @returns {JsonValidator} - Returns this for method chaining
    */
-  setJsonSchema(schema) {
+  setJsonSchema (schema) {
     if (!schema || typeof schema !== 'object') {
       throw new Error('Schema must be a valid object');
     }
@@ -87,7 +87,7 @@ class JsonValidator {
    * Get current JSON Schema
    * @returns {Object|null} - The current JSON Schema or null if not set
    */
-  jsonSchema() {
+  jsonSchema () {
     return this._jsonSchema;
   }
 
@@ -96,7 +96,7 @@ class JsonValidator {
    * @param {Object|string} json - JSON data as object or string
    * @returns {boolean} - True if valid, false if invalid
    */
-  validate(json) {
+  validate (json) {
     if (!this._jsonSchema) {
       throw new Error('No schema set. Call setJsonSchema() first.');
     }
@@ -172,7 +172,7 @@ class JsonValidator {
    * Check if the last validation had errors
    * @returns {boolean} - True if there were errors, false otherwise
    */
-  hasError() {
+  hasError () {
     return this._error !== null;
   }
 
@@ -180,7 +180,7 @@ class JsonValidator {
    * Get error details from the last validation
    * @returns {Object|null} - Error object or null if no errors
    */
-  error() {
+  error () {
     return this._error;
   }
 
@@ -188,7 +188,7 @@ class JsonValidator {
    * Get error message formatted for LLM consumption
    * @returns {string} - Formatted error message
    */
-  errorMessageForLLM() {
+  errorMessageForLLM () {
     if (!this._error) {
       return "No validation errors";
     }
@@ -209,7 +209,7 @@ class JsonValidator {
    * Format errors from jsonschema into a more readable format
    * @private
    */
-  _formatErrors(errors) {
+  _formatErrors (errors) {
     if (!errors || errors.length === 0) {
       return "Unknown validation error";
     }
@@ -224,7 +224,7 @@ class JsonValidator {
    * Static test method to demonstrate JsonValidator functionality
    * @returns {boolean} - True if all tests pass
    */
-  static test() {
+  static test () {
     console.log('Running JsonValidator tests...');
     
     // Check if jsonschema is available

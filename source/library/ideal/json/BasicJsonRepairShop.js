@@ -3,6 +3,8 @@
  * @class BasicJsonRepairShop
  * @extends Object
  * @classdesc A basic JSON repair shop that can repair JSON strings. 
+ * 
+ * TODO: reduce isValid calls by returning a boolean from repair methods
  */
 
 class BasicJsonRepairShop extends Object {
@@ -14,6 +16,7 @@ class BasicJsonRepairShop extends Object {
     super();
     this._jsonString = jsonString;
     this._isLogEnabled = true;
+    this._fixNote = "";
   }
 
   /**
@@ -38,6 +41,22 @@ class BasicJsonRepairShop extends Object {
     return this._isLogEnabled;
   }
 
+  setFixNote (fixNote) {
+    this._fixNote = fixNote;
+    return this;
+  }
+
+  appendFixNote (fixNote) {
+    if (this._fixNote.length > 0) {
+      this._fixNote += ", ";
+    }
+    this._fixNote += fixNote;
+    return this;
+  }
+
+  fixNote () {
+    return this._fixNote;
+  }
   // error handling
 
   isValid () {
@@ -62,7 +81,7 @@ class BasicJsonRepairShop extends Object {
   }
 
   logSuccessfullyRepaired () {
-    console.log("BasicJsonRepairShop successfully repaired:");
+    console.log("BasicJsonRepairShop successful. Fixes: " + this.fixNote() + ":");
     this.logJsonString();
   }
 
@@ -76,14 +95,16 @@ class BasicJsonRepairShop extends Object {
     console.log(parts.join("\n"));
   }
 
+  debugLog (message) {
+    if (this.isLogEnabled()) {
+      console.log(message);
+    }
+  }
+
   // repair methods
 
-
   repair () {
-    // try our bag of tricks to fix common LLM JSON errors
-    // exit early if fix seems to work
-
-    if (this.isValid()) {  
+    if (this.isValid()) {
         return true;
     }
 
@@ -91,9 +112,27 @@ class BasicJsonRepairShop extends Object {
       this.logAttemptingToFix();
     }
 
+    if (this.justRepair()) {
+        if (this.isLogEnabled()) {
+            this.logSuccessfullyRepaired();
+        }
+        return true;
+    } else {
+        if (this.isLogEnabled()) {
+            this.logFailedToRepair();
+        }
+        return false;
+    }
+}
+
+
+  justRepair () {
+    // try our bag of tricks to fix common LLM JSON errors
+    // exit early if fix seems to work
+
     this.tryRemovingLastChar("}"); // most common Claude error
 
-    if (this.isValid()) {  
+    if (this.isValid()) {
         return true;
     }
 
@@ -111,6 +150,7 @@ class BasicJsonRepairShop extends Object {
     this.matchFirstAndLastChars("\"", "\"");
 
     if (this.isValid()) {  
+        this.setFixNote("matched first and last chars");
         return true;
     }
 
@@ -127,13 +167,6 @@ class BasicJsonRepairShop extends Object {
     this.tryRemovingLastChar("\"");
 
     const isValid = this.isValid();
-    if (this.isLogEnabled()) {
-        if (isValid) {
-            this.logSuccessfullyRepaired();
-        } else {
-            this.logFailedToRepair();
-        }
-    }
     return isValid;
   }
 
@@ -153,10 +186,12 @@ class BasicJsonRepairShop extends Object {
 
     if (jsonString.startsWith("<![CDATA[")) {
         jsonString = jsonString.substring(9, jsonString.length);
+        this.appendFixNote("Removed CDATA header");
     }
 
     if (jsonString.endsWith("]]>")) {
         jsonString = jsonString.substring(0, jsonString.length - 3);
+        this.appendFixNote("Removed CDATA footer");
     }
 
     this.setJsonString(jsonString);
@@ -168,7 +203,8 @@ class BasicJsonRepairShop extends Object {
 
   repairInvalidFirstChar () {
     while (this.jsonString().length > 0 && !this.hasValidFirstChar()) {
-            this.setJsonString(this.jsonString().sansFirstCharacter());
+        this.appendFixNote("Removed invalid first char '" + this.jsonString().firstCharacter() + "'");
+        this.setJsonString(this.jsonString().sansFirstCharacter());
     }
   }
 
@@ -178,6 +214,7 @@ class BasicJsonRepairShop extends Object {
 
   repairInvalidLastChar () {
     while (this.jsonString().length > 0 && !this.hasValidLastChar()) {
+        this.appendFixNote("Removed invalid last char '" + this.jsonString().lastCharacter() + "'");
       this.setJsonString(this.jsonString().sansLastCharacter());
     }
   }
@@ -190,6 +227,7 @@ class BasicJsonRepairShop extends Object {
         if (jsonString.lastCharacter() !== lastChar) {
             let s = jsonString + lastChar;
             if (s.isValidJson()) {
+                this.appendFixNote("Added missing last char '" + lastChar + "'");
                 jsonString = s;
             }
         }
@@ -199,6 +237,7 @@ class BasicJsonRepairShop extends Object {
         if (jsonString.firstCharacter() !== firstChar) {
             let s = firstChar + jsonString;
             if (s.isValidJson()) {
+                this.appendFixNote("Added missing first char '" + firstChar + "'");
                 jsonString = s;
             }
         }
@@ -213,6 +252,7 @@ class BasicJsonRepairShop extends Object {
     if (jsonString.lastCharacter() === lastChar) {
         let s = jsonString.sansLastCharacter();
         if (s.isValidJson()) {
+            this.appendFixNote("Removed last char '" + lastChar + "'");
             jsonString = s;
         }
     }
@@ -226,6 +266,7 @@ class BasicJsonRepairShop extends Object {
     if (jsonString.firstCharacter() === firstChar) {
         let s = jsonString.sansFirstCharacter();
         if (s.isValidJson()) {
+            this.appendFixNote("Removed first char '" + firstChar + "'");
             jsonString = s;
         }
     }

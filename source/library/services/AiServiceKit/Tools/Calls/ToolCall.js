@@ -185,9 +185,13 @@ Example Tool call format:
     */
   }
 
+  toolDefinitionForToolName (toolName) {
+    return this.toolCalls().toolDefinitionWithName(toolName);
+  }
+
   findToolDefinition () {
     if (this.toolDefinition() === null) {
-      const def = this.toolCalls().toolDefinitionWithName(this.toolName());
+      const def = this.toolDefinitionForToolName(this.toolName());
       this.setToolDefinition(def);
     }
     return this.toolDefinition();
@@ -229,16 +233,24 @@ Example Tool call format:
 
             const repairShop = new BasicJsonRepairShop();
             repairShop.setJsonString(callString);
+            repairShop.setLogEnabled(true);
             repairShop.repair();
-            callString = repairShop.jsonString();
 
             if (!repairShop.isValid()) {
-                const error = new Error(repairShop.errorString());
+                repairShop.setJsonString(callString); // so we get the error on the original string?
+                debugger;
+                repairShop.repair();
+
+                repairShop.setJsonString(callString); // so we get the error on the original string?
+
+                const errorString = repairShop.errorString();
+                const error = new Error(errorString);
                 this.handleParseError(error);
                 return;
             }
 
             callString = repairShop.jsonString();
+            this.setCallString(callString); // so we don't have to fix it again
         }
 
         const json = JSON.parse(callString);
@@ -258,10 +270,8 @@ Example Tool call format:
   }
 
   assertValidCall () {
-    /*
     this.assertValidToolCallSchema();
     this.assertValidParametersSchema();
-    */
   }
 
   assertValidToolCallSchema () {
@@ -288,20 +298,44 @@ Example Tool call format:
 
   handleParseError (e) {
     //throw new Error(this.type() + " Error parsing call string: " + e.message);
+
+    // we need the callId to report the error - let's try to extract it
     const jsonRepairShop = new JsonRepairShop();
     jsonRepairShop.setJsonString(this.callString());
-
     const callId = jsonRepairShop.extractProperty("callId");
-    assert(callId !== undefined);
-    this.setCallId(callId); 
+
+    if (callId !== undefined) {
+      this.setCallId(callId);
+    } else {
+        console.warn("Failed to extract callId after parse error from call string: " + this.callString());
+    }
 
     const toolName = jsonRepairShop.extractProperty("toolName");
-    assert(toolName !== undefined);
-    this.setToolName(toolName);
+    if (toolName !== undefined) {
+      this.setToolName(toolName);
+    } else {
+      console.warn("Failed to extract toolName after parse error from call string: " + this.callString());
+    }
+
+    if (callId === undefined || toolName === undefined) {
+      console.warn("Failed to extract callId or toolName after parse error from call string: " + this.callString());
+      console.warn("So we'll report back what we have and hope the AI can figure it out.");
+    }
 
     // Add parse-specific information to the error
-    e.extraMessage = "Error parsing tool call JSON";
     e.name = "ToolCallParseError";
+    e.extraMessage = "Error parsing tool call JSON. Please fix the call string and try again.";
+
+    if (toolName !== undefined) {
+        // lets get the too definition schema so we can remind the AI of the expected format
+        const toolDefinition = this.toolDefinitionForToolName(toolName);
+        if (toolDefinition !== null) {
+            const toolCallSchema = toolDefinition.asJsonSchema();
+            const toolCallSchemaString = JSON.stringify(toolCallSchema, null, 2);
+            e.extraMessage += "\nThe '" + toolName + "' tool call schema is\n " + toolCallSchemaString;
+            debugger;
+        }
+    }
     
     // Report parse error to the server if SvApp is available
     try {
@@ -317,12 +351,12 @@ Example Tool call format:
           }
         };
         
-        debugger;
         SvErrorReport.asyncSend(e, errorData).catch(error => {
           console.error("Failed to report tool call parse error:", error);
         });
     } catch (reportError) {
       console.error("Error while trying to report tool call parse error:", reportError);
+      debugger;
     }
 
     this.handleCallError(e);

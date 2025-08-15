@@ -991,7 +991,7 @@ class Type extends Object {
         */
     }
 
-    static errorWithJsonType (value) {
+    static errorWithJsonType (value) {        
         const seen = new Set();
         let error = null;
         let currentPath = [];

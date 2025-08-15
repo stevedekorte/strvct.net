@@ -16,7 +16,7 @@
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([PiApiImageGeneration]);
     this.setNodeCanReorderSubnodes(false);
-    this.setNodeCanAddSubnode(true);
+    this.setNodeCanAddSubnode(false);
     this.setCanDelete(false);
     }
 

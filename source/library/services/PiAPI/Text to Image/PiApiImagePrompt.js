@@ -278,6 +278,25 @@
   }
 
   /**
+   * @description Sanitizes the prompt to avoid Midjourney parameter parsing issues.
+   * Replaces single dashes that could be interpreted as parameters with safe alternatives.
+   * @param {string} prompt - The raw prompt text
+   * @returns {string} The sanitized prompt
+   * @category Utility
+   */
+  sanitizePromptForMidjourney (prompt) {
+    // Replace dash followed by space with comma to avoid parameter interpretation
+    // This handles cases like "Frank Frazetta style - bold brushstrokes"
+    prompt = prompt.replace(/\s-\s/g, ', ');
+    
+    // Also replace em-dash and en-dash with safe alternatives
+    prompt = prompt.replace(/—/g, ', ');
+    prompt = prompt.replace(/–/g, ', ');
+    
+    return prompt;
+  }
+
+  /**
    * @description Starts the image generation process.
    * @category Process
    */
@@ -289,11 +308,14 @@
     const apiKey = this.service().apiKeyOrUserAuthToken();
     const endpoint = 'https://api.piapi.ai/api/v1/task';
     
+    // Sanitize the prompt before sending to avoid Midjourney parameter issues
+    const sanitizedPrompt = this.sanitizePromptForMidjourney(this.prompt());
+    
     const bodyJson = {
       model: this.model(),
       task_type: "imagine",
       input: {
-        prompt: this.prompt(),
+        prompt: sanitizedPrompt,
         aspect_ratio: this.aspectRatio(),
         process_mode: this.processMode(),
         skip_prompt_check: false
@@ -524,9 +546,9 @@
    * @param {Object} aiImage - The loaded AI image object.
    * @category Delegation
    */
-  onImageGenerationImageLoaded (generation, aiImage) {
+  onImageGenerationImageLoaded (/*generation, aiImage*/) {
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+    //this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
   }
 
   /**

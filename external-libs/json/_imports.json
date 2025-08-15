@@ -8,5 +8,6 @@
     "json-stable-stringify/_imports.json",
     "jsondiffpatch/_imports.json",
     "jsonrepair/_imports.json",
-    "jsonschema/_imports.json"
+    "jsonschema/_imports.json",
+    "parse-json/_imports.json"
 ]

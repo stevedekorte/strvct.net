@@ -140,12 +140,14 @@
 
         // Aspect ratio
         {
-            const slot = this.newSlot("aspectRatio", "1:1");
+            const validValues = ["16:9", "9:16", "4:3", "3:4", "3:2", "2:3", "1:1"];
+            const slot = this.newSlot("aspectRatio", validValues.first());
             slot.setSlotType("String");
+            slot.setAllowsNullValue(false);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
-            slot.setValidValues(["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"]);
+            slot.setValidValues(validValues);
         }
 
         // Final result data URL
@@ -277,39 +279,25 @@
      * @category Setup
      */
     setPrompt (prompt) {
-        
-        // Try to parse structured prompts
-        if (prompt && prompt.includes("Create an image with the attributes described by this JSON")) {
-            try {
-                const jsonMatch = prompt.match(/\{[\s\S]*\}/);
-                if (jsonMatch) {
-                    const jsonObj = JSON.parse(jsonMatch[0]);
-                    
-                    // Extract content (scene)
-                    if (jsonObj.scene) {
-                        this.setContentPrompt(jsonObj.scene);
-                    }
-                    
-                    // Extract style
-                    if (jsonObj.artStyle) {
-                        let style = jsonObj.artStyle;
-                        // Clean up common prefixes
-                        style = style.replace(/^Inspired by the /, "");
-                        style = style.replace(/^in the style of /, "");
-                        this.setStylePrompt(style);
-                    }
-                    
-                    return this;
-                }
-            } catch (e) {
-                console.warn("Failed to parse JSON prompt, using as single prompt:", e);
+        // Try to parse json prompts
+        const jsonMatch = prompt.match(/\{[\s\S]*\}/);
+        if (jsonMatch && jsonMatch.isValidJson()) {
+            const jsonObj = JSON.parse(jsonMatch[0]);
+            
+            if (jsonObj.scene) {
+                this.setContentPrompt(jsonObj.scene);
             }
+            
+            if (jsonObj.artStyle) {
+                let style = jsonObj.artStyle;
+                this.setStylePrompt(style);
+            }                
+        } else {
+            debugger;
+            // If it's not JSON or parsing failed, use the prompt as both content and style
+            this.setContentPrompt(prompt);
+            this.setStylePrompt("fantasy art illustration");
         }
-        
-        // If it's not JSON or parsing failed, use the prompt as both content and style
-        this.setContentPrompt(prompt);
-        this.setStylePrompt("fantasy art illustration");
-        
         return this;
     }
 
@@ -853,12 +841,12 @@
     }
 
     // Delegate methods from prompts
-    onImagePromptSuccess (prompt) {
+    onImagePromptSuccess (/*prompt*/) {
         // We handle final results directly after await
         // This is just for status updates during generation
     }
 
-    onImagePromptImageLoaded (prompt, aiImage) {
+    onImagePromptImageLoaded (prompt /*, aiImage*/) {
         // Called when an individual image loads
         if (prompt === this.openAiPrompt()) {
             // OpenAI image loaded - will be used as base
