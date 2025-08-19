@@ -275,20 +275,57 @@ Example Tool call format:
   }
 
   assertValidToolCallSchema () {
-    const validator = new JsonValidator();
-    const toolCallSchema = this.toolDefinition().toolMethod().asJsonSchema();
-    validator.setJsonSchema(toolCallSchema);
+    const validator = new AjvValidator();
+    
+    // Use asRootJsonSchema from the Function class which already builds a complete schema with definitions
+    const completeSchema = this.toolDefinition().toolMethod().asRootJsonSchema();
+    
+    validator.setJsonSchema(completeSchema);
+
+    if (validator.hasError()) {
+        // invalid schema!
+      const e = new Error(validator.errorMessageForLLM());
+      throw e;
+    }
+    
     const isValid = validator.validate(this.callJson());
     if (!isValid) {
-      const e = new Error(validator.errorMessageForLLM());
-      this.handleCallError(e);
+        const e = new Error(validator.errorMessageForLLM());
+
+        console.error("Error during schema validation:", e);
+        console.error("Complete schema:", JSON.stringify(completeSchema, null, 2));
+        console.error("Call JSON:", JSON.stringify(this.callJson(), null, 2));
+
+        debugger;
+        this.handleCallError(e);
     }
+
   }
 
   assertValidParametersSchema () {
-    const validator = new JsonValidator();
-    const paramsSchema = this.toolDefinition().toolMethod().paramsSchema(new Set());
-    validator.setJsonSchema(paramsSchema);
+    const validator = new AjvValidator();
+    const refSet = new Set();
+    const paramsSchema = this.toolDefinition().toolMethod().paramsSchema(refSet);
+    
+    // Build a complete schema with definitions for any referenced types
+    const completeSchema = {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": paramsSchema,
+      "additionalProperties": false
+    };
+    
+    // Only add definitions if there are referenced types
+    if (refSet.size > 0) {
+      completeSchema.definitions = {};
+      for (const referencedClass of refSet) {
+        const typeName = referencedClass.type();
+        const typeSchema = referencedClass.asJsonSchema(new Set());
+        completeSchema.definitions[typeName] = typeSchema;
+      }
+    }
+    
+    validator.setJsonSchema(completeSchema);
     const isValid = validator.validate(this.parametersDict());
     if (!isValid) {
       const e = new Error(validator.errorMessageForLLM());
@@ -327,10 +364,10 @@ Example Tool call format:
     e.extraMessage = "Error parsing tool call JSON. Please fix the call string and try again.";
 
     if (toolName !== undefined) {
-        // lets get the too definition schema so we can remind the AI of the expected format
+        // lets get the tool definition schema so we can remind the AI of the expected format
         const toolDefinition = this.toolDefinitionForToolName(toolName);
         if (toolDefinition !== null) {
-            const toolCallSchema = toolDefinition.asJsonSchema();
+            const toolCallSchema = toolDefinition.toolJsonSchema();
             const toolCallSchemaString = JSON.stringify(toolCallSchema, null, 2);
             e.extraMessage += "\nThe '" + toolName + "' tool call schema is\n " + toolCallSchemaString;
             debugger;
@@ -387,7 +424,7 @@ Example Tool call format:
   // make call
 
   async makeCall () {
-    assert(this.isQueued());
+    assert(this.isQueued(), "Tool call is not queued, it's '" + this.status() + "', but we haven't done makeCall() yet");
 
     try {
       this.setStatus("calling");

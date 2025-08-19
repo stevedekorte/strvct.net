@@ -4,10 +4,10 @@
     "clarinet/clarinet.js",
     "clarinet/UiAttribution.json",
 
+    "ajv/_imports.json",
     "fast-json-patch/_imports.json",
     "json-stable-stringify/_imports.json",
     "jsondiffpatch/_imports.json",
     "jsonrepair/_imports.json",
-    "jsonschema/_imports.json",
     "parse-json/_imports.json"
 ]

@@ -88,7 +88,7 @@
       }
     }
 
-    this.addSubnode(toolCall); // in case there's an error, we'll need this
+    this.addSubnode(toolCall); // in case there's an error or result response, we'll need to keep the tool call around
     this.onToolCallAdded(toolCall);
     //toolCall.handleCall(); // this may wait for this message to complete
 

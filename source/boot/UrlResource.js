@@ -103,6 +103,10 @@
         return this._path;
     }
 
+    fileName () {
+        return this.path().split("/").pop();
+    }
+
     /**
      * Gets the file extension of the resource path.
      * @returns {string} The file extension.

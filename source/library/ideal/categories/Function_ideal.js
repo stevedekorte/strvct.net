@@ -136,6 +136,17 @@ Function.prototype.parameters = function () {
 Function.prototype.addParameter = function (name, type, description) {
     assert(name, "Name is required");
     assert(type, "Type is required");
+    
+    // Ensure type is a string, not a function
+    if (typeof type === 'function') {
+        console.error("WARNING: addParameter received a function for type parameter:", type);
+        console.error("Parameter name:", name);
+        console.error("Function name:", this.name);
+        debugger;
+        // Try to get the name of the function/class
+        type = type.name || type.toString();
+    }
+    
     if (!name.isCapitalized()) {
         assert(description, "Description is required");
     }
@@ -267,12 +278,57 @@ Example:
     }
 */
 
+/*
 Function.prototype.asRootJsonSchema = function (refSet = new Set()) {
-    const json = {
+    // For functions, we return the schema directly with the $id and $schema added
+    const schema = this.asJsonSchema(refSet);
+    return {
         "$id": this.assistantToolName(),
         "$schema": "http://json-schema.org/draft-07/schema#",
+        ...schema
     };
-    Object.assign(json, this.asJsonSchema(refSet));
+}
+*/
+
+Function.prototype.asRootJsonSchema = function asRootJsonSchema (definitionsOnly = false) {
+    // NOTE: this uses a format of all definitions at the top level
+
+    const refSet = new Set();
+    /*
+    // useful for debugging classes put in the refSet
+    refSet._add = refSet.add;
+    refSet.add = function (aClass) {
+        if (!aClass.jsonSchemaDescription || aClass.jsonSchemaDescription() === null) {
+            debugger;
+        }
+        if (!this.has(aClass)) {
+            this._add(aClass);
+            console.log("refSet.add(" + aClass.type() + ") size ", this.size);
+        }
+    }
+    */
+
+    const json = {
+        //"$id": this.type(),
+        "$id": this.assistantToolName(),
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "description": this.description()
+    };
+    
+    if (definitionsOnly) {
+        this.asJsonSchema(refSet); // we only do this to set the refSet to include all classes with this object references
+        assert(this.asJsonSchema); // sanity check - we'll need this 
+        refSet.add(this); // now we add ourselve and we're ready to just share all the definitions
+    } else {
+        Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
+        refSet.delete(this); // don't include ourself in the definitions, as we're the root schema
+    }        
+
+    if (refSet.size) {
+        json.definitions = SvNode.jsonSchemaDefinitionsForRefSet.call(this, refSet);
+        //console.log("Object.keys(json.definitions).length = ", Object.keys(json.definitions).length);
+    }
+
     return json;
 }
 
@@ -286,13 +342,41 @@ Function.prototype.asJsonSchema = function (refSet = new Set()) {
 
     const paramsSchema = this.paramsSchema(refSet); 
 
-    /*
-    // add return type refs
-    this.returnTypes().forEach(typeName => {
-        refTypeName(paramDict.type, refSet);
-    });
-    */
+    // Return a proper JSON Schema for the tool call structure
+    // The schema validates the actual tool call format expected
+    // For parameters, we need to wrap the paramsSchema in a proper object schema
+    const parametersObjectSchema = {
+        "type": "object",
+        "properties": paramsSchema,
+        "additionalProperties": false
+    };
 
+    return {
+        "type": "object",
+        "description": description,
+        "properties": {
+            "toolName": {
+                "type": "string",
+                "const": name,
+                "description": "The name of the tool to call"
+            },
+            "callId": {
+                "type": "string",
+                "description": "A unique identifier for the call"
+            },
+            "parameters": parametersObjectSchema
+        },
+        "required": ["toolName", "callId", "parameters"],
+        "additionalProperties": false
+    };
+}
+
+Function.prototype.asToolMetadata = function (refSet = new Set()) {
+    // This returns the full tool metadata including non-schema properties
+    const name = this.assistantToolName();
+    const description = this.description();
+    const paramsSchema = this.paramsSchema(refSet);
+    
     return {
         "$id": name,
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -414,4 +498,22 @@ Function.prototype.callsOnNarrationTool = function () {
     return this.toolTiming() == "on narration";
 };
 
+
+// --- JSON Schema Validation ---
+
+/*
+Function.prototype.jsonSchemaValidator = function () {
+    // lazy init validator
+    if (this.getMetaProperty("jsonSchemaValidator") === undefined) {
+        this.setMetaProperty("jsonSchemaValidator", new ZJsonValidator());
+    }
+    return this.getMetaProperty("jsonSchemaValidator") ;
+};
+
+Function.prototype.validateJsonSchema = function (json) {
+    const validator = this.jsonSchemaValidator();
+    validator.setJsonSchema(this.asRootJsonSchema());
+    return validator.validate(json);
+};
+*/
 

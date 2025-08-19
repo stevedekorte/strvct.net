@@ -35,7 +35,7 @@ class JsonValidator {
     // Default options
     const defaultOptions = {
       throwError: false,        // Don't throw on validation errors
-      allowUnknownAttributes: false, // Don't allow unknown attributes
+      allowUnknownAttributes: true, // Allow unknown attributes (for compatibility with newer JSON Schema drafts)
       skipAttributes: [],       // No attributes to skip
       nestedErrors: true,       // Enable nested error reporting
       required: true,           // Enable required field validation
@@ -67,7 +67,8 @@ class JsonValidator {
       throw new Error('Schema must be a valid object');
     }
     
-    this._jsonSchema = schema;
+    // Clean the schema to remove unsupported keywords
+    this._jsonSchema = this._cleanSchema(schema);
     try {
       // jsonschema doesn't need compilation, just store the schema
       this._error = null;
@@ -81,6 +82,49 @@ class JsonValidator {
     }
     
     return this;
+  }
+  
+  /**
+   * Remove keywords that are not supported by the jsonschema library
+   * @private
+   * @param {Object} schema - The schema to clean
+   * @returns {Object} - The cleaned schema
+   */
+  _cleanSchema (schema) {
+    if (!schema || typeof schema !== 'object') {
+      return schema;
+    }
+    
+    // Keywords that are valid in newer JSON Schema drafts but not supported by this library
+    const unsupportedKeywords = ['readOnly', 'writeOnly', 'examples', 'deprecated', 'const', 'contentMediaType', 'contentEncoding'];
+    
+    const cleaned = {};
+    for (const key in schema) {
+      if (!unsupportedKeywords.includes(key)) {
+        if (key === 'properties' || key === 'definitions' || key === 'patternProperties') {
+          // Recursively clean nested schemas
+          cleaned[key] = {};
+          for (const propKey in schema[key]) {
+            cleaned[key][propKey] = this._cleanSchema(schema[key][propKey]);
+          }
+        } else if (key === 'items' || key === 'additionalItems' || key === 'additionalProperties') {
+          // These can be schemas or booleans
+          cleaned[key] = this._cleanSchema(schema[key]);
+        } else if (key === 'allOf' || key === 'anyOf' || key === 'oneOf') {
+          // Arrays of schemas
+          cleaned[key] = Array.isArray(schema[key]) 
+            ? schema[key].map(s => this._cleanSchema(s))
+            : schema[key];
+        } else {
+          cleaned[key] = schema[key];
+        }
+      } else if (key === 'const') {
+        // Convert 'const' to 'enum' with single value (supported by older library)
+        cleaned['enum'] = [schema[key]];
+      }
+    }
+    
+    return cleaned;
   }
 
   /**
@@ -148,14 +192,7 @@ class JsonValidator {
     }
     
     // Validate against schema
-    console.log('Validating data:', data);
-    console.log('Against schema:', this._jsonSchema);
-    console.log('With options:', this._options);
     const result = this._validator.validate(data, this._jsonSchema, this._options);
-    console.log('Validation result:', result);
-    if (result.errors && result.errors.length > 0) {
-      console.log('Validation errors:', result.errors);
-    }
     
     if (!result.valid) {
       this._error = {

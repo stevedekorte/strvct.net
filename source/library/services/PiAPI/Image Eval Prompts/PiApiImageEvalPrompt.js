@@ -159,11 +159,8 @@
         if (!style) {
             return content;
         }
-        
-        // Combine in Midjourney format
-        // Clean up style if it ends with a period
-        const cleanStyle = style.replace(/\.$/, "");
-        return `${content}, in the style of ${cleanStyle}`;
+
+        return [style, content].join(" ");
     }
     
     /**
@@ -288,6 +285,7 @@ For each image, provide:
 2. A brief explanation of the score
 
 Focus on how well the image captures the content described, not the artistic style.
+Reduce the score heavily if the image has a border of any kind (e.g. white, painting frame, etc.)
 
 IMPORTANT: Use 0-based indexing for the images (first image is index 0, second is index 1, etc.).
 

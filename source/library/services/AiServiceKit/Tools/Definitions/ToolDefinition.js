@@ -72,6 +72,16 @@
       //slot.setValidValues(values);
     }
     
+    {
+        const slot = this.newSlot("jsonSchemaValidator", null);
+        slot.setDescription("Validator for the JSON Schema.");
+        //slot.setFinalInitProto(AjvValidator); // let's lazy instantiate this
+        slot.setSlotType("AjvValidator");
+        slot.setShouldStoreSlot(false);
+        slot.setShouldJsonArchive(false);
+        slot.setIsSubnodeField(false);
+        slot.setCanEditInspection(false);
+    }
   }
 
   initPrototype () {
@@ -84,6 +94,14 @@
     this.setSummaryFormat("value");
     this.setHasNewlineAfterSummary(true);
     */
+  }
+
+  jsonSchemaValidator () {
+    if (!this._jsonSchemaValidator) {
+        //debugger;
+        this._jsonSchemaValidator = new AjvValidator();
+    }
+    return this._jsonSchemaValidator;
   }
 
   title () {
@@ -130,10 +148,77 @@
 
   toolJsonSchema (refSet = new Set()) {
     this.assertMethodExists();
-    const json = this.toolMethod().asJsonSchema(refSet);
-    return json;
+    
+    // Validate using the complete schema with definitions
+    this.assertValidJsonSchema();
+    
+    // Return just the tool metadata (without definitions) for the prompt
+    // The definitions will be provided elsewhere in the shared context
+    const metadata = this.toolMethod().asToolMetadata(refSet);
+    
+    return metadata;
   }
 
+  assertValidJsonSchema () {
+    const rootSchema = this.toolMethod().asRootJsonSchema();
+    
+    // Check if the schema contains any functions (which would be invalid)
+    const checkForFunctions = (obj, path = '') => {
+        // For arrays, check indexed elements only
+        if (Array.isArray(obj)) {
+            for (let i = 0; i < obj.length; i++) {
+                const value = obj[i];
+                const currentPath = `${path}[${i}]`;
+                if (typeof value === 'function') {
+                    console.error(`Found function at ${currentPath}:`, value.toString());
+                    debugger;
+                } else if (value && typeof value === 'object' && value !== null) {
+                    checkForFunctions(value, currentPath);
+                }
+            }
+            return;
+        }
+        
+        // For objects, only check own properties
+        for (const key in obj) {
+            if (!Object.hasOwn(obj, key)) {
+                continue; // Skip inherited properties
+            }
+            const value = obj[key];
+            const currentPath = path ? `${path}.${key}` : key;
+            if (typeof value === 'function') {
+                console.error(`Found function at ${currentPath}:`, value.toString());
+                debugger;
+            } else if (value && typeof value === 'object' && value !== null) {
+                checkForFunctions(value, currentPath);
+            }
+        }
+    };
+    
+    console.log("Checking schema for functions in tool:", this.name());
+    checkForFunctions(rootSchema);
+    
+    const validator = this.jsonSchemaValidator();
+    
+    try {
+        validator.setJsonSchema(rootSchema);
+    } catch (err) {
+        console.error("Error validating schema for tool:", this.name());
+        console.error("Error message:", err.message);
+        console.error("Schema that failed:", JSON.stringify(rootSchema, null, 2));
+        throw err;
+    }
+    
+    if (validator.hasError()) {
+        const e = new Error(validator.errorMessageForLLM());
+        console.error("Tool definition JSON Schema is invalid: " + e.message);
+        console.error("Schema that failed:", JSON.stringify(rootSchema, null, 2));
+        debugger;
+        throw e;
+    }
+  }
+
+  
   jsonSchemaString () {
     const json = this.toolJsonSchema();
     const s = JSON.stableStringifyWithStdOptions(json, null, 2);
@@ -147,7 +232,7 @@
     return refSet;
   }
 
-  // setup components
+  // setup components -- this is just for the UI inspector of the tool definition schema
 
   componentsRoot () {
     return this.referencedSchemas();

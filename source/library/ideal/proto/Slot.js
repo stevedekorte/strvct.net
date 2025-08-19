@@ -1696,9 +1696,14 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             type: this.jsonSchemaType(),
             description: this.jsonSchemaDescription(),
             //enum: this.jsonSchemaEnum(), // use jsonSchemeAddRanges instead
-            properties: this.jsonSchemaProperties(refSet),
             readOnly: this.isReadOnly()
         };
+        
+        // Only add properties if they exist (for object types)
+        // Already declared above, so reuse the same variable
+        if (properties !== undefined) {
+            schema.properties = properties;
+        }
 
         if (this.initValue() !== undefined) {
             schema.default = this.initValue();

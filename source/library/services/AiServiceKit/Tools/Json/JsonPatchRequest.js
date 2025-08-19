@@ -14,8 +14,9 @@
   }
 
   static asJsonSchema () {
+    // Don't include $schema when used as a definition within another schema
+    // Simplified schema without if/then which may not be supported by z-schema
     return {
-      "$schema": "http://json-schema.org/draft-04/schema#",
       "title": "JSON Patch",
       "type": "array",
       "items": {
@@ -31,28 +32,15 @@
             "format": "json-pointer"
           },
           "value": {
-            "description": "Required for add, replace, and test operations"
+            "description": "The value to use for add, replace, and test operations"
           },
           "from": {
             "type": "string",
             "format": "json-pointer",
-            "description": "Required for move and copy operations"
+            "description": "The source path for move and copy operations"
           }
         },
-        "allOf": [
-          {
-            "if": {
-              "properties": { "op": { "enum": ["add", "replace", "test"] } }
-            },
-            "then": { "required": ["value"] }
-          },
-          {
-            "if": {
-              "properties": { "op": { "enum": ["move", "copy"] } }
-            },
-            "then": { "required": ["from"] }
-          }
-        ]
+        "additionalProperties": false
       }
     };
   }

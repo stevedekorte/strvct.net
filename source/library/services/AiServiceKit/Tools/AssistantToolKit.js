@@ -145,8 +145,7 @@ The following formats will be used for tool calls and responses:
 
   async onToolCallAdded (toolCall) {
     if (toolCall.isOnStreamTool()) {
-      assert(toolCall.isQueued());
-      await toolCall.makeCall();
+      await this.processToolCall(toolCall);
     }
   }
 
@@ -165,12 +164,21 @@ The following formats will be used for tool calls and responses:
   async processQueuedToolCalls () {
     const queuedCalls = this.toolCalls().queuedCalls();
     for (const toolCall of queuedCalls) {
-      assert(toolCall.isQueued());
-      if (!toolCall.isOnNarrationTool()) {
-        await toolCall.makeCall();
-      }
+      assert(toolCall.isQueued(), "sanity check: we're processing queued tool calls, but tool call status is not set to queued");
+      await this.processToolCall(toolCall);
     }
     this.scheduleMethod("sendCompletedToolCallResponses", 0);
+  }
+
+  async processToolCall (toolCall) {
+    if (toolCall.isCompleted()) { // might have had a parse error 
+        assert(toolCall.hasError(), "Tool call is completed but has no error");
+        return;
+    }
+
+    if (!toolCall.isOnNarrationTool()) { // TODO: handling this in a more general way
+        await toolCall.makeCall();
+    }
   }
 
   completedCallsRequiringResponse () {

@@ -1957,7 +1957,7 @@
         const slots = this.jsonSchemaSlots();
 
         if (slots.length === 0) {
-            return undefined;
+            return {}; // Return empty object instead of undefined
         }
 
         const properties = {};
