@@ -156,11 +156,39 @@
             return "";
         }
         
+        // Split content into sentences and add equal weighting
+        const contentSentences = this.splitIntoSentences(content);
+        const weightedContent = contentSentences
+            .map(sentence => sentence.trim())
+            .filter(sentence => sentence.length > 0)
+            .join("::1 ");
+        
         if (!style) {
-            return content;
+            return weightedContent;
         }
+        
+        // Weight the style equal to the content by using the number of content sentences
+        const contentWeight = contentSentences.length;
+        const weightedStyle = style + "::" + contentWeight;
 
-        return [style, content].join(" ");
+        return [weightedStyle, weightedContent].join(" ");
+    }
+    
+    /**
+     * @description Splits text into sentences.
+     * @param {string} text - The text to split.
+     * @returns {Array<string>} Array of sentences.
+     * @category Prompts
+     */
+    splitIntoSentences (text) {
+        // Split on sentence-ending punctuation followed by space or end of string
+        // Keep the punctuation with the sentence
+        const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+        
+        // Clean up and filter out empty sentences
+        return sentences
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
     }
     
     /**
