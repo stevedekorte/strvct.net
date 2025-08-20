@@ -332,7 +332,9 @@
    */
   moveDirectly (fromPath, key, rootNode) {
     const sourceValue = rootNode.getValueAtPath(fromPath);
-    this.addDirectly(key, sourceValue);
+    // Deep clone the value to avoid reference sharing
+    const clonedValue = JSON.parse(JSON.stringify(sourceValue));
+    this.addDirectly(key, clonedValue);
     rootNode.removeValueAtPath(fromPath);
     return this;
   }
@@ -347,7 +349,9 @@
    */
   copyDirectly (fromPath, key, rootNode) {
     const sourceValue = rootNode.getValueAtPath(fromPath);
-    this.addDirectly(key, sourceValue);
+    // Deep clone the value to avoid reference sharing
+    const clonedValue = JSON.parse(JSON.stringify(sourceValue));
+    this.addDirectly(key, clonedValue);
     return this;
   }
 

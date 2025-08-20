@@ -296,7 +296,7 @@ Example Tool call format:
         console.error("Complete schema:", JSON.stringify(completeSchema, null, 2));
         console.error("Call JSON:", JSON.stringify(this.callJson(), null, 2));
 
-        debugger;
+        //debugger;
         this.handleCallError(e);
     }
 
@@ -429,9 +429,9 @@ Example Tool call format:
     try {
       this.setStatus("calling");
 
-      const toolTarget = this.toolTarget();
-      const methodName = this.toolDefinition().name();
-      const method = toolTarget.methodNamed(methodName);
+      let toolTarget = this.toolTarget();
+      let methodName = this.toolDefinition().name();
+      let method = toolTarget.methodNamed(methodName);
       //const parametersDict = this.parametersDict();
 
       // should we instantiate the parameter objects and replace them as values in the json, or just pass the json?
@@ -478,7 +478,14 @@ Example Tool call format:
   }
 
   handleCallSuccess (resultValue) {
-    Type.assertIsJsonType(resultValue);
+    try {
+        Type.assertIsJsonType(resultValue);
+    } catch(e) {
+        console.error("Error asserting that resultValue is a JSON type: " + e.message);
+        debugger;
+        Type.assertIsJsonType(resultValue);
+    }
+
     this.setStatus("completed");
 
     const r = this.newToolResult();

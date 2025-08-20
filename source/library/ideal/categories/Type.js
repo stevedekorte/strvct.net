@@ -870,13 +870,32 @@ class Type extends Object {
         }
     }
 
+    static isJsonType (value /*, seenSet = new Set()*/) {
+        if (Type.isSimpleJsonType(value)) {
+            return true;
+        }
+        try {
+            JSON.stringify(value);
+            return true;
+        } catch (e) {
+            if (e.message) {
+                return false; // just to avoid linter complaining about unused error variable
+            }
+            return false;
+        }
+    }
+
     /**
      * Checks if the given value is a JSON-compatible type.
      * @category Type Checking / JSON
      * @param {*} value - The value to check.
      * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
      */
-    static isJsonType (value, seenSet = new Set()) {
+    /*static isJsonType_fast (value, seenSet = new Set(), path = "") {
+        if (Type.isSimpleJsonType(value)) {
+            return true;
+        }
+
         if (seenSet.has(value)) {
             return false; // JSON types can't contain circular references
         }
@@ -884,14 +903,11 @@ class Type extends Object {
 
         const vType = typeof(value);
         return (
-            value === null ||
-            vType === 'string' ||
-            vType === 'number' ||
-            vType === 'boolean' ||
-            (Array.isArray(value) && value.every(v => Type.isJsonType(v, seenSet))) ||
-            (vType === 'object' && Object.values(value).every(v => Type.isJsonType(v, seenSet)))
+            Type.isSimpleJsonType(value) ||
+            (Array.isArray(value) && value.every((v, index) => Type.isJsonType(v, seenSet, path + "[" + index + "]"))) ||
+            (vType === 'object' && Reflect.ownKeys(value).every((key) => Type.isJsonType(value[key], seenSet, path + "[\"" + key + "\"]")))
         );
-    }
+    }*/
 
     /**
      * Checks if the given value is a primitive JSON type.
@@ -915,34 +931,53 @@ class Type extends Object {
      * @param {*} value - The value to check.
      * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
      */
-    static assertIsJsonType (value, seenSet = new Set()) {
+    static errorWithJsonType (value, seenMap = new Map(), path = "") {
+        // the purpose of this method is to get a more informative error message than 
+        // using the default JSON.stringify() test
 
-        const vType = typeof(value);
-        const isSimpleType = (
-            value === null ||
-            vType === 'string' ||
-            vType === 'number' ||
-            vType === 'boolean');
-
-        if (isSimpleType) {
-            return true;
+        if (Type.isPrimitiveJsonType(value)) {
+            return null;
         }
 
-        if (seenSet.has(value)) {
-            throw new Error("JSON types can't contain circular references");
+        if (seenMap.has(value)) {
+            const seenPath = seenMap.get(value);
+            let errorMessage = "Found circular reference to value: " +Type.typeName(value) + "\n";
+            errorMessage += "path1: " + seenPath + "\n";
+            errorMessage += "path2: " + path + "\n";
+            debugger;
+            return errorMessage;
         }
-        seenSet.add(value); // place here so we don't add simple types
+        seenMap.set(value, path); // place here so we don't add simple types
 
         if (Array.isArray(value)) {
-            value.every(v => Type.assertIsJsonType(v, seenSet));
-            return true;
-        }
+            for (let i = 0; i < value.length; i++) {
+                const v = value[i];
+                const error = Type.errorWithJsonType(v, seenMap, path + "[" + i + "]");
+                if (error) {
+                    return error;
+                }
+            }
+            return null;
+        } else if (typeof(value) === 'object') {
+            const keys = Object.keys(value);
+            for (const key of keys) {
+                const v = value[key];
+                const error = Type.errorWithJsonType(v, seenMap, path + "[" + JSON.stringify(key) + "]");
+                if (error) {
+                    return error;
+                }
+            }
+            return null;
+        } 
 
-        if (vType === 'object') {
-             Object.values(value).every(v => Type.assertIsJsonType(v, seenSet));
-             return true;
+        return "Unsupported JSON type: '" + Type.typeName(value) + "' at path: '" + path + "'";
+    }
+
+    static assertIsJsonType (value) {
+        const errorMessage = Type.errorWithJsonType(value);
+        if (errorMessage) {
+            throw new Error(errorMessage);
         }
-        return false;
     }
 
     /**
@@ -952,115 +987,9 @@ class Type extends Object {
      * @returns {boolean} True if the value is a deep JSON-compatible type, false otherwise.
      */
     static isDeepJsonType (value) {
-        const error = this.errorWithJsonType(value);
-        return error === null;   
-        /*
-        const seen = new Set();
-      
-        function checkValue (v) {
-          if (v === null) return true;
-      
-          const type = typeof(v);
-      
-          if (['string', 'number', 'boolean'].includes(type)) {
-            return true;
-          }
-      
-          if (type === 'object') {
-            if (seen.has(v)) {
-                return false; // Circular reference
-            }
-            seen.add(v);
-      
-            if (Array.isArray(v)) {
-              return v.every(checkValue);
-            } else {
-              return Object.keys(v).every(key => {
-                if (typeof key !== 'string') {
-                    return false;
-                }
-                return checkValue(v[key]);
-              });
-            }
-          }
-      
-          return false; // Functions, undefined, symbols, etc.
-        }
-      
-        return checkValue(value);
-        */
+        const errorMessage = Type.errorWithJsonType(value);
+        return errorMessage === null;
     }
-
-    static errorWithJsonType (value) {        
-        const seen = new Set();
-        let error = null;
-        let currentPath = [];
-
-        function currentPathString () {
-            let s = "";
-            for (let i = 0; i < currentPath.length; i++) {
-                const part = currentPath[i];
-                if (Type.isNumber(part)) {
-                    s += "[" + part + "]";
-                } else {
-                    s += part;
-                }
-                if (i < currentPath.length - 1) {
-                    s += ".";
-                }
-            }
-            return s;
-        }
-      
-        function checkValue (v) {
-          if (v === null) return true;
-      
-          const type = typeof(v);
-      
-          if (['string', 'number', 'boolean'].includes(type)) {
-            return true;
-          }
-      
-          if (type === 'object') {
-            if (seen.has(v)) {
-                error = "Circular reference at path: " + currentPathString();
-                return false; // Circular reference
-            }
-            seen.add(v);
-      
-            if (Array.isArray(v)) {
-              for (let i = 0; i < v.length; i++) {
-                currentPath.push(i);
-                const result = checkValue(v[i]);
-                currentPath.pop();
-                if (!result) return false;
-              }
-              return true;
-            } else {
-              for (const key of Object.keys(v)) {
-                if (typeof key !== 'string') {
-                    error = "Non-string key at path: " + currentPathString();
-                    return false;
-                }
-                currentPath.push(key);
-                const result = checkValue(v[key]);
-                currentPath.pop();
-                if (!result) return false;
-              }
-              return true;
-            }
-          }
-          error = "Unsupported type: '" + Type.typeName(v) + "' at path: " + currentPathString();
-          return false; // Functions, undefined, symbols, etc.
-        }
-      
-        checkValue(value);
-        if (error) {
-            return new Error(error);
-        }
-        return null;
-    }
-
 
     /**
      * Generates a unique identifier for the given value based on its type.
