@@ -20,8 +20,6 @@
       slot.setShouldJsonArchive(true);
       slot.setCanEditInspection(false);
     }
-
-
   }
 
   initPrototype () {
@@ -33,12 +31,14 @@
     this.setSummaryFormat("value");
     this.setHasNewlineAfterSummary(true);
     this.setNodeCanReorderSubnodes(false);
+    this.setNoteIsSubnodeCount(true);
   }
 
   finalInit () {
     super.finalInit();
     this.setTitle("Tool Definitions");
-    //this.setNoteIsSubnodeCount(true);
+    this.setNoteIsSubnodeCount(true);
+    this.setNoteIconName(null);
   }
 
   addToolsForInstance (instance) {
@@ -60,6 +60,7 @@
         //console.log(" - tool: " + method.name);
         toolDef.setToolTarget(instance);
         toolDef.setName(method.name);
+        toolDef.updateJsonSchemaString();
         this.addTool(toolDef);
       //}
     }

@@ -155,49 +155,11 @@
     // Return just the tool metadata (without definitions) for the prompt
     // The definitions will be provided elsewhere in the shared context
     const metadata = this.toolMethod().asToolMetadata(refSet);
-    
     return metadata;
   }
 
   assertValidJsonSchema () {
     const rootSchema = this.toolMethod().asRootJsonSchema();
-    
-    // Check if the schema contains any functions (which would be invalid)
-    const checkForFunctions = (obj, path = '') => {
-        // For arrays, check indexed elements only
-        if (Array.isArray(obj)) {
-            for (let i = 0; i < obj.length; i++) {
-                const value = obj[i];
-                const currentPath = `${path}[${i}]`;
-                if (typeof value === 'function') {
-                    console.error(`Found function at ${currentPath}:`, value.toString());
-                    debugger;
-                } else if (value && typeof value === 'object' && value !== null) {
-                    checkForFunctions(value, currentPath);
-                }
-            }
-            return;
-        }
-        
-        // For objects, only check own properties
-        for (const key in obj) {
-            if (!Object.hasOwn(obj, key)) {
-                continue; // Skip inherited properties
-            }
-            const value = obj[key];
-            const currentPath = path ? `${path}.${key}` : key;
-            if (typeof value === 'function') {
-                console.error(`Found function at ${currentPath}:`, value.toString());
-                debugger;
-            } else if (value && typeof value === 'object' && value !== null) {
-                checkForFunctions(value, currentPath);
-            }
-        }
-    };
-    
-    console.log("Checking schema for functions in tool:", this.name());
-    checkForFunctions(rootSchema);
-    
     const validator = this.jsonSchemaValidator();
     
     try {
@@ -219,11 +181,12 @@
   }
 
   
-  jsonSchemaString () {
+  updateJsonSchemaString () {
     const json = this.toolJsonSchema();
     const s = JSON.stableStringifyWithStdOptions(json, null, 2);
+    this.setJsonSchemaString(s);
     this.setupComponents();
-    return s;
+    return this;
   }
 
   classSetReferencedByDefinition () {

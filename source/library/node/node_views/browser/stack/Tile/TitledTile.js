@@ -227,7 +227,7 @@
                 }
             } 
 
-            if (node.noteIconName()) {
+            if (node.noteIconName() && !node.noteIsSubnodeCount()) {
                 this.hideNoteView();
                 this.showNoteIconView();
             } else {
@@ -276,8 +276,17 @@
      * @category UI
      */
     showNoteView () {
-        this.noteView().unhideDisplay();   
-        this.noteView().setString(this.node().note());
+        const nv = this.noteView();
+        nv.unhideDisplay();   
+        nv.setString(this.node().note());
+        // Clear any background image that might have been set (e.g. right arrow)
+        nv.setBackgroundImageUrlPath(null);
+        nv.setBackgroundSizeWH(null, null);
+        nv.setWidth("fit-content");
+        nv.setHeight("fit-content");
+        nv.setMinAndMaxWidth(null);
+        nv.setMinAndMaxHeight(null);
+        this.hideNoteIconView();
     }
 
     /**

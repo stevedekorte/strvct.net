@@ -20,7 +20,9 @@
       slot.setAllowsNullValue(true);
       slot.setShouldStoreSlot(true);
     }
+  }
 
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([ToolCall]);
@@ -29,10 +31,6 @@
     this.setNodeCanReorderSubnodes(false);
     this.setCanDelete(false);
 
-    /*
-    this.setSummaryFormat("value");
-    this.setHasNewlineAfterSummary(true);
-    */
     this.setNoteIsSubnodeCount(true);
     this.setShouldStoreSubnodes(true);
   }
@@ -41,6 +39,7 @@
     super.finalInit();
     this.setTitle("Tool Calls");
     this.setNoteIsSubnodeCount(true);
+    this.setNoteIconName(null);
   }
 
   howToMakeToolCallsPrompt () {
