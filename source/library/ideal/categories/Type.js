@@ -871,7 +871,7 @@ class Type extends Object {
     }
 
     static isJsonType (value /*, seenSet = new Set()*/) {
-        if (Type.isSimpleJsonType(value)) {
+        if (Type.isPrimitiveJsonType(value)) {
             return true;
         }
         try {
@@ -892,7 +892,7 @@ class Type extends Object {
      * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
      */
     /*static isJsonType_fast (value, seenSet = new Set(), path = "") {
-        if (Type.isSimpleJsonType(value)) {
+        if (Type.isPrimitiveJsonType(value)) {
             return true;
         }
 
@@ -903,7 +903,7 @@ class Type extends Object {
 
         const vType = typeof(value);
         return (
-            Type.isSimpleJsonType(value) ||
+            Type.isPrimitiveJsonType(value) ||
             (Array.isArray(value) && value.every((v, index) => Type.isJsonType(v, seenSet, path + "[" + index + "]"))) ||
             (vType === 'object' && Reflect.ownKeys(value).every((key) => Type.isJsonType(value[key], seenSet, path + "[\"" + key + "\"]")))
         );
