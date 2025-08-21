@@ -88,7 +88,7 @@
      * @category Resource Management
      */
     resourcePaths () {
-        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions());
+        return SvResourceManager.shared().resourceFilePathsWithExtensions(this.extensions());
     }
 
     /**
@@ -97,7 +97,7 @@
      * @category Resource Management
      */
     urlResources () {
-        return ResourceManager.shared().urlResourcesWithExtensions(this.extensions());
+        return SvResourceManager.shared().urlResourcesWithExtensions(this.extensions());
     }
 
     /**

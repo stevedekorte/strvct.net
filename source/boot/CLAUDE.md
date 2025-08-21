@@ -89,7 +89,7 @@ node ./site/strvct/source/boot/index-builder/ResourceIndexer.js ./strvct/resourc
 ## Runtime Loading
 
 At runtime:
-1. ResourceManager loads the small `_index.json` first
+1. SvResourceManager loads the small `_index.json` first
 2. Checks SvHashCache for cached content using hashes
 3. Downloads `_cam.json.zip` if needed
 4. Extracts and evaluates resources in dependency order

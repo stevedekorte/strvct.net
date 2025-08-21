@@ -35,7 +35,7 @@
 
     Use:
 
-    The root index.html file just needs to run ResourceManager.js which 
+    The root index.html file just needs to run SvResourceManager.js which 
     will load the above two files and eval the JS and CSS code to start
     the app.
    

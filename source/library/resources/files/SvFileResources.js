@@ -98,7 +98,7 @@
             const rootFolder = SvResourceFolder.clone().setPath(this.rootPath());
             this.addSubnode(rootFolder);
 
-            const entries = ResourceManager.shared().entries();
+            const entries = SvResourceManager.shared().entries();
             entries.forEach(entry => {
                 const aPath = entry.path;
                 const pathArray = aPath.split("/");

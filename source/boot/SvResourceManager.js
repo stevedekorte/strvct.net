@@ -5,21 +5,21 @@
  */
 
 /**
- * @class ResourceManager
+ * @class SvResourceManager
  * @extends Object
  * @classdesc Singleton that supports loading, caching and evaluation of resources for the application.
  * Resources are primarily JS and CSS files, but can also include images, JSON, SVG, and other assets.
  */
 
-(class ResourceManager extends Object {
+(class SvResourceManager extends Object {
 
     /**
      * @category Initialization
-     * @description Initializes the ResourceManager class.
-     * @returns {ResourceManager} The initialized class.
+     * @description Initializes the SvResourceManager class.
+     * @returns {SvResourceManager} The initialized class.
      */
     static initThisClass () {
-        SvGlobals.globals().ResourceManager = ResourceManager;
+        SvGlobals.globals().SvResourceManager = SvResourceManager;
         return this;
     }
 
@@ -35,10 +35,10 @@
     /**
      * @category Instance Methods
      * @description Returns the type of the manager.
-     * @returns {string} The type "ResourceManager".
+     * @returns {string} The type "SvResourceManager".
      */
     type () {
-        return "ResourceManager";
+        return "SvResourceManager";
     }
 
     /**
@@ -47,13 +47,13 @@
      * @returns {string} The boot path.
      */
     bootPath () {
-        return ResourceManager.bootPath();
+        return SvResourceManager.bootPath();
     }
 
     /**
      * @category Static Methods
-     * @description Returns a shared instance of ResourceManager.
-     * @returns {ResourceManager} The shared instance.
+     * @description Returns a shared instance of SvResourceManager.
+     * @returns {SvResourceManager} The shared instance.
      */
     static shared () {
         if (!Object.hasOwn(this, "_shared")) {
@@ -75,8 +75,8 @@
 
     /**
      * @category Initialization
-     * @description Initializes the ResourceManager instance.
-     * @returns {ResourceManager} The initialized instance.
+     * @description Initializes the SvResourceManager instance.
+     * @returns {SvResourceManager} The initialized instance.
      */
     init () {
         this._index = null;
@@ -99,7 +99,7 @@
     /**
      * @category Core Functionality
      * @description Runs the resource loading and evaluation process.
-     * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
+     * @returns {Promise<SvResourceManager>} A promise that resolves with the SvResourceManager instance.
      */
     async run () {
         this.onProgress("", 0);
@@ -258,7 +258,7 @@
      * @returns {Promise<*>} The data of the resource.
      */
     async asyncDataForResourceAtPath (path) {
-        const resourceUrl = SvUrlResource.clone().setPath(ResourceManager.bootPath() + "/" + path);
+        const resourceUrl = SvUrlResource.clone().setPath(SvResourceManager.bootPath() + "/" + path);
         await resourceUrl.promiseLoad();
         return resourceUrl.data();
     }
@@ -350,7 +350,7 @@
         //await jsResources.promiseSerialTimeoutsForEach(async (r /*, index*/) => { // very slow this way!
         await jsResources.promiseSerialForEach(async (r /*, index*/) => {
             //this.updateBar();
-            //SvBootLoadingView.shared().setSubtitle(n + " / " + ResourceManager.shared().updateUndeferredResourceCount());
+            //SvBootLoadingView.shared().setSubtitle(n + " / " + SvResourceManager.shared().updateUndeferredResourceCount());
             r.eval();
         });
         SvBootLoadingView.shared().setSubtitle("running app");
@@ -485,8 +485,8 @@
 
     /**
      * @category Core Functionality
-     * @description Sets up and runs the ResourceManager.
-     * @returns {Promise<ResourceManager>} A promise that resolves with the ResourceManager instance.
+     * @description Sets up and runs the SvResourceManager.
+     * @returns {Promise<SvResourceManager>} A promise that resolves with the SvResourceManager instance.
      */
     async setupAndRun () {
         await this.run();

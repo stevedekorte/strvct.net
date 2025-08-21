@@ -178,7 +178,7 @@
         if (this._data) {
             return this;
         }
-        ResourceManager.shared().updateBar();
+        SvResourceManager.shared().updateBar();
 
         //console.log("SvUrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
@@ -400,7 +400,7 @@
      */
     async promiseLoadUnzipIfNeeded () {
         if (!SvGlobals.globals().pako) {
-            await SvUrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
+            await SvUrlResource.clone().setPath(SvResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }
 

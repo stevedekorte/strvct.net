@@ -19,7 +19,7 @@ class BootLoader extends Object {
     "Array_promises.js",
     "SvUrlResource.js",
     "SvBootLoadingView.js",
-    "ResourceManager.js",
+    "SvResourceManager.js",
     "Base.js",
     "Promise_ideal.js",
     "IndexedDbFolder.js",
@@ -62,7 +62,7 @@ class BootLoader extends Object {
     await SvPlatform.asyncWaitForNextRender(); // let the background color get rendered first?
     //debugger;
     await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());
-    await ResourceManager.shared().setupAndRun();
+    await SvResourceManager.shared().setupAndRun();
   }
 
 }

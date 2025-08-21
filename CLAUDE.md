@@ -383,7 +383,7 @@ class ConfigObject extends SvStorableNode {
   3. Compresses bundle for network efficiency (`_cam.json.zip`)
   4. Generates separate resource index file (`_index.json`)
 - Runtime behavior:
-  1. `ResourceManager` loads the small index file first
+  1. `SvResourceManager` loads the small index file first
   2. Checks client-side cache (via `SvHashCache`) using content hashes
   3. Downloads compressed bundle only if cache is empty
   4. CSS resources evaluated sequentially (order matters)
@@ -445,7 +445,7 @@ class ConfigObject extends SvStorableNode {
 
 - `AiService`: Base class for AI service integration
 - `BMNotificationCenter`: Event dispatcher
-- `ResourceManager`: Handles resource loading
+- `SvResourceManager`: Handles resource loading
 - `PersistentObjectPool`: Manages object persistence
 
 ## Development Workflow
@@ -533,7 +533,7 @@ The framework includes a path-based convention system to automatically exclude e
 // Check if a file should be loaded in current environment
 StrvctFile.with('path/to/web-only/SomeClass.js').canUseInCurrentEnv() // false in Node.js
 
-// Automatic filtering in ResourceManager
+// Automatic filtering in SvResourceManager
 this.jsResources() // Returns only environment-appropriate resources
 this.cssResources() // Returns only environment-appropriate resources
 ```

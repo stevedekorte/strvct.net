@@ -51,8 +51,8 @@ class StrvctFramework {
     
     /**
     * @method resourceManager
-    * @description Returns the ResourceManager instance
-    * @returns {ResourceManager|null} The ResourceManager instance, or null if not initialized
+    * @description Returns the SvResourceManager instance
+    * @returns {SvResourceManager|null} The SvResourceManager instance, or null if not initialized
     */
     resourceManager() {
     return this._resourceManager;

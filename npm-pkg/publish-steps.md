@@ -62,7 +62,7 @@ Applications that use the STRVCT npm package should:
    await framework.initialize();
    ```
 
-3. Access the framework's functionality through the ResourceManager:
+3. Access the framework's functionality through the SvResourceManager:
    ```javascript
    const resourceManager = framework.resourceManager();
    ```

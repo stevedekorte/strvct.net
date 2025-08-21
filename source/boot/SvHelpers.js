@@ -45,7 +45,7 @@ function evalStringFromSourceUrl (codeString, path) {
         //console.log("✅ Successfully evaluated:", path);
         return result;
     } catch (evalError) {
-        // Add context to error and re-throw (error will be handled by ResourceManager)
+        // Add context to error and re-throw (error will be handled by SvResourceManager)
         console.error("❌ Error evaluating: '" + path + "'");
         debugger;
         evalError.evalPath = path;
