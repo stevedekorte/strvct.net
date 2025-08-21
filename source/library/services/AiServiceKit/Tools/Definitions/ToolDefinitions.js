@@ -42,6 +42,8 @@
   }
 
   addToolsForInstance (instance) {
+    // we use this to add tools for other instances besides ourselves. e.g. the Session, Campaign, or Character
+    //debugger;
     //const ownerPath = this.ownershipChainPathString();
     //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.typeId() + " '" + instance.title() + "'");
 
@@ -51,8 +53,10 @@
 
     this.toolTargetInstances().add(instance);
 
+    //console.log(this.typeId() + " addToolsForInstance(" + instance.typeId() + "):");
     const methodSet = instance.getInheritedToolMethodSet();
     for (const method of methodSet) {
+        //console.log("  -- adding tool '" + method.name + "'");
       //console.log(instance.type() + " " + method.name + " isToolable: " + method.isToolable());
       assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
       //if (!this.toolDefinitionWithName(method.name)) {
