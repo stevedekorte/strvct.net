@@ -475,7 +475,7 @@ STRVCT uses a custom resource loading system that evaluates JavaScript and CSS a
    - **Relative to site directory**: Paths should be relative to the webRoot for VSCode mapping
 
 3. **Implementation**: The boot system handles this in three locations:
-   - `source/boot/Helpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
+   - `source/boot/SvHelpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
    - `source/boot/SvUrlResource.js` - `evalDataAsJS()` and `evalDataAsCss()` for resources
    - `source/boot/BootLoader.js` - Boot file evaluation
 

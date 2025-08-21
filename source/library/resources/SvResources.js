@@ -195,17 +195,17 @@
      * @category Caching
      */
     async prechacheWhereAppropriate () {
-        BootLoadingView.shared().setSubtitle("initializing resources");
+        SvBootLoadingView.shared().setSubtitle("initializing resources");
 
         //console.log(this.type() + ".prechacheWhereAppropriate()");
         //promiseSerialTimeoutsForEach
         await this.subnodes().promiseSerialForEach(async (node) => {
             //console.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
             //debugger;
-            //BootLoadingView.shared().setSubtitle("prechaching " + node.title());
+            //SvBootLoadingView.shared().setSubtitle("prechaching " + node.title());
             await node.prechacheWhereAppropriate();
         });
-        //BootLoadingView.shared().setSubtitle("prechaching done");
+        //SvBootLoadingView.shared().setSubtitle("prechaching done");
 
         this.postNoteNamed("onResourcesDidPrechache");
         return this;

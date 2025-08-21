@@ -2,12 +2,12 @@
 
 /**
  * @module boot
- * @class BootLoadingView
+ * @class SvBootLoadingView
  * @extends Object
  * @description Manages the loading view displayed during the boot process.
  */
 
-class BootLoadingView extends Object {
+class SvBootLoadingView extends Object {
 
   constructor () {
     super();
@@ -24,11 +24,11 @@ class BootLoadingView extends Object {
   /**
    * @method shared
    * @category Singleton
-   * @returns {BootLoadingView} The shared instance of the loading view.
+   * @returns {SvBootLoadingView} The shared instance of the loading view.
    */
   static shared () {
     if (this._shared === null) {
-      this._shared = new BootLoadingView();
+      this._shared = new SvBootLoadingView();
     }
     return this._shared;
   }
@@ -133,7 +133,7 @@ class BootLoadingView extends Object {
    * @method setTitle
    * @category UI Update
    * @param {string} s - The title text to set.
-   * @returns {BootLoadingView} The current instance for chaining.
+   * @returns {SvBootLoadingView} The current instance for chaining.
    */
   setTitle (s) {
     if (!this.isAvailable() || this.isClosing()) {
@@ -165,7 +165,7 @@ class BootLoadingView extends Object {
 
     this.subtitleElement().innerText = s;
     
-    //console.log("-- BootLoadingView setSubtitle(\"" + s + "\") #" + this._updateCount);
+    //console.log("-- SvBootLoadingView setSubtitle(\"" + s + "\") #" + this._updateCount);
 
     if (ratio !== null) {
       this.setBarRatio(ratio);
@@ -194,7 +194,7 @@ class BootLoadingView extends Object {
    * @method setBarRatio
    * @category UI Update
    * @param {number} r - The ratio to set (between 0 and 1).
-   * @returns {BootLoadingView} The current instance for chaining.
+   * @returns {SvBootLoadingView} The current instance for chaining.
    * @throws {Error} If the ratio is invalid.
    */
   setBarRatio (r) {
@@ -232,7 +232,7 @@ class BootLoadingView extends Object {
    * @category UI Update
    * @param {number} n - The current step.
    * @param {number} count - The total number of steps.
-   * @returns {BootLoadingView} The current instance for chaining.
+   * @returns {SvBootLoadingView} The current instance for chaining.
    */
   setBarToNofM (n, count) {
     this.setBarRatio(n / count);
@@ -293,13 +293,13 @@ class BootLoadingView extends Object {
   }
 }
 
-SvGlobals.set("BootLoadingView", BootLoadingView);
-BootLoadingView.shared();
+SvGlobals.set("SvBootLoadingView", SvBootLoadingView);
+SvBootLoadingView.shared();
 
 // Initialize fade-in animation immediately on browsers
 if (SvPlatform.isBrowserPlatform()) {
   // Use setTimeout to ensure this runs after current execution context
   setTimeout(() => {
-    BootLoadingView.shared().initializeFadeIn();
+    SvBootLoadingView.shared().initializeFadeIn();
   }, 0);
 }
