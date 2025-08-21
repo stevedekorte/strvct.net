@@ -45,7 +45,7 @@ class SvServiceWorker extends Object {
         }
         this._isRegistered = true;
 
-        const path = "strvct/source/ServiceWorker/sj.js"
+        const path = "strvct/source/ServiceWorker/SvServiceWorkerCode.js"
         console.log("registering service worker '" + path + "'")
         const promise = navigator.serviceWorker.register(path); //{ scope: ""../"}
 
