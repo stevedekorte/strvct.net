@@ -5,19 +5,19 @@
  */
 
 /**
- * @class WindowErrorPanel
+ * @class SvWindowErrorPanel
  * @extends ProtoClass
- * @classdesc WindowErrorPanel handles JavaScript window errors and provides error reporting functionality.
+ * @classdesc SvWindowErrorPanel handles JavaScript window errors and provides error reporting functionality.
  */
 
 
-class WindowErrorPanel extends Object {
+class SvWindowErrorPanel extends Object {
     
     static _shared = null;
 
     static shared () {
         if (!this._shared) {
-            this._shared = new WindowErrorPanel();
+            this._shared = new SvWindowErrorPanel();
         }
         return this._shared;
     }
@@ -38,8 +38,8 @@ class WindowErrorPanel extends Object {
     }
 
     /**
-     * @description Initialize the WindowErrorPanel.
-     * @returns {WindowErrorPanel}
+     * @description Initialize the SvWindowErrorPanel.
+     * @returns {SvWindowErrorPanel}
      * @category Initialization
      */
     init () {
@@ -51,7 +51,7 @@ class WindowErrorPanel extends Object {
 
     /**
      * @description Register for window error events using addEventListener.
-     * @returns {WindowErrorPanel}
+     * @returns {SvWindowErrorPanel}
      * @category Event Registration
      */
     registerForWindowErrors () {
@@ -80,7 +80,7 @@ class WindowErrorPanel extends Object {
             });
             
             this.setIsRegistered(true);
-            //console.log("WindowErrorPanel: Registered for window error events");
+            //console.log("SvWindowErrorPanel: Registered for window error events");
         }
         return this;
     }
@@ -92,7 +92,7 @@ class WindowErrorPanel extends Object {
      * @param {number} lineno - The line number where the error occurred.
      * @param {number} colno - The column number where the error occurred.
      * @param {Error} error - The error object.
-     * @returns {WindowErrorPanel}
+     * @returns {SvWindowErrorPanel}
      * @category Error Handling
      */
     handleWindowError (message, source, lineno, colno, error) {
@@ -317,17 +317,17 @@ class WindowErrorPanel extends Object {
 
     test () {
         setTimeout(() => {
-            throw new Error("WindowErrorPanel test error");
+            throw new Error("SvWindowErrorPanel test error");
         }, 300);
     }
 
 };
 
-SvGlobals.set("WindowErrorPanel", WindowErrorPanel);
+SvGlobals.set("SvWindowErrorPanel", SvWindowErrorPanel);
 
-WindowErrorPanel.shared();
+SvWindowErrorPanel.shared();
 
-//WindowErrorPanel.shared(); // Move to app init until this class is extracted from Strvct
+//SvWindowErrorPanel.shared(); // Move to app init until this class is extracted from Strvct
 
-//WindowErrorPanel.shared().test();
+//SvWindowErrorPanel.shared().test();
 

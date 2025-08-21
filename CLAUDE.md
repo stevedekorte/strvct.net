@@ -384,7 +384,7 @@ class ConfigObject extends SvStorableNode {
   4. Generates separate resource index file (`_index.json`)
 - Runtime behavior:
   1. `ResourceManager` loads the small index file first
-  2. Checks client-side cache (via `HashCache`) using content hashes
+  2. Checks client-side cache (via `SvHashCache`) using content hashes
   3. Downloads compressed bundle only if cache is empty
   4. CSS resources evaluated sequentially (order matters)
   5. JS resources evaluated in dependency order
@@ -476,7 +476,7 @@ STRVCT uses a custom resource loading system that evaluates JavaScript and CSS a
 
 3. **Implementation**: The boot system handles this in three locations:
    - `source/boot/Helpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
-   - `source/boot/UrlResource.js` - `evalDataAsJS()` and `evalDataAsCss()` for resources
+   - `source/boot/SvUrlResource.js` - `evalDataAsJS()` and `evalDataAsCss()` for resources
    - `source/boot/BootLoader.js` - Boot file evaluation
 
 ### VSCode Debugging Configuration

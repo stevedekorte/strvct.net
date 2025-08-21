@@ -310,7 +310,7 @@
                 if (okTypes.contains(newNode.type())) {
                     this.addSubnode(newNode);
                 } else {
-                    WindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.type() });
+                    SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.type() });
                 }
                 //if (this.acceptsAddingSubnode(match)) {
                 //    this.addSubnode(match);

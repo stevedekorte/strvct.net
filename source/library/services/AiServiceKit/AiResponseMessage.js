@@ -335,7 +335,7 @@
 
     // TODO: look at error and retry if appropriate,
     // otherwise show error panel
-    WindowErrorPanel.shared().showPanelWithInfo({ message: msg });
+    SvWindowErrorPanel.shared().showPanelWithInfo({ message: msg });
     /*
     if (msg.includes("Please try again in 6ms.")) {
       this.setRetryCount(this.retryCount() + 1);

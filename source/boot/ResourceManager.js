@@ -116,10 +116,10 @@
      */
     async promiseLoadIndex () {
         const path = "build/_index.json";
-        const resource = await UrlResource.with(path).promiseLoad();
+        const resource = await SvUrlResource.with(path).promiseLoad();
         this._index = resource.dataAsJson();
         this._indexResources = this._index.map((entry) => {
-            const resource = UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash);
+            const resource = SvUrlResource.clone().setPath(entry.path).setResourceHash(entry.hash);
             assert(resource.path() === entry.path);
             assert(resource.resourceHash() === entry.hash);
             return resource;
@@ -142,7 +142,7 @@
     /**
      * @category Resource Access
      * @description Returns the index resources.
-     * @returns {Array<UrlResource>} The index resources.
+     * @returns {Array<SvUrlResource>} The index resources.
      */
     indexResources () {
         return this._indexResources;
@@ -157,12 +157,12 @@
         //console.log("🔍 Checking if CAM loading is needed...");
         
         if (SvPlatform.isNodePlatform()) {
-            console.log("🔍 Clearing HashCache on Node.js...");
-            await HashCache.shared().promiseClear();
+            console.log("🔍 Clearing SvHashCache on Node.js...");
+            await SvHashCache.shared().promiseClear();
         }
 
-        const count = await HashCache.shared().promiseCount();
-        //console.log("📊 HashCache count:", count);
+        const count = await SvHashCache.shared().promiseCount();
+        //console.log("📊 SvHashCache count:", count);
         if (!count) {
             //console.log("💾 Loading CAM...");
             await this.promiseLoadCam();
@@ -182,19 +182,19 @@
             this._promiseForLoadCam = Promise.clone();
             try {
                 const path = "build/_cam.json.zip";
-                const resource = await UrlResource.clone().setPath(path).promiseLoad();
+                const resource = await SvUrlResource.clone().setPath(path).promiseLoad();
                 const cam = resource.dataAsJson();
                 
                 // Store CAM content in memory for synchronous access
                 this._camContent = cam;
                 
-                // Also store in HashCache for async access
+                // Also store in SvHashCache for async access
                 const camKeys = Reflect.ownKeys(cam);
                 await camKeys.promiseParallelForEach(async (k) => {
                     const v = cam[k];
-                    return HashCache.shared().promiseAtPut(k, v);
+                    return SvHashCache.shared().promiseAtPut(k, v);
                 });
-                HashCache.shared().promiseRemoveKeysNotInSet(camKeys); // collect garbage
+                SvHashCache.shared().promiseRemoveKeysNotInSet(new Set(camKeys)); // collect garbage
                 this._promiseForLoadCam.callResolveFunc();
             } catch (error) {
                 console.error("❌ Error in promiseLoadCam:", error);
@@ -208,7 +208,7 @@
      * @category Resource Access
      * @description Finds a resource for a given path.
      * @param {string} path - The path to search for.
-     * @returns {UrlResource|undefined} The found resource or undefined.
+     * @returns {SvUrlResource|undefined} The found resource or undefined.
      */
     resourceForPath (path) {
         return this.indexResources().find(r => r.path() === path);
@@ -245,7 +245,7 @@
      * @category Resource Access
      * @description Filters resources by file extension.
      * @param {string} ext - The file extension to filter by.
-     * @returns {Array<UrlResource>} Filtered resources.
+     * @returns {Array<SvUrlResource>} Filtered resources.
      */
     resourcesWithExtension (ext) {
         return this.indexResources().filter(r => r.pathExtension() === ext);
@@ -258,7 +258,7 @@
      * @returns {Promise<*>} The data of the resource.
      */
     async asyncDataForResourceAtPath (path) {
-        const resourceUrl = UrlResource.clone().setPath(ResourceManager.bootPath() + "/" + path);
+        const resourceUrl = SvUrlResource.clone().setPath(ResourceManager.bootPath() + "/" + path);
         await resourceUrl.promiseLoad();
         return resourceUrl.data();
     }
@@ -266,7 +266,7 @@
     /**
      * @category Resource Access
      * @description Returns all JavaScript resources filtered by environment.
-     * @returns {Array<UrlResource>} JavaScript resources.
+     * @returns {Array<SvUrlResource>} JavaScript resources.
      */
     jsResources () {
         if (!this._filteredJsResources) {
@@ -278,7 +278,7 @@
     /**
      * @category Resource Access
      * @description Returns all CSS resources filtered by environment.
-     * @returns {Array<UrlResource>} CSS resources.
+     * @returns {Array<SvUrlResource>} CSS resources.
      */
     cssResources () {
         if (!this._filteredCssResources) {
@@ -290,7 +290,7 @@
     /**
      * @category Resource Filtering
      * @description Determines if a resource should be loaded in the current environment using StrvctFile.
-     * @param {UrlResource} resource - The resource to check.
+     * @param {SvUrlResource} resource - The resource to check.
      * @returns {boolean} True if the resource should be loaded.
      */
     shouldLoadResourceInCurrentEnvironment (resource) {
@@ -440,8 +440,8 @@
         
         return "" + 
             Math.round(this._pageLoadTime/100)/10 + "s, " + 
-            Math.round(UrlResource._totalBytesLoaded/1000) + "k, " + 
-            UrlResource._totalUrlsLoaded + " files";
+            Math.round(SvUrlResource._totalBytesLoaded/1000) + "k, " + 
+            SvUrlResource._totalUrlsLoaded + " files";
     }
 
     /**
@@ -466,7 +466,7 @@
      * @category Resource Access
      * @description Filters URL resources by multiple file extensions.
      * @param {Array<string>} extensions - The file extensions to filter by.
-     * @returns {Array<UrlResource>} Filtered URL resources.
+     * @returns {Array<SvUrlResource>} Filtered URL resources.
      */
     urlResourcesWithExtensions (extensions) {
         const extSet = extensions.asSet();

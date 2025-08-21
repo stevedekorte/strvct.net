@@ -125,11 +125,11 @@
         }
         {
             /**
-             * @member {SvUrlResource} urlResource - The URL resource associated with this resource.
+             * @member {SvSvUrlResource} urlResource - The URL resource associated with this resource.
              * @category Resource Properties
              */
             const slot = this.newSlot("urlResource", null);
-            slot.setSlotType("UrlResource");
+            slot.setSlotType("SvUrlResource");
         }
 
         {
@@ -282,7 +282,7 @@
         //console.log("asyncLoad: " + this.path());
         try {
             this.setLoadState("loading");
-            await this.asyncLoadUrlResource();
+            await this.asyncLoadSvUrlResource();
             this.setLoadState("loaded");
             //this.postNoteNamed("resourceLoaded");
             //console.log("asyncLoad: " + this.path() + " loaded");
@@ -311,7 +311,7 @@
      * @returns {Promise<void>} A promise that resolves when the URL resource is loaded.
      * @category Resource Loading
      */
-    async asyncLoadUrlResource () {
+    async asyncLoadSvUrlResource () {
         const url = this.urlResource();
         await url.promiseLoad();
         const data = url.data();

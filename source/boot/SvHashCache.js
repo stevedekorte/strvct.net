@@ -5,14 +5,14 @@
 "use strict";
 
 /**
- * @class HashCache
+ * @class SvHashCache
  * @extends Base
  * @classdesc An key/value db where the keys are hashes of the values.
  * There are APIs to help with using as a url load cache.
  */
-(class HashCache extends Base {
+(class SvHashCache extends Base {
     /**
-     * @description Initializes the prototype slots for the HashCache class.
+     * @description Initializes the prototype slots for the SvHashCache class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -24,14 +24,14 @@
     }
   
     /**
-     * @description Initializes the prototype for the HashCache class.
+     * @description Initializes the prototype for the SvHashCache class.
      * @category Initialization
      */
     initPrototype () {
     }
 
     /**
-     * @description Initializes the HashCache instance.
+     * @description Initializes the SvHashCache instance.
      * @category Initialization
      */
     init () {
@@ -39,13 +39,13 @@
         this.setIdb(IndexedDbFolder.clone());
         this.setIsDebugging(false);
         this.idb().setIsDebugging(false);
-        this.setPath("sharedHashCache");
+        this.setPath("sharedSvHashCache");
     }
 
     /**
-     * @description Sets the path for the HashCache.
+     * @description Sets the path for the SvHashCache.
      * @param {string} aString - The path to set.
-     * @returns {HashCache} - The current HashCache instance.
+     * @returns {SvHashCache} - The current SvHashCache instance.
      * @category Configuration
      */
     setPath (aString) {
@@ -133,12 +133,12 @@
      * @category Data Retrieval
      */
     async promiseLoadUrlAndWriteToHash (url, hash) {
-        const resource = await UrlResource.with(url).promiseLoad();
+        const resource = await SvUrlResource.with(url).promiseLoad();
         const data = resource.data();
         if (data === undefined) {
             throw new Error("unable to load url: '" + url + "'");
         } else {
-            console.log("HashCache loaded url: '" + url + "'");
+            console.log("SvHashCache loaded url: '" + url + "'");
             debugger;
             await this.promiseAtPut(hash, data);
             return data;
@@ -203,7 +203,7 @@
             throw new Error("hash key does not match hash of value");
         }
 
-        this.debugLog("HashCache atPut ", hash);
+        this.debugLog("SvHashCache atPut ", hash);
         return this.idb().promiseAtPut(hash, data);
     }
 

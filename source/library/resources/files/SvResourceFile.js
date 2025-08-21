@@ -178,11 +178,11 @@
 
     /**
      * @description Gets the URL resource for the file.
-     * @returns {UrlResource} The URL resource object.
+     * @returns {SvUrlResource} The URL resource object.
      * @category Loading
      */
     urlResource () {
-        return UrlResource.with(this.path());
+        return SvUrlResource.with(this.path());
     }
 
     /**

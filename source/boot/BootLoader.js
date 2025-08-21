@@ -11,21 +11,21 @@
 class BootLoader extends Object {
 
   static _files = [
-    "WindowErrorPanel.js",
+    "SvWindowErrorPanel.js",
     "Object_categorySupport.js",
     "Object_boot.js",
     "Helpers.js",
     "URL_promises.js",
     "Array_promises.js",
-    "UrlResource.js",
+    "SvUrlResource.js",
     "BootLoadingView.js",
     "ResourceManager.js",
     "Base.js",
     "Promise_ideal.js",
     "IndexedDbFolder.js",
     "IndexedDbTx.js",
-    "HashCache.js" // important that this be after IndexedDbFolder/Tx so it can be used
-    //"pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
+    "SvHashCache.js" // important that this be after IndexedDbFolder/Tx so it can be used
+    //"pako.js" // loaded lazily first time SvUrlResource is asked to load a .zip file
   ];
   static _bootPath = "strvct/source/boot";
   static _promiseCompleted = null;

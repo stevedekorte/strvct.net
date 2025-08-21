@@ -5,14 +5,14 @@
  */
 
 /**
- * @class UrlResource
+ * @class SvUrlResource
  * @extends Object
  * @classdesc Represents a resource identified by a URL. Supports automatic
  * loading from network or cache, and unzipping of zip files. To use the cache, 
  * the resourceHash must be specified.
  */
 
-(class UrlResource extends Object {
+(class SvUrlResource extends Object {
 
     static initThisClass () {
         /** @type {number} Total bytes loaded across all instances */
@@ -21,13 +21,13 @@
         /** @type {number} Total number of URLs loaded across all instances */
         this._totalUrlsLoaded = 0;
 
-        SvGlobals.globals().UrlResource = UrlResource;
+        SvGlobals.globals().SvUrlResource = SvUrlResource;
     }
 
     /**
-     * Creates a new UrlResource instance with the given URL.
+     * Creates a new SvUrlResource instance with the given URL.
      * @param {string} url - The URL of the resource.
-     * @returns {UrlResource} A new UrlResource instance.
+     * @returns {SvUrlResource} A new SvUrlResource instance.
      * @category Factory Methods
      */
     static with (url) {
@@ -35,8 +35,8 @@
     }
 
     /**
-     * Creates a clone of the UrlResource class.
-     * @returns {UrlResource} A new instance of UrlResource.
+     * Creates a clone of the SvUrlResource class.
+     * @returns {SvUrlResource} A new instance of SvUrlResource.
      * @category Factory Methods
      */
     static clone () {
@@ -51,12 +51,12 @@
      * @category Metadata
      */
     type () {
-        return "UrlResource";
+        return "SvUrlResource";
     }
 
     /**
-     * Initializes the UrlResource instance.
-     * @returns {UrlResource} The initialized instance.
+     * Initializes the SvUrlResource instance.
+     * @returns {SvUrlResource} The initialized instance.
      * @category Lifecycle
      */
     init () {
@@ -72,7 +72,7 @@
     /**
      * Sets the path of the resource.
      * @param {string} aPath - The path to set.
-     * @returns {UrlResource} The instance for chaining.
+     * @returns {SvUrlResource} The instance for chaining.
      * @category Path Management
      */
     setPath (aPath) {
@@ -119,7 +119,7 @@
     /**
      * Sets the resource hash.
      * @param {string} h - The hash to set.
-     * @returns {UrlResource} The instance for chaining.
+     * @returns {SvUrlResource} The instance for chaining.
      * @category Hash Management
      */
     setResourceHash (h) {
@@ -138,7 +138,7 @@
 
     /**
      * Loads the resource asynchronously.
-     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @returns {Promise<SvUrlResource>} A promise that resolves with the loaded resource.
      * @category Loading
      */
     async promiseLoad () {
@@ -171,7 +171,7 @@
 
     /**
      * Loads the resource from the cache if available, otherwise loads it from the network.
-     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @returns {Promise<SvUrlResource>} A promise that resolves with the loaded resource.
      * @category Loading
      */
     async asyncLoadFromCache () {
@@ -180,17 +180,17 @@
         }
         ResourceManager.shared().updateBar();
 
-        //console.log("UrlResource.asyncLoadFromCache() " + this.path())
+        //console.log("SvUrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
-        if (h && SvGlobals.globals().HashCache) {
-            const hc = HashCache.shared();
+        if (h && SvGlobals.globals().SvHashCache) {
+            const hc = SvHashCache.shared();
             //await hc.promiseClear(); // clear cache for now
             const hasKey = await hc.promiseHasKey(h);
             //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
             if (this.path().split("/").includes("deferred")) {
                 //debugger;
-                //console.log("UrlResource loading a deferred resource: " + this.path());
+                //console.log("SvUrlResource loading a deferred resource: " + this.path());
             }
             //if (data !== undefined) {
             if (hasKey) {
@@ -199,21 +199,21 @@
                 if (data === undefined) {
                     console.warn("hashcache has undefined data for " + h + " " + this.path());
                     debugger; // there's a bug here, so just load normally
-                    console.log("UrlResource load from network: " + this.path());
+                    console.log("SvUrlResource load from network: " + this.path());
                     return this.promiseJustLoad();
                 }
 
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
                 if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
-                    //console.log("UrlResource load from cache: " + this.path());
+                    //console.log("SvUrlResource load from cache: " + this.path());
                     //debugger;
                 }
                 return this;
             } else {
                 // otherwise, load normally and cache result
                 //this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                //console.log("UrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
+                //console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
                 assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash() );
@@ -226,8 +226,8 @@
                 console.log("  no hash for " + this.path())
                 //debugger;
             }
-            if (!SvGlobals.globals().HashCache) {
-                console.log("  no HashCache")
+            if (!SvGlobals.globals().SvHashCache) {
+                console.log("  no SvHashCache")
             }
             console.log("loading normally " + this.path() + " " + h)
             */
@@ -237,7 +237,7 @@
 
     /**
      * Loads the resource from the network.
-     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @returns {Promise<SvUrlResource>} A promise that resolves with the loaded resource.
      * @category Loading
      */
     async promiseJustLoad () {
@@ -257,7 +257,7 @@
 
     /**
      * Loads the resource from the network and evaluates it.
-     * @returns {Promise<UrlResource>} A promise that resolves with the loaded resource.
+     * @returns {Promise<SvUrlResource>} A promise that resolves with the loaded resource.
      * @category Loading and Evaluation
      */
     async promiseLoadAndEval () {
@@ -268,12 +268,12 @@
 
     /**
      * Evaluates the resource as javascript or CSS.
-     * @returns {UrlResource} The instance for chaining.
+     * @returns {SvUrlResource} The instance for chaining.
      * @category Evaluation
      */
     eval () {
         if (this._didEval) {
-            console.warn("UrlResource already evaluated: " + this.path());
+            console.warn("SvUrlResource already evaluated: " + this.path());
             return this;
         }
 
@@ -287,18 +287,18 @@
 
     /**
      * Evaluates the resource as javascript.
-     * @returns {UrlResource} The instance for chaining.
+     * @returns {SvUrlResource} The instance for chaining.
      * @category Evaluation
      */
     evalDataAsJS () {
-        //console.log("UrlResource eval ", this.path())
+        //console.log("SvUrlResource eval ", this.path())
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }
 
     /**
      * Evaluates the resource as CSS.
-     * @returns {UrlResource} The instance for chaining.
+     * @returns {SvUrlResource} The instance for chaining.
      * @category Evaluation
      */
     evalDataAsCss () {
@@ -400,7 +400,7 @@
      */
     async promiseLoadUnzipIfNeeded () {
         if (!SvGlobals.globals().pako) {
-            await UrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
+            await SvUrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }
 
