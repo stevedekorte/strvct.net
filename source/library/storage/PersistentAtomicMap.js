@@ -49,11 +49,11 @@
         }
         {
             /**
-             * @member {IndexedDbFolder} idb
+             * @member {SvIndexedDbFolder} idb
              * @category Storage
              */
             const slot = this.newSlot("idb", null);
-            slot.setSlotType("IndexedDbFolder");
+            slot.setSlotType("SvIndexedDbFolder");
         }
         {
             /**
@@ -80,7 +80,7 @@
     init () {
         super.init();
         this.setIsOpen(false);
-        this.setIdb(IndexedDbFolder.clone());
+        this.setIdb(SvIndexedDbFolder.clone());
         this.setIsDebugging(false);
         this.setName("PersistentAtomicMap");
     }

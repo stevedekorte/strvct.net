@@ -22,9 +22,9 @@ class BootLoader extends Object {
     "SvResourceManager.js",
     "Base.js",
     "Promise_ideal.js",
-    "IndexedDbFolder.js",
-    "IndexedDbTx.js",
-    "SvHashCache.js" // important that this be after IndexedDbFolder/Tx so it can be used
+    "SvIndexedDbFolder.js",
+    "SvIndexedDbTx.js",
+    "SvHashCache.js" // important that this be after SvIndexedDbFolder/Tx so it can be used
     //"pako.js" // loaded lazily first time SvUrlResource is asked to load a .zip file
   ];
   static _bootPath = "strvct/source/boot";

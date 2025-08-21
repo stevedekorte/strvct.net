@@ -28,12 +28,12 @@
         }
 
         /**
-         * @member {IndexedDbFolder} idb - The IndexedDbFolder instance.
+         * @member {SvIndexedDbFolder} idb - The SvIndexedDbFolder instance.
          * @category Storage
          */
         {
             const slot = this.newSlot("idb", null);
-            slot.setSlotType("IndexedDbFolder");
+            slot.setSlotType("SvIndexedDbFolder");
         }
     }
 
@@ -44,7 +44,7 @@
      */
     init () {
         super.init()
-        this.setIdb(IndexedDbFolder.clone())
+        this.setIdb(SvIndexedDbFolder.clone())
         this.setIsDebugging(false)
     }
     

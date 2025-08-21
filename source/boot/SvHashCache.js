@@ -17,7 +17,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {IndexedDbFolder|null} idb - The IndexedDbFolder instance used for storage.
+         * @member {SvIndexedDbFolder|null} idb - The SvIndexedDbFolder instance used for storage.
          * @category Storage
          */
         this.newSlot("idb", null);
@@ -36,7 +36,7 @@
      */
     init () {
         super.init()
-        this.setIdb(IndexedDbFolder.clone());
+        this.setIdb(SvIndexedDbFolder.clone());
         this.setIsDebugging(false);
         this.idb().setIsDebugging(false);
         this.setPath("sharedSvHashCache");

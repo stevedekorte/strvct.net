@@ -5,13 +5,13 @@
  */
 
 /**
- * @class IndexedDbFolder
+ * @class SvIndexedDbFolder
  * @extends Base
  * @classdesc Represents a folder in IndexedDB for storing and managing data.
  */
-(class IndexedDbFolder extends Base {
+(class SvIndexedDbFolder extends Base {
     /**
-     * Initializes the prototype slots for the IndexedDbFolder.
+     * Initializes the prototype slots for the SvIndexedDbFolder.
      */
     initPrototypeSlots () {
         /**
@@ -45,7 +45,7 @@
         this.newSlot("promiseForOpen", null);
 
         /**
-         * @member {IndexedDbTx} lastTx - The last transaction performed.
+         * @member {SvIndexedDbTx} lastTx - The last transaction performed.
          */
         this.newSlot("lastTx", null) ;
 
@@ -95,11 +95,11 @@
     /**
      * Sets the path of the folder.
      * @param {string} aString - The new path to set.
-     * @returns {IndexedDbFolder} - Returns this instance.
+     * @returns {SvIndexedDbFolder} - Returns this instance.
      */
     setPath (aString) {
         if (this._path !== aString) {
-            assert(!this.isOpen(), "can't change the path on an open IndexedDbFolder instance");
+            assert(!this.isOpen(), "can't change the path on an open SvIndexedDbFolder instance");
             this._path = aString;
         }
         return this;
@@ -139,7 +139,7 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            this.debugLog("IndexedDbFolder: Storage will not be cleared except by explicit user action.");
+            this.debugLog("SvIndexedDbFolder: Storage will not be cleared except by explicit user action.");
         } else {
             this.logWarn(this.type() + " '" + this.path() + "'  may be cleared by the browser under storage pressure.");
         }
@@ -246,7 +246,7 @@
 
     /**
      * Closes the database.
-     * @returns {IndexedDbFolder} - Returns this instance.
+     * @returns {SvIndexedDbFolder} - Returns this instance.
      */
     close () {
         if (this.isOpen()) {
@@ -260,11 +260,11 @@
     /**
      * Gets a folder at the specified path component.
      * @param {string} pathComponent - The path component.
-     * @returns {IndexedDbFolder} - A new IndexedDbFolder instance.
+     * @returns {SvIndexedDbFolder} - A new SvIndexedDbFolder instance.
      */
     folderAt (pathComponent) {
         assert(!pathComponent.contains(this.pathSeparator()), "pathComponent contains pathSeparator");
-        const db = IndexedDbFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator());
+        const db = SvIndexedDbFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator());
         return db;
     }
 
@@ -340,7 +340,7 @@
      * @returns {string} - The current stack trace.
      */
     currentStack () {
-        const stack = this.isDebugging() ? new Error().stack : "(call IndexedDbFolder.setIsDebugging(true) to get a stack recording)" 
+        const stack = this.isDebugging() ? new Error().stack : "(call SvIndexedDbFolder.setIsDebugging(true) to get a stack recording)" 
         return stack
     }
     
@@ -519,7 +519,7 @@
      * @returns {Promise} - A promise that resolves when the database is deleted.
      */
     async promiseDelete () {
-        assert(!this.isOpen(), "IndexedDbFolder is open");
+        assert(!this.isOpen(), "SvIndexedDbFolder is open");
         const deletePromise = Promise.clone();
 
         const request = this.indexedDB().deleteDatabase(this.storeName());
@@ -556,10 +556,10 @@
     /**
      * Creates a new transaction object.
      * @async
-     * @returns {Promise<IndexedDbTx>} - A promise that resolves to a new transaction object.
+     * @returns {Promise<SvIndexedDbTx>} - A promise that resolves to a new transaction object.
      */
     async promiseNewTx () {
-        assert(this.isOpen(), "IndexedDbFolder is not open")
+        assert(this.isOpen(), "SvIndexedDbFolder is not open")
         //debugger;
         this.debugLog(this.path() + " promiseNewTx")
         //debugger;
@@ -588,7 +588,7 @@
     /**
      * Creates a new transaction object.
      * @private
-     * @returns {IndexedDbTx} - A new transaction object.
+     * @returns {SvIndexedDbTx} - A new transaction object.
      */
     privateNewTx () {
         //debugger;
@@ -596,7 +596,7 @@
         if (this.lastTx()) {
             //assert(this.lastTx().isCommitted() || this.lastTx().isAborted())
         }
-        const newTx = IndexedDbTx.clone().setDbFolder(this)
+        const newTx = SvIndexedDbTx.clone().setDbFolder(this)
         this.setLastTx(newTx)
         return newTx
     }
@@ -720,14 +720,14 @@
     // -----------------------------------------------------------------
 
     /**
-     * Tests the IndexedDbFolder class.
+     * Tests the SvIndexedDbFolder class.
      * @static
      * @async
      * @returns {Promise<void>} - A promise that resolves when the test is complete.
      */
 
     static async promiseSelfTest () {
-        const folder = IndexedDbFolder.clone()
+        const folder = SvIndexedDbFolder.clone()
         await folder.promiseAtPut("test", "x");
         const map = await folder.promiseAsMap();
         this.log("db map = ", map);

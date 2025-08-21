@@ -102,8 +102,8 @@
 
         {
             const slot = this.newSlot("idb", null);
-            slot.setSlotType("IndexedDbFolder");
-            //slot.setFinalInitProto(IndexedDbFolder);
+            slot.setSlotType("SvIndexedDbFolder");
+            //slot.setFinalInitProto(SvIndexedDbFolder);
         }
     }
     
@@ -325,7 +325,7 @@
 
     idb () {
         if (this._idb === null) {
-            const idb = IndexedDbFolder.clone();
+            const idb = SvIndexedDbFolder.clone();
             idb.setIsDebugging(false);
             idb.setPath(this.type());
             this._idb = idb;

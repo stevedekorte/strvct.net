@@ -5,11 +5,11 @@
 "use strict";
 
 /**
- * @class IndexedDbTx
+ * @class SvIndexedDbTx
  * @extends Base
  * @classdesc Abstraction of a single IndexedDB transaction.
  */
-(class IndexedDbTx extends Base {
+(class SvIndexedDbTx extends Base {
 
     /** 
      * Initialize prototype slots
@@ -109,7 +109,7 @@
 
     /**
      * Mark the transaction as completed
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Transaction
      */
     markCompleted () {
@@ -122,7 +122,7 @@
     /**
      * Mark the transaction as rejected
      * @param {Error} error - The error that caused the rejection
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Transaction
      */
     markRejected (error) {
@@ -132,7 +132,7 @@
 
     /**
      * Mark the transaction as resolved
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Transaction
      */
     markResolved () {
@@ -192,7 +192,7 @@
 
     /**
      * Begin the transaction
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Transaction
      */
     begin () {
@@ -207,7 +207,7 @@
 	
     /**
      * Abort the transaction
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Transaction
      */
     abort () {
@@ -295,7 +295,7 @@
     /**
      * Push a request to the transaction
      * @param {object} aRequest - The request to push
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Transaction
      */
     pushRequest (aRequest) {
@@ -345,7 +345,7 @@
      * Add an entry to the object store
      * @param {string} key - The key
      * @param {string|ArrayBuffer} value - The value
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Database Operations
      */
     atAdd (key, value) {
@@ -367,7 +367,7 @@
      * Update an entry in the object store
      * @param {string} key - The key
      * @param {string|ArrayBuffer} value - The value
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Database Operations
      */
     atUpdate (key, value) {
@@ -388,7 +388,7 @@
     /**
      * Remove an entry from the object store
      * @param {string} key - The key
-     * @returns {IndexedDbTx}
+     * @returns {SvIndexedDbTx}
      * @category Database Operations
      */
     removeAt (key) {
