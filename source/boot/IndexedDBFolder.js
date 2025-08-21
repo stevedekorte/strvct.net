@@ -139,9 +139,9 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            console.log("IndexedDbFolder: Storage will not be cleared except by explicit user action.");
+            this.debugLog("IndexedDbFolder: Storage will not be cleared except by explicit user action.");
         } else {
-            console.warn(this.type() + " '" + this.path() + "' WARNING: Storage may be cleared by the browser under storage pressure.");
+            this.logWarn(this.type() + " '" + this.path() + "'  may be cleared by the browser under storage pressure.");
         }
 
         return granted;
@@ -231,7 +231,7 @@
         const db = event.target.result;
 
         db.onerror = (event) => {
-            console.log(this.type() + ".onOpenUpgradeNeeded() db error ", event);
+            this.logWarn(this.type() + ".onOpenUpgradeNeeded() db error ", event);
         };
 
         this.setDb(db);
@@ -284,10 +284,10 @@
      */
     readOnlyObjectStore () {
         const tx = this.db().transaction([this.storeName()], "readonly");
-
+        const self = this;
         tx.onerror = (/*event*/) => {
             const m = "readOnlyObjectStore tx error"
-            console.error(m)
+            self.logError(m)
             throw new Error(m)
         };
 
@@ -305,15 +305,16 @@
      */
     readWriteObjectStore () {
         const tx = this.db().transaction([this.storeName()], "readwrite");
-        
+        const self = this;
+
         tx.onerror = (/*event*/) => {
             const m = "readWriteObjectStore tx error"
-            console.error(m)
+            self.logError(m)
             throw new Error(m)
         };
 
         tx.oncomplete = (/*event*/) => {
-            console.log("readWriteObjectStore tx oncomplete ", tx._note)
+            self.debugLog("readWriteObjectStore tx oncomplete ", tx._note)
         }
 
         const objectStore = tx.objectStore(this.storeName())
@@ -356,6 +357,7 @@
         const objectStore = this.readOnlyObjectStore()
         const request = objectStore.get(key);
         const stack = this.currentStack()
+        const self = this;
 
         request.onsuccess = (/*event*/) => {
             try {
@@ -367,13 +369,13 @@
                     atPromise.callResolveFunc(undefined);
                 }
             } catch (e) {
-                this.debugLog(" promiseAt('" +  key + "') caught stack ", stack);
+                self.debugLog(" promiseAt('" +  key + "') caught stack ", stack);
                 throw e;
             }
         }
         
         request.onerror = (/*event*/) => {
-            console.log("promiseAt('" + key + "') onerror", event.target.error);
+            self.debugLog("promiseAt('" + key + "') onerror", event.target.error);
             atPromise.callResolveFunc(undefined);
         }
         
@@ -392,6 +394,7 @@
         const objectStore = this.readOnlyObjectStore();
         const request = objectStore.count(optionalKey);
         const stack = this.currentStack();
+        const self = this;
 
         request.onsuccess = (/*event*/) => {
             const count = request.result;
@@ -405,7 +408,7 @@
         }
         
         request.onerror = (/*event*/) => {
-            console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack);
+            self.logError("promiseCount() onerror: ", event.target.error, " stack: ", stack);
             countPromise.callRejectFunc(event);
         }
 
@@ -424,6 +427,7 @@
         const objectStore = this.readOnlyObjectStore();
         const request = objectStore.getAllKeys();
         const stack = this.currentStack();
+        const self = this;
 
         request.onsuccess = (/*event*/) => {
             const keysArray = request.result;
@@ -431,7 +435,7 @@
         }
         
         request.onerror = (/*event*/) => {
-            console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack);
+            self.logError("promiseCount() onerror: ", event.target.error, " stack: ", stack);
             promise.callRejectFunc(event);
         }
 
@@ -484,24 +488,25 @@
     async promiseClear () {
         await this.promiseOpen();
         const clearPromise = Promise.clone();
-
+        
         const objectStore = this.readWriteObjectStore();
         objectStore._tx._note = "promiseClear";
         
         const request = objectStore.clear();
         //const stack = this.currentStack();
+        const self = this;
 
         objectStore._tx.oncomplete = (event) => {
-            console.log("db promiseClear tx oncomplete");
+            self.debugLog("db promiseClear tx oncomplete");
             clearPromise.callResolveFunc(event);
         };
 
         request.onsuccess = (/*event*/) => {
-            console.log("db promiseClear request onsuccess");
+            self.debugLog("db promiseClear request onsuccess");
         };
 
         request.onerror = (event) => {
-            console.log("db promiseClear request error");
+            self.debugLog("db promiseClear request error");
             clearPromise.callRejectFunc(event);
         };
 
@@ -567,8 +572,8 @@
 
             if (!lastTx.isFinished()) {
                 if (!lastTx.isCommitted()) {
-                    console.warn("WARNING: last tx was not committed yet!")
-                    console.log("last tx:")
+                    this.logWarn("WARNING: last tx was not committed yet!")
+                    this.logWarn("last tx:")
                     lastTx.show()
                 } 
 
@@ -650,109 +655,6 @@
         });
     }
 
-
-    /*
-    async promiseAtPut (key, value) {
-        await this.promiseOpen();
-  
-        if (typeof(value) === "undefined") {
-            return this.promiseRemoveAt(key)
-        }
-  
-        // Create a single readwrite transaction for the entire operation
-        const putPromise = Promise.clone();
-        const objectStore = this.readWriteObjectStore();
-        objectStore._tx._note = "promiseAtPut";
-        const stack = this.currentStack();
-  
-        try {
-            // Check if key exists within the same transaction
-            const countRequest = objectStore.count(key);
-  
-            countRequest.onsuccess = () => {
-                try {
-                    const count = countRequest.result;
-                    const hasKey = count !== 0;
-  
-                    this.debugLog(`promiseAtPut: key="${key}", count=${count}, hasKey=${hasKey}`);
-  
-                    let request;
-                    if (hasKey) {
-                        // Key exists, use put() to update
-                        this.debugLog("idb YES hasKey using put", key);
-                        request = objectStore.put({ key: key, value: value });
-                    } else {
-                        // Key doesn't exist, use add() to enforce uniqueness constraint
-                        this.debugLog("idb NO hasKey using add", key);
-                        request = objectStore.add({ key: key, value: value });
-                    }
-  
-                    request.onsuccess = () => {
-                        this.debugLog("promiseAtPut operation successful for key:", key);
-                    };
-  
-                    request.onerror = (event) => {
-                        console.error("promiseAtPut operation error for key:", key, "error:", event.target.error);
-                        console.error("Error name:", event.target.error?.name);
-                        console.error("Error message:", event.target.error?.message);
-  
-                        // Don't call reject here - let the transaction handle it
-                        // The transaction will abort and we'll handle it in onabort
-                    };
-  
-                } catch (error) {
-                    console.error("promiseAtPut error in count success handler:", error, "stack:", stack);
-                    // Don't call reject here either - let transaction abort
-                }
-            };
-  
-            countRequest.onerror = (event) => {
-                console.error("promiseAtPut count error:", event.target.error, "stack:", stack);
-                // Don't call reject here - let transaction handle it
-            };
-  
-            // Handle transaction completion - this is where we resolve
-            objectStore._tx.oncomplete = (event) => {
-                this.debugLog("promiseAtPut tx oncomplete for key:", key);
-                putPromise.callResolveFunc(event);
-            };
-  
-            // Handle transaction error - this will give us more details
-            objectStore._tx.onerror = (event) => {
-                console.error("promiseAtPut tx error for key:", key);
-                console.error("Transaction error:", event.target?.error);
-                console.error("Error name:", event.target?.error?.name);
-                console.error("Error message:", event.target?.error?.message);
-                console.error("Stack:", stack);
-                putPromise.callRejectFunc(event.target?.error || new Error("Transaction error"));
-            };
-  
-            // Handle transaction abort - this will tell us why it was aborted
-            objectStore._tx.onabort = (event) => {
-                console.error("promiseAtPut tx aborted for key:", key);
-                console.error("Abort event:", event);
-                console.error("Transaction error:", event.target?.error);
-                console.error("Error name:", event.target?.error?.name);
-                console.error("Error message:", event.target?.error?.message);
-                console.error("Stack:", stack);
-  
-                // If it's a constraint error, we might want to handle it differently
-                if (event.target?.error?.name === 'ConstraintError') {
-                    console.error("This is a constraint error - the count() check might not be working correctly");
-                }
-  
-                putPromise.callRejectFunc(event.target?.error || new Error("Transaction aborted"));
-            };
-  
-        } catch (error) {
-            console.error("promiseAtPut caught error:", error, "stack:", stack);
-            putPromise.callRejectFunc(error);
-        }
-  
-        return putPromise;
-    }
-    */
-
     
     /**
      * Asserts that a key exists in the database.
@@ -828,9 +730,9 @@
         const folder = IndexedDbFolder.clone()
         await folder.promiseAtPut("test", "x");
         const map = await folder.promiseAsMap();
-        console.log("db map = ", map);
+        this.log("db map = ", map);
         const v = await folder.promiseAt("test");
-        console.log("read ", v);
+        this.log("read ", v);
     }
 
     static async usage () {

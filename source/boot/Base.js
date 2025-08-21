@@ -212,24 +212,37 @@
         return this.type()
     }
 
+    logPrefix () {
+        return this.debugTypeId() + " ";
+    }
+
     /**
      * Logs a debug message if debugging is enabled.
      * @param {string|function} s - The message to log or a function that returns the message.
      * @returns {Base} The instance itself for method chaining.
      * @category Debugging
      */
-    debugLog (s) {
+    debugLog (...args) {
         if (this.isDebugging()) {
+            let s = "";
             if (typeof(s) === "function") {
-                s = s()
-            }
-            if (arguments.length == 1) {
-                console.log(this.debugTypeId() + " " + s)
+                s = s();
             } else {
-                console.log(this.debugTypeId() + " ", arguments[0], arguments[1])
+                s = this.logPrefix() + args.map(String).join('');
             }
+            console.log(this.logPrefix() + " " + s);
         }
         return this
+    }
+
+    logWarn (...args) {
+        const s = this.logPrefix() + args.map(String).join('');
+        console.warn("**WARNING**: " + this.logPrefix() + " " + s);
+      }
+    
+    logError (...args) {
+        const s = this.logPrefix() + args.map(String).join('');
+        console.error("**ERROR**: " + this.logPrefix() + " " + s);;
     }
 
 }.initThisClass());

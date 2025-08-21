@@ -180,17 +180,17 @@
   }
 
   log (...args) {
-    const s = this.logPrefix() + args.map(String).join('')
+    const s = this.logPrefix() + args.map(String).join('');
     console.log(s);
   }
 
   logWarn (...args) {
-    const s = this.logPrefix() + args.map(String).join('')
-    console.warn(s);
+    const s = this.logPrefix() + args.map(String).join('');
+    console.warn("**WARNING**: " + s);
   }
 
   logError (...args) {
-    const s = this.logPrefix() + args.map(String).join('')
+    const s = this.logPrefix() + args.map(String).join('');
     console.error(s);
   }
 

@@ -84,15 +84,15 @@
      * @category Testing
      */
     selfTestOnStore (store) {
-        store.rootOrIfAbsentFromClosure(() => SvStorableNode.clone())
-        //store.flushIfNeeded()
-        console.log("store:", store.asJson())
-        console.log(" --- ")
-        store.collect()
-        store.clearCache()
-        const loadedNode = store.rootObject()
-        console.log("loadedNode = ", loadedNode)
-        console.log(this.type() + " --- self test end --- ")
+        store.rootOrIfAbsentFromClosure(() => SvStorableNode.clone());
+        //store.flushIfNeeded();
+        console.log("store:", store.asJson());
+        console.log(" --- ");
+        store.collect();
+        store.clearCache();
+        const loadedNode = store.rootObject();
+        console.log("loadedNode = ", loadedNode);
+        console.log(this.type() + " --- self test end --- ");
     }
 
     /**
@@ -103,7 +103,7 @@
      */
     static async promiseSelfTest () {
         this.addTimeout(() => { 
-            return PersistentObjectPool.promiseSelfTest() 
+            return PersistentObjectPool.promiseSelfTest();
         }, 1000);
     }
     

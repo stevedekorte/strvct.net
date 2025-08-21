@@ -1250,6 +1250,8 @@
         // --- sanity checks ---
         assert(obj.shouldStore(), "object " + obj.type() + " shouldStore is false");
 
+        this.debugLog(() => "storeObject(" + obj.typeId() + ")");
+
         // --- store ---
 
         const puuid = obj.puuid();
@@ -1344,7 +1346,8 @@
         this.setMarkedSet(null);
 
         this.debugLog(() => "--- end collect --- collecting " + deleteCount + " pids ---");
-       // debugger
+        //console.log("         --- end collect --- collecting " + deleteCount + " pids ---");
+
         await this.recordsMap().promiseCommit();
 
         const remainingCount = this.recordsMap().count();
