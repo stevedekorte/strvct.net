@@ -2,28 +2,20 @@
  * @module local-web-server
  */
 
-/**
- * Helper function to get the global object across different JavaScript environments
- * @returns {Object} The global object (window, global, self, or globalThis)
- */
-function getGlobalThis () {
-  if (typeof globalThis !== "undefined") return globalThis;
-  if (typeof self !== "undefined") return self;
-  if (typeof window !== "undefined") return window;
-  if (typeof global !== "undefined") return global;
-  throw new Error("Unable to locate global object");
-}
 
 /**
  * @class Base
  * @classdesc Base class with helpful methods for cloning and slot creation
  */
 
-(class Base {
+(class Base extends Object {
   /**
    * @constructor
    */
-  constructor () {}
+  constructor () {
+    super();
+    this._isDebugging = false;
+  }
 
   /**
    * Sets up the capitalized method on the String prototype
@@ -38,6 +30,24 @@ function getGlobalThis () {
         });
       };
     }
+  }
+
+  /**
+   * Check if debugging is enabled
+   * @returns {boolean} True if debugging is enabled
+   */
+  isDebugging () {
+    return this._isDebugging;
+  }
+
+  /**
+   * Set debugging state
+   * @param {boolean} enabled - Whether to enable debugging
+   * @returns {UoAccountServerApi} The instance itself for method chaining
+   */
+  setIsDebugging (enabled) {
+    this._isDebugging = enabled;
+    return this;
   }
 
   /**
@@ -159,6 +169,12 @@ function getGlobalThis () {
     return this;
   }
 
+  debugLog (...args) {
+    if (this.isDebugging()) {
+        this.log(...args);
+    }
+  }
+
   logPrefix () {
     return this.type() + " ";
   }
@@ -166,6 +182,16 @@ function getGlobalThis () {
   log (...args) {
     const s = this.logPrefix() + args.map(String).join('')
     console.log(s);
+  }
+
+  logWarn (...args) {
+    const s = this.logPrefix() + args.map(String).join('')
+    console.warn(s);
+  }
+
+  logError (...args) {
+    const s = this.logPrefix() + args.map(String).join('')
+    console.error(s);
   }
 
 }).initThisClass();

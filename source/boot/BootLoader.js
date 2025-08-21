@@ -22,9 +22,9 @@ class BootLoader extends Object {
     "ResourceManager.js",
     "Base.js",
     "Promise_ideal.js",
-    "IndexedDBFolder.js",
-    "IndexedDBTx.js",
-    "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
+    "IndexedDbFolder.js",
+    "IndexedDbTx.js",
+    "HashCache.js" // important that this be after IndexedDbFolder/Tx so it can be used
     //"pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
   ];
   static _bootPath = "strvct/source/boot";

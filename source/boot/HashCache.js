@@ -17,7 +17,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {IndexedDBFolder|null} idb - The IndexedDBFolder instance used for storage.
+         * @member {IndexedDbFolder|null} idb - The IndexedDbFolder instance used for storage.
          * @category Storage
          */
         this.newSlot("idb", null);
@@ -36,7 +36,7 @@
      */
     init () {
         super.init()
-        this.setIdb(IndexedDBFolder.clone());
+        this.setIdb(IndexedDbFolder.clone());
         this.setIsDebugging(false);
         this.idb().setIsDebugging(false);
         this.setPath("sharedHashCache");

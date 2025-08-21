@@ -5,13 +5,13 @@
  */
 
 /**
- * @class IndexedDBFolder
+ * @class IndexedDbFolder
  * @extends Base
  * @classdesc Represents a folder in IndexedDB for storing and managing data.
  */
-(class IndexedDBFolder extends Base {
+(class IndexedDbFolder extends Base {
     /**
-     * Initializes the prototype slots for the IndexedDBFolder.
+     * Initializes the prototype slots for the IndexedDbFolder.
      */
     initPrototypeSlots () {
         /**
@@ -45,7 +45,7 @@
         this.newSlot("promiseForOpen", null);
 
         /**
-         * @member {IndexedDBTx} lastTx - The last transaction performed.
+         * @member {IndexedDbTx} lastTx - The last transaction performed.
          */
         this.newSlot("lastTx", null) ;
 
@@ -95,11 +95,11 @@
     /**
      * Sets the path of the folder.
      * @param {string} aString - The new path to set.
-     * @returns {IndexedDBFolder} - Returns this instance.
+     * @returns {IndexedDbFolder} - Returns this instance.
      */
     setPath (aString) {
         if (this._path !== aString) {
-            assert(!this.isOpen(), "can't change the path on an open IndexedDBFolder instance");
+            assert(!this.isOpen(), "can't change the path on an open IndexedDbFolder instance");
             this._path = aString;
         }
         return this;
@@ -139,7 +139,7 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
+            console.log("IndexedDbFolder: Storage will not be cleared except by explicit user action.");
         } else {
             console.warn(this.type() + " '" + this.path() + "' WARNING: Storage may be cleared by the browser under storage pressure.");
         }
@@ -246,7 +246,7 @@
 
     /**
      * Closes the database.
-     * @returns {IndexedDBFolder} - Returns this instance.
+     * @returns {IndexedDbFolder} - Returns this instance.
      */
     close () {
         if (this.isOpen()) {
@@ -260,11 +260,11 @@
     /**
      * Gets a folder at the specified path component.
      * @param {string} pathComponent - The path component.
-     * @returns {IndexedDBFolder} - A new IndexedDBFolder instance.
+     * @returns {IndexedDbFolder} - A new IndexedDbFolder instance.
      */
     folderAt (pathComponent) {
         assert(!pathComponent.contains(this.pathSeparator()), "pathComponent contains pathSeparator");
-        const db = IndexedDBFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator());
+        const db = IndexedDbFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator());
         return db;
     }
 
@@ -339,7 +339,7 @@
      * @returns {string} - The current stack trace.
      */
     currentStack () {
-        const stack = this.isDebugging() ? new Error().stack : "(call IndexedDBFolder.setIsDebugging(true) to get a stack recording)" 
+        const stack = this.isDebugging() ? new Error().stack : "(call IndexedDbFolder.setIsDebugging(true) to get a stack recording)" 
         return stack
     }
     
@@ -514,7 +514,7 @@
      * @returns {Promise} - A promise that resolves when the database is deleted.
      */
     async promiseDelete () {
-        assert(!this.isOpen(), "IndexedDBFolder is open");
+        assert(!this.isOpen(), "IndexedDbFolder is open");
         const deletePromise = Promise.clone();
 
         const request = this.indexedDB().deleteDatabase(this.storeName());
@@ -551,10 +551,10 @@
     /**
      * Creates a new transaction object.
      * @async
-     * @returns {Promise<IndexedDBTx>} - A promise that resolves to a new transaction object.
+     * @returns {Promise<IndexedDbTx>} - A promise that resolves to a new transaction object.
      */
     async promiseNewTx () {
-        assert(this.isOpen(), "IndexedDBFolder is not open")
+        assert(this.isOpen(), "IndexedDbFolder is not open")
         //debugger;
         this.debugLog(this.path() + " promiseNewTx")
         //debugger;
@@ -583,7 +583,7 @@
     /**
      * Creates a new transaction object.
      * @private
-     * @returns {IndexedDBTx} - A new transaction object.
+     * @returns {IndexedDbTx} - A new transaction object.
      */
     privateNewTx () {
         //debugger;
@@ -591,7 +591,7 @@
         if (this.lastTx()) {
             //assert(this.lastTx().isCommitted() || this.lastTx().isAborted())
         }
-        const newTx = IndexedDBTx.clone().setDbFolder(this)
+        const newTx = IndexedDbTx.clone().setDbFolder(this)
         this.setLastTx(newTx)
         return newTx
     }
@@ -818,14 +818,14 @@
     // -----------------------------------------------------------------
 
     /**
-     * Tests the IndexedDBFolder class.
+     * Tests the IndexedDbFolder class.
      * @static
      * @async
      * @returns {Promise<void>} - A promise that resolves when the test is complete.
      */
 
     static async promiseSelfTest () {
-        const folder = IndexedDBFolder.clone()
+        const folder = IndexedDbFolder.clone()
         await folder.promiseAtPut("test", "x");
         const map = await folder.promiseAsMap();
         console.log("db map = ", map);

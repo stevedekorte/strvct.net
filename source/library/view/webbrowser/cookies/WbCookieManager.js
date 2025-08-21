@@ -325,7 +325,7 @@
 
     idb () {
         if (this._idb === null) {
-            const idb = IndexedDBFolder.clone();
+            const idb = IndexedDbFolder.clone();
             idb.setIsDebugging(false);
             idb.setPath(this.type());
             this._idb = idb;
