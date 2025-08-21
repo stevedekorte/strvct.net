@@ -12,16 +12,16 @@ class SvBootLoader extends Object {
 
   static _files = [
     "SvWindowErrorPanel.js",
-    "Object_categorySupport.js",
-    "Object_boot.js",
+    "categories/Object_categorySupport.js",
+    "categories/Object_boot.js",
     "SvHelpers.js",
-    "URL_promises.js",
-    "Array_promises.js",
+    "categories/URL_promises.js",
+    "categories/Array_promises.js",
     "SvUrlResource.js",
     "SvBootLoadingView.js",
     "SvResourceManager.js",
     "SvBase.js",
-    "Promise_ideal.js",
+    "categories/Promise_ideal.js",
     "SvIndexedDbFolder.js",
     "SvIndexedDbTx.js",
     "SvHashCache.js" // important that this be after SvIndexedDbFolder/Tx so it can be used

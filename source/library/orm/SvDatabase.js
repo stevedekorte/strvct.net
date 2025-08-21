@@ -7,10 +7,10 @@
 
 // Load STRVCT dependencies in correct order
 require("../../../GameServer/site/strvct/source/boot/SvGlobals");
-require("../../../GameServer/site/strvct/source/boot/Object_categorySupport");
+require("../../../GameServer/site/strvct/source/boot/categories/Object_categorySupport");
 require("../../../GameServer/site/strvct/source/library/ideal/categories/Error_ideal");
-const { Base } = require("../../../GameServer/site/strvct/webserver");
-require("../../../GameServer/site/strvct/source/boot/Promise_ideal");
+const { SvBase } = require("../../../GameServer/site/strvct/webserver");
+require("../../../GameServer/site/strvct/source/boot/categories/Promise_ideal");
 
 const { sequelize, initializeDatabase } = require("../database");
 const SvDbTable = require("./SvDbTable");
@@ -160,6 +160,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
             }
         } catch (error) {
             // Zone.js not available or not in transaction context
+            throw new Error("Zone.js not available or not in transaction context. Error: " + error.message);
         }
         return null;
     }

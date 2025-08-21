@@ -18,15 +18,16 @@ class SvServiceWorker extends Object {
     static _shared = null;
 
     static shared () {
-        if (!Worker._shared) {
-            Worker._shared = new Worker();
-            Worker._shared.init();
+        const thisClass = SvServiceWorker;
+        if (!thisClass._shared) {
+            thisClass._shared = new thisClass();
+            thisClass._shared.init();
         }
-        return Worker._shared;
+        return thisClass._shared;
     }
 
     static register () {
-        const worker = Worker.shared();
+        const worker = thisClass.shared();
         worker.registerServiceWorker();
         return worker;
     }
@@ -82,4 +83,4 @@ class SvServiceWorker extends Object {
     }
 }
 
-SvGlobals.set("Worker", Worker);
+SvGlobals.set("SvServiceWorker", SvServiceWorker);

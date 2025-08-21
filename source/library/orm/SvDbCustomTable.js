@@ -6,7 +6,7 @@
 
 // Load STRVCT dependencies in correct order
 require("../../../GameServer/site/strvct/source/boot/SvGlobals");
-require("../../../GameServer/site/strvct/source/boot/Object_categorySupport");
+require("../../../GameServer/site/strvct/source/boot/categories/Object_categorySupport");
 require("/Users/steve/_projects/Active/undreamedof.ai/Servers/GameServer/site/strvct/source/library/ideal/categories/object/Object_ideal.js");
 require("/Users/steve/_projects/Active/undreamedof.ai/Servers/GameServer/site/strvct/source/library/ideal/categories/String_ideal.js");
 
