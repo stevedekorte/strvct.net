@@ -157,7 +157,7 @@ The ORM uses an observer pattern with automatic context tracking:
 
 ```javascript
 // SvDbRow automatically implements transaction listeners
-class SvDbRow extends Base {
+class SvDbRow extends SvBase {
     onTxCommit(tx) {
         // Update state to reflect committed changes
         this.copyOldDictFromDict();

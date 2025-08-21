@@ -48,7 +48,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
  * });
  * ```
  */
-(class SvDbRow extends Base {
+(class SvDbRow extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbRow.

@@ -11,7 +11,7 @@
  */
 
 
-(class MimeExtensions extends Base {
+(class MimeExtensions extends SvBase {
 
     constructor () {
         super()

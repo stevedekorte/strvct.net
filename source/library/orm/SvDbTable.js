@@ -37,7 +37,7 @@ const SvDbCache = require("./SvDbCache");
  * await table.insertRow(newRow);
  * ```
  */
-const SvDbTable = (class SvDbTable extends Base {
+const SvDbTable = (class SvDbTable extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbTable.

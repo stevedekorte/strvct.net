@@ -142,7 +142,7 @@ class SvPlatform extends Object {
   }
 
   static async promiseReadyOnNode () {
-    //console.log("promiseReadyOnNode: starting BootLoader on Node");
+    //console.log("promiseReadyOnNode: starting SvBootLoader on Node");
     // In Node.js, we can start immediately since the process is already ready
     // Wait for next tick to ensure all modules are loaded
     await new Promise(resolve => {

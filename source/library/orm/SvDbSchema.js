@@ -22,7 +22,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
  * - Generate JSON schema representation
  * - Handle multiple database dialects (SQLite, PostgreSQL)
  */
-const SvDbSchema = (class SvDbSchema extends Base {
+const SvDbSchema = (class SvDbSchema extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbSchema.

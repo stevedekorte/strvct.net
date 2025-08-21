@@ -38,7 +38,7 @@ const FifoMap = require("/Users/steve/_projects/Active/undreamedof.ai/Servers/Ga
  * cache.delete("user-123");
  * ```
  */
-const SvDbCache = (class SvDbCache extends Base {
+const SvDbCache = (class SvDbCache extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbCache.

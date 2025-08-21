@@ -10,7 +10,7 @@
  * @classdesc An key/value db where the keys are hashes of the values.
  * There are APIs to help with using as a url load cache.
  */
-(class SvHashCache extends Base {
+(class SvHashCache extends SvBase {
     /**
      * @description Initializes the prototype slots for the SvHashCache class.
      * @category Initialization

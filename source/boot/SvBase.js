@@ -2,16 +2,12 @@
 
 /**
  * @module boot
- * @class Base
+ * @class SvBase
  * @extends Object
- * @description Base class with helpful methods for cloning and slot creation.
+ * @description SvBase class with helpful methods for cloning and slot creation.
  */
-    
 
-/**
- * Base class with helpful methods for cloning and slot creation.
- */
-(class Base extends Object {
+(class SvBase extends Object {
 
     /**
      * @returns {string} The JSON type for an Object which is "object", unless the type method is defined.
@@ -44,7 +40,7 @@
 
     /**
      * Returns a shared instance of the class.
-     * @returns {Base} The shared instance of the class.
+     * @returns {SvBase} The shared instance of the class.
      * @category Instance Management
      */
     static shared () {
@@ -80,7 +76,7 @@
 
     /**
      * Sets up the Object.defineSlot method for defining slots on objects.
-     * @returns {typeof Base} The class itself.
+     * @returns {typeof SvBase} The class itself.
      * @category Initialization
      */
     static setupDefineSlot () {
@@ -104,7 +100,7 @@
 
     /**
      * Initializes the class by setting up prototype slots and methods.
-     * @returns {typeof Base} The class itself.
+     * @returns {typeof SvBase} The class itself.
      * @category Initialization
      */
     static initThisClass () {
@@ -139,7 +135,7 @@
 
     /**
      * Creates and initializes a new instance of the class.
-     * @returns {Base} A new instance of the class.
+     * @returns {SvBase} A new instance of the class.
      * @category Instance Management
      */
     static clone () {
@@ -170,7 +166,7 @@
      * Creates a new slot with a getter and setter.
      * @param {string} slotName - The name of the slot to create.
      * @param {*} [initialValue=null] - The initial value of the slot.
-     * @returns {Base} The instance itself for method chaining.
+     * @returns {SvBase} The instance itself for method chaining.
      * @category Slot Management
      */
     newSlot (slotName, initialValue) {
@@ -219,7 +215,7 @@
     /**
      * Logs a debug message if debugging is enabled.
      * @param {string|function} s - The message to log or a function that returns the message.
-     * @returns {Base} The instance itself for method chaining.
+     * @returns {SvBase} The instance itself for method chaining.
      * @category Debugging
      */
     debugLog (...args) {

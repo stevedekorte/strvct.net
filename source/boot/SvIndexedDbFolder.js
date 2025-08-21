@@ -6,10 +6,10 @@
 
 /**
  * @class SvIndexedDbFolder
- * @extends Base
+ * @extends SvBase
  * @classdesc Represents a folder in IndexedDB for storing and managing data.
  */
-(class SvIndexedDbFolder extends Base {
+(class SvIndexedDbFolder extends SvBase {
     /**
      * Initializes the prototype slots for the SvIndexedDbFolder.
      */

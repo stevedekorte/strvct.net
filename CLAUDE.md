@@ -477,7 +477,7 @@ STRVCT uses a custom resource loading system that evaluates JavaScript and CSS a
 3. **Implementation**: The boot system handles this in three locations:
    - `source/boot/SvHelpers.js` - `evalStringFromSourceUrl()` for general JS evaluation
    - `source/boot/SvUrlResource.js` - `evalDataAsJS()` and `evalDataAsCss()` for resources
-   - `source/boot/BootLoader.js` - Boot file evaluation
+   - `source/boot/SvBootLoader.js` - Boot file evaluation
 
 ### VSCode Debugging Configuration
 The framework works with VSCode's Chrome debugger extension:

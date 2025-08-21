@@ -2,13 +2,13 @@
 
 /**
  * @module boot
- * @class BootLoader
+ * @class SvBootLoader
  * @extends Object
  * @description Manages the loading of JavaScript files in a specific order during the boot process.
  * Files are loaded in parallel and then evaluated sequentially.
  */
 
-class BootLoader extends Object {
+class SvBootLoader extends Object {
 
   static _files = [
     "SvWindowErrorPanel.js",
@@ -20,7 +20,7 @@ class BootLoader extends Object {
     "SvUrlResource.js",
     "SvBootLoadingView.js",
     "SvResourceManager.js",
-    "Base.js",
+    "SvBase.js",
     "Promise_ideal.js",
     "SvIndexedDbFolder.js",
     "SvIndexedDbTx.js",
@@ -67,6 +67,6 @@ class BootLoader extends Object {
 
 }
 
-SvGlobals.set("BootLoader", BootLoader);
+SvGlobals.set("SvBootLoader", SvBootLoader);
 
-//await BootLoader.asyncRun();
+//await SvBootLoader.asyncRun();

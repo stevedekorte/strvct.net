@@ -48,7 +48,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
  * });
  * ```
  */
-const SvDatabase = (class SvDatabase extends Base {
+const SvDatabase = (class SvDatabase extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDatabase.

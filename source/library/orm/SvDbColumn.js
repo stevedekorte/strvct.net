@@ -38,7 +38,7 @@ const SvDbDataType = require("./SvDbDataType");
  * console.log(column.referencedColumnName()); // "id"
  * ```
  */
-(class SvDbColumn extends Base {
+(class SvDbColumn extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbColumn.

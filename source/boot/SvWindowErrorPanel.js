@@ -98,9 +98,18 @@ class SvWindowErrorPanel extends Object {
     handleWindowError (message, source, lineno, colno, error) {
         //debugger;
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
+            let sourceName = null;
+            if (typeof(source) === "string") {
+                sourceName = source;
+            } else if (source && source.type) {
+                sourceName = source.type();
+            } else {
+                sourceName = typeof(source);
+            }
+
             const errorInfo = {
                 message: message,
-                source: Type.isString(source) ? source : Type.typeName(source),
+                source: sourceName,
                 lineno: lineno,
                 colno: colno,
                 stack: error ? error.stack : "No stack trace",
@@ -210,7 +219,7 @@ class SvWindowErrorPanel extends Object {
             }
             
             // Create error message content
-            let errorMessage = errorInfo.message;
+            let errorMessage = errorInfo.message ? errorInfo.message : "";
             if (errorMessage.includes(":")) {
                 const parts = errorMessage.split(":").map(part => part.trim());
                 while (parts.length > 1 && parts.first().toLowerCase().endsWith("error")) {

@@ -9,7 +9,7 @@
  * @extends Base
  * @classdesc Abstraction of a single IndexedDB transaction.
  */
-(class SvIndexedDbTx extends Base {
+(class SvIndexedDbTx extends SvBase {
 
     /** 
      * Initialize prototype slots

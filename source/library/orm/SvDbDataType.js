@@ -35,7 +35,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
  * const compatible = SvDbDataType.isValueCompatibleWithDbType("hello", "STRING"); // true
  * ```
  */
-(class SvDbDataType extends Base {
+(class SvDbDataType extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbDataType.

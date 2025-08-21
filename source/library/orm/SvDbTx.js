@@ -49,7 +49,7 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
  * // Listeners automatically notified on commit/rollback
  * ```
  */
-(class SvDbTx extends Base {
+(class SvDbTx extends SvBase {
 
     /**
      * @description Initialize prototype slots for the SvDbTx.
