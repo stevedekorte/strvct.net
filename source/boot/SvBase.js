@@ -26,7 +26,7 @@
      * @category Environment
      */
     static isInBrowser () {
-        return (typeof (document) !== 'undefined')
+        return (typeof (document) !== 'undefined');
     }
 
     /**
@@ -35,7 +35,7 @@
      * @category Environment
      */
     isInBrowser () {
-        return (typeof (document) !== 'undefined')
+        return (typeof (document) !== 'undefined');
     }
 
     /**
@@ -89,10 +89,10 @@
             }
         
             if (typeof(slotValue) === "function") {
-                slotValue.displayName = slotName
+                slotValue.displayName = slotName;
             }
             
-            Object.defineProperty(obj, slotName, descriptor)
+            Object.defineProperty(obj, slotName, descriptor);
         }
         this.defineStringCapitalized();
         return this;
@@ -205,7 +205,7 @@
      * @category Debugging
      */
     debugTypeId () {
-        return this.type()
+        return this.type();
     }
 
     logPrefix () {
@@ -265,7 +265,7 @@ const debugAssert = function (v, errorMessage) {
         debugger;
         throw new Error(m)
     }
-    return v
+    return v;
 }
 
 SvGlobals.set("debugAssert", debugAssert);
