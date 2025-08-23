@@ -224,7 +224,7 @@
             if (typeof(s) === "function") {
                 s = s();
             } else {
-                s = this.logPrefix() + args.map(String).join('');
+                s = args.map(String).join('');
             }
             console.log(this.logPrefix() + " " + s);
         }
@@ -232,12 +232,12 @@
     }
 
     logWarn (...args) {
-        const s = this.logPrefix() + args.map(String).join('');
+        const s = args.map(String).join('');
         console.warn("**WARNING**: " + this.logPrefix() + " " + s);
       }
     
     logError (...args) {
-        const s = this.logPrefix() + args.map(String).join('');
+        const s = args.map(String).join('');
         console.error("**ERROR**: " + this.logPrefix() + " " + s);;
     }
 

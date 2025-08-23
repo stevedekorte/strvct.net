@@ -18,7 +18,7 @@
      * @returns {string} The generated action key.
      * @category Key Generation
      */
-    static actionKeyForTargetAndMethod(target, method) {
+    static actionKeyForTargetAndMethod (target, method) {
         assert(target, "target is null");
         assert(target.typeId, Type.typeName(target) + " class missing typeId");
         return target.typeId() + "." + method;
@@ -28,7 +28,7 @@
      * @description Initializes the prototype slots for the SyncAction class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         /**
          * @member {Object} target
          * @description The target object for the action.
@@ -89,7 +89,7 @@
      * @description Initializes the prototype of the SyncAction class.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
     }
 	
     /**
@@ -97,7 +97,7 @@
      * @returns {Error|null} The caught error or null if successful.
      * @category Action Execution
      */
-    tryToSend() {
+    tryToSend () {
         try {
             this.send();
         } catch(error) {
@@ -114,13 +114,13 @@
      * @returns {null}
      * @category Action Execution
      */
-    send() {
+    send () {
         //this.debugLog(() => "   <- sending " + this.description())
         const t = this.target();
         const m = this.method();
         const a = this.args();
         t[m].apply(t, a ? a : []);
-        return null
+        return null;
     }
 	
     /**
@@ -128,8 +128,8 @@
      * @returns {string} The actions key.
      * @category Key Generation
      */
-    actionsKey() {
-        return SyncAction.actionKeyForTargetAndMethod(this.target(), this.method())
+    actionsKey () {
+        return SyncAction.actionKeyForTargetAndMethod(this.target(), this.method());;
     }
 	
     /**
@@ -138,10 +138,10 @@
      * @returns {boolean} True if the actions are equal, false otherwise.
      * @category Comparison
      */
-    equals(anAction) {
+    equals (anAction) {
         return anAction !== null && 
                (this.target() === anAction.target()) && 
-               (this.method() === anAction.method())
+               (this.method() === anAction.method());
     }
 	
     /**
@@ -149,10 +149,10 @@
      * @returns {string} The action description.
      * @category Utility
      */
-    description() {
-        const t = this.target() ? this.target().debugTypeId() : "null"
-        const o = this.order() === 0 ? "" : " order:" + this.order()
-        return this.typeId() + " " + t + " " + this.method() + "" + o
+    description () {
+        const t = this.target() ? this.target().debugTypeId() : "null";
+        const o = this.order() === 0 ? "" : " order:" + this.order();
+        return this.typeId() + " " + t + " " + this.method() + "" + o;
     }
 
 }.initThisClass());

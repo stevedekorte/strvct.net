@@ -329,7 +329,7 @@
     sendNotification (note) {
         const obs = this.observer();
         if (obs === undefined) { // observer may have been collected
-            this.logWarn("OBSERVER COLLECTED ON: " + this.description());
+            console.log("OBSERVER COLLECTED ON: " + this.description());
             this.stopWatching();
             return;
         }
@@ -361,8 +361,8 @@
     startWatching () {
         this.center().addObservation(this);
         if (this.sender() && this.sender().isKindOf(FirebaseStorageService)) {
-            this.debugLog("STARTING WATCHING FOR " + this.sender().debugTypeId() + " " + this.name());
-            debugger;
+            console.log("STARTING WATCHING FOR " + this.sender().debugTypeId() + " " + this.name());
+            //debugger;
             this.sender().onDidMutateObject(this);
         }
         return this;

@@ -1032,26 +1032,27 @@
 
     // debugging
 
+    logPrefix () {
+        const logPrefix = this.thisClass().hasShared() ? this.type() + "(shared)" : this.type();
+        return logPrefix;
+    }
+
     /**
      * Logs a debug message if debugging is enabled.
      * @param {string|Function} s - The message to log or a function that returns the message.
      * @returns {ProtoClass} This instance.
      * @category Debugging
      */
-    debugLog (s) {
+    debugLog (...args) {
         if (this.isDebugging()) {
-            if (Type.isFunction(s)) {
-                s = s();
-            }
-
-            //const tid = this.thisClass().hasShared() ? this.type() + "(shared)" : this.debugTypeId();
-            const tid = this.thisClass().hasShared() ? this.debugTypeId() + "(shared)" : this.debugTypeId();
-
-            if (arguments.length == 1) {
-                console.log(tid + " " + s);
+            let s = "";
+            if (Type.isFunction(args[0])) {
+                s = args[0]();
             } else {
-                console.log(tid + " ", arguments[0], arguments[1]);
+                s = args.map(String).join("");
             }
+
+            console.log(this.logPrefix() + " " + s);
         }
         return this;
     }
