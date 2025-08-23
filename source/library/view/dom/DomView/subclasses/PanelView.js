@@ -48,6 +48,16 @@
             const slot = this.newSlot("isDragging", false);
             slot.setSlotType("Boolean");
         }
+
+        {
+            const slot = this.newSlot("isModal", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            const slot = this.newSlot("isOpen", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**

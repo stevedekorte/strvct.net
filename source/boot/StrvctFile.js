@@ -311,7 +311,6 @@ class StrvctFile extends Object {
             // URL encode the path to handle spaces and special characters
             const encodedPath = encodeURI(this._path);
             const sourceUrlComment = `\n//# sourceURL=${encodedPath}`;
-            //console.log("eval [" + encodedPath.split("/").pop() + "]");
             eval(this._content + sourceUrlComment);
             //const evalFunc = new Function(this._content + sourceUrlComment);
             //evalFunc.call(window);

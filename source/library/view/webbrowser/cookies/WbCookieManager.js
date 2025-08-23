@@ -69,9 +69,9 @@
         /*
         const newValue = WbCookieManager.valueOfCookieNamed(name);
         if(newValue !== value && value !== null) {
-            console.log("[" + newValue + "] != [" + value + "]");
+            this.debugLog("[" + newValue + "] != [" + value + "]");
             debugger;
-            console.log("let's debugg this!");
+            this.debugLog("let's debugg this!");
             WbCookieManager.valueOfCookieNamed(name);
             this.setValueOfCookieNamed(name, value);
         }
@@ -163,9 +163,9 @@
             }
         }
         if (cookiesMap.keysArray().detect(key => key.length > 50)) {
-            console.log("found crazy cookie names: ", cookiesMap.keysArray());
+            this.logWarn("found crazy cookie names: ", cookiesMap.keysArray());
             debugger;
-            console.log("cookie look hosed - deleting all cookies");
+            this.logWarn("cookie looks hosed - deleting all cookies");
             this.deleteAllCookies();
             this.readCookies();
         }
@@ -306,7 +306,7 @@
     requestDeleteCookie (wbCookie) {
         if (SvPlatform.isBrowserPlatform()) {
             document.cookie = wbCookie.deleteCookieString();
-            console.log("deleted cookie: ", wbCookie.name());   
+            this.debugLog("deleted cookie: ", wbCookie.name());   
         } else {
             this.idb().saveToIdb();
         }

@@ -308,10 +308,10 @@
         try {
             this.sendNotification(note);       
         } catch(error) {
-            console.log("NOTIFICATION EXCEPTION: '" + error.message + "'");
-            console.log("  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
+            this.errorLog("NOTIFICATION EXCEPTION: '" + error.message + "'");
+            this.errorLog("  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
             if (note.senderStack()) {
-                console.log("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack());
+                this.errorLog("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack());
             }
 
             // how to we propogate the exception so we can inspect it in the debugger
@@ -329,13 +329,13 @@
     sendNotification (note) {
         const obs = this.observer();
         if (obs === undefined) { // observer may have been collected
-            console.log("OBSERVER COLLECTED ON: " + this.description());
+            this.logWarn("OBSERVER COLLECTED ON: " + this.description());
             this.stopWatching();
             return;
         }
 
         if (this.center().isDebugging() || this.isDebugging()) {
-            console.log(note.sender().debugTypeId() + " sending note " + note.name() + " to " + this.observer().debugTypeId());
+            this.debugLog(note.sender().debugTypeId() + " sending note " + note.name() + " to " + this.observer().debugTypeId());
         }
 
         const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];
@@ -360,6 +360,11 @@
      */
     startWatching () {
         this.center().addObservation(this);
+        if (this.sender() && this.sender().isKindOf(FirebaseStorageService)) {
+            this.debugLog("STARTING WATCHING FOR " + this.sender().debugTypeId() + " " + this.name());
+            debugger;
+            this.sender().onDidMutateObject(this);
+        }
         return this;
     }
 

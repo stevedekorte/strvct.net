@@ -14,11 +14,9 @@ function evalStringFromSourceUrl (codeString, path) {
     const sourceURL = path;
     const encodedURL = encodeURI(sourceURL);
     
-    // Put sourceURL at the beginning to avoid line number offset in debugger
-    // const sourceUrlComment = `\n//# sourceURL=${encodedURL}`; // OLD: caused 2-line offset in debugger
-    // const sourceUrlComment = `//# sourceURL=${encodedURL}\n`; // NEW: should fix line offset
-    const sourceUrlComment = `//# sourceURL=${encodedURL}\n`;
-    //const debugCode = sourceUrlComment + codeString;
+    // sourceURL comment format for Chrome DevTools and VSCode debugging
+    // Must be at end of code (Chrome spec), no leading slash (VSCode compat)
+    const sourceUrlComment = `\n//# sourceURL=${encodedURL}`;
     const debugCode = codeString + sourceUrlComment;
     
     // Evaluate the code with error handling
