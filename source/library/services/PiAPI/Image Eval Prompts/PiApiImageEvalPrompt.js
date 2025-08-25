@@ -203,8 +203,22 @@
         
         // Update combined prompt when content or style changes
         if (slot.name() === "prompt" || slot.name() === "stylePrompt") {
+            // TEMPORARILY DISABLED: Using simple concatenation instead of buildCombinedPrompt()
+            // due to MJ v7 not supporting multiple text prompts with :: syntax
+            const content = this.prompt().trim();
+            const style = this.stylePrompt().trim();
+            
+            let simplePrompt = content;
+            if (style && content) {
+                simplePrompt = style + " " + content;
+            }
+            
+            this.setCombinedPrompt(simplePrompt);
+            
+            /* DISABLED FOR MJ v7:
             const combined = this.buildCombinedPrompt();
             this.setCombinedPrompt(combined);
+            */
         }
     }
 
@@ -213,6 +227,28 @@
      * @category Action
      */
     async generate () {
+        // TEMPORARILY DISABLED: Midjourney v7 doesn't support multiple text prompts with :: syntax
+        // When a newer version is available, uncomment the buildCombinedPrompt() code below
+        
+        // For now, just combine the prompts with simple concatenation
+        const content = this.prompt().trim();
+        const style = this.stylePrompt().trim();
+        
+        if (!content) {
+            this.setError("Content prompt is required");
+            return;
+        }
+        
+        // Simple concatenation without :: weight syntax for MJ v7 compatibility
+        let simplePrompt = content;
+        if (style) {
+            simplePrompt = style + " " + content;
+        }
+        
+        // Store the combined prompt for display
+        this.setCombinedPrompt(simplePrompt);
+        
+        /* DISABLED FOR MJ v7 - Re-enable when multiple text prompts are supported:
         // Build the combined prompt
         const combined = this.buildCombinedPrompt();
         
@@ -223,10 +259,11 @@
         
         // Store the combined prompt for display
         this.setCombinedPrompt(combined);
+        */
         
         // Temporarily set the prompt to the combined version for generation
         const originalPrompt = this.prompt();
-        this.setPrompt(combined);
+        this.setPrompt(simplePrompt);
         
         // Call parent generate method
         await super.generate();
