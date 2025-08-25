@@ -37,6 +37,24 @@
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
+    
+    /**
+     * @member {SvXhrRequest} currentXhrRequest - The current XHR request being used
+     */
+    {
+      const slot = this.newSlot("currentXhrRequest", null);
+      slot.setSlotType("SvXhrRequest");
+      slot.setShouldStoreSlot(false);
+    }
+    
+    /**
+     * @member {Array} xhrRequestHistory - History of XHR requests for continuations
+     */
+    {
+      const slot = this.newSlot("xhrRequestHistory", null);
+      slot.setSlotType("Array");
+      slot.setShouldStoreSlot(false);
+    }
 
     /**
      * @member {AiChatModel} model - The model the request is for.
@@ -93,13 +111,6 @@
       slot.setSlotType("JSON Object");
     }
 
-    /**
-     * @member {XMLHttpRequest} xhr - The XMLHttpRequest object.
-     */
-    {
-      const slot = this.newSlot("xhr", null);
-      slot.setSlotType("XMLHttpRequest");
-    }
 
     /**
      * @member {Boolean} isStreaming - Whether the request is streaming.
@@ -326,6 +337,7 @@
     this.setIsDebugging(false);
     this.setRequestId(this.puuid());
     this.setTitle("Request");
+    this.setXhrRequestHistory([]);
     this.setIsDebugging(true);
   }
 
@@ -428,6 +440,15 @@
       throw new Error(this.type() + " apiKeyOrUserAuthToken missing");
     }
   }
+  
+  /**
+   * Returns the underlying XMLHttpRequest object from the current XHR request
+   * @returns {XMLHttpRequest}
+   */
+  xhr () {
+    const xhrRequest = this.currentXhrRequest();
+    return xhrRequest ? xhrRequest.xhr() : null;
+  }
 
   /**
    * Returns the active API URL
@@ -473,8 +494,15 @@
    * @returns {string}
    */
   responseSizeDescription () {
-    const size = this.xhr() ? this.xhr().responseText.length : 0;
-    return ByteFormatter.clone().setValue(size).formattedValue();
+    // For streaming, use fullContent if available, otherwise get from current XHR
+    if (this.fullContent()) {
+      return ByteFormatter.clone().setValue(this.fullContent().length).formattedValue();
+    }
+    const xhr = this.currentXhrRequest();
+    if (xhr) {
+      return ByteFormatter.clone().setValue(xhr.contentByteCount()).formattedValue();
+    }
+    return ByteFormatter.clone().setValue(0).formattedValue();
   }
 
   /**
@@ -546,7 +574,7 @@
     this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
 
     this.setError(null); // clear error (in case we are retrying)
-    assert(!this.xhr());
+    assert(!this.currentXhrRequest());
 
     if (!this.isContinuation()) {
       assert(!this.xhrPromise());
@@ -566,127 +594,61 @@
     this.setupForStreaming();
     this.setReadLines([]);
 
-    const xhr = new XMLHttpRequest();
-    this.setXhr(xhr);
-    xhr.open("POST", this.activeApiUrl());
-
-    // set headers
-    const options = this.requestOptions();
+    // Create a new SvXhrRequest for this request
+    const xhrRequest = SvXhrRequest.clone();
+    this.setCurrentXhrRequest(xhrRequest);
+    this.xhrRequestHistory().push(xhrRequest);
     
-    for (const header in options.headers) {
-      const value = options.headers[header];
-      xhr.setRequestHeader(header, value);
-    }
+    // Configure the XHR request
+    xhrRequest.setUrl(this.activeApiUrl());
+    xhrRequest.setMethod("POST");
+    xhrRequest.setRequestOptions(this.requestOptions());
+    xhrRequest.setResponseType(""); // "" or "text" is required for streams
+    
+    // Set this as the delegate to receive callbacks
+    xhrRequest.setDelegate(this);
 
     // let's print the url and headers here to the console
     console.log("--------------------------------");
     console.log("model:", this.chatModel().title());
     console.log("url:", this.activeApiUrl());
-    console.log("headers:", options.headers);
+    console.log("headers:", this.requestOptions().headers);
     console.log("--------------------------------");
-
-    xhr.responseType = ""; // "" or "text" is required for streams
 
     if (!this.isContinuation()) {
       this.setFullContent("");
     }
-
-    // TODO: move to a standard wrapped XHR class?
-    
-    // why false arg? see https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
-    xhr.addEventListener("progress", (event) => {
-      EventManager.shared().safeWrapEvent(() => {
-        this.onXhrProgress(event);
-      }, event)
-    }, false);
-
-    xhr.addEventListener("loadend", (event) => {
-      try { 
-        EventManager.shared().safeWrapEvent(() => { 
-          this.onXhrLoadEnd(event);
-        }, event);
-      } catch (error) {
-       this.onError(error); 
-      }
-    });
-
-    xhr.addEventListener("error", (event) => {
-      EventManager.shared().safeWrapEvent(() => { 
-        this.onXhrError(event);
-      }, event)
-    });
-
-    xhr.addEventListener("abort", (event) => {
-      EventManager.shared().safeWrapEvent(() => { 
-        this.onXhrAbort(event);
-      }, event)
-    });
-
-    //  EventManager.shared().safeWrapEvent(() => { ... })
     
     if (!this.isContinuation()) {
       this.sendDelegate("onRequestBegin");
       this.sendDelegate("onStreamStart");
     }
 
-    //const s = JSON.stringify(options, null, 2);
-    //this.debugLog("SENDING REQUEST BODY:", options.body);
-    xhr.send(options.body);
+    // Send the request
+    await xhrRequest.asyncSend();
 
     return this.xhrPromise();
   }
 
   /**
-   * @category XHR
-   * @description Called when the XHR progress event is fired
-   * @param {ProgressEvent} event 
+   * @category Delegate callbacks from SvXhrRequest
+   * @description Called when the XHR request makes progress
+   * @param {SvXhrRequest} request 
    */
-  onXhrProgress (/*event*/) {
-    /*
-    const txt = event.currentTarget.responseText;
-    const latestString = txt.substr(txt.length - event.loaded, event.loaded);
-    console.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
-    */
-    //debugger;
+  onRequestProgress (/*request*/) {
+    // For streaming, we need to read the partial response
     this.onXhrRead();
-
   }
 
   /**
-   * @category XHR
-   * @description Called when the XHR loadend event is fired
-   * @param {Event} event 
+   * @category Delegate callbacks from SvXhrRequest
+   * @description Called when the XHR request completes successfully
+   * @param {SvXhrRequest} request 
    */
-  onXhrLoadEnd (/*event*/) {
-    if (this.didAbort()) {
-      return;
-    }
-    //console.log(this.typeId() + " onXhrLoadEnd() bytes [[" + this.fullContent() + "]]");
-
-    //debugger
-    const isError = this.xhr().status >= 300
-    if (isError) {
-      console.log(this.description());
-      console.error(this.xhr().responseText);
-      const json = JSON.parse(this.xhr().responseText);
-      if (json.error) {
-        let msg = null;
-        if (Type.isString(json.error)) {
-          msg = json.error;
-        } else if (Type.isString(json.error.message)) {
-          msg = json.error.message;
-        } else {
-          msg = JSON.stringify(json.error, null, 2);
-        }
-        this.onError(new Error(msg));
-      } else {
-        this.onError(new Error("request error code:" + this.xhr().status + ")"));
-      }
-    } else {
-      this.readXhrLines() // finish reading any remaining lines
-    }
-
-
+  onRequestSuccess (/*request*/) {
+    // Finish reading any remaining lines
+    this.readXhrLines();
+    
     if (this.stoppedDueToMaxTokens()) {
       // continue with another request
       this.continueRequest();
@@ -698,16 +660,49 @@
       }
       return;
     }
+    
     this.sendDelegate("onStreamEnd");
-    this.sendDelegate("onRequestComplete")
+    this.sendDelegate("onRequestComplete");
 
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
 
-    console.log(this.typeId() + " onXhrLoadEnd()");
-
-    //const completionDict = this.bodyJson();
-    //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, null, 2)); // no usage property!
+    console.log(this.typeId() + " request completed");
+  }
+  
+  /**
+   * @category Delegate callbacks from SvXhrRequest
+   * @description Called when the XHR request fails
+   * @param {SvXhrRequest} request 
+   */
+  onRequestFailure (request) {
+    const xhr = request.xhr();
+    console.log(this.description());
+    
+    // Try to parse error from response
+    const responseText = request.responseText();
+    if (responseText && responseText !== "[Binary blob data]" && responseText !== "[Binary array buffer]") {
+      try {
+        const json = JSON.parse(responseText);
+        if (json.error) {
+          let msg = null;
+          if (Type.isString(json.error)) {
+            msg = json.error;
+          } else if (Type.isString(json.error.message)) {
+            msg = json.error.message;
+          } else {
+            msg = JSON.stringify(json.error, null, 2);
+          }
+          this.onError(new Error(msg));
+          return;
+        }
+      } catch (e) {
+        console.log("onRequestFailure: error parsing json: " + e);
+        // Not JSON, use status code error
+      }
+    }
+    
+    this.onError(new Error("request error code: " + xhr.status));
   }
 
   /**
@@ -756,7 +751,7 @@
   retryRequest () {
     this.setError(null);
     this.setFullContent(this.fullContent().substring(0, this.continuationStartIndex()));
-    this.setXhr(null);
+    this.setCurrentXhrRequest(null);
     // TODO need to track where coninutation read index was
     this.setReadIndex(0); // this is the read index on the new xhr responseText, not the AiRequest fullContent
     this.setStopReason(null);
@@ -807,7 +802,7 @@
     }
 
     // clear request state except fullContent
-    this.setXhr(null);
+    this.setCurrentXhrRequest(null);
     this.setReadIndex(0); // this is the read index on the responseText, not the fullContent
     this.setStopReason(null);
     this.setStatus("continuing");
@@ -870,137 +865,42 @@
   }
 
   /**
-   * @category XHR
-   * @description Called when the XHR error event is fired
-   * @param {Event} event 
+   * @category Delegate callbacks from SvXhrRequest
+   * @description Called when the XHR request encounters an error
+   * @param {SvXhrRequest} request 
+   * @param {Error} error 
    */
-  onXhrError (event) {
-    console.log("onXhrError:", event);
-    const xhr = this.xhr();
-    
-    // Get error information from the event
-    let eventErrorInfo = {};
-    if (event) {
-      eventErrorInfo = {
-        type: event.type,
-        target: event.target ? event.target.constructor.name : 'unknown',
-        // Note: XHR error events typically don't have a direct error message
-        // but we can check for any additional properties
-        hasError: event.error ? true : false,
-        errorType: event.error ? event.error.constructor.name : 'none'
-      };
-    }
-    
-    // Additional ways to get error information from the event:
-    // 1. Check if event has an error property (rare for XHR errors)
-    // if (event.error) {
-    //   console.log("Event error:", event.error);
-    // }
-    
-    // 2. Check if event has a message property
-    // if (event.message) {
-    //   console.log("Event message:", event.message);
-    // }
-    
-    // 3. Check if event has a detail property (used in some custom events)
-    // if (event.detail) {
-    //   console.log("Event detail:", event.detail);
-    // }
-    
-    // 4. Get the XHR object from the event target
-    // const xhrFromEvent = event.target;
-    // if (xhrFromEvent && xhrFromEvent.status) {
-    //   console.log("XHR from event status:", xhrFromEvent.status);
-    // }
-    
-    // error events don't contain messages - need to look at xhr and guess at what happened
-    //let s = "Error on Xhr requestId " + this.requestId() + " ";
-    const info = {
-      activeApiUrl: this.activeApiUrl(),
-      //requestId: this.requestId(),
-      status: this.nameForXhrStatusCode(xhr.status), // e.g. 404 = file not found
-      statusText: xhr.statusText,
-      readyState: this.nameForXhrReadyState(xhr.readyState), // e.g.. 4 === DONE
-      //description: this.description(),
-      eventInfo: eventErrorInfo
-    }
-    const errorMessage = "onXhrError: " + JSON.stringify(info, null, 2);
-    console.warn(errorMessage);
-    debugger;
-    const error = new Error(errorMessage);
+  onRequestError (request, error) {
+    console.log("onRequestError:", error);
     this.onError(error);
     this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
   }
 
+
   /**
-   * @category XHR
-   * @description Returns a brief description of an XHR status code
-   * @param {number} statusCode 
-   * @returns {string}
+   * @category Delegate callbacks from SvXhrRequest
+   * @description Called when the XHR request is aborted
+   * @param {SvXhrRequest} request 
    */
-	nameForXhrStatusCode (statusCode) {
-  /**
-		   * This function returns a brief description of an XHR status code.
-		   * 
-		   * @param {number} statusCode - The XHR status code.
-		   * @returns {string} - A brief description of the status, or "Unknown status".
-		   */
-	
-		const xhrStatuses = {
-      0: "Not started: Network Error, Request Blocked, or CORS issue",
-      100: "Continue",
-      101: "Switching protocols",
-      200: "OK - Request successful",
-      201: "Created - Resource created",
-      301: "Moved permanently",
-      304: "Not modified",
-      400: "Bad request", 
-      401: "Unauthorized",
-      403: "Forbidden",
-      404: "Not found",
-      500: "Internal server error" 
-		};
-	
-		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
-  }
-
-  /**
-   * @category XHR
-   * @description Returns a brief description of an XHR readyState
-   * @param {number} readyState 
-   * @returns {string}
-   */
-  nameForXhrReadyState (readyState) {
-    /**
-     * This function returns a brief description of an XHR readyState.
-     * 
-     * @param {number} readyState - The XHR readyState value.
-     * @returns {string} - A brief description of the state, or "Unknown state".
-     */
-
-    const xhrStates = {
-      0: "Request not initialized",
-      1: "Server connection established",
-      2: "Request received",
-      3: "Processing request",
-      4: "Request finished"
-    };
-
-    return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
-  }
-
-  /**
-   * @category XHR
-   * @description Called when the XHR abort event is fired
-   * @param {Event} event 
-   */
-  onXhrAbort (/*event*/) {
+  onRequestAbort (/*request*/) {
     this.setDidAbort(true);
     this.setStatus("aborted");
     this.sendDelegate("onStreamEnd");
     //this.sendDelegate("onStreamAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
+  }
+  
+  /**
+   * @category Delegate callbacks from SvXhrRequest
+   * @description Called when the XHR request completes (success, failure, or abort)
+   * @param {SvXhrRequest} request 
+   */
+  onRequestComplete (request) {
+    // Clean up the current request reference if it matches
+    if (this.currentXhrRequest() === request) {
+      this.setCurrentXhrRequest(null);
+    }
   }
 
   /**
@@ -1009,8 +909,16 @@
    * @returns {string}
    */
   unreadResponse () {
-    const unread = this.xhr().responseText.substr(this.readIndex());
-    return unread
+    const xhrRequest = this.currentXhrRequest();
+    if (!xhrRequest) {
+      return "";
+    }
+    const responseText = xhrRequest.responseText();
+    if (!responseText || responseText === "[Binary blob data]" || responseText === "[Binary array buffer]") {
+      return "";
+    }
+    const unread = responseText.substr(this.readIndex());
+    return unread;
   }
 
   /**
@@ -1019,7 +927,14 @@
    * @returns {string}
    */
   readRemaining () {
-    const responseText = this.xhr().responseText;
+    const xhrRequest = this.currentXhrRequest();
+    if (!xhrRequest) {
+      return undefined;
+    }
+    const responseText = xhrRequest.responseText();
+    if (!responseText || responseText === "[Binary blob data]" || responseText === "[Binary array buffer]") {
+      return undefined;
+    }
 
     if (this.readIndex() >= responseText.length) {
       return undefined;
@@ -1037,7 +952,15 @@
    * @returns {string}
    */
   readNextXhrLine () {
-    const responseText = this.xhr().responseText;
+    const xhrRequest = this.currentXhrRequest();
+    if (!xhrRequest) {
+      return undefined;
+    }
+    const responseText = xhrRequest.responseText();
+    if (!responseText || responseText === "[Binary blob data]" || responseText === "[Binary array buffer]") {
+      return undefined;
+    }
+    
     const newLineIndex = responseText.indexOf("\n", this.readIndex());
   
     if (newLineIndex === -1) {
@@ -1054,14 +977,14 @@
     this.setReadIndex(newLineIndex + 1); // advance the read index
   
     return newLine;
-    }
+  }
 
   /**
    * @category XHR
    * @description Called when the XHR read event is fired
    */
   onXhrRead () {
-    this.readXhrLines()
+    this.readXhrLines();
   }
 
   /**
@@ -1087,12 +1010,8 @@
    * @returns {boolean}
    */
   isActive () {
-    const xhr = this.xhr();
-    if (xhr) {
-      const state = xhr.readyState;
-      return (state >= 1 && state <= 3);
-    }
-    return false;
+    const xhrRequest = this.currentXhrRequest();
+    return xhrRequest ? xhrRequest.isActive() : false;
   }
   
   /**
@@ -1101,8 +1020,9 @@
    * @returns {AiRequest}
    */
   abort () {
-    if (this.isActive()) {
-      this.xhr().abort();
+    const xhrRequest = this.currentXhrRequest();
+    if (xhrRequest) {
+      xhrRequest.abort();
     }
     return this;
   }
