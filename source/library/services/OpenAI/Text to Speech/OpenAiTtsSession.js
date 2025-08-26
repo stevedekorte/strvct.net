@@ -237,11 +237,11 @@
 
     {
       /**
-       * @member {WASound} sound
+       * @member {SvWaSound} sound
        * @description Latest sound being generated.
        */
       const slot = this.newSlot("sound", null); // latest sound being generated
-      slot.setSlotType("WASound");
+      slot.setSlotType("SvWaSound");
     }
 
     {
@@ -384,7 +384,7 @@
 
   /**
    * @description Generates TTS and queues the resulting sound.
-   * @returns {WASound} The generated sound.
+   * @returns {SvWaSound} The generated sound.
    */
   generate () {
     const request = this.newRequest();
@@ -398,11 +398,11 @@
 
   /**
    * @description Queues a sound for playback.
-   * @param {WASound} sound - The sound to queue.
+   * @param {SvWaSound} sound - The sound to queue.
    * @returns {OpenAiTtsSession} The current instance.
    */
   queueSound (sound) {
-    this.audioQueue().queueWASound(sound);
+    this.audioQueue().queueSvWaSound(sound);
     return this;
   }
 

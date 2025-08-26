@@ -112,7 +112,7 @@
       // and all writes to the store tx need to be sync so the store is in a consistent state for it's
       // next read/write
       //await audioBlob.asyncPrepareToStoreSynchronously() 
-      //const sound = WASound.fromBlob(audioBlob);
+      //const sound = SvWaSound.fromBlob(audioBlob);
       this.sound().asyncLoadFromDataBlob(audioBlob);
 
       this.sendDelegate("onRequestComplete");

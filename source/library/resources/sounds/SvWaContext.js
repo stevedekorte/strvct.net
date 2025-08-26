@@ -5,17 +5,17 @@
 "use strict";
 
 /**
- * @class WAContext
+ * @class SvWaContext
  * @extends BaseNode
  * @classdesc A WebAudioContext wrapper. 
- * This is used with WASound for decoding and playing sounds.
+ * This is used with SvWaSound for decoding and playing sounds.
  * 
  * Notes:
  * 
  * Browsers don't allow sounds to be played until a user interacts (using certain events) with the page,
  * so this class registers to listen for "onFirstUserEvent" notification, and sets up the WebAudioContext after when it's received.
  */
-(class WAContext extends BaseNode {
+(class SvWaContext extends BaseNode {
     
     /**
      * @static
@@ -36,7 +36,7 @@
      */
     static firstUserEvent (/*anEventListener*/) {
         Broadcaster.shared().removeListenerForName(this, "firstUserEvent")
-        WAContext.shared().setupIfNeeded() // need user input to do this
+        SvWaContext.shared().setupIfNeeded() // need user input to do this
     }
 
     /**
@@ -107,14 +107,14 @@
 
     /**
      * @description Sets up the context if needed
-     * @returns {WAContext} The instance
+     * @returns {SvWaContext} The instance
      * @category Setup
      */
     setupIfNeeded () {
         if (!this.isSetup()) {
             this.setAudioContext(new window.AudioContext());
             this.setupPromise().callResolveFunc();
-            Broadcaster.shared().broadcastNameAndArgument("didSetupWAContext", this);
+            Broadcaster.shared().broadcastNameAndArgument("didSetupSvWaContext", this);
             //console.warn("can't get audio context until user gesture e.g. tap");
         }
         return this

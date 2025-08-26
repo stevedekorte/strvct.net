@@ -114,7 +114,7 @@
   }
 
   queueSound (sound) {
-    this.audioQueue().queueWASound(sound);
+    this.audioQueue().queueSvWaSound(sound);
     return this;
   }
 

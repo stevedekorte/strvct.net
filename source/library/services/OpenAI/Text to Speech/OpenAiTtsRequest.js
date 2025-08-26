@@ -110,12 +110,12 @@
     }
 
     /**
-     * @member {WASound} sound - The WASound object for the received audio.
+     * @member {SvWaSound} sound - The SvWaSound object for the received audio.
      * @category Audio
      */
     {
       const slot = this.newSlot("sound", null);
-      slot.setSlotType("WASound");
+      slot.setSlotType("SvWaSound");
     }
 
     /**
@@ -141,7 +141,7 @@
     this.setRequestId(this.puuid());
     this.setTitle("Request");
 
-    const sound = WASound.clone();
+    const sound = SvWaSound.clone();
     this.setSound(sound);
     
     // Create and set the fetchPromise immediately
@@ -338,7 +338,7 @@
       
       try {
         const sound = this.sound();
-        console.log("OpenAiTtsRequest: Loading audio blob into WASound...");
+        console.log("OpenAiTtsRequest: Loading audio blob into SvWaSound...");
         await sound.asyncLoadFromDataBlob(audioBlob);
         console.log("OpenAiTtsRequest: Audio loaded", JSON.stringify({
           data: sound.data(),
@@ -347,7 +347,7 @@
           loadState: sound.loadState()
         }, null, 2));
       } catch (error) {
-        console.error("Failed to load audio data into WASound:", error);
+        console.error("Failed to load audio data into SvWaSound:", error);
         throw new Error(`Failed to decode audio: ${error.message}`);
       }
 

@@ -14,6 +14,20 @@
  * and use these to compose the name and options arguments for the FontFace constructor.
  * e.g. Thin Italic will be 100 italic, Light Italic will be 300 italic, etc.
  * 
+ * 
+ * TODO NOTES:
+ * 
+ * Use Modern Formats and Subsetting
+
+You should use the WOFF2 font format. 
+It's the most modern and efficient format, and you should only use older formats if you absolutely need to support legacy browsers. 
+You can also use unicode-range to only load the characters you need for a specific page, which can save a lot of bandwidth.
+
+Manage Layout Shift with Modern CSS
+
+To prevent your content from "jumping" around as fonts load, you can use modern CSS properties within the @font-face rule. 
+These include size-adjust, ascent-override, descent-override, and line-gap-override. 
+These properties help you match the size of the fallback font to the final webfont.
  */
 
 (class SvFont extends SvResource {

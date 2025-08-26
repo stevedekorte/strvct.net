@@ -1,6 +1,6 @@
 [
     "SvSoundResources.js",
-    "WASound.js",
-    "WAContext.js",
+    "SvWaSound.js",
+    "SvWaContext.js",
     "WAQueue.js"
 ]

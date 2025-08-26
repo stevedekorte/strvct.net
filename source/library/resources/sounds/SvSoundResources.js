@@ -27,14 +27,14 @@
      */
     setup () {
         super.setup();
-        this.setResourceClasses([WASound]);
-        this.setSubnodeClasses([WASound]);
+        this.setResourceClasses([SvWaSound]);
+        this.setSubnodeClasses([SvWaSound]);
         return this;
     }
 
     /**
      * @description Adds a sound to the collection.
-     * @param {WASound} aSound - The sound to add.
+     * @param {SvWaSound} aSound - The sound to add.
      * @returns {SvSoundResources} The current instance.
      * @member {function}
      * @category SoundManagement
@@ -46,7 +46,7 @@
 
     /**
      * @description Gets all sounds in the collection.
-     * @returns {Array<WASound>} An array of sounds.
+     * @returns {Array<SvWaSound>} An array of sounds.
      * @member {function}
      * @category SoundManagement
      */

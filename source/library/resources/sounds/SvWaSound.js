@@ -2,7 +2,7 @@
 
 /**
  * @module library.resources.sounds
- * @class WASound
+ * @class SvWaSound
  * @extends SvResource
  * @description A sound resource.
 
@@ -19,7 +19,7 @@
 
 */
 
-(class WASound extends SvResource {
+(class SvWaSound extends SvResource {
 
     /**
      * @static
@@ -34,7 +34,7 @@
 
     /**
      * @description initializes the prototype slots
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     initPrototypeSlots () {
 
@@ -252,7 +252,7 @@
     /**
      * @description sets the array buffer
      * @param {ArrayBuffer} arrayBuffer the array buffer
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     setArrayBuffer (arrayBuffer) {
         this.setData(arrayBuffer);
@@ -281,7 +281,7 @@
      * @static
      * @description creates a sound from a blob
      * @param {Blob} audioBlob the blob
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     static fromBlob (audioBlob) {
         const sound = this.clone();
@@ -356,12 +356,12 @@
      * @returns {AudioContext} the audio context
      */
     audioCtx () {
-        return WAContext.shared().setupIfNeeded().audioContext();
+        return SvWaContext.shared().setupIfNeeded().audioContext();
     }
 
     /**
      * @description on did load
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     onDidLoad () {
         this.promiseToDecode();
@@ -413,7 +413,7 @@
 
             assert(this.data().byteLength);
             const arrayBufferCopy = this.data().slice(0);
-            const decodedBuffer = await WAContext.shared().promiseDecodeArrayBuffer(arrayBufferCopy);
+            const decodedBuffer = await SvWaContext.shared().promiseDecodeArrayBuffer(arrayBufferCopy);
             assert(this.data().byteLength);
             this.onDecode(decodedBuffer);
         } catch (error) {
@@ -425,7 +425,7 @@
     /**
      * @description on error
      * @param {Error} e the error
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     onError (e) {
         console.warn(this.type() + " onDecodeError ", e.message, " " + this.path());
@@ -437,7 +437,7 @@
     /**
      * @description on decode
      * @param {AudioBuffer} decodedBuffer the decoded buffer
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     onDecode (decodedBuffer) {
         assert(!Type.isNullOrUndefined(decodedBuffer));
@@ -452,7 +452,7 @@
     /**
      * @description on decode error
      * @param {Error} e the error
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     onDecodeError (e) {
         console.warn(this.type() + " onDecodeError ", e.message, " " + this.path());
@@ -481,7 +481,7 @@
     /**
      * @description sync to source
      * @param {AudioBufferSourceNode} source the source
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     syncToSource (source) {
         // TODO: do this work if it's already playing?
@@ -527,7 +527,7 @@
 
     /**
      * @description on started
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     onStarted () {
         //console.log("Sound.onStarted() " + this.description());
@@ -536,7 +536,7 @@
 
     /**
      * @description on ended
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     onEnded () {
         //console.log("Sound.onEnded() " + this.description());
@@ -548,7 +548,7 @@
 
     /**
      * @description stops the sound
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     stop () {
         if (this.isPlaying()) {
@@ -568,7 +568,7 @@
 
     /**
      * @description prepares to access
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     prepareToAccess () {
         super.prepareToAccess();
@@ -589,7 +589,7 @@
     /**
      * @description posts a note
      * @param {String} methodName the method name
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     post (methodName) {
         this.postNoteNamed(methodName);
@@ -600,7 +600,7 @@
     /**
      * @description adds a delegate
      * @param {Object} d the delegate
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     addDelegate (d) {
         this.delegateSet().add(d);
@@ -610,7 +610,7 @@
     /**
      * @description removes a delegate
      * @param {Object} d the delegate
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     removeDelegate (d) {
         this.delegateSet().delete(d);
@@ -621,7 +621,7 @@
      * @description sends a delegate
      * @param {String} methodName the method name
      * @param {Array} args the arguments
-     * @returns {WASound} the sound
+     * @returns {SvWaSound} the sound
      */
     sendDelegate (methodName, args = [this]) {
         const sendDelegate = (d, methodName, args) => {

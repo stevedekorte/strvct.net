@@ -144,22 +144,22 @@
    * @category Queue Management
    * @description Queues an audio blob.
    * @param {Blob} audioBlob - The audio blob.
-   * @returns {WASound} The sound.
+   * @returns {SvWaSound} The sound.
    */
   queueAudioBlob (audioBlob) {
     audioBlob.assertConformsToProtocol("AudioClipProtocol");
-    const sound = WASound.fromBlob(audioBlob);
-    this.queueWASound(sound);
+    const sound = SvWaSound.fromBlob(audioBlob);
+    this.queueSvWaSound(sound);
     return sound;
   }
 
   /**
    * @category Queue Management
-   * @description Queues a WASound.
-   * @param {WASound} sound - The WASound.
+   * @description Queues a SvWaSound.
+   * @param {SvWaSound} sound - The SvWaSound.
    */
-  queueWASound (sound) {
-    // e.g. sound could be a WASound or YouTube MusicTrack
+  queueSvWaSound (sound) {
+    // e.g. sound could be a SvWaSound or YouTube MusicTrack
     // just needs to support the protocol
 
     // verify sound protocol
@@ -195,7 +195,7 @@
    * @async
    * @category Playback Control
    * @description Plays a sound.
-   * @param {WASound} sound - The sound.
+   * @param {SvWaSound} sound - The sound.
    */
   async playSound (sound) {
     //this.pause();
@@ -213,7 +213,7 @@
   /**
    * @category Playback Control
    * @description Handles the end of a sound.
-   * @param {WASound} waSound - The sound.
+   * @param {SvWaSound} waSound - The sound.
    */
   onSoundEnded (waSound) {
     waSound.removeDelegate(this);
