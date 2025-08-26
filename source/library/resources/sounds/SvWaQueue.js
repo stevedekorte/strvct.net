@@ -3,13 +3,13 @@
  */
 
 /**
- * @class WAQueue
+ * @class SvWaQueue
  * @extends SvSummaryNode
- * @classdesc WAQueue for managing audio playback queue.
+ * @classdesc SvWaQueue for managing audio playback queue.
  * 
  * Use:
  * 
- * const waq = WAQueue.clone()
+ * const waq = SvWaQueue.clone()
  * waq.pushSound(waSound1);
  * waq.pushSound(waSound2);
  * 
@@ -17,10 +17,10 @@
  */
 "use strict";
 
-(class WAQueue extends SvSummaryNode {
+(class SvWaQueue extends SvSummaryNode {
 
   /**
-   * @description Initializes the prototype slots for the WAQueue.
+   * @description Initializes the prototype slots for the SvWaQueue.
    * @category Initialization
    */
   initPrototypeSlots () {
@@ -65,7 +65,7 @@
   }
 
   /**
-   * @description Initializes the WAQueue instance.
+   * @description Initializes the SvWaQueue instance.
    * @category Initialization
    */
   init () {
@@ -84,7 +84,7 @@
   }
 
   /**
-   * @description Generates the subtitle for the WAQueue.
+   * @description Generates the subtitle for the SvWaQueue.
    * @returns {string} The subtitle string.
    * @category UI
    */
@@ -110,7 +110,7 @@
   /**
    * @description Sets the muted state of the queue.
    * @param {Boolean} aBool - The muted state to set.
-   * @returns {WAQueue} The instance for method chaining.
+   * @returns {SvWaQueue} The instance for method chaining.
    * @category Playback
    */
   setIsMuted (aBool) {
@@ -126,7 +126,7 @@
   /**
    * @description Pushes a sound to the queue and processes it.
    * @param {Object} waSound - The sound to push to the queue.
-   * @returns {WAQueue} The instance for method chaining.
+   * @returns {SvWaQueue} The instance for method chaining.
    * @category Queue Management
    */
   pushSound (waSound) {
@@ -138,7 +138,7 @@
 
   /**
    * @description Processes the sound queue.
-   * @returns {WAQueue} The instance for method chaining.
+   * @returns {SvWaQueue} The instance for method chaining.
    * @category Queue Management
    */
   processQueue () {
@@ -155,7 +155,7 @@
   /**
    * @description Plays an audio blob.
    * @param {Object} waSound - The sound to play.
-   * @returns {WAQueue} The instance for method chaining.
+   * @returns {SvWaQueue} The instance for method chaining.
    * @category Playback
    */
   playAudioBlob (waSound) {

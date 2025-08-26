@@ -2,5 +2,5 @@
     "SvSoundResources.js",
     "SvWaSound.js",
     "SvWaContext.js",
-    "WAQueue.js"
+    "SvWaQueue.js"
 ]
