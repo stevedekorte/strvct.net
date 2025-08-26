@@ -47,6 +47,20 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
         }
+        
+        // Midjourney version
+        {
+            const slot = this.newSlot("midjourneyVersion", "7");
+            slot.setSlotType("String");
+            slot.setLabel("Midjourney Version");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setValidValues(["6", "7"]);
+            slot.setAllowsNullValue(false);
+            slot.setDescription("6: Use v6 (supports :: weights for precise control)\n7: Use v7 (latest model, natural language only)");
+        }
 
         // Combined prompt (read-only, for display)
         {
@@ -156,22 +170,43 @@
             return "";
         }
         
-        // Split content into sentences and add equal weighting
+        const version = this.midjourneyVersion();
         const contentSentences = this.splitIntoSentences(content);
-        const weightedContent = contentSentences
-            .map(sentence => sentence.trim())
-            .filter(sentence => sentence.length > 0)
-            .join("::1 ");
+        const hasMultipleConcepts = contentSentences.length > 1 || style;
         
-        if (!style) {
-            return weightedContent;
+        let result;
+        
+        if (version === "7") {
+            // v7: Use natural language, no weights
+            if (style) {
+                result = style + " " + content;
+            } else {
+                result = content;
+            }
+            
+        } else {
+            // v6: Use weighted syntax if multiple concepts
+            if (hasMultipleConcepts) {
+                const weightedContent = contentSentences
+                    .map(sentence => sentence.trim())
+                    .filter(sentence => sentence.length > 0)
+                    .join("::1 ");
+                
+                if (style) {
+                    const contentWeight = contentSentences.length;
+                    const weightedStyle = style + "::" + contentWeight;
+                    result = [weightedStyle, weightedContent].join(" ");
+                } else {
+                    result = weightedContent;
+                }
+            } else {
+                // Single concept, but user selected v6
+                result = content;
+            }
         }
         
-        // Weight the style equal to the content by using the number of content sentences
-        const contentWeight = contentSentences.length;
-        const weightedStyle = style + "::" + contentWeight;
-
-        return [weightedStyle, weightedContent].join(" ");
+        // Always append version flag to be explicit
+        return result + " --v " + version;
     }
     
     /**
@@ -203,22 +238,8 @@
         
         // Update combined prompt when content or style changes
         if (slot.name() === "prompt" || slot.name() === "stylePrompt") {
-            // TEMPORARILY DISABLED: Using simple concatenation instead of buildCombinedPrompt()
-            // due to MJ v7 not supporting multiple text prompts with :: syntax
-            const content = this.prompt().trim();
-            const style = this.stylePrompt().trim();
-            
-            let simplePrompt = content;
-            if (style && content) {
-                simplePrompt = style + " " + content;
-            }
-            
-            this.setCombinedPrompt(simplePrompt);
-            
-            /* DISABLED FOR MJ v7:
             const combined = this.buildCombinedPrompt();
             this.setCombinedPrompt(combined);
-            */
         }
     }
 
@@ -227,29 +248,7 @@
      * @category Action
      */
     async generate () {
-        // TEMPORARILY DISABLED: Midjourney v7 doesn't support multiple text prompts with :: syntax
-        // When a newer version is available, uncomment the buildCombinedPrompt() code below
-        
-        // For now, just combine the prompts with simple concatenation
-        const content = this.prompt().trim();
-        const style = this.stylePrompt().trim();
-        
-        if (!content) {
-            this.setError("Content prompt is required");
-            return;
-        }
-        
-        // Simple concatenation without :: weight syntax for MJ v7 compatibility
-        let simplePrompt = content;
-        if (style) {
-            simplePrompt = style + " " + content;
-        }
-        
-        // Store the combined prompt for display
-        this.setCombinedPrompt(simplePrompt);
-        
-        /* DISABLED FOR MJ v7 - Re-enable when multiple text prompts are supported:
-        // Build the combined prompt
+        // Build the combined prompt (now includes --v 6 for compatibility)
         const combined = this.buildCombinedPrompt();
         
         if (!combined) {
@@ -259,11 +258,10 @@
         
         // Store the combined prompt for display
         this.setCombinedPrompt(combined);
-        */
         
         // Temporarily set the prompt to the combined version for generation
         const originalPrompt = this.prompt();
-        this.setPrompt(simplePrompt);
+        this.setPrompt(combined);
         
         // Call parent generate method
         await super.generate();
