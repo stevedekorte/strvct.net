@@ -82,7 +82,8 @@ class SvPlatform extends Object {
       //console.log("SvPlatform asyncSetupForNode");
       this.setupPerformance();
       this.setupNodeTLS();
-      await this.asyncSetupNodeIndexedDB();
+      // DISABLED: We use our own LevelDB implementation
+      // await this.asyncSetupNodeIndexedDB();
   }
 
   /**
@@ -95,6 +96,9 @@ class SvPlatform extends Object {
       process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
   }
 
+  // DISABLED: We use our own LevelDB implementation via SvIndexedDbFolder
+  // The node-indexeddb-lmdb polyfill is not needed and can conflict
+  /*
   static async asyncSetupNodeIndexedDB () {
       //console.log('Initializing IndexedDB for Node.js...');
       
@@ -108,6 +112,7 @@ class SvPlatform extends Object {
 
       //console.log('IndexedDB and IDBKeyRange are now available');
   }
+  */
 
   static setupPerformance () {
       // Setup basic performance API if not available

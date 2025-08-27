@@ -555,12 +555,24 @@ This system prevents browser-specific code from causing errors in Node.js and al
 
 ## Coding Style
 
-- Always use semicolons at the end of statements in JavaScript
-- Follow the formatting examples in existing code
-- Use consistent indentation (2 spaces) for all code blocks
+### ESLint Configuration
+The framework uses ESLint for code consistency. Key rules to follow:
+- **ALWAYS include space before function parentheses**: `function (args)` not `function(args)`
+  - This applies to: function declarations, function expressions, async functions, and method definitions
+  - Example: `initPrototype () {` not `initPrototype() {`
+  - Example: `async function loadData () {` not `async function loadData() {`
+  - Example: `methodName () {` not `methodName() {`
+- **Use consistent indentation** (4 spaces for application code, may vary in framework)
+- **Semicolons required** at the end of statements
+- **No debugger statements** in production code
+- The project disables `no-undef` checks (framework uses dynamic evaluation)
+- ESLint is configured via `eslint.config.js`
+
+### Framework-Specific Conventions
 - Use the Map class instead of dictionaries for maps
-- When declaring a method, put a space between the method name and the ()
-- All custom Strvct framework classes (not including categories of JS classes) should have the "Sv" prefix to indicate they are part of the STRVCT framework. External code in the external-libs folder is exempt from this naming convention.
+- All custom Strvct framework classes (not including categories of JS classes) should have the "Sv" prefix to indicate they are part of the STRVCT framework
+- External code in the external-libs folder is exempt from naming conventions
+- Follow the formatting examples in existing code
 
 # Important
 

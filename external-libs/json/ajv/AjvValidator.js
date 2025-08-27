@@ -85,8 +85,15 @@ class AjvValidator {
      * @param {Object} [options] - Ajv options
      */
     constructor (options = {}) {
-        // Check if Ajv is properly loaded
-        if (!window.ajv7) {
+        // Get Ajv7 from appropriate location based on environment
+        let ajv7Lib;
+        if (typeof window !== 'undefined' && window.ajv7) {
+            ajv7Lib = window.ajv7;
+        } else if (typeof global !== 'undefined' && global.ajv7) {
+            ajv7Lib = global.ajv7;
+        } else if (typeof globalThis !== 'undefined' && globalThis.ajv7) {
+            ajv7Lib = globalThis.ajv7;
+        } else {
             throw new Error("Ajv library not properly loaded. Make sure ajv7.js loads before AjvValidator.js");
         }
         
@@ -113,7 +120,7 @@ class AjvValidator {
         
         try {
             // Create Ajv instance with clean options
-            this._ajv = new window.ajv7(this._options);
+            this._ajv = new ajv7Lib(this._options);
         } catch (err) {
             console.error("Error creating Ajv instance:", err);
             console.error("This is likely due to prototype pollution from STRVCT's extensions");
@@ -122,7 +129,7 @@ class AjvValidator {
                 strict: false,
                 validateSchema: false
             });
-            this._ajv = new window.ajv7(minimalOptions);
+            this._ajv = new ajv7Lib(minimalOptions);
         } finally {
             // Always restore the prototype extensions
             AjvValidator.restorePrototypeExtensions(savedMethods);
@@ -328,7 +335,4 @@ class AjvValidator {
     }
 }
 
-// Export for use in STRVCT's global namespace
-if (typeof window !== 'undefined') {
-    window.AjvValidator = AjvValidator;
-}
+SvGlobals.set("AjvValidator", AjvValidator);

@@ -76,12 +76,23 @@
         }
 
         /**
-         * @member {UoUserInterface} userInterface
+         * @member {String} userInterfaceClassName
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("userInterfaceClassName", null);
+            slot.setSlotType("String");
+        }
+
+        /**
+         * @member {SvUserInterface} userInterface
          * @category UI
          */
         {
             const slot = this.newSlot("userInterface", null);
-            slot.setFinalInitProto(SvUserInterface);
+            slot.setSlotType("SvUserInterface");
+            //slot.setFinalInitProto(SvUserInterface);
+            // note: we want to be able to support 1) web ui 2) cli ui 3) no ui i.e. headless mode
         }
 
         /**
@@ -151,7 +162,15 @@
      */
     init () {
         super.init();
+        this.initUserInterface();
         //this.setDidInitPromise(Promise.clone());
+    }
+
+    initUserInterface () {
+        const uiClass = SvGlobals.get(this.userInterfaceClassName());
+        assert(uiClass, "User interface class " + this.userInterfaceClassName() + " not found");
+        assert(uiClass.isKindOf(SvUserInterface), "User interface class " + this.userInterfaceClassName() + " is not a subclass of SvUserInterface");
+        this.setUserInterface(uiClass.clone());
     }
 
     finalInit () {
@@ -177,8 +196,11 @@
             return;
         }
         this.setIsRunning(true);
-        this.userInterface().setApp(this);
-        await this.userInterface().assertCanRun(); // e.g. check for other tabs
+
+        if (this.userInterface()) {
+            this.userInterface().setApp(this);
+            await this.userInterface().assertCanRun(); // e.g. check for other tabs
+        }
         await this.initAndOpenStore(); // will create model
         await this.setup();
     }
@@ -264,7 +286,7 @@
         this.pauseReactiveSystem();
 
         await this.setupModel();
-        await this.setupUserInterface();
+        await this.setupUserInterfaceIfNeeded();
         await this.appDidInit();
 
         this.resumeReactiveSystem();
@@ -276,7 +298,7 @@
         await this.model().setup();
     }
 
-    async setupUserInterface () {
+    async setupUserInterfaceIfNeeded () {
         SvBootLoadingView.shared().setSubtitle("setup ui");
 
         if (SvPlatform.isBrowserPlatform()) {

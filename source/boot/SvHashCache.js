@@ -157,10 +157,14 @@
         if (data === undefined) {
             return undefined;
         }
-        const typeIsOk = typeof(data) === "string" || data instanceof ArrayBuffer;
+        
+        // In Node.js, check for Buffer as well as ArrayBuffer
+        const typeIsOk = typeof(data) === "string" || 
+                        data instanceof ArrayBuffer || 
+                        (typeof Buffer !== 'undefined' && Buffer.isBuffer(data));
 
         if (!typeIsOk) {
-            console.warn("data is a " + typeof(data) + ", but we except a string or ArrayBuffer. Path: " + optionalPathForDebugging);
+            console.warn("data is a " + typeof(data) + ", but we except a string, ArrayBuffer, or Buffer. Path: " + optionalPathForDebugging);
             if (typeof(data) === "object") {
                 console.warn("data is an object: " + JSON.stringify(data, null, 2));
             }
@@ -168,14 +172,20 @@
 
             return undefined;
         }
+        
+        // Convert Buffer to ArrayBuffer if needed
+        let returnData = data;
+        if (typeof Buffer !== 'undefined' && Buffer.isBuffer(data)) {
+            returnData = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+        }
 
-        const dataHash = await this.promiseHashKeyForData(data);
+        const dataHash = await this.promiseHashKeyForData(returnData);
         if (dataHash !== hash) {
             debugger;
             throw new Error("hash key does not match hash of value");
         }
 
-        return data;
+        return returnData;
     }
 
     /**
@@ -217,12 +227,22 @@
         if (typeof(data) === "string") {
             data = new TextEncoder("utf-8").encode(data);    
         }
+        
+        // Convert Buffer to ArrayBuffer for consistent hashing
+        if (typeof Buffer !== 'undefined' && Buffer.isBuffer(data)) {
+            data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+        }
 
         // check if data is a valid type 
         assert(data.constructor.name === "Uint8Array" || data.constructor.name === "ArrayBuffer", "data is not a valid type");
-        const hashArrayBuffer = await crypto.subtle.digest("SHA-256", data);
-        const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)));
-        return hashString;
+        
+        // Use the unified sha256 method from ArrayBuffer_ideal
+        if (data.constructor.name === "Uint8Array") {
+            return await data.sha256();
+        } else {
+            // ArrayBuffer
+            return await data.sha256();
+        }
     }
 
     /**
@@ -266,7 +286,8 @@
     async promiseRemoveKeysNotInSet (keepKeySet) {
         const currentKeys = await this.idb().promiseAllKeys();
         const currentKeysSet = new Set(currentKeys);
-        const keysToRemove = currentKeysSet.difference(keepKeySet);
+        // Use a more compatible approach than Set.difference()
+        const keysToRemove = new Set([...currentKeysSet].filter(x => !keepKeySet.has(x)));
 
         const tx = this.idb().newTransaction();
         keysToRemove.forEach(async (key) => {

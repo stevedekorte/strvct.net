@@ -1,0 +1,6 @@
+[
+    "SvUserInterface.js",
+    "SvWebUserInterface.js",
+    "SvCliUserInterface.js",
+    "SvHeadlessUserInterface.js"
+]

@@ -11,7 +11,7 @@ try {
  * Simplified CLI Browser for debugging
  */
 class SvCliBrowser {
-  constructor (rootNode, options = {}) {
+  constructor (rootNode /*, options = {}*/) {
     if (!rootNode) {
       throw new Error('SvCliBrowser requires a root node');
     }
@@ -74,15 +74,10 @@ class SvCliBrowser {
     this._screen.render();
   }
   
-  setRootNode (node) {
+  setRootNode (/*node*/) {
     // Do nothing for now
     return this;
   }
 }
 
-// Make the class available globally
-if (typeof window !== 'undefined') {
-  window.SvCliBrowser = SvCliBrowser;
-} else if (typeof global !== 'undefined') {
-  global.SvCliBrowser = SvCliBrowser;
-}
+SvGlobals.set("SvCliBrowser", SvCliBrowser);

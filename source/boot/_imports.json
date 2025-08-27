@@ -1,5 +1,7 @@
 [
     "SvGlobals.js",
-    "SvBase.js"
+    "SvBase.js",
+    "server-only/_imports.json",
+    "web-only/_imports.json"
 ]
 

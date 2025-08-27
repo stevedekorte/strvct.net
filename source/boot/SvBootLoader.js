@@ -17,13 +17,16 @@ class SvBootLoader extends Object {
     "SvHelpers.js",
     "categories/URL_promises.js",
     "categories/Array_promises.js",
+    "categories/ArrayBuffer_ideal.js",
     "SvUrlResource.js",
     "SvBootLoadingView.js",
     "SvResourceManager.js",
     "SvBase.js",
     "categories/Promise_ideal.js",
-    "SvIndexedDbFolder.js",
-    "SvIndexedDbTx.js",
+    "web-only/SvIndexedDbFolder.js",
+    "web-only/SvIndexedDbTx.js",
+    "server-only/SvIndexedDbFolder.js",
+    "server-only/SvIndexedDbTx.js",
     "SvHashCache.js" // important that this be after SvIndexedDbFolder/Tx so it can be used
     //"pako.js" // loaded lazily first time SvUrlResource is asked to load a .zip file
   ];

@@ -321,8 +321,10 @@ class ImportsIndexer {
      * @category Data Processing
      */
     hashForData (data) {
-        //const hash = await crypto.subtle.digest("SHA-256", this);
-        const hash = crypto.createHash('sha256').update(data).digest("base64");
+        // Use the same hash method as ArrayBuffer.prototype.sha256() for consistency
+        // This ensures hashes match between build time and runtime
+        const buffer = Buffer.from(data, 'utf8');
+        const hash = crypto.createHash('sha256').update(buffer).digest("base64");
         return hash;
     }
 

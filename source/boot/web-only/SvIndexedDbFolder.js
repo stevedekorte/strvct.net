@@ -59,7 +59,13 @@
      * Initializes the prototype.
      */
     initPrototype () {
-        this.setIsDebugging(true)
+        this.setIsDebugging(true);
+        console.log(">>> Using Browser/IndexedDB implementation of SvIndexedDbFolder");
+        
+        // This should never run in Node.js
+        if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+            throw new Error("Browser implementation loaded in Node.js environment!");
+        }
     }
 
     indexedDB () {

@@ -380,7 +380,9 @@ class StrvctFile extends Object {
         
         // Evaluate files sequentially to maintain order
         files.forEach(file => {
-            file.eval();
+            if (file.canUseInCurrentEnv()) {
+                file.eval();
+            }
         });
     }
 
@@ -412,9 +414,11 @@ class StrvctFile extends Object {
         const isNodePlatform = SvPlatform.isNodePlatform();
         
         if (isNodePlatform) {
-            const isBrowserOnly = pathComponents.includes('browser-only');
+            // In Node.js, skip web-only (browser-only) files
+            const isBrowserOnly = pathComponents.includes('web-only') || pathComponents.includes('browser-only');
             return !isBrowserOnly;
         } else {
+            // In browser, skip server-only files
             const isNodeOnly = pathComponents.includes('server-only');
             return !isNodeOnly;
         }

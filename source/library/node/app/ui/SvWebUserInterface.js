@@ -1,22 +1,14 @@
 "use strict";
 
 /*
-    @class SvUserInterface
-    @extends SvStorableNode
-    @classdesc The SvUserInterface class is the main user interface class of the SvApp.
+    @class SvWebUserInterface
+    @extends SvUserInterface
+    @classdesc The SvWebUserInterface class is the user interface class for the web.
 
 */
 
-(class SvUserInterface extends SvStorableNode {
+(class SvWebUserInterface extends SvUserInterface {
 
-    initPrototypeSlots () {
-    }
-
-    initPrototype () {
-        this.setShouldStore(false);
-        this.setShouldStoreSubnodes(false);
-        this.setNodeCanReorderSubnodes(false);
-    }
 
     init () {
         super.init();

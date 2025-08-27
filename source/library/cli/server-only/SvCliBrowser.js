@@ -1236,9 +1236,4 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = SvCliBrowser;
 }
 
-// Also make the class available globally for STRVCT
-if (typeof window !== 'undefined') {
-  window.SvCliBrowser = SvCliBrowser;
-} else if (typeof global !== 'undefined') {
-  global.SvCliBrowser = SvCliBrowser;
-}
+SvGlobals.set("SvCliBrowser", SvCliBrowser);

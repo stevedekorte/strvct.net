@@ -446,8 +446,4 @@ const draft07Schema = {
 };
 */
 
-
-// Export for use in STRVCT's global namespace
-if (typeof window !== 'undefined') {
-  window.ZJsonValidator = ZJsonValidator;
-}
+SvGlobals.set("ZJsonValidator", ZJsonValidator);
