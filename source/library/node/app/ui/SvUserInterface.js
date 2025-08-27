@@ -10,6 +10,10 @@
 (class SvUserInterface extends SvStorableNode {
 
     initPrototypeSlots () {
+        {
+            const slot = this.newSlot("app", null);
+            slot.setSlotType("SvApp");
+        }
     }
 
     initPrototype () {
@@ -21,6 +25,11 @@
     init () {
         super.init();
         return this;
+    }
+
+    assertCanRun () {
+        // override in subclasses with any checks that need to be done before running
+        return true;
     }
 
     async afterAppDidInit () {

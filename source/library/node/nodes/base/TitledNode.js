@@ -161,7 +161,7 @@
      * @returns {string} The title of the node.
      */
     nodeHeaderTitle () {
-        return this.title()
+        return this.title();
     }
 
     /**
@@ -199,7 +199,7 @@
     nodePathArrayForPathComponents (pathComponents, results = []) {
         results.push(this);
 
-        const link = this.nodeTileLink()
+        const link = this.nodeTileLink();
         if (link && link !== this) {
             return link.nodePathArrayForPathComponents(pathComponents);
         }
@@ -223,7 +223,7 @@
      * @returns {string} The node path string.
      */
     nodePathString () {
-        return this.nodePath().map(node => node.title()).join("/")
+        return this.nodePath().map(node => node.title()).join("/");
     }
     
     /**
@@ -242,22 +242,22 @@
      */
     nodeAtSubpathArray (subpathArray) {
         if (subpathArray.length) {
-            const t = subpathArray.first()
+            const t = subpathArray.first();
 
-            let subnode = null
+            let subnode = null;
             if (Type.isArray(t)) {
                 // supports a path component that is an ordered list of subnodes titles 
-                subnode = this.firstSubnodeWithTitles(t)
+                subnode = this.firstSubnodeWithTitles(t);
             } else {
-                subnode = this.firstSubnodeWithTitle(t)
+                subnode = this.firstSubnodeWithTitle(t);
             }
 
             if (subnode) {
-                return subnode.nodeAtSubpathArray(subpathArray.rest())
+                return subnode.nodeAtSubpathArray(subpathArray.rest());
             }
-            return null
+            return null;
         }        
-        return this
+        return this;
     }
 
     /**
@@ -266,11 +266,11 @@
      * @returns {TitledNode} This node.
      */
     removeFirstSubnodeWithTitle (aString) {
-        const sn = this.firstSubnodeWithTitle(aString)
+        const sn = this.firstSubnodeWithTitle(aString);
         if (sn) {
-            sn.delete()
+            sn.delete();
         }
-        return this
+        return this;
     }
 
     /**
@@ -279,7 +279,7 @@
      * @returns {TitledNode} The first subnode with the given title.
      */
     firstSubnodeWithTitle (aString) {
-        return this.subnodes().detect(subnode => subnode.title() === aString)
+        return this.subnodes().detect(subnode => subnode.title() === aString);
     }
 
     /**
@@ -289,13 +289,13 @@
      */
     firstSubnodeWithTitles (titlesArray) {
         for (let i = 0; i < titlesArray.length; i++) {
-            const title = titlesArray[i]
-            const subnode = this.firstSubnodeWithTitle(title)
+            const title = titlesArray[i];
+            const subnode = this.firstSubnodeWithTitle(title);
             if (subnode) {
-                return subnode
+                return subnode;
             }
         }
-        return null
+        return null;
     }
 
     /**
@@ -304,7 +304,7 @@
      * @returns {TitledNode} The first subnode with the given subtitle.
      */
     firstSubnodeWithSubtitle (aString) {
-        return this.subnodes().detect(subnode => subnode.subtitle() === aString)
+        return this.subnodes().detect(subnode => subnode.subtitle() === aString);
     }
 
     /**
@@ -312,9 +312,9 @@
      * @returns {TitledNode} The root node.
      */
     rootNode () {
-        const store = this.defaultStore()
-        const root = store.rootObject()
-        return root
+        const store = this.defaultStore();
+        const root = store.rootObject();
+        return root;
     }
 
     /**
@@ -324,16 +324,16 @@
      * @returns {TitledNode} The subnode with the given title.
      */
     subnodeWithTitleIfAbsentInsertProto (aString, aProto) {
-        const subnode = this.firstSubnodeWithTitle(aString)
+        const subnode = this.firstSubnodeWithTitle(aString);
 
         if (subnode) {
             if (subnode.type() !== aProto.type()) {
                 // replace the subnode with matching title, 
                 // if it's not of the requested class
 
-                const newSubnode = aProto.clone()
+                const newSubnode = aProto.clone();
                 try {
-                    newSubnode.copyFromAndIgnoreMissingSlots(subnode)
+                    newSubnode.copyFromAndIgnoreMissingSlots(subnode);
                 } catch (error) {
                     if (error instanceof MissingSlotError) {
                         debugger;
@@ -341,16 +341,16 @@
                         error.rethrow();
                     }
                 }
-                this.replaceSubnodeWith(subnode, newSubnode)
-                this.removeOtherSubnodesWithSameTitle(newSubnode)
-                return newSubnode
+                this.replaceSubnodeWith(subnode, newSubnode);
+                this.removeOtherSubnodesWithSameTitle(newSubnode);
+                return newSubnode;
             }
 
-            this.removeOtherSubnodesWithSameTitle(subnode)
-            return subnode
+            this.removeOtherSubnodesWithSameTitle(subnode);
+            return subnode;
         }
 
-        return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone())
+        return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone());
     }
 
     /**
@@ -360,14 +360,14 @@
      * @returns {TitledNode} The added subnode.
      */
     addSubnodeAndSetSlotForClass (aName, aClass) {
-        const subnode = this.subnodeWithTitleIfAbsentInsertProto(aName, aClass)
-        this.removeOtherSubnodesWithSameTitle(subnode)
-        const slot = this.thisPrototype().slotNamed(aName.toLowerCase())
-        assert(slot)
+        const subnode = this.subnodeWithTitleIfAbsentInsertProto(aName, aClass);
+        this.removeOtherSubnodesWithSameTitle(subnode);
+        const slot = this.thisPrototype().slotNamed(aName.toLowerCase());
+        assert(slot);
         if (slot) {
-            slot.onInstanceSetValue(this, subnode) 
+            slot.onInstanceSetValue(this, subnode); 
         }
-        return subnode
+        return subnode;
     }
 
     /**
@@ -376,8 +376,8 @@
      * @returns {TitledNode} This node.
      */
     removeSubnodesWithTitle (aString) {
-        this.subnodes().select(sn => sn.title() === aString).forEach(sn => sn.delete())
-        return this
+        this.subnodes().select(sn => sn.title() === aString).forEach(sn => sn.delete());
+        return this;
     }
 
     /**
@@ -386,15 +386,15 @@
      * @returns {TitledNode} This node.
      */
     removeOtherSubnodesWithSameTitle (aSubnode) {
-        assert(this.hasSubnode(aSubnode))
+        assert(this.hasSubnode(aSubnode));
         this.subnodes().shallowCopy().forEach((sn) => {
             if (sn !== aSubnode) {
                 if (sn.title() === aSubnode.title()) {
-                    this.removeSubnode(sn)
+                    this.removeSubnode(sn);
                 }
             }
-        })
-        return this
+        });
+        return this;
     }
 
     /**
@@ -404,16 +404,16 @@
      * @returns {TitledNode} The subnode with the given title.
      */
     subnodeWithTitleIfAbsentInsertClosure (aString, aClosure) {
-        let subnode = this.firstSubnodeWithTitle(aString)
+        let subnode = this.firstSubnodeWithTitle(aString);
 
         if (!subnode && aClosure) {
-            subnode = aClosure()
-            subnode.setTitle(aString)
+            subnode = aClosure();
+            subnode.setTitle(aString);
 
-            this.addSubnode(subnode)
+            this.addSubnode(subnode);
         }
 
-        return subnode
+        return subnode;
     }
 
     /**
@@ -424,13 +424,13 @@
         this.setSubnodeSortFunc(function (a, b) {
             const cleanedTitle = function (t) {
                 return Type.isNullOrUndefined(t) ? "" : t;
-            }
+            };
 
             let at = cleanedTitle(a.title());
             let bt = cleanedTitle(b.title());
             return at.localeCompare(bt);
-        })
-        return this
+        });
+        return this;
     }
 
     /**
@@ -438,7 +438,7 @@
      * @returns {boolean} Whether the node view should have a badge.
      */
     nodeViewShouldBadge () {
-        return false
+        return false;
     }
 
     /**
@@ -446,7 +446,7 @@
      * @returns {string|null} The badge title.
      */
     nodeViewBadgeTitle () {
-        return null
+        return null;
     }
 
     /**
@@ -454,7 +454,7 @@
      * @returns {string} The summary of the node.
      */
     summary () {
-        return this.title() + " " + this.subtitle()
+        return this.title() + " " + this.subtitle();
     }
 
     recursiveFilter (aFilter) {

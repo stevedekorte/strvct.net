@@ -80,7 +80,7 @@
          * @category UI
          */
         {
-            const slot = this.newSlot("userInterfaceClassName", null);
+            const slot = this.newSlot("userInterfaceClassName", "SvUserInterface");
             slot.setSlotType("String");
         }
 
@@ -171,6 +171,7 @@
         assert(uiClass, "User interface class " + this.userInterfaceClassName() + " not found");
         assert(uiClass.isKindOf(SvUserInterface), "User interface class " + this.userInterfaceClassName() + " is not a subclass of SvUserInterface");
         this.setUserInterface(uiClass.clone());
+        console.log("initUserInterface: " + this.userInterface().type());
     }
 
     finalInit () {
@@ -197,10 +198,9 @@
         }
         this.setIsRunning(true);
 
-        if (this.userInterface()) {
-            this.userInterface().setApp(this);
-            await this.userInterface().assertCanRun(); // e.g. check for other tabs
-        }
+        this.userInterface().setApp(this);
+        await this.userInterface().assertCanRun(); // e.g. check for other tabs
+
         await this.initAndOpenStore(); // will create model
         await this.setup();
     }
@@ -300,11 +300,7 @@
 
     async setupUserInterfaceIfNeeded () {
         SvBootLoadingView.shared().setSubtitle("setup ui");
-
-        if (SvPlatform.isBrowserPlatform()) {
-            this.userInterface().setApp(this);
-            await this.userInterface().setup();
-        }
+        await this.userInterface().setup();
     }
 
     /**
