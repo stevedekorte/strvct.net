@@ -308,10 +308,10 @@
         try {
             this.sendNotification(note);       
         } catch(error) {
-            this.errorLog("NOTIFICATION EXCEPTION: '" + error.message + "'");
-            this.errorLog("  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
+            this.logError("NOTIFICATION EXCEPTION: '" + error.message + "'");
+            this.logError("  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
             if (note.senderStack()) {
-                this.errorLog("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack());
+                this.logError("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack());
             }
 
             // how to we propogate the exception so we can inspect it in the debugger
