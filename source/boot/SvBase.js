@@ -212,6 +212,11 @@
         return this.debugTypeId() + " ";
     }
 
+    log (...args) {
+        const s = args.map(String).join('');
+        console.log(this.logPrefix() + " " + s);
+    }
+
     /**
      * Logs a debug message if debugging is enabled.
      * @param {string|function} s - The message to log or a function that returns the message.
@@ -226,7 +231,7 @@
             } else {
                 s = args.map(String).join('');
             }
-            console.log(this.logPrefix() + " " + s);
+            console.log("DEBUG: " + this.logPrefix() + " " + s);
         }
         return this
     }
