@@ -392,4 +392,9 @@
     return JSON.stableStringifyWithStdOptions(this.asJson(), null, 2);
   }
 
+  copyJsonToClipboard () {
+    JSON.stringify(this.asJson(), null, 2).copyToClipboard();
+    return this;
+  }
+
 }.initThisClass());

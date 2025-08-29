@@ -15,7 +15,7 @@
      * @category Availability
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
     
     /**
@@ -63,11 +63,11 @@
      */
     initPrototype () {
         // inherits isEnabled and isEditable slots from Field
-        this.setShouldStore(true)
-        this.setNodeTileIsSelectable(true)
-        this.setNodeCanInspect(true)
-        this.setKeyIsVisible(false)
-        this.setValueIsVisible(false)
+        this.setShouldStore(true);
+        this.setNodeTileIsSelectable(true);
+        this.setNodeCanInspect(true);
+        this.setKeyIsVisible(false);
+        this.setValueIsVisible(false);
     }
 
     /**
@@ -77,8 +77,8 @@
      * @category Configuration
      */
     setTitle (s) {
-        super.setTitle(s)
-        return this
+        super.setTitle(s);
+        return this;
     }
     
     /**
@@ -87,7 +87,7 @@
      * @category Information
      */
     summary () {
-        return ""
+        return "";
     }
 
     /**
@@ -97,7 +97,7 @@
      */
     target () {
         const t = this._target;
-        return t ? t : this.parentNode()
+        return t ? t : this.parentNode();
     }
 
     /**
@@ -106,9 +106,9 @@
      * @category Action
      */
     canDoAction () {
-        const t = this.target()
-        const m = this.methodName()
-        return t && t[m]
+        const t = this.target();
+        const m = this.methodName();
+        return t && t[m];
     }
 
     /**
@@ -118,17 +118,21 @@
      */
     doAction () {
         if (this.canDoAction()) {
-            const func = this.target()[this.methodName()]
+            const func = this.target()[this.methodName()];
             
             if (Type.isFunction(func)) {
-                func.call(this.target(), this)
+                const target = this.target();
+                const result = func.call(target, this);
+                if (result === this) {
+                    throw new Error("doAction() returned this action field. Looks like you used the field name instead of the method name.");
+                }
             } else {
-                console.warn("no method with this name")
+                this.logWarn("no method with this name");
             }
         } else {
-            this.debugLog(" can't perform action ", this.methodName(), " on ", this.target())
+            this.logWarn(" can't perform action ", this.methodName(), " on ", this.target());
         }
-        return this
+        return this;
     }
 
     /**
@@ -136,11 +140,11 @@
      * @category Synchronization
      */
     syncFromTarget () {
-        super.syncFromTarget()
+        super.syncFromTarget();
     
-        const t = this.target()
+        const t = this.target();
         if (t) {
-            const infoMethodName = this.methodName() + "ActionInfo"
+            const infoMethodName = this.methodName() + "ActionInfo";
             const method = t[infoMethodName];
             if (method) {
                 const infoDict = method.apply(t, []);
@@ -155,9 +159,9 @@
      * @category Lifecycle
      */
     prepareToAccess () {
-        super.prepareToAccess()
-        this.syncFromTarget()
-        return this
+        super.prepareToAccess();
+        this.syncFromTarget();
+        return this;
     }
     
     /**
@@ -172,7 +176,7 @@
             if (v !== undefined) {
                 if (!Type.isBoolean(v)) {
                     const methodName = this.methodName() + "ActionInfo";
-                    console.warn(this.target().typeId() + "." + methodName + "() returned invalid value of '" + v + "' for isEnabled. Boolean value is required.")
+                    console.warn(this.target().typeId() + "." + methodName + "() returned invalid value of '" + v + "' for isEnabled. Boolean value is required.");
                 }
                 assert(Type.isBoolean(v));
                 this.setIsEnabled(v);
@@ -180,7 +184,7 @@
         }
 
         {
-            const v = infoDict.title
+            const v = infoDict.title;
             if (v !== undefined) {
                 assert(Type.isString(v) || Type.isNull(v));
                 this.setTitle(v);
@@ -188,7 +192,7 @@
         }
 
         {
-            const v = infoDict.subtitle
+            const v = infoDict.subtitle;
             if (v !== undefined) {
                 assert(Type.isString(v) || Type.isNull(v));
                 this.setSubtitle(v);
@@ -196,14 +200,14 @@
         }
 
         {
-            const v = infoDict.isVisible 
+            const v = infoDict.isVisible;
             if (v !== undefined) {
                 assert(Type.isBoolean(v));
-                this.setIsVisible(v)
+                this.setIsVisible(v);
             }
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -215,9 +219,9 @@
         return {
             isEnabled: this.isEnabled(),
             title: this.title(),
-            subtitle: subthis.title(),
+            subtitle: this.title(),
             isVisible: this.isVisible()
-        }
+        };
     }
 
 }.initThisClass());

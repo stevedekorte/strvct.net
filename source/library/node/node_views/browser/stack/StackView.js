@@ -630,19 +630,28 @@
         // in which case, the tile may be about to be removed
         if (tile && tile.nodeTileLink()) {
             const oNode = tile.nodeTileLink();
-            const ovc = this.otherViewContent();
-            if (!ovc || (ovc.node() !== oNode)) {
-                const ov = this.otherViewContentForNode(oNode);
-                this.setOtherViewContent(ov);
-                
-                // When we create a new view, ensure its NavView syncs orientation
-                if (ov && ov.navView) {
-                    // Schedule orientation sync after the view is added to DOM
-                    this.addTimeout(() => {
-                        if (ov.navView()) {
-                            ov.navView().syncOrientation();
-                        }
-                    }, 0);
+            
+            // Check if we should show the otherView
+            // Hide it if the node has no subnodes and can't add subnodes
+            if (!this.shouldShowOtherViewForNode(oNode)) {
+                // Hide the otherView since it serves no purpose
+                this.clearOtherView();
+            } else {
+                // Show the otherView normally
+                const ovc = this.otherViewContent();
+                if (!ovc || (ovc.node() !== oNode)) {
+                    const ov = this.otherViewContentForNode(oNode);
+                    this.setOtherViewContent(ov);
+                    
+                    // When we create a new view, ensure its NavView syncs orientation
+                    if (ov && ov.navView) {
+                        // Schedule orientation sync after the view is added to DOM
+                        this.addTimeout(() => {
+                            if (ov.navView()) {
+                                ov.navView().syncOrientation();
+                            }
+                        }, 0);
+                    }
                 }
             }
         } else {
@@ -1040,6 +1049,23 @@
             return this.nodeToStackCache().at(k, this);
         }
         return null;
+    }
+
+    /**
+     * @description Determines if the otherView should be shown for a given node.
+     * @param {BMNode} node The node to check.
+     * @returns {boolean} True if the otherView should be shown, false otherwise.
+     */
+    shouldShowOtherViewForNode (node) {
+        if (!node) {
+            return false;
+        }
+        
+        // Show otherView if the node has subnodes or can add subnodes
+        const hasSubnodes = node.hasSubnodes && node.hasSubnodes();
+        const canAddSubnodes = node.nodeCanAddSubnode && node.nodeCanAddSubnode();
+        
+        return hasSubnodes || canAddSubnodes;
     }
 
     /**

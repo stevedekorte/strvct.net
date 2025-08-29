@@ -218,7 +218,7 @@
      * @category UI
      */
     thisNode () {
-        return this
+        return this;
     }
 
     /**
@@ -227,7 +227,7 @@
      * @category UI
      */
     nodeTileLinkMethods () {
-        return ["thisNode"]
+        return ["thisNode"];
     }
 
     /**
@@ -235,7 +235,6 @@
      * @category UI
      */
     defaultNodeTileLinkMethod () {
-
     }
 
     // --- adding fields as subnodes ---
@@ -248,7 +247,7 @@
     addSubnodeFieldsForSlots (slots) {
         slots.forEach(slot => {
             this.addSubnodeFieldForSlot(slot);
-        })
+        });
     }
 
     /**
@@ -303,9 +302,9 @@
         const pathNodes = this.createInspectorNodePath(slot.inspectorPath());
 
         /*
-        const node = pathNodes.last()
+        const node = pathNodes.last();
         if (node !== this) {
-            node.setNodeSubtitleIsChildrenSummary(true)
+            node.setNodeSubtitleIsChildrenSummary(true);
         }
         */
 
@@ -316,7 +315,7 @@
             //field.setNodeFillsRemainingWidth(slot.nodeFillsRemainingWidth());
         }
         pathNodes.last().addSubnode(field);
-        return this
+        return this;
     }
 
     /**
@@ -330,7 +329,7 @@
         pathNodes.forEach(node => {
             if (node !== this) {
                 node.setNodeSubtitleIsChildrenSummary(true);
-                node.setHasNewlineAfterSummary(true)
+                node.setHasNewlineAfterSummary(true);
                 if (node !== pathNodes.last()) {
                     node.setHasNewLineSeparator(true);
                 }

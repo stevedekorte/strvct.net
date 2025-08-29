@@ -40,6 +40,7 @@
  * newCookie.save();
  * 
  */
+
 (class WbCookieManager extends ProtoClass {
     
     static valueOfCookieNamed (name) {

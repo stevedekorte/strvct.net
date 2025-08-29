@@ -148,21 +148,6 @@
   }
 
   /**
-   * Sets up this instance as a sample
-   * @description Sets up this instance and its subnodes as a sample
-   * @returns {JsonSchemaNode} This instance
-   * @category Data Management
-   */
-  setupAsSample () {
-    this.subnodes().forEach(sn => {
-      if (sn.setupAsSample) {
-        sn.setupAsSample();
-      }
-    })
-    return this
-  }
-
-  /**
    * Updates the message JSON
    * @description Creates a JSON object containing the necessary information to update the character on the server
    * @returns {Object} The message JSON object
