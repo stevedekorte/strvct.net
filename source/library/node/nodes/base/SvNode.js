@@ -1239,15 +1239,11 @@
     // --- log ------------------------
     
     /**
-
-     * @description Log a message if this instance is in debug mode.
-     * @param {string} msg - The message to log.
+     * @description Get the prefix for logging messages.
+     * @returns {string} The prefix for logging messages.
      */
-    log (msg) {
-        //const s = this.nodePathString() + " --  " + msg
-        if (this.isDebugging()) {
-            console.log("[" +  this.nodePathString() + "] " + msg);
-        }
+    logPrefix () {
+        return "[" +  this.nodePathString() + "]";
     }
 
     // --- post notifications ----------------------------------------

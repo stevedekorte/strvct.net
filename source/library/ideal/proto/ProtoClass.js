@@ -1037,6 +1037,11 @@
         return logPrefix;
     }
 
+    log (...args) {
+        const s = args.map(String).join('');
+        console.log(this.logPrefix() + " " + s);
+    }
+
     /**
      * Logs a debug message if debugging is enabled.
      * @param {string|Function} s - The message to log or a function that returns the message.
@@ -1052,9 +1057,19 @@
                 s = args.map(String).join("");
             }
 
-            console.log(this.logPrefix() + " " + s);
+            console.log("DEBUG: " + this.logPrefix() + " " + s);
         }
         return this;
+    } 
+
+    logWarn (...args) {
+        const s = args.map(String).join('');
+        console.warn("**WARNING**: " + this.logPrefix() + " " + s);
+      }
+    
+    logError (...args) {
+        const s = args.map(String).join('');
+        console.error("**ERROR**: " + this.logPrefix() + " " + s);;
     }
 
     // --- other ---
