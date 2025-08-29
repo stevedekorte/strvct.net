@@ -9,10 +9,11 @@
  * Provides methods for getting, setting, and deleting cookies with proper domain handling.
  * 
  * Usage example:
- * WebBrowserCookie.shared().setCookie("authToken", token, 400 * 24 * 60 * 60);
- * const token = WebBrowserCookie.shared().getCookie("authToken");
- * WebBrowserCookie.shared().deleteCookie("authToken");
+ * WebBrowserCookie.shared().setCookie("myCookie", myCookieValue, 400 * 24 * 60 * 60);
+ * const myCookieValue = WebBrowserCookie.shared().getCookie("myCookie");
+ * WebBrowserCookie.shared().deleteCookie("myCookie");
  */
+
 (class WebBrowserCookie extends ProtoClass {
     
     /**

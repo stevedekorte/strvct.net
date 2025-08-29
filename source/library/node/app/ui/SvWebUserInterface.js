@@ -44,14 +44,16 @@
     setupNormalDocTheme () {
         const doc = DocumentBody.shared();
         doc.setBackgroundColor("#191919");
-        //doc.setFontFamily("EB Garamond");
         doc.setFontFamily("HoeflerTitling");
+        
+        //doc.setFontFamily("EB Garamond");
         //doc.setFontFamily("IMFellEnglish");
         //doc.setFontFamily("Lusitana");
         //doc.setFontFamily("BarlowCondensed");
         //doc.setFontWeight("medium");
-        doc.setFontSizeAndLineHeight("16px");
-        doc.setLineHeight(1.3);
+
+        //doc.setFontSize("18px");
+        //doc.setLineHeight(1.3);
    }
 
 }.initThisClass());

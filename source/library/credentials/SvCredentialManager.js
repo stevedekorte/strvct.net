@@ -53,16 +53,38 @@
       super.finalInit();
     }
 
-    // these implementations are temporary - will be replaced with actual implementations
+    // Return fresh Firebase ID token for API authentication
 
-    bearerTokenForService (/*serviceName*/) {
-      // TODO: implement this for credentials
-      return this.userAuthToken();
+    async bearerTokenForService (/*serviceName*/) {
+      // Get fresh Firebase ID token
+      if (typeof firebase !== 'undefined' && firebase.auth) {
+        const user = firebase.auth().currentUser;
+        if (user) {
+          try {
+            return await user.getIdToken();
+          } catch (error) {
+            console.error("Failed to get Firebase ID token:", error);
+            return null;
+          }
+        }
+      }
+      return null;
     }
     
-    bearerTokenForEndpoint (/*endpoint*/) {
-        // TODO: implement this for credentials
-        return this.userAuthToken();
+    async bearerTokenForEndpoint (/*endpoint*/) {
+        // Get fresh Firebase ID token
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+          const user = firebase.auth().currentUser;
+          if (user) {
+            try {
+              return await user.getIdToken();
+            } catch (error) {
+              console.error("Failed to get Firebase ID token:", error);
+              return null;
+            }
+          }
+        }
+        return null;
     }
 
     /*==
