@@ -487,25 +487,18 @@
     }
 
     // let's print the url and headers here to the console
-    console.log("--------------------------------");
-    console.log("url:", this.url());
-    console.log("method:", this.method());
-    console.log("headers:", options.headers);
+    let bodyInfo = "";
     if (isFormData) {
-      console.log("body type: FormData (multipart/form-data)");
-      console.log("Content-Type will be set automatically by browser with boundary");
+      bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
     } else if (Type.isString(options.body)) {
-      console.log("body type: String");
-      console.log("body preview:", options.body.substring(0, 200) + (options.body.length > 200 ? "..." : ""));
+      const preview = options.body.substring(0, 200) + (options.body.length > 200 ? "..." : "");
+      bodyInfo = `String, preview: ${preview}`;
     } else if (Type.isBlob(options.body)) {
-      console.log("body type: Blob");
-      console.log("blob size:", options.body.size, "bytes");
-      console.log("blob type:", options.body.type || "unknown");
+      bodyInfo = `Blob, size: ${options.body.size} bytes, type: ${options.body.type || "unknown"}`;
     } else if (Type.isArrayBuffer(options.body)) {
-      console.log("body type: ArrayBuffer");
-      console.log("buffer size:", options.body.byteLength, "bytes");
+      bodyInfo = `ArrayBuffer, size: ${options.body.byteLength} bytes`;
     }
-    console.log("--------------------------------");
+    console.log(`XHR Request - url: ${this.url()}, method: ${this.method()}, body type: ${bodyInfo}, headers:`, options.headers);
 
     xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" for binary data
     
