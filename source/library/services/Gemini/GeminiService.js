@@ -129,15 +129,29 @@
   }
 
   /**
-   * @description Sets up the chat endpoint URL.
+   * @description Returns the chat endpoint URL with API key.
    * @category API Communication
    */
-  setupChatEndpoint () {
+  async getChatEndpointWithKey () {
     let url = this.endPointUrlFormat();
     url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
     url = url.replaceAll("{generate response method}", "streamGenerateContent");
-    url = url.replaceAll("{api key}", this.apiKeyOrUserAuthToken());
-    this.setChatEndpoint(url);
+    const apiKey = await this.apiKeyOrUserAuthToken();
+    url = url.replaceAll("{api key}", apiKey);
+    return url;
+  }
+  
+  /**
+   * @description Returns the chat endpoint URL (without API key for display).
+   * @category API Communication
+   */
+  chatEndpoint () {
+    // Return URL without API key for display purposes
+    let url = this.endPointUrlFormat();
+    url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
+    url = url.replaceAll("{generate response method}", "streamGenerateContent");
+    url = url.replaceAll("{api key}", "[API_KEY]");
+    return url;
   }
 
   /**
@@ -187,7 +201,7 @@
       this.setProjectId(info.projectId);
     }
 
-    this.setupChatEndpoint();
+    // Note: setupChatEndpoint is now async, will be called in prepareToSendRequest
   }
 
   /*
@@ -223,7 +237,7 @@
    * @category API Communication
    */
   prepareToSendRequest (aRequest) {
-    this.setupChatEndpoint(); // in case user's auth token has changed
+    // Chat endpoint is now built dynamically in getChatEndpointWithKey()
 
     //debugger;
     const bodyJson = aRequest.bodyJson();

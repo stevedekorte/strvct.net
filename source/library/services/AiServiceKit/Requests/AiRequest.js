@@ -370,7 +370,9 @@
    * @returns {string}
    */
   subtitle () {
-    return [this.fullContent().length + " bytes", this.status()].join("\n");
+    const content = this.fullContent();
+    const length = content ? content.length : 0;
+    return [length + " bytes", this.status()].join("\n");
   }
 
   /**
@@ -385,10 +387,10 @@
   /**
    * @category Login
    * @description Returns the API key
-   * @returns {string}
+   * @returns {Promise<string>}
    */
-  apiKeyOrUserAuthToken () {
-    return this.service().apiKeyOrUserAuthToken();
+  async apiKeyOrUserAuthToken () {
+    return await this.service().apiKeyOrUserAuthToken();
   }
 
   /**
@@ -401,10 +403,10 @@
 
   /**
    * Returns the request options
-   * @returns {Object}
+   * @returns {Promise<Object>}
    */
-  requestOptions () {
-    const apiKey = this.apiKeyOrUserAuthToken();
+  async requestOptions () {
+    const apiKey = await this.apiKeyOrUserAuthToken();
     const json = {
       method: "POST",
       headers: {
@@ -429,14 +431,14 @@
   /**
    * Asserts that the request is valid
    */
-  assertValid () {
+  async assertValid () {
     if (!this.apiUrl()) {
       throw new Error(this.type() + " apiUrl missing");
     }
 
-    if (!this.apiKeyOrUserAuthToken()) {
+    const token = await this.apiKeyOrUserAuthToken();
+    if (!token) {
       debugger;
-      this.apiKeyOrUserAuthToken();
       throw new Error(this.type() + " apiKeyOrUserAuthToken missing");
     }
   }
@@ -452,10 +454,16 @@
 
   /**
    * Returns the active API URL
-   * @returns {string}
+   * @returns {Promise<string>|string}
    */
-  activeApiUrl () {
-    let url = this.apiUrl();
+  async activeApiUrl () {
+    let url;
+    // Check if subclass has async getApiUrl method
+    if (this.getApiUrl) {
+      url = await this.getApiUrl();
+    } else {
+      url = this.apiUrl();
+    }
     if (this.needsProxy()) {
       url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     }
@@ -599,10 +607,14 @@
     this.setCurrentXhrRequest(xhrRequest);
     this.xhrRequestHistory().push(xhrRequest);
     
+    // Get request options and URL asynchronously
+    const requestOptions = await this.requestOptions();
+    const apiUrl = await this.activeApiUrl();
+    
     // Configure the XHR request
-    xhrRequest.setUrl(this.activeApiUrl());
+    xhrRequest.setUrl(apiUrl);
     xhrRequest.setMethod("POST");
-    xhrRequest.setRequestOptions(this.requestOptions());
+    xhrRequest.setRequestOptions(requestOptions);
     xhrRequest.setResponseType(""); // "" or "text" is required for streams
     
     // Set this as the delegate to receive callbacks
@@ -611,8 +623,8 @@
     // let's print the url and headers here to the console
     console.log("--------------------------------");
     console.log("model:", this.chatModel().title());
-    console.log("url:", this.activeApiUrl());
-    console.log("headers:", this.requestOptions().headers);
+    console.log("url:", apiUrl);
+    console.log("headers:", requestOptions.headers);
     console.log("--------------------------------");
 
     if (!this.isContinuation()) {

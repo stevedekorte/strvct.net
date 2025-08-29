@@ -84,11 +84,20 @@
 
   /**
    * @description Returns the API key for the Gemini service.
-   * @returns {string} The API key.
+   * @returns {Promise<string>} The API key.
    * @category Authentication
    */
-  apiKey () {
-    return GeminiService.shared().apiKeyOrUserAuthToken();
+  async apiKey () {
+    return await GeminiService.shared().apiKeyOrUserAuthToken();
+  }
+  
+  /**
+   * @description Returns the API URL for the request.
+   * @returns {Promise<string>} The API URL.
+   * @category API Communication
+   */
+  async getApiUrl () {
+    return await GeminiService.shared().getChatEndpointWithKey();
   }
 
   /**
@@ -100,16 +109,16 @@
     return this;
   }
 
-  isUsingUserAuthToken () {
-    return GeminiService.shared().isUsingUserAuthToken();
+  async isUsingUserAuthToken () {
+    return await GeminiService.shared().isUsingUserAuthToken();
   }
 
   /**
    * @description Prepares the request options for the API call.
-   * @returns {Object} The request options.
+   * @returns {Promise<Object>} The request options.
    * @category Request Preparation
    */
-  requestOptions () {
+  async requestOptions () {
     const dict = {
       method: "POST",
       headers: {
@@ -119,8 +128,8 @@
       body: JSON.stringify(this.bodyJson())
     };
 
-    if (this.isUsingUserAuthToken()) {
-      dict.headers.Authorization = `Bearer ${this.apiKeyOrUserAuthToken()}`;
+    if (await this.isUsingUserAuthToken()) {
+      dict.headers.Authorization = `Bearer ${await GeminiService.shared().apiKeyOrUserAuthToken()}`;
     }
 
     return dict;

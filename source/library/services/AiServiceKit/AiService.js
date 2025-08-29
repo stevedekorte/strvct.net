@@ -191,8 +191,9 @@
    * @returns {boolean} True if the API key is set and valid, false otherwise.
    * @category Authentication
    */
-  hasApiKey () {
-    return this.apiKeyOrUserAuthToken() && this.apiKeyOrUserAuthToken().length > 0;
+  async hasApiKey () {
+    const token = await this.apiKeyOrUserAuthToken();
+    return token && token.length > 0;
   }
 
   /**
@@ -290,8 +291,8 @@
    * @category Authentication
    */
 
-  apiKeyOrUserAuthToken () {
-    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.type());
+  async apiKeyOrUserAuthToken () {
+    const userAuthToken = await SvCredentialManager.shared().bearerTokenForService(this.type());
     if (userAuthToken) {
       return userAuthToken;
     }
@@ -303,8 +304,9 @@
    * @returns {boolean} True if the service is using the user auth token, false otherwise.
    * @category Authentication
    */
-  isUsingUserAuthToken () {
-    return this.userAuthToken() !== null && this.apiKeyOrUserAuthToken() === this.userAuthToken();
+  async isUsingUserAuthToken () {
+    const token = await this.apiKeyOrUserAuthToken();
+    return this.userAuthToken() !== null && token === this.userAuthToken();
   }
 
   /** 

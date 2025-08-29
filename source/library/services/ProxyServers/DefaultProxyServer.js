@@ -45,10 +45,22 @@
     if (SvPlatform.isNodePlatform()) {
       return;
     } else {
-      const loc = window.location;  
-      this.setHostname(loc.hostname);
-      this.setPort(Number(loc.port));
-      this.setIsSecure(loc.protocol === "https:");
+      const loc = window.location;
+      
+      // For localhost development with Firebase, use the Firebase Functions API
+      if (loc.hostname === 'localhost') {
+        // Firebase Functions are served through our HTTPS proxy
+        this.setHostname(loc.hostname);
+        this.setPort(Number(loc.port));
+        this.setIsSecure(loc.protocol === "https:");
+        this.setPath("/proxy");
+      } else {
+        // For production, use the current location
+        this.setHostname(loc.hostname);
+        this.setPort(Number(loc.port));
+        this.setIsSecure(loc.protocol === "https:");
+        this.setPath("/proxy");
+      }
     }
   }
 

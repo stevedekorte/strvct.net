@@ -22,6 +22,7 @@
     }
 
     initPrototypeSlots () {
+        /*
         {
             const slot = this.newSlot("userAuthToken", "");
             slot.setLabelToCapitalizedSlotName();
@@ -30,6 +31,7 @@
             slot.setIsSubnodeField(true);
             slot.setAllowsNullValue(true);
         }
+        */
 
         {
             const slot = this.newSlot("credentials", null);
@@ -49,42 +51,18 @@
     }
 
     finalInit () {
-      this.setUserAuthToken("");
+      //this.setUserAuthToken("");
       super.finalInit();
     }
 
     // Return fresh Firebase ID token for API authentication
 
     async bearerTokenForService (/*serviceName*/) {
-      // Get fresh Firebase ID token
-      if (typeof firebase !== 'undefined' && firebase.auth) {
-        const user = firebase.auth().currentUser;
-        if (user) {
-          try {
-            return await user.getIdToken();
-          } catch (error) {
-            console.error("Failed to get Firebase ID token:", error);
-            return null;
-          }
-        }
-      }
-      return null;
+      return await UoAccountServerApi.shared().authToken();
     }
     
     async bearerTokenForEndpoint (/*endpoint*/) {
-        // Get fresh Firebase ID token
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-          const user = firebase.auth().currentUser;
-          if (user) {
-            try {
-              return await user.getIdToken();
-            } catch (error) {
-              console.error("Failed to get Firebase ID token:", error);
-              return null;
-            }
-          }
-        }
-        return null;
+        return await UoAccountServerApi.shared().authToken();
     }
 
     /*==
