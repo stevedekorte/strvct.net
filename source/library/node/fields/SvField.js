@@ -339,10 +339,10 @@
      */
     didUpdateSlotTarget (oldValue, newValue) {
         if (oldValue) {
-            const obs = this.didUpdateNodeObs()
+            const obs = this.didUpdateNodeObs();
             if (obs) {
-                obs.stopWatching()
-                this.setDidUpdateNodeObs(null)
+                obs.stopWatching();
+                this.setDidUpdateNodeObs(null);
             }
         }
 
@@ -373,23 +373,9 @@
      * @param {SvSummaryNode} aNote - The note.
      */
     onUpdatedNode (aNote) {
-        /*
-        if (this.target()) {
-            console.log(this.type() + " for " + this.target().type()  + "." + this.key() + " onUpdatedNode(" + aNote.sender().type() + ")");
+        if (this.isKindOf(SvActionField)) {
+            //debugger;
         }
-
-        if (this.key() === "Stength") {
-            console.log(this.type() + " onUpdatedNode (key is Stength)");
-        }
-
-        if (this.key() === "Bonuses") {
-            console.log(this.type() + " onUpdatedNode (key is Bonuses)");
-        }
-
-        if (this.key() === "Total") {
-            console.log(this.type() + " onUpdatedNode (key is Total)");
-        }
-        */
 
         assert(aNote);
         // if it has a note, it was a post sent through notification center that the target node changed

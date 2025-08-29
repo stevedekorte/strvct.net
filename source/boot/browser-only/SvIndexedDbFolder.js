@@ -608,6 +608,14 @@
     }
 
     /**
+     * Creates a new transaction object for batch operations.
+     * @returns {SvIndexedDbTx} - A new transaction object.
+     */
+    newTransaction () {
+        return this.privateNewTx()
+    }
+
+    /**
      * Returns a debug type ID for the database folder.
      * @returns {string} - The debug type ID.
      */

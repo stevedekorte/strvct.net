@@ -202,15 +202,27 @@
         const hasHash = await this.promiseHasHash(hash);
 
         if (hasHash) {
-            // we have this key so no point in writing (as same key always means same value)
-            return;
+            // Check if the existing data actually matches
+            const existingData = await this.idb().promiseAt(hash);
+            const existingHash = await this.promiseHashKeyForData(existingData);
+            if (existingHash !== hash) {
+                console.warn(`Corrupted cache entry detected for key ${hash} - removing`);
+                await this.idb().promiseRemoveAt(hash);
+                // Continue to re-add with correct hash
+            } else {
+                // we have this key and it's valid, so no point in writing
+                return;
+            }
         }
 
         // verify key before writing
         const dataHash = await this.promiseHashKeyForData(data);
 
         if (hash !== dataHash) {
-            throw new Error("hash key does not match hash of value");
+            console.error(`Hash mismatch: expected ${hash}, got ${dataHash}`);
+            console.warn("This typically happens when the hash algorithm has changed.");
+            console.warn("Please clear your browser cache: DevTools > Application > Storage > Clear site data");
+            throw new Error("hash key does not match hash of value - please clear browser cache");
         }
 
         this.debugLog("SvHashCache atPut ", hash);
@@ -290,6 +302,7 @@
         const keysToRemove = new Set([...currentKeysSet].filter(x => !keepKeySet.has(x)));
 
         const tx = this.idb().newTransaction();
+        tx.begin(); // Initialize the actual IndexedDB transaction
         keysToRemove.forEach(async (key) => {
             tx.removeAt(key);
         });

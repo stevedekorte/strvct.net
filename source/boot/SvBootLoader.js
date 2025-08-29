@@ -1,3 +1,4 @@
+// test
 "use strict";
 
 /**
@@ -23,8 +24,8 @@ class SvBootLoader extends Object {
     "SvResourceManager.js",
     "SvBase.js",
     "categories/Promise_ideal.js",
-    "web-only/SvIndexedDbFolder.js",
-    "web-only/SvIndexedDbTx.js",
+    "browser-only/SvIndexedDbFolder.js",
+    "browser-only/SvIndexedDbTx.js",
     "server-only/SvIndexedDbFolder.js",
     "server-only/SvIndexedDbTx.js",
     "SvHashCache.js" // important that this be after SvIndexedDbFolder/Tx so it can be used
@@ -43,6 +44,8 @@ class SvBootLoader extends Object {
   }
 
   static async asyncRun () {
+    //await SvHashCache.shared().promiseClear(); console.log("🔍 Cleared SvHashCache");
+
     if (this._promiseCompleted === null) {
       this._promiseCompleted = new Promise((resolve, reject) => {
         this.asyncBegin().then(() => {
@@ -54,6 +57,7 @@ class SvBootLoader extends Object {
   }
 
   static async asyncBegin () {
+    console.log("🔍 asyncBegin");
     await SvPlatform.promiseReady();
 
     /*

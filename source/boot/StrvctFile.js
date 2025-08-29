@@ -204,6 +204,7 @@ class StrvctFile extends Object {
      * @category File Loading
      */
     async asyncLoadNode () {
+        console.log("🔍 asyncLoadNode file: " + this._path);
         const fs = require('fs').promises;
         const path = require('path');
         
@@ -225,6 +226,7 @@ class StrvctFile extends Object {
      * @category File Loading
      */
     async asyncLoadBrowser () {
+        console.log("🔍 asyncLoadBrowser file: " + this._path);
         const baseUrl = StrvctFile.baseUrl();
         const fullUrl = baseUrl ? 
             `${baseUrl}/${this._path.replace(/^\//, '')}` : 
@@ -373,6 +375,7 @@ class StrvctFile extends Object {
     static async asyncLoadAndSequentiallyEvalPaths (filePaths) {
         const files = filePaths.map(filePath => StrvctFile.with(filePath));
         const loadPromises = files.map(file => {
+            console.log("🔍 Loading file: " + file.path());
             return file.asyncLoad();
         });
         
@@ -381,6 +384,7 @@ class StrvctFile extends Object {
         // Evaluate files sequentially to maintain order
         files.forEach(file => {
             if (file.canUseInCurrentEnv()) {
+                console.log("🔍 Evaluating file: " + file.path());
                 file.eval();
             }
         });
@@ -414,8 +418,8 @@ class StrvctFile extends Object {
         const isNodePlatform = SvPlatform.isNodePlatform();
         
         if (isNodePlatform) {
-            // In Node.js, skip web-only (browser-only) files
-            const isBrowserOnly = pathComponents.includes('web-only') || pathComponents.includes('browser-only');
+            // In Node.js, skip browser-only (browser-only) files
+            const isBrowserOnly = pathComponents.includes('browser-only') || pathComponents.includes('browser-only');
             return !isBrowserOnly;
         } else {
             // In browser, skip server-only files

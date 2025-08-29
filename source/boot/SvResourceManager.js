@@ -160,6 +160,9 @@
             console.log("🔍 Clearing SvHashCache on Node.js...");
             await SvHashCache.shared().promiseClear();
         }
+        //debugger;
+        //await SvHashCache.shared().promiseClear();
+
 
         const count = await SvHashCache.shared().promiseCount();
         //console.log("📊 SvHashCache count:", count);

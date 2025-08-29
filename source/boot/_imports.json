@@ -2,6 +2,6 @@
     "SvGlobals.js",
     "SvBase.js",
     "server-only/_imports.json",
-    "web-only/_imports.json"
+    "browser-only/_imports.json"
 ]
 

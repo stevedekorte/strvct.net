@@ -338,4 +338,17 @@
         return pathNodes;
     }
 
+    subnodeFields () {
+        return this.subnodes().filter(subnode => {
+            return subnode.isKindOf(SvFieldNode);
+        });
+    }
+
+    existingSubnodeFieldForSlot (slot) {
+        const match = this.subnodeFields().find(subnode => {
+            return subnode.fieldSlotName() === slot.name();
+        });
+        return match;
+    }
+
 }.initThisClass());

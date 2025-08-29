@@ -525,13 +525,13 @@ The framework is designed to gracefully handle the absence of browser APIs in he
 The framework includes a path-based convention system to automatically exclude environment-specific resources:
 
 **Path Component Conventions:**
-- `web-only` - Excluded in Node.js environments
+- `browser-only` - Excluded in Node.js environments
 - `server-only` - Excluded in browser environments
 
 **Usage:**
 ```javascript
 // Check if a file should be loaded in current environment
-StrvctFile.with('path/to/web-only/SomeClass.js').canUseInCurrentEnv() // false in Node.js
+StrvctFile.with('path/to/browser-only/SomeClass.js').canUseInCurrentEnv() // false in Node.js
 
 // Automatic filtering in SvResourceManager
 this.jsResources() // Returns only environment-appropriate resources
@@ -540,7 +540,7 @@ this.cssResources() // Returns only environment-appropriate resources
 
 **Directory Structure Examples:**
 ```
-strvct/source/library/view/web-only/    # Excluded in Node.js
+strvct/source/library/view/browser-only/    # Excluded in Node.js
 strvct/source/library/testing/server-only/ # Excluded in browser
 ```
 
