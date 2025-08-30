@@ -57,7 +57,6 @@ class SvBootLoader extends Object {
   }
 
   static async asyncBegin () {
-    console.log("🔍 asyncBegin");
     await SvPlatform.promiseReady();
 
     /*
@@ -67,7 +66,6 @@ class SvBootLoader extends Object {
     }
     */
     await SvPlatform.asyncWaitForNextRender(); // let the background color get rendered first?
-    //debugger;
     await StrvctFile.asyncLoadAndSequentiallyEvalPaths(this.fullPaths());
     await SvResourceManager.shared().setupAndRun();
   }

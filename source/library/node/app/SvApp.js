@@ -171,7 +171,6 @@
         assert(uiClass, "User interface class " + this.userInterfaceClassName() + " not found");
         assert(uiClass.isKindOf(SvUserInterface), "User interface class " + this.userInterfaceClassName() + " is not a subclass of SvUserInterface");
         this.setUserInterface(uiClass.clone());
-        console.log("initUserInterface: " + this.userInterface().type());
     }
 
     finalInit () {

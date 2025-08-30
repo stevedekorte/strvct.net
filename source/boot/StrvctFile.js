@@ -226,7 +226,7 @@ class StrvctFile extends Object {
      * @category File Loading
      */
     async asyncLoadBrowser () {
-        console.log("🔍 asyncLoadBrowser file: " + this._path);
+        //console.log("🔍 asyncLoadBrowser file: " + this._path);
         const baseUrl = StrvctFile.baseUrl();
         const fullUrl = baseUrl ? 
             `${baseUrl}/${this._path.replace(/^\//, '')}` : 
@@ -375,7 +375,7 @@ class StrvctFile extends Object {
     static async asyncLoadAndSequentiallyEvalPaths (filePaths) {
         const files = filePaths.map(filePath => StrvctFile.with(filePath));
         const loadPromises = files.map(file => {
-            console.log("🔍 Loading file: " + file.path());
+            //console.log("🔍 Loading file: " + file.path());
             return file.asyncLoad();
         });
         
@@ -384,7 +384,7 @@ class StrvctFile extends Object {
         // Evaluate files sequentially to maintain order
         files.forEach(file => {
             if (file.canUseInCurrentEnv()) {
-                console.log("🔍 Evaluating file: " + file.path());
+                //console.log("🔍 Evaluating file: " + file.path());
                 file.eval();
             }
         });
