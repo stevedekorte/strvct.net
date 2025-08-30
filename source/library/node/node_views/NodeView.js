@@ -271,7 +271,7 @@
      */
     visibleSubnodes () {
         const node = this.node();
-        return node.subnodes();
+        return node.subnodes().filter(subnode => subnode.isVisible());
     }
 
     /**
