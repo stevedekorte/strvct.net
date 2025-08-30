@@ -552,7 +552,7 @@
         //debugger;
         //this.setRootPid(obj.puuid()); // this is set when the dirty root object is stored
         this._rootObject = obj;
-        this.debugLog(" adding rootObject " + obj.debugTypeId());
+        this.logDebug(" adding rootObject " + obj.debugTypeId());
         this.addActiveObject(obj);
         this.addDirtyObject(obj);
         return this;
@@ -644,7 +644,7 @@
 
         if (!this.hasActiveObject(anObject)) {
             //const title = anObject.title ? anObject.title() : "-";
-            //this.debugLog(() => anObject.debugTypeId() + ".addMutationObserver(" + this.debugTypeId() + " '" + title + "')");
+            //this.logDebug(() => anObject.debugTypeId() + ".addMutationObserver(" + this.debugTypeId() + " '" + title + "')");
             anObject.addMutationObserver(this);
             this.activeObjects().set(anObject.puuid(), anObject);
             //this.addDirtyObject(anObject);
@@ -771,7 +771,7 @@
         }
 
         if (!this.dirtyObjects().has(puuid)) {
-            this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" );
+            this.logDebug(() => "addDirtyObject(" + anObject.typeId() + ")" );
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?");
             }
@@ -819,7 +819,7 @@
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
                 //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null);
-                this.debugLog("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size );
+                this.logDebug("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size );
                 scheduler.scheduleTargetAndMethod(this, methodName, 1000);
             }
         }
@@ -834,17 +834,17 @@
      * @returns {void}
      */
     async commitStoreDirtyObjects () {
-        this.debugLog("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
+        this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
         //debugger;
         if (this.hasDirtyObjects()) {
             //console.log(this.type() + " --- commitStoreDirtyObjects ---");
 
-            //this.debugLog("--- commitStoreDirtyObjects begin ---");
+            //this.logDebug("--- commitStoreDirtyObjects begin ---");
             await this.recordsMap().promiseBegin();
             const storeCount = this.storeDirtyObjects();
             await this.recordsMap().promiseCommit();
-            this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
-            this.debugLog("--- commitStoreDirtyObjects total objects: " + this.recordsMap().count());
+            this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
+            this.logDebug("--- commitStoreDirtyObjects total objects: " + this.recordsMap().count());
 
             //this.show("AFTER commitStoreDirtyObjects");
         }
@@ -888,7 +888,7 @@
             }
 
             totalStoreCount += thisLoopStoreCount;
-            //this.debugLog(() => "totalStoreCount: " + totalStoreCount);
+            //this.logDebug(() => "totalStoreCount: " + totalStoreCount);
         }
 
         this.setStoringPids(null);
@@ -1250,7 +1250,7 @@
         // --- sanity checks ---
         assert(obj.shouldStore(), "object " + obj.type() + " shouldStore is false");
 
-        this.debugLog(() => "storeObject(" + obj.typeId() + ")");
+        this.logDebug(() => "storeObject(" + obj.typeId() + ")");
 
         // --- store ---
 
@@ -1273,7 +1273,7 @@
 
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);
-            //this.debugLog(() => "store " + puuid + " <- " + record.type )
+            //this.logDebug(() => "store " + puuid + " <- " + record.type )
 
             {
                 // sanity checks
@@ -1295,7 +1295,7 @@
     /*
     storeRecord (puuid, record) {
         const jsonString = JSON.stringify(record);
-        this.debugLog(() => "store " + puuid + " <- " + record.type );
+        this.logDebug(() => "store " + puuid + " <- " + record.type );
         this.recordsMap().set(puuid, jsonString);
         return this;
     }
@@ -1336,7 +1336,7 @@
         await this.recordsMap().promiseBegin();
         this.flushIfNeeded(); // store any dirty objects
 
-        this.debugLog(() => "--- begin collect --- with " + this.recordsMap().count() + " pids");
+        this.logDebug(() => "--- begin collect --- with " + this.recordsMap().count() + " pids");
         this.setMarkedSet(new Set());
         this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept
         this.markPid(this.rootPid());
@@ -1345,13 +1345,13 @@
         const deleteCount = this.sweep();
         this.setMarkedSet(null);
 
-        this.debugLog(() => "--- end collect --- collecting " + deleteCount + " pids ---");
+        this.logDebug(() => "--- end collect --- collecting " + deleteCount + " pids ---");
         //console.log("         --- end collect --- collecting " + deleteCount + " pids ---");
 
         await this.recordsMap().promiseCommit();
 
         const remainingCount = this.recordsMap().count();
-        this.debugLog(() => " ---- keys count after commit: " + remainingCount + " ---");
+        this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
         return remainingCount;
     }
 
@@ -1361,12 +1361,12 @@
      * @returns {Boolean}
      */
     markPid (pid) { // private
-        //this.debugLog(() => "markPid(" + pid + ")")
+        //this.logDebug(() => "markPid(" + pid + ")")
         if (!this.markedSet().has(pid)) {
             this.markedSet().add(pid);
             const refPids = this.refSetForPuuid(pid);
             //debugger;
-            //this.debugLog(() => "markPid " + pid + " w refs " + JSON.stringify(refPids.asArray()));
+            //this.logDebug(() => "markPid " + pid + " w refs " + JSON.stringify(refPids.asArray()));
             refPids.forEach(refPid => this.markPid(refPid));
             return true;
         }
@@ -1435,7 +1435,7 @@
         const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()); // allPids doesn't contain rootKey
 
         unmarkedPidSet.forEach(pid => {
-            this.debugLog(() => "--- sweeping --- deletePid(" + pid + ") ");
+            this.logDebug(() => "--- sweeping --- deletePid(" + pid + ") ");
             this.recordsMap().removeKey(pid); // this will remove the pid from the recordsMap
         });
 
@@ -1447,8 +1447,8 @@
         const recordsMap = this.recordsMap();
         recordsMap.keysArray().forEach(pid => {
             if (!this.markedSet().has(pid)) {
-                //this.debugLog("--- sweeping --- deletePid(" + pid + ") " + JSON.stringify(recordsMap.at(pid)));
-                this.debugLog(() => "--- sweeping --- deletePid(" + pid + ") ");
+                //this.logDebug("--- sweeping --- deletePid(" + pid + ") " + JSON.stringify(recordsMap.at(pid)));
+                this.logDebug(() => "--- sweeping --- deletePid(" + pid + ") ");
                 const count = recordsMap.count();
                 recordsMap.removeKey(pid);
                 assert(recordsMap.count() === count - 1);

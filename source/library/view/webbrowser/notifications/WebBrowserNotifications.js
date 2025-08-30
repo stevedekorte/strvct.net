@@ -65,7 +65,7 @@
                 promise.callResolveFunc(false);
             } else {
                 const result = await Notification.requestPermission();
-                this.debugLog("requestPermission:", result);
+                this.logDebug("requestPermission:", result);
                 const gotPermission = result === "granted";
                 if (!gotPermission) {
                     console.warn(this.type() + " permission denied");

@@ -49,7 +49,7 @@
 
     if (this.toolTargetInstances().has(instance)) {
         const errorMessage = "Tool definitions already added for instance: " + instance.type();
-        this.debugLog(errorMessage);
+        this.logDebug(errorMessage);
         //debugger;
         //throw new Error(errorMessage);
         return this;

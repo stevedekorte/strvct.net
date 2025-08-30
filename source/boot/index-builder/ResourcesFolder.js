@@ -27,7 +27,7 @@ class ResourcesFolder extends Object {
     /**
      * @category Debugging
      */
-    debugLog (s) {
+    logDebug (s) {
         if (this.isDebugging()) {
             console.log(s)
         }

@@ -335,7 +335,7 @@
         }
 
         if (this.center().isDebugging() || this.isDebugging()) {
-            this.debugLog(note.sender().debugTypeId() + " sending note " + note.name() + " to " + this.observer().debugTypeId());
+            this.logDebug(note.sender().debugTypeId() + " sending note " + note.name() + " to " + this.observer().debugTypeId());
         }
 
         const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];
@@ -344,7 +344,7 @@
             method.call(obs, note);
         } else {
             if (this.isDebugging()) {
-                this.debugLog(" no method found for note name " + note.name());
+                this.logDebug(" no method found for note name " + note.name());
             }
         }
 

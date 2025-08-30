@@ -70,9 +70,9 @@
         /*
         const newValue = WbCookieManager.valueOfCookieNamed(name);
         if(newValue !== value && value !== null) {
-            this.debugLog("[" + newValue + "] != [" + value + "]");
+            this.logDebug("[" + newValue + "] != [" + value + "]");
             debugger;
-            this.debugLog("let's debugg this!");
+            this.logDebug("let's debugg this!");
             WbCookieManager.valueOfCookieNamed(name);
             this.setValueOfCookieNamed(name, value);
         }
@@ -307,7 +307,7 @@
     requestDeleteCookie (wbCookie) {
         if (SvPlatform.isBrowserPlatform()) {
             document.cookie = wbCookie.deleteCookieString();
-            this.debugLog("deleted cookie: ", wbCookie.name());   
+            this.logDebug("deleted cookie: ", wbCookie.name());   
         } else {
             this.idb().saveToIdb();
         }

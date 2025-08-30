@@ -358,7 +358,7 @@
      * @private
      */
     onPanBegin (aGesture) {
-        this.debugLog("onPanBegin")
+        this.logDebug("onPanBegin")
         this.setDragStartPos(this.item().positionInDocument())
 
         this.addTimeout(() => {
@@ -445,7 +445,7 @@
      * @private
      */
     onPanComplete (aGesture) {
-        this.debugLog("onPanComplete")
+        this.logDebug("onPanComplete")
 
         const destView = this.firstAcceptingDropTarget()
         
@@ -556,7 +556,7 @@
         // onDragSourceHover & onDragDestinationHover
         const isSource = aView === this.source()
         const methodName = "onDrag" + (isSource ? "Source" : "Destination") + action
-        //this.debugLog(aView.node().title() + " " + methodName)
+        //this.logDebug(aView.node().title() + " " + methodName)
         this.sendProtocolMessage(aView, methodName)
     }
 
@@ -578,7 +578,7 @@
                 msg += " <<<<<<<<<<<<<< NOT FOUND "
             }
 
-            this.debugLog(msg)
+            this.logDebug(msg)
         }
 
         if (receiver[methodName]) {
@@ -594,7 +594,7 @@
      * @returns {DragView} The current instance.
      */ 
     close () {
-        this.debugLog("close")
+        this.logDebug("close")
         this.postNoteNamed("onDragViewClose")
         // handle calling this out of seqence?
 

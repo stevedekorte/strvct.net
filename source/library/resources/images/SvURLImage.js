@@ -79,7 +79,7 @@
      */
     async loadDataURL () {
         if (this.isDebugging()) {
-            this.debugLog(".loadDataURL() " + this.path());
+            this.logDebug(".loadDataURL() " + this.path());
         }
 
         try {

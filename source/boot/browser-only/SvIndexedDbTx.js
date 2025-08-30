@@ -196,7 +196,7 @@
      * @category Transaction
      */
     begin () {
-        this.debugLog(this.dbFolder().path() + " TX BEGIN ")
+        this.logDebug(this.dbFolder().path() + " TX BEGIN ")
         this.assertNotCommitted()
         this.setTxRequestStack(new Error().stack)
 	    const tx = this.newTx()
@@ -275,7 +275,7 @@
         const tx = this.tx()
         
         tx.oncomplete = (/*event*/) => { 
-            this.debugLog(" COMMIT COMPLETE")
+            this.logDebug(" COMMIT COMPLETE")
             this.markCompleted()
         }
 
@@ -283,7 +283,7 @@
             this.markRejected(error)
         }
 
-        this.debugLog(" COMMITTING")
+        this.logDebug(" COMMITTING")
         tx.commit()
 
         return this.promiseForFinished()
@@ -305,7 +305,7 @@
 
         aRequest.onerror = (event) => {
 		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "' error: '" + event.target.error + "'";
-		    this.debugLog(fullDescription)
+		    this.logDebug(fullDescription)
 		    if (requestStack) { 
                 console.error("error stack ", requestStack)
             }
@@ -352,7 +352,7 @@
         this.assertValidKeyValue(key, value)
         this.assertNotCommitted()
         
-        this.debugLog(() => "ADD " + key + " '...'")
+        this.logDebug(() => "ADD " + key + " '...'")
 
         const entry = this.entryForKeyAndValue(key, value)
         const request = this.objectStore().add(entry);
@@ -374,7 +374,7 @@
         this.assertValidKeyValue(key, value)
 	    this.assertNotCommitted()
 
-        this.debugLog(() => "UPDATE " + key)
+        this.logDebug(() => "UPDATE " + key)
 
         const entry = this.entryForKeyAndValue(key, value)
         const request = this.objectStore().put(entry);
@@ -394,7 +394,7 @@
     removeAt (key) {
 	    this.assertNotCommitted()
 
-        this.debugLog(() => "REMOVE " + key)
+        this.logDebug(() => "REMOVE " + key)
 
         const request = this.objectStore().delete(key);
         request._action = "remove"

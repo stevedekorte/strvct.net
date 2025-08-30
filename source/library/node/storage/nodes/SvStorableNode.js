@@ -117,7 +117,7 @@
         if (newValue !== null && this._subnodes && this._subnodes.includes(oldValue)) { 
             newValue.setParentNode(this)
             this.subnodes().replaceOccurancesOfWith(oldValue, newValue)
-            //this.debugLog(" this.subnodes().replaceOccurancesOfWith(", oldValue, ",", newValue, ")")
+            //this.logDebug(" this.subnodes().replaceOccurancesOfWith(", oldValue, ",", newValue, ")")
         }
         */
     }

@@ -1221,7 +1221,7 @@
     // box shadow
 
     setBoxShadow (s) {
-        //this.debugLog(".setBoxShadow(" + s + ")")
+        //this.logDebug(".setBoxShadow(" + s + ")")
         this.setCssProperty("box-shadow", s);
         return this;
     }
@@ -1346,7 +1346,7 @@
     // border left
 
     setBorderLeft (s) {
-        //this.debugLog(" border-left set '", s, "'")
+        //this.logDebug(" border-left set '", s, "'")
         this.setCssProperty("border-left", s);
         return this;
     }

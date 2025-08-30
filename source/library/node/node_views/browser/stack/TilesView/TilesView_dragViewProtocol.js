@@ -246,7 +246,7 @@
      * @returns {Object} The tile placeholder
      */
     newTilePlaceHolder (dragView) {
-        //this.debugLog("newTilePlaceHolder")
+        //this.logDebug("newTilePlaceHolder")
         if (!this.tilePlaceHolder()) {
             const ph = DomView.clone().setElementClassName("TilePlaceHolder"); // classname not for css rule, just a note for debugging
             ph.setBackgroundColor("black");
@@ -386,7 +386,7 @@
      * @returns undefined
      */
     removeTilePlaceHolder () {
-        this.debugLog("removeTilePlaceHolder");
+        this.logDebug("removeTilePlaceHolder");
 
         const ph = this.tilePlaceHolder();
         if (ph) {
@@ -404,7 +404,7 @@
      * @returns undefined
      */
     animateRemoveTilePlaceHolderAndThen (resolve) {
-        this.debugLog("animateRemoveTilePlaceHolder");
+        this.logDebug("animateRemoveTilePlaceHolder");
 
         const ph = this.tilePlaceHolder();
         if (ph) {
@@ -427,7 +427,7 @@
      * @returns {TilesView_dragViewProtocol} The current instance
      */
     endDropMode () {
-        this.debugLog("endDropMode");;
+        this.logDebug("endDropMode");;
         //this.unstackTiles();
         this.removeTilePlaceHolder();
         this.unstackTiles();
@@ -436,7 +436,7 @@
 
         /*
         this.animateRemoveTilePlaceHolderAndThen(() => {
-         this.debugLog("endDropMode");
+         this.logDebug("endDropMode");
             this.unstackTiles();
             this.setHasPausedSync(false);
             this.didReorderTiles();

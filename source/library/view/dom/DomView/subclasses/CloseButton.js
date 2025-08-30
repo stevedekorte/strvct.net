@@ -113,7 +113,7 @@
      * @category Event
      */
     onTapComplete (aGesture) {
-        //this.debugLog(".onTapComplete()")
+        //this.logDebug(".onTapComplete()")
         if (!this.isEditable()) {
             this.sendActionToTarget()
         }

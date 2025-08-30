@@ -365,7 +365,7 @@
         }
         */
 
-        //this.debugLog(".setContentEditable(" + aBool + ") = ", this.contentEditable());
+        //this.logDebug(".setContentEditable(" + aBool + ") = ", this.contentEditable());
         //this.setIsRegisteredForClicks(this.contentEditable());  // is this needed after move to tap?
 
         return this;
@@ -514,7 +514,7 @@
         //debugger;
         //console.log(this.value() + " onDoubleTapComplete");
         // make content editable and select text
-        //this.debugLog(".onDoubleTapComplete()");
+        //this.logDebug(".onDoubleTapComplete()");
         if (this.contentEditable()) {
             return this;
         }
@@ -932,7 +932,7 @@
         //return result;
 
         //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
-        //this.debugLog(" onKeyUp value: [" + this.value() + "]")
+        //this.logDebug(" onKeyUp value: [" + this.value() + "]")
 
         if (this.doesInput()) {
             event.preventDefault();
@@ -975,7 +975,7 @@
             return;
         }
         
-	    //this.debugLog(".onEnterKeyUp()");
+	    //this.logDebug(".onEnterKeyUp()");
 	    //this.didEdit();
 
         this.formatValue();
@@ -1072,14 +1072,14 @@
         }
         
         if (newValue !== oldValue) {
-            this.debugLog("formatValue newValue !== oldValue");
-            this.debugLog(" newValue: [" + newValue + "]");
+            this.logDebug("formatValue newValue !== oldValue");
+            this.logDebug(" newValue: [" + newValue + "]");
             this.setInnerHtml(newValue);
             this.didEdit();
         }
         */
 	    //console.trace(this.type() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
-        //this.debugLog(" after formatValue: '" + this.innerHtml() + "'");
+        //this.logDebug(" after formatValue: '" + this.innerHtml() + "'");
         return this;
     }
     
@@ -1147,7 +1147,7 @@
      */
     onClick (event) {
         // needed to prevent click-to-edit event from selecting the background row
-        //this.debugLog(".onClick()")
+        //this.logDebug(".onClick()")
 
         if (this.contentEditable()) {
             this.sendActionToTarget();

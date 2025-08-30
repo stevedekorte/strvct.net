@@ -506,7 +506,7 @@
     tryToPostNotificationNow (note) {
         try { 
             this.postNotificationNow(note);
-            //this.debugLog("   <- posting " + note.description() )
+            //this.logDebug("   <- posting " + note.description() )
         } catch (error) {
             console.log(this.type() + " caught exception while posting: " + note.description());
             return error;

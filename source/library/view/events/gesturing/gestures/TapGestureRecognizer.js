@@ -197,7 +197,7 @@
                 const distance = currentPos.distanceFrom(downPos)
                 
                 if (distance > this.maxMovementDistance()) {
-                    this.debugLog(".onMove() cancelling tap due to movement distance: " + distance)
+                    this.logDebug(".onMove() cancelling tap due to movement distance: " + distance)
                     this.cancel()
                 }
             }
@@ -212,7 +212,7 @@
     onUp (event) {
         super.onUp(event)
  
-        this.debugLog(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().typeId())
+        this.logDebug(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().typeId())
 
         if (this.hasTimer()) {
             if (this.tapCount() === this.numberOfTapsRequired()) {

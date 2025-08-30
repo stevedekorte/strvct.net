@@ -415,7 +415,7 @@
      * @category Event
      */
     onEnterKeyUp (event) {
-        //this.debugLog(".onEnterKeyUp()")
+        //this.logDebug(".onEnterKeyUp()")
 
         if (this.titleView().isEditable()) {
             this.titleView().activate();

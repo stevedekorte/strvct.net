@@ -117,7 +117,7 @@
         if (this._isPaused !== aBool) {
             this._isPaused = aBool;
 
-            this.debugLog(this.type() + ".setIsPaused(" + aBool + ")");
+            this.logDebug(this.type() + ".setIsPaused(" + aBool + ")");
 
             if (aBool) {
                 this.cancelAllGestures();
@@ -145,7 +145,7 @@
      * @category Control
      */
     requestActiveGesture (aGesture) {
-        this.debugLog("requestActiveGesture(" + aGesture.description() + ")");
+        this.logDebug("requestActiveGesture(" + aGesture.description() + ")");
 
         if (this.isPaused()) {
             return false;
@@ -187,7 +187,7 @@
         aGesture.viewTarget().cancelAllGesturesExcept(aGesture);
         this.cancelBegunGesturesExcept(aGesture);
         this.setActiveGesture(aGesture);
-        this.debugLog("acceptGesture(" + aGesture.description() + ")");
+        this.logDebug("acceptGesture(" + aGesture.description() + ")");
         return this;
     }
 
@@ -199,8 +199,8 @@
      * @category Control
      */
     rejectGesture (aGesture) {
-        this.debugLog("rejectGesture(" + aGesture.description() + ")");
-        this.debugLog("already active " + this.activeGesture().description());
+        this.logDebug("rejectGesture(" + aGesture.description() + ")");
+        this.logDebug("already active " + this.activeGesture().description());
         return this;
     }
 

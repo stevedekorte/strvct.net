@@ -220,7 +220,7 @@
      * @category Event Handling
      */
     didInput () {
-        this.debugLog("didInput")
+        this.logDebug("didInput")
         this.tellParentViews("onDidInput", this)
         return this
     }
@@ -230,7 +230,7 @@
      * @category Event Handling
      */
     didEdit () {
-        this.debugLog("didEdit");
+        this.logDebug("didEdit");
         this.tellParentViews("onDidEdit", this);
         return this;
     }
@@ -386,10 +386,10 @@
      */
     disablePointerEventsUntilTimeout (ms) {
         this.setPointerEvents("none")
-        this.debugLog(" disabling pointer events")
+        this.logDebug(" disabling pointer events")
 
         this.addTimeout(() => {
-            this.debugLog(" enabling pointer events");
+            this.logDebug(" enabling pointer events");
             this.setPointerEvents("inherit")
         }, ms)
 

@@ -73,7 +73,7 @@
    */
   setup () {
       // Load the YouTube IFrame Player API asynchronously
-      this.debugLog("setup()");
+      this.logDebug("setup()");
       const tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
       const firstScriptTag = document.getElementsByTagName("script")[0];
@@ -86,7 +86,7 @@
    * @category Callback
    */
   onLoaded () {
-    this.debugLog("onLoaded()");
+    this.logDebug("onLoaded()");
     this.frameReadyPromise().callResolveFunc();
   }
 

@@ -557,7 +557,7 @@
     makeOrientationDown () { 
 
         // stackview is down so tiles are left to right
-        //this.debugLog("makeOrientationDown")
+        //this.logDebug("makeOrientationDown")
 
         this.setDisplay("inline-block")
         //this.setWidth("fit-content")
@@ -704,7 +704,7 @@
      */
     willAcceptFirstResponder () {
         super.willAcceptFirstResponder()
-	    //this.debugLog(".willAcceptFirstResponder()")
+	    //this.logDebug(".willAcceptFirstResponder()")
         return this
     }
 
@@ -715,7 +715,7 @@
      * @returns {DomView} The node tile link.
      */
     nodeTileLink () {
-        //this.debugLog(".visibleSubnodes() isInspecting:" + this.isInspecting())
+        //this.logDebug(".visibleSubnodes() isInspecting:" + this.isInspecting())
         /*
         if(this.node().hasDefaultInspector && this.node().hasDefaultInspector()) {
             return this.node().nodeDefaultInspector()
@@ -780,22 +780,22 @@
 
     onMetaLeft_c_KeyDown (/*event*/) {
         // MacOScopy
-        this.debugLog("onMetaLeft_c_KeyDown");
+        this.logDebug("onMetaLeft_c_KeyDown");
     }
 
     onMetaLeft_v_KeyDown (/*event*/) {
         // MacOS paste
-        this.debugLog("onMetaLeft_v_KeyDown");
+        this.logDebug("onMetaLeft_v_KeyDown");
     }
 
     onControl_c_KeyDown (/*event*/) {
         // Windows copy
-        this.debugLog("onControl_c_KeyDown");
+        this.logDebug("onControl_c_KeyDown");
     }
 
     onControl_v_KeyDown (/*event*/) {
         // Windows paste
-        this.debugLog("onControl_v_KeyDown");
+        this.logDebug("onControl_v_KeyDown");
     }
 
 }.initThisClass());

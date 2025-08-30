@@ -359,7 +359,7 @@
    * Displays the request details
    */
   showRequest () {
-    this.debugLog(this.description());
+    this.logDebug(this.description());
   }
 
   /**
@@ -459,8 +459,8 @@
 
     this.assertValid();
 
-    //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
-    //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
+    //this.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
+    //this.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
 
     this.setStatus("sending request...");
 
@@ -486,19 +486,21 @@
       xhr.setRequestHeader(header, value);
     }
 
-    // let's print the url and headers here to the console
-    let bodyInfo = "";
-    if (isFormData) {
-      bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
-    } else if (Type.isString(options.body)) {
-      const preview = options.body.substring(0, 200) + (options.body.length > 200 ? "..." : "");
-      bodyInfo = `String, preview: ${preview}`;
-    } else if (Type.isBlob(options.body)) {
-      bodyInfo = `Blob, size: ${options.body.size} bytes, type: ${options.body.type || "unknown"}`;
-    } else if (Type.isArrayBuffer(options.body)) {
-      bodyInfo = `ArrayBuffer, size: ${options.body.byteLength} bytes`;
+    if (this.isDebugging()) {
+        // let's print the url and headers here to the console
+        let bodyInfo = "";
+        if (isFormData) {
+        bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
+        } else if (Type.isString(options.body)) {
+        const preview = options.body.substring(0, 200) + (options.body.length > 200 ? "..." : "");
+        bodyInfo = `String, preview: ${preview}`;
+        } else if (Type.isBlob(options.body)) {
+        bodyInfo = `Blob, size: ${options.body.size} bytes, type: ${options.body.type || "unknown"}`;
+        } else if (Type.isArrayBuffer(options.body)) {
+        bodyInfo = `ArrayBuffer, size: ${options.body.byteLength} bytes`;
+        }
+        this.logDebug(`XHR Request - url: ${this.url()}, method: ${this.method()}, body type: ${bodyInfo}, headers:`, options.headers);
     }
-    console.log(`XHR Request - url: ${this.url()}, method: ${this.method()}, body type: ${bodyInfo}, headers:`, options.headers);
 
     xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" for binary data
     
@@ -574,7 +576,7 @@
     /*
     const txt = event.currentTarget.responseText;
     const latestString = txt.substr(txt.length - event.loaded, event.loaded);
-    console.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
+    this.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
     */
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
     this.sendDelegate("onRequestProgress", [this]);
@@ -626,7 +628,7 @@
       }
     } catch (error) {
       // ignore
-      console.log("responseXmlError() error: " + error.message);
+      this.logError("responseXmlError() error: " + error.message);
     }
     return null;
   }
@@ -643,7 +645,7 @@
         }
       }
     } catch (error) {
-      console.log("responseXmlError() error: " + error.message);
+      this.logError("responseXmlError() error: " + error.message);
       // ignore
     }
     return null;
@@ -664,7 +666,7 @@
       const statusCode = this.xhr().status;
       const fullStatus = this.fullNameForXhrStatusCode(statusCode);
 
-      console.log(this.description());
+      this.logDebug(this.description());
 
       // try to extract an error message from the response, if it has one
 
@@ -687,9 +689,7 @@
       }
     }
 
-    console.log(this.typeId() + " onXhrLoadEnd()");
     this.xhrPromise().callResolveFunc();
-
   }
 
   responseText () {
@@ -773,7 +773,7 @@
    * @param {number} seconds 
    */
   retryWithDelay (seconds) {
-    console.log(this.typeId() + " retrying in " + seconds + " seconds");
+    this.log(this.typeId() + " retrying in " + seconds + " seconds");
     this.addTimeout(() => { 
       this.retryRequest();
     }, seconds * 1000);
@@ -1058,7 +1058,7 @@
     if (d) {
       const f = d[methodName];
       if (f) {
-        //this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
+        //this.logDebug(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
         f.apply(d, args);
         return true;
       }

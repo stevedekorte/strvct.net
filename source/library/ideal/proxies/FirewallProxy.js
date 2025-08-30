@@ -108,7 +108,7 @@
         // use as parent class of both ObservableProxy and Firewall
         if (this.protectedTraps().has(trapName)) {
             const msg = " blocked proxy trap '" + trapName + "' on property '" + propertyName + "'"
-            this.debugLog(msg)
+            this.logDebug(msg)
             throw new Error(this.typeId() + msg)
             return false
         }
@@ -124,7 +124,7 @@
      */
     onProtectedMethodCall(propertyName, argsList) {
         const msg = " blocked method call '" + propertyName + "' "
-        this.debugLog(msg)
+        this.logDebug(msg)
         throw new Error(this.typeId() + msg)
     }
 

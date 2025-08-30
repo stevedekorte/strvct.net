@@ -30,9 +30,9 @@
 
     /*
     onEnterKeyDown (event) {
-        this.debugLog(" onEnterKeyDown")
+        this.logDebug(" onEnterKeyDown")
         if (this.unfocusOnEnterKey() && this.isFocused()) {
-            this.debugLog(" releasing focus")
+            this.logDebug(" releasing focus")
             // this.releaseFocus() // TODO: implement something to pass focus up view chain to whoever wants it
             //this.element().parentElement.focus()
             if (this.parentView()) {

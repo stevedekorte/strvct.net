@@ -1009,7 +1009,7 @@
         // not a great name but this walks back the ancestors (including self) and tries to find an
         // existing class with the same name as the ancestor + the given postfix
         // useful for things like type + "View" or type + "Tile", etc
-        //this.debugLog(" firstAncestorClassWithPostfix(" + aPostfix + ")")
+        //this.logDebug(" firstAncestorClassWithPostfix(" + aPostfix + ")")
         const classes = this.thisClass().ancestorClassesIncludingSelf();
         for (let i = 0; i < classes.length; i++) {
             const aClass = classes[i];
@@ -1048,7 +1048,7 @@
      * @returns {ProtoClass} This instance.
      * @category Debugging
      */
-    debugLog (...args) {
+    logDebug (...args) {
         if (this.isDebugging()) {
             let s = "";
             if (Type.isFunction(args[0])) {

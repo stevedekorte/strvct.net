@@ -169,7 +169,7 @@
     return this;
   }
 
-  debugLog (...args) {
+  logDebug (...args) {
     if (this.isDebugging()) {
         this.log(...args);
     }

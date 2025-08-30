@@ -68,7 +68,7 @@
 
     /*
     onBeforeEvent (methodName, event) {
-        this.debugLog(() => { return " onBeforeEvent " + methodName })
+        this.logDebug(() => { return " onBeforeEvent " + methodName })
         return this
     }
     */

@@ -26,7 +26,7 @@
 
             // add a subnode if tapping on empty area
             const p = aGesture.downPosition() // there may not be an up position on windows?
-            //this.debugLog(".onTapComplete() ", aGesture.upEvent())
+            //this.logDebug(".onTapComplete() ", aGesture.upEvent())
             if (p && p.event() && p.event().target === this.element()) {
                 const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
                 const isAltTap = keyModifiers.contains("Alternate");
@@ -96,7 +96,7 @@
     onPinchBegin (aGesture) { // pinch apart to insert a new tile
         // TODO: move tile specific code to Tile
 
-        //this.debugLog(".onPinchBegin()")
+        //this.logDebug(".onPinchBegin()")
 
         // - calc insert index
         const p = aGesture.beginCenterPosition()
@@ -138,7 +138,7 @@
             //newTile.scheduleSyncFromNode()
             //this._temporaryPinchSubnode.didUpdateNode()
         } else {
-            //this.debugLog(".onPinchBegin() cancelling due to no add action")
+            //this.logDebug(".onPinchBegin() cancelling due to no add action")
 
             aGesture.cancel()
         }        
@@ -155,7 +155,7 @@
             if (s < 0) {
                 s = 0
             }
-            //this.debugLog(".onPinchMove() s = ", s)
+            //this.logDebug(".onPinchMove() s = ", s)
             const minHeight = Tile.defaultHeight()
             const newTile = this.subviewForNode(this._temporaryPinchSubnode)
             //newTile.setBackgroundColor("black")
@@ -190,7 +190,7 @@
      * @category Gesture Handling
      */
     onPinchComplete (aGesture) {
-        //this.debugLog(".onPinchCompleted()")
+        //this.logDebug(".onPinchCompleted()")
         // if pinch is tall enough, keep new tile
 
         if (this._temporaryPinchSubnode) {
@@ -216,7 +216,7 @@
      * @category Gesture Handling
      */
     onPinchCancelled (aGesture) {
-        //this.debugLog(".onPinchCancelled()")
+        //this.logDebug(".onPinchCancelled()")
         if (this._temporaryPinchSubnode) {
             this.node().removeSubnode(this._temporaryPinchSubnode)
             this._temporaryPinchSubnode = null

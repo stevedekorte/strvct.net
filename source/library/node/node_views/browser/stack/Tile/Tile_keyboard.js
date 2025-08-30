@@ -16,7 +16,7 @@
      * @category Keyboard Interaction
      */
     onEnterKeyUp () {
-        //this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
+        //this.logDebug(this.type() + " for " + this.node().title() + " onEnterKeyUp")
         this.justTap();
         return false; // stop propagation
     }
@@ -28,7 +28,7 @@
      * @category Keyboard Interaction
      */
     onShiftBackspaceKeyUp (/*event*/) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onBackspaceKeyUp");
+        this.logDebug(this.type() + " for " + this.node().title() + " onBackspaceKeyUp");
         this.delete();
         return false; // stop propagation
     }
@@ -62,7 +62,7 @@
      * @category Keyboard Interaction
      */
     on_d_KeyDown (event) {
-        this.debugLog(" on_d_KeyDown ", event._id);
+        this.logDebug(" on_d_KeyDown ", event._id);
         this.setIsRegisteredForBrowserDrag(true);
         return true;
     }
@@ -74,7 +74,7 @@
      * @category Keyboard Interaction
      */
     on_d_KeyUp (event) {
-        this.debugLog(" on_d_KeyUp ", event._id);
+        this.logDebug(" on_d_KeyUp ", event._id);
         this.setIsRegisteredForBrowserDrag(false);
         return true;
     }

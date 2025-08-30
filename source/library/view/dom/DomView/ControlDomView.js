@@ -85,7 +85,7 @@
      */
     onClick (event) {
         debugger;
-        this.debugLog(".onClick()")
+        this.logDebug(".onClick()")
         this.sendActionToTarget()
         event.stopPropagation()
         return false
@@ -98,7 +98,7 @@
      * @category Event Handling
      */
     onTapComplete (aGesture) {
-        this.debugLog(".onTapComplete()")
+        this.logDebug(".onTapComplete()")
         this.sendActionToTarget()
         return this
     }

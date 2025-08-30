@@ -46,7 +46,7 @@
      * @category Event Handling
      */
     onVisibility () {
-        //this.debugLog(".onVisibility()")
+        //this.logDebug(".onVisibility()")
         const callback = this.onVisibilityCallback();
         if (callback) {
             callback();

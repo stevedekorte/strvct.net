@@ -421,7 +421,7 @@
 
     try {
       const url = this.getPeersUrl();
-      this.debugLog("getPeersUrl: '" + url + "'");
+      this.logDebug("getPeersUrl: '" + url + "'");
 
       const options = {
         method: 'GET', // HTTP method

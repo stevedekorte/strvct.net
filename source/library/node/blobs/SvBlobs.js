@@ -177,7 +177,7 @@
         // remove invalid Blob subnodes (thbose with null meta data)
         this.subnodes().shallowCopy().forEach((blob) => {
             if (!blob.isValid()) {
-                this.debugLog(" collecting inValid blob:", blob.description());
+                this.logDebug(" collecting inValid blob:", blob.description());
                 blob.delete();
             }
         })
@@ -190,7 +190,7 @@
         const storedHashes = await store.promiseAllKeys();
         storedHashes.forEach(async (h) => {
             if (!subnodeHashes.has(h)) {
-                this.debugLog("collecting unreferenced blob hash:", h);
+                this.logDebug("collecting unreferenced blob hash:", h);
                 await store.promiseRemoveKey(h);
             }
         })

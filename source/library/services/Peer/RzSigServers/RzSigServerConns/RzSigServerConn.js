@@ -598,7 +598,7 @@
    * @returns {RzSigServerConn} The current instance.
    */
   attemptToConnect () {
-    this.debugLog("connecting to peerjs signal server: ", JSON.stringify(this.peerOptions(), null, 2) )
+    this.logDebug("connecting to peerjs signal server: ", JSON.stringify(this.peerOptions(), null, 2) )
 
     let requestedPeerId = undefined;
     if (this.peerIdPrefix().length) {
@@ -628,7 +628,7 @@
    */
   async onOpen (peerId) {
     this.setPeerId(peerId)
-    //this.debugLog("opened with peerId: '" + peerId + "'");
+    //this.logDebug("opened with peerId: '" + peerId + "'");
     this.setStatus("connected to server")
     //this.refreshPeers()
     this.sendDelegateMessage("onSigServerOpen", [this]);
@@ -695,7 +695,7 @@
     // incoming connection
 
     const id = conn.peer;
-    this.debugLog("incoming connection from: " + id)
+    this.logDebug("incoming connection from: " + id)
 
     const peerConn = this.peerConns().addIfAbsentPeerConnForId(id)
     peerConn.setConn(conn)
@@ -752,7 +752,7 @@
    * @returns {RzSigServerConn} The current instance.
    */
   onError (error) {
-    //this.debugLog("error ", error);
+    //this.logDebug("error ", error);
     //debugger
     console.log("error: " + error.message);
     this.setStatus(error.message);

@@ -88,7 +88,7 @@
      * @category Keyboard
      */
     onMeta_n_KeyDown (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onMeta_n_KeyDown");
+        this.logDebug(this.type() + " for " + this.node().title() + " onMeta_n_KeyDown");
         this.addIfPossible();
         event.stopPropagation();
         event.preventDefault();
@@ -100,7 +100,7 @@
      * @category Keyboard
      */
     onShiftBackspaceKeyUp (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp");
+        this.logDebug(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp");
         if (this.selectedTile()) { 
             this.selectedTile().delete();
         }
@@ -133,7 +133,7 @@
      * @category Keyboard
      */
     onAlternate_d_KeyUp (/*event*/) {
-        //this.debugLog(" onMetaLeft_d_KeyUp")
+        //this.logDebug(" onMetaLeft_d_KeyUp")
         this.duplicateSelectedTile();
         return false; // stop propogation
     }

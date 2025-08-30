@@ -78,7 +78,7 @@
      * @category Gesture
      */
     justAlternateTap () {
-        this.debugLog(".justInspect()");
+        this.logDebug(".justInspect()");
         if (this.node().nodeCanInspect()) { 
             this.setIsInspecting(true);
             this.column().didTapItem(this);

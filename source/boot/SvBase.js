@@ -223,7 +223,7 @@
      * @returns {SvBase} The instance itself for method chaining.
      * @category Debugging
      */
-    debugLog (...args) {
+    logDebug (...args) {
         if (this.isDebugging()) {
             let s = "";
             if (typeof(s) === "function") {

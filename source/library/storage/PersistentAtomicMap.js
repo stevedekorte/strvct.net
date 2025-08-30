@@ -121,7 +121,7 @@
      * @category Operation
      */
     async promiseOpen () {
-        this.debugLog(() => "promiseOnOpen() '" + this.name() + "'");
+        this.logDebug(() => "promiseOnOpen() '" + this.name() + "'");
         await this.idb().promiseOpen();
         await this.promiseOnOpen(); // it can deal with multiple calls while it's opening
     }
@@ -135,11 +135,11 @@
         /*
         if (false) {
             debugger;
-            this.debugLog("onOpen() - CLEARING BEFORE OPEN");
+            this.logDebug("onOpen() - CLEARING BEFORE OPEN");
              await this.promiseClear();
         } 
         */
-        this.debugLog("onOpen() - loading cache");
+        this.logDebug("onOpen() - loading cache");
         await this.promiseLoadMap();
     }
 
@@ -230,7 +230,7 @@
         
         super.applyChanges(); // do this last as it will clear the snapshot
         
-        this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----");
+        this.logDebug(() => "---- " + this.type() + " committed tx with " + count + " writes ----");
 
         await tx.promiseCommit();
         this.setIsApplying(false);
@@ -247,7 +247,7 @@
 
         const isSynced = map.isEqual(currentMap); // works if keys and values are strings
         if (isSynced) {
-            this.debugLog(".verifySync() SUCCEEDED");
+            this.logDebug(".verifySync() SUCCEEDED");
         } else {
             throw new Error(this.debugTypeId() + ".verifySync() FAILED");
         }

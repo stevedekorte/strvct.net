@@ -218,7 +218,7 @@
      * @returns {boolean} True if the event should continue propagation, false otherwise
      */
     invokeMethodNameForEvent (methodName, event) {
-        //this.debugLog(".invokeMethodNameForEvent('" + methodName + "')")
+        //this.logDebug(".invokeMethodNameForEvent('" + methodName + "')")
         //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
         if (this[methodName]) {
             //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
@@ -349,7 +349,7 @@
     onMouseDown (event) {
         const methodName = Mouse.shared().downMethodNameForEvent(event)
         if (methodName !== "onMouseDown") {
-            this.debugLog(".onMouseDown calling: ", methodName)
+            this.logDebug(".onMouseDown calling: ", methodName)
             this.invokeMethodNameForEvent(methodName, event)
         }
         return true
@@ -363,7 +363,7 @@
     onMouseUp (event) {
         const methodName = Mouse.shared().upMethodNameForEvent(event)
         if (methodName !== "onMouseUp") {
-            this.debugLog(".onMouseUp calling: ", methodName)
+            this.logDebug(".onMouseUp calling: ", methodName)
             this.invokeMethodNameForEvent(methodName, event)
         }
         return true
@@ -430,7 +430,7 @@
      */
     onKeyUp (event) {
         let shouldPropogate = true
-        //this.debugLog(" onKeyUp ", event._id)
+        //this.logDebug(" onKeyUp ", event._id)
         const methodName = SvKeyboard.shared().upMethodNameForEvent(event)
         //console.log(this.typeId() + " onKeyUp methodName: ", methodName)
         shouldPropogate = this.invokeMethodNameForEvent(methodName, event)
@@ -489,7 +489,7 @@
         //console.log(this.typeId() + " onFocus")
         this.willAcceptFirstResponder();
         // subclasses can override 
-        //this.debugLog(" onFocus")
+        //this.logDebug(" onFocus")
         return true
     }
 
@@ -502,7 +502,7 @@
         //console.log(this.typeId() + " onBlur")
         this.didReleaseFirstResponder();
         // subclasses can override 
-        //this.debugLog(" onBlur")
+        //this.logDebug(" onBlur")
         return true
     }
 

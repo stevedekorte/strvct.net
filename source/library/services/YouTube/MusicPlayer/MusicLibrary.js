@@ -238,7 +238,7 @@
    */
   playTrackWithName (name) {
     //debugger;
-    this.debugLog("playTrackWithName('" + name + "')");
+    this.logDebug("playTrackWithName('" + name + "')");
     const track = this.trackWithName(name);
     if (!track) {
       console.warn(this.type() + " couldn't find track '" + name + "'");

@@ -95,7 +95,7 @@ class BasicJsonRepairShop extends Object {
     console.log(parts.join("\n"));
   }
 
-  debugLog (message) {
+  logDebug (message) {
     if (this.isLogEnabled()) {
       console.log(message);
     }

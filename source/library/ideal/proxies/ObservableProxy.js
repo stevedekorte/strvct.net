@@ -206,7 +206,7 @@
         this._observers.forEach((obs) => {
             if (obs[noteName]) {
                 if (this.isDebugging()) {
-                    this.debugLog(" posting " + noteName);
+                    this.logDebug(" posting " + noteName);
                 }
                 obs[noteName].call(obs, this.target(), propertyName);
             }

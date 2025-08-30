@@ -83,7 +83,7 @@
      * @category Debugging
      */
     show () {
-        this.debugLog(" size " + this.width() + "x" + this.height())
+        this.logDebug(" size " + this.width() + "x" + this.height())
     }
 
     /**

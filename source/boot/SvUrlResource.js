@@ -163,7 +163,7 @@
      * @param {string} s - The message to log.
      * @category Debugging
      */
-    debugLog (s) {
+    logDebug (s) {
         if (this.isDebugging()) {
             console.log(s);
         }
@@ -212,7 +212,7 @@
                 return this;
             } else {
                 // otherwise, load normally and cache result
-                //this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                //this.logDebug(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
                 //console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());

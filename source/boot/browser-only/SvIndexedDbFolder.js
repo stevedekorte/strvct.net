@@ -145,7 +145,7 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            this.debugLog("SvIndexedDbFolder: Storage will not be cleared except by explicit user action.");
+            this.logDebug("SvIndexedDbFolder: Storage will not be cleared except by explicit user action.");
         } else {
             this.logWarn(this.type() + " '" + this.path() + "'  may be cleared by the browser under storage pressure.");
         }
@@ -207,7 +207,7 @@
         }
 
         request.onerror = (error) => {
-            this.debugLog(" open db error: ", event);
+            this.logDebug(" open db error: ", event);
             this.onOpenError(event)
             openPromise.callRejectFunc(error);
         }
@@ -223,7 +223,7 @@
         let message = event.message
         if (!message) {
             message = "Unable to open IndexedDB.<br>May not work on Brave Browser."
-            this.debugLog(" open db error: ", event);
+            this.logDebug(" open db error: ", event);
         }
     }
 
@@ -232,7 +232,7 @@
      * @param {Event} event - The upgrade needed event.
      */
     onOpenUpgradeNeeded (event) {
-        this.debugLog(" onupgradeneeded - likely setting up local database for the first time");
+        this.logDebug(" onupgradeneeded - likely setting up local database for the first time");
 
         const db = event.target.result;
 
@@ -320,7 +320,7 @@
         };
 
         tx.oncomplete = (/*event*/) => {
-            self.debugLog("readWriteObjectStore tx oncomplete ", tx._note)
+            self.logDebug("readWriteObjectStore tx oncomplete ", tx._note)
         }
 
         const objectStore = tx.objectStore(this.storeName())
@@ -375,13 +375,13 @@
                     atPromise.callResolveFunc(undefined);
                 }
             } catch (e) {
-                self.debugLog(" promiseAt('" +  key + "') caught stack ", stack);
+                self.logDebug(" promiseAt('" +  key + "') caught stack ", stack);
                 throw e;
             }
         }
         
         request.onerror = (/*event*/) => {
-            self.debugLog("promiseAt('" + key + "') onerror", event.target.error);
+            self.logDebug("promiseAt('" + key + "') onerror", event.target.error);
             atPromise.callResolveFunc(undefined);
         }
         
@@ -483,7 +483,7 @@
      */
     async show () {
         const map = await this.promiseAsMap();
-        this.debugLog(" " + this.path() + " = " + map.description());
+        this.logDebug(" " + this.path() + " = " + map.description());
     }
 
     /**
@@ -503,16 +503,16 @@
         const self = this;
 
         objectStore._tx.oncomplete = (event) => {
-            self.debugLog("db promiseClear tx oncomplete");
+            self.logDebug("db promiseClear tx oncomplete");
             clearPromise.callResolveFunc(event);
         };
 
         request.onsuccess = (/*event*/) => {
-            self.debugLog("db promiseClear request onsuccess");
+            self.logDebug("db promiseClear request onsuccess");
         };
 
         request.onerror = (event) => {
-            self.debugLog("db promiseClear request error");
+            self.logDebug("db promiseClear request error");
             clearPromise.callRejectFunc(event);
         };
 
@@ -531,12 +531,12 @@
         const request = this.indexedDB().deleteDatabase(this.storeName());
 
         request.onerror = (error) => {
-            this.debugLog("Error deleting '" + this.storeName() + "'");
+            this.logDebug("Error deleting '" + this.storeName() + "'");
             deletePromise.callRejectFunc(error);
         }
 
         request.onsuccess = (event) => {
-            this.debugLog(" deleted successfully '" + this.storeName() + "'");
+            this.logDebug(" deleted successfully '" + this.storeName() + "'");
             deletePromise.callResolveFunc(event);
         }
 
@@ -567,7 +567,7 @@
     async promiseNewTx () {
         assert(this.isOpen(), "SvIndexedDbFolder is not open")
         //debugger;
-        this.debugLog(this.path() + " promiseNewTx")
+        this.logDebug(this.path() + " promiseNewTx")
         //debugger;
         /*
         const lastTx = this.lastTx()
@@ -709,7 +709,7 @@
      */
     async promiseAdd (key, value) { // private
         const tx = await this.promiseNewTx();
-        this.debugLog("idb tx atAdd ", key);
+        this.logDebug("idb tx atAdd ", key);
         tx.begin();
         //tx.setIsDebugging(this.isDebugging());
         tx.atAdd(key, value);

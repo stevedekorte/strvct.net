@@ -130,7 +130,7 @@
      * @category Transaction
      */
     begin () {
-        this.debugLog(this.dbFolder().path() + " TX BEGIN");
+        this.logDebug(this.dbFolder().path() + " TX BEGIN");
         this.assertNotCommitted();
         this.setTxRequestStack(new Error().stack);
         
@@ -159,7 +159,7 @@
         this.setIsAborted(true);
         this.markResolved();
         
-        this.debugLog("Transaction aborted");
+        this.logDebug("Transaction aborted");
         return this;
     }
     
@@ -178,7 +178,7 @@
         assert(typeof(key) === "string", "Key must be a string");
         this.assertNotCommitted();
         
-        this.debugLog(() => "REMOVE " + key);
+        this.logDebug(() => "REMOVE " + key);
         
         // Track the operation
         if (this.operations().has(key)) {
@@ -208,12 +208,12 @@
         
         // If no operations were added, just resolve
         if (!this.batch()) {
-            this.debugLog(" NO-OP COMMIT (no operations)");
+            this.logDebug(" NO-OP COMMIT (no operations)");
             this.markCompleted();
             return this.promiseForFinished();
         }
         
-        this.debugLog(" COMMITTING");
+        this.logDebug(" COMMITTING");
         
         try {
             // Check for consistency before committing
@@ -222,12 +222,12 @@
             // Write the batch
             await this.batch().write();
             
-            this.debugLog(" COMMIT COMPLETE");
+            this.logDebug(" COMMIT COMPLETE");
             this.markCompleted();
             return this.promiseForFinished();
             
         } catch (error) {
-            this.debugLog(" COMMIT ERROR: " + error.message);
+            this.logDebug(" COMMIT ERROR: " + error.message);
             this.markRejected(error);
             throw error;
         }
@@ -260,7 +260,7 @@
         this.assertValidKeyValue(key, value);
         this.assertNotCommitted();
         
-        this.debugLog(() => "ADD " + key + " '...'");
+        this.logDebug(() => "ADD " + key + " '...'");
         
         // Track the operation
         if (this.operations().has(key)) {
@@ -300,7 +300,7 @@
         this.assertValidKeyValue(key, value);
         this.assertNotCommitted();
         
-        this.debugLog(() => "UPDATE " + key);
+        this.logDebug(() => "UPDATE " + key);
         
         // Track the operation
         this.operations().set(key, { action: 'update', value: value });
@@ -334,7 +334,7 @@
         this.assertNotCommitted();
         assert(this.batch(), "Transaction not started");
         
-        this.debugLog(() => "REMOVE " + key);
+        this.logDebug(() => "REMOVE " + key);
         
         // Track the operation
         this.operations().set(key, { action: 'delete' });

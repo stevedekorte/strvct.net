@@ -483,7 +483,7 @@
    * Displays the request details
    */
   showRequest () {
-    this.debugLog(this.description());
+    this.logDebug(this.description());
   }
 
   /**
@@ -491,7 +491,7 @@
    */
   showResponse () {
     const json = this.json();
-    this.debugLog(" response json: ", json);
+    this.logDebug(" response json: ", json);
     if (json.error) {
       console.warn(this.type() + " ERROR:", json.error.message);
     }
@@ -1068,7 +1068,7 @@
     if (d) {
       const f = d[methodName]
       if (f) {
-        //this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
+        //this.logDebug(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
         f.apply(d, args)
         return true
       }

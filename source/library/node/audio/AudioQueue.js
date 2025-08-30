@@ -217,7 +217,7 @@
    */
   onSoundEnded (waSound) {
     waSound.removeDelegate(this);
-    this.debugLog("finished playing");
+    this.logDebug("finished playing");
     this.setCurrentSound(null);
     this.processQueue();
     this.didUpdateNode();
@@ -231,12 +231,12 @@
   pause () {
     throw new Error("pause not supported");
     /*
-    this.debugLog("pause()");
+    this.logDebug("pause()");
 
     const audio = this.currentSound();
     if (audio) {
       audio.pause();
-      this.debugLog("paused");
+      this.logDebug("paused");
     }
     */
   }
@@ -246,13 +246,13 @@
    * @description Resumes playing the current sound if one is paused.
    */
   resume () {
-    this.debugLog("resume()");
+    this.logDebug("resume()");
 
     const audio = this.currentSound();
     if (audio) {
       //if (audio.paused) {
         audio.play();
-        this.debugLog("resumed");
+        this.logDebug("resumed");
       //}
     }
   }

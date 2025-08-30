@@ -176,7 +176,7 @@
    * @category Event Handling
    */
   onSoundEnded (waSound) {
-    this.debugLog("finished playing");
+    this.logDebug("finished playing");
     this.setCurrentSound(null);
     this.processQueue();
     this.didUpdateNode();
@@ -187,12 +187,12 @@
    * @category Playback
    */
   stop () {
-    this.debugLog("pause()");
+    this.logDebug("pause()");
 
     const sound = this.currentSound();
     if (sound) {
       sound.stop();
-      this.debugLog("paused");
+      this.logDebug("paused");
     }
   }
 
@@ -201,12 +201,12 @@
    * @category Playback
    */
   resume () {
-    this.debugLog("resume()");
+    this.logDebug("resume()");
 
     const audio = this.currentSound();
     if (audio) {
       audio.play();
-      this.debugLog("resumed");
+      this.logDebug("resumed");
     }
   }
 

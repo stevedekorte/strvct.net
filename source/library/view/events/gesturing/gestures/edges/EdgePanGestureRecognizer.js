@@ -102,7 +102,7 @@
         const vt = this.viewTarget()
 
         if (!vt) {
-            this.debugLog(" missing viewTarget")
+            this.logDebug(" missing viewTarget")
             return max
         }
 

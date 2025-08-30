@@ -170,7 +170,7 @@
 
     onAlternate_D_KeyDown (/*event*/) {
         SvApp.shared().toggleDeveloperMode();
-        //this.debugLog(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", SvApp.shared().developerMode());
+        //this.logDebug(" onOptionShift_d_KeyDown ", event._id, " developerMode: ", SvApp.shared().developerMode());
         return true;
     }
 

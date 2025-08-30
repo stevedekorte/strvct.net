@@ -51,7 +51,7 @@
      * @category Event Handling
      */
     onDidEditNode () {
-        this.debugLog(" onDidEditNode")
+        this.logDebug(" onDidEditNode")
     }
 
     /**

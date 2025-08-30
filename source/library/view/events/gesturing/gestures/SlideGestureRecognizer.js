@@ -188,7 +188,7 @@
      * @category Gesture Control
      */
     finish () {
-        //this.debugLog(".finish()")
+        //this.logDebug(".finish()")
         this.setIsPressing(false)
         this.deactivate()
         this.stopDocListeners()

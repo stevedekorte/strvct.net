@@ -889,10 +889,10 @@
         const eventClass = event.__proto__.constructor;
 
         if (eventClass === MouseEvent) {
-            //this.debugLog(" got mouse")
+            //this.logDebug(" got mouse")
             return Mouse.shared().pointsForEvent(event)
         } else if (eventClass === TouchEvent) {   
-            //this.debugLog(" got touch")
+            //this.logDebug(" got touch")
             return TouchScreen.shared().pointsForEvent(event)
         }
         
@@ -1354,7 +1354,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     cancel () {
-        this.debugLog(" cancel")
+        this.logDebug(" cancel")
         //this.willCancel()
         this.sendCancelledMessage()
         //this.didCancel()

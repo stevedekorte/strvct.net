@@ -198,7 +198,7 @@
     this.updateSubtitle("sending request");
 
     const ssml = speaker.ssmlRequestForText(text);
-    this.debugLog("start(" + text + ")");
+    this.logDebug("start(" + text + ")");
 
     const response = await fetch(
       this.requestUrl(),

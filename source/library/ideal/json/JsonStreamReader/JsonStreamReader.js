@@ -219,7 +219,7 @@
     this.containerStack().push(container);
     this.sendDelegate("onJsonStreamReaderPushContainer", [this, container]);
 
-    //this.debugLog("push ", JSON.stableStringifyWithStdOptions(container));
+    //this.logDebug("push ", JSON.stableStringifyWithStdOptions(container));
     //this.show();
     return this;
   }
@@ -290,7 +290,7 @@
    */
   onKey (key) {
     this.pushKey(key);
-    //this.debugLog("k '" + key + "'");
+    //this.logDebug("k '" + key + "'");
   }
 
   /**
@@ -308,7 +308,7 @@
       container[this.currentKey()] = v;
       this.popKey();
     }
-    //this.debugLog("v " + JSON.stableStringifyWithStdOptions(v));
+    //this.logDebug("v " + JSON.stableStringifyWithStdOptions(v));
   }
 
   /**
@@ -320,7 +320,7 @@
     const item = {};
     this.onValue(item);
     this.pushContainer(item);
-    //this.debugLog("onOpenObject ");
+    //this.logDebug("onOpenObject ");
     this.onKey(key);
   }
 
@@ -331,7 +331,7 @@
   onCloseObject () {
     assert(this.containerStack().length > 1, "can't close root object");
     this.popContainer();
-    //this.debugLog("onCloseObject ", JSON.stableStringifyWithStdOptions(item));
+    //this.logDebug("onCloseObject ", JSON.stableStringifyWithStdOptions(item));
   }
 
   /**
@@ -342,7 +342,7 @@
     const item = [];
     this.onValue(item);
     this.pushContainer(item);
-    //this.debugLog("onOpenArray ");
+    //this.logDebug("onOpenArray ");
   }
 
   /**
@@ -352,7 +352,7 @@
   onCloseArray () {
     assert(this.containerStack().length > 1, "can't close root array");
     this.popContainer();
-    //this.debugLog("onCloseArray ", JSON.stableStringifyWithStdOptions(item));
+    //this.logDebug("onCloseArray ", JSON.stableStringifyWithStdOptions(item));
   }
 
   /**

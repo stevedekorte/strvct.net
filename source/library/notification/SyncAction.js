@@ -115,7 +115,7 @@
      * @category Action Execution
      */
     send () {
-        //this.debugLog(() => "   <- sending " + this.description())
+        //this.logDebug(() => "   <- sending " + this.description())
         const t = this.target();
         const m = this.method();
         const a = this.args();

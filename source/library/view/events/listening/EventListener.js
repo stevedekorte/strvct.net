@@ -321,7 +321,7 @@
             if (!this.isListening()) {
                 this.incrementListenCount()
 
-                this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
+                this.logDebug(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
                 assert(this.isValid())
                 this._isListening = true; // can't use setter here as it would cause a loop
                 this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
@@ -476,7 +476,7 @@
 
             this.decrementListenCount()
 
-            //this.debugLog(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
+            //this.logDebug(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
             t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
             this._isListening = false; // can't use setter here as it would cause a loop
         }

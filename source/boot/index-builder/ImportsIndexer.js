@@ -72,7 +72,7 @@ class ImportsIndexer {
      * @param {string} s
      * @category Debugging
      */
-    debugLog (s) {
+    logDebug (s) {
         if (this.isDebugging()) {
             console.log(s);
         }

@@ -241,7 +241,7 @@
    * @category Debugging
    */
   showRequest () {
-    this.debugLog(
+    this.logDebug(
       " request " +
       this.requestId() +
       " apiUrl: " +
@@ -258,7 +258,7 @@
    */
   showResponse () {
     const json = this.json();
-    this.debugLog(" response json: ", json);
+    this.logDebug(" response json: ", json);
     if (json.error) {
       console.warn(this.type() + " ERROR:", json.error.message);
     }

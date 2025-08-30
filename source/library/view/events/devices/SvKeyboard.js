@@ -390,7 +390,7 @@
             key.onKeyDown(event);
 
             if (this.isDebugging()) {
-                this.debugLog(" " + this.downMethodNameForEvent(event));
+                this.logDebug(" " + this.downMethodNameForEvent(event));
             }
         } else {
             console.warn("SvKeyboard.shared() no key found for event ", event);
@@ -417,8 +417,8 @@
         key.onKeyUp(event);
 
         if (this.isDebugging()) {
-            this.debugLog(" " + this.upMethodNameForEvent(event));
-            this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp");
+            this.logDebug(" " + this.upMethodNameForEvent(event));
+            this.logDebug(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp");
         }
 
         return shouldPropogate;
@@ -672,7 +672,7 @@
      * @description Shows the currently down keys
      */
     showDownKeys () {
-        this.debugLog(" downKeys: ", this.downKeyNames());
+        this.logDebug(" downKeys: ", this.downKeyNames());
     }
 
     /**

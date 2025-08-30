@@ -467,7 +467,7 @@
    * @category Audio
    */
   pause() {
-    this.debugLog("pause()");
+    this.logDebug("pause()");
     this.audioQueue().pause();
   }
 
@@ -476,7 +476,7 @@
    * @category Audio
    */
   resume () {
-    this.debugLog("resume()");
+    this.logDebug("resume()");
     this.audioQueue().resume();
   }
 

@@ -229,7 +229,7 @@
     scheduleTargetAndMethod (target, syncMethod, optionalOrder) { // higher order performed last
         if (!this.hasScheduledTargetAndMethod(target, syncMethod)) {
             const newAction = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder);
-            this.debugLog(() => "    -> scheduling " + newAction.description());
+            this.logDebug(() => "    -> scheduling " + newAction.description());
             
             if (syncMethod !== "processPostQueue") {
                 if (this.currentAction() && this.currentAction().equals(newAction)) {
@@ -411,7 +411,7 @@
         this.setIsProcessing(true);
         let error = null;
 
-        this.debugLog("Sync");
+        this.logDebug("Sync");
         
         const actions = this.orderedActions();
         this.actions().clear();
@@ -460,12 +460,12 @@
             
         }
         if (this.isProcessing()) {
-            this.debugLog(() => "fullSyncNow called while isProcessing so SKIPPING");
+            this.logDebug(() => "fullSyncNow called while isProcessing so SKIPPING");
             return this;
         }
 
         if (this.actionCount()) {
-            this.debugLog(" --- fullSyncNow start --- ");
+            this.logDebug(" --- fullSyncNow start --- ");
             let count = 0;
             const maxCount = 10;
 
@@ -485,7 +485,7 @@
                 assert (count < maxCount)
             }
 
-            this.debugLog(" --- fullSyncNow end --- ");
+            this.logDebug(" --- fullSyncNow end --- ");
         }
 
         this.pushNextCycleActions();

@@ -16,7 +16,7 @@
      * @category Styling
      */
     applyStyles () {
-        //this.debugLog(".applyStyles()")
+        //this.logDebug(".applyStyles()")
         super.applyStyles()
         return this
     }

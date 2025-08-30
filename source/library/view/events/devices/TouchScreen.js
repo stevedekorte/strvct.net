@@ -114,7 +114,7 @@
         this.startListening()
         this.setIsDebugging(false)
         if (this.isDebugging()) {
-            this.debugLog(".init()")
+            this.logDebug(".init()")
         }
         return this
     }

@@ -307,7 +307,7 @@
         if (tile && canAdd) {
             const canCopy = !Type.isNullOrUndefined(tile.node().copy);
             if (canCopy) { 
-                //this.debugLog(" duplicate selected tile " + this.selectedTile().node().title());
+                //this.logDebug(" duplicate selected tile " + this.selectedTile().node().title());
                 const subnode = tile.node();
                 const newSubnode = subnode.copy();
                 const index = node.indexOfSubnode(subnode);
@@ -431,7 +431,7 @@
      * @category Events
      */
     onDoubleClick (/*event*/) {
-        //this.debugLog(".onDoubleClick()");
+        //this.logDebug(".onDoubleClick()");
         return true;
     }
 
@@ -475,22 +475,22 @@
 
     onMetaLeft_c_KeyDown (/*event*/) {
         // MacOScopy
-        this.debugLog("onMetaLeft_c_KeyDown");
+        this.logDebug("onMetaLeft_c_KeyDown");
     }
 
     onMetaLeft_v_KeyDown (/*event*/) {
         // MacOS paste
-        this.debugLog("onMetaLeft_v_KeyDown");
+        this.logDebug("onMetaLeft_v_KeyDown");
     }
 
     onControl_c_KeyDown (/*event*/) {
         // Windows copy
-        this.debugLog("onControl_c_KeyDown");
+        this.logDebug("onControl_c_KeyDown");
     }
 
     onControl_v_KeyDown (/*event*/) {
         // Windows paste
-        this.debugLog("onControl_v_KeyDown");
+        this.logDebug("onControl_v_KeyDown");
     }
 
 }.initThisClass());

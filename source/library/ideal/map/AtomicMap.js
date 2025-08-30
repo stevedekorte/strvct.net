@@ -178,7 +178,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
             await lastPromise;
         }
 
-        this.debugLog(() => " begin --- (queue size is " + this.beginPromiseFifoQueue().length + ")");
+        this.logDebug(() => " begin --- (queue size is " + this.beginPromiseFifoQueue().length + ")");
         this.assertAccessible();
         this.assertNotInTx();
         this.setSnapshot(this.map().shallowCopy());
@@ -192,7 +192,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
      * @returns {AtomicMap} This instance of AtomicMap.
      */
     revert () {
-        this.debugLog(() => " revert ---");
+        this.logDebug(() => " revert ---");
         this.assertInTx();
         this.setMap(this.snapshot());
         this.setSnapshot(null);
@@ -219,7 +219,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
      * @returns {Promise} A Promise that resolves when the changes have been committed.
      */
     async promiseCommit () {
-        this.debugLog(() => " prepare commit ---");
+        this.logDebug(() => " prepare commit ---");
         this.assertInTx();
         if (this.hasChanges()) {
             await this.promiseApplyChanges();

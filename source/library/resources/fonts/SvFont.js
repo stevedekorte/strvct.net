@@ -230,7 +230,7 @@ These properties help you match the size of the fallback font to the final webfo
      */
     onLoadError (error) {
         if (this.isDebugging()) {
-            this.debugLog(".onLoadError() ", error)
+            this.logDebug(".onLoadError() ", error)
         }
         return this
     }

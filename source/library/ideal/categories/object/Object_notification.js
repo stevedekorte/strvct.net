@@ -136,7 +136,7 @@
         const note = this.newNoteNamed(aNoteName);
         note.setInfo(info);
         note.post();
-        //this.debugLog(".postNoteNamed('" + aNoteName + "')");
+        //this.logDebug(".postNoteNamed('" + aNoteName + "')");
         return note;
     }
 

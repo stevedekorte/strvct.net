@@ -270,7 +270,7 @@
      * @category Event Handling
      */
     onMouseDown (event) {
-        //this.debugLog(" onMouseDown")
+        //this.logDebug(" onMouseDown")
         this.setIsDragging(true)
 
         this.removeParentTracking()
@@ -318,7 +318,7 @@
      * @category Event Handling
      */
     onMouseOver (event) {
-        //this.debugLog(" onMouseOver")
+        //this.logDebug(" onMouseOver")
         this.setIsHighlighted(true)
         return false
     }
@@ -330,7 +330,7 @@
      * @category Event Handling
      */
     onMouseLeave (event) {
-        //this.debugLog(" onMouseLeave")
+        //this.logDebug(" onMouseLeave")
         this.setIsHighlighted(false)
         return false
     }

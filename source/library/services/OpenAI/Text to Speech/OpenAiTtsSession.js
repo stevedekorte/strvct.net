@@ -493,7 +493,7 @@
    * @description Pauses audio playback.
    */
   pause () {
-    this.debugLog("pause()");
+    this.logDebug("pause()");
     this.audioQueue().pause();
   }
 
@@ -501,7 +501,7 @@
    * @description Resumes audio playback.
    */
   resume () {
-    this.debugLog("resume()");
+    this.logDebug("resume()");
     this.audioQueue().resume();
   }
 

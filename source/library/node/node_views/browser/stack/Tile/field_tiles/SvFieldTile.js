@@ -517,7 +517,7 @@
 
     syncFromNode () {
         super.syncFromNode()
-        //this.debugLog(" syncFromNode")
+        //this.logDebug(" syncFromNode")
 		
         const node = this.node()
         node.prepareToSyncToView()
@@ -773,7 +773,7 @@
      * @returns {SvFieldTile} The current instance.
      */
     onEnterKeyUp (/*event*/) {
-        //this.debugLog(".onEnterKeyUp()")
+        //this.logDebug(".onEnterKeyUp()")
         if (this.valueView().activate) {
             this.valueView().activate()
         }
@@ -787,7 +787,7 @@
      */
     setBackgroundColor (c) {
         /*
-        this.debugLog(".setBackgroundColor ", c)
+        this.logDebug(".setBackgroundColor ", c)
         if (c !== "white") {
             console.log("not white")
         }

@@ -135,7 +135,7 @@
      * @category Event Handling
      */
     onShow () {
-        this.debugLog("onShow");
+        this.logDebug("onShow");
     }
 
     /**
@@ -143,7 +143,7 @@
      * @category Event Handling
      */
     onClick () {
-        this.debugLog("onClick");
+        this.logDebug("onClick");
     }
 
     /**
@@ -151,7 +151,7 @@
      * @category Event Handling
      */
     onClose () {
-        this.debugLog("onClose");
+        this.logDebug("onClose");
     }
 
     /**
@@ -160,7 +160,7 @@
      * @category Error Handling
      */
     onError (error) {
-        this.debugLog("onError " + error);
+        this.logDebug("onError " + error);
         this.setError(error);
     }
 
@@ -170,7 +170,7 @@
      * @category Event Handling
      */
     onAction (event) {
-        this.debugLog("onAction '" + event.action + "'");
+        this.logDebug("onAction '" + event.action + "'");
         this.setChoice(event.action);
     }
 

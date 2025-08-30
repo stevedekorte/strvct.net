@@ -102,7 +102,7 @@
      * @category Debugging
      */
     show () {
-        this.debugLog(":");
+        this.logDebug(":");
         this.styleSheets().forEach(sheet => sheet.show());
         return this;
     }

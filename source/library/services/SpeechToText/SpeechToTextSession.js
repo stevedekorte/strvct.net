@@ -403,7 +403,7 @@
    * @param {Event} event - The result event.
    */
   onResult (event) {
-    //this.debugLog("onResult")
+    //this.logDebug("onResult")
 
     let interim = '';
     let final = '';
@@ -523,7 +523,7 @@
    * @returns {Promise} The transcript promise.
    */
   start () {
-    this.debugLog("start")
+    this.logDebug("start")
     if (!this.isRecording()) {
       this.setTranscriptPromise(Promise.clone());
       this.clearTranscript();
@@ -550,7 +550,7 @@
    * @returns {SpeechToTextSession} The current instance.
    */
   stop () {
-    //this.debugLog("stop")
+    //this.logDebug("stop")
     if (this.isRecording()) {
       this.clearInputTimeout()
       this.recognition().stop();

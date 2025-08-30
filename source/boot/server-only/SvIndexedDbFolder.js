@@ -171,7 +171,7 @@ const { ClassicLevel } = require('classic-level');
             this.setLevelDb(levelDb);  // This is fine - it's an instance
             this.setDb(levelDb);       // This is fine - it's an instance
             
-            this.debugLog(`Opened LevelDB at ${dbPath}`);
+            this.logDebug(`Opened LevelDB at ${dbPath}`);
             return Promise.resolve();
         } catch (error) {
             this.logError(`Failed to open LevelDB at ${dbPath}: ${error.message}`);
@@ -310,7 +310,7 @@ const { ClassicLevel } = require('classic-level');
         await this.promiseOpen();
         
         await this.levelDb().clear();
-        this.debugLog("Database cleared");
+        this.logDebug("Database cleared");
         return Promise.resolve();
     }
     
@@ -328,7 +328,7 @@ const { ClassicLevel } = require('classic-level');
         
         try {
             await fs.rm(dbPath, { recursive: true, force: true });
-            this.debugLog(`Deleted database at ${dbPath}`);
+            this.logDebug(`Deleted database at ${dbPath}`);
         } catch (error) {
             this.logError(`Failed to delete database at ${dbPath}: ${error.message}`);
             throw error;
@@ -345,7 +345,7 @@ const { ClassicLevel } = require('classic-level');
     async promiseNewTx () {
         await this.promiseOpen();
         
-        this.debugLog(this.path() + " promiseNewTx");
+        this.logDebug(this.path() + " promiseNewTx");
         
         // Note: Need to ensure SvIndexedDbTx_node is loaded
         const newTx = SvIndexedDbTx.clone().setDbFolder(this);

@@ -85,7 +85,7 @@
      * @category Event Handling
      */
     doPress (event) { 
-        this.debugLog("doPress");
+        this.logDebug("doPress");
         this.setIsPressing(true);
         this.setDownEvent(event);
         this.startDocListeners();
@@ -115,7 +115,7 @@
      * @category Gesture Control
      */
     attemptBegin () {
-        this.debugLog("attemptBegin")
+        this.logDebug("attemptBegin")
 
         if (!this.doesTargetAccept()) {
             return;
@@ -136,7 +136,7 @@
      * @category Event Handling
      */
     onMouseMoveCapture (event) { // tmp for debugging dragview
-        this.debugLog("onMouseMoveCapture")
+        this.logDebug("onMouseMoveCapture")
         super.onMouseMoveCapture(event)
     }
 

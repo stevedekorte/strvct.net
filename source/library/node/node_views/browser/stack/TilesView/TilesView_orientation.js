@@ -38,7 +38,7 @@
         this.setHeight("fit-content")
         this.setMinHeight("100%")
 
-        this.debugLog("makeOrientationRight on ", this.node() ? this.node().title() : null)
+        this.logDebug("makeOrientationRight on ", this.node() ? this.node().title() : null)
 
         if (this.node()) {
             const align = this.node().nodeChildrenAlignment()
@@ -62,7 +62,7 @@
         this.setWidth("fit-content")
         this.setMinAndMaxHeight("100%")
 
-        this.debugLog("makeOrientationDown on ", this.node() ? this.node().title() : null)
+        this.logDebug("makeOrientationDown on ", this.node() ? this.node().title() : null)
 
         if (this.node()) {
             const align = this.node().nodeChildrenAlignment()

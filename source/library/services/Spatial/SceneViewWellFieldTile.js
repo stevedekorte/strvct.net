@@ -127,7 +127,7 @@
     
     /*
     didUpdateImageWellView (anImageWell) {
-        //this.debugLog(".didUpdateImageWellView()")
+        //this.logDebug(".didUpdateImageWellView()")
         this.scheduleSyncToNode() 
         return this
     }

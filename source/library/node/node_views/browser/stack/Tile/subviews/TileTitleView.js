@@ -62,7 +62,7 @@
      */
     selectNextKeyView () {
         /*
-        this.debugLog(".selectNextKeyView()")
+        this.logDebug(".selectNextKeyView()")
         const tile = this.parentView().parentView();
         const nextTile = this.row().column().selectNextTile()
         */

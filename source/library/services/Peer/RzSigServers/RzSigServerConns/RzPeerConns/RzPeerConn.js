@@ -467,7 +467,7 @@
    * @description Handles the open event of the connection.
    */
   onOpen () {
-    this.debugLog("onOpen");
+    this.logDebug("onOpen");
     this.clearChunks();
     if (this.useKeepAlive()) {
       this.sendPing();
@@ -544,7 +544,7 @@
       const json = JSON.parse(s);
       this.clearChunks();
 
-      //this.debugLog(this.type() + " completedChunks ", JSON.stringify(json));
+      //this.logDebug(this.type() + " completedChunks ", JSON.stringify(json));
 
       this.sendDelegateMessage("onPeerData", [this, json]);
     }
@@ -556,7 +556,7 @@
    */
   onError (error) {
     this.setError(error);
-    this.debugLog("onError:", error);
+    this.logDebug("onError:", error);
     this.setStatus("error: " + error.message);
 
     this.sendDelegateMessage("onPeerError", [this, error]);
@@ -585,7 +585,7 @@
    * @description Handles the close event of the connection.
    */
   onClose () {
-    this.debugLog("onClose");
+    this.logDebug("onClose");
     this.setStatus("closed");
     this.cancelNextPingTimeout();
 
@@ -638,13 +638,13 @@
     if (d) {
       const m = d[methodName];
       if (m) {
-        this.debugLog("sending delegate message " + methodName);
+        this.logDebug("sending delegate message " + methodName);
         m.apply(d, args);
       } else {
-        this.debugLog("delegate " + this.delegate().typeId() + " missing method " + methodName);
+        this.logDebug("delegate " + this.delegate().typeId() + " missing method " + methodName);
       }
     } else {
-      this.debugLog("no delegate");
+      this.logDebug("no delegate");
     }
   }
 

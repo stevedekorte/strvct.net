@@ -242,7 +242,7 @@
    */
   setupPlayer () {
     console.log("------------- setup YouTubePlayer ---------------");
-    this.debugLog("setupPlayer()");
+    this.logDebug("setupPlayer()");
     const json = {
       height: "0",
       width: "0",
@@ -298,7 +298,7 @@
     }
 
     await this.playerPromise();
-    this.debugLog("play() after promise");
+    this.logDebug("play() after promise");
 
     const startSeconds = 0.0;
     if (this.videoId()) {
@@ -373,7 +373,7 @@
   onPlayerError (event) {
     debugger;
     const error = Number(event.data);
-    this.debugLog(
+    this.logDebug(
       "------------------ onPlayerError " +
         error +
         " videoId: '" +
@@ -411,7 +411,7 @@
    * @param {Object} event - The ready event.
    */
   onPlayerReady (/*event*/) {
-    this.debugLog("onPlayerReady()");
+    this.logDebug("onPlayerReady()");
     this.promiseUpdateVolume();
 
     assert(this._playerPromise);
@@ -423,37 +423,37 @@
    * @param {Object} event - The state change event.
    */
   onPlayerStateChange (event) {
-    this.debugLog("onPlayerStateChange " + event.data);
+    this.logDebug("onPlayerStateChange " + event.data);
 
     const state = Number(event.data);
     switch (state) {
       case -1:
-        this.debugLog("Video unstarted");
+        this.logDebug("Video unstarted");
         break;
 
       case YT.PlayerState.ENDED:
-        this.debugLog("Video ENDED");
+        this.logDebug("Video ENDED");
         this.onPlayerEnd(event);
         break;
 
       case YT.PlayerState.PLAYING:
-        this.debugLog("Video PLAYING");
+        this.logDebug("Video PLAYING");
         break;
 
       case YT.PlayerState.PAUSED:
-        this.debugLog("Video PAUSED");
+        this.logDebug("Video PAUSED");
         break;
 
       case YT.PlayerState.BUFFERING:
-        this.debugLog("Video BUFFERING");
+        this.logDebug("Video BUFFERING");
         break;
 
       case YT.PlayerState.CUED:
-        this.debugLog("Video CUED");
+        this.logDebug("Video CUED");
         break;
 
       default:
-        this.debugLog("Video unknown state chage");
+        this.logDebug("Video unknown state chage");
     }
 
     this.didUpdateNodeIfInitialized();
@@ -519,9 +519,9 @@
     if (this.isReady()) {
       this.player().setVolume(v);
       if(v !== this.player().getVolume()) {
-        this.debugLog("WARNING: setVolume not equal getVolume after set");
-        this.debugLog("set volume:", v);
-        this.debugLog("getVolume: ", this.player().getVolume());
+        this.logDebug("WARNING: setVolume not equal getVolume after set");
+        this.logDebug("set volume:", v);
+        this.logDebug("getVolume: ", this.player().getVolume());
       }
     }
   }
