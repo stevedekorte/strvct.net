@@ -293,14 +293,10 @@
     updateNoteViewStyle () {
         const nv = this.noteView();
         const node = this.node();
-        /*
-        if (node && node.isKindOf(UoRollRequestMessage)) {
-            debugger;
-        }
-        */
-        if (node && node.noteButtonInfo) {
+
+        if (node && node.noteButtonInfo && this.noteView().innerHtml().length > 0) {
             const info = node.noteButtonInfo();
-            if (info && this.noteView().innerHtml().length > 0) {
+            if (info) {
                 // set nv to look like a button
                 /*
                 if (nv.innerHtml() === "TAP TO ROLL") {
@@ -311,16 +307,22 @@
                     nv.setColor(info.color);
                 }
                 if (info.backgroundColor) {
-                    nv.setRealBackgroundColor(info.backgroundColor);
-                    if(nv.backgroundColor() !== info.backgroundColor) {
-                        debugger;
-                        nv.setBackgroundColor(info.backgroundColor);
-                    }
+                    nv.setRealBackgroundColor(info.backgroundColor); // note overrides normal background color
+                }
+                if (info.opacity) {
+                    nv.setOpacity(info.opacity);
                 }
                 nv.setPaddingLeft("1em");
                 nv.setPaddingRight("1em");
                 nv.setBorderRadius("0.33em");
             }
+        } else {
+            nv.setRealBackgroundColor(null);
+            nv.setColor(null);
+            nv.setOpacity(null);
+            nv.setPaddingLeft(null);
+            nv.setPaddingRight(null);
+            nv.setBorderRadius(null);
         }
     }
 
