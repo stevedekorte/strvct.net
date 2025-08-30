@@ -413,21 +413,21 @@
     };
   }
 
-  xhrForUrl (url, method, bodyString) {
+  async xhrForUrl (url, method, bodyString) {
     const xhr = SvXhrRequest.clone();
     xhr.setUrl(url);
     xhr.setMethod(method);
     xhr.setHeaders({
-      "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
+      "Authorization": `Bearer ` + await this.service().apiKeyOrUserAuthToken()
     });
     xhr.setDelegate(this);
     xhr.setBody(bodyString);
     return xhr;
   }
 
-  proxyXhrForUrl (url, method, bodyString) {
+  async proxyXhrForUrl (url, method, bodyString) {
     const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
-    return this.xhrForUrl(proxyUrl, method, bodyString);
+    return await this.xhrForUrl(proxyUrl, method, bodyString);
   }
 
   async getInitImageId () {
@@ -436,7 +436,7 @@
     const initUrl = "https://cloud.leonardo.ai/api/rest/v1/init-image";
     const bodyJson = await this.asynInitRequestBodyJson();
     const bodyString = JSON.stringify(bodyJson);
-    const xhr = this.proxyXhrForUrl(initUrl, "POST", bodyString);
+    const xhr = await this.proxyXhrForUrl(initUrl, "POST", bodyString);
     await xhr.asyncSend();
 
     if (xhr.isSuccess()) {
@@ -496,14 +496,14 @@
     // 3. POST it to S3
     //const res = await fetch(proxyUrl, { method: "POST", body: form });
 
-    const xhr = this.proxyXhrForUrl(url, "POST", form);
+    const xhr = await this.proxyXhrForUrl(url, "POST", form);
     //const xhr = this.xhrForUrl(url, "POST", form);
     // Keep Authorization for proxy server authentication
     // IMPORTANT: Do NOT set Content-Type header for multipart/form-data
     // The browser will automatically set it with the correct boundary parameter
     
     xhr.setHeaders({
-      "Authorization": `Bearer ` + this.service().apiKeyOrUserAuthToken()
+      "Authorization": `Bearer ` + await this.service().apiKeyOrUserAuthToken()
       // Removed "Content-Type": "multipart/form-data" - browser must set this with boundary
     });
     

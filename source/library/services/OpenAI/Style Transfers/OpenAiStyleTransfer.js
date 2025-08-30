@@ -388,7 +388,7 @@
      */
     async generateWithStyleReference (prompt, styleImageUrl, styleImageDataUrl) {
         try {
-            const apiKey = this.service().apiKeyOrUserAuthToken();
+            const apiKey = await this.service().apiKeyOrUserAuthToken();
             
             // Step 1: Upload the style image to OpenAI to get an internal ID
             console.log("=== OpenAI Style Transfer - Uploading Style Image ===");

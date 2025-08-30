@@ -285,10 +285,10 @@
 
   // --- start generation ---
 
-  setupXhrRequest () {
+  async setupXhrRequest () {
     const endpoint = 'https://cloud.leonardo.ai/api/rest/v1/generations/' + this.generationId();
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-    const apiKey = this.service().apiKeyOrUserAuthToken();
+    const apiKey = await this.service().apiKeyOrUserAuthToken();
 
     const xhr = this.xhrRequest();
     xhr.clear();
@@ -349,7 +349,7 @@
 
 
     try {
-      this.setupXhrRequest();
+      await this.setupXhrRequest();
       await this.xhrRequest().asyncSend();
       //debugger;
       // we use onRequestError/onRequestFailure should cover normal cases

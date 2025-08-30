@@ -263,7 +263,7 @@
     this.setStatus("fetching response...");
     this.sendDelegate("onImagePromptStart", [this]);
 
-    const apiKey = this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
+    const apiKey = await this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // OpenAI image generation endpoint (gpt-image-1, NOT DALL-E)
     /*
     // NOT USED - we use gpt-image-1, not dall-e

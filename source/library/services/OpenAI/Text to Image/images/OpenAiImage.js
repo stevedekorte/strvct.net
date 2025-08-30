@@ -240,7 +240,7 @@
     const proxyUrl = urlObject.toString(); // send it to the old proxy server
 
 
-    const apiKey = OpenAiService.shared().apiKeyOrUserAuthToken();
+    const apiKey = await OpenAiService.shared().apiKeyOrUserAuthToken();
 
     try {
 

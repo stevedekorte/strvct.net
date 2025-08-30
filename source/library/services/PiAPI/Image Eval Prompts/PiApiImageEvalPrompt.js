@@ -334,7 +334,7 @@
             throw new Error("No images to evaluate");
         }
         
-        const apiKey = this.openAiService().apiKeyOrUserAuthToken();
+        const apiKey = await this.openAiService().apiKeyOrUserAuthToken();
         const endpoint = 'https://api.openai.com/v1/chat/completions';
         
         // Use the content prompt (not the combined one) for evaluation
@@ -554,24 +554,24 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
 
     /**
      * @description Override to check both services.
-     * @returns {boolean} True if generation can be performed, false otherwise.
+     * @returns {Promise<boolean>} True if generation can be performed, false otherwise.
      * @category Validation
      */
-    canGenerate () {
+    async canGenerate () {
         const hasContent = super.canGenerate();
-        const hasOpenAiKey = !this.autoEvaluate() || this.openAiService().hasApiKey();
+        const hasOpenAiKey = !this.autoEvaluate() || await this.openAiService().hasApiKey();
         return hasContent && hasOpenAiKey;
     }
 
     /**
      * @description Gets information about the generate action.
-     * @returns {Object} The action information.
+     * @returns {Promise<Object>} The action information.
      * @category Action
      */
-    generateActionInfo () {
-        const baseInfo = super.generateActionInfo();
+    async generateActionInfo () {
+        const baseInfo = await super.generateActionInfo();
         
-        if (this.autoEvaluate() && !this.openAiService().hasApiKey()) {
+        if (this.autoEvaluate() && !(await this.openAiService().hasApiKey())) {
             return {
                 isEnabled: false,
                 isVisible: true,

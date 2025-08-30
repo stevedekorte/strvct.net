@@ -618,10 +618,10 @@ Example generation body json:
 
   // --- start generation ---
 
-  setupXhrRequest () {
+  async setupXhrRequest () {
     const endpoint = 'https://cloud.leonardo.ai/api/rest/v1/generations';
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-    const apiKey = this.service().apiKeyOrUserAuthToken();
+    const apiKey = await this.service().apiKeyOrUserAuthToken();
 
     const xhr = this.xhrRequest();
     xhr.clear();
@@ -684,7 +684,7 @@ Example generation body json:
     this.setStatus("Sending Generation Request...");
     this.sendDelegate("onImagePromptStart", [this]);
 
-    this.setupXhrRequest();
+    await this.setupXhrRequest();
 
     try {
       await this.xhrRequest().asyncSend(); // we use onRequestError instead of throwing an error

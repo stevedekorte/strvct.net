@@ -267,12 +267,20 @@
 
   /**
    * @description Gets information about the generate action.
-   * @returns {Object} The action information.
+   * @returns {Object|Promise<Object>} The action information.
    * @category Action
    */
   generateActionInfo () {
+    const canGen = this.canGenerate();
+    // If canGenerate returns a promise (from a subclass), handle it
+    if (canGen && typeof canGen.then === 'function') {
+      return canGen.then(isEnabled => ({
+        isEnabled: isEnabled,
+        isVisible: true
+      }));
+    }
     return {
-        isEnabled: this.canGenerate(),
+        isEnabled: canGen,
         isVisible: true
     }
   }
@@ -305,7 +313,7 @@
     this.setStatus("submitting task...");
     this.sendDelegate("onImagePromptStart", [this]);
 
-    const apiKey = this.service().apiKeyOrUserAuthToken();
+    const apiKey = await this.service().apiKeyOrUserAuthToken();
     const endpoint = 'https://api.piapi.ai/api/v1/task';
     
     // Sanitize the prompt before sending to avoid Midjourney parameter issues

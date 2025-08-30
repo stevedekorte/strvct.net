@@ -207,17 +207,17 @@
 
   /**
    * @description Creates a proxy XHR request for the given URL.
-   * @returns {SvXhrRequest} An XHR request configured for proxy.
+   * @returns {Promise<SvXhrRequest>} An XHR request configured for proxy.
    * @category Request Preparation
    */
-  proxyXhrForUrl () {
+  async proxyXhrForUrl () {
     const SvXhrRequest = SvGlobals.globals().SvXhrRequest;
     const xhr = SvXhrRequest.clone();
     xhr.setUrl(this.proxyUrl());
     xhr.setMethod("POST");
     xhr.setHeaders({
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${this.service().apiKeyOrUserAuthToken()}`
+      "Authorization": `Bearer ${await this.service().apiKeyOrUserAuthToken()}`
     });
     xhr.setDelegate(this);
     xhr.setBody(JSON.stringify(this.bodyJson()));
@@ -283,7 +283,7 @@
       }
 
       // Create XHR request with proxy support
-      const xhrRequest = this.proxyXhrForUrl();
+      const xhrRequest = await this.proxyXhrForUrl();
       this.setSvXhrRequest(xhrRequest);
       
       // Send the request

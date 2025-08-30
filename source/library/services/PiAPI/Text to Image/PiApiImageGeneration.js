@@ -269,10 +269,10 @@
 
   // --- start generation ---
 
-  setupXhrRequest () {
+  async setupXhrRequest () {
     const endpoint = 'https://api.piapi.ai/api/v1/task/' + this.taskId();
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-    const apiKey = this.service().apiKeyOrUserAuthToken();
+    const apiKey = await this.service().apiKeyOrUserAuthToken();
 
     const xhr = this.xhrRequest();
     xhr.clear();
@@ -338,7 +338,7 @@
     this.setStatus("Poll " + this.pollCount() + " of " + this.maxPollCount());
 
     try {
-      this.setupXhrRequest();
+      await this.setupXhrRequest();
       await this.xhrRequest().asyncSend();
       //debugger;
       // we use onRequestError/onRequestFailure should cover normal cases

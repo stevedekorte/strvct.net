@@ -168,11 +168,12 @@
 
   /**
    * Checks if the request can be spoken.
-   * @returns {boolean} True if the request can be spoken, false otherwise.
+   * @returns {Promise<boolean>} True if the request can be spoken, false otherwise.
    * @category Validation
    */
-  canSpeak () {
-    const hasKey = speaker.service().apiKeyOrUserAuthToken() !== null;
+  async canSpeak () {
+    const speaker = this.speaker();
+    const hasKey = await speaker.service().apiKeyOrUserAuthToken() !== null;
     const hasText = this.cleanedText().length > 0;
     return hasKey && hasText;
   }
@@ -204,7 +205,7 @@
       {
         method: "POST",
         headers: {
-          "Ocp-Apim-Subscription-Key": speaker.service().apiKeyOrUserAuthToken(),
+          "Ocp-Apim-Subscription-Key": await speaker.service().apiKeyOrUserAuthToken(),
           "Content-Type": "application/ssml+xml",
           "X-Microsoft-OutputFormat": "riff-24khz-16bit-mono-pcm",
         },

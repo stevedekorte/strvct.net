@@ -276,7 +276,7 @@
             this.setStatus(`evaluating ${allImages.length} image(s)...`);
             
             // Use OpenAI's vision model to evaluate each image
-            const apiKey = this.service().apiKeyOrUserAuthToken();
+            const apiKey = await this.service().apiKeyOrUserAuthToken();
             const endpoint = 'https://api.openai.com/v1/chat/completions';
             
             // Build the evaluation prompt

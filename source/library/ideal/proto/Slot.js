@@ -1164,10 +1164,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     // Type Checking and Conversion
 
                     if (slot.slotType() === "String" && Type.isNumber(newValue)) {
-                        console.log("RESOLUTION: converting value to string");
+                        console.log("RESOLUTION: converting number to string");
                         newValue = String(newValue);
+                    } else if (slot.slotType() === "String" && Type.isError(newValue)) {
+                        console.log("RESOLUTION: converting error to string");
+                        newValue = String(newValue.message);
                     } else if (slot.slotType() === "Number" && Type.isString(newValue)) {
-                        console.log("RESOLUTION: converting value to number");
+                        console.log("RESOLUTION: converting string to number");
                         newValue = Number(newValue);
                     } else { // It's not just a type conversion issue...
                         slot.validateValue(newValue); // so we can step into it
