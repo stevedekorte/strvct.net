@@ -959,7 +959,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category Setup
      */
     setupValue () {
-        Object.defineSlot(this.owner(), this.privateName(), this.initValue());
+        let v = this.initValue();
+        if (Type.isMutable(v) && !Type.isClass(v)) {
+            v = v.deepCopy(); // not sure this is always correct...
+        }
+        Object.defineSlot(this.owner(), this.privateName(), v);
         return this;
     }
 

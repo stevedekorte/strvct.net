@@ -453,6 +453,44 @@ class Type extends Object {
     }
 
     /**
+     * Checks if the given value is enumerable (iterable).
+     * @category Type Checking
+     * @static
+     * @param {*} value - The value to check.
+     * @returns {boolean} True if the value is enumerable/iterable (has Symbol.iterator), false otherwise.
+     * @description Returns true for arrays, sets, maps, strings, typed arrays, NodeLists, and other iterables.
+     *              Returns false for null, undefined, numbers, booleans, plain objects, and functions.
+     */
+    static isEnumerable (value) {
+        if (value == null) {
+            return false;
+        }
+        return typeof value[Symbol.iterator] === 'function';
+    }
+
+    /**
+     * Checks if the given value is mutable.
+     * @category Type Checking
+     * @static
+     * @param {*} value - The value to check.
+     * @returns {boolean} True if the value is mutable, false if immutable.
+     * @description Returns false for primitive/immutable types: null, undefined, boolean, number, bigint, string, symbol.
+     *              Returns true for objects, arrays, functions, and other reference types that can be modified.
+     */
+    static isMutable (value) {
+        if (value == null) {
+            return false;
+        }
+        const type = typeof value;
+        // Primitive types are immutable
+        return type !== 'boolean' && 
+               type !== 'number' && 
+               type !== 'bigint' && 
+               type !== 'string' && 
+               type !== 'symbol';
+    }
+
+    /**
      * Checks if the given value is a Set.
      * @category Type Checking
      * @static
@@ -941,7 +979,7 @@ class Type extends Object {
 
         if (seenMap.has(value)) {
             const seenPath = seenMap.get(value);
-            let errorMessage = "Found circular reference to value: " +Type.typeName(value) + "\n";
+            let errorMessage = "Found duplicate reference to value: " +Type.typeName(value) + "\n";
             errorMessage += "path1: " + seenPath + "\n";
             errorMessage += "path2: " + path + "\n";
             debugger;
