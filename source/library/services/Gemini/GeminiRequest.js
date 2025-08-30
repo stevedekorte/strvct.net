@@ -128,8 +128,12 @@
       body: JSON.stringify(this.bodyJson())
     };
 
-    if (await this.isUsingUserAuthToken()) {
-      dict.headers.Authorization = `Bearer ${await GeminiService.shared().apiKeyOrUserAuthToken()}`;
+    // Always add Authorization header when we have a token (for proxy auth or direct API)
+    const token = await GeminiService.shared().apiKeyOrUserAuthToken();
+    if (token) {
+      // If it's a JWT (starts with eyJ), it's for proxy auth
+      // If it's not, it might be a Google Cloud access token
+      dict.headers.Authorization = `Bearer ${token}`;
     }
 
     return dict;

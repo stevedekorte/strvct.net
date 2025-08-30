@@ -136,8 +136,18 @@
     let url = this.endPointUrlFormat();
     url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
     url = url.replaceAll("{generate response method}", "streamGenerateContent");
+    
+    // Only include API key in URL if it's an actual Gemini API key (not a Firebase token)
     const apiKey = await this.apiKeyOrUserAuthToken();
-    url = url.replaceAll("{api key}", apiKey);
+    if (apiKey && !apiKey.startsWith("eyJ")) {
+      // Real API keys don't start with eyJ (which is the start of a JWT)
+      url = url.replaceAll("{api key}", apiKey);
+    } else {
+      // Remove the key parameter entirely when using proxy auth
+      url = url.replace("?key={api key}", "");
+      url = url.replace("&key={api key}", "");
+    }
+    
     return url;
   }
   
