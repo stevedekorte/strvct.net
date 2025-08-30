@@ -35,8 +35,13 @@
      * @returns {TileNoteView} The current instance.
      * @category Styling
      */
-    setBackgroundColor (/*s*/) {
+    setBackgroundColor (/*s*/) { // HACK to avoid theme colors 
         super.setBackgroundColor("tranparent");
+        return this;
+    }
+
+    setRealBackgroundColor (s) {
+        super.setBackgroundColor(s);
         return this;
     }
 

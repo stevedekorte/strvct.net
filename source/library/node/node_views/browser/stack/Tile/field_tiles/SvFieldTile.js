@@ -159,38 +159,38 @@
      * @returns {SvFieldTile} The current instance.
      */
     init () {
-        super.init()
-        this.makeCursorDefault()
-        this.setSpellCheck(false)
+        super.init();
+        this.makeCursorDefault();
+        this.setSpellCheck(false);
 
-        this.setOpacity(1)
-        this.setPosition("relative")
-        this.setHeight("auto")
-        this.setMinHeight("5em")
-        this.setMaxHeight("none")
-        this.setHeight("auto")
-        this.setOverflow("visible")
-        this.setWidth("auto")
-        this.setTransition("background-color .3s ease-out")
-        this.setTextAlign("left")
+        this.setOpacity(1);
+        this.setPosition("relative");
+        this.setHeight("auto");
+        this.setMinHeight("5em");
+        this.setMaxHeight("none");
+        this.setHeight("auto");
+        this.setOverflow("visible");
+        this.setWidth("auto");
+        this.setTransition("background-color .3s ease-out");
+        this.setTextAlign("left");
 
         {
-            this.setKvSection(this.contentView().newFlexSubview().setElementClassName("KvSection"))
-            this.kvSection().setFlexDirection("column")
+            this.setKvSection(this.contentView().newFlexSubview().setElementClassName("KvSection"));
+            this.kvSection().setFlexDirection("column");
 
-            this.setKeyViewContainer(this.kvSection().newFlexSubview().setElementClassName("KeyViewContainer"))
-            this.keyViewContainer().setAlignItems("flex-start")
-            this.setupKeyView()
+            this.setKeyViewContainer(this.kvSection().newFlexSubview().setElementClassName("KeyViewContainer"));
+            this.keyViewContainer().setAlignItems("flex-start");
+            this.setupKeyView();
 
-            this.setValueViewContainer(this.kvSection().newFlexSubview().setElementClassName("ValueViewContainer"))
-            this.valueViewContainer().setAlignItems("flex-start")
-            this.setupValueView()
+            this.setValueViewContainer(this.kvSection().newFlexSubview().setElementClassName("ValueViewContainer"));
+            this.valueViewContainer().setAlignItems("flex-start");
+            this.setupValueView();
 
-            this.setNoteViewContainer(this.contentView().newFlexSubview().setElementClassName("NoteViewContainer"))
-            this.setupNoteView()
+            this.setNoteViewContainer(this.contentView().newFlexSubview().setElementClassName("NoteViewContainer"));
+            this.setupNoteView();
 
-            this.setErrorViewContainer(this.contentView().newFlexSubview().setElementClassName("ErrorViewContainer"))
-            this.setupErrorView()
+            this.setErrorViewContainer(this.contentView().newFlexSubview().setElementClassName("ErrorViewContainer"));
+            this.setupErrorView();
 
             /*
             this.contentView().subviews().forEach(subview => {
@@ -217,18 +217,18 @@
         v.setTextAlign("left")
         v.setWhiteSpace("nowrap")
 
-        this.setKeyView(v)
-        v.turnOffUserSelect()
-        v.setSpellCheck(false)
+        this.setKeyView(v);
+        v.turnOffUserSelect();
+        v.setSpellCheck(false);
         //v.setPaddingTop(this.vPadding())
         //v.setPaddingBottom(this.vPadding())
-        v.setMarginTop(this.vPadding())
-        v.setMarginBottom(this.vPadding())
-        v.setPaddingLeft("0em")
-        v.setPaddingRight("0em")
+        v.setMarginTop(this.vPadding());
+        v.setMarginBottom(this.vPadding());
+        v.setPaddingLeft("0em");
+        v.setPaddingRight("0em");
 
-        this.keyViewContainer().addSubview(v)     
-        return v
+        this.keyViewContainer().addSubview(v);     
+        return v;
     }
 
     /**
@@ -247,10 +247,10 @@
         v.setMarginTop(this.vPadding())
         v.setMarginBottom(this.vPadding())
 
-        this.setValueView(v)
-        this.valueViewContainer().addSubview(v)  
+        this.setValueView(v);
+        this.valueViewContainer().addSubview(v);  
         //this.valueSectionView().addSubview(v)  
-        return v
+        return v;
     }
 
     /**
@@ -269,10 +269,10 @@
         v.setMarginRightPx(0)
         v.setMarginTop("0em")
         v.setMarginBottom("0.2em")
-        v.setUserSelect("text")
-        this.setNoteView(v)
-        this.noteViewContainer().addSubview(v)
-        return v
+        v.setUserSelect("text");
+        this.setNoteView(v);
+        this.noteViewContainer().addSubview(v);
+        return v;
     }
 
     /**
@@ -286,10 +286,10 @@
         //v.setInnerHtml("error")
         v.setColor("red")
         v.setPaddingBottom("0em")
-        v.setWhiteSpace("normal")
-        this.setErrorView(v)
-        this.errorViewContainer().addSubview(v)
-        return v 
+        v.setWhiteSpace("normal");
+        this.setErrorView(v);
+        this.errorViewContainer().addSubview(v);
+        return v; 
     }
 
     /**
@@ -316,7 +316,7 @@
         v.setColor("white")
         v.setBackgroundColor("transparent")
         //tf.setSelectAllOnDoubleClick(true)
-        return v
+        return v;
     }
 
     // colors
@@ -326,8 +326,8 @@
      * @returns {CssColor} The current background color.
      */
     currentBackgroundCssColor () {
-        const bg = this.navView().computedBackgroundColor()
-        return CssColor.clone().setCssColorString(bg)
+        const bg = this.navView().computedBackgroundColor();
+        return CssColor.clone().setCssColorString(bg);
     }
 
     /**
@@ -335,7 +335,7 @@
      * @returns {CssColor} The value background color.
      */
     valueBackgroundCssColor () {
-        return this.currentBackgroundCssColor().contrastComplement(0.2)
+        return this.currentBackgroundCssColor().contrastComplement(0.2);
     }
 
     /**
@@ -344,7 +344,7 @@
      */
 
     valueBackgroundColor () {
-        return this.valueBackgroundCssColor().cssColorString()
+        return this.valueBackgroundCssColor().cssColorString();
     }
 
     /**

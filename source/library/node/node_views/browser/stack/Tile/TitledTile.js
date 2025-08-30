@@ -263,6 +263,7 @@
         this.titleView().syncStateFrom(this);
         this.subtitleView().syncStateFrom(this);
         this.noteView().syncStateFrom(this);
+        this.updateNoteViewStyle();
         /*
         this.titleView().setIsSelected(b)
         this.subtitleView().setIsSelected(b)
@@ -289,6 +290,41 @@
         this.hideNoteIconView();
     }
 
+    updateNoteViewStyle () {
+        const nv = this.noteView();
+        const node = this.node();
+        /*
+        if (node && node.isKindOf(UoRollRequestMessage)) {
+            debugger;
+        }
+        */
+        if (node && node.noteButtonInfo) {
+            const info = node.noteButtonInfo();
+            if (info && this.noteView().innerHtml().length > 0) {
+                // set nv to look like a button
+                /*
+                if (nv.innerHtml() === "TAP TO ROLL") {
+                    debugger;
+                }
+                 d*/
+                if (info.color) {
+                    nv.setColor(info.color);
+                }
+                if (info.backgroundColor) {
+                    nv.setRealBackgroundColor(info.backgroundColor);
+                    if(nv.backgroundColor() !== info.backgroundColor) {
+                        debugger;
+                        nv.setBackgroundColor(info.backgroundColor);
+                    }
+                }
+                nv.setPaddingLeft("1em");
+                nv.setPaddingRight("1em");
+                nv.setBorderRadius("0.33em");
+            }
+        }
+    }
+
+
     /**
      * @description Hides the note view
      * @category UI
@@ -296,6 +332,7 @@
     hideNoteView () {
         this.noteView().hideDisplay();     
     }
+
 
     /**
      * @description Shows the note icon view
