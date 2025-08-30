@@ -2296,6 +2296,14 @@
       }
       */
 
+      hasHeaderOrFooter () {
+        return this.footerNode() !== null || this.headerNode() !== null;
+      }
+
+      canNavTo () {
+        return this.hasSubnodes() || this.hasHeaderOrFooter() || this.nodeCanAddSubnode();
+      }
+
 }.initThisClass());
 
 

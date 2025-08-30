@@ -1061,11 +1061,7 @@
             return false;
         }
         
-        // Show otherView if the node has subnodes or can add subnodes
-        const hasSubnodes = node.hasSubnodes && node.hasSubnodes();
-        const canAddSubnodes = node.nodeCanAddSubnode && node.nodeCanAddSubnode();
-        
-        return hasSubnodes || canAddSubnodes;
+        return node.canNavTo();
     }
 
     /**

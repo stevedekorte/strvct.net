@@ -66,11 +66,11 @@
 
   /**
    * @description Prepares and returns the request options.
-   * @returns {Object} The request options.
+   * @returns {Promise<Object>} The request options.
    * @category API Request
    */
-  requestOptions () {
-    const apiKey = this.apiKeyOrUserAuthToken();
+  async requestOptions () {
+    const apiKey = await this.apiKeyOrUserAuthToken();
     const bodyJson = this.bodyJson();
     bodyJson.stream = true;
     //bodyJson.usage = true;

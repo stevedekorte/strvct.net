@@ -89,19 +89,22 @@
 
   /**
    * @description Prepares the request options for the Anthropic API call.
-   * @returns {Object} The request options.
+   * @returns {Promise<Object>} The request options.
    * @category Request Preparation
    */
-  requestOptions () {
-    const json = super.requestOptions();
+  async requestOptions () {
+    const json = await super.requestOptions();
 
-    // When using proxy, don't set API key headers - the proxy server handles auth
-    if (!this.needsProxy()) {
-      // Only set API key directly when not using proxy
-      // remove Authorization property and use x-api-key instead
+    // When using proxy with Firebase auth, keep the Authorization header
+    // When using Anthropic API directly, use x-api-key header
+    const apiKey = await this.apiKeyOrUserAuthToken();
+    if (apiKey && !apiKey.startsWith("eyJ")) {
+      // It's a real Anthropic API key, not a JWT
       delete json.headers["Authorization"];
-      json.headers["x-api-key"] = this.apiKeyOrUserAuthToken();
+      json.headers["x-api-key"] = apiKey;
     }
+    // If it's a JWT, keep the Authorization header from the parent class
+    
     return json;
   }
 
