@@ -34,7 +34,7 @@
  // TODO: move this to TooDefinition_anthropic category
  // define in AnthropicService folder
   asAnthropicToolCallSchema () {
-    const schema = this.toolJsonSchema();
+    const schema = this.toolJsonDescription();
     const json = {};
     json.name = schema.toolName;
     json.description = schema.description;
@@ -51,10 +51,10 @@
 
   returnNotes () {
     const notes = [];
-    if (this.toolJsonSchema().isSilentSuccess) {
+    if (this.toolJsonDescription().isSilentSuccess) {
       notes.push("This tool call does not return a result on success.");
     }
-    if (this.toolJsonSchema().isSilentError) {
+    if (this.toolJsonDescription().isSilentError) {
       notes.push("This tool call does not return a result on error.");
     }
     return notes.join("\n");

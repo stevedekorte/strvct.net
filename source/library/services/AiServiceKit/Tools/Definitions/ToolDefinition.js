@@ -5,6 +5,7 @@
 * @class ToolDefinition
 * @extends SvJsonDictionaryNode
 * @classdesc Describes what a tool can do.
+
 */
 
 (class ToolDefinition extends UoJsonDictionaryNode {
@@ -27,21 +28,62 @@
       slot.setShouldJsonArchive(true);
       slot.setIsSubnodeField(false);
       slot.setCanEditInspection(false);
-      slot.setIsInJsonSchema(true);
+      slot.setIsInJsonSchema(false);
+      slot.setIsRequired(false);
       slot.setShouldStoreSlot(true);
     }
 
+    // --- begin json schema ----
+
     {
-      const slot = this.newSlot("name", null);
-      slot.setDescription("Name of the function to call.");
+      const slot = this.newSlot("name", "");
+      slot.setDescription("Name of the tool call.");
       slot.setSlotType("String");
-      slot.setAllowsNullValue(true);
+      slot.setAllowsNullValue(false);
       slot.setShouldJsonArchive(true);
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
       slot.setIsInJsonSchema(true);
-      slot.setShouldStoreSlot(true);
+      slot.setIsRequired(true);
     }
+
+    /*
+    {
+      const slot = this.newSlot("parameters", {}); // only defined for json schema - pass through to method info
+      slot.setDescription("Parameters for the tool call.");
+      slot.setSlotType("JSON Object");
+      slot.setAllowsNullValue(false);
+      slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
+    }
+
+    {
+      const slot = this.newSlot("returns", {}); // only defined for json schema - pass through to method info
+      slot.setDescription("Returns for the function to call.");
+      slot.setSlotType("JSON Object");
+      slot.setAllowsNullValue(false);
+      slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
+    }
+
+    {
+      const slot = this.newSlot("isSilentError", false); // only used for json schema
+      slot.setDescription("Silent error for the function to call.");
+      slot.setSlotType("Boolean");
+      slot.setAllowsNullValue(false);
+      slot.setIsInJsonSchema(true);
+      slot.setIsRequired(false);
+    }
+
+    {
+      const slot = this.newSlot("isSilentSuccess", false); // only used for json schema
+      slot.setDescription("Silent success for the function to call.");
+      slot.setSlotType("Boolean");
+      slot.setAllowsNullValue(false);
+      slot.setIsInJsonSchema(true);
+      slot.setIsRequired(false);
+    }
+      */
+
+    // --- end json schema ----
 
     {
       const slot = this.newSlot("jsonSchemaString", null);
@@ -82,6 +124,7 @@
         slot.setIsSubnodeField(false);
         slot.setCanEditInspection(false);
     }
+
   }
 
   initPrototype () {
@@ -146,19 +189,94 @@
     assert(method, "Method named " + this.name() + " not found in class " + this.toolTarget().type());
   }
 
-  toolJsonSchema (refSet = new Set()) {
+  // --- begin pass through to method info ---
+
+  /*
+  isSilentError () {
+    const method = this.toolMethod();
+    if (!method) {
+      return null;
+    }
+    return method.isSilentError();
+  }
+
+  isSilentSuccess () {
+    const method = this.toolMethod();
+    if (!method) {
+      return null;
+    }
+    return method.isSilentSuccess();
+  }
+
+  returns () {
+    const method = this.toolMethod();
+    if (!method) {
+      return null;
+    }
+    return method.returns();
+  }
+ */
+
+  // --- end pass through to method info ---
+
+/*
+  toolJsonDescription (refSet = new Set()) { // tool definition info
     this.assertMethodExists();
     
     // Validate using the complete schema with definitions
-    this.assertValidJsonSchema();
+    this.assertMethodHasValidJsonSchema();
     
+    const method = this.toolMethod();
     // Return just the tool metadata (without definitions) for the prompt
     // The definitions will be provided elsewhere in the shared context
-    const metadata = this.toolMethod().asToolMetadata(refSet);
-    return metadata;
+    //const metadata = this.toolMethod().asToolMetadata(refSet);
+    //return metadata;
+    
+    const schema = {
+        "$id": method.assistantToolName() + "_ToolDefinition",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "toolName": method.assistantToolName(),
+        "description": method.description(),
+        "toolCallSchema": ToolCall.toolCallJsonSchemaForToolDefinition(this, refSet),
+        "toolCallResultSchema": ToolResult.toolCallResultJsonSchemaForToolDefinition(this, refSet),
+        "behaviorNotes": {
+          "isSilentSuccess": method.isSilentSuccess(),
+          "isSilentError": method.isSilentError()
+        }
+    };
+    console.log("schema: ", JSON.stringify(schema, null, 2));
+    debugger;
+    return schema;
+  }
+    */
+
+  toolJsonDescription (refSet = new Set()) { // tool definition info
+    this.assertMethodExists();
+    
+    // Validate using the complete schema with definitions
+    this.assertMethodHasValidJsonSchema();
+    
+    const method = this.toolMethod();
+    // Return just the tool metadata (without definitions) for the prompt
+    // The definitions will be provided elsewhere in the shared context
+    //const metadata = this.toolMethod().asToolMetadata(refSet);
+    //return metadata;
+    
+    const schema = {
+        "toolName": method.assistantToolName(),
+        "description": method.description(),
+        "toolCallSchema": ToolCall.toolCallJsonSchemaForToolDefinition(this, refSet),
+        "toolCallResultSchema": ToolResult.toolCallResultJsonSchemaForToolDefinition(this, refSet),
+        "behaviorNotes": {
+          "isSilentSuccess": method.isSilentSuccess(),
+          "isSilentError": method.isSilentError()
+        }
+    };
+    console.log("schema: ", JSON.stringify(schema, null, 2));
+    return schema;
   }
 
-  assertValidJsonSchema () {
+  assertMethodHasValidJsonSchema () {
     const rootSchema = this.toolMethod().asRootJsonSchema();
     const validator = this.jsonSchemaValidator();
     
@@ -182,7 +300,7 @@
 
   
   updateJsonSchemaString () {
-    const json = this.toolJsonSchema();
+    const json = this.toolJsonDescription();
     const s = JSON.stableStringifyWithStdOptions(json, null, 2);
     this.setJsonSchemaString(s);
     this.setupComponents();
@@ -191,7 +309,7 @@
 
   classSetReferencedByDefinition () {
     const refSet = new Set();
-    this.toolJsonSchema(refSet);
+    this.toolJsonDescription(refSet);
     return refSet;
   }
 

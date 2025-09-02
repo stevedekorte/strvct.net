@@ -702,6 +702,15 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return this.getAnnotation("isInJsonSchema");
     }
 
+    setJsonSchemaPattern (s) {
+        this.setAnnotation("jsonSchemaPattern", s);
+        return this;
+    }
+
+    jsonSchemaPattern () {
+        return this.getAnnotation("jsonSchemaPattern");
+    }
+
     /**
      * @category Inspector
      */
@@ -1724,6 +1733,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         if (this.jsonSchemaExamples()) {
             schema.examples = this.jsonSchemaExamples();
+        }
+
+        const pattern = this.jsonSchemaPattern();
+        if (pattern) {
+            schema.pattern = pattern;
         }
 
         this.jsonSchemeAddRanges(schema);

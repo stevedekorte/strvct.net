@@ -78,6 +78,16 @@
      * @category Inspection
      */
     setupInspectorFromSlots () {
+
+        if (this.isKindOf(SvPointerField)) {
+            const target = this.nodeTileLink();
+            if (target) {
+                target.setupInspectorFromSlots();
+                this.setNodeInspector(target.nodeInspector());
+            }
+            return this;
+        }
+
         const slotsMap = this.thisPrototype().allSlotsMap();
         const slotNames = slotsMap.keysArray();
         
@@ -95,15 +105,9 @@
         slotNames.forEachV(slotName => {
             const slot = slotsMap.get(slotName);
 
-            if (slot.inspectorPath() === "API") {
-                debugger;
-            }
-
             if (slot.canInspect()) {
                 const field = slot.newInspectorField();
                 let pathNodes = null;
-
-
 
                 if (field) {
                     field.setOwnerNode(this);

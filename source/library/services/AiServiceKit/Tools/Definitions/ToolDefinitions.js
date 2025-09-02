@@ -94,20 +94,45 @@
   toolSpecPrompt () {
     const parts = [];
     parts.push(`
-Notes: tool definitions include a "returns" property which is a JSON Schema object describing the expected return value.\n
-Some of the referenced type definitions may be defined at the end of this prompt explanation document.
 
->#> List of Tools
+Notes: The tool definitions below describe the available tools and their behaviors. Each definition includes:
+ - "parameters": The schema for what you should send in your tool call (this is what goes in your tool call's "parameters" field)
+ - "returns": A JSON Schema describing what the tool sends back (for your reference only)
+ - "isSilentSuccess": Whether the tool sends a result on success (for your reference only)
+ - "isSilentError": Whether the tool sends a result on error (for your reference only)
+
+**Important**: When making a tool call, you only use the "parameters" schema. The other properties (returns, isSilentSuccess, etc.) are documentation to help you understand the tool's behavior - they are NOT part of your actual tool call.
+
+>#> 
+=#= List of Tools
+
 The following tools are available for you to use:
 `);
     parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
     //parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // includes tools and type definitions
+
+
+    parts.push(`
+        
+=#= How to Use These Definitions
+
+When making a tool call, use only the "parameters" schema from the definition. For example, for the rollRequest tool:
+
+Tool call structure:
+{
+  "callId": "call_X",
+  "toolName": "rollRequest",
+  "parameters": {
+    "rollRequest": { /* Use schema from #/definitions/UoRollRequestMessage */ }
+  }
+}
+`);
     return parts.join("\n\n");
   }
 
   toolSpecsJson () {
     const refSet = new Set();
-    const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonSchema(refSet));
+    const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
     /*
     const types = refSet.map(type => type.jsonSchemaRef());
     const json = {
@@ -125,7 +150,7 @@ The following tools are available for you to use:
 
   classesReferencedByToolTypes () {
     const refSet = new Set();
-    this.toolDefinitions().map(toolDef => toolDef.toolJsonSchema(refSet));
+    this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
     return refSet;
   }
 

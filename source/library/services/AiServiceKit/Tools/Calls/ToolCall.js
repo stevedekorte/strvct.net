@@ -27,9 +27,25 @@ Example Tool call format:
 (class ToolCall extends UoJsonDictionaryNode { 
 
   static jsonSchemaDescription () {
-    return "Format for Assistant API call to make an '" + this.type() + "' API call.";
+    return `Generic format for Assistant API call to make an '" + this.type() + "' tool call.
+    See schema for the particular tool call (whose name is in the toolName property) for the expected "parameters" property schema.`;
   }
   
+  static toolCallJsonSchemaForToolDefinition (toolDefinition, refSet = new Set()) {
+    // only the ToolCall class should know what it's schema is
+    //const schema = this.asRootJsonSchema(new Set()).deepCopy();
+    const schema = this.asJsonSchema(new Set()).deepCopy();
+
+    const method = toolDefinition.toolMethod();
+    const toolName = method.assistantToolName();
+
+    schema["$id"] = toolName + "_ToolCall";
+    schema.description = method.description();
+    schema.properties.toolName = { "const": toolName };
+    schema.properties.parameters = method.paramsSchema(refSet);
+    return schema;
+  }
+
   /**
    * Initializes the prototype slots.
    * @category Initialization
@@ -37,8 +53,13 @@ Example Tool call format:
   initPrototypeSlots () {
 
     {
-      const slot = this.newSlot("toolCalls", null);
-      slot.setDescription("Reference to the tool calls.");
+        const slot = this.overrideSlot("jsonId", null);
+        slot.setIsInJsonSchema(false);
+    }
+
+    {
+      const slot = this.newSlot("toolCalls", null); 
+      slot.setDescription("Reference to the owner ToolCalls instance.");
       slot.setSlotType("ToolCalls");
       slot.setShouldJsonArchive(false);
       slot.setIsSubnodeField(false);
@@ -69,7 +90,6 @@ Example Tool call format:
 
     // ---- BEGIN ToolCall JSON schema ----
 
-
     {
       const slot = this.newSlot("toolName", null); // set by tool call 
       slot.setDescription("The name of the tool to call.");
@@ -79,6 +99,7 @@ Example Tool call format:
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
       slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
       slot.setShouldStoreSlot(true);
     }
 
@@ -91,8 +112,44 @@ Example Tool call format:
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
       slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
       slot.setShouldStoreSlot(true);
+
+      slot.setJsonSchemaPattern("^call_\\d+$");
     }
+
+    // --- begin pass through JSON schema to method info ---
+    
+    {
+        const slot = this.newSlot("parameters", {}); // pass through to method info
+        slot.setDescription("JSON object of key/value parameters for the tool call.");
+        slot.setSlotType("Object");
+        slot.setAllowsNullValue(false);
+        slot.setIsInJsonSchema(true);
+        slot.setIsRequired(false);
+    }
+
+    {
+        const slot = this.newSlot("toolNote", ""); // pass through to method info
+        slot.setDescription("A note about the tool call which might contain info related to errors or retries. Purely for debugging purposes.");
+        slot.setSlotType("String");
+        slot.setAllowsNullValue(false);
+        slot.setIsInJsonSchema(true);
+        slot.setIsRequired(false);
+    }
+
+    /*
+    {
+        const slot = this.newSlot("refCallId", ""); // pass through to method info
+        slot.setDescription("A callId of a tool call which this call is a retry of. Only set if this call is a retry.");
+        slot.setSlotType("String");
+        slot.setAllowsNullValue(false);
+        slot.setIsInJsonSchema(true);
+        slot.setIsRequired(false);
+    }
+        */
+
+    // --- end pass through JSON schema to method info ---
 
     {
       const slot = this.newSlot("status", "queued");
@@ -102,7 +159,7 @@ Example Tool call format:
       slot.setShouldJsonArchive(false);
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
-      slot.setIsInJsonSchema(true);
+      slot.setIsInJsonSchema(false);
       slot.setShouldStoreSlot(true);
       slot.setValidValues(["queued", "calling", "completed"]);
       // queued: tool is queued to be called
@@ -256,6 +313,12 @@ Example Tool call format:
         const json = JSON.parse(callString);
         this.setCallJson(json);
 
+        assert(this.callJson().toolName, "toolName is required");
+        assert(Type.isString(this.callJson().toolName), "toolName must be a string");
+
+        assert(this.callJson().callId, "callId is required");
+        assert(Type.isString(this.callJson().callId), "callId must be a string");
+
     } catch (e) {
       this.handleParseError(e);
     }
@@ -271,37 +334,96 @@ Example Tool call format:
 
   assertValidCall () {
     this.assertValidToolCallSchema();
-    this.assertValidParametersSchema();
+   // this.assertValidParametersSchema();
+  }
+
+  descriptionForSchemaValidationError (errorString) {
+    const callSchema = ToolCall.toolCallJsonSchemaForToolDefinition(this.toolDefinition());
+
+    const parts = [];
+    parts.push("--------------------------------");
+    parts.push("Error during schema validation:");
+    parts.push(errorString);
+    parts.push("--------------------------------");
+    parts.push("Call schema:");
+    parts.push(JSON.stringify(callSchema, null, 2));
+    parts.push("--------------------------------");
+    return parts.join("\n");
+  }
+
+  descriptionForJsonValidationError (errorString) {
+    const callSchema = ToolCall.toolCallJsonSchemaForToolDefinition(this.toolDefinition());
+    const callJson = this.callJson();
+
+    const parts = [];
+    parts.push("Error during schema validation:");
+    parts.push(errorString);
+    parts.push("--------------------------------");
+    parts.push("Call schema:");
+    parts.push(JSON.stringify(callSchema, null, 2));
+    parts.push("--------------------------------");
+    parts.push("Call JSON:");
+    parts.push(JSON.stringify(callJson, null, 2));
+    parts.push("--------------------------------");
+    return parts.join("\n");
   }
 
   assertValidToolCallSchema () {
     const validator = new AjvValidator();
     
     // Use asRootJsonSchema from the Function class which already builds a complete schema with definitions
-    const completeSchema = this.toolDefinition().toolMethod().asRootJsonSchema();
-    
-    validator.setJsonSchema(completeSchema);
+    const refSet = new Set();
+    const callSchema = ToolCall.toolCallJsonSchemaForToolDefinition(this.toolDefinition(), refSet);
+    const definitions = this.definitionsForRefSet(refSet);
+    if (Type.isUndefined(callSchema.definitions)) {
+      callSchema.definitions = {};
+    }
+    Object.assign(callSchema.definitions, definitions);
 
+    validator.setJsonSchema(callSchema);
+
+    // See if our own ToolCall schema is valid
     if (validator.hasError()) {
-        // invalid schema!
-      const e = new Error(validator.errorMessageForLLM());
-      throw e;
+        // UH OH: our own Schema is invalid - this is not an LLM error
+        const errorString = validator.errorMessageForLLM();
+        const description = this.descriptionForSchemaValidationError(errorString);
+        this.logError(description);
+        debugger;
+        const e = new Error(errorString);
+        throw e;
     }
     
+    // Now see if the call JSON is is valid against our own ToolCall schema
     const isValid = validator.validate(this.callJson());
     if (!isValid) {
-        const e = new Error(validator.errorMessageForLLM());
-
-        console.error("Error during schema validation:", e);
-        console.error("Complete schema:", JSON.stringify(completeSchema, null, 2));
-        console.error("Call JSON:", JSON.stringify(this.callJson(), null, 2));
-
-        //debugger;
+        const errorString = validator.errorMessageForLLM();
+        const description = this.descriptionForJsonValidationError(errorString);
+        this.logError(description);
+        debugger;
+        const e = new Error(errorString);
         this.handleCallError(e);
     }
 
   }
 
+  definitionsForRefSet (refSet) {
+    const definitions = {};
+    const fullRefSet = new Set(refSet);
+    
+    while (refSet.size > 0) {
+        const newRefSet = new Set();
+        for (const referencedClass of refSet) {
+          const typeName = referencedClass.type();
+          const typeSchema = referencedClass.asJsonSchema(newRefSet);
+          definitions[typeName] = typeSchema;
+        }
+        refSet = newRefSet.difference(fullRefSet); // only the items in newRefSet that are not in fullRefSet
+        fullRefSet.addAll(newRefSet);
+      }
+    return definitions;
+  }
+
+  /*
   assertValidParametersSchema () {
     const validator = new AjvValidator();
     const refSet = new Set();
@@ -328,10 +450,16 @@ Example Tool call format:
     validator.setJsonSchema(completeSchema);
     const isValid = validator.validate(this.parametersDict());
     if (!isValid) {
-      const e = new Error(validator.errorMessageForLLM());
-      this.handleCallError(e);
+        const errorString = validator.errorMessageForLLM();
+        console.error("Error during schema validation:", errorString);
+        console.error("Complete schema:", JSON.stringify(completeSchema, null, 2));
+        console.error("Parameters JSON:", JSON.stringify(this.parametersDict(), null, 2));
+        debugger;
+        const e = new Error(errorString);
+        this.handleCallError(e);
     }
   }
+ */
 
   handleParseError (e) {
     //throw new Error(this.type() + " Error parsing call string: " + e.message);
@@ -367,7 +495,7 @@ Example Tool call format:
         // lets get the tool definition schema so we can remind the AI of the expected format
         const toolDefinition = this.toolDefinitionForToolName(toolName);
         if (toolDefinition !== null) {
-            const toolCallSchema = toolDefinition.toolJsonSchema();
+            const toolCallSchema = ToolCall.toolCallJsonSchemaForToolDefinition(toolDefinition);
             const toolCallSchemaString = JSON.stringify(toolCallSchema, null, 2);
             e.extraMessage += "\nThe '" + toolName + "' tool call schema is\n " + toolCallSchemaString;
             debugger;

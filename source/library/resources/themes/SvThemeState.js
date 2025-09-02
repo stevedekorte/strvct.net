@@ -362,7 +362,7 @@
         this.removeAllSubnodes();
 
         // need this because the fonts typically aren't loaded until after this prototype is initialized
-        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((instance) => { 
+        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((/*instance*/) => { 
             //debugger;
             const values = SvResources.shared().fonts().allFontNames();
             values.unshift("inherit");
@@ -657,7 +657,7 @@
      * @returns {SvThemeState} The instance.
      */
     setupAsDefault () {
-        const title = this.title();
+        //const title = this.title();
         const methodName = "setupAsDefault" + this.title().capitalized() + "State";
         this[methodName].call(this);
         return this;

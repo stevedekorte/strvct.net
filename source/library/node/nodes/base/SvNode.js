@@ -2152,6 +2152,19 @@
         return this.jsonSchemaRefForTypeName(this.type(), refSet);
     }
 
+    /*
+    static jsonSchemaDefinitionsRefForTypeName (typeName, refSet) {
+        if (!refSet.has(this)) {
+            this.asJsonSchema(refSet); // so we add references within the referenced type
+        }
+        assert(Type.isSet(refSet));
+        assert(this.asJsonSchema); // sanity check - we'll need this 
+        assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.type());
+        refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
+        return "#/definitions/" + typeName;
+    }
+    */
+
     /**
 
      * @description Get the JSON schema reference for a type name.

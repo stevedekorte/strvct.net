@@ -4,13 +4,42 @@
 * @class ToolResult
 * @extends SvJsonDictionaryNode
 * @classdesc A specific response to a tool call.
+
+
+ <tool-call-result>
+  {
+    "callId": string,        // e.g., "call_0", "call_1", etc.
+    "result": object,        // The response data from the tool
+    "status": string,        // Either "success" or "error"
+    "error": string | null   // Error message if status="error", otherwise null
+  }
+  </tool-call-result>
+
 */
 
 //UoJsonDictionaryNode
 (class ToolResult extends SvSummaryNode {
 
-  static enclosingTagName () {
-    return "tool-call-result";
+    static enclosingTagName () {
+        return "tool-call-result";
+    }
+
+    static jsonSchemaDescription () {
+        return `Format for client to respond with a result a tool call. 
+See schema for the particular tool call (whose name is in the toolName property) for the expected "result" property schema.`;
+  }
+
+  static toolCallResultJsonSchemaForToolDefinition (toolDefinition, refSet = new Set()) {
+    // only the ToolCall class should know what it's schema is
+    const schema = this.asJsonSchema(new Set()).deepCopy();
+    const method = toolDefinition.toolMethod();
+    const toolName = method.assistantToolName();
+    
+    schema["$id"] = toolName + "_ToolCallResult";
+    schema.description = method.description();
+    schema.properties.toolName = { "const": toolName };
+    schema.properties.result = { "$ref": method.returnsJsonSchema(refSet) };
+    return schema;
   }
 
   /**
@@ -30,23 +59,34 @@
 
     // ---- BEGIN ToolResult JSON schema ----
 
+    /*
     {
-      const slot = this.newSlot("toolName", null);
+        const slot = this.overrideSlot("jsonId", null);
+        slot.setIsInJsonSchema(false);
+    }
+    */
+
+    {
+      const slot = this.newSlot("toolName", "");
       slot.setDescription("The name of the tool that made the call.");
       slot.setSlotType("String");
+      slot.setAllowsNullValue(false);
       slot.setIsSubnodeField(true);
       slot.setShouldJsonArchive(true);
       slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
       slot.setShouldStoreSlot(true);
     }
 
     {
-      const slot = this.newSlot("callId", null);
+      const slot = this.newSlot("callId", "");
       slot.setDescription("A unique identifier included in the tool call to which this is a response.");
       slot.setSlotType("String");
+      slot.setAllowsNullValue(false);
       slot.setIsSubnodeField(true);
       slot.setShouldJsonArchive(true);
       slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
       slot.setShouldStoreSlot(true);
     }
 
@@ -59,6 +99,7 @@
       slot.setAllowsNullValue(true);
       slot.setShouldJsonArchive(true);
       slot.setIsInJsonSchema(true);
+      slot.setIsRequired(true);
       slot.setShouldStoreSlot(true);
     }
 
@@ -69,6 +110,7 @@
       slot.setAllowsNullValue(true);
       slot.setShouldJsonArchive(true);
       slot.setIsInJsonSchema(true);
+      slot.setIsRequired(false);
       slot.setShouldStoreSlot(true);
     }
 
@@ -153,24 +195,24 @@
     return toolDefinition.toolMethod();
   }
 
-  silentSuccess () {
-    return this.toolMethod().silentSuccess();
+  isSilentSuccess () {
+    return this.toolMethod().isSilentSuccess();
   }
 
-  silentError () {
-    return this.toolMethod().silentError();
+  isSilentError () {
+    return this.toolMethod().isSilentError();
   }
 
   doesRequireResponse () {
     if (this.hasSuccess()) {
-      return !this.silentSuccess();
+      return !this.isSilentSuccess();
     } 
     if (this.hasError()) {
       // For errors, check if we have a valid tool definition first
       // If not (e.g., JSON parse errors), always report the error
       const toolCall = this.toolCall();
       if (toolCall && toolCall.hasToolDefinition()) {
-        return !this.silentError();
+        return !this.isSilentError();
       } else {
         // No tool definition means this is likely a parse error
         // Always report these errors back to the AI

@@ -328,7 +328,7 @@
      * @returns {Set} A new set containing elements in this set that are not in setB
      * @category Set Operations
      */
-    difference (setB) {
+    difference (setB) { // returns items in self that are not in setB
         let _difference = new Set(this);
         for (let v of setB) {
             _difference.delete(v);

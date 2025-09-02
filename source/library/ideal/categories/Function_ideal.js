@@ -185,26 +185,26 @@ Function.prototype.returnTypes = function () {
 
 // silent success
 
-Function.prototype.setSilentSuccess = function (aBool) {
+Function.prototype.setIsSilentSuccess = function (aBool) {
     assert(Type.isBoolean(aBool));
-    this.setMetaProperty("silentSuccess", aBool);
+    this.setMetaProperty("isSilentSuccess", aBool);
     return this;
 };
 
-Function.prototype.silentSuccess = function () {
-    return this.getMetaProperty("silentSuccess") !== false;
+Function.prototype.isSilentSuccess = function () {
+    return this.getMetaProperty("isSilentSuccess") !== false;
 };
 
 // silent error
 
-Function.prototype.setSilentError = function (aBool) {
+Function.prototype.setIsSilentError = function (aBool) {
     assert(Type.isBoolean(aBool));
-    this.setMetaProperty("silentError", aBool);
+    this.setMetaProperty("isSilentError", aBool);
     return this;
 };
 
-Function.prototype.silentError = function () {
-    return this.getMetaProperty("silentError") === true;
+Function.prototype.isSilentError = function () {
+    return this.getMetaProperty("isSilentError") === true;
 };
 
 // json schema for tool call use
@@ -213,7 +213,10 @@ Function.prototype.jsonSchemaForParameter = function (parameter, refSet) {
     assert(refSet, "refSet is required");
     if (parameter.type.isCapitalized()) {
         const aClass = SvGlobals.globals()[parameter.type];
-        return aClass.jsonSchemaRef(refSet);
+
+        return { 
+            "$ref": aClass.jsonSchemaRef(refSet)
+        };
     }
     return { 
         "type": parameter.type, 
@@ -384,8 +387,8 @@ Function.prototype.asToolMetadata = function (refSet = new Set()) {
         "description": description,
         "parameters": paramsSchema,
         "returns": this.returnsJsonSchema(refSet),
-        "silentSuccess": this.silentSuccess(),
-        "silentError": this.silentError()
+        "isSilentSuccess": this.isSilentSuccess(),
+        "isSilentError": this.isSilentError()
     };
 }
 
@@ -397,7 +400,8 @@ Function.prototype.paramsSchema = function (refSet) {
     // need to ref types to put them in refSet
 
     const paramsSchema = {
-        // keys and $ref and description
+        type: "object",
+        properties: {} // keys and $ref and description
     };
 
     const refTypeName = function (typeName, refSet) {
@@ -411,7 +415,7 @@ Function.prototype.paramsSchema = function (refSet) {
     Object.keys(parameters).forEach(key => {
         const paramDict = parameters[key];
         const dict = {};
-        paramsSchema[key] = dict;
+        paramsSchema.properties[key] = dict;
         const isJsonType = ["null", "array", "string", "object"].includes(paramDict.type);
         if (isJsonType) {
             dict["type"] = paramDict.type;

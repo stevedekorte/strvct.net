@@ -243,7 +243,9 @@
             return;
         } else {
             console.warn("tagDelegate (" + this.tagDelegate().type() + ") missing method: " + textMethodName + " for tag: " + tagName);
-            const errorMessage = "Error: you responded with a '" + tagName + "' tag which the client does not understand.";
+            let errorMessage = "Error: you responded with a '" + tagName + "' tag which the client does not understand. ";
+            errorMessage += "If you have sent the tool call for which this was the result, then ignore your own response and wait from the tool-call-result from the client user response. ";
+            errorMessage += "Critical: you MUST NOT make use of <tool-call-result> tag in your response.";
             this.reportErrorToAi(errorMessage);
             debugger; 
         }
@@ -259,10 +261,10 @@
         const toolCall = this.conversation().assistantToolKit().toolCalls().toolCallWithName(toolName);
         if (toolCall) {
             const toolMethod = toolCall.toolMethod();
-            const silentSuccess = toolMethod.silentSuccess();
-            const silentError = toolMethod.silentError();
-            if (silentSuccess) {
-                note = "Note: the '" + toolName + "' has a silentSuccess value of " + silentSuccess + ". And a silentError value of " + silentError + ".";
+            const isSilentSuccess = toolMethod.isSilentSuccess();
+            const isSilentError = toolMethod.isSilentError();
+            if (isSilentSuccess) {
+                note = "Note: the '" + toolName + "' has a isSilentSuccess value of " + isSilentSuccess + ". And a isSilentError value of " + isSilentError + ".";
             }
         } else {
             note = "Note: the tool call with name '" + toolName + "' was not found. Please check the system prompt for the list of available tool calls.";
