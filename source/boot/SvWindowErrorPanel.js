@@ -49,6 +49,16 @@ class SvWindowErrorPanel extends Object {
         return this;
     }
 
+    errorFromEvent (event) {
+        const message = event.reason ? event.reason : event.message;
+        const error = new Error(message);
+        error.reason = event.reason;
+        error.filename = event.filename;
+        error.lineno = event.lineno;
+        error.colno = event.colno;
+        error.error = event.error;
+        return error;
+    }
     /**
      * @description Register for window error events using addEventListener.
      * @returns {SvWindowErrorPanel}
@@ -57,32 +67,43 @@ class SvWindowErrorPanel extends Object {
     registerForWindowErrors () {
         if (!this.isRegistered()) {
             window.addEventListener('error', (event) => {
-                this.handleWindowError(
-                    event.message,
-                    event.filename,
-                    event.lineno,
-                    event.colno,
-                    event.error
-                );
-                //throw event.error; // so the debugger will break
+                const error = this.errorFromEvent(event);
+                this.handleWindowError(error);
             });
             
             // Also register for unhandled promise rejections
             window.addEventListener('unhandledrejection', (event) => {
-                this.handleWindowError(
-                    `Unhandled Promise Rejection: ${event.reason}`,
-                    'Promise',
-                    0,
-                    0,
-                    event.reason
-                );
-                //throw event.reason; // so the debugger will break
+                const error = this.errorFromEvent(event);
+                this.handleWindowError(error);
             });
             
             this.setIsRegistered(true);
-            //console.log("SvWindowErrorPanel: Registered for window error events");
         }
         return this;
+    }
+
+    errorInfoFromError (error) {
+        return {
+            reason: error.reason,
+            message: error.message,
+            source: error.filename,
+            sourceName: this.cleanSourceName(error.filename),
+            lineno: error.lineno,
+            colno: error.colno,
+            error: error.error
+        };
+    }
+
+    cleanSourceName (source) {
+        let sourceName = null;
+        if (typeof(source) === "string") {
+            sourceName = source;
+        } else if (source && source.type) {
+            sourceName = source.type();
+        } else {
+            sourceName = typeof(source);
+        }
+        return sourceName;
     }
 
     /**
@@ -95,28 +116,13 @@ class SvWindowErrorPanel extends Object {
      * @returns {SvWindowErrorPanel}
      * @category Error Handling
      */
-    handleWindowError (message, source, lineno, colno, error) {
+    handleWindowError (error) {
         //debugger;
-        try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
-            let sourceName = null;
-            if (typeof(source) === "string") {
-                sourceName = source;
-            } else if (source && source.type) {
-                sourceName = source.type();
-            } else {
-                sourceName = typeof(source);
-            }
-
-            const errorInfo = {
-                message: message,
-                source: sourceName,
-                lineno: lineno,
-                colno: colno,
-                stack: error ? error.stack : "No stack trace",
-                timestamp: new Date().toISOString()
-            };
+        try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HERE COULD CAUSE AN INFINITE LOOP
+            const errorInfo = this.errorInfoFromError(error);
             
             // Check if the error occurred within the YouTube API's Web Worker
+            const source = errorInfo.sourceName;
             if (source.includes('www.youtube.com') || source.includes('www.google.com')) {
                 this.handleYouTubeError(errorInfo);
                 return this;
@@ -144,11 +150,7 @@ class SvWindowErrorPanel extends Object {
     handleYouTubeError (errorInfo) {
         try {
             console.error('Exception caught from YouTube API Web Worker:');
-            console.error('Message:', errorInfo.message);
-            console.error('Source:', errorInfo.source);
-            console.error('Line:', errorInfo.lineno);
-            console.error('Column:', errorInfo.colno);
-            console.error('Error object:', errorInfo.error);
+            console.error(JSON.stringify(errorInfo, null, 2));
         } catch (e) {
             console.error("Error in handleYouTubeError:", e);
         }
@@ -163,8 +165,6 @@ class SvWindowErrorPanel extends Object {
     showPanelWithInfo (errorInfo) {
         debugger;
         console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
-        //debugger;
-        //return;
 
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window

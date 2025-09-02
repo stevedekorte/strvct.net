@@ -910,17 +910,19 @@
    * @param {Error} error - The timeout error
    */
   onXhrTimeout (error) {
- 
+    assert(error instanceof Error, "onXhrTimeout error not instance of Error");
+    
     debugger;
     if (!SvPlatform.isOnline()) {
-        error.message = "Internet connection down." + error.message;
+        error.message = "Internet connection down. " + error.message;
     }
 
     this.setDidTimeout(true);
     this.setError(error);
 
-    this.setStatus("TIMEOUT (after " + this.timeoutPeriodInMs()/1000 + " seconds): " + error.message);
-    this.logWarn(" ======================= " + this.type() + " TIMEOUT: " + error.message + " ======================= ");
+    this.logDivider();
+    this.setStatus("ERROR: " + error.message);
+    this.logError(".onXhrTimeout" + error.message);
     this.sendDelegate("onRequestTimeout", [this, error]);
     
     if (error) {

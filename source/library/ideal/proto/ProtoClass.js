@@ -1042,6 +1042,15 @@
         console.log(this.logPrefix() + " " + s);
     }
 
+    logDivider (note) {
+        const half = "==================================";
+        if (note) {
+            console.log(half + " " + note + " " + half);
+        } else {
+            console.log(half + half);
+        }
+    }
+
     /**
      * Logs a debug message if debugging is enabled.
      * @param {string|Function} s - The message to log or a function that returns the message.

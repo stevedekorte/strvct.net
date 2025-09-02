@@ -325,9 +325,12 @@
   }
 
   shouldRequestResponseOnComplete () {
-    return this.role() === "user";
+    return this.isUserMessage();
   }
 
+  isUserMessage () {
+    return this.role() === "user";
+  }
 
   /**
    * Handle completion of the message.
