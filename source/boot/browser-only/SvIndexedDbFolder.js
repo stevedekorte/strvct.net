@@ -578,7 +578,7 @@
 
             if (!lastTx.isFinished()) {
                 if (!lastTx.isCommitted()) {
-                    this.logWarn("WARNING: last tx was not committed yet!")
+                    this.logWarn("last tx was not committed yet!")
                     this.logWarn("last tx:")
                     lastTx.show()
                 } 

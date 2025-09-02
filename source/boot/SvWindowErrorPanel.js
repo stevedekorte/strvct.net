@@ -161,6 +161,7 @@ class SvWindowErrorPanel extends Object {
      * @category UI
      */
     showPanelWithInfo (errorInfo) {
+        debugger;
         console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
         //debugger;
         //return;
@@ -220,16 +221,21 @@ class SvWindowErrorPanel extends Object {
             
             // Create error message content
             let errorMessage = errorInfo.message ? errorInfo.message : "";
+            
+            // First, extract only the first sentence (up to the first period)
+            const periodIndex = errorMessage.indexOf(".");
+            if (periodIndex > 0) {
+                errorMessage = errorMessage.substring(0, periodIndex + 1);
+            }
+            
+            // Then, if the message contains a colon, extract the part after the last colon
             if (errorMessage.includes(":")) {
-                const parts = errorMessage.split(":").map(part => part.trim());
-                while (parts.length > 1 && parts.first().toLowerCase().endsWith("error")) {
-                    parts.shift();
-                }
-                errorMessage = parts.last();
+                const lastColonIndex = errorMessage.lastIndexOf(":");
+                errorMessage = errorMessage.substring(lastColonIndex + 1).trim();
             }
 
-            errorMessage += "<br>Source: '" + errorInfo.source + "'";
-            errorMessage += "<br>Line: " + errorInfo.lineno;
+            //errorMessage += "<br>Source: '" + errorInfo.source + "'";
+            //errorMessage += "<br>Line: " + errorInfo.lineno;
 
             //const errorTitle = parts[0];
             //const errorMessage = '"' + parts[1] + '"';

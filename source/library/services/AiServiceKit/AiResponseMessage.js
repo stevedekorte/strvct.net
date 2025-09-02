@@ -328,10 +328,9 @@
    * @category Error Handling
    */
   onRequestError (aRequest) {
-    console.log("ERROR: ", aRequest.error().message);
     this.setError(aRequest.error());
     const msg = aRequest.error().message;
-    console.warn("ERROR: ", msg);
+    this.logError(msg);
 
     // TODO: look at error and retry if appropriate,
     // otherwise show error panel

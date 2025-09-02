@@ -181,6 +181,14 @@ class SvPlatform extends Object {
       });
     });
   }
+
+  static isOnline () {
+    if (this.isBrowserPlatform()) {
+        return navigator.onLine;
+    }
+    // assume online for non-browser platforms?
+    return true;
+}
 }
 
 SvGlobals.set("SvPlatform", SvPlatform);

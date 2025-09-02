@@ -77,7 +77,8 @@
         if (tids.has(name)) {
             tids.delete(name);
         } else {
-            console.warn("removeTimeoutNamed('" + name + "') no timeout with that name found");
+            // this path is not unusual but we might want to log it when debugging timeouts
+            //console.warn("removeTimeoutNamed('" + name + "') no timeout with that name found");
         }
         return this;
     }

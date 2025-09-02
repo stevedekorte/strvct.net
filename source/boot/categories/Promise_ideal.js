@@ -174,37 +174,49 @@
 /**
  * @method callResolveFunc
  * @memberof Promise
- * @description Calls the resolve function of the promise.
- * @param {*} arg1 - First argument to pass to the resolve function.
- * @param {*} arg2 - Second argument to pass to the resolve function.
- * @param {*} arg3 - Third argument to pass to the resolve function.
+ * @description Calls the resolve function of the promise with variable arguments.
+ * @param {...*} args - Arguments to pass to the resolve function.
  * @returns {*} The result of calling the resolve function.
  * @category Resolution
  */
-    callResolveFunc (arg1, arg2, arg3) {
+    callResolveFunc (...args) {
         assert(!this.isRejected(), "promise resolve call on already rejected promise");
         this._status = "resolved";
         this.clearAwaiterCount();
         this.cancelTimeout();
-        return this._resolveFunc(arg1, arg2, arg3);
+        if (this._resolveFunc) {
+            return this._resolveFunc(...args);
+        }
+        debugger;
+        throw new Error("Promise resolved with no resolve function provided");
     }
 
 /**
  * @method callRejectFunc
  * @memberof Promise
- * @description Calls the reject function of the promise.
- * @param {*} arg1 - First argument to pass to the reject function.
- * @param {*} arg2 - Second argument to pass to the reject function.
- * @param {*} arg3 - Third argument to pass to the reject function.
+ * @description Calls the reject function of the promise with variable arguments.
+ * If no reject function exists (e.g., promise not created via Promise.clone()), 
+ * rethrows the first argument as an exception.
+ * @param {...*} args - Arguments to pass to the reject function.
  * @returns {*} The result of calling the reject function.
+ * @throws {*} The first argument if no reject function exists.
  * @category Resolution
  */
-    callRejectFunc (arg1, arg2, arg3) { 
+    callRejectFunc (...args) { 
         assert(!this.isResolved(), "promise reject call on already resolved promise");
         this._status = "rejected";
         this.clearAwaiterCount();
         this.cancelTimeout();
-        return this._rejectFunc(arg1, arg2, arg3);
+        if (this._rejectFunc) {
+            debugger;
+            return this._rejectFunc(...args);
+        }
+        // If no reject function exists, rethrow the error/exception
+        if (args.length > 0) {
+            throw args[0];
+        }
+        debugger;
+        throw new Error("Promise rejected with no reject function and no error provided");
     }
 
 // status

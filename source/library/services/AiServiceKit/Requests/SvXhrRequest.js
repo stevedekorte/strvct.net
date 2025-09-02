@@ -138,6 +138,17 @@
       slot.setCanEditInspection(false);
     }
 
+    {
+      const slot = this.newSlot("timeoutPeriodInMs", 30000); // 30 seconds
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
     /**
      * @member {Error} error - The error object.
      */
@@ -165,6 +176,20 @@
      */
     {
       const slot = this.newSlot("didAbort", false);
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
+    /**
+     * @member {Boolean} didTimeout - Whether the request timed out.
+     */
+    {
+      const slot = this.newSlot("didTimeout", false);
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -429,6 +454,7 @@
     this.setCompletionPromise(Promise.clone());
     this.setStatus("");
     this.setDidAbort(false);
+    this.setDidTimeout(false);
     this.setRetryCount(0);
   }
 
@@ -466,6 +492,7 @@
 
     const xhr = new XMLHttpRequest();
     this.setXhr(xhr);
+    xhr.timeout = this.timeoutPeriodInMs();
     xhr.open(this.method(), this.url());
 
     // set headers
@@ -479,7 +506,7 @@
       
       // Skip Content-Type header for FormData - browser must set it with boundary
       if (isFormData && header.toLowerCase() === 'content-type') {
-        console.warn("Skipping Content-Type header for FormData - browser will set it with boundary");
+        this.logWarn("Skipping Content-Type header for FormData - browser will set it with boundary");
         continue;
       }
       
@@ -509,11 +536,23 @@
     // NOTE: This is the reason why we use the false argument for the third argument to addEventListener:
     // https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
 
+    xhr.addEventListener("loadstart", (event) => {
+      em.safeWrapEvent(() => {
+        this.onXhrLoadStart(event);
+      }, event)
+    });
+
     xhr.addEventListener("progress", (event) => {
       em.safeWrapEvent(() => {
         this.onXhrProgress(event);
       }, event)
     }, false);
+
+    xhr.addEventListener("load", (event) => {
+      em.safeWrapEvent(() => {
+        this.onXhrLoad(event);
+      }, event)
+    });
 
     xhr.addEventListener("loadend", (event) => {
       try { 
@@ -528,12 +567,12 @@
     xhr.addEventListener("error", (event) => {
       em.safeWrapEvent(() => { 
         // Get error details from XHR (event.error is usually null for XHR errors)
-        const status = event.target.status;
-        const statusText = event.target.statusText;
-        const responseText = event.target.responseText;
+        const status = this.readableStatus(); // event.target.status; 
+        const readyState = this.readableReadyState(); // event.target.statusText;
+        const responseText = this.responseText(); // event.target.responseText;
         
         // Create an Error object with detailed message like the parent class does
-        const errorMessage = `XHR error: status: ${status} (${statusText}), response: ${responseText || 'none'}`;
+        const errorMessage = `XHR error: status: ${status} (${readyState}), response: ${responseText || 'none'}`;
         const error = new Error(errorMessage);
         
         this.onXhrError(error);
@@ -546,6 +585,13 @@
       }, event)
     });
 
+    xhr.addEventListener("timeout", (event) => {
+      em.safeWrapEvent(() => {
+        const error = new Error(`Request timeout: exceeded ${this.timeoutPeriodInMs()}ms`);
+        this.onXhrTimeout(error);
+      }, event)
+    });
+
     xhr.send(options.body);
 
     await this.xhrPromise(); // wait for the request to complete
@@ -555,6 +601,7 @@
       const m = JSON.stringify(this.readbleJsonState(), null, 2);
       this.setError(new Error(m));
       this.setStatus("Failed: " + m);
+      debugger;
       this.sendDelegate("onRequestFailue", [this]);
     } else {
       this.setStatus("Succeeded");
@@ -565,6 +612,16 @@
     
     // Resolve the completion promise to signal the request is done
     this.completionPromise().callResolveFunc();
+  }
+
+  /**
+   * @category XHR
+   * @description Called when the XHR loadstart event is fired
+   * @param {ProgressEvent} event 
+   */
+  onXhrLoadStart (/*event*/) {
+    this.setStatus("request started");
+    this.sendDelegate("onRequestBegin", [this]);
   }
 
   /**
@@ -581,6 +638,8 @@
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
     this.sendDelegate("onRequestProgress", [this]);
   }
+
+  // --- status and error handling ---
 
   statusCode () {
     const xhr = this.xhr();
@@ -653,6 +712,17 @@
 
   /**
    * @category XHR
+   * @description Called when the XHR load event is fired (successful completion only)
+   * @param {Event} event 
+   */
+  onXhrLoad (/*event*/) {
+    // This fires only on successful completion (status 200-299)
+    // We can use this for success-specific logic if needed
+    // Currently most logic is in loadend which fires for all completions
+  }
+
+  /**
+   * @category XHR
    * @description Called when the XHR loadend event is fired
    * @param {Event} event 
    */
@@ -663,29 +733,33 @@
     }
 
     if (this.hasErrorStatusCode()) {
-      const statusCode = this.xhr().status;
-      const fullStatus = this.fullNameForXhrStatusCode(statusCode);
-
-      this.logDebug(this.description());
-
-      // try to extract an error message from the response, if it has one
-
-      const xhr = this.xhr();
-      const contentType = xhr.getResponseHeader("Content-Type");
-      if (contentType.includes("application/json")) {
-        const errorMessageInJson = this.responseJsonError();
-        if (errorMessageInJson) {
-          const errorMessage = fullStatus + " json.error: " + errorMessageInJson;
-          this.onXhrError(new Error(errorMessage));
-        }
-      } else if (contentType.includes("text/xml")) {
-        const errorMessageInXml = this.responseXmlError();
-        if (errorMessageInXml) {
-          const errorMessage = fullStatus + " xml.error: " + errorMessageInXml;
-          this.onXhrError(new Error(errorMessage));
-        }
+      if (!SvPlatform.isOnline()) {
+        this.onXhrError(new Error("Internet connection down."));
       } else {
-        this.onXhrError(new Error(fullStatus));
+        const statusCode = this.xhr().status;
+        const fullStatus = this.fullNameForXhrStatusCode(statusCode);
+
+        this.logDebug(this.description());
+
+        // try to extract an error message from the response, if it has one
+
+        const xhr = this.xhr();
+        const contentType = xhr.getResponseHeader("Content-Type");
+        if (contentType.includes("application/json")) {
+            const errorMessageInJson = this.responseJsonError();
+            if (errorMessageInJson) {
+            const errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
+            this.onXhrError(new Error(errorMessage));
+            }
+        } else if (contentType.includes("text/xml")) {
+            const errorMessageInXml = this.responseXmlError();
+            if (errorMessageInXml) {
+            const errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
+            this.onXhrError(new Error(errorMessage));
+            }
+        } else {
+            this.onXhrError(new Error(fullStatus));
+        }
       }
     }
 
@@ -803,12 +877,13 @@
     const msg = e.message;
     this.setError(e);
     this.setStatus("ERROR: " + msg);
-    console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
+    this.logWarn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
     //debugger;
+    //const didHandle = 
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {
-      console.warn(this.debugTypeId() + " " + e.message);
+      this.logWarn(this.debugTypeId() + " " + e.message);
     }
     return this;
   }
@@ -827,6 +902,53 @@
     
     // Also resolve the completion promise when aborted
     this.completionPromise().callResolveFunc();
+  }
+
+  /**
+   * @category XHR
+   * @description Called when the XHR timeout event is fired
+   * @param {Error} error - The timeout error
+   */
+  onXhrTimeout (error) {
+ 
+    debugger;
+    if (!SvPlatform.isOnline()) {
+        error.message = "Internet connection down." + error.message;
+    }
+
+    this.setDidTimeout(true);
+    this.setError(error);
+
+    this.setStatus("TIMEOUT (after " + this.timeoutPeriodInMs()/1000 + " seconds): " + error.message);
+    this.logWarn(" ======================= " + this.type() + " TIMEOUT: " + error.message + " ======================= ");
+    this.sendDelegate("onRequestTimeout", [this, error]);
+    
+    if (error) {
+      this.logWarn(this.debugTypeId() + " " + error.message);
+    }
+    
+    this.throwDescriptiveError(this.causeOfError() + ". ");
+  }
+
+  throwDescriptiveError (prefix = "") {
+    const error = new Error(this.descriptiveErrorMessage(prefix));
+    throw error;
+  }
+
+  descriptiveErrorMessage (prefix = "") {
+    const json = {
+      status: this.readableStatus(),
+      readyState: this.readableReadyState(),
+      error: this.error()?.message,
+      responseText: this.responseText(),
+      shouldAutoRetry: this.shouldAutoRetryForCurrentError()
+    };
+    
+    if (this.didTimeout()) {
+        json.didTimeout = true;
+        json.timeoutPeriod = this.timeoutPeriodInMs()/1000 + " seconds";
+    }
+    return prefix + JSON.stringify(json, null, 2);
   }
 
   // -----------------------------------------------------------------------------
@@ -927,10 +1049,23 @@
    * @returns {boolean}
    */
   shouldAutoRetryForCurrentError () {
-    //const e = this.error();
-    // higher level code should probably hand the decision to retry based on the error message
-    // but we'll just use the status code for now
-    return this.shouldAutoRetryForXhrStatusCode(this.xhr().status);
+    // Check if this was a timeout - timeouts are often transient and worth retrying
+    if (this.didTimeout()) {
+      return true;
+    }
+    
+    // Check if this was an abort - aborts should not be retried
+    if (this.didAbort()) {
+      return false;
+    }
+    
+    // For other errors, check the status code
+    const xhr = this.xhr();
+    if (xhr) {
+      return this.shouldAutoRetryForXhrStatusCode(xhr.status);
+    }
+    
+    return false;
   }
   
 
@@ -1064,6 +1199,83 @@
       }
     }
     return false;
+  }
+
+  // --- error handling ---
+
+  /**
+   * @category XHR
+   * @description Returns a string describing the cause of the error
+   * @returns {string}
+   */
+
+  causeOfError () {
+    const xhr = this.xhr();
+    if (!xhr) {
+        return "No XHR object available";
+    }
+    
+    const status = xhr.status;
+    const readyState = xhr.readyState;
+    const error = this.error();
+    const responseText = this.responseText();
+    
+    const causes = [];
+
+    if (!SvPlatform.isOnline()) { // NOTE: we assume this method is called at time of error
+       causes.push("Internet connection down.");
+    }
+    
+    // Check for timeout first (most specific)
+    if (this.didTimeout()) {
+        causes.push(`Request timeout (exceeded ${this.timeoutPeriodInMs()/1000} seconds)`);
+    }
+    
+    // Network and connection issues
+    else if (status === 0) {
+        if (this.didAbort()) {
+            causes.push("request was aborted");
+        } else if (readyState === 0) {
+            causes.push("request not initialized");
+        } else {
+            // Status 0 with non-zero readyState indicates network failure
+            causes.push("network error (possible causes: CORS blocked, connection refused, SSL/TLS error, offline)");
+        }
+    }
+    
+    // HTTP error statuses
+    else if (status >= 300 && status < 400) {
+        causes.push(`redirect error (${this.fullNameForXhrStatusCode(status)})`);
+    } else if (status >= 400 && status < 500) {
+        causes.push(`client error (${this.fullNameForXhrStatusCode(status)})`);
+    } else if (status >= 500) {
+        causes.push(`server error (${this.fullNameForXhrStatusCode(status)})`);
+    }
+    
+    // Connection state issues
+    if (readyState > 0 && readyState < 4 && status !== 0 && !this.didTimeout()) {
+        causes.push("incomplete request (connection may have dropped)");
+    }
+    
+    // Include error message if available (but avoid duplicating timeout message)
+    if (error && !this.didTimeout()) {
+        const errorMsg = error.message || error.toString();
+        if (errorMsg && !causes.some(c => c.includes(errorMsg))) {
+            causes.push(`error: "${errorMsg}"`);
+        }
+    }
+    
+    // Check for empty response on success status
+    if (status >= 200 && status < 300 && !responseText) {
+        causes.push("successful status but empty response");
+    }
+    
+    // Provide specific guidance for common issues
+    if (status === 0 && window.location.protocol === 'file:' && !this.didTimeout() && !this.didAbort()) {
+        causes.push("file:// protocol detected - XMLHttpRequest may be blocked");
+    }
+    
+    return causes.length > 0 ? causes.join("; ") : "unknown error";
   }
 
 

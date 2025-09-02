@@ -214,7 +214,7 @@
 
     log (...args) {
         const s = args.map(String).join('');
-        console.log(this.logPrefix() + " " + s);
+        console.log(this.logPrefix() + ": " + s);
     }
 
     /**
