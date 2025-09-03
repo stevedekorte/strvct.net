@@ -150,7 +150,7 @@
             if (this.shouldMerge() && sn) {
                 sn.setJson(v);
             } else {
-                console.log("SvJsonArrayNode.setJson() creating new node for hash: ", hash);
+                this.log("SvJsonArrayNode.setJson() creating new node for hash: ", hash);
                 const aNode = this.thisClass().nodeForJson(v, jsonPathComponents.concat(k));
                 aNode.setTitle(k);
                 if (aNode.setKey) {

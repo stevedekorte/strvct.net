@@ -4,7 +4,7 @@
 
 "use strict";
 
-const { Base } = require("../../../GameServer/site/strvct/webserver");
+const { SvBase } = require("../../../GameServer/site/strvct/webserver");
 const SvDbDataType = require("./SvDbDataType");
 // const SvDbTable = require("./SvDbTable");
 // const SvDbRow = require("./SvDbRow");
@@ -31,11 +31,11 @@ const SvDbDataType = require("./SvDbDataType");
  * Usage:
  * ```javascript
  * const column = table.columnWithName("user_id");
- * console.log(column.dataType());           // "UUID"
- * console.log(column.allowNull());          // false
- * console.log(column.isForeignKey());       // true
- * console.log(column.referencedTableName()); // "users"
- * console.log(column.referencedColumnName()); // "id"
+ * this.log(column.dataType());           // "UUID"
+ * this.log(column.allowNull());          // false
+ * this.log(column.isForeignKey());       // true
+ * this.log(column.referencedTableName()); // "users"
+ * this.log(column.referencedColumnName()); // "id"
  * ```
  */
 (class SvDbColumn extends SvBase {

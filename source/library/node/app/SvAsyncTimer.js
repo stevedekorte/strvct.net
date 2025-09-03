@@ -76,7 +76,7 @@
         } finally {
             this.setEndTime(this.now());
             if (this.doesLog()) {
-                this.log();
+                this.logNow();
             }
         }
         if (caughtError !== null) {
@@ -84,8 +84,8 @@
         }
     }
 
-    log () {
-        console.log(" --- " + this.label() + " " + this.dtInSeconds() + "s --- ");
+    logNow () {
+        this.log(" --- " + this.label() + " " + this.dtInSeconds() + "s --- ");
     }
 
     dtInMs () {

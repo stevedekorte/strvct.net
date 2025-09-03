@@ -106,23 +106,23 @@
      * @category Resource Management
      */
     async setupSubnodes () {
-        //console.log(this.type() + " setupSubnodes begin with " + this.urlResources().length + " url resources");
+        //this.log(".setupSubnodes begin with " + this.urlResources().length + " url resources");
 
         await this.urlResources().promiseParallelForEach(async (r) => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
             const aResource = rClass.clone().setPath(r.path());
             aResource.setUrlResource(r);
-            //console.log("loading resource: " + aResource.path());
+            //this.log("loading resource: " + aResource.path());
             if (aResource.canDeferLoad()) {
                 //aResource.asyncLoad(); // don't wait for this one
             } else {
                 await aResource.asyncLoad(); // do this in parallel
-                //console.log("asyncLoaded resource: " + aResource.path());
+                //this.log("asyncLoaded resource: " + aResource.path());
             }
             this.addResource(aResource);
         });
         
-        //console.log(this.type() + " setupSubnodes done");
+        //this.log(".setupSubnodes done");
 
         if (this.type() !== "SvFileResources") {
             //assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
@@ -227,15 +227,15 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        //console.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        //this.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
         //debugger;
         await this.resources().promiseParallelMap(async (r) => {
-            //console.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
+            //this.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {
                 await r.prechacheWhereAppropriate();
             }
         });
-        //console.log("resource group: " + this.type() + ".prechacheWhereAppropriate() done");
+        //this.log("resource group: " + this.type() + ".prechacheWhereAppropriate() done");
         return this;
     }
 

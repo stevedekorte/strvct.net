@@ -582,7 +582,7 @@
             link.click();
             document.body.removeChild(link);
             
-            console.log("Video download initiated:", filename);
+            this.log("Video download initiated:", filename);
         } catch (error) {
             console.error("Failed to download video:", error);
             

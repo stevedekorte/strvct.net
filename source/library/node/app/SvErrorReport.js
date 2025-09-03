@@ -45,7 +45,7 @@
      */
     static async test () {
         const message = "Test error message";
-        console.log("Testing error reporting with message: '", message, "'");
+        this.log("Testing error reporting with message: '", message, "'");
         
         const testError = new Error(message);
         testError.name = "TestError";
@@ -166,7 +166,7 @@
                 
                 // Parse and return the response
                 const responseData = await response.json();
-                console.log("Error report sent successfully:", responseData);
+                this.log("Error report sent successfully:", responseData);
                 return responseData;
             } catch (err) {
                 console.error("Failed to send error report:", err);

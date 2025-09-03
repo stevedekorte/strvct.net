@@ -96,7 +96,7 @@
      * @param {boolean} newValue - The new value of isPicked.
      * @category State
      */
-    didUpdateSlotIsPicked (oldValue, newValue) {
+    didUpdateSlotIsPicked (/*oldValue, newValue*/) {
         const optionsNode = this.optionsNode();
         if (optionsNode) {
             optionsNode.didToggleOption(this);
@@ -105,11 +105,11 @@
             debugger;
             // if this is called, the stack views might not have properly synced 
             // after the OptionsNode removed it's subnodes
-            console.log("parent: ", this.parentNode().title());
-            console.log("grand parent: ", this.parentNode().parentNode().title());
-            console.log("great grand parent: ", this.parentNode().parentNode().parentNode().title());
+            this.log("parent: ", this.parentNode().title());
+            this.log("grand parent: ", this.parentNode().parentNode().title());
+            this.log("great grand parent: ", this.parentNode().parentNode().parentNode().title());
             const result = this.firstParentChainNodeOfClass(SvOptionsNode);
-            console.log("result: ", result.title());
+            this.log("result: ", result.title());
             throw new Error("missing SvOptionsNode");
         }
     }

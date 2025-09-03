@@ -60,7 +60,7 @@
      */
     initPrototype () {
         this.setIsDebugging(true);
-        console.log(">>> Using Browser/IndexedDB implementation of SvIndexedDbFolder");
+        this.log(">>> Using Browser/IndexedDB implementation of SvIndexedDbFolder");
         
         // This should never run in Node.js
         if (typeof process !== 'undefined' && process.versions && process.versions.node) {
@@ -771,11 +771,11 @@ async function estimateAllIndexedDBUsage () {
     for (const database of databases) {
       const databaseName = database.name;
       const usage = await estimateIndexedDBUsage(databaseName);
-      console.log(`Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
+      this.log(`Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
       totalUsage += usage;
     }
   
-    console.log(`Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
+    this.log(`Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
     return totalUsage;
   }
   

@@ -133,7 +133,7 @@
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
         if (this.hasDate()) {
             const d = new Date(this.year(), this.month(), this.day(), 0, 0, 0, 0, 0)
-            //console.log("d = ", d)
+            //this.log("d = ", d)
             return d
         }
         return null
@@ -149,8 +149,7 @@
             const d = this.jsDate()
             const s = d.monthName() + " " + d.dateNumberName() + ", " + d.getFullYear()
             const s2 = [this.year(), this.month(), this.day()].join("-")
-            return s2 //+ " - " + s
-            return s
+            return s2 + " - " + s;
         }
 
         return "No date selected"

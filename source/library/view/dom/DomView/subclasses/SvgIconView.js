@@ -168,7 +168,7 @@
                 this.unhideDisplay();
             } else {
                 const error = "can't find icon '" + name + "'";
-                console.log(error);
+                this.logError(error);
                 //debugger;
                 this.clear();
                 return this;

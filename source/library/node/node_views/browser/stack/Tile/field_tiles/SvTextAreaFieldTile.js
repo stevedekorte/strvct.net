@@ -138,7 +138,7 @@
      * @category Event Handling
      */
     onClickValueButton () {
-        console.log("this.isMicOn():", this.isMicOn());
+        this.log("this.isMicOn():", this.isMicOn());
         if (!this.isMicOn()) {
             this.setupSttSessionIfNeeded();
             this.sttSession().start();
@@ -164,10 +164,10 @@
      * @param {SpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
-    onSpeechInterimResult (sttSession) {
+    onSpeechInterimResult (/*sttSession*/) {
         const text = this.sttSession().interimTranscript();
         this.valueView().setString(text);
-        console.log("onSpeechInterimResult('" + text + "')");
+        this.log("onSpeechInterimResult('" + text + "')");
     }
 
     /**
@@ -175,7 +175,7 @@
      * @param {SpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
-    onSpeechFinal (sttSession) {
+    onSpeechFinal (/*sttSession*/) {
 
     }
 
@@ -186,7 +186,7 @@
      */
     onSpeechInput (sttSession) {
         const text = this.sttSession().fullTranscript();
-        console.log("onSpeechInput('" + text + "')");
+        this.log("onSpeechInput('" + text + "')");
         if (text.length > 0) {
             const textField = this.valueView();
             textField.setValue(text);
@@ -201,7 +201,7 @@
      * @param {SpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
-    onSpeechEnd (sttSession) {
+    onSpeechEnd (/*sttSession*/) {
         this.updateSttButton()
     }
 
@@ -210,7 +210,7 @@
      * @param {SpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
-    onSessionEnd (sttSession) {
+    onSessionEnd (/*sttSession*/) {
         this.updateSttButton()
     }
     

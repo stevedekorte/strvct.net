@@ -323,7 +323,7 @@
      * @returns {void}
      */
     onDomMutation (mutationList /*, observer*/) {
-     //   console.log("onDomMutation --------------> ", mutationList);
+     //   this.log("onDomMutation --------------> ", mutationList);
 
         for(const mutation of mutationList) {
             if (mutation.type === 'characterData') {
@@ -331,10 +331,10 @@
             }
             /*
             if (mutation.type === 'childList') {
-                console.log('A child node has been added or removed.');
+                this.log('A child node has been added or removed.');
             }
             else if (mutation.type === 'attributes') {
-                console.log('The ' + mutation.attributeName + ' attribute was modified.');
+                this.log('The ' + mutation.attributeName + ' attribute was modified.');
             }
             */
         }
@@ -346,7 +346,7 @@
      * @returns {void}
      */
     onCharacterDataMutation (mutation) {
-        console.log("onCharacterDataMutation --------------> ", mutation);
+        this.log("onCharacterDataMutation --------------> ", mutation);
     }
 
     /**
@@ -502,7 +502,7 @@
      * @returns {void}
      */
     onDoubleTapCancelled (/*aGesture*/) {
-        //console.log(this.value() + " onDoubleTapCancelled");
+        //this.log(this.value() + " onDoubleTapCancelled");
     }
 
     /**
@@ -512,7 +512,7 @@
      */
     onDoubleTapComplete (/*aGesture*/) {
         //debugger;
-        //console.log(this.value() + " onDoubleTapComplete");
+        //this.log(this.value() + " onDoubleTapComplete");
         // make content editable and select text
         //this.logDebug(".onDoubleTapComplete()");
         if (this.contentEditable()) {
@@ -556,7 +556,7 @@
         // sent before focus and bubbles up the parent chain
 
         super.onFocusIn();
-        //console.log(this.typeId() + " '" + this.string() + "' onFocusIn")
+        //this.log(" '" + this.string() + "' onFocusIn")
         if (this.contentEditable()) {
             this.pauseGestures();
         }
@@ -569,12 +569,12 @@
      */
     onFocusOut (/*event*/) {
         // sent before blur
-        //console.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
+        //this.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
         //const isFocused = this.isActiveElementAndEditable();
         this.storeSelectionRange();
 
         super.onFocusOut();
-        //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
+        //this.log(" '" + this.string() + "' onFocusOut")
         this.unpauseGestures(); // do we need to check for (!this.contentEditable())?
     }
 
@@ -586,11 +586,11 @@
      * @returns {void}
      */
     onFocus (/*event*/) {
-       // console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()");
+       // this.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()");
         if (this.onBlurSelection()) {
             this.restoreSelectionRange();
         } else {
-            //console.log("--- NO blur selection ---");
+            //this.log("--- NO blur selection ---");
         }
     }
 
@@ -600,7 +600,7 @@
      */
     blur () {
         //debugger;
-        //console.log(this.value() + " blur");
+        //this.log(this.value() + " blur");
         return super.blur();
     }
 
@@ -720,9 +720,9 @@
             const shouldMerge = newValue.beginsWith(oldValue);
             if (shouldMerge) {
                 /*
-                console.log("---- begin HTML merge ----");
-                console.log("oldValue: [" + oldValue + "]");
-                console.log("newValue: [" + newValue + "]");
+                this.log("---- begin HTML merge ----");
+                this.log("oldValue: [" + oldValue + "]");
+                this.log("newValue: [" + newValue + "]");
                 */
 
                 const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
@@ -730,8 +730,8 @@
                 reader.onStreamHtml(newValue);
                 reader.endHtmlStream();
                 this.element().mergeFrom(reader.rootElement());
-                //console.log("merged: [" + this.element().innerHTML + "]");
-                //console.log("---- end HTML merge ----");
+                //this.log("merged: [" + this.element().innerHTML + "]");
+                //this.log("---- end HTML merge ----");
             } else {
                  this.setString(newValue);
             }
@@ -757,7 +757,7 @@
      * @returns {SvTextView} The text field.
      */
     setNewValue (v) { // private method
-        //console.log("setNewValue(" + v.substring(0, 10) + "...)");
+        //this.log("setNewValue(" + v.substring(0, 10) + "...)");
         if (this.allowsHtml()) {
             this.setInnerHtml(v);
         } else {
@@ -809,10 +809,10 @@
             }
             
             /*
-            console.log(" setString(");
-            console.log("    old: '" + oldValue + "'");
-            console.log("    new: '" + newValue + "'");
-            console.log("---");
+            this.log(" setString(");
+            this.log("    old: '" + oldValue + "'");
+            this.log("    new: '" + newValue + "'");
+            this.log("---");
             */            
         }
         return this;
@@ -851,7 +851,7 @@
      * @returns {void}
      */
     onAlternateEnterKeyUp (/*event*/) {
-        console.log(this.typeId() + " onAlternateEnterKeyDown");
+        this.log(" onAlternateEnterKeyDown");
         //this.insertEnterAtCursor();
         //this.afterEnter();
     }
@@ -905,7 +905,7 @@
         // sent before the content is changed
         super.onKeyDown(event);
         //const keyName = SvKeyboard.shared().keyForEvent(event);
-        //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode);
+        //this.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode);
 
         if (this.shouldMuteEvent(event)) {
             event.preventDefault();
@@ -931,7 +931,7 @@
         //event.preventDefault();
         //return result;
 
-        //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
+        //this.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
         //this.logDebug(" onKeyUp value: [" + this.value() + "]")
 
         if (this.doesInput()) {
@@ -1166,7 +1166,7 @@
     setBorder (v) {
         /*
         if (this.value() === "a") {
-            console.log("break");
+            this.log("break");
         }
         */
         return super.setBorder(v);
@@ -1219,7 +1219,7 @@
      * @returns {void}
      */
     startSpeechToText () {
-        console.log("=== start speech to text ===");
+        this.log("=== start speech to text ===");
         if (this._speechSession) {
             this._speechSession.stop();
             this._speechSession = null;
@@ -1245,7 +1245,7 @@
     onSpeechInterimResult (/*speechSession*/) {
         //const s = speechSession.intermFullTranscript();
         //const s = speechSession.fullTranscript();
-        //console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'");
+        //this.log("onSpeechInterimResult intermFullTranscript: '" + s + "'");
         //this.insertTextAtCursorSimple(s);
     }
 
@@ -1256,7 +1256,7 @@
      */
     onSpeechEnd (speechSession) {
         const s = speechSession.fullTranscript();
-        console.log("onSpeechEnd full: '" + s + "'");
+        this.log("onSpeechEnd full: '" + s + "'");
         this.insertTextAtCursorSimple(s);
         this._speechSession = null;
     }
@@ -1266,7 +1266,7 @@
      * @returns {void}
      */
     stopSpeechToText () {
-        console.log("==== stop speech to text ====");
+        this.log("==== stop speech to text ====");
         // TODO: add visual indicator?
         const speech = this._speechSession;
         if (speech) {
@@ -1336,7 +1336,7 @@
      * @returns {void}
      */
     onSelectStart (/*event*/) {
-        console.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()");
+        this.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()");
     }
 
 }.initThisClass());

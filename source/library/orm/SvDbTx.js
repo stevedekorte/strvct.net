@@ -4,7 +4,7 @@
 
 "use strict";
 
-const { Base } = require("../../../GameServer/site/strvct/webserver");
+const { SvBase } = require("../../../GameServer/site/strvct/webserver");
 
 // Zone.js initialization helper
 const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
@@ -37,8 +37,8 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
  * 
  * // Add listener for transaction lifecycle events
  * tx.addListener({
- *   onTxCommit: (tx) => console.log("Transaction committed successfully"),
- *   onTxRollback: (tx) => console.log("Transaction rolled back")
+ *   onTxCommit: (tx) => this.log("Transaction committed successfully"),
+ *   onTxRollback: (tx) => this.log("Transaction rolled back")
  * });
  * 
  * const result = await tx.begin(async () => {

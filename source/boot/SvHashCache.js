@@ -96,7 +96,7 @@
      * @category Query
      */
     promiseHasKey (key) {
-        //console.log("promiseHasKey(" + key + ")");
+        //this.log("promiseHasKey(" + key + ")");
         return this.idb().promiseHasKey(key);
     }
 
@@ -119,7 +119,7 @@
             this.assertValidValue(dataFromDb);
             return dataFromDb;
         }
-        console.log("no hachcache key '" + hash + "' '" + url + "'");
+        this.log("no hachcache key '" + hash + "' '" + url + "'");
         // otherwise load it from url, store it, and then return it
         return this.promiseLoadUrlAndWriteToHash(url, hash);
     }
@@ -138,7 +138,7 @@
         if (data === undefined) {
             throw new Error("unable to load url: '" + url + "'");
         } else {
-            console.log("SvHashCache loaded url: '" + url + "'");
+            this.log("SvHashCache loaded url: '" + url + "'");
             debugger;
             await this.promiseAtPut(hash, data);
             return data;

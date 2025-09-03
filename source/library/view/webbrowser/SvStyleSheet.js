@@ -71,7 +71,7 @@
      * @category Debugging
      */
     show () {
-        console.log("sheetElement:", this.sheetElement())
+        this.log("sheetElement:", this.sheetElement())
     }
 
 }.initThisClass());

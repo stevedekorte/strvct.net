@@ -50,7 +50,7 @@
      * @returns {SvJsonNullField} Returns this instance for method chaining.
      * @category Serialization
      */
-    setJson (json, jsonPathComponents = []) {
+    setJson (/*json, jsonPathComponents = []*/) {
         return this
     }
 
@@ -60,10 +60,10 @@
      * @returns {SvJsonNullField} Returns this instance for method chaining.
      * @category Configuration
      */
-    setValueIsEditable (aBool) {
+    setValueIsEditable (/*aBool*/) {
         /*
         if (aBool) {
-            console.log(this.type() + " setValueIsEditable true")
+            this.log(".setValueIsEditable true")
         }
         */
         return super.setValueIsEditable(false)

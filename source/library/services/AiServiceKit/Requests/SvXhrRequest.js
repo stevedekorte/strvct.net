@@ -633,7 +633,7 @@
     /*
     const txt = event.currentTarget.responseText;
     const latestString = txt.substr(txt.length - event.loaded, event.loaded);
-    this.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
+    this.log(".onXhrProgress() read [" + latestString + "]");
     */
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
     this.sendDelegate("onRequestProgress", [this]);
@@ -847,7 +847,7 @@
    * @param {number} seconds 
    */
   retryWithDelay (seconds) {
-    this.log(this.typeId() + " retrying in " + seconds + " seconds");
+    this.log(".retryWithDelay(" + seconds + " seconds)");
     this.addTimeout(() => { 
       this.retryRequest();
     }, seconds * 1000);
@@ -911,7 +911,7 @@
    */
   onXhrTimeout (error) {
     assert(error instanceof Error, "onXhrTimeout error not instance of Error");
-    
+
     debugger;
     if (!SvPlatform.isOnline()) {
         error.message = "Internet connection down. " + error.message;

@@ -4,7 +4,7 @@
 
 "use strict";
 
-const { Base } = require("../../../GameServer/site/strvct/webserver");
+const { SvBase } = require("../../../GameServer/site/strvct/webserver");
 
 /**
  * @class SvDbSchema
@@ -55,15 +55,15 @@ const SvDbSchema = (class SvDbSchema extends SvBase {
         const queryInterface = sequelize.getQueryInterface();
         const dialect = sequelize.getDialect();
         
-        console.log(`Reading database schema for dialect: ${dialect}`);
+        this.log(`Reading database schema for dialect: ${dialect}`);
         
         // Get all table names
         const allTableNames = await queryInterface.showAllTables();
-        console.log(`Found ${allTableNames.length} tables:`, allTableNames.join(", "));
+        this.log(`Found ${allTableNames.length} tables:`, allTableNames.join(", "));
         
         // Filter out system tables that we don't want in our ORM
         const tableNames = this.filterSystemTables(allTableNames);
-        console.log(`Processing ${tableNames.length} application tables:`, tableNames.join(", "));
+        this.log(`Processing ${tableNames.length} application tables:`, tableNames.join(", "));
         
         // Validate all application table names before processing
         for (const tableName of tableNames) {
@@ -77,7 +77,7 @@ const SvDbSchema = (class SvDbSchema extends SvBase {
         
         // Process each table
         for (const tableName of tableNames) {
-            console.log(`Processing table: ${tableName}`);
+            this.log(`Processing table: ${tableName}`);
             
             try {
                 const tableSchema = await this.getTableSchema(queryInterface, tableName, dialect);
@@ -106,9 +106,10 @@ const SvDbSchema = (class SvDbSchema extends SvBase {
             let tableDescription;
             try {
                 tableDescription = await queryInterface.describeTable(tableName);
-                console.log(`Successfully described table ${tableName}`);
+                this.log(`Successfully described table ${tableName}`);
             } catch (error) {
-                console.log(`Attempting alternative table description for ${tableName}...`);
+                this.logError(error);
+                this.log(`Attempting alternative table description for ${tableName}...`);
                 // Fallback for some databases
                 const rawDescription = await queryInterface.sequelize.query(
                     `PRAGMA table_info(${tableName})`,
@@ -125,12 +126,12 @@ const SvDbSchema = (class SvDbSchema extends SvBase {
                         primaryKey: col.pk === 1
                     };
                 }
-                console.log(`Alternative table description successful for ${tableName}`);
+                this.log(`Alternative table description successful for ${tableName}`);
             }
             
             // Get foreign key information
             const foreignKeys = await this.getForeignKeys(queryInterface, tableName, dialect);
-            console.log(`Found ${foreignKeys.length} foreign keys for table ${tableName}`);
+            this.log(`Found ${foreignKeys.length} foreign keys for table ${tableName}`);
             
             // Get indexes
             const indexes = await this.getIndexes(queryInterface, tableName, dialect);
@@ -332,7 +333,7 @@ const SvDbSchema = (class SvDbSchema extends SvBase {
         
         const excluded = tableNames.filter(tableName => systemTables.includes(tableName));
         if (excluded.length > 0) {
-            console.log(`Excluding system tables from ORM: ${excluded.join(", ")}`);
+            this.log(`Excluding system tables from ORM: ${excluded.join(", ")}`);
         }
         
         return filtered;

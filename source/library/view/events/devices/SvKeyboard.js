@@ -351,12 +351,12 @@
             return "    " + code + ": \"" + this.codeToKeysMap().get(code).name() + "\"";
         })
         const s = "{\n" + lines.join(",\n") + "}\n";
-        console.log("c2k:", s);
+        this.log("c2k:", s);
 
         /*
-        console.log("Keyboard:")
+        this.log("Keyboard:")
         this.codeToKeysMap().forEachKV((code, key) => {
-            console.log("  code: ", code + " key name: ", this.keyForCode(code).name())
+            this.log("  code: ", code + " key name: ", this.keyForCode(code).name())
         });
         */
         return this;
@@ -381,7 +381,7 @@
      * @returns {boolean} True if the event should propagate
      */
     onKeyDownCapture (event) {
-        //console.log("event.metaKey = ", event.metaKey)
+        //this.log("event.metaKey = ", event.metaKey)
         
         const shouldPropogate = true;
         const key = this.keyForEvent(event);
@@ -411,7 +411,7 @@
         const shouldPropogate = true;
         const key = this.keyForEvent(event);
         if (!key) {
-            console.log("]]]]]]]]]]] WARNING: missing key for event: ", event);
+            this.log("]]]]]]]]]]] WARNING: missing key for event: ", event);
             return;
         }
         key.onKeyUp(event);
@@ -713,7 +713,7 @@
         if (event.metaKey) {
             const n = event.location;
 
-            //console.log("event.location = ", event.location)
+            //this.log("event.location = ", event.location)
 
             if (n === 1) {
                 modifierNames.push("MetaLeft");
@@ -738,14 +738,14 @@
      */
     showEvent (event) {
         const kb = SvKeyboard.shared();
-        console.log("---");
-        console.log("SvKeyboard.showEvent():");
-        console.log("  code: ", event.keyCode);
-        console.log("  name: ", kb.nameForKeyCode(event.keyCode));
-        console.log("  is modifier: ", kb.eventIsJustModifierKey(event));
-        console.log("  modifierNames: ", kb.modifierNamesForEvent(event));
-        console.log("  modsAndKeyName: ", kb.modsAndKeyNameForEvent(event));
-        console.log("---");
+        this.log("---");
+        this.log("SvKeyboard.showEvent():");
+        this.log("  code: ", event.keyCode);
+        this.log("  name: ", kb.nameForKeyCode(event.keyCode));
+        this.log("  is modifier: ", kb.eventIsJustModifierKey(event));
+        this.log("  modifierNames: ", kb.modifierNamesForEvent(event));
+        this.log("  modsAndKeyName: ", kb.modsAndKeyNameForEvent(event));
+        this.log("---");
     }
     
 }.initThisClass());

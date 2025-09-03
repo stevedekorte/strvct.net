@@ -4,7 +4,7 @@
 
 "use strict";
 
-const { Base } = require("../../../GameServer/site/strvct/webserver");
+const { SvBase } = require("../../../GameServer/site/strvct/webserver");
 const SvDbColumn = require("./SvDbColumn");
 const SvDbRow = require("./SvDbRow");
 const SvDbCache = require("./SvDbCache");
@@ -120,9 +120,9 @@ const SvDbTable = (class SvDbTable extends SvBase {
         if (customClass === undefined) {
             const SvDbCustomTable = require("./SvDbCustomTable");
             customClass = SvDbCustomTable.newSubclassWithName(customClassName);
-            console.log("created custom table class: ", customClassName);
+            this.log("created custom table class: ", customClassName);
         } else {
-            console.log("found custom table class: ", customClassName);
+            this.log("found custom table class: ", customClassName);
         }
 
         // now setup the custom class
@@ -140,9 +140,9 @@ const SvDbTable = (class SvDbTable extends SvBase {
         if (!customRowClass) {
             const SvDbCustomRow = require("./SvDbCustomRow");
             customRowClass = SvDbCustomRow.newSubclassWithName(customRowClassName);
-            console.log("created custom row class: ", customRowClassName);
+            this.log("created custom row class: ", customRowClassName);
         } else {
-            console.log("found custom row class: ", customRowClassName);
+            this.log("found custom row class: ", customRowClassName);
         }
 
         // now setup the custom row class

@@ -166,7 +166,7 @@
             
             if (values) {
                 const initValue = values.first();
-                //console.log("SvThemeState setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
+                //this.log(" setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
                 slot.setInitValue(initValue); // first value is typically "inherit"
                 slot.setValidValues(values);
             }
@@ -378,7 +378,7 @@
      */
     clearStyleCache () {
         this.setStyleCacheMap(null);
-        //console.log("clearStyleCache");
+        //this.log("clearStyleCache");
         return this;
     }
 
@@ -468,7 +468,7 @@
             const themeClassName = this.themeClass().title();
             const stateName = this.title();
             const spacer = "-".repeat(depth);
-            console.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')");
+            this.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')");
             //debugger
         */
         
@@ -506,7 +506,7 @@
         }
 
         if (v) {
-            //console.log("found: '" + v + "'");
+            //this.log("found: '" + v + "'");
         }
 
         return v;
@@ -555,7 +555,7 @@
      */
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
-        //console.log("applyStyleSlotsToView ", aView.debugTypeId());
+        //this.log("applyStyleSlotsToView ", aView.debugTypeId());
         styleSlots.forEach(slot => { 
             const name = slot.name();
             const isLocked = lockedSet ? lockedSet.has(name) : false;
@@ -565,12 +565,12 @@
                 if (v) {
                     const themeClassName = this.themeClass().title();
                     const stateName = this.title();
-                    console.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node());
+                    this.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node());
                 }
                 */
                 aView.performIfResponding(aView.setterNameForSlot(name), v);
             } else {
-                console.log("style " + name + " locked on view " + aView.type());
+                this.log("style " + name + " locked on view " + aView.type());
             }
         })
         return this;
@@ -583,7 +583,7 @@
      * @returns {boolean} False.
      */
     onDidEdit () {
-        console.log(this.typeId() + " onDidEdit");
+        this.log(".onDidEdit");
         this.setStyleCacheMap(null);
         debugger;
         return false

@@ -139,7 +139,7 @@
         //assert(audioArrayBuffer.format === "audio/wav", "audioArrayBuffer must be a WAV file"); // this may not be true
 
         // let's log a bunch of info about the buffer
-       // console.log("audioArrayBuffer: " + JSON.stringify(this.jsonInfoForBuffer(audioArrayBuffer), null, 2));
+       // this.log("audioArrayBuffer: " + JSON.stringify(this.jsonInfoForBuffer(audioArrayBuffer), null, 2));
 
         this.audioContext().decodeAudioData(audioArrayBuffer,
             (decodedBuffer) => { 
@@ -147,7 +147,7 @@
                 promise.callResolveFunc(decodedBuffer);
             },
             (error) => { 
-                console.log("error decodingaudioArrayBuffer: ", error.message);
+                this.log("error decodingaudioArrayBuffer: ", error.message);
 
                 promise.callRejectFunc(error);
             }

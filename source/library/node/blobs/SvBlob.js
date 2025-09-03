@@ -13,7 +13,7 @@
     /**
      * Initializes the prototype slots for the SvBlob class.
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("name", null);
@@ -91,7 +91,7 @@
     /**
      * Initializes the prototype for the SvBlob class.
      */
-    initPrototype() {
+    initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setCanDelete(true);
@@ -102,7 +102,7 @@
      * @returns {number} The age of the blob in milliseconds.
      * @category Utility
      */
-    age() {
+    age () {
         return new Date().getTime() - this.lastModifiedTime()
     }
 
@@ -111,7 +111,7 @@
      * @description Prepares the SvBlob for first access by setting up the value field.
      * @category Initialization
      */
-    prepareForFirstAccess() {
+    prepareForFirstAccess () {
         super.prepareForFirstAccess()
         this.setupValueField()
     }
@@ -120,7 +120,7 @@
      * @description Initializes the prototype slots for the SvBlob.
      * @category Initialization
      */
-    async setupValueField() {
+    async setupValueField () {
         const field = SvTextAreaField.clone().setKey("value");
         field.setValueMethod("value");
         field.setValueIsEditable(false);
@@ -138,7 +138,7 @@
      * @description Performs any necessary actions after reading the value of the SvBlob.
      * @category Data
      */
-    didReadValue() {
+    didReadValue () {
     }
 
     /**
@@ -146,7 +146,7 @@
      * @returns {string} The name of the SvBlob.
      * @category Metadata
      */
-    title() {
+    title () {
         return this.name()
     }
 
@@ -155,7 +155,7 @@
      * @returns {string|null} The size of the SvBlob's data in a human-readable format, or null if the size is not available.
      * @category Metadata
      */
-    subtitle() {
+    subtitle () {
         const size = this.valueSize()
         if (size) {
             return size.byteSizeDescription()
@@ -168,7 +168,7 @@
      * @returns {string} The hash value of the SvBlob.
      * @category Data
      */
-    hash() {
+    hash () {
         return this.valueHash() // for subnode lookup
     }
 
@@ -179,7 +179,7 @@
      * @returns {SvBlob} The current instance of SvBlob.
      * @category Data
      */
-    didUpdateSlotValue(oldValue, newValue) {
+    didUpdateSlotValue (oldValue, newValue) {
         if (newValue) {
             this.setValueSize(newValue.length)
             this.setLastModifiedTime(new Date().getTime())
@@ -193,7 +193,7 @@
      * @returns {*} The store associated with the SvBlob's parent node.
      * @category Storage
      */
-    store() {
+    store () {
         return this.parentNode().store()
     }
 
@@ -202,7 +202,7 @@
      * @description Promises to write the value of the SvBlob to the store.
      * @category Storage
      */
-    async promiseWriteValue() {
+    async promiseWriteValue () {
         // what about number or null values?
         const v = this.value()
         assert(Type.isArrayBuffer(v) || Type.isString(v))
@@ -219,7 +219,7 @@
      * @param {string} h The hash value of the value.
      * @category Storage
      */
-    async promiseWriteValueWithHash(v, h) {
+    async promiseWriteValueWithHash (v, h) {
         this.setValueHash(h);
 
         if (Type.isArrayBuffer(v)) {
@@ -232,9 +232,10 @@
 
         try {
             await this.store().promiseAtPut(h, v);
-            console.log("did write hash/value pair: " + this.description())
+            this.log("did write hash/value pair: " + this.description())
         } catch (error) {
-            console.log("error writing hash/value pair: " + this.description())
+            this.logError(error);
+            this.log("error writing hash/value pair: " + this.description())
             debugger
         }
     }
@@ -243,7 +244,7 @@
      * @description Promises to read the value of the SvBlob from the store.
      * @category Storage
      */
-    async promiseReadValue() {
+    async promiseReadValue () {
         if (this.value()) {
             return
         }
@@ -261,7 +262,7 @@
      * @returns {boolean} True if the SvBlob is valid, false otherwise.
      * @category Validation
      */
-    isValid() {
+    isValid () {
         if (Type.isNull(this.name())) {
             return false
         }
@@ -286,7 +287,7 @@
      * @returns {string} A string description of the SvBlob.
      * @category Utility
      */
-    description() {
+    description () {
         const slotNames = ["name", "valueHash", "valueSize", "lastModifiedTime"]
         const parts = [this.typeId()]
         slotNames.forEach(slotName => {
@@ -301,7 +302,7 @@
      * @description Tests the hash function by comparing the calculated hash of a string with a known hash value.
      * @category Testing
      */
-    static async testHash() {
+    static async testHash () {
         // This is a test to make sure browser JS and node JS hashes match.
         //  Here's the code from nodejs:
         // crypto.createHash('sha256').update(Buffer.from("abc", "utf8")).digest("base64");
@@ -312,7 +313,7 @@
         const digestBuffer = await arrayBuffer.promiseSha256Digest();
         const h = digestBuffer.base64Encoded()
         assert(h === nodejsHash)
-        console.log("hashes match!")
+        this.log("hashes match!")
         debugger;
     }
 

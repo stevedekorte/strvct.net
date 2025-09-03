@@ -243,7 +243,7 @@
 
     /*
     setData (data) {
-        console.log(this.typeId() + ".setData(", data, ")");
+        this.log(".setData(", data, ")");
         this._data = data;
         return this;
     }
@@ -302,7 +302,7 @@
         const arrayBuffer = await promise;
         // set the result 
         this.setData(arrayBuffer);
-        //console.log(this.typeId() + " setData " + arrayBuffer.byteLength);
+        //this.log(" setData " + arrayBuffer.byteLength);
     }
 
     // --- attributes ---
@@ -397,7 +397,7 @@
         try {            
             if (this.path()) {
                 //debugger;
-                //console.log(this.typeId() + " path: ", this.path());
+                //this.log(" path: ", this.path());
             } else {
                 if (!this.fetchPromise()) {
                     this.setFetchPromise(Promise.resolve());
@@ -443,7 +443,7 @@
         assert(!Type.isNullOrUndefined(decodedBuffer));
         this.setDecodedBuffer(decodedBuffer);
         this.setLoadState("loaded");
-        //console.log(this.type() + " didDecode " + this.path())
+        //this.log(" didDecode " + this.path())
         if (this.shouldPlayOnLoad()) {
             this.play();
         }
@@ -530,7 +530,7 @@
      * @returns {SvWaSound} the sound
      */
     onStarted () {
-        //console.log("Sound.onStarted() " + this.description());
+        //this.log("Sound.onStarted() " + this.description());
         this.post("onSoundStarted");
     }
 
@@ -539,7 +539,7 @@
      * @returns {SvWaSound} the sound
      */
     onEnded () {
-        //console.log("Sound.onEnded() " + this.description());
+        //this.log("Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
         this.setSource(null);
         this.playPromise().callResolveFunc();
@@ -637,7 +637,7 @@
           sendDelegate(d, methodName, args);
         } else {
           const error = this.type() + " delegate missing method '" + methodName + "'";
-          console.log(error);
+          this.log(error);
           debugger;
           throw new Error(error);
         }
@@ -659,11 +659,11 @@
         // Step 1: Convert ArrayBuffer to Blob
         const arrayBuffer = this.data();
         assert(arrayBuffer);
-        //console.log(this.typeId() + " promiseDataUrl byte count " + arrayBuffer.byteLength);
+        //this.log(".promiseDataUrl byte count " + arrayBuffer.byteLength);
         assert(arrayBuffer.byteLength > 0);
         const mimeType = 'audio/*';
         const dataUrl = await arrayBuffer.promiseAsDataUrlWithMimeType(mimeType);
-        console.log("dataUrl: ", dataUrl.clipWithEllipsis(20));
+        this.log("dataUrl: ", dataUrl.clipWithEllipsis(20));
         return dataUrl;
     }
 

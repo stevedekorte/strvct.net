@@ -47,7 +47,7 @@ class SvServiceWorker extends Object {
         this._isRegistered = true;
 
         const path = "strvct/source/ServiceWorker/SvServiceWorkerCode.js"
-        console.log("registering service worker '" + path + "'")
+        this.log("registering service worker '" + path + "'")
         const promise = navigator.serviceWorker.register(path); //{ scope: ""../"}
 
         try { 
@@ -63,7 +63,7 @@ class SvServiceWorker extends Object {
      * @category Service Worker Registration
      */
     onRegistered () {
-        console.log("Service worker successfully registered on scope ", registration.scope);
+        this.log("Service worker successfully registered on scope ", registration.scope);
     }
 
     /**
@@ -71,7 +71,7 @@ class SvServiceWorker extends Object {
      * @category Error Handling
      */
     onError (error) {
-        console.log("Service worker error:\n",
+        this.log("Service worker error:\n",
             "  typeof(error): ", typeof(error), "\n", 
             "  message:", error.message, "\n",
             "  fileName:", error.fileName, "\n",

@@ -171,7 +171,7 @@
      */
     show () {
         const subnodeNames = this.subnodes().map(sn => sn.name())
-        console.log(this.type() + " '" + this.path() + "': " +  JSON.stringify(subnodeNames))
+        this.log(" '" + this.path() + "': " +  JSON.stringify(subnodeNames))
     }
 
     /**
@@ -337,7 +337,7 @@
      */
     async prechacheWhereAppropriate () {
         debugger;
-       // console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
+       // this.log(".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }
 

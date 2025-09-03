@@ -85,7 +85,7 @@
      * @category Data Synchronization
      */
     syncToNode () {   
-        //console.log("syncToNode")
+        //this.log("syncToNode")
         const node = this.node()
         node.setValue(this.textView().innerText())
         return this
@@ -114,7 +114,7 @@
      * @category Styling
      */
     applyStyles () {
-        console.log(this.type() + " themeClassName ", this.node().themeClassName())
+        this.log(" themeClassName ", this.node().themeClassName())
         super.applyStyles()
         return this
     }

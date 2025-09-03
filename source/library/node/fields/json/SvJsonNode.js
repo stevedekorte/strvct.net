@@ -29,13 +29,14 @@
      */
     static openMimeChunk (dataChunk) {
         const data = dataChunk.decodedData();
-        //console.log("data = '" + data + "'");
+        //this.log("data = '" + data + "'");
         let json = null;
 
         try {
             json = JSON.parse(data);
-            //console.log("drop json = " + JSON.stableStringifyWithStdOptions(json, null, 2) + "");
+            //this.log("drop json = " + JSON.stableStringifyWithStdOptions(json, null, 2) + "");
         } catch (error) {
+            this.logError(error);
             // return an error node instead?
         }
 

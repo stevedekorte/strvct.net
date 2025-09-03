@@ -115,7 +115,7 @@
         //this.addSubnode(themes);
         //let link = this.addLinkSubnode(themes);
         //this.setThemes(themes);
-        //console.log("themes link = ", link.debugTypeId());
+        //this.log("themes link = ", link.debugTypeId());
 
         this.setFiles(SvFileResources.shared());
         this.addSubnode(this.files());
@@ -197,10 +197,10 @@
     async prechacheWhereAppropriate () {
         SvBootLoadingView.shared().setSubtitle("initializing resources");
 
-        //console.log(this.type() + ".prechacheWhereAppropriate()");
+        //this.log(".prechacheWhereAppropriate()");
         //promiseSerialTimeoutsForEach
         await this.subnodes().promiseSerialForEach(async (node) => {
-            //console.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
+            //this.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
             //debugger;
             //SvBootLoadingView.shared().setSubtitle("prechaching " + node.title());
             await node.prechacheWhereAppropriate();

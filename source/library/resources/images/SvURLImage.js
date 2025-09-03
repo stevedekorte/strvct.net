@@ -116,4 +116,4 @@
 
 }.initThisClass());
 
-//console.log("SvURLImage: ", SvURLImage)
+//this.log("SvURLImage: ", SvURLImage)

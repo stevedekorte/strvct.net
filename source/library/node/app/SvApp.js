@@ -230,12 +230,11 @@
      * @category Data Management
      */
     async clearStoreThenClose () {
-        console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<");
+        this.logDivider("begin clearStoreThenClose");
         await this.store().promiseDeleteAll();
-        console.log(">>>>>>>>>>>>>>>> cleared db  <<<<<<<<<<<<<<<");
         await this.store().promiseClose();
+        this.logDivider("end clearStoreThenClose");
     }
-
 
     /**
      * @description Opens the store and runs the app
@@ -382,7 +381,7 @@
      */
     showClasses () {
         const s = ProtoClass.subclassesDescription();
-        console.log(s);
+        this.log(s);
     }
 
 }.initThisClass());

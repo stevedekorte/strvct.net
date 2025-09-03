@@ -383,7 +383,7 @@
         if (aNode === this.target()) {
             // refresh
             //debugger;
-            //console.log(this.type() + " didUpdateNode " + aNode.typeId())
+            //this.log(".didUpdateNode " + aNode.typeId())
             this.syncFromTarget()
         }
     }
@@ -419,7 +419,7 @@
      * @param {Object} v - The value.
      */
     setValueOnTarget (v) { // called by View on edit
-        //console.log("setValue '" + v + "'")
+        //this.log("setValue '" + v + "'")
         const target = this.target();
         const setter = this.setterNameForSlot(this.valueMethod());
 
@@ -470,7 +470,7 @@
         const target = this.target();
         const slotName = this.valueMethod();
 
-        //console.log("target = " + target.type() + " getter = '" + getter + "'")
+        //this.log("target = " + target.type() + " getter = '" + getter + "'")
         if (target[slotName]) {
             const value = target[slotName].apply(target);
             return value;
@@ -592,7 +592,7 @@
      * @returns {Object} The JSON archive.
      */
     jsonArchive () {
-        //console.log(this.typeId() + ".jsonArchive()")
+        //this.log(".jsonArchive()")
         return super.jsonArchive();
     }
 
