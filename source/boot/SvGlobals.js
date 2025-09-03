@@ -65,6 +65,13 @@ const SvGlobals = (class SvGlobals extends Object {
     }
 
     static set (key, value) {
+        if (this.has(key)) {
+            throw new Error(`SvGlobals.set("${key}") is already defined`);
+        }
+        this.globals()[key] = value;
+    }
+
+    static update (key, value) {
         this.globals()[key] = value;
     }
 
@@ -92,7 +99,7 @@ const SvGlobals = (class SvGlobals extends Object {
 });
 
 // Make SvGlobals globally available
-SvGlobals.set("SvGlobals", SvGlobals);
+SvGlobals.update("SvGlobals", SvGlobals);
 
 if (SvGlobals.globals().SvGlobals === undefined) {
     throw new Error("SvGlobals is not defined");

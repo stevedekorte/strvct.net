@@ -19,7 +19,7 @@
      * @returns {SvResourceManager} The initialized class.
      */
     static initThisClass () {
-        SvGlobals.globals().SvResourceManager = SvResourceManager;
+        SvGlobals.set("SvResourceManager", SvResourceManager);
         return this;
     }
 

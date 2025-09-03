@@ -4,6 +4,8 @@
  * @module boot
  */
 
+//debugger;
+//assert(SvGlobals.globals().SvIndexedDbFolder === undefined, "SvIndexedDbFolder is already defined");
 /**
  * @class SvIndexedDbFolder
  * @extends SvBase
@@ -74,7 +76,7 @@
     }
 
     indexedDB () {
-        const idb = SvGlobals.globals()["indexedDB"];
+        const idb = SvGlobals.get("indexedDB");
         assert(idb, "indexedDB is not available");
         return idb;
     }
@@ -121,10 +123,15 @@
      * @returns {Promise} - A promise for persistence.
      */
     static promisePersistence () {
-        if (!this._promiseForPersistence) {
-            this._promiseForPersistence = this.newPromisePersistence()
+        //debugger;
+        if (this._promiseForPersistence === null) {
+            this._promiseForPersistence = Promise.clone();
+            this.newPromisePersistence().then(() => {
+                this._promiseForPersistence.callResolveFunc();
+            });
+            assert(this._promiseForPersistence !== null, "promiseForPersistence is null");
         }
-        return this._promiseForPersistence
+        return this._promiseForPersistence;
     }
 
     /**

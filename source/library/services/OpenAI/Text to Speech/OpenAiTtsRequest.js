@@ -198,7 +198,7 @@
    * @category Request Preparation
    */
   proxyUrl () {
-    const ProxyServers = SvGlobals.globals().ProxyServers;
+    const ProxyServers = SvGlobals.get("ProxyServers");
     if (ProxyServers && ProxyServers.shared().defaultServer()) {
       return ProxyServers.shared().defaultServer().proxyUrlForUrl(this.apiUrl());
     }

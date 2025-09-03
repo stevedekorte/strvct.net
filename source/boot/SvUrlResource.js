@@ -182,7 +182,7 @@
 
         //console.log("SvUrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
-        if (h && SvGlobals.globals().SvHashCache) {
+        if (h && SvGlobals.has("SvHashCache")) {
             const hc = SvHashCache.shared();
             //await hc.promiseClear(); // clear cache for now
             const hasKey = await hc.promiseHasKey(h);

@@ -119,8 +119,13 @@
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
             this.prototype.initPrototype();
         }
-
-        SvGlobals.globals()[this.type()] = this; // This isn't done automatically by JS class deifintions, so we do it here
+        /*
+        if (this.type() === "SvBase") {
+            SvGlobals.update(this.type(), this);
+        } else {
+         */
+        SvGlobals.set(this.type(), this); // This isn't done automatically by JS class deifintions, so we do it here
+        //}
         return this;
     }
 
