@@ -244,7 +244,7 @@
           "isSilentError": method.isSilentError()
         }
     };
-    console.log("schema: ", JSON.stringify(schema, null, 2));
+    this.log("schema: ", JSON.stringify(schema, null, 2));
     debugger;
     return schema;
   }
@@ -272,7 +272,7 @@
           "isSilentError": method.isSilentError()
         }
     };
-    console.log("schema: ", JSON.stringify(schema, null, 2));
+    //this.log("schema: ", JSON.stringify(schema, null, 2));
     return schema;
   }
 
@@ -283,16 +283,16 @@
     try {
         validator.setJsonSchema(rootSchema);
     } catch (err) {
-        console.error("Error validating schema for tool:", this.name());
-        console.error("Error message:", err.message);
-        console.error("Schema that failed:", JSON.stringify(rootSchema, null, 2));
+        this.logError("Error validating schema for tool:", this.name());
+        this.logError("Error message:", err.message);
+        this.logError("Schema that failed:", JSON.stringify(rootSchema, null, 2));
         throw err;
     }
     
     if (validator.hasError()) {
         const e = new Error(validator.errorMessageForLLM());
-        console.error("Tool definition JSON Schema is invalid: " + e.message);
-        console.error("Schema that failed:", JSON.stringify(rootSchema, null, 2));
+        this.logError("Tool definition JSON Schema is invalid: " + e.message);
+        this.logError("Schema that failed:", JSON.stringify(rootSchema, null, 2));
         debugger;
         throw e;
     }
@@ -340,7 +340,7 @@
     this.componentsRoot().removeAllSubnodes();
     map.forEach((value, key) => {
       if (value === null) {
-        console.warn("value is null for key: ", key, " using empty string instead");
+        this.logWarn("value is null for key: ", key, " using empty string instead");
         value = "";
       }
       
@@ -349,8 +349,8 @@
       }
 
       if (!Type.isString(key)) {
-        console.warn("key: ", key);
-        console.warn("value: ", value);
+        this.logWarn("key: ", key);
+        this.logWarn("value: ", value);
         debugger;
       }
       assert(Type.isString(key));

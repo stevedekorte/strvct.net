@@ -493,7 +493,7 @@
     const json = this.json();
     this.logDebug(" response json: ", json);
     if (json.error) {
-      console.warn(this.type() + " ERROR:", json.error.message);
+      this.logError(json.error.message);
     }
   }
 
@@ -576,7 +576,7 @@
   async asyncSendAndStreamResponse () {
 
     if (this.isContinuation()) {
-      //console.log(this.typeId() + " asyncSendAndStreamResponse() isContinuation");
+      //this.logDebug(" asyncSendAndStreamResponse() isContinuation");
     }
 
     this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
@@ -592,8 +592,8 @@
     this.assertValid();
     this.assertReadyToStream();
 
-    //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
-    //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
+    //this.logDebug("--- URL ---\n", this.activeApiUrl(), "\n-----------");
+    //this.logDebug("--- CURL ---\n", this.curlCommand(), "\n-----------");
 
     //debugger;
     this.setIsStreaming(true);
@@ -675,7 +675,7 @@
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
 
-    console.log(this.typeId() + " request completed");
+    this.log(" request completed");
   }
   
   /**
@@ -685,7 +685,7 @@
    */
   onRequestFailure (request) {
     const xhr = request.xhr();
-    console.log(this.description());
+    this.log(this.description());
     
     // Try to parse error from response
     const responseText = request.responseText();
@@ -705,7 +705,7 @@
           return;
         }
       } catch (e) {
-        console.log("onRequestFailure: error parsing json: " + e);
+        this.log("onRequestFailure: error parsing json: " + e);
         // Not JSON, use status code error
       }
     }
@@ -795,9 +795,9 @@
    * @description Continues the request
    */
   continueRequest () {
-    console.log("========================================== " + this.typeId() + " continueRequest() =====================================");
+    this.logDivider(" continueRequest()");
     const lastBit = this.fullContent().slice(-100);
-    console.log("continuing lastBit: [[[" + lastBit + "]]]");
+    this.log("continuing lastBit: [[[" + lastBit + "]]]");
     // add a continue message to the end of the messages array if needed
     //if (this.lastMessageIsContinueRequest()) {
     const messages = this.bodyJson().messages;
@@ -838,7 +838,7 @@
    * @param {number} seconds 
    */
   retryWithDelay (seconds) {
-    console.log(this.typeId() + " retrying in " + seconds + " seconds");
+    this.log(" retrying in " + seconds + " seconds");
     this.addTimeout(() => { 
       this.retryRequest();
     }, seconds*1000);
@@ -862,13 +862,9 @@
       e.message = this.service().title() + " overloaded, retrying in " + ts;
     }
 
-    console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
+    this.logError(e.message);
     debugger;
     this.sendDelegate("onRequestError", [this, e]);
-
-    if (e) {
-      console.warn(this.debugTypeId() + " " + e.message);
-    }
     return this;
   }
 
@@ -879,7 +875,7 @@
    * @param {Error} error 
    */
   onRequestError (request, error) {
-    console.log("onRequestError:", error);
+    this.logError("onRequestError:", error);
     this.onError(error);
     this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
@@ -978,9 +974,9 @@
     const newLine = responseText.substring(this.readIndex(), newLineIndex);
 
     /*
-    console.log("responseText: [" + responseText + "]");
-    console.log("indexes: " + this.readIndex() + " -> " + newLineIndex);
-    console.log("newLine: [" + newLine + "]");
+    this.log("responseText: [" + responseText + "]");
+    this.log("indexes: " + this.readIndex() + " -> " + newLineIndex);
+    this.log("newLine: [" + newLine + "]");
     */
     this.setReadIndex(newLineIndex + 1); // advance the read index
   
@@ -1051,7 +1047,7 @@
    * @param {string} newContent 
    */
   onNewContent (newContent) {
-    //console.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
+    //this.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
     this.sendDelegate("onStreamData", [this, newContent]);
   }

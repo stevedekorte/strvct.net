@@ -318,7 +318,7 @@
             this.setStatus("evaluation complete");
             
         } catch (error) {
-            console.error("Image evaluation failed:", error);
+            this.logError("Image evaluation failed:", error);
             this.setError("Evaluation failed: " + error.message);
         }
     }
@@ -370,9 +370,9 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         // Add all images to the message
         imageNodes.forEach((imageNode, index) => {
             const imageUrl = imageNode.imageUrl() || imageNode.url();
-            console.log(`Adding image ${index} to evaluation: ${imageNode.title()}`);
+            this.log(`Adding image ${index} to evaluation: ${imageNode.title()}`);
             if (imageUrl) {
-                console.log(`  URL (first 100 chars): ${imageUrl.substring(0, 100)}...`);
+                this.log(`  URL (first 100 chars): ${imageUrl.substring(0, 100)}...`);
                 messages[0].content.push({
                     type: "image_url",
                     image_url: {
@@ -388,8 +388,8 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
             max_tokens: 1000
         };
         
-        console.log("=== OpenAI Image Evaluation ===");
-        console.log("Evaluating", imageNodes.length, "images");
+        this.log("=== OpenAI Image Evaluation ===");
+        this.log("Evaluating", imageNodes.length, "images");
         
         const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
         
@@ -411,7 +411,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         // Process the evaluation results
         if (resultData.choices && resultData.choices[0]) {
             const content = resultData.choices[0].message.content;
-            console.log("Evaluation response:", content);
+            this.log("Evaluation response:", content);
             
             // Try to parse JSON from the response
             try {
@@ -425,7 +425,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                     
                     if (!hasIndexZero && minIndex === 1) {
                         // Convert from 1-based to 0-based
-                        console.log("Converting from 1-based to 0-based indices");
+                        this.log("Converting from 1-based to 0-based indices");
                         scores = scores.map(scoreObj => ({
                             ...scoreObj,
                             index: scoreObj.index - 1
@@ -440,12 +440,12 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                             seenIndices.add(score.index);
                             uniqueScores.push(score);
                         } else {
-                            console.warn(`Duplicate index ${score.index} found in evaluation scores, skipping`);
+                            this.logWarn(`Duplicate index ${score.index} found in evaluation scores, skipping`);
                         }
                     }
                     
                     this.setEvaluationScores(uniqueScores);
-                    console.log("Evaluation scores (cleaned):", uniqueScores);
+                    this.log("Evaluation scores (cleaned):", uniqueScores);
                 } else {
                     // Fallback: give all images equal scores
                     const defaultScores = imageNodes.map((node, idx) => ({
@@ -456,7 +456,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                     this.setEvaluationScores(defaultScores);
                 }
             } catch (parseError) {
-                console.error("Failed to parse evaluation scores:", parseError);
+                this.logError("Failed to parse evaluation scores:", parseError);
                 // Fallback scores
                 const defaultScores = imageNodes.map((node, idx) => ({
                     index: idx,
@@ -478,7 +478,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         const imageNodes = this.images().subnodes();
         
         if (!scores || scores.length === 0 || !imageNodes || imageNodes.length === 0) {
-            console.warn("No scores or images to select from");
+            this.logWarn("No scores or images to select from");
             return;
         }
         
@@ -486,16 +486,16 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         let bestScore = -1;
         let bestIndex = 0;
         
-        console.log("Evaluating scores to find best image:");
+        this.log("Evaluating scores to find best image:");
         scores.forEach(scoreObj => {
-            console.log(`  Image ${scoreObj.index}: score ${scoreObj.score}`);
+            this.log(`  Image ${scoreObj.index}: score ${scoreObj.score}`);
             if (scoreObj.score > bestScore) {
                 bestScore = scoreObj.score;
                 bestIndex = scoreObj.index;
             }
         });
         
-        console.log(`Best image is index ${bestIndex} with score ${bestScore}`);
+        this.log(`Best image is index ${bestIndex} with score ${bestScore}`);
         this.setBestImageIndex(bestIndex);
         
         // Update image titles with scores
@@ -512,24 +512,24 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         
         // Set the best image as result
         if (bestIndex >= 0 && bestIndex < imageNodes.length) {
-            console.log(`Accessing imageNodes[${bestIndex}] from ${imageNodes.length} total images`);
+            this.log(`Accessing imageNodes[${bestIndex}] from ${imageNodes.length} total images`);
             const bestImageNode = imageNodes[bestIndex];
-            console.log(`Best image node title: ${bestImageNode.title()}`);
+            this.log(`Best image node title: ${bestImageNode.title()}`);
             
             // Try to get the same URL format we sent to OpenAI
             //const bestImageUrl = bestImageNode.imageUrl() || bestImageNode.url();
             const displayUrl = bestImageNode.imageUrl() || bestImageNode.dataUrl();
             
-            console.log(`Best image URLs:`);
-            console.log(`  imageUrl(): ${bestImageNode.imageUrl() ? 'exists' : 'null'}`);
-            console.log(`  dataUrl(): ${bestImageNode.dataUrl() ? 'exists' : 'null'}`);
-            console.log(`  url(): ${bestImageNode.url() ? 'exists' : 'null'}`);
+            this.log(`Best image URLs:`);
+            this.log(`  imageUrl(): ${bestImageNode.imageUrl() ? 'exists' : 'null'}`);
+            this.log(`  dataUrl(): ${bestImageNode.dataUrl() ? 'exists' : 'null'}`);
+            this.log(`  url(): ${bestImageNode.url() ? 'exists' : 'null'}`);
             
             if (displayUrl) {
                 // Log first 100 chars of the URL to verify it's the right image
-                console.log(`Setting result image URL (first 100 chars): ${displayUrl.substring(0, 100)}...`);
+                this.log(`Setting result image URL (first 100 chars): ${displayUrl.substring(0, 100)}...`);
                 this.setResultImageUrlData(displayUrl);
-                console.log(`Selected best image: index ${bestIndex} with score ${bestScore}`);
+                this.log(`Selected best image: index ${bestIndex} with score ${bestScore}`);
                 this.sendDelegate("onImagePromptImageLoaded", [this, bestImageNode]);
             }
         }

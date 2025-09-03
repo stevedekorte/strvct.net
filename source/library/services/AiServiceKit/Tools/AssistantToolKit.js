@@ -150,7 +150,7 @@ The following formats will be used for tool calls and responses:
   }
 
   onMessageComplete (aMsg) {
-    console.log(this.type() + ".onMessageComplete('" + aMsg.messageId() + "')");
+    this.log(".onMessageComplete('" + aMsg.messageId() + "')");
     //debugger;
     if (aMsg.isResponse()) { // should we only call the tools from this message?
        this.processQueuedToolCalls();
@@ -210,7 +210,7 @@ The following formats will be used for tool calls and responses:
     m.setIsVisibleToUser = function (value) {
       assert(value === false, "Tool call results should not be visible to user");
     };
-    //console.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.type());
+    //this.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.type());
     return m;
   }
 
