@@ -48,9 +48,9 @@ require("./Base.js");
 require("./MimeExtensions.js");
 const fs = require('fs');
 const nodePath = require('path');
-const https = require('https');
-const http = require('http');
-const url = require('url');
+//const https = require('https');
+//const http = require('http');
+//const url = require('url');
 
 /**
  * @class BaseHttpsServerRequest
@@ -104,7 +104,7 @@ const url = require('url');
      * @returns {string} The log prefix.
      */
     logPrefix () {
-        return this.server().serverName() + ": ";
+        return "[" + this.server().serverName() + "] ";
     }
 
     /**
@@ -132,7 +132,7 @@ const url = require('url');
      * @param {string} path - The request path.
      * @returns {boolean} True if this should be handled as a file request.
      */
-    shouldHandleFileRequest (path) {
+    shouldHandleFileRequest (/*path*/) {
         return true;
     }
 
@@ -313,7 +313,7 @@ const url = require('url');
         try {
             return JSON.parse(body);
         } catch (e) {
-            throw new Error('Invalid JSON in request body');
+            throw new Error('Invalid JSON in request body ' + e.message);
         }
     }
 

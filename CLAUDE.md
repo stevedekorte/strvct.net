@@ -518,7 +518,7 @@ When running in Node.js, some browser APIs are not available. The framework hand
 - **DO** place all Node.js-specific polyfills in `strvct/source/boot/ShimsForNode/`
 - **DO** check for existence before defining: `if (typeof SomeAPI === 'undefined')`
 
-The framework is designed to gracefully handle the absence of browser APIs in headless environments. Most browser-specific functionality should be conditionally executed based on environment detection using `StrvctFile.isNodeEnvironment()`.
+The framework is designed to gracefully handle the absence of browser APIs in headless environments. Most browser-specific functionality should be conditionally executed based on environment detection using `SvPlatform.isNodePlatform()`.
 
 ### Environment-Specific Resource Loading
 

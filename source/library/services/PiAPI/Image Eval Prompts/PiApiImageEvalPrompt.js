@@ -527,7 +527,6 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
             
             if (displayUrl) {
                 // Log first 100 chars of the URL to verify it's the right image
-                this.log(`Setting result image URL (first 100 chars): ${displayUrl.substring(0, 100)}...`);
                 this.setResultImageUrlData(displayUrl);
                 this.log(`Selected best image: index ${bestIndex} with score ${bestScore}`);
                 this.sendDelegate("onImagePromptImageLoaded", [this, bestImageNode]);

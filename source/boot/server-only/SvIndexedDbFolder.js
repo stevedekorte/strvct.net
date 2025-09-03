@@ -30,7 +30,6 @@ const { ClassicLevel } = require('classic-level');
         this.newSlot("pathSeparator", "/");
         this.newSlot("db", null);
         this.newSlot("hasPermission", true); // Always true in Node.js
-        this.newSlot("promiseForPersistence", null);
         this.newSlot("promiseForOpen", null);
         this.newSlot("lastTx", null);
         this.newSlot("version", 2);
@@ -45,23 +44,10 @@ const { ClassicLevel } = require('classic-level');
          * @member {string} dataDir - Base directory for database files.
          */
         this.newSlot("dataDir", "./data/leveldb/");
-        
-        /**
-         * @member {boolean} isNodeEnvironment - Flag to identify Node.js environment.
-         */
-        this.newSlot("isNodeEnvironment", true);
     }
     
     initPrototype () {
         this.setIsDebugging(false);
-    }
-    
-    /**
-     * Override to detect Node.js environment.
-     * @returns {boolean} - Always true for this implementation.
-     */
-    isOnNodeJs () {
-        return true;
     }
     
     /**
@@ -71,15 +57,6 @@ const { ClassicLevel } = require('classic-level');
     hasIndexedDB () {
         return true; // We simulate IndexedDB with LevelDB
     }
-    
-    /**
-     * Override to indicate Storage API availability.
-     * @returns {boolean} - Always true in Node.js (no storage pressure).
-     */
-    hasStorageApi () {
-        return true; // No storage pressure in Node.js
-    }
-    
     
     /**
      * Convert the path to a filesystem-safe directory name.
@@ -100,7 +77,7 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseOpen () {
         if (!this.promiseForOpen()) {
-            await this.promisePersistence();
+            await SvIndexedDbFolder.promisePersistence();
             this.setPromiseForOpen(this.newPromiseOpen());
         }
         return this.promiseForOpen();
@@ -110,11 +87,8 @@ const { ClassicLevel } = require('classic-level');
      * Returns a promise for persistence (always resolves in Node.js).
      * @returns {Promise} - A promise that resolves to true.
      */
-    promisePersistence () {
-        if (!this.promiseForPersistence()) {
-            this.setPromiseForPersistence(Promise.resolve(true));
-        }
-        return this.promiseForPersistence();
+    static promisePersistence () {
+        return true;
     }
     
     /**
@@ -171,10 +145,10 @@ const { ClassicLevel } = require('classic-level');
             this.setLevelDb(levelDb);  // This is fine - it's an instance
             this.setDb(levelDb);       // This is fine - it's an instance
             
-            this.logDebug(`Opened LevelDB at ${dbPath}`);
+            if (this.isDebugging()) console.log(this.logPrefix(), `Opened LevelDB at ${dbPath}`);
             return Promise.resolve();
         } catch (error) {
-            this.logError(`Failed to open LevelDB at ${dbPath}: ${error.message}`);
+            console.error("**ERROR**:", this.logPrefix(), `Failed to open LevelDB at ${dbPath}: ${error.message}`);
             throw error;
         }
     }
@@ -263,7 +237,7 @@ const { ClassicLevel } = require('classic-level');
         // Count all keys
         let count = 0;
         const iterator = this.levelDb().keys();
-        for await (const key of iterator) {
+        while (await iterator.next()) {
             count++;
         }
         return count;
@@ -310,7 +284,7 @@ const { ClassicLevel } = require('classic-level');
         await this.promiseOpen();
         
         await this.levelDb().clear();
-        this.logDebug("Database cleared");
+        if (this.isDebugging()) console.log(this.logPrefix(), "Database cleared");
         return Promise.resolve();
     }
     
@@ -328,9 +302,9 @@ const { ClassicLevel } = require('classic-level');
         
         try {
             await fs.rm(dbPath, { recursive: true, force: true });
-            this.logDebug(`Deleted database at ${dbPath}`);
+            if (this.isDebugging()) console.log(this.logPrefix(), `Deleted database at ${dbPath}`);
         } catch (error) {
-            this.logError(`Failed to delete database at ${dbPath}: ${error.message}`);
+            console.error("**ERROR**:", this.logPrefix(), `Failed to delete database at ${dbPath}: ${error.message}`);
             throw error;
         }
         
@@ -345,7 +319,7 @@ const { ClassicLevel } = require('classic-level');
     async promiseNewTx () {
         await this.promiseOpen();
         
-        this.logDebug(this.path() + " promiseNewTx");
+        if (this.isDebugging()) console.log(this.logPrefix(), this.path() + " promiseNewTx");
         
         // Note: Need to ensure SvIndexedDbTx_node is loaded
         const newTx = SvIndexedDbTx.clone().setDbFolder(this);
@@ -404,7 +378,7 @@ const { ClassicLevel } = require('classic-level');
             await this.levelDb().put(key, storeValue);
             return Promise.resolve();
         } catch (error) {
-            this.logError(`Failed to put key ${key}: ${error.message}`);
+            console.error("**ERROR**:", this.logPrefix(), `Failed to put key ${key}: ${error.message}`);
             throw error;
         }
     }
@@ -424,7 +398,7 @@ const { ClassicLevel } = require('classic-level');
         } catch (error) {
             // LevelDB doesn't error on deleting non-existent keys
             if (error.code !== 'LEVEL_NOT_FOUND') {
-                this.logError(`Failed to remove key ${key}: ${error.message}`);
+                console.error("**ERROR**:", this.logPrefix(), `Failed to remove key ${key}: ${error.message}`);
                 throw error;
             }
             return Promise.resolve();

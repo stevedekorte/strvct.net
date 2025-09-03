@@ -8,6 +8,14 @@
  */
 
 
+/*
+console.log("console.log test");
+console.error("console.error test");
+console.warn("console.warn test");
+console.info("console.info test");
+console.debug("console.debug test");
+*/
+
 // SvPlatform.getWindowLocationURL().explicitOrigin()
 
 URL.prototype.explicitOrigin = function () {

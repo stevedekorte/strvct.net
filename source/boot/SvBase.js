@@ -209,12 +209,12 @@
     }
 
     logPrefix () {
-        return this.debugTypeId() + " ";
+        return "[" + this.debugTypeId() + "] ";
     }
 
     log (...args) {
-        const s = args.map(String).join('');
-        console.log(this.logPrefix() + ": " + s);
+        // Use console.log directly with spread operator to preserve caller location in debugger
+        console.log(this.logPrefix() + ":", ...args);
     }
 
     /**
@@ -225,25 +225,20 @@
      */
     logDebug (...args) {
         if (this.isDebugging()) {
-            let s = "";
-            if (typeof(s) === "function") {
-                s = s();
-            } else {
-                s = args.map(String).join('');
-            }
-            console.log("DEBUG: " + this.logPrefix() + " " + s);
+            // Use console.log directly to preserve caller location
+            console.log("DEBUG:", this.logPrefix(), ...args);
         }
         return this
     }
 
     logWarn (...args) {
-        const s = args.map(String).join('');
-        console.warn("**WARNING**: " + this.logPrefix() + " " + s);
-      }
+        // Use console.warn directly to preserve caller location
+        console.warn("**WARNING**:", this.logPrefix(), ...args);
+    }
     
     logError (...args) {
-        const s = args.map(String).join('');
-        console.error("**ERROR**: " + this.logPrefix() + " " + s);;
+        // Use console.error directly to preserve caller location
+        console.error("**ERROR**:", this.logPrefix(), ...args);
     }
 
 }.initThisClass());

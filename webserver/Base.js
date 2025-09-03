@@ -176,7 +176,7 @@
   }
 
   logPrefix () {
-    return this.type() + " ";
+    return "[" + this.type() + "] ";
   }
 
   log (...args) {

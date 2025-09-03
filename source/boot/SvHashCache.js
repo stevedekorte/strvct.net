@@ -225,7 +225,7 @@
             throw new Error("hash key does not match hash of value - please clear browser cache");
         }
 
-        this.logDebug("SvHashCache atPut ", hash);
+        if (this.isDebugging()) console.log(this.logPrefix(), "SvHashCache atPut ", hash);
         return this.idb().promiseAtPut(hash, data);
     }
 

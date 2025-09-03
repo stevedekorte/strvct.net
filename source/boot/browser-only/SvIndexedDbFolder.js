@@ -10,6 +10,18 @@
  * @classdesc Represents a folder in IndexedDB for storing and managing data.
  */
 (class SvIndexedDbFolder extends SvBase {
+
+    static _promiseForPersistence = null;
+    static _hasPermission = false;
+
+    static setHasPermission (aBool) {
+        this._hasPermission = aBool;
+    }
+
+    static hasPermission () {
+        return this._hasPermission;
+    }
+
     /**
      * Initializes the prototype slots for the SvIndexedDbFolder.
      */
@@ -30,14 +42,9 @@
         this.newSlot("db", null);
 
         /**
-         * @member {boolean} hasPermission - Indicates if the application has permission for persistence.
-         */
-        this.newSlot("hasPermission", false);
-
-        /**
          * @member {Promise} promiseForPersistence - Promise for requesting persistence.
          */
-        this.newSlot("promiseForPersistence", null);
+        //this.newSlot("promiseForPersistence", null);
 
         /**
          * @member {Promise} promiseForOpen - Promise for opening the database. Has a value while opening.
@@ -59,9 +66,7 @@
      * Initializes the prototype.
      */
     initPrototype () {
-        this.setIsDebugging(true);
-        this.log(">>> Using Browser/IndexedDB implementation of SvIndexedDbFolder");
-        
+        this.setIsDebugging(true);        
         // This should never run in Node.js
         if (typeof process !== 'undefined' && process.versions && process.versions.node) {
             throw new Error("Browser implementation loaded in Node.js environment!");
@@ -74,7 +79,7 @@
         return idb;
     }
 
-    navigator () {
+    static navigator () {
         return SvGlobals.globals()["navigator"];
     }
 
@@ -90,7 +95,7 @@
      * Checks if the Storage API is available.
      * @returns {boolean} - True if the Storage API is available, false otherwise.
      */
-    hasStorageApi () {
+    static hasStorageApi () {
         const nav = this.navigator()
         if (nav) {
             return nav.storage && nav.storage.persist;
@@ -115,15 +120,11 @@
      * Returns a promise for persistence.
      * @returns {Promise} - A promise for persistence.
      */
-    promisePersistence () {
-        if (!this.promiseForPersistence()) {
-            this.setPromiseForPersistence(this.newPromisePersistence())
+    static promisePersistence () {
+        if (!this._promiseForPersistence) {
+            this._promiseForPersistence = this.newPromisePersistence()
         }
-        return this.promiseForPersistence()
-    }
-
-    isOnNodeJs () {
-        return typeof process !== 'undefined';
+        return this._promiseForPersistence
     }
 
     /**
@@ -131,10 +132,7 @@
      * @async
      * @returns {Promise<boolean>} - A promise that resolves to true if persistence is granted, false otherwise.
      */
-    async newPromisePersistence () {
-        if (this.isOnNodeJs()) {
-            return true;
-        }
+    static async newPromisePersistence () {
 
         if (!this.hasStorageApi()) {
             throw new Error("Missing navigator.storage API.");
@@ -145,9 +143,9 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            this.logDebug("SvIndexedDbFolder: Storage will not be cleared except by explicit user action.");
+            console.log("Storage will not be cleared except by explicit user action.");
         } else {
-            this.logWarn(this.type() + " '" + this.path() + "'  may be cleared by the browser under storage pressure.");
+            console.warn("WARNING: IndexedDB storage may be cleared by the browser under storage pressure.");
         }
 
         return granted;
@@ -176,7 +174,7 @@
      */
     async promiseOpen () {
         if (!this.promiseForOpen()) {
-            await this.promisePersistence();
+            await SvIndexedDbFolder.promisePersistence();
             this.setPromiseForOpen(this.newPromiseOpen())
         }
         return this.promiseForOpen()

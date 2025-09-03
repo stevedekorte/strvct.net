@@ -139,7 +139,7 @@
     }
 
     {
-      const slot = this.newSlot("timeoutPeriodInMs", 30000); // 30 seconds
+      const slot = this.newSlot("timeoutPeriodInMs", 60000); // 30 seconds
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
@@ -280,7 +280,6 @@
     this.setRequestId(this.puuid());
     this.setRequestOptions({});
     this.setCompletionPromise(Promise.clone());
-    this.setIsDebugging(true);
   }
 
 
@@ -384,7 +383,7 @@
    * Displays the request details
    */
   showRequest () {
-    this.logDebug(this.description());
+    if (this.isDebugging()) console.log(this.logPrefix(), this.description());
   }
 
   /**
@@ -485,8 +484,8 @@
 
     this.assertValid();
 
-    //this.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
-    //this.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
+    //console.log(this.logPrefix(), "--- URL ---\n", this.activeApiUrl(), "\n-----------");
+    //console.log(this.logPrefix(), "--- CURL ---\n", this.curlCommand(), "\n-----------");
 
     this.setStatus("sending request...");
 
@@ -506,7 +505,7 @@
       
       // Skip Content-Type header for FormData - browser must set it with boundary
       if (isFormData && header.toLowerCase() === 'content-type') {
-        this.logWarn("Skipping Content-Type header for FormData - browser will set it with boundary");
+        console.warn("**WARNING**:", this.logPrefix(), "Skipping Content-Type header for FormData - browser will set it with boundary");
         continue;
       }
       
@@ -517,16 +516,24 @@
         // let's print the url and headers here to the console
         let bodyInfo = "";
         if (isFormData) {
-        bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
+            bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
         } else if (Type.isString(options.body)) {
-        const preview = options.body.substring(0, 200) + (options.body.length > 200 ? "..." : "");
-        bodyInfo = `String, preview: ${preview}`;
+            const preview = options.body.substring(0, 200) + (options.body.length > 200 ? "..." : "");
+            bodyInfo = `String: ${preview}`;
         } else if (Type.isBlob(options.body)) {
-        bodyInfo = `Blob, size: ${options.body.size} bytes, type: ${options.body.type || "unknown"}`;
+            bodyInfo = `Blob, size: ${options.body.size} bytes, type: ${options.body.type || "unknown"}`;
         } else if (Type.isArrayBuffer(options.body)) {
-        bodyInfo = `ArrayBuffer, size: ${options.body.byteLength} bytes`;
+            bodyInfo = `ArrayBuffer, size: ${options.body.byteLength} bytes`;
         }
-        this.logDebug(`XHR Request - url: ${this.url()}, method: ${this.method()}, body type: ${bodyInfo}, headers:`, options.headers);
+        if (this.isDebugging()) {
+            const dict = {
+                url: this.url(),
+                method: this.method(),
+                bodyType: bodyInfo,
+                headers: options.headers
+            };
+            console.log(this.logPrefix(), JSON.stringify(dict, null, 2));
+        }
     }
 
     xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" for binary data
@@ -633,7 +640,7 @@
     /*
     const txt = event.currentTarget.responseText;
     const latestString = txt.substr(txt.length - event.loaded, event.loaded);
-    this.log(".onXhrProgress() read [" + latestString + "]");
+    console.log(this.logPrefix(), ".onXhrProgress() read [" + latestString + "]");
     */
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
     this.sendDelegate("onRequestProgress", [this]);
@@ -687,7 +694,7 @@
       }
     } catch (error) {
       // ignore
-      this.logError("responseXmlError() error: " + error.message);
+      console.error("**ERROR**:", this.logPrefix(), "responseXmlError() error: " + error.message);
     }
     return null;
   }
@@ -704,7 +711,7 @@
         }
       }
     } catch (error) {
-      this.logError("responseXmlError() error: " + error.message);
+      console.error("**ERROR**:", this.logPrefix(), "responseXmlError() error: " + error.message);
       // ignore
     }
     return null;
@@ -739,7 +746,7 @@
         const statusCode = this.xhr().status;
         const fullStatus = this.fullNameForXhrStatusCode(statusCode);
 
-        this.logDebug(this.description());
+        if (this.isDebugging()) console.log(this.logPrefix(), this.description());
 
         // try to extract an error message from the response, if it has one
 
@@ -847,7 +854,7 @@
    * @param {number} seconds 
    */
   retryWithDelay (seconds) {
-    this.log(".retryWithDelay(" + seconds + " seconds)");
+    console.log(this.logPrefix(), ".retryWithDelay(" + seconds + " seconds)");
     this.addTimeout(() => { 
       this.retryRequest();
     }, seconds * 1000);
@@ -877,13 +884,13 @@
     const msg = e.message;
     this.setError(e);
     this.setStatus("ERROR: " + msg);
-    this.logWarn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
+    console.warn("**WARNING**:", this.logPrefix(), " ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
     //debugger;
     //const didHandle = 
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {
-      this.logWarn(this.debugTypeId() + " " + e.message);
+      console.warn("**WARNING**:", this.logPrefix(), this.debugTypeId() + " " + e.message);
     }
     return this;
   }
@@ -920,16 +927,19 @@
     this.setDidTimeout(true);
     this.setError(error);
 
-    this.logDivider();
+    console.log(this.logPrefix(), "----------------------------------------");
     this.setStatus("ERROR: " + error.message);
-    this.logError(".onXhrTimeout" + error.message);
+    console.error("**ERROR**:", this.logPrefix(), ".onXhrTimeout" + error.message);
     this.sendDelegate("onRequestTimeout", [this, error]);
     
     if (error) {
-      this.logWarn(this.debugTypeId() + " " + error.message);
+      console.warn("**WARNING**:", this.logPrefix(), this.debugTypeId() + " " + error.message);
     }
     
-    this.throwDescriptiveError(this.causeOfError() + ". ");
+    if (!this.sendDelegate("onRequestError", [this, error])) {
+        // no onRequestError delegate, so throw a descriptive error
+        this.throwDescriptiveError(this.causeOfError() + ". ");
+    }
   }
 
   throwDescriptiveError (prefix = "") {
@@ -1195,7 +1205,7 @@
     if (d) {
       const f = d[methodName];
       if (f) {
-        //this.logDebug(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
+        //if (this.isDebugging()) console.log(this.logPrefix(), this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
         f.apply(d, args);
         return true;
       }

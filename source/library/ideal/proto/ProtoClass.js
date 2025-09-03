@@ -1034,7 +1034,7 @@
 
     logPrefix () {
         const logPrefix = this.thisClass().hasShared() ? this.type() + "(shared)" : this.type();
-        return logPrefix;
+        return "[" + logPrefix + "] ";
     }
 
     log (...args) {
