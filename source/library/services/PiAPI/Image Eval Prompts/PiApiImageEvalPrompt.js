@@ -47,20 +47,6 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
         }
-        
-        // Midjourney version
-        {
-            const slot = this.newSlot("midjourneyVersion", "7");
-            slot.setSlotType("String");
-            slot.setLabel("Midjourney Version");
-            slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setValidValues(["6", "7"]);
-            slot.setAllowsNullValue(false);
-            slot.setDescription("6: Use v6 (supports :: weights for precise control)\n7: Use v7 (latest model, natural language only)");
-        }
 
         // Combined prompt (read-only, for display)
         {
@@ -129,6 +115,11 @@
             slot.setSyncsToView(true);
         }
 
+        {
+            const slot = this.newSlot("evalCompletionPromise", null);
+            slot.setSlotType("Promise");
+        }
+
         // Update generate action label
         {
             const slot = this.thisPrototype().slotNamed("generateAction");
@@ -170,43 +161,17 @@
             return "";
         }
         
-        const version = this.midjourneyVersion();
-        const contentSentences = this.splitIntoSentences(content);
-        const hasMultipleConcepts = contentSentences.length > 1 || style;
-        
         let result;
         
-        if (version === "7") {
-            // v7: Use natural language, no weights
-            if (style) {
-                result = style + " " + content;
-            } else {
-                result = content;
-            }
-            
+        if (style) {
+            result = style + " " + content;
         } else {
-            // v6: Use weighted syntax if multiple concepts
-            if (hasMultipleConcepts) {
-                const weightedContent = contentSentences
-                    .map(sentence => sentence.trim())
-                    .filter(sentence => sentence.length > 0)
-                    .join("::1 ");
-                
-                if (style) {
-                    const contentWeight = contentSentences.length;
-                    const weightedStyle = style + "::" + contentWeight;
-                    result = [weightedStyle, weightedContent].join(" ");
-                } else {
-                    result = weightedContent;
-                }
-            } else {
-                // Single concept, but user selected v6
-                result = content;
-            }
+            result = content;
         }
         
-        // Always append version flag to be explicit
-        return result + " --v " + version;
+        // Version flag is now appended by the parent class
+        
+        return result;
     }
     
     /**
@@ -248,7 +213,8 @@
      * @category Action
      */
     async generate () {
-        // Build the combined prompt (now includes --v 6 for compatibility)
+        this.setEvalCompletionPromise(Promise.clone());
+        // Build the combined prompt
         const combined = this.buildCombinedPrompt();
         
         if (!combined) {
@@ -262,17 +228,15 @@
         // Temporarily set the prompt to the combined version for generation
         const originalPrompt = this.prompt();
         this.setPrompt(combined);
-        
-        // Call parent generate method
         await super.generate();
-        
         // Restore the original content prompt
         this.setPrompt(originalPrompt);
         
         // Don't proceed with evaluation if generation failed
         if (this.error()) {
-            return;
+            this.onEvalError(this.error());
         }
+        return this.evalCompletionPromise();
     }
 
     /**
@@ -320,7 +284,20 @@
         } catch (error) {
             this.logError("Image evaluation failed:", error);
             this.setError("Evaluation failed: " + error.message);
+            return this.onEvalError(error);
         }
+        return this.onEvalCompletion();
+    }
+
+    onEvalCompletion () {
+        this.evalCompletionPromise().callResolveFunc(this);
+    }
+
+    onEvalError (error) {
+        this.setError(error);
+        this.setStatus("Error: " + error.message);
+        //this.sendDelegate("onEvalError", [this, error]);
+        this.evalCompletionPromise().callRejectFunc(error);
     }
 
     /**
@@ -405,7 +382,9 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         const resultData = await response.json();
         
         if (!response.ok) {
-            throw new Error(`OpenAI error: ${resultData.error?.message || response.statusText}`);
+            const error = new Error(`OpenAI error: ${resultData.error?.message || response.statusText}`);
+            this.onEvalError(error);
+            return;
         }
         
         // Process the evaluation results

@@ -252,13 +252,17 @@
 
     // --- load ---
 
+    isLoaded () {
+        return this.loadState() === "loaded";
+    }
+
     /**
      * @description Loads the resource if it hasn't been loaded yet.
      * @returns {SvResource} The resource instance.
      * @category Resource Loading
      */
     loadIfNeeded () {
-        if (this.loadState() === "unloaded") {
+        if (!this.isLoaded()) {
             this.load();
         }
         return this;
@@ -273,12 +277,23 @@
         throw new Error("deprecated - use asyncLoad instead");
     }
 
+    async asyncLoadIfNeeded () {
+        if (!this.isLoaded()) {
+            await this.asyncLoad();
+        }
+        return this;
+    }
+
     /**
      * @description Asynchronously loads and decodes the resource.
      * @returns {Promise<SvResource>} A promise that resolves to the resource instance.
      * @category Resource Loading
      */
     async asyncLoad () {
+        if (this.isLoaded()) {
+           debugger; // should never happen
+           return this;
+        }
         //this.log("asyncLoad: " + this.path());
         try {
             this.setLoadState("loading");
@@ -352,7 +367,7 @@
     async prechacheWhereAppropriate () {
         if (!this.isLoaded()) {
             if (!this.canDeferLoad()) {
-                this.log(".prechacheWhereAppropriate: " + this.path());
+                //this.log(".prechacheWhereAppropriate: " + this.path());
                 await this.asyncLoad();
                 //console.warn("---- " + this.type() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
             }

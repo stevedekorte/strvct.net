@@ -206,124 +206,121 @@
 
             // Get auth token and base URL from the account server API
             const accountApi = UoAccountServerApi.clone();
-            const authToken = accountApi.authToken();
+            const authToken = await accountApi.authToken();
             const accountServerUrl = accountApi.baseUrl || accountApi.accountUrl();
             
             // Remove trailing slash if present
             const baseUrl = accountServerUrl.endsWith('/') ? accountServerUrl.slice(0, -1) : accountServerUrl;
-            const uploadUrlEndpoint = baseUrl + "/firebase/upload-url";
-            
-            console.log("Firebase upload URL endpoint:", uploadUrlEndpoint);
-            console.log("Account server base URL:", baseUrl);
-            
-            console.log("Auth token retrieved:", authToken ? `${authToken.substring(0, 20)}...` : "null");
+            const uploadUrlEndpoint = baseUrl + "/storage/upload-url";
             
             if (!authToken) {
                 throw new Error("No auth token found. Please log in first.");
             }
             
-            console.log("Making request to:", uploadUrlEndpoint);
-            console.log("Request headers:", {
-                'Authorization': `Bearer ${authToken.substring(0, 20)}...`,
-                'Content-Type': 'application/json'
-            });
+            console.log("FirebaseStorageImage.uploadToFirebase: Getting upload URL for:", filename);
             
-            // Use XMLHttpRequest directly, following UoAccountServerApi pattern
-            const uploadData = await new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open("POST", uploadUrlEndpoint, true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
-                
-                xhr.onload = function () {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const responseData = JSON.parse(xhr.responseText);
-                            resolve(responseData);
-                        } catch (error) {
-                            reject(new Error(`Invalid JSON response: ${error.message}`));
-                        }
-                    } else {
-                        let errorMessage;
-                        try {
-                            const errorResponse = JSON.parse(xhr.responseText);
-                            errorMessage = errorResponse.error?.message || errorResponse.error || xhr.responseText;
-                        } catch (e) {
-                            console.log("Error parsing JSON:", e);
-                            errorMessage = xhr.responseText || xhr.statusText;
-                        }
-                        reject(new Error(`Failed to get upload URL: ${xhr.status} - ${errorMessage}`));
-                    }
-                };
-                
-                xhr.onerror = function () {
-                    reject(new Error(`Network error: ${xhr.statusText || 'Connection failed'}`));
-                };
-                
-                xhr.ontimeout = function () {
-                    reject(new Error('Request timed out'));
-                };
-                
-                xhr.timeout = 30000; // 30 second timeout
-                
-                const requestBody = JSON.stringify({
-                    filename: filename,
-                    contentType: 'image/png',
-                    path: 'midjourney-style-transfer'
-                });
-                
-                xhr.send(requestBody);
+            // Use SvXhrRequest for consistent error handling
+            const request = SvXhrRequest.clone();
+            request.setUrl(uploadUrlEndpoint);
+            request.setMethod("POST");
+            request.setTimeoutPeriodInMs(30000); // 30 second timeout
+            request.setHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             });
+            request.setBody(JSON.stringify({
+                filename: filename,
+                contentType: 'image/png',
+                path: 'omnireference'
+            }));
+            
+            await request.asyncSend();
+            
+            // Check if request had an error
+            if (request.error() || request.hasErrorStatusCode()) {
+                // SvXhrRequest now properly extracts nested error structures like error.message
+                const errorMessage = request.error() ? request.error().message : request.causeOfError();
+                throw new Error(`Failed to get upload URL: ${errorMessage}`);
+            }
+            
+            // Success - parse the response
+            const responseText = request.responseText();
+            const uploadData = JSON.parse(responseText);
             
             this.setUploadStatus("uploading to Firebase...");
 
-            // Convert data URL to blob
-            const blob = await this.dataUrlToBlob(this.dataUrl());
+            // Check if we need to use direct upload (emulator fallback)
+            if (uploadData.useDirectUpload) {
+                console.log("FirebaseStorageImage.uploadToFirebase: Using direct upload for emulator");
+                
+                // Use the direct upload endpoint
+                const directRequest = SvXhrRequest.clone();
+                const directUrl = baseUrl + "/storage/upload-direct";
+                directRequest.setUrl(directUrl);
+                directRequest.setMethod("POST");
+                directRequest.setTimeoutPeriodInMs(30000); // 30 second timeout
+                directRequest.setHeaders({
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                });
+                directRequest.setBody(JSON.stringify({
+                    fullPath: uploadData.fullPath,
+                    contentType: uploadData.contentType,
+                    fileData: this.dataUrl() // Send the data URL directly
+                }));
+                
+                await directRequest.asyncSend();
+                
+                // Check if direct upload had an error
+                if (directRequest.error() || directRequest.hasErrorStatusCode()) {
+                    const errorMessage = directRequest.error() ? directRequest.error().message : directRequest.causeOfError();
+                    throw new Error(`Direct upload failed: ${errorMessage}`);
+                }
+                
+                // Parse the response
+                const directResponse = JSON.parse(directRequest.responseText());
+                this.setPublicUrl(directResponse.publicUrl);
+                this.setStoragePath(directResponse.fullPath);
+                
+            } else {
+                // Standard upload with signed URL
+                // Convert data URL to blob
+                const blob = await this.dataUrlToBlob(this.dataUrl());
 
-            // Upload directly to Firebase using the signed URL
-            // Use plain XMLHttpRequest to avoid any header issues
-            console.log("Uploading to signed URL:", uploadData.uploadUrl);
-            console.log("Blob size:", blob.size, "bytes");
-            
-            await new Promise((resolve, reject) => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('PUT', uploadData.uploadUrl, true);
-                // Don't set ANY headers - let the browser handle it
+                console.log("FirebaseStorageImage.uploadToFirebase: Uploading image to Firebase Storage");
                 
-                xhr.onload = function () {
-                    console.log("Upload response status:", xhr.status);
-                    console.log("Upload response text:", xhr.responseText);
-                    
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        console.log("Upload successful!");
-                        resolve();
-                    } else {
-                        reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
-                    }
-                };
+                // Use SvXhrRequest for the upload
+                const uploadRequest = SvXhrRequest.clone();
+                uploadRequest.setUrl(uploadData.uploadUrl);
+                uploadRequest.setMethod("PUT");
+                uploadRequest.setTimeoutPeriodInMs(30000); // 30 second timeout
+                // Don't set Content-Type header - let browser handle it for signed URLs
+                uploadRequest.setHeaders({});
+                uploadRequest.setBody(blob);
                 
-                xhr.onerror = function () {
-                    console.error("Upload network error");
-                    reject(new Error('Upload failed: Network error or CORS issue'));
-                };
+                await uploadRequest.asyncSend();
                 
-                xhr.send(blob);
-            });
-            
-            console.log("Upload completed successfully, public URL will be:", uploadData.publicUrl);
+                // Check if upload had an error
+                if (uploadRequest.error() || uploadRequest.hasErrorStatusCode()) {
+                    const errorMessage = uploadRequest.error() ? uploadRequest.error().message : uploadRequest.causeOfError();
+                    throw new Error(`Upload failed: ${errorMessage}`);
+                }
 
-            // Store the results
-            this.setPublicUrl(uploadData.publicUrl);
-            this.setStoragePath(uploadData.fullPath);
+                // Store the results
+                this.setPublicUrl(uploadData.publicUrl);
+                this.setStoragePath(uploadData.fullPath);
+            }
+            
+            // Set common metadata
             this.setUploadMetadata({
                 filename: filename,
-                contentType: uploadData.contentType,
+                contentType: uploadData.contentType || 'image/png',
                 uploadedAt: new Date().toISOString(),
                 expires: uploadData.expires
             });
 
             this.setUploadStatus("uploaded successfully");
-            console.log("Image uploaded to Firebase via signed URL:", uploadData.publicUrl);
+            console.log("FirebaseStorageImage.uploadToFirebase: Image uploaded successfully:", uploadData.publicUrl);
 
         } catch (error) {
             console.log("Firebase upload failed:", error);
@@ -439,6 +436,37 @@
             reader.onerror = reject;
             reader.readAsDataURL(file);
         });
+    }
+
+    /**
+     * @description Sets the image from an SvImage instance
+     * @param {SvImage} svImage - The SvImage to copy data from
+     * @returns {Promise<void>}
+     * @category Upload
+     */
+    async setSvImage (svImage) {
+        if (!svImage || !svImage.getImageData) {
+            throw new Error("Invalid SvImage provided");
+        }
+
+        const imageData = svImage.getImageData();
+        if (!imageData) {
+            throw new Error("SvImage has no image data");
+        }
+
+        // Set the data URL from the SvImage
+        this.setDataUrl(imageData);
+        
+        // Optionally set a label based on the hash filename
+        if (svImage.asyncGetHashFileName) {
+            try {
+                const hashFileName = await svImage.asyncGetHashFileName();
+                this.setImageLabel(hashFileName);
+            } catch (error) {
+                console.warn("Could not generate hash filename:", error);
+                // Continue without setting the label
+            }
+        }
     }
 
     /**

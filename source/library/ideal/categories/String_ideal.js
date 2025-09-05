@@ -800,9 +800,9 @@
      * Computes the SHA-256 digest of the string
      * @returns {Promise<ArrayBuffer>} A promise that resolves to the SHA-256 digest
      */
-    promiseSha256Digest () {
+    async promiseSha256Digest () {
         const uint8Array = new TextEncoder("utf-8").encode(this);    
-        return crypto.subtle.digest("SHA-256", uint8Array.buffer);
+        return await crypto.subtle.digest("SHA-256", uint8Array.buffer);
     }
 
     /**

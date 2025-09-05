@@ -101,7 +101,7 @@
      * @category Status
      */
     {
-      const slot = this.newSlot("maxPollCount", 30);
+      const slot = this.newSlot("maxPollCount", 40);
       slot.setSlotType("Number");
       slot.setCanEditInspection(false);
       slot.setShouldStoreSlot(true);

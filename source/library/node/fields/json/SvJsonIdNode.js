@@ -76,17 +76,53 @@
      * @returns {SvJsonNode|null} The descendant node with the matching JSON ID, or null if no such node is found.
      * @category Node Search
      */
-    descendantWithJsonId (jsonId) {
+    descendantWithJsonId (jsonId, path = "") {
         if (this.jsonId() === jsonId) {
-          return this;
+            return this;
         }
-        return this.subnodes().detect(sn => {
-          if (sn.descendantWithJsonId) {
-            return sn.descendantWithJsonId(jsonId);
-          }
-          return false;
+        const newPath = path + "/" + this.jsonPathCompmentString();
+        console.log(newPath , ".descendantWithJsonId('" + jsonId + "')");
+
+        return this.nextJsonDescendants().detectAndReturnValue(sn => {
+
+            if (sn.isKindOf(SvPointerField)) {
+                sn = sn.nodeTileLink();
+            }
+
+            if (sn && sn.descendantWithJsonId) {
+                return sn.descendantWithJsonId(jsonId, newPath);
+            } else {
+                console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
+                //debugger;
+            }
+            return null;
         });
     }
+
+    jsonPathCompmentString () {
+        return this.type() + ":" + this.title() + ":" + this.jsonId();
+    }
+
+    nextJsonDescendants () {
+        let target = this;
+        assert(!target.isKindOf(SvPointerField), "target is a pointer field");
+        /*
+        if (target.isKindOf(SvPointerField)) {
+            target = target.nodeTileLink();
+        }
+        */
+
+        if (target.shouldStoreSubnodes()) {
+            return target.subnodes();
+        }
+
+        return target.jsonSchemaSlotValues();
+    }
+
+    jsonSchemaSlotValues () {
+        return this.thisClass().jsonSchemaSlots().map(slot => slot.onInstanceRawGetValue(this));
+    }
+
 
     asJson () {
         return this.calcJson();

@@ -229,4 +229,47 @@
         return aNode.type() === "FirebaseStorageImage";
     }
 
+    /**
+     * @description Adds and uploads an SvImage to Firebase Storage
+     * @param {SvImage} svImage - The SvImage to upload
+     * @returns {Promise<FirebaseStorageImage>} The FirebaseStorageImage after upload completes
+     * @category Upload
+     */
+    async asyncAddSvImage (svImage) {
+        // Validate input
+        if (!svImage || !svImage.getImageData) {
+            throw new Error("Invalid SvImage provided");
+        }
+
+        const imageData = svImage.getImageData();
+        if (!imageData) {
+            throw new Error("SvImage has no image data");
+        }
+
+        // Create a new FirebaseStorageImage
+        const fbImage = FirebaseStorageImage.clone();
+        
+        // Set the data URL
+        fbImage.setDataUrl(imageData);
+        
+        // Get the hash-based filename from SvImage
+        const label = await svImage.asyncGetHashFileName();
+        fbImage.setImageLabel(label);
+        
+        // Add to collection
+        this.addSubnode(fbImage);
+        
+        // Upload to Firebase with the hash-based filename
+        try {
+            // The uploadToFirebase method will use the imageLabel as the filename
+            await fbImage.uploadToFirebase();
+            console.log(`FirebaseStorageImages.asyncAddSvImage: Successfully uploaded ${label}`);
+        } catch (error) {
+            console.error(`FirebaseStorageImages.asyncAddSvImage: Failed to upload ${label}:`, error);
+            throw error;
+        }
+        
+        return fbImage;
+    }
+
 }.initThisClass());

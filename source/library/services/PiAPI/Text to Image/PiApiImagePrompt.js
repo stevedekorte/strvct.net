@@ -67,7 +67,7 @@
      * @category Configuration
      */
     {
-      const slot = this.newSlot("processMode", "relax");
+      const slot = this.newSlot("processMode", "turbo");
       slot.setInspectorPath("")
       slot.setLabel("process mode")
       slot.setShouldStoreSlot(true)
@@ -194,6 +194,62 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @member {string} omniRefImageUrl
+     * @description URL to character reference sheet composite image for Midjourney v7 omnireference.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("omniRefImageUrl", null);
+      slot.setSlotType("String");
+      slot.setLabel("Omnireference Image URL");
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setCanEditInspection(true);
+      slot.setDescription("URL to character reference sheet composite image for Midjourney v7 (Firebase Storage or other hosted URL)");
+    }
+
+    /**
+     * @member {string} midjourneyVersion
+     * @description The Midjourney version to use (6 or 7).
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("midjourneyVersion", "7");
+      slot.setSlotType("String");
+      slot.setLabel("Midjourney Version");
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setValidValues(["6", "7"]);
+      slot.setAllowsNullValue(false);
+      slot.setDescription("6: Use v6 (supports :: weights for precise control)\n7: Use v7 (latest model, natural language only)");
+    }
+
+    /**
+     * @member {string} promptSuffix
+     * @description Additional parameters to append to the prompt (e.g., "--no details --no frame").
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("promptSuffix", "");
+      slot.setSlotType("String");
+      slot.setLabel("Prompt Suffix");
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setCanEditInspection(true);
+      slot.setDescription("Additional Midjourney parameters to append (e.g., '--no details --no frame --chaos 50')");
+    }
+
+    {
+        const slot = this.newSlot("completionPromise", null);
+        slot.setSlotType("Promise");
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
@@ -309,6 +365,7 @@
    * @category Process
    */
   async start () {
+    this.setCompletionPromise(Promise.clone());
     this.setError("");
     this.setStatus("submitting task...");
     this.sendDelegate("onImagePromptStart", [this]);
@@ -317,17 +374,46 @@
     const endpoint = 'https://api.piapi.ai/api/v1/task';
     
     // Sanitize the prompt before sending to avoid Midjourney parameter issues
-    const sanitizedPrompt = this.sanitizePromptForMidjourney(this.prompt());
+    let sanitizedPrompt = this.sanitizePromptForMidjourney(this.prompt());
+    
+    // Append prompt suffix if provided (e.g., "--no details --no frame")
+    const suffix = this.promptSuffix();
+    if (suffix && suffix.trim().length > 0) {
+      sanitizedPrompt = sanitizedPrompt + " " + suffix.trim();
+    }
+    
+    // Append omnireference flags if image is provided
+    if (this.omniRefImageUrl()) {
+      sanitizedPrompt = sanitizedPrompt + " --oref --ow 100";
+    }
+    
+    // Append Midjourney version flag to the prompt (last)
+    const version = this.midjourneyVersion();
+    if (version && !sanitizedPrompt.includes("--v ")) {
+      sanitizedPrompt = sanitizedPrompt + " --v " + version;
+    }
+
+    console.log("sanitizedPrompt: [\n" + sanitizedPrompt + "\n]");
+    //debugger;
+    
+    // Build the input object
+    const input = {
+      prompt: sanitizedPrompt,
+      aspect_ratio: this.aspectRatio(),
+      process_mode: this.processMode(),
+      skip_prompt_check: false
+    };
+    
+    // Add omnireference image URL if provided
+    if (this.omniRefImageUrl()) {
+      input.image_urls = [this.omniRefImageUrl()];
+      // Note: suffix field is not supported by PiAPI - parameters must be in prompt
+    }
     
     const bodyJson = {
       model: this.model(),
       task_type: "imagine",
-      input: {
-        prompt: sanitizedPrompt,
-        aspect_ratio: this.aspectRatio(),
-        process_mode: this.processMode(),
-        skip_prompt_check: false
-      }
+      input: input
     };
     
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
@@ -376,28 +462,24 @@
           console.error("PiAPI immediate failure:", resultData);
           const error = new Error(errorMsg);
           this.onError(error);
-          return;
-        }
-        
-        // PiAPI returns a task_id for tracking
-        if (resultData && resultData.task_id) {
-          this.setTaskId(resultData.task_id);
-          this.setStatus("task submitted, awaiting completion...");
-          
-          // Note: In a full implementation, you would poll for task completion
-          // or implement webhook handling. For now, we'll just record the task ID.
-          this.onTaskSubmitted(resultData);
         } else {
-          const error = new Error("No task_id returned from PiAPI");
-          this.onError(error);
+            // PiAPI returns a task_id for tracking
+            if (resultData && resultData.task_id) {
+                this.setTaskId(resultData.task_id);
+                this.setStatus("task submitted, awaiting completion...");
+                this.onTaskSubmitted(resultData);
+            } else {
+                const error = new Error("No task_id returned from PiAPI");
+                this.onError(error);
+            }
         }
       }
       // Don't handle request failures here - let delegate methods handle them
     } catch (error) {
       this.onError(error);
-      error.rethrow();
     }
-  }
+    return this.completionPromise();
+}
 
   /**
    * @description Handles successful task submission.
@@ -445,6 +527,7 @@
    */
   onError (error) {
     const s = "ERROR: " + error.message;
+    debugger;
     console.error(s);
     this.setError(error.message);
     this.setStatus(s);
@@ -482,6 +565,11 @@
    */
   onEnd () {
     this.sendDelegate("onImagePromptEnd", [this]);
+    if (this.error()) {
+        this.completionPromise().callRejectFunc(this.error());
+    } else {
+        this.completionPromise().callResolveFunc(this);
+    }
   }
 
   // --- Delegate methods from PiApiImageGeneration ---

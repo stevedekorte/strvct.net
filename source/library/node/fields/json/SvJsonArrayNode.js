@@ -289,16 +289,23 @@
         return d;
     }
 
-    descendantWithJsonId (jsonId) {
+    descendantWithJsonId (jsonId, path = "") {
         if (this.jsonId() === jsonId) {
           return this;
         }
-        return this.subnodes().detect(sn => {
+        return this.subnodes().detectAndReturnValue(sn => {
+            if (sn.isKindOf(SvPointerField)) {
+                sn = sn.nodeTileLink();
+            }
           if (sn.descendantWithJsonId) {
-            return sn.descendantWithJsonId(jsonId);
+            return sn.descendantWithJsonId(jsonId, path + "/" + this.jsonPathCompmentString());
           }
           return false;
         });
+    }
+
+    jsonPathCompmentString () {
+        return this.type() + ":" + this.title() + ":" + this.jsonId();
     }
 
 }.initThisClass());

@@ -1025,8 +1025,20 @@ class Type extends Object {
      * @returns {boolean} True if the value is a deep JSON-compatible type, false otherwise.
      */
     static isDeepJsonType (value) {
+        /*
         const errorMessage = Type.errorWithJsonType(value);
         return errorMessage === null;
+        */
+
+        try {
+            JSON.stringify(value);
+        } catch (e) {
+            if(e) {
+                // just to avoid linter complaints about e not being used
+            }
+            return false;
+        }
+        return true;
     }
 
     /**

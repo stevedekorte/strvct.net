@@ -9,14 +9,14 @@
  * @extends SvStorableNode
  * @classdesc Wrapper for request to API service that manages streaming the response and checking for various errors.
  * 
- * Caller sets:
+ * Caller can set:
  *   - delegate
- *   - url
+ *   - url (required)
  *   - headers
  *   - body
  *   - json
- *   - isStreaming
- *   - requestId
+ *   - isStreaming (default false)
+ *   - requestId (default puuid)
  *   - retryDelaySeconds
  * 
  * Delegate protocol:
@@ -438,7 +438,7 @@
       requestId: this.requestId(),
       url: this.url(),
       options: this.requestOptions(),
-      readableState: this.readbleJsonState()
+      readableState: this.readableJsonState()
     };
 
     return JSON.stringify(json, null, 2);
@@ -466,7 +466,10 @@
     assert(options.headers, "headers is required");
     assert(Type.isDictionary(options.headers), "headers must be a dictionary");
     const body = options.body;
-    assert(Type.isString(body) || Type.isFormData(body) || Type.isBlob(body) || Type.isArrayBuffer(body), "body must be a string, FormData, Blob, or ArrayBuffer");
+    // Body is optional for GET/HEAD requests
+    if (body !== undefined && body !== null) {
+      assert(Type.isString(body) || Type.isFormData(body) || Type.isBlob(body) || Type.isArrayBuffer(body), "body must be a string, FormData, Blob, or ArrayBuffer");
+    }
   }
 
   /**
@@ -605,11 +608,14 @@
 
     // only have a status error
     if (this.hasErrorStatusCode() || this.error()) {
-      const m = JSON.stringify(this.readbleJsonState(), null, 2);
-      this.setError(new Error(m));
-      this.setStatus("Failed: " + m);
-      debugger;
-      this.sendDelegate("onRequestFailue", [this]);
+      // If we don't already have an error set by onXhrError, create one
+      if (!this.error()) {
+        const m = JSON.stringify(this.readableJsonState(), null, 2);
+        this.setError(new Error(m));
+      }
+      this.setStatus("Failed: " + this.causeOfError());
+      //debugger;
+      this.sendDelegate("onRequestFailure", [this]);
     } else {
       this.setStatus("Succeeded");
       this.sendDelegate("onRequestSuccess", [this]);
@@ -705,13 +711,41 @@
       // see if there is a json error message
       if (text.length < 1024) { // so we don't try to parse a huge response
         const json = JSON.parse(text);
-        const errorMessage = json.error;
-        if (errorMessage) {
-          return errorMessage;
+        
+        // Check for various common error structures
+        // 1. Direct error string: { error: "message" }
+        if (typeof json.error === 'string' && json.error) {
+          return json.error;
+        }
+        
+        // 2. Nested error object: { error: { message: "message" } }
+        if (json.error && typeof json.error === 'object' && json.error.message) {
+          return json.error.message;
+        }
+        
+        // 3. Direct message field: { message: "error message" }
+        if (typeof json.message === 'string' && json.message) {
+          return json.message;
+        }
+        
+        // 4. Error array: { errors: [{message: "message"}] }
+        if (Array.isArray(json.errors) && json.errors.length > 0) {
+          const firstError = json.errors[0];
+          if (typeof firstError === 'string') {
+            return firstError;
+          }
+          if (firstError.message) {
+            return firstError.message;
+          }
+        }
+        
+        // 5. If error is an object but no message field, stringify it
+        if (json.error && typeof json.error === 'object') {
+          return JSON.stringify(json.error);
         }
       }
     } catch (error) {
-      console.error("**ERROR**:", this.logPrefix(), "responseXmlError() error: " + error.message);
+      console.error("**ERROR**:", this.logPrefix(), "responseJsonError() error: " + error.message);
       // ignore
     }
     return null;
@@ -981,7 +1015,7 @@
     return this.nameForXhrReadyState(xhr.readyState);
   }
 
-  readbleJsonState () {
+  readableJsonState () {
     const xhr = this.xhr();
 
     if (!xhr) {

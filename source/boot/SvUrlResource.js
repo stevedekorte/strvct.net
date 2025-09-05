@@ -213,7 +213,7 @@
             } else {
                 // otherwise, load normally and cache result
                 //this.logDebug(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                //console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
+                console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
                 assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash() );

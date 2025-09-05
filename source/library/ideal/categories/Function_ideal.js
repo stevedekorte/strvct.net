@@ -133,9 +133,18 @@ Function.prototype.parameters = function () {
 
 // add parameter
 
+Function.prototype.addParameterWithNameAndDict = function (name, dict) {
+    assert(name, "Name is required");
+    assert(dict, "Dict is required");
+    
+    this.parameters()[name] = dict;
+    return this;
+};
+
 Function.prototype.addParameter = function (name, type, description) {
     assert(name, "Name is required");
     assert(type, "Type is required");
+    assert(description, "Description is required");
     
     // Ensure type is a string, not a function
     if (typeof type === 'function') {

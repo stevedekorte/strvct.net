@@ -214,6 +214,9 @@
                     name = obj.constructor.name + ".prototype";
                 }
             } catch (e) {
+                if (e) {
+                    // just here to make linters happy
+                }
                 name = "[error getting name]";
             }
             return name;
@@ -335,23 +338,17 @@
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super
         }
 
-        // call the initPrototypeSlots method for the category, if it exists
+        // Call category-specific initialization methods if they exist
+        // This allows categories to define slots using initPrototypeSlots_categoryName
+        // and initialization logic using initPrototype_categoryName
         let catName = nameParts[1];
-        let catInitMethodName = "initPrototypeSlots_" + catName;
-        let hasCatInitMethod = Object.hasOwn(this.prototype, catInitMethodName);
-        //console.log("catInitMethod: '" + catInitMethodName + "' exists: ", hasCatInitMethod);
-
         let parentProto = parentClass.prototype;
-        let parentProtoHasCatInitMethod = Object.hasOwn(parentProto, catInitMethodName);
-
-        if (hasCatInitMethod) {
-            if (!parentProtoHasCatInitMethod) {
-                let msg = "parent class prototype '" + this.name + "' does not have categoryInitMethod '" + catInitMethodName + "'";
-                debugger;
-                throw new Error(msg);
-            }
-            parentProto[catInitMethodName].apply(parentProto);
+        
+        // Setup category prototype if needed (adds category slots to existing slot maps)
+        if (Object.hasOwn(parentProto, "setupCategoryPrototype")) {
+            parentProto.setupCategoryPrototype(catName);
         }
+        
         return this;
     }
 

@@ -9,7 +9,7 @@
 */
 
 Type.typedArrayTypeNames().forEach((name) => {
-    const aClass = SvGlobals.globals()[name]
+    const aClass = SvGlobals.get(name);
 
     if (Type.isUndefined(aClass)) {
         console.warn("TypeArray-store error: missing type " + name);
@@ -28,10 +28,14 @@ Type.typedArrayTypeNames().forEach((name) => {
          * @returns {string} The base64 encoded string.
          * @category Encoding
          */
-        base64Encoded: function(aRecord, aStore) {
+        base64Encoded: function (/*aRecord, aStore*/) {
             return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
         },
-    })
+
+        promiseSha256Digest: async function () {
+            return await crypto.subtle.digest("SHA-256", this);
+        }
+    });
 
 });
 
@@ -42,15 +46,15 @@ Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
      * @returns {string} The base64 encoded string.
      * @category Encoding
      */
-    base64Encoded: function (aRecord, aStore) {
+    base64Encoded: function (/*aRecord, aStore*/) {
         return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
     },
 
     /**
      * @category Cryptography
      */
-    promiseSha256Digest: function () {
-        return crypto.subtle.digest("SHA-256", this);
+    promiseSha256Digest: async function () {
+        return await crypto.subtle.digest("SHA-256", this);
      }
 });
 

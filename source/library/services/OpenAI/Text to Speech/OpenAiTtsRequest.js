@@ -321,6 +321,9 @@
             throw new Error(`TTS API error: ${errorJson.error.message || errorJson.error}`);
           }
         } catch (e) {
+            if (e) {
+                // just here to keep the linter happy
+            }
           // Not JSON, continue
         }
         

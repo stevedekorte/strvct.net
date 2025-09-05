@@ -231,7 +231,7 @@
         /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(this, "_slotsMap", new Map()); // slots for just this proto
         Object.defineSlot(this, "_allSlotsMap", new Map()); // slots for this proto and all protos in the proto chain
-        if (SvGlobals.globals()["ProtoClass"]) {
+        if (SvGlobals.get("ProtoClass")) {
             if (this !== ProtoClass.prototype) {
                 if(this._allSlotsMap === ProtoClass.prototype._allSlotsMap) {
                     debugger;
@@ -278,6 +278,95 @@
     assertAllSlotsHaveTypes () {
         this.forEachSlot(slot => {
             assert(slot.slotType() !== null, this.type() + " missing slot type for " + slot.name());
+        });
+    }
+
+    /**
+     * @description Setup a category's prototype by calling its initialization methods
+     * @category Initialization
+     * @param {string} categoryName - The name of the category (e.g., "firestore" from "SvImage_firestore")
+     * @returns {void}
+     */
+    setupCategoryPrototype (categoryName) {
+        if (!this.isPrototype()) {
+            throw new Error("setupCategoryPrototype called on non-prototype");
+        }
+
+        if (this.type() === "Object") {
+            console.warn("setupCategoryPrototype called on Object prototype - skipping as we don't have slotMaps without ProtoClass");
+            return this;
+        }
+
+        // Ensure we have slot maps (should already exist from parent class initialization)
+        if (!Object.hasOwn(this, "_slotsMap")) {
+            throw new Error("setupCategoryPrototype called on prototype without slot maps - parent class not initialized?");
+        }
+
+        // Store the current number of slots so we know which ones are new
+        const previousSlotCount = this._slotsMap.size;
+        
+        // Check for category-specific initPrototypeSlots method
+        const catInitSlotsMethodName = "initPrototypeSlots_" + categoryName;
+        if (Object.hasOwn(this, catInitSlotsMethodName)) {
+            // Call the category's slot initialization
+            this[catInitSlotsMethodName].apply(this);
+            
+            // Initialize only the new slots that were just defined by the category
+            this.initCategorySlots(previousSlotCount);
+            
+            // Update the allSlotsMap to include the new category slots
+            this.updateAllSlotsMapForCategory();
+        }
+        
+        // Check for category-specific initPrototype method
+        const catInitProtoMethodName = "initPrototype_" + categoryName;
+        if (Object.hasOwn(this, catInitProtoMethodName)) {
+            // Call the category's prototype initialization
+            this[catInitProtoMethodName].apply(this);
+        }
+        
+        return this;
+    }
+
+    /**
+     * @description Initialize only the slots added by a category
+     * @category Initialization
+     * @param {number} previousSlotCount - The number of slots before the category added its slots
+     * @returns {void}
+     */
+    initCategorySlots (previousSlotCount) {
+        assert(this.isPrototype());
+        
+        // Convert the map to an array to access by index
+        const slotsArray = Array.from(this._slotsMap.values());
+        
+        // Initialize only the new slots (those after previousSlotCount)
+        for (let i = previousSlotCount; i < slotsArray.length; i++) {
+            const slot = slotsArray[i];
+            slot.setupInOwner();
+            const hasIvar = Object.hasOwn(this, "_" + slot.name());
+            const hasGetter = Object.hasOwn(this, slot.name());
+            assert(hasIvar && hasGetter, this.type() + " missing " + slot.name() + " slot (from category)");
+        }
+    }
+
+    /**
+     * @description Update the allSlotsMap to include newly added category slots
+     * @category Initialization
+     * @returns {void}
+     */
+    updateAllSlotsMapForCategory () {
+        if (!this.isPrototype()) {
+            throw new Error("updateAllSlotsMapForCategory called on non-prototype");
+        }
+
+        // Add the current prototype's slots to allSlotsMap
+        // This will include any newly added category slots
+        this._slotsMap.forEach((slot, key) => {
+            // Only add if not already present (to preserve slot override behavior)
+            if (!this._allSlotsMap.has(key)) {
+                this._allSlotsMap.set(key, slot);
+            }
         });
     }
 
