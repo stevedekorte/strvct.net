@@ -38,6 +38,7 @@
          * @member {LeonardoService} leonardoService
          * @category AI Service
          */
+        /*
         {
             const slot = this.newSlot("leonardoService", null);
             slot.setShouldStoreSlot(true);
@@ -45,6 +46,7 @@
             slot.setIsSubnode(true);
             slot.setSlotType("LeonardoService");
         }
+        */
         
         /**
          * @member {AnthropicService} anthropicService
@@ -86,12 +88,26 @@
          * @member {PiApiService} piApiService
          * @category AI Service
          */
+        /*
         {
             const slot = this.newSlot("piApiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(PiApiService);
             slot.setIsSubnode(true);
             slot.setSlotType("PiApiService");
+        }
+        */
+
+        /**
+         * @member {ImagineProService} imagineProService
+         * @category AI Service
+         */
+        {
+            const slot = this.newSlot("imagineProService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(ImagineProService);
+            slot.setIsSubnode(true);
+            slot.setSlotType("ImagineProService");
         }
 
         
@@ -219,10 +235,6 @@
         this.setNodeCanReorderSubnodes(false);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
-
-        if (this.isPrototype()) {
-            this.slotNamed("leonardoService").setShouldStoreSlot(true).setupSetter();
-        }
     }
 
     finalInit () {

@@ -609,17 +609,6 @@
         }
         */
 
-        /*
-        if (Type.typeName(anObject).startsWith("Services")) {
-            console.log("addActiveObject() called with Services");
-            debugger;
-        }
-
-        if (Type.typeName(anObject).startsWith("Leonardo")) {
-            console.log("addActiveObject() called with Leonardo*");
-            debugger;
-        }
-        */
 
         if (Type.typeName(anObject) === "PersistentObjectPool") {
             console.log("addActiveObject() called with PersistentObjectPool");
@@ -939,19 +928,6 @@
 
         const aClass = this.classForName(className);
 
-        /*
-        if (className.startsWith("Leonardo")) {
-            console.log("objectForRecord() called with Leonardo*");
-            debugger;
-        }
-
-
-        if (className.startsWith("Anthropic")) {
-            console.log("objectForRecord() called with Leonardo*");
-            debugger;
-        }
-        */
-
         if (!aClass) {
             const error = "missing class '" + className + "' - returning null";
             console.warn(error);
@@ -1169,18 +1145,6 @@
      * @returns {Object}
      */
     refValue (v) {
-
-        /*
-        if (Type.typeName(v).startsWith("Services")) {
-            console.log("refValue() called with Services");
-            debugger;
-        }
-
-        if (Type.typeName(v).startsWith("Leonardo")) {
-            console.log("refValue() called with Leonardo*");
-            debugger;
-        }
-            */
 
         assert(!Type.isPromise(v));
 

@@ -11,9 +11,6 @@
  * 
  * This class handles uploading images to Firebase Storage and
  * maintaining references to the uploaded images with their public URLs.
- * 
- * Replaces LeonardoRefImage for style transfer workflows, providing
- * publicly accessible URLs that work with external services like Midjourney.
  */
 (class FirebaseStorageImage extends SvStorableNode {
 

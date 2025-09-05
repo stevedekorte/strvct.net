@@ -1,0 +1,329 @@
+/**
+ * @module library.services.ImaginePro.Text_to_Image
+ */
+
+/**
+ * @class ImagineProImageGeneration
+ * @extends SvSummaryNode
+ * @classdesc Represents an ImaginePro image generation task that polls for completion.
+ */
+"use strict";
+
+(class ImagineProImageGeneration extends SvSummaryNode {
+  
+  /**
+   * @description Initializes the prototype slots for the class.
+   * @category Initialization
+   */
+  initPrototypeSlots () {
+
+    /**
+     * @member {string} taskId
+     * @description The task ID for tracking the generation.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("taskId", "");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {string} status
+     * @description The current status of the generation.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("status", "pending");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+    }
+
+    /**
+     * @member {string} error
+     * @description Any error message from the generation.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("error", "");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setSlotType("String");
+    }
+
+    /**
+     * @member {ImagineProImages} images
+     * @description The generated images.
+     * @category Output
+     */
+    {
+      const slot = this.newSlot("images", null);
+      slot.setFinalInitProto(ImagineProImages);
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+      slot.setSlotType("ImagineProImages");
+    }
+
+    /**
+     * @member {Object} delegate
+     * @description The delegate for handling events.
+     * @category Delegation
+     */
+    {
+      const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
+    }
+
+    /**
+     * @member {number} pollInterval
+     * @description The interval in milliseconds between polls.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("pollInterval", 2000);
+      slot.setSlotType("Number");
+    }
+
+    /**
+     * @member {number} maxPollAttempts
+     * @description The maximum number of poll attempts.
+     * @category Configuration
+     */
+    {
+      const slot = this.newSlot("maxPollAttempts", 60);
+      slot.setSlotType("Number");
+    }
+
+    /**
+     * @member {number} pollAttempts
+     * @description The current number of poll attempts.
+     * @category Status
+     */
+    {
+      const slot = this.newSlot("pollAttempts", 0);
+      slot.setSlotType("Number");
+    }
+
+    /**
+     * @member {Object} pollTimeoutId
+     * @description The timeout ID for the polling interval.
+     * @category Internal
+     */
+    {
+      const slot = this.newSlot("pollTimeoutId", null);
+      slot.setSlotType("Object");
+    }
+
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
+    this.setCanDelete(true);
+  }
+
+  /**
+   * @description Gets the title for the generation.
+   * @returns {string} The title.
+   * @category Metadata
+   */
+  title () {
+    return `Generation ${this.taskId().slice(0, 8)}...`;
+  }
+
+  /**
+   * @description Gets the subtitle for the generation.
+   * @returns {string} The subtitle.
+   * @category Metadata
+   */
+  subtitle () {
+    return this.status();
+  }
+
+  /**
+   * @description Gets the ImaginePro service.
+   * @returns {Object} The ImaginePro service.
+   * @category Service
+   */
+  service () {
+    return ImagineProService.shared();
+  }
+
+  /**
+   * @description Starts polling for the task status.
+   * @category Process
+   */
+  startPolling () {
+    this.setPollAttempts(0);
+    this.setStatus("polling for task status...");
+    this.sendDelegate("onImageGenerationStart", [this]);
+    this.pollTaskStatus();
+  }
+
+  /**
+   * @description Stops polling for the task status.
+   * @category Process
+   */
+  stopPolling () {
+    if (this.pollTimeoutId()) {
+      clearTimeout(this.pollTimeoutId());
+      this.setPollTimeoutId(null);
+    }
+  }
+
+  /**
+   * @description Polls the task status from the API.
+   * @category Process
+   */
+  async pollTaskStatus () {
+    try {
+      const apiKey = await this.service().apiKeyOrUserAuthToken();
+      const endpoint = `https://api.imaginepro.ai/api/v1/midjourney/task/${this.taskId()}/fetch`;
+      const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
+
+      const request = SvXhrRequest.clone();
+      request.setUrl(proxyEndpoint);
+      request.setMethod("GET");
+      request.setHeaders({
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      });
+
+      await request.asyncSend();
+
+      if (request.isSuccess()) {
+        const responseText = request.responseText();
+        const response = JSON.parse(responseText);
+        
+        this.handlePollResponse(response);
+      } else {
+        // Network error, keep polling
+        this.schedulePoll();
+      }
+    } catch (error) {
+      console.error("Poll error:", error);
+      this.schedulePoll();
+    }
+  }
+
+  /**
+   * @description Handles the poll response from the API.
+   * @param {Object} response - The response from the API.
+   * @category Process
+   */
+  handlePollResponse (response) {
+    const status = response.status;
+    
+    if (status === "completed" || status === "success") {
+      this.setStatus("completed");
+      
+      // Extract images from the response
+      if (response.task && response.task.images && response.task.images.length > 0) {
+        response.task.images.forEach((imageUrl, index) => {
+          const image = this.images().add();
+          image.setTitle(`image ${index + 1}`);
+          image.setUrl(imageUrl);
+          image.setDelegate(this);
+          image.fetch();
+        });
+      } else if (response.images && response.images.length > 0) {
+        // Alternative response structure
+        response.images.forEach((imageUrl, index) => {
+          const image = this.images().add();
+          image.setTitle(`image ${index + 1}`);
+          image.setUrl(imageUrl);
+          image.setDelegate(this);
+          image.fetch();
+        });
+      }
+      
+      this.stopPolling();
+      this.sendDelegate("onImageGenerationEnd", [this]);
+      
+    } else if (status === "failed" || status === "error") {
+      this.setStatus("failed");
+      const errorMsg = response.error || response.message || "Task failed";
+      this.setError(errorMsg);
+      this.stopPolling();
+      this.sendDelegate("onImageGenerationError", [this]);
+      
+    } else if (status === "pending" || status === "processing" || status === "in_progress") {
+      // Task is still processing, continue polling
+      this.setStatus(`processing... (attempt ${this.pollAttempts() + 1}/${this.maxPollAttempts()})`);
+      this.schedulePoll();
+      
+    } else {
+      // Unknown status, continue polling
+      console.log("Unknown task status:", status);
+      this.schedulePoll();
+    }
+  }
+
+  /**
+   * @description Schedules the next poll.
+   * @category Process
+   */
+  schedulePoll () {
+    this.setPollAttempts(this.pollAttempts() + 1);
+    
+    if (this.pollAttempts() >= this.maxPollAttempts()) {
+      this.setStatus("timeout");
+      this.setError("Task timed out after " + this.maxPollAttempts() + " attempts");
+      this.stopPolling();
+      this.sendDelegate("onImageGenerationError", [this]);
+    } else {
+      const timeoutId = setTimeout(() => this.pollTaskStatus(), this.pollInterval());
+      this.setPollTimeoutId(timeoutId);
+    }
+  }
+
+  /**
+   * @description Handles successful image loading.
+   * @param {Object} aiImage - The loaded AI image object.
+   * @category Delegation
+   */
+  onImageLoaded (aiImage) {
+    this.sendDelegate("onImageGenerationImageLoaded", [this, aiImage]);
+  }
+
+  /**
+   * @description Handles errors during image loading.
+   * @param {Object} aiImage - The AI image object that failed to load.
+   * @category Delegation
+   */
+  onImageError (aiImage) {
+    this.sendDelegate("onImageGenerationImageError", [this, aiImage]);
+  }
+
+  /**
+   * @description Sends a delegate method call.
+   * @param {string} methodName - The name of the method to call.
+   * @param {Array} args - The arguments to pass to the method.
+   * @returns {boolean} True if the delegate method was called, false otherwise.
+   * @category Delegation
+   */
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate();
+    if (d) {
+      const f = d[methodName];
+      if (f) {
+        f.apply(d, args);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * @description Shuts down the generation and stops polling.
+   * @returns {ImagineProImageGeneration} The current instance.
+   * @category Lifecycle
+   */
+  shutdown () {
+    this.stopPolling();
+    this.images().subnodes().forEach(image => image.shutdown());
+    return this;
+  }
+
+}.initThisClass());

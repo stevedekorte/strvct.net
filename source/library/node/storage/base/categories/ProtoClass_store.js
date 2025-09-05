@@ -43,18 +43,6 @@
             entries: []
         };
 
-        /*
-        if (Type.typeName(this).startsWith("Services")) {
-            console.log("recordForStore() called with Services*");
-            debugger;
-        }
-
-        if (Type.typeName(this).startsWith("Leonardo")) {
-            console.log("recordForStore() called with Leonardo*");
-            debugger;
-        }
-            */
-
         this.allSlotsMap().forEachKV((slotName, slot) => {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this);
