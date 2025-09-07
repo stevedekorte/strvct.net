@@ -156,9 +156,15 @@
    */
   startPolling () {
     this.setPollAttempts(0);
-    this.setStatus("polling for task status...");
+    this.setStatus("preparing to poll for task status...");
     this.sendDelegate("onImageGenerationStart", [this]);
-    this.pollTaskStatus();
+    
+    // Add initial delay before first poll to avoid race condition
+    // ImaginePro needs a moment to register the task before we can poll it
+    setTimeout(() => {
+      this.setStatus("polling for task status...");
+      this.pollTaskStatus();
+    }, 3000); // Wait 3 seconds before first poll
   }
 
   /**
@@ -179,15 +185,16 @@
   async pollTaskStatus () {
     try {
       const apiKey = await this.service().apiKeyOrUserAuthToken();
-      const endpoint = `https://api.imaginepro.ai/api/v1/midjourney/task/${this.taskId()}/fetch`;
+      // ImaginePro uses /message/{messageId} endpoint, not /task/{taskId}/fetch
+      const endpoint = `https://api.imaginepro.ai/api/v1/midjourney/message/${this.taskId()}`;
       const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
 
       const request = SvXhrRequest.clone();
       request.setUrl(proxyEndpoint);
       request.setMethod("GET");
       request.setHeaders({
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json'
+        'Authorization': `Bearer ${apiKey}`
+        // Don't send Content-Type for GET requests - it causes Firebase to return 400
       });
 
       await request.asyncSend();
@@ -198,8 +205,25 @@
         
         this.handlePollResponse(response);
       } else {
-        // Network error, keep polling
-        this.schedulePoll();
+        // Log the error response for debugging
+        console.error("ImaginePro poll request failed:", {
+          status: request.status(),
+          statusText: request.statusText(),
+          responseText: request.responseText(),
+          url: endpoint
+        });
+        
+        // If it's a 400 error, the message ID might be invalid
+        if (request.status() === 400) {
+          const errorMsg = "Invalid message ID or request - stopping polling";
+          this.setStatus("failed");
+          this.setError(errorMsg);
+          this.stopPolling();
+          this.sendDelegate("onImageGenerationError", [this]);
+        } else {
+          // Other errors, keep polling
+          this.schedulePoll();
+        }
       }
     } catch (error) {
       console.error("Poll error:", error);
@@ -215,20 +239,12 @@
   handlePollResponse (response) {
     const status = response.status;
     
-    if (status === "completed" || status === "success") {
+    // ImaginePro returns "DONE" when completed
+    if (status === "DONE" || status === "completed" || status === "success") {
       this.setStatus("completed");
       
-      // Extract images from the response
-      if (response.task && response.task.images && response.task.images.length > 0) {
-        response.task.images.forEach((imageUrl, index) => {
-          const image = this.images().add();
-          image.setTitle(`image ${index + 1}`);
-          image.setUrl(imageUrl);
-          image.setDelegate(this);
-          image.fetch();
-        });
-      } else if (response.images && response.images.length > 0) {
-        // Alternative response structure
+      // ImaginePro returns images directly in response.images
+      if (response.images && response.images.length > 0) {
         response.images.forEach((imageUrl, index) => {
           const image = this.images().add();
           image.setTitle(`image ${index + 1}`);

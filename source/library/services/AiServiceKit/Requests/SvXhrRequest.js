@@ -430,7 +430,7 @@
     const optionsCopy = JSON.parse(JSON.stringify(this.requestOptions())); // breaks for non-JSON!
 
     const maxBodyLength = 1000;
-    if (optionsCopy.body.length > maxBodyLength) {
+    if (optionsCopy.body && typeof optionsCopy.body === 'string' && optionsCopy.body.length > maxBodyLength) {
       optionsCopy.body = optionsCopy.body.substring(0, maxBodyLength) + "...";
     }
 
@@ -602,7 +602,14 @@
       }, event)
     });
 
-    xhr.send(options.body);
+    // For GET and HEAD requests, don't send a body (even if it's undefined/null)
+    // This prevents Firebase from returning 400 errors
+    const methodsWithoutBody = ['GET', 'HEAD', 'DELETE'];
+    if (methodsWithoutBody.includes(options.method.toUpperCase())) {
+      xhr.send();
+    } else {
+      xhr.send(options.body);
+    }
 
     await this.xhrPromise(); // wait for the request to complete
 
@@ -786,13 +793,13 @@
 
         const xhr = this.xhr();
         const contentType = xhr.getResponseHeader("Content-Type");
-        if (contentType.includes("application/json")) {
+        if (contentType && contentType.includes("application/json")) {
             const errorMessageInJson = this.responseJsonError();
             if (errorMessageInJson) {
             const errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
             this.onXhrError(new Error(errorMessage));
             }
-        } else if (contentType.includes("text/xml")) {
+        } else if (contentType && contentType.includes("text/xml")) {
             const errorMessageInXml = this.responseXmlError();
             if (errorMessageInXml) {
             const errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
@@ -918,7 +925,9 @@
     const msg = e.message;
     this.setError(e);
     this.setStatus("ERROR: " + msg);
-    console.warn("**WARNING**:", this.logPrefix(), " ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
+    console.warn("**ERROR**:", this.logPrefix(), " ======================= " + this.type() + " " + this.url() + " onXhrError: " + e.message + " ======================= ");
+    debugger;
+    console.warn(this.description());
     //debugger;
     //const didHandle = 
     this.sendDelegate("onRequestError", [this, e]);

@@ -436,13 +436,14 @@
           const error = new Error(errorMsg);
           this.onError(error);
         } else {
-            // ImaginePro returns a task_id for tracking
-            if (response.task_id) {
-                this.setTaskId(response.task_id);
+            // ImaginePro returns either task_id or messageId for tracking
+            const taskId = response.task_id || response.messageId;
+            if (taskId) {
+                this.setTaskId(taskId);
                 this.setStatus("task submitted, awaiting completion...");
                 this.onTaskSubmitted(response);
             } else {
-                const error = new Error("No task_id returned from ImaginePro");
+                const error = new Error("No task_id or messageId returned from ImaginePro");
                 this.onError(error);
             }
         }
