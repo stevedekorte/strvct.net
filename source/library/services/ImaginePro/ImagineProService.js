@@ -27,7 +27,7 @@
 
   serviceInfo () {
     return {
-      "taskEndpoint": "https://api.imaginepro.ai/api/v1/midjourney/imagine"
+      "taskEndpoint": "https://api.imaginepro.ai/api/v1/nova/imagine"
     };
   }
 

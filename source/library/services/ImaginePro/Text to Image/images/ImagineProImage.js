@@ -102,11 +102,9 @@
     this.setStatus("loading...");
 
     try {
-      // Use proxy server to fetch the image
-      const proxyServer = ProxyServers.shared().defaultServer();
-      const proxiedUrl = proxyServer.proxyUrlForUrl(this.url());
-      
-      this.setImageUrl(proxiedUrl);
+      // ImaginePro CDN images are publicly accessible, no proxy needed
+      // Just use the direct URL
+      this.setImageUrl(this.url());
 
       // Create an img element to load the image
       const img = new Image();
@@ -122,7 +120,7 @@
           ctx.drawImage(img, 0, 0);
           const dataUrl = canvas.toDataURL('image/png');
           
-          this.setDataUrl(dataUrl);
+          this.setDataURL(dataUrl);
           this.setHasLoaded(true);
           this.setStatus("loaded");
           
@@ -136,7 +134,7 @@
           reject(error);
         };
         
-        img.src = proxiedUrl;
+        img.src = this.url();
       });
       
     } catch (error) {

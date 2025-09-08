@@ -158,6 +158,20 @@
    */
   async evaluateImages () {
     try {
+      this.setStatus("waiting for images to load...");
+      
+      // Wait for all images to finish loading
+      const imageNodes = this.images().subnodes();
+      const loadPromises = imageNodes.map(async (imageNode) => {
+        // If image doesn't have dataURL yet, wait for it to load
+        if (!imageNode.dataURL() && imageNode.url()) {
+          // The fetch method should populate the dataURL
+          await imageNode.fetch();
+        }
+      });
+      
+      await Promise.all(loadPromises);
+      
       this.setStatus("evaluating images with OpenAI...");
       
       // Check if OpenAI service has API key
@@ -187,7 +201,7 @@
   }
 
   onEvalError (error) {
-    this.setError(error);
+    this.setError(error.message || String(error));
     this.setStatus("Error: " + error.message);
     this.evalCompletionPromise().callRejectFunc(error);
   }
@@ -238,14 +252,16 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
     
     // Add all images to the message
     imageNodes.forEach((imageNode, index) => {
-      const imageUrl = imageNode.imageUrl() || imageNode.url();
+      // Prefer dataURL (base64) over external URL to avoid OpenAI timeout issues
+      const imageData = imageNode.dataURL() || imageNode.imageUrl() || imageNode.url();
       this.log(`Adding image ${index} to evaluation: ${imageNode.title()}`);
-      if (imageUrl) {
-        this.log(`  URL (first 100 chars): ${imageUrl.substring(0, 100)}...`);
+      if (imageData) {
+        const isDataUrl = imageData.startsWith('data:');
+        this.log(`  Using ${isDataUrl ? 'base64 data URL' : 'external URL'} (first 100 chars): ${imageData.substring(0, 100)}...`);
         messages[0].content.push({
           type: "image_url",
           image_url: {
-            url: imageUrl
+            url: imageData
           }
         });
       }
@@ -388,11 +404,11 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
       this.log(`Best image node title: ${bestImageNode.title()}`);
       
       // Get the display URL for the best image
-      const displayUrl = bestImageNode.imageUrl() || bestImageNode.dataUrl();
+      const displayUrl = bestImageNode.imageUrl() || bestImageNode.dataURL();
       
       this.log(`Best image URLs:`);
       this.log(`  imageUrl(): ${bestImageNode.imageUrl() ? 'exists' : 'null'}`);
-      this.log(`  dataUrl(): ${bestImageNode.dataUrl() ? 'exists' : 'null'}`);
+      this.log(`  dataURL(): ${bestImageNode.dataURL() ? 'exists' : 'null'}`);
       this.log(`  url(): ${bestImageNode.url() ? 'exists' : 'null'}`);
       
       if (displayUrl) {

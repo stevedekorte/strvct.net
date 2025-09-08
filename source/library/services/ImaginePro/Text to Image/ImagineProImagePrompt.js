@@ -370,7 +370,7 @@
     this.sendDelegate("onImagePromptStart", [this]);
 
     const apiKey = await this.service().apiKeyOrUserAuthToken();
-    const endpoint = 'https://api.imaginepro.ai/api/v1/midjourney/imagine';
+    const endpoint = 'https://api.imaginepro.ai/api/v1/nova/imagine';
     
     // Sanitize the prompt before sending to avoid Midjourney parameter issues
     let sanitizedPrompt = this.sanitizePromptForMidjourney(this.prompt());
@@ -579,7 +579,7 @@
         if (genImage.hasLoaded()) {
           // Copy the loaded image data
           image.setImageUrl(genImage.imageUrl());
-          image.setDataUrl(genImage.dataUrl());
+          image.setDataURL(genImage.dataURL());
         } else {
           // Set up delegate and fetch if not loaded
           image.setDelegate(this);

@@ -264,7 +264,7 @@
       this.stopPolling();
       this.sendDelegate("onImageGenerationError", [this]);
       
-    } else if (status === "pending" || status === "processing" || status === "in_progress") {
+    } else if (status === "pending" || status === "processing" || status === "PROCESSING" || status === "in_progress") {
       // Task is still processing, continue polling
       this.setStatus(`processing... (attempt ${this.pollAttempts() + 1}/${this.maxPollAttempts()})`);
       this.schedulePoll();

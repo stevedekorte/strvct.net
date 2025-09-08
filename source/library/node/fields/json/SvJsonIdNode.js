@@ -85,15 +85,17 @@
 
         return this.nextJsonDescendants().detectAndReturnValue(sn => {
 
-            if (sn.isKindOf(SvPointerField)) {
-                sn = sn.nodeTileLink();
-            }
+            if (sn) {
+                if (sn.isKindOf(SvPointerField)) {
+                    sn = sn.nodeTileLink();
+                }
 
-            if (sn && sn.descendantWithJsonId) {
-                return sn.descendantWithJsonId(jsonId, newPath);
-            } else {
-                console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
-                //debugger;
+                if (sn.descendantWithJsonId) {
+                    return sn.descendantWithJsonId(jsonId, newPath);
+                } else {
+                    console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
+                    //debugger;
+                }
             }
             return null;
         });
