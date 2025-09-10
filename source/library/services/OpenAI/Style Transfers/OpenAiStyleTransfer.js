@@ -63,7 +63,7 @@
         // Style reference image storage
         {
             const slot = this.newSlot("styleRefImage", null);
-            slot.setFinalInitProto(FirebaseStorageImage);
+            slot.setFinalInitProto(FirestoreImage);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
         }

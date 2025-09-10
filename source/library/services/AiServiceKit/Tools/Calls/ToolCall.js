@@ -592,6 +592,7 @@ Example Tool call format:
       this.handleCallSuccess(resultValue);
       */
     } catch (e) {
+        console.error("---- TOOLCALL ERROR: ", e," Error making tool call: " + this.toolDefinition().name());
         debugger;
         this.handleCallError(e);
     }

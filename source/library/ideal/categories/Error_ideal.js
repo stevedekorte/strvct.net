@@ -53,7 +53,7 @@
             if (errorMessage) {
                 console.warn("assert failed: " + errorMessage);
             }
-        throw e;
+            throw e;
         }
         return v;
     }
@@ -100,13 +100,7 @@
             didThrow = true;
         }
 
-        if (!didThrow) {
-            console.log("assertThrows(" + func.toString() + ") failed");
-        } else {
-            //console.log("assertThrows(" + func.toString() + ") passed");
-        }
-
-        assert(didThrow);
+        assert(didThrow, "assertThrows(" + func.toString() + ") failed");
     }
 
     /**

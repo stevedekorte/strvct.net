@@ -94,13 +94,44 @@
 
     async asyncAsImage () {
         await this.asyncLoadIfNeeded();
-        return this.asImage();
+        
+        // Create image and wait for it to load
+        const image = new Image();
+        
+        // For data URLs, we don't need CORS but we still need to wait for load
+        const dataUrl = this.dataURL();
+        if (!dataUrl) {
+            throw new Error("No dataURL available for image");
+        }
+        
+        // Return a promise that resolves when the image loads
+        return new Promise((resolve, reject) => {
+            image.onload = () => {
+                image.onload = null;
+                image.onerror = null;
+                resolve(image);
+            };
+            
+            image.onerror = (error) => {
+                image.onload = null;
+                image.onerror = null;
+                console.error("Error loading image from dataURL:", error);
+                reject(new Error("Failed to load image from dataURL"));
+            };
+            
+            // Set src after handlers are attached
+            image.src = dataUrl;
+        });
     }
 
     asImage () {
         const image = new Image();
         image.src = this.dataURL();
         return image;
+    }
+
+    hasDataURL () {
+        return this.dataURL() && this.dataURL().length > 0;
     }
 
     /**
@@ -114,6 +145,7 @@
         if (dataUrl && dataUrl.length > 0) {
             return dataUrl;
         }
+
         const path = this.path();
         if (path && path.length > 0) {
             return path;

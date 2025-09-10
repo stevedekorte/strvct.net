@@ -45,14 +45,15 @@
 
     /**
      * @member {string} error
-     * @description Any error message from the generation.
+     * @description Any error from the generation.
      * @category Status
      */
     {
-      const slot = this.newSlot("error", "");
+      const slot = this.newSlot("error", null);
+      slot.setAllowsNullValue(true);
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
-      slot.setSlotType("String");
+      slot.setSlotType("Error");
     }
 
     /**
@@ -187,6 +188,7 @@
       const apiKey = await this.service().apiKeyOrUserAuthToken();
       // ImaginePro uses /message/{messageId} endpoint, not /task/{taskId}/fetch
       const endpoint = `https://api.imaginepro.ai/api/v1/midjourney/message/${this.taskId()}`;
+      // IMPORTANT: Use proxy for polling requests too (accounting & CORS)
       const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
 
       const request = SvXhrRequest.clone();
@@ -217,7 +219,7 @@
         if (request.status() === 400) {
           const errorMsg = "Invalid message ID or request - stopping polling";
           this.setStatus("failed");
-          this.setError(errorMsg);
+          this.setError(new Error(errorMsg));
           this.stopPolling();
           this.sendDelegate("onImageGenerationError", [this]);
         } else {
@@ -250,17 +252,29 @@
           image.setTitle(`image ${index + 1}`);
           image.setUrl(imageUrl);
           image.setDelegate(this);
-          image.fetch();
+          // Don't await fetch - let it run asynchronously
+          // Errors are handled via delegate callbacks
+          image.fetch().catch(error => {
+            // Catch any errors to prevent unhandled promise rejections
+            console.error("Error fetching image:", error);
+            // The error is already handled in the image's error handler
+          });
         });
       }
       
       this.stopPolling();
       this.sendDelegate("onImageGenerationEnd", [this]);
       
-    } else if (status === "failed" || status === "error") {
+    } else if (status === "failed" || status === "error" || status === "FAIL") {
       this.setStatus("failed");
-      const errorMsg = response.error || response.message || "Task failed";
-      this.setError(errorMsg);
+      
+      // Log the full response to understand the error structure
+      console.error("ImaginePro task failed with response:", response);
+      
+      // Extract error message from various possible locations
+      const errorMsg = response.error || response.message || response.errorMessage || 
+                      response.failureReason || response.reason || "Task failed";
+      this.setError(new Error(errorMsg));
       this.stopPolling();
       this.sendDelegate("onImageGenerationError", [this]);
       
@@ -285,7 +299,7 @@
     
     if (this.pollAttempts() >= this.maxPollAttempts()) {
       this.setStatus("timeout");
-      this.setError("Task timed out after " + this.maxPollAttempts() + " attempts");
+      this.setError(new Error("Task timed out after " + this.maxPollAttempts() + " attempts"));
       this.stopPolling();
       this.sendDelegate("onImageGenerationError", [this]);
     } else {

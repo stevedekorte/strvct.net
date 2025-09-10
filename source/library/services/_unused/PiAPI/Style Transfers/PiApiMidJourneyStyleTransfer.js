@@ -69,7 +69,7 @@
         // Initial image reference for Firebase upload
         {
             const slot = this.newSlot("initRefImage", null);
-            slot.setFinalInitProto(FirebaseStorageImage);
+            slot.setFinalInitProto(FirestoreImage);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
         }

@@ -293,7 +293,7 @@
         }
 
         if (this.type() === "Object") {
-            console.warn("setupCategoryPrototype called on Object prototype - skipping as we don't have slotMaps without ProtoClass");
+            //console.warn("Object_boot.setupCategoryPrototype() called on Object prototype - skipping as we don't have slotMaps without ProtoClass");
             return this;
         }
 

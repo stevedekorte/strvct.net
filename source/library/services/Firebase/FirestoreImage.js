@@ -5,14 +5,14 @@
  */
 
 /**
- * @class FirebaseStorageImage
+ * @class FirestoreImage
  * @extends SvStorableNode
  * @classdesc Represents an image stored in Firebase Storage
  * 
  * This class handles uploading images to Firebase Storage and
  * maintaining references to the uploaded images with their public URLs.
  */
-(class FirebaseStorageImage extends SvStorableNode {
+(class FirestoreImage extends SvStorableNode {
 
     initPrototypeSlots () {
         // Image data URL (local)
@@ -181,6 +181,13 @@
         return FirebaseStorageService.shared();
     }
 
+    async asyncCompleteUploadIfNeeded () {
+        if (this.hasPublicUrl()) {
+            return;
+        }
+        await this.uploadToFirebase();
+    }
+
     /**
      * @description Uploads the image to Firebase Storage via AccountServer
      * @returns {Promise<void>}
@@ -214,7 +221,7 @@
                 throw new Error("No auth token found. Please log in first.");
             }
             
-            console.log("FirebaseStorageImage.uploadToFirebase: Getting upload URL for:", filename);
+            console.log("FirestoreImage.uploadToFirebase: Getting upload URL for:", filename);
             
             // Use SvXhrRequest for consistent error handling
             const request = SvXhrRequest.clone();
@@ -248,7 +255,7 @@
 
             // Check if we need to use direct upload (emulator fallback)
             if (uploadData.useDirectUpload) {
-                console.log("FirebaseStorageImage.uploadToFirebase: Using direct upload for emulator");
+                console.log("FirestoreImage.uploadToFirebase: Using direct upload for emulator");
                 
                 // Use the direct upload endpoint
                 const directRequest = SvXhrRequest.clone();
@@ -284,7 +291,7 @@
                 // Convert data URL to blob
                 const blob = await this.dataUrlToBlob(this.dataUrl());
 
-                console.log("FirebaseStorageImage.uploadToFirebase: Uploading image to Firebase Storage");
+                console.log("FirestoreImage.uploadToFirebase: Uploading image to Firebase Storage");
                 
                 // Use SvXhrRequest for the upload
                 const uploadRequest = SvXhrRequest.clone();
@@ -317,7 +324,7 @@
             });
 
             this.setUploadStatus("uploaded successfully");
-            console.log("FirebaseStorageImage.uploadToFirebase: Image uploaded successfully:", uploadData.publicUrl);
+            console.log("FirestoreImage.uploadToFirebase: Image uploaded successfully:", uploadData.publicUrl);
 
         } catch (error) {
             console.log("Firebase upload failed:", error);

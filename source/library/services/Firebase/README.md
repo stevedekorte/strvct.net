@@ -79,7 +79,7 @@ service firebase.storage {
 ### Classes
 
 - **`FirebaseStorageService`**: Manages Firebase configuration and SDK
-- **`FirebaseStorageImage`**: Handles individual image uploads and URL management
+- **`FirestoreImage`**: Handles individual image uploads and URL management
 - **`PiApiMidJourneyStyleTransfer`**: Updated to use Firebase instead of Leonardo S3
 
 ## Usage

@@ -45,12 +45,12 @@
         // Images collection for testing
         {
             const slot = this.newSlot("images", null);
-            slot.setFinalInitProto(FirebaseStorageImages);
+            slot.setFinalInitProto(FirestoreImages);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
-            slot.setSlotType("FirebaseStorageImages");
+            slot.setSlotType("FirestoreImages");
         }
     }
 
@@ -199,7 +199,7 @@
 
     /**
      * @description Uploads an image via AccountServer signed URL
-     * @deprecated Use FirebaseStorageImage.uploadToFirebase() instead
+     * @deprecated Use FirestoreImage.uploadToFirebase() instead
      * @param {string} dataUrl - The image data URL
      * @param {string} filename - Optional filename
      * @returns {Promise<Object>} Object with publicUrl and metadata

@@ -208,14 +208,23 @@
         this.clearAwaiterCount();
         this.cancelTimeout();
         if (this._rejectFunc) {
-            debugger;
             return this._rejectFunc(...args);
         }
         // If no reject function exists, rethrow the error/exception
         if (args.length > 0) {
-            throw args[0];
+            const error = args[0];
+            // Ensure we always throw an Error object, not a DOM Event or other non-Error
+            if (error instanceof Error) {
+                throw error;
+            } else if (typeof Event !== 'undefined' && error instanceof Event) {
+                // DOM Event - create a proper Error
+                throw new Error(`Promise rejected with DOM Event: ${error.type}`);
+            } else if (typeof error === 'string') {
+                throw new Error(error);
+            } else {
+                throw new Error(`Promise rejected with: ${String(error)}`);
+            }
         }
-        debugger;
         throw new Error("Promise rejected with no reject function and no error provided");
     }
 

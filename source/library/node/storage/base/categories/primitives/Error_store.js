@@ -15,10 +15,10 @@
      * @returns {Error_store} The current instance.
      * @category Data Loading
      */
-    loadFromRecord(aRecord, aStore) {
+    loadFromRecord (aRecord /*, aStore*/) {
         this.name = aRecord.name;
         this.message = aRecord.message;
-        return this
+        return this;
     }
 
     /**
@@ -27,12 +27,12 @@
      * @returns {Object} An object containing the error information.
      * @category Data Storage
      */
-    recordForStore(aStore) { // should only be called by Store
+    recordForStore (/*aStore*/) { // should only be called by Store
         return {
             type: this.type(), 
             name: this.name,
             message: this.message
-        }
+        };
     }
 
     /**
@@ -40,8 +40,8 @@
      * @returns {boolean} Always returns true.
      * @category Data Storage
      */
-    shouldStore() {
-        return true
+    shouldStore () {
+        return true;
     }
 
     /**
@@ -50,8 +50,8 @@
      * @returns {Set} The input set of PIDs.
      * @category Data Reference
      */
-    refsPidsForJsonStore(puuids = new Set()) {
-        return puuids
+    refsPidsForJsonStore (puuids = new Set()) {
+        return puuids;
     }
 
 }).initThisCategory();

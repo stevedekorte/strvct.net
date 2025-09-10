@@ -8,6 +8,10 @@
  * @class ImagineProImagePrompt
  * @extends SvSummaryNode
  * @classdesc Represents an ImaginePro image prompt for generating images using Midjourney via ImaginePro API.
+ * 
+ * IMPORTANT: This implementation ONLY supports Midjourney V7 or later versions.
+ * We do NOT support V6 or earlier versions. All prompts will be sent with --v 7 flag.
+ * Omnireference uses V7's --oref and --ow parameters (not V6's --cref/--cw).
  */
 (class ImagineProImagePrompt extends SvSummaryNode {  
   initPrototypeSlots () {
@@ -100,12 +104,13 @@
      * @category Status
      */
     {
-      const slot = this.newSlot("error", "");
+      const slot = this.newSlot("error", null);
+      slot.setAllowsNullValue(true);
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(false)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
+      slot.setSlotType("Error")
       slot.setCanEditInspection(false);
     }
 
@@ -196,7 +201,9 @@
 
     /**
      * @member {string} omniRefImageUrl
-     * @description URL to character reference sheet composite image for Midjourney omnireference.
+     * @description URL to character reference sheet composite image for Midjourney V7+ omnireference.
+     * This will be used with --oref parameter (V7's omnireference flag).
+     * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
      * @category Configuration
      */
     {
@@ -210,23 +217,6 @@
       slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
     }
 
-    /**
-     * @member {string} midjourneyVersion
-     * @description The Midjourney version to use (6 or 7).
-     * @category Configuration
-     */
-    {
-      const slot = this.newSlot("midjourneyVersion", "6");
-      slot.setSlotType("String");
-      slot.setLabel("Midjourney Version");
-      slot.setIsSubnodeField(true);
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setValidValues(["6"]);
-      slot.setAllowsNullValue(false);
-      slot.setDescription("Version 6 is currently supported by ImaginePro");
-    }
 
     /**
      * @member {string} promptSuffix
@@ -342,8 +332,9 @@
   }
 
   /**
-   * @description Sanitizes the prompt to avoid Midjourney parameter parsing issues.
+   * @description Sanitizes the prompt to avoid Midjourney parameter parsing issues and ImaginePro content moderation.
    * Replaces single dashes that could be interpreted as parameters with safe alternatives.
+   * Also replaces words that trigger false positives in ImaginePro's overly aggressive content filter.
    * @param {string} prompt - The raw prompt text
    * @returns {string} The sanitized prompt
    * @category Utility
@@ -356,6 +347,26 @@
     prompt = prompt.replace(/—/g, ', ');
     prompt = prompt.replace(/–/g, ', ');
     
+    // Handle ImaginePro's overly aggressive content moderation
+    // Replace problematic words that are falsely flagged in fantasy/game contexts
+    // These replacements maintain the meaning while avoiding false positive rejections
+    prompt = prompt
+      .replace(/\bstone flesh\b/gi, 'stone surface') // "stone flesh" -> "stone surface" (for golems)
+      .replace(/\bflesh\b/gi, 'form') // Generic "flesh" -> "form" as fallback
+      .replace(/\bnaked\b/gi, 'bare') // "naked" -> "bare" (for weapons, etc.)
+      .replace(/\bkill\b/gi, 'defeat') // "kill" -> "defeat" (for combat descriptions)
+      .replace(/\bblood\b/gi, 'crimson') // "blood" -> "crimson" (for visual descriptions)
+      .replace(/\bgore\b/gi, 'battle damage') // "gore" -> "battle damage"
+      .replace(/\bcorpse\b/gi, 'fallen figure') // "corpse" -> "fallen figure"
+      .replace(/\bdead\b/gi, 'fallen') // "dead" -> "fallen"
+      .replace(/\bmurder\b/gi, 'eliminate') // "murder" -> "eliminate"
+      .replace(/\btorture\b/gi, 'torment') // "torture" -> "torment"
+      .replace(/\bsexy\b/gi, 'attractive') // "sexy" -> "attractive"
+      .replace(/\bsensual\b/gi, 'graceful') // "sensual" -> "graceful"
+      .replace(/\bviolent\b/gi, 'intense') // "violent" -> "intense"
+      .replace(/\bbloody\b/gi, 'crimson') // "bloody" -> "crimson"
+      .replace(/\bbrutal\b/gi, 'fierce'); // "brutal" -> "fierce"
+    
     return prompt;
   }
 
@@ -365,7 +376,7 @@
    */
   async start () {
     this.setCompletionPromise(Promise.clone());
-    this.setError("");
+    this.setError(null);
     this.setStatus("submitting task...");
     this.sendDelegate("onImagePromptStart", [this]);
 
@@ -382,8 +393,11 @@
     }
     
     // Append omnireference flags if image is provided
+    // IMPORTANT: We ONLY support Midjourney V7 or later versions
+    // V7 uses --oref (omnireference) and --ow (omnireference weight) parameters
+    // We do NOT support V6 or earlier (which used --cref/--cw)
     if (this.omniRefImageUrl()) {
-      sanitizedPrompt = sanitizedPrompt + " --cref " + this.omniRefImageUrl() + " --cw 100";
+      sanitizedPrompt = sanitizedPrompt + " --oref " + this.omniRefImageUrl() + " --ow 100";
     }
     
     // Append aspect ratio
@@ -392,7 +406,9 @@
       sanitizedPrompt = sanitizedPrompt + " --ar " + aspectRatio;
     }
     
-    // Note: ImaginePro currently only supports v6, no need to append version flag
+    // IMPORTANT: We require Midjourney V7 or later
+    // Append version flag to ensure V7 is used
+    sanitizedPrompt = sanitizedPrompt + " --v 7";
     
     console.log("sanitizedPrompt: [\n" + sanitizedPrompt + "\n]");
     
@@ -401,6 +417,10 @@
       process_mode: this.processMode()
     };
     
+    // IMPORTANT: Always use proxy for ImaginePro API requests:
+    // 1. ACCOUNTING: Tracks API usage for user billing
+    // 2. AUTHENTICATION: Handles API key management securely
+    // 3. CORS: Ensures proper headers for cross-origin requests
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
 
     // Create SvXhrRequest instead of using fetch
@@ -500,10 +520,28 @@
    * @category Process
    */
   onError (error) {
-    const s = "ERROR: " + error.message;
-    debugger;
+    // Handle different error types
+    let errorMessage;
+    let errorObject;
+    
+    if (error instanceof Error) {
+      errorMessage = error.message;
+      errorObject = error;
+    } else if (error instanceof Event) {
+      // DOM Event - extract meaningful information
+      errorMessage = "Image loading failed";
+      errorObject = new Error(errorMessage);
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+      errorObject = new Error(errorMessage);
+    } else {
+      errorMessage = "Unknown error occurred";
+      errorObject = new Error(errorMessage);
+    }
+    
+    const s = "ERROR: " + errorMessage;
     console.error(s);
-    this.setError(error.message);
+    this.setError(errorObject);
     this.setStatus(s);
     this.sendDelegate("onImagePromptError", [this]);
     this.onEnd();
@@ -540,6 +578,7 @@
   onEnd () {
     this.sendDelegate("onImagePromptEnd", [this]);
     if (this.error()) {
+        // Pass the error object to the reject function
         this.completionPromise().callRejectFunc(this.error());
     } else {
         this.completionPromise().callResolveFunc(this);
@@ -607,7 +646,18 @@
    * @category Delegation
    */
   onImageGenerationError (generation) {
-    this.onError(new Error(generation.error() || "Generation failed"));
+    const error = generation.error();
+    let errorMessage = error ? error.message || error : "Generation failed";
+    
+    // Add more context to timeout errors
+    if (errorMessage.includes("timeout")) {
+      errorMessage += ". This may be due to high load on ImaginePro's servers. Please try again in a few moments.";
+    }
+    
+    console.error(this.logPrefix(), "Image generation failed:", errorMessage);
+    console.error(this.logPrefix(), "Task ID:", generation.taskId());
+    
+    this.onError(new Error(errorMessage));
   }
 
   /**

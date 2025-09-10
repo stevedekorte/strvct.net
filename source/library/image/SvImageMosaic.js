@@ -200,9 +200,40 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Helper
      */
     async loadAllImages (images) {
-        const promises = images.map(async (imageSource) => {
+        const promises = images.map(async (imageSource, index) => {
             // assume it's an SvImage
-            return await imageSource.asyncAsImage();
+            console.log(`Loading image ${index + 1}/${images.length}`);
+            
+            // Get the dataURL directly to ensure we're using local data
+            const dataUrl = imageSource.dataURL();
+            if (!dataUrl) {
+                throw new Error(`No dataURL for image ${index + 1}`);
+            }
+            
+            // Create a fresh Image element for each one
+            const img = new Image();
+            
+            // Don't set crossOrigin for dataURLs - it's not needed and can cause issues
+            // img.crossOrigin = "anonymous"; // DON'T DO THIS for dataURLs
+            
+            return new Promise((resolve, reject) => {
+                img.onload = () => {
+                    console.log(`Image ${index + 1} loaded successfully`);
+                    img.onload = null;
+                    img.onerror = null;
+                    resolve(img);
+                };
+                
+                img.onerror = (error) => {
+                    console.error(`Image ${index + 1} failed to load:`, error);
+                    img.onload = null;
+                    img.onerror = null;
+                    reject(new Error(`Failed to load image ${index + 1}`));
+                };
+                
+                // Set the dataURL as source
+                img.src = dataUrl;
+            });
         });
         
         return await Promise.all(promises);

@@ -5,14 +5,14 @@
  */
 
 /**
- * @class FirebaseStorageImages
+ * @class FirestoreImages
  * @extends SvJsonArrayNode
- * @classdesc Collection of Firebase Storage images for testing and management
+ * @classdesc Collection of Firestore images for testing and management
  * 
- * This class provides a UI for managing and testing Firebase Storage image uploads.
+ * This class provides a UI for managing and testing Firestore image uploads.
  * Images can be added, uploaded, and their public URLs can be tested.
  */
-(class FirebaseStorageImages extends SvJsonArrayNode {
+(class FirestoreImages extends SvJsonArrayNode {
 
     initPrototypeSlots () {
         // Add image action
@@ -55,18 +55,18 @@
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
-        this.setSubnodeClasses([FirebaseStorageImage]);
+        this.setSubnodeClasses([FirestoreImage]);
         this.setNodeCanAddSubnode(true);
         this.setNodeCanReorderSubnodes(true);
         this.setNodeCanEditTitle(false);
-        this.setTitle("Firebase Images");
+        this.setTitle("Firestore Images");
         this.setSubtitle("Test image uploads");
         this.setNodeFillsRemainingWidth(false);
     }
 
     finalInit () {
         super.finalInit();
-        this.setTitle("Firebase Images");
+        this.setTitle("Firestore Images");
     }
 
     /**
@@ -90,11 +90,11 @@
 
     /**
      * @description Adds a test image with sample data
-     * @returns {FirebaseStorageImage} The new image
+     * @returns {FirestoreImage} The new image
      * @category Actions
      */
     addTestImage () {
-        const image = FirebaseStorageImage.clone();
+        const image = FirestoreImage.clone();
         const timestamp = Date.now();
         image.setImageLabel(`Test Image ${timestamp}`);
         
@@ -108,7 +108,7 @@
 
     /**
      * @description Adds an image from file selection
-     * @returns {Promise<FirebaseStorageImage>} The new image
+     * @returns {Promise<FirestoreImage>} The new image
      * @category Actions
      */
     async addImageFromFile () {
@@ -120,7 +120,7 @@
             input.onchange = async (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const image = FirebaseStorageImage.clone();
+                    const image = FirestoreImage.clone();
                     image.setImageLabel(file.name);
                     await image.setFromFile(file);
                     this.addSubnode(image);
@@ -216,7 +216,7 @@
      * @category DragDrop
      */
     acceptedSubnodeTypes () {
-        return ["FirebaseStorageImage"];
+        return ["FirestoreImage"];
     }
 
     /**
@@ -226,49 +226,52 @@
      * @category DragDrop
      */
     canAddSubnode (aNode) {
-        return aNode.type() === "FirebaseStorageImage";
+        return aNode.type() === "FirestoreImage";
     }
 
     /**
-     * @description Adds and uploads an SvImage to Firebase Storage
+     * @description Adds and uploads an SvImage to Firestore
      * @param {SvImage} svImage - The SvImage to upload
-     * @returns {Promise<FirebaseStorageImage>} The FirebaseStorageImage after upload completes
+     * @returns {Promise<FirestoreImage>} The FirestoreImage after upload completes
      * @category Upload
      */
     async asyncAddSvImage (svImage) {
-        // Validate input
-        if (!svImage || !svImage.getImageData) {
-            throw new Error("Invalid SvImage provided");
-        }
+        assert(svImage && svImage.isKindOf(SvImage), "SvImage is not a valid SvImage");
+        assert(svImage.hasDataURL(), "SvImage has no dataURL");
 
-        const imageData = svImage.getImageData();
-        if (!imageData) {
-            throw new Error("SvImage has no image data");
-        }
-
-        // Create a new FirebaseStorageImage
-        const fbImage = FirebaseStorageImage.clone();
-        
-        // Set the data URL
-        fbImage.setDataUrl(imageData);
-        
-        // Get the hash-based filename from SvImage
+        // Return existing FirestoreImage if it exists
         const label = await svImage.asyncGetHashFileName();
+        const existingImage = this.subnodeWithLabel(label);
+        if (existingImage) {
+            await existingImage.asyncCompleteUploadIfNeeded(); // in case it was added by another thread but not completed
+            return existingImage;
+        }
+
+        // Otherwise, create and add new FirestoreImage
+        const fbImage = FirestoreImage.clone();        
+        fbImage.setDataUrl(svImage.dataURL());        
         fbImage.setImageLabel(label);
-        
-        // Add to collection
         this.addSubnode(fbImage);
-        
+
         // Upload to Firebase with the hash-based filename
         try {
             // The uploadToFirebase method will use the imageLabel as the filename
             await fbImage.uploadToFirebase();
-            console.log(`FirebaseStorageImages.asyncAddSvImage: Successfully uploaded ${label}`);
+            console.log(`FirestoreImages.asyncAddSvImage: Successfully uploaded ${label}`);
         } catch (error) {
-            console.error(`FirebaseStorageImages.asyncAddSvImage: Failed to upload ${label}:`, error);
+            console.error(`FirestoreImages.asyncAddSvImage: Failed to upload ${label}:`, error);
             throw error;
         }
         
+        return fbImage;
+    }
+
+    subnodeWithLabel (label) {
+        return this.subnodes().find(img => img.imageLabel() === label);
+    }
+
+    async asyncFirestoreImageForSvImage (svImage) {
+        const fbImage = await this.asyncAddSvImage(svImage);
         return fbImage;
     }
 

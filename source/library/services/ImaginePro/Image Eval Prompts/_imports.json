@@ -1,4 +1,6 @@
 [
+  "SvImageNodes.js",
+  "ImageEvaluator/_imports.json",
   "ImagineProImageEvalPrompt.js",
   "ImagineProImageEvalPrompts.js"
 ]

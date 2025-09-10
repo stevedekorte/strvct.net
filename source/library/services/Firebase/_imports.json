@@ -1,5 +1,6 @@
 [
-    "FirebaseStorageImage.js",
-    "FirebaseStorageImages.js",
-    "FirebaseStorageService.js"
+    "FirestoreImage.js",
+    "FirestoreImages.js",
+    "FirebaseStorageService.js",
+    "SvImage_firestore.js"
 ]

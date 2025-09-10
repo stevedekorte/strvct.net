@@ -7,6 +7,10 @@
  * @extends AiService
  * @classdesc ImagineProService is a service for ImaginePro's Midjourney API.
  * 
+ * IMPORTANT: This service ONLY supports Midjourney V7 or later versions.
+ * V7 uses --oref (omnireference) and --ow (omnireference weight) parameters.
+ * We do NOT support V6 or earlier versions (which used --cref/--cw).
+ * 
  * Example:
  * 
  * ImagineProService.shared().setApiKey("your-imaginepro-key");

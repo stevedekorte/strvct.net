@@ -18,13 +18,32 @@
              * @member {String} dataURL - The data URL of the image.
              * @category Data
              */
-            const slot = this.newSlot("dataURL", null);
+            const slot = this.newSlot("svImage", null);
             slot.setShouldStoreSlot(true);
-            slot.setSlotType("String");
+            slot.setSlotType("SvImage");
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             // SvImageWellField
         }
+
+        /*
+        {
+            const slot = this.newSlot("note", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
+        }
+        */
+    }
+
+    dataURL () {
+        return this.svImage().dataURL();
+    }
+
+    setDataURL (dataURL) {
+        this.setDataURL(dataURL);
+        return this;
     }
 
     /**
