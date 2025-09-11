@@ -43,6 +43,11 @@
             const slot = this.newSlot("sha256Hash", "");
             slot.setSlotType("String");
         }
+
+        {
+            const slot = this.newSlot("imageObject", false);
+            slot.setSlotType("Image");
+        }
     }
 
     /**
@@ -70,7 +75,7 @@
         return this.path().pathExtension()
     }
 
-    onUpdateSlotImageData () {
+    onUpdateSlotDataURL () {
         debugger;
         this.setSha256Hash(null);
         // we'll lazily calculate the hash if/when needed
@@ -92,39 +97,29 @@
         return this.dataURL() !== null;
     }
 
-    async asyncAsImage () {
+    assertValidDataURL () {
+        const dataURL = this.dataURL();
+        assert(dataURL, "dataURL is not set");
+        assert(dataURL.length > 0, "dataURL is empty");
+        assert(dataURL.startsWith("data:image/"), "dataURL does not start with data:image/");
+    }
+
+    async asyncAsImageObject () {
         await this.asyncLoadIfNeeded();
-        
-        // Create image and wait for it to load
-        const image = new Image();
-        
-        // For data URLs, we don't need CORS but we still need to wait for load
-        const dataUrl = this.dataURL();
-        if (!dataUrl) {
-            throw new Error("No dataURL available for image");
+        this.assertValidDataURL();
+
+        if (!this.imageObject()) {
+            const image = new Image();
+            image.src = this.dataURL();
+            this.setImageObject(image);
         }
-        
-        // Return a promise that resolves when the image loads
-        return new Promise((resolve, reject) => {
-            image.onload = () => {
-                image.onload = null;
-                image.onerror = null;
-                resolve(image);
-            };
-            
-            image.onerror = (error) => {
-                image.onload = null;
-                image.onerror = null;
-                console.error("Error loading image from dataURL:", error);
-                reject(new Error("Failed to load image from dataURL"));
-            };
-            
-            // Set src after handlers are attached
-            image.src = dataUrl;
-        });
+
+        return this.imageObject();
     }
 
     asImage () {
+        this.assertValidDataURL();
+
         const image = new Image();
         image.src = this.dataURL();
         return image;

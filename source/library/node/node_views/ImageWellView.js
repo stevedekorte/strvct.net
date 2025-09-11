@@ -198,7 +198,7 @@
             this.addSubview(v);
             */
 
-            v.fetchDataURLFromSrc(dataURL);
+            v.asyncFetchDataURLFromSrc(dataURL);
             v.autoFitChildHeight();
             v.autoFitParentWidth();
         }

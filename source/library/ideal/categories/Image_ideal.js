@@ -13,6 +13,12 @@ if (!SvGlobals.has("Image")) {
      */
     (class Image_ideal extends Image {
 
+        static async asyncDataUrlForSrc (src) {
+            const img = new Image();
+            await img.asyncLoadUrl(src);
+            return img.asDataURL();
+        }
+
         /**
          * Sets the delegate object for this image.
          * @param {Object} anObject - The delegate object
@@ -33,23 +39,12 @@ if (!SvGlobals.has("Image")) {
             return this._delegate;
         }
 
-        /**
-         * Loads an image from a given URL.
-         * @param {string} url - The URL of the image to load
-         * @returns {Image_ideal} This image instance
-         * @category Image Loading
-         */
-        loadUrl (url) {
+        async asyncLoadUrl (url) {
             this.crossOrigin = "Anonymous";
-            this.onload = () => { 
-                this.onDidLoad();
-            }
-            this.onerror = () => { 
-                console.warn("error loading image " + url);
-            }
-
-            this.src = url;
-            return this;
+            // need to set up callbacks in the promise before setting the src!
+            const promise = this.promiseLoaded(); // promise resolves when loaded and calls onDidLoad() which may call ddidFetchDataUrl()
+            this.src = url; 
+            return promise;
         }
 
         /**
@@ -59,6 +54,34 @@ if (!SvGlobals.has("Image")) {
          * @category Image Processing
          */
         onDidLoad () {
+            // tell the delegate about the loaded data
+            if (this._delegate) {
+                /**
+                 * Callback function for the delegate when the image data URL is fetched.
+                 * @callback didFetchDataUrl
+                 * @param {string} data - The image data URL
+                 * @category Image Processing
+                 */
+                this._delegate.didFetchDataUrl(this.asDataURL());
+            }
+
+            return this;
+        }
+
+        onLoadError (error) {
+            console.warn("Image: error loading src '" + this.src + "' ", error);
+        }
+
+        asDataURL () {
+            if (!this._dataURL) {
+                this._dataURL = this.composeDataURL();
+            }
+            return this._dataURL;
+        }
+
+        composeDataURL () {
+            assert(this.isLoaded(), "Can't compose data URL for an unloaded image");
+
             // create a canvas the size of the image
             const canvas = document.createElement("CANVAS");
             canvas.height = this.height;
@@ -69,21 +92,34 @@ if (!SvGlobals.has("Image")) {
             ctx.drawImage(this, 0, 0);
 
             // get the image data from the canvas
-            const data = canvas.toDataURL("image/jpeg");
+            const dataURL = canvas.toDataURL("image/jpeg");
+            return dataURL;
+        }
 
-            // tell the delegate about the loaded data
-            if (this._delegate) {
-                /**
-                 * Callback function for the delegate when the image data URL is fetched.
-                 * @callback didFetchDataUrl
-                 * @param {string} data - The image data URL
-                 * @category Image Processing
-                 */
-                this._delegate.didFetchDataUrl(data);
+        async promiseLoaded () {
+            // we need to store the promise so we don't override the callbacks!
+            if (this.isLoaded()) {
+                this._promiseLoaded = Promise.resolve(this);
+            } else {
+                this._promiseLoaded = new Promise((resolve, reject) => {
+                    this.onload = () => {
+                        this.onDidLoad();
+                        resolve(this);
+                    }
+                    this.onerror = (error) => {
+                        this.onLoadError(error);
+                        reject(error);
+                    }
+                });
             }
 
-            return this;
+            return this._promiseLoaded;
         }
+
+        isLoaded () {
+            return (img.complete && img.naturalWidth > 0);
+        }
+
 
     }).initThisCategory();
 

@@ -178,7 +178,7 @@
         this.addSubview(v);
 
         if (!Type.isNullOrUndefined(dataURL) && Type.isString(dataURL)) {
-            v.fetchDataURLFromSrc(dataURL);
+            v.asyncFetchDataURLFromSrc(dataURL);
             v.autoFitChildHeight();
             v.autoFitParentWidth();
         }

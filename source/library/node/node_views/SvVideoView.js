@@ -289,7 +289,7 @@
      * @returns {VideoView} The VideoView instance
      * @category Data
      */
-    fetchDataURLFromSrc (src) {
+    async asyncFetchDataURLFromSrc (src) {
         if (src.startsWith("data:")) {
 	        this.setFromDataURL(src);
         } else {

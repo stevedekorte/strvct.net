@@ -135,7 +135,7 @@
      * @throws {Error} Always throws an error as this method shouldn't be called
      * @category Uncategorized
      */
-    setIsRegisteredForBrowserDrop(aBool) {
+    setIsRegisteredForBrowserDrop (aBool) {
         throw new Error("shouldn't be called");
     }
 
@@ -233,30 +233,17 @@
      * @returns {ImageView} The ImageView instance
      * @category Data
      */
-    fetchDataURLFromSrc (src) {
+    async asyncFetchDataURLFromSrc (src) {
         if (src.startsWith("data:")) {
 	        this.setFromDataURL(src);
         } else {
-            const img = new Image();
-            img.setDelegate(this);
-            img.loadUrl(src);
+            this.setFromDataURL(Image.asyncDataUrlForSrc(src));
             this.setSrcUrl(src);
         }
 		
         return this;
     }
     
-    /**
-     * @description Callback for when the data URL is fetched
-     * @param {String} dataURL - The fetched data URL
-     * @returns {ImageView} The ImageView instance
-     * @category Data
-     */
-    didFetchDataUrl (dataURL) {
-        this.setFromDataURL(dataURL);
-        return this;
-    }
-
     /**
      * @description Creates a new raw image view for a given image
      * @param {Image} image - The image to create a view for

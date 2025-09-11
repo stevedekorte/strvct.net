@@ -67,9 +67,9 @@
     }
 
     /*
-    addFontWithResource (aResource) {
+    await asyncAddFontWithResource (aResource) {
         const font = SvFont.clone().setResource(aResource)
-        font.load()
+        await font.asyncLoadIfNeeded()
         this.addSubnode(font)
         return this
     }

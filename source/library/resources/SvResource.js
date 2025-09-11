@@ -112,17 +112,11 @@
              * @member {string} loadState - The current load state of the resource.
              * @category Resource Properties
              */
-            const slot = this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
+            const slot = this.newSlot("loadState", "unloaded"); 
             slot.setSlotType("String");
+            slot.setValidValues(["unloaded", "loading", "decoding", "loaded"]);
         }
-        {
-            /**
-             * @member {boolean} isLoaded - Indicates if the resource is loaded.
-             * @category Resource Properties
-             */
-            const slot = this.newSlot("isLoaded", false);
-            slot.setSlotType("Boolean");
-        }
+
         {
             /**
              * @member {SvSvUrlResource} urlResource - The URL resource associated with this resource.
@@ -250,23 +244,20 @@
     }
     */
 
-    // --- load ---
+    // --- load states---
+
+    isLoading () {
+        return this.loadState() === "loading";
+    }
+
+    isDecoding () {
+        return this.loadState() === "decoding";
+    }
 
     isLoaded () {
         return this.loadState() === "loaded";
     }
 
-    /**
-     * @description Loads the resource if it hasn't been loaded yet.
-     * @returns {SvResource} The resource instance.
-     * @category Resource Loading
-     */
-    loadIfNeeded () {
-        if (!this.isLoaded()) {
-            this.load();
-        }
-        return this;
-    }
 
     /**
      * @description Loads the resource.
@@ -330,7 +321,8 @@
         const url = this.urlResource();
         await url.promiseLoad();
         const data = url.data();
-        assert(data.byteLength);
+        assert(data.byteLength, "data.byteLength is not set");
+        assert(data.byteLength > 0, "data.byteLength is not greater than 0");
         this.setData(data);
         await this.onDidLoad();
     }
@@ -341,9 +333,10 @@
      * @category Resource Loading
      */
     async onDidLoad () {
-        this.setIsLoaded(true);
+        this.setLoadState("loaded");
         this.postNoteNamed("didLoad");
     }
+
 
     /**
      * @description Asynchronously decodes the data.

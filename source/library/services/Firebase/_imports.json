@@ -1,6 +1,5 @@
 [
-    "FirestoreImage.js",
-    "FirestoreImages.js",
-    "FirebaseStorageService.js",
-    "SvImage_firestore.js"
+    "FirestoreDatabase/_imports.json",
+    "FirebaseStorage/_imports.json",
+    "FirebaseService.js"
 ]

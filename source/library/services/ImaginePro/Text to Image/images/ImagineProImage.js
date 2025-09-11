@@ -11,207 +11,139 @@
 
 (class ImagineProImage extends SvImage {
 
-  /**
-   * @description Initializes the prototype slots for the class.
-   * @category Initialization
-   */
-  initPrototypeSlots () {
-
     /**
-     * @member {string} url
-     * @description The URL of the generated image.
-     * @category Data
+     * @description Initializes the prototype slots for the class.
+     * @category Initialization
      */
-    {
-      const slot = this.newSlot("url", "");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-    }
+    initPrototypeSlots () {
 
-    /**
-     * @member {string} imageUrl
-     * @description The proxied image URL.
-     * @category Data
-     */
-    {
-      const slot = this.newSlot("imageUrl", "");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setSlotType("String");
+        {
+            const slot = this.newSlot("publicUrl", "");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setSlotType("String");
+        }
+
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setCanDelete(true);
     }
 
     /**
-     * @member {string} status
-     * @description The loading status of the image.
-     * @category Status
+     * @description Gets the subtitle for the image.
+     * @returns {string} The subtitle.
+     * @category Metadata
      */
-    {
-      const slot = this.newSlot("status", "");
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
+    subtitle () {
+        return this.status();
     }
 
     /**
-     * @member {Object} delegate
-     * @description The delegate for handling events.
-     * @category Delegation
+     * @description Fetches the image data.
+     * @category Process
      */
-    {
-      const slot = this.newSlot("delegate", null);
-      slot.setSlotType("Object");
+    async fetch () {
+
+        const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
+        console.log(this.logPrefix(), "Loading image through proxy:");
+
+        this.setImageUrl(proxyUrl);
+        
+        const img = new Image();
+        // Don't set crossOrigin when using proxy - the proxy handles CORS
+        
+        await new Promise((resolve /*, reject*/) => {
+            const loadHandler = () => {
+            // Remove event listeners to prevent memory leaks
+            img.onload = null;
+            img.onerror = null;
+            
+            // Try to convert to data URL if CORS allows
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                this.setDataURL(dataUrl);
+                this.setHasLoaded(true);
+                this.setStatus("loaded with dataURL");
+                console.log(this.logPrefix(), "Successfully converted to dataURL");
+            } catch (corsError) {
+                // CORS prevented conversion to dataURL, but image is still loaded
+                console.error(this.logPrefix(), "CORS error converting to dataURL:", corsError);
+                console.error("  Image src:", img.src);
+                console.error("  This will prevent OpenAI evaluation from working");
+                this.setHasLoaded(true);
+                this.setStatus("loaded (external URL only)");
+            }
+            
+            this.sendDelegate("onImageLoaded", [this]);
+            resolve();
+            };
+            
+            const errorHandler = (errorEvent) => {
+            // Remove event listeners to prevent memory leaks
+            img.onload = null;
+            img.onerror = null;
+            
+            // Image failed to load entirely - this is a real error
+            // IMPORTANT: Do NOT pass the errorEvent object anywhere as it's a DOM Event
+            const errorMessage = `Failed to load image from ImaginePro: ${this.url()}`;
+            console.error(this.logPrefix(), errorMessage," errorEvent:", errorEvent);
+            this.setError(new Error(errorMessage));
+            
+            this.setStatus("error loading image");
+            this.setHasLoaded(false); // Mark as not loaded since it failed
+            this.sendDelegate("onImageError", [this]); // Send error event, not loaded event
+            resolve(); // Resolve instead of reject to allow process to continue
+            };
+            
+            img.onload = loadHandler;
+            img.onerror = errorHandler;
+            img.src = proxyUrl; // Load through proxy to ensure CORS headers
+        });
+        
+        } catch (error) {
+            // Make sure we never throw a DOM Event object
+            const errorMessage = error instanceof Event ? 
+                `Image loading error: ${error.type}` : 
+                (error.message || String(error));
+            console.error("Error fetching image:", errorMessage);
+            this.setError(error instanceof Error ? error : new Error(errorMessage));
+            this.setStatus("error: " + errorMessage);
+            this.sendDelegate("onImageError", [this]);
+        }
     }
 
-    /**
-     * @member {boolean} hasLoaded
-     * @description Whether the image has been loaded.
-     * @category Status
-     */
-    {
-      const slot = this.newSlot("hasLoaded", false);
-      slot.setShouldStoreSlot(true);
-      slot.setSlotType("Boolean");
+    async asyncSetImageUrl (anImageUrl) {
+        const dataUrl = await ImagineProImage.asyncDataUrlForImageUrl(anImageUrl);
+        this.setDataURL(dataUrl);
     }
 
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setCanDelete(true);
-  }
+    static async asyncDataUrlForImageUrl (anImageUrl) {
+        const img = new Image();
+        img.src = anImageUrl;
 
-  /**
-   * @description Gets the subtitle for the image.
-   * @returns {string} The subtitle.
-   * @category Metadata
-   */
-  subtitle () {
-    return this.status();
-  }
+        assert(anImageUrl.startsWith("http"), "ImagineProImage.asyncSetImageUrl: Image URL must start with http");
 
-  /**
-   * @description Fetches the image data.
-   * @category Process
-   */
-  async fetch () {
-    if (this.hasLoaded()) {
-      return;
-    }
-
-    this.setStatus("loading...");
-
-    try {
-      // IMPORTANT: Always use proxy for ImaginePro images for two critical reasons:
-      // 1. ACCOUNTING: The proxy tracks API usage for billing purposes
-      // 2. CORS: The proxy adds necessary CORS headers to allow canvas operations
-      //    Without CORS headers, we cannot:
-      //    - Convert images to dataURLs
-      //    - Create omnireference mosaics
-      //    - Use images in canvas compositing
-      // Never load ImaginePro images directly - always go through the proxy
-      const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
-      console.log(this.logPrefix(), "Loading image through proxy:");
-      console.log("  Original URL:", this.url());
-      console.log("  Proxy URL:", proxyUrl);
-      this.setImageUrl(proxyUrl);
-      
-      const img = new Image();
-      // Don't set crossOrigin when using proxy - the proxy handles CORS
-      
-      await new Promise((resolve /*, reject*/) => {
-        const loadHandler = () => {
-          // Remove event listeners to prevent memory leaks
-          img.onload = null;
-          img.onerror = null;
-          
-          // Try to convert to data URL if CORS allows
-          try {
+        // Try to convert to data URL if CORS allows
+        try {
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0);
             const dataUrl = canvas.toDataURL('image/png');
-            
             this.setDataURL(dataUrl);
-            this.setHasLoaded(true);
-            this.setStatus("loaded with dataURL");
-            console.log(this.logPrefix(), "Successfully converted to dataURL");
-          } catch (corsError) {
+        } catch (corsError) {            
             // CORS prevented conversion to dataURL, but image is still loaded
-            console.error(this.logPrefix(), "CORS error converting to dataURL:", corsError);
-            console.error("  Image src:", img.src);
-            console.error("  This will prevent OpenAI evaluation from working");
-            this.setHasLoaded(true);
-            this.setStatus("loaded (external URL only)");
-          }
-          
-          this.sendDelegate("onImageLoaded", [this]);
-          resolve();
-        };
-        
-        const errorHandler = (errorEvent) => {
-          // Remove event listeners to prevent memory leaks
-          img.onload = null;
-          img.onerror = null;
-          
-          // Image failed to load entirely - this is a real error
-          // IMPORTANT: Do NOT pass the errorEvent object anywhere as it's a DOM Event
-          const errorMessage = `Failed to load image from ImaginePro: ${this.url()}`;
-          console.error(this.logPrefix(), errorMessage," errorEvent:", errorEvent);
-          this.setError(new Error(errorMessage));
-          
-          this.setStatus("error loading image");
-          this.setHasLoaded(false); // Mark as not loaded since it failed
-          this.sendDelegate("onImageError", [this]); // Send error event, not loaded event
-          resolve(); // Resolve instead of reject to allow process to continue
-        };
-        
-        img.onload = loadHandler;
-        img.onerror = errorHandler;
-        img.src = proxyUrl; // Load through proxy to ensure CORS headers
-      });
-      
-    } catch (error) {
-      // Make sure we never throw a DOM Event object
-      const errorMessage = error instanceof Event ? 
-        `Image loading error: ${error.type}` : 
-        (error.message || String(error));
-      console.error("Error fetching image:", errorMessage);
-      this.setError(error instanceof Error ? error : new Error(errorMessage));
-      this.setStatus("error: " + errorMessage);
-      this.sendDelegate("onImageError", [this]);
+            const errorMessage = "PossibleCORS error converting image URL '" + anImageUrl + "' to a dataURL";
+            console.error(this.logPrefix(), errorMessage, corsError);
+            throw new Error(errorMessage);
+        }
     }
-  }
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * @description Shuts down the image.
-   * @returns {ImagineProImage} The current instance.
-   * @category Lifecycle
-   */
-  shutdown () {
-    // Cleanup if needed
-    return this;
-  }
 
 }.initThisClass());
