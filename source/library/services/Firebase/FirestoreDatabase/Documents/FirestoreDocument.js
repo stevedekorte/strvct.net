@@ -34,6 +34,16 @@
             slot.setIsSubnodeField(true);
         }
 
+        {
+            const slot = this.newSlot("updateTimeMillis", 0); 
+            slot.setDescription("Timestamp of last update in milliseconds since epoch");
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(false);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
+        }
+
         // Upload status
         {
             const slot = this.newSlot("uploadStatus", "");
@@ -296,6 +306,11 @@
                 // Fallback to raw object if stringification fails
                 this.setContent(data);
             }
+            
+            // Update the updateTimeMillis from the document snapshot
+            if (snap.updateTime) {
+                this.setUpdateTimeMillis(snap.updateTime.toMillis());
+            }
 
             this.setUploadStatus("downloaded successfully");
         } catch (error) {
@@ -304,6 +319,29 @@
             this.setUploadStatus("download failed");
         }
     }
+
+    async asyncCloudUpdateTimeMillis () {
+        const db = firebase.firestore();
+        const docRef = db.doc(this.storagePath());
+        
+        // Use select() with empty array to fetch ONLY metadata, not document content
+        const docSnapshot = await docRef.select().get();
+        
+        if (!docSnapshot.exists) {
+            return 0;
+        }
+        
+        const cloudUpdateTime = docSnapshot.updateTime ? docSnapshot.updateTime.toMillis() : 0;
+        return cloudUpdateTime;
+    }
+
+    async asyncIsNewerThanCloud () {
+          const cloudUpdateTime = await this.asyncCloudUpdateTimeMillis();
+          const localUpdateTime = this.updateTimeMillis();
+          return localUpdateTime > cloudUpdateTime;
+    }
+
+    // --- action wrappers ---
 
     // Action wrappers (match inspector action names)
     async uploadToFirebase () { return this.asyncUpload(); }
