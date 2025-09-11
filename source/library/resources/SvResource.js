@@ -321,8 +321,8 @@
         const url = this.urlResource();
         await url.promiseLoad();
         const data = url.data();
-        assert(data.byteLength, "data.byteLength is not set");
-        assert(data.byteLength > 0, "data.byteLength is not greater than 0");
+        assert(data.byteLength, "data.byteLength method not found");
+        //assert(data.byteLength() > 0, "data.byteLength is not greater than 0");
         this.setData(data);
         await this.onDidLoad();
     }

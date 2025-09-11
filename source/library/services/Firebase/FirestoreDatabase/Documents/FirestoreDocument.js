@@ -16,27 +16,18 @@
 
     initPrototypeSlots () {
 
-        // label
-        {
-            const slot = this.newSlot("label", "");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setIsSubnodeField(true);
-        }
-
-        // Firebase Storage public URL
-        {
-            const slot = this.newSlot("publicUrl", null);
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setIsSubnodeField(true);
-        }
-
-        // Firebase Storage path
         {
             const slot = this.newSlot("storagePath", null);
+            slot.setDescription("Firebase Storage path");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
+        }
+
+        {
+            const slot = this.newSlot("publicUrl", null);
+            slot.setDescription("Firebase Storage public URL. Set after upload.");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -114,7 +105,7 @@
      * @category UI
      */
     title () {
-        return this.imageLabel() || "Firebase Image";
+        return this.storagePath();
     }
 
     /**
@@ -162,7 +153,7 @@
      * @returns {Promise<void>}
      * @category Upload
      */
-    async uploadToFirebase () {
+    async asyncUpload () {
       
         
     }
@@ -172,7 +163,7 @@
      * @returns {Promise<void>}
      * @category Delete
      */
-    async deleteFromFirebase () {
+    async asyncDelete () {
   
         
     }

@@ -43,7 +43,7 @@
      * @category Process
      */
     async fetch () {
-
+/*
         const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
         console.log(this.logPrefix(), "Loading image through proxy:");
 
@@ -52,7 +52,7 @@
         const img = new Image();
         // Don't set crossOrigin when using proxy - the proxy handles CORS
         
-        await new Promise((resolve /*, reject*/) => {
+        await new Promise((resolve , reject) => {
             const loadHandler = () => {
             // Remove event listeners to prevent memory leaks
             img.onload = null;
@@ -116,6 +116,7 @@
             this.setStatus("error: " + errorMessage);
             this.sendDelegate("onImageError", [this]);
         }
+            */
     }
 
     async asyncSetImageUrl (anImageUrl) {

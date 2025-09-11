@@ -42,7 +42,7 @@
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
-        this.setSubnodeClasses([FirestoreImage]);
+        this.setSubnodeClasses([FirestoreDocument]);
         this.setNodeCanAddSubnode(true);
         this.setNodeCanReorderSubnodes(true);
         this.setNodeCanEditTitle(false);
@@ -85,9 +85,9 @@
      * @description Clears all images from the collection
      * @category Actions
      */
-    await clearAllDocuments () {
+    async clearAllDocuments () {
         await this.documents().promiseParallelForEach(async document => {
-            await document.deleteFromFirebase();
+            await document.asyncDelete();
         });
     }
 
@@ -96,13 +96,24 @@
     }
 
 
-    documentWithLabel (label) {
-        return this.subnodes().find(document => document.label() === label);
+    documentWithStoragePath (storagePath) {
+        return this.subnodes().find(document => document.storagePath() === storagePath);
     }
 
-    async asyncDocumentForLabel (label) {
-        const fbImage = await this.asyncAddSvImage(svImage);
-        return fbImage;
+    async asyncAtPutDocument (storagePath, content) {
+        const doc  = this.documentWithStoragePath(storagePath);
+        if (doc) {
+            doc.setContent(content);
+            await doc.asyncUpload();
+            return doc;
+        } else {
+            const newDoc = FirestoreDocument.clone();
+            newDoc.setStoragePath(storagePath);
+            newDoc.setContent(content);
+            this.addSubnode(newDoc);
+            await newDoc.asyncUpload();
+            return newDoc;
+        }
     }
 
 }.initThisClass());

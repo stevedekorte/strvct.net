@@ -133,13 +133,15 @@
 
 
     // Action to evaluate the image
+    /*
     {
       const slot = this.newSlot("evaluateAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Evaluate Image");
       slot.setCanInspect(true);
-      slot.setIsAction(true);
+     // slot.setIsAction(true);
     }
+     */
   }
 
   /**

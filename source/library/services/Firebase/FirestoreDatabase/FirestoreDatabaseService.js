@@ -45,10 +45,4 @@
         this.setShouldStoreSubnodes(false);
     }
 
-    finalInit () {
-        super.finalInit();
-        this.setTitle("Firestore Database");
-    }
-
-
 }.initThisClass());

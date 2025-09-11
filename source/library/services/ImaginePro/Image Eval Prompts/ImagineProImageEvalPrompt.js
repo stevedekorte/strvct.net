@@ -24,6 +24,7 @@
   initPrototypeSlots () {
     
     // ImagesEvaluator instance for handling evaluation
+    /*
     {
       const slot = this.newSlot("imagesEvaluator", null);
       slot.setFinalInitProto(ImagesEvaluator);
@@ -34,7 +35,7 @@
       slot.setSyncsToView(true);
       slot.setDescription("Evaluator for generated images");
     }
-
+*/
     // Result image URL data (the best matching image) - kept for compatibility
     {
       const slot = this.newSlot("resultImageUrlData", null);
