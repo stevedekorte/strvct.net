@@ -47,15 +47,13 @@
 
     initPrototype () {
         this.setTitle("Firebase Storage");
-        this.setSubtitle("Google Blob hosting service");
+        this.setSubtitle("blob hosting");
         this.setShouldStoreSubnodes(false);
     }
 
     finalInit () {
         super.finalInit();
-        this.setTitle("Firebase Storage");
+        this.initPrototype();
     }
-
-    
 
 }.initThisClass());

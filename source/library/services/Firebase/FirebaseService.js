@@ -41,9 +41,14 @@
     }
 
     initPrototype () {
-        this.setTitle("Firebase Service");
-        this.setSubtitle("Google Firebase integration");
+        this.setTitle("Firebase");
+        this.setSubtitle("could services");
         this.setShouldStoreSubnodes(false);
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.initPrototype();
     }
 
 }.initThisClass());

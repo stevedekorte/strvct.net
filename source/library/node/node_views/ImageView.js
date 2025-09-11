@@ -135,7 +135,7 @@
      * @throws {Error} Always throws an error as this method shouldn't be called
      * @category Uncategorized
      */
-    setIsRegisteredForBrowserDrop (aBool) {
+    setIsRegisteredForBrowserDrop (/*aBool*/) {
         throw new Error("shouldn't be called");
     }
 
@@ -156,7 +156,7 @@
      * @returns {ImageView} The ImageView instance
      * @category State
      */
-    setEditable (aBool) {
+    setEditable (/*aBool*/) {
         // to avoid editable content?
         return this;
     }

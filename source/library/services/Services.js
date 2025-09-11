@@ -27,11 +27,11 @@
     initPrototypeSlots () {
                
         {
-            const slot = this.newSlot("firebaseStorageService", null);
+            const slot = this.newSlot("firebaseeService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(FirebaseStorageService);
+            slot.setFinalInitProto(FirebaseService);
             slot.setIsSubnode(true);
-            slot.setSlotType("FirebaseStorageService");
+            slot.setSlotType("FirebaseService");
         }
 
         /**

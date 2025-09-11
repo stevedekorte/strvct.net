@@ -62,9 +62,7 @@
      * @category UI
      */
     subtitle () {
-        const total = this.subnodeCount();
-        return `${total} documents`;
-        // TODO show summary of active document uploads/downloads
+        return "document database";
     }
 
     /**
