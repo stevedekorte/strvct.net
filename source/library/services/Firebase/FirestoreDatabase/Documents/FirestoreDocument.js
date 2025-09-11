@@ -18,22 +18,21 @@
 
         {
             const slot = this.newSlot("storagePath", null);
-            slot.setDescription("Firebase Storage path");
+            slot.setDescription("Firestore document path (collection/docId)");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
         }
 
+        // Content
         {
-            const slot = this.newSlot("publicUrl", null);
-            slot.setDescription("Firebase Storage public URL. Set after upload.");
-            slot.setSlotType("String");
+            const slot = this.newSlot("content", null);
+            slot.setSlotType("Object");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
         }
-
 
         // Upload status
         {
@@ -120,33 +119,8 @@
         if (this.uploadStatus()) {
             return this.uploadStatus();
         }
-        if (this.hasPublicUrl()) {
-            return "Uploaded";
-        }
-        if (this.hasDataUrl()) {
-            return "Ready to upload";
-        }
         return "No image";
     }
-
-    /**
-     * @description Checks if image has a data URL
-     * @returns {boolean} True if has data URL
-     * @category Status
-     */
-    hasDataUrl () {
-        return this.dataUrl() !== null && this.dataUrl() !== "";
-    }
-
-    /**
-     * @description Checks if image has been uploaded
-     * @returns {boolean} True if uploaded
-     * @category Status
-     */
-    hasPublicUrl () {
-        return this.publicUrl() !== null && this.publicUrl() !== "";
-    }
-
 
     /**
      * @description Uploads the image to Firebase Storage via AccountServer
@@ -154,8 +128,83 @@
      * @category Upload
      */
     async asyncUpload () {
-      
-        
+        try {
+            this.setError("");
+            this.setUploadStatus("preparing upload...");
+
+            // Ensure Firestore web client is available
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                throw new Error("Firebase Firestore web client not available");
+            }
+
+            // Connect to Firestore
+            const db = firebase.firestore();
+
+            // In local development, attempt to use the emulator if available
+            try {
+                const h = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
+                const isLocal = ['localhost', '127.0.0.1', '::1'].includes(h) || h.endsWith('.local') || h.endsWith('.test');
+                if (isLocal) {
+                    // Guard to avoid reconfiguring emulator repeatedly
+                    if (!window.__uo_firestore_emulator_configured__) {
+                        if (typeof db.useEmulator === 'function') {
+                            db.useEmulator('localhost', 8080);
+                        } else if (typeof db.settings === 'function') {
+                            db.settings({ host: 'localhost:8080', ssl: false });
+                        }
+                        window.__uo_firestore_emulator_configured__ = true;
+                    }
+                }
+            } catch (e) {
+                // Non-fatal; continue with default config
+                console.warn("Firestore emulator configuration failed (non-fatal):", e);
+            }
+
+            // Parse content from JSON string or accept object directly
+            const rawContent = this.content();
+            let data;
+            if (rawContent == null) {
+                throw new Error("No content provided to upload");
+            }
+            if (typeof rawContent === 'string') {
+                try {
+                    data = JSON.parse(rawContent);
+                } catch (e) {
+                    throw new Error("Content is not valid JSON: " + e.message);
+                }
+            } else if (typeof rawContent === 'object') {
+                data = rawContent;
+            } else {
+                throw new Error("Unsupported content type: " + (typeof rawContent));
+            }
+
+            // Determine target document path
+            let path = this.storagePath();
+            if (!path || typeof path !== 'string' || path.trim() === '') {
+                // Provide a reasonable default path if none is provided
+                path = `TestDocuments/${Date.now()}`;
+                this.setStoragePath(path);
+            }
+
+            // Firestore requires an even number of segments for document paths
+            const segments = path.split('/').filter(Boolean);
+            if (segments.length % 2 !== 0) {
+                // If a collection path was given, append a generated id
+                path = path.endsWith('/') ? path + Date.now() : `${path}/${Date.now()}`;
+                this.setStoragePath(path);
+            }
+
+            this.setUploadStatus("uploading to Firestore...");
+
+            // Write the document (replace document with provided data)
+            await db.doc(path).set(data, { merge: false });
+
+            this.setUploadStatus("uploaded successfully");
+        } catch (error) {
+            console.error("FirestoreDocument.asyncUpload failed:", error);
+            this.setError(error.message || String(error));
+            this.setUploadStatus("upload failed");
+        }
     }
 
     /**
@@ -164,9 +213,102 @@
      * @category Delete
      */
     async asyncDelete () {
-  
-        
+        try {
+            this.setError("");
+            this.setUploadStatus("preparing delete...");
+
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                throw new Error("Firebase Firestore web client not available");
+            }
+
+            const path = this.storagePath();
+            if (!path) {
+                throw new Error("No storagePath set for document");
+            }
+
+            const db = firebase.firestore();
+            // Ensure emulator in dev before operation
+            try {
+                const h = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
+                const isLocal = ['localhost', '127.0.0.1', '::1'].includes(h) || h.endsWith('.local') || h.endsWith('.test');
+                if (isLocal && !window.__uo_firestore_emulator_configured__) {
+                    if (typeof db.useEmulator === 'function') {
+                        db.useEmulator('localhost', 8080);
+                    } else if (typeof db.settings === 'function') {
+                        db.settings({ host: 'localhost:8080', ssl: false });
+                    }
+                    window.__uo_firestore_emulator_configured__ = true;
+                }
+            } catch (e) {}
+            await db.doc(path).delete();
+
+            this.setUploadStatus("deleted successfully");
+        } catch (error) {
+            console.error("FirestoreDocument.asyncDelete failed:", error);
+            this.setError(error.message || String(error));
+            this.setUploadStatus("delete failed");
+        }
     }
+
+    /**
+     * @description Tests downloading the image from Firebase
+     * @returns {Promise<void>}
+     * @category Testing
+     */
+    async asyncDownload () {
+        try {
+            this.setError("");
+            this.setUploadStatus("downloading from Firestore...");
+
+            if (typeof firebase === 'undefined' || !firebase.firestore) {
+                throw new Error("Firebase Firestore web client not available");
+            }
+
+            const path = this.storagePath();
+            if (!path) {
+                throw new Error("No storagePath set for document");
+            }
+
+            const db = firebase.firestore();
+            // Ensure emulator in dev before operation
+            try {
+                const h = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
+                const isLocal = ['localhost', '127.0.0.1', '::1'].includes(h) || h.endsWith('.local') || h.endsWith('.test');
+                if (isLocal && !window.__uo_firestore_emulator_configured__) {
+                    if (typeof db.useEmulator === 'function') {
+                        db.useEmulator('localhost', 8080);
+                    } else if (typeof db.settings === 'function') {
+                        db.settings({ host: 'localhost:8080', ssl: false });
+                    }
+                    window.__uo_firestore_emulator_configured__ = true;
+                }
+            } catch (e) {}
+            const snap = await db.doc(path).get();
+            if (!snap.exists) {
+                throw new Error("Document does not exist at path: " + path);
+            }
+
+            const data = snap.data();
+            // Store as JSON string for consistency with input expectations
+            try {
+                this.setContent(JSON.stringify(data, null, 2));
+            } catch (e) {
+                // Fallback to raw object if stringification fails
+                this.setContent(data);
+            }
+
+            this.setUploadStatus("downloaded successfully");
+        } catch (error) {
+            console.error("FirestoreDocument.asyncDownload failed:", error);
+            this.setError(error.message || String(error));
+            this.setUploadStatus("download failed");
+        }
+    }
+
+    // Action wrappers (match inspector action names)
+    async uploadToFirebase () { return this.asyncUpload(); }
+    async deleteFromFirebase () { return this.asyncDelete(); }
+    async testDownload () { return this.asyncDownload(); }
 
     /**
      * @description Gets action info for upload action
@@ -175,7 +317,7 @@
      */
     uploadActionInfo () {
         return {
-            isEnabled: this.hasDataUrl() && !this.hasPublicUrl(),
+            isEnabled: true,
             isVisible: true
         };
     }
@@ -187,54 +329,9 @@
      */
     deleteActionInfo () {
         return {
-            isEnabled: this.hasPublicUrl(),
-            isVisible: this.hasPublicUrl()
+            isEnabled: true,
+            isVisible: true
         };
-    }
-
-    /**
-     * @description Checks if the public URL is still accessible
-     * @returns {Promise<boolean>} True if accessible
-     * @category Validation
-     */
-    async isUrlAccessible () {
-        if (!this.hasPublicUrl()) {
-            return false;
-        }
-
-        try {
-            const response = await fetch(this.publicUrl(), { method: 'HEAD' });
-            return response.ok;
-        } catch (error) {
-            console.error("URL accessibility check failed:", error);
-            return false;
-        }
-    }
-
-    /**
-     * @description Re-uploads the image if the URL has expired
-     * @returns {Promise<void>}
-     * @category Upload
-     */
-    async reuploadIfNeeded () {
-        const isAccessible = await this.isUrlAccessible();
-        if (!isAccessible && this.hasDataUrl()) {
-            console.log("Firebase URL not accessible, re-uploading...");
-            // Clear old references
-            this.setPublicUrl(null);
-            this.setStoragePath(null);
-            // Re-upload
-            await this.uploadToFirebase();
-        }
-    }
-
-    /**
-     * @description Tests downloading the image from Firebase
-     * @returns {Promise<void>}
-     * @category Testing
-     */
-    async downloadFromFirebase () {
-      
     }
 
     /**
@@ -244,7 +341,7 @@
      */
     testDownloadActionInfo () {
         return {
-            isEnabled: this.hasPublicUrl(),
+            isEnabled: true,
             isVisible: true
         };
     }

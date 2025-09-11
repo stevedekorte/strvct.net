@@ -71,11 +71,7 @@
      * @category Actions
      */
     addTestDocument () {
-        const document = FirebaseDocument.clone();
-        document.setLabel(`Test Document ${Date.now()}`);
-        document.setContent("{ 'test': 'test' }");
-        this.addSubnode(document);
-        return document;
+        this.asyncAtPutDocument(`TestDocuments/${Date.now()}`, "{\"test\": \"test\"}");
     }
 
 
@@ -98,16 +94,16 @@
         return this.subnodes().find(document => document.storagePath() === storagePath);
     }
 
-    async asyncAtPutDocument (storagePath, content) {
+    async asyncAtPutDocument (storagePath, jsonContent) {
         const doc  = this.documentWithStoragePath(storagePath);
         if (doc) {
-            doc.setContent(content);
+            doc.setContent(jsonContent);
             await doc.asyncUpload();
             return doc;
         } else {
             const newDoc = FirestoreDocument.clone();
             newDoc.setStoragePath(storagePath);
-            newDoc.setContent(content);
+            newDoc.setContent(jsonContent);
             this.addSubnode(newDoc);
             await newDoc.asyncUpload();
             return newDoc;
