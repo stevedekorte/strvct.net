@@ -171,16 +171,7 @@
     hasPublicUrl () {
         return this.publicUrl() !== null && this.publicUrl() !== "";
     }
-
-    /**
-     * @description Gets the Firebase Storage service
-     * @returns {FirebaseStorageService} The service
-     * @category Service
-     */
-    service () {
-        return FirebaseStorageService.shared();
-    }
-
+    
     async asyncCompleteUploadIfNeeded () {
         if (this.hasPublicUrl()) {
             return;
@@ -340,11 +331,6 @@
      * @category Helper
      */
     async dataUrlToBlob (dataUrl) {
-        // For PNG images, we could strip metadata by re-encoding through canvas
-        // This ensures no EXIF or other metadata is preserved
-        if (dataUrl.includes('image/png') || dataUrl.includes('image/jpeg')) {
-            return this.stripMetadataViaCanvas(dataUrl);
-        }
         
         // For other types, use the original method
         return new Promise((resolve) => {
@@ -360,39 +346,6 @@
         });
     }
     
-    /**
-     * @description Strips metadata from an image by re-encoding through canvas
-     * @param {string} dataUrl - The data URL
-     * @returns {Promise<Blob>} The blob without metadata
-     * @category Helper
-     */
-    async stripMetadataViaCanvas (dataUrl) {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => {
-                // Create canvas and draw the image
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                
-                // Convert back to blob (this strips all metadata)
-                canvas.toBlob((blob) => {
-                    if (blob) {
-                        console.log("Stripped metadata from image via canvas re-encoding");
-                        resolve(blob);
-                    } else {
-                        reject(new Error("Failed to convert canvas to blob"));
-                    }
-                }, 'image/png', 1.0); // Use PNG for lossless quality
-            };
-            img.onerror = () => {
-                reject(new Error("Failed to load image for metadata stripping"));
-            };
-            img.src = dataUrl;
-        });
-    }
 
     /**
      * @description Deletes the image from Firebase Storage
@@ -473,154 +426,5 @@
         }
     }
 
-    /**
-     * @description Gets action info for upload action
-     * @returns {Object} Action info
-     * @category Actions
-     */
-    uploadActionInfo () {
-        return {
-            isEnabled: this.hasDataUrl() && !this.hasPublicUrl(),
-            isVisible: true
-        };
-    }
-
-    /**
-     * @description Gets action info for delete action
-     * @returns {Object} Action info
-     * @category Actions
-     */
-    deleteActionInfo () {
-        return {
-            isEnabled: this.hasPublicUrl(),
-            isVisible: this.hasPublicUrl()
-        };
-    }
-
-    /**
-     * @description Checks if the public URL is still accessible
-     * @returns {Promise<boolean>} True if accessible
-     * @category Validation
-     */
-    async isUrlAccessible () {
-        if (!this.hasPublicUrl()) {
-            return false;
-        }
-
-        try {
-            const response = await fetch(this.publicUrl(), { method: 'HEAD' });
-            return response.ok;
-        } catch (error) {
-            console.error("URL accessibility check failed:", error);
-            return false;
-        }
-    }
-
-    /**
-     * @description Re-uploads the image if the URL has expired
-     * @returns {Promise<void>}
-     * @category Upload
-     */
-    async reuploadIfNeeded () {
-        const isAccessible = await this.isUrlAccessible();
-        if (!isAccessible && this.hasDataUrl()) {
-            console.log("Firebase URL not accessible, re-uploading...");
-            // Clear old references
-            this.setPublicUrl(null);
-            this.setStoragePath(null);
-            // Re-upload
-            await this.uploadToFirebase();
-        }
-    }
-
-    /**
-     * @description Tests downloading the image from Firebase
-     * @returns {Promise<void>}
-     * @category Testing
-     */
-    async testDownload () {
-        try {
-            this.setError("");
-            this.setUploadStatus("testing download...");
-
-            if (!this.hasPublicUrl()) {
-                throw new Error("No public URL available. Upload the image first.");
-            }
-
-            const url = this.publicUrl();
-            console.log("Testing download from:", url);
-
-            // Test 1: Simple fetch to check if URL is accessible
-            console.log("Test 1: Checking URL accessibility...");
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const contentType = response.headers.get('content-type');
-            const contentLength = response.headers.get('content-length');
-            console.log("Content-Type:", contentType);
-            console.log("Content-Length:", contentLength, "bytes");
-
-            // Test 2: Try to load as blob
-            console.log("Test 2: Loading as blob...");
-            const blob = await response.blob();
-            console.log("Blob size:", blob.size, "bytes");
-            console.log("Blob type:", blob.type);
-
-            // Test 3: Try to create an object URL and load in an image
-            console.log("Test 3: Creating object URL and testing in Image element...");
-            const objectUrl = URL.createObjectURL(blob);
-            
-            await new Promise((resolve, reject) => {
-                const img = new Image();
-                img.onload = () => {
-                    console.log("Image loaded successfully!");
-                    console.log("Image dimensions:", img.width, "x", img.height);
-                    URL.revokeObjectURL(objectUrl);
-                    resolve();
-                };
-                img.onerror = (e) => {
-                    console.error("Image load failed:", e);
-                    URL.revokeObjectURL(objectUrl);
-                    reject(new Error("Failed to load image in browser"));
-                };
-                img.src = objectUrl;
-            });
-
-            // Test 4: Check CORS headers
-            console.log("Test 4: Checking CORS headers...");
-            console.log("Access-Control-Allow-Origin:", response.headers.get('access-control-allow-origin') || "Not set");
-            
-            // Success
-            this.setUploadStatus("download test successful!");
-            console.log("✅ All download tests passed!");
-            console.log("The image is publicly accessible and can be loaded.");
-            
-        } catch (error) {
-            console.error("❌ Download test failed:", error);
-            this.setError(`Download test failed: ${error.message}`);
-            this.setUploadStatus("download test failed");
-            
-            // Additional debugging info
-            console.log("Debug info:");
-            console.log("- Public URL:", this.publicUrl());
-            console.log("- Storage path:", this.storagePath());
-            console.log("- Upload metadata:", JSON.stringify(this.uploadMetadata(), null, 2));
-        }
-    }
-
-    /**
-     * @description Gets action info for test download action
-     * @returns {Object} Action info
-     * @category Actions
-     */
-    testDownloadActionInfo () {
-        return {
-            isEnabled: this.hasPublicUrl(),
-            isVisible: true
-        };
-    }
 
 }.initThisClass());

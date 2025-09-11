@@ -39,17 +39,7 @@
             slot.setActionMethodName("clearAllImages");
         }
 
-        // Upload all action
-        {
-            const slot = this.newSlot("uploadAllAction", null);
-            slot.setInspectorPath("");
-            slot.setLabel("Upload All Images");
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("Action");
-            //slot.setIsSubnodeField(true);
-            slot.setActionMethodName("uploadAllImages");
-        }
+
     }
 
     initPrototype () {
@@ -190,22 +180,6 @@
     clearAllActionInfo () {
         return {
             isEnabled: this.subnodeCount() > 0,
-            isVisible: true
-        };
-    }
-
-    /**
-     * @description Gets action info for upload all action
-     * @returns {Object} Action info
-     * @category Actions
-     */
-    uploadAllActionInfo () {
-        const hasUnuploadedImages = this.subnodes().some(img => 
-            img.hasDataUrl() && !img.hasPublicUrl()
-        );
-        
-        return {
-            isEnabled: hasUnuploadedImages,
             isVisible: true
         };
     }

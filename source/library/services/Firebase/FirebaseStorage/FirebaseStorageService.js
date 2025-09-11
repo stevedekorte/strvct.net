@@ -30,10 +30,7 @@
     }
 
     initPrototypeSlots () {
-        // This service doesn't need credential slots since uploads go through AccountServer
-        // The AccountServer handles Firebase credentials securely
-        
-        // Images collection for testing
+
         {
             const slot = this.newSlot("images", null);
             slot.setFinalInitProto(FirestoreImages);
@@ -43,6 +40,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("FirestoreImages");
         }
+        
     }
 
     initPrototype () {

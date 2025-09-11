@@ -14,7 +14,7 @@
     "Map_ideal.js",
     "Error_ideal.js",
     "Function_ideal.js",
-    "Image_ideal.js",
+    "browser-only/_imports.json",
     "TypedArray-ideal.js",
     "ImmutableSet.js",
     "JSON_ideal.js",
