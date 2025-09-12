@@ -31,6 +31,14 @@
             slot.setSlotType("Object");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
+            slot.setIsSubnodeField(false);
+        }
+
+        {
+            const slot = this.newSlot("contentString", null); // pass through to content value
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
         }
 
@@ -106,6 +114,23 @@
         this.setShouldStoreSubnodes(false);
         this.setNodeCanAddSubnode(false);
         this.setCanDelete(true);
+    }
+
+    contentString () {
+        return JSON.stringify(this.content(), null, 2);
+    }
+
+    setContentString (value) {
+        try {
+            if (value == null) {
+                return this;
+            }
+            const jsonContent = JSON.parse(value);
+            this.setContent(jsonContent);
+        } catch (e) {
+            console.error("FirestoreDocument.setContentString: Error parsing JSON:", e);
+        }
+        return this;
     }
 
     /**

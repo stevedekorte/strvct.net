@@ -110,4 +110,13 @@
         }
     }
 
+    async asyncAtGetDocument (storagePath) {
+        const doc = this.documentWithStoragePath(storagePath);
+        if (doc) {
+            return doc.asJson();
+        } else {
+            return null;
+        }
+    }
+
 }.initThisClass());

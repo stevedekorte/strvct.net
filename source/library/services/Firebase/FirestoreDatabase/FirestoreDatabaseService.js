@@ -41,7 +41,7 @@
 
     initPrototype () {
         this.setTitle("Firestore Database");
-        this.setSubtitle("Firestore JSON Document database");
+        this.setSubtitle("document database");
         this.setShouldStoreSubnodes(false);
     }
 
