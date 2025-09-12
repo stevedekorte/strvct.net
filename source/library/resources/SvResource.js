@@ -114,7 +114,14 @@
              */
             const slot = this.newSlot("loadState", "unloaded"); 
             slot.setSlotType("String");
-            slot.setValidValues(["unloaded", "loading", "decoding", "loaded"]);
+            slot.setValidValues([
+                "unloaded", 
+                "loading", 
+                "loading failed",
+                "decoding", 
+                "decoding failed",
+                "loaded"
+            ]);
         }
 
         {
@@ -289,11 +296,11 @@
         try {
             this.setLoadState("loading");
             await this.asyncLoadSvUrlResource();
-            this.setLoadState("loaded");
             //this.postNoteNamed("resourceLoaded");
             //this.log("asyncLoad: " + this.path() + " loaded");
 
         } catch (error) {
+            this.setLoadState("loading failed");
             this.setError(error);
             //this.postNoteNamed("loadError");
             throw error;
@@ -302,13 +309,14 @@
         try {
             this.setLoadState("decoding");
             await this.asyncDecodeData();
-            this.setLoadState("decoded");
             //this.postNoteNamed("resourceDecoded");
         } catch (error) {
+            this.setLoadState("decoding failed");
             this.setError(error);
             //this.postNoteNamed("decodeError");
             throw error;
         }
+        this.setLoadState("loaded");
         return this;
     }
 

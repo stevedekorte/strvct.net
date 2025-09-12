@@ -110,6 +110,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("validValues", null); // used for options field and validation
         this.simpleNewSlot("validValuesClosure", null);
 
+        this.simpleNewSlot("validValuesArePermissive", false); // present valid values in UI but allow any value of correct type
+
         this.simpleNewSlot("validItems", null); // array of dictionaries with label, subtitle, value
         this.simpleNewSlot("validItemsClosure", null);
 
@@ -266,12 +268,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         // sanity check
         if (v) {
-            const isValid = this.validateValue(this.initValue());
+            const initValue = this.initValue();
+            const isValid = this.validateValue(initValue);
             if (!isValid) {
+                const errorMessage = "Slot '" + this.name() + "' initValue of: " + Type.typeDescription(initValue) + " is not in valid values: " + JSON.stableStringifyWithStdOptions(this._validValues);
                 debugger;
-                this.validateValue(this.initValue());
-
-                throw new Error(Type.typeDescription(this.initValue()) + " not in valid values: " + JSON.stableStringifyWithStdOptions(this._validValues));
+                this.validateValue(initValue);
+                throw new Error(errorMessage);
             }
         }
         return this;
@@ -1072,41 +1075,53 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @returns {boolean} True if the value is valid, false otherwise.
      */
     validateValue (v) {
+
         if (v === null) {
-            //debugger;
             return this.allowsNullValue();
         }
 
-        const validItems = this.validItems();
-        const valueIsInValidItems = function (v) {
-            if (validItems !== null) {
-                return validItems.detect(item => {
-                    return Type.valuesAreEqual(item.value, v);
-                });
-            }
-            return false;
-        };
-
-
-        if (this.allowsMultiplePicks()) {
-            if(!Type.isArray(v)) {
-                assert(!Type.isArray(v));
-                console.warn("slot '" + this.name() + "' allows multiple picks, but value is not an array: " + Type.typeDescription(v));
-                debugger;
+        // type validation
+        const slotType = this.slotType();
+        if (slotType) {
+            if (!this.validateValueTypeOnly(v)) {
                 return false;
             }
-            return v.every(value => valueIsInValidItems(value));
         }
 
-        // check valid items first (to support multiple valid slot types)
-
-        //const validItems = this.computedValidItems(); // closure may reference unloaded classes...
-
-        if (valueIsInValidItems(v)) {
+        if (this.validValuesArePermissive()) {
             return true;
         }
 
+        const validItems = this.validItems();
+        // TODO: fix computedValidItems 
+        //const validItems = this.computedValidItems(); // closure may reference unloaded classes...
 
+        if (validItems !== null) {
+            const valueIsInValidItems = function (v) {
+                return validItems.detect(item => {
+                    return Type.valuesAreEqual(item.value, v);
+                });
+            };
+
+
+            if (this.allowsMultiplePicks()) {
+                if(!Type.isArray(v)) {
+                    assert(!Type.isArray(v));
+                    console.warn("slot '" + this.name() + "' allows multiple picks, but value is not an array: " + Type.typeDescription(v));
+                    debugger;
+                    return false;
+                }
+                return v.every(value => valueIsInValidItems(value));
+            }
+
+            return valueIsInValidItems(v);
+        }
+
+        return true;
+    }
+
+    validateValueTypeOnly (v) {
+        // type validation
         const slotType = this.slotType();
         if (slotType) {
             // NOTE: need to handle special cases like:
@@ -1131,10 +1146,12 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 console.log("Slot '" +this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
                 //debugger;
                 Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
+                return false;
             }
         }
 
-        return false;
+        // if no slot type, it's valid
+        return true;
     }
 
     slotTypeClass () {
@@ -1162,15 +1179,18 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
                 if (!isValid) {
-                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + "' expected (" + slot.slotType() + ")";
+                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
                     console.log(errorMsg);
-                    debugger;
+                    if (!["challengeRating", "spellcastingAbility"].contains(slot.name())) {
+                        debugger;
+                        slot.validateValue(newValue);
+                    }   
 
                     const initValue = slot.initValue();
                     if (initValue) {
                         if (!slot.validateValue(initValue)) {
                             console.log("RESOLUTION: initValue is not valid, so we can't use it");
-                        debugger;
+                            debugger;
                         }
                     }
 
