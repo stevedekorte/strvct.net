@@ -274,7 +274,9 @@
                     }
                     window.__uo_firestore_emulator_configured__ = true;
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("FirestoreDocument.asyncDelete: Error configuring emulator:", e);
+            }
             await db.doc(path).delete();
 
             this.setUploadStatus("deleted successfully");
@@ -317,7 +319,9 @@
                     }
                     window.__uo_firestore_emulator_configured__ = true;
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.error("FirestoreDocument.asyncDownload: Error configuring emulator:", e);
+            }
             const snap = await db.doc(path).get();
             if (!snap.exists) {
                 throw new Error("Document does not exist at path: " + path);
@@ -328,6 +332,7 @@
             try {
                 this.setContent(JSON.stringify(data, null, 2));
             } catch (e) {
+                console.error("FirestoreDocument.asyncDownload: Error stringifying data:", e);
                 // Fallback to raw object if stringification fails
                 this.setContent(data);
             }
