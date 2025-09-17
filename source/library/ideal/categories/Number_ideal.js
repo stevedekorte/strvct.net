@@ -289,5 +289,44 @@ const Base64 = (function () {
     asString () {
         return this.toString();
     }
+
+    /**
+     * Returns a string representation of the number as a fraction
+     * Only supports numbers between -100 and 100 inclusive
+     * @returns {string} The string representation of the number as a fraction e.g. for input 0.5 returns "1/2"
+     * @category Formatting
+     */
+    asFractionString () {
+        const ERR = 'Unsupported fraction error';
+        const x = +this;
+        const tol = 1e-12; // equality tolerance for floating-point comparisons
+      
+        // Only supports inputs in [-100, 100]
+        if (!Number.isFinite(x) || x < -100 || x > 100) throw new Error(ERR);
+      
+        // Handle exact integers
+        if (Math.abs(x - Math.round(x)) < tol) {
+          const n = Math.round(x);
+          if (Math.abs(n) <= 100) return n + '/1';
+          throw new Error(ERR);
+        }
+      
+        // Try to find an exact n/k with k<=100 and |n|<=100
+        const gcd = (a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
+      
+        for (let k = 1; k <= 100; k++) {
+          const n = Math.round(x * k);
+          if (Math.abs(n) > 100) continue;
+          if (Math.abs(x - n / k) < tol) {
+            const g = gcd(n, k);
+            let nn = n / g, kk = k / g;
+            if (kk < 0) { nn = -nn; kk = -kk; } // force positive denominator
+            if (Math.abs(nn) <= 100 && kk >= 1 && kk <= 100) return nn + '/' + kk;
+          }
+        }
+      
+        // No exact bounded fraction found
+        throw new Error(ERR);
+    }
     
 }).initThisCategory();

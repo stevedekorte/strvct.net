@@ -228,15 +228,16 @@
                 this.markAsDirty(); // save our type conversion
               }
             } else if (slot.slotType() !== Type.typeName(v)) {
-              const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
+              const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
               console.warn(errorMessage);
-
               //throw new Error(errorMessage);
 
-              if (slot.slotType() === "Number" && v && v.asNumber) {
-                slot.onInstanceSetValue(this, v.asNumber());
+              if (slot.slotType() === "Number" && v && v.asNumber ) {
+                console.log("resolving by converting input value to number using asNumber(): ", v.asNumber());
+                const resolvedValue = v.asNumber();
+                assert(!Type.isNaN(resolvedValue), "resolved value must be a number");
+                slot.onInstanceSetValue(this, resolvedValue);
                 this.markAsDirty(); // save our type conversion
-
               } else {
                 const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
                 console.warn(errorMessage);
@@ -244,6 +245,7 @@
                     console.warn(`converting value from number ${v} to string '${v.asString()}'`);
                     let newValue = v.asString();
                     // tmp hack for challenge rating
+                    /*
                     if (v === 1/8) {
                       newValue = "1/8";
                     } else if (v === 1/4) {
@@ -251,6 +253,7 @@
                     } else if (v === 1/2) {
                       newValue = "1/2";
                     }
+                      */
                     slot.onInstanceSetValue(this, newValue);
                     this.markAsDirty(); // save our type conversion
                 } else {

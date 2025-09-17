@@ -178,7 +178,7 @@
                     const methodName = this.methodName() + "ActionInfo";
                     console.warn(this.target().typeId() + "." + methodName + "() returned invalid value of '" + v + "' for isEnabled. Boolean value is required.");
                 }
-                assert(Type.isBoolean(v));
+                assert(Type.isBoolean(v), "isEnabled must be a boolean");
                 this.setIsEnabled(v);
             }
         }
@@ -186,7 +186,7 @@
         {
             const v = infoDict.title;
             if (v !== undefined) {
-                assert(Type.isString(v) || Type.isNull(v));
+                assert(Type.isString(v) || Type.isNull(v), "title must be a string or null");
                 this.setTitle(v);
             }
         }
@@ -194,7 +194,7 @@
         {
             const v = infoDict.subtitle;
             if (v !== undefined) {
-                assert(Type.isString(v) || Type.isNull(v));
+                assert(Type.isString(v) || Type.isNull(v), "subtitle must be a string or null");
                 this.setSubtitle(v);
             }
         }
@@ -202,7 +202,7 @@
         {
             const v = infoDict.isVisible;
             if (v !== undefined) {
-                assert(Type.isBoolean(v));
+                assert(Type.isBoolean(v), "isVisible must be a boolean");
                 this.setIsVisible(v);
             }
         }

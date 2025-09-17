@@ -352,7 +352,38 @@
                 this[k] = vals[k];
             }
         }
-      }
+    }
+
+    asCleanJson () {
+        // We assume the receiver is being used as a JSON object,
+        // but it needs to have it's prototype slots removed. 
+        // To do this, we:
+        // 1. duplicate via JSON.stringify, and JSON.parse
+        // 2. remove the prototype slots (which are not JSON compatible)
+
+        const dup = JSON.parse(JSON.stringify(this));
+
+        function cleanJson (obj) {
+            if (typeof obj !== "object" || obj === null) {
+                return obj; // primitive values are not modified
+            }
+            if (Array.isArray(obj)) {
+                // clean each element
+                return obj.map(cleanJson);
+            }
+
+            const o = Object.create(null);
+            // remove the prototype
+            Object.setPrototypeOf(o, null);
+            for (const k of Object.keys(obj)) {
+                // clean each value
+                o[k] = cleanJson(obj[k]);
+            }
+            return o;
+        }
+
+        return cleanJson(dup);   
+    }
 
 }).initThisCategory();
 

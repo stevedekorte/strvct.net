@@ -104,16 +104,28 @@
             slot.setActionMethodName("deleteFromFirebase");
         }
 
-        // Test download action
+        // Download from Firebase action
         {
-            const slot = this.newSlot("testDownloadAction", null);
+            const slot = this.newSlot("downloadFromFirebaseAction", null);
             slot.setInspectorPath("");
-            slot.setLabel("Test Download");
+            slot.setLabel("Download from Firebase");
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("testDownload");
+            slot.setActionMethodName("downloadFromFirebase");
+        }
+
+        // Clear local data action
+        {
+            const slot = this.newSlot("clearLocalDataAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Clear Local Data");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("clearLocalData");
         }
     }
 
@@ -160,7 +172,7 @@
      * @category Status
      */
     hasDataUrl () {
-        return this.dataUrl() !== null && this.dataUrl() !== "";
+        return this.dataUrl() !== null && this.dataUrl().length > 0;
     }
 
     /**
@@ -274,7 +286,19 @@
                 
                 // Parse the response
                 const directResponse = JSON.parse(directRequest.responseText());
-                this.setPublicUrl(directResponse.publicUrl);
+                // Fix the bucket URL if it has the wrong domain
+                let publicUrl = directResponse.publicUrl;
+                if (publicUrl && publicUrl.includes('.firebasestorage.app')) {
+                    publicUrl = publicUrl.replace('.firebasestorage.app', '.appspot.com');
+                    console.log("Fixed bucket URL from .firebasestorage.app to .appspot.com");
+                }
+                
+                // For omnireference images, we need real public URLs (not emulator)
+                // so external services like Midjourney can access them
+                // Don't convert to emulator URLs even in local development
+                console.log("Using real Firebase Storage URL for public accessibility");
+                
+                this.setPublicUrl(publicUrl);
                 this.setStoragePath(directResponse.fullPath);
                 
             } else {
@@ -302,8 +326,29 @@
                 }
 
                 // Store the results
-                this.setPublicUrl(uploadData.publicUrl);
-                this.setStoragePath(uploadData.fullPath);
+                // Fix the bucket URL if it has the wrong domain
+                let publicUrl = uploadData.publicUrl;
+                if (publicUrl && publicUrl.includes('.firebasestorage.app')) {
+                    publicUrl = publicUrl.replace('.firebasestorage.app', '.appspot.com');
+                    console.log("Fixed bucket URL from .firebasestorage.app to .appspot.com");
+                }
+                this.setPublicUrl(publicUrl);
+                // Only set storage path if it's actually a path, not just the bucket
+                if (uploadData.fullPath && uploadData.fullPath.includes('/')) {
+                    this.setStoragePath(uploadData.fullPath);
+                } else {
+                    console.warn("Invalid storage path received:", uploadData.fullPath);
+                    // Try to extract path from public URL
+                    if (uploadData.publicUrl) {
+                        const url = new URL(uploadData.publicUrl);
+                        const pathMatch = url.pathname.match(/\/o\/([^?]+)/);
+                        if (pathMatch) {
+                            const decodedPath = decodeURIComponent(pathMatch[1]);
+                            this.setStoragePath(decodedPath);
+                            console.log("Extracted storage path from URL:", decodedPath);
+                        }
+                    }
+                }
             }
             
             // Set common metadata
@@ -361,10 +406,17 @@
                 throw new Error("No Firebase storage path");
             }
 
-            const service = this.service();
-            await service.deleteImage(this.storagePath());
+            // Ensure Firebase Storage is available
+            if (typeof firebase === 'undefined' || !firebase.storage) {
+                throw new Error("Firebase Storage not available");
+            }
 
-            // Clear the Firebase references
+            // Get a reference to the file and delete it
+            const storage = firebase.storage();
+            const fileRef = storage.ref(this.storagePath());
+            await fileRef.delete();
+
+            // Clear the Firebase references locally after successful deletion
             this.setPublicUrl(null);
             this.setStoragePath(null);
             this.setUploadMetadata(null);
@@ -375,6 +427,140 @@
             this.setError(error.message);
             this.setUploadStatus("delete failed");
         }
+    }
+
+    /**
+     * @description Downloads the image from Firebase Storage and stores it as a data URL
+     * @returns {Promise<void>}
+     * @category Download
+     */
+    async downloadFromFirebase () {
+        try {
+            this.setError("");
+            this.setUploadStatus("downloading...");
+
+            // First try to use the public URL if we have one
+            if (this.publicUrl()) {
+                console.log("Attempting to download from public URL:", this.publicUrl());
+                console.log("Storage path:", this.storagePath());
+                
+                // For Firebase Storage URLs, try direct fetch first (they usually have auth tokens in the URL)
+                try {
+                    const response = await fetch(this.publicUrl());
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        
+                        // Convert blob to data URL
+                        const reader = new FileReader();
+                        const dataUrl = await new Promise((resolve, reject) => {
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        });
+                        
+                        this.setDataUrl(dataUrl);
+                        this.setUploadStatus("downloaded");
+                        return;
+                    } else {
+                        console.log("Direct fetch failed with status:", response.status);
+                    }
+                } catch (fetchError) {
+                    console.log("Direct fetch failed:", fetchError.message);
+                }
+                
+                // If direct fetch failed and it's a Firebase Storage URL, try SDK
+                if (this.publicUrl().includes('firebasestorage.googleapis.com') && 
+                    typeof firebase !== 'undefined' && firebase.storage) {
+                    console.log("Attempting Firebase SDK download as fallback");
+                    
+                    // Extract the actual file path from the URL
+                    const url = new URL(this.publicUrl());
+                    const pathMatch = url.pathname.match(/\/o\/([^?]+)/);
+                    if (pathMatch) {
+                        const encodedPath = pathMatch[1];
+                        const decodedPath = decodeURIComponent(encodedPath);
+                        console.log("Extracted path from URL:", decodedPath);
+                        
+                        try {
+                            const storage = firebase.storage();
+                            const fileRef = storage.ref(decodedPath);
+                            const downloadUrl = await fileRef.getDownloadURL();
+                            console.log("Got fresh download URL from Firebase SDK:", downloadUrl);
+                            
+                            const response = await fetch(downloadUrl);
+                            if (!response.ok) {
+                                throw new Error(`Failed to download via SDK: ${response.status}`);
+                            }
+                            const blob = await response.blob();
+                            
+                            // Convert blob to data URL
+                            const reader = new FileReader();
+                            const dataUrl = await new Promise((resolve, reject) => {
+                                reader.onloadend = () => resolve(reader.result);
+                                reader.onerror = reject;
+                                reader.readAsDataURL(blob);
+                            });
+                            
+                            this.setDataUrl(dataUrl);
+                            this.setUploadStatus("downloaded");
+                            return;
+                        } catch (sdkError) {
+                            console.error("Firebase SDK download failed:", sdkError);
+                            throw sdkError;
+                        }
+                    }
+                }
+                
+                // If we got here, nothing worked
+                throw new Error("Failed to download image from Firebase Storage");
+            }
+
+            // Fallback to using Firebase Storage SDK if no public URL
+            if (!this.storagePath()) {
+                throw new Error("No Firebase storage path or public URL");
+            }
+
+            // Ensure Firebase Storage is available
+            if (typeof firebase === 'undefined' || !firebase.storage) {
+                throw new Error("Firebase Storage not available");
+            }
+
+            // Get a reference to the file and download it
+            const storage = firebase.storage();
+            const fileRef = storage.ref(this.storagePath());
+            
+            // Get the download URL
+            const downloadUrl = await fileRef.getDownloadURL();
+            
+            // Fetch the image and convert to data URL
+            const response = await fetch(downloadUrl);
+            const blob = await response.blob();
+            
+            // Convert blob to data URL
+            const reader = new FileReader();
+            const dataUrl = await new Promise((resolve, reject) => {
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+            
+            this.setDataUrl(dataUrl);
+            this.setUploadStatus("downloaded");
+
+        } catch (error) {
+            console.error("Firebase download failed:", error);
+            this.setError(error.message);
+            this.setUploadStatus("download failed");
+        }
+    }
+
+    /**
+     * @description Clears the local data URL while keeping Firebase references
+     * @category Data Management
+     */
+    clearLocalData () {
+        this.setDataUrl(null);
+        this.setUploadStatus("local data cleared");
     }
 
     /**
@@ -424,6 +610,39 @@
                 // Continue without setting the label
             }
         }
+    }
+
+    /**
+     * @description Gets action info for download from Firebase action
+     * @returns {Object} Action info
+     * @category Actions
+     */
+    downloadFromFirebaseActionInfo () {
+        return {
+            isEnabled: this.hasStoragePath() && !this.hasDataUrl(),
+            isVisible: true
+        };
+    }
+
+    /**
+     * @description Gets action info for clear local data action
+     * @returns {Object} Action info
+     * @category Actions
+     */
+    clearLocalDataActionInfo () {
+        return {
+            isEnabled: this.hasDataUrl(),
+            isVisible: true
+        };
+    }
+
+    /**
+     * @description Helper to check if we have a storage path
+     * @returns {boolean}
+     * @category Helpers
+     */
+    hasStoragePath () {
+        return this.storagePath() !== null && this.storagePath().length > 0;
     }
 
 

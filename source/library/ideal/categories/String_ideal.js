@@ -289,10 +289,21 @@
         if (this === "" || this === null || this === undefined) {
             return NaN;
         }
-        
+        if (this.isFraction()) {
+            // parse and validate the fraction, then convert to a number
+            const parts = this.split("/");
+            assert(parts.length === 2, "fraction must have exactly one slash");
+            const numerator = Number(parts[0]);
+            const denominator = Number(parts[1]);
+            assert(!Type.isNaN(numerator), "numerator cannot be NaN");
+            assert(!Type.isNaN(denominator), "denominator cannot be NaN");
+            assert(denominator !== 0, "denominator cannot be zero");
+            return numerator / denominator;
+        }
         const number = Number(this);
         return isNaN(number) ? NaN : number;
     }
+
 
     /**
      * Converts camelCase to a human-readable string
@@ -936,6 +947,11 @@
             return false;
         }
     }
+
+    isFraction () {
+        return /^\d+\/\d+$/.test(this);
+    }
+
 
 }).initThisCategory();
 
