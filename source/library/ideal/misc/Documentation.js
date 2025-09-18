@@ -57,7 +57,7 @@
             const classDict = {};
             classDict.name = aClass.svType();
             const superclass = aClass.superClass();
-            if (superclass.svType) {
+            if (Type.isFunction(superclass.svType)) {
                 classDict.superClass = superclass.svType();
             }
             classes.push(classDict);
