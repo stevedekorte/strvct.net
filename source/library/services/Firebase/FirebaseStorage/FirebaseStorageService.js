@@ -18,6 +18,7 @@
  * - Client uploads directly to Firebase using signed URL
  * - No Firebase credentials exposed to client
  */
+
 (class FirebaseStorageService extends SvSummaryNode {
     
     /**
