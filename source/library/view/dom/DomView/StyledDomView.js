@@ -159,7 +159,7 @@
      * @returns {StyledDomView}
      * @category State
      */
-    didUpdateSlotIsActive (oldValue, newValue) {
+    didUpdateSlotIsActive (/*oldValue, newValue*/) {
         // sent by hooked setter
         this.updateSubviews()
         return this
@@ -193,7 +193,7 @@
      * @returns {StyledDomView}
      * @category State
      */
-    didUpdateSlotIsSelected (oldValue, newValue) {
+    didUpdateSlotIsSelected (/*oldValue, newValue*/) {
         // sent by hooked setter
         this.updateSubviews()
         return this
