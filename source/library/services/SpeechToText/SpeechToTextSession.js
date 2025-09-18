@@ -512,7 +512,7 @@
   onError (event) {
     const error = event.error;
     this.sendDelegateMessage("onSpeechError", [this, error]);
-    console.warn(this.typeId() + " error: " + error);
+    console.warn(this.svTypeId() + " error: " + error);
     if (this.transcriptPromise()) {
       this.transcriptPromise().callRejectFunc(error);
     }

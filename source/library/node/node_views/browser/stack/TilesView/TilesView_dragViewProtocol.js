@@ -46,7 +46,7 @@
         this.setHasPausedSync(true);
         //ElementDomView.pauseRetires();
 
-        //console.log(this.typeId() + " onDragSourceBegin");
+        //console.log(this.svTypeId() + " onDragSourceBegin");
         // ---
 
 

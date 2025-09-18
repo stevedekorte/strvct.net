@@ -227,7 +227,7 @@
         const proto = this.subviewProtoForSubnode(aSubnode);
 
         if (!proto) {
-            throw new Error("no subviewProto for subnode " + aSubnode.typeId());
+            throw new Error("no subviewProto for subnode " + aSubnode.svTypeId());
         }
 
         const instance = proto.clone();
@@ -561,7 +561,7 @@
      * @returns {string} The debug type ID.
      */
     debugTypeId () {
-        let s = "view:'" + this.typeId() + "'";
+        let s = "view:'" + this.svTypeId() + "'";
         s += " node:'" + this.nodeId() + "'";
         s += " themeClass:'" +this.themeClassName() + "'";
         if (this.node()) {

@@ -129,7 +129,7 @@
                 if (tile.unselect) {
                     tile.unselect();
                 } else {
-                    //console.warn("=WARNING= " + this.typeId() + ".unselectAllTilesExcept() tile " + tile.typeId() + " missing unselect method")
+                    //console.warn("=WARNING= " + this.svTypeId() + ".unselectAllTilesExcept() tile " + tile.svTypeId() + " missing unselect method")
                 }
             }
         });
@@ -445,7 +445,7 @@
             subview.scrollIntoView();
             subview.justTap();
         } else {
-            console.warn(this.svType() + " for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId());
+            console.warn(this.svType() + " for node " + this.node().svTypeId() + " has no matching subview for shouldSelectSubnode " + subnode.svTypeId());
         }
 
         return this; 
@@ -472,7 +472,7 @@
 
             this.didChangeNavSelection();
         } else {
-            console.warn(this.svType() + " for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId());
+            console.warn(this.svType() + " for node " + this.node().svTypeId() + " has no matching subview for shouldFocusSubnode " + subnode.svTypeId());
         }
 
         return this; 

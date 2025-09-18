@@ -219,9 +219,9 @@
      */
     invokeMethodNameForEvent (methodName, event) {
         //this.logDebug(".invokeMethodNameForEvent('" + methodName + "')")
-        //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
+        //console.log(this.svTypeId() + ".invokeMethodNameForEvent('" + methodName + "')")
         if (this[methodName]) {
-            //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
+            //console.log(this.svTypeId() + ".invokeMethodNameForEvent('" + methodName + "')")
             const continueProp = this[methodName].apply(this, [event])
             if (continueProp === false) {
                 //event.preventDefault()
@@ -432,7 +432,7 @@
         let shouldPropogate = true
         //this.logDebug(" onKeyUp ", event._id)
         const methodName = SvKeyboard.shared().upMethodNameForEvent(event)
-        //console.log(this.typeId() + " onKeyUp methodName: ", methodName)
+        //console.log(this.svTypeId() + " onKeyUp methodName: ", methodName)
         shouldPropogate = this.invokeMethodNameForEvent(methodName, event)
         return shouldPropogate
     }
@@ -486,7 +486,7 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onFocus (event) {
-        //console.log(this.typeId() + " onFocus")
+        //console.log(this.svTypeId() + " onFocus")
         this.willAcceptFirstResponder();
         // subclasses can override 
         //this.logDebug(" onFocus")
@@ -499,7 +499,7 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onBlur (event) {
-        //console.log(this.typeId() + " onBlur")
+        //console.log(this.svTypeId() + " onBlur")
         this.didReleaseFirstResponder();
         // subclasses can override 
         //this.logDebug(" onBlur")

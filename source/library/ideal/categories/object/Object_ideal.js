@@ -149,7 +149,7 @@
         if (f) {
             return f.call(this, arg1, arg2, arg3);
         }
-        throw new Error(this.typeId() + " does not respond to '" + methodName + "'");
+        throw new Error(this.svTypeId() + " does not respond to '" + methodName + "'");
     }
  
     /**

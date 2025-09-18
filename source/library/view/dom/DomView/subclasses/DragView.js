@@ -568,7 +568,7 @@
     sendProtocolMessage (receiver, methodName) {
         if (!methodName.contains("Hover") && this.isDebugging()) {
 
-            let msg = receiver.typeId() + " " + methodName 
+            let msg = receiver.svTypeId() + " " + methodName 
 
             if (methodName.contains("Dropped")) {
                 msg += " " + this.dragOperation()

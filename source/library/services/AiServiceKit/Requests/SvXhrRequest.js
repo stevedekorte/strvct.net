@@ -1248,7 +1248,7 @@
     if (d) {
       const f = d[methodName];
       if (f) {
-        //if (this.isDebugging()) console.log(this.logPrefix(), this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
+        //if (this.isDebugging()) console.log(this.logPrefix(), this.svTypeId() + " sending " + d.svTypeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
         f.apply(d, args);
         return true;
       }

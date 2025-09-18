@@ -688,7 +688,7 @@
     onObjectUpdatePid (anObject, oldPid, newPid) {
         // sanity check for debugging - could remove later
         if (this.hasActiveObject(anObject)) {
-            const msg = "onObjectUpdatePid " + anObject.typeId() + " " + oldPid + " -> " + newPid;
+            const msg = "onObjectUpdatePid " + anObject.svTypeId() + " " + oldPid + " -> " + newPid;
             console.log(msg);
             throw new Error(msg);
         }
@@ -742,7 +742,7 @@
      */
     addDirtyObject (anObject) { // private
         if (anObject.thisClass && anObject.thisClass().isKindOf(ObjectPool)) {
-            throw new Error("attempt to addDirtyObject " + anObject.typeId() + " which is an ObjectPool");
+            throw new Error("attempt to addDirtyObject " + anObject.svTypeId() + " which is an ObjectPool");
         }
         if (!this.hasActiveObject(anObject)) {
             console.log("looks like it hasn't been referenced yet");
@@ -760,7 +760,7 @@
         }
 
         if (!this.dirtyObjects().has(puuid)) {
-            this.logDebug(() => "addDirtyObject(" + anObject.typeId() + ")" );
+            this.logDebug(() => "addDirtyObject(" + anObject.svTypeId() + ")" );
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?");
             }
@@ -777,7 +777,7 @@
      * @returns {ObjectPool}
      */
     forceAddDirtyObject (anObject) {
-        console.log("forceAddDirtyObject " + anObject.typeId());
+        console.log("forceAddDirtyObject " + anObject.svTypeId());
         if (this.storingPids() !== null) {
             // we might be in the middle of storing changes
             debugger;
@@ -798,7 +798,7 @@
      */
     scheduleStore () {
         if (!this.isOpen()) {
-            console.log(this.typeId() + " can't schedule store yet, not open")
+            console.log(this.svTypeId() + " can't schedule store yet, not open")
             return this
         }
         assert(this.isOpen())
@@ -860,7 +860,7 @@
                 //console.log("  storing pid " + puuid);
 
                 if (this.storingPids().has(puuid)) {
-                    const msg = "ERROR: attempt to double store " + obj.typeId();
+                    const msg = "ERROR: attempt to double store " + obj.svTypeId();
                     console.log(msg);
                     throw new Error(msg);
                 }
@@ -1214,7 +1214,7 @@
         // --- sanity checks ---
         assert(obj.shouldStore(), "object " + obj.svType() + " shouldStore is false");
 
-        this.logDebug(() => "storeObject(" + obj.typeId() + ")");
+        this.logDebug(() => "storeObject(" + obj.svTypeId() + ")");
 
         // --- store ---
 
@@ -1233,7 +1233,7 @@
             const kvPromise = this.kvPromiseForObject(obj);
             this.recordsMap().asyncQueueSetKvPromise(kvPromise);
         } else {
-            //console.log("storeObject " + obj.typeId());
+            //console.log("storeObject " + obj.svTypeId());
 
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);

@@ -240,7 +240,7 @@
      * @category Utility
      */
     valueId (v) {
-        return v ? v.typeId() : "undefined";
+        return v ? v.svTypeId() : "undefined";
     }
 
     /**

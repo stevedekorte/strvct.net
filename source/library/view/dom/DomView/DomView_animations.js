@@ -17,7 +17,7 @@
     immediatelyScrollToBottom () {
         const focusedElement = document.activeElement
         const needsRefocus = focusedElement !== this.element()
-        // console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
+        // console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
 
         //this.setScrollTop(this.scrollHeight() + "px")
         this.element().scrollTop = this.element().scrollHeight;
@@ -47,7 +47,7 @@
      * @category Scrolling
      */
     scrollSubviewToTop (aSubview) {
-        console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollSubviewToTop()")
+        console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollSubviewToTop()")
         assert(this.hasSubview(aSubview))
         //this.setScrollTop(aSubview.offsetTop())
         //this.setScrollTopSmooth(aSubview.offsetTop())
@@ -70,7 +70,7 @@
      * @category Animation
      */
     animateValue (targetFunc, valueFunc, setterFunc, duration) { // duration in milliseconds         
-        console.log("]]]]]]]]]]]] " + this.typeId() + ".animateValue()")
+        console.log("]]]]]]]]]]]] " + this.svTypeId() + ".animateValue()")
         if (duration == null) {
             duration = 200
         }
@@ -135,7 +135,7 @@
         }
 
         const focusedView = WebBrowserWindow.shared().activeDomView()
-        //console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollIntoView() needsRefocus = ", focusedView !== this)
+        //console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollIntoView() needsRefocus = ", focusedView !== this)
 
         // if another view is focused, the scrolling will unfocus it, so we
         // need a way to return focus after scrolling is complete

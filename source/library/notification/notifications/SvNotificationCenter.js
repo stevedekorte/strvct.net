@@ -572,7 +572,7 @@
             if (showDebug) {
                 //this.log(" >>> " + this.svType() + " " + note.name() + " matches obs: " + obs.description());
                 if (obs.observer.svType() === "UoChatInputTile") {
-                    this.log(" >>> " +this.svType() + " sending ", note.name() + " to observer " + obs.observer().typeId());
+                    this.log(" >>> " +this.svType() + " sending ", note.name() + " to observer " + obs.observer().svTypeId());
                 }
             }
             */

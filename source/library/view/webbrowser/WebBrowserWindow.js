@@ -517,7 +517,7 @@
     storeSelectionRange () {
         const range = this.getSelectionRange();
         if (range) {
-            console.log(this.typeId() + "--- storing selection ---");
+            console.log(this.svTypeId() + "--- storing selection ---");
             this.setStoredSelectionRange(range);
             return true;
         }
@@ -531,7 +531,7 @@
      */
     restoreSelectionRange () {
         if (this.storedSelectionRange()) {
-            console.log(this.typeId() + "--- restoring selection ---");
+            console.log(this.svTypeId() + "--- restoring selection ---");
             this.setSelectionRange(this.storedSelectionRange());
             assert(this.storedSelectionRange().isEqual(this.getSelectionRange()));
             this.setStoredSelectionRange(null);

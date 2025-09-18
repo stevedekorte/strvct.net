@@ -1684,7 +1684,7 @@
      * @returns {string} The debug type ID.
      */
     debugTypeId () {
-        return this.typeId() + " '" + this.title() + "'";
+        return this.svTypeId() + " '" + this.title() + "'";
     }
 
     // ----

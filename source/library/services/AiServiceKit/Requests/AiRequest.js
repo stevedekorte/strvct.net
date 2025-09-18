@@ -1047,7 +1047,7 @@
    * @param {string} newContent 
    */
   onNewContent (newContent) {
-    //this.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
+    //this.log(this.svTypeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
     this.sendDelegate("onStreamData", [this, newContent]);
   }
@@ -1064,7 +1064,7 @@
     if (d) {
       const f = d[methodName]
       if (f) {
-        //this.logDebug(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
+        //this.logDebug(this.svTypeId() + " sending " + d.svTypeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
         f.apply(d, args)
         return true
       }

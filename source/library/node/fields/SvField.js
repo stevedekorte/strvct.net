@@ -383,7 +383,7 @@
         if (aNode === this.target()) {
             // refresh
             //debugger;
-            //this.log(".didUpdateNode " + aNode.typeId())
+            //this.log(".didUpdateNode " + aNode.svTypeId())
             this.syncFromTarget()
         }
     }
@@ -607,7 +607,7 @@
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
         if (!didSet) {
             if (this.target()) {
-                console.warn("Field unable to set value using " + this.target().typeId() + "' '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
+                console.warn("Field unable to set value using " + this.target().svTypeId() + "' '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
             } else {
                 console.warn("Field unable to set value using '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
             }

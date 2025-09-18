@@ -45,7 +45,7 @@
     // we use this to add tools for other instances besides ourselves. e.g. the Session, Campaign, or Character
     //debugger;
     //const ownerPath = this.ownershipChainPathString();
-    //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.typeId() + " '" + instance.title() + "'");
+    //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.svTypeId() + " '" + instance.title() + "'");
 
     if (this.toolTargetInstances().has(instance)) {
         const errorMessage = "Tool definitions already added for instance: " + instance.svType();
@@ -57,7 +57,7 @@
 
     this.toolTargetInstances().add(instance);
 
-    //console.log(this.typeId() + " addToolsForInstance(" + instance.typeId() + "):");
+    //console.log(this.svTypeId() + " addToolsForInstance(" + instance.svTypeId() + "):");
     const methodSet = instance.getInheritedToolMethodSet();
     for (const method of methodSet) {
         //console.log("  -- adding tool '" + method.name + "'");
@@ -74,9 +74,9 @@
     }
 
     if (this.subnodeCount() === 0) {
-      console.warn("no tools found for instance: " + instance.typeId());
+      console.warn("no tools found for instance: " + instance.svTypeId());
     }
-    //console.log("--- " + instance.typeId() + " tools ---");
+    //console.log("--- " + instance.svTypeId() + " tools ---");
     //console.log(this.description() + "\n");
 
     return this;

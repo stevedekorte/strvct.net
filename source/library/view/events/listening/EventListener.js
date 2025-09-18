@@ -62,7 +62,7 @@
         owners.forEach((owner) => {
             const listeners = this.activeListenersForOwner(owner)
 
-            console.log("  " + owner.typeId() + ": " + listeners.length)
+            console.log("  " + owner.svTypeId() + ": " + listeners.length)
             //this.showActiveForOwner(owner)
         })
         */
@@ -77,7 +77,7 @@
     static showActiveForOwner (owner) { // tmp debugging
         const listeners = this.activeListenersForOwner(owner)
         listeners.forEach(listener => {
-            console.log("    " + listener.delegate().typeId() + " " + listener.fullMethodName())
+            console.log("    " + listener.delegate().svTypeId() + " " + listener.fullMethodName())
         })
     }
 
@@ -287,9 +287,9 @@
     listenerKey () {
         let key = null
         if (this.owner().node) {
-             key = this.owner().typeId() + " " + this.owner().node().title() + " " + this.delegate().typeId() + " " + this.fullMethodName()
+             key = this.owner().svTypeId() + " " + this.owner().node().title() + " " + this.delegate().svTypeId() + " " + this.fullMethodName()
         } else {
-            key = this.owner().typeId() + " " + this.delegate().typeId() + " " + this.fullMethodName()
+            key = this.owner().svTypeId() + " " + this.delegate().svTypeId() + " " + this.fullMethodName()
         }
         return key
     }
@@ -321,7 +321,7 @@
             if (!this.isListening()) {
                 this.incrementListenCount()
 
-                this.logDebug(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
+                this.logDebug(() => this.delegate().svTypeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
                 assert(this.isValid())
                 this._isListening = true; // can't use setter here as it would cause a loop
                 this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
@@ -359,10 +359,10 @@
         
         if (d.viewTarget) {
             //return d.viewTarget().debugTypeId() + "->" + d.svType().before("GestureRecognizer") 
-            return d.viewTarget().typeId() + " ->" + d.svType().before("GestureRecognizer") 
+            return d.viewTarget().svTypeId() + " ->" + d.svType().before("GestureRecognizer") 
         }
 
-        return d.typeId()
+        return d.svTypeId()
     }
 
     /**
@@ -476,7 +476,7 @@
 
             this.decrementListenCount()
 
-            //this.logDebug(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
+            //this.logDebug(() => this.delegate().svTypeId() + " will stop listening for " + this.methodName())
             t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
             this._isListening = false; // can't use setter here as it would cause a loop
         }

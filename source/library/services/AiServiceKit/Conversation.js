@@ -316,7 +316,7 @@
       }
       SimpleSynth.clone().playReceiveBeep();
       this.onNewMessageFromUpdate(newMsg);
-      //console.warn(this.typeId() + " updateMessageJson no message found with messageId '" + messageId + "'");
+      //console.warn(this.svTypeId() + " updateMessageJson no message found with messageId '" + messageId + "'");
       return newMsg;
     }
   }

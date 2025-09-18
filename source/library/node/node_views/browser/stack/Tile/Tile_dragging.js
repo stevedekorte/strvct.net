@@ -101,7 +101,7 @@
      * @category Dropping
      */
     onDragDestinationDropped (dragView) {
-        console.log(this.typeId() + " onDragDestinationDropped")
+        console.log(this.svTypeId() + " onDragDestinationDropped")
 
         const itemNode = dragView.item().node()
 

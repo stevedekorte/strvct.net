@@ -202,7 +202,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     markAsDirty () {
         const store = this.defaultStore();
         if (store.hasActiveObject(this)) {
-            console.log("markAsDirty " + this.typeId());
+            console.log("markAsDirty " + this.svTypeId());
             store.forceAddDirtyObject(this); // not ideal, but let's see if it works
         }
     }

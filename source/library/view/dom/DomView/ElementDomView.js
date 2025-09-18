@@ -151,8 +151,8 @@
         }
         let external = this.externalFullActiveEventListenerCount()
         if (internal !== external) {
-            console.log(this.typeId() + " internal: " + internal + " ", this.allEventListeners().filter(v => v.isListening()).map(v => v.fullMethodName()) )
-            console.log(this.typeId() + " external: " + external + " ", EventListener.activeListenersForOwner(this).map(v => v.fullMethodName()))
+            console.log(this.svTypeId() + " internal: " + internal + " ", this.allEventListeners().filter(v => v.isListening()).map(v => v.fullMethodName()) )
+            console.log(this.svTypeId() + " external: " + external + " ", EventListener.activeListenersForOwner(this).map(v => v.fullMethodName()))
             this.fullActiveEventListenerCount();
             EventListener.activeListenersForOwner(this);
             debugger;
@@ -167,7 +167,7 @@
      */
     prepareToRetire () {
         //debugger;
-        console.log(this.typeId() + " prepareToRetire");
+        console.log(this.svTypeId() + " prepareToRetire");
         assert(!this.hasParentView());
 
         // if view has no parent at the end of event loop, 
@@ -186,7 +186,7 @@
 
         /*
         if (this.externalFullActiveEventListenerCount()) {
-            console.warn(this.typeId() + " was unable to remove the following event listeners:");
+            console.warn(this.svTypeId() + " was unable to remove the following event listeners:");
             EventListener.showActiveForOwner(this);
             debugger;
         }

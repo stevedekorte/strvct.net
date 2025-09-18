@@ -66,7 +66,7 @@
      * @category Debugging
      */
     debugTypeId () {
-        return this.typeId() + "_'" + this.label() + "'";
+        return this.svTypeId() + "_'" + this.label() + "'";
     }
 
     /**

@@ -103,7 +103,7 @@
      */
     acceptsLongPress () {
         if (!this.column()) {
-            console.log("missing parent view on: " + this.typeId());
+            console.log("missing parent view on: " + this.svTypeId());
         }
 
         if (this.column()) {

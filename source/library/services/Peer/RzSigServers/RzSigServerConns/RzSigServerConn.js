@@ -794,7 +794,7 @@
     error.betterMessage = "ERRORFATAL: The client's browser does not support some or all WebRTC features that you are trying to use. ";
     // ERRORFATAL
     // The client's browser does not support some or all WebRTC features that you are trying to use.
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -807,7 +807,7 @@
     // ERROR
     // You've already disconnected this peer from the server and can no longer make any new connections on it.
     error.betterMessage = "ERROR: You've already disconnected this peer from the server and can no longer make any new connections on it. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -820,7 +820,7 @@
     // ERRORFATAL
     // The ID passed into the Peer constructor contains illegal characters.
     error.betterMessage = "ERRORFATAL: The ID passed into the Peer constructor contains illegal characters. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -833,7 +833,7 @@
     // ERRORFATAL
     // The API key passed into the Peer constructor contains illegal characters or is not in the system (cloud server only).
     error.betterMessage = "ERRORFATAL: The API key passed into the Peer constructor contains illegal characters or is not in the system (cloud server only). ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -846,7 +846,7 @@
     // ERROR
     // Lost or cannot establish a connection to the signalling server.
     error.betterMessage = "ERROR: Lost or cannot establish a connection to the signalling server. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -859,7 +859,7 @@
     // ERROR
     // The peer you're trying to connect to does not exist.
     error.betterMessage = "ERROR: The peer you're trying to connect to does not exist. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -872,7 +872,7 @@
     // ERRORFATAL
     // PeerJS is being used securely, but the cloud server does not support SSL. Use a custom SigServer.
     error.betterMessage = "ERRORFATAL: PeerJS is being used securely, but the cloud server does not support SSL. Use a custom SigServer. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -885,7 +885,7 @@
     // ERRORFATAL
     // Unable to reach the server.
     error.betterMessage = "ERRORFATAL: Unable to reach the server. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -898,7 +898,7 @@
     // ERRORFATAL
     // An error from the underlying socket.
     error.betterMessage = "ERRORFATAL: An error from the underlying socket. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -913,7 +913,7 @@
 
     // TODO: retry?
     error.betterMessage = "ERRORFATAL: The underlying socket closed unexpectedly. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -934,7 +934,7 @@
       })
     }
     error.betterMessage = "ERRORSOMETIMES FATAL: The ID passed into the Peer constructor is already taken. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   /**
@@ -947,11 +947,11 @@
     if (this.getIdRetryCount() < this.getIdMaxRetries()) {
       this.setGetIdRetryCount(this.getIdRetryCount() + 1);
       this.addTimeout(() => {
-        console.warn(this.typeId() + " retry get id");
+        console.warn(this.svTypeId() + " retry get id");
         func();
       }, this.getIdRetryDelayMs());
     } else {
-      console.warn(this.typeId() + " reached max get id retries");
+      console.warn(this.svTypeId() + " reached max get id retries");
     }
     return this
   }
@@ -966,7 +966,7 @@
     // ERROR
     // Native WebRTC errors.
     error.betterMessage = "ERROR: Native WebRTC errors. ";
-    console.warn(this.typeId() + error.betterMessage, error);
+    console.warn(this.svTypeId() + error.betterMessage, error);
   }
 
   // --- reconnect ---
@@ -1004,7 +1004,7 @@
    * @returns {RzSigServerConn} The current instance.
    */
   onCall (call) {
-    console.warn(this.typeId() + " onCall: ", call);
+    console.warn(this.svTypeId() + " onCall: ", call);
     /*
 
     // Answer incoming voice call

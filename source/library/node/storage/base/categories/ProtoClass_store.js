@@ -109,7 +109,7 @@
                         const pid = v["*"];
                         assert(pid);
                         const storeRef = StoreRef.clone().setPid(pid).setStore(aStore);
-                        //console.log(this.typeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
+                        //console.log(this.svTypeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
                         slot.onInstanceSetValueRef(this, storeRef);
                     } else */
                     if (slot.slotType() === "JSON Object") {

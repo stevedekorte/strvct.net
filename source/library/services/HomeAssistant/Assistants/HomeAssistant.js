@@ -413,7 +413,7 @@
     if (error.currentTarget.readyState === 3) {
       console.log("ERROR: unable to connect");
     }
-    console.warn(this.typeId() + " " + this.wsUrl() + " onError:", error);
+    console.warn(this.svTypeId() + " " + this.wsUrl() + " onError:", error);
     this.setStatus("ERROR: " + error.message);
     error.rethrow();
   }
@@ -596,7 +596,7 @@
       }
 
     } else {
-      console.warn(this.typeId() + " WARNING: unhandled message [[" + JSON.stringify(message, null, 2) + "]]");
+      console.warn(this.svTypeId() + " WARNING: unhandled message [[" + JSON.stringify(message, null, 2) + "]]");
     }
     this.updateStatus();
   }

@@ -62,14 +62,14 @@
 
         if (newValue) {
             if (parentless.has(newValue)) {
-                console.log("removing " + this.typeId() + " from parentless")
+                console.log("removing " + this.svTypeId() + " from parentless")
             }
             parentless.delete(this)
         } else if (Type.isNullOrUndefined(oldValue) && !Type.isNullOrUndefined(newValue)) {
             if (parentless.size === 0) { // is this always correct?
                 this.scheduleMethod("retireParentlessViews")
             }
-            console.log("adding " + this.typeId() + " to parentless")
+            console.log("adding " + this.svTypeId() + " to parentless")
             parentless.add(this)
         }
 
@@ -523,7 +523,7 @@
 
         // sanity check - make sure it's in our subview list
         if (!this.hasSubview(aSubview)) {
-            const msg = this.svType() + " removeSubview " + aSubview.typeId() + " failed - no child found among: " + this.subviews().map(view => view.typeId())
+            const msg = this.svType() + " removeSubview " + aSubview.svTypeId() + " failed - no child found among: " + this.subviews().map(view => view.svTypeId())
             //Error.showCurrentStack()
             throw new Error(msg)
             //return aSubview

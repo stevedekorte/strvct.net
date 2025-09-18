@@ -155,7 +155,7 @@
     /*
     didUpdateSlotParentView (oldValue, newValue) { 
         super.didUpdateSlotParentView(oldValue, newValue);
-        console.log(this.typeId() + ".didUpdateSlotParentView(", oldValue.typeId(), ",", newValue.typeId(), ")");
+        console.log(this.svTypeId() + ".didUpdateSlotParentView(", oldValue.svTypeId(), ",", newValue.svTypeId(), ")");
         return this;
     }
     */
@@ -329,7 +329,7 @@
         
         /*
         if (ov.subviews().length) {
-            const names = ov.subviews().map(ov => ov.typeId());
+            const names = ov.subviews().map(ov => ov.svTypeId());
             //console.log("removing subviews: ", names);
             debugger;
         }
@@ -356,7 +356,7 @@
 
         /*
         if (ov.subviews().length) {
-            const names = ov.subviews().map(ov => ov.typeId());
+            const names = ov.subviews().map(ov => ov.svTypeId());
             //console.log("removing subviews: ", names);
             //debugger;
         }
@@ -1002,7 +1002,7 @@
      * @returns {String} The cache id.
      */
     cacheId () { // used atm in StackView cache
-        return this.node().typeId();
+        return this.node().svTypeId();
     }
 
     /**
@@ -1045,7 +1045,7 @@
      */
     cachedViewForNode (aNode) {
         if (this.hasCache() && aNode) {
-            const k = aNode.typeId();
+            const k = aNode.svTypeId();
             return this.nodeToStackCache().at(k, this);
         }
         return null;

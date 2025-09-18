@@ -289,7 +289,7 @@
      */
     description () {
         const slotNames = ["name", "valueHash", "valueSize", "lastModifiedTime"]
-        const parts = [this.typeId()]
+        const parts = [this.svTypeId()]
         slotNames.forEach(slotName => {
             parts.push(slotName + ":" + this[slotName]())
         })

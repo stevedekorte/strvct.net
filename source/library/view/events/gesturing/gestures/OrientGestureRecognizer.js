@@ -437,7 +437,7 @@
     debugJson () {
         const dp = this.diffPosition()
         return {
-            id: this.typeId(),
+            id: this.svTypeId(),
             dx: dp.x(),
             dy: dp.y(),
             scale: this.scale(),

@@ -47,7 +47,7 @@
     super.init();
     /*
     const p = Promise.clone();
-    p.setLabel(this.typeId() + ".frameReadyPromise");
+    p.setLabel(this.svTypeId() + ".frameReadyPromise");
     //p.setOnAwaitFunc(() => { this.setup(); });
     this.setFrameReadyPromise(p);
     */
@@ -60,7 +60,7 @@
    */
   frameReadyPromise () {
     if (!this._frameReadyPromise) {
-      this.setFrameReadyPromise(Promise.clone().setLabel(this.typeId() + ".frameReadyPromise"));
+      this.setFrameReadyPromise(Promise.clone().setLabel(this.svTypeId() + ".frameReadyPromise"));
       this.setup();
     }
     return this._frameReadyPromise;

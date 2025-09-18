@@ -846,7 +846,7 @@
         const vt = this.viewTarget()
 
         if (this.isDebugging()) {
-            console.log(this.shortTypeId() + " sending " + methodName + " to " + vt.typeId())
+            console.log(this.shortTypeId() + " sending " + methodName + " to " + vt.svTypeId())
         }
 
         //try {
@@ -862,7 +862,7 @@
         }
         /*
         } catch(e) {
-            console.error(this.typeId() + ".sendDelegateMessage(" + methodName + ") caught exception ", e.stack)
+            console.error(this.svTypeId() + ".sendDelegateMessage(" + methodName + ") caught exception ", e.stack)
             result = false
             //this.cancel() // how to do this without potentially cause a loop?
             e.rethrow();
@@ -1582,7 +1582,7 @@
         this.updateOutlineView();
         this.updateFingerViews();
         if (this.viewTarget()) {
-            console.log(this.viewTarget().typeId() + ".updateDebugger");
+            console.log(this.viewTarget().svTypeId() + ".updateDebugger");
         }
     }
 
@@ -1653,7 +1653,7 @@
      * @returns {String} The short type ID.
      */
     shortTypeId () {
-        return this.typeId().replaceAll("GestureRecognizer", "");
+        return this.svTypeId().replaceAll("GestureRecognizer", "");
     }
 
     /**
@@ -1661,7 +1661,7 @@
      * @returns {String} The description.
      */
     description () {
-        return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target");
+        return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().svTypeId() : "null view target");
     }
     
 }.initThisClass());

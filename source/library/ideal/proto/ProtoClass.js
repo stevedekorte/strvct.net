@@ -995,7 +995,7 @@
      * @category Information
      */
     toString () {
-        return this.typeId();
+        return this.svTypeId();
     }
 
     // --- ancestors ---

@@ -114,7 +114,7 @@
         assert(config.label, "Coach mark config must include label");
         
         // Use provided id or generate one based on view type
-        const id = config.id || this.typeId();
+        const id = config.id || this.svTypeId();
         
         this.setCoachMarkId(id);
         this.setCoachMarkLabel(config.label);

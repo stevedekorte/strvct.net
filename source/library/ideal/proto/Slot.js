@@ -1516,7 +1516,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const storeRef = this.onInstanceGetValueRef(anInstance);
         if (storeRef) {
             
-            //console.warn(anInstance.typeId() + "." + this.name() + " [" + anInstance.title() + "] - loading storeRef");
+            //console.warn(anInstance.svTypeId() + "." + this.name() + " [" + anInstance.title() + "] - loading storeRef");
             //console.warn(anInstance.title() + " loading storeRef for " + this.name());
             const obj = storeRef.unref();
             /*
@@ -1530,8 +1530,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             setter.apply(anInstance, [obj]); // WARNING: this may mark objects as dirty
 
         } else {
-            //console.warn(anInstance.typeId() + " unable to load storeRef - not found");
-            //console.warn(anInstance.typeId() + ".shouldStoreSubnodes() = " + anInstance.shouldStoreSubnodes());
+            //console.warn(anInstance.svTypeId() + " unable to load storeRef - not found");
+            //console.warn(anInstance.svTypeId() + ".shouldStoreSubnodes() = " + anInstance.shouldStoreSubnodes());
             //throw new Error("");
         }
     }

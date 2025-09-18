@@ -224,7 +224,7 @@
      * @category Management
      */
     addBegunGesture (aGesture) {
-        this.begunGesturesMap().set(aGesture.typeId(), aGesture);
+        this.begunGesturesMap().set(aGesture.svTypeId(), aGesture);
         return this;
     }
 
@@ -235,7 +235,7 @@
      * @category Management
      */
     removeBegunGesture (aGesture) {
-        this.begunGesturesMap().delete(aGesture.typeId());
+        this.begunGesturesMap().delete(aGesture.svTypeId());
         return this;
     }
 

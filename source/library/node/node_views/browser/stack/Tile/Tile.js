@@ -169,7 +169,7 @@
     /*
     setDisplay (v) {
         if (v === "block") {
-            console.log(this.typeId() + " setDisplay " + v)
+            console.log(this.svTypeId() + " setDisplay " + v)
         }
         return super.setDisplay(v)
     }

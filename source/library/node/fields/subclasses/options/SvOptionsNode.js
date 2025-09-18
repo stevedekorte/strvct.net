@@ -151,7 +151,7 @@
      * @returns {string} The debug type identifier.
      */
     debugTypeId () {
-        return this.typeId() + "_'" + this.key() + "'";
+        return this.svTypeId() + "_'" + this.key() + "'";
     }
     
     /**

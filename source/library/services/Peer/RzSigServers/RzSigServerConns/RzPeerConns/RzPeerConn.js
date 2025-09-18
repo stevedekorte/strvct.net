@@ -604,7 +604,7 @@
       this.setReconnectAttemptCount(this.reconnectAttemptCount() + 1);
       const delaySeconds = Math.pow(2, count);
       this.addTimeout(() => { this.reconnect(); }, delaySeconds * 1000);
-      console.log(this.typeId() + " will attempt reconnect in " + delaySeconds + " seconds");
+      console.log(this.svTypeId() + " will attempt reconnect in " + delaySeconds + " seconds");
 
     }
   }
@@ -613,7 +613,7 @@
    * @description Attempts to reconnect to the peer.
    */
   reconnect () {
-    console.log(this.typeId() + " attempting reconnect");
+    console.log(this.svTypeId() + " attempting reconnect");
     this.connect();
   }
 
@@ -622,7 +622,7 @@
    * @param {Event} aNote - The event object.
    */
   onDocumentBeforeUnload (/*aNote*/) {
-    console.log(this.typeId() + " onDocumentBeforeUnload shutdown");
+    console.log(this.svTypeId() + " onDocumentBeforeUnload shutdown");
     this.shutdown();
   }
 
@@ -641,7 +641,7 @@
         this.logDebug("sending delegate message " + methodName);
         m.apply(d, args);
       } else {
-        this.logDebug("delegate " + this.delegate().typeId() + " missing method " + methodName);
+        this.logDebug("delegate " + this.delegate().svTypeId() + " missing method " + methodName);
       }
     } else {
       this.logDebug("no delegate");
@@ -784,7 +784,7 @@
    */
   sendPing () {
     if (!this.nextPingTimeout()) {
-      console.log(this.typeId() + " sendPing");
+      console.log(this.svTypeId() + " sendPing");
       this.setGotPong(false);
       this.send({ name: "RzPeerConnPing" });
       this.setupNextPingTimeout();
@@ -797,7 +797,7 @@
    * @description Handles the pong event.
    */
   onPong () {
-    //console.log(this.typeId() + " onPong")
+    //console.log(this.svTypeId() + " onPong")
     this.setGotPong(true);
   }
 
@@ -831,7 +831,7 @@
     if (this.gotPong()) {
       this.sendPing();
     } else {
-      console.log(this.typeId() + " onPingTimeout shutdown");
+      console.log(this.svTypeId() + " onPingTimeout shutdown");
       this.shutdown();
     }
   }
@@ -842,7 +842,7 @@
    * @description Handles the ping event.
    */
   onPing () {
-    //console.log(this.typeId() + " onPing")
+    //console.log(this.svTypeId() + " onPing")
     this.sendPong();
   }
 
@@ -850,7 +850,7 @@
    * @description Sends a pong to the peer.
    */
   sendPong () {
-    //console.log(this.typeId() + " sendPong")
+    //console.log(this.svTypeId() + " sendPong")
     this.send({ name: "RzPeerConnPong" });
   }
 

@@ -181,11 +181,11 @@
             if (node.setJson) {
               node.setJson(v, jsonPathComponents.concat(k));
             } else {
-              console.warn(this.typeId() + ".setJson() found slot with no setJson(): ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
+              console.warn(this.svTypeId() + ".setJson() found slot with no setJson(): ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
             }
           }
           else {
-            console.warn(this.typeId() + ".setJson() found slot with no node: ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
+            console.warn(this.svTypeId() + ".setJson() found slot with no node: ", k, " at path: " + jsonPathComponents.concat(k).join("/"));
           }
         }
         else {
@@ -228,7 +228,7 @@
                 this.markAsDirty(); // save our type conversion
               }
             } else if (slot.slotType() !== Type.typeName(v)) {
-              const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
+              const errorMessage = this.svTypeId() + ".setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
               console.warn(errorMessage);
               //throw new Error(errorMessage);
 
@@ -239,7 +239,7 @@
                 slot.onInstanceSetValue(this, resolvedValue);
                 this.markAsDirty(); // save our type conversion
               } else {
-                const errorMessage = this.typeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
+                const errorMessage = this.svTypeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
                 console.warn(errorMessage);
                 if (slot.slotType() === "String" && Type.isNumber(v)) {
                     console.warn(`converting value from number ${v} to string '${v.asString()}'`);

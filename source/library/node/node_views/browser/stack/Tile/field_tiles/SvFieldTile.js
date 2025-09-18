@@ -360,7 +360,7 @@
      * @returns {string} The key view color.
      */
     keyViewColor () {
-        //this.log(this.node().title() + " " + this.typeId() + ".isSelected() = ", this.isSelected())
+        //this.log(this.node().title() + " " + this.svTypeId() + ".isSelected() = ", this.isSelected())
         return this.currentColor()
         //return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString()
     }

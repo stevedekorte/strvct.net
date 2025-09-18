@@ -176,7 +176,7 @@
             if (v !== undefined) {
                 if (!Type.isBoolean(v)) {
                     const methodName = this.methodName() + "ActionInfo";
-                    console.warn(this.target().typeId() + "." + methodName + "() returned invalid value of '" + v + "' for isEnabled. Boolean value is required.");
+                    console.warn(this.target().svTypeId() + "." + methodName + "() returned invalid value of '" + v + "' for isEnabled. Boolean value is required.");
                 }
                 assert(Type.isBoolean(v), "isEnabled must be a boolean");
                 this.setIsEnabled(v);

@@ -212,7 +212,7 @@
     onUp (event) {
         super.onUp(event)
  
-        this.logDebug(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().typeId())
+        this.logDebug(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().svTypeId())
 
         if (this.hasTimer()) {
             if (this.tapCount() === this.numberOfTapsRequired()) {

@@ -20,8 +20,8 @@
      */
     static actionKeyForTargetAndMethod (target, method) {
         assert(target, "target is null");
-        assert(target.typeId, Type.typeName(target) + " class missing typeId");
-        return target.typeId() + "." + method;
+        assert(target.svTypeId, Type.typeName(target) + " class missing svTypeId");
+        return target.svTypeId() + "." + method;
     }
 
     /**
@@ -101,7 +101,7 @@
         try {
             this.send();
         } catch(error) {
-            console.warn(this.typeId() + ".tryToSend(" + this.description() + ") caught exception: ");
+            console.warn(this.svTypeId() + ".tryToSend(" + this.description() + ") caught exception: ");
             error.show();
             this.setError(error);
             return error;
@@ -152,7 +152,7 @@
     description () {
         const t = this.target() ? this.target().debugTypeId() : "null";
         const o = this.order() === 0 ? "" : " order:" + this.order();
-        return this.typeId() + " " + t + " " + this.method() + "" + o;
+        return this.svTypeId() + " " + t + " " + this.method() + "" + o;
     }
 
 }.initThisClass());

@@ -109,7 +109,7 @@
         if (this.protectedTraps().has(trapName)) {
             const msg = " blocked proxy trap '" + trapName + "' on property '" + propertyName + "'"
             this.logDebug(msg)
-            throw new Error(this.typeId() + msg)
+            throw new Error(this.svTypeId() + msg)
             return false
         }
 
@@ -125,7 +125,7 @@
     onProtectedMethodCall(propertyName, argsList) {
         const msg = " blocked method call '" + propertyName + "' "
         this.logDebug(msg)
-        throw new Error(this.typeId() + msg)
+        throw new Error(this.svTypeId() + msg)
     }
 
     /**

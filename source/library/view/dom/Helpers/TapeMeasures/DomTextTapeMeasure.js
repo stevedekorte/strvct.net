@@ -115,7 +115,7 @@
      */
     createTestElement () {
         const e = document.createElement("div");
-	    e.setAttribute("id", this.typeId());
+	    e.setAttribute("id", this.svTypeId());
         e.style.display = "block";
         e.style.position = "absolute";
         e.style.width = "auto";

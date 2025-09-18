@@ -466,7 +466,7 @@
 
     /*
     scheduleSyncFromNode () {
-        console.warn(this.typeId() + " scheduleSyncFromNode");
+        console.warn(this.svTypeId() + " scheduleSyncFromNode");
         return super.scheduleSyncFromNode();
     }
     */

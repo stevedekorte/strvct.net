@@ -121,7 +121,7 @@
      * @returns {string} The type ID.
      * @category Identification
      */
-    typeId () {
+    svTypeId () {
         return this.typePuuid();
     }
 
@@ -150,4 +150,4 @@
 
 }).initThisCategory();
 
-assert(Object.typeId, "Object.typeId is not defined");
+assert(Object.svTypeId, "Object.svTypeId is not defined");

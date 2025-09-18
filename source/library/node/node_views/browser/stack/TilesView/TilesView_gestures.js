@@ -20,7 +20,7 @@
      * @category Gesture Handling
      */
     onTapComplete (aGesture) {
-        //console.log(this.typeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
+        //console.log(this.svTypeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
         
         if (this.node()) {
 
@@ -179,7 +179,7 @@
                 newTile.contentView().setTransform(null)                
             }
         } else {
-            console.warn(this.typeId() + ".onPinchMove() missing this._temporaryPinchSubnode")
+            console.warn(this.svTypeId() + ".onPinchMove() missing this._temporaryPinchSubnode")
         }
         // do we need to restack views?
     }
