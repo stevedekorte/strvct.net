@@ -443,7 +443,7 @@
 
    * @param {Event} event - The open event.
    */
-  async onOpen (event) {
+  async onOpen (/*event*/) {
     this.setStatus("connected, authorizing...");
   }
 
@@ -478,7 +478,7 @@
     } catch (error) {
       this.setError(error);
       throw error;
-      this.disconnect();
+      //this.disconnect();
     }
   }
 
@@ -527,7 +527,7 @@
 
   updateStatus () {
     if (this.messagePromises().size) {
-      const ids = Array.from(this.messagePromises().keys());
+      //const ids = Array.from(this.messagePromises().keys());
       //this.setStatus("awaiting " + this.messagePromises().size + " messages (" + JSON.stringify(ids) + ")");
       this.setStatus("awaiting " + this.messagePromises().size + " messages...");
     } else {

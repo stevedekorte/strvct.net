@@ -167,7 +167,7 @@ Object.defineSlots(ProtoClass.prototype, {
      * @returns {ProtoClass} The instance
      * @category Broadcasting
      */
-    broadcastMessage: function(methodName) {
+    broadcastMessage: function (methodName) {
         Broadcaster.shared().broadcastNameAndArgument(methodName, this)
         return this
     }

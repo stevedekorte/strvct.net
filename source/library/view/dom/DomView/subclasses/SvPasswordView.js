@@ -230,7 +230,7 @@
      * @description Override to disable HTML content methods
      * @category Disabled Methods
      */
-    setInnerHtml (html) {
+    setInnerHtml (/*html*/) {
         throw new Error("SvPasswordView does not support HTML content");
     }
 
@@ -246,7 +246,7 @@
      * @description Override to disable content editable
      * @category Disabled Methods
      */
-    setContentEditable (aBool) {
+    setContentEditable (/*aBool*/) {
         // Input elements don't use contentEditable
         return this;
     }
