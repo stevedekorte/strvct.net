@@ -39,7 +39,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         }
 
         if(!this.shouldStore()) {
-            console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
+            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.svType() + ") with shouldStore set to false - returning null");
             return null;
         }
 
@@ -102,7 +102,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         let type = "Object";
 
         if (Type.isFunction(this.type)) { // if we have a type method, use it to get the type
-            type = this.type();
+            type = this.svType();
         }
 
         // Arrays, Maps, and Sets already support recordForStore() ,

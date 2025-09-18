@@ -102,7 +102,7 @@
    * @category Data Processing
    */
   onJsonStreamReaderPopContainer (reader, json) {
-    throw new Error(this.type() + " onJsonStreamReaderPopContainer(reader, json) should be overridden by subclass");
+    throw new Error(this.svType() + " onJsonStreamReaderPopContainer(reader, json) should be overridden by subclass");
   }
 
 }).initThisClass();

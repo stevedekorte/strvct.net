@@ -155,7 +155,7 @@
      */
     static shared () {
         if (!this.isSingleton()) {
-            console.warn("WARNING: called " + this.type() + ".shared() but class not declared a singleton!");
+            console.warn("WARNING: called " + this.svType() + ".shared() but class not declared a singleton!");
             /*
                 // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
                 
@@ -170,7 +170,7 @@
         if (!this.hasShared()) {
             this.setShared(this.clone())
         }
-        //assert(this.isKindOf(this._shared.thisClass()), this.type() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().type());
+        //assert(this.isKindOf(this._shared.thisClass()), this.svType() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().svType());
         return this._shared;
     }
 
@@ -196,7 +196,7 @@
      */
     static initClass () { // called only once when class is created
 
-        //console.log(this.type() + " initThisClass");
+        //console.log(this.svType() + " initThisClass");
         Object.defineSlot(this, "_shared", undefined);
         //this.newClassSlot("shared", undefined);
         this.newClassSlot("isSingleton", false);
@@ -216,7 +216,7 @@
      * @static
      */
     static ancestorClassesTypesIncludingSelf () {
-        return this.ancestorClassesIncludingSelf().map(c => c.type());
+        return this.ancestorClassesIncludingSelf().map(c => c.svType());
     }
 
     /**
@@ -226,7 +226,7 @@
      * @static
      */
     static ancestorClassesTypes () {
-        return this.ancestorClasses().map(c => c.type());
+        return this.ancestorClasses().map(c => c.svType());
     }
 
     /*
@@ -310,9 +310,9 @@
 
         /*
         if (traversed.has(this)) {
-            throw new Error("already traversed ", this.type())
+            throw new Error("already traversed ", this.svType())
         } else {
-            console.log("newly traversing ", this.type())
+            console.log("newly traversing ", this.svType())
         }
         traversed.add(this)
         */
@@ -328,13 +328,13 @@
             //lines.append("----")
         }
         const path = "";
-        lines.append(prefix + spacer + this.type() + " " + path + postfix);
+        lines.append(prefix + spacer + this.svType() + " " + path + postfix);
         /*
         if (this.parentClass()) { // for UML diagram
-            lines.append("[" + this.type() + "] -> [" + this.parentClass().type() + "]")
+            lines.append("[" + this.svType() + "] -> [" + this.parentClass().svType() + "]")
         }
         */
-        const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()));
+        const sortedSubclasses = this.subclasses().sort((a, b) => a.svType().localeCompare(b.svType()));
         const subclassLines = sortedSubclasses.map((subclass) => {
             return subclass.subclassesDescription(level + 1, traversed);
         })
@@ -524,7 +524,7 @@
 
     isEqual (anObject) {
         // Should this test Type equality?
-        if (this.type() !== obj2.type()) {
+        if (this.svType() !== obj2.svType()) {
             return false;
         }
         const sm1 = this.allSlotsRawValueMap();
@@ -562,7 +562,7 @@
     newSlot (slotName, initialValue, allowOnInstance=false) {
         /*
         if (Reflect.ownKeys(this).contains(slotName)) {
-            const msg = "WARNING: " + this.type() + "." + slotName + " slot already exists"
+            const msg = "WARNING: " + this.svType() + "." + slotName + " slot already exists"
             throw new Error(msg)
         }
         */
@@ -573,7 +573,7 @@
             if(typeof(initialValue) === "function" && this[slotName + "_isOptional"] !== undefined) {
                 return null;
             }
-            const msg = this.type() + " newSlot('" + slotName + "') - slot already exists";
+            const msg = this.svType() + " newSlot('" + slotName + "') - slot already exists";
             console.log(msg);
             debugger;
             this.hasSlot(slotName);
@@ -599,7 +599,7 @@
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
         const oldSlot = this.getSlot(slotName);
         if (Type.isUndefined(oldSlot)) {
-            const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override";
+            const msg = this.svType() + " newSlot('" + slotName + "') - no existing slot to override";
             console.log(msg);
             throw new Error(msg);
         }
@@ -645,7 +645,7 @@
      */
     assertProtoSlotsHaveType () {
         this.slotsMap().forEachKV((slotName, slot) => {
-            assert(Type.isString(slot.slotType()), () => { return this.type() + " slot " + slotName + " has no type" });
+            assert(Type.isString(slot.slotType()), () => { return this.svType() + " slot " + slotName + " has no type" });
         });
     }
 
@@ -1014,7 +1014,7 @@
         for (let i = 0; i < classes.length; i++) {
             const aClass = classes[i];
 
-            const name = aClass.type() + aPostfix;
+            const name = aClass.svType() + aPostfix;
             const proto = Object.getClassNamed(name);
             if (proto) {
                 return proto;
@@ -1033,7 +1033,7 @@
     // debugging
 
     logPrefix () {
-        const logPrefix = this.thisClass().hasShared() ? this.type() + "(shared)" : this.type();
+        const logPrefix = this.thisClass().hasShared() ? this.svType() + "(shared)" : this.svType();
         return "[" + logPrefix + "] ";
     }
 
@@ -1111,7 +1111,7 @@
      */
     shared () {
         if (!this.isSingleton()) {
-            console.warn("WARNING: called " + this.type() + ".shared() but class not declared a singleton!");
+            console.warn("WARNING: called " + this.svType() + ".shared() but class not declared a singleton!");
             /*
                 // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
                 
@@ -1126,7 +1126,7 @@
         if (!this.hasShared()) {
             this.setShared(this.clone());
         }
-        //assert(this.isKindOf(this._shared.thisClass()), this.type() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().type());
+        //assert(this.isKindOf(this._shared.thisClass()), this.svType() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().svType());
         return this._shared;
     }
 
@@ -1166,7 +1166,7 @@
      * @category Class Hierarchy
      */
     ancestorClassesTypesIncludingSelf () {
-        return this.ancestorClassesIncludingSelf().map(c => c.type());
+        return this.ancestorClassesIncludingSelf().map(c => c.svType());
     }
 
     /**
@@ -1175,7 +1175,7 @@
      * @category Class Hierarchy
      */
     ancestorClassesTypes () {
-        return this.ancestorClasses().map(c => c.type());
+        return this.ancestorClasses().map(c => c.svType());
     }
 
     /**
@@ -1206,7 +1206,7 @@
      * @returns {string} The type name.
      * @category Information
      */
-    type () {
+    svType () {
         return this.constructor.name;
     }
 
@@ -1220,10 +1220,10 @@
         // create a slot named methodName
         const value = this[methodName];
         if (!value) {
-            throw new Error("Method " + methodName + " not found on " + this.type());
+            throw new Error("Method " + methodName + " not found on " + this.svType());
         }
         if (!Type.isFunction(value)) {
-            throw new Error("Method " + methodName + " is not a function on " + this.type());
+            throw new Error("Method " + methodName + " is not a function on " + this.svType());
         }
         return value;
     } 
@@ -1242,7 +1242,7 @@
 
     registerMethodNamed (name) {
         const method = this.methodNamed(name);
-        assert(method, "Method " + name + " not found on " + this.type());
+        assert(method, "Method " + name + " not found on " + this.svType());
         method.setMetaProperty("name", name);
         method.setMetaProperty("ownerObject", this);
         this.methodsMap().set(name, method);
@@ -1294,7 +1294,7 @@
      * @category Debugging
      */
     debugTypeId () {
-        return this.type() + "_" + this.shortId();
+        return this.svType() + "_" + this.shortId();
     }
 
     /**

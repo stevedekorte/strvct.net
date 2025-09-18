@@ -16,7 +16,7 @@
      * @category Keyboard Interaction
      */
     onEnterKeyUp () {
-        //this.logDebug(this.type() + " for " + this.node().title() + " onEnterKeyUp")
+        //this.logDebug(this.svType() + " for " + this.node().title() + " onEnterKeyUp")
         this.justTap();
         return false; // stop propagation
     }
@@ -28,7 +28,7 @@
      * @category Keyboard Interaction
      */
     onShiftBackspaceKeyUp (/*event*/) {
-        this.logDebug(this.type() + " for " + this.node().title() + " onBackspaceKeyUp");
+        this.logDebug(this.svType() + " for " + this.node().title() + " onBackspaceKeyUp");
         this.delete();
         return false; // stop propagation
     }

@@ -94,17 +94,17 @@
   finalInit () {
     super.finalInit();
     try {
-     // assert(this.subnodeClasses().length > 0, this.type() + " has no subnode classes");
+     // assert(this.subnodeClasses().length > 0, this.svType() + " has no subnode classes");
       this.messages().forEach(m => {
-        //assert(this.subnodeClasses().includes(m.thisClass()), m.type() + " is not in " + JSON.stringify(this.subnodeClasses().map(c => c.type())));
+        //assert(this.subnodeClasses().includes(m.thisClass()), m.svType() + " is not in " + JSON.stringify(this.subnodeClasses().map(c => c.svType())));
         if(!m.setConversation) {
           debugger;
-          throw new Error(m.type() + " missing setConversation() ");
+          throw new Error(m.svType() + " missing setConversation() ");
         }
       });
     } catch (error) {
       //debugger;
-      console.log(this.type() + " finalInit error: " + error.message);
+      console.log(this.svType() + " finalInit error: " + error.message);
       this.removeAllSubnodes();
     }
     //debugger;
@@ -210,7 +210,7 @@
   onChatInputValue (v) {
     debugger;
     if (!this.acceptsChatInput()) {
-      console.warn(this.type() + " does not accept chat input");
+      console.warn(this.svType() + " does not accept chat input");
       return;
     }
     const m = this.newMessage();
@@ -251,7 +251,7 @@
     assert(Type.isArray(msgsJson));
 
     const json = {
-      type: this.type(),
+      type: this.svType(),
       messages: msgsJson
     };
     return json;

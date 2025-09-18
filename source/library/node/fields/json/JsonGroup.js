@@ -117,7 +117,7 @@
   }
 
   updateJson (/*json, jsonPathComponents = []*/) {
-    throw new Error(this.type() + ".updateJson() is no longer implemented. applyJsonPatches() is the new method to use.");
+    throw new Error(this.svType() + ".updateJson() is no longer implemented. applyJsonPatches() is the new method to use.");
     /*
     this.setJson(json, jsonPathComponents)
     return this
@@ -148,7 +148,7 @@
     const subnodesToRemove = this.jsonSubnodes().select(sn => {
       const notFound = !keys.includes(sn.title());
       if (notFound) {
-        console.warn(this.type() + ".setJson() did not find key: ", sn.title(), " at path: " + jsonPathComponents.join("/"));
+        console.warn(this.svType() + ".setJson() did not find key: ", sn.title(), " at path: " + jsonPathComponents.join("/"));
         //debugger;
       }
       return notFound;
@@ -203,7 +203,7 @@
                 // if not, something is wrong
 
                 // since jsonId is created on finalInit, this could be set even if it really should be null
-                //console.warn(this.type() + ".setJson() found slot with jsonId mismatch: " + node.jsonId() + " !== " + v.jsonId, " at path: " + jsonPathComponents.concat(k).join("/"));
+                //console.warn(this.svType() + ".setJson() found slot with jsonId mismatch: " + node.jsonId() + " !== " + v.jsonId, " at path: " + jsonPathComponents.concat(k).join("/"));
                 //debugger;
                 node.setJson(v, jsonPathComponents.concat(k));
               }
@@ -223,7 +223,7 @@
               } else {
                 // slot doesn't allow null, use the default/init value
                 const initValue = slot.initValue();
-                console.warn(this.type() + ".setJson() slot '" + slot.name() + "' doesn't allow null, using initValue: " + initValue);
+                console.warn(this.svType() + ".setJson() slot '" + slot.name() + "' doesn't allow null, using initValue: " + initValue);
                 slot.onInstanceSetValue(this, initValue);
                 this.markAsDirty(); // save our type conversion
               }
@@ -266,7 +266,7 @@
           }
         }
       } else {
-        const errorMessage = "WARNING: " + this.type() + ".setJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/");
+        const errorMessage = "WARNING: " + this.svType() + ".setJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/");
         console.warn(errorMessage);
         // also add the warning to the error log
         //debugger; 
@@ -289,7 +289,7 @@
     if (this.shouldStoreSubnodes()) {
       this.subnodes().filter(sn => sn.title() !== "jsonString").map(sn => {
         if (sn.asJson && sn.asJson() !== undefined) { // skip things like images
-          console.log("calcJson() " + this.type() + " subnode: " + sn.title());
+          console.log("calcJson() " + this.svType() + " subnode: " + sn.title());
           debugger;
           dict[sn.title()] = sn.asJson()
         }
@@ -344,8 +344,8 @@
   // --- subnode slots ---
 
   newSubnodeFieldSlot (slotName, finalProto) {
-    assert(Type.isString(slotName), this.type() + "newSubnodeFieldSlot() slotName should be a string, not a " + Type.typeName(slotName));
-    assert(Type.isString(finalProto) || Type.isClass(finalProto), this.type() + "newSubnodeFieldSlot() finalProto should be a class, not a " + finalProto.type());
+    assert(Type.isString(slotName), this.svType() + "newSubnodeFieldSlot() slotName should be a string, not a " + Type.typeName(slotName));
+    assert(Type.isString(finalProto) || Type.isClass(finalProto), this.svType() + "newSubnodeFieldSlot() finalProto should be a class, not a " + finalProto.svType());
   
     const slot = this.newSlot(slotName, null);
     slot.setLabel(slot.name().humanized());
@@ -356,7 +356,7 @@
     slot.setFinalInitProto(finalProto);
     //slot.setIsSubnode(true);
     slot.setIsSubnodeField(true);
-    slot.setSlotType(Type.isString(finalProto) ? finalProto : finalProto.type());
+    slot.setSlotType(Type.isString(finalProto) ? finalProto : finalProto.svType());
     slot.setSummaryFormat("key: value");
 
     return slot;
@@ -373,7 +373,7 @@
       if (["String", "Number", "Array", "Boolean", "Map", "Set"].includes(defaultType)) {
         slot.setSlotType(defaultType); // careful with this!
       } else {
-        console.warn(this.type() + ".configureSlotForJsonField('" + slot.name() + "') slotType is null and defaultType is not a JSON type: ", defaultType);
+        console.warn(this.svType() + ".configureSlotForJsonField('" + slot.name() + "') slotType is null and defaultType is not a JSON type: ", defaultType);
         debugger;
         slot.setSlotType("String");
       }

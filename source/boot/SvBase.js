@@ -15,7 +15,7 @@
     static jsonType () {
         /// check if type is a function
         if (typeof this.type === "function") {
-            return this.type();
+            return this.svType();
         }
         return "object";
     }
@@ -57,7 +57,7 @@
      * @returns {string} The name of the class.
      * @category Reflection
      */
-    static type () {
+    static svType () {
         return this.name
     }
 
@@ -120,11 +120,11 @@
             this.prototype.initPrototype();
         }
         /*
-        if (this.type() === "SvBase") {
-            SvGlobals.update(this.type(), this);
+        if (this.svType() === "SvBase") {
+            SvGlobals.update(this.svType(), this);
         } else {
          */
-        SvGlobals.set(this.type(), this); // This isn't done automatically by JS class deifintions, so we do it here
+        SvGlobals.set(this.svType(), this); // This isn't done automatically by JS class deifintions, so we do it here
         //}
         return this;
     }
@@ -134,7 +134,7 @@
      * @returns {string} The name of the class.
      * @category Reflection
      */
-    type () {
+    svType () {
         return this.constructor.name;
     }
 
@@ -210,7 +210,7 @@
      * @category Debugging
      */
     debugTypeId () {
-        return this.type();
+        return this.svType();
     }
 
     logPrefix () {

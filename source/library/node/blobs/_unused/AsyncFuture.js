@@ -89,10 +89,10 @@
                 if (f) {
                     f.call(target, this)
                 } else {
-                    console.warn(this.type() + " LOCAL WARNING: " + target.type() + " missing method "+ m + "()")
+                    console.warn(this.svType() + " LOCAL WARNING: " + target.svType() + " missing method "+ m + "()")
                 }
             } else {
-                console.warn(this.type() + " LOCAL WARNING: no responseTarget for " + m)
+                console.warn(this.svType() + " LOCAL WARNING: no responseTarget for " + m)
             }
         }
     }
@@ -150,7 +150,7 @@
                     }
 
                     if (!this.isDone()) {
-                        throw new Error(this.type() + " resultProxy accessed before result has been received")
+                        throw new Error(this.svType() + " resultProxy accessed before result has been received")
                     }
 
                     const v = target.result()

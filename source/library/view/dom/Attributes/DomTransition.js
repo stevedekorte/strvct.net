@@ -196,7 +196,7 @@
         ]
 
         const s = parts.join(" ")
-        console.log(this.type() + " asString() = '" + s + "'")
+        console.log(this.svType() + " asString() = '" + s + "'")
         return s
     }
 

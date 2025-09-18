@@ -370,7 +370,7 @@
             if (!this.canDeferLoad()) {
                 //this.log(".prechacheWhereAppropriate: " + this.path());
                 await this.asyncLoad();
-                //console.warn("---- " + this.type() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
+                //console.warn("---- " + this.svType() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
             }
         }
     }

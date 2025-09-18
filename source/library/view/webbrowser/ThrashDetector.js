@@ -238,7 +238,7 @@
      * @category Thrash Detection
      */
     onThrash () {
-        //console.log(this.type() + " reflowCount: ", this.reflowCount())
+        //console.log(this.svType() + " reflowCount: ", this.reflowCount())
     }
 
     /**
@@ -247,7 +247,7 @@
      */
     endFrame () {
         if (this.enabled() && this.reflowCount()) {
-            console.log(">>> " +  this.type() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), null, 2))
+            console.log(">>> " +  this.svType() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), null, 2))
         }
     }
 

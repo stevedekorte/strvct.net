@@ -192,7 +192,7 @@
      * @category Event
      */
     onTapOfDecendantNode (aNode) {
-        if (aNode.type() === "SvDayNode") {
+        if (aNode.svType() === "SvDayNode") {
             const dayNode = aNode
             const monthNode = dayNode.parentNode()
             const yearNode = monthNode.parentNode()

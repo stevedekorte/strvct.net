@@ -210,7 +210,7 @@ The following formats will be used for tool calls and responses:
     m.setIsVisibleToUser = function (value) {
       assert(value === false, "Tool call results should not be visible to user");
     };
-    //this.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.type());
+    //this.log(">>>>>>>>>>>>>>>>>>>>>>> created tool call results message with class: " + m.svType());
     return m;
   }
 

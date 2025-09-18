@@ -93,7 +93,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle(this.type().before("Service"));
+    this.setTitle(this.svType().before("Service"));
     this.assertHasModels();
     //debugger;
 
@@ -114,7 +114,7 @@
 
   setModelsJson (json) {
     super.setModelsJson(json);
-    //console.log(this.type() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
+    //console.log(this.svType() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
     this.assertHasModels();
     //debugger;
     return this;
@@ -168,7 +168,7 @@
     aRequest.setBodyJson(bodyJson);
 
     if (mergedMessageCount) {
-      //console.log(this.type() +".prepareToSendRequest() merged " + mergedMessageCount + " messages");
+      //console.log(this.svType() +".prepareToSendRequest() merged " + mergedMessageCount + " messages");
     }
     return this;
   }

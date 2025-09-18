@@ -83,7 +83,7 @@
   onConnection (conn) {
     this.debugLog("incoming connection from: " + conn.peer)
     if (!this.allowsIncomingConnections()) {
-      console.warn(this.type() + " attempted connection while allowsIncomingConnections is false");
+      console.warn(this.svType() + " attempted connection while allowsIncomingConnections is false");
       return this
     }
 
@@ -133,7 +133,7 @@
       }, 5000);
     } else {
       console.warn(
-        this.type() +
+        this.svType() +
           "Reached maximum number of " + this.maxRetries() + " retries. Displaying system message."
       );
       // Display a system message here, e.g. by updating the UI

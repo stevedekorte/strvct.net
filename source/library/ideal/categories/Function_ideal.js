@@ -315,13 +315,13 @@ Function.prototype.asRootJsonSchema = function asRootJsonSchema (definitionsOnly
         }
         if (!this.has(aClass)) {
             this._add(aClass);
-            console.log("refSet.add(" + aClass.type() + ") size ", this.size);
+            console.log("refSet.add(" + aClass.svType() + ") size ", this.size);
         }
     }
     */
 
     const json = {
-        //"$id": this.type(),
+        //"$id": this.svType(),
         "$id": this.assistantToolName(),
         "$schema": "http://json-schema.org/draft-07/schema#",
         "description": this.description()

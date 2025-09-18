@@ -185,7 +185,7 @@
    */
   finalInit () {
     super.finalInit()
-    this.setTitle(this.type().before("Service"));
+    this.setTitle(this.svType().before("Service"));
 
     // model and other info is set via OpenAiService.json file
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4

@@ -207,7 +207,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             };
         }
         
-        throw Error.exception(this.type() + ".itemForValue() called with invalid value: " + v);
+        throw Error.exception(this.svType() + ".itemForValue() called with invalid value: " + v);
     }
 
     /**
@@ -379,10 +379,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             this.setOwnsValue(true);
 
             if (this.slotType() === null) {
-                if (aProto.type() === "String") {
+                if (aProto.svType() === "String") {
                     this.setSlotType(aProto);
                 } else {
-                    this.setSlotType(aProto.type()); // hack
+                    this.setSlotType(aProto.svType()); // hack
                 }
             }
         }
@@ -798,7 +798,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 if (this.validItems()) {
                     if (field.setValidItems === undefined) {
                         debugger;
-                        throw new Error("field " + field.type() + " does not support setValidItems.");
+                        throw new Error("field " + field.svType() + " does not support setValidItems.");
                     }
                     field.setValidItems(this.validItems());
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks());
@@ -945,7 +945,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             this._doesHookSetter = aBool;
             if (aBool) {
                 if (this.alreadyHasSetter() && !this.ownsSetter()) {
-                    const msg = this.owner().type() + "." + this.setterName() + "() exists, so we can't hook it - fix by calling slot.setOwnsSetter(true)";
+                    const msg = this.owner().svType() + "." + this.setterName() + "() exists, so we can't hook it - fix by calling slot.setOwnsSetter(true)";
                     console.log(msg);
                     throw new Error(msg);
                 } 
@@ -1179,7 +1179,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
                 if (!isValid) {
-                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
+                    const errorMsg = "WARNING: " + this.svType() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
                     console.log(errorMsg);
                     if (!["challengeRating", "spellcastingAbility"].contains(slot.name())) {
                         debugger;
@@ -1295,7 +1295,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     onInstanceSetValue (anInstance, aValue) {
         const m = anInstance[this._setterName];
         if (Type.isUndefined(m)) {
-            throw new Error(anInstance.type() + " is missing setter '" + this._setterName + "'");
+            throw new Error(anInstance.svType() + " is missing setter '" + this._setterName + "'");
         }
         return m.call(anInstance, aValue); // not consistent with rawset to return this...
     }
@@ -1359,15 +1359,15 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category Initialization
      */
     onInstanceFinalInitSlot (anInstance) {
-        assert(this.slotType() !== null, " slotType is null for " + anInstance.type() + "." + this.name());
+        assert(this.slotType() !== null, " slotType is null for " + anInstance.svType() + "." + this.name());
 
         const finalInitProto = this.finalInitProtoClass(); //this._finalInitProto;
         if (finalInitProto) {
 
             let oldValue = this.onInstanceGetValue(anInstance);
 
-            if (oldValue && oldValue.type() !== finalInitProto.type()) {
-                const warning = "slot '" + this.name() + "' finalInitProto type (" + finalInitProto.type() + ") does not match existing value (" + oldValue.type() + ") from Store";
+            if (oldValue && oldValue.svType() !== finalInitProto.svType()) {
+                const warning = "slot '" + this.name() + "' finalInitProto type (" + finalInitProto.svType() + ") does not match existing value (" + oldValue.svType() + ") from Store";
                 console.warn(warning);
                 debugger;
                 //throw new Error(warning);
@@ -1427,7 +1427,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             // sanity check - we don't typically want to add it automatically if subnodes are stored
             assert(anInstance.shouldStoreSubnodes() === false);
             const value = this.onInstanceGetValue(anInstance);
-            assert(!Type.isNullOrUndefined(value), anInstance.type() + "." + this.name() + " ivar is undefined for *subnode* slot - maybe you meant to use setIsSubnodeField(true)?");
+            assert(!Type.isNullOrUndefined(value), anInstance.svType() + "." + this.name() + " ivar is undefined for *subnode* slot - maybe you meant to use setIsSubnodeField(true)?");
             anInstance.assertValidSubnodeType(value); // tmp - this is also done in addSubnode
             anInstance.addSubnode(value);
         }
@@ -1520,7 +1520,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             //console.warn(anInstance.title() + " loading storeRef for " + this.name());
             const obj = storeRef.unref();
             /*
-            //console.warn("   loaded: " + obj.type());
+            //console.warn("   loaded: " + obj.svType());
             anInstance[this.privateName()] = obj; // is this safe? what about initialization?
             //this.onInstanceSetValue(anInstance, obj);
             this.onInstanceSetValueRef(anInstance, null);

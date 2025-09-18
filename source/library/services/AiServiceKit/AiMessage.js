@@ -51,7 +51,7 @@
       slot.setSlotType("String");
       slot.setValidValues(this.validRoles());
       slot.setCanInspect(true);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
     }
 
     /**
@@ -63,7 +63,7 @@
       slot.setSlotType("Boolean");
       slot.setShouldStoreSlot(true);
       slot.setCanInspect(true);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
     }
 
     /**
@@ -320,8 +320,8 @@
    * @category Cleanup
    */
   cleanupAssistantMessage () {
-    if (this.type() === "AiResponseMessage") {
-    //if (this.type() !== "UoRollRequestMessage" && this.type() !== "UoImageMessage") {
+    if (this.svType() === "AiResponseMessage") {
+    //if (this.svType() !== "UoRollRequestMessage" && this.svType() !== "UoImageMessage") {
       //debugger;
       // TODO: add sanity check before deleting
       this.deleteFollowingMessages(); 

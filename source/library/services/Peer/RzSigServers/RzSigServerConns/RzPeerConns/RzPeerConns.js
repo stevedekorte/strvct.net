@@ -125,7 +125,7 @@
    * @category Validation
    */
   assertValidSubnodes () {
-    const invalidMatch = this.subnodes().detect(sn => sn.thisClass().type() !== this.peerConnClass().type())
+    const invalidMatch = this.subnodes().detect(sn => sn.thisClass().svType() !== this.peerConnClass().svType())
     assert(!invalidMatch);
   }
 

@@ -190,7 +190,7 @@
      * @category Data Representation
      */
     asString () {
-        let s = this.type() + "(" + this._x + ", " + this._y ;
+        let s = this.svType() + "(" + this._x + ", " + this._y ;
 
         if (this._z) { 
             s += ", " + this._z;

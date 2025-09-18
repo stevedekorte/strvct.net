@@ -99,7 +99,7 @@ class SvWindowErrorPanel extends Object {
         if (typeof(source) === "string") {
             sourceName = source;
         } else if (source && source.type) {
-            sourceName = source.type();
+            sourceName = source.svType();
         } else {
             sourceName = typeof(source);
         }

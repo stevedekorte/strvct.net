@@ -43,7 +43,7 @@
         }
 
         return {
-            type: this.type(), 
+            type: this.svType(), 
             entries: entries
         }
     }

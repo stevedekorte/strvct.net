@@ -470,7 +470,7 @@
         // added while we process them
 
         /*
-        this.log(" --- " + this.type() + " processPostQueue BEGIN ---")
+        this.log(" --- " + this.svType() + " processPostQueue BEGIN ---")
         this.show()
         this.log(" ")
         */
@@ -560,7 +560,7 @@
         const showDebug = this.shouldDebugNote(note);
 
         if (showDebug) {
-            this.log(" >>> " + this.type() + " senderId " + note.senderId() + " posting " + note.name());
+            this.log(" >>> " + this.svType() + " senderId " + note.senderId() + " posting " + note.name());
             //this.showObservers()
         }
         */
@@ -570,9 +570,9 @@
         matching.forEach(obs => {
             /*
             if (showDebug) {
-                //this.log(" >>> " + this.type() + " " + note.name() + " matches obs: " + obs.description());
-                if (obs.observer.type() === "UoChatInputTile") {
-                    this.log(" >>> " +this.type() + " sending ", note.name() + " to observer " + obs.observer().typeId());
+                //this.log(" >>> " + this.svType() + " " + note.name() + " matches obs: " + obs.description());
+                if (obs.observer.svType() === "UoChatInputTile") {
+                    this.log(" >>> " +this.svType() + " sending ", note.name() + " to observer " + obs.observer().typeId());
                 }
             }
             */

@@ -188,7 +188,7 @@
     const text = this.cleanedText();
 
     if (text.length === 0) {
-      const errorMsg = this.type() + " requested tts on empty string"
+      const errorMsg = this.svType() + " requested tts on empty string"
       this.updateSubtitle("ERROR: empty text");
       this.setError(errorMsg)
       console.warn(errorMsg)

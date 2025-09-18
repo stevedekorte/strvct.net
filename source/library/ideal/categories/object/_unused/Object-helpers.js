@@ -68,7 +68,7 @@ Object.defineSlot = function (obj, slotName, slotValue) {
             let objType = null
             try {
                 //if (obj.type) {
-                    objType = obj.type()
+                    objType = obj.svType()
                 //}
             } catch (e) {
                 //console.warn("can't get type on ", obj)
@@ -256,9 +256,9 @@ Object.defineSlotSafely(Object.prototype, "forEachPrototype", function (fn) {
 
     while (proto) {
         fn(proto);
-        //console.log("proto is ", proto.type())
+        //console.log("proto is ", proto.svType())
         if (proto === proto.__proto__) {
-            throw new Error("__proto__ loop detected in " + proto.type());
+            throw new Error("__proto__ loop detected in " + proto.svType());
             break;
         } else {
             proto = proto.__proto__;
@@ -290,7 +290,7 @@ Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () {
     }
 
     const m = this._allSlotsMap;
-    //console.log("*** " + this.type() + " setupAllSlotsMap");
+    //console.log("*** " + this.svType() + " setupAllSlotsMap");
 
     //assert(this.isPrototype())
     this.forEachSlot(slot => {
@@ -323,11 +323,11 @@ Object.defineSlot(Object.prototype, "slotsMap", function () {
  */
 Object.defineSlot(Object.prototype, "initSlots", function () { // setup property, getter, setter for each slot
     assert(this.isPrototype());
-    //console.log(this.type() + " this.slotsMap().size = " + this.slotsMap().size);
+    //console.log(this.svType() + " this.slotsMap().size = " + this.slotsMap().size);
 
     this.slotsMap().forEach((slot) => {
         slot.setupInOwner();
-        assert(this.hasOwnProperty([slot.name()]) && this.hasOwnProperty(["_" + slot.name()]), this.type() + " missing " + slot.name() + " slot");
+        assert(this.hasOwnProperty([slot.name()]) && this.hasOwnProperty(["_" + slot.name()]), this.svType() + " missing " + slot.name() + " slot");
     });
 });
 
@@ -366,8 +366,8 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
         if (this.assertProtoSlotsHaveType) {
             this.assertProtoSlotsHaveType();
         } else {
-            if (this.type() !== "Object") {
-                console.log(this.type() + " missing assertProtoSlotsHaveType");
+            if (this.svType() !== "Object") {
+                console.log(this.svType() + " missing assertProtoSlotsHaveType");
                 debugger;
             }
         }
@@ -375,7 +375,7 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
         //debugger;
     }
 
-    //console.log("\n\n" + this.type() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
+    //console.log("\n\n" + this.svType() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
     return this;
 });
 
@@ -393,7 +393,7 @@ Object.defineSlot(Object, "initThisCategory", function () {
 
     const hasTwoPartName = this.name.split("_").length === 2;
     if (!hasTwoPartName) {
-        const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName_categoryName.";
+        const msg = "category class name '" + this.svType() + "' doesn't match expected pattern of ClassName_categoryName.";
         throw new Error(msg);
     }
 

@@ -395,7 +395,7 @@
         //this.value(); // triggers didUpdateNodeIfInitialized
 
         // up to subclasses to implement
-        //throw new Error("syncFromTarget not implemented for " + this.type());
+        //throw new Error("syncFromTarget not implemented for " + this.svType());
         return this
     }
 
@@ -431,7 +431,7 @@
             target.didUpdateNode(this.valueMethod()); // shouldn't this be done by the setter?
             this.validate();
         } else {
-            console.warn(this.type() + " target " + target.type() + " missing slot '" + setter + "'");
+            console.warn(this.svType() + " target " + target.svType() + " missing slot '" + setter + "'");
             debugger;
         }
 		
@@ -470,12 +470,12 @@
         const target = this.target();
         const slotName = this.valueMethod();
 
-        //this.log("target = " + target.type() + " getter = '" + getter + "'")
+        //this.log("target = " + target.svType() + " getter = '" + getter + "'")
         if (target[slotName]) {
             const value = target[slotName].apply(target);
             return value;
         } else {
-            console.warn(this.type() + " target " + target.type() + " missing slot '" + slotName + "'");
+            console.warn(this.svType() + " target " + target.svType() + " missing slot '" + slotName + "'");
         }
 
         return null;
@@ -493,7 +493,7 @@
             if (target[slotName]) {
                 return target[slotName].apply(target);
             } else {
-                console.warn(this.type() + " target " + target.type() + " missing note getter slot '" + slotName + "'");
+                console.warn(this.svType() + " target " + target.svType() + " missing note getter slot '" + slotName + "'");
             }
         }
 

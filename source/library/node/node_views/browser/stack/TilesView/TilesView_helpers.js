@@ -128,7 +128,7 @@
             if (r.node) {
                 return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "")
             }
-            return r.type() 
+            return r.svType() 
         }).join(", "))
         return this
     }

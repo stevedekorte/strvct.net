@@ -36,7 +36,7 @@
             const selection = window.getSelection();
             return selection.toString();
         } else {
-            console.warn(this.type() + " attempt to get selection on unfocused text")
+            console.warn(this.svType() + " attempt to get selection on unfocused text")
         }
         return ""
     }

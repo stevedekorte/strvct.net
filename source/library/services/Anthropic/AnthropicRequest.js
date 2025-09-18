@@ -131,7 +131,7 @@
 
       while (line !== undefined) {
         line = line.trim();
-        //console.warn(this.type() + " readXhrLines() read line: [" + line + "]");
+        //console.warn(this.svType() + " readXhrLines() read line: [" + line + "]");
 
         if (line.length) {
           if (line.startsWith("data:")) {
@@ -141,7 +141,7 @@
           } else if (line.startsWith("event:")) {
             // ingore
           } else {
-            console.warn(this.type() + " WARNING: don't know what to do with this line: [" + line + "]");
+            console.warn(this.svType() + " WARNING: don't know what to do with this line: [" + line + "]");
             debugger;
           }
         }
@@ -205,7 +205,7 @@
       // a keep alive message?
       // example: {"type": "message_stop"}
     } else {
-      console.warn(this.type() + " WARNING: don't know what to do with this JsonChunk", json);
+      console.warn(this.svType() + " WARNING: don't know what to do with this JsonChunk", json);
       debugger;
     }
   }

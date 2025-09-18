@@ -120,7 +120,7 @@
         const classes = new Map()
 
         m.forEach(v => {
-            const type = v.type()
+            const type = v.svType()
             const count = classes.get(type)
             if (count === undefined) {
                 classes.set(type, 1) 
@@ -142,7 +142,7 @@ MemoryUsage.shared() //.setup()
         const classes = new Map()
 
         this.instanceSet().forEach(v => {
-            const type = v.type()
+            const type = v.svType()
             const count = classes.get(type)
             if (count === undefined) {
                 classes.set(type, 1) 

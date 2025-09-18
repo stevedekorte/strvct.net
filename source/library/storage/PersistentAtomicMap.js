@@ -100,7 +100,7 @@
      * @category Operation
      */
     open () {
-        throw new Error(this.type() + " synchronous open not supported");
+        throw new Error(this.svType() + " synchronous open not supported");
     }
 
     /**
@@ -230,7 +230,7 @@
         
         super.applyChanges(); // do this last as it will clear the snapshot
         
-        this.logDebug(() => "---- " + this.type() + " committed tx with " + count + " writes ----");
+        this.logDebug(() => "---- " + this.svType() + " committed tx with " + count + " writes ----");
 
         await tx.promiseCommit();
         this.setIsApplying(false);

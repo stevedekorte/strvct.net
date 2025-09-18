@@ -167,7 +167,7 @@
       this.setOwner(owner);
       owner.addChild(this);
     } else{
-      console.warn(this.type() + " " + this.id() + " unable to find owner with id " + this.ownerId())
+      console.warn(this.svType() + " " + this.id() + " unable to find owner with id " + this.ownerId())
     }
     return this;
   }
@@ -195,7 +195,7 @@
    */
   updateTitles () {
     this.setTitle(this.computeShortName());
-    this.setSubtitle(this.type().after("HomeAssistant"));
+    this.setSubtitle(this.svType().after("HomeAssistant"));
   }
 
   /**
@@ -214,7 +214,7 @@
    */
   parentChainPath () {
     return this.parentChainNodes().map(node => {
-      return node.type() + " \"" + node.title() + "\"";
+      return node.svType() + " \"" + node.title() + "\"";
     }).join(" / ");
   }
 

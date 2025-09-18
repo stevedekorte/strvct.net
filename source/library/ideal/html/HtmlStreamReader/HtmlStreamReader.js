@@ -251,7 +251,7 @@
    */
   show () {
     const line = "-".repeat(20);
-    console.log(line + " " + this.type() + " " + line);
+    console.log(line + " " + this.svType() + " " + line);
     this.rootNode().show();
     console.log(line + line);
     //debugger;
@@ -313,7 +313,7 @@
       assert(e.name() === tagName);
       //console.log("onCloseElement " + e.asHtml());
     } else {
-      console.warn("WARNING:  " + this.type() + ".onCloseElement(" + tagName + ") doesn't match current node " + currentNode.name() + " so we will ignore it and won't send a callback");
+      console.warn("WARNING:  " + this.svType() + ".onCloseElement(" + tagName + ") doesn't match current node " + currentNode.name() + " so we will ignore it and won't send a callback");
     }
   }
 
@@ -376,7 +376,7 @@
 
     /*
     if (this.isDebugging()) {
-      console.log(this.type() + " --------------- calling delegate " + methodName + "(" + args.join(",") + ")");
+      console.log(this.svType() + " --------------- calling delegate " + methodName + "(" + args.join(",") + ")");
     }
     */
 
@@ -388,7 +388,7 @@
       }
     } else {
       /*
-      const error = this.type() + " delegate missing method '" + methodName + "'";
+      const error = this.svType() + " delegate missing method '" + methodName + "'";
       console.log(error);
       debugger;
       throw new Error(error);

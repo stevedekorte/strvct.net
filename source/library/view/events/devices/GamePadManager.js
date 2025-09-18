@@ -151,7 +151,7 @@
      */
     startPolling () {
         if (!this._intervalId) {
-            console.log(this.type() + ".startPolling()");
+            console.log(this.svType() + ".startPolling()");
             this._intervalId = setInterval(() => { 
                 this.poll();
             }, this.pollPeriod());
@@ -185,7 +185,7 @@
      */
     poll () {
         const gamepads = this.navigatorGamepads();
-        //console.log(this.type() + ".poll() gamepads.length = ", gamepads.length);
+        //console.log(this.svType() + ".poll() gamepads.length = ", gamepads.length);
         const padsMap = this.gamePadsMap();
 
         for (let i = 0; i < gamepads.length; i++) {

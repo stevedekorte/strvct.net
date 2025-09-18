@@ -242,7 +242,7 @@
         const db = event.target.result;
 
         db.onerror = (event) => {
-            this.logWarn(this.type() + ".onOpenUpgradeNeeded() db error ", event);
+            this.logWarn(this.svType() + ".onOpenUpgradeNeeded() db error ", event);
         };
 
         this.setDb(db);

@@ -76,8 +76,8 @@
    */
   static initThisClass () {
     this.prototype.setupPrototype();
-    console.log(" --- " + this.type() + ".initThisClass() ---");
-    SvGlobals.globals()[this.type()] = this;
+    console.log(" --- " + this.svType() + ".initThisClass() ---");
+    SvGlobals.globals()[this.svType()] = this;
     return this;
   }
 
@@ -101,7 +101,7 @@
    * @static
    * @returns {string} The name of the class
    */
-  static type () {
+  static svType () {
     return this.name;
   }
 
@@ -109,7 +109,7 @@
    * Returns the type (name) of the instance's class
    * @returns {string} The name of the instance's class
    */
-  type () {
+  svType () {
     return this.constructor.name;
   }
 
@@ -176,7 +176,7 @@
   }
 
   logPrefix () {
-    return "[" + this.type() + "] ";
+    return "[" + this.svType() + "] ";
   }
 
   log (...args) {

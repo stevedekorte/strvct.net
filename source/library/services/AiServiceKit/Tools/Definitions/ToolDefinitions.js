@@ -48,7 +48,7 @@
     //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.typeId() + " '" + instance.title() + "'");
 
     if (this.toolTargetInstances().has(instance)) {
-        const errorMessage = "Tool definitions already added for instance: " + instance.type();
+        const errorMessage = "Tool definitions already added for instance: " + instance.svType();
         this.logDebug(errorMessage);
         //debugger;
         //throw new Error(errorMessage);
@@ -61,7 +61,7 @@
     const methodSet = instance.getInheritedToolMethodSet();
     for (const method of methodSet) {
         //console.log("  -- adding tool '" + method.name + "'");
-      //console.log(instance.type() + " " + method.name + " isToolable: " + method.isToolable());
+      //console.log(instance.svType() + " " + method.name + " isToolable: " + method.isToolable());
       assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
       //if (!this.toolDefinitionWithName(method.name)) {
         const toolDef = ToolDefinition.clone();

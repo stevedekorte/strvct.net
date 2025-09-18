@@ -281,7 +281,7 @@
           } else {
             let dict = {
               "message": `Method '${methodName}' not found on either of:`,
-              "promptTarget": this.promptTarget() ? this.promptTarget().type() : "null",
+              "promptTarget": this.promptTarget() ? this.promptTarget().svType() : "null",
               "promptDictionary": this.promptMap() ? this.promptMap().keysArray() : "null" 
             };
             throw new Error(JSON.stringify(dict, null, 2));
@@ -298,7 +298,7 @@
     } else if (Type.isJsonType(value)) {
       return JSON.stringify(value, null, 2);
     } else {
-      throw new Error(this.type() + "Unable to format value: " + value);
+      throw new Error(this.svType() + "Unable to format value: " + value);
     }
   }
 

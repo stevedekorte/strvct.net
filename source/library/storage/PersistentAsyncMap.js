@@ -74,7 +74,7 @@
      * @category Operations
      */
     open () {
-        throw new Error(this.type() + " synchronous open not supported")
+        throw new Error(this.svType() + " synchronous open not supported")
     }
 
     /**

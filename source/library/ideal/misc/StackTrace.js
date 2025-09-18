@@ -170,7 +170,7 @@
      * @category Utility
      */
     show () {
-        console.log(this.type() + ": '" + this.error().message + "'")
+        console.log(this.svType() + ": '" + this.error().message + "'")
         this.stackFrames().forEach(frame => frame.show())
     }
 

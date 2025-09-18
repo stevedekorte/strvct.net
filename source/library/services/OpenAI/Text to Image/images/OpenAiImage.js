@@ -215,8 +215,8 @@
    */
   getProxyUrl () {
     const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
-    console.log(this.type() + " url: '" + this.url() + "'");
-    console.log(this.type() + " proxy url: '" + proxyUrl + "'");
+    console.log(this.svType() + " url: '" + this.url() + "'");
+    console.log(this.svType() + " proxy url: '" + proxyUrl + "'");
     return proxyUrl;
   }
 
@@ -233,7 +233,7 @@
     const url = this.getProxyUrl();
     this.setStatus("fetching...");
     //console.log("fetch url " + this.url());
-    console.log(this.type() + " fetch proxy url: " + url);
+    console.log(this.svType() + " fetch proxy url: " + url);
     const urlObject = new URL(url);
     // now change the port to 8000
     urlObject.port = "8000";

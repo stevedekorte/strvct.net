@@ -290,7 +290,7 @@
    * @returns {string} The debug type and id.
    */
   debugTypeId () {
-    return this.type() + " " + this.shortId();
+    return this.svType() + " " + this.shortId();
   }
 
   /**
@@ -530,7 +530,7 @@
     */
     const chunks = this.chunks()
 
-    //console.warn(this.type() + " onReceiveChunk() ", JSON.stringify(chunk));
+    //console.warn(this.svType() + " onReceiveChunk() ", JSON.stringify(chunk));
 
     chunks.set(chunk.index, chunk.content);
 
@@ -544,7 +544,7 @@
       const json = JSON.parse(s);
       this.clearChunks();
 
-      //this.logDebug(this.type() + " completedChunks ", JSON.stringify(json));
+      //this.logDebug(this.svType() + " completedChunks ", JSON.stringify(json));
 
       this.sendDelegateMessage("onPeerData", [this, json]);
     }
@@ -681,7 +681,7 @@
     const mSize = data.length;
     const maxSize = this.maxMessageSize();
     if (mSize > maxSize) {
-      const s = this.type() + " send() message size of " + mSize + " exceeds max of " + maxSize;
+      const s = this.svType() + " send() message size of " + mSize + " exceeds max of " + maxSize;
       console.warn(s);
       this.sendDataAsChunks(data);
       return;
@@ -708,7 +708,7 @@
           total: numChunks,
           content: dataStr.slice(i * chunkSize, (i + 1) * chunkSize)
         };
-        //console.warn(this.type() + " sending chunk:" + JSON.stringify(chunk))
+        //console.warn(this.svType() + " sending chunk:" + JSON.stringify(chunk))
         this.conn().send(chunk);
     }
   }
@@ -737,7 +737,7 @@
    * @description Shuts down the connection.
    */
   shutdown () {
-    console.warn(this.type() + " " + this.shortId() + " shutdown");
+    console.warn(this.svType() + " " + this.shortId() + " shutdown");
     if (this.conn()) { // only close connection if it's still up
       this.setStatus("shutdown")
       this.conn().close()

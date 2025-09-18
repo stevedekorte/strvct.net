@@ -238,7 +238,7 @@
    * Initialize the HomeAssistant instance.
 
    */
-  init() {
+  init () {
     super.init();
     this.setTitle("Home Assistant");
     this.setCanDelete(true);
@@ -513,7 +513,7 @@
 
     const s = JSON.stringify(dict);
     promise.setLabel("HomeAssistant request: " + s);
-    console.log(this.type() + " asyncSendMessageDict( " + s.clipWithEllipsis(40) + " )");
+    console.log(this.svType() + " asyncSendMessageDict( " + s.clipWithEllipsis(40) + " )");
     this.socket().send(s);
 
     this.updateStatus();
@@ -571,7 +571,7 @@
    */
   async onMessage (event) {
     const message = JSON.parse(event.data);
-    console.log(this.type() + " onMessage( ", event.data.clipWithEllipsis(40) + " )");
+    console.log(this.svType() + " onMessage( ", event.data.clipWithEllipsis(40) + " )");
 
     if (message.type === "auth_required") {
       await this.getAuth(); // response is handled with "auth" and "auth_invalid" message types

@@ -27,7 +27,7 @@ Example Tool call format:
 (class ToolCall extends UoJsonDictionaryNode { 
 
   static jsonSchemaDescription () {
-    return `Generic format for Assistant API call to make an '" + this.type() + "' tool call.
+    return `Generic format for Assistant API call to make an '" + this.svType() + "' tool call.
     See schema for the particular tool call (whose name is in the toolName property) for the expected "parameters" property schema.`;
   }
   
@@ -413,7 +413,7 @@ Example Tool call format:
     while (refSet.size > 0) {
         const newRefSet = new Set();
         for (const referencedClass of refSet) {
-          const typeName = referencedClass.type();
+          const typeName = referencedClass.svType();
           const typeSchema = referencedClass.asJsonSchema(newRefSet);
           definitions[typeName] = typeSchema;
         }
@@ -441,7 +441,7 @@ Example Tool call format:
     if (refSet.size > 0) {
       completeSchema.definitions = {};
       for (const referencedClass of refSet) {
-        const typeName = referencedClass.type();
+        const typeName = referencedClass.svType();
         const typeSchema = referencedClass.asJsonSchema(new Set());
         completeSchema.definitions[typeName] = typeSchema;
       }
@@ -462,7 +462,7 @@ Example Tool call format:
  */
 
   handleParseError (e) {
-    //throw new Error(this.type() + " Error parsing call string: " + e.message);
+    //throw new Error(this.svType() + " Error parsing call string: " + e.message);
 
     // we need the callId to report the error - let's try to extract it
     const jsonRepairShop = new JsonRepairShop();
@@ -630,7 +630,7 @@ Example Tool call format:
       debugger;
     }
 
-    console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
+    console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
     //debugger;
 
     this.setStatus("completed");
@@ -643,7 +643,7 @@ Example Tool call format:
     r.setStatus("failure");
     this.setToolResult(r);
     this.toolCalls().onToolCallComplete(this);
-    console.error("---- TOOLCALL ERROR: " + this.type() + " Error handling tool call: " + e.message);
+    console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
     
     // Report error to the server if SvApp is available
     const errorData = {
@@ -655,7 +655,7 @@ Example Tool call format:
           toolName: this.toolName(),
           callId: this.callId(),
           status: this.status(),
-          toolTarget: this.toolTarget().type(),
+          toolTarget: this.toolTarget().svType(),
           //toolTargetJson: this.toolTarget().asJson()
         }
       };

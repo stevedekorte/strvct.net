@@ -146,7 +146,7 @@
   }
 
   apiKeyOrUserAuthToken () {
-    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.type())
+    const userAuthToken = SvCredentialManager.shared().bearerTokenForService(this.svType())
     if (userAuthToken) {
       return userAuthToken;
     }

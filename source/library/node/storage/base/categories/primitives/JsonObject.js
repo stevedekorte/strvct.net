@@ -62,7 +62,7 @@
      * @category Data Storage
      */
     recordForStore (aStore) {
-        let type = this.type();
+        let type = this.svType();
 
         return {
             type: type, 

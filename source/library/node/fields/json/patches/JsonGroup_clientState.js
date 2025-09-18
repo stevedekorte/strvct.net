@@ -23,7 +23,7 @@
       const firstLocation = locations[0];
       if (firstLocation) {
         if (firstLocation.activeCreatures) {
-          assert(Type.isArray(firstLocation.activeCreatures), "Expected array JSON for " + this.type());
+          assert(Type.isArray(firstLocation.activeCreatures), "Expected array JSON for " + this.svType());
         }
       }
     }
@@ -43,7 +43,7 @@
       toolCall.setCallResult(null);
     } catch (error) {
       console.log("----------------------------------------------------------");
-      console.warn(this.type() + ".patchClientState() got error '" + error.message + "' applying patch: ", JSON.stringify(patch));
+      console.warn(this.svType() + ".patchClientState() got error '" + error.message + "' applying patch: ", JSON.stringify(patch));
       
       if (error.patchError) {
         // Enhanced error from native patch system

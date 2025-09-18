@@ -402,7 +402,7 @@
         this.setViewMoveListeners([])
         this.setDocMoveListeners([])
 
-        //this.setGestureName(this.type().before("GestureRecognizer"))
+        //this.setGestureName(this.svType().before("GestureRecognizer"))
         this.autoSetMessageNames()
         this.setIsEmulatingTouch(true)
         this.setFingerViewMap(new Map())
@@ -883,7 +883,7 @@
      */
     pointsForEvent (event) {
         if (Type.isNullOrUndefined(event)) {
-            throw new Error(this.type() + ".pointsForEvent(event) event is missing")
+            throw new Error(this.svType() + ".pointsForEvent(event) event is missing")
         }
 
         const eventClass = event.__proto__.constructor;
@@ -896,7 +896,7 @@
             return TouchScreen.shared().pointsForEvent(event)
         }
         
-        console.warn(this.type() + " can't handle this event type yet: ", event)
+        console.warn(this.svType() + " can't handle this event type yet: ", event)
 
         return []
     }
@@ -1238,7 +1238,7 @@
         if (this._gestureName) {
             return this._gestureName
         }
-        return this.type().before("GestureRecognizer")
+        return this.svType().before("GestureRecognizer")
     }
 
     /**
@@ -1475,7 +1475,7 @@
         v.setPosition("absolute")
         v.setTextAlign("center")
         v.setZIndex(10000)
-        v.setInnerHtml(this.type())
+        v.setInnerHtml(this.svType())
         v.setPxFontSize(10)
         v.setColor("white")
         return v
@@ -1517,7 +1517,7 @@
      * @returns {String} The title for the finger number.
      */
     titleForFingerNumber (n) {
-        return "&nbsp;".repeat(26) + this.type() + "&nbsp;" + n + "&nbsp;of&nbsp;" + this.numberOfFingersDown() 
+        return "&nbsp;".repeat(26) + this.svType() + "&nbsp;" + n + "&nbsp;of&nbsp;" + this.numberOfFingersDown() 
     }
 
     /**

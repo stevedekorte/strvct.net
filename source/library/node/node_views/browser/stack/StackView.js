@@ -403,7 +403,7 @@
         
         //const p = nodePathArray.map(n => n.title()).join("/");
         //console.log("--- selectNodePathArray ---");
-        //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")");
+        //console.log(this.svType() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")");
         const node = nextNodePathArray.shift(); // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
         //console.warn("- popped '" + node.title() + "'");
 

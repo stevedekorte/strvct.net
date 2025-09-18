@@ -193,7 +193,7 @@
 
     // Use regular fetch for image loading like Leonardo does
     const url = this.url();
-    console.log(this.type() + " fetching url: " + url);
+    console.log(this.svType() + " fetching url: " + url);
     
     try {
       const response = await fetch(url, { method: 'GET' });

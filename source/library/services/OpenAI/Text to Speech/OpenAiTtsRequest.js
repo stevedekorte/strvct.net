@@ -232,8 +232,8 @@
    * @category Validation
    */
   assertValid () {
-    assert(this.service().hasApiKey(), this.type() + " apiKey missing");
-    assert(this.apiUrl(), this.type() + " apiUrl missing");
+    assert(this.service().hasApiKey(), this.svType() + " apiKey missing");
+    assert(this.apiUrl(), this.svType() + " apiUrl missing");
   }
 
   /**
@@ -260,7 +260,7 @@
     const json = this.json();
     this.logDebug(" response json: ", json);
     if (json.error) {
-      console.warn(this.type() + " ERROR:", json.error.message);
+      console.warn(this.svType() + " ERROR:", json.error.message);
     }
   }
 

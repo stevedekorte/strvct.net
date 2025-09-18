@@ -73,7 +73,7 @@
    */
   fetchInfoUrl () {
     const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-    const url = baseUrl + "/app/info/" + this.type() + ".json";
+    const url = baseUrl + "/app/info/" + this.svType() + ".json";
     return url;
   }
 

@@ -131,7 +131,7 @@
      * @category Type Checking
      */
     fullTypeName () {
-        return this.type() + " " + this.typeCategory();
+        return this.svType() + " " + this.typeCategory();
     }
  
     /**

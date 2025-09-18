@@ -234,7 +234,7 @@
             if (syncMethod !== "processPostQueue") {
                 if (this.currentAction() && this.currentAction().equals(newAction)) {
                     const error = [
-                        this.type() + " LOOP DETECTED: ",
+                        this.svType() + " LOOP DETECTED: ",
                         "  scheduleTargetAndMethod: (" + newAction.description() + ")",
                         "  while processing: (" + this.currentAction().description() + ")"
                     ].join("\n");
@@ -509,7 +509,7 @@
      * @category Debugging
      */
     show () {
-        console.log(this.type() + ":");
+        console.log(this.svType() + ":");
         console.log(this.actionsDescription());
     }
 

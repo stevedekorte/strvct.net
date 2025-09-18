@@ -365,13 +365,13 @@
         //debugger;
         if (this.allowsMultiplePicks()) {
             if (!Type.isArray(v)) {
-                console.warn(this.type() + ".setValueOnTarget() called with non array value when allowsMultiplePicks is true");
+                console.warn(this.svType() + ".setValueOnTarget() called with non array value when allowsMultiplePicks is true");
                 debugger;
             }
         } else {
             if (Type.isArray(v)) {
                 // this isn't necessarily an error, but it is unexpected
-                console.warn(this.type() + ".setValueOnTarget() called with array when allowsMultiplePicks is true");
+                console.warn(this.svType() + ".setValueOnTarget() called with array when allowsMultiplePicks is true");
                 debugger;
             }
         }
@@ -412,7 +412,7 @@
      * @returns {Array<string>} An array of accepted subnode type names.
      */
     acceptedSubnodeTypes () {
-        return [SvOptionNode.type()];
+        return [SvOptionNode.svType()];
     }
 
     /**
@@ -533,7 +533,7 @@
             };
         }
         
-        throw Error.exception(this.type() + ".itemForValue() called with invalid value: " + v);
+        throw Error.exception(this.svType() + ".itemForValue() called with invalid value: " + v);
     }
 
     /**

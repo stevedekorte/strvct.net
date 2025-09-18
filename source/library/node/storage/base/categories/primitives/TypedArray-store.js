@@ -41,7 +41,7 @@
  * 
  *         recordForStore: function(aStore) { // should only be called by Store
  *             return {
- *                 type: this.type(), 
+ *                 type: this.svType(), 
  *                 values: this.valuesArray() 
  *             }
  *         },
@@ -106,7 +106,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     recordForStore: function(aStore) { // should only be called by Store
         return {
-            type: this.type(), 
+            type: this.svType(), 
             values: this.valuesArray() 
         }
     },

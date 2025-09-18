@@ -47,7 +47,7 @@
             }
             addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((/*instance*/) => { 
                 //return SvThemeResources.shared().activeTheme().themeClassNames();
-                return Tile.allSubclasses().map(aClass => aClass.type());
+                return Tile.allSubclasses().map(aClass => aClass.svType());
             })
 
             //SvThemeResources.shared().activeTheme().newThemeClassOptions()
@@ -307,10 +307,10 @@
                 const match = canUseNodes.first();
                 const newNode = match.openMimeChunk(dataChunk);
 
-                if (okTypes.contains(newNode.type())) {
+                if (okTypes.contains(newNode.svType())) {
                     this.addSubnode(newNode);
                 } else {
-                    SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.type() });
+                    SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.svType() });
                 }
                 //if (this.acceptsAddingSubnode(match)) {
                 //    this.addSubnode(match);

@@ -168,7 +168,7 @@
     assert(sound.addDelegate);
     assert(sound.removeDelegate);
 
-    //console.log(this.type() + " PUSH " + sound.description());
+    //console.log(this.svType() + " PUSH " + sound.description());
     this.queue().push(sound);
     this.processQueue();
     this.didUpdateNode();
@@ -184,7 +184,7 @@
       const q = this.queue();
       if (q.length) {
         const sound = q.shift();
-        //console.log(this.type() + " POP " + sound.description());
+        //console.log(this.svType() + " POP " + sound.description());
         this.playSound(sound);
       }
     }
@@ -276,7 +276,7 @@
    * @returns {string} The debug description.
    */
   debugDescription () {
-    return this.type() + " " + this.id();
+    return this.svType() + " " + this.id();
   }
 
 }.initThisClass());

@@ -121,7 +121,7 @@
       }
     } catch (error) {
       this.onError(error);
-      console.warn(this.type() + " ERROR:", error);
+      console.warn(this.svType() + " ERROR:", error);
       this.xhrPromise().callRejectFunc(new Error(error));      
     }
   }

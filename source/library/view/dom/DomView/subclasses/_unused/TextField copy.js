@@ -593,7 +593,7 @@
             this.didEdit()
         }
         */
-	    //console.trace(this.type() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
+	    //console.trace(this.svType() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
         //this.debugLog(" after formatValue: '" + this.innerHtml() + "'")
         return this
     }

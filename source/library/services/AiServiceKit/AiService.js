@@ -251,7 +251,7 @@
       this.setServiceInfo(info);
       this.setupFromInfo();
     } catch (error) {
-      console.log(this.type() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
+      console.log(this.svType() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
       return;
     }
   }
@@ -282,7 +282,7 @@
    * @category Authentication
    */
   userAuthToken () {
-    return SvCredentialManager.shared().bearerTokenForService(this.type());
+    return SvCredentialManager.shared().bearerTokenForService(this.svType());
   }
 
   /**
@@ -292,7 +292,7 @@
    */
 
   async apiKeyOrUserAuthToken () {
-    const userAuthToken = await SvCredentialManager.shared().bearerTokenForService(this.type());
+    const userAuthToken = await SvCredentialManager.shared().bearerTokenForService(this.svType());
     if (userAuthToken) {
       return userAuthToken;
     }
@@ -321,7 +321,7 @@
       const model = AiChatModel.clone().setJson(modelInfo).setService(this);
       this.models().addSubnode(model);
     });
-    //console.log(this.type() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
+    //console.log(this.svType() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
     this.fetchModelsPromise().callResolveFunc();
     return this;
   }
@@ -333,7 +333,7 @@
    */
   fetchInfoUrl () {
     const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-    const url = baseUrl + "/app/info/" + this.type() + ".json";
+    const url = baseUrl + "/app/info/" + this.svType() + ".json";
     return url;
   }
 
@@ -357,7 +357,7 @@
    * @category Request Handling
    */
   chatRequestClass () {
-    const className = this.type().split("Service")[0] + "Request";
+    const className = this.svType().split("Service")[0] + "Request";
     const requestClass = SvGlobals.globals()[className];
     if (!requestClass) {
       throw new Error("chatRequestClass " + className + " not found");

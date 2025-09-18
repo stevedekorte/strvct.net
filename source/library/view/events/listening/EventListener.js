@@ -358,8 +358,8 @@
         const d = this.delegate()
         
         if (d.viewTarget) {
-            //return d.viewTarget().debugTypeId() + "->" + d.type().before("GestureRecognizer") 
-            return d.viewTarget().typeId() + " ->" + d.type().before("GestureRecognizer") 
+            //return d.viewTarget().debugTypeId() + "->" + d.svType().before("GestureRecognizer") 
+            return d.viewTarget().typeId() + " ->" + d.svType().before("GestureRecognizer") 
         }
 
         return d.typeId()
@@ -423,7 +423,7 @@
             result = method.call(delegate, event); 
 
             if (this.isDebugging()) {
-                console.log("sent: " + delegate.type() + "." + fullMethodName, "(" + event.type + ") and returned " + result)
+                console.log("sent: " + delegate.svType() + "." + fullMethodName, "(" + event.type + ") and returned " + result)
             }
 
             if (result === false) {
@@ -436,7 +436,7 @@
             this.onAfterEvent(event)
         } else {
             if (this.isDebugging()) {
-                console.log(this.listenTargetDescription() + " MISSING method: " + delegate.type() + "." + fullMethodName, "(" + event.type + ")" )
+                console.log(this.listenTargetDescription() + " MISSING method: " + delegate.svType() + "." + fullMethodName, "(" + event.type + ")" )
             }
         }
 

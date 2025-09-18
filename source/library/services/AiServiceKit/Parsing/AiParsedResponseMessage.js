@@ -88,7 +88,7 @@
       const slot = this.newSlot("isDoneSpeaking", false);
       slot.setCanInspect(true);
       slot.setDuplicateOp("duplicate");
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setLabel("Is Done Speaking");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -171,7 +171,7 @@
       this.justHandleEmbeddedRequests();
     } catch (e) {
       console.warn(
-        this.type() +
+        this.svType() +
           ".handleEmbeddedRequests() ERROR: " +
           e.message +
           " ================================"
@@ -242,7 +242,7 @@
             this.reportErrorToAi("Error: " + errorMessage + extraNote);
             return;
         } else {
-            console.warn("tagDelegate (" + this.tagDelegate().type() + ") missing method: " + textMethodName + " for tag: " + tagName);
+            console.warn("tagDelegate (" + this.tagDelegate().svType() + ") missing method: " + textMethodName + " for tag: " + tagName);
             let errorMessage = "Error: you responded with a '" + tagName + "' tag which the client does not understand. ";
             errorMessage += "If you have sent the tool call for which this was the result, then ignore your own response and wait from the tool-call-result from the client user response. ";
             errorMessage += "Critical: you MUST NOT make use of <tool-call-result> tag in your response.";
@@ -276,7 +276,7 @@
   }
 
   reportErrorToAi (errorMessage) {
-    console.warn(this.type() + ".reportErrorToAi(\"" + errorMessage + "\")");
+    console.warn(this.svType() + ".reportErrorToAi(\"" + errorMessage + "\")");
     debugger;
     if (this.conversation().assistantToolKit) {
         // the assistant tool kit will send the error message after the AI's current response is complete

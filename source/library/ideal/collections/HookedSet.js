@@ -60,7 +60,7 @@
         assert(gotWillMutate)
         assert(gotDidMutate)
 
-        console.log(this.type() + " - passed self test")
+        console.log(this.svType() + " - passed self test")
         return true
     }
 

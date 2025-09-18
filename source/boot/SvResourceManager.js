@@ -37,7 +37,7 @@
      * @description Returns the type of the manager.
      * @returns {string} The type "SvResourceManager".
      */
-    type () {
+    svType () {
         return "SvResourceManager";
     }
 

@@ -423,7 +423,7 @@ class SvCliBrowser extends Object {
     const selectedNode = this._getSelectedNode(columnIndex);
     if (!selectedNode) return;
     
-    this._writeToLog(`Enter pressed on: ${selectedNode.title ? selectedNode.title() : selectedNode.type()}`);
+    this._writeToLog(`Enter pressed on: ${selectedNode.title ? selectedNode.title() : selectedNode.svType()}`);
     
     if (this._isEditableField(selectedNode)) {
       this._handleEditItem(columnIndex);
@@ -543,7 +543,7 @@ class SvCliBrowser extends Object {
     
     if (!node.subnodes || typeof node.subnodes !== 'function') {
       if (this._logFilePath) {
-        this._writeToLog("_getNodeItems: node has no subnodes method, type: " + (node.type ? node.type() : "unknown"));
+        this._writeToLog("_getNodeItems: node has no subnodes method, type: " + (node.type ? node.svType() : "unknown"));
       }
       return [];
     }
@@ -563,9 +563,9 @@ class SvCliBrowser extends Object {
   }
   
   _formatNodeItem (subnode) {
-    const title = subnode.title ? subnode.title() : subnode.type();
+    const title = subnode.title ? subnode.title() : subnode.svType();
     const subtitle = subnode.subtitle ? subnode.subtitle() : '';
-    const typeName = subnode.type ? subnode.type() : '';
+    const typeName = subnode.type ? subnode.svType() : '';
     
     if (this._isFieldType(typeName)) {
       return this._formatFieldItem(subnode, title);
@@ -620,7 +620,7 @@ class SvCliBrowser extends Object {
         return node.value();
       } catch (e) {
         // Silent fallback
-        console.error("Error getting field value for node: " + node.type() + " " + e.message);
+        console.error("Error getting field value for node: " + node.svType() + " " + e.message);
       }
     }
     
@@ -661,7 +661,7 @@ class SvCliBrowser extends Object {
   _isEditableField (node) {
     if (!node) return false;
     
-    const typeName = node.type ? node.type() : '';
+    const typeName = node.type ? node.svType() : '';
     const isField = typeName.includes('SvField') || typeName.includes('Field');
     
     return isField && 
@@ -736,7 +736,7 @@ class SvCliBrowser extends Object {
       const items = this._getNodeItems(this._currentNode);
       if (items.length > 0) {
         const nextColumn = this._columns[startIndex];
-        const nodeTitle = this._currentNode.title ? this._currentNode.title() : this._currentNode.type();
+        const nodeTitle = this._currentNode.title ? this._currentNode.title() : this._currentNode.svType();
         nextColumn.setLabel(' ' + nodeTitle.trim() + ' ');
         nextColumn.setItems(items);
       }
@@ -885,7 +885,7 @@ class SvCliBrowser extends Object {
     const selectedNode = this._getSelectedNode(columnIndex);
     if (!selectedNode) return;
     
-    this._writeToLog(`Editing item: ${selectedNode.title ? selectedNode.title() : selectedNode.type()}`);
+    this._writeToLog(`Editing item: ${selectedNode.title ? selectedNode.title() : selectedNode.svType()}`);
     
     if (this._isEditableField(selectedNode)) {
       this._editFieldValue(selectedNode, columnIndex);
@@ -1146,8 +1146,8 @@ class SvCliBrowser extends Object {
     debugInfo += `Focused column index: ${this._focusedColumnIndex}\n`;
     debugInfo += `Number of columns: ${this._columns.length}\n`;
     debugInfo += `Current path length: ${this._currentPath.length}\n`;
-    debugInfo += `Root node type: ${this._rootNode.type ? this._rootNode.type() : 'unknown'}\n`;
-    debugInfo += `Current node type: ${this._currentNode.type ? this._currentNode.type() : 'unknown'}\n\n`;
+    debugInfo += `Root node type: ${this._rootNode.type ? this._rootNode.svType() : 'unknown'}\n`;
+    debugInfo += `Current node type: ${this._currentNode.type ? this._currentNode.svType() : 'unknown'}\n\n`;
     
     debugInfo += 'Column info:\n';
     this._columns.forEach((col, i) => {

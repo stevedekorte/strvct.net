@@ -557,7 +557,7 @@ Example generation body json:
    * @category Metadata
    */
   subtitle () {
-    return this.type() + "\n" + this.status();
+    return this.svType() + "\n" + this.status();
   }
 
   /**

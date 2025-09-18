@@ -16,7 +16,7 @@
      * @category Mutation
      */
     mutatorMethodNamesSet () {
-        throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class");
+        throw new Error("undefined mutatorMethodNamesSet on '" + this.svType() + "' class");
     }
 
     /**

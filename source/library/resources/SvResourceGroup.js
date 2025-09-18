@@ -47,7 +47,7 @@
      */
     init () {
         super.init();
-        this.setTitle(this.type());
+        this.setTitle(this.svType());
         this.setResourceClasses([]);
         this.setup();
         //this.registerForAppDidInit();
@@ -124,11 +124,11 @@
         
         //this.log(".setupSubnodes done");
 
-        if (this.type() !== "SvFileResources") {
-            //assert(this.subnodes().length > 0, this.type() + " subnodes should have subnodes");
+        if (this.svType() !== "SvFileResources") {
+            //assert(this.subnodes().length > 0, this.svType() + " subnodes should have subnodes");
             /*
             if (this.subnodes().length !== this.urlResources().length) {
-                console.warn(this.type() + " should have " + this.urlResources().length + " subnodes, but has " + this.subnodes().length);
+                console.warn(this.svType() + " should have " + this.urlResources().length + " subnodes, but has " + this.subnodes().length);
                 debugger;
             }
             */
@@ -227,15 +227,15 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        //this.log("resource group: " + this.type() + ".prechacheWhereAppropriate()");
+        //this.log("resource group: " + this.svType() + ".prechacheWhereAppropriate()");
         //debugger;
         await this.resources().promiseParallelMap(async (r) => {
-            //this.log("resource: " + r.type() + ".prechacheWhereAppropriate()");
+            //this.log("resource: " + r.svType() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {
                 await r.prechacheWhereAppropriate();
             }
         });
-        //this.log("resource group: " + this.type() + ".prechacheWhereAppropriate() done");
+        //this.log("resource group: " + this.svType() + ".prechacheWhereAppropriate() done");
         return this;
     }
 

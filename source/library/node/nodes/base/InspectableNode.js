@@ -123,7 +123,7 @@
                         pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());
                         pathNodes.last().addSubnode(linkNode);
                     } else {
-                        throw new Error(this.type() + "." + slot.name() + " must have it's slotType set to be inspected");
+                        throw new Error(this.svType() + "." + slot.name() + " must have it's slotType set to be inspected");
                     }
                 }
 
@@ -265,7 +265,7 @@
         const field = slot.newInspectorField();
         if (!field) {
             const className = slot.fieldInspectorViewClassName();
-            throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'");
+            throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.svType() + "'");
         }
 
         field.setOwnerNode(this);
@@ -291,7 +291,7 @@
 
         //field.syncFromTarget(); // new: to fix boolean sync issues
 
-        if (field.type() === "SvBooleanField") {
+        if (field.svType() === "SvBooleanField") {
             //debugger;
             //const v = slot.onInstanceGetValue(this);
             field.syncFromTarget();

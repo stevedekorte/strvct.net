@@ -28,7 +28,7 @@
      */
     recordForStore(aStore) { // should only be called by Store
         return {
-            type: this.type(), 
+            type: this.svType(), 
             time: this.getTime() // toJSON is a standard library Date method
         }
     }

@@ -1769,7 +1769,7 @@
         /*
         if(this.overflowScrolling() !== s) {
             // this happens even in Chrome v123.0.6312.87 (2024)
-            console.warn(this.type() + " WARNING: setOverflowScrolling('" + s + "') failed (got '" + this.overflowScrolling() + "')");
+            console.warn(this.svType() + " WARNING: setOverflowScrolling('" + s + "') failed (got '" + this.overflowScrolling() + "')");
         }
         */
         return this;
@@ -1786,7 +1786,7 @@
         assert(Type.isString(s));
         this.setSpecialCssProperty("-webkit-overflow-scrolling", s);
         if(this.webkitOverflowScrolling() !== s) {
-            console.warn(this.type() + " WARNING: setWebkitOverflowScrolling failed")
+            console.warn(this.svType() + " WARNING: setWebkitOverflowScrolling failed")
         }
         return this;
     }

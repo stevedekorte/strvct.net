@@ -577,7 +577,7 @@
 
 
         /*
-        if (this.node().type() === "ChatInputNode" && newValue === "") {
+        if (this.node().svType() === "ChatInputNode" && newValue === "") {
             this.log("SvChatInputTile syncValueFromNode(SvChatInputNode) newValue = [" + newValue + "]");
             valueView.setValue(newValue);
         }

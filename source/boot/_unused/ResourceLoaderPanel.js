@@ -204,17 +204,17 @@
     // --- handle events ------------------------------------------------
 
     resourceLoaderProgress (event) {
-        //console.log(this.type() + " got resourceLoaderLoadUrl " + JSON.stringify(event.detail))
+        //console.log(this.svType() + " got resourceLoaderLoadUrl " + JSON.stringify(event.detail))
         this.didLoadPath(event.detail.path, event.detail.progress)
     }
 
     resourceLoaderError (event) {
-        //console.log(this.type() + " got resourceLoaderError " + event.detail)
+        //console.log(this.svType() + " got resourceLoaderError " + event.detail)
         this.handleError(event.detail.error)
     }
 
     resourceLoaderDone (event) {
-        //console.log(this.type() + " got resourceLoaderDone " + event.detail)
+        //console.log(this.svType() + " got resourceLoaderDone " + event.detail)
         this.stop()
     }
 

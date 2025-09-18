@@ -180,7 +180,7 @@
    */
   playerPromise () {
     if (!this._playerPromise) {
-      this._playerPromise = Promise.clone().setLabel(this.type() + " setup");
+      this._playerPromise = Promise.clone().setLabel(this.svType() + " setup");
       this.setupFrame();
     }
     return this._playerPromise
@@ -306,7 +306,7 @@
       await this.promiseUpdateVolume();
 
 
-      this.setPlayPromise(Promise.clone().setLabel(this.type() + ".playPromise"));
+      this.setPlayPromise(Promise.clone().setLabel(this.svType() + ".playPromise"));
       this.player().loadVideoById(this.videoId(), startSeconds);
       return this.playPromise();
     }
@@ -651,7 +651,7 @@
       this.setElement(null);
     }
 
-    this.setPlayerPromise(Promise.clone().setLabel(this.type() + " setup"));
+    this.setPlayerPromise(Promise.clone().setLabel(this.svType() + " setup"));
   }
 
 }).initThisClass();

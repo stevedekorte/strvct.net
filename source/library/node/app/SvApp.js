@@ -215,7 +215,7 @@
         SvBootLoadingView.shared().setSubtitle("opening data store");
 
         this.setStore(this.defaultStore());
-        this.store().setName(this.type()); // name of the database
+        this.store().setName(this.svType()); // name of the database
 
         let clearFirst = false; // SvPlatform.isNodePlatform())
 
@@ -250,7 +250,7 @@
 
         const isCorrectModel = !Type.isNullOrUndefined(currentRootObject) && this.store().rootObject().isKindOf(this.modelClass());
         if (!isCorrectModel) { 
-            console.error("Model is not correct type: " + this.store().rootObject().thisClass().type());
+            console.error("Model is not correct type: " + this.store().rootObject().thisClass().svType());
             if (this._attemptToResetStore === true) { 
                 debugger;
                 throw new Error("Failed to open store with correct model after reset");

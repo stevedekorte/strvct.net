@@ -285,7 +285,7 @@
    * @category Error Handling
    */
   showError () {
-    console.warn(this.type() + " ERROR: " + this.error());
+    console.warn(this.svType() + " ERROR: " + this.error());
     return this;
   }
 

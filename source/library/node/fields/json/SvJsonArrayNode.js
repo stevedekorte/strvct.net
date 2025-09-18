@@ -109,7 +109,7 @@
         const slot = this.overrideSlot("subnodes");
         slot.setIsInJsonSchema(true);
         slot.setShouldJsonArchive(true);
-        slot.setJsonSchemaItemsType(aClass.type());
+        slot.setJsonSchemaItemsType(aClass.svType());
         this.setSubnodeClasses([aClass]);
     }
 
@@ -119,7 +119,7 @@
      * @category UI
      */
     subtitle () {
-        if (this.thisClass().type() === "SvJsonArrayNode") {
+        if (this.thisClass().svType() === "SvJsonArrayNode") {
             return "Array"; // so we know it's an array when using the UI to assembly JSON
         }
 
@@ -163,7 +163,7 @@
             aSubnode.setKeyIsVisible(false);
             aSubnode.setKeyIsEditable(false);
             const editableValueTypes = ["SvStringField", "SvNumberField", "SvBooleanField"];
-            if (editableValueTypes.contains(aSubnode.type())) {
+            if (editableValueTypes.contains(aSubnode.svType())) {
                 aSubnode.setValueIsEditable(true);
             }
          }
@@ -251,7 +251,7 @@
             } else {
                 const aNode = this.newSubnodeForJson(v, jsonPathComponents.concat(index));
                 newSubnodes.push(aNode);
-                //this.log("SvJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
+                //this.log("SvJsonArrayNode.setJson() creating new node " + aNode.svType() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
         });
 
@@ -305,7 +305,7 @@
     }
 
     jsonPathCompmentString () {
-        return this.type() + ":" + this.title() + ":" + this.jsonId();
+        return this.svType() + ":" + this.title() + ":" + this.jsonId();
     }
 
 }.initThisClass());

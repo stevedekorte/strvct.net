@@ -61,7 +61,7 @@
      * @returns {string} The visible class name for this node.
      */
     static visibleClassName () {
-        let name = this.type();
+        let name = this.svType();
         name = name.sansPrefix("Sv");
         name = name.sansSuffix("Field");
         name = name.sansSuffix("Node");
@@ -348,7 +348,7 @@
      * @returns {string} The node type.
      */
     nodeType () {
-        return this.type();
+        return this.svType();
     }
 
     /*
@@ -412,7 +412,7 @@
             return this._nodeVisibleClassName;
         }
 		
-        return this.type().sansPrefix("Sv");
+        return this.svType().sansPrefix("Sv");
     }
 
     // --- subnodes ----------------------------------------
@@ -518,7 +518,7 @@
      * @param {SvNode} aSubnode - The subnode to check.
      */
     assertValidSubnodeType (aSubnode) {
-        assert(aSubnode.thisClass().isKindOf(SvNode), "Attempt to add subnode of type '" + aSubnode.type() + "' which does not inherit from SvNode (as subnodes are required to do)");
+        assert(aSubnode.thisClass().isKindOf(SvNode), "Attempt to add subnode of type '" + aSubnode.svType() + "' which does not inherit from SvNode (as subnodes are required to do)");
     }
 
     /**
@@ -679,7 +679,7 @@
      */
     acceptedSubnodeTypes () {
         const types = [];
-        this.subnodeClasses().forEach(c => types.push(c.type()));
+        this.subnodeClasses().forEach(c => types.push(c.svType()));
         return types;
     }
 
@@ -699,7 +699,7 @@
             return false;
         }
         */
-        //const type = aSunode.type();
+        //const type = aSunode.svType();
         const ancestors = aSubnode.thisClass().ancestorClassesTypesIncludingSelf();
         return this.acceptedSubnodeTypes().canDetect(type => ancestors.contains(type));
     }
@@ -1368,7 +1368,7 @@
      * @returns {SvNode|null} The first parent node of the given class, or null if not found.
      */
     parentNodeOfType (className) {
-        if (this.type() === className) {
+        if (this.svType() === className) {
             return this;
         }
         
@@ -1401,7 +1401,7 @@
      * @returns {Array} An array of parent node types.
      */
     parentNodeTypes () {
-        return this.parentNodes().map(node => node.type());
+        return this.parentNodes().map(node => node.svType());
     }
     
     // --- subnode lookup -----------------------------
@@ -1424,7 +1424,7 @@
      */
     firstSubnodeOfType (obj) {
         // obj could be clas, prototype, or instance
-        return this.subnodes().detect(subnode => subnode.type() === obj.type());
+        return this.subnodes().detect(subnode => subnode.svType() === obj.svType());
     }
             
     /**
@@ -1516,12 +1516,12 @@
             newValue = [];
         }
 
-        if (newValue.type() !== "SubnodesArray") {
+        if (newValue.svType() !== "SubnodesArray") {
             //debugger;
             this._subnodes = SubnodesArray.from(newValue);
             newValue.removeDuplicates();
             newValue = this._subnodes;
-            assert(newValue.type() === "SubnodesArray");
+            assert(newValue.svType() === "SubnodesArray");
         } else {
             /*
             if (this.hasNullSubnodes()) {
@@ -1561,7 +1561,7 @@
     assertSubnodesHaveParentNodes () {
         const missing = this.subnodes().detect(subnode => !subnode.parentNode());
         if (missing) {
-            throw new Error("missing parent node on subnode " + missing.type());
+            throw new Error("missing parent node on subnode " + missing.svType());
         }
         return this;
     }
@@ -1868,7 +1868,7 @@
     jsonArchive () {
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
         const dict = {
-            type: this.type()
+            type: this.svType()
         };
 
         jsonArchiveSlots.forEach(slot => {
@@ -1926,7 +1926,7 @@
      * @returns {string} The JSON schema title.
      */
     static jsonSchemaTitle () {
-        return this.type();
+        return this.svType();
     }
 
     /**
@@ -2026,13 +2026,13 @@
             }
             if (!this.has(aClass)) {
                 this._add(aClass);
-                this.log("refSet.add(" + aClass.type() + ") size ", this.size);
+                this.log("refSet.add(" + aClass.svType() + ") size ", this.size);
             }
         }
         */
 
         const json = {
-            "$id": this.type(),
+            "$id": this.svType(),
             "$schema": "http://json-schema.org/draft-07/schema#"
         };
         
@@ -2069,7 +2069,7 @@
         while (!done) {
             done = true;
             Array.from(refSet).forEach(aClass => {
-                const className = aClass.type();
+                const className = aClass.svType();
                 if (!classNameToSchemaMap.has(className)) {
                     classNameToSchemaMap.set(className, aClass.asJsonSchema(refSet));
                     done = false;
@@ -2095,13 +2095,13 @@
             const newRefSet = new Set();
             undefinedClasses.forEach(aClass => {
                 const schemaDef = aClass.asJsonSchema(newRefSet);
-                assert(!Type.isNullOrUndefined(schemaDef), "missing schemaDef for " + aClass.type());
-                definitions[aClass.type()] = schemaDef;
+                assert(!Type.isNullOrUndefined(schemaDef), "missing schemaDef for " + aClass.svType());
+                definitions[aClass.svType()] = schemaDef;
                 definedClasses.add(aClass);
             });
             undefinedClasses = newRefSet.difference(definedClasses); // returns set with items in newRefSet but not in definedClasses
         }
-        const definedClassNames = Array.from(definedClasses).map(c => c.type());
+        const definedClassNames = Array.from(definedClasses).map(c => c.svType());
         this.log("definedClasses: [" + definedClassNames.join(", ") + "]");
         this.log("definitions: [" + Object.keys(definitions).join(", ") + "]");
         */
@@ -2133,11 +2133,11 @@
         }
 
         const title = this.jsonSchemaTitle();
-        if (title != this.type()) {
+        if (title != this.svType()) {
             schema.title = title;
         }
 
-        assert(schema.description, "missing json schema description for " + this.type());
+        assert(schema.description, "missing json schema description for " + this.svType());
         return schema;
     }
 
@@ -2149,7 +2149,7 @@
      */
     static jsonSchemaRef (refSet) {
         assert(refSet);
-        return this.jsonSchemaRefForTypeName(this.type(), refSet);
+        return this.jsonSchemaRefForTypeName(this.svType(), refSet);
     }
 
     /*
@@ -2159,7 +2159,7 @@
         }
         assert(Type.isSet(refSet));
         assert(this.asJsonSchema); // sanity check - we'll need this 
-        assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.type());
+        assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.svType());
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
         return "#/definitions/" + typeName;
     }
@@ -2178,7 +2178,7 @@
         }
         assert(Type.isSet(refSet));
         assert(this.asJsonSchema); // sanity check - we'll need this 
-        assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.type());
+        assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.svType());
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
         return "#/definitions/" + typeName;
     }
@@ -2230,7 +2230,7 @@
                         if (hasValidSubnodeClass) {
                             this.addSubnode(subnode);
                         } else {
-                            console.warn("fromJsonSchema subnode class '" + subnode.type() + "' not in subnodeClasses " + JSON.stableStringifyWithStdOptions(this.subnodeClasses().map(c => c.type())));
+                            console.warn("fromJsonSchema subnode class '" + subnode.svType() + "' not in subnodeClasses " + JSON.stableStringifyWithStdOptions(this.subnodeClasses().map(c => c.svType())));
                             debugger;
                         }
                     });

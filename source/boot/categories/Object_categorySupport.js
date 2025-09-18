@@ -162,7 +162,7 @@
                 let objType = null
                 try {
                     //if (obj.type) {
-                        objType = obj.type()
+                        objType = obj.svType()
                     //}
                 } catch (e) {
                     //console.warn("can't get type on ", obj)

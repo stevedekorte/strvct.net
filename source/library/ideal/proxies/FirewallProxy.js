@@ -193,7 +193,7 @@
         const dp = date.asReadOnly()
         assertThrows(() => dp.setYear(1999))
 
-        console.log(this.type() + " - self test passed")
+        console.log(this.svType() + " - self test passed")
     }
 }.initThisClass());
 

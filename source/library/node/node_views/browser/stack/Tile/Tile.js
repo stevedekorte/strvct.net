@@ -748,7 +748,7 @@
           }
         } else {
           if (isStrict) {
-            const error = this.type() + " delegate missing method '" + methodName + "'";
+            const error = this.svType() + " delegate missing method '" + methodName + "'";
             console.log(error);
             debugger;
             throw new Error(error);
@@ -767,7 +767,7 @@
           }
         } else {
           if (isStrict) {
-            const error = this.type() + " delegate missing method '" + methodName + "'";
+            const error = this.svType() + " delegate missing method '" + methodName + "'";
             console.log(error);
             debugger;
             throw new Error(error);

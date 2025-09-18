@@ -60,7 +60,7 @@
             this.setPermissionPromise(promise);
             
             if (!this.isSupported()) {
-                const msg = this.type() + " sending browser notifications is not supported";
+                const msg = this.svType() + " sending browser notifications is not supported";
                 console.warn(msg);
                 promise.callResolveFunc(false);
             } else {
@@ -68,7 +68,7 @@
                 this.logDebug("requestPermission:", result);
                 const gotPermission = result === "granted";
                 if (!gotPermission) {
-                    console.warn(this.type() + " permission denied");
+                    console.warn(this.svType() + " permission denied");
                 }
                 promise.callResolveFunc(gotPermission);
             }

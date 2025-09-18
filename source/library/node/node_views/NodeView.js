@@ -464,7 +464,7 @@
      * @returns {string} The log name.
      */
     logName () {
-        return this.type();
+        return this.svType();
     }
     
     /**

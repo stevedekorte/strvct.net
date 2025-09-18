@@ -102,7 +102,7 @@
     }
 
     jsonPathCompmentString () {
-        return this.type() + ":" + this.title() + ":" + this.jsonId();
+        return this.svType() + ":" + this.title() + ":" + this.jsonId();
     }
 
     nextJsonDescendants () {

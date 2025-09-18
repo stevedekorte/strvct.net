@@ -63,7 +63,7 @@
 
     /*
     async prechacheWhereAppropriate () {
-        //console.warn( this.type() + " doesn't implement prechacheWhereAppropriate");
+        //console.warn( this.svType() + " doesn't implement prechacheWhereAppropriate");
         await super.prechacheWhereAppropriate();
     }
     */

@@ -50,7 +50,7 @@ class SvCliBrowser {
     
     // Test getting subnodes
     let content = 'SvCliBrowser Started\n\n';
-    content += 'Root node type: ' + (rootNode.type ? rootNode.type() : 'unknown') + '\n';
+    content += 'Root node type: ' + (rootNode.type ? rootNode.svType() : 'unknown') + '\n';
     
     if (rootNode.subnodes && typeof rootNode.subnodes === 'function') {
       try {
@@ -58,7 +58,7 @@ class SvCliBrowser {
         content += 'Subnodes count: ' + subnodes.length + '\n\n';
         
         subnodes.slice(0, 5).forEach((node, i) => {
-          const title = node.title ? node.title() : node.type();
+          const title = node.title ? node.title() : node.svType();
           content += `${i + 1}. ${title}\n`;
         });
       } catch (e) {

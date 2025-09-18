@@ -428,7 +428,7 @@
      * @returns {SvWaSound} the sound
      */
     onError (e) {
-        console.warn(this.type() + " onDecodeError ", e.message, " " + this.path());
+        console.warn(this.svType() + " onDecodeError ", e.message, " " + this.path());
         this.setError(e);
     }
 
@@ -455,7 +455,7 @@
      * @returns {SvWaSound} the sound
      */
     onDecodeError (e) {
-        console.warn(this.type() + " onDecodeError ", e.message, " " + this.path());
+        console.warn(this.svType() + " onDecodeError ", e.message, " " + this.path());
         this.setError(e);
     }
 
@@ -513,7 +513,7 @@
      * @returns {String} the description
      */
     description () {
-        const parts = [this.type()];
+        const parts = [this.svType()];
         if (this.label()) {
             parts.push(this.label());
         }
@@ -636,7 +636,7 @@
         if (d) {
           sendDelegate(d, methodName, args);
         } else {
-          const error = this.type() + " delegate missing method '" + methodName + "'";
+          const error = this.svType() + " delegate missing method '" + methodName + "'";
           this.log(error);
           debugger;
           throw new Error(error);

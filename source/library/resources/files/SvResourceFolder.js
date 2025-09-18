@@ -189,7 +189,7 @@
      * @category Node Management
      */
     subfolders () {
-        return this.subnodes().filter(node => node.type() === this.folderClassName())
+        return this.subnodes().filter(node => node.svType() === this.folderClassName())
     }
 
     /**

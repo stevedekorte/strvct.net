@@ -15,7 +15,7 @@
       const slot = ≈.newSlot("isDoneSpeaking", false);
       slot.setCanInspect(true);
       slot.setDuplicateOp("duplicate");
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setLabel("Is Done Speaking");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -79,7 +79,7 @@
   }
 
   onSoundStarted (sound) {
-    //console.log(this.type() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
+    //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
     this.onSpeakingText(sound.transcript());
 
     //debugger;
@@ -98,7 +98,7 @@
   }
 
   onSoundEnded (sound) {
-    //console.log(this.type() + ".onSoundEnded [" + sound.transcript().clipWithEllipsis(15) + "]");
+    //console.log(this.svType() + ".onSoundEnded [" + sound.transcript().clipWithEllipsis(15) + "]");
     this.onSpokeText(sound.transcript());
   }
 

@@ -130,7 +130,7 @@
             this.setLastEvent(this._currentEvent)
             this._currentEvent = event
             if (this.isDebugging()) {
-                console.log(this.type() + " touch count: " + this.currentPoints().length)
+                console.log(this.svType() + " touch count: " + this.currentPoints().length)
             }
             //Devices.shared().setCurrentEvent(event)
         }
@@ -156,7 +156,7 @@
      */
     onTouchBeginCapture (event) {
         if (this.isDebugging()) {
-            console.log(this.type() + ".onTouchBeginCapture()")
+            console.log(this.svType() + ".onTouchBeginCapture()")
         }
         this.setCurrentEvent(event)
         //this.handleLeave(event)

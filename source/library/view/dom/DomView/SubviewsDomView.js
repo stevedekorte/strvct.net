@@ -208,7 +208,7 @@
         assert(aSubview.hasElement()) 
 
         if (this.hasSubview(aSubview)) {
-            throw new Error(this.type() + ".addSubview(" + aSubview.type() + ") attempt to add duplicate subview ")
+            throw new Error(this.svType() + ".addSubview(" + aSubview.svType() + ") attempt to add duplicate subview ")
         }
 
         assert(Type.isNullOrUndefined(aSubview.parentView()))
@@ -519,11 +519,11 @@
      * @returns {SubviewsDomView} The updated view.
      */
     removeSubview (aSubview) {
-        //console.warn("WARNING: " + this.type() + " removeSubview " + aSubview.type())
+        //console.warn("WARNING: " + this.svType() + " removeSubview " + aSubview.svType())
 
         // sanity check - make sure it's in our subview list
         if (!this.hasSubview(aSubview)) {
-            const msg = this.type() + " removeSubview " + aSubview.typeId() + " failed - no child found among: " + this.subviews().map(view => view.typeId())
+            const msg = this.svType() + " removeSubview " + aSubview.typeId() + " failed - no child found among: " + this.subviews().map(view => view.typeId())
             //Error.showCurrentStack()
             throw new Error(msg)
             //return aSubview
@@ -559,13 +559,13 @@
 
             // sanity check - make sure element was removed
             if (this.hasChildElement(e)) {
-                const msg = "WARNING: " + this.type() + " removeSubview " + aSubview.type() + " failed - still has element after remove"
+                const msg = "WARNING: " + this.svType() + " removeSubview " + aSubview.svType() + " failed - still has element after remove"
                 //console.warn(msg)
                 //Error.showCurrentStack()
                 throw new Error(msg)
             }
         } else {
-            const msg = "WARNING: " + this.type() + " removeSubview " + aSubview.type() + " parent element is missing this child element"
+            const msg = "WARNING: " + this.svType() + " removeSubview " + aSubview.svType() + " parent element is missing this child element"
             throw new Error(msg)
         }
 

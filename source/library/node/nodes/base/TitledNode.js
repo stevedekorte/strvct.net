@@ -327,7 +327,7 @@
         const subnode = this.firstSubnodeWithTitle(aString);
 
         if (subnode) {
-            if (subnode.type() !== aProto.type()) {
+            if (subnode.svType() !== aProto.svType()) {
                 // replace the subnode with matching title, 
                 // if it's not of the requested class
 

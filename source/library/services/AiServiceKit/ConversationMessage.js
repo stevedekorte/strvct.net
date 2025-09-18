@@ -384,7 +384,7 @@
    * @category Data
    */
   setValue (s) {
-    //assert(Type.isString(s), this.type() + " setValue() requires a string");
+    //assert(Type.isString(s), this.svType() + " setValue() requires a string");
     super.setValue(s)
     this.directDidUpdateNode() // so updates trigger UI refresh
     return this

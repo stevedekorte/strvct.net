@@ -161,7 +161,7 @@
      * @category Event
      */
     onTapOfDecendantNode (aNode) {
-        if (aNode.type() === "SvMinuteNode") {
+        if (aNode.svType() === "SvMinuteNode") {
             const minuteNode = aNode
             const hourNode = minuteNode.parentNode()
             this.setHour(hourNode.value())

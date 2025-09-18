@@ -15,7 +15,7 @@
      * @category Type Checking
      * @returns {string} The type name of the object
      */
-    static type () { 
+    static svType () { 
         return this.name;
     }
 
@@ -24,7 +24,7 @@
      * @category Type Checking
      * @returns {string} The type name of the object
      */
-    type () { 
+    svType () { 
         return this.constructor.name;
     }
 
@@ -100,9 +100,9 @@
 
         while (proto) {
             fn(proto);
-            //console.log("proto is ", proto.type())
+            //console.log("proto is ", proto.svType())
             if (proto === proto.__proto__) {
-                throw new Error("__proto__ loop detected in " + proto.type());
+                throw new Error("__proto__ loop detected in " + proto.svType());
             } else {
                 proto = proto.__proto__;
             }
@@ -156,7 +156,7 @@
         }
 
         const m = this._allSlotsMap;
-        //console.log("*** " + this.type() + " setupAllSlotsMap");
+        //console.log("*** " + this.svType() + " setupAllSlotsMap");
 
         //assert(this.isPrototype())
 
@@ -201,13 +201,13 @@
      */
     initSlots () {
         assert(this.isPrototype());
-        //console.log(this.type() + " this.slotsMap().size = " + this.slotsMap().size);
+        //console.log(this.svType() + " this.slotsMap().size = " + this.slotsMap().size);
 
         this.slotsMap().forEach((slot) => {
             slot.setupInOwner();
             const hasIvar = Object.hasOwn(this, "_" + slot.name());
             const hasGetter = Object.hasOwn(this, slot.name());
-            assert(hasIvar && hasGetter, this.type() + " missing " + slot.name() + " slot");
+            assert(hasIvar && hasGetter, this.svType() + " missing " + slot.name() + " slot");
         });
     }
 
@@ -262,8 +262,8 @@
             if (this.assertProtoSlotsHaveType) {
                 this.assertProtoSlotsHaveType();
             } else {
-                if (this.type() !== "Object") {
-                    console.log(this.type() + " missing assertProtoSlotsHaveType");
+                if (this.svType() !== "Object") {
+                    console.log(this.svType() + " missing assertProtoSlotsHaveType");
                     debugger;
                 }
             }
@@ -271,13 +271,13 @@
             //debugger;
         }
 
-        //console.log("\n\n" + this.type() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
+        //console.log("\n\n" + this.svType() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
         return this;
     }
 
     assertAllSlotsHaveTypes () {
         this.forEachSlot(slot => {
-            assert(slot.slotType() !== null, this.type() + " missing slot type for " + slot.name());
+            assert(slot.slotType() !== null, this.svType() + " missing slot type for " + slot.name());
         });
     }
 
@@ -292,7 +292,7 @@
             throw new Error("setupCategoryPrototype called on non-prototype");
         }
 
-        if (this.type() === "Object") {
+        if (this.svType() === "Object") {
             //console.warn("Object_boot.setupCategoryPrototype() called on Object prototype - skipping as we don't have slotMaps without ProtoClass");
             return this;
         }
@@ -346,7 +346,7 @@
             slot.setupInOwner();
             const hasIvar = Object.hasOwn(this, "_" + slot.name());
             const hasGetter = Object.hasOwn(this, slot.name());
-            assert(hasIvar && hasGetter, this.type() + " missing " + slot.name() + " slot (from category)");
+            assert(hasIvar && hasGetter, this.svType() + " missing " + slot.name() + " slot (from category)");
         }
     }
 

@@ -241,7 +241,7 @@
     this.logDebug("playTrackWithName('" + name + "')");
     const track = this.trackWithName(name);
     if (!track) {
-      console.warn(this.type() + " couldn't find track '" + name + "'");
+      console.warn(this.svType() + " couldn't find track '" + name + "'");
       return;
     }
     const player = this.musicPlayer();
@@ -271,7 +271,7 @@
   async playSoundEffectWithName (name) {
     const track = this.trackWithName(name);
     if (!track) {
-      console.warn(this.type() + " couldn't find track '" + name + "'");
+      console.warn(this.svType() + " couldn't find track '" + name + "'");
       return;
     }
     const player = this.soundEffectPlayer();

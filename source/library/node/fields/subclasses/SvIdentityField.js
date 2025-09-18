@@ -48,7 +48,7 @@
      */
     setValue (inValue) { // called by View on edit
         if (Type.isNull(inValue)) {
-            this.log("WARNING: " + this.type() + " setValue(null)")
+            this.log("WARNING: " + this.svType() + " setValue(null)")
             return this
         }
 	    //this.log("inValue = '" + inValue + "'")

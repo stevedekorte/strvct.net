@@ -212,7 +212,7 @@
       },
       body: ""
     });
-    this.setTitle(this.type());
+    this.setTitle(this.svType());
     this.setIsDebugging(true);
   }
 
@@ -234,7 +234,7 @@
 
   assertValidUrl () {
     if (!this.url()) {
-      throw new Error(this.type() + " url missing");
+      throw new Error(this.svType() + " url missing");
     }
   }
 
@@ -257,7 +257,7 @@
 
   showResponse () {
     if (json.error) {
-      console.warn(this.type() + " ERROR:", json.error.message);
+      console.warn(this.svType() + " ERROR:", json.error.message);
     }
   }
 

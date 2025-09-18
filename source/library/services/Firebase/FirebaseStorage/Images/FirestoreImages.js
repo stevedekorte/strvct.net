@@ -200,7 +200,7 @@
      * @category DragDrop
      */
     canAddSubnode (aNode) {
-        return aNode.type() === "FirestoreImage";
+        return aNode.svType() === "FirestoreImage";
     }
 
     /**

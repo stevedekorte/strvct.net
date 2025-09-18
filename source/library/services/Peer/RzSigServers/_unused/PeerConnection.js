@@ -28,7 +28,7 @@
   }
 
   debugTypeId () {
-    return this.type() + " " + this.shortId();
+    return this.svType() + " " + this.shortId();
   }
 
   init() {
@@ -111,7 +111,7 @@
   // --- shutdown ---
 
   shutdown() {
-    console.log(this.type() + " " + this.shortId() + " shutdown");
+    console.log(this.svType() + " " + this.shortId() + " shutdown");
     if (this.conn()) { // only close connection if it's still up
       this.conn().close()
       this.server().removePeerConnection(this);

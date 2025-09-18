@@ -11,7 +11,7 @@
 (class ToolDefinition extends UoJsonDictionaryNode {
 
   static jsonSchemaDescription () {
-    return "Format for Assistant API call to make an '" + this.type() + "' API call.";
+    return "Format for Assistant API call to make an '" + this.svType() + "' API call.";
   }
   
   /**
@@ -151,7 +151,7 @@
     let title = "";
     /*
     if (this.toolTarget()) {
-      title += this.toolTarget().thisClass().type() + ".";
+      title += this.toolTarget().thisClass().svType() + ".";
     } else {
       title += "NULL";
     }
@@ -186,7 +186,7 @@
 
   assertMethodExists () {
     const method = this.toolMethod();
-    assert(method, "Method named " + this.name() + " not found in class " + this.toolTarget().type());
+    assert(method, "Method named " + this.name() + " not found in class " + this.toolTarget().svType());
   }
 
   // --- begin pass through to method info ---
@@ -332,7 +332,7 @@
 
     const refSet = new Set();
     Array.from(this.classSetReferencedByDefinition()).forEach(c => {
-      map.set(c.type(), c.asJsonSchema(refSet));
+      map.set(c.svType(), c.asJsonSchema(refSet));
     });
 
     // components

@@ -135,7 +135,7 @@
      * @category Utility
      */
     asString () {
-        return this.type() + "(" + this.origin().asString() + ", " + this.size().asString() + ")"
+        return this.svType() + "(" + this.origin().asString() + ", " + this.size().asString() + ")"
     }
 
     /**

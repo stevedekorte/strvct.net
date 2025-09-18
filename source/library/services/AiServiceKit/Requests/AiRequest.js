@@ -72,7 +72,7 @@
       slot.setCanInspect(true);
       slot.setCanEditInspection(false);
       slot.setDuplicateOp("duplicate");
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Boolean");
@@ -95,7 +95,7 @@
       const slot = this.newSlot("body", null); 
       slot.setCanInspect(true);
       slot.setCanEditInspection(false);
-      slot.setInspectorPath(this.type() + "/body");
+      slot.setInspectorPath(this.svType() + "/body");
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -117,7 +117,7 @@
      */
     {
       const slot = this.newSlot("isStreaming", false);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -138,7 +138,7 @@
      */
     {
       const slot = this.newSlot("requestId", null);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -152,7 +152,7 @@
      */
     {
       const slot = this.newSlot("readIndex", 0);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -174,7 +174,7 @@
      */
     {
       const slot = this.newSlot("isContinuation", false);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -188,7 +188,7 @@
      */
     {
       const slot = this.newSlot("continuationStartIndex", 0); 
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -202,7 +202,7 @@
      */
     {
       const slot = this.newSlot("stopReason", null);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -216,7 +216,7 @@
      */
     {
       const slot = this.newSlot("retryDelaySeconds", 1);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -230,7 +230,7 @@
      */
     {
       const slot = this.newSlot("fullContent", null); 
-      slot.setInspectorPath(this.type() + "/fullContent");
+      slot.setInspectorPath(this.svType() + "/fullContent");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -260,7 +260,7 @@
      */
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -274,7 +274,7 @@
      */
     {
       const slot = this.newSlot("didAbort", false);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -433,13 +433,13 @@
    */
   async assertValid () {
     if (!this.apiUrl()) {
-      throw new Error(this.type() + " apiUrl missing");
+      throw new Error(this.svType() + " apiUrl missing");
     }
 
     const token = await this.apiKeyOrUserAuthToken();
     if (!token) {
       debugger;
-      throw new Error(this.type() + " apiKeyOrUserAuthToken missing");
+      throw new Error(this.svType() + " apiKeyOrUserAuthToken missing");
     }
   }
   
@@ -996,7 +996,7 @@
    * @description Reads the lines from the XHR response
    */
   readXhrLines () {
-    throw new Error(this.type() + " readXhrLines not implemented");
+    throw new Error(this.svType() + " readXhrLines not implemented");
   }
 
   /**
@@ -1005,7 +1005,7 @@
    * @param {Object} json 
    */
   onStreamJsonChunk (/*json*/) {
-    throw new Error(this.type() + " onStreamJsonChunk not implemented");
+    throw new Error(this.svType() + " onStreamJsonChunk not implemented");
   }
 
   /**
@@ -1110,7 +1110,7 @@
    * @returns {Object}
    */
   stopReasonDict () {
-    return new Error(this.type() + " stopReasonDict not implemented");
+    return new Error(this.svType() + " stopReasonDict not implemented");
   }
 
   /**
@@ -1130,7 +1130,7 @@
    * @returns {boolean}
    */
   stoppedDueToMaxTokens () {
-    throw new Error(this.type() + " stoppedDueToMaxTokens not implemented");
+    throw new Error(this.svType() + " stoppedDueToMaxTokens not implemented");
   }
 
   /**

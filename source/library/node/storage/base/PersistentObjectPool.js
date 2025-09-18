@@ -63,7 +63,7 @@
      * @category Operation
      */
     open () {
-        throw new Error(this.type() + " synchronous open not available - use promiseOpen()");
+        throw new Error(this.svType() + " synchronous open not available - use promiseOpen()");
     }
 
     /**
@@ -72,7 +72,7 @@
      * @category Testing
      */
     async promiseSelfTest () {
-        console.log(this.type() + " --- self test start --- ");
+        console.log(this.svType() + " --- self test start --- ");
         const store = this.thisClass().clone();
         await store.promiseOpen();
         this.selfTestOnStore(store);
@@ -92,7 +92,7 @@
         store.clearCache();
         const loadedNode = store.rootObject();
         console.log("loadedNode = ", loadedNode);
-        console.log(this.type() + " --- self test end --- ");
+        console.log(this.svType() + " --- self test end --- ");
     }
 
     /**

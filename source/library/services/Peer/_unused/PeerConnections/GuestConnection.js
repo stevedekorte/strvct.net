@@ -54,7 +54,7 @@
   // ----------------
 
   onOpen(peerId) {
-    console.log(this.type() + " onOpen(" + peerId + ")");
+    console.log(this.svType() + " onOpen(" + peerId + ")");
     super.onOpen(peerId);
 
     /*
@@ -77,7 +77,7 @@
     if (method) {
       method.apply(this, [data]);
     } else {
-      console.warn("WARNING: no " + this.type() + "." + action + "() method found");
+      console.warn("WARNING: no " + this.svType() + "." + action + "() method found");
       debugger;
     }
   }
@@ -87,7 +87,7 @@
   }
 
   description () {
-    return this.type() + " id: " + this.id() + " nick: " + this.nickname()
+    return this.svType() + " id: " + this.id() + " nick: " + this.nickname()
   }
 
   session () {

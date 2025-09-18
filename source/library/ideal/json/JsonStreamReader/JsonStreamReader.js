@@ -278,7 +278,7 @@
    * @category Error Handling
    */
   onError (e) {
-    console.log(this.type() + " error: " + e);
+    console.log(this.svType() + " error: " + e);
     debugger;
     this.sendDelegate("onJsonStreamReaderError", [this, e]);
   }
@@ -377,7 +377,7 @@
 
     /*
     if (this.isDebugging()) {
-      console.log(this.type() + " --------------- calling delegate " + methodName + "(" + args.join(",") + ")");
+      console.log(this.svType() + " --------------- calling delegate " + methodName + "(" + args.join(",") + ")");
     }
     */
 
@@ -389,7 +389,7 @@
       }
     } else {
       /*
-      const error = this.type() + " delegate missing method '" + methodName + "'";
+      const error = this.svType() + " delegate missing method '" + methodName + "'";
       console.log(error);
       debugger;
       throw new Error(error);

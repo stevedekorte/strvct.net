@@ -55,7 +55,7 @@
       // Check if the target node supports JSON patch operations
       if (!targetInfo.node.executeDirectOperation) {
         throw new JsonPatchError(
-          `Target node type '${targetInfo.node.type()}' does not support JSON patch operations. Only JSON collection nodes (JsonGroup, SvJsonArrayNode) with patch categories support direct operations.`,
+          `Target node type '${targetInfo.node.svType()}' does not support JSON patch operations. Only JSON collection nodes (JsonGroup, SvJsonArrayNode) with patch categories support direct operations.`,
           operation,
           pathSegments,
           targetInfo.key,
@@ -151,7 +151,7 @@
         // If there's still path remaining, this is an error
         if (remainingPath.length > 0) {
           throw new JsonPatchError(
-            `Cannot navigate further from '${nextSegment}' - node type '${childNode.type()}' does not support path navigation`,
+            `Cannot navigate further from '${nextSegment}' - node type '${childNode.svType()}' does not support path navigation`,
             null,
             fullPath,
             remainingPath[0],

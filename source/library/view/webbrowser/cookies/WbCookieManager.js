@@ -328,7 +328,7 @@
         if (this._idb === null) {
             const idb = SvIndexedDbFolder.clone();
             idb.setIsDebugging(false);
-            idb.setPath(this.type());
+            idb.setPath(this.svType());
             this._idb = idb;
         }
         return this._idb;

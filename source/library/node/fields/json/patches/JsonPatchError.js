@@ -44,7 +44,7 @@
             fullPath: this.fullPath,
             failedAt: this.partialPath,
             failedSegment: this.currentSegment,
-            nodeType: this.targetNode ? this.targetNode.type() : 'unknown',
+            nodeType: this.targetNode ? this.targetNode.svType() : 'unknown',
             suggestions: this.getSuggestions()
         };
     }

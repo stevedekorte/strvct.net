@@ -142,7 +142,7 @@
 
         this.cache().set(k, v)
         keys.push(k)
-        console.log(this.type() + " caching: " + keys.length)
+        console.log(this.svType() + " caching: " + keys.length)
     }
 
     /**

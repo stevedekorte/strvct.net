@@ -278,12 +278,12 @@
 
     const proxyUrl = this.getProxyUrl();
     this.setStatus("fetching...");
-    console.log(this.type() + " fetch proxy url: " + proxyUrl);
+    console.log(this.svType() + " fetch proxy url: " + proxyUrl);
   */
 
     //const apiKey = LeonardoService.shared().apiKeyOrUserAuthToken();
     const url = this.url();
-    console.log(this.type() + " fetching url: " + url);
+    console.log(this.svType() + " fetching url: " + url);
     try {
       const response = await fetch(url, { method: 'GET' });
       /*

@@ -480,7 +480,7 @@
                 v = null;
             }
         } else {
-            const errorMsg = "missing getter method: " + this.type() + "." + name + "()";
+            const errorMsg = "missing getter method: " + this.svType() + "." + name + "()";
             console.warn(errorMsg);
             //throw new Error(errorMsg);
         }
@@ -565,12 +565,12 @@
                 if (v) {
                     const themeClassName = this.themeClass().title();
                     const stateName = this.title();
-                    this.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node());
+                    this.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.svType())// + "/" + aView.node());
                 }
                 */
                 aView.performIfResponding(aView.setterNameForSlot(name), v);
             } else {
-                this.log("style " + name + " locked on view " + aView.type());
+                this.log("style " + name + " locked on view " + aView.svType());
             }
         })
         return this;

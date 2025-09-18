@@ -77,7 +77,7 @@
         this.styleNames().forEach( (name) => { 
             const getterMethod = this[name]
             if (!getterMethod) {
-                const errorMsg = "missing getter method: " + this.type() + "." + name + "()"
+                const errorMsg = "missing getter method: " + this.svType() + "." + name + "()"
                 console.warn(errorMsg)
                 throw new Error(errorMsg)
             }

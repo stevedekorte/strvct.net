@@ -102,8 +102,8 @@
         const puuid = this.puuid();
         let typeName = null;
 
-        if (Type.isFunction(this.type)) {
-            typeName = this.type();
+        if (Type.isFunction(this.svType)) {
+            typeName = this.svType();
         } else {
             typeName = Type.typeName(this);
         }
@@ -133,8 +133,8 @@
     debugTypeId () {
         const puuid = this.puuid().substr(0,3)
 
-        if (Type.isFunction(this.type)) {
-            return this.type() + "_" + puuid
+        if (Type.isFunction(this.svType)) {
+            return this.svType() + "_" + puuid
         }
         return Type.typeName(this) + "_" + puuid
     }

@@ -346,7 +346,7 @@
      */
     setupElementClassName () {
         const e = this.element()
-        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
+        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.svType())
         ancestorNames.forEach(name => e.classList.add(name))
         return this
     }

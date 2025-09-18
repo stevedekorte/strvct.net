@@ -489,7 +489,7 @@
         //debugger;
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()); // this call will actually internally set this._rootObject as we may need it while loading the root's refs
-            //assert(!Type.isNullOrUndefined(root), this.type() + " rootObject is null or undefined");
+            //assert(!Type.isNullOrUndefined(root), this.svType() + " rootObject is null or undefined");
             if (Type.isNullOrUndefined(root)) {
                 // this can happen is the root object class doesn't exist anymore
                 console.log("readRootObject() rootObject is null or undefined");
@@ -603,7 +603,7 @@
         }
         */
         /*
-        if (anObject.type() === "Error") {
+        if (anObject.svType() === "Error") {
             debugger;
             return false;
         }
@@ -617,7 +617,7 @@
         }
 
         if (!anObject.shouldStore()) {
-            const msg = "attempt to addActiveObject '" + anObject.type() + "' but shouldStore is false";
+            const msg = "attempt to addActiveObject '" + anObject.svType() + "' but shouldStore is false";
             console.warn(msg);
             anObject.shouldStore();
             //throw new Error(msg);
@@ -625,7 +625,7 @@
         }
 
         if (!anObject.isInstance()) {
-            const msg = "can't store non instance of type '" + anObject.type() + "'";
+            const msg = "can't store non instance of type '" + anObject.svType() + "'";
             console.log(msg);
             anObject.isKindOf(ProtoClass);
             throw new Error(msg);
@@ -804,7 +804,7 @@
         assert(this.isOpen())
         const scheduler = SyncScheduler.shared();
         const methodName = "commitStoreDirtyObjects";
-        //console.log(this.type() + " --- scheduleStore ---")
+        //console.log(this.svType() + " --- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
                 //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null);
@@ -826,7 +826,7 @@
         this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
         //debugger;
         if (this.hasDirtyObjects()) {
-            //console.log(this.type() + " --- commitStoreDirtyObjects ---");
+            //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
 
             //this.logDebug("--- commitStoreDirtyObjects begin ---");
             await this.recordsMap().promiseBegin();
@@ -921,7 +921,7 @@
         const className = aRecord.type;
         //console.log("loading " + className + " " + aRecord.id);
         if (className === "Promise") {
-            console.warn(this.type() + " WARNING: a Promise was stored. Returning a null. Check stack trace to see which object stored it.");
+            console.warn(this.svType() + " WARNING: a Promise was stored. Returning a null. Check stack trace to see which object stored it.");
             debugger;
             return null;
         }
@@ -1155,7 +1155,7 @@
         assert(!v.isClass());
 
         if (!v.shouldStore()) {
-            console.log("WARNING: called refValue on " + v.type() + " which has shouldStore=false");
+            console.log("WARNING: called refValue on " + v.svType() + " which has shouldStore=false");
          //   debugger;
             return null;
         }
@@ -1212,7 +1212,7 @@
         */
         
         // --- sanity checks ---
-        assert(obj.shouldStore(), "object " + obj.type() + " shouldStore is false");
+        assert(obj.shouldStore(), "object " + obj.svType() + " shouldStore is false");
 
         this.logDebug(() => "storeObject(" + obj.typeId() + ")");
 
@@ -1285,7 +1285,7 @@
      * @returns {Number}
      */
     async promiseCollect () {
-        //console.log(this.type() + " --- promiseCollect ---");
+        //console.log(this.svType() + " --- promiseCollect ---");
         if (Type.isUndefined(this.rootPid())) {
             console.log("---- NO ROOT PID FOR COLLECT - clearing! ----");
             await this.recordsMap().promiseBegin();
@@ -1511,7 +1511,7 @@
     }
 
     static selfTest () {
-        console.log(this.type() + " --- self test start --- ");
+        console.log(this.svType() + " --- self test start --- ");
         const store = ObjectPool.clone()
         store.open();;
 
@@ -1523,7 +1523,7 @@
         store.clearCache();
         const loadedNode = store.rootObject();
         console.log("loadedNode = ", loadedNode);
-        console.log(this.type() + " --- self test end --- ");
+        console.log(this.svType() + " --- self test end --- ");
     }
     */
 

@@ -20,7 +20,7 @@
     static instanceFromRecordInStore (/*aRecord, aStore*/) {
 
         if(!this.shouldStore()) {
-            console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
+            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.svType() + ") with shouldStore set to false - returning null");
             return null;
         }
 
@@ -39,7 +39,7 @@
      */
     recordForStore (aStore) { // should only be called by Store
         const aRecord = {
-            type: this.type(), 
+            type: this.svType(), 
             entries: []
         };
 
@@ -47,9 +47,9 @@
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this);
                 if (Type.isPromise(v)) {
-                    throw new Error(this.type() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
+                    throw new Error(this.svType() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
                 }
-                assert(!Type.isUndefined(v), this.type() + " slot '" + slotName + "' is set to shouldStore, but is undefined");
+                assert(!Type.isUndefined(v), this.svType() + " slot '" + slotName + "' is set to shouldStore, but is undefined");
 
                 let valueToRecord;
                 if (slot.slotType() === "JSON Object") {
@@ -121,7 +121,7 @@
                     }
                 }
             } else {
-                console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.type() + "' does not. Did schema change?");
+                console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change?");
                 //debugger;
                 this.scheduleMethod("didMutate", 1000); // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete 
                 //debugger;

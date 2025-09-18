@@ -91,7 +91,7 @@
      */
     {
       const slot = this.newSlot("requestId", null);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -105,7 +105,7 @@
      */
     {
       const slot = this.newSlot("retryDelaySeconds", 1);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -117,7 +117,7 @@
     // max retries
     {
       const slot = this.newSlot("maxRetries", 3);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -129,7 +129,7 @@
     // retry count
     {
       const slot = this.newSlot("retryCount", 0);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -140,7 +140,7 @@
 
     {
       const slot = this.newSlot("timeoutPeriodInMs", 60000); // 30 seconds
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -162,7 +162,7 @@
      */
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -176,7 +176,7 @@
      */
     {
       const slot = this.newSlot("didAbort", false);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -190,7 +190,7 @@
      */
     {
       const slot = this.newSlot("didTimeout", false);
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.svType());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -925,7 +925,7 @@
     const msg = e.message;
     this.setError(e);
     this.setStatus("ERROR: " + msg);
-    console.warn("**ERROR**:", this.logPrefix(), " ======================= " + this.type() + " " + this.url() + " onXhrError: " + e.message + " ======================= ");
+    console.warn("**ERROR**:", this.logPrefix(), " ======================= " + this.svType() + " " + this.url() + " onXhrError: " + e.message + " ======================= ");
     debugger;
     console.warn(this.description());
     //debugger;

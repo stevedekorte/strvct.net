@@ -117,7 +117,7 @@
         if (this._isPaused !== aBool) {
             this._isPaused = aBool;
 
-            this.logDebug(this.type() + ".setIsPaused(" + aBool + ")");
+            this.logDebug(this.svType() + ".setIsPaused(" + aBool + ")");
 
             if (aBool) {
                 this.cancelAllGestures();

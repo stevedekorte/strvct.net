@@ -116,7 +116,7 @@
             // Check if json has invalid keys
             const invalidSlotNames = Set.difference(newKeys,  this.jsonSchemaSlotNamesSet());
             if (invalidSlotNames.size > 0) {
-                throw new Error(this.type() + ".setJson() contained invalid JSON schema keys: " + invalidSlotNames.join(", "), " at path: " + jsonPathComponents.join("/"));
+                throw new Error(this.svType() + ".setJson() contained invalid JSON schema keys: " + invalidSlotNames.join(", "), " at path: " + jsonPathComponents.join("/"));
             }
 
             // Check if all required slots are present in json
@@ -124,7 +124,7 @@
 
             // - throw an error if there are json properties not present in the JSON schema
             if (missingSlotNames.size > 0) {
-                throw new Error(this.type() + ".setJson() missing required JSON schema keys: " + missingSlotNames.join(", "), " at path: " + jsonPathComponents.join("/"));
+                throw new Error(this.svType() + ".setJson() missing required JSON schema keys: " + missingSlotNames.join(", "), " at path: " + jsonPathComponents.join("/"));
             }
 
             // looks good, so we can set the json normally. Fields will auto apply new values to their respective slots

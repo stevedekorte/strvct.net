@@ -93,7 +93,7 @@
    * @category Data Retrieval
    */
   groupName () {
-    return this.type().after("HomeAssistant");
+    return this.svType().after("HomeAssistant");
   }
 
   /**

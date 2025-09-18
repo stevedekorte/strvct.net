@@ -212,7 +212,7 @@
     setEditable (aBool) {
         // to avoid editable content?
         if (aBool) {
-            console.warn("setEditable is not implemented for " + this.type());
+            console.warn("setEditable is not implemented for " + this.svType());
         }
         return this;
     }

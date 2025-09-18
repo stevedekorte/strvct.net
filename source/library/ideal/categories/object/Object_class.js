@@ -84,7 +84,7 @@
     static parentClass () {
         const p = this.__proto__;
 
-        if (p && p.type) {
+        if (p && p.svType) {
             return p;
         }
 
@@ -258,7 +258,7 @@
      * @category Class Registration
      */
     static defineClassGlobally () {
-        const className = this.type();
+        const className = this.svType();
         if (Type.isUndefined(this.globals()[className])) {
             this.globals()[className] = this;
             
@@ -273,7 +273,7 @@
             if (typeof globalThis !== 'undefined') {
                 globalThis[className] = this;
             }
-        } else if (this.type() !== "Object") {
+        } else if (this.svType() !== "Object") {
             const msg = "WARNING: Attempt to redefine SvGlobals.globals()['" + className + "']";
             console.warn(msg);
             throw new Error(msg);
@@ -297,7 +297,7 @@
      */
     static addToAllClasses () {
         if (this.allClassesSet().has(this)) {
-            throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'");
+            throw new Error("attempt to call initThisClass twice on class '" + this.svType() + "'");
         }
         this.allClassesSet().add(this);
         return this;

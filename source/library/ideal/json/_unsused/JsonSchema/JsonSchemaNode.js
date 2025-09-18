@@ -135,7 +135,7 @@
    * @category Data Management
    */
   updateJson (/*json*/) {
-    throw new Error(this.type() + ".updateJson() is no longer implemented. applyJsonPatches() is the new method to use.");
+    throw new Error(this.svType() + ".updateJson() is no longer implemented. applyJsonPatches() is the new method to use.");
     /*
     // we assume it's a patch if it's an array
     if (Type.isArray(json)) { 

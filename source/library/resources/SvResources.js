@@ -200,7 +200,7 @@
         //this.log(".prechacheWhereAppropriate()");
         //promiseSerialTimeoutsForEach
         await this.subnodes().promiseSerialForEach(async (node) => {
-            //this.log("subnode: " + node.type() + ".prechacheWhereAppropriate()");
+            //this.log("subnode: " + node.svType() + ".prechacheWhereAppropriate()");
             //debugger;
             //SvBootLoadingView.shared().setSubtitle("prechaching " + node.title());
             await node.prechacheWhereAppropriate();

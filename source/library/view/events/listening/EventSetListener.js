@@ -157,7 +157,7 @@
      */
     resync () {
         if (this.isListening()) {
-            console.warn(this.type() + " resyncing while listening");
+            console.warn(this.svType() + " resyncing while listening");
             debugger;
             this.stop();
             this.syncToListeners();

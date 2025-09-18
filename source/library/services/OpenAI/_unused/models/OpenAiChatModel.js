@@ -69,7 +69,7 @@
     const apiKey = this.service().apiKey();
 
     if (!apiKey) {
-      console.warn(this.type() + " " + this.title() + " asyncCheckAvailability() - no api key");
+      console.warn(this.svType() + " " + this.title() + " asyncCheckAvailability() - no api key");
       //debugger;
       return null
     }
@@ -102,7 +102,7 @@
         - add check for "model does not exist" to ensure it's a model error
         - otherwise, retry with backoff?
       */
-     console.log(this.type()  + " " + this.name() + " asyncCheckAvailability " + json.error.code);
+     console.log(this.svType()  + " " + this.name() + " asyncCheckAvailability " + json.error.code);
       this.setIsAvailable(false);
     } else {
       this.setIsAvailable(true);

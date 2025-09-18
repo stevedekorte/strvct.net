@@ -44,7 +44,7 @@ const { spawn } = require('child_process');
      * Start the auto-relauncher
      */
     start () {
-        console.log(this.type() + " started");
+        console.log(this.svType() + " started");
         const tid = setInterval(() => this.checkAndDeleteFile(), this.checkInterval());
         this.setIntervalId(tid);
 
@@ -72,7 +72,7 @@ const { spawn } = require('child_process');
     checkAndDeleteFile () {
         try {
             if (fs.existsSync(this.filePath())) {
-                console.log(this.type() + " found '" + this.filePath() + "' - this is our signal to (delete this file and) restart the process...");
+                console.log(this.svType() + " found '" + this.filePath() + "' - this is our signal to (delete this file and) restart the process...");
                 fs.unlinkSync(this.filePath());
                 this.restartProcess();
             }

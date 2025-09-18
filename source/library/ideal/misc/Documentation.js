@@ -9,10 +9,10 @@
  * TODO: Rename to something more unique.
  */
 (class Documentation extends ProtoClass {
-    initPrototypeSlots() {
+    initPrototypeSlots () {
     }
 
-    initPrototype() {
+    initPrototype () {
     }
 
     /**
@@ -20,7 +20,7 @@
      * @returns {Array} An array of all the classes.
      * @category Data Retrieval
      */
-    classes() {
+    classes () {
         return ProtoClass.allClassesSet().asArray();
     }
 
@@ -30,7 +30,7 @@
      * @returns {Array} An array of objects containing information about the methods of the given class.
      * @category Data Retrieval
      */
-    methodsDocsForClass(aClass) {
+    methodsDocsForClass (aClass) {
         const methods = [];
         Object.getOwnPropertyNames(aClass).forEach((methodName) => {
             const v = aClass[methodName];
@@ -51,14 +51,14 @@
      * @returns {Object} A JSON representation of the documentation for all classes and their methods.
      * @category Data Representation
      */
-    asJson() {
+    asJson () {
         const classes = [];
         this.classes().forEach((aClass) => {
             const classDict = {};
-            classDict.name = aClass.type();
+            classDict.name = aClass.svType();
             const superclass = aClass.superClass();
-            if (superclass.type) {
-                classDict.superClass = superclass.type();
+            if (superclass.svType) {
+                classDict.superClass = superclass.svType();
             }
             classes.push(classDict);
             classDict.methods = this.methodsDocsForClass(aClass);
@@ -70,7 +70,7 @@
      * @description Logs a summary of the documentation for all classes and their methods to the console.
      * @category Output
      */
-    show() {
+     show () {
         const classes = this.asJson();
         const lines = [];
         classes.forEach((aClass) => {

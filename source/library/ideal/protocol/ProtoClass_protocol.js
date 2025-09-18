@@ -127,7 +127,7 @@
     * @category Method Validation
     */
     assertImplementsMethodNamesSet (methodNamesSet) {
-    assert(this.implementsMethodNamesSet(methodNamesSet), this.type() + " is missing methods: " + methodNamesSet.difference(this.allSlotsNamesSet()));
+    assert(this.implementsMethodNamesSet(methodNamesSet), this.svType() + " is missing methods: " + methodNamesSet.difference(this.allSlotsNamesSet()));
     }
 
 }).initThisCategory();

@@ -146,7 +146,7 @@
         this.setupSubnodesIfNeeded();
         //debugger;
         await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => {
-            //this.log("file: " + file.type() + ".prechacheWhereAppropriate()");
+            //this.log("file: " + file.svType() + ".prechacheWhereAppropriate()");
             await file.prechacheWhereAppropriate();
         });
         return this;
