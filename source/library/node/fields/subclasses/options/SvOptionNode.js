@@ -65,7 +65,7 @@
      * @returns {string} The debug type identifier.
      * @category Debugging
      */
-    debugTypeId () {
+    svDebugId () {
         return this.svTypeId() + "_'" + this.label() + "'";
     }
 

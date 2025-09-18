@@ -933,7 +933,7 @@
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {
-      console.warn("**WARNING**:", this.logPrefix(), this.debugTypeId() + " " + e.message);
+      console.warn("**WARNING**:", this.logPrefix(), this.svDebugId() + " " + e.message);
     }
     return this;
   }
@@ -976,7 +976,7 @@
     this.sendDelegate("onRequestTimeout", [this, error]);
     
     if (error) {
-      console.warn("**WARNING**:", this.logPrefix(), this.debugTypeId() + " " + error.message);
+      console.warn("**WARNING**:", this.logPrefix(), this.svDebugId() + " " + error.message);
     }
     
     if (!this.sendDelegate("onRequestError", [this, error])) {

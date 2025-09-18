@@ -265,7 +265,7 @@
             console.warn("attempt to set to same element")
         } else {
             if (Type.isNullOrUndefined(e)) {
-                console.warn(this.debugTypeId() + " setElement null")
+                console.warn(this.svDebugId() + " setElement null")
                 debugger;
             }
             
@@ -325,7 +325,7 @@
     setupElement () {
         const e = this.createElement()
         this.setElement(e)
-        this.setElementId(this.debugTypeId())
+        this.setElementId(this.svDebugId())
         //this.setupElementClassName()
         return this
     }

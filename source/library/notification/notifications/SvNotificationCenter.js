@@ -318,6 +318,12 @@
     addObservation (obs) {
         if (!this.hasObservation(obs)) {
             this.observationsMap().set(obs.obsHash(), obs);
+            /*
+            if (obs.sender() !== null && obs.sender().svType() === "FirestoreDatabaseService") {
+                console.log("----------- " + obs.observer().svTypeId() + " now observing " + obs.sender().svTypeId());
+                debugger;
+            }
+            */
             //this.observations().push(obs);
         }
         return this;

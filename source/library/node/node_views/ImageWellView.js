@@ -147,7 +147,7 @@
 
     onBrowserDragOver (event) {
         const r =  super.onBrowserDragOver(event);
-        //console.log(this.debugTypeId() + " onBrowserDragOver() -> " + r);
+        //console.log(this.svDebugId() + " onBrowserDragOver() -> " + r);
         return r;
     }
     */

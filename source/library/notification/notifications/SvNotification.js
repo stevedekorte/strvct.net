@@ -81,7 +81,7 @@
      * @category Identification
      */
     senderId () {
-        return this.sender().debugTypeId();
+        return this.sender().svDebugId();
     }
 
     /**

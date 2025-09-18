@@ -1293,7 +1293,7 @@
      * @returns {string} The debug type ID.
      * @category Debugging
      */
-    debugTypeId () {
+    svDebugId () {
         return this.svType() + "_" + this.shortId();
     }
 

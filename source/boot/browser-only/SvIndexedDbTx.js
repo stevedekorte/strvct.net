@@ -408,8 +408,8 @@
      * @returns {string}
      * @category Debugging
      */
-    debugTypeId () {
-        return this.dbFolder().debugTypeId() + " " + this.txId() //super.debugTypeId()
+    svDebugId () {
+        return this.dbFolder().svDebugId() + " " + this.txId() //super.svDebugId()
     }
     
 }.initThisClass());

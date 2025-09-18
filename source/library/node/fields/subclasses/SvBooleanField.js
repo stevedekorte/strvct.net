@@ -73,7 +73,7 @@
         const isValid = this.valueIsBool();
 		
         if (!isValid) {
-            const targetName = this.target() ? this.target().debugTypeId() : "<no target>";
+            const targetName = this.target() ? this.target().svDebugId() : "<no target>";
             const s = "Field '" + this.key() + "' on target '" + targetName + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
             console.warn(s);
             debugger;

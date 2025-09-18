@@ -209,12 +209,12 @@
      * @returns {string} The type of the instance.
      * @category Debugging
      */
-    debugTypeId () {
+    svDebugId () {
         return this.svType();
     }
 
     logPrefix () {
-        return "[" + this.debugTypeId() + "] ";
+        return "[" + this.svDebugId() + "] ";
     }
 
     log (...args) {

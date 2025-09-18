@@ -36,7 +36,7 @@ function evalStringFromSourceUrl (codeString, path) {
             
             result = eval.call(globalObj, debugCode);
         } else {
-            console.log("eval url: " + sourceURL);
+            //console.log("eval url: " + sourceURL);
             result = eval(debugCode);
            // result = new Function(debugCode)(); // new Function() is faster than eval() but causes 2-line offset in debugger
         }

@@ -115,7 +115,7 @@
         //this.addSubnode(themes);
         //let link = this.addLinkSubnode(themes);
         //this.setThemes(themes);
-        //this.log("themes link = ", link.debugTypeId());
+        //this.log("themes link = ", link.svDebugId());
 
         this.setFiles(SvFileResources.shared());
         this.addSubnode(this.files());

@@ -555,7 +555,7 @@
      */
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
-        //this.log("applyStyleSlotsToView ", aView.debugTypeId());
+        //this.log("applyStyleSlotsToView ", aView.svDebugId());
         styleSlots.forEach(slot => { 
             const name = slot.name();
             const isLocked = lockedSet ? lockedSet.has(name) : false;

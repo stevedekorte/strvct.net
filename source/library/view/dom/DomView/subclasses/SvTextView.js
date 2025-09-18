@@ -905,7 +905,7 @@
         // sent before the content is changed
         super.onKeyDown(event);
         //const keyName = SvKeyboard.shared().keyForEvent(event);
-        //this.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode);
+        //this.log(this.svDebugId() + " onKeyDown event.keyCode = ", event.keyCode);
 
         if (this.shouldMuteEvent(event)) {
             event.preventDefault();
@@ -931,7 +931,7 @@
         //event.preventDefault();
         //return result;
 
-        //this.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
+        //this.log(this.svDebugId() + " onKeyUp event.keyCode = ", event.keyCode)
         //this.logDebug(" onKeyUp value: [" + this.value() + "]")
 
         if (this.doesInput()) {

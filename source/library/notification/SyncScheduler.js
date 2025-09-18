@@ -321,7 +321,7 @@
      */
     unscheduleTarget (target) {
         if (this.hasActionsForTarget(target)) {
-            console.log("unscheduling target " + target.debugTypeId());
+            console.log("unscheduling target " + target.svDebugId());
 
             if (this.isProcessing()) {
                 console.warn("WARNING: SynScheduler unscheduleTarget while processing actions set - will unschedule action")

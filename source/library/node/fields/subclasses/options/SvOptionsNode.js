@@ -150,7 +150,7 @@
      * @description Gets a debug type identifier for the options node.
      * @returns {string} The debug type identifier.
      */
-    debugTypeId () {
+    svDebugId () {
         return this.svTypeId() + "_'" + this.key() + "'";
     }
     

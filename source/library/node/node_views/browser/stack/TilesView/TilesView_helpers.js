@@ -148,9 +148,9 @@
 
     // --- helpers ---
 /*
-    debugTypeId () {
+    svDebugId () {
         const comment = " '" + (this.node() ? this.node().title() : "untitled node") + "'"
-        return super.debugTypeId() + comment
+        return super.svDebugId() + comment
     }
 */
 

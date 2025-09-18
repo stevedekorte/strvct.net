@@ -440,7 +440,7 @@
     /*
     setNode (aNode) {
         if (this.node() && Type.isNull(aNode)) {
-            console.log(this.debugTypeId() + " setNode(null)");
+            console.log(this.svDebugId() + " setNode(null)");
             //debugger;
         }
         super.setNode(aNode);

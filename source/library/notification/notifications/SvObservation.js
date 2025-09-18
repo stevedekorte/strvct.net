@@ -68,6 +68,12 @@
             slot.setSlotType("Object"); // TODO: add observer protocol
             slot.setAllowsNullValue(true);
         }
+
+        {
+            const slot = this.newSlot("observerDescription", ""); // description of the observer for debugging when observer is collected
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(false);
+        }
         /**
          * @member {Object|null} sender - WeakRef to sender
          * @category Configuration
@@ -76,6 +82,12 @@
             const slot = this.newWeakSlot("sender", null);
             slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
+        }
+
+        {
+            const slot = this.newSlot("senderDescription", ""); // description of the sender for debugging when sender is collected
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(false);
         }
         /**
          * @member {String|null} obsHash
@@ -144,6 +156,11 @@
      */
     didUpdateSlotSender () {
         this.clearHashes();
+        if (this.sender() === null) {
+            this.setSenderDescription("null");
+        } else {
+            this.setSenderDescription(this.sender().svTypeId());
+        }
     }
 
     /**
@@ -152,6 +169,11 @@
      */
     didUpdateSlotObserver () {
         this.clearHashes();
+        if (this.observer() === null) {
+            this.setObserverDescription("null");
+        } else {
+            this.setObserverDescription(this.observer().svTypeId());
+        }
     }
 
     /**
@@ -335,7 +357,7 @@
         }
 
         if (this.center().isDebugging() || this.isDebugging()) {
-            this.logDebug(note.sender().debugTypeId() + " sending note " + note.name() + " to " + this.observer().debugTypeId());
+            this.logDebug(note.sender().svDebugId() + " sending note " + note.name() + " to " + this.observer().svDebugId());
         }
 
         const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];
@@ -360,11 +382,14 @@
      */
     startWatching () {
         this.center().addObservation(this);
-        if (this.sender() && this.sender().isKindOf(FirebaseStorageService)) {
-            this.log("STARTING WATCHING FOR " + this.sender().debugTypeId() + " " + this.name());
+
+        /*
+        if (this.sender() && this.sender().isKindOf(FirestoreDatabaseService)) {
+            this.log("STARTING WATCHING FOR " + this.sender().svTypeId() + " " + this.name());
             //debugger;
             this.sender().onDidMutateObject(this);
         }
+        */
         return this;
     }
 
@@ -393,7 +418,8 @@
      * @category Utility
      */
     description () {
-        return this.observerId() + " listening to " + this.senderId() + " " + this.name();
+        return "observer '" + this.observerDescription() + "' listening for sender '" + this.senderDescription() + "' note '" + this.name() + "' (warning: puuids may have changed on load)";
+        //return this.observerId() + " listening to " + this.senderId() + " " + this.name();
     }
 
     /**

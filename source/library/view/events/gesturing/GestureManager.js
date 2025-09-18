@@ -269,9 +269,9 @@
      * @returns {string} The debug type ID
      * @category Debugging
      */
-    debugTypeId () {
+    svDebugId () {
         const s = this.isPaused() ? "(paused)" : "(not paused)";
-        return super.debugTypeId() + s;
+        return super.svDebugId() + s;
     }
     
 }.initThisClass());

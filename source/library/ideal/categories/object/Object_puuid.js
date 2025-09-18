@@ -130,7 +130,7 @@
      * @returns {string} A debug-friendly type ID.
      * @category Debugging
      */
-    debugTypeId () {
+    svDebugId () {
         const puuid = this.puuid().substr(0,3)
 
         if (Type.isFunction(this.svType)) {
@@ -144,7 +144,7 @@
      * @returns {string} The debug type ID spacer.
      * @category Debugging
      */
-    debugTypeIdSpacer () {
+    svDebugIdSpacer () {
         return " -> "
     }
 

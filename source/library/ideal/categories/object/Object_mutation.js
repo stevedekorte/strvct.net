@@ -147,7 +147,7 @@
     didMutate (optionalSlotName) {
         const mos = this._mutationObservers;
         if (mos) {
-            //console.log("" + this.debugTypeId() + ".didMutate()")
+            //console.log("" + this.svDebugId() + ".didMutate()")
             mos.forEach(obs => {
                 obs.onDidMutateObject(this, optionalSlotName);
             });

@@ -249,7 +249,7 @@
         if (isSynced) {
             this.logDebug(".verifySync() SUCCEEDED");
         } else {
-            throw new Error(this.debugTypeId() + ".verifySync() FAILED");
+            throw new Error(this.svDebugId() + ".verifySync() FAILED");
         }
     }
     

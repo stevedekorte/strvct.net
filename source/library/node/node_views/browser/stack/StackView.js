@@ -433,8 +433,8 @@
             console.log("- invalid path - can't find tile for node: " + node.title());
 
             console.log("debug info:");
-            console.log("  looking for node: ", node.debugTypeId());
-            const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId());
+            console.log("  looking for node: ", node.svDebugId());
+            const subnodeIds = this.tilesView().node().subnodes().map(node => node.svDebugId());
             console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds) );
 
             debugger;
@@ -927,7 +927,7 @@
      */
     onStackChildDragSourceEnter (dragView) {
         if (!this.isCaching()) {
-            console.log(this.debugTypeId() + " onStackChildDragSourceEnter");
+            console.log(this.svDebugId() + " onStackChildDragSourceEnter");
             this.watchOnceForNoteFrom("onDragViewClose", dragView);
             //this.beginCaching();
             this.rootStackView().beginCaching();
@@ -940,7 +940,7 @@
      * @returns {StackView} The stack view.
      */
     onDragViewClose (/*aNote*/) {
-        console.log(this.debugTypeId() + " onDragViewClose");
+        console.log(this.svDebugId() + " onDragViewClose");
         //this.endCaching();
         this.rootStackView().endCaching();
     }
@@ -962,7 +962,7 @@
     beginCaching () {
         // begins caching on all chained substacks
         if(!this.isCaching()) {
-            //console.log(this.debugTypeId() + " beginCaching -----------------");
+            //console.log(this.svDebugId() + " beginCaching -----------------");
             //debugger;
             this.setNodeToStackCache(new Map());
 
@@ -982,7 +982,7 @@
     endCaching () {
         // ends caching on all chained substacks
         if(this.isCaching()) {
-            //console.log(this.debugTypeId() + " endCaching -----------------");
+            //console.log(this.svDebugId() + " endCaching -----------------");
             //this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv));
             this.setNodeToStackCache(null);
 

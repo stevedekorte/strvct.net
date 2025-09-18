@@ -624,8 +624,8 @@
      * Returns a debug type ID for the database folder.
      * @returns {string} - The debug type ID.
      */
-    debugTypeId () {
-        return super.debugTypeId() + " '" + this.path() + "'"
+    svDebugId () {
+        return super.svDebugId() + " '" + this.path() + "'"
     }
 
     // -------------------------------------------------------------------

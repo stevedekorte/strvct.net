@@ -108,7 +108,7 @@
      * @returns {NodeView} The current instance.
      */
     updateElementIdLabel () {
-        this.element().id = this.debugTypeId()
+        this.element().id = this.svDebugId()
         return this
     }
     
@@ -541,7 +541,7 @@
     nodeDescription () {
         const node = this.node();
         if (node) {
-            return node.debugTypeId();
+            return node.svDebugId();
         }
         return null;
     }
@@ -552,7 +552,7 @@
      */
     nodeId () {
         const node = this.node();
-        const nodeId = node ? node.debugTypeId() : "null";
+        const nodeId = node ? node.svDebugId() : "null";
         return nodeId;
     }
 
@@ -560,7 +560,7 @@
      * @description Gets the debug type ID for this view.
      * @returns {string} The debug type ID.
      */
-    debugTypeId () {
+    svDebugId () {
         let s = "view:'" + this.svTypeId() + "'";
         s += " node:'" + this.nodeId() + "'";
         s += " themeClass:'" +this.themeClassName() + "'";

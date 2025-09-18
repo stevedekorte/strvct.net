@@ -552,7 +552,7 @@
         //debugger;
         //this.setRootPid(obj.puuid()); // this is set when the dirty root object is stored
         this._rootObject = obj;
-        this.logDebug(" adding rootObject " + obj.debugTypeId());
+        this.logDebug(" adding rootObject " + obj.svDebugId());
         this.addActiveObject(obj);
         this.addDirtyObject(obj);
         return this;
@@ -633,7 +633,7 @@
 
         if (!this.hasActiveObject(anObject)) {
             //const title = anObject.title ? anObject.title() : "-";
-            //this.logDebug(() => anObject.debugTypeId() + ".addMutationObserver(" + this.debugTypeId() + " '" + title + "')");
+            //this.logDebug(() => anObject.svDebugId() + ".addMutationObserver(" + this.svDebugId() + " '" + title + "')");
             anObject.addMutationObserver(this);
             this.activeObjects().set(anObject.puuid(), anObject);
             //this.addDirtyObject(anObject);

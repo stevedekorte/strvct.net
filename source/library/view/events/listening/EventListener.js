@@ -332,7 +332,7 @@
                 */
             }
         } else {
-            //console.log(this.delegate().debugTypeId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
+            //console.log(this.delegate().svDebugId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
             //debugger;
         }
         return this
@@ -358,7 +358,7 @@
         const d = this.delegate()
         
         if (d.viewTarget) {
-            //return d.viewTarget().debugTypeId() + "->" + d.svType().before("GestureRecognizer") 
+            //return d.viewTarget().svDebugId() + "->" + d.svType().before("GestureRecognizer") 
             return d.viewTarget().svTypeId() + " ->" + d.svType().before("GestureRecognizer") 
         }
 

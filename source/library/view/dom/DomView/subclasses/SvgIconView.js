@@ -131,9 +131,9 @@
      * @returns {string}
      * @category Debugging
      */
-    debugTypeId () {
+    svDebugId () {
         const name = this.iconName();
-        return  super.debugTypeId() + (name ? " '" + name + "'" : "");
+        return  super.svDebugId() + (name ? " '" + name + "'" : "");
     }
 
     /**
@@ -174,7 +174,7 @@
                 return this;
             }
 
-            this.setElementId(this.debugTypeId() + " '" + this.svgId() + "'");
+            this.setElementId(this.svDebugId() + " '" + this.svgId() + "'");
         }
 
         return this;

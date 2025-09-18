@@ -203,7 +203,7 @@
                 this.setNeedsReflow(false);
                 let m = opName ;
                 if (optionalView) {
-                    m = optionalView.debugTypeId() + " get " + opName;
+                    m = optionalView.svDebugId() + " get " + opName;
                 }
                 const s = this.lastWrite() + " -> " + m;
                 this.triggers().push(s);
@@ -225,7 +225,7 @@
             this.setNeedsReflow(true)
             let m = opName 
             if (optionalView) {
-                m = optionalView.debugTypeId() + " set " + opName
+                m = optionalView.svDebugId() + " set " + opName
             }
             this.setLastWrite(m)
         }

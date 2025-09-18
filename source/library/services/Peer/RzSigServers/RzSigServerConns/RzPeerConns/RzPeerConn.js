@@ -289,7 +289,7 @@
    * @description Returns a debug-friendly type and id string.
    * @returns {string} The debug type and id.
    */
-  debugTypeId () {
+  svDebugId () {
     return this.svType() + " " + this.shortId();
   }
 

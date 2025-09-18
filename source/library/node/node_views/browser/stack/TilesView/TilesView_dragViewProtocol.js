@@ -132,7 +132,7 @@
      * @param {Object} dragView - The view being dragged
      */
     onDragSourceDropped (dragView) {
-        //console.log(this.debugTypeId() + " --- onDragSourceDropped ---")
+        //console.log(this.svDebugId() + " --- onDragSourceDropped ---")
         //debugger;
 
         const insertIndex = this.indexOfTilePlaceHolder();
@@ -145,7 +145,7 @@
         } else {
             throw new Error("unhandled drag operation");
         }
-        //console.log(this.debugTypeId() + " --- unstacking ---")
+        //console.log(this.svDebugId() + " --- unstacking ---")
 
         this.unstackTiles();
         this.removeTilePlaceHolder();
@@ -282,7 +282,7 @@
                 //ph.transitions().at("left").updateDuration(0);
             }
         } else {
-            console.log("tilePlaceHolder missing (null) for TileView: ", this.debugTypeId());
+            console.log("tilePlaceHolder missing (null) for TileView: ", this.svDebugId());
         }
 
         return this;

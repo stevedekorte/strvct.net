@@ -428,7 +428,7 @@
 
         if (aNode !== this._parentNode) { 
             if (this._parentNode && aNode) {
-                console.warn(this.debugTypeId() + " setParentNode(" + aNode.debugTypeId() + ")  already has parent " + this._parentNode.debugTypeId());
+                console.warn(this.svDebugId() + " setParentNode(" + aNode.svDebugId() + ")  already has parent " + this._parentNode.svDebugId());
                 console.warn("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
             
@@ -1525,14 +1525,14 @@
         } else {
             /*
             if (this.hasNullSubnodes()) {
-                console.warn(this.debugTypeId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes());
+                console.warn(this.svDebugId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes());
                 this.subnodes().removeOccurancesOf(null);
                 //debugger;
             }
             */
 
             if(this.hasDuplicateSubnodes()) {
-                console.warn(this.debugTypeId() + " hasDuplicateSubnodes - removing duplicates and continuing");
+                console.warn(this.svDebugId() + " hasDuplicateSubnodes - removing duplicates and continuing");
                 debugger;
                 newValue.removeDuplicates();
             }
@@ -1683,7 +1683,7 @@
      * @description Get the debug type ID of this instance.
      * @returns {string} The debug type ID.
      */
-    debugTypeId () {
+    svDebugId () {
         return this.svTypeId() + " '" + this.title() + "'";
     }
 

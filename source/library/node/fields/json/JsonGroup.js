@@ -233,7 +233,7 @@
               //throw new Error(errorMessage);
 
               if (slot.slotType() === "Number" && v && v.asNumber ) {
-                console.log("resolving by converting input value to number using asNumber(): ", v.asNumber());
+                console.warn(this.logPrefix() + "WARNING: resolving by converting input value to number using asNumber(): ", v.asNumber());
                 const resolvedValue = v.asNumber();
                 assert(!Type.isNaN(resolvedValue), "resolved value must be a number");
                 slot.onInstanceSetValue(this, resolvedValue);
