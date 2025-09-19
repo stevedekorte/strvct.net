@@ -37,8 +37,8 @@
      * @category Scheduling
      */
     removeScheduledActions () {
-        if (SvGlobals.globals()["SyncScheduler"]) {
-            SyncScheduler.shared().unscheduleTarget(this)
+        if (SvGlobals.globals()["SvSyncScheduler"]) {
+            SvSyncScheduler.shared().unscheduleTarget(this)
         }
     }
 
@@ -148,7 +148,7 @@
      * @category Scheduling
      */
     scheduleSelfFor (aMethodName, milliseconds) {
-        return SyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
+        return SvSyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
     }
 
     // --- who's watching who ---

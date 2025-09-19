@@ -1,6 +1,6 @@
 [
-    "SyncAction.js",
-    "SyncScheduler.js",
+    "SvSyncAction.js",
+    "SvSyncScheduler.js",
     "notifications/_imports.json",
     "SvBroadcaster.js"
 ]

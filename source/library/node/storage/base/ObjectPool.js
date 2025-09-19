@@ -802,12 +802,12 @@
             return this
         }
         assert(this.isOpen())
-        const scheduler = SyncScheduler.shared();
+        const scheduler = SvSyncScheduler.shared();
         const methodName = "commitStoreDirtyObjects";
         //console.log(this.svType() + " --- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
-                //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null);
+                //console.warn("scheduleStore currentAction = ", SvSyncScheduler.currentAction() ? SvSyncScheduler.currentAction().description() : null);
                 this.logDebug("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size );
                 scheduler.scheduleTargetAndMethod(this, methodName, 1000);
             }
@@ -999,7 +999,7 @@
         // schedule didInitLoadingPids to occur at end of event loop 
 
         if (!this.isFinalizing() && this.loadingPids().count() === 0) {
-            SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids");
+            SvSyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids");
         }
 
         this.loadingPids().add(puuid);

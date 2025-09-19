@@ -8,7 +8,7 @@
  * @extends Object
  * @classdesc 
  * Extends Object with timeout functionality.
- * Sometimes we can't use the SyncScheduler as we have to make sure 
+ * Sometimes we can't use the SvSyncScheduler as we have to make sure 
  * something happens *after* the current event loop ends (and control is returned to the browser),
  * but scheduler runs while still in (but at the end of) the current event.
  * Also, we sometimes need timeout delays.

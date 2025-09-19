@@ -414,7 +414,7 @@
             return this;
         }
         
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", priority);
+        SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", priority);
         return this;
     }
     
@@ -423,7 +423,7 @@
      * @returns {boolean} True if a sync to node is scheduled, false otherwise.
      */
     hasScheduleSyncToNode () {
-        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode");
+        return SvSyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode");
     }
 
     /**
@@ -431,7 +431,7 @@
      * @returns {boolean} True if a sync from node is scheduled, false otherwise.
      */
     hasScheduleSyncFromNode () {
-        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode");
+        return SvSyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode");
     }
 
     /**
@@ -440,7 +440,7 @@
      */
     scheduleSyncFromNode () {
         assert(!this.hasScheduleSyncToNode());
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2);
+        SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2);
         return this;
     }
 
@@ -448,7 +448,7 @@
      * @description Unschedules a sync from the node.
      */
     unscheduleSyncFromNode () {
-        SyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode");
+        SvSyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode");
     }
 
     /**

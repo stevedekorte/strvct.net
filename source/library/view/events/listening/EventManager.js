@@ -191,9 +191,9 @@
      * @category Synchronization
      */
     syncIfAppropriate () {
-        if (SvGlobals.globals().SyncScheduler) {
+        if (SvGlobals.globals().SvSyncScheduler) {
            if (EventManager.shared().eventLevelCount() === 0) { 
-                SyncScheduler.shared().fullSyncNow();
+                SvSyncScheduler.shared().fullSyncNow();
            }
         }
         return this;

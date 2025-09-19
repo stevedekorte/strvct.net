@@ -265,12 +265,12 @@
     }
 
     pauseReactiveSystem () {
-        SyncScheduler.shared().pause();
+        SvSyncScheduler.shared().pause();
         SvNotificationCenter.shared().pause();
     }
 
     resumeReactiveSystem () {
-        SyncScheduler.shared().resume();
+        SvSyncScheduler.shared().resume();
         SvNotificationCenter.shared().resume();
     }
 

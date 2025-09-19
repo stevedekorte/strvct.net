@@ -894,7 +894,7 @@ TODO:
 	            <updateSubviews?>
 	            NodeView.scheduleSyncToNode (check to make sure EventSetListener isHandling an Event?)
 	        event returns (through EventSetListener)
-	            EventSetListener.onAfterEvent calls SyncScheduler.fullSyncNow()
+	            EventSetListener.onAfterEvent calls SvSyncScheduler.fullSyncNow()
 				
 		PULL from node
 			(watches for didUpdateNode notification on it's node)

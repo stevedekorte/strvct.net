@@ -603,7 +603,7 @@
      */
     privateNewTx () {
         //debugger;
-        //SyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
+        //SvSyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
         if (this.lastTx()) {
             //assert(this.lastTx().isCommitted() || this.lastTx().isAborted())
         }

@@ -5,11 +5,11 @@
 "use strict";
 
 /**
- * @class SyncAction
+ * @class SvSyncAction
  * @extends ProtoClass
- * @classdesc An action managed by the SyncScheduler.
+ * @classdesc An action managed by the SvSyncScheduler.
  */
-(class SyncAction extends ProtoClass {
+(class SvSyncAction extends ProtoClass {
     /**
      * @static
      * @description Generates a unique action key for a target and method combination.
@@ -25,7 +25,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the SyncAction class.
+     * @description Initializes the prototype slots for the SvSyncAction class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -86,7 +86,7 @@
     }
 
     /**
-     * @description Initializes the prototype of the SyncAction class.
+     * @description Initializes the prototype of the SvSyncAction class.
      * @category Initialization
      */
     initPrototype () {
@@ -129,12 +129,12 @@
      * @category Key Generation
      */
     actionsKey () {
-        return SyncAction.actionKeyForTargetAndMethod(this.target(), this.method());;
+        return SvSyncAction.actionKeyForTargetAndMethod(this.target(), this.method());;
     }
 	
     /**
      * @description Checks if this action equals another action.
-     * @param {SyncAction} anAction - The action to compare with.
+     * @param {SvSyncAction} anAction - The action to compare with.
      * @returns {boolean} True if the actions are equal, false otherwise.
      * @category Comparison
      */

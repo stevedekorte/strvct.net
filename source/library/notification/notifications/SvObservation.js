@@ -143,7 +143,7 @@
     stopFromCollectedRef () {
         if (!this.didFinalizeStop()) {
             // need this check because if observer and sender finalizations occur in the same event loop
-            // both with try to schedule stopWatching, and the SyncScheduler will (mistakenly?) detect this is a loop
+            // both with try to schedule stopWatching, and the SvSyncScheduler will (mistakenly?) detect this is a loop
             this.setDidFinalizeStop(true);
             this.scheduleMethod("stopWatching");
         }

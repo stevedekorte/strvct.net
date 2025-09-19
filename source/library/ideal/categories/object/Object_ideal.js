@@ -307,7 +307,7 @@
      * @category Scheduling
      */
     scheduleMethod (methodName, priority) { // high priority = scheduled later
-        return SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority);
+        return SvSyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority);
     }
 
     /**
@@ -318,7 +318,7 @@
      * @category Scheduling
      */
     scheduleMethodForNextCycle (methodName, priority) { // high priority = scheduled later
-        return SyncScheduler.shared().scheduleTargetAndMethodForNextCycle(this, methodName, priority);
+        return SvSyncScheduler.shared().scheduleTargetAndMethodForNextCycle(this, methodName, priority);
     }
 
     /**

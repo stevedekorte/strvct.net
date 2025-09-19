@@ -194,7 +194,7 @@
 
         //assert(!EventListener.activeOwners().has(this));
 
-        SyncScheduler.shared().unscheduleTarget(this);
+        SvSyncScheduler.shared().unscheduleTarget(this);
 
         //if (this.isFirstResponder()) {
         //    this.blur(); / is this needed?
@@ -225,7 +225,7 @@
     retireSubviewTree () {
         // this should be called by:
         //   scheduleRetireIfReady() -> prepareToRetire()
-        // will this cause a SyncAction loop issue as this will result in adding:
+        // will this cause a SvSyncAction loop issue as this will result in adding:
         //   scheduleMethod("retireIfReady")
         // on subviews, so we do it in a way that avoids this.
 

@@ -5,11 +5,11 @@
  */
 
 /**
- * @class SyncScheduler
+ * @class SvSyncScheduler
  * @extends ProtoClass
- * @classdesc SyncScheduler is sort of a lower level NotificationCenter.
+ * @classdesc SvSyncScheduler is sort of a lower level NotificationCenter.
  * 
- * SyncScheduler essentially:
+ * SvSyncScheduler essentially:
  * - receives requests of the form "send targetA messageB" (Note: often, the sender is also the target)
  * - and at the end of the event loop (via a timeout):
  *   -- coaleses them (so the same message isn't sent twice to the same target)
@@ -24,14 +24,14 @@
  * 
  * Many state changes can cause the need to synchronize a given object 
  * with others within a given event loop, but we only want synchronization to 
- * happen at the end of an event loop, so a shared SyncScheduler instance is used to
+ * happen at the end of an event loop, so a shared SvSyncScheduler instance is used to
  * track which sync actions should be sent at the end of the event loop and only sends each one once.
  * 
- * SyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
+ * SvSyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
  * 
  * Example use:
  * 
- * SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode");
+ * SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode");
  * 
  * Automatic sync loop detection:
  * 
@@ -42,7 +42,7 @@
  * 
  * Scheduled actions can also be given a priority via an optional 3rd argument:
  * 
- * SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1);
+ * SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1);
  * 
  * Higher priorities will be performed *later* than lower ones. 
  * 
@@ -67,15 +67,15 @@
  * 
  * Pause and Resume:
  * 
- * SyncScheduler can be paused and resumed to prevent syncing from happening.
+ * SvSyncScheduler can be paused and resumed to prevent syncing from happening.
  * An example of when this is useful is when initializing the application (e.g. appDidInit) 
  * and you don't want any syncing to happen until the app is fully initialized.
  * Example use:
  * 
- * SyncScheduler.shared().pause()
- * SyncScheduler.shared().resume()
+ * SvSyncScheduler.shared().pause()
+ * SvSyncScheduler.shared().resume()
  */
-(class SyncScheduler extends ProtoClass {
+(class SvSyncScheduler extends ProtoClass {
 
     /**
      * @static
@@ -119,12 +119,12 @@
         }
 
         /**
-         * @member {SyncAction} currentAction
+         * @member {SvSyncAction} currentAction
          * @category State
          */
         {
             const slot = this.newSlot("currentAction", null);
-            slot.setSlotType("SyncAction");
+            slot.setSlotType("SvSyncAction");
         }
 
         /**
@@ -162,7 +162,7 @@
 
     /**
      * @description Pauses the scheduler
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Control
      */
     pause () {
@@ -172,7 +172,7 @@
 
     /**
      * @description Resumes the scheduler
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Control
      */
     resume () {
@@ -182,15 +182,15 @@
     }
 
     /**
-     * @description Creates a new SyncAction
+     * @description Creates a new SvSyncAction
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
      * @param {number} [order] - The order of execution
-     * @returns {SyncAction} The new SyncAction instance
+     * @returns {SvSyncAction} The new SvSyncAction instance
      * @category Action Management
      */
     newActionForTargetAndMethod (target, syncMethod, order) {
-        const newAction = SyncAction.clone();
+        const newAction = SvSyncAction.clone();
         newAction.setTarget(target);
         newAction.setMethod(syncMethod);
         newAction.setOrder(order ? order : 0);
@@ -202,7 +202,7 @@
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
      * @param {number} [optionalOrder] - The optional order of execution
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Scheduling
      */
     scheduleTargetAndMethodForNextCycle (target, syncMethod, optionalOrder) {
@@ -273,7 +273,7 @@
      * @category Query
      */
     hasScheduledTargetAndMethod (target, syncMethod) {
-        const actionKey = SyncAction.actionKeyForTargetAndMethod(target, syncMethod);
+        const actionKey = SvSyncAction.actionKeyForTargetAndMethod(target, syncMethod);
     	return this.actions().hasKey(actionKey);
     }
 
@@ -316,7 +316,7 @@
     /**
      * @description Unschedules all actions for a target
      * @param {Object} target - The target object
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Scheduling
      */
     unscheduleTarget (target) {
@@ -340,7 +340,7 @@
      * @description Unschedules a specific target and method
      * @param {Object} target - The target object
      * @param {string} syncMethod - The sync method name
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Scheduling
      */
     unscheduleTargetAndMethod (target, syncMethod) {
@@ -352,7 +352,7 @@
     /**
      * @description Removes an action by its key
      * @param {string} k - The action key
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Action Management
      */
     removeActionKey (k) {
@@ -366,7 +366,7 @@
 	
     /**
      * @description Sets a timeout if needed
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Control
      */
     setTimeoutIfNeeded () {
@@ -394,7 +394,7 @@
 	
     /**
      * @description Processes the sets of actions
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Processing
      */
     processSets () {
@@ -433,7 +433,7 @@
         this.setIsProcessing(false);
         
         if (error) {
-            console.log("SyncScheduler processSets actions count: " + this.actionCount());
+            console.log("SvSyncScheduler processSets actions count: " + this.actionCount());
             error.rethrow();
         }
 
@@ -451,7 +451,7 @@
 
     /**
      * @description Performs a full sync now
-     * @returns {SyncScheduler} The instance
+     * @returns {SvSyncScheduler} The instance
      * @category Processing
      */
     fullSyncNow () {
@@ -475,9 +475,9 @@
 
                 if (count > 6) {
                     this.setIsDebugging(true)
-                    console.log("\n\nSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?");
+                    console.log("\n\nSvSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?");
                     console.log(" --- processSets # " + count + " --- ");
-                    console.log("\nSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());
+                    console.log("\nSvSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());
                     console.log("\n" + SvNotificationCenter.shared().shortDescription() + ":\n" + SvNotificationCenter.shared().notesDescription());
                     console.log(" --- ");
                     debugger
