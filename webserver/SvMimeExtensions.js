@@ -8,13 +8,13 @@ require("./SvGlobals.js");
 require("./Base.js");
 
 /**
- * @class MimeExtensions
+ * @class SvMimeExtensions
  * @classdesc A class for getting the mime type for a file extension
- * @example MimeExtensions.shared().mimeTypeForPathExtension(".jpg")
+ * @example SvMimeExtensions.shared().mimeTypeForPathExtension(".jpg")
  */
 
 
-(class MimeExtensions extends Base {
+(class SvMimeExtensions extends Base {
 
     constructor () {
         super()
@@ -873,5 +873,5 @@ require("./Base.js");
 
 // Export for use in other modules
 if (typeof module !== "undefined" && module.exports) {
-    module.exports = MimeExtensions;
+    module.exports = SvMimeExtensions;
 }

@@ -3,15 +3,15 @@
  */
 
 /**
- * @class MimeExtensions
+ * @class SvMimeExtensions
  * @extends Base
  * @classdesc A class for managing MIME types and file extensions.
  *
- * @example MimeExtensions.shared().mimeTypeForPathExtension(".jpg")
+ * @example SvMimeExtensions.shared().mimeTypeForPathExtension(".jpg")
  */
 
 
-(class MimeExtensions extends SvBase {
+(class SvMimeExtensions extends SvBase {
 
     constructor () {
         super()

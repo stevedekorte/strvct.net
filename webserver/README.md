@@ -27,7 +27,7 @@ The base request handler class that provides:
 
 ### Supporting Classes
 - **Base.js** - Base class with slot/property management
-- **MimeExtensions.js** - MIME type detection for file extensions
+- **SvMimeExtensions.js** - MIME type detection for file extensions
 - **AutoRelaunch.js** - Server auto-restart mechanism
 - **SvGlobals.js** - Cross-platform global object helper
 

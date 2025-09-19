@@ -6,7 +6,7 @@
 
 require("../SvGlobals.js");
 require("../BaseHttpsServerRequest.js");
-require("../MimeExtensions.js");
+require("../SvMimeExtensions.js");
 const fs = require('fs');
 const nodePath = require('path');
 
@@ -226,7 +226,7 @@ const nodePath = require('path');
         // Get content type
         const extname = nodePath.extname(filePath);
         const contentType =
-        MimeExtensions.shared().mimeTypeForPathExtension(extname) ||
+        SvMimeExtensions.shared().mimeTypeForPathExtension(extname) ||
         "application/octet-stream";
         
         // Read and serve the file

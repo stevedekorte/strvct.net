@@ -45,7 +45,7 @@ using the contents of:
 
 require("./SvGlobals.js");
 require("./Base.js");
-require("./MimeExtensions.js");
+require("./SvMimeExtensions.js");
 const fs = require('fs');
 const nodePath = require('path');
 //const https = require('https');
@@ -199,7 +199,7 @@ const nodePath = require('path');
         }
 
         const extname = nodePath.extname(filePath);
-        const contentType = MimeExtensions.shared().mimeTypeForPathExtension(extname) || 'application/octet-stream';
+        const contentType = SvMimeExtensions.shared().mimeTypeForPathExtension(extname) || 'application/octet-stream';
 
         fs.readFile(filePath, (error, content) => {
             if (error) {
