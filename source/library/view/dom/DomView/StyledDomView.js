@@ -96,7 +96,7 @@
     init () {
         super.init()
         this.setLockedStyleAttributeSet(new Set());
-        Broadcaster.shared().addListenerForName(this, "onActivateView"); // NOTE: do we want *every* view to do this 
+        SvBroadcaster.shared().addListenerForName(this, "onActivateView"); // NOTE: do we want *every* view to do this 
         return this;
     }
 
@@ -172,7 +172,7 @@
     activate () {
         this.select()
         this.setIsActive(true)
-        Broadcaster.shared().broadcastNameAndArgument("onActivateView", this)
+        SvBroadcaster.shared().broadcastNameAndArgument("onActivateView", this)
     }
 
     /**

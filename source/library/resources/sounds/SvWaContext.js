@@ -24,7 +24,7 @@
      */
     static initClass () {
         this.setIsSingleton(true)
-        Broadcaster.shared().addListenerForName(this, "firstUserEvent")
+        SvBroadcaster.shared().addListenerForName(this, "firstUserEvent")
         //this.watchOnceForNote("onFirstUserEvent")
     }
 
@@ -35,7 +35,7 @@
      * @category Event Handling
      */
     static firstUserEvent (/*anEventListener*/) {
-        Broadcaster.shared().removeListenerForName(this, "firstUserEvent")
+        SvBroadcaster.shared().removeListenerForName(this, "firstUserEvent")
         SvWaContext.shared().setupIfNeeded() // need user input to do this
     }
 
@@ -114,7 +114,7 @@
         if (!this.isSetup()) {
             this.setAudioContext(new window.AudioContext());
             this.setupPromise().callResolveFunc();
-            Broadcaster.shared().broadcastNameAndArgument("didSetupSvWaContext", this);
+            SvBroadcaster.shared().broadcastNameAndArgument("didSetupSvWaContext", this);
             //console.warn("can't get audio context until user gesture e.g. tap");
         }
         return this

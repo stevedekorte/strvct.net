@@ -63,7 +63,7 @@
         it's possible to send a direct message to all name listeners without waiting
         until the event loop to end. These will pass the sender itself instead of a Notification object.
 
-        See Broadcaster class.
+        See SvBroadcaster class.
 
     Helper methods available to subclasses of SvNode:
 

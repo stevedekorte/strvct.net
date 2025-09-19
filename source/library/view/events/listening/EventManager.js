@@ -121,7 +121,7 @@
     onReceivedUserEvent () {
         if (!this.hasReceivedUserEvent()) {
             this.setHasReceivedUserEvent(true);
-            Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this);
+            SvBroadcaster.shared().broadcastNameAndArgument("firstUserEvent", this);
             this.firstUserEventPromise().callResolveFunc();
         }
         

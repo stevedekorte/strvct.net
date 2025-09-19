@@ -33,7 +33,7 @@
  *         ... tell store to persist it ...
  *     }
  */
-(class Broadcaster extends ProtoClass {
+(class SvBroadcaster extends ProtoClass {
 
     /**
      * @static

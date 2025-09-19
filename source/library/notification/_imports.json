@@ -2,5 +2,5 @@
     "SyncAction.js",
     "SyncScheduler.js",
     "notifications/_imports.json",
-    "Broadcaster.js"
+    "SvBroadcaster.js"
 ]
