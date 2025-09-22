@@ -544,7 +544,9 @@
       apiUrl:  this.apiUrl()
       //body: this.bodyJson()
     };
-    json.options.body = json.options.body.substring(0, 200) + "..."; // cut off at 200 characters
+    if (json.options.body) {
+      json.options.body = json.options.body.substring(0, 200) + "..."; // cut off at 200 characters
+    }
     return JSON.stringify(json, null, 2);
   }
 

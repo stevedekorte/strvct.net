@@ -452,10 +452,13 @@
 
     prepareToAccess () {
         super.prepareToAccess();
+        /*
         if (this.validItemsClosure()) {
             console.log(this.logPrefix() + " prepareToAccess() callingsetupSubnodes () because validItemsClosure is set");
+            debugger;
             this.setupSubnodes();
         }
+        */
         return this;
     }
 
@@ -476,11 +479,19 @@
      */
     computedValidItems () {
         const context = this.target();
+        if (this.validItems()) {
+            return this.validItems();
+        } else if (this.validItemsClosure()) {
+            return this.validItemsClosure()(context);
+        } 
+
+        /*
         if (this.validItemsClosure()) {
             return this.validItemsClosure()(context);
         } else if (this.validItems()) {
             return this.validItems();
         }
+        */
         return null;
     }
 
