@@ -450,6 +450,15 @@
         this.setupSubnodesIfEmpty();
     }
 
+    prepareToAccess () {
+        super.prepareToAccess();
+        if (this.validItemsClosure()) {
+            console.log(this.logPrefix() + " prepareToAccess() callingsetupSubnodes () because validItemsClosure is set");
+            this.setupSubnodes();
+        }
+        return this;
+    }
+
     /**
      * @description Computes the valid values for the options.
      * @returns {Array} An array of valid values.
@@ -466,10 +475,11 @@
      * @returns {Array|null} The valid items, or null if neither validItems nor validItemsClosure are set.
      */
     computedValidItems () {
-        if (this.validItems()) {
+        const context = this.target();
+        if (this.validItemsClosure()) {
+            return this.validItemsClosure()(context);
+        } else if (this.validItems()) {
             return this.validItems();
-        } else if (this.validItemsClosure()) {
-            return this.validItemsClosure()();
         }
         return null;
     }
@@ -680,10 +690,11 @@
             validItems.forEach(v => {
                 const item = this.itemForValue(v);
                 const newNode = this.addOptionNodeForDict(item);
+                newNode.setCanDelete(false);
                 if (Type.isNumber(v)) {
-                    assert(Type.isNumber(item.value));
-                    assert(Type.isNumber(newNode.value()));
-                    assert(newNode.value() === item.value);
+                    assert(Type.isNumber(item.value), "item.value is not a number");
+                    assert(Type.isNumber(newNode.value()), "newNode.value() is not a number");
+                    assert(newNode.value() === item.value, "newNode.value() !== item.value");
                 }
                 assert(newNode.optionsNode() === this, "newNode.optionsNode() !== this");
             });

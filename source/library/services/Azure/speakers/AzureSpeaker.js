@@ -179,7 +179,6 @@
      */
     {
       const slot = this.newSlot("currentAudio", null);
-      /*
       slot.setInspectorPath("")
       slot.setLabel("Muted")
       slot.setShouldStoreSlot(true)
@@ -187,7 +186,6 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("AudioBlob")
       slot.setIsSubnodeField(true)
-      */
     }
 
     /**
@@ -196,6 +194,7 @@
      */
     {
       const slot = this.newSlot("audioQueue", null);
+      slot.setSlotType("AudioQueue")
     }
 
     /**
@@ -204,6 +203,7 @@
      */
     {
       const slot = this.newSlot("audioBlobQueue", null);
+      slot.setSlotType("AudioBlobQueue")
     }
 
     /**
@@ -466,7 +466,7 @@
    * Pauses the audio queue.
    * @category Audio
    */
-  pause() {
+  pause () {
     this.logDebug("pause()");
     this.audioQueue().pause();
   }

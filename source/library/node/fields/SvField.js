@@ -396,7 +396,7 @@
 
         // up to subclasses to implement
         //throw new Error("syncFromTarget not implemented for " + this.svType());
-        return this
+        return this;
     }
 
     /**

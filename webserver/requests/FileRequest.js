@@ -47,7 +47,7 @@ const nodePath = require('path');
      * @param {URL} urlObject - The URL object to check
      * @returns {boolean} True if this class can handle the URL
      */
-    static canHandleUrl (urlObject) {
+    static canHandleUrl (/*urlObject*/) {
         // Handle all requests that weren't handled by other classes
         return true;
     }
@@ -222,7 +222,7 @@ const nodePath = require('path');
      * Serves a file with appropriate content type.
      * @param {string} filePath - The path to the file to serve
      */
-    serveFile(filePath) {
+    serveFile (filePath) {
         // Get content type
         const extname = nodePath.extname(filePath);
         const contentType =

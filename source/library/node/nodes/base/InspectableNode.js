@@ -344,13 +344,13 @@
 
     subnodeFields () {
         return this.subnodes().filter(subnode => {
-            return subnode.isKindOf(SvFieldNode);
+            return subnode.isKindOf(SvField);
         });
     }
 
     existingSubnodeFieldForSlot (slot) {
         const match = this.subnodeFields().find(subnode => {
-            return subnode.fieldSlotName() === slot.name();
+            return subnode.valueMethod() === slot.name();
         });
         return match;
     }

@@ -126,6 +126,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         this.simpleNewSlot("actionMethodName", null); // used by slots that will be represented by ActionFields to store the methodName
         this.simpleNewSlot("annotations", null);
+
+        this.simpleNewSlot("isVisible", null); // only set on finalInitProto if true or false, ignore if null
     }
 
     /*
@@ -380,8 +382,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
             if (this.slotType() === null) {
                 if (aProto.svType() === "String") {
+                    // if slotType is a string, set it to the proto type
                     this.setSlotType(aProto);
                 } else {
+                    // otherwise set it to the proto type
                     this.setSlotType(aProto.svType()); // hack
                 }
             }
@@ -1362,6 +1366,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         assert(this.slotType() !== null, " slotType is null for " + anInstance.svType() + "." + this.name());
 
         const finalInitProto = this.finalInitProtoClass(); //this._finalInitProto;
+
         if (finalInitProto) {
 
             let oldValue = this.onInstanceGetValue(anInstance);
@@ -1402,7 +1407,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     */
 
                 const newValue = finalInitProto.clone();
+
+                if (Type.isBoolean(this.isVisible()) && Type.isFunction(newValue.setIsVisible)) {
+                    newValue.setIsVisible(this.isVisible());
+                }
+
                 this.onInstanceSetValue(anInstance, newValue);
+
                 if (newValue.setOwnerNode) { // it might not be a SvNode
                     newValue.setOwnerNode(anInstance); // should this be inside the setter? Maybe if slot.doesOwnValue(true)?
                 }
