@@ -434,6 +434,11 @@
       optionsCopy.body = optionsCopy.body.substring(0, maxBodyLength) + "...";
     }
 
+    // let's also clip the authorization header to just the first 10 characters
+    if (optionsCopy.headers && optionsCopy.headers.Authorization) {
+      optionsCopy.headers.Authorization = optionsCopy.headers.Authorization.substring(0, 10) + "...";
+    }
+
     const json = {
       requestId: this.requestId(),
       url: this.url(),
@@ -925,7 +930,7 @@
     const msg = e.message;
     this.setError(e);
     this.setStatus("ERROR: " + msg);
-    console.warn(" === ERROR while sending " + this.logPrefix() + " ===\n", this.description(), "\n=====================================================\n");
+    console.warn("=== ERROR while sending", this.logPrefix(), " === \n" + this.description() + "\n=====================================================\n");
     debugger;
     //debugger;
     //const didHandle = 
