@@ -79,6 +79,7 @@
      */
     {
       const slot = this.newSlot("port", 0);
+      slot.setAllowsNullValue(true); // null means with don't use the proxy
       slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Port")
@@ -139,6 +140,17 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
+    }
+
+    // isDisabled slot which causes urls to not be generated
+    {
+      const slot = this.newSlot("isDisabled", false);
+      slot.setShouldJsonArchive(true);
+      slot.setInspectorPath("");
+      slot.setLabel("Disabled");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
     }
 
     //this.setSubnodeClasses([ProxyRequest]);
@@ -242,6 +254,11 @@
    * @category URL Generation
    */
   proxyUrlForUrl (targetUrl) {
+    if (this.isDisabled()) {
+        console.warn("ProxyServer is disabled, returning targetUrl: ", targetUrl);
+        return targetUrl;
+    }
+
     assert(targetUrl);
 
     const errors = this.validationErrors()

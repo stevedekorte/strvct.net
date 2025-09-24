@@ -437,7 +437,7 @@
     const json = {
       requestId: this.requestId(),
       url: this.url(),
-      options: this.requestOptions(),
+      options: optionsCopy,
       readableState: this.readableJsonState()
     };
 
@@ -925,9 +925,8 @@
     const msg = e.message;
     this.setError(e);
     this.setStatus("ERROR: " + msg);
-    console.warn("**ERROR**:", this.logPrefix(), " ======================= " + this.svType() + " " + this.url() + " onXhrError: " + e.message + " ======================= ");
+    console.warn(" === ERROR while sending " + this.logPrefix() + " ===\n", this.description(), "\n=====================================================\n");
     debugger;
-    console.warn(this.description());
     //debugger;
     //const didHandle = 
     this.sendDelegate("onRequestError", [this, e]);

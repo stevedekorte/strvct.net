@@ -29,7 +29,7 @@
       slot.setFinalInitProto(SvImage);
       slot.setSlotType("SvImage");
       slot.setLabel("Image");
-      slot.setIsSubnode(true);
+      slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDescription("The image to evaluate");

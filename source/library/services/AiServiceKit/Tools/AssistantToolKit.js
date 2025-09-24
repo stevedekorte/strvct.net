@@ -182,7 +182,10 @@ The following formats will be used for tool calls and responses:
   }
 
   completedCallsRequiringResponse () {
-    return this.toolCalls().completedCalls().filter((toolCall) => toolCall.toolResult().doesRequireResponse());
+    return this.toolCalls().completedCalls().filter((toolCall) => {
+      const result = toolCall.toolResult();
+      return result && result.doesRequireResponse();
+    });
   }
 
   async sendCompletedToolCallResponses () {

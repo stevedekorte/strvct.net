@@ -148,6 +148,92 @@
     }
 
     /**
+     * @description Recursively navigates to a node at the given path, tracking parent information.
+     * @param {Array} pathSegments - The path segments to navigate.
+     * @param {Array} originalPath - The original full path for error reporting.
+     * @param {Object} parentNode - The parent node (for tracking).
+     * @param {string} slotName - The slot name in the parent (for tracking).
+     * @returns {Object} Object with {node, parentNode, slotName} properties.
+     * @category JSON Patch
+     */
+    nodeAtPathWithParent (pathSegments, originalPath = null, parentNode = null, slotName = null) {
+        const fullPath = originalPath || pathSegments.slice();
+        
+        if (pathSegments.length === 0) {
+            return { node: this, parentNode: parentNode, slotName: slotName };
+        }
+        
+        const nextSegment = pathSegments[0];
+        const remainingPath = pathSegments.slice(1);
+        
+        try {
+            const childNode = this.childNodeForSegment(nextSegment);
+            
+            if (!childNode) {
+                throw new JsonPatchError(
+                    `No child found for array index '${nextSegment}'`,
+                    null,
+                    fullPath,
+                    nextSegment,
+                    this
+                );
+            }
+            
+            // Check if the child node supports nodeAtPathWithParent (i.e., is a JSON collection type)
+            if (childNode.nodeAtPathWithParent) {
+                // Continue navigation through the child
+                return childNode.nodeAtPathWithParent(remainingPath, fullPath, this, nextSegment);
+            } else if (childNode.nodeAtPath) {
+                // Fallback to nodeAtPath for older implementations, but lose parent tracking
+                if (remainingPath.length > 0) {
+                    const finalNode = childNode.nodeAtPath(remainingPath, fullPath);
+                    return { node: finalNode, parentNode: this, slotName: nextSegment };
+                } else {
+                    return { node: childNode, parentNode: this, slotName: nextSegment };
+                }
+            } else {
+                // Child node is likely a primitive field or other non-collection type
+                // If there's still path remaining, check if it's a plain object we can navigate into
+                if (remainingPath.length > 0) {
+                    // Special case for plain objects - we can navigate into them
+                    if (typeof childNode === 'object' && !Array.isArray(childNode)) {
+                        // For plain objects, return them as the node for further navigation
+                        return { 
+                            node: childNode, 
+                            parentNode: this, 
+                            slotName: nextSegment 
+                        };
+                    }
+                    
+                    const nodeType = childNode.svType ? childNode.svType() : typeof childNode;
+                    throw new JsonPatchError(
+                        `Cannot navigate further from array index '${nextSegment}' - node type '${nodeType}' does not support path navigation`,
+                        null,
+                        fullPath,
+                        remainingPath[0],
+                        childNode
+                    );
+                }
+                // If no remaining path, this child is our target
+                return { node: childNode, parentNode: this, slotName: nextSegment };
+            }
+            
+        } catch (error) {
+            if (error instanceof JsonPatchError) {
+                throw error;
+            }
+            
+            throw new JsonPatchError(
+                `Error navigating to array index '${nextSegment}': ${error.message}`,
+                null,
+                fullPath,
+                nextSegment,
+                this
+            );
+        }
+    }
+
+    /**
      * @description Gets the child node for a specific path segment (array index).
      * @param {string} segment - The path segment (array index).
      * @returns {Object} The child node.
@@ -175,10 +261,16 @@
      * @returns {number} The validated index (-1 for "/-" append).
      * @category JSON Patch
      */
-    validateArrayIndex (indexString, operation = "access") {
+    validateArrayIndex (indexString, operation = "access", fullOperation = null) {
         if (indexString === '-') {
             if (operation !== 'add') {
-                throw new Error(`Cannot ${operation} using '/-' path. Use '/-' only with 'add' operations.`);
+                throw new JsonPatchError(
+                    `Cannot ${operation} using '/-' path. Use '/-' only with 'add' operations.`,
+                    fullOperation,
+                    fullOperation ? this.parsePathSegments(fullOperation.path) : [indexString],
+                    indexString,
+                    this
+                );
             }
             return -1; // Special return value for append
         }
@@ -186,11 +278,23 @@
         const index = parseInt(indexString);
         
         if (isNaN(index)) {
-            throw new Error(`Array index '${indexString}' is not a valid number`);
+            throw new JsonPatchError(
+                `Array index '${indexString}' is not a valid number. Array operations require numeric indices (0, 1, 2, etc.) or '-' for append.`,
+                fullOperation,
+                fullOperation ? this.parsePathSegments(fullOperation.path) : [indexString],
+                indexString,
+                this
+            );
         }
         
         if (index < 0) {
-            throw new Error(`Array index ${index} is negative. Array indices must be >= 0`);
+            throw new JsonPatchError(
+                `Array index ${index} is negative. Array indices must be >= 0.`,
+                fullOperation,
+                fullOperation ? this.parsePathSegments(fullOperation.path) : [indexString],
+                indexString,
+                this
+            );
         }
         
         return index;
@@ -208,14 +312,20 @@
      */
     executeDirectOperation (op, key, value, operation, rootNode) {
         switch (op) {
-            case 'add': return this.addDirectly(key, value);
-            case 'remove': return this.removeDirectly(key);
-            case 'replace': return this.replaceDirectly(key, value);
-            case 'move': return this.moveDirectly(operation.from, key, rootNode);
-            case 'copy': return this.copyDirectly(operation.from, key, rootNode);
-            case 'test': return this.testDirectly(key, value);
+            case 'add': return this.addDirectly(key, value, operation);
+            case 'remove': return this.removeDirectly(key, operation);
+            case 'replace': return this.replaceDirectly(key, value, operation);
+            case 'move': return this.moveDirectly(operation.from, key, rootNode, operation);
+            case 'copy': return this.copyDirectly(operation.from, key, rootNode, operation);
+            case 'test': return this.testDirectly(key, value, operation);
             default:
-                throw new Error(`Unsupported JSON patch operation: ${op}`);
+                throw new JsonPatchError(
+                    `Unsupported JSON patch operation: ${op}`,
+                    operation,
+                    this.parsePathSegments(operation.path),
+                    key,
+                    this
+                );
         }
     }
 
@@ -226,9 +336,9 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
-    addDirectly (key, value) {
+    addDirectly (key, value, operation = null) {
         try {
-            const index = this.validateArrayIndex(key, "add");
+            const index = this.validateArrayIndex(key, "add", operation);
             const newNode = this.newSubnodeForJson(value);
             
             if (index === -1) {
@@ -253,15 +363,27 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
-    removeDirectly (key) {
-        const index = this.validateArrayIndex(key, "remove");
+    removeDirectly (key, operation = null) {
+        const index = this.validateArrayIndex(key, "remove", operation);
         
         if (index === -1) {
-            throw new Error("Cannot remove using '/-' path. Specify a valid array index (0, 1, 2, etc.)");
+            throw new JsonPatchError(
+                "Cannot remove using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         if (index >= this.subnodes().length) {
-            throw new Error(`Cannot remove from array: index ${index} is out of bounds (valid range: 0-${this.subnodes().length - 1})`);
+            throw new JsonPatchError(
+                `Cannot remove from array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         const node = this.subnodes().at(index);
@@ -276,15 +398,27 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
-    replaceDirectly (key, value) {
-        const index = this.validateArrayIndex(key, "replace");
+    replaceDirectly (key, value, operation = null) {
+        const index = this.validateArrayIndex(key, "replace", operation);
         
         if (index === -1) {
-            throw new Error("Cannot replace using '/-' path. Specify a valid array index (0, 1, 2, etc.)");
+            throw new JsonPatchError(
+                "Cannot replace using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         if (index >= this.subnodes().length) {
-            throw new Error(`Cannot replace in array: index ${index} is out of bounds (valid range: 0-${this.subnodes().length - 1})`);
+            throw new JsonPatchError(
+                `Cannot replace in array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         const newNode = this.newSubnodeForJson(value);
@@ -301,7 +435,7 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
-    moveDirectly (fromPath, key, rootNode) {
+    moveDirectly (fromPath, key, rootNode /*, operation = null*/) {
         const sourceValue = rootNode.getValueAtPath(fromPath);
         // Deep clone the value to avoid reference sharing
         const clonedValue = JSON.parse(JSON.stringify(sourceValue));
@@ -318,7 +452,7 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
-    copyDirectly (fromPath, key, rootNode) {
+    copyDirectly (fromPath, key, rootNode /*, operation = null*/) {
         const sourceValue = rootNode.getValueAtPath(fromPath);
         // Deep clone the value to avoid reference sharing
         const clonedValue = JSON.parse(JSON.stringify(sourceValue));
@@ -333,22 +467,40 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Patch
      */
-    testDirectly (key, expectedValue) {
-        const index = this.validateArrayIndex(key, "test");
+    testDirectly (key, expectedValue, operation = null) {
+        const index = this.validateArrayIndex(key, "test", operation);
         
         if (index === -1) {
-            throw new Error("Cannot test using '/-' path. Specify a valid array index (0, 1, 2, etc.)");
+            throw new JsonPatchError(
+                "Cannot test using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         if (index >= this.subnodes().length) {
-            throw new Error(`Cannot test array: index ${index} is out of bounds (valid range: 0-${this.subnodes().length - 1})`);
+            throw new JsonPatchError(
+                `Cannot test array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         const node = this.subnodes().at(index);
         const actualValue = node.asJson();
         
         if (JSON.stringify(actualValue) !== JSON.stringify(expectedValue)) {
-            throw new Error(`Test failed: expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`);
+            throw new JsonPatchError(
+                `Test failed: expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`,
+                operation,
+                operation ? this.parsePathSegments(operation.path) : null,
+                key,
+                this
+            );
         }
         
         return this;

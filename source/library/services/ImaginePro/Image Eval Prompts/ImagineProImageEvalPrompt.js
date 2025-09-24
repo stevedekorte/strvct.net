@@ -23,19 +23,15 @@
    */
   initPrototypeSlots () {
     
-    // ImagesEvaluator instance for handling evaluation
-    /*
     {
-      const slot = this.newSlot("imagesEvaluator", null);
-      slot.setFinalInitProto(ImagesEvaluator);
-      slot.setSlotType("ImagesEvaluator");
-      slot.setLabel("Images Evaluator");
+      const slot = this.newSlot("imageEvaluators", null);
+      slot.setFinalInitProto(ImageEvaluators);
+      slot.setLabel("Images Evaluations");
       slot.setIsSubnode(true);
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
-      slot.setDescription("Evaluator for generated images");
     }
-*/
+
     // Result image URL data (the best matching image) - kept for compatibility
     {
       const slot = this.newSlot("resultImageUrlData", null);
@@ -46,16 +42,6 @@
       slot.setSyncsToView(true);
       slot.setFieldInspectorViewClassName("SvImageWellField");
       slot.setCanEditInspection(false);
-    }
-
-    // Auto-evaluate flag
-    {
-      const slot = this.newSlot("autoEvaluate", true);
-      slot.setSlotType("Boolean");
-      slot.setLabel("Auto Evaluate");
-      slot.setIsSubnodeField(true);
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
     }
 
     {
@@ -73,22 +59,12 @@
   }
 
   /**
-   * @description Gets the OpenAI service for evaluation.
-   * @returns {Object} The OpenAI service.
-   * @category Service
-   */
-  openAiService () {
-    return OpenAiService.shared();
-  }
-
-  /**
    * @description Override title to show it's an eval prompt.
    * @returns {string} The title.
    * @category Metadata
    */
   title () {
-    const p = this.prompt().clipWithEllipsis(15);
-    return p ? `Eval: ${p}` : "Eval Prompt";
+    return this.prompt().clipWithEllipsis(15);
   }
 
   /**
@@ -137,15 +113,15 @@
       this.setStatus("preparing evaluation...");
       
       this.images().subnodes().forEach(node => {
-        node.setSubtitle(node.imageGenPrompt());
+        const svImage = node.asSvImage();
+        const evaluator = this.imageEvaluators().add();
+        evaluator.setSvImage(svImage);
+        evaluator.setImageGenPrompt(this.prompt());
+        evaluator.evaluate();
       });
-      // Prepare the evaluator
-      const evaluator = this.imagesEvaluator();      
-      evaluator.setSvImageNodes(this.copyOfImageNodes());
-      evaluator.setImageGenPrompt(this.prompt());
-      this.setStatus("evaluating images with OpenAI...");      
-      await evaluator.evaluate();
-      
+
+      this.setStatus("evaluating images...");      
+      await this.imageEvaluators().asyncEvaluate();
       this.processEvaluationResults();
     
       this.setStatus("evaluation complete");
@@ -164,28 +140,13 @@
    * @category Evaluation
    */
   processEvaluationResults () {
-    const evaluator = this.imagesEvaluator();
-    
-    // Get the best image that was already selected by evaluator.selectBestImage()
-    const bestImage = evaluator.bestImage();
-    const bestIndex = evaluator.bestImageIndex();
-    
-    if (bestImage && bestImage.imageUrl()) {
-      // Set the result image URL for compatibility
-      this.setResultImageUrlData(bestImage.imageUrl());
-      
-      // Log the selection
-      const results = evaluator.evaluationResults();
-      if (results && results[bestIndex]) {
-        const bestScore = results[bestIndex].score;
-        this.log(`Selected best image: index ${bestIndex} with score ${bestScore}`);
-      }
-      
-      // Send delegate notification if we have a corresponding image node
-      const imageNodes = this.images().subnodes();
-      if (bestIndex < imageNodes.length) {
+    //const bestSvImage = this.imageEvaluators().bestSvImage();
+    const bestIndex = this.imageEvaluators().bestImageIndex();
+
+    // Send delegate notification if we have a corresponding image node
+    const imageNodes = this.images().subnodes();
+    if (bestIndex < imageNodes.length) {
         this.sendDelegate("onImagePromptImageLoaded", [this, imageNodes[bestIndex]]);
-      }
     }
   }
 
@@ -212,82 +173,6 @@
     this.setError(errorObj);
     this.setStatus("Error: " + errorMessage);
     this.evalCompletionPromise().callRejectFunc(errorObj);
-  }
-
-  /**
-   * @description Gets a descriptive subtitle based on current state.
-   * @returns {string} The subtitle.
-   * @category UI
-   */
-  subtitle () {
-    if (this.resultImageUrlData()) {
-      const evaluator = this.imagesEvaluator();
-      const results = evaluator ? evaluator.evaluationResults() : null;
-      const bestIndex = evaluator ? evaluator.bestImageIndex() : null;
-      
-      if (results && bestIndex !== null && results[bestIndex]) {
-        const bestScore = results[bestIndex].score || 0;
-        return `Complete - Best score: ${bestScore}`;
-      }
-    }
-    
-    return super.subtitle();
-  }
-
-  /**
-   * @description Override to check both services.
-   * @returns {Promise<boolean>} True if generation can be performed, false otherwise.
-   * @category Validation
-   */
-  async canGenerate () {
-    const hasContent = await super.canGenerate();
-    const hasOpenAiKey = !this.autoEvaluate() || await this.openAiService().hasApiKey();
-    return hasContent && hasOpenAiKey;
-  }
-
-  /**
-   * @description Override to check OpenAI service for evaluation.
-   * @returns {Object} Action info.
-   * @category Actions
-   */
-  generateActionInfo () {
-    const parentInfo = super.generateActionInfo();
-    if (!this.autoEvaluate()) {
-      return parentInfo;
-    }
-    
-    // Check if OpenAI is configured for evaluation
-    const hasOpenAiKey = this.openAiService().hasApiKey();
-    if (!hasOpenAiKey) {
-      return {
-        ...parentInfo,
-        isEnabled: false,
-        title: parentInfo.title,
-        subtitle: "OpenAI API key required for evaluation"
-      };
-    }
-    
-    return parentInfo;
-  }
-
-  /**
-   * @description Helper method to get evaluation scores for compatibility.
-   * @returns {Array} The evaluation scores from the evaluator.
-   * @category Compatibility
-   */
-  evaluationScores () {
-    const evaluator = this.imagesEvaluator();
-    return evaluator ? evaluator.evaluationResults() : [];
-  }
-
-  /**
-   * @description Helper method to get best image index for compatibility.
-   * @returns {number|null} The best image index from the evaluator.
-   * @category Compatibility
-   */
-  bestImageIndex () {
-    const evaluator = this.imagesEvaluator();
-    return evaluator ? evaluator.bestImageIndex() : null;
   }
 
 }).initThisClass();

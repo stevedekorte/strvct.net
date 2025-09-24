@@ -44,23 +44,28 @@
   setupForPage () {
     if (SvPlatform.isNodePlatform()) {
       return;
+    }
+    
+    // Use centralized environment configuration
+    // Note: UoEnvironment may not be loaded yet when DefaultProxyServer is initialized
+    // So we check if it exists first
+    if (typeof UoEnvironment !== 'undefined' && UoEnvironment.shared) {
+      const config = UoEnvironment.shared().getProxyConfig();
+      this.setIsSecure(config.isSecure);
+      this.setSubdomain(config.subdomain);
+      this.setDomain(config.domain);
+      this.setPort(config.port);
+      this.setPath(config.path);
+      this.setParameterName(config.parameterName);
     } else {
+      // Fallback to basic configuration if UoEnvironment isn't available yet
+      // This can happen during early initialization
       const loc = window.location;
-      
-      // For localhost development with Firebase, use the Firebase Functions API
-      if (loc.hostname === 'localhost') {
-        // Firebase Functions are served through our HTTPS proxy
-        this.setHostname(loc.hostname);
-        this.setPort(Number(loc.port));
-        this.setIsSecure(loc.protocol === "https:");
-        this.setPath("/proxy");
-      } else {
-        // For production, use the current location
-        this.setHostname(loc.hostname);
-        this.setPort(Number(loc.port));
-        this.setIsSecure(loc.protocol === "https:");
-        this.setPath("/proxy");
-      }
+      this.setHostname(loc.hostname);
+      this.setPort(Number(loc.port) || null);
+      this.setIsSecure(loc.protocol === "https:");
+      this.setPath("/proxy");
+      this.setParameterName("proxyUrl");
     }
   }
 

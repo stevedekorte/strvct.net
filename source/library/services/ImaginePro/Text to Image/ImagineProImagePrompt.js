@@ -115,16 +115,15 @@
     }
 
     /**
-     * @member {ImagineProImages} images
+     * @member {FilesToDownload} images
      * @description The generated images.
      * @category Output
      */
     {
       const slot = this.newSlot("images", null)
-      slot.setFinalInitProto(ImagineProImages)
+      slot.setFinalInitProto(FilesToDownload)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
-      slot.setSlotType("ImagineProImages");
     }
 
     /**

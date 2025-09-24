@@ -101,6 +101,26 @@
         });
     }
 
+    descendantWithJsonIdOrThrow (jsonId, path = "") {
+        const result = this.descendantWithJsonId(jsonId, path);
+        if (!result) {
+            throw new Error("Descendant with jsonId: " + jsonId + " not found");
+        }
+        return result;
+    }
+
+    // -- multiple descendants --
+
+    descendantsWithJsonIds (jsonIds) {
+        return jsonIds.map(jsonId => this.descendantWithJsonId(jsonId));
+    }
+
+    descendantsWithJsonIdsOrThrow (jsonIds) {
+        return jsonIds.map(jsonId => this.descendantWithJsonIdOrThrow(jsonId));
+    }
+
+    // -- json path completion --
+
     jsonPathCompmentString () {
         return this.svType() + ":" + this.title() + ":" + this.jsonId();
     }

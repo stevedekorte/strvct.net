@@ -54,8 +54,14 @@
       
       // Check if the target node supports JSON patch operations
       if (!targetInfo.node.executeDirectOperation) {
+        // Special handling for plain Object slots
+        if (targetInfo.parentNode && targetInfo.slotName && typeof targetInfo.node === 'object' && !Array.isArray(targetInfo.node)) {
+          return this.executeOperationOnObjectSlot(operation, targetInfo);
+        }
+        
+        const nodeType = targetInfo.node.svType ? targetInfo.node.svType() : typeof targetInfo.node;
         throw new JsonPatchError(
-          `Target node type '${targetInfo.node.svType()}' does not support JSON patch operations. Only JSON collection nodes (JsonGroup, SvJsonArrayNode) with patch categories support direct operations.`,
+          `Target node type '${nodeType}' does not support JSON patch operations. Only JSON collection nodes (JsonGroup, SvJsonArrayNode) with patch categories or plain Object slots support direct operations.`,
           operation,
           pathSegments,
           targetInfo.key,
@@ -103,14 +109,97 @@
    */
   findTargetForPath (pathSegments) {
     if (pathSegments.length === 1) {
-      return { node: this, key: pathSegments[0] };
+      return { node: this, key: pathSegments[0], parentNode: null, slotName: null };
     }
     
     const navigationSegments = pathSegments.slice(0, -1);
     const targetKey = pathSegments[pathSegments.length - 1];
-    const targetNode = this.nodeAtPath(navigationSegments);
+    const result = this.nodeAtPathWithParent(navigationSegments);
     
-    return { node: targetNode, key: targetKey };
+    return { 
+      node: result.node, 
+      key: targetKey,
+      parentNode: result.parentNode,
+      slotName: result.slotName
+    };
+  }
+
+  /**
+   * @description Recursively navigates to a node at the given path, tracking parent information.
+   * @param {Array} pathSegments - The path segments to navigate.
+   * @param {Array} originalPath - The original full path for error reporting.
+   * @param {Object} parentNode - The parent node (for tracking).
+   * @param {string} slotName - The slot name in the parent (for tracking).
+   * @returns {Object} Object with {node, parentNode, slotName} properties.
+   * @category JSON Patch
+   */
+  nodeAtPathWithParent (pathSegments, originalPath = null, parentNode = null, slotName = null) {
+    const fullPath = originalPath || pathSegments.slice();
+    
+    if (pathSegments.length === 0) {
+      return { node: this, parentNode: parentNode, slotName: slotName };
+    }
+    
+    const nextSegment = pathSegments[0];
+    const remainingPath = pathSegments.slice(1);
+    
+    try {
+      const childNode = this.childNodeForSegment(nextSegment);
+      
+      if (!childNode) {
+        throw new JsonPatchError(
+          `No child found for segment '${nextSegment}'`,
+          null,
+          fullPath,
+          nextSegment,
+          this
+        );
+      }
+      
+      // Check if the child node supports nodeAtPathWithParent (i.e., is a JSON collection type)
+      if (childNode.nodeAtPathWithParent) {
+        return childNode.nodeAtPathWithParent(remainingPath, fullPath, this, nextSegment);
+      } else {
+        // Child node is likely a primitive field or other non-collection type
+        // If there's still path remaining, this is an error for non-object types
+        if (remainingPath.length > 0) {
+          // Special case for plain objects - we can navigate into them
+          if (typeof childNode === 'object' && !Array.isArray(childNode)) {
+            // For plain objects, we need to handle navigation differently
+            // Return the object as the parent for the next level
+            return { 
+              node: childNode, 
+              parentNode: this, 
+              slotName: nextSegment 
+            };
+          }
+          
+          const nodeType = childNode.svType ? childNode.svType() : typeof childNode;
+          throw new JsonPatchError(
+            `Cannot navigate further from '${nextSegment}' - node type '${nodeType}' does not support path navigation`,
+            null,
+            fullPath,
+            nextSegment,
+            this
+          );
+        }
+        
+        // No more path segments, return the child
+        return { node: childNode, parentNode: this, slotName: nextSegment };
+      }
+    } catch (error) {
+      if (error instanceof JsonPatchError) {
+        throw error;
+      }
+      
+      throw new JsonPatchError(
+        `Failed to navigate to '${nextSegment}': ${error.message}`,
+        null,
+        fullPath,
+        nextSegment,
+        this
+      );
+    }
   }
 
   /**
@@ -209,6 +298,66 @@
       
       return value;
     }
+  }
+
+  /**
+   * @description Executes a JSON patch operation on a plain Object slot.
+   * @param {Object} operation - The patch operation.
+   * @param {Object} targetInfo - Information about the target (node, parentNode, slotName, key).
+   * @returns {JsonGroup} The parent node.
+   * @category JSON Patch
+   */
+  executeOperationOnObjectSlot (operation, targetInfo) {
+    const { node: objectValue, parentNode, slotName, key } = targetInfo;
+    const op = operation.op;
+    const value = operation.value;
+    
+    // Create a new object to avoid mutating the original
+    const newObject = Object.assign({}, objectValue);
+    
+    switch (op) {
+      case 'add':
+      case 'replace':
+        newObject[key] = value;
+        break;
+      case 'remove':
+        delete newObject[key];
+        break;
+      case 'test':
+        if (newObject[key] !== value) {
+          throw new JsonPatchError(
+            `Test operation failed: expected ${JSON.stringify(value)}, got ${JSON.stringify(newObject[key])}`,
+            operation,
+            null,
+            key,
+            objectValue
+          );
+        }
+        return parentNode;
+      default:
+        throw new JsonPatchError(
+          `Unsupported operation '${op}' for plain Object slots`,
+          operation,
+          null,
+          key,
+          objectValue
+        );
+    }
+    
+    // Update the slot with the modified object
+    const slot = parentNode.getSlot(slotName);
+    if (!slot) {
+      throw new JsonPatchError(
+        `Cannot find slot '${slotName}' to update`,
+        operation,
+        null,
+        slotName,
+        parentNode
+      );
+    }
+    
+    slot.onInstanceSetValue(parentNode, newObject);
+    return parentNode;
   }
 
   /**

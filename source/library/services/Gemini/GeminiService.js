@@ -144,8 +144,12 @@
       url = url.replaceAll("{api key}", apiKey);
     } else {
       // Remove the key parameter entirely when using proxy auth
-      url = url.replace("?key={api key}", "");
-      url = url.replace("&key={api key}", "");
+      // First remove the entire key parameter including the ? or &
+      if (url.includes("?key={api key}")) {
+        url = url.replace("?key={api key}", "");
+      } else if (url.includes("&key={api key}")) {
+        url = url.replace("&key={api key}", "");
+      }
     }
     
     return url;

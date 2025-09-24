@@ -17,20 +17,85 @@
      * @param {Object} targetNode - The node where the error occurred.
      */
     constructor (message, operation, pathSegments, currentSegment, targetNode) {
-        super(message);
+        // Build comprehensive error message with all debugging info
+        let fullMessage = message;
+        
+        // Store the original properties
+        const fullPath = pathSegments ? '/' + pathSegments.join('/') : '';
+        let partialPath = fullPath;
+        
+        if (currentSegment && pathSegments) {
+            const currentIndex = pathSegments.indexOf(currentSegment);
+            partialPath = currentIndex >= 0 ? '/' + pathSegments.slice(0, currentIndex + 1).join('/') : fullPath;
+        }
+        
+        // Add operation details
+        if (operation) {
+            fullMessage += `\n  Operation: ${operation.op}`;
+            if (operation.path) fullMessage += ` at path "${operation.path}"`;
+            if (operation.value !== undefined) {
+                const valueStr = JSON.stringify(operation.value);
+                if (valueStr.length > 100) {
+                    fullMessage += `\n  Value: ${valueStr.substring(0, 100)}...`;
+                } else {
+                    fullMessage += `\n  Value: ${valueStr}`;
+                }
+            }
+            if (operation.from) fullMessage += `\n  From: "${operation.from}"`;
+        }
+        
+        // Add path information
+        if (fullPath) {
+            fullMessage += `\n  Full path: "${fullPath}"`;
+            if (partialPath && partialPath !== fullPath) {
+                fullMessage += `\n  Failed at: "${partialPath}"`;
+            }
+        }
+        
+        // Add current segment info
+        if (currentSegment) {
+            fullMessage += `\n  Failed segment: "${currentSegment}"`;
+        }
+        
+        // Add target node information
+        if (targetNode) {
+            if (targetNode.svType) {
+                fullMessage += `\n  Target node type: ${targetNode.svType()}`;
+            } else if (typeof targetNode === 'object') {
+                if (Array.isArray(targetNode)) {
+                    fullMessage += `\n  Target type: Array (length: ${targetNode.length})`;
+                } else {
+                    fullMessage += `\n  Target type: Object`;
+                    const keys = Object.keys(targetNode);
+                    if (keys.length <= 5) {
+                        fullMessage += ` (keys: ${keys.join(', ')})`;
+                    } else {
+                        fullMessage += ` (${keys.length} keys)`;
+                    }
+                }
+            } else {
+                fullMessage += `\n  Target type: ${typeof targetNode}`;
+            }
+            
+            // Add node path if available
+            if (targetNode.nodePathString) {
+                fullMessage += `\n  Node path: "${targetNode.nodePathString()}"`;
+            }
+        }
+        
+        // Add full operation JSON for complex debugging
+        if (operation) {
+            fullMessage += `\n  Full operation: ${JSON.stringify(operation)}`;
+        }
+        
+        super(fullMessage);
         this.name = 'JsonPatchError';
         this.operation = operation;
         this.pathSegments = pathSegments;
         this.currentSegment = currentSegment;
         this.targetNode = targetNode;
-        this.fullPath = pathSegments ? '/' + pathSegments.join('/') : '';
-        
-        if (currentSegment && pathSegments) {
-            const currentIndex = pathSegments.indexOf(currentSegment);
-            this.partialPath = currentIndex >= 0 ? '/' + pathSegments.slice(0, currentIndex + 1).join('/') : this.fullPath;
-        } else {
-            this.partialPath = this.fullPath;
-        }
+        this.fullPath = fullPath;
+        this.partialPath = partialPath;
     }
 
     /**

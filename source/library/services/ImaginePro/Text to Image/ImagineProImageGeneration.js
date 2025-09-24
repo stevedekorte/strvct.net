@@ -23,11 +23,12 @@
      * @category Status
      */
     {
-      const slot = this.newSlot("taskId", "");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
+        const slot = this.newSlot("taskId", "");
+        slot.setShouldStoreSlot(true);
+        slot.setSyncsToView(true);
+        slot.setSlotType("String");
+        slot.setIsSubnodeField(true);
+        slot.setCanInspect(true);
     }
 
     /**
@@ -41,6 +42,7 @@
       slot.setSyncsToView(true);
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
+      slot.setCanInspect(true);
     }
 
     /**
@@ -51,9 +53,10 @@
     {
       const slot = this.newSlot("error", null);
       slot.setAllowsNullValue(true);
-      slot.setShouldStoreSlot(false);
+      slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setSlotType("Error");
+      slot.setCanInspect(true);
     }
 
     /**
@@ -63,10 +66,11 @@
      */
     {
       const slot = this.newSlot("images", null);
-      slot.setFinalInitProto(ImagineProImages);
+      slot.setFinalInitProto(FilesToDownload);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
-      slot.setSlotType("ImagineProImages");
+      slot.setSlotType("FilesToDownload");
+      slot.setCanInspect(true);
     }
 
     /**
@@ -76,7 +80,9 @@
      */
     {
       const slot = this.newSlot("delegate", null);
+      slot.setShouldStoreSlot(true);
       slot.setSlotType("Object");
+      slot.setCanInspect(true);
     }
 
     /**
@@ -87,6 +93,8 @@
     {
       const slot = this.newSlot("pollInterval", 2000);
       slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setCanInspect(true);
     }
 
     /**
@@ -97,6 +105,8 @@
     {
       const slot = this.newSlot("maxPollAttempts", 60);
       slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setCanInspect(true);
     }
 
     /**
@@ -107,6 +117,8 @@
     {
       const slot = this.newSlot("pollAttempts", 0);
       slot.setSlotType("Number");
+      slot.setShouldStoreSlot(true);
+      slot.setCanInspect(true);
     }
 
     /**
@@ -117,6 +129,7 @@
     {
       const slot = this.newSlot("pollTimeoutId", null);
       slot.setSlotType("Object");
+      slot.setCanInspect(true);
     }
 
     this.setShouldStore(true);

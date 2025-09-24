@@ -286,7 +286,7 @@ class SvWindowErrorPanel extends Object {
                 errorPanelDiv.style.transform = 'scale(0.95)';
                 
                 // Remove element after animation completes
-                this.addTimeout(() => {
+                setTimeout(() => {
                     backdropDiv.remove();
                 }, 500); // Match the 0.5s transition duration
             });

@@ -1,4 +1,5 @@
 [
   "ImageEvaluator.js",
+  "ImageEvaluators.js",
   "SvImage_evaluator.js"
 ]

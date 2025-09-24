@@ -186,6 +186,9 @@ See schema for the particular tool call (whose name is in the toolName property)
 
   toolMethod () {
     const toolCall = this.toolCall();
+    if (!toolCall) {
+      throw new Error("Tool result has no associated tool call");
+    }
     const toolDefinition = toolCall.findToolDefinition();
     if (toolDefinition === null) {
       debugger;

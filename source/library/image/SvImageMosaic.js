@@ -20,7 +20,7 @@
  * mosaic.addImage(backViewImage);
  * 
  * // Compose the mosaic
- * const compositeImage = await mosaic.compose();
+ * const compositeImage = await mosaic.asyncCompose();
  * 
  * // Get as data URL for display or upload
  * const dataUrl = mosaic.compositeDataURL();
@@ -133,7 +133,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {Promise<Image>} The composite image
      * @category Composition
      */
-    async compose () {
+    async asyncCompose () {
         const images = this.images();
         
         if (!images || images.length === 0) {

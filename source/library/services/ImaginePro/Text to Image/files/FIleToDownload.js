@@ -1,15 +1,14 @@
 "use strict";
 
-/**
- * @module library.services.PiAPI.Text_to_Image.images
- */
+
 
 /**
- * @class PiApiImage
+ * @class FileToDownload
  * @extends SvSummaryNode
- * @classdesc Represents a single generated image from PiAPI Midjourney service.
+ * @classdesc Represents a single image to download.
  */
-(class PiApiImage extends SvSummaryNode {
+
+(class FileToDownload extends SvSummaryNode {
 
   initPrototypeSlots () {
     
@@ -35,7 +34,7 @@
      * @category Image Data
      */
     {
-      const slot = this.newSlot("imageUrl", "");
+      const slot = this.newSlot("imageUrl", ""); // this is a passthrough to dataUrl
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
@@ -122,13 +121,24 @@
     this.setNodeCanReorderSubnodes(false);
   }
 
+  setImageUrl (dataUrl) {
+    // this is a passthrough to dataUrl
+    this.setDataUrl(dataUrl);
+    return this;
+  }
+
+  imageUrl () {
+    // this is a passthrough to dataUrl
+    return this.dataUrl();
+  }
+
   /**
    * @description Gets the title for the image.
    * @returns {string} The title.
    * @category Metadata
    */
   title () {
-    return this.hasLoaded() ? "Generated Image" : "Loading...";
+    return this.hasLoaded() ? "Loaded" : "Loading...";
   }
 
   /**
@@ -158,7 +168,7 @@
    * @category Status
    */
   hasLoaded () {
-    return this.imageUrl().length > 0;
+    return this.dataUrl().length > 0;
   }
 
   /**
@@ -193,7 +203,7 @@
 
     // Use regular fetch for image loading like Leonardo does
     const url = this.url();
-    console.log(this.svType() + " fetching url: " + url);
+    console.log(this.logPrefix() + " fetching url: " + url);
     
     try {
       const response = await fetch(url, { method: 'GET' });
@@ -225,12 +235,11 @@
    * @category Loading
    */
   onLoaded (dataUrl) {
-    this.setImageUrl(dataUrl); // This is what displays the image in the UI
     this.setDataUrl(dataUrl);  // Keep for compatibility
     this.setIsLoading(false);
     this.setError("");
     
-    console.log('PiAPI Image Data URL: ' + dataUrl.length + " bytes");
+    console.log(this.logPrefix() + ' Loaded Data URL: ' + dataUrl.length + " bytes");
     
     // Notify delegate if it exists
     this.sendDelegate("onImageLoaded", [this]);
@@ -247,19 +256,6 @@
     
     // Notify delegate if it exists
     this.sendDelegate("onImageError", [this]);
-  }
-
-  /**
-   * @description Gets the parent image prompt.
-   * @returns {Object|null} The parent image prompt or null.
-   * @category Hierarchy
-   */
-  imagePrompt () {
-    const images = this.parentNode();
-    if (images) {
-      return images.parentNode();
-    }
-    return null;
   }
 
   /**
@@ -358,6 +354,45 @@
    */
   onRequestComplete (/*request*/) {
     // Final cleanup if needed
+  }
+
+  hasDataUrl () {
+    return this.dataUrl().length > 0;
+  }
+
+  dataUrlType () {
+    if (!this.hasDataUrl()) {
+      return null;
+    }
+    // read the data type from the data url
+    const dataUrl = this.dataUrl();
+    const dataUrlType = dataUrl.split(";")[0].split(":")[1];
+    return dataUrlType;
+  }
+
+  dataUrlMimeType () {
+    if (!this.hasDataUrl()) {
+      return null;
+    }
+    const dataUrlType = this.dataUrlType();
+    const dataUrlMimeType = dataUrlType.split("/")[1];
+    return dataUrlMimeType;
+  }
+
+  dataUrlIsImage () {
+    if (!this.hasDataUrl()) {
+      return false;
+    }
+    const dataUrlType = this.dataUrlType();
+    return dataUrlType.startsWith("image/");
+  }
+
+  asSvImage () {
+    const image = SvImage.clone();
+    assert(this.dataUrl(), "dataUrl is required");
+    assert(this.dataUrlIsImage(), "dataUrl is not an image");
+    image.setDataUrl(this.dataUrl());
+    return image;
   }
 
 }.initThisClass());
