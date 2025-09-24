@@ -288,6 +288,10 @@
     this.setTitle("XHR Request");
   }
 
+  logPrefix () {
+    return "[" + this.svTypeId() + ":" + this.requestId() + "]";
+  }
+
   // --- request options helpers ---
 
   /*
