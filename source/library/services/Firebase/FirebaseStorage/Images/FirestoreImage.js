@@ -137,6 +137,34 @@
     }
 
     /**
+     * @description Gets the Firebase Storage instance
+     * @returns {Object} Firebase Storage instance
+     * @throws {Error} If Firebase Storage is not available or fails to initialize
+     * @category Helper
+     */
+    getFirebaseStorage () {
+        // Check if Firebase is available globally
+        if (typeof firebase !== 'undefined' && firebase && firebase.storage) {
+            try {
+                return firebase.storage();
+            } catch (error) {
+                throw new Error(`Firebase Storage initialization failed: ${error.message}`);
+            }
+        }
+        
+        // Check if it's available on window
+        if (typeof window !== 'undefined' && window.firebase && window.firebase.storage) {
+            try {
+                return window.firebase.storage();
+            } catch (error) {
+                throw new Error(`Firebase Storage initialization failed: ${error.message}`);
+            }
+        }
+        
+        throw new Error("Firebase Storage is not available - ensure Firebase libraries are loaded");
+    }
+
+    /**
      * @description Gets the title for this image
      * @returns {string} The title
      * @category UI
@@ -406,13 +434,10 @@
                 throw new Error("No Firebase storage path");
             }
 
-            // Ensure Firebase Storage is available
-            if (typeof firebase === 'undefined' || !firebase.storage) {
-                throw new Error("Firebase Storage not available");
-            }
+            // Get Firebase Storage instance
+            const storage = this.getFirebaseStorage();
 
             // Get a reference to the file and delete it
-            const storage = firebase.storage();
             const fileRef = storage.ref(this.storagePath());
             await fileRef.delete();
 
@@ -469,8 +494,8 @@
                 }
                 
                 // If direct fetch failed and it's a Firebase Storage URL, try SDK
-                if (this.publicUrl().includes('firebasestorage.googleapis.com') && 
-                    typeof firebase !== 'undefined' && firebase.storage) {
+                const storage = this.getFirebaseStorage();
+                if (this.publicUrl().includes('firebasestorage.googleapis.com') && storage) {
                     console.log("Attempting Firebase SDK download as fallback");
                     
                     // Extract the actual file path from the URL
@@ -482,7 +507,6 @@
                         console.log("Extracted path from URL:", decodedPath);
                         
                         try {
-                            const storage = firebase.storage();
                             const fileRef = storage.ref(decodedPath);
                             const downloadUrl = await fileRef.getDownloadURL();
                             console.log("Got fresh download URL from Firebase SDK:", downloadUrl);
@@ -505,6 +529,14 @@
                             this.setUploadStatus("downloaded");
                             return;
                         } catch (sdkError) {
+                            // Check if it's a file-not-found error
+                            if (sdkError.code === 'storage/object-not-found') {
+                                console.log("File not found in Firebase Storage");
+                                this.setDataUrl(null);
+                                this.setUploadStatus("not found");
+                                return;
+                            }
+                            // For other errors, throw them
                             console.error("Firebase SDK download failed:", sdkError);
                             throw sdkError;
                         }
@@ -520,13 +552,10 @@
                 throw new Error("No Firebase storage path or public URL");
             }
 
-            // Ensure Firebase Storage is available
-            if (typeof firebase === 'undefined' || !firebase.storage) {
-                throw new Error("Firebase Storage not available");
-            }
+            // Get Firebase Storage instance
+            const storage = this.getFirebaseStorage();
 
             // Get a reference to the file and download it
-            const storage = firebase.storage();
             const fileRef = storage.ref(this.storagePath());
             
             // Get the download URL
@@ -548,9 +577,19 @@
             this.setUploadStatus("downloaded");
 
         } catch (error) {
+            // Check if it's a file-not-found error
+            if (error.code === 'storage/object-not-found') {
+                console.log("File not found in Firebase Storage");
+                this.setDataUrl(null);
+                this.setError("");
+                this.setUploadStatus("not found");
+                return;
+            }
+            // For other errors (network, API, etc), throw them
             console.error("Firebase download failed:", error);
             this.setError(error.message);
             this.setUploadStatus("download failed");
+            throw error; // Re-throw actual errors
         }
     }
 
