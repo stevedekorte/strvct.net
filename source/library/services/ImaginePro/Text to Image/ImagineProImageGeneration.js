@@ -251,56 +251,58 @@
    * @param {Object} response - The response from the API.
    * @category Process
    */
-  handlePollResponse (response) {
+  async handlePollResponse (response) {
     const status = response.status;
+    const isDone = ["DONE", "completed", "success"].includes(status);
+    const isError = ["failed", "error", "FAIL"].includes(status);
+    const isPending = ["pending", "processing", "PROCESSING", "in_progress"].includes(status);
     
     // ImaginePro returns "DONE" when completed
-    if (status === "DONE" || status === "completed" || status === "success") {
-      this.setStatus("completed");
-      
-      // ImaginePro returns images directly in response.images
-      if (response.images && response.images.length > 0) {
-        response.images.forEach((imageUrl, index) => {
-          const image = this.images().add();
-          image.setTitle(`image ${index + 1}`);
-          image.setUrl(imageUrl);
-          image.setDelegate(this);
-          // Don't await fetch - let it run asynchronously
-          // Errors are handled via delegate callbacks
-          image.fetch().catch(error => {
-            // Catch any errors to prevent unhandled promise rejections
-            console.error("Error fetching image:", error);
-            // The error is already handled in the image's error handler
-          });
-        });
-      }
-      
-      this.stopPolling();
-      this.sendDelegate("onImageGenerationEnd", [this]);
-      
-    } else if (status === "failed" || status === "error" || status === "FAIL") {
-      this.setStatus("failed");
-      
-      // Log the full response to understand the error structure
-      console.error("ImaginePro task failed with response:", response);
-      
-      // Extract error message from various possible locations
-      const errorMsg = response.error || response.message || response.errorMessage || 
-                      response.failureReason || response.reason || "Task failed";
-      this.setError(new Error(errorMsg));
-      this.stopPolling();
-      this.sendDelegate("onImageGenerationError", [this]);
-      
-    } else if (status === "pending" || status === "processing" || status === "PROCESSING" || status === "in_progress") {
-      // Task is still processing, continue polling
+    if (isDone) {
+      this.handlePollDone(response);
+    } else if (isError) {
+      this.handlePollError(response);
+    } else if (isPending) {
       this.setStatus(`processing... (attempt ${this.pollAttempts() + 1}/${this.maxPollAttempts()})`);
       this.schedulePoll();
-      
     } else {
-      // Unknown status, continue polling
-      console.log("Unknown task status:", status);
+      // Unknown status, continue polling?
+      console.warn(this.logPrefix() + "Unknown task status:", status);
       this.schedulePoll();
     }
+  }
+
+  async handlePollDone (response) {
+    this.setStatus("completed");
+      
+    // ImaginePro returns images directly in response.images
+    if (response.images && response.images.length > 0) {
+       const promises = response.images.map(async (imageUrl, index) => {   
+        const image = this.images().add();
+        image.setTitle(`image ${index + 1}`);
+        image.setUrl(imageUrl);
+        image.setDelegate(this);
+        return image.fetch();
+      });
+      await Promise.all(promises); // parallelize the fetches
+    }
+    
+    this.stopPolling();
+    this.sendDelegate("onImageGenerationEnd", [this]);
+  }
+
+  async handlePollError (response) {
+    this.setStatus("failed");
+      
+    // Log the full response to understand the error structure
+    console.error("ImaginePro task failed with response:", response);
+    
+    // Extract error message from various possible locations
+    const errorMsg = response.error || response.message || response.errorMessage || 
+                    response.failureReason || response.reason || "Task failed";
+    this.setError(new Error(errorMsg));
+    this.stopPolling();
+    this.sendDelegate("onImageGenerationError", [this]);
   }
 
   /**

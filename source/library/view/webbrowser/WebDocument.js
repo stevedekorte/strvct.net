@@ -107,6 +107,17 @@
         return this;
     }
 
+
+    isFullscreen () {
+        // Document is in fullscreen mode. Also see WebBrowserWindow.isFullscreen().
+        return !!(
+          document.fullscreenElement ||
+          document.webkitFullscreenElement ||
+          document.mozFullScreenElement ||
+          document.msFullscreenElement
+        );
+      }
+
 }).initThisClass();
 
 WebDocument.shared();

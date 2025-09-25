@@ -255,22 +255,26 @@
 
   noteForToolJsonString (jsonString) {
     let note = "";
+    let json = null;
     try {
-        const json = JSON.parse(jsonString);
-        const toolName = json.toolName;
-        const toolCall = this.conversation().assistantToolKit().toolCalls().toolCallWithName(toolName);
-        if (toolCall) {
-            const toolMethod = toolCall.toolMethod();
-            const isSilentSuccess = toolMethod.isSilentSuccess();
-            const isSilentError = toolMethod.isSilentError();
-            if (isSilentSuccess) {
-                note = "Note: the '" + toolName + "' has a isSilentSuccess value of " + isSilentSuccess + ". And a isSilentError value of " + isSilentError + ".";
-            }
-        } else {
-            note = "Note: the tool call with name '" + toolName + "' was not found. Please check the system prompt for the list of available tool calls.";
+        json = JSON.parse(jsonString);
+    } catch (error) {
+        if (error) {
+            // just here to keep the linter happy
         }
-    } catch (e) {
-        console.warn("Error parsing the tool-call-result tag: " + e.message);
+        return "";
+    }
+    const toolName = json.toolName;
+    if (!toolName) {
+        return "";
+    }
+    const toolDefinition = this.conversation().assistantToolKit().toolCalls().toolDefinitionWithName(toolName);
+    if (toolDefinition) {
+        const schema = toolDefinition.toolJsonDescription(new Set());
+        const schemaString = JSON.stringify(schema, null, 2);
+        note = "Note: the tool definition for the '" + toolName + "' tool is: " + schemaString;
+    } else {
+        note = "Note: the tool call with name '" + toolName + "' was not found. Please check the system prompt for the list of available tool calls.";
     }
     return note;
   }

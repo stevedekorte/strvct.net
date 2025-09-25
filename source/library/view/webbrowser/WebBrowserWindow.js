@@ -562,4 +562,10 @@
         this.postNoteNamed("onWindowError", event);
     }
 
+    isFullScreen () {
+        // Window is in fullscreen mode. Also see WebDocument.isFullscreen().
+        // NOTE: This isn’t perfect—window borders, taskbars, or multiple monitors can cause false positives/negatives.
+        return window.innerHeight === screen.height && window.innerWidth === screen.width;
+    }
+
 }.initThisClass());

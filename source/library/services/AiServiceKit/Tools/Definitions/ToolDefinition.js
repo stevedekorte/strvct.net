@@ -43,6 +43,7 @@
       slot.setShouldJsonArchive(true);
       slot.setIsInJsonSchema(true);
       slot.setIsRequired(true);
+      slot.setShouldStoreSlot(true);
     }
 
     /*
@@ -180,7 +181,9 @@
       }
       return false;
     });
-
+    if (!method) {
+      throw new Error("Method named '" + slotName + "' not found in class " + this.toolTarget().svType());
+    }
     return method;
   }
 

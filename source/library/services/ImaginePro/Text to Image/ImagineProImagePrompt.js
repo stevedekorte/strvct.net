@@ -617,7 +617,7 @@
         if (genImage.hasLoaded()) {
           // Copy the loaded image data
           image.setImageUrl(genImage.imageUrl());
-          image.setDataURL(genImage.dataURL());
+          image.setDataURL(genImage.dataUrl());
         } else {
           // Set up delegate and fetch if not loaded
           image.setDelegate(this);
