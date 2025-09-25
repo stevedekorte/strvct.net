@@ -47,17 +47,6 @@
     this.setTitle("Image Evaluators");
   }
 
-  /**
-   * @description Creates a new image eval prompt.
-   * @returns {ImagineProImageEvalPrompt} The new image eval prompt.
-   * @category Creation
-   */
-  add () {
-    const prompt = ImageEvaluator.clone();
-    this.addSubnode(prompt);
-    return prompt;
-  }
-
   async asyncEvaluate () {
     const promises = this.subnodes().map(node => node.asyncEvaluate());
     await Promise.all(promises);

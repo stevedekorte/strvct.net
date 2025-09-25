@@ -49,15 +49,5 @@
     this.setTitle("Image Eval Prompts");
   }
 
-  /**
-   * @description Creates a new image eval prompt.
-   * @returns {ImagineProImageEvalPrompt} The new image eval prompt.
-   * @category Creation
-   */
-  add () {
-    const prompt = ImagineProImageEvalPrompt.clone();
-    this.addSubnode(prompt);
-    return prompt;
-  }
 
 }.initThisClass());

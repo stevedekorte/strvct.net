@@ -46,8 +46,11 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
          * @category Data
          */
         {
-            const slot = this.newSlot("images", null);
-            slot.setSlotType("Array");
+            const slot = this.newSlot("svImages", null);
+            slot.setFinalInitProto(SvImages);
+            slot.setCanInspect(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -85,15 +88,6 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
     initPrototype () {
     }
 
-    /**
-     * @description Initializes the instance.
-     * @category Initialization
-     */
-    init () {
-        super.init();
-        this.setImages([]);
-        return this;
-    }
 
     /**
      * @description Adds an image to the mosaic
@@ -101,8 +95,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {SvImageMosaic} Returns this for method chaining
      * @category Image Management
      */
-    addImage (image) {
-        this.images().push(image);
+    addImage (svImage) {
+        this.svImages().addSubnode(svImage);
         return this;
     }
 
@@ -112,8 +106,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {SvImageMosaic} Returns this for method chaining
      * @category Image Management
      */
-    addImages (images) {
-        this.images().push(...images);
+    addImages (svImageArray) {
+        this.svImages().addSubnodes(svImageArray);
         return this;
     }
 
@@ -122,8 +116,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {SvImageMosaic} Returns this for method chaining
      * @category Image Management
      */
-    clearImages () {
-        this.setImages([]);
+    clear () {
+        this.svImages().removeAllSubnodes();
         this.setCompositeImage(null);
         return this;
     }
@@ -134,15 +128,15 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Composition
      */
     async asyncCompose () {
-        const images = this.images();
+        const images = this.svImages().subnodes();
         
         if (!images || images.length === 0) {
             console.warn("**WARNING**:", this.logPrefix(), "No images to compose");
             return null;
         }
 
-        // Load all images first
-        const loadedImages = await this.loadAllImages(images);
+        // Load if needed, and convert to Image objects
+        const loadedImages = await Promise.all(images.map(img => img.asyncAsImageObject()));
         
         // Calculate target height and scaled dimensions
         const targetHeight = this.calculateMaxHeight(loadedImages);
@@ -189,55 +183,9 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         });
         
         this.setCompositeImage(compositeImage);
-        
         return compositeImage;
     }
 
-    /**
-     * @description Loads all images and returns them as Image elements
-     * @param {Array} images - Array of image sources
-     * @returns {Promise<Array<Image>>} Array of loaded Image elements
-     * @category Helper
-     */
-    async loadAllImages (images) {
-        const promises = images.map(async (imageSource, index) => {
-            // assume it's an SvImage
-            console.log(`Loading image ${index + 1}/${images.length}`);
-            
-            // Get the dataURL directly to ensure we're using local data
-            const dataUrl = imageSource.dataURL();
-            if (!dataUrl) {
-                throw new Error(`No dataURL for image ${index + 1}`);
-            }
-            
-            // Create a fresh Image element for each one
-            const img = new Image();
-            
-            // Don't set crossOrigin for dataURLs - it's not needed and can cause issues
-            // img.crossOrigin = "anonymous"; // DON'T DO THIS for dataURLs
-            
-            return new Promise((resolve, reject) => {
-                img.onload = () => {
-                    console.log(`Image ${index + 1} loaded successfully`);
-                    img.onload = null;
-                    img.onerror = null;
-                    resolve(img);
-                };
-                
-                img.onerror = (error) => {
-                    console.error(`Image ${index + 1} failed to load:`, error);
-                    img.onload = null;
-                    img.onerror = null;
-                    reject(new Error(`Failed to load image ${index + 1}`));
-                };
-                
-                // Set the dataURL as source
-                img.src = dataUrl;
-            });
-        });
-        
-        return await Promise.all(promises);
-    }
 
     /**
      * @description Calculates scaled dimensions for all images to match target height
@@ -246,8 +194,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {Array<Object>} Array of {width, height} objects with scaled dimensions
      * @category Helper
      */
-    calculateScaledDimensions (images, targetHeight) {
-        return images.map(img => {
+    calculateScaledDimensions (imageObjects, targetHeight) {
+        return imageObjects.map(img => {
             const scale = targetHeight / img.height;
             return {
                 width: Math.round(img.width * scale),
@@ -274,9 +222,9 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {Number} Total width in pixels
      * @category Helper
      */
-    calculateTotalWidth (images) {
+    calculateTotalWidth (imageObjects) {
         const imageWidths = images.reduce((sum, img) => sum + img.width, 0);
-        const dividerWidths = this.dividerWidth() * (images.length - 1);
+        const dividerWidths = this.dividerWidth() * (imageObjects.length - 1);
         return imageWidths + dividerWidths;
     }
 
@@ -286,55 +234,36 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @returns {Number} Maximum height in pixels
      * @category Helper
      */
-    calculateMaxHeight (images) {
-        return Math.max(...images.map(img => img.height));
+    calculateMaxHeight (imageObjects) {
+        return Math.max(...imageObjects.map(img => img.height));
     }
 
-    /**
-     * @description Gets the composite image as a data URL
-     * @returns {string|null} Data URL of the composite image or null if not composed
-     * @category Output
-     */
+    /*
+    compositeCanvas () {
+        const img = this.compositeImage();
+
+        const canvas = document.createElement("canvas");
+        if (img) {
+            canvas.width = img.width;
+            canvas.height = img.height;
+        }
+        const ctx = canvas.getContext("2d");
+        if (img) {
+            ctx.drawImage(img, 0, 0);
+        }
+        return canvas;
+    }
+
     compositeDataURL () {
-        const img = this.compositeImage();
-        if (!img) {
-            return null;
-        }
-        
-        // If it's already a data URL in the src, return it
-        if (img.src && img.src.startsWith("data:")) {
-            return img.src;
-        }
-        
-        // Otherwise, draw to canvas and get data URL
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-        return canvas.toDataURL("image/png");
+        return this.compositeCanvas().toDataURL("image/png");
     }
 
-    /**
-     * @description Gets the composite image as a Blob
-     * @returns {Promise<Blob>} Blob of the composite image
-     * @category Output
-     */
     async compositeBlob () {
-        const img = this.compositeImage();
-        if (!img) {
-            return null;
-        }
-        
-        const canvas = document.createElement("canvas");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0);
+        const canvas = this.compositeCanvas();
         
         return new Promise((resolve) => {
             canvas.toBlob(resolve, "image/png");
         });
     }
-
+    */
 }.initThisClass());

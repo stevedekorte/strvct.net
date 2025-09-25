@@ -73,7 +73,7 @@
      * @returns {Point} The current Point instance
      * @category Data Manipulation
      */
-    copyFrom (p, copyDict) {
+    copyFrom (p/*, copyDict*/) {
         this._x = p._x;
         this._y = p._y;
         this._z = p._z;
@@ -406,7 +406,7 @@
      * @returns {Point} A new Point with negated coordinates
      * @category Arithmetic
      */
-    negated (p) {
+    negated () {
         return this.multiplyByScalar(-1);
     }
 

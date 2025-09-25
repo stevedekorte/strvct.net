@@ -50,17 +50,6 @@
     }
 
     /**
-    * @description Creates a new image.
-    * @returns {PiApiImage} The newly created image.
-    * @category Management
-    */
-    add () {
-        const image = FileToDownload.clone();
-        this.addSubnode(image);
-        return image;
-    }
-
-    /**
     * @description Checks if all images have been loaded.
     * @returns {boolean} True if all images are loaded, false otherwise.
     * @category Status

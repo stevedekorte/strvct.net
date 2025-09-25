@@ -117,7 +117,7 @@
         return this.imageObject();
     }
 
-    asImage () {
+    asImageObject () {
         this.assertValidDataURL();
 
         const image = new Image();

@@ -75,23 +75,6 @@ Image.__proto__ = Object;
         return this._dataURL;
     }
 
-    composeDataURL () {
-        assert(this.isLoaded(), "Can't compose data URL for an unloaded image");
-
-        // create a canvas the size of the image
-        const canvas = document.createElement("CANVAS");
-        canvas.height = this.height;
-        canvas.width = this.width;
-
-        // draw image to the canvas
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(this, 0, 0);
-
-        // get the image data from the canvas
-        const dataURL = canvas.toDataURL("image/jpeg");
-        return dataURL;
-    }
-
     async promiseLoaded () {
         // we need to store the promise so we don't override the callbacks!
         if (this.isLoaded()) {
@@ -116,48 +99,33 @@ Image.__proto__ = Object;
         return (img.complete && img.naturalWidth > 0);
     }
 
+    asCanvas () {
+        assert(this.isLoaded(), "Can't get canvas for an unloaded image");
+
+        const canvas = document.createElement("canvas");
+        canvas.width = this.width;
+        canvas.height = this.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(this, 0, 0);
+        return canvas;
+    }
+
+    composeDataURL () {
+        return this.asCanvas().toDataURL("image/png");
+    }
 
     async asyncAsBlob () {
-        await this.promiseLoaded();
-        const dataUrl = this.asDataURL();
-   
         return new Promise((resolve) => {
-            const arr = dataUrl.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
-            }
-            resolve(new Blob([u8arr], { type: mime }));
+            const quality = 1.0;
+            this.asCanvas().toBlob(resolve, "image/png", quality);
         });
     }
  
     async asyncRemoveAllMetadata () {
         await this.promiseLoaded();
-
-        const canvas = document.createElement('canvas');
-        canvas.width = this.width;
-        canvas.height = this.height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(this, 0, 0);
-        
-        const promise = Promise.clone();
-
-        // Render to blob (this strips all metadata)
-        canvas.toBlob((blob) => {
-            if (blob) {
-                // set the src to the blob - now without metadata
-                this.src = blob;
-                promise.callResolveFunc(this);
-            } else {
-                const error = new Error("Failed to convert canvas to blob");
-                promise.callRejectFunc(error);
-            }
-        }, 'image/png', 1.0); // Use PNG for lossless quality
-
-        return promise;
+        const blob = await this.asyncAsBlob();
+        this.src = blob;
+        return this;
     }
 
 }).initThisCategory();

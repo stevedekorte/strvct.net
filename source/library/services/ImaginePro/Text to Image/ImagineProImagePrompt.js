@@ -120,8 +120,8 @@
      * @category Output
      */
     {
-      const slot = this.newSlot("images", null)
-      slot.setFinalInitProto(FilesToDownload)
+      const slot = this.newSlot("images", null);
+      slot.setFinalInitProto(SvImages);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }

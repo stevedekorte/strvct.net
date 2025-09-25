@@ -1,5 +1,6 @@
 [
     "SvImage.js",
+    "SvImages.js",
     "SvURLImage.js",
     "SvImageResources.js",
     "SvImageTile.js"

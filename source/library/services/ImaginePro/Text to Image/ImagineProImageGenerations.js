@@ -17,8 +17,8 @@
    */
   initPrototype () {
     this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setCanDelete(false);
+    this.setShouldStoreSubnodes(true);
+    this.setCanDelete(true);
     this.setSubnodeClasses([ImagineProImageGeneration]);
     this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
@@ -33,15 +33,5 @@
     this.setTitle("generations");
   }
 
-  /**
-   * @description Creates a new generation.
-   * @returns {ImagineProImageGeneration} The new generation.
-   * @category Creation
-   */
-  add () {
-    const generation = ImagineProImageGeneration.clone();
-    this.addSubnode(generation);
-    return generation;
-  }
 
 }.initThisClass());

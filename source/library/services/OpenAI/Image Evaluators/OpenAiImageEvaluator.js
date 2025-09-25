@@ -306,7 +306,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
             ];
             
             // Add all images to the message
-            allImages.forEach((img, idx) => {
+            allImages.forEach((img /*, idx*/) => {
                 if (img.type === 'url') {
                     messages[0].content.push({
                         type: "image_url",
