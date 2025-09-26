@@ -113,7 +113,7 @@
                     field.setOwnerNode(this);
                     field.setTarget(this);
                     field.setCanDelete(false);
-                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());
+                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath(), "SvSummaryNode");
                     pathNodes.last().addSubnode(field);
                 } else {
                     const node = slot.onInstanceGetValue(this);
@@ -144,22 +144,45 @@
      * @returns {Array} An array of path nodes.
      * @category Path
      */
-    createNodePath (aPath, pathSubnodeType = "SvFolderNode") {
+    createNodePath (aPath, pathSubnodeType = "SvSummaryNode") {
         const pathNodes = [this];
 
         if (aPath) {
             const components = aPath.split("/");
             let node = this;
 
+    /*
+    this.setShouldStoreSubnodes(false);
+    this.setNodeCanReorderSubnodes(false);
+    this.setSubnodeClasses([UoAccountUser]);
+    this.setNodeCanAddSubnode(false);
+    this.setNoteIsSubnodeCount(true);
+    this.setNodeSubtitleIsChildrenSummary(true);
+    */
+
             components.forEach(component => {
                 node = node.subnodeWithTitleIfAbsentInsertClosure(component, () => {
-                    //debugger
+                    if (component === "settings") {
+                        debugger;
+                    }
                     const nodeClass = Object.getClassNamed(pathSubnodeType);
                     const newNode = nodeClass.clone();
                     newNode.setNodeCanReorderSubnodes(false); // should this be here?
                     newNode.setTitle(component);
                     newNode.setSubtitle(null);
                     newNode.setNodeCanAddSubnode(false);
+
+
+                    newNode.setShouldStoreSubnodes(false);
+                    newNode.setNodeCanReorderSubnodes(false);
+                    newNode.setNodeCanAddSubnode(false);
+                    //newNode.setNoteIsSubnodeCount(true);
+
+
+                    if (newNode.isKindOf(SvSummaryNode)) {
+                        newNode.setNodeSubtitleIsChildrenSummary(true);
+                    }
+
                     return newNode;
                 })
                 pathNodes.push(node);

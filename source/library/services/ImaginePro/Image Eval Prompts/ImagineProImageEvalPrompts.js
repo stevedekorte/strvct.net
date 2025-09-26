@@ -26,28 +26,10 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setCanDelete(false);
-
     this.setSubnodeClasses([ImagineProImageEvalPrompt]);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(false);
-  }
-
-  /**
-   * @description Initializes the instance.
-   * @category Initialization
-   */
-  init () {
-    super.init();
-  }
-
-  /**
-   * @description Performs final initialization.
-   * @category Initialization
-   */
-  finalInit () {
-    super.finalInit();
     this.setTitle("Image Eval Prompts");
   }
-
 
 }.initThisClass());

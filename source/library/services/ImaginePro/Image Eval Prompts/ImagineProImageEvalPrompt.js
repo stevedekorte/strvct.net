@@ -8,10 +8,9 @@
  * @classdesc An ImaginePro image eval prompt that generates images and evaluates them with OpenAI.
  * 
  * How it works:
- * 1. Generates images using the parent ImagineProImagePrompt class
- * 2. Uses ImagesEvaluator to evaluate how well each image matches the prompt
+ * 1. Generates images using the parent ImagineProImagePrompt parent class
+ * 2. Uses ImageEvaluators to evaluate how well each image matches the prompt
  * 3. Selects and stores the best matching image in resultImageUrlData slot
- * 4. Provides evaluation scores for all generated images
  */
 "use strict";
 
@@ -51,10 +50,8 @@
 
     // Update generate action label
     {
-      const slot = this.thisPrototype().slotNamed("generateAction");
-      if (slot) {
+        const slot = this.thisPrototype().slotNamed("generateAction");
         slot.setLabel("Generate & Evaluate");
-      }
     }
   }
 
@@ -92,15 +89,10 @@
     // Let parent handle the basic completion
     super.onImageGenerationEnd(generation);
     
-    // If auto-evaluate is enabled and generation was successful, evaluate
+    // If generation was successful, evaluate
     if (generation.status() === "completed") {
       this.evaluateImages();
     } 
-  }
-
-  copyOfImageNodes () {
-    const imageNodes = this.images().subnodes();
-    return imageNodes.map(node => node.copy());
   }
 
   /**

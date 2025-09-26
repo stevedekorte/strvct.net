@@ -784,7 +784,6 @@ Example generation body json:
    */
   onEnd () {
     this.sendDelegateMessage("onImagePromptEnd", [this]);
-    
     this.completedPromise().callResolveFunc();
   }
 

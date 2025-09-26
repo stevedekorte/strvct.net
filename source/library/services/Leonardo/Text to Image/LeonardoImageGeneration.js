@@ -519,7 +519,6 @@
    * @category Process
    */
   onEnd () {
-    
     this.sendDelegateMessage("onImageGenerationEnd", [this]);
   }
 

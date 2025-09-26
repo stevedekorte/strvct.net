@@ -14,6 +14,7 @@
  * Omnireference uses V7's --oref and --ow parameters (not V6's --cref/--cw).
  */
 (class ImagineProImagePrompt extends SvSummaryNode {  
+
   initPrototypeSlots () {
 
     /**
@@ -23,12 +24,12 @@
      */
     {
       const slot = this.newSlot("prompt", "");
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
     }
 
     /**
@@ -38,7 +39,7 @@
      */
     {
       const slot = this.newSlot("model", "midjourney");
-      slot.setInspectorPath("");
+      slot.setInspectorPath("settings");
       slot.setLabel("Text to Image Model");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -55,14 +56,14 @@
      */
     {
       const slot = this.newSlot("aspectRatio", "1:1");
-      slot.setInspectorPath("")
-      slot.setLabel("aspect ratio")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"])
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("settings");
+      slot.setLabel("aspect ratio");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setValidValues(["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"]);
+      slot.setIsSubnodeField(true);
     }
 
     /**
@@ -72,31 +73,16 @@
      */
     {
       const slot = this.newSlot("processMode", "fast");
-      slot.setInspectorPath("")
-      slot.setLabel("process mode")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(["relax", "fast", "turbo"])
-      slot.setIsSubnodeField(true)
-    }
-
-    /**
-     * @member {Action} generateAction
-     * @description The action to trigger image generation.
-     * @category Action
-     */
-    {
-      const slot = this.newSlot("generateAction", null);
-      slot.setInspectorPath("");
-      slot.setLabel("Generate");
+      slot.setInspectorPath("settings");
+      slot.setLabel("process mode");
+      slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
+      slot.setSlotType("String");
+      slot.setValidValues(["relax", "fast", "turbo"]);
       slot.setIsSubnodeField(true);
-      slot.setActionMethodName("generate");
     }
+
 
     /**
      * @member {string} error
@@ -107,10 +93,10 @@
       const slot = this.newSlot("error", null);
       slot.setAllowsNullValue(true);
       slot.setInspectorPath("")
-      slot.setShouldStoreSlot(false)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Error")
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Error");
       slot.setCanEditInspection(false);
     }
 
@@ -133,12 +119,12 @@
      */
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
 
@@ -149,14 +135,31 @@
      */
     {
       const slot = this.newSlot("taskId", "");
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
+
+
+    /**
+     * @member {Action} generateAction
+     * @description The action to trigger image generation.
+     * @category Action
+     */
+    {
+        const slot = this.newSlot("generateAction", null);
+        slot.setInspectorPath("");
+        slot.setLabel("Generate");
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("Action");
+        slot.setIsSubnodeField(true);
+        slot.setActionMethodName("generate");
+      }
 
     /**
      * @member {ImagineProImageGenerations} generations
@@ -238,7 +241,9 @@
         const slot = this.newSlot("completionPromise", null);
         slot.setSlotType("Promise");
     }
+  }
 
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
@@ -263,7 +268,7 @@
    * @category Metadata
    */
   subtitle () {
-    return this.status()
+    return this.status();
   }
 
   /**
@@ -271,8 +276,8 @@
    * @category Initialization
    */
   finalInit () {
-    super.finalInit()
-    this.setCanDelete(true)
+    super.finalInit();
+    this.setCanDelete(true);
   }
 
   /**
@@ -281,7 +286,7 @@
    * @category Hierarchy
    */
   imagePrompts () {
-    return this.parentNode()
+    return this.parentNode();
   }
 
   /**
@@ -316,16 +321,8 @@
    * @category Action
    */
   generateActionInfo () {
-    const canGen = this.canGenerate();
-    // If canGenerate returns a promise (from a subclass), handle it
-    if (canGen && typeof canGen.then === 'function') {
-      return canGen.then(isEnabled => ({
-        isEnabled: isEnabled,
-        isVisible: true
-      }));
-    }
     return {
-        isEnabled: canGen,
+        isEnabled: this.canGenerate(),
         isVisible: true
     }
   }
@@ -600,7 +597,7 @@
         image.dataURL(genImage.url());
         if (genImage.hasLoaded()) {
           // Copy the loaded image data
-          image.setImageUrl(genImage.imageUrl());
+          //image.setImageUrl(genImage.imageUrl());
           image.setDataURL(genImage.dataUrl());
         } else {
           // Set up delegate and fetch if not loaded

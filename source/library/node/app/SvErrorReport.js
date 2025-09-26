@@ -139,6 +139,7 @@
             console.warn("Not sure where to send error reports in node");
             return { success: false, error: "Not sure where to send error reports in node" };
         }
+        
         // Get the base URL from the current window location
         const protocol = window.location.protocol; // "http:" or "https:"
         const host = window.location.hostname;

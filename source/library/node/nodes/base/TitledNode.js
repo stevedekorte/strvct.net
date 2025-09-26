@@ -412,7 +412,6 @@
         if (!subnode && aClosure) {
             subnode = aClosure();
             subnode.setTitle(aString);
-
             this.addSubnode(subnode);
         }
 

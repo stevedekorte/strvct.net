@@ -10,13 +10,6 @@
 (class ImageEvaluators extends SvSummaryNode {
 
   /**
-   * @description Initializes the prototype slots for the class.
-   * @category Initialization
-   */
-  initPrototypeSlots () {
-  }
-
-  /**
    * @description Initializes the prototype.
    * @category Initialization
    */
@@ -28,22 +21,6 @@
     this.setSubnodeClasses([ImageEvaluator]);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(false);
-  }
-
-  /**
-   * @description Initializes the instance.
-   * @category Initialization
-   */
-  init () {
-    super.init();
-  }
-
-  /**
-   * @description Performs final initialization.
-   * @category Initialization
-   */
-  finalInit () {
-    super.finalInit();
     this.setTitle("Image Evaluators");
   }
 
@@ -52,18 +29,20 @@
     await Promise.all(promises);
   }
 
-  bestSvImage () {
-    const bestEvaluator = this.subnodes().reduce((best, node) => {
+  bestEvaluator () {
+    return this.subnodes().reduce((best, node) => {
       return node.score() > best.score() ? node : best;
     }, this.subnodes()[0]);
-    return bestEvaluator.svImage();
+  }
+
+  bestSvImage () {
+    const bestEvaluator = this.bestEvaluator();
+    return bestEvaluator ? bestEvaluator.svImage() : null;
   }
 
   bestImageIndex () {
-    const bestEvaluator = this.subnodes().reduce((best, node) => {
-      return node.score() > best.score() ? node : best;
-    }, this.subnodes()[0]);
-    return this.subnodes().indexOf(bestEvaluator);
+    const bestEvaluator = this.bestEvaluator();
+    return bestEvaluator ? this.subnodes().indexOf(bestEvaluator) : null;
   }
 
 }.initThisClass());
