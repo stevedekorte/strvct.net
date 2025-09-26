@@ -159,16 +159,14 @@
       slot.setShouldStoreSlot(true);
     }
 
-    /**
-     * @member {OpenAiImageEvaluators} imageEvaluators
-     * @category Image Evaluation
-     */
+    /*
     {
       const slot = this.newSlot("imageEvaluators", null);
       slot.setFinalInitProto(OpenAiImageEvaluators);
       slot.setIsSubnode(true);
       slot.setShouldStoreSlot(true);
     }
+    */
   }
 
   /**

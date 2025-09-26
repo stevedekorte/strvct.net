@@ -316,28 +316,10 @@
    */
   onSuccess (/*json*/) {
     this.onEnd();
+  }
 
-/*
-    this.sendDelegateMessage("onImagePromptLoading", [this]);
-
-    if (json.error) {
-      this.setStatus("ERROR: " + json.error.message);
-      return
-    }
-    
-    // now we need load the images
-    json.data.forEach(imageDict => {
-      const image = this.images().add();
-      //imageResult.setCreated(json.created);
-      image.setTitle("image " + this.images().subnodeCount());
-      image.setRevisedPrompt(imageDict.revised_prompt);
-      image.setUrl(imageDict.url);
-      image.fetch();
-    })
-
-    this.updateStatus()
-    console.log('Success:', json.data);
-    */
+  resultImageUrlData () {
+    return this.images().subnodes().first().dataUrl();
   }
 
   /**
@@ -359,10 +341,10 @@
    * @param {Object} aiImage - The loaded AI image object.
    * @category Process
    */
-  onImageLoaded (aiImage) {
+  onImageLoaded (/*aiImage*/) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
+    //this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
     this.onEnd();
   }
 
@@ -371,10 +353,10 @@
    * @param {Object} aiImage - The AI image object that failed to load.
    * @category Process
    */
-  onImageError (aiImage) {
+  onImageError (/*aiImage*/) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
+    //this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
     this.onEnd();
   }
 

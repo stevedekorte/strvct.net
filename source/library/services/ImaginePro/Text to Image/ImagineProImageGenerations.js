@@ -9,7 +9,7 @@
  */
 "use strict";
 
-(class ImagineProImageGenerations extends SvJsonArrayNode {
+(class ImagineProImageGenerations extends SvSummaryNode {
 
   /**
    * @description Initializes the prototype.

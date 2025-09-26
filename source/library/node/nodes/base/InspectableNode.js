@@ -113,6 +113,7 @@
                     field.setOwnerNode(this);
                     field.setTarget(this);
                     field.setCanDelete(false);
+                    //field.setSummaryFormat("key value");
                     pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath(), "SvSummaryNode");
                     pathNodes.last().addSubnode(field);
                 } else {
@@ -151,20 +152,9 @@
             const components = aPath.split("/");
             let node = this;
 
-    /*
-    this.setShouldStoreSubnodes(false);
-    this.setNodeCanReorderSubnodes(false);
-    this.setSubnodeClasses([UoAccountUser]);
-    this.setNodeCanAddSubnode(false);
-    this.setNoteIsSubnodeCount(true);
-    this.setNodeSubtitleIsChildrenSummary(true);
-    */
-
             components.forEach(component => {
                 node = node.subnodeWithTitleIfAbsentInsertClosure(component, () => {
-                    if (component === "settings") {
-                        debugger;
-                    }
+
                     const nodeClass = Object.getClassNamed(pathSubnodeType);
                     const newNode = nodeClass.clone();
                     newNode.setNodeCanReorderSubnodes(false); // should this be here?

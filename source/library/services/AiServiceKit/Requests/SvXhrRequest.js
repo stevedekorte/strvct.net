@@ -487,7 +487,7 @@
    */
   
 
-  async asyncSend () {
+  async asyncSend () { // does not throw errors - sets error if there is one. Caller must check hasError() and error()
     this.setXhrPromise(Promise.clone());
     this.setCompletionPromise(Promise.clone());
 
@@ -805,14 +805,14 @@
         if (contentType && contentType.includes("application/json")) {
             const errorMessageInJson = this.responseJsonError();
             if (errorMessageInJson) {
-            const errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
-            this.onXhrError(new Error(errorMessage));
+                const errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
+                this.onXhrError(new Error(errorMessage));
             }
         } else if (contentType && contentType.includes("text/xml")) {
             const errorMessageInXml = this.responseXmlError();
             if (errorMessageInXml) {
-            const errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
-            this.onXhrError(new Error(errorMessage));
+                const errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
+                this.onXhrError(new Error(errorMessage));
             }
         } else {
             this.onXhrError(new Error(fullStatus));

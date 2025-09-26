@@ -17,6 +17,8 @@
 
   initPrototypeSlots () {
 
+    // --- prompt ---
+
     /**
      * @member {string} prompt
      * @description The prompt text for image generation.
@@ -25,12 +27,35 @@
     {
       const slot = this.newSlot("prompt", "");
       slot.setInspectorPath("");
+      slot.setAllowsNullValue(false);
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
     }
+
+
+
+    /**
+     * @member {string} promptSuffix
+     * @description Additional parameters to append to the prompt (e.g., "--no details --no frame").
+     * @category Configuration
+     */
+    {
+        const slot = this.newSlot("promptSuffix", "");
+        slot.setSlotType("String");
+        slot.setAllowsNullValue(false);
+        slot.setLabel("Prompt Suffix");
+        slot.setIsSubnodeField(true);
+        slot.setShouldStoreSlot(true);
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setCanEditInspection(true);
+        slot.setDescription("Additional Midjourney parameters to append (e.g., '--no details --no frame --chaos 50')");
+    }
+
+    // --- settings ---
 
     /**
      * @member {string} model
@@ -39,14 +64,16 @@
      */
     {
       const slot = this.newSlot("model", "midjourney");
-      slot.setInspectorPath("settings");
-      slot.setLabel("Text to Image Model");
+      slot.setInspectorPath("Settings");
+      //slot.setLabel("Text to Image Model");
+      slot.setLabel("Model");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setValidValues(["midjourney"]);
       slot.setIsSubnodeField(true);
+      slot.setSummaryFormat("key: value");
     }
 
     /**
@@ -56,14 +83,15 @@
      */
     {
       const slot = this.newSlot("aspectRatio", "1:1");
-      slot.setInspectorPath("settings");
-      slot.setLabel("aspect ratio");
+      slot.setInspectorPath("Settings");
+      slot.setLabel("Aspect Ratio");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setValidValues(["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"]);
       slot.setIsSubnodeField(true);
+      slot.setSummaryFormat("key: value");
     }
 
     /**
@@ -73,16 +101,34 @@
      */
     {
       const slot = this.newSlot("processMode", "fast");
-      slot.setInspectorPath("settings");
-      slot.setLabel("process mode");
+      slot.setInspectorPath("Settings");
+      slot.setLabel("Process Mode");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setValidValues(["relax", "fast", "turbo"]);
       slot.setIsSubnodeField(true);
+      slot.setSummaryFormat("key: value");
     }
 
+    // --- generation ---
+
+    /**
+ * @member {Action} generateAction
+ * @description The action to trigger image generation.
+ * @category Action
+ */
+    {
+        const slot = this.newSlot("generateAction", null);
+        slot.setInspectorPath("");
+        slot.setLabel("Generate");
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("Action");
+        slot.setIsSubnodeField(true);
+        slot.setActionMethodName("generate");
+        }
 
     /**
      * @member {string} error
@@ -98,19 +144,9 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Error");
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key value");
     }
 
-    /**
-     * @member {FilesToDownload} images
-     * @description The generated images.
-     * @category Output
-     */
-    {
-      const slot = this.newSlot("images", null);
-      slot.setFinalInitProto(SvImages);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-    }
 
     /**
      * @member {string} status
@@ -126,6 +162,7 @@
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key value");
     }
 
     /**
@@ -142,24 +179,8 @@
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key value");
     }
-
-
-    /**
-     * @member {Action} generateAction
-     * @description The action to trigger image generation.
-     * @category Action
-     */
-    {
-        const slot = this.newSlot("generateAction", null);
-        slot.setInspectorPath("");
-        slot.setLabel("Generate");
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Action");
-        slot.setIsSubnodeField(true);
-        slot.setActionMethodName("generate");
-      }
 
     /**
      * @member {ImagineProImageGenerations} generations
@@ -219,24 +240,6 @@
       slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
     }
 
-
-    /**
-     * @member {string} promptSuffix
-     * @description Additional parameters to append to the prompt (e.g., "--no details --no frame").
-     * @category Configuration
-     */
-    {
-      const slot = this.newSlot("promptSuffix", "");
-      slot.setSlotType("String");
-      slot.setLabel("Prompt Suffix");
-      slot.setIsSubnodeField(true);
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setCanEditInspection(true);
-      slot.setDescription("Additional Midjourney parameters to append (e.g., '--no details --no frame --chaos 50')");
-    }
-
     {
         const slot = this.newSlot("completionPromise", null);
         slot.setSlotType("Promise");
@@ -259,7 +262,7 @@
    */
   title () {
     const p = this.prompt().clipWithEllipsis(15);
-    return p ? p : this.svType() + " Image Prompt";
+    return p ? p : "Image Prompt";
   }
 
   /**
@@ -366,6 +369,38 @@
     return prompt;
   }
 
+  composeFullPrompt () {
+    let prompt = this.prompt();
+    prompt = this.sanitizePromptForMidjourney(prompt);
+    
+    // Append prompt suffix if provided (e.g., "--no details --no frame")
+    const suffix = this.promptSuffix();
+    if (suffix.trim().length > 0) {
+      prompt += " " + suffix.trim();
+    }
+    
+    // Append omnireference flags if image is provided
+    // IMPORTANT: We ONLY support Midjourney V7 or later versions
+    // V7 uses --oref (omnireference) and --ow (omnireference weight) parameters
+    // We do NOT support V6 or earlier (which used --cref/--cw)
+    if (this.omniRefImageUrl()) {
+      prompt += " --oref " + this.omniRefImageUrl() + " --ow 100";
+    }
+    
+    // Append aspect ratio
+    const aspectRatio = this.aspectRatio();
+    if (aspectRatio && aspectRatio !== "1:1") {
+      prompt += " --ar " + aspectRatio;
+    }
+    
+    // IMPORTANT: We require Midjourney V7 or later
+    // Append version flag to ensure V7 is used
+    prompt += " --v 7";
+    
+    console.log("composeFullPrompt: [\n" + prompt + "\n]");
+    return prompt;
+  }
+
   /**
    * @description Starts the image generation process.
    * @category Process
@@ -379,37 +414,8 @@
     const apiKey = await this.service().apiKeyOrUserAuthToken();
     const endpoint = 'https://api.imaginepro.ai/api/v1/nova/imagine';
     
-    // Sanitize the prompt before sending to avoid Midjourney parameter issues
-    let sanitizedPrompt = this.sanitizePromptForMidjourney(this.prompt());
-    
-    // Append prompt suffix if provided (e.g., "--no details --no frame")
-    const suffix = this.promptSuffix();
-    if (suffix && suffix.trim().length > 0) {
-      sanitizedPrompt = sanitizedPrompt + " " + suffix.trim();
-    }
-    
-    // Append omnireference flags if image is provided
-    // IMPORTANT: We ONLY support Midjourney V7 or later versions
-    // V7 uses --oref (omnireference) and --ow (omnireference weight) parameters
-    // We do NOT support V6 or earlier (which used --cref/--cw)
-    if (this.omniRefImageUrl()) {
-      sanitizedPrompt = sanitizedPrompt + " --oref " + this.omniRefImageUrl() + " --ow 100";
-    }
-    
-    // Append aspect ratio
-    const aspectRatio = this.aspectRatio();
-    if (aspectRatio && aspectRatio !== "1:1") {
-      sanitizedPrompt = sanitizedPrompt + " --ar " + aspectRatio;
-    }
-    
-    // IMPORTANT: We require Midjourney V7 or later
-    // Append version flag to ensure V7 is used
-    sanitizedPrompt = sanitizedPrompt + " --v 7";
-    
-    console.log("sanitizedPrompt: [\n" + sanitizedPrompt + "\n]");
-    
     const bodyJson = {
-      prompt: sanitizedPrompt,
+      prompt: this.composeFullPrompt(),
       process_mode: this.processMode()
     };
     
@@ -419,7 +425,6 @@
     // 3. CORS: Ensures proper headers for cross-origin requests
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
 
-    // Create SvXhrRequest instead of using fetch
     const request = SvXhrRequest.clone();
     request.setDelegate(this);
     request.setUrl(proxyEndpoint);
@@ -436,78 +441,31 @@
     try {
       await request.asyncSend(); // Delegate methods handle errors
       
+      if (request.hasError()) {
+        throw request.error();
+      }
+
       if (request.isSuccess()) {
-        const responseText = request.responseText();
-        const response = JSON.parse(responseText);
-        
-        // Check if the task immediately failed
-        if (response.status === "failed" || response.status === "error") {
-          let errorMsg = "Image generation failed";
-          if (response.error) {
-            errorMsg += ": " + (response.error.message || response.error);
-          } else if (response.message) {
-            errorMsg += ": " + response.message;
-          }
-          console.error("ImaginePro immediate failure:", response);
-          const error = new Error(errorMsg);
-          this.onError(error);
+        const responseJson = JSON.parse(request.responseText());
+        const taskId = responseJson.task_id || responseJson.messageId;
+        if (taskId) {
+            this.addGenerationForTaskId(taskId);
         } else {
-            // ImaginePro returns either task_id or messageId for tracking
-            const taskId = response.task_id || response.messageId;
-            if (taskId) {
-                this.setTaskId(taskId);
-                this.setStatus("task submitted, awaiting completion...");
-                this.onTaskSubmitted(response);
-            } else {
-                const error = new Error("No task_id or messageId returned from ImaginePro");
-                this.onError(error);
-            }
+            throw new Error("No task_id or messageId returned from ImaginePro");
         }
       }
-      // Don't handle request failures here - let delegate methods handle them
     } catch (error) {
       this.onError(error);
     }
     return this.completionPromise();
   }
 
-  /**
-   * @description Handles successful task submission.
-   * @param {Object} json - The response JSON from the API.
-   * @category Process
-   */
-  onTaskSubmitted (json) {
-    this.setStatus(`Task ${this.taskId()} submitted successfully`);
-    this.sendDelegateMessage("onImagePromptTaskSubmitted", [this, json]);
-    
-    // Create a generation object to track the task
+  addGenerationForTaskId (taskId) {
+    this.setStatus("task submitted, awaiting completion...");
     const generation = this.generations().add();
-    generation.setTaskId(this.taskId());
+    generation.setTaskId(taskId);
     generation.setDelegate(this);
-    
-    // Start polling for the task status
     generation.startPolling();
-  }
-
-  /**
-   * @description Handles successful image generation completion.
-   * @param {Object} json - The response JSON from the API.
-   * @category Process
-   */
-  onSuccess (json) {
-    // This would be called when polling detects completion
-    if (json.images && json.images.length > 0) {
-      json.images.forEach((imageUrl, index) => {
-        const image = this.images().add();
-        image.setTitle(`image ${index + 1}`);
-        image.setUrl(imageUrl);
-        image.fetch();
-      });
-    }
-    
-    this.setStatus("completed");
-    this.sendDelegateMessage("onImagePromptSuccess", [this, json]);
-    this.onEnd();
   }
 
   /**
@@ -516,13 +474,10 @@
    * @category Process
    */
   onError (error) {
-    assert(Type.isError(error), "error is not an Error");
-    // Handle different error types
-
-    const errorMessage = "ERROR: " + error.message;
-    console.error(this.logPrefix(), errorMessage);
+    assert(Type.isError(error), "error value passed to onError is not an Error");
+    console.error(this.logPrefix(), error.message);
     this.setError(error);
-    this.setStatus(errorMessage);
+    this.setStatus("ERROR: " + error.message);
     this.sendDelegateMessage("onImagePromptError", [this]);
     this.onEnd();
   }
@@ -555,7 +510,7 @@
    * @description Handles the end of the image generation process.
    * @category Process
    */
-  onEnd () {
+  onEnd () { // end of request to being task
     this.sendDelegateMessage("onImagePromptEnd", [this]);
     if (this.error()) {
         // Pass the error object to the reject function
@@ -582,10 +537,7 @@
    * @param {Object} generation - The generation object.
    * @category Delegation
    */
-  onImageGenerationEnd (generation) {
-    // Debug logging
-    console.log("onImageGenerationEnd - status:", generation.status(), "images:", generation.images().subnodes().length);
-    
+  onImageGenerationEnd (generation) {    
     // Check if generation was successful and has images
     if (generation.status() === "completed" && generation.images().subnodes().length > 0) {
       this.setStatus("Generation complete - copying images...");

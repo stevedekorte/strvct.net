@@ -61,7 +61,8 @@
    * @category Metadata
    */
   title () {
-    return this.prompt().clipWithEllipsis(15);
+    const p = this.prompt().clipWithEllipsis(15);
+    return p ? p : "Image Eval Prompt";
   }
 
   /**

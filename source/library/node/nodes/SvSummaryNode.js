@@ -248,6 +248,9 @@
      * @category Summary
      */
     summary () { 
+        if (this.title() === "settings") {
+            debugger;
+        }
         const k = this.summaryKey();
         let v = this.summaryValue();
 

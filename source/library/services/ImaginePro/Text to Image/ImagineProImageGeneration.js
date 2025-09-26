@@ -276,21 +276,29 @@
 
   async handlePollDone (response) {
     this.setStatus("completed");
+    this.stopPolling();
+
     // ImaginePro returns images directly in response.images
-    if (response.images && response.images.length > 0) {
-       const promises = response.images.map(async (imageUrl, index) => {   
-        const image = this.images().add();
-        image.setTitle(`image ${index + 1}`);
-        image.setUrl(imageUrl);
-        image.setDelegate(this);
-        return image.fetch();
-      });
-      await Promise.all(promises); // parallelize the fetches
+    const imageUrls = response.images;  
+    if (imageUrls && imageUrls.length > 0) {
+       await this.downloadImageUrls(imageUrls);
     }
     
-    this.stopPolling();
     this.sendDelegateMessage("onImageGenerationEnd", [this]);
   }
+
+    async downloadImageUrls (imageUrls) {
+        // add each image, set its url, and start downloading it
+        const promises = imageUrls.map(async (imageUrl, index) => {   
+            const image = this.images().add();
+            image.setTitle(`image ${index + 1}`);
+            image.setUrl(imageUrl);
+            image.setDelegate(this);
+            return image.fetch();
+        });
+        // wait for all the fetches to complete
+        await Promise.all(promises); // parallelize the fetches
+    }
 
   async handlePollError (response) {
     this.setStatus("failed");
