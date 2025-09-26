@@ -85,7 +85,7 @@
     }
 
     logNow () {
-        this.log(" --- " + this.label() + " " + this.dtInSeconds() + "s --- ");
+        console.log(this.logPrefix(), " --- " + this.label() + " " + this.dtInSeconds() + "s --- ");
     }
 
     dtInMs () {

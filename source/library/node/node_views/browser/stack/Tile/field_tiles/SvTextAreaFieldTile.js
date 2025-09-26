@@ -138,7 +138,7 @@
      * @category Event Handling
      */
     onClickValueButton () {
-        this.log("this.isMicOn():", this.isMicOn());
+        console.log(this.logPrefix(), "this.isMicOn():", this.isMicOn());
         if (!this.isMicOn()) {
             this.setupSttSessionIfNeeded();
             this.sttSession().start();
@@ -167,7 +167,7 @@
     onSpeechInterimResult (/*sttSession*/) {
         const text = this.sttSession().interimTranscript();
         this.valueView().setString(text);
-        this.log("onSpeechInterimResult('" + text + "')");
+        console.log(this.logPrefix(), "onSpeechInterimResult('" + text + "')");
     }
 
     /**
@@ -186,7 +186,7 @@
      */
     onSpeechInput (sttSession) {
         const text = this.sttSession().fullTranscript();
-        this.log("onSpeechInput('" + text + "')");
+        console.log(this.logPrefix(), "onSpeechInput('" + text + "')");
         if (text.length > 0) {
             const textField = this.valueView();
             textField.setValue(text);

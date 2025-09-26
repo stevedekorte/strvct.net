@@ -437,7 +437,7 @@
         if (!this.hasNotification(note)) {
             /*
             if (note.sender().title && note.sender().title === "STRVCTapp") {
-                this.log("NotificationCenter '" + note.sender().title() + "' " + note.name())
+                console.log(this.logPrefix(), "NotificationCenter '" + note.sender().title() + "' " + note.name())
             }
             */
             this.noteSet().add(note);
@@ -463,7 +463,7 @@
      */
     processPostQueue () {
         if (this.isPaused()) {
-            this.log("WARNING: SvNotificationCenter.processPostQueue() called while paused - SKIPPING");
+            console.log(this.logPrefix(), "WARNING: SvNotificationCenter.processPostQueue() called while paused - SKIPPING");
             return this;
         }
 
@@ -475,16 +475,16 @@
         // added while we process them
 
         /*
-        this.log(" --- " + this.svType() + " processPostQueue BEGIN ---")
+        console.log(this.logPrefix(), " --- " + this.svType() + " processPostQueue BEGIN ---")
         this.show()
-        this.log(" ")
+        console.log(this.logPrefix(), " ")
         */
         this.setCurrentNote(null);
 
         if (!this.isProcessing()) {
             this.setIsProcessing(true);
             this.calcIndexes();
-            //this.log("processPostQueue " + this.notifications().length);
+            //console.log(this.logPrefix(), "processPostQueue " + this.notifications().length);
             const notes = this.notifications();
             this.setNotifications([]);
             notes.forEach(note => {
@@ -498,7 +498,7 @@
             console.warn("WARNING: attempt to call processPostQueue recursively while on note: ", this._currentNote);
         }
 
-        //this.log(" --- processPostQueue END ---");
+        //console.log(this.logPrefix(), " --- processPostQueue END ---");
 
         return this;
     }
@@ -513,7 +513,7 @@
             this.postNotificationNow(note);
             //this.logDebug("   <- posting " + note.description() )
         } catch (error) {
-            this.log(" caught exception while posting: " + note.description());
+            console.log(this.logPrefix(), " caught exception while posting: " + note.description());
             return error;
         }
         return null;
@@ -565,7 +565,7 @@
         const showDebug = this.shouldDebugNote(note);
 
         if (showDebug) {
-            this.log(" >>> " + this.svType() + " senderId " + note.senderId() + " posting " + note.name());
+            console.log(this.logPrefix(), " >>> " + this.svType() + " senderId " + note.senderId() + " posting " + note.name());
             //this.showObservers()
         }
         */
@@ -575,9 +575,9 @@
         matching.forEach(obs => {
             /*
             if (showDebug) {
-                //this.log(" >>> " + this.svType() + " " + note.name() + " matches obs: " + obs.description());
+                //console.log(this.logPrefix(), " >>> " + this.svType() + " " + note.name() + " matches obs: " + obs.description());
                 if (obs.observer.svType() === "UoChatInputTile") {
-                    this.log(" >>> " +this.svType() + " sending ", note.name() + " to observer " + obs.observer().svTypeId());
+                    console.log(this.logPrefix(), " >>> " +this.svType() + " sending ", note.name() + " to observer " + obs.observer().svTypeId());
                 }
             }
             */
@@ -621,10 +621,10 @@
      * @returns {SvNotificationCenter} the notification center
      */
     show () {
-        this.log("  posting notes:");
-        this.log(this.notesDescription());
-        this.log("  observations:");
-        this.log(this.observersDescription());
+        console.log(this.logPrefix(), "  posting notes:");
+        console.log(this.logPrefix(), this.notesDescription());
+        console.log(this.logPrefix(), "  observations:");
+        console.log(this.logPrefix(), this.observersDescription());
     }
 
     /**
@@ -649,9 +649,9 @@
      */
     showCurrentNoteStack () {
         if (this.currentNote() === null) {
-            //this.log("SvNotificationCenter.showCurrentNoteStack() warning - no current post")
+            //console.log(this.logPrefix(), "SvNotificationCenter.showCurrentNoteStack() warning - no current post")
         } else {
-            this.log("current post sender stack: ", this.currentNote().senderStack());
+            console.log(this.logPrefix(), "current post sender stack: ", this.currentNote().senderStack());
         }
     }
 

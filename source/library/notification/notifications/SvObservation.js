@@ -330,10 +330,10 @@
         try {
             this.sendNotification(note);       
         } catch(error) {
-            this.logError("NOTIFICATION EXCEPTION: '" + error.message + "'");
-            this.logError("  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
+            console.error(this.logPrefix(), "NOTIFICATION EXCEPTION: '" + error.message + "'");
+            console.error(this.logPrefix(), "  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
             if (note.senderStack()) {
-                this.logError("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack());
+                console.error(this.logPrefix(), "  SENDER (" + note.senderId() + ") STACK: ", note.senderStack());
             }
 
             // how to we propogate the exception so we can inspect it in the debugger
@@ -351,7 +351,7 @@
     sendNotification (note) {
         const obs = this.observer();
         if (obs === undefined) { // observer may have been collected
-            this.log("OBSERVER COLLECTED ON: " + this.description());
+            console.log(this.logPrefix(), "OBSERVER COLLECTED ON: " + this.description());
             this.stopWatching();
             return;
         }
@@ -385,7 +385,7 @@
 
         /*
         if (this.sender() && this.sender().isKindOf(FirestoreDatabaseService)) {
-            this.log("STARTING WATCHING FOR " + this.sender().svTypeId() + " " + this.name());
+            console.log(this.logPrefix(), "STARTING WATCHING FOR " + this.sender().svTypeId() + " " + this.name());
             
             this.sender().onDidMutateObject(this);
         }

@@ -374,7 +374,7 @@
         if (aNode === this.target()) {
             // refresh
             
-            //this.log(".didUpdateNode " + aNode.svTypeId())
+            //console.log(this.logPrefix(), ".didUpdateNode " + aNode.svTypeId())
             this.syncFromTarget()
         }
     }
@@ -410,7 +410,7 @@
      * @param {Object} v - The value.
      */
     setValueOnTarget (v) { // called by View on edit
-        //this.log("setValue '" + v + "'")
+        //console.log(this.logPrefix(), "setValue '" + v + "'")
         const target = this.target();
         const setter = this.setterNameForSlot(this.valueMethod());
 
@@ -462,7 +462,7 @@
         const target = this.target();
         const slotName = this.valueMethod();
 
-        //this.log("target = " + target.svType() + " getter = '" + getter + "'")
+        //console.log(this.logPrefix(), "target = " + target.svType() + " getter = '" + getter + "'")
         if (target[slotName]) {
             const value = target[slotName].apply(target);
             return value;
@@ -583,7 +583,7 @@
      * @returns {Object} The JSON archive.
      */
     jsonArchive () {
-        //this.log(".jsonArchive()")
+        //console.log(this.logPrefix(), ".jsonArchive()")
         return super.jsonArchive();
     }
 

@@ -24,16 +24,10 @@
 
 (class SvErrorReport extends TitledNode {
 
-    static async asyncSend (error, json = null) {
+    static async asyncSend (error, additionalJson = null) {
         const errorReport = SvErrorReport.clone();
         errorReport.setError(error);
-
-        if (!Type.isJsonType(json)) {
-            const errorMessage = Type.errorWithJsonType(json);
-            console.warn("SvErrorReport json argument is not a valid JSON type: " + errorMessage);
-            
-        }
-        errorReport.setJson(json);
+        errorReport.setAdditionalJson(additionalJson);
         return await errorReport.asyncSend();
     }
 
@@ -44,22 +38,8 @@
      * @category Error Handling
      */
     static async test () {
-        const message = "Test error message";
-        this.log("Testing error reporting with message: '", message, "'");
-        
-        const testError = new Error(message);
-        testError.name = "TestError";
-        
-        const additionalData = {
-            isTest: true,
-            testTime: Date.now(),
-            component: "ErrorReportingSystem"
-        };
-        
-        const errorReport = SvErrorReport.clone();
-        errorReport.setError(testError);
-        errorReport.setJson(additionalData);
-        return await errorReport.asyncSend();
+        console.log("Sending test error report");        
+        return await SvErrorReport.asyncSend(new Error("Test error message"), { foo: "bar" });
     }
 
     /**
@@ -74,7 +54,12 @@
         }
 
         {
-            const slot = this.newSlot("json", null);
+            const slot = this.newSlot("additionalJson", null);
+            slot.setSlotType("JSON Object");
+        }
+
+        {
+            const slot = this.newSlot("bodyJson", null);
             slot.setSlotType("JSON Object");
         }
 
@@ -96,7 +81,54 @@
         super.init();
     }
 
+    generalInfoJson () {
+        const json = {};
+        json.timestamp = new Date().toISOString();
 
+        if (SvGlobals.has("SvApp")) {
+            json.app = SvApp.shared().name();
+            json.version = SvApp.shared().versionsString();
+        }
+
+        if (SvPlatform.isBrowserPlatform()) {
+            json.userAgent = navigator.userAgent;
+            json.url = window.location.href;
+            json.referrer = document.referrer || null;
+        }
+        
+        return json;
+    }
+
+    errorInfoJson () {
+        const normalizedError = Error_ideal.normalizeError(error);
+
+        const json = {};
+
+        if (normalizedError.message) {
+            json.message = normalizedError.message;
+        }
+        if (normalizedError.name) {
+            json.name = normalizedError.name;
+        }
+        if (normalizedError.stack) {
+            json.stack = normalizedError.stack;
+        }
+
+        return json;
+    }
+
+    composeBodyJson () {
+        const error = this.error();
+        assert(error, "no error to report");
+
+        // Prepare error data
+        const json = {};
+        json.general = this.generalInfoJson();
+        json.error = this.errorInfoJson();
+        json.additional = this.additionalJson();
+
+        this.setBodyJson(json);
+    }
 
     /**
      * Posts an error report to the server's /log_error endpoint
@@ -107,76 +139,38 @@
      */
     async asyncSend () {
         try {
-            const error = this.error();
-            assert(error, "no error to report");
-            const json = this.json();
-
- 
-            // Prepare error data
-            const errorData = {
-                timestamp: new Date().toISOString(),
-                app: SvApp.shared().name(),
-                version: SvApp.shared().versionsString()
-            };
-
-            if (SvPlatform.isBrowserPlatform()) {
-                errorData.userAgent = navigator.userAgent;
-                errorData.url = window.location.href;
-                errorData.referrer = document.referrer || null;
-            }
-            
-            // Add error information
-            if (error instanceof Error) {
-                errorData.message = error.message;
-                errorData.name = error.name;
-                errorData.stack = error.stack;
-            } else if (typeof error === "object") {
-                // Handle error-like objects
-                Object.assign(errorData, error);
-            } else if (typeof error === "string") {
-                // Handle string errors
-                errorData.message = error;
-            }
-            
-            // Add additional JSON data if provided
-            if (json && typeof json === "object") {
-                errorData.additionalData = json;
-            }
-            
-            try {
-
-                if (SvPlatform.isNodePlatform()) {
-                    console.warn("Not sure where to send error reports in node");
-                    return { success: false, error: "Not sure where to send error reports in node" };
-                }
-                // Get the base URL from the current window location
-                const protocol = window.location.protocol; // "http:" or "https:"
-                const host = window.location.hostname;
-                const port = window.location.port || (protocol === "https:" ? "443" : "80");
-                const baseUrl = `${protocol}//${host}:${port}`;
-
-                // Post the error data to the server
-                const response = await fetch(`${baseUrl}/log_error`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(errorData)
-                });
-                
-                // Parse and return the response
-                const responseData = await response.json();
-                this.log("Error report sent successfully:", responseData);
-                return responseData;
-            } catch (err) {
-                console.error("Failed to send error report:", err);
-                return { success: false, error: err.message };
-            }
-
-        } catch (err) {
-            console.error("Failed to send error report:", err);
-            return { success: false, error: err.message };
+            this.composeBodyJson();
+           await this.justSend();
+        } catch (error) {
+            console.error("Failed to send error report:", error);
+            return { success: false, error: error.message };
         }
+    }
+
+    async justSend () {
+        if (SvPlatform.isNodePlatform()) {
+            console.warn("Not sure where to send error reports in node");
+            return { success: false, error: "Not sure where to send error reports in node" };
+        }
+        // Get the base URL from the current window location
+        const protocol = window.location.protocol; // "http:" or "https:"
+        const host = window.location.hostname;
+        const port = window.location.port || (protocol === "https:" ? "443" : "80");
+        const baseUrl = `${protocol}//${host}:${port}`;
+
+        // Post the error data to the server
+        const response = await fetch(`${baseUrl}/log_error`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(this.bodyJson())
+        });
+        
+        // Parse and return the response
+        const responseData = await response.json();
+        console.log("Error report sent successfully: ", responseData);
+        return responseData;
     }
 
 }.initThisClass());

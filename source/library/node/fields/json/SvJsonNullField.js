@@ -63,7 +63,7 @@
     setValueIsEditable (/*aBool*/) {
         /*
         if (aBool) {
-            this.log(".setValueIsEditable true")
+            console.log(this.logPrefix(), ".setValueIsEditable true")
         }
         */
         return super.setValueIsEditable(false)

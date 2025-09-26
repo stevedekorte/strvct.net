@@ -263,10 +263,10 @@
                 await this.promiseLoad();
                 assert(this.hasData(), "no data found for " + this.path());
             } else {
-                //this.log(" deferring: " + this.path());
+                //console.log(this.logPrefix(), " deferring: " + this.path());
             }
         } else {
-            //this.log("------------------- file: " + this.path() + "  - not precaching");
+            //console.log(this.logPrefix(), "------------------- file: " + this.path() + "  - not precaching");
         }
         return this;
     }

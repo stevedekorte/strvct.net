@@ -127,10 +127,10 @@
                     throw new Error("doAction() returned this action field. Looks like you used the field name instead of the method name.");
                 }
             } else {
-                this.logWarn("no method with this name");
+                console.warn(this.logPrefix(), "no method with this name");
             }
         } else {
-            this.logWarn(" can't perform action ", this.methodName(), " on ", this.target());
+            console.warn(this.logPrefix(), " can't perform action ", this.methodName(), " on ", this.target());
         }
         return this;
     }

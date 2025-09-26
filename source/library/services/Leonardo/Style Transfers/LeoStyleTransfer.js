@@ -114,18 +114,18 @@
     }
 
     /**
-     * @member {Action} startAction - The action to start style transfer.
+     * @member {Action} generateAction - The action to start style transfer.
      * @category Actions
      */
     {
-      const slot = this.newSlot("startAction", null);
+      const slot = this.newSlot("generateAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Start Style Transfer");
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
       slot.setIsSubnodeField(true);
-      slot.setActionMethodName("start");
+      slot.setActionMethodName("generate");
     }
 
     /**
@@ -228,10 +228,10 @@
    * @returns {Promise<void>}
    * @category Actions
    */
-  async start () {
+  async generate () {
     try {
       this.setError("");
-      this.setStatus("starting style transfer...");
+      this.setStatus("generating style transfer...");
       
       // Validate we have a prompt
       if (!this.prompt() || this.prompt().trim() === "") {
@@ -445,7 +445,7 @@
    * @returns {Object} Action info.
    * @category Actions
    */
-  startActionInfo () {
+  generateActionInfo () {
     return {
       isEnabled: this.canStart(),
       isVisible: true

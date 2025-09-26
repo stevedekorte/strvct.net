@@ -380,7 +380,7 @@
      */
     showClasses () {
         const s = ProtoClass.subclassesDescription();
-        this.log(s);
+        console.log(this.logPrefix(), s);
     }
 
 }.initThisClass());

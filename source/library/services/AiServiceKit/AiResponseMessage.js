@@ -330,7 +330,7 @@
   onRequestError (aRequest) {
     this.setError(aRequest.error());
     const msg = aRequest.error().message;
-    this.logError(msg);
+    console.error(this.logPrefix(), msg);
 
     // TODO: look at error and retry if appropriate,
     // otherwise show error panel

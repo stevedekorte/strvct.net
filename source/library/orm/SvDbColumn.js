@@ -31,11 +31,11 @@ const SvDbDataType = require("./SvDbDataType");
  * Usage:
  * ```javascript
  * const column = table.columnWithName("user_id");
- * this.log(column.dataType());           // "UUID"
- * this.log(column.allowNull());          // false
- * this.log(column.isForeignKey());       // true
- * this.log(column.referencedTableName()); // "users"
- * this.log(column.referencedColumnName()); // "id"
+ * console.log(this.logPrefix(), column.dataType());           // "UUID"
+ * console.log(this.logPrefix(), column.allowNull());          // false
+ * console.log(this.logPrefix(), column.isForeignKey());       // true
+ * console.log(this.logPrefix(), column.referencedTableName()); // "users"
+ * console.log(this.logPrefix(), column.referencedColumnName()); // "id"
  * ```
  */
 (class SvDbColumn extends SvBase {

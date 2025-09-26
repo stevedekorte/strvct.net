@@ -225,7 +225,7 @@
      * @category Debugging
      */
     show () {
-        this.log(this.description())
+        console.log(this.logPrefix(), this.description())
         this.showTxRequestStack()
     }
 

@@ -113,7 +113,7 @@ const nodePath = require('path');
      * Subclasses should override to implement their specific handling.
      */
     process () {
-        this.log(this.request().url);
+        console.log(this.logPrefix(), this.request().url);
         this.setUrlObject(this.getUrlObject());
         
         const path = this.getPath();

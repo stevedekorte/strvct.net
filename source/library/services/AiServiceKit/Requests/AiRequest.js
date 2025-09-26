@@ -492,7 +492,7 @@
     const json = this.json();
     this.logDebug(" response json: ", json);
     if (json.error) {
-      this.logError(json.error.message);
+      console.error(this.logPrefix(), json.error.message);
     }
   }
 
@@ -676,7 +676,7 @@
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
 
-    this.log(" request completed");
+    console.log(this.logPrefix(), " request completed");
   }
   
   /**
@@ -686,7 +686,7 @@
    */
   onRequestFailure (request) {
     const xhr = request.xhr();
-    this.log(this.description());
+    console.log(this.logPrefix(), this.description());
     
     // Try to parse error from response
     const responseText = request.responseText();
@@ -706,7 +706,7 @@
           return;
         }
       } catch (e) {
-        this.log("onRequestFailure: error parsing json: " + e);
+        console.log(this.logPrefix(), "onRequestFailure: error parsing json: " + e);
         // Not JSON, use status code error
       }
     }
@@ -798,7 +798,7 @@
   continueRequest () {
     this.logDivider(" continueRequest()");
     const lastBit = this.fullContent().slice(-100);
-    this.log("continuing lastBit: [[[" + lastBit + "]]]");
+    console.log(this.logPrefix(), "continuing lastBit: [[[" + lastBit + "]]]");
     // add a continue message to the end of the messages array if needed
     //if (this.lastMessageIsContinueRequest()) {
     const messages = this.bodyJson().messages;
@@ -839,7 +839,7 @@
    * @param {number} seconds 
    */
   retryWithDelay (seconds) {
-    this.log(" retrying in " + seconds + " seconds");
+    console.log(this.logPrefix(), " retrying in " + seconds + " seconds");
     this.addTimeout(() => { 
       this.retryRequest();
     }, seconds*1000);
@@ -863,7 +863,7 @@
       e.message = this.service().title() + " overloaded, retrying in " + ts;
     }
 
-    this.logError(e.message);
+    console.error(this.logPrefix(), e.message);
     this.sendDelegateMessage("onRequestError", [this, e]);
     return this;
   }
@@ -875,7 +875,7 @@
    * @param {Error} error 
    */
   onRequestError (request, error) {
-    this.logError("onRequestError:", error);
+    console.error(this.logPrefix(), "onRequestError:", error);
     this.onError(error);
     this.sendDelegateMessage("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
@@ -974,9 +974,9 @@
     const newLine = responseText.substring(this.readIndex(), newLineIndex);
 
     /*
-    this.log("responseText: [" + responseText + "]");
-    this.log("indexes: " + this.readIndex() + " -> " + newLineIndex);
-    this.log("newLine: [" + newLine + "]");
+    console.log(this.logPrefix(), "responseText: [" + responseText + "]");
+    console.log(this.logPrefix(), "indexes: " + this.readIndex() + " -> " + newLineIndex);
+    console.log(this.logPrefix(), "newLine: [" + newLine + "]");
     */
     this.setReadIndex(newLineIndex + 1); // advance the read index
   
@@ -1047,7 +1047,7 @@
    * @param {string} newContent 
    */
   onNewContent (newContent) {
-    //this.log(this.svTypeId() + ".onNewContent(`" + newContent + "`)");
+    //console.log(this.logPrefix(), this.svTypeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
     this.sendDelegateMessage("onStreamData", [this, newContent]);
   }

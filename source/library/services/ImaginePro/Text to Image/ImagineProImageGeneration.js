@@ -132,6 +132,13 @@
       slot.setCanInspect(true);
     }
 
+    {
+      const slot = this.newSlot("imageUrls", null);
+      slot.setFinalInitProto(Array);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setCanDelete(true);
@@ -221,12 +228,7 @@
         this.handlePollResponse(response);
       } else {
         // Log the error response for debugging
-        console.error("ImaginePro poll request failed:", {
-          status: request.status(),
-          statusText: request.statusText(),
-          responseText: request.responseText(),
-          url: endpoint
-        });
+        console.error("ImaginePro poll request failed:", request.description());
         
         // If it's a 400 error, the message ID might be invalid
         if (request.status() === 400) {

@@ -127,7 +127,7 @@
       this.setStatus("evaluation complete");
       
     } catch (error) {
-      this.logError("Image evaluation failed:", error);
+      console.error(this.logPrefix(), "Image evaluation failed:", error);
       this.setError(new Error("Evaluation failed: " + error.message));
       return this.onEvalError(error);
     }
@@ -155,24 +155,10 @@
   }
 
   onEvalError (error) {
-    // Handle different error types
-    let errorMessage;
-    let errorObj;
-    
-    if (error instanceof Error) {
-      errorMessage = error.message;
-      errorObj = error;
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-      errorObj = new Error(errorMessage);
-    } else {
-      errorMessage = String(error);
-      errorObj = new Error(errorMessage);
-    }
-    
-    this.setError(errorObj);
-    this.setStatus("Error: " + errorMessage);
-    this.evalCompletionPromise().callRejectFunc(errorObj);
+    const normalizedError = Error_ideal.normalizeError(error);
+    this.setError(normalizedError);
+    this.setStatus("Error: " + normalizedError.message);
+    this.evalCompletionPromise().callRejectFunc(normalizedError);
   }
 
 }).initThisClass();

@@ -46,7 +46,7 @@
          throw new Error("subclasses should override this method");
         //const aNode = this.clone();
         //setValue(dataChunk);
-        //this.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length);
+        //console.log(this.logPrefix(), dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length);
         //return aNode;
     }
 
@@ -292,12 +292,12 @@
             console.warn(this.logPrefix() + "asyncLoad called on loaded resource");
             return this;
         }
-        //this.log("asyncLoad: " + this.path());
+        //console.log(this.logPrefix(), "asyncLoad: " + this.path());
         try {
             this.setLoadState("loading");
             await this.asyncLoadSvUrlResource();
             //this.postNoteNamed("resourceLoaded");
-            //this.log("asyncLoad: " + this.path() + " loaded");
+            //console.log(this.logPrefix(), "asyncLoad: " + this.path() + " loaded");
 
         } catch (error) {
             this.setLoadState("loading failed");
@@ -368,7 +368,7 @@
     async prechacheWhereAppropriate () {
         if (!this.isLoaded()) {
             if (!this.canDeferLoad()) {
-                //this.log(".prechacheWhereAppropriate: " + this.path());
+                //console.log(this.logPrefix(), ".prechacheWhereAppropriate: " + this.path());
                 await this.asyncLoad();
                 //console.warn("---- " + this.svType() + " (subclass of SvResource) doesn't implement prechacheWhereAppropriate");
             }

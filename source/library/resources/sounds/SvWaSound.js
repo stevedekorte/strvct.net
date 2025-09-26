@@ -243,7 +243,7 @@
 
     /*
     setData (data) {
-        this.log(".setData(", data, ")");
+        console.log(this.logPrefix(), ".setData(", data, ")");
         this._data = data;
         return this;
     }
@@ -302,7 +302,7 @@
         const arrayBuffer = await promise;
         // set the result 
         this.setData(arrayBuffer);
-        //this.log(" setData " + arrayBuffer.byteLength);
+        //console.log(this.logPrefix(), " setData " + arrayBuffer.byteLength);
     }
 
     // --- attributes ---
@@ -397,7 +397,7 @@
         try {            
             if (this.path()) {
                 
-                //this.log(" path: ", this.path());
+                //console.log(this.logPrefix(), " path: ", this.path());
             } else {
                 if (!this.fetchPromise()) {
                     this.setFetchPromise(Promise.resolve());
@@ -443,7 +443,7 @@
         assert(!Type.isNullOrUndefined(decodedBuffer));
         this.setDecodedBuffer(decodedBuffer);
         this.setLoadState("loaded");
-        //this.log(" didDecode " + this.path())
+        //console.log(this.logPrefix(), " didDecode " + this.path())
         if (this.shouldPlayOnLoad()) {
             this.play();
         }
@@ -530,7 +530,7 @@
      * @returns {SvWaSound} the sound
      */
     onStarted () {
-        //this.log("Sound.onStarted() " + this.description());
+        //console.log(this.logPrefix(), "Sound.onStarted() " + this.description());
         this.post("onSoundStarted");
     }
 
@@ -539,7 +539,7 @@
      * @returns {SvWaSound} the sound
      */
     onEnded () {
-        //this.log("Sound.onEnded() " + this.description());
+        //console.log(this.logPrefix(), "Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
         this.setSource(null);
         this.playPromise().callResolveFunc();
@@ -628,11 +628,11 @@
         // Step 1: Convert ArrayBuffer to Blob
         const arrayBuffer = this.data();
         assert(arrayBuffer);
-        //this.log(".promiseDataUrl byte count " + arrayBuffer.byteLength);
+        //console.log(this.logPrefix(), ".promiseDataUrl byte count " + arrayBuffer.byteLength);
         assert(arrayBuffer.byteLength > 0);
         const mimeType = 'audio/*';
         const dataUrl = await arrayBuffer.promiseAsDataUrlWithMimeType(mimeType);
-        this.log("dataUrl: ", dataUrl.clipWithEllipsis(20));
+        console.log(this.logPrefix(), "dataUrl: ", dataUrl.clipWithEllipsis(20));
         return dataUrl;
     }
 

@@ -133,7 +133,7 @@
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
         if (this.hasDate()) {
             const d = new Date(this.year(), this.month(), this.day(), 0, 0, 0, 0, 0)
-            //this.log("d = ", d)
+            //console.log(this.logPrefix(), "d = ", d)
             return d
         }
         return null

@@ -242,7 +242,7 @@
         const db = event.target.result;
 
         db.onerror = (event) => {
-            this.logWarn(this.svType() + ".onOpenUpgradeNeeded() db error ", event);
+            console.warn(this.logPrefix(), this.svType() + ".onOpenUpgradeNeeded() db error ", event);
         };
 
         this.setDb(db);
@@ -583,8 +583,8 @@
 
             if (!lastTx.isFinished()) {
                 if (!lastTx.isCommitted()) {
-                    this.logWarn("last tx was not committed yet!")
-                    this.logWarn("last tx:")
+                    console.warn(this.logPrefix(), "last tx was not committed yet!")
+                    console.warn(this.logPrefix(), "last tx:")
                     lastTx.show()
                 } 
 
@@ -748,9 +748,9 @@
         const folder = SvIndexedDbFolder.clone()
         await folder.promiseAtPut("test", "x");
         const map = await folder.promiseAsMap();
-        this.log("db map = ", map);
+        console.log(this.logPrefix(), "db map = ", map);
         const v = await folder.promiseAt("test");
-        this.log("read ", v);
+        console.log(this.logPrefix(), "read ", v);
     }
 
     static async usage () {
@@ -775,11 +775,11 @@ async function estimateAllIndexedDBUsage () {
     for (const database of databases) {
       const databaseName = database.name;
       const usage = await estimateIndexedDBUsage(databaseName);
-      this.log(`Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
+      console.log(this.logPrefix(), `Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
       totalUsage += usage;
     }
   
-    this.log(`Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
+    console.log(this.logPrefix(), `Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
     return totalUsage;
   }
   

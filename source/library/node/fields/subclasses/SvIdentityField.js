@@ -48,14 +48,14 @@
      */
     setValue (inValue) { // called by View on edit
         if (Type.isNull(inValue)) {
-            this.log("WARNING: " + this.svType() + " setValue(null)")
+            console.log(this.logPrefix(), "WARNING: " + this.svType() + " setValue(null)")
             return this
         }
-	    //this.log("inValue = '" + inValue + "'")
+	    //console.log(this.logPrefix(), "inValue = '" + inValue + "'")
 	    let newValue = inValue.strip()
 	    
         const parts = newValue.split(" ").concat(newValue.split("\n")).concat(newValue.split(","))
-	    //this.log("parts = '", parts)
+	    //console.log(this.logPrefix(), "parts = '", parts)
         const validPart = parts.detect(part => { return bitcore.PublicKey.isValid(part) })
 
         if (validPart) {
@@ -66,7 +66,7 @@
             this.scheduleSyncToView() 
         }
         
-        //this.log("newValue = '" + newValue + "'")
+        //console.log(this.logPrefix(), "newValue = '" + newValue + "'")
         super.setValue(newValue)
 		
         return this

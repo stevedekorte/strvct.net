@@ -85,7 +85,7 @@
      */
     showPaths () {
         const paths = this.rootFolder().allResourceFiles().map(file => file.path());
-        this.log("paths = ", paths.join("\n"));
+        console.log(this.logPrefix(), "paths = ", paths.join("\n"));
     }
     
     /**
@@ -146,7 +146,7 @@
         this.setupSubnodesIfNeeded();
         
         await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => {
-            //this.log("file: " + file.svType() + ".prechacheWhereAppropriate()");
+            //console.log(this.logPrefix(), "file: " + file.svType() + ".prechacheWhereAppropriate()");
             await file.prechacheWhereAppropriate();
         });
         return this;

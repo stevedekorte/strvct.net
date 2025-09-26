@@ -10,6 +10,7 @@
  * @classdesc Represents an OpenAI image prompt for generating images using gpt-image-1 model (NOT DALL-E).
  */
 (class OpenAiImagePrompt extends SvSummaryNode {  
+
   initPrototypeSlots () {
 
     /**
@@ -234,14 +235,6 @@
   }
 
   /**
-   * @description Initiates the image generation process.
-   * @category Action
-   */
-  async generate () {
-    await this.start();
-  }
-
-  /**
    * @description Gets information about the generate action.
    * @returns {Object} The action information.
    * @category Action
@@ -258,23 +251,13 @@
    * @description Starts the image generation process.
    * @category Process
    */
-  async start () {
+  async generate () {
     this.setError("");
     this.setStatus("fetching response...");
     this.sendDelegateMessage("onImagePromptStart", [this]);
 
     const apiKey = await this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // OpenAI image generation endpoint (gpt-image-1, NOT DALL-E)
-    /*
-    // NOT USED - we use gpt-image-1, not dall-e
-    const bodyJson = {
-      model: this.ttiModel(), // not sure this is valid, but it's used in the python API
-      prompt: this.prompt(),
-      n: this.imageCount(), 
-      size: this.imageSize(),
-      quality: this.quality()
-    };
-    */
 
     // gpt-image-1
     const bodyJson = {

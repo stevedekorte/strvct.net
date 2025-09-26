@@ -104,11 +104,11 @@
         } else {
             // if this is called, the stack views might not have properly synced 
             // after the OptionsNode removed it's subnodes
-            this.log("parent: ", this.parentNode().title());
-            this.log("grand parent: ", this.parentNode().parentNode().title());
-            this.log("great grand parent: ", this.parentNode().parentNode().parentNode().title());
+            console.log(this.logPrefix(), "parent: ", this.parentNode().title());
+            console.log(this.logPrefix(), "grand parent: ", this.parentNode().parentNode().title());
+            console.log(this.logPrefix(), "great grand parent: ", this.parentNode().parentNode().parentNode().title());
             const result = this.firstParentChainNodeOfClass(SvOptionsNode);
-            this.log("result: ", result.title());
+            console.log(this.logPrefix(), "result: ", result.title());
             throw new Error("missing SvOptionsNode");
         }
     }

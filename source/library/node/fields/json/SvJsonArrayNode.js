@@ -251,7 +251,7 @@
             } else {
                 const aNode = this.newSubnodeForJson(v, jsonPathComponents.concat(index));
                 newSubnodes.push(aNode);
-                //this.log("SvJsonArrayNode.setJson() creating new node " + aNode.svType() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
+                //console.log(this.logPrefix(), "SvJsonArrayNode.setJson() creating new node " + aNode.svType() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
         });
 

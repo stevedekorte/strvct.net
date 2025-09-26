@@ -167,14 +167,14 @@
 
         // Start action
         {
-            const slot = this.newSlot("startAction", null);
+            const slot = this.newSlot("generateAction", null);
             slot.setInspectorPath("");
             slot.setLabel("Start Style Transfer");
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("start");
+            slot.setActionMethodName("generate");
         }
 
         // Upload style image action
@@ -295,10 +295,10 @@
      * @returns {Promise<void>}
      * @category Actions
      */
-    async start () {
+    async generate () {
         try {
             this.setError("");
-            this.setStatus("starting OpenAI style transfer...");
+            this.setStatus("generating OpenAI style transfer...");
             
             // Check if OpenAI service has API key
             if (!this.service().hasApiKey()) {
@@ -549,11 +549,11 @@
     }
 
     /**
-     * @description Gets action info for the start action.
+     * @description Gets action info for the generate action.
      * @returns {Object} Action info.
      * @category Actions
      */
-    startActionInfo () {
+    generateActionInfo () {
         const hasContent = !!(this.contentPrompt() && this.contentPrompt().trim() !== "");
         const hasStyleImage = !!((this.styleRefImage() && this.styleRefImage().hasDataUrl()) ||
                                (this.styleImageDataUrl() !== null && this.styleImageDataUrl() !== ""));

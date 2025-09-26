@@ -106,23 +106,23 @@
      * @category Resource Management
      */
     async setupSubnodes () {
-        //this.log(".setupSubnodes begin with " + this.urlResources().length + " url resources");
+        //console.log(this.logPrefix(), ".setupSubnodes begin with " + this.urlResources().length + " url resources");
 
         await this.urlResources().promiseParallelForEach(async (r) => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension());
             const aResource = rClass.clone().setPath(r.path());
             aResource.setUrlResource(r);
-            //this.log("loading resource: " + aResource.path());
+            //console.log(this.logPrefix(), "loading resource: " + aResource.path());
             if (aResource.canDeferLoad()) {
                 //aResource.asyncLoad(); // don't wait for this one
             } else {
                 await aResource.asyncLoad(); // do this in parallel
-                //this.log("asyncLoaded resource: " + aResource.path());
+                //console.log(this.logPrefix(), "asyncLoaded resource: " + aResource.path());
             }
             this.addResource(aResource);
         });
         
-        //this.log(".setupSubnodes done");
+        //console.log(this.logPrefix(), ".setupSubnodes done");
 
         if (this.svType() !== "SvFileResources") {
             //assert(this.subnodes().length > 0, this.svType() + " subnodes should have subnodes");
@@ -225,15 +225,15 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        //this.log("resource group: " + this.svType() + ".prechacheWhereAppropriate()");
+        //console.log(this.logPrefix(), "resource group: " + this.svType() + ".prechacheWhereAppropriate()");
         
         await this.resources().promiseParallelMap(async (r) => {
-            //this.log("resource: " + r.svType() + ".prechacheWhereAppropriate()");
+            //console.log(this.logPrefix(), "resource: " + r.svType() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {
                 await r.prechacheWhereAppropriate();
             }
         });
-        //this.log("resource group: " + this.svType() + ".prechacheWhereAppropriate() done");
+        //console.log(this.logPrefix(), "resource group: " + this.svType() + ".prechacheWhereAppropriate() done");
         return this;
     }
 

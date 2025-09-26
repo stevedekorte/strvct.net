@@ -120,9 +120,9 @@ const SvDbTable = (class SvDbTable extends SvBase {
         if (customClass === undefined) {
             const SvDbCustomTable = require("./SvDbCustomTable");
             customClass = SvDbCustomTable.newSubclassWithName(customClassName);
-            this.log("created custom table class: ", customClassName);
+            console.log(this.logPrefix(), "created custom table class: ", customClassName);
         } else {
-            this.log("found custom table class: ", customClassName);
+            console.log(this.logPrefix(), "found custom table class: ", customClassName);
         }
 
         // now setup the custom class
@@ -140,9 +140,9 @@ const SvDbTable = (class SvDbTable extends SvBase {
         if (!customRowClass) {
             const SvDbCustomRow = require("./SvDbCustomRow");
             customRowClass = SvDbCustomRow.newSubclassWithName(customRowClassName);
-            this.log("created custom row class: ", customRowClassName);
+            console.log(this.logPrefix(), "created custom row class: ", customRowClassName);
         } else {
-            this.log("found custom row class: ", customRowClassName);
+            console.log(this.logPrefix(), "found custom row class: ", customRowClassName);
         }
 
         // now setup the custom row class

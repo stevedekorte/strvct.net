@@ -179,7 +179,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         const sequelizeTransaction = await sequelize.transaction();
         tx.setTxRef(sequelizeTransaction);
         tx.setIsActive(true);
-        this.log("Database.onBegin() called - Sequelize transaction created");
+        console.log(this.logPrefix(), "Database.onBegin() called - Sequelize transaction created");
     }
 
     /**
@@ -191,7 +191,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         // Commit the Sequelize transaction
         if (tx.txRef()) {
             await tx.txRef().commit();
-            this.log("Database.onCommit() called - Sequelize transaction committed");
+            console.log(this.logPrefix(), "Database.onCommit() called - Sequelize transaction committed");
         }
         tx.setIsActive(false);
         tx.setTxRef(null);
@@ -207,7 +207,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         // Rollback the Sequelize transaction
         if (tx.txRef()) {
             await tx.txRef().rollback();
-            this.log("Database.onRollback() called - Sequelize transaction rolled back");
+            console.log(this.logPrefix(), "Database.onRollback() called - Sequelize transaction rolled back");
         }
         tx.setIsActive(false);
         tx.setTxRef(null);

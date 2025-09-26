@@ -1826,7 +1826,7 @@
     setJsonArchive (json) {
         // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
         
-        //this.log(".setJsonArchive(" + JSON.stableStringifyWithStdOptions(json, null, 2) + ")");
+        //console.log(this.logPrefix(), ".setJsonArchive(" + JSON.stableStringifyWithStdOptions(json, null, 2) + ")");
 
         //const keys = Object.keys(json).select(key => key !== "type");
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
@@ -1874,7 +1874,7 @@
             dict[k] = v;
         });
 
-        //this.log(".jsonArchive() = " + JSON.stableStringifyWithStdOptions(dict, null, 2));
+        //console.log(this.logPrefix(), ".jsonArchive() = " + JSON.stableStringifyWithStdOptions(dict, null, 2));
 
         return dict;
     }
@@ -2022,7 +2022,7 @@
             }
             if (!this.has(aClass)) {
                 this._add(aClass);
-                this.log("refSet.add(" + aClass.svType() + ") size ", this.size);
+                console.log(this.logPrefix(), "refSet.add(" + aClass.svType() + ") size ", this.size);
             }
         }
         */
@@ -2043,7 +2043,7 @@
 
         if (refSet.size) {
             json.definitions = this.jsonSchemaDefinitionsForRefSet(refSet);
-            //this.log("Object.keys(json.definitions).length = ", Object.keys(json.definitions).length);
+            //console.log(this.logPrefix(), "Object.keys(json.definitions).length = ", Object.keys(json.definitions).length);
         }
 
         return json;
@@ -2098,8 +2098,8 @@
             undefinedClasses = newRefSet.difference(definedClasses); // returns set with items in newRefSet but not in definedClasses
         }
         const definedClassNames = Array.from(definedClasses).map(c => c.svType());
-        this.log("definedClasses: [" + definedClassNames.join(", ") + "]");
-        this.log("definitions: [" + Object.keys(definitions).join(", ") + "]");
+        console.log(this.logPrefix(), "definedClasses: [" + definedClassNames.join(", ") + "]");
+        console.log(this.logPrefix(), "definitions: [" + Object.keys(definitions).join(", ") + "]");
         */
         return definitions;
     }
@@ -2217,7 +2217,7 @@
                 assert(slot.isInJsonSchema(), "attempt to set slot not in json schema");
 
                 if (slot.name() === "subnodes") { // special case subnodes for now?
-                    //this.log("fromJsonSchema setting subnodes");
+                    //console.log(this.logPrefix(), "fromJsonSchema setting subnodes");
                     const subnodes = json[key];
                     this.removeAllSubnodes();
                     subnodes.forEach(subnodeJson => {

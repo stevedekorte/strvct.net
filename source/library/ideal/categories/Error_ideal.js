@@ -127,6 +127,49 @@
     }
 
     /**
+     * Normalizes an error (String, Error, Event) to an Error object.
+     * @param {*} error - The error to normalize
+     * @returns {Error} The normalized error
+     * @category Error Handling
+     */
+    static normalizeError (error) {
+        if (error instanceof Error) {
+            return error;
+        }
+
+        if (error instanceof String) {
+            return new Error(error);
+        }
+        
+        if (error instanceof Event) {
+            let message = error.message;
+            const note = "Event type: '" + error.type + "' target: '" + error.target + "'";
+            if (message) {
+                message += "\n" + note;
+            } else {
+                message = note;
+            }
+            return new Error(message);
+        }
+        
+        console.error("Unknown type of error:", error);
+        throw new Error("Unknown error type: " + typeof error);
+    }
+
+    /**
+     * Gets the short message of the error.
+     * @returns {string} The short message of the error
+     * @category Error Handling
+     */
+    shortMessage () {
+        const s = this.message;
+        if (s.length <= 100) {
+            return s;
+        }
+        return s.substring(0, 100) + "...";
+    }
+
+    /**
      * @category Debugging
      */
     stackURLs () {

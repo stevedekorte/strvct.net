@@ -163,8 +163,8 @@
             }
         }
         if (cookiesMap.keysArray().detect(key => key.length > 50)) {
-            this.logWarn("found crazy cookie names: ", cookiesMap.keysArray());
-            this.logWarn("cookie looks hosed - deleting all cookies");
+            console.warn(this.logPrefix(), "found crazy cookie names: ", cookiesMap.keysArray());
+            console.warn(this.logPrefix(), "cookie looks hosed - deleting all cookies");
             this.deleteAllCookies();
             this.readCookies();
         }

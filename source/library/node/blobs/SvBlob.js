@@ -232,10 +232,10 @@
 
         try {
             await this.store().promiseAtPut(h, v);
-            this.log("did write hash/value pair: " + this.description())
+            console.log(this.logPrefix(), "did write hash/value pair: " + this.description())
         } catch (error) {
-            this.logError(error);
-            this.log("error writing hash/value pair: " + this.description())
+            console.error(this.logPrefix(), error);
+            console.log(this.logPrefix(), "error writing hash/value pair: " + this.description())
             debugger
         }
     }
@@ -313,7 +313,7 @@
         const digestBuffer = await arrayBuffer.promiseSha256Digest();
         const h = digestBuffer.base64Encoded()
         assert(h === nodejsHash, "hashes do not match");
-        this.log("hashes match!");
+        console.log(this.logPrefix(), "hashes match!");
     }
 
 }.initThisClass());

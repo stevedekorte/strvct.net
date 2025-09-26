@@ -718,29 +718,29 @@
     }
 
     show () {
-        this.log("--------------------------------");
-        this.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after setupSubnodes!\n");
+        console.log(this.logPrefix(), "--------------------------------");
+        console.log(this.logPrefix(), "\nERROR: OptionsNode '" + this.key() + "' not synced with target after setupSubnodes!\n");
 
         // this can happen if the target has a value that is not in the validItems array
-        this.log("Let's try syncing the picked values to the target:");
+        console.log(this.logPrefix(), "Let's try syncing the picked values to the target:");
 
-        this.log("VALID VALUES:");
-        this.log("  computedValidItems: " + JSON.stableStringifyWithStdOptions(this.computedValidItems()) + "\n");
-        this.log("  validItemsMatch: " + this.validItemsMatch() + "\n");
+        console.log(this.logPrefix(), "VALID VALUES:");
+        console.log(this.logPrefix(), "  computedValidItems: " + JSON.stableStringifyWithStdOptions(this.computedValidItems()) + "\n");
+        console.log(this.logPrefix(), "  validItemsMatch: " + this.validItemsMatch() + "\n");
 
-        this.log("PICKS:");
-        this.log("  allowsMultiplePicks: " + this.allowsMultiplePicks() + "\n");
-        this.log("TARGET VALUE:");
-        this.log("  value: ", JSON.stableStringifyWithStdOptions(this.value()) + "\n");
+        console.log(this.logPrefix(), "PICKS:");
+        console.log(this.logPrefix(), "  allowsMultiplePicks: " + this.allowsMultiplePicks() + "\n");
+        console.log(this.logPrefix(), "TARGET VALUE:");
+        console.log(this.logPrefix(), "  value: ", JSON.stableStringifyWithStdOptions(this.value()) + "\n");
         
-        this.log("SELECTED VALUES:");
-        this.log("  selectedValues: ", JSON.stableStringifyWithStdOptions(this.selectedValues()) + "\n");
+        console.log(this.logPrefix(), "SELECTED VALUES:");
+        console.log(this.logPrefix(), "  selectedValues: ", JSON.stableStringifyWithStdOptions(this.selectedValues()) + "\n");
         if (!this.allowsMultiplePicks()) {
-            this.log("  selectedValue: ", JSON.stableStringifyWithStdOptions(this.selectedValue()) + "\n");
+            console.log(this.logPrefix(), "  selectedValue: ", JSON.stableStringifyWithStdOptions(this.selectedValue()) + "\n");
         }
 
-        this.log("  pickedItems: ", this.pickedItems(), "\n");
-        this.log("--------------------------------");
+        console.log(this.logPrefix(), "  pickedItems: ", this.pickedItems(), "\n");
+        console.log(this.logPrefix(), "--------------------------------");
     }
     
 }.initThisClass());

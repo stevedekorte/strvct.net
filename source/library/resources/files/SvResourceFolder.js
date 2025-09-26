@@ -171,7 +171,7 @@
      */
     show () {
         const subnodeNames = this.subnodes().map(sn => sn.name())
-        this.log(" '" + this.path() + "': " +  JSON.stringify(subnodeNames))
+        console.log(this.logPrefix(), " '" + this.path() + "': " +  JSON.stringify(subnodeNames))
     }
 
     /**
@@ -336,7 +336,7 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-       // this.log(".prechacheWhereAppropriate() " + this.path());
+       // console.log(this.logPrefix(), ".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }
 

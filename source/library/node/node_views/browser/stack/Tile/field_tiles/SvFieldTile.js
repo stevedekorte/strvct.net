@@ -360,7 +360,7 @@
      * @returns {string} The key view color.
      */
     keyViewColor () {
-        //this.log(this.node().title() + " " + this.svTypeId() + ".isSelected() = ", this.isSelected())
+        //console.log(this.logPrefix(), this.node().title() + " " + this.svTypeId() + ".isSelected() = ", this.isSelected())
         return this.currentColor()
         //return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString()
     }
@@ -577,7 +577,7 @@
 
         /*
         if (this.node().svType() === "ChatInputNode" && newValue === "") {
-            this.log("SvChatInputTile syncValueFromNode(SvChatInputNode) newValue = [" + newValue + "]");
+            console.log(this.logPrefix(), "SvChatInputTile syncValueFromNode(SvChatInputNode) newValue = [" + newValue + "]");
             valueView.setValue(newValue);
         }
         */
@@ -590,7 +590,7 @@
             valueView.setBorder(this.valueEditableBorder())
             valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em")
         } else {
-            //this.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
+            //console.log(this.logPrefix(), "fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             valueView.setColor(this.uneditableColor())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
             valueView.setBorder(this.valueUneditableBorder())
@@ -599,7 +599,7 @@
 
         if (valueView.setCanHitEnter) {
             if (node.acceptsValueInput) {
-                //this.log("node.acceptsValueInput() = ", node.acceptsValueInput());
+                //console.log(this.logPrefix(), "node.acceptsValueInput() = ", node.acceptsValueInput());
                 
                 valueView.setCanHitEnter(node.acceptsValueInput());
                 //valueView.setCanHitEnter(true);
@@ -788,7 +788,7 @@
         /*
         this.logDebug(".setBackgroundColor ", c)
         if (c !== "white") {
-            this.log("not white")
+            console.log(this.logPrefix(), "not white")
         }
         */
         super.setBackgroundColor(c)

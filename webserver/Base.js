@@ -171,7 +171,7 @@
 
   logDebug (...args) {
     if (this.isDebugging()) {
-        this.log(...args);
+        console.log(this.logPrefix(), ...args);
     }
   }
 

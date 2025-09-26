@@ -37,8 +37,8 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
  * 
  * // Add listener for transaction lifecycle events
  * tx.addListener({
- *   onTxCommit: (tx) => this.log("Transaction committed successfully"),
- *   onTxRollback: (tx) => this.log("Transaction rolled back")
+ *   onTxCommit: (tx) => console.log(this.logPrefix(), "Transaction committed successfully"),
+ *   onTxRollback: (tx) => console.log(this.logPrefix(), "Transaction rolled back")
  * });
  * 
  * const result = await tx.begin(async () => {

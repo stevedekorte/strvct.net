@@ -386,7 +386,7 @@ Example Tool call format:
         // UH OH: our own Schema is invalid - this is not an LLM error
         const errorString = validator.errorMessageForLLM();
         const description = this.descriptionForSchemaValidationError(errorString);
-        this.logError(description);
+        console.error(this.logPrefix(), description);
         const e = new Error(errorString);
         throw e;
     }
@@ -396,7 +396,7 @@ Example Tool call format:
     if (!isValid) {
         const errorString = validator.errorMessageForLLM();
         const description = this.descriptionForJsonValidationError(errorString);
-        this.logError(description);
+        console.error(this.logPrefix(), description);
         const e = new Error(errorString);
         this.handleCallError(e);
     }

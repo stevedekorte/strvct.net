@@ -247,7 +247,7 @@
           "isSilentError": method.isSilentError()
         }
     };
-    this.log("schema: ", JSON.stringify(schema, null, 2));
+    console.log(this.logPrefix(), "schema: ", JSON.stringify(schema, null, 2));
     return schema;
   }
     */
@@ -274,7 +274,7 @@
           "isSilentError": method.isSilentError()
         }
     };
-    //this.log("schema: ", JSON.stringify(schema, null, 2));
+    //console.log(this.logPrefix(), "schema: ", JSON.stringify(schema, null, 2));
     return schema;
   }
 
@@ -285,16 +285,16 @@
     try {
         validator.setJsonSchema(rootSchema);
     } catch (err) {
-        this.logError("Error validating schema for tool:", this.name());
-        this.logError("Error message:", err.message);
-        this.logError("Schema that failed:", JSON.stringify(rootSchema, null, 2));
+        console.error(this.logPrefix(), "Error validating schema for tool:", this.name());
+        console.error(this.logPrefix(), "Error message:", err.message);
+        console.error(this.logPrefix(), "Schema that failed:", JSON.stringify(rootSchema, null, 2));
         throw err;
     }
     
     if (validator.hasError()) {
         const e = new Error(validator.errorMessageForLLM());
-        this.logError("Tool definition JSON Schema is invalid: " + e.message);
-        this.logError("Schema that failed:", JSON.stringify(rootSchema, null, 2));
+        console.error(this.logPrefix(), "Tool definition JSON Schema is invalid: " + e.message);
+        console.error(this.logPrefix(), "Schema that failed:", JSON.stringify(rootSchema, null, 2));
         throw e;
     }
   }
@@ -341,7 +341,7 @@
     this.componentsRoot().removeAllSubnodes();
     map.forEach((value, key) => {
       if (value === null) {
-        this.logWarn("value is null for key: ", key, " using empty string instead");
+        console.warn(this.logPrefix(), "value is null for key: ", key, " using empty string instead");
         value = "";
       }
       
@@ -350,8 +350,8 @@
       }
 
       if (!Type.isString(key)) {
-        this.logWarn("key: ", key);
-        this.logWarn("value: ", value);
+        console.warn(this.logPrefix(), "key: ", key);
+        console.warn(this.logPrefix(), "value: ", value);
         throw new Error("key is not a string");
       }
       assert(Type.isString(key));
