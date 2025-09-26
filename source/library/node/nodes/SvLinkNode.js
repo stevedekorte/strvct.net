@@ -73,8 +73,6 @@
             const isNode = newValue.thisClass().isKindOf(SvNode);
             assert(isNode);
         }
-
-        debugger;
         return this;
     }
     */

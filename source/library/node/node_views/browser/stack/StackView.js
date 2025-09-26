@@ -244,7 +244,7 @@
     /*
     setFlexDirection (v) {
         if (this.flexDirection() === "column" && v == "row") {
-            debugger; // why are we switching back to row?
+            // why are we switching back to row?
         }
         super.setFlexDirection(v);
         return this;
@@ -331,7 +331,6 @@
         if (ov.subviews().length) {
             const names = ov.subviews().map(ov => ov.svTypeId());
             //console.log("removing subviews: ", names);
-            debugger;
         }
         */
         
@@ -358,7 +357,7 @@
         if (ov.subviews().length) {
             const names = ov.subviews().map(ov => ov.svTypeId());
             //console.log("removing subviews: ", names);
-            //debugger;
+            
         }
         */
         
@@ -437,7 +436,6 @@
             const subnodeIds = this.tilesView().node().subnodes().map(node => node.svDebugId());
             console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds) );
 
-            debugger;
             return false;
         }
 
@@ -461,13 +459,13 @@
         
         // last one might not have a node
         while (parts.last() && Type.isNullOrUndefined(parts.last().node())) {
-            //debugger;
+            
             parts.removeLast();
         }
 
         return parts.map(sv => {
             if (!sv.node()) {
-                debugger;
+                throw new Error("this stack view has a null node");
             }
             return sv.node();
         })
@@ -478,16 +476,6 @@
         return this.selectedNodePathArray().map(node => node.title()).join("/");
     }
 
-    /*
-    selectedNodePathArray () {
-        return this.stackViewSubchain().map(sv => {
-            if (!sv.node()) {
-                debugger;
-            }
-            return sv.node()
-        })
-    }
-    */
 
     /**
      * @description Checks if the stack view is the root stack view.
@@ -504,9 +492,8 @@
     topDidChangeNavSelection () {
         // broadcast path change to listeners, like bread crumb view
         //console.log("topDidChangeNavSelection");
-        //debugger;
+        
         if (!this.rootStackView()) {
-            debugger;
             return this;
         }
 
@@ -613,7 +600,7 @@
      * @returns {StackView} The stack view.
      */
     scheduleSyncFromNode () {
-        //debugger;
+        
         super.scheduleSyncFromNode();
     }
 
@@ -626,7 +613,7 @@
 
         const tile = this.navView().tilesView().selectedTile(); // this may get called before tilesView has synced to current subnodes,
         //console.log("StackView syncFromNavSelection " + this.node().title() + " -> " + (tile ? tile.nodeTitle() : null));
-        //debugger;
+        
         // in which case, the tile may be about to be removed
         if (tile && tile.nodeTileLink()) {
             const oNode = tile.nodeTileLink();
@@ -888,10 +875,6 @@
                 sum -= this.navView().targetWidth();
             }
             */
-                        
-            if (this.node().title() === "bread crumbs") {
-          //      debugger;
-            }
 
             //this.topViewWidth();
 
@@ -963,7 +946,7 @@
         // begins caching on all chained substacks
         if(!this.isCaching()) {
             //console.log(this.svDebugId() + " beginCaching -----------------");
-            //debugger;
+            
             this.setNodeToStackCache(new Map());
 
             const ov = this.otherViewContent();

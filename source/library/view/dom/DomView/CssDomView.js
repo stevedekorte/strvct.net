@@ -342,12 +342,12 @@
     // computed style
 
     getComputedCssProperty (name /*, errorCheck*/) {
-        //debugger; // getComputedStyle forces a layout - make sure it's needed 
+         // getComputedStyle forces a layout - make sure it's needed 
         return window.getComputedStyle(this.element()).getPropertyValue(name);
     }
 
     getComputedPxCssProperty (name, errorCheck) {
-     //   debugger; // getComputedCssProperty forces a reflow? - make sure it's needed 
+        // getComputedCssProperty forces a reflow? - make sure it's needed 
         const s = this.getComputedCssProperty(name, errorCheck);
         if (s.length) {
             return this.pxStringToNumber(s);
@@ -525,9 +525,6 @@
     }
 
     setFontSize (s) {
-        if (s === "6px") {
-            //debugger;
-        }
         this.setCssProperty("font-size", s);
         return this;
     }
@@ -898,7 +895,7 @@
         this.justSetTransition(s)
 
         if (this._transitions) {
-            //debugger;
+            
             this.transitions().syncFromDomView()
         }
 

@@ -82,7 +82,7 @@
     //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
     this.onSpeakingText(sound.transcript());
 
-    //debugger;
+    
     if (this.session().isHost() /*&& this.session().hasClients() */) {
       const audioMsg = UoAudioMessage.clone()
         .setInReplyToMessageId(this.messageId())

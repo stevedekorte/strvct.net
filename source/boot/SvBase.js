@@ -255,7 +255,6 @@ const assert = function (v, errorMessage) {
         }
         const m = errorMessage ? errorMessage : "assert failed - false value";
         console.error(m);
-        debugger;
         throw new Error(m);
     }
     return v

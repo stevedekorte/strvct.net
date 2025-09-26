@@ -289,9 +289,9 @@
             }
             return this.data();
         } catch (error) {
-            console.error(this.svType() + ".asyncValueFromData() error loading value from data for " + this.path() + " : " + error.message);
-            debugger;
-            throw error;
+            const errorMessage = this.svType() + ".asyncValueFromData() error loading value from data for " + this.path() + " : " + error.message;
+            console.error(errorMessage);
+            throw new Error(errorMessage);
         }
     }
 

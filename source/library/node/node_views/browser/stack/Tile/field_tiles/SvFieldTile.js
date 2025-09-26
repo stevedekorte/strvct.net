@@ -563,7 +563,6 @@
         /*
         if (this.keyView().innerText() === "Additional Notes") {
             assert(node.valuePlaceholderText() !== null, "missing node.valuePlaceholderText()");
-            debugger;
         }
         */
 
@@ -601,7 +600,7 @@
         if (valueView.setCanHitEnter) {
             if (node.acceptsValueInput) {
                 //this.log("node.acceptsValueInput() = ", node.acceptsValueInput());
-                //debugger;
+                
                 valueView.setCanHitEnter(node.acceptsValueInput());
                 //valueView.setCanHitEnter(true);
             } else {

@@ -177,11 +177,14 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @returns {Node} The node instance.
          * @category Styling
          */
-        copyComputedStyleFrom: function (e) {
-            debugger; // getComputedStyle can force a reflow
-            const style = window.getComputedStyle(e, null).cssText;
+        copyComputedStyleFrom: function (/*element*/) {
+            throw new Error("copyComputedStyleFrom can force a reflow! Avoid using this method.");
+            // getComputedStyle can force a reflow
+            /*
+            const style = window.getComputedStyle(element, null).cssText;
             this.style.cssText = style;
             return this
+            */
         },
 
         /**

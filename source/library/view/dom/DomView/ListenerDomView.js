@@ -260,7 +260,7 @@
      * @param {Event} event - The resize event object
      * @returns {boolean} True to continue event propagation, false otherwise
      */
-    onWindowResize (event) {
+    onWindowResize (/*event*/) {
         return true
     }
 
@@ -314,7 +314,6 @@
      * @returns {ListenerDomView} The current instance
      */
     setIsRegisteredForMouse (aBool, useCapture) {
-        debugger;
         this.mouseListener().setUseCapture(useCapture).setIsListening(aBool) 
         return this
     }
@@ -467,7 +466,7 @@
      * @param {Event} event - The focus in event object
      * @returns {boolean} True to continue event propagation, false otherwise
      */
-    onFocusIn (event) {
+    onFocusIn (/*event*/) {
         return true
     }
 
@@ -476,7 +475,7 @@
      * @param {Event} event - The focus out event object
      * @returns {boolean} True to continue event propagation, false otherwise
      */
-    onFocusOut (event) {
+    onFocusOut (/*event*/) {
         return true
     }
 
@@ -485,7 +484,7 @@
      * @param {Event} event - The focus event object
      * @returns {boolean} True to continue event propagation, false otherwise
      */
-    onFocus (event) {
+    onFocus (/*event*/) {
         //console.log(this.svTypeId() + " onFocus")
         this.willAcceptFirstResponder();
         // subclasses can override 
@@ -498,7 +497,7 @@
      * @param {Event} event - The blur event object
      * @returns {boolean} True to continue event propagation, false otherwise
      */
-    onBlur (event) {
+    onBlur (/*event*/) {
         //console.log(this.svTypeId() + " onBlur")
         this.didReleaseFirstResponder();
         // subclasses can override 

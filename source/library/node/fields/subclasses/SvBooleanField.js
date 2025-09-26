@@ -76,7 +76,6 @@
             const targetName = this.target() ? this.target().svDebugId() : "<no target>";
             const s = "Field '" + this.key() + "' on target '" + targetName + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
             console.warn(s);
-            debugger;
             this.setValue(false);
             this.setValueError(s);
         } else {
@@ -131,30 +130,15 @@
         return this;
     }
 
-    /*
-    init () {
-        super.init();
-        debugger;
-        return this;
-    }
-
-    didUpdateSlotValue (oldValue, newValue) {  // setValue() is called by View on edit
-        debugger;
-        super.didUpdateSlotValue(oldValue, newValue);
-        return this;
-    }
-    */
-
     syncFromTarget () {
         this.setValue(this.getValueFromTarget());
         return this
     }
     /*
     setValue (v) {
-        debugger;
         super.setValue(v);
         return this;
     }
-        */
+    */
 
 }.initThisClass());

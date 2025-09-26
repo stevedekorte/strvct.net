@@ -130,13 +130,6 @@
         this.setNoteIconName("right-arrow");
         this.setSubnodeProto(SvOptionNode);
     }
-    
-    /*
-    init () {
-        super.init();
-        debugger;
-    }
-    */
 
     /**
      * @description Gets the title of the options node.
@@ -362,17 +355,18 @@
      * @returns {SvOptionsNode} The current instance.
      */
     setValueOnTarget (v) {
-        //debugger;
+        
         if (this.allowsMultiplePicks()) {
             if (!Type.isArray(v)) {
-                console.warn(this.svType() + ".setValueOnTarget() called with non array value when allowsMultiplePicks is true");
-                debugger;
+                const errorMessage = this.svType() + ".setValueOnTarget() called with non array value when allowsMultiplePicks is true";
+                console.warn(errorMessage);
+                throw new Error(errorMessage);
+
             }
         } else {
             if (Type.isArray(v)) {
                 // this isn't necessarily an error, but it is unexpected
                 console.warn(this.svType() + ".setValueOnTarget() called with array when allowsMultiplePicks is true");
-                debugger;
             }
         }
         super.setValueOnTarget(v);
@@ -455,7 +449,6 @@
         /*
         if (this.validItemsClosure()) {
             console.log(this.logPrefix() + " prepareToAccess() callingsetupSubnodes () because validItemsClosure is set");
-            debugger;
             this.setupSubnodes();
         }
         */
@@ -467,7 +460,6 @@
      * @returns {Array} An array of valid values.
      */
     computedValidValues () {
-        debugger;
         return this.computedValidItems().map(item => item.value);
     }
 

@@ -81,7 +81,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
         }
 
         for (let i = 0; i < remoteChildNodes.length; i++) {
-            //debugger;
+            
 
             const remoteChildNode = remoteChildNodes[i];
             

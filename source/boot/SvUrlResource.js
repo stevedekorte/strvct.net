@@ -189,7 +189,7 @@
             //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
             if (this.path().split("/").includes("deferred")) {
-                //debugger;
+                
                 //console.log("SvUrlResource loading a deferred resource: " + this.path());
             }
             //if (data !== undefined) {
@@ -198,7 +198,6 @@
                 const data = await hc.promiseAt(h, this.path());
                 if (data === undefined) {
                     console.warn("hashcache has undefined data for " + h + " " + this.path());
-                    debugger; // there's a bug here, so just load normally
                     console.log("SvUrlResource load from network: " + this.path());
                     return this.promiseJustLoad();
                 }
@@ -207,7 +206,7 @@
                 this._data = data;
                 if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
                     //console.log("SvUrlResource load from cache: " + this.path());
-                    //debugger;
+                    
                 }
                 return this;
             } else {
@@ -224,7 +223,7 @@
             /*
             if (!h) {
                 console.log("  no hash for " + this.path())
-                //debugger;
+                
             }
             if (!SvGlobals.globals().SvHashCache) {
                 console.log("  no SvHashCache")
@@ -350,7 +349,6 @@
         if (SvPlatform.isNodePlatform()) {
             if (!data || (typeof data !== 'object') || (!data.constructor || (data.constructor.name !== 'Uint8Array' && data.constructor.name !== 'ArrayBuffer'))) {
                 // Gracefully handle non-ArrayBuffer data in Node.js
-                debugger;
                 if (typeof data === 'object' && data !== null) {
                     return JSON.stringify(data);
                 }

@@ -217,7 +217,7 @@
   pushContainer (container) {
     assert(container, "container is null");
     this.containerStack().push(container);
-    this.sendDelegate("onJsonStreamReaderPushContainer", [this, container]);
+    this.sendDelegateMessage("onJsonStreamReaderPushContainer", [this, container]);
 
     //this.logDebug("push ", JSON.stableStringifyWithStdOptions(container));
     //this.show();
@@ -232,7 +232,7 @@
   popContainer () {
     assert(this.containerStack().length > 1, "can't close root array");
     const item = this.containerStack().pop();
-    this.sendDelegate("onJsonStreamReaderPopContainer", [this, item]);
+    this.sendDelegateMessage("onJsonStreamReaderPopContainer", [this, item]);
     return item;
   }
 
@@ -279,8 +279,7 @@
    */
   onError (e) {
     console.log(this.svType() + " error: " + e);
-    debugger;
-    this.sendDelegate("onJsonStreamReaderError", [this, e]);
+    this.sendDelegateMessage("onJsonStreamReaderError", [this, e]);
   }
 
   /**
@@ -363,40 +362,6 @@
     this.popIfCurrentNodeIsText();
   }
 
-  // --------------------------------
-
-  /**
-   * @description Sends a message to the delegate object, if one is set.
-   * @param {string} methodName - The name of the method to call on the delegate.
-   * @param {Array} [args=[this]] - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called successfully, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-
-    /*
-    if (this.isDebugging()) {
-      console.log(this.svType() + " --------------- calling delegate " + methodName + "(" + args.join(",") + ")");
-    }
-    */
-
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    } else {
-      /*
-      const error = this.svType() + " delegate missing method '" + methodName + "'";
-      console.log(error);
-      debugger;
-      throw new Error(error);
-      */
-    }
-    return false;
-  }
 }.initThisClass());
 
 /*
@@ -419,7 +384,6 @@ const testJsonReader = function () {
 
   console.log("input: ", JSON.stableStringifyWithStdOptions(jsonInput));
   console.log("output: ", JSON.stableStringifyWithStdOptions(reader.rootContainer()));
-  debugger;
 
   console.log(
     "========================================================================="

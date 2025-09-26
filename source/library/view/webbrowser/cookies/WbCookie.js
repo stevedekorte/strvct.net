@@ -170,7 +170,7 @@
      * @category Cookie Parsing
      */
     static fromCookieString (cookieString) {
-        //debugger;
+        
         const cookie = this.clone();
         cookie.setCookieString(cookieString);
         return cookie;

@@ -84,7 +84,6 @@
      * @category Event Handling
      */
     onClick (event) {
-        debugger;
         this.logDebug(".onClick()")
         this.sendActionToTarget()
         event.stopPropagation()
@@ -97,7 +96,7 @@
      * @returns {ControlDomView}
      * @category Event Handling
      */
-    onTapComplete (aGesture) {
+    onTapComplete (/*aGesture*/) {
         this.logDebug(".onTapComplete()")
         this.sendActionToTarget()
         return this
@@ -132,7 +131,7 @@
      * @returns {boolean}
      * @category Event Handling
      */
-    onDoubleClick (event) {
+    onDoubleClick (/*event*/) {
         return true
     }
     

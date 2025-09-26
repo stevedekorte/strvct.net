@@ -242,7 +242,6 @@
     setIsDebugging (b) {
         if (b === false && this.isDebugging() === true) {
             // make sure we're changing this for a good reason
-            debugger;
         }
         super.setIsDebugging(b);
         return this;
@@ -314,7 +313,6 @@
      * @returns {void}
      */
     onPoolOpenFailure (error) {
-        debugger;
         // here so subclasses can easily hook
         throw error;
     }
@@ -351,7 +349,7 @@
      * @returns {Promise}
      */
     async onRecordsDictOpen () {
-        //debugger;
+        
         //this.show("ON OPEN");
         await this.promiseCollect();
         //this.show("AFTER COLLECT");
@@ -388,7 +386,7 @@
         if (map.at(this.rootKey()) !== pid) {
             map.atPut(this.rootKey(), pid);
             console.log("---- SET ROOT PID " + pid + " ----")
-            //debugger;
+            
         }
         assert(this.hasStoredRoot());
         return this;
@@ -486,7 +484,7 @@
      */
     readRootObject () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
-        //debugger;
+        
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()); // this call will actually internally set this._rootObject as we may need it while loading the root's refs
             //assert(!Type.isNullOrUndefined(root), this.svType() + " rootObject is null or undefined");
@@ -500,7 +498,6 @@
             //this.setRootObject(root); // this is for setting up new root
             return this.rootObject();
         }
-        debugger;
         throw new Error("missing root object");
     }
 
@@ -549,7 +546,7 @@
 
         assert(!this.knowsObject(obj));
 
-        //debugger;
+        
         //this.setRootPid(obj.puuid()); // this is set when the dirty root object is stored
         this._rootObject = obj;
         this.logDebug(" adding rootObject " + obj.svDebugId());
@@ -599,21 +596,20 @@
 
         /*
         if (Type.isDictionary(anObject)) {
-            debugger;
         }
         */
         /*
         if (anObject.svType() === "Error") {
-            debugger;
             return false;
         }
         */
 
 
         if (Type.typeName(anObject) === "PersistentObjectPool") {
-            console.log("addActiveObject() called with PersistentObjectPool");
-            debugger;
-            return false;
+            const msg = "addActiveObject() called with PersistentObjectPool";
+            console.warn(msg);
+            throw new Error(msg);
+            //return false;
         }
 
         if (!anObject.shouldStore()) {
@@ -780,10 +776,8 @@
         console.log("forceAddDirtyObject " + anObject.svTypeId());
         if (this.storingPids() !== null) {
             // we might be in the middle of storing changes
-            debugger;
             if (this.storingPids().has(anObject.puuid())) {
                 // looks like this object is already queued to be stored
-                debugger;
                 return this;
             }
         }
@@ -824,7 +818,7 @@
      */
     async commitStoreDirtyObjects () {
         this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
-        //debugger;
+        
         if (this.hasDirtyObjects()) {
             //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
 
@@ -866,7 +860,7 @@
                 }
 
                 this.storingPids().add(puuid);
-                //debugger;
+                
                 this.storeObject(obj);
 
                 thisLoopStoreCount ++;
@@ -922,7 +916,6 @@
         //console.log("loading " + className + " " + aRecord.id);
         if (className === "Promise") {
             console.warn(this.svType() + " WARNING: a Promise was stored. Returning a null. Check stack trace to see which object stored it.");
-            debugger;
             return null;
         }
 
@@ -932,14 +925,13 @@
             const error = "missing class '" + className + "' - returning null";
             console.warn(error);
             //throw new Error(error);
-            //debugger;
+            
             return null;
         }
         assert(!Type.isNullOrUndefined(aRecord.id))
 
         if (Type.isUndefined(aClass.instanceFromRecordInStore)) {
             console.warn("Class '" + className + "' missing method 'instanceFromRecordInStore' - deserializing as null");
-            debugger;
             return null;
         }
 
@@ -1003,11 +995,6 @@
         }
 
         this.loadingPids().add(puuid);
-        /*
-        if (puuid === "ISkYj2Vrxc") {
-            debugger;
-        }
-        */
         
         const aRecord = this.recordForPid(puuid);
         if (Type.isUndefined(aRecord)) {
@@ -1099,7 +1086,7 @@
      * @returns {Object}
      */
     refForPid (aPid) {
-        debugger;
+        // is this ever called?
         return { 
             "*": aPid.pid()
             //"*": this.pid()
@@ -1155,8 +1142,7 @@
         assert(!v.isClass());
 
         if (!v.shouldStore()) {
-            console.log("WARNING: called refValue on " + v.svType() + " which has shouldStore=false");
-         //   debugger;
+            console.warn(this.logPrefix() + "WARNING: called refValue on " + v.svType() + " which has shouldStore=false");
             return null;
         }
 
@@ -1207,7 +1193,6 @@
     storeObject (obj) {
         /*
         if (Type.isDictionary(obj)) {
-            debugger;
         }
         */
         
@@ -1229,7 +1214,6 @@
             // asyncRecordForStore is only implemented if there's no 
             // synchronous option for serialization e.g. serializing a Blob
             //throw new Error("no support for asyncRecordForStore yet!");
-            debugger;
             const kvPromise = this.kvPromiseForObject(obj);
             this.recordsMap().asyncQueueSetKvPromise(kvPromise);
         } else {
@@ -1329,7 +1313,7 @@
         if (!this.markedSet().has(pid)) {
             this.markedSet().add(pid);
             const refPids = this.refSetForPuuid(pid);
-            //debugger;
+            
             //this.logDebug(() => "markPid " + pid + " w refs " + JSON.stringify(refPids.asArray()));
             refPids.forEach(refPid => this.markPid(refPid));
             return true;

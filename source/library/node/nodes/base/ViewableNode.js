@@ -263,7 +263,6 @@
                 return proto;
             }
             console.warn("no class found for nodeViewClassName:'" + name + "'");
-            debugger;
         }
         
 	  	return this.firstAncestorClassWithPostfix("View");

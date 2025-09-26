@@ -56,7 +56,6 @@
 
     /*
     resourceClassesForFileExtension (extension) {
-        debugger;
         return super.resourceClassesForFileExtension(extension);
     }
     */

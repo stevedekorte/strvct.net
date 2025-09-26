@@ -117,7 +117,7 @@ class SvWindowErrorPanel extends Object {
      * @category Error Handling
      */
     handleWindowError (error) {
-        //debugger;
+        
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HERE COULD CAUSE AN INFINITE LOOP
             const errorInfo = this.errorInfoFromError(error);
             
@@ -163,7 +163,6 @@ class SvWindowErrorPanel extends Object {
      * @category UI
      */
     showPanelWithInfo (errorInfo) {
-        debugger;
         console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
 
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
@@ -300,7 +299,7 @@ class SvWindowErrorPanel extends Object {
             
             // Add backdrop to document body
             document.body.appendChild(backdropDiv);
-            //debugger;
+            
         } catch (e) {
             console.error("Error in showPanelWithInfo:", e);
         }

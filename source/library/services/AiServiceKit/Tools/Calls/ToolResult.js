@@ -191,7 +191,6 @@ See schema for the particular tool call (whose name is in the toolName property)
     }
     const toolDefinition = toolCall.findToolDefinition();
     if (toolDefinition === null) {
-      debugger;
       toolCall.findToolDefinition();
       throw new Error("Tool definition not found for tool call: " + toolCall.toolName());
     }

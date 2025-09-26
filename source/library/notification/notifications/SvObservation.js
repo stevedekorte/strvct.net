@@ -386,7 +386,7 @@
         /*
         if (this.sender() && this.sender().isKindOf(FirestoreDatabaseService)) {
             this.log("STARTING WATCHING FOR " + this.sender().svTypeId() + " " + this.name());
-            //debugger;
+            
             this.sender().onDidMutateObject(this);
         }
         */

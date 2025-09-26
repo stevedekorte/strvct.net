@@ -322,7 +322,7 @@
   cleanupAssistantMessage () {
     if (this.svType() === "AiResponseMessage") {
     //if (this.svType() !== "UoRollRequestMessage" && this.svType() !== "UoImageMessage") {
-      //debugger;
+      
       // TODO: add sanity check before deleting
       this.deleteFollowingMessages(); 
       this.setContent("");
@@ -335,7 +335,7 @@
    * @category Cleanup
    */
   cleanupUserMessage () {
-    //debugger;
+    
     // TODO: add sanity check before deleting
     this.deleteFollowingMessages();
     this.requestResponse();

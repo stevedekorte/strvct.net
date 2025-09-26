@@ -96,7 +96,6 @@
   }
 
   formatsPrompt () {
-    debugger;
     return `### Formats
 
 The following formats will be used for tool calls and responses:
@@ -105,8 +104,7 @@ The following formats will be used for tool calls and responses:
 - JSON patch format: RFC 6902`;
   }
 
-  fullToolCallPrompt () {
-    debugger;
+  fullToolCallPrompt () { // is this used?
     const prompt = [
       "## Tool Call Details", 
       this.formatsPrompt(),
@@ -117,15 +115,13 @@ The following formats will be used for tool calls and responses:
     return prompt;
   }
 
-  formalToolSpecificationsPrompt () {
-    debugger;
+  formalToolSpecificationsPrompt () { // is this used?
     const s = this.toolDefinitions().toolSpecPrompt();
     assert(s.includes("rollRequest"), "rollRequest tool not found in toolSpecPrompt");
     return s;
   }
 
-  toolTypesJson () {
-    debugger;
+  toolTypesJson () { // is this used?
     return this.toolDefinitions().toolTypesJson();
   }
 
@@ -151,7 +147,7 @@ The following formats will be used for tool calls and responses:
 
   onMessageComplete (aMsg) {
     this.log(".onMessageComplete('" + aMsg.messageId() + "')");
-    //debugger;
+    
     if (aMsg.isResponse()) { // should we only call the tools from this message?
        this.processQueuedToolCalls();
       }

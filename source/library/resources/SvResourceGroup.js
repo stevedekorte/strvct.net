@@ -129,7 +129,6 @@
             /*
             if (this.subnodes().length !== this.urlResources().length) {
                 console.warn(this.svType() + " should have " + this.urlResources().length + " subnodes, but has " + this.subnodes().length);
-                debugger;
             }
             */
         }
@@ -167,7 +166,6 @@
     resourceForPath (aPath) {
         const rClass = this.resourceClassForFileExtension(aPath.pathExtension());
         if (!rClass) {
-            debugger;
             this.resourceClassForFileExtension(aPath.pathExtension());
             return null;
         }
@@ -228,7 +226,7 @@
      */
     async prechacheWhereAppropriate () {
         //this.log("resource group: " + this.svType() + ".prechacheWhereAppropriate()");
-        //debugger;
+        
         await this.resources().promiseParallelMap(async (r) => {
             //this.log("resource: " + r.svType() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {

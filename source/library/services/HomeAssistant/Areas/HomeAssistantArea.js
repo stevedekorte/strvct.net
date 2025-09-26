@@ -20,7 +20,7 @@
       * @description Initializes the instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
     }
     
@@ -85,7 +85,6 @@
       * @category Data Retrieval
       */
     findOwner () {
-        debugger;
         return null;
     }
 

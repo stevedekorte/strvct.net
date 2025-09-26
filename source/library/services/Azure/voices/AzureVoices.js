@@ -88,7 +88,7 @@
    * @description Sets up the subnodes.
    */
   setupSubnodes () {
-    //debugger;
+    
     this.removeAllSubnodes()
     
     this.setVoices([])

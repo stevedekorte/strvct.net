@@ -342,7 +342,7 @@
             
             // Step 2: Generate final image with style reference
             this.setStatus("generating styled image...");
-            this.sendDelegate("onImagePromptLoading");
+            this.sendDelegateMessage("onImagePromptLoading");
             
             // Build the prompt that combines content and optional style description
             let combinedPrompt = this.contentPrompt();
@@ -374,7 +374,7 @@
             console.error("OpenAI style transfer failed:", error);
             this.setError(error.message);
             this.setStatus("failed");
-            this.sendDelegate("onImagePromptError");
+            this.sendDelegateMessage("onImagePromptError");
         }
     }
 
@@ -485,8 +485,8 @@
                         imageUrl: () => finalUrl
                     };
                     
-                    this.sendDelegate("onImagePromptImageLoaded", [this, resultImage]);
-                    this.sendDelegate("onImagePromptEnd", [this]);
+                    this.sendDelegateMessage("onImagePromptImageLoaded", [this, resultImage]);
+                    this.sendDelegateMessage("onImagePromptEnd", [this]);
                 } else {
                     throw new Error("No image URL in response");
                 }
@@ -617,25 +617,6 @@
         }
         
         return "Ready";
-    }
-
-    /**
-     * @description Sends a delegate method call.
-     * @param {string} methodName - The name of the method to call.
-     * @param {Array} args - The arguments to pass to the method.
-     * @returns {boolean} True if the delegate method was called, false otherwise.
-     * @category Delegation
-     */
-    sendDelegate (methodName, args = [this]) {
-        const d = this.delegate();
-        if (d) {
-            const f = d[methodName];
-            if (f) {
-                f.apply(d, args);
-                return true;
-            }
-        }
-        return false;
     }
 
 }.initThisClass());

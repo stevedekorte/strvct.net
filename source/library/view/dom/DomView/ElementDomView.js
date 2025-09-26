@@ -31,7 +31,6 @@
     }
 
     static retireParentlessViews () {
-        debugger;
         const parentless = this.viewsWithoutParents()
 
         while (parentless.size) { // do this effective "pop" loop, so it's ok to delete items inside a prepareToRetire
@@ -146,7 +145,6 @@
     assertEventListenerCountsMatch () {
         let internal = this.fullActiveEventListenerCount()
         if (isNaN(internal)) {
-            debugger;
             this.fullActiveEventListenerCount()
         }
         let external = this.externalFullActiveEventListenerCount()
@@ -155,7 +153,6 @@
             console.log(this.svTypeId() + " external: " + external + " ", EventListener.activeListenersForOwner(this).map(v => v.fullMethodName()))
             this.fullActiveEventListenerCount();
             EventListener.activeListenersForOwner(this);
-            debugger;
         }
         //assert(internal === external)
     }
@@ -166,7 +163,7 @@
      * @returns {ElementDomView} The current instance
      */
     prepareToRetire () {
-        //debugger;
+        
         console.log(this.svTypeId() + " prepareToRetire");
         assert(!this.hasParentView());
 
@@ -188,7 +185,6 @@
         if (this.externalFullActiveEventListenerCount()) {
             console.warn(this.svTypeId() + " was unable to remove the following event listeners:");
             EventListener.showActiveForOwner(this);
-            debugger;
         }
         */
 
@@ -265,8 +261,9 @@
             console.warn("attempt to set to same element")
         } else {
             if (Type.isNullOrUndefined(e)) {
-                console.warn(this.svDebugId() + " setElement null")
-                debugger;
+                const errorMessage = this.svDebugId() + " setElement called with null";
+                console.warn(errorMessage);
+                throw new Error(errorMessage);
             }
             
             //assert(!this._element) // element shouldn't change, if only to avoid dealing with listener issues

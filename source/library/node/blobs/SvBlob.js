@@ -312,9 +312,8 @@
         const arrayBuffer = uint8Array.buffer
         const digestBuffer = await arrayBuffer.promiseSha256Digest();
         const h = digestBuffer.base64Encoded()
-        assert(h === nodejsHash)
-        this.log("hashes match!")
-        debugger;
+        assert(h === nodejsHash, "hashes do not match");
+        this.log("hashes match!");
     }
 
 }.initThisClass());

@@ -1,4 +1,4 @@
-/* eslint-disable */
+ 
 "use strict";
 
 /**
@@ -91,7 +91,6 @@
      * @category Storage
      */
     promiseOpen () {
-        debugger;
         return this.store().promiseOpen();
     }
 

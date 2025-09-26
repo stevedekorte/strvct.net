@@ -159,7 +159,7 @@
    */
   beginHtmlStream () {
     this.pushTopNode();
-    this.sendDelegate("onHtmlStreamReaderStart", [this]);
+    this.sendDelegateMessage("onHtmlStreamReaderStart", [this]);
   }
 
   /**
@@ -194,11 +194,10 @@
       // need to pop if its a StreamTextNode
       this.setError(new Error("HtmlStreamReader.endHtmlStream() ended with unclosed elements"));
       console.warn(this.error().message);
-      debugger;
     }
     */
     this.parser().end();
-    this.sendDelegate("onHtmlStreamReaderEnd", [this]);
+    this.sendDelegateMessage("onHtmlStreamReaderEnd", [this]);
   }
 
   /**
@@ -213,7 +212,7 @@
     assert(!currentNode.isTextNode());
     currentNode.addChild(newNode);
     this.setCurrentNode(newNode);
-    this.sendDelegate("onHtmlStreamReaderPushNode", [this, newNode]);
+    this.sendDelegateMessage("onHtmlStreamReaderPushNode", [this, newNode]);
     return newNode;
   }
 
@@ -231,7 +230,7 @@
     assert(p); // this can happen on an incomplete tag e.g. [<div class="']
     this.setCurrentNode(p);
 
-    this.sendDelegate("onHtmlStreamReaderPopNode", [this, n]);
+    this.sendDelegateMessage("onHtmlStreamReaderPopNode", [this, n]);
     //this.show();
     return n;
   }
@@ -254,7 +253,7 @@
     console.log(line + " " + this.svType() + " " + line);
     this.rootNode().show();
     console.log(line + line);
-    //debugger;
+    
   }
 
   /**
@@ -325,7 +324,7 @@
   onText (text) {
     //console.log("onText '" + text + "'");
     const n = this.currentNode();
-    //debugger;
+    
     
     if (n.isTextNode()) {
       n.appendText(text);
@@ -364,39 +363,6 @@
     this.popIfCurrentNodeIsText();
   }
 
-  /**
-   * @description Sends a message to the delegate
-   * @param {string} methodName - The name of the delegate method
-   * @param {Array} [args=[this]] - Additional arguments to pass to the delegate method
-   * @returns {boolean} - Returns true if the delegate method was called successfully, false otherwise
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-
-    /*
-    if (this.isDebugging()) {
-      console.log(this.svType() + " --------------- calling delegate " + methodName + "(" + args.join(",") + ")");
-    }
-    */
-
-    if (d) {
-      const f = d[methodName]
-      if (f) {
-        f.apply(d, args)
-        return true
-      }
-    } else {
-      /*
-      const error = this.svType() + " delegate missing method '" + methodName + "'";
-      console.log(error);
-      debugger;
-      throw new Error(error);
-      */
-    }
-    return false
-  }
-
 }.initThisClass());
 
 
@@ -404,6 +370,7 @@
  * @description Test function for HtmlStreamReader
  * @category Testing
  */
+/*
 const testSentenceReader = function () {
 
   console.log(
@@ -447,7 +414,6 @@ const testSentenceReader = function () {
     console.warn(`Input: '<div class="session-name">The Lost City's Hidden Secrets</div><span data-note="speak">Welcome, brave souls, to the edge of the <div class=location-name>Sighing Desert</div>.</span><span data-note="speak">Here, amid the dunes that stretch like slumbering golden serpents beneath the relentless sun, lies the enigma of a vanished civilization.</span>'`);
     console.warn("Expected Output: ", JSON.stringify(expectedSentences, null, 2));
     console.warn("  Actual Output: ", JSON.stringify(results, null, 2));
-    debugger;
   }
 
   console.log(
@@ -455,5 +421,6 @@ const testSentenceReader = function () {
   );
   
 }
+*/
 
 //testSentenceReader();

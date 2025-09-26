@@ -261,7 +261,7 @@
   async start () {
     this.setError("");
     this.setStatus("fetching response...");
-    this.sendDelegate("onImagePromptStart", [this]);
+    this.sendDelegateMessage("onImagePromptStart", [this]);
 
     const apiKey = await this.service().apiKeyOrUserAuthToken(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // OpenAI image generation endpoint (gpt-image-1, NOT DALL-E)
@@ -303,7 +303,6 @@
       // add a detailed error message
       if (!response.ok) {
         const error = new Error(`HTTP error! Type: ${response.type}, Status: ${response.status}, Status Text:${response.statusText}`);
-        debugger;
         throw error;
       }
 
@@ -336,7 +335,7 @@
     this.onEnd();
 
 /*
-    this.sendDelegate("onImagePromptLoading", [this]);
+    this.sendDelegateMessage("onImagePromptLoading", [this]);
 
     if (json.error) {
       this.setStatus("ERROR: " + json.error.message);
@@ -368,7 +367,7 @@
     console.error(s);
     this.setError(error.message);
     this.setStatus(s);
-    this.sendDelegate("onImagePromptError", [this]);
+    this.sendDelegateMessage("onImagePromptError", [this]);
     this.onEnd();
   }
 
@@ -380,7 +379,7 @@
   onImageLoaded (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
     this.onEnd();
   }
 
@@ -392,7 +391,7 @@
   onImageError (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
     this.onEnd();
   }
 
@@ -401,7 +400,7 @@
    * @category Process
    */
   onEnd () {
-    this.sendDelegate("onImagePromptEnd", [this]);
+    this.sendDelegateMessage("onImagePromptEnd", [this]);
   }
 
   /**
@@ -413,25 +412,6 @@
     if (s) {
       this.setStatus(s);
     }
-  }
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

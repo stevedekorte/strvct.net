@@ -4,7 +4,7 @@
  * @module boot
  */
 
-//debugger;
+
 //assert(SvGlobals.globals().SvIndexedDbFolder === undefined, "SvIndexedDbFolder is already defined");
 /**
  * @class SvIndexedDbFolder
@@ -123,7 +123,7 @@
      * @returns {Promise} - A promise for persistence.
      */
     static promisePersistence () {
-        //debugger;
+        
         if (this._promiseForPersistence === null) {
             this._promiseForPersistence = Promise.clone();
             this.newPromisePersistence().then(() => {
@@ -571,9 +571,9 @@
      */
     async promiseNewTx () {
         assert(this.isOpen(), "SvIndexedDbFolder is not open")
-        //debugger;
+        
         this.logDebug(this.path() + " promiseNewTx")
-        //debugger;
+        
         /*
         const lastTx = this.lastTx()
         if (lastTx) {
@@ -602,7 +602,7 @@
      * @returns {SvIndexedDbTx} - A new transaction object.
      */
     privateNewTx () {
-        //debugger;
+        
         //SvSyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
         if (this.lastTx()) {
             //assert(this.lastTx().isCommitted() || this.lastTx().isAborted())
@@ -685,8 +685,7 @@
         const hasKey = await this.promiseHasKey(key);
 
         if (!hasKey) {
-            debugger;
-            throw new Error("failed assert");
+            throw new Error("promiseAssertHasKey(" + key + ") assert failed");
         }
     }
 

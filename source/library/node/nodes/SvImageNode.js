@@ -80,7 +80,6 @@
      * @category Data Serialization
      */
     jsonArchive () {
-        debugger;
         return undefined;
     }
 
@@ -89,12 +88,10 @@
     }
 
     value () {
-        debugger;
         return this.dataURL();
     }
 
     setValue (value) {
-        debugger;
         this.setDataURL(value);
         return this;
     }

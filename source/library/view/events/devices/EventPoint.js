@@ -110,7 +110,6 @@
      * @category DOM
      */
     findOverview () {
-        debugger;
         // search up the dom elements until we find one 
         // associated with a DomView instance 
 

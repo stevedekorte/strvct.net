@@ -76,7 +76,6 @@
     }
 
     onUpdateSlotDataURL () {
-        debugger;
         this.setSha256Hash(null);
         // we'll lazily calculate the hash if/when needed
     }
@@ -88,7 +87,6 @@
      */
     onDidLoad () {
         super.onDidLoad()
-        debugger;
         this.setDataUrl(this.data())
         return this
     }

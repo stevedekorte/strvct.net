@@ -396,7 +396,7 @@
 
         try {            
             if (this.path()) {
-                //debugger;
+                
                 //this.log(" path: ", this.path());
             } else {
                 if (!this.fetchPromise()) {
@@ -593,7 +593,7 @@
      */
     post (methodName) {
         this.postNoteNamed(methodName);
-        this.sendDelegate(methodName);
+        this.sendDelegateMessage(methodName);
         return this;
     }
 
@@ -617,37 +617,6 @@
         return this;
     }
 
-    /**
-     * @description sends a delegate
-     * @param {String} methodName the method name
-     * @param {Array} args the arguments
-     * @returns {SvWaSound} the sound
-     */
-    sendDelegate (methodName, args = [this]) {
-        const sendDelegate = (d, methodName, args) => {
-            const f = d[methodName]
-            if (f) {
-              f.apply(d, args)
-            }
-        };
-
-        /*
-        const d = this.delegate();
-        if (d) {
-          sendDelegate(d, methodName, args);
-        } else {
-          const error = this.svType() + " delegate missing method '" + methodName + "'";
-          this.log(error);
-          debugger;
-          throw new Error(error);
-        }
-        */
-
-        this.delegateSet().forEach(d => { 
-            sendDelegate(d, methodName, args); 
-        });
-    }
-
     // ----
 
     /**
@@ -666,6 +635,5 @@
         this.log("dataUrl: ", dataUrl.clipWithEllipsis(20));
         return dataUrl;
     }
-
 
 }.initThisClass());

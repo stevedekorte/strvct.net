@@ -765,7 +765,7 @@
     }
     const errorMethodName = "on" + errorMethodRoot;
 
-    //debugger;
+    
 
     // send self error message
     const method = this[errorMethodName]
@@ -929,8 +929,7 @@
     // This can happen if you attempt to reconnect a peer that has been disconnected from the server, but its old ID has now been taken.
     if (this.peerIdPrefix()) {
       this.retryClosure(() => {
-        debugger;
-        this.attemptToConnect()
+        this.attemptToConnect();
       })
     }
     error.betterMessage = "ERRORSOMETIMES FATAL: The ID passed into the Peer constructor is already taken. ";

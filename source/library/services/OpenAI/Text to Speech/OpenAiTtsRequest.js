@@ -178,7 +178,6 @@
    * @category Configuration
    */
   setService (anObject) {
-    debugger;
     this.setDelegate(anObject);
     return this;
   }
@@ -275,7 +274,7 @@
     
     try {
       this.setStatus("sending");
-      this.sendDelegate("onRequestBegin");
+      this.sendDelegateMessage("onRequestBegin");
 
       this.assertValid(); 
       if (this.isDebugging()) {
@@ -354,7 +353,7 @@
         throw new Error(`Failed to decode audio: ${error.message}`);
       }
 
-      this.sendDelegate("onRequestComplete");
+      this.sendDelegateMessage("onRequestComplete");
       
       // Resolve the fetchPromise now that everything is complete
       fetchPromise.callResolveFunc();
@@ -401,27 +400,8 @@
    * @category Error Handling
    */
   onError (error) {
-    this.sendDelegate("onRequestError", [this, error]);
+    this.sendDelegateMessage("onRequestError", [this, error]);
     this.setError(error);
-  }
-
-  /**
-   * @description Sends a delegate method call if the delegate exists and has the method.
-   * @param {String} methodName - The name of the method to call on the delegate.
-   * @param {Array} args - The arguments to pass to the delegate method.
-   * @returns {Boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
-    if (d) {
-      const f = d[methodName]
-      if (f) {
-        f.apply(d, args)
-        return true
-      }
-    }
-    return false
   }
 
 }.initThisClass());

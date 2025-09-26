@@ -571,7 +571,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     startViewListeners () {
-        //debugger;
+        
         this.stopViewListeners()
         this.setViewListeners(this.startNewViewListenersForClasses(this.listenerClasses()))
         return this
@@ -652,7 +652,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     startViewMoveListeners () {
-        //debugger;
+        
         this.stopViewMoveListeners()
         this.setViewMoveListeners(this.startNewViewListenersForClasses(this.moveListenerClasses()))
         return this
@@ -1010,7 +1010,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseDown (event) {      
-        //debugger;  
+          
         this.emulateDownIfNeeded(event)
         this.setDownEvent(event)
         this.onDown(event)

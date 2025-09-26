@@ -800,12 +800,11 @@
         for (let index = subnodes.length - 1; index > -1; index--) {
             const sn = subnodes.at(index);
             if (Type.isNullOrUndefined(sn)) {
-                debugger;
                 const beforeCount = subnodes.length;
                 subnodes.removeAt(index); // raw removal
                 const afterCount = subnodes.length;
                 if (beforeCount === afterCount) {
-                    debugger;
+                    throw new Error("failed to remove subnode at index " + index);
                 }
             }
         }
@@ -828,7 +827,6 @@
         return subnodes.detect(subnode => {
             /*
             if (Type.isNullOrUndefined(subnode)) {
-                debugger;
                 this.cleanSubnodes();
             }
             */
@@ -1512,12 +1510,12 @@
 
         if (Type.isNullOrUndefined(newValue)) {
             console.warn("attempt to set subnodes array to null or undefined - possible corruption of object pool storage <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-            //debugger;
+            
             newValue = [];
         }
 
         if (newValue.svType() !== "SubnodesArray") {
-            //debugger;
+            
             this._subnodes = SubnodesArray.from(newValue);
             newValue.removeDuplicates();
             newValue = this._subnodes;
@@ -1527,13 +1525,12 @@
             if (this.hasNullSubnodes()) {
                 console.warn(this.svDebugId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes());
                 this.subnodes().removeOccurancesOf(null);
-                //debugger;
+                
             }
             */
 
             if(this.hasDuplicateSubnodes()) {
                 console.warn(this.svDebugId() + " hasDuplicateSubnodes - removing duplicates and continuing");
-                debugger;
                 newValue.removeDuplicates();
             }
         }
@@ -1543,7 +1540,7 @@
 
         this.watchSubnodes();
         if (this._subnodes.contains(null)) { // what would cause this?
-            //debugger;
+            
             console.warn("found null in subnodes array - removing");
             this._subnodes.filterInPlace(sn => !(sn === null) );
         }
@@ -2022,7 +2019,6 @@
         refSet._add = refSet.add;
         refSet.add = function (aClass) {
             if (!aClass.jsonSchemaDescription || aClass.jsonSchemaDescription() === null) {
-                debugger;
             }
             if (!this.has(aClass)) {
                 this._add(aClass);
@@ -2231,7 +2227,6 @@
                             this.addSubnode(subnode);
                         } else {
                             console.warn("fromJsonSchema subnode class '" + subnode.svType() + "' not in subnodeClasses " + JSON.stableStringifyWithStdOptions(this.subnodeClasses().map(c => c.svType())));
-                            debugger;
                         }
                     });
                 } else {
@@ -2240,7 +2235,6 @@
                 }
             } else {
                 console.warn("fromJsonSchema missing slot for key '" + key + "'");
-                debugger;
             }
             requiredSlotNamesSet.delete(key);
         });
@@ -2248,7 +2242,6 @@
         if (requiredSlotNamesSet.size > 0) {
             // verify all required slots were set
             console.warn("fromJsonSchema missing required slots: " + Array.from(requiredSlotNamesSet).join(", "));
-            debugger;
         }
 
         return this;

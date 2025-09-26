@@ -151,7 +151,7 @@
         if (tid) {
             clearTimeout(tid);
             //console.log("Promise cancelTimeout() label: ", this.label().clipWithEllipsis(40) );
-            //debugger;
+            
             this._timeoutId = null;
         }
         return this;
@@ -187,7 +187,6 @@
         if (this._resolveFunc) {
             return this._resolveFunc(...args);
         }
-        debugger;
         throw new Error("Promise resolved with no resolve function provided");
     }
 

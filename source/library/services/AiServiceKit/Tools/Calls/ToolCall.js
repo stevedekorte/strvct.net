@@ -295,7 +295,6 @@ Example Tool call format:
 
             if (!repairShop.isValid()) {
                 repairShop.setJsonString(callString); // so we get the error on the original string?
-                debugger;
                 repairShop.repair();
 
                 repairShop.setJsonString(callString); // so we get the error on the original string?
@@ -325,7 +324,7 @@ Example Tool call format:
   }
 
   didUpdateSlotCallJson (oldValue, newValue) {
-    //debugger;
+    
     if (oldValue !== this.callJson() && newValue !== null) {
       this.setToolName(newValue.toolName);
       this.setCallId(newValue.callId);
@@ -388,7 +387,6 @@ Example Tool call format:
         const errorString = validator.errorMessageForLLM();
         const description = this.descriptionForSchemaValidationError(errorString);
         this.logError(description);
-        debugger;
         const e = new Error(errorString);
         throw e;
     }
@@ -399,7 +397,6 @@ Example Tool call format:
         const errorString = validator.errorMessageForLLM();
         const description = this.descriptionForJsonValidationError(errorString);
         this.logError(description);
-        debugger;
         const e = new Error(errorString);
         this.handleCallError(e);
     }
@@ -454,7 +451,6 @@ Example Tool call format:
         console.error("Error during schema validation:", errorString);
         console.error("Complete schema:", JSON.stringify(completeSchema, null, 2));
         console.error("Parameters JSON:", JSON.stringify(this.parametersDict(), null, 2));
-        debugger;
         const e = new Error(errorString);
         this.handleCallError(e);
     }
@@ -498,7 +494,6 @@ Example Tool call format:
             const toolCallSchema = ToolCall.toolCallJsonSchemaForToolDefinition(toolDefinition);
             const toolCallSchemaString = JSON.stringify(toolCallSchema, null, 2);
             e.extraMessage += "\nThe '" + toolName + "' tool call schema is\n " + toolCallSchemaString;
-            debugger;
         }
     }
     
@@ -521,7 +516,6 @@ Example Tool call format:
         });
     } catch (reportError) {
       console.error("Error while trying to report tool call parse error:", reportError);
-      debugger;
     }
 
     this.handleCallError(e);
@@ -593,7 +587,6 @@ Example Tool call format:
       */
     } catch (e) {
         console.error("---- TOOLCALL ERROR: ", e," Error making tool call: " + this.toolDefinition().name());
-        debugger;
         this.handleCallError(e);
     }
   }
@@ -611,7 +604,6 @@ Example Tool call format:
         Type.assertIsJsonType(resultValue);
     } catch(e) {
         console.error("Error asserting that resultValue is a JSON type: " + e.message);
-        debugger;
         Type.assertIsJsonType(resultValue);
     }
 
@@ -627,11 +619,10 @@ Example Tool call format:
   handleCallError (e) {
     if (!Type.isError(e)) {
       e = new Error("handleCallError requires an Error instance");
-      debugger;
     }
 
     console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
-    //debugger;
+    
 
     this.setStatus("completed");
 
@@ -683,7 +674,7 @@ Example Tool call format:
   }
 
   setCallResult (json) {
-    //debugger;
+    
     this.handleCallSuccess(json);
     return this;
   }

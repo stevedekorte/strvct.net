@@ -394,8 +394,8 @@
             }
         } else {
             console.warn("SvKeyboard.shared() no key found for event ", event);
-            debugger;
-            this.keyForEvent(event);
+            
+            //this.keyForEvent(event);
         }
             
         return shouldPropogate;
@@ -526,7 +526,7 @@
         }
 
         if (modifiers.includes("MetaLeft")) {
-            debugger;
+            // no-op
         }
 
         return modifiers.join("") + keyName; // examples: "Control_1_", "MetaLeft_c_"

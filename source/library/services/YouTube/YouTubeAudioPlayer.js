@@ -254,7 +254,6 @@
           this.onPlayerStateChange(event);
         },
         onError: (event) => {
-          debugger;
           this.onPlayerError(event);
         },
       },
@@ -371,7 +370,6 @@
    * @param {Object} event - The error event.
    */
   onPlayerError (event) {
-    debugger;
     const error = Number(event.data);
     this.logDebug(
       "------------------ onPlayerError " +

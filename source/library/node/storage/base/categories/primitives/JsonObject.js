@@ -32,7 +32,7 @@
         return instance;
     }
 
-    static instanceFromRecordInStore (aRecord, aStore) {
+    static instanceFromRecordInStore (aRecord /*, aStore*/) {
         // this is just a hack to deal with JSON objects
         const instance = JSON.parse(aRecord.jsonString);
         return instance;
@@ -50,7 +50,7 @@
      * @returns {Object} The loaded object.
      * @category Data Loading
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (/*aRecord, aStore*/) {
         // instance is already loaded by instanceFromRecordInStore()
         return this;
     }
@@ -61,7 +61,7 @@
      * @returns {Object} The created record.
      * @category Data Storage
      */
-    recordForStore (aStore) {
+    recordForStore (/*aStore*/) {
         let type = this.svType();
 
         return {
@@ -98,7 +98,7 @@
      * @category Configuration
      */
     setShouldStore (aBool) {
-        debugger;
+        console.warn(this.logPrefix() + "setShouldStore " + aBool);
         return this;
     }
  

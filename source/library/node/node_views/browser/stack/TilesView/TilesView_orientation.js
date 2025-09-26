@@ -45,7 +45,7 @@
             if (this.validAlignItemsPropertyValues().contains(align)) {
                 this.setJustifyContent(align)
             } else {
-                debugger;
+                // is this an error?
             }
         }
     }
@@ -68,8 +68,7 @@
             const align = this.node().nodeChildrenAlignment()
             if (this.validJustifyContentPropertyValues().contains(align)) {
                 this.setJustifyContent(align)
-            } else {
-            }
+            } 
             this.setAlignItems(null)
         }
     }
@@ -127,26 +126,26 @@
      * @category Stacking
      */
     stackTilesVertically () {
-        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
-        const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden())
-        let y = 0
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx");
+        const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden());
+        let y = 0;
         
-        const offsets = displayedTiles.map(tile => tile.offsetTop())
+        //const offsets = displayedTiles.map(tile => tile.offsetTop());
 
         displayedTiles.forEachKV((i, tile) => {
-            let h = tile.computedHeight() 
+            let h = tile.computedHeight();
 
             if (tile.position() !== "absolute") { 
-                tile.makeAbsolutePositionAndSize()
+                tile.makeAbsolutePositionAndSize();
                 tile.setLeftPx(0)
-                tile.setOrder(null)
+                tile.setOrder(null);
             } 
 
-            tile.setTopPx(y)
-            y += h + 2
-        })
+            tile.setTopPx(y);
+            y += h + 2;
+        });
 
-        return this
+        return this;
     }
 
     /**

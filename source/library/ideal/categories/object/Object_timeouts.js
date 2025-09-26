@@ -61,7 +61,6 @@
             tids.set(tidInfo[0], tid);
         } else {
             console.warn("addTimeout('" + tidInfo[0] + "') timeout with that name already exists");
-            debugger;
         }
         return tid;
     }

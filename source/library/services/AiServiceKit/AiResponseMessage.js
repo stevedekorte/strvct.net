@@ -282,7 +282,7 @@
       json.top_p = this.topP();
     }
 
-    //debugger;
+    
     json.messages = this.jsonHistory();
 
     request.setBodyJson(json);
@@ -374,7 +374,7 @@
    * @category Event Handling
    */
   onRequestComplete (/*aRequest*/) {
-   // debugger;
+   
     //this.setRequest(null)
     //this.setStatus("complete");
     this.markAsComplete();
@@ -418,7 +418,7 @@
    */
   onStreamData (request, /*newContent*/) {
     this.setContent(request.fullContent())
-    this.sendDelegate("onMessageUpdate")
+    this.sendDelegateMessage("onMessageUpdate")
   }
   
   /**
@@ -428,10 +428,10 @@
    * @category Event Handling
    */
   onStreamEnd (/*request*/) {
-    //debugger;
+    
     //this.setContent(request.fullContent()); // all data has already been sent
     this.setIsComplete(true);
-    this.sendDelegate("onMessageUpdate");
+    this.sendDelegateMessage("onMessageUpdate");
   }
 
   /**

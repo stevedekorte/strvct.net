@@ -84,7 +84,7 @@
      * @param {Object} copyDict - Copy options (not used in this method)
      * @returns {CssColor} A new CssColor instance with copied values
      */
-    copyFrom (aColor, copyDict) {
+    copyFrom (aColor /*, copyDict*/) {
         return CssColor.clone().set(aColor.red(), aColor.green(), aColor.blue(), aColor.opacity())
     }
 
@@ -100,7 +100,7 @@
         const div = document.createElement("div");
         document.body.appendChild(div);
         div.style.color = aColorString;
-        const style = window.getComputedStyle(div); debugger;
+        const style = window.getComputedStyle(div);
         const color = style.color;
         document.body.removeChild(div);
 
@@ -245,12 +245,11 @@
      * @param {number} r - Ratio (0-1)
      * @returns {number} Interpolated value
      */
-    interpV1V2Ratio(v1, v2, r) {
-        const diff = v2 - v1;
+    interpV1V2Ratio (v1, v2, r) {
         if (v1 > v2) {
-            return v1 - (v1 - v2)*r
+            return v1 - (v1 - v2)*r;
         }
-        return v2 - (v2 - v1)*r
+        return v2 - (v2 - v1)*r;
     }
 
     /**
@@ -426,7 +425,7 @@
      * @returns {CssColor} A new CssColor instance with the complement color
      */
     complement () {
-        const temprgb = this.asDict255();
+        let temprgb = this.asDict255();
         const temphsv = RGB2HSV(temprgb);
         temphsv.hue = HueShift(temphsv.hue, 180.0);
         temprgb = HSV2RGB(temphsv);

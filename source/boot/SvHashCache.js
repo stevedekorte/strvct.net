@@ -69,7 +69,7 @@
      * @category Query
      */
     async promiseCount () {
-        //debugger;
+        
         return this.idb().promiseCount();
     }
 
@@ -139,7 +139,6 @@
             throw new Error("unable to load url: '" + url + "'");
         } else {
             this.log("SvHashCache loaded url: '" + url + "'");
-            debugger;
             await this.promiseAtPut(hash, data);
             return data;
         }
@@ -168,8 +167,6 @@
             if (typeof(data) === "object") {
                 console.warn("data is an object: " + JSON.stringify(data, null, 2));
             }
-            debugger;
-
             return undefined;
         }
         
@@ -181,7 +178,6 @@
 
         const dataHash = await this.promiseHashKeyForData(returnData);
         if (dataHash !== hash) {
-            debugger;
             throw new Error("hash key does not match hash of value");
         }
 

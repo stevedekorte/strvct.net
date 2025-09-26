@@ -377,7 +377,7 @@
     this.setCompletionPromise(Promise.clone());
     this.setError(null);
     this.setStatus("submitting task...");
-    this.sendDelegate("onImagePromptStart", [this]);
+    this.sendDelegateMessage("onImagePromptStart", [this]);
 
     const apiKey = await this.service().apiKeyOrUserAuthToken();
     const endpoint = 'https://api.imaginepro.ai/api/v1/nova/imagine';
@@ -481,7 +481,7 @@
    */
   onTaskSubmitted (json) {
     this.setStatus(`Task ${this.taskId()} submitted successfully`);
-    this.sendDelegate("onImagePromptTaskSubmitted", [this, json]);
+    this.sendDelegateMessage("onImagePromptTaskSubmitted", [this, json]);
     
     // Create a generation object to track the task
     const generation = this.generations().add();
@@ -509,7 +509,7 @@
     }
     
     this.setStatus("completed");
-    this.sendDelegate("onImagePromptSuccess", [this, json]);
+    this.sendDelegateMessage("onImagePromptSuccess", [this, json]);
     this.onEnd();
   }
 
@@ -519,30 +519,14 @@
    * @category Process
    */
   onError (error) {
+    assert(Type.isError(error), "error is not an Error");
     // Handle different error types
-    let errorMessage;
-    let errorObject;
-    
-    if (error instanceof Error) {
-      errorMessage = error.message;
-      errorObject = error;
-    } else if (error instanceof Event) {
-      // DOM Event - extract meaningful information
-      errorMessage = "Image loading failed";
-      errorObject = new Error(errorMessage);
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-      errorObject = new Error(errorMessage);
-    } else {
-      errorMessage = "Unknown error occurred";
-      errorObject = new Error(errorMessage);
-    }
-    
-    const s = "ERROR: " + errorMessage;
-    console.error(s);
-    this.setError(errorObject);
-    this.setStatus(s);
-    this.sendDelegate("onImagePromptError", [this]);
+
+    const errorMessage = "ERROR: " + error.message;
+    console.error(this.logPrefix(), errorMessage);
+    this.setError(error);
+    this.setStatus(errorMessage);
+    this.sendDelegateMessage("onImagePromptError", [this]);
     this.onEnd();
   }
 
@@ -554,7 +538,7 @@
   onImageLoaded (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
     this.onEnd();
   }
 
@@ -566,7 +550,7 @@
   onImageError (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
     this.onEnd();
   }
 
@@ -575,7 +559,7 @@
    * @category Process
    */
   onEnd () {
-    this.sendDelegate("onImagePromptEnd", [this]);
+    this.sendDelegateMessage("onImagePromptEnd", [this]);
     if (this.error()) {
         // Pass the error object to the reject function
         this.completionPromise().callRejectFunc(this.error());
@@ -593,7 +577,7 @@
    */
   onImageGenerationStart (generation) {
     this.setStatus("Generation polling started...");
-    this.sendDelegate("onImagePromptGenerationStart", [this, generation]);
+    this.sendDelegateMessage("onImagePromptGenerationStart", [this, generation]);
   }
 
   /**
@@ -613,7 +597,7 @@
       const generationImages = generation.images().subnodes();
       for (const genImage of generationImages) {
         const image = this.images().add();
-        image.setUrl(genImage.url());
+        image.dataURL(genImage.url());
         if (genImage.hasLoaded()) {
           // Copy the loaded image data
           image.setImageUrl(genImage.imageUrl());
@@ -626,7 +610,7 @@
       }
       
       this.setStatus("Images copied from generation");
-      this.sendDelegate("onImagePromptSuccess", [this]);
+      this.sendDelegateMessage("onImagePromptSuccess", [this]);
     } else if (generation.error()) {
       this.onError(new Error(generation.error()));
     } else {
@@ -667,7 +651,7 @@
    */
   onImageGenerationImageLoaded (/*generation, aiImage*/) {
     this.updateStatus();
-    //this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+    //this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
   }
 
   /**
@@ -678,7 +662,7 @@
    */
   onImageGenerationImageError (generation, aiImage) {
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
   }
 
   // --- SvXhrRequest Delegate Methods ---
@@ -755,29 +739,12 @@
    * @category Status
    */
   updateStatus () {
+    /*
     const s = this.images().status();
     if (s) {
       this.setStatus(s);
     }
-  }
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
+      */
   }
 
   /**

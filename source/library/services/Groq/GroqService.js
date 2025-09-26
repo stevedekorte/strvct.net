@@ -126,7 +126,7 @@
     let messages = bodyJson.messages;
 
     // remove initial system message and place it in the request json
-    //debugger;
+    
     if (messages.length == 1 && messages[0].role === this.systemRoleName()) {
       // if the last message is not a user message, we need to add a user message
       const userMessage = {

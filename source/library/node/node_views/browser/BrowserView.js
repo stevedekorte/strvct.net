@@ -140,13 +140,12 @@
         if (selectedNode) {
             const pathArray = selectedNode.nodePathArray(); 
             pathArray.shift(); // remove first component
-            //debugger;
+            
             if (pathArray.length > 1) {
                 this.selectNodePathArray(pathArray);
             }
         } else {
             console.warn("no node found for path: '" + aPath + "'");
-            debugger;
         }
         return this;
     }

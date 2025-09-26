@@ -336,7 +336,6 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-        debugger;
        // this.log(".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }

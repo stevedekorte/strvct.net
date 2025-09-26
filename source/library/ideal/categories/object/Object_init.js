@@ -30,7 +30,6 @@
             obj.finalInit();
         }
         if(!obj._hasDoneInit) {
-            debugger;
             obj.finalInit();
         }
 

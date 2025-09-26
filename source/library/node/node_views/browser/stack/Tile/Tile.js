@@ -155,11 +155,6 @@
 
         const state = this.currentThemeState()
         if (state) {
-            /*
-            if (this.thisClass() === BreadCrumbsTile) {
-                debugger;
-            }
-            */
             state.applyBorderStylesToView(this) // apply only border styles
             state.applyNonBorderStylesToView(this.contentView()) // apply non border styles
         }
@@ -247,7 +242,6 @@
      * @description Turns on user select.
      */
     turnOnUserSelect () {
-        debugger;
         super.turnOnUserSelect()
         return this
     }
@@ -750,7 +744,6 @@
           if (isStrict) {
             const error = this.svType() + " delegate missing method '" + methodName + "'";
             console.log(error);
-            debugger;
             throw new Error(error);
           }
         }
@@ -769,7 +762,6 @@
           if (isStrict) {
             const error = this.svType() + " delegate missing method '" + methodName + "'";
             console.log(error);
-            debugger;
             throw new Error(error);
           }
         }

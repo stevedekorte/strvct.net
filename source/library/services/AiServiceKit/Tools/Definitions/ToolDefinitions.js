@@ -43,14 +43,14 @@
 
   addToolsForInstance (instance) {
     // we use this to add tools for other instances besides ourselves. e.g. the Session, Campaign, or Character
-    //debugger;
+    
     //const ownerPath = this.ownershipChainPathString();
     //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.svTypeId() + " '" + instance.title() + "'");
 
     if (this.toolTargetInstances().has(instance)) {
         const errorMessage = "Tool definitions already added for instance: " + instance.svType();
         this.logDebug(errorMessage);
-        //debugger;
+        
         //throw new Error(errorMessage);
         return this;
     }

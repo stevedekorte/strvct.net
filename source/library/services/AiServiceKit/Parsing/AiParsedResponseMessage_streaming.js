@@ -10,7 +10,7 @@
 (class AiParsedResponseMessage_streaming extends AiParsedResponseMessage {
 
   initPrototypeSlots_streaming () {
-    //debugger;
+    
     // --- streaming ---
 
     /*
@@ -93,7 +93,7 @@
     }
     //console.log("onStreamEnd request.fullContent() = [" + request.fullContent() + "]");
     //this.updateContent(request.fullContent())
-    this.sendDelegate("onMessageUpdate");
+    this.sendDelegateMessage("onMessageUpdate");
     this.shutdownSentenceReader();
   }
 
@@ -190,14 +190,14 @@
 
   processStreamContent () { // see processStreamContent
     // TODO: add check if we are currently streaming repsonse and/or speaking
-    //debugger;
+    
     this.setIsComplete(false); // otherwise markAsComplete won't call delegate
     this.setupHtmlStreamReader();
     this.htmlStreamReader().beginHtmlStream();
     this.htmlStreamReader().onStreamHtml(this.content());
     this.htmlStreamReader().endHtmlStream();
     this.shutdownSentenceReader();
-    //debugger;
+    
     this.markAsComplete();
   }
 

@@ -682,7 +682,7 @@ Example generation body json:
   async start () {
     this.setError("");
     this.setStatus("Sending Generation Request...");
-    this.sendDelegate("onImagePromptStart", [this]);
+    this.sendDelegateMessage("onImagePromptStart", [this]);
 
     await this.setupXhrRequest();
 
@@ -744,7 +744,7 @@ Example generation body json:
     console.error(s);
     this.setError(request.error().message);
     this.setStatus(s);
-    this.sendDelegate("onImagePromptError", [this]);
+    this.sendDelegateMessage("onImagePromptError", [this]);
     this.onEnd();
   }
 
@@ -758,7 +758,7 @@ Example generation body json:
   onImageLoaded (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
     this.onEnd();
   }
 
@@ -770,7 +770,7 @@ Example generation body json:
   onImageError (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
     this.onEnd();
   }
 
@@ -783,29 +783,9 @@ Example generation body json:
    * @category Process
    */
   onEnd () {
-    this.sendDelegate("onImagePromptEnd", [this]);
-    //debugger;
+    this.sendDelegateMessage("onImagePromptEnd", [this]);
+    
     this.completedPromise().callResolveFunc();
-  }
-
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

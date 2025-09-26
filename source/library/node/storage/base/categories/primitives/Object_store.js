@@ -43,7 +43,7 @@ Object.defineSlots(typedArrayClass.prototype, {
             return null;
         }
 
-        //debugger;
+        
         const instance = this.preClone ? this.preClone() : new this();
         instance.init();
         // caller needs to call finalInit and afterInit

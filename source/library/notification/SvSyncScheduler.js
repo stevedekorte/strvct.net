@@ -239,7 +239,6 @@
                         "  while processing: (" + this.currentAction().description() + ")"
                     ].join("\n");
                     console.log(error);
-                    debugger;
                     throw new Error(error);
                 }
             }
@@ -418,7 +417,7 @@
  
         actions.forEach((action) => {
             if (action.isUnscheduled()) {
-               debugger;
+              throw new Error("action is unscheduled");
             } else {
                 this.setCurrentAction(action);
                 const actionError = action.tryToSend();

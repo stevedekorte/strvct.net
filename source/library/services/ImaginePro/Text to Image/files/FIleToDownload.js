@@ -242,7 +242,7 @@
     console.log(this.logPrefix() + ' Loaded Data URL: ' + dataUrl.length + " bytes");
     
     // Notify delegate if it exists
-    this.sendDelegate("onImageLoaded", [this]);
+    this.sendDelegateMessage("onImageLoaded", [this]);
   }
 
   /**
@@ -255,26 +255,7 @@
     this.setIsLoading(false);
     
     // Notify delegate if it exists
-    this.sendDelegate("onImageError", [this]);
-  }
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
+    this.sendDelegateMessage("onImageError", [this]);
   }
 
   /**

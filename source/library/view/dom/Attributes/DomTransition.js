@@ -231,7 +231,6 @@
             return this
         }
 
-        debugger;
         let v = parts.removeFirst()
         assert(!Type.isNull(v))
         this.setProperty(v)

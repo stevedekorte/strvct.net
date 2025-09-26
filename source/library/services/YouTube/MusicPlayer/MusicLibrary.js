@@ -237,7 +237,7 @@
    * @returns {MusicLibrary} The music library.
    */
   playTrackWithName (name) {
-    //debugger;
+    
     this.logDebug("playTrackWithName('" + name + "')");
     const track = this.trackWithName(name);
     if (!track) {

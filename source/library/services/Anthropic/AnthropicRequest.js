@@ -142,7 +142,6 @@
             // ingore
           } else {
             console.warn(this.svType() + " WARNING: don't know what to do with this line: [" + line + "]");
-            debugger;
           }
         }
         line = this.readNextXhrLine();
@@ -169,7 +168,6 @@
         //this.fullContent().copyToClipboard();
       }
       this.abort();
- //     debugger;
       return;
     } else if (type === "message_start") {
       // nothing to do?
@@ -206,7 +204,6 @@
       // example: {"type": "message_stop"}
     } else {
       console.warn(this.svType() + " WARNING: don't know what to do with this JsonChunk", json);
-      debugger;
     }
   }
 

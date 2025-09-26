@@ -95,7 +95,7 @@
    * Initializes the MusicTrack instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setDelegateSet(new Set());
   }
@@ -223,7 +223,7 @@
    */
   post (methodName) {
     this.postNoteNamed(methodName);
-    this.sendDelegate(methodName);
+    this.sendDelegateMessage(methodName);
     return this;
   }
 
@@ -247,25 +247,6 @@
   removeDelegate (d) {
       this.delegateSet().delete(d);
       return this;
-  }
-
-  /**
-   * Sends a method call to all delegates.
-   * @category Delegation
-   * @param {string} methodName - The name of the method to call on delegates.
-   * @param {Array} [args=[this]] - The arguments to pass to the delegate method.
-   */
-  sendDelegate (methodName, args = [this]) {
-      const sendDelegate = (d, methodName, args) => {
-          const f = d[methodName]
-          if (f) {
-            f.apply(d, args)
-          }
-      };
-
-      this.delegateSet().forEach(d => { 
-          sendDelegate(d, methodName, args); 
-      });
-  }
+  }s
 
 }).initThisClass();

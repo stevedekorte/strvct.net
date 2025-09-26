@@ -115,19 +115,6 @@
   }
 
   /**
-   * Sets the JSON archive for this instance
-   * @description Sets the JSON archive for this instance
-   * @param {Object} json - The JSON object to set as the archive
-   * @returns {JsonSchemaNode} This instance
-   * @category Data Management
-   */
-  setJsonArchive (json) {
-    debugger;
-    this.setJson(json);
-    return this;
-  }
-
-  /**
    * Updates the JSON for this instance
    * @description Updates the JSON for this instance, applying patches if the input is an array or updating the entire JSON if it's an object
    * @param {Object|Array} json - The JSON object or array of patches to apply

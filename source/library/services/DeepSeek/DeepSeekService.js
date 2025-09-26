@@ -95,7 +95,7 @@
     super.finalInit()
     this.setTitle(this.svType().before("Service"));
     this.assertHasModels();
-    //debugger;
+    
 
     // model and other info is set via DeepSeekService.json file
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
@@ -116,12 +116,12 @@
     super.setModelsJson(json);
     //console.log(this.svType() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
     this.assertHasModels();
-    //debugger;
+    
     return this;
   }
 
   setModels (aAiChatModels) {
-    //debugger;
+    
     return super.setModels(aAiChatModels);
   }
 

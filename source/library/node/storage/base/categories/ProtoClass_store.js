@@ -24,7 +24,7 @@
             return null;
         }
 
-        //debugger;
+        
         const instance = this.preClone ? this.preClone() : new this();
         instance.init();
         // caller needs to call finalInit and afterInit
@@ -103,7 +103,6 @@
                     // looks like the schema has changed 
                     // TODO: add something the schedule a didMutate?
                     console.warn("no setter for slot '"+ slot.name() + "'?");
-                    debugger;
                 } else {
                     /*if (slot.isLazy()) {
                         const pid = v["*"];
@@ -122,9 +121,9 @@
                 }
             } else {
                 console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change?");
-                //debugger;
+                
                 this.scheduleMethod("didMutate", 1000); // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete 
-                //debugger;
+                
             }
         })
 

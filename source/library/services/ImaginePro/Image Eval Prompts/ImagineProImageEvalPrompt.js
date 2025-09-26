@@ -146,7 +146,7 @@
     // Send delegate notification if we have a corresponding image node
     const imageNodes = this.images().subnodes();
     if (bestIndex < imageNodes.length) {
-        this.sendDelegate("onImagePromptImageLoaded", [this, imageNodes[bestIndex]]);
+        this.sendDelegateMessage("onImagePromptImageLoaded", [this, imageNodes[bestIndex]]);
     }
   }
 

@@ -252,7 +252,7 @@
   markAsComplete () {
     if (!this.isComplete()) {
       this.setIsComplete(true); // will send onMessageComplete
-      //this.sendDelegate("onMessageComplete");
+      //this.sendDelegateMessage("onMessageComplete");
     }
     return this;
   }
@@ -264,7 +264,7 @@
   }
 
   didUpdateSlotError (/*oldValue, newValue*/) {
-    this.sendDelegate("onMessageError", this);
+    this.sendDelegateMessage("onMessageError", this);
   }
 
   /**
@@ -317,9 +317,9 @@
    * @category State
    */
   didUpdateSlotIsComplete (oldValue, newValue) {
-    //debugger;
+    
     if(newValue && this.conversation()) { // so not called during deserialization
-      //debugger;
+      
       this.scheduleMethod("onComplete");
     }
   }
@@ -339,7 +339,7 @@
    */
   onComplete () {
     // to be overridden by subclasses
-    this.sendDelegate("onMessageComplete");
+    this.sendDelegateMessage("onMessageComplete");
     if (this.shouldRequestResponseOnComplete()) {
       this.requestResponse();
     }
@@ -352,7 +352,6 @@
    * @category UI
    */
   valueIsEditable () {
-    debugger;
     return this._valueIsEditable && !this.isComplete();
   }
 
@@ -363,7 +362,7 @@
    * @category UI
    */
   setSendInConversation (/*v*/) {
-    debugger;
+    // no-op
   }
 
   /**
@@ -565,28 +564,7 @@
   }
 
   /**
-   * Send a method call to the delegate.
-
-   * @param {String} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {Boolean} True if the method was called successfully, false otherwise.
-   * @category Delegate
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
    * Clean up if the message is incomplete.
-
    * @category Maintenance
    */
   cleanupIfIncomplete () {

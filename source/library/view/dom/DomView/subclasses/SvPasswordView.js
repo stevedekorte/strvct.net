@@ -302,14 +302,4 @@
         }
     }
 
-    /*
-    setFontStyle (style) {
-        if (style === "normal") {
-            debugger;
-        }
-        super.setFontStyle(style);
-        return this;
-    }
-    */
-
 }.initThisClass());

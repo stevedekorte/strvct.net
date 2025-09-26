@@ -244,7 +244,7 @@
 
       // Step 1: Generate initial image with OpenAI
       this.setStatus("generating initial image with OpenAI...");
-      this.sendDelegate("onImageGenerationPromptLoading");
+      this.sendDelegateMessage("onImageGenerationPromptLoading");
       
       openAiPrompt.setDelegate(this);
       await openAiPrompt.generate();
@@ -309,24 +309,24 @@
         throw new Error("No images found in generation");
       }
       
-      //debugger;
+      
 
       if (finalImage && finalImage.imageUrl()) {
         this.setResultDataUrl(finalImage.imageUrl());
         this.setStatus("style transfer complete");
         
-        //this.sendDelegate("onImageGenerationPromptImageLoaded");
+        //this.sendDelegateMessage("onImageGenerationPromptImageLoaded");
       } else {
         throw new Error("Failed to get final image data URL from Leonardo");
       }
-      this.sendDelegate("onImagePromptImageLoaded", [this, finalImage]);
-      this.sendDelegate("onImagePromptEnd", [this]);
+      this.sendDelegateMessage("onImagePromptImageLoaded", [this, finalImage]);
+      this.sendDelegateMessage("onImagePromptEnd", [this]);
 
     } catch (error) {
       this.setError(error.message);
       this.setStatus("failed");
       
-      this.sendDelegate("onImagePromptError");
+      this.sendDelegateMessage("onImagePromptError");
     }
   }
 
@@ -508,25 +508,6 @@
     }
     
     return "Ready";
-  }
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
   }
 
 }.initThisClass());

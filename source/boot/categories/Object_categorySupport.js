@@ -169,7 +169,6 @@
                 }
 
                 if (objType) {
-                    //  debugger;
                     slotValue.displayName = objType + "." + slotName
                     //console.log("slotValue.displayName: ", slotValue.displayName)
                 } else {
@@ -265,7 +264,6 @@
         let hasTwoPartName = nameParts.length === 2;
         if (!hasTwoPartName) {
             const msg = "category class name '" + this.name + "' doesn't match expected pattern of ClassName_categoryName.";
-            debugger;
             throw new Error(msg);
         }
 

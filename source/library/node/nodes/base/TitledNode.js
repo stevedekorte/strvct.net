@@ -335,11 +335,14 @@
                 try {
                     newSubnode.copyFromAndIgnoreMissingSlots(subnode);
                 } catch (error) {
+                    /*
                     if (error instanceof MissingSlotError) {
-                        debugger;
+                        // ?
                     } else {
                         error.rethrow();
                     }
+                    */
+                    error.rethrow();
                 }
                 this.replaceSubnodeWith(subnode, newSubnode);
                 this.removeOtherSubnodesWithSameTitle(newSubnode);

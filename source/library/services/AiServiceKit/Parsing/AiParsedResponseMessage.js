@@ -109,7 +109,7 @@
 
 
   isVisible () {
-    //debugger;
+    
     return super.isVisible() && (this.role() !== "system" /*|| SvApp.shared().developerMode() */);
   }
 
@@ -152,7 +152,7 @@
 
   updateContent (html) {
     this.setContent(html);
-    this.sendDelegate("onMessageUpdate");
+    this.sendDelegateMessage("onMessageUpdate");
     return this;
   }
 
@@ -247,7 +247,6 @@
             errorMessage += "If you have sent the tool call for which this was the result, then ignore your own response and wait from the tool-call-result from the client user response. ";
             errorMessage += "Critical: you MUST NOT make use of <tool-call-result> tag in your response.";
             this.reportErrorToAi(errorMessage);
-            debugger; 
         }
       }
     }
@@ -281,7 +280,7 @@
 
   reportErrorToAi (errorMessage) {
     console.warn(this.svType() + ".reportErrorToAi(\"" + errorMessage + "\")");
-    debugger;
+
     if (this.conversation().assistantToolKit) {
         // the assistant tool kit will send the error message after the AI's current response is complete
         const assistantToolKit = this.conversation().assistantToolKit();

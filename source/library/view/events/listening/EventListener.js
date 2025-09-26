@@ -327,13 +327,13 @@
                 this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
                 /*
                 if (this.useCapture()) {
-                    debugger;
+                   
                 }
                 */
             }
         } else {
             //console.log(this.delegate().svDebugId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
-            //debugger;
+            
         }
         return this
     }

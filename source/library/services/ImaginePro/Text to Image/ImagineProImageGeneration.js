@@ -171,7 +171,7 @@
   startPolling () {
     this.setPollAttempts(0);
     this.setStatus("preparing to poll for task status...");
-    this.sendDelegate("onImageGenerationStart", [this]);
+    this.sendDelegateMessage("onImageGenerationStart", [this]);
     
     // Add initial delay before first poll to avoid race condition
     // ImaginePro needs a moment to register the task before we can poll it
@@ -234,7 +234,7 @@
           this.setStatus("failed");
           this.setError(new Error(errorMsg));
           this.stopPolling();
-          this.sendDelegate("onImageGenerationError", [this]);
+          this.sendDelegateMessage("onImageGenerationError", [this]);
         } else {
           // Other errors, keep polling
           this.schedulePoll();
@@ -252,10 +252,10 @@
    * @category Process
    */
   async handlePollResponse (response) {
-    const status = response.status;
-    const isDone = ["DONE", "completed", "success"].includes(status);
+    const status = response.status;// PROCESSING, DONE, FAILED, etc.
+    const isDone = ["DONE"].includes(status);
     const isError = ["failed", "error", "FAIL"].includes(status);
-    const isPending = ["pending", "processing", "PROCESSING", "in_progress"].includes(status);
+    const isPending = [ "PROCESSING"].includes(status);
     
     // ImaginePro returns "DONE" when completed
     if (isDone) {
@@ -274,7 +274,6 @@
 
   async handlePollDone (response) {
     this.setStatus("completed");
-      
     // ImaginePro returns images directly in response.images
     if (response.images && response.images.length > 0) {
        const promises = response.images.map(async (imageUrl, index) => {   
@@ -288,7 +287,7 @@
     }
     
     this.stopPolling();
-    this.sendDelegate("onImageGenerationEnd", [this]);
+    this.sendDelegateMessage("onImageGenerationEnd", [this]);
   }
 
   async handlePollError (response) {
@@ -302,7 +301,7 @@
                     response.failureReason || response.reason || "Task failed";
     this.setError(new Error(errorMsg));
     this.stopPolling();
-    this.sendDelegate("onImageGenerationError", [this]);
+    this.sendDelegateMessage("onImageGenerationError", [this]);
   }
 
   /**
@@ -316,7 +315,7 @@
       this.setStatus("timeout");
       this.setError(new Error("Task timed out after " + this.maxPollAttempts() + " attempts"));
       this.stopPolling();
-      this.sendDelegate("onImageGenerationError", [this]);
+      this.sendDelegateMessage("onImageGenerationError", [this]);
     } else {
       const timeoutId = setTimeout(() => this.pollTaskStatus(), this.pollInterval());
       this.setPollTimeoutId(timeoutId);
@@ -329,7 +328,7 @@
    * @category Delegation
    */
   onImageLoaded (aiImage) {
-    this.sendDelegate("onImageGenerationImageLoaded", [this, aiImage]);
+    this.sendDelegateMessage("onImageGenerationImageLoaded", [this, aiImage]);
   }
 
   /**
@@ -338,26 +337,7 @@
    * @category Delegation
    */
   onImageError (aiImage) {
-    this.sendDelegate("onImageGenerationImageError", [this, aiImage]);
-  }
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
+    this.sendDelegateMessage("onImageGenerationImageError", [this, aiImage]);
   }
 
   /**

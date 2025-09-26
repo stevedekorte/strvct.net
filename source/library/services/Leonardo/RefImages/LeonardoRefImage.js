@@ -255,14 +255,6 @@
     this.setNodeFillsRemainingWidth(true);
   }
 
-  /*
-  setDataUrl (dataUrl) {
-    debugger;
-    this._dataUrl = dataUrl;
-    return this;
-  }
-  */
-
   /**
    * @description Gets the subtitle for the image.
    * @returns {string} The status of the image.
@@ -471,7 +463,7 @@
   async uploadInitImageToS3 () {
     this.setStatus("uploading image to S3...");
 
-    //debugger;
+    
     const initImageDict = this.initImageDict();
     // hack to deal with storage bug
     if (Type.isString(initImageDict.fields)) {
@@ -516,7 +508,6 @@
       this.setUpdloadedDate(new Date());
       this.setStatus("complete");
     } else {
-      debugger;
       this.setHasUploaded(false);
       this.setError(`S3 upload failed: ${xhr.error().message}`);
       this.setStatus("failed");

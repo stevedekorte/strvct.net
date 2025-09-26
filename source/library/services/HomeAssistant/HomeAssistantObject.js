@@ -233,7 +233,7 @@
     let name = this.name();
     const owner = this.findOwner();
     //console.log("", this.parentChainPath());
-    //debugger;
+    
     if (owner) {
       const prefix = owner.title();
       if (name.beginsWith(prefix) && name !== prefix) {

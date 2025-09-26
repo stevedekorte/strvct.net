@@ -155,7 +155,8 @@
      */
     static shared () {
         if (!this.isSingleton()) {
-            console.warn("WARNING: called " + this.svType() + ".shared() but class not declared a singleton!");
+            const errorMessage = "WARNING: called " + this.svType() + ".shared() but class not declared a singleton!";
+            console.warn(errorMessage);
             /*
                 // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
                 
@@ -164,7 +165,7 @@
                     return this
                 }
             */
-            debugger;
+            throw new Error(errorMessage);
         }
 
         if (!this.hasShared()) {
@@ -575,7 +576,6 @@
             }
             const msg = this.svType() + " newSlot('" + slotName + "') - slot already exists";
             console.log(msg);
-            debugger;
             this.hasSlot(slotName);
             throw new Error(msg);
         }
@@ -872,14 +872,8 @@
      * Initializes the slots of the instance.
      * @category Initialization
      */
-    initializeSlots () {
-        //debugger;
+    initializeSlots () {  
         this.thisPrototype().allSlotsMap().forEach(slot => {
-            /*
-            if (slot.name() === "subnodes") {
-                debugger;
-            }
-            */
             slot.onInstanceInitSlot(this);
         });
     }
@@ -903,7 +897,7 @@
             const slot = this.thisPrototype().allSlotsMap().get(slotName);
             if (keys.includes("sessions") && keys.includes("subnodes")) {
                 if (["sessions", "subnodes"].includes(slotName)) {
-                    debugger;
+                    throw new Error("finalInitSlots received sessions and subnodes");
                 }
             }
             slot.onInstanceFinalInitSlot(this);
@@ -1023,7 +1017,6 @@
             //console.log("sansName:", sansName)
             const sansProto = Object.getClassNamed(sansName); // hack to deal with nodeViewClass issues
             if (sansProto) {
-              //  debugger;
                 return sansProto;
             }
         }
@@ -1111,7 +1104,8 @@
      */
     shared () {
         if (!this.isSingleton()) {
-            console.warn("WARNING: called " + this.svType() + ".shared() but class not declared a singleton!");
+            const errorMessage = "WARNING: called " + this.svType() + ".shared() but class not declared a singleton!";
+            console.warn(errorMessage);
             /*
                 // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
                 
@@ -1120,7 +1114,7 @@
                     return this
                 }
             */
-            debugger;
+            throw new Error(errorMessage);
         }
 
         if (!this.hasShared()) {
@@ -1226,7 +1220,7 @@
             throw new Error("Method " + methodName + " is not a function on " + this.svType());
         }
         return value;
-    } 
+    }
 
     /**
      * Gets the methods map.
@@ -1304,6 +1298,41 @@
      */
     shortId () {
         return this.puuid().slice(-4);
+    }
+
+    // ---- delegate ----
+
+    sendDelegateMessage (methodName, args = [this]) {
+
+        const sendDelegateFunc = (d, methodName, args) => {
+            const f = d[methodName];
+            if (f) {
+              f.apply(d, args);
+            }
+        };
+
+        if (this.respondsTo("delegate")) {
+            const d = this.delegate();
+            if (d) {
+                sendDelegateFunc(d, methodName, args);
+            }
+        }
+        
+
+        if (this.respondsTo("delegateSet")) {
+            const dset = this.delegateSet();
+            if (dset) {
+                dset.forEach(d => {
+                    sendDelegateFunc(d, methodName, args);
+                });
+            }
+        }
+    }
+
+    receiveDelegateMessage (methodName, args = [this]) {
+        if (this.respondsTo(methodName)) {
+            this[methodName].apply(this, args);
+        }
     }
 
 }.initThisClass());

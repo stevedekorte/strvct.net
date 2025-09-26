@@ -142,7 +142,7 @@
 
   jsonSchemaValidator () {
     if (!this._jsonSchemaValidator) {
-        //debugger;
+        
         this._jsonSchemaValidator = new AjvValidator();
     }
     return this._jsonSchemaValidator;
@@ -248,7 +248,6 @@
         }
     };
     this.log("schema: ", JSON.stringify(schema, null, 2));
-    debugger;
     return schema;
   }
     */
@@ -296,7 +295,6 @@
         const e = new Error(validator.errorMessageForLLM());
         this.logError("Tool definition JSON Schema is invalid: " + e.message);
         this.logError("Schema that failed:", JSON.stringify(rootSchema, null, 2));
-        debugger;
         throw e;
     }
   }
@@ -354,7 +352,7 @@
       if (!Type.isString(key)) {
         this.logWarn("key: ", key);
         this.logWarn("value: ", value);
-        debugger;
+        throw new Error("key is not a string");
       }
       assert(Type.isString(key));
       assert(Type.isString(value));

@@ -134,7 +134,6 @@
     async promiseOnOpen () {
         /*
         if (false) {
-            debugger;
             this.logDebug("onOpen() - CLEARING BEFORE OPEN");
              await this.promiseClear();
         } 

@@ -253,7 +253,7 @@
   prepareToSendRequest (aRequest) {
     // Chat endpoint is now built dynamically in getChatEndpointWithKey()
 
-    //debugger;
+    
     const bodyJson = aRequest.bodyJson();
     const geminiBody = {};
 
@@ -274,7 +274,7 @@
     
     // remove initial system message and place it in the request json
 
-    //debugger;
+    
     if (messages.length > 0) {
       const firstMessage = messages.first();
       if (firstMessage.role === this.systemRoleName()) {
@@ -302,13 +302,13 @@
         }
       };
     });
-    //debugger;
+    
 
     // remove messages with empy content
     messages = messages.filter((message) => { return message.content.length > 0; });
 
     //console.log("geminiBody", JSON.stringify(geminiBody, null, 2));
-    //debugger;
+    
   
     aRequest.setBodyJson(geminiBody);
   }

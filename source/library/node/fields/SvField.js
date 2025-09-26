@@ -347,7 +347,7 @@
         }
 
         if (newValue) {
-            //debugger;
+            
             this.setDidUpdateNodeObs(this.watchForNoteFrom("onUpdatedNode", newValue));
             //this.didUpdateNodeObs().setIsDebugging(true);
             this.scheduleMethod("syncFromTarget");
@@ -362,27 +362,18 @@
         return this
     }
 
-    /*
-    didUpdateTargetNode (aNote) {
-        debugger;
-    }
-    */
 
     /**
      * @description Called when the node is updated.
      * @param {SvSummaryNode} aNote - The note.
      */
     onUpdatedNode (aNote) {
-        if (this.isKindOf(SvActionField)) {
-            //debugger;
-        }
-
-        assert(aNote);
+        assert(aNote, "aNote is null");
         // if it has a note, it was a post sent through notification center that the target node changed
         const aNode = aNote.sender()
         if (aNode === this.target()) {
             // refresh
-            //debugger;
+            
             //this.log(".didUpdateNode " + aNode.svTypeId())
             this.syncFromTarget()
         }
@@ -431,8 +422,9 @@
             target.didUpdateNode(this.valueMethod()); // shouldn't this be done by the setter?
             this.validate();
         } else {
-            console.warn(this.svType() + " target " + target.svType() + " missing slot '" + setter + "'");
-            debugger;
+            const errorMessage = this.svType() + " target " + target.svType() + " missing slot '" + setter + "'";
+            console.warn(errorMessage);
+            throw new Error(errorMessage);
         }
 		
         return this;
@@ -506,7 +498,6 @@
      * @param {Object} aFieldView - The field view.
      */
     didUpdateView (/*aFieldView*/) {  
-        debugger;      
         let parentNode = this.parentNode();
         if (!parentNode) {
             parentNode = this.target();
@@ -607,14 +598,19 @@
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
         if (!didSet) {
             if (this.target()) {
-                console.warn("Field unable to set value using " + this.target().svTypeId() + "' '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
+                const errorMessage = "Field unable to set value using " + this.target().svTypeId() + "' '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/");
+                console.warn(errorMessage);
+                throw new Error(errorMessage);
             } else {
-                console.warn("Field unable to set value using '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/"));
+                const errorMessage = "Field unable to set value using '" + this.key() + "' setJson(" + json + ") at path: " + jsonPathComponents.join("/");
+                console.warn(errorMessage);
+                throw new Error(errorMessage);
             }
-            debugger;
+            /*
             this.setValue(json);
             let v = this.value();
             assert(v === json, "failed to set value");
+            */
         }
         assert(didSet);
         return this;

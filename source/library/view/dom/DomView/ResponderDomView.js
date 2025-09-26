@@ -191,7 +191,7 @@
         }
 /*
         if (this.isActiveElementAndEditable()) {
-            //debugger;
+            
         }
 */
         updateElementHTML(this.element(), newValue);

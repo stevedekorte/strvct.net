@@ -95,18 +95,15 @@
   }
 
   setJsonArchive () {
-    debugger;
-    throw new Error("don't use this")
+    throw new Error("don't use this");
   }
 
   jsonArchive () {
-    debugger;
-    throw new Error("don't use this")
+    throw new Error("don't use this");
   }
 
   json () {
-    debugger;
-    throw new Error("don't use this")
+    throw new Error("don't use this");
   }
 
   // -----------------------
@@ -149,7 +146,7 @@
       const notFound = !keys.includes(sn.title());
       if (notFound) {
         console.warn(this.svType() + ".setJson() did not find key: ", sn.title(), " at path: " + jsonPathComponents.join("/"));
-        //debugger;
+        
       }
       return notFound;
     });
@@ -204,7 +201,7 @@
 
                 // since jsonId is created on finalInit, this could be set even if it really should be null
                 //console.warn(this.svType() + ".setJson() found slot with jsonId mismatch: " + node.jsonId() + " !== " + v.jsonId, " at path: " + jsonPathComponents.concat(k).join("/"));
-                //debugger;
+                
                 node.setJson(v, jsonPathComponents.concat(k));
               }
             } else {
@@ -269,9 +266,9 @@
         const errorMessage = "WARNING: " + this.svType() + ".setJson() did not find slot: " + k + " at path: " + jsonPathComponents.concat(k).join("/");
         console.warn(errorMessage);
         // also add the warning to the error log
-        //debugger; 
+         
         throw new Error(errorMessage);
-        //debugger;
+        
       }
     });
     return this;
@@ -290,7 +287,6 @@
       this.subnodes().filter(sn => sn.title() !== "jsonString").map(sn => {
         if (sn.asJson && sn.asJson() !== undefined) { // skip things like images
           console.log("calcJson() " + this.svType() + " subnode: " + sn.title());
-          debugger;
           dict[sn.title()] = sn.asJson()
         }
       });
@@ -374,7 +370,6 @@
         slot.setSlotType(defaultType); // careful with this!
       } else {
         console.warn(this.svType() + ".configureSlotForJsonField('" + slot.name() + "') slotType is null and defaultType is not a JSON type: ", defaultType);
-        debugger;
         slot.setSlotType("String");
       }
     }

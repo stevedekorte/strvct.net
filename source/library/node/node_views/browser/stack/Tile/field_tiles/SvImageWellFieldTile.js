@@ -63,7 +63,6 @@
     }
 
     setDataUrl (dataUrl) {
-        debugger;
         this.setValue(dataUrl);
         return this;
     }

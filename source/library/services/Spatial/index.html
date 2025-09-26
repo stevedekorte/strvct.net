@@ -84,7 +84,7 @@ window.onload = function () {
         }, { passive: false });
 
         // ----------------------------------------------------------------------
-        //debugger;
+        
 
         // Load the .DAE file
         assimpjs ().then (function (ajs) {
@@ -186,7 +186,7 @@ window.onload = function () {
                         let materialData = objJson.materials[meshData.materialindex];
                         //console.log("meshData.materialindex: ", meshData.materialindex);
                         let material = new BABYLON.StandardMaterial("materialName", scene);
-                        //debugger;
+                        
                         // Set material properties based on materialData
                         // e.g., material.diffuseColor = new BABYLON.Color3(...);
 
@@ -243,7 +243,6 @@ window.onload = function () {
 
                 /*
                 const applyMaterials2 = function (objJson, mtlJson, scene) {
-                    debugger;
                     let materials = {};
 
                     // Parse materials from MTL JSON
@@ -268,8 +267,6 @@ window.onload = function () {
                         });
                     }
                     
-                    debugger;
-
                     // Construct meshes and apply materials
                     objJson.meshes.forEach(meshData => {
                         let vertices = meshData.vertices;
@@ -296,7 +293,7 @@ window.onload = function () {
                 }
 
             // Example usage
-            //debugger;
+            
             //console.log("applyMaterials2:"  ,applyMaterials2);
             applyMaterials2(objJson, mtlJson, scene);
 */

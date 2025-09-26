@@ -36,7 +36,6 @@
      * @returns {TilesView_selection} The current instance.
      */
     didUpdateSlotIsSelected (oldValue, newValue) {
-        debugger;
         super.didUpdateSlotIsSelected(oldValue, newValue);
 
         if (this.isSelected()) {

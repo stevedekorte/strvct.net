@@ -630,14 +630,14 @@
         this.setError(new Error(m));
       }
       this.setStatus("Failed: " + this.causeOfError());
-      //debugger;
-      this.sendDelegate("onRequestFailure", [this]);
+      
+      this.sendDelegateMessage("onRequestFailure", [this]);
     } else {
       this.setStatus("Succeeded");
-      this.sendDelegate("onRequestSuccess", [this]);
+      this.sendDelegateMessage("onRequestSuccess", [this]);
     }
 
-    this.sendDelegate("onRequestComplete", [this]);
+    this.sendDelegateMessage("onRequestComplete", [this]);
     
     // Resolve the completion promise to signal the request is done
     this.completionPromise().callResolveFunc();
@@ -650,7 +650,7 @@
    */
   onXhrLoadStart (/*event*/) {
     this.setStatus("request started");
-    this.sendDelegate("onRequestBegin", [this]);
+    this.sendDelegateMessage("onRequestBegin", [this]);
   }
 
   /**
@@ -665,7 +665,7 @@
     console.log(this.logPrefix(), ".onXhrProgress() read [" + latestString + "]");
     */
     this.setStatus("progress: " + this.contentByteCount() + " bytes");
-    this.sendDelegate("onRequestProgress", [this]);
+    this.sendDelegateMessage("onRequestProgress", [this]);
   }
 
   // --- status and error handling ---
@@ -784,7 +784,7 @@
    * @param {Event} event 
    */
   onXhrLoadEnd (/*event*/) {
-    //debugger;
+    
     if (this.didAbort()) {
       return;
     }
@@ -935,10 +935,9 @@
     this.setError(e);
     this.setStatus("ERROR: " + msg);
     console.warn("=== ERROR while sending", this.logPrefix(), " === \n" + this.description() + "\n=====================================================\n");
-    debugger;
-    //debugger;
+    
     //const didHandle = 
-    this.sendDelegate("onRequestError", [this, e]);
+    this.sendDelegateMessage("onRequestError", [this, e]);
 
     if (e) {
       console.warn("**WARNING**:", this.logPrefix(), this.svDebugId() + " " + e.message);
@@ -955,7 +954,7 @@
   onXhrAbort (/*event*/) {
     this.setDidAbort(true);
     this.setStatus("aborted");
-    this.sendDelegate("onRequestAbort");
+    this.sendDelegateMessage("onRequestAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
     
     // Also resolve the completion promise when aborted
@@ -970,7 +969,6 @@
   onXhrTimeout (error) {
     assert(error instanceof Error, "onXhrTimeout error not instance of Error");
 
-    debugger;
     if (!SvPlatform.isOnline()) {
         error.message = "Internet connection down. " + error.message;
     }
@@ -981,13 +979,13 @@
     console.log(this.logPrefix(), "----------------------------------------");
     this.setStatus("ERROR: " + error.message);
     console.error("**ERROR**:", this.logPrefix(), ".onXhrTimeout" + error.message);
-    this.sendDelegate("onRequestTimeout", [this, error]);
+    this.sendDelegateMessage("onRequestTimeout", [this, error]);
     
     if (error) {
       console.warn("**WARNING**:", this.logPrefix(), this.svDebugId() + " " + error.message);
     }
     
-    if (!this.sendDelegate("onRequestError", [this, error])) {
+    if (!this.sendDelegateMessage("onRequestError", [this, error])) {
         // no onRequestError delegate, so throw a descriptive error
         this.throwDescriptiveError(this.causeOfError() + ". ");
     }
@@ -1242,26 +1240,6 @@
   shutdown () {
     this.abort();
     return this;
-  }
-
-  /**
-   * @category XHR
-   * @description Sends a delegate message
-   * @param {string} methodName 
-   * @param {Array} args 
-   * @returns {boolean}
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        //if (this.isDebugging()) console.log(this.logPrefix(), this.svTypeId() + " sending " + d.svTypeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")");
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
   }
 
   // --- error handling ---

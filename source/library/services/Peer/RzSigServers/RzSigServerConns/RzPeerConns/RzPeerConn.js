@@ -789,7 +789,7 @@
       this.send({ name: "RzPeerConnPing" });
       this.setupNextPingTimeout();
     } else {
-      debugger;
+      // no-op
     }
   }
 

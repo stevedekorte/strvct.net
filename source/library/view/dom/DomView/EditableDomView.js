@@ -230,7 +230,7 @@
      * @category Event Handling
      */
     onPaste (event) {
-        //debugger;
+        
         // prevent pasting text by default after event
         event.preventDefault();
 

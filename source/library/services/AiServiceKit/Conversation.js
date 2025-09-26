@@ -98,16 +98,15 @@
       this.messages().forEach(m => {
         //assert(this.subnodeClasses().includes(m.thisClass()), m.svType() + " is not in " + JSON.stringify(this.subnodeClasses().map(c => c.svType())));
         if(!m.setConversation) {
-          debugger;
           throw new Error(m.svType() + " missing setConversation() ");
         }
       });
     } catch (error) {
-      //debugger;
+      
       console.log(this.svType() + " finalInit error: " + error.message);
       this.removeAllSubnodes();
     }
-    //debugger;
+    
     this.messages().forEach(m => m.setConversation(this));
     this.setNodeCanAddSubnode(false);
     //this.setNodeFillsRemainingWidth(true);
@@ -208,7 +207,6 @@
    * @category Input Handling
    */
   onChatInputValue (v) {
-    debugger;
     if (!this.acceptsChatInput()) {
       console.warn(this.svType() + " does not accept chat input");
       return;
@@ -235,7 +233,7 @@
    * @category Input Handling
    */
   clearInput () {
-    debugger; // shouldn't need this as TextField has option to do this
+    // shouldn't need this as TextField has option to do this
   }
 
   /**

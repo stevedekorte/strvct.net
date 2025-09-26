@@ -85,8 +85,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("isWeak", false); // should hook getter
 
         // debugging 
-        //this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
-        //this.simpleNewSlot("doesBreakInSetter", false) // uses "debugger;"
+        //this.simpleNewSlot("doesBreakInGetter", false) // uses debugger
+        //this.simpleNewSlot("doesBreakInSetter", false) // uses debugger
 
         // copying behavior
         //this.simpleNewSlot("initOp", "copyValue")
@@ -274,7 +274,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             const isValid = this.validateValue(initValue);
             if (!isValid) {
                 const errorMessage = "Slot '" + this.name() + "' initValue of: " + Type.typeDescription(initValue) + " is not in valid values: " + JSON.stableStringifyWithStdOptions(this._validValues);
-                debugger;
                 this.validateValue(initValue);
                 throw new Error(errorMessage);
             }
@@ -751,12 +750,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         if (slotType /*&& this.canInspect()*/) {
             const fieldName = this.fieldInspectorViewClassName();
             let proto = SvGlobals.globals()[fieldName];
-
-            /*
-            if (fieldName.includes("Date")) {
-                debugger;
-            }
-            */
             
             if (!proto) {
                 //let nodeName = "Sv" + slotType + "Node";
@@ -778,7 +771,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 
 
                 if (Type.isBoolean(this.valueAllowsHtml())) {
-                    //debugger;
+                    
                     field.setValueAllowsHtml(this.valueAllowsHtml());
                 }
 
@@ -801,7 +794,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
                 if (this.validItems()) {
                     if (field.setValidItems === undefined) {
-                        debugger;
                         throw new Error("field " + field.svType() + " does not support setValidItems.");
                     }
                     field.setValidItems(this.validItems());
@@ -897,7 +889,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     if (Type.isClass(value)) { 
                         // ok to copy value
                     } else if (!Type.isUndefined(value)) {
-                        debugger;
+                        throw new Error("copyFrom received a value that is not a class or undefined: " + Type.typeDescription(value));
                     }
                 }
             }
@@ -1112,7 +1104,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 if(!Type.isArray(v)) {
                     assert(!Type.isArray(v));
                     console.warn("slot '" + this.name() + "' allows multiple picks, but value is not an array: " + Type.typeDescription(v));
-                    debugger;
                     return false;
                 }
                 return v.every(value => valueIsInValidItems(value));
@@ -1148,7 +1139,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     return true;
                 }
                 console.log("Slot '" +this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
-                //debugger;
+                
                 Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
                 return false;
             }
@@ -1183,18 +1174,18 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
                 if (!isValid) {
-                    const errorMsg = "WARNING: " + this.svType() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
-                    console.log(errorMsg);
-                    if (!["challengeRating", "spellcastingAbility"].contains(slot.name())) {
-                        debugger;
+                    const errorMsg = "WARNING: " + this.logPrefix() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
+                    console.warn(errorMsg);
+                    /*
                         slot.validateValue(newValue);
-                    }   
+                    */
 
                     const initValue = slot.initValue();
                     if (initValue) {
                         if (!slot.validateValue(initValue)) {
-                            console.log("RESOLUTION: initValue is not valid, so we can't use it");
-                            debugger;
+                            const errorMsg = "WARNING: " + this.logPrefix() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
+                            console.warn(errorMsg);
+                            throw new Error(errorMsg);
                         }
                     }
 
@@ -1231,7 +1222,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     if (this.shouldStore()) {
                         const store = this.defaultStore();
                         if (store.hasActiveObject(this)) {
-                            //debugger;
+                            
                             store.forceAddDirtyObject(this); // not ideal, but let's see if it works
                         }
                     }
@@ -1374,7 +1365,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             if (oldValue && oldValue.svType() !== finalInitProto.svType()) {
                 const warning = "slot '" + this.name() + "' finalInitProto type (" + finalInitProto.svType() + ") does not match existing value (" + oldValue.svType() + ") from Store";
                 console.warn(warning);
-                debugger;
                 //throw new Error(warning);
                 oldValue = null; // let the code below override it
             }
@@ -1819,12 +1809,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         }
 
         if (slotType === "JSON Object") {
-            debugger;
+            // ?
+
         }
 
 
         if (slotType.hasSuffix(" Class")) {
-            debugger;
+            // ?
         }
 
         if (slotType === "Action") {

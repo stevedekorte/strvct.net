@@ -285,14 +285,12 @@
         super.init()
         this.setStyleCacheMap(null) // null is used to indicate cache needs to be built when accessed
         this.setShouldStore(true)
-      //  debugger;
         this.setShouldStoreSubnodes(false) 
 
         let slot = this.thisPrototype().slotNamed("subnodes")
         if (slot.shouldStoreSlotOnInstance(this)) {
-            debugger;
             let b = slot.shouldStoreSlotOnInstance(this)
-            assert(!b)
+            assert(!b, "problem?");
         }
         this.setNodeCanAddSubnode(false)
         this.setSubtitle("state")
@@ -363,7 +361,7 @@
 
         // need this because the fonts typically aren't loaded until after this prototype is initialized
         this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((/*instance*/) => { 
-            //debugger;
+            
             const values = SvResources.shared().fonts().allFontNames();
             values.unshift("inherit");
             return values;
@@ -530,7 +528,7 @@
      * @returns {SvThemeState} The instance.
      */
     applyNonBorderStylesToView (aView) {
-        //debugger;
+        
         this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView);
         return this;
     }
@@ -585,7 +583,6 @@
     onDidEdit () {
         this.log(".onDidEdit");
         this.setStyleCacheMap(null);
-        debugger;
         return false
     }
 

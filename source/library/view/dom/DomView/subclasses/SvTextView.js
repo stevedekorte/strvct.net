@@ -285,7 +285,6 @@
      * @returns {SvTextView} The text field.
      */
     startMutationObserver () {
-        debugger;
         if (!this.mutationObserver()) {
             const config = { 
                 subtree: true,
@@ -450,7 +449,7 @@
     syncPlaceholderText () {
         const pt = this.placeholderText();
         if (pt && pt.length > 0) {
-            //debugger;
+            
             this.element().setAttribute('data-placeholder', pt);
             assert(this.element().getAttribute('data-placeholder') === pt);
         } else {
@@ -469,7 +468,7 @@
 
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {
-                //debugger;
+                
                 this.addDefaultDoubleTapGesture();
                 this.setContentEditable(false);
             } else {
@@ -511,7 +510,7 @@
      * @returns {SvTextView} The text field.
      */
     onDoubleTapComplete (/*aGesture*/) {
-        //debugger;
+        
         //this.log(this.value() + " onDoubleTapComplete");
         // make content editable and select text
         //this.logDebug(".onDoubleTapComplete()");
@@ -599,7 +598,7 @@
      * @returns {SvTextView} The text field.
      */
     blur () {
-        //debugger;
+        
         //this.log(this.value() + " blur");
         return super.blur();
     }
@@ -686,7 +685,7 @@
 
         /*
         if (this.innerHtml() !== newValue) {
-            debugger;
+            throw new Error(this.svDebugId() + " setValue innerHtml !== newValue");
         }
         */
         return this;
@@ -1102,10 +1101,6 @@
      * @returns {SvTextView} The text field.
      */
     setThemeClassName (aName) {
-        if (this.themeClassName() === "FieldKey") {
-            debugger;
-        }
-
         super.setThemeClassName(aName);
         if (aName === "FieldKey") {
             assert(this.themeClassName() === "FieldKey");
@@ -1118,11 +1113,6 @@
      * @returns {SvTextView} The text field.
      */
     applyStyles () {
-        /*
-        if (this.themeClassName() === "FieldKey") {
-            debugger;
-        }
-        */
         super.applyStyles();
         return this;
     }
@@ -1210,7 +1200,7 @@
             this.stopSpeechToText();
             event.stopPropagation();
         } else {
-            debugger;
+            // no-op
         }
     }
 
@@ -1229,7 +1219,7 @@
         if (!this._speechSession) {
             if (SvGlobals.globals()["SpeechToTextSession"]) {
                 this._speechSession = SpeechToTextSession.clone().setDelegate(this);
-                //debugger;
+                
                 this._speechSession.start();
             } else {
                 console.warn("no SpeechToTextSession class available");

@@ -334,7 +334,7 @@
     console.log('Image Data URL: ' + imageDataUrl.length + " bytes");
     this.setImageUrl(imageDataUrl);
     this.setStatus("complete")
-    this.sendDelegate("onImageLoaded", [this])
+    this.sendDelegateMessage("onImageLoaded", [this])
   }
 
   /**
@@ -348,7 +348,7 @@
     console.error(s);
     this.setError(s);
     this.setStatus(s)
-    this.sendDelegate("onImageError", [this])
+    this.sendDelegateMessage("onImageError", [this])
   }
 
   /**
@@ -358,25 +358,6 @@
    */
   delegate () {
     return this.imagePrompt()
-  }
-
-  /**
-   * @description Sends a method call to the delegate.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the method was called successfully, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
   }
 
 }.initThisClass());

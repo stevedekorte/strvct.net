@@ -424,7 +424,7 @@
       });
     }
 
-    //debugger;
+    
     return json;
   }
 
@@ -438,7 +438,6 @@
 
     const token = await this.apiKeyOrUserAuthToken();
     if (!token) {
-      debugger;
       throw new Error(this.svType() + " apiKeyOrUserAuthToken missing");
     }
   }
@@ -597,7 +596,7 @@
     //this.logDebug("--- URL ---\n", this.activeApiUrl(), "\n-----------");
     //this.logDebug("--- CURL ---\n", this.curlCommand(), "\n-----------");
 
-    //debugger;
+    
     this.setIsStreaming(true);
     this.setStatus("streaming");
 
@@ -630,8 +629,8 @@
     }
     
     if (!this.isContinuation()) {
-      this.sendDelegate("onRequestBegin");
-      this.sendDelegate("onStreamStart");
+      this.sendDelegateMessage("onRequestBegin");
+      this.sendDelegateMessage("onStreamStart");
     }
 
     // Send the request
@@ -671,8 +670,8 @@
       return;
     }
     
-    this.sendDelegate("onStreamEnd");
-    this.sendDelegate("onRequestComplete");
+    this.sendDelegateMessage("onStreamEnd");
+    this.sendDelegateMessage("onRequestComplete");
 
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
@@ -817,7 +816,7 @@
     this.setStopReason(null);
     this.setStatus("continuing");
 
-   // debugger;
+   
     this.setIsContinuation(true); // so the fullContent isn't cleared
     // send request again to continue where we left off
     this.asyncSendAndStreamResponse();
@@ -865,8 +864,7 @@
     }
 
     this.logError(e.message);
-    debugger;
-    this.sendDelegate("onRequestError", [this, e]);
+    this.sendDelegateMessage("onRequestError", [this, e]);
     return this;
   }
 
@@ -879,7 +877,7 @@
   onRequestError (request, error) {
     this.logError("onRequestError:", error);
     this.onError(error);
-    this.sendDelegate("onStreamEnd");
+    this.sendDelegateMessage("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
   }
 
@@ -892,8 +890,8 @@
   onRequestAbort (/*request*/) {
     this.setDidAbort(true);
     this.setStatus("aborted");
-    this.sendDelegate("onStreamEnd");
-    //this.sendDelegate("onStreamAbort");
+    this.sendDelegateMessage("onStreamEnd");
+    //this.sendDelegateMessage("onStreamAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
   }
   
@@ -1051,27 +1049,7 @@
   onNewContent (newContent) {
     //this.log(this.svTypeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
-    this.sendDelegate("onStreamData", [this, newContent]);
-  }
-
-  /**
-   * @category XHR
-   * @description Sends a delegate message
-   * @param {string} methodName 
-   * @param {Array} args 
-   * @returns {boolean}
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
-    if (d) {
-      const f = d[methodName]
-      if (f) {
-        //this.logDebug(this.svTypeId() + " sending " + d.svTypeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
-        f.apply(d, args)
-        return true
-      }
-    }
-    return false
+    this.sendDelegateMessage("onStreamData", [this, newContent]);
   }
 
   // --- stopping ---

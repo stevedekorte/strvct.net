@@ -982,7 +982,6 @@ class Type extends Object {
             let errorMessage = "Found duplicate reference to value: " +Type.typeName(value) + "\n";
             errorMessage += "path1: " + seenPath + "\n";
             errorMessage += "path2: " + path + "\n";
-            debugger;
             return errorMessage;
         }
         seenMap.set(value, path); // place here so we don't add simple types

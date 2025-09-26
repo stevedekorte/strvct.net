@@ -452,33 +452,14 @@
     console.error(s);
     this.setError(error.message);
     this.setStatus(s)
-    this.sendDelegate("onTtsPromptError", [this]);
+    this.sendDelegateMessage("onTtsPromptError", [this]);
     //this.onEnd();
     PanelView.showError(new Error("Text to Speech request " + s));
-    debugger;
   }
 
   //onEnd () {
     // on success or error
   //}
-
-  /**
-   * @description Sends a message to the delegate.
-   * @param {string} methodName - The name of the method to call on the delegate.
-   * @param {Array} args - The arguments to pass to the delegate method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
-  }
 
   // --- playing audio ---- 
 

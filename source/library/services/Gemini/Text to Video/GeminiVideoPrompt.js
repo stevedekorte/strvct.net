@@ -274,7 +274,7 @@
         
         this.setStatus("Requesting generation...");
         this.setError(null); // Clear any previous errors
-        this.sendDelegate("onVideoPromptStart", [this]);
+        this.sendDelegateMessage("onVideoPromptStart", [this]);
 
         // For this API, we just need a text prompt - image data is optional
         
@@ -306,7 +306,7 @@
                 const errorMessage = `API error: ${response.status} ${response.statusText} - ${errorText}`;
                 this.setStatus("API request failed");
                 this.setError(errorMessage);
-                this.sendDelegate("onVideoPromptError", [this]);
+                this.sendDelegateMessage("onVideoPromptError", [this]);
                 return null;
             }
             
@@ -323,7 +323,7 @@
             const errorMessage = `API request error: ${error.message}`;
             this.setStatus("Request failed");
             this.setError(errorMessage);
-            this.sendDelegate("onVideoPromptError", [this]);
+            this.sendDelegateMessage("onVideoPromptError", [this]);
             console.error("GeminiVideoPrompt generation error:", error);
             return null;
         }
@@ -367,7 +367,7 @@
                 const errorMessage = `API error: ${response.status} ${response.statusText} - ${errorText}`;
                 this.setStatus("Status check failed");
                 this.setError(errorMessage);
-                this.sendDelegate("onVideoPromptError", [this]);
+                this.sendDelegateMessage("onVideoPromptError", [this]);
                 return null;
             }
             
@@ -396,7 +396,7 @@
                 if (data.error) {
                     this.setStatus("Error");
                     this.setError(data.error.message);
-                    this.sendDelegate("onVideoPromptError", [this]);
+                    this.sendDelegateMessage("onVideoPromptError", [this]);
                     return null;
                 }
 
@@ -406,7 +406,7 @@
                 this.setVideoDataUrl(dataUrl);
 
                 this.setStatus("Complete");
-                this.sendDelegate("onVideoPromptVideoLoaded", [this]);
+                this.sendDelegateMessage("onVideoPromptVideoLoaded", [this]);
             } else {
                 if (data.metadata && data.metadata.progressPercentage) {
                     this.setStatus(`Video generation: ${data.metadata.progressPercentage}% complete`);
@@ -420,7 +420,7 @@
             const errorMessage = `Operation error: ${error.message}`;
             this.setStatus("Status check failed");
             this.setError(errorMessage);
-            this.sendDelegate("onVideoPromptError", [this]);
+            this.sendDelegateMessage("onVideoPromptError", [this]);
             console.error("GeminiVideoPrompt operation status error:", error);
             return false;
         }
@@ -439,21 +439,9 @@
             const errorMessage = `Operation did not complete after ${attempts} attempts`;
             this.setStatus("Generation timed out");
             this.setError(errorMessage);
-            this.sendDelegate("onVideoPromptError", [this]);
+            this.sendDelegateMessage("onVideoPromptError", [this]);
         }
         return null;
-    }
-
-    sendDelegate (methodName, args = [this]) {
-        const d = this.delegate();
-        if (d) {
-            const f = d[methodName];
-            if (f) {
-                f.apply(d, args);
-                return true;
-            }
-        }
-        return false;
     }
 
     shutdown () {

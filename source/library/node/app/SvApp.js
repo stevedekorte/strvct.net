@@ -252,7 +252,6 @@
         if (!isCorrectModel) { 
             console.error("Model is not correct type: " + this.store().rootObject().thisClass().svType());
             if (this._attemptToResetStore === true) { 
-                debugger;
                 throw new Error("Failed to open store with correct model after reset");
             }
             this._attemptToResetStore = true;

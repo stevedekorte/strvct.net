@@ -71,7 +71,6 @@
         const newValue = WbCookieManager.valueOfCookieNamed(name);
         if(newValue !== value && value !== null) {
             this.logDebug("[" + newValue + "] != [" + value + "]");
-            debugger;
             this.logDebug("let's debugg this!");
             WbCookieManager.valueOfCookieNamed(name);
             this.setValueOfCookieNamed(name, value);
@@ -165,7 +164,6 @@
         }
         if (cookiesMap.keysArray().detect(key => key.length > 50)) {
             this.logWarn("found crazy cookie names: ", cookiesMap.keysArray());
-            debugger;
             this.logWarn("cookie looks hosed - deleting all cookies");
             this.deleteAllCookies();
             this.readCookies();

@@ -151,9 +151,9 @@ Function.prototype.addParameter = function (name, type, description) {
         console.error("WARNING: addParameter received a function for type parameter:", type);
         console.error("Parameter name:", name);
         console.error("Function name:", this.name);
-        debugger;
+        throw new Error("addParameter received a function for type parameter: " + type);
         // Try to get the name of the function/class
-        type = type.name || type.toString();
+        //type = type.name || type.toString();
     }
     
     if (!name.isCapitalized()) {
@@ -311,7 +311,7 @@ Function.prototype.asRootJsonSchema = function asRootJsonSchema (definitionsOnly
     refSet._add = refSet.add;
     refSet.add = function (aClass) {
         if (!aClass.jsonSchemaDescription || aClass.jsonSchemaDescription() === null) {
-            debugger;
+            throw new Error("refSet.add(" + aClass.svType() + ") - jsonSchemaDescription is null");
         }
         if (!this.has(aClass)) {
             this._add(aClass);

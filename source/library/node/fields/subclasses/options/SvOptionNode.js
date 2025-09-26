@@ -102,7 +102,6 @@
             optionsNode.didToggleOption(this);
             this.didUpdateNodeIfInitialized();
         } else {
-            debugger;
             // if this is called, the stack views might not have properly synced 
             // after the OptionsNode removed it's subnodes
             this.log("parent: ", this.parentNode().title());

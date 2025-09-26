@@ -48,21 +48,21 @@
     static preClone () {
         const obj = super.preClone();
         console.log("----------- " + obj.svTypeId() + " [after preClone] ");
-        //debugger;
+        
         return obj;
     }
 
     static clone () {
         const obj = super.clone();
         console.log("----------- " + obj.svTypeId() + " [after clone] ");
-        //debugger;
+        
         return obj;
     }
 
     init () {
         super.init();
         console.log("----------- " + this.svTypeId() + ".init() ");
-       // debugger;
+       
     }
 
 }.initThisClass());

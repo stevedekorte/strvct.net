@@ -197,7 +197,6 @@
     try {
       const modelsJson = await this.fetchAllModelsDetails();
       console.log(modelsJson);
-      debugger;
     } catch (error) {
       console.error("Error fetching models:", error);
     }
@@ -243,8 +242,10 @@
   
     // Step 1: Fetch the list of model IDs
     const listResp = await fetch(this.fetchModelsUrl(), { headers: headers });
-    debugger;
-    if (!listResp.ok) throw new Error(`Model list fetch failed: ${listResp.statusText}`);
+
+    if (!listResp.ok) {
+        throw new Error(`Model list fetch failed: ${listResp.statusText}`);
+    }
     const listData = await listResp.json();
   
     // Step 2: Fetch extended info on each model
@@ -253,7 +254,9 @@
       const id = model.id;
       try {
         const detailResp = await fetch(this.fetchModelDetailsUrl(id), { headers: headers });
-        if (!detailResp.ok) throw new Error(`Fetch failed for ${id}: ${detailResp.statusText}`);
+        if (!detailResp.ok) {
+          throw new Error(`Fetch failed for ${id}: ${detailResp.statusText}`);
+        }
         const detailData = await detailResp.json();
         detailedModels[id] = detailData;
       } catch (err) {

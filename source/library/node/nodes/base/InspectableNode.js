@@ -272,7 +272,6 @@
 
         if (field.setFieldSlotName) {
             field.setFieldSlotName(slot.name()); //is this used?
-            debugger;
         }
 
         field.setShouldStore(false);
@@ -292,16 +291,11 @@
         //field.syncFromTarget(); // new: to fix boolean sync issues
 
         if (field.svType() === "SvBooleanField") {
-            //debugger;
+            
             //const v = slot.onInstanceGetValue(this);
             field.syncFromTarget();
             assert(field.value() === slot.onInstanceGetValue(this));
         }
-        /*
-        if (name === "isAvailable") {
-            debugger;
-        }
-        */
        
         const pathNodes = this.createInspectorNodePath(slot.inspectorPath());
 

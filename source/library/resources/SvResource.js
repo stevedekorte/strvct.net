@@ -289,8 +289,8 @@
      */
     async asyncLoad () {
         if (this.isLoaded()) {
-           debugger; // should never happen
-           return this;
+            console.warn(this.logPrefix() + "asyncLoad called on loaded resource");
+            return this;
         }
         //this.log("asyncLoad: " + this.path());
         try {

@@ -177,18 +177,6 @@
         this.scheduleMethod("setupPathViews");
     }
 
-    /**
-     * @description Sets the height of the tile
-     * @param {string|number} v - The height value
-     * @returns {BreadCrumbsTile}
-     * @category Layout
-     */
-    setHeight (v) {
-        if (v === "100%") {
-            debugger;
-        }
-        return super.setHeight(v);
-    }
 
     /**
      * @description Handles the update of the parent view slot
@@ -215,7 +203,7 @@
         this.syncPathToStack();
         if (!this.targetStackView()) {
             console.warn("no target stack view");
-            //debugger;
+            
             return this;
         }
         //const path = this.targetStackView().selectedNodePathString();
@@ -232,7 +220,7 @@
     onClickPathComponent (aPathComponentView) {
         const nodePathArray = aPathComponentView.info();
         if (nodePathArray.length === 0) {
-            //debugger;
+            // no-op
         }
         console.log("select path: " + nodePathArray.map(n => n.title()).join("/"));
         const t = this.targetStackView();
@@ -578,7 +566,6 @@
         return this.crumbViews().sum(view => { 
             const w = view.cachedSize().width();
             if (Type.isNaN(w)) { 
-                debugger; 
                 throw new Error("invalid width value");
             }
             return w + rightMargin;

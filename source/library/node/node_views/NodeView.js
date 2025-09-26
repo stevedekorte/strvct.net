@@ -160,7 +160,6 @@
      * @returns {Class} The subview prototype.
      */
     subviewProto () {
-        debugger;
         if (this.node()) {
             const vc = this.node().nodeTileClass();
             if (vc) { 

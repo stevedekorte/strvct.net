@@ -94,7 +94,7 @@
                     return sn.descendantWithJsonId(jsonId, newPath);
                 } else {
                     console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
-                    //debugger;
+                    
                 }
             }
             return null;
@@ -155,7 +155,6 @@
             const diff = JsonPatch.compare(this.jsonCache(), json);
             if (diff.length > 0) {
                 console.error("jsonCache is invalid:\n" + JSON.stringify(diff, null, 2));
-                debugger;
             }
 
             return this.jsonCache();

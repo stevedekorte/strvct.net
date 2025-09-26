@@ -52,12 +52,12 @@
      * @category Animation
      */
     setTransition (s) {
-        //debugger;
+        
         return super.setTransition(s);
     }
 
     onClick (/*event*/) {
-        //debugger;
+        
         return this;
     }
 

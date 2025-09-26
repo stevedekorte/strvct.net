@@ -48,9 +48,10 @@
             this.setValue(value);
         } catch (e) {
             this.setValue(null);
-            console.warn("Error parsing JSON: " + e.message);
-            debugger;
+            const errorMessage = "Error parsing JSON: " + e.message;
+            console.warn(errorMessage);
             this.setError(e);
+            e.rethrow();
         }
         return this;
     }

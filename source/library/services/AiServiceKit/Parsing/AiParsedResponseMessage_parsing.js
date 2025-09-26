@@ -52,11 +52,10 @@
       const json = JSON.parse(s);
       return json;
     } catch (e) {
-      debugger;
       this.addAiError("AI responded with invalid JSON in [" + description + "]: " + e.message);
       throw e;
     }
-    return undefined;
+    //return undefined;
   }
 
   async promiseParseAiJsonString (s, description) {
@@ -64,10 +63,9 @@
       const json = JSON.parse(s);
       return json;
     } catch (e) {
-      debugger;
       this.addAiError("AI responded with invalid JSON in [" + description + "]: " + e.message);
       console.log("attempting to repair json string...");
-      debugger;
+
       const repairedString = await UoJsonFixer.repairJsonString(s); // throws an error if repair failed
       if (repairedString && repairedString !== s) {
         console.log("trying repaired json string...");
@@ -75,7 +73,6 @@
       }
       throw e;
     }
-    return undefined;
   }
 
   /*

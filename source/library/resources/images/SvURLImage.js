@@ -109,7 +109,6 @@
      * @category Data Loading
      */
     didFetchDataUrl (dataURL) {
-        debugger;
         this.setDataURL(dataURL);
         return this
     }

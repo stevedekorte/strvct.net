@@ -359,7 +359,7 @@
             pc.didTapItem(newSelectedTile);
             this.selectPreviousColumn();
 
-            //debugger;
+            
             pc.didChangeNavSelection();
         }
         return this;

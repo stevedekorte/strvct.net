@@ -298,11 +298,6 @@
             const info = node.noteButtonInfo();
             if (info) {
                 // set nv to look like a button
-                /*
-                if (nv.innerHtml() === "TAP TO ROLL") {
-                    debugger;
-                }
-                 d*/
                 if (info.color) {
                     nv.setColor(info.color);
                 }
@@ -436,7 +431,7 @@
      * @category UI
      */
     makeNoteRightArrow () {
-        //debugger;
+        
         const nv = this.noteView();
         
         nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"));        
@@ -466,12 +461,5 @@
             super.onEnterKeyUp(event);
         }        
     }
-
-    /*
-    removeAllGestureRecognizers () {
-        debugger;
-        return super.removeAllGestureRecognizers()
-    }
-    */
     
 }.initThisClass());

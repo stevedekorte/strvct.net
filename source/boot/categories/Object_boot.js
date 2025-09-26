@@ -222,11 +222,11 @@
         }
 
         if (Object.hasOwn(this, "_slotsMap")) {
-            debugger;
+            throw new Error("setupPrototype called on prototype with _slotsMap");
         }
 
         if (Object.hasOwn(this, "_allSlotsMap")) {
-            debugger;
+            throw new Error("setupPrototype called on prototype with _allSlotsMap");
         }
         /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(this, "_slotsMap", new Map()); // slots for just this proto
@@ -234,7 +234,7 @@
         if (SvGlobals.get("ProtoClass")) {
             if (this !== ProtoClass.prototype) {
                 if(this._allSlotsMap === ProtoClass.prototype._allSlotsMap) {
-                    debugger;
+                    throw new Error("setupPrototype called on prototype with _allSlotsMap");
                 }
             }
         }
@@ -263,14 +263,12 @@
                 this.assertProtoSlotsHaveType();
             } else {
                 if (this.svType() !== "Object") {
-                    console.log(this.svType() + " missing assertProtoSlotsHaveType");
-                    debugger;
+                    const errorMessage = this.svType() + " missing assertProtoSlotsHaveType";
+                    console.log(errorMessage);
+                    throw new Error(errorMessage);
                 }
             }
-        } else {
-            //debugger;
         }
-
         //console.log("\n\n" + this.svType() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
         return this;
     }

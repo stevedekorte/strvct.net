@@ -56,14 +56,5 @@
         this.logDebug(" onDidEditNode")
     }
 
-    /**
-     * @description Creates a JSON archive of the SpatialModelNode.
-     * @returns {undefined}
-     * @category Data Serialization
-     */
-    jsonArchive () {
-        debugger;
-        return undefined;
-    }
     
 }.initThisClass());

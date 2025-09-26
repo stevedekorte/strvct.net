@@ -252,7 +252,7 @@
      * @returns {Array} the observations
      */
     observations () {
-       // debugger;
+       
         return this.observationsMap().valuesArray();
     }
 
@@ -321,7 +321,6 @@
             /*
             if (obs.sender() !== null && obs.sender().svType() === "FirestoreDatabaseService") {
                 console.log("----------- " + obs.observer().svTypeId() + " now observing " + obs.sender().svTypeId());
-                debugger;
             }
             */
             //this.observations().push(obs);

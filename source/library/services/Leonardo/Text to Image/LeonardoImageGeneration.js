@@ -318,7 +318,7 @@
    * @category Process
    */
   async startPolling () {
-    //debugger;
+    
     //assert(!this.isPolling(), "already polling");
     assert(this.generationId(), "generationId is required");
 
@@ -328,7 +328,7 @@
     this.setXhrRequest(SvXhrRequest.clone());
     this.setError("");
     this.setStatus("Start polling...");
-    this.sendDelegate("onImagePromptStart", [this]);
+    this.sendDelegateMessage("onImagePromptStart", [this]);
     await this.poll();
   }
 
@@ -351,7 +351,7 @@
     try {
       await this.setupXhrRequest();
       await this.xhrRequest().asyncSend();
-      //debugger;
+      
       // we use onRequestError/onRequestFailure should cover normal cases
     } catch (error) {
       this.onError(error);
@@ -373,7 +373,6 @@
       return "missing generations_by_pk.status";
     } catch (error) {
       console.warn("error parsing json: " + error.message);
-      debugger;
       return undefined;
     }
   }
@@ -381,7 +380,7 @@
   // -- delegate methods from SvXhrRequest --
 
   async onRequestSuccess (request) {
-    //debugger;
+    
     const text = request.responseText();
     const json = JSON.parse(text);
 
@@ -408,7 +407,7 @@
   onError (error) {
     this.setError(error);
     this.setStatus("Error: " + error);
-    this.sendDelegate("onImagePromptError", [this]);
+    this.sendDelegateMessage("onImagePromptError", [this]);
     this.onEnd();
   }
 
@@ -473,7 +472,7 @@
     console.error(s);
     this.setError(error.message);
     this.setStatus(s);
-    this.sendDelegate("onImagePromptError", [this]);
+    this.sendDelegateMessage("onImagePromptError", [this]);
     this.onEnd();
   }
 
@@ -499,7 +498,7 @@
   onImageLoaded (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
     this.onEnd();
   }
 
@@ -511,7 +510,7 @@
   onImageError (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
-    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
+    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
     this.onEnd();
   }
 
@@ -520,28 +519,8 @@
    * @category Process
    */
   onEnd () {
-    //debugger;
-    this.sendDelegate("onImageGenerationEnd", [this]);
-  }
-
-
-  /**
-   * @description Sends a delegate method call.
-   * @param {string} methodName - The name of the method to call.
-   * @param {Array} args - The arguments to pass to the method.
-   * @returns {boolean} True if the delegate method was called, false otherwise.
-   * @category Delegation
-   */
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate();
-    if (d) {
-      const f = d[methodName];
-      if (f) {
-        f.apply(d, args);
-        return true;
-      }
-    }
-    return false;
+    
+    this.sendDelegateMessage("onImageGenerationEnd", [this]);
   }
 
   /**

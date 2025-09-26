@@ -206,7 +206,7 @@
    */
   chatModel () {
     
-    //debugger;
+    
     if (this._chatModel) {
       return this._chatModel;
     }
@@ -384,7 +384,7 @@
    * @category Interaction
    */
   startWithPrompt (prompt) {
-    //debugger;
+    
     this.clear();
     //this.setSystemPrompt(prompt);
     const promptMsg = this.newSystemMessage();

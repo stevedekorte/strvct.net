@@ -149,7 +149,7 @@
         }
 
         if (stopReason) {
-          //debugger;
+          
           this.setStopReason(stopReason);
         }
     } else {
@@ -194,7 +194,7 @@
   stoppedDueToMaxTokens () {
     const b = this.stopReason() === "length";
     if (b) {
-      debugger;
+      // no-op
     }
     return b;
   }
