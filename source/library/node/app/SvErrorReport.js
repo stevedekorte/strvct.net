@@ -1,8 +1,5 @@
 "use strict";
 
-/**
- * @module library.node
- */
 
 /**
  * @class SvErrorReport
@@ -11,14 +8,7 @@
  * 
  * Example:
  * 
- * // quick send
- * await SvErrorReport.asyncSend(new Error("Test error message"));
- * 
- * // detailed send
- * const errorReport = SvErrorReport.clone();
- * errorReport.setError(new Error("Test error message"));
- * errorReport.setJson({ isTest: true, testTime: Date.now(), component: "ErrorReportingSystem" });
- * await errorReport.asyncSend();
+ * await SvErrorReport.asyncSend(new Error("Test error message"), optionalAdditionalJson);
  * 
  */
 
@@ -100,7 +90,9 @@
     }
 
     errorInfoJson () {
-        const normalizedError = Error_ideal.normalizeError(error);
+        assert(this.error(), "missing error to report");
+
+        const normalizedError = Error_ideal.normalizeError(this.error());
 
         const json = {};
 
@@ -118,15 +110,10 @@
     }
 
     composeBodyJson () {
-        const error = this.error();
-        assert(error, "no error to report");
-
-        // Prepare error data
         const json = {};
         json.general = this.generalInfoJson();
         json.error = this.errorInfoJson();
         json.additional = this.additionalJson();
-
         this.setBodyJson(json);
     }
 
@@ -142,7 +129,7 @@
             this.composeBodyJson();
            await this.justSend();
         } catch (error) {
-            console.error("Failed to send error report:", error);
+            console.error("Failed to send error report: ", error);
             return { success: false, error: error.message };
         }
     }
