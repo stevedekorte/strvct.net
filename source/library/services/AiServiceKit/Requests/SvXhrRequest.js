@@ -56,8 +56,12 @@
      */
     {
       const slot = this.newSlot("url", null);
+      slot.setLabel("URL");
+      slot.setIsSubnodeField(true);
+      slot.setCanInspect(true);
       slot.setSlotType("String");
       slot.setShouldStoreSlot(true);
+      slot.setSummaryFormat("key: value");
     }
 
     /**
@@ -65,6 +69,7 @@
      */
     {
       const slot = this.newSlot("requestOptions", null);
+      slot.setInspectorPath("Parameters");
       slot.setSlotType("Object");
       slot.setShouldStoreSlot(true);
     }
@@ -86,103 +91,144 @@
       slot.setSlotType("Promise");
     }
 
+    // --- Settings ---
+
     /**
-     * @member {String} requestId - The request ID. A UUID set on init.
+     * @member {String} responseType - The XMLHttpRequest responseType ('', 'arraybuffer', 'blob', 'document', 'json', 'text')
      */
     {
-      const slot = this.newSlot("requestId", null);
-      slot.setInspectorPath(this.svType());
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-    }
+        const slot = this.newSlot("responseType", "");
+        slot.setLabel("Response Type");
+        slot.setInspectorPath("Settings");
+        slot.setShouldStoreSlot(false);
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("String");
+        slot.setIsSubnodeField(true);
+        slot.setCanEditInspection(true);
+        slot.setDescription("The XMLHttpRequest responseType. Use 'blob' for binary data like images or audio.");
+        slot.setSummaryFormat("key: value");
+      }
 
     /**
      * @member {Number} retryDelaySeconds - The delay before retrying the request.
      */
     {
       const slot = this.newSlot("retryDelaySeconds", 1);
-      slot.setInspectorPath(this.svType());
+      slot.setLabel("Retry Delay Seconds");
+      slot.setInspectorPath("Settings");
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key: value");
+    }
+
+
+    {
+      const slot = this.newSlot("timeoutPeriodInMs", 60000); // 30 seconds
+      slot.setLabel("Timeout Period Ms");
+      slot.setInspectorPath("Settings");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key: value");
     }
 
     // max retries
     {
-      const slot = this.newSlot("maxRetries", 3);
-      slot.setInspectorPath(this.svType());
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Number");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
+        const slot = this.newSlot("maxRetries", 3);
+        slot.setLabel("Max Retries");
+        slot.setInspectorPath("Settings");
+        slot.setShouldStoreSlot(false);
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("Number");
+        slot.setIsSubnodeField(true);
+        slot.setCanEditInspection(false);
+        slot.setSummaryFormat("key: value");
     }
-
+    
     // retry count
     {
-      const slot = this.newSlot("retryCount", 0);
-      slot.setInspectorPath(this.svType());
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Number");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
+        const slot = this.newSlot("retryCount", 0);
+        slot.setLabel("Retry Count");
+        slot.setInspectorPath("State");
+        slot.setShouldStoreSlot(false);
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("Number");
+        slot.setIsSubnodeField(true);
+        slot.setCanEditInspection(false);
+        slot.setSummaryFormat("key: value");
     }
 
+    // --- State ---
+
+
+    /**
+     * @member {String} status - The status of the request.
+     */
     {
-      const slot = this.newSlot("timeoutPeriodInMs", 60000); // 30 seconds
-      slot.setInspectorPath(this.svType());
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Number");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-    }
+        const slot = this.newSlot("status", "");
+        slot.setLabel("Status");
+        slot.setInspectorPath("State");
+        slot.setShouldStoreSlot(true);
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("String");
+        slot.setIsSubnodeField(true);
+        slot.setCanEditInspection(false);
+        slot.setSummaryFormat("key: value");
+      }
+
+    /**
+     * @member {String} requestId - The request ID. A UUID set on init.
+     */
+    {
+        const slot = this.newSlot("requestId", null);
+        slot.setLabel("Request ID");
+        slot.setInspectorPath("State");
+        slot.setShouldStoreSlot(true);
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("String");
+        slot.setIsSubnodeField(true);
+        slot.setCanEditInspection(false);
+        slot.setSummaryFormat("key: value");
+      }
 
     /**
      * @member {Error} error - The error object.
      */
     {
       const slot = this.newSlot("error", null);
+      slot.setLabel("Error");
+      slot.setInspectorPath("State");
       slot.setSlotType("Error");
+      slot.setSummaryFormat("key: value");
     }
 
-    /**
-     * @member {String} status - The status of the request.
-     */
-    {
-      const slot = this.newSlot("status", "");
-      slot.setInspectorPath(this.svType());
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-    }
 
     /**
      * @member {Boolean} didAbort - Whether the request was aborted.
      */
     {
       const slot = this.newSlot("didAbort", false);
-      slot.setInspectorPath(this.svType());
+      slot.setLabel("Aborted");
+      slot.setInspectorPath("State");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Boolean");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key: value");
     }
 
     /**
@@ -190,13 +236,15 @@
      */
     {
       const slot = this.newSlot("didTimeout", false);
-      slot.setInspectorPath(this.svType());
+      slot.setLabel("Timed Out");
+      slot.setInspectorPath("State");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Boolean");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("key: value");
     }
 
     /**
@@ -241,20 +289,6 @@
       slot.setActionMethodName("copyResponseText");
     }
 
-    /**
-     * @member {String} responseType - The XMLHttpRequest responseType ('', 'arraybuffer', 'blob', 'document', 'json', 'text')
-     */
-    {
-      const slot = this.newSlot("responseType", "");
-      slot.setInspectorPath("");
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setDescription("The XMLHttpRequest responseType. Use 'blob' for binary data like images or audio.");
-    }
 
     /**
      * @member {Promise} completionPromise - Promise that resolves when the XHR request completes (success, error, or abort)

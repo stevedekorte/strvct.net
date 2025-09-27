@@ -22,6 +22,7 @@
     this.setSubnodeClasses([ImagineProImageGeneration]);
     this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
+    this.setNodeSubtitleIsChildrenSummary(true);
   }
 
   /**

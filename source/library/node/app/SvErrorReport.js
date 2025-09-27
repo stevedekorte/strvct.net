@@ -92,7 +92,7 @@
     errorInfoJson () {
         assert(this.error(), "missing error to report");
 
-        const normalizedError = Error_ideal.normalizeError(this.error());
+        const normalizedError = Error.normalizeError(this.error());
 
         const json = {};
 

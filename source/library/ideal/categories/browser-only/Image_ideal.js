@@ -11,6 +11,8 @@ Image.__proto__ = Object;
 
     static async asyncDataUrlForSrc (src) {
         const img = new Image();
+        assert(Type.isString(src), "Image.asyncDataUrlForSrc: src must be a string");
+        assert(src.length > 0, "Image.asyncDataUrlForSrc: src is empty");
         await img.asyncLoadUrl(src);
         return img.asDataURL();
     }
@@ -80,12 +82,14 @@ Image.__proto__ = Object;
         if (this.isLoaded()) {
             this._promiseLoaded = Promise.resolve(this);
         } else {
+            debugger;
             this._promiseLoaded = new Promise((resolve, reject) => {
                 this.onload = () => {
                     this.onDidLoad();
                     resolve(this);
                 }
                 this.onerror = (error) => {
+                    error = Error.normalizeError(error);
                     this.onLoadError(error);
                     reject(error);
                 }
@@ -96,12 +100,11 @@ Image.__proto__ = Object;
     }
 
     isLoaded () {
-        return (img.complete && img.naturalWidth > 0);
+        return (this.complete && this.naturalWidth > 0);
     }
 
     asCanvas () {
         assert(this.isLoaded(), "Can't get canvas for an unloaded image");
-
         const canvas = document.createElement("canvas");
         canvas.width = this.width;
         canvas.height = this.height;

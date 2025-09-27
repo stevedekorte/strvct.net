@@ -493,7 +493,7 @@
      * @returns {string} The visible key.
      */
     visibleKey () {
-        return this.node().key()
+        return this.node().key();
     }
 
     // sync 
@@ -505,9 +505,9 @@
      * @returns {SvFieldTile} The current instance.
      */
     didUpdateSlotIsSelected (oldValue, newValue) {
-        super.didUpdateSlotIsSelected(oldValue, newValue)
-        this.syncFromNodeNow() // need this to update selection color on fields?
-        return this
+        super.didUpdateSlotIsSelected(oldValue, newValue);
+        this.syncFromNodeNow(); // need this to update selection color on fields?
+        return this;
     }
 
     /**
@@ -516,19 +516,19 @@
      */
 
     syncFromNode () {
-        super.syncFromNode()
-        //this.logDebug(" syncFromNode")
+        super.syncFromNode();
+        //this.logDebug(" syncFromNode");
 		
-        const node = this.node()
-        node.prepareToSyncToView()
-        //this.setIsDisplayHidden(!node.isVisible())
+        const node = this.node();
+        node.prepareToSyncToView();
+        //this.setIsDisplayHidden(!node.isVisible());
 
-        this.syncKeyFromNode()
-        this.syncValueFromNode()
-        this.syncErrorFromNode()
-        this.syncNoteFromNode()
-        this.syncDotsFromNode()
-        return this
+        this.syncKeyFromNode();
+        this.syncValueFromNode();
+        this.syncErrorFromNode();
+        this.syncNoteFromNode();
+        this.syncDotsFromNode();
+        return this;
     }
 
     /**
@@ -536,14 +536,14 @@
      * @returns {SvFieldTile} The current instance.
      */
     syncKeyFromNode () {
-        const node = this.node()
-        const keyView = this.keyView()
+        const node = this.node();
+        const keyView = this.keyView();
 
-        keyView.setString(this.visibleKey()) // setString only applies if value changed
-        keyView.setIsVisible(node.keyIsVisible())
-        keyView.setIsDisplayHidden(!node.keyIsVisible())
-        keyView.setIsEditable(node.keyIsEditable())
-        keyView.setColor(this.keyViewColor())
+        keyView.setString(this.visibleKey()); // setString only applies if value changed
+        keyView.setIsVisible(node.keyIsVisible());
+        keyView.setIsDisplayHidden(!node.keyIsVisible());
+        keyView.setIsEditable(node.keyIsEditable());
+        keyView.setColor(this.keyViewColor());
     }
 
     /**
@@ -551,14 +551,14 @@
      * @returns {SvFieldTile} The current instance.
      */
     syncValueFromNode () {
-        const node = this.node()
-        const valueView = this.valueView()
+        const node = this.node();
+        const valueView = this.valueView();
 
-        const newValue = this.visibleValue()
+        const newValue = this.visibleValue();
 
-        valueView.setValue(newValue)
-        valueView.setIsEditable(node.valueIsEditable())
-        valueView.setIsDisplayHidden(!node.valueIsVisible())
+        valueView.setValue(newValue);
+        valueView.setIsEditable(node.valueIsEditable());
+        valueView.setIsDisplayHidden(!node.valueIsVisible());
 
         /*
         if (this.keyView().innerText() === "Additional Notes") {

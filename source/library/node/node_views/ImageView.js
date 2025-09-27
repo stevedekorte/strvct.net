@@ -237,7 +237,9 @@
         if (src.startsWith("data:")) {
 	        this.setFromDataURL(src);
         } else {
-            this.setFromDataURL(Image.asyncDataUrlForSrc(src));
+            console.log("asyncFetchDataURLFromSrc: ", src);
+            const dataUrl = await Image.asyncDataUrlForSrc(src);
+            this.setFromDataURL(dataUrl);
             this.setSrcUrl(src);
         }
 		

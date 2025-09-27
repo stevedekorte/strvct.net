@@ -211,7 +211,7 @@
         }
         // If no reject function exists, rethrow the error/exception
         if (args.length > 0) {
-            const normalizedError = Error_ideal.normalizeError(args[0]);
+            const normalizedError = Error.normalizeError(args[0]);
             throw normalizedError;
         }
         throw new Error("Promise rejected with no reject function and no error provided");

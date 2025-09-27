@@ -112,6 +112,26 @@
       slot.setSummaryFormat("key: value");
     }
 
+        /**
+     * @member {string} omniRefImageUrl
+     * @description URL to character reference sheet composite image for Midjourney V7+ omnireference.
+     * This will be used with --oref parameter (V7's omnireference flag).
+     * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("omniRefImageUrl", null);
+            slot.setInspectorPath("Settings");
+            slot.setSlotType("String");
+            slot.setLabel("Omniref Image URL");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
+            slot.setSummaryFormat("key value");
+          }
+
     // --- generation ---
 
     /**
@@ -155,29 +175,13 @@
      */
     {
       const slot = this.newSlot("status", "");
+      slot.setLabel("Status");
       slot.setInspectorPath("");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-      slot.setSummaryFormat("key value");
-    }
-
-    /**
-     * @member {string} taskId
-     * @description The task ID returned by ImaginePro for tracking the generation.
-     * @category Status
-     */
-    {
-      const slot = this.newSlot("taskId", "");
-      slot.setInspectorPath("");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
+      //slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
       slot.setSummaryFormat("key value");
     }
@@ -222,23 +226,7 @@
       slot.setCanEditInspection(false);
     }
 
-    /**
-     * @member {string} omniRefImageUrl
-     * @description URL to character reference sheet composite image for Midjourney V7+ omnireference.
-     * This will be used with --oref parameter (V7's omnireference flag).
-     * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
-     * @category Configuration
-     */
-    {
-      const slot = this.newSlot("omniRefImageUrl", null);
-      slot.setSlotType("String");
-      slot.setLabel("Omnireference Image URL");
-      slot.setIsSubnodeField(true);
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setCanEditInspection(true);
-      slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
-    }
+
 
     {
         const slot = this.newSlot("completionPromise", null);
@@ -537,38 +525,9 @@
    * @param {Object} generation - The generation object.
    * @category Delegation
    */
-  onImageGenerationEnd (generation) {    
-    // Check if generation was successful and has images
-    if (generation.status() === "completed" && generation.images().subnodes().length > 0) {
-      this.setStatus("Generation complete - copying images...");
-      
-      // Copy images from generation to our images collection
-      const generationImages = generation.images().subnodes();
-      for (const genImage of generationImages) {
-        const image = this.images().add();
-        image.dataURL(genImage.url());
-        if (genImage.hasLoaded()) {
-          // Copy the loaded image data
-          //image.setImageUrl(genImage.imageUrl());
-          image.setDataURL(genImage.dataUrl());
-        } else {
-          // Set up delegate and fetch if not loaded
-          image.setDelegate(this);
-          image.fetch();
-        }
-      }
-      
-      this.setStatus("Images copied from generation");
-      this.sendDelegateMessage("onImagePromptSuccess", [this]);
-    } else if (generation.error()) {
-      this.onError(new Error(generation.error()));
-    } else {
-      // More detailed status message
-      const actualStatus = generation.status();
-      const imageCount = generation.images().subnodes().length;
-      this.setStatus(`Generation ended without images (status: ${actualStatus}, images: ${imageCount})`);
-    }
-    
+  onImageGenerationEnd (/*generation*/) {    
+    this.setStatus("Generation completed");
+    this.sendDelegateMessage("onImagePromptSuccess", [this]);
     this.onEnd();
   }
 
@@ -579,16 +538,7 @@
    */
   onImageGenerationError (generation) {
     const error = generation.error();
-    let errorMessage = error ? error.message || error : "Generation failed";
-    
-    // Add more context to timeout errors
-    if (errorMessage.includes("timeout")) {
-      errorMessage += ". This may be due to high load on ImaginePro's servers. Please try again in a few moments.";
-    }
-    
-    console.error(this.logPrefix(), "Image generation failed:", errorMessage);
-    console.error(this.logPrefix(), "Task ID:", generation.taskId());
-    
+    this.setStatus("Generation failed: " + error.message);
     this.onError(new Error(errorMessage));
   }
 
@@ -704,6 +654,18 @@
   shutdown () {
     this.images().subnodes().forEach(image => image.shutdown());
     return this;
+  }
+
+  resultImageUrlData () {
+    const generation = this.generations().subnodes().last();
+    if (!generation) {
+      return null;
+    }
+    const image = generation.images().subnodes().last();
+    if (!image) {
+      return null;
+    }
+    return image.dataUrl();
   }
 
 }.initThisClass());

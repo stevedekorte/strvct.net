@@ -148,7 +148,7 @@
   }
 
   onEvalError (error) {
-    const normalizedError = Error_ideal.normalizeError(error);
+    const normalizedError = Error.normalizeError(error);
     this.setError(normalizedError);
     this.setStatus("Error: " + normalizedError.message);
     this.evalCompletionPromise().callRejectFunc(normalizedError);

@@ -170,14 +170,6 @@
   }
 
   /**
-   * @description Initializes the instance.
-   * @category Initialization
-   */
-  init () {
-    super.init();
-  }
-
-  /**
    * @description Performs final initialization steps for the instance.
    * @category Initialization
    */
