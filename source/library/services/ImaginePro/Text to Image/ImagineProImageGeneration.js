@@ -29,6 +29,7 @@
         slot.setSlotType("String");
         slot.setIsSubnodeField(true);
         slot.setCanInspect(true);
+        slot.setCanEditInspection(false);
     }
 
     /**
@@ -43,6 +44,7 @@
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
       slot.setCanInspect(true);
+      slot.setCanEditInspection(false);
     }
 
     /**
@@ -57,6 +59,7 @@
       slot.setSyncsToView(true);
       slot.setSlotType("Error");
       slot.setCanInspect(true);
+      slot.setCanEditInspection(false);
     }
 
     /**
@@ -71,6 +74,7 @@
       slot.setIsSubnode(true);
       slot.setSlotType("FilesToDownload");
       slot.setCanInspect(true);
+      slot.setCanEditInspection(false);
     }
 
     /**

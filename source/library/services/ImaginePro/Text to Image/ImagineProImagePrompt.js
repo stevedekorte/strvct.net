@@ -148,7 +148,7 @@
         slot.setSlotType("Action");
         slot.setIsSubnodeField(true);
         slot.setActionMethodName("generate");
-        }
+    }
 
     /**
      * @member {string} error
@@ -225,8 +225,6 @@
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
-
-
 
     {
         const slot = this.newSlot("completionPromise", null);
