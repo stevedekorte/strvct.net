@@ -158,7 +158,7 @@
     }
 
     /**
-     * @description Uploads the image to Firebase Storage via AccountServer
+     * @description Uploads the document content to Firestore
      * @returns {Promise<void>}
      * @category Upload
      */
