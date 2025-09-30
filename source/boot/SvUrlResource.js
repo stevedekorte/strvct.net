@@ -214,11 +214,15 @@
                 this.logDebug(this.svType() + " no cache for '" + this.resourceHash() + "' " + this.path());
                 console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path());
 
-                if (this.path() === "strvct/source/library/services/ImaginePro/Text to Image/files/FileToDownload.js") {
-                    debugger;
-                }
+                assert(this.data() === null, "this.data() should be null");
 
                 await this.promiseJustLoad();
+
+
+                if (this.path() === "strvct/source/library/services/ImaginePro/Text to Image/files/FileToDownload.js") {
+                    console.log("this.data().asString(): [[[\n", this.data().asString(), "\n]]]");
+                    debugger;
+                }
 
                 try {
                     await hc.promiseAtPut(h, this.data());

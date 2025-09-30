@@ -1,7 +1,6 @@
 "use strict";
 
 
-
 /**
 * @class FilesToDownload
 * @extends SvSummaryNode
@@ -9,7 +8,7 @@
 */
 
 (class FilesToDownload extends SvSummaryNode {
-    
+
     /**
     * @description Initializes the prototype slots for the PiApiImages class.
     * @category Initialization
@@ -30,7 +29,7 @@
     * @category Display
     */
     subtitle () {
-        return this.status()
+        return this.status();
     }
 
     /**
@@ -40,13 +39,13 @@
     */
     status () {
         if (this.subnodeCount() && this.hasLoadedAllFiles()) {
-            return "complete"
+            return "complete";
         } else if (this.hasError()) {
-            return "error loading image"
+            return "error loading image";
         } else if (this.isLoading()) {
-            return "loading images..."
+            return "loading images...";
         }
-        return ""
+        return "";
     }
 
     /**
@@ -55,7 +54,7 @@
     * @category Status
     */
     hasLoadedAllFiles () {
-        return !this.subnodes().canDetect(sn => !sn.isLoaded())
+        return !this.subnodes().canDetect(sn => !sn.isLoaded());
     }
 
     /**
@@ -64,7 +63,7 @@
     * @category Status
     */
     hasError () {
-        return this.subnodes().canDetect(sn => sn.hasError())
+        return this.subnodes().canDetect(sn => sn.hasError());
     }
 
     /**
@@ -73,7 +72,7 @@
     * @category Status
     */
     isLoading () {
-        return this.subnodes().canDetect(sn => sn.isLoading())
+        return this.subnodes().canDetect(sn => sn.isLoading());
     }
 
 }.initThisClass());

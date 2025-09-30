@@ -7,6 +7,8 @@
 // ArrayBuffer and Uint8Array can't be extended via the normal category system
 // because they are TypedArray constructors. We'll add methods directly to their prototypes.
 
+// ArrayBuffer_sha256.js
+
 /**
  * Computes SHA-256 hash of the ArrayBuffer and returns it as a base64 string.
  * Works in both browser and Node.js environments.
@@ -28,3 +30,16 @@ ArrayBuffer.prototype.asyncSha256 = async function () {
         throw new Error("No crypto implementation available");
     }
 };
+
+/**
+ * Converts the ArrayBuffer to a string using UTF-8 encoding.
+ * @returns {string} The decoded string representation of the ArrayBuffer.
+ * @throws {Error} If the bytes in the ArrayBuffer are not valid UTF-8.
+ * @category Conversion
+ */
+ArrayBuffer.prototype.asString = function () {
+    // Decoder assumes utf-8 encoding.
+    // have to be careful with this. If the bytes are not valid utf-8, this will throw an error.
+    return new TextDecoder().decode(this);
+};
+

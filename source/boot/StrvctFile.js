@@ -300,6 +300,8 @@ class StrvctFile extends Object {
             throw new Error("No content loaded. Use load() first.");
         }
 
+        console.log("StrvctFile eval path: " + this._path);
+
         if (SvPlatform.isNodePlatform()) {
             // Use absolute path for better Node.js debugging
             const path = require("path");

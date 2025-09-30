@@ -11,28 +11,28 @@
 
 (class ImagineProImageGenerations extends SvSummaryNode {
 
-  /**
+    /**
    * @description Initializes the prototype.
    * @category Initialization
    */
-  initPrototype () {
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setCanDelete(true);
-    this.setSubnodeClasses([ImagineProImageGeneration]);
-    this.setNodeCanAddSubnode(false);
-    this.setNodeCanReorderSubnodes(false);
-    this.setNodeSubtitleIsChildrenSummary(true);
-  }
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setCanDelete(true);
+        this.setSubnodeClasses([ImagineProImageGeneration]);
+        this.setNodeCanAddSubnode(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setNodeSubtitleIsChildrenSummary(true);
+    }
 
-  /**
+    /**
    * @description Performs final initialization.
    * @category Initialization
    */
-  finalInit () {
-    super.finalInit();
-    this.setTitle("generations");
-  }
+    finalInit () {
+        super.finalInit();
+        this.setTitle("generations");
+    }
 
 
 }.initThisClass());

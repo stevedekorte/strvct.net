@@ -1131,7 +1131,7 @@
      * @returns {Set} A new Set containing the array's elements.
      */
     asSet () {
-        return new Set(this)
+        return new Set(this);
     }
 
     /**
@@ -1180,10 +1180,10 @@
         for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
             if (!func(v)) {
-                this.removeAt(i)
+                this.removeAt(i);
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -1192,7 +1192,7 @@
      * @returns {Array_ideal} A new array containing only the elements that satisfy the condition.
      */
     select (func) {
-        return this.filter(func)
+        return this.filter(func);
     }
 
     /**
@@ -1238,7 +1238,7 @@
                 this.atPut(i, newValue);
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -1251,7 +1251,7 @@
         for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
             if (v === e) {
-                this.removeAt(i)
+                this.removeAt(i);
             }
         }
         return this;
@@ -1266,16 +1266,16 @@
         // not a mutator
         // like join, but calls aFunc with the array and index as arguments
         // to get each new item to insert between array items
-        const joined = []
+        const joined = [];
         for (let i = 0; i < this.length; i++) {
-            const v = this[i]
-            joined.push(v)
+            const v = this[i];
+            joined.push(v);
             if (i < this.length - 1) {
-                const separator = aFunc(this, i)
-                joined.push(separator)
+                const separator = aFunc(this, i);
+                joined.push(separator);
             }
         }
-        return joined
+        return joined;
     }
 
     /**
@@ -1288,7 +1288,7 @@
         if (index !== -1) {
             return this.slice(0, index);
         }
-        return this
+        return this;
     }
 
     /**
@@ -1297,7 +1297,7 @@
      * @returns {Array_ideal} A new array containing the union of the elements.
      */
     union (other) {
-        let r = this.concat(other).unique()
+        let r = this.concat(other).unique();
         return r;
     }
 
@@ -1307,7 +1307,7 @@
      * @returns {Array_ideal} A new array containing the intersection of the elements.
      */
     intersection (other) { // returns all items that are present in both
-        const thisSet = new Set(this)
+        const thisSet = new Set(this);
         return other.filter((v) => {
             return thisSet.has(v);
         });
@@ -1319,7 +1319,7 @@
      * @returns {Array_ideal} A new array containing the difference of the elements.
      */
     difference (other) { // returns items in other that are not in self
-        const thisSet = new Set(this)
+        const thisSet = new Set(this);
         return other.filter(v => !thisSet.has(v));
     }
 
@@ -1329,9 +1329,9 @@
      * @returns {Array_ideal} A new array containing the symmetric difference of the elements.
      */
     symmetricDifference (other) { // returns items in either not present in the other
-        let all = this.concat(other)
-        const thisSet = new Set(this)
-        const otherSet = new Set(other)
+        let all = this.concat(other);
+        const thisSet = new Set(this);
+        const otherSet = new Set(other);
         return all.filter(v => !thisSet.has(v) || !otherSet.has(v));
     }
 
@@ -1359,22 +1359,22 @@
             return false;
         }
 
-        // compare lengths - can save a lot of time 
+        // compare lengths - can save a lot of time
         if (this.length !== array.length) {
             return false;
         }
 
         for (let i = 0, l = this.length; i < l; i++) {
-            const a = this.at(i)
-            const b = array.at(i)
+            const a = this.at(i);
+            const b = array.at(i);
 
             // Check if we have nested arrays
             /*
                 if (this.at(i) instanceof Array && array[i] instanceof Array) {
                     // recurse into the nested arrays
                     if (!this.at(i).equals(array[i]))
-                        return false;       
-                }     
+                        return false;
+                }
             */
 
             if (a.equals && !a.equals(b, visited)) {
@@ -1396,7 +1396,7 @@
      */
     containsEquals (b) {
         for (let i = 0, l = this.length; i < l; i++) {
-            let a = this.at(i)
+            let a = this.at(i);
 
             if (a.equals) {
                 if (!a.equals(b)) {
