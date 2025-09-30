@@ -25,7 +25,7 @@
     * @description Initializes the AiConversations instance.
     * @category Initialization
     */
-    init() {
+    init () {
     super.init();
     this.setTitle("Conversations");
     this.setShouldStore(true);
@@ -38,7 +38,7 @@
     * @description Performs final initialization steps.
     * @category Initialization
     */
-    finalInit() {
+    finalInit () {
     super.finalInit();
     this.setNoteIsSubnodeCount(true);
 

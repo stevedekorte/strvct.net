@@ -59,7 +59,7 @@
         const range = selection.getRangeAt(0);
         
         // Helper function to calculate offset within the parent
-        function getOffsetWithinParent(node, offset) {
+        function getOffsetWithinParent (node, offset) {
             if (node === div) return offset;
             
             let length = 0;

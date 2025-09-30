@@ -39,7 +39,7 @@
    * @returns {RzPeer} The initialized RzPeer instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setIsDebugging(false)
     this.setCanDelete(false)

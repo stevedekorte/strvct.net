@@ -3,7 +3,7 @@
 const { ClassicLevel } = require('classic-level');
 const fs = require('fs').promises;
 
-async function test() {
+async function test () {
     // Clean up
     await fs.rm('./data', { recursive: true, force: true }).catch(() => {});
     

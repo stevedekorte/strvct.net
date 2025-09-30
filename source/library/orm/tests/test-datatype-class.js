@@ -6,7 +6,7 @@
 
 const SvDbDataType = require("../SvDbDataType");
 
-function testSvDbDataType() {
+function testSvDbDataType () {
     console.log("=== Testing SvDbDataType Class ===");
     
     // Test 1: dataTypeForValue static method

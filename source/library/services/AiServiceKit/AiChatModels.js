@@ -19,7 +19,7 @@
       * @description Initializes the instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
@@ -31,7 +31,7 @@
       * @description Performs final initialization tasks.
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit();
         this.setNoteIsSubnodeCount(true);
         this.setSubnodeClasses([AiChatModel]);

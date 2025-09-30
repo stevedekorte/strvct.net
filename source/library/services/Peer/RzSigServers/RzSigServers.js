@@ -28,7 +28,7 @@
    * @description Performs final initialization tasks.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit();
     this.setupDefaultServers();
   }

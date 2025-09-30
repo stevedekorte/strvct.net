@@ -16,7 +16,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @constructor
     * @category Initialization
     */
-    constructor() {
+    constructor () {
     this._refs = new EnumerableWeakMap();
     }
 
@@ -25,7 +25,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @param {*} v - The value to assert.
     * @category Validation
     */
-    assertValidValue(v) {
+    assertValidValue (v) {
     if (v === undefined) {
         throw new Error("values cannot be undefined as unref returns undefined after collection");
         return;
@@ -38,7 +38,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {EnumerableWeakSet} This instance.
     * @category Modification
     */
-    add(v) {
+    add (v) {
     this.assertValidValue(v);
 
     const refs = this._refs;
@@ -54,7 +54,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @description Clears all values from the EnumerableWeakSet.
     * @category Modification
     */
-    clear() {
+    clear () {
     this._refs.clear();
     }
 
@@ -64,7 +64,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {boolean} True if the value was present and removed, false otherwise.
     * @category Modification
     */
-    delete(v) {
+    delete (v) {
     this.assertValidValue(v);
 
     const hadValue = this.has(v)
@@ -80,7 +80,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {boolean} True if the value is present, false otherwise.
     * @category Query
     */
-    has(v) {
+    has (v) {
     this.assertValidValue(v)
     return this._refs.has(v.puuid())
     }
@@ -90,7 +90,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {Array} An array of the values.
     * @category Query
     */
-    keys() {
+    keys () {
     return this.valuesArray()
     }
 
@@ -99,7 +99,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {Array} An array of the values.
     * @category Query
     */
-    values() {
+    values () {
     return this.valuesArray()
     }
 
@@ -109,7 +109,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @description IMPORTANT: due to the nature of WeakRefs, the size may be smaller when actually used.
     * @category Query
     */
-    count() {
+    count () {
     return this._refs.count()
     }
 
@@ -118,7 +118,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @param {Function} fn - The function to execute for each value.
     * @category Iteration
     */
-    forEach(fn) {
+    forEach (fn) {
     this._refs.forEach(v => fn(v, v, this))
     }
 
@@ -129,7 +129,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @throws {Error} Throws an error indicating that the method is unimplemented.
     * @category Uncategorized
     */
-    entries() {
+    entries () {
     throw new Error("unimplemented")
     }
 
@@ -137,7 +137,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @description Clears any collected (stale) WeakRefs from the EnumerableWeakSet.
     * @category Maintenance
     */
-    clearCollected() {
+    clearCollected () {
     this.forEach(v => {}) // forEach will remove any stale weakrefs
     }
 
@@ -146,7 +146,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {Set} A Set containing all values.
     * @category Query
     */
-    valuesSet() {
+    valuesSet () {
     const set = new Set()
     this.forEach(v => set.add(v))
     return set
@@ -157,7 +157,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {Array} An array containing all values.
     * @category Query
     */
-    valuesArray() {
+    valuesArray () {
     const a = new Array()
     this.forEach(v => a.push(v))
     return a
@@ -168,7 +168,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @returns {Array} An array containing all keys.
     * @category Query
     */
-    keysArray() {
+    keysArray () {
     return this._refs.keysArray()
     }
 

@@ -15,7 +15,7 @@ const SvDbRow = require("../SvDbRow");
 const { initializeDatabase, sequelize } = require("../../database");
 const { v4: uuidv4 } = require("uuid");
 
-async function testDatabaseOperations() {
+async function testDatabaseOperations () {
     console.log("=== Testing Database Operations ===\n");
     
     let testCustomerId = null;

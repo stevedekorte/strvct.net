@@ -15,7 +15,7 @@
      * @returns {Map_store} The current instance.
      * @category Data Loading
      */
-    loadFromRecord(aRecord, aStore) {
+    loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
             const key = entry[0];
             const value = aStore.unrefValue(entry[1]);
@@ -31,7 +31,7 @@
      * @returns {Object} The record representation of the map.
      * @category Data Conversion
      */
-    recordForStore(aStore) { // should only be called by Store
+    recordForStore (aStore) { // should only be called by Store
         let iterator = this.entries();
         let entry = iterator.next().value
         const entries = []
@@ -53,7 +53,7 @@
      * @returns {boolean} Always returns true.
      * @category Storage Management
      */
-    shouldStore() {
+    shouldStore () {
         return true
     }
 
@@ -63,7 +63,7 @@
      * @returns {Set} The set of collected PUIDs.
      * @category Data Collection
      */
-    refsPidsForJsonStore(puuids = new Set()) {
+    refsPidsForJsonStore (puuids = new Set()) {
         this.forEach(v => { 
             if (!Type.isNull(v)) { 
                 v.refsPidsForJsonStore(puuids)

@@ -404,7 +404,7 @@
  * @param {string} htmlContent - The new HTML content
  * @category DOM Manipulation
  */
-function updateElementHTML(element, htmlContent) {
+function updateElementHTML (element, htmlContent) {
     let isFocused = (document.activeElement === element);
 
     let isEditable = element.contentEditable === 'true' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA';

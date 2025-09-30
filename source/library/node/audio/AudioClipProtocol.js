@@ -19,7 +19,7 @@
     * @param {Object} audioClipDelegate - The audio clip delegate to add.
     * @category Delegation
     */
-    addDelegate(audioClipDelegate) {
+    addDelegate (audioClipDelegate) {
     }
 
     /**
@@ -27,14 +27,14 @@
     * @param {Object} audioClipDelegate - The audio clip delegate to remove.
     * @category Delegation
     */
-    removeDelegate(audioClipDelegate) {
+    removeDelegate (audioClipDelegate) {
     }
 
     /**
     * @description Stops the audio clip.
     * @category Playback
     */
-    stop() {
+    stop () {
     }
 
 

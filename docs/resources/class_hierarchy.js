@@ -9,15 +9,15 @@ const walk = require('acorn-walk');
 const CLASS_DOC_PATH = '../resources/class-doc/class_doc.html';
 const OUTPUT_DIR = 'docs/reference';
 
-function ensureLeadingSlash(path) {
+function ensureLeadingSlash (path) {
   return path.startsWith('/') ? path : '/' + path;
 }
 
-function composeClassDocUrl(path) {
+function composeClassDocUrl (path) {
   return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
 }
 
-async function findJsFiles(dir) {
+async function findJsFiles (dir) {
   const files = await fs.readdir(dir, { withFileTypes: true });
   const jsFiles = [];
 
@@ -36,18 +36,18 @@ async function findJsFiles(dir) {
   return jsFiles;
 }
 
-function parseClasses(content) {
+function parseClasses (content) {
   const ast = acorn.parse(content, { ecmaVersion: 'latest', sourceType: 'module' });
   const classes = [];
 
   walk.simple(ast, {
-    ClassDeclaration(node) {
+    ClassDeclaration (node) {
       classes.push({
         name: node.id.name,
         superClass: node.superClass ? node.superClass.name : null
       });
     },
-    ClassExpression(node) {
+    ClassExpression (node) {
       if (node.id) {
         classes.push({
           name: node.id.name,
@@ -60,7 +60,7 @@ function parseClasses(content) {
   return classes;
 }
 
-function buildHierarchy(classes) {
+function buildHierarchy (classes) {
   const classIndex = {};
   const hierarchy = { Object: { name: 'Object', children: {}, superClass: null } };
   const builtInTypes = ['Array', 'Boolean', 'Date', 'Error', 'Map', 'Set', 'String', 'Number', 'ArrayBuffer', 'Blob', 'Image', 'Range'];
@@ -99,7 +99,7 @@ function buildHierarchy(classes) {
   return { hierarchy, classIndex };
 }
 
-function placeOrphan(hierarchy, orphan) {
+function placeOrphan (hierarchy, orphan) {
   if (hierarchy[orphan.superClass]) {
     hierarchy[orphan.superClass].children[orphan.name] = orphan;
     return true;
@@ -112,7 +112,7 @@ function placeOrphan(hierarchy, orphan) {
   return false;
 }
 
-function printHierarchy(hierarchy, classFiles, indent = '', isRoot = true) {
+function printHierarchy (hierarchy, classFiles, indent = '', isRoot = true) {
   let output = '';
   const entries = Object.entries(hierarchy);
   
@@ -142,14 +142,14 @@ function printHierarchy(hierarchy, classFiles, indent = '', isRoot = true) {
   return output;
 }
 
-function createClassLink(className, filePath) {
+function createClassLink (className, filePath) {
     const link = document.createElement('a');
     link.textContent = className;
     link.href = composeClassDocUrl(filePath);
     return link;
 }
 
-async function main(folderPath) {
+async function main (folderPath) {
   try {
     const jsFiles = await findJsFiles(folderPath);
     const allClasses = [];

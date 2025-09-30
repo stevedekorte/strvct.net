@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testGetRowForId() {
+async function testGetRowForId () {
     console.log("=== Testing getRowForId() Cache-First Lookup ===");
     
     // Get shared database instance and setup (handles initialization automatically)

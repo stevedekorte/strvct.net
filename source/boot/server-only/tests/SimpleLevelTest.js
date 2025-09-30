@@ -6,7 +6,7 @@ const { ClassicLevel } = require('classic-level');
 const path = require('path');
 const fs = require('fs').promises;
 
-async function testLevel() {
+async function testLevel () {
     const dbPath = './data/test-simple-level';
     
     // Clean up any previous test

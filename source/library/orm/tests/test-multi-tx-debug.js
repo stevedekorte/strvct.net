@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function debugMultiTx() {
+async function debugMultiTx () {
     console.log("=== Debugging Multi-Transaction Support ===");
     
     // Get shared database instance and setup (handles initialization automatically)

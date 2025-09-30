@@ -7,7 +7,7 @@
 const { initializeDatabase } = require("../../database");
 const SvDatabase = require("../SvDatabase");
 
-async function testSaveWithTx() {
+async function testSaveWithTx () {
     console.log("=== Testing save() with Transactions ===");
     
     // Initialize database

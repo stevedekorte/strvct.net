@@ -176,7 +176,7 @@
   }
   */
   
-  pause() {
+  pause () {
     this.debugLog("pause()");
     this.audioQueue().pause();
   }

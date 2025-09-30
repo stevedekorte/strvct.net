@@ -126,7 +126,7 @@ Object.defineSlots = function (obj, dict) {
  * @member defineSlotSafely
  * @category Property
  */
-Object.defineSlotSafely = function(obj, slotName, slotValue) {
+Object.defineSlotSafely = function (obj, slotName, slotValue) {
     const nameForObj = function (obj) {
         let name = "?";
         try {

@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testConcurrentTransactions() {
+async function testConcurrentTransactions () {
     console.log("=== Testing Concurrent Multiple Transactions ===");
     
     // Get shared database instance and setup (handles initialization automatically)

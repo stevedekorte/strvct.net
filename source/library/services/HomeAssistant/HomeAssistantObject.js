@@ -81,7 +81,7 @@
    * @description Initializes the HomeAssistantObject.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setTitle("");
     this.setCanDelete(true);

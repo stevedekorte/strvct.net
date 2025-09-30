@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer'); // npm install puppeteer
 
-async function getChannelVideoData(url) {
+async function getChannelVideoData (url) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url);

@@ -25,7 +25,7 @@
      * @description Initializes prototype slots for the RootContentNode class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("browserHeaderNode", null);
             slot.setShouldStoreSlot(true);
@@ -38,7 +38,7 @@
      * @description Initializes the prototype for the RootContentNode class.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
         this.setTitle("Root Content Node");
         this.setNodeCanReorderSubnodes(true);
         this.setNodeMinTileHeight(75);

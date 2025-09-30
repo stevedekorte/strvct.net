@@ -37,7 +37,7 @@
    * @description Initializes the SttMessage instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setSubtitle("")
     this.setShouldStore(true);
@@ -59,7 +59,7 @@
    * @description Performs final initialization tasks.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit()
   }
 

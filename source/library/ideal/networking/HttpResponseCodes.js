@@ -11,7 +11,7 @@
    * Initializes the prototype slots.
    * @private
    */
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       /**
        * @member {Map} codesMap - A map of HTTP response codes and their corresponding information.
@@ -26,7 +26,7 @@
    * Initializes the prototype by setting the codesMap.
    * @private
    */
-  initPrototype() {
+  initPrototype () {
     this.setCodesMap(this.codesAsMap());
   }
 
@@ -34,7 +34,7 @@
    * Initializes the instance.
    * @private
    */
-  init() {
+  init () {
     super.init();
   }
 
@@ -44,7 +44,7 @@
    * @private
    * @category Data Processing
    */
-  codesAsMap() {
+  codesAsMap () {
     const m = new Map();
     const json = this.jsonCodes();
     Object.keys(json).forEach(code => {
@@ -61,7 +61,7 @@
    * @static
    * @category Data Retrieval
    */
-  infoForCode(code) {
+  infoForCode (code) {
     const info = this.codesMap().get("" + code);
     return info;
   }
@@ -74,7 +74,7 @@
    * @description Retrieves the information for a given HTTP response code and formats it as a string.
    * @category Formatting
    */
-  stringForCode(code) {
+  stringForCode (code) {
     const info = this.infoForCode(code);
     if (info) {
       return "HTTP Response Code '" + code + "': " + info.type + ": " + info.description;
@@ -90,7 +90,7 @@
    * @description Retrieves the information for a given HTTP response code and formats it as a shorter string.
    * @category Formatting
    */
-  shortStringForCode(code) {
+  shortStringForCode (code) {
     const info = this.infoForCode(code);
     if (info) {
       return info.type + ": " + info.description;
@@ -105,7 +105,7 @@
    * @private
    * @category Data Storage
    */
-  jsonCodes() {
+  jsonCodes () {
     return {
       "100": {"type": "Informational", "description": "Continue"},
       "101": {"type": "Informational", "description": "Switching Protocols"},

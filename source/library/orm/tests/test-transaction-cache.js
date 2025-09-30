@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testTransactionCacheConsistency() {
+async function testTransactionCacheConsistency () {
     console.log("=== Testing Transaction-Aware Cache Consistency ===");
     
     // Get shared database instance and setup (handles initialization automatically)

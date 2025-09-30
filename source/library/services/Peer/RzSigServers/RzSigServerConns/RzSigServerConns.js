@@ -22,7 +22,7 @@
       * @description Initializes the instance
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setTitle("connections to sigserver");
         this.setShouldStore(true);
@@ -35,7 +35,7 @@
       * @description Performs final initialization
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit()
         this.setNoteIsSubnodeCount(true);
         this.removeAllSubnodes();

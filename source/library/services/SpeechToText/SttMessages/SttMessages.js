@@ -14,7 +14,7 @@
    * @description Initializes the prototype slots for the SttMessages class.
    * @category Initialization
    */
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     /**
      * @member {Array} subnodeClasses - The classes of subnodes for this node.
      * @category Configuration

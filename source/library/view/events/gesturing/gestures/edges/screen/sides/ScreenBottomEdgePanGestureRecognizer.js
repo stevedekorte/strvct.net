@@ -21,7 +21,7 @@
      * @private
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
 
     }
 
@@ -30,7 +30,7 @@
      * @returns {ScreenBottomEdgePanGestureRecognizer} The initialized instance
      * @category Initialization
      */
-    init() {
+    init () {
         super.init()
         this.setEdgeName("bottom")
         return this

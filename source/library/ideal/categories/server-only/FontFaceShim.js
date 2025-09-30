@@ -15,7 +15,7 @@ if (typeof FontFace === 'undefined') {
      * This is a stub that pretends to initialize but doesn't actually load fonts.
      */
     class FontFace {
-        constructor(family, source, descriptors = {}) {
+        constructor (family, source, descriptors = {}) {
             this.family = family;
             this.source = source;
             this.descriptors = descriptors;
@@ -27,7 +27,7 @@ if (typeof FontFace === 'undefined') {
          * Pretends to load the font. Always resolves successfully.
          * @returns {Promise<FontFace>} A promise that resolves to this FontFace instance
          */
-        load() {
+        load () {
             this.status = 'loaded';
             return Promise.resolve(this);
         }
@@ -36,11 +36,11 @@ if (typeof FontFace === 'undefined') {
          * Returns the font family name
          * @returns {string} The font family name
          */
-        get family() {
+        get family () {
             return this._family;
         }
 
-        set family(value) {
+        set family (value) {
             this._family = value;
         }
 
@@ -48,11 +48,11 @@ if (typeof FontFace === 'undefined') {
          * Returns the font source
          * @returns {string} The font source
          */
-        get source() {
+        get source () {
             return this._source;
         }
 
-        set source(value) {
+        set source (value) {
             this._source = value;
         }
 
@@ -60,11 +60,11 @@ if (typeof FontFace === 'undefined') {
          * Returns the font loading status
          * @returns {string} The loading status ('unloaded', 'loading', 'loaded', 'error')
          */
-        get status() {
+        get status () {
             return this._status;
         }
 
-        set status(value) {
+        set status (value) {
             this._status = value;
         }
 
@@ -72,11 +72,11 @@ if (typeof FontFace === 'undefined') {
          * Returns a promise that resolves when the font is loaded
          * @returns {Promise<FontFace>} A promise that resolves to this FontFace instance
          */
-        get loaded() {
+        get loaded () {
             return this._loaded;
         }
 
-        set loaded(value) {
+        set loaded (value) {
             this._loaded = value;
         }
     }

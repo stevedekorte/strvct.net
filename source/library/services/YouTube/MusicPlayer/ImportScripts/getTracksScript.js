@@ -2,7 +2,7 @@
 
 //To get a list from a videos list page, scroll to the bottom, then open the console and type:
 
-function getVideoslist() {
+function getVideoslist () {
   let vids = document.getElementsByClassName(
     "yt-simple-endpoint focus-on-expand style-scope ytd-rich-grid-media"
   );
@@ -38,7 +38,7 @@ getVideoslist();
 
 //To get a list from a playlist page:
 
-function getPlaylist() {
+function getPlaylist () {
   let vids = document.getElementsByClassName(
     "yt-simple-endpoint style-scope ytd-playlist-video-renderer"
   );

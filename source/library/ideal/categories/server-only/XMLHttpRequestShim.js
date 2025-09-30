@@ -13,14 +13,14 @@ if (typeof XMLHttpRequest === 'undefined') {
 
     // Wrapper class to fix event handling compatibility
     class XMLHttpRequest extends NodeXMLHttpRequest {
-        constructor() {
+        constructor () {
             super();
             this._onerror = null;
             this._onload = null;
             this._onreadystatechange = null;
         }
 
-        set onerror(callback) {
+        set onerror (callback) {
             this._onerror = callback;
             super.onerror = (error) => {
                 if (callback) {
@@ -31,11 +31,11 @@ if (typeof XMLHttpRequest === 'undefined') {
             };
         }
 
-        get onerror() {
+        get onerror () {
             return this._onerror;
         }
 
-        set onload(callback) {
+        set onload (callback) {
             this._onload = callback;
             super.onload = (event) => {
                 if (callback) {
@@ -46,11 +46,11 @@ if (typeof XMLHttpRequest === 'undefined') {
             };
         }
 
-        get onload() {
+        get onload () {
             return this._onload;
         }
 
-        set onreadystatechange(callback) {
+        set onreadystatechange (callback) {
             this._onreadystatechange = callback;
             super.onreadystatechange = (event) => {
                 if (callback) {
@@ -61,7 +61,7 @@ if (typeof XMLHttpRequest === 'undefined') {
             };
         }
 
-        get onreadystatechange() {
+        get onreadystatechange () {
             return this._onreadystatechange;
         }
     }

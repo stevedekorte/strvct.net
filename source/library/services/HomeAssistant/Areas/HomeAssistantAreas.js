@@ -19,7 +19,7 @@
       * @description Initializes the HomeAssistantAreas instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setTitle("areas");
         this.setSubnodeClasses([HomeAssistantArea]);
@@ -29,7 +29,7 @@
       * @description Performs final initialization steps.
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit();
         this.setGetMessageType("config/area_registry/list");
     }

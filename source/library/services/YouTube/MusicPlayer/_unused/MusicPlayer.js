@@ -13,7 +13,7 @@
 
 (class MusicPlayer extends BMStorableNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("currentTrack", null);
@@ -46,7 +46,7 @@
     this.setShouldStoreSubnodes(false)
   }
 
-  init() {
+  init () {
     super.init();
     this.setIsDebugging(true);
   }

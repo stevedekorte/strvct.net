@@ -27,18 +27,18 @@ const colors = {
 
 // Test utilities
 class TestRunner {
-    constructor() {
+    constructor () {
         this.tests = [];
         this.passed = 0;
         this.failed = 0;
         this.currentTest = null;
     }
 
-    test(name, fn) {
+    test (name, fn) {
         this.tests.push({ name, fn });
     }
 
-    async run() {
+    async run () {
         console.log(`${colors.blue}Starting SvIndexedDb Tests${colors.reset}\n`);
         console.log(`${colors.gray}Database files location: ./data/leveldb/{path}/${colors.reset}\n`);
 
@@ -71,7 +71,7 @@ class TestRunner {
         return this.failed === 0;
     }
 
-    async showDatabaseFiles() {
+    async showDatabaseFiles () {
         const dataDir = './data/leveldb';
         try {
             const dirs = await fs.readdir(dataDir);
@@ -93,19 +93,19 @@ class TestRunner {
         }
     }
 
-    assert(condition, message) {
+    assert (condition, message) {
         if (!condition) {
             throw new Error(message || 'Assertion failed');
         }
     }
 
-    assertEqual(actual, expected, message) {
+    assertEqual (actual, expected, message) {
         if (actual !== expected) {
             throw new Error(message || `Expected ${expected}, got ${actual}`);
         }
     }
 
-    assertDeepEqual(actual, expected, message) {
+    assertDeepEqual (actual, expected, message) {
         if (JSON.stringify(actual) !== JSON.stringify(expected)) {
             throw new Error(message || `Objects not equal:\n  Expected: ${JSON.stringify(expected)}\n  Actual: ${JSON.stringify(actual)}`);
         }
@@ -113,7 +113,7 @@ class TestRunner {
 }
 
 // Check if level module is installed
-function checkLevelInstalled() {
+function checkLevelInstalled () {
     try {
         require('level');
         return true;
@@ -123,7 +123,7 @@ function checkLevelInstalled() {
 }
 
 // Install level if needed
-async function ensureLevelInstalled() {
+async function ensureLevelInstalled () {
     if (!checkLevelInstalled()) {
         console.log(`${colors.yellow}Installing 'level' package...${colors.reset}`);
         try {
@@ -137,7 +137,7 @@ async function ensureLevelInstalled() {
 }
 
 // Clean up test databases
-async function cleanupTestDatabases() {
+async function cleanupTestDatabases () {
     const dataDir = './data/leveldb';
     try {
         await fs.rm(dataDir, { recursive: true, force: true });
@@ -148,7 +148,7 @@ async function cleanupTestDatabases() {
 }
 
 // Load the STRVCT boot environment
-async function loadStrvctEnvironment() {
+async function loadStrvctEnvironment () {
     // Set up minimal globals for STRVCT
     global.SvGlobals = {
         globals: () => global,
@@ -158,14 +158,14 @@ async function loadStrvctEnvironment() {
 
     // Create mock Promise.clone if needed
     if (!Promise.clone) {
-        Promise.clone = function() {
+        Promise.clone = function () {
             let resolveFunc, rejectFunc;
             const promise = new Promise((resolve, reject) => {
                 resolveFunc = resolve;
                 rejectFunc = reject;
             });
-            promise.callResolveFunc = function(value) { resolveFunc(value); };
-            promise.callRejectFunc = function(error) { rejectFunc(error); };
+            promise.callResolveFunc = function (value) { resolveFunc(value); };
+            promise.callRejectFunc = function (error) { rejectFunc(error); };
             return promise;
         };
     }
@@ -192,7 +192,7 @@ async function loadStrvctEnvironment() {
     eval(require('fs').readFileSync(path.join(bootPath, 'SvBase.js'), 'utf8'));
     
     // Need to set up initThisClass for the class pattern
-    Object.prototype.initThisClass = function() {
+    Object.prototype.initThisClass = function () {
         // Simple implementation for testing
         if (this.prototype && this.prototype.initPrototypeSlots) {
             this.prototype.initPrototypeSlots.call(this.prototype);
@@ -233,7 +233,7 @@ async function loadStrvctEnvironment() {
 }
 
 // Main test suite
-async function runTests() {
+async function runTests () {
     await ensureLevelInstalled();
     await cleanupTestDatabases();
     await loadStrvctEnvironment();

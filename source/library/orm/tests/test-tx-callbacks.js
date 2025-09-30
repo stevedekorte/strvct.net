@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testTransactionCallbacks() {
+async function testTransactionCallbacks () {
     console.log("=== Testing Transaction Listeners (Updated Test) ===");
     
     const database = await SvDatabase.shared().setup();
@@ -133,7 +133,7 @@ async function testTransactionCallbacks() {
     
     // Temporarily capture console.warn to count warnings from listener errors
     const originalWarn = console.warn;
-    console.warn = function(...args) {
+    console.warn = function (...args) {
         if (args[0] && args[0].includes("Transaction commit listener failed")) {
             errorCount++;
         }

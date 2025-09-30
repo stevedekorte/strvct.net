@@ -43,7 +43,7 @@ JSON.nodeCount = function (json) {
  * @category Data Analysis
  */
 JSON.stringifyOnlyJson = function (obj, replacer, space) {
-    function filterJsonCompatible(value) {
+    function filterJsonCompatible (value) {
         if (Array.isArray(value)) {
             return value
                 .filter(Type.isJsonType)
@@ -74,7 +74,7 @@ JSON.stringifyOnlyJson = function (obj, replacer, space) {
 JSON.stableStringifyOnlyJson = function (obj, replacer, space) {
     const seen = new WeakSet();  // Track objects to prevent circular references
 
-    function filterJsonCompatible(value) {
+    function filterJsonCompatible (value) {
         if (typeof value === 'object' && value !== null) {
             if (seen.has(value)) return undefined;  // Avoid circular reference
             seen.add(value);

@@ -682,7 +682,7 @@
         }
     }
 
-    onAlternate_l_KeyUp(event) {
+    onAlternate_l_KeyUp (event) {
         if (this.hasFocus()) {
             this.stopSpeechToText()
             event.stopPropagation();
@@ -796,7 +796,7 @@
 
 assert(HTMLElement.prototype.clone === undefined);
 
-HTMLElement.prototype.clone = function() {
+HTMLElement.prototype.clone = function () {
     const newNode = document.createElement(this.tagName);
     Array.from(this.attributes).forEach(attr => {
         newNode.setAttribute(attr.name, attr.value);
@@ -805,7 +805,7 @@ HTMLElement.prototype.clone = function() {
     return newNode
 };
 
-HTMLElement.prototype.mergeFrom = function(remoteElement) {
+HTMLElement.prototype.mergeFrom = function (remoteElement) {
     if (this.innerHTML === remoteElement.innerHTML) {
         return;
     }
@@ -873,7 +873,7 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
     }
 };
 
-HTMLElement.prototype.findElementWithTextContent = function(textContent) {
+HTMLElement.prototype.findElementWithTextContent = function (textContent) {
     const children = Array.from(this.childNodes);
 
     for (let i = 0; i < children.length; i++) {

@@ -6,7 +6,7 @@
 */
 
 (class PeerConnection extends BMStorableNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("peerId", null);
     }
@@ -28,7 +28,7 @@
     }
   }
 
-  id() {
+  id () {
     const conn = this.conn();
     if (conn) {
       return conn.peer;
@@ -45,14 +45,14 @@
     return this.svType() + " " + this.shortId();
   }
 
-  init() {
+  init () {
     super.init();
     this.setTitle("Peer Connection")
     this.setIsDebugging(true);
     return this;
   }
 
-  setConn(conn) {
+  setConn (conn) {
     this._conn = conn;
     if (conn) {
       this.setPeerId(conn.peer);
@@ -61,7 +61,7 @@
     return this;
   }
 
-  setup() {
+  setup () {
     const conn = this.conn();
     conn.on("open", () => this.onOpen());
     conn.on("data", (data) => this.onData(data));
@@ -71,22 +71,22 @@
 
   // --- events ---
 
-  onOpen(peerId) {
+  onOpen (peerId) {
     this.setPeerId(peerId);
     this.debugLog("onOpen");
     this.sendDelegateMessage("onOpen");
   }
 
-  onData(data) {
+  onData (data) {
     this.sendDelegateMessage("onData", [data]);
   }
 
-  onError(error) {
+  onError (error) {
     this.debugLog("onError:", error);
     this.sendDelegateMessage("onError", [error]);
   }
 
-  onClose() {
+  onClose () {
     this.debugLog("onClose");
     this.server().removePeerConnection(this);
     this.setConn(null);
@@ -96,7 +96,7 @@
 
   // --- delegate ---
 
-  sendDelegateMessage(methodName, args = []) {
+  sendDelegateMessage (methodName, args = []) {
     const d = this.delegate();
     if (d) {
       const m = d[methodName];
@@ -108,7 +108,7 @@
 
   // --- sending ---
 
-  send(json) {
+  send (json) {
     if (!this.conn()) {
       console.warn("attempt to send to closed connection ", this.peerId());
       return;
@@ -116,7 +116,7 @@
     this.conn().send(json);
   }
 
-  sendThenClose(json) {
+  sendThenClose (json) {
     this.send(json);
     setTimeout(() => {
       this.shutdown();
@@ -125,7 +125,7 @@
 
   // --- shutdown ---
 
-  shutdown() {
+  shutdown () {
     console.log(this.svType() + " " + this.shortId() + " shutdown");
     if (this.conn()) { // only close connection if it's still up
       this.conn().close()

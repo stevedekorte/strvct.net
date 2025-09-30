@@ -14,7 +14,7 @@
      * @returns {SvDefaultTheme} The initialized instance.
      * @category Initialization
      */
-    init() {
+    init () {
         super.init()
         return this
     }
@@ -23,7 +23,7 @@
      * @description Initializes the prototype slots for the SvDefaultTheme instance.
      * @category Initialization
      */
-    finalInit() {
+    finalInit () {
         super.finalInit();
         this.setupAsDefault() 
     }
@@ -33,7 +33,7 @@
      * @returns {SvDefaultTheme} The current instance.
      * @category Configuration
      */
-    setupAsDefault() {
+    setupAsDefault () {
         if (!this.hasSubnodes()) {
             //debugger
             this.setTitle("DefaultTheme")

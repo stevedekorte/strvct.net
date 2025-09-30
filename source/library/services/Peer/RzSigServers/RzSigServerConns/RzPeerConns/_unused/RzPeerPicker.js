@@ -7,7 +7,7 @@
 
 (class RzPeerPicker extends BMFolderNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     //this.newSlot("validTitlesMethod", "availablePeerIds")
     this.newSlot("chooseMethod", null)
 

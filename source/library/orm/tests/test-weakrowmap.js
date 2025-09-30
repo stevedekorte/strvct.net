@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testWeakRowMap() {
+async function testWeakRowMap () {
     console.log("=== Testing WeakRowMap Functionality ===");
     
     // Get shared database instance and setup (handles initialization automatically)

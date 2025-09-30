@@ -43,7 +43,7 @@ String.clipWithEllipsis = function (length) {
  * @param {WebSocket} ws - The WebSocket connection from the browser.
  * @category WebSocket
  */
-wss.on('connection', async function(ws) {
+wss.on('connection', async function (ws) {
   console.log('Got WS connection from browser and opening new connection to HomeAssistant...');
 
   ws.binaryType = 'utf8'; // This line ensures you receive text instead of Buffer objects
@@ -60,7 +60,7 @@ wss.on('connection', async function(ws) {
    * Handles the 'open' event of the WebSocket connection to HomeAssistant.
    * @category WebSocket
    */
-  wsClient.on('open', async function() {
+  wsClient.on('open', async function () {
     console.log('Connected to the HomeAssistant WS server');
     wsClientOpen = true;
     // Send all queued messages
@@ -111,7 +111,7 @@ wss.on('connection', async function(ws) {
    * Handles the 'close' event of the WebSocket connection from the browser.
    * @category WebSocket
    */
-  ws.on('close', function() {
+  ws.on('close', function () {
     console.log('WSS client disconnected');
     wsClient.close();
   });
@@ -120,7 +120,7 @@ wss.on('connection', async function(ws) {
    * Handles the 'close' event of the WebSocket connection to HomeAssistant.
    * @category WebSocket
    */
-  wsClient.on('close', function() {
+  wsClient.on('close', function () {
     console.log('WS server connection closed');
     wsClientOpen = false;
   });
@@ -130,7 +130,7 @@ wss.on('connection', async function(ws) {
  * Starts the server listening on port 8124.
  * @category Server
  */
-server.listen(8124, function() {
+server.listen(8124, function () {
   console.log(`This is a secure WebSocket server running on port 8124
 and acting as a proxy to a non-secure WebSocket server on port 8123.
 Example use case: WSS client (e.g. HTTPS browser) <-> WSS proxy <-> WS server (e.g. HomeAssistant API).`);

@@ -7,28 +7,28 @@ const path = require('path');
 const fs = require('fs').promises;
 
 class MinimalIndexedDbFolder {
-    constructor() {
+    constructor () {
         this.path = '/';
         this.db = null;
         this.levelDb = null;
         this.dataDir = './data/leveldb/';
     }
     
-    setPath(aPath) {
+    setPath (aPath) {
         this.path = aPath;
         return this;
     }
     
-    dbPath() {
+    dbPath () {
         const safePath = this.path.replace(/[^a-zA-Z0-9-_/]/g, '_');
         return path.join(this.dataDir, safePath);
     }
     
-    isOpen() {
+    isOpen () {
         return this.levelDb !== null && this.levelDb.status === 'open';
     }
     
-    async promiseOpen() {
+    async promiseOpen () {
         if (this.isOpen()) return;
         
         const dbPath = this.dbPath();
@@ -40,7 +40,7 @@ class MinimalIndexedDbFolder {
         this.db = this.levelDb;
     }
     
-    async close() {
+    async close () {
         if (this.levelDb) {
             await this.levelDb.close();
             this.levelDb = null;
@@ -48,12 +48,12 @@ class MinimalIndexedDbFolder {
         }
     }
     
-    async promiseAtPut(key, value) {
+    async promiseAtPut (key, value) {
         await this.promiseOpen();
         await this.levelDb.put(key, value);
     }
     
-    async promiseAt(key) {
+    async promiseAt (key) {
         await this.promiseOpen();
         try {
             return await this.levelDb.get(key);
@@ -65,18 +65,18 @@ class MinimalIndexedDbFolder {
         }
     }
     
-    async promiseHasKey(key) {
+    async promiseHasKey (key) {
         const val = await this.promiseAt(key);
         return val !== undefined;
     }
     
-    static clone() {
+    static clone () {
         return new MinimalIndexedDbFolder();
     }
 }
 
 // Test it
-async function test() {
+async function test () {
     console.log('Testing minimal wrapper...');
     
     const folder = MinimalIndexedDbFolder.clone().setPath('/test/minimal/');

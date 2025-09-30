@@ -15,7 +15,7 @@ const SvDbTable = require("../SvDbTable");
 const SvDbColumn = require("../SvDbColumn");
 const SvDbRow = require("../SvDbRow");
 
-async function testRowMethodsSimple() {
+async function testRowMethodsSimple () {
     console.log("=== Testing SvDbTable Row Methods (Simple) ===\n");
     
     try {

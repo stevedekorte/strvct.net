@@ -1,13 +1,13 @@
 class TestClass {
-    constructor(name) {
+    constructor (name) {
         this.name = name;
     }
 
-    sayHello() {
+    sayHello () {
         return `Hello, my name is ${this.name}!`;
     }
 
-    static createGreeting(name) {
+    static createGreeting (name) {
         return new TestClass(name).sayHello();
     }
 }

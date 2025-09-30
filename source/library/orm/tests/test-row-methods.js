@@ -21,7 +21,7 @@ const { initializeDatabase } = require("../../database");
 /**
  * Main test function
  */
-async function testRowMethods() {
+async function testRowMethods () {
     console.log("=== Testing SvDbTable Row Methods ===\n");
     
     try {

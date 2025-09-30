@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testSaveMethod() {
+async function testSaveMethod () {
     console.log("=== Testing save() Method Behavior ===");
     
     // Get shared database instance and setup (handles initialization automatically)

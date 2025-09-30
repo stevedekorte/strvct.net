@@ -20,7 +20,7 @@
       * @description Initializes the HomeAssistantStates instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setTitle("states");
         this.setSubnodeClasses([HomeAssistantState]);
@@ -30,7 +30,7 @@
       * @description Performs final initialization steps for the HomeAssistantStates instance.
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit();
         this.setGetMessageType("get_states");
         this.setNodeSubtitleIsChildrenSummary(false);

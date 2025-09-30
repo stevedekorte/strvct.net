@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 /**
  * Test the ORM using the high-level row interface without touching Sequelize directly
  */
-async function testOrmRowOperations() {
+async function testOrmRowOperations () {
     try {
         console.log("Starting ORM Row Operations test...");
         
@@ -32,7 +32,7 @@ async function testOrmRowOperations() {
 /**
  * Test row-based CRUD operations using the ORM
  */
-async function testRowCrudOperations(database) {
+async function testRowCrudOperations (database) {
     console.log("\n=== Testing Row-Based CRUD Operations ===");
     
     // Get the users table

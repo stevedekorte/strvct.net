@@ -74,7 +74,7 @@
    * @returns {SvThemeClass} This instance.
    * @category Setup
    */
-  setupAsDefault() {
+  setupAsDefault () {
     this.setTitle("Tile");
     //this.setupSubnodes();
     this.states().setupAsDefault()

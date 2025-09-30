@@ -16,7 +16,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
      * @returns {Set} A set of all the definition references found in the schema.
      * @category Schema Analysis
      */
-    static definitionRefsInJsonSchema(schema) {
+    static definitionRefsInJsonSchema (schema) {
         const refs = new Set();
         const addRef = (ref) => {
             if (ref) {
@@ -53,7 +53,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
      * @throws {Error} If a class is not found for any of the given definition references.
      * @category Class Resolution
      */
-    static classesForRefs(definitionRefs) {
+    static classesForRefs (definitionRefs) {
         const classes = new Set();
         definitionRefs.forEach(ref => {
             const cls = this.classForRef(ref);
@@ -73,7 +73,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
      * @returns {Class|undefined} The class corresponding to the given definition reference, or undefined if no class is found.
      * @category Class Resolution
      */
-    static classForRef(ref) {
+    static classForRef (ref) {
         const className = this.classNameForRef(ref);
         const cls = this.classForClassName(className);
         return cls;
@@ -87,7 +87,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
      * @returns {string} The class name extracted from the definition reference.
      * @category Utility
      */
-    static classNameForRef(ref) {
+    static classNameForRef (ref) {
         const parts = ref.split("/");
         const className = parts[parts.length - 1];
         return className;      
@@ -101,7 +101,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
      * @returns {Class|undefined} The class corresponding to the given class name, or undefined if no class is found.
      * @category Class Resolution
      */
-    static classForClassName(className) {
+    static classForClassName (className) {
         const aClass = SvGlobals.globals()[className];
         return aClass;
     }

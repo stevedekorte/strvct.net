@@ -6,7 +6,7 @@
 */
 
 (class OpenAiChatModel extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.newSlot("name", null);
     {
       const slot = this.newSlot("isAvailable", undefined)
@@ -27,7 +27,7 @@
     }
   }
 
-  init() {
+  init () {
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);

@@ -123,7 +123,7 @@
      * @returns {TilesView_helpers} Returns this instance for method chaining.
      * @category Debugging
      */
-    showTiles(tiles) {
+    showTiles (tiles) {
         console.log("tiles: ", tiles.map(r => {
             if (r.node) {
                 return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "")
@@ -139,7 +139,7 @@
      * @returns {TilesView_helpers} Returns this instance for method chaining.
      * @category Debugging
      */
-    showNodes(nodes) {
+    showNodes (nodes) {
         console.log("nodes: ", nodes.map(node => {
             return node.title()
         }).join(", "))

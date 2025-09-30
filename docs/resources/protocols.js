@@ -8,23 +8,23 @@ const doctrine = require('doctrine');
 const CLASS_DOC_PATH = '../resources/class-doc/class_doc.html';
 const OUTPUT_DIR = 'docs/reference';
 
-function ensureLeadingSlash(path) {
+function ensureLeadingSlash (path) {
   return path.startsWith('/') ? path : '/' + path;
 }
 
-function composeClassDocUrl(path) {
+function composeClassDocUrl (path) {
   return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
 }
 
 class ProtocolAnalyzer {
-  constructor(folderPath) {
+  constructor (folderPath) {
     this.folderPath = folderPath;
     this.allProtocols = new Map();
     this.protocolFiles = {};
     this.implementors = new Map();
   }
 
-  async analyze() {
+  async analyze () {
     const jsFiles = await this.findJsFiles(this.folderPath);
     await this.processFiles(jsFiles);
     const hierarchy = this.buildHierarchy();
@@ -33,7 +33,7 @@ class ProtocolAnalyzer {
     await this.writeOutput(markdownContent);
   }
 
-  async findJsFiles(dir) {
+  async findJsFiles (dir) {
     const files = await fs.readdir(dir, { withFileTypes: true });
     const jsFiles = [];
 
@@ -51,7 +51,7 @@ class ProtocolAnalyzer {
     return jsFiles;
   }
 
-  async processFiles(jsFiles) {
+  async processFiles (jsFiles) {
     for (const file of jsFiles) {
       const content = await fs.readFile(file, 'utf-8');
       console.log(`Processing file: ${file}`);
@@ -70,7 +70,7 @@ class ProtocolAnalyzer {
     }
   }
 
-  parseProtocols(content, fileName) {
+  parseProtocols (content, fileName) {
     const comments = [];
     try {
       const ast = acorn.parse(content, {
@@ -99,7 +99,7 @@ class ProtocolAnalyzer {
     }
   }
 
-  processClass(node, comments, protocols) {
+  processClass (node, comments, protocols) {
     if (node.id) {
       const className = node.id.name;
       const moduleName = this.getModuleName(node, comments) || 'globals';
@@ -119,11 +119,11 @@ class ProtocolAnalyzer {
     }
   }
 
-  isProtocolSubclass(node) {
+  isProtocolSubclass (node) {
     return node.superClass && node.superClass.name === 'Protocol';
   }
 
-  getModuleName(node, comments) {
+  getModuleName (node, comments) {
     const relevantComments = comments.filter(comment => comment.loc.end.line <= node.loc.start.line);
     for (let i = relevantComments.length - 1; i >= 0; i--) {
       const comment = relevantComments[i];
@@ -136,7 +136,7 @@ class ProtocolAnalyzer {
     return null;
   }
 
-  getImplementedProtocols(node, comments) {
+  getImplementedProtocols (node, comments) {
     const relevantComments = comments.filter(comment => comment.loc.end.line <= node.loc.start.line);
     const implementedProtocols = [];
     for (let i = relevantComments.length - 1; i >= 0; i--) {
@@ -148,14 +148,14 @@ class ProtocolAnalyzer {
     return implementedProtocols;
   }
 
-  addToProtocol(protocols, moduleName, itemName) {
+  addToProtocol (protocols, moduleName, itemName) {
     if (!protocols.has(moduleName)) {
       protocols.set(moduleName, new Set());
     }
     protocols.get(moduleName).add(itemName);
   }
 
-  buildHierarchy() {
+  buildHierarchy () {
     const hierarchy = {};
 
     for (const [moduleName, items] of this.allProtocols) {
@@ -178,7 +178,7 @@ class ProtocolAnalyzer {
     return hierarchy;
   }
 
-  printHierarchy(hierarchy, indent = '') {
+  printHierarchy (hierarchy, indent = '') {
     let output = '';
     const entries = Object.entries(hierarchy);
 
@@ -208,7 +208,7 @@ class ProtocolAnalyzer {
     return output;
   }
 
-  async writeOutput(content) {
+  async writeOutput (content) {
     // Create the output directory if it doesn't exist
     const outputDir = path.join(this.folderPath, OUTPUT_DIR);
     await fs.mkdir(outputDir, { recursive: true });
@@ -219,7 +219,7 @@ class ProtocolAnalyzer {
   }
 }
 
-async function main() {
+async function main () {
   const folderPath = process.argv[2] || '.';
   const analyzer = new ProtocolAnalyzer(folderPath);
   try {

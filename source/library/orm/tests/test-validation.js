@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testValidation() {
+async function testValidation () {
     console.log("=== Testing Enhanced Validation ===");
     
     const database = await SvDatabase.shared().setup();

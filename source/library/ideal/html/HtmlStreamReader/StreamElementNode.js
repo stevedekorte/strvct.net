@@ -12,7 +12,7 @@
      * Initializes the prototype slots for the class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         {
             /**
              * @member {string} name
@@ -46,13 +46,13 @@
      * Initializes the prototype.
      * @category Initialization
      */
-    initPrototype() {}
+    initPrototype () {}
 
     /**
      * Initializes an instance of the class.
      * @category Initialization
      */
-    init() {
+    init () {
         super.init();
         this.setAttributes({});
         this.setChildren([]);
@@ -63,7 +63,7 @@
      * @returns {boolean} False, since this class represents an HTML element node and not a text node.
      * @category Node Type
      */
-    isTextNode() {
+    isTextNode () {
         return false;
     }
 
@@ -72,7 +72,7 @@
      * @returns {StreamNode|null} The last text node child, or null if there is none.
      * @category Node Traversal
      */
-    lastTextNode() {
+    lastTextNode () {
         const last = this.children().last();
         if (last && last.isTextNode()) {
             return last;
@@ -86,7 +86,7 @@
      * @returns {StreamElementNode} The current node instance.
      * @category Node Manipulation
      */
-    addChild(aNode) {
+    addChild (aNode) {
         aNode.setParent(this);
         this.children().push(aNode);
         this.domNode().appendChild(aNode.domNode());
@@ -98,7 +98,7 @@
      * @returns {string} The string representation of the attributes.
      * @category HTML Generation
      */
-    attributesString() {
+    attributesString () {
         const parts = [];
         for (const [key, value] of Object.entries(this.attributes())) {
             parts.push(key + '="' + value + '"');
@@ -111,7 +111,7 @@
      * @returns {string} The opening tag string.
      * @category HTML Generation
      */
-    openTagString() {
+    openTagString () {
         const as = this.attributesString();
         return "<" + this.name() + (as ? " " + as : "") + ">";
     }
@@ -121,7 +121,7 @@
      * @returns {string} The closing tag string, or an empty string if the node is not closed.
      * @category HTML Generation
      */
-    closeTagString() {
+    closeTagString () {
         if (this.isClosed()) {
             return "</" + this.name() + ">";
         }
@@ -133,7 +133,7 @@
      * @returns {string} The description of the node.
      * @category HTML Generation
      */
-    description() {
+    description () {
         return this.openTagString() + this.innerHtml().clipWithEllipsis(15) + this.closeTagString();
     }
 
@@ -142,7 +142,7 @@
      * @returns {string} The HTML representation of the node.
      * @category HTML Generation
      */
-    asHtml() {
+    asHtml () {
         // NOTE: this is not normalized HTML, use asHtmlNormalized() on the returned value before comparing
         return this.openTagString() + this.innerHtml() + this.closeTagString();
     }
@@ -152,7 +152,7 @@
      * @returns {string} The inner HTML of the node.
      * @category HTML Generation
      */
-    innerHtml() {
+    innerHtml () {
         // NOTE: this is not normalized HTML, use asHtmlNormalized() on the returned value before comparing
         const strings = this.children().map(child => child.asHtml());
         return strings.join("");
@@ -163,7 +163,7 @@
      * @returns {string} The text content of the node.
      * @category Content Extraction
      */
-    textContent() {
+    textContent () {
         return this.children().map(c => c.textContent()).join("");
     }
 
@@ -172,7 +172,7 @@
      * @returns {StreamElementNode} The current node instance.
      * @category Debugging
      */
-    show() {
+    show () {
         console.log(this.depthSpacer() + this.openTagString());
         this.children().forEach(child => child.show());
         console.log(this.depthSpacer() + this.closeTagString());
@@ -184,7 +184,7 @@
      * @returns {HTMLElement} The new DOM node.
      * @category DOM Manipulation
      */
-    asDomNode() {
+    asDomNode () {
         const newNode = document.createElement(this.name());
         const attributes = this.attributes();
 
@@ -203,7 +203,7 @@
      * @returns {string|undefined} The value of the data-note attribute, or undefined if not present.
      * @category Attribute Access
      */
-    dataNote() {
+    dataNote () {
         return this.attributes()["data-note"];
     }
 

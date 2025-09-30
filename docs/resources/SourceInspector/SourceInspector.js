@@ -1,11 +1,11 @@
 class SourceInspector {
-    constructor(elementId, bannerElementId) {
+    constructor (elementId, bannerElementId) {
         this.element = document.getElementById(elementId);
         this.bannerElement = document.getElementById(bannerElementId);
         this.urlParams = new URLSearchParams(window.location.search);
     }
 
-    async loadAndDisplaySource() {
+    async loadAndDisplaySource () {
         const path = this.urlParams.get('path');
         if (!path) {
             this.displayError('No path parameter provided');
@@ -28,7 +28,7 @@ class SourceInspector {
         }
     }
 
-    displaySource(sourceCode) {
+    displaySource (sourceCode) {
         const lines = sourceCode.split('\n');
         const beginLine = parseInt(this.urlParams.get('beginLine')) || 1;
         const endLine = parseInt(this.urlParams.get('endLine')) || lines.length;
@@ -44,17 +44,17 @@ class SourceInspector {
         this.element.innerHTML = formattedCode;
     }
 
-    displayFilename(path) {
+    displayFilename (path) {
         const filename = path.split('/').pop();
         this.bannerElement.textContent = filename;
     }
 
-    displayError(message) {
+    displayError (message) {
         this.element.innerHTML = `<span class="error">${this.escapeHtml(message)}</span>`;
         this.bannerElement.textContent = 'Error';
     }
 
-    escapeHtml(unsafe) {
+    escapeHtml (unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
@@ -63,7 +63,7 @@ class SourceInspector {
             .replace(/'/g, "&#039;");
     }
 
-    scrollToHighlight() {
+    scrollToHighlight () {
         const beginLine = parseInt(this.urlParams.get('beginLine')) || 1;
         const highlightedElement = this.element.querySelector(`.line[data-line="${beginLine}"]`);
         if (highlightedElement) {

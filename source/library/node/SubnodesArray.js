@@ -17,7 +17,7 @@
      * @returns {void}
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         /**
          * The owner of this SubnodesArray.
          * @member {Object|null} _owner
@@ -33,7 +33,7 @@
      * @returns {Object|null} The owner object or null if not set.
      * @category Data Access
      */
-    owner() {
+    owner () {
         return this._owner;
     }
 
@@ -44,7 +44,7 @@
      * @returns {SubnodesArray} The SubnodesArray instance.
      * @category Data Modification
      */
-    setOwner(obj) {
+    setOwner (obj) {
         this._owner = obj;
         return this;
     }
@@ -57,7 +57,7 @@
      * @returns {SubnodesArray} A new SubnodesArray instance containing the elements from oldArray.
      * @category Creation
      */
-    static from(oldArray) {
+    static from (oldArray) {
         const newArray = this.clone();
         oldArray.forEach(v => newArray.push(v)); // make sure any method hooks are called
         return newArray;
@@ -69,11 +69,11 @@
      * @returns {boolean} Always returns true.
      * @category Storage
      */
-    shouldStore() {
+    shouldStore () {
         return true;
     }
 
-    didInit() {
+    didInit () {
         super.didInit();
         assert(this.hasDoneInit());
     }

@@ -7,19 +7,19 @@
 
 
 (class OpenAiModels extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.newSlot("models", null);
     this.newSlot("didModelCheck", false);
   }
 
-  init() {
+  init () {
     super.init();
     this.setTitle("models");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
   }
 
-  finalInit() {
+  finalInit () {
     super.finalInit();
     this.nodeSubtitleIsChildrenSummary(true)
     this.setNodeSubtitleIsChildrenSummary(true)

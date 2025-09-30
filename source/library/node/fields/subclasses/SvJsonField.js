@@ -69,7 +69,7 @@
      * @returns {*} The result of the method call or the default return value.
      * @category Utility
      */
-    proxyGetter(methodName, defaultReturnValue = "") {
+    proxyGetter (methodName, defaultReturnValue = "") {
         const v = this.value()
         return v ? v[methodName].apply(v) : defaultReturnValue
     }

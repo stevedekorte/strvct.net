@@ -20,7 +20,7 @@
       * @description Initializes the HomeAssistantEntities instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setTitle("entities");
         this.setSubnodeClasses([HomeAssistantEntity]);
@@ -30,7 +30,7 @@
       * @description Performs final initialization steps for the HomeAssistantEntities instance.
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit();
         this.setGetMessageType("config/entity_registry/list");
     }

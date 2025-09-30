@@ -11,7 +11,7 @@
      * Initializes the prototype slots for the class.
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         {
             /**
              * @member {string} id
@@ -64,7 +64,7 @@
      * Initializes the prototype.
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
     }
 
     /**
@@ -74,7 +74,7 @@
      * @returns {StreamNode|null} The ancestor node that satisfies the function, or null if none is found.
      * @category Tree Traversal
      */
-    detectAncestor(func) {
+    detectAncestor (func) {
         if (func(this)) {
             return this;
         }
@@ -90,7 +90,7 @@
      * @returns {StreamNode} The current instance.
      * @category Node Lifecycle
      */
-    onOpen() {
+    onOpen () {
         const domNode = this.asDomNode();
         /*
         // parent responsible for calling appendChild
@@ -108,7 +108,7 @@
      * @returns {StreamNode} The current instance.
      * @category Node Lifecycle
      */
-    onClose() {
+    onClose () {
         // called by HtmlStreamReader
         this.setIsClosed(true);
         return this;
@@ -120,7 +120,7 @@
      * @returns {StreamNode} The root node of the node tree.
      * @category Tree Traversal
      */
-    rootNode() {
+    rootNode () {
         if (this.parent()) {
             return this.parent().rootNode();
         }
@@ -133,7 +133,7 @@
      * @returns {StreamNode[]} An array of nodes representing the tag path.
      * @category Tree Traversal
      */
-    tagPath() {
+    tagPath () {
         const path = this.parent() ? this.parent().tagPath() : [];
         path.push(this);
         return path;
@@ -145,7 +145,7 @@
      * @returns {number[]} An array of child indices representing the number path.
      * @category Tree Traversal
      */
-    numberPath() {
+    numberPath () {
         return this.tagPath().map(tag => tag.childIndex());
     }
 
@@ -155,7 +155,7 @@
      * @returns {number} The depth of the current node in the node tree.
      * @category Tree Analysis
      */
-    depth() {
+    depth () {
         return this.tagPath().length;
     }
 
@@ -165,7 +165,7 @@
      * @returns {string} A string of spaces representing the depth of the current node.
      * @category Formatting
      */
-    depthSpacer() {
+    depthSpacer () {
         return "  ".repeat(this.depth());
     }
 

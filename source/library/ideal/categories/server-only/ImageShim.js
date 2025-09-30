@@ -11,14 +11,14 @@ try {
 
     // Define Image class for Node.js
     class Image extends NodeImage {
-        constructor(width, height) {
+        constructor (width, height) {
             super(width, height);
             this.onload = null;
             this.onerror = null;
         }
         
         // Override src setter to handle onload/onerror events
-        set src(value) {
+        set src (value) {
             super.src = value;
             if (this.onload) {
                 // Simulate async loading
@@ -28,44 +28,44 @@ try {
             }
         }
         
-        get src() {
+        get src () {
             return super.src;
         }
     }
 
     // Define HTMLCanvasElement polyfill
     class HTMLCanvasElement {
-        constructor(width = 300, height = 150) {
+        constructor (width = 300, height = 150) {
             this._canvas = createCanvas(width, height);
             this.width = width;
             this.height = height;
         }
         
-        getContext(contextType, contextAttributes) {
+        getContext (contextType, contextAttributes) {
             return this._canvas.getContext(contextType, contextAttributes);
         }
         
-        toDataURL(type, encoderOptions) {
+        toDataURL (type, encoderOptions) {
             return this._canvas.toDataURL(type, encoderOptions);
         }
         
-        toBuffer(mimeType, config) {
+        toBuffer (mimeType, config) {
             return this._canvas.toBuffer(mimeType, config);
         }
         
-        set width(value) {
+        set width (value) {
             this._canvas.width = value;
         }
         
-        get width() {
+        get width () {
             return this._canvas.width;
         }
         
-        set height(value) {
+        set height (value) {
             this._canvas.height = value;
         }
         
-        get height() {
+        get height () {
             return this._canvas.height;
         }
     }
@@ -73,7 +73,7 @@ try {
     // Define document.createElement for canvas
     if (typeof document === 'undefined') {
         global.document = {
-            createElement: function(tagName) {
+            createElement: function (tagName) {
                 if (tagName === 'canvas') {
                     return new HTMLCanvasElement();
                 }

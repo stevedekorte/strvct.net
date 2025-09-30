@@ -26,14 +26,14 @@ global.assert = (condition, message) => {
 
 // Create mock Promise.clone if needed
 if (!Promise.clone) {
-    Promise.clone = function() {
+    Promise.clone = function () {
         let resolveFunc, rejectFunc;
         const promise = new Promise((resolve, reject) => {
             resolveFunc = resolve;
             rejectFunc = reject;
         });
-        promise.callResolveFunc = function(value) { resolveFunc(value); };
-        promise.callRejectFunc = function(error) { rejectFunc(error); };
+        promise.callResolveFunc = function (value) { resolveFunc(value); };
+        promise.callRejectFunc = function (error) { rejectFunc(error); };
         return promise;
     };
 }
@@ -44,7 +44,7 @@ require(path.join(__dirname, '../../SvBase.js'));
 require(path.join(__dirname, '../SvIndexedDbFolder.js'));
 require(path.join(__dirname, '../SvIndexedDbTx.js'));
 
-async function runTest() {
+async function runTest () {
     console.log('Testing SvIndexedDb via proper loading...\n');
     
     // Clean up any previous test data

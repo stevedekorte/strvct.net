@@ -60,7 +60,7 @@
    * @description Calls the superclass finalInit method and performs a sanity check.
    * @category Initialization
    */
-  finalInit() {
+  finalInit () {
     super.finalInit()
     assert(this.subnodeCount() === 0); // sanity check
   }

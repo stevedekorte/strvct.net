@@ -81,7 +81,7 @@
    * @description Initializes the HomeAssistantState.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
   }
 

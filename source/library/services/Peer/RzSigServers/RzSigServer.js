@@ -224,7 +224,7 @@
    * @returns {RzSigServer} The initialized instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     //this.setPeerConnections(new Map());
     this.setIsDebugging(true)
@@ -416,7 +416,7 @@
    * @returns {Promise<Array>} A promise that resolves to the array of peer IDs.
    * @category Peers
    */
-  async fetchPeerIds() { // Note this is a GET request, so we don't need to be connected to do this
+  async fetchPeerIds () { // Note this is a GET request, so we don't need to be connected to do this
     this.setStatus("");
 
     try {

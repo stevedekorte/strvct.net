@@ -1,4 +1,4 @@
-async function loadAndRenderMarkdown() {
+async function loadAndRenderMarkdown () {
   try {
     const contentDiv = document.getElementById('content');
     
@@ -54,14 +54,14 @@ async function loadAndRenderMarkdown() {
 
     const renderer = new marked.Renderer();
 
-    function processCitations(text) {
+    function processCitations (text) {
       const citationRegex = /(<a href="[^"]*" title="[^"]*">)(\d+)(<\/a>)/g;
       return text.replace(citationRegex, (match, openTag, number, closeTag) => {
         return `<a href="#ref-${number}" class="citation-link" title="Jump to reference">[${number}]</a>`;
       });
     }
 
-    renderer.heading = function(text, level) {
+    renderer.heading = function (text, level) {
       const slug = text.toLowerCase().replace(/[^\w]+/g, '-');
       if (level > 1) {
         toc.push({ text, level, slug });
@@ -69,7 +69,7 @@ async function loadAndRenderMarkdown() {
       return `<h${level} id="${slug}">${text}</h${level}>`;
     };
 
-    function transformLocalPath(path) {
+    function transformLocalPath (path) {
       if (path && !path.startsWith('http') && !path.startsWith('#')) {
         const urlParams = new URLSearchParams(window.location.search);
         const currentPath = urlParams.get('path') || './README.md';
@@ -97,7 +97,7 @@ async function loadAndRenderMarkdown() {
       return path;
     }
 
-    renderer.link = function(href, title, text) {
+    renderer.link = function (href, title, text) {
       let transformedHref = transformLocalPath(href);
       
       if (title) {
@@ -110,8 +110,8 @@ async function loadAndRenderMarkdown() {
     const svgPlaceholderTokenizer = {
       name: 'svgPlaceholder',
       level: 'inline',
-      start(src) { return src.match(/{{SVG_PLACEHOLDER_/)?.index; },
-      tokenizer(src, tokens) {
+      start (src) { return src.match(/{{SVG_PLACEHOLDER_/)?.index; },
+      tokenizer (src, tokens) {
         const match = src.match(/{{SVG_PLACEHOLDER_(\d+):([^}]+)}}/);
         if (match) {
           return {
@@ -122,7 +122,7 @@ async function loadAndRenderMarkdown() {
           };
         }
       },
-      renderer(token) {
+      renderer (token) {
         const originalTag = svgMap.get(token.id);
         if (originalTag) {
           const transformedPath = transformLocalPath(token.path);
@@ -139,17 +139,17 @@ async function loadAndRenderMarkdown() {
 
     marked.use({ renderer });
 
-    renderer.paragraph = function(text) {
+    renderer.paragraph = function (text) {
       const linkedText = processCitations(text);
       return `<p>${linkedText}</p>`;
     };
 
-    renderer.listitem = function(text) {
+    renderer.listitem = function (text) {
       const linkedText = processCitations(text);
       return `<li>${linkedText}</li>`;
     };
 
-    function generateTOC(items) {
+    function generateTOC (items) {
       let currentLevel = 2;
       let html = '<ul>';
       items.forEach(item => {
@@ -171,7 +171,7 @@ async function loadAndRenderMarkdown() {
       return html;
     }
 
-    function decodeURL(url) {
+    function decodeURL (url) {
       try {
         return decodeURIComponent(url.replace(/\+/g, ' '));
       } catch (e) {
@@ -231,7 +231,7 @@ async function loadAndRenderMarkdown() {
       ${referencesSection}
     `;
 
-    function getTextContent(element) {
+    function getTextContent (element) {
       let text = '';
       for (let node of element.childNodes) {
         if (node.nodeType === Node.TEXT_NODE) {

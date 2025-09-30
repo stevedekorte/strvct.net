@@ -54,7 +54,7 @@
    * @description Initializes the HomeAssistantGroup instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setIdMap(new Map());
   }

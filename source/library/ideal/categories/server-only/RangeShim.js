@@ -7,7 +7,7 @@
 
 // Complete Range polyfill for DOM range functionality
 class Range extends Object {
-    constructor() {
+    constructor () {
         this.startContainer = null;
         this.startOffset = 0;
         this.endContainer = null;
@@ -17,49 +17,49 @@ class Range extends Object {
     }
     
     // Basic range manipulation methods
-    setStart(node, offset) {
+    setStart (node, offset) {
         this.startContainer = node;
         this.startOffset = offset;
         this.updateCollapsed();
         this.updateCommonAncestor();
     }
     
-    setEnd(node, offset) {
+    setEnd (node, offset) {
         this.endContainer = node;
         this.endOffset = offset;
         this.updateCollapsed();
         this.updateCommonAncestor();
     }
     
-    setStartBefore(node) {
+    setStartBefore (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setStart(node.parentNode, this.getNodeIndex(node));
     }
     
-    setStartAfter(node) {
+    setStartAfter (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setStart(node.parentNode, this.getNodeIndex(node) + 1);
     }
     
-    setEndBefore(node) {
+    setEndBefore (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setEnd(node.parentNode, this.getNodeIndex(node));
     }
     
-    setEndAfter(node) {
+    setEndAfter (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setEnd(node.parentNode, this.getNodeIndex(node) + 1);
     }
     
-    collapse(toStart = false) {
+    collapse (toStart = false) {
         if (toStart) {
             this.endContainer = this.startContainer;
             this.endOffset = this.startOffset;
@@ -70,7 +70,7 @@ class Range extends Object {
         this.collapsed = true;
     }
     
-    selectNode(node) {
+    selectNode (node) {
         this.startContainer = node.parentNode;
         this.startOffset = this.getNodeIndex(node);
         this.endContainer = node.parentNode;
@@ -79,7 +79,7 @@ class Range extends Object {
         this.updateCommonAncestor();
     }
     
-    selectNodeContents(node) {
+    selectNodeContents (node) {
         this.startContainer = node;
         this.startOffset = 0;
         this.endContainer = node;
@@ -89,7 +89,7 @@ class Range extends Object {
     }
     
     // Range comparison methods
-    compareBoundaryPoints(how, sourceRange) {
+    compareBoundaryPoints (how, sourceRange) {
         if (!sourceRange) {
             throw new Error("Source range is required");
         }
@@ -121,19 +121,19 @@ class Range extends Object {
     }
     
     // Range deletion and extraction
-    deleteContents() {
+    deleteContents () {
         // In a server environment, this would typically be a no-op
         // or could log that content would be deleted
         return;
     }
     
-    extractContents() {
+    extractContents () {
         // In a server environment, return a document fragment
         // This is a simplified implementation
         const fragment = {
             nodeType: 11, // DocumentFragment
             childNodes: [],
-            appendChild: function(node) {
+            appendChild: function (node) {
                 this.childNodes.push(node);
                 return node;
             }
@@ -141,25 +141,25 @@ class Range extends Object {
         return fragment;
     }
     
-    cloneContents() {
+    cloneContents () {
         // Return a copy of the contents
         return this.extractContents();
     }
     
-    insertNode(node) {
+    insertNode (node) {
         // In a server environment, this would typically be a no-op
         // or could log that a node would be inserted
         return;
     }
     
-    surroundContents(newParent) {
+    surroundContents (newParent) {
         // In a server environment, this would typically be a no-op
         // or could log that content would be surrounded
         return;
     }
     
     // Range cloning
-    cloneRange() {
+    cloneRange () {
         const newRange = new Range();
         newRange.setStart(this.startContainer, this.startOffset);
         newRange.setEnd(this.endContainer, this.endOffset);
@@ -167,7 +167,7 @@ class Range extends Object {
     }
     
     // Range detachment
-    detach() {
+    detach () {
         this.startContainer = null;
         this.startOffset = 0;
         this.endContainer = null;
@@ -177,7 +177,7 @@ class Range extends Object {
     }
     
     // Content retrieval
-    toString() {
+    toString () {
         // Return text content within the range
         if (this.collapsed) {
             return "";
@@ -194,12 +194,12 @@ class Range extends Object {
     }
     
     // Range intersection and containment
-    intersectsNode(node) {
+    intersectsNode (node) {
         // Simplified intersection check
         return this.startContainer === node || this.endContainer === node;
     }
     
-    isPointInRange(node, offset) {
+    isPointInRange (node, offset) {
         // Simplified point-in-range check
         if (this.collapsed) {
             return false;
@@ -216,7 +216,7 @@ class Range extends Object {
         return false;
     }
     
-    comparePoint(node, offset) {
+    comparePoint (node, offset) {
         // Compare a point to the range
         if (this.isPointInRange(node, offset)) {
             return 0;
@@ -231,14 +231,14 @@ class Range extends Object {
     }
     
     // Helper methods
-    updateCollapsed() {
+    updateCollapsed () {
         this.collapsed = (
             this.startContainer === this.endContainer &&
             this.startOffset === this.endOffset
         );
     }
     
-    updateCommonAncestor() {
+    updateCommonAncestor () {
         if (this.startContainer === this.endContainer) {
             this.commonAncestorContainer = this.startContainer;
         } else {
@@ -247,7 +247,7 @@ class Range extends Object {
         }
     }
     
-    getNodeIndex(node) {
+    getNodeIndex (node) {
         if (!node.parentNode || !node.parentNode.childNodes) {
             return 0;
         }
@@ -260,7 +260,7 @@ class Range extends Object {
         return 0;
     }
     
-    comparePoints(point1, point2) {
+    comparePoints (point1, point2) {
         if (point1.container === point2.container) {
             if (point1.offset < point2.offset) return -1;
             if (point1.offset > point2.offset) return 1;

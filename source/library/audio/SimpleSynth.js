@@ -32,15 +32,15 @@
 
 (class SimpleSynth extends ProtoClass {
 
-  static initClass() {
+  static initClass () {
     this.setIsSingleton(true);
   }
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     //this.newSlot("idb", null);
   }
 
-  initPrototype() {
+  initPrototype () {
   }
 
   /**
@@ -48,7 +48,7 @@
    * @returns {AudioContext} The new AudioContext object.
    * @category Audio Context
    */
-  audioContext() {
+  audioContext () {
     const context = new (window.AudioContext || window.webkitAudioContext)();
     return context;
   }
@@ -57,7 +57,7 @@
    * @description Plays an ominous sound using the Web Audio API.
    * @category Sound Effects
    */
-  playOminousSound() {
+  playOminousSound () {
     const audioContext = this.audioContext();
 
     const notes = [110, 123.47, 130.81, 146.83]; // Frequencies for notes A2, B2, C3, and D3
@@ -85,7 +85,7 @@
    * @param {number[]} notes - An array of frequencies (in Hz) to play.
    * @category Sound Generation
    */
-  playNotes(notes) {
+  playNotes (notes) {
     /*
     The given function playNotes plays an array of notes using the Web Audio API. 
     Each note in the array is played for a duration of 0.1 seconds (100 milliseconds) with a delay of 0.1 seconds between each note. 
@@ -116,7 +116,7 @@
    * @description Plays a send beep sound.
    * @category Sound Effects
    */
-  playSendBeep() {
+  playSendBeep () {
     this.playNotes([330, 290]);
   }
 
@@ -124,7 +124,7 @@
    * @description Plays a receive beep sound.
    * @category Sound Effects
    */
-  playReceiveBeep() {
+  playReceiveBeep () {
     this.playNotes([290, 330]);
   }
 
@@ -132,7 +132,7 @@
    * @description Plays a button tap sound.
    * @category Sound Effects
    */
-  playButtonTap() {
+  playButtonTap () {
     //this.playNotes([440]);
     this.playTrackNamed("buttonPress");
   }
@@ -141,7 +141,7 @@
    * @description Plays a button down sound.
    * @category Sound Effects
    */
-  playButtonDown() {
+  playButtonDown () {
     //this.playNotes([400]);
     this.playTrackNamed("buttonPress");
   }
@@ -150,7 +150,7 @@
    * @description Plays a button up sound.
    * @category Sound Effects
    */
-  playButtonUp() {
+  playButtonUp () {
     this.playNotes([480]);
   }
 
@@ -158,7 +158,7 @@
    * @description Plays a button cancelled sound.
    * @category Sound Effects
    */
-  playButtonCancelled() {
+  playButtonCancelled () {
     this.playNotes([440, 330]);
   }
 
@@ -166,7 +166,7 @@
    * @description Plays a network connected sound.
    * @category Sound Effects
    */
-  playNetworkConnected() {
+  playNetworkConnected () {
     this.playNotes([300, 400, 500]);
   }
 
@@ -174,7 +174,7 @@
    * @description Plays a network disconnected sound.
    * @category Sound Effects
    */
-  playNetworkDisconnected() {
+  playNetworkDisconnected () {
     this.playNotes([500, 400, 300]);
   }
 
@@ -182,7 +182,7 @@
    * @description Plays a warning sound.
    * @category Sound Effects
    */
-  playWarning() {
+  playWarning () {
     this.playNotes([420, 450]);
   }
 
@@ -190,7 +190,7 @@
    * @description Plays an alert sound.
    * @category Sound Effects
    */
-  playAlert() {
+  playAlert () {
     playNotes([600, 660, 600]);
   }
 
@@ -199,7 +199,7 @@
    * @param {string} trackName - The name of the track to play.
    * @category Sound Playback
    */
-  playTrackNamed(trackName) {
+  playTrackNamed (trackName) {
     const notes = this.tracksJson()[trackName];
 
     if (!notes) {
@@ -215,7 +215,7 @@
    * @param {Object[]} notes - An array of note objects with properties like pitch, lengthMs, oscillator, delayMs, and volume.
    * @category Sound Playback
    */
-  playTrackNotes(notes) {
+  playTrackNotes (notes) {
     const context = this.audioContext();
     let currentTime = context.currentTime;
 
@@ -250,7 +250,7 @@
    * @returns {Object} An object with track names as keys and arrays of note objects as values.
    * @category Sound Data
    */
-  tracksJson() {
+  tracksJson () {
     return {
       "buttonPress": [
         { "pitch": 400, "lengthMs": 100, "oscillator": "sine", "delayMs": 100, "volume": 0.7 }

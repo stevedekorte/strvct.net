@@ -1,6 +1,6 @@
 const youtubesearchapi = require("youtube-search-api");
 
-async function scrapeYouTubeVideos(searchTerm) {
+async function scrapeYouTubeVideos (searchTerm) {
     const allItems = [];
     const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`;
     console.log("searchUrl:", searchUrl);

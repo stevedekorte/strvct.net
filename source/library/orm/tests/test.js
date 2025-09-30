@@ -12,7 +12,7 @@ const path = require("path");
 /**
  * Write the database schema to a JSON file
  */
-async function writeSchemaToFile(jsonSchema) {
+async function writeSchemaToFile (jsonSchema) {
     try {
         const testsDir = __dirname;
         const schemaFilePath = path.join(testsDir, "schema.json");
@@ -32,7 +32,7 @@ async function writeSchemaToFile(jsonSchema) {
 /**
  * Test the SvDatabase ORM functionality
  */
-async function testSvDatabase() {
+async function testSvDatabase () {
     try {
         console.log("Starting SvDatabase test...");
         
@@ -71,7 +71,7 @@ async function testSvDatabase() {
 /**
  * Test foreign key detection functionality
  */
-async function testForeignKeyFunctionality(database) {
+async function testForeignKeyFunctionality (database) {
     console.log("Testing foreign key detection functionality...");
     
     // First, check if foreign keys are enabled in SQLite
@@ -133,7 +133,7 @@ async function testForeignKeyFunctionality(database) {
 /**
  * Test the transaction interface with CRUD operations
  */
-async function testTransactionInterface(database) {
+async function testTransactionInterface (database) {
     console.log("Testing transaction interface...");
     
     // Test successful transaction

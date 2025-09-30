@@ -7,10 +7,10 @@
 */
 
 (class PeerConnections extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
-  init() {
+  init () {
     super.init();
     this.setTitle("Peer Connections");
     this.setShouldStore(true);
@@ -20,7 +20,7 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
-  finalInit() {
+  finalInit () {
     super.finalInit()
     this.setTitle("Peer Connections");
     this.setNoteIsSubnodeCount(true);

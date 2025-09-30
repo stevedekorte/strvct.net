@@ -40,7 +40,7 @@
     * @description Initializes prototype slots.
     * @category Initialization
     */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
 
     }
 
@@ -48,7 +48,7 @@
     * @description Initializes the HomeAssistantDevice.
     * @category Initialization
     */
-    init() {
+    init () {
     super.init();
     }
     
@@ -56,7 +56,7 @@
     * @description Performs final initialization.
     * @category Initialization
     */
-    finalInit() {
+    finalInit () {
     super.finalInit();
     this.setNodeCanEditTitle(true);
     }
@@ -66,7 +66,7 @@
     * @returns {HomeAssistantDevice} The current device instance.
     * @category Data Access
     */
-    entitiesNode() {
+    entitiesNode () {
     return this;
     }
 
@@ -75,7 +75,7 @@
     * @returns {string} The device ID.
     * @category Data Access
     */
-    id() {
+    id () {
     return this.haJson().id;
     }
 
@@ -84,7 +84,7 @@
     * @returns {string|null} The area ID.
     * @category Data Access
     */
-    areaId() {
+    areaId () {
     return this.haJson().area_id;
     }
 
@@ -93,7 +93,7 @@
     * @returns {string|null} The owner ID.
     * @category Data Access
     */
-    ownerId() {
+    ownerId () {
     return this.areaId();
     }
 
@@ -102,7 +102,7 @@
     * @returns {Object} The areas node of the Home Assistant instance.
     * @category Data Access
     */
-    ownerGroup() {
+    ownerGroup () {
     return this.homeAssistant().areasNode();
     }
 
@@ -110,7 +110,7 @@
     * @description Updates the titles of the device.
     * @category UI
     */
-    updateTitles() {
+    updateTitles () {
     let name = this.haJson().name_by_user;
     if (!name) {
         name = this.haJson().name;
@@ -131,7 +131,7 @@
     * @returns {string|undefined} The state of the device.
     * @category Data Access
     */
-    state() {
+    state () {
     if (this.subnodesCount() === 1) {
         return this.subnodes().first().state();
     }
@@ -144,7 +144,7 @@
     * @returns {HomeAssistantDevice} The current device instance.
     * @category Data Manipulation
     */
-    addEntity(entity) {
+    addEntity (entity) {
     entity.removeFromParentNode();
     this.entitiesNode().addSubnode(entity);
     return this;

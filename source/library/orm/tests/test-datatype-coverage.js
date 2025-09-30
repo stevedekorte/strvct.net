@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testDataTypeCoverage() {
+async function testDataTypeCoverage () {
     console.log("=== Testing dataTypeForValue() Coverage ===");
     
     const database = await SvDatabase.shared().setup();

@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testChangedDict() {
+async function testChangedDict () {
     console.log("=== Testing changedDict() for Insert/Update Optimization ===");
     
     // Get shared database instance and setup (handles initialization automatically)

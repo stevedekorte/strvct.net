@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testIsIndexed() {
+async function testIsIndexed () {
     console.log("=== Testing isIndexed Property ===");
     
     // Get shared database instance and setup (handles initialization automatically)

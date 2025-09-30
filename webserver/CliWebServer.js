@@ -27,7 +27,7 @@ const nodePath = require('path');
     /**
      * Initializes the prototype slots.
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         /**
          * @member {BaseHttpsServer} server - The server instance.
          */
@@ -53,7 +53,7 @@ const nodePath = require('path');
      * Initializes the instance.
      * @returns {CliWebServer} The initialized instance.
      */
-    init() {
+    init () {
         super.init();
         this.setServer(BaseHttpsServer.clone());
         this.setInitializeCallbacks([]);
@@ -65,7 +65,7 @@ const nodePath = require('path');
      * @param {function} callback - The initialization function.
      * @returns {CliWebServer} This instance for chaining.
      */
-    addInitializeCallback(callback) {
+    addInitializeCallback (callback) {
         this.initializeCallbacks().push(callback);
         return this;
     }
@@ -74,7 +74,7 @@ const nodePath = require('path');
      * Parses command line arguments.
      * @returns {Object} The parsed arguments.
      */
-    parseArgs() {
+    parseArgs () {
         const argv = yargs(hideBin(process.argv)).options({
             port: { type: 'number', demandOption: false, describe: 'Port number' },
             key: { type: 'string', demandOption: false, describe: 'Key file path' },
@@ -93,7 +93,7 @@ const nodePath = require('path');
      * Configures the server based on command line arguments.
      * @returns {CliWebServer} This instance for chaining.
      */
-    configureServer() {
+    configureServer () {
         const argv = this.args() || this.parseArgs();
         const server = this.server();
         
@@ -132,7 +132,7 @@ const nodePath = require('path');
     /**
      * Sets up error handling for the process.
      */
-    setupErrorHandling() {
+    setupErrorHandling () {
         // Set up global error handlers
         process.on("unhandledRejection", (reason, promise) => {
             console.error(`${this.server().serverName()}: Unhandled Rejection at:`, promise, "reason:", reason);
@@ -149,7 +149,7 @@ const nodePath = require('path');
     /**
      * Loads the server configuration and initializes request classes.
      */
-    async prepareServer() {
+    async prepareServer () {
         try {
             const server = this.server();
             // Load configuration if not already loaded
@@ -206,7 +206,7 @@ const nodePath = require('path');
     /**
      * Starts the server.
      */
-    async start() {
+    async start () {
         try {
             this.setupErrorHandling();
             

@@ -20,7 +20,7 @@
       * @description Initializes the HomeAssistantDevices instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setTitle("devices");
         this.setSubnodeClasses([HomeAssistantDevice]);
@@ -30,7 +30,7 @@
       * @description Performs final initialization steps for the HomeAssistantDevices instance.
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit();
         this.setGetMessageType("config/device_registry/list");
     }

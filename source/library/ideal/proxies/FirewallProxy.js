@@ -26,7 +26,7 @@
      * @description Initializes prototype slots
      * @category Initialization
      */
-    initPrototypeSlots() {
+    initPrototypeSlots () {
         {
             /**
              * @member protectedTraps
@@ -53,7 +53,7 @@
      * @description Initializes the prototype
      * @category Initialization
      */
-    initPrototype() {
+    initPrototype () {
     }
 
     /**
@@ -61,7 +61,7 @@
      * @returns {FirewallProxy} The initialized instance
      * @category Initialization
      */
-    init() {
+    init () {
         super.init()
         this.setProtectedTraps(this.defaultProtectedTraps().shallowCopy())
         this.setProtectedMethods(this.defaultProtectedMethods().shallowCopy())
@@ -74,7 +74,7 @@
      * @returns {Set} The set of protected traps
      * @category Configuration
      */
-    defaultProtectedTraps() {
+    defaultProtectedTraps () {
         return new Set([
             "defineProperty", // Object.defineProperty
             "deleteProperty", // Object.deleteProperty
@@ -89,7 +89,7 @@
      * @returns {Set} The set of protected methods
      * @category Configuration
      */
-    defaultProtectedMethods() {
+    defaultProtectedMethods () {
         return new Set([
         ])
     }
@@ -101,7 +101,7 @@
      * @returns {boolean} True if the trap is not protected, false otherwise
      * @category Trap Handling
      */
-    postForTrap(trapName, propertyName) {
+    postForTrap (trapName, propertyName) {
         // instead of posting to observers,
         // just check if it's a protected trap and, if so, raise an exception
         // TODO: abstract non posting behavior from ObservableProxy and
@@ -122,7 +122,7 @@
      * @param {Arguments} argsList - The arguments passed to the method
      * @category Error Handling
      */
-    onProtectedMethodCall(propertyName, argsList) {
+    onProtectedMethodCall (propertyName, argsList) {
         const msg = " blocked method call '" + propertyName + "' "
         this.logDebug(msg)
         throw new Error(this.svTypeId() + msg)
@@ -135,7 +135,7 @@
      * @returns {*} The value of the property
      * @category Trap Handling
      */
-    get(target, propertyName) {
+    get (target, propertyName) {
         if (propertyName === "observable") {
             const self = this
             return () => { return self }
@@ -163,7 +163,7 @@
      * @description Self-test for FirewallProxy
      * @category Testing
      */
-    static selfTest() {
+    static selfTest () {
         // test array
         const array = ["a", "b", "c"]
         const ap = array.asReadOnly()
@@ -208,7 +208,7 @@ Object.defineSlots(Object.prototype, {
      * @returns {Set} A set of mutator method names
      * @category Configuration
      */
-    mutatorMethodNamesSet() {
+    mutatorMethodNamesSet () {
         return new Set([
             "__defineGetter__",
             "__defineSetter__",
@@ -223,7 +223,7 @@ Object.defineSlots(Set.prototype, {
      * @returns {Set} A set of mutator method names
      * @category Configuration
      */
-    mutatorMethodNamesSet() {
+    mutatorMethodNamesSet () {
         return new Set([
             "add",
             "clear",
@@ -240,7 +240,7 @@ Object.defineSlots(Map.prototype, {
      * @returns {Set} A set of mutator method names
      * @category Configuration
      */
-    mutatorMethodNamesSet() {
+    mutatorMethodNamesSet () {
         return new Set([
             "clear",
             "delete",
@@ -257,7 +257,7 @@ Object.defineSlots(Array.prototype, {
      * @returns {Set} A set of mutator method names
      * @category Configuration
      */
-    mutatorMethodNamesSet() {
+    mutatorMethodNamesSet () {
         return new Set([
             "copyWithin",
             "pop",
@@ -279,7 +279,7 @@ Object.defineSlots(Date.prototype, {
      * @returns {Set} A set of mutator method names
      * @category Configuration
      */
-    mutatorMethodNamesSet() {
+    mutatorMethodNamesSet () {
         return new Set([
             "setDate",
             "setFullYear",
@@ -309,7 +309,7 @@ Object.defineSlots(Object.prototype, {
      * @returns {FirewallProxy} A read-only proxy for the object
      * @category Proxy Creation
      */
-    asReadOnly() {
+    asReadOnly () {
         const obj = FirewallProxy.newProxyFor(this)
         obj.observable().setProtectedMethods(this.mutatorMethodNamesSet())
         return obj

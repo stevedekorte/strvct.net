@@ -21,7 +21,7 @@
       * @description Sets up the initial state of the AzureTtsRequests instance.
       * @category Initialization
       */
-    init() {
+    init () {
         super.init();
         this.setTitle("requests");
         this.setShouldStore(true);
@@ -36,7 +36,7 @@
       * @description Sets additional properties after the main initialization.
       * @category Initialization
       */
-    finalInit() {
+    finalInit () {
         super.finalInit()
         this.setNoteIsSubnodeCount(true);
         this.setTitle("requests");

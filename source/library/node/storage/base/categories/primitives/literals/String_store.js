@@ -14,7 +14,7 @@
      * @returns {Set} The input set of puuids.
      * @category Storage
      */
-    refsPidsForJsonStore(puuids = new Set()) {
+    refsPidsForJsonStore (puuids = new Set()) {
         return puuids
     }
 

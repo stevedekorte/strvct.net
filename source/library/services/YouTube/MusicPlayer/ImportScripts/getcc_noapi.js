@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 
-async function timeout(ms) {
+async function timeout (ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function scrapeYouTubeVideos(searchTerm) {
+async function scrapeYouTubeVideos (searchTerm) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -94,7 +94,7 @@ async function scrapeYouTubeVideos(searchTerm) {
     return videoResults;
 }
 
-async function run() {
+async function run () {
     const results = await scrapeYouTubeVideos("dungeon music");
     //console.log(results);
     console.log(Object.keys(results).length, " results found");

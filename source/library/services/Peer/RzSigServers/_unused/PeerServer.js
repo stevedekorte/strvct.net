@@ -6,7 +6,7 @@
 */
 
 (class PeerServer extends Base {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.newSlot("peerId", null);
     this.newSlot("peer", null);
     this.newSlot("retryCount", 0);
@@ -17,7 +17,7 @@
     this.newSlot("delegate", true);
   }
 
-  init() {
+  init () {
     super.init();
     this.setPeerConnections(new Map());
     this.setIsDebugging(false)
@@ -45,7 +45,7 @@
       }
   }
 
-  setup() {
+  setup () {
     //console.log("getPeers: ", await this.getPeers());
 
     //const id = LocalUser.shared().id();
@@ -122,7 +122,7 @@
     return this
   }
 
-  onError(err) {
+  onError (err) {
     this.debugLog("error ", err);
 
     if (this.retryCount() < this.maxRetries()) {
@@ -145,7 +145,7 @@
     }
   }
 
-  onCall(call) {
+  onCall (call) {
     // Answer incoming voice call
     const acceptCall = confirm(
       `Incoming call. Do you want to accept the call?`
@@ -206,7 +206,7 @@
     return "https://" + opts.host + opts.path + '/api/peers';
   }
 
-  async getPeers() { // Note this is a GET request, so we don't need to be connected to do this
+  async getPeers () { // Note this is a GET request, so we don't need to be connected to do this
     const url = this.getPeersUrl();
     console.log("getPeersUrl: '" + url + "'");
     const response = await fetch(url);

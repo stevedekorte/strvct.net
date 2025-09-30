@@ -66,7 +66,7 @@ Object.defineSlots(typedArrayClass, {
      * @param {Object} aStore - The store containing the record.
      * @returns {TypedArray} The created TypedArray instance.
      */
-    instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store
+    instanceFromRecordInStore: function (aRecord, aStore) { // should only be called by Store
         const obj = new this.thisClass()(aRecord.length)
         return obj
     },
@@ -81,7 +81,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @param {Object} aStore - The store containing the record.
      * @returns {TypedArray} The loaded TypedArray.
      */
-    loadFromRecord: function(aRecord, aStore) {
+    loadFromRecord: function (aRecord, aStore) {
         const values = aRecord.values
         for (let i = 0; i < values.length; i++) {
             this[i] = values[i]
@@ -94,7 +94,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @description Converts the TypedArray to a regular Array.
      * @returns {Array} The TypedArray as a regular Array.
      */
-    valuesArray: function() {
+    valuesArray: function () {
         return Array.fromIterator(this.values())
     },
 
@@ -104,7 +104,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @param {Object} aStore - The store to create the record for.
      * @returns {Object} The record representation of the TypedArray.
      */
-    recordForStore: function(aStore) { // should only be called by Store
+    recordForStore: function (aStore) { // should only be called by Store
         return {
             type: this.svType(), 
             values: this.valuesArray() 
@@ -117,7 +117,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @param {Set} puuids - The set of persistent unique identifiers.
      * @returns {Set} The set of persistent unique identifiers (unchanged as TypedArrays have no references).
      */
-    refsPidsForJsonStore: function(puuids = new Set()) {
+    refsPidsForJsonStore: function (puuids = new Set()) {
         // no references in a TypedArray
         return puuids
     },

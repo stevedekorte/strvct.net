@@ -9,7 +9,7 @@
 */
 
 (class GuestConnection extends PeerConnection {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("pubkey", null); 
     }
@@ -19,7 +19,7 @@
     }
   }
 
-  init() {
+  init () {
     super.init();
     this.setTitle("Guest Connection")
     this.setInfo({});
@@ -53,7 +53,7 @@
   
   // ----------------
 
-  onOpen(peerId) {
+  onOpen (peerId) {
     console.log(this.svType() + " onOpen(" + peerId + ")");
     super.onOpen(peerId);
 
@@ -67,7 +67,7 @@
     this.hostSession().onOpenGuestConnection(this);
   }
 
-  onData(data) {
+  onData (data) {
     this.debugLog("onData", data);
     data.peerId = this.peerId()
 
@@ -96,7 +96,7 @@
 
   // --- player data ---
 
-  onReceived_updatePlayer(data) {
+  onReceived_updatePlayer (data) {
     this.setInfo(data.player);
     const player = App.shared().session().players().updatePlayerJson(data.player);
     this.setPlayer(player);
@@ -104,7 +104,7 @@
 
   // --- player data ---
 
-  onReceived_remotePrompt(data) {
+  onReceived_remotePrompt (data) {
     // Add prompt to prompt history
     if (this.canSendPrompts()) {
       Session.shared().addToHistory({
@@ -142,7 +142,7 @@
     }
   }
 
-  onReceived_remoteSystemMessage(data) {
+  onReceived_remoteSystemMessage (data) {
     // Add remote system message update to history if guest is allowed to send prompts
     if (this.canSendPrompts()) {
       Session.shared().addToHistory({
@@ -161,7 +161,7 @@
     }
   }
   
-  onReceived_chat(data) {
+  onReceived_chat (data) {
     // Add chat to chat history
     Session.shared().addToHistory({
       type: "chat",
@@ -190,7 +190,7 @@
     );
   }
 
-  onClose() {
+  onClose () {
     super.onClose();
 
     if (!this.isBanned()) {

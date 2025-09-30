@@ -191,7 +191,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
      */
     getAllSubelementsWithAnyOfClass (classNames) {
         let allSubelements = [];
-        function recurse(element) {
+        function recurse (element) {
         Array.from(element.children).forEach(child => {
             // Check if the child element contains any of the class names provided
             if (classNames.some(className => child.classList.contains(className))) {
@@ -229,7 +229,7 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
 
         let allSubelements = [];
 
-        function recurse(element) {
+        function recurse (element) {
         Array.from(element.children).forEach(child => {
             // Check if the child element's tag name is in the provided list 
             if (lowerCaseTagNames.includes(child.tagName.toLowerCase())) { 

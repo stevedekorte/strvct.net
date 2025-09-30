@@ -51,7 +51,7 @@
    * @description Initializes the YouTubeService instance.
    * @category Initialization
    */
-  init() {
+  init () {
     super.init();
     this.setTitle("YouTube");
     this.setSubtitle("music service");

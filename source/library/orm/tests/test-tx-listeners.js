@@ -6,7 +6,7 @@
 
 const SvDatabase = require("../SvDatabase");
 
-async function testTransactionListeners() {
+async function testTransactionListeners () {
     console.log("=== Testing Transaction Listeners ===");
     
     const database = await SvDatabase.shared().setup();

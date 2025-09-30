@@ -17,7 +17,7 @@
 
 class MarkdownRelative extends Object {
 
-    constructor() {
+    constructor () {
         super();
         this._inputString = null;
         this._outputString = null;

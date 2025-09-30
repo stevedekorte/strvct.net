@@ -115,7 +115,7 @@
      * @param {Boolean} aBool - Whether to register for browser drop events
      * @throws {Error} Always throws an error as this method shouldn't be called
      */
-    setIsRegisteredForBrowserDrop(aBool) {
+    setIsRegisteredForBrowserDrop (aBool) {
         throw new Error("shouldn't be called")
     }
 
@@ -391,7 +391,7 @@
         });
 
 
-        scene.meshes.forEach(function(mesh) {
+        scene.meshes.forEach(function (mesh) {
             if(mesh.material){
                 mesh.material.backFaceCulling = false;
             }

@@ -24,7 +24,7 @@
 */
 
 class MarkdownToc extends Object {
-    constructor() {
+    constructor () {
         super();
         this._markdownString = '';
         this._jsonToc = []; // Will now store array of [level, title] tuples
