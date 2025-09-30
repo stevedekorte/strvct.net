@@ -138,11 +138,23 @@
      * @param {function} fn - The function to call for each slot
      */
     reverseForEachSlot (fn) {
-        const slots = [];
-        this.forEachSlot(slot => {
-            slots.push(slot);
+        // We need to reverse the prototype chain order, but keep slots within each prototype in their original order
+        const slotsByProto = [];
+
+        this.forEachPrototype(proto => {
+            if (Object.hasOwn(proto, "_slotsMap")) {
+                const protoSlots = [];
+                proto._slotsMap.forEach((slot) => {
+                    protoSlots.push(slot);
+                });
+                slotsByProto.push(protoSlots);
+            }
         });
-        slots.reverse().forEach(fn);
+
+        // Reverse the prototype order (so base classes come first), but keep slots within each proto in order
+        slotsByProto.reverse().forEach(protoSlots => {
+            protoSlots.forEach(fn);
+        });
     }
 
     /**
