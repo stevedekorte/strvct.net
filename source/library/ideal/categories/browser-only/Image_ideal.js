@@ -1,6 +1,6 @@
 "use strict";
 
-Image.__proto__ = Object; 
+Image.__proto__ = Object;
 /**
  * @module library.ideal
  * @class Image_ideal
@@ -41,7 +41,7 @@ Image.__proto__ = Object;
         this.crossOrigin = "Anonymous";
         // need to set up callbacks in the promise before setting the src!
         const promise = this.promiseLoaded(); // promise resolves when loaded and calls onDidLoad() which may call ddidFetchDataUrl()
-        this.src = url; 
+        this.src = url;
         return promise;
     }
 
@@ -87,12 +87,12 @@ Image.__proto__ = Object;
                 this.onload = () => {
                     this.onDidLoad();
                     resolve(this);
-                }
+                };
                 this.onerror = (error) => {
                     error = Error.normalizeError(error);
                     this.onLoadError(error);
                     reject(error);
-                }
+                };
             });
         }
 
@@ -123,7 +123,7 @@ Image.__proto__ = Object;
             this.asCanvas().toBlob(resolve, "image/png", quality);
         });
     }
- 
+
     async asyncRemoveAllMetadata () {
         await this.promiseLoaded();
         const blob = await this.asyncAsBlob();

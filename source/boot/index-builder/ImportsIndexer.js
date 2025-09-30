@@ -6,7 +6,7 @@
  * @extends Object
  * @classdesc Builds an index of resources from _imports.json files.
  *  Runs in node.js.
- *  
+ *
  *  Recursively walks _imports.json files
  *  to construct top level _imports_index.json file with format:
 
@@ -29,16 +29,16 @@
         ...
     }
 
-    which only contains entries for JS and CSS files. 
+    which only contains entries for JS and CSS files.
 
     A zipped version of cam file is also produced.
 
     Use:
 
-    The root index.html file just needs to run SvResourceManager.js which 
+    The root index.html file just needs to run SvResourceManager.js which
     will load the above two files and eval the JS and CSS code to start
     the app.
-   
+
 */
 
 // --------------------------------------------------
@@ -47,10 +47,10 @@ const nodePath = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const zlib = require("zlib");
-const process = require('process');
+const process = require("process");
 
 
-class ImportsIndexer { 
+class ImportsIndexer {
     /**
      * @constructor
      * @category Initialization
@@ -146,7 +146,7 @@ class ImportsIndexer {
             } else {
                 this.paths().push(fullPath);
             }
-        })
+        });
     }
 
     /**
@@ -174,7 +174,7 @@ class ImportsIndexer {
      * @category File Operations
      */
     indexFileName () {
-        return "_index.json"
+        return "_index.json";
     }
 
     /**
@@ -279,7 +279,7 @@ class ImportsIndexer {
         return this.paths().filter(path => {
             const pathExt = path.split(".").pop().toLowerCase();
             return exts.indexOf(pathExt) !== -1;
-        })
+        });
     }
 
     /**
@@ -321,10 +321,10 @@ class ImportsIndexer {
      * @category Data Processing
      */
     hashForData (data) {
-        // Use the same hash method as ArrayBuffer.prototype.sha256() for consistency
+        // Use the same hash method as ArrayBuffer.prototype.asyncSha256() for consistency
         // This ensures hashes match between build time and runtime
-        const buffer = Buffer.from(data, 'utf8');
-        const hash = crypto.createHash('sha256').update(buffer).digest("base64");
+        const buffer = Buffer.from(data, "utf8");
+        const hash = crypto.createHash("sha256").update(buffer).digest("base64");
         return hash;
     }
 

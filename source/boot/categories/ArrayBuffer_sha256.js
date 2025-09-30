@@ -12,29 +12,19 @@
  * Works in both browser and Node.js environments.
  * @returns {Promise<string>} The SHA-256 hash as a base64 string
  */
-ArrayBuffer.prototype.sha256 = async function () {
-    if (typeof crypto !== 'undefined' && crypto.subtle) {
+ArrayBuffer.prototype.asyncSha256 = async function () {
+    if (typeof crypto !== "undefined" && crypto.subtle) {
         // Browser environment or Node.js with Web Crypto API
         const hashArrayBuffer = await crypto.subtle.digest("SHA-256", this);
         const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)));
         return hashString;
-    } else if (typeof require !== 'undefined') {
+    } else if (typeof require !== "undefined") {
         // Node.js environment - use Node's crypto module
-        const nodeCrypto = require('crypto');
-        const hash = nodeCrypto.createHash('sha256');
+        const nodeCrypto = require("crypto");
+        const hash = nodeCrypto.createHash("sha256");
         hash.update(Buffer.from(this));
-        return hash.digest('base64');
+        return hash.digest("base64");
     } else {
         throw new Error("No crypto implementation available");
     }
-};
-
-/**
- * Computes SHA-256 hash of the Uint8Array and returns it as a base64 string.
- * Works in both browser and Node.js environments.
- * @returns {Promise<string>} The SHA-256 hash as a base64 string
- */
-Uint8Array.prototype.sha256 = async function () {
-    // Convert to ArrayBuffer and use its sha256 method
-    return this.buffer.slice(this.byteOffset, this.byteOffset + this.byteLength).sha256();
 };

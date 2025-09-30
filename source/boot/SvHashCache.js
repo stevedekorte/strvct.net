@@ -22,7 +22,7 @@
          */
         this.newSlot("idb", null);
     }
-  
+
     /**
      * @description Initializes the prototype for the SvHashCache class.
      * @category Initialization
@@ -35,7 +35,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setIdb(SvIndexedDbFolder.clone());
         this.setIsDebugging(false);
         this.idb().setIsDebugging(false);
@@ -60,7 +60,7 @@
      * @category Query
      */
     promiseHasHash (hash) {
-        return this.idb().promiseHasKey(hash)
+        return this.idb().promiseHasKey(hash);
     }
 
     /**
@@ -69,7 +69,6 @@
      * @category Query
      */
     async promiseCount () {
-        
         return this.idb().promiseCount();
     }
 
@@ -156,11 +155,11 @@
         if (data === undefined) {
             return undefined;
         }
-        
+
         // In Node.js, check for Buffer as well as ArrayBuffer
-        const typeIsOk = typeof(data) === "string" || 
-                        data instanceof ArrayBuffer || 
-                        (typeof Buffer !== 'undefined' && Buffer.isBuffer(data));
+        const typeIsOk = typeof(data) === "string" ||
+                        data instanceof ArrayBuffer ||
+                        (typeof Buffer !== "undefined" && Buffer.isBuffer(data));
 
         if (!typeIsOk) {
             console.warn("data is a " + typeof(data) + ", but we except a string, ArrayBuffer, or Buffer. Path: " + optionalPathForDebugging);
@@ -169,10 +168,10 @@
             }
             return undefined;
         }
-        
+
         // Convert Buffer to ArrayBuffer if needed
         let returnData = data;
-        if (typeof Buffer !== 'undefined' && Buffer.isBuffer(data)) {
+        if (typeof Buffer !== "undefined" && Buffer.isBuffer(data)) {
             returnData = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
         }
 
@@ -216,12 +215,21 @@
 
         if (hash !== dataHash) {
             console.error(`Hash mismatch: expected ${hash}, got ${dataHash}`);
-            console.warn("This typically happens when the hash algorithm has changed.");
+            console.warn("This typically happens when one of the following occurs:");
+            console.warn("1. the hash algorithm has changed (e.g. package script hash is different than the hash algorithm used here)");
+            console.warn("2. the package build script was not run or the package was notproperly deployed");
             console.warn("Please clear your browser cache: DevTools > Application > Storage > Clear site data");
-            throw new Error("hash key does not match hash of value - please clear browser cache");
+            const error = new Error("hash key does not match hash of value - please clear browser cache");
+            debugger;
+            let testHash = await this.promiseHashKeyForData(hash);
+            console.log("testHash", testHash);
+            error.shouldClearBrowserCache = true;
+            throw error;
         }
 
-        if (this.isDebugging()) console.log(this.logPrefix(), "SvHashCache atPut ", hash);
+        if (this.isDebugging()) {
+            console.log(this.logPrefix(), "SvHashCache atPut ", hash);
+        }
         return this.idb().promiseAtPut(hash, data);
     }
 
@@ -233,24 +241,19 @@
      */
     async promiseHashKeyForData (data) {
         if (typeof(data) === "string") {
-            data = new TextEncoder("utf-8").encode(data);    
+            data = new TextEncoder("utf-8").encode(data);
         }
-        
+
         // Convert Buffer to ArrayBuffer for consistent hashing
-        if (typeof Buffer !== 'undefined' && Buffer.isBuffer(data)) {
+        if (typeof Buffer !== "undefined" && Buffer.isBuffer(data)) {
             data = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
         }
 
-        // check if data is a valid type 
-        assert(data.constructor.name === "Uint8Array" || data.constructor.name === "ArrayBuffer", "data is not a valid type");
-        
-        // Use the unified sha256 method from ArrayBuffer_ideal
-        if (data.constructor.name === "Uint8Array") {
-            return await data.sha256();
-        } else {
-            // ArrayBuffer
-            return await data.sha256();
-        }
+        // check if data is a valid type
+        assert(data instanceof Uint8Array || data instanceof ArrayBuffer, "data is not a valid type");
+
+        // Use the unified asyncSha256 method from ArrayBuffer_ideal
+        return await data.asyncSha256();
     }
 
     /**

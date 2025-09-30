@@ -144,7 +144,7 @@
      * @category Action
      */
     {
-      const slot = this.newSlot("startPollingAction", null);
+      const slot = this.newSlot("asyncStartPollingAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Start Polling");
       //slot.setShouldStoreSlot(true)
@@ -152,7 +152,7 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
       slot.setIsSubnodeField(true);
-      slot.setActionMethodName("startPolling");
+      slot.setActionMethodName("asyncStartPolling");
     }
 
     /**
@@ -275,7 +275,7 @@
    * @returns {Object} The action information.
    * @category Action
    */
-  startPollingActionInfo () {
+  asyncStartPollingActionInfo () {
     return {
         isEnabled: this.canStartPolling(),
         //title: this.title(),
@@ -317,7 +317,7 @@
    * @description Starts the image generation process.
    * @category Process
    */
-  async startPolling () {
+  async asyncStartPolling () {
     
     //assert(!this.isPolling(), "already polling");
     assert(this.generationId(), "generationId is required");

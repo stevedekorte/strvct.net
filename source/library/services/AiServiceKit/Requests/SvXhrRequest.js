@@ -815,42 +815,55 @@
   /**
    * @category XHR
    * @description Called when the XHR loadend event is fired
-   * @param {Event} event 
+   * @param {Event} event
    */
   onXhrLoadEnd (/*event*/) {
-    
+
     if (this.didAbort()) {
       return;
     }
 
+    // Note: loadend fires for all completed requests, including those with error status codes.
+    // HTTP error status codes (4xx, 5xx) are NOT XHR errors - they are successful XHR
+    // completions that returned an error status. We record the error state by setting the
+    // error slot, but we don't call onXhrError() which is reserved for network-level failures.
+    //
+    // The error slot gets set in asyncSend() after this promise resolves.
+
     if (this.hasErrorStatusCode()) {
       if (!SvPlatform.isOnline()) {
+        // This is a true network error - connection is down
         this.onXhrError(new Error("Internet connection down."));
       } else {
+        // HTTP error status codes are not XHR errors - they're successful requests
+        // that returned an error status. We still want to extract and record detailed
+        // error information in the error slot for later use in asyncSend().
+
         const statusCode = this.xhr().status;
         const fullStatus = this.fullNameForXhrStatusCode(statusCode);
 
         if (this.isDebugging()) console.log(this.logPrefix(), this.description());
 
-        // try to extract an error message from the response, if it has one
-
+        // Try to extract an error message from the response
         const xhr = this.xhr();
         const contentType = xhr.getResponseHeader("Content-Type");
+        let errorMessage = fullStatus;
+
         if (contentType && contentType.includes("application/json")) {
-            const errorMessageInJson = this.responseJsonError();
-            if (errorMessageInJson) {
-                const errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
-                this.onXhrError(new Error(errorMessage));
-            }
+          const errorMessageInJson = this.responseJsonError();
+          if (errorMessageInJson) {
+            errorMessage = errorMessageInJson + ". (json.error) " + fullStatus;
+          }
         } else if (contentType && contentType.includes("text/xml")) {
-            const errorMessageInXml = this.responseXmlError();
-            if (errorMessageInXml) {
-                const errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
-                this.onXhrError(new Error(errorMessage));
-            }
-        } else {
-            this.onXhrError(new Error(fullStatus));
+          const errorMessageInXml = this.responseXmlError();
+          if (errorMessageInXml) {
+            errorMessage = errorMessageInXml + ". (xml.error) " + fullStatus;
+          }
         }
+
+        // Set the error slot directly without calling onXhrError()
+        // This records the error state without triggering error event behavior
+        this.setError(new Error(errorMessage));
       }
     }
 

@@ -5,7 +5,7 @@
 "use strict";
 
 /**
- * @class SvMediaCache 
+ * @class SvMediaCache
  * @extends ProtoClass
  * @classdesc A cache for media files. Uses SvHashCache for local cache and Firestore for remote storage.
  */
@@ -47,7 +47,6 @@
     }
 
 
-
     /**
      * @description Closes the map.
      * @returns {SvMediaCache} - Returns this instance.
@@ -57,7 +56,7 @@
         this.hashCache().close();
         return this;
     }
-	
+
     async asyncGet (hash) {
         if (await this.asyncHasLocal(hash)) {
             return this.asyncGetLocal(hash);
@@ -134,5 +133,5 @@
         // TODO: handle different media types
         return SvImage.clone().setData(data);
     }
-    
+
 }.initThisClass());

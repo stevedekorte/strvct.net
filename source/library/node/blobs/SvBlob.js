@@ -103,7 +103,7 @@
      * @category Utility
      */
     age () {
-        return new Date().getTime() - this.lastModifiedTime()
+        return new Date().getTime() - this.lastModifiedTime();
     }
 
     /**
@@ -112,8 +112,8 @@
      * @category Initialization
      */
     prepareForFirstAccess () {
-        super.prepareForFirstAccess()
-        this.setupValueField()
+        super.prepareForFirstAccess();
+        this.setupValueField();
     }
 
     /**
@@ -147,7 +147,7 @@
      * @category Metadata
      */
     title () {
-        return this.name()
+        return this.name();
     }
 
     /**
@@ -156,11 +156,11 @@
      * @category Metadata
      */
     subtitle () {
-        const size = this.valueSize()
+        const size = this.valueSize();
         if (size) {
-            return size.byteSizeDescription()
+            return size.byteSizeDescription();
         }
-        return null
+        return null;
     }
 
     /**
@@ -169,7 +169,7 @@
      * @category Data
      */
     hash () {
-        return this.valueHash() // for subnode lookup
+        return this.valueHash(); // for subnode lookup
     }
 
     /**
@@ -181,11 +181,11 @@
      */
     didUpdateSlotValue (oldValue, newValue) {
         if (newValue) {
-            this.setValueSize(newValue.length)
-            this.setLastModifiedTime(new Date().getTime())
-            this.promiseWriteValue()
+            this.setValueSize(newValue.length);
+            this.setLastModifiedTime(new Date().getTime());
+            this.promiseWriteValue();
         }
-        return this
+        return this;
     }
 
     /**
@@ -194,7 +194,7 @@
      * @category Storage
      */
     store () {
-        return this.parentNode().store()
+        return this.parentNode().store();
     }
 
     /**
@@ -204,8 +204,8 @@
      */
     async promiseWriteValue () {
         // what about number or null values?
-        const v = this.value()
-        assert(Type.isArrayBuffer(v) || Type.isString(v))
+        const v = this.value();
+        assert(Type.isArrayBuffer(v) || Type.isString(v));
 
         const digestBuffer = await v.promiseSha256Digest();
         const h = digestBuffer.base64Encoded();
@@ -232,11 +232,11 @@
 
         try {
             await this.store().promiseAtPut(h, v);
-            console.log(this.logPrefix(), "did write hash/value pair: " + this.description())
+            console.log(this.logPrefix(), "did write hash/value pair: " + this.description());
         } catch (error) {
             console.error(this.logPrefix(), error);
-            console.log(this.logPrefix(), "error writing hash/value pair: " + this.description())
-            debugger
+            console.log(this.logPrefix(), "error writing hash/value pair: " + this.description());
+            debugger;
         }
     }
 
@@ -246,7 +246,7 @@
      */
     async promiseReadValue () {
         if (this.value()) {
-            return
+            return;
         }
 
         assert(this.isValid());
@@ -264,22 +264,22 @@
      */
     isValid () {
         if (Type.isNull(this.name())) {
-            return false
+            return false;
         }
 
         if (Type.isNull(this.valueHash())) {
-            return false
+            return false;
         }
 
         if (Type.isNull(this.valueSize())) {
-            return false
+            return false;
         }
 
         if (Type.isNull(this.lastModifiedTime()) || this.lastModifiedTime() === 0) {
-            return false
+            return false;
         }
 
-        return true
+        return true;
     }
 
     /**
@@ -288,12 +288,12 @@
      * @category Utility
      */
     description () {
-        const slotNames = ["name", "valueHash", "valueSize", "lastModifiedTime"]
-        const parts = [this.svTypeId()]
+        const slotNames = ["name", "valueHash", "valueSize", "lastModifiedTime"];
+        const parts = [this.svTypeId()];
         slotNames.forEach(slotName => {
-            parts.push(slotName + ":" + this[slotName]())
-        })
-        return parts.join(", ")
+            parts.push(slotName + ":" + this[slotName]());
+        });
+        return parts.join(", ");
     }
 
     /**
@@ -306,12 +306,12 @@
         // This is a test to make sure browser JS and node JS hashes match.
         //  Here's the code from nodejs:
         // crypto.createHash('sha256').update(Buffer.from("abc", "utf8")).digest("base64");
-        const nodejsHash = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
+        const nodejsHash = "ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0=";
         const enc = new TextEncoder(); // always utf-8
         const uint8Array = enc.encode("abc");
-        const arrayBuffer = uint8Array.buffer
+        const arrayBuffer = uint8Array.buffer;
         const digestBuffer = await arrayBuffer.promiseSha256Digest();
-        const h = digestBuffer.base64Encoded()
+        const h = digestBuffer.base64Encoded();
         assert(h === nodejsHash, "hashes do not match");
         console.log(this.logPrefix(), "hashes match!");
     }

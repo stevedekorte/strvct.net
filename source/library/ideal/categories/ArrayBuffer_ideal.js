@@ -20,3 +20,6 @@
     }
 
 }).initThisCategory();
+
+console.log("---------------------------------------------------- ArrayBuffer_ideal.js evaluated ----------------------------------------------------");
+debugger;

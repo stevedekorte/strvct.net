@@ -112,43 +112,45 @@
       slot.setSummaryFormat("key: value");
     }
 
-        /**
-     * @member {string} omniRefImageUrl
-     * @description URL to character reference sheet composite image for Midjourney V7+ omnireference.
-     * This will be used with --oref parameter (V7's omnireference flag).
-     * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
-     * @category Configuration
-     */
-        {
-            const slot = this.newSlot("omniRefImageUrl", null);
-            slot.setInspectorPath("Settings");
-            slot.setSlotType("String");
-            slot.setLabel("Omniref Image URL");
-            slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(true);
-            slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
-            slot.setSummaryFormat("key value");
-          }
-
-    // --- generation ---
-
     /**
- * @member {Action} generateAction
- * @description The action to trigger image generation.
- * @category Action
+ * @member {string} omniRefImageUrl
+ * @description URL to character reference sheet composite image for Midjourney V7+ omnireference.
+ * This will be used with --oref parameter (V7's omnireference flag).
+ * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
+ * @category Configuration
  */
     {
-        const slot = this.newSlot("generateAction", null);
-        slot.setInspectorPath("");
-        slot.setLabel("Generate");
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Action");
+        const slot = this.newSlot("omniRefImageUrl", null);
+        slot.setInspectorPath("Settings");
+        slot.setSlotType("String");
+        slot.setLabel("Omniref Image URL");
         slot.setIsSubnodeField(true);
-        slot.setActionMethodName("generate");
+        slot.setShouldStoreSlot(true);
+        slot.setSyncsToView(true);
+        slot.setCanEditInspection(true);
+        slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
+        slot.setSummaryFormat("key value");
     }
+
+
+    /**
+     * @member {SvXhrRequest} xhrRequest
+     * @description The current XHR request object for debugging.
+     * @category Request
+     */
+    {
+        const slot = this.newSlot("xhrRequest", null);
+        slot.setShouldJsonArchive(true);
+        slot.setInspectorPath("");
+        slot.setLabel("xhr request");
+        slot.setShouldStoreSlot(true);
+        slot.setSyncsToView(true);
+        slot.setFinalInitProto(SvXhrRequest);
+        slot.setIsSubnodeField(true);
+        slot.setCanEditInspection(false);
+      }
+
+    // --- generation ---
 
     /**
      * @member {string} error
@@ -209,22 +211,55 @@
       slot.setSlotType("Object");
     }
 
+
+
     /**
-     * @member {SvXhrRequest} xhrRequest
-     * @description The current XHR request object for debugging.
-     * @category Request
+     * @member {Action} generateAction
+     * @description The action to trigger image generation.
+     * @category Action
      */
     {
-      const slot = this.newSlot("xhrRequest", null);
-      slot.setShouldJsonArchive(true);
-      slot.setInspectorPath("");
-      slot.setLabel("xhr request");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setFinalInitProto(SvXhrRequest);
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
+        const slot = this.newSlot("generateAction", null);
+        slot.setInspectorPath("");
+        slot.setLabel("Generate");
+        slot.setSyncsToView(true);
+        slot.setDuplicateOp("duplicate");
+        slot.setSlotType("Action");
+        slot.setIsSubnodeField(true);
+        slot.setActionMethodName("generate");
     }
+
+        /**
+     * @member {Action} evaluateAction
+     * @description The action to trigger image generation.
+     * @category Action
+     */
+        {
+            const slot = this.newSlot("evaluateAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Evaluate");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("evaluate");
+        }
+
+        /**
+     * @member {Action} clearAction
+     * @description The action to clear the image prompt.
+     * @category Action
+     */
+        {
+            const slot = this.newSlot("clearAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Clear");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("clear");
+        }
 
     {
         const slot = this.newSlot("completionPromise", null);
@@ -410,11 +445,10 @@
     // 2. AUTHENTICATION: Handles API key management securely
     // 3. CORS: Ensures proper headers for cross-origin requests
     const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-
     const request = SvXhrRequest.clone();
     request.setDelegate(this);
     request.setUrl(proxyEndpoint);
-    request.setMethod("POST");
+    request.setMethod("POST"); 
     request.setHeaders({
       'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
@@ -425,153 +459,42 @@
     this.setXhrRequest(request);
 
     try {
-      await request.asyncSend(); // Delegate methods handle errors
-      
-      if (request.hasError()) {
-        throw request.error();
-      }
+        await request.asyncSend(); // Delegate methods handle errors
 
-      if (request.isSuccess()) {
-        const responseJson = JSON.parse(request.responseText());
-        const taskId = responseJson.task_id || responseJson.messageId;
-        if (taskId) {
-            this.addGenerationForTaskId(taskId);
+        if (request.hasError()) {
+            this.setError(request.error());
         } else {
-            throw new Error("No task_id or messageId returned from ImaginePro");
+            const responseJson = JSON.parse(request.responseText());
+            const taskId = responseJson.task_id || responseJson.messageId;
+            if (taskId) {
+                await this.addGenerationForTaskId(taskId);
+            } else {
+                throw new Error("No task_id or messageId returned from ImaginePro");
+            }
         }
-      }
     } catch (error) {
       this.onError(error);
     }
-    return this.completionPromise();
+    this.onPromptEnd();
   }
 
-  addGenerationForTaskId (taskId) {
+  async addGenerationForTaskId (taskId) {
     this.setStatus("task submitted, awaiting completion...");
     const generation = this.generations().add();
     generation.setTaskId(taskId);
     generation.setDelegate(this);
-    generation.startPolling();
-  }
-
-  /**
-   * @description Handles errors during image generation.
-   * @param {Error} error - The error object.
-   * @category Process
-   */
-  onError (error) {
-    assert(Type.isError(error), "error value passed to onError is not an Error");
-    console.error(this.logPrefix(), error.message);
-    this.setError(error);
-    this.setStatus("ERROR: " + error.message);
-    this.sendDelegateMessage("onImagePromptError", [this]);
-    this.onEnd();
-  }
-
-  /**
-   * @description Handles successful image loading.
-   * @param {Object} aiImage - The loaded AI image object.
-   * @category Process
-   */
-  onImageLoaded (aiImage) {
-    this.didUpdateNode();
-    this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
-    this.onEnd();
-  }
-
-  /**
-   * @description Handles errors during image loading.
-   * @param {Object} aiImage - The AI image object that failed to load.
-   * @category Process
-   */
-  onImageError (aiImage) {
-    this.didUpdateNode();
-    this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
-    this.onEnd();
+    await generation.asyncStartPolling();
   }
 
   /**
    * @description Handles the end of the image generation process.
    * @category Process
    */
-  onEnd () { // end of request to being task
+  onPromptEnd () { // end of request to being task
     this.sendDelegateMessage("onImagePromptEnd", [this]);
-    if (this.error()) {
-        // Pass the error object to the reject function
-        this.completionPromise().callRejectFunc(this.error());
-    } else {
-        this.completionPromise().callResolveFunc(this);
-    }
-  }
-
-  // --- Delegate methods from ImagineProImageGeneration ---
-
-  /**
-   * @description Handles successful generation start.
-   * @param {Object} generation - The generation object.
-   * @category Delegation
-   */
-  onImageGenerationStart (generation) {
-    this.setStatus("Generation polling started...");
-    this.sendDelegateMessage("onImagePromptGenerationStart", [this, generation]);
-  }
-
-  /**
-   * @description Handles generation completion with images.
-   * @param {Object} generation - The generation object.
-   * @category Delegation
-   */
-  onImageGenerationEnd (/*generation*/) {    
-    this.setStatus("Generation completed");
-    this.sendDelegateMessage("onImagePromptSuccess", [this]);
-    this.onEnd();
-  }
-
-  /**
-   * @description Handles generation errors.
-   * @param {Object} generation - The generation object.
-   * @category Delegation
-   */
-  onImageGenerationError (generation) {
-    const error = generation.error();
-    this.setStatus("Generation failed: " + error.message);
-    this.onError(new Error(errorMessage));
-  }
-
-  /**
-   * @description Handles individual image loading from generation.
-   * @param {Object} generation - The generation object.
-   * @param {Object} aiImage - The loaded AI image object.
-   * @category Delegation
-   */
-  onImageGenerationImageLoaded (/*generation, aiImage*/) {
-    this.updateStatus();
-    //this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
-  }
-
-  /**
-   * @description Handles individual image errors from generation.
-   * @param {Object} generation - The generation object.
-   * @param {Object} aiImage - The AI image object that failed to load.
-   * @category Delegation
-   */
-  onImageGenerationImageError (generation, aiImage) {
-    this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
   }
 
   // --- SvXhrRequest Delegate Methods ---
-
-  /**
-   * @description Called when the request begins.
-   * @param {SvXhrRequest} request - The request object.
-   * @category Request Delegation
-   */
-  onRequestBegin (/*request*/) {
-    this.setStatus("sending request...");
-  }
 
   /**
    * @description Called during request progress.
@@ -583,87 +506,39 @@
   }
 
   /**
-   * @description Called when the request succeeds.
-   * @param {SvXhrRequest} request - The request object.
-   * @category Request Delegation
-   */
-  onRequestSuccess (/*request*/) {
-    // Success handling is done in the main start() method
-    // This is called after the request completes successfully
-  }
-
-  /**
-   * @description Called when the request fails.
-   * @param {SvXhrRequest} request - The request object.
-   * @category Request Delegation
-   */
-  onRequestFailure (request) {
-    const error = request.error() || new Error(`Request failed: ${request.status()}`);
-    this.onError(error);
-  }
-
-  /**
-   * @description Called when the request is aborted.
-   * @param {SvXhrRequest} request - The request object.
-   * @category Request Delegation
-   */
-  onRequestAbort (/*request*/) {
-    this.setStatus("request aborted");
-    this.onEnd();
-  }
-
-  /**
-   * @description Called when the request encounters an error.
-   * @param {SvXhrRequest} request - The request object.
-   * @param {Error} error - The error object.
-   * @category Request Delegation
-   */
-  onRequestError (request, error) {
-    this.onError(error);
-  }
-
-  /**
-   * @description Called when the request completes (success, error, or abort).
-   * @param {SvXhrRequest} request - The request object.
-   * @category Request Delegation
-   */
-  onRequestComplete (/*request*/) {
-    // Final cleanup can be done here if needed
-  }
-
-  /**
-   * @description Updates the status of the image prompt.
-   * @category Status
-   */
-  updateStatus () {
-    /*
-    const s = this.images().status();
-    if (s) {
-      this.setStatus(s);
-    }
-      */
-  }
-
-  /**
    * @description Shuts down the image prompt and its associated images.
    * @returns {ImagineProImagePrompt} The current instance.
    * @category Lifecycle
    */
   shutdown () {
-    this.images().subnodes().forEach(image => image.shutdown());
+    this.nodeShutdown();
     return this;
   }
 
+  allResultImages () {
+    return this.generations().subnodes().map(generation => generation.images().subnodes()).flat();
+  }
+
   resultImageUrlData () {
-    const generation = this.generations().subnodes().last();
-    if (!generation) {
-      return null;
+    const image = this.allResultImages().last();
+    if (image) {
+        return image.dataUrl();
     }
-    const image = generation.images().subnodes().last();
-    if (!image) {
-      return null;
-    }
-    return image.dataUrl();
+    return null;
+  }
+
+  /// --- Actions ---
+
+  clear () {
+    this.setStatus("");
+    this.setError(null);
+    this.shutdown();
+    this.generations().removeAllSubnodes();
+    //this.svImages().removeAllSubnodes();
+  }
+
+  evaluate () {
+    
   }
 
 }.initThisClass());

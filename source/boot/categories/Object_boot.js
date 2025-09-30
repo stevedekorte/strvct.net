@@ -1,4 +1,4 @@
-"use strict"; 
+"use strict";
 
 /**
  * @module boot
@@ -15,7 +15,7 @@
      * @category Type Checking
      * @returns {string} The type name of the object
      */
-    static svType () { 
+    static svType () {
         return this.name;
     }
 
@@ -24,7 +24,7 @@
      * @category Type Checking
      * @returns {string} The type name of the object
      */
-    svType () { 
+    svType () {
         return this.constructor.name;
     }
 
@@ -34,7 +34,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a class, false otherwise
      */
-    static isClass () { 
+    static isClass () {
         return true;
     }
 
@@ -43,7 +43,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a class, false otherwise
      */
-    isClass () { 
+    isClass () {
         return false;
     }
 
@@ -53,7 +53,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a prototype, false otherwise
      */
-    static isPrototype () { 
+    static isPrototype () {
         return false;
     }
 
@@ -62,7 +62,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is a prototype, false otherwise
      */
-    isPrototype () { 
+    isPrototype () {
         return this.constructor.prototype === this;
     }
 
@@ -72,7 +72,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is an instance, false otherwise
      */
-    static isInstance () { 
+    static isInstance () {
         return false;
     }
 
@@ -81,7 +81,7 @@
      * @category Type Checking
      * @returns {boolean} True if the object is an instance, false otherwise
      */
-    isInstance () { 
+    isInstance () {
         return !this.isPrototype();
     }
 
@@ -90,8 +90,8 @@
      * @category Enumeration
      * @param {function} fn - The function to call for each prototype
      */
-    forEachPrototype (fn) { 
-    
+    forEachPrototype (fn) {
+
         let proto = this;
 
         if (this.isInstance()) {
@@ -122,12 +122,12 @@
      * @category Enumeration
      * @param {function} fn - The function to call for each slot
      */
-    forEachSlot (fn) { 
+    forEachSlot (fn) {
         this.forEachPrototype(proto => {
             if (Object.hasOwn(proto, "_slotsMap")) {
                 proto._slotsMap.forEach((slot /*, key, map*/) => {
                     fn(slot);
-                })
+                });
             }
         });
     }
@@ -150,7 +150,7 @@
      * @category Initialization
      * @returns {void}
      */
-    setupAllSlotsMap () { 
+    setupAllSlotsMap () {
         if (!this.isPrototype()) {
             throw new Error("setupAllSlotsMap called on non-prototype");
         }
@@ -161,7 +161,7 @@
         //assert(this.isPrototype())
 
         // reverse order so m.keysArray() will return the slots in the order in which they are defined
-        this.reverseForEachSlot(slot => { 
+        this.reverseForEachSlot(slot => {
             const k = slot.name();
             m.set(k, slot);
         });
@@ -169,7 +169,7 @@
         /*
         this.forEachSlot(slot => {
             const k = slot.name();
-        if (!m.has(k)) { // to handle overrides 
+        if (!m.has(k)) { // to handle overrides
                 m.set(k, slot);
             }
         });
@@ -181,7 +181,7 @@
      * @category Accessors
      * @returns {Map} The all slots map
      */
-    allSlotsMap () { 
+    allSlotsMap () {
         return this._allSlotsMap;
     }
 
@@ -190,7 +190,7 @@
      * @category Accessors
      * @returns {Map} The slots map
      */
-    slotsMap () { 
+    slotsMap () {
         return this._slotsMap;
     }
 
@@ -233,7 +233,7 @@
         Object.defineSlot(this, "_allSlotsMap", new Map()); // slots for this proto and all protos in the proto chain
         if (SvGlobals.get("ProtoClass")) {
             if (this !== ProtoClass.prototype) {
-                if(this._allSlotsMap === ProtoClass.prototype._allSlotsMap) {
+                if (this._allSlotsMap === ProtoClass.prototype._allSlotsMap) {
                     throw new Error("setupPrototype called on prototype with _allSlotsMap");
                 }
             }
@@ -242,11 +242,11 @@
 
         // We need to separate initPrototypeSlots, initSlots, initPrototype as
         // initializing some slots may depend on others already existing.
-        
-        // Slot init ordering may be important as well and why slots should be stored in 
+
+        // Slot init ordering may be important as well and why slots should be stored in
         // an array with a name->slot map used as an index.
 
-        
+
         if (Object.hasOwn(this, "initPrototypeSlots")) {
             // Only called if method defined on this class.
             this.initPrototypeSlots();// This method should NOT call super
@@ -302,27 +302,27 @@
 
         // Store the current number of slots so we know which ones are new
         const previousSlotCount = this._slotsMap.size;
-        
+
         // Check for category-specific initPrototypeSlots method
         const catInitSlotsMethodName = "initPrototypeSlots_" + categoryName;
         if (Object.hasOwn(this, catInitSlotsMethodName)) {
             // Call the category's slot initialization
             this[catInitSlotsMethodName].apply(this);
-            
+
             // Initialize only the new slots that were just defined by the category
             this.initCategorySlots(previousSlotCount);
-            
+
             // Update the allSlotsMap to include the new category slots
             this.updateAllSlotsMapForCategory();
         }
-        
+
         // Check for category-specific initPrototype method
         const catInitProtoMethodName = "initPrototype_" + categoryName;
         if (Object.hasOwn(this, catInitProtoMethodName)) {
             // Call the category's prototype initialization
             this[catInitProtoMethodName].apply(this);
         }
-        
+
         return this;
     }
 
@@ -334,10 +334,10 @@
      */
     initCategorySlots (previousSlotCount) {
         assert(this.isPrototype());
-        
+
         // Convert the map to an array to access by index
         const slotsArray = Array.from(this._slotsMap.values());
-        
+
         // Initialize only the new slots (those after previousSlotCount)
         for (let i = previousSlotCount; i < slotsArray.length; i++) {
             const slot = slotsArray[i];

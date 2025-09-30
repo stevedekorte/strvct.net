@@ -26,7 +26,7 @@
      * @category Environment
      */
     static isInBrowser () {
-        return (typeof (document) !== 'undefined');
+        return (typeof (document) !== "undefined");
     }
 
     /**
@@ -35,7 +35,7 @@
      * @category Environment
      */
     isInBrowser () {
-        return (typeof (document) !== 'undefined');
+        return (typeof (document) !== "undefined");
     }
 
     /**
@@ -49,7 +49,7 @@
             this._shared = obj;
             obj.init();
         }
-        return this._shared
+        return this._shared;
     }
 
     /**
@@ -58,7 +58,7 @@
      * @category Reflection
      */
     static svType () {
-        return this.name
+        return this.name;
     }
 
     static defineStringCapitalized () {
@@ -69,7 +69,7 @@
                         return match.toUpperCase();
                     });
                 }
-            )
+            );
         }
         return this;
     }
@@ -86,14 +86,14 @@
                 enumerable: false,
                 value: slotValue,
                 writable: true,
-            }
-        
+            };
+
             if (typeof(slotValue) === "function") {
                 slotValue.displayName = slotName;
             }
-            
+
             Object.defineProperty(obj, slotName, descriptor);
-        }
+        };
         this.defineStringCapitalized();
         return this;
     }
@@ -106,10 +106,10 @@
     static initThisClass () {
         this.setupDefineSlot();
 
-        // initPrototypeSlots is split from initPrototype as initPrototype may need to 
+        // initPrototypeSlots is split from initPrototype as initPrototype may need to
         // access slots that are created in initPrototypeSlots. We can't just put the slot definitions at the top
         // as subclasses may *override* the slot definitions.
-        
+
         if (Object.hasOwn(this.prototype, "initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
             this.prototype.initPrototypeSlots();
@@ -189,7 +189,7 @@
         if (!this[slotName]) {
             this[slotName] = function () {
                 return this[privateName];
-            }
+            };
         }
 
         const setterName = "set" + slotName.capitalized();
@@ -198,7 +198,7 @@
             this[setterName] = function (newValue) {
                 this[privateName] = newValue;
                 return this;
-            }
+            };
         }
 
         return this;
@@ -233,14 +233,14 @@
             // Use console.log directly to preserve caller location
             console.log("DEBUG:", this.logPrefix(), ...args);
         }
-        return this
+        return this;
     }
 
     logWarn (...args) {
         // Use console.warn directly to preserve caller location
         console.warn("**WARNING**:", this.logPrefix(), ...args);
     }
-    
+
     logError (...args) {
         // Use console.error directly to preserve caller location
         console.error("**ERROR**:", this.logPrefix(), ...args);
@@ -257,8 +257,8 @@ const assert = function (v, errorMessage) {
         console.error(m);
         throw new Error(m);
     }
-    return v
-}
+    return v;
+};
 
 SvGlobals.set("assert", assert);
 
@@ -267,9 +267,9 @@ const debugAssert = function (v, errorMessage) {
         const m = errorMessage ? errorMessage : "assert failed - false value";
         console.warn(m);
         debugger;
-        throw new Error(m)
+        throw new Error(m);
     }
     return v;
-}
+};
 
 SvGlobals.set("debugAssert", debugAssert);

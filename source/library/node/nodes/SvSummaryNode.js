@@ -9,13 +9,13 @@
  * - padding
  * - margin
  * and has an inspector for these attributes
- * 
+ *
  * support for links?
  */
 "use strict";
 
 (class SvSummaryNode extends SvStorableNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvSummaryNode.
      * @category Initialization
@@ -247,10 +247,7 @@
      * @returns {string} The summary.
      * @category Summary
      */
-    summary () { 
-        if (this.title() === "settings") {
-            debugger;
-        }
+    summary () {
         const k = this.summaryKey();
         let v = this.summaryValue();
 
@@ -277,7 +274,7 @@
             end = "\n";
         }
 
-        if (f === "key") { 
+        if (f === "key") {
             if (!k) {
                 return "";
             }
@@ -293,14 +290,14 @@
 
         const kvSeparator = this.hasNewLineSeparator() ? "\n" : " ";
 
-        if (f === "key value") { 
+        if (f === "key value") {
             if (!k) {
                 return "";
             }
             return begin + k + kvSeparator + v + end;
         }
 
-        if (f === "key: value") { 
+        if (f === "key: value") {
             if (!k) {
                 return "";
             }
@@ -316,7 +313,7 @@
 
         return "";
     }
-        
+
     /**
      * @description Returns the summary of all child nodes.
      * @returns {string} The children summary.
@@ -333,13 +330,13 @@
      */
     nodeSummarySuffixOut () {
         let s = this._nodeSummarySuffix;
-        
+
         if (s === "newline") {
             return "<br>";
         } else {
             s = s.replaceAll("<br>", "");
         }
-        
+
         return s;
     }
 
@@ -350,5 +347,5 @@
     didUpdateNode () {
         super.didUpdateNode();
     }
-    
+
 }.initThisClass());

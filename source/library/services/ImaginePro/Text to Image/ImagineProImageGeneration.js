@@ -143,6 +143,13 @@
       slot.setSyncsToView(true);
     }
 
+    {
+      const slot = this.newSlot("completionPromise", Promise.clone());
+      slot.setSlotType("Promise");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setCanDelete(true);
@@ -154,7 +161,7 @@
    * @category Metadata
    */
   title () {
-    return `Generation ${this.taskId().slice(0, 8)}...`;
+    return `Generation ${this.taskId().slice(0, 5)}`;
   }
 
   /**
@@ -179,7 +186,8 @@
    * @description Starts polling for the task status.
    * @category Process
    */
-  startPolling () {
+  async asyncStartPolling () {
+    this.setCompletionPromise(Promise.clone());
     this.setPollAttempts(0);
     this.setStatus("preparing to poll for task status...");
     this.sendDelegateMessage("onImageGenerationStart", [this]);
@@ -189,7 +197,8 @@
     setTimeout(() => {
       this.setStatus("polling for task status...");
       this.pollTaskStatus();
-    }, 3000); // Wait 3 seconds before first poll
+    }, 3000);
+    return this.completionPromise(); // Wait 3 seconds before first poll
   }
 
   /**
@@ -288,6 +297,7 @@
        await this.downloadImageUrls(imageUrls);
     }
     
+    this.completionPromise().callResolveFunc(this);
     this.sendDelegateMessage("onImageGenerationEnd", [this]);
   }
 
@@ -315,6 +325,7 @@
                     response.failureReason || response.reason || "Task failed";
     this.setError(new Error(errorMsg));
     this.stopPolling();
+    this.completionPromise().callRejectFunc(this.error());
     this.sendDelegateMessage("onImageGenerationError", [this]);
   }
 
@@ -337,24 +348,6 @@
   }
 
   /**
-   * @description Handles successful image loading.
-   * @param {Object} aiImage - The loaded AI image object.
-   * @category Delegation
-   */
-  onImageLoaded (aiImage) {
-    this.sendDelegateMessage("onImageGenerationImageLoaded", [this, aiImage]);
-  }
-
-  /**
-   * @description Handles errors during image loading.
-   * @param {Object} aiImage - The AI image object that failed to load.
-   * @category Delegation
-   */
-  onImageError (aiImage) {
-    this.sendDelegateMessage("onImageGenerationImageError", [this, aiImage]);
-  }
-
-  /**
    * @description Shuts down the generation and stops polling.
    * @returns {ImagineProImageGeneration} The current instance.
    * @category Lifecycle
@@ -363,6 +356,10 @@
     this.stopPolling();
     this.images().subnodes().forEach(image => image.shutdown());
     return this;
+  }
+
+  resultSvImages () {
+    return this.images().subnodes().map(image => image.asSvImage());
   }
 
 }.initThisClass());

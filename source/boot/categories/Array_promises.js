@@ -29,12 +29,12 @@
 
                     const v = array[index];
                     await aPromiseBlock(v, index);
-                    setTimeout(() => nextFunc(array, index+1), 0); // TODO: move to addTimeout?
+                    setTimeout(() => nextFunc(array, index + 1), 0); // TODO: move to addTimeout?
                     //requestIdleCallback(() => nextFunc(array, index+1));
                 } catch (error) {
                     reject(error);
                 }
-            }
+            };
 
             nextFunc(this, 0);
         });
@@ -47,17 +47,17 @@
      */
     async promiseSerialForEach (aBlock) {
         // Validate that aBlock is an async function
-        if (aBlock.constructor.name !== 'AsyncFunction') {
+        if (aBlock.constructor.name !== "AsyncFunction") {
             throw new Error("aBlock must be an async function");
         }
-        
+
         for (let i = 0; i < this.length; i++) {
             try {
                 await aBlock(this[i], i);
             } catch (error) {
                 console.error(`❌ Error in promiseSerialForEach at index ${i}:`, error);
-                console.error(`Element:`, this[i]);
-                console.error(`Error type:`, typeof error);
+                console.error("Element:", this[i]);
+                console.error("Error type:", typeof error);
                 throw error;
             }
         }
@@ -69,7 +69,7 @@
      * @returns {Promise<any[]>} A promise that resolves to an array of the results.
      */
     async promiseParallelMap (aBlock) {
-        assert(aBlock.constructor.name === 'AsyncFunction', "aBlock must be an async function");
+        assert(aBlock.constructor.name === "AsyncFunction", "aBlock must be an async function");
         const promises = this.map(v => aBlock(v));
         const values = await Promise.all(promises);
         return values;
@@ -79,6 +79,6 @@
         await this.promiseParallelMap(aBlock);
         //await this.parallelForEachWithYield(aBlock);
         //await this.promiseSerialTimeoutsForEach(aBlock);
-    } 
+    }
 
 }).initThisCategory();

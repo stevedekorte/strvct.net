@@ -8,19 +8,19 @@
  * @class StrvctFile
  * @extends Object
  * @classdesc Unified file loading abstraction that works in both browser and Node.js environments.
- * 
+ *
  * Usage:
  *   const file = StrvctFile.with('source/boot/MyFile.js');
  *   const content = await file.asyncLoad();
- * 
+ *
  * Class configuration:
  *   StrvctFile.setBaseUrl('https://example.com/strvct/');  // Browser mode
  *   StrvctFile.setWorkingPath('/path/to/project/');        // Node.js mode
- * 
+ *
  * Automatically detects the environment and routes to appropriate APIs:
  * - Browser: Uses fetch() with baseUrl for HTTP requests
  * - Node.js: Uses fs module with workingPath for file system access
- * 
+ *
  * Also handles IndexedDB polyfilling for Node.js environments.
  */
 
@@ -36,7 +36,7 @@ class StrvctFile extends Object {
      * @type {string}
      * @description Base URL for browser file loading
      */
-    static _baseUrl = '';
+    static _baseUrl = "";
 
     /**
      * @static
@@ -44,7 +44,7 @@ class StrvctFile extends Object {
      * @type {string}
      * @description Working directory path for Node.js file loading
      */
-    static _workingPath = '';
+    static _workingPath = "";
 
     /**
      * @static
@@ -65,14 +65,14 @@ class StrvctFile extends Object {
          * @type {string}
          * @description Path to the file
          */
-        this._path = '';
+        this._path = "";
         /**
          * @private
          * @type {string|null}
          * @description Cached file content after loading
          */
         this._content = null;
-    } 
+    }
 
     static setup () {
         if (SvPlatform.isNodePlatform()) {
@@ -88,7 +88,7 @@ class StrvctFile extends Object {
      * @category Class Configuration
      */
     static setBaseUrl (url) {
-        this._baseUrl = url.replace(/\/$/, ''); // Remove trailing slash
+        this._baseUrl = url.replace(/\/$/, ""); // Remove trailing slash
         return this;
     }
 
@@ -162,7 +162,7 @@ class StrvctFile extends Object {
      */
     async asyncLoad () {
         if (!this._path) {
-            throw new Error('No file path set. Use setPath() first.');
+            throw new Error("No file path set. Use setPath() first.");
         }
 
         let content;
@@ -171,7 +171,7 @@ class StrvctFile extends Object {
         } else {
             content = await this.asyncLoadBrowser();
         }
-        
+
         this._content = content;
         return content;
     }
@@ -183,7 +183,7 @@ class StrvctFile extends Object {
      */
     async asyncLoadArrayBuffer () {
         if (!this._path) {
-            throw new Error('No file path set. Use setPath() first.');
+            throw new Error("No file path set. Use setPath() first.");
         }
 
         let content;
@@ -192,7 +192,7 @@ class StrvctFile extends Object {
         } else {
             content = await this.asyncLoadArrayBufferBrowser();
         }
-        
+
         this._content = content;
         assert(content instanceof ArrayBuffer, "content is a " + typeof(content) + ", but we except a ArrayBuffer");
         return content;
@@ -205,15 +205,15 @@ class StrvctFile extends Object {
      */
     async asyncLoadNode () {
         console.log("🔍 asyncLoadNode file: " + this._path);
-        const fs = require('fs').promises;
-        const path = require('path');
-        
+        const fs = require("fs").promises;
+        const path = require("path");
+
         try {
             // Use working path if set, otherwise resolve relative to current directory
             const basePath = StrvctFile.workingPath() || process.cwd();
             const fullPath = path.resolve(basePath, this._path);
             //console.log("fs.readFile [" + fullPath.split("/").pop() + "]");
-            const content = await fs.readFile(fullPath, 'utf8');
+            const content = await fs.readFile(fullPath, "utf8");
             return content;
         } catch (error) {
             throw new Error(`Failed to load file in Node.js: ${this._path} - ${error.message}`);
@@ -228,10 +228,10 @@ class StrvctFile extends Object {
     async asyncLoadBrowser () {
         //console.log("🔍 asyncLoadBrowser file: " + this._path);
         const baseUrl = StrvctFile.baseUrl();
-        const fullUrl = baseUrl ? 
-            `${baseUrl}/${this._path.replace(/^\//, '')}` : 
+        const fullUrl = baseUrl ?
+            `${baseUrl}/${this._path.replace(/^\//, "")}` :
             this._path;
-        
+
         try {
             const response = await fetch(fullUrl);
             if (!response.ok) {
@@ -249,15 +249,15 @@ class StrvctFile extends Object {
      * @category File Loading
      */
     async asyncLoadArrayBufferNode () {
-        const fs = require('fs').promises;
-        const path = require('path');
-        
+        const fs = require("fs").promises;
+        const path = require("path");
+
         try {
             // Use working path if set, otherwise resolve relative to current directory
             const basePath = StrvctFile.workingPath() || process.cwd();
             const fullPath = path.resolve(basePath, this._path);
             const buffer = await fs.readFile(fullPath);
-            
+
             // Convert Node.js Buffer to ArrayBuffer
             const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
             assert(arrayBuffer instanceof ArrayBuffer, "arrayBuffer is a " + typeof(arrayBuffer) + ", but we except a ArrayBuffer");
@@ -274,10 +274,10 @@ class StrvctFile extends Object {
      */
     async asyncLoadArrayBufferBrowser () {
         const baseUrl = StrvctFile.baseUrl();
-        const fullUrl = baseUrl ? 
-            `${baseUrl}/${this._path.replace(/^\//, '')}` : 
+        const fullUrl = baseUrl ?
+            `${baseUrl}/${this._path.replace(/^\//, "")}` :
             this._path;
-        
+
         try {
             const response = await fetch(fullUrl);
             if (!response.ok) {
@@ -297,12 +297,12 @@ class StrvctFile extends Object {
      */
     eval () {
         if (this._content === null) {
-            throw new Error('No content loaded. Use load() first.');
+            throw new Error("No content loaded. Use load() first.");
         }
-        
+
         if (SvPlatform.isNodePlatform()) {
             // Use absolute path for better Node.js debugging
-            const path = require('path');
+            const path = require("path");
             const basePath = StrvctFile.workingPath() || process.cwd();
             const absolutePath = path.resolve(basePath, this._path);
             const sourceUrlComment = `\n//# sourceURL=${absolutePath}`;
@@ -336,12 +336,12 @@ class StrvctFile extends Object {
      */
     async asyncExists () {
         if (!this._path) {
-            throw new Error('No file path set. Use setPath() first.');
+            throw new Error("No file path set. Use setPath() first.");
         }
 
         if (SvPlatform.isNodePlatform()) {
-            const fs = require('fs').promises;
-            const path = require('path');
+            const fs = require("fs").promises;
+            const path = require("path");
             try {
                 const basePath = StrvctFile.workingPath() || process.cwd();
                 const fullPath = path.resolve(basePath, this._path);
@@ -354,10 +354,10 @@ class StrvctFile extends Object {
             // In browser, try to fetch and see if it succeeds
             try {
                 const baseUrl = StrvctFile.baseUrl();
-                const fullUrl = baseUrl ? 
-                    `${baseUrl}/${this._path.replace(/^\//, '')}` : 
+                const fullUrl = baseUrl ?
+                    `${baseUrl}/${this._path.replace(/^\//, "")}` :
                     this._path;
-                const response = await fetch(fullUrl, { method: 'HEAD' });
+                const response = await fetch(fullUrl, { method: "HEAD" });
                 return response.ok;
             } catch {
                 return false;
@@ -378,13 +378,13 @@ class StrvctFile extends Object {
             //console.log("🔍 Loading file: " + file.path());
             return file.asyncLoad();
         });
-        
+
         await Promise.all(loadPromises);
-        
+
         // Evaluate files sequentially to maintain order
         files.forEach(file => {
             if (file.canUseInCurrentEnv()) {
-                //console.log("🔍 Evaluating file: " + file.path());
+                console.log("🔍 Evaluating file: " + file.path());
                 file.eval();
             }
         });
@@ -413,17 +413,17 @@ class StrvctFile extends Object {
         if (!path) {
             return true; // No path set, assume it's usable
         }
-        
-        const pathComponents = path.split('/');
+
+        const pathComponents = path.split("/");
         const isNodePlatform = SvPlatform.isNodePlatform();
-        
+
         if (isNodePlatform) {
             // In Node.js, skip browser-only (browser-only) files
-            const isBrowserOnly = pathComponents.includes('browser-only') || pathComponents.includes('browser-only');
+            const isBrowserOnly = pathComponents.includes("browser-only") || pathComponents.includes("browser-only");
             return !isBrowserOnly;
         } else {
             // In browser, skip server-only files
-            const isNodeOnly = pathComponents.includes('server-only');
+            const isNodeOnly = pathComponents.includes("server-only");
             return !isNodeOnly;
         }
     }

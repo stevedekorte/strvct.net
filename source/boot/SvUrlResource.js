@@ -8,7 +8,7 @@
  * @class SvUrlResource
  * @extends Object
  * @classdesc Represents a resource identified by a URL. Supports automatic
- * loading from network or cache, and unzipping of zip files. To use the cache, 
+ * loading from network or cache, and unzipping of zip files. To use the cache,
  * the resourceHash must be specified.
  */
 
@@ -44,7 +44,7 @@
         obj.init();
         return obj;
     }
-	
+
     /**
      * Returns the type of the resource.
      * @returns {string} The type of the resource.
@@ -189,7 +189,7 @@
             //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
             if (this.path().split("/").includes("deferred")) {
-                
+
                 //console.log("SvUrlResource loading a deferred resource: " + this.path());
             }
             //if (data !== undefined) {
@@ -206,16 +206,27 @@
                 this._data = data;
                 if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
                     //console.log("SvUrlResource load from cache: " + this.path());
-                    
+
                 }
                 return this;
             } else {
                 // otherwise, load normally and cache result
-                //this.logDebug(this.svType() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path())
+                this.logDebug(this.svType() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path());
+
+                if (this.path() === "strvct/source/library/services/ImaginePro/Text to Image/files/FileToDownload.js") {
+                    debugger;
+                }
+
                 await this.promiseJustLoad();
-                await hc.promiseAtPut(h, this.data());
-                assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash() );
+
+                try {
+                    await hc.promiseAtPut(h, this.data());
+                } catch (error) {
+                    console.error("error writing hash/value pair from path '" + this.path() + "' error: " + error.message);
+                    throw error;
+                }
+                assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash());
                 //console.log(this.svType() + " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
@@ -223,7 +234,7 @@
             /*
             if (!h) {
                 console.log("  no hash for " + this.path())
-                
+
             }
             if (!SvGlobals.globals().SvHashCache) {
                 console.log("  no SvHashCache")
@@ -246,7 +257,6 @@
             this.constructor._totalBytesLoaded += data.byteLength;
             this.constructor._totalUrlsLoaded += 1;
         } catch (error) {
-            debugger
             this._error = error;
             error.cause = error;
             throw error;
@@ -260,7 +270,7 @@
      * @category Loading and Evaluation
      */
     async promiseLoadAndEval () {
-        console.log("promiseLoadAndEval " + this.path())
+        console.log("promiseLoadAndEval " + this.path());
         await this.promiseLoad();
         this.eval();
     }
@@ -306,7 +316,7 @@
             // console.log("⏭️  Skipping CSS evaluation in Node.js:", this.path());
             return;
         }
-        
+
         const cssString = this.dataAsText(); // default decoding is to utf8
         // Use relative path for VSCode compatibility (no leading slash)
         // URL encode the path to handle spaces and special characters
@@ -314,8 +324,8 @@
         const sourceUrl = `\n//# sourceURL=${encodedPath}`;
         const debugCssString = cssString + sourceUrl;
         //console.log("eval css: " +  entry.path)
-        const element = document.createElement('style');
-        element.type = 'text/css';
+        const element = document.createElement("style");
+        element.type = "text/css";
         element.appendChild(document.createTextNode(debugCssString));
         document.head.appendChild(element);
     }
@@ -342,20 +352,20 @@
 
         if (this.isZipFile()) {
             data = this.unzippedData();
-        } 
+        }
 
         // Handle invalid data types in Node.js gracefully
-        
+
         if (SvPlatform.isNodePlatform()) {
-            if (!data || (typeof data !== 'object') || (!data.constructor || (data.constructor.name !== 'Uint8Array' && data.constructor.name !== 'ArrayBuffer'))) {
+            if (!data || (typeof data !== "object") || (!data.constructor || (data.constructor.name !== "Uint8Array" && data.constructor.name !== "ArrayBuffer"))) {
                 // Gracefully handle non-ArrayBuffer data in Node.js
-                if (typeof data === 'object' && data !== null) {
+                if (typeof data === "object" && data !== null) {
                     return JSON.stringify(data);
                 }
-                return String(data || '');
+                return String(data || "");
             }
         }
-        
+
 
         return new TextDecoder().decode(data); // default decoding is to utf8
     }
