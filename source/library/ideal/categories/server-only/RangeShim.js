@@ -15,7 +15,7 @@ class Range extends Object {
         this.collapsed = true;
         this.commonAncestorContainer = null;
     }
-    
+
     // Basic range manipulation methods
     setStart (node, offset) {
         this.startContainer = node;
@@ -23,42 +23,42 @@ class Range extends Object {
         this.updateCollapsed();
         this.updateCommonAncestor();
     }
-    
+
     setEnd (node, offset) {
         this.endContainer = node;
         this.endOffset = offset;
         this.updateCollapsed();
         this.updateCommonAncestor();
     }
-    
+
     setStartBefore (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setStart(node.parentNode, this.getNodeIndex(node));
     }
-    
+
     setStartAfter (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setStart(node.parentNode, this.getNodeIndex(node) + 1);
     }
-    
+
     setEndBefore (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setEnd(node.parentNode, this.getNodeIndex(node));
     }
-    
+
     setEndAfter (node) {
         if (!node.parentNode) {
             throw new Error("Node has no parent");
         }
         this.setEnd(node.parentNode, this.getNodeIndex(node) + 1);
     }
-    
+
     collapse (toStart = false) {
         if (toStart) {
             this.endContainer = this.startContainer;
@@ -69,7 +69,7 @@ class Range extends Object {
         }
         this.collapsed = true;
     }
-    
+
     selectNode (node) {
         this.startContainer = node.parentNode;
         this.startOffset = this.getNodeIndex(node);
@@ -78,7 +78,7 @@ class Range extends Object {
         this.collapsed = false;
         this.updateCommonAncestor();
     }
-    
+
     selectNodeContents (node) {
         this.startContainer = node;
         this.startOffset = 0;
@@ -87,15 +87,15 @@ class Range extends Object {
         this.collapsed = false;
         this.updateCommonAncestor();
     }
-    
+
     // Range comparison methods
     compareBoundaryPoints (how, sourceRange) {
         if (!sourceRange) {
             throw new Error("Source range is required");
         }
-        
+
         let thisPoint, otherPoint;
-        
+
         switch (how) {
             case Range.START_TO_START:
                 thisPoint = { container: this.startContainer, offset: this.startOffset };
@@ -116,17 +116,17 @@ class Range extends Object {
             default:
                 throw new Error("Invalid comparison type");
         }
-        
+
         return this.comparePoints(thisPoint, otherPoint);
     }
-    
+
     // Range deletion and extraction
     deleteContents () {
         // In a server environment, this would typically be a no-op
         // or could log that content would be deleted
         return;
     }
-    
+
     extractContents () {
         // In a server environment, return a document fragment
         // This is a simplified implementation
@@ -140,24 +140,24 @@ class Range extends Object {
         };
         return fragment;
     }
-    
+
     cloneContents () {
         // Return a copy of the contents
         return this.extractContents();
     }
-    
+
     insertNode (node) {
         // In a server environment, this would typically be a no-op
         // or could log that a node would be inserted
         return;
     }
-    
+
     surroundContents (newParent) {
         // In a server environment, this would typically be a no-op
         // or could log that content would be surrounded
         return;
     }
-    
+
     // Range cloning
     cloneRange () {
         const newRange = new Range();
@@ -165,7 +165,7 @@ class Range extends Object {
         newRange.setEnd(this.endContainer, this.endOffset);
         return newRange;
     }
-    
+
     // Range detachment
     detach () {
         this.startContainer = null;
@@ -175,61 +175,61 @@ class Range extends Object {
         this.collapsed = true;
         this.commonAncestorContainer = null;
     }
-    
+
     // Content retrieval
     toString () {
         // Return text content within the range
         if (this.collapsed) {
             return "";
         }
-        
+
         // Simplified text extraction
         if (this.startContainer === this.endContainer) {
             if (this.startContainer.nodeType === 3) { // Text node
                 return this.startContainer.textContent.substring(this.startOffset, this.endOffset);
             }
         }
-        
+
         return "";
     }
-    
+
     // Range intersection and containment
     intersectsNode (node) {
         // Simplified intersection check
         return this.startContainer === node || this.endContainer === node;
     }
-    
+
     isPointInRange (node, offset) {
         // Simplified point-in-range check
         if (this.collapsed) {
             return false;
         }
-        
+
         if (node === this.startContainer && offset >= this.startOffset) {
             return true;
         }
-        
+
         if (node === this.endContainer && offset <= this.endOffset) {
             return true;
         }
-        
+
         return false;
     }
-    
+
     comparePoint (node, offset) {
         // Compare a point to the range
         if (this.isPointInRange(node, offset)) {
             return 0;
         }
-        
+
         // Simplified comparison
         if (node === this.startContainer && offset < this.startOffset) {
             return -1;
         }
-        
+
         return 1;
     }
-    
+
     // Helper methods
     updateCollapsed () {
         this.collapsed = (
@@ -237,7 +237,7 @@ class Range extends Object {
             this.startOffset === this.endOffset
         );
     }
-    
+
     updateCommonAncestor () {
         if (this.startContainer === this.endContainer) {
             this.commonAncestorContainer = this.startContainer;
@@ -246,12 +246,12 @@ class Range extends Object {
             this.commonAncestorContainer = this.startContainer;
         }
     }
-    
+
     getNodeIndex (node) {
         if (!node.parentNode || !node.parentNode.childNodes) {
             return 0;
         }
-        
+
         for (let i = 0; i < node.parentNode.childNodes.length; i++) {
             if (node.parentNode.childNodes[i] === node) {
                 return i;
@@ -259,14 +259,14 @@ class Range extends Object {
         }
         return 0;
     }
-    
+
     comparePoints (point1, point2) {
         if (point1.container === point2.container) {
             if (point1.offset < point2.offset) return -1;
             if (point1.offset > point2.offset) return 1;
             return 0;
         }
-        
+
         // Simplified comparison for different containers
         return 0;
     }
@@ -277,5 +277,5 @@ Range.START_TO_START = 0;
 Range.START_TO_END = 1;
 Range.END_TO_END = 2;
 Range.END_TO_START = 3;
-    
+
 SvGlobals.set("Range", Range);

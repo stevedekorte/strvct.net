@@ -8,92 +8,92 @@
 */
 
 (class ToolDefinitions extends SvSummaryNode {
-  /*
+    /*
    * Initializes the prototype slots.
    * @category Initialization
    */
-  initPrototypeSlots () {
+    initPrototypeSlots () {
 
-    {
-      const slot = this.newSlot("toolTargetInstances", null); // is a Set of instances that have tools defined for them
-      slot.setFinalInitProto(Set);
-      slot.setShouldJsonArchive(true);
-      slot.setCanEditInspection(false);
+        {
+            const slot = this.newSlot("toolTargetInstances", null); // is a Set of instances that have tools defined for them
+            slot.setFinalInitProto(Set);
+            slot.setShouldJsonArchive(true);
+            slot.setCanEditInspection(false);
+        }
     }
-  }
 
-  initPrototype () {
-    this.setCanDelete(false);
-    this.setShouldStore(false);
-    this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([ToolDefinition]);
+    initPrototype () {
+        this.setCanDelete(false);
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
+        this.setSubnodeClasses([ToolDefinition]);
 
-    this.setSummaryFormat("value");
-    this.setHasNewlineAfterSummary(true);
-    this.setNodeCanReorderSubnodes(false);
-    this.setNoteIsSubnodeCount(true);
-  }
+        this.setSummaryFormat("value");
+        this.setHasNewlineAfterSummary(true);
+        this.setNodeCanReorderSubnodes(false);
+        this.setNoteIsSubnodeCount(true);
+    }
 
-  finalInit () {
-    super.finalInit();
-    this.setTitle("Tool Definitions");
-    this.setNoteIsSubnodeCount(true);
-    this.setNoteIconName(null);
-  }
+    finalInit () {
+        super.finalInit();
+        this.setTitle("Tool Definitions");
+        this.setNoteIsSubnodeCount(true);
+        this.setNoteIconName(null);
+    }
 
-  addToolsForInstance (instance) {
+    addToolsForInstance (instance) {
     // we use this to add tools for other instances besides ourselves. e.g. the Session, Campaign, or Character
-    
-    //const ownerPath = this.ownershipChainPathString();
-    //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.svTypeId() + " '" + instance.title() + "'");
 
-    if (this.toolTargetInstances().has(instance)) {
-        const errorMessage = "Tool definitions already added for instance: " + instance.svType();
-        this.logDebug(errorMessage);
-        
-        //throw new Error(errorMessage);
+        //const ownerPath = this.ownershipChainPathString();
+        //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.svTypeId() + " '" + instance.title() + "'");
+
+        if (this.toolTargetInstances().has(instance)) {
+            const errorMessage = "Tool definitions already added for instance: " + instance.svType();
+            this.logDebug(errorMessage);
+
+            //throw new Error(errorMessage);
+            return this;
+        }
+
+        this.toolTargetInstances().add(instance);
+
+        //console.log(this.svTypeId() + " addToolsForInstance(" + instance.svTypeId() + "):");
+        const methodSet = instance.getInheritedToolMethodSet();
+        for (const method of methodSet) {
+        //console.log("  -- adding tool '" + method.name + "'");
+            //console.log(instance.svType() + " " + method.name + " isToolable: " + method.isToolable());
+            assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
+            //if (!this.toolDefinitionWithName(method.name)) {
+            const toolDef = ToolDefinition.clone();
+            //console.log(" - tool: " + method.name);
+            toolDef.setToolTarget(instance);
+            toolDef.setName(method.name);
+            toolDef.updateJsonSchemaString();
+            this.addTool(toolDef);
+            //}
+        }
+
+        if (this.subnodeCount() === 0) {
+            console.warn("no tools found for instance: " + instance.svTypeId());
+        }
+        //console.log("--- " + instance.svTypeId() + " tools ---");
+        //console.log(this.description() + "\n");
+
         return this;
     }
 
-    this.toolTargetInstances().add(instance);
-
-    //console.log(this.svTypeId() + " addToolsForInstance(" + instance.svTypeId() + "):");
-    const methodSet = instance.getInheritedToolMethodSet();
-    for (const method of methodSet) {
-        //console.log("  -- adding tool '" + method.name + "'");
-      //console.log(instance.svType() + " " + method.name + " isToolable: " + method.isToolable());
-      assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
-      //if (!this.toolDefinitionWithName(method.name)) {
-        const toolDef = ToolDefinition.clone();
-        //console.log(" - tool: " + method.name);
-        toolDef.setToolTarget(instance);
-        toolDef.setName(method.name);
-        toolDef.updateJsonSchemaString();
-        this.addTool(toolDef);
-      //}
+    addTool (toolDef) {
+        this.addSubnode(toolDef);
+        return this;
     }
 
-    if (this.subnodeCount() === 0) {
-      console.warn("no tools found for instance: " + instance.svTypeId());
+    toolDefinitionWithName (name) {
+        return this.toolDefinitions().find(toolDef => toolDef.name() === name);
     }
-    //console.log("--- " + instance.svTypeId() + " tools ---");
-    //console.log(this.description() + "\n");
 
-    return this;
-  }
-
-  addTool (toolDef) {
-    this.addSubnode(toolDef);
-    return this;
-  }
-  
-  toolDefinitionWithName (name) {
-    return this.toolDefinitions().find(toolDef => toolDef.name() === name);
-  }
-
-  toolSpecPrompt () {
-    const parts = [];
-    parts.push(`
+    toolSpecPrompt () {
+        const parts = [];
+        parts.push(`
 
 Notes: The tool definitions below describe the available tools and their behaviors. Each definition includes:
  - "parameters": The schema for what you should send in your tool call (this is what goes in your tool call's "parameters" field)
@@ -108,11 +108,11 @@ Notes: The tool definitions below describe the available tools and their behavio
 
 The following tools are available for you to use:
 `);
-    parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
-    //parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // includes tools and type definitions
+        parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
+        //parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // includes tools and type definitions
 
 
-    parts.push(`
+        parts.push(`
         
 =#= How to Use These Definitions
 
@@ -127,13 +127,13 @@ Tool call structure:
   }
 }
 `);
-    return parts.join("\n\n");
-  }
+        return parts.join("\n\n");
+    }
 
-  toolSpecsJson () {
-    const refSet = new Set();
-    const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
-    /*
+    toolSpecsJson () {
+        const refSet = new Set();
+        const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
+        /*
     const types = refSet.map(type => type.jsonSchemaRef());
     const json = {
       "tools": tools,
@@ -141,21 +141,21 @@ Tool call structure:
     };
     return json;
     */
-    return tools;
-  }
+        return tools;
+    }
 
-  toolDefinitions () {
-    return this.subnodes();
-  }
+    toolDefinitions () {
+        return this.subnodes();
+    }
 
-  classesReferencedByToolTypes () {
-    const refSet = new Set();
-    this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
-    return refSet;
-  }
+    classesReferencedByToolTypes () {
+        const refSet = new Set();
+        this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
+        return refSet;
+    }
 
-  description () {
-    return this.subnodes().map(toolDef => toolDef.description()).join("\n");
-  }
+    description () {
+        return this.subnodes().map(toolDef => toolDef.description()).join("\n");
+    }
 
 }.initThisClass());

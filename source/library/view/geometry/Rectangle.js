@@ -8,15 +8,15 @@
  * @class Rectangle
  * @extends ProtoClass
  * @classdesc Class to represent a rectangle.
- * 
+ *
  * NOTES
- * 
+ *
  * For top & bottom, we assume we are using screen coordinates so:
- * 
+ *
  *     top = x
- * 
+ *
  * and:
- * 
+ *
  *     bottom = x + height
  */
 (class Rectangle extends ProtoClass {
@@ -48,10 +48,10 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setOrigin(Point.clone())
-        this.setSize(Point.clone())
-        return this
+        super.init();
+        this.setOrigin(Point.clone());
+        this.setSize(Point.clone());
+        return this;
     }
 
     /**
@@ -60,7 +60,7 @@
      * @category Utility
      */
     duplicate () {
-        return this.thisClass().clone().copyFrom(this)
+        return this.thisClass().clone().copyFrom(this);
     }
 
     /**
@@ -70,11 +70,11 @@
      * @category Utility
      */
     copyFrom (aRect) {
-        this.origin().copyFrom(aRect.origin())
-        this.size().copyFrom(aRect.size())
-        return this
+        this.origin().copyFrom(aRect.origin());
+        this.size().copyFrom(aRect.size());
+        return this;
     }
-    
+
     /**
      * @description Checks if the Rectangle contains a given point.
      * @param {Point} p - The point to check.
@@ -82,9 +82,9 @@
      * @category Geometry
      */
     containsPoint (p) {
-        const a = p.isGreaterThanOrEqualTo(this.origin()) 
-        const b = p.isLessThanOrEqualTo(this.maxPoint())
-        return a && b
+        const a = p.isGreaterThanOrEqualTo(this.origin());
+        const b = p.isLessThanOrEqualTo(this.maxPoint());
+        return a && b;
     }
 
     /**
@@ -94,7 +94,7 @@
      * @category Geometry
      */
     containsRectangle (r) {
-        return r.origin().isGreaterThanOrEqualTo(this.origin()) && r.maxPoint().isLessThanOrEqualTo(this.maxPoint())
+        return r.origin().isGreaterThanOrEqualTo(this.origin()) && r.maxPoint().isLessThanOrEqualTo(this.maxPoint());
     }
 
     /**
@@ -104,20 +104,20 @@
      * @category Geometry
      */
     unionWith (r) {
-        const u = Rectangle.clone()
-        const o1 = this.origin()
-        const o2 = r.origin()
-        const m1 = this.maxPoint()
-        const m2 = r.maxPoint()
-        const minX = Math.min(o1.x(), o2.x())
-        const minY = Math.min(o1.y(), o2.y())
-        u.origin().setX(minX)
-        u.origin().setY(minY)
-        const maxX = Math.max(m1.x(), m2.x())
-        const maxY = Math.max(m1.y(), m2.y())
-        u.setWidth(maxX - minX)
-        u.setHeight(maxY - minY)
-        return u
+        const u = Rectangle.clone();
+        const o1 = this.origin();
+        const o2 = r.origin();
+        const m1 = this.maxPoint();
+        const m2 = r.maxPoint();
+        const minX = Math.min(o1.x(), o2.x());
+        const minY = Math.min(o1.y(), o2.y());
+        u.origin().setX(minX);
+        u.origin().setY(minY);
+        const maxX = Math.max(m1.x(), m2.x());
+        const maxY = Math.max(m1.y(), m2.y());
+        u.setWidth(maxX - minX);
+        u.setHeight(maxY - minY);
+        return u;
     }
 
     /**
@@ -126,7 +126,7 @@
      * @category Geometry
      */
     maxPoint () {
-        return this.origin().add(this.size())
+        return this.origin().add(this.size());
     }
 
     /**
@@ -135,7 +135,7 @@
      * @category Utility
      */
     asString () {
-        return this.svType() + "(" + this.origin().asString() + ", " + this.size().asString() + ")"
+        return this.svType() + "(" + this.origin().asString() + ", " + this.size().asString() + ")";
     }
 
     /**
@@ -162,7 +162,7 @@
      * @category Geometry
      */
     minX () {
-        return this.x()
+        return this.x();
     }
 
     /**
@@ -171,7 +171,7 @@
      * @category Geometry
      */
     minY () {
-        return this.y()
+        return this.y();
     }
 
     /**
@@ -180,7 +180,7 @@
      * @category Geometry
      */
     maxX () {
-        return this.x() + this.width()
+        return this.x() + this.width();
     }
 
     /**
@@ -189,9 +189,9 @@
      * @category Geometry
      */
     maxY () {
-        return this.y() + this.height()
+        return this.y() + this.height();
     }
-    
+
     /**
      * @description Sets the maximum x-coordinate of the Rectangle.
      * @param {number} mx - The new maximum x-coordinate.
@@ -199,9 +199,9 @@
      * @category Geometry
      */
     setMaxX (mx) {
-        const w = mx - this.x()
-        this.setWidth(w)
-        return this
+        const w = mx - this.x();
+        this.setWidth(w);
+        return this;
     }
 
     /**
@@ -211,9 +211,9 @@
      * @category Geometry
      */
     setMaxY (my) {
-        const h = my - this.y()
-        this.setHeight(h)
-        return this
+        const h = my - this.y();
+        this.setHeight(h);
+        return this;
     }
 
     /**
@@ -223,9 +223,9 @@
      * @category Geometry
      */
     setWidth (w) {
-        assert(w >= 0)
-        this.size().setX(w)
-        return this
+        assert(w >= 0);
+        this.size().setX(w);
+        return this;
     }
 
     /**
@@ -244,9 +244,9 @@
      * @category Geometry
      */
     setHeight (h) {
-        assert(h >= 0)
-        this.size().setY(h)
-        return this
+        assert(h >= 0);
+        this.size().setY(h);
+        return this;
     }
 
     /**
@@ -264,7 +264,7 @@
      * @category Geometry
      */
     top () {
-        return this.y() 
+        return this.y();
     }
 
     /**
@@ -273,7 +273,7 @@
      * @category Geometry
      */
     bottom () {
-        return this.y() + this.height() 
+        return this.y() + this.height();
     }
 
     /**
@@ -282,7 +282,7 @@
      * @category Geometry
      */
     left () {
-        return this.x() 
+        return this.x();
     }
 
     /**
@@ -291,7 +291,7 @@
      * @category Geometry
      */
     right () {
-        return this.x() + this.width() 
+        return this.x() + this.width();
     }
 
     /**
@@ -301,32 +301,32 @@
      * @category Geometry
      */
     makeBoundsOfPoints (points) {
-        const firstPoint = points[0]
-        let minX = firstPoint.x()
-        let maxX = firstPoint.x()
-        let minY = firstPoint.y()
-        let maxY = firstPoint.y()
+        const firstPoint = points[0];
+        let minX = firstPoint.x();
+        let maxX = firstPoint.x();
+        let minY = firstPoint.y();
+        let maxY = firstPoint.y();
         points.forEach(p => {
-            const x = p.x()
-            const y = p.y()
+            const x = p.x();
+            const y = p.y();
 
             // faster than using Math.min/max
             if (x < minX) {
-                minX = x
+                minX = x;
             } else if (x > maxX) {
-                maxX = x 
+                maxX = x;
             }
 
             if (y < minY) {
-                minY = y 
+                minY = y;
             } else if (y > maxY) {
-                maxY = y
+                maxY = y;
             }
-        })
-        this.origin().setX(minX).setY(minY)
-        this.setMaxX(maxX)
-        this.setMaxY(maxY)
-        return this
+        });
+        this.origin().setX(minX).setY(minY);
+        this.setMaxX(maxX);
+        this.setMaxY(maxY);
+        return this;
     }
 
 }.initThisClass());

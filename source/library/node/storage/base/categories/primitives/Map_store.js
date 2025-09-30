@@ -33,19 +33,19 @@
      */
     recordForStore (aStore) { // should only be called by Store
         let iterator = this.entries();
-        let entry = iterator.next().value
-        const entries = []
+        let entry = iterator.next().value;
+        const entries = [];
         while (entry) {
-            const key = entry[0]
-            const value = entry[1]
-            entries.push([key, aStore.refValue(value)])
-            entry = iterator.next().value
+            const key = entry[0];
+            const value = entry[1];
+            entries.push([key, aStore.refValue(value)]);
+            entry = iterator.next().value;
         }
 
         return {
-            type: this.svType(), 
+            type: this.svType(),
             entries: entries
-        }
+        };
     }
 
     /**
@@ -54,7 +54,7 @@
      * @category Storage Management
      */
     shouldStore () {
-        return true
+        return true;
     }
 
     /**
@@ -64,12 +64,12 @@
      * @category Data Collection
      */
     refsPidsForJsonStore (puuids = new Set()) {
-        this.forEach(v => { 
-            if (!Type.isNull(v)) { 
-                v.refsPidsForJsonStore(puuids)
-            } 
-        })
-        return puuids
+        this.forEach(v => {
+            if (!Type.isNull(v)) {
+                v.refsPidsForJsonStore(puuids);
+            }
+        });
+        return puuids;
     }
 
 }).initThisCategory();

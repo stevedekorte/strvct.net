@@ -14,7 +14,7 @@
      * @category Error Handling
      */
     rethrow () {
-        if (this.cause === undefined && typeof(Error.cause) === 'function') {
+        if (this.cause === undefined && typeof(Error.cause) === "function") {
             this.cause = this;
         }
         throw this;
@@ -45,7 +45,7 @@
                 errorMessage = errorMessage();
             }
             const m = errorMessage ? errorMessage : "assert failed - false value";
-            
+
             const e = new Error(m);
             if (errorName) {
                 e.name = errorName;
@@ -80,7 +80,7 @@
         const e = new Error();
         e.name = "STACK TRACE";
         e.message = "";
-        console.log( e.stack );
+        console.log(e.stack);
     }
 
     /**
@@ -140,7 +140,7 @@
         if (error instanceof String) {
             return new Error(error);
         }
-        
+
         if (error instanceof Event) {
             let message = error.message;
             const note = "Event type: '" + error.type + "' target: '" + error.target + "'";
@@ -151,7 +151,7 @@
             }
             return new Error(message);
         }
-        
+
         console.error("Unknown type of error:", error);
         throw new Error("Unknown error type: " + typeof error);
     }
@@ -176,18 +176,18 @@
         let urls = this.stack.split("at");
         urls.removeFirst();
         urls = urls.map(url => {
-            
+
             if (url.contains("(")) {
                 url = url.after("(");
             }
-    
+
             url = url.strip();
-    
+
             const parts = url.split(":");
             parts.removeLast();
             parts.removeLast();
             return parts.join(":");
-        })
+        });
         return urls;
     }
 
@@ -202,7 +202,7 @@
         const firstLine = lines.removeFirst();
         const out = [];
         const indent = "    ";
-		
+
         lines.forEach(function (line) {
             if (line.contains("at file")) {
                 out.push(["....", line.after("at ").split("/").pop()]);
@@ -216,26 +216,26 @@
                 const path = line.after("(").before(")");
                 const filePart = path.split("/").pop();
                 let file = filePart.before(":");
-                if (file === "") { 
+                if (file === "") {
                     file = "???.js:??:?";
                 }
                 const className = file.before(".js");
                 const location = filePart.after(":");
                 out.push([className + " " + method + "()      ", file + ":" + location]);
             }
-        })
-		
+        });
+
         let s = firstLine + "\n";
-        const m = out.maxValue(function (entry) { return entry[0].length });
+        const m = out.maxValue(function (entry) { return entry[0].length; });
         out.forEach(function (entry) {
             s += indent + entry[0] + " ".repeat(m + 1 - entry[0].length) + entry[1] + "\n";
-        })
-		
+        });
+
         //s = error.message + "\n" + s;
         s = s.replaceAll("<br>", "\n");
         return s;
     }
-	
+
     /**
      * Logs the error description to the console.
      * @category Error Handling
@@ -258,7 +258,7 @@
  */
 SvGlobals.globals().assert = function assert (v, errorMessage) {
     return Error.assert(v, errorMessage);
-}
+};
 
 /**
  * Global assertDefined function.
@@ -270,7 +270,7 @@ SvGlobals.globals().assert = function assert (v, errorMessage) {
  */
 SvGlobals.globals().assertDefined = function assertDefined (v, errorMessage) {
     return Error.assertDefined(v, errorMessage);
-}
+};
 
 /**
  * Global assertThrows function.
@@ -280,4 +280,4 @@ SvGlobals.globals().assertDefined = function assertDefined (v, errorMessage) {
  */
 SvGlobals.globals().assertThrows = function assertThrows (func) {
     Error.assertThrows(func);
-}
+};

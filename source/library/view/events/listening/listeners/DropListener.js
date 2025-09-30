@@ -10,7 +10,7 @@
  * @classdesc Listens to a set of events on a drop target.
  */
 (class DropListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots for the DropListener class.
      * @returns {void}
@@ -26,8 +26,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -41,7 +41,7 @@
         this.addEventNameAndMethodName("dragenter", "onBrowserDragEnter"); // must prevent default
         this.addEventNameAndMethodName("drop",      "onBrowserDrop");
         this.addEventNameAndMethodName("dragleave", "onBrowserDragLeave");
-        return this
+        return this;
     }
 
     /**
@@ -50,9 +50,9 @@
      * @category Lifecycle
      */
     start () {
-        super.start()
+        super.start();
         //this.listenTarget().__isListeningForDrop___ = true
-        return this
+        return this;
     }
 
     /**
@@ -61,9 +61,9 @@
      * @category Lifecycle
      */
     stop () {
-        super.stop()
+        super.stop();
         //this.listenTarget().__isListeningForDrop___ = false // breaks if multiple drop listeners on same element
-        return this
+        return this;
     }
 
     /*
@@ -72,5 +72,5 @@
         return this
     }
     */
-    
+
 }.initThisClass());

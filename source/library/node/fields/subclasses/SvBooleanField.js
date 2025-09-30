@@ -7,7 +7,7 @@
  * @classdesc SvBooleanField represents a boolean field in the system.
  */
 (class SvBooleanField extends SvField {
-    
+
     /**
      * @static
      * @description Indicates if this field is available as a node primitive.
@@ -15,9 +15,9 @@
      * @category Metadata
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
-    
+
     /**
      * @description Initializes the prototype slots for this field.
      * @category Initialization
@@ -63,7 +63,7 @@
         const b = this.value();
         return Type.isBoolean(b);
     }
-	
+
     /**
      * @description Validates the current value of the field.
      * @returns {boolean} True if the value is valid, false otherwise.
@@ -71,7 +71,7 @@
      */
     validate () {
         const isValid = this.valueIsBool();
-		
+
         if (!isValid) {
             const targetName = this.target() ? this.target().svDebugId() : "<no target>";
             const s = "Field '" + this.key() + "' on target '" + targetName + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
@@ -80,11 +80,11 @@
             this.setValueError(s);
         } else {
             this.setValueError(null);
-        } 
-		
+        }
+
         return isValid;
     }
-	
+
     /**
      * @description Normalizes the given value to a boolean.
      * @param {*} v - The value to normalize.
@@ -92,12 +92,12 @@
      * @category Data Processing
      */
     normalizeThisValue (v) {
-        if (v === true || v === "t" || v === "true" || v === 1) { 
-            return true; 
+        if (v === true || v === "t" || v === "true" || v === 1) {
+            return true;
         }
         return false;
     }
-	
+
     /**
      * @description Called after the node is updated.
      * @returns {*} The result of the parent class's didUpdateNode method.
@@ -132,7 +132,7 @@
 
     syncFromTarget () {
         this.setValue(this.getValueFromTarget());
-        return this
+        return this;
     }
     /*
     setValue (v) {

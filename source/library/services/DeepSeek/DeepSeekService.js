@@ -6,9 +6,9 @@
  * @class DeepSeekService
  * @extends AiService
  * @classdesc DeepSeekService is a SvSummaryNode that holds the API key and subnodes for the various OpenAI services.
- * 
+ *
  * Example:
- * 
+ *
  * DeepSeekService.shared().setApiKey("sk-1234567890");
  * const hasApiKey = DeepSeekService.shared().hasApiKey();
  */
@@ -16,30 +16,30 @@
 
 (class DeepSeekService extends AiService {
 
-  /**
+    /**
    * @static
    * @description Initializes the class and sets it as a singleton.
    * @category Initialization
    */
-  static initClass () {
-    this.setIsSingleton(true);
-  }
+    static initClass () {
+        this.setIsSingleton(true);
+    }
 
-  /**
+    /**
    * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model objects with name, note, and contextWindow properties.
    * @category Model Configuration
    */
-  modelsJson () {
-    return [
-      {
-        "name": "deepseek-coder",
-        "title": "DeepSeek Coder",
-        "inputTokenLimit": 65536,
-        "outputTokenLimit": 8192,
-        "maxChainOfThoughtTokens": 32000
-      }
-      /*
+    modelsJson () {
+        return [
+            {
+                "name": "deepseek-coder",
+                "title": "DeepSeek Coder",
+                "inputTokenLimit": 65536,
+                "outputTokenLimit": 8192,
+                "maxChainOfThoughtTokens": 32000
+            }
+            /*
       {
           "name": "deepseek-chat",
           "title": "DeepSeek Chat",
@@ -56,76 +56,76 @@
           "maxChainOfThoughtTokens": 32000
       }
       */
-    ];
-  }
-  
-  /**
+        ];
+    }
+
+    /**
    * @description Initializes the prototype slots for the class.
    * @category Initialization
    */
-  initPrototypeSlots () {
+    initPrototypeSlots () {
 
-  }
+    }
 
-  /**
+    /**
    * @description Initializes the instance.
    * @category Initialization
    */
-  init () {
-    super.init();
-  }
+    init () {
+        super.init();
+    }
 
-  /**
+    /**
    * @description Returns the service information.
    * @returns {Object} The service information.
    * @category Service Information
    */
-  serviceInfo () {
-    return {
-      "source": "https://api-docs.deepseek.com",
-      "chatEndpoint": "https://api.deepseek.com/chat/completions"
-    };
-  }
+    serviceInfo () {
+        return {
+            "source": "https://api-docs.deepseek.com",
+            "chatEndpoint": "https://api.deepseek.com/chat/completions"
+        };
+    }
 
-  /**
+    /**
    * @description Performs final initialization steps for the instance.
    * @category Initialization
    */
-  finalInit () {
-    super.finalInit()
-    this.setTitle(this.svType().before("Service"));
-    this.assertHasModels();
-    
+    finalInit () {
+        super.finalInit();
+        this.setTitle(this.svType().before("Service"));
+        this.assertHasModels();
+
 
     // model and other info is set via DeepSeekService.json file
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
-  }
+    }
 
-  /**
+    /**
    * @description Validates the API key.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the key is valid, false otherwise.
    * @category Authentication
    */
-  validateKey (/*s*/) {
-    return true;
-  }
+    validateKey (/*s*/) {
+        return true;
+    }
 
 
-  setModelsJson (json) {
-    super.setModelsJson(json);
-    //console.log(this.svType() + ".setModelsJson() has " + this.models().subnodes().length + " models now."); 
-    this.assertHasModels();
-    
-    return this;
-  }
+    setModelsJson (json) {
+        super.setModelsJson(json);
+        //console.log(this.svType() + ".setModelsJson() has " + this.models().subnodes().length + " models now.");
+        this.assertHasModels();
 
-  setModels (aAiChatModels) {
-    
-    return super.setModels(aAiChatModels);
-  }
+        return this;
+    }
 
-  /*
+    setModels (aAiChatModels) {
+
+        return super.setModels(aAiChatModels);
+    }
+
+    /*
   prepareToSendRequest (aRequest) {
     const bodyJson = aRequest.bodyJson();
     let messages = bodyJson.messages;
@@ -155,7 +155,7 @@
       }
       if (message.role === lastRole) {
         const lastMessage = newMessages.last();
-        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n" 
+        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
         lastMessage.content = lastMessage.content + "\n" + message.content;
       } else {
         newMessages.push(message);
@@ -174,11 +174,11 @@
   }
 */
 
- assertHasModels ()  {
-  assert(this.models().subnodes().length > 0, "DeepSeekService must have at least one model");
- }
+    assertHasModels ()  {
+        assert(this.models().subnodes().length > 0, "DeepSeekService must have at least one model");
+    }
 
- /*
+    /*
  title () {
   this.assertHasModels();
   return super.title() + " (" + this.models().subnodes().length + " models)";

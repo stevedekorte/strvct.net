@@ -11,7 +11,7 @@
  */
 
 (class SvField extends SvSummaryNode {
-    
+
     initPrototypeSlots () {
 
         /**
@@ -218,7 +218,7 @@
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
         }
-        
+
         /**
          * @member {string} noteMethod - The method of the note.
          */
@@ -227,7 +227,7 @@
             slot.setSlotType("String");
             slot.setSyncsToView(true);
         }
-        
+
         /**
          * @member {string} keyError - The error of the key.
          */
@@ -237,7 +237,7 @@
             slot.setAllowsNullValue(true);
             slot.setSyncsToView(true);
         }
-        
+
         /**
          * @member {string} valueError - The error of the value.
          */
@@ -247,7 +247,7 @@
             slot.setAllowsNullValue(true);
             slot.setSyncsToView(true);
         }
-        
+
         /**
          * @member {SvNode} target - The target of the field.
          */
@@ -279,8 +279,8 @@
      * @description Called when the node is loaded from the store.
      */
     didLoadFromStore () { // move to finalInit?
-        super.didLoadFromStore()
-        this.validate()
+        super.didLoadFromStore();
+        this.validate();
     }
 
     /**
@@ -289,20 +289,20 @@
      * @returns {SvField} The new node.
      */
     static nodeCreate () {
-        const newNode = super.nodeCreate()
+        const newNode = super.nodeCreate();
 
         if (newNode.setKeyIsEditable) {
-            newNode.setKeyIsEditable(true)
-            newNode.setValueIsEditable(true)
+            newNode.setKeyIsEditable(true);
+            newNode.setValueIsEditable(true);
         }
 
         if (newNode.setIsEditable) {
-            newNode.setIsEditable(true)
+            newNode.setIsEditable(true);
         }
 
-        newNode.setNodeCanInspect(true)
-        newNode.setNodeCanEditTitle(true)
-        return newNode
+        newNode.setNodeCanInspect(true);
+        newNode.setNodeCanEditTitle(true);
+        return newNode;
     }
 
     /**
@@ -310,17 +310,17 @@
      * @returns {string} The title of the field.
      */
     title () {
-        return this.key()
+        return this.key();
     }
 
     /*
     target () {
-        assert(!Type.isNull(this._target)) 
+        assert(!Type.isNull(this._target))
 
         if (this._target) {
             return this._target
         }
-		
+
         return this.parentNode() // we can't do this because we want to support free floating Fields
     }
     */
@@ -347,19 +347,19 @@
         }
 
         if (newValue) {
-            
+
             this.setDidUpdateNodeObs(this.watchForNoteFrom("onUpdatedNode", newValue));
             //this.didUpdateNodeObs().setIsDebugging(true);
             this.scheduleMethod("syncFromTarget");
-        } 
+        }
     }
 
     /**
      * @description Called when the node is updated.
      */
     directDidUpdateNode () {
-        super.didUpdateNode()
-        return this
+        super.didUpdateNode();
+        return this;
     }
 
 
@@ -370,12 +370,12 @@
     onUpdatedNode (aNote) {
         assert(aNote, "aNote is null");
         // if it has a note, it was a post sent through notification center that the target node changed
-        const aNode = aNote.sender()
+        const aNode = aNote.sender();
         if (aNode === this.target()) {
             // refresh
-            
+
             //console.log(this.logPrefix(), ".didUpdateNode " + aNode.svTypeId())
-            this.syncFromTarget()
+            this.syncFromTarget();
         }
     }
 
@@ -415,7 +415,7 @@
         const setter = this.setterNameForSlot(this.valueMethod());
 
         v = this.normalizeThisValue(v);
-        
+
         if (target[setter]) {
             target[setter].apply(target, [v]);
 
@@ -426,10 +426,10 @@
             console.warn(errorMessage);
             throw new Error(errorMessage);
         }
-		
+
         return this;
     }
-	
+
     /**
      * @description Normalizes the value.
      * @param {Object} v - The value.
@@ -438,7 +438,7 @@
     normalizeThisValue (v) {
 	    return v;
     }
-	
+
     /**
      * @description Gets the value from the target.
      * @returns {Object} The value.
@@ -472,7 +472,7 @@
 
         return null;
     }
-	
+
     /**
      * @description Gets the note from the target.
      * @returns {Object} The note.
@@ -489,15 +489,15 @@
             }
         }
 
-       // return null
-        return this._note
+        // return null
+        return this._note;
     }
-	
+
     /**
      * @description Called when the view is updated.
      * @param {Object} aFieldView - The field view.
      */
-    didUpdateView (/*aFieldView*/) {  
+    didUpdateView (/*aFieldView*/) {
         let parentNode = this.parentNode();
         if (!parentNode) {
             parentNode = this.target();
@@ -510,10 +510,10 @@
         if (this.target() && this.target().didUpdateField) {
             this.target().didUpdateField(this); // what if it's down a path in an inspector?
         }
-        
+
         return this;
     }
-	
+
     /**
      * @description Returns the visible value of the field.
      * @returns {Object} The visible value.
@@ -530,7 +530,7 @@
         // subclasses should override if needed
         return true;
     }
-	
+
     /**
      * @description Returns the tile link of the field.
      * @returns {Object} The tile link.
@@ -622,12 +622,12 @@
      */
     asJson () {
         // test used for Character sheet atm
-        // separate fron jsonArchive 
+        // separate fron jsonArchive
         return this.value();
     }
 
     // ----------------
-    
+
     /**
      * @description Sets the is editable of the field.
      * @param {boolean} aBool - The is editable.
@@ -636,5 +636,5 @@
         this.setValueIsEditable(aBool);
         return this;
     }
-    
+
 }.initThisClass());

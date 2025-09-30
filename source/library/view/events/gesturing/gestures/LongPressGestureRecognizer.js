@@ -6,16 +6,16 @@
  * @class LongPressGestureRecognizer
  * @extends GestureRecognizer
  * @classdesc Recognize a long press and hold in (roughly) one location.
- * 
+ *
  * Notes:
- * 
+ *
  * Should gesture cancel if press moves?:
- * 
+ *
  * 1. outside of a distance from start point or
  * 2. outside of the view
- * 
+ *
  * Delegate messages:
- * 
+ *
  * onLongPressBegin
  * onLongPressComplete
  * onLongPressCancelled
@@ -23,7 +23,7 @@
 "use strict";
 
 (class LongPressGestureRecognizer extends GestureRecognizer {
-    
+
     initPrototypeSlots () {
         /**
          * @member {Number} timePeriod - milliseconds
@@ -74,7 +74,7 @@
             this.stopTimer();
         }
 
-        const tid = this.addTimeout(() => { this.onLongPress() }, this.timePeriod());
+        const tid = this.addTimeout(() => { this.onLongPress(); }, this.timePeriod());
         this.setTimeoutId(tid);
         this.startDocListeners(); // didFinish will stop listening
         return this;
@@ -88,9 +88,9 @@
     stopTimer () {
         if (this.hasTimer()) {
             this.clearTimeout(this.timeoutId());
-            this.setTimeoutId(null)
+            this.setTimeoutId(null);
         }
-        return this
+        return this;
     }
 
     /**
@@ -99,25 +99,25 @@
      * @category Timer Management
      */
     hasTimer () {
-        return this.timeoutId() !== null
+        return this.timeoutId() !== null;
     }
 
     // -- the completed gesture ---
-    
+
     /**
      * @description Handles the long press event
      * @category Gesture Recognition
      */
     onLongPress () {
-        this.setTimeoutId(null)
+        this.setTimeoutId(null);
 
         if (this.currentEventIsOnTargetView()) {
             if (this.requestActivationIfNeeded()) {
-                this.sendCompleteMessage()
-                this.didFinish()
+                this.sendCompleteMessage();
+                this.didFinish();
             }
         } else {
-            this.cancel()
+            this.cancel();
         }
     }
 
@@ -129,15 +129,15 @@
      * @category Event Handling
      */
     onDown (event) {
-        super.onDown(event)
-        
+        super.onDown(event);
+
         const isWithin = this.currentEventIsOnTargetView();
 
-        if (isWithin && 
-            this.hasAcceptableFingerCount() && 
+        if (isWithin &&
+            this.hasAcceptableFingerCount() &&
             !GestureManager.shared().hasActiveGesture()) {
-            this.startTimer()
-            this.sendBeginMessage()
+            this.startTimer();
+            this.sendBeginMessage();
         }
     }
 
@@ -147,13 +147,13 @@
      * @category Event Handling
      */
     onMove (event) {
-        super.onMove(event)
-    
+        super.onMove(event);
+
         if (this.hasTimer()) { // TODO: also check move distance?
             if (this.currentEventIsOnTargetView()) {
-                this.setCurrentEvent(event)
+                this.setCurrentEvent(event);
             } else {
-                this.cancel()
+                this.cancel();
             }
         }
 
@@ -165,10 +165,10 @@
      * @category Event Handling
      */
     onUp (event) {
-        super.onUp(event)
+        super.onUp(event);
 
         if (this.hasTimer()) {
-            this.cancel()
+            this.cancel();
         }
     }
 
@@ -179,11 +179,11 @@
      */
     cancel () {
         if (this.hasTimer()) {
-            this.stopTimer()
-            this.sendCancelledMessage()
-            this.didFinish()
+            this.stopTimer();
+            this.sendCancelledMessage();
+            this.didFinish();
         }
-        return this
+        return this;
     }
 
     /*
@@ -200,5 +200,5 @@
         this.didFinish()
     }
     */
-    
+
 }.initThisClass());

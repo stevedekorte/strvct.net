@@ -1,6 +1,6 @@
 "use strict";
 
-/* 
+/*
 
         ElevenLabsService
 
@@ -23,7 +23,7 @@
         return [
         ];
     }
-    
+
     initPrototypeSlots () {
     }
 
@@ -32,7 +32,7 @@
     }
 
     finalInit () {
-        super.finalInit()
+        super.finalInit();
         this.setTitle("ElevenLabs");
     }
 

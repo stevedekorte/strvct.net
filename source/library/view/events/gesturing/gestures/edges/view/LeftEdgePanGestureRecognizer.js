@@ -15,7 +15,7 @@
  *     onLeftEdgePanCancelled
  */
 (class LeftEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots
      * @category Initialization
@@ -30,9 +30,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("left")
-        return this
+        super.init();
+        this.setEdgeName("left");
+        return this;
     }
 
 }.initThisClass());

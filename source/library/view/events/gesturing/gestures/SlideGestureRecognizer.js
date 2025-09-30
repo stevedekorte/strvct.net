@@ -8,8 +8,8 @@
  * @classdesc
  * This gets tricky as we need to follow movement outside the view.
  * To do this, we add special event move and up handlers to the document after getting
- * a down event and then remove them after the up event. 
- * 
+ * a down event and then remove them after the up event.
+ *
  * We ignore the view's own move and up events.
  *
  * Delegate messages:
@@ -17,10 +17,10 @@
  *     onSlideMove
  *     onSlideComplete
  *     onSlideCancelled
- * 
+ *
  * Gesture state info methods:
  *     direction()
- *     distance() 
+ *     distance()
  *     downPosInView()
  *
  * TODO:
@@ -31,7 +31,7 @@
 "use strict";
 
 (class SlideGestureRecognizer extends GestureRecognizer {
-    
+
     initPrototypeSlots () {
         /**
          * @member {string} direction - The direction of the slide gesture
@@ -47,9 +47,9 @@
          */
         {
             const slot = this.newSlot("validDirectionsMap", new Map([
-                ["left", 1], 
-                ["right", 2], 
-                ["up", 3], 
+                ["left", 1],
+                ["right", 2],
+                ["up", 3],
                 ["down", 4]
             ]));
             slot.setSlotType("Map");
@@ -59,8 +59,8 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("maxPerpendicularDistToBegin", 10) // will not begin if this is exceeded
-            slot.setSlotType("Number")
+            const slot = this.newSlot("maxPerpendicularDistToBegin", 10); // will not begin if this is exceeded
+            slot.setSlotType("Number");
         }
         //downPositionInTarget: null, Point
     }
@@ -71,13 +71,13 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses())     
-        this.setMinFingersRequired(1)
-        this.setMaxFingersAllowed(1)
-        this.setMinDistToBegin(10)
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
+        this.setMinFingersRequired(1);
+        this.setMaxFingersAllowed(1);
+        this.setMinDistToBegin(10);
         //this.setIsDebugging(false)
-        return this
+        return this;
     }
 
     /**
@@ -88,8 +88,8 @@
      */
     setDirection (directionName) {
         assert(this.validDirectionsMap().has(directionName));
-        this._direction = directionName
-        return this
+        this._direction = directionName;
+        return this;
     }
 
     /**
@@ -99,9 +99,9 @@
      * @category Configuration
      */
     setNumberOfTouchesRequired (n) {
-        assert(n === 1) // need to add multi-touch support
-        this._numberOfTouchesRequired = n
-        return this
+        assert(n === 1); // need to add multi-touch support
+        this._numberOfTouchesRequired = n;
+        return this;
     }
 
     /**
@@ -110,13 +110,13 @@
      * @category Event Handling
      */
     onDown (event) {
-        super.onDown(event)
+        super.onDown(event);
 
         if (!this.isPressing()) {
             if (this.hasAcceptableFingerCount()) {
-                this.setIsPressing(true)
-                this.setBeginEvent(event)
-                this.startDocListeners()
+                this.setIsPressing(true);
+                this.setBeginEvent(event);
+                this.startDocListeners();
             }
         }
     }
@@ -128,23 +128,23 @@
      * @category Event Handling
      */
     onMove (event) {
-        super.onMove(event)
+        super.onMove(event);
 
         if (this.isPressing()) {
             if (!this.isActive() && this.hasMovedTooMuchPerpendicular()) {
-                this.cancel()
-                return this
+                this.cancel();
+                return this;
             }
 
             if (!this.isActive() && this.hasMovedEnough()) {
                 if (this.requestActivationIfNeeded()) {
                     //this.setIsActive(true)
-                    this.sendBeginMessage() // being
+                    this.sendBeginMessage(); // being
                 }
             }
-        
+
             if (this.isActive()) {
-                this.sendMoveMessage() // move
+                this.sendMoveMessage(); // move
             }
         }
     }
@@ -156,17 +156,17 @@
      * @category Event Handling
      */
     onUp (event) {
-        super.onUp(event)
+        super.onUp(event);
 
         if (this.isPressing()) {
-            this.setIsPressing(false)
+            this.setIsPressing(false);
             if (this.isActive()) {
-                this.sendCompleteMessage() // complete
+                this.sendCompleteMessage(); // complete
             }
-            this.finish()
+            this.finish();
         }
 
-        return true
+        return true;
     }
 
     /**
@@ -176,10 +176,10 @@
      */
     cancel () {
         if (this.isActive()) {
-            this.sendCancelledMessage()
+            this.sendCancelledMessage();
         }
-        this.finish()
-        return this
+        this.finish();
+        return this;
     }
 
     /**
@@ -189,11 +189,11 @@
      */
     finish () {
         //this.logDebug(".finish()")
-        this.setIsPressing(false)
-        this.deactivate()
-        this.stopDocListeners()
-        this.didFinish()
-        return this
+        this.setIsPressing(false);
+        this.deactivate();
+        this.stopDocListeners();
+        this.didFinish();
+        return this;
     }
 
     /**
@@ -202,18 +202,18 @@
      * @category Gesture Recognition
      */
     hasMovedTooMuchPerpendicular () {
-        let m = this.maxPerpendicularDistToBegin()
-        let dp = this.diffPos()
+        let m = this.maxPerpendicularDistToBegin();
+        let dp = this.diffPos();
 
         let funcs = {
             left: (dx, dy) => dy,
             right: (dx, dy) => dy,
             up: (dx, dy) => dx,
             down: (dx, dy) => dx
-        }
+        };
 
-        let r = Math.abs(funcs[this.direction()](dp.x(), dp.y())) > m
-        return r
+        let r = Math.abs(funcs[this.direction()](dp.x(), dp.y())) > m;
+        return r;
     }
 
     /**
@@ -222,18 +222,18 @@
      * @category Gesture Recognition
      */
     hasMovedEnough () {
-        let m = this.minDistToBegin()
-        let dp = this.diffPos()
+        let m = this.minDistToBegin();
+        let dp = this.diffPos();
 
         let funcs = {
             left: (dx, dy) => -dx,
             right: (dx, dy) =>  dx,
             up: (dx, dy) =>  dy,
             down: (dx, dy) => -dy
-        }
+        };
 
-        let r = funcs[this.direction()](dp.x(), dp.y()) > m
-        return r
+        let r = funcs[this.direction()](dp.x(), dp.y()) > m;
+        return r;
     }
 
     /**
@@ -242,24 +242,24 @@
      * @category Gesture Recognition
      */
     diffPos () {
-        let cp = this.currentPosition()
-        let bp = this.beginPosition()
+        let cp = this.currentPosition();
+        let bp = this.beginPosition();
 
-        assert(cp)
-        assert(bp)
-        
-        let p = cp.subtract(bp).floorInPlace() // floor here?
-        let dx = p.x()
-        let dy = p.y()
+        assert(cp);
+        assert(bp);
+
+        let p = cp.subtract(bp).floorInPlace(); // floor here?
+        let dx = p.x();
+        let dy = p.y();
         let funcs = {
             left: (p) => p.setX(Math.min(dx, 0)),
             right: (p) => p.setX(Math.max(dx, 0)),
             up: (p) => p.setY(Math.max(dy, 0)),
             down: (p) => p.setY(Math.min(dy, 0))
-        }
+        };
 
-        funcs[this.direction()](p)
-        return p
+        funcs[this.direction()](p);
+        return p;
     }
 
     /**
@@ -268,16 +268,16 @@
      * @category Gesture Recognition
      */
     distance () {
-        let p = this.diffPos()
-        let dx = p.x()
-        let dy = p.y()
+        let p = this.diffPos();
+        let dx = p.x();
+        let dy = p.y();
         let funcs = {
             left: (dx, dy) => dx,
             right: (dx, dy) => dx,
             up: (dx, dy) => dy,
             down: (dx, dy) => dy
-        }
-        return Math.abs(funcs[this.direction()](dx, dy))
+        };
+        return Math.abs(funcs[this.direction()](dx, dy));
     }
 
 }.initThisClass());

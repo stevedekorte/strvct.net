@@ -10,7 +10,7 @@
  * @classdesc Root service for Firebase integration
  */
 (class FirebaseService extends SvSummaryNode {
-    
+
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
@@ -19,9 +19,9 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     initPrototypeSlots () {
-        
+
         {
             const slot = this.newSlot("firestoreDatabaseService", null);
             slot.setFinalInitProto(FirestoreDatabaseService);

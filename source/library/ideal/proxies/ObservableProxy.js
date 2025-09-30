@@ -167,7 +167,7 @@
             // examples: "onObservedGet", "onObservedSet"
             const noteName = "onObserved" + name.capitalized();
             this._noteNamesDict[name] = noteName;
-        })
+        });
         return this;
     }
 
@@ -179,7 +179,7 @@
      */
     addObserver (obs) {
         this.observers().appendIfAbsent(obs);
-        return obs
+        return obs;
     }
 
     /**
@@ -210,7 +210,7 @@
                 }
                 obs[noteName].call(obs, this.target(), propertyName);
             }
-        })
+        });
         return true;
     }
 
@@ -264,7 +264,7 @@
     get (target, propertyName) {
         if (propertyName === "observable") {
             const self = this;
-            return () => { return self; }
+            return () => { return self; };
         }
 
         /*
@@ -325,7 +325,7 @@
      */
     has (target, propertyName) {
         this.postForTrap("has", propertyName);
-        return Reflect.has( target, propertyName );
+        return Reflect.has(target, propertyName);
     }
 
     /**
@@ -393,13 +393,13 @@
         const eventMethod = (target, propertyName) => {
             resultsDict[propertyName] = true;
             console.log("got note " + propertyName);
-        }
+        };
 
         const testObserver = {};
 
         Object.values(noteNamesDict).forEach((name) => {
             testObserver[name] = eventMethod;
-        })
+        });
 
 
         const testArray = ["a", "b", "c"];

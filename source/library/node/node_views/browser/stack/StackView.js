@@ -4,34 +4,34 @@
  * @module library.node.node_views.browser.stack
  * @class StackView
  * @extends NodeView
- * @description 
+ * @description
 
     A view from which of generalized (mixed vertical and horizontal) Miller Column system can be built.
-    
+
     Overview of view structure:
 
         StackView contains:
             |- navView, which is a NavView and contains:
                 |- scrollView, which is a StackScrollView and contains:
-                    |- tilesView, which is a TilesView contains array of: 
+                    |- tilesView, which is a TilesView contains array of:
                         |->> Tiles(or subclass), (each of which contains a contentView, so things like slide-to-delete gestures work)
             |- otherView, which is a FlexDomView whose content is used to display the selected ite, and can be set with setOtherViewContent()
-        
-    
+
+
         There is also a "direction" attribute. If it's value is:
         - "right": the navView is on the left, and otherView is on the right, causing navigation to head towards the left
         - "down": the navView is on the top, and otherView is on the bottom, causing navigation to head downwards
 
         Note: TilesViews will ask their parent StackView about their direction setting to determine the orientation layout of their subviews
 
-        The direction for child StackViews can be set individually, so for example, we could use a "down" direction for the 
-        topmost StackView or first few levels (so there will be left to right navigation menus at the top level) 
+        The direction for child StackViews can be set individually, so for example, we could use a "down" direction for the
+        topmost StackView or first few levels (so there will be left to right navigation menus at the top level)
         while children could use the "right" direction so navigation under the top level is left to right.
 
-        In this way, we can compose most common hierarchical navigation systems out of this single view type, 
+        In this way, we can compose most common hierarchical navigation systems out of this single view type,
         maximizing code reuse and flexibility. For example:
         - developer can change layout without code changes
-        - layout could flexibly change with display size 
+        - layout could flexibly change with display size
         - each user could potentially chose a preferred layout
 
         This also means all the logic around expanding, collapsing, selecting, navigating the views
@@ -41,11 +41,11 @@
 
         The StackView will try to collapse and expand levels of navigation to make the best use of the available display area.
         For example, as one navigates deeper into the hierarchy such that the columns would consume the width of the display,
-        the top most views will start collpasing to allow the deepest views to be displayed. 
+        the top most views will start collpasing to allow the deepest views to be displayed.
 
         The relevant method is:
         StackView.updateCompactionChain()
-    
+
     Drag & Drop:
 
         When dragging & dropping, hierarchy views for nodes are cached (in nodeToStackCache) in order to make the drag & drop implementation
@@ -118,10 +118,10 @@
     }
 
     init () {
-        super.init()
+        super.init();
 
         this.setNodeToStackCache(null);
-        
+
         this.setDisplay("flex");
         this.setPosition("relative");
         this.setWidth("100%");
@@ -153,7 +153,7 @@
     }
 
     /*
-    didUpdateSlotParentView (oldValue, newValue) { 
+    didUpdateSlotParentView (oldValue, newValue) {
         super.didUpdateSlotParentView(oldValue, newValue);
         console.log(this.svTypeId() + ".didUpdateSlotParentView(", oldValue.svTypeId(), ",", newValue.svTypeId(), ")");
         return this;
@@ -240,7 +240,7 @@
         if (d == "right");
     }
     */
-    
+
     /*
     setFlexDirection (v) {
         if (this.flexDirection() === "column" && v == "row") {
@@ -321,19 +321,19 @@
         ov.setFlexBasis(null);
         ov.setFlexGrow(1);
         ov.setFlexShrink(1);
-        
+
         // On mobile, make sure the otherView is visible when it has content
         if (WebBrowserWindow.shared().isOnMobile()) {
             ov.unhideDisplay();
         }
-        
+
         /*
         if (ov.subviews().length) {
             const names = ov.subviews().map(ov => ov.svTypeId());
             //console.log("removing subviews: ", names);
         }
         */
-        
+
         ov.removeAllSubviews().addSubview(v);
         return this;
     }
@@ -357,10 +357,10 @@
         if (ov.subviews().length) {
             const names = ov.subviews().map(ov => ov.svTypeId());
             //console.log("removing subviews: ", names);
-            
+
         }
         */
-        
+
         ov.removeAllSubviews();
         return this;
     }
@@ -374,7 +374,7 @@
     }
 
     // notifications
-    
+
     /**
      * @description Gets the tiles view.
      * @returns {TilesView} The tiles view.
@@ -388,8 +388,8 @@
      * @param {Array} nodePathArray The node path array to select.
      * @returns {Boolean} True if the selection was successful, false otherwise.
      */
-    selectNodePathArray (nodePathArray) {  
-        if (nodePathArray.length === 0) { 
+    selectNodePathArray (nodePathArray) {
+        if (nodePathArray.length === 0) {
             //console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
             // no selections left so unselect next
             this.tilesView().unselectAllTiles();
@@ -399,7 +399,7 @@
 
         const nextNodePathArray = nodePathArray.shallowCopy();
         // the path should start with the node *after* this one
-        
+
         //const p = nodePathArray.map(n => n.title()).join("/");
         //console.log("--- selectNodePathArray ---");
         //console.log(this.svType() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")");
@@ -421,7 +421,7 @@
             // if we didn't find the tile but the node is a subnode, sync the tilesView and look again
             if (this.tilesView().node().subnodes().contains(node)) {
                 //console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!");
-               // console.log("- so syncFromNodeNow and see if we can find it");
+                // console.log("- so syncFromNodeNow and see if we can find it");
                 this.tilesView().syncFromNodeNow();
                 selectedTile = this.tilesView().selectTileWithNode(node);
                 assert(selectedTile, "failed to find tile for node: " + node.title());
@@ -434,7 +434,7 @@
             console.log("debug info:");
             console.log("  looking for node: ", node.svDebugId());
             const subnodeIds = this.tilesView().node().subnodes().map(node => node.svDebugId());
-            console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds) );
+            console.log("  subnodes:" + JSON.stableStringifyWithStdOptions(subnodeIds));
 
             return false;
         }
@@ -456,10 +456,10 @@
     selectedNodePathArray () {
         // grab the whole chain of stack view
         const parts = this.stackViewSubchain().shallowCopy();
-        
+
         // last one might not have a node
         while (parts.last() && Type.isNullOrUndefined(parts.last().node())) {
-            
+
             parts.removeLast();
         }
 
@@ -468,7 +468,7 @@
                 throw new Error("this stack view has a null node");
             }
             return sv.node();
-        })
+        });
     }
 
     selectedNodePathString () {
@@ -492,7 +492,7 @@
     topDidChangeNavSelection () {
         // broadcast path change to listeners, like bread crumb view
         //console.log("topDidChangeNavSelection");
-        
+
         if (!this.rootStackView()) {
             return this;
         }
@@ -559,7 +559,7 @@
     selectedPathTitlesArray () {
         const titles = this.selectedNodePathArray().map(node => {
             return node.title();
-        })
+        });
         titles.shift();
         return titles;
     }
@@ -592,7 +592,7 @@
         this.onStackViewPathChangeNote().post();
         return this;
     }
-    
+
     // ----------------
 
     /**
@@ -600,7 +600,7 @@
      * @returns {StackView} The stack view.
      */
     scheduleSyncFromNode () {
-        
+
         super.scheduleSyncFromNode();
     }
 
@@ -613,11 +613,11 @@
 
         const tile = this.navView().tilesView().selectedTile(); // this may get called before tilesView has synced to current subnodes,
         //console.log("StackView syncFromNavSelection " + this.node().title() + " -> " + (tile ? tile.nodeTitle() : null));
-        
+
         // in which case, the tile may be about to be removed
         if (tile && tile.nodeTileLink()) {
             const oNode = tile.nodeTileLink();
-            
+
             // Check if we should show the otherView
             // Hide it if the node has no subnodes and can't add subnodes
             if (!this.shouldShowOtherViewForNode(oNode)) {
@@ -629,7 +629,7 @@
                 if (!ovc || (ovc.node() !== oNode)) {
                     const ov = this.otherViewContentForNode(oNode);
                     this.setOtherViewContent(ov);
-                    
+
                     // When we create a new view, ensure its NavView syncs orientation
                     if (ov && ov.navView) {
                         // Schedule orientation sync after the view is added to DOM
@@ -781,7 +781,7 @@
      * @returns {Array} The stack view subchain.
      */
     stackViewSubchain () {
-        // returns self and all StackViews below 
+        // returns self and all StackViews below
         const chain = [];
         let current = this;
 
@@ -804,16 +804,16 @@
      * @description Gets the sum of nav widths.
      * @returns {Number} The sum of nav widths.
      */
-    sumOfNavWidths () { 
+    sumOfNavWidths () {
         // Returns sum of self and all preceeding vertical nav view widths.
         // This is used for compacting
-        
+
         // NOTES:
         // - We assume no direct compaction of horizontal nav views (e.g. horizontal menus)
-        //  ** so we need to skip summing widths of horizontal nav views 
-        //     as well as compacting them 
-        // - Even if vertical and horizontal navs are interleaved, 
-        //   we treat all vertical nav view compactions 
+        //  ** so we need to skip summing widths of horizontal nav views
+        //     as well as compacting them
+        // - Even if vertical and horizontal navs are interleaved,
+        //   we treat all vertical nav view compactions
         //   as if they are part of the same Miller Column.
 
         const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
@@ -856,7 +856,7 @@
      * @returns {StackView} The stack view.
      */
     compactNavAsNeeded () {
-        // this method is called on each stack view in the chain, from left to right (earliest to last view), 
+        // this method is called on each stack view in the chain, from left to right (earliest to last view),
         // in order to compact them as needed to fit the available width.
         // So each will see the current compaction state (via sumOfNavWidths()) of all previous views in the chain when it makes its decision.
 
@@ -864,11 +864,11 @@
             //console.log("StackView " + this.node().title() + " compactNavAsNeeded");
 
             const maxWidth = this.topViewWidth(); // our subviews need to fit into this width
-            
+
             // Calculate the sum WITHOUT this nav view
-           // const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
+            // const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
             let sum = this.sumOfNavWidths();
-            
+
             /*
             // if this is the last view, we don't need to check if it can fit
             if (this.nextStackView() === null) {
@@ -889,7 +889,7 @@
                 this.navView().collapse();
                 //console.log(" <- '" + this.node().title() + "' w: " + thisWidth + " cw: " + cw + " sum:" + sum + " > win " + maxWidth); //+ " COLLAPSE " + this.direction());
             }
-            
+
             // Update NavView width constraints for window size
             this.navView().updateWidthForWindow();
         } else {
@@ -944,9 +944,9 @@
      */
     beginCaching () {
         // begins caching on all chained substacks
-        if(!this.isCaching()) {
+        if (!this.isCaching()) {
             //console.log(this.svDebugId() + " beginCaching -----------------");
-            
+
             this.setNodeToStackCache(new Map());
 
             const ov = this.otherViewContent();
@@ -964,7 +964,7 @@
      */
     endCaching () {
         // ends caching on all chained substacks
-        if(this.isCaching()) {
+        if (this.isCaching()) {
             //console.log(this.svDebugId() + " endCaching -----------------");
             //this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv));
             this.setNodeToStackCache(null);
@@ -1007,7 +1007,7 @@
         if (!cache.hasKey(k)) {
             cache.atPut(k, aView);
         }
-        return this
+        return this;
     }
 
     /*
@@ -1043,7 +1043,7 @@
         if (!node) {
             return false;
         }
-        
+
         return node.canNavTo();
     }
 
@@ -1066,5 +1066,5 @@
 
         return sv;
     }
-        
+
 }.initThisClass());

@@ -11,9 +11,9 @@
  * TapGestureRecognizer
  *
  * Recognize a number of taps inside a viewTarget and within a maxHoldPeriod.
- *     
- * On first tap for finger count, start timer. 
- * If second tap for finger count occurs before it's expired, it's recognized. 
+ *
+ * On first tap for finger count, start timer.
+ * If second tap for finger count occurs before it's expired, it's recognized.
  * Otherwise, restart timer.
  *
  * Delegate messages:
@@ -33,7 +33,7 @@
  *     this.addGestureRecognizer(tg)
  */
 (class TapGestureRecognizer extends GestureRecognizer {
-    
+
     /**
      * @description Initializes the prototype slots for the TapGestureRecognizer.
      * @private
@@ -98,13 +98,13 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses())
-        this.setIsDebugging(false) 
-        this.resetTapCount()
-        this.setShouldRequestActivation(false) // allow multiple tap targets?
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
+        this.setIsDebugging(false);
+        this.resetTapCount();
+        this.setShouldRequestActivation(false); // allow multiple tap targets?
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -113,8 +113,8 @@
      * @category State Management
      */
     resetTapCount () {
-        this.setTapCount(0)
-        return this
+        this.setTapCount(0);
+        return this;
     }
 
     /**
@@ -125,12 +125,12 @@
      */
     startTimer (/*event*/) {
         if (this.timeoutId()) {
-            this.stopTimer()
+            this.stopTimer();
         }
 
         const tid = this.addTimeout(() => this.cancel(), this.maxHoldPeriod());
-        this.setTimeoutId(tid)
-        return this
+        this.setTimeoutId(tid);
+        return this;
     }
 
     /**
@@ -141,10 +141,10 @@
     stopTimer () {
         if (this.hasTimer()) {
             this.clearTimeout(this.timeoutId());
-            this.setTimeoutId(null)
-            this.resetTapCount()
+            this.setTimeoutId(null);
+            this.resetTapCount();
         }
-        return this
+        return this;
     }
 
     /**
@@ -153,7 +153,7 @@
      * @category Timer Management
      */
     hasTimer () {
-        return this.timeoutId() !== null
+        return this.timeoutId() !== null;
     }
 
     /**
@@ -163,21 +163,21 @@
      * @category Event Handling
      */
     onDown (event) {
-        super.onDown(event)
-        
+        super.onDown(event);
+
         if (this.numberOfFingersDown() < this.numberOfFingersRequired()) {
-            return this
+            return this;
         }
 
         if (!this.hasTimer()) {
-            this.setTapCount(1)
-            this.startTimer()
-            this.sendBeginMessage() // begin
+            this.setTapCount(1);
+            this.startTimer();
+            this.sendBeginMessage(); // begin
         } else {
-            this.setTapCount(this.tapCount() + 1)
+            this.setTapCount(this.tapCount() + 1);
         }
 
-        return true
+        return true;
     }
 
     /**
@@ -186,19 +186,19 @@
      * @category Event Handling
      */
     onMove (event) {
-        super.onMove(event)
-        
+        super.onMove(event);
+
         // Cancel the tap if the finger/mouse has moved too far
         if (this.hasTimer() && this.downEvent()) {
-            const currentPos = this.currentPosition()
-            const downPos = this.downPosition()
-            
+            const currentPos = this.currentPosition();
+            const downPos = this.downPosition();
+
             if (currentPos && downPos) {
-                const distance = currentPos.distanceFrom(downPos)
-                
+                const distance = currentPos.distanceFrom(downPos);
+
                 if (distance > this.maxMovementDistance()) {
-                    this.logDebug(".onMove() cancelling tap due to movement distance: " + distance)
-                    this.cancel()
+                    this.logDebug(".onMove() cancelling tap due to movement distance: " + distance);
+                    this.cancel();
                 }
             }
         }
@@ -210,14 +210,14 @@
      * @category Event Handling
      */
     onUp (event) {
-        super.onUp(event)
- 
-        this.logDebug(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().svTypeId())
+        super.onUp(event);
+
+        this.logDebug(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().svTypeId());
 
         if (this.hasTimer()) {
             if (this.tapCount() === this.numberOfTapsRequired()) {
-                this.stopTimer()
-                this.complete()
+                this.stopTimer();
+                this.complete();
             }
         } else {
             //this.cancel()
@@ -229,9 +229,9 @@
      * @category Gesture State
      */
     complete () {
-        this.stopTimer()
+        this.stopTimer();
         if (this.requestActivationIfNeeded()) {
-            this.sendCompleteMessage() // complete
+            this.sendCompleteMessage(); // complete
         }
     }
 
@@ -242,10 +242,10 @@
      */
     cancel () {
         if (this.hasTimer()) {
-            this.stopTimer()
-            this.sendCancelledMessage() // cancelled
+            this.stopTimer();
+            this.sendCancelledMessage(); // cancelled
         }
-        return this
+        return this;
     }
 
 }.initThisClass());

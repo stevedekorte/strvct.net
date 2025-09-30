@@ -9,14 +9,14 @@
  * @extends ProtoClass
  * @classdesc
  * SvDataUrl class for handling data URLs in drag and drop operations.
- * 
+ *
  * Examples of setting up a dataTransfer for a drag out of browser event:
- * 
+ *
  * event.dataTransfer.setData("DownloadURL", "application/json:hello.json:data:application/json;base64," + btoa("[1,2,3]"));
  * event.dataTransfer.setData("DownloadURL", "text/plain:hello.txt:data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D");
  */
 (class SvDataUrl extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the SvDataUrl class.
      */
@@ -69,15 +69,15 @@
      * @category Data
      */
     mimeTypeDescription () {
-        const mimeType = this.mimeType()
+        const mimeType = this.mimeType();
         if (mimeType) {
-            const name = this.mimeTypeToFileSuffixDict()[mimeType]
+            const name = this.mimeTypeToFileSuffixDict()[mimeType];
             if (name) {
-                return name
+                return name;
             }
-            return mimeType
+            return mimeType;
         }
-        return null
+        return null;
     }
 
     /**
@@ -86,7 +86,7 @@
      * @category Data
      */
     isXml () {
-        return this.mimeType() === "application/xml"
+        return this.mimeType() === "application/xml";
     }
 
     /**
@@ -95,7 +95,7 @@
      * @category Data
      */
     isJson () {
-        return this.mimeType() === "application/json"
+        return this.mimeType() === "application/json";
     }
 
     /**
@@ -104,7 +104,7 @@
      * @category Data
      */
     isText () {
-        return this.mimeType() === "text/plain"
+        return this.mimeType() === "text/plain";
     }
 
     /**
@@ -113,7 +113,7 @@
      * @category Data
      */
     isHtml () {
-        return this.mimeType() === "text/html"
+        return this.mimeType() === "text/html";
     }
 
     /**
@@ -126,10 +126,10 @@
             "application/json" : "json",
             "application/xml" : "xml",
             "text/javascript" : "js",
-            "text/plain" : "txt", 
-            "text/html" : "html", 
-            //"text/uri-list" 
-        }
+            "text/plain" : "txt",
+            "text/html" : "html",
+            //"text/uri-list"
+        };
     }
 
     /**
@@ -139,10 +139,10 @@
      */
     dataUrlString () {
         // e.g.: "application/json:hello.json:data:application/json;base64," + btoa("[1,2,3]"));
-        const header = this.mimeType() + ":" + this.fileName() + ":data:" + this.mimeType() + ";base64,"  
-        const content = btoa(this.decodedData())
-        const s = header + content
-        return s
+        const header = this.mimeType() + ":" + this.fileName() + ":data:" + this.mimeType() + ";base64,";
+        const content = btoa(this.decodedData());
+        const s = header + content;
+        return s;
     }
 
     /**
@@ -152,17 +152,17 @@
      * @category Data
      */
     setDataUrlString (dataUrl) {
-        const type = dataUrl.before(":")
-        assert(type === "data")
-        const afterData = dataUrl.after("data:")
-        const mimeType = afterData.before(";")
-        const encodedData = afterData.after("base64,")
-        const decodedData = encodedData.base64Decoded()
-        
-        this.setDataUrl(dataUrl)
-        this.setMimeType(mimeType)
-        this.setDecodedData(decodedData)
-        return this
+        const type = dataUrl.before(":");
+        assert(type === "data");
+        const afterData = dataUrl.after("data:");
+        const mimeType = afterData.before(";");
+        const encodedData = afterData.after("base64,");
+        const decodedData = encodedData.base64Decoded();
+
+        this.setDataUrl(dataUrl);
+        this.setMimeType(mimeType);
+        this.setDecodedData(decodedData);
+        return this;
     }
 
 }.initThisClass());

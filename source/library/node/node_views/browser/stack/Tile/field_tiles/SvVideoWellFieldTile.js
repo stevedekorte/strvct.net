@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvVideoWellFieldTile extends SvFieldTile {
-    
+
     /**
      * @description Checks if the given mime type can be opened.
      * @param {string} mimeType - The mime type to check.
@@ -60,7 +60,7 @@
         this.setValue(dataUrl);
         return this;
     }
-	
+
     /**
      * @description Returns the video well view.
      * @returns {VideoWellView} The video well view.
@@ -80,7 +80,7 @@
 
         const field = this.node();
         this.setMaxWidth("100em"); // get this from node instead?
-        
+
         this.applyStyles(); // normally this would happen in updateSubviews
         this.videoWellView().setVideoDataUrl(field.value());
         this.videoWellView().setIsEditable(field.valueIsEditable());
@@ -102,14 +102,14 @@
      */
     syncToNode () {
         const field = this.node();
-				
+
         field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
             const data = this.videoWellView().videoDataUrl();
             field.setValue(data);
         }
-        
+
         return this;
     }
 
@@ -130,7 +130,7 @@
     isEmpty () {
         return Type.isNull(this.dataUrl());
     }
-    
+
     /**
      * @description Handles the update of the video well view.
      * @param {VideoWellView} aVideoWell - The updated video well view.
@@ -141,5 +141,5 @@
         this.scheduleSyncToNode();
         return this;
     }
-    
+
 }.initThisClass());

@@ -8,23 +8,23 @@
  * @class LeonardoImageGeneration
  * @extends SvSummaryNode
  * @classdesc Polls for the status of an image generation request.
- * 
+ *
  * The LeonardoImagePrompt node creates a LeonardoImageGeneration node with the generation id
  * and polls for the status of the generation.
- * 
+ *
  * When the generation is complete, the LeonardoImagePrompt node creates LeonardoImage nodes
  * and sets their urls.
- * 
+ *
  * To poll, we use the /generations/{generationId} endpoint.
- * 
+ *
  * Example request curl command:
- * 
+ *
  * curl -X GET \
  *   "https://cloud.leonardo.ai/api/rest/v1/generations/5ea7492a-8499-4706-9e04-1a0bcb5cf6e8" \
  *   -H "Authorization: Bearer $LEONARDO_API_KEY"
- * 
+ *
  * Example response:
- * 
+ *
 
   {
     "generations_by_pk": {
@@ -53,368 +53,368 @@
   Next, we create LeonardoImage nodes, set their urls, and fetch them.
 
   */
-(class LeonardoImageGeneration extends SvSummaryNode {  
+(class LeonardoImageGeneration extends SvSummaryNode {
 
-  initPrototypeSlots () {
+    initPrototypeSlots () {
 
-    /**
+        /**
      * @member {string} prompt
      * @description The prompt text for image generation.
      * @category Input
      */
-    {
-      const slot = this.newSlot("generationId", "");
-      slot.setInspectorPath("")
-      //slot.setLabel("prompt")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-    }
+        {
+            const slot = this.newSlot("generationId", "");
+            slot.setInspectorPath("");
+            //slot.setLabel("prompt")
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+        }
 
-    /**
+        /**
    * @member {SvXhrRequest} xhrRequest - The request to fetch the generation json response.
    * @category Networking
    */
-    {
-      const slot = this.newSlot("xhrRequest", null);
-      slot.setShouldJsonArchive(true);
-      slot.setInspectorPath("");
-      slot.setLabel("xhr request");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setFinalInitProto(SvXhrRequest);
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-    }
+        {
+            const slot = this.newSlot("xhrRequest", null);
+            slot.setShouldJsonArchive(true);
+            slot.setInspectorPath("");
+            slot.setLabel("xhr request");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setFinalInitProto(SvXhrRequest);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+        }
 
-    // we need isPolling, pollCount and maxPollCount, and a pollIntervalSeconds
-    {
-      const slot = this.newSlot("isPolling", false);
-      slot.setSlotType("Boolean");
-      slot.setCanEditInspection(false);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnodeField(true);
-    }
+        // we need isPolling, pollCount and maxPollCount, and a pollIntervalSeconds
+        {
+            const slot = this.newSlot("isPolling", false);
+            slot.setSlotType("Boolean");
+            slot.setCanEditInspection(false);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(true);
+        }
 
-    /**
+        /**
      * @member {number} pollCount
      * @description The number of times we have polled for the generation status.
      * @category Status
      */
-    {
-      const slot = this.newSlot("pollCount", 0);
-      slot.setSlotType("Number");
-      slot.setCanEditInspection(false);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnodeField(true);
-    }
+        {
+            const slot = this.newSlot("pollCount", 0);
+            slot.setSlotType("Number");
+            slot.setCanEditInspection(false);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(true);
+        }
 
-    /**
+        /**
      * @member {number} maxPollCount
      * @description The maximum number of times we will poll for the generation status.
      * @category Status
      */
-    {
-      const slot = this.newSlot("maxPollCount", 30);
-      slot.setSlotType("Number");
-      slot.setCanEditInspection(false);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnodeField(true);
-    }
+        {
+            const slot = this.newSlot("maxPollCount", 30);
+            slot.setSlotType("Number");
+            slot.setCanEditInspection(false);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(true);
+        }
 
-    /**
+        /**
      * @member {number} pollIntervalSeconds
      * @description The interval in seconds between polling for the generation status.
      * @category Status
      */
-    {
-      const slot = this.newSlot("pollIntervalSeconds", 2); // just for the generation response, images take longer
-      slot.setSlotType("Number");
-      slot.setCanEditInspection(false);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnodeField(true);
-    }
+        {
+            const slot = this.newSlot("pollIntervalSeconds", 2); // just for the generation response, images take longer
+            slot.setSlotType("Number");
+            slot.setCanEditInspection(false);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(true);
+        }
 
-      
-    /**
+
+        /**
      * @member {Action} generateAction
      * @description The action to trigger image generation.
      * @category Action
      */
-    {
-      const slot = this.newSlot("asyncStartPollingAction", null);
-      slot.setInspectorPath("");
-      slot.setLabel("Start Polling");
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(true);
-      slot.setActionMethodName("asyncStartPolling");
-    }
+        {
+            const slot = this.newSlot("asyncStartPollingAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Start Polling");
+            //slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncStartPolling");
+        }
 
-    /**
+        /**
      * @member {string} error
      * @description The error message if any during image generation.
      * @category Status
      */
-    {
-      const slot = this.newSlot("error", ""); // null or String
-      slot.setInspectorPath("");
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      //slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-    }
+        {
+            const slot = this.newSlot("error", ""); // null or String
+            slot.setInspectorPath("");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            //slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+        }
 
-    /**
+        /**
      * @member {LeonardoImages} images
      * @description The generated images.
      * @category Output
      */
-    {
-      const slot = this.newSlot("images", null);
-      slot.setFinalInitProto(LeonardoImages);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-      slot.setSlotType("LeonardoImages");
-    }
+        {
+            const slot = this.newSlot("images", null);
+            slot.setFinalInitProto(LeonardoImages);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnode(true);
+            slot.setSlotType("LeonardoImages");
+        }
 
-    /**
+        /**
      * @member {string} status
      * @description The current status of the image generation process.
      * @category Status
      */
-    {
-      const slot = this.newSlot("status", ""); // String
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false);
-    }
+        {
+            const slot = this.newSlot("status", ""); // String
+            slot.setInspectorPath("");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+        }
 
-    /**
+        /**
      * @member {Object} delegate
      * @description The delegate object for handling various events.
      * @category Delegation
      */
-    {
-      const slot = this.newSlot("delegate", null); 
-      slot.setSlotType("Object");
+        {
+            const slot = this.newSlot("delegate", null);
+            slot.setSlotType("Object");
+        }
+
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setSubnodeClasses([]);
+        this.setNodeCanAddSubnode(false);
+        this.setCanDelete(true);
+        this.setNodeCanReorderSubnodes(false);
     }
 
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([]);
-    this.setNodeCanAddSubnode(false);
-    this.setCanDelete(true);
-    this.setNodeCanReorderSubnodes(false);
-  }
-
-  /**
+    /**
    * @description Gets the title for the image prompt.
    * @returns {string} The title.
    * @category Metadata
    */
-  title () {
-    return "Generation";
-  }
+    title () {
+        return "Generation";
+    }
 
-  /**
+    /**
    * @description Gets the subtitle for the image prompt.
    * @returns {string} The subtitle.
    * @category Metadata
    */
-  subtitle () {
-    return this.status();
+    subtitle () {
+        return this.status();
     //return [this.generationId(), this.status()].join("\n");
-  }
+    }
 
-  /**
+    /**
    * @description Performs final initialization.
    * @category Initialization
    */
-  finalInit () {
-    super.finalInit()
-    this.setCanDelete(true)
-  }
+    finalInit () {
+        super.finalInit();
+        this.setCanDelete(true);
+    }
 
-  /**
+    /**
    * @description Gets the OpenAI service.
    * @returns {Object} The OpenAI service.
    * @category Service
    */
-  service () {
-    return LeonardoService.shared();
-  }
+    service () {
+        return LeonardoService.shared();
+    }
 
-  // --- action button ---
+    // --- action button ---
 
-  hasGenerationId () {
-    return this.generationId().length > 0;
-  }
+    hasGenerationId () {
+        return this.generationId().length > 0;
+    }
 
-  /**
+    /**
    * @description Checks if image generation can be performed.
    * @returns {boolean} True if generation can be performed, false otherwise.
    * @category Validation
    */
-  canStartPolling () {
-    return this.hasGenerationId() && !this.isPolling();
-  }
+    canStartPolling () {
+        return this.hasGenerationId() && !this.isPolling();
+    }
 
-  /**
+    /**
    * @description Gets information about the generate action.
    * @returns {Object} The action information.
    * @category Action
    */
-  asyncStartPollingActionInfo () {
-    return {
-        isEnabled: this.canStartPolling(),
-        //title: this.title(),
-        isVisible: true
+    asyncStartPollingActionInfo () {
+        return {
+            isEnabled: this.canStartPolling(),
+            //title: this.title(),
+            isVisible: true
+        };
     }
-  }
 
-  // --- start generation ---
+    // --- start generation ---
 
-  async setupXhrRequest () {
-    const endpoint = 'https://cloud.leonardo.ai/api/rest/v1/generations/' + this.generationId();
-    const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-    const apiKey = await this.service().apiKeyOrUserAuthToken();
+    async setupXhrRequest () {
+        const endpoint = "https://cloud.leonardo.ai/api/rest/v1/generations/" + this.generationId();
+        const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
+        const apiKey = await this.service().apiKeyOrUserAuthToken();
 
-    const xhr = this.xhrRequest();
-    xhr.clear();
-    xhr.setUrl(proxyEndpoint);
-    xhr.setMethod("GET");
-    xhr.setHeaders({
-      "Authorization": `Bearer ` + apiKey,
-      "Content-Type": 'application/json'
-    });
-    xhr.setBody("");
-    xhr.setDelegate(this);
-    xhr.assertValid();
-  }
-  
+        const xhr = this.xhrRequest();
+        xhr.clear();
+        xhr.setUrl(proxyEndpoint);
+        xhr.setMethod("GET");
+        xhr.setHeaders({
+            "Authorization": "Bearer " + apiKey,
+            "Content-Type": "application/json"
+        });
+        xhr.setBody("");
+        xhr.setDelegate(this);
+        xhr.assertValid();
+    }
 
-  clear (){
-    this.setPollCount(0);
-    this.setIsPolling(false);
-    this.xhrRequest().abort();
-    this.xhrRequest().clear();
-    this.setError("");
-    this.setStatus("");
-  }
 
-  /**
+    clear () {
+        this.setPollCount(0);
+        this.setIsPolling(false);
+        this.xhrRequest().abort();
+        this.xhrRequest().clear();
+        this.setError("");
+        this.setStatus("");
+    }
+
+    /**
    * @description Starts the image generation process.
    * @category Process
    */
-  async asyncStartPolling () {
-    
-    //assert(!this.isPolling(), "already polling");
-    assert(this.generationId(), "generationId is required");
+    async asyncStartPolling () {
 
-    this.clear();
-    this.setPollCount(0);
-    this.setIsPolling(true);
-    this.setXhrRequest(SvXhrRequest.clone());
-    this.setError("");
-    this.setStatus("Start polling...");
-    this.sendDelegateMessage("onImagePromptStart", [this]);
-    await this.poll();
-  }
+        //assert(!this.isPolling(), "already polling");
+        assert(this.generationId(), "generationId is required");
 
-  async pollAfterDelay () {
-    this.addTimeout(() => {
-      this.poll();
-    }, this.pollIntervalSeconds() * 1000);
-  }
-
-  async poll () {
-    if (this.pollCount() >= this.maxPollCount()) {
-      this.setIsPolling(false);
-      this.onError("Max poll count reached");
-      return;
-    }
-    this.setPollCount(this.pollCount() + 1);
-    this.setStatus("Poll " + this.pollCount() + " of " + this.maxPollCount());
-
-
-    try {
-      await this.setupXhrRequest();
-      await this.xhrRequest().asyncSend();
-      
-      // we use onRequestError/onRequestFailure should cover normal cases
-    } catch (error) {
-      this.onError(error);
+        this.clear();
+        this.setPollCount(0);
+        this.setIsPolling(true);
+        this.setXhrRequest(SvXhrRequest.clone());
+        this.setError("");
+        this.setStatus("Start polling...");
+        this.sendDelegateMessage("onImagePromptStart", [this]);
+        await this.poll();
     }
 
-    // delegate messages should handle everything
+    async pollAfterDelay () {
+        this.addTimeout(() => {
+            this.poll();
+        }, this.pollIntervalSeconds() * 1000);
+    }
 
-  }
+    async poll () {
+        if (this.pollCount() >= this.maxPollCount()) {
+            this.setIsPolling(false);
+            this.onError("Max poll count reached");
+            return;
+        }
+        this.setPollCount(this.pollCount() + 1);
+        this.setStatus("Poll " + this.pollCount() + " of " + this.maxPollCount());
 
-  apiPollStatus () {
+
+        try {
+            await this.setupXhrRequest();
+            await this.xhrRequest().asyncSend();
+
+            // we use onRequestError/onRequestFailure should cover normal cases
+        } catch (error) {
+            this.onError(error);
+        }
+
+        // delegate messages should handle everything
+
+    }
+
+    apiPollStatus () {
     // "status": "PENDING" | "STARTED" | "COMPLETE" | "FAILED",
-    try {
-      const text = this.xhrRequest().responseText();
-      const json = JSON.parse(text);
-      const gens = json.generations_by_pk;
-      if (gens) {
-        return gens.status;
-      }
-      return "missing generations_by_pk.status";
-    } catch (error) {
-      console.warn("error parsing json: " + error.message);
-      return undefined;
+        try {
+            const text = this.xhrRequest().responseText();
+            const json = JSON.parse(text);
+            const gens = json.generations_by_pk;
+            if (gens) {
+                return gens.status;
+            }
+            return "missing generations_by_pk.status";
+        } catch (error) {
+            console.warn("error parsing json: " + error.message);
+            return undefined;
+        }
     }
-  }
 
-  // -- delegate methods from SvXhrRequest --
+    // -- delegate methods from SvXhrRequest --
 
-  async onRequestSuccess (request) {
-    
-    const text = request.responseText();
-    const json = JSON.parse(text);
+    async onRequestSuccess (request) {
 
-    // "status": "PENDING" | "STARTED" | "COMPLETE" | "FAILED",
+        const text = request.responseText();
+        const json = JSON.parse(text);
 
-    const status = this.apiPollStatus();
+        // "status": "PENDING" | "STARTED" | "COMPLETE" | "FAILED",
 
-    this.setStatus(status.toLowerCase());
+        const status = this.apiPollStatus();
 
-    if (status === "COMPLETE") {
-      this.setIsPolling(false);
-      this.spawnImageNodes();
-    } else if (status === "FAILED") {
-      this.onError("failed");
-    } else if (json.error) {
-      this.onError(json.error);
-    } else if (status === "PENDING" || status === "STARTED") {
-      await this.pollAfterDelay();
-    } else {
-      this.onError("Unknown status: " + status);
+        this.setStatus(status.toLowerCase());
+
+        if (status === "COMPLETE") {
+            this.setIsPolling(false);
+            this.spawnImageNodes();
+        } else if (status === "FAILED") {
+            this.onError("failed");
+        } else if (json.error) {
+            this.onError(json.error);
+        } else if (status === "PENDING" || status === "STARTED") {
+            await this.pollAfterDelay();
+        } else {
+            this.onError("Unknown status: " + status);
+        }
     }
-  }
 
-  onError (error) {
-    this.setError(error);
-    this.setStatus("Error: " + error);
-    this.sendDelegateMessage("onImagePromptError", [this]);
-    this.onEnd();
-  }
+    onError (error) {
+        this.setError(error);
+        this.setStatus("Error: " + error);
+        this.sendDelegateMessage("onImagePromptError", [this]);
+        this.onEnd();
+    }
 
-  async spawnImageNodes () {
-    this.setStatus("loading images...");
+    async spawnImageNodes () {
+        this.setStatus("loading images...");
 
-  /*
+        /*
     {
       "generations_by_pk": {
         "generated_images": [
@@ -441,98 +441,98 @@
     }
   */
 
-    const text = this.xhrRequest().responseText();
-    const json = JSON.parse(text);
+        const text = this.xhrRequest().responseText();
+        const json = JSON.parse(text);
 
-    if (json.error) {
-      this.onError(json.error);
-      return;
+        if (json.error) {
+            this.onError(json.error);
+            return;
+        }
+
+        const images = json.generations_by_pk.generated_images;
+        assert(Type.isArray(images), "images is not an array");
+
+        this.setStatus("Generating images...");
+
+        for (const imageJson of images) {
+            const imageNode = this.images().add();
+            imageNode.setJsonInfo(imageJson);
+            imageNode.setDelegate(this);
+            await imageNode.asyncFetch();  // this will parallelize the fetches
+        }
     }
 
-    const images = json.generations_by_pk.generated_images;
-    assert(Type.isArray(images), "images is not an array");
-
-    this.setStatus("Generating images...");
-
-    for (const imageJson of images) {
-      const imageNode = this.images().add();
-      imageNode.setJsonInfo(imageJson);
-      imageNode.setDelegate(this);
-      await imageNode.asyncFetch();  // this will parallelize the fetches
-    }
-  }
-
-  /**
+    /**
    * @description Handles errors during image generation.
    * @param {Error} error - The error object.
    * @category Process
    */
-  onRequestFailure (error) {
-    const s = "ERROR: " + error.message;
-    console.error(s);
-    this.setError(error.message);
-    this.setStatus(s);
-    this.sendDelegateMessage("onImagePromptError", [this]);
-    this.onEnd();
-  }
-
-  updateStatus () {
-    const allImagesLoaded = this.images().subnodes().every(image => image.isLoaded());
-    if (allImagesLoaded) {
-      this.setStatus("complete");
-    } else {
-      // N of M images loaded
-      const n = this.images().subnodes().filter(image => image.isLoaded()).length;
-      const m = this.images().subnodes().length;
-      this.setStatus(`${n} of ${m} images loaded...`);
+    onRequestFailure (error) {
+        const s = "ERROR: " + error.message;
+        console.error(s);
+        this.setError(error.message);
+        this.setStatus(s);
+        this.sendDelegateMessage("onImagePromptError", [this]);
+        this.onEnd();
     }
-  }
 
-  // -- delegate methods from LeonardoImage --
+    updateStatus () {
+        const allImagesLoaded = this.images().subnodes().every(image => image.isLoaded());
+        if (allImagesLoaded) {
+            this.setStatus("complete");
+        } else {
+            // N of M images loaded
+            const n = this.images().subnodes().filter(image => image.isLoaded()).length;
+            const m = this.images().subnodes().length;
+            this.setStatus(`${n} of ${m} images loaded...`);
+        }
+    }
 
-  /**
+    // -- delegate methods from LeonardoImage --
+
+    /**
    * @description Handles successful image loading.
    * @param {Object} aiImage - The loaded AI image object.
    * @category Process
    */
-  onImageLoaded (aiImage) {
-    this.didUpdateNode();
-    this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
-    this.onEnd();
-  }
+    onImageLoaded (aiImage) {
+        this.didUpdateNode();
+        this.updateStatus();
+        this.sendDelegateMessage("onImagePromptImageLoaded", [this, aiImage]);
+        this.onEnd();
+    }
 
-  /**
+    /**
    * @description Handles errors during image loading.
    * @param {Object} aiImage - The AI image object that failed to load.
    * @category Process
    */
-  onImageError (aiImage) {
-    this.didUpdateNode();
-    this.updateStatus();
-    this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
-    this.onEnd();
-  }
+    onImageError (aiImage) {
+        this.didUpdateNode();
+        this.updateStatus();
+        this.sendDelegateMessage("onImagePromptImageError", [this, aiImage]);
+        this.onEnd();
+    }
 
-  /**
+    /**
    * @description Handles the end of the image generation process.
    * @category Process
    */
-  onEnd () {
-    this.sendDelegateMessage("onImageGenerationEnd", [this]);
-  }
+    onEnd () {
+        this.sendDelegateMessage("onImageGenerationEnd", [this]);
+    }
 
-  /**
+    /**
    * @description Shuts down the image prompt and its associated images.
    * @returns {OpenAiImagePrompt} The current instance.
    * @category Lifecycle
    */
-  shutdown () {
-    if (this.xhrRequest()) {
-      this.xhrRequest().abort();
+    shutdown () {
+        if (this.xhrRequest()) {
+            this.xhrRequest().abort();
+        }
+        this.images().subnodes().forEach(image => image.shutdown());
+        return this;
     }
-    this.images().subnodes().forEach(image => image.shutdown());
-    return this;
-  }
 
 }.initThisClass());

@@ -8,7 +8,7 @@
 "use strict";
 
 (class TilesView_styling extends TilesView {
-    
+
     /**
      * Applies styles to the tiles view.
      * @description This method applies styles to the tiles view and its components.
@@ -17,8 +17,8 @@
      */
     applyStyles () {
         //this.logDebug(".applyStyles()")
-        super.applyStyles()
-        return this
+        super.applyStyles();
+        return this;
     }
 
     /*

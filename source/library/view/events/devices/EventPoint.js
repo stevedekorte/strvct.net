@@ -8,11 +8,11 @@
  * @class EventPoint
  * @extends Point
  * @classdesc Class to represent a 2d or 3d point, optionally with a time.
- * 
+ *
  * NOTES:
- * 
+ *
  * Event's positions are set to the document (event.pageX, event.pageY) coordinates.
- * To get the viewport coordinates (event.clientX, event.clientY), 
+ * To get the viewport coordinates (event.clientX, event.clientY),
  * use the viewportPosition() method.
  */
 (class EventPoint extends Point {
@@ -69,7 +69,7 @@
             slot.setSlotType("Event");
         }
     }
-   
+
     /*
     init () {
         super.init()
@@ -85,11 +85,11 @@
      * @category Data Manipulation
      */
     copyFrom (p, copyDict) {
-        super.copyFrom(p, copyDict)
-        this._id = p._id
-        this._state = p._state
-        this._target = p._target
-        return this
+        super.copyFrom(p, copyDict);
+        this._id = p._id;
+        this._state = p._state;
+        this._target = p._target;
+        return this;
     }
 
     /**
@@ -99,9 +99,9 @@
      */
     overView () {
         if (this._overView === null) {
-            this._overView = this.findOverview()
+            this._overView = this.findOverview();
         }
-        return this._overView
+        return this._overView;
     }
 
     /**
@@ -110,20 +110,20 @@
      * @category DOM
      */
     findOverview () {
-        // search up the dom elements until we find one 
-        // associated with a DomView instance 
+        // search up the dom elements until we find one
+        // associated with a DomView instance
 
         let e = document.elementFromPoint(this.x(), this.y());
 
 
         while (e) {
-            const view = e.domView()
+            const view = e.domView();
             if (view) {
-                return view
+                return view;
             }
-            e = e.parentElement
+            e = e.parentElement;
         }
-        return null
+        return null;
     }
 
     /**
@@ -132,9 +132,9 @@
      * @category Viewport
      */
     viewportPosition () {
-        const e = this.event()
-        const p = Point.clone().set(e.clientX, e.clientY)
-        return p
+        const e = this.event();
+        const p = Point.clone().set(e.clientX, e.clientY);
+        return p;
     }
 
     /**
@@ -143,7 +143,7 @@
      * @category Viewport
      */
     viewportHeight () {
-        return window.innerHeight
+        return window.innerHeight;
     }
 
     /**
@@ -152,7 +152,7 @@
      * @category Viewport
      */
     viewportWidth () {
-        return window.innerWidth
+        return window.innerWidth;
     }
 
     /**
@@ -161,7 +161,7 @@
      * @category Viewport
      */
     distFromTopOfViewport () {
-        return this.event().clientY
+        return this.event().clientY;
     }
 
     /**
@@ -170,7 +170,7 @@
      * @category Viewport
      */
     distFromBottomOfViewport () {
-        return this.viewportHeight() - this.distFromTopOfViewport()
+        return this.viewportHeight() - this.distFromTopOfViewport();
     }
 
     /**
@@ -179,7 +179,7 @@
      * @category Viewport
      */
     distFromLeftOfViewport () {
-        return this.event().clientX
+        return this.event().clientX;
     }
 
     /**
@@ -188,7 +188,7 @@
      * @category Viewport
      */
     distFromRightOfViewport () {
-        return this.viewportWidth() - this.distFromLeftOfViewport()
+        return this.viewportWidth() - this.distFromLeftOfViewport();
     }
-    
+
 }.initThisClass());

@@ -5,7 +5,7 @@
  * @classdesc Represents a pointer field tile in the browser stack.
  */
 (class SvPointerFieldTile extends TitledTile {
-    
+
     /**
      * @description Initializes the prototype slots for the SvPointerFieldTile class.
      * @private
@@ -30,9 +30,9 @@
      * @returns {SvPointerFieldTile} The instance after updating subviews.
      * @category UI Update
      */
-    updateSubviews () {	
+    updateSubviews () {
         super.updateSubviews();
-		
+
         //let node = this.node()
 
         if (this.isSelected()) {
@@ -42,8 +42,8 @@
         }
 
         this.applyStyles();
-		
+
         return this;
     }
-    
+
 }.initThisClass());

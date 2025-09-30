@@ -16,7 +16,7 @@
  *     const mouseListener = MouseListener.clone().setListenTarget(element).setDelegate(anObject)
  *
  * will send onMouseDown(event), onMouseOver(event) etc to anObject when those events occur on the element.
- * 
+ *
  * TODO: abstraction for eventsDict
  */
 (class EventSetListener extends ProtoClass {
@@ -27,8 +27,8 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("listenTarget", null)
-            slot.setSlotType("EventTarget"); 
+            const slot = this.newSlot("listenTarget", null);
+            slot.setSlotType("EventTarget");
         }
         /**
          * @member {Object} delegate
@@ -287,6 +287,6 @@
             this._isListening = false; // can't use setter here as it would cause a loop
         }
         return this;
-    }   
+    }
 
 }.initThisClass());

@@ -13,21 +13,21 @@ const SvDbDataType = require("./SvDbDataType");
  * @class SvDbColumn
  * @extends Base
  * @classdesc Represents a database column with its metadata and constraints.
- * 
+ *
  * This class stores complete column information extracted from database schema introspection,
  * including data types, constraints, and default values. It provides the metadata foundation
  * for data validation and object-relational mapping operations.
- * 
+ *
  * Column properties include:
  * - Basic metadata: name, data type, null constraints
  * - Key constraints: primary key, unique, foreign key relationships
  * - Auto-generation: auto-increment, default values
  * - Validation: data type checking, constraint enforcement
- * 
+ *
  * The column metadata is used by SvDbRow for data validation and by SvDbTable for
  * primary key identification during CRUD operations. It serves as the schema definition
  * that ensures data integrity between the object model and database storage.
- * 
+ *
  * Usage:
  * ```javascript
  * const column = table.columnWithName("user_id");
@@ -87,13 +87,13 @@ const SvDbDataType = require("./SvDbDataType");
             Holds the structure of the foreign key constraint
             {
                 referencedTable: "table_name",      // The table being referenced
-                referencedColumn: "column_name",    // The column being referenced  
+                referencedColumn: "column_name",    // The column being referenced
                 onUpdate: "CASCADE|RESTRICT|...",   // Action on update
                 onDelete: "CASCADE|RESTRICT|...",   // Action on delete
                 constraintName: "fk_constraint_name" // Constraint name (PostgreSQL only)
             }
             */
-            
+
             this.newSlot("foreignKey", null);
         }
     }
@@ -115,7 +115,7 @@ const SvDbDataType = require("./SvDbDataType");
         this.setUnique(columnData.unique);
         this.setDefaultValue(columnData.defaultValue);
         this.setIsIndexed(columnData.isIndexed || false);
-        
+
         // Set foreign key information if present
         if (columnData.foreignKey) {
             this.setForeignKey(columnData.foreignKey);
@@ -172,7 +172,7 @@ const SvDbDataType = require("./SvDbDataType");
      */
     foreignKeyActions () {
         if (!this.isForeignKey()) return null;
-        
+
         const fk = this.foreignKey();
         return {
             onUpdate: fk.onUpdate,
@@ -194,7 +194,7 @@ const SvDbDataType = require("./SvDbDataType");
      */
     getRelationshipType () {
         if (!this.isForeignKey()) return null;
-        
+
         if (this.unique() || this.primaryKey()) {
             return "one-to-one";  // This record can only reference one parent
         } else {
@@ -242,9 +242,9 @@ const SvDbDataType = require("./SvDbDataType");
      */
     validateValue (value) {
         return SvDbDataType.validateValueForDbType(
-            value, 
-            this.dataType(), 
-            this.allowNull(), 
+            value,
+            this.dataType(),
+            this.allowNull(),
             this.columnName()
         );
     }

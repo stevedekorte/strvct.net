@@ -10,7 +10,7 @@
  * @classdesc Represents a DOM transition with properties like duration, timing function, and delay.
  */
 (class DomTransition extends ProtoClass {
-    
+
     /**
      * @static
      * @description Initializes the class with global values for transitions.
@@ -18,7 +18,7 @@
      */
     static initClass () {
         const globalValues = ["inherit", "initial", "revert", "revert-layer", "unset"].asSet();
-        this.newClassSlot("globalValues", globalValues)
+        this.newClassSlot("globalValues", globalValues);
     }
 
     /**
@@ -28,12 +28,12 @@
      * @category Validation
      */
     static validPropertyValues () {
-        return [  "background-color",  "background-position",  "border-color",  "border-width",  "border-spacing",  
-        "bottom",  "color",  "font-size",  "font-weight",  "height",  "left",  "letter-spacing",  "line-height",  
-        "margin",  "margin-bottom",  "margin-left",  "margin-right",  "margin-top",  "max-height",  "max-width",  
-        "min-height",  "min-width",  "opacity",  "outline-color",  "outline-offset",  "outline-width",  "padding",  
-        "padding-bottom",  "padding-left",  "padding-right",  "padding-top",  "right",  "text-indent",  "text-shadow",  
-        "top",  "vertical-align",  "visibility",  "width",  "word-spacing",  "z-index"]
+        return ["background-color",  "background-position",  "border-color",  "border-width",  "border-spacing",
+            "bottom",  "color",  "font-size",  "font-weight",  "height",  "left",  "letter-spacing",  "line-height",
+            "margin",  "margin-bottom",  "margin-left",  "margin-right",  "margin-top",  "max-height",  "max-width",
+            "min-height",  "min-width",  "opacity",  "outline-color",  "outline-offset",  "outline-width",  "padding",
+            "padding-bottom",  "padding-left",  "padding-right",  "padding-top",  "right",  "text-indent",  "text-shadow",
+            "top",  "vertical-align",  "visibility",  "width",  "word-spacing",  "z-index"];
     }
 
     /**
@@ -71,7 +71,7 @@
          * @category Properties
          */
         {
-            const slot = this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
+            const slot = this.newSlot("timingFunction", "ease-in-out"); // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
             slot.setSlotType("String");
         }
         /**
@@ -79,7 +79,7 @@
          * @category Properties
          */
         {
-            const slot = this.newSlot("delay", 0) // set to number type (unit = seconds)
+            const slot = this.newSlot("delay", 0); // set to number type (unit = seconds)
             slot.setSlotType("Number");
         }
         /**
@@ -105,12 +105,12 @@
      * @category Manipulation
      */
     clear () {
-        this.setGlobal(null)
-        this.setProperty(null)
-        this.setDuration(0)
-        this.setTimingFunction("")
-        this.setDelay(0)
-        return this
+        this.setGlobal(null);
+        this.setProperty(null);
+        this.setDuration(0);
+        this.setTimingFunction("");
+        this.setDelay(0);
+        return this;
     }
 
     /**
@@ -121,11 +121,11 @@
      */
     updateDuration (s) {
         if (Type.isNumber(s)) {
-            s = s + "s"
+            s = s + "s";
         }
-        this.setDuration(s)
-        this.syncToDomView()
-        return this
+        this.setDuration(s);
+        this.syncToDomView();
+        return this;
     }
 
     /**
@@ -135,9 +135,9 @@
      * @category Manipulation
      */
     updateDelay (s) {
-        this.setDelay(s)
-        this.syncToDomView()
-        return this
+        this.setDelay(s);
+        this.syncToDomView();
+        return this;
     }
 
     /**
@@ -147,9 +147,9 @@
      * @category Manipulation
      */
     updateTimingFunction (s) {
-        this.setTimingFunction(s)
-        this.syncToDomView()
-        return this
+        this.setTimingFunction(s);
+        this.syncToDomView();
+        return this;
     }
 
     /**
@@ -158,11 +158,11 @@
      * @category Utility
      */
     durationString () {
-        const v = this.duration()
+        const v = this.duration();
         if (Type.isNumber(v)) {
-            return v + "s"
+            return v + "s";
         }
-        return v
+        return v;
     }
 
     /**
@@ -171,11 +171,11 @@
      * @category Utility
      */
     delayString () {
-        const v = this.delay()
+        const v = this.delay();
         if (Type.isNumber(v)) {
-            return v + "s"
+            return v + "s";
         }
-        return v
+        return v;
     }
 
     /**
@@ -185,7 +185,7 @@
      */
     asString () {
         if (this.global()) {
-            return this.global()
+            return this.global();
         }
 
         const parts = [
@@ -193,11 +193,11 @@
             this.durationString(),
             this.timingFunction()
             //this.delayString(),
-        ]
+        ];
 
-        const s = parts.join(" ")
-        console.log(this.svType() + " asString() = '" + s + "'")
-        return s
+        const s = parts.join(" ");
+        console.log(this.svType() + " asString() = '" + s + "'");
+        return s;
     }
 
     /**
@@ -207,52 +207,52 @@
      * @category Manipulation
      */
     setFromString (aString) {
-        // ordering of parts: 
-        //   transition-property, 
-        //   transition-duration, 
-        //   transition-timing-function, 
+        // ordering of parts:
+        //   transition-property,
+        //   transition-duration,
+        //   transition-timing-function,
         //   transition-delay.
         //
 
         const startsWithNumber = function (s) {
             if (s.length) {
-                const c = s[0]
-                return (c >= '0' && c <= '9');
+                const c = s[0];
+                return (c >= "0" && c <= "9");
             }
-            return false
-        }
+            return false;
+        };
 
-        const parts = aString.split(" ").select(part => part !== "")
+        const parts = aString.split(" ").select(part => part !== "");
 
-        this.clear()
+        this.clear();
 
         if (parts.length === 1 && this.thisClass().validGlobalValues().has(parts[0])) {
-            this.setGlobal(parts[0])
-            return this
+            this.setGlobal(parts[0]);
+            return this;
         }
 
-        let v = parts.removeFirst()
-        assert(!Type.isNull(v))
-        this.setProperty(v)
+        let v = parts.removeFirst();
+        assert(!Type.isNull(v));
+        this.setProperty(v);
 
-        v = parts.removeFirst()
+        v = parts.removeFirst();
         if (!Type.isNull(v)) {
-            assert(startsWithNumber(v))
-            this.setDuration(v)
+            assert(startsWithNumber(v));
+            this.setDuration(v);
         }
 
-        v = parts.removeFirst()
+        v = parts.removeFirst();
         if (!Type.isNull(v)) {
-            this.setTimingFunction(v)
+            this.setTimingFunction(v);
         }
 
-        v = parts.removeFirst()
+        v = parts.removeFirst();
         if (!Type.isNull(v)) {
-            assert(startsWithNumber(v))
-            this.setDelay(v)
+            assert(startsWithNumber(v));
+            this.setDelay(v);
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -261,8 +261,8 @@
      * @category Synchronization
      */
     syncToDomView () {
-        this.transitions().syncToDomView()
-        return this
+        this.transitions().syncToDomView();
+        return this;
     }
 
 }.initThisClass());

@@ -6,7 +6,7 @@
 * @class AiConversations
 * @extends SvSummaryNode
 * @classdesc Manages AI conversations.
-* 
+*
 * conversations
 * - conversation
 * - - requests
@@ -19,19 +19,19 @@
     */
     initPrototypeSlots () {
     }
-        
+
 
     /**
     * @description Initializes the AiConversations instance.
     * @category Initialization
     */
     init () {
-    super.init();
-    this.setTitle("Conversations");
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setNodeCanAddSubnode(true);
-    this.setNodeCanReorderSubnodes(true);
+        super.init();
+        this.setTitle("Conversations");
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(true);
     }
 
     /**
@@ -39,11 +39,11 @@
     * @category Initialization
     */
     finalInit () {
-    super.finalInit();
-    this.setNoteIsSubnodeCount(true);
+        super.finalInit();
+        this.setNoteIsSubnodeCount(true);
 
-    // subclasses should set this
-    this.setSubnodeClasses([AiConversation]);
+        // subclasses should set this
+        this.setSubnodeClasses([AiConversation]);
     }
 
     /**
@@ -52,7 +52,7 @@
     * @category UI Behavior
     */
     subviewsScrollSticksToBottom () {
-    return false;
+        return false;
     }
 
     /**
@@ -61,7 +61,7 @@
     * @category Service Management
     */
     service () {
-    return this.parentNode();
+        return this.parentNode();
     }
 
 }.initThisClass());

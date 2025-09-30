@@ -15,8 +15,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -25,7 +25,7 @@
      */
     finalInit () {
         super.finalInit();
-        this.setupAsDefault() 
+        this.setupAsDefault();
     }
 
     /**
@@ -36,11 +36,11 @@
     setupAsDefault () {
         if (!this.hasSubnodes()) {
             //debugger
-            this.setTitle("DefaultTheme")
-            const defaultThemeClass = SvThemeClass.clone().setupAsDefault()
-            this.addSubnode(defaultThemeClass)
+            this.setTitle("DefaultTheme");
+            const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
+            this.addSubnode(defaultThemeClass);
         }
-        return this
-   }
+        return this;
+    }
 
 }.initThisClass());

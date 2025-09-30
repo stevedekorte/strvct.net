@@ -7,7 +7,7 @@
 /**
  * @class PinchGestureRecognizer
  * @extends GestureRecognizer
- * @classdesc Subclass of OrientGestureRecognizer that overrides hasMovedEnough() to 
+ * @classdesc Subclass of OrientGestureRecognizer that overrides hasMovedEnough() to
  * check for minDistToBegin.
  *
  * Delegate messages:
@@ -21,7 +21,7 @@
  *         scale // current distance between 1st to fingers down divided by their initial distance
  */
 (class PinchGestureRecognizer extends GestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots
      * @private
@@ -37,13 +37,13 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses()) 
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
         //this.setIsDebugging(false)
         //this.setIsVisualDebugging(true)
-        this.setMinFingersRequired(2)
-        this.setMaxFingersAllowed(2)
-        return this
+        this.setMinFingersRequired(2);
+        this.setMaxFingersAllowed(2);
+        return this;
     }
 
     /**
@@ -52,10 +52,10 @@
      * @category Gesture Recognition
      */
     hasMovedEnough () {
-        const m = this.minDistToBegin()
-        const d = this.currentPosition().distanceFrom(this.downPosition())
+        const m = this.minDistToBegin();
+        const d = this.currentPosition().distanceFrom(this.downPosition());
         //console.log(this.shortTypeId() + ".hasMovedEnough() " + d + ">= min " + m)
-        return d >= m
+        return d >= m;
     }
-    
+
 }.initThisClass());

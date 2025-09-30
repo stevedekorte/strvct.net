@@ -7,53 +7,53 @@
 /**
  * @class XaiService
  * @extends AiService
- * @classdesc 
- * 
+ * @classdesc
+ *
  * @example
  * XaiService.shared().setApiKey("...");
  * const hasApiKey = XaiService.shared().hasApiKey();
- * 
+ *
  * NOTES: Grok doesn't require alternate user and assistant roles, so we don't need to merge messages like Xai does.
  * - No docs on whether system messages must be placed at the beginning of the messages array.
 */
 
 (class XaiService extends AiService {
 
-  /**
+    /**
    * @static
    * @description Initializes the class as a singleton.
    * @category Initialization
    */
-  static initClass () {
-    this.setIsSingleton(true);
-  }
+    static initClass () {
+        this.setIsSingleton(true);
+    }
 
-  serviceInfo () {
-    return {
-      "chatEndpoint": "https://api.x.ai/v1/chat/completions"
-    };
-  }
+    serviceInfo () {
+        return {
+            "chatEndpoint": "https://api.x.ai/v1/chat/completions"
+        };
+    }
 
-  /**
+    /**
    * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model configuration objects.
    * @category Configuration
    */
-  modelsJson () {
-    return [
-      {
-        "name": "grok-4-latest",
-        "title": "Grok 4",
-        "inputTokenLimit": 256000,
-        "outputTokenLimit": 256000
-      },
-      {
-        "name": "grok-3-beta",
-        "title": "Grok 3 Beta",
-        "inputTokenLimit": 131072,
-        "outputTokenLimit": 16384
-      }
-      /*
+    modelsJson () {
+        return [
+            {
+                "name": "grok-4-latest",
+                "title": "Grok 4",
+                "inputTokenLimit": 256000,
+                "outputTokenLimit": 256000
+            },
+            {
+                "name": "grok-3-beta",
+                "title": "Grok 3 Beta",
+                "inputTokenLimit": 131072,
+                "outputTokenLimit": 16384
+            }
+            /*
       // these other models may not be good enough to work properly
       {
         "name": "grok-3-mini",
@@ -68,60 +68,60 @@
         "outputTokenLimit": 8192 // jsut a guess as I can't find it in the docs
       }
       */
-    ];
-  }
-  
-  /**
+        ];
+    }
+
+    /**
    * @description Initializes the prototype slots.
    * @category Initialization
    */
-  initPrototypeSlots () {
-  }
+    initPrototypeSlots () {
+    }
 
-  /**
+    /**
    * @description Initializes the service.
    * @category Initialization
    */
-  init () {
-    super.init();
-  }
+    init () {
+        super.init();
+    }
 
-  /**
+    /**
    * @description Performs final initialization steps.
    * @category Initialization
    */
-  finalInit () {
-    super.finalInit()
-    this.setTitle("xAi");
+    finalInit () {
+        super.finalInit();
+        this.setTitle("xAi");
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
-  }
+    }
 
-  /**
+    /**
    * @description Validates the API key format.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the API key is valid, false otherwise.
    * @category Authentication
    */
-  validateKey (/*s*/) {
-    return true;
-  }
+    validateKey (/*s*/) {
+        return true;
+    }
 
-  /**
+    /**
    * @description Checks if a valid API key is set.
    * @returns {boolean} True if a valid API key is set, false otherwise.
    * @category Authentication
    */
-  hasApiKey () {
-    return true; //this.apiKey().length > 0;
-  }
+    hasApiKey () {
+        return true; //this.apiKey().length > 0;
+    }
 
-  /**
+    /**
    * @description Prepares the request before sending it to the API.
    * @param {Object} aRequest - The request object to prepare.
    * @returns {XaiService} The service instance.
    * @category Request Handling
    */
-  prepareToSendRequest (/*aRequest*/) {
+    prepareToSendRequest (/*aRequest*/) {
     /*
     const bodyJson = aRequest.bodyJson();
     let messages = bodyJson.messages;
@@ -152,7 +152,7 @@
       }
       if (message.role === lastRole) {
         const lastMessage = newMessages.last();
-        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n" 
+        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
         lastMessage.content = lastMessage.content + "\n" + message.content;
       } else {
         newMessages.push(message);
@@ -168,7 +168,7 @@
       //console.log("XaiService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
     }
   */
-    return this;
-  }
+        return this;
+    }
 
 }.initThisClass());

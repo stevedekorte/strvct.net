@@ -19,12 +19,12 @@
      */
     static instanceFromRecordInStore (/*aRecord, aStore*/) {
 
-        if(!this.shouldStore()) {
-            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.svType() + ") with shouldStore set to false - returning null");
+        if (!this.shouldStore()) {
+            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" + this.svType() + ") with shouldStore set to false - returning null");
             return null;
         }
 
-        
+
         const instance = this.preClone ? this.preClone() : new this();
         instance.init();
         // caller needs to call finalInit and afterInit
@@ -39,7 +39,7 @@
      */
     recordForStore (aStore) { // should only be called by Store
         const aRecord = {
-            type: this.svType(), 
+            type: this.svType(),
             entries: []
         };
 
@@ -99,10 +99,10 @@
             // TODO: replace with slot.onInstanceSetValueFromEntry(this, entry, aStore)
 
             if (slot) {
-                    if (!slot.hasSetterOnInstance(this)) {
-                    // looks like the schema has changed 
+                if (!slot.hasSetterOnInstance(this)) {
+                    // looks like the schema has changed
                     // TODO: add something the schedule a didMutate?
-                    console.warn("no setter for slot '"+ slot.name() + "'?");
+                    console.warn("no setter for slot '" + slot.name() + "'?");
                 } else {
                     /*if (slot.isLazy()) {
                         const pid = v["*"];
@@ -121,11 +121,11 @@
                 }
             } else {
                 console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change?");
-                
-                this.scheduleMethod("didMutate", 1000); // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete 
-                
+
+                this.scheduleMethod("didMutate", 1000); // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete
+
             }
-        })
+        });
 
         return this;
     }

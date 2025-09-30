@@ -8,17 +8,17 @@
  * @class BrowserView
  * @extends StackView
  * @classdesc A StackView with the 2nd level node used as a horizontal breadcrumb path node.
- * 
+ *
  * To do this, we create a top wrapper node, which has one subnode which is the actual root node.
  * Somehow we will set the root node tile view to display the path selected in the UI...
- * 
+ *
  * AppLauncher - sets up database, may read App object from database or create if db is empty?
- * 
+ *
  * Nodes: ---------------> Views:
- * 
+ *
  * browserNode             BrowserView
- *   appRootNode             HeaderTile 
- *     settingsNode (OPTION hidden) 
+ *   appRootNode             HeaderTile
+ *     settingsNode (OPTION hidden)
  *     topContentNode          BreadCrumbsTile
  *         about
  *         guide
@@ -35,22 +35,22 @@
  *         twitter
  *         links
  *         repl
- * 
+ *
  * Ideas:
  *     - need way to read/write local changes (with permission) to server
- *     
+ *
  * Questions:
  * - Should browserHeaderNode be the AppNode, so we can option click it to inspect it and map app name to header?
  * - Which node should be root node of storage pool?
  * -- does App own the pool, or does pool own the app?
- * -- should there be a RootPoolNode class that helps manage the pool or help expose management and info to the UI? 
- * 
+ * -- should there be a RootPoolNode class that helps manage the pool or help expose management and info to the UI?
+ *
  * Todo:
  *     Make moveToBase() more generic
  */
 
 (class BrowserView extends StackView {
-    
+
     /**
      * @description Initializes prototype slots for the BrowserView class.
      * @category Initialization
@@ -120,7 +120,7 @@
      * @category Navigation
      */
     navigateToNode (aNode) {
-        const pathArray = aNode.nodePathArray(); 
+        const pathArray = aNode.nodePathArray();
         pathArray.shift(); // remove first component
         this.selectNodePathArray(pathArray);
         return this;
@@ -138,9 +138,9 @@
         //components.shift(); // remove first component
         const selectedNode = this.node().nodeAtSubpathArray(components);
         if (selectedNode) {
-            const pathArray = selectedNode.nodePathArray(); 
+            const pathArray = selectedNode.nodePathArray();
             pathArray.shift(); // remove first component
-            
+
             if (pathArray.length > 1) {
                 this.selectNodePathArray(pathArray);
             }

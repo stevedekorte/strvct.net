@@ -15,7 +15,7 @@
  *     SvThemeResources -> Theme -> ThemeClass -> ThemeState -> ThemeAttribute
  *
  * example:
- * 
+ *
  *     global           -> "Dark" -> "Field"   -> "active"   -> "opacity" : "0.5"
  *
  * Example use by views:
@@ -25,21 +25,21 @@
  * We'd like to implement some form  of inheritance system.
  * Example:
  *
- * The ThemeClass "FieldValue" has a "unselected" ThemeState, but no "active" ThemeState, 
+ * The ThemeClass "FieldValue" has a "unselected" ThemeState, but no "active" ThemeState,
  * so we default to the "unselected" ThemeState.
  *
  * Should ThemeClass implement a defaultSubnode() method for failed lookups?
- * Should it ask subnodes isDefault()? 
+ * Should it ask subnodes isDefault()?
  */
 (class SvThemeResources extends SvStorableNode {
-    
+
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
 
     /**
@@ -54,15 +54,15 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setTitle("Themes")
+        this.setTitle("Themes");
 
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
 
-        this.setNoteIsSubnodeCount(true)
-        this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses([SvTheme, SvDefaultTheme])
-        this.setNodeCanReorderSubnodes(true)
+        this.setNoteIsSubnodeCount(true);
+        this.setNodeCanAddSubnode(true);
+        this.setSubnodeClasses([SvTheme, SvDefaultTheme]);
+        this.setNodeCanReorderSubnodes(true);
 
         //this.setSubnodes([SvDefaultTheme.clone()]) // hack
     }
@@ -74,7 +74,7 @@
     finalInit () {
         super.finalInit();
         if (!this.hasSubnodes()) {
-            this.addSubnode(SvDefaultTheme.clone()) // hack
+            this.addSubnode(SvDefaultTheme.clone()); // hack
         }
     }
 
@@ -84,7 +84,7 @@
      * @category Theme Management
      */
     activeTheme () {
-        return this.subnodes().first()
+        return this.subnodes().first();
     }
 
     /**
@@ -93,7 +93,7 @@
      * @category Theme Management
      */
     defaultThemeClass () {
-        return this.activeTheme().subnodes().first()
+        return this.activeTheme().subnodes().first();
     }
-    
+
 }.initThisClass());

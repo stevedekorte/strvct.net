@@ -9,7 +9,7 @@
  * TODO: make subclass of ButtonView?
  */
 (class CloseButton extends FlexDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the CloseButton.
      * @category Initialization
@@ -39,33 +39,33 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.makeFlexAndCenterContent()
-        this.setPadding("0em")
-        this.turnOffUserSelect()
+        super.init();
+        this.makeFlexAndCenterContent();
+        this.setPadding("0em");
+        this.turnOffUserSelect();
         //this.setDisplay("table") // to center svg
 
-        const iv = SvgIconView.clone().setIconName("close")
-        iv.setColor("white")
+        const iv = SvgIconView.clone().setIconName("close");
+        iv.setColor("white");
 
-        iv.setMinAndMaxWidth(10)
-        iv.setMinAndMaxHeight(10)
-                
+        iv.setMinAndMaxWidth(10);
+        iv.setMinAndMaxHeight(10);
+
         //iv.setWidth("fit-content")
         //iv.setHeight("fit-content")
 
-        iv.makeFlexAndCenterContent()
+        iv.makeFlexAndCenterContent();
         //iv.setTopPx(0)
         //iv.setLeftPx(0)
         //iv.setMarginBottom("1px") // TODO: fix the SVG for this icon so this isn't needed?
 
 
-        this.setIconView(iv)
-        this.addSubview(iv)
+        this.setIconView(iv);
+        this.addSubview(iv);
 
-        this.setAction("close")
-        this.addDefaultTapGesture()
-        return this
+        this.setAction("close");
+        this.addDefaultTapGesture();
+        return this;
     }
 
     /**
@@ -75,12 +75,12 @@
      * @category View
      */
     setIconName (aString) {
-        this.iconView().setIconName(aString)
-        return this
+        this.iconView().setIconName(aString);
+        return this;
     }
 
     // --- editable ---
-    
+
     /**
      * @description Sets the enabled state of the button.
      * @param {boolean} aBool - The enabled state to set.
@@ -89,11 +89,11 @@
      */
     setIsEnabled (aBool) {
         if (this._isEnabled !== aBool) {
-            this._isEnabled = aBool
-            this.syncEnabled()
+            this._isEnabled = aBool;
+            this.syncEnabled();
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -103,7 +103,7 @@
      */
     syncEnabled () {
         //this.setIsDisplayHidden(!this.isEnabled())
-        return this
+        return this;
     }
 
     /**
@@ -115,9 +115,9 @@
     onTapComplete (aGesture) {
         //this.logDebug(".onTapComplete()")
         if (!this.isEditable()) {
-            this.sendActionToTarget()
+            this.sendActionToTarget();
         }
-        return false
+        return false;
     }
-    
+
 }.initThisClass());

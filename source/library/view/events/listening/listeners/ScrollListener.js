@@ -8,7 +8,7 @@
  * @classdesc Listens to scroll events.
  */
 (class ScrollListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots for the ScrollListener.
      * @returns {void}
@@ -24,8 +24,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -35,7 +35,7 @@
      */
     setupListeners () {
         this.addEventNameAndMethodName("scroll",   "onScroll");
-        return this
+        return this;
     }
 
 }.initThisClass());

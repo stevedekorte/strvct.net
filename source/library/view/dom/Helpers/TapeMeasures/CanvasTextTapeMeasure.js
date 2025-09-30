@@ -6,13 +6,13 @@
  * @class CanvasTextTapeMeasure
  * @extends ProtoClass
  * @classdesc Used to measure rendered text dimensions given a string and a style.
- * 
+ *
  * Example uses:
- * 
+ *
  *     const width = CanvasTextTapeMeasure.shared().getTextWidth(text, fontString);
  */
 (class CanvasTextTapeMeasure extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -41,17 +41,17 @@
             slot.setSlotType("CanvasRenderingContext2D");
         }
     }
-	
+
     /**
      * @description Initializes the CanvasTextTapeMeasure instance.
      * @returns {CanvasTextTapeMeasure} The initialized instance.
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setCanvas(document.createElement("canvas"))
-        this.setContext(this.canvas().getContext("2d"))
-        return this
+        super.init();
+        this.setCanvas(document.createElement("canvas"));
+        this.setContext(this.canvas().getContext("2d"));
+        return this;
     }
 
     /**
@@ -62,11 +62,11 @@
      * @category Measurement
      */
     getTextWidth (text, fontString) {
-        const context = this.context()
+        const context = this.context();
         context.font = fontString;
-        const metrics = context.measureText(text)
-        return metrics.width
-    }       
+        const metrics = context.measureText(text);
+        return metrics.width;
+    }
 
     /**
      * @static
@@ -75,12 +75,12 @@
      * @category Testing
      */
     static selfTest () {
-        const tape = CanvasTextTapeMeasure.clone()
+        const tape = CanvasTextTapeMeasure.clone();
         const w = tape.getTextWidth("hello there!", "bold 12pt arial");
-        assert(Math.round(w) === 86)
-        return this	
+        assert(Math.round(w) === 86);
+        return this;
     }
-	
+
 }.initThisClass());
 
 //CanvasTextTapeMeasure.selfTest()

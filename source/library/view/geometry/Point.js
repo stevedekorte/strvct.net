@@ -6,16 +6,16 @@
  * @class Point
  * @extends ProtoClass
  * @classdesc Class to represent a 2d or 3d point, optionally with a time.
- * 
- * TODO: 
+ *
+ * TODO:
  *     Move internal representation to array e.g.
- * 
+ *
  *     const slot = this.newSlot("valueArray", new Array(0, 0, 0, 0))
- * 
+ *
  *     x () {
  *         return this._valueArray[0]
  *     }
- * 
+ *
  *     isEqual (other) {
  *         return this._valueArray == other.valueArray()
  *     }
@@ -93,7 +93,7 @@
         this._y = y;
         return this;
     }
-    
+
     /**
      * @description Sets the x, y, z, and t values.
      * @param {Number} x - The x coordinate
@@ -192,13 +192,13 @@
     asString () {
         let s = this.svType() + "(" + this._x + ", " + this._y ;
 
-        if (this._z) { 
+        if (this._z) {
             s += ", " + this._z;
         }
 
         /*
-        if (this._t) { 
-            s += ", " + this._t + "t" 
+        if (this._t) {
+            s += ", " + this._t + "t"
         }
         */
 
@@ -265,7 +265,7 @@
         const dx = this.dxFrom(p);
         const dy = this.dyFrom(p);
         const dz = this.dzFrom(p);
-        return Math.sqrt(dx*dx + dy*dy + dz*dz);
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     /**
@@ -398,7 +398,7 @@
      * @category Arithmetic
      */
     divideByScalar (v) {
-        return this.multiplyByScalar(1/v);
+        return this.multiplyByScalar(1 / v);
     }
 
     /**
@@ -418,7 +418,7 @@
      * @category CSS
      */
     asCssStringWithUnitSuffix (name, unitSuffix) {
-        if (!unitSuffix) { 
+        if (!unitSuffix) {
             unitSuffix = "";
         }
 
@@ -472,5 +472,5 @@
     height () {
         return this.y();
     }
-    
+
 }.initThisClass());

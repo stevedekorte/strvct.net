@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvDataStoreRecord extends SvFieldSetNode {
-    
+
     /**
      * Initializes the prototype slots for the SvDataStoreRecord.
      * @category Initialization
@@ -44,15 +44,15 @@
      * @category Initialization
      */
     prepareForFirstAccess () {
-        super.prepareForFirstAccess()
-        const jsonField = SvTextAreaField.clone().setKey("recordString")
-        jsonField.setValueMethod("recordString").setValueIsEditable(false).setIsMono(true)
-        this.addField(jsonField)
+        super.prepareForFirstAccess();
+        const jsonField = SvTextAreaField.clone().setKey("recordString");
+        jsonField.setValueMethod("recordString").setValueIsEditable(false).setIsMono(true);
+        this.addField(jsonField);
 
         this.referencedRecords().forEach((aRecord) => {
-            const node = SvDataStoreRecord.forRecord(aRecord)
-            this.addSubnode(node)
-        })
+            const node = SvDataStoreRecord.forRecord(aRecord);
+            this.addSubnode(node);
+        });
     }
 
     /**
@@ -61,7 +61,7 @@
      * @category Data Access
      */
     record () {
-        return this.store().recordForPid(this.key())
+        return this.store().recordForPid(this.key());
     }
 
     /**
@@ -71,7 +71,7 @@
      * @category Data Modification
      */
     setRecordString (s) {
-        throw new Error("not editable")
+        throw new Error("not editable");
     }
 
     /**
@@ -80,7 +80,7 @@
      * @category Data Access
      */
     recordString () {
-        return JSON.stableStringifyWithStdOptions(this.record(), null, 2)
+        return JSON.stableStringifyWithStdOptions(this.record(), null, 2);
     }
 
     /**
@@ -89,7 +89,7 @@
      * @category Data Access
      */
     referencedRecords () {
-        return this.referencedPidSet().map( pid => this.defaultStore().recordForPid(pid) )
+        return this.referencedPidSet().map(pid => this.defaultStore().recordForPid(pid));
     }
 
     /**
@@ -98,7 +98,7 @@
      * @category Data Access
      */
     referencedPidSet () {
-        return this.defaultStore().refSetForPuuid(this.record().id)
+        return this.defaultStore().refSetForPuuid(this.record().id);
     }
 
     /**
@@ -109,14 +109,14 @@
      * @category Factory
      */
     static forRecord (aRecord) {
-        const subnode = SvDataStoreRecord.clone()
-        subnode.setTitle(aRecord.type + " " + aRecord.id)
+        const subnode = SvDataStoreRecord.clone();
+        subnode.setTitle(aRecord.type + " " + aRecord.id);
         //subnode.setTitle(aRecord.id)
-        subnode.setKey(aRecord.id)
-        subnode.setStore(this.defaultStore()) //// <-------------------- avoid this?
-        const size = JSON.stableStringifyWithStdOptions(aRecord).length
-        subnode.setSubtitle(size.byteSizeDescription())
-        return subnode
+        subnode.setKey(aRecord.id);
+        subnode.setStore(this.defaultStore()); //// <-------------------- avoid this?
+        const size = JSON.stableStringifyWithStdOptions(aRecord).length;
+        subnode.setSubtitle(size.byteSizeDescription());
+        return subnode;
     }
-    
+
 }.initThisClass());

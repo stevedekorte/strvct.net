@@ -8,7 +8,7 @@
  * @class FirestoreImage
  * @extends SvStorableNode
  * @classdesc Represents an image stored in Firebase Storage
- * 
+ *
  * This class handles uploading images to Firebase Storage and
  * maintaining references to the uploaded images with their public URLs.
  */
@@ -144,23 +144,23 @@
      */
     getFirebaseStorage () {
         // Check if Firebase is available globally
-        if (typeof firebase !== 'undefined' && firebase && firebase.storage) {
+        if (typeof firebase !== "undefined" && firebase && firebase.storage) {
             try {
                 return firebase.storage();
             } catch (error) {
                 throw new Error(`Firebase Storage initialization failed: ${error.message}`);
             }
         }
-        
+
         // Check if it's available on window
-        if (typeof window !== 'undefined' && window.firebase && window.firebase.storage) {
+        if (typeof window !== "undefined" && window.firebase && window.firebase.storage) {
             try {
                 return window.firebase.storage();
             } catch (error) {
                 throw new Error(`Firebase Storage initialization failed: ${error.message}`);
             }
         }
-        
+
         throw new Error("Firebase Storage is not available - ensure Firebase libraries are loaded");
     }
 
@@ -211,7 +211,7 @@
     hasPublicUrl () {
         return this.publicUrl() !== null && this.publicUrl() !== "";
     }
-    
+
     async asyncCompleteUploadIfNeeded () {
         if (this.hasPublicUrl()) {
             return;
@@ -235,7 +235,7 @@
 
             // Generate a unique filename based on the label
             const label = this.imageLabel() || "image";
-            const sanitizedLabel = label.toLowerCase().replace(/[^a-z0-9]/g, '_');
+            const sanitizedLabel = label.toLowerCase().replace(/[^a-z0-9]/g, "_");
             const timestamp = Date.now();
             const filename = `${sanitizedLabel}_${timestamp}.png`;
 
@@ -243,51 +243,51 @@
             const accountApi = UoAccountServerApi.clone();
             const authToken = await accountApi.authToken();
             const accountServerUrl = accountApi.baseUrl || accountApi.accountUrl();
-            
+
             // Remove trailing slash if present
-            const baseUrl = accountServerUrl.endsWith('/') ? accountServerUrl.slice(0, -1) : accountServerUrl;
+            const baseUrl = accountServerUrl.endsWith("/") ? accountServerUrl.slice(0, -1) : accountServerUrl;
             const uploadUrlEndpoint = baseUrl + "/storage/upload-url";
-            
+
             if (!authToken) {
                 throw new Error("No auth token found. Please log in first.");
             }
-            
+
             console.log("FirestoreImage.uploadToFirebase: Getting upload URL for:", filename);
-            
+
             // Use SvXhrRequest for consistent error handling
             const request = SvXhrRequest.clone();
             request.setUrl(uploadUrlEndpoint);
             request.setMethod("POST");
             request.setTimeoutPeriodInMs(30000); // 30 second timeout
             request.setHeaders({
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${authToken}`
             });
             request.setBody(JSON.stringify({
                 filename: filename,
-                contentType: 'image/png',
-                path: 'omnireference'
+                contentType: "image/png",
+                path: "omnireference"
             }));
-            
+
             await request.asyncSend();
-            
+
             // Check if request had an error
             if (request.error() || request.hasErrorStatusCode()) {
                 // SvXhrRequest now properly extracts nested error structures like error.message
                 const errorMessage = request.error() ? request.error().message : request.causeOfError();
                 throw new Error(`Failed to get upload URL: ${errorMessage}`);
             }
-            
+
             // Success - parse the response
             const responseText = request.responseText();
             const uploadData = JSON.parse(responseText);
-            
+
             this.setUploadStatus("uploading to Firebase...");
 
             // Check if we need to use direct upload (emulator fallback)
             if (uploadData.useDirectUpload) {
                 console.log("FirestoreImage.uploadToFirebase: Using direct upload for emulator");
-                
+
                 // Use the direct upload endpoint
                 const directRequest = SvXhrRequest.clone();
                 const directUrl = baseUrl + "/storage/upload-direct";
@@ -295,47 +295,47 @@
                 directRequest.setMethod("POST");
                 directRequest.setTimeoutPeriodInMs(30000); // 30 second timeout
                 directRequest.setHeaders({
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${authToken}`
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${authToken}`
                 });
                 directRequest.setBody(JSON.stringify({
                     fullPath: uploadData.fullPath,
                     contentType: uploadData.contentType,
                     fileData: this.dataUrl() // Send the data URL directly
                 }));
-                
+
                 await directRequest.asyncSend();
-                
+
                 // Check if direct upload had an error
                 if (directRequest.error() || directRequest.hasErrorStatusCode()) {
                     const errorMessage = directRequest.error() ? directRequest.error().message : directRequest.causeOfError();
                     throw new Error(`Direct upload failed: ${errorMessage}`);
                 }
-                
+
                 // Parse the response
                 const directResponse = JSON.parse(directRequest.responseText());
                 // Fix the bucket URL if it has the wrong domain
                 let publicUrl = directResponse.publicUrl;
-                if (publicUrl && publicUrl.includes('.firebasestorage.app')) {
-                    publicUrl = publicUrl.replace('.firebasestorage.app', '.appspot.com');
+                if (publicUrl && publicUrl.includes(".firebasestorage.app")) {
+                    publicUrl = publicUrl.replace(".firebasestorage.app", ".appspot.com");
                     console.log("Fixed bucket URL from .firebasestorage.app to .appspot.com");
                 }
-                
+
                 // For omnireference images, we need real public URLs (not emulator)
                 // so external services like Midjourney can access them
                 // Don't convert to emulator URLs even in local development
                 console.log("Using real Firebase Storage URL for public accessibility");
-                
+
                 this.setPublicUrl(publicUrl);
                 this.setStoragePath(directResponse.fullPath);
-                
+
             } else {
                 // Standard upload with signed URL
                 // Convert data URL to blob
                 const blob = await this.dataUrlToBlob(this.dataUrl());
 
                 console.log("FirestoreImage.uploadToFirebase: Uploading image to Firebase Storage");
-                
+
                 // Use SvXhrRequest for the upload
                 const uploadRequest = SvXhrRequest.clone();
                 uploadRequest.setUrl(uploadData.uploadUrl);
@@ -344,9 +344,9 @@
                 // Don't set Content-Type header - let browser handle it for signed URLs
                 uploadRequest.setHeaders({});
                 uploadRequest.setBody(blob);
-                
+
                 await uploadRequest.asyncSend();
-                
+
                 // Check if upload had an error
                 if (uploadRequest.error() || uploadRequest.hasErrorStatusCode()) {
                     const errorMessage = uploadRequest.error() ? uploadRequest.error().message : uploadRequest.causeOfError();
@@ -356,13 +356,13 @@
                 // Store the results
                 // Fix the bucket URL if it has the wrong domain
                 let publicUrl = uploadData.publicUrl;
-                if (publicUrl && publicUrl.includes('.firebasestorage.app')) {
-                    publicUrl = publicUrl.replace('.firebasestorage.app', '.appspot.com');
+                if (publicUrl && publicUrl.includes(".firebasestorage.app")) {
+                    publicUrl = publicUrl.replace(".firebasestorage.app", ".appspot.com");
                     console.log("Fixed bucket URL from .firebasestorage.app to .appspot.com");
                 }
                 this.setPublicUrl(publicUrl);
                 // Only set storage path if it's actually a path, not just the bucket
-                if (uploadData.fullPath && uploadData.fullPath.includes('/')) {
+                if (uploadData.fullPath && uploadData.fullPath.includes("/")) {
                     this.setStoragePath(uploadData.fullPath);
                 } else {
                     console.warn("Invalid storage path received:", uploadData.fullPath);
@@ -378,11 +378,11 @@
                     }
                 }
             }
-            
+
             // Set common metadata
             this.setUploadMetadata({
                 filename: filename,
-                contentType: uploadData.contentType || 'image/png',
+                contentType: uploadData.contentType || "image/png",
                 uploadedAt: new Date().toISOString(),
                 expires: uploadData.expires
             });
@@ -404,10 +404,10 @@
      * @category Helper
      */
     async dataUrlToBlob (dataUrl) {
-        
+
         // For other types, use the original method
         return new Promise((resolve) => {
-            const arr = dataUrl.split(',');
+            const arr = dataUrl.split(",");
             const mime = arr[0].match(/:(.*?);/)[1];
             const bstr = atob(arr[1]);
             let n = bstr.length;
@@ -418,7 +418,7 @@
             resolve(new Blob([u8arr], { type: mime }));
         });
     }
-    
+
 
     /**
      * @description Deletes the image from Firebase Storage
@@ -468,13 +468,13 @@
             if (this.publicUrl()) {
                 console.log("Attempting to download from public URL:", this.publicUrl());
                 console.log("Storage path:", this.storagePath());
-                
+
                 // For Firebase Storage URLs, try direct fetch first (they usually have auth tokens in the URL)
                 try {
                     const response = await fetch(this.publicUrl());
                     if (response.ok) {
                         const blob = await response.blob();
-                        
+
                         // Convert blob to data URL
                         const reader = new FileReader();
                         const dataUrl = await new Promise((resolve, reject) => {
@@ -482,7 +482,7 @@
                             reader.onerror = reject;
                             reader.readAsDataURL(blob);
                         });
-                        
+
                         this.setDataUrl(dataUrl);
                         this.setUploadStatus("downloaded");
                         return;
@@ -492,12 +492,12 @@
                 } catch (fetchError) {
                     console.log("Direct fetch failed:", fetchError.message);
                 }
-                
+
                 // If direct fetch failed and it's a Firebase Storage URL, try SDK
                 const storage = this.getFirebaseStorage();
-                if (this.publicUrl().includes('firebasestorage.googleapis.com') && storage) {
+                if (this.publicUrl().includes("firebasestorage.googleapis.com") && storage) {
                     console.log("Attempting Firebase SDK download as fallback");
-                    
+
                     // Extract the actual file path from the URL
                     const url = new URL(this.publicUrl());
                     const pathMatch = url.pathname.match(/\/o\/([^?]+)/);
@@ -505,18 +505,18 @@
                         const encodedPath = pathMatch[1];
                         const decodedPath = decodeURIComponent(encodedPath);
                         console.log("Extracted path from URL:", decodedPath);
-                        
+
                         try {
                             const fileRef = storage.ref(decodedPath);
                             const downloadUrl = await fileRef.getDownloadURL();
                             console.log("Got fresh download URL from Firebase SDK:", downloadUrl);
-                            
+
                             const response = await fetch(downloadUrl);
                             if (!response.ok) {
                                 throw new Error(`Failed to download via SDK: ${response.status}`);
                             }
                             const blob = await response.blob();
-                            
+
                             // Convert blob to data URL
                             const reader = new FileReader();
                             const dataUrl = await new Promise((resolve, reject) => {
@@ -524,13 +524,13 @@
                                 reader.onerror = reject;
                                 reader.readAsDataURL(blob);
                             });
-                            
+
                             this.setDataUrl(dataUrl);
                             this.setUploadStatus("downloaded");
                             return;
                         } catch (sdkError) {
                             // Check if it's a file-not-found error
-                            if (sdkError.code === 'storage/object-not-found') {
+                            if (sdkError.code === "storage/object-not-found") {
                                 console.log("File not found in Firebase Storage");
                                 this.setDataUrl(null);
                                 this.setUploadStatus("not found");
@@ -542,7 +542,7 @@
                         }
                     }
                 }
-                
+
                 // If we got here, nothing worked
                 throw new Error("Failed to download image from Firebase Storage");
             }
@@ -557,14 +557,14 @@
 
             // Get a reference to the file and download it
             const fileRef = storage.ref(this.storagePath());
-            
+
             // Get the download URL
             const downloadUrl = await fileRef.getDownloadURL();
-            
+
             // Fetch the image and convert to data URL
             const response = await fetch(downloadUrl);
             const blob = await response.blob();
-            
+
             // Convert blob to data URL
             const reader = new FileReader();
             const dataUrl = await new Promise((resolve, reject) => {
@@ -572,13 +572,13 @@
                 reader.onerror = reject;
                 reader.readAsDataURL(blob);
             });
-            
+
             this.setDataUrl(dataUrl);
             this.setUploadStatus("downloaded");
 
         } catch (error) {
             // Check if it's a file-not-found error
-            if (error.code === 'storage/object-not-found') {
+            if (error.code === "storage/object-not-found") {
                 console.log("File not found in Firebase Storage");
                 this.setDataUrl(null);
                 this.setError("");
@@ -638,7 +638,7 @@
 
         // Set the data URL from the SvImage
         this.setDataUrl(imageData);
-        
+
         // Optionally set a label based on the hash filename
         if (svImage.asyncGetHashFileName) {
             try {

@@ -10,99 +10,99 @@
  */
 "use strict";
 
-(class AiJsonRequest extends AiRequest { 
+(class AiJsonRequest extends AiRequest {
 
-  initPrototypeSlots () {
+    initPrototypeSlots () {
     /**
      * @member {JsonStreamReader|null} jsonStreamReader
      * @category Data
      */
-    {
-      const slot = this.newSlot("jsonStreamReader", null);
-      slot.setSlotType("JsonStreamReader");
-    }
+        {
+            const slot = this.newSlot("jsonStreamReader", null);
+            slot.setSlotType("JsonStreamReader");
+        }
 
-    /**
+        /**
      * @member {number} containerChunkLevel - depth of json to call onStreamJsonChunk(json)
      * @category Configuration
      */
-    {
-      const slot = this.newSlot("containerChunkLevel", 2);
-      slot.setSlotType("Number");
+        {
+            const slot = this.newSlot("containerChunkLevel", 2);
+            slot.setSlotType("Number");
+        }
     }
-  }
 
-  /**
+    /**
    * @description Initializes the AiJsonRequest
    * @category Initialization
    */
-  init () {
-    super.init();
-    this.setIsDebugging(true);
+    init () {
+        super.init();
+        this.setIsDebugging(true);
 
-    const reader = JsonStreamReader.clone();
-    reader.setDelegate(this);
-    this.setJsonStreamReader(reader);
-  }
+        const reader = JsonStreamReader.clone();
+        reader.setDelegate(this);
+        this.setJsonStreamReader(reader);
+    }
 
-  /**
+    /**
    * @description Sets up the request for streaming
    * @returns {AiJsonRequest} The current instance
    * @category Setup
    */
-  setupForStreaming () {
-    return this;
-  }
+    setupForStreaming () {
+        return this;
+    }
 
-  /**
+    /**
    * @description Asynchronously sends the request and streams the response
    * @returns {Promise}
    * @category Network
    */
-  async asyncSendAndStreamResponse () {
-    if (!this.isContinuation()) {
-      this.jsonStreamReader().beginJsonStream();
+    async asyncSendAndStreamResponse () {
+        if (!this.isContinuation()) {
+            this.jsonStreamReader().beginJsonStream();
+        }
+        return super.asyncSendAndStreamResponse();
     }
-    return super.asyncSendAndStreamResponse();
-  }
 
-  /**
+    /**
    * @description Reads XHR lines and processes them
    * @private
    * @category Data Processing
    */
-  readXhrLines () {
-    try {
-      const newText = this.readRemaining();
-      if (newText) {
-        this.jsonStreamReader().onStreamJson(newText);
-      }
-    } catch (error) {
-      this.onError(error);
-      this.xhrPromise().callRejectFunc(new Error(error));      
+    readXhrLines () {
+        try {
+            const newText = this.readRemaining();
+            if (newText) {
+                this.jsonStreamReader().onStreamJson(newText);
+            }
+        } catch (error) {
+            this.onError(error);
+            this.xhrPromise().callRejectFunc(new Error(error));
+        }
     }
-  }
 
-  /**
+    /**
    * @description Handles JSON stream reader errors
    * @param {JsonStreamReader} reader - The JSON stream reader
    * @param {Error} error - The error that occurred
    * @category Error Handling
    */
-  onJsonStreamReaderError (reader, error) {
-    this.setError(error);
-    this.abort();
-  }
+    onJsonStreamReaderError (reader, error) {
+        this.setError(error);
+        this.abort();
+    }
 
-  /**
+    /**
    * @description Handles popped containers from the JSON stream reader
    * @param {JsonStreamReader} reader - The JSON stream reader
    * @param {Object} json - The JSON object popped from the container
    * @throws {Error} Throws an error if not overridden by subclass
    * @category Data Processing
    */
-  onJsonStreamReaderPopContainer (reader, json) {
-    throw new Error(this.svType() + " onJsonStreamReaderPopContainer(reader, json) should be overridden by subclass");
-  }
+    onJsonStreamReaderPopContainer (reader, json) {
+        throw new Error(this.svType() + " onJsonStreamReaderPopContainer(reader, json) should be overridden by subclass");
+    }
 
 }).initThisClass();

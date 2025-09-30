@@ -3,7 +3,7 @@
  * @class ImageWellView
  * @extends NodeView
  * @classdesc ImageWellView
- * 
+ *
  * - designed to contain an ImageView
  * - can have its own frame and decoration
  * - supports drag & drop of images
@@ -78,7 +78,7 @@
         this.tellParentViews("didUpdateImageWellView", this);
         return this;
     }
-    
+
     /**
      * @description Checks if the image well is editable.
      * @returns {Boolean} True if editable, false otherwise.
@@ -88,7 +88,7 @@
         // we need this to override the normal isContentEditable return value
         return this._isEditable;
     }
-    
+
     /**
      * @description Sets the editable state of the image well.
      * @param {Boolean} aBool - The new editable state.
@@ -102,7 +102,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description Highlights the image well during drag operations.
      * @category Visual Feedback
@@ -110,7 +110,7 @@
     dragHighlight () {
         this.setBackgroundColor("rgba(128, 128, 128, 0.5)");
     }
-    
+
     /**
      * @description Removes the highlight from the image well after drag operations.
      * @category Visual Feedback
@@ -118,7 +118,7 @@
     dragUnhighlight () {
         this.setBackgroundColor("transparent");
     }
-    
+
     /**
      * @description Checks if the image well is full (contains an image).
      * @returns {Boolean} True if full, false otherwise.
@@ -128,7 +128,7 @@
         //console.log("this.imageView().dataURL()  = ", this.imageView().dataURL() );
         return this.subviews().length > 0;
     }
-    
+
     /**
      * @description Determines if the image well accepts drops.
      * @param {Event} event - The drop event.
@@ -137,7 +137,7 @@
      */
     acceptsDrop (event) {
         //return true;
-        return this.isEditable();     
+        return this.isEditable();
     }
 
     /*
@@ -171,7 +171,7 @@
     value () {
         return this.imageDataUrl();
     }
-    
+
     /**
      * @description Sets the image data URL for the image well.
      * @param {string} dataURL - The image data URL.
@@ -184,7 +184,7 @@
         if (this.hasImageUrl(dataURL)) {
             return this;
         }
-        
+
         this.removeAllSubviews();
 
         const v = ImageView.clone();
@@ -221,7 +221,7 @@
         }
         return false;
     }
-    
+
     /**
      * @description Gets the current image data URL.
      * @returns {string|null} The image data URL or null if not set.
@@ -234,7 +234,7 @@
         }
         return null;
     }
-    
+
 
     // need these as method name is constructed from MIME type
 
@@ -276,9 +276,9 @@
     droppedImageData (dataChunk) {
         this.setImageDataUrl(dataChunk.dataUrl());
         this.scheduleSyncToNode();
-        return this;   
+        return this;
     }
-    
+
     /**
      * @description Called before removing a subview.
      * @param {Object} aSubview - The subview being removed.
@@ -293,5 +293,5 @@
         }
         return this;
     }
-    
+
 }.initThisClass());

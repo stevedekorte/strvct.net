@@ -3,7 +3,7 @@
  * @class SvVideoWellView
  * @extends NodeView
  * @classdesc SvVideoWellView
- * 
+ *
  * - designed to contain a SvVideoView
  * - can have its own frame and decoration
  * - supports drag & drop of videos
@@ -79,7 +79,7 @@
         this.tellParentViews("didUpdateVideoWellView", this);
         return this;
     }
-    
+
     /**
      * @description Checks if the video well is editable.
      * @returns {Boolean} True if editable, false otherwise.
@@ -88,7 +88,7 @@
     isEditable () {
         return this._isEditable;
     }
-    
+
     /**
      * @description Sets the editable state of the video well.
      * @param {Boolean} aBool - The new editable state.
@@ -102,7 +102,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description Highlights the video well during drag operations.
      * @category Visual Feedback
@@ -110,7 +110,7 @@
     dragHighlight () {
         this.setBackgroundColor("rgba(128, 128, 128, 0.5)");
     }
-    
+
     /**
      * @description Removes the highlight from the video well after drag operations.
      * @category Visual Feedback
@@ -118,7 +118,7 @@
     dragUnhighlight () {
         this.setBackgroundColor("transparent");
     }
-    
+
     /**
      * @description Checks if the video well is full (contains a video).
      * @returns {Boolean} True if full, false otherwise.
@@ -127,7 +127,7 @@
     isFull () {
         return this.subviews().length > 0;
     }
-    
+
     /**
      * @description Determines if the video well accepts drops.
      * @param {Event} event - The drop event.
@@ -157,7 +157,7 @@
     value () {
         return this.videoDataUrl();
     }
-    
+
     /**
      * @description Sets the video data URL for the video well.
      * @param {string} dataURL - The video data URL or blob URL.
@@ -170,7 +170,7 @@
         if (this.hasVideoUrl(dataURL)) {
             return this;
         }
-        
+
         this.removeAllSubviews();
 
         const v = SvVideoView.clone();
@@ -201,7 +201,7 @@
         }
         return false;
     }
-    
+
     /**
      * @description Gets the current video data URL.
      * @returns {string|null} The video data URL or null if not set.
@@ -214,7 +214,7 @@
         }
         return null;
     }
-    
+
     // need these as method name is constructed from MIME type
 
     /**
@@ -253,9 +253,9 @@
     droppedVideoData (dataChunk) {
         this.setVideoDataUrl(dataChunk.dataUrl());
         this.scheduleSyncToNode();
-        return this;   
+        return this;
     }
-    
+
     /**
      * @description Called before removing a subview.
      * @param {Object} aSubview - The subview being removed.
@@ -270,5 +270,5 @@
         }
         return this;
     }
-    
+
 }.initThisClass());

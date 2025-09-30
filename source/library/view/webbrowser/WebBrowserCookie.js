@@ -7,7 +7,7 @@
  * @extends ProtoClass
  * @classdesc Abstraction for browser cookie management.
  * Provides methods for getting, setting, and deleting cookies with proper domain handling.
- * 
+ *
  * Usage example:
  * WebBrowserCookie.shared().setCookie("myCookie", myCookieValue, 400 * 24 * 60 * 60);
  * const myCookieValue = WebBrowserCookie.shared().getCookie("myCookie");
@@ -15,7 +15,7 @@
  */
 
 (class WebBrowserCookie extends ProtoClass {
-    
+
     /**
      * @static
      * @description Initializes the class as a singleton.
@@ -24,7 +24,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -32,7 +32,7 @@
     initPrototypeSlots () {
         // No additional slots needed for this utility class
     }
-    
+
     /**
      * @description Initializes the WebBrowserCookie instance.
      * @returns {WebBrowserCookie} The initialized instance.
@@ -51,11 +51,11 @@
      */
     getCookie (name) {
         if (!document.cookie) return null;
-        const cookies = document.cookie.split(';');
+        const cookies = document.cookie.split(";");
         for (let cookie of cookies) {
-            const [key, ...valParts] = cookie.trim().split('=');
+            const [key, ...valParts] = cookie.trim().split("=");
             if (key === name) {
-                return decodeURIComponent(valParts.join('='));
+                return decodeURIComponent(valParts.join("="));
             }
         }
         return null;
@@ -86,15 +86,15 @@
         cookieStr += `; Max-Age=${maxAgeSeconds}`;
         cookieStr += `; Path=${path}`;
         cookieStr += `; SameSite=${sameSite}`;
-        
+
         if (domain) {
             cookieStr += `; Domain=${domain}`;
         }
-        
+
         if (secure) {
-            cookieStr += `; Secure`;
+            cookieStr += "; Secure";
         }
-        
+
         document.cookie = cookieStr;
         return this;
     }
@@ -115,11 +115,11 @@
         } = options;
 
         let cookieStr = `${encodeURIComponent(name)}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=${path}`;
-        
+
         if (domain) {
             cookieStr += `; Domain=${domain}`;
         }
-        
+
         document.cookie = cookieStr;
         return this;
     }
@@ -131,13 +131,13 @@
      */
     detectDomain () {
         const hostname = window.location.hostname;
-        
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            return 'localhost';
-        } else if (hostname.endsWith('.undreamedof.ai') || hostname === 'undreamedof.ai') {
-            return '.undreamedof.ai';
+
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+            return "localhost";
+        } else if (hostname.endsWith(".undreamedof.ai") || hostname === "undreamedof.ai") {
+            return ".undreamedof.ai";
         }
-        
+
         // For other domains, let the browser handle it
         return null;
     }
@@ -149,7 +149,7 @@
      */
     shouldUseSecureFlag () {
         // Use secure flag for HTTPS connections
-        return window.location.protocol === 'https:';
+        return window.location.protocol === "https:";
     }
 
     /**
@@ -176,7 +176,7 @@
      * @category Security
      */
     isSecureConnection () {
-        return this.protocol() === 'https:';
+        return this.protocol() === "https:";
     }
 
     /**
@@ -186,7 +186,7 @@
      */
     isLocalhost () {
         const hostname = this.hostname();
-        return hostname === 'localhost' || hostname === '127.0.0.1';
+        return hostname === "localhost" || hostname === "127.0.0.1";
     }
 
     /**
@@ -197,10 +197,10 @@
     getAllCookies () {
         const cookies = {};
         if (document.cookie) {
-            document.cookie.split(';').forEach(cookie => {
-                const [key, ...valParts] = cookie.trim().split('=');
+            document.cookie.split(";").forEach(cookie => {
+                const [key, ...valParts] = cookie.trim().split("=");
                 if (key) {
-                    cookies[key] = decodeURIComponent(valParts.join('='));
+                    cookies[key] = decodeURIComponent(valParts.join("="));
                 }
             });
         }
@@ -224,4 +224,4 @@
         return dict;
     }
 
-}.initThisClass()); 
+}.initThisClass());

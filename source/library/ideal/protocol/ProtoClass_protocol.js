@@ -1,5 +1,5 @@
 /**
-* @module library.ideal.protocol 
+* @module library.ideal.protocol
 */
 
 "use strict";
@@ -8,7 +8,7 @@
 * @class ProtoClass_protocol
 * @extends ProtoClass
 * Extends the Protocol class with some methods for working with protocols.
-* 
+*
 * ## Implementing protocols
 * ProtoClass subclasses that implement a protocol can declare this by calling the addProtocol(protocolClass) method.
 * This is typically within their initPrototype() method.
@@ -34,7 +34,7 @@
     * @category Protocol Management
     */
     static protocolWithName (protocolClassName) {
-    Type.assertString(protocolClassName);
+        Type.assertString(protocolClassName);
         const protocolClass = SvGlobals.globals()[protocol];
         if (protocolClass) {
             if (protocolClass.isKindOf(Protocol)) {
@@ -52,16 +52,16 @@
     */
     addProtocol (protocol) {
     // Ensure protocol is a subclass of Protocol.
-    assert(protocol.isClass() && protocol.isKindOf(Protocol), "Protocol " + protocol + " is not a subclass of Protocol");
+        assert(protocol.isClass() && protocol.isKindOf(Protocol), "Protocol " + protocol + " is not a subclass of Protocol");
 
-    // Add protocol to set of protocols.
-    if (this.methodsConformToProtocol(protocol)) {
-        this.protocols().add(protocol);
-    } else {
-        throw new Error("Protocol " + protocol + " not found in " + this);
-    }
+        // Add protocol to set of protocols.
+        if (this.methodsConformToProtocol(protocol)) {
+            this.protocols().add(protocol);
+        } else {
+            throw new Error("Protocol " + protocol + " not found in " + this);
+        }
 
-    protocol.addImplementer(this.thisClass());
+        protocol.addImplementer(this.thisClass());
     }
 
     /**
@@ -70,7 +70,7 @@
     * @category Protocol Analysis
     */
     allProtocolMethodNames () {
-    return this.protocols().allSlotsMap().valuesArray().map(slot => slot.name()).unique();
+        return this.protocols().allSlotsMap().valuesArray().map(slot => slot.name()).unique();
     }
 
     /**
@@ -80,7 +80,7 @@
     * @category Protocol Analysis
     */
     methodsConformToProtocol (protocol) {
-    return this.protocols().allSlotsMap().valuesArray().select(slot => slot.conformsToProtocol(protocol));
+        return this.protocols().allSlotsMap().valuesArray().select(slot => slot.conformsToProtocol(protocol));
     }
 
     /**
@@ -90,7 +90,7 @@
     * @category Protocol Analysis
     */
     conformsToProtocol (protocol) {
-    return this.protocols().has(protocol);
+        return this.protocols().has(protocol);
     }
 
     /**
@@ -99,7 +99,7 @@
     * @category Protocol Validation
     */
     assertConformsToProtocol (protocol) {
-    assert(this.conformsToProtocol(protocol), "Protocol " + protocol + " not found in " + this);
+        assert(this.conformsToProtocol(protocol), "Protocol " + protocol + " not found in " + this);
     }
 
     /**
@@ -108,7 +108,7 @@
     * @category Slot Analysis
     */
     allSlotsNamesSet () {
-    return this.allSlotsMap().keysSet();
+        return this.allSlotsMap().keysSet();
     }
 
     /**
@@ -118,7 +118,7 @@
     * @category Method Analysis
     */
     implementsMethodNamesSet (methodNamesSet) {
-    return methodNamesSet.isSubsetOf(this.allSlotsNamesSet());
+        return methodNamesSet.isSubsetOf(this.allSlotsNamesSet());
     }
 
     /**
@@ -127,7 +127,7 @@
     * @category Method Validation
     */
     assertImplementsMethodNamesSet (methodNamesSet) {
-    assert(this.implementsMethodNamesSet(methodNamesSet), this.svType() + " is missing methods: " + methodNamesSet.difference(this.allSlotsNamesSet()));
+        assert(this.implementsMethodNamesSet(methodNamesSet), this.svType() + " is missing methods: " + methodNamesSet.difference(this.allSlotsNamesSet()));
     }
 
 }).initThisCategory();

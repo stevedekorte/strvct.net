@@ -8,7 +8,7 @@
  * @classdesc Represents an image resource.
  */
 (class SvImage extends SvResource {
-    
+
     /**
      * @static
      * @description Returns an array of supported file extensions for images.
@@ -16,7 +16,7 @@
      * @category File Management
      */
     static supportedExtensions () {
-        return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"]
+        return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"];
     }
 
     /**
@@ -63,7 +63,7 @@
      * @category Metadata
      */
     title () {
-        return this.path().fileName()
+        return this.path().fileName();
     }
 
     /**
@@ -72,7 +72,7 @@
      * @category Metadata
      */
     subtitle () {
-        return this.path().pathExtension()
+        return this.path().pathExtension();
     }
 
     onUpdateSlotDataURL () {
@@ -86,9 +86,9 @@
      * @category Lifecycle
      */
     onDidLoad () {
-        super.onDidLoad()
-        this.setDataUrl(this.data())
-        return this
+        super.onDidLoad();
+        this.setDataUrl(this.data());
+        return this;
     }
 
     isLoaded () {
@@ -166,30 +166,30 @@
         }
 
         // Check if it's a data URL or regular URL
-        if (imageData.startsWith('data:')) {
+        if (imageData.startsWith("data:")) {
             // Extract the base64 data part (after the comma)
-            const base64Data = imageData.split(',')[1];
+            const base64Data = imageData.split(",")[1];
             if (!base64Data) {
                 throw new Error("Invalid data URL format");
             }
-            
+
             // Convert base64 to array buffer
             const binaryString = atob(base64Data);
             const bytes = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) {
                 bytes[i] = binaryString.charCodeAt(i);
             }
-            
+
             // Use the TypedArray's promiseSha256Digest method
             const hashBuffer = await bytes.promiseSha256Digest();
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
             return hashHex;
         } else {
             // For URLs, use String's promiseSha256Digest
             const hashBuffer = await imageData.promiseSha256Digest();
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
             return hashHex;
         }
     }
@@ -207,7 +207,7 @@
 
         // Generate hash
         const hash = await this.asyncSha256Hash();
-        
+
         // Determine file extension from data URL
         let extension = "png"; // default
         if (imageData.startsWith("data:image/")) {
@@ -222,7 +222,7 @@
                 }
             }
         }
-        
+
         // Return filename with hash and extension
         return `${hash}.${extension}`;
     }

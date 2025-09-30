@@ -9,7 +9,7 @@
  * @extends OpenAiRequest
  * @classdesc
  * XaiRequest class for handling API requests to Xai.
- * 
+ *
  * Example streaming request:
 
 curl https://api.x.ai/v1/chat/completions \
@@ -62,34 +62,34 @@ curl https://api.x.ai/v1/chat/completions \
 
 (class XaiRequest extends OpenAiRequest {
 
-  /**
+    /**
    * @description Initializes prototype slots for the XaiRequest class.
    * @category Initialization
    */
-  initPrototypeSlots () {
-  }
+    initPrototypeSlots () {
+    }
 
-  /**
+    /**
    * @description Initializes the XaiRequest instance.
    * @category Initialization
    */
-  init () {
-    super.init();
-    this.setIsDebugging(true);
-    this.setIsStreaming(true);
-  }
+    init () {
+        super.init();
+        this.setIsDebugging(true);
+        this.setIsStreaming(true);
+    }
 
-  /**
+    /**
    * @description Sets up the request for streaming.
    * @returns {XaiRequest} The current XaiRequest instance.
    * @category Configuration
    */
-  setupForStreaming () {
+    setupForStreaming () {
     // subclasses should override this method to set up the request for streaming
-    const body = this.bodyJson();
-    body.stream = true;
-    //body.max_tokens = this.outputTokenLimit(); // current max output tokens allowed by Xai
-    return this;
-  }
+        const body = this.bodyJson();
+        body.stream = true;
+        //body.max_tokens = this.outputTokenLimit(); // current max output tokens allowed by Xai
+        return this;
+    }
 
 }).initThisClass();

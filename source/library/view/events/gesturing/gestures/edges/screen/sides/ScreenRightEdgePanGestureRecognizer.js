@@ -15,7 +15,7 @@
  * - onScreenRightEdgePanCancelled
  */
 (class ScreenRightEdgePanGestureRecognizer extends ScreenEdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @returns {void}
@@ -31,9 +31,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("right")
-        return this
+        super.init();
+        this.setEdgeName("right");
+        return this;
     }
 
 }.initThisClass());

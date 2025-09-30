@@ -8,7 +8,7 @@
  * @classdesc Listens to a set of document related events.
  */
 (class DocumentListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots for the DocumentListener class.
      * @category Initialization
@@ -23,8 +23,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -45,7 +45,7 @@
         //this.addEventNameAndMethodName("fullscreenchange", "onBrowserFullScreenChange"); // Document specific
         //this.addEventNameAndMethodName("fullscreenerror", "onBrowserFullScreenError"); // Document specific
 
-        return this
+        return this;
     }
 
     /**
@@ -54,7 +54,7 @@
      * @category Event Handling
      */
     listenTarget () {
-        return document // is this the best way to handle this?
+        return document; // is this the best way to handle this?
     }
-    
+
 }.initThisClass());

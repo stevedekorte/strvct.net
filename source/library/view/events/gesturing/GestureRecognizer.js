@@ -10,26 +10,26 @@
  * @description A class for recognizing gestures.
 
     This class:
-     - listens for events 
+     - listens for events
      - uses logic to detect gestures
      - coordinates which gestures are active with a GestureManager
      - sends delegate messages for gesture state changes
-    
+
     This class supports general gesture logic & helper methods
-    and is intended to be sublclassed to implement particular gesture types. 
+    and is intended to be sublclassed to implement particular gesture types.
     See SlideGestureRecognizer, for an example subclass.
 
     Event Listeners
 
-    Listeners are typically on a particular view's element. 
-    document.body listeners are usually added once the gesture has begun, 
-    in order to track events outside the element. 
+    Listeners are typically on a particular view's element.
+    document.body listeners are usually added once the gesture has begun,
+    in order to track events outside the element.
     The document listeners are then removed once the gesture has ended or cancelled.
 
     Delegate Messages
 
     State change delegate messages are sent to the viewTarget. These are typically:
-    
+
         accepts<GestureType>(aGesture)
         on<GestureType>Begin(aGesture)
         on<GestureType>Move(aGesture)
@@ -38,19 +38,19 @@
 
     Simulating Touches with the Mouse
 
-    Holding the SHIFT key and click-dragging the mouse can be used to simulate 2 finger 
+    Holding the SHIFT key and click-dragging the mouse can be used to simulate 2 finger
     gestures on non-touch devices.
 
     State to track event semantics:
 
         downEvent - set onDownEvent *if* number of touchs is in correct range
-        beginEvent - set when sending begin message - typically in onMove: 
+        beginEvent - set when sending begin message - typically in onMove:
         activePoints() - returns downEvent points for fingers contained in currentEvent
         upEvent - usually set on complete, not used much yet
 
     NOTES
 
-    Browsers may implement their own touch gestures. To prevent these from 
+    Browsers may implement their own touch gestures. To prevent these from
     interfering with our own, be sure to call:
 
         aView.setTouchAction("none")
@@ -59,19 +59,19 @@
 
         html * { touch-action: none; }
 
-    TODO: 
-    
+    TODO:
+
     - rename methods to clearly identify Doc and View related methods
     - move visualizer to separate class?
 
     QUESTIONS:
     If a view has the active gesture control, and a decendent view requests becoming the active
     gesture, the GestureManager will detect this and let the child steal control.
-    
+
 */
 
 (class GestureRecognizer extends ProtoClass {
-    
+
     initPrototypeSlots () {
         /**
          * @member {DomView} viewTarget - the view that the gesture is recognized on
@@ -115,7 +115,7 @@
             slot.setSlotType("Array");
         }
 
-            // listeners
+        // listeners
 
         /**
          * @member {Array} viewListeners - the listeners for view events
@@ -282,7 +282,7 @@
             const slot = this.newSlot("completeMessage", null); // "on<GestureType>Complete",
             slot.setSlotType("String");
         }
-        
+
         // debugging
 
         /**
@@ -309,7 +309,7 @@
             slot.setSlotType("Map");
         }
 
-        // begin pressing 
+        // begin pressing
 
         /**
          * @member {Boolean} isPressing - whether the gesture is pressing
@@ -393,26 +393,26 @@
     }
 
     init () {
-        super.init()
-        this.setListenerClasses([]) // subclasses override this in their
+        super.init();
+        this.setListenerClasses([]); // subclasses override this in their
 
-        this.setViewListeners([])
-        this.setDocListeners([])
+        this.setViewListeners([]);
+        this.setDocListeners([]);
 
-        this.setViewMoveListeners([])
-        this.setDocMoveListeners([])
+        this.setViewMoveListeners([]);
+        this.setDocMoveListeners([]);
 
         //this.setGestureName(this.svType().before("GestureRecognizer"))
-        this.autoSetMessageNames()
-        this.setIsEmulatingTouch(true)
-        this.setFingerViewMap(new Map())
+        this.autoSetMessageNames();
+        this.setIsEmulatingTouch(true);
+        this.setFingerViewMap(new Map());
 
-        this.setIsDebugging(false)
+        this.setIsDebugging(false);
         //this.setIsVisualDebugging(true)
-        return this
+        return this;
     }
 
- 
+
     // -- event helpers --
 
     /**
@@ -425,7 +425,7 @@
         this.setCurrentEvent(null);
         return this;
     }
-    
+
     /**
      * @description Sets the current event.
      * @param {Event} event - The event to set.
@@ -485,10 +485,10 @@
      * @returns {Boolean} Whether the current event is on the target view.
      */
     currentEventIsOnTargetView () {
-        const points = this.pointsForEvent(this.currentEvent())
-        const p = points.first()
-        const view = this.viewTarget()
-        return view.containsPoint(p)
+        const points = this.pointsForEvent(this.currentEvent());
+        const p = points.first();
+        const view = this.viewTarget();
+        return view.containsPoint(p);
         //return points.canDetect(p1 => !view.containsPoint(p1))
     }
 
@@ -500,9 +500,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     setListenerClasses (classNames) {
-        this._listenerClasses = classNames
-        this.filterListenerClassesForTouch()
-        return this
+        this._listenerClasses = classNames;
+        this.filterListenerClassesForTouch();
+        return this;
     }
 
     /**
@@ -512,8 +512,8 @@
     filterListenerClassesForTouch () {
         // if we don't have a touch screen, avoid registering for touch events
         if (!TouchScreen.shared().isSupported()) {
-            const results = this.listenerClasses().filter(name => !name.beginsWith("Touch"))
-            this._listenerClasses = results
+            const results = this.listenerClasses().filter(name => !name.beginsWith("Touch"));
+            this._listenerClasses = results;
         }
     }
 
@@ -529,8 +529,8 @@
             const proto = Object.getClassNamed(className);
             const listener = proto.clone();
             listener.setDelegate(this);
-            return listener
-        })
+            return listener;
+        });
     }
 
     /**
@@ -539,29 +539,29 @@
      * @returns {Array} The new listeners.
      */
     startNewViewListenersForClasses (classesArray) {
-        const listeners = this.newListenersForClasses(classesArray)
+        const listeners = this.newListenersForClasses(classesArray);
         listeners.forEach(listener => {
-            listener.setListenTarget(this.viewTarget().element())
-            listener.setIsDebugging(this.isDebugging())
-            listener.start()
-        })
-        return listeners
+            listener.setListenTarget(this.viewTarget().element());
+            listener.setIsDebugging(this.isDebugging());
+            listener.start();
+        });
+        return listeners;
     }
-    
+
     /**
      * @description Starts new document listeners for the given classes.
      * @param {Array} classesArray - The class names to create listeners for.
      * @returns {Array} The new listeners.
      */
     startNewDocListenersForClasses (classesArray) {
-        const listeners = this.newListenersForClasses(classesArray)
+        const listeners = this.newListenersForClasses(classesArray);
         listeners.forEach(listener => {
-            listener.setUseCapture(true)
-            listener.setListenTarget(window)
-            listener.setIsDebugging(this.isDebugging())
-            listener.start()
-        })
-        return listeners
+            listener.setUseCapture(true);
+            listener.setListenTarget(window);
+            listener.setIsDebugging(this.isDebugging());
+            listener.start();
+        });
+        return listeners;
     }
 
     // --- view listeners ---
@@ -571,10 +571,10 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     startViewListeners () {
-        
-        this.stopViewListeners()
-        this.setViewListeners(this.startNewViewListenersForClasses(this.listenerClasses()))
-        return this
+
+        this.stopViewListeners();
+        this.setViewListeners(this.startNewViewListenersForClasses(this.listenerClasses()));
+        return this;
     }
 
     /**
@@ -582,9 +582,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     stopViewListeners () {
-        this.viewListeners().forEach(listener => listener.stop())
-        this.viewListeners().clear()
-        return this
+        this.viewListeners().forEach(listener => listener.stop());
+        this.viewListeners().clear();
+        return this;
     }
 
     // --- doc listeners ---
@@ -594,9 +594,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     startDocListeners () {
-        this.stopDocListeners()
-        this.setDocListeners(this.startNewDocListenersForClasses(this.listenerClasses()))
-        return this
+        this.stopDocListeners();
+        this.setDocListeners(this.startNewDocListenersForClasses(this.listenerClasses()));
+        return this;
     }
 
     /**
@@ -604,9 +604,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     stopDocListeners () {
-        this.docListeners().forEach(listener => listener.stop())
-        this.docListeners().clear()
-        return this
+        this.docListeners().forEach(listener => listener.stop());
+        this.docListeners().clear();
+        return this;
     }
 
     // -- special case for mouse and touch move events ---
@@ -619,11 +619,11 @@
      */
     didUpdateSlotIsPressing (oldValue, newValue) {
         if (newValue === true) {
-            this.startViewMoveListeners()
-            this.startDocMoveListeners() // is this correct?
+            this.startViewMoveListeners();
+            this.startDocMoveListeners(); // is this correct?
         } else {
-            this.stopViewMoveListeners()
-            this.stopDocMoveListeners() // is this correct?
+            this.stopViewMoveListeners();
+            this.stopDocMoveListeners(); // is this correct?
         }
     }
 
@@ -634,7 +634,7 @@
      * @returns {Array} The move listeners.
      */
     newMoveListeners () {
-        return this.listenersForClasses(this.moveListenerClasses())
+        return this.listenersForClasses(this.moveListenerClasses());
     }
 
     /**
@@ -642,9 +642,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     stopViewMoveListeners () {
-        this.viewMoveListeners().forEach(listener => listener.stop())
-        this.viewMoveListeners().clear()
-        return this
+        this.viewMoveListeners().forEach(listener => listener.stop());
+        this.viewMoveListeners().clear();
+        return this;
     }
 
     /**
@@ -652,10 +652,10 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     startViewMoveListeners () {
-        
-        this.stopViewMoveListeners()
-        this.setViewMoveListeners(this.startNewViewListenersForClasses(this.moveListenerClasses()))
-        return this
+
+        this.stopViewMoveListeners();
+        this.setViewMoveListeners(this.startNewViewListenersForClasses(this.moveListenerClasses()));
+        return this;
     }
 
     // --- doc move listeners ---
@@ -665,9 +665,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     stopDocMoveListeners () {
-        this.docMoveListeners().forEach(listener => listener.stop())
-        this.docMoveListeners().clear()
-        return this
+        this.docMoveListeners().forEach(listener => listener.stop());
+        this.docMoveListeners().clear();
+        return this;
     }
 
     /**
@@ -675,9 +675,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     startDocMoveListeners () {
-        this.stopDocMoveListeners()
-        this.setDocMoveListeners(this.startNewDocListenersForClasses(this.moveListenerClasses()))
-        return this
+        this.stopDocMoveListeners();
+        this.setDocMoveListeners(this.startNewDocListenersForClasses(this.moveListenerClasses()));
+        return this;
     }
 
     // ---------------------
@@ -691,9 +691,9 @@
     hasMovedEnough () {
         // intended to be overridden by subclasses
         // e.g. a rotation recognizer might look at how much first two fingers have rotated
-        const m = this.minDistToBegin()
-        const d = this.currentPosition().distanceFrom(this.downPosition())
-        return d >= m
+        const m = this.minDistToBegin();
+        const d = this.currentPosition().distanceFrom(this.downPosition());
+        return d >= m;
     }
 
     /**
@@ -701,7 +701,7 @@
      * @returns {Boolean} Whether the gesture has an acceptable finger count.
      */
     hasAcceptableFingerCount () {
-        const n = this.numberOfFingersDown()
+        const n = this.numberOfFingersDown();
         return  n >= this.minFingersRequired() &&
                 n <= this.maxFingersAllowed();
     }
@@ -715,12 +715,12 @@
             if (SvKeyboard.shared().hasKeysDown()) {
                 // make exception for shift key since we use it to emulate multi-touch
                 if (SvKeyboard.shared().shiftKey().isOnlyKeyDown()) {
-                    return true
+                    return true;
                 }
-                return false
+                return false;
             }
         }
-        return true
+        return true;
     }
 
     /**
@@ -728,8 +728,8 @@
      * @returns {Boolean} Whether the gesture can begin.
      */
     canBegin () {
-        return !this.isActive() && 
-                this.hasMovedEnough() && 
+        return !this.isActive() &&
+                this.hasMovedEnough() &&
                 this.hasAcceptableFingerCount() &&
                 this.hasAcceptableKeyboardState();
     }
@@ -741,11 +741,11 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     start () {
-        this.startViewListeners()
+        this.startViewListeners();
         // We typically don't want to listen to document level events all the time.
         // Instead, some view events will start and stop the doc listeners.
-        //this.startViewMoveListeners() 
-        return this
+        //this.startViewMoveListeners()
+        return this;
     }
 
     /**
@@ -753,11 +753,11 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     stop () {
-        this.stopViewListeners()
-        this.stopDocListeners()
-        this.stopViewMoveListeners() // is this correct?
-        this.stopDocMoveListeners() // is this correct?
-        return this
+        this.stopViewListeners();
+        this.stopDocListeners();
+        this.stopViewMoveListeners(); // is this correct?
+        this.stopDocMoveListeners(); // is this correct?
+        return this;
     }
 
     /**
@@ -765,8 +765,8 @@
      * @returns {Array} The event listeners.
      */
     allEventListeners () {
-        const sets = [this.viewListeners(), this.docListeners(), this.viewMoveListeners(), this.docMoveListeners()].flat()
-        return sets.map(eventListenerSet => eventListenerSet.allEventListeners()).flat()
+        const sets = [this.viewListeners(), this.docListeners(), this.viewMoveListeners(), this.docMoveListeners()].flat();
+        return sets.map(eventListenerSet => eventListenerSet.allEventListeners()).flat();
     }
 
     // active
@@ -779,8 +779,8 @@
         if (this.shouldRequestActivation()) {
             return GestureManager.shared().requestActiveGesture(this);
         }
-        this.setIsActive(true)
-        return true
+        this.setIsActive(true);
+        return true;
     }
 
     /**
@@ -789,9 +789,9 @@
      */
     isActive () {
         if (this.shouldRequestActivation()) {
-            return GestureManager.shared().activeGesture() === this
+            return GestureManager.shared().activeGesture() === this;
         }
-        return this._isActive
+        return this._isActive;
     }
 
     /**
@@ -802,8 +802,8 @@
         if (this.shouldRequestActivation()) {
             GestureManager.shared().deactivateGesture(this);
         }
-        this.setIsActive(false)
-        return this
+        this.setIsActive(false);
+        return this;
     }
 
     // finish
@@ -813,23 +813,23 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     didFinish () {
-        this.setDidBegin(false)
-        GestureManager.shared().removeBegunGesture(this)
+        this.setDidBegin(false);
+        GestureManager.shared().removeBegunGesture(this);
 
         // why do we do this with a delay?
         // is it needed now to prevent a move
-        this.addTimeout(() => { 
-            GestureManager.shared().removeBegunGesture(this)
+        this.addTimeout(() => {
+            GestureManager.shared().removeBegunGesture(this);
             this.deactivate();
-        }, 0)
+        }, 0);
 
         if (this.shouldRemoveOnComplete() && this.viewTarget()) {
-            this.stop()
-            this.viewTarget().removeGestureRecognizer(this)
+            this.stop();
+            this.viewTarget().removeGestureRecognizer(this);
         }
 
-        this.removeFingerViews()
-        return this
+        this.removeFingerViews();
+        return this;
     }
 
     // subclass helpers
@@ -841,23 +841,23 @@
      * @returns {Any} The result.
      */
     sendDelegateMessage (methodName, argument) {
-        let result = undefined
-        assert(methodName !== null)
-        const vt = this.viewTarget()
+        let result = undefined;
+        assert(methodName !== null);
+        const vt = this.viewTarget();
 
         if (this.isDebugging()) {
-            console.log(this.shortTypeId() + " sending " + methodName + " to " + vt.svTypeId())
+            console.log(this.shortTypeId() + " sending " + methodName + " to " + vt.svTypeId());
         }
 
         //try {
         if (vt) {
             if (vt[methodName]) {
-                result = vt[methodName].call(vt, this, argument)
+                result = vt[methodName].call(vt, this, argument);
             } else {
                 if (this.isDebugging()) {
-                    console.log("gesture delegate missing method " + methodName)
+                    console.log("gesture delegate missing method " + methodName);
                 }
-                result = false
+                result = false;
             }
         }
         /*
@@ -869,12 +869,12 @@
         }
         */
 
-        return result
+        return result;
     }
 
     // points helper
     // maps mouse and touch events to a common list of points (with times and ids) format
-    // so we can share the event handling code for both devices 
+    // so we can share the event handling code for both devices
 
     /**
      * @description Returns the points for the event.
@@ -883,22 +883,22 @@
      */
     pointsForEvent (event) {
         if (Type.isNullOrUndefined(event)) {
-            throw new Error(this.svType() + ".pointsForEvent(event) event is missing")
+            throw new Error(this.svType() + ".pointsForEvent(event) event is missing");
         }
 
         const eventClass = event.__proto__.constructor;
 
         if (eventClass === MouseEvent) {
             //this.logDebug(" got mouse")
-            return Mouse.shared().pointsForEvent(event)
-        } else if (eventClass === TouchEvent) {   
+            return Mouse.shared().pointsForEvent(event);
+        } else if (eventClass === TouchEvent) {
             //this.logDebug(" got touch")
-            return TouchScreen.shared().pointsForEvent(event)
+            return TouchScreen.shared().pointsForEvent(event);
         }
-        
-        console.warn(this.svType() + " can't handle this event type yet: ", event)
 
-        return []
+        console.warn(this.svType() + " can't handle this event type yet: ", event);
+
+        return [];
     }
 
     // all events hook
@@ -910,8 +910,8 @@
      */
     onEvent (event) {
         if (this.isVisualDebugging()) {
-            this.updateOutlineView()
-            this.updateFingerViews()
+            this.updateOutlineView();
+            this.updateFingerViews();
             //this.updateDebugTimer()
         }
     }
@@ -924,9 +924,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onOver (event) {
-        this.setOverEvent(event)
-        this.setCurrentEvent(event)
-        this.onEvent(event)
+        this.setOverEvent(event);
+        this.setCurrentEvent(event);
+        this.onEvent(event);
     }
 
     /**
@@ -935,9 +935,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onDown (event) {
-        this.setDownEvent(event)
-        this.setCurrentEvent(event)
-        this.onEvent(event)
+        this.setDownEvent(event);
+        this.setCurrentEvent(event);
+        this.onEvent(event);
     }
 
     /**
@@ -946,8 +946,8 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMove (event) {
-        this.setCurrentEvent(event)
-        this.onEvent(event)
+        this.setCurrentEvent(event);
+        this.onEvent(event);
     }
 
     /**
@@ -956,9 +956,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onUp (event) {
-        this.setUpEvent(event)
+        this.setUpEvent(event);
         //this.setCurrentEvent(event) // on Windows, the up event may not have any positions
-        this.onEvent(event)
+        this.onEvent(event);
     }
 
     /**
@@ -967,9 +967,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onLeave (event) {
-        this.setLeaveEvent(event)
-        this.setCurrentEvent(event)
-        this.onEvent(event)
+        this.setLeaveEvent(event);
+        this.setCurrentEvent(event);
+        this.onEvent(event);
     }
 
     // --- mouse events ---
@@ -980,8 +980,8 @@
      * @returns {Boolean} Whether the event should be emulated.
      */
     shouldEmulateEvent (event) {
-        return this.isEmulatingTouch() && 
-                event.shiftKey && 
+        return this.isEmulatingTouch() &&
+                event.shiftKey &&
                 event.__proto__.constructor === MouseEvent &&
                 this.pointsForEvent(event).length === 1;
     }
@@ -992,16 +992,16 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     emulateDownIfNeeded (event) {
-        const p1 = this.pointsForEvent(event).first()
+        const p1 = this.pointsForEvent(event).first();
 
         if (this.shouldEmulateEvent(event)) {
             // make a duplicate of the down event point with a different id
-            const p2 = p1.copy().setId("emulatedTouch")
-            p2.setX(p2.x() + 10)
-            p2.setY(p2.y() + 10)
-            event.pushCachedPoint(p2)
+            const p2 = p1.copy().setId("emulatedTouch");
+            p2.setX(p2.x() + 10);
+            p2.setY(p2.y() + 10);
+            event.pushCachedPoint(p2);
         }
-        return this
+        return this;
     }
 
     /**
@@ -1009,11 +1009,11 @@
      * @param {Event} event - The event.
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
-    onMouseDown (event) {      
-          
-        this.emulateDownIfNeeded(event)
-        this.setDownEvent(event)
-        this.onDown(event)
+    onMouseDown (event) {
+
+        this.emulateDownIfNeeded(event);
+        this.setDownEvent(event);
+        this.onDown(event);
     }
 
     /**
@@ -1022,17 +1022,17 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     emulateMoveIfNeeded (event) {
-        const p2 = this.pointsForEvent(event).first()
+        const p2 = this.pointsForEvent(event).first();
 
-        if (this.shouldEmulateEvent(event) && this.downEvent()) {      
+        if (this.shouldEmulateEvent(event) && this.downEvent()) {
             // get down point and current point and add an emulated point on the other side
-            const p1 = this.pointsForEvent(this.downEvent()).first()
-            const v = p2.subtract(p1).negated()
-            const emulatedPoint = p1.add(v).setId("emulatedTouch")
-            event.pushCachedPoint(emulatedPoint)
+            const p1 = this.pointsForEvent(this.downEvent()).first();
+            const v = p2.subtract(p1).negated();
+            const emulatedPoint = p1.add(v).setId("emulatedTouch");
+            event.pushCachedPoint(emulatedPoint);
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -1041,8 +1041,8 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseMove (event) {
-        this.emulateMoveIfNeeded(event)
-        this.onMove(event)
+        this.emulateMoveIfNeeded(event);
+        this.onMove(event);
     }
 
     /**
@@ -1051,7 +1051,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseUp (event) {
-        this.onUp(event)
+        this.onUp(event);
     }
 
     /**
@@ -1060,7 +1060,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseLeave (event) {
-        this.onLeave(event)
+        this.onLeave(event);
     }
 
     // mouse capture events
@@ -1071,7 +1071,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseOverCapture (event) {
-        this.onOver(event)
+        this.onOver(event);
     }
 
     /**
@@ -1080,8 +1080,8 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseDownCapture (event) {
-        this.emulateDownIfNeeded(event)
-        this.onDown(event)
+        this.emulateDownIfNeeded(event);
+        this.onDown(event);
     }
 
     /**
@@ -1090,8 +1090,8 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseMoveCapture (event) {
-        this.emulateMoveIfNeeded(event)
-        this.onMove(event)
+        this.emulateMoveIfNeeded(event);
+        this.onMove(event);
     }
 
     /**
@@ -1100,7 +1100,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseUpCapture (event) {
-        this.onUp(event)
+        this.onUp(event);
     }
 
     /**
@@ -1109,7 +1109,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onMouseLeaveCapture (event) {
-        this.onLeave(event)
+        this.onLeave(event);
     }
 
     // touch events
@@ -1120,7 +1120,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onTouchStart (event) {
-        this.onDown(event)
+        this.onDown(event);
     }
 
     /**
@@ -1129,7 +1129,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onTouchMove (event) {
-        this.onMove(event)
+        this.onMove(event);
     }
 
     /**
@@ -1138,7 +1138,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onTouchEnd (event) {
-        this.onUp(event)
+        this.onUp(event);
     }
 
     /**
@@ -1146,11 +1146,11 @@
      * @param {Event} event - The event.
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
-    onTouchCancel (event) { 
+    onTouchCancel (event) {
         //this.onUp(event)
-        this.cancel()
+        this.cancel();
     }
-    
+
     // touch capture events
 
     /**
@@ -1159,7 +1159,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onTouchStartCapture (event) {
-        this.onDown(event)
+        this.onDown(event);
     }
 
     /**
@@ -1168,7 +1168,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onTouchMoveCapture (event) {
-        this.onMove(event)
+        this.onMove(event);
     }
 
     /**
@@ -1177,7 +1177,7 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     onTouchEndCapture (event) {
-        this.onUp(event)
+        this.onUp(event);
     }
 
     /**
@@ -1187,7 +1187,7 @@
      */
     onTouchCancelCapture (event) {
         //this.onUp(event)
-        this.cancel()
+        this.cancel();
     }
 
     // diff position helper
@@ -1197,7 +1197,7 @@
      * @returns {Point} The difference between the current position and the begin position.
      */
     diffPos () {
-        return this.currentPosition().subtract(this.beginPosition()).floorInPlace() // floor here?
+        return this.currentPosition().subtract(this.beginPosition()).floorInPlace(); // floor here?
     }
 
     /**
@@ -1205,9 +1205,9 @@
      * @returns {Number} The distance between the current position and the begin position.
      */
     distance () {
-        const dp = this.diffPos()
-        const dx = Math.abs(dp.x())
-        const dy = Math.abs(dp.y())
+        const dp = this.diffPos();
+        const dx = Math.abs(dp.x());
+        const dy = Math.abs(dp.y());
         const funcs = {
             left: (dx, dy) => dx,
             right: (dx, dy) => dx,
@@ -1215,8 +1215,8 @@
             down: (dx, dy) => dy,
             x: (dx, dy) => dx,
             y: (dx, dy) => dy
-        }
-        return funcs[this.direction()](dx, dy)
+        };
+        return funcs[this.direction()](dx, dy);
     }
 
     /**
@@ -1225,9 +1225,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     setGestureName (aName) {
-        this._gestureName = aName
-        this.autoSetMessageNames()
-        return this
+        this._gestureName = aName;
+        this.autoSetMessageNames();
+        return this;
     }
 
     /**
@@ -1236,9 +1236,9 @@
      */
     gestureName () {
         if (this._gestureName) {
-            return this._gestureName
+            return this._gestureName;
         }
-        return this.svType().before("GestureRecognizer")
+        return this.svType().before("GestureRecognizer");
     }
 
     /**
@@ -1247,7 +1247,7 @@
      * @returns {String} The default message for the state.
      */
     defaultMessageForState (state) {
-        return "on" + this.gestureName() + state.capitalized()
+        return "on" + this.gestureName() + state.capitalized();
     }
 
     /**
@@ -1255,13 +1255,13 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     autoSetMessageNames () {
-        this.setAcceptMessage("accepts" + this.gestureName())
-        this.setBeginMessage(this.defaultMessageForState("Begin"))
-        this.setMoveMessage(this.defaultMessageForState("Move"))
-        this.setRequestCancelMessage("on" + this.gestureName() + "RequestCancel")
-        this.setCancelledMessage(this.defaultMessageForState("Cancelled"))
-        this.setCompleteMessage(this.defaultMessageForState("Complete"))
-        return this
+        this.setAcceptMessage("accepts" + this.gestureName());
+        this.setBeginMessage(this.defaultMessageForState("Begin"));
+        this.setMoveMessage(this.defaultMessageForState("Move"));
+        this.setRequestCancelMessage("on" + this.gestureName() + "RequestCancel");
+        this.setCancelledMessage(this.defaultMessageForState("Cancelled"));
+        this.setCompleteMessage(this.defaultMessageForState("Complete"));
+        return this;
     }
 
     // sending delegate messages
@@ -1274,15 +1274,15 @@
 
         // see if view accepts the gesture before we begin
         // for now, assume it accepts if it doesn't implement the accept<GestureType> method
-        const vt = this.viewTarget()
+        const vt = this.viewTarget();
         if (vt[this.acceptMessage()]) {
             if (!this.sendDelegateMessage(this.acceptMessage())) {
-                this.cancel()
-                return false
+                this.cancel();
+                return false;
             }
         }
 
-        return true
+        return true;
     }
 
     /**
@@ -1291,14 +1291,14 @@
      */
     sendBeginMessage () {
         if (!this.doesTargetAccept()) {
-            return this
+            return this;
         }
-        
-        this.setDidBegin(true)
-        this.setBeginEvent(this.currentEvent())
-        this.sendDelegateMessage(this.beginMessage())
-        GestureManager.shared().addBegunGesture(this)
-        return this
+
+        this.setDidBegin(true);
+        this.setBeginEvent(this.currentEvent());
+        this.sendDelegateMessage(this.beginMessage());
+        GestureManager.shared().addBegunGesture(this);
+        return this;
     }
 
     /**
@@ -1306,9 +1306,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     sendMoveMessage () {
-        this.sendDelegateMessage(this.moveMessage())
+        this.sendDelegateMessage(this.moveMessage());
         //this.didMove()
-        return this
+        return this;
     }
 
     /**
@@ -1316,9 +1316,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     sendCompleteMessage () {
-        this.sendDelegateMessage(this.completeMessage())
-        this.didFinish()
-        return this
+        this.sendDelegateMessage(this.completeMessage());
+        this.didFinish();
+        return this;
     }
 
     /**
@@ -1326,9 +1326,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     sendCancelledMessage () {
-        this.sendDelegateMessage(this.cancelledMessage())
-        this.didFinish()
-        return this
+        this.sendDelegateMessage(this.cancelledMessage());
+        this.didFinish();
+        return this;
     }
 
     /**
@@ -1338,12 +1338,12 @@
      */
     requestCancel (byGesture) {
         if (this.shouldAcceptCancelRequest()) {
-            this.cancel()
+            this.cancel();
         }
         /*
         const shouldCancel = this.sendDelegateMessage(this.requestCancelMessage(), byGesture)
         //console.log("this.requestCancelMessage() =================== ", this.requestCancelMessage(), " -> ", shouldCancel)
-        if (shouldCancel || Type.isUndefined(shouldCancel)) { 
+        if (shouldCancel || Type.isUndefined(shouldCancel)) {
             this.cancel()
         }
         */
@@ -1354,9 +1354,9 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     cancel () {
-        this.logDebug(" cancel")
+        this.logDebug(" cancel");
         //this.willCancel()
-        this.sendCancelledMessage()
+        this.sendCancelledMessage();
         //this.didCancel()
     }
 
@@ -1377,10 +1377,10 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     cleanup () {
-        this.setDownEvent(null)
-        this.setCurrentEvent(null)
-        this.setUpEvent(null)
-        return this
+        this.setDownEvent(null);
+        this.setCurrentEvent(null);
+        this.setUpEvent(null);
+        return this;
     }
 
     /**
@@ -1388,7 +1388,7 @@
      * @returns {Boolean} Whether the visual debugger should be shown.
      */
     shouldShowVisualDebugger () {
-        return this.hasDownPointsInView() || this.isActive() // || this.isPressing());
+        return this.hasDownPointsInView() || this.isActive(); // || this.isPressing());
     }
 
     // ---  outline view for debugging ---
@@ -1398,13 +1398,13 @@
      * @returns {DomView} The new outline view.
      */
     newOutlineView () {
-        const v = DomView.clone()
-        v.setPointerEvents("none")
-        v.setBorder("1px dashed white")
-        v.setBackgroundColor("transparent")
-        v.setPosition("absolute")
-        v.setZIndex(10000)
-        return v
+        const v = DomView.clone();
+        v.setPointerEvents("none");
+        v.setBorder("1px dashed white");
+        v.setBackgroundColor("transparent");
+        v.setPosition("absolute");
+        v.setZIndex(10000);
+        return v;
     }
 
     /**
@@ -1413,10 +1413,10 @@
      */
     outlineView () {
         if (!this._outlineView) {
-            const v = this.newOutlineView()
-            this._outlineView = v
+            const v = this.newOutlineView();
+            this._outlineView = v;
         }
-        return this._outlineView
+        return this._outlineView;
     }
 
     /**
@@ -1441,19 +1441,18 @@
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
     showOutlineView () {
-        const v = this.outlineView()
+        const v = this.outlineView();
         if (!v.parentView()) {
-            DocumentBody.shared().addSubview(v)
+            DocumentBody.shared().addSubview(v);
         }
-        const vt = this.viewTarget()
-        const bounds = vt.frameInDocument()
+        const vt = this.viewTarget();
+        const bounds = vt.frameInDocument();
 
-        v.setMinAndMaxHeight(bounds.height())
-        v.setMinAndMaxWidth(bounds.width())
-        v.setLeftPx(bounds.x())
-        v.setTopPx(bounds.y())
+        v.setMinAndMaxHeight(bounds.height());
+        v.setMinAndMaxWidth(bounds.width());
+        v.setLeftPx(bounds.x());
+        v.setTopPx(bounds.y());
     }
-
 
 
     // --- finger views for debugging ---
@@ -1463,22 +1462,22 @@
      * @returns {DomView} The new finger view.
      */
     newFingerView () {
-        const v = DomView.clone()
-        v.setPointerEvents("none")
+        const v = DomView.clone();
+        v.setPointerEvents("none");
 
-        const size = 50
-        v.setMinAndMaxHeight(size)
-        v.setMinAndMaxWidth(size)
-        v.setBorderRadiusPx(Math.round(size/2) + "px")
-        v.setBorder("1px dashed white")
+        const size = 50;
+        v.setMinAndMaxHeight(size);
+        v.setMinAndMaxWidth(size);
+        v.setBorderRadiusPx(Math.round(size / 2) + "px");
+        v.setBorder("1px dashed white");
         //v.setBackgroundColor("rgba(255, 255, 255, 0.5)")
-        v.setPosition("absolute")
-        v.setTextAlign("center")
-        v.setZIndex(10000)
-        v.setInnerHtml(this.svType())
-        v.setPxFontSize(10)
-        v.setColor("white")
-        return v
+        v.setPosition("absolute");
+        v.setTextAlign("center");
+        v.setZIndex(10000);
+        v.setInnerHtml(this.svType());
+        v.setPxFontSize(10);
+        v.setColor("white");
+        return v;
     }
 
     /**
@@ -1506,7 +1505,7 @@
         map.keysArray().forEach((id) => {
             const fingerView = map.get(id);
             fingerView.removeFromParentView();
-        })
+        });
         map.clear();
         return this;
     }
@@ -1517,7 +1516,7 @@
      * @returns {String} The title for the finger number.
      */
     titleForFingerNumber (n) {
-        return "&nbsp;".repeat(26) + this.svType() + "&nbsp;" + n + "&nbsp;of&nbsp;" + this.numberOfFingersDown() 
+        return "&nbsp;".repeat(26) + this.svType() + "&nbsp;" + n + "&nbsp;of&nbsp;" + this.numberOfFingersDown();
     }
 
     /**
@@ -1526,15 +1525,15 @@
      */
     showFingers () {
         const points = this.pointsForEvent(this.currentEvent());
-        const idsToRemoveSet = this.fingerViewMap().keysSet(); 
-        let count = 1
+        const idsToRemoveSet = this.fingerViewMap().keysSet();
+        let count = 1;
 
         points.forEach((point) => {
             const id = point.id();
             const v = this.viewForFingerId(id);
             idsToRemoveSet.delete(id);
-            const nx = point.x() - v.clientWidth()/2;
-            const ny = point.y() - v.clientHeight()/2;
+            const nx = point.x() - v.clientWidth() / 2;
+            const ny = point.y() - v.clientHeight() / 2;
             v.setLeftPx(nx);
             v.setTopPx(ny);
             v.setInnerHtml(this.titleForFingerNumber(count));
@@ -1547,7 +1546,7 @@
                 v.setColor("#888");
             }
             count ++;
-        })
+        });
 
         const fvd = this.fingerViewMap();
         idsToRemoveSet.forEach((id) => {
@@ -1555,7 +1554,7 @@
             assert(fingerView);
             fingerView.removeFromParentView();
             fvd.delete(id);
-        })
+        });
 
         return this;
     }
@@ -1567,7 +1566,7 @@
     updateFingerViews () {
         if (this.shouldShowVisualDebugger()) {
             this.showFingers();
-        } else {            
+        } else {
             this.removeFingerViews();
         }
 
@@ -1663,6 +1662,6 @@
     description () {
         return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().svTypeId() : "null view target");
     }
-    
+
 }.initThisClass());
 

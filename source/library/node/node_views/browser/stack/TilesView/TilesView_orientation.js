@@ -8,7 +8,7 @@
 "use strict";
 
 (class TilesView_orientation extends TilesView {
-    
+
     // --- orientation ---
 
     /**
@@ -18,32 +18,32 @@
      */
     syncOrientation () {
         if (this.isVertical()) {
-            this.makeOrientationRight()
+            this.makeOrientationRight();
         } else {
-            this.makeOrientationDown() 
+            this.makeOrientationDown();
         }
-        return this
+        return this;
     }
 
     /**
      * @description Sets the orientation to right (vertical).
      * @category Orientation
      */
-    makeOrientationRight () { 
+    makeOrientationRight () {
         // stack left to right columns, so top to bottom items
-        this.setFlexDirection("column") //  need to use flex to avoid gaps in rows despite 0 marins
+        this.setFlexDirection("column"); //  need to use flex to avoid gaps in rows despite 0 marins
 
-        
-        this.setMinWidth("100%")
-        this.setHeight("fit-content")
-        this.setMinHeight("100%")
 
-        this.logDebug("makeOrientationRight on ", this.node() ? this.node().title() : null)
+        this.setMinWidth("100%");
+        this.setHeight("fit-content");
+        this.setMinHeight("100%");
+
+        this.logDebug("makeOrientationRight on ", this.node() ? this.node().title() : null);
 
         if (this.node()) {
-            const align = this.node().nodeChildrenAlignment()
+            const align = this.node().nodeChildrenAlignment();
             if (this.validAlignItemsPropertyValues().contains(align)) {
-                this.setJustifyContent(align)
+                this.setJustifyContent(align);
             } else {
                 // is this an error?
             }
@@ -54,22 +54,22 @@
      * @description Sets the orientation to down (horizontal).
      * @category Orientation
      */
-    makeOrientationDown () { 
+    makeOrientationDown () {
         // stackview is down, so items are left to right
-        this.setFlexDirection("row")
+        this.setFlexDirection("row");
 
-        this.setMinWidth("100%")
-        this.setWidth("fit-content")
-        this.setMinAndMaxHeight("100%")
+        this.setMinWidth("100%");
+        this.setWidth("fit-content");
+        this.setMinAndMaxHeight("100%");
 
-        this.logDebug("makeOrientationDown on ", this.node() ? this.node().title() : null)
+        this.logDebug("makeOrientationDown on ", this.node() ? this.node().title() : null);
 
         if (this.node()) {
-            const align = this.node().nodeChildrenAlignment()
+            const align = this.node().nodeChildrenAlignment();
             if (this.validJustifyContentPropertyValues().contains(align)) {
-                this.setJustifyContent(align)
-            } 
-            this.setAlignItems(null)
+                this.setJustifyContent(align);
+            }
+            this.setAlignItems(null);
         }
     }
 
@@ -81,11 +81,11 @@
      * @category Orientation
      */
     isVertical () {
-        const sv = this.stackView()
+        const sv = this.stackView();
         if (!sv) {
-            return null
+            return null;
         }
-        return sv.direction() === "right"
+        return sv.direction() === "right";
     }
 
     // --- stacking general ---
@@ -97,11 +97,11 @@
      */
     stackTiles () {
         if (this.isVertical()) {
-            this.stackTilesVertically()
+            this.stackTilesVertically();
         } else {
-            this.stackTilesHorizontally()
+            this.stackTilesHorizontally();
         }
-        return this
+        return this;
     }
 
     /**
@@ -111,11 +111,11 @@
      */
     unstackTiles () {
         if (this.isVertical()) {
-            this.unstackTilesVertically()
+            this.unstackTilesVertically();
         } else {
-            this.unstackTilesHorizontally()
+            this.unstackTilesHorizontally();
         }
-        return this
+        return this;
     }
 
     // --- stacking vertical ---
@@ -129,17 +129,17 @@
         const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx");
         const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden());
         let y = 0;
-        
+
         //const offsets = displayedTiles.map(tile => tile.offsetTop());
 
         displayedTiles.forEachKV((i, tile) => {
             let h = tile.computedHeight();
 
-            if (tile.position() !== "absolute") { 
+            if (tile.position() !== "absolute") {
                 tile.makeAbsolutePositionAndSize();
-                tile.setLeftPx(0)
+                tile.setLeftPx(0);
                 tile.setOrder(null);
-            } 
+            }
 
             tile.setTopPx(y);
             y += h + 2;
@@ -154,14 +154,14 @@
      * @category Stacking
      */
     unstackTilesVertically  () {
-        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
-        
-        orderedTiles.forEach(tile => assert(tile.hasElement()) ) // todo: temp test
-        orderedTiles.forEach(tile => tile.makeRelativePositionAndSize())
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx");
 
-        this.removeAllSubviews()
-        this.addSubviews(orderedTiles)
-        return this
+        orderedTiles.forEach(tile => assert(tile.hasElement())); // todo: temp test
+        orderedTiles.forEach(tile => tile.makeRelativePositionAndSize());
+
+        this.removeAllSubviews();
+        this.addSubviews(orderedTiles);
+        return this;
     }
 
     // --- stacking horizontal ---
@@ -172,22 +172,22 @@
      * @category Stacking
      */
     stackTilesHorizontally () {
-        const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx") 
-        const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden())
-        let x = 0
-        
-        displayedTiles.forEach((tile) => {
-            let w = tile.computedWidth() 
-            if (tile.position() !== "absolute") {
-                tile.makeAbsolutePositionAndSize()
-                tile.setTopPx(0)
-                tile.setOrder(null)
-            }
-            tile.setLeftPx(x)
-            x += w
-        })
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx");
+        const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden());
+        let x = 0;
 
-        return this
+        displayedTiles.forEach((tile) => {
+            let w = tile.computedWidth();
+            if (tile.position() !== "absolute") {
+                tile.makeAbsolutePositionAndSize();
+                tile.setTopPx(0);
+                tile.setOrder(null);
+            }
+            tile.setLeftPx(x);
+            x += w;
+        });
+
+        return this;
     }
 
     /**
@@ -196,11 +196,11 @@
      * @category Stacking
      */
     unstackTilesHorizontally () {
-        const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx")
-        orderedTiles.forEachPerform("makeRelativePositionAndSize")
-        this.removeAllSubviews()
-        this.addSubviews(orderedTiles)
-        return this
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx");
+        orderedTiles.forEachPerform("makeRelativePositionAndSize");
+        this.removeAllSubviews();
+        this.addSubviews(orderedTiles);
+        return this;
     }
 
 

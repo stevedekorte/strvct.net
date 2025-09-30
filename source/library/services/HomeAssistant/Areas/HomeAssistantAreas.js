@@ -40,7 +40,7 @@
       */
     completeSetup () {
         super.completeSetup();
-        
+
         const root = this.homeAssistant().rootFolder();
         root.removeAllSubnodes();
         root.addSubnodes(this.haObjects());

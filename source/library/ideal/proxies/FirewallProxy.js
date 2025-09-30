@@ -62,11 +62,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setProtectedTraps(this.defaultProtectedTraps().shallowCopy())
-        this.setProtectedMethods(this.defaultProtectedMethods().shallowCopy())
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setProtectedTraps(this.defaultProtectedTraps().shallowCopy());
+        this.setProtectedMethods(this.defaultProtectedMethods().shallowCopy());
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -81,7 +81,7 @@
             "preventExtensions", //  Reflect.preventExtensions(target);
             "set", // obj.x = y or obj[x] = y
             "setPrototypeOf", // Reflect.setPrototypeOf()
-        ])
+        ]);
     }
 
     /**
@@ -91,7 +91,7 @@
      */
     defaultProtectedMethods () {
         return new Set([
-        ])
+        ]);
     }
 
     /**
@@ -107,13 +107,13 @@
         // TODO: abstract non posting behavior from ObservableProxy and
         // use as parent class of both ObservableProxy and Firewall
         if (this.protectedTraps().has(trapName)) {
-            const msg = " blocked proxy trap '" + trapName + "' on property '" + propertyName + "'"
-            this.logDebug(msg)
-            throw new Error(this.svTypeId() + msg)
-            return false
+            const msg = " blocked proxy trap '" + trapName + "' on property '" + propertyName + "'";
+            this.logDebug(msg);
+            throw new Error(this.svTypeId() + msg);
+            return false;
         }
 
-        return true
+        return true;
     }
 
     /**
@@ -123,9 +123,9 @@
      * @category Error Handling
      */
     onProtectedMethodCall (propertyName, argsList) {
-        const msg = " blocked method call '" + propertyName + "' "
-        this.logDebug(msg)
-        throw new Error(this.svTypeId() + msg)
+        const msg = " blocked method call '" + propertyName + "' ";
+        this.logDebug(msg);
+        throw new Error(this.svTypeId() + msg);
     }
 
     /**
@@ -137,22 +137,22 @@
      */
     get (target, propertyName) {
         if (propertyName === "observable") {
-            const self = this
-            return () => { return self }
+            const self = this;
+            return () => { return self; };
         }
 
-        this.postForTrap("get", propertyName)
+        this.postForTrap("get", propertyName);
 
         // if it's a protected method, we'll return a special function
         // that calls onProtectedMethodCall to raise an exception
-        const isProtected = this.protectedMethods().has(propertyName)
+        const isProtected = this.protectedMethods().has(propertyName);
         if (isProtected) {
-            const isFunction = Type.isFunction(target[propertyName])
+            const isFunction = Type.isFunction(target[propertyName]);
             if (isFunction) {
-                const self = this
+                const self = this;
                 return () => {
-                    return self.onProtectedMethodCall(propertyName, arguments)
-                }
+                    return self.onProtectedMethodCall(propertyName, arguments);
+                };
             }
         }
 
@@ -165,35 +165,35 @@
      */
     static selfTest () {
         // test array
-        const array = ["a", "b", "c"]
-        const ap = array.asReadOnly()
-        assertThrows(() => ap.atPut(0, "foo"))
-        assertThrows(() => ap[0] = "bar")
-        assertThrows(() => ap.pop())
-        assertThrows(() => ap.reverse())
-        assertThrows(() => ap.shift())
-        assertThrows(() => ap.sort())
+        const array = ["a", "b", "c"];
+        const ap = array.asReadOnly();
+        assertThrows(() => ap.atPut(0, "foo"));
+        assertThrows(() => ap[0] = "bar");
+        assertThrows(() => ap.pop());
+        assertThrows(() => ap.reverse());
+        assertThrows(() => ap.shift());
+        assertThrows(() => ap.sort());
 
         // test set
-        const set = new Set(["foo", "bar"])
-        const sp = set.asReadOnly()
-        assertThrows(() => sp.add(1))
-        assertThrows(() => sp.clear())
-        assertThrows(() => sp.delete("foo"))
+        const set = new Set(["foo", "bar"]);
+        const sp = set.asReadOnly();
+        assertThrows(() => sp.add(1));
+        assertThrows(() => sp.clear());
+        assertThrows(() => sp.delete("foo"));
 
         // test map
-        const map = new Map([["foo", 1], ["bar", 2]])
-        const mp = set.asReadOnly()
-        assertThrows(() => mp.clear())
-        assertThrows(() => mp.delete("foo"))
-        assertThrows(() => mp.set("foo", 2))
+        const map = new Map([["foo", 1], ["bar", 2]]);
+        const mp = set.asReadOnly();
+        assertThrows(() => mp.clear());
+        assertThrows(() => mp.delete("foo"));
+        assertThrows(() => mp.set("foo", 2));
 
         // test date
-        const date = new Date()
-        const dp = date.asReadOnly()
-        assertThrows(() => dp.setYear(1999))
+        const date = new Date();
+        const dp = date.asReadOnly();
+        assertThrows(() => dp.setYear(1999));
 
-        console.log(this.svType() + " - self test passed")
+        console.log(this.svType() + " - self test passed");
     }
 }.initThisClass());
 
@@ -212,10 +212,10 @@ Object.defineSlots(Object.prototype, {
         return new Set([
             "__defineGetter__",
             "__defineSetter__",
-        ])
+        ]);
     }
 
-})
+});
 
 Object.defineSlots(Set.prototype, {
     /**
@@ -228,10 +228,10 @@ Object.defineSlots(Set.prototype, {
             "add",
             "clear",
             "delete"
-        ])
+        ]);
     }
 
-})
+});
 
 Object.defineSlots(Map.prototype, {
 
@@ -245,10 +245,10 @@ Object.defineSlots(Map.prototype, {
             "clear",
             "delete",
             "set",
-        ])
+        ]);
     }
 
-})
+});
 
 Object.defineSlots(Array.prototype, {
 
@@ -267,13 +267,13 @@ Object.defineSlots(Array.prototype, {
             "sort",
             "splice",
             "unshift"
-        ])
+        ]);
     }
 
-})
+});
 
 Object.defineSlots(Date.prototype, {
-    
+
     /**
      * @description Returns a set of mutator method names
      * @returns {Set} A set of mutator method names
@@ -297,10 +297,10 @@ Object.defineSlots(Date.prototype, {
             "setUTCMonth",
             "setUTCSeconds",
             "setYear",
-        ])
+        ]);
     }
 
-})
+});
 
 Object.defineSlots(Object.prototype, {
 
@@ -310,12 +310,12 @@ Object.defineSlots(Object.prototype, {
      * @category Proxy Creation
      */
     asReadOnly () {
-        const obj = FirewallProxy.newProxyFor(this)
-        obj.observable().setProtectedMethods(this.mutatorMethodNamesSet())
-        return obj
+        const obj = FirewallProxy.newProxyFor(this);
+        obj.observable().setProtectedMethods(this.mutatorMethodNamesSet());
+        return obj;
     }
 
-})
+});
 
 
 //FirewallProxy.selfTest()

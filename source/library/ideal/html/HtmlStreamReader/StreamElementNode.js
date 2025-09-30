@@ -7,7 +7,7 @@
 "use strict";
 
 (class StreamElementNode extends StreamNode {
-    
+
     /**
      * Initializes the prototype slots for the class.
      * @category Initialization

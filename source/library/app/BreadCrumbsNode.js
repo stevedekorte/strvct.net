@@ -6,7 +6,7 @@
  */
 "use strict";
 
-(class BreadCrumbsNode extends SvFolderNode { 
+(class BreadCrumbsNode extends SvFolderNode {
     /**
      * Initializes the prototype slots of the BreadCrumbsNode class.
      * @description This method is used to initialize the prototype slots of the BreadCrumbsNode class.

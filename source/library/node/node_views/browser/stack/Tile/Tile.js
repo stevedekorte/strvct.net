@@ -9,16 +9,16 @@
     to support features like slide-to-delete.
 
     Tile supports tile features such as:
-    
+
         - selection
         - applying styles to match state
         - slide-to-delete gesture
         - long-press + pan-to-reorder gesture
         - dragging
         - close/delete button on right side
-    
+
     NOTES
-    
+
     Tile styles lookup order:
 
         node -> (fallback to) -> tile -> (fallback to) -> column
@@ -28,7 +28,7 @@
 */
 
 (class Tile extends NodeView {
-    
+
     initPrototypeSlots () {
         {
             /**
@@ -149,16 +149,16 @@
      * @description Applies styles to the tile.
      */
     applyStyles () {
-        // we default to using the current theme, but 
+        // we default to using the current theme, but
         // we need to give view a chance to override style
         // also, NodeView should override this method to give node a chance to override style
 
-        const state = this.currentThemeState()
+        const state = this.currentThemeState();
         if (state) {
-            state.applyBorderStylesToView(this) // apply only border styles
-            state.applyNonBorderStylesToView(this.contentView()) // apply non border styles
+            state.applyBorderStylesToView(this); // apply only border styles
+            state.applyNonBorderStylesToView(this.contentView()); // apply non border styles
         }
-        return this
+        return this;
     }
 
     /*
@@ -174,28 +174,28 @@
      * @description Initializes the tile.
      */
     init () {
-        super.init()
+        super.init();
 
-        this.setThemeClassName("Tile")
+        this.setThemeClassName("Tile");
 
-        this.setDisplay("inline-block")
-        this.setPosition("relative") // so absolute position on close button works
+        this.setDisplay("inline-block");
+        this.setPosition("relative"); // so absolute position on close button works
         //this.setFlexGrow(0)
         //this.setFlexShrink(0)
-        this.makeOrientationRight()
+        this.makeOrientationRight();
 
-        this.setWidth("100%")
-        this.setHeight("fit-content")
-        this.setWhiteSpace("no-wrap")
+        this.setWidth("100%");
+        this.setHeight("fit-content");
+        this.setWhiteSpace("no-wrap");
         //this.setHeight("auto")
 
         //this.setMinHeight("4em")
         //this.setColor("rbga(255, 255, 255, 0.5)")
-        this.setTransition("all 0s")
-        this.setOverflow("hidden")
-        this.setWhiteSpace("nowrap")
+        this.setTransition("all 0s");
+        this.setOverflow("hidden");
+        this.setWhiteSpace("nowrap");
         //this.setTransitionStyle("all 0.0s ease, width 0s, max-width 0s, min-width 0s")
-        
+
         /*
         this.setBorderStyle("solid")
         this.setBorderColor("transparent")
@@ -206,44 +206,44 @@
         this.setTextAlign("left")
         */
 
-        this.setOverflowScrolling("touch")
+        this.setOverflowScrolling("touch");
 
-        this.turnOffUserSelect()
-        this.setAcceptsFirstResponder(false)
-        this.setupTileContentView()
+        this.turnOffUserSelect();
+        this.setAcceptsFirstResponder(false);
+        this.setupTileContentView();
 
         /*
-        if (TouchScreen.shared().isSupported() || true) { // testing 
+        if (TouchScreen.shared().isSupported() || true) { // testing
             //
         } else {
             //this.addCloseButton()
         }
         */
 
-        this.setTransition(this.transitionStyle())
+        this.setTransition(this.transitionStyle());
 
         //this.animateOpen()
-        
-        this.addGestureRecognizer(LongPressGestureRecognizer.clone()) // for long press & pan reordering
-        this.addGestureRecognizer(SlideGestureRecognizer.clone()) // for slide delete
+
+        this.addGestureRecognizer(LongPressGestureRecognizer.clone()); // for long press & pan reordering
+        this.addGestureRecognizer(SlideGestureRecognizer.clone()); // for slide delete
         //this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
-        this.addDefaultTapGesture()
+        this.addDefaultTapGesture();
         //this.defaultTapGesture().setShouldRequestActivation(true) // test to avoid tapping button within tile and row
 
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width?
         //this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
 
-        this.setIsRegisteredForKeyboard(true)
-        this.setIsDebugging(false)
-        return this
+        this.setIsRegisteredForKeyboard(true);
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
      * @description Turns on user select.
      */
     turnOnUserSelect () {
-        super.turnOnUserSelect()
-        return this
+        super.turnOnUserSelect();
+        return this;
     }
 
     /*
@@ -258,12 +258,12 @@
      * @returns {Tile} The duplicated tile.
      */
     duplicate () {
-        const dup = super.duplicate()
-        dup.setNode(this.node().duplicate())
-        return dup
+        const dup = super.duplicate();
+        dup.setNode(this.node().duplicate());
+        return dup;
     }
 
-    // -- contentView -- 
+    // -- contentView --
     // a special subview within the Tile for it's content
     // we route style methods to it
 
@@ -272,26 +272,26 @@
      * We route style methods to it.
      */
     setupTileContentView () {
-        const cv = FlexDomView.clone().setElementClassName("TileContentView")
-        cv.setDisplay("flex")
-        cv.setHeight("auto")
-        cv.setMinHeightPx(60)
-        cv.setWidthPercentage(100)
-        cv.setHeightPercentage(100) 
-        cv.setPosition("relative")
-        cv.setFloat("left")
+        const cv = FlexDomView.clone().setElementClassName("TileContentView");
+        cv.setDisplay("flex");
+        cv.setHeight("auto");
+        cv.setMinHeightPx(60);
+        cv.setWidthPercentage(100);
+        cv.setHeightPercentage(100);
+        cv.setPosition("relative");
+        cv.setFloat("left");
         //cv.autoFitParentWidth().autoFitParentHeight() // can't do this since we need to float left for sliding
         //cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s, width 0s, min-width 0s, max-width 0s")
-        cv.setTransition("all 0s")
-        cv.setZIndex(2) // so it will be above other views like the slide delete button 
-        this.setZIndex(1)
-        this.setContentView(cv)
-        this.addSubview(cv)
-        return this
+        cv.setTransition("all 0s");
+        cv.setZIndex(2); // so it will be above other views like the slide delete button
+        this.setZIndex(1);
+        this.setContentView(cv);
+        this.addSubview(cv);
+        return this;
     }
 
     desiredWidth () {
-        return this.calcWidth()
+        return this.calcWidth();
     }
 
     /*
@@ -314,27 +314,27 @@
      * @returns {Tile} The current instance.
      */
     addContentSubview (aView) {
-        return this.contentView().addSubview(aView)
+        return this.contentView().addSubview(aView);
     }
-   
+
     /**
      * @description Removes a content subview.
      * @param {DomView} aView - The view to remove.
      * @returns {Tile} The current instance.
      */
     removeContentSubview (aView) {
-        return this.contentView().removeSubview(aView)
+        return this.contentView().removeSubview(aView);
     }
 
 
     // --- helpers --------
-    
+
     /**
      * @description Gets the browser.
      * @returns {Browser} The browser.
      */
     browser () {
-        return this.column().browser()
+        return this.column().browser();
     }
 
     /**
@@ -342,19 +342,19 @@
      * @returns {Column} The column.
      */
     column () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv && pv.isKindOf(TilesView)) {
-            return pv
+            return pv;
         }
-        return null
+        return null;
     }
-    
+
     /**
      * @description Gets the nav view.
      * @returns {NavView} The nav view.
      */
     navView () {
-        return this.column().navView()
+        return this.column().navView();
     }
 
     // ----
@@ -366,7 +366,7 @@
      */
     didUpdateSlotIsInspecting (/*oldValue, newValue*/) {
         //super.didUpdateSlotIsSelected (oldValue, newValue)
-        this.tilesView().didChangeNavSelection()
+        this.tilesView().didChangeNavSelection();
         //this.updateSubviews()
     }
 
@@ -376,44 +376,44 @@
      * @param {any} newValue - The new value.
      */
     didUpdateSlotIsSelected (oldValue, newValue) {
-        super.didUpdateSlotIsSelected (oldValue, newValue)
+        super.didUpdateSlotIsSelected (oldValue, newValue);
 
-        
+
         if (this.isSelected()) {
-            this.setLastSelectionDate(Date.clone())
+            this.setLastSelectionDate(Date.clone());
         } else {
             //this.setShouldShowFlash(true)
-            this.setLastSelectionDate(null)
+            this.setLastSelectionDate(null);
         }
-        
-        this.tilesView().didChangeNavSelection() // handed by onTap?
+
+        this.tilesView().didChangeNavSelection(); // handed by onTap?
         //this.updateSubviews()
     }
-    
+
     // update
-     
+
     /**
      * @description Updates the subviews.
      */
-    updateSubviews () {   
+    updateSubviews () {
         if (this.closeButtonView()) {
-            const node = this.node()
+            const node = this.node();
 
             if (node) {
-                this.closeButtonView().setColor(this.currentColor()) // needed?
+                this.closeButtonView().setColor(this.currentColor()); // needed?
             }
-			
+
             if (this.canDelete()) {
-                this.closeButtonView().setOpacity(this.restCloseButtonOpacity())
+                this.closeButtonView().setOpacity(this.restCloseButtonOpacity());
             } else {
-                this.closeButtonView().setOpacity(0)
+                this.closeButtonView().setOpacity(0);
             }
 
             if (node) {
-                const h = node.nodeMinTileHeight()
+                const h = node.nodeMinTileHeight();
                 if (h) {
-                    this.setMinAndMaxHeight(h) 
-                    this.contentView().autoFitParentHeight()
+                    this.setMinAndMaxHeight(h);
+                    this.contentView().autoFitParentHeight();
                 }
             }
         }
@@ -424,29 +424,29 @@
         if (node && node.nodeMinTileHeight()) {
             const e = this.element()
             if (node.nodeMinTileHeight() === -1) {
-                this.setHeight("auto")                
+                this.setHeight("auto")
                 this.setPaddingBottom("calc(100% - 20px)")
             } else {
                 this.setHeight(this.pxNumberToString(node.nodeMinTileHeight()))
             }
         }
         */
-        
-        this.scheduleMethod("applyStyles")
+
+        this.scheduleMethod("applyStyles");
         //this.applyStyles()
 
-        return this
+        return this;
     }
-    
+
     // -------------
-    
+
     onDidEdit (/*aView*/) {
-        this.scheduleSyncToNode() 
-        return true // stop propogation
+        this.scheduleSyncToNode();
+        return true; // stop propogation
     }
-    
+
     // --- sync ---
-	
+
     /**
      * @description Syncs from the node.
      */
@@ -467,20 +467,20 @@
      * @returns {TilesView} The tiles view.
      */
     tilesView () {
-        return this.parentView()
+        return this.parentView();
     }
 
     stackView () {
-        const tilesView = this.tilesView()
-        if (tilesView) {        
-            const scrollView = tilesView.parentView()
-            const navView = scrollView.parentView()
-            const stackView = navView.parentView()
+        const tilesView = this.tilesView();
+        if (tilesView) {
+            const scrollView = tilesView.parentView();
+            const navView = scrollView.parentView();
+            const stackView = navView.parentView();
             if (stackView && stackView.thisClass().isKindOf(StackView)) {
-                return stackView
+                return stackView;
             }
         }
-        return null
+        return null;
         //return this.firstParentViewWithAncestorClass(StackView)
     }
 
@@ -489,47 +489,47 @@
      * @returns {string} The direction.
      */
     direction () {
-        const sv = this.stackView()
+        const sv = this.stackView();
         if (sv) {
-            const d = sv.direction()
-            return d
+            const d = sv.direction();
+            return d;
         }
 
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv && pv.direction) {
-            return pv.direction()
+            return pv.direction();
         }
 
-        return "down"
+        return "down";
     }
 
     syncOrientation () {
         if (!this.parentView()) {
-            return this
+            return this;
         }
 
-        const d = this.direction()
+        const d = this.direction();
 
         if (d === "right") {
-            this.makeOrientationRight()
+            this.makeOrientationRight();
         } else if (d === "down") {
-            this.makeOrientationDown()
+            this.makeOrientationDown();
         }
-        return this
+        return this;
     }
 
     /**
      * @description Makes the orientation right.
      */
-    makeOrientationRight () {  
+    makeOrientationRight () {
         // stackview is right so tiles are top to bottom
 
-        this.setDisplay("inline-block")  
+        this.setDisplay("inline-block");
 
-        this.setMinAndMaxWidth("100%")
-        this.setMinHeight("5em")
-        this.setHeight("fit-content")
-        this.setMaxHeight(null)
+        this.setMinAndMaxWidth("100%");
+        this.setMinHeight("5em");
+        this.setHeight("fit-content");
+        this.setMaxHeight(null);
 
         //this.setWidth("fit-content")
         //this.setHeight("fit-content")
@@ -548,23 +548,22 @@
         */
     }
 
-    makeOrientationDown () { 
+    makeOrientationDown () {
 
         // stackview is down so tiles are left to right
         //this.logDebug("makeOrientationDown")
 
-        this.setDisplay("inline-block")
+        this.setDisplay("inline-block");
         //this.setWidth("fit-content")
         //this.setWidth("170px")
 
-        this.setMinAndMaxWidth("17em")
+        this.setMinAndMaxWidth("17em");
         //this.setWidth("fit-content")
-        this.setWidth("-webkit-fill-available")
+        this.setWidth("-webkit-fill-available");
 
-        this.setMaxWidth(null)
+        this.setMaxWidth(null);
 
-        this.setMinAndMaxHeight("100%")
-        
+        this.setMinAndMaxHeight("100%");
 
 
         //this.setMinAndMaxWHeight(null) // new
@@ -576,47 +575,47 @@
         //this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
 
-        
+
         if (this.stackView()) {
             // apply node height hint
-            const node = this.stackView().node()
+            const node = this.stackView().node();
             if (node) {
-                const h = node.nodeMinTileHeight()
+                const h = node.nodeMinTileHeight();
                 //console.log("node " + this.node().title() + " height " + h)
                 if (h) {
-                    this.setMinAndMaxHeight(h)
+                    this.setMinAndMaxHeight(h);
                     //this.contentView().setMinAndMaxHeight(h)
                 }
             }
         }
     }
-    
+
     // close button
-    
+
     /**
      * @description Adds a close button.
      */
     addCloseButton () {
         if (this.closeButtonView() === null) {
-            const cb = SvgIconView.clone().setIconName("close")
-            cb.setStrokeColor("white")
-            cb.setFillColor("white")
-            this.setCloseButtonView(cb)
-            this.contentView().addSubview(cb) 
-            cb.setMinAndMaxWidthAndHeight(8)
-            cb.setAction("delete")
-            cb.setOpacity(0).setTransition(this.transitionStyle())
+            const cb = SvgIconView.clone().setIconName("close");
+            cb.setStrokeColor("white");
+            cb.setFillColor("white");
+            this.setCloseButtonView(cb);
+            this.contentView().addSubview(cb);
+            cb.setMinAndMaxWidthAndHeight(8);
+            cb.setAction("delete");
+            cb.setOpacity(0).setTransition(this.transitionStyle());
         }
-        return this
+        return this;
     }
-    
+
     removeCloseButton () {
         if (this.closeButtonView() !== null) {
-            this.contentView().removeSubview(this.closeButtonView()) 
-            this.setCloseButtonView(null)
+            this.contentView().removeSubview(this.closeButtonView());
+            this.setCloseButtonView(null);
         }
     }
-    
+
     // ---
     /**
      * @description Passes the first responder to the column.
@@ -625,10 +624,10 @@
     passFirstResponderToColumn () {
         if (this.isFirstResponder()) {
             if (this.column()) {
-                this.column().becomeFirstResponder()
+                this.column().becomeFirstResponder();
             }
         }
-        return this
+        return this;
     }
 
     // --- delete ---
@@ -639,9 +638,9 @@
      */
     canDelete () {
         if (this.node()) {
-            return this.node().canDelete()
+            return this.node().canDelete();
         }
-        return false
+        return false;
     }
 
     /**
@@ -650,8 +649,8 @@
     delete () {
         //console.log("delete")
         if (this.canDelete()) {
-            this.removeFromParentView()
-            this.node().delete()
+            this.removeFromParentView();
+            this.node().delete();
         }
     }
 
@@ -663,10 +662,10 @@
 		this.addTimeout(() => {
 			this.setOpacity(1)
 			this.setMinAndMaxHeight(this.defaultHeight())
-		}, 0)		
+		}, 0)
 	},
 	*/
-  
+
 
     // -------------------
 
@@ -679,31 +678,31 @@
         return this
     }
     */
-    
+
     /**
      * @description Decendant released focus.
      * @param {DomView} aView - The view.
      * @returns {boolean} Whether the focus was released.
      */
     decendantReleasedFocus (/*aView*/) {
-        this.focus() // this doesn't seem right 
-        return true
+        this.focus(); // this doesn't seem right
+        return true;
     }
 
     // --- selecting ---
-	
+
     /**
      * @description Will accept first responder.
      * @returns {Tile} The current instance.
      */
     willAcceptFirstResponder () {
-        super.willAcceptFirstResponder()
+        super.willAcceptFirstResponder();
 	    //this.logDebug(".willAcceptFirstResponder()")
-        return this
+        return this;
     }
 
     // -------------------------
-    
+
     /**
      * @description Gets the node tile link.
      * @returns {DomView} The node tile link.
@@ -717,10 +716,10 @@
         */
 
         if (this.isInspecting()) {
-            return this.node().nodeInspector()
+            return this.node().nodeInspector();
         }
 
-        return this.node().nodeTileLink()
+        return this.node().nodeTileLink();
     }
 
     // --- delegate ---
@@ -734,36 +733,36 @@
      */
     sendNodeDelegate (methodName, args = [this], isStrict = false) {
         const d = this.node();
-    
+
         if (d) {
-          const f = d[methodName];
-          if (f) {
-            return f.apply(d, args);
-          }
+            const f = d[methodName];
+            if (f) {
+                return f.apply(d, args);
+            }
         } else {
-          if (isStrict) {
-            const error = this.svType() + " delegate missing method '" + methodName + "'";
-            console.log(error);
-            throw new Error(error);
-          }
+            if (isStrict) {
+                const error = this.svType() + " delegate missing method '" + methodName + "'";
+                console.log(error);
+                throw new Error(error);
+            }
         }
         return undefined;
     }
-    
+
     getFromNodeDelegate (methodName, args = [], isStrict = false) {
         const d = this.node();
-    
+
         if (d) {
-          const f = d[methodName];
-          if (f) {
-            return f.apply(d, args);
-          }
+            const f = d[methodName];
+            if (f) {
+                return f.apply(d, args);
+            }
         } else {
-          if (isStrict) {
-            const error = this.svType() + " delegate missing method '" + methodName + "'";
-            console.log(error);
-            throw new Error(error);
-          }
+            if (isStrict) {
+                const error = this.svType() + " delegate missing method '" + methodName + "'";
+                console.log(error);
+                throw new Error(error);
+            }
         }
         return undefined;
     }

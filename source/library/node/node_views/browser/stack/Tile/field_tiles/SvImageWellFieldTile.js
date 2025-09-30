@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvImageWellFieldTile extends SvFieldTile {
-    
+
     /**
      * @description Checks if the given mime type can be opened.
      * @param {string} mimeType - The mime type to check.
@@ -66,7 +66,7 @@
         this.setValue(dataUrl);
         return this;
     }
-	
+
     /**
      * @description Returns the image well view.
      * @returns {ImageWellView} The image well view.
@@ -86,7 +86,7 @@
 
         const field = this.node();
         this.setMaxWidth("100em"); // get this from node instead?
-        
+
         this.applyStyles(); // normally this would happen in updateSubviews
         this.imageWellView().setImageDataUrl(field.value());
 
@@ -109,16 +109,16 @@
      */
     syncToNode () {
         const field = this.node();
-				
+
         //this.updateKeyView();
-        
+
         field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
             const data = this.imageWellView().imageDataUrl();
             field.setValue(data);
         }
-        
+
         //super.suncToNode();
         return this;
     }
@@ -140,7 +140,7 @@
     isEmpty () {
         return Type.isNull(this.dataUrl());
     }
-    
+
     /**
      * @description Handles the update of the image well view.
      * @param {ImageWellView} anImageWell - The updated image well view.
@@ -152,5 +152,5 @@
         this.scheduleSyncToNode();
         return this;
     }
-    
+
 }.initThisClass());

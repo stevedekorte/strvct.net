@@ -8,12 +8,12 @@
  * @class DomCssInspector
  * @extends ProtoClass
  * @classdesc Used to inspect class styles since css hides stylesheet.cssRules.
- * 
+ *
  * example use:
  * const value = DomCssInspector.shared().setElementClassName("..").cssStyle.fontFamily
  */
 (class DomCssInspector extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the DomCssInspector class.
      * @category Initialization
@@ -36,15 +36,15 @@
      */
     testElement () {
         if (!this._testElement) {
-            this._testElement = this.createTestElement()
+            this._testElement = this.createTestElement();
             document.body.appendChild(this._testElement);
             if (!document.getElementById(this.idName())) {
-                throw new Error("missing element '" + this.idName() + "'")
+                throw new Error("missing element '" + this.idName() + "'");
             }
         }
-        return this._testElement
+        return this._testElement;
     }
-	
+
     /**
      * @description Creates a new test element.
      * @returns {HTMLElement} The created test element.
@@ -55,7 +55,7 @@
 	    e.setAttribute("id", this.idName());
         e.style.display = "none";
         e.style.visibility = "hidden";
-        return e
+        return e;
     }
 
     /**
@@ -66,7 +66,7 @@
      */
     setElementClassName (aName) {
         this.testElement().setAttribute("class", aName);
-        return this
+        return this;
     }
 
     /**
@@ -76,7 +76,7 @@
      * @category CSS Inspection
      */
     cssStyle (key) {
-        return this.testElement().style
+        return this.testElement().style;
     }
-    
+
 }.initThisClass());

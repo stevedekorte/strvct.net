@@ -21,56 +21,56 @@
 */
 
 (class BMAudioPlayer extends DomView {
-    
+
     initPrototypeSlots () {
-        this.newSlot("path", "")
-        this.newSlot("sourceElement", null)
+        this.newSlot("path", "");
+        this.newSlot("sourceElement", null);
     }
 
     init () {
-        this.setElementType("audio") // TODO: use a method override instead?
-        super.init()
-        this.open()
-        return this
+        this.setElementType("audio"); // TODO: use a method override instead?
+        super.init();
+        this.open();
+        return this;
     }
 
     // open / close
 
     open () {
         this.setVisibility("hidden");
-        DocumentBody.shared().addSubviewIfAbsent(this)
-        return this
+        DocumentBody.shared().addSubviewIfAbsent(this);
+        return this;
     }
 
     close () {
-        DocumentBody.shared().removeSubviewIfPresent(this)
-        return this
+        DocumentBody.shared().removeSubviewIfPresent(this);
+        return this;
     }
 
     // element
 
     createElement () {
-        const audio = document.createElement("audio")
+        const audio = document.createElement("audio");
         audio.setAttribute("autoplay", "");
 
-        const source = document.createElement("source")
-        this.setSourceElement(source)
+        const source = document.createElement("source");
+        this.setSourceElement(source);
 
-        audio.appendChild(source)
-        audio.addEventListener("playing", event => this.onPlaying(event), false); 
-        audio.addEventListener("progress", event => this.onProgress(event), false); 
-        audio.addEventListener("ended", event => this.onEnded(event), false); 
-        audio.addEventListener("error", event => this.onError(event), false); 
-        return audio
+        audio.appendChild(source);
+        audio.addEventListener("playing", event => this.onPlaying(event), false);
+        audio.addEventListener("progress", event => this.onProgress(event), false);
+        audio.addEventListener("ended", event => this.onEnded(event), false);
+        audio.addEventListener("error", event => this.onError(event), false);
+        return audio;
     }
-    
+
     // events
 
     onPlaying (event) {
         if (this.isDebugging()) {
-            this.debugLog(".onPlaying() ")
+            this.debugLog(".onPlaying() ");
         }
-        return this
+        return this;
     }
 
     onProgress (event) {
@@ -94,30 +94,30 @@
             "mpa": "mp4",
             "ogg": "ogg",
             "oga": "ogg",
-        }
-        const type =  "audio/" + fileExtensionToType[extString.toLowerCase()]
-        assert(type)
-        return type
+        };
+        const type =  "audio/" + fileExtensionToType[extString.toLowerCase()];
+        assert(type);
+        return type;
     }
 
     setPath (aPath) {
         if (this._path != aPath) {
-            this._path = aPath
-        
-            this.stop()
+            this._path = aPath;
+
+            this.stop();
 
             if (this.isDebugging()) {
-                this.debugLog( ".setPath:'" + aPath + "'")
+                this.debugLog(".setPath:'" + aPath + "'");
             }
 
-            const source = this.sourceElement()
+            const source = this.sourceElement();
             source.src = aPath;
 
             const type = this.audioTypeForExtension(aPath.pathExtension());
             source.setAttribute("type", type);
-            this.load() 
+            this.load();
         }
-        return this
+        return this;
     }
 
     path () {
@@ -126,67 +126,67 @@
 
     name () {
         if (!this.path()) {
-            return ""
+            return "";
         }
-        return this.path().fileName()
+        return this.path().fileName();
     }
 
     // loading
 
     load () {
         if (this.isDebugging()) {
-            this.debugLog( ".load() '" + this.path() + "'")
+            this.debugLog(".load() '" + this.path() + "'");
         }
-        this.element().load()
-        return this
+        this.element().load();
+        return this;
     }
 
     // playing / pausing / stopping
 
     play () {
         if (this.isPlaying()) {
-            return this
+            return this;
         }
 
         if (this.isDebugging()) {
-            this.debugLog( ".play() '" + this.path() + "'")
+            this.debugLog(".play() '" + this.path() + "'");
         }
 
-        const promise = this.element().play()
+        const promise = this.element().play();
         promise.catch((e) => {
-            console.log("audio play exception: ", e.message)
-        })
-        return this
+            console.log("audio play exception: ", e.message);
+        });
+        return this;
 
     }
 
     isPlaying () {
-        const e = this.element()
-        return e.duration > 0 && !e.paused
+        const e = this.element();
+        return e.duration > 0 && !e.paused;
     }
 
     // pausing
 
     pause () {
-        this.element().pause()
-        return this
+        this.element().pause();
+        return this;
     }
 
     isPaused () {
-        const e = this.element()
-        return e.paused
+        const e = this.element();
+        return e.paused;
     }
 
     // stopping
 
     stop () {
         if (this.isDebugging()) {
-            this.debugLog( ".stop() '" + this.path() + "'")
+            this.debugLog(".stop() '" + this.path() + "'");
         }
 
         this.pause();
         this.setCurrentTime(0);
-        return this
+        return this;
     }
 
     // current time

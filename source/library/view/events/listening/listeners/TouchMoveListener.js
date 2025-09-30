@@ -9,7 +9,7 @@
  * Separated from TouchListeners for performance reasons.
  */
 (class TouchMoveListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots
      * @category Initialization
@@ -23,9 +23,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
-    } 
+        super.init();
+        return this;
+    }
 
     /**
      * @description Sets up the event listeners
@@ -34,7 +34,7 @@
      */
     setupListeners () {
         this.addEventNameAndMethodName("touchmove",   "onTouchMove");
-        return this
+        return this;
     }
 
 }.initThisClass());

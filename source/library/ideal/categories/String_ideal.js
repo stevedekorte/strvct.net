@@ -24,7 +24,7 @@
     asString () {
         return this;
     }
-    
+
     /**
      * Counts the occurrences of a substring in the string
      * @param {string} substring - The substring to count
@@ -62,7 +62,7 @@
     isEqual (other) {
         return this === other;
     }
-    
+
     /**
      * Checks if the string is empty
      * @returns {boolean} True if the string is empty, false otherwise
@@ -80,7 +80,7 @@
     size () {
         return this.length;
     }
-    
+
     /**
      * Checks if the string begins with the given prefix
      * @param {string} prefix - The prefix to check
@@ -93,10 +93,10 @@
         }
         for (let i = 0; i < prefix.length; i ++) {
             if (this.charAt(i) !== prefix.charAt(i)) {
-                return false
+                return false;
             }
-        } 
-        return true
+        }
+        return true;
     }
 
     /**
@@ -115,7 +115,7 @@
      */
     before (aString) {
         const index = this.indexOf(aString);
-        
+
         if (index === -1) {
             return this;
         }
@@ -134,7 +134,7 @@
         if (index === -1) {
             return "";
         }
-        
+
         return this.slice(index + aString.length);
     }
 
@@ -184,8 +184,8 @@
     repeated (times) {
         let result = "";
         const aString = this;
-        times.repeat(function () { result += aString });
-        return result
+        times.repeat(function () { result += aString; });
+        return result;
     }
 
     /**
@@ -194,9 +194,9 @@
      * @returns {string} The string with the prefixes removed
      */
     sansPrefixes (aStringList) {
-        let result = this
-        aStringList.forEach((s) => { result = result.sansPrefix(s) })
-        return result
+        let result = this;
+        aStringList.forEach((s) => { result = result.sansPrefix(s); });
+        return result;
     }
 
     /**
@@ -223,9 +223,9 @@
      * @returns {string} The string with the suffixes removed
      */
     sansSuffixes (aStringList) {
-        let result = this
-        aStringList.forEach((s) => { result = result.sansSuffix(s) })
-        return result
+        let result = this;
+        aStringList.forEach((s) => { result = result.sansSuffix(s); });
+        return result;
     }
 
     /**
@@ -332,7 +332,7 @@
      * @returns {string} The titleized string
      */
     titleized () {
-        return this.split(/\s+/).map(function (s) { return s.capitalized() }).join(" ");
+        return this.split(/\s+/).map(function (s) { return s.capitalized(); }).join(" ");
     }
 
     /**
@@ -381,7 +381,7 @@
      * @returns {number} The number of lines
      */
     lineCount () {
-        let count = 0
+        let count = 0;
         for (let i = 0; i < this.length; i++) {
             const c = this.charAt(i);
             if (c === "\n") {
@@ -442,7 +442,7 @@
     splitArray (splitters) {
         let s = this;
         const results = [];
-        splitters.forEach( (splitter) => {
+        splitters.forEach((splitter) => {
             if (s.contains(splitter)) {
                 const before = s.before(splitter);
                 s = s.after(splitter);
@@ -450,7 +450,7 @@
             } else {
                 results.push(null);
             }
-        })
+        });
         return results;
     }
 
@@ -547,7 +547,7 @@
      */
     indent (n, spacer = " ") {
         const indentation = spacer.repeat(n);
-        return this.split('\n').map(line => indentation + line).join('\n');
+        return this.split("\n").map(line => indentation + line).join("\n");
     }
 
     /**
@@ -605,13 +605,13 @@
         const cache = this.thisPrototype()._setterCacheMap;
         let result = cache[this];
         if (!result) {
-             result = "set" + this.capitalized();
-             cache.set(this, result);
-             // test for highwater mark
-             if (cache.size > 50000) {
+            result = "set" + this.capitalized();
+            cache.set(this, result);
+            // test for highwater mark
+            if (cache.size > 50000) {
                 console.warn("setter cache is getting big! clearing...");
                 cache.clear();
-             }
+            }
         }
         return result;
     }
@@ -671,7 +671,7 @@
         if (this.length <= length) {
             return this.toString();
         }
-        return this.substring(0, length) + '...';
+        return this.substring(0, length) + "...";
     }
 
     quoted () {
@@ -746,7 +746,7 @@
             const code = this.charCodeAt(i);
             if (code > 0x7f && code <= 0x7ff) {
                 s ++;
-            } else if (code > 0x7ff && code <= 0xffff) { 
+            } else if (code > 0x7ff && code <= 0xffff) {
                 s += 2;
             }
             if (code >= 0xDC00 && code <= 0xDFFF) {
@@ -782,13 +782,13 @@
     hashCode32 () {
         let hash = 0;
         for (let i = 0; i < this.length; i++) {
-        const chr = this.charCodeAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash |= 0; // Convert to 32bit integer
+            const chr = this.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
         }
         return hash;
     }
-    
+
     /**
      * Computes a 64-bit hash code for the string
      * @returns {number} The 64-bit hash code
@@ -812,7 +812,7 @@
      * @returns {Promise<ArrayBuffer>} A promise that resolves to the SHA-256 digest
      */
     async promiseSha256Digest () {
-        const uint8Array = new TextEncoder("utf-8").encode(this);    
+        const uint8Array = new TextEncoder("utf-8").encode(this);
         return await crypto.subtle.digest("SHA-256", uint8Array.buffer);
     }
 
@@ -821,7 +821,7 @@
      * @returns {string} The string with HTML tags removed
      */
     stripHTML () {
-        const doc = new DOMParser().parseFromString(this, 'text/html');
+        const doc = new DOMParser().parseFromString(this, "text/html");
         return doc.body.textContent || "";
     }
 
@@ -832,12 +832,12 @@
      */
     stripHtmlElementsWithTagNames (tagNames) {
         const parser = new DOMParser();
-        const doc = parser.parseFromString(this, 'text/html');
-    
+        const doc = parser.parseFromString(this, "text/html");
+
         tagNames.forEach(tagName => {
             doc.querySelectorAll(tagName).forEach(el => el.remove());
         });
-    
+
         return doc.body.innerHTML;
     }
 
@@ -848,15 +848,15 @@
      */
     replaceContentOfHtmlTagMap (tagNameToContentMap) {
         const parser = new DOMParser();
-        const doc = parser.parseFromString(this, 'text/html');
-    
+        const doc = parser.parseFromString(this, "text/html");
+
         tagNameToContentMap.forEach((newContent, tagName) => {
             assert(this.verifyTagClosed(tagName), `Tag <${tagName}> is not properly closed`);
             doc.querySelectorAll(tagName).forEach(el => {
                 el.innerHTML = newContent;
             });
         });
-    
+
         return doc.body.innerHTML;
     }
 
@@ -868,12 +868,12 @@
      */
     mapContentOfTagsWithName (tagName, replaceFunction) {
         const parser = new DOMParser();
-        const doc = parser.parseFromString(this, 'text/html');
-    
+        const doc = parser.parseFromString(this, "text/html");
+
         doc.querySelectorAll(tagName).forEach(el => {
             el.innerHTML = replaceFunction(el.innerHTML);
         });
-    
+
         return doc.body.innerHTML;
     }
 
@@ -883,11 +883,11 @@
      * @throws {Error} If the tag is not properly closed
      */
     verifyTagClosed (tagName) {
-        const openMatches = (this.match(new RegExp(`<${tagName}(\\s[^>]*?)?>`, 'gi')) || []).filter(m => !/\/\s*>$/.test(m.trim()));
-        const closeMatches = this.match(new RegExp(`</${tagName}>`, 'gi')) || [];
+        const openMatches = (this.match(new RegExp(`<${tagName}(\\s[^>]*?)?>`, "gi")) || []).filter(m => !/\/\s*>$/.test(m.trim()));
+        const closeMatches = this.match(new RegExp(`</${tagName}>`, "gi")) || [];
         return openMatches.length === closeMatches.length;
     }
-      
+
 
     /**
      * Computes the difference between this string and another string
@@ -912,8 +912,8 @@
      * @category HTML Operations
      */
     asNormalizedHtml () {
-        const element = document.createElement("div");        
-        element.innerHTML = this;        
+        const element = document.createElement("div");
+        element.innerHTML = this;
         return element.innerHTML;
     }
 
@@ -926,7 +926,7 @@
     contentOfElementsOfTag (tagName) {
         const el = document.createElement("div");
         el.innerHTML = this;
-        let matches = el.elementsOfTag(tagName);    
+        let matches = el.elementsOfTag(tagName);
         const results = [];
         matches.forEach((e) => results.push(e.innerHTML));
         return results;
@@ -956,8 +956,4 @@
 }).initThisCategory();
 
 String.prototype._setterCacheMap = new Map();
-
-
-
-
 

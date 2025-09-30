@@ -7,7 +7,7 @@
 "use strict";
 
 (class StackScrollView extends ScrollView {
-    
+
     /**
      * Initialize prototype slots for the StackScrollView.
      * @category Initialization
@@ -21,18 +21,18 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         /*
         this.setDisplay("block")
         this.setPosition("relative")
         this.setTopPx(null)
-        this.setMsOverflowStyle("none") // removes scrollbars on IE 10+ 
-        this.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox 
+        this.setMsOverflowStyle("none") // removes scrollbars on IE 10+
+        this.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox
         this.setBackgroundColor("transparent")
         //this.setBorder("1px solid purple")
         */
-        this.makeVertical()
-        return this
+        this.makeVertical();
+        return this;
     }
 
     /**
@@ -43,11 +43,11 @@
      */
     setIsVertical (aBool) {
         if (aBool) {
-            this.makeVertical()
+            this.makeVertical();
         } else {
-            this.makeHorizontal()
+            this.makeHorizontal();
         }
-        return this
+        return this;
     }
 
     /**
@@ -56,11 +56,11 @@
      * @category Configuration
      */
     makeVertical () {
-        this.setWidth("100%")
+        this.setWidth("100%");
         this.setFlexGrow(1);
-        this.setOverflowY("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
-        this.setOverflowX("hidden")
-        return this
+        this.setOverflowY("scroll"); // has to be scroll, not auto, for touch scroll momentum to work
+        this.setOverflowX("hidden");
+        return this;
     }
 
     /**
@@ -70,13 +70,13 @@
      * @category Configuration
      */
     makeHorizontal () {
-        this.setWidth("null")
-        this.setHeight("100%")
+        this.setWidth("null");
+        this.setHeight("100%");
         this.setFlexGrow(1);
-        this.setOverflowY("hidden") 
-        this.setOverflowX("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
-        return this
+        this.setOverflowY("hidden");
+        this.setOverflowX("scroll"); // has to be scroll, not auto, for touch scroll momentum to work
+        return this;
     }
 
-    
+
 }.initThisClass());

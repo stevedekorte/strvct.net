@@ -8,13 +8,13 @@
 /**
  * @class Slot
  * @extends Object
- * @classdesc Abstraction for a slot on a prototype. 
- * 
+ * @classdesc Abstraction for a slot on a prototype.
+ *
  * An array of these are stored in each prototype.
- * 
+ *
  * - stores slot related data, such as:
  *   - default value
- *   - cloning policy 
+ *   - cloning policy
  *   - persistent policy
  *   - comment
  *   - whether slot can be:
@@ -22,10 +22,10 @@
  *   - inspected
  *   - isPrivate
  *   - slotType
- * - handles auto generating getter/setter 
- * 
+ * - handles auto generating getter/setter
+ *
  * NOTE:
- * 
+ *
  * TODO: hooks code is a mess, need to cleanup and modularize
  */
 
@@ -33,14 +33,14 @@ if (!SvGlobals.globals().ideal) {
     SvGlobals.globals().ideal = {};
 }
 
-SvGlobals.globals().ideal.Slot = (class Slot extends Object { 
+SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
     /**
      * @category Initialization
      */
     initPrototypeSlots () {
         Object.defineSlot(this, "_slotNames", new Set());
-        
+
         this.simpleNewSlot("owner", null); // typically a reference to a .prototype
         this.simpleNewSlot("name", false);
         this.simpleNewSlot("privateName", null);
@@ -60,7 +60,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         // getter
         this.simpleNewSlot("ownsGetter", true);
         this.simpleNewSlot("doesHookGetter", false);
-        //this.simpleNewSlot("hookedGetterIsOneShot", false) 
+        //this.simpleNewSlot("hookedGetterIsOneShot", false)
         //this.simpleNewSlot("isInGetterHook", false)
 
         // setter
@@ -84,20 +84,20 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         //this.simpleNewSlot("isLazy", false); // should hook getter
         this.simpleNewSlot("isWeak", false); // should hook getter
 
-        // debugging 
+        // debugging
         //this.simpleNewSlot("doesBreakInGetter", false) // uses debugger
         //this.simpleNewSlot("doesBreakInSetter", false) // uses debugger
 
         // copying behavior
         //this.simpleNewSlot("initOp", "copyValue")
-        //this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"])) 
+        //this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"]))
         this.simpleNewSlot("duplicateOp", "nop");
         this.simpleNewSlot("validDuplicateOps", new Set(["nop", "copyValue", "duplicate"]));
         this.simpleNewSlot("comment", null);
         this.simpleNewSlot("isPrivate", false);
 
         // inspector related
-        // slotType is a string value, eg: "Boolean", "String", "Number", "Action" - can be used to find a class 
+        // slotType is a string value, eg: "Boolean", "String", "Number", "Action" - can be used to find a class
         // to create an inspector node for the slotValue
         this.simpleNewSlot("slotType", null);
         this.simpleNewSlot("slotTypeDict", null); // a dictionary with kind (instance, class, primitive (null or undefined)), and name (class name if instance or class, or the primitive name if primitive)
@@ -106,7 +106,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("label", null); // visible label on inspector
         this.simpleNewSlot("allowsNullValue", false); // used for validation
 
-        // valid values 
+        // valid values
         this.simpleNewSlot("validValues", null); // used for options field and validation
         this.simpleNewSlot("validValuesClosure", null);
 
@@ -137,7 +137,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
     setSlotType (s) {
         assert(Type.isString(s), "Slot.setSlotType called with non-string: " + s);
-        this.setSlotTypeDict({ 
+        this.setSlotTypeDict({
             kind: "instance",
             name: s
         });
@@ -199,7 +199,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 subtitle: null,
                 value: null
             };
-        }   
+        }
 
         if (Type.isString(v) || Type.isNumber(v)) {
             return {
@@ -208,7 +208,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 value: v
             };
         }
-        
+
         throw Error.exception(this.svType() + ".itemForValue() called with invalid value: " + v);
     }
 
@@ -225,7 +225,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
     /**
      * @category Valid Items
-     * @description returns an array of dictionaries with label and value. 
+     * @description returns an array of dictionaries with label and value.
      * If _validItems is available, returns that, otherwise uses validValues if available, otherwise uses validValuesClosure if available, otherwise returns null.
      */
     validItems () {
@@ -239,7 +239,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
     /**
      * @category Valid Items
-     * @description returns a closure which returns an array of dictionaries with label, subtitle and value. 
+     * @description returns a closure which returns an array of dictionaries with label, subtitle and value.
      * If _validItemsClosure is available, returns that, otherwise if validValuesClosure is available, uses that to convert values to items, otherwise returns null.
      */
     validItemsClosure () {
@@ -249,7 +249,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             const self = this;
             return (context) => {
                 return self.itemsForValues(self._validValuesClosure(context));
-            }
+            };
         }
         return null;
     }
@@ -342,7 +342,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     /**
      * @category Slot Creation
      */
-    simpleNewSlot (slotName, initialValue) {  
+    simpleNewSlot (slotName, initialValue) {
         // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
         const privateName = "_" + slotName;
         Object.defineSlot(this, privateName, initialValue);
@@ -350,7 +350,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         if (!this[slotName]) {
             const simpleGetter = function () {
                 return this[privateName];
-            }
+            };
 
             Object.defineSlot(this, slotName, simpleGetter);
         }
@@ -361,13 +361,13 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             const simpleSetter = function (newValue) {
                 this[privateName] = newValue;
                 return this;
-            }
+            };
 
             Object.defineSlot(this, setterName, simpleSetter);
         }
 
         this._slotNames.add(slotName);
-        
+
         return this;
     }
 
@@ -399,7 +399,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     setLabelToCapitalizedSlotName () {
         let s = this.name().capitalized();
         // If the name was camel case, we want to split it into words.
-        s = s.replace(/([A-Z])/g, ' $1').trim();
+        s = s.replace(/([A-Z])/g, " $1").trim();
         this.setLabel(s);
         return this;
     }
@@ -525,7 +525,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     setShouldJsonArchive (aBool) {
         this.setAnnotation("shouldJsonArchive", aBool);
-        return this
+        return this;
     }
 
     /**
@@ -738,7 +738,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         if (this.validValues() || this.validValuesClosure() || this.validItems() || this.validItemsClosure()) {
             fieldName = "SvOptionsNode";
         }
-        
+
         return fieldName;
     }
 
@@ -750,7 +750,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         if (slotType /*&& this.canInspect()*/) {
             const fieldName = this.fieldInspectorViewClassName();
             let proto = SvGlobals.globals()[fieldName];
-            
+
             if (!proto) {
                 //let nodeName = "Sv" + slotType + "Node";
                 const nodeName = "SvPointerField";
@@ -764,14 +764,14 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 field.setValueMethod(this.name());
                 field.setValueIsEditable(this.canEditInspection());
                 field.setCanDelete(false);
-                
+
                 if (Type.isString(this.valueWhiteSpace())) {
                     field.setValueWhiteSpace(this.valueWhiteSpace());
                 }
-                
+
 
                 if (Type.isBoolean(this.valueAllowsHtml())) {
-                    
+
                     field.setValueAllowsHtml(this.valueAllowsHtml());
                 }
 
@@ -886,14 +886,14 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     value = Type.deepCopyForValue(value);
                 } else {
                     // we'll use the value - but this may be dangerous!
-                    if (Type.isClass(value)) { 
+                    if (Type.isClass(value)) {
                         // ok to copy value
                     } else if (!Type.isUndefined(value)) {
                         throw new Error("copyFrom received a value that is not a class or undefined: " + Type.typeDescription(value));
                     }
                 }
             }
-            
+
             this[privateName] = value;
             /*
             const setterName = "set" + slotName.capitalized()
@@ -926,10 +926,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category Hooks
      */
     ownerImplemnentsdHooks () {
-        return true
+        return true;
         /*
         const slotsMap = this.owner().slotsMap() // TODO: this is slow
-        return this.hookNames().canDetect(hookName => slotsMap.has(hookName)) 
+        return this.hookNames().canDetect(hookName => slotsMap.has(hookName))
         */
     }
 
@@ -944,7 +944,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     const msg = this.owner().svType() + "." + this.setterName() + "() exists, so we can't hook it - fix by calling slot.setOwnsSetter(true)";
                     console.log(msg);
                     throw new Error(msg);
-                } 
+                }
                 // this.setOwnsSetter(true);
             }
             //this.setupSetter();
@@ -979,7 +979,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category Getter
      */
     alreadyHasGetter () {
-        return Object.hasOwn(this.owner(), this.getterName()); // TODO: hasOwnProperty? 
+        return Object.hasOwn(this.owner(), this.getterName()); // TODO: hasOwnProperty?
     }
 
     /**
@@ -1000,7 +1000,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category Getter
      */
     alreadyHasSetter () {
-        return Object.hasOwn(this.owner(), this.setterName());  // TODO: hasOwnProperty? 
+        return Object.hasOwn(this.owner(), this.setterName());  // TODO: hasOwnProperty?
     }
 
     /**
@@ -1041,7 +1041,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const privateName = this.privateName();
         const func = function () {
             return this[privateName];
-        }
+        };
         return func;
     }
 
@@ -1058,10 +1058,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     autoGetter () {
         const slot = this;
-        return function (/*arg*/) { 
+        return function (/*arg*/) {
             // assert(Type.isUndefined(arg)); // TODO: remove this
             return this.getSlotValue(slot);
-        }
+        };
     }
 
     /**
@@ -1089,7 +1089,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         }
 
         const validItems = this.validItems();
-        // TODO: fix computedValidItems 
+        // TODO: fix computedValidItems
         //const validItems = this.computedValidItems(); // closure may reference unloaded classes...
 
         if (validItems !== null) {
@@ -1101,7 +1101,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
 
             if (this.allowsMultiplePicks()) {
-                if(!Type.isArray(v)) {
+                if (!Type.isArray(v)) {
                     assert(!Type.isArray(v));
                     console.warn("slot '" + this.name() + "' allows multiple picks, but value is not an array: " + Type.typeDescription(v));
                     return false;
@@ -1138,8 +1138,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 if (result) {
                     return true;
                 }
-                console.log("Slot '" +this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
-                
+                console.log("Slot '" + this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
+
                 Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
                 return false;
             }
@@ -1169,7 +1169,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     vString = "'" + vString + "'";
                 }
                 return Type.typeName(v) + " " + vString;
-            }
+            };
 
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
@@ -1222,7 +1222,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     if (this.shouldStore()) {
                         const store = this.defaultStore();
                         if (store.hasActiveObject(this)) {
-                            
+
                             store.forceAddDirtyObject(this); // not ideal, but let's see if it works
                         }
                     }
@@ -1242,7 +1242,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 } else if (newValue.setOwnerNode) {
                     // this is a Node specific feature so might not belong here
                     // but it's fundamental enough that we might want to support it elsewhere
-                    newValue.setOwnerNode(this); // this is the instance 
+                    newValue.setOwnerNode(this); // this is the instance
                 }
             }
 
@@ -1266,7 +1266,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const func = function (newValue) {
             this[privateName] = newValue;
             return this;
-        }
+        };
         return func;
     }
 
@@ -1411,7 +1411,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 /*
                 if (this.shouldFinalInitAsSubnode()) {
                     anInstance.addSubnode(newValue);
-                    
+
                     const title = this.finalInitTitle();
                     if (title) {
                         newValue.setTitle(title);
@@ -1421,10 +1421,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     }
                 }
                 */
-            } 
+            }
         }
 
-        if (this.isSubnode()) { 
+        if (this.isSubnode()) {
             // sanity check - we don't typically want to add it automatically if subnodes are stored
             assert(anInstance.shouldStoreSubnodes() === false);
             const value = this.onInstanceGetValue(anInstance);
@@ -1451,28 +1451,28 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         assert(this.validInitOps().contains(op)); // TODO: put on setter instead
 
         const opMethods = {
-            "null" : () => { 
+            "null" : () => {
                 this.onInstanceSetValue(anInstance, null);
             },
 
-            "lazy" : () => { 
+            "lazy" : () => {
                 const obj = this.initProto().clone();
                 anInstance[this.privateName()] = obj;
             },
 
-            "proto" : () => { 
+            "proto" : () => {
                 const obj = this.initProto().clone();
                 this.onInstanceSetValue(anInstance, obj);
             },
 
-            "nop" : () => { 
+            "nop" : () => {
             },
 
-            "copyValue" : () => { 
+            "copyValue" : () => {
                 this.onInstanceSetValue(anInstance, defaultValue);
             },
-    
-            "duplicate" : () => { 
+
+            "duplicate" : () => {
                 if (defaultValue) {
                     const obj = defaultValue.duplicate();
                     this.onInstanceSetValue(anInstance, obj);
@@ -1488,7 +1488,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         if (this.isLazy()) {
             const obj = initProto.clone();
             anInstance[this._privateName] = obj;
-        } else */ 
+        } else */
         if (initProto) {
             const obj = initProto.clone();
             this.onInstanceSetValue(anInstance, obj);
@@ -1516,7 +1516,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     onInstanceLoadRef (anInstance) {
         const storeRef = this.onInstanceGetValueRef(anInstance);
         if (storeRef) {
-            
+
             //console.warn(anInstance.svTypeId() + "." + this.name() + " [" + anInstance.title() + "] - loading storeRef");
             //console.warn(anInstance.title() + " loading storeRef for " + this.name());
             const obj = storeRef.unref();
@@ -1578,7 +1578,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         // what about integer?
 
-        const passThroughTypes = new Set(["String", "Number", "Boolean", "Array"])
+        const passThroughTypes = new Set(["String", "Number", "Boolean", "Array"]);
 
         if (passThroughTypes.has(type)) {
             return type.toLowerCase();
@@ -1621,7 +1621,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             const enumArray = a.shallowCopy();
 
             if (schema.type === "number") {
-                enumArray.sort((a, b) => a - b)
+                enumArray.sort((a, b) => a - b);
 
                 const hasANonInteger = enumArray.filter(v => { return !Type.isInteger(v); }).length > 0;
                 if (!hasANonInteger) {
@@ -1711,7 +1711,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             const schema = this.jsonSchema();
             // need to recursively decend into the schema to find refs
             // and add them to the refSet
-            
+
             return schema;
         }
 
@@ -1735,7 +1735,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             //enum: this.jsonSchemaEnum(), // use jsonSchemeAddRanges instead
             readOnly: this.isReadOnly()
         };
-        
+
         // Only add properties if they exist (for object types)
         // Already declared above, so reuse the same variable
         if (properties !== undefined) {
@@ -1770,17 +1770,17 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             schema.items = {
                 "description": this.jsonSchemaItemsDescription(),
                 "uniqueItems": this.jsonSchemaItemsIsUnique()
-            }
+            };
 
-           if (this.validJsonSchemaItemsTypes().contains(itemsType)) {
+            if (this.validJsonSchemaItemsTypes().contains(itemsType)) {
                 schema.items.type = itemsType; // it's a json type
-           } else {
-                // it's a class 
+            } else {
+                // it's a class
                 const aClass = SvGlobals.globals()[itemsType];
                 assert(aClass && aClass.isClass());
                 schema.items["$ref"] = aClass.jsonSchemaRef(refSet);
             }
-        
+
         }
 
         if (this.allowsMultiplePicks()) {
@@ -1861,7 +1861,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             }
         }
         */
- 
+
         return false;
     }
 
@@ -1873,7 +1873,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const value = slot.valueFromJson(jsonValue);
 
         if (slot.finalInitProto()) {
-            const obj = slot.onInstanceGetValue(anInstance)
+            const obj = slot.onInstanceGetValue(anInstance);
             obj.fromJsonSchema(v); // this will do a type check?
             return this;
         }
@@ -1898,7 +1898,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         }
         return this;
     }
-    
+
 }.initThisClass());
 
 

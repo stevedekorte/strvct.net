@@ -11,7 +11,7 @@
  * Extends SvSummaryNode.
  */
 (class SvFolderNode extends SvSummaryNode {
-    
+
     /**
      * @static
      * @description Indicates if this node is available as a node primitive.
@@ -19,9 +19,9 @@
      * @category Node Properties
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
-    
+
     /**
      * @description Initializes the prototype slots for the SvFolderNode.
      * These slots are useful for implementing menus.
@@ -78,7 +78,7 @@
         this.setShouldStoreSubnodes(true);
         this.setTitle("title");
         this.setNodeCanEditTitle(true);
-        
+
         this.setNodeCanReorderSubnodes(true);
         this.setNodeCanInspect(true);
         //this.setNoteIconName("right-arrow");
@@ -89,9 +89,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses(SvNode.primitiveNodeClasses())
+        super.init();
+        this.setNodeCanAddSubnode(true);
+        this.setSubnodeClasses(SvNode.primitiveNodeClasses());
     }
 
     /**
@@ -100,7 +100,7 @@
      * @category Node Properties
      */
     title () {
-        return this.label()
+        return this.label();
     }
 
     /**
@@ -110,8 +110,8 @@
      * @category Node Properties
      */
     setTitle (aString) {
-        this.setLabel(aString)
-        return this
+        this.setLabel(aString);
+        return this;
     }
 
     /**
@@ -120,7 +120,7 @@
      * @category Node Properties
      */
     acceptedSubnodeTypes () {
-        return SvCreatorNode.fieldTypes()
+        return SvCreatorNode.fieldTypes();
     }
 
     /**
@@ -128,11 +128,11 @@
      * @category Actions
      */
     sendMenuAction () {
-       const t = this.target()
-       const m = this.methodName()
-       if (t && m && t[m]) {
-           t[m].apply(t, [this])
-       }
+        const t = this.target();
+        const m = this.methodName();
+        if (t && m && t[m]) {
+            t[m].apply(t, [this]);
+        }
     }
 
     /**
@@ -142,9 +142,9 @@
      * @category Event Handling
      */
     onTapOfNode (aNode) {
-        super.onTapOfNode()
-        this.sendMenuAction()
-        return this
+        super.onTapOfNode();
+        this.sendMenuAction();
+        return this;
     }
 
     /**
@@ -154,6 +154,6 @@
      * @category Event Handling
      */
     didUpdateSlotParentNode (oldValue, newValue) {
-        this.scheduleSyncToView()
+        this.scheduleSyncToView();
     }
 }.initThisClass());

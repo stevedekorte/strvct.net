@@ -81,7 +81,7 @@
             return this;
         }
         const newPath = path + "/" + this.jsonPathCompmentString();
-        console.log(newPath , ".descendantWithJsonId('" + jsonId + "')");
+        console.log(newPath, ".descendantWithJsonId('" + jsonId + "')");
 
         return this.nextJsonDescendants().detectAndReturnValue(sn => {
 
@@ -94,7 +94,7 @@
                     return sn.descendantWithJsonId(jsonId, newPath);
                 } else {
                     console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
-                    
+
                 }
             }
             return null;

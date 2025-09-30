@@ -5,11 +5,11 @@
  * @class SvErrorReport
  * @extends TitledNode
  * @classdesc A class for reporting errors to the server.
- * 
+ *
  * Example:
- * 
+ *
  * await SvErrorReport.asyncSend(new Error("Test error message"), optionalAdditionalJson);
- * 
+ *
  */
 
 (class SvErrorReport extends TitledNode {
@@ -28,7 +28,7 @@
      * @category Error Handling
      */
     static async test () {
-        console.log("Sending test error report");        
+        console.log("Sending test error report");
         return await SvErrorReport.asyncSend(new Error("Test error message"), { foo: "bar" });
     }
 
@@ -54,7 +54,7 @@
         }
 
     }
-  
+
     /**
      * @description Initializes the prototype
      * @category Initialization
@@ -85,7 +85,7 @@
             json.url = window.location.href;
             json.referrer = document.referrer || null;
         }
-        
+
         return json;
     }
 
@@ -127,7 +127,7 @@
     async asyncSend () {
         try {
             this.composeBodyJson();
-           await this.justSend();
+            await this.justSend();
         } catch (error) {
             console.error("Failed to send error report: ", error);
             return { success: false, error: error.message };
@@ -139,7 +139,7 @@
             console.warn("Not sure where to send error reports in node");
             return { success: false, error: "Not sure where to send error reports in node" };
         }
-        
+
         // Get the base URL from the current window location
         const protocol = window.location.protocol; // "http:" or "https:"
         const host = window.location.hostname;
@@ -154,7 +154,7 @@
             },
             body: JSON.stringify(this.bodyJson())
         });
-        
+
         // Parse and return the response
         const responseData = await response.json();
         console.log("Error report sent successfully: ", responseData);

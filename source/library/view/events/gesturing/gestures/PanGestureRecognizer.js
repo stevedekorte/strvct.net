@@ -8,19 +8,19 @@
  * @class PanGestureRecognizer
  * @extends GestureRecognizer
  * @classdesc PanGestureRecognizer
- * 
+ *
  * Gesture begins when the minimal number of fingers have moved the minimal distance.
  * Will requestActive before beginning.
- * 
+ *
  * Delegate messages:
- * 
+ *
  *     onPanBegin
  *     onPanMove
  *     onPanComplete
  *     onPanCancelled
  */
 (class PanGestureRecognizer extends GestureRecognizer {
-    
+
     initPrototypeSlots () {
         /**
          * @member {Number} minNumberOfFingersRequired
@@ -84,7 +84,7 @@
      * @returns {PanGestureRecognizer}
      * @category Event Handling
      */
-    doPress (event) { 
+    doPress (event) {
         this.logDebug("doPress");
         this.setIsPressing(true);
         this.setDownEvent(event);
@@ -106,7 +106,7 @@
                 this.doPress(event);
             }
         }
-        
+
         return this;
     }
 
@@ -115,17 +115,17 @@
      * @category Gesture Control
      */
     attemptBegin () {
-        this.logDebug("attemptBegin")
+        this.logDebug("attemptBegin");
 
         if (!this.doesTargetAccept()) {
             return;
         }
 
         if (this.requestActivationIfNeeded()) {
-            this.sendBeginMessage() // begin
+            this.sendBeginMessage(); // begin
         } else {
             if (this.isDebugging()) {
-                console.log(this.shortTypeId() + ".attemptBegin() FAILED")
+                console.log(this.shortTypeId() + ".attemptBegin() FAILED");
             }
         }
     }
@@ -136,8 +136,8 @@
      * @category Event Handling
      */
     onMouseMoveCapture (event) { // tmp for debugging dragview
-        this.logDebug("onMouseMoveCapture")
-        super.onMouseMoveCapture(event)
+        this.logDebug("onMouseMoveCapture");
+        super.onMouseMoveCapture(event);
     }
 
     /**
@@ -147,18 +147,18 @@
      * @category Event Handling
      */
     onMove (event) {
-        super.onMove(event)
+        super.onMove(event);
 
         if (this.isPressing()) {
             if (this.isActive()) {
-                this.sendMoveMessage() // move
+                this.sendMoveMessage(); // move
             } else {
                 if (this.hasMovedEnough()) {
-                    this.attemptBegin()
+                    this.attemptBegin();
                 }
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -168,15 +168,15 @@
      * @category Event Handling
      */
     onUp (event) {
-        super.onUp(event)
+        super.onUp(event);
 
         if (this.isPressing()) {
             if (this.isActive()) {
-                this.sendCompleteMessage() // complete
+                this.sendCompleteMessage(); // complete
             }
-            this.didFinish() // will set isPressing to false
+            this.didFinish(); // will set isPressing to false
         }
-        return this
+        return this;
     }
 
     // ----------------------------------
@@ -188,10 +188,10 @@
      */
     cancel () {
         if (this.isActive()) {
-            this.sendCancelledMessage()
+            this.sendCancelledMessage();
         }
-        this.didFinish()
-        return this
+        this.didFinish();
+        return this;
     }
 
     /**
@@ -200,10 +200,10 @@
      * @category Gesture Control
      */
     didFinish () {
-        super.didFinish()
-        this.setIsPressing(false)
-        this.stopDocListeners()
-        return this
+        super.didFinish();
+        this.setIsPressing(false);
+        this.stopDocListeners();
+        return this;
     }
 
     // ----------------------------------
@@ -214,9 +214,9 @@
      * @category Validation
      */
     hasMovedEnough () {
-        const m = this.minDistToBegin()
-        const d = this.currentPosition().distanceFrom(this.downPosition())
-        return d >= m
+        const m = this.minDistToBegin();
+        const d = this.currentPosition().distanceFrom(this.downPosition());
+        return d >= m;
     }
 
     /**
@@ -225,7 +225,7 @@
      * @category Calculation
      */
     distance () {
-        return this.currentPosition().distanceFrom(this.beginPosition())
+        return this.currentPosition().distanceFrom(this.beginPosition());
     }
 
 }.initThisClass());

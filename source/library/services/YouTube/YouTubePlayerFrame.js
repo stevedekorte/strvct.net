@@ -13,82 +13,82 @@
  */
 (class YouTubePlayerFrame extends ProtoClass {
 
-  /**
+    /**
    * @static
    * @description Initializes the class as a singleton.
    * @category Initialization
    */
-  static initClass () {
-    this.setIsSingleton(true);
-  }
-  
-  /**
+    static initClass () {
+        this.setIsSingleton(true);
+    }
+
+    /**
    * @description Initializes the prototype slots.
    * @category Initialization
    */
-  initPrototypeSlots () {
+    initPrototypeSlots () {
     /**
      * @member {Promise} frameReadyPromise
      * @category State
      */
-    {
-      const slot = this.newSlot("frameReadyPromise", null);
-      slot.setSlotType("Promise");
+        {
+            const slot = this.newSlot("frameReadyPromise", null);
+            slot.setSlotType("Promise");
+        }
+
+        this.setIsDebugging(false);
     }
 
-    this.setIsDebugging(false);
-  }
-
-  /**
+    /**
    * @description Initializes the instance.
    * @category Initialization
    */
-  init () {
-    super.init();
+    init () {
+        super.init();
     /*
     const p = Promise.clone();
     p.setLabel(this.svTypeId() + ".frameReadyPromise");
     //p.setOnAwaitFunc(() => { this.setup(); });
     this.setFrameReadyPromise(p);
     */
-  }
+    }
 
-  /**
+    /**
    * @description Returns the frame ready promise, creating it if it doesn't exist.
    * @returns {Promise}
    * @category State
    */
-  frameReadyPromise () {
-    if (!this._frameReadyPromise) {
-      this.setFrameReadyPromise(Promise.clone().setLabel(this.svTypeId() + ".frameReadyPromise"));
-      this.setup();
+    frameReadyPromise () {
+        if (!this._frameReadyPromise) {
+            this.setFrameReadyPromise(Promise.clone().setLabel(this.svTypeId() + ".frameReadyPromise"));
+            this.setup();
+        }
+        return this._frameReadyPromise;
     }
-    return this._frameReadyPromise;
-  }
 
-  /**
+    /**
    * @description Sets up the YouTube IFrame Player API.
    * @private
    * @category Setup
    */
-  setup () {
-      // Load the YouTube IFrame Player API asynchronously
-      this.logDebug("setup()");
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  }
+    setup () {
+        // Load the YouTube IFrame Player API asynchronously
+        this.logDebug("setup()");
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
 
-  /**
+    /**
    * @description Called when the YouTube API is loaded.
    * @private
    * @category Callback
    */
-  onLoaded () {
-    this.logDebug("onLoaded()");
-    this.frameReadyPromise().callResolveFunc();
-  }
+    onLoaded () {
+        this.logDebug("onLoaded()");
+        this.frameReadyPromise().callResolveFunc();
+    }
 
 }).initThisClass();
 
@@ -102,5 +102,5 @@
  * @category Callback
  */
 SvGlobals.globals().onYouTubeIframeAPIReady = function (arg1, arg2, arg3) {
-  YouTubePlayerFrame.shared().onLoaded();
+    YouTubePlayerFrame.shared().onLoaded();
 };

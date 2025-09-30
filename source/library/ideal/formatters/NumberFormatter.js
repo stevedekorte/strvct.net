@@ -42,7 +42,7 @@
             slot.setCanInspect(true);
         }
     }
-  
+
     initPrototype () {
     }
 
@@ -59,12 +59,12 @@
         const suffixes = ["", "K", "M", "B", "T"];
         const magnitude = Math.floor(Math.log10(Math.abs(number)) / 3);
         const scaled = number / Math.pow(10, magnitude * 3);
-      
+
         if (magnitude === 0) {
-          return number.toString();
+            return number.toString();
         } else {
-          const roundedScaled = Number(scaled.toPrecision(significantDigits));
-          return roundedScaled + suffixes[magnitude];
+            const roundedScaled = Number(scaled.toPrecision(significantDigits));
+            return roundedScaled + suffixes[magnitude];
         }
     }
 

@@ -12,7 +12,7 @@
  * that it's important for performance reasons to only listen for them when needed.
  */
 (class MouseMoveListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -34,7 +34,7 @@
      */
     setupListeners () {
         this.addEventNameAndMethodName("mousemove", "onMouseMove");
-        return this
+        return this;
     }
 
 }.initThisClass());

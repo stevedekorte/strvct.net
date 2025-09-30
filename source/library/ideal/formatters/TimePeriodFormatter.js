@@ -38,15 +38,15 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("periodsMap", new Map(Object.entries({ 
-                seconds: "s", 
-                minutes: "m", 
-                hours: "h", 
-                days: "d", 
-                months: "months", 
+            const slot = this.newSlot("periodsMap", new Map(Object.entries({
+                seconds: "s",
+                minutes: "m",
+                hours: "h",
+                days: "d",
+                months: "months",
                 years: "years"
             })));
-            slot.setSlotType("Object"); 
+            slot.setSlotType("Object");
         }
     }
 
@@ -67,19 +67,19 @@
         if (seconds < 60) {
             return Math.floor(seconds) + periods.get("seconds");
         }
-        
-        const minutes = Math.floor(seconds/60);
+
+        const minutes = Math.floor(seconds / 60);
         if (minutes < 60) {
             return minutes + periods.get("minutes");
         }
 
-        const hours = Math.floor(minutes/60);
+        const hours = Math.floor(minutes / 60);
         if (hours < 24) {
             return hours + periods.get("hours");
         }
-        
-        const days = Math.floor(hours/24);
+
+        const days = Math.floor(hours / 24);
         return days + periods.get("days");
     }
-    
+
 }.initThisClass());

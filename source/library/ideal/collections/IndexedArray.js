@@ -4,15 +4,15 @@
  * @module library.ideal.collections
  * @class IndexedArray
  * @extends HookedArray
- * @description A subclass of Array that maintains a dictionary index of the 
- * elements of the list via an index closure. The index closure should return 
- * a string. For this to work, you need to avoid using the Array 
+ * @description A subclass of Array that maintains a dictionary index of the
+ * elements of the list via an index closure. The index closure should return
+ * a string. For this to work, you need to avoid using the Array
  * operations which can't be overridden:
- * 
- *     a[i] -> instead use a.at(i) 
+ *
+ *     a[i] -> instead use a.at(i)
  *     a[i] = b -> instead use a.atPut(i, b)
  *     delete a[i] -> instead use a.removeAt(i)
- * 
+ *
  */
 (class IndexedArray extends HookedArray {
 
@@ -119,7 +119,7 @@
     reindex () {
         this.setNeedsReindex(false); // do this first to avoid infinite loop
         this._index.clear();
-        this.forEach( v => this.addItemToIndex(v) );
+        this.forEach(v => this.addItemToIndex(v));
         return this;
     }
 
@@ -144,7 +144,7 @@
         super.didMutate(slotName, optionalValue);
 
         if (this._indexClosure && !this._needsReindex && optionalValue) {
-            // If we don't already need to reindex, 
+            // If we don't already need to reindex,
             // check if we can avoid it.
             // These cover the common use cases.
 
@@ -164,7 +164,7 @@
 
             if (slotName === "removeAt") {
                 if (!this.contains(optionalValue)) {
-                    // No copies of this value in the array, 
+                    // No copies of this value in the array,
                     // so we can just remove it from the index.
                     this.removeItemFromIndex(optionalValue);
                     return;

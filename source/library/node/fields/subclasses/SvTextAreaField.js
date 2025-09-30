@@ -8,7 +8,7 @@
  * It provides functionality for working with plain text data and can be used as a node primitive.
  */
 (class SvTextAreaField extends SvField {
-    
+
     /**
      * @static
      * @description Indicates whether this class is available as a node primitive.
@@ -78,7 +78,7 @@
      */
     appendToValue (text) {
         this.setValue(this.value() + text);
-        return this
+        return this;
     }
 
     /**
@@ -88,7 +88,7 @@
      */
     syncFromTarget () {
         super.syncFromTarget();
-        return this
+        return this;
     }
-    
+
 }.initThisClass());

@@ -7,7 +7,7 @@
 /**
  * A subclass of SortedArray which maintains a reference to the owner of the subnodes,
  * and is set to persist its items. This class is used by SvNodes to maintain their subnodes.
- * 
+ *
  * @class SubnodesArray
  * @extends SortedArray
  */

@@ -18,7 +18,7 @@ class FileReader extends Object {
         this.onloadend = null;
         this.onprogress = null;
     }
-    
+
     readAsText (blob /*, encoding*/) {
         setTimeout(() => {
             this.readyState = 2; // DONE
@@ -27,16 +27,16 @@ class FileReader extends Object {
             if (this.onloadend) this.onloadend({ target: this });
         }, 0);
     }
-    
+
     readAsDataURL (blob) {
         setTimeout(() => {
             this.readyState = 2; // DONE
-            this.result = "data:text/plain;base64," + Buffer.from(String(blob)).toString('base64');
+            this.result = "data:text/plain;base64," + Buffer.from(String(blob)).toString("base64");
             if (this.onload) this.onload({ target: this });
             if (this.onloadend) this.onloadend({ target: this });
         }, 0);
     }
-    
+
     readAsArrayBuffer (blob) {
         setTimeout(() => {
             this.readyState = 2; // DONE
@@ -45,7 +45,7 @@ class FileReader extends Object {
             if (this.onloadend) this.onloadend({ target: this });
         }, 0);
     }
-    
+
     abort () {
         this.readyState = 2; // DONE
         if (this.onloadend) this.onloadend({ target: this });

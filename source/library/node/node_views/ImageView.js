@@ -7,7 +7,7 @@
 "use strict";
 
 (class ImageView extends NodeView {
-    
+
     initPrototypeSlots () {
         /**
          * @member {FlexDomView} imageContainer - Container for the image
@@ -160,7 +160,7 @@
         // to avoid editable content?
         return this;
     }
-    
+
     /**
      * @description Checks if the view accepts drops
      * @returns {Boolean} Always returns false
@@ -177,26 +177,26 @@
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null);
         this.setOpacity(0);
-		
+
         this.setWidth("0px");
-		
+
         this.setPaddingLeftPx(0);
         this.setPaddingRightPx(0);
-		
+
         this.setMarginLeft(0);
         this.setMarginRightPx(0);
     }
-    
+
     /**
      * @description Closes the image view with an animation
      * @category UI Operations
      */
     close () {
         const seconds = 0.3;
-		
+
         this.collapse();
-        
-        this.addTimeout( () => { 
+
+        this.addTimeout(() => {
             this.closeButtonView().hideDisplay();
             const parentView = this.parentView();
             this.removeFromParentView();
@@ -213,7 +213,7 @@
     hasImageUrl (url) {
         return (url === v.dataURL() || url === v.srcUrl());
     }
-    
+
     /**
      * @description Removes the raw image view
      * @returns {ImageView} The ImageView instance
@@ -226,7 +226,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description Fetches the data URL from a source URL
      * @param {String} src - The source URL
@@ -242,10 +242,10 @@
             this.setFromDataURL(dataUrl);
             this.setSrcUrl(src);
         }
-		
+
         return this;
     }
-    
+
     /**
      * @description Creates a new raw image view for a given image
      * @param {Image} image - The image to create a view for
@@ -285,8 +285,8 @@
         const v = this.newRawImageViewForImage(image);
         this.setRawImageView(v);
         this.imageContainer().addSubview(v);
-	
+
         return this;
     }
-    
+
 }.initThisClass());

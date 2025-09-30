@@ -10,7 +10,6 @@ self.addEventListener("activate", function(event) {
 */
 
 
-
 // service-worker.js
 
 // Path is relative to the origin.
@@ -20,11 +19,11 @@ const ASSETS_TO_BE_CACHED = [OFFLINE_PAGE_URL];
 
 self.addEventListener("install", event => {
     event.waitUntil(
-        // The Cache API is domain specific and allows an app to create & name 
+        // The Cache API is domain specific and allows an app to create & name
         // various caches it"ll use. This allows for better data organization.
         // Under each named cache, we"ll add our key-value pairs.
         caches.open("my-service-worker-cache-name").then((cache) => {
-            // addAll() hits (GET request) all the URIs in the array and caches 
+            // addAll() hits (GET request) all the URIs in the array and caches
             // the results, with the URIs as the keys.
             cache.addAll(ASSETS_TO_BE_CACHED)
                 .then(() => console.log("Assets added to cache."))
@@ -45,5 +44,4 @@ self.addEventListener("fetch", (e) => {
 
     e.respondWith(response);
 });
-
 

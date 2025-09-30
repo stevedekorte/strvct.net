@@ -8,7 +8,7 @@
  * @classdesc Listens to a set of drag events on element being dragged.
  */
 (class DragListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots
      * @private
@@ -24,8 +24,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -38,7 +38,7 @@
         this.addEventNameAndMethodName("dragstart", "onBrowserDragStart");
         this.addEventNameAndMethodName("drag",      "onBrowserDrag");
         this.addEventNameAndMethodName("dragend",   "onBrowserDragEnd");
-        return this
+        return this;
     }
 
     /**
@@ -47,9 +47,9 @@
      * @category Lifecycle
      */
     start () {
-        super.start()
+        super.start();
         //this.listenTarget().ondragstart = (e) => { console.log("--- ondragstart ---"); } // TODO: still needed?
-        return this
+        return this;
     }
-    
+
 }.initThisClass());

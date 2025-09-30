@@ -19,102 +19,102 @@ console.debug("console.debug test");
 // SvPlatform.getWindowLocationURL().explicitOrigin()
 
 URL.prototype.explicitOrigin = function () {
-  const scheme = this.protocol.slice(0, -1);            // drop trailing “:”
-  const host   = this.hostname;
-  const port   = this.port || (
-      scheme === 'https' ? '443' :
-      scheme === 'http'  ? '80'  :
-      ''
-  );
-  return `${scheme}://${host}${port ? ':' + port : ''}`;
+    const scheme = this.protocol.slice(0, -1);            // drop trailing “:”
+    const host   = this.hostname;
+    const port   = this.port || (
+        scheme === "https" ? "443" :
+            scheme === "http"  ? "80"  :
+                ""
+    );
+    return `${scheme}://${host}${port ? ":" + port : ""}`;
 };
 
 class SvPlatform extends Object {
 
-  static _isNodePlatform = null;
+    static _isNodePlatform = null;
 
-  /**
+    /**
    * @static
    * @description Detects if running in Node.js platform
    * @returns {boolean} True if running in Node.js
    * @category Environment Detection
    */
-  static isNodePlatform () {
-      if (this._isNodePlatform === null) {
-          // we'll assume no polyfills at this point, so this should be a valid test
-          this._isNodePlatform = (typeof process !== 'undefined' && 
-                  process.versions && 
+    static isNodePlatform () {
+        if (this._isNodePlatform === null) {
+            // we'll assume no polyfills at this point, so this should be a valid test
+            this._isNodePlatform = (typeof process !== "undefined" &&
+                  process.versions &&
                   process.versions.node);
-      }
-      return this._isNodePlatform;
-  }
+        }
+        return this._isNodePlatform;
+    }
 
-  /**
+    /**
    * @static
    * @description Detects if running in browser platform
    * @returns {boolean} True if running in browser
    * @category Environment Detection
    */
-  static isBrowserPlatform () {
-      return !this.isNodePlatform();
-      /*
+    static isBrowserPlatform () {
+        return !this.isNodePlatform();
+        /*
       // we might have polyfills
-      return (typeof window !== 'undefined' && 
+      return (typeof window !== 'undefined' &&
               typeof document !== 'undefined');
       */
-  }
+    }
 
-  /**
+    /**
    * @static
    * @private
    * @type {boolean}
    * @description Flag to track if environment has been set up
    */
-  static _didSetupEnvironment = false;
+    static _didSetupEnvironment = false;
 
-  static _promiseReady = null;
+    static _promiseReady = null;
 
-  static async asyncSetup () {
-      if (this.isNodePlatform()) {
-          await this.asyncSetupForNode();
-      } else {
-          await this.asyncSetupForBrowser();
-      }
-  }
+    static async asyncSetup () {
+        if (this.isNodePlatform()) {
+            await this.asyncSetupForNode();
+        } else {
+            await this.asyncSetupForBrowser();
+        }
+    }
 
-  static async asyncSetupForBrowser () {
-      // console.log("SvPlatform asyncSetupForBrowser");
-  }
+    static async asyncSetupForBrowser () {
+        // console.log("SvPlatform asyncSetupForBrowser");
+    }
 
-  static async asyncSetupForNode () {
-      //console.log("SvPlatform asyncSetupForNode");
-      this.setupPerformance();
-      this.setupNodeTLS();
-      // DISABLED: We use our own LevelDB implementation
-      // await this.asyncSetupNodeIndexedDB();
-  }
+    static async asyncSetupForNode () {
+        //console.log("SvPlatform asyncSetupForNode");
+        this.setupPerformance();
+        this.setupNodeTLS();
+        // DISABLED: We use our own LevelDB implementation
+        // await this.asyncSetupNodeIndexedDB();
+    }
 
-  /**
+    /**
    * @static
    * @description Sets up TLS configuration for Node.js development environment
    * @category Node.js Setup
    */
-  static setupNodeTLS () {
-      // Allow self-signed certificates for local development
-      process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-  }
+    static setupNodeTLS () {
+        // Allow self-signed certificates for local development
+        process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+    }
 
-  // DISABLED: We use our own LevelDB implementation via SvIndexedDbFolder
-  // The node-indexeddb-lmdb polyfill is not needed and can conflict
-  /*
+    // DISABLED: We use our own LevelDB implementation via SvIndexedDbFolder
+    // The node-indexeddb-lmdb polyfill is not needed and can conflict
+    /*
   static async asyncSetupNodeIndexedDB () {
       //console.log('Initializing IndexedDB for Node.js...');
-      
+
       // Load and initialize the database cache FIRST
       const dbManager = require('node-indexeddb-lmdb/dbManager');
       await dbManager.loadCache();
 
-      const { indexedDB, IDBKeyRange } = require('node-indexeddb-lmdb');                
+      const { indexedDB, IDBKeyRange } = require('node-indexeddb-lmdb');
       SvGlobals.set("indexedDB", indexedDB);
       SvGlobals.set("IDBKeyRange", IDBKeyRange);
 
@@ -122,83 +122,83 @@ class SvPlatform extends Object {
   }
   */
 
-  static setupPerformance () {
-      // Setup basic performance API if not available
-      if (!SvGlobals.has("performance")) {
-          SvGlobals.set("performance", {
-              now: () => Date.now(),
-              timing: {
-                  navigationStart: Date.now()
-              }
-          });
-      }
-  }
-
-  static getWindowLocationURL () {
-      if (SvPlatform.isNodePlatform()) {
-          return new URL("file://" + this.getWorkingDirectory() + "/index.js");
-      }
-      return new URL(window.location.href);
-  }
-  
-  // --- ready ---
-
-  static async promiseReady () {
-    if (this._promiseReady === null) {
-        if (SvPlatform.isNodePlatform()) {
-            this._promiseReady = this.promiseReadyOnNode();
-        } else {
-        this._promiseReady = this.promiseReadyInBrowser();
+    static setupPerformance () {
+        // Setup basic performance API if not available
+        if (!SvGlobals.has("performance")) {
+            SvGlobals.set("performance", {
+                now: () => Date.now(),
+                timing: {
+                    navigationStart: Date.now()
+                }
+            });
         }
     }
-    return this._promiseReady;
-  }
 
-  static async promiseReadyOnNode () {
+    static getWindowLocationURL () {
+        if (SvPlatform.isNodePlatform()) {
+            return new URL("file://" + this.getWorkingDirectory() + "/index.js");
+        }
+        return new URL(window.location.href);
+    }
+
+    // --- ready ---
+
+    static async promiseReady () {
+        if (this._promiseReady === null) {
+            if (SvPlatform.isNodePlatform()) {
+                this._promiseReady = this.promiseReadyOnNode();
+            } else {
+                this._promiseReady = this.promiseReadyInBrowser();
+            }
+        }
+        return this._promiseReady;
+    }
+
+    static async promiseReadyOnNode () {
     //console.log("promiseReadyOnNode: starting SvBootLoader on Node");
     // In Node.js, we can start immediately since the process is already ready
     // Wait for next tick to ensure all modules are loaded
-    await new Promise(resolve => {
-      process.nextTick(() => {
-        resolve();
-      });
-    });
-  }
-
-  static async promiseReadyInBrowser () {
-    // Wrap the load event in a Promise
-    await new Promise(resolve => {
-      if (document.readyState === 'complete') {
-        resolve();
-      } else {
-        window.addEventListener('load', () => {
-          resolve();
+        await new Promise(resolve => {
+            process.nextTick(() => {
+                resolve();
+            });
         });
-      }
-    });
-  }
-
-  static async asyncWaitForNextRender () {
-    if (SvPlatform.isNodePlatform()) {
-      return;
     }
-    // in browser, we can wait for the next render
-    return new Promise(resolve => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(resolve); // Resolves after the paint
-      });
-    });
-  }
 
-  static isOnline () {
-    if (this.isBrowserPlatform()) {
-        return navigator.onLine;
+    static async promiseReadyInBrowser () {
+    // Wrap the load event in a Promise
+        await new Promise(resolve => {
+            if (document.readyState === "complete") {
+                resolve();
+            } else {
+                window.addEventListener("load", () => {
+                    resolve();
+                });
+            }
+        });
     }
-    // assume online for non-browser platforms?
-    return true;
-}
+
+    static async asyncWaitForNextRender () {
+        if (SvPlatform.isNodePlatform()) {
+            return;
+        }
+        // in browser, we can wait for the next render
+        return new Promise(resolve => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(resolve); // Resolves after the paint
+            });
+        });
+    }
+
+    static isOnline () {
+        if (this.isBrowserPlatform()) {
+            return navigator.onLine;
+        }
+        // assume online for non-browser platforms?
+        return true;
+    }
 }
 
 SvGlobals.set("SvPlatform", SvPlatform);
-//await SvPlatform.asyncSetup(); 
+//await SvPlatform.asyncSetup();
 

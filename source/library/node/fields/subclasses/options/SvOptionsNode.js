@@ -5,15 +5,15 @@
  * @class SvOptionsNode
  * @extends SvField
  * @classdesc SvOptionsNode represents a field for selecting one or multiple options.
- * 
+ *
  * NOTES:
- * 
+ *
  *  computedValidItems() will use validItemsClosure() if it is set, otherwise it will use validItems().
- * 
+ *
  * Idea:
- * 
+ *
  * have pickedValues() always return an array of (option leaf nodes) the form:
- * 
+ *
  * [
  *     {
  *         path: ["path component A", "path component B", ...], // the UI will construct folders to allow user to browse this options path
@@ -23,32 +23,32 @@
  *     },
  *     ...
  * ]
- * 
+ *
  * and implement pickedValue() to return first item:
- * 
+ *
  *     pickedValue () {
  *         return this.pickedValues().first()
  *     }
- * 
+ *
  * and have pick action choose which to set on target value depend on this.allowsMultiplePicks()
- * 
+ *
  * Calling value() and setValue() on the target:
- * 
+ *
  * - we need to support just putting in value or array (if multi-choice) of raw values,
  *   as well as an option to store the pickedDicts(), so we need another Slot attribute...
- * 
+ *
  * Notes:
- * 
+ *
  * Sometimes the options dict will have a value key, sometimes it will not.
  * If it doesn't, then the label is used as the value.
- * 
+ *
  * Should we support both cases, or require the use of the value key?
- * 
+ *
  * SvField.setValueOnTarget() needs to handle both cases.
- * 
+ *
  */
 (class SvOptionsNode extends SvField {
-    
+
     /**
      * @static
      * @description Indicates if this node is available as a primitive.
@@ -146,7 +146,7 @@
     svDebugId () {
         return this.svTypeId() + "_'" + this.key() + "'";
     }
-    
+
     /**
      * @description Sets the title of the options node.
      * @param {string} s - The new title.
@@ -213,7 +213,7 @@
      * @returns {Array<string>} An array of picked node path strings.
      */
     pickedNodePathStrings () {
-        return this.pickedNodePaths().map(nodePath => nodePath.map(node => { 
+        return this.pickedNodePaths().map(nodePath => nodePath.map(node => {
             return node.title();
         }).join(" / "));
     }
@@ -318,7 +318,7 @@
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
             this.unpickLeafSubnodesExcept(anOptionNode);
         }
-        
+
         this.updateTargetValue();
         return this;
     }
@@ -355,7 +355,7 @@
      * @returns {SvOptionsNode} The current instance.
      */
     setValueOnTarget (v) {
-        
+
         if (this.allowsMultiplePicks()) {
             if (!Type.isArray(v)) {
                 const errorMessage = this.svType() + ".setValueOnTarget() called with non array value when allowsMultiplePicks is true";
@@ -380,7 +380,7 @@
      */
     unpickLeafSubnodesExcept (anOptionNode) {
         this.leafSubnodes().forEach(sn => {
-            if (sn !== anOptionNode) { 
+            if (sn !== anOptionNode) {
                 sn.setIsPicked(false);
             }
         });
@@ -427,7 +427,7 @@
     constrainValue () {
         return this;
     }
-    
+
     /**
      * @description Gets the node tile link.
      * @returns {SvOptionsNode} The current instance.
@@ -475,7 +475,7 @@
             return this.validItems();
         } else if (this.validItemsClosure()) {
             return this.validItemsClosure()(context);
-        } 
+        }
 
         /*
         if (this.validItemsClosure()) {
@@ -505,7 +505,7 @@
      */
     targetHasPick (v) {
         const targetValue = this.value();
-        
+
         if (this.allowsMultiplePicks()) {
             // For multi-pick, target value should be an array
             if (!Type.isArray(targetValue)) {
@@ -536,7 +536,7 @@
                 subtitle: null,
                 value: null,
             };
-        }   
+        }
 
         if (Type.isString(v) || Type.isNumber(v)) {
             return {
@@ -545,7 +545,7 @@
                 value: v,
             };
         }
-        
+
         throw Error.exception(this.svType() + ".itemForValue() called with invalid value: " + v);
     }
 
@@ -588,13 +588,13 @@
     picksMatch () {
         const targetValue = this.value();
         const selectedVals = this.selectedValues();
-        
+
         if (this.allowsMultiplePicks()) {
             // For multiple picks, compare arrays (order doesn't matter)
             if (!Type.isArray(targetValue)) {
                 return selectedVals.length === 0;
             }
-            return targetValue.length === selectedVals.length && 
+            return targetValue.length === selectedVals.length &&
                    targetValue.every(val => selectedVals.includes(val)) &&
                    selectedVals.every(val => targetValue.includes(val));
         } else {
@@ -612,7 +612,7 @@
     isValidValue (value) {
         const validItems = this.computedValidItems();
         const validValues = validItems.map(item => item.value);
-        
+
         if (this.allowsMultiplePicks()) {
             if (!Type.isArray(value)) {
                 return false;
@@ -645,7 +645,7 @@
      */
     defaultValue () {
         const validItems = this.computedValidItems();
-        
+
         if (this.allowsMultiplePicks()) {
             return []; // Empty array for multi-pick
         } else {
@@ -668,7 +668,7 @@
         // lets see if this prevents the sync loop
         //super.didUpdateNode();
     }
-    
+
     didChangeSubnodeList () {
         // Only propagate subnode list changes if we're not setting up
         if (!this._isSettingUpSubnodes) {
@@ -685,7 +685,7 @@
         if (this.needsSyncToSubnodes()) {
             // Prevent notifications during setup
             this._isSettingUpSubnodes = true;
-            
+
             this.removeAllSubnodes();
             const validItems = this.computedValidItems();
 
@@ -706,7 +706,7 @@
             //this.setSyncedValidItemsJsonString(JSON.stableStringifyOnlyJson(validItems));
 
             this.syncPicksToSubnodes();
-            
+
             // Re-enable notifications
             this._isSettingUpSubnodes = false;
 
@@ -732,7 +732,7 @@
         console.log(this.logPrefix(), "  allowsMultiplePicks: " + this.allowsMultiplePicks() + "\n");
         console.log(this.logPrefix(), "TARGET VALUE:");
         console.log(this.logPrefix(), "  value: ", JSON.stableStringifyWithStdOptions(this.value()) + "\n");
-        
+
         console.log(this.logPrefix(), "SELECTED VALUES:");
         console.log(this.logPrefix(), "  selectedValues: ", JSON.stableStringifyWithStdOptions(this.selectedValues()) + "\n");
         if (!this.allowsMultiplePicks()) {
@@ -742,5 +742,5 @@
         console.log(this.logPrefix(), "  pickedItems: ", this.pickedItems(), "\n");
         console.log(this.logPrefix(), "--------------------------------");
     }
-    
+
 }.initThisClass());

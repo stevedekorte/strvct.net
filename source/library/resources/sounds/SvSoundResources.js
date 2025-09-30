@@ -15,8 +15,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setTitle("Sounds")
+        super.init();
+        this.setTitle("Sounds");
     }
 
     /**
@@ -40,8 +40,8 @@
      * @category SoundManagement
      */
     addSound (aSound) {
-        this.addResource(aSound)
-        return this
+        this.addResource(aSound);
+        return this;
     }
 
     /**
@@ -51,7 +51,7 @@
      * @category SoundManagement
      */
     sounds () {
-        return this.resources()
+        return this.resources();
     }
 
     async prechacheWhereAppropriate () {

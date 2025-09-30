@@ -31,57 +31,57 @@
 (class BMUrlResources extends BMNode {
 
     static initClass () {
-        this.setIsSingleton(true)
-		return this
+        this.setIsSingleton(true);
+        return this;
     }
-    
+
     initPrototypeSlots () {
-        this.newSlot("hashToResourceMap", null) 
-        this.newSlot("urlToResourceMap", null) 
+        this.newSlot("hashToResourceMap", null);
+        this.newSlot("urlToResourceMap", null);
     }
 
     init () {
-        super.init()
-        this.setTitle("Url Resources")
-        this.setHashToResourceMap(new EnumerableWeakMap())
-        this.setUrlToResourceMap(new EnumerableWeakMap())
-        return this
+        super.init();
+        this.setTitle("Url Resources");
+        this.setHashToResourceMap(new EnumerableWeakMap());
+        this.setUrlToResourceMap(new EnumerableWeakMap());
+        return this;
     }
 
     subtitle () {
-        return this.hashToResourceMap().size + " active requests" 
+        return this.hashToResourceMap().size + " active requests";
     }
 
     newUrlResourceForUrlAndHash (url, hash) {
         {
-            const r = this.hashToResourceMap().get(hash)
+            const r = this.hashToResourceMap().get(hash);
             if (r) {
-                return r
+                return r;
             }
         }
 
         {
-            const r = this.urlToResourceMap().get(url)
+            const r = this.urlToResourceMap().get(url);
             if (r) {
-                return r
+                return r;
             }
         }
 
-        const r = BMUrlResources.clone().setUrl(url).setHash(hash)
-        this.addUrlResource(r)
-        return r
+        const r = BMUrlResources.clone().setUrl(url).setHash(hash);
+        this.addUrlResource(r);
+        return r;
     }
 
     addUrlResource (urlResource) {
-        this.hashToResourceMap().delete(urlResource.hash())
-        this.urlToResourceMap().delete(urlResource.url())
-        return this
+        this.hashToResourceMap().delete(urlResource.hash());
+        this.urlToResourceMap().delete(urlResource.url());
+        return this;
     }
 
     removeUrlResource (urlResource) {
-        this.hashToResourceMap().delete(urlResource.hash())
-        this.urlToResourceMap().delete(urlResource.url())
-        return this
+        this.hashToResourceMap().delete(urlResource.hash());
+        this.urlToResourceMap().delete(urlResource.url());
+        return this;
     }
 
 }.initThisClass());

@@ -23,8 +23,8 @@
         const symbolKey = Symbol.keyFor(sym);
         if (symbolKey !== undefined) {
             // Global symbol with a key, can be serialized safely
-            const dict = { 
-                type: 'Symbol', 
+            const dict = {
+                type: "Symbol",
                 key: symbolKey
             };
             return dict;

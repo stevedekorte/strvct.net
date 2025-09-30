@@ -9,7 +9,7 @@
  * @classdesc Extends the Event prototype with methods for caching points.
  */
 if (!SvGlobals.globals().Event) {
-    console.log("WARNING: no Event object found - maybe we are not in browser?")
+    console.log("WARNING: no Event object found - maybe we are not in browser?");
 } else {
     Object.defineSlots(Event.prototype, {
         /**
@@ -18,7 +18,7 @@ if (!SvGlobals.globals().Event) {
          * @category Cache Management
          */
         hasCachedPoints: function () {
-            return this._cachedPoints !== undefined
+            return this._cachedPoints !== undefined;
         },
 
         /**
@@ -27,7 +27,7 @@ if (!SvGlobals.globals().Event) {
          * @category Cache Management
          */
         setCachedPoints: function (points) {
-            this._cachedPoints = points
+            this._cachedPoints = points;
         },
 
         /**
@@ -36,17 +36,17 @@ if (!SvGlobals.globals().Event) {
          * @category Cache Management
          */
         cachedPoints: function () {
-            return this._cachedPoints
+            return this._cachedPoints;
         },
-        
+
         /**
          * @description Adds a new point to the cached points array.
          * @param {Object} point - The point to be added to the cached points.
          * @category Cache Management
          */
         pushCachedPoint: function (point) {
-            assert(this._cachedPoints)
-            this._cachedPoints.push(point)
+            assert(this._cachedPoints);
+            this._cachedPoints.push(point);
         }
-    })
+    });
 }

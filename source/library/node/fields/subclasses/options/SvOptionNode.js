@@ -10,7 +10,7 @@
  * @classdesc A single option from a set of options choices.
  */
 (class SvOptionNode extends SvStorableNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvOptionNode.
      * @category Initialization
@@ -102,7 +102,7 @@
             optionsNode.didToggleOption(this);
             this.didUpdateNodeIfInitialized();
         } else {
-            // if this is called, the stack views might not have properly synced 
+            // if this is called, the stack views might not have properly synced
             // after the OptionsNode removed it's subnodes
             console.log(this.logPrefix(), "parent: ", this.parentNode().title());
             console.log(this.logPrefix(), "grand parent: ", this.parentNode().parentNode().title());
@@ -118,7 +118,7 @@
      * @returns {SvOptionNode} The current instance.
      * @category State
      */
-    toggle () { 
+    toggle () {
         // The OptionNodeTile knows to call this
         this.setIsPicked(!this.isPicked());
         return this;
@@ -134,7 +134,7 @@
         this.setLabel(aString);
         return this;
     }
-    
+
     /**
      * @description Retrieves the title (label) of the option.
      * @returns {string} The title of the option.

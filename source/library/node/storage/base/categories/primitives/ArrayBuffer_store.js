@@ -20,9 +20,9 @@
      */
     static instanceFromRecordInStore (aRecord, aStore) {
         //assert(aRecord.type === "ArrayBuffer")
-        const bytes = aRecord.bytes
-        const obj = new ArrayBuffer(bytes.length)
-        return obj
+        const bytes = aRecord.bytes;
+        const obj = new ArrayBuffer(bytes.length);
+        return obj;
     }
 
     /**
@@ -33,12 +33,12 @@
      * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
-        assert(aRecord.bytes.length === this.length)
-        const bytes = aRecord.bytes
+        assert(aRecord.bytes.length === this.length);
+        const bytes = aRecord.bytes;
         for (let i = 0; i < bytes.length; i++) {
-            this[i] = bytes[i]
+            this[i] = bytes[i];
         }
-        return this
+        return this;
     }
 
     /**
@@ -47,11 +47,11 @@
      * @category Data Conversion
      */
     bytes () {
-        const bytes = []
+        const bytes = [];
         for (let i = 0; i < this.byteLength; i++) {
-            bytes.push(this[i])
+            bytes.push(this[i]);
         }
-        return bytes
+        return bytes;
     }
 
     /**
@@ -63,9 +63,9 @@
      */
     recordForStore (aStore) {
         return {
-            type: "ArrayBuffer", //Type.typeName(this), 
+            type: "ArrayBuffer", //Type.typeName(this),
             bytes: this.bytes(),
-        }
+        };
     }
 
     /**
@@ -75,7 +75,7 @@
      * @category Identification
      */
     refsPidsForJsonStore (puuids = new Set()) {
-        return puuids
+        return puuids;
     }
-    
+
 }).initThisCategory();

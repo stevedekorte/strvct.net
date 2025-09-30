@@ -8,7 +8,7 @@
  * @classdesc FlexDomView is a specialized DomView that utilizes flexbox for layout.
  */
 (class FlexDomView extends DomView {
-    
+
     /**
      * @description Initializes the prototype slots for the FlexDomView.
      * @private
@@ -23,9 +23,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setDisplay("flex")
-        return this
+        super.init();
+        this.setDisplay("flex");
+        return this;
     }
 
     /**
@@ -34,10 +34,10 @@
      * @category Layout
      */
     makeFlexAndCenterContent () {
-        this.setDisplay("flex")
-        this.setAlignItems("center")
-        this.setJustifyContent("center")
-        return this
+        this.setDisplay("flex");
+        this.setAlignItems("center");
+        this.setJustifyContent("center");
+        return this;
     }
 
     /**
@@ -46,7 +46,7 @@
      * @category Layout
      */
     canSplit () {
-        return this.subviews().length === 0
+        return this.subviews().length === 0;
     }
 
     /**
@@ -57,9 +57,9 @@
      */
     addSubviewCount (count) {
         for (let i = 0; i < count; i++) {
-            this.newFlexSubview()     
+            this.newFlexSubview();
         }
-        return this
+        return this;
     }
 
     /**
@@ -68,14 +68,14 @@
      * @category Subview Management
      */
     newFlexSubview () {
-        const v = FlexDomView.clone()
-        v.setDisplay("flex")
-        v.setMinHeight("0em")
-        v.setMinWidth("0em")
-        const order = this.subviews().length
-        v.setOrder(order)
-        this.addSubview(v) 
-        return v
+        const v = FlexDomView.clone();
+        v.setDisplay("flex");
+        v.setMinHeight("0em");
+        v.setMinWidth("0em");
+        const order = this.subviews().length;
+        v.setOrder(order);
+        this.addSubview(v);
+        return v;
     }
 
     /**
@@ -84,8 +84,8 @@
      */
     makeSubviewsOrdered () {
         this.subviews().forEachKV((i, sv) => {
-            sv.setOrder(i)
-        })
+            sv.setOrder(i);
+        });
     }
 
     /**
@@ -93,10 +93,10 @@
      * @category Subview Management
      */
     makeSubviewsReverseOrdered () {
-        const count = this.subviews().length
+        const count = this.subviews().length;
         this.subviews().forEachKV((i, sv) => {
-            sv.setOrder(count - 1 - i)
-        })
+            sv.setOrder(count - 1 - i);
+        });
     }
 
     /**
@@ -106,12 +106,12 @@
      * @category Layout
      */
     flexSplitIntoTiles (count) {
-        assert(this.canSplit()) // temporary
-        this.setDisplay("flex")
-        this.setFlexDirection("column")
-        this.addSubviewCount(count)
-        this.debugBorders()
-        return this
+        assert(this.canSplit()); // temporary
+        this.setDisplay("flex");
+        this.setFlexDirection("column");
+        this.addSubviewCount(count);
+        this.debugBorders();
+        return this;
     }
 
     /**
@@ -121,12 +121,12 @@
      * @category Layout
      */
     flexSplitIntoColumns (count) {
-        assert(this.canSplit()) // temporary
-        this.setDisplay("flex")
-        this.setFlexDirection("row")
-        this.addSubviewCount(count)
-        this.debugBorders()
-        return this
+        assert(this.canSplit()); // temporary
+        this.setDisplay("flex");
+        this.setFlexDirection("row");
+        this.addSubviewCount(count);
+        this.debugBorders();
+        return this;
     }
 
     /**
@@ -135,9 +135,9 @@
      * @category Layout
      */
     flexCenterContent () {
-        this.setJustifyContent("center")
-        this.setAlignItems("center")
-        return this
+        this.setJustifyContent("center");
+        this.setAlignItems("center");
+        return this;
     }
 
     /**
@@ -146,11 +146,11 @@
      * @category Layout
      */
     makeStandardFlexView () {
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.flexCenterContent()
-        this.setOverflow("hidden")
-        return this
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.flexCenterContent();
+        this.setOverflow("hidden");
+        return this;
     }
 
     /**

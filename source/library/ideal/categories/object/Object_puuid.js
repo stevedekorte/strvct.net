@@ -13,18 +13,18 @@
      * @category Identification
      */
     static newUuid () {
-        const length = 10
-        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const length = 10;
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         const charactersLength = characters.length;
         const randomValues = new Uint8Array(length);
-        
+
         // Use appropriate crypto API based on environment
-        if (typeof window !== 'undefined' && window.crypto) {
+        if (typeof window !== "undefined" && window.crypto) {
             // Browser environment
             window.crypto.getRandomValues(randomValues);
-        } else if (typeof require !== 'undefined') {
+        } else if (typeof require !== "undefined") {
             // Node.js environment
-            const crypto = require('crypto');
+            const crypto = require("crypto");
             crypto.randomFillSync(randomValues);
         } else {
             // Fallback to Math.random (less secure)
@@ -33,12 +33,12 @@
             }
         }
         const result = new Array(length);
-    
+
         for (let i = 0; i < length; i++) {
             result[i] = characters[randomValues[i] % charactersLength];
         }
-    
-        return result.join('');
+
+        return result.join("");
     }
 
     /**
@@ -49,10 +49,10 @@
      */
     puuid () {
         if (!this.hasPuuid()) {
-            this.setPuuid(Object.newUuid())
+            this.setPuuid(Object.newUuid());
         }
 
-        return this["_puuid"]
+        return this["_puuid"];
     }
 
     /**
@@ -131,12 +131,12 @@
      * @category Debugging
      */
     svDebugId () {
-        const puuid = this.puuid().substr(0,3)
+        const puuid = this.puuid().substr(0, 3);
 
         if (Type.isFunction(this.svType)) {
-            return this.svType() + "_" + puuid
+            return this.svType() + "_" + puuid;
         }
-        return Type.typeName(this) + "_" + puuid
+        return Type.typeName(this) + "_" + puuid;
     }
 
     /**
@@ -145,7 +145,7 @@
      * @category Debugging
      */
     svDebugIdSpacer () {
-        return " -> "
+        return " -> ";
     }
 
 }).initThisCategory();

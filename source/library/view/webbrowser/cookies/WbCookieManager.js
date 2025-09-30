@@ -7,12 +7,12 @@
  * @extends ProtoClass
  * @classdesc Manages a collection of browser cookies.
  * Provides methods for reading and managing multiple cookies.
- * 
+ *
  * Usage examples:
- * 
+ *
  * // simple example
  * WbCookieManager.shared().setValueOfCookieNamed("returnUrl", window.location.href);
- * 
+ *
  * // more complex example
  * const cookie = WbCookieManager.shared().cookieNamed("myCookie");
  * if (cookie) {
@@ -30,7 +30,7 @@
  * WbCookieManager.shared().clear();
  *
  * WbCookieManager.shared().cookieCount();
- * 
+ *
  * const newCookie = WbCookieManager.shared().newCookieNamed("myCookie");
  * newCookie.setPath("/");
  * newCookie.setDomain("mydomain.com");
@@ -38,11 +38,11 @@
  * newCookie.setSecure(true);
  * newCookie.setHttpOnly(true);
  * newCookie.save();
- * 
+ *
  */
 
 (class WbCookieManager extends ProtoClass {
-    
+
     static valueOfCookieNamed (name) {
         const cookie = WbCookieManager.shared().cookieNamed(name);
         if (cookie) {
@@ -87,8 +87,8 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
-        
+
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -106,7 +106,7 @@
             //slot.setFinalInitProto(SvIndexedDbFolder);
         }
     }
-    
+
     /**
      * @description Initializes the WbCookieManager instance.
      * @returns {WbCookieManager} The initialized instance.
@@ -135,11 +135,11 @@
      */
     readCookies () {
         if (SvPlatform.isBrowserPlatform()) {
-           this.readBrowserCookies();
+            this.readBrowserCookies();
         } else {
             this.loadFromIdb();
         }
-        
+
         return this;
     }
 
@@ -152,8 +152,8 @@
         // Only access document.cookie in browser environment
         const cookiesMap = new Map();
         this.setCookiesMap(cookiesMap);
-        const cookieStrings = document.cookie.split(';');
-        
+        const cookieStrings = document.cookie.split(";");
+
         for (let cookieString of cookieStrings) {
             const trimmedCookie = cookieString.trim();
             if (trimmedCookie) {
@@ -305,7 +305,7 @@
     requestDeleteCookie (wbCookie) {
         if (SvPlatform.isBrowserPlatform()) {
             document.cookie = wbCookie.deleteCookieString();
-            this.logDebug("deleted cookie: ", wbCookie.name());   
+            this.logDebug("deleted cookie: ", wbCookie.name());
         } else {
             this.idb().saveToIdb();
         }

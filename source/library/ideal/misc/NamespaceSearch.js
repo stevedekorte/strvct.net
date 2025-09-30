@@ -46,7 +46,7 @@
             slot.setSlotType("Function");
         }
     }
-  
+
     initPrototype () {
     }
 
@@ -64,8 +64,8 @@
      * @category Search
      */
     clear () {
-        this.setVisited(new Set([this])) // to avoid searching this object
-        this.setMatchingPaths([])
+        this.setVisited(new Set([this])); // to avoid searching this object
+        this.setMatchingPaths([]);
     }
 
     /**
@@ -75,9 +75,9 @@
      * @category Search
      */
     find (searchString) {
-        this.clear()
+        this.clear();
 
-        throw new Error("Not implemented")
+        throw new Error("Not implemented");
         /*
         if (searchString) {
             this.setSlotMatchClosure((slotOwner, slotName, slotValue, slotPath) => {
@@ -99,22 +99,22 @@
      */
     findOnObject (v, path = []) {
         if (Type.isNullOrUndefined(v)) {
-            return false
+            return false;
         }
 
         if (this.visited().has(v)) {
-            return false
+            return false;
         } else {
-            this.visited().add(v)
+            this.visited().add(v);
         }
 
         //const joinedPath = path.join("/")
 
         Object.getOwnPropertyNames(v).forEach((k) => {
             if (this.canAccessSlot(v, k)) {
-                this.findOnSlot(v, k, path)
+                this.findOnSlot(v, k, path);
             }
-        })
+        });
     }
 
     /**
@@ -126,9 +126,9 @@
      */
     canAccessSlot (v, k) {
         // to avoid illegal operation errors
-        const descriptor = Object.getOwnPropertyDescriptor(v, k)
-        const hasCustomGetter = Type.isUndefined(descriptor.get)
-        return !hasCustomGetter
+        const descriptor = Object.getOwnPropertyDescriptor(v, k);
+        const hasCustomGetter = Type.isUndefined(descriptor.get);
+        return !hasCustomGetter;
     }
 
     /**
@@ -139,16 +139,16 @@
      * @category Search
      */
     findOnSlot (slotOwner, slotName, path = []) {
-        const localPath = path.shallowCopy()
-        localPath.push(slotName)
-        
-        const slotValue = slotOwner[slotName]
+        const localPath = path.shallowCopy();
+        localPath.push(slotName);
+
+        const slotValue = slotOwner[slotName];
 
         if (this.doesMatchOnSlot(slotOwner, slotName, slotValue, localPath)) {
-            this.addMatchingPath(localPath)
+            this.addMatchingPath(localPath);
         }
 
-        this.findOnObject(slotValue, localPath)
+        this.findOnObject(slotValue, localPath);
     }
 
     /**
@@ -161,7 +161,7 @@
      * @category Search
      */
     doesMatchOnSlot (slotOwner, slotName, slotValue, slotPath) {
-        return this.slotMatchClosure()(slotOwner, slotName, slotValue, slotPath)
+        return this.slotMatchClosure()(slotOwner, slotName, slotValue, slotPath);
     }
 
     /**
@@ -171,11 +171,11 @@
      * @category Search
      */
     addMatchingPath (aPath) {
-        const stringPath = aPath.join("/")
+        const stringPath = aPath.join("/");
         if (!this.matchingPaths().contains(stringPath)) {
-            this.matchingPaths().push(stringPath)
+            this.matchingPaths().push(stringPath);
         }
-        return this
+        return this;
     }
 
     /**
@@ -183,8 +183,8 @@
      * @category Output
      */
     showMatches () {
-        console.log("matchingPaths:")
-        this.matchingPaths().forEach(p => console.log("  " + p))
+        console.log("matchingPaths:");
+        this.matchingPaths().forEach(p => console.log("  " + p));
     }
 
     /**
@@ -193,12 +193,12 @@
      * @category Testing
      */
     static selfTest () {
-        const ns = NamespaceSearch.clone()
+        const ns = NamespaceSearch.clone();
         ns.setSlotMatchClosure(function (slotOwner, slotName, slotValue, slotPath) {
-            return slotName === "String"
-        })
-        ns.find()
-        assert(ns.matchingPaths()[0] === "globalThis/String")
+            return slotName === "String";
+        });
+        ns.find();
+        assert(ns.matchingPaths()[0] === "globalThis/String");
     }
 
 }.initThisClass());

@@ -11,7 +11,7 @@
  * @classdesc Represents a theme state with various style attributes.
  */
 (class SvThemeState extends SvThemeFolder {
-    
+
     /**
      * @static
      * @description Returns an array of style names.
@@ -20,7 +20,7 @@
     static styleNames () {
         return [
             "color", // start with ["#000", "#111", "#222", "#333", "#444", .. to #fff by X
-            "backgroundColor", 
+            "backgroundColor",
             "opacity", // 0 to 1 by 0.1
 
             "fontFamily",
@@ -34,18 +34,18 @@
 
             /*
             "paddingLeft", // 0px to 100px by 1px
-            "paddingRight", 
-            "paddingTop", 
+            "paddingRight",
+            "paddingTop",
             "paddingBottom",
 
-            // for border we need to support 
+            // for border we need to support
             // left, right, top, bottom
             // border-style
             // border-width
             // border-radius
-            "borderLeft", // 0px to 100px by 1px 
-            "borderRight", 
-            "borderTop", 
+            "borderLeft", // 0px to 100px by 1px
+            "borderRight",
+            "borderTop",
             "borderBottom",
             "borderRadius"
             */
@@ -112,7 +112,7 @@
         for (let i = 0; i < 10; i ++) {
             values.push(i + "px");;
         }
-        return values
+        return values;
     }
 
     /**
@@ -121,7 +121,7 @@
      * @returns {string[]} Array of valid border style values.
      */
     static validBorderStyleValues () {
-        return ["inherit", "none", "dotted", "dashed", "solid", /*"groove", "inset"*/];
+        return ["inherit", "none", "dotted", "dashed", "solid",];
     }
 
     /**
@@ -163,16 +163,16 @@
             //slot.setInitValue("inherit");
 
             //slot.setValidValues(values)
-            
+
             if (values) {
                 const initValue = values.first();
                 //console.log(this.logPrefix(), " setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
                 slot.setInitValue(initValue); // first value is typically "inherit"
                 slot.setValidValues(values);
             }
-            
+
             styleSlots.push(slot);
-        }
+        };
 
         // --- colors ---
 
@@ -214,10 +214,10 @@
             addSlot("marginTop", "margin", "top", margins);
             addSlot("marginBottom", "margin", "bottom", margins);
         }
-        
+
 
         // --- border ---
-        
+
         {
             const styles = this.thisClass().validBorderStyleValues();
             addSlot("borderLeftStyle", "border/left", "style", styles);
@@ -268,7 +268,7 @@
             const slot = this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !(slot.name().beginsWith("border") || slot.name().beginsWith("margin")))); // cached for efficiency
             slot.setSlotType("Array");
         }
-        
+
         {
             /**
              * @member {Map} styleCacheMap
@@ -282,18 +282,18 @@
      * @description Initializes the SvThemeState instance.
      */
     init () {
-        super.init()
-        this.setStyleCacheMap(null) // null is used to indicate cache needs to be built when accessed
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false) 
+        super.init();
+        this.setStyleCacheMap(null); // null is used to indicate cache needs to be built when accessed
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
 
-        let slot = this.thisPrototype().slotNamed("subnodes")
+        let slot = this.thisPrototype().slotNamed("subnodes");
         if (slot.shouldStoreSlotOnInstance(this)) {
-            let b = slot.shouldStoreSlotOnInstance(this)
+            let b = slot.shouldStoreSlotOnInstance(this);
             assert(!b, "problem?");
         }
-        this.setNodeCanAddSubnode(false)
-        this.setSubtitle("state")
+        this.setNodeCanAddSubnode(false);
+        this.setSubtitle("state");
 
         //this.setSubnodeClasses([SvStringField])
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
@@ -305,7 +305,7 @@
     finalInit () {
         super.finalInit();
         if (!this.hasSubnodes()) {
-            this.setupSubnodes()
+            this.setupSubnodes();
         }
     }
 
@@ -316,9 +316,9 @@
      * @returns {SvThemeState} The instance.
      */
     setThemeAttribute (key, value) {
-        this[key.asSetter()].apply(this, [value])
+        this[key.asSetter()].apply(this, [value]);
         //this.firstSubnodeWithTitle(key).setValue(value)
-        return this
+        return this;
     }
 
     /**
@@ -326,7 +326,7 @@
      * @returns {SvThemeState} The instance.
      */
     syncFromViewStyle () {
-        return this
+        return this;
     }
 
     /**
@@ -360,8 +360,8 @@
         this.removeAllSubnodes();
 
         // need this because the fonts typically aren't loaded until after this prototype is initialized
-        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((/*instance*/) => { 
-            
+        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((/*instance*/) => {
+
             const values = SvResources.shared().fonts().allFontNames();
             values.unshift("inherit");
             return values;
@@ -406,11 +406,11 @@
      */
     computeStyleCacheMap () {
         const map = new Map();
-        this.styleSlots().forEach(slot => { 
+        this.styleSlots().forEach(slot => {
             const name = slot.name();
             const v = this.getStyleValueNamed(name);
             map.set(name, v);
-        })
+        });
         return map;
     }
 
@@ -442,7 +442,7 @@
      * @description Gets the parent theme state.
      * @returns {*} The parent theme state.
      */
-    
+
     parentThemeState () {
         return this.themeStates().subnodeBefore(this);
     }
@@ -450,7 +450,7 @@
     /*
        See notes at top of this file for explaination of lookup order.
     */
-    
+
     /**
      * @description Gets the style value named.
      * @param {string} name - The style name.
@@ -469,12 +469,12 @@
             console.log(this.logPrefix(), " " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')");
             //debugger
         */
-        
+
         let v = null;
 
         if (getterMethod) {
             v = getterMethod.apply(this);
-            if (v === "" || v === "inherit") { 
+            if (v === "" || v === "inherit") {
                 v = null;
             }
         } else {
@@ -490,7 +490,7 @@
             if (parent) {
                 const stateName = this.title();
                 const state = parent.stateWithName(stateName);
-                v = state.getStyleValueNamed(name, depth+1); // will recurse through themeClass parents
+                v = state.getStyleValueNamed(name, depth + 1); // will recurse through themeClass parents
             }
         }
 
@@ -499,7 +499,7 @@
             const parent = this.parentThemeState(); // parent theme state eg: active -(child)-> selected -(child)-> unselected
             assert(parent !== this);
             if (parent) {
-                v = parent.getStyleValueNamed(name, depth+1); // will recurse through themeStates and each state will recurse themeClass parents
+                v = parent.getStyleValueNamed(name, depth + 1); // will recurse through themeStates and each state will recurse themeClass parents
             }
         }
 
@@ -528,7 +528,7 @@
      * @returns {SvThemeState} The instance.
      */
     applyNonBorderStylesToView (aView) {
-        
+
         this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView);
         return this;
     }
@@ -554,7 +554,7 @@
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
         //console.log(this.logPrefix(), "applyStyleSlotsToView ", aView.svDebugId());
-        styleSlots.forEach(slot => { 
+        styleSlots.forEach(slot => {
             const name = slot.name();
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
@@ -570,12 +570,12 @@
             } else {
                 console.log(this.logPrefix(), "style " + name + " locked on view " + aView.svType());
             }
-        })
+        });
         return this;
     }
 
     // --- changes ---
-    
+
     /**
      * @description On did edit.
      * @returns {boolean} False.
@@ -583,7 +583,7 @@
     onDidEdit () {
         console.log(this.logPrefix(), ".onDidEdit");
         this.setStyleCacheMap(null);
-        return false
+        return false;
     }
 
     /**
@@ -611,7 +611,7 @@
         // so our change may invalidate attributes of states that inherit from us
         this.parentNode().subnodes().forEach(sn => sn.scheduleMethod("clearStyleCache"));
     }
-    
+
     /**
      * @description Did reorder parent subnodes.
      */
@@ -626,13 +626,13 @@
     styleMap () {
         const map = new Map();
         const title = this.title();
-        this.styleSlots().forEach(slot => { 
+        this.styleSlots().forEach(slot => {
             const name = slot.name();
             //const v = this.getCachedStyleValueNamed(name);
             const v = this.getStyleValueNamed(name);
             map.set(title + ". " + name, v);
             // these look like: disabled.backgroundColor: "black"
-        })
+        });
         return map;
     }
 
@@ -670,8 +670,8 @@
         this.setThemeAttribute("color", "white");
         this.setThemeAttribute("backgroundColor", "#333");
         //this.setThemeAttribute("fontWeight", "normal");
-      }
-    
+    }
+
     /**
      * @description Sets up as default unselected state.
      * @returns {SvThemeState} The instance.
@@ -680,8 +680,8 @@
         this.setThemeAttribute("color", "#bbb");
         this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");
-      }
-    
+    }
+
     /**
      * @description Sets up as default selected state.
      * @returns {SvThemeState} The instance.
@@ -690,8 +690,8 @@
         this.setThemeAttribute("color", "white");
         this.setThemeAttribute("backgroundColor", "#222");
         //this.setThemeAttribute("fontWeight", "normal");
-      }
-    
+    }
+
     /**
      * @description Sets up as default disabled state.
      * @returns {SvThemeState} The instance.
@@ -705,8 +705,7 @@
         this.setThemeAttribute("paddingRight", "22px");
         this.setThemeAttribute("paddingTop", "8px");
         this.setThemeAttribute("paddingBottom", "8px");
-      }
+    }
 
 }.initThisClass());
-
 

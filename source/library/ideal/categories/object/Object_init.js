@@ -5,11 +5,11 @@
  * @class Object_init
  * @extends Object
  * @classdesc Initialization related behavior.
- * 
+ *
  * Notes:
- * 
+ *
  * Init outside of deserialization looks like this:
- * 
+ *
  *     static clone () {
         const obj = this.preClone();
         obj.init();
@@ -20,7 +20,7 @@
     }
 
  * Init inside of deserialization looks like this (within ObjectPool):
- * 
+ *
        obj.loadFromRecord(aRecord, this)
 
         this.loadingPids().delete(obj.puuid()) // need to do this to get object to ber marked as dirty if it's slots are updated in finalInit
@@ -39,25 +39,25 @@
 
     And didInit (which sets _hasDoneInit to true) is called from Object_init.afterInit.
 
- * 
- * Some initialization may have to wait until other objects have initialized. 
- * 
- * These are some states the object may need to wait for, 
+ *
+ * Some initialization may have to wait until other objects have initialized.
+ *
+ * These are some states the object may need to wait for,
  * and how to handle completing initialization at those points:
- * 
+ *
  * - initAfterEventLoop() (end of current event loop)
  *   In your class's init() method, call this.setShouldScheduleDidInit(true) and implement didInit()
- *   This will cause the didInit method called after Object.init() inside Object.clone() to 
+ *   This will cause the didInit method called after Object.init() inside Object.clone() to
  *   be scheduled for the end of the current event loop.
- * 
+ *
  * - initAfterDeserialization of the ObjectPool that created the object is complete (similar to awakeFromNib:)
- *   Implement a didLoadFromStore(aStore) method. 
+ *   Implement a didLoadFromStore(aStore) method.
  *   This will be called (on the deserialized objects) after the ObjectPool has finished deserializing.
  *   Deserialization currently takes place synchronously within a single event loop.
- * 
+ *
  * - appDidInit (when the Application posts an appDidInit notification)
  *   Implement an appDidInit() method, and in init() call this.listenForAppDidInit().
- * 
+ *
  */
 
 (class Object_init extends Object {
@@ -87,7 +87,7 @@
      * @returns {Object_init} This object.
      * @category Initialization
      */
-    init () { 
+    init () {
         return this;
     }
 
@@ -132,7 +132,7 @@
      */
     didInit () {
         if (!this.isSingleton()) {
-            assert(!this.hasDoneInit()); 
+            assert(!this.hasDoneInit());
         }
         this.setHasDoneInit(true);
     }
@@ -145,7 +145,7 @@
     hasDoneInit () {
         return this._hasDoneInit === true; // hasDoneInit only set after serialization
     }
-    
+
     /**
      * Sets whether initialization has been completed.
      * @param {boolean} aBool - Whether initialization has been completed.
@@ -156,7 +156,7 @@
         this._hasDoneInit = aBool;
         return this;
     }
-    
+
     /**
      * Schedules the didInit method to be called.
      * @category Initialization

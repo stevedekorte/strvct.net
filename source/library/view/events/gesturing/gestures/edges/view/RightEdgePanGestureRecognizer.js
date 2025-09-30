@@ -6,7 +6,7 @@
  * @class RightEdgePanGestureRecognizer
  * @extends EdgePanGestureRecognizer
  * @classdesc Recognizes right edge pan gestures.
- * 
+ *
  * Delegate messages:
  * - onRightEdgePanBegin
  * - onRightEdgePanMove
@@ -14,7 +14,7 @@
  * - onRightEdgePanCancelled
  */
 (class RightEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @category Initialization
@@ -29,9 +29,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("right")
-        return this
+        super.init();
+        this.setEdgeName("right");
+        return this;
     }
 
 }.initThisClass());

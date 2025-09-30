@@ -10,7 +10,7 @@
  * @classdesc Listens to a set of gamepad events.
  */
 (class GamePadListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots.
      * @returns {void}
@@ -26,8 +26,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -38,7 +38,7 @@
     setupListeners () {
         this.addEventNameAndMethodName("gamepadconnected",   "onGamePadConnected");
         this.addEventNameAndMethodName("gamepaddisconnected", "onGamePadDisconnected");
-        return this
+        return this;
     }
 
 }.initThisClass());

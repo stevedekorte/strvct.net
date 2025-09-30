@@ -1,6 +1,6 @@
 "use strict";
 
-/** 
+/**
  * @module library.ideal
  * @class Type
  * @extends Object
@@ -12,7 +12,7 @@
 
     Another example:
 
-        const i8a = new Int8Array(6);   
+        const i8a = new Int8Array(6);
         console.log("is a Int8Array: ", Type.isInt8Array(i8a))
 
     JS built-in objects:
@@ -84,7 +84,7 @@ class Type extends Object {
      * Built-ins and primitives work the same way except for null and undefined are special cases as they are not objects.
      * For null and undefined, the typeName is the string "null" and "undefined" respectively.
      * For protocols, the typeName is the protocol name with " protocol" appended.
-     * @category Type Names 
+     * @category Type Names
      * @param {*} value - The value to get the type name for.
      * @returns {string} The type name of the value.
      * @throws {Error} If unable to identify the type of the value.
@@ -92,15 +92,15 @@ class Type extends Object {
     static typeName (value) {
         // Handle null case first since typeof null is 'object'
         if (value === null) {
-          return 'null';
+            return "null";
         }
-      
+
         // Handle undefined explicitly
         if (value === undefined) {
-          return 'undefined';
+            return "undefined";
         }
         //const baseType = typeof(value);
-      
+
         /*
         // Handle functions
         if (baseType === 'function') { // true for both Function class and Function instances
@@ -108,13 +108,13 @@ class Type extends Object {
             function isFunctionClassReference(value) {
                 if (typeof value !== 'function') return false;
                 if (value === Function) return true;
-                
+
                 let proto = Object.getPrototypeOf(value);
                 while (proto) {
                   if (proto === Function) return true;
                   proto = Object.getPrototypeOf(proto);
                 }
-                
+
                 return false;
             }
 
@@ -126,13 +126,13 @@ class Type extends Object {
             return 'Function instance'; // TODO: add support for Function subclasses
         }
         */
-      
+
 
         // ok, now it must be a class or class instance
         // Handle class instances
         if (Type.isClass(value)) {
             const className = value.name;
-            if (className === "" || className === "anonymous") { 
+            if (className === "" || className === "anonymous") {
                 // it's an Function instance
                 return Object.typeNameForInstanceOfClassName("Function");
             }
@@ -144,7 +144,7 @@ class Type extends Object {
             const className = value.constructor.name;
             return Object.typeNameForInstanceOfClassName(className);
         }
-      
+
         throw new Error("Unable to identify the type of value: " + value);
     }
 
@@ -171,7 +171,7 @@ class Type extends Object {
 
     static valueIsInstanceOfClass (value, classReference) {
         if (value instanceof classReference) return true;
-    
+
         // Handle known primitives with object wrappers
         switch (classReference) {
             case String: return typeof value === "string";
@@ -197,7 +197,7 @@ class Type extends Object {
         }
         return aClass.isKindOf(bClass);
     }
-    
+
     static typeNameIsKindOf (typeA, typeB) {
         assert(Type.isString(typeA));
         assert(Type.isString(typeB));
@@ -217,7 +217,7 @@ class Type extends Object {
             return false;
         }
 
-        // now we need to check for subsclass of classes and instances 
+        // now we need to check for subsclass of classes and instances
         const aIsClass = this.typeNameIsClass(typeA);
         const bIsClass = this.typeNameIsClass(typeB);
 
@@ -255,13 +255,13 @@ class Type extends Object {
     static primitiveTypeNameSet () {
         return new Set([
             "bigint",
-            "boolean", 
-            "number", 
-            "null", 
-            "string", 
+            "boolean",
+            "number",
+            "null",
+            "string",
             "symbol",
             "undefined"
-        ]); 
+        ]);
     }
 
     static isPrimitive (value) {
@@ -311,7 +311,7 @@ class Type extends Object {
             "WeakMap",
             "WeakSet"
         ]);
-        
+
         /*
         return [
             "Array",
@@ -465,7 +465,7 @@ class Type extends Object {
         if (value == null) {
             return false;
         }
-        return typeof value[Symbol.iterator] === 'function';
+        return typeof value[Symbol.iterator] === "function";
     }
 
     /**
@@ -483,11 +483,11 @@ class Type extends Object {
         }
         const type = typeof value;
         // Primitive types are immutable
-        return type !== 'boolean' && 
-               type !== 'number' && 
-               type !== 'bigint' && 
-               type !== 'string' && 
-               type !== 'symbol';
+        return type !== "boolean" &&
+               type !== "number" &&
+               type !== "bigint" &&
+               type !== "string" &&
+               type !== "symbol";
     }
 
     /**
@@ -498,8 +498,8 @@ class Type extends Object {
      * @returns {boolean} True if the value is a Set, false otherwise.
      */
     static isSet (value) {
-        return !Type.isNull(value) && 
-            Type.isObject(value) && 
+        return !Type.isNull(value) &&
+            Type.isObject(value) &&
             value.__proto__ === Set.prototype;
     }
 
@@ -511,8 +511,8 @@ class Type extends Object {
      * @returns {boolean} True if the value is a RegExp, false otherwise.
      */
     static isRegExp (value) {
-        return !Type.isNull(value) && 
-            Type.isObject(value) && 
+        return !Type.isNull(value) &&
+            Type.isObject(value) &&
             value.__proto__ === RegExp.prototype;
     }
 
@@ -524,14 +524,14 @@ class Type extends Object {
      * @returns {boolean} True if the value is a BigInt, false otherwise.
      */
     static isBigInt (value) {
-        return !Type.isNull(value) && 
-            Type.isObject(value) && 
+        return !Type.isNull(value) &&
+            Type.isObject(value) &&
             value.__proto__ === BigInt.prototype;
     }
 
     static isFormData (value) {
-        return !Type.isNull(value) && 
-        Type.isObject(value) && 
+        return !Type.isNull(value) &&
+        Type.isObject(value) &&
         value.__proto__ === FormData.prototype; // should we use instanceof instead?
     }
 
@@ -543,10 +543,10 @@ class Type extends Object {
      * @returns {boolean} True if the value is a Map, false otherwise.
      */
     static isMap (value) {
-        return !Type.isNull(value) && 
-            Type.isObject(value) && 
+        return !Type.isNull(value) &&
+            Type.isObject(value) &&
             value.__proto__ === Map.prototype;
-    }  
+    }
 
     /**
      * Checks if the given value is an iterator.
@@ -556,8 +556,8 @@ class Type extends Object {
      * @returns {boolean} True if the value is an iterator, false otherwise.
      */
     static isIterator (value) {
-        return !Type.isNull(value) && 
-                Type.isObject(value) && 
+        return !Type.isNull(value) &&
+                Type.isObject(value) &&
                 typeof(value[Symbol.iterator]) === "function";
     }
 
@@ -570,7 +570,7 @@ class Type extends Object {
      */
     static isBoolean (value) {
         return typeof(value) === "boolean";
-    }   
+    }
 
     /**
      * Checks if the given value is a function.
@@ -581,11 +581,11 @@ class Type extends Object {
      */
     static isFunction (value) {
         return typeof(value) === "function";
-    }  
+    }
 
     static isAsyncFunction (func) {
         if (Type.isFunction(func)) {
-            return func.constructor.name === 'AsyncFunction';
+            return func.constructor.name === "AsyncFunction";
         }
         return false;
     }
@@ -653,7 +653,7 @@ class Type extends Object {
      * @returns {boolean} True if the value is an integer, false otherwise.
      */
     static isInteger (value) {
-        return Number.isInteger(value) 
+        return Number.isInteger(value);
     }
 
     /**
@@ -663,7 +663,7 @@ class Type extends Object {
      * @param {*} value - The value to check.
      * @returns {boolean} True if the value is an object, false otherwise.
      */
-    static isObject (value) { 
+    static isObject (value) {
         // WARNING: true for array and dictionary too!
         return typeof(value) === "object";
     }
@@ -678,7 +678,7 @@ class Type extends Object {
     static isInstance (value) {
         if (Type.isNullOrUndefined(value)) {
             return false;
-         }
+        }
         const proto = Object.getPrototypeOf(value);
         return !Type.isNullOrUndefined(proto);
     }
@@ -709,7 +709,7 @@ class Type extends Object {
      */
     static isString (value) {
         return typeof(value) === "string";
-    } 
+    }
 
     /**
      * Checks if the given value is a symbol.
@@ -720,7 +720,7 @@ class Type extends Object {
      */
     static isSymbol (value) {
         return typeof(value) === "symbol";
-    } 
+    }
 
     /**
      * Checks if the given value is an ArrayBuffer.
@@ -755,7 +755,7 @@ class Type extends Object {
         return Type.isNumber(v) || Type.isString(v) || Type.isBoolean(v) || Type.isUndefined(v) || Type.isNull(v);
     }
 
-    // typed arrays 
+    // typed arrays
 
     /**
      * Checks if the given value has the specified constructor.
@@ -838,7 +838,7 @@ class Type extends Object {
     static isUint32Array (v) {
         return Type.valueHasConstructor(v, Uint32Array);
     }
-    
+
     /**
      * Checks if the given value is a Float32Array.
      * @category Type Checking / Typed Arrays
@@ -879,7 +879,7 @@ class Type extends Object {
         return Type.valueHasConstructor(v, BigUint64Array);
     }
 
-    
+
     /**
      * Checks if the given value is a TypedArray.
      * @category Type Checking / Typed Arrays
@@ -956,9 +956,9 @@ class Type extends Object {
     static isPrimitiveJsonType (value) {
         return (
             value === null ||
-            typeof value === 'string' ||
-            typeof value === 'number' ||
-            typeof value === 'boolean'
+            typeof value === "string" ||
+            typeof value === "number" ||
+            typeof value === "boolean"
         );
     }
 
@@ -970,7 +970,7 @@ class Type extends Object {
      * @returns {boolean} True if the value is a JSON-compatible type, false otherwise.
      */
     static errorWithJsonType (value, seenMap = new Map(), path = "") {
-        // the purpose of this method is to get a more informative error message than 
+        // the purpose of this method is to get a more informative error message than
         // using the default JSON.stringify() test
 
         if (Type.isPrimitiveJsonType(value)) {
@@ -979,7 +979,7 @@ class Type extends Object {
 
         if (seenMap.has(value)) {
             const seenPath = seenMap.get(value);
-            let errorMessage = "Found duplicate reference to value: " +Type.typeName(value) + "\n";
+            let errorMessage = "Found duplicate reference to value: " + Type.typeName(value) + "\n";
             errorMessage += "path1: " + seenPath + "\n";
             errorMessage += "path2: " + path + "\n";
             return errorMessage;
@@ -995,7 +995,7 @@ class Type extends Object {
                 }
             }
             return null;
-        } else if (typeof(value) === 'object') {
+        } else if (typeof(value) === "object") {
             const keys = Object.keys(value);
             for (const key of keys) {
                 const v = value[key];
@@ -1005,7 +1005,7 @@ class Type extends Object {
                 }
             }
             return null;
-        } 
+        }
 
         return "Unsupported JSON type: '" + Type.typeName(value) + "' at path: '" + path + "'";
     }
@@ -1032,7 +1032,7 @@ class Type extends Object {
         try {
             JSON.stringify(value);
         } catch (e) {
-            if(e) {
+            if (e) {
                 // just to avoid linter complaints about e not being used
             }
             return false;
@@ -1140,20 +1140,20 @@ class Type extends Object {
      * @param {*} value - The value to check.
      * @returns {string[]} An array of matching type names.
      */
-        static typeNamesForValue (value) {
-            const matches = [];
-            const typeNames = this.builtInTypeNames();
-            for (let i = 0; i < typeNames.length; i++) {
-                const typeName = typeNames[i];
-                const methodName = "is" + typeName;
-                if (this[methodName].apply(this, [value])) {
-                    matches.push(typeName);
-                }
+    static typeNamesForValue (value) {
+        const matches = [];
+        const typeNames = this.builtInTypeNames();
+        for (let i = 0; i < typeNames.length; i++) {
+            const typeName = typeNames[i];
+            const methodName = "is" + typeName;
+            if (this[methodName].apply(this, [value])) {
+                matches.push(typeName);
             }
-            return matches;
         }
+        return matches;
+    }
 
-        
+
     /**
      * Asserts that the given value matches the specified valid type names.
      * @category Type Names
@@ -1161,14 +1161,14 @@ class Type extends Object {
      * @param {string[]} validTypeNames - An array of valid type names.
      * @throws {Error} If the value's type names don't match the valid type names.
      */
-        static assertValueTypeNames (v, validTypeNames) {
-            const foundTypeNames = this.typeNamesForValue(v);
-            const foundTypeNamesSet = new Set(foundTypeNames);
-            const doesMatch = foundTypeNamesSet.isSubsetOf(new Set(validTypeNames)) && foundTypeNamesSet.size === validTypeNames.length;
-            if (!doesMatch) {
-                throw new Error(JSON.stringify(validTypeNames) + " != " + JSON.stringify(foundTypeNames) );
-            }
+    static assertValueTypeNames (v, validTypeNames) {
+        const foundTypeNames = this.typeNamesForValue(v);
+        const foundTypeNamesSet = new Set(foundTypeNames);
+        const doesMatch = foundTypeNamesSet.isSubsetOf(new Set(validTypeNames)) && foundTypeNamesSet.size === validTypeNames.length;
+        if (!doesMatch) {
+            throw new Error(JSON.stringify(validTypeNames) + " != " + JSON.stringify(foundTypeNames));
         }
+    }
     /**
      * Runs tests for the Type class methods.
      * @category Testing
@@ -1199,7 +1199,7 @@ class Type extends Object {
           console.log(`  Expected: ${expected}`);
           console.log(`  Got:      ${result}`);
           console.log('');
-          
+
           if (result !== expected) {
             throw new Error(
               `Test failed${description ? ` (${description})` : ''}\n` +
@@ -1209,14 +1209,14 @@ class Type extends Object {
             );
           }
         }
-      
+
         // Original examples from the problem statement
         test([], 'Array', 'empty array');
         test(Array, 'Array class', 'Array class');
         test(undefined, 'undefined', 'undefined value');
         test(Function, 'Function class', 'Function constructor');
         test(function() {}, 'Function', 'function expression');
-      
+
         // Additional basic cases
         test(null, 'null', 'null value');
         test({}, 'Object', 'empty object');
@@ -1226,7 +1226,7 @@ class Type extends Object {
         test(Symbol(), 'Symbol', 'symbol value');
         test(BigInt(42), 'BigInt', 'bigint value');
         test(BigInt, 'BigInt class', 'BigInt constructor');
-      
+
         // Built-in constructors
         test(Object, 'Object class', 'Object');
         test(String, 'String class', 'String');
@@ -1234,7 +1234,7 @@ class Type extends Object {
         test(Boolean, 'Boolean class', 'Boolean');
         test(Date, 'Date class', 'Date');
         test(RegExp, 'RegExp class', 'RegExp');
-      
+
         // Built-in instances
         test(new Date(), 'Date', 'Date instance');
         test(new RegExp(''), 'RegExp', 'RegExp instance');
@@ -1244,30 +1244,30 @@ class Type extends Object {
 
         // these class definitions were confusing the documentation parser
         // so comment out test for now
-      
+
         // Array subclass cases
         class MyArray extends Array {}
         const myArr = new MyArray();
         test(myArr, 'MyArray', 'Array subclass instance');
         test(MyArray, 'MyArray class', 'Array subclass constructor');
         test(new Array(), 'Array', 'Array instance');
-      
+
         // Function cases
         test(() => {}, 'Function', 'arrow function');
         test(function() {}, 'Function', 'function expression');
         test(new Function(), 'Function', 'Function instance');
         test(Function, 'Function class', 'Function constructor');
-      
+
         // Note: We can't meaningfully subclass Function because the instances
         // are always anonymous functions. Keeping the constructor test only.
         class MyFunction extends Function {}
         test(MyFunction, 'MyFunction class', 'Function subclass constructor');
-      
+
         // Regular class cases
         class MyClass {}
         test(MyClass, 'MyClass class', 'class declaration');
         test(new MyClass(), 'MyClass', 'class instance');
-      
+
         console.log('All tests passed!');
     }
     */

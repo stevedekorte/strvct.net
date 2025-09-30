@@ -8,11 +8,11 @@
 * @class SvTheme
 * @extends SvThemeFolder
 * @classdesc SvTheme class represents a theme in the application.
-* 
+*
 * SvThemeResources.shared().activeTheme().newThemeClassOptions()
 */
 (class SvTheme extends SvThemeFolder {
-    
+
     /**
     * @description Initializes the prototype slots for the SvTheme class.
     * @category Initialization
@@ -25,17 +25,17 @@
     * @category Initialization
     */
     initPrototype () {
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setNodeCanEditTitle(true);
-    this.setTitle("Untitled " + this.thisClass().visibleClassName());
-    this.setSubtitle("theme")
-    //this.setSubtitle("Theme")
-    this.setCanDelete(true);
-    this.setNodeCanAddSubnode(true);
-    //this.setSubnodeClasses([SvThemeLevel]);
-    this.setSubnodeClasses([SvThemeClass]);
-    this.setNodeCanReorderSubnodes(true);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanEditTitle(true);
+        this.setTitle("Untitled " + this.thisClass().visibleClassName());
+        this.setSubtitle("theme");
+        //this.setSubtitle("Theme")
+        this.setCanDelete(true);
+        this.setNodeCanAddSubnode(true);
+        //this.setSubnodeClasses([SvThemeLevel]);
+        this.setSubnodeClasses([SvThemeClass]);
+        this.setNodeCanReorderSubnodes(true);
     }
 
     /**
@@ -43,7 +43,7 @@
     * @category Initialization
     */
     init () {
-    super.init();
+        super.init();
     //this.setupSubnodes()
     }
 
@@ -53,14 +53,14 @@
     * @category Setup
     */
     setupAsDefault () {
-    debugger
-    this.setTitle("DefaultTheme");
-    const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
-    this.addSubnode(defaultThemeClass);
-    return this;
+        debugger;
+        this.setTitle("DefaultTheme");
+        const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
+        this.addSubnode(defaultThemeClass);
+        return this;
     }
 
-    // --- 
+    // ---
 
     /**
     * @description Retrieves a theme class by its name.
@@ -69,7 +69,7 @@
     * @category Retrieval
     */
     themeClassNamed (name) {
-    return this.firstSubnodeWithTitle(name);
+        return this.firstSubnodeWithTitle(name);
     }
 
     /**
@@ -78,7 +78,7 @@
     * @category Retrieval
     */
     themeClassNames () {
-    return this.subnodes().map(themeClass => themeClass.title());
+        return this.subnodes().map(themeClass => themeClass.title());
     }
 
     /**
@@ -87,13 +87,13 @@
     * @category Creation
     */
     newThemeClassOptions () {
-    const options = SvOptionsNode.clone();
-    this.subnodes().forEach(themeClass => {
+        const options = SvOptionsNode.clone();
+        this.subnodes().forEach(themeClass => {
             const name = themeClass.title();
             const option = SvOptionNode.clone().setLabel(name).setValue(name);
             options.addSubnode(option);
-    })
-    return options
+        });
+        return options;
     }
 
     /**
@@ -103,8 +103,8 @@
     * @category Retrieval
     */
     themeClassNamed (name) {
-    return this.allThemeClasses().detect(themeClass => themeClass.title() === name);
-/*
+        return this.allThemeClasses().detect(themeClass => themeClass.title() === name);
+        /*
     const themeClass = this.firstSubnodeWithTitle(className);
     if (themeClass) {
         return themeClass.themeClassNamed(name);
@@ -119,7 +119,7 @@
     * @category Retrieval
     */
     allThemeClasses () {
-    return this.subnodes().map(themeClass => themeClass.selfAndAllThemeChildren()).flat();
+        return this.subnodes().map(themeClass => themeClass.selfAndAllThemeChildren()).flat();
     }
 
     /**
@@ -128,9 +128,9 @@
     * @category Creation
     */
     allThemeClassesMap () {
-    const map = new Map()
-    this.allThemeClasses().forEach(themeClass => map.set(themeClass.title(), themeClass));
-    return map
+        const map = new Map();
+        this.allThemeClasses().forEach(themeClass => map.set(themeClass.title(), themeClass));
+        return map;
     }
 
     /**
@@ -140,7 +140,7 @@
     * @category Retrieval
     */
     stateWithName (name) {
-    return this.states().stateWithName(name);
+        return this.states().stateWithName(name);
     }
 
 }.initThisClass());

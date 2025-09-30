@@ -25,18 +25,18 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setFlexDirection("column")
-        this.setFlexGrow(1)
-        this.setOverflow("hidden")
-        this.setUserSelect("none")
-        this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
-        this.makeOrientationRight()
-        this.setIsDisplayHidden(true)
+        super.init();
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setFlexDirection("column");
+        this.setFlexGrow(1);
+        this.setOverflow("hidden");
+        this.setUserSelect("none");
+        this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s");
+        this.makeOrientationRight();
+        this.setIsDisplayHidden(true);
 
-        return this
+        return this;
     }
 
     /**
@@ -45,11 +45,11 @@
      * @category Layout
      */
     isVertical () {
-        const sv = this.parentView()
+        const sv = this.parentView();
         if (!sv) {
-            return null
+            return null;
         }
-        return sv.isVertical()
+        return sv.isVertical();
     }
 
     /**
@@ -59,11 +59,11 @@
      */
     syncOrientation () {
         if (this.isVertical()) {
-            this.makeOrientationRight()
+            this.makeOrientationRight();
         } else {
-            this.makeOrientationDown()
+            this.makeOrientationDown();
         }
-        return this
+        return this;
     }
 
     /**
@@ -71,8 +71,8 @@
      * @category Layout
      */
     makeOrientationRight () {
-        this.setWidth("-webkit-fill-available")
-        this.setHeight("fit-content")
+        this.setWidth("-webkit-fill-available");
+        this.setHeight("fit-content");
     }
 
     /**
@@ -80,8 +80,8 @@
      * @category Layout
      */
     makeOrientationDown () {
-        this.setWidth("fit-content")
-        this.setHeight("-webkit-fill-available")
+        this.setWidth("fit-content");
+        this.setHeight("-webkit-fill-available");
     }
 
     /**
@@ -90,12 +90,12 @@
      * @category Tile Management
      */
     removeTile () {
-        const oldTile = this.tile()
+        const oldTile = this.tile();
         if (oldTile) {
-            oldTile.setNode(null)
-            this.removeSubview(oldTile)
+            oldTile.setNode(null);
+            this.removeSubview(oldTile);
         }
-        return this
+        return this;
     }
 
     /**
@@ -105,24 +105,24 @@
      * @category Node Management
      */
     setNode (aNode) {
-        super.setNode(aNode)
+        super.setNode(aNode);
 
         if (aNode === null) {
-            this.removeTile()
-            this.setIsDisplayHidden(true)
+            this.removeTile();
+            this.setIsDisplayHidden(true);
         } else {
-            this.setIsDisplayHidden(false)
-            const tile = this.tile()
+            this.setIsDisplayHidden(false);
+            const tile = this.tile();
             if (tile) {
                 const tileClass = this.subviewProtoForSubnode(aNode);
                 if (tile.thisClass() !== tileClass) {
-                    this.setupTile()
-                }   
+                    this.setupTile();
+                }
             } else {
-                this.setupTile()
+                this.setupTile();
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -131,14 +131,14 @@
      * @category Tile Management
      */
     setupTile () {
-        this.removeTile()
-        const tileClass = this.node().nodeTileClass()
-        assert(tileClass)
-        const newTile = tileClass.clone()
-        newTile.setNode(this.node())
-        this.setTile(newTile)
-        this.addSubview(newTile)
-        return this
+        this.removeTile();
+        const tileClass = this.node().nodeTileClass();
+        assert(tileClass);
+        const newTile = tileClass.clone();
+        newTile.setNode(this.node());
+        this.setTile(newTile);
+        this.addSubview(newTile);
+        return this;
     }
 
     /**
@@ -147,11 +147,11 @@
      * @category Synchronization
      */
     syncFromNode () {
-        this.syncOrientation()
+        this.syncOrientation();
         if (this.tile()) {
-            this.tile().syncFromNode()
+            this.tile().syncFromNode();
         }
-        return this
+        return this;
     }
 
 }.initThisClass());

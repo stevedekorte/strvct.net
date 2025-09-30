@@ -12,7 +12,7 @@
  * - sending any waiting notifications after permission is gained
  * - notification timeouts
  *
- * Todo: 
+ * Todo:
  * - support for multiple waiting notes? waiting note limit
  * - add any abstractions specific to special Chrome/Android notifications
  *
@@ -21,7 +21,7 @@
  * WebBrowserNotifications.shared().newNote().setTitle("hello").setBody("...").tryToPost()
  */
 (class WebBrowserNotifications extends ProtoClass {
-    
+
     /**
      * @static
      * @description Initializes the class as a singleton
@@ -58,7 +58,7 @@
         if (!this.permissionPromise()) {
             const promise = Promise.clone();
             this.setPermissionPromise(promise);
-            
+
             if (!this.isSupported()) {
                 const msg = this.svType() + " sending browser notifications is not supported";
                 console.warn(msg);
@@ -106,7 +106,7 @@
     newNote () {
         return WebBrowserNotification.clone();
     }
-    
+
 }.initThisClass());
 
 //WebBrowserNotifications.shared();

@@ -8,7 +8,7 @@
  * @class GestureManager
  * @extends ProtoClass
  * @classdesc GestureManager coordinates which gesture has control globally.
- * 
+ *
  * We typically only want one gesture to be active globally.
  * GestureManager helps to coordinate which gesture has control.
  *
@@ -26,16 +26,16 @@
  * If a descendant view requests control, it can steal it.
  */
 (class GestureManager extends ProtoClass {
-    
+
     /**
      * @static
      * @description Initializes the class
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots
      * @category Initialization
@@ -54,7 +54,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("begunGesturesMap", null) 
+            const slot = this.newSlot("begunGesturesMap", null);
             slot.setSlotType("Map");
         }
         /**
@@ -151,7 +151,7 @@
             return false;
         }
 
-        assert(aGesture)
+        assert(aGesture);
         const ag = this.activeGesture();
 
         if (!ag) {
@@ -273,5 +273,5 @@
         const s = this.isPaused() ? "(paused)" : "(not paused)";
         return super.svDebugId() + s;
     }
-    
+
 }.initThisClass());

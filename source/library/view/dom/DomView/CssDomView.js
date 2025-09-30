@@ -11,7 +11,7 @@
  */
 
 (class CssDomView extends ElementDomView {
-    
+
     initPrototypeSlots () {
         // css hidden values
         {
@@ -56,7 +56,7 @@
         }
     }
 
-    
+
     init () {
         super.init();
         //this.setDisplay("block");
@@ -141,10 +141,10 @@
     */
 
     // ------------------------------
-    
-    /*    
+
+    /*
     applyCSS (ruleName) {
-        if (ruleName == null) { 
+        if (ruleName == null) {
             ruleName = this.elementClassName();
         }
         CSS.ruleAt(ruleName).applyToElement(this.element());
@@ -199,7 +199,7 @@
             assert(result !== null);
             //console.log("getAttribute('" + k + "') = ", v);
             //console.log("element['" + k + "'] = ", result);
-            //console.log("-----------------------> getAttribute '" + k + "' ", result); 
+            //console.log("-----------------------> getAttribute '" + k + "' ", result);
             //throw new Error("move this to another method");
             return result;
         }
@@ -266,12 +266,12 @@
                 /*
                 if (doesSanityCheck) {
                     // sanity check the result
-                    // but ignore these keys as they have equivalent functional values 
+                    // but ignore these keys as they have equivalent functional values
                     // that can have different string values
-                    const ignoredKeys = { 
-                        "background-position": true,  
-                        "transition": true, 
-                        "color": true , 
+                    const ignoredKeys = {
+                        "background-position": true,
+                        "transition": true,
+                        "color": true ,
                         "background-color": true,
                         "box-shadow": true,
                         "border-bottom": true,
@@ -289,7 +289,7 @@
                             msg += "     set: <" + typeof(newValue) + "> '" + newValue + "'\n";
                             msg += "     got: <" + typeof(resultValue) + "> '" + resultValue + "'\n";
                             console.warn(msg);
-                            //throw new Error(msg); 
+                            //throw new Error(msg);
                         }
                     }
                 }
@@ -342,12 +342,12 @@
     // computed style
 
     getComputedCssProperty (name /*, errorCheck*/) {
-         // getComputedStyle forces a layout - make sure it's needed 
+        // getComputedStyle forces a layout - make sure it's needed
         return window.getComputedStyle(this.element()).getPropertyValue(name);
     }
 
     getComputedPxCssProperty (name, errorCheck) {
-        // getComputedCssProperty forces a reflow? - make sure it's needed 
+        // getComputedCssProperty forces a reflow? - make sure it's needed
         const s = this.getComputedCssProperty(name, errorCheck);
         if (s.length) {
             return this.pxStringToNumber(s);
@@ -380,19 +380,19 @@
     // pointer events
 
     pointerEventsValidValues () {
-        return [null, 
-            "auto", 
-            "none", 
-            "visiblePainted", 
-            "visibleFill", 
-            "visibleStroke", 
-            "visible", 
-            "painted", 
-            "fill", 
-            "stroke", 
-            "all", 
-            "inherit", 
-            "initial", 
+        return [null,
+            "auto",
+            "none",
+            "visiblePainted",
+            "visibleFill",
+            "visibleStroke",
+            "visible",
+            "painted",
+            "fill",
+            "stroke",
+            "all",
+            "inherit",
+            "initial",
             "unset"];
     }
 
@@ -476,7 +476,7 @@
         return this.getCssProperty("font-family");
     }
 
-    // font style 
+    // font style
 
     setFontStyle (s) {
         assert(Type.isString(s) || Type.isNull(s));
@@ -488,7 +488,7 @@
         return this.getCssProperty("font-style");
     }
 
-    // font stretch 
+    // font stretch
 
     setFontStretch (s) {
         assert(Type.isString(s) || Type.isNull(s));
@@ -503,7 +503,7 @@
     // font weight
 
     fontWeightValidatorFunction () {
-       return (v) => { Type.isNumber(v) || [null, "normal", "bold", "bolder", "lighter", "initial", "inherit"].contains(v); };
+        return (v) => { Type.isNumber(v) || [null, "normal", "bold", "bolder", "lighter", "initial", "inherit"].contains(v); };
     }
 
     setFontWeight (v) {
@@ -683,7 +683,7 @@
         this.setCssProperty("padding", v);
         return this;
     }
-    
+
     padding () {
         return this.getCssProperty("padding");
     }
@@ -724,7 +724,7 @@
     }
 
     // right
-    
+
     setPaddingRight (v) {
         assert(Type.isString(v) || Type.isNull(v));
         this.setCssProperty("padding-right", v);
@@ -880,8 +880,8 @@
     // icons - TODO: find a better place for this
 
     pathForIconName (aName) {
-        const pathSeparator = "/"
-        return ["strvct", "resources", "icons", aName + ".svg"].join(pathSeparator)
+        const pathSeparator = "/";
+        return ["strvct", "resources", "icons", aName + ".svg"].join(pathSeparator);
     }
 
     // transition
@@ -892,14 +892,14 @@
     }
 
     setTransition (s) {
-        this.justSetTransition(s)
+        this.justSetTransition(s);
 
         if (this._transitions) {
-            
-            this.transitions().syncFromDomView()
+
+            this.transitions().syncFromDomView();
         }
 
-        return this
+        return this;
     }
 
     transition () {
@@ -993,9 +993,9 @@
 
     transitions () {
         if (this._transitions == null) {
-            this._transitions = DomTransitions.clone().setDomView(this).syncFromDomView()
+            this._transitions = DomTransitions.clone().setDomView(this).syncFromDomView();
         }
-        return this._transitions
+        return this._transitions;
     }
 
     // transforms
@@ -1031,7 +1031,7 @@
     // opacity
 
     opacityValidatorFunction () {
-        return (v) => { return Type.isNumber(v) || [null, "auto", "inherit", "initial", "unset"].contains(v) }
+        return (v) => { return Type.isNumber(v) || [null, "auto", "inherit", "initial", "unset"].contains(v); };
     }
 
     setOpacity (v) {
@@ -1044,7 +1044,7 @@
         return this.getCssProperty("opacity");
     }
 
-    // z index 
+    // z index
 
     setZIndex (v) {
         this.setCssProperty("z-index", v);
@@ -1055,7 +1055,7 @@
         return this.getCssProperty("z-index");
     }
 
-    // cursor 
+    // cursor
 
     setCursor (s) {
         this.setCssProperty("cursor", s);
@@ -1202,7 +1202,7 @@
     // float
 
     validFloatPropertyValues () {
-        return [null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"]
+        return [null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"];
     }
 
     setFloat (v) {
@@ -1230,7 +1230,7 @@
     // sizing
 
     validBoxSizingPropertyValues () {
-        return [null, "inherit", "content-box", "border-box"]
+        return [null, "inherit", "content-box", "border-box"];
     }
 
     setBoxSizing (s) {
@@ -1243,7 +1243,7 @@
     }
 
 
-    // gap 
+    // gap
 
     setGap (s) {
         this.setCssProperty("gap", s);
@@ -1255,7 +1255,7 @@
     }
 
 
-    // border 
+    // border
 
     setBorder (s) {
         this.setCssProperty("border", s);
@@ -1461,7 +1461,7 @@
     // alignment
 
     validTextAlignValues () {
-        return [null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"]
+        return [null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"];
     }
 
     setTextAlign (v) {
@@ -1486,7 +1486,7 @@
         return this.getCssProperty("clear");
     }
 
-    // flex 
+    // flex
 
     setFlex (v) {
         assert(Type.isString(v) || Type.isNull(v));
@@ -1525,7 +1525,7 @@
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     validAlignItemsPropertyValues () {
-        return [null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch"]
+        return [null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch"];
     }
 
     setAlignItems (v) {
@@ -1539,9 +1539,9 @@
     }
 
     // flex justify-content (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
-    
+
     validJustifyContentPropertyValues () {
-        return [null, "flex-start", "center", "flex-end", "space-between", "space-around"]
+        return [null, "flex-start", "center", "flex-end", "space-between", "space-around"];
     }
 
     setJustifyContent (v) {
@@ -1591,7 +1591,7 @@
 
     setFlexBasis (v) {
         if (Type.isNumber(v)) {
-            v = this.pxNumberToString(v)
+            v = this.pxNumberToString(v);
         }
         this.setCssProperty("flex-basis", v);
         return this;
@@ -1626,7 +1626,7 @@
     // visibility
 
     setIsVisible (aBool) {
-        const v = aBool ? "visible" : "hidden"
+        const v = aBool ? "visible" : "hidden";
         this.setCssProperty("visibility", v);
         return this;
     }
@@ -1662,7 +1662,7 @@
         }
 		return this
 	}
-	
+
 	unhideHeight () {
 		if (!Type.isUndefined(this.hiddenMinHeight())) {
 			this.setMinHeight(this.hiddenMaxHeight())
@@ -1671,7 +1671,7 @@
 			this.setMaxHeight(this.hiddenMaxHeight())
 			this.setHiddenMaxHeight(undefined)
 		}
-		
+
 		return this
 	}
     */
@@ -1680,9 +1680,9 @@
 
     setIsDisplayHidden (aBool) {
         if (aBool) {
-            this.hideDisplay()
+            this.hideDisplay();
         } else {
-            this.unhideDisplay()
+            this.unhideDisplay();
         }
         return this;
     }
@@ -1703,7 +1703,7 @@
     unhideDisplay () {
         if (this.hiddenDisplayMode()) {
             const oldValue = this.hiddenDisplayValue();
-            this.setHiddenDisplayValue(null); 
+            this.setHiddenDisplayValue(null);
             assert(oldValue);
             if (oldValue) {
                 this.setHiddenDisplayMode(false); // must call *before* setDisplay()
@@ -1754,7 +1754,7 @@
     overflowScrollingValidValues () {
         return [null, "auto", "touch", "inherit", "initial", "unset"];
     }
-    
+
     setOverflowScrolling (s) {
         //assert(Type.isString(s))
         assert(this.overflowScrollingValidValues().contains(s));
@@ -1778,12 +1778,12 @@
 
     // webkit specific
 
-    setWebkitOverflowScrolling (s) {    
+    setWebkitOverflowScrolling (s) {
         // NOTE: try to use setOverflowScrolling() instead, it will call this too
         assert(Type.isString(s));
         this.setSpecialCssProperty("-webkit-overflow-scrolling", s);
-        if(this.webkitOverflowScrolling() !== s) {
-            console.warn(this.svType() + " WARNING: setWebkitOverflowScrolling failed")
+        if (this.webkitOverflowScrolling() !== s) {
+            console.warn(this.svType() + " WARNING: setWebkitOverflowScrolling failed");
         }
         return this;
     }
@@ -1792,7 +1792,7 @@
         return this.getSpecialCssProperty("-webkit-overflow-scrolling");
     }
 
-    // ms specific 
+    // ms specific
 
     setMsOverflowStyle (s) {
         /* -ms-overflow-style: none; removes scrollbars on IE 10+  */
@@ -1855,12 +1855,12 @@
         return this.getCssProperty("overflow-y");
     }
 
-    /*	
+    /*
 
     // text over flow
 
     // Overflow behavior at line end
-    // Right end if ltr, left end if rtl 
+    // Right end if ltr, left end if rtl
     text-overflow: clip;
     text-overflow: ellipsis;
     text-overflow: "…";
@@ -1869,14 +1869,14 @@
     text-overflow: fade(5%);
 
     // Overflow behavior at left end | at right end
-    // Directionality has no influence 
+    // Directionality has no influence
     text-overflow: clip ellipsis;
     text-overflow: "…" "…";
     text-overflow: fade clip;
     text-overflow: fade(10px) fade(10px);
     text-overflow: fade(5%) fade(5%);
 
-    // Global values 
+    // Global values
     text-overflow: inherit;
     text-overflow: initial;
     text-overflow: unset;
@@ -1900,14 +1900,14 @@
             "-khtml-user-select",
             "-webkit-user-select",
             "-o-user-select"
-        ]
+        ];
     }
 
     userSelect () {
-        const style = this.cssStyle()
-        let result = this.userSelectKeys().detect(key => style[key])
-        result = result || style.userSelect
-        return result
+        const style = this.cssStyle();
+        let result = this.userSelectKeys().detect(key => style[key]);
+        result = result || style.userSelect;
+        return result;
     }
 
     turnOffUserSelect () {
@@ -1920,14 +1920,14 @@
         return this;
     }
 
-    // user selection 
+    // user selection
 
     setUserSelect (aString) {
-        const style = this.cssStyle()
+        const style = this.cssStyle();
         //console.log("'" + aString + "' this.userSelect() = '" + this.userSelect() + "' === ", this.userSelect() == aString)
         if (this.userSelect() !== aString) {
-            style.userSelect = aString
-            this.userSelectKeys().forEach(key => style[key] = aString)
+            style.userSelect = aString;
+            this.userSelectKeys().forEach(key => style[key] = aString);
         }
         return this;
     }
@@ -1975,89 +1975,89 @@
     // calculated size (outside of parent view)
 
     calcSize () {
-        assert(this.parentView())
+        assert(this.parentView());
 
-        const e = this.element()
-        assert(e.parentNode)
+        const e = this.element();
+        assert(e.parentNode);
 
         // reads
-        this.didDomRead("display")
+        this.didDomRead("display");
         //this.didDomRead("position")
         //this.didDomRead("width")
-        const display = e.style.display
-        const position = e.style.position
-        const width = e.style.width
+        const display = e.style.display;
+        const position = e.style.position;
+        const width = e.style.width;
 
         // writes
-        this.didDomWrite("display")
+        this.didDomWrite("display");
         //this.didDomWrite("position")
         //this.didDomWrite("width")
-        e.style.display = "block"
-        e.style.position = "absolute"
-        e.style.width = "auto"
+        e.style.display = "block";
+        e.style.position = "absolute";
+        e.style.width = "auto";
 
         // read calc
-        this.didDomRead("clientWidth")
+        this.didDomRead("clientWidth");
         //this.didDomRead("clientHeight")
-        const w = (e.clientWidth + 1) 
-        const h = (e.clientHeight + 1) 
+        const w = (e.clientWidth + 1);
+        const h = (e.clientHeight + 1);
         //const size = { width: w, height: h }
-        const size = Point.clone().setXY(w, h).freeze()
+        const size = Point.clone().setXY(w, h).freeze();
 
         // write
-        this.didDomWrite("display")
+        this.didDomWrite("display");
         //this.didDomWrite("position")
         //this.didDomWrite("width")
-        e.style.display = display
-        e.style.position = position
-        e.style.width = width
+        e.style.display = display;
+        e.style.position = position;
+        e.style.width = width;
 
         if (w === 1 && h === 1) {
-            assert(e.hasAncestor(document.body)) // client measurements will be zero if it's not in a document
+            assert(e.hasAncestor(document.body)); // client measurements will be zero if it's not in a document
         }
 
-        this.setCachedSize(size)
-        return size
+        this.setCachedSize(size);
+        return size;
     }
 
     cacheClientSize () {
         if (this.display() === "none") {
-            return Point.clone().freeze()
+            return Point.clone().freeze();
         }
 
-        const e = this.element()
-        this.setCachedSize(Point.clone().setXY(e.clientWidth, e.clientHeight).freeze())
+        const e = this.element();
+        this.setCachedSize(Point.clone().setXY(e.clientWidth, e.clientHeight).freeze());
         return this;
     }
 
     cachedSize () {
         if (this.display() === "none") {
-            return Point.clone().freeze()
+            return Point.clone().freeze();
         }
-        return this._cachedSize
+        return this._cachedSize;
     }
 
     // calculated size (within parent view)
 
     calcWidth () {
         if (this.display() === "none") {
-            return 0
+            return 0;
         }
-        return this.calcSize().width()
+        return this.calcSize().width();
     }
 
     calcHeight () {
         if (this.display() === "none") {
-            return 0
+            return 0;
         }
-        return this.calcSize().height()
+        return this.calcSize().height();
     }
 
     // width
 
     setWidthString (v) {
         assert(Type.isString(v) || Type.isNull(v));
-        this.setCssProperty("width", v, () => { this.didChangeWidth() });
+        this.setCssProperty("width", v, () => { this.didChangeWidth(); });
         return this;
     }
 
@@ -2071,8 +2071,8 @@
     }
 
     setWidthPercentage (aNumber) {
-        const newValue = this.percentageNumberToString(aNumber)
-        this.setCssProperty("width", newValue, () => { this.didChangeWidth() });
+        const newValue = this.percentageNumberToString(aNumber);
+        this.setCssProperty("width", newValue, () => { this.didChangeWidth(); });
         return this;
     }
 
@@ -2094,7 +2094,7 @@
         return this.getAttribute("clientHeight");
     }
 
-    // offsetX - includes borders, padding, scrollbar 
+    // offsetX - includes borders, padding, scrollbar
 
     offsetWidth () {
         return this.getAttribute("offsetWidth");
@@ -2107,46 +2107,46 @@
     // width px
 
     minWidthPx () {
-        const s = this.getCssProperty("min-width")
-        // TODO: support em to px translation 
-        return this.pxStringToNumber(s)
+        const s = this.getCssProperty("min-width");
+        // TODO: support em to px translation
+        return this.pxStringToNumber(s);
     }
 
     maxWidthPx () {
-        const w = this.getCssProperty("max-width")
+        const w = this.getCssProperty("max-width");
         if (w === "") {
-            return null
+            return null;
         }
-        return this.pxStringToNumber(w)
+        return this.pxStringToNumber(w);
     }
 
     // height px
 
     minHeightPx () {
-        const s = this.getCssProperty("min-height")
-        // TODO: support em to px translation 
-        return this.pxStringToNumber(s)
+        const s = this.getCssProperty("min-height");
+        // TODO: support em to px translation
+        return this.pxStringToNumber(s);
     }
 
     maxHeightPx () {
-        const s = this.getCssProperty("max-height")
+        const s = this.getCssProperty("max-height");
         if (s === "") {
-            return null
+            return null;
         }
-        return this.pxStringToNumber(s)
+        return this.pxStringToNumber(s);
     }
 
     // -----------
 
     cssStyle () {
-        return this.element().style
+        return this.element().style;
     }
 
     setMinWidth (v) {
         if (Type.isNumber(v)) {
-            v = this.pxNumberToString(v)
+            v = this.pxNumberToString(v);
         }
-        this.setCssProperty("min-width", v, () => { this.didChangeWidth() });
+        this.setCssProperty("min-width", v, () => { this.didChangeWidth(); });
         return this;
     }
 
@@ -2160,7 +2160,7 @@
 
     /*
     lockSize () {
-        const h = this.computedHeight() 
+        const h = this.computedHeight()
         const w = this.computedWidth()
         this.setMinAndMaxWidth(w)
         this.setMinAndMaxHeight(h)
@@ -2178,7 +2178,7 @@
 
     displayIsFlex () {
         // TODO: choose a better name for this method?
-        return (this.display() === "flex" || this.hiddenDisplayValue() === "flex")
+        return (this.display() === "flex" || this.hiddenDisplayValue() === "flex");
     }
 
     // fixed width
@@ -2246,11 +2246,11 @@
         return this;
     }
 
-    setMaxWidth (v) { 
+    setMaxWidth (v) {
         if (Type.isNumber(v)) {
-            v = this.pxNumberToString(v)
+            v = this.pxNumberToString(v);
         }
-        this.setCssProperty("max-width", v, () => { this.didChangeWidth() }); 
+        this.setCssProperty("max-width", v, () => { this.didChangeWidth(); });
         return this;
     }
 
@@ -2265,94 +2265,94 @@
         this.setCssProperty("min-width", v, () => { this.didChangeWidth() })
         */
         if (!Type.isNull(v)) {
-            this.setCssProperty("width", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
+            this.setCssProperty("width", v, null); // avoids weird behavior but not ideal if min and max settings change do diff values
         }
         return this;
     }
 
     setMinAndMaxHeight (v) {
         if (Type.isNumber(v)) {
-            v = this.pxNumberToString(v)
+            v = this.pxNumberToString(v);
         }
-        this.setCssProperty("min-height", v, () => { this.didChangeHeight() });
-        this.setCssProperty("max-height", v, () => { this.didChangeHeight() });
+        this.setCssProperty("min-height", v, () => { this.didChangeHeight(); });
+        this.setCssProperty("max-height", v, () => { this.didChangeHeight(); });
         if (!Type.isNull(v)) {
-            this.setCssProperty("height", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
+            this.setCssProperty("height", v, null); // avoids weird behavior but not ideal if min and max settings change do diff values
         }
         return this;
     }
 
     setMinAndMaxWidthAndHeight (v) {
-        this.setMinAndMaxWidth(v)
-        this.setMinAndMaxHeight(v)
+        this.setMinAndMaxWidth(v);
+        this.setMinAndMaxHeight(v);
         return this;
     }
 
     percentageNumberToString (aNumber) {
-        assert(Type.isNumber(aNumber) && (aNumber >= 0) && (aNumber <= 100))
-        return aNumber + "%"
+        assert(Type.isNumber(aNumber) && (aNumber >= 0) && (aNumber <= 100));
+        return aNumber + "%";
     }
 
     pxNumberToString (aNumber) {
         if (Type.isNull(aNumber)) {
-            return null
+            return null;
         }
 
         if (Type.isString(aNumber)) {
             if (aNumber.startsWith("calc") || aNumber.endsWith("px")) {
-                return aNumber
+                return aNumber;
             }
         }
 
-        assert(Type.isNumber(aNumber))
-        return aNumber + "px"
+        assert(Type.isNumber(aNumber));
+        return aNumber + "px";
     }
 
     pxStringToNumber (s) {
-        assert(Type.isString(s))
-        
+        assert(Type.isString(s));
+
         if (s === "") {
-            return 0
+            return 0;
         }
-        
+
         if (s === "auto") {
-            return 0
+            return 0;
         }
 
         if (s.contains("%")) {
-            return 0
+            return 0;
         }
 
-        assert(s.endsWith("px"))
-        return Number(s.replace("px", ""))
+        assert(s.endsWith("px"));
+        return Number(s.replace("px", ""));
     }
 
     setMinAndMaxHeightPercentage (aNumber) {
-        const newValue = this.percentageNumberToString(aNumber)
-        this.setCssProperty("min-height", newValue, () => { this.didChangeHeight() });
-        this.setCssProperty("max-height", newValue, () => { this.didChangeHeight() });
+        const newValue = this.percentageNumberToString(aNumber);
+        this.setCssProperty("min-height", newValue, () => { this.didChangeHeight(); });
+        this.setCssProperty("max-height", newValue, () => { this.didChangeHeight(); });
         return this;
     }
 
     setHeightPercentage (aNumber) {
         // NOTE: %s don't work unless same parent view dimension is defined
-        const newValue = this.percentageNumberToString(aNumber)
-        this.setHeightString(newValue)
+        const newValue = this.percentageNumberToString(aNumber);
+        this.setHeightString(newValue);
         return this;
     }
 
     setMinWidthPx (aNumber) {
-        this.setMinWidth(this.pxNumberToString(aNumber))
+        this.setMinWidth(this.pxNumberToString(aNumber));
         return this;
     }
 
     setMinHeightPx (aNumber) {
-        this.setMinHeight(this.pxNumberToString(aNumber))
+        this.setMinHeight(this.pxNumberToString(aNumber));
         return this;
     }
 
     setMaxHeightPx (aNumber) {
-        this.setMaxHeight(this.pxNumberToString(aNumber))
+        this.setMaxHeight(this.pxNumberToString(aNumber));
         return this;
     }
 
@@ -2373,26 +2373,26 @@
     }
 
     setMinHeight (newValue) {
-        assert(Type.isString(newValue) || Type.isNull(newValue))
+        assert(Type.isString(newValue) || Type.isNull(newValue));
         // <length> | <percentage> | auto | max-content | min-content | fit-content | -webkit-fill-available
-        this.setCssProperty("min-height", newValue, () => { this.didChangeHeight() });
+        this.setCssProperty("min-height", newValue, () => { this.didChangeHeight(); });
         return this;
     }
 
     setMaxHeight (newValue) {
-        assert(Type.isString(newValue) || Type.isNull(newValue))
+        assert(Type.isString(newValue) || Type.isNull(newValue));
         // <length> | <percentage> | none | max-content | min-content | fit-content | -webkit-fill-available
-        this.setCssProperty("max-height", newValue, () => { this.didChangeHeight() });
+        this.setCssProperty("max-height", newValue, () => { this.didChangeHeight(); });
         return this;
     }
 
     setWidthPx (aNumber) {
-        this.setWidthString(this.pxNumberToString(aNumber))
+        this.setWidthString(this.pxNumberToString(aNumber));
         return this;
     }
 
     setHeightPx (aNumber) {
-        this.setHeightString(this.pxNumberToString(aNumber))
+        this.setHeightString(this.pxNumberToString(aNumber));
         return this;
     }
 
@@ -2400,25 +2400,25 @@
         // height: auto|length|initial|inherit;
 
         if (Type.isNumber(s)) {
-            return this.setHeightPx(s)
+            return this.setHeightPx(s);
         }
-        this.setHeightString(s)
+        this.setHeightString(s);
         return this;
     }
 
     setWidthToAuto () {
-        this.setWidthString("auto")
+        this.setWidthString("auto");
         return this;
     }
 
     setHeightToAuto () {
-        this.setHeightString("auto")
+        this.setHeightString("auto");
         return this;
     }
 
     setHeightString (s) {
-        assert(Type.isString(s) || Type.isNull(s))
-        this.setCssProperty("height", s, () => { this.didChangeHeight() });
+        assert(Type.isString(s) || Type.isNull(s));
+        this.setCssProperty("height", s, () => { this.didChangeHeight(); });
         return this;
     }
 
@@ -2429,24 +2429,24 @@
     // --- string ---
 
     setString (v) {
-        return this.setTextContent(v)
+        return this.setTextContent(v);
         //return this.setInnerHtml(v)
     }
 
     string () {
-        return this.textContent()
+        return this.textContent();
         //return this.innerHtml()
     }
 
     // --- innerHTML ---
 
     innerHtml () {
-        return this.getAttribute("innerHTML")
+        return this.getAttribute("innerHTML");
         //return this.element().innerHTML
     }
 
     setInnerHtml (v) {
-        this.setAttribute("innerHTML", v)
+        this.setAttribute("innerHTML", v);
         //this.element().innerHTML = v
         return this;
     }
@@ -2459,28 +2459,28 @@
     }
 
     innerText () {
-        const e = this.element()
-        return e.innerText 
+        const e = this.element();
+        return e.innerText;
         //return e.textContent || e.innerText || "";
     }
 
     // --- textContent ---
 
     setTextContent (v) {
-        this.element().textContent = v
+        this.element().textContent = v;
         //this.setAttribute("textContent", v)
         return this;
     }
 
     textContent () {
-        return this.element().textContent
+        return this.element().textContent;
         //return this.getAttribute("textContent")
     }
 
     // --- touch events ---
 
     setTouchAction (s) {
-        this.setCssProperty("-ms-touch-action", s) // needed?
+        this.setCssProperty("-ms-touch-action", s); // needed?
         this.setCssProperty("touch-action", s);
         return this;
     }
@@ -2498,14 +2498,14 @@
 
     // scroll width & scroll height
 
-    scrollWidth () { 
+    scrollWidth () {
         // a read-only value
         return this.getAttribute("scrollWidth");
     }
 
     scrollHeight () {
         // a read-only value
-        return this.getAttribute("scrollHeight"); 
+        return this.getAttribute("scrollHeight");
     }
 
     // offset width & offset height
@@ -2521,16 +2521,16 @@
     }
 
     boundingClientRect () {
-        this.didDomRead("boundingClientRect")
-        return this.element().getBoundingClientRect()
+        this.didDomRead("boundingClientRect");
+        return this.element().getBoundingClientRect();
     }
 
     viewportX () {
-        return this.boundingClientRect().x
+        return this.boundingClientRect().x;
     }
 
     viewportY () {
-        return this.boundingClientRect().y
+        return this.boundingClientRect().y;
     }
 
     /*
@@ -2558,16 +2558,16 @@
 
     containsPoint (aPoint) {
         // point must be in document coordinates
-        return this.frameInDocument().containsPoint(aPoint)
+        return this.frameInDocument().containsPoint(aPoint);
     }
 
     // viewport coordinates helpers
 
     frameInViewport () {
-        const origin = this.positionInViewport()
-        const size = this.sizeInViewport()
-        const frame = Rectangle.clone().setOrigin(origin).setSize(size)
-        return frame
+        const origin = this.positionInViewport();
+        const size = this.sizeInViewport();
+        const frame = Rectangle.clone().setOrigin(origin).setSize(size);
+        return frame;
     }
 
     positionInViewport () {
@@ -2584,7 +2584,7 @@
         const rect = this.boundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
         const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-        
+
         // Check if any part of the element is in the viewport
         const isInViewport = (
             rect.top < viewportHeight &&
@@ -2592,7 +2592,7 @@
             rect.left < viewportWidth &&
             rect.right > 0
         );
-        
+
         return isInViewport;
     }
 
@@ -2601,23 +2601,23 @@
     // --- document positioning ---
 
     setFrameInDocument (aRect) {
-        this.setPosition("absolute")
-        this.setLeftPx(aRect.origin().x())
-        this.setTopPx(aRect.origin().y())
-        this.setMinAndMaxSize(aRect.size())
+        this.setPosition("absolute");
+        this.setLeftPx(aRect.origin().x());
+        this.setTopPx(aRect.origin().y());
+        this.setMinAndMaxSize(aRect.size());
         return this;
     }
 
     frameInDocument () {
-        const origin = this.positionInDocument()
-        const size = this.size()
-        const frame = Rectangle.clone().setOrigin(origin).setSize(size)
+        const origin = this.positionInDocument();
+        const size = this.size();
+        const frame = Rectangle.clone().setOrigin(origin).setSize(size);
 
         //const size = this.calcSize() // this.size()
         //onst frame = Rectangle.clone().setOrigin(origin)
         //frame.size().setX(size.width).setY(size.height)
 
-        return frame
+        return frame;
     }
 
     // -------------------
@@ -2627,85 +2627,85 @@
     // fixed position
 
     hasFixedX () {
-        return !Type.isNullOrUndefined(this.leftPx() ) 
+        return !Type.isNullOrUndefined(this.leftPx());
     }
 
     hasFixedY () {
-        return !Type.isNullOrUndefined(this.topPx() ) 
+        return !Type.isNullOrUndefined(this.topPx());
     }
 
     hasFixedPosition () {
-        return this.position() === "absolute" && this.hasFixedX() && this.hasFixedY()
+        return this.position() === "absolute" && this.hasFixedX() && this.hasFixedY();
     }
 
     // fixed size
 
     hasFixedSize () {
-        return this.hasFixedWidth() && this.hasFixedHeight()
+        return this.hasFixedWidth() && this.hasFixedHeight();
     }
 
     hasFixedWidth () {
-        const v1 = this.minWidthPx()
-        const v2 = this.maxWidthPx()
-        return !Type.isNullOrUndefined(v1) && v1 === v2
+        const v1 = this.minWidthPx();
+        const v2 = this.maxWidthPx();
+        return !Type.isNullOrUndefined(v1) && v1 === v2;
     }
 
     hasFixedHeight () {
-        const v1 = this.minHeightPx()
-        const v2 = this.maxHeightPx()
-        return !Type.isNullOrUndefined(v1) && v1 === v2
+        const v1 = this.minHeightPx();
+        const v2 = this.maxHeightPx();
+        return !Type.isNullOrUndefined(v1) && v1 === v2;
     }
 
     decrementFixedWidth () {
-        assert(this.hasFixedWidth())
-        this.setMinAndMaxWidth(Math.max(0, this.minWidthPx()-1))
+        assert(this.hasFixedWidth());
+        this.setMinAndMaxWidth(Math.max(0, this.minWidthPx() - 1));
         return this;
     }
 
     decrementFixedHeight () {
-        assert(this.hasFixedHeight())
-        this.setMinAndMaxHeight(Math.max(0, this.minHeightPx()-1))
+        assert(this.hasFixedHeight());
+        this.setMinAndMaxHeight(Math.max(0, this.minHeightPx() - 1));
         return this;
     }
 
     // fixed frame
 
     hasFixedFrame () {
-        return this.hasFixedPosition() && this.hasFixedSize()
+        return this.hasFixedPosition() && this.hasFixedSize();
     }
 
     fixedFrame () {
-        assert(this.hasFixedFrame())
-        const origin = Point.clone().set(Math.round(this.leftPx()), Math.round(this.topPx()))
-        const size   = Point.clone().set(Math.round(this.minWidthPx()), Math.round(this.minHeightPx()))
-        const frame  = Rectangle.clone().setOrigin(origin).setSize(size)
-        return frame
+        assert(this.hasFixedFrame());
+        const origin = Point.clone().set(Math.round(this.leftPx()), Math.round(this.topPx()));
+        const size   = Point.clone().set(Math.round(this.minWidthPx()), Math.round(this.minHeightPx()));
+        const frame  = Rectangle.clone().setOrigin(origin).setSize(size);
+        return frame;
     }
 
     //--------------
 
     estimatedWidthPx () {
-        const v1 = this.minWidthPx()
-        const v2 = this.maxWidthPx()
+        const v1 = this.minWidthPx();
+        const v2 = this.maxWidthPx();
         if (!Type.isNullOrUndefined(v1) && v1 === v2) {
-            return v1
+            return v1;
         }
-        return this.clientWidth()
+        return this.clientWidth();
     }
 
     estimatedHeightPx () {
-        const v1 = this.minHeightPx()
-        const v2 = this.maxHeightPx()
+        const v1 = this.minHeightPx();
+        const v2 = this.maxHeightPx();
         if (!Type.isNullOrUndefined(v1) && v1 === v2) {
-            return v1
+            return v1;
         }
-        return this.clientHeight()
+        return this.clientHeight();
     }
 
     // ------------------------
 
     positionInDocument () {
-        this.didDomRead("scrollTop")
+        this.didDomRead("scrollTop");
         //this.didDomRead("scrollLeft")
 
         const box = this.element().getBoundingClientRect();
@@ -2725,7 +2725,7 @@
         const left = box.left + scrollLeft - clientLeft;
 
         const p = Point.clone().set(Math.round(left), Math.round(top));
-        return p
+        return p;
     }
 
     size () {
@@ -2735,64 +2735,64 @@
     // ---------------------
 
     setFrameInParent (aRect) {
-        this.setPosition("absolute")
-        this.setLeftPx(aRect.origin().x())
-        this.setTopPx(aRect.origin().y())
-        this.setMinAndMaxSize(aRect.size())
+        this.setPosition("absolute");
+        this.setLeftPx(aRect.origin().x());
+        this.setTopPx(aRect.origin().y());
+        this.setMinAndMaxSize(aRect.size());
         return this;
     }
 
     frameInParentView () {
-        const origin = this.relativePos()
-        const size = this.size()
-        const frame = Rectangle.clone().setOrigin(origin).setSize(size)
-        return frame
+        const origin = this.relativePos();
+        const size = this.size();
+        const frame = Rectangle.clone().setOrigin(origin).setSize(size);
+        return frame;
     }
 
     // ---
 
     relativePos () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv) {
-            return this.positionInDocument().subtract(pv.positionInDocument())
+            return this.positionInDocument().subtract(pv.positionInDocument());
             //return pv.positionInDocument().subtract(this.positionInDocument())
         }
-        return this.positionInDocument()
+        return this.positionInDocument();
     }
 
     setRelativePos (p) {
         //this.setPosition("absolute")
-        this.setLeftPx(p.x())
-        this.setTopPx(p.y())
+        this.setLeftPx(p.x());
+        this.setTopPx(p.y());
         return this;
     }
 
     // ---
 
     viewPosForWindowPos (pos) {
-        return pos.subtract(this.positionInDocument())
+        return pos.subtract(this.positionInDocument());
     }
 
     // --------------
 
     makeAbsolutePositionAndSize () {
-        const f = this.frameInParentView()
-        this.setFrameInParent(f)
-        return this 
+        const f = this.frameInParentView();
+        this.setFrameInParent(f);
+        return this;
     }
 
     makeRelativePositionAndSize () {
         // TODO: check if it's flex and set flex basis in flex direction instead?
-        this.setPosition("relative")
+        this.setPosition("relative");
 
-        this.setTopPx(null)
-        this.setLeftPx(null)
-        this.setRightPx(null)
-        this.setBottomPx(null)
+        this.setTopPx(null);
+        this.setLeftPx(null);
+        this.setRightPx(null);
+        this.setBottomPx(null);
 
-        this.setMinAndMaxWidth(null)
-        this.setMinAndMaxHeight(null)  
-        return this 
+        this.setMinAndMaxWidth(null);
+        this.setMinAndMaxHeight(null);
+        return this;
     }
 
     // --------------
@@ -2806,7 +2806,7 @@
     // --- scroll actions ---
 
     scrollToTop () {
-        this.setScrollTop(0)
+        this.setScrollTop(0);
         return this;
     }
 
@@ -2818,25 +2818,25 @@
     // --- css :after :before ---
 
     setContentAfterOrBeforeString (aString, afterOrBefore) {
-        const uniqueClassName = "UniqueClass_" + this.puuid()
-        const e = this.element()
+        const uniqueClassName = "UniqueClass_" + this.puuid();
+        const e = this.element();
         if (e.className.indexOf(uniqueClassName) === -1) {
-            const newRuleKey = "DomView" + uniqueClassName + ":" + afterOrBefore
-            const newRuleValue = "content: \"" + aString + "\";"
+            const newRuleKey = "DomView" + uniqueClassName + ":" + afterOrBefore;
+            const newRuleValue = "content: \"" + aString + "\";";
             //console.log("newRule '" + newRuleKey + "', '" + newRuleValue + "'")
             document.styleSheets[0].addRule(newRuleKey, newRuleValue);
-            e.className += " " + uniqueClassName
+            e.className += " " + uniqueClassName;
         }
         return this;
     }
 
     setContentAfterString (s) {
-        this.setContentAfterOrBeforeString(s, "after")
+        this.setContentAfterOrBeforeString(s, "after");
         return this;
     }
 
     setContentBeforeString (s) {
-        this.setContentAfterOrBeforeString(s, "before")
+        this.setContentAfterOrBeforeString(s, "before");
         return this;
     }
 
@@ -2861,5 +2861,5 @@
         this.element().classList.remove(aClassName);
         return this;
     }
-    
+
 }.initThisClass());

@@ -11,7 +11,7 @@
  * Automatically closes when tapped and includes open/close animations.
  */
 (class SvCoachMarkView extends DomView {
-    
+
     /**
      * @description Initializes the prototype slots for the SvCoachMarkView
      * @category Initialization
@@ -25,7 +25,7 @@
             const slot = this.newSlot("label", "");
             slot.setSlotType("String");
         }
-        
+
         {
             /**
              * @member {DomView} targetView - The view that this coach mark points to
@@ -34,7 +34,7 @@
             const slot = this.newSlot("targetView", null);
             slot.setSlotType("DomView");
         }
-        
+
         {
             /**
              * @member {DomView} labelView - The view containing the label text
@@ -43,7 +43,7 @@
             const slot = this.newSlot("labelView", null);
             slot.setSlotType("DomView");
         }
-        
+
         {
             /**
              * @member {Boolean} isOpen - Whether the coach mark is currently open
@@ -61,7 +61,7 @@
      */
     init () {
         super.init();
-        
+
         // Style the container
         this.setPosition("absolute");
         this.setDisplay("flex");
@@ -72,7 +72,7 @@
         this.setOpacity(0);
         this.setTransform("translateY(10px)");
         this.setTransition("opacity 0.3s ease-out, transform 0.3s ease-out");
-        
+
         // Create the label view
         const labelView = DomView.clone();
         labelView.setBackgroundColor("rgba(0, 0, 0, 0.9)");
@@ -85,10 +85,10 @@
         labelView.setMaxWidth("300px");
         labelView.setTextAlign("center");
         labelView.setLineHeight("1.4");
-        
+
         this.setLabelView(labelView);
         this.addSubview(labelView);
-        
+
         // Add arrow pointing down
         const arrow = DomView.clone();
         arrow.setWidth("0");
@@ -98,10 +98,10 @@
         arrow.setBorderTop("8px solid rgba(0, 0, 0, 0.9)");
         arrow.setMarginTop("-1px");
         this.addSubview(arrow);
-        
+
         // Add tap gesture to close
         this.addDefaultTapGesture();
-        
+
         return this;
     }
 
@@ -129,7 +129,7 @@
         if (!targetView) {
             return false;
         }
-        
+
         return targetView.isInViewport();
     }
 
@@ -142,34 +142,34 @@
         if (!this.canOpen() || this.isOpen()) {
             return this;
         }
-        
+
         this.setIsOpen(true);
-        
+
         // Position above the target view
         const targetView = this.targetView();
         const targetElement = targetView.element();
         const targetRect = targetElement.getBoundingClientRect();
-        
+
         // Add to document body if not already added
         if (!this.parentView()) {
             document.body.appendChild(this.element());
         }
-        
+
         // Position the coach mark
         const coachMarkHeight = this.element().offsetHeight;
         const left = targetRect.left + (targetRect.width / 2);
         const top = targetRect.top - coachMarkHeight - 10; // 10px gap above target
-        
+
         this.setLeftPx(left);
         this.setTopPx(top);
-        
+
         // Center horizontally by offsetting half width
         requestAnimationFrame(() => {
             const coachMarkWidth = this.element().offsetWidth;
             this.setTransform(`translateX(-${coachMarkWidth / 2}px) translateY(0)`);
             this.setOpacity(1);
         });
-        
+
         return this;
     }
 
@@ -182,20 +182,20 @@
         if (!this.isOpen()) {
             return this;
         }
-        
+
         this.setIsOpen(false);
-        
+
         // Animate out
         this.setOpacity(0);
         this.setTransform("translateX(-50%) translateY(10px)");
-        
+
         // Remove from DOM after animation completes
         this.addTimeout(() => {
             if (this.element() && this.element().parentNode) {
                 this.element().parentNode.removeChild(this.element());
             }
         }, 300);
-        
+
         return this;
     }
 
@@ -209,5 +209,5 @@
         this.close();
         return false;
     }
-    
+
 }.initThisClass());

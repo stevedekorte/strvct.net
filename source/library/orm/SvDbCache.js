@@ -11,28 +11,28 @@ const FifoMap = require("/Users/steve/_projects/Active/undreamedof.ai/Servers/Ga
  * @class SvDbCache
  * @extends Base
  * @classdesc A two-tier caching system for database rows combining FIFO and weak reference caching.
- * 
+ *
  * This cache provides optimal performance by using a FIFO (First In, First Out) cache for recently
  * accessed rows and a weak reference cache for longer-term storage. The FIFO cache ensures fast
  * access to frequently used rows while the weak cache prevents memory leaks by allowing garbage
  * collection when rows are no longer referenced elsewhere.
- * 
+ *
  * Key features:
  * - Fast access to recently used rows via FIFO cache
- * - Memory-efficient storage via weak reference cache  
+ * - Memory-efficient storage via weak reference cache
  * - Automatic cleanup when FIFO limit is exceeded
  * - Garbage collection friendly for unused rows
- * 
+ *
  * Cache strategy:
  * 1. get() checks FIFO cache first (fastest), then weak cache
  * 2. set() adds to both FIFO and weak caches, evicts oldest from FIFO if needed
  * 3. delete() removes from both caches
- * 
+ *
  * Usage:
  * ```javascript
  * const cache = SvDbCache.clone();
  * cache.setFifoLimit(100); // Keep 100 most recent rows in fast cache
- * 
+ *
  * cache.set("user-123", userRow);
  * const user = cache.get("user-123"); // Fast FIFO lookup
  * cache.delete("user-123");
@@ -82,7 +82,7 @@ const SvDbCache = (class SvDbCache extends SvBase {
         if (this.fifoMap().has(key)) {
             return this.fifoMap().get(key);
         }
-        
+
         // Fall back to weak cache for longer-term storage
         return this.weakRowMap().get(key);
     }
@@ -96,10 +96,10 @@ const SvDbCache = (class SvDbCache extends SvBase {
     set (key, value) {
         // Add to weak cache for long-term storage (garbage collection friendly)
         this.weakRowMap().set(key, value);
-        
+
         // Add to FIFO cache for fast recent access
         this.fifoMap().set(key, value);
-        
+
         // Enforce FIFO limit by removing oldest entries
         while (this.fifoMap().size() > this.fifoLimit()) {
             // Remove the oldest entry from FIFO cache
@@ -122,7 +122,7 @@ const SvDbCache = (class SvDbCache extends SvBase {
     delete (key) {
         const fifoDeleted = this.fifoMap().delete(key);
         const weakDeleted = this.weakRowMap().delete(key);
-        
+
         // Return true if deleted from either cache
         return fifoDeleted || weakDeleted;
     }
@@ -163,7 +163,7 @@ const SvDbCache = (class SvDbCache extends SvBase {
         return {
             fifoSize: this.fifoMap().size(),
             fifoLimit: this.fifoLimit(),
-            fifoUtilization: (this.fifoMap().size() / this.fifoLimit() * 100).toFixed(1) + '%'
+            fifoUtilization: (this.fifoMap().size() / this.fifoLimit() * 100).toFixed(1) + "%"
         };
     }
 

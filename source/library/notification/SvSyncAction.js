@@ -91,7 +91,7 @@
      */
     initPrototype () {
     }
-	
+
     /**
      * @description Attempts to send the action, catching and handling any errors.
      * @returns {Error|null} The caught error or null if successful.
@@ -100,7 +100,7 @@
     tryToSend () {
         try {
             this.send();
-        } catch(error) {
+        } catch (error) {
             console.warn(this.svTypeId() + ".tryToSend(" + this.description() + ") caught exception: ");
             error.show();
             this.setError(error);
@@ -108,7 +108,7 @@
         }
         return null;
     }
-	
+
     /**
      * @description Sends the action by calling the specified method on the target.
      * @returns {null}
@@ -122,7 +122,7 @@
         t[m].apply(t, a ? a : []);
         return null;
     }
-	
+
     /**
      * @description Generates the actions key for this action.
      * @returns {string} The actions key.
@@ -131,7 +131,7 @@
     actionsKey () {
         return SvSyncAction.actionKeyForTargetAndMethod(this.target(), this.method());;
     }
-	
+
     /**
      * @description Checks if this action equals another action.
      * @param {SvSyncAction} anAction - The action to compare with.
@@ -139,11 +139,11 @@
      * @category Comparison
      */
     equals (anAction) {
-        return anAction !== null && 
-               (this.target() === anAction.target()) && 
+        return anAction !== null &&
+               (this.target() === anAction.target()) &&
                (this.method() === anAction.method());
     }
-	
+
     /**
      * @description Generates a description of this action.
      * @returns {string} The action description.

@@ -16,7 +16,7 @@
      * @category Node Configuration
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -42,12 +42,12 @@
          * @category Content
          */
         {
-            const slot = this.newSlot("value", "...")
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setSlotType("String")
-            slot.setLabel("value")
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("value", "...");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setSlotType("String");
+            slot.setLabel("value");
+            slot.setSyncsToView(true);
             //slot.setInspectorPath("Style")
         }
     }
@@ -57,18 +57,18 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-        this.setCanDelete(true)
-        this.setNodeCanInspect(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setCanDelete(true);
+        this.setNodeCanInspect(true);
 
-        this.setTitle("title")
-        this.setNodeCanEditTitle(true)
-        
-        this.setNodeCanReorderSubnodes(true)
-  
-        this.setNodeCanEditTileHeight(true)
-        this.setNodeCanEditColumnWidth(true)
+        this.setTitle("title");
+        this.setNodeCanEditTitle(true);
+
+        this.setNodeCanReorderSubnodes(true);
+
+        this.setNodeCanEditTileHeight(true);
+        this.setNodeCanEditColumnWidth(true);
     }
 
     /**

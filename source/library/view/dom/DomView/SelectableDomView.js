@@ -6,11 +6,11 @@
  * @class SelectableDomView
  * @extends ControlDomView
  * @classdesc SelectableDomView
- * 
+ *
  * For subclasses to extend. Ancestors of this class are organizational parts of DomView.
  */
 (class SelectableDomView extends ControlDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -36,9 +36,9 @@
             const selection = window.getSelection();
             return selection.toString();
         } else {
-            console.warn(this.svType() + " attempt to get selection on unfocused text")
+            console.warn(this.svType() + " attempt to get selection on unfocused text");
         }
-        return ""
+        return "";
     }
 
     /**
@@ -49,7 +49,7 @@
     storeSelectionRange () {
         const range = this.getSelectionRange();
         if (range) {
-            console.log(this.svTypeId() + "--- storing selection ---")
+            console.log(this.svTypeId() + "--- storing selection ---");
             this.setStoredSelectionRange(range);
             return true;
         }
@@ -121,7 +121,7 @@
 
         return this.getWindowSelectionRange();
     }
-    
+
     /**
      * @description Sets the selection range if it's contained within this view.
      * @param {Range} range - The range to set as the selection.
@@ -143,7 +143,7 @@
      * @category Caret
      */
     placeCaretAtEnd () {
-        const el = this.element()
+        const el = this.element();
         el.focus();
 
         if (typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
@@ -159,7 +159,7 @@
             textRange.collapse(false);
             textRange.select();
         }
-        return this
+        return this;
     }
 
     /**
@@ -168,7 +168,7 @@
      * @category Caret
      */
     moveCaretToEnd () {
-        const contentEditableElement = this.element()
+        const contentEditableElement = this.element();
         let range, selection;
 
         if (document.createRange) {
@@ -187,7 +187,7 @@
             range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
             range.select();//Select the range (make it the visible selection
         }
-        return this
+        return this;
     }
 
     /**
@@ -200,11 +200,11 @@
             range.moveToElementText(this.element());
             range.select();
         } else if (window.getSelection) {
-            const selection = window.getSelection(); 
+            const selection = window.getSelection();
             const range = document.createRange();
             range.selectNodeContents(this.element());
             selection.removeAllRanges();
-            selection.addRange(range);  
+            selection.addRange(range);
         }
     }
 
@@ -214,7 +214,7 @@
      * @returns {SelectableDomView} The instance for method chaining.
      * @category Selection
      */
-     replaceSelectedText (replacementText) {
+    replaceSelectedText (replacementText) {
         let range;
         if (window.getSelection) {
             const sel = window.getSelection();
@@ -224,11 +224,11 @@
                 range.insertNode(document.createTextNode(replacementText));
             }
 
-            console.log("inserted node")
+            console.log("inserted node");
         } else if (document.selection && document.selection.createRange) {
             range = document.selection.createRange();
             range.text = replacementText;
-            console.log("set range.text")
+            console.log("set range.text");
         }
 
         if (range) {
@@ -238,7 +238,7 @@
 
         this.didEdit();
 
-        return this
+        return this;
     }
 
     /**
@@ -247,8 +247,8 @@
      * @category Caret
      */
     getCaretPosition () {
-        const editableElement = this.element()
-        let caretPos = 0
+        const editableElement = this.element();
+        let caretPos = 0;
         if (window.getSelection) {
             const sel = window.getSelection();
             if (sel.rangeCount) {

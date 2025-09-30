@@ -5,7 +5,7 @@
 /**
  * @class EdgePanGestureRecognizer
  * @extends PanGestureRecognizer
- * @classdesc Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge of the view. 
+ * @classdesc Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge of the view.
  * Don't use this class directly - instead use its subclass for the edge you're interested in.
  *
  * Delegate messages:
@@ -77,9 +77,9 @@
      * @category Calculation
      */
     distanceFromEdge () {
-        const name = this.edgeName()
-        const d = this.currentEdgeDistances()[name]
-        return d
+        const name = this.edgeName();
+        const d = this.currentEdgeDistances()[name];
+        return d;
     }
 
     /**
@@ -88,7 +88,7 @@
      * @category Configuration
      */
     maxEdgeDistance () {
-        return 100000
+        return 100000;
     }
 
     /**
@@ -97,16 +97,16 @@
      * @category Calculation
      */
     currentEdgeDistances () {
-        const max = this.maxEdgeDistance()
-        const points = this.allPoints() // event points are in document coordinates
-        const vt = this.viewTarget()
+        const max = this.maxEdgeDistance();
+        const points = this.allPoints(); // event points are in document coordinates
+        const vt = this.viewTarget();
 
         if (!vt) {
-            this.logDebug(" missing viewTarget")
-            return max
+            this.logDebug(" missing viewTarget");
+            return max;
         }
 
-        const f = vt.frameInDocument()
+        const f = vt.frameInDocument();
 
         // use maxValue to make sure all fingers are close to the edge
 
@@ -115,7 +115,7 @@
             bottom: points.maxValue(p => Math.abs(f.bottom() - p.y()), max),
             left: points.maxValue(p => Math.abs(f.left() - p.x()), max),
             right: points.maxValue(p => Math.abs(f.right() - p.x()), max)
-        }
+        };
     }
 
 }.initThisClass());

@@ -16,7 +16,7 @@
      * @category Structure
      */
     static rootNodeProto () {
-        return RootContentNode
+        return RootContentNode;
     }
 
     /**
@@ -47,7 +47,7 @@
             slot.setSlotType("BrowserView");
         }
     }
-  
+
     /**
      * @description Initializes the prototype.
      * @returns {StrvctApp} The updated StrvctApp.
@@ -66,11 +66,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setName("StrvctApp");
         this.setVersion([0, 0, 0, 0]);
         this.setNodeCanReorderSubnodes(true);
-        return this
+        return this;
     }
 
     /**
@@ -82,7 +82,7 @@
         await super.setupUi();
         await this.setupModel();
         SvResources.shared(); // load resources
-        
+
         const browser = BrowserView.clone();
         this.rootNode().setTitle("root node");
         browser.setNode(this.rootNode());
@@ -101,8 +101,8 @@
      */
     showClasses () {
         debugger;
-        const s = ProtoClass.subclassesDescription()
-        console.log(s)
+        const s = ProtoClass.subclassesDescription();
+        console.log(s);
     }
 
     // --- setup model ---
@@ -127,11 +127,11 @@
      * @category Theme
      */
     setupDocTheme () {
-        const doc = DocumentBody.shared()
-        doc.setHeight("100%") // trying to fix body not fitting window
-        doc.setColor("#f4f4ec")
-        doc.setBackgroundColor("rgb(25, 25, 25)")
-        this.setupNormalDocTheme()
+        const doc = DocumentBody.shared();
+        doc.setHeight("100%"); // trying to fix body not fitting window
+        doc.setColor("#f4f4ec");
+        doc.setBackgroundColor("rgb(25, 25, 25)");
+        this.setupNormalDocTheme();
         //this.setupVectorTheme()
         //this.setupBlenderProTheme()
     }
@@ -142,22 +142,22 @@
      * @category Theme
      */
     setupNormalDocTheme () {
-        const doc = DocumentBody.shared()
-        doc.setBackgroundColor("#191919")
+        const doc = DocumentBody.shared();
+        doc.setBackgroundColor("#191919");
         //doc.setFontFamily("Sans-Serif")
         //doc.setFontFamily("Electrolize-Regular")
-        doc.setFontFamily("Helvetica")
+        doc.setFontFamily("Helvetica");
         //doc.setFontWeight("bold")
         //doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("Helvetica LT W01 Condensed")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")
-        doc.setFontSizeAndLineHeight("16px")
+        doc.setFontSizeAndLineHeight("16px");
         //doc.setLetterSpacing("0.05em")
         //doc.setTextTransform("uppercase")
         //doc.setBorder("1px dashed #aaa")
-   }
+    }
 
     /*
     setupVectorDocTheme () {

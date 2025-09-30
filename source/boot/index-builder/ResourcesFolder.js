@@ -13,15 +13,15 @@ class ResourcesFolder extends Object {
      * @category Initialization
      */
     init () {
-        this._path = null
-        this._isDebugging = true
+        this._path = null;
+        this._isDebugging = true;
     }
 
     /**
      * @category Debugging
      */
     isDebugging () {
-        return this._isDebugging
+        return this._isDebugging;
     }
 
     /**
@@ -29,7 +29,7 @@ class ResourcesFolder extends Object {
      */
     logDebug (s) {
         if (this.isDebugging()) {
-            console.log(s)
+            console.log(s);
         }
     }
 
@@ -37,15 +37,15 @@ class ResourcesFolder extends Object {
      * @category Path Management
      */
     path () {
-        return this._path
+        return this._path;
     }
 
     /**
      * @category Path Management
      */
     setPath (aString) {
-        this._path = aString
-        return this
+        this._path = aString;
+        return this;
     }
 
     // --- general purpose ---
@@ -54,13 +54,13 @@ class ResourcesFolder extends Object {
      * @category File Operations
      */
     fileNames () {
-        const allNames = fs.readdirSync(this.path()).filter(name => name !== ".DS_Store")
+        const allNames = fs.readdirSync(this.path()).filter(name => name !== ".DS_Store");
         const names = allNames.filter(name => {
-            const itemPath = nodePath.join(this.path(), name)
-            return fs.statSync(itemPath).isFile()
+            const itemPath = nodePath.join(this.path(), name);
+            return fs.statSync(itemPath).isFile();
 
-        })
-        return names
+        });
+        return names;
     }
 
     /**
@@ -84,7 +84,7 @@ class ResourcesFolder extends Object {
             const thisClass = this.constructor;
             const folder = new thisClass().setPath(itemPath);
             return folder;
-        })
+        });
     }
 
     /*
@@ -110,7 +110,7 @@ class ResourcesFolder extends Object {
      * @category Resource Management
      */
     resourceFileNames () {
-        let files = this.fileNames()
+        let files = this.fileNames();
         files = files.filter(name => name.indexOf(".") !== 0); // doesn't begin with dot
         files = files.filter(name => name.indexOf(".") !== -1); // does have a dot
         files = files.filter(name => name.indexOf("_") !== 0);   // doesn't begin with _
@@ -140,7 +140,7 @@ class ResourcesFolder extends Object {
         const fileNames = this.resourceFileNames();
         const folderImports = this.subfolderNames().map(name => {
             return nodePath.join(name, "_imports.json");
-        })
+        });
         const all = fileNames.concat(folderImports);
         this.setImportsArray(all);
         return this;
@@ -153,7 +153,7 @@ class ResourcesFolder extends Object {
         const jsonString = JSON.stringify(anArray, null, 2);
         const path = nodePath.join(this.path(), "_imports.json");
         fs.writeFileSync(path, jsonString);
-        return this
+        return this;
     }
 }
 

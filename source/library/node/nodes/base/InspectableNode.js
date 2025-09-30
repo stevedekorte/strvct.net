@@ -5,10 +5,10 @@
  * @class InspectableNode
  * @extends TitledNode
  * @classdesc InspectableNode
- * 
+ *
  * Handles creating inspector nodes and related fields.
  * Slot has some logic for this too.
- * 
+ *
  * Inheritance chain:
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  */
@@ -56,10 +56,10 @@
      */
     nodeInspector () {
         if (!this._nodeInspector) {
-            this._nodeInspector = BaseNode.clone()
-            this.initNodeInspector()
+            this._nodeInspector = BaseNode.clone();
+            this.initNodeInspector();
         }
-        return this._nodeInspector
+        return this._nodeInspector;
     }
 
     /**
@@ -68,8 +68,8 @@
      * @category Inspection
      */
     initNodeInspector () {  // TODO: merge with setupInspectorFromSlots?
-        this.setupInspectorFromSlots()
-        return this
+        this.setupInspectorFromSlots();
+        return this;
     }
 
     /**
@@ -90,7 +90,7 @@
 
         const slotsMap = this.thisPrototype().allSlotsMap();
         const slotNames = slotsMap.keysArray();
-        
+
         this.nodeInspector().setTitle(this.title() + " inspector");
 
         {
@@ -101,7 +101,7 @@
                 slotNames.unshift(s);
             }
         }
-        
+
         slotNames.forEachV(slotName => {
             const slot = slotsMap.get(slotName);
 
@@ -128,13 +128,13 @@
                     }
                 }
 
-                pathNodes.forEach(pathNode => { 
+                pathNodes.forEach(pathNode => {
                     pathNode.setCanDelete(false) ;
-                })
+                });
             }
-        })
-        return this
-    }    
+        });
+        return this;
+    }
 
     // --- helpful for setting up inspector paths ---
 
@@ -174,23 +174,23 @@
                     }
 
                     return newNode;
-                })
+                });
                 pathNodes.push(node);
-            })
+            });
         }
 
         return pathNodes;
     }
 
     // --- fields ---
-    
+
     /*
     addLinkFieldForNode (aNode) {
         const field = SvLinkField.clone().setName(aNode.title()).setValue(aNode)
         return this.addStoredField(field)
     }
     */
-    
+
     /**
      * @description Adds a field to the node.
      * @param {Object} aField - The field to add.
@@ -201,7 +201,7 @@
         throw new Error("addField shouldn't be called - use SvFieldSetNode");
         //return this.addSubnode(aField);
     }
-    
+
     /**
      * @description Gets the node tile link.
      * @returns {InspectableNode} This instance.
@@ -209,13 +209,13 @@
      */
     nodeTileLink () {
         // used by UI tile views to browse into next column
-        return this
+        return this;
     }
 
     // nodeTileLinkMethods
     // used by UI tile views to choose the node ref to use for the next column
     // if returns null, the tile won't open another column
-    // 
+    //
     // The two typical use cases are :
     //
     // 1) A pointer tile which links to some other node.
@@ -224,7 +224,7 @@
     //    skipping to one of its subnodes. This allows a node
     //    to have inspector separated from "subnode" browsing.
     //    Example: a Server object might have the subnodes:
-    //    [ StringFieldNode (for server name),  
+    //    [ StringFieldNode (for server name),
     //      ActionNode (to connect/disconnect),
     //      ServerClientsNode (holds list of connected server clients)
     //
@@ -299,17 +299,17 @@
         field.setNodeCanAddSubnode(false);
         field.setCanDelete(false);
         field.setIsVisible(slot.isSubnodeFieldVisible());
-        
+
 
         //field.syncFromTarget(); // new: to fix boolean sync issues
 
         if (field.svType() === "SvBooleanField") {
-            
+
             //const v = slot.onInstanceGetValue(this);
             field.syncFromTarget();
             assert(field.value() === slot.onInstanceGetValue(this));
         }
-       
+
         const pathNodes = this.createInspectorNodePath(slot.inspectorPath());
 
         /*

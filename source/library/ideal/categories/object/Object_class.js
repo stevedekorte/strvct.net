@@ -2,7 +2,7 @@
 
 /**
  * Object_class
- * 
+ *
  * Some added state and behavior on Object class.
  * @module library.ideal.object
  * @class Object_class
@@ -34,7 +34,7 @@
         // otherwise, it's an instance
         return this.__proto__.constructor;
     }
- 
+
     /**
      * Gets the prototype of this instance.
      * @returns {Object} The prototype of this instance.
@@ -147,7 +147,7 @@
             if (!aBool) {
                 throw new Error("failed assert");
             }
-        }
+        };
 
         // define ivar
         {
@@ -158,7 +158,7 @@
                 enumerable: false,
                 value: slotValue,
                 writable: true,
-            }
+            };
             Object.defineProperty(this, ivarName, descriptor);
         }
 
@@ -166,36 +166,36 @@
         {
             const hasGetter = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, slotName));
             assert(!hasGetter);
-            const getterFunc = function () { 
+            const getterFunc = function () {
                 assert(arguments.length === 0);
-                return this[ivarName]; 
+                return this[ivarName];
             };
             const descriptor = {
                 configurable: true,
                 enumerable: false,
                 value: getterFunc,
                 writable: true,
-            }
+            };
             Object.defineProperty(this, slotName, descriptor);
         }
 
         // define setter
         {
             const setterName = "set" + slotName.capitalized();
-            const setterFunc = function (v) { 
-                this[ivarName] = v; 
-                return this; 
+            const setterFunc = function (v) {
+                this[ivarName] = v;
+                return this;
             };
             const descriptor = {
                 configurable: true,
                 enumerable: false,
                 value: setterFunc,
                 writable: true,
-            }
+            };
             Object.defineProperty(this, setterName, descriptor);
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -239,7 +239,7 @@
         // use allSlotsMap() to avoid this
 
         this.forEachSlot(slot => {
-            fn(slot.name(), slot); 
+            fn(slot.name(), slot);
         });
     }
 
@@ -249,7 +249,7 @@
      */
     initPrototype () {
         // called after setupInOwner is called on each slot
-        // so we have a chance to initialize things after all slots are set up 
+        // so we have a chance to initialize things after all slots are set up
     }
 
     /**
@@ -261,16 +261,16 @@
         const className = this.svType();
         if (Type.isUndefined(this.globals()[className])) {
             this.globals()[className] = this;
-            
+
             // Also make the class available in global scope for direct access
             // This is especially important in Node.js where eval context might be isolated
-            if (typeof global !== 'undefined') {
+            if (typeof global !== "undefined") {
                 global[className] = this;
             }
-            if (typeof window !== 'undefined') {
+            if (typeof window !== "undefined") {
                 window[className] = this;
             }
-            if (typeof globalThis !== 'undefined') {
+            if (typeof globalThis !== "undefined") {
                 globalThis[className] = this;
             }
         } else if (this.svType() !== "Object") {

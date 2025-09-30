@@ -9,14 +9,14 @@
  * @extends SvSummaryNode
  * @classdesc Manages coach marks throughout the application. Views can register with the manager
  * to provide contextual help. The manager coordinates display timing and prevents overlapping marks.
- * 
+ *
  * @example
  * // Basic usage - register a coach mark from any DomView subclass
  * this.setupCoachMark({
  *     label: "Click here to save your work",
  *     priority: 10
  * });
- * 
+ *
  * @example
  * // Advanced usage with custom id and condition
  * this.setupCoachMark({
@@ -25,7 +25,7 @@
  *     priority: 100, // Higher priority shows first
  *     condition: () => this.character().hasEmptyStats()
  * });
- * 
+ *
  * @example
  * // Direct registration with the manager
  * const manager = SvApp.shared().model().coachMarkManager();
@@ -36,16 +36,16 @@
  *     priority: 50,
  *     condition: () => !this.hasRolledStrength()
  * });
- * 
+ *
  * @example
  * // Reset all coach marks (e.g., from a help menu)
  * const manager = SvApp.shared().model().coachMarkManager();
  * manager.resetShownCoachMarks();
- * 
+ *
  * @example
  * // Temporarily disable coach marks
  * manager.setIsEnabled(false);
- * 
+ *
  * @example
  * // Check if a specific coach mark has been shown
  * if (manager.shownCoachMarkIds().has("dice-roller")) {
@@ -53,7 +53,7 @@
  * }
  */
 (class SvCoachMarkManager extends SvSummaryNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvCoachMarkManager
      * @category Initialization
@@ -67,7 +67,7 @@
             const slot = this.newSlot("registeredViews", null);
             slot.setSlotType("Map");
         }
-        
+
         {
             /**
              * @member {Set} shownCoachMarkIds - Set of coach mark ids that have been shown
@@ -77,7 +77,7 @@
             slot.setSlotType("Set");
             slot.setShouldStoreSlot(true);
         }
-        
+
         {
             /**
              * @member {SvCoachMarkView} activeCoachMark - Currently displayed coach mark
@@ -86,7 +86,7 @@
             const slot = this.newSlot("activeCoachMark", null);
             slot.setSlotType("SvCoachMarkView");
         }
-        
+
         {
             /**
              * @member {Boolean} isEnabled - Whether coach marks are enabled
@@ -96,7 +96,7 @@
             slot.setSlotType("Boolean");
             slot.setShouldStoreSlot(true);
         }
-        
+
         {
             /**
              * @member {Array} coachMarkQueue - Queue of pending coach marks to show
@@ -145,18 +145,18 @@
         assert(config.view, "Coach mark config must include view");
         assert(config.id, "Coach mark config must include id");
         assert(config.label, "Coach mark config must include label");
-        
+
         const defaults = {
             priority: 0,
             condition: () => true
         };
-        
+
         const finalConfig = Object.assign({}, defaults, config);
         this.registeredViews().set(config.id, finalConfig);
-        
+
         // Check if this coach mark should be shown
         this.checkCoachMark(config.id);
-        
+
         return this;
     }
 
@@ -168,14 +168,14 @@
      */
     unregisterView (id) {
         this.registeredViews().delete(id);
-        
+
         // Remove from queue if present
         const queue = this.coachMarkQueue();
         const index = queue.findIndex(item => item.id === id);
         if (index !== -1) {
             queue.splice(index, 1);
         }
-        
+
         return this;
     }
 
@@ -189,24 +189,24 @@
         if (!this.isEnabled()) {
             return false;
         }
-        
+
         if (this.shownCoachMarkIds().has(id)) {
             return false;
         }
-        
+
         const config = this.registeredViews().get(id);
         if (!config) {
             return false;
         }
-        
+
         if (!config.view.isInViewport()) {
             return false;
         }
-        
+
         if (!config.condition()) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -234,20 +234,20 @@
         if (!config) {
             return this;
         }
-        
+
         // Don't queue if already queued
         if (this.coachMarkQueue().find(item => item.id === id)) {
             return this;
         }
-        
+
         this.coachMarkQueue().push(config);
-        
+
         // Sort by priority (highest first)
         this.coachMarkQueue().sort((a, b) => b.priority - a.priority);
-        
+
         // Try to show next coach mark
         this.showNextCoachMark();
-        
+
         return this;
     }
 
@@ -261,26 +261,26 @@
             // Already showing a coach mark
             return this;
         }
-        
+
         const queue = this.coachMarkQueue();
         if (queue.length === 0) {
             return this;
         }
-        
+
         const config = queue.shift();
-        
+
         // Double-check it should still be shown
         if (!this.shouldShowCoachMark(config.id)) {
             // Try next one
             this.showNextCoachMark();
             return this;
         }
-        
+
         // Create and show the coach mark
         const coachMark = SvCoachMarkView.clone();
         coachMark.setLabel(config.label);
         coachMark.setTargetView(config.view);
-        
+
         // Set up close handler
         const originalOnTapComplete = coachMark.onTapComplete.bind(coachMark);
         coachMark.onTapComplete = (gesture) => {
@@ -288,13 +288,13 @@
             this.onCoachMarkClosed(config.id);
             return false;
         };
-        
+
         this.setActiveCoachMark(coachMark);
         coachMark.open();
-        
+
         // Mark as shown
         this.shownCoachMarkIds().add(config.id);
-        
+
         return this;
     }
 
@@ -306,12 +306,12 @@
      */
     onCoachMarkClosed (/*id*/) {
         this.setActiveCoachMark(null);
-        
+
         // Show next coach mark after a short delay
         this.addTimeout(() => {
             this.showNextCoachMark();
         }, 500);
-        
+
         return this;
     }
 
@@ -322,12 +322,12 @@
      */
     resetShownCoachMarks () {
         this.shownCoachMarkIds().clear();
-        
+
         // Re-check all registered views
         this.registeredViews().forEach((config, id) => {
             this.checkCoachMark(id);
         });
-        
+
         return this;
     }
 
@@ -342,5 +342,5 @@
         });
         return this;
     }
-    
+
 }.initThisClass());

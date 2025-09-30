@@ -14,8 +14,8 @@
 (class SvMimeExtensions extends SvBase {
 
     constructor () {
-        super()
-        this.setup()
+        super();
+        this.setup();
     }
 
     /**
@@ -29,7 +29,7 @@
             ext = "." + ext;
         }
 
-        return this._fileExtensionToMimeTypeDict[ext]
+        return this._fileExtensionToMimeTypeDict[ext];
     }
 
     /**
@@ -39,11 +39,11 @@
      * @returns {string[]} The path extensions.
      */
     static pathExtensionsForMimeType (mimeType) {
-        const allExtensions = Object.keys(this._fileExtensionToMimeTypeDict)
+        const allExtensions = Object.keys(this._fileExtensionToMimeTypeDict);
         const matchingExtensions = allExtensions.filter(ext => {
-            return mimeType === this._fileExtensionToMimeTypeDict[ext]
-        })
-        return matchingExtensions.map(ext => ext.slice(1))
+            return mimeType === this._fileExtensionToMimeTypeDict[ext];
+        });
+        return matchingExtensions.map(ext => ext.slice(1));
     }
 
     /**
@@ -871,6 +871,6 @@
 
             ".woff2": "font/woff2",
             ".woff": "font/woff",
-        }
+        };
     }
 }.initThisClass());

@@ -8,12 +8,12 @@
  * @class SvResources
  * @extends SvStorableNode
  * @classdesc SvResources class for managing various resource types.
- * 
+ *
  * Usage example:
  * SvResources.shared().files().resourceForPath("./app/info/.../data.txt")
  */
 (class SvResources extends SvStorableNode {
-    
+
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
@@ -179,14 +179,14 @@
         if (!rClass) {
             // do we want this behavior?
             // What's the typical use case for this method
-            rClass = SvResourceFile; 
+            rClass = SvResourceFile;
         }
         */
         if (rClass) {
             const aResource = rClass.clone().setPath(aPath).load();
             return aResource;
         }
-        return null
+        return null;
     }
 
     /**
@@ -201,7 +201,7 @@
         //promiseSerialTimeoutsForEach
         await this.subnodes().promiseSerialForEach(async (node) => {
             //console.log(this.logPrefix(), "subnode: " + node.svType() + ".prechacheWhereAppropriate()");
-            
+
             //SvBootLoadingView.shared().setSubtitle("prechaching " + node.title());
             await node.prechacheWhereAppropriate();
         });

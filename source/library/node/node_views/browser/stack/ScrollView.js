@@ -10,21 +10,21 @@
  * @classdesc
  * ScrollView is a specialized view that provides scrolling functionality.
  * It implements a sticks-to-bottom behavior and handles content mutations.
- * 
+ *
  * Notes:
  * - isAtBottom is a computed property that checks if scroll is at bottom now
  * - wasAtBottom tracks if scroll was at bottom before content change
- * 
+ *
  * When user scrolls or setScrollHeight:
  * - update wasAtBottom (using isAtBottom)
  * - update lastScrollHeight (may be used elsewhere later)
- * 
+ *
  * When content changes:
  * - auto scroll if wasAtBottom true
  * - update lastScrollHeight to bottom (may be used elsewhere later)
  */
-(class ScrollView extends DomView { 
-    
+(class ScrollView extends DomView {
+
     /**
      * @description Initializes the prototype slots for the ScrollView
      * @category Initialization
@@ -64,14 +64,14 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setDisplay("block")
-        this.setPosition("relative")
-        this.setTopPx(null)
-        this.setMsOverflowStyle("none")
-        this.setOverflow("-moz-scrollbars-none")
-        this.setBackgroundColor("transparent")
-        return this
+        super.init();
+        this.setDisplay("block");
+        this.setPosition("relative");
+        this.setTopPx(null);
+        this.setMsOverflowStyle("none");
+        this.setOverflow("-moz-scrollbars-none");
+        this.setBackgroundColor("transparent");
+        return this;
     }
 
     /**
@@ -80,7 +80,7 @@
      * @category View Hierarchy
      */
     scrollContentView () {
-        return this.subviews().first()
+        return this.subviews().first();
     }
 
     /**
@@ -88,7 +88,7 @@
      * @category Event Handling
      */
     listenForScroll () {
-        this.scrollListener().setIsListening(true)
+        this.scrollListener().setIsListening(true);
     }
 
     /**
@@ -98,7 +98,7 @@
      */
     contentView () {
         return this.subviews().first();
-    }   
+    }
 
     /**
      * @description Sets whether the view should stick to the bottom
@@ -122,7 +122,7 @@
      * @category Event Handling
      */
     onScroll (event) {
-        this.updateScrollTracking()
+        this.updateScrollTracking();
     }
 
     /**
@@ -168,9 +168,9 @@
      * @category State
      */
     setScrollHeight (v) {
-        super.setScrollHeight(v)
-        this.updateScrollTracking()
-        return this
+        super.setScrollHeight(v);
+        this.updateScrollTracking();
+        return this;
     }
 
     /**
@@ -179,9 +179,9 @@
      * @category State
      */
     updateScrollTracking () {
-        this.updateLastScrollHeight()
-        this.updateWasAtBottom()
-        return this
+        this.updateLastScrollHeight();
+        this.updateWasAtBottom();
+        return this;
     }
 
     /**
@@ -190,8 +190,8 @@
      * @category State
      */
     updateLastScrollHeight () {
-        this.setLastScrollHeight(this.scrollHeight())
-        return this
+        this.setLastScrollHeight(this.scrollHeight());
+        return this;
     }
 
     /**
@@ -201,9 +201,9 @@
      */
     updateWasAtBottom () {
         if (this.wasAtBottom() !== this.isAtBottom()) {
-            this.setWasAtBottom(this.isAtBottom())
+            this.setWasAtBottom(this.isAtBottom());
         }
-        return this
+        return this;
     }
 
 }.initThisClass());

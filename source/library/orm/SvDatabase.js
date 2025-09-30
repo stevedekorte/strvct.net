@@ -24,23 +24,23 @@ require("./external-libs/zonejs/ZoneJS_init.js");
  * @class SvDatabase
  * @extends Base
  * @classdesc Main database representation class that provides object-relational mapping capabilities.
- * 
+ *
  * This class serves as the primary interface for database operations, providing:
  * - Database schema introspection via Sequelize QueryInterface
  * - Object hierarchy creation (Database → Table → Column → Row)
  * - Managed transaction support with automatic commit/rollback
  * - CRUD operations with transaction enforcement
  * - JSON schema export for API consumption
- * 
+ *
  * The class reads database metadata and creates a structured object model that mirrors
  * the database schema. All database operations require an active transaction to ensure
  * data consistency and provide proper error handling.
- * 
+ *
  * Usage:
  * ```javascript
  * const database = SvDatabase.clone();
  * await database.setup(); // Read schema and create object hierarchy
- * 
+ *
  * const tx = database.newTx();
  * await tx.begin(async () => {
  *   const rows = await database.query("users", { limit: 10 });
@@ -55,7 +55,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
      * @category Initialization
      */
     initPrototypeSlots () {
-        
+
         {
             this.newSlot("databaseName", null);
         }
@@ -155,8 +155,8 @@ const SvDatabase = (class SvDatabase extends SvBase {
      */
     currentTx () {
         try {
-            if (typeof Zone !== 'undefined' && Zone.current && Zone.current.get('currentTx')) {
-                return Zone.current.get('currentTx');
+            if (typeof Zone !== "undefined" && Zone.current && Zone.current.get("currentTx")) {
+                return Zone.current.get("currentTx");
             }
         } catch (error) {
             // Zone.js not available or not in transaction context
@@ -224,20 +224,20 @@ const SvDatabase = (class SvDatabase extends SvBase {
         if (!tx) {
             throw new Error("Transaction is required for database operations");
         }
-        
+
         if (!this.activeTxs().has(tx)) {
             throw new Error("Transaction is not registered with this database");
         }
-        
+
         if (!tx.isActive()) {
             throw new Error("Transaction is not active");
         }
-        
+
         const txRef = tx.txRef();
         if (!txRef) {
             throw new Error("Transaction has no Sequelize transaction reference");
         }
-        
+
         return txRef;
     }
 
@@ -251,7 +251,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         this.setDatabaseName(schemaJson.database);
 
         const tables = [];
-        
+
         for (const tableData of schemaJson.tables) {
             // Create new SvDbTable instance
             const table = SvDbTable.clone();
@@ -259,7 +259,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
             table.setupFromSchemaJson(tableData);
             tables.push(table);
         }
-        
+
         this.setTables(tables);
     }
 
@@ -292,7 +292,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         try {
             // Validate transaction and get reference
             const transaction = this.validateTxAndGetRef(tx);
-            
+
             // Build the query options
             const queryOptions = {
                 raw: true, // Return plain objects instead of model instances
@@ -310,28 +310,28 @@ const SvDatabase = (class SvDatabase extends SvBase {
 
             // Handle sorting
             if (searchOptions.sort) {
-                const order = searchOptions.order || 'ASC';
+                const order = searchOptions.order || "ASC";
                 queryOptions.order = [[searchOptions.sort, order.toUpperCase()]];
             }
 
             // Build WHERE clause
-            let whereClause = '';
+            let whereClause = "";
             const replacements = {};
-            
-            if (searchOptions.where && typeof searchOptions.where === 'object') {
+
+            if (searchOptions.where && typeof searchOptions.where === "object") {
                 const conditions = [];
                 for (const [key, value] of Object.entries(searchOptions.where)) {
                     conditions.push(`${key} = :${key}`);
                     replacements[key] = value;
                 }
                 if (conditions.length > 0) {
-                    whereClause = 'WHERE ' + conditions.join(' AND ');
+                    whereClause = "WHERE " + conditions.join(" AND ");
                 }
             }
 
             // Build the SQL query
             const sql = `SELECT * FROM ${tableName} ${whereClause}`;
-            
+
             // Execute the query
             const results = await sequelize.query(sql, {
                 ...queryOptions,
@@ -357,19 +357,19 @@ const SvDatabase = (class SvDatabase extends SvBase {
         try {
             // Validate transaction and get reference
             const transaction = this.validateTxAndGetRef(tx);
-            
+
             // Build column and value lists
             const columns = Object.keys(rowData);
             const values = columns.map(col => `:${col}`);
-            
-            const sql = `INSERT INTO ${tableName} (${columns.join(', ')}) VALUES (${values.join(', ')})`;
-            
+
+            const sql = `INSERT INTO ${tableName} (${columns.join(", ")}) VALUES (${values.join(", ")})`;
+
             const dialect = sequelize.getDialect();
             let insertedRow;
-            
-            if (dialect === 'postgres') {
+
+            if (dialect === "postgres") {
                 // PostgreSQL supports RETURNING clause
-                const sqlWithReturning = sql + ' RETURNING *';
+                const sqlWithReturning = sql + " RETURNING *";
                 const [result] = await sequelize.query(sqlWithReturning, {
                     replacements: rowData,
                     type: sequelize.QueryTypes.INSERT,
@@ -383,15 +383,15 @@ const SvDatabase = (class SvDatabase extends SvBase {
                     type: sequelize.QueryTypes.INSERT,
                     transaction: transaction
                 });
-                
+
                 // Find the primary key to query back the inserted row
                 const table = this.tableWithName(tableName);
                 const primaryKeyColumn = table.columns().find(col => col.primaryKey());
-                
+
                 if (primaryKeyColumn && rowData[primaryKeyColumn.columnName()]) {
                     const pkName = primaryKeyColumn.columnName();
                     const pkValue = rowData[pkName];
-                    
+
                     const [result] = await sequelize.query(
                         `SELECT * FROM ${tableName} WHERE ${pkName} = :pk`,
                         {
@@ -425,7 +425,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         try {
             // Validate transaction and get reference
             const transaction = this.validateTxAndGetRef(tx);
-            
+
             // Find the primary key column
             const table = this.tableWithName(tableName);
             if (!table) {
@@ -439,7 +439,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
 
             const primaryKeyName = primaryKeyColumn.columnName();
             const primaryKeyValue = rowData[primaryKeyName];
-            
+
             if (!primaryKeyValue) {
                 throw new Error(`Primary key ${primaryKeyName} not provided in row data`);
             }
@@ -447,7 +447,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
             // Build SET clause
             const updates = [];
             const replacements = { pk: primaryKeyValue };
-            
+
             for (const [key, value] of Object.entries(rowData)) {
                 if (key !== primaryKeyName) {
                     updates.push(`${key} = :${key}`);
@@ -456,11 +456,11 @@ const SvDatabase = (class SvDatabase extends SvBase {
             }
 
             if (updates.length === 0) {
-                throw new Error('No fields to update');
+                throw new Error("No fields to update");
             }
 
-            const sql = `UPDATE ${tableName} SET ${updates.join(', ')} WHERE ${primaryKeyName} = :pk`;
-            
+            const sql = `UPDATE ${tableName} SET ${updates.join(", ")} WHERE ${primaryKeyName} = :pk`;
+
             // Execute the update
             await sequelize.query(sql, {
                 replacements: replacements,
@@ -496,7 +496,7 @@ const SvDatabase = (class SvDatabase extends SvBase {
         try {
             // Validate transaction and get reference
             const transaction = this.validateTxAndGetRef(tx);
-            
+
             // Find the primary key column
             const table = this.tableWithName(tableName);
             if (!table) {
@@ -510,13 +510,13 @@ const SvDatabase = (class SvDatabase extends SvBase {
 
             const primaryKeyName = primaryKeyColumn.columnName();
             const primaryKeyValue = rowData[primaryKeyName];
-            
+
             if (!primaryKeyValue) {
                 throw new Error(`Primary key ${primaryKeyName} not provided in row data`);
             }
 
             const sql = `DELETE FROM ${tableName} WHERE ${primaryKeyName} = :pk`;
-            
+
             // Execute the delete
             const result = await sequelize.query(sql, {
                 replacements: { pk: primaryKeyValue },
@@ -526,15 +526,15 @@ const SvDatabase = (class SvDatabase extends SvBase {
 
             // Check affected rows based on database dialect
             const dialect = sequelize.getDialect();
-            if (dialect === 'postgres') {
+            if (dialect === "postgres") {
                 // PostgreSQL returns the number of affected rows in result[1].rowCount
                 return result[1] && result[1].rowCount > 0;
             } else {
                 // SQLite: check if result indicates successful deletion
                 // For DELETE operations, Sequelize may return different formats
-                if (Array.isArray(result) && result.length > 1 && typeof result[1] === 'number') {
+                if (Array.isArray(result) && result.length > 1 && typeof result[1] === "number") {
                     return result[1] > 0;
-                } else if (result && typeof result.affectedRows === 'number') {
+                } else if (result && typeof result.affectedRows === "number") {
                     return result.affectedRows > 0;
                 } else {
                     // Assume success if no error was thrown (SQLite doesn't always provide affected count)

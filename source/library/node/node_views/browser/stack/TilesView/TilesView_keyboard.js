@@ -7,7 +7,7 @@
  * @classdesc TilesView_keyboard class for handling keyboard controls and arrow navigation in TilesView
  */
 (class TilesView_keyboard extends TilesView {
-    
+
     // --- keyboard controls, arrow navigation ---
 
     /**
@@ -24,8 +24,8 @@
 
     /*
     onShiftDeleteKeyUp (event) {
-        if (!this.canNavigate()) { 
-            return 
+        if (!this.canNavigate()) {
+            return
         }
 
         this.deleteSelectedTiles()
@@ -50,8 +50,8 @@
      */
     onMetaDeleteKeyDown (event) {
         console.log("meta delete");
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         this.deleteSelectedTiles();
@@ -65,7 +65,7 @@
      * @category Keyboard
      */
     onMetaKeyDown (event) {
-        // do we need to hook this to avoid meta being stolen by app? 
+        // do we need to hook this to avoid meta being stolen by app?
         event.stopPropagation();
         event.preventDefault();
     }
@@ -101,7 +101,7 @@
      */
     onShiftBackspaceKeyUp (event) {
         this.logDebug(this.svType() + " for " + this.node().title() + " onShiftBackspaceKeyUp");
-        if (this.selectedTile()) { 
+        if (this.selectedTile()) {
             this.selectedTile().delete();
         }
         event.stopPropagation();
@@ -184,7 +184,7 @@
     onShiftUpArrowKeyDown (event) {
         const result = this.onUpArrowKeyDown(event)
         this.activateSelectedTile()
-        return result 
+        return result
     }
 
     onShiftDownArrowKeyDown (event) {
@@ -203,8 +203,8 @@
      * @category Keyboard
      */
     onAlternateUpArrowKeyDown (/*event*/) { // why down and not up?
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         if (this.isVertical()) {
@@ -220,13 +220,13 @@
      * @category Keyboard
      */
     onAlternateDownArrowKeyDown (/*event*/) { // why down and not up?
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         if (this.isVertical()) {
             this.selectLastTile();
-        } 
+        }
         return false;
     }
 
@@ -237,8 +237,8 @@
      * @category Keyboard
      */
     onAlternateLeftArrowKeyDown (/*event*/) { // why down and not up?
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         if (!this.isVertical()) {
@@ -254,13 +254,13 @@
      * @category Keyboard
      */
     onAlternateRightArrowKeyDown (/*event*/) { // why down and not up?
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         if (!this.isVertical()) {
             this.selectLastTile();
-        } 
+        }
         return false;
     }
 
@@ -274,8 +274,8 @@
      * @category Keyboard
      */
     onUpArrowKeyDown (/*event*/) { // why down and not up?
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         if (this.isVertical()) {
@@ -285,7 +285,7 @@
         }
         return false;
     }
-	
+
     /**
      * @description Handles down arrow key down event
      * @param {Event} event - The keyboard event
@@ -293,8 +293,8 @@
      * @category Keyboard
      */
     onDownArrowKeyDown (/*event*/) { // why down and not up?
-        if (!this.canNavigate()) { 
-            return; 
+        if (!this.canNavigate()) {
+            return;
         }
 
         if (this.isVertical()) {
@@ -304,7 +304,7 @@
         }
         return false;
     }
-	
+
     /**
      * @description Handles left arrow key up event
      * @param {Event} event - The keyboard event
@@ -312,16 +312,16 @@
      * @category Keyboard
      */
     onLeftArrowKeyUp (/*event*/) {
-        if (!this.canNavigate()) { 
+        if (!this.canNavigate()) {
             return this;
-        }   
+        }
         if (this.isVertical()) {
             this.moveLeft();
         } else {
             this.moveDown();
         }
     }
-	
+
     /**
      * @description Handles right arrow key up event
      * @param {Event} event - The keyboard event
@@ -329,9 +329,9 @@
      * @category Keyboard
      */
     onRightArrowKeyUp (/*event*/) {
-        if (!this.canNavigate()) { 
+        if (!this.canNavigate()) {
             return this;
-        }   
+        }
 
         if (this.isVertical()) {
             this.moveRight();
@@ -348,18 +348,18 @@
      * @category Navigation
      */
     moveLeft () {
-        const pc = this.previousItemSet();  
+        const pc = this.previousItemSet();
         if (pc) {
-            if (this.selectedTile()) { 
-                this.selectedTile().unselect(); 
+            if (this.selectedTile()) {
+                this.selectedTile().unselect();
             }
-            
+
             const newSelectedTile = pc.selectedTile();
             newSelectedTile.setShouldShowFlash(true).updateSubviews();
             pc.didTapItem(newSelectedTile);
             this.selectPreviousColumn();
 
-            
+
             pc.didChangeNavSelection();
         }
         return this;
@@ -408,31 +408,31 @@
     onEscapeKeyDown (/*event*/) {
         //this.setIsColumnInspecting(false)
 
-        if (!this.canNavigate()) { 
+        if (!this.canNavigate()) {
             return this;
-        }   
+        }
 
         this.moveLeft();
         //return true
     }
-	
+
     // --- enter key begins tile editing ---
-	
+
     /**
      * @description Handles enter key up event
      * @param {Event} event - The keyboard event
      * @returns {boolean} False to stop propagation
      * @category Keyboard
      */
-    onEnterKeyUp (event) {        
-        if (!this.canNavigate()) { 
+    onEnterKeyUp (event) {
+        if (!this.canNavigate()) {
             return this;
         }
-    
+
         // carefull - if Tile is registered fro keyboard,
         // this may cause onEnterKeyUp to be sent twice
         const tile = this.selectedTile();
-        if (tile) { 
+        if (tile) {
             tile.onEnterKeyUp(event);
         }
 
@@ -449,8 +449,8 @@
      */
     deleteTile (aTile) {
         let sNode = aTile.node();
-        if (sNode && sNode.canDelete()) { 
-            sNode.performNodeAction("delete"); 
+        if (sNode && sNode.canDelete()) {
+            sNode.performNodeAction("delete");
         }
         return this;
     }
@@ -466,7 +466,7 @@
             this.selectPreviousColumn();
         }
     }
-	
+
     /**
      * @description Handles plus key up event to add a new item
      * @param {Event} event - The keyboard event
@@ -474,19 +474,19 @@
      * @category Keyboard
      */
     onPlusKeyUp (/*event*/) {
-        if (!this.canNavigate()) { 
-            return; 
-        }   
+        if (!this.canNavigate()) {
+            return;
+        }
 
         const sNode = this.selectedNode();
-        if (sNode && sNode.hasNodeAction("add")) { 
-            const newNode = sNode.performNodeAction("add"); 
+        if (sNode && sNode.hasNodeAction("add")) {
+            const newNode = sNode.performNodeAction("add");
             this.selectNextColumn();
             if (this.nextColumn()) {
                 this.nextColumn().selectTileWithNode(newNode);
             }
         }
-        return false;   
+        return false;
     }
 
 }.initThisCategory());

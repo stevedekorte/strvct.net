@@ -17,7 +17,7 @@
             slot.setSlotType("String");
         }
     }
-  
+
     /**
      * Initializes the prototype for the class.
      * @category Initialization
@@ -91,5 +91,5 @@
         const domNode = document.createTextNode(this.textContent());
         return domNode;
     }
-    
+
 }.initThisClass());

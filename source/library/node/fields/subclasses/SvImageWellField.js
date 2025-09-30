@@ -16,9 +16,9 @@
      * @category Initialization
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
-    
+
     /**
      * @static
      * @description Returns a set of supported MIME types for this image well field.
@@ -26,7 +26,7 @@
      * @category Configuration
      */
     static supportedMimeTypes () {
-        return new Set(["image/jpeg", "image/gif", "image/png"])
+        return new Set(["image/jpeg", "image/gif", "image/png"]);
     }
 
     /**
@@ -37,7 +37,7 @@
      * @category Validation
      */
     static canOpenMimeType (mimeType) {
-        return this.supportedMimeTypes().has(mimeType)
+        return this.supportedMimeTypes().has(mimeType);
     }
 
     /**
@@ -48,13 +48,13 @@
      * @category Data Handling
      */
     static openMimeChunk (dataChunk) {
-        const newNode = this.clone()
-        newNode.setValue(dataChunk.dataUrl())
+        const newNode = this.clone();
+        newNode.setValue(dataChunk.dataUrl());
         //newNode.setValue(dataChunk.decodedData())
-        newNode.setKeyIsEditable(true)
-        newNode.setValueIsEditable(true)
-        newNode.setCanDelete(true)
-        return newNode
+        newNode.setKeyIsEditable(true);
+        newNode.setValueIsEditable(true);
+        newNode.setCanDelete(true);
+        return newNode;
     }
 
     /**
@@ -108,8 +108,8 @@
      * @category Data Handling
      */
     summaryValue () {
-        return ""
+        return "";
     }
-   
+
 }).initThisClass();
 

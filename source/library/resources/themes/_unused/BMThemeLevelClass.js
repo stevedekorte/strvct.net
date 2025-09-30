@@ -7,7 +7,7 @@
 */
 
 (class BMThemeLevelClass extends BMThemeClass {
-    
+
     initPrototypeSlots () {
 
     }
@@ -17,8 +17,8 @@
         super.init()
 
         this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true) 
-        
+        this.setShouldStoreSubnodes(true)
+
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled " + this.thisClass().visibleClassName())
         this.setNodeCanEditTitle(false)
@@ -30,11 +30,11 @@
     */
 
     updateTitle () {
-        const pn = this.parentNode()
+        const pn = this.parentNode();
         if (pn) {
-            const index = pn.indexOfSubnode(this)
+            const index = pn.indexOfSubnode(this);
             if (index !== -1) {
-                this.setTitle("Level " + index)
+                this.setTitle("Level " + index);
             }
         }
     }

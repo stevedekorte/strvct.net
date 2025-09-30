@@ -6,7 +6,7 @@
  * @class CssAnimation
  * @extends ProtoClass
  * @classdesc Encapsulation of CSS animation rule and animation control properties on a view.
- * It will also start an animationListener on the target view, 
+ * It will also start an animationListener on the target view,
  * which will send a onAnimationStart, and onAnimationEnd messages to the view.
  *
  * It works by composing a CSS animation rule and inserting it into the document's first style sheet.
@@ -14,7 +14,7 @@
  * it's already registered, so it doesn't register them again.
  *
  * Example use:
- *      
+ *
  *     CssAnimation.clone().setPropertyName("right").setTargetValue("10px").setView(aView).start()
  */
 "use strict";
@@ -29,14 +29,14 @@
      * @category Animation
      */
     static insertRuleForAnimation (cssAnimation) {
-        const name = cssAnimation.ruleName()
-        const rules = this.insertedRuleNamesSet()
+        const name = cssAnimation.ruleName();
+        const rules = this.insertedRuleNamesSet();
         if (!rules.has(name)) { // name is a hash of rule, so this should be safe
             const css = window.document.styleSheets[0];
             css.insertRule(cssAnimation.composedRule(), css.cssRules.length); // is this allowed or will some security nonsense block it?
-            rules.add(name)
+            rules.add(name);
         }
-        return this
+        return this;
     }
 
     /**
@@ -45,7 +45,7 @@
      * @category Initialization
      */
     static initClass () {
-        this.newClassSlot("insertedRuleNamesSet", new Set())
+        this.newClassSlot("insertedRuleNamesSet", new Set());
     }
 
     /**
@@ -109,7 +109,7 @@
          * @category Animation
          */
         {
-            const slot = this.newSlot("iterationCount", 1) // animation-iteration-count
+            const slot = this.newSlot("iterationCount", 1); // animation-iteration-count
             slot.setSlotType("Number");
         }
         /**
@@ -272,14 +272,14 @@
      * @param {DomView} aView - The view to apply the animation to
      * @category Animation
      */
-    applyToView (aView) { 
+    applyToView (aView) {
         const dict = this.propertySlotsDict();
         const e = this.view().element();
         Reflect.ownKeys(dict).forEach(attributeName => {
             const slotName = dict[attributeName];
             const value = this[slotName].apply(this);
             e.setAttribute(attributeName, value);
-        })
+        });
     }
 
     /**

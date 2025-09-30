@@ -10,25 +10,25 @@
 
     static looksLikeAStandardDateFormat (str) {
         const patterns = [
-          // ISO
-          /^YYYY[-/]MM[-/]DD$/,
-          /^YYYY[-/]MM[-/]DD HH:mm:ss$/,
-          // US
-          /^MM\/DD\/YYYY$/,
-          /^M\/D\/YY$/,
-          /^MM\/DD\/YYYY h:mm A$/,    // e.g. 03/05/2025 8:30 PM
-          // European
-          /^DD\.MM\.YYYY$/,
-          /^D\.M\.YY$/,
-          // Hybrid with time
-          /^YYYY[-/]MM[-/]DD[T ]HH:mm:ss$/,  // e.g. 2025-06-25T14:30:00 or space
-          // Locale‐agnostic numeric
-          /^YYYYMMDD$/,
-          // RFC‐style tokens (lowercase)
-          /^yyyy[-/]MM[-/]dd$/,
-          /^dd[-/]MM[-/]yyyy$/,
+            // ISO
+            /^YYYY[-/]MM[-/]DD$/,
+            /^YYYY[-/]MM[-/]DD HH:mm:ss$/,
+            // US
+            /^MM\/DD\/YYYY$/,
+            /^M\/D\/YY$/,
+            /^MM\/DD\/YYYY h:mm A$/,    // e.g. 03/05/2025 8:30 PM
+            // European
+            /^DD\.MM\.YYYY$/,
+            /^D\.M\.YY$/,
+            // Hybrid with time
+            /^YYYY[-/]MM[-/]DD[T ]HH:mm:ss$/,  // e.g. 2025-06-25T14:30:00 or space
+            // Locale‐agnostic numeric
+            /^YYYYMMDD$/,
+            // RFC‐style tokens (lowercase)
+            /^yyyy[-/]MM[-/]dd$/,
+            /^dd[-/]MM[-/]yyyy$/,
         ];
-      
+
         return patterns.some(rx => rx.test(str));
     }
 
@@ -37,7 +37,7 @@
      * @category Utility
      */
     copy () {
-        return this.shallowCopy()
+        return this.shallowCopy();
     }
 
     /**
@@ -45,21 +45,21 @@
      * @category Utility
      */
     shallowCopy () {
-        return new Date(this.getTime())
+        return new Date(this.getTime());
     }
 
     // ---
-   
+
     /**
      * @returns {string[]} An array of month names.
      * @category Localization
      */
     monthNames () {
-        return [ 
-            "January", "February", "March", 
-            "April", "May", "June", 
-            "July", "August", "September", 
-            "October", "November", "December" 
+        return [
+            "January", "February", "March",
+            "April", "May", "June",
+            "July", "August", "September",
+            "October", "November", "December"
         ];
     }
 
@@ -68,7 +68,7 @@
      * @category Localization
      */
     monthName () {
-        const monthNumber = this.getMonth() - 1
+        const monthNumber = this.getMonth() - 1;
         return this.monthNames()[monthNumber];
     }
 
@@ -77,8 +77,8 @@
      * @category Formatting
      */
     dateNumberName () {
-        const dayNumber = this.getDate()
-        return dayNumber + dayNumber.ordinalSuffix()
+        const dayNumber = this.getDate();
+        return dayNumber + dayNumber.ordinalSuffix();
     }
 
     /**
@@ -88,11 +88,11 @@
      * @category Formatting
      */
     paddedNumber (n) {
-        const s = "" + n
-        if (s.length === 1) { 
-            return "0" + s
+        const s = "" + n;
+        if (s.length === 1) {
+            return "0" + s;
         }
-        return s
+        return s;
     }
 
     /**
@@ -100,7 +100,7 @@
      * @category Formatting
      */
     zeroPaddedHours () {
-        return this.paddedNumber(this.getHours())
+        return this.paddedNumber(this.getHours());
     }
 
     /**
@@ -108,7 +108,7 @@
      * @category Formatting
      */
     zeroPaddedMinutes () {
-        return this.paddedNumber(this.getMinutes())
+        return this.paddedNumber(this.getMinutes());
     }
 
     /**
@@ -116,7 +116,7 @@
      * @category Formatting
      */
     zeroPaddedSeconds () {
-        return this.paddedNumber(this.getSeconds())
+        return this.paddedNumber(this.getSeconds());
     }
 
     /**
@@ -124,10 +124,10 @@
      * @category Formatting
      */
     getTwelveHours () {
-        let h = this.getHours()
-        if (h > 12) { h -= 12 }
-        if (h === 0) { h = 12 }
-        return h
+        let h = this.getHours();
+        if (h > 12) { h -= 12; }
+        if (h === 0) { h = 12; }
+        return h;
     }
 
     /**
@@ -135,7 +135,7 @@
      * @category Formatting
      */
     zeroPaddedUSDate () {
-        return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes())
+        return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes());
     }
 
 

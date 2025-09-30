@@ -7,7 +7,7 @@
  * @classdesc Represents a node for managing prototypes.
  */
 (class SvPrototypesNode extends SvStorableNode {
-    
+
     /**
      * @description Initializes prototype slots.
      * @category Initialization
@@ -50,7 +50,7 @@
 
         primitives.addSubnodes(this.primitiveSubnodes())
         */
-        return this
+        return this;
     }
 
 }.initThisClass());

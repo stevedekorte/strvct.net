@@ -17,7 +17,7 @@
  *     onBottomEdgePanCancelled
  */
 (class BottomEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @returns {void}
@@ -33,11 +33,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("bottom")
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setEdgeName("bottom");
+        this.setIsDebugging(false);
+        return this;
     }
-    
-    
+
+
 }.initThisClass());

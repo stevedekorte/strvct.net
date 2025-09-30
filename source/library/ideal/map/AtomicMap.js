@@ -89,7 +89,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
             slot.setSlotType("Array");
         }
     }
-  
+
     initPrototype () {
     }
 
@@ -162,7 +162,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     begin () {
         throw new Error("deprecated - use promiseBegin");
     }
-    
+
     /**
      * @async
      * @category Promise
@@ -199,7 +199,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.changedKeySet().clear();
         this.setIsInTx(false);
         this.onCompleteTx();
-        return this
+        return this;
     }
 
     /**
@@ -430,7 +430,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     keysArray () {
         return this.map().keysArray();
     }
-	
+
     /**
      * @category Data Retrieval
      * @description Returns an array of values in the map.
@@ -445,9 +445,9 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
      * @description Returns the number of key-value pairs in the map.
      * @returns {number} The number of key-value pairs.
      */
-    count () { 
+    count () {
         return this.map().size;
-    }	
+    }
 
     /**
      * @category Mutation
@@ -475,8 +475,8 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         assert(this.keysAndValuesAreStrings());
         let byteCount = 0;
         this.map().forEachKV((k, v) => {
-            byteCount += k.length + v.length
-        })
+            byteCount += k.length + v.length;
+        });
         this.setTotalBytesCache(byteCount);
         return byteCount;
     }
@@ -499,7 +499,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     fromJson (json) {
         this.map().clear();
         this.map().fromDict(json);
-        return this
+        return this;
     }
 
     /**
@@ -509,13 +509,13 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
      * @static
      */
     static async selfTest () {
-        const m = this.clone()
+        const m = this.clone();
 
         await m.promiseBegin();
         m.atPut("foo", "bar");
-        await m.promiseCommit(); 
-        assert(m.count() === 1)
-        assert(m.Array()[0] === "foo")
+        await m.promiseCommit();
+        assert(m.count() === 1);
+        assert(m.Array()[0] === "foo");
 
         await m.promiseBegin();
         m.removeAt("foo");

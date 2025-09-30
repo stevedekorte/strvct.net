@@ -1,4 +1,4 @@
- 
+
 "use strict";
 
 /**
@@ -103,7 +103,7 @@
      * @category Lookup
      */
     blobWithName (aName) {
-        return this.subnodes().detect(sn => sn.title() === aName)
+        return this.subnodes().detect(sn => sn.title() === aName);
         //return this.firstSubnodeWithTitle(aName)
     }
 
@@ -114,7 +114,7 @@
      * @category Lookup
      */
     hasBlobWithName (aName) {
-        return !Type.isNullOrUndefined(this.blobWithName(aName))
+        return !Type.isNullOrUndefined(this.blobWithName(aName));
     }
 
     // --- lookup blob by hash ---
@@ -126,7 +126,7 @@
      * @category Lookup
      */
     hasBlobWithValueHash (h) {
-        return !Type.isNullOrUndefined(this.blobWithValueHash(h))
+        return !Type.isNullOrUndefined(this.blobWithValueHash(h));
     }
 
     /**
@@ -137,7 +137,7 @@
      */
     blobWithValueHash (h) {
         //debugger
-        return this.subnodes().detect(sn => sn.valueHash() === h) /// <------------------------------ TEMPORARY
+        return this.subnodes().detect(sn => sn.valueHash() === h); /// <------------------------------ TEMPORARY
         //return this.subnodeWithHash(h)
     }
 
@@ -179,7 +179,7 @@
                 this.logDebug(" collecting inValid blob:", blob.description());
                 blob.delete();
             }
-        })
+        });
 
         // remove store entries which are not referenced by a Blob subnode valueHash
         const subnodeHashes = this.subnodes().map(sn => sn.valueHash()).asSet();
@@ -192,7 +192,7 @@
                 this.logDebug("collecting unreferenced blob hash:", h);
                 await store.promiseRemoveKey(h);
             }
-        })
+        });
     }
 
     /**
@@ -207,7 +207,7 @@
             const blob = SvBlobs.shared().blobForKey("http://test.com/");
             blob.setValue("test content");
             await blob.promiseWrite();
-        })
+        });
     }
 
 }.initThisClass());

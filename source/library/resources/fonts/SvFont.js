@@ -9,29 +9,29 @@
  * @extends SvResource
  * @classdesc A class for managing font resources. Managed by SvFontResources.
  * Supports the following file extensions: ttf, otf, woff, woff2.
- * 
+ *
  * When the font is loaded, it will infer the font family, weight, and style from the font name
  * and use these to compose the name and options arguments for the FontFace constructor.
  * e.g. Thin Italic will be 100 italic, Light Italic will be 300 italic, etc.
- * 
- * 
+ *
+ *
  * TODO NOTES:
- * 
+ *
  * Use Modern Formats and Subsetting
 
-You should use the WOFF2 font format. 
-It's the most modern and efficient format, and you should only use older formats if you absolutely need to support legacy browsers. 
+You should use the WOFF2 font format.
+It's the most modern and efficient format, and you should only use older formats if you absolutely need to support legacy browsers.
 You can also use unicode-range to only load the characters you need for a specific page, which can save a lot of bandwidth.
 
 Manage Layout Shift with Modern CSS
 
-To prevent your content from "jumping" around as fonts load, you can use modern CSS properties within the @font-face rule. 
-These include size-adjust, ascent-override, descent-override, and line-gap-override. 
+To prevent your content from "jumping" around as fonts load, you can use modern CSS properties within the @font-face rule.
+These include size-adjust, ascent-override, descent-override, and line-gap-override.
 These properties help you match the size of the fallback font to the final webfont.
  */
 
 (class SvFont extends SvResource {
-    
+
     /**
      * @static
      * @description Returns an array of supported file extensions for fonts.
@@ -49,7 +49,7 @@ These properties help you match the size of the fallback font to the final webfo
      * @category Font Properties
      */
     static fontWeightMap () {
-        const wm = new Map()
+        const wm = new Map();
         wm.set("Thin", 100);
         wm.set("Extra Light", 200); wm.set("ExtraLight", 200);
         wm.set("Ultra Light", 200); wm.set("UltraLight", 200);
@@ -61,7 +61,7 @@ These properties help you match the size of the fallback font to the final webfo
         wm.set("Bold", 700);
         wm.set("Extra Bold", 800); wm.set("ExtraBold", 800);
         wm.set("Ultra Bold", 800); wm.set("UltraBold", 800);
-        wm.set("Black", 900)
+        wm.set("Black", 900);
         wm.set("Heavy", 900);
         return wm;
     }
@@ -110,7 +110,7 @@ These properties help you match the size of the fallback font to the final webfo
      * @category Initialization
      */
     initPrototype () {
-        this.setIsDebugging(false)
+        this.setIsDebugging(false);
     }
 
     /**
@@ -118,8 +118,8 @@ These properties help you match the size of the fallback font to the final webfo
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setOptions({})  // example options { style: 'normal', weight: 700 }  
+        super.init();
+        this.setOptions({});  // example options { style: 'normal', weight: 700 }
     }
 
     /**
@@ -128,7 +128,7 @@ These properties help you match the size of the fallback font to the final webfo
      * @category Font Properties
      */
     title () {
-        return this.name()
+        return this.name();
     }
 
     /**
@@ -138,10 +138,10 @@ These properties help you match the size of the fallback font to the final webfo
      */
     name () {
         if (this._name) {
-            return this._name
+            return this._name;
         }
 
-        return this.path().fileName()
+        return this.path().fileName();
     }
 
     /**
@@ -205,7 +205,7 @@ These properties help you match the size of the fallback font to the final webfo
             name = name.split(" ").shift();
         }
 
-        const face = new FontFace(name, this.data(), this.options()); 
+        const face = new FontFace(name, this.data(), this.options());
         this.setFontFace(face);
 
         if (SvPlatform.isBrowserPlatform()) {
@@ -230,9 +230,9 @@ These properties help you match the size of the fallback font to the final webfo
      */
     onLoadError (error) {
         if (this.isDebugging()) {
-            this.logDebug(".onLoadError() ", error)
+            this.logDebug(".onLoadError() ", error);
         }
-        return this
+        return this;
     }
 
     /**

@@ -6,19 +6,19 @@
  * @class DomTextTapeMeasure
  * @extends ProtoClass
  * @classdesc Used to measure rendered text dimensions given a string and a style.
- * 
+ *
  * Example uses:
- * 
+ *
  *     const size1 = DomTextTapeMeasure.shared().sizeOfCssClassWithHtmlString(this.elementClassName(), text);
  *     const h = size1.height;
- * 
+ *
  *     const size2 = DomTextTapeMeasure.shared().sizeOfElementWithHtmlString(domElement, text);
  *     const w = size2.width;
- * 
+ *
  * TODO: move to using separate document
  */
 (class DomTextTapeMeasure extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the DomTextTapeMeasure class.
      */
@@ -47,16 +47,16 @@
              */
             const slot = this.newSlot("stylesToCopy", [
                 "fontSize",
-                "fontStyle", 
-                "fontWeight", 
+                "fontStyle",
+                "fontWeight",
                 "fontFamily",
-                "lineHeight", 
-                "textTransform", 
+                "lineHeight",
+                "textTransform",
                 "letterSpacing"
             ]);
             slot.setSlotType("Array");
         }
-        
+
         {
             /**
              * @member {Map} cache - Cache for storing measurement results.
@@ -91,11 +91,11 @@
     document () {
         // return document
         if (!this._document) {
-            this.setDocument(new Document())
+            this.setDocument(new Document());
         }
-        return this._document
+        return this._document;
     }
-	
+
     /**
      * @description Gets or creates the test element.
      * @returns {Element} The test element.
@@ -103,11 +103,11 @@
      */
     testElement () {
         if (!this._testElement) {
-            this._testElement = this.createTestElement()
+            this._testElement = this.createTestElement();
         }
-        return this._testElement
+        return this._testElement;
     }
-	
+
     /**
      * @description Creates and sets up the test element.
      * @returns {Element} The created test element.
@@ -123,7 +123,7 @@
         e.style.top  = -1000;
         e.style.visibility = "hidden";
         this.document().body.appendChild(e);
-        return e		
+        return e;
     }
 
     /**
@@ -133,16 +133,16 @@
      * @category Caching
      */
     addToCache (k, v) {
-        const keys = this.cacheKeys()
-        
+        const keys = this.cacheKeys();
+
         if (keys.length > this.maxCacheKeys()) {
-            const oldKey = keys.shift() // first in, first out
-            this.cache().delete(oldKey)
+            const oldKey = keys.shift(); // first in, first out
+            this.cache().delete(oldKey);
         }
 
-        this.cache().set(k, v)
-        keys.push(k)
-        console.log(this.svType() + " caching: " + keys.length)
+        this.cache().set(k, v);
+        keys.push(k);
+        console.log(this.svType() + " caching: " + keys.length);
     }
 
     /**
@@ -159,7 +159,7 @@
 
         const e = this.testElement();
         //e.cssText = element.cssText // this would force reflow?
-		
+
         this.stylesToCopy().forEach(function (styleName) {
             const v = element.style[styleName];
             if (v) {
@@ -168,18 +168,18 @@
                 delete e.style[styleName];
             }
         });
-		
+
         e.innerHTML = element.innerHTML;
-		
-        const width = (e.clientWidth + 1); 
-        const height = (e.clientHeight + 1); 
+
+        const width = (e.clientWidth + 1);
+        const height = (e.clientHeight + 1);
         this.clean();
 
         const result = { width: width, height: height };
         this.addToCache(text, result);
         return result;
     }
-	
+
     /**
      * @description Cleans the test element by resetting its properties.
      * @returns {DomTextTapeMeasure} The current instance.
@@ -192,5 +192,5 @@
         this.stylesToCopy().forEach(styleName => delete e.style[styleName]);
         return this;
     }
-	
+
 }.initThisClass());

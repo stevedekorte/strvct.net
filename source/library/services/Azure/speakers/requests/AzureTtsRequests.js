@@ -37,7 +37,7 @@
       * @category Initialization
       */
     finalInit () {
-        super.finalInit()
+        super.finalInit();
         this.setNoteIsSubnodeCount(true);
         this.setTitle("requests");
     }
@@ -54,7 +54,7 @@
       * @category Data Retrieval
       */
     speaker () {
-        return this.parentNode()
+        return this.parentNode();
     }
 
 }.initThisClass());

@@ -8,7 +8,7 @@
 
 (class AiParsedResponseMessage_voiceNarration extends AiParsedResponseMessage {
 
-  /*
+    /*
   initPrototypeSlots () {
     //voice narration
     {
@@ -20,93 +20,93 @@
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setSlotType("Boolean");
-      slot.setIsSubnodeField(false);      
+      slot.setIsSubnodeField(false);
     }
   }
     */
 
-  didUpdateIsDoneSpeaking (oldValue, newValue) {
-    if (newValue) {
-      //this.clearAnyQueuedAudio();
+    didUpdateIsDoneSpeaking (oldValue, newValue) {
+        if (newValue) {
+            //this.clearAnyQueuedAudio();
+        }
     }
-  }
 
-  tagsToSpeak () {
-    return ["sentence", "location-name", "session-name"];
-  }
-
-  // --- voice narration ---
-
-  playTtsPauseMs (ms) {
-    assert(Type.isNumber(ms));
-    this.voiceNarrateText(`<break time="` + ms + `ms"/>`);
-  }
-
-  shouldVoiceNarrate () {
-    const session = this.session();
-    if (session && session.settings) {
-      const settings = session.settings();
-      const voiceNarrationOn = settings.shouldVoiceNarrate();
-      return !this.isDoneSpeaking() && this.session().isHost() && voiceNarrationOn;
+    tagsToSpeak () {
+        return ["sentence", "location-name", "session-name"];
     }
-    return false;
-  }
 
-  stopSpeaking () {
-    this.setIsDoneSpeaking(true);
-    this.speaker().stopAndClearQueue();
-    return this;
-  }
+    // --- voice narration ---
 
-  session () {
-    return this.conversation().firstOwnerChainNodeOfClass(UoSession);
-  }
+    playTtsPauseMs (ms) {
+        assert(Type.isNumber(ms));
+        this.voiceNarrateText("<break time=\"" + ms + "ms\"/>");
+    }
 
-  speaker () {
-    const settings = this.session().settings();
-    const speaker = settings.narrationSpeaker();
-    return speaker;
-  }
+    shouldVoiceNarrate () {
+        const session = this.session();
+        if (session && session.settings) {
+            const settings = session.settings();
+            const voiceNarrationOn = settings.shouldVoiceNarrate();
+            return !this.isDoneSpeaking() && this.session().isHost() && voiceNarrationOn;
+        }
+        return false;
+    }
 
-  voiceNarrateText (text) {
-    const speaker = this.speaker(); // this is anOpenAiTtsSession
-    speaker.setPrompt(text);
-    //speaker.setPrompt(this.spokenContentOfText(text));
-    const sound = speaker.generate(); // this will add it to the speaker's tts queue, and then audio queue
-    // we want to follow when the sound starts/stops playing so we can highlight/unhighlight the text
-    sound.addDelegate(this);
-    sound.setTranscript(text); // so we know which text audio is for when handling the delegate methods
-  }
+    stopSpeaking () {
+        this.setIsDoneSpeaking(true);
+        this.speaker().stopAndClearQueue();
+        return this;
+    }
 
-  onSoundStarted (sound) {
+    session () {
+        return this.conversation().firstOwnerChainNodeOfClass(UoSession);
+    }
+
+    speaker () {
+        const settings = this.session().settings();
+        const speaker = settings.narrationSpeaker();
+        return speaker;
+    }
+
+    voiceNarrateText (text) {
+        const speaker = this.speaker(); // this is anOpenAiTtsSession
+        speaker.setPrompt(text);
+        //speaker.setPrompt(this.spokenContentOfText(text));
+        const sound = speaker.generate(); // this will add it to the speaker's tts queue, and then audio queue
+        // we want to follow when the sound starts/stops playing so we can highlight/unhighlight the text
+        sound.addDelegate(this);
+        sound.setTranscript(text); // so we know which text audio is for when handling the delegate methods
+    }
+
+    onSoundStarted (sound) {
     //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
-    this.onSpeakingText(sound.transcript());
+        this.onSpeakingText(sound.transcript());
 
-    
-    if (this.session().isHost() /*&& this.session().hasClients() */) {
-      const audioMsg = UoAudioMessage.clone()
-        .setInReplyToMessageId(this.messageId())
-        .setSound(sound);
-      audioMsg.promisePrepareDataUrl().then(() => {
-        this.session().shareAudioMessage(audioMsg);
-      });
+
+        if (this.session().isHost() /*&& this.session().hasClients() */) {
+            const audioMsg = UoAudioMessage.clone()
+                .setInReplyToMessageId(this.messageId())
+                .setSound(sound);
+            audioMsg.promisePrepareDataUrl().then(() => {
+                this.session().shareAudioMessage(audioMsg);
+            });
+        }
     }
-  }
 
-  onSpeakingText (text) {
-    this.postNoteNamed("onSpeakingText").setInfo(text); //.setIsDebugging(true);
-  }
+    onSpeakingText (text) {
+        this.postNoteNamed("onSpeakingText").setInfo(text); //.setIsDebugging(true);
+    }
 
-  onSoundEnded (sound) {
+    onSoundEnded (sound) {
     //console.log(this.svType() + ".onSoundEnded [" + sound.transcript().clipWithEllipsis(15) + "]");
-    this.onSpokeText(sound.transcript());
-  }
+        this.onSpokeText(sound.transcript());
+    }
 
-  onSpokeText (text) {
-    this.postNoteNamed("onSpokeText").setInfo(text); //.setIsDebugging(true);
-  }
+    onSpokeText (text) {
+        this.postNoteNamed("onSpokeText").setInfo(text); //.setIsDebugging(true);
+    }
 
-  /*
+    /*
   onSoundStarted (aNote) {
     const sound = aNote.sender();
     this.postNoteNamed("onSpeakingText").setInfo(sound.transcript());
@@ -118,12 +118,11 @@
   }
   */
 
-  /*
+    /*
   spokenContentOfText (text) {
     return text.stripHtmlElementsWithTagNames(this.unspeakableTagNames());
   }
   */
 
 }).initThisCategory();
-
 

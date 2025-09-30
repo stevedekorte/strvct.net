@@ -8,7 +8,7 @@
  * @class FirestoreImages
  * @extends SvJsonArrayNode
  * @classdesc Collection of Firestore images for testing and management
- * 
+ *
  * This class provides a UI for managing and testing Firestore image uploads.
  * Images can be added, uploaded, and their public URLs can be tested.
  */
@@ -68,11 +68,11 @@
         const total = this.subnodeCount();
         const uploaded = this.subnodes().filter(img => img.hasPublicUrl()).length;
         const pending = total - uploaded;
-        
+
         if (total === 0) {
             return "No images";
         } else if (pending === 0) {
-            return `${total} image${total !== 1 ? 's' : ''} uploaded`;
+            return `${total} image${total !== 1 ? "s" : ""} uploaded`;
         } else {
             return `${uploaded}/${total} uploaded, ${pending} pending`;
         }
@@ -87,11 +87,11 @@
         const image = FirestoreImage.clone();
         const timestamp = Date.now();
         image.setImageLabel(`Test Image ${timestamp}`);
-        
+
         // Create a simple test image data URL (1x1 pixel red PNG)
         const testDataUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8DwHwAFBQIAX8jx0gAAAABJRU5ErkJggg==";
         image.setDataUrl(testDataUrl);
-        
+
         this.addSubnode(image);
         return image;
     }
@@ -103,10 +103,10 @@
      */
     async addImageFromFile () {
         return new Promise((resolve, reject) => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+
             input.onchange = async (e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -116,10 +116,10 @@
                     this.addSubnode(image);
                     resolve(image);
                 } else {
-                    reject(new Error('No file selected'));
+                    reject(new Error("No file selected"));
                 }
             };
-            
+
             input.click();
         });
     }
@@ -138,24 +138,24 @@
      * @category Actions
      */
     async uploadAllImages () {
-        const pendingImages = this.subnodes().filter(img => 
+        const pendingImages = this.subnodes().filter(img =>
             img.hasDataUrl() && !img.hasPublicUrl()
         );
-        
+
         if (pendingImages.length === 0) {
             console.log("No images to upload");
             return;
         }
-        
+
         console.log(`Uploading ${pendingImages.length} images...`);
-        
-        const uploadPromises = pendingImages.map(img => 
+
+        const uploadPromises = pendingImages.map(img =>
             img.uploadToFirebase().catch(error => {
                 console.error(`Failed to upload ${img.imageLabel()}:`, error);
                 return null;
             })
         );
-        
+
         await Promise.all(uploadPromises);
         console.log("Upload complete");
     }
@@ -222,8 +222,8 @@
         }
 
         // Otherwise, create and add new FirestoreImage
-        const fbImage = FirestoreImage.clone();        
-        fbImage.setDataUrl(svImage.dataURL());        
+        const fbImage = FirestoreImage.clone();
+        fbImage.setDataUrl(svImage.dataURL());
         fbImage.setImageLabel(label);
         this.addSubnode(fbImage);
 
@@ -236,7 +236,7 @@
             console.error(`FirestoreImages.asyncAddSvImage: Failed to upload ${label}:`, error);
             throw error;
         }
-        
+
         return fbImage;
     }
 

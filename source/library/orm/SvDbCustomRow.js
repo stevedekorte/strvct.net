@@ -10,22 +10,22 @@ const SvDbRow = require("./SvDbRow");
  * @class SvDbRow
  * @extends Base
  * @classdesc Represents a single database row with data validation and persistence operations.
- * 
+ *
  * This class provides an Active Record pattern implementation where each instance represents
  * a single row of data from a database table. It handles data storage, validation, and
  * persistence operations while maintaining the relationship with its parent table.
- * 
+ *
  * Key features:
  * - Data storage in a dictionary format with column validation
  * - Automatic validation against table schema (column names and types)
  * - Convenience save() method for CRUD operations (automatic insert/update detection)
  * - Support for custom row classes per table via inheritance
  * - Integration with the table's column metadata for data integrity
- * 
+ *
  * The row validates all data against the table's column definitions and provides
  * a clean interface for working with individual records. Custom row classes can
  * extend SvDbRow to add domain-specific methods and validation logic.
- * 
+ *
  * Usage:
  * ```javascript
  * const tx = database.newTx();
@@ -35,7 +35,7 @@ const SvDbRow = require("./SvDbRow");
  *   row.setRowKeyValue("name", "John Doe");
  *   row.setRowKeyValue("email", "john@example.com");
  *   await row.save(tx); // Automatically inserts (no primary key)
- *   
+ *
  *   // Update existing row
  *   row.setRowKeyValue("name", "Jane Doe");
  *   await row.save(tx); // Automatically updates (has primary key)
@@ -74,7 +74,7 @@ const SvDbRow = require("./SvDbRow");
     }
 
 
-    setupCustomPrototype () { 
+    setupCustomPrototype () {
         // Note: this needs to be called after the database schema is loaded
         assert(this.isPrototype(), "setupRowPrototype must be called on a prototype");
         assert(this.table() !== null, "table is not set");
@@ -107,14 +107,14 @@ const SvDbRow = require("./SvDbRow");
         proto.addMethod(column.setterName(), function (value) { return this.set(columnName, value); });
 
         // If it's a foreign key (ends in "Id"), then add get/set for referenced owner row
-        // e.g.  "userId" -> "user" + "setUser" 
+        // e.g.  "userId" -> "user" + "setUser"
         if (column.isForeignKey()) {
             const ownerTable = column.pointsToOwningTable();
             assert(ownerTable !== null, "ownerTable not found for column " + columnName);
 
             // get/set a parent table
             // e.g. if the column is "userId", we add "user" and "setUser" methods
-            proto.addMethod(column.ownerGetterName(), async function () { 
+            proto.addMethod(column.ownerGetterName(), async function () {
                 const ownerRowId = this.getRowKey(columnName);
                 return await ownerTable.getRowForId(ownerRowId);
             });
@@ -133,8 +133,8 @@ const SvDbRow = require("./SvDbRow");
                 this.setRowKeyValue(columnName, ownerRow.id());
             });
 
-            // e.g. if this is the Transaction row and it has a userId, 
-            // then Users is the owner table and User is the owner row 
+            // e.g. if this is the Transaction row and it has a userId,
+            // then Users is the owner table and User is the owner row
             // User.transactions() and User.newTransaction() methods
 
             const ownerRowClass = ownerTable.rowClass();
@@ -153,7 +153,7 @@ const SvDbRow = require("./SvDbRow");
     }
 
     ownerGetChildrenMethodName () {
-        // ownerGetChildrenMethodName is this row's table name with a lower case first letter   
+        // ownerGetChildrenMethodName is this row's table name with a lower case first letter
         // e.g. Transactions -> transactions
         return this.table().name().charAt(0).toLowerCase() + this.table().name().slice(1);
     }
@@ -183,7 +183,7 @@ const SvDbRow = require("./SvDbRow");
     // --- advanced setup ---
     // so when the SvDatabase is initialized and loaded, we need to find all the custom row classes
     // and call setTable() and setupMethods() on each prototype
-    // maybe on initThisClass, SvCustomRow could find the shared SvDatabase and register itself 
+    // maybe on initThisClass, SvCustomRow could find the shared SvDatabase and register itself
     // with a method like addCustomRowClass()
     /*
 
@@ -211,7 +211,7 @@ const SvDbRow = require("./SvDbRow");
         }
     }
     */
-    
+
 }).initThisClass();
 
 module.exports = SvDbRow;

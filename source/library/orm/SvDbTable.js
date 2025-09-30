@@ -13,21 +13,21 @@ const SvDbCache = require("./SvDbCache");
  * @class SvDbTable
  * @extends Base
  * @classdesc Represents a database table with its columns and provides table-level operations.
- * 
+ *
  * This class encapsulates table metadata and provides high-level CRUD operations that work
  * with row objects. It manages the relationship between table schema (columns) and data (rows),
  * and handles the mapping between raw database records and object instances.
- * 
+ *
  * Key responsibilities:
  * - Store table metadata (name, columns, row class mapping)
  * - Provide table-specific CRUD operations (selectRows, insertRow, updateRow, deleteRow)
  * - Handle row object creation and population from database records
  * - Manage column name-to-column object mapping for efficient lookups
  * - Support custom row classes for domain-specific table representations
- * 
+ *
  * The table delegates actual database operations to its parent SvDatabase instance while
  * providing a convenient interface for working with specific tables and their data.
- * 
+ *
  * Usage:
  * ```javascript
  * const table = database.tableWithName("users");
@@ -180,10 +180,10 @@ const SvDbTable = (class SvDbTable extends SvBase {
 
     setupFromSchemaJson (tableData) {
         this.setTableName(tableData.name);
-        
+
         // Create columns array for this table
         const columns = [];
-        
+
         if (tableData.columns) {
             for (const columnData of tableData.columns) {
                 // Create new SvDbColumn instance
@@ -193,7 +193,7 @@ const SvDbTable = (class SvDbTable extends SvBase {
                 columns.push(column);
             }
         }
-        
+
         this.setColumns(columns);
     }
 
@@ -217,24 +217,24 @@ const SvDbTable = (class SvDbTable extends SvBase {
         const rowClass = this.rowClass();
         const primaryKeyName = this.primaryKeyName();
         const rowDicts = await this.database().query(this.tableName(), searchOptions, tx);
-        
+
         for (const rowDict of rowDicts) {
             let row = null;
-            
+
             // Check cache first if we have a primary key
             if (primaryKeyName && rowDict[primaryKeyName] !== undefined && rowDict[primaryKeyName] !== null) {
                 row = this.getCachedRowForId(rowDict[primaryKeyName]);
                 // we do not set the row with the rowDict here because it may be dirty
                 // and we don't want to overwrite the cached row with a dirty row
             }
-            
+
             // If not found in cache, create a new row instance
             if (!row) {
                 row = rowClass.clone();
                 row.setTable(this);  // Set the table reference
                 row.setupFromDict(rowDict);
             }
-            
+
             rows.push(row);
         }
         return rows;
@@ -245,7 +245,7 @@ const SvDbTable = (class SvDbTable extends SvBase {
         const insertedData = await this.database().insert(this.tableName(), rowDict, tx);
         // Update the row with any auto-generated values (like auto-increment IDs)
         row.setupFromDict(insertedData);
-        
+
         // Schedule cache addition for transaction commit
         const primaryKeyValue = row.primaryKeyValue();
         if (primaryKeyValue !== undefined && primaryKeyValue !== null) {
@@ -253,14 +253,14 @@ const SvDbTable = (class SvDbTable extends SvBase {
                 this.onAssignedIdToRow(row);
             });
         }
-        
+
         return insertedData;
     }
 
     async deleteRow (row, tx) {
         const rowDict = row.asDict();
         const result = await this.database().delete(this.tableName(), rowDict, tx);
-        
+
         // Schedule cache removal for transaction commit
         if (result) {
             const primaryKeyValue = row.primaryKeyValue();
@@ -270,7 +270,7 @@ const SvDbTable = (class SvDbTable extends SvBase {
                 });
             }
         }
-        
+
         return result;
     }
 
@@ -297,7 +297,7 @@ const SvDbTable = (class SvDbTable extends SvBase {
         }
 
         const primaryKeyValue = row.primaryKeyValue();
-        
+
         if (primaryKeyValue !== undefined && primaryKeyValue !== null) {
             // Add the row to the cache using the primary key as the key
             this.rowCache().set(primaryKeyValue, row);
@@ -329,8 +329,8 @@ const SvDbTable = (class SvDbTable extends SvBase {
         }
 
         // Cache miss - query database
-        const rows = await this.selectRows({ 
-            where: { [this.primaryKeyName()]: primaryKeyValue } 
+        const rows = await this.selectRows({
+            where: { [this.primaryKeyName()]: primaryKeyValue }
         }, tx);
 
         return rows.length > 0 ? rows[0] : null;
@@ -343,7 +343,7 @@ const SvDbTable = (class SvDbTable extends SvBase {
         return rows;
     }
 
-    
+
 }).initThisClass();
 
 module.exports = SvDbTable;

@@ -8,7 +8,7 @@
  * @classdesc An object wrapper for the Reflect functions.
  */
 SvGlobals.globals().Mirror = class Mirror extends Object {
-    
+
     /**
      * Creates a Mirror instance for the given target.
      * @param {*} aTarget - The target object to reflect on.
@@ -16,9 +16,9 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Initialization
      */
     static reflectOn (aTarget) {
-        return this.clone().setTarget(aTarget)
+        return this.clone().setTarget(aTarget);
     }
-    
+
     /**
      * Sets the target object for this Mirror instance.
      * @param {*} aTarget - The target object to set.
@@ -26,17 +26,17 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Initialization
      */
     setTarget (aTarget) {
-        this._target = aTarget
-        return this
+        this._target = aTarget;
+        return this;
     }
-    
+
     /**
      * Gets the current target object of this Mirror instance.
      * @returns {*} The current target object.
      * @category Accessor
      */
     target () {
-        return this._target
+        return this._target;
     }
 
     /**
@@ -47,9 +47,9 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Property Manipulation
      */
     defineProperty (propertyKey, attributes) {
-        return Reflect.defineProperty(this.target(), propertyKey, attributes)        
+        return Reflect.defineProperty(this.target(), propertyKey, attributes);
     }
-    
+
     /**
      * Deletes a property from the target object.
      * @param {string|symbol} propertyKey - The property key to delete.
@@ -57,9 +57,9 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Property Manipulation
      */
     deleteProperty (propertyKey) {
-        return Reflect.deleteProperty(this.target(), propertyKey)
+        return Reflect.deleteProperty(this.target(), propertyKey);
     }
-    
+
     /**
      * Gets the value of a property on the target object.
      * @param {string|symbol} propertyKey - The property key to get.
@@ -68,7 +68,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Property Access
      */
     get (propertyKey, optionalReceiver) {
-        return Reflect.get(this.target(), propertyKey, optionalReceiver)
+        return Reflect.get(this.target(), propertyKey, optionalReceiver);
     }
 
     /**
@@ -78,16 +78,16 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Property Access
      */
     getOwnPropertyDescriptor (propertyKey) {
-        return Reflect.getOwnPropertyDescriptor(this.target(), propertyKey)
+        return Reflect.getOwnPropertyDescriptor(this.target(), propertyKey);
     }
-    
+
     /**
      * Gets the prototype of the target object.
      * @returns {Object|null} The prototype of the target object.
      * @category Object Inspection
      */
     getPrototype () {
-        return Reflect.getPrototypeOf(this.target())
+        return Reflect.getPrototypeOf(this.target());
     }
 
     /**
@@ -97,7 +97,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Property Access
      */
     has (propertyKey) {
-        return Reflect.has(this.target(), propertyKey)
+        return Reflect.has(this.target(), propertyKey);
     }
 
     /**
@@ -106,7 +106,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Object Inspection
      */
     isExtensible () {
-        return Reflect.isExtensible(this.target())
+        return Reflect.isExtensible(this.target());
     }
 
     /**
@@ -115,7 +115,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Object Inspection
      */
     ownKeys () {
-        return Reflect.ownKeys(this.target())
+        return Reflect.ownKeys(this.target());
     }
 
     /**
@@ -124,7 +124,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Object Manipulation
      */
     preventExtensions () {
-        return Reflect.preventExtensions(this.target())
+        return Reflect.preventExtensions(this.target());
     }
 
     /**
@@ -136,7 +136,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Property Manipulation
      */
     set (propertyKey, value, optionalReceiver) {
-        return Reflect.set(this.target(), propertyKey, value, optionalReceiver)
+        return Reflect.set(this.target(), propertyKey, value, optionalReceiver);
     }
 
     /**
@@ -146,7 +146,7 @@ SvGlobals.globals().Mirror = class Mirror extends Object {
      * @category Object Manipulation
      */
     setPrototype (prototype) {
-        return Reflect.setPrototypeOf(this.target(), prototype)
+        return Reflect.setPrototypeOf(this.target(), prototype);
     }
-    
-}
+
+};

@@ -8,52 +8,52 @@
  * @class SvSyncScheduler
  * @extends ProtoClass
  * @classdesc SvSyncScheduler is sort of a lower level NotificationCenter.
- * 
+ *
  * SvSyncScheduler essentially:
  * - receives requests of the form "send targetA messageB" (Note: often, the sender is also the target)
  * - and at the end of the event loop (via a timeout):
  *   -- coaleses them (so the same message isn't sent twice to the same target)
  *   -- sends them
- * 
+ *
  * The NotificationCenter could be used to do this, but it would be heavier:
  * - overhead of every receiver registering observations
  * - overhead of matching observations with posts
  * - potential garbage collection issues (may already be solved with weak references now)
- * 
+ *
  * Motivation:
- * 
- * Many state changes can cause the need to synchronize a given object 
- * with others within a given event loop, but we only want synchronization to 
+ *
+ * Many state changes can cause the need to synchronize a given object
+ * with others within a given event loop, but we only want synchronization to
  * happen at the end of an event loop, so a shared SvSyncScheduler instance is used to
  * track which sync actions should be sent at the end of the event loop and only sends each one once.
- * 
+ *
  * SvSyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
- * 
+ *
  * Example use:
- * 
+ *
  * SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode");
- * 
+ *
  * Automatic sync loop detection:
- * 
+ *
  * It will throw an error if a sync action is scheduled while another is being performed,
  * which ensures sync loops are avoided.
- * 
+ *
  * Ordering:
- * 
+ *
  * Scheduled actions can also be given a priority via an optional 3rd argument:
- * 
+ *
  * SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1);
- * 
- * Higher priorities will be performed *later* than lower ones. 
- * 
+ *
+ * Higher priorities will be performed *later* than lower ones.
+ *
  * Some typical sync methods:
- * 
+ *
  * // view
- * syncToNode	
+ * syncToNode
  * syncFromNode
- * 
+ *
  * When to run:
- * 
+ *
  * When a UI event is handled, SyncSchedule.fullSyncNow should be called just before
  * control is returned to the browser to ensure that another UI event won't occur
  * before syncing as that could leave the node and view out of sync.
@@ -64,14 +64,14 @@
  * - edit view #2
  * - view gets didUpdateNode and does syncFromNode which overwrites view state #2 causing an error!
  * But the above would have been ok if the didUpdateNode was posted once at the end of the event loop.
- * 
+ *
  * Pause and Resume:
- * 
+ *
  * SvSyncScheduler can be paused and resumed to prevent syncing from happening.
- * An example of when this is useful is when initializing the application (e.g. appDidInit) 
+ * An example of when this is useful is when initializing the application (e.g. appDidInit)
  * and you don't want any syncing to happen until the app is fully initialized.
  * Example use:
- * 
+ *
  * SvSyncScheduler.shared().pause()
  * SvSyncScheduler.shared().resume()
  */
@@ -85,7 +85,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots
      * @category Initialization
@@ -217,7 +217,7 @@
         this.nextCycleActions().clear();
         return this;
     }
-	
+
     /**
      * @description Schedules a target and method for sync
      * @param {Object} target - The target object
@@ -230,7 +230,7 @@
         if (!this.hasScheduledTargetAndMethod(target, syncMethod)) {
             const newAction = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder);
             this.logDebug(() => "    -> scheduling " + newAction.description());
-            
+
             if (syncMethod !== "processPostQueue") {
                 if (this.currentAction() && this.currentAction().equals(newAction)) {
                     const error = [
@@ -247,7 +247,7 @@
 	    	this.setTimeoutIfNeeded();
             return true;
         }
-		
+
         return false;
     }
 
@@ -284,14 +284,14 @@
      * @category Query
      */
     isSyncingTargetAndMethod (target, syncMethod) {
-        const ca = this.currentAction()
+        const ca = this.currentAction();
         if (ca) {
             const action = this.newActionForTargetAndMethod(target, syncMethod);
     		return ca.equals(action);
         }
         return false;
     }
-    
+
     /**
      * @description Gets all actions for a target
      * @param {Object} target - The target object
@@ -323,12 +323,12 @@
             console.log("unscheduling target " + target.svDebugId());
 
             if (this.isProcessing()) {
-                console.warn("WARNING: SynScheduler unscheduleTarget while processing actions set - will unschedule action")
+                console.warn("WARNING: SynScheduler unscheduleTarget while processing actions set - will unschedule action");
             }
 
             this.actionsForTarget(target).forEach(action => {
                 this.removeActionKey(action.actionsKey());
-            })
+            });
         }
 
         assert(!this.hasActionsForTarget()); // todo: remove this sanity check
@@ -362,7 +362,7 @@
         }
         return this;
     }
-	
+
     /**
      * @description Sets a timeout if needed
      * @returns {SvSyncScheduler} The instance
@@ -371,26 +371,26 @@
     setTimeoutIfNeeded () {
 	    if (!this.hasTimeout() && !this.isPaused() && this.actions().size > 0) {
             this.setHasTimeout(true);
-	        this.addTimeout(() => { 
+	        this.addTimeout(() => {
 	            this.setHasTimeout(false);
 	            this.processSets();
 	        }, 1);
 	    }
 	    return this;
     }
-	
+
     /**
      * @description Gets the ordered actions
      * @returns {Array} An array of ordered actions
      * @category Query
      */
     orderedActions () {
-        const sorter = function (a1, a2) { 
-            return a1.order() - a2.order(); 
+        const sorter = function (a1, a2) {
+            return a1.order() - a2.order();
         };
         return this.actions().valuesArray().sort(sorter);
     }
-	
+
     /**
      * @description Processes the sets of actions
      * @returns {SvSyncScheduler} The instance
@@ -411,13 +411,13 @@
         let error = null;
 
         this.logDebug("Sync");
-        
+
         const actions = this.orderedActions();
         this.actions().clear();
- 
+
         actions.forEach((action) => {
             if (action.isUnscheduled()) {
-              throw new Error("action is unscheduled");
+                throw new Error("action is unscheduled");
             } else {
                 this.setCurrentAction(action);
                 const actionError = action.tryToSend();
@@ -427,10 +427,10 @@
                 this.setCurrentAction(null);
             }
         });
-        
+
         this.setCurrentAction(null);
         this.setIsProcessing(false);
-        
+
         if (error) {
             console.log("SvSyncScheduler processSets actions count: " + this.actionCount());
             error.rethrow();
@@ -456,7 +456,7 @@
     fullSyncNow () {
         if (this.isPaused()) {
             return this;
-            
+
         }
         if (this.isProcessing()) {
             this.logDebug(() => "fullSyncNow called while isProcessing so SKIPPING");
@@ -473,15 +473,15 @@
                 count ++;
 
                 if (count > 6) {
-                    this.setIsDebugging(true)
+                    this.setIsDebugging(true);
                     console.log("\n\nSvSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?");
                     console.log(" --- processSets # " + count + " --- ");
                     console.log("\nSvSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());
                     console.log("\n" + SvNotificationCenter.shared().shortDescription() + ":\n" + SvNotificationCenter.shared().notesDescription());
                     console.log(" --- ");
-                    debugger
+                    debugger;
                 }
-                assert (count < maxCount)
+                assert (count < maxCount);
             }
 
             this.logDebug(" --- fullSyncNow end --- ");
@@ -500,7 +500,7 @@
         if (this.orderedActions().length === 0) {
             return "none";
         }
-        return this.orderedActions().map(action => "    " + action.description() ).join("\n");
+        return this.orderedActions().map(action => "    " + action.description()).join("\n");
     }
 
     /**

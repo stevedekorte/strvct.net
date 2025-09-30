@@ -7,14 +7,14 @@
  * @extends ProtoClass
  * @classdesc Abstraction for the main web browser window
  * Owns a DocumentBody view.
- * 
+ *
  * Usage example:
  * WebBrowserWindow.shared().storeSelectionRange();
  * // do stuff
  * WebBrowserWindow.shared().restoreSelectionRange();
  */
-(class WebBrowserWindow extends ProtoClass { 
-    
+(class WebBrowserWindow extends ProtoClass {
+
     /**
      * @static
      * @description Initializes the class as a singleton.
@@ -23,7 +23,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -47,7 +47,7 @@
             slot.setSlotType("Range");
         }
     }
-    
+
     /**
      * @description Initializes the WebBrowserWindow instance.
      * @returns {WebBrowserWindow} The initialized instance.
@@ -81,7 +81,7 @@
     documentBody () {
         return DocumentBody.shared();
     }
-    
+
     /**
      * @description Gets the width of the window.
      * @returns {number} The width of the window.
@@ -99,7 +99,7 @@
     height () {
         return window.innerHeight;
     }
-    
+
     /**
      * @description Calculates the aspect ratio of the window.
      * @returns {number} The aspect ratio of the window.
@@ -108,7 +108,7 @@
     aspectRatio () {
         return this.width() / this.height();
     }
-    
+
     /**
      * @description Sets the width of the window (unavailable in browser).
      * @param {number} w - The width to set.
@@ -119,7 +119,7 @@
         console.warn("warning: WebBrowserWindow.setWidth() unavailable in browser");
         return this;
     }
-    
+
     /**
      * @description Sets the height of the window (unavailable in browser).
      * @param {number} h - The height to set.
@@ -130,7 +130,7 @@
         console.warn("warning: WebBrowserWindow.setHeight() unavailable in browser");
         return this;
     }
-    
+
     /**
      * @description Logs the window size to the console.
      * @category Debugging
@@ -151,14 +151,14 @@
         console.log("      isOnMobile: ", this.isOnMobile());
         console.log("   isTouchDevice: ", this.isTouchDevice());
     }
-    
+
     /**
      * @description Gets an array of mobile device names.
      * @returns {string[]} An array of mobile device names.
      * @category Device Detection
      */
     mobileNames () {
-        return ["android", "webos", "iphone", "ipad", "ipod", "blackBerry", "windows phone"];  
+        return ["android", "webos", "iphone", "ipad", "ipod", "blackBerry", "windows phone"];
     }
 
     /**
@@ -197,8 +197,8 @@
     agentIsSafari () {
         const vendor = navigator.vendor;
         const agent = navigator.userAgent;
-        
-        const isSafari = !Type.isNullOrUndefined(vendor) && 
+
+        const isSafari = !Type.isNullOrUndefined(vendor) &&
                 vendor.contains("Apple") &&
                 !Type.isNullOrUndefined(agent) &&
                 !agent.contains("CriOS") &&
@@ -215,13 +215,13 @@
         const isChrome = Boolean(window.chrome);
         return isChrome;
     }
-    
+
     /**
      * @description Checks if the device is a mobile device.
      * @returns {boolean} True if the device is mobile, false otherwise.
      * @category Device Detection
      */
-    isOnMobile () { 
+    isOnMobile () {
         const agent = this.agent();
         const match = this.mobileNames().detect((name) => { return agent.contains(name); });
         return match !== null;
@@ -233,7 +233,7 @@
      * @category Device Detection
      */
     isTouchDevice () {
-        let result = false; 
+        let result = false;
         if ("ontouchstart" in window) { result = true; }
         if (navigator.maxTouchPoints) { result = true; }
         return result;
@@ -247,7 +247,7 @@
     urlHash () {
         return decodeURI(window.location.hash.substr(1));
     }
-    
+
     /**
      * @description Sets the URL hash.
      * @param {string} aString - The string to set as the URL hash.
@@ -271,7 +271,7 @@
         if (this.urlHash() !== aString) {
             const hash = encodeURI(aString);
             const newUrl = `${window.location.pathname}#${hash}`;
-            history.pushState(null, '', newUrl);
+            history.pushState(null, "", newUrl);
         }
         return this;
     }
@@ -284,12 +284,12 @@
 
     pushSearchParam (key, value) {
         const params = new URLSearchParams(window.location.search);
-        params.set(key, value); 
+        params.set(key, value);
         const newUrl = `${window.location.pathname}?${params.toString()}`;
-        history.replaceState(null, '', newUrl); // Or use pushState to keep history
+        history.replaceState(null, "", newUrl); // Or use pushState to keep history
         return this;
     }
-    
+
     /**
      * @description Gets a description dictionary of the browser window.
      * @returns {Object} A dictionary containing agent, size, and isOnMobile information.
@@ -319,7 +319,7 @@
      * @category URL Management
      */
     rootUrl () {
-        const urlWithoutPathOrQuery = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        const urlWithoutPathOrQuery = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ":" + window.location.port : "");
         return urlWithoutPathOrQuery;
     }
 
@@ -332,8 +332,8 @@
         const url = new URL(window.location.href);
         let basePath = url.pathname;
 
-        if (basePath.endsWith('/index.html')) {
-            basePath = basePath.substring(0, basePath.lastIndexOf('index.html'));
+        if (basePath.endsWith("/index.html")) {
+            basePath = basePath.substring(0, basePath.lastIndexOf("index.html"));
         }
 
         return url.origin + basePath;
@@ -373,7 +373,7 @@
     title () {
         return document.title;
     }
-    
+
     /**
      * @description Gets the active DOM view.
      * @returns {DOMView|null} The active DOM view or null if not found.
@@ -413,7 +413,7 @@
     onPageShow (event) {
         this.postNoteNamed("onPageShow", event);
     }
-    
+
     /**
      * @description Handles the page hide event.
      * @param {Event} event - The page hide event.

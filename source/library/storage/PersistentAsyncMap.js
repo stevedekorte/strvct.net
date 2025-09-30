@@ -6,7 +6,7 @@
 
 /**
  * An async Map wrapper for IndexedDB.
- * 
+ *
  * @class PersistentAsyncMap
  * @extends ProtoClass
  * @classdesc Provides a persistent asynchronous map implementation using IndexedDB.
@@ -43,11 +43,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIdb(SvIndexedDbFolder.clone())
-        this.setIsDebugging(false)
+        super.init();
+        this.setIdb(SvIndexedDbFolder.clone());
+        this.setIsDebugging(false);
     }
-    
+
     /**
      * Assert that the map is accessible and open.
      * @throws {Error} If the map is not open.
@@ -55,8 +55,8 @@
      * @category Validation
      */
     assertAccessible () {
-        super.assertAccessible()
-        this.assertOpen()
+        super.assertAccessible();
+        this.assertOpen();
     }
 
     /**
@@ -65,7 +65,7 @@
      * @category State
      */
     isOpen () {
-        return this.idb().isOpen()
+        return this.idb().isOpen();
     }
 
     /**
@@ -74,7 +74,7 @@
      * @category Operations
      */
     open () {
-        throw new Error(this.svType() + " synchronous open not supported")
+        throw new Error(this.svType() + " synchronous open not supported");
     }
 
     /**
@@ -84,10 +84,10 @@
      */
     close () {
         if (this.isOpen()) {
-            this.idb().close()
-            this.setIsOpen(false)
+            this.idb().close();
+            this.setIsOpen(false);
         }
-        return this
+        return this;
     }
 
     /**
@@ -102,7 +102,7 @@
         await this.idb().promiseOpen();
         await this.promiseOnOpen() ;
     }
-	
+
     /**
      * Perform actions after opening the map (can be overridden).
      * @returns {Promise<void>}
@@ -111,7 +111,7 @@
     promiseOnOpen () {
         //return this.promiseClear()
     }
-	
+
     /**
      * Assert that the map is open.
      * @throws {Error} If the map is not open.
@@ -119,10 +119,10 @@
      * @category Validation
      */
     assertOpen () {
-        assert(this.isOpen())
-        return this
+        assert(this.isOpen());
+        return this;
     }
-	
+
     /**
      * Clear all data in the map.
      * @returns {Promise<void>}

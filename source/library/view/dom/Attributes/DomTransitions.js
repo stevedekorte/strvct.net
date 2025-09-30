@@ -9,21 +9,21 @@
  * @extends ProtoClass
  * @classdesc
  * DomTransition
- *         
+ *
  * Example use in a DomView:
  *
  *         aDomView.transitions().at("opacity").updateDuration("0.3s")
  *
  * updates the opacity time without changing other transition settings
- *        
+ *
  *
  * NOTES:
  *
  *     CSS transition value example:
- *     
- *         transition: width 2s linear 1s, height 2s ease 1s; 
- *     
- *     1st time value is the duration, 
+ *
+ *         transition: width 2s linear 1s, height 2s ease 1s;
+ *
+ *     1st time value is the duration,
  *     2nd time value is the delay
  */
 (class DomTransitions extends ProtoClass {
@@ -106,19 +106,19 @@
      * @category Synchronization
      */
     syncFromDomView () {
-        this.setProperties({})
+        this.setProperties({});
 
-        const s = this.domView().transition()
+        const s = this.domView().transition();
 
         if (s !== "") {
-            const transitionStrings = s.split(",")
+            const transitionStrings = s.split(",");
 
             transitionStrings.forEach((tString) => {
-                const t = DomTransition.clone().setFromString(tString)
-                this.properties()[t.property()] = t
-            })
+                const t = DomTransition.clone().setFromString(tString);
+                this.properties()[t.property()] = t;
+            });
         }
 
-        return this
+        return this;
     }
 }.initThisClass());

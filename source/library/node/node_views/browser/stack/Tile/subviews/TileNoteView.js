@@ -27,15 +27,15 @@
         this.setTextAlign("right");
         this.setTextOverflow("ellipsis");
         return this;
-    } 
-    
+    }
+
     /**
      * @description Sets the background color of the TileNoteView to transparent.
      * @param {string} s - The color string (ignored in this implementation).
      * @returns {TileNoteView} The current instance.
      * @category Styling
      */
-    setBackgroundColor (/*s*/) { // HACK to avoid theme colors 
+    setBackgroundColor (/*s*/) { // HACK to avoid theme colors
         super.setBackgroundColor("tranparent");
         return this;
     }
@@ -52,12 +52,12 @@
      * @category Animation
      */
     setTransition (s) {
-        
+
         return super.setTransition(s);
     }
 
     onClick (/*event*/) {
-        
+
         return this;
     }
 

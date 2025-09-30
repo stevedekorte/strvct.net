@@ -15,7 +15,7 @@
      * @category Storage
      */
     refsPidsForJsonStore (puuids = new Set()) {
-        return puuids
+        return puuids;
     }
 
 }).initThisCategory();

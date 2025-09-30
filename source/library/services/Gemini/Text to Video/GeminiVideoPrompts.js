@@ -8,7 +8,7 @@
   * @classdesc Represents a collection of Gemini video prompts for text-to-video conversion.
   */
 (class GeminiVideoPrompts extends SvSummaryNode {
-    
+
     /**
       * Initializes the prototype slots for the OpenAiImagePrompts class.
       * @description Sets up the storage, subnode classes, and other properties for the OpenAiImagePrompts node.

@@ -8,18 +8,18 @@
  * @class WebSocketListener
  * @extends EventSetListener
  * @classdesc Listens to a set of web socket events.
- * 
+ *
  * NOTES:
- * 
+ *
  * MessageEvent contains:
  * - data
  * - origin
- * - lastEventId 
- * - source 
+ * - lastEventId
+ * - source
  * - ports
  */
 (class WebSocketListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots for the WebSocketListener.
      * @category Initialization
@@ -34,8 +34,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -48,7 +48,7 @@
         this.addEventNameAndMethodName("close", "onClose");
         this.addEventNameAndMethodName("error", "onError");
         this.addEventNameAndMethodName("message", "onMessage");
-        return this
+        return this;
     }
 
 }.initThisClass());

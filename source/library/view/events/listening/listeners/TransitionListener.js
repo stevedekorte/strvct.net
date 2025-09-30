@@ -10,7 +10,7 @@
  * @classdesc Listens to a set of animation transition events.
  */
 (class TransitionListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots for the TransitionListener class.
      * @returns {void}
@@ -26,8 +26,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -40,7 +40,7 @@
         this.addEventNameAndMethodName("transitionstart", "onTransitionStart");
         this.addEventNameAndMethodName("transitioncancel", "onTransitionCancel");
         this.addEventNameAndMethodName("transitionend", "onTransitionEnd");
-        return this
+        return this;
     }
-    
+
 }.initThisClass());

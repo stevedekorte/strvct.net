@@ -10,8 +10,8 @@
  * @classdesc Extends Tile with gesture handling functionality.
  */
 (class Tile_gestures extends Tile {
-    
-    // --- tap gesture -------- 
+
+    // --- tap gesture --------
 
     /**
      * @description Determines if the tile accepts tap begin gesture.
@@ -30,7 +30,7 @@
      * @category Gesture
      */
     onTapComplete (aGesture) {
-        this.setLastTapDate(new Date())
+        this.setLastTapDate(new Date());
         const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
 
         const methodName = "just" + keyModifiers.join("") + "Tap";
@@ -79,7 +79,7 @@
      */
     justAlternateTap () {
         this.logDebug(".justInspect()");
-        if (this.node().nodeCanInspect()) { 
+        if (this.node().nodeCanInspect()) {
             this.setIsInspecting(true);
             this.column().didTapItem(this);
         }
@@ -111,7 +111,7 @@
         }
         return false;
     }
-    
+
     /**
      * @description Handles the beginning of a long press gesture.
      * @param {Object} aGesture - The gesture object.
@@ -142,8 +142,8 @@
         const t1 = this.lastTapDate();
         const t2 = new Date();
         if (t1) {
-            const dtSeconds = (t2.getTime() - t1.getTime())/1000;
-            
+            const dtSeconds = (t2.getTime() - t1.getTime()) / 1000;
+
             if (dtSeconds < maxDt) {
                 isTapTapHold = true;
             }
@@ -165,7 +165,7 @@
             this.column().unselectAllTilesExcept(this);
         }
 
-        this.activate()
+        this.activate();
         const dv = DragView.clone().setItems(this.column().selectedTiles()).setSource(this.column());
 
         if (isTapLongPress) {
@@ -173,7 +173,7 @@
         } else {
             dv.setDragOperation("move");
         }
-        
+
         dv.openWithEvent(longPressGesture.currentEvent());
     }
 

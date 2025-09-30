@@ -10,11 +10,11 @@
  * @classdesc YouTubeService class for managing YouTube-related functionality.
  */
 (class YouTubeService extends SvStorableNode {
-  /**
+    /**
    * @description Initializes the prototype slots for the YouTubeService.
    * @category Initialization
    */
-  initPrototypeSlots () {
+    initPrototypeSlots () {
     /*
     {
       const slot = this.newSlot("musicLibrary", null)
@@ -31,30 +31,30 @@
     }
     */
 
-    /**
+        /**
      * @member {YouTubeAudioPlayer} youTubeAudioPlayer - The YouTube audio player instance.
      * @category Audio
      */
-    {
-        const slot = this.newSlot("youTubeAudioPlayer", null)
-        slot.setShouldStoreSlot(true);
-        slot.setFinalInitProto(YouTubeAudioPlayer);
-        slot.setIsSubnode(true);
-        slot.setSlotType("YouTubeAudioPlayer");
+        {
+            const slot = this.newSlot("youTubeAudioPlayer", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(YouTubeAudioPlayer);
+            slot.setIsSubnode(true);
+            slot.setSlotType("YouTubeAudioPlayer");
+        }
+
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
     }
 
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-  }
-
-  /**
+    /**
    * @description Initializes the YouTubeService instance.
    * @category Initialization
    */
-  init () {
-    super.init();
-    this.setTitle("YouTube");
-    this.setSubtitle("music service");
-  }
+    init () {
+        super.init();
+        this.setTitle("YouTube");
+        this.setSubtitle("music service");
+    }
 
 }).initThisClass();

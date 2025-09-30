@@ -40,7 +40,7 @@
  *         rotationInDegrees // difference between initial angle between 1st two fingers down and their current angle
  *
  *     scale:
- *         scale // current distance between 1st to fingers down divided by their intitial distance  
+ *         scale // current distance between 1st to fingers down divided by their intitial distance
  */
 (class OrientGestureRecognizer extends GestureRecognizer {
 
@@ -59,15 +59,15 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses())
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
 
-        this.setMinFingersRequired(2)
-        this.setMaxFingersAllowed(4)
-        this.setMinDistToBegin(10)
+        this.setMinFingersRequired(2);
+        this.setMaxFingersAllowed(4);
+        this.setMinDistToBegin(10);
 
-        this.setIsDebugging(false)
-        return this
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -76,17 +76,17 @@
      * @category Event Handling
      */
     onDown (event) {
-        super.onDown(event)
+        super.onDown(event);
         //console.log(this.shortTypeId() + ".onDown() this.isPressing() = ", this.isPressing())
 
         if (!this.isPressing()) {
-            const downCount = this.numberOfFingersDown()
+            const downCount = this.numberOfFingersDown();
             if (downCount >= this.minFingersRequired() &&
                 downCount <= this.maxFingersAllowed()
             ) {
-                this.setIsPressing(true)
+                this.setIsPressing(true);
                 //this.setBeginEvent(event)
-                this.startDocListeners()
+                this.startDocListeners();
             }
         }
     }
@@ -97,25 +97,25 @@
      * @category Event Handling
      */
     onMove (event) {
-        super.onMove(event)
+        super.onMove(event);
 
         if (this.isPressing()) {
             if (this.canBegin()) {
                 if (this.requestActivationIfNeeded()) {
-                    this.sendBeginMessage()
+                    this.sendBeginMessage();
                 }
             }
 
             if (this.activePoints().length < this.minFingersRequired()) {
-                this.onUp(event)
-                return
+                this.onUp(event);
+                return;
             }
 
             if (this.isActive()) {
                 if (this.activePoints().length >= this.minFingersRequired()) {
-                    this.sendMoveMessage()
+                    this.sendMoveMessage();
                 } else {
-                    this.onUp(event)
+                    this.onUp(event);
                 }
             }
         }
@@ -127,14 +127,14 @@
      * @category Event Handling
      */
     onUp (event) {
-        super.onUp(event)
+        super.onUp(event);
 
         if (this.isPressing()) {
-            this.setIsPressing(false)
+            this.setIsPressing(false);
             if (this.isActive()) {
-                this.sendCompleteMessage()
+                this.sendCompleteMessage();
             }
-            this.didFinish()
+            this.didFinish();
         }
     }
 
@@ -145,10 +145,10 @@
      */
     cancel () {
         if (this.isActive()) {
-            this.sendCancelledMessage()
+            this.sendCancelledMessage();
         }
-        this.didFinish()
-        return this
+        this.didFinish();
+        return this;
     }
 
     /**
@@ -157,11 +157,11 @@
      * @category Gesture Control
      */
     didFinish () {
-        super.didFinish()
-        this.setIsPressing(false)
-        this.deactivate()
-        this.stopDocListeners()
-        return this
+        super.didFinish();
+        this.setIsPressing(false);
+        this.deactivate();
+        this.stopDocListeners();
+        return this;
     }
 
     /**
@@ -170,8 +170,8 @@
      * @category Point Calculation
      */
     downPoints () {
-        const p = this.pointsForEvent(this.downEvent())
-        return [p[0], p[1]]
+        const p = this.pointsForEvent(this.downEvent());
+        return [p[0], p[1]];
     }
 
     /**
@@ -182,9 +182,9 @@
      */
     activeForEvent (event) {
         // looks for two points whose id matchs those of the two down points
-        const points = this.pointsForEvent(event)
-        const ids = this.downPoints().map(p => p.id())
-        return points.select(p => ids.contains(p.id()))
+        const points = this.pointsForEvent(event);
+        const ids = this.downPoints().map(p => p.id());
+        return points.select(p => ids.contains(p.id()));
     }
 
     /**
@@ -193,7 +193,7 @@
      * @category Point Calculation
      */
     beginPoints () {
-        return this.activeForEvent(this.beginEvent())
+        return this.activeForEvent(this.beginEvent());
     }
 
     /**
@@ -202,7 +202,7 @@
      * @category Point Calculation
      */
     lastPoints () {
-        return this.activeForEvent(this.lastEvent())
+        return this.activeForEvent(this.lastEvent());
     }
 
     /**
@@ -211,7 +211,7 @@
      * @category Point Calculation
      */
     activePoints () { // current points that were in down points
-        return this.activeForEvent(this.currentEvent())
+        return this.activeForEvent(this.currentEvent());
     }
 
     /**
@@ -221,7 +221,7 @@
      * @category Point Calculation
      */
     centerForPoints (p) {
-        return p[0].midpointTo(p[1])
+        return p[0].midpointTo(p[1]);
     }
 
     /**
@@ -230,7 +230,7 @@
      * @category Position Calculation
      */
     downCenterPosition () {
-        return this.centerForPoints(this.downPoints())
+        return this.centerForPoints(this.downPoints());
     }
 
     /**
@@ -239,7 +239,7 @@
      * @category Position Calculation
      */
     beginCenterPosition () {
-        return this.centerForPoints(this.beginPoints())
+        return this.centerForPoints(this.beginPoints());
     }
 
     /**
@@ -248,7 +248,7 @@
      * @category Position Calculation
      */
     currentCenterPosition () {
-        return this.centerForPoints(this.activePoints())
+        return this.centerForPoints(this.activePoints());
     }
 
     /**
@@ -257,7 +257,7 @@
      * @category Position Calculation
      */
     diffPosition () {
-        return this.currentCenterPosition().subtract(this.beginCenterPosition())
+        return this.currentCenterPosition().subtract(this.beginCenterPosition());
     }
 
     /**
@@ -267,7 +267,7 @@
      * @category Angle Calculation
      */
     angleInDegreesForPoints (p) {
-        return p[0].angleInDegreesTo(p[1])
+        return p[0].angleInDegreesTo(p[1]);
     }
 
     /**
@@ -276,7 +276,7 @@
      * @category Angle Calculation
      */
     downAngleInDegress () {
-        return this.angleInDegreesForPoints(this.downPoints())
+        return this.angleInDegreesForPoints(this.downPoints());
     }
 
     /**
@@ -285,7 +285,7 @@
      * @category Angle Calculation
      */
     beginAngleInDegress () {
-        return this.angleInDegreesForPoints(this.beginPoints())
+        return this.angleInDegreesForPoints(this.beginPoints());
     }
 
     /**
@@ -294,7 +294,7 @@
      * @category Angle Calculation
      */
     activeAngleInDegress () {
-        return this.angleInDegreesForPoints(this.activePoints())
+        return this.angleInDegreesForPoints(this.activePoints());
     }
 
     /**
@@ -316,7 +316,7 @@
      * @category Spread Calculation
      */
     spreadForPoints (p) {
-        return p[0].distanceFrom(p[1])
+        return p[0].distanceFrom(p[1]);
     }
 
     /**
@@ -326,7 +326,7 @@
      */
     downSpread () {
         // initial distance between first two fingers down
-        return this.spreadForPoints(this.downPoints())
+        return this.spreadForPoints(this.downPoints());
     }
 
     /**
@@ -336,7 +336,7 @@
      */
     beginSpread () {
         // initial distance between first two fingers down
-        return this.spreadForPoints(this.beginPoints())
+        return this.spreadForPoints(this.beginPoints());
     }
 
     /**
@@ -346,7 +346,7 @@
      */
     currentSpread () {
         // current distance between first two fingers down
-        return this.spreadForPoints(this.activePoints())
+        return this.spreadForPoints(this.activePoints());
     }
 
     /**
@@ -357,7 +357,7 @@
     spread () {
         const s = this.currentSpread() - this.beginSpread();
         //console.log("spread = " + s + " = " + this.currentSpread() + " - " + this.beginSpread() )
-        return s
+        return s;
     }
 
     /**
@@ -366,8 +366,8 @@
      * @category Spread Calculation
      */
     downSpreadX () {
-        const p = this.downPoints()
-        return Math.abs(p[0].x() - p[1].x())
+        const p = this.downPoints();
+        return Math.abs(p[0].x() - p[1].x());
     }
 
     /**
@@ -376,8 +376,8 @@
      * @category Spread Calculation
      */
     downSpreadY () {
-        const p = this.downPoints()
-        return Math.abs(p[0].y() - p[1].y())
+        const p = this.downPoints();
+        return Math.abs(p[0].y() - p[1].y());
     }
 
     /**
@@ -386,8 +386,8 @@
      * @category Spread Calculation
      */
     currentSpreadX () {
-        const p = this.activePoints()
-        return Math.abs(p[0].x() - p[1].x())
+        const p = this.activePoints();
+        return Math.abs(p[0].x() - p[1].x());
     }
 
     /**
@@ -396,8 +396,8 @@
      * @category Spread Calculation
      */
     currentSpreadY () {
-        const p = this.activePoints()
-        return Math.abs(p[0].y() - p[1].y())
+        const p = this.activePoints();
+        return Math.abs(p[0].y() - p[1].y());
     }
 
     /**
@@ -406,7 +406,7 @@
      * @category Spread Calculation
      */
     spreadX () {
-        return this.currentSpreadX() - this.downSpreadX()
+        return this.currentSpreadX() - this.downSpreadX();
     }
 
     /**
@@ -415,7 +415,7 @@
      * @category Spread Calculation
      */
     spreadY () {
-        return this.currentSpreadY() - this.downSpreadY()
+        return this.currentSpreadY() - this.downSpreadY();
     }
 
     /**
@@ -426,7 +426,7 @@
     scale () {
         const s = this.currentSpread() / this.beginSpread();
         //console.log("scale = " + s + " = " + this.currentSpread() + "/" + this.beginSpread() )
-        return s
+        return s;
     }
 
     /**
@@ -435,14 +435,14 @@
      * @category Debugging
      */
     debugJson () {
-        const dp = this.diffPosition()
+        const dp = this.diffPosition();
         return {
             id: this.svTypeId(),
             dx: dp.x(),
             dy: dp.y(),
             scale: this.scale(),
             rotation: this.rotationInDegrees()
-        }
+        };
     }
 
     /**
@@ -450,7 +450,7 @@
      * @category Debugging
      */
     show () {
-        console.log(this.debugJson())
+        console.log(this.debugJson());
     }
 
 }.initThisClass());

@@ -5,19 +5,19 @@
 /**
  * @class ScreenEdgePanGestureRecognizer
  * @extends PanGestureRecognizer
- * @classdesc Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge. 
+ * @classdesc Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge.
  * Don't use this class directly - instead use its subclass for the edge you're interested in.
- * 
+ *
  * Delegate messages:
- * 
+ *
  *     onScreenEdgePanBegin
  *     onScreenEdgePanMove
  *     onScreenEdgePanComplete
  *     onScreenEdgePanCancelled
- * 
+ *
  * For distance, ask the target for its frameInViewport and compare with
  * event's posInWindow:
- * 
+ *
  *     const frame = target.frameInDocument()
  *     frame.top()
  *     frame.bottom()
@@ -27,7 +27,7 @@
 "use strict";
 
 (class ScreenEdgePanGestureRecognizer extends PanGestureRecognizer { // TODO abstract PanEdgeGestureRecognizer
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -57,11 +57,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses()) 
-        this.setMinDistToBegin(5)
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
+        this.setMinDistToBegin(5);
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -70,8 +70,8 @@
      * @category Lifecycle
      */
     start () {
-        this.startDocListeners() // only want to listen to the document
-        return this
+        this.startDocListeners(); // only want to listen to the document
+        return this;
     }
 
     /**
@@ -80,9 +80,9 @@
      * @category Lifecycle
      */
     didFinish () {
-        super.didFinish()
-        this.setIsPressing(false)
-        return this
+        super.didFinish();
+        this.setIsPressing(false);
+        return this;
     }
 
     /**
@@ -101,11 +101,11 @@
      * @category Calculation
      */
     distanceFromEdge () {
-        const name = this.edgeName()
-        assert(name)
-        const d = this.currentEdgeDistances()[name]
-        assertDefined(d)
-        return d
+        const name = this.edgeName();
+        assert(name);
+        const d = this.currentEdgeDistances()[name];
+        assertDefined(d);
+        return d;
     }
 
     /**
@@ -114,7 +114,7 @@
      * @category Configuration
      */
     maxEdgeDistance () {
-        return 100000
+        return 100000;
     }
 
     /**
@@ -123,14 +123,14 @@
      * @category Calculation
      */
     currentEdgeDistances () {
-        const max = this.maxEdgeDistance()
-        const points = this.allPoints()
+        const max = this.maxEdgeDistance();
+        const points = this.allPoints();
         return {
             top:    points.minValue(p => p.distFromTopOfViewport(),    max),
             bottom: points.minValue(p => p.distFromBottomOfViewport(), max),
             left:   points.minValue(p => p.distFromLeftOfViewport(),   max),
             right:  points.minValue(p => p.distFromRightOfViewport(),  max)
-        }
+        };
     }
-    
+
 }.initThisClass());

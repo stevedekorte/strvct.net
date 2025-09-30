@@ -5,10 +5,10 @@
  * @class NavView
  * @extends NodeView
  * @classdesc NavView is a component for navigation in a stack-based layout. It includes header, footer, and scrollable content areas.
- * 
- * 
+ *
+ *
  * Notes: NavView instances have their width set in several ways:
- * 
+ *
  * 1. In makeOrientationRight(): Sets default width using minAndMaxWidth("17em")
  * 2. In targetWidth(): Calculates desired width starting from 400px, using the node's minimum tile width as a reference
  * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
@@ -26,7 +26,7 @@
             const slot = this.newSlot("stackView", null);
             slot.setSlotType("StackView");
         }
-            
+
         /**
          * @member {DomView} headerView - A subview placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
          * @category Layout
@@ -82,7 +82,7 @@
         }
 
         /**
-         * @member {String} beforeEdgePanBorderBottom - The border style before a bottom edge pan gesture 
+         * @member {String} beforeEdgePanBorderBottom - The border style before a bottom edge pan gesture
          * @private
          * @category State
          */
@@ -92,7 +92,7 @@
         }
 
         /**
-         * @member {String} beforeEdgePanBorderRight - The border style before a right edge pan gesture - 
+         * @member {String} beforeEdgePanBorderRight - The border style before a right edge pan gesture -
          * @private
          * @category State
          */
@@ -107,7 +107,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("clickToAddView", null);  
+            const slot = this.newSlot("clickToAddView", null);
             slot.setSlotType("DomView");
         }
     }
@@ -153,7 +153,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setDisplay("flex");
         this.setPosition("relative");
         this.setFlexDirection("column");
@@ -191,7 +191,7 @@
         this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()); // for adjusting height
 
         this.setupClickToAddViewIfNeeded();
-        return this
+        return this;
     }
 
     /**
@@ -281,7 +281,7 @@
         if (node) {
             const hint = node.nodeNavBorderHint();
             if (Type.isBoolean(hint)) {
-                return hint
+                return hint;
             }
         }
         return true;
@@ -327,7 +327,7 @@
             //this.setMinAndMaxWidth("17em");
             const targetW = this.targetWidth();
             const windowW = WebBrowserWindow.shared().width();
-            
+
             // If our target width exceeds window width, constrain to window
             if (targetW >= windowW) {
                 this.setMinWidth("17em");
@@ -346,9 +346,9 @@
                     this.setMinAndMaxWidth(targetW);
                 }
             }
-            
+
         }
-        
+
         this.setMinAndMaxHeight("100%");
 
         // Only show border when not on mobile
@@ -388,7 +388,7 @@
 
         if (this.node()) {
             if (this.node().nodeFillsRemainingWidth()) {
-               // this.setMinAndMaxHeight("100%")
+                // this.setMinAndMaxHeight("100%")
             }
         }
 
@@ -422,7 +422,7 @@
      * @category Node Management
      */
     setNode (aNode) {
-        super.setNode(aNode)
+        super.setNode(aNode);
         this.tilesView().setNode(aNode);
 
         if (aNode.headerNode) {
@@ -473,7 +473,7 @@
                     this.setMinWidth(w);
                 }
                 this.setMinAndMaxHeight("100%");
-            } 
+            }
         } else {
             const h = this.node().nodeMinTileHeight();
             if (h && !Type.isNullOrUndefined(h)) {
@@ -524,7 +524,7 @@
     collapse () {
         if (!this.isCollapsed()) {
             this.hideDisplay();
-           this.setIsCollapsed(true);
+            this.setIsCollapsed(true);
         }
         assert(this.isDisplayHidden());
     }
@@ -551,7 +551,7 @@
             const targetW = this.targetWidth();
             const windowW = WebBrowserWindow.shared().width();
             const isLastNavView = this.stackView() && !this.stackView().nextStackView();
-            
+
             // If our target width exceeds window width, constrain to window
             if (targetW >= windowW) {
                 this.setMinWidth("17em");

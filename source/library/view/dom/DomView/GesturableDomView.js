@@ -10,7 +10,7 @@
  * @classdesc GesturableDomView class for handling gestures
  */
 (class GesturableDomView extends VisibleDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the GesturableDomView
      * @category Initialization
@@ -29,7 +29,7 @@
             slot.setSlotType("Array");
         }
 
-        // default gestures with typical settings 
+        // default gestures with typical settings
         {
             /**
              * @member {TapGestureRecognizer} defaultTapGesture - Default tap gesture recognizer
@@ -182,7 +182,7 @@
      * @returns {TapGestureRecognizer} The default double tap gesture recognizer
      * @category Gesture Management
      */
-    addDefaultDoubleTapGesture () { 
+    addDefaultDoubleTapGesture () {
         if (!this.defaultDoubleTapGesture()) {
             const gr = this.newDoubleTapGestureRecognizer();
             this.setDefaultDoubleTapGesture(gr);
@@ -196,7 +196,7 @@
      * @returns {GesturableDomView} The current instance
      * @category Gesture Management
      */
-    removeDefaultDoubleTapGesture () { 
+    removeDefaultDoubleTapGesture () {
         if (this.defaultDoubleTapGesture()) {
             this.removeGestureRecognizer(this.defaultDoubleTapGesture());
             this.setDefaultDoubleTapGesture(null);

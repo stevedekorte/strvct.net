@@ -42,7 +42,7 @@
 
             for (const [name, descriptor] of Object.entries(descriptors)) {
                 if (processedMethods.has(name)) continue;
-                if (typeof descriptor.value === 'function') {
+                if (typeof descriptor.value === "function") {
                     methodSet.add(descriptor.value);
                 }
                 processedMethods.add(name);
@@ -63,7 +63,7 @@
         const methodSet = this.getInheritedMethodSet().filter(method => method.isToolable && method.isToolable());
         thisClass._inheritedToolMethodSet = methodSet;
         return methodSet;
-      }
+    }
 
     /**
      * Creates a new subclass with the given name.
@@ -74,26 +74,26 @@
      */
     static newSubclassWithName (newClassName) {
         const newClass = class extends this {
-          constructor (...args) {
-            super(...args);
-          }
+            constructor (...args) {
+                super(...args);
+            }
         };
-        Object.defineProperty(newClass, 'name', { value: newClassName });
+        Object.defineProperty(newClass, "name", { value: newClassName });
         //SvGlobals.globals()[newClassName] = newClass; // initThisClass() will do this, don't do it here so it doesn't throw an error
 
         // NOTE: the caller will need to add any slots (or add an initPrototype method) and then call initThisClass() on the new class
         return newClass;
-      }
+    }
 
-   // --- clone ---
+    // --- clone ---
 
-   /**
+    /**
     * Performs pre-clone operations.
     * @returns {ProtoClass} The pre-cloned object.
     * @category Cloning
     * @static
     */
-   static preClone () {
+    static preClone () {
         if (this.isSingleton() && this.hasShared()) {
             // kinda weird dealing with shared in clone like this
             // do we do this to deal with deserialization of singletons?
@@ -107,7 +107,7 @@
 
         return obj;
     }
-    
+
     /**
      * Creates a clone of this class instance.
      * @returns {ProtoClass} The cloned object.
@@ -132,7 +132,7 @@
      * @static
      */
     static sharedContext () {
-        return this
+        return this;
     }
 
     /**
@@ -142,10 +142,10 @@
      * @static
      */
     static hasShared () {
-        return Object.hasOwn(this.sharedContext(), "_shared")
+        return Object.hasOwn(this.sharedContext(), "_shared");
         //return !Type.isNullOrUndefined(this.sharedContext()._shared)
     }
-    
+
     /**
      * Gets the shared instance of this class.
      * @returns {ProtoClass} The shared instance.
@@ -159,7 +159,7 @@
             console.warn(errorMessage);
             /*
                 // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
-                
+
                 static initClass () {
                     this.setIsSingleton(true)
                     return this
@@ -169,7 +169,7 @@
         }
 
         if (!this.hasShared()) {
-            this.setShared(this.clone())
+            this.setShared(this.clone());
         }
         //assert(this.isKindOf(this._shared.thisClass()), this.svType() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().svType());
         return this._shared;
@@ -279,7 +279,7 @@
         children.forEach(child => {
             results.push(child);
             child.descendantClasses(results);
-        })
+        });
         return results;
     }
 
@@ -338,7 +338,7 @@
         const sortedSubclasses = this.subclasses().sort((a, b) => a.svType().localeCompare(b.svType()));
         const subclassLines = sortedSubclasses.map((subclass) => {
             return subclass.subclassesDescription(level + 1, traversed);
-        })
+        });
         lines.appendItems(subclassLines);
         return lines.join("\n");
     }
@@ -353,7 +353,7 @@
      */
     superHasMethodName (methodName) {
         const superProto = Object.getPrototypeOf(Object.getPrototypeOf(this));
-        return typeof superProto?.[methodName] === 'function';
+        return typeof superProto?.[methodName] === "function";
     }
 
     /**
@@ -445,7 +445,7 @@
         assert(this.isPrototype());
 
         const slot = this.ownSlotNamed(slotName);
-        
+
         if (slot) {
             return slot;
         }
@@ -472,7 +472,7 @@
         if (slot) {
             return slot;
         }
-        
+
         return null;
     }
 
@@ -507,12 +507,12 @@
      */
     detectSlot (fn) { // returns undefined if no match
         // TODO: Optimize - this should stop search on match
-        let matchingSlot = undefined
+        let matchingSlot = undefined;
         this.forEachSlot(slot =>  {
             if (matchingSlot === undefined && fn(slot)) {
                 matchingSlot = slot;
             }
-        })
+        });
         return matchingSlot;
     }
 
@@ -560,7 +560,7 @@
      * @throws {Error} If the slot already exists.
      * @category Slot Creation
      */
-    newSlot (slotName, initialValue, allowOnInstance=false) {
+    newSlot (slotName, initialValue, allowOnInstance = false) {
         /*
         if (Reflect.ownKeys(this).contains(slotName)) {
             const msg = "WARNING: " + this.svType() + "." + slotName + " slot already exists"
@@ -571,7 +571,7 @@
         if (this.hasSlot(slotName)) {
             // hack to avoid error for methods like Set isSubsetOf, which exist on only on some browsers
             // so we define ourselves.
-            if(typeof(initialValue) === "function" && this[slotName + "_isOptional"] !== undefined) {
+            if (typeof(initialValue) === "function" && this[slotName + "_isOptional"] !== undefined) {
                 return null;
             }
             const msg = this.svType() + " newSlot('" + slotName + "') - slot already exists";
@@ -596,7 +596,7 @@
      * @throws {Error} If the slot doesn't exist to be overridden.
      * @category Slot Creation
      */
-    overrideSlot (slotName, initialValue, allowOnInstance=false) {
+    overrideSlot (slotName, initialValue, allowOnInstance = false) {
         const oldSlot = this.getSlot(slotName);
         if (Type.isUndefined(oldSlot)) {
             const msg = this.svType() + " newSlot('" + slotName + "') - no existing slot to override";
@@ -618,7 +618,7 @@
      * @returns {Slot} The newly created slot.
      * @category Slot Creation
      */
-    justNewSlot (slotName, initialValue, allowOnInstance=false) { // private
+    justNewSlot (slotName, initialValue, allowOnInstance = false) { // private
         if (!allowOnInstance) {
             assert(this.isPrototype());
         }
@@ -645,7 +645,7 @@
      */
     assertProtoSlotsHaveType () {
         this.slotsMap().forEachKV((slotName, slot) => {
-            assert(Type.isString(slot.slotType()), () => { return this.svType() + " slot " + slotName + " has no type" });
+            assert(Type.isString(slot.slotType()), () => { return this.svType() + " slot " + slotName + " has no type"; });
         });
     }
 
@@ -801,7 +801,7 @@
         }
     }
     */
-   
+
     /**
      * Handles the will get slot event.
      * @category Slot Hooks
@@ -861,7 +861,7 @@
      * Initializes the instance.
      * @category Initialization
      */
-    init () { 
+    init () {
         super.init();
         // subclasses should override to do initialization
         //assert(this.isInstance());
@@ -872,7 +872,7 @@
      * Initializes the slots of the instance.
      * @category Initialization
      */
-    initializeSlots () {  
+    initializeSlots () {
         this.thisPrototype().allSlotsMap().forEach(slot => {
             slot.onInstanceInitSlot(this);
         });
@@ -903,9 +903,9 @@
             slot.onInstanceFinalInitSlot(this);
         });
         */
-       this.thisPrototype().allSlotsMap().forEach(slot => {
-        slot.onInstanceFinalInitSlot(this);
-       });
+        this.thisPrototype().allSlotsMap().forEach(slot => {
+            slot.onInstanceFinalInitSlot(this);
+        });
     }
 
     /**
@@ -1031,7 +1031,7 @@
     }
 
     log (...args) {
-        const s = args.map(String).join('');
+        const s = args.map(String).join("");
         console.log(this.logPrefix() + " " + s);
     }
 
@@ -1062,15 +1062,15 @@
             console.log("DEBUG: " + this.logPrefix() + " " + s);
         }
         return this;
-    } 
+    }
 
     logWarn (...args) {
-        const s = args.map(String).join('');
+        const s = args.map(String).join("");
         console.warn("**WARNING**: " + this.logPrefix() + " " + s);
-      }
-    
+    }
+
     logError (...args) {
-        const s = args.map(String).join('');
+        const s = args.map(String).join("");
         console.error("**ERROR**: " + this.logPrefix() + " " + s);;
     }
 
@@ -1108,7 +1108,7 @@
             console.warn(errorMessage);
             /*
                 // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
-                
+
                 static initClass () {
                     this.setIsSingleton(true)
                     return this
@@ -1307,7 +1307,7 @@
         const sendDelegateFunc = (d, methodName, args) => {
             const f = d[methodName];
             if (f) {
-              f.apply(d, args);
+                f.apply(d, args);
             }
         };
 
@@ -1317,7 +1317,7 @@
                 sendDelegateFunc(d, methodName, args);
             }
         }
-        
+
 
         if (this.respondsTo("delegateSet")) {
             const dset = this.delegateSet();

@@ -22,10 +22,10 @@
     * @category Initialization
     */
     initPrototype () {
-    this.setNodeSubtitleIsChildrenSummary(true)
-    this.setShouldStoreSubnodes(false)
-    this.setCanDelete(false)
-    this.setNoteIsSubnodeCount(true);
+        this.setNodeSubtitleIsChildrenSummary(true);
+        this.setShouldStoreSubnodes(false);
+        this.setCanDelete(false);
+        this.setNoteIsSubnodeCount(true);
     }
 
     /**
@@ -33,8 +33,8 @@
     * @category Initialization
     */
     init () {
-    super.init();
-    this.setSubtitle("Azure Locale");
+        super.init();
+        this.setSubtitle("Azure Locale");
     }
 
     /**
@@ -44,8 +44,8 @@
     * @category Voice Management
     */
     addVoice (aVoice) {
-    this.addSubnode(aVoice.duplicate())
-    return this
+        this.addSubnode(aVoice.duplicate());
+        return this;
     }
 
 }.initThisClass());

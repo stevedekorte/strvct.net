@@ -8,10 +8,10 @@
  * @class OpenAiImageEvaluator
  * @extends SvSummaryNode
  * @classdesc Evaluates images against a content prompt using OpenAI's vision capabilities.
- * 
+ *
  * This class takes a list of images and a content prompt, then uses OpenAI's
  * vision model to score each image based on how well it matches the prompt.
- * 
+ *
  * How it works:
  * - Takes a content prompt describing what the images should contain
  * - Accepts multiple images (via URLs or data URLs)
@@ -20,7 +20,7 @@
  */
 
 (class OpenAiImageEvaluator extends SvSummaryNode {
-    
+
     /**
      * @description Initializes the prototype slots for the OpenAiImageEvaluator class.
      */
@@ -181,25 +181,25 @@
      */
     async addImage () {
         try {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
             input.multiple = true;
-            
+
             const filesSelected = new Promise((resolve, reject) => {
                 input.onchange = (e) => {
                     const files = Array.from(e.target.files);
                     if (files.length > 0) {
                         resolve(files);
                     } else {
-                        reject(new Error('No files selected'));
+                        reject(new Error("No files selected"));
                     }
                 };
             });
-            
+
             input.click();
             const files = await filesSelected;
-            
+
             // Convert files to data URLs
             const dataUrls = await Promise.all(files.map(file => {
                 return new Promise((resolve, reject) => {
@@ -209,13 +209,13 @@
                     reader.readAsDataURL(file);
                 });
             }));
-            
+
             // Add to existing data URLs
             const currentDataUrls = this.imageDataUrls() || [];
             this.setImageDataUrls([...currentDataUrls, ...dataUrls]);
-            
+
             this.setStatus(`Added ${files.length} image(s) for evaluation`);
-            
+
         } catch (error) {
             console.error("Failed to add images:", error);
             this.setError("Failed to add images: " + error.message);
@@ -243,55 +243,55 @@
         try {
             this.setError("");
             this.setStatus("starting evaluation...");
-            
+
             // Check if OpenAI service has API key
             if (!this.service().hasApiKey()) {
                 throw new Error("OpenAI API key is not configured. Please set your API key in OpenAI Service settings.");
             }
-            
+
             // Validate inputs
             if (!this.contentPrompt() || this.contentPrompt().trim() === "") {
                 throw new Error("Content prompt is required");
             }
-            
+
             // Collect all images (URLs and data URLs)
             const allImages = [];
-            
+
             if (this.imageUrls() && this.imageUrls().length > 0) {
                 this.imageUrls().forEach((url, index) => {
-                    allImages.push({ type: 'url', value: url, index: index });
+                    allImages.push({ type: "url", value: url, index: index });
                 });
             }
-            
+
             if (this.imageDataUrls() && this.imageDataUrls().length > 0) {
                 this.imageDataUrls().forEach((dataUrl, index) => {
-                    allImages.push({ type: 'dataUrl', value: dataUrl, index: index + (this.imageUrls()?.length || 0) });
+                    allImages.push({ type: "dataUrl", value: dataUrl, index: index + (this.imageUrls()?.length || 0) });
                 });
             }
-            
+
             if (allImages.length === 0) {
                 throw new Error("No images to evaluate. Please add images first.");
             }
-            
+
             this.setStatus(`evaluating ${allImages.length} image(s)...`);
-            
+
             // Use OpenAI's vision model to evaluate each image
             const apiKey = await this.service().apiKeyOrUserAuthToken();
-            const endpoint = 'https://api.openai.com/v1/chat/completions';
-            
+            const endpoint = "https://api.openai.com/v1/chat/completions";
+
             // Build the evaluation prompt
             let evaluationPrompt = `Evaluate how well each of the following images matches this content prompt: "${this.contentPrompt()}".\n\n`;
-            
+
             if (this.evaluationCriteria()) {
                 evaluationPrompt += `Additional evaluation criteria: ${this.evaluationCriteria()}\n\n`;
             }
-            
+
             evaluationPrompt += `For each image, provide:
 1. A score from 0 to 100 (where 100 is a perfect match)
 2. A brief explanation of the score
 
 Return the results as a JSON array with objects containing: {"index": <number>, "score": <number>, "explanation": "<string>"}`;
-            
+
             // Format the request with all images
             const messages = [
                 {
@@ -304,17 +304,17 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                     ]
                 }
             ];
-            
+
             // Add all images to the message
             allImages.forEach((img /*, idx*/) => {
-                if (img.type === 'url') {
+                if (img.type === "url") {
                     messages[0].content.push({
                         type: "image_url",
                         image_url: {
                             url: img.value
                         }
                     });
-                } else if (img.type === 'dataUrl') {
+                } else if (img.type === "dataUrl") {
                     messages[0].content.push({
                         type: "image_url",
                         image_url: {
@@ -323,39 +323,39 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                     });
                 }
             });
-            
+
             const bodyJson = {
                 model: "gpt-4o", // Vision model
                 messages: messages,
                 max_tokens: 1000
             };
-            
+
             console.log("=== OpenAI Image Evaluation API Call ===");
             console.log("Evaluation prompt:", evaluationPrompt);
             console.log("Number of images:", allImages.length);
-            
+
             const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-            
+
             const response = await fetch(proxyEndpoint, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(bodyJson)
             });
-            
+
             const resultData = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(`API error: ${resultData.error?.message || response.statusText}`);
             }
-            
+
             // Process the results
             if (resultData.choices && resultData.choices[0]) {
                 const content = resultData.choices[0].message.content;
                 console.log("Evaluation response:", content);
-                
+
                 // Try to parse JSON from the response
                 try {
                     const jsonMatch = content.match(/\[[\s\S]*\]/);
@@ -363,11 +363,11 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                         const scores = JSON.parse(jsonMatch[0]);
                         this.setScores(scores);
                         this.setEvaluationResults(content);
-                        
+
                         // Find best and worst scores
                         const bestScore = Math.max(...scores.map(s => s.score));
                         const worstScore = Math.min(...scores.map(s => s.score));
-                        
+
                         this.setStatus(`Evaluation complete. Best score: ${bestScore}, Worst score: ${worstScore}`);
                     } else {
                         // Fallback: store the raw response
@@ -382,7 +382,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
             } else {
                 throw new Error("No response from evaluation");
             }
-            
+
         } catch (error) {
             console.error("Image evaluation failed:", error);
             this.setError(error.message);
@@ -399,7 +399,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         const hasContent = !!(this.contentPrompt() && this.contentPrompt().trim() !== "");
         const hasImages = !!((this.imageUrls() && this.imageUrls().length > 0) ||
                            (this.imageDataUrls() && this.imageDataUrls().length > 0));
-        
+
         return {
             isEnabled: hasContent && hasImages,
             isVisible: true
@@ -426,7 +426,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
     clearImagesActionInfo () {
         const hasImages = !!((this.imageUrls() && this.imageUrls().length > 0) ||
                            (this.imageDataUrls() && this.imageDataUrls().length > 0));
-        
+
         return {
             isEnabled: hasImages,
             isVisible: true
@@ -442,21 +442,21 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         if (this.error()) {
             return "Error: " + this.error();
         }
-        
+
         if (this.scores() && this.scores().length > 0) {
             const avgScore = this.scores().reduce((sum, s) => sum + s.score, 0) / this.scores().length;
             return `Evaluated: Avg score ${avgScore.toFixed(1)}`;
         }
-        
+
         if (this.status()) {
             return this.status();
         }
-        
+
         const imageCount = (this.imageUrls()?.length || 0) + (this.imageDataUrls()?.length || 0);
         if (imageCount > 0) {
             return `${imageCount} image(s) ready`;
         }
-        
+
         return "Ready";
     }
 

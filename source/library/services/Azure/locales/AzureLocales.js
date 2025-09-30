@@ -22,10 +22,10 @@
     * @category Initialization
     */
     initPrototype () {
-    this.setNodeSubtitleIsChildrenSummary(true)
-    this.setShouldStoreSubnodes(false)
-    this.setCanDelete(false);
-    this.setNoteIsSubnodeCount(true);
+        this.setNodeSubtitleIsChildrenSummary(true);
+        this.setShouldStoreSubnodes(false);
+        this.setCanDelete(false);
+        this.setNoteIsSubnodeCount(true);
     }
 
     /**
@@ -33,8 +33,8 @@
     * @category Initialization
     */
     init () {
-    super.init();
-    this.setTitle("Locales");
+        super.init();
+        this.setTitle("Locales");
     }
 
     /**
@@ -43,7 +43,7 @@
     * @category Data Retrieval
     */
     locales () {
-    return this.subnodes()
+        return this.subnodes();
     }
 
     /**
@@ -53,7 +53,7 @@
     * @category Data Retrieval
     */
     localeNamed (aLocaleName) {
-    return this.locales().detect(locale => locales.title() === aLocaleName)
+        return this.locales().detect(locale => locales.title() === aLocaleName);
     }
 
     /**
@@ -63,12 +63,12 @@
     * @category Data Management
     */
     localeNamedCreateIfAbsent (aLocaleName) {
-    let locale = this.localeNamed(aLocaleName)
-    if (!locale) {
-        locale = AzureLocal.clone().setTitle(aLocaleName)
-        this.addSubnode(locale)
-    }
-    return locale
+        let locale = this.localeNamed(aLocaleName);
+        if (!locale) {
+            locale = AzureLocal.clone().setTitle(aLocaleName);
+            this.addSubnode(locale);
+        }
+        return locale;
     }
 
     /**
@@ -78,9 +78,9 @@
     * @category Data Management
     */
     addVoice (aVoice) {
-    const locale = this.localeNamedCreateIfAbsent(aVoice.localeName())
-    locale.addVoice(aVoice)
-    return this
+        const locale = this.localeNamedCreateIfAbsent(aVoice.localeName());
+        locale.addVoice(aVoice);
+        return this;
     }
 
 }.initThisClass());

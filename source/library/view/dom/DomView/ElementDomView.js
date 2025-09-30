@@ -7,18 +7,18 @@
 /**
  * @class ElementDomView
  * @extends ProtoClass
- * @classdesc Base view class. Wraps a dom element. 
+ * @classdesc Base view class. Wraps a dom element.
  * This is wrapped instead of a category or subclass of Element/etc because:
  *   - The DOM doesn't play nicely with such extensions.
- *   - Keep open possibility of being ability swap out DOM as a render/event layer 
- * 
+ *   - Keep open possibility of being ability swap out DOM as a render/event layer
+ *
  * TODO: add class variable validPropertyValues[propertyName] -> validValueSet and check css values if available?
  */
 (class ElementDomView extends ProtoClass {
 
     /*
     static initClass () {
-        this.newClassSlot("viewsWithoutParents", new Set()) // track these so we can retire them, but not during drag & drop 
+        this.newClassSlot("viewsWithoutParents", new Set()) // track these so we can retire them, but not during drag & drop
         this.newClassSlot("isPausingRetires", false) // when true, retireQueue is paused
     }
 
@@ -51,9 +51,9 @@
      * @returns {DocumentBody} The shared instance of DocumentBody
      */
     static documentBodyView () {
-        return DocumentBody.shared()
+        return DocumentBody.shared();
     }
-    
+
     initPrototypeSlots () {
         /**
          * @member {string} elementClassName
@@ -90,9 +90,9 @@
      * @returns {ElementDomView} The initialized instance
      */
     init () {
-        super.init()
-        this.setupElement()
-        return this
+        super.init();
+        this.setupElement();
+        return this;
     }
 
     // retiring
@@ -163,15 +163,15 @@
      * @returns {ElementDomView} The current instance
      */
     prepareToRetire () {
-        
+
         console.log(this.svTypeId() + " prepareToRetire");
         assert(!this.hasParentView());
 
-        // if view has no parent at the end of event loop, 
+        // if view has no parent at the end of event loop,
         // our policy is to retire the view
 
         this.setIsRegisteredForVisibility(false); // this one isn't a listener
-        
+
         this.retireSubviewTree();
 
         // do this after removing subviews, just in case events where added by those changes
@@ -226,9 +226,9 @@
         // on subviews, so we do it in a way that avoids this.
 
         this.subviews().forEach(sv => {
-            sv.setParentView(null)
-            sv.prepareToRetire()
-        })
+            sv.setParentView(null);
+            sv.prepareToRetire();
+        });
     }
 
     // --- element ---
@@ -239,8 +239,8 @@
      * @returns {ElementDomView} The current instance
      */
     setElementId (aString) {
-        this.setAttribute("id", aString)
-        return this
+        this.setAttribute("id", aString);
+        return this;
     }
 
     /**
@@ -248,7 +248,7 @@
      * @returns {string} The element ID
      */
     elementId () {
-        return this.getAttribute("id")
+        return this.getAttribute("id");
     }
 
     /**
@@ -258,34 +258,34 @@
      */
     setElement (e) {
         if (e === this._element) {
-            console.warn("attempt to set to same element")
+            console.warn("attempt to set to same element");
         } else {
             if (Type.isNullOrUndefined(e)) {
                 const errorMessage = this.svDebugId() + " setElement called with null";
                 console.warn(errorMessage);
                 throw new Error(errorMessage);
             }
-            
-            //assert(!this._element) // element shouldn't change, if only to avoid dealing with listener issues
-            
-            if (this._element) {
-                this.removeAllListeners()
-            }
-            
-            const oldValue = this._element
-            this._element = e
-            e.setDomView(this)
 
-            this.didUpdateSlotElement(oldValue, e)
-            
+            //assert(!this._element) // element shouldn't change, if only to avoid dealing with listener issues
+
+            if (this._element) {
+                this.removeAllListeners();
+            }
+
+            const oldValue = this._element;
+            this._element = e;
+            e.setDomView(this);
+
+            this.didUpdateSlotElement(oldValue, e);
+
             /*
             if (e) {
                 // use timer as focus listener can't be set up yet - why not?
-                this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
+                this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
             }
             */
         }
-        return this
+        return this;
     }
 
     /**
@@ -295,7 +295,7 @@
      */
     didUpdateSlotElement (/*e*/) {
         // for subclasses to override
-        return this
+        return this;
     }
 
     /**
@@ -303,7 +303,7 @@
      * @returns {boolean} True if the view has an element, false otherwise
      */
     hasElement () {
-        return !Type.isNullOrUndefined(this.element())
+        return !Type.isNullOrUndefined(this.element());
     }
 
     /**
@@ -311,8 +311,8 @@
      * @returns {Element} The created element
      */
     createElement () {
-        const e = document.createElement(this.elementType())
-        return e
+        const e = document.createElement(this.elementType());
+        return e;
     }
 
     /**
@@ -320,11 +320,11 @@
      * @returns {ElementDomView} The current instance
      */
     setupElement () {
-        const e = this.createElement()
-        this.setElement(e)
-        this.setElementId(this.svDebugId())
+        const e = this.createElement();
+        this.setElement(e);
+        this.setElementId(this.svDebugId());
         //this.setupElementClassName()
-        return this
+        return this;
     }
 
     /**
@@ -332,9 +332,9 @@
      * @returns {string} The escaped element ID
      */
     escapedElementId () {
-        const id = this.elementId()
-        const escapedId = id.replace(/[^a-z|\d]/gi, '\\$&');
-        return escapedId
+        const id = this.elementId();
+        const escapedId = id.replace(/[^a-z|\d]/gi, "\\$&");
+        return escapedId;
     }
 
     /**
@@ -342,10 +342,10 @@
      * @returns {ElementDomView} The current instance
      */
     setupElementClassName () {
-        const e = this.element()
-        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.svType())
-        ancestorNames.forEach(name => e.classList.add(name))
-        return this
+        const e = this.element();
+        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.svType());
+        ancestorNames.forEach(name => e.classList.add(name));
+        return this;
     }
 
     /**
@@ -354,9 +354,9 @@
      * @returns {ElementDomView} The current instance
      */
     insertElementClassName (aName) {
-        const e = this.element()
-        e.classList.add(aName)
-        return this
+        const e = this.element();
+        e.classList.add(aName);
+        return this;
     }
 
     /**
@@ -365,9 +365,9 @@
      * @returns {ElementDomView} The current instance
      */
     removeElementClassName (aName) {
-        const e = this.element()
-        e.classList.remove(aName)
-        return this
+        const e = this.element();
+        e.classList.remove(aName);
+        return this;
     }
 
     /**
@@ -376,10 +376,10 @@
      * @returns {ElementDomView} The current instance
      */
     setElementClassNames (names) {
-        this.setElementClassName(names.join(" "))
-        return this
+        this.setElementClassName(names.join(" "));
+        return this;
     }
-  
+
     // --- element class name ---
 
     /**
@@ -389,12 +389,12 @@
      */
     setElementClassName (aName) {
         if (this._elementClassName !== aName) {
-            this._elementClassName = aName
+            this._elementClassName = aName;
             if (this.element()) {
                 this.setAttribute("class", aName);
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -404,10 +404,10 @@
     elementClassName () {
         if (this.element()) {
             const className = this.getAttribute("class");
-            this._elementClassName = className
-            return className
+            this._elementClassName = className;
+            return className;
         }
-        return this._elementClassName
+        return this._elementClassName;
     }
 
     /**
@@ -416,8 +416,8 @@
      * @returns {ElementDomView} The current instance
      */
     loremIpsum (maxWordCount) {
-        this.setInnerHtml("".loremIpsum(10, maxWordCount))
-        return this
+        this.setInnerHtml("".loremIpsum(10, maxWordCount));
+        return this;
     }
 
     // --- editing - abstracted from content editable for use in non text views ---
@@ -429,8 +429,8 @@
      */
     setIsEditable (aBool) {
         // subclasses can override for non text editing behaviors e.g. a checkbox, toggle switch, etc
-        this.setContentEditable(aBool)
-        return this
+        this.setContentEditable(aBool);
+        return this;
     }
 
     /**
@@ -438,7 +438,7 @@
      * @returns {boolean} True if editable, false otherwise
      */
     isEditable () {
-        return this.isContentEditable()
+        return this.isContentEditable();
     }
 
     // --- content editing ---
@@ -451,12 +451,12 @@
     setContentEditable (aBool) {
         //console.log(this.elementClassName() + " setContentEditable(" + aBool + ")")
         if (aBool) {
-            this.makeCursorText()
+            this.makeCursorText();
         } else {
-            this.makeCursorDefault() // is this correct?
+            this.makeCursorDefault(); // is this correct?
         }
 
-        this.setAttribute("contentEditable", aBool ? "true" : "false")
+        this.setAttribute("contentEditable", aBool ? "true" : "false");
 
         /*
         if (this.showsHaloWhenEditable()) {
@@ -464,26 +464,26 @@
         }
         */
 
-        this.setCssProperty("outline", "none")
+        this.setCssProperty("outline", "none");
 
-        this.setIsRegisteredForKeyboard(aBool)
+        this.setIsRegisteredForKeyboard(aBool);
 
         if (aBool) {
-            this.turnOnUserSelect()
+            this.turnOnUserSelect();
         } else {
-            this.setUserSelect("auto")
+            this.setUserSelect("auto");
         }
 
-        this.setIsRegisteredForClipboard(aBool) // so we receive onPaste events from clipboard
+        this.setIsRegisteredForClipboard(aBool); // so we receive onPaste events from clipboard
 
-        return this
+        return this;
     }
 
     /**
      * @description Checks if the content is editable
      * @returns {boolean} True if content is editable, false otherwise
      */
-    isContentEditable () { 
+    isContentEditable () {
         // there's a separate method for contentEditable() that just accesses element attribute
         //const v = window.getComputedStyle(this.element(), null).getPropertyValue("contentEditable");
         const s = this.getAttribute("contentEditable");

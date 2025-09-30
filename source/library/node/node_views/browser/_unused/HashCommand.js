@@ -1,19 +1,19 @@
 "use strict";
 
 /*
-    
+
     HashCommand
 
     Work in progress.
-    
+
 */
 
 (class HashCommand extends ProtoClass {
-    
+
     initPrototypeSlots () {
-        this.newSlot("target", null)
-        this.newSlot("method", null)
-        this.newSlot("arguments", [])
+        this.newSlot("target", null);
+        this.newSlot("method", null);
+        this.newSlot("arguments", []);
     }
 
     /*
@@ -24,59 +24,59 @@
     */
 
     clear () {
-        this.setMethod(null)
-        this.setArguments(null)
-        return this
+        this.setMethod(null);
+        this.setArguments(null);
+        return this;
     }
 
     parseCommandString (s) {
-        let j = []
+        let j = [];
         try {
-            j = JSON.parse(s)
+            j = JSON.parse(s);
         } catch (e) {
-            return this
+            return this;
         }
 
-        console.log("parseCommandString:", j)
+        console.log("parseCommandString:", j);
         if (!j) {
-            this.clear()
-            return this
+            this.clear();
+            return this;
         }
 
-        let m = j[0]
-        let a = j[1]
+        let m = j[0];
+        let a = j[1];
 
-        return this
+        return this;
     }
 
     setArgsString (s) {
-        this.setArguments(JSON.parse(s))
-        return this
+        this.setArguments(JSON.parse(s));
+        return this;
     }
 
     getArgsString () {
-        return JSON.stringify(this.arguments())
+        return JSON.stringify(this.arguments());
     }
 
     asCommandString () {
         if (this.method()) {
-            let argsString = JSON.stringify(this.arguments())
-            return this.method() + "(" + this.argumentStrings().join(",") + ")"
+            let argsString = JSON.stringify(this.arguments());
+            return this.method() + "(" + this.argumentStrings().join(",") + ")";
 
         }
-        return null
+        return null;
     }
 
     send () {
-        let t = this.target()
-        let m = this.method()
+        let t = this.target();
+        let m = this.method();
 
         if (t && m) {
             if (t.acceptsHashCommand(m)) {
-                t[m].apply(this.arguments())
+                t[m].apply(this.arguments());
             }
         }
 
     }
-    
+
 }.initThisClass());

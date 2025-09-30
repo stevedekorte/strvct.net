@@ -4,12 +4,12 @@
  * @module library.node.node_views.browser.stack.TilesView
  * @class TilesView_dragViewProtocol
  * @extends TilesView
- * @classdesc Handles the drag and drop protocol for TilesView. 
- * 
+ * @classdesc Handles the drag and drop protocol for TilesView.
+ *
  * When a drag is performed, a DragView is created to render the drag operation,
- *  manage the drag events, and store the drag related info such as the list of items being dragged. 
+ *  manage the drag events, and store the drag related info such as the list of items being dragged.
  * The DragView instance is used as an argument for many of the drag view protocol methods.
- * 
+ *
  * To support drop on a tiles view, the tiles must implement the methods:
  * - acceptsDrop
  * - onDragDestinationDropped
@@ -18,10 +18,10 @@
  * - onDragDestinationEnter
  * - onDragDestinationExit
  * - onDragDestinationEnd
- * 
+ *
  * Note that we do the drop on the TilesView, not on the tile so we can manage
  * the insertion point and animate the tiles moving into place.
- * 
+ *
  * To support draggings a tile, the tile must implement the methods:
  * - onDragSourceBegin
  * - onDragSourceCancelled
@@ -29,12 +29,12 @@
  * - onDragSourceHover
  * - onDragSourceExit
  * - onDragSourceEnd
- * 
+ *
  * @implements {DragViewProtocol}
  */
 
 (class TilesView_dragViewProtocol extends TilesView {
-    
+
     // -- messages sent by DragView to the parent/owner of the view it's dragging ---
 
     /**
@@ -133,7 +133,7 @@
      */
     onDragSourceDropped (dragView) {
         //console.log(this.svDebugId() + " --- onDragSourceDropped ---")
-        
+
 
         const insertIndex = this.indexOfTilePlaceHolder();
 
@@ -141,7 +141,7 @@
         if (dragView.isMoveOp()) {
             // todo
         } else if (dragView.isCopyOp()) {
-             movedNodes = movedNodes.map(aNode => aNode.duplicate());
+            movedNodes = movedNodes.map(aNode => aNode.duplicate());
         } else {
             throw new Error("unhandled drag operation");
         }
@@ -149,14 +149,14 @@
 
         this.unstackTiles();
         this.removeTilePlaceHolder();
-    
+
         //console.log("---")
         //this.showNodes(movedNodes)
         //this.showTiles(this.subviews())
         const newSubnodesOrder = this.subviews().map(sv => sv.node());
-        
+
         //this.showNodes(newSubnodesOrder);
-        
+
         this.node().removeSubnodes(movedNodes); // is this needed?
         //assert(!newSubnodesOrder.containsAny(movedNodes));
 
@@ -183,7 +183,7 @@
         if (dragView.isMoveOp()) {
             movedNodes.forEach(aNode => aNode.removeFromParentNode());
         } else if (dragView.isCopyOp()) {
-             movedNodes = movedNodes.map(aNode => aNode.duplicate());
+            movedNodes = movedNodes.map(aNode => aNode.duplicate());
         } else {
             throw new Error("unhandled drag operation");
         }
@@ -227,8 +227,8 @@
             if (dropNode === this.node()) {
                 return false;
             }
-            
-            const acceptsNode = node.acceptsAddingSubnode(dropNode)
+
+            const acceptsNode = node.acceptsAddingSubnode(dropNode);
             const canReorder = this.canReorderTiles();;
             //console.log(node.title() + " acceptsNode " + dropNode.title() + " " + acceptsNode);
             //console.log("parentNode " + node.parentNode().title());
@@ -296,10 +296,10 @@
         const sortMethod = this.isVertical() ? "topPx" : "leftPx";
         const orderedTiles = this.tiles().shallowCopy().sortPerform(sortMethod);
         const insertIndex = orderedTiles.indexOf(this.tilePlaceHolder());
-        
+
         //this.showTiles(orderedTiles);
         //console.log("hover insertIndex: ", insertIndex);
-        
+
         return insertIndex;
     }
 
@@ -333,11 +333,11 @@
             const vp = this.viewPosForWindowPos(dragView.dropPoint());
             if (this.isVertical()) {
                 const h = dragView.computedHeight();
-                const y = vp.y() - h/2;
+                const y = vp.y() - h / 2;
                 ph.setTopPx(y);
             } else {
                 const w = dragView.computedWidth();
-                const x = vp.x() - w/2;
+                const x = vp.x() - w / 2;
                 //console.log("w:" + w + " x:" + vp.x());
                 ph.setLeftPx(x);
             }
@@ -345,7 +345,7 @@
             this.stackTiles(); // need to use this so we can animate the tile movements
         }
     }
-    
+
     /**
      * @description Handles when the drag destination is exited
      * @param {Object} dragView - The view being dragged
@@ -411,13 +411,13 @@
             ph.setMinAndMaxHeight(0);
             this.addTimeout(() => {
                 this.removeTilePlaceHolder();
-                if (resolve) { 
-                    resolve(); 
+                if (resolve) {
+                    resolve();
                 }
-            }, 1*1000);
+            }, 1 * 1000);
         } else {
-            if (resolve) { 
-                resolve(); 
+            if (resolve) {
+                resolve();
             }
         }
     }

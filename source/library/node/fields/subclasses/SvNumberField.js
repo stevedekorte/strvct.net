@@ -7,18 +7,18 @@
 /**
  * @class SvNumberField
  * @extends SvField
- * @classdesc A named number field that validates that the 
+ * @classdesc A named number field that validates that the
  * value is a number and shows an appropraite error message.
  */
 (class SvNumberField extends SvField {
-    
+
     /**
      * @static
      * @returns {boolean} True if available as a node primitive
      * @category Utility
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -40,14 +40,14 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("isInteger", false)
-            slot.setDuplicateOp("copyValue")
-            slot.setSlotType("Boolean")
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setCanEditInspection(true)
-            slot.setLabel("Is integer")
-            slot.setInspectorPath("NumberField")
+            const slot = this.newSlot("isInteger", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Is integer");
+            slot.setInspectorPath("NumberField");
             //slot.setSyncsToView(true)
         }
 
@@ -56,14 +56,14 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("hasLimits", false)
-            slot.setDuplicateOp("copyValue")
-            slot.setSlotType("Boolean")
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setCanEditInspection(true)
-            slot.setLabel("Has limits")
-            slot.setInspectorPath("NumberField")
+            const slot = this.newSlot("hasLimits", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Has limits");
+            slot.setInspectorPath("NumberField");
             //slot.setSyncsToView(true)
         }
 
@@ -72,14 +72,14 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("minValue", 0)
-            slot.setDuplicateOp("copyValue")
-            slot.setSlotType("Number")
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setCanEditInspection(true)
-            slot.setLabel("Min Value")
-            slot.setInspectorPath("NumberField")
+            const slot = this.newSlot("minValue", 0);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Number");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Min Value");
+            slot.setInspectorPath("NumberField");
             //slot.setSyncsToView(true)
         }
 
@@ -88,14 +88,14 @@
          * @category Configuration
          */
         {
-            const slot = this.newSlot("maxValue", 1)
-            slot.setDuplicateOp("copyValue")
-            slot.setSlotType("Number")
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setCanEditInspection(true)
-            slot.setLabel("Max value")
-            slot.setInspectorPath("NumberField")
+            const slot = this.newSlot("maxValue", 1);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Number");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Max value");
+            slot.setInspectorPath("NumberField");
             //slot.setSyncsToView(true)
         }
     }
@@ -107,8 +107,8 @@
     initPrototype () {
     }
 
-    // --- 
-    // TODO: 
+    // ---
+    // TODO:
     // - add a Slot.validatorMethod or methodHook so this can be done dynamically?
 
     /**
@@ -116,7 +116,7 @@
      * @category Validation
      */
     didUpdateSlotIsInteger () {
-        this.validate()
+        this.validate();
     }
 
     /**
@@ -124,7 +124,7 @@
      * @category Validation
      */
     didUpdateSlotHasLimits () {
-        this.validate()
+        this.validate();
     }
 
     /**
@@ -132,7 +132,7 @@
      * @category Validation
      */
     didUpdateSlotMinValue () {
-        this.validate()
+        this.validate();
     }
 
     /**
@@ -140,7 +140,7 @@
      * @category Validation
      */
     didUpdateSlotMaxValue () {
-        this.validate()
+        this.validate();
     }
 
     // ----
@@ -150,11 +150,11 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setKey("Number title")
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(true)
-        this.setValue(0)
+        super.init();
+        this.setKey("Number title");
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(true);
+        this.setValue(0);
     }
 
     /**
@@ -176,7 +176,7 @@
         } else {
             super.setValue(v);
         }
-        return this
+        return this;
     }
 
     /**
@@ -188,43 +188,43 @@
         const n = this.value();
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
-	
+
     /**
      * @description Validate the field value
      * @returns {boolean} True if the value is valid
      * @category Validation
      */
     validate () {
-        const v = Number(this.value())
-        const errors = []
-        
+        const v = Number(this.value());
+        const errors = [];
+
         if (!this.valueIsNumeric()) {
-            errors.push("This needs to be a number.")
+            errors.push("This needs to be a number.");
         }
 
         if (this.hasLimits()) {
             if (v < this.minValue()) {
-                errors.push("Must be >= " + this.minValue() + ".")
+                errors.push("Must be >= " + this.minValue() + ".");
             }
             if (v > this.maxValue()) {
-                errors.push("Must be <= " + this.maxValue() + ".")
+                errors.push("Must be <= " + this.maxValue() + ".");
             }
         }
 
         if (this.isInteger()) {
             if (!Number.isInteger(v)) {
-                errors.push("Must be an integer.")
+                errors.push("Must be an integer.");
             }
         }
 
         if (errors.length) {
-            this.setValueError(errors.join("\n"))
+            this.setValueError(errors.join("\n"));
         } else {
-            this.setValueError(null)
+            this.setValueError(null);
         }
-        
-        const isValid = this.valueError() === null
-        return isValid
+
+        const isValid = this.valueError() === null;
+        return isValid;
     }
-    
+
 }.initThisClass());

@@ -7,7 +7,7 @@
 /**
  * @class Broadcaster
  * @extends ProtoClass
- * @classdesc Fast notifications that immediately message listeners 
+ * @classdesc Fast notifications that immediately message listeners
  * instead of using Observer and Notification objects.
  * As multiple notifications of the same name are not merged
  * within the same event loop, it's up to listeners to implement handlers efficiently.
@@ -41,9 +41,9 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initialize prototype slots
      * @category Initialization
@@ -71,8 +71,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setNameToListenersMap(new Map())
+        super.init();
+        this.setNameToListenersMap(new Map());
     }
 
     /**
@@ -82,19 +82,19 @@
      * @category Listener Management
      */
     listenerSetForName (name) {
-        assert(!Type.isNullOrUndefined(name))
+        assert(!Type.isNullOrUndefined(name));
 
-        // probably not inneficient since 
+        // probably not inneficient since
         // 1. we don't remove listeners often
         // 2. we don't have many names
-        const n2l = this.nameToListenersMap()
+        const n2l = this.nameToListenersMap();
 
         if (!n2l.has(name)) {
-            n2l.set(name, new Set())
+            n2l.set(name, new Set());
         }
-        return n2l.get(name)
+        return n2l.get(name);
     }
-	
+
     /**
      * @description Add a listener for a given name
      * @param {Object} aListener - The listener to add
@@ -103,10 +103,10 @@
      * @category Listener Management
      */
     addListenerForName (aListener, name) {
-        this.listenerSetForName(name).add(aListener)
-        return this
+        this.listenerSetForName(name).add(aListener);
+        return this;
     }
-    
+
     /**
      * @description Remove a listener for a given name
      * @param {Object} aListener - The listener to remove
@@ -115,8 +115,8 @@
      * @category Listener Management
      */
     removeListenerForName (aListener, name) {
-        this.listenerSetForName(name).delete(aListener)
-        return this
+        this.listenerSetForName(name).delete(aListener);
+        return this;
     }
 
     /**
@@ -128,9 +128,9 @@
      */
     broadcastNameAndArgument (methodName, anArgument) {
         this.listenerSetForName(methodName).forEach(v => {
-            v[methodName].call(v, anArgument)
-        })
-        return this
+            v[methodName].call(v, anArgument);
+        });
+        return this;
     }
 
     /**
@@ -140,8 +140,8 @@
      * @category Listener Management
      */
     removeListenersForName (name) {
-        this.nameToListenersMap().delete(name)
-        return this
+        this.nameToListenersMap().delete(name);
+        return this;
     }
 
     /**
@@ -149,12 +149,12 @@
      * @category Maintenance
      */
     clean () {
-        const n2l = this.nameToListenersMap()
+        const n2l = this.nameToListenersMap();
         n2l.shallowCopy().forEachKV((name, listenerSet) => {
             if (listenerSet.size === 0) {
-                n2l.delete(name)
+                n2l.delete(name);
             }
-        })
+        });
     }
 
 }.initThisClass());
@@ -168,8 +168,8 @@ Object.defineSlots(ProtoClass.prototype, {
      * @category Broadcasting
      */
     broadcastMessage: function (methodName) {
-        Broadcaster.shared().broadcastNameAndArgument(methodName, this)
-        return this
+        Broadcaster.shared().broadcastNameAndArgument(methodName, this);
+        return this;
     }
-    
-})
+
+});

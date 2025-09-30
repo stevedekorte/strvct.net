@@ -8,7 +8,7 @@
  * @class GamePadManager
  * @extends ProtoClass
  * @classdesc GamePadManager
- * 
+ *
  * - checks if gamepad API is supported
  * - polls navigator gamepads state
  * - creates and removes GamePad instances to match current state
@@ -21,7 +21,7 @@
  *
  * // check for game pad support
  * const isSupported = GamePadManager.shared().isSupported()
- * 
+ *
  * // start monitoring gamepads
  * GamePadManager.shared().startPolling()
  *
@@ -29,12 +29,12 @@
  * const pads = GamePadManager.shared().connectedGamePads()
  *
  * // each pad will have a unique id to identiy it
- * pads.forEach( (pad) => { 
- *     console.log("pad id:", pad.id()) 
+ * pads.forEach( (pad) => {
+ *     console.log("pad id:", pad.id())
  * })
  */
 (class GamePadManager extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the GamePadManager class.
      */
@@ -81,10 +81,10 @@
     connectedGamePads () {
         return this.gamePadsMap().valuesArray();
     }
-    
+
     /*
     canListenForConnect () {
-        return ("ongamepadconnected" in window); 
+        return ("ongamepadconnected" in window);
     }
 
     startListening () {
@@ -94,10 +94,10 @@
         }
         return this
     }
-    
+
     // listener events
 
-    
+
     onGamePadConnected (event) {
         this.poll()
         return true
@@ -136,13 +136,13 @@
     navigatorGamepads () {
         if (navigator.getGamepads) {
             return navigator.getGamepads();
-        } 
-        
+        }
+
         if (navigator.webkitGetGamepads) {
             return navigator.webkitGetGamepads;
         }
 
-        return null
+        return null;
     }
 
     /**
@@ -152,7 +152,7 @@
     startPolling () {
         if (!this._intervalId) {
             console.log(this.svType() + ".startPolling()");
-            this._intervalId = setInterval(() => { 
+            this._intervalId = setInterval(() => {
                 this.poll();
             }, this.pollPeriod());
         }
@@ -201,7 +201,7 @@
                 gamePad.updateData(gp);
 
                 if (this.isDebugging()) {
-                    console.log("Gamepad index:" + gp.index + " id:" + gp.id + 
+                    console.log("Gamepad index:" + gp.index + " id:" + gp.id +
                     ". buttonCount:" + gp.buttons.length + " axisCount:" + gp.axes.length);
                 }
             } else {

@@ -7,7 +7,7 @@
  * @classdesc Handles keyboard interactions for Tile objects.
  */
 (class Tile_keyboard extends Tile {
-    
+
     // --- keyboard controls ---
 
     /**

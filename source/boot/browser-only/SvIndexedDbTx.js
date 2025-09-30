@@ -11,7 +11,7 @@
  */
 (class SvIndexedDbTx extends SvBase {
 
-    /** 
+    /**
      * Initialize prototype slots
      */
     initPrototypeSlots () {
@@ -19,73 +19,73 @@
          * @member {object} dbFolder - Database folder object
          * @category Database
          */
-        this.newSlot("dbFolder", null)
+        this.newSlot("dbFolder", null);
 
         /**
          * @member {object} objectStore - IndexedDB object store
          * @category Database
          */
-        this.newSlot("objectStore", null)
+        this.newSlot("objectStore", null);
 
         /**
          * @member {object} tx - IndexedDB transaction object
          * @category Transaction
          */
-        this.newSlot("tx", null)
+        this.newSlot("tx", null);
 
         /**
          * @member {Array} requests - Array of transaction requests
          * @category Transaction
          */
-        this.newSlot("requests", [])
+        this.newSlot("requests", []);
 
         /**
          * @member {boolean} isCommitted - Flag indicating if transaction is committed
          * @category Transaction
          */
-        this.newSlot("isCommitted", false) // set to true when tx.commit() is called
+        this.newSlot("isCommitted", false); // set to true when tx.commit() is called
 
         /**
          * @member {boolean} isAborted - Flag indicating if transaction is aborted
          * @category Transaction
          */
-        this.newSlot("isAborted", false)
+        this.newSlot("isAborted", false);
 
         /**
          * @member {boolean} isCompleted - Flag indicating if transaction is completed
          * @category Transaction
          */
-        this.newSlot("isCompleted", false) // set to true after tx commit onsuccess callback received 
+        this.newSlot("isCompleted", false); // set to true after tx commit onsuccess callback received
 
         /**
          * @member {Error} txRequestStack - Stack trace of transaction request
          * @category Debugging
          */
-        this.newSlot("txRequestStack", null)
+        this.newSlot("txRequestStack", null);
 
         /**
          * @member {object} options - Transaction options
          * @category Transaction
          */
-        this.newSlot("options", { "durability": "strict" })
+        this.newSlot("options", { "durability": "strict" });
 
         /**
          * @member {string} txId - Transaction ID
          * @category Transaction
          */
-        this.newSlot("txId", null)
+        this.newSlot("txId", null);
 
         /**
          * @member {Promise} promiseForCommit - Promise for transaction commit
          * @category Transaction
          */
-        this.newSlot("promiseForCommit", null)
+        this.newSlot("promiseForCommit", null);
 
         /**
          * @member {Promise} promiseForFinished - Promise for transaction finish
          * @category Transaction
          */
-        this.newSlot("promiseForFinished", null)
+        this.newSlot("promiseForFinished", null);
 
         /**
          * @member {number} timeoutInMs - Transaction timeout in milliseconds
@@ -93,7 +93,7 @@
          */
         this.newSlot("timeoutInMs", 1000);
     }
-  
+
     initPrototype () {
     }
 
@@ -102,7 +102,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setPromiseForFinished(Promise.clone());
         //this.setIsDebugging(false) // this will be overwritten by db with it's own isDebugging setting
     }
@@ -116,7 +116,7 @@
         assert(!this.isCompleted());
         this.setIsCompleted(true);
         this.markResolved();
-        return this
+        return this;
     }
 
     /**
@@ -127,7 +127,7 @@
      */
     markRejected (error) {
         this.promiseForFinished().callRejectFunc(error);
-        return this
+        return this;
     }
 
     /**
@@ -137,7 +137,7 @@
      */
     markResolved () {
         this.promiseForFinished().callResolveFunc();
-        return this
+        return this;
     }
 
     /*
@@ -152,18 +152,18 @@
      * @category Database
      */
     db () {
-        return this.dbFolder().db()
+        return this.dbFolder().db();
     }
-    
+
     /**
      * Get the store name
      * @returns {string}
      * @category Database
      */
     storeName () {
-        return this.dbFolder().storeName()
+        return this.dbFolder().storeName();
     }
-	
+
     // --- being and commit ---
 
     /**
@@ -171,7 +171,7 @@
      * @category Transaction
      */
     assertNotCommitted () {
-	    assert(this.isCommitted() === false)
+	    assert(this.isCommitted() === false);
     }
 
     /**
@@ -180,14 +180,14 @@
      * @category Transaction
      */
     newTx () {
-        assert(this.tx() === null)
-        const tx = this.db().transaction(this.storeName(), "readwrite", this.options())
-        tx.onerror    = (error) => { 
-            debugger
-            throw new Error(error) 
-        }
-        this.setTx(tx)
-        return tx
+        assert(this.tx() === null);
+        const tx = this.db().transaction(this.storeName(), "readwrite", this.options());
+        tx.onerror    = (error) => {
+            debugger;
+            throw new Error(error);
+        };
+        this.setTx(tx);
+        return tx;
     }
 
     /**
@@ -196,15 +196,15 @@
      * @category Transaction
      */
     begin () {
-        this.logDebug(this.dbFolder().path() + " TX BEGIN ")
-        this.assertNotCommitted()
-        this.setTxRequestStack(new Error().stack)
-	    const tx = this.newTx()
+        this.logDebug(this.dbFolder().path() + " TX BEGIN ");
+        this.assertNotCommitted();
+        this.setTxRequestStack(new Error().stack);
+	    const tx = this.newTx();
         const objectStore = tx.objectStore(this.storeName());
-        this.setObjectStore(objectStore)
-        return this
+        this.setObjectStore(objectStore);
+        return this;
     }
-	
+
     /**
      * Abort the transaction
      * @returns {SvIndexedDbTx}
@@ -215,7 +215,7 @@
 	    this.tx().abort(); // how does this get rejected?
         this.setIsAborted(true);
         this.markResolved();
-	    return this
+	    return this;
     }
 
     // --- debugging ---
@@ -225,8 +225,8 @@
      * @category Debugging
      */
     show () {
-        console.log(this.logPrefix(), this.description())
-        this.showTxRequestStack()
+        console.log(this.logPrefix(), this.description());
+        this.showTxRequestStack();
     }
 
     /**
@@ -235,11 +235,11 @@
      * @category Debugging
      */
     description () {
-        let s = "db: " + this.dbFolder().path() + " tx:\n"
+        let s = "db: " + this.dbFolder().path() + " tx:\n";
         this.requests().forEach(rq => {
-            s += "    " + JSON.stringify({ action: rq._action, key: rq._key, value: rq._value })
-        })
-        return s
+            s += "    " + JSON.stringify({ action: rq._action, key: rq._key, value: rq._value });
+        });
+        return s;
     }
 
     /**
@@ -247,9 +247,9 @@
      * @category Debugging
      */
     showTxRequestStack () {
-        const rs = this.txRequestStack()
-        if (rs) { 
-            console.error("error stack ", rs)
+        const rs = this.txRequestStack();
+        if (rs) {
+            console.error("error stack ", rs);
         }
     }
 
@@ -261,7 +261,7 @@
      * @category Transaction
      */
     isFinished () {
-        return this.isAborted() || this.isCompleted()
+        return this.isAborted() || this.isCompleted();
     }
 
     /**
@@ -270,26 +270,26 @@
      * @category Transaction
      */
     promiseCommit () {
-        assert(!this.isFinished())
+        assert(!this.isFinished());
 
-        const tx = this.tx()
-        
-        tx.oncomplete = (/*event*/) => { 
-            this.logDebug(" COMMIT COMPLETE")
-            this.markCompleted()
-        }
+        const tx = this.tx();
 
-        tx.onerror = (error) => { 
-            this.markRejected(error)
-        }
+        tx.oncomplete = (/*event*/) => {
+            this.logDebug(" COMMIT COMPLETE");
+            this.markCompleted();
+        };
 
-        this.logDebug(" COMMITTING")
-        tx.commit()
+        tx.onerror = (error) => {
+            this.markRejected(error);
+        };
 
-        return this.promiseForFinished()
+        this.logDebug(" COMMITTING");
+        tx.commit();
+
+        return this.promiseForFinished();
     }
 
-	
+
     // --- helpers ---
 
     /**
@@ -299,21 +299,21 @@
      * @category Transaction
      */
     pushRequest (aRequest) {
-	    this.assertNotCommitted()
+	    this.assertNotCommitted();
 
         const requestStack = this.isDebugging() ? new Error().stack : null;
 
         aRequest.onerror = (event) => {
 		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "' error: '" + event.target.error + "'";
-		    this.logDebug(fullDescription)
-		    if (requestStack) { 
-                console.error("error stack ", requestStack)
+		    this.logDebug(fullDescription);
+		    if (requestStack) {
+                console.error("error stack ", requestStack);
             }
-		  	throw new Error(fullDescription)
-        }
+		  	throw new Error(fullDescription);
+        };
 
-        this.requests().push(aRequest)
-	    return this
+        this.requests().push(aRequest);
+	    return this;
     }
 
     /**
@@ -323,10 +323,10 @@
      * @category Validation
      */
     assertValidKeyValue (key, value) {
-        assert(typeof(key) === "string")
-        assert(typeof(value) === "string" || (typeof(value) === "object" && Object.getPrototypeOf(value) === ArrayBuffer.prototype))
+        assert(typeof(key) === "string");
+        assert(typeof(value) === "string" || (typeof(value) === "object" && Object.getPrototypeOf(value) === ArrayBuffer.prototype));
     }
-	
+
     /**
      * Create an entry object for key and value
      * @param {string} key - The key
@@ -335,12 +335,12 @@
      * @category Utility
      */
     entryForKeyAndValue (key, value) {
-        this.assertValidKeyValue(key, value)
-        return { key: key, value: value }
+        this.assertValidKeyValue(key, value);
+        return { key: key, value: value };
     }
-	
+
     // --- operations ----
-	
+
     /**
      * Add an entry to the object store
      * @param {string} key - The key
@@ -349,18 +349,18 @@
      * @category Database Operations
      */
     atAdd (key, value) {
-        this.assertValidKeyValue(key, value)
-        this.assertNotCommitted()
-        
-        this.logDebug(() => "ADD " + key + " '...'")
+        this.assertValidKeyValue(key, value);
+        this.assertNotCommitted();
 
-        const entry = this.entryForKeyAndValue(key, value)
+        this.logDebug(() => "ADD " + key + " '...'");
+
+        const entry = this.entryForKeyAndValue(key, value);
         const request = this.objectStore().add(entry);
-        request._action = "add"
-        request._key = key 
-        request._value = value 
-        this.pushRequest(request)
-        return this
+        request._action = "add";
+        request._key = key;
+        request._value = value;
+        this.pushRequest(request);
+        return this;
     }
 
     /**
@@ -371,20 +371,20 @@
      * @category Database Operations
      */
     atUpdate (key, value) {
-        this.assertValidKeyValue(key, value)
-	    this.assertNotCommitted()
+        this.assertValidKeyValue(key, value);
+	    this.assertNotCommitted();
 
-        this.logDebug(() => "UPDATE " + key)
+        this.logDebug(() => "UPDATE " + key);
 
-        const entry = this.entryForKeyAndValue(key, value)
+        const entry = this.entryForKeyAndValue(key, value);
         const request = this.objectStore().put(entry);
-        request._action = "put"
-        request._key = key
-        request._value = value 
-        this.pushRequest(request)
-        return this
+        request._action = "put";
+        request._key = key;
+        request._value = value;
+        this.pushRequest(request);
+        return this;
     }
-    
+
     /**
      * Remove an entry from the object store
      * @param {string} key - The key
@@ -392,15 +392,15 @@
      * @category Database Operations
      */
     removeAt (key) {
-	    this.assertNotCommitted()
+	    this.assertNotCommitted();
 
-        this.logDebug(() => "REMOVE " + key)
+        this.logDebug(() => "REMOVE " + key);
 
         const request = this.objectStore().delete(key);
-        request._action = "remove"
-        request._key = key
-        this.pushRequest(request)
-        return this
+        request._action = "remove";
+        request._key = key;
+        this.pushRequest(request);
+        return this;
     }
 
     /**
@@ -409,7 +409,7 @@
      * @category Debugging
      */
     svDebugId () {
-        return this.dbFolder().svDebugId() + " " + this.txId() //super.svDebugId()
+        return this.dbFolder().svDebugId() + " " + this.txId(); //super.svDebugId()
     }
-    
+
 }.initThisClass());

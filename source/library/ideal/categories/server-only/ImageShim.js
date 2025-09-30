@@ -7,7 +7,7 @@
 console.log("evaluating ImageShim.js");
 
 try {
-    const { createCanvas, loadImage, Image: NodeImage } = require('canvas');
+    const { createCanvas, loadImage, Image: NodeImage } = require("canvas");
 
     // Define Image class for Node.js
     class Image extends NodeImage {
@@ -16,7 +16,7 @@ try {
             this.onload = null;
             this.onerror = null;
         }
-        
+
         // Override src setter to handle onload/onerror events
         set src (value) {
             super.src = value;
@@ -27,7 +27,7 @@ try {
                 }, 0);
             }
         }
-        
+
         get src () {
             return super.src;
         }
@@ -40,41 +40,41 @@ try {
             this.width = width;
             this.height = height;
         }
-        
+
         getContext (contextType, contextAttributes) {
             return this._canvas.getContext(contextType, contextAttributes);
         }
-        
+
         toDataURL (type, encoderOptions) {
             return this._canvas.toDataURL(type, encoderOptions);
         }
-        
+
         toBuffer (mimeType, config) {
             return this._canvas.toBuffer(mimeType, config);
         }
-        
+
         set width (value) {
             this._canvas.width = value;
         }
-        
+
         get width () {
             return this._canvas.width;
         }
-        
+
         set height (value) {
             this._canvas.height = value;
         }
-        
+
         get height () {
             return this._canvas.height;
         }
     }
 
     // Define document.createElement for canvas
-    if (typeof document === 'undefined') {
+    if (typeof document === "undefined") {
         global.document = {
             createElement: function (tagName) {
-                if (tagName === 'canvas') {
+                if (tagName === "canvas") {
                     return new HTMLCanvasElement();
                 }
                 throw new Error(`createElement not implemented for ${tagName}`);

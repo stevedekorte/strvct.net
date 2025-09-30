@@ -11,25 +11,25 @@
 
 (class ImagineProImageEvalPrompts extends SvJsonArrayNode {
 
-  /**
+    /**
    * @description Initializes the prototype slots for the class.
    * @category Initialization
    */
-  initPrototypeSlots () {
-  }
+    initPrototypeSlots () {
+    }
 
-  /**
+    /**
    * @description Initializes the prototype.
    * @category Initialization
    */
-  initPrototype () {
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setCanDelete(false);
-    this.setSubnodeClasses([ImagineProImageEvalPrompt]);
-    this.setNodeCanAddSubnode(true);
-    this.setNodeCanReorderSubnodes(false);
-    this.setTitle("Image Eval Prompts");
-  }
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setCanDelete(false);
+        this.setSubnodeClasses([ImagineProImageEvalPrompt]);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(false);
+        this.setTitle("Image Eval Prompts");
+    }
 
 }.initThisClass());

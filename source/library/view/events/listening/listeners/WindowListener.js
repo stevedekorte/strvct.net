@@ -11,7 +11,7 @@
  * NOTE: the target of the event is the browser window and not a DOM element.
  */
 (class WindowListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -26,8 +26,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -58,7 +58,7 @@
         this.addEventNameAndMethodName("popstate", "onPopState"); // fires when navigating through session history (back/forward buttons), but only for entries added with pushState() or replaceState()
         // For most hash-based navigation needs, hashchange is the simpler and more direct approach.
 
-        return this
+        return this;
     }
 
     /**
@@ -67,7 +67,7 @@
      * @category Event Handling
      */
     listenTarget () {
-        return window // we need to target the window and not the element asssociated with a View
+        return window; // we need to target the window and not the element asssociated with a View
     }
-    
+
 }.initThisClass());

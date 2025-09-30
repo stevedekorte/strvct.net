@@ -30,7 +30,7 @@
      * @category Copying
      */
     shallowCopy () {
-        return new Map(this)
+        return new Map(this);
     }
 
     /**
@@ -39,7 +39,7 @@
      * @category Information
      */
     count () {
-        return this.size
+        return this.size;
     }
 
     /**
@@ -49,7 +49,7 @@
      * @category Access
      */
     at (k) {
-        return this.get(k)
+        return this.get(k);
     }
 
     /**
@@ -61,9 +61,9 @@
      */
     atIfAbsentPut (k, v) {
         if (!this.has(k)) {
-            this.set(k, v)
+            this.set(k, v);
         }
-        return this
+        return this;
     }
 
     /**
@@ -73,7 +73,7 @@
      * @category Information
      */
     hasKey (k) {
-        return this.has(k)
+        return this.has(k);
     }
 
     /**
@@ -84,8 +84,8 @@
      * @category Modification
      */
     atPut (k, v) {
-        this.set(k, v)
-        return this
+        this.set(k, v);
+        return this;
     }
 
     /**
@@ -95,8 +95,8 @@
      * @category Modification
      */
     removeKey (k) {
-        this.delete(k)
-        return this
+        this.delete(k);
+        return this;
     }
 
     /**
@@ -203,7 +203,7 @@
             if (!fn(k, v)) {
                 this.delete(k);
             }
-        })
+        });
         return this;
     }
 
@@ -214,13 +214,13 @@
      * @category Filtering
      */
     select (fn) {
-        const m = new this.constructor()
+        const m = new this.constructor();
         this.forEach((v, k) => {
             if (fn(k, v)) {
-                m.set(k, v)
+                m.set(k, v);
             }
-        })
-        return m
+        });
+        return m;
     }
 
     /**
@@ -255,7 +255,7 @@
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -265,7 +265,7 @@
      * @category Information
      */
     isEmpty () {
-        return this.size === 0;    
+        return this.size === 0;
     }
 
     /**
@@ -278,7 +278,7 @@
         this.forEachKV((k, v) => dict[k] = v);
         return dict;
     }
-    
+
     /**
      * Populates the map from a plain object
      * @param {Object} aDict - The object to populate from
@@ -309,29 +309,29 @@
      */
     reorderKeyToBeBefore (keyToMove, beforeKey) {
         if (!this.has(keyToMove) || !this.has(beforeKey)) {
-          return this;
+            return this;
         }
-      
+
         const value = this.get(keyToMove);
         this.delete(keyToMove);
-      
+
         const entries = Array.from(this.entries());
         this.clear();
-      
+
         let keyInserted = false;
         for (const [key, val] of entries) {
-          if (key === beforeKey && !keyInserted) {
-            this.set(keyToMove, value);
-            keyInserted = true;
-          }
-          if (key !== keyToMove) {
-            this.set(key, val);
-          }
+            if (key === beforeKey && !keyInserted) {
+                this.set(keyToMove, value);
+                keyInserted = true;
+            }
+            if (key !== keyToMove) {
+                this.set(key, val);
+            }
         }
-      
+
         return this;
     };
-    
+
     /**
      * Reorders a key to be after another key
      * @param {*} keyToMove - The key to move
@@ -341,22 +341,22 @@
      */
     reorderKeyToBeAfter (keyToMove, afterKey) {
         if (!this.has(keyToMove) || !this.has(afterKey)) {
-          return this;
+            return this;
         }
-      
+
         const value = this.get(keyToMove);
         this.delete(keyToMove);
-      
+
         const entries = Array.from(this.entries());
         this.clear();
-      
+
         for (const [key, val] of entries) {
-          this.set(key, val);
-          if (key === afterKey) {
-            this.set(keyToMove, value);
-          }
+            this.set(key, val);
+            if (key === afterKey) {
+                this.set(keyToMove, value);
+            }
         }
-      
+
         return this;
     }
 
@@ -401,14 +401,14 @@
     hashCode64 () {
         const prime = 31;
         let result = 0;
-    
+
         for (const [key, value] of this) {
             const keyHash = Type.hashCode64(key);
             const valueHash = Type.hashCode64(value);
             const entryHash = (keyHash + (valueHash * prime)) | 0;  // Combine key and value hashes
             result = (result + entryHash * prime) | 0;  // Update result with entryHash
         }
-    
+
         return result;
     };
 

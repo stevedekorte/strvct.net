@@ -7,16 +7,16 @@
 /**
  * @class TypedArray
  * @classdesc Extends TypedArray functionality for storage operations.
- * 
+ *
  * Note: The following code was commented out in the original file:
  * Type.typedArrayTypeNames().forEach((name) => {
  *     const aClass = Object.getClassNamed(name)
- * 
+ *
  *     if (Type.isUndefined(aClass)) {
  *         console.warn("TypeArray-store error: missing type " + name)
  *         return
  *     }
- * 
+ *
  *     Object.defineSlots(aClass, {
  *         instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store
  *             const obj = new this.thisClass()(aRecord.length)
@@ -24,9 +24,9 @@
  *             return obj
  *         },
  *     })
- * 
+ *
  *     Object.defineSlots(aClass.prototype, {
- * 
+ *
  *         loadFromRecord: function(aRecord, aStore) {
  *             const values = aRecord.values
  *             for (let i = 0; i < values.length; i++) {
@@ -34,28 +34,28 @@
  *             }
  *             return this
  *         },
- * 
+ *
  *         valuesArray: function() {
  *             return Array.fromIterator(this.values())
  *         },
- * 
+ *
  *         recordForStore: function(aStore) { // should only be called by Store
  *             return {
- *                 type: this.svType(), 
- *                 values: this.valuesArray() 
+ *                 type: this.svType(),
+ *                 values: this.valuesArray()
  *             }
  *         },
- * 
+ *
  *         refsPidsForJsonStore: function(puuids = new Set()) {
  *             // no references in a TypedArray
  *             return puuids
  *         },
  *     })
- * 
+ *
  * })
  */
 
-const typedArrayClass = Int8Array.__proto__ // just using int array to get to abstract parent TypeArray class, as we can't use TypeArray name directly
+const typedArrayClass = Int8Array.__proto__; // just using int array to get to abstract parent TypeArray class, as we can't use TypeArray name directly
 
 Object.defineSlots(typedArrayClass, {
     /**
@@ -67,10 +67,10 @@ Object.defineSlots(typedArrayClass, {
      * @returns {TypedArray} The created TypedArray instance.
      */
     instanceFromRecordInStore: function (aRecord, aStore) { // should only be called by Store
-        const obj = new this.thisClass()(aRecord.length)
-        return obj
+        const obj = new this.thisClass()(aRecord.length);
+        return obj;
     },
-})
+});
 
 Object.defineSlots(typedArrayClass.prototype, {
 
@@ -82,11 +82,11 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {TypedArray} The loaded TypedArray.
      */
     loadFromRecord: function (aRecord, aStore) {
-        const values = aRecord.values
+        const values = aRecord.values;
         for (let i = 0; i < values.length; i++) {
-            this[i] = values[i]
+            this[i] = values[i];
         }
-        return this
+        return this;
     },
 
     /**
@@ -95,7 +95,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Array} The TypedArray as a regular Array.
      */
     valuesArray: function () {
-        return Array.fromIterator(this.values())
+        return Array.fromIterator(this.values());
     },
 
     /**
@@ -106,9 +106,9 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     recordForStore: function (aStore) { // should only be called by Store
         return {
-            type: this.svType(), 
-            values: this.valuesArray() 
-        }
+            type: this.svType(),
+            values: this.valuesArray()
+        };
     },
 
     /**
@@ -119,6 +119,6 @@ Object.defineSlots(typedArrayClass.prototype, {
      */
     refsPidsForJsonStore: function (puuids = new Set()) {
         // no references in a TypedArray
-        return puuids
+        return puuids;
     },
-})
+});

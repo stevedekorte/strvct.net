@@ -7,7 +7,7 @@
  * @classdesc A stand-in node that lets the user select a field to replace it with.
  */
 (class SvCreatorNode extends SvStorableNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvCreatorNode.
      * @category Initialization
@@ -33,7 +33,7 @@
             slot.setSlotType("Array");
         }
     }
-  
+
     /**
      * @description Initializes the prototype with default values and settings.
      * @category Initialization
@@ -65,14 +65,14 @@
      */
     static fieldTypes () {
         return [
-            "SvActionField", 
-            "SvBooleanField", 
+            "SvActionField",
+            "SvBooleanField",
             "SvDateNode",
-            "SvImageWellField", 
+            "SvImageWellField",
             "SvJsonDictionaryNode",
             "SvJsonArrayNode",
-            "SvFolderNode", 
-            "SvNumberField", 
+            "SvFolderNode",
+            "SvNumberField",
             "SvOptionsNode",
             "SvStringField",
             "SvTextAreaField",
@@ -90,7 +90,7 @@
      * @category Data Structure
      */
     protoObjects () {
-        return []
+        return [];
         /*
         const app = this.rootNode()
         const protosNode = app.firstSubnodeWithTitle("Prototypes")
@@ -106,12 +106,12 @@
      */
     setupSubnodes () {
         if (this.subnodes().length == 0) {
-            this.addSubnodesForObjects(SvNode.primitiveNodeClasses())
+            this.addSubnodesForObjects(SvNode.primitiveNodeClasses());
             //this.addSubnodesForObjects(this.protoObjects())
         }
-        return this
+        return this;
     }
-    
+
     /**
      * @description Adds subnodes for the given objects.
      * @param {Array} objects - An array of objects to create subnodes for.
@@ -119,16 +119,16 @@
      */
     addSubnodesForObjects (objects) {
         const newSubnodes = objects.map((aClass) => {
-            const newNode = SvFolderNode.clone()
-            newNode.setTitle(aClass.nodeCreateName())
-            newNode.setNodeCanEditTitle(false)
-            newNode.setNodeCanEditSubtitle(false)
-            newNode.setNoteIconName(null)
-            newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)
-            newNode.setCanDelete(false)
-            return newNode
-        })
-        this.addSubnodes(newSubnodes)
+            const newNode = SvFolderNode.clone();
+            newNode.setTitle(aClass.nodeCreateName());
+            newNode.setNodeCanEditTitle(false);
+            newNode.setNodeCanEditSubtitle(false);
+            newNode.setNoteIconName(null);
+            newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass);
+            newNode.setCanDelete(false);
+            return newNode;
+        });
+        this.addSubnodes(newSubnodes);
     }
 
     /**
@@ -137,13 +137,13 @@
      * @returns {SvCreatorNode} The current instance.
      * @category User Interaction
      */
-   didChoose (actionNode) {
-        const obj = actionNode.info()
-        const newNode = obj.nodeCreate()
-        newNode.setCanDelete(true)
-        this.replaceSelfWithNode(newNode)
-        return this
-   }
+    didChoose (actionNode) {
+        const obj = actionNode.info();
+        const newNode = obj.nodeCreate();
+        newNode.setCanDelete(true);
+        this.replaceSelfWithNode(newNode);
+        return this;
+    }
 
     /**
      * @description Replaces this node with a new node in the parent's subnodes.
@@ -151,10 +151,10 @@
      * @category Data Structure
      */
     replaceSelfWithNode (newNode) {
-        const parentNode = this.parentNode()
-        assert(parentNode)
-        parentNode.replaceSubnodeWith(this, newNode)
-        parentNode.postShouldFocusAndExpandSubnode(newNode) 
+        const parentNode = this.parentNode();
+        assert(parentNode);
+        parentNode.replaceSubnodeWith(this, newNode);
+        parentNode.postShouldFocusAndExpandSubnode(newNode);
     }
 
     /**
@@ -163,7 +163,7 @@
      * @category Data Retrieval
      */
     nodeSummary () {
-        return ""
+        return "";
     }
-    
+
 }.initThisClass());

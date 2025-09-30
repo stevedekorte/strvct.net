@@ -12,7 +12,7 @@
         For persisting a object tree to a JSON formatted representation and back.
         Usefull for both persistence and exporting object out the the app/browser and onto desktop or other browsers.
 
-        This is a parent class for PersistentObjectPool, which just swaps out the recordDict AtomicMap, 
+        This is a parent class for PersistentObjectPool, which just swaps out the recordDict AtomicMap,
         with a PersistentAtomicMap.
 
         An object pool can also be created by pointing at an object within another pool.
@@ -27,10 +27,10 @@
             }
 
         Example use:
-    
+
             // converting a node to json
             const poolJson = ObjectPool.clone().setRoot(rootNode).asJson()
-            
+
             // converting json to a node
             const rootObject = ObjectPool.clone().fromJson(poolJson).root()
 
@@ -60,7 +60,7 @@
     static shouldStore () {
         return false;
     }
-    
+
     /**
      * @description initialize the prototype slots
      * @returns {void}
@@ -222,7 +222,7 @@
      * @returns {void}
      */
     init () {
-        super.init()
+        super.init();
         this.setRecordsMap(ideal.AtomicMap.clone());
         this.setActiveObjects(new Map());
         this.setDirtyObjects(new Map());
@@ -275,7 +275,7 @@
      * @description open the object pool
      * @returns {Promise}
      */
-    async promiseOpen () { 
+    async promiseOpen () {
         const map = this.recordsMap();
         if (map.isOpen() && map.name() === this.name()) {
             return this;
@@ -338,7 +338,7 @@
                 v = v.slice(0, max) + "...";
             }
             console.log("   '" + k + "': '" + v + "'");
-        })
+        });
 
         console.log("------");
     }
@@ -349,7 +349,7 @@
      * @returns {Promise}
      */
     async onRecordsDictOpen () {
-        
+
         //this.show("ON OPEN");
         await this.promiseCollect();
         //this.show("AFTER COLLECT");
@@ -380,13 +380,13 @@
      * @param {String} pid - the new root pid
      * @returns {ObjectPool}
      */
-    setRootPid (pid) { 
+    setRootPid (pid) {
         // private - it's assumed we aren't already in storing-dirty-objects tx
         const map = this.recordsMap();
         if (map.at(this.rootKey()) !== pid) {
             map.atPut(this.rootKey(), pid);
-            console.log("---- SET ROOT PID " + pid + " ----")
-            
+            console.log("---- SET ROOT PID " + pid + " ----");
+
         }
         assert(this.hasStoredRoot());
         return this;
@@ -459,7 +459,7 @@
             refs.delete(appRootObject);
             assert(refs.size === 0, "there are still stored refs to the app root object");
             // TODO:what about dirty objects?
-            
+
             // read the old record into the new object
             const oldRecord = this.recordForPid(storedRootPid);
             appRootObject.loadFromRecord(oldRecord, this);
@@ -470,7 +470,7 @@
 
             // now we need to update the active objects
             this.addActiveObject(appRootObject);
-            this.addDirtyObject(obj);appRootObject
+            this.addDirtyObject(obj);appRootObject;
 
         } else {
             this.setRootObject(rootObject);
@@ -484,7 +484,7 @@
      */
     readRootObject () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
-        
+
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()); // this call will actually internally set this._rootObject as we may need it while loading the root's refs
             //assert(!Type.isNullOrUndefined(root), this.svType() + " rootObject is null or undefined");
@@ -524,13 +524,13 @@
 
     /*
     changeOldPidToNewPid (oldPid, newPid) {
-        // flush and change pids on all activeObjects 
-        // and pids and pidRefs in recordsMap 
+        // flush and change pids on all activeObjects
+        // and pids and pidRefs in recordsMap
         throw new Error("unimplemented");
         return this;
     }
     */
-    
+
     /**
      * @description set the root object
      * @param {Object} obj - the new root object
@@ -546,7 +546,7 @@
 
         assert(!this.knowsObject(obj));
 
-        
+
         //this.setRootPid(obj.puuid()); // this is set when the dirty root object is stored
         this._rootObject = obj;
         this.logDebug(" adding rootObject " + obj.svDebugId());
@@ -585,7 +585,7 @@
         const puuid = anObject.puuid();
         return this.activeObjects().has(puuid);
     }
-    
+
     /**
      * @description add an active object
      * @param {Object} anObject - the object to add
@@ -656,7 +656,7 @@
      */
     removeMutationObservations () {
         this.activeObjects().forEachKV((puuid, obj) => obj.removeMutationObserver(this)); // activeObjects is super set of dirtyObjects
-        return this
+        return this;
     }
 
     /**
@@ -756,7 +756,7 @@
         }
 
         if (!this.dirtyObjects().has(puuid)) {
-            this.logDebug(() => "addDirtyObject(" + anObject.svTypeId() + ")" );
+            this.logDebug(() => "addDirtyObject(" + anObject.svTypeId() + ")");
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?");
             }
@@ -792,21 +792,21 @@
      */
     scheduleStore () {
         if (!this.isOpen()) {
-            console.log(this.svTypeId() + " can't schedule store yet, not open")
-            return this
+            console.log(this.svTypeId() + " can't schedule store yet, not open");
+            return this;
         }
-        assert(this.isOpen())
+        assert(this.isOpen());
         const scheduler = SvSyncScheduler.shared();
         const methodName = "commitStoreDirtyObjects";
         //console.log(this.svType() + " --- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
                 //console.warn("scheduleStore currentAction = ", SvSyncScheduler.currentAction() ? SvSyncScheduler.currentAction().description() : null);
-                this.logDebug("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size );
+                this.logDebug("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
                 scheduler.scheduleTargetAndMethod(this, methodName, 1000);
             }
         }
-        return this
+        return this;
     }
 
     // --- storing ---
@@ -818,7 +818,7 @@
      */
     async commitStoreDirtyObjects () {
         this.logDebug("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
-        
+
         if (this.hasDirtyObjects()) {
             //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
 
@@ -839,7 +839,7 @@
      */
     storeDirtyObjects () { // PRIVATE
         // store the dirty objects, if they contain references objects unknown to pool,
-        // they'll be added as active + dirty objects which will be stored on next loop. 
+        // they'll be added as active + dirty objects which will be stored on next loop.
         // We continue until there are no dirty objects left.
 
         let totalStoreCount = 0;
@@ -860,7 +860,7 @@
                 }
 
                 this.storingPids().add(puuid);
-                
+
                 this.storeObject(obj);
 
                 thisLoopStoreCount ++;
@@ -885,11 +885,11 @@
      * @returns {Map}
      */
     classNameConversionMap () {
-        const m = new Map()
+        const m = new Map();
         /*
         m.set("SvMenuNode", "SvFolderNode")
         */
-       return m;
+        return m;
     }
 
     /**
@@ -897,11 +897,11 @@
      * @param {String} className - the name of the class
      * @returns {Class}
      */
-    classForName (className) { 
+    classForName (className) {
         const m = this.classNameConversionMap();
         if (m.has(className)) {
             return Object.getClassNamed(m.get(className));
-        } 
+        }
 
         return Object.getClassNamed(className);
     }
@@ -925,17 +925,17 @@
             const error = "missing class '" + className + "' - returning null";
             console.warn(error);
             //throw new Error(error);
-            
+
             return null;
         }
-        assert(!Type.isNullOrUndefined(aRecord.id))
+        assert(!Type.isNullOrUndefined(aRecord.id));
 
         if (Type.isUndefined(aClass.instanceFromRecordInStore)) {
             console.warn("Class '" + className + "' missing method 'instanceFromRecordInStore' - deserializing as null");
             return null;
         }
 
-        
+
         const obj = aClass.instanceFromRecordInStore(aRecord, this);
         if (obj === null) {
             // maybe the class shouldStore is false?
@@ -988,14 +988,14 @@
             return activeObj;
         }
 
-        // schedule didInitLoadingPids to occur at end of event loop 
+        // schedule didInitLoadingPids to occur at end of event loop
 
         if (!this.isFinalizing() && this.loadingPids().count() === 0) {
             SvSyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids");
         }
 
         this.loadingPids().add(puuid);
-        
+
         const aRecord = this.recordForPid(puuid);
         if (Type.isUndefined(aRecord)) {
             console.log("missing record for " + puuid);
@@ -1029,7 +1029,7 @@
                 } else if (obj.didLoadFromStore) {
                     obj.didLoadFromStore(); // should this be able to trigger an objectForPid() that would add to loadingPids?
                 }
-            })
+            });
         }
         this.setIsFinalizing(false);
     }
@@ -1074,7 +1074,7 @@
             if (obj.lazyPids) {
                 obj.lazyPids(pids);
             }
-        })
+        });
         return pids;
     }
 
@@ -1087,7 +1087,7 @@
      */
     refForPid (aPid) {
         // is this ever called?
-        return { 
+        return {
             "*": aPid.pid()
             //"*": this.pid()
         };
@@ -1195,7 +1195,7 @@
         if (Type.isDictionary(obj)) {
         }
         */
-        
+
         // --- sanity checks ---
         assert(obj.shouldStore(), "object " + obj.svType() + " shouldStore is false");
 
@@ -1211,7 +1211,7 @@
         }
 
         if (obj.asyncRecordForStore) {
-            // asyncRecordForStore is only implemented if there's no 
+            // asyncRecordForStore is only implemented if there's no
             // synchronous option for serialization e.g. serializing a Blob
             //throw new Error("no support for asyncRecordForStore yet!");
             const kvPromise = this.kvPromiseForObject(obj);
@@ -1280,7 +1280,7 @@
 
         // this is an on-disk collection
         // in-memory objects aren't considered
-        // so we make sure they're flushed to the db first 
+        // so we make sure they're flushed to the db first
         await this.recordsMap().promiseBegin();
         this.flushIfNeeded(); // store any dirty objects
 
@@ -1313,7 +1313,7 @@
         if (!this.markedSet().has(pid)) {
             this.markedSet().add(pid);
             const refPids = this.refSetForPuuid(pid);
-            
+
             //this.logDebug(() => "markPid " + pid + " w refs " + JSON.stringify(refPids.asArray()));
             refPids.forEach(refPid => this.markPid(refPid));
             return true;
@@ -1345,7 +1345,7 @@
      */
     puuidsSetFromJson (json, puuids = new Set()) {
         // json can only contain array's, dictionaries, and literals.
-        // We store dictionaries as an array of entries, 
+        // We store dictionaries as an array of entries,
         // and reserve dicts in the json for pointers with the format { "*": "<puuid>" }
 
         //console.log(" json: ", JSON.stringify(json, null, 2));
@@ -1358,7 +1358,7 @@
         } else {
             throw new Error("unable to handle json type: " + typeof(json) + " missing refsPidsForJsonStore() method?");
         }
-        
+
         return puuids;
     }
 
@@ -1369,7 +1369,7 @@
             if (obj.refSetForPuuid(pid).has(objPid)) {
                 objects.add(obj);
             }
-        })
+        });
         return objects;
     }
 
@@ -1420,7 +1420,7 @@
         await map.promiseBegin();
         map.forEachK(pid => {
             map.removeKey(pid);
-        }) // the remove applies to the changeSet
+        }); // the remove applies to the changeSet
         await map.promiseCommit();
     }
 
@@ -1512,6 +1512,4 @@
     */
 
 }.initThisClass());
-
-
 

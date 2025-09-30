@@ -71,8 +71,8 @@
      * @category Animation
      */
     currentValue () {
-        const view = this.view()
-        return view[this.viewProperty()].apply(view)
+        const view = this.view();
+        return view[this.viewProperty()].apply(view);
     }
 
     /**
@@ -81,10 +81,10 @@
      * @category Animation
      */
     start () {
-        this.setStartValue(this.currentValue())
-        this.setStartTime(new Date().getTime())
-        this.nextFrame()
-        return this
+        this.setStartValue(this.currentValue());
+        this.setStartTime(new Date().getTime());
+        this.nextFrame();
+        return this;
     }
 
     /**
@@ -104,9 +104,9 @@
      */
     setterName () {
         if (!this._setterName) {
-            this._setterName = this.viewProperty().asSetter()
+            this._setterName = this.viewProperty().asSetter();
         }
-        return this._setterName
+        return this._setterName;
     }
 
     /**
@@ -116,8 +116,8 @@
      * @category Animation
      */
     setValue (v) {
-        view[this.setterName()].call(view, v)
-        return this
+        view[this.setterName()].call(view, v);
+        return this;
     }
 
     /**
@@ -126,16 +126,16 @@
      * @category Animation
      */
     nextFrame () {
-        const tr = this.timeRatioDone()
+        const tr = this.timeRatioDone();
         const newValue = Math.ceil((this.timeRatioDone() * (this.currentValue() - this.startValue())) + this.startValue());
-        this.setValue(newValue)
+        this.setValue(newValue);
 
         if (tr !== 1) {
-            requestAnimationFrame(() => { this.nextFrame() })
+            requestAnimationFrame(() => { this.nextFrame(); });
         } else {
-            this.didComplete()
+            this.didComplete();
         }
-        return this
+        return this;
     }
 
     /**

@@ -1,15 +1,15 @@
 // NOTE: moved this functionality into Object_categorySupport.js and boot code
 
-"use strict"; 
+"use strict";
 
 /*
     @module library.ideal.object
 
     Weird JS things:
 
-    Some of the primitives such as Array, Set, Map have constructors which 
-    do not inherit from Object (they and the Object constructor all inherit 
-    from constructor named "") but their constructor prototypes *do* inherit 
+    Some of the primitives such as Array, Set, Map have constructors which
+    do not inherit from Object (they and the Object constructor all inherit
+    from constructor named "") but their constructor prototypes *do* inherit
     from Object.prototype.
 
     To make this consistent (so we can inherit class methods) we do
@@ -19,21 +19,21 @@
 
 {
     const classesToFix = [
-        Array, 
-        Boolean, 
+        Array,
+        Boolean,
         Blob,
-        Date, 
-        Error, 
-        Image, 
-        Set, 
-        Map, 
+        Date,
+        Error,
+        Image,
+        Set,
+        Map,
         Number,
         Range,
         String,
         ArrayBuffer,
         RegExp,
         BigInt
-    ]
+    ];
     classesToFix.forEach(aClass => aClass.__proto__ = Object);
     debugger;
 }
@@ -41,7 +41,7 @@
 /*
 
     Object-helpers
-    
+
     Some functions to help us implement categories.
 
 */
@@ -53,14 +53,14 @@
 Object.defineSlot = function (obj, slotName, slotValue) {
     if (Object.getOwnPropertyDescriptor(obj, slotName)) {
         // TODO: raise exception if it exists? Safer for categories?
-        this[slotName] = slotValue
+        this[slotName] = slotValue;
     } else {
         const descriptor = {
             configurable: true,
             enumerable: false,
             value: slotValue,
             writable: true,
-        }
+        };
 
         // this breaks on prototypes
         /*
@@ -84,9 +84,9 @@ Object.defineSlot = function (obj, slotName, slotValue) {
         }
         */
 
-        Object.defineProperty(obj, slotName, descriptor)
+        Object.defineProperty(obj, slotName, descriptor);
     }
-}
+};
 
 /*
 Test = class Test {
@@ -94,16 +94,16 @@ Test = class Test {
         this._foo = 123
     }
 }
- 
+
 Object.defineSlot(Test.prototype, "_foo", "bar")
- 
+
 let test = new Test()
 test.setup()
- 
+
 console.log(test)
 let d = Reflect.getOwnPropertyDescriptor(test, "_foo")
 console.log(d)
- 
+
 if (d.enumerable) {
     console.log("is enumerable")
 } else {
@@ -117,9 +117,9 @@ if (d.enumerable) {
  */
 Object.defineSlots = function (obj, dict) {
     Object.keys(dict).forEach((slotName) => {
-        const slotValue = dict[slotName]
-        Object.defineSlot(obj, slotName, slotValue)
-    })
+        const slotValue = dict[slotName];
+        Object.defineSlot(obj, slotName, slotValue);
+    });
 };
 
 /**
@@ -139,10 +139,10 @@ Object.defineSlotSafely = function (obj, slotName, slotValue) {
             name = "[error getting name]";
         }
         return name;
-    }
+    };
 
     if (obj.hasOwnProperty(slotName) && !slotName.startsWith("_")) {
-        if(typeof(slotValue) === "function" && obj[slotName + "_isOptional"] !== undefined) {
+        if (typeof(slotValue) === "function" && obj[slotName + "_isOptional"] !== undefined) {
             return null;
         }
         const msg = nameForObj(obj) + "." + slotName + " slot already exists";
@@ -174,7 +174,7 @@ Object.defineSlotsSafelyFromMap = function (obj, aMap) {
  * @member type
  * @category Type
  */
-Object.defineSlotSafely(Object, "type", function () { 
+Object.defineSlotSafely(Object, "type", function () {
     return this.name;
 });
 
@@ -182,7 +182,7 @@ Object.defineSlotSafely(Object, "type", function () {
  * @member type
  * @category Type
  */
-Object.defineSlotSafely(Object.prototype, "type", function () { 
+Object.defineSlotSafely(Object.prototype, "type", function () {
     return this.constructor.name;
 });
 
@@ -192,7 +192,7 @@ Object.defineSlotSafely(Object.prototype, "type", function () {
  * @member isClass
  * @category Type
  */
-Object.defineSlotSafely(Object, "isClass", function () { 
+Object.defineSlotSafely(Object, "isClass", function () {
     return true;
 });
 
@@ -200,7 +200,7 @@ Object.defineSlotSafely(Object, "isClass", function () {
  * @member isClass
  * @category Type
  */
-Object.defineSlotSafely(Object.prototype, "isClass", function () { 
+Object.defineSlotSafely(Object.prototype, "isClass", function () {
     return false;
 });
 
@@ -210,7 +210,7 @@ Object.defineSlotSafely(Object.prototype, "isClass", function () {
  * @member isPrototype
  * @category Type
  */
-Object.defineSlotSafely(Object, "isPrototype", function () { 
+Object.defineSlotSafely(Object, "isPrototype", function () {
     return false;
 });
 
@@ -218,7 +218,7 @@ Object.defineSlotSafely(Object, "isPrototype", function () {
  * @member isPrototype
  * @category Type
  */
-Object.defineSlotSafely(Object.prototype, "isPrototype", function () { 
+Object.defineSlotSafely(Object.prototype, "isPrototype", function () {
     return this.constructor.prototype === this;
 });
 
@@ -228,7 +228,7 @@ Object.defineSlotSafely(Object.prototype, "isPrototype", function () {
  * @member isInstance
  * @category Type
  */
-Object.defineSlotSafely(Object, "isInstance", function () { 
+Object.defineSlotSafely(Object, "isInstance", function () {
     return false;
 });
 
@@ -236,7 +236,7 @@ Object.defineSlotSafely(Object, "isInstance", function () {
  * @member isInstance
  * @category Type
  */
-Object.defineSlotSafely(Object.prototype, "isInstance", function () { 
+Object.defineSlotSafely(Object.prototype, "isInstance", function () {
     return !this.isPrototype();
 });
 
@@ -247,7 +247,7 @@ Object.defineSlotSafely(Object.prototype, "isInstance", function () {
  * @member forEachPrototype
  * @category Iteration
  */
-Object.defineSlotSafely(Object.prototype, "forEachPrototype", function (fn) { 
+Object.defineSlotSafely(Object.prototype, "forEachPrototype", function (fn) {
     let proto = this;
 
     if (this.isInstance()) {
@@ -270,12 +270,12 @@ Object.defineSlotSafely(Object.prototype, "forEachPrototype", function (fn) {
  * @member forEachSlot
  * @category Iteration
  */
-Object.defineSlot(Object.prototype, "forEachSlot", function (fn) { 
+Object.defineSlot(Object.prototype, "forEachSlot", function (fn) {
     this.forEachPrototype(proto => {
         if (Object.hasOwn(proto, "_slotsMap")) {
             proto._slotsMap.forEach((slot, key, map) => {
                 fn(slot);
-            })
+            });
         }
     });
 });
@@ -284,7 +284,7 @@ Object.defineSlot(Object.prototype, "forEachSlot", function (fn) {
  * @member setupAllSlotsMap
  * @category Initialization
  */
-Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () { 
+Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () {
     if (!this.isPrototype()) {
         throw new Error("setupAllSlotsMap called on non-prototype");
     }
@@ -295,7 +295,7 @@ Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () {
     //assert(this.isPrototype())
     this.forEachSlot(slot => {
         const k = slot.name();
-        if (!m.has(k)) { // to handle overrides 
+        if (!m.has(k)) { // to handle overrides
             m.set(k, slot);
         }
     });
@@ -305,7 +305,7 @@ Object.defineSlot(Object.prototype, "setupAllSlotsMap", function () {
  * @member allSlotsMap
  * @category Getter
  */
-Object.defineSlot(Object.prototype, "allSlotsMap", function () { 
+Object.defineSlot(Object.prototype, "allSlotsMap", function () {
     return this._allSlotsMap;
 });
 
@@ -313,7 +313,7 @@ Object.defineSlot(Object.prototype, "allSlotsMap", function () {
  * @member slotsMap
  * @category Getter
  */
-Object.defineSlot(Object.prototype, "slotsMap", function () { 
+Object.defineSlot(Object.prototype, "slotsMap", function () {
     return this._slotsMap;
 });
 
@@ -335,7 +335,7 @@ Object.defineSlot(Object.prototype, "initSlots", function () { // setup property
  * @member setupPrototype
  * @category Initialization
  */
-Object.defineSlot(Object.prototype, "setupPrototype", function () { 
+Object.defineSlot(Object.prototype, "setupPrototype", function () {
 
     if (!this.isPrototype()) {
         throw new Error("setupPrototype called on non-prototype");
@@ -348,11 +348,11 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
 
     // We need to separate initPrototypeSlots, initSlots, initPrototype as
     // initializing some slots may depend on others already existing.
-    
-    // Slot init ordering may be important as well and why slots should be stored in 
+
+    // Slot init ordering may be important as well and why slots should be stored in
     // an array with a name->slot map used as an index.
 
-    
+
     if (this.hasOwnProperty("initPrototypeSlots")) {
         // Only called if method defined on this class.
         this.initPrototypeSlots();// This method should NOT call super
@@ -384,7 +384,7 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
  * @member initThisCategory
  * @category Initialization
  */
-Object.defineSlot(Object, "initThisCategory", function () { 
+Object.defineSlot(Object, "initThisCategory", function () {
     // define this first, so we can use it to more cleanly define our
     // Object categories.
     //
@@ -415,12 +415,12 @@ Object.defineSlot(Object, "initThisCategory", function () {
             /*
             // this doesn't seem to get the correct .name(?)
             if (typeof (v) === "function" && k !== "constructor") {
-                //v._categoryName = this.name // add a comment for category source 
+                //v._categoryName = this.name // add a comment for category source
             }
             */
-        })
+        });
         return map;
-    }
+    };
 
     // get the parent class
     const parentClass = this.__proto__;
@@ -445,19 +445,19 @@ Object.defineSlot(Object, "initThisCategory", function () {
     console.log("parentClass.name = '" + parentClass.name + "'")
     console.log("parentClass.__proto__.name = '" + parentClass.__proto__.name + "'")
     */
-    
+
     // bit of a hack to fix super in class and proto methods
     if (parentClass !== Object) { // don't need to call super on base class
         // fix super in instance methods
-        Object.setPrototypeOf(this.prototype, parentClass.__proto__.prototype); 
+        Object.setPrototypeOf(this.prototype, parentClass.__proto__.prototype);
 
         // fix super in static/class methods
         // need to do this *after* instance methods super fix as it changes __proto__
-        Object.setPrototypeOf(this, parentClass.__proto__); 
+        Object.setPrototypeOf(this, parentClass.__proto__);
 
         // related to super, see:
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super
     }
 
-    return this
+    return this;
 });

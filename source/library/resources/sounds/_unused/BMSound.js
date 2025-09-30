@@ -9,56 +9,56 @@
 */
 
 (class BMSound extends BaseNode {
-    
+
     // --- mime types ---
 
     static supportedMimeTypes () {
-        return new Set(["audio/ogg", "audio/wave", "audio/mp3"])
+        return new Set(["audio/ogg", "audio/wave", "audio/mp3"]);
     }
 
     static canOpenMimeType (mimeType) {
-        return this.supportedMimeTypes().has(mimeType)
+        return this.supportedMimeTypes().has(mimeType);
     }
 
     static openMimeChunk (dataChunk) {
-        const aNode = this.clone()
+        const aNode = this.clone();
         //setValue(dataChunk)
-        console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)
-        return aNode
+        console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length);
+        return aNode;
     }
 
     // ---
 
     initPrototypeSlots () {
-        this.newSlot("path", null)
+        this.newSlot("path", null);
     }
 
     init () {
-        super.init()
+        super.init();
     }
 
     title () {
-        return this.name()
+        return this.name();
     }
 
     subtitle () {
-        return this.path().pathExtension()
+        return this.path().pathExtension();
     }
 
     name () {
-        return this.path().lastPathComponent().sansExtension()
+        return this.path().lastPathComponent().sansExtension();
     }
 
     play () {
-        const audioPlayer = BMAudioPlayer.shared()
-        audioPlayer.setPath(this.path())
-        audioPlayer.play()
-        return this
+        const audioPlayer = BMAudioPlayer.shared();
+        audioPlayer.setPath(this.path());
+        audioPlayer.play();
+        return this;
     }
 
     prepareToAccess () {
-        super.prepareToAccess()
-        this.play() // not a good way to do this
+        super.prepareToAccess();
+        this.play(); // not a good way to do this
         //audio.src = 'data:audio/wav;base64,UklGR...;
     }
 

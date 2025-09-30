@@ -15,7 +15,7 @@
         onTopEdgePanCancelled
  */
 (class TopEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots
      * @private
@@ -31,9 +31,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("top")
-        return this
+        super.init();
+        this.setEdgeName("top");
+        return this;
     }
 
 }.initThisClass());

@@ -63,11 +63,11 @@
      */
     cssString () {
         // NOTE: multiple transform one line directives are applied from right to left
-        const s = 
-          this.scale().asCssScale3dString() + " " 
-        + this.position().asCssTranslate3dString() + " " 
+        const s =
+          this.scale().asCssScale3dString() + " "
+        + this.position().asCssTranslate3dString() + " "
         + this.rotation().asCssRotate3dDegreesString(); // is this the expected order?
-        return s
+        return s;
     }
 
     /**
@@ -76,11 +76,11 @@
      * @category Utility
      */
     copy () {
-        const t = Transform.clone()
-        t.position().copy(this.position())
-        t.rotation().copy(this.rotation())
-        t.scale().copy(this.scale())
-        return t
+        const t = Transform.clone();
+        t.position().copy(this.position());
+        t.rotation().copy(this.rotation());
+        t.scale().copy(this.scale());
+        return t;
     }
 
     /**
@@ -90,10 +90,10 @@
      * @category Geometry
      */
     addInPlace (otherTransform) {
-        this.position().addInPlace(otherTransform.position())
-        this.rotation().addInPlace(otherTransform.rotation())
-        this.scale().addInPlace(otherTransform.scale())
-        return this
+        this.position().addInPlace(otherTransform.position());
+        this.rotation().addInPlace(otherTransform.rotation());
+        this.scale().addInPlace(otherTransform.scale());
+        return this;
     }
 
     /*
@@ -114,5 +114,5 @@
         return t
     }
     */
-   
+
 }.initThisClass());

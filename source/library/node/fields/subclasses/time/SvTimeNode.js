@@ -9,7 +9,7 @@
 "use strict";
 
 (class SvTimeNode extends SvSummaryNode {
-    
+
     /**
      * @static
      * @description Indicates if this node is available as a primitive.
@@ -17,7 +17,7 @@
      * @category Metadata
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -25,7 +25,7 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-        this.overrideSlot("subnodes").setShouldStoreSlot(false)
+        this.overrideSlot("subnodes").setShouldStoreSlot(false);
 
         /**
          * @member {Number} hour - The hour value of the time.
@@ -89,7 +89,7 @@
      * @category Time
      */
     hasTime () {
-        return !Type.isNull(this.hour())
+        return !Type.isNull(this.hour());
     }
 
     /**
@@ -100,10 +100,10 @@
     jsDate () {
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
         if (this.hasTime()) {
-            const d = new Date(0, 0, 0, this.hour(), this.minute(), 0, 0, 0)
-            return d
+            const d = new Date(0, 0, 0, this.hour(), this.minute(), 0, 0, 0);
+            return d;
         }
-        return null
+        return null;
     }
 
     /**
@@ -113,10 +113,10 @@
      */
     timeString () {
         if (!this.formatter()) { //tmp hack to deal with bug
-            this.setFormatter(TimeFormatter.clone())
+            this.setFormatter(TimeFormatter.clone());
         }
 
-        return this.formatter().setDate(this.jsDate()).formattedValue()
+        return this.formatter().setDate(this.jsDate()).formattedValue();
     }
 
     /**
@@ -126,10 +126,10 @@
      */
     subtitle () {
         if (this.hasTime()) {
-            return this.timeString()
+            return this.timeString();
         }
 
-        return "No time selected"
+        return "No time selected";
     }
 
     /**
@@ -139,7 +139,7 @@
     prepareToSyncToView () {
         // called after clicked
         if (!this.hasSubnodes()) {
-            this.setupHourNodes()
+            this.setupHourNodes();
         }
     }
 
@@ -149,8 +149,8 @@
      */
     setupHourNodes () {
         for (let i = 0; i < 23; i++) {
-            const hour = SvHourNode.clone().setValue(i)
-            this.addSubnode(hour)
+            const hour = SvHourNode.clone().setValue(i);
+            this.addSubnode(hour);
         }
     }
 
@@ -162,14 +162,14 @@
      */
     onTapOfDecendantNode (aNode) {
         if (aNode.svType() === "SvMinuteNode") {
-            const minuteNode = aNode
-            const hourNode = minuteNode.parentNode()
-            this.setHour(hourNode.value())
-            this.setMinute(minuteNode.value())
-            this.scheduleSyncToView()
-            this.parentNode().postShouldFocusSubnode(this)
+            const minuteNode = aNode;
+            const hourNode = minuteNode.parentNode();
+            this.setHour(hourNode.value());
+            this.setMinute(minuteNode.value());
+            this.scheduleSyncToView();
+            this.parentNode().postShouldFocusSubnode(this);
         }
-        return true
+        return true;
     }
 
     /**
@@ -178,8 +178,8 @@
      * @category Serialization
      */
     jsonArchive () {
-        const d = this.jsDate()
-        return d ? d.toString() : null
+        const d = this.jsDate();
+        return d ? d.toString() : null;
     }
 
 }.initThisClass());

@@ -108,7 +108,7 @@
         this.clearNoteHash();
         return this;
     }
-    
+
     /**
      * Checks if this notification is equal to another.
      * @param {SvNotification} obs - The notification to compare with.
@@ -116,7 +116,7 @@
      * @category Comparison
      */
     isEqual (obs) {
-        if (this === obs) { 
+        if (this === obs) {
             return true;
         }
 
@@ -130,7 +130,7 @@
      */
     clearNoteHash () {
         this._noteHash = null;
-        return this
+        return this;
     }
 
     /**
@@ -154,7 +154,7 @@
     isPosted () {
         return this.center().hasNotification(this);
     }
-    
+
     /**
      * Posts the notification.
      * @returns {SvNotification} The current instance.
@@ -167,11 +167,11 @@
             e.message = this.senderId() + " posting note '" + this.name() + "'";
             this.setSenderStack(e.stack);
         }
-       
+
         this.center().addNotification(this);
         return this;
     }
-    
+
     /**
      * Gets a description of the notification.
      * @returns {string} The description.

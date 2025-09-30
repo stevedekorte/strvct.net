@@ -11,31 +11,31 @@
  *
  * Dragging Protocol
  *
- * Messages sent to the Item 
+ * Messages sent to the Item
  *     - onDragItemBegin
  *     - onDragItemCancelled
- *     - onDragItemDropped   
+ *     - onDragItemDropped
  *
- * Messages sent to Source 
+ * Messages sent to Source
  *     - onDragSourceBegin
  *     - onDragSourceHover
  *     - onDragSourceCancelled // dropped on a view that doesn't accept it
  *     - onDragSourceDropped
  *     - onDragSourceEnd
  *
- *     // using these messages avoids a bunch of conditions in the receiver 
+ *     // using these messages avoids a bunch of conditions in the receiver
  *     // the source is repsonsible for completing the drag operation
  *     // the DragView will set it's destination slot before calling these
- *     
- *     - onDragSourceMoveToDestination 
+ *
+ *     - onDragSourceMoveToDestination
  *     - onDragSourceCopyToDestination
  *     - onDragSourceLinkToDestination
- *     
+ *
  *     - onDragSourceMoveToSelf
  *     - onDragSourceCopyToSelf
  *     - onDragSourceLinkToSelf
- *     
- * Messages sent to Destination or Hover target 
+ *
+ * Messages sent to Destination or Hover target
  *     - acceptsDropHover
  *     - onDragDestinationEnter // not sent if destination === source
  *     - onDragDestinationHover
@@ -56,10 +56,10 @@
  * onLongPressComplete (longPressGesture) {
  *     const dv = DragView.clone().setItem(this).setSource(this.column())
  *     dv.openWithEvent(longPressGesture.currentEvent()) // TODO: eliminate this step?
- * } 
+ * }
  */
 (class DragView extends StyledDomView {
-    
+
     initPrototypeSlots () {
         // the view that will be dragged when operation is complete
         //this.newSlot("item", null)
@@ -113,7 +113,7 @@
         }
 
         /**
-         * @member {Point} dragStartPos - Start position in screen coordinates 
+         * @member {Point} dragStartPos - Start position in screen coordinates
          */
         {
             const slot = this.newSlot("dragStartPos", null);
@@ -124,7 +124,7 @@
          * @member {String} dragOperation - The drag operation type: move, copy, link, delete
          */
         {
-            const slot = this.newSlot("dragOperation", "move")
+            const slot = this.newSlot("dragOperation", "move");
             slot.setDoesHookSetter(true);
             slot.setSlotType("String");
         }
@@ -246,44 +246,44 @@
      * @private
      */
     setupMultiItemView () {
-        const parentView = this.items().first().parentView()
+        const parentView = this.items().first().parentView();
 
         // copy parent frame
-        const f = parentView.frameInDocument()
-        this.setFrameInDocument(f)
-        this.setBackgroundColor("transparent")
+        const f = parentView.frameInDocument();
+        this.setFrameInDocument(f);
+        this.setBackgroundColor("transparent");
 
         // duplicate item subviews
         this.items().forEach(sv => {
-            const dup = sv.htmlDuplicateView()
-            this.addSubview(dup)
-            assert(dup.hasFixedFrame())
-        })
+            const dup = sv.htmlDuplicateView();
+            this.addSubview(dup);
+            assert(dup.hasFixedFrame());
+        });
 
-        const ff = this.fixedFrameFittingSubviews()
-        const nf = parentView.convertFrameToDocument(ff)
-        this.setFrameInDocument(nf)
+        const ff = this.fixedFrameFittingSubviews();
+        const nf = parentView.convertFrameToDocument(ff);
+        this.setFrameInDocument(nf);
 
         // make subviews inline-block
         this.subviews().forEach(sv => {
-            sv.setDisplay("inline-block")
-            sv.setPosition("relative")
-            sv.setTop(null)
-            sv.setLeft(null)
-            sv.setBorder(null)
-            sv.setFloat("left")
-        })
-        
-        this.setDisplay("block")
-        this.setWhiteSpace("normal")
-        this.setOverflow("hidden")
-        this.setWidth(null)
-        this.setHeight(null)
+            sv.setDisplay("inline-block");
+            sv.setPosition("relative");
+            sv.setTop(null);
+            sv.setLeft(null);
+            sv.setBorder(null);
+            sv.setFloat("left");
+        });
 
-        this.setWidth("fit-content")
-        this.setHeight("fit-content")
-        this.setMinAndMaxWidth(null)
-        this.setMinAndMaxHeight(null)
+        this.setDisplay("block");
+        this.setWhiteSpace("normal");
+        this.setOverflow("hidden");
+        this.setWidth(null);
+        this.setHeight(null);
+
+        this.setWidth("fit-content");
+        this.setHeight("fit-content");
+        this.setMinAndMaxWidth(null);
+        this.setMinAndMaxHeight(null);
     }
 
     /**
@@ -291,10 +291,10 @@
      * @private
      */
     setupSingleItemView () {
-        const aView = this.item()
-        this.setFrameInDocument(aView.frameInDocument())
-        this.setInnerHtml(aView.innerHtml())
-        this.setOverflow("visible")
+        const aView = this.item();
+        this.setFrameInDocument(aView.frameInDocument());
+        this.setInnerHtml(aView.innerHtml());
+        this.setOverflow("visible");
     }
 
     /**
@@ -302,7 +302,7 @@
      * @returns {Boolean} True if it has a pan gesture, false otherwise
      */
     hasPan () {
-        return !Type.isNull(this.defaultPanGesture())
+        return !Type.isNull(this.defaultPanGesture());
     }
 
     /**
@@ -311,16 +311,16 @@
      * @returns {DragView} The DragView instance
      */
     openWithEvent (event) {
-        const pan = this.addDefaultPanGesture()
-        pan.setShouldRemoveOnComplete(true)
-        pan.setMinDistToBegin(0)
-        pan.onDown(event)
-        pan.attemptBegin()
+        const pan = this.addDefaultPanGesture();
+        pan.setShouldRemoveOnComplete(true);
+        pan.setMinDistToBegin(0);
+        pan.onDown(event);
+        pan.attemptBegin();
 
-        this.setTransition("all 0s, transform 0.1s, box-shadow 0.1s")
-        this.open()
-        
-        return this
+        this.setTransition("all 0s, transform 0.1s, box-shadow 0.1s");
+        this.open();
+
+        return this;
     }
 
     /**
@@ -328,20 +328,20 @@
      * @returns {Boolean} Always returns true
      */
     acceptsPan () {
-        return true
+        return true;
     }
 
     /**
      * @description Opens the DragView
      * @returns {DragView} The DragView instance
      */
-    open () {        
-        this.setupView()
-        DocumentBody.shared().addSubview(this)
-        this.orderFront()
-        this.onBegin()
-        this.postNoteNamed("onDragViewOpen")
-        return this
+    open () {
+        this.setupView();
+        DocumentBody.shared().addSubview(this);
+        this.orderFront();
+        this.onBegin();
+        this.postNoteNamed("onDragViewOpen");
+        return this;
     }
 
     /**
@@ -349,23 +349,23 @@
      * @private
      */
     onBegin () {
-        this.sendProtocolMessage(this.source(), "onDragSourceBegin")
+        this.sendProtocolMessage(this.source(), "onDragSourceBegin");
     }
-    
+
     /**
      * @description Handles the beginning of a pan gesture
      * @param {PanGesture} aGesture - The pan gesture
      * @private
      */
     onPanBegin (aGesture) {
-        this.logDebug("onPanBegin")
-        this.setDragStartPos(this.item().positionInDocument())
+        this.logDebug("onPanBegin");
+        this.setDragStartPos(this.item().positionInDocument());
 
         this.addTimeout(() => {
-            this.addPanStyle()
-        })
+            this.addPanStyle();
+        });
 
-        this.onPanMove(aGesture)
+        this.onPanMove(aGesture);
     }
 
     /**
@@ -373,9 +373,9 @@
      * @private
      */
     updatePosition () {
-        const newPosition = this.dragStartPos().add(this.defaultPanGesture().diffPos()) 
-        this.setLeftPx(newPosition.x())
-        this.setTopPx(newPosition.y())
+        const newPosition = this.dragStartPos().add(this.defaultPanGesture().diffPos());
+        this.setLeftPx(newPosition.x());
+        this.setTopPx(newPosition.y());
     }
 
     /**
@@ -384,11 +384,11 @@
      * @private
      */
     onPanMove (aGesture) {
-        this.updatePosition()
-        
-        this.addTimeout(() => { 
-            this.hoverOverViews()
-        })
+        this.updatePosition();
+
+        this.addTimeout(() => {
+            this.hoverOverViews();
+        });
     }
 
     /**
@@ -397,16 +397,16 @@
      * @private
      */
     onPanCancelled (aGesture) {
-        const destFrame = this.source().dropCompleteDocumentFrame()
+        const destFrame = this.source().dropCompleteDocumentFrame();
 
-        const completionCallback = () => { 
-            this.sendProtocolMessage(this.source(), "onDragSourceCancelled")
-            this.sendProtocolMessage(this.source(), "onDragSourceEnd")
-            this.close() 
-        }
+        const completionCallback = () => {
+            this.sendProtocolMessage(this.source(), "onDragSourceCancelled");
+            this.sendProtocolMessage(this.source(), "onDragSourceEnd");
+            this.close();
+        };
 
-        this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback)
-        this.removePanStyle()
+        this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback);
+        this.removePanStyle();
     }
 
     /**
@@ -416,8 +416,8 @@
      */
     firstAcceptingDropTarget () {
         return this.hoverViews().detect((v) => {
-            return v.acceptsDropHoverComplete && v.acceptsDropHoverComplete(this)
-        })
+            return v.acceptsDropHoverComplete && v.acceptsDropHoverComplete(this);
+        });
     }
 
     /**
@@ -426,17 +426,17 @@
      * @private
      */
     currentOperation () {
-        const keyboard = SvKeyboard.shared()
+        const keyboard = SvKeyboard.shared();
 
         if (keyboard.alternateKey().isDown()) {
-            return "copy"
+            return "copy";
         }
 
         if (keyboard.alternateKey().isDown()) {
-            return "link"
+            return "link";
         }
 
-        return "move"
+        return "move";
     }
 
     /**
@@ -445,36 +445,36 @@
      * @private
      */
     onPanComplete (aGesture) {
-        this.logDebug("onPanComplete")
+        this.logDebug("onPanComplete");
 
-        const destView = this.firstAcceptingDropTarget()
-        
+        const destView = this.firstAcceptingDropTarget();
+
         if (!destView) {
-            this.onPanCancelled(aGesture)
+            this.onPanCancelled(aGesture);
             return;
         }
 
-        const isSource = (destView === this.source())
+        const isSource = (destView === this.source());
 
-        this.setDestination(destView)
+        this.setDestination(destView);
 
         if (destView) {
             const completionCallback = () => {
-                this.sendProtocolAction(destView, "Dropped")
+                this.sendProtocolAction(destView, "Dropped");
 
-                this.sendProtocolMessage(this.source(), "onDragSourceEnd")
+                this.sendProtocolMessage(this.source(), "onDragSourceEnd");
                 if (destView !== this.source()) {
-                    this.sendProtocolMessage(destView, "onDragDestinationEnd")
+                    this.sendProtocolMessage(destView, "onDragDestinationEnd");
                 }
 
-                this.close()
-            }
-            const destFrame = destView.dropCompleteDocumentFrame()
-            this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback)
-            this.removePanStyle()
-            this.hoverViews().remove(destView)
+                this.close();
+            };
+            const destFrame = destView.dropCompleteDocumentFrame();
+            this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback);
+            this.removePanStyle();
+            this.hoverViews().remove(destView);
         } else {
-            this.close()
+            this.close();
         }
     }
 
@@ -484,7 +484,7 @@
      * @private
      */
     viewsUnderDefaultPan () {
-        return DocumentBody.shared().viewsUnderPoint(this.dropPoint())
+        return DocumentBody.shared().viewsUnderPoint(this.dropPoint());
     }
 
     /**
@@ -494,7 +494,7 @@
      */
 
     dropPoint () {
-        return this.defaultPanGesture().currentPosition()
+        return this.defaultPanGesture().currentPosition();
     }
 
     /**
@@ -504,7 +504,7 @@
      */
     newHoverViews () {
         //console.log("dropPoint: " + this.dropPoint().asString())
-        return this.viewsUnderDefaultPan().select(v => v.acceptsDropHover && v.acceptsDropHover(this))
+        return this.viewsUnderDefaultPan().select(v => v.acceptsDropHover && v.acceptsDropHover(this));
     }
 
     /**
@@ -512,37 +512,37 @@
      * @returns {DragView} The current instance.
      */
     hoverOverViews () {
-        const oldViews = this.hoverViews()
-        const newViews = this.newHoverViews()
+        const oldViews = this.hoverViews();
+        const newViews = this.newHoverViews();
 
         // if new view was not in old one's, we must be entering it
-        const enteringViews = newViews.select(v => !oldViews.contains(v))
+        const enteringViews = newViews.select(v => !oldViews.contains(v));
 
         // if new view was in old one's, we're still hovering
-        const hoveringViews = newViews.select(v => oldViews.contains(v))
+        const hoveringViews = newViews.select(v => oldViews.contains(v));
 
         // if old view isn't in new ones, we must have exited it
-        const exitingViews = oldViews.select(v => !newViews.contains(v))
- 
-        // onDragSourceEnter onDragDestinationEnter 
-        enteringViews.forEach(aView => this.sendProtocolAction(aView, "Enter"))
+        const exitingViews = oldViews.select(v => !newViews.contains(v));
+
+        // onDragSourceEnter onDragDestinationEnter
+        enteringViews.forEach(aView => this.sendProtocolAction(aView, "Enter"));
 
         // onDragSourceHover onDragDestinationHover
-        hoveringViews.forEach(aView => this.sendProtocolAction(aView, "Hover"))
+        hoveringViews.forEach(aView => this.sendProtocolAction(aView, "Hover"));
 
-        // onDragSourceExit onDragDestinationExit 
-        exitingViews.forEach(aView =>  this.sendProtocolAction(aView, "Exit")) 
+        // onDragSourceExit onDragDestinationExit
+        exitingViews.forEach(aView =>  this.sendProtocolAction(aView, "Exit"));
 
-        this.setHoverViews(newViews)
-        return this
+        this.setHoverViews(newViews);
+        return this;
     }
 
     /**
      * @description Exits all hover views.
      */
     exitAllHovers () {
-        this.hoverViews().forEach((aView) => { this.sendProtocolAction(aView, "Exit") })
-        this.setHoverViews([])
+        this.hoverViews().forEach((aView) => { this.sendProtocolAction(aView, "Exit"); });
+        this.setHoverViews([]);
     }
 
     // drop hover protocol
@@ -554,10 +554,10 @@
      */
     sendProtocolAction (aView, action) {
         // onDragSourceHover & onDragDestinationHover
-        const isSource = aView === this.source()
-        const methodName = "onDrag" + (isSource ? "Source" : "Destination") + action
+        const isSource = aView === this.source();
+        const methodName = "onDrag" + (isSource ? "Source" : "Destination") + action;
         //this.logDebug(aView.node().title() + " " + methodName)
-        this.sendProtocolMessage(aView, methodName)
+        this.sendProtocolMessage(aView, methodName);
     }
 
     /**
@@ -568,47 +568,47 @@
     sendProtocolMessage (receiver, methodName) {
         if (!methodName.contains("Hover") && this.isDebugging()) {
 
-            let msg = receiver.svTypeId() + " " + methodName 
+            let msg = receiver.svTypeId() + " " + methodName;
 
             if (methodName.contains("Dropped")) {
-                msg += " " + this.dragOperation()
-            }
-    
-            if (!receiver[methodName]) {
-                msg += " <<<<<<<<<<<<<< NOT FOUND "
+                msg += " " + this.dragOperation();
             }
 
-            this.logDebug(msg)
+            if (!receiver[methodName]) {
+                msg += " <<<<<<<<<<<<<< NOT FOUND ";
+            }
+
+            this.logDebug(msg);
         }
 
         if (receiver[methodName]) {
             // this fails on onDragDestinationEnd method triggered by onMouseUpCapture
-            receiver[methodName].call(receiver, this)
+            receiver[methodName].call(receiver, this);
         }
     }
-    
+
     // close
 
     /**
      * @description Closes the DragView.
      * @returns {DragView} The current instance.
-     */ 
+     */
     close () {
-        this.logDebug("close")
-        this.postNoteNamed("onDragViewClose")
+        this.logDebug("close");
+        this.postNoteNamed("onDragViewClose");
         // handle calling this out of seqence?
 
-        this.exitAllHovers()
+        this.exitAllHovers();
         // TODO: animate move to end location before removing
 
-        this.removePanStyle()
-        DocumentBody.shared().removeSubview(this)
-        assert(Type.isNullOrUndefined(this.element().parentNode)) // sanity check
-        this.setItems([])
-        this.setIsClosed(true)
+        this.removePanStyle();
+        DocumentBody.shared().removeSubview(this);
+        assert(Type.isNullOrUndefined(this.element().parentNode)); // sanity check
+        this.setItems([]);
+        this.setIsClosed(true);
 
 
-        return this
+        return this;
     }
 
     // --- drag style ---
@@ -618,15 +618,15 @@
      * @returns {DragView} The current instance.
      */
     addPanStyle () {
-        const s = "0px 0px 10px 10px rgba(0, 0, 0, 0.5)"
-        const r = 1.05 // 1.1 * (1/Math.sqrt(this.items().length))
-        this.setTransform("scale(" + r + ")")
+        const s = "0px 0px 10px 10px rgba(0, 0, 0, 0.5)";
+        const r = 1.05; // 1.1 * (1/Math.sqrt(this.items().length))
+        this.setTransform("scale(" + r + ")");
         if (this.subviews().length) {
-            this.subviews().forEach(v => v.setBoxShadow(s))
+            this.subviews().forEach(v => v.setBoxShadow(s));
         } else {
-            this.setBoxShadow(s)
+            this.setBoxShadow(s);
         }
-        return this
+        return this;
     }
 
     /**
@@ -634,14 +634,14 @@
      * @returns {DragView} The current instance.
      */
     removePanStyle () {
-        const s = "none"
-        this.setTransform("scale(1)")
+        const s = "none";
+        this.setTransform("scale(1)");
         if (this.subviews().length) {
-            this.subviews().forEach(v => v.setBoxShadow(s))
+            this.subviews().forEach(v => v.setBoxShadow(s));
         } else {
-            this.setBoxShadow(s)
+            this.setBoxShadow(s);
         }
-        return this
+        return this;
     }
 
 }.initThisClass());

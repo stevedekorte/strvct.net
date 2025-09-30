@@ -2,7 +2,7 @@
  * @module library.node.fields.subclasses
  */
 
-"use strict"; 
+"use strict";
 
 /**
  * @class SvPasswordField
@@ -10,7 +10,7 @@
  * @classdesc Represents a password field in the application. Inherits from SvStringField but provides password-specific behavior.
  */
 (class SvPasswordField extends SvStringField {
-    
+
     /**
      * @static
      * @returns {boolean} True if available as a node primitive.
@@ -18,7 +18,7 @@
      * @category Availability
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -50,7 +50,7 @@
      * @category Synchronization
      */
     syncFromNode () {
-        return super.syncFromNode()
+        return super.syncFromNode();
     }
-    
+
 }.initThisClass());

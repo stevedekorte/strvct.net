@@ -7,7 +7,7 @@
  */
 
 // Only define FontFace if it doesn't already exist
-if (typeof FontFace === 'undefined') {
+if (typeof FontFace === "undefined") {
     console.log("evaluating FontFaceShim.js");
 
     /**
@@ -19,7 +19,7 @@ if (typeof FontFace === 'undefined') {
             this.family = family;
             this.source = source;
             this.descriptors = descriptors;
-            this.status = 'unloaded';
+            this.status = "unloaded";
             this.loaded = Promise.resolve(this);
         }
 
@@ -28,7 +28,7 @@ if (typeof FontFace === 'undefined') {
          * @returns {Promise<FontFace>} A promise that resolves to this FontFace instance
          */
         load () {
-            this.status = 'loaded';
+            this.status = "loaded";
             return Promise.resolve(this);
         }
 

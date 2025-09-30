@@ -6,11 +6,11 @@
 
 /**
  * A single function which can be used either from the browser or node.js to get the global object.
- * 
+ *
  * Notes:
- * 
+ *
  * From: https://developer.mozilla.org/en-US/docs/Glossary/Global_object
- * 
+ *
  * globalThis === globalThis.globalThis // true (everywhere)
  * window === window.window // true (in a browser)
  * self === self.self // true (in a browser or a Web Worker)
@@ -30,34 +30,34 @@ const SvGlobals = (class SvGlobals extends Object {
     }
 
     static privateSetupGlobals () {
-        if (typeof(globalThis) !== 'undefined') {
+        if (typeof(globalThis) !== "undefined") {
             // should work in all modern browsers and node.js
             return globalThis;
         }
 
-        if (typeof(self) !== 'undefined') {
+        if (typeof(self) !== "undefined") {
             // for browser and web workers
             return self;
         }
 
-        if (typeof(window) !== 'undefined') { 
+        if (typeof(window) !== "undefined") {
             // for older browsers that don't support globalThis
-            window.global = window; 
+            window.global = window;
             return window;
         }
 
-        if (typeof(global) !== 'undefined') { 
+        if (typeof(global) !== "undefined") {
             // for older node.js versions that don't support globalThis
-            global.window = global; 
+            global.window = global;
             return global;
         }
 
         // Note: this might still return the wrong result!
-        if (typeof(this) !== 'undefined' && this.Math === Math) {
+        if (typeof(this) !== "undefined" && this.Math === Math) {
             return this;
         }
-        
-        throw new Error('Unable to locate global `this`');
+
+        throw new Error("Unable to locate global `this`");
     }
 
     static get (key) {
@@ -92,7 +92,7 @@ const SvGlobals = (class SvGlobals extends Object {
     }
 
     static asMap () {
-        const dict = this.globals();    
+        const dict = this.globals();
         const map = new Map(Object.entries(dict));
         return map;
     }

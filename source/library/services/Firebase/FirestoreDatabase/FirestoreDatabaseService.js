@@ -8,10 +8,10 @@
  * @class FirebaseStorageService
  * @extends AiService
  * @classdesc Service for Firebase Storage integration via AccountServer
- * 
+ *
  * This service coordinates with the AccountServer to get signed upload URLs,
  * allowing secure uploads to Firebase Storage without exposing credentials.
- * 
+ *
  * Security model:
  * - Client requests signed URL from AccountServer (authenticated)
  * - AccountServer generates time-limited upload URL using Firebase Admin SDK
@@ -19,7 +19,7 @@
  * - No Firebase credentials exposed to client
  */
 (class FirestoreDatabaseService extends SvSummaryNode {
-    
+
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
@@ -48,21 +48,21 @@
     static preClone () {
         const obj = super.preClone();
         console.log("----------- " + obj.svTypeId() + " [after preClone] ");
-        
+
         return obj;
     }
 
     static clone () {
         const obj = super.clone();
         console.log("----------- " + obj.svTypeId() + " [after clone] ");
-        
+
         return obj;
     }
 
     init () {
         super.init();
         console.log("----------- " + this.svTypeId() + ".init() ");
-       
+
     }
 
 }.initThisClass());

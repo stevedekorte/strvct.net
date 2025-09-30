@@ -27,9 +27,9 @@
      */
     constructor () {
         super();
-        
-        this.href = '';
-        this.pathname = '';
+
+        this.href = "";
+        this.pathname = "";
         this.response = null;
     }
 
@@ -38,17 +38,17 @@
      * @returns {Promise<ArrayBuffer>} A promise that resolves with the response as an ArrayBuffer.
      */
     async promiseLoad () {
-        const path = this.href
-        console.log("URL.promiseLoad() (over NETWORK) ", path)
-        
+        const path = this.href;
+        console.log("URL.promiseLoad() (over NETWORK) ", path);
+
         try {
             const file = StrvctFile.with(path);
             const textContent = await file.asyncLoad();
-            
+
             // Convert text to ArrayBuffer to maintain API compatibility
             const encoder = new TextEncoder();
             const arrayBuffer = encoder.encode(textContent).buffer;
-            
+
             this.response = arrayBuffer;
             //console.log("URL loaded ", path)
             return arrayBuffer;
@@ -57,5 +57,5 @@
             throw new Error(`Error loading ${path}: ${error.message}`);
         }
     }
-    
+
 }).initThisCategory();

@@ -3,96 +3,96 @@
 (class AsyncFuture extends Base {
 
     initPrototype () {
-        this.newSlot("connection", null)
-        this.newSlot("message", null)
-        this.newSlot("response", null)
-        this.newSlot("responseTarget", null)
-        this.newSlot("result", undefined)
-        this.newSlot("error", null)
-        this.newSlot("isDone", false)
-        this.newSlot("timeoutId", null)
-        this.newSlot("timeout", 30000)
+        this.newSlot("connection", null);
+        this.newSlot("message", null);
+        this.newSlot("response", null);
+        this.newSlot("responseTarget", null);
+        this.newSlot("result", undefined);
+        this.newSlot("error", null);
+        this.newSlot("isDone", false);
+        this.newSlot("timeoutId", null);
+        this.newSlot("timeout", 30000);
         //this.newSlot("resultProxy", null)
-        this.newSlot("doesIgnoreResponse", false)
+        this.newSlot("doesIgnoreResponse", false);
     }
 
     init () {
-        super.init()
-        this.startTimeout()
-        this.setIsDebugging(false)
+        super.init();
+        this.startTimeout();
+        this.setIsDebugging(false);
     }
 
     // --- timeout ---
 
     setTimeout (ms) {
         if (this.hasTimer()) {
-            this.stopTimeout()
-            this.startTimeout()
+            this.stopTimeout();
+            this.startTimeout();
         }
     }
 
     hasTimer () {
-        return this.timeoutId() !== null
+        return this.timeoutId() !== null;
     }
 
     startTimeout () {
         if (this.timeout()) {
-            const tid = setTimeout(() => this.onTimeout(), this.timeout())
-            this.setTimeoutId(tid)
+            const tid = setTimeout(() => this.onTimeout(), this.timeout());
+            this.setTimeoutId(tid);
         }
     }
 
     stopTimeout () {
-        const tid = this.timeoutId()
+        const tid = this.timeoutId();
         if (tid) {
-            clearTimeout(tid)
-            this.setTimeoutId(null)
+            clearTimeout(tid);
+            this.setTimeoutId(null);
         }
     }
 
     onTimeout () {
-        this.onDone()
-        this.setTimeoutId(null)
-        this.debugLog(" " + this.message().messageId() + " TIMEOUT")
-        this.informResponseTarget("onTimeout")
+        this.onDone();
+        this.setTimeoutId(null);
+        this.debugLog(" " + this.message().messageId() + " TIMEOUT");
+        this.informResponseTarget("onTimeout");
     }
 
     // --- callbacks ---
 
     onComplete () {
-        this.onDone()
-        this.informResponseTarget("onComplete")
+        this.onDone();
+        this.informResponseTarget("onComplete");
     }
 
     onError () {
-        this.onDone()
-        this.informResponseTarget("onError")
+        this.onDone();
+        this.informResponseTarget("onError");
     }
 
     // --- response target ---
 
     ignoreResponse () {
-        this.setDoesIgnoreResponse(true)
-        return this
+        this.setDoesIgnoreResponse(true);
+        return this;
     }
 
     informResponseTarget (prefix) {
         if (this.doesIgnoreResponse()) {
-            return
+            return;
         }
 
-        const target = this.responseTarget()
-        const m = prefix + "_" + this.message().methodName()
+        const target = this.responseTarget();
+        const m = prefix + "_" + this.message().methodName();
         if (this.message().expectsResponse()) {
             if (target) {
-                const f = target[m]
+                const f = target[m];
                 if (f) {
-                    f.call(target, this)
+                    f.call(target, this);
                 } else {
-                    console.warn(this.svType() + " LOCAL WARNING: " + target.svType() + " missing method "+ m + "()")
+                    console.warn(this.svType() + " LOCAL WARNING: " + target.svType() + " missing method " + m + "()");
                 }
             } else {
-                console.warn(this.svType() + " LOCAL WARNING: no responseTarget for " + m)
+                console.warn(this.svType() + " LOCAL WARNING: no responseTarget for " + m);
             }
         }
     }
@@ -100,9 +100,9 @@
     // --- done ---
 
     onDone () {
-        this.stopTimeout()
-        this.setIsDone(true)
-        this.connection().removeFuture(this)
+        this.stopTimeout();
+        this.setIsDone(true);
+        this.connection().removeFuture(this);
         //this.cleanUp()
     }
 
@@ -116,19 +116,19 @@
     // --- response ---
 
     handleResponse (aResponse) {
-        this.setResponse(aResponse)
+        this.setResponse(aResponse);
         if (aResponse.result) {
-            this.setResult(aResponse.result())
+            this.setResult(aResponse.result());
         } else {
-            this.setError(aResponse.error())
+            this.setError(aResponse.error());
         }
 
         if (this.error()) {
-            this.onError()
+            this.onError();
         } else {
-            this.onComplete()
+            this.onComplete();
         }
-        return this
+        return this;
     }
 
     // --- result proxy ---
@@ -163,7 +163,7 @@
                 };
             }
         }
-    
+
         return new Proxy(this, handler)
     }
     */

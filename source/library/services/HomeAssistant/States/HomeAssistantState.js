@@ -8,7 +8,7 @@
  * @class HomeAssistantState
  * @extends HomeAssistantObject
  * @classdesc Represents a state in Home Assistant.
- * 
+ *
  * Example JSON structure:
  * {
  *   "entity_id": "media_player.homepod_tv_left",
@@ -37,17 +37,17 @@
  */
 (class HomeAssistantState extends HomeAssistantObject {
 
-  /**
+    /**
    * @description Initializes the prototype slots for the HomeAssistantState.
    * @category Initialization
    */
-  initPrototypeSlots () {
+    initPrototypeSlots () {
 
-    {
-      //const slot = this.newSlot("entity", null);
-    }
+        {
+            //const slot = this.newSlot("entity", null);
+        }
 
-    /*
+        /*
 
     {
       const slot = this.newSlot("jsonString", null)
@@ -58,7 +58,7 @@
     */
 
 
-    /*
+        /*
     {
       const slot = this.newSlot("scanAction", null);
       //slot.setInspectorPath("Character");
@@ -72,35 +72,35 @@
     }
     */
 
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setSummaryFormat("key value");
-  }
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setSummaryFormat("key value");
+    }
 
-  /**
+    /**
    * @description Initializes the HomeAssistantState.
    * @category Initialization
    */
-  init () {
-    super.init();
-  }
+    init () {
+        super.init();
+    }
 
-  /*
+    /*
   subtitle () {
     return "Entity";
   }
   */
-  
-  /**
+
+    /**
    * @description Performs final initialization tasks.
    * @category Initialization
    */
-  finalInit () {
-    super.finalInit();
-    this.setNoteIsSubnodeCount(false);
-  }
+    finalInit () {
+        super.finalInit();
+        this.setNoteIsSubnodeCount(false);
+    }
 
-/*
+    /*
   scanActionInfo () {
     return {
         isEnabled: this.hasValidUrl(),
@@ -111,74 +111,74 @@
   }
   */
 
-  /**
+    /**
    * @description Gets the ID of the state.
    * @returns {string} The ID of the state.
    * @category Information
    */
-  id () {
-    return this.haJson().context.id; // is this correct?
-  }
+    id () {
+        return this.haJson().context.id; // is this correct?
+    }
 
-  /**
+    /**
    * @description Gets the entity ID of the state.
    * @returns {string} The entity ID of the state.
    * @category Information
    */
-  entityId () {
-    return this.haJson().entity_id;
-  }
+    entityId () {
+        return this.haJson().entity_id;
+    }
 
-  /*
+    /*
   findOwner () {
     const entity = this.homeAssistant().entityWithId(this.entityId());
     return entity;
   }
   */
 
-  /**
+    /**
    * @description Gets the owner ID of the state.
    * @returns {string} The owner ID of the state.
    * @category Information
    */
-  ownerId () {
-    return this.entityId();
-  }
+    ownerId () {
+        return this.entityId();
+    }
 
-  /**
+    /**
    * @description Gets the owner group of the state.
    * @returns {Object} The owner group of the state.
    * @category Information
    */
-  ownerGroup () {
-    return this.homeAssistant().entitiesNode();
-  }
+    ownerGroup () {
+        return this.homeAssistant().entitiesNode();
+    }
 
-  /**
+    /**
    * @description Updates the titles of the state.
    * @category Update
    */
-  updateTitles () {
-    this.setName(this.name());
-    this.setTitle(this.computeShortName());
-    this.setSubtitle(this.haJson().state);
-  }
+    updateTitles () {
+        this.setName(this.name());
+        this.setTitle(this.computeShortName());
+        this.setSubtitle(this.haJson().state);
+    }
 
-  /**
+    /**
    * @description Gets the name of the state.
    * @returns {string} The name of the state.
    * @category Information
    */
-  name () {
-    const json = this.haJson();
-    let name = json.attributes.friendly_name;
-    if (!name) {
-      name = json.entity_id
+    name () {
+        const json = this.haJson();
+        let name = json.attributes.friendly_name;
+        if (!name) {
+            name = json.entity_id;
+        }
+        return name;
     }
-    return name;
-  }
 
-  /*
+    /*
   updateTitle () {
     this.setName(this.computeName());
     this.setTitle(this.computeShortName());
@@ -186,13 +186,13 @@
   }
   */
 
-  /**
+    /**
    * @description Gets the current state.
    * @returns {string} The current state.
    * @category Information
    */
-  state () {
-    return this.haJson().state;
-  }
+    state () {
+        return this.haJson().state;
+    }
 
 }).initThisClass();

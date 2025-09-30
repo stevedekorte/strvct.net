@@ -17,9 +17,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        Object.defineSlot(this, "_isSorting", false)
-        Object.defineSlot(this, "_sortFunc", null)
+        super.init();
+        Object.defineSlot(this, "_isSorting", false);
+        Object.defineSlot(this, "_sortFunc", null);
     }
 
     /**
@@ -28,12 +28,12 @@
      * @category Query
      */
     doesSort () {
-        return !Type.isNull(this._sortFunc)
+        return !Type.isNull(this._sortFunc);
     }
 
     /**
      * Sets the sort function for the array.
-     * The sort function should take two arguments of type SvNode and 
+     * The sort function should take two arguments of type SvNode and
      * return a negative value if the first argument is less than the second,
      * Changing the sort function will cause the array to be resorted.
      * To disable sorting, pass null as the sort function.
@@ -48,7 +48,7 @@
                 this.resort();
             }
         }
-        return this
+        return this;
     }
 
     /**
@@ -57,7 +57,7 @@
      * @category Query
      */
     sortFunc () {
-        return this._sortFunc
+        return this._sortFunc;
     }
 
     /**
@@ -67,7 +67,7 @@
      * @category Event
      */
     didChangeSlotSortFunc (oldValue, newValue) {
-        this.resort()
+        this.resort();
     }
 
     /**
@@ -85,7 +85,7 @@
     }
 
     /**
-     * Determines if a resort is needed based on mutation method called. 
+     * Determines if a resort is needed based on mutation method called.
      * These mutation methods do not require a resort: pop, shift, sort, removeAt, remove, removeAll.
      * @param {string} slotName - The name of the modified slot.
      * @returns {boolean} True if a resort is needed, false otherwise.
@@ -93,11 +93,11 @@
      */
     needsResortOnForSlot (slotName) {
         const nonOrderChangingSlots = [
-            "pop", 
-            "shift", 
-            "sort", 
-            "removeAt", 
-            "remove", 
+            "pop",
+            "shift",
+            "sort",
+            "removeAt",
+            "remove",
             "removeAll"
         ];
         return !nonOrderChangingSlots.contains(slotName);
@@ -120,7 +120,7 @@
             this.resort();
         }
     }
-    
+
     /**
      * Runs a self-test on the SortedArray class.
      * @returns {typeof SortedArray} The SortedArray class.
@@ -128,7 +128,7 @@
      */
     static selfTest () {
         let sa = this.clone();
-        sa.setSortFunc((a, b) => { return a - b });
+        sa.setSortFunc((a, b) => { return a - b; });
         sa.push(3, 1, 2);
         assert(sa.isEqual([1, 2, 3]));
         return this;

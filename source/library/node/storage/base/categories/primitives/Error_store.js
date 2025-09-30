@@ -29,7 +29,7 @@
      */
     recordForStore (/*aStore*/) { // should only be called by Store
         return {
-            type: this.svType(), 
+            type: this.svType(),
             name: this.name,
             message: this.message
         };

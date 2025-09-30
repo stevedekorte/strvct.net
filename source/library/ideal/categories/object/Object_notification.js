@@ -2,7 +2,7 @@
 
 /**
  * Object category to support notification and observation functionality.
- * 
+ *
  * @module library.ideal.object
  * @class Object_notification
  * @extends Object
@@ -13,36 +13,36 @@
      * Prepares the object for retirement by removing notification observers and scheduled actions.
      * @category Lifecycle
      */
-    prepareToRetire () { 
+    prepareToRetire () {
         // opportunity to remove notification observers, event listeners, etc
         //this.assertNotRetired()
-        this.removeAllNotificationObservations()
-        this.removeScheduledActions()
+        this.removeAllNotificationObservations();
+        this.removeScheduledActions();
     }
 
     // -------------------------------------------------
- 
+
     /**
      * Removes all notification observations for this object.
      * @category Notification
      */
     removeAllNotificationObservations () {
         if (SvGlobals.globals()["SvNotificationCenter"]) {
-            SvNotificationCenter.shared().removeObserver(this)
+            SvNotificationCenter.shared().removeObserver(this);
         }
     }
- 
+
     /**
      * Removes all scheduled actions for this object.
      * @category Scheduling
      */
     removeScheduledActions () {
         if (SvGlobals.globals()["SvSyncScheduler"]) {
-            SvSyncScheduler.shared().unscheduleTarget(this)
+            SvSyncScheduler.shared().unscheduleTarget(this);
         }
     }
 
-    // --- notification helpers --- 
+    // --- notification helpers ---
 
     /**
      * Watches a specific sender for all notifications.
@@ -51,12 +51,12 @@
      * @category Notification
      */
     watchSender (sender) {
-        const obs = SvNotificationCenter.shared().newObservation()
-        obs.setObserver(this)
-        obs.setIsOneShot(false)
-        obs.setSender(sender)
-        obs.startWatching()
-        return obs
+        const obs = SvNotificationCenter.shared().newObservation();
+        obs.setObserver(this);
+        obs.setIsOneShot(false);
+        obs.setSender(sender);
+        obs.startWatching();
+        return obs;
     }
 
     /**
@@ -67,13 +67,13 @@
      * @category Notification
      */
     watchForNoteFrom (aNoteName, sender) {
-        const obs = SvNotificationCenter.shared().newObservation()
-        obs.setObserver(this)
+        const obs = SvNotificationCenter.shared().newObservation();
+        obs.setObserver(this);
         //obs.setIsOneShot(false)
-        obs.setSender(sender)
-        obs.setName(aNoteName)
-        obs.startWatching()
-        return obs
+        obs.setSender(sender);
+        obs.setName(aNoteName);
+        obs.startWatching();
+        return obs;
     }
 
     /**
@@ -83,11 +83,11 @@
      * @category Notification
      */
     watchForNote (aNoteName) {
-        const obs = SvNotificationCenter.shared().newObservation()
-        obs.setName(aNoteName)
-        obs.setObserver(this)
-        obs.startWatching()
-        return obs
+        const obs = SvNotificationCenter.shared().newObservation();
+        obs.setName(aNoteName);
+        obs.setObserver(this);
+        obs.startWatching();
+        return obs;
     }
 
     // --- watch once ---
@@ -99,7 +99,7 @@
      * @category Notification
      */
     watchOnceForNote (aNoteName) {
-        return this.watchForNote(aNoteName).setIsOneShot(true)
+        return this.watchForNote(aNoteName).setIsOneShot(true);
     }
 
     /**
@@ -110,7 +110,7 @@
      * @category Notification
      */
     watchOnceForNoteFrom (aNoteName, sender) {
-        return this.watchOnceForNote(aNoteName).setSender(sender) // does it work to set sender after it's started watching?
+        return this.watchOnceForNote(aNoteName).setSender(sender); // does it work to set sender after it's started watching?
     }
 
     /**
@@ -120,10 +120,10 @@
      * @category Notification
      */
     newNoteNamed (aNoteName) {
-        const note = SvNotificationCenter.shared().newNote()
-        note.setSender(this)
-        note.setName(aNoteName)
-        return note
+        const note = SvNotificationCenter.shared().newNote();
+        note.setSender(this);
+        note.setName(aNoteName);
+        return note;
     }
 
     /**
@@ -148,7 +148,7 @@
      * @category Scheduling
      */
     scheduleSelfFor (aMethodName, milliseconds) {
-        return SvSyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
+        return SvSyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds);
     }
 
     // --- who's watching who ---
@@ -159,7 +159,7 @@
      * @category Notification
      */
     watchers () {
-        // objects we are watching for notifications from 
+        // objects we are watching for notifications from
         return SvNotificationCenter.shared().observersOfSender(this);
     }
 

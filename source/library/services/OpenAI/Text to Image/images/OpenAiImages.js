@@ -16,13 +16,13 @@
     * @category Initialization
     */
     initPrototypeSlots () {
-    this.setTitle("image results");
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([OpenAiImage]);
-    this.setNodeCanAddSubnode(false);
-    this.setNodeCanReorderSubnodes(false);
-    this.setNoteIsSubnodeCount(true);
+        this.setTitle("image results");
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setSubnodeClasses([OpenAiImage]);
+        this.setNodeCanAddSubnode(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setNoteIsSubnodeCount(true);
     }
 
     /**
@@ -31,7 +31,7 @@
     * @category Display
     */
     subtitle () {
-    return this.status()
+        return this.status();
     }
 
     /**
@@ -40,14 +40,14 @@
     * @category Status
     */
     status () {
-    if (this.subnodeCount() && this.hasLoadedAllImages()) {
-        return "complete"
-    } else if (this.hasError()) {
-        return "error loading image"
-    } else if (this.isLoading()) {
-        return "loading images..."
-    }
-    return ""
+        if (this.subnodeCount() && this.hasLoadedAllImages()) {
+            return "complete";
+        } else if (this.hasError()) {
+            return "error loading image";
+        } else if (this.isLoading()) {
+            return "loading images...";
+        }
+        return "";
     }
 
     /**
@@ -56,7 +56,7 @@
     * @category Data Retrieval
     */
     imagePrompt () {
-    return this.parentNode()
+        return this.parentNode();
     }
 
     /**
@@ -65,7 +65,7 @@
     * @category Status
     */
     hasLoadedAllImages () {
-    return !this.subnodes().canDetect(sn => !sn.isLoaded())
+        return !this.subnodes().canDetect(sn => !sn.isLoaded());
     }
 
     /**
@@ -74,7 +74,7 @@
     * @category Status
     */
     hasError () {
-    return this.subnodes().canDetect(sn => sn.hasError())
+        return this.subnodes().canDetect(sn => sn.hasError());
     }
 
     /**
@@ -83,7 +83,7 @@
     * @category Status
     */
     isLoading () {
-    return this.subnodes().canDetect(sn => sn.isLoading())
+        return this.subnodes().canDetect(sn => sn.isLoading());
     }
 
 }.initThisClass());

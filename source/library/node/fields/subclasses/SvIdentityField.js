@@ -8,7 +8,7 @@
  * This field is used to handle and validate Bitcoin public keys.
  */
 (class SvIdentityField extends SvField {
-    
+
     /**
      * @description Initializes the prototype slots for the SvIdentityField.
      * @category Initialization
@@ -33,12 +33,12 @@
      */
     validate () {
         if (!bitcore.PublicKey.isValid(this.value())) {
-            this.setValueError("invalid address")
+            this.setValueError("invalid address");
         } else {
-            this.setValueError(null)
+            this.setValueError(null);
         }
     }
-	
+
     /**
      * @description Sets the value of the field.
      * Processes the input value to extract a valid Bitcoin public key.
@@ -48,28 +48,28 @@
      */
     setValue (inValue) { // called by View on edit
         if (Type.isNull(inValue)) {
-            console.log(this.logPrefix(), "WARNING: " + this.svType() + " setValue(null)")
-            return this
+            console.log(this.logPrefix(), "WARNING: " + this.svType() + " setValue(null)");
+            return this;
         }
 	    //console.log(this.logPrefix(), "inValue = '" + inValue + "'")
-	    let newValue = inValue.strip()
-	    
-        const parts = newValue.split(" ").concat(newValue.split("\n")).concat(newValue.split(","))
+	    let newValue = inValue.strip();
+
+        const parts = newValue.split(" ").concat(newValue.split("\n")).concat(newValue.split(","));
 	    //console.log(this.logPrefix(), "parts = '", parts)
-        const validPart = parts.detect(part => { return bitcore.PublicKey.isValid(part) })
+        const validPart = parts.detect(part => { return bitcore.PublicKey.isValid(part); });
 
         if (validPart) {
-            newValue = validPart
+            newValue = validPart;
         }
 
         if (inValue !== newValue) {
-            this.scheduleSyncToView() 
+            this.scheduleSyncToView();
         }
-        
+
         //console.log(this.logPrefix(), "newValue = '" + newValue + "'")
-        super.setValue(newValue)
-		
-        return this
+        super.setValue(newValue);
+
+        return this;
     }
 
 }.initThisClass());

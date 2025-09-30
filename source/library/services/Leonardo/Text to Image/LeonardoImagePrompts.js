@@ -8,7 +8,7 @@
   * @classdesc Represents a collection of Leonardo image prompts for text-to-image conversion.
   */
 (class LeonardoImagePrompts extends SvSummaryNode {
-    
+
     /**
       * Initializes the prototype slots for the LeonardoImagePrompts class.
       * @description Sets up the storage, subnode classes, and other properties for the OpenAiImagePrompts node.

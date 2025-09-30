@@ -3,14 +3,14 @@
 /*
 
     SvModelReference
-    
+
     A reference to a model object instance that is owned by another part of the model tree.
     Used when we need to refer to objects without duplicating them or transferring ownership.
 
 */
 
 (class SvModelReference extends JsonGroup {
-    
+
     static jsonSchemaDescription () {
         return "A reference to a model object instance";
     }
@@ -57,7 +57,7 @@
 
     summary () {
         const parts = [];
-        
+
         if (this.referenceId()) {
             parts.push(this.referenceId());
         } else {

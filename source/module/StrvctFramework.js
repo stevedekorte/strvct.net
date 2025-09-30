@@ -17,17 +17,17 @@ class StrvctFramework {
     */
     constructor (options = {}) {
         this._options = Object.assign({
-            rootPath: 'strvct',
+            rootPath: "strvct",
             autoInitialize: true
         }, options);
-        
+
         this._isInitialized = false;
-        
+
         if (this._options.autoInitialize) {
             this.initialize();
         }
     }
-    
+
     /**
     * @method initialize
     * @description Initializes the framework, loading core files and resources
@@ -35,12 +35,12 @@ class StrvctFramework {
     */
     async initialize () {
         if (SvPlatform.isNodePlatform()) {
-            require('./strvct/source/boot/SvBootLoader.js');
+            require("./strvct/source/boot/SvBootLoader.js");
             this._isInitialized = true;
             return this;
         }
     }
-        
+
     /**
     * @method isInitialized
     * @description Returns whether the framework has been initialized
@@ -49,7 +49,7 @@ class StrvctFramework {
     isInitialized () {
         return this._isInitialized;
     }
-    
+
     /**
     * @method resourceManager
     * @description Returns the SvResourceManager instance
@@ -61,9 +61,9 @@ class StrvctFramework {
 }
 
 // Handle both CommonJS and ES module exports
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = StrvctFramework;
-} else if (typeof define === 'function' && define.amd) {
+} else if (typeof define === "function" && define.amd) {
     define([], function () { return StrvctFramework; });
 } else {
     window.StrvctFramework = StrvctFramework;

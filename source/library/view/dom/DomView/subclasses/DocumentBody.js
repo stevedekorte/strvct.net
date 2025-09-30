@@ -8,7 +8,7 @@
  * @classdesc Represents the document body as a DomView.
  */
 (class DocumentBody extends DomView {
-    
+
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
@@ -17,7 +17,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes prototype slots.
      * @category Initialization
@@ -36,7 +36,7 @@
 
         // setup shared devices for later use
         Devices.shared().setupIfNeeded();
-        
+
         //this.documentListener().setIsListening(true)
         if (SvPlatform.isNodePlatform()) {
             console.log("🟡 DocumentBody: init: not in browser environment - skipping setIsRegisteredForBrowserDrop");
@@ -57,7 +57,7 @@
         event.preventDefault();
         return false;
     }
-    
+
     /**
      * @description Sets up the element for the DocumentBody.
      * @returns {DocumentBody} The current instance.
@@ -74,7 +74,7 @@
         // get this from element override
         return this;
     }
-    
+
     /**
      * @description Gets the document body element.
      * @returns {HTMLElement} The document body element.
@@ -83,7 +83,7 @@
     element () {
         return document.body;
     }
-    
+
     /**
      * @description Calculates the zoom-adjusted width of the document body.
      * @returns {number} The zoom-adjusted width.
@@ -92,7 +92,7 @@
     zoomAdjustedWidth () {
         return WebBrowserWindow.shared().width() * this.zoomRatio();
     }
-    
+
     /**
      * @description Calculates the zoom-adjusted height of the document body.
      * @returns {number} The zoom-adjusted height.
@@ -101,7 +101,7 @@
     zoomAdjustedHeight () {
         return WebBrowserWindow.shared().height() * this.zoomRatio();
     }
-    
+
     /**
      * @description Calculates the zoom-adjusted size of the document body.
      * @returns {Object} An object containing the zoom-adjusted width and height.
@@ -141,7 +141,7 @@
      */
     firstViewForElement (e) {
         // search up the dom element parents to find one
-        // associated with a DomView instance 
+        // associated with a DomView instance
 
         while (e) {
             const view = e.domView();
@@ -154,5 +154,5 @@
         return null;
     }
 
-   
+
 }.initThisClass());

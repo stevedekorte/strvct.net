@@ -22,7 +22,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
             if (ref) {
                 refs.add(ref);
             }
-        }
+        };
 
         const addRefs = (obj) => {
             if (Type.isArray(obj)) {
@@ -39,7 +39,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
                     }
                 });
             }
-        }
+        };
 
         addRefs(schema);
         return refs;
@@ -90,7 +90,7 @@ SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {
     static classNameForRef (ref) {
         const parts = ref.split("/");
         const className = parts[parts.length - 1];
-        return className;      
+        return className;
     }
 
     /**

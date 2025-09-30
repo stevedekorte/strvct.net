@@ -8,10 +8,10 @@
  * @class StyledDomView
  * @extends FlexDomView
  * @classdesc StyledDomView
- * 
+ *
  * (a step towards eliminating the remaining css files)
  *
- * A base view to handle styles in a uniform way. 
+ * A base view to handle styles in a uniform way.
  * Holds an instance of SvViewStyles which holds a set of SvViewStyle instances, one for each style.
  *
  * Overview:
@@ -30,11 +30,11 @@
  *
  * - unselected
  * - selected
- * - active 
+ * - active
  * - disabled
  */
 (class StyledDomView extends FlexDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the StyledDomView.
      * @category Initialization
@@ -94,9 +94,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setLockedStyleAttributeSet(new Set());
-        SvBroadcaster.shared().addListenerForName(this, "onActivateView"); // NOTE: do we want *every* view to do this 
+        SvBroadcaster.shared().addListenerForName(this, "onActivateView"); // NOTE: do we want *every* view to do this
         return this;
     }
 
@@ -107,9 +107,9 @@
      * @category State
      */
     syncStateFrom (aView) {
-        this.setIsSelected(aView.isSelected())
-        this.setIsActive(aView.isActive())
-        return this
+        this.setIsSelected(aView.isSelected());
+        this.setIsActive(aView.isActive());
+        return this;
     }
 
     /**
@@ -120,19 +120,19 @@
     themeClassNamePath () {
         // search up the view ancestors and compose a path
         if (this.themeClassName()) {
-            const path = [this.themeClassName()]
+            const path = [this.themeClassName()];
             this.forEachAncestorView(view => {
                 if (view.themeClassName) {
-                    const k = view.themeClassName()
+                    const k = view.themeClassName();
                     if (k) {
-                        path.push(k)
+                        path.push(k);
                     }
                 }
-            })
-            path.reverse()
-            return path
+            });
+            path.reverse();
+            return path;
         }
-        return null
+        return null;
     }
 
     /**
@@ -141,15 +141,15 @@
      * @category Style
      */
     applyStyles () {
-        // we default to using the current theme, but 
+        // we default to using the current theme, but
         // we need to give view a chance to override style
         // also, NodeView should override this method to give node a chance to override style
 
-        const state = this.currentThemeState()
+        const state = this.currentThemeState();
         if (state) {
-            state.applyToView(this)
+            state.applyToView(this);
         }
-        return this
+        return this;
     }
 
     /**
@@ -161,8 +161,8 @@
      */
     didUpdateSlotIsActive (/*oldValue, newValue*/) {
         // sent by hooked setter
-        this.updateSubviews()
-        return this
+        this.updateSubviews();
+        return this;
     }
 
     /**
@@ -170,9 +170,9 @@
      * @category State
      */
     activate () {
-        this.select()
-        this.setIsActive(true)
-        SvBroadcaster.shared().broadcastNameAndArgument("onActivateView", this)
+        this.select();
+        this.setIsActive(true);
+        SvBroadcaster.shared().broadcastNameAndArgument("onActivateView", this);
     }
 
     /**
@@ -182,7 +182,7 @@
      */
     onActivateView (aView) {
         if (aView !== this & this.isActive()) {
-            this.setIsActive(false)
+            this.setIsActive(false);
         }
     }
 
@@ -195,8 +195,8 @@
      */
     didUpdateSlotIsSelected (/*oldValue, newValue*/) {
         // sent by hooked setter
-        this.updateSubviews()
-        return this
+        this.updateSubviews();
+        return this;
     }
 
     /**
@@ -206,11 +206,11 @@
      */
     toggleSelection () {
         if (this.isSelected()) {
-            this.unselect()
+            this.unselect();
         } else {
-            this.select()
+            this.select();
         }
-        return this
+        return this;
     }
 
     /**
@@ -219,8 +219,8 @@
      * @category State
      */
     select () {
-        this.setIsSelected(true)
-        return this
+        this.setIsSelected(true);
+        return this;
     }
 
     /**
@@ -229,10 +229,10 @@
      * @category State
      */
     unselect () {
-        if (this.isSelected()) { // for debugging 
-            this.setIsSelected(false)
+        if (this.isSelected()) { // for debugging
+            this.setIsSelected(false);
         }
-        return this
+        return this;
     }
 
     /**
@@ -241,19 +241,19 @@
      * @category Theme
      */
     themePathArray () {
-        const path = []
+        const path = [];
 
-        const themeClassName = this.themeClassName()
+        const themeClassName = this.themeClassName();
         if (themeClassName) {
-            path.push(themeClassName)
+            path.push(themeClassName);
         } else {
-            path.push("DefaultThemeClass")
+            path.push("DefaultThemeClass");
         }
 
-        const stateName = this.currentThemeStateName() 
-        path.push(stateName)
+        const stateName = this.currentThemeStateName();
+        path.push(stateName);
 
-        return path
+        return path;
     }
 
     /**
@@ -262,7 +262,7 @@
      * @category Theme
      */
     themePathString () {
-        return this.themePathArray().join(" / ")
+        return this.themePathArray().join(" / ");
     }
 
     /**
@@ -271,13 +271,13 @@
      * @category Theme
      */
     currentThemeClass () {
-        const theme = SvThemeResources.shared().activeTheme()
+        const theme = SvThemeResources.shared().activeTheme();
         if (!theme) {
-            return null
+            return null;
         }
-        const className = this.themeClassName() ? this.themeClassName() : "DefaultThemeClass"
-        const themeClass = theme.themeClassNamed(className)
-        return themeClass
+        const className = this.themeClassName() ? this.themeClassName() : "DefaultThemeClass";
+        const themeClass = theme.themeClassNamed(className);
+        return themeClass;
     }
 
     /**
@@ -286,21 +286,21 @@
      * @category Theme
      */
     currentThemeStateName () {
-        let stateName = "unselected"
+        let stateName = "unselected";
 
         if (this.isDisabled()) {
-            stateName = "disabled" // should this mix with selected?
+            stateName = "disabled"; // should this mix with selected?
         }
 
         if (this.isSelected()) {
-            stateName = "selected"
+            stateName = "selected";
         }
 
         if (this.isActive()) {
-            stateName = "active"
+            stateName = "active";
         }
 
-        return stateName
+        return stateName;
     }
 
     /**
@@ -309,14 +309,14 @@
      * @category Theme
      */
     currentThemeState () {
-        const tc = this.currentThemeClass() 
+        const tc = this.currentThemeClass();
         if (tc) {
-            const stateName = this.currentThemeStateName()
-            const state = tc.stateWithName(stateName)
-            assert(state)
-            return state
+            const stateName = this.currentThemeStateName();
+            const state = tc.stateWithName(stateName);
+            assert(state);
+            return state;
         }
-        return null
+        return null;
     }
 
     /**
@@ -326,20 +326,20 @@
      * @category Theme
      */
     themeValueForAttribute (attributeName) {
-        const stateNode = this.currentThemeState()
+        const stateNode = this.currentThemeState();
         if (stateNode) {
-            const attribtueNode = stateNode.attributeNamed(attributeName)
+            const attribtueNode = stateNode.attributeNamed(attributeName);
             if (attribtueNode) {
-                const value = attribtueNode.value()
+                const value = attribtueNode.value();
                 if (!value) {
-                    console.log("no attribute found for ", this.themePathString() + " / " + attributeName)
-                    return null
+                    console.log("no attribute found for ", this.themePathString() + " / " + attributeName);
+                    return null;
                 }
-                return value
+                return value;
             }
         }
 
-        return null
+        return null;
     }
 
     /**
@@ -348,11 +348,11 @@
      * @category Style
      */
     currentColor () {
-        const v = this.themeValueForAttribute("color")
+        const v = this.themeValueForAttribute("color");
         if (v) {
-            return v
+            return v;
         }
-        return "inherit"
+        return "inherit";
     }
 
     /**
@@ -361,11 +361,11 @@
      * @category Style
      */
     currentBgColor () {
-        const v = this.themeValueForAttribute("backgroundColor")
+        const v = this.themeValueForAttribute("backgroundColor");
         if (v) {
-            return v
+            return v;
         }
-        return "inherit"
+        return "inherit";
     }
 
     /**
@@ -374,10 +374,10 @@
      * @category Synchronization
      */
     resyncAllViews () {
-        this.syncStylesToSubviews()
-        this.applyStyles()
-        super.resyncAllViews()
-        return this
+        this.syncStylesToSubviews();
+        this.applyStyles();
+        super.resyncAllViews();
+        return this;
     }
 
     /**
@@ -386,7 +386,7 @@
      * @category Synchronization
      */
     syncStylesToSubviews () {
-        return this
+        return this;
     }
-	
+
 }.initThisClass());

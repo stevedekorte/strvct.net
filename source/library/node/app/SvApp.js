@@ -7,7 +7,7 @@
 /**
  * @class SvApp
  * @extends TitledNode
- * @classdesc A shared instance that represents the application. 
+ * @classdesc A shared instance that represents the application.
  *
  * Handles:
  * - starting up persistence system
@@ -24,7 +24,7 @@
  */
 
 (class SvApp extends TitledNode {
-    
+
     /**
      * @static
      * @description Initializes the class
@@ -145,9 +145,9 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Boolean");
             slot.setIsSubnodeField(false);
-          }
+        }
     }
-  
+
     /**
      * @description Initializes the prototype
      * @category Initialization
@@ -185,7 +185,7 @@
     title () {
         return this.name();
     }
-    
+
 
     /**
      * @description Runs the app
@@ -205,13 +205,13 @@
     }
 
     // --- open store ---
-    
+
     modelClass () {
         const className = this.thisPrototype().slotNamed("model").slotType();
         return SvGlobals.get(className);
     }
 
-     async initAndOpenStore () {
+    async initAndOpenStore () {
         SvBootLoadingView.shared().setSubtitle("opening data store");
 
         this.setStore(this.defaultStore());
@@ -241,7 +241,7 @@
      * @category Initialization
      */
     async openStore () {
-        await this.store().promiseOpen(); 
+        await this.store().promiseOpen();
         this.store().rootOrIfAbsentFromClosure(() => {
             return this.modelClass().clone();
         });
@@ -249,9 +249,9 @@
         const currentRootObject = this.store().rootObject();
 
         const isCorrectModel = !Type.isNullOrUndefined(currentRootObject) && this.store().rootObject().isKindOf(this.modelClass());
-        if (!isCorrectModel) { 
+        if (!isCorrectModel) {
             console.error("Model is not correct type: " + this.store().rootObject().thisClass().svType());
-            if (this._attemptToResetStore === true) { 
+            if (this._attemptToResetStore === true) {
                 throw new Error("Failed to open store with correct model after reset");
             }
             this._attemptToResetStore = true;
@@ -306,7 +306,7 @@
      */
     async appDidInit () {
         this.setHasDoneAppInit(true);
-        
+
         this.model().appDidInit();
         this.userInterface().appDidInit();
 
@@ -343,7 +343,7 @@
         this.setTitle(aString);
         return this;
     }
-    
+
     /**
      * @description Returns the version string
      * @returns {string} The version string

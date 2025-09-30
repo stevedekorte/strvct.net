@@ -11,8 +11,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        Object.defineSlot(this, "_store", null) // move to initPrototype?
+        super.init();
+        Object.defineSlot(this, "_store", null); // move to initPrototype?
     }
 
     /**
@@ -22,8 +22,8 @@
      * @category Data Management
      */
     setPid (aPid) {
-        this["*"] = aPid
-        return this
+        this["*"] = aPid;
+        return this;
     }
 
     /**
@@ -32,7 +32,7 @@
      * @category Data Retrieval
      */
     pid () {
-        return this.getOwnProperty("*")
+        return this.getOwnProperty("*");
     }
 
     /**
@@ -42,8 +42,8 @@
      * @category Data Management
      */
     setStore (aStore) {
-        this._store = aStore
-        return this
+        this._store = aStore;
+        return this;
     }
 
     /**
@@ -52,7 +52,7 @@
      * @category Data Retrieval
      */
     store () {
-        return this._store
+        return this._store;
     }
 
     /**
@@ -61,7 +61,7 @@
      * @category Data Retrieval
      */
     unref () {
-        return this.store().objectForPid(this.pid())
+        return this.store().objectForPid(this.pid());
     }
 
     /**
@@ -70,7 +70,7 @@
      * @category Object Creation
      */
     ref () {
-        return this.store().refForPid(this.pid())
+        return this.store().refForPid(this.pid());
     }
-    
+
 }.initThisClass());

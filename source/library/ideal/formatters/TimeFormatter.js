@@ -33,10 +33,10 @@
          * @category Data
          */
         {
-            const slot = this.newSlot("date", null) // temp value which will be formatted
-            slot.setShouldStoreSlot(false)
-            slot.setSlotType("Date") // a javascript Date object
-            slot.setCanInspect(true)
+            const slot = this.newSlot("date", null); // temp value which will be formatted
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Date"); // a javascript Date object
+            slot.setCanInspect(true);
         }
 
         /**
@@ -47,10 +47,10 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("is24Hour", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("is24Hour", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
 
         /**
@@ -61,10 +61,10 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("showsMeridiem", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("showsMeridiem", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
 
         /**
@@ -75,12 +75,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("uppercaseMeridem", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("uppercaseMeridem", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
-            
+
         /**
          * @description The string to use for AM.
          * @type {string}
@@ -89,12 +89,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("amString", "am")
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("String")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("amString", "am");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description The string to use for PM.
          * @type {string}
@@ -103,12 +103,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("pmString", "pm")
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("String")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("pmString", "pm");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description Whether to pad hours with zeros.
          * @type {boolean}
@@ -117,12 +117,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("doesPadHours", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("doesPadHours", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description Whether to show hours.
          * @type {boolean}
@@ -131,12 +131,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("showsHours", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("showsHours", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description The spacer between hours and minutes.
          * @type {string}
@@ -145,12 +145,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("hourMinuteSpacer", ":")
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("String")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("hourMinuteSpacer", ":");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description Whether to show minutes.
          * @type {boolean}
@@ -159,12 +159,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("showsMinutes", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("showsMinutes", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description Whether to show seconds.
          * @type {boolean}
@@ -173,12 +173,12 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("showsSeconds", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("showsSeconds", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
-                
+
         /**
          * @description Whether to show milliseconds.
          * @type {boolean}
@@ -187,14 +187,14 @@
          * @category Formatting
          */
         {
-            const slot = this.newSlot("showsMilliseconds", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("showsMilliseconds", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
     }
-  
-    initPrototype () {      
+
+    initPrototype () {
     }
 
     /**
@@ -206,13 +206,13 @@
      */
     paddedNumber (n, padLength) {
         if (!padLength) {
-            padLength = 2
+            padLength = 2;
         }
-        const s = "" + n
-        if (s.length < padLength) { 
-            return "0".repeat(padLength - s.length) + s
+        const s = "" + n;
+        if (s.length < padLength) {
+            return "0".repeat(padLength - s.length) + s;
         }
-        return s
+        return s;
     }
 
     /**
@@ -221,10 +221,10 @@
      * @category Formatting
      */
     getTwelveHours () {
-        let h = this.date().getHours()
-        if (h > 12) { h -= 12 }
-        if (h === 0) { h = 12 }
-        return h
+        let h = this.date().getHours();
+        if (h > 12) { h -= 12; }
+        if (h === 0) { h = 12; }
+        return h;
     }
 
     /**
@@ -233,7 +233,7 @@
      * @category Formatting
      */
     zeroPaddedUSDate () {
-        return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes())
+        return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes());
     }
 
     /**
@@ -242,17 +242,17 @@
      * @category Formatting
      */
     hoursString () {
-        let h = this.date().getHours()
+        let h = this.date().getHours();
 
         if (!this.is24Hour()) {
-            h = this.getTwelveHours()
-        }
-        
-        if (this.doesPadHours()) {
-            this.paddedNumber(h)
+            h = this.getTwelveHours();
         }
 
-        return "" + h
+        if (this.doesPadHours()) {
+            this.paddedNumber(h);
+        }
+
+        return "" + h;
     }
 
     /**
@@ -261,7 +261,7 @@
      * @category Formatting
      */
     minutesString () {
-        return this.paddedNumber(this.date().getMinutes())
+        return this.paddedNumber(this.date().getMinutes());
     }
 
     /**
@@ -270,7 +270,7 @@
      * @category Formatting
      */
     secondsString () {
-        return this.paddedNumber(this.date().getSeconds())
+        return this.paddedNumber(this.date().getSeconds());
     }
 
     /**
@@ -279,7 +279,7 @@
      * @category Formatting
      */
     millisecondsString () {
-        return this.paddedNumber(this.date().getMilliseconds() % 1000)
+        return this.paddedNumber(this.date().getMilliseconds() % 1000);
     }
 
     /**
@@ -288,19 +288,19 @@
      * @category Formatting
      */
     meridiemString () {
-        let s = ""
-        
+        let s = "";
+
         if (this.date().getHours() < 12) {
-            s = this.amString()
+            s = this.amString();
         } else {
-            s = this.pmString()
-        }
-        
-        if (this.uppercaseMeridem()) {
-            s = s.toUpperCase()
+            s = this.pmString();
         }
 
-        return s
+        if (this.uppercaseMeridem()) {
+            s = s.toUpperCase();
+        }
+
+        return s;
     }
 
     /**
@@ -309,50 +309,50 @@
      * @category Formatting
      */
     formattedValue () {
-        assert(this.date())
-        let s = ""
+        assert(this.date());
+        let s = "";
 
         if (this.showsHours()) {
-            s += this.hoursString()
+            s += this.hoursString();
         }
 
         if (this.showsMinutes()) {
             if (s.length) {
-                s += this.hourMinuteSpacer()
+                s += this.hourMinuteSpacer();
             }
-            s += this.minutesString()
-        } 
+            s += this.minutesString();
+        }
 
         if (this.showsMeridiem()) { // correct location wrt seconds?
-            s += this.meridiemString()
-        } 
+            s += this.meridiemString();
+        }
 
         if (this.showsSeconds()) {
             if (s.length) {
-                s += this.hourMinuteSpacer()
+                s += this.hourMinuteSpacer();
             }
-            s += this.secondsString()
-        } 
+            s += this.secondsString();
+        }
 
         if (this.showsMilliseconds()) {
             if (s.length) {
-                s += this.hourMinuteSpacer()
+                s += this.hourMinuteSpacer();
             }
-            s += this.millisecondsString() 
-        } 
+            s += this.millisecondsString();
+        }
 
         if (true) {
-            const h = this.date().getHours()
-            const m = this.date().getMinutes()
-            if (h === 0 && m === 0) { 
-                s = "midnight"
+            const h = this.date().getHours();
+            const m = this.date().getMinutes();
+            if (h === 0 && m === 0) {
+                s = "midnight";
             }
 
-            if (h === 12 && m === 0) { 
-                s = "noon"
+            if (h === 12 && m === 0) {
+                s = "noon";
             }
         }
 
-        return s
+        return s;
     }
 }.initThisClass());

@@ -10,14 +10,14 @@
 * @classdesc Collection of PiAPI image prompts for managing multiple text-to-image generations.
 */
 (class PiApiImagePrompts extends SvJsonArrayNode {
-    
+
     initPrototypeSlots () {
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([PiApiImagePrompt]);
-    this.setNodeCanAddSubnode(true);
-    this.setCanDelete(true);
-    this.setNodeCanReorderSubnodes(true);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setSubnodeClasses([PiApiImagePrompt]);
+        this.setNodeCanAddSubnode(true);
+        this.setCanDelete(true);
+        this.setNodeCanReorderSubnodes(true);
     }
 
     /**
@@ -26,7 +26,7 @@
     * @category Metadata
     */
     title () {
-    return "Text to Image";
+        return "Text to Image";
     }
 
     /**
@@ -35,8 +35,8 @@
     * @category Metadata
     */
     subtitle () {
-    const count = this.subnodeCount();
-    return count + " prompt" + (count !== 1 ? "s" : "");
+        const count = this.subnodeCount();
+        return count + " prompt" + (count !== 1 ? "s" : "");
     }
 
     /**
@@ -45,9 +45,9 @@
     * @category Management
     */
     add () {
-    const prompt = PiApiImagePrompt.clone();
-    this.addSubnode(prompt);
-    return prompt;
+        const prompt = PiApiImagePrompt.clone();
+        this.addSubnode(prompt);
+        return prompt;
     }
 
     /**
@@ -56,7 +56,7 @@
     * @category Service
     */
     service () {
-    return PiApiService.shared();
+        return PiApiService.shared();
     }
 
 }.initThisClass());

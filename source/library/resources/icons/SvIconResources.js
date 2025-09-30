@@ -6,7 +6,7 @@
  * @class SvIconResources
  * @extends SvResourceGroup
  * @classdesc SvIconResources
- * 
+ *
  * Hack to put SVG files into Javascript strings to avoid cross site loading issues.
  */
 (class SvIconResources extends SvResourceGroup {
@@ -17,9 +17,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setTitle("Icons")
-        return this
+        super.init();
+        this.setTitle("Icons");
+        return this;
     }
 
     /**
@@ -42,9 +42,9 @@
      * @category Icon Management
      */
     addIcon (aName, svgString) {
-        const node = SvgIconNode.clone().setTitle(aName).setSvgString(svgString)
-        this.addSubnode(node)
-        return this
+        const node = SvgIconNode.clone().setTitle(aName).setSvgString(svgString);
+        this.addSubnode(node);
+        return this;
     }
 
     /**
@@ -54,11 +54,11 @@
      * @category Icon Retrieval
      */
     iconWithName (aName) {
-        const node = this.firstSubnodeWithTitle(aName)
+        const node = this.firstSubnodeWithTitle(aName);
         if (node) {
-            return node.svgIconView()
+            return node.svgIconView();
         }
-        return null
+        return null;
     }
 
     /**
@@ -67,11 +67,11 @@
      * @category Icon Retrieval
      */
     iconNames () {
-        return this.subnodes().map(sn => sn.title())
+        return this.subnodes().map(sn => sn.title());
     }
 
     preCacheWhereAppropriate () {
         // no precaching for icons
-    }   
+    }
 
 }.initThisClass());

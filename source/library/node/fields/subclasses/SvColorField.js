@@ -7,7 +7,7 @@
  * @classdesc SvColorField represents a color field with red, green, blue, and alpha components.
  */
 (class SvColorField extends SvField {
-    
+
     /**
      * @static
      * @description Indicates if this field is available as a node primitive.
@@ -15,9 +15,9 @@
      * @category Metadata
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
-    
+
     /**
      * @description Initializes the prototype slots for the SvColorField.
      * @category Initialization
@@ -28,11 +28,11 @@
          * @category Color Components
          */
         {
-            const slot = this.newSlot("red", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setSlotType("Number")
+            const slot = this.newSlot("red", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setSlotType("Number");
         }
 
         /**
@@ -40,11 +40,11 @@
          * @category Color Components
          */
         {
-            const slot = this.newSlot("green", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setSlotType("Number")
+            const slot = this.newSlot("green", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setSlotType("Number");
         }
 
         /**
@@ -52,11 +52,11 @@
          * @category Color Components
          */
         {
-            const slot = this.newSlot("blue", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setSlotType("Number")
+            const slot = this.newSlot("blue", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setSlotType("Number");
         }
 
         /**
@@ -64,11 +64,11 @@
          * @category Color Components
          */
         {
-            const slot = this.newSlot("alpha", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setSlotType("Number")
+            const slot = this.newSlot("alpha", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setSlotType("Number");
         }
     }
 
@@ -92,7 +92,7 @@
      * @category Conversion
      */
     asCssColor () {
-        return CssColor.clone().set(this.red(), this.green(), this.blue(), this.alpha())
+        return CssColor.clone().set(this.red(), this.green(), this.blue(), this.alpha());
     }
 
     /**
@@ -102,7 +102,7 @@
      * @category Conversion
      */
     fromCssColor (/*aCssColor*/) {
-        return this
+        return this;
     }
-    
+
 }.initThisClass());

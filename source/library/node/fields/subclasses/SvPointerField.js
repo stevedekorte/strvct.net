@@ -8,7 +8,7 @@
  * (sometimes the other node is used as a list of items, but not always)
  */
 (class SvPointerField extends SvField {
-    
+
     /**
      * @description Initializes prototype slots.
      * @category Initialization
@@ -56,7 +56,7 @@
         const title = this.proxyGetter("title");
         return title;
     }
-	
+
     /**
      * @description Gets the subtitle of the value object.
      * @returns {string} The subtitle of the value object.
@@ -65,7 +65,7 @@
     subtitle () {
         return this.proxyGetter("subtitle");
     }
-	
+
     /**
      * @description Gets the note of the value object.
      * @returns {string} The note of the value object.
@@ -74,7 +74,7 @@
     note () {
         return this.proxyGetter("note");
     }
-	
+
     /**
      * @description Gets the node tile link.
      * @returns {*} The value of the field.

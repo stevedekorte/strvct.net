@@ -52,7 +52,7 @@
              */
         }
     }
-  
+
     initPrototype () {
     }
 
@@ -63,29 +63,29 @@
      * @category Parsing
      */
     fromLine (line) {
-        line = line.after("at ")
+        line = line.after("at ");
 
         if (line.contains("(")) {
-            const functionName = line.before("(").strip()
-            this.setFunctionName(functionName)
-            line = line.between("(", ")").strip()
+            const functionName = line.before("(").strip();
+            this.setFunctionName(functionName);
+            line = line.between("(", ")").strip();
         }
-        
-        const parts = line.split(":")
+
+        const parts = line.split(":");
         if (parts.length !== 4) {
-            console.log("unexpected stacktrace line format: '" + line + "'")
-            return this
+            console.log("unexpected stacktrace line format: '" + line + "'");
+            return this;
         }
-        const lineNumber = parts.removeLast()
-        this.setLineNumber(Number(lineNumber))
+        const lineNumber = parts.removeLast();
+        this.setLineNumber(Number(lineNumber));
 
-        const characterNumber = parts.removeLast()
-        this.setCharacterNumber(Number(characterNumber))
+        const characterNumber = parts.removeLast();
+        this.setCharacterNumber(Number(characterNumber));
 
-        const url = parts.join(":")
-        this.setUrl(url)
+        const url = parts.join(":");
+        this.setUrl(url);
 
-        return this
+        return this;
     }
 
     /**
@@ -94,7 +94,7 @@
      * @category Utility
      */
     description () {
-        return "  " + this.functionName() + "() line " + this.lineNumber()
+        return "  " + this.functionName() + "() line " + this.lineNumber();
     }
 
     /**
@@ -102,7 +102,7 @@
      * @category Utility
      */
     show () {
-        console.log(this.description())
+        console.log(this.description());
     }
 }.initThisClass());;
 
@@ -142,7 +142,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
     }
 
     /**
@@ -152,17 +152,17 @@
      * @category Parsing
      */
     setError (error) {
-        this._error = error
+        this._error = error;
 
-        const lines = error.stack.split("\n")
-        const firstLine = lines.removeFirst()
-		
+        const lines = error.stack.split("\n");
+        const firstLine = lines.removeFirst();
+
         const frames = lines.map((line) => {
-            return StackFrame.clone().fromLine(line)
-        })
-        this.setStackFrames(frames)
+            return StackFrame.clone().fromLine(line);
+        });
+        this.setStackFrames(frames);
 
-        return this
+        return this;
     }
 
     /**
@@ -170,8 +170,8 @@
      * @category Utility
      */
     show () {
-        console.log(this.svType() + ": '" + this.error().message + "'")
-        this.stackFrames().forEach(frame => frame.show())
+        console.log(this.svType() + ": '" + this.error().message + "'");
+        this.stackFrames().forEach(frame => frame.show());
     }
 
     /**
@@ -181,15 +181,15 @@
     test () {
         const f1 = function () {
             try {
-                throw(new Error("test error"))
+                throw (new Error("test error"));
             } catch (e) {
-                StackTrace.clone().setError(e).show()
+                StackTrace.clone().setError(e).show();
             }
-        }
-        
-        const f2 = function () { f1() }
-        const f3 = function () { f2() }
-        f3()        
+        };
+
+        const f2 = function () { f1(); };
+        const f3 = function () { f2(); };
+        f3();
     }
 
 }.initThisClass());

@@ -6,17 +6,17 @@
  * @extends Tile
  * @classdesc
 
-    Field views are tiles that present nodes which have key/value pairs, 
+    Field views are tiles that present nodes which have key/value pairs,
     such as those representing slots, or other named properties.
 
     The idea is to use the field as the container, and then get
-    a custom value view to present in the value area. 
+    a custom value view to present in the value area.
 
 */
 
 
-(class SvFieldTile extends Tile { 
-    
+(class SvFieldTile extends Tile {
+
     initPrototypeSlots () {
         {
             /** @member {boolean} allowsCursorNavigation
@@ -200,7 +200,7 @@
             */
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -208,14 +208,14 @@
      * @returns {DomView} The key view.
      */
     setupKeyView () {
-        const v = SvTextView.clone().setElementClassName("SvFieldKeyView")
+        const v = SvTextView.clone().setElementClassName("SvFieldKeyView");
         if (!v.themeClassName()) {
-            v.setThemeClassName("FieldKey")
+            v.setThemeClassName("FieldKey");
         }
-        v.setDisplay("inline-block")
-        v.setOverflow("hidden")
-        v.setTextAlign("left")
-        v.setWhiteSpace("nowrap")
+        v.setDisplay("inline-block");
+        v.setOverflow("hidden");
+        v.setTextAlign("left");
+        v.setWhiteSpace("nowrap");
 
         this.setKeyView(v);
         v.turnOffUserSelect();
@@ -227,7 +227,7 @@
         v.setPaddingLeft("0em");
         v.setPaddingRight("0em");
 
-        this.keyViewContainer().addSubview(v);     
+        this.keyViewContainer().addSubview(v);
         return v;
     }
 
@@ -236,20 +236,20 @@
      * @returns {DomView} The value view.
      */
     setupValueView () {
-        const v = this.createValueView()
+        const v = this.createValueView();
         if (!v.themeClassName()) {
-            v.setThemeClassName("FieldValue")
+            v.setThemeClassName("FieldValue");
         }
-        v.setUserSelect("text")   // should the value view handle this?
-        v.setSpellCheck(false)   // should the value view handle this?
+        v.setUserSelect("text");   // should the value view handle this?
+        v.setSpellCheck(false);   // should the value view handle this?
         //v.setPaddingTop(this.vPadding())
         //v.setPaddingBottom(this.vPadding())
-        v.setMarginTop(this.vPadding())
-        v.setMarginBottom(this.vPadding())
+        v.setMarginTop(this.vPadding());
+        v.setMarginBottom(this.vPadding());
 
         this.setValueView(v);
-        this.valueViewContainer().addSubview(v);  
-        //this.valueSectionView().addSubview(v)  
+        this.valueViewContainer().addSubview(v);
+        //this.valueSectionView().addSubview(v)
         return v;
     }
 
@@ -258,17 +258,17 @@
      * @returns {DomView} The note view.
      */
     setupNoteView () {
-        const v = DomView.clone().setElementClassName("SvFieldTileNoteViewView")
-        v.setDisplay("block")
-        v.setPosition("relative")
-        v.setOverflow("hidden")
-        v.setWidth("100%")
-        v.setFontWeight("normal")
-        v.setColor("#aaa")
-        v.setMarginLeft("0em")
-        v.setMarginRightPx(0)
-        v.setMarginTop("0em")
-        v.setMarginBottom("0.2em")
+        const v = DomView.clone().setElementClassName("SvFieldTileNoteViewView");
+        v.setDisplay("block");
+        v.setPosition("relative");
+        v.setOverflow("hidden");
+        v.setWidth("100%");
+        v.setFontWeight("normal");
+        v.setColor("#aaa");
+        v.setMarginLeft("0em");
+        v.setMarginRightPx(0);
+        v.setMarginTop("0em");
+        v.setMarginBottom("0.2em");
         v.setUserSelect("text");
         this.setNoteView(v);
         this.noteViewContainer().addSubview(v);
@@ -280,16 +280,16 @@
      * @returns {DomView} The error view.
      */
     setupErrorView () {
-        const v = DomView.clone().setElementClassName("SvFieldTileErrorView")
-        v.setUserSelect("text")
-        v.setSpellCheck(false)
+        const v = DomView.clone().setElementClassName("SvFieldTileErrorView");
+        v.setUserSelect("text");
+        v.setSpellCheck(false);
         //v.setInnerHtml("error")
-        v.setColor("red")
-        v.setPaddingBottom("0em")
+        v.setColor("red");
+        v.setPaddingBottom("0em");
         v.setWhiteSpace("normal");
         this.setErrorView(v);
         this.errorViewContainer().addSubview(v);
-        return v; 
+        return v;
     }
 
     /**
@@ -297,24 +297,24 @@
      * @returns {DomView} The value view.
      */
     createValueView () {
-        const v = SvTextView.clone().setElementClassName("SvFieldValueView")
-        v.setDisplay("flex")
-        v.setPosition("relative")
-        v.setWidth("100%")
-        v.setMarginTop("0.1em")
-        v.setMarginLeft("0em")
-        v.setMarginRight("0em")
-        v.setMarginBottom("0.1em")
-        v.setTextAlign("left")
-        v.setOverflow("hidden")
-        v.setWhiteSpace("nowrap")
+        const v = SvTextView.clone().setElementClassName("SvFieldValueView");
+        v.setDisplay("flex");
+        v.setPosition("relative");
+        v.setWidth("100%");
+        v.setMarginTop("0.1em");
+        v.setMarginLeft("0em");
+        v.setMarginRight("0em");
+        v.setMarginBottom("0.1em");
+        v.setTextAlign("left");
+        v.setOverflow("hidden");
+        v.setWhiteSpace("nowrap");
         /*
         v.setPaddingLeft("7px")
         v.setPaddingRight("4px")
         v.setPaddingBottom("5px")
         */
-        v.setColor("white")
-        v.setBackgroundColor("transparent")
+        v.setColor("white");
+        v.setBackgroundColor("transparent");
         //tf.setSelectAllOnDoubleClick(true)
         return v;
     }
@@ -352,7 +352,7 @@
      * @returns {string} The editable color.
      */
     editableColor () {
-        return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString()
+        return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString();
     }
 
     /**
@@ -361,18 +361,18 @@
      */
     keyViewColor () {
         //console.log(this.logPrefix(), this.node().title() + " " + this.svTypeId() + ".isSelected() = ", this.isSelected())
-        return this.currentColor()
+        return this.currentColor();
         //return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString()
     }
 
-	
+
     // visible key and value
     /**
      * @description Gets the visible value.
      * @returns {string} The visible value.
      */
     visibleValue () {
-        return this.node().visibleValue()
+        return this.node().visibleValue();
     }
 
     /**
@@ -417,7 +417,7 @@
             } else {
                 this.hideKeyDots();
             }
-            
+
             // Check value completion
             if (node.valueIsComplete) {
                 if (node.valueIsComplete()) {
@@ -487,7 +487,7 @@
         }
         return this;
     }
-	
+
     /**
      * @description Gets the visible key.
      * @returns {string} The visible key.
@@ -496,8 +496,8 @@
         return this.node().key();
     }
 
-    // sync 
-    
+    // sync
+
     /**
      * @description Updates the slot isSelected.
      * @param {boolean} oldValue - The old value.
@@ -518,7 +518,7 @@
     syncFromNode () {
         super.syncFromNode();
         //this.logDebug(" syncFromNode");
-		
+
         const node = this.node();
         node.prepareToSyncToView();
         //this.setIsDisplayHidden(!node.isVisible());
@@ -584,23 +584,23 @@
 
         if (node.valueIsEditable()) {
             //valueView.setColor(this.editableColor())
-            valueView.setColor(this.currentColor())
+            valueView.setColor(this.currentColor());
             //valueView.setBorder("1px solid #444")
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
-            valueView.setBorder(this.valueEditableBorder())
-            valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em")
+            valueView.setBorder(this.valueEditableBorder());
+            valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em");
         } else {
             //console.log(this.logPrefix(), "fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
-            valueView.setColor(this.uneditableColor())
+            valueView.setColor(this.uneditableColor());
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
-            valueView.setBorder(this.valueUneditableBorder())
+            valueView.setBorder(this.valueUneditableBorder());
             //valueView.setPaddingLeft("0em").setPaddingRight("0em")
         }
 
         if (valueView.setCanHitEnter) {
             if (node.acceptsValueInput) {
                 //console.log(this.logPrefix(), "node.acceptsValueInput() = ", node.acceptsValueInput());
-                
+
                 valueView.setCanHitEnter(node.acceptsValueInput());
                 //valueView.setCanHitEnter(true);
             } else {
@@ -614,27 +614,27 @@
      * @returns {SvFieldTile} The current instance.
      */
     syncErrorFromNode () {
-        const node = this.node()
-        const valueView = this.valueView()
-        const errorView = this.errorView()
+        const node = this.node();
+        const valueView = this.valueView();
+        const errorView = this.errorView();
 
-        const color = valueView.color()
-        
+        const color = valueView.color();
+
         if (node.valueError()) {
-            valueView.setColor(this.errorColor())
-            errorView.setColor(this.errorColor())
-            errorView.setInnerHtml(node.valueError())
-            errorView.fadeInHeightToDisplayBlock()
+            valueView.setColor(this.errorColor());
+            errorView.setColor(this.errorColor());
+            errorView.setInnerHtml(node.valueError());
+            errorView.fadeInHeightToDisplayBlock();
             //valueView.setToolTip(node.valueError())
         } else {
-            valueView.setBackgroundColor("transparent")
-            valueView.setColor(color)
+            valueView.setBackgroundColor("transparent");
+            valueView.setColor(color);
 
             if (errorView.display() !== "none") {
-                errorView.setDisplay("none")
+                errorView.setDisplay("none");
             }
             //errorView.fadeOutHeightToDisplayNone()
-            
+
             //valueView.setToolTip("")
         }
     }
@@ -645,14 +645,14 @@
      */
     syncNoteFromNode () {
         //const node = this.node()
-        const noteView = this.noteView()
-        
+        const noteView = this.noteView();
+
         if (this.visibleNote()) {
-            noteView.unhideDisplay()
-            noteView.setInnerHtml(this.visibleNote())
+            noteView.unhideDisplay();
+            noteView.setInnerHtml(this.visibleNote());
         } else {
-            noteView.hideDisplay()
-            noteView.setInnerHtml("")
+            noteView.hideDisplay();
+            noteView.setInnerHtml("");
         }
     }
 
@@ -664,30 +664,30 @@
      * @returns {string} The visible note.
      */
     visibleNote () {
-        return this.node().note()
+        return this.node().note();
     }
-    
+
     /**
      * @description Syncs to the node.
      * @returns {SvFieldTile} The current instance.
      */
     syncToNode () {
-        const node = this.node()
+        const node = this.node();
 
         if (node.keyIsEditable()) {
             const keyValue = this.keyView().value();
-            node.setKey(keyValue)
+            node.setKey(keyValue);
         }
-	
+
         if (node.valueIsEditable()) {
             const valueViewValue = this.valueView().value();
-            node.setValue(valueViewValue)
+            node.setValue(valueViewValue);
         }
-		
-        super.syncToNode()
-        return this
+
+        super.syncToNode();
+        return this;
     }
-    
+
     /**
      * @description Called when an edit occurs.
      * @param {DomView} changedView - The changed view.
@@ -696,12 +696,12 @@
     onDidEdit (changedView) { // sent up subview chain when an edit occurs
         this.scheduleSyncToNode();
         if (changedView === this.valueView()) {
-            const node = this.node()
+            const node = this.node();
             if (node.onDidEditValue) {
-                node.onDidEditValue(changedView)
+                node.onDidEditValue(changedView);
             }
         }
-        return true
+        return true;
     }
 
     /**
@@ -711,10 +711,10 @@
      */
     onDidInput (changedView) { // sent up subview chain when an input occurs
         if (changedView === this.valueView()) {
-            const node = this.node()
+            const node = this.node();
             this.syncToNode(); //  is this done elsewhere
             if (node.onValueInput) {
-                node.onValueInput(changedView)
+                node.onValueInput(changedView);
             }
         }
     }
@@ -724,10 +724,10 @@
      * @returns {SvFieldTile} The current instance.
      */
     syncStylesToSubviews () {
-        super.syncStylesToSubviews()
-        this.keyView().syncStateFrom(this)
-        this.valueView().syncStateFrom(this)
-        return this
+        super.syncStylesToSubviews();
+        this.keyView().syncStateFrom(this);
+        this.valueView().syncStateFrom(this);
+        return this;
     }
 
     /**
@@ -735,8 +735,8 @@
      * @returns {SvFieldTile} The current instance.
      */
     updateSubviews () {
-        super.updateSubviews()
-        this.syncStylesToSubviews()
+        super.updateSubviews();
+        this.syncStylesToSubviews();
 
         /*
         const node = this.node()
@@ -751,8 +751,8 @@
             }
         }
         */
-        
-        return this
+
+        return this;
     }
 
     /**
@@ -760,10 +760,10 @@
      * @returns {SvFieldTile} The current instance.
      */
     applyStyles () {
-        super.applyStyles()
+        super.applyStyles();
         //this.keyView().applyStyles()
         //this.valueView().applyStyles()
-        return this
+        return this;
     }
 
     /**
@@ -774,9 +774,9 @@
     onEnterKeyUp (/*event*/) {
         //this.logDebug(".onEnterKeyUp()")
         if (this.valueView().activate) {
-            this.valueView().activate()
+            this.valueView().activate();
         }
-        return this
+        return this;
     }
 
     /**
@@ -791,8 +791,8 @@
             console.log(this.logPrefix(), "not white")
         }
         */
-        super.setBackgroundColor(c)
-        return this
+        super.setBackgroundColor(c);
+        return this;
     }
 
     /**
@@ -800,8 +800,8 @@
      * @returns {SvFieldTile} The current instance.
      */
     becomeKeyView () {
-        this.valueView().becomeKeyView()
-        return this
+        this.valueView().becomeKeyView();
+        return this;
     }
 
     /**
@@ -809,10 +809,10 @@
      * @returns {SvFieldTile} The current instance.
      */
     unselect () {
-        super.unselect()
-        this.valueView().blur()
-        this.keyView().blur()
-        return this
+        super.unselect();
+        this.valueView().blur();
+        this.keyView().blur();
+        return this;
     }
-    
+
 }.initThisClass());

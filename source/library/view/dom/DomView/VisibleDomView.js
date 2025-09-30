@@ -8,7 +8,7 @@
  * @classdesc Support for visibility events.
  */
 (class VisibleDomView extends ListenerDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the VisibleDomView.
      * @category Initialization
@@ -120,19 +120,19 @@
      */
     registerForVisibility () { // this is a oneShot event, as onVisibility() unregisters
         if (this.isRegisteredForVisibility()) {
-            return this
+            return this;
         }
 
         const intersectionObserverOptions = {
-            root: this.visibilityRoot(), // watch for visibility in the viewport 
+            root: this.visibilityRoot(), // watch for visibility in the viewport
             rootMargin: "0px",
             threshold: 1.0
         };
 
         const obs = new IntersectionObserver((entries, observer) => {
-            const intersectionEvent = new Event('IntersectionObserverEvent', { bubbles: false, cancelable: true }); // not sure about these options settings
+            const intersectionEvent = new Event("IntersectionObserverEvent", { bubbles: false, cancelable: true }); // not sure about these options settings
 
-            EventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer) }, intersectionEvent);
+            EventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer); }, intersectionEvent);
             //this.handleIntersection(entries, observer);
         }, intersectionObserverOptions);
 

@@ -19,21 +19,21 @@
  */
 JSON.nodeCount = function (json) {
     let count = 1; // Start with 1 to count the current node
-    
+
     if (Array.isArray(json)) {
         // If it's an array, recursively count nodes for each element
         json.forEach(item => {
-        count += countJsonNodes(item);
+            count += countJsonNodes(item);
         });
-    } else if (typeof json === 'object' && json !== null) {
+    } else if (typeof json === "object" && json !== null) {
         // If it's an object, recursively count nodes for each property
         Object.values(json).forEach(value => {
-        count += countJsonNodes(value);
+            count += countJsonNodes(value);
         });
     }
-    
+
     return count;
-}
+};
 
 /**
  * Stringifies only the JSON compatible values in an object.
@@ -48,7 +48,7 @@ JSON.stringifyOnlyJson = function (obj, replacer, space) {
             return value
                 .filter(Type.isJsonType)
                 .map(item => filterJsonCompatible(item));
-        } else if (typeof value === 'object' && value !== null) {
+        } else if (typeof value === "object" && value !== null) {
             return Object.keys(value).reduce((acc, key) => {
                 if (Type.isJsonType(value[key])) {
                     acc[key] = filterJsonCompatible(value[key]);
@@ -75,7 +75,7 @@ JSON.stableStringifyOnlyJson = function (obj, replacer, space) {
     const seen = new WeakSet();  // Track objects to prevent circular references
 
     function filterJsonCompatible (value) {
-        if (typeof value === 'object' && value !== null) {
+        if (typeof value === "object" && value !== null) {
             if (seen.has(value)) return undefined;  // Avoid circular reference
             seen.add(value);
 
@@ -103,7 +103,6 @@ JSON.stableStringifyOnlyJson = function (obj, replacer, space) {
 };
 
 
-
 JSON.stableStringifyWithStdOptions = function (obj, replacer, space) {
     const opts = {};
 
@@ -118,7 +117,7 @@ JSON.stableStringifyWithStdOptions = function (obj, replacer, space) {
     } else {
         opts.space = 2;
     }
-    
+
     /*
     if (Object.keys(opts).length === 0) {
         return JSON.stableStringify(obj);
@@ -126,7 +125,6 @@ JSON.stableStringifyWithStdOptions = function (obj, replacer, space) {
     */
     return JSON.stableStringify(obj, opts);
 };
-
 
 
 //}).initThisCategory();

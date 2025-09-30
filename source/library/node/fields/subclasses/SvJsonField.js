@@ -8,7 +8,7 @@
  * It provides functionality to set and retrieve JSON values, and interact with SvJsonNode.
  */
 (class SvJsonField extends SvField {
-    
+
     /**
      * @description Initializes the prototype slots for the SvJsonField.
      * @category Initialization
@@ -29,11 +29,11 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(false)
-        this.setKeyIsVisible(true)
-        this.setValueIsVisible(true)
-        this.setNodeTileIsSelectable(true)
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(false);
+        this.setKeyIsVisible(true);
+        this.setValueIsVisible(true);
+        this.setNodeTileIsSelectable(true);
     }
 
     /**
@@ -43,10 +43,10 @@
      * @category Data Manipulation
      */
     setValue (v) {
-        console.warn("WARNING: SvJsonField setValue '" + v + "'")
-        const node = SvJsonNode.nodeForJson(v)
-        this.setNodeTileLink(node)
-        return this
+        console.warn("WARNING: SvJsonField setValue '" + v + "'");
+        const node = SvJsonNode.nodeForJson(v);
+        this.setNodeTileLink(node);
+        return this;
     }
 
     /**
@@ -55,11 +55,11 @@
      * @category Data Retrieval
      */
     value () {
-        const node = this.nodeTileLink()
+        const node = this.nodeTileLink();
         if (node) {
-            return node.jsonArchive()
+            return node.jsonArchive();
         }
-        return undefined
+        return undefined;
     }
 
     /**
@@ -70,8 +70,8 @@
      * @category Utility
      */
     proxyGetter (methodName, defaultReturnValue = "") {
-        const v = this.value()
-        return v ? v[methodName].apply(v) : defaultReturnValue
+        const v = this.value();
+        return v ? v[methodName].apply(v) : defaultReturnValue;
     }
 
     /**
@@ -80,25 +80,25 @@
      * @category Data Retrieval
      */
     title () {
-        return this.proxyGetter("title")
+        return this.proxyGetter("title");
     }
-	
+
     /**
      * @description Gets the subtitle of the JSON field.
      * @returns {string} The subtitle of the field.
      * @category Data Retrieval
      */
     subtitle () {
-        return this.proxyGetter("subtitle")
+        return this.proxyGetter("subtitle");
     }
-	
+
     /**
      * @description Gets the note of the JSON field.
      * @returns {string} The note of the field.
      * @category Data Retrieval
      */
     note () {
-        return this.proxyGetter("note")
+        return this.proxyGetter("note");
     }
 
 }.initThisClass());

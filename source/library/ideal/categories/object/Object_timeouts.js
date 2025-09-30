@@ -6,13 +6,13 @@
  * @module library.ideal.object
  * @class Object_timeouts
  * @extends Object
- * @classdesc 
+ * @classdesc
  * Extends Object with timeout functionality.
- * Sometimes we can't use the SvSyncScheduler as we have to make sure 
+ * Sometimes we can't use the SvSyncScheduler as we have to make sure
  * something happens *after* the current event loop ends (and control is returned to the browser),
  * but scheduler runs while still in (but at the end of) the current event.
  * Also, we sometimes need timeout delays.
- * 
+ *
  * This helps track all timeouts for an object, and cancel them all at once via cancelAllTimeouts()
  * which is useful when retiring an object.
  */
@@ -30,7 +30,7 @@
         }
         return this[slotName];
     }
-    
+
     /**
      * Adds a timeout function to be executed after a specified delay.
      * @param {Function} aFunc - The function to be executed.
@@ -39,7 +39,7 @@
      * @returns {number} The timeout ID.
      * @category Timeout Management
      */
-    addTimeout (aFunc, msDelay, optionalName) { 
+    addTimeout (aFunc, msDelay, optionalName) {
         // if no optionalName given, use the timeoutId for the name,
         // as timeout ids should be unique
 
@@ -50,9 +50,9 @@
         }
 
         const tidInfo = new Array(2); // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
-        const tid = setTimeout(() => { 
+        const tid = setTimeout(() => {
             this.removeTimeoutNamed(tidInfo[0]);
-            const event = new Event('Custom_addTimeoutEvent', { bubbles: false, cancelable: true }); // not sure about these options settings
+            const event = new Event("Custom_addTimeoutEvent", { bubbles: false, cancelable: true }); // not sure about these options settings
             EventManager.shared().safeWrapEvent(aFunc, event);
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
@@ -88,7 +88,7 @@
      * @returns {Object_timeouts} This object.
      * @category Timeout Management
      */
-    clearTimeout (tid) { 
+    clearTimeout (tid) {
         // IMPORTANT: (for now) we assume a given timeouts is either referred to by name or tid, but not both
         // in which case, if the tid is called here, it was used at the key in the timeoutNameToIdMap
         this.removeTimeoutNamed(tid);
@@ -103,12 +103,12 @@
      * @category Timeout Management
      */
     clearTimeoutNamed (name) {
-        const tids = this.timeoutNameToIdMap()
+        const tids = this.timeoutNameToIdMap();
         if (tids.has(name)) {
-            const tid = tids.get(name)
-            this.clearTimeout(tid)
+            const tid = tids.get(name);
+            this.clearTimeout(tid);
         }
-        return this
+        return this;
     }
 
     /**
@@ -118,19 +118,19 @@
      * @category Timeout Management
      */
     hasTimeoutNamed (name) {
-        const tids = this.timeoutNameToIdMap()
-        return tids.has(name)
+        const tids = this.timeoutNameToIdMap();
+        return tids.has(name);
     }
-    
+
     /**
      * Cancels all timeouts associated with this object.
      * @returns {Object_timeouts} This object.
      * @category Timeout Management
      */
     cancelAllTimeouts () {
-        const tids = this.timeoutNameToIdMap()
-        tids.forEachKV((name, tid) => this.clearTimeout(tid))
-        return this
+        const tids = this.timeoutNameToIdMap();
+        tids.forEachKV((name, tid) => this.clearTimeout(tid));
+        return this;
     }
 
     /*

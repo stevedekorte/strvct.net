@@ -8,18 +8,18 @@
  * @class BooleanView
  * @extends StyledDomView
  * @classdesc BooleanView represents a checkbox component.
- * 
+ *
  * The checkbox is composed of 2 overlapping inner views,
  * one for the inner check itself, and one for the outer border around.
- * The check components are rendered with scalable SVG and 
+ * The check components are rendered with scalable SVG and
  * are synced to match the color of the parent view's text color by
  * getting the computed color and applying it to the fill or stroke of the
  * svg views.
- * 
+ *
  * TODO: support disabled/uneditable color style?
  */
 (class BooleanView extends StyledDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the BooleanView.
      */
@@ -86,7 +86,7 @@
         this.setFilter("blur(0.2px)");
         this.flexCenterContent();
         //this.setBorder("1px dashed red")
-       
+
         this.turnOffUserSelect();
         this.setSpellCheck(false);
         this.setContentEditable(false);
@@ -114,10 +114,10 @@
             inner.setPosition("absolute");
             inner.setTopPx(0);
             inner.setLeftPx(0);
-            inner.setMinAndMaxWidthAndHeight(size)
-            inner.setStrokeColor("transparent")
-            this.setInnerCheckView(inner)
-            this.addSubview(inner)
+            inner.setMinAndMaxWidthAndHeight(size);
+            inner.setStrokeColor("transparent");
+            this.setInnerCheckView(inner);
+            this.addSubview(inner);
         }
 
         {
@@ -132,9 +132,9 @@
             this.setOuterCheckView(outer);
             this.addSubview(outer);
         }
-        
+
         this.setIsEditable(this.isEditable());
-        
+
         // Ensure initial appearance is updated with the default value
         this.updateAppearance();
 
@@ -156,21 +156,21 @@
      * @returns {BooleanView}
      * @category State
      */
-    setIsEditable (aBool) {        
+    setIsEditable (aBool) {
         this._isEditable = aBool;
-        
+
         if (this._isEditable) {
             const g = this.addDefaultTapGesture();
             g.setShouldRequestActivation(false); // so the tile doesn't block the initial tap
         } else {
             this.removeDefaultTapGesture();
         }
-        
+
         this.updateAppearance();
-        
+
         return this;
     }
-    
+
     /**
      * @description Toggles the checkbox state.
      * @returns {BooleanView}
@@ -181,7 +181,7 @@
         this.didEdit();
         return this;
     }
-    
+
     /**
      * @description Activates the checkbox.
      * @returns {BooleanView}
@@ -191,7 +191,7 @@
         this.toggle();
         return this;
     }
-    
+
     /**
      * @description Sets the value of the checkbox.
      * @param {boolean} v - The value to set.
@@ -202,13 +202,13 @@
         if (Type.isNullOrUndefined(v)) {
             v = false;
         }
-        
+
 	    this._value = v;
 
         this.updateAppearance();
         return this;
     }
-	
+
     /**
      * @description Gets the value of the checkbox.
      * @returns {boolean}
@@ -217,7 +217,7 @@
     value () {
 	    return this._value;
     }
-	
+
     /**
      * @description Checks if the checkbox is checked.
      * @returns {boolean}
@@ -226,7 +226,7 @@
     isChecked () {
 	    return this.value();
     }
-    
+
     /**
      * @description Sets the background color.
      * @param {string} s - The color to set.
@@ -237,7 +237,7 @@
         // needed?
         return this;
     }
-	
+
     /**
      * @description Updates the appearance of the checkbox.
      * @returns {BooleanView}
@@ -252,7 +252,7 @@
 
         this.outerCheckView().setStrokeColor(color);
         this.innerCheckView().setFillColor(this.value() ? color : "transparent");
-        
+
         return this;
     }
 
@@ -267,5 +267,5 @@
         this.toggle();
         return false;
     }
-    
+
 }.initThisClass());

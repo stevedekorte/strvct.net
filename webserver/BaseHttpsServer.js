@@ -8,16 +8,16 @@ require("./SvGlobals.js");
 require("./Base.js");
 require("./BaseHttpsServerRequest.js");
 
-const https = require('https');
-const http = require('http');
-const fs = require('fs');
-const nodePath = require('path');
+const https = require("https");
+const http = require("http");
+const fs = require("fs");
+const nodePath = require("path");
 
 /**
  * @class BaseHttpsServer
  * @extends Base
  * @classdesc Base HTTPS server with optional HTTP support. Subclasses should override serverName() and customize behavior.
- * 
+ *
  * REDESIGN NOTES:
  * - Remove the need for server subclasses (GameHttpsServer, AccountHttpsServer)
  * - Add support for --config command line argument that points to a JSON configuration file
@@ -37,7 +37,7 @@ const nodePath = require('path');
  * - Remove requestClass() and newRequestHandler() methods
  */
 (class BaseHttpsServer extends Base {
-    
+
     /**
      * Initializes the prototype slots for the BaseHttpsServer.
      */
@@ -71,27 +71,27 @@ const nodePath = require('path');
          * @member {boolean} isSecure - Indicates whether the server should use HTTPS.
          */
         this.newSlot("isSecure", true);
-        
+
         /**
          * @member {string} configPath - Path to the JSON configuration file.
          */
         this.newSlot("configPath", null);
-        
+
         /**
          * @member {Array} requestClasses - Array of loaded request handler classes.
          */
         this.newSlot("requestClasses", []);
-        
+
         /**
          * @member {string} serverName - The name of the server for logging.
          */
         this.newSlot("serverName", "BaseServer");
-        
+
         /**
          * @member {string} logsPath - The path where log files should be stored.
          */
         this.newSlot("logsPath", null);
-        
+
         /**
          * @member {Object} config - Parsed configuration object.
          * @description This contains the request classes and the server name, and can be used for other things in the future.
@@ -99,7 +99,7 @@ const nodePath = require('path');
          */
         this.newSlot("config", null);
     }
-  
+
     /**
      * Initializes the prototype.
      */
@@ -120,11 +120,11 @@ const nodePath = require('path');
         super.init();
         this.setPort(8000);
         // Default key paths - subclasses may override
-        this.setKeyPath(nodePath.join(__dirname, 'keys/server.key'));
-        this.setCertPath(nodePath.join(__dirname, 'keys/server.crt'));
+        this.setKeyPath(nodePath.join(__dirname, "keys/server.key"));
+        this.setCertPath(nodePath.join(__dirname, "keys/server.crt"));
         return this;
     }
-    
+
     /**
      * Returns the options for creating an HTTPS server.
      * @returns {Object} The server options.
@@ -143,7 +143,7 @@ const nodePath = require('path');
     protocol () {
         return this.isSecure() ? "https" : "http";
     }
-    
+
     /**
      * Returns the server's URL.
      * @returns {string} The server URL.
@@ -177,54 +177,54 @@ const nodePath = require('path');
         if (this.configPath()) {
             this.loadConfiguration();
         }
-        
+
         const createServerMethod = this.isSecure() ? https.createServer : http.createServer;
         const serverOptions = this.isSecure() ? this.options() : {};
-        
-        const server = this.isSecure() 
+
+        const server = this.isSecure()
             ? createServerMethod(serverOptions, (request, response) => this.onRequest(request, response))
             : createServerMethod((request, response) => this.onRequest(request, response));
-            
+
         this.setServer(server);
-        
+
         server.listen(this.port(), () => {
-            console.log(this.serverName() + ' is running at ' + this.url());
+            console.log(this.serverName() + " is running at " + this.url());
         });
     }
-    
+
     /**
      * Loads the configuration file and request handler classes.
      */
     loadConfiguration () {
         console.log(this.serverName() + ": Loading configuration from " + this.configPath());
-        
-        const configData = fs.readFileSync(this.configPath(), 'utf8');
+
+        const configData = fs.readFileSync(this.configPath(), "utf8");
         const config = JSON.parse(configData);
         this.setConfig(config);
-        
+
         // Set server name from config if provided and not overridden by CLI
         if (config.serverName && this.serverName() === "BaseServer") {
             this.setServerName(config.serverName);
         }
-        
+
         const requestClasses = [];
         if (config.requestClasses) {
             for (const classInfo of config.requestClasses) {
                 // Handle both formats: object with path or just a path string
-                const classPath = typeof classInfo === 'string' ? classInfo : classInfo.path;
+                const classPath = typeof classInfo === "string" ? classInfo : classInfo.path;
                 const requestClass = this.loadRequestClass(classInfo);
-                
+
                 if (requestClass) {
                     requestClasses.push(requestClass);
                     // Get class name from path if not specified
-                    const className = classInfo.className || nodePath.basename(classPath, '.js');
+                    const className = classInfo.className || nodePath.basename(classPath, ".js");
                     console.log(this.serverName() + ": Loaded request handler: " + className);
                 }
             }
         }
         this.setRequestClasses(requestClasses);
     }
-    
+
     /**
      * Loads a single request class from the given class info.
      * @param {Object|string} classInfo - Either an object with path property or a path string
@@ -232,30 +232,30 @@ const nodePath = require('path');
      */
     loadRequestClass (classInfo) {
         // Get class path - either from object or directly if string was provided
-        const classPath = typeof classInfo === 'string' ? classInfo : classInfo.path;
-        
+        const classPath = typeof classInfo === "string" ? classInfo : classInfo.path;
+
         // Extract className from the filename (remove path and extension)
-        const fileName = nodePath.basename(classPath, '.js');
+        const fileName = nodePath.basename(classPath, ".js");
         const className = classInfo.className || fileName;
-        
+
         // Check if class is already loaded
         if (SvGlobals.globals()[className]) {
             return SvGlobals.globals()[className];
         }
-        
+
         // Resolve the path relative to the config file directory
         const configDir = nodePath.dirname(this.configPath());
         const fullPath = nodePath.resolve(configDir, classPath);
-        
+
         // Load the module using require instead of eval for better error handling
         try {
             require(fullPath);
             const RequestClass = SvGlobals.globals()[className];
-            
+
             if (!RequestClass) {
                 throw new Error(`Class ${className} not found in ${fullPath}. Make sure the class name matches the filename.`);
             }
-            
+
             // Return the class (actual initialization will be handled by CliWebServer)
             return RequestClass;
         } catch (error) {
@@ -281,7 +281,7 @@ const nodePath = require('path');
             handler.process();
         }
     }
-    
+
     /**
      * Handles a request using the configured request classes.
      * @param {Object} request - The request object.
@@ -290,22 +290,22 @@ const nodePath = require('path');
     handleRequestWithClasses (request, response) {
         try {
             // Handle OPTIONS requests for CORS
-            if (request.method === 'OPTIONS') {
+            if (request.method === "OPTIONS") {
                 const headers = {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                    'Access-Control-Max-Age': '86400',
-                    'Content-Length': '0'
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+                    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+                    "Access-Control-Max-Age": "86400",
+                    "Content-Length": "0"
                 };
                 response.writeHead(200, headers);
                 response.end();
                 return;
             }
-            
+
             // Parse the URL
             const urlObject = new URL(request.url, `${this.protocol()}://${request.headers.host || this.hostname()}`);
-            
+
             // Find the first request class that can handle this URL
             for (const RequestClass of this.requestClasses()) {
                 if (RequestClass.canHandleUrl && RequestClass.canHandleUrl(urlObject)) {
@@ -314,21 +314,21 @@ const nodePath = require('path');
                     handler.setServer(this);
                     handler.setRequest(request);
                     handler.setResponse(response);
-                    
+
                     // Process the request
                     handler.process();
                     return;
                 }
             }
-            
+
             // No handler found - send 404
-            response.writeHead(404, { 'Content-Type': 'text/plain' });
-            response.end('Not Found');
-            
+            response.writeHead(404, { "Content-Type": "text/plain" });
+            response.end("Not Found");
+
         } catch (error) {
             console.error(this.serverName() + ": Request handling error:", error);
-            response.writeHead(500, { 'Content-Type': 'text/plain' });
-            response.end('Internal Server Error');
+            response.writeHead(500, { "Content-Type": "text/plain" });
+            response.end("Internal Server Error");
         }
     }
 

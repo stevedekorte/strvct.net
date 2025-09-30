@@ -5,7 +5,7 @@
 * @class UoJsonDictionaryNode
 * @extends SvJsonDictionaryNode
 * @classdesc Adds some methods to access the session.
-* 
+*
 */
 
 (class UoJsonDictionaryNode extends SvJsonDictionaryNode {
@@ -17,7 +17,7 @@
     */
 
     session () {
-    return this.firstOwnerChainNodeOfClass(UoSession);
+        return this.firstOwnerChainNodeOfClass(UoSession);
     }
 
 }.initThisClass());

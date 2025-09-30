@@ -9,21 +9,21 @@
  * @extends SvResourceGroup
  * @classdesc
  * SvFileResources is a class for managing file resources.
- * 
+ *
  * Usage examples:
- * 
+ *
  * SvFileResources.shared().setupSubnodesIfNeeded();
- * 
+ *
  * const fileOrFolderResource = SvFileResources.shared().rootFolder().resourceAtPath("path/to/resource");
- * 
+ *
  * const resources = MResourceFiles.shared().rootFolder().allResourceFiles().resourcesWithName(aName);
- * 
+ *
  * SvFileResources.shared().rootFolder().allResourceFiles().forEach(file => {
  *     ...
  * });
  */
 (class SvFileResources extends SvResourceGroup {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      */
@@ -87,7 +87,7 @@
         const paths = this.rootFolder().allResourceFiles().map(file => file.path());
         console.log(this.logPrefix(), "paths = ", paths.join("\n"));
     }
-    
+
     /**
      * @description Sets up subnodes if they haven't been set up yet.
      * @returns {Promise<SvFileResources>} A promise that resolves to the instance.
@@ -144,7 +144,7 @@
      */
     async prechacheWhereAppropriate () {
         this.setupSubnodesIfNeeded();
-        
+
         await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => {
             //console.log(this.logPrefix(), "file: " + file.svType() + ".prechacheWhereAppropriate()");
             await file.prechacheWhereAppropriate();

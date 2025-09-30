@@ -6,13 +6,13 @@
 
 /**
  * SvFontResources
- * 
+ *
  * @class
  * @extends SvResourceGroup
  * @classdesc Manages font resources. Can be accessed via SvResources.shared().fonts().newFontOptions()
  */
 (class SvFontResources extends SvResourceGroup {
-    
+
     /**
      * @static
      * @description Initializes the class
@@ -21,7 +21,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes prototype slots
      * @category Initialization
@@ -75,7 +75,7 @@
         const aPath = aResource.path();
         const components = aPath.split("/");
 
-        /*const fontFileName =*/ components.pop(); 
+        /*const fontFileName =*/ components.pop();
         const familyName = components.pop();
 
         const family = this.fontFamilyNamed(familyName);
@@ -116,9 +116,9 @@
             return family;
         }
 
-        const newFamily = SvFontFamily.clone().setName(aName)
-        this.addFamily(newFamily)
-        return newFamily
+        const newFamily = SvFontFamily.clone().setName(aName);
+        this.addFamily(newFamily);
+        return newFamily;
     }
 
     /**
@@ -130,7 +130,7 @@
         const fonts = [];
         this.subnodes().forEach(fontFamily => {
             fontFamily.subnodes().forEach(font => fonts.push(font));
-        })
+        });
         return fonts;
     }
 
@@ -154,7 +154,7 @@
             const name = font.title();
             const option = SvOptionNode.clone().setLabel(name).setValue(name);
             options.addSubnode(option);
-        })
+        });
         return options;
     }
 
@@ -202,7 +202,7 @@
      * @category Resource Status
      */
     hasLoadedAllFontsWithNames (names) {
-        return names.canDetect(name => !this.hasLoadedFontWithName(name)) === false; 
+        return names.canDetect(name => !this.hasLoadedFontWithName(name)) === false;
     }
 
 }.initThisClass());

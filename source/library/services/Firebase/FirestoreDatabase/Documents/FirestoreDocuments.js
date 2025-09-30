@@ -8,7 +8,7 @@
  * @class FirestoreDocuments
  * @extends SvJsonArrayNode
  * @classdesc Collection of Firestore documents for testing and management
- * 
+ *
  */
 (class FirestoreDocuments extends SvSummaryNode {
 

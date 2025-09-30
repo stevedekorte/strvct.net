@@ -8,7 +8,7 @@
  */
 
 (class SvTextNodeTile extends Tile {
-    
+
     /**
      * Initializes the prototype slots for the SvTextNodeTile.
      * @category Initialization
@@ -30,32 +30,32 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
 
-        const cv = this.contentView()
-        cv.setMinHeight("1em")
+        const cv = this.contentView();
+        cv.setMinHeight("1em");
 
-        const tv = SvTextView.clone()
-        this.setTextView(tv)
-        this.contentView().addSubview(tv)
+        const tv = SvTextView.clone();
+        this.setTextView(tv);
+        this.contentView().addSubview(tv);
 
-        tv.setDisplay("flex")
+        tv.setDisplay("flex");
         //tv.setFlex("10")
-        tv.setAlignItems("flex-start") // alignment in direction of flex
-        tv.setJustifyContent("center") // alignment perpendicutal to flex
-        tv.setFlexDirection("column")
-        tv.setWidth("100%")
-        tv.setMinHeight("1em")
-        tv.setIsEditable(true)
+        tv.setAlignItems("flex-start"); // alignment in direction of flex
+        tv.setJustifyContent("center"); // alignment perpendicutal to flex
+        tv.setFlexDirection("column");
+        tv.setWidth("100%");
+        tv.setMinHeight("1em");
+        tv.setIsEditable(true);
 
-        tv.setUsesDoubleTapToEdit(true)
-        tv.setOverflow("visible")
+        tv.setUsesDoubleTapToEdit(true);
+        tv.setOverflow("visible");
 
-        this.updateSubviews()
-        this.setIsSelectable(true)
-        return this
+        this.updateSubviews();
+        this.setIsSelectable(true);
+        return this;
     }
-    
+
     // ---
 
     /**
@@ -64,7 +64,7 @@
      * @category Layout
      */
     desiredWidth () {
-        return this.calcWidth()
+        return this.calcWidth();
     }
 
     // --- edit ---
@@ -84,28 +84,28 @@
      * @returns {SvTextNodeTile} The current instance.
      * @category Data Synchronization
      */
-    syncToNode () {   
+    syncToNode () {
         //console.log(this.logPrefix(), "syncToNode")
-        const node = this.node()
-        node.setValue(this.textView().innerText())
-        return this
+        const node = this.node();
+        node.setValue(this.textView().innerText());
+        return this;
     }
-    
+
     /**
      * Synchronizes the tile's content from the node.
      * @returns {SvTextNodeTile} The current instance.
      * @category Data Synchronization
      */
     syncFromNode () {
-        const node = this.node()
+        const node = this.node();
         if (!node) {
-            return 
+            return;
         }
-        
-        this.textView().setString(node.value())
 
-        this.applyStyles()
-        return this
+        this.textView().setString(node.value());
+
+        this.applyStyles();
+        return this;
     }
 
     /**
@@ -114,9 +114,9 @@
      * @category Styling
      */
     applyStyles () {
-        console.log(this.logPrefix(), " themeClassName ", this.node().themeClassName())
-        super.applyStyles()
-        return this
+        console.log(this.logPrefix(), " themeClassName ", this.node().themeClassName());
+        super.applyStyles();
+        return this;
     }
 
 }.initThisClass());

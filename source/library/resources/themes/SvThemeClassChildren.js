@@ -10,7 +10,7 @@
  * @classdesc Represents a folder for theme class children.
  */
 (class SvThemeClassChildren extends SvThemeFolder {
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization
@@ -23,14 +23,14 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true) 
-        this.setNodeCanEditTitle(true)
-        this.setTitle("children")
-        this.setCanDelete(true)
-        this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses([SvThemeClass])
-        this.setNodeCanReorderSubnodes(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanEditTitle(true);
+        this.setTitle("children");
+        this.setCanDelete(true);
+        this.setNodeCanAddSubnode(true);
+        this.setSubnodeClasses([SvThemeClass]);
+        this.setNodeCanReorderSubnodes(true);
     }
 
     /**
@@ -40,7 +40,7 @@
      * @category Search
      */
     themeClassNamed (name) {
-        return this.subnodes().detect(sn => sn.title() === name)
+        return this.subnodes().detect(sn => sn.title() === name);
     }
 
 }.initThisClass());

@@ -17,8 +17,8 @@ require("./Base.js");
 (class SvMimeExtensions extends Base {
 
     constructor () {
-        super()
-        this.setup()
+        super();
+        this.setup();
     }
 
     /**
@@ -31,7 +31,7 @@ require("./Base.js");
             ext = "." + ext;
         }
 
-        return this._fileExtensionToMimeTypeDict[ext]
+        return this._fileExtensionToMimeTypeDict[ext];
     }
 
     /**
@@ -867,7 +867,7 @@ require("./Base.js");
             //".wasm": "application/octet-stream",
             ".woff2": "font/woff2",
             ".woff": "font/woff",
-        }
+        };
     }
 }.initThisClass());
 

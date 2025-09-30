@@ -9,7 +9,7 @@
 
 
 (class SubviewsDomView extends CssDomView {
-    
+
     initPrototypeSlots () {
         /**
          * @member {DomView} parentView - The parent view.
@@ -43,7 +43,7 @@
     hasParentView () {
         return Type.isNullOrUndefined(this.parentView()) === false;
     }
-    
+
     /**
      * @description Updates the parent view slot.
      * @param {DomView} oldValue - The old parent view.
@@ -53,7 +53,7 @@
     didUpdateSlotParentView (/*oldValue, newValue*/) {
         return this;
     }
-    
+
     /*
     didUpdateSlotParentView (oldValue, newValue) {
         const parentless = this.thisClass().viewsWithoutParents()
@@ -91,7 +91,7 @@
      */
     hasParentViewAncestor (aView) {
         const pv = this.parentView();
-        
+
         if (!pv) {
             return false;
         }
@@ -110,9 +110,9 @@
      */
     hasSubviewDescendant (aView) {
         if (aView == this) {
-            return true
+            return true;
         }
-        return this.subviews().canDetect(sv => sv.hasSubviewDescendant(aView))
+        return this.subviews().canDetect(sv => sv.hasSubviewDescendant(aView));
     }
 
     /**
@@ -121,13 +121,13 @@
      * @returns {Set} The set of all subviews.
      */
     allSubviewsRecursively (allViews = new Set()) {
-        allViews.add(this)
+        allViews.add(this);
         this.subviews().forEach(view => {
-            view.allSubviewsRecursively(allViews)
-        })
-        return allViews
+            view.allSubviewsRecursively(allViews);
+        });
+        return allViews;
     }
-    
+
     // view chains
 
     /**
@@ -136,10 +136,10 @@
      */
     forEachAncestorView (fn) { // should we call this ancestorViews?
         // returned list in order of very top parent first
-        let p = this.parentView()
+        let p = this.parentView();
         while (p) {
-            fn(p)
-            p = p.parentView()
+            fn(p);
+            p = p.parentView();
         }
     }
 
@@ -149,13 +149,13 @@
      */
     parentViewChain () { // should we call this ancestorViews?
         // returned list in order of very top parent first
-        const chain = []
-        let p = this.parentView()
+        const chain = [];
+        let p = this.parentView();
         while (p) {
-            chain.push(p)
-            p = p.parentView()
+            chain.push(p);
+            p = p.parentView();
         }
-        return chain.reversed()
+        return chain.reversed();
     }
 
     /**
@@ -164,7 +164,7 @@
      * @returns {Array} The parent views of the given class.
      */
     parentViewsOfClass (aClass) {
-        return this.parentViewChain().filter(v => v.thisClass().isSubclassOf(aClass))
+        return this.parentViewChain().filter(v => v.thisClass().isSubclassOf(aClass));
     }
 
     // --- subviews ---
@@ -174,7 +174,7 @@
      * @returns {number} The number of subviews.
      */
     subviewCount () {
-        return this.subviews().length
+        return this.subviews().length;
     }
 
     /**
@@ -183,7 +183,7 @@
      * @returns {boolean} True if the view has the subview, false otherwise.
      */
     hasSubview (aSubview) {
-        return this.subviews().contains(aSubview)
+        return this.subviews().contains(aSubview);
     }
 
     /**
@@ -193,9 +193,9 @@
      */
     addSubviewIfAbsent (aSubview) {
         if (!this.hasSubview(aSubview)) {
-            this.addSubview(aSubview)
+            this.addSubview(aSubview);
         }
-        return this
+        return this;
     }
 
     /**
@@ -204,29 +204,29 @@
      * @returns {SubviewsDomView} The updated view.
      */
     addSubview (aSubview) {
-        assert(!Type.isNullOrUndefined(aSubview)) 
-        assert(aSubview.hasElement()) 
+        assert(!Type.isNullOrUndefined(aSubview));
+        assert(aSubview.hasElement());
 
         if (this.hasSubview(aSubview)) {
-            throw new Error(this.svType() + ".addSubview(" + aSubview.svType() + ") attempt to add duplicate subview ")
+            throw new Error(this.svType() + ".addSubview(" + aSubview.svType() + ") attempt to add duplicate subview ");
         }
 
-        assert(Type.isNullOrUndefined(aSubview.parentView()))
+        assert(Type.isNullOrUndefined(aSubview.parentView()));
         /*
         if (aSubview.parentView()) {
             aSubview.removeFromParent()
         }
         */
 
-        this.willAddSubview(aSubview)
+        this.willAddSubview(aSubview);
 
-        this.subviews().append(aSubview)
+        this.subviews().append(aSubview);
         //.shared().didWrite("appendChild", this)
         this.element().appendChild(aSubview.element());
-        aSubview.setParentView(this)
+        aSubview.setParentView(this);
 
-        this.didChangeSubviewList()
-        return aSubview
+        this.didChangeSubviewList();
+        return aSubview;
     }
 
     /**
@@ -235,8 +235,8 @@
      * @returns {SubviewsDomView} The updated view.
      */
     addSubviews (someSubviews) {
-        someSubviews.forEach(sv => this.addSubview(sv))
-        return this
+        someSubviews.forEach(sv => this.addSubview(sv));
+        return this;
     }
 
     /**
@@ -246,28 +246,28 @@
      * @returns {SubviewsDomView} The updated view.
      */
     swapSubviews (sv1, sv2) {
-        assert(sv1 !== sv2)
-        assert(this.hasSubview(sv1))
-        assert(this.hasSubview(sv2))
-        
-        const i1 = this.indexOfSubview(sv1)
-        const i2 = this.indexOfSubview(sv2)
+        assert(sv1 !== sv2);
+        assert(this.hasSubview(sv1));
+        assert(this.hasSubview(sv2));
 
-        this.removeSubview(sv1)
-        this.removeSubview(sv2)
+        const i1 = this.indexOfSubview(sv1);
+        const i2 = this.indexOfSubview(sv2);
+
+        this.removeSubview(sv1);
+        this.removeSubview(sv2);
 
         if (i1 < i2) {
-            this.atInsertSubview(i1, sv2) // i1 is smaller, so do it first
-            this.atInsertSubview(i2, sv1)
+            this.atInsertSubview(i1, sv2); // i1 is smaller, so do it first
+            this.atInsertSubview(i2, sv1);
         } else {
-            this.atInsertSubview(i2, sv1) // i2 is smaller, so do it first          
-            this.atInsertSubview(i1, sv2)
+            this.atInsertSubview(i2, sv1); // i2 is smaller, so do it first
+            this.atInsertSubview(i1, sv2);
         }
 
-        assert(this.indexOfSubview(sv1) === i2)
-        assert(this.indexOfSubview(sv2) === i1)
+        assert(this.indexOfSubview(sv1) === i2);
+        assert(this.indexOfSubview(sv2) === i1);
 
-        return this
+        return this;
     }
 
     /**
@@ -277,10 +277,10 @@
      */
     orderSubviewFront (aSubview) {
         if (this.subviews().last() !== aSubview) {
-            this.removeSubview(aSubview)
-            this.addSubview(aSubview)
+            this.removeSubview(aSubview);
+            this.addSubview(aSubview);
         }
-        return this
+        return this;
     }
 
     /**
@@ -288,11 +288,11 @@
      * @returns {SubviewsDomView} The updated view.
      */
     orderFront () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv) {
-            pv.orderSubviewFront(this)
+            pv.orderSubviewFront(this);
         }
-        return this
+        return this;
     }
 
     /**
@@ -301,9 +301,9 @@
      * @returns {SubviewsDomView} The updated view.
      */
     orderSubviewBack (aSubview) {
-        this.removeSubview(aSubview)
-        this.atInsertSubview(0, aSubview)
-        return this
+        this.removeSubview(aSubview);
+        this.atInsertSubview(0, aSubview);
+        return this;
     }
 
     /**
@@ -311,11 +311,11 @@
      * @returns {SubviewsDomView} The updated view.
      */
     orderBack () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv) {
-            pv.orderSubviewBack(this)
+            pv.orderSubviewBack(this);
         }
-        return this
+        return this;
     }
 
     /**
@@ -325,18 +325,18 @@
      * @returns {SubviewsDomView} The updated view.
      */
     replaceSubviewWith (oldSubview, newSubview) {
-        assert(this.hasSubview(oldSubview))
-        assert(!this.hasSubview(newSubview))
-        
-        const index = this.indexOfSubview(oldSubview)
-        this.removeSubview(oldSubview)
-        this.atInsertSubview(index, newSubview)
+        assert(this.hasSubview(oldSubview));
+        assert(!this.hasSubview(newSubview));
+
+        const index = this.indexOfSubview(oldSubview);
+        this.removeSubview(oldSubview);
+        this.atInsertSubview(index, newSubview);
 
         // TODO: remove this sanity check
-        assert(this.indexOfSubview(newSubview) === index)
-        assert(this.hasSubview(newSubview))
-        assert(!this.hasSubview(oldSubview))
-        return this
+        assert(this.indexOfSubview(newSubview) === index);
+        assert(this.hasSubview(newSubview));
+        assert(!this.hasSubview(oldSubview));
+        return this;
     }
 
     /**
@@ -346,16 +346,16 @@
      * @returns {SubviewsDomView} The updated view.
      */
     atInsertSubview (anIndex, aSubview) {
-        this.subviews().atInsert(anIndex, aSubview)
-        assert(this.subviews()[anIndex] === aSubview)
+        this.subviews().atInsert(anIndex, aSubview);
+        assert(this.subviews()[anIndex] === aSubview);
 
         //ThrashDetector.shared().didWrite("atInsertElement", this)
-        this.element().atInsertElement(anIndex, aSubview.element())
-        assert(this.element().childNodes[anIndex] === aSubview.element())
+        this.element().atInsertElement(anIndex, aSubview.element());
+        assert(this.element().childNodes[anIndex] === aSubview.element());
 
-        aSubview.setParentView(this) // TODO: unify with addSubview
-        this.didChangeSubviewList() // TODO:  unify with addSubview
-        return aSubview
+        aSubview.setParentView(this); // TODO: unify with addSubview
+        this.didChangeSubviewList(); // TODO:  unify with addSubview
+        return aSubview;
     }
 
     /**
@@ -365,14 +365,14 @@
      * @returns {SubviewsDomView} The updated view.
      */
     moveSubviewToIndex (aSubview, i) {
-        assert(i < this.subviews().length)
-        assert(this.subviews().contains(aSubview))
+        assert(i < this.subviews().length);
+        assert(this.subviews().contains(aSubview));
 
         if (this.subviews()[i] !== aSubview) {
-            this.removeSubview(aSubview)
-            this.atInsertSubview(i, aSubview)
+            this.removeSubview(aSubview);
+            this.atInsertSubview(i, aSubview);
         }
-        return this
+        return this;
     }
 
     /**
@@ -381,15 +381,15 @@
      * @returns {SubviewsDomView} The updated view.
      */
     updateSubviewsToOrder (orderedSubviews) {
-        assert(this.subviews() !== orderedSubviews)
-        assert(this.subviews().length === orderedSubviews.length)
+        assert(this.subviews() !== orderedSubviews);
+        assert(this.subviews().length === orderedSubviews.length);
 
         for (let i = 0; i < this.subviews().length; i ++) {
-            const v2 = orderedSubviews[i]
-            this.moveSubviewToIndex(v2, i)
+            const v2 = orderedSubviews[i];
+            this.moveSubviewToIndex(v2, i);
         }
-        
-        return this
+
+        return this;
     }
 
     // --- subview utilities ---
@@ -399,7 +399,7 @@
      * @returns {number} The sum of the heights of all subviews.
      */
     sumOfSubviewHeights () {
-        return this.subviews().sum(subview => subview.clientHeight())
+        return this.subviews().sum(subview => subview.clientHeight());
     }
 
     /**
@@ -411,11 +411,11 @@
     performOnSubviewsExcept (methodName, exceptedSubview) {
         this.subviews().forEach(subview => {
             if (subview !== exceptedSubview) {
-                subview[methodName].apply(subview)
+                subview[methodName].apply(subview);
             }
-        })
+        });
 
-        return this
+        return this;
     }
 
     // -----------------------
@@ -428,7 +428,7 @@
         if (this.parentView()) {
             this.parentView().removeSubview(this); // will set parentView to null
         }
-        return this
+        return this;
     }
 
     /**
@@ -440,17 +440,17 @@
         // call removeSubview for a direct actions
         // use justRemoteSubview for internal changes
 
-        this.setTransition("all " + delayInSeconds + "s")
+        this.setTransition("all " + delayInSeconds + "s");
 
         this.addTimeout(() => {
-            this.setOpacity(0)
-        }, 0)
+            this.setOpacity(0);
+        }, 0);
 
         this.addTimeout(() => {
-            this.parentView().removeSubview(this)
-        }, delayInSeconds * 1000)
+            this.parentView().removeSubview(this);
+        }, delayInSeconds * 1000);
 
-        return this
+        return this;
     }
 
     /**
@@ -473,14 +473,14 @@
      * @returns {boolean} True if the view has the element, false otherwise.
      */
     hasChildElement (anElement) {
-        const children = this.element().childNodes
+        const children = this.element().childNodes;
         for (let i = 0; i < children.length; i++) {
-            const child = children[i]
+            const child = children[i];
             if (anElement === child) {
-                return true
+                return true;
             }
         }
-        return false
+        return false;
     }
 
     /**
@@ -508,9 +508,9 @@
      */
     removeSubviewIfPresent (aSubview) {
         if (this.hasSubview(aSubview)) {
-            this.removeSubview(aSubview)
+            this.removeSubview(aSubview);
         }
-        return this
+        return this;
     }
 
     /**
@@ -523,25 +523,25 @@
 
         // sanity check - make sure it's in our subview list
         if (!this.hasSubview(aSubview)) {
-            const msg = this.svType() + " removeSubview " + aSubview.svTypeId() + " failed - no child found among: " + this.subviews().map(view => view.svTypeId())
+            const msg = this.svType() + " removeSubview " + aSubview.svTypeId() + " failed - no child found among: " + this.subviews().map(view => view.svTypeId());
             //Error.showCurrentStack()
-            throw new Error(msg)
+            throw new Error(msg);
             //return aSubview
         }
 
         if (aSubview.parentView() !== this) {
-            throw new Error("attempt to remove subview by a non parent")
+            throw new Error("attempt to remove subview by a non parent");
         }
 
         // remove from subview list -  give subview a chance to deal with change
-        this.willRemoveSubview(aSubview)
-        aSubview.willRemove()
+        this.willRemoveSubview(aSubview);
+        aSubview.willRemove();
 
-        this.justRemoveSubview(aSubview)
+        this.justRemoveSubview(aSubview);
 
-        this.didChangeSubviewList()
+        this.didChangeSubviewList();
 
-        return aSubview
+        return aSubview;
     }
 
     /**
@@ -550,27 +550,27 @@
      * @returns {SubviewsDomView} The updated view.
      */
     justRemoveSubview (aSubview) { // PRIVATE
-        this.subviews().remove(aSubview)
+        this.subviews().remove(aSubview);
 
-        const e = aSubview.element()
-        if (this.hasChildElement(e)) { // sanity check - make we have child element 
+        const e = aSubview.element();
+        if (this.hasChildElement(e)) { // sanity check - make we have child element
             //ThrashDetector.shared().didWrite("removeChild", this)
             this.element().removeChild(e); // WARNING: this will trigger an immediate onBlur window event, which may cause sync actions
 
             // sanity check - make sure element was removed
             if (this.hasChildElement(e)) {
-                const msg = "WARNING: " + this.svType() + " removeSubview " + aSubview.svType() + " failed - still has element after remove"
+                const msg = "WARNING: " + this.svType() + " removeSubview " + aSubview.svType() + " failed - still has element after remove";
                 //console.warn(msg)
                 //Error.showCurrentStack()
-                throw new Error(msg)
+                throw new Error(msg);
             }
         } else {
-            const msg = "WARNING: " + this.svType() + " removeSubview " + aSubview.svType() + " parent element is missing this child element"
-            throw new Error(msg)
+            const msg = "WARNING: " + this.svType() + " removeSubview " + aSubview.svType() + " parent element is missing this child element";
+            throw new Error(msg);
         }
 
-        aSubview.setParentView(null)
-        return this
+        aSubview.setParentView(null);
+        return this;
     }
 
     /**
@@ -580,12 +580,12 @@
     removeAllSubviews () {
         //const sv = this.subviews().shallowCopy()
         //sv.forEach(subview => this.removeSubview(subview))
-        while(this.subviews().length) {
-            const sv = this.subviews().last()
-            this.removeSubview(sv)
+        while (this.subviews().length) {
+            const sv = this.subviews().last();
+            this.removeSubview(sv);
         }
-        assert(this.subviews().length === 0) // temp sanity check
-        return this
+        assert(this.subviews().length === 0); // temp sanity check
+        return this;
     }
 
     /**
@@ -594,7 +594,7 @@
      * @returns {number} The index of the subview, or -1 if not found.
      */
     indexOfSubview (aSubview) {
-        return this.subviews().indexOf(aSubview)
+        return this.subviews().indexOf(aSubview);
     }
 
     /**
@@ -603,12 +603,12 @@
      * @returns {DomView} The next subview, or null if not found.
      */
     subviewAfter (aSubview) {
-        const index = this.indexOfSubview(aSubview)
-        const nextIndex = index + 1
+        const index = this.indexOfSubview(aSubview);
+        const nextIndex = index + 1;
         if (nextIndex < this.subviews().length) {
-            return this.subviews()[nextIndex]
+            return this.subviews()[nextIndex];
         }
-        return null
+        return null;
     }
 
     /**
@@ -619,10 +619,10 @@
      */
     sendAllViewDecendants (methodName, argList) {
         this.subviews().forEach((v) => {
-            v[methodName].apply(v, argList)
-            v.sendAllViewDecendants(methodName, argList)
-        })
-        return this
+            v[methodName].apply(v, argList);
+            v.sendAllViewDecendants(methodName, argList);
+        });
+        return this;
     }
 
     // --- updates ---
@@ -634,17 +634,17 @@
      * @returns {SubviewsDomView} The updated view.
      */
     tellParentViews (msg, aView) {
-        const f = this[msg]
+        const f = this[msg];
         if (f) {
-            const r = f.call(this, aView) 
+            const r = f.call(this, aView);
             if (r === true) {
-                return // stop propogation on first view returning non-false
+                return; // stop propogation on first view returning non-false
             }
         }
 
-        const p = this.parentView()
+        const p = this.parentView();
         if (p) {
-            p.tellParentViews(msg, aView)
+            p.tellParentViews(msg, aView);
         }
     }
 
@@ -655,18 +655,18 @@
      * @returns {SubviewsDomView} The updated view.
      */
     askParentViews (msg, aView) {
-        const f = this[msg]
+        const f = this[msg];
         if (f) {
-            const r = f.call(this, aView)
-            return r
+            const r = f.call(this, aView);
+            return r;
         }
 
-        const p = this.parentView()
+        const p = this.parentView();
         if (p) {
-            return p.getParentViewMethod(msg, aView)
+            return p.getParentViewMethod(msg, aView);
         }
 
-        return undefined
+        return undefined;
     }
 
     /**
@@ -675,14 +675,14 @@
      * @returns {DomView} The first parent view with the ancestor class, or null if not found.
      */
     firstParentViewWithAncestorClass (aClass) {
-        const p = this.parentView()
+        const p = this.parentView();
         if (p) {
             if (p.isSubclassOf(aClass)) {
-                return p
+                return p;
             }
-            return p.firstParentViewWithAncestorClass(aClass)
+            return p.firstParentViewWithAncestorClass(aClass);
         }
-        return undefined
+        return undefined;
     }
 
 
@@ -693,9 +693,9 @@
      * @returns {SubviewsDomView} The updated view.
      */
     fillParentView () {
-        this.setWidthPercentage(100)
-        this.setHeightPercentage(100)
-        return this
+        this.setWidthPercentage(100);
+        this.setHeightPercentage(100);
+        return this;
     }
 
     /**
@@ -703,14 +703,14 @@
      * @returns {SubviewsDomView} The updated view.
      */
     centerInParentView () {
-        this.setMinAndMaxWidth(null)
-        this.setMinAndMaxHeight(null)
+        this.setMinAndMaxWidth(null);
+        this.setMinAndMaxHeight(null);
         //this.setWidth("100%")
         //this.setHeight("100%")
-        this.setOverflow("auto")
-        this.setMarginString("auto")
-        this.setPosition("absolute")
-        this.setTopPx(0).setLeftPx(0).setRightPx(0).setBottomPx(0)
+        this.setOverflow("auto");
+        this.setMarginString("auto");
+        this.setPosition("absolute");
+        this.setTopPx(0).setLeftPx(0).setRightPx(0).setBottomPx(0);
     }
 
     /*
@@ -725,7 +725,7 @@
 
         // timeout used to make sure div is placed and laid out first
         // TODO: consider ordering issue
-        this.addTimeout(() => { 
+        this.addTimeout(() => {
             let sh = this.parentView().clientHeight()
             let h = this.clientHeight()
             this.setTopPx(sh/2 - h/2)
@@ -745,7 +745,7 @@
 
         // timeout used to make sure div is placed and laid out first
         // TODO: consider ordering issue
-        this.addTimeout(() => { 
+        this.addTimeout(() => {
             let sw = this.parentView().clientWidth()
             let w = this.clientWidth()
             this.setTopPx(sw/2 - w/2)
@@ -760,11 +760,11 @@
      * @returns {DomView} The root view.
      */
     rootView () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv) {
-            return pv.rootView()
+            return pv.rootView();
         }
-        return this
+        return this;
     }
 
     /**
@@ -772,7 +772,7 @@
      * @returns {boolean} True if the view is in the document, false otherwise.
      */
     isInDocument () {
-        return this.rootView() === DocumentBody.shared()
+        return this.rootView() === DocumentBody.shared();
     }
 
     /**
@@ -781,12 +781,12 @@
      */
     containerize () {
         // create a subview of same size as parent and put all other subviews in it
-        const container = DomView.clone()
-        container.setMinAndMaxHeight(this.clientHeight())
-        container.setMinAndMaxWidth(this.clientWidth())
-        this.moveAllSubviewsToView(container)
-        this.addSubview(container)
-        return container
+        const container = DomView.clone();
+        container.setMinAndMaxHeight(this.clientHeight());
+        container.setMinAndMaxWidth(this.clientWidth());
+        this.moveAllSubviewsToView(container);
+        this.addSubview(container);
+        return container;
     }
 
     /**
@@ -794,11 +794,11 @@
      * @returns {SubviewsDomView} The updated view.
      */
     uncontainerize () {
-        assert(this.subviewCount() === 1)
-        const container = this.subviews().first()
-        this.removeSubview(container)
-        container.moveAllSubviewsToView(this)
-        return this
+        assert(this.subviewCount() === 1);
+        const container = this.subviews().first();
+        this.removeSubview(container);
+        container.moveAllSubviewsToView(this);
+        return this;
     }
 
     /**
@@ -808,14 +808,14 @@
      */
     moveAllSubviewsToView (aView) {
         this.subviews().shallowCopy().forEach((sv) => {
-            this.remove(sv)
-            aView.addSubview(sv)
-        })
-        return this
+            this.remove(sv);
+            aView.addSubview(sv);
+        });
+        return this;
     }
 
-    // auto fit 
-    // need to be careful about interactions as some of these change 
+    // auto fit
+    // need to be careful about interactions as some of these change
     // display and position attributes
     // NOTE: when we ask parent to fit child, should we make sure child position attribute allows this?
 
@@ -824,7 +824,7 @@
      * @returns {boolean} True if the view has an absolute position child, false otherwise.
      */
     hasAbsolutePositionChild () {
-        return this.subviews().canDetect(sv => sv.position() === "absolute")
+        return this.subviews().canDetect(sv => sv.position() === "absolute");
     }
 
     // auto fit width
@@ -834,10 +834,10 @@
      * @returns {SubviewsDomView} The updated view.
      */
     autoFitParentWidth () {
-        this.setDisplay("block")
-        this.setWidth("-webkit-fill-available")
+        this.setDisplay("block");
+        this.setWidth("-webkit-fill-available");
         //this.setHeight("-webkit-fill-available")
-        return this
+        return this;
     }
 
     /**
@@ -846,10 +846,10 @@
      */
     autoFitChildWidth () {
         //assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
-        this.setDisplay("inline-block")
-        this.setWidth("auto")
-        this.setOverflow("auto")
-        return this
+        this.setDisplay("inline-block");
+        this.setWidth("auto");
+        this.setOverflow("auto");
+        return this;
     }
 
     // auto fit height
@@ -859,11 +859,11 @@
      * @returns {SubviewsDomView} The updated view.
      */
     autoFitParentHeight () {
-        this.setPosition("absolute")
+        this.setPosition("absolute");
         //this.setHeightPercentage(100)
-        this.setHeight("-webkit-fill-available")
+        this.setHeight("-webkit-fill-available");
         //this.setHeight("-webkit-fill-available")
-        return this
+        return this;
     }
 
     /**
@@ -872,9 +872,9 @@
      */
     autoFitChildHeight () {
         //assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
-        this.setPosition("relative") // or static? but can't be absolute
-        this.setHeight("fit-content")
-        return this
+        this.setPosition("relative"); // or static? but can't be absolute
+        this.setHeight("fit-content");
+        return this;
     }
 
     // organizing
@@ -884,11 +884,11 @@
      * @returns {SubviewsDomView} The updated view.
      */
     moveToAbsoluteDocumentBody () {
-        const f = this.frameInDocument()
-        this.setFrameInDocument(f)
-        this.removeFromParentView()
-        DocumentBody.shared().addSubview(this)
-        return this
+        const f = this.frameInDocument();
+        this.setFrameInDocument(f);
+        this.removeFromParentView();
+        DocumentBody.shared().addSubview(this);
+        return this;
     }
 
     // organizing
@@ -898,13 +898,13 @@
      * @returns {SubviewsDomView} The updated view.
      */
     absoluteOrganizeSubviewsVertically () {
-        let top = 0
+        let top = 0;
         this.subviews().shallowCopy().forEach((sv) => {
-            const h = sv.clientHeight()
-            sv.setLeftPx(0)
-            sv.setTopPx(top)
-            top += h
-        })
+            const h = sv.clientHeight();
+            sv.setLeftPx(0);
+            sv.setTopPx(top);
+            top += h;
+        });
     }
 
     /**
@@ -928,10 +928,10 @@
      * @returns {DomView} The duplicated view.
      */
     htmlDuplicateView () {
-        const v = DomView.clone()
-        v.setFrameInParent(this.frameInParentView())
-        v.setInnerHtml(this.innerHtml())
-        return v
+        const v = DomView.clone();
+        v.setFrameInParent(this.frameInParentView());
+        v.setInnerHtml(this.innerHtml());
+        return v;
     }
 
     /**
@@ -940,12 +940,12 @@
      * @returns {DomView} The duplicated view.
      */
     htmlDuplicateViewAndSubviews (selectedSubviews) {
-        selectedSubviews.forEach(sv => asset(sv.parentView() === this))
+        selectedSubviews.forEach(sv => asset(sv.parentView() === this));
 
-        const v = DomView.clone()
-        v.setFrameInParent(this.frameInParentView())
-        selectedSubviews.forEach(sv => v.addSubview(sv.htmlDuplicateView()))
-        return v
+        const v = DomView.clone();
+        v.setFrameInParent(this.frameInParentView());
+        selectedSubviews.forEach(sv => v.addSubview(sv.htmlDuplicateView()));
+        return v;
     }
 
     /**
@@ -953,10 +953,10 @@
      * @returns {DomView} The duplicated view.
      */
     htmlDuplicateViewWithSubviews () {
-        const v = DomView.clone()
-        v.setFrameInParent(this.frameInParentView())
-        this.subviews().forEach(sv => v.addSubview(sv.htmlDuplicateView()))
-        return v
+        const v = DomView.clone();
+        v.setFrameInParent(this.frameInParentView());
+        this.subviews().forEach(sv => v.addSubview(sv.htmlDuplicateView()));
+        return v;
     }
 
     // fitting
@@ -966,9 +966,9 @@
      * @returns {SubviewsDomView} The updated view.
      */
     fitSubviews () {
-        const f = this.frameFittingSubviewsInParent()
-        this.setFrameInParent(f)
-        return this
+        const f = this.frameFittingSubviewsInParent();
+        this.setFrameInParent(f);
+        return this;
     }
 
     /**
@@ -976,18 +976,18 @@
      * @returns {Rect} The frame of the subviews.
      */
     frameFittingSubviewsInParent () {
-        let u = null
+        let u = null;
 
         this.subviews().forEach(sv => {
-            const f = sv.frameInParent()
+            const f = sv.frameInParent();
             if (u === null) {
-                u = f
+                u = f;
             } else {
-                u = u.unionWith(f)
+                u = u.unionWith(f);
             }
-        })
+        });
 
-        return u
+        return u;
     }
 
     /**
@@ -995,18 +995,18 @@
      * @returns {Rect} The frame of the subviews.
      */
     fixedFrameFittingSubviews () {
-        let u = null
+        let u = null;
 
         this.subviews().forEach(sv => {
-            const f = sv.fixedFrame()
+            const f = sv.fixedFrame();
             if (u === null) {
-                u = f
+                u = f;
             } else {
-                u = u.unionWith(f)
+                u = u.unionWith(f);
             }
-        })
+        });
 
-        return u
+        return u;
     }
 
     /**
@@ -1015,9 +1015,9 @@
      * @returns {Rect} The converted frame.
      */
     convertFrameToDocument (aRect) {
-        const p = this.positionInDocument()
-        const newOrigin = aRect.origin().add(p)
-        return aRect.copy().setOrigin(newOrigin)
+        const p = this.positionInDocument();
+        const newOrigin = aRect.origin().add(p);
+        return aRect.copy().setOrigin(newOrigin);
     }
 
     // ----
@@ -1035,9 +1035,9 @@
      * @returns {SubviewsDomView} The updated view.
      */
     resyncAllViews () {
-        this.updateSubviews() // NodeView already does this when it schedules syncFromNode, so don't call from NodeView
-        this.subviews().forEach(sv => sv.resyncAllViews())
-        return this
+        this.updateSubviews(); // NodeView already does this when it schedules syncFromNode, so don't call from NodeView
+        this.subviews().forEach(sv => sv.resyncAllViews());
+        return this;
     }
 
     // ---- adding and removing a view to enable/disable it ---

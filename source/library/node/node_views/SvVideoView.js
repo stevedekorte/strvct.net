@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvVideoView extends NodeView {
-    
+
     initPrototypeSlots () {
         /**
          * @member {FlexDomView} videoContainer - Container for the video
@@ -216,7 +216,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description Checks if the view accepts drops
      * @returns {Boolean} Always returns false
@@ -233,26 +233,26 @@
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null);
         this.setOpacity(0);
-		
+
         this.setWidth("0px");
-		
+
         this.setPaddingLeftPx(0);
         this.setPaddingRightPx(0);
-		
+
         this.setMarginLeft(0);
         this.setMarginRightPx(0);
     }
-    
+
     /**
      * @description Closes the video view with an animation
      * @category UI Operations
      */
     close () {
         const seconds = 0.3;
-		
+
         this.collapse();
-        
-        this.addTimeout( () => { 
+
+        this.addTimeout(() => {
             this.closeButtonView().hideDisplay();
             const parentView = this.parentView();
             this.removeFromParentView();
@@ -269,7 +269,7 @@
     hasVideoUrl (url) {
         return (url === this.dataURL() || url === this.srcUrl());
     }
-    
+
     /**
      * @description Removes the raw video view
      * @returns {VideoView} The VideoView instance
@@ -282,7 +282,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description Fetches the data URL from a source URL
      * @param {String} src - The source URL
@@ -297,10 +297,10 @@
             this.setSrcUrl(src);
             this.setFromSrcURL(src);
         }
-		
+
         return this;
     }
-    
+
     /**
      * @description Callback for when the data URL is fetched
      * @param {String} dataURL - The fetched data URL
@@ -348,18 +348,18 @@
         video.autoplay = this.autoplay();
         video.loop = this.loop();
         video.muted = this.muted();
-        
+
         // Ensure video controls are interactive
         video.style.userSelect = "auto";
         video.style.pointerEvents = "auto";
-        
+
         // Note: Drag-to-desktop for binary files is severely limited by browser security.
         // Instead, we rely on the download button and right-click "Save video as..." options.
-        
+
         const v = this.newRawVideoViewForVideo(video);
         this.setRawVideoView(v);
         this.videoContainer().addSubview(v);
-	
+
         return this;
     }
 
@@ -386,14 +386,14 @@
         // Ensure video controls are interactive
         video.style.userSelect = "auto";
         video.style.pointerEvents = "auto";
-        
+
         // Note: Drag-to-desktop for binary files is severely limited by browser security.
         // Instead, we rely on the download button and right-click "Save video as..." options.
 
         const v = this.newRawVideoViewForVideo(video);
         this.setRawVideoView(v);
         this.videoContainer().addSubview(v);
-	
+
         return this;
     }
 
@@ -544,16 +544,16 @@
             // Determine file extension and filename
             let filename = "video.mp4";
             let downloadUrl = dataURL;
-            
+
             if (dataURL.startsWith("data:")) {
                 const mimeMatch = dataURL.match(/^data:([^;]+)/);
                 const mimeType = mimeMatch ? mimeMatch[1] : "video/mp4";
                 const extension = this.getFileExtensionFromMimeType(mimeType);
                 filename = `video.${extension}`;
-                
+
                 // For large data URLs, convert to blob URL for better browser support
                 try {
-                    const base64Data = dataURL.split(',')[1];
+                    const base64Data = dataURL.split(",")[1];
                     const byteCharacters = atob(base64Data);
                     const byteNumbers = new Array(byteCharacters.length);
                     for (let i = 0; i < byteCharacters.length; i++) {
@@ -562,7 +562,7 @@
                     const byteArray = new Uint8Array(byteNumbers);
                     const blob = new Blob([byteArray], { type: mimeType });
                     downloadUrl = URL.createObjectURL(blob);
-                    
+
                     // Clean up blob URL after download
                     this.addTimeout(() => URL.revokeObjectURL(downloadUrl), 30000);
                 } catch (blobError) {
@@ -576,16 +576,16 @@
             link.href = downloadUrl;
             link.download = filename;
             link.style.display = "none";
-            
+
             // Add to DOM, click, and remove
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
+
             console.log(this.logPrefix(), "Video download initiated:", filename);
         } catch (error) {
             console.error("Failed to download video:", error);
-            
+
             // Fallback: try to open in new window
             try {
                 const newWindow = window.open(dataURL, "_blank");
@@ -596,8 +596,8 @@
                 console.error("Fallback download also failed:", fallbackError);
             }
         }
-        
+
         return this;
     }
-    
+
 }.initThisClass());

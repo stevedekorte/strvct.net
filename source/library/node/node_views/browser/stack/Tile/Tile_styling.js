@@ -7,7 +7,7 @@
 "use strict";
 
 (class Tile_styling extends Tile {
-    
+
     /**
      * Updates the parent view and applies styles.
      * @param {*} oldValue - The old parent view value.
@@ -16,10 +16,10 @@
      * @category View Management
      */
     didUpdateSlotParentView (oldValue, newValue) {
-        super.didUpdateSlotParentView(oldValue, newValue)
+        super.didUpdateSlotParentView(oldValue, newValue);
         //this.scheduleMethod("applyStyles")
-        this.applyStyles()
-        return this
+        this.applyStyles();
+        return this;
     }
 
     // --- css pass-through to contentView ---
@@ -31,8 +31,8 @@
      * @category Styling
      */
     setBackgroundColor (s) {
-        this.contentView().setBackgroundColor(s)
-        return this
+        this.contentView().setBackgroundColor(s);
+        return this;
     }
 
     /**
@@ -42,8 +42,8 @@
      * @category Styling
      */
     setColor (s) {
-        this.contentView().setColor(s)
-        return this
+        this.contentView().setColor(s);
+        return this;
     }
 
     /**
@@ -53,8 +53,8 @@
      * @category Styling
      */
     setOpacity (v) {
-        this.contentView().setOpacity(v)
-        return this
+        this.contentView().setOpacity(v);
+        return this;
     }
 
     // --- styles ---

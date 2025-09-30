@@ -30,7 +30,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         const instance = JSON.parse(aRecord.jsonString);
         return instance;
     }
-    
+
 
     static instanceFromRecordInStore (aRecord, aStore) {
 
@@ -38,12 +38,12 @@ Object.defineSlots(typedArrayClass.prototype, {
             return this.instanceFromRecordInStoreForObject(aRecord, aStore);
         }
 
-        if(!this.shouldStore()) {
-            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.svType() + ") with shouldStore set to false - returning null");
+        if (!this.shouldStore()) {
+            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" + this.svType() + ") with shouldStore set to false - returning null");
             return null;
         }
 
-        
+
         const instance = this.preClone ? this.preClone() : new this();
         instance.init();
         // caller needs to call finalInit and afterInit
@@ -66,7 +66,7 @@ Object.defineSlots(typedArrayClass.prototype, {
             const v = entry[1];
             this[k] = aStore.unrefValue(v);
         });
-        */ 
+        */
         return this;
     }
 
@@ -83,7 +83,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     recordForStore (/*aStore*/) {
         // NOTES: this is (typically) only for dictionaries, not for objects.
         // generic storage of (non ProtoClass subclass) objects is not supported.
-        const isDirectObject =this.isDirectObject();
+        const isDirectObject = this.isDirectObject();
         assert(isDirectObject, "Object_store.recordForStore() called with a non direct Object instance");
         //assert(this.shouldStore(), "Object_store.recordForStore() called with an object that shouldStore is false");
 
@@ -94,11 +94,11 @@ Object.defineSlots(typedArrayClass.prototype, {
         assert(Type.isDeepJsonType(this), "Object_store.recordForStore() on direct Object instance that is not a deep JSON object");
 
         return {
-            type: "Object", 
+            type: "Object",
             jsonString: JSON.stableStringify(this) // so we can avoid duplicate writes (if the persistent store checks if the value has changed)
         };
 
-/*
+        /*
         let type = "Object";
 
         if (Type.isFunction(this.type)) { // if we have a type method, use it to get the type
@@ -124,10 +124,10 @@ Object.defineSlots(typedArrayClass.prototype, {
 
         // need to special case objects as they can also be used as JSON dictionaries.
         // if we have a dictionary, we need to store it as a dictionary, not as an object.
-        
+
         return {
-            type: type, 
-            entries: entries, 
+            type: type,
+            entries: entries,
         };
         */
     }
@@ -146,7 +146,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         }
         return puuids;
     }
-    
+
     /**
      * @description Gets the default store.
      * @returns {Object} The default store.
@@ -162,7 +162,7 @@ Object.defineSlots(typedArrayClass.prototype, {
      * @returns {Object} This object.
      * @category Data Loading
      */
-    didLoadFromStore () { 
+    didLoadFromStore () {
         // See Object_init notes for docs on when/how to use this properly.
         // Here for subclasses to override.
         return this;
@@ -183,7 +183,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         }
         return this;
     }
- 
+
     /**
      * @description Gets whether the object should be stored.
      * @returns {boolean} Whether the object should be stored.
@@ -206,5 +206,5 @@ Object.defineSlots(typedArrayClass.prototype, {
             store.forceAddDirtyObject(this); // not ideal, but let's see if it works
         }
     }
-    
+
 }).initThisCategory();

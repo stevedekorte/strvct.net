@@ -3,19 +3,19 @@
  * @class JsonObject_store
  * @extends Object
  * @classdesc A bit of a hack to deal with slots containing JSON objects.
- * 
+ *
  * Serializing:
  * ObjectPool will test to see if the object is a JSON object, and if so, will call:
  * record = JsonObject.instanceForObject(anObject).recordForStore(aStore);
- * 
+ *
  * Unserializing:
  * ObjectPool will call instanceFromRecordInStore() which will return a JSON object.
- * 
+ *
  * NOTES:
  * We need to deal with special ivars like _mutationObservers and _puuid.
  * - we don't want to store them in the JSON string.
  * - we need to make sure those properties are not enumerable so they don't corrupt collections like Sets, Maps, Dictionaries, Arrays, etc.
- * 
+ *
  */
 
 "use strict";
@@ -65,8 +65,8 @@
         let type = this.svType();
 
         return {
-            type: type, 
-            jsonString: JSON.stableStringify(this.jsonValue()), 
+            type: type,
+            jsonString: JSON.stableStringify(this.jsonValue()),
         };
     }
 
@@ -85,7 +85,7 @@
      * @returns {Object} This object.
      * @category Data Loading
      */
-    didLoadFromStore () { 
+    didLoadFromStore () {
         // See Object_init notes for docs on when/how to use this properly.
         // Here for subclasses to override.
         return this;
@@ -101,7 +101,7 @@
         console.warn(this.logPrefix() + "setShouldStore " + aBool);
         return this;
     }
- 
+
     /**
      * @description Gets whether the object should be stored.
      * @returns {boolean} Whether the object should be stored.
@@ -110,5 +110,5 @@
     shouldStore () {
         return true;
     }
-    
+
 }).initThisClass();

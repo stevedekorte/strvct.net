@@ -7,7 +7,7 @@
  * @classdesc Represents a minute node in a time-related structure.
  */
 (class SvMinuteNode extends BaseNode {
-    
+
     /**
      * Initializes the prototype slots for the SvMinuteNode.
      * @category Initialization
@@ -53,7 +53,7 @@
      */
     minuteName () {
         let s = this.value();
-        if (s < 10) { 
+        if (s < 10) {
             s = "0" + s;
         }
         return s;
@@ -76,7 +76,7 @@
     subtitle () {
         return null;
     }
-    
+
     /**
      * Returns the note of the node.
      * @returns {null} Always returns null.
@@ -85,7 +85,7 @@
     note () {
         return null;
     }
-    
+
     /**
      * Returns the node tile link.
      * @description Used by UI tile views to browse into next column.
@@ -95,5 +95,5 @@
     nodeTileLink () {
         return null;
     }
-    
+
 }.initThisClass());

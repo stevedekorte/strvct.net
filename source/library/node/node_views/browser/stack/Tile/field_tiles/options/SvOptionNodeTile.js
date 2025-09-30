@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvOptionNodeTile extends TitledTile {
-    
+
     /**
      * @description Toggles the option state if editable
      * @returns {SvOptionNodeTile} Returns this instance
@@ -33,7 +33,7 @@
         event.stopPropagation();
         return this;
     }
-    
+
     /**
      * @description Handles the tap complete gesture
      * @param {Object} aGesture - The tap gesture object

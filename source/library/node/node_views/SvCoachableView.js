@@ -9,33 +9,33 @@
  * @extends NodeView
  * @classdesc Adds coach mark support to NodeView. Views can register themselves with the
  * coach mark manager to provide contextual help to users.
- * 
+ *
  * NOTES: At first, we'll stick to just supporting one coach mark at the view level.
- * 
+ *
  * e.g. A TileView whose node has canDelete() = true, might register a coach mark.
- * 
+ *
  * syncFromNode() {
  *   ...
  *   this.registerForCoachMark();
  * }
- * 
+ *
  * registerForCoachMark () {
  *   if (this.canDelete()) {
  *     const cm = this.coachMarkManager();
  *     const id = "TileView-canDelete";
  *     if (!cm.hasRegisteredCoachMark(id)) {
  *       cm.registerCoachMarkDict({
- *         id: id, 
+ *         id: id,
  *         label: "You can delete this by left dragging it."
  *       });
  *     }
  *   }
  * }
- * 
+ *
  */
 
 (class SvCoachableView extends NodeView {
-    
+
     /**
      * @description Initializes the prototype slots for the SvCoachableView
      * @category Initialization
@@ -49,7 +49,7 @@
             const slot = this.newSlot("coachMarkId", null);
             slot.setSlotType("String");
         }
-        
+
         {
             /**
              * @member {String} coachMarkLabel - Text to display in the coach mark
@@ -58,7 +58,7 @@
             const slot = this.newSlot("coachMarkLabel", null);
             slot.setSlotType("String");
         }
-        
+
         {
             /**
              * @member {Number} coachMarkPriority - Display priority (higher shows first)
@@ -67,7 +67,7 @@
             const slot = this.newSlot("coachMarkPriority", 0);
             slot.setSlotType("Number");
         }
-        
+
         {
             /**
              * @member {Function} coachMarkCondition - Function that returns true when mark should be shown
@@ -76,7 +76,7 @@
             const slot = this.newSlot("coachMarkCondition", null);
             slot.setSlotType("Function");
         }
-        
+
         {
             /**
              * @member {Boolean} isRegisteredForCoachMark - Whether this view is registered with the manager
@@ -112,24 +112,24 @@
      */
     setupCoachMark (config) {
         assert(config.label, "Coach mark config must include label");
-        
+
         // Use provided id or generate one based on view type
         const id = config.id || this.svTypeId();
-        
+
         this.setCoachMarkId(id);
         this.setCoachMarkLabel(config.label);
-        
+
         if (config.priority !== undefined) {
             this.setCoachMarkPriority(config.priority);
         }
-        
+
         if (config.condition) {
             this.setCoachMarkCondition(config.condition);
         }
-        
+
         // Register with manager if available
         this.registerForCoachMark();
-        
+
         return this;
     }
 
@@ -142,33 +142,33 @@
         if (this.isRegisteredForCoachMark()) {
             return this;
         }
-        
+
         const manager = this.coachMarkManager();
         if (!manager) {
             // Manager not available yet, try again later
             this.addTimeout(() => this.registerForCoachMark(), 100);
             return this;
         }
-        
+
         if (!this.coachMarkId() || !this.coachMarkLabel()) {
             // Not configured for coach marks
             return this;
         }
-        
+
         const config = {
             view: this,
             id: this.coachMarkId(),
             label: this.coachMarkLabel(),
             priority: this.coachMarkPriority()
         };
-        
+
         if (this.coachMarkCondition()) {
             config.condition = this.coachMarkCondition();
         }
-        
+
         manager.registerView(config);
         this.setIsRegisteredForCoachMark(true);
-        
+
         return this;
     }
 
@@ -181,14 +181,14 @@
         if (!this.isRegisteredForCoachMark()) {
             return this;
         }
-        
+
         const manager = this.coachMarkManager();
         if (manager && this.coachMarkId()) {
             manager.unregisterView(this.coachMarkId());
         }
-        
+
         this.setIsRegisteredForCoachMark(false);
-        
+
         return this;
     }
 
@@ -199,7 +199,7 @@
      */
     onVisibility () {
         super.onVisibility();
-        
+
         // When view becomes visible, check if its coach mark should be shown
         if (this.isRegisteredForCoachMark()) {
             const manager = this.coachMarkManager();
@@ -207,7 +207,7 @@
                 manager.checkCoachMark(this.coachMarkId());
             }
         }
-        
+
         return this;
     }
 
@@ -220,5 +220,5 @@
         this.unregisterForCoachMark();
         return super.willRemove();
     }
-    
+
 }.initThisClass());

@@ -8,7 +8,7 @@
  * Parent is a StackScrollView, whose parent is a NavView.
  */
 (class TilesView extends ScrollContentView {
-    
+
     initPrototypeSlots () {
         /**
          * @member {Array} tiles
@@ -70,8 +70,8 @@
         //this.setFlexShrink(0);
         this.makeOrientationRight();
 
-        this.setOverflow("hidden")
-        this.setOverflowScrolling("auto")
+        this.setOverflow("hidden");
+        this.setOverflowScrolling("auto");
 
         this.setMsOverflowStyle("none");
         this.setUserSelect("none");
@@ -82,7 +82,7 @@
         */
         //this.setBorder("3px solid blue")
 
-        this.setIsDebugging(false)
+        this.setIsDebugging(false);
         this.setIsRegisteredForKeyboard(true);
         this.setAcceptsFirstResponder(true);
 
@@ -91,7 +91,7 @@
         this.addGestureRecognizer(TapGestureRecognizer.clone()); // for pinch open to add tile
 
         this.setIsRegisteredForBrowserDrop(true);
-        
+
         //this.setBorder("1px dashed red");
         this.setDefaultSubviewProto(TitledTile);
         return this;
@@ -133,7 +133,7 @@
     */
 
     // --- title ---
-    
+
     /**
      * @description Gets the title
      * @returns {string}
@@ -144,7 +144,7 @@
     }
 
     // --- accessing tiles ---
-    
+
     /**
      * @description Gets the tiles
      * @returns {Array}
@@ -204,7 +204,7 @@
      * @category Data
      */
     indexOfTile (aTile) {
-        // we might want this to be based on flex view order instead, 
+        // we might want this to be based on flex view order instead,
         // so best to keep it abstract
         return this.indexOfSubview(aTile);
     }
@@ -227,11 +227,11 @@
         if (this.tiles().length === 0) {
             return 0;
         }
-        
-        const maxWidth = this.tiles().maxValue(tile => tile.desiredWidth());	
+
+        const maxWidth = this.tiles().maxValue(tile => tile.desiredWidth());
         return maxWidth;
     }
-	
+
     // --- sync ---
 
     /**
@@ -265,11 +265,11 @@
      */
     subviewProtoForSubnode (aSubnode) {
         let proto = aSubnode.nodeTileClass(); // we need this to get tile versions of view
-		
+
         if (!proto) {
             proto = this.defaultSubviewProto();
         }
-				
+
         return proto;
     }
 
@@ -284,9 +284,9 @@
         if (this.node() && this.node().nodeTilesStartAtBottom()) {
             this.setTransition("none");
             this.setAnimation("none");
-            this.element().style.scrollBehavior = 'auto';
+            this.element().style.scrollBehavior = "auto";
             this.element().offsetHeight; // force reflow
-            this.addTimeout(() => { this.scrollToBottom() }, 0);
+            this.addTimeout(() => { this.scrollToBottom(); }, 0);
             //this.tile().last().scrollIntoView();
         }
 
@@ -306,7 +306,7 @@
         const canAdd = node.nodeCanAddSubnode();
         if (tile && canAdd) {
             const canCopy = !Type.isNullOrUndefined(tile.node().copy);
-            if (canCopy) { 
+            if (canCopy) {
                 //this.logDebug(" duplicate selected tile " + this.selectedTile().node().title());
                 const subnode = tile.node();
                 const newSubnode = subnode.copy();
@@ -329,7 +329,7 @@
             const i = this.indexOfSubview(tile);
             const dupNode = tile.node().duplicate();
             newNodes.push(dupNode);
-            this.node().addSubnodeAt(dupNode, i+1);
+            this.node().addSubnodeAt(dupNode, i + 1);
         });
         this.unselectAllTiles();
         this.syncFromNodeNow();
@@ -340,7 +340,7 @@
             if (newTile) {
                 newTile.select();
             }
-        })
+        });
 
         return this;
     }
@@ -368,7 +368,7 @@
         }
         return false;
     }
-    
+
     /*
     setIsColumnInspecting (aBool) {
         if (this._isColumnInspecting !== aBool) {
@@ -391,7 +391,7 @@
     }
 
     // next column
-    
+
     /**
      * @description Gets next column
      * @returns {TilesView|null}
@@ -406,7 +406,7 @@
     }
 
     // previous column
-	
+
     /**
      * @description Gets previous item set
      * @returns {TilesView|null}
@@ -441,7 +441,7 @@
     setNode (aNode) {
         if (this.node() && Type.isNull(aNode)) {
             console.log(this.svDebugId() + " setNode(null)");
-            
+
         }
         super.setNode(aNode);
         return this;
@@ -470,7 +470,7 @@
         return super.scheduleSyncFromNode();
     }
     */
-    
+
     // copy and paste keyboard events
 
     onMetaLeft_c_KeyDown (/*event*/) {

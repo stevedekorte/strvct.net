@@ -13,11 +13,11 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
  * @class SvDbTx
  * @extends Base
  * @classdesc Manages database transactions with automatic commit/rollback and listener-based execution.
- * 
+ *
  * This class provides a safe, managed approach to database transactions using a listener pattern
  * that ensures proper transaction lifecycle management. It automatically handles commit on success
  * and rollback on errors, preventing transaction leaks and ensuring data consistency.
- * 
+ *
  * Key features:
  * - Callback-based transaction execution with automatic lifecycle management
  * - Integration with Sequelize transaction system for underlying database operations
@@ -26,21 +26,21 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
  * - Observer pattern with listeners for transaction lifecycle events (onTxCommit/onTxRollback)
  * - Prevention of nested transactions and proper cleanup of database state
  * - Error propagation while maintaining transaction integrity
- * 
+ *
  * The transaction enforces that all database operations must occur within a transaction scope,
  * providing ACID guarantees and preventing partial updates that could leave the database
  * in an inconsistent state.
- * 
+ *
  * Usage:
  * ```javascript
  * const tx = database.newTx();
- * 
+ *
  * // Add listener for transaction lifecycle events
  * tx.addListener({
  *   onTxCommit: (tx) => console.log(this.logPrefix(), "Transaction committed successfully"),
  *   onTxRollback: (tx) => console.log(this.logPrefix(), "Transaction rolled back")
  * });
- * 
+ *
  * const result = await tx.begin(async () => {
  *   await database.insert("users", userData);
  *   await database.update("profiles", profileData);
@@ -102,18 +102,18 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
             throw new Error("Transaction has no database reference");
         }
 
-        if (!callback || typeof callback !== 'function') {
+        if (!callback || typeof callback !== "function") {
             throw new Error("Transaction begin() requires a callback function");
         }
-        
+
         // Initialize Zone.js and create transaction zone
         loadZoneJs();
-        
+
         await this.database().onBegin(this);
-        
+
         // Run callback in Zone with transaction context
         return Zone.current.fork({
-            name: 'SvDbTx',
+            name: "SvDbTx",
             properties: {
                 currentTx: this
             }
@@ -134,7 +134,7 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
      * @param {Object} listener - Object that may respond to onTxCommit and/or onTxRollback
      */
     addListener (listener) {
-        if (!listener || typeof listener !== 'object') {
+        if (!listener || typeof listener !== "object") {
             throw new Error("Listener must be an object");
         }
         this.listeners().push(listener);
@@ -153,13 +153,12 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
     }
 
 
-
     /**
      * Notify all listeners that the transaction has committed
      */
     notifyCommitListeners () {
         for (const listener of this.listeners()) {
-            if (listener && typeof listener.onTxCommit === 'function') {
+            if (listener && typeof listener.onTxCommit === "function") {
                 listener.onTxCommit(this);
             }
         }
@@ -171,13 +170,13 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
      */
     notifyRollbackListeners () {
         for (const listener of this.listeners()) {
-            if (listener && typeof listener.onTxRollback === 'function') {
+            if (listener && typeof listener.onTxRollback === "function") {
                 listener.onTxRollback(this);
             }
         }
         this.clearListeners();
     }
-    
+
 
     /**
      * Clear all listeners without notifying them
@@ -185,7 +184,6 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
     clearListeners () {
         this.setListeners([]);
     }
-
 
 
     /**
@@ -196,12 +194,12 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
         if (!this.database()) {
             throw new Error("Transaction has no database reference");
         }
-        
+
         await this.database().onCommit(this);
-        
+
         // Notify listeners after successful database commit
         this.notifyCommitListeners();
-        
+
         return this;
     }
 
@@ -213,12 +211,12 @@ const loadZoneJs = require("./external-libs/zonejs/ZoneJS_init.js");
         if (!this.database()) {
             throw new Error("Transaction has no database reference");
         }
-        
+
         await this.database().onRollback(this);
-        
+
         // Notify listeners of rollback
         this.notifyRollbackListeners();
-        
+
         return this;
     }
 

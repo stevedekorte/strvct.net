@@ -8,7 +8,7 @@
  * @classdesc Listens to a set of select events on element.
  */
 (class SelectListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization
@@ -49,5 +49,5 @@
         this.addEventNameAndMethodName("selectionchange", "onSelectionChange"); // IMPORTANT: not widely supported
         return this;
     }
-    
+
 }.initThisClass());

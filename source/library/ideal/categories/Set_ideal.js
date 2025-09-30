@@ -15,14 +15,14 @@
      * @category Creation
      */
     static fromIterator (iterator) {
-        const results = new this()
-        let entry = iterator.next()
+        const results = new this();
+        let entry = iterator.next();
         while (!entry.done) {
-            const v = entry.value
-            results.add(v)
-            entry = iterator.next()
+            const v = entry.value;
+            results.add(v);
+            entry = iterator.next();
         }
-        return results
+        return results;
     }
 
     addAll (anObject) {
@@ -56,7 +56,7 @@
      * @category Information
      */
     count () {
-        return this.size
+        return this.size;
     }
 
     /**
@@ -90,7 +90,7 @@
      * @category Conversion
      */
     keysArray () {
-        return Array.fromIterator(this.values())
+        return Array.fromIterator(this.values());
     }
 
     /**
@@ -99,7 +99,7 @@
      * @category Conversion
      */
     valuesArray () {
-        return this.keysArray()
+        return this.keysArray();
     }
 
     /**
@@ -108,16 +108,16 @@
      * @category Conversion
      */
     asArray () {
-        return this.keysArray()
+        return this.keysArray();
     }
-    
+
     /**
      * Iterates over the set, calling a function for each key-value pair
      * @param {function(*, *, Set_ideal): void} fn - The function to call for each entry
      * @category Iteration
      */
     forEachKV (fn) {
-        this.forEach((v, k, self) => fn(k, v, self))
+        this.forEach((v, k, self) => fn(k, v, self));
     }
 
     /**
@@ -126,7 +126,7 @@
      * @category Iteration
      */
     forEachK (fn) {
-        this.forEach((v, k) => fn(k))
+        this.forEach((v, k) => fn(k));
     }
 
     /**
@@ -135,7 +135,7 @@
      * @category Iteration
      */
     forEachV (fn) {
-        this.forEach(v => fn(v))
+        this.forEach(v => fn(v));
     }
 
     /**
@@ -148,7 +148,7 @@
         const result = this.detect(func);
         return result !== undefined && result !== null;
     }
-    
+
     /**
      * Finds the first element in the set that satisfies the given function
      * @param {function(*): boolean} fn - The function to test each element
@@ -157,12 +157,12 @@
      */
     detect (fn) {
         for (let v of this) {
-            const r = fn(v)
+            const r = fn(v);
             if (r === true) {
                 return v;
             }
         }
-        return undefined
+        return undefined;
     }
 
     /**
@@ -172,9 +172,9 @@
      * @category Filtering
      */
     filter (fn) {
-        return this.select(fn)
+        return this.select(fn);
     }
-    
+
     /**
      * Returns an array of elements that satisfy the given function
      * @param {function(*): boolean} fn - The function to test each element
@@ -182,7 +182,7 @@
      * @category Filtering
      */
     select (fn) {
-        return this.valuesArray().select(fn)
+        return this.valuesArray().select(fn);
     }
 
     /**
@@ -192,9 +192,9 @@
      * @category Transformation
      */
     map (func) {
-        const result = new Set()
-        this.forEach((v) => result.add(func(v)))
-        return result
+        const result = new Set();
+        this.forEach((v) => result.add(func(v)));
+        return result;
     }
 
     /**
@@ -231,7 +231,7 @@
      */
     isSupersetOf (subset) {
         if (this.size < subset.size) {
-            return false
+            return false;
         }
 
         for (let v of subset) {
@@ -249,7 +249,7 @@
     union_isOptional () {
         // so exception isn't thrown if the browser defines it
     }
-    
+
     /**
      * Returns a new set that is the union of this set and another set
      * @param {Set} setB - The set to union with
@@ -271,7 +271,7 @@
     intersection_isOptional () {
         // so exception isn't thrown if the browser defines it
     }
-    
+
     /**
      * Returns a new set that is the intersection of this set and another set
      * @param {Set} setB - The set to intersect with
@@ -302,7 +302,7 @@
      * @returns {Set} A new set containing elements in either set but not in both
      * @category Set Operations
      */
-    symmetricDifference (setB) { 
+    symmetricDifference (setB) {
         let _difference = new Set(this);
         for (let v of setB) {
             if (_difference.has(v)) {
@@ -321,7 +321,7 @@
     difference_isOptional () {
         // so exception isn't thrown if the browser defines it
     }
-    
+
     /**
      * Returns a new set that is the difference of this set and another set
      * @param {Set} setB - The set to subtract
@@ -342,7 +342,7 @@
      * @category Information
      */
     isEmpty () {
-        return this.size == 0        
+        return this.size == 0;
     }
 
     /**
@@ -353,9 +353,9 @@
     pop () {
         const iter = this.values();
         const value = iter.next().value;
-        return value
+        return value;
     }
-    
+
     /**
      * Returns an immutable version of this set
      * @returns {ImmutableSet} An immutable set with the same elements as this set
@@ -373,11 +373,11 @@
     hashCode64 () {
         const prime = 31;
         let result = 0;
-    
+
         for (const item of this) {
             result = (result + Type.hashCode64(item) * prime) | 0;  // Accumulate hash with prime multiplier
         }
-    
+
         return result;
     }
 

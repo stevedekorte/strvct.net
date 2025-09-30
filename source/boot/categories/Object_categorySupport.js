@@ -1,16 +1,16 @@
-"use strict"; 
+"use strict";
 
 /**
  * @module boot
  */
 
-/** 
+/**
  * @class Object_categorySupport
  * @extends Object
  * @classdesc This class adds support for defining slots in classes and prototypes,
- * and adds a initThisCategory for setting up categories. A category is a way to add 
+ * and adds a initThisCategory for setting up categories. A category is a way to add
  * class and instance methods to another class and its prototype. Calling initThisCategory
- * on a class will copy the class's class and instance methods to the class's 
+ * on a class will copy the class's class and instance methods to the class's
  * superclass and superclass prototype.
 */
 
@@ -18,7 +18,7 @@
 
     /**
      * @method initThisClass
-     * @description This method is called to initialize the class. It makes the 
+     * @description This method is called to initialize the class. It makes the
      * primitives inherit from Object and defines the slots for defining slots.
     */
     static initThisClass_justForCategories () {
@@ -67,7 +67,7 @@
     static instanceTypeName () {
         return this.typeNameForInstanceOfClassName(this.name);
     }
-    
+
     /*
     typeName () {
         const aClass = this.__proto__;
@@ -85,9 +85,9 @@
         /*
             Weird JS things:
 
-            Some of the primitives such as Array, Set, Map have constructors which 
-            do not inherit from Object (they and the Object constructor all inherit 
-            from constructor named "") but their constructor prototypes *do* inherit 
+            Some of the primitives such as Array, Set, Map have constructors which
+            do not inherit from Object (they and the Object constructor all inherit
+            from constructor named "") but their constructor prototypes *do* inherit
             from Object.prototype.
 
             To make this consistent (so we can inherit class methods) we do
@@ -132,7 +132,7 @@
                 //console.warn("Object_categorySupport.makePrimitivesInheritFromObject: class '" + className + "' not found");
             }
         });
-        
+
         return this;
     }
 
@@ -219,10 +219,10 @@
                 name = "[error getting name]";
             }
             return name;
-        }
-    
+        };
+
         if (Object.hasOwn(obj, slotName) && !slotName.startsWith("_")) {
-            if(typeof(slotValue) === "function" && obj[slotName + "_isOptional"] !== undefined) {
+            if (typeof(slotValue) === "function" && obj[slotName + "_isOptional"] !== undefined) {
                 return null;
             }
             const msg = nameForObj(obj) + "." + slotName + " slot already exists";
@@ -250,14 +250,14 @@
 
     /**
      * @method initThisCategory
-     * @description This method is called to initialize the category. It makes the 
+     * @description This method is called to initialize the category. It makes the
      * class and its prototype inherit from the superclass and superclass prototype.
     */
-    static initThisCategory () { 
+    static initThisCategory () {
         // define this first, so we can use it to more cleanly define our Object categories.
         //
         // This is a bit of a hack to implement class categories in Javascript
-        // sanity check: check name to ensure we're only using this on a category 
+        // sanity check: check name to ensure we're only using this on a category
         // following the naming convention of ClassName_categoryName
 
         let nameParts = this.name.split("_");
@@ -285,10 +285,10 @@
                 /*
                 // this doesn't seem to get the correct .name(?)
                 if (typeof (v) === "function" && k !== "constructor") {
-                    //v._categoryName = this.name // add a comment for category source 
+                    //v._categoryName = this.name // add a comment for category source
                 }
                 */
-            })
+            });
             return map;
         };
 
@@ -322,15 +322,15 @@
         console.log("parentClass.name = '" + parentClass.name + "'")
         console.log("parentClass.__proto__.name = '" + parentClass.__proto__.name + "'")
         */
-        
+
         // bit of a hack to fix super in class and proto methods
         if (parentClass !== Object) { // don't need to call super on base class
             // fix super in instance methods
-            Object.setPrototypeOf(this.prototype, parentClass.__proto__.prototype); 
+            Object.setPrototypeOf(this.prototype, parentClass.__proto__.prototype);
 
             // fix super in static/class methods
             // need to do this *after* instance methods super fix as it changes __proto__
-            Object.setPrototypeOf(this, parentClass.__proto__); 
+            Object.setPrototypeOf(this, parentClass.__proto__);
 
             // related to super, see:
             // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super
@@ -341,12 +341,12 @@
         // and initialization logic using initPrototype_categoryName
         let catName = nameParts[1];
         let parentProto = parentClass.prototype;
-        
+
         // Setup category prototype if needed (adds category slots to existing slot maps)
         if (Object.hasOwn(parentProto, "setupCategoryPrototype")) {
             parentProto.setupCategoryPrototype(catName);
         }
-        
+
         return this;
     }
 

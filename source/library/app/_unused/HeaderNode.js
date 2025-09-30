@@ -12,8 +12,8 @@
  */
 
 
-(class HeaderNode extends SvFolderNode { 
-    
+(class HeaderNode extends SvFolderNode {
+
     initPrototypeSlots () {
 
         {
@@ -28,8 +28,8 @@
             slot.setFinalInitProto(SvThemeResources);
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
-        }        
-        
+        }
+
         {
             const slot = this.newSlot("prototypes", null);
             slot.setFinalInitProto(SvPrototypesNode);
@@ -45,7 +45,7 @@
             slot.setIsSubnode(true);
         }
     }
-  
+
     /**
      * @description Initializes the prototype properties for the HeaderNode.
      * @category Initialization

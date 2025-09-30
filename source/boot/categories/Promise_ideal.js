@@ -8,11 +8,11 @@
  * @class Promise_ideal
  * @extends Promise
  * @classdesc Some extra methods for the Javascript Promise primitive.
- * 
+ *
  * Example usage:
- * 
+ *
  * const promise = Promise.clone();
- * 
+ *
  * ...
  * promise.callResolveFunc();
  * ...
@@ -49,10 +49,10 @@
             resolveFunc = resolve; // sets the outer resolve function
             rejectFunc = reject; // sets the outer reject function
         });
-        promise._resolveFunc = resolveFunc; // record the resolve function so the promise can access it 
+        promise._resolveFunc = resolveFunc; // record the resolve function so the promise can access it
         promise._rejectFunc = rejectFunc; // record the reject function so the promise can access it
-        promise._status = "pending"; 
-        promise._awaiterCount = 0; 
+        promise._status = "pending";
+        promise._awaiterCount = 0;
         promise._timeoutMs = null;
         promise._timeoutId = null;
         promise._onAwaitFunc = null;
@@ -82,20 +82,20 @@
      */
     onAwait () {
         if (this.isPending()) {
-            this._awaiterCount ++;    
-        
-        if (!this._hasCalledAwaitFunc) {
-            const f = this._onAwaitFunc;
-            if (f) {
-                f(this);
+            this._awaiterCount ++;
+
+            if (!this._hasCalledAwaitFunc) {
+                const f = this._onAwaitFunc;
+                if (f) {
+                    f(this);
+                }
             }
         }
-        } 
     }
 
-// label
+    // label
 
-/**
+    /**
  * @method setLabel
  * @memberof Promise
  * @description Sets a label for the promise.
@@ -108,7 +108,7 @@
         return this;
     }
 
-/**
+    /**
  * @method label
  * @memberof Promise
  * @description Gets the label of the promise.
@@ -119,9 +119,9 @@
         return this._label;
     }
 
-// timeouts
+    // timeouts
 
-/**
+    /**
  * @method beginTimeout
  * @memberof Promise
  * @description Begins a timeout for the promise.
@@ -133,13 +133,13 @@
         assert(this.isPending());
         assert(this._timeoutId === null);
         this._timeoutMs = ms;
-        this._timeoutId = setTimeout(() => { 
+        this._timeoutId = setTimeout(() => {
             this.onTimeout();
         }, ms);
         return this;
     }
 
-/**
+    /**
  * @method cancelTimeout
  * @memberof Promise
  * @description Cancels the timeout for the promise.
@@ -151,13 +151,13 @@
         if (tid) {
             clearTimeout(tid);
             //console.log("Promise cancelTimeout() label: ", this.label().clipWithEllipsis(40) );
-            
+
             this._timeoutId = null;
         }
         return this;
     }
 
-/**
+    /**
  * @method onTimeout
  * @memberof Promise
  * @description Handles the timeout event for the promise.
@@ -169,9 +169,9 @@
     }
 
 
-// resolve / reject
+    // resolve / reject
 
-/**
+    /**
  * @method callResolveFunc
  * @memberof Promise
  * @description Calls the resolve function of the promise with variable arguments.
@@ -190,18 +190,18 @@
         throw new Error("Promise resolved with no resolve function provided");
     }
 
-/**
+    /**
  * @method callRejectFunc
  * @memberof Promise
  * @description Calls the reject function of the promise with variable arguments.
- * If no reject function exists (e.g., promise not created via Promise.clone()), 
+ * If no reject function exists (e.g., promise not created via Promise.clone()),
  * rethrows the first argument as an exception.
  * @param {...*} args - Arguments to pass to the reject function.
  * @returns {*} The result of calling the reject function.
  * @throws {*} The first argument if no reject function exists.
  * @category Resolution
  */
-    callRejectFunc (...args) { 
+    callRejectFunc (...args) {
         assert(!this.isResolved(), "promise reject call on already resolved promise");
         this._status = "rejected";
         this.clearAwaiterCount();
@@ -217,55 +217,55 @@
         throw new Error("Promise rejected with no reject function and no error provided");
     }
 
-// status
+    // status
 
-/**
+    /**
  * @method isResolved
  * @memberof Promise
  * @description Checks if the promise is resolved.
  * @returns {boolean} True if the promise is resolved, false otherwise.
  * @category Status
  */
-    isResolved () { 
+    isResolved () {
         return this._status === "resolved";
     }
 
-/**
+    /**
  * @method isRejected
  * @memberof Promise
  * @description Checks if the promise is rejected.
  * @returns {boolean} True if the promise is rejected, false otherwise.
  * @category Status
  */
-    isRejected () { 
+    isRejected () {
         return this._status === "rejected";
     }
 
-/**
+    /**
  * @method isPending
  * @memberof Promise
  * @description Checks if the promise is pending.
  * @returns {boolean} True if the promise is pending, false otherwise.
  * @category Status
  */
-    isPending () { 
+    isPending () {
         return this._status === "pending";
     }
 
-// awaiters
+    // awaiters
 
-/**
+    /**
  * @method hasAwaiters
  * @memberof Promise
  * @description Checks if the promise has any awaiters.
  * @returns {boolean} True if the promise has awaiters, false otherwise.
  * @category Await
  */
-    hasAwaiters () { 
+    hasAwaiters () {
         return this._awaiterCount !== 0;
     }
 
-/**
+    /**
  * @method clearAwaiterCount
  * @memberof Promise
  * @description Clears the awaiter count.
@@ -276,7 +276,7 @@
         this._awaiterCount = 0;
     }
 
-/**
+    /**
  * @method then
  * @memberof Promise
  * @description Overrides the then method to include onAwait functionality.
@@ -285,10 +285,10 @@
  * @returns {Promise} A new Promise instance.
  * @category Chaining
  */
-    then (onFulfilled, onRejected) { 
+    then (onFulfilled, onRejected) {
         this.onAwait();
         return this.originalThen(onFulfilled, onRejected);
     }
-    
+
 }).initThisCategory();
 

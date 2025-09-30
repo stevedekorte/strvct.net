@@ -7,24 +7,24 @@
 /**
  * @class SvWaContext
  * @extends BaseNode
- * @classdesc A WebAudioContext wrapper. 
+ * @classdesc A WebAudioContext wrapper.
  * This is used with SvWaSound for decoding and playing sounds.
- * 
+ *
  * Notes:
- * 
+ *
  * Browsers don't allow sounds to be played until a user interacts (using certain events) with the page,
  * so this class registers to listen for "onFirstUserEvent" notification, and sets up the WebAudioContext after when it's received.
  */
 (class SvWaContext extends BaseNode {
-    
+
     /**
      * @static
      * @description Initializes the class
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
-        SvBroadcaster.shared().addListenerForName(this, "firstUserEvent")
+        this.setIsSingleton(true);
+        SvBroadcaster.shared().addListenerForName(this, "firstUserEvent");
         //this.watchOnceForNote("onFirstUserEvent")
     }
 
@@ -35,8 +35,8 @@
      * @category Event Handling
      */
     static firstUserEvent (/*anEventListener*/) {
-        SvBroadcaster.shared().removeListenerForName(this, "firstUserEvent")
-        SvWaContext.shared().setupIfNeeded() // need user input to do this
+        SvBroadcaster.shared().removeListenerForName(this, "firstUserEvent");
+        SvWaContext.shared().setupIfNeeded(); // need user input to do this
     }
 
     /**
@@ -84,7 +84,7 @@
      * @category Metadata
      */
     title () {
-        return "WebAudio Context"
+        return "WebAudio Context";
     }
 
     /**
@@ -93,7 +93,7 @@
      * @category Metadata
      */
     subtitle () {
-        return null
+        return null;
     }
 
     /**
@@ -102,7 +102,7 @@
      * @category Setup
      */
     isSetup () {
-        return !Type.isNull(this.audioContext())
+        return !Type.isNull(this.audioContext());
     }
 
     /**
@@ -117,9 +117,9 @@
             SvBroadcaster.shared().broadcastNameAndArgument("didSetupSvWaContext", this);
             //console.warn("can't get audio context until user gesture e.g. tap");
         }
-        return this
+        return this;
     }
-    
+
     /**
      * @description Decodes an array buffer
      * @param {ArrayBuffer} audioArrayBuffer - The audio array buffer to decode
@@ -128,7 +128,7 @@
      */
     async promiseDecodeArrayBuffer (audioArrayBuffer) {
         // NOTE: may mutate audioArrayBuffer!!!!!!!!!!
-        await this.setupPromise(); // should we throw an error instead? 
+        await this.setupPromise(); // should we throw an error instead?
 
         const promise = Promise.clone();
         assert(audioArrayBuffer instanceof ArrayBuffer, "audioArrayBuffer must be an ArrayBuffer");
@@ -139,14 +139,14 @@
         //assert(audioArrayBuffer.format === "audio/wav", "audioArrayBuffer must be a WAV file"); // this may not be true
 
         // let's log a bunch of info about the buffer
-       // console.log(this.logPrefix(), "audioArrayBuffer: " + JSON.stringify(this.jsonInfoForBuffer(audioArrayBuffer), null, 2));
+        // console.log(this.logPrefix(), "audioArrayBuffer: " + JSON.stringify(this.jsonInfoForBuffer(audioArrayBuffer), null, 2));
 
         this.audioContext().decodeAudioData(audioArrayBuffer,
-            (decodedBuffer) => { 
+            (decodedBuffer) => {
                 //assert(audioArrayBuffer.byteLength);
                 promise.callResolveFunc(decodedBuffer);
             },
-            (error) => { 
+            (error) => {
                 console.log(this.logPrefix(), "error decodingaudioArrayBuffer: ", error.message);
 
                 promise.callRejectFunc(error);
@@ -161,7 +161,7 @@
             format: audioArrayBuffer.format,
             sampleRate: audioArrayBuffer.sampleRate,
             channels: audioArrayBuffer.channels
-        }
+        };
     }
 
     /*
@@ -171,7 +171,7 @@
     }
 
     disconnectSource (webAudioSource) {
-        
+
     }
     */
 

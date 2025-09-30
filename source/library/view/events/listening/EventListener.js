@@ -8,7 +8,7 @@
  * @class EventListener
  * @extends ProtoClass
  * @classdesc Listener for single event. Should only be used by EventSetListener class.
- * 
+ *
  * For full list of events, see:
  * https://developer.mozilla.org/en-US/docs/Web/Events
  */
@@ -27,7 +27,7 @@
          * @static
          * @member {Set} activeListeners - Set of active listeners (tmp debugging).
          */
-        this.newClassSlot("activeListeners", new Set()) // tmp debugging
+        this.newClassSlot("activeListeners", new Set()); // tmp debugging
     }
 
     /**
@@ -56,8 +56,8 @@
      * @description Shows active listeners (for debugging).
      */
     static showActive () { // tmp debugging
-        const owners = this.activeOwners()
-        console.log("--- EventListener " + owners.size + " active owners ---")
+        const owners = this.activeOwners();
+        console.log("--- EventListener " + owners.size + " active owners ---");
         /*
         owners.forEach((owner) => {
             const listeners = this.activeListenersForOwner(owner)
@@ -66,7 +66,7 @@
             //this.showActiveForOwner(owner)
         })
         */
-        console.log("-------------------------------------")
+        console.log("-------------------------------------");
     }
 
     /**
@@ -75,10 +75,10 @@
      * @param {Object} owner - The owner object.
      */
     static showActiveForOwner (owner) { // tmp debugging
-        const listeners = this.activeListenersForOwner(owner)
+        const listeners = this.activeListenersForOwner(owner);
         listeners.forEach(listener => {
-            console.log("    " + listener.delegate().svTypeId() + " " + listener.fullMethodName())
-        })
+            console.log("    " + listener.delegate().svTypeId() + " " + listener.fullMethodName());
+        });
     }
 
     /**
@@ -167,31 +167,31 @@
      * @returns {EventListener} The initialized EventListener.
      */
     init () {
-        super.init()
-        this.setHandlerFunc(event => this.safeHandleEvent(event))
+        super.init();
+        this.setHandlerFunc(event => this.safeHandleEvent(event));
         //this.setHandlerFunc(event => this.handleEvent(event))
-        return this
+        return this;
     }
 
     /**
      * @description Called when the methodName slot is updated.
      */
     didUpdateSlotMethodName () {
-        this.clearFullMethodName()
+        this.clearFullMethodName();
     }
 
     /**
      * @description Called when the methodSuffix slot is updated.
      */
     didUpdateSlotMethodSuffix () {
-        this.clearFullMethodName()
+        this.clearFullMethodName();
     }
 
     /**
      * @description Called when the useCapture slot is updated.
      */
     didUpdateSlotUseCapture () {
-        this.clearFullMethodName()
+        this.clearFullMethodName();
     }
 
     /**
@@ -201,10 +201,10 @@
      */
     setListenTarget (t) {
         if (this.isListening()) {
-            assert(t)
+            assert(t);
         }
-        this._listenTarget = t
-        return this
+        this._listenTarget = t;
+        return this;
     }
 
     /**
@@ -212,14 +212,14 @@
      * @returns {String} The description of the listen target.
      */
     listenTargetDescription () {
-        return this.listenTarget().description()
+        return this.listenTarget().description();
     }
 
     /**
      * @description Clears the full method name.
      */
     clearFullMethodName () {
-        this.setFullMethodName(null)
+        this.setFullMethodName(null);
     }
 
     /**
@@ -227,14 +227,14 @@
      * @returns {String} The full method name.
      */
     calcFullMethodName () {
-        let suffix = ""
+        let suffix = "";
 
         if (this.useCapture()) {
-            suffix = "Capture"
+            suffix = "Capture";
         }
 
-        suffix += this.methodSuffix()
-        return this.methodName() + suffix
+        suffix += this.methodSuffix();
+        return this.methodName() + suffix;
     }
 
     /**
@@ -243,9 +243,9 @@
      */
     fullMethodName () {
         if (!this._fullMethodName) {
-            this._fullMethodName = this.calcFullMethodName()
+            this._fullMethodName = this.calcFullMethodName();
         }
-        return this._fullMethodName
+        return this._fullMethodName;
     }
 
     /**
@@ -255,18 +255,18 @@
      */
     setIsListening (aBool) {
         if (aBool) {
-            this.start()
+            this.start();
         } else {
-            this.stop()
+            this.stop();
         }
-        return this
+        return this;
     }
 
     /**
      * @description Asserts that the listener has a listen target.
      */
     assertHasListenTarget () {
-        assert(!Type.isNullOrUndefined(this.listenTarget()))
+        assert(!Type.isNullOrUndefined(this.listenTarget()));
     }
 
     /**
@@ -274,31 +274,31 @@
      * @returns {Boolean} Whether the listener is valid.
      */
     isValid () {
-        const hasListenTarget = !Type.isNullOrUndefined(this.listenTarget())
-        const hasEventName    = !Type.isNullOrUndefined(this.eventName())
-        const hasMethodName   = !Type.isNullOrUndefined(this.methodName())
-        return hasMethodName && hasEventName && hasListenTarget
+        const hasListenTarget = !Type.isNullOrUndefined(this.listenTarget());
+        const hasEventName    = !Type.isNullOrUndefined(this.eventName());
+        const hasMethodName   = !Type.isNullOrUndefined(this.methodName());
+        return hasMethodName && hasEventName && hasListenTarget;
     }
-    
+
     /**
      * @description Gets the listener key.
      * @returns {String} The listener key.
      */
     listenerKey () {
-        let key = null
+        let key = null;
         if (this.owner().node) {
-             key = this.owner().svTypeId() + " " + this.owner().node().title() + " " + this.delegate().svTypeId() + " " + this.fullMethodName()
+            key = this.owner().svTypeId() + " " + this.owner().node().title() + " " + this.delegate().svTypeId() + " " + this.fullMethodName();
         } else {
-            key = this.owner().svTypeId() + " " + this.delegate().svTypeId() + " " + this.fullMethodName()
+            key = this.owner().svTypeId() + " " + this.delegate().svTypeId() + " " + this.fullMethodName();
         }
-        return key
+        return key;
     }
-    
+
     /**
      * @description Increments the listen count.
      */
     incrementListenCount () {
-        this.thisClass().listenCount++
+        this.thisClass().listenCount++;
         //EventListener.activeListeners().add(this)
         //console.log(this.listenerKey() + " START")
     }
@@ -307,7 +307,7 @@
      * @description Decrements the listen count.
      */
     decrementListenCount () {
-        this.thisClass().listenCount--
+        this.thisClass().listenCount--;
         //EventListener.activeListeners().delete(this)
         //console.log(this.listenerKey() + " STOP")
     }
@@ -319,23 +319,23 @@
     start () {
         if (this.delegateCanRespond()) {
             if (!this.isListening()) {
-                this.incrementListenCount()
+                this.incrementListenCount();
 
-                this.logDebug(() => this.delegate().svTypeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
-                assert(this.isValid())
+                this.logDebug(() => this.delegate().svTypeId() + " will start listening for " + this.eventName() + " -> " + this.methodName());
+                assert(this.isValid());
                 this._isListening = true; // can't use setter here as it would cause a loop
                 this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
                 /*
                 if (this.useCapture()) {
-                   
+
                 }
                 */
             }
         } else {
             //console.log(this.delegate().svDebugId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
-            
+
         }
-        return this
+        return this;
     }
 
     /**
@@ -343,11 +343,11 @@
      * @returns {Object} The owner object.
      */
     owner () {
-        const d = this.delegate()
+        const d = this.delegate();
         if (d.viewTarget) {
-            return d.viewTarget()
+            return d.viewTarget();
         }
-        return d
+        return d;
     }
 
     /**
@@ -355,14 +355,14 @@
      * @returns {String} The description of the owner.
      */
     ownerDescription () {
-        const d = this.delegate()
-        
+        const d = this.delegate();
+
         if (d.viewTarget) {
-            //return d.viewTarget().svDebugId() + "->" + d.svType().before("GestureRecognizer") 
-            return d.viewTarget().svTypeId() + " ->" + d.svType().before("GestureRecognizer") 
+            //return d.viewTarget().svDebugId() + "->" + d.svType().before("GestureRecognizer")
+            return d.viewTarget().svTypeId() + " ->" + d.svType().before("GestureRecognizer");
         }
 
-        return d.svTypeId()
+        return d.svTypeId();
     }
 
     /**
@@ -383,10 +383,10 @@
             }
             */
 
-            return this.handleEvent(event)
+            return this.handleEvent(event);
         }, event);
-        
-        return result
+
+        return result;
     }
 
     /**
@@ -395,11 +395,11 @@
      */
     delegateCanRespond () {
         if (Type.isNullOrUndefined(this.delegate())) {
-            return false
+            return false;
         }
-        const method = this.delegate()[this.fullMethodName()]
-        const canRespond = Type.isFunction(method)
-        return canRespond
+        const method = this.delegate()[this.fullMethodName()];
+        const canRespond = Type.isFunction(method);
+        return canRespond;
     }
 
     /**
@@ -408,39 +408,39 @@
      * @returns {*} The result of handling the event.
      */
     handleEvent (event) {
-        const fullMethodName = this.fullMethodName()
+        const fullMethodName = this.fullMethodName();
 
         //event._isUserInteraction = this.isUserInteraction() // unused
 
-        const delegate = this.delegate()
-        const method = delegate[fullMethodName]
+        const delegate = this.delegate();
+        const method = delegate[fullMethodName];
 
 
-        let result = true
+        let result = true;
         if (method) {
-            this.onBeforeEvent(event)
+            this.onBeforeEvent(event);
 
-            result = method.call(delegate, event); 
+            result = method.call(delegate, event);
 
             if (this.isDebugging()) {
-                console.log("sent: " + delegate.svType() + "." + fullMethodName, "(" + event.type + ") and returned " + result)
+                console.log("sent: " + delegate.svType() + "." + fullMethodName, "(" + event.type + ") and returned " + result);
             }
 
             if (result === false) {
-                event.stopPropagation()
+                event.stopPropagation();
                 if (event.cancelable) {
-                    event.preventDefault() // do we want this?
+                    event.preventDefault(); // do we want this?
                 }
             }
 
-            this.onAfterEvent(event)
+            this.onAfterEvent(event);
         } else {
             if (this.isDebugging()) {
-                console.log(this.listenTargetDescription() + " MISSING method: " + delegate.svType() + "." + fullMethodName, "(" + event.type + ")" )
+                console.log(this.listenTargetDescription() + " MISSING method: " + delegate.svType() + "." + fullMethodName, "(" + event.type + ")");
             }
         }
 
-        return result
+        return result;
     }
 
     /**
@@ -449,7 +449,7 @@
      * @returns {EventListener} The EventListener instance.
      */
     onBeforeEvent (/*event*/) {
-        return this
+        return this;
     }
 
     /**
@@ -459,9 +459,9 @@
      */
     onAfterEvent (/*event*/) {
         if (this.isUserInteraction()) {
-            EventManager.shared().onReceivedUserEvent()
+            EventManager.shared().onReceivedUserEvent();
         }
-        return this
+        return this;
     }
 
     /**
@@ -470,18 +470,18 @@
      */
     stop () {
         if (this.isListening()) {
-            this.assertHasListenTarget()
+            this.assertHasListenTarget();
 
-            const t = this.listenTarget()
+            const t = this.listenTarget();
 
-            this.decrementListenCount()
+            this.decrementListenCount();
 
             //this.logDebug(() => this.delegate().svTypeId() + " will stop listening for " + this.methodName())
             t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
             this._isListening = false; // can't use setter here as it would cause a loop
         }
 
-        return this
-    }   
+        return this;
+    }
 
 }.initThisClass());

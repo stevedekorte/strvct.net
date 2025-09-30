@@ -16,9 +16,9 @@
      * @category Initialization
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
-    
+
     /**
      * @static
      * @description Returns a set of supported MIME types for this video well field.
@@ -26,7 +26,7 @@
      * @category Configuration
      */
     static supportedMimeTypes () {
-        return new Set(["video/mp4", "video/webm", "video/ogg"])
+        return new Set(["video/mp4", "video/webm", "video/ogg"]);
     }
 
     /**
@@ -37,7 +37,7 @@
      * @category Validation
      */
     static canOpenMimeType (mimeType) {
-        return this.supportedMimeTypes().has(mimeType)
+        return this.supportedMimeTypes().has(mimeType);
     }
 
     /**
@@ -48,12 +48,12 @@
      * @category Data Handling
      */
     static openMimeChunk (dataChunk) {
-        const newNode = this.clone()
-        newNode.setValue(dataChunk.dataUrl())
-        newNode.setKeyIsEditable(true)
-        newNode.setValueIsEditable(true)
-        newNode.setCanDelete(true)
-        return newNode
+        const newNode = this.clone();
+        newNode.setValue(dataChunk.dataUrl());
+        newNode.setKeyIsEditable(true);
+        newNode.setValueIsEditable(true);
+        newNode.setCanDelete(true);
+        return newNode;
     }
 
     /**
@@ -147,7 +147,7 @@
      * @category Data Handling
      */
     summaryValue () {
-        return ""
+        return "";
     }
-   
+
 }).initThisClass();

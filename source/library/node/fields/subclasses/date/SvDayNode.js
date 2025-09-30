@@ -7,7 +7,7 @@
  * @classdesc Represents a day node in a calendar or date system. It handles the representation and manipulation of a single day value.
  */
 (class SvDayNode extends BaseNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvDayNode.
      * @category Initialization
@@ -75,7 +75,7 @@
     subtitle () {
         return null;
     }
-    
+
     /**
      * @description Gets the note for the node.
      * @returns {null} Always returns null.
@@ -84,7 +84,7 @@
     note () {
         return null;
     }
-    
+
     /**
      * @description Gets the tile link for the node.
      * @returns {null} Always returns null.
@@ -94,5 +94,5 @@
         // used by UI tile views to browse into next column
         return null;
     }
-    
+
 }.initThisClass());

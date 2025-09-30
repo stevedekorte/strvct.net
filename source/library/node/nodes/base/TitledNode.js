@@ -7,7 +7,7 @@
  *     subtitle
  *     summary
  *     icon/thumbnail (move to viewable?)
- * 
+ *
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  */
 
@@ -127,7 +127,7 @@
         if (this.subtitleIsSubnodeCount() && this.subnodesCount()) {
             return this.subnodesCount();
         }
-        
+
         return this._subtitle;
     }
 
@@ -138,7 +138,7 @@
     noteSubnodesCount () {
         return this.subnodesCount();
     }
-    
+
     /**
      * @description Gets the note of the node.
      * @returns {string|number} The note or subnode count.
@@ -152,7 +152,7 @@
 
             return "";
         }
-        
+
         return this._note;
     }
 
@@ -213,7 +213,7 @@
         }
         return results;
     }
-    
+
     nodePathArray () {
         return this.nodePath();
     }
@@ -225,16 +225,16 @@
     nodePathString () {
         return this.nodePath().map(node => node.title()).join("/");
     }
-    
+
     /**
      * @description Gets the node at a given subpath string.
      * @param {string} pathString - The subpath string.
      * @returns {TitledNode} The node at the subpath.
      */
     nodeAtSubpathString (pathString) {
-        return this.nodeAtSubpathArray(pathString.split("/"));        
+        return this.nodeAtSubpathArray(pathString.split("/"));
     }
-    
+
     /**
      * @description Gets the node at a given subpath array.
      * @param {Array} subpathArray - The subpath array.
@@ -246,7 +246,7 @@
 
             let subnode = null;
             if (Type.isArray(t)) {
-                // supports a path component that is an ordered list of subnodes titles 
+                // supports a path component that is an ordered list of subnodes titles
                 subnode = this.firstSubnodeWithTitles(t);
             } else {
                 subnode = this.firstSubnodeWithTitle(t);
@@ -256,7 +256,7 @@
                 return subnode.nodeAtSubpathArray(subpathArray.rest());
             }
             return null;
-        }        
+        }
         return this;
     }
 
@@ -328,7 +328,7 @@
 
         if (subnode) {
             if (subnode.svType() !== aProto.svType()) {
-                // replace the subnode with matching title, 
+                // replace the subnode with matching title,
                 // if it's not of the requested class
 
                 const newSubnode = aProto.clone();
@@ -368,7 +368,7 @@
         const slot = this.thisPrototype().slotNamed(aName.toLowerCase());
         assert(slot);
         if (slot) {
-            slot.onInstanceSetValue(this, subnode); 
+            slot.onInstanceSetValue(this, subnode);
         }
         return subnode;
     }
@@ -466,5 +466,5 @@
         });
         return results;
     }
-    
+
 }.initThisClass());

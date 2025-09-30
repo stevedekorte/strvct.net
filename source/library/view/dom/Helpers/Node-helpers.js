@@ -28,7 +28,7 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          */
         setDomView: function (aView) {
             this._domViewWeakRef = aView ? new WeakRef(aView) : null;
-            return this
+            return this;
         },
 
         /**
@@ -36,10 +36,10 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @returns {Object|undefined} The DOM view or undefined if not set.
          * @category View Management
          */
-        domView: function () { 
+        domView: function () {
             const ref = this._domViewWeakRef;
             const v = ref ? ref.deref() : undefined;
-            return v
+            return v;
         },
 
         /**
@@ -51,7 +51,7 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
             while (this.firstChild) {
                 this.removeChild(this.lastChild);
             }
-            return this
+            return this;
         },
 
         /**
@@ -73,19 +73,19 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @category Node Manipulation
          */
         atInsertElement: function (index, child) {
-            const children = this.children
-            
+            const children = this.children;
+
             if (index < children.length) {
-                this.insertBefore(child, children[index])
-                return
+                this.insertBefore(child, children[index]);
+                return;
             }
-            
+
             if (index === children.length) {
-                this.appendChild(child)
-                return
+                this.appendChild(child);
+                return;
             }
-            
-            throw new Error("invalid dom child index")
+
+            throw new Error("invalid dom child index");
         },
 
         /**
@@ -94,25 +94,25 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @category Node Information
          */
         description: function () {
-            let s = false
-        
+            let s = false;
+
             if (this === window) {
-                s = "window"
+                s = "window";
             }
-        
+
             if (!s) {
-                s = this.getAttribute("id")
+                s = this.getAttribute("id");
             }
-        
+
             if (!s) {
-                s = this.getAttribute("class")
+                s = this.getAttribute("class");
             }
-        
+
             if (!s) {
-                s = this.tagName
+                s = this.tagName;
             }
-        
-            return s
+
+            return s;
         },
 
         /**
@@ -121,12 +121,12 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @category Node Traversal
          */
         forEachChild (fn) {
-            for(let i = 0; i < this.childNodes.length; i ++) {
-                const child = this.childNodes[i]
-                fn(child)
+            for (let i = 0; i < this.childNodes.length; i ++) {
+                const child = this.childNodes[i];
+                fn(child);
             }
         },
-        
+
         /**
          * Executes a function for each descendant node.
          * @param {Function} fn - The function to execute for each descendant.
@@ -134,9 +134,9 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          */
         forEachDecendant: function (fn) {
             this.forEachChild(child => {
-                fn(child)
-                child.forEachDecendant(fn)
-            })
+                fn(child);
+                child.forEachDecendant(fn);
+            });
         },
 
         /**
@@ -145,10 +145,10 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @category Node Traversal
          */
         forEachAncestor: function (fn) {
-            const pn = this.parentNode()
+            const pn = this.parentNode();
             if (pn) {
-                fn(pn)
-                pn.forEachAncestor(fn)
+                fn(pn);
+                pn.forEachAncestor(fn);
             }
         },
 
@@ -159,17 +159,17 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @category Node Traversal
          */
         hasAncestor: function (anElement) {
-            const pn = this.parentNode()
+            const pn = this.parentNode();
             if (pn) {
                 if (pn === anElement) {
-                    return true
+                    return true;
                 }
 
-                return pn.hasAncestor(anElement)
+                return pn.hasAncestor(anElement);
             }
 
-            return false
-        }, 
+            return false;
+        },
 
         /**
          * Copies the computed style from another element.
@@ -196,7 +196,7 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
         copyStyleFrom: function (e) {
             const style = e.style.cssText;
             this.style.cssText = style;
-            return this
+            return this;
         },
 
         /**
@@ -208,13 +208,13 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
         copyAttributesFrom: function (e) {
             for (const attr of e.attributes) {
                 if (attr.namespace) {
-                    this.setAttributeNS(attr.namespace, attr.name, attr.value)
+                    this.setAttributeNS(attr.namespace, attr.name, attr.value);
                 } else {
-                    this.setAttribute(attr.name, attr.value)
+                    this.setAttribute(attr.name, attr.value);
                 }
             }
 
-            return this
+            return this;
         },
 
         /**
@@ -223,11 +223,11 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          * @category Attributes
          */
         attributesMap: function () {
-            const map = new Map()
+            const map = new Map();
             for (const attr of this.attributes) {
-                map.set(attr.name, attr.value)
+                map.set(attr.name, attr.value);
             }
-            return map
+            return map;
         },
 
         /**
@@ -238,8 +238,8 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
         setAttributesMap: function (map) {
             if (this.setAttribute) {
                 map.forEachKV((k, v) => {
-                    this.setAttribute(k, v)
-                })
+                    this.setAttribute(k, v);
+                });
             }
         },
 
@@ -250,21 +250,21 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          */
         removeAttributes: function (names) {
             if (this.removeAttribute) {
-                names.forEach(k => this.removeAttribute(k))
+                names.forEach(k => this.removeAttribute(k));
             }
         },
-        
+
         /**
          * Sets attributes on this node and removes them from descendants.
          * @param {Map} attributeMap - A map of attribute names to values.
          * @category Attributes
          */
         setAttributesAndRemoveFromDecendants: function (attributeMap) {
-            this.setAttributesMap(attributeMap)
-            const names = attributeMap.keysArray()
+            this.setAttributesMap(attributeMap);
+            const names = attributeMap.keysArray();
             this.forEachDecendant(e => {
-                e.removeAttributes(names)
-            })
+                e.removeAttributes(names);
+            });
         },
 
         /**
@@ -276,9 +276,9 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
             const xmlns = "http://www.w3.org/2000/svg";
             const symbol = document.createElementNS(xmlns, "g");
             //const symbol = document.createElement("g");
-            this.moveChildrenTo(symbol)
-            this.appendChild(symbol)
-            return symbol
+            this.moveChildrenTo(symbol);
+            this.appendChild(symbol);
+            return symbol;
         },
 
         /**
@@ -290,15 +290,15 @@ if (SvGlobals.globals()["Node"]) { // DOM Node
          */
         containsPointXY: function (x, y) {
             // this assumes ancestors geographically contain descendant elements
-            // which isn't always the case, but document.elementFromPoint might typically clip 
+            // which isn't always the case, but document.elementFromPoint might typically clip
             // subviews such that this is usually true
-            const topElement = document.elementFromPoint(x, y)
+            const topElement = document.elementFromPoint(x, y);
             if (topElement === this) {
-                return true
+                return true;
             }
-            return topElement.hasAncestor(this)
+            return topElement.hasAncestor(this);
         }
 
-    })
+    });
 
 }

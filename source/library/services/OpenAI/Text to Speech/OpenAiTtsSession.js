@@ -11,12 +11,12 @@
  */
 (class OpenAiTtsSession extends SvSummaryNode {
 
-  /**
+    /**
    * @description Returns an array of speed options.
    * @returns {number[]} An array of speed values.
    */
-  speedOptionsJson () {
-    return [1, 1.05, 1.10, 1.15, 1.2, 1.25, 1.5, 1.75, 2];
+    speedOptionsJson () {
+        return [1, 1.05, 1.10, 1.15, 1.2, 1.25, 1.5, 1.75, 2];
     /*
     return [
       {
@@ -41,176 +41,176 @@
       },
     ];
     */
-  }
+    }
 
-  /**
+    /**
    * @description Initializes the prototype slots for the class.
    */
-  initPrototypeSlots () {
+    initPrototypeSlots () {
 
-    {
-      /**
+        {
+            /**
        * @member {string} prompt
        * @description The prompt for text-to-speech conversion.
        */
-      const slot = this.newSlot("prompt", "");
-      slot.setInspectorPath("");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-      slot.setSummaryFormat("none");
-    }
+            const slot = this.newSlot("prompt", "");
+            slot.setInspectorPath("");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("none");
+        }
 
-    {
-      const validModels = ["tts-1", "tts-1-hd"];
-      /**
+        {
+            const validModels = ["tts-1", "tts-1-hd"];
+            /**
        * @member {string} ttsModel
        * @description The TTS model to use.
        */
-      const slot = this.newSlot("ttsModel", validModels.first());
-      slot.setInspectorPath("");
-      slot.setLabel("Text to Speech Model");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setValidValues(validModels);
-      slot.setIsSubnodeField(true);
-      slot.setSummaryFormat("none");
-    }
+            const slot = this.newSlot("ttsModel", validModels.first());
+            slot.setInspectorPath("");
+            slot.setLabel("Text to Speech Model");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValues(validModels);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("none");
+        }
 
-    {
-      const validVoices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
-      /**
+        {
+            const validVoices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
+            /**
        * @member {string} voice
        * @description The voice to use for TTS.
        */
-      //const slot = this.newSlot("voice", validVoices.first());
-      const slot = this.newSlot("voice", "fable");
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(validVoices)
-      slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("value key")
-    }
+            //const slot = this.newSlot("voice", validVoices.first());
+            const slot = this.newSlot("voice", "fable");
+            slot.setInspectorPath("");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValues(validVoices);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("value key");
+        }
 
-    {
-      const validResponseFormats = ["mp3", "opus", "aac", "flac"];
-      /**
+        {
+            const validResponseFormats = ["mp3", "opus", "aac", "flac"];
+            /**
        * @member {string} responseFormat
        * @description The audio format for the TTS response.
        */
-      const slot = this.newSlot("responseFormat", validResponseFormats.first());
-      slot.setInspectorPath("")
-      slot.setLabel("format")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setValidValues(validResponseFormats)
-      slot.setIsSubnodeField(true)
-    }
+            const slot = this.newSlot("responseFormat", validResponseFormats.first());
+            slot.setInspectorPath("");
+            slot.setLabel("format");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidValues(validResponseFormats);
+            slot.setIsSubnodeField(true);
+        }
 
-    {
-      const validValuesJson = this.speedOptionsJson()
-      /**
+        {
+            const validValuesJson = this.speedOptionsJson();
+            /**
        * @member {number} speed
        * @description The speed of the TTS playback.
        */
-      const slot = this.newSlot("speed", validValuesJson.first());
-      //const slot = this.newSlot("speed", validValuesJson.first().value);
-      slot.setInspectorPath("")
-      slot.setLabel("speed")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Number")
-      slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("value key")
-      slot.setValidValues(validValuesJson)
-    }
+            const slot = this.newSlot("speed", validValuesJson.first());
+            //const slot = this.newSlot("speed", validValuesJson.first().value);
+            slot.setInspectorPath("");
+            slot.setLabel("speed");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("value key");
+            slot.setValidValues(validValuesJson);
+        }
 
-    {
-      /**
+        {
+            /**
        * @member {null} generateAction
        * @description Action slot for generating TTS.
        */
-      const slot = this.newSlot("generateAction", null);
-      slot.setInspectorPath("");
-      slot.setLabel("Generate");
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(true);
-      slot.setActionMethodName("generate");
-    }
+            const slot = this.newSlot("generateAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Generate");
+            //slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("generate");
+        }
 
-    {
-      /**
+        {
+            /**
        * @member {string} error
        * @description Stores any error messages.
        */
-      const slot = this.newSlot("error", ""); // null or String
-      slot.setInspectorPath("");
-      slot.setShouldStoreSlot(false);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      //slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false);
-    }
+            const slot = this.newSlot("error", ""); // null or String
+            slot.setInspectorPath("");
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            //slot.setIsSubnodeField(true)
+            slot.setCanEditInspection(false);
+        }
 
-    // --- playing ---
+        // --- playing ---
 
-    {
-      /**
+        {
+            /**
        * @member {boolean} isMuted
        * @description Indicates if the audio is muted.
        */
-      const slot = this.newSlot("isMuted", false);
-      slot.setInspectorPath("");
-      slot.setLabel("is muted");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Boolean");
-      slot.setIsSubnodeField(true);
-      slot.setSummaryFormat("none");
-    }
+            const slot = this.newSlot("isMuted", false);
+            slot.setInspectorPath("");
+            slot.setLabel("is muted");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Boolean");
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("none");
+        }
 
-    {
-      /**
+        {
+            /**
        * @member {Array} ttsRequestQueue
        * @description Queue for TTS requests.
        */
-      const slot = this.newSlot("ttsRequestQueue", null);
-      slot.setDuplicateOp("copyValue");
-      slot.setShouldStoreSlot(false);
-      slot.setSummaryFormat("none");
-      slot.setSlotType("Array");
+            const slot = this.newSlot("ttsRequestQueue", null);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(false);
+            slot.setSummaryFormat("none");
+            slot.setSlotType("Array");
 
-    }
+        }
 
-    {
-      /**
+        {
+            /**
        * @member {AudioQueue} audioQueue
        * @description Queue for audio playback.
        */
-      const slot = this.newSlot("audioQueue", null);
-      slot.setDuplicateOp("copyValue");
-      slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
-      slot.setSlotType("AudioQueue");
-      slot.setSummaryFormat("none");
-    }
+            const slot = this.newSlot("audioQueue", null);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(false);
+            slot.setIsSubnode(true);
+            slot.setSlotType("AudioQueue");
+            slot.setSummaryFormat("none");
+        }
 
-    /*
+        /*
     {
       const slot = this.newSlot("outputAudioBlob", null)
       slot.setShouldStoreSlot(false);
@@ -219,67 +219,67 @@
     }
     */
 
-    {
-      /**
+        {
+            /**
        * @member {string} status
        * @description Current status of the TTS session.
        */
-      const slot = this.newSlot("status", ""); // String
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false);
-      slot.setSummaryFormat("none");
-    }
+            const slot = this.newSlot("status", ""); // String
+            slot.setInspectorPath("");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setSummaryFormat("none");
+        }
 
-    {
-      /**
+        {
+            /**
        * @member {SvWaSound} sound
        * @description Latest sound being generated.
        */
-      const slot = this.newSlot("sound", null); // latest sound being generated
-      slot.setSlotType("SvWaSound");
-    }
+            const slot = this.newSlot("sound", null); // latest sound being generated
+            slot.setSlotType("SvWaSound");
+        }
 
-    {
-      /**
+        {
+            /**
        * @member {Object} delegate
        * @description Delegate object for callbacks.
        */
-      const slot = this.newSlot("delegate", null); 
-      slot.setSlotType("Object");
+            const slot = this.newSlot("delegate", null);
+            slot.setSlotType("Object");
+        }
+
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setSubnodeClasses([]);
+        this.setNodeCanAddSubnode(false);
+        this.setCanDelete(true);
+        this.setNodeCanReorderSubnodes(false);
+
+        this.setNodeSubtitleIsChildrenSummary(true);
+        this.setTitle("Text to Speech Session");
+        this.setNoteIsSubnodeCount(true);
+        this.setCanDelete(true);
     }
 
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([]);
-    this.setNodeCanAddSubnode(false);
-    this.setCanDelete(true);
-    this.setNodeCanReorderSubnodes(false);
-
-    this.setNodeSubtitleIsChildrenSummary(true);
-    this.setTitle("Text to Speech Session");
-    this.setNoteIsSubnodeCount(true);
-    this.setCanDelete(true);
-  }
-
-  /**
+    /**
    * @description Initializes the OpenAiTtsSession.
    * @returns {OpenAiTtsSession} The initialized instance.
    */
-  init () {
-    super.init();
-    this.setTtsRequestQueue([]);
-    //if (!this.audioQueue()) {
-      this.setAudioQueue(AudioQueue.clone());
-    //}
-    return this;
-  }
-  
-  /*
+    init () {
+        super.init();
+        this.setTtsRequestQueue([]);
+        //if (!this.audioQueue()) {
+        this.setAudioQueue(AudioQueue.clone());
+        //}
+        return this;
+    }
+
+    /*
   title () {
     const p = this.prompt().clipWithEllipsis(30);
     return p ? p : "Text to Speech Prompt";
@@ -290,202 +290,201 @@
   }
   */
 
-  /**
+    /**
    * @description Gets the parent TTS sessions.
    * @returns {Object} The parent TTS sessions.
    */
-  ttsSessions () {
-    return this.parentNode();
-  }
+    ttsSessions () {
+        return this.parentNode();
+    }
 
-  /**
+    /**
    * @description Gets the OpenAI service.
    * @returns {OpenAiService} The OpenAI service instance.
    */
-  service () {
+    service () {
     //return this.ttsSessions().service()
-    return OpenAiService.shared();
-  }
+        return OpenAiService.shared();
+    }
 
-  // ---
+    // ---
 
-  /**
+    /**
    * @description Sets the muted state of the audio queue.
    * @param {boolean} aBool - The muted state to set.
    * @returns {OpenAiTtsSession} The current instance.
    */
-  setIsMuted (aBool) {
-    this.audioQueue().setIsMuted(aBool);
-    return this;
-  }
+    setIsMuted (aBool) {
+        this.audioQueue().setIsMuted(aBool);
+        return this;
+    }
 
-  /**
+    /**
    * @description Gets the muted state of the audio queue.
    * @returns {boolean} The current muted state.
    */
-  isMuted () {
-    return this.audioQueue().isMuted();
-  }
+    isMuted () {
+        return this.audioQueue().isMuted();
+    }
 
-  // ---
+    // ---
 
-  // --- generate action ---
+    // --- generate action ---
 
-  /**
+    /**
    * @description Checks if generation is possible.
    * @returns {boolean} True if generation is possible, false otherwise.
    */
-  canGenerate () {
-    return this.prompt().length > 0;
-  }
+    canGenerate () {
+        return this.prompt().length > 0;
+    }
 
-  /**
+    /**
    * @description Gets the generate action info.
    * @returns {Object} An object containing action info.
    */
-  generateActionInfo () {
-    return {
-        isEnabled: this.canGenerate(),
-        //title: this.title(),
-        isVisible: true
-    };
-  }
+    generateActionInfo () {
+        return {
+            isEnabled: this.canGenerate(),
+            //title: this.title(),
+            isVisible: true
+        };
+    }
 
-  // --- fetch ---
+    // --- fetch ---
 
-  /**
+    /**
    * @description Gets the API endpoint for TTS.
    * @returns {string} The API endpoint URL.
    */
-  endpoint () {
-    return "https://api.openai.com/v1/audio/speech";
-  }
+    endpoint () {
+        return "https://api.openai.com/v1/audio/speech";
+    }
 
-  /**
+    /**
    * @description Creates a new TTS request.
    * @returns {OpenAiTtsRequest} A new TTS request instance.
    */
-  newRequest () {
-    const request = OpenAiTtsRequest.clone();
-    request.setApiUrl(this.endpoint());
-    request.setDelegate(this)
+    newRequest () {
+        const request = OpenAiTtsRequest.clone();
+        request.setApiUrl(this.endpoint());
+        request.setDelegate(this);
 
-    const bodyJson = { 
-      model: this.ttsModel(), 
-      voice: this.voice(), 
-      input: this.prompt(),
-      response_format: this.responseFormat(), 
-      speed: this.speed()
-    };
+        const bodyJson = {
+            model: this.ttsModel(),
+            voice: this.voice(),
+            input: this.prompt(),
+            response_format: this.responseFormat(),
+            speed: this.speed()
+        };
 
-    request.setBodyJson(bodyJson);
-    return request;
-  }
+        request.setBodyJson(bodyJson);
+        return request;
+    }
 
-  /**
+    /**
    * @description Generates TTS and queues the resulting sound.
    * @returns {SvWaSound} The generated sound.
    */
-  generate () {
-    const request = this.newRequest();
-    this.ttsRequestQueue().unshift(request); // needed?
-    const sound = request.sound();
-    sound.setTranscript(this.prompt());
-    this.queueSound(sound);
-    request.asyncSend();
-    return sound;
-  }
+    generate () {
+        const request = this.newRequest();
+        this.ttsRequestQueue().unshift(request); // needed?
+        const sound = request.sound();
+        sound.setTranscript(this.prompt());
+        this.queueSound(sound);
+        request.asyncSend();
+        return sound;
+    }
 
-  /**
+    /**
    * @description Queues a sound for playback.
    * @param {SvWaSound} sound - The sound to queue.
    * @returns {OpenAiTtsSession} The current instance.
    */
-  queueSound (sound) {
-    this.audioQueue().queueSvWaSound(sound);
-    return this;
-  }
+    queueSound (sound) {
+        this.audioQueue().queueSvWaSound(sound);
+        return this;
+    }
 
-  /**
+    /**
    * @description Shuts down the TTS session.
    * @returns {OpenAiTtsSession} The current instance.
    */
-  shutdown () {
-    this.stopAndClearQueue();
-    return this;
-  }
+    shutdown () {
+        this.stopAndClearQueue();
+        return this;
+    }
 
-  /**
+    /**
    * @description Stops playback and clears the queue.
    */
-  stopAndClearQueue () {
-    this.ttsRequestQueue().forEach(r => r.shutdown());
-    this.setTtsRequestQueue([]);
+    stopAndClearQueue () {
+        this.ttsRequestQueue().forEach(r => r.shutdown());
+        this.setTtsRequestQueue([]);
 
-    this.audioQueue().stopAndClearQueue();
-  }
+        this.audioQueue().stopAndClearQueue();
+    }
 
-  /**
+    /**
    * @description Callback for when a request begins.
    * @param {OpenAiTtsRequest} request - The request that began.
    */
-  onRequestBegin (/*request*/) {
-  }
+    onRequestBegin (/*request*/) {
+    }
 
-  /**
+    /**
    * @description Callback for when a request completes successfully.
    * @param {OpenAiTtsRequest} request - The completed request.
    */
-  async onRequestComplete (/*request*/) {
-    this.setStatus("success");    
+    async onRequestComplete (/*request*/) {
+        this.setStatus("success");
     //this.onEnd();
     //console.log('Success: got audio blob of size: ' + audioBlob.size);
-  }
+    }
 
-  /**
+    /**
    * @description Callback for when a request encounters an error.
    * @param {OpenAiTtsRequest} request - The request that errored.
    * @param {Error} error - The error that occurred.
    */
-  onRequestError (request, error) {
-    const s = "ERROR: " + error.message;
-    console.error(s);
-    this.setError(error.message);
-    this.setStatus(s)
-    this.sendDelegateMessage("onTtsPromptError", [this]);
-    //this.onEnd();
-    PanelView.showError(new Error("Text to Speech request " + s));
-  }
+    onRequestError (request, error) {
+        const s = "ERROR: " + error.message;
+        console.error(s);
+        this.setError(error.message);
+        this.setStatus(s);
+        this.sendDelegateMessage("onTtsPromptError", [this]);
+        //this.onEnd();
+        PanelView.showError(new Error("Text to Speech request " + s));
+    }
 
-  //onEnd () {
+    //onEnd () {
     // on success or error
-  //}
+    //}
 
-  // --- playing audio ---- 
+    // --- playing audio ----
 
-  /*
+    /*
   queueAudioBlob (audioBlob) { // called by the request once it's complete
     this.audioQueue().queueAudioBlob(audioBlob);
     return this;
   }
   */
-  
-  /**
+
+    /**
    * @description Pauses audio playback.
    */
-  pause () {
-    this.logDebug("pause()");
-    this.audioQueue().pause();
-  }
+    pause () {
+        this.logDebug("pause()");
+        this.audioQueue().pause();
+    }
 
-  /**
+    /**
    * @description Resumes audio playback.
    */
-  resume () {
-    this.logDebug("resume()");
-    this.audioQueue().resume();
-  }
+    resume () {
+        this.logDebug("resume()");
+        this.audioQueue().resume();
+    }
 
 }.initThisClass());
 
-  

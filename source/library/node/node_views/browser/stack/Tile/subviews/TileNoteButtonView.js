@@ -27,7 +27,7 @@
 
     syncFromNode () {
         // get the button name from the node and set it
-        
+
         return this;
     }
 
@@ -50,12 +50,12 @@
      * @category Animation
      */
     setTransition (s) {
-        
+
         return super.setTransition(s);
     }
 
     onClick (/*event*/) {
-        
+
         return this;
     }
 

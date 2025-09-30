@@ -8,7 +8,7 @@
  * @class OpenAiStyleTransfers
  * @extends SvSummaryNode
  * @classdesc Collection of OpenAI style transfers.
- * 
+ *
  * Manages a collection of OpenAI style transfer operations that use
  * OpenAI's style reference image capability to apply artistic styles
  * to generated images.

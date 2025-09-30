@@ -6,12 +6,12 @@
  * @extends SvSummaryNode
  * @classdesc A shared global object to manage passwords.
  * Used by Service APIs. Examples:
- * 
+ *
  * SvCredentialManager.shared().setUserAuthToken("..."); // set the user auth token for the current user
- * 
+ *
  * const bearerToken = SvCredentialManager.shared().bearerTokenForService("OpenAI");
  * const bearerToken = SvCredentialManager.shared().bearerTokenForEndpoint("https://api.openai.com/v1/chat/completions");
- * 
+ *
  */
 
 
@@ -51,16 +51,16 @@
     }
 
     finalInit () {
-      //this.setUserAuthToken("");
-      super.finalInit();
+        //this.setUserAuthToken("");
+        super.finalInit();
     }
 
     // Return fresh Firebase ID token for API authentication
 
     async bearerTokenForService (/*serviceName*/) {
-      return await UoAccountServerApi.shared().authToken();
+        return await UoAccountServerApi.shared().authToken();
     }
-    
+
     async bearerTokenForEndpoint (/*endpoint*/) {
         return await UoAccountServerApi.shared().authToken();
     }
@@ -71,23 +71,23 @@
    * @returns {string} The URL for fetching service information.
    * @category Service Information
    */
-  fetchInfoUrl () {
-    const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-    const url = baseUrl + "/app/info/" + this.svType() + ".json";
-    return url;
-  }
+    fetchInfoUrl () {
+        const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+        const url = baseUrl + "/app/info/" + this.svType() + ".json";
+        return url;
+    }
 
-  /**
+    /**
    * @description Fetches the service information.
    * @returns {Promise<Object>} A promise that resolves to the service information.
    * @category Service Information
    */
-  async fetchInfo () {
-    return fetch(this.fetchInfoUrl())
-      .then(response => response.json())
-      .then(json => {
-        return json;
-      });
-  }
+    async fetchInfo () {
+        return fetch(this.fetchInfoUrl())
+            .then(response => response.json())
+            .then(json => {
+                return json;
+            });
+    }
 
 }.initThisClass());

@@ -15,17 +15,17 @@
  *   {image_url} in the style of {style_prompt}
  * - Supports image weight (--iw) and chaos (--c) parameters
  * - Stores the style transferred image as a urlData
- * 
+ *
  * Uses Firebase Storage for image hosting to enable Midjourney style transfer.
  * Firebase provides public URLs that are accessible by PiAPI/Midjourney servers.
- * 
+ *
  * Delegate messages sent:
  * - onImagePromptLoading
  * - onImagePromptError
  * - onImagePromptImageLoaded
  * - onImagePromptImageError
  * - onImagePromptEnd
- * 
+ *
  * (the delegate will typically be a UoImageMessage)
  */
 
@@ -195,7 +195,7 @@
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("start");
         }
-        
+
         // Just style transfer action (skip OpenAI generation)
         {
             const slot = this.newSlot("justStyleTransferAction", null);
@@ -207,7 +207,7 @@
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("justStyleTransfer");
         }
-        
+
         // Retry final transfer action
         {
             const slot = this.newSlot("retryFinalTransferAction", null);
@@ -283,15 +283,15 @@
         const jsonMatch = prompt.match(/\{[\s\S]*\}/);
         if (jsonMatch && jsonMatch.isValidJson()) {
             const jsonObj = JSON.parse(jsonMatch[0]);
-            
+
             if (jsonObj.scene) {
                 this.setContentPrompt(jsonObj.scene);
             }
-            
+
             if (jsonObj.artStyle) {
                 let style = jsonObj.artStyle;
                 this.setStylePrompt(style);
-            }                
+            }
         } else {
             debugger;
             // If it's not JSON or parsing failed, use the prompt as both content and style
@@ -347,68 +347,68 @@
         try {
             this.setError("");
             this.setStatus("starting style transfer...");
-            
+
             // Check if PiAPI service has API key
             if (!this.piApiService().hasApiKey()) {
                 throw new Error("PiAPI API key is not configured. Please set your API key in PiAPI Service settings.");
             }
-            
+
             // Check if OpenAI service has API key
             if (!this.openAiService().hasApiKey()) {
                 throw new Error("OpenAI API key is not configured. Please set your API key in OpenAI Service settings.");
             }
-            
+
             // Check if Firebase service is configured
             const firebaseService = FirebaseStorageService.shared();
             if (!firebaseService.isConfigured()) {
                 throw new Error("Firebase Storage is not configured. Please set up Firebase configuration in Firebase Storage Service settings.");
             }
-            
+
             // Validate inputs
             if (!this.contentPrompt() || this.contentPrompt().trim() === "") {
                 throw new Error("Content prompt is required");
             }
-            
+
             if (!this.stylePrompt() || this.stylePrompt().trim() === "") {
                 throw new Error("Style prompt is required");
             }
-            
+
             // Check what's already completed
             const openAiPrompt = this.openAiPrompt();
             const hasOpenAiImage = openAiPrompt && openAiPrompt.images() && openAiPrompt.images().subnodeCount() > 0;
             const hasOpenAiFirebase = this.getInitImageFirebaseUrl() !== null;
-            
+
             // Step 1: Generate OpenAI image if needed
             if (!hasOpenAiImage) {
                 this.setStatus("generating content image with OpenAI...");
                 this.sendDelegate("onImagePromptLoading");
-                
+
                 const openAiPrompt = this.setupInitialPrompt();
                 openAiPrompt.setDelegate(this);
-                
+
                 console.log("=== STEP 1: OpenAI Image Generation ===");
                 console.log("Content Prompt:", this.contentPrompt());
                 console.log("Sending to OpenAI API...");
-                
+
                 await openAiPrompt.generate();
             } else {
                 this.setStatus("using existing OpenAI image...");
                 console.log("=== STEP 1: Using existing OpenAI image ===");
             }
-            
+
             // Step 2: Verify OpenAI generation succeeded
             if (!openAiPrompt.images() || openAiPrompt.images().subnodeCount() === 0) {
                 const openAiError = openAiPrompt.error ? openAiPrompt.error() : "No images generated";
                 throw new Error("Failed to generate OpenAI image: " + openAiError);
             }
-            
+
             const openAiImage = openAiPrompt.images().subnodes().last();
             const openAiImageDataUrl = openAiImage.imageUrl();
-            
+
             if (!openAiImageDataUrl) {
                 throw new Error("Failed to get image URL from OpenAI");
             }
-            
+
             // Step 3: Upload OpenAI image to Firebase if needed
             if (!hasOpenAiFirebase) {
                 this.setStatus("uploading OpenAI image to Firebase...");
@@ -421,47 +421,47 @@
                 this.setStatus("using existing Firebase upload...");
                 console.log("=== STEP 3: Using existing Firebase upload ===");
             }
-            
+
             // Verify upload succeeded
             const initRef = this.initRefImage();
-            
+
             if (!initRef || !initRef.hasPublicUrl()) {
                 throw new Error("Failed to upload OpenAI image to Firebase");
             }
-            
+
             const openAiFirebaseUrl = this.getInitImageFirebaseUrl();
-            
+
             if (!openAiFirebaseUrl) {
                 throw new Error("Failed to get Firebase URL for OpenAI image");
             }
-            
+
             console.log("Firebase URL for OpenAI image:", openAiFirebaseUrl);
-            
+
             // Step 4: Apply style transfer using Firebase URL
             this.setStatus("applying style to OpenAI image with Midjourney...");
-            
+
             const finalPrompt = this.piApiFinalPrompt();
-            
+
             // Build the simple prompt: {image url} in the style of {style}
             // IMPORTANT: Do NOT include content description - only the image URL and style
             // The OpenAI image already contains the content, we just want to apply style
             let fullPrompt = openAiFirebaseUrl; // Image URL must be first
             fullPrompt += ` in the style of ${this.stylePrompt()}`; // ONLY add the style, not content
-            
+
             // Add image weight if not default
             if (this.imageWeight() !== 1) {
                 fullPrompt += ` --iw ${this.imageWeight()}`;
             }
-            
+
             // Add chaos weight if not default
             if (this.chaosWeight() && this.chaosWeight() !== 0) {
                 fullPrompt += ` --c ${this.chaosWeight()}`;
             }
-            
+
             // Note: --sw (style weight) only works with --sref (style reference images)
             // --iw (image weight) controls how closely to follow the input image
             // --c (chaos) controls variation between the 4 generated images
-            
+
             console.log("=== STEP 4: Midjourney Style Transfer ===");
             console.log("Content Prompt (used for OpenAI):", this.contentPrompt());
             console.log("Style Prompt (for Midjourney):", this.stylePrompt());
@@ -469,17 +469,17 @@
             console.log("Aspect Ratio:", this.aspectRatio());
             console.log("Process Mode:", this.processMode());
             console.log("Sending to PiAPI/Midjourney...");
-            
+
             finalPrompt.setPrompt(fullPrompt);
             finalPrompt.setModel("midjourney");
             finalPrompt.setAspectRatio(this.aspectRatio());
             finalPrompt.setProcessMode(this.processMode());
             finalPrompt.setDelegate(this);
-            
+
             // Start final generation and wait for completion
             await finalPrompt.generate();
             await this.waitForMidjourneyCompletion(finalPrompt);
-            
+
             // Get the first image from the final generation
             const images = finalPrompt.images();
             if (images && images.subnodeCount() > 0) {
@@ -500,14 +500,14 @@
             } else {
                 throw new Error("No images generated in final style transfer");
             }
-            
+
         } catch (error) {
             this.setError(error.message);
             this.setStatus("failed");
             this.sendDelegate("onImagePromptError");
         }
     }
-    
+
     /**
      * @description Just does the style transfer without regenerating the OpenAI image.
      * @returns {Promise<void>}
@@ -517,37 +517,37 @@
         try {
             this.setError("");
             this.setStatus("starting style transfer only...");
-            
+
             // Check if we have an OpenAI image
             const openAiPrompt = this.openAiPrompt();
             if (!openAiPrompt || !openAiPrompt.images() || openAiPrompt.images().subnodeCount() === 0) {
                 throw new Error("No OpenAI image available. Generate one first using 'Start Full Process'");
             }
-            
+
             // Check if Firebase Storage is configured
             const firebaseService = FirebaseStorageService.shared();
             if (!firebaseService.isConfigured()) {
                 throw new Error("Firebase Storage is not configured");
             }
-            
+
             // Validate inputs
             if (!this.stylePrompt() || this.stylePrompt().trim() === "") {
                 throw new Error("Style prompt is required");
             }
-            
+
             console.log("=== JUST STYLE TRANSFER ===");
             console.log("Using existing OpenAI image");
             console.log("Style Prompt:", this.stylePrompt());
             console.log("Image Weight:", this.imageWeight());
-            
+
             // Get the OpenAI image
             const openAiImage = openAiPrompt.images().subnodes().last();
             const openAiImageDataUrl = openAiImage.imageUrl();
-            
+
             if (!openAiImageDataUrl) {
                 throw new Error("Failed to get image URL from OpenAI");
             }
-            
+
             // Upload to Firebase if needed
             const hasOpenAiFirebase = this.getInitImageFirebaseUrl() !== null;
             if (!hasOpenAiFirebase) {
@@ -558,43 +558,43 @@
                 initRef.setImageLabel("OpenAI content image");
                 await initRef.uploadToFirebase();
             }
-            
+
             const openAiFirebaseUrl = this.getInitImageFirebaseUrl();
             if (!openAiFirebaseUrl) {
                 throw new Error("Failed to get Firebase URL for OpenAI image");
             }
-            
+
             console.log("Firebase URL:", openAiFirebaseUrl);
-            
+
             // Apply style transfer
             this.setStatus("applying style to OpenAI image with Midjourney...");
-            
+
             const finalPrompt = this.piApiFinalPrompt();
-            
+
             // Build the simple prompt: {image url} in the style of {style}
             // IMPORTANT: Do NOT include content description - only the image URL and style
             // The OpenAI image already contains the content, we just want to apply style
             let fullPrompt = openAiFirebaseUrl; // Image URL must be first
             fullPrompt += ` in the style of ${this.stylePrompt()}`; // ONLY add the style, not content
-            
+
             // Add image weight if not default
             if (this.imageWeight() !== 1) {
                 fullPrompt += ` --iw ${this.imageWeight()}`;
             }
-            
+
             console.log("Full Midjourney Prompt:", fullPrompt);
             console.log("Sending to PiAPI/Midjourney...");
-            
+
             finalPrompt.setPrompt(fullPrompt);
             finalPrompt.setModel("midjourney");
             finalPrompt.setAspectRatio(this.aspectRatio());
             finalPrompt.setProcessMode(this.processMode());
             finalPrompt.setDelegate(this);
-            
+
             // Start final generation and wait for completion
             await finalPrompt.generate();
             await this.waitForMidjourneyCompletion(finalPrompt);
-            
+
             // Get the first image from the final generation
             const images = finalPrompt.images();
             if (images && images.subnodeCount() > 0) {
@@ -613,14 +613,14 @@
             } else {
                 throw new Error("No images generated in style transfer");
             }
-            
+
         } catch (error) {
             this.setError(error.message);
             this.setStatus("failed");
             this.sendDelegate("onImagePromptError");
         }
     }
-    
+
     /**
      * @description Retries just the final style transfer step.
      * @returns {Promise<void>}
@@ -630,73 +630,73 @@
         try {
             this.setError("");
             this.setStatus("retrying style transfer...");
-            
+
             // Check we have the OpenAI Firebase URL
             const openAiFirebaseUrl = this.getInitImageFirebaseUrl();
-            
+
             if (!openAiFirebaseUrl) {
                 throw new Error("OpenAI image not uploaded to Firebase yet");
             }
-            
+
             // Check if Firebase URL is still accessible
             this.setStatus("checking Firebase image accessibility...");
-            
+
             try {
-                const response = await fetch(openAiFirebaseUrl, { method: 'HEAD' });
+                const response = await fetch(openAiFirebaseUrl, { method: "HEAD" });
                 if (!response.ok) {
-                    console.error(`OpenAI Firebase URL check failed:`, response.status, response.statusText);
+                    console.error("OpenAI Firebase URL check failed:", response.status, response.statusText);
                     if (response.status === 403) {
-                        throw new Error(`OpenAI Firebase URL has expired or is not accessible (403 Forbidden). Need to re-upload.`);
+                        throw new Error("OpenAI Firebase URL has expired or is not accessible (403 Forbidden). Need to re-upload.");
                     } else if (response.status === 404) {
-                        throw new Error(`OpenAI Firebase image not found (404). Need to re-upload.`);
+                        throw new Error("OpenAI Firebase image not found (404). Need to re-upload.");
                     } else {
                         throw new Error(`OpenAI Firebase URL is not accessible: ${response.status} ${response.statusText}`);
                     }
                 }
-                console.log(`OpenAI Firebase URL is accessible`);
+                console.log("OpenAI Firebase URL is accessible");
             } catch (error) {
                 // If Firebase URL is not accessible, we need to re-upload
                 this.setStatus("Firebase URL expired, need to re-generate or re-upload image");
                 throw error;
             }
-            
+
             // Apply style transfer
             this.setStatus("applying style to OpenAI image with Midjourney...");
-            
+
             const finalPrompt = this.piApiFinalPrompt();
-            
+
             // Build the simple prompt: {image url} in the style of {style}
             // IMPORTANT: Do NOT include content description - only the image URL and style
             // The OpenAI image already contains the content, we just want to apply style
             let fullPrompt = openAiFirebaseUrl; // Image URL must be first
             fullPrompt += ` in the style of ${this.stylePrompt()}`; // ONLY add the style, not content
-            
+
             // Add image weight if not default
             if (this.imageWeight() !== 1) {
                 fullPrompt += ` --iw ${this.imageWeight()}`;
             }
-            
+
             // Add chaos weight if not default
             if (this.chaosWeight() && this.chaosWeight() !== 0) {
                 fullPrompt += ` --c ${this.chaosWeight()}`;
             }
-            
+
             // Note: --sw (style weight) only works with --sref (style reference images)
             // --iw (image weight) controls how closely to follow the input image
             // --c (chaos) controls variation between the 4 generated images
-            
+
             console.log("Final style transfer prompt (image + style only):", fullPrompt);
-            
+
             finalPrompt.setPrompt(fullPrompt);
             finalPrompt.setModel("midjourney");
             finalPrompt.setAspectRatio(this.aspectRatio());
             finalPrompt.setProcessMode(this.processMode());
             finalPrompt.setDelegate(this);
-            
+
             // Start final generation and wait for completion
             await finalPrompt.generate();
             await this.waitForMidjourneyCompletion(finalPrompt);
-            
+
             // Get the first image from the final generation
             const images = finalPrompt.images();
             if (images && images.subnodeCount() > 0) {
@@ -717,14 +717,14 @@
             } else {
                 throw new Error("No images generated in final style transfer");
             }
-            
+
         } catch (error) {
             this.setError(error.message);
             this.setStatus("retry failed");
             this.sendDelegate("onImagePromptError");
         }
     }
-    
+
     /**
      * @description Gets action info for the retry final transfer action.
      * @returns {Object} Action info.
@@ -733,14 +733,14 @@
     retryFinalTransferActionInfo () {
         const hasOpenAiFirebase = this.getInitImageFirebaseUrl() !== null;
         const hasStylePrompt = this.stylePrompt() && this.stylePrompt().trim() !== "";
-        
+
         return {
             isEnabled: hasOpenAiFirebase && hasStylePrompt && !this.isProcessing(),
             isVisible: hasOpenAiFirebase
         };
     }
-    
-    
+
+
     /**
      * @description Waits for a Midjourney generation to complete.
      * @param {Object} piApiPrompt - The PiAPI prompt to wait for.
@@ -751,10 +751,10 @@
         return new Promise((resolve, reject) => {
             let pollCount = 0;
             const maxPolls = 60; // 5 minutes with 5-second intervals
-            
+
             const checkInterval = setInterval(() => {
                 pollCount++;
-                
+
                 // Check if images have been loaded (this happens after polling completes)
                 const images = piApiPrompt.images();
                 if (images && images.subnodeCount() > 0) {
@@ -763,26 +763,26 @@
                     resolve();
                     return;
                 }
-                
+
                 // Check generation status
                 const generations = piApiPrompt.generations();
                 if (generations && generations.subnodes().length > 0) {
                     const generation = generations.subnodes().first();
                     const status = generation.status();
-                    
+
                     console.log(`Midjourney polling ${pollCount}/${maxPolls}: ${status}`);
-                    
+
                     if (status.includes("error") || status.includes("failed")) {
                         clearInterval(checkInterval);
                         // Get more details about the error
                         let errorDetails = generation.error ? generation.error() : "";
-                        
+
                         // Try to get the full API response for more details
                         if (generation.xhrRequest && generation.xhrRequest()) {
                             try {
                                 const responseText = generation.xhrRequest().responseText();
                                 const responseJson = JSON.parse(responseText);
-                                
+
                                 // Extract error details from the response
                                 if (responseJson.data && responseJson.data.error) {
                                     const apiError = responseJson.data.error;
@@ -791,7 +791,7 @@
                                         errorDetails += ` - ${apiError.detail}`;
                                     }
                                 }
-                                
+
                                 // Create a single object with all debug info
                                 const debugInfo = {
                                     status: status,
@@ -800,14 +800,14 @@
                                     apiError: responseJson.data?.error || null,
                                     fullResponse: responseJson
                                 };
-                                
+
                                 // Log as a single string for easy copying
                                 console.error("MIDJOURNEY_ERROR_DEBUG: " + JSON.stringify(debugInfo, null, 2));
                             } catch (e) {
                                 console.error("PARSE_ERROR: " + e.message);
                             }
                         }
-                        
+
                         const errorMessage = errorDetails || "Unknown error - check console for details";
                         reject(new Error(`Midjourney generation failed: ${errorMessage}`));
                     } else if (pollCount >= maxPolls) {
@@ -877,22 +877,22 @@
      */
     isProcessing () {
         const status = this.status();
-        return status !== "" && 
-               status !== "failed" && 
+        return status !== "" &&
+               status !== "failed" &&
                status !== "style transfer complete" &&
                status !== "completed" &&
                status !== "Using Midjourney artistic interpretation as final result" &&
                !status.includes("Error");
     }
-    
+
     /**
      * @description Checks if the style transfer process can be started.
      * @returns {boolean} True if can start, false otherwise.
      * @category Status
      */
     canStart () {
-        return this.contentPrompt() !== null && 
-               this.contentPrompt().trim() !== "" && 
+        return this.contentPrompt() !== null &&
+               this.contentPrompt().trim() !== "" &&
                this.stylePrompt() !== null &&
                this.stylePrompt().trim() !== "" &&
                !this.isProcessing();
@@ -945,7 +945,7 @@
         const openAiPrompt = this.openAiPrompt();
         const hasOpenAiImage = openAiPrompt && openAiPrompt.images() && openAiPrompt.images().subnodeCount() > 0;
         const hasStylePrompt = this.stylePrompt() && this.stylePrompt().trim() !== "";
-        
+
         return {
             isEnabled: hasOpenAiImage && hasStylePrompt && !this.isProcessing(),
             isVisible: true
@@ -961,15 +961,15 @@
         this.setError("");
         this.setStatus("");
         this.setResultDataUrl(null);
-        
+
         if (this.openAiPrompt()) {
             this.openAiPrompt().shutdown();
         }
-        
+
         if (this.piApiPrompt()) {
             this.piApiPrompt().shutdown();
         }
-        
+
         return this;
     }
 
@@ -982,15 +982,15 @@
         if (this.hasError()) {
             return "Error: " + this.error();
         }
-        
+
         if (this.hasResult()) {
             return "Complete";
         }
-        
+
         if (this.status()) {
             return this.status();
         }
-        
+
         // Check for missing API keys
         if (!this.piApiService().hasApiKey()) {
             return "PiAPI key required";
@@ -1001,7 +1001,7 @@
         if (!FirebaseStorageService.shared().isConfigured()) {
             return "Firebase Storage configuration required";
         }
-        
+
         return "Ready";
     }
 

@@ -4,14 +4,14 @@
  * @module library.node.node_views.browser.stack.Tile.subviews
  * @class TileTitleView
  * @extends SvTextView
- * @classdesc A title element in a Tile. 
- * 
+ * @classdesc A title element in a Tile.
+ *
  * Reasons not to just use setElementClassName() on a SvTextView instead:
  * - to automatically get the full class hierarchy in the div name
  * - a place to (potentially) override interaction behaviors
  */
 (class TileTitleView extends SvTextView {
-    
+
     /**
      * @description Initializes prototype slots for the TileTitleView.
      * @category Initialization
@@ -33,20 +33,20 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setDisplay("block")
-        this.setPosition("relative")
-        this.setMarginTop("0em")
-        this.setMarginLeft("0em")
-        this.setMinWidth("20px")
-        this.setWidth("100%")
-        this.setPaddingTop("2px")
-        this.setPaddingBottom("2px")
-        this.setTextAlign("left")
-        this.setWhiteSpace("nowrap")
-        this.setOverflow("hidden")
-        this.setWordWrap("normal")
-        return this
+        super.init();
+        this.setDisplay("block");
+        this.setPosition("relative");
+        this.setMarginTop("0em");
+        this.setMarginLeft("0em");
+        this.setMinWidth("20px");
+        this.setWidth("100%");
+        this.setPaddingTop("2px");
+        this.setPaddingBottom("2px");
+        this.setTextAlign("left");
+        this.setWhiteSpace("nowrap");
+        this.setOverflow("hidden");
+        this.setWordWrap("normal");
+        return this;
     }
 
     /*
@@ -66,7 +66,7 @@
         const tile = this.parentView().parentView();
         const nextTile = this.row().column().selectNextTile()
         */
-        return true
+        return true;
     }
-    
+
 }.initThisClass());

@@ -7,14 +7,14 @@
  * @classdesc SvUrlField is a specialized field for handling URL data.
  */
 (class SvUrlField extends SvField {
-    
+
     /**
      * @static
      * @returns {boolean} True if the field is available as a node primitive.
      * @category Availability
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@
      * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
-        return mimeType.startsWith("text/uri-list")
+        return mimeType.startsWith("text/uri-list");
     }
 
     /**
@@ -34,26 +34,26 @@
      * @category Data Opening
      */
     static openMimeChunk (dataChunk) {
-        const newNode = this.clone()
-        const uris = dataChunk.decodedData().split("\n")
-        const uri = uris.first()
+        const newNode = this.clone();
+        const uris = dataChunk.decodedData().split("\n");
+        const uri = uris.first();
 
         try {
-            const url = new URL(uri)
-            newNode.setKey(url.hostname)
-            const path = url.pathname
-            const p = path.fileName()
+            const url = new URL(uri);
+            newNode.setKey(url.hostname);
+            const path = url.pathname;
+            const p = path.fileName();
             if (p) {
-                newNode.setKey(p)
+                newNode.setKey(p);
             }
         } catch (error) {
-            newNode.setKey("?")
+            newNode.setKey("?");
         }
 
-        newNode.setValue(uri)
-        newNode.setValueIsVisible(false)
+        newNode.setValue(uri);
+        newNode.setValueIsVisible(false);
 
-        return newNode
+        return newNode;
     }
 
     /**
@@ -133,19 +133,19 @@
      * @category Slot Management
      */
     newStringSlotNamed (slotName, defaultValue) {
-        const slot = this.newSlot(slotName, defaultValue)
-        slot.setOwnsSetter(true)
-        slot.setDoesHookSetter(true)
-        slot.setDuplicateOp("copyValue")
-        slot.setCanInspect(true)
-        slot.setSlotType("String")
-        slot.setLabel(slotName.capitalized())
-        slot.setInspectorPath("URL")
+        const slot = this.newSlot(slotName, defaultValue);
+        slot.setOwnsSetter(true);
+        slot.setDoesHookSetter(true);
+        slot.setDuplicateOp("copyValue");
+        slot.setCanInspect(true);
+        slot.setSlotType("String");
+        slot.setLabel(slotName.capitalized());
+        slot.setInspectorPath("URL");
 
         if (slotName !== "href") {
             //slot.setCanEditInspection(false)
         }
-        return slot
+        return slot;
     }
 
     /**
@@ -153,18 +153,18 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
 
-        this.setKey("Link")
-        this.setKeyIsVisible(true)
-        this.setKeyIsEditable(true)
+        this.setKey("Link");
+        this.setKeyIsVisible(true);
+        this.setKeyIsEditable(true);
 
-        this.setValueIsEditable(true)
-        this.setValueIsVisible(true)
+        this.setValueIsEditable(true);
+        this.setValueIsVisible(true);
 
-        this.setCanDelete(true)
+        this.setCanDelete(true);
 
-        this.setNodeCanInspect(true)
+        this.setNodeCanInspect(true);
     }
 
     /**
@@ -173,7 +173,7 @@
      * @category Inspection
      */
     nodeInspector () {
-        return super.nodeInspector()
+        return super.nodeInspector();
     }
 
     /**
@@ -182,18 +182,18 @@
      * @category URL Manipulation
      */
     urlFromValue () {
-        const s = this.value()
+        const s = this.value();
         if (s.trim() === "") {
-            return null
+            return null;
         }
-        
+
         try {
-            const url = new URL(s)
-            return url
+            const url = new URL(s);
+            return url;
         } catch (e) {
             //this.setError(e.message)
         }
-        return null
+        return null;
     }
 
     /**
@@ -201,7 +201,7 @@
      * @category Event Handling
      */
     didUpdateSlotValue () {
-        this.parseValue()
+        this.parseValue();
     }
 
     /**
@@ -209,10 +209,10 @@
      * @category Event Handling
      */
     didUpdateSlotHref () {
-        this.setIsUpdatingHref(true)
-        this.setValue(this.href())
-        this.parseValue()
-        this.setIsUpdatingHref(false)
+        this.setIsUpdatingHref(true);
+        this.setValue(this.href());
+        this.parseValue();
+        this.setIsUpdatingHref(false);
     }
 
     /**
@@ -221,16 +221,16 @@
      */
     scheduleUnparse () {
         if (this.hasDoneInit()) {
-            this.unparseValue()
+            this.unparseValue();
         }
     }
-    
+
     /**
      * @description Called when the protocol slot is updated.
      * @category Event Handling
      */
     didUpdateSlotProtocol () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -238,7 +238,7 @@
      * @category Event Handling
      */
     didUpdateSlotUsername () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -246,7 +246,7 @@
      * @category Event Handling
      */
     didUpdateSlotPassword () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -254,7 +254,7 @@
      * @category Event Handling
      */
     didUpdateSlotHostName () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -262,7 +262,7 @@
      * @category Event Handling
      */
     didUpdateSlotPort () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -270,7 +270,7 @@
      * @category Event Handling
      */
     didUpdateSlotPathname () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -278,7 +278,7 @@
      * @category Event Handling
      */
     didUpdateSlotSearch () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
 
     /**
@@ -286,31 +286,31 @@
      * @category Event Handling
      */
     didUpdateSlotHash () {
-        this.scheduleUnparse()
+        this.scheduleUnparse();
     }
-    
+
     /**
      * @description Parses the current value and updates the individual URL components.
      * @returns {SvUrlField} This instance.
      * @category URL Manipulation
      */
     parseValue () {
-        const url = this.urlFromValue()
+        const url = this.urlFromValue();
         if (!url) {
-            return this
+            return this;
         }
-        
-        this.directSetProtocol(url.protocol)
-        this.directSetUsername(url.username)
-        this.directSetPassword(url.password)
-        this.directSetHostname(url.hostname)
-        this.directSetPort(url.port)
-        this.directSetPathname(url.pathname)
-        this.directSetSearch(url.search)
-        this.directSetHash(url.hash)
-        this.directSetHref(url.href)
-        
-        return this
+
+        this.directSetProtocol(url.protocol);
+        this.directSetUsername(url.username);
+        this.directSetPassword(url.password);
+        this.directSetHostname(url.hostname);
+        this.directSetPort(url.port);
+        this.directSetPathname(url.pathname);
+        this.directSetSearch(url.search);
+        this.directSetHash(url.hash);
+        this.directSetHref(url.href);
+
+        return this;
     }
 
     /**
@@ -319,16 +319,16 @@
      * @category URL Manipulation
      */
     urlFromComponents () {
-        const url = new URL("http://test.com")
-        url.protocol = this.protocol()
-        url.username = this.username()
-        url.password = this.password()
-        url.hostname = this.hostname()
-        url.port = this.port()
-        url.pathname = this.pathname()
-        url.search = this.search()
-        url.hash = this.hash()
-        return url 
+        const url = new URL("http://test.com");
+        url.protocol = this.protocol();
+        url.username = this.username();
+        url.password = this.password();
+        url.hostname = this.hostname();
+        url.port = this.port();
+        url.pathname = this.pathname();
+        url.search = this.search();
+        url.hash = this.hash();
+        return url;
     }
 
     /**
@@ -337,9 +337,9 @@
      * @category URL Manipulation
      */
     unparseValue () {
-        const url = this.urlFromComponents()
-        this.directSetHref(url.href)
-        return this
+        const url = this.urlFromComponents();
+        this.directSetHref(url.href);
+        return this;
     }
 
     /**
@@ -348,7 +348,7 @@
      * @category URL Manipulation
      */
     nodeUrlLink () {
-        return this.value()
+        return this.value();
     }
 
     /**
@@ -357,15 +357,15 @@
      * @category Validation
      */
     validate () {
-        const isValid = this.valueIsValidUrl()
-		
+        const isValid = this.valueIsValidUrl();
+
         if (!isValid) {
-            this.setValueError("Invalid URL")
+            this.setValueError("Invalid URL");
         } else {
-            this.setValueError(null)
-        } 
-		
-        return isValid
+            this.setValueError(null);
+        }
+
+        return isValid;
     }
 
     /**
@@ -375,16 +375,16 @@
      */
     valueIsValidUrl () {
         if (Type.isNullOrUndefined(this.value())) {
-            this.setValue("")
+            this.setValue("");
         }
-        
-        const url = this.value()
+
+        const url = this.value();
         try {
-            const urlObject = new URL(url)
-            return true
+            const urlObject = new URL(url);
+            return true;
         } catch (error) {
-            return false
+            return false;
         }
     }
-    
+
 }.initThisClass());

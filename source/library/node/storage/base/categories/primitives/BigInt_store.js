@@ -25,7 +25,7 @@
             value: this.toString()
         };
 
-        return dict
+        return dict;
     }
 
     /**
@@ -36,7 +36,7 @@
      * @category Deserialization
      */
     loadFromRecord (aRecord, aStore) {
-        return this
+        return this;
     }
 
     /**

@@ -10,7 +10,7 @@
  * @classdesc A single GamePad with a unique id.
  */
 (class GamePad extends Device {
-    
+
     /**
      * @description Initializes the prototype slots for the GamePad class.
      * @private
@@ -102,12 +102,12 @@
      * @category Update
      */
     updateData (gp) {
-        assert(gp.id() === this.id()) // quick sanity check
+        assert(gp.id() === this.id()); // quick sanity check
 
         if (gp.timestamp !== this.timestamp()) {
-            this.setTimestamp(gp.timestamp)
-            this.updateButtons(gp.buttons)
-            this.updateAxes(gp.axes)
+            this.setTimestamp(gp.timestamp);
+            this.updateButtons(gp.buttons);
+            this.updateAxes(gp.axes);
         }
     }
 
@@ -119,24 +119,24 @@
      */
     updateButtons (newButtons) {
         // make sure number of buttons is correct
-        const currentButtons = this.buttons()
+        const currentButtons = this.buttons();
         while (currentButtons.length < newButtons.length) {
-            currentButtons.push(0)
+            currentButtons.push(0);
         }
 
         if (this.shouldSendNotes()) {
             // check for differences
             for (let i = 0; i < newButtons.length; i ++) {
                 if (currentButtons.at(i) !== newButtons.at(i)) {
-                    currentButtons.atPut(i, newButtons.at(i))
-                    this.changedButtonIndexTo(i, newButtons.at(i))
+                    currentButtons.atPut(i, newButtons.at(i));
+                    this.changedButtonIndexTo(i, newButtons.at(i));
                 }
             }
         } else {
-            this.setButtons(newButtons.shallowCopy())
+            this.setButtons(newButtons.shallowCopy());
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -147,11 +147,11 @@
      * @category Event
      */
     changedButtonIndexTo (index, isDown) {
-        const note = SvNotificationCenter.shared().newNote().setSender(this)
-        note.setName("onGamePadButton" + index + (isDown ? "Down" : "Up")) // TODO: optimize
-        note.setInfo(isDown)
-        note.post()
-        return this
+        const note = SvNotificationCenter.shared().newNote().setSender(this);
+        note.setName("onGamePadButton" + index + (isDown ? "Down" : "Up")); // TODO: optimize
+        note.setInfo(isDown);
+        note.post();
+        return this;
     }
 
     /**
@@ -162,24 +162,24 @@
      */
     updateAxes (newAxes) {
         // make sure number of buttons is correct
-        const currentAxes = this.axes()
+        const currentAxes = this.axes();
         while (currentAxes.length < newAxes.length) {
-            currentAxes.push(0)
+            currentAxes.push(0);
         }
 
         if (this.shouldSendNotes()) {
             // check for differences
             for (let i = 0; i < newAxes.length; i ++) {
                 if (currentAxes.at(i) !== newAxes.at(i)) {
-                    currentAxes.atPut(i, newAxes.at(i))
-                    this.changedAxesIndexTo(i, newAxes[i])
+                    currentAxes.atPut(i, newAxes.at(i));
+                    this.changedAxesIndexTo(i, newAxes[i]);
                 }
             }
         } else {
-            this.setAxes(newAxes.copy())
+            this.setAxes(newAxes.copy());
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -190,11 +190,11 @@
      * @category Event
      */
     changedAxesIndexTo (index, value) {
-        const note = SvNotificationCenter.shared().newNote().setSender(this)
-        note.setName("onGamePadAxis" + index + "Changed") // TODO: optimize?
-        note.setInfo(value)
-        note.post()
-        return this
+        const note = SvNotificationCenter.shared().newNote().setSender(this);
+        note.setName("onGamePadAxis" + index + "Changed"); // TODO: optimize?
+        note.setInfo(value);
+        note.post();
+        return this;
     }
 
     /**
@@ -203,11 +203,11 @@
      * @category Event
      */
     onConnected () {
-        this.setIsConnected(true)
-        const note = SvNotificationCenter.shared().newNote().setSender(this)
-        note.setName("onGamePadConnected")
-        note.post()
-        return this
+        this.setIsConnected(true);
+        const note = SvNotificationCenter.shared().newNote().setSender(this);
+        note.setName("onGamePadConnected");
+        note.post();
+        return this;
     }
 
     /**
@@ -216,11 +216,11 @@
      * @category Event
      */
     onDisconnected () {
-        this.setIsConnected(false)
-        const note = SvNotificationCenter.shared().newNote().setSender(this)
-        note.setName("onGamePadDisconnected")
-        note.post()
-        return this
+        this.setIsConnected(false);
+        const note = SvNotificationCenter.shared().newNote().setSender(this);
+        note.setName("onGamePadDisconnected");
+        note.post();
+        return this;
     }
 
 }.initThisClass());

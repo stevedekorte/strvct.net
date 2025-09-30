@@ -8,7 +8,7 @@
  * @class ThrashDetector
  * @extends ProtoClass
  * @classdesc The ThrashDetector helps minimize DOM thrashing by warning when interleaving of read and write operations is detected.
- * 
+ *
  * The DOM can be slow if (layout dependent) read and (layout modifying) write operations are interleaved,
  * as the read will require a re-layout or "reflow" of the DOM rendering engine.
  *
@@ -32,9 +32,9 @@
  * https://gist.github.com/paulirish/5d52fb081b3570c81e3a
  */
 (class ThrashDetector extends ProtoClass {
-        
+
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
 
     initPrototypeSlots () {
@@ -49,7 +49,7 @@
                 "scrollTop", "scrollLeft", "scrollWidth", "scrollHeight", // scroll
                 "scrollBy", "scrollTo", "scrollIntoView", "scrollIntoViewIfNeeded", // scroll animations
                 "clientTop", "clientLeft", "clientWidth", "clientHeight", // client
-                "getComputedStyle", 
+                "getComputedStyle",
                 "getClientRects", "getBoundingClientRect", // rects
                 "computeRole", "computedName", "innerText",
 
@@ -63,8 +63,8 @@
                 "layerX", "layerY", "offsetX", "offsetY",
 
                 // on SVG
-                "computeCTM", "getBBox", "getCharNumAtPosition", "getComputedTextLength", 
-                "getEndPositionOfChar", "getExtentOfChar", "getNumberOfChars", "getRotationOfChar", 
+                "computeCTM", "getBBox", "getCharNumAtPosition", "getComputedTextLength",
+                "getEndPositionOfChar", "getExtentOfChar", "getNumberOfChars", "getRotationOfChar",
                 "getStartPositionOfChar", "getSubStringLength", "selectSubString", "instanceRoot"
             ]));
             slot.setSlotType("Set");
@@ -122,7 +122,7 @@
                 "border-top-left-radius",
                 "border-top-right-radius",
                 "border-top-style",
-                "caret-color",               
+                "caret-color",
                 "color",
                 "filter",
                 "outline-color",
@@ -183,10 +183,10 @@
      * @category Frame Management
      */
     beginFrame () {
-        this.setNeedsReflow(false)
-        this.setReflowCount(0)
-        this.setTriggers([])
-        this.setLastWrite(null)
+        this.setNeedsReflow(false);
+        this.setReflowCount(0);
+        this.setTriggers([]);
+        this.setLastWrite(null);
     }
 
     /**
@@ -209,7 +209,7 @@
                 this.triggers().push(s);
                 this.onThrash();
             }
-        } 
+        }
         return this;
     }
 
@@ -222,14 +222,14 @@
      */
     didWrite (opName, optionalView) {
         if (!this.noReflowWriteOpSet().has(opName)) {
-            this.setNeedsReflow(true)
-            let m = opName 
+            this.setNeedsReflow(true);
+            let m = opName;
             if (optionalView) {
-                m = optionalView.svDebugId() + " set " + opName
+                m = optionalView.svDebugId() + " set " + opName;
             }
-            this.setLastWrite(m)
+            this.setLastWrite(m);
         }
-        return this
+        return this;
     }
 
     /**
@@ -247,8 +247,8 @@
      */
     endFrame () {
         if (this.enabled() && this.reflowCount()) {
-            console.log(">>> " +  this.svType() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), null, 2))
+            console.log(">>> " +  this.svType() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), null, 2));
         }
     }
 
- }.initThisClass());
+}.initThisClass());

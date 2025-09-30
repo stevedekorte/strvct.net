@@ -11,14 +11,14 @@
  */
 
 (class SvDateField extends SvField {
-     
+
     /**
      * @static
      * @returns {boolean} True if available as a node primitive
      * @category Utility
      */
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     /**
@@ -99,12 +99,12 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setKey("Date title")
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(true)
-        this.setupSubnodeFields()
-        this.setValue(Date.now())
+        super.init();
+        this.setKey("Date title");
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(true);
+        this.setupSubnodeFields();
+        this.setValue(Date.now());
     }
 
     /**
@@ -253,7 +253,7 @@
             } else {
                 timestamp = new Date(v).getTime();
             }
-            
+
             if (isNaN(timestamp)) {
                 throw new Error("Invalid date value");
             }
@@ -285,11 +285,11 @@
         }
         // Basic date formatting - can be enhanced with a proper date formatting library
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
     }
-	
+
     /**
      * @description Validate the field value
      * @returns {boolean} True if the value is valid
@@ -298,7 +298,7 @@
     validate () {
         const timestamp = this.value();
         const errors = [];
-        
+
         if (timestamp === null && !this.valueAllowsNull()) {
             errors.push("Date is required.");
         } else if (timestamp !== null) {
@@ -314,8 +314,8 @@
         } else {
             this.setValueError(null);
         }
-        
+
         return this.valueError() === null;
     }
-    
+
 }.initThisClass());

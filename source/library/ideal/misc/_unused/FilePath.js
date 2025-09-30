@@ -11,15 +11,15 @@
 SvGlobals.globals().ideal.FilePath = class FilePath extends ProtoClass {
 
     static with (pathString) {
-        return FilePath.clone().setPathString(pathString)
+        return FilePath.clone().setPathString(pathString);
     }
- 
+
     static pathSeparator () {
-        return "/"
+        return "/";
     }
 
     initPrototypeSlots () {
-        this.newSlot("pathString", null)
+        this.newSlot("pathString", null);
     }
 
     /*
@@ -29,7 +29,7 @@ SvGlobals.globals().ideal.FilePath = class FilePath extends ProtoClass {
     */
 
     pathComponents () {
-        const s = this.pathString()
+        const s = this.pathString();
 
         if (s === "/") {
             return [""];
@@ -37,12 +37,12 @@ SvGlobals.globals().ideal.FilePath = class FilePath extends ProtoClass {
         else if (s === "") {
             return [];
         }
-        
+
         return s.split("/");
     }
 
     sansLastPathComponent () {
-        const c = this.pathComponents()
+        const c = this.pathComponents();
         c.removeLast();
         return c.join("/");
     }
@@ -56,5 +56,5 @@ SvGlobals.globals().ideal.FilePath = class FilePath extends ProtoClass {
         return extension;
     }
 
-}.initThisClass()
+}.initThisClass();
 

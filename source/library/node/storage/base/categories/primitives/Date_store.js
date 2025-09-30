@@ -16,8 +16,8 @@
      * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
-        this.setTime(aRecord.time)
-        return this
+        this.setTime(aRecord.time);
+        return this;
     }
 
     /**
@@ -28,9 +28,9 @@
      */
     recordForStore (aStore) { // should only be called by Store
         return {
-            type: this.svType(), 
+            type: this.svType(),
             time: this.getTime() // toJSON is a standard library Date method
-        }
+        };
     }
 
     /**
@@ -39,7 +39,7 @@
      * @category Data Storage
      */
     shouldStore () {
-        return true
+        return true;
     }
 
     /**
@@ -49,7 +49,7 @@
      * @category Data Storage
      */
     refsPidsForJsonStore (puuids = new Set()) {
-        return puuids
+        return puuids;
     }
 
 }).initThisCategory();

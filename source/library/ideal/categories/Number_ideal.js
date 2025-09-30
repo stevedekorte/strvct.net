@@ -7,7 +7,7 @@
  * @private
  */
 const Base64 = (function () {
-    const digitsStr = 
+    const digitsStr =
     //   0       8       16      24      32      40      48      56     63
     //   v       v       v       v       v       v       v       v      v
         "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-";
@@ -61,7 +61,7 @@ const Base64 = (function () {
     duplicate () {
         return this;
     }
-    
+
     /**
      * Returns a copy of the number (which is the number itself for primitives)
      * @returns {number} The number
@@ -111,7 +111,7 @@ const Base64 = (function () {
      * @category Iteration
      */
     forEach (func) {
-        assert(Number.isInteger(this))
+        assert(Number.isInteger(this));
         for (let i = 0; i < this; i++) {
             func(i);
         }
@@ -123,7 +123,7 @@ const Base64 = (function () {
      * @category Iteration
      */
     reverseForEach (func) {
-        assert(Number.isInteger(this))
+        assert(Number.isInteger(this));
         for (let i = this - 1; i >= 0; i--) {
             func(i);
         }
@@ -165,7 +165,7 @@ const Base64 = (function () {
         const i = this;
         let j = i % 10;
         let k = i % 100;
-        
+
         if (j === 1 && k !== 11) {
             return "st";
         }
@@ -194,7 +194,7 @@ const Base64 = (function () {
      * @category Conversion
      */
     fromBase64 (base64String) {
-        // need to call like: 
+        // need to call like:
         // Number.prototype.fromBase64("...")
         return Base64.toInt(base64String);
     }
@@ -214,7 +214,7 @@ const Base64 = (function () {
      * @category Formatting
      */
     withOrdinalIndicator () {
-        return this + "" + this.ordinalIndicator()
+        return this + "" + this.ordinalIndicator();
     }
 
     /**
@@ -225,26 +225,26 @@ const Base64 = (function () {
     ordinalIndicator () {
         const num = this;
 
-        if (typeof num !== 'number' || isNaN(num) || !Number.isInteger(num)) {
-            return '';
+        if (typeof num !== "number" || isNaN(num) || !Number.isInteger(num)) {
+            return "";
         }
-    
+
         const lastDigit = num % 10;
         const lastTwoDigits = num % 100;
-    
+
         if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
-            return 'th';
+            return "th";
         }
-    
+
         switch (lastDigit) {
             case 1:
-                return 'st';
+                return "st";
             case 2:
-                return 'nd';
+                return "nd";
             case 3:
-                return 'rd';
+                return "rd";
             default:
-                return 'th';
+                return "th";
         }
     }
 
@@ -260,7 +260,7 @@ const Base64 = (function () {
             return "no " + label + "s";
         } else if (count === 1) {
             return count + " " + label;
-        } 
+        }
         return count + " " + label + "s";
     }
 
@@ -297,36 +297,36 @@ const Base64 = (function () {
      * @category Formatting
      */
     asFractionString () {
-        const ERR = 'Unsupported fraction error';
+        const ERR = "Unsupported fraction error";
         const x = +this;
         const tol = 1e-12; // equality tolerance for floating-point comparisons
-      
+
         // Only supports inputs in [-100, 100]
         if (!Number.isFinite(x) || x < -100 || x > 100) throw new Error(ERR);
-      
+
         // Handle exact integers
         if (Math.abs(x - Math.round(x)) < tol) {
-          const n = Math.round(x);
-          if (Math.abs(n) <= 100) return n + '/1';
-          throw new Error(ERR);
+            const n = Math.round(x);
+            if (Math.abs(n) <= 100) return n + "/1";
+            throw new Error(ERR);
         }
-      
+
         // Try to find an exact n/k with k<=100 and |n|<=100
-        const gcd = (a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1};
-      
+        const gcd = (a, b)=>{a = Math.abs(a);b = Math.abs(b);while (b) {[a, b] = [b, a % b];} return a || 1;};
+
         for (let k = 1; k <= 100; k++) {
-          const n = Math.round(x * k);
-          if (Math.abs(n) > 100) continue;
-          if (Math.abs(x - n / k) < tol) {
-            const g = gcd(n, k);
-            let nn = n / g, kk = k / g;
-            if (kk < 0) { nn = -nn; kk = -kk; } // force positive denominator
-            if (Math.abs(nn) <= 100 && kk >= 1 && kk <= 100) return nn + '/' + kk;
-          }
+            const n = Math.round(x * k);
+            if (Math.abs(n) > 100) continue;
+            if (Math.abs(x - n / k) < tol) {
+                const g = gcd(n, k);
+                let nn = n / g, kk = k / g;
+                if (kk < 0) { nn = -nn; kk = -kk; } // force positive denominator
+                if (Math.abs(nn) <= 100 && kk >= 1 && kk <= 100) return nn + "/" + kk;
+            }
         }
-      
+
         // No exact bounded fraction found
         throw new Error(ERR);
     }
-    
+
 }).initThisCategory();

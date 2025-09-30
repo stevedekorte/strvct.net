@@ -3,10 +3,10 @@
  * @class SvPasswordFieldTile
  * @extends SvStringFieldTile
  * @classdesc SvPasswordFieldTile class for handling password field tiles. Uses SvPasswordView for native password input behavior.
- * 
+ *
  * NOTES:
  * other attributes of the password input element we could make use of:
- * 
+ *
     - maxlength: Limits number of characters.
     - required: Prevents form submission if left empty.
     - autocomplete="off" or "new-password": Helps control browser autofill behavior.
@@ -14,7 +14,7 @@
  */
 
 (class SvPasswordFieldTile extends SvStringFieldTile {
-    
+
     /**
      * @description Initializes the password field tile
      * @returns {SvPasswordFieldTile} The current instance
@@ -24,7 +24,7 @@
         super.init();
         return this;
     }
-    
+
     /**
      * Creates and configures a value view for the password field tile.
      * @returns {SvPasswordView} The configured SvPasswordView instance.
@@ -46,5 +46,5 @@
         v.setBorderRadius("0.2em");
         return v;
     }
-    
+
 }.initThisClass());

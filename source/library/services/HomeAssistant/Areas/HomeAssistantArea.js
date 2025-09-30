@@ -23,7 +23,7 @@
     init () {
         super.init();
     }
-    
+
     /**
       * @description Performs final initialization steps.
       * @category Initialization

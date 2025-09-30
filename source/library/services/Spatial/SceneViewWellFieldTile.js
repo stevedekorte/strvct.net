@@ -10,7 +10,7 @@
  * @classdesc SceneViewWellFieldTile class for handling scene view well fields.
  */
 (class SceneViewWellFieldTile extends SvFieldTile {
-    
+
     /**
      * @description Checks if the given MIME type can be opened.
      * @param {string} mimeType - The MIME type to check.
@@ -19,7 +19,7 @@
      */
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
-        return mimeType.startsWith("model/")
+        return mimeType.startsWith("model/");
     }
 
     /**
@@ -73,16 +73,16 @@
      * @category Synchronization
      */
     syncFromNode () {
-        super.syncFromNode()
+        super.syncFromNode();
 
-        const field = this.node()
-        this.setMaxWidth("100em") // get this from node instead?
-        
-        this.applyStyles() // normally this would happen in updateSubviews
-        this.valueView().setDataUrl(field.value())
-        this.valueView().setIsEditable(field.valueIsEditable())
+        const field = this.node();
+        this.setMaxWidth("100em"); // get this from node instead?
 
-        return this
+        this.applyStyles(); // normally this would happen in updateSubviews
+        this.valueView().setDataUrl(field.value());
+        this.valueView().setIsEditable(field.valueIsEditable());
+
+        return this;
     }
 
     /**
@@ -91,20 +91,20 @@
      * @category Synchronization
      */
     syncToNode () {
-        const field = this.node()
-				
+        const field = this.node();
+
         //this.updateKeyView()
-        
-        field.setKey(this.keyView().value())
+
+        field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
-            const data = this.valueView().dataUrl()
+            const data = this.valueView().dataUrl();
             //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"))
-        	field.setValue(data)
+        	field.setValue(data);
         }
-        
+
         //super.suncToNode()
-        return this
+        return this;
     }
 
     /**
@@ -113,7 +113,7 @@
      * @category Data
      */
     dataUrl () {
-        return this.valueView().dataUrl()
+        return this.valueView().dataUrl();
     }
 
     /**
@@ -122,15 +122,15 @@
      * @category State
      */
     isEmpty () {
-        return Type.isNull(this.dataUrl())
+        return Type.isNull(this.dataUrl());
     }
-    
+
     /*
     didUpdateImageWellView (anImageWell) {
         //this.logDebug(".didUpdateImageWellView()")
-        this.scheduleSyncToNode() 
+        this.scheduleSyncToNode()
         return this
     }
     */
-    
+
 }.initThisClass());

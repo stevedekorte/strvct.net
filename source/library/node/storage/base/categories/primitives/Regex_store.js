@@ -10,7 +10,7 @@
 (class RegExp_store extends RegExp {
 
     static instanceFromRecordInStore (aRecord, aStore) {
-        const obj = new RegExp(aRecord.pattern, aRecord.flags || '');
+        const obj = new RegExp(aRecord.pattern, aRecord.flags || "");
         return obj;
     }
 
@@ -21,10 +21,10 @@
      * @category Serialization
      */
     recordForStore (aStore) { // should only be called by Store
-        const dict = { 
-            type: 'RegExp', 
-            pattern: this.source, 
-            flags: this.flags 
+        const dict = {
+            type: "RegExp",
+            pattern: this.source,
+            flags: this.flags
         };
 
         return dict;

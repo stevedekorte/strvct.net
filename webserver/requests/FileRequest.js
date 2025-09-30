@@ -7,8 +7,8 @@
 require("../SvGlobals.js");
 require("../BaseHttpsServerRequest.js");
 require("../SvMimeExtensions.js");
-const fs = require('fs');
-const nodePath = require('path');
+const fs = require("fs");
+const nodePath = require("path");
 
 /**
  * @class FileRequest
@@ -16,32 +16,32 @@ const nodePath = require('path');
  * @classdesc Handles static file serving requests with security protections.
  */
 (class FileRequest extends BaseHttpsServerRequest {
-    
+
     initPrototypeSlots () {
-        
+
         /**
          * @member {string} webRoot - The root directory for serving files
          */
         this.newSlot("webRoot", process.cwd());
-        
+
         /**
          * @member {Set} blockedExtensions - File extensions that should never be served
          */
         this.newSlot("blockedExtensions", new Set([
-            '.env', '.sqlite', '.sqlite3', '.db', '.key', '.pem', '.crt',
-            '.config', '.git', '.gitignore', '.npmrc', '.htaccess', '.htpasswd',
-            '.bash_history', '.ssh', '.gnupg', '.password', '.passwd', '.shadow'
+            ".env", ".sqlite", ".sqlite3", ".db", ".key", ".pem", ".crt",
+            ".config", ".git", ".gitignore", ".npmrc", ".htaccess", ".htpasswd",
+            ".bash_history", ".ssh", ".gnupg", ".password", ".passwd", ".shadow"
         ]));
-        
+
         /**
          * @member {Set} blockedPaths - Path segments that indicate sensitive directories
          */
         this.newSlot("blockedPaths", new Set([
-            'node_modules', '.git', '.svn', '.hg', '.env', 'config',
-            'private', 'keys', 'certs', 'certificates', '.ssh', 'secrets'
+            "node_modules", ".git", ".svn", ".hg", ".env", "config",
+            "private", "keys", "certs", "certificates", ".ssh", "secrets"
         ]));
     }
-    
+
     /**
      * Determines if this class can handle the given URL.
      * @param {URL} urlObject - The URL object to check
@@ -51,7 +51,7 @@ const nodePath = require('path');
         // Handle all requests that weren't handled by other classes
         return true;
     }
-    
+
     /**
      * Validates if a file path is safe to serve.
      * @param {string} filePath - The file path to validate
@@ -62,20 +62,20 @@ const nodePath = require('path');
             // Resolve to absolute path
             const resolvedPath = nodePath.resolve(filePath);
             const webRootPath = nodePath.resolve(this.webRoot());
-            
+
             // Check if the resolved path is within the web root
             if (!resolvedPath.startsWith(webRootPath)) {
                 console.warn(`FileRequest: Attempted directory traversal: ${filePath} -> ${resolvedPath}`);
                 return false;
             }
-            
+
             // Check for blocked extensions
             const ext = nodePath.extname(resolvedPath).toLowerCase();
             if (this.blockedExtensions().has(ext)) {
                 console.warn(`FileRequest: Blocked file extension: ${ext}`);
                 return false;
             }
-            
+
             // Check for blocked path segments
             const pathSegments = resolvedPath.split(nodePath.sep);
             for (const segment of pathSegments) {
@@ -84,21 +84,21 @@ const nodePath = require('path');
                     return false;
                 }
             }
-            
+
             // Check for hidden files (starting with .)
             const basename = nodePath.basename(resolvedPath);
-            if (basename.startsWith('.') && basename !== '.well-known') {
+            if (basename.startsWith(".") && basename !== ".well-known") {
                 console.warn(`FileRequest: Blocked hidden file: ${basename}`);
                 return false;
             }
-            
+
             return true;
         } catch (error) {
             console.error(`FileRequest: Error validating path: ${error.message}`);
             return false;
         }
     }
-    
+
     /**
      * Processes the file request.
      */
@@ -109,13 +109,13 @@ const nodePath = require('path');
         // Get the requested path
         let requestPath = this.path();
         if (requestPath === "/") {
-        requestPath = "/index.html";
+            requestPath = "/index.html";
         }
 
         // Remove query string from file path
         const questionIndex = requestPath.indexOf("?");
         if (questionIndex > -1) {
-        requestPath = requestPath.substring(0, questionIndex);
+            requestPath = requestPath.substring(0, questionIndex);
         }
 
         // Decode URL encoding (e.g., %20 -> space)
@@ -126,8 +126,8 @@ const nodePath = require('path');
 
         // Remove leading slash for join
         const relativePath = normalizedPath.startsWith("/")
-        ? normalizedPath.substring(1)
-        : normalizedPath;
+            ? normalizedPath.substring(1)
+            : normalizedPath;
 
         // Determine what file to serve based on path resolution rules
         this.resolveAndServeFile(relativePath);
@@ -143,8 +143,8 @@ const nodePath = require('path');
 
         // Validate the base path is safe
         if (!this.isPathSafe(basePath)) {
-        this.sendForbidden();
-        return;
+            this.sendForbidden();
+            return;
         }
 
         // Check if the requested path has an extension
@@ -152,10 +152,10 @@ const nodePath = require('path');
 
         if (hasExtension) {
         // Path has extension, serve directly
-        this.serveFile(basePath);
+            this.serveFile(basePath);
         } else {
         // Path has no extension, implement the fallback logic
-        this.handlePathWithoutExtension(basePath);
+            this.handlePathWithoutExtension(basePath);
         }
     }
 
@@ -166,55 +166,55 @@ const nodePath = require('path');
     handlePathWithoutExtension (basePath) {
         // Step 1: Check if it's a directory with index.html
         fs.stat(basePath, (error, stats) => {
-        if (!error && stats.isDirectory()) {
+            if (!error && stats.isDirectory()) {
             // It's a directory, look for index.html inside
-            const indexPath = nodePath.join(basePath, "index.html");
+                const indexPath = nodePath.join(basePath, "index.html");
 
-            // Validate the index.html path is safe
-            if (!this.isPathSafe(indexPath)) {
-            this.sendForbidden();
-            return;
+                // Validate the index.html path is safe
+                if (!this.isPathSafe(indexPath)) {
+                    this.sendForbidden();
+                    return;
+                }
+
+                fs.access(indexPath, fs.constants.F_OK, (indexError) => {
+                    if (!indexError) {
+                        // index.html exists in the directory
+                        this.serveFile(indexPath);
+                    } else {
+                        // Directory exists but no index.html - return 404
+                        this.sendNotFound();
+                    }
+                });
+                return;
             }
 
-            fs.access(indexPath, fs.constants.F_OK, (indexError) => {
-            if (!indexError) {
-                // index.html exists in the directory
-                this.serveFile(indexPath);
-            } else {
-                // Directory exists but no index.html - return 404
-                this.sendNotFound();
-            }
+            // Step 2: Check for file without extension
+            fs.access(basePath, fs.constants.F_OK, (noExtError) => {
+                if (!noExtError) {
+                    // File without extension exists
+                    this.serveFile(basePath);
+                    return;
+                }
+
+                // Step 3: Check for file with .html extension
+                const htmlPath = basePath + ".html";
+
+                // Validate the .html path is safe
+                if (!this.isPathSafe(htmlPath)) {
+                    this.sendForbidden();
+                    return;
+                }
+
+                fs.access(htmlPath, fs.constants.F_OK, (htmlError) => {
+                    if (!htmlError) {
+                        // File with .html extension exists
+                        this.serveFile(htmlPath);
+                    } else {
+                        // Step 4: Nothing found, return 404
+                        this.sendNotFound();
+                    }
+                });
             });
-            return;
-        }
-
-        // Step 2: Check for file without extension
-        fs.access(basePath, fs.constants.F_OK, (noExtError) => {
-            if (!noExtError) {
-            // File without extension exists
-            this.serveFile(basePath);
-            return;
-            }
-
-            // Step 3: Check for file with .html extension
-            const htmlPath = basePath + ".html";
-
-            // Validate the .html path is safe
-            if (!this.isPathSafe(htmlPath)) {
-            this.sendForbidden();
-            return;
-            }
-
-            fs.access(htmlPath, fs.constants.F_OK, (htmlError) => {
-            if (!htmlError) {
-                // File with .html extension exists
-                this.serveFile(htmlPath);
-            } else {
-                // Step 4: Nothing found, return 404
-                this.sendNotFound();
-            }
-            });
-        });
         });
     }
 
@@ -228,7 +228,7 @@ const nodePath = require('path');
         const contentType =
         SvMimeExtensions.shared().mimeTypeForPathExtension(extname) ||
         "application/octet-stream";
-        
+
         // Read and serve the file
         fs.readFile(filePath, (error, content) => {
             if (error) {
@@ -245,18 +245,18 @@ const nodePath = require('path');
             }
         });
     }
-    
+
     /**
      * Sends a 403 Forbidden response.
      */
     sendForbidden () {
-        this.response().writeHead(403, { 
-            'Content-Type': 'text/plain',
-            'Access-Control-Allow-Origin': '*'
+        this.response().writeHead(403, {
+            "Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"
         });
-        this.response().end('403 Forbidden');
+        this.response().end("403 Forbidden");
     }
-    
+
 }).initThisClass();
 
 // Export for use in other modules

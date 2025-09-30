@@ -9,23 +9,23 @@
  * @extends ProtoClass
  * @classdesc
  * A singleton to manage tracking all events including:
- * 
+ *
  * - user events
  * - timers
  * - other events (indexed db, etc) - eventually
- * 
+ *
  * We need this in order to:
- * 
+ *
  * - do sync operators at the end of an event callback.
- * - track the first user initiated event in order to wait 
+ * - track the first user initiated event in order to wait
  *   to request things like audio input or audio output access
- * 
+ *
  * Example use:
- * 
+ *
  *     EventManager.shared().safeWrapEvent(() => { ... }, event) // we pass in event so we can access it globally
- * 
+ *
  * Example of waiting on first user event:
- * 
+ *
  *     await EventManager.shared().firstUserEventPromise();
  */
 (class EventManager extends ProtoClass {
@@ -38,7 +38,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots
      * @category Initialization
@@ -124,7 +124,7 @@
             SvBroadcaster.shared().broadcastNameAndArgument("firstUserEvent", this);
             this.firstUserEventPromise().callResolveFunc();
         }
-        
+
         return this;
     }
 
@@ -192,9 +192,9 @@
      */
     syncIfAppropriate () {
         if (SvGlobals.globals().SvSyncScheduler) {
-           if (EventManager.shared().eventLevelCount() === 0) { 
+            if (EventManager.shared().eventLevelCount() === 0) {
                 SvSyncScheduler.shared().fullSyncNow();
-           }
+            }
         }
         return this;
     }

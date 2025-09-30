@@ -7,16 +7,16 @@
 */
 
 (class HeaderFooterView extends NodeView {
-    
+
     initPrototypeSlots () {
-        this.newSlot("headerClass", null)
-        this.newSlot("headerView", null)
+        this.newSlot("headerClass", null);
+        this.newSlot("headerView", null);
 
-        this.newSlot("middleClass", null)
-        this.newSlot("middleView", null)
+        this.newSlot("middleClass", null);
+        this.newSlot("middleView", null);
 
-        this.newSlot("footerClass", null)
-        this.newSlot("footerView", null)
+        this.newSlot("footerClass", null);
+        this.newSlot("footerView", null);
     }
 
     /*
@@ -28,31 +28,31 @@
         return this
     }
     */
-    
+
     setupHeaderMiddleFooterViews () {
 
         if (this.headerClass()) {
-            const v = this.headerClass().clone()
-            v.setOrder(0)
-            this.setHeaderView(v)
-            this.addSubview(v)
+            const v = this.headerClass().clone();
+            v.setOrder(0);
+            this.setHeaderView(v);
+            this.addSubview(v);
         }
 
         if (this.middleClass()) {
-            const v = this.middleClass().clone()
-            v.setOrder(1)
-            this.setMiddleView(v)
-            this.addSubview(v)
+            const v = this.middleClass().clone();
+            v.setOrder(1);
+            this.setMiddleView(v);
+            this.addSubview(v);
         }
 
         if (this.footerClass()) {
-            const v = this.footerClass().clone()
-            v.setOrder(2)
-            this.setFooterView(v)
-            this.addSubview(v)
+            const v = this.footerClass().clone();
+            v.setOrder(2);
+            this.setFooterView(v);
+            this.addSubview(v);
         }
 
-        return this
+        return this;
     }
 
     /*
@@ -67,5 +67,5 @@
         return this
     }
     */
-    
+
 }.initThisClass());

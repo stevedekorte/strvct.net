@@ -8,7 +8,7 @@
  * @classdesc Represents a group of image resources.
  */
 (class SvImageResources extends SvResourceGroup {
-    
+
     /**
      * @description Initializes the SvImageResources instance.
      * @returns {SvImageResources} The initialized instance.
@@ -18,7 +18,7 @@
         super.init();
         this.setTitle("Images");
         this.setSubnodeClasses([SvURLImage]);
-        return this
+        return this;
     }
 
     /**

@@ -10,7 +10,7 @@
  * @classdesc Represents a key on a keyboard.
  */
 (class KeyboardKey extends Device {
-    
+
     initPrototypeSlots () {
         /**
          * @member {Boolean} isDown - Indicates whether the key is pressed down.
@@ -52,9 +52,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -64,9 +64,9 @@
      * @category Event Handling
      */
     onKeyDown (event) {
-        let shouldPropogate = true
-        this.setIsDown(true)
-        return shouldPropogate
+        let shouldPropogate = true;
+        this.setIsDown(true);
+        return shouldPropogate;
     }
 
     /**
@@ -76,9 +76,9 @@
      * @category Event Handling
      */
     onKeyUp (event) {
-        let shouldPropogate = true
-        this.setIsDown(false)
-        return shouldPropogate
+        let shouldPropogate = true;
+        this.setIsDown(false);
+        return shouldPropogate;
     }
 
     /**
@@ -87,7 +87,7 @@
      * @category State
      */
     isUp () {
-        return !this.isDown()
+        return !this.isDown();
     }
 
     /**
@@ -96,7 +96,7 @@
      * @category State
      */
     isOnlyKeyDown () {
-        return this.isDown() && this.keyboard().currentlyDownKeys().length
+        return this.isDown() && this.keyboard().currentlyDownKeys().length;
     }
 
     /**
@@ -106,8 +106,8 @@
      * @category Identification
      */
     isAlphabetical (event) {
-        const c = this.code()
-        return c >= 65 && c <= 90
+        const c = this.code();
+        return c >= 65 && c <= 90;
     }
-    
+
 }.initThisClass());

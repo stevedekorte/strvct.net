@@ -10,7 +10,7 @@
  * @classdesc Represents a month node in a date hierarchy. This class handles month-specific operations and properties.
  */
 (class SvMonthNode extends BaseNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvMonthNode.
      * @category Initialization
@@ -33,13 +33,13 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setNoteIconName("right-arrow")
+        this.setNoteIconName("right-arrow");
 
-        this.setCanDelete(false)
-        this.setNodeCanInspect(false)
+        this.setCanDelete(false);
+        this.setNodeCanInspect(false);
 
-        this.setTitle("a month")
-        this.setNodeCanEditTitle(true)
+        this.setTitle("a month");
+        this.setNodeCanEditTitle(true);
 
         //this.setSubnodeProto(SvOptionNode)
         //this.setNodeCanReorderSubnodes(false)
@@ -54,9 +54,9 @@
      * @category Data Manipulation
      */
     setValue (v) {
-        assert(Number.isInteger(v) && v > 0 && v < 13)
-        this._value = v
-        return this
+        assert(Number.isInteger(v) && v > 0 && v < 13);
+        this._value = v;
+        return this;
     }
 
     /**
@@ -65,8 +65,8 @@
      * @category Data Retrieval
      */
     year () {
-        const year = this.parentNode().value()
-        return year
+        const year = this.parentNode().value();
+        return year;
     }
 
     /**
@@ -84,8 +84,8 @@
      * @category Data Retrieval
      */
     monthNames () {
-        return ["January", "February", "March", "April", 
-            "May", "June", "July", "August", 
+        return ["January", "February", "March", "April",
+            "May", "June", "July", "August",
             "September", "October", "November", "December"];
     }
 
@@ -95,7 +95,7 @@
      * @category Data Retrieval
      */
     monthName () {
-        return this.monthNames()[this.value()-1]
+        return this.monthNames()[this.value() - 1];
     }
 
     /**
@@ -104,7 +104,7 @@
      * @category Display
      */
     title () {
-        return this.monthName()
+        return this.monthName();
     }
 
     /**
@@ -113,11 +113,11 @@
      * @category Formatting
      */
     zeroPaddedMonthNumber () {
-        let v = this.value()
-        if (v < 10) { 
-            v = "0" + v 
+        let v = this.value();
+        if (v < 10) {
+            v = "0" + v;
         }
-        return v
+        return v;
     }
 
     /**
@@ -127,9 +127,9 @@
      */
     subtitle () {
         //return this.zeroPaddedMonthNumber()
-        return null
+        return null;
     }
-    
+
     /**
      * @description Used by UI tile views to browse into next column.
      * @returns {SvMonthNode} The current instance.
@@ -148,11 +148,11 @@
         if (!this.subnodeCount()) {
 
             for (let i = 1; i < this.daysThisMonth() + 1; i++) {
-                const day = SvDayNode.clone().setValue(i)
-                day.setCanDelete(false)
-                this.addSubnode(day)
+                const day = SvDayNode.clone().setValue(i);
+                day.setCanDelete(false);
+                this.addSubnode(day);
             }
         }
     }
-    
+
 }.initThisClass());

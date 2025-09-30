@@ -17,13 +17,13 @@
      * @param {Object} dragView - The view being dragged
      */
     onDragDestinationEnter (dragView) {
-        this.setHasPausedSync(true)
+        this.setHasPausedSync(true);
 
         // insert place holder view
         if (!this.tilePlaceHolder()) {
-            this.newTilePlaceHolder(dragView)
-            this.tilePlaceHolder().setMinAndMaxHeight(dragView.computedHeight())
-            this.onDragDestinationHover(dragView)
+            this.newTilePlaceHolder(dragView);
+            this.tilePlaceHolder().setMinAndMaxHeight(dragView.computedHeight());
+            this.onDragDestinationHover(dragView);
         }
     }
 
@@ -33,31 +33,31 @@
      */
     onDragDestinationHover (dragView) {
         // move place holder view
-        const ph = this.tilePlaceHolder()
+        const ph = this.tilePlaceHolder();
         if (ph) {
-            this.syncTilePlaceHolderSize(dragView)
-            const vp = this.viewPosForWindowPos(dragView.dropPoint())
+            this.syncTilePlaceHolderSize(dragView);
+            const vp = this.viewPosForWindowPos(dragView.dropPoint());
             if (this.isVertical()) {
-                const h = dragView.computedHeight()
-                const y = vp.y() - h/2
-                ph.setTopPx(y)
+                const h = dragView.computedHeight();
+                const y = vp.y() - h / 2;
+                ph.setTopPx(y);
             } else {
-                const w = dragView.computedWidth()
-                const x = vp.x() - w/2
+                const w = dragView.computedWidth();
+                const x = vp.x() - w / 2;
                 //console.log("w:" + w + " x:" + vp.x())
-                ph.setLeftPx(x)
+                ph.setLeftPx(x);
             }
             //console.log("ph.top() = ", ph.top())
-            this.stackTiles() // need to use this so we can animate the tile movements
+            this.stackTiles(); // need to use this so we can animate the tile movements
         }
     }
-    
+
     /**
      * @description Handles when the drag destination is exited
      * @param {Object} dragView - The view being dragged
      */
     onDragDestinationExit (dragView) {
-        this.endDropMode()
+        this.endDropMode();
     }
 
     /**
@@ -65,7 +65,7 @@
      * @param {Object} aDragView - The view being dragged
      */
     onDragDestinationEnd (aDragView) {
-        this.endDropMode()
+        this.endDropMode();
     }
 
     /**
@@ -82,7 +82,7 @@
      * @returns {Object} The document frame
      */
     dropCompleteDocumentFrame () {
-        return this.tilePlaceHolder().frameInDocument()
+        return this.tilePlaceHolder().frameInDocument();
     }
 
 
@@ -93,7 +93,7 @@
      * @returns {boolean} Whether drops are accepted
      */
     acceptsDrop () {
-        return true
+        return true;
     }
 
 }).initThisProtocol();

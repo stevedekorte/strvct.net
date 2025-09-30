@@ -36,7 +36,7 @@
       * @category Initialization
       */
     finalInit () {
-        super.finalInit()
+        super.finalInit();
         this.setNoteIsSubnodeCount(true);
         this.removeAllSubnodes();
     }
@@ -47,7 +47,7 @@
       * @category Service
       */
     service () {
-        return this.parentNode()
+        return this.parentNode();
     }
 
     /**
@@ -56,7 +56,7 @@
       * @category Connection
       */
     connClass () {
-        return this.subnodeClasses().first()
+        return this.subnodeClasses().first();
     }
 
     /*

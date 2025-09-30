@@ -14,8 +14,8 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-        this.setShouldStore(true)
-        this.setShouldScheduleDidInit(true)
+        this.setShouldStore(true);
+        this.setShouldScheduleDidInit(true);
         //this.setShouldStoreSubnodes(true)
 
         /**
@@ -24,8 +24,8 @@
          * @category Node Properties
          */
         {
-            const slot = this.overrideSlot("canDelete", false)
-            slot.setShouldStoreSlot(true)  // defined in SvNode, but we want to store it
+            const slot = this.overrideSlot("canDelete", false);
+            slot.setShouldStoreSlot(true);  // defined in SvNode, but we want to store it
         }
 
         /**
@@ -34,8 +34,8 @@
          * @category Node Properties
          */
         {
-            const slot = this.overrideSlot("title", null)
-            slot.setShouldStoreSlot(true)
+            const slot = this.overrideSlot("title", null);
+            slot.setShouldStoreSlot(true);
         }
 
         /**
@@ -44,8 +44,8 @@
          * @category Node Properties
          */
         {
-            const slot = this.overrideSlot("subtitle", "")
-            slot.setShouldStoreSlot(true)
+            const slot = this.overrideSlot("subtitle", "");
+            slot.setShouldStoreSlot(true);
         }
 
         /**
@@ -54,10 +54,10 @@
          * @category Layout
          */
         {
-            const slot = this.overrideSlot("nodeFillsRemainingWidth", false)
-            slot.setShouldStoreSlot(true)
-            slot.setCanEditInspection(true)
-            slot.setCanInspect(true)
+            const slot = this.overrideSlot("nodeFillsRemainingWidth", false);
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+            slot.setCanInspect(true);
         }
 
         /**
@@ -66,17 +66,17 @@
          * @category Node Structure
          */
         {
-            const slot = this.overrideSlot("subnodes", null)
+            const slot = this.overrideSlot("subnodes", null);
             //subnodesSlot.setOwnsSetter(true)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookGetter(true)
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookGetter(true);
             //slot.setHookedGetterIsOneShot(true)
             //slot.setIsLazy(true) // no point in using this until we have coroutines?
-            slot.setInitProto(SubnodesArray)
+            slot.setInitProto(SubnodesArray);
 
-            assert(slot.doesHookGetter())
+            assert(slot.doesHookGetter());
         }
-        
+
         /*
         {
             const slot = this.newSlot("lazySubnodeCount", null)
@@ -100,21 +100,21 @@
      * @category Slot Management
      */
     didUpdateSlot (aSlot, oldValue, newValue) {
-        super.didUpdateSlot(aSlot, oldValue, newValue)
+        super.didUpdateSlot(aSlot, oldValue, newValue);
 
 	    if (!this.shouldStore() || !this.isInstance()) {
-	        return this
+	        return this;
 	    }
-	    
-        if (aSlot.shouldStoreSlot()) { 
+
+        if (aSlot.shouldStoreSlot()) {
             //this.didMutate(aSlot.name())
-            this.didMutate()
+            this.didMutate();
         }
-        
+
         // TODO: HACK, add a switch for this feature
         // TODO: find a way to avoid this?
         /*
-        if (newValue !== null && this._subnodes && this._subnodes.includes(oldValue)) { 
+        if (newValue !== null && this._subnodes && this._subnodes.includes(oldValue)) {
             newValue.setParentNode(this)
             this.subnodes().replaceOccurancesOfWith(oldValue, newValue)
             //this.logDebug(" this.subnodes().replaceOccurancesOfWith(", oldValue, ",", newValue, ")")
@@ -125,7 +125,7 @@
     /*
     didUpdateSlotSubnodes (oldValue, newValue) {
         super.didUpdateSlotSubnodes(oldValue, newValue)
-        this.updateLazySubnodeCount()        
+        this.updateLazySubnodeCount()
         return this
     }
     */
@@ -144,9 +144,9 @@
      * @category Node Structure
      */
     didChangeSubnodeList () {
-        super.didChangeSubnodeList()
+        super.didChangeSubnodeList();
         //this.updateLazySubnodeCount()
-        return this
+        return this;
     }
 
     /**
@@ -156,9 +156,9 @@
      */
     subnodeCount () {
         if (!this._subnodes) {
-            return this.lazySubnodeCount()
+            return this.lazySubnodeCount();
         }
-        return this._subnodes.length
+        return this._subnodes.length;
     }
 
     /**
@@ -167,8 +167,8 @@
      * @category Initialization
      */
     prepareForFirstAccess () {
-        super.prepareForFirstAccess()
-        return this
+        super.prepareForFirstAccess();
+        return this;
     }
 
 }.initThisClass());

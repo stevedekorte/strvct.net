@@ -6,7 +6,7 @@
 
 // Load Level at module level - use the Node.js implementation directly
 // We use classic-level directly to avoid browser/node detection issues
-const { ClassicLevel } = require('classic-level');
+const { ClassicLevel } = require("classic-level");
 
 /**
  * @class SvIndexedDbFolder
@@ -15,7 +15,7 @@ const { ClassicLevel } = require('classic-level');
  * This category provides server-side compatibility for the IndexedDB abstraction.
  */
 (class SvIndexedDbFolder extends SvBase {
-    
+
     /**
      * Initializes the prototype slots for the Node.js implementation.
      */
@@ -23,7 +23,7 @@ const { ClassicLevel } = require('classic-level');
         super.init();
         return this;
     }
-    
+
     initPrototypeSlots () {
         // Base slots from original implementation
         this.newSlot("path", "/");
@@ -33,23 +33,23 @@ const { ClassicLevel } = require('classic-level');
         this.newSlot("promiseForOpen", null);
         this.newSlot("lastTx", null);
         this.newSlot("version", 2);
-        
+
         // Node.js specific slots
         /**
          * @member {object} levelDb - The LevelDB database instance.
          */
         this.newSlot("levelDb", null);
-        
+
         /**
          * @member {string} dataDir - Base directory for database files.
          */
         this.newSlot("dataDir", "./data/leveldb/");
     }
-    
+
     initPrototype () {
         this.setIsDebugging(false);
     }
-    
+
     /**
      * Override to indicate IndexedDB availability (simulated via LevelDB).
      * @returns {boolean} - True if LevelDB can be loaded.
@@ -57,19 +57,19 @@ const { ClassicLevel } = require('classic-level');
     hasIndexedDB () {
         return true; // We simulate IndexedDB with LevelDB
     }
-    
+
     /**
      * Convert the path to a filesystem-safe directory name.
      * @returns {string} - The sanitized path for filesystem use.
      */
     dbPath () {
-        const path = require('path');
-        const safePath = this.path().replace(/[^a-zA-Z0-9-_/]/g, '_');
+        const path = require("path");
+        const safePath = this.path().replace(/[^a-zA-Z0-9-_/]/g, "_");
         // Always use absolute paths to avoid ambiguity
         const absolutePath = path.resolve(this.dataDir(), safePath);
         return absolutePath;
     }
-    
+
     /**
      * Returns a promise to open the database.
      * @async
@@ -82,7 +82,7 @@ const { ClassicLevel } = require('classic-level');
         }
         return this.promiseForOpen();
     }
-    
+
     /**
      * Returns a promise for persistence (always resolves in Node.js).
      * @returns {Promise} - A promise that resolves to true.
@@ -90,7 +90,7 @@ const { ClassicLevel } = require('classic-level');
     static promisePersistence () {
         return true;
     }
-    
+
     /**
      * Gets the store name.
      * @returns {string} - The store name (same as path).
@@ -98,7 +98,7 @@ const { ClassicLevel } = require('classic-level');
     storeName () {
         return this.path();
     }
-    
+
     /**
      * Sets the path of the folder.
      * @param {string} aString - The new path to set.
@@ -111,7 +111,7 @@ const { ClassicLevel } = require('classic-level');
         }
         return this;
     }
-    
+
     /**
      * Creates a new promise to open the database.
      * @returns {Promise} - A promise that resolves when the database is opened.
@@ -121,13 +121,13 @@ const { ClassicLevel } = require('classic-level');
         if (this.isOpen()) {
             return Promise.resolve();
         }
-        
+
         // Ensure the data directory exists
-        const fs = require('fs').promises;
-        const path = require('path');
+        const fs = require("fs").promises;
+        const path = require("path");
         const dirPath = path.dirname(dbPath);
         await fs.mkdir(dirPath, { recursive: true });
-        
+
         try {
             // Create the ClassicLevel instance - this is what we'll store
             // Use createIfMissing and errorIfExists options for clean database creation
@@ -135,16 +135,16 @@ const { ClassicLevel } = require('classic-level');
             const levelDb = new ClassicLevel(dbPath, {
                 createIfMissing: true,
                 errorIfExists: false,
-                valueEncoding: 'buffer'  // Store all values as buffers for proper binary support
+                valueEncoding: "buffer"  // Store all values as buffers for proper binary support
             });
-            
+
             // Open is automatic in ClassicLevel v10+, but we'll explicitly open anyway
             await levelDb.open();
-            
+
             // Store the INSTANCE in slots, not the class
             this.setLevelDb(levelDb);  // This is fine - it's an instance
             this.setDb(levelDb);       // This is fine - it's an instance
-            
+
             if (this.isDebugging()) console.log(this.logPrefix(), `Opened LevelDB at ${dbPath}`);
             return Promise.resolve();
         } catch (error) {
@@ -152,7 +152,7 @@ const { ClassicLevel } = require('classic-level');
             throw error;
         }
     }
-    
+
     /**
      * Closes the database.
      * @returns {SvIndexedDbFolder} - Returns this instance.
@@ -166,15 +166,15 @@ const { ClassicLevel } = require('classic-level');
         }
         return this;
     }
-    
+
     /**
      * Checks if the database is open.
      * @returns {boolean} - True if the database is open, false otherwise.
      */
     isOpen () {
-        return this.levelDb() !== null && this.levelDb().status === 'open';
+        return this.levelDb() !== null && this.levelDb().status === "open";
     }
-    
+
     /**
      * Retrieves a value for a given key from the database.
      * @async
@@ -183,29 +183,29 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseAt (key) {
         await this.promiseOpen();
-        
+
         // ClassicLevel returns undefined for non-existent keys (no error thrown)
         const value = await this.levelDb().get(key);
-        
+
         if (value === undefined) {
             return undefined;
         }
-        
+
         // LevelDB with 'buffer' encoding always returns Buffers
         if (Buffer.isBuffer(value)) {
             // Check if it's a string (starts with our string marker)
             if (value.length >= 4 && value[0] === 0xFF && value[1] === 0xFE && value[2] === 0xFD && value[3] === 0xFC) {
                 // It's a string - convert back
-                return value.slice(4).toString('utf8');
+                return value.slice(4).toString("utf8");
             } else {
                 // It's binary data - convert Buffer to ArrayBuffer
                 return value.buffer.slice(value.byteOffset, value.byteOffset + value.byteLength);
             }
         }
-        
+
         return value;
     }
-    
+
     /**
      * Checks if a key exists in the database.
      * @async
@@ -214,12 +214,12 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseHasKey (key) {
         await this.promiseOpen();
-        
+
         // ClassicLevel returns undefined for non-existent keys (no error thrown)
         const value = await this.levelDb().get(key);
         return value !== undefined;
     }
-    
+
     /**
      * Counts the number of entries in the database or for a specific key.
      * @async
@@ -228,12 +228,12 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseCount (optionalKey) {
         await this.promiseOpen();
-        
+
         if (optionalKey) {
             const hasKey = await this.promiseHasKey(optionalKey);
             return hasKey ? 1 : 0;
         }
-        
+
         // Count all keys
         let count = 0;
         const iterator = this.levelDb().keys();
@@ -242,7 +242,7 @@ const { ClassicLevel } = require('classic-level');
         }
         return count;
     }
-    
+
     /**
      * Retrieves all keys from the database.
      * @async
@@ -250,7 +250,7 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseAllKeys () {
         await this.promiseOpen();
-        
+
         const keys = [];
         const iterator = this.levelDb().keys();
         for await (const key of iterator) {
@@ -258,7 +258,7 @@ const { ClassicLevel } = require('classic-level');
         }
         return keys;
     }
-    
+
     /**
      * Retrieves all key-value pairs from the database as a Map.
      * @async
@@ -266,7 +266,7 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseAsMap () {
         await this.promiseOpen();
-        
+
         const map = new Map();
         const iterator = this.levelDb().iterator();
         for await (const [key, value] of iterator) {
@@ -274,7 +274,7 @@ const { ClassicLevel } = require('classic-level');
         }
         return map;
     }
-    
+
     /**
      * Clears all data from the database.
      * @async
@@ -282,12 +282,12 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseClear () {
         await this.promiseOpen();
-        
+
         await this.levelDb().clear();
         if (this.isDebugging()) console.log(this.logPrefix(), "Database cleared");
         return Promise.resolve();
     }
-    
+
     /**
      * Deletes the entire database.
      * @async
@@ -296,10 +296,10 @@ const { ClassicLevel } = require('classic-level');
     async promiseDelete () {
         // Close the database first
         await this.close();
-        
-        const fs = require('fs').promises;
+
+        const fs = require("fs").promises;
         const dbPath = this.dbPath();
-        
+
         try {
             await fs.rm(dbPath, { recursive: true, force: true });
             if (this.isDebugging()) console.log(this.logPrefix(), `Deleted database at ${dbPath}`);
@@ -307,10 +307,10 @@ const { ClassicLevel } = require('classic-level');
             console.error("**ERROR**:", this.logPrefix(), `Failed to delete database at ${dbPath}: ${error.message}`);
             throw error;
         }
-        
+
         return Promise.resolve();
     }
-    
+
     /**
      * Creates a new transaction object.
      * @async
@@ -318,15 +318,15 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseNewTx () {
         await this.promiseOpen();
-        
+
         if (this.isDebugging()) console.log(this.logPrefix(), this.path() + " promiseNewTx");
-        
+
         // Note: Need to ensure SvIndexedDbTx_node is loaded
         const newTx = SvIndexedDbTx.clone().setDbFolder(this);
         this.setLastTx(newTx);
         return Promise.resolve(newTx);
     }
-    
+
     /**
      * Private method to create a new transaction.
      * @private
@@ -337,7 +337,7 @@ const { ClassicLevel } = require('classic-level');
         this.setLastTx(newTx);
         return newTx;
     }
-    
+
     /**
      * Puts a value at a specified key in the database.
      * @async
@@ -347,16 +347,16 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseAtPut (key, value) {
         await this.promiseOpen();
-        
+
         if (typeof(value) === "undefined") {
             return this.promiseRemoveAt(key);
         }
-        
+
         // Convert values to Buffer for LevelDB storage
         let storeValue;
-        if (typeof value === 'string') {
+        if (typeof value === "string") {
             // Add a marker for strings so we can distinguish them from binary data
-            const stringBuffer = Buffer.from(value, 'utf8');
+            const stringBuffer = Buffer.from(value, "utf8");
             storeValue = Buffer.concat([Buffer.from([0xFF, 0xFE, 0xFD, 0xFC]), stringBuffer]);
         } else if (value instanceof ArrayBuffer) {
             storeValue = Buffer.from(value);
@@ -368,10 +368,10 @@ const { ClassicLevel } = require('classic-level');
         } else {
             // Fallback - convert to JSON string
             const jsonStr = JSON.stringify(value);
-            const stringBuffer = Buffer.from(jsonStr, 'utf8');
+            const stringBuffer = Buffer.from(jsonStr, "utf8");
             storeValue = Buffer.concat([Buffer.from([0xFF, 0xFE, 0xFD, 0xFC]), stringBuffer]);
         }
-        
+
         // For simple put operations, we can use LevelDB directly
         // For consistency with IndexedDB behavior, we'll use transactions for complex operations
         try {
@@ -382,7 +382,7 @@ const { ClassicLevel } = require('classic-level');
             throw error;
         }
     }
-    
+
     /**
      * Removes a value at a specified key in the database.
      * @async
@@ -391,20 +391,20 @@ const { ClassicLevel } = require('classic-level');
      */
     async promiseRemoveAt (key) {
         await this.promiseOpen();
-        
+
         try {
             await this.levelDb().del(key);
             return Promise.resolve();
         } catch (error) {
             // LevelDB doesn't error on deleting non-existent keys
-            if (error.code !== 'LEVEL_NOT_FOUND') {
+            if (error.code !== "LEVEL_NOT_FOUND") {
                 console.error("**ERROR**:", this.logPrefix(), `Failed to remove key ${key}: ${error.message}`);
                 throw error;
             }
             return Promise.resolve();
         }
     }
-    
+
     /**
      * Creates a new transaction for batch operations.
      * @returns {SvIndexedDbTx} - A new transaction instance.
@@ -419,5 +419,5 @@ const { ClassicLevel } = require('classic-level');
         tx.setDbFolder(this);
         return tx;
     }
-    
+
 }.initThisClass());

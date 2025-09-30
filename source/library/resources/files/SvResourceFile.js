@@ -74,7 +74,7 @@
          * @category Loading
          */
         {
-            const slot = this.newSlot("promiseForLoad", null); 
+            const slot = this.newSlot("promiseForLoad", null);
             slot.setDescription("holds promise used for reading from URL request or indexedDB");
             slot.setSlotType("Promise");
         }
@@ -93,8 +93,8 @@
          * @category Loading
          */
         {
-             const slot = this.newSlot("isLoaded", false);
-             slot.setSlotType("Boolean");
+            const slot = this.newSlot("isLoaded", false);
+            slot.setSlotType("Boolean");
         }
 
         /**
@@ -238,8 +238,8 @@
     precacheExtensions () {
         return [
             "html",
-            "json", 
-            "txt", 
+            "json",
+            "txt",
             "otf", "ttf", "woff", "woff2" // font formats
             //"svg"
             //"js", // needed? should already be loaded at this point

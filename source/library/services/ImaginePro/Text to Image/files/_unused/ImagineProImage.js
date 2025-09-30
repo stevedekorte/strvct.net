@@ -43,21 +43,21 @@
      * @category Process
      */
     async fetch () {
-/*
+        /*
         const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
         console.log(this.logPrefix(), "Loading image through proxy:");
 
         this.setImageUrl(proxyUrl);
-        
+
         const img = new Image();
         // Don't set crossOrigin when using proxy - the proxy handles CORS
-        
+
         await new Promise((resolve , reject) => {
             const loadHandler = () => {
             // Remove event listeners to prevent memory leaks
             img.onload = null;
             img.onerror = null;
-            
+
             // Try to convert to data URL if CORS allows
             try {
                 const canvas = document.createElement('canvas');
@@ -66,7 +66,7 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0);
                 const dataUrl = canvas.toDataURL('image/png');
-                
+
                 this.setDataURL(dataUrl);
                 this.setHasLoaded(true);
                 this.setStatus("loaded with dataURL");
@@ -79,37 +79,37 @@
                 this.setHasLoaded(true);
                 this.setStatus("loaded (external URL only)");
             }
-            
+
             this.sendDelegate("onImageLoaded", [this]);
             resolve();
             };
-            
+
             const errorHandler = (errorEvent) => {
             // Remove event listeners to prevent memory leaks
             img.onload = null;
             img.onerror = null;
-            
+
             // Image failed to load entirely - this is a real error
             // IMPORTANT: Do NOT pass the errorEvent object anywhere as it's a DOM Event
             const errorMessage = `Failed to load image from ImaginePro: ${this.url()}`;
             console.error(this.logPrefix(), errorMessage," errorEvent:", errorEvent);
             this.setError(new Error(errorMessage));
-            
+
             this.setStatus("error loading image");
             this.setHasLoaded(false); // Mark as not loaded since it failed
             this.sendDelegate("onImageError", [this]); // Send error event, not loaded event
             resolve(); // Resolve instead of reject to allow process to continue
             };
-            
+
             img.onload = loadHandler;
             img.onerror = errorHandler;
             img.src = proxyUrl; // Load through proxy to ensure CORS headers
         });
-        
+
         } catch (error) {
             // Make sure we never throw a DOM Event object
-            const errorMessage = error instanceof Event ? 
-                `Image loading error: ${error.type}` : 
+            const errorMessage = error instanceof Event ?
+                `Image loading error: ${error.type}` :
                 (error.message || String(error));
             console.error("Error fetching image:", errorMessage);
             this.setError(error instanceof Error ? error : new Error(errorMessage));
@@ -132,14 +132,14 @@
 
         // Try to convert to data URL if CORS allows
         try {
-            const canvas = document.createElement('canvas');
+            const canvas = document.createElement("canvas");
             canvas.width = img.width;
             canvas.height = img.height;
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext("2d");
             ctx.drawImage(img, 0, 0);
-            const dataUrl = canvas.toDataURL('image/png');
+            const dataUrl = canvas.toDataURL("image/png");
             this.setDataURL(dataUrl);
-        } catch (corsError) {            
+        } catch (corsError) {
             // CORS prevented conversion to dataURL, but image is still loaded
             const errorMessage = "PossibleCORS error converting image URL '" + anImageUrl + "' to a dataURL";
             console.error(this.logPrefix(), errorMessage, corsError);

@@ -1,11 +1,11 @@
 /**
  * @module browser.stack.Tile.field_tiles
- * @class SvStringFieldTile 
+ * @class SvStringFieldTile
  * @extends SvFieldTile
  * @classdesc SvStringFieldTile class for handling string field tiles.
  */
-(class SvStringFieldTile extends SvFieldTile { 
-    
+(class SvStringFieldTile extends SvFieldTile {
+
     /*
     initPrototypeSlots () {
             }
@@ -41,14 +41,14 @@
 
     syncValueFromNode () {
         const node = this.node();
-       
+
         const valueAllowsHtml = (node.valueAllowsHtml ? node.valueAllowsHtml() : null);
         if (!Type.isNull(valueAllowsHtml)) {
             const vv = this.valueView();
             if (vv.setAllowsHtml) {
                 vv.setAllowsHtml(valueAllowsHtml);
                 if (valueAllowsHtml) {
-                    vv.setIsEditable(false); // TODO: make sure this doesn't get overridden 
+                    vv.setIsEditable(false); // TODO: make sure this doesn't get overridden
                 }
             }
         }
@@ -63,5 +63,5 @@
 
         super.syncValueFromNode();
     }
-    
+
 }.initThisClass());

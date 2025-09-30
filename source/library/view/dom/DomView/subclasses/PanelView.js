@@ -9,8 +9,8 @@
  * @extends DomView
  * @classdesc PanelView is a customizable panel component with a title, subtitle, and a button.
  */
-(class PanelView extends DomView { 
-    
+(class PanelView extends DomView {
+
     /**
      * Initialize prototype slots for the PanelView.
      * @private
@@ -84,7 +84,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setDisplay("flex");
         this.setPosition("absolute");
 
@@ -104,7 +104,7 @@
             const view = SvTextView.clone().setElementClassName("PanelTitleView");
             this.setTitleView(view);
             this.addSubview(view);
-            view.setTextAlign("center")
+            view.setTextAlign("center");
             view.setHeight("3em");
             view.setWhiteSpace("normal");
             view.centerInParentView();
@@ -132,7 +132,7 @@
             this.setCssOnSubview(view);
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -142,8 +142,8 @@
      * @category UI Manipulation
      */
     setTitle (s) {
-        this.titleView().setValue(s)
-        return this
+        this.titleView().setValue(s);
+        return this;
     }
 
     /**
@@ -153,7 +153,7 @@
      */
     openInWindow () {
         SvApp.shared().mainWindow().documentBody().addSubview(this);
-        return this
+        return this;
     }
 
     /**
@@ -164,7 +164,7 @@
      * @category Error Handling
      */
     static showError (error) {
-        const panel = PanelView.clone().setTitle(error.message)
+        const panel = PanelView.clone().setTitle(error.message);
         //.setMinAndMaxWidth(300).setMinAndMaxHeight(200);
         panel.centerInParentView();
         panel.setTopPx(0);
@@ -217,8 +217,8 @@
      * @category Event Handling
      */
     hitButton1 () {
-        this.close()
-        return this
+        this.close();
+        return this;
     }
 
     /**
@@ -227,8 +227,8 @@
      * @category Lifecycle
      */
     close () {
-        this.removeFromParentView()
-        return this
+        this.removeFromParentView();
+        return this;
     }
-    
+
 }.initThisClass());

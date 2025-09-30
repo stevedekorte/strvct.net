@@ -32,7 +32,7 @@
         }
         return this
     }
-    
+
     addNodeAction (actionString) {
         if (!this.nodeActions().contains(actionString)) {
 	        this.nodeActions().push(actionString)
@@ -48,18 +48,18 @@
         }
         return this
     }
-    
+
     addNodeActions (actionStringList) {
         actionStringList.forEach( (action) => {
             this.addNodeAction(action)
         })
         return this
     }
-    
+
     hasNodeAction (actionName) {
         return this.nodeActions().contains(actionName)
     }
-    
+
     performNodeAction (actionName) {
         return this[actionName].apply(this)
     }
@@ -70,7 +70,4 @@
     */
 
 }.initThisClass());
-
-
-
 

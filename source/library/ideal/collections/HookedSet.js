@@ -2,7 +2,7 @@
 
 /**
  * A subclass of Set that hooks the base mutation methods.
- * 
+ *
  * For this to work, you need to use method alternatives to the non-method
  * (operator) operations.
  * @module library.ideal.collections
@@ -17,7 +17,7 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-        this.setupMutatorHooks()
+        this.setupMutatorHooks();
     }
 
     // ------------------------------
@@ -33,7 +33,7 @@
             "add",
             "clear",
             "delete"
-        ])
+        ]);
     }
 
     /**
@@ -42,28 +42,28 @@
      * @category Testing
      */
     static selfTest () {
-        const a = this.clone()
-        
-        let gotWillMutate = false
-        let gotDidMutate = false
+        const a = this.clone();
+
+        let gotWillMutate = false;
+        let gotDidMutate = false;
 
         a.willMutate = () => {
-            gotWillMutate = true
-        }
-        
+            gotWillMutate = true;
+        };
+
         a.didMutate = () => {
-            assert(gotWillMutate)
-            gotDidMutate = true
-        }
+            assert(gotWillMutate);
+            gotDidMutate = true;
+        };
 
-        a.add("b")
-        assert(gotWillMutate)
-        assert(gotDidMutate)
+        a.add("b");
+        assert(gotWillMutate);
+        assert(gotDidMutate);
 
-        console.log(this.svType() + " - passed self test")
-        return true
+        console.log(this.svType() + " - passed self test");
+        return true;
     }
 
-}.initThisClass()); 
+}.initThisClass());
 
 //HookedSet.selfTest()

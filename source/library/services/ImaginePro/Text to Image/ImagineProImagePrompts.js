@@ -10,21 +10,21 @@
 "use strict";
 
 (class ImagineProImagePrompts extends SvJsonArrayNode {
-  /**
+    /**
    * @description Initializes the prototype.
    * @category Initialization
    */
-  initPrototype () {
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setCanDelete(false);
-    this.setSubnodeClasses([ImagineProImagePrompt]);
-    this.setNodeCanReorderSubnodes(false);
-  }
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setCanDelete(false);
+        this.setSubnodeClasses([ImagineProImagePrompt]);
+        this.setNodeCanReorderSubnodes(false);
+    }
 
-  finalInit () {
-    super.finalInit();
-    this.setTitle("Image Prompts");
-  }
+    finalInit () {
+        super.finalInit();
+        this.setTitle("Image Prompts");
+    }
 
 }.initThisClass());

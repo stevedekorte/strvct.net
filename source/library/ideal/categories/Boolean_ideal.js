@@ -20,9 +20,9 @@
      * @category Utility
      */
     duplicate () {
-        return this
+        return this;
     }
- 
+
     // logic
 
     /**
@@ -30,7 +30,7 @@
      * @category Logic
      */
     negate () {
-        return !this
+        return !this;
     }
 
     /**
@@ -40,7 +40,7 @@
      * @category Logic
      */
     and (v) {
-        return this && v
+        return this && v;
     }
 
     /**
@@ -50,7 +50,7 @@
      * @category Logic
      */
     or (v) {
-        return this || v
+        return this || v;
     }
 
     /**
@@ -60,7 +60,7 @@
      * @category Logic
      */
     xor (v) {
-        return ( this && !v ) || ( !this && v )
+        return (this && !v) || (!this && v);
     }
 
     // control flow
@@ -73,9 +73,9 @@
      */
     ifTrue (aClosure) { // just a test
         if (this) {
-            return aClosure()
+            return aClosure();
         }
-        return undefined
+        return undefined;
     }
 
 }).initThisCategory();

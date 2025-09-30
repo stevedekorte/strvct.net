@@ -10,7 +10,7 @@
  * @classdesc Services class that manages various AI and other services.
  */
 (class Services extends SvSummaryNode {
-    
+
     /**
      * @static
      * @description Initializes the class as a singleton.
@@ -25,7 +25,7 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-               
+
         {
             const slot = this.newSlot("firebaseService", null);
             slot.setShouldStoreSlot(true);
@@ -46,7 +46,7 @@
             slot.setSlotType("LeonardoService");
         }
         */
-        
+
         /**
          * @member {AnthropicService} anthropicService
          * @category AI Service
@@ -105,7 +105,7 @@
             slot.setIsSubnode(true);
         }
 
-        
+
         /**
          * @member {OpenAiService} openAiService
          * @category AI Service
@@ -120,7 +120,7 @@
         /**
          * @member {DeepSeekService} deepSeekService
          * @category AI Service
-         */  
+         */
         {
             const slot = this.newSlot("deepSeekService", null);
             slot.setShouldStoreSlot(true);
@@ -162,7 +162,7 @@
          * @category Video Service
          */
         {
-            const slot = this.newSlot("youtubeService", null)
+            const slot = this.newSlot("youtubeService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(YouTubeService);
             slot.setIsSubnode(true);
@@ -186,7 +186,7 @@
          * @category Audio Processing
          */
         {
-            const slot = this.newSlot("speechToTextSessions", null)
+            const slot = this.newSlot("speechToTextSessions", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(SpeechToTextSessions);
             slot.setIsSubnode(true);
@@ -197,7 +197,7 @@
          * @category Networking
          */
         {
-            const slot = this.newSlot("proxyServers", null)
+            const slot = this.newSlot("proxyServers", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(ProxyServers);
             slot.setIsSubnode(true);
@@ -208,7 +208,7 @@
          * @category Home Automation
          */
         {
-            const slot = this.newSlot("homeAssistants", null)
+            const slot = this.newSlot("homeAssistants", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(HomeAssistants);
             slot.setIsSubnode(true);
@@ -252,7 +252,7 @@
         //return this.groqService().defaultChatModel();
         //return this.xaiService().defaultChatModel();
         //return this.openAiService().defaultChatModel();
-        return this.geminiService().defaultChatModel(); 
+        return this.geminiService().defaultChatModel();
         //return this.deepSeekService().defaultChatModel();
         //return this.anthropicService().defaultChatModel(); // Opus is too expensive
         //return this.aiServices().first().defaultChatModel();
@@ -286,5 +286,5 @@
     chatModelWithName (name) {
         return this.chatModels().detect(m => m.modelName() === name);
     }
-	
+
 }.initThisClass());

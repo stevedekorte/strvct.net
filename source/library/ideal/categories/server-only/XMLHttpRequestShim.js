@@ -7,9 +7,9 @@
  */
 
 // Only define XMLHttpRequest if it doesn't already exist
-if (typeof XMLHttpRequest === 'undefined') {
+if (typeof XMLHttpRequest === "undefined") {
 
-    const { XMLHttpRequest: NodeXMLHttpRequest } = require('xmlhttprequest');
+    const { XMLHttpRequest: NodeXMLHttpRequest } = require("xmlhttprequest");
 
     // Wrapper class to fix event handling compatibility
     class XMLHttpRequest extends NodeXMLHttpRequest {
@@ -25,7 +25,7 @@ if (typeof XMLHttpRequest === 'undefined') {
             super.onerror = (error) => {
                 if (callback) {
                     // Create a proper event-like object if one wasn't provided
-                    const event = error || { type: 'error', target: this };
+                    const event = error || { type: "error", target: this };
                     callback(event);
                 }
             };
@@ -40,7 +40,7 @@ if (typeof XMLHttpRequest === 'undefined') {
             super.onload = (event) => {
                 if (callback) {
                     // Ensure event object exists
-                    const eventObj = event || { type: 'load', target: this };
+                    const eventObj = event || { type: "load", target: this };
                     callback(eventObj);
                 }
             };
@@ -55,7 +55,7 @@ if (typeof XMLHttpRequest === 'undefined') {
             super.onreadystatechange = (event) => {
                 if (callback) {
                     // Ensure event object exists
-                    const eventObj = event || { type: 'readystatechange', target: this };
+                    const eventObj = event || { type: "readystatechange", target: this };
                     callback(eventObj);
                 }
             };

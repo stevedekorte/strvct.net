@@ -4,28 +4,28 @@
  * @module library.node.nodes.base
  * @class SvNode
  * @extends ProtoClass
- * @classdesc The base class of model objects that supports the protocol 
+ * @classdesc The base class of model objects that supports the protocol
  * used to sync with views (subclasses of NodeView).
  * State and behavior here are focused on managing subnodes.
  * The SvStorableNode subclass is used to sync the model to
  * the persistence system.
- * 
+ *
  * Notifications (intended for views):
  * - didUpdateNode // lets views know they need to scheduleSyncFromNode
  * - shouldFocusSubnode // request that the UI focus on the sender
- * 
+ *
  * Update messages sent to self:
  * - didUpdateSlotParentNode(oldValue, newValue)
  * - didChangeSubnodeList // hook to resort if needed and call didReorderParentSubnodes
  * - prepareForFirstAccess // sent to self on first access to subnodes
  * - prepareToAccess // sent to sent whenever a subnode is accessed
- * 
+ *
  * Update messages sent to parent:
  * - didUpdateNode // let parent know a subnode has changed
- * 
+ *
  * Update messages sent to subnodes:
  * - didReorderParentSubnodes // sent on subnode order change
- * 
+ *
  * Protocol helpers:
  * - watchOnceForNote(aNote) // typically used to watch for appDidInit
  */
@@ -73,7 +73,7 @@
      * @returns {SvNode} A new instance of this node.
      */
     static nodeCreate () {
-        // we implemnet this on SvNode class and prototype so 
+        // we implemnet this on SvNode class and prototype so
         // it works for both instance and class creator prototypes
         return this.clone();
     }
@@ -114,7 +114,7 @@
      * initializing only its own slots. The framework handles slot inheritance automatically.
      */
     initPrototypeSlots () {
- 
+
         /*
         {
             const slot = this.newSlot("nodeType", null);
@@ -261,7 +261,7 @@
         this.watchSubnodes();
 
         this.setSubnodeClasses(this.thisPrototype().subnodeClasses().shallowCopy());
-        return this
+        return this;
     }
 
     ownerOrParentNode () {
@@ -364,11 +364,11 @@
      * @returns {SvNode} A new instance of this node.
      */
     nodeCreate () {
-        // we implemnet this on SvNode class and prototype so 
+        // we implemnet this on SvNode class and prototype so
         // it works for both instance and class creator prototypes
         return this.duplicate();
     }
-    
+
     /**
 
      * @description Get the name used for node creation.
@@ -401,7 +401,7 @@
     }
 
     // -----------------------
-    
+
     /**
 
      * @description Get the visible class name for this node.
@@ -411,12 +411,12 @@
         if (this._nodeVisibleClassName) {
             return this._nodeVisibleClassName;
         }
-		
+
         return this.svType().sansPrefix("Sv");
     }
 
     // --- subnodes ----------------------------------------
-    
+
     /**
 
      * @description Set the parent node for this instance.
@@ -426,12 +426,12 @@
     setParentNode (aNode) {
         assert(aNode !== this); // sanity check
 
-        if (aNode !== this._parentNode) { 
+        if (aNode !== this._parentNode) {
             if (this._parentNode && aNode) {
                 console.warn(this.svDebugId() + " setParentNode(" + aNode.svDebugId() + ")  already has parent " + this._parentNode.svDebugId());
                 console.warn("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
-            
+
             const oldNode = this._parentNode;
             this._parentNode = aNode;
             this.didUpdateSlotParentNode(oldNode, aNode);
@@ -496,7 +496,7 @@
         assert(!this.hasSubnode(aSubnode));
         return this.justAddSubnodeAt(aSubnode, this.subnodeCount());
     }
-	
+
     /**
 
      * @description Add a subnode to this instance at a specific index without any checks.
@@ -511,7 +511,7 @@
         aSubnode.setParentNode(this);
         return aSubnode;
     }
-    
+
     /**
 
      * @description Assert that a given subnode is a valid type.
@@ -585,7 +585,7 @@
         newSubnodes.forEach(sn => {
             this.addSubnodeAt(sn, index);
             index ++;
-        })
+        });
         return this;
     }
 
@@ -597,8 +597,8 @@
      * @returns {SvNode} This instance.
      */
     moveSubnodesToIndex (movedSubnodes, anIndex) {
-        this.subnodes().moveItemsToIndex(movedSubnodes, anIndex)
-        return this
+        this.subnodes().moveItemsToIndex(movedSubnodes, anIndex);
+        return this;
     }
 
     /**
@@ -713,7 +713,7 @@
         this.subnodes().forEach(sn => {
             fn(sn);
             sn.forEachSubnodeRecursively(fn);
-        })
+        });
     }
 
     /**
@@ -728,7 +728,7 @@
             if (fn(subnode)) {
                 results.push(subnode);
             }
-        })
+        });
         return results;
     }
 
@@ -762,7 +762,7 @@
     }
 
     // --------
-	
+
     /**
 
      * @description Check if this instance is equal to another instance.
@@ -791,8 +791,8 @@
      * @returns {SvNode} This instance.
      */
     createSubnodesIndex () {
-        this.subnodes().setIndexClosure( v => v.hash());
-        return this
+        this.subnodes().setIndexClosure(v => v.hash());
+        return this;
     }
 
     cleanSubnodes () {
@@ -809,7 +809,7 @@
             }
         }
     }
-	
+
     /**
 
      * @description Check if this instance has a given subnode.
@@ -833,23 +833,23 @@
             return subnode.isEqual(aSubnode);
         });
     }
-    
+
     /**
 
      * @description Remove a subnode from this instance without any checks.
      * @param {SvNode} aSubnode - The subnode to remove.
      * @returns {SvNode} The removed subnode.
      */
-    justRemoveSubnode (aSubnode) { // private method 
+    justRemoveSubnode (aSubnode) { // private method
         this.subnodes().remove(aSubnode);
-        
+
         if (aSubnode.parentNode() === this) {
             aSubnode.setParentNode(null);
         }
-        
+
         return aSubnode;
     }
-    
+
     /**
 
      * @description Remove a subnode from this instance.
@@ -872,7 +872,7 @@
         subnodeList.forEach(sn => this.removeSubnode(sn));
         return this;
     }
-    
+
     /**
 
      * @description Remove all subnodes from this instance.
@@ -882,7 +882,7 @@
         if (this.subnodeCount()) {
             this.subnodes().slice().forEach((subnode) => {
                 this.justRemoveSubnode(subnode);
-            })
+            });
             //this.didChangeSubnodeList() handled by hooked array but this could be more efficient
         }
         return this;
@@ -990,9 +990,9 @@
         this.nodeReorderSudnodesTo(subnodes);
         return this;
     }
-    
+
     // --- update / sync system ----------------------------
-    
+
     /**
 
      * @description Trigger the didUpdateNode method if this instance has been initialized.
@@ -1019,9 +1019,9 @@
         if (note) {
             note.post();
         }
-        
+
         // TODO: make this more efficient, as we don't always need it
-        
+
         if (this.parentNode()) {
             assert(this.parentNode() !== this);
             this.parentNode().didUpdateNodeIfInitialized();
@@ -1096,7 +1096,7 @@
      * @description Prepare this instance for the first access to its subnodes.
      */
     prepareForFirstAccess () {
-        // subclasses can override 
+        // subclasses can override
     }
 
     /*
@@ -1104,9 +1104,9 @@
         this.prepareToAccess(); // infinite loop?
     }
     */
-    
+
     // --- parent chain notifications ---
-    
+
     /**
 
      * @description Send a message to this instance's parent nodes.
@@ -1233,9 +1233,9 @@
 
         return null;
     }
-    
+
     // --- log ------------------------
-    
+
     /**
      * @description Get the prefix for logging messages.
      * @returns {string} The prefix for logging messages.
@@ -1272,7 +1272,7 @@
     }
 
     // -- adding subnodes by instantiating subnode class ----
-    
+
     /**
 
      * @description Add a new subnode at a given index without any checks.
@@ -1303,7 +1303,7 @@
      * @description Add a new subnode at the end of the subnode list without any checks.
      * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
-    justAdd () {  
+    justAdd () {
         return this.justAddAt(this.subnodeCount());
     }
 
@@ -1327,7 +1327,7 @@
      * @description Add a new subnode at the end of the subnode list.
      * @returns {SvNode|null} The added subnode, or null if no subnode was added.
      */
-    add (noArg) {  
+    add (noArg) {
         assert(noArg === undefined);
         return this.addAt(this.subnodeCount());
     }
@@ -1346,7 +1346,7 @@
         }
         return this;
     }
-	
+
     /**
 
      * @description Remove this instance from its parent node and destroy it.
@@ -1358,7 +1358,7 @@
     }
 
     // --- utility -----------------------------
-    
+
     /**
 
      * @description Get the first parent node of a given class.
@@ -1369,11 +1369,11 @@
         if (this.svType() === className) {
             return this;
         }
-        
+
         if (this.parentNode()) {
             return this.parentNode().parentNodeOfType(className);
         }
-        
+
         return null;
     }
 
@@ -1385,14 +1385,14 @@
     parentNodes () {
         let node = this.parentNode();
         const results = [];
-		
+
         while (node) {
             results.push(node);
             node = this.parentNode();
         }
         return results;
     }
-    
+
     /**
 
      * @description Get the types of all parent nodes of this instance.
@@ -1401,9 +1401,9 @@
     parentNodeTypes () {
         return this.parentNodes().map(node => node.svType());
     }
-    
+
     // --- subnode lookup -----------------------------
-    
+
     /**
 
      * @description Get all subnodes of this instance except for a given subnode.
@@ -1413,7 +1413,7 @@
     subnodesSans (aSubnode) {
         return this.subnodes().select(subnode => subnode !== aSubnode);
     }
-    
+
     /**
 
      * @description Get the first subnode of a given class.
@@ -1424,7 +1424,7 @@
         // obj could be clas, prototype, or instance
         return this.subnodes().detect(subnode => subnode.svType() === obj.svType());
     }
-            
+
     /**
 
      * @description Ensure a subnode of a given class exists and add it if not.
@@ -1447,14 +1447,14 @@
      * @returns {SvNode} This instance.
      */
     sendRespondingSubnodes (aMethodName, argumentList) {
-        this.subnodes().forEach((subnode) => { 
+        this.subnodes().forEach((subnode) => {
             if (subnode[aMethodName]) {
                 subnode[aMethodName].apply(subnode, argumentList);
             }
-        })
+        });
         return this;
     }
-    
+
     // --- subnodes -----------------------------
     /**
 
@@ -1484,7 +1484,7 @@
      */
     watchSubnodes () {
         this._subnodes.addMutationObserver(this);
-        return this
+        return this;
     }
 
     /**
@@ -1510,12 +1510,12 @@
 
         if (Type.isNullOrUndefined(newValue)) {
             console.warn("attempt to set subnodes array to null or undefined - possible corruption of object pool storage <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-            
+
             newValue = [];
         }
 
         if (newValue.svType() !== "SubnodesArray") {
-            
+
             this._subnodes = SubnodesArray.from(newValue);
             newValue.removeDuplicates();
             newValue = this._subnodes;
@@ -1525,11 +1525,11 @@
             if (this.hasNullSubnodes()) {
                 console.warn(this.svDebugId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes());
                 this.subnodes().removeOccurancesOf(null);
-                
+
             }
             */
 
-            if(this.hasDuplicateSubnodes()) {
+            if (this.hasDuplicateSubnodes()) {
                 console.warn(this.svDebugId() + " hasDuplicateSubnodes - removing duplicates and continuing");
                 newValue.removeDuplicates();
             }
@@ -1540,16 +1540,16 @@
 
         this.watchSubnodes();
         if (this._subnodes.contains(null)) { // what would cause this?
-            
+
             console.warn("found null in subnodes array - removing");
-            this._subnodes.filterInPlace(sn => !(sn === null) );
+            this._subnodes.filterInPlace(sn => !(sn === null));
         }
-        
+
         this._subnodes.forEach(sn => sn.setParentNode(this)); // TODO: isn't this done elsewhere?
         this.didChangeSubnodeList(); // not handled automatically
         return this;
     }
-    
+
     /**
 
      * @description Assert that all subnodes have a parent node.
@@ -1564,7 +1564,7 @@
     }
 
     // --- subnode sorting ---
-	
+
     /**
 
      * @description Set the sorting function for the subnodes.
@@ -1575,7 +1575,7 @@
         this.subnodes().setSortFunc(f);
         return this;
     }
-    
+
     /**
 
      * @description Check if the subnodes are sorted.
@@ -1584,9 +1584,9 @@
     doesSortSubnodes () {
         return this.subnodes().doesSort();
     }
-    
+
     // --- subnode indexing ---
-	
+
     /**
 
      * @description Get the indexed subnodes of this instance.
@@ -1594,11 +1594,11 @@
      */
     lazyIndexedSubnodes () {
         if (!this.subnodes().indexClosure()) {
-            this.subnodes().setIndexClosure( sn => sn.hash() );
+            this.subnodes().setIndexClosure(sn => sn.hash());
         }
         return this.subnodes();
     }
-	
+
     /**
 
      * @description Get the subnode with a given hash.
@@ -1608,7 +1608,7 @@
     subnodeWithHash (h) {
         return this.lazyIndexedSubnodes().itemForIndexKey(h);
     }
-	
+
     /**
 
      * @description Remove the subnode with a given hash.
@@ -1622,7 +1622,7 @@
         }
         return this;
     }
-	
+
     /**
 
      * @description Check if this instance has a subnode with a given hash.
@@ -1632,9 +1632,9 @@
     hasSubnodeWithHash (h) {
         return this.lazyIndexedSubnodes().hasIndexKey(h);
     }
-	
+
     // visibility
-	
+
     /**
 
      * @description Handle the node becoming visible.
@@ -1665,7 +1665,7 @@
         return this;
     }
 
-    /** 
+    /**
 
      * @description Handle the tap on this node.
      * @returns {SvNode} This instance.
@@ -1688,7 +1688,7 @@
 
     /*
     validValuesForSlotName (slotName) {
-        // if there's a method for this particular slot use it, 
+        // if there's a method for this particular slot use it,
         // otherwise fail back on the validValues declared in the Slot
 
         const getterName = "validValuesForSlot" + slotName.capitalized();
@@ -1698,8 +1698,8 @@
             if (validValues !== undefined) {
                 return validValues;
             }
-        } 
-        
+        }
+
         const slot = this.thisPrototype().slotNamed(slotName);
         assert(slot);
         return slot.validValues();
@@ -1737,7 +1737,7 @@
             if (noSiblings || oneChild) {
                 this.replaceSubnodeWithSubnodes(sn, sns);
             }
-        })
+        });
         return this;
     }
 
@@ -1748,8 +1748,8 @@
      * @returns {Array} The leaf subnodes.
      */
     leafSubnodes (results = []) {
-         this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
-         return results;
+        this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
+        return results;
     }
 
     /**
@@ -1780,7 +1780,7 @@
         const hasSubnodes = (item.options !== undefined) && (item.options.length > 0);
         const nodeClass = hasSubnodes ? SvFolderNode : SvOptionNode;
         const newNode = nodeClass.clone().setTitle(String(item.label));
-        
+
         if (!hasSubnodes) {
             newNode.setValue(item.value !== undefined ? item.value : item.label);
             newNode.justSetIsPicked(item.isPicked === true);
@@ -1810,7 +1810,7 @@
         if (itemDicts) {
             itemDicts.forEach(subitemDict => {
                 this.addOptionNodeForDict(subitemDict);
-            })
+            });
         }
         return this;
     }
@@ -1825,13 +1825,13 @@
      */
     setJsonArchive (json) {
         // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
-        
+
         //console.log(this.logPrefix(), ".setJsonArchive(" + JSON.stableStringifyWithStdOptions(json, null, 2) + ")");
 
         //const keys = Object.keys(json).select(key => key !== "type");
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
         //assert(keys.length === jsonArchiveSlots.length); // or should we assume a diff if missing?
-        
+
         jsonArchiveSlots.forEach(slot => {
             const k = slot.getterName();
             const v = json[k];
@@ -1853,7 +1853,7 @@
         })
         */
 
-        return this
+        return this;
     }
 
 
@@ -1878,7 +1878,7 @@
 
         return dict;
     }
-    
+
     /**
 
      * @description Create an instance from a JSON archive.
@@ -1888,7 +1888,7 @@
     static fromJsonArchive (json) {
         const className = json.type;
         assert(className); // sanity check
-        
+
         const aClass = SvGlobals.globals()[className];
         assert(aClass.isKindOf(this)); // sanity check
 
@@ -1944,7 +1944,7 @@
      */
     static jsonSchemaProperties (refSet) {
         assert(refSet);
-        assert(this.asJsonSchema); // sanity check - we'll need this 
+        assert(this.asJsonSchema); // sanity check - we'll need this
         refSet.add(this);
 
         const slots = this.jsonSchemaSlots();
@@ -1961,7 +1961,7 @@
 
         return properties;
     }
-    
+
     /**
 
      * @description Get the JSON schema required for this instance.
@@ -1975,13 +1975,13 @@
         }
 
         const required = [];
-        
+
         slots.forEach(slot => {
             //if (!slot.allowsNullValue()) {
             if (slot.isRequired()) {
                 required.push(slot.getterName());
             }
-        })
+        });
 
         return required;
     }
@@ -2031,15 +2031,15 @@
             "$id": this.svType(),
             "$schema": "http://json-schema.org/draft-07/schema#"
         };
-        
+
         if (definitionsOnly) {
             this.asJsonSchema(refSet); // we only do this to set the refSet to include all classes with this object references
-            assert(this.asJsonSchema); // sanity check - we'll need this 
+            assert(this.asJsonSchema); // sanity check - we'll need this
             refSet.add(this); // now we add ourselve and we're ready to just share all the definitions
         } else {
             Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
             refSet.delete(this); // don't include ourself in the definitions, as we're the root schema
-        }        
+        }
 
         if (refSet.size) {
             json.definitions = this.jsonSchemaDefinitionsForRefSet(refSet);
@@ -2061,7 +2061,7 @@
 
         // iterate to grab all the definitions - simple but a bit inefficient. Not used in tight loops, so no problem.
         let done = false;
-        const classNameToSchemaMap = new Map(); 
+        const classNameToSchemaMap = new Map();
         while (!done) {
             done = true;
             Array.from(refSet).forEach(aClass => {
@@ -2081,7 +2081,7 @@
         });
 
         /*
-        // as we write out the definitions, we'll get encounter more refs, 
+        // as we write out the definitions, we'll get encounter more refs,
         // so we need to queue them to be added too
 
         const definedClasses = new Set();
@@ -2154,7 +2154,7 @@
             this.asJsonSchema(refSet); // so we add references within the referenced type
         }
         assert(Type.isSet(refSet));
-        assert(this.asJsonSchema); // sanity check - we'll need this 
+        assert(this.asJsonSchema); // sanity check - we'll need this
         assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.svType());
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
         return "#/definitions/" + typeName;
@@ -2173,7 +2173,7 @@
             this.asJsonSchema(refSet); // so we add references within the referenced type
         }
         assert(Type.isSet(refSet));
-        assert(this.asJsonSchema); // sanity check - we'll need this 
+        assert(this.asJsonSchema); // sanity check - we'll need this
         assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.svType());
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
         return "#/definitions/" + typeName;
@@ -2258,41 +2258,41 @@
     nodeShutdown (visited = new Set()) {
         // need to check for loops
         if (visited.has(this)) {
-            return
+            return;
         }
         visited.add(this);
 
-        this.performIfResponding("shutdown", visited); 
+        this.performIfResponding("shutdown", visited);
         this.ownedSlotValues().forEach(sv => sv.performIfResponding("nodeShutdown", visited));
         this.subnodes().forEach(sn => {
-          sn.performIfResponding("nodeShutdown", visited);
+            sn.performIfResponding("nodeShutdown", visited);
         });
-      }
+    }
 
-      /**
+    /**
 
        * @description Get the slots whose values are owned by this instance.
        * @returns {Array} The slots whose values are owned by this instance.
        */
-      slotsWhoseValuesAreOwned () {
+    slotsWhoseValuesAreOwned () {
         return this.thisPrototype().slots().filter(slot => slot.ownsValue());
-      }
+    }
 
-      /**
+    /**
 
        * @description Get the owned slot values.
        * @returns {Array} The owned slot values.
        */
 
-      ownedSlotValues () {
+    ownedSlotValues () {
         return this.slotsWhoseValuesAreOwned().map(slot => slot.onInstanceGetValue(this));
-      }
-    
-      /*
+    }
+
+    /*
       recursivelySendToOwnedNodes (methodName) {
-        // for things like shutdown methods, we want to send them to all owned nodes 
+        // for things like shutdown methods, we want to send them to all owned nodes
         // both to subnodes and slot values owned by each node
-    
+
         // note: we probably want to send these from the bottom up
         this.subnodes().forEach(sn => {
           this.sendMessageToOwnedSlotValues(methodName);
@@ -2302,16 +2302,13 @@
       }
       */
 
-      hasHeaderOrFooter () {
+    hasHeaderOrFooter () {
         return this.footerNode() !== null || this.headerNode() !== null;
-      }
+    }
 
-      canNavTo () {
+    canNavTo () {
         return this.hasSubnodes() || this.hasHeaderOrFooter() || this.nodeCanAddSubnode();
-      }
+    }
 
 }.initThisClass());
-
-
-
 

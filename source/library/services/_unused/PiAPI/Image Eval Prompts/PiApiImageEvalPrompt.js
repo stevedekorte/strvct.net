@@ -8,27 +8,27 @@
  * @class PiApiImageEvalPrompt
  * @extends PiApiImagePrompt
  * @classdesc Extends PiApiImagePrompt to add automatic evaluation and selection of best image.
- * 
+ *
  * This class combines PiAPI's Midjourney generation (inherited from PiApiImagePrompt)
  * with OpenAI's evaluation capabilities to automatically select the best matching image.
- * 
+ *
  * How it works:
  * 1. Takes a content prompt (what to generate) and style prompt (artistic style)
  * 2. Combines them for the inherited Midjourney generation
  * 3. After generation completes, uses OpenAI's vision model to score each image
  * 4. Selects and stores the best matching image
- * 
+ *
  * Inherits all delegate messages from PiApiImagePrompt
  */
 
 (class PiApiImageEvalPrompt extends PiApiImagePrompt {
-    
+
     /**
      * @description Initializes the prototype slots for the PiApiImageEvalPrompt class.
      */
     initPrototypeSlots () {
         // Don't call super - the framework handles this automatically
-        
+
         // The prompt slot exists from parent - just update its label
         {
             const slot = this.thisPrototype().slotNamed("prompt");
@@ -156,24 +156,24 @@
     buildCombinedPrompt () {
         const content = this.prompt().trim();
         const style = this.stylePrompt().trim();
-        
+
         if (!content) {
             return "";
         }
-        
+
         let result;
-        
+
         if (style) {
             result = style + " " + content;
         } else {
             result = content;
         }
-        
+
         // Version flag is now appended by the parent class
-        
+
         return result;
     }
-    
+
     /**
      * @description Splits text into sentences.
      * @param {string} text - The text to split.
@@ -184,13 +184,13 @@
         // Split on sentence-ending punctuation followed by space or end of string
         // Keep the punctuation with the sentence
         const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
-        
+
         // Clean up and filter out empty sentences
         return sentences
             .map(s => s.trim())
             .filter(s => s.length > 0);
     }
-    
+
     /**
      * @description Called when a slot is updated.
      * @param {Object} slot - The slot that was updated.
@@ -200,7 +200,7 @@
      */
     didUpdateSlot (slot, oldValue, newValue) {
         super.didUpdateSlot(slot, oldValue, newValue);
-        
+
         // Update combined prompt when content or style changes
         if (slot.name() === "prompt" || slot.name() === "stylePrompt") {
             const combined = this.buildCombinedPrompt();
@@ -216,22 +216,22 @@
         this.setEvalCompletionPromise(Promise.clone());
         // Build the combined prompt
         const combined = this.buildCombinedPrompt();
-        
+
         if (!combined) {
             this.setError("Content prompt is required");
             return;
         }
-        
+
         // Store the combined prompt for display
         this.setCombinedPrompt(combined);
-        
+
         // Temporarily set the prompt to the combined version for generation
         const originalPrompt = this.prompt();
         this.setPrompt(combined);
         await super.generate();
         // Restore the original content prompt
         this.setPrompt(originalPrompt);
-        
+
         // Don't proceed with evaluation if generation failed
         if (this.error()) {
             this.onEvalError(this.error());
@@ -247,12 +247,12 @@
     onImageGenerationEnd (generation) {
         // Let parent handle the basic completion
         super.onImageGenerationEnd(generation);
-        
+
         // If auto-evaluate is enabled and generation was successful, evaluate
-        if (this.autoEvaluate() && 
-            generation.status() === "completed" && 
+        if (this.autoEvaluate() &&
+            generation.status() === "completed" &&
             this.images().subnodes().length > 0) {
-            
+
             // Start evaluation process
             this.evaluateImages();
         }
@@ -266,21 +266,21 @@
     async evaluateImages () {
         try {
             this.setStatus("evaluating images with OpenAI...");
-            
+
             // Check if OpenAI service has API key
             if (!this.openAiService().hasApiKey()) {
                 this.setError("OpenAI API key not configured for evaluation");
                 return;
             }
-            
+
             // Evaluate with OpenAI
             await this.evaluateWithOpenAI();
-            
+
             // Select best image
             await this.selectBestImage();
-            
+
             this.setStatus("evaluation complete");
-            
+
         } catch (error) {
             this.logError("Image evaluation failed:", error);
             this.setError("Evaluation failed: " + error.message);
@@ -310,13 +310,13 @@
         if (!imageNodes || imageNodes.length === 0) {
             throw new Error("No images to evaluate");
         }
-        
+
         const apiKey = await this.openAiService().apiKeyOrUserAuthToken();
-        const endpoint = 'https://api.openai.com/v1/chat/completions';
-        
+        const endpoint = "https://api.openai.com/v1/chat/completions";
+
         // Use the content prompt (not the combined one) for evaluation
         const contentPrompt = this.prompt();
-        
+
         // Build evaluation prompt
         const evaluationPrompt = `Evaluate how well each of these images matches this content prompt: "${contentPrompt}".
 
@@ -330,7 +330,7 @@ Reduce the score heavily if the image has a border of any kind (e.g. white, pain
 IMPORTANT: Use 0-based indexing for the images (first image is index 0, second is index 1, etc.).
 
 Return the results as a JSON array with objects containing: {"index": <number>, "score": <number>, "explanation": "<string>"}`;
-        
+
         // Format the request with all images
         const messages = [
             {
@@ -343,7 +343,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 ]
             }
         ];
-        
+
         // Add all images to the message
         imageNodes.forEach((imageNode, index) => {
             const imageUrl = imageNode.imageUrl() || imageNode.url();
@@ -358,50 +358,50 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 });
             }
         });
-        
+
         const bodyJson = {
             model: "gpt-4o",
             messages: messages,
             max_tokens: 1000
         };
-        
+
         this.log("=== OpenAI Image Evaluation ===");
         this.log("Evaluating", imageNodes.length, "images");
-        
+
         const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-        
+
         const response = await fetch(proxyEndpoint, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(bodyJson)
         });
-        
+
         const resultData = await response.json();
-        
+
         if (!response.ok) {
             const error = new Error(`OpenAI error: ${resultData.error?.message || response.statusText}`);
             this.onEvalError(error);
             return;
         }
-        
+
         // Process the evaluation results
         if (resultData.choices && resultData.choices[0]) {
             const content = resultData.choices[0].message.content;
             this.log("Evaluation response:", content);
-            
+
             // Try to parse JSON from the response
             try {
                 const jsonMatch = content.match(/\[[\s\S]*\]/);
                 if (jsonMatch) {
                     let scores = JSON.parse(jsonMatch[0]);
-                    
+
                     // Check if OpenAI is using 1-based indices (all indices >= 1 and no index 0)
                     const hasIndexZero = scores.some(s => s.index === 0);
                     const minIndex = Math.min(...scores.map(s => s.index));
-                    
+
                     if (!hasIndexZero && minIndex === 1) {
                         // Convert from 1-based to 0-based
                         this.log("Converting from 1-based to 0-based indices");
@@ -410,7 +410,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                             index: scoreObj.index - 1
                         }));
                     }
-                    
+
                     // Remove any duplicate indices (keep the first occurrence)
                     const uniqueScores = [];
                     const seenIndices = new Set();
@@ -422,7 +422,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                             this.logWarn(`Duplicate index ${score.index} found in evaluation scores, skipping`);
                         }
                     }
-                    
+
                     this.setEvaluationScores(uniqueScores);
                     this.log("Evaluation scores (cleaned):", uniqueScores);
                 } else {
@@ -455,16 +455,16 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
         const scores = this.evaluationScores();
         this.setEvaluationScoresString(JSON.stringify(scores, null, 2));
         const imageNodes = this.images().subnodes();
-        
+
         if (!scores || scores.length === 0 || !imageNodes || imageNodes.length === 0) {
             this.logWarn("No scores or images to select from");
             return;
         }
-        
+
         // Find the highest scoring image
         let bestScore = -1;
         let bestIndex = 0;
-        
+
         this.log("Evaluating scores to find best image:");
         scores.forEach(scoreObj => {
             this.log(`  Image ${scoreObj.index}: score ${scoreObj.score}`);
@@ -473,37 +473,37 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 bestIndex = scoreObj.index;
             }
         });
-        
+
         this.log(`Best image is index ${bestIndex} with score ${bestScore}`);
         this.setBestImageIndex(bestIndex);
-        
+
         // Update image titles with scores
         scores.forEach((scoreObj) => {
             const idx = scoreObj.index;
             if (imageNodes[idx]) {
                 const isBest = idx === bestIndex;
-                const title = isBest ? 
+                const title = isBest ?
                     `Image ${idx + 1} ⭐ (Score: ${scoreObj.score})` :
                     `Image ${idx + 1} (Score: ${scoreObj.score})`;
                 imageNodes[idx].setTitle(title);
             }
         });
-        
+
         // Set the best image as result
         if (bestIndex >= 0 && bestIndex < imageNodes.length) {
             this.log(`Accessing imageNodes[${bestIndex}] from ${imageNodes.length} total images`);
             const bestImageNode = imageNodes[bestIndex];
             this.log(`Best image node title: ${bestImageNode.title()}`);
-            
+
             // Try to get the same URL format we sent to OpenAI
             //const bestImageUrl = bestImageNode.imageUrl() || bestImageNode.url();
             const displayUrl = bestImageNode.imageUrl() || bestImageNode.dataUrl();
-            
-            this.log(`Best image URLs:`);
-            this.log(`  imageUrl(): ${bestImageNode.imageUrl() ? 'exists' : 'null'}`);
-            this.log(`  dataUrl(): ${bestImageNode.dataUrl() ? 'exists' : 'null'}`);
-            this.log(`  url(): ${bestImageNode.url() ? 'exists' : 'null'}`);
-            
+
+            this.log("Best image URLs:");
+            this.log(`  imageUrl(): ${bestImageNode.imageUrl() ? "exists" : "null"}`);
+            this.log(`  dataUrl(): ${bestImageNode.dataUrl() ? "exists" : "null"}`);
+            this.log(`  url(): ${bestImageNode.url() ? "exists" : "null"}`);
+
             if (displayUrl) {
                 // Log first 100 chars of the URL to verify it's the right image
                 this.setResultImageUrlData(displayUrl);
@@ -526,7 +526,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 return `Complete - Best score: ${bestScore}`;
             }
         }
-        
+
         return super.subtitle();
     }
 
@@ -548,7 +548,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
      */
     async generateActionInfo () {
         const baseInfo = await super.generateActionInfo();
-        
+
         if (this.autoEvaluate() && !(await this.openAiService().hasApiKey())) {
             return {
                 isEnabled: false,
@@ -556,7 +556,7 @@ Return the results as a JSON array with objects containing: {"index": <number>, 
                 title: "OpenAI API key required for evaluation"
             };
         }
-        
+
         return baseInfo;
     }
 

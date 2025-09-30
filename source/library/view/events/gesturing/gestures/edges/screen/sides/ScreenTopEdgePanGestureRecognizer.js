@@ -6,16 +6,16 @@
  * @class ScreenTopEdgePanGestureRecognizer
  * @extends ScreenEdgePanGestureRecognizer
  * @classdesc Recognizes pan gestures from the top edge of the screen.
- * 
+ *
  * Delegate messages:
- * 
+ *
  * onScreenTopEdgePanBegin
  * onScreenTopEdgePanMove
  * onScreenTopEdgePanComplete
  * onScreenTopEdgePanCancelled
  */
 (class ScreenTopEdgePanGestureRecognizer extends ScreenEdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @returns {void}
@@ -30,9 +30,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("top")
-        return this
+        super.init();
+        this.setEdgeName("top");
+        return this;
     }
 
 }.initThisClass());

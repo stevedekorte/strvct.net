@@ -21,7 +21,7 @@
         try {
             const pathSegments = this.parsePathSegments(operation.path);
             const targetInfo = this.findTargetForPath(pathSegments);
-            
+
             // Check if the target node supports JSON patch operations
             if (!targetInfo.node.executeDirectOperation) {
                 throw new JsonPatchError(
@@ -32,7 +32,7 @@
                     targetInfo.node
                 );
             }
-            
+
             // Pass the root node (or this if no root provided) for copy/move operations
             const patchRoot = rootNode || this;
             return targetInfo.node.executeDirectOperation(operation.op, targetInfo.key, operation.value, operation, patchRoot);
@@ -41,7 +41,7 @@
                 error.operation = operation;
                 throw error;
             }
-            
+
             throw new JsonPatchError(
                 `Failed to apply patch: ${error.message}`,
                 operation,
@@ -59,10 +59,10 @@
      * @category JSON Patch
      */
     parsePathSegments (path) {
-        if (path === '/') {
+        if (path === "/") {
             return [];
         }
-        return path.split('/').slice(1); // Remove leading empty string from split
+        return path.split("/").slice(1); // Remove leading empty string from split
     }
 
     /**
@@ -75,11 +75,11 @@
         if (pathSegments.length === 1) {
             return { node: this, key: pathSegments[0] };
         }
-        
+
         const navigationSegments = pathSegments.slice(0, -1);
         const targetKey = pathSegments[pathSegments.length - 1];
         const targetNode = this.nodeAtPath(navigationSegments);
-        
+
         return { node: targetNode, key: targetKey };
     }
 
@@ -92,17 +92,17 @@
      */
     nodeAtPath (pathSegments, originalPath = null) {
         const fullPath = originalPath || pathSegments.slice();
-        
+
         if (pathSegments.length === 0) {
             return this;
         }
-        
+
         const nextSegment = pathSegments[0];
         const remainingPath = pathSegments.slice(1);
-        
+
         try {
             const childNode = this.childNodeForSegment(nextSegment);
-            
+
             if (!childNode) {
                 throw new JsonPatchError(
                     `No child found for segment '${nextSegment}'`,
@@ -112,7 +112,7 @@
                     this
                 );
             }
-            
+
             // Check if the child node supports nodeAtPath (i.e., is a JSON collection type)
             if (childNode.nodeAtPath) {
                 return childNode.nodeAtPath(remainingPath, fullPath);
@@ -131,12 +131,12 @@
                 // If no remaining path, this child is our target
                 return childNode;
             }
-            
+
         } catch (error) {
             if (error instanceof JsonPatchError) {
                 throw error;
             }
-            
+
             throw new JsonPatchError(
                 `Error navigating to '${nextSegment}': ${error.message}`,
                 null,
@@ -158,17 +158,17 @@
      */
     nodeAtPathWithParent (pathSegments, originalPath = null, parentNode = null, slotName = null) {
         const fullPath = originalPath || pathSegments.slice();
-        
+
         if (pathSegments.length === 0) {
             return { node: this, parentNode: parentNode, slotName: slotName };
         }
-        
+
         const nextSegment = pathSegments[0];
         const remainingPath = pathSegments.slice(1);
-        
+
         try {
             const childNode = this.childNodeForSegment(nextSegment);
-            
+
             if (!childNode) {
                 throw new JsonPatchError(
                     `No child found for array index '${nextSegment}'`,
@@ -178,7 +178,7 @@
                     this
                 );
             }
-            
+
             // Check if the child node supports nodeAtPathWithParent (i.e., is a JSON collection type)
             if (childNode.nodeAtPathWithParent) {
                 // Continue navigation through the child
@@ -196,15 +196,15 @@
                 // If there's still path remaining, check if it's a plain object we can navigate into
                 if (remainingPath.length > 0) {
                     // Special case for plain objects - we can navigate into them
-                    if (typeof childNode === 'object' && !Array.isArray(childNode)) {
+                    if (typeof childNode === "object" && !Array.isArray(childNode)) {
                         // For plain objects, return them as the node for further navigation
-                        return { 
-                            node: childNode, 
-                            parentNode: this, 
-                            slotName: nextSegment 
+                        return {
+                            node: childNode,
+                            parentNode: this,
+                            slotName: nextSegment
                         };
                     }
-                    
+
                     const nodeType = childNode.svType ? childNode.svType() : typeof childNode;
                     throw new JsonPatchError(
                         `Cannot navigate further from array index '${nextSegment}' - node type '${nodeType}' does not support path navigation`,
@@ -217,12 +217,12 @@
                 // If no remaining path, this child is our target
                 return { node: childNode, parentNode: this, slotName: nextSegment };
             }
-            
+
         } catch (error) {
             if (error instanceof JsonPatchError) {
                 throw error;
             }
-            
+
             throw new JsonPatchError(
                 `Error navigating to array index '${nextSegment}': ${error.message}`,
                 null,
@@ -241,16 +241,16 @@
      */
     childNodeForSegment (segment) {
         const index = this.validateArrayIndex(segment, "navigate");
-        
+
         if (index === -1) {
             throw new Error("Cannot navigate to append position '/-'");
         }
-        
+
         const arrayLength = this.subnodes().length;
         if (index >= arrayLength) {
             throw new Error(`Array index ${index} is out of bounds. Array has ${arrayLength} elements (valid indices: 0-${arrayLength - 1})`);
         }
-        
+
         return this.subnodes().at(index);
     }
 
@@ -262,8 +262,8 @@
      * @category JSON Patch
      */
     validateArrayIndex (indexString, operation = "access", fullOperation = null) {
-        if (indexString === '-') {
-            if (operation !== 'add') {
+        if (indexString === "-") {
+            if (operation !== "add") {
                 throw new JsonPatchError(
                     `Cannot ${operation} using '/-' path. Use '/-' only with 'add' operations.`,
                     fullOperation,
@@ -274,9 +274,9 @@
             }
             return -1; // Special return value for append
         }
-        
+
         const index = parseInt(indexString);
-        
+
         if (isNaN(index)) {
             throw new JsonPatchError(
                 `Array index '${indexString}' is not a valid number. Array operations require numeric indices (0, 1, 2, etc.) or '-' for append.`,
@@ -286,7 +286,7 @@
                 this
             );
         }
-        
+
         if (index < 0) {
             throw new JsonPatchError(
                 `Array index ${index} is negative. Array indices must be >= 0.`,
@@ -296,7 +296,7 @@
                 this
             );
         }
-        
+
         return index;
     }
 
@@ -312,12 +312,12 @@
      */
     executeDirectOperation (op, key, value, operation, rootNode) {
         switch (op) {
-            case 'add': return this.addDirectly(key, value, operation);
-            case 'remove': return this.removeDirectly(key, operation);
-            case 'replace': return this.replaceDirectly(key, value, operation);
-            case 'move': return this.moveDirectly(operation.from, key, rootNode, operation);
-            case 'copy': return this.copyDirectly(operation.from, key, rootNode, operation);
-            case 'test': return this.testDirectly(key, value, operation);
+            case "add": return this.addDirectly(key, value, operation);
+            case "remove": return this.removeDirectly(key, operation);
+            case "replace": return this.replaceDirectly(key, value, operation);
+            case "move": return this.moveDirectly(operation.from, key, rootNode, operation);
+            case "copy": return this.copyDirectly(operation.from, key, rootNode, operation);
+            case "test": return this.testDirectly(key, value, operation);
             default:
                 throw new JsonPatchError(
                     `Unsupported JSON patch operation: ${op}`,
@@ -340,16 +340,16 @@
         try {
             const index = this.validateArrayIndex(key, "add", operation);
             const newNode = this.newSubnodeForJson(value);
-            
+
             if (index === -1) {
                 this.addSubnode(newNode);
                 return this;
             }
-            
+
             if (index > this.subnodes().length) {
                 throw new Error(`Cannot add to array: index ${index} is beyond array end (length: ${this.subnodes().length}). Use index ${this.subnodes().length} or '/-' to append`);
             }
-            
+
             this.addSubnodeAt(newNode, index);
             return this;
         } catch (error) {
@@ -365,7 +365,7 @@
      */
     removeDirectly (key, operation = null) {
         const index = this.validateArrayIndex(key, "remove", operation);
-        
+
         if (index === -1) {
             throw new JsonPatchError(
                 "Cannot remove using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
@@ -375,7 +375,7 @@
                 this
             );
         }
-        
+
         if (index >= this.subnodes().length) {
             throw new JsonPatchError(
                 `Cannot remove from array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
@@ -385,7 +385,7 @@
                 this
             );
         }
-        
+
         const node = this.subnodes().at(index);
         this.removeSubnode(node);
         return this;
@@ -400,7 +400,7 @@
      */
     replaceDirectly (key, value, operation = null) {
         const index = this.validateArrayIndex(key, "replace", operation);
-        
+
         if (index === -1) {
             throw new JsonPatchError(
                 "Cannot replace using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
@@ -410,7 +410,7 @@
                 this
             );
         }
-        
+
         if (index >= this.subnodes().length) {
             throw new JsonPatchError(
                 `Cannot replace in array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
@@ -420,7 +420,7 @@
                 this
             );
         }
-        
+
         const newNode = this.newSubnodeForJson(value);
         const oldNode = this.subnodes().at(index);
         this.replaceSubnodeWith(oldNode, newNode);
@@ -469,7 +469,7 @@
      */
     testDirectly (key, expectedValue, operation = null) {
         const index = this.validateArrayIndex(key, "test", operation);
-        
+
         if (index === -1) {
             throw new JsonPatchError(
                 "Cannot test using '/-' path. Specify a valid array index (0, 1, 2, etc.)",
@@ -479,7 +479,7 @@
                 this
             );
         }
-        
+
         if (index >= this.subnodes().length) {
             throw new JsonPatchError(
                 `Cannot test array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
@@ -489,10 +489,10 @@
                 this
             );
         }
-        
+
         const node = this.subnodes().at(index);
         const actualValue = node.asJson();
-        
+
         if (JSON.stringify(actualValue) !== JSON.stringify(expectedValue)) {
             throw new JsonPatchError(
                 `Test failed: expected ${JSON.stringify(expectedValue)} but got ${JSON.stringify(actualValue)}`,
@@ -502,7 +502,7 @@
                 this
             );
         }
-        
+
         return this;
     }
 

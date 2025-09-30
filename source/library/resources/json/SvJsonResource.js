@@ -11,7 +11,7 @@
  */
 
 (class SvJsonResource extends SvResource {
-    
+
     /**
      * @static
      * @description Returns an array of supported file extensions for JSON resources.

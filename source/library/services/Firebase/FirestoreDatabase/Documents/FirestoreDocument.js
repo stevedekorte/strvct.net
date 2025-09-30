@@ -8,9 +8,9 @@
  * @class FirestoreDocument
  * @extends SvStorableNode
  * @classdesc Represents a document stored in Firebase Firebase
- * 
+ *
  * FirestoreDatabase records
- * 
+ *
  */
 (class FirestoreDocument extends SvSummaryNode {
 
@@ -43,7 +43,7 @@
         }
 
         {
-            const slot = this.newSlot("updateTimeMillis", 0); 
+            const slot = this.newSlot("updateTimeMillis", 0);
             slot.setDescription("Timestamp of last update in milliseconds since epoch");
             slot.setSlotType("Number");
             slot.setAllowsNullValue(false);
@@ -168,7 +168,7 @@
             this.setUploadStatus("preparing upload...");
 
             // Ensure Firestore web client is available
-            if (typeof firebase === 'undefined' || !firebase.firestore) {
+            if (typeof firebase === "undefined" || !firebase.firestore) {
                 throw new Error("Firebase Firestore web client not available");
             }
 
@@ -177,15 +177,15 @@
 
             // In local development, attempt to use the emulator if available
             try {
-                const h = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
-                const isLocal = ['localhost', '127.0.0.1', '::1'].includes(h) || h.endsWith('.local') || h.endsWith('.test');
+                const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
+                const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
                 if (isLocal) {
                     // Guard to avoid reconfiguring emulator repeatedly
                     if (!window.__uo_firestore_emulator_configured__) {
-                        if (typeof db.useEmulator === 'function') {
-                            db.useEmulator('localhost', 8080);
-                        } else if (typeof db.settings === 'function') {
-                            db.settings({ host: 'localhost:8080', ssl: false });
+                        if (typeof db.useEmulator === "function") {
+                            db.useEmulator("localhost", 8080);
+                        } else if (typeof db.settings === "function") {
+                            db.settings({ host: "localhost:8080", ssl: false });
                         }
                         window.__uo_firestore_emulator_configured__ = true;
                     }
@@ -201,13 +201,13 @@
             if (rawContent == null) {
                 throw new Error("No content provided to upload");
             }
-            if (typeof rawContent === 'string') {
+            if (typeof rawContent === "string") {
                 try {
                     data = JSON.parse(rawContent);
                 } catch (e) {
                     throw new Error("Content is not valid JSON: " + e.message);
                 }
-            } else if (typeof rawContent === 'object') {
+            } else if (typeof rawContent === "object") {
                 data = rawContent;
             } else {
                 throw new Error("Unsupported content type: " + (typeof rawContent));
@@ -215,17 +215,17 @@
 
             // Determine target document path
             let path = this.storagePath();
-            if (!path || typeof path !== 'string' || path.trim() === '') {
+            if (!path || typeof path !== "string" || path.trim() === "") {
                 // Provide a reasonable default path if none is provided
                 path = `TestDocuments/${Date.now()}`;
                 this.setStoragePath(path);
             }
 
             // Firestore requires an even number of segments for document paths
-            const segments = path.split('/').filter(Boolean);
+            const segments = path.split("/").filter(Boolean);
             if (segments.length % 2 !== 0) {
                 // If a collection path was given, append a generated id
-                path = path.endsWith('/') ? path + Date.now() : `${path}/${Date.now()}`;
+                path = path.endsWith("/") ? path + Date.now() : `${path}/${Date.now()}`;
                 this.setStoragePath(path);
             }
 
@@ -252,7 +252,7 @@
             this.setError("");
             this.setUploadStatus("preparing delete...");
 
-            if (typeof firebase === 'undefined' || !firebase.firestore) {
+            if (typeof firebase === "undefined" || !firebase.firestore) {
                 throw new Error("Firebase Firestore web client not available");
             }
 
@@ -264,13 +264,13 @@
             const db = firebase.firestore();
             // Ensure emulator in dev before operation
             try {
-                const h = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
-                const isLocal = ['localhost', '127.0.0.1', '::1'].includes(h) || h.endsWith('.local') || h.endsWith('.test');
+                const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
+                const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
                 if (isLocal && !window.__uo_firestore_emulator_configured__) {
-                    if (typeof db.useEmulator === 'function') {
-                        db.useEmulator('localhost', 8080);
-                    } else if (typeof db.settings === 'function') {
-                        db.settings({ host: 'localhost:8080', ssl: false });
+                    if (typeof db.useEmulator === "function") {
+                        db.useEmulator("localhost", 8080);
+                    } else if (typeof db.settings === "function") {
+                        db.settings({ host: "localhost:8080", ssl: false });
                     }
                     window.__uo_firestore_emulator_configured__ = true;
                 }
@@ -297,7 +297,7 @@
             this.setError("");
             this.setUploadStatus("downloading from Firestore...");
 
-            if (typeof firebase === 'undefined' || !firebase.firestore) {
+            if (typeof firebase === "undefined" || !firebase.firestore) {
                 throw new Error("Firebase Firestore web client not available");
             }
 
@@ -309,13 +309,13 @@
             const db = firebase.firestore();
             // Ensure emulator in dev before operation
             try {
-                const h = (typeof window !== 'undefined' && window.location && window.location.hostname) || '';
-                const isLocal = ['localhost', '127.0.0.1', '::1'].includes(h) || h.endsWith('.local') || h.endsWith('.test');
+                const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
+                const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
                 if (isLocal && !window.__uo_firestore_emulator_configured__) {
-                    if (typeof db.useEmulator === 'function') {
-                        db.useEmulator('localhost', 8080);
-                    } else if (typeof db.settings === 'function') {
-                        db.settings({ host: 'localhost:8080', ssl: false });
+                    if (typeof db.useEmulator === "function") {
+                        db.useEmulator("localhost", 8080);
+                    } else if (typeof db.settings === "function") {
+                        db.settings({ host: "localhost:8080", ssl: false });
                     }
                     window.__uo_firestore_emulator_configured__ = true;
                 }
@@ -336,7 +336,7 @@
                 // Fallback to raw object if stringification fails
                 this.setContent(data);
             }
-            
+
             // Update the updateTimeMillis from the document snapshot
             if (snap.updateTime) {
                 this.setUpdateTimeMillis(snap.updateTime.toMillis());
@@ -353,22 +353,22 @@
     async asyncCloudUpdateTimeMillis () {
         const db = firebase.firestore();
         const docRef = db.doc(this.storagePath());
-        
+
         // Use select() with empty array to fetch ONLY metadata, not document content
         const docSnapshot = await docRef.select().get();
-        
+
         if (!docSnapshot.exists) {
             return 0;
         }
-        
+
         const cloudUpdateTime = docSnapshot.updateTime ? docSnapshot.updateTime.toMillis() : 0;
         return cloudUpdateTime;
     }
 
     async asyncIsNewerThanCloud () {
-          const cloudUpdateTime = await this.asyncCloudUpdateTimeMillis();
-          const localUpdateTime = this.updateTimeMillis();
-          return localUpdateTime > cloudUpdateTime;
+        const cloudUpdateTime = await this.asyncCloudUpdateTimeMillis();
+        const localUpdateTime = this.updateTimeMillis();
+        return localUpdateTime > cloudUpdateTime;
     }
 
     // --- action wrappers ---

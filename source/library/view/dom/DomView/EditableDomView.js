@@ -10,7 +10,7 @@
  * @classdesc EditableDomView is for subclasses to extend. Ancestors of this class are organizational parts of DomView.
  */
 (class EditableDomView extends SelectableDomView {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @category Initialization
@@ -19,7 +19,7 @@
         /*
         {
             const slot = this.newSlot("unfocusOnEnterKey", false);
-            slot.setSlotType("Boolean");    
+            slot.setSlotType("Boolean");
         }
         {
             const slot = this.newSlot("showsHaloWhenEditable", false);
@@ -51,17 +51,17 @@
      * @category Text Manipulation
      */
     consolidateTextNodesAndPreserveSelection () {
-        const div = this.element()
+        const div = this.element();
 
         const selection = window.getSelection();
         if (!selection.rangeCount) return;
-    
+
         const range = selection.getRangeAt(0);
-        
+
         // Helper function to calculate offset within the parent
         function getOffsetWithinParent (node, offset) {
             if (node === div) return offset;
-            
+
             let length = 0;
             while (node.previousSibling) {
                 node = node.previousSibling;
@@ -73,16 +73,16 @@
         // Get current selection's start and end positions relative to the entire text content of the div
         const startOffset = getOffsetWithinParent(range.startContainer, range.startOffset);
         const endOffset = getOffsetWithinParent(range.endContainer, range.endOffset);
-    
+
         // Merge all text nodes into a single text node
         const combinedText = Array.from(div.childNodes)
             .map(node => node.textContent)
-            .join('');
+            .join("");
         while (div.firstChild) {
             div.removeChild(div.firstChild);
         }
         div.appendChild(document.createTextNode(combinedText));
-    
+
         // Restore the selection or cursor position
         const newRange = document.createRange();
         newRange.setStart(div.firstChild, startOffset);
@@ -90,7 +90,7 @@
         selection.removeAllRanges();
         selection.addRange(newRange);
 
-        return this
+        return this;
     }
 
     /**
@@ -104,29 +104,29 @@
 
         if (window.getSelection) {
             sel = window.getSelection();
-    
+
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
-    
+
                 // Remember the position before insertion
                 var positionBeforeInsertion = range.startOffset;
-    
+
                 // Create a new text node containing the text to insert
                 textNode = document.createTextNode(text);
                 range.insertNode(textNode);
-    
+
                 // Adjust the selection to be at the end of the new text node
                 range.setStartAfter(textNode);
                 range.setEndAfter(textNode);
                 sel.removeAllRanges();
                 sel.addRange(range);
-    
+
                 // Calculate new position after consolidation
                 var positionAfterConsolidation = positionBeforeInsertion + insertedTextLength;
-    
+
                 // Now, consolidate all text nodes in the div
                 el.textContent = el.textContent;
-    
+
                 // Restore the position
                 var newRange = document.createRange();
                 var newSel = window.getSelection();
@@ -140,7 +140,7 @@
             document.selection.createRange().text = text;
         }
     }
-    
+
     /**
      * @description Inserts text at the cursor position (assumes content ONLY has text).
      * @param {string} text - The text to insert.
@@ -148,43 +148,43 @@
      * @category Text Manipulation
      */
     insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
-        this.consolidateTextNodesAndPreserveSelection()
+        this.consolidateTextNodesAndPreserveSelection();
 
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
-    
+
         // Extract text content before and after the cursor/selection
         const startText = range.startContainer.textContent.substring(0, range.startOffset);
         const endText = range.startContainer.textContent.substring(range.endOffset);
-    
+
         // Reconstruct the full text content with the inserted text
         range.startContainer.textContent = startText + text + endText;
-    
+
         // Position the cursor after the inserted text
         range.setStart(range.startContainer, startText.length + text.length);
         range.setEnd(range.startContainer, startText.length + text.length);
         selection.removeAllRanges();
         selection.addRange(range);
-        return this
+        return this;
     }
-    
+
     /*
     insertTextAtCursorSimple (text) {
         const el = this.element();
         // First, ensure that all text is consolidated into a single node
         el.textContent = el.textContent;
-    
+
         var sel, range;
         if (window.getSelection) {
             sel = window.getSelection();
             if (sel.getRangeAt && sel.rangeCount) {
                 range = sel.getRangeAt(0);
-                
+
                 range.deleteContents();
-                
+
                 var textNode = document.createTextNode(text);
                 range.insertNode(textNode);
-    
+
                 // Move the caret to the end of the newly inserted text node
                 range = document.createRange();
                 range.selectNodeContents(textNode);
@@ -198,7 +198,7 @@
         }
     }
     */
-    
+
 
     /*
     insertTextAtCursor (text) {
@@ -230,7 +230,7 @@
      * @category Event Handling
      */
     onPaste (event) {
-        
+
         // prevent pasting text by default after event
         event.preventDefault();
 
@@ -242,23 +242,22 @@
             const e = document.createElement("DIV");
             e.innerHTML = html;
             return e.textContent || e.innerText || "";
-        }
+        };
 
         if (html && html.trim().length !== 0) {
-            const s = htmlToPlainTextFunc(html)
-            this.replaceSelectedText(s)
+            const s = htmlToPlainTextFunc(html);
+            this.replaceSelectedText(s);
             return false; // prevent returning text in clipboard
         }
 
         if (text && text.trim().length !== 0) {
-            const s = htmlToPlainTextFunc(text)
-            this.replaceSelectedText(s)
+            const s = htmlToPlainTextFunc(text);
+            this.replaceSelectedText(s);
             return false; // prevent returning text in clipboard
         }
 
-        return true
+        return true;
     }
 
-   
 
 }.initThisClass());

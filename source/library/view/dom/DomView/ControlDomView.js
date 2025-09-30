@@ -10,7 +10,7 @@
  * @classdesc ControlDomView handles target / action state and behavior.
  */
 (class ControlDomView extends ResponderDomView {
-    
+
     initPrototypeSlots () {
         // Targetable - target / action
         /**
@@ -48,7 +48,7 @@
      * @category Validation
      */
     hasTargetAndAction () {
-        return (this.target() !== null) && (this.action() !== null)
+        return (this.target() !== null) && (this.action() !== null);
     }
 
     /**
@@ -58,9 +58,9 @@
      * @category Target
      */
     setTarget (anObject) {
-        this._target = anObject
-        this.setIsRegisteredForClicks(this.hasTargetAndAction())
-        return this
+        this._target = anObject;
+        this.setIsRegisteredForClicks(this.hasTargetAndAction());
+        return this;
     }
 
     /**
@@ -70,9 +70,9 @@
      * @category Action
      */
     setAction (anActionString) {
-        this._action = anActionString
-        this.setIsRegisteredForClicks(this.hasTargetAndAction())
-        return this
+        this._action = anActionString;
+        this.setIsRegisteredForClicks(this.hasTargetAndAction());
+        return this;
     }
 
     // ---
@@ -84,10 +84,10 @@
      * @category Event Handling
      */
     onClick (event) {
-        this.logDebug(".onClick()")
-        this.sendActionToTarget()
-        event.stopPropagation()
-        return false
+        this.logDebug(".onClick()");
+        this.sendActionToTarget();
+        event.stopPropagation();
+        return false;
     }
 
     /**
@@ -97,9 +97,9 @@
      * @category Event Handling
      */
     onTapComplete (/*aGesture*/) {
-        this.logDebug(".onTapComplete()")
-        this.sendActionToTarget()
-        return this
+        this.logDebug(".onTapComplete()");
+        this.sendActionToTarget();
+        return this;
     }
 
     /**
@@ -109,20 +109,20 @@
      */
     sendActionToTarget () {
         if (!this.action()) {
-            return null
+            return null;
         }
 
-        const t = this.target()
+        const t = this.target();
         if (!t) {
-            throw new Error("no target for action " + this.action())
+            throw new Error("no target for action " + this.action());
         }
 
-        const method = t[this.action()]
+        const method = t[this.action()];
         if (!method) {
-            throw new Error("no target for action " + this.action())
+            throw new Error("no target for action " + this.action());
         }
 
-        return method.call(t, this)
+        return method.call(t, this);
     }
 
     /**
@@ -132,7 +132,7 @@
      * @category Event Handling
      */
     onDoubleClick (/*event*/) {
-        return true
+        return true;
     }
-    
+
 }.initThisClass());

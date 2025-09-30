@@ -5,26 +5,26 @@
  * @classdesc Command line script to recursively walk directories and
     generate a _imports.json file. These files are used by
     ImportsIndexer to build and index and zip file containing
-    resources. 
+    resources.
 
     Generally, this is only used for data resources like:
     - fonts
     - images
     - svg icons
     - sounds
-    - json data files 
+    - json data files
     - etc
 
-    which don't need to be loaded immediately, and whose load order 
+    which don't need to be loaded immediately, and whose load order
     isn't critical (unlike load&eval on JS source files).
 
 */
 
 console.log("running ResourceIndexer.js");
 
-const ResourcesFolder = require('./ResourcesFolder.js');
+const ResourcesFolder = require("./ResourcesFolder.js");
 //console.log("ResourcesFolder:", ResourcesFolder);
-const process = require('process');
+const process = require("process");
 
 
 class ResourceIndexer extends Object {

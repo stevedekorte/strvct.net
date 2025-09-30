@@ -6,11 +6,11 @@
  * @class DomView_browserDragAndDrop
  * @extends DomView
  * @classdesc DomView_browserDragAndDrop
- * 
+ *
  * For subclasses to extend. Ancestors of this class are organizational parts of DomView.
  */
 (class DomView_browserDragAndDrop extends DomView {
-    
+
     // -- browser register for drop ---
 
     /**
@@ -39,7 +39,7 @@
      * @category Drop Handling
      */
     acceptsDrop () {
-        return true // make ivar?
+        return true; // make ivar?
     }
 
     // ---------------------
@@ -51,11 +51,11 @@
      * @category Drag Event Handling
      */
     onBrowserDragEnter (event) {
-        event.preventDefault() // needed?
+        event.preventDefault(); // needed?
 
         if (this.acceptsDrop(event)) {
-            this.onBrowserDragOverAccept(event)
-            return true
+            this.onBrowserDragOverAccept(event);
+            return true;
         }
 
         return false;
@@ -68,13 +68,13 @@
      * @category Drag Event Handling
      */
     onBrowserDragOver (event) {
-        event.preventDefault()
+        event.preventDefault();
 
         if (this.acceptsDrop(event)) {
             event.dataTransfer.dropEffect = "copy";
             event.dataTransfer.effectAllowed = "copy";
-            this.onBrowserDragOverAccept(event)
-            return true
+            this.onBrowserDragOverAccept(event);
+            return true;
         }
 
         return false;
@@ -86,7 +86,7 @@
      * @category Drag Event Handling
      */
     onBrowserDragOverAccept (event) {
-        this.dragHighlight()
+        this.dragHighlight();
     }
 
     /**
@@ -96,7 +96,7 @@
      * @category Drag Event Handling
      */
     onBrowserDragLeave (event) {
-        this.dragUnhighlight()
+        this.dragUnhighlight();
         return this.acceptsDrop(event);
     }
 
@@ -126,14 +126,14 @@
      */
     onBrowserDrop (event) {
         if (this.acceptsDrop(event)) {
-            this.onBrowserDataTransfer(event.dataTransfer)
-            this.dragUnhighlight()
+            this.onBrowserDataTransfer(event.dataTransfer);
+            this.dragUnhighlight();
             event.preventDefault();
-            event.stopPropagation()
+            event.stopPropagation();
             return true;
         }
         event.preventDefault();
-        return false
+        return false;
     }
 
     /**
@@ -143,11 +143,11 @@
      * @category Drop Handling
      */
     dropMethodForMimeType (mimeType) {
-        let s = mimeType.replaceAll("/", " ")
-        s = s.replaceAll("-", " ")
-        s = s.capitalizeWords()
-        s = s.replaceAll(" ", "")
-        return "onBrowserDrop" + s
+        let s = mimeType.replaceAll("/", " ");
+        s = s.replaceAll("-", " ");
+        s = s.capitalizeWords();
+        s = s.replaceAll(" ", "");
+        return "onBrowserDrop" + s;
     }
 
     /**
@@ -158,32 +158,32 @@
     onBrowserDataTransfer (dataTransfer) {
         if (dataTransfer.files.length) {
             for (let i = 0; i < dataTransfer.files.length; i++) {
-                const file = dataTransfer.files[i]
-                this.onBrowserDropFile(file)
+                const file = dataTransfer.files[i];
+                this.onBrowserDropFile(file);
             }
         } else if (dataTransfer.items) {
-            let data = dataTransfer.items
+            let data = dataTransfer.items;
 
-            let dataTransferItems = []
+            let dataTransferItems = [];
             for (let i = 0; i < data.length; i++) {
-                dataTransferItems.push(data[i])
+                dataTransferItems.push(data[i]);
             }
 
-            dataTransferItems = dataTransferItems.reversed()
+            dataTransferItems = dataTransferItems.reversed();
 
             for (let i = 0; i < dataTransferItems.length; i++) {
-                const dataTransferItem = dataTransferItems[i]
-                const mimeType = dataTransferItem.type
+                const dataTransferItem = dataTransferItems[i];
+                const mimeType = dataTransferItem.type;
 
                 if (mimeType) {
                     dataTransferItem.getAsString((s) => {
-                        const chunk = SvDataUrl.clone()
-                        chunk.setMimeType(mimeType)
-                        chunk.setDecodedData(s)
-                        console.log("Drag mimeType: '" + mimeType + "'")
-                        console.log("    data: " + s.length + " bytes")
-                        this.onBrowserDropChunk(chunk)
-                    })
+                        const chunk = SvDataUrl.clone();
+                        chunk.setMimeType(mimeType);
+                        chunk.setDecodedData(s);
+                        console.log("Drag mimeType: '" + mimeType + "'");
+                        console.log("    data: " + s.length + " bytes");
+                        this.onBrowserDropChunk(chunk);
+                    });
                 }
                 break; // only send the first MIME type for now
             }
@@ -209,8 +209,8 @@
      * @category Drop Handling
      */
     onBrowserDropMimeTypeAndRawData (mimeType, dataUrl) {
-        const dd = SvDataUrl.clone().setDataUrlString(dataUrl)
-        this.onBrowserDropChunk(dd)
+        const dd = SvDataUrl.clone().setDataUrlString(dataUrl);
+        this.onBrowserDropChunk(dd);
     }
 
     /**
@@ -219,12 +219,12 @@
      * @category Drop Handling
      */
     onBrowserDropChunk (dataChunk) {
-        const methodName = this.dropMethodForMimeType(dataChunk.mimeType())
-        const method = this[methodName]
-        console.log("onBrowserDropFile => ", methodName)
+        const methodName = this.dropMethodForMimeType(dataChunk.mimeType());
+        const method = this[methodName];
+        console.log("onBrowserDropFile => ", methodName);
 
         if (method) {
-            method.call(this, dataChunk)
+            method.call(this, dataChunk);
         }
     }
 
@@ -237,9 +237,9 @@
      * @category Drag Configuration
      */
     setDraggable (aBool) {
-        assert(Type.isBoolean(aBool))
-        this.element().setAttribute("draggable", aBool)
-        return this
+        assert(Type.isBoolean(aBool));
+        this.element().setAttribute("draggable", aBool);
+        return this;
     }
 
     /**
@@ -248,7 +248,7 @@
      * @category Drag Configuration
      */
     draggable () {
-        return this.element().getAttribute("draggable")
+        return this.element().getAttribute("draggable");
     }
 
     /**
@@ -257,7 +257,7 @@
      * @category Drag Registration
      */
     isRegisteredForBrowserDrag () {
-        return this.browserDragListener().isListening()
+        return this.browserDragListener().isListening();
     }
 
     /**
@@ -267,9 +267,9 @@
      * @category Drag Registration
      */
     setIsRegisteredForBrowserDrag (aBool) {
-        this.browserDragListener().setIsListening(aBool)
-        this.setDraggable(aBool)
-        return this
+        this.browserDragListener().setIsListening(aBool);
+        this.setDraggable(aBool);
+        return this;
     }
 
     /**

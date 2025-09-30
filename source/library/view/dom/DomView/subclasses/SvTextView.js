@@ -4,17 +4,17 @@
  * @module library.view.dom.DomView.subclasses
  * @class SvTextView
  * @extends StyledDomView
- * @description A view for a single line of text. 
+ * @description A view for a single line of text.
  * For multi-line text, use TextArea.
  * On input, sends didEdit up parent view chain.
  * This typically goes to a SvFieldTile.onDidEdit(changedView) which sends this.scheduleSyncToNode().
  * Behavior:
- * (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent. 
- * 
+ * (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent.
+ *
  */
 
 (class SvTextView extends StyledDomView {
-    
+
     initPrototypeSlots () {
 
         /**
@@ -42,7 +42,7 @@
             const slot = this.newSlot("htmlStreamReader", null); // for merge support
             slot.setSlotType("HtmlStreamReader");
         }
-        
+
         /**
          * @member {String} selectedColor
          * @description The selected color.
@@ -112,7 +112,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("Boolean");
         }
-        
+
         /**
          * @member {Boolean} doesMuteEnter
          * @description Whether the text field does mute enter.
@@ -252,7 +252,7 @@
         //this.setMinHeight("2.07em");
         this.setMinHeight("1em");
         this.setCssProperty("outline", "none");
-		
+
         this.setIsRegisteredForFocus(true); // need this to call unpauseGestures when editing ends
 
         //this.setUnfocusOnEnterKey(true);
@@ -286,11 +286,11 @@
      */
     startMutationObserver () {
         if (!this.mutationObserver()) {
-            const config = { 
+            const config = {
                 subtree: true,
-                childList: true, 
-                attributes: true, 
-                attributeOldValue: true, 
+                childList: true,
+                attributes: true,
+                attributeOldValue: true,
                 //characterDataOldValue: true,
                 characterData: true
             };
@@ -322,10 +322,10 @@
      * @returns {void}
      */
     onDomMutation (mutationList /*, observer*/) {
-     //   console.log(this.logPrefix(), "onDomMutation --------------> ", mutationList);
+        //   console.log(this.logPrefix(), "onDomMutation --------------> ", mutationList);
 
-        for(const mutation of mutationList) {
-            if (mutation.type === 'characterData') {
+        for (const mutation of mutationList) {
+            if (mutation.type === "characterData") {
                 this.onCharacterDataMutation(mutation);
             }
             /*
@@ -383,12 +383,12 @@
         return this;
     }
 
-    
+
     isEditable () {
         return this._isEditable;
     }
     */
-    
+
     /**
      * @description Did update slot does input.
      * @returns {void}
@@ -404,7 +404,7 @@
     didUpdateSlotCanHitEnter () {
         this.syncEditingControl();
     }
-    
+
     /**
      * @description Did update slot is editable.
      * @returns {void}
@@ -449,11 +449,11 @@
     syncPlaceholderText () {
         const pt = this.placeholderText();
         if (pt && pt.length > 0) {
-            
-            this.element().setAttribute('data-placeholder', pt);
-            assert(this.element().getAttribute('data-placeholder') === pt);
+
+            this.element().setAttribute("data-placeholder", pt);
+            assert(this.element().getAttribute("data-placeholder") === pt);
         } else {
-            this.element().removeAttribute('data-placeholder');
+            this.element().removeAttribute("data-placeholder");
         }
         return this;
     }
@@ -468,7 +468,7 @@
 
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {
-                
+
                 this.addDefaultDoubleTapGesture();
                 this.setContentEditable(false);
             } else {
@@ -510,7 +510,7 @@
      * @returns {SvTextView} The text field.
      */
     onDoubleTapComplete (/*aGesture*/) {
-        
+
         //console.log(this.logPrefix(), this.value() + " onDoubleTapComplete");
         // make content editable and select text
         //this.logDebug(".onDoubleTapComplete()");
@@ -518,7 +518,7 @@
             return this;
         }
 
-        
+
         this.setContentEditable(true);
         this.focus();
         this.selectAll();
@@ -585,7 +585,7 @@
      * @returns {void}
      */
     onFocus (/*event*/) {
-       // console.log(this.logPrefix(), "'" + this.textContent().substring(0, 20) + "...'.onFocus()");
+        // console.log(this.logPrefix(), "'" + this.textContent().substring(0, 20) + "...'.onFocus()");
         if (this.onBlurSelection()) {
             this.restoreSelectionRange();
         } else {
@@ -598,7 +598,7 @@
      * @returns {SvTextView} The text field.
      */
     blur () {
-        
+
         //console.log(this.logPrefix(), this.value() + " blur");
         return super.blur();
     }
@@ -631,7 +631,7 @@
         this.didEdit();
         return this;
     }
-	
+
     /**
      * @description Returns the strings that can detect returns.
      * @returns {Array} The strings.
@@ -639,16 +639,16 @@
     returnStrings () {
         return ["<div><br></div>", "<br><br>"];
     }
-	
+
     /**
      * @description Checks if the text field contains returns.
      * @returns {Boolean} True if it contains returns, false otherwise.
      */
     containsReturns () {
         const value = this.value(); // correct?
-        return returnStrings.canDetect(returnString => value.contains(returnString));	
+        return returnStrings.canDetect(returnString => value.contains(returnString));
     }
-	
+
     // ------------------
 
     /**
@@ -732,7 +732,7 @@
                 //console.log(this.logPrefix(), "merged: [" + this.element().innerHTML + "]");
                 //console.log(this.logPrefix(), "---- end HTML merge ----");
             } else {
-                 this.setString(newValue);
+                this.setString(newValue);
             }
             this.setLastMergeValue(newValue);
         }
@@ -782,7 +782,7 @@
 
         return newValue;
     }
-    
+
     /**
      * @description Sets the string.
      * @param {String} newValue - The new value.
@@ -797,22 +797,22 @@
 
             if (this.isFocused()) {
                 //if (this.allowsSetStringWhileFocused()) {
-                    //this.blur();
-                    this.setNewValue(newValue);
-                    //this.focus();
-                //} 
+                //this.blur();
+                this.setNewValue(newValue);
+                //this.focus();
+                //}
                 //throw new Error("attempt to call SvTextView.setString while it's focused");
             } else {
                 //this.isFocused();
                 this.setNewValue(newValue);
             }
-            
+
             /*
             console.log(this.logPrefix(), " setString(");
             console.log(this.logPrefix(), "    old: '" + oldValue + "'");
             console.log(this.logPrefix(), "    new: '" + newValue + "'");
             console.log(this.logPrefix(), "---");
-            */            
+            */
         }
         return this;
     }
@@ -836,7 +836,7 @@
             if (equalSignDown) {
                 this.setPxFontSize(fontSize + 1);
             } else if (minusDown) {
-                if (fontSize > 1) { 
+                if (fontSize > 1) {
                     this.setPxFontSize(fontSize - 1);
                 }
             }
@@ -865,7 +865,7 @@
             //this.insertTextAtCursor("\n");
             this.insertTextAtCursorSimple("\n");
             this.placeCaretAtEnd();
-        }   
+        }
     }
 
     /**
@@ -920,7 +920,7 @@
      */
     onInput (event) {
         // sent after the content is changed
-        //const returnKeyCode = 13; 
+        //const returnKeyCode = 13;
 
         if (!this.shouldMuteEvent(event)) {
             this.didEdit(); // we muted the return key down event so content is not changed
@@ -940,7 +940,7 @@
         }
         return false;
     }
-    
+
     /**
      * @description On key up.
      * @param {Event} event - The event.
@@ -950,14 +950,14 @@
         super.onKeyUp(event);
         return false;
     }
-    
-    
+
+
     /**
      * @description On enter key down.
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onEnterKeyDown (/*event*/) {    
+    onEnterKeyDown (/*event*/) {
         // insert 2 returns as cursor won't go to the second line with 1
         // document.execCommand('insertHTML', false, "\n\n");
         // prevent the default behaviour of return key pressed
@@ -973,7 +973,7 @@
         if (!this.isContentEditable()) {
             return;
         }
-        
+
 	    //this.logDebug(".onEnterKeyUp()");
 	    //this.didEdit();
 
@@ -1028,11 +1028,11 @@
         }
 
         //this.tellParentViews("didInput", this);
-            
+
         if (!this.doesHoldFocusOnReturn()) {
             this.releaseFirstResponder();
         }
-        
+
         if (this.doesClearOnReturn()) {
             this.setTextContent("");
             //this.setInnerHtml("");
@@ -1044,14 +1044,14 @@
             this.didTextInputNote().post();
         }
         */
-        
+
         if (event) {
             event.stopPropagation();
         }
 
         return false;
     }
-	
+
     /**
      * @description Format value.
      * @returns {SvTextView} The text field.
@@ -1061,15 +1061,15 @@
         /*
 	    const oldValue = this.innerHtml();
 	    let newValue = this.innerText(); // removes returns
-        
+
         if (this.doesTrim()) {
             newValue = newValue.trim();
-        } 
+        }
 
         if (true) {
             //newValue.replaceAll("\n", "<br>");
         }
-        
+
         if (newValue !== oldValue) {
             this.logDebug("formatValue newValue !== oldValue");
             this.logDebug(" newValue: [" + newValue + "]");
@@ -1081,7 +1081,7 @@
         //this.logDebug(" after formatValue: '" + this.innerHtml() + "'");
         return this;
     }
-    
+
     /*
     setInput (s) {
         const n = this.node();
@@ -1105,7 +1105,7 @@
         if (aName === "FieldKey") {
             assert(this.themeClassName() === "FieldKey");
         }
-         return this;
+        return this;
     }
 
     /**
@@ -1129,7 +1129,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description On click.
      * @param {Event} event - The event.
@@ -1147,7 +1147,7 @@
 
         return super.onClick(event);
     }
-    
+
     /**
      * @description Set border.
      * @param {Boolean} v - The value.
@@ -1219,7 +1219,7 @@
         if (!this._speechSession) {
             if (SvGlobals.globals()["SpeechToTextSession"]) {
                 this._speechSession = SpeechToTextSession.clone().setDelegate(this);
-                
+
                 this._speechSession.start();
             } else {
                 console.warn("no SpeechToTextSession class available");
@@ -1272,49 +1272,49 @@
      * @returns {void}
      */
     onUpArrowKeyDown (event) { // why down and not up?
-        if (this.isFocused()) { 
+        if (this.isFocused()) {
             return false;
         }
-        
+
         return super.onUpArrowKeyDown(event);
     }
-	
+
     /**
      * @description On down arrow key down.
      * @param {Event} event - The event.
      * @returns {void}
      */
     onDownArrowKeyDown (event) { // why down and not up?
-        if (this.isFocused()) { 
+        if (this.isFocused()) {
             return false;
         }
 
         return super.onDownArrowKeyDown(event);
     }
-	
+
     /**
      * @description On left arrow key up.
      * @param {Event} event - The event.
      * @returns {void}
      */
     onLeftArrowKeyUp (event) {
-        if (this.isFocused()) { 
-            return false;  
+        if (this.isFocused()) {
+            return false;
         }
-        
+
         return super.onLeftArrowKeyUp(event);
     }
-	
+
     /**
      * @description On right arrow key up.
      * @param {Event} event - The event.
      * @returns {void}
      */
     onRightArrowKeyUp (event) {
-        if (this.isFocused()) { 
+        if (this.isFocused()) {
             return false;
         }
-        
+
         return super.onRightArrowKeyUp(event);
     }
 
@@ -1330,5 +1330,4 @@
     }
 
 }.initThisClass());
-
 

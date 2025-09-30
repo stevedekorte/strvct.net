@@ -8,14 +8,14 @@
  * @class SvAsyncTimer
  * @extends ProtoClass
  * @classdesc A timer for running asynchronous code.
- * 
+ *
  * Example:
- * 
+ *
  * // quick call to run a block
  * const timer =  SvAsyncTimer.runBlock(async () => {
  *     await ...
  * }, "foo");
- * 
+ *
  * // more detailed call
  * const timer =  SvAsyncTimer.clone();
  * timer.setLabel("foo");
@@ -93,7 +93,7 @@
     }
 
     dtInSeconds () {
-        return Math.round(this.dtInMs()/100)/10;
+        return Math.round(this.dtInMs() / 100) / 10;
     }
 
     now () {

@@ -4,13 +4,13 @@
  * @extends TilesView
  * @classdesc
  * TilesView_gestures
- * 
+ *
  * This class extends TilesView to add gesture handling functionality.
  */
 "use strict";
 
 (class TilesView_gestures extends TilesView {
-    
+
     // --- tap ---
 
     /**
@@ -21,11 +21,11 @@
      */
     onTapComplete (aGesture) {
         //console.log(this.svTypeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
-        
+
         if (this.node()) {
 
             // add a subnode if tapping on empty area
-            const p = aGesture.downPosition() // there may not be an up position on windows?
+            const p = aGesture.downPosition(); // there may not be an up position on windows?
             //this.logDebug(".onTapComplete() ", aGesture.upEvent())
             if (p && p.event() && p.event().target === this.element()) {
                 const keyModifiers = SvKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
@@ -33,13 +33,13 @@
                 if (isAltTap) {
                     // inspect parent node
                     //this.setIsColumnInspecting(true)
-                    return this
+                    return this;
                 } else {
-                    this.addIfPossible()
+                    this.addIfPossible();
                 }
             }
         }
-        return true
+        return true;
     }
 
     // --- reorder ---
@@ -50,7 +50,7 @@
      * @category Tile Management
      */
     canReorderTiles () {
-        return this.node().nodeTileLink().nodeCanReorderSubnodes()
+        return this.node().nodeTileLink().nodeCanReorderSubnodes();
     }
 
     /**
@@ -58,15 +58,15 @@
      * @returns {TilesView_gestures} The instance itself.
      * @category Tile Management
      */
-    didReorderTiles () { 
+    didReorderTiles () {
         if (!this.node() || !this.isInBrowser()) {
-            return this
+            return this;
         }
         // TODO: make a more scaleable API
-        const subnodes = this.tiles().map(tile => tile.node())
-        this.node().nodeTileLink().nodeReorderSudnodesTo(subnodes)
+        const subnodes = this.tiles().map(tile => tile.node());
+        this.node().nodeTileLink().nodeReorderSudnodesTo(subnodes);
         //this.node().nodeReorderSudnodesTo(subnodes)
-        return this
+        return this;
     }
 
     // --- pinch apart to create a tile ---
@@ -83,8 +83,8 @@
         // now see if topElement has this.element() as an ancestor
 
         return this.tiles().detect((tile) => {
-            return tile.frameInDocument().containsPoint(aPoint)
-        })
+            return tile.frameInDocument().containsPoint(aPoint);
+        });
     }
 
     /**
@@ -99,51 +99,51 @@
         //this.logDebug(".onPinchBegin()")
 
         // - calc insert index
-        const p = aGesture.beginCenterPosition()
-        const tile = this.tileContainingPoint(p)
+        const p = aGesture.beginCenterPosition();
+        const tile = this.tileContainingPoint(p);
         if (!tile) {
             // don't allow pinch if it's bellow all the tiles
             // use a tap gesture to create a tile there instead?
-            return this
+            return this;
         }
 
-        const insertIndex = this.tiles().indexOf(tile)
+        const insertIndex = this.tiles().indexOf(tile);
 
         //console.log("insertIndex: ", insertIndex)
 
         if (this.node().hasNodeAction("add")) {
             // create new subnode at index
-            const newSubnode = this.node().addAt(insertIndex)
+            const newSubnode = this.node().addAt(insertIndex);
 
             // reference it with _temporaryPinchSubnode so we
             // can delete it if pinch doesn't complete with enough height
-            this._temporaryPinchSubnode = newSubnode
+            this._temporaryPinchSubnode = newSubnode;
 
             // sync with node to add tile view for it
-            this.syncFromNodeNow()
+            this.syncFromNodeNow();
 
             // find new tile and prepare it
-            const newTile = this.subviewForNode(newSubnode)
-            newTile.setMinAndMaxHeight(0)
-            newTile.contentView().setMinAndMaxHeight(64)
-            newTile.setTransition("all 0.3s")
-            newTile.contentView().setTransition("all 0s")
-            newTile.setBackgroundColor("black")
+            const newTile = this.subviewForNode(newSubnode);
+            newTile.setMinAndMaxHeight(0);
+            newTile.contentView().setMinAndMaxHeight(64);
+            newTile.setTransition("all 0.3s");
+            newTile.contentView().setTransition("all 0s");
+            newTile.setBackgroundColor("black");
 
-            // set new tile view height to zero and 
-            const minHeight = Tile.defaultHeight()
-            const cv = newTile.contentView()
-            cv.setBackgroundColor(this.navView().backgroundColor())
-            cv.setMinAndMaxHeight(minHeight)
+            // set new tile view height to zero and
+            const minHeight = Tile.defaultHeight();
+            const cv = newTile.contentView();
+            cv.setBackgroundColor(this.navView().backgroundColor());
+            cv.setMinAndMaxHeight(minHeight);
             //newTile.scheduleSyncFromNode()
             //this._temporaryPinchSubnode.didUpdateNode()
         } else {
             //this.logDebug(".onPinchBegin() cancelling due to no add action")
 
-            aGesture.cancel()
-        }        
+            aGesture.cancel();
+        }
     }
-    
+
     /**
      * @description Handles the movement of a pinch gesture.
      * @param {Object} aGesture - The pinch gesture object.
@@ -151,35 +151,35 @@
      */
     onPinchMove (aGesture) {
         if (this._temporaryPinchSubnode) {
-            let s = Math.floor(aGesture.spreadY())
+            let s = Math.floor(aGesture.spreadY());
             if (s < 0) {
-                s = 0
+                s = 0;
             }
             //this.logDebug(".onPinchMove() s = ", s)
-            const minHeight = Tile.defaultHeight()
-            const newTile = this.subviewForNode(this._temporaryPinchSubnode)
+            const minHeight = Tile.defaultHeight();
+            const newTile = this.subviewForNode(this._temporaryPinchSubnode);
             //newTile.setBackgroundColor("black")
-            newTile.setMinAndMaxHeight(s)
-            const t = Math.floor(s/2 - minHeight/2);
-            newTile.contentView().setTopPx(t)
+            newTile.setMinAndMaxHeight(s);
+            const t = Math.floor(s / 2 - minHeight / 2);
+            newTile.contentView().setTopPx(t);
 
-            const h = Tile.defaultHeight()
+            const h = Tile.defaultHeight();
 
             if (s < h) {
-                const f = s/h;
+                const f = s / h;
                 const rot = Math.floor((1 - f) * 90);
-                newTile.setPerspective(1000)
-                newTile.setTransformOrigin(0)
+                newTile.setPerspective(1000);
+                newTile.setTransformOrigin(0);
                 //newTile.contentView().setTransformOriginPercentage(0)
-                newTile.contentView().setTransform("rotateX(" + rot + "deg)")
+                newTile.contentView().setTransform("rotateX(" + rot + "deg)");
                 const z = -100 * f;
                 //newTile.contentView().setTransform("translateZ(" + z + "dg)")
             } else {
-                newTile.setPerspective(null)
-                newTile.contentView().setTransform(null)                
+                newTile.setPerspective(null);
+                newTile.contentView().setTransform(null);
             }
         } else {
-            console.warn(this.svTypeId() + ".onPinchMove() missing this._temporaryPinchSubnode")
+            console.warn(this.svTypeId() + ".onPinchMove() missing this._temporaryPinchSubnode");
         }
         // do we need to restack views?
     }
@@ -194,19 +194,19 @@
         // if pinch is tall enough, keep new tile
 
         if (this._temporaryPinchSubnode) {
-            const newTile = this.subviewForNode(this._temporaryPinchSubnode)
-            const minHeight = Tile.defaultHeight()
+            const newTile = this.subviewForNode(this._temporaryPinchSubnode);
+            const minHeight = Tile.defaultHeight();
             if (newTile.clientHeight() < minHeight) {
-                this.removeTile(newTile)
+                this.removeTile(newTile);
             } else {
                 //newTile.setTransition("all 0.3s, height 0s")
-                this.addTimeout(() => { 
-                    newTile.contentView().setTopPx(0)
-                    newTile.setMinAndMaxHeight(minHeight) 
-                }, 0)
+                this.addTimeout(() => {
+                    newTile.contentView().setTopPx(0);
+                    newTile.setMinAndMaxHeight(minHeight);
+                }, 0);
             }
 
-            this._temporaryPinchSubnode = null
+            this._temporaryPinchSubnode = null;
         }
     }
 
@@ -218,8 +218,8 @@
     onPinchCancelled (aGesture) {
         //this.logDebug(".onPinchCancelled()")
         if (this._temporaryPinchSubnode) {
-            this.node().removeSubnode(this._temporaryPinchSubnode)
-            this._temporaryPinchSubnode = null
+            this.node().removeSubnode(this._temporaryPinchSubnode);
+            this._temporaryPinchSubnode = null;
         }
     }
 

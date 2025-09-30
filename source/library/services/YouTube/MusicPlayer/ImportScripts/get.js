@@ -4,10 +4,10 @@ async function scrapeYouTubeVideos (searchTerm) {
     const allItems = [];
     const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchTerm)}`;
     console.log("searchUrl:", searchUrl);
-    let result = await youtubesearchapi.GetListByKeyword(searchTerm, false, 10000, [{type:"cc-video"}]);
+    let result = await youtubesearchapi.GetListByKeyword(searchTerm, false, 10000, [{ type:"cc-video" }]);
     console.log("result:", result.items);
     console.log("result.items.length:", result.items.length);
-    
+
     allItems.push(...result.items);
 
     while (result.nextPage && result.items.length > 0) {
@@ -25,5 +25,4 @@ async function run () {
 }
 
 run();
-
 

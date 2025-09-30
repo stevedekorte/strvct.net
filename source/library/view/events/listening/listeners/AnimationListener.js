@@ -8,16 +8,16 @@
  * @class AnimationListener
  * @extends EventSetListener
  * @classdesc Listens to a set of animation events.
- * 
+ *
  * See: https://developer.mozilla.org/en-US/docs/Web/API/AnimationEvent
- * 
+ *
  * AnimationEvent contains:
  * - animationName
  * - elapsedTime
- * - pseudoElement 
+ * - pseudoElement
  */
 (class AnimationListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots for the AnimationListener class.
      * @returns {void}
@@ -33,9 +33,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -48,7 +48,7 @@
         this.addEventNameAndMethodName("animationiteration", "onAnimationIteration");
         this.addEventNameAndMethodName("animationstart", "onAnimationStart");
         this.addEventNameAndMethodName("animationcancel", "onAnimationCancel");
-        return this
+        return this;
     }
 
 }.initThisClass());

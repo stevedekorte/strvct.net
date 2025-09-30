@@ -2,7 +2,7 @@
 
 /**
  * Object category to support observing slot value changes (i.e. "mutations").
- * 
+ *
  * @module library.ideal.object
  * @class Object_mutation
  * @extends Object
@@ -31,18 +31,18 @@
         // it copies each slot whose name is in mutatorMethodNamesSet
         // to unhooked_<slotName>, and implements a slot which calls the
         // unhooked version after calling this.willMutate(slotName)
-        
+
         this.mutatorMethodNamesSet().forEach((slotName) => {
             const unhookedName = "unhooked_" + slotName;
             const unhookedFunction = this[slotName];
-    
+
             Object.defineSlot(this, unhookedName, unhookedFunction);
-    
+
             const hookedFunction = function () {
                 this.willMutate(slotName, arguments);
                 const result = this[unhookedName].apply(this, arguments);
                 this.didMutate(slotName);
-    
+
                 //let argsString = [];
                 //for (let i=0; i < arguments.length; i++) {
                 //    if (i !== 0) { argsString += ", " }
@@ -50,12 +50,12 @@
                 //}
                 //console.log("hooked Array " + slotName + "(" + argsString + ")") ;
                 //console.log("result = " + result);
-    
+
                 return result;
-            }
-    
+            };
+
             Object.defineSlot(this, slotName, hookedFunction);
-        })
+        });
     }
 
     // -----------------------------------------
@@ -102,7 +102,7 @@
     addMutationObserver (anObserver) {
         if (this.isDirectObject()) {
             // no support for mutation observers on JSON objects... yet.
-            return this
+            return this;
         }
         this.mutationObservers().add(anObserver);
         return this;
@@ -131,7 +131,7 @@
         /*
         const mos = this._mutationObservers;
         if (mos) {
-            mos.forEach(v => { 
+            mos.forEach(v => {
                 v.onWillMutateObject(this);
             })
         }

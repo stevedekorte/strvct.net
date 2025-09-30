@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvMeridiemNode extends BaseNode {
-    
+
     /**
      * Initializes the prototype slots for the SvMeridiemNode.
      * @category Initialization
@@ -57,8 +57,8 @@
     }
 
     monthNames () {
-        return ["January", "February", "March", "April", 
-            "May", "June", "July", "August", 
+        return ["January", "February", "March", "April",
+            "May", "June", "July", "August",
             "September", "October", "November", "December"];
     }
 
@@ -72,8 +72,8 @@
 
     zeroPaddedMonthNumber () {
         let v = this.value()
-        if (v < 10) { 
-            v = "0" + v 
+        if (v < 10) {
+            v = "0" + v
         }
         return v
     }
@@ -82,7 +82,7 @@
         //return this.zeroPaddedMonthNumber()
         return null
     }
-    
+
     nodeTileLink () {
         // used by UI tile views to browse into next column
         return this
@@ -98,5 +98,5 @@
         }
     }
     */
-    
+
 }.initThisClass());

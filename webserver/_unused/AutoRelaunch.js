@@ -6,8 +6,8 @@
 
 require("./getGlobalThis.js");
 require("./Base.js");
-const fs = require('fs');
-const { spawn } = require('child_process');
+const fs = require("fs");
+const { spawn } = require("child_process");
 
 /**
  * @class AutoRelauncher
@@ -33,7 +33,7 @@ const { spawn } = require('child_process');
         /** @member {number|null} intervalId - The ID of the interval timer */
         this.newSlot("intervalId", null);
     }
-  
+
     /**
      * Initialize prototype
      */
@@ -77,7 +77,7 @@ const { spawn } = require('child_process');
                 this.restartProcess();
             }
         } catch (error) {
-            console.error('Error occurred:', error);
+            console.error("Error occurred:", error);
         }
     }
 
@@ -86,7 +86,7 @@ const { spawn } = require('child_process');
      */
     restartProcess () {
         spawn(this.launchCommand(), this.launchArgs(), {
-            stdio: 'inherit',
+            stdio: "inherit",
             detached: true,
             shell: true
         }).unref();
@@ -100,7 +100,7 @@ const { spawn } = require('child_process');
     setupDefaults () {
         autoRelauncher.setFilePath("./shouldRelaunchNow.txt");
         autoRelauncher.setLaunchCommand("bash");
-        autoRelauncher.setLaunchArgs(['/home/protected/run.sh']);
+        autoRelauncher.setLaunchArgs(["/home/protected/run.sh"]);
     }
 
     /**
@@ -109,7 +109,7 @@ const { spawn } = require('child_process');
     setupTest () {
         autoRelauncher.setFilePath("./shouldRelaunchNow.txt");
         autoRelauncher.setLaunchCommand("node");
-        autoRelauncher.setLaunchArgs(['./strvct/local-web-server/AutoRelaunch.js']);
+        autoRelauncher.setLaunchArgs(["./strvct/local-web-server/AutoRelaunch.js"]);
     }
 
 }.initThisClass());

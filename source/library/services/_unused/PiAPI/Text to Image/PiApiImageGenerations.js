@@ -10,14 +10,14 @@
 * @classdesc Collection of PiAPI image generation tracking objects.
 */
 (class PiApiImageGenerations extends SvJsonArrayNode {
-    
+
     initPrototypeSlots () {
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([PiApiImageGeneration]);
-    this.setNodeCanReorderSubnodes(false);
-    this.setNodeCanAddSubnode(false);
-    this.setCanDelete(false);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setSubnodeClasses([PiApiImageGeneration]);
+        this.setNodeCanReorderSubnodes(false);
+        this.setNodeCanAddSubnode(false);
+        this.setCanDelete(false);
     }
 
     /**
@@ -26,7 +26,7 @@
     * @category Metadata
     */
     title () {
-    return "Generations";
+        return "Generations";
     }
 
     /**
@@ -35,8 +35,8 @@
     * @category Metadata
     */
     subtitle () {
-    const count = this.subnodeCount();
-    return count + " generation" + (count === 1 ? "" : "s");
+        const count = this.subnodeCount();
+        return count + " generation" + (count === 1 ? "" : "s");
     }
 
     /**
@@ -45,9 +45,9 @@
     * @category Collection
     */
     add () {
-    const generation = PiApiImageGeneration.clone();
-    this.addSubnode(generation);
-    return generation;
+        const generation = PiApiImageGeneration.clone();
+        this.addSubnode(generation);
+        return generation;
     }
 
 }.initThisClass());

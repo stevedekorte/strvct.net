@@ -6,8 +6,8 @@
  * @extends SvResource
  * @description A sound resource.
 
-    Note: 
-    
+    Note:
+
     AudioBufferSourceNode can't be paused and later resumed. Use AudioWorklet instead.
 
     Usage:
@@ -62,7 +62,7 @@
             slot.setSlotType("Promise");
         }
 
-        // decoding 
+        // decoding
 
         /**
          * @member decodePromise
@@ -95,7 +95,7 @@
             const slot = this.newSlot("shouldPlayOnLoad", false);
             slot.setSlotType("Boolean");
         }
-        
+
         /**
          * @member shouldPlayOnAccess
          * @description should play on access
@@ -122,7 +122,7 @@
          * @type {AudioBufferSourceNode}
          */
         {
-            const slot = this.newSlot("source", null); // AudioBufferSourceNode 
+            const slot = this.newSlot("source", null); // AudioBufferSourceNode
             slot.setSlotType("AudioBufferSourceNode");
         }
 
@@ -300,7 +300,7 @@
         const promise = audioBlob.asyncToArrayBuffer();
         this.setArrayBufferPromise(promise);
         const arrayBuffer = await promise;
-        // set the result 
+        // set the result
         this.setData(arrayBuffer);
         //console.log(this.logPrefix(), " setData " + arrayBuffer.byteLength);
     }
@@ -322,7 +322,7 @@
      * @description returns the sample count
      * @returns {Number} the sample count
      */
-    sampleCount () { 
+    sampleCount () {
         if (this.decodedBuffer()) {
             return this.decodedBuffer().length;
         }
@@ -333,7 +333,7 @@
      * @description returns the length
      * @returns {Number} the length
      */
-    length () { 
+    length () {
         throw new Error("use sampleCount method instead");
         //return this.sampleCount();
     }
@@ -394,9 +394,9 @@
             return Promise.resolve();
         }
 
-        try {            
+        try {
             if (this.path()) {
-                
+
                 //console.log(this.logPrefix(), " path: ", this.path());
             } else {
                 if (!this.fetchPromise()) {
@@ -465,17 +465,17 @@
      * @description new audio source
      * @returns {AudioBufferSourceNode} the audio source
      */
-    newAudioSource () { 
+    newAudioSource () {
         // a AudioBufferSourceNode can only be used once
         const ctx = this.audioCtx();
         const source = ctx.createBufferSource();
         source.buffer = this.decodedBuffer();
         source.connect(ctx.destination);
         this.syncToSource(source);
-        source.addEventListener("ended", (event) => { 
+        source.addEventListener("ended", (event) => {
             this.onEnded(event);
-        })
-        return source
+        });
+        return source;
     }
 
     /**
@@ -562,7 +562,7 @@
 
     /*
     NOTE: AudioBufferSourceNode can't be paused and later resumed. Use AudioWorklet instead.
-    pause () 
+    pause ()
     resume ()
     */
 
@@ -630,7 +630,7 @@
         assert(arrayBuffer);
         //console.log(this.logPrefix(), ".promiseDataUrl byte count " + arrayBuffer.byteLength);
         assert(arrayBuffer.byteLength > 0);
-        const mimeType = 'audio/*';
+        const mimeType = "audio/*";
         const dataUrl = await arrayBuffer.promiseAsDataUrlWithMimeType(mimeType);
         console.log(this.logPrefix(), "dataUrl: ", dataUrl.clipWithEllipsis(20));
         return dataUrl;

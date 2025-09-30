@@ -2,23 +2,23 @@
  * @module browser.stack.Tile
  * @class TitledTile
  * @extends Tile
- * @classdesc 
+ * @classdesc
  * TitledTile
- * 
+ *
  * Adds a few subviews for typical tile functionality:
- * 
+ *
  *     - titleView
  *     - subtitleView
  *     - noteView
  *     - noteIconView
  *     - thumbnailView
- * 
+ *
  * Most of these can easily be disabled, if not needed.
  */
 "use strict";
 
 (class TitledTile extends Tile {
-    
+
     initPrototypeSlots () {
         /**
          * @member {DomView} titleView
@@ -144,7 +144,7 @@
         icon.setStrokeColor("white"); // use currentColor?
         icon.setOpacity(0.2);
         this.setNoteIconView(rv.addSubview(icon));
-        
+
         this.updateSubviews();
         this.setIsSelectable(true);
         return this;
@@ -174,7 +174,7 @@
 
             this.setThumbnailView(tv);
             this.addSubview(tv);
-            
+
             // TODO: make this dynamic with subview for title & subtitle
             const offset = 60;
             this.titleView().setLeftPx(offset);
@@ -182,7 +182,7 @@
         }
         return this;
     }
-    
+
     /**
      * @description Checks if the tile has a subtitle
      * @returns {boolean}
@@ -211,21 +211,21 @@
      */
     updateSubviews () {
         super.updateSubviews();
-	
+
         const node = this.node();
 
         if (node) {
             this.titleView().setIsEditable(node.nodeCanEditTitle());
             this.subtitleView().setIsEditable(node.nodeCanEditSubtitle());
             this.subtitleView().setIsDisplayHidden(!this.hasSubtitle());
-    
+
             if (node) {
                 const imageUrl = node.nodeThumbnailUrl();
                 if (imageUrl) {
                     this.setupThumbnailViewIfAbsent();
                     this.thumbnailView().setBackgroundImageUrlPath(imageUrl);
                 }
-            } 
+            }
 
             if (node.noteIconName() && !node.noteIsSubnodeCount()) {
                 this.hideNoteView();
@@ -237,7 +237,7 @@
         } else {
             this.titleView().setIsEditable(false);
             this.subtitleView().setIsEditable(false);
-            this.subtitleView().setIsDisplayHidden(true); 
+            this.subtitleView().setIsDisplayHidden(true);
         }
 
         this.syncStylesToSubviews();
@@ -278,7 +278,7 @@
      */
     showNoteView () {
         const nv = this.noteView();
-        nv.unhideDisplay();   
+        nv.unhideDisplay();
         nv.setString(this.node().note());
         // Clear any background image that might have been set (e.g. right arrow)
         nv.setBackgroundImageUrlPath(null);
@@ -327,7 +327,7 @@
      * @category UI
      */
     hideNoteView () {
-        this.noteView().hideDisplay();     
+        this.noteView().hideDisplay();
     }
 
 
@@ -338,7 +338,7 @@
     showNoteIconView () {
         const v = this.noteIconView();
         if (v.iconName() != this.node().noteIconName()) {
-            v.unhideDisplay();    
+            v.unhideDisplay();
             v.setIconName(this.node().noteIconName());
             //v.setDoesMatchParentColor(true)
 
@@ -358,7 +358,7 @@
      * @category UI
      */
     hideNoteIconView () {
-        this.noteIconView().hideDisplay();  
+        this.noteIconView().hideDisplay();
     }
 
     /**
@@ -391,7 +391,7 @@
      * @category Event
      */
     onDidEdit (/*aView*/) {
-        super.onDidEdit(); 
+        super.onDidEdit();
     }
 
     /**
@@ -399,7 +399,7 @@
      * @returns {TitledTile}
      * @category Data
      */
-    syncToNode () {   
+    syncToNode () {
         //console.log("syncToNode")
         const node = this.node();
         node.setTitle(this.titleView().innerText());
@@ -421,26 +421,26 @@
         this.updateSubviews();
 
         this.setIsDisplayHidden(!node.isVisible());
-        
+
         return this;
     }
-    
+
     /**
      * @description Makes the note view a right arrow
      * @returns {TitledTile}
      * @category UI
      */
     makeNoteRightArrow () {
-        
+
         const nv = this.noteView();
-        
-        nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"));        
+
+        nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"));
         nv.setBackgroundSizeWH(10, 10);
         nv.setBackgroundRepeat("no-repeat");
-        
+
         nv.setMinAndMaxWidth(10);
         nv.setMinAndMaxHeight(10);
-        return this;		
+        return this;
     }
 
     /**
@@ -459,7 +459,7 @@
             event.stopPropagation();
         } else {
             super.onEnterKeyUp(event);
-        }        
+        }
     }
-    
+
 }.initThisClass());

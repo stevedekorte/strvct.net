@@ -2,7 +2,7 @@
  * @module library.node.fields.subclasses
  */
 
-"use strict";  
+"use strict";
 
 /**
  * @class SvStringField
@@ -10,7 +10,7 @@
  * @classdesc Represents a string field in the application.
  */
 (class SvStringField extends SvField {
-    
+
     /**
      * @static
      * @returns {boolean} True if available as a node primitive.
@@ -57,7 +57,7 @@
      * @category Synchronization
      */
     syncFromNode () {
-        return super.syncFromNode()
+        return super.syncFromNode();
     }
-    
+
 }.initThisClass());

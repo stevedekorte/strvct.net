@@ -10,7 +10,7 @@
  * @classdesc Listens to a set of wheel (mouse or other wheel) events.
  */
 (class WheelListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -25,8 +25,8 @@
      * @returns {WheelListener} The instance of the class.
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -36,7 +36,7 @@
      */
     setupListeners () {
         this.addEventNameAndMethodName("wheel",   "onWheel");
-        return this
+        return this;
     }
 
 }.initThisClass());

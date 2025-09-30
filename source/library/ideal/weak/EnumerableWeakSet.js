@@ -6,7 +6,7 @@
 * @extends WeakSet
 * @classdesc A Set with WeakRef values internally, but external API looks normal (gets and sets values).
 * Unlike WeakSet, it's values are enumerable.
-* 
+*
 * Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
 * implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
 */
@@ -17,7 +17,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Initialization
     */
     constructor () {
-    this._refs = new EnumerableWeakMap();
+        this._refs = new EnumerableWeakMap();
     }
 
     /**
@@ -26,10 +26,10 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Validation
     */
     assertValidValue (v) {
-    if (v === undefined) {
-        throw new Error("values cannot be undefined as unref returns undefined after collection");
-        return;
-    }
+        if (v === undefined) {
+            throw new Error("values cannot be undefined as unref returns undefined after collection");
+            return;
+        }
     }
 
     /**
@@ -39,15 +39,15 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Modification
     */
     add (v) {
-    this.assertValidValue(v);
+        this.assertValidValue(v);
 
-    const refs = this._refs;
-    const pid = v.puuid();
-    if (!refs.has(pid)) {
-        refs.set(pid, v);
-    }
+        const refs = this._refs;
+        const pid = v.puuid();
+        if (!refs.has(pid)) {
+            refs.set(pid, v);
+        }
 
-    return this;
+        return this;
     }
 
     /**
@@ -55,7 +55,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Modification
     */
     clear () {
-    this._refs.clear();
+        this._refs.clear();
     }
 
     /**
@@ -65,13 +65,13 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Modification
     */
     delete (v) {
-    this.assertValidValue(v);
+        this.assertValidValue(v);
 
-    const hadValue = this.has(v)
-    if (hadValue) {
-        this._refs.delete(v.puuid())
-    }
-    return hadValue
+        const hadValue = this.has(v);
+        if (hadValue) {
+            this._refs.delete(v.puuid());
+        }
+        return hadValue;
     }
 
     /**
@@ -81,8 +81,8 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     has (v) {
-    this.assertValidValue(v)
-    return this._refs.has(v.puuid())
+        this.assertValidValue(v);
+        return this._refs.has(v.puuid());
     }
 
     /**
@@ -91,7 +91,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     keys () {
-    return this.valuesArray()
+        return this.valuesArray();
     }
 
     /**
@@ -100,7 +100,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     values () {
-    return this.valuesArray()
+        return this.valuesArray();
     }
 
     /**
@@ -110,7 +110,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     count () {
-    return this._refs.count()
+        return this._refs.count();
     }
 
     /**
@@ -119,7 +119,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Iteration
     */
     forEach (fn) {
-    this._refs.forEach(v => fn(v, v, this))
+        this._refs.forEach(v => fn(v, v, this));
     }
 
     // --- extras ---
@@ -130,7 +130,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Uncategorized
     */
     entries () {
-    throw new Error("unimplemented")
+        throw new Error("unimplemented");
     }
 
     /**
@@ -138,7 +138,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Maintenance
     */
     clearCollected () {
-    this.forEach(v => {}) // forEach will remove any stale weakrefs
+        this.forEach(v => {}); // forEach will remove any stale weakrefs
     }
 
     /**
@@ -147,9 +147,9 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     valuesSet () {
-    const set = new Set()
-    this.forEach(v => set.add(v))
-    return set
+        const set = new Set();
+        this.forEach(v => set.add(v));
+        return set;
     }
 
     /**
@@ -158,9 +158,9 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     valuesArray () {
-    const a = new Array()
-    this.forEach(v => a.push(v))
-    return a
+        const a = new Array();
+        this.forEach(v => a.push(v));
+        return a;
     }
 
     /**
@@ -169,7 +169,7 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Query
     */
     keysArray () {
-    return this._refs.keysArray()
+        return this._refs.keysArray();
     }
 
 });

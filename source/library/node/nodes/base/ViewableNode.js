@@ -8,14 +8,14 @@
  * @class ViewableNode
  * @extends InspectableNode
  * @classdesc Class for handling a node's connection to the user interface.
- * Views can reference nodes, but nodes should not reference views. 
- * Views can query nodes for info or tell them to take actions, but otherwise 
+ * Views can reference nodes, but nodes should not reference views.
+ * Views can query nodes for info or tell them to take actions, but otherwise
  * nodes should only communicate with views via notfications.
- * 
+ *
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  */
 (class ViewableNode extends InspectableNode {
-    
+
     initPrototypeSlots () {
         /**
          * @member {string|null} nodeViewClassName
@@ -26,7 +26,7 @@
             slot.setAllowsNullValue(true);
             slot.setSlotType("String");
         }
-        
+
         /**
          * @member {string} nodeTileClassName
          * @category View
@@ -44,15 +44,15 @@
                 slot.setInspectorPath("Node/Viewable");
 
                 return slot;
-            }
-            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((/*instance*/) => { 
+            };
+            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((/*instance*/) => {
                 //return SvThemeResources.shared().activeTheme().themeClassNames();
                 return Tile.allSubclasses().map(aClass => aClass.svType());
-            })
+            });
 
             //SvThemeResources.shared().activeTheme().newThemeClassOptions()
         }
-        
+
         /**
          * @member {string|null} nodeThumbnailUrl
          * @category View
@@ -226,7 +226,7 @@
 
     }
 
-    initPrototype () {    
+    initPrototype () {
     }
 
     /**
@@ -234,7 +234,7 @@
      * @category Initialization
      */
     finalInit () {
-        super.finalInit()
+        super.finalInit();
         if (this.nodeChildrenAlignment() === "Start") {
             this.setNodeChildrenAlignment("flex-start");
         }
@@ -264,7 +264,7 @@
             }
             console.warn("no class found for nodeViewClassName:'" + name + "'");
         }
-        
+
 	  	return this.firstAncestorClassWithPostfix("View");
     }
 
@@ -273,15 +273,15 @@
      * @returns {Object} The node tile class.
      * @category View
      */
-    nodeTileClass () {  
-        // This is used (instead of nodeViewClass) by TilesView to 
+    nodeTileClass () {
+        // This is used (instead of nodeViewClass) by TilesView to
         // get it's subnode's views. Other views (typically) use nodeViewClass.
-        const name = this.nodeTileClassName()
+        const name = this.nodeTileClassName();
 
         if (name) {
-            const proto = Object.getClassNamed(name)
+            const proto = Object.getClassNamed(name);
             if (proto) {
-                return proto
+                return proto;
             }
             console.warn("no class found for nodeTileClassName:'" + name + "'");
         }
@@ -331,7 +331,7 @@
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue);
 
-        if (aSlot.syncsToView()) { 
+        if (aSlot.syncsToView()) {
             this.scheduleSyncToView(aSlot.name());
         }
     }
@@ -354,7 +354,7 @@
     prepareToSyncToView () {
         this.prepareToAccess();
     }
-	
+
     /**
      * @description Handles the node becoming visible event.
      * @returns {ViewableNode} The current instance.

@@ -11,14 +11,14 @@
  * managing firstResponder, tabbing between key views
  */
 (class ResponderDomView extends GesturableDomView {
-    
+
     /**
      * @static
      * @description Initializes the class
      * @category Initialization
      */
     static initClass () {
-        this.newClassSlot("tabCount", 0)
+        this.newClassSlot("tabCount", 0);
     }
 
     /**
@@ -35,7 +35,7 @@
             slot.setSlotType("Boolean");
         }
 
-        // browser looks at element.tabindex to find next element 
+        // browser looks at element.tabindex to find next element
         // to focus on tab press, but we may want more behavior
         /*
         {
@@ -70,8 +70,8 @@
             this.setIsRegisteredForFocus(true);
         } else {
             // only need timeout when create dom element in same event?
-            this.addTimeout(() => { 
-                this.setIsRegisteredForFocus(true); 
+            this.addTimeout(() => {
+                this.setIsRegisteredForFocus(true);
             }, 0);
         }
     }
@@ -109,13 +109,13 @@
      */
     focusAfterDelay (seconds) {
         this.addTimeout(() => {
-            const e = this.element()
+            const e = this.element();
             if (e) {
                 // in case element has retired during the timeout
-                e.focus()
+                e.focus();
             }
-        }, seconds * 1000)
-        return this
+        }, seconds * 1000);
+        return this;
     }
 
     /**
@@ -124,7 +124,7 @@
      * @category Focus Management
      */
     hasFocus () {
-        return this.isActiveElement()
+        return this.isActiveElement();
     }
 
     /**
@@ -132,9 +132,9 @@
      * @returns {ResponderDomView}
      * @category Focus Management
      */
-    blur () { 
-        this.element().blur()
-        return this
+    blur () {
+        this.element().blur();
+        return this;
     }
 
     // --- active element ---
@@ -145,7 +145,7 @@
      * @category Focus Management
      */
     isActiveElement () {
-        return document.activeElement === this.element()
+        return document.activeElement === this.element();
     }
 
     /**
@@ -154,7 +154,7 @@
      * @category Focus Management
      */
     isActiveElementAndEditable () {
-        return this.isActiveElement() && this.contentEditable()
+        return this.isActiveElement() && this.contentEditable();
     }
 
     /**
@@ -163,7 +163,7 @@
      * @category Focus Management
      */
     isFocused () {
-        return this.isActiveElement()
+        return this.isActiveElement();
     }
 
     // --- inner html ---
@@ -189,9 +189,9 @@
         if (newValue === oldValue) {
             return this;
         }
-/*
+        /*
         if (this.isActiveElementAndEditable()) {
-            
+
         }
 */
         updateElementHTML(this.element(), newValue);
@@ -210,7 +210,7 @@
         if (p) {
             const d = p.display();
             p.setDisplay("none");
-            p.setDisplay(d);  
+            p.setDisplay(d);
         }
         return this;
     }
@@ -220,9 +220,9 @@
      * @category Event Handling
      */
     didInput () {
-        this.logDebug("didInput")
-        this.tellParentViews("onDidInput", this)
-        return this
+        this.logDebug("didInput");
+        this.tellParentViews("onDidInput", this);
+        return this;
     }
 
     /**
@@ -242,7 +242,7 @@
      * @category Event Handling
      */
     onEnterKeyUp (event) {
-        return true
+        return true;
     }
 
     // --- tabs and next key view ----
@@ -266,7 +266,7 @@
      * @category Event Handling
      */
     onTabKeyUp (event) {
-        return false
+        return false;
     }
 
     /**
@@ -274,7 +274,7 @@
      * @returns {ResponderDomView}
      * @category Focus Management
      */
-    becomeKeyView () { 
+    becomeKeyView () {
         this.focus();
         return this;
     }
@@ -285,17 +285,17 @@
      * @category Focus Management
      */
     selectNextKeyView () {
-        const nkv = this.nextKeyView()
+        const nkv = this.nextKeyView();
         if (nkv) {
-            nkv.becomeKeyView()
-            return true
+            nkv.becomeKeyView();
+            return true;
         } else {
             const p = this.parentView();
             if (p) {
                 return p.selectNextKeyView();
             }
         }
-        return false
+        return false;
     }
 
     // --- error checking ---
@@ -317,7 +317,7 @@
      * @category Focus Management
      */
     willAcceptFirstResponder () {
-        return this
+        return this;
     }
 
     /**
@@ -329,7 +329,7 @@
         return this;
     }
 
-    // --- firstResponder --- 
+    // --- firstResponder ---
 
     /**
      * @description Checks if this view is the first responder
@@ -354,10 +354,10 @@
      */
     becomeFirstResponder () {
         if (this.acceptsFirstResponder()) {
-            this.willBecomeFirstResponder()
-            this.focus()
+            this.willBecomeFirstResponder();
+            this.focus();
         } else if (this.parentView()) {
-            this.parentView().becomeFirstResponder()
+            this.parentView().becomeFirstResponder();
         }
         return this;
     }
@@ -368,7 +368,7 @@
      * @category Focus Management
      */
     releaseFirstResponder () {
-        if (this.isFocused()) { 
+        if (this.isFocused()) {
             this.blur();
         }
 
@@ -385,15 +385,15 @@
      * @category Event Handling
      */
     disablePointerEventsUntilTimeout (ms) {
-        this.setPointerEvents("none")
-        this.logDebug(" disabling pointer events")
+        this.setPointerEvents("none");
+        this.logDebug(" disabling pointer events");
 
         this.addTimeout(() => {
             this.logDebug(" enabling pointer events");
-            this.setPointerEvents("inherit")
-        }, ms)
+            this.setPointerEvents("inherit");
+        }, ms);
 
-        return this
+        return this;
     }
 
 }.initThisClass());
@@ -407,13 +407,13 @@
 function updateElementHTML (element, htmlContent) {
     let isFocused = (document.activeElement === element);
 
-    let isEditable = element.contentEditable === 'true' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA';
+    let isEditable = element.contentEditable === "true" || element.tagName === "INPUT" || element.tagName === "TEXTAREA";
 
     if (isEditable && isFocused) {
         let selectionStart = element.selectionStart;
         let selectionEnd = element.selectionEnd;
 
-        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
             element.value = htmlContent;
         } else {
             element.innerHTML = htmlContent;
@@ -422,7 +422,7 @@ function updateElementHTML (element, htmlContent) {
         element.selectionStart = selectionStart;
         element.selectionEnd = selectionEnd;
     } else {
-        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
             element.value = htmlContent;
         } else {
             element.innerHTML = htmlContent;

@@ -7,7 +7,7 @@
 /**
  * @class SvObservation
  * @extends ProtoClass
- * @classdesc An abstraction for a NotificationCenter observation. 
+ * @classdesc An abstraction for a NotificationCenter observation.
  * Holds references to which notification message a given observer wants
  * notifications for.
  */
@@ -17,7 +17,7 @@
      * @description Initializes the prototype slots for the SvObservation class.
      */
     initPrototypeSlots () {
-    
+
         /**
          * @member {SvNotificationCenter} center - NotificationCenter that owns this
          * @category Configuration
@@ -56,7 +56,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("didFinalizeStop", false); 
+            const slot = this.newSlot("didFinalizeStop", false);
             slot.setSlotType("Boolean");
         }
         /**
@@ -94,7 +94,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("obsHash", null); 
+            const slot = this.newSlot("obsHash", null);
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
         }
@@ -103,7 +103,7 @@
          * @category State
          */
         {
-            const slot = this.newSlot("noteHash", null); 
+            const slot = this.newSlot("noteHash", null);
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
         }
@@ -270,7 +270,7 @@
      * @returns {String} The sender ID.
      * @category Utility
      */
-    senderId () { 
+    senderId () {
         return this.valueId(this.sender());
     }
 
@@ -279,7 +279,7 @@
      * @returns {String} The observer ID.
      * @category Utility
      */
-    observerId () { 
+    observerId () {
         return this.valueId(this.observer());
     }
 
@@ -296,14 +296,14 @@
 
         if (senderNull) {
             if (nameNull) {
-                return (/*note*/) => { return true; }
+                return (/*note*/) => { return true; };
             }
-            return (note) => { return note.name() === name; }
+            return (note) => { return note.name() === name; };
         }
         if (nameNull) {
-            return (note) => { return note.sender() === sender; }
+            return (note) => { return note.sender() === sender; };
         }
-        return (note) => { return note.noteHash() === this.noteHash(); }
+        return (note) => { return note.noteHash() === this.noteHash(); };
     }
 
     /**
@@ -328,8 +328,8 @@
      */
     tryToSendNotification (note) {
         try {
-            this.sendNotification(note);       
-        } catch(error) {
+            this.sendNotification(note);
+        } catch (error) {
             console.error(this.logPrefix(), "NOTIFICATION EXCEPTION: '" + error.message + "'");
             console.error(this.logPrefix(), "  OBSERVER (" + this.observer() + ") STACK: ", error.stack);
             if (note.senderStack()) {
@@ -386,7 +386,7 @@
         /*
         if (this.sender() && this.sender().isKindOf(FirestoreDatabaseService)) {
             console.log(this.logPrefix(), "STARTING WATCHING FOR " + this.sender().svTypeId() + " " + this.name());
-            
+
             this.sender().onDidMutateObject(this);
         }
         */
@@ -430,9 +430,9 @@
     static testWeakRefs () {
         const observer = new Object();
         const sender = new Object();
-        //const observation = 
+        //const observation =
         SvNotificationCenter.shared().newObservation().setName("weakRefTest").setObserver(observer).setSender(sender).startWatching();
-        // let's see if this onFinalizedSlotObserver or onFinalizedSlotSender get called and it auto stops watching 
+        // let's see if this onFinalizedSlotObserver or onFinalizedSlotSender get called and it auto stops watching
     }
 
 }.initThisClass());

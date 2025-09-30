@@ -10,7 +10,7 @@
  * @classdesc Represents an image resource loaded from a URL.
  */
 (class SvURLImage extends SvResource {
-    
+
     /**
      * @static
      * @description Returns an array of supported file extensions for images.
@@ -110,7 +110,7 @@
      */
     didFetchDataUrl (dataURL) {
         this.setDataURL(dataURL);
-        return this
+        return this;
     }
 
 }.initThisClass());

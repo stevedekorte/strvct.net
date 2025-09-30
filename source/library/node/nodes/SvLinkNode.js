@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvLinkNode extends SvSummaryNode {
-    
+
     /**
      * @static
      * @description Indicates if this node is available as a primitive
@@ -34,7 +34,7 @@
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("SvNode");
         }
-        
+
         /**
          * @member {boolean} willDuplicateLinkedObject
          * @description Indicates if the linked object should be duplicated when this node is duplicated
@@ -62,9 +62,9 @@
         this.setNodeCanEditTitle(true);
 
         this.setCanDelete(true);
-        this.setNodeCanInspect(true); 
+        this.setNodeCanInspect(true);
     }
-    
+
     /*
     didUpdateSlotLinkedNode (oldValue, newValue) {
         assert(Type.isNull(newValue) || Type.isObject(newValue));
@@ -131,7 +131,7 @@
         if (ln) {
             return ln.setTitle(s)
         }
-        return this   
+        return this
     }
     */
 
@@ -145,7 +145,7 @@
         if (ln) {
             return ln.subtitle();
         }
-        return "drop tile to link";    
+        return "drop tile to link";
     }
 
     /*
@@ -163,11 +163,11 @@
      * @returns {Array} An empty array as this node doesn't accept subnodes
      * @category Node Structure
      */
-    acceptedSubnodeTypes () { 
+    acceptedSubnodeTypes () {
         // TODO: have browser use nodeTileLink for this protocol?
         return [];
     }
-    
+
     /**
      * @description Gets the note of the linked node
      * @returns {string|null} The note of the linked node or null if no node is linked

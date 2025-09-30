@@ -6,7 +6,7 @@
  * @class ButtonView
  * @extends FlexDomView
  * @classdesc A simple push button view with a TextView label.
- * 
+ *
  * CSS Styles:
  * .SvActionFieldView {
  *     min-height: 28px;
@@ -21,7 +21,7 @@
  *     text-align: center;
  *     vertical-align: center;
  * }
- * 
+ *
  * .SvActionFieldView:hover {
  *     color: white;
  *     background-color: #888;
@@ -30,7 +30,7 @@
 "use strict";
 
 (class ButtonView extends FlexDomView {
-    
+
     initPrototypeSlots () {
         /**
          * @member {SvTextView} titleView - The view for displaying the button's title.
@@ -161,7 +161,7 @@
      * @category UI Customization
      */
     setTitle (s) {
-        if (s === "" || Type.isNullOrUndefined(s)) { 
+        if (s === "" || Type.isNullOrUndefined(s)) {
             s = " "; // to avoid weird html layout issues
         }
 
@@ -292,5 +292,5 @@
         //SimpleSynth.clone().playButtonTap();
         return false;
     }
-    
+
 }.initThisClass());

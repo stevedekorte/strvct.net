@@ -6,10 +6,10 @@
  * @extends SvSummaryNode
  * @classdesc A shared global object to manage passwords.
  * Used by Service APIs. Examples:
- * 
+ *
  * const bearerToken = SvCredentialManager.shared().bearerTokenForService("OpenAI");
  * const bearerToken = SvCredentialManager.shared().bearerTokenForEndpoint("https://api.openai.com/v1/chat/completions");
- * 
+ *
  */
 
 (class SvCredentials extends SvSummaryNode {

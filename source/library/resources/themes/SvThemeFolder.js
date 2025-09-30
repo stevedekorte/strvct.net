@@ -10,7 +10,7 @@
  * @classdesc Represents a folder for organizing themes in the application.
  */
 (class SvThemeFolder extends SvStorableNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvThemeFolder class.
      * @category Initialization
@@ -25,7 +25,7 @@
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
-        
+
         this.setNodeCanEditTitle(true);
         this.setTitle("Untitled " + this.thisClass().visibleClassName());
         this.setCanDelete(true);
@@ -51,14 +51,14 @@
      */
     styleMap () {
         // this should be the same implementation of styleMap() as SvThemeClass
-        const map = new Map()
-        const title = this.title()
-        this.subnodes().forEach(sn => { 
+        const map = new Map();
+        const title = this.title();
+        this.subnodes().forEach(sn => {
             sn.styleMap().forEachKV((k, v) => {
-              map.set(title + "." + k, v)
-            })
-        })
-        return map
+                map.set(title + "." + k, v);
+            });
+        });
+        return map;
     }
 
 }.initThisClass());

@@ -15,8 +15,8 @@
     * @category Initialization
     */
     initPrototypeSlots () {
-    this.setShouldStore(true)
-    this.setShouldStoreSubnodes(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
     }
 
     /**
@@ -25,9 +25,9 @@
     * @category Initialization
     */
     init () {
-    super.init();
-    this.setNodeCanAddSubnode(true)
-    return this;
+        super.init();
+        this.setNodeCanAddSubnode(true);
+        return this;
     }
 
     /**
@@ -35,11 +35,11 @@
     * @category Initialization
     */
     finalInit () {
-    super.finalInit()
-    this.setTitle("Speakers")
-    this.setSubnodeClasses([AzureSpeaker])
-    this.setNodeCanReorderSubnodes(true)
-    this.setNoteIsSubnodeCount(true);
+        super.finalInit();
+        this.setTitle("Speakers");
+        this.setSubnodeClasses([AzureSpeaker]);
+        this.setNodeCanReorderSubnodes(true);
+        this.setNoteIsSubnodeCount(true);
     }
 
     /**
@@ -48,7 +48,7 @@
     * @category Hierarchy
     */
     service () {
-    return this.parentNode()
+        return this.parentNode();
     }
 
 }.initThisClass());

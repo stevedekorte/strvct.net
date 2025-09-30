@@ -16,22 +16,22 @@ require("./external-libs/zonejs/ZoneJS_init.js");
  * @class SvDbRow
  * @extends Base
  * @classdesc Represents a single database row with data validation and persistence operations.
- * 
+ *
  * This class provides an Active Record pattern implementation where each instance represents
  * a single row of data from a database table. It handles data storage, validation, and
  * persistence operations while maintaining the relationship with its parent table.
- * 
+ *
  * Key features:
  * - Data storage in a dictionary format with column validation
  * - Automatic validation against table schema (column names and types)
  * - Convenience save() method for CRUD operations (automatic insert/update detection)
  * - Support for custom row classes per table via inheritance
  * - Integration with the table's column metadata for data integrity
- * 
+ *
  * The row validates all data against the table's column definitions and provides
  * a clean interface for working with individual records. Custom row classes can
  * extend SvDbRow to add domain-specific methods and validation logic.
- * 
+ *
  * Usage:
  * ```javascript
  * const tx = database.newTx();
@@ -41,7 +41,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
  *   row.setRowKeyValue("name", "John Doe");
  *   row.setRowKeyValue("email", "john@example.com");
  *   await row.save(tx); // Automatically inserts (no primary key)
- *   
+ *
  *   // Update existing row
  *   row.setRowKeyValue("name", "Jane Doe");
  *   await row.save(tx); // Automatically updates (has primary key)
@@ -129,7 +129,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
 
         // Check if primary key was assigned
         const newPrimaryKeyValue = this.primaryKeyValue();
-        
+
         // If we didn't have a primary key before but we do now, notify the table
         if ((oldPrimaryKeyValue === undefined || oldPrimaryKeyValue === null) &&
             (newPrimaryKeyValue !== undefined && newPrimaryKeyValue !== null)) {
@@ -174,7 +174,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
         if (this.editingTx() !== null && this.editingTx() !== currentTx) {
             throw new Error("attempt to modify a row that is being edited by another transaction is not allowed");
         }
-        
+
         // Set editing transaction if not already set
         if (this.editingTx() === null) {
             // Take a snapshot of current state before first modification
@@ -218,7 +218,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
         if (!tx) {
             throw new Error("Transaction required for delete() operation");
         }
-        
+
         const primaryKeyValue = this.primaryKeyValue();
         if (primaryKeyValue === undefined || primaryKeyValue === null) {
             throw new Error("Row must have a primary key to delete");
@@ -237,7 +237,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
         if (!tx) {
             tx = this.table().database().currentTx();
         }
-        
+
         if (!tx) {
             throw new Error("No transaction context available. Must be called within a transaction scope.");
         }
@@ -316,7 +316,7 @@ require("./external-libs/zonejs/ZoneJS_init.js");
         this.setDict(Object.assign({}, this.oldDict()));
         this.setEditingTx(null);
     }
-    
+
 }).initThisClass();
 
 module.exports = SvDbRow;

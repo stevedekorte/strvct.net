@@ -7,7 +7,7 @@
  * @classdesc SvDateNode represents a date field in the application. It provides functionality to select and display dates.
  */
 (class SvDateNode extends SvSummaryNode {
-    
+
     /**
      * @static
      * @returns {boolean} True if this node is available as a primitive.
@@ -16,12 +16,12 @@
     static availableAsNodePrimitive () {
         return true;
     }
-    
+
     /**
      * @description Initializes the prototype slots for the SvDateNode.
      * @category Initialization
      */
-    initPrototypeSlots () {        
+    initPrototypeSlots () {
 
         /**
          * @member {Array} subnodes
@@ -101,18 +101,18 @@
      * @category Initialization
      */
     initPrototype () {
-        
-        this.setNoteIconName("right-arrow")
 
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setNodeCanReorderSubnodes(false)
-        this.setCanDelete(true)
+        this.setNoteIconName("right-arrow");
 
-        this.setTitle("Date")
-        this.setNodeCanEditTitle(true)
-        this.setNodeCanEditSubtitle(false)
-        this.setNodeCanInspect(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setCanDelete(true);
+
+        this.setTitle("Date");
+        this.setNodeCanEditTitle(true);
+        this.setNodeCanEditSubtitle(false);
+        this.setNodeCanInspect(true);
     }
 
     /**
@@ -121,7 +121,7 @@
      * @category Utility
      */
     hasDate () {
-        return !Type.isNull(this.year())
+        return !Type.isNull(this.year());
     }
 
     /**
@@ -132,11 +132,11 @@
     jsDate () {
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
         if (this.hasDate()) {
-            const d = new Date(this.year(), this.month(), this.day(), 0, 0, 0, 0, 0)
+            const d = new Date(this.year(), this.month(), this.day(), 0, 0, 0, 0, 0);
             //console.log(this.logPrefix(), "d = ", d)
-            return d
+            return d;
         }
-        return null
+        return null;
     }
 
     /**
@@ -146,13 +146,13 @@
      */
     subtitle () {
         if (this.hasDate()) {
-            const d = this.jsDate()
-            const s = d.monthName() + " " + d.dateNumberName() + ", " + d.getFullYear()
-            const s2 = [this.year(), this.month(), this.day()].join("-")
+            const d = this.jsDate();
+            const s = d.monthName() + " " + d.dateNumberName() + ", " + d.getFullYear();
+            const s2 = [this.year(), this.month(), this.day()].join("-");
             return s2 + " - " + s;
         }
 
-        return "No date selected"
+        return "No date selected";
     }
 
     /**
@@ -162,7 +162,7 @@
     prepareToSyncToView () {
         // called after DateNode is selected
         if (!this.hasSubnodes()) {
-            this.setupSubnodes()
+            this.setupSubnodes();
         }
     }
 
@@ -171,18 +171,18 @@
      * @category Initialization
      */
     setupSubnodes () {
-        this.removeAllSubnodes()
-        
-        const startYear = this.startYear()
-        const range = this.yearRange()
+        this.removeAllSubnodes();
 
-        const years = []
+        const startYear = this.startYear();
+        const range = this.yearRange();
+
+        const years = [];
         for (let i = startYear; i < startYear + range; i++) {
-            const year = SvYearNode.clone().setValue(i)
-            year.setCanDelete(false)
-            years.push(year)
+            const year = SvYearNode.clone().setValue(i);
+            year.setCanDelete(false);
+            years.push(year);
         }
-        this.setSubnodes(years)
+        this.setSubnodes(years);
     }
 
     /**
@@ -193,16 +193,16 @@
      */
     onTapOfDecendantNode (aNode) {
         if (aNode.svType() === "SvDayNode") {
-            const dayNode = aNode
-            const monthNode = dayNode.parentNode()
-            const yearNode = monthNode.parentNode()
-            this.setDay(dayNode.value())
-            this.setMonth(monthNode.value())
-            this.setYear(yearNode.value())
-            this.scheduleSyncToView()
-            this.parentNode().postShouldFocusSubnode(this)
+            const dayNode = aNode;
+            const monthNode = dayNode.parentNode();
+            const yearNode = monthNode.parentNode();
+            this.setDay(dayNode.value());
+            this.setMonth(monthNode.value());
+            this.setYear(yearNode.value());
+            this.scheduleSyncToView();
+            this.parentNode().postShouldFocusSubnode(this);
         }
-        return true
+        return true;
     }
 
     /**
@@ -211,7 +211,7 @@
      * @category Utility
      */
     endYear () {
-        return this.startYear() + this.yearRange()
+        return this.startYear() + this.yearRange();
     }
 
     /**
@@ -220,7 +220,7 @@
      * @category Validation
      */
     yearRangeOk () {
-        return this.startYear() <= this.endYear()
+        return this.startYear() <= this.endYear();
     }
 
     /**
@@ -229,13 +229,13 @@
      */
     didUpdateSlotStartYear () {
         if (!this.hasDoneInit()) { // so we ignore the initial setup as a change
-            return
+            return;
         }
 
         if (!this.yearRangeOk()) {
-            this.setEndYear(this.startYear())
+            this.setEndYear(this.startYear());
         }
-        this.setupSubnodes()
+        this.setupSubnodes();
     }
 
     /**
@@ -244,13 +244,13 @@
      */
     didUpdateSlotEndYear () {
         if (!this.hasDoneInit()) {
-            return
+            return;
         }
 
         if (!this.yearRangeOk()) {
-            this.setStartYear(this.endYear())
+            this.setStartYear(this.endYear());
         }
-        this.setupSubnodes()
+        this.setupSubnodes();
     }
 
     /**
@@ -259,8 +259,8 @@
      * @category Serialization
      */
     jsonArchive () {
-        const d = this.jsDate()
-        return d ? d.toString() : null
+        const d = this.jsDate();
+        return d ? d.toString() : null;
     }
 
 }.initThisClass());

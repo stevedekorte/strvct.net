@@ -9,11 +9,11 @@
 
 SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
     constructor (message) {
-      super(message);
-      this.name = "MissingSlotError";
+        super(message);
+        this.name = "MissingSlotError";
     }
 });
-  
+
 /**
  * Adds copying related behaviors for Object class.
  * @module library.ideal.object
@@ -30,9 +30,9 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      */
     shallowCopy () {
         const copy = Object.assign({}, this);
-        return copy
+        return copy;
     }
- 
+
     /**
      * Creates a deep copy of the object.
      * @returns {Object} A deep copy of the object.
@@ -50,14 +50,14 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
             return instance;
         }
     }
- 
+
     /**
      * Alias for duplicate method.
      * @returns {Object} A deep copy of the object.
      * @category Copying
      */
     copy () {
-        return this.duplicate()
+        return this.duplicate();
     }
 
     /**
@@ -68,7 +68,7 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
     deepCopy () {
         return this.copy();
     }
- 
+
     /**
      * Copies values from another object, ignoring missing slots.
      * @param {Object} anObject - The object to copy from.
@@ -76,9 +76,9 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      * @category Copying
      */
     copyFromAndIgnoreMissingSlots (anObject) {
-        return this.copyFrom(anObject, true) 
+        return this.copyFrom(anObject, true);
     }
-    
+
     /**
      * Copies values from another object.
      * @param {Object} anObject - The object to copy from.
@@ -86,11 +86,11 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      * @returns {Object} This object after copying.
      * @category Copying
      */
-    copyFrom (anObject, ignoreMissingSlots = false) { 
-        this.duplicateSlotValuesFrom(anObject, ignoreMissingSlots)
-        return this
+    copyFrom (anObject, ignoreMissingSlots = false) {
+        this.duplicateSlotValuesFrom(anObject, ignoreMissingSlots);
+        return this;
     }
- 
+
     /**
      * Duplicates slot values from another object.
      * @param {Object} otherObject - The object to duplicate from.
@@ -101,31 +101,31 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      */
     duplicateSlotValuesFrom (otherObject, ignoreMissingSlots = false) {
         this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
-            const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
-            const hasSlot = !Type.isNullOrUndefined(otherSlot)
+            const otherSlot = otherObject.thisPrototype().slotNamed(slotName);
+            const hasSlot = !Type.isNullOrUndefined(otherSlot);
             if (hasSlot) {
-                const dop = otherSlot.duplicateOp()
+                const dop = otherSlot.duplicateOp();
                 if (dop === "nop") {
                     // skip
                 } else {
-                    const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazy slots?
-        
+                    const v = otherSlot.onInstanceGetValue(otherObject); // TODO: what about lazy slots?
+
                     if (dop === "copyValue") {
-                        mySlot.onInstanceSetValue(this, v)
+                        mySlot.onInstanceSetValue(this, v);
                     } else if (dop === "duplicate") {
-                        const dup = v === null ? v : v.duplicate()
-                        mySlot.onInstanceSetValue(this, dup)
+                        const dup = v === null ? v : v.duplicate();
+                        mySlot.onInstanceSetValue(this, dup);
                     } else {
-                        throw new Error("unsupported slot duplicate operation: '" +  dop + "'")
+                        throw new Error("unsupported slot duplicate operation: '" +  dop + "'");
                     }
                 }
             } else if (!ignoreMissingSlots) {
-                throw new MissingSlotError()
+                throw new MissingSlotError();
             }
-        })
-        return this
+        });
+        return this;
     }
- 
+
     /**
      * Copies slot values from another object.
      * @param {Object} otherObject - The object to copy from.
@@ -134,11 +134,11 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      */
     copySlotValuesFrom (otherObject) {
         this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
-            const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
-            const v = otherSlot.onInstanceGetValue(otherObject)
-            mySlot.onInstanceSetValue(this, v)
-        })
-        return this
+            const otherSlot = otherObject.thisPrototype().slotNamed(slotName);
+            const v = otherSlot.onInstanceGetValue(otherObject);
+            mySlot.onInstanceSetValue(this, v);
+        });
+        return this;
     }
 
 }).initThisCategory();

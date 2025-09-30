@@ -7,7 +7,7 @@
  * @classdesc Represents a JSON dictionary node in the Sv (STRVCT) system.
  */
 (class SvJsonDictionaryNode extends SvJsonNode {
-    
+
     /**
      * @static
      * @description Checks if this node type can open a specific MIME type.
@@ -138,7 +138,6 @@
         // - throw an error if there are json properties not present in the JSON schema
 
 
-
         // remove any keys that are no longer in the json
         keysToRemove.forEach((k) => {
             this.removeSubnode(this.firstSubnodeWithTitle(k));
@@ -259,5 +258,5 @@
         });
         return this;
     }
-    
+
 }.initThisClass());

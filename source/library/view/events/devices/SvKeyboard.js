@@ -37,7 +37,7 @@
  *
  *     Newer JS browser APIs might have better ways to do
  *     key code to name mappings. TODO: look into whether this is well supported across browsers.
- * 
+ *
  */
 
 "use strict";
@@ -52,7 +52,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @category Initialization
      * @description Initializes the prototype slots
@@ -63,7 +63,7 @@
          * @description Dictionary of KeyboardKey objects
          */
         {
-            const slot = this.newSlot("codeToKeysMap", null); 
+            const slot = this.newSlot("codeToKeysMap", null);
             slot.setComment("dictionary of KeyboardKey objects");
             slot.setSlotType("Map");
         }
@@ -170,7 +170,7 @@
         if (!this._k2c) {
             this._k2c = this.keyCodesToNamesMap().inverted();
         }
-        return this._k2c
+        return this._k2c;
     }
 
     /**
@@ -182,7 +182,7 @@
     keyCodeForName (aName) {
         return this.k2c().get(aName);
     }
-    
+
     /**
      * @category Event Handling
      * @description Checks if the event is just a modifier key
@@ -300,7 +300,7 @@
             [220, "Backslash"],
             [221, "CloseBracket"],
             [222, "SingleQuote"]
-          ]);
+        ]);
     }
 
     /**
@@ -309,7 +309,7 @@
      * @returns {Object} The shift dictionary
      */
     shiftDict () {
-        // Based on a Macbook Pro keyboard. 
+        // Based on a Macbook Pro keyboard.
         // Not sure if this is platform specific.
 
         return {
@@ -349,7 +349,7 @@
 
         const lines = c2k.keysArray().map((code) => {
             return "    " + code + ": \"" + this.codeToKeysMap().get(code).name() + "\"";
-        })
+        });
         const s = "{\n" + lines.join(",\n") + "}\n";
         console.log(this.logPrefix(), "c2k:", s);
 
@@ -382,7 +382,7 @@
      */
     onKeyDownCapture (event) {
         //console.log(this.logPrefix(), "event.metaKey = ", event.metaKey)
-        
+
         const shouldPropogate = true;
         const key = this.keyForEvent(event);
 
@@ -394,10 +394,10 @@
             }
         } else {
             console.warn("SvKeyboard.shared() no key found for event ", event);
-            
+
             //this.keyForEvent(event);
         }
-            
+
         return shouldPropogate;
     }
 
@@ -423,7 +423,7 @@
 
         return shouldPropogate;
     }
-    
+
     /**
      * @category Event Handling
      * @description Gets the down method name for a given event
@@ -487,7 +487,7 @@
         if (Type.isUndefined(event.keyCode)) {
             return "";
         }
-        
+
         const key = this.keyForCode(event.keyCode);
         const isJustModifier = this.eventIsJustModifierKey(event);
         const modifiers = this.modifierNamesForEvent(event); // may include Shift
@@ -495,13 +495,13 @@
         const isNumeric = this.eventIsNumeric(event);
         let keyName = key ? key.name() : event.code;
 
-        
+
         if (isJustModifier) {
             return keyName;
         }
 
         if (event.shiftKey) {
-            // Note: if another modifier besides the shift key is down, 
+            // Note: if another modifier besides the shift key is down,
             // the non-shift version of event.key is used. For example:
             // shift-equals is "Plus"
             // control-shift-equals is "ControlShiftEquals"
@@ -682,12 +682,12 @@
      */
     allModifierNames () {
         return [
-            "Alternate", 
-            "Control", 
+            "Alternate",
+            "Control",
             "Meta",
-            "MetaLeft", 
-            "MetaRight", 
-            "Shift", 
+            "MetaLeft",
+            "MetaRight",
+            "Shift",
         ];
     }
 
@@ -704,12 +704,12 @@
 
         if (event.altKey) {
             modifierNames.push("Alternate");
-        } 
-        
+        }
+
         if (event.ctrlKey) {
             modifierNames.push("Control");
         }
-        
+
         if (event.metaKey) {
             const n = event.location;
 
@@ -722,8 +722,8 @@
             } else {
                 modifierNames.push("Meta");
             }
-        } 
-        
+        }
+
         if (event.shiftKey) {
             modifierNames.push("Shift");
         }
@@ -747,5 +747,5 @@
         console.log(this.logPrefix(), "  modsAndKeyName: ", kb.modsAndKeyNameForEvent(event));
         console.log(this.logPrefix(), "---");
     }
-    
+
 }.initThisClass());

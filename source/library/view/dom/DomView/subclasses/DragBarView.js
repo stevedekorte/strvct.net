@@ -10,7 +10,7 @@
  * @classdesc Represents a draggable bar view that can be used for resizing or other drag operations.
  */
 (class DragBarView extends DomView {
-    
+
     /**
      * @description Initializes the prototype slots for the DragBarView.
      * @category Initialization
@@ -96,29 +96,29 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
 
-        this.turnOffUserSelect()
+        this.turnOffUserSelect();
 
-        this.setElementClassName("DragBarView")
-        this.setDisplay("inline-block")
+        this.setElementClassName("DragBarView");
+        this.setDisplay("inline-block");
 
-        this.setIsRegisteredForMouse(true)
-        this.syncHighlighted()
-        this.syncEnabled()
+        this.setIsRegisteredForMouse(true);
+        this.syncHighlighted();
+        this.syncEnabled();
 
         this._mouseMoveTrackerFunc = (event) => {
-            this.mouseMoveTracker(event)
-            return true
-        }
+            this.mouseMoveTracker(event);
+            return true;
+        };
 
         this._mouseUpTrackerFunc = (event) => {
-            this.mouseUpTracker(event)
-            return true
-        }
+            this.mouseUpTracker(event);
+            return true;
+        };
 
-        this.setBackgroundColor(this.normalColor())
-        return this
+        this.setBackgroundColor(this.normalColor());
+        return this;
     }
 
     /**
@@ -128,10 +128,10 @@
      */
     hoverCursorType () {
         if (this.isVerticalDrag()) {
-            return "row-resize"
+            return "row-resize";
         }
 
-        return "col-resize"
+        return "col-resize";
     }
 
     /**
@@ -142,11 +142,11 @@
      */
     setIsVertical (aBool) {
         if (this._isVertical !== aBool) {
-            this._isVertical = aBool
+            this._isVertical = aBool;
             //console.log("this.hoverCursorType() = ", this.hoverCursorType())
-            this.setCursor(this.hoverCursorType())
+            this.setCursor(this.hoverCursorType());
         }
-        return this
+        return this;
     }
 
     /**
@@ -157,11 +157,11 @@
      */
     setIsEnabled (aBool) {
         if (this._isEnabled !== aBool) {
-            this._isEnabled = aBool
-            this.syncEnabled()
+            this._isEnabled = aBool;
+            this.syncEnabled();
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -170,8 +170,8 @@
      * @category State
      */
     syncEnabled () {
-        this.setIsDisplayHidden(!this.isEnabled())
-        return this
+        this.setIsDisplayHidden(!this.isEnabled());
+        return this;
     }
 
     /**
@@ -182,11 +182,11 @@
      */
     setIsHighlighted (aBool) {
         if (this._isHighlighted !== aBool) {
-            this._isHighlighted = aBool
-            this.syncHighlighted()
+            this._isHighlighted = aBool;
+            this.syncHighlighted();
         }
 
-        return this
+        return this;
     }
 
     /**
@@ -196,17 +196,17 @@
      */
     syncHighlighted () {
         if (this.isDragging()) {
-            return this
+            return this;
         }
 
         if (this.isHighlighted()) {
-            this.setBackgroundColor(this.highlightColor())
+            this.setBackgroundColor(this.highlightColor());
         } else {
-            this.setBackgroundColor(this.normalColor())
+            this.setBackgroundColor(this.normalColor());
         }
-        this.syncCursor()
+        this.syncCursor();
 
-        return this
+        return this;
     }
 
     /**
@@ -216,11 +216,11 @@
      */
     syncCursor () {
         if (this.isHighlighted()) {
-            this.setCursor(this.hoverCursorType())
+            this.setCursor(this.hoverCursorType());
         } else {
-            this.setCursor(null)
+            this.setCursor(null);
         }
-        return this
+        return this;
     }
 
     /**
@@ -231,7 +231,7 @@
     mouseMoveTracker (event) {
         //console.log("mouse pos: ", event.clientX, " x ", event.clientY)
         if (this.delegate()) {
-            this.delegate().didDragDivider(Math.floor(event.clientX), Math.floor(event.clientY))
+            this.delegate().didDragDivider(Math.floor(event.clientX), Math.floor(event.clientY));
         }
     }
 
@@ -242,7 +242,7 @@
      */
     mouseUpTracker (event) {
         //console.log("mouse pos: ", event.clientX, " x ", event.clientY)
-        this.onMouseUp(event)
+        this.onMouseUp(event);
     }
 
     /**
@@ -254,13 +254,13 @@
     setIsDragging (b) {
         this._isDragging = b;
         if (b) {
-            this.setBackgroundColor(this.dragColor())
-            this.parentView().setBorder("1px dashed white")
+            this.setBackgroundColor(this.dragColor());
+            this.parentView().setBorder("1px dashed white");
         } else {
-            this.setBackgroundColor(this.normalColor())
-            this.parentView().setBorder("0px dashed white")
+            this.setBackgroundColor(this.normalColor());
+            this.parentView().setBorder("0px dashed white");
         }
-        return this
+        return this;
     }
 
     /**
@@ -271,10 +271,10 @@
      */
     onMouseDown (event) {
         //this.logDebug(" onMouseDown")
-        this.setIsDragging(true)
+        this.setIsDragging(true);
 
-        this.removeParentTracking()
-        return false
+        this.removeParentTracking();
+        return false;
     }
 
     /**
@@ -283,10 +283,10 @@
      * @category Event Handling
      */
     addParentTracking () {
-        const r = this.documentBodyView()
+        const r = this.documentBodyView();
         r.element().removeEventListener("mousemove", this._mouseMoveTrackerFunc, false);
         r.element().removeEventListener("mouseup", this._mouseUpTrackerFunc, false);
-        return this
+        return this;
     }
 
     /**
@@ -295,10 +295,10 @@
      * @category Event Handling
      */
     removeParentTracking () {
-        const r = this.documentBodyView()
+        const r = this.documentBodyView();
         r.element().addEventListener("mousemove", this._mouseMoveTrackerFunc, false);
         r.element().addEventListener("mouseup", this._mouseUpTrackerFunc, false);
-        return this
+        return this;
     }
 
     /**
@@ -308,7 +308,7 @@
      * @category Event Handling
      */
     onMouseMove (event) {
-        return false
+        return false;
     }
 
     /**
@@ -319,8 +319,8 @@
      */
     onMouseOver (event) {
         //this.logDebug(" onMouseOver")
-        this.setIsHighlighted(true)
-        return false
+        this.setIsHighlighted(true);
+        return false;
     }
 
     /**
@@ -331,8 +331,8 @@
      */
     onMouseLeave (event) {
         //this.logDebug(" onMouseLeave")
-        this.setIsHighlighted(false)
-        return false
+        this.setIsHighlighted(false);
+        return false;
     }
 
     /**
@@ -342,9 +342,9 @@
      * @category Event Handling
      */
     onMouseUp (event) {
-        this.setIsDragging(false)
-        this.addParentTracking()
-        return false
+        this.setIsDragging(false);
+        this.addParentTracking();
+        return false;
     }
-    
+
 }.initThisClass());

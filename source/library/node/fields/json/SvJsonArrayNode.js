@@ -7,7 +7,7 @@
  * @classdesc Represents a JSON array node in the object tree.
  */
 (class SvJsonArrayNode extends SvJsonNode {
-    
+
     /**
      * @static
      * @description Checks if the node can open a specific MIME type.
@@ -73,7 +73,7 @@
             items["$ref"] = this.subnodeClasses().first().jsonSchemaRef(refSet);
         } else {
             const refs = this.subnodeClasses().map(subnodeClass => {
-                return { 
+                return {
                     "$ref": subnodeClass.jsonSchemaRef(refSet)
                 };
             });
@@ -85,7 +85,7 @@
         }
         return items;
     }
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization
@@ -166,7 +166,7 @@
             if (editableValueTypes.contains(aSubnode.svType())) {
                 aSubnode.setValueIsEditable(true);
             }
-         }
+        }
 
         aSubnode.setNodeCanEditTitle(false);
         return aSubnode;
@@ -256,9 +256,9 @@
         });
 
         //if (true) {
-            this.subnodes().clear();
-            this.subnodes().appendItems(newSubnodes);
-            newSubnodes.forEach(sn => sn.setParentNode(this));
+        this.subnodes().clear();
+        this.subnodes().appendItems(newSubnodes);
+        newSubnodes.forEach(sn => sn.setParentNode(this));
         //} else {
         //    this.setSubnodes(newSubnodes);
         //}
@@ -291,16 +291,16 @@
 
     descendantWithJsonId (jsonId, path = "") {
         if (this.jsonId() === jsonId) {
-          return this;
+            return this;
         }
         return this.subnodes().detectAndReturnValue(sn => {
             if (sn.isKindOf(SvPointerField)) {
                 sn = sn.nodeTileLink();
             }
-          if (sn.descendantWithJsonId) {
-            return sn.descendantWithJsonId(jsonId, path + "/" + this.jsonPathCompmentString());
-          }
-          return false;
+            if (sn.descendantWithJsonId) {
+                return sn.descendantWithJsonId(jsonId, path + "/" + this.jsonPathCompmentString());
+            }
+            return false;
         });
     }
 

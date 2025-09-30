@@ -10,7 +10,7 @@
  * @classdesc Listens to events on a SpeechSynthesisUtterance instance.
  */
 (class SpeechListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots.
      * @private
@@ -25,9 +25,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -43,7 +43,7 @@
         this.addEventNameAndMethodName("pause", "onPause");
         this.addEventNameAndMethodName("resume", "onResume");
         this.addEventNameAndMethodName("start", "onStart");
-        return this
+        return this;
     }
 
 }.initThisClass());

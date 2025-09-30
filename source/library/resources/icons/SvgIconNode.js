@@ -18,7 +18,7 @@
     * @category File Handling
     */
     static supportedExtensions () {
-    return ["svg"]
+        return ["svg"];
     }
 
     /**
@@ -30,12 +30,12 @@
         * @member {string} svgString - The SVG string content.
         * @category Data
         */
-    {
-        const slot = this.newSlot("svgString", null)
-        slot.setCanInspect(true)
-        slot.setSlotType("String")
-        slot.setLabel("SVG string")
-    }
+        {
+            const slot = this.newSlot("svgString", null);
+            slot.setCanInspect(true);
+            slot.setSlotType("String");
+            slot.setLabel("SVG string");
+        }
     }
 
     /**
@@ -51,10 +51,10 @@
     * @category Data Loading
     */
     onDidLoad () {
-    super.onDidLoad()
-    //debugger
-    this.setSvgString(this.urlResource().dataAsText())
-    return this
+        super.onDidLoad();
+        //debugger
+        this.setSvgString(this.urlResource().dataAsText());
+        return this;
     }
 
     /**
@@ -64,9 +64,9 @@
     */
     svgIconView () {
     // TODO: this view stuff probably shouldn't be in the model
-    debugger
-    const icon = SvgIconView.clone().setSvgString(this.svgString())
-    return icon
+        debugger;
+        const icon = SvgIconView.clone().setSvgString(this.svgString());
+        return icon;
     }
 
     /**
@@ -75,7 +75,7 @@
     * @category Data Retrieval
     */
     noteIconName () {
-    return this.title()
+        return this.title();
     }
 
 }.initThisClass());

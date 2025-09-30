@@ -7,7 +7,7 @@
  * @classdesc Represents a boolean field tile in the browser stack.
  */
 (class SvBooleanFieldTile extends SvFieldTile {
-    
+
     /*
     initPrototypeSlots () {
     }
@@ -20,7 +20,7 @@
      */
     init () {
         super.init();
-        
+
         this.turnOffUserSelect();
         this.keyView().setTransition("color 0.3s");
         this.keyView().setPaddingLeft("0.5em");
@@ -58,7 +58,7 @@
         }
         return bv;
     }
-	
+
     /**
      * @description Returns the BooleanView used for the value.
      * @returns {BooleanView} The BooleanView instance.
@@ -78,5 +78,5 @@
         this.booleanView().updateAppearance();
         return this;
     }
-    
+
 }.initThisClass());

@@ -9,7 +9,7 @@
 "use strict";
 
 (class SvTextAreaFieldTile extends SvFieldTile {
-    
+
     /**
      * Initializes the prototype slots for the SvTextAreaFieldTile.
      */
@@ -28,7 +28,7 @@
          * @category Speech Recognition
          */
         {
-            const slot = this.newSlot("sttSession", null); 
+            const slot = this.newSlot("sttSession", null);
             slot.setSlotType("SpeechToTextSession");
         }
     }
@@ -51,7 +51,7 @@
         this.setValueEditableBorder("none");
 
         this.setupValueViewButton();
-        return this
+        return this;
     }
 
     /**
@@ -94,7 +94,7 @@
         bv.setPadding("0px");
         bv.setMarginTop("1px");
         bv.titleView().setIsDisplayHidden(true);
-        bv.setAttribute("title", "Speech to text input")
+        bv.setAttribute("title", "Speech to text input");
         this.setSttButton(bv);
         this.updateSttButton();
     }
@@ -154,8 +154,8 @@
      */
     setupSttSessionIfNeeded () {
         if (!this.sttSession()) {
-          const stt = SpeechToTextSession.clone().setDelegate(this).setSessionLabel("ChatInputNode STT input");
-          this.setSttSession(stt);
+            const stt = SpeechToTextSession.clone().setDelegate(this).setSessionLabel("ChatInputNode STT input");
+            this.setSttSession(stt);
         }
     }
 
@@ -202,7 +202,7 @@
      * @category Speech Recognition
      */
     onSpeechEnd (/*sttSession*/) {
-        this.updateSttButton()
+        this.updateSttButton();
     }
 
     /**
@@ -211,7 +211,7 @@
      * @category Speech Recognition
      */
     onSessionEnd (/*sttSession*/) {
-        this.updateSttButton()
+        this.updateSttButton();
     }
-    
+
 }.initThisClass());

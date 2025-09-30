@@ -8,7 +8,7 @@
  * @classdesc Listens to a set of clipboard events.
  */
 (class ClipboardListener extends EventSetListener {
-    
+
     /**
      * @description Initializes the prototype slots for the ClipboardListener class.
      * @category Initialization
@@ -23,8 +23,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -36,7 +36,7 @@
         this.addEventNameAndMethodName("copy", "onCopy");
         this.addEventNameAndMethodName("cut", "onCut");
         this.addEventNameAndMethodName("paste", "onPaste");
-        return this
+        return this;
     }
 
 }.initThisClass());

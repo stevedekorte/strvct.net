@@ -8,7 +8,7 @@
  * @class BaseHttpsServerRequest
  * @extends Base
  * @classdesc Base class for handling HTTPS server requests, including file and proxy requests.
- * 
+ *
  * REDESIGN NOTES:
  * - This class will become the base class for all request handlers
  * - Remove handleAcmeChallenge() and handleFileRequest() methods
@@ -27,11 +27,11 @@
 
 TODO: respond to paths in:
 
- /.well-known/acme-challenge/ 
- 
-using the contents of: 
- 
- /home/public/.well-known/acme-challenge/. 
+ /.well-known/acme-challenge/
+
+using the contents of:
+
+ /home/public/.well-known/acme-challenge/.
 
 
  NOTES:
@@ -46,8 +46,8 @@ using the contents of:
 require("./SvGlobals.js");
 require("./Base.js");
 require("./SvMimeExtensions.js");
-const fs = require('fs');
-const nodePath = require('path');
+const fs = require("fs");
+const nodePath = require("path");
 //const https = require('https');
 //const http = require('http');
 //const url = require('url');
@@ -58,7 +58,7 @@ const nodePath = require('path');
  * @classdesc Base class for handling HTTPS server requests.
  */
 (class BaseHttpsServerRequest extends Base {
-    
+
     initPrototypeSlots () {
         /**
          * @member {Object} server - The server instance.
@@ -95,7 +95,7 @@ const nodePath = require('path');
          */
         this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/");
     }
-  
+
     initPrototype () {
     }
 
@@ -115,13 +115,13 @@ const nodePath = require('path');
     process () {
         console.log(this.logPrefix(), this.request().url);
         this.setUrlObject(this.getUrlObject());
-        
+
         const path = this.getPath();
         this.setPath(path);
-        
+
         // Set query map
         this.setQueryMap(this.getQueryMap());
-        
+
         // Subclasses should override this method to handle the request
         // Don't send a response here - let subclasses handle it
     }
@@ -149,12 +149,12 @@ const nodePath = require('path');
     handleAcmeChallenge () {
         const urlPath = this.urlObject().pathname;
         const localPath = this.localAcmePath() + urlPath.substring("/.well-known/acme-challenge/".length);
-        
+
         fs.readFile(localPath, (error, data) => {
             if (error) {
                 this.sendNotFound();
             } else {
-                this.response().writeHead(200, { 'Content-Type': 'text/plain' });
+                this.response().writeHead(200, { "Content-Type": "text/plain" });
                 this.response().end(data);
             }
         });
@@ -193,17 +193,17 @@ const nodePath = require('path');
      * @description Handles file requests.
      */
     handleFileRequest () {
-        let filePath = '.' + this.request().url;
-        if (filePath === './') {
-            filePath = './index.html';
+        let filePath = "." + this.request().url;
+        if (filePath === "./") {
+            filePath = "./index.html";
         }
 
         const extname = nodePath.extname(filePath);
-        const contentType = SvMimeExtensions.shared().mimeTypeForPathExtension(extname) || 'application/octet-stream';
+        const contentType = SvMimeExtensions.shared().mimeTypeForPathExtension(extname) || "application/octet-stream";
 
         fs.readFile(filePath, (error, content) => {
             if (error) {
-                if (error.code === 'ENOENT') {
+                if (error.code === "ENOENT") {
                     this.sendNotFound();
                 } else {
                     this.sendServerError();
@@ -221,25 +221,25 @@ const nodePath = require('path');
      */
     sendFileContent (content, contentType) {
         const headers = {
-            'Content-Type': contentType,
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
-            'Pragma': 'no-cache',
-            'Expires': '0'
+            "Content-Type": contentType,
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
         };
-        
+
         if (this.server().isSecure()) {
-            headers['Strict-Transport-Security'] = 'max-age=86400; includeSubDomains';
+            headers["Strict-Transport-Security"] = "max-age=86400; includeSubDomains";
         }
-        
+
         this.response().writeHead(200, headers);
-        this.response().end(content, 'utf-8');
+        this.response().end(content, "utf-8");
     }
 
     /**
      * @description Sends a 404 Not Found response.
      */
     sendNotFound () {
-        this.response().writeHead(404, { 'Content-Type': 'text/html' });
+        this.response().writeHead(404, { "Content-Type": "text/html" });
         this.response().end(`
             <!DOCTYPE html>
             <html>
@@ -255,19 +255,19 @@ const nodePath = require('path');
                 <p>The requested resource could not be found.</p>
             </body>
             </html>
-        `, 'utf-8');
+        `, "utf-8");
     }
 
     /**
      * @description Sends a 500 Internal Server Error response.
      */
     sendServerError () {
-        this.response().writeHead(500, { 
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
+        this.response().writeHead(500, {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
         });
-        this.response().end(JSON.stringify({ 
-            error: 'Internal Server Error' 
+        this.response().end(JSON.stringify({
+            error: "Internal Server Error"
         }));
     }
 
@@ -293,14 +293,14 @@ const nodePath = require('path');
      */
     async readBody () {
         return new Promise((resolve, reject) => {
-            let data = '';
-            this.request().on('data', chunk => {
+            let data = "";
+            this.request().on("data", chunk => {
                 data += chunk;
             });
-            this.request().on('end', () => {
+            this.request().on("end", () => {
                 resolve(data);
             });
-            this.request().on('error', reject);
+            this.request().on("error", reject);
         });
     }
 
@@ -313,7 +313,7 @@ const nodePath = require('path');
         try {
             return JSON.parse(body);
         } catch (e) {
-            throw new Error('Invalid JSON in request body ' + e.message);
+            throw new Error("Invalid JSON in request body " + e.message);
         }
     }
 
@@ -324,10 +324,10 @@ const nodePath = require('path');
      */
     sendJson (data, statusCode = 200) {
         const headers = {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization"
         };
         this.response().writeHead(statusCode, headers);
         this.response().end(JSON.stringify(data));

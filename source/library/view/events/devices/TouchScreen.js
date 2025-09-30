@@ -9,9 +9,9 @@
  * @extends Device
  * @classdesc Global shared instance that tracks current touch state in window coordinates.
  * Registers for capture events on document.body.
- * 
+ *
  * Example use:
- * 
+ *
  *     const hasTouch = TouchScreen.shared().isSupported()
  */
 (class TouchScreen extends Device {
@@ -22,9 +22,9 @@
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots for the TouchScreen class.
      * @category Initialization
@@ -90,18 +90,18 @@
     calcIsSupported () {
         // return WebBrowserWindow.isTouchDevice()
         let result = false;
-        
-        if ("ontouchstart" in window) { 
-            // works on most browsers 
-            result = true; 
+
+        if ("ontouchstart" in window) {
+            // works on most browsers
+            result = true;
         }
 
         if (navigator.maxTouchPoints) {
-            // works on IE10/11 and Surface	
-            result = true; 
-        } 
+            // works on IE10/11 and Surface
+            result = true;
+        }
 
-        return result
+        return result;
     }
 
     /**
@@ -110,13 +110,13 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.startListening()
-        this.setIsDebugging(false)
+        super.init();
+        this.startListening();
+        this.setIsDebugging(false);
         if (this.isDebugging()) {
-            this.logDebug(".init()")
+            this.logDebug(".init()");
         }
-        return this
+        return this;
     }
 
     /**
@@ -127,14 +127,14 @@
      */
     setCurrentEvent (event) {
         if (this._currentEvent !== event) {
-            this.setLastEvent(this._currentEvent)
-            this._currentEvent = event
+            this.setLastEvent(this._currentEvent);
+            this._currentEvent = event;
             if (this.isDebugging()) {
-                console.log(this.svType() + " touch count: " + this.currentPoints().length)
+                console.log(this.svType() + " touch count: " + this.currentPoints().length);
             }
             //Devices.shared().setCurrentEvent(event)
         }
-        return this
+        return this;
     }
 
     /**
@@ -143,9 +143,9 @@
      * @category Event Handling
      */
     startListening () {
-        this.setTouchListener(TouchListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
-        this.touchListener().setIsListening(true)
-        return this
+        this.setTouchListener(TouchListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this));
+        this.touchListener().setIsListening(true);
+        return this;
     }
 
     /**
@@ -156,11 +156,11 @@
      */
     onTouchBeginCapture (event) {
         if (this.isDebugging()) {
-            console.log(this.svType() + ".onTouchBeginCapture()")
+            console.log(this.svType() + ".onTouchBeginCapture()");
         }
-        this.setCurrentEvent(event)
+        this.setCurrentEvent(event);
         //this.handleLeave(event)
-        return true
+        return true;
     }
 
     /**
@@ -170,8 +170,8 @@
      * @category Touch Point Tracking
      */
     lastPointForId (id) {
-        const lastPoints = this.pointsForEvent(this.lastEvent())
-        return lastPoints.detect(p => p.id() === id)
+        const lastPoints = this.pointsForEvent(this.lastEvent());
+        return lastPoints.detect(p => p.id() === id);
     }
 
     /**
@@ -181,8 +181,8 @@
      * @category Touch Point Tracking
      */
     currentPointForId (id) {
-        const currentPoints = this.pointsForEvent(this.currentEvent())
-        return currentPoints.detect(p => p.id() === id)
+        const currentPoints = this.pointsForEvent(this.currentEvent());
+        return currentPoints.detect(p => p.id() === id);
     }
 
     /**
@@ -192,9 +192,9 @@
      * @category Event Handling
      */
     onTouchMoveCapture (event) {
-        this.setCurrentEvent(event)
+        this.setCurrentEvent(event);
         //this.handleLeave(event)
-        return true
+        return true;
     }
 
     /**
@@ -204,9 +204,9 @@
      * @category Event Handling
      */
     onTouchEndCapture (event) {
-        this.setCurrentEvent(event)
+        this.setCurrentEvent(event);
         //this.handleLeave(event)
-        return true
+        return true;
     }
 
     /**
@@ -216,16 +216,16 @@
      * @category Touch Point Creation
      */
     pointForTouch (touch) {
-        assert(event.__proto__.constructor === TouchEvent)
-        const p = EventPoint.clone()
-        p.setId(touch.identifier)
-        p.setTarget(touch.target)
-        p.set(touch.pageX, touch.pageY)  // document position
-        p.setTimeToNow()
-        p.setIsDown(true)
-        p.setEvent(touch)
+        assert(event.__proto__.constructor === TouchEvent);
+        const p = EventPoint.clone();
+        p.setId(touch.identifier);
+        p.setTarget(touch.target);
+        p.set(touch.pageX, touch.pageY);  // document position
+        p.setTimeToNow();
+        p.setIsDown(true);
+        p.setEvent(touch);
         //p.findOverview()
-        return p
+        return p;
     }
 
     /**
@@ -235,16 +235,16 @@
      * @category Touch Point Creation
      */
     justPointsForEvent (event) {
-        const points = []
+        const points = [];
         // event.touches isn't a proper array, so we can't enumerate it normally
-        const touches = event.touches // all current touches
+        const touches = event.touches; // all current touches
         for (let i = 0; i < touches.length; i++) {
-            const touch = touches[i]
-            const p = this.pointForTouch(touch)
-            points.append(p)
+            const touch = touches[i];
+            const p = this.pointForTouch(touch);
+            points.append(p);
         }
 
-        return points
+        return points;
     }
 
     /**
@@ -255,13 +255,13 @@
      */
     pointsForEvent (event) {
         if (!event.hasCachedPoints()) {
-            event.preventDefault() // needed to prevent browser from handling touches?
+            event.preventDefault(); // needed to prevent browser from handling touches?
 
-            const points = this.justPointsForEvent(event)
-            event.setCachedPoints(points)
+            const points = this.justPointsForEvent(event);
+            event.setCachedPoints(points);
         }
 
-        return event.cachedPoints(event)
+        return event.cachedPoints(event);
     }
 
     /**
@@ -271,9 +271,9 @@
      */
     currentPoints () {
         if (this.currentEvent()) {
-            return this.pointsForEvent(this.currentEvent())
+            return this.pointsForEvent(this.currentEvent());
         }
-        return []
+        return [];
     }
 
 }.initThisClass());

@@ -7,7 +7,7 @@
  * @classdesc SvImageNode class for handling image nodes.
  */
 (class SvImageNode extends SvStorableNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvImageNode.
      * @category Initialization
@@ -65,7 +65,7 @@
         super.finalInit();
         this.setNodeViewClassName("ImageWellView");
     }
-    
+
     /**
      * @description Handles the event when the node is edited.
      * @category Event Handling
@@ -95,5 +95,5 @@
         this.setDataURL(value);
         return this;
     }
-    
+
 }.initThisClass());

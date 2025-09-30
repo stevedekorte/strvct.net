@@ -10,7 +10,7 @@
  * @classdesc Represents a year node in a date-related structure.
  */
 (class SvYearNode extends BaseNode {
-    
+
     /**
      * @description Initializes the prototype slots for the SvYearNode.
      * @category Initialization
@@ -62,7 +62,7 @@
     hasSubnodes () {
         return true;
     }
-    
+
     /**
      * @description Prepares the node for access, potentially refreshing subnodes.
      * @category Node Management
@@ -72,7 +72,7 @@
             //this.refreshSubnodes();
         }
     }
-    
+
     /**
      * @description Returns the node to be used as a link in tile views.
      * @returns {SvYearNode} The current node instance.
@@ -94,5 +94,5 @@
             }
         }
     }
-    
+
 }.initThisClass());

@@ -2,7 +2,7 @@
 
 /**
  * HookedMap is a subclass of Map that hooks the base mutation methods.
- * 
+ *
  * The JS Map object holds key-value pairs and remembers the original insertion order of the keys.
  * For this to work, you need to use method alternatives to the non-method (operator) operations.
  *
@@ -18,7 +18,7 @@
      * @category Initialization
      */
     initPrototypeSlots () {
-        this.setupMutatorHooks()
+        this.setupMutatorHooks();
     }
 
     /**
@@ -31,7 +31,7 @@
             "clear",
             "delete",
             "set",
-        ])
+        ]);
     }
 
     /**
@@ -40,25 +40,25 @@
      * @category Testing
      */
     static selfTest () {
-        const a = this.clone()
-        
-        let gotWillMutate = false
-        let gotDidMutate = false
+        const a = this.clone();
+
+        let gotWillMutate = false;
+        let gotDidMutate = false;
 
         a.willMutate = () => {
-            gotWillMutate = true
-        }
+            gotWillMutate = true;
+        };
 
         a.didMutate = () => {
-            gotDidMutate = true
-        }
+            gotDidMutate = true;
+        };
 
-        a.clear()
-        assert(gotWillMutate)
-        assert(gotDidMutate)
+        a.clear();
+        assert(gotWillMutate);
+        assert(gotDidMutate);
 
-        console.log(this.svType() + " - passed self test")
-        return this
+        console.log(this.svType() + " - passed self test");
+        return this;
     }
 
 }.initThisClass()); //.selfTest()

@@ -45,7 +45,7 @@
              * @member {DomNode|null} domNode
              * @description The DOM node associated with the current node.
              */
-            const slot = this.newSlot("domNode", null); 
+            const slot = this.newSlot("domNode", null);
             slot.setSlotType("Node"); // Object/EventTarget/Node/Element|CharacterData|DocumentFragment|Document|DocumentType|Attr
             slot.setAllowsNullValue(true);
         }

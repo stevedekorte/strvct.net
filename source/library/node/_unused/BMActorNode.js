@@ -4,87 +4,87 @@
 
     BMActorNode
 
-    Async messages don't ensure processing order, so we need actors with 
+    Async messages don't ensure processing order, so we need actors with
     message queues in order to sequence inbound messages.
- 
+
     NOTES
 
     - auto runs if any messages are in inbox (the asyncMessageQueue)
-  
+
 
 */
 
 (class BMActorNode extends BaseNode {
-    
+
     initPrototypeSlots () {
-        this.newSlot("inbox", null).setInitProto(Array) // asyncMessageQueue
-        this.newSlot("timeoutId", null) 
+        this.newSlot("inbox", null).setInitProto(Array); // asyncMessageQueue
+        this.newSlot("timeoutId", null);
     }
 
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     composeAndSendMessage (messageName, args, callback) {
-        const msg = this.composeMessage(messageName, args, callback)
-        this.receiveMessage(msg)
-        return msg.future()
+        const msg = this.composeMessage(messageName, args, callback);
+        this.receiveMessage(msg);
+        return msg.future();
     }
 
     composeMessage (messageName, args, callback) {
-        const msg = InboxMessage.clone().setName(messageName).setArgs(args).setCallback(callback)
-        this.inbox().push(msg)
-        return msg
+        const msg = InboxMessage.clone().setName(messageName).setArgs(args).setCallback(callback);
+        this.inbox().push(msg);
+        return msg;
     }
 
     receiveMessage (aMessage) {
-        this.inbox().push(aMessage)
+        this.inbox().push(aMessage);
         if (this.inbox().length === 1) {
-            this.runViaTimeout()
+            this.runViaTimeout();
         }
-        return this
+        return this;
     }
 
     runViaTimeout () {
-        const tid = this.addTimeout(() => { this.run() }, 0)
-        this.setTimeoutId(tid)
-        return this
+        const tid = this.addTimeout(() => { this.run(); }, 0);
+        this.setTimeoutId(tid);
+        return this;
     }
 
     run () {
         if (this.inbox().length) {
-            const aMessage = this.inbox().removeFirst()
-            this.processMessage(aMessage)
+            const aMessage = this.inbox().removeFirst();
+            this.processMessage(aMessage);
         }
 
         if (this.inbox().length) {
-            this.runViaTimeout()
+            this.runViaTimeout();
         }
     }
 
     processMessage (aMessage) {
         if (!this.respondsTo(aMessage.name())) {
-            this.onErrorProcessingMessage(aMessage, new Error("missing method " + aMessage.name()))
+            this.onErrorProcessingMessage(aMessage, new Error("missing method " + aMessage.name()));
         }
 
         try {
-            const f = this[aMessage.name()]
-            const result = f.apply(this, aMessage.args())
-            this.onSuccessProcessingMessage(aMessage, result)
+            const f = this[aMessage.name()];
+            const result = f.apply(this, aMessage.args());
+            this.onSuccessProcessingMessage(aMessage, result);
         } catch (anError) {
-            this.onErrorProcessingMessage(aMessage, anError)
+            this.onErrorProcessingMessage(aMessage, anError);
         }
-        aMessage.future().futureCompleted()
+        aMessage.future().futureCompleted();
     }
 
     onSuccessProcessingMessage (aMessage, aResult) {
-        aMessage.future().future_setResult(aResult)
+        aMessage.future().future_setResult(aResult);
     }
 
     onErrorProcessingMessage (aMessage, anError) {
-        aMessage.future().future_setError(anError)
+        aMessage.future().future_setError(anError);
     }
-    
+
 
 }.initThisClass());

@@ -8,7 +8,7 @@
  * @class PiApiImageEvalPrompts
  * @extends SvSummaryNode
  * @classdesc Collection of PiAPI image evaluation prompts.
- * 
+ *
  * Manages a collection of prompts that generate multiple images via Midjourney
  * and then evaluate them with OpenAI to select the best match.
  */

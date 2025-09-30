@@ -9,7 +9,7 @@
 "use strict";
 
 (class SvActionFieldTile extends Tile {
-    
+
     initPrototypeSlots () {
         /**
          * @member {ButtonView} buttonView - The button view for this action field tile.
@@ -31,7 +31,7 @@
 
         const cv = this.contentView();
         cv.flexCenterContent();
-		
+
         const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
         this.setButtonView(bv);
 	    bv.setTarget(this).setAction("didClickButton");
@@ -47,21 +47,21 @@
      * @returns {SvActionFieldTile} The updated instance.
      * @category UI
      */
-    updateSubviews () {	
-        super.updateSubviews()
-		
-        const node = this.node()
-        const bv = this.buttonView()
-        bv.setTitle(node.title())
-        bv.setSubtitle(node.subtitle())
-        bv.setIsEditable(node.nodeCanEditTitle())
+    updateSubviews () {
+        super.updateSubviews();
 
-        bv.setIsEnabled(node.isEnabled())
+        const node = this.node();
+        const bv = this.buttonView();
+        bv.setTitle(node.title());
+        bv.setSubtitle(node.subtitle());
+        bv.setIsEditable(node.nodeCanEditTitle());
+
+        bv.setIsEnabled(node.isEnabled());
 
         if (node.isEnabled()) {
-            bv.setOpacity(1)
+            bv.setOpacity(1);
         } else {
-            bv.setOpacity(0.5)	
+            bv.setOpacity(0.5);
         }
 
         const isVisible = this.node().isVisible();
@@ -71,11 +71,11 @@
 
 
         if (!isVisible) {
-            assert(this.isDisplayHidden())
+            assert(this.isDisplayHidden());
         }
-        return this
+        return this;
     }
-    
+
     /**
      * @description Handles the enter key up event.
      * @param {Event} event - The key up event.
@@ -83,10 +83,10 @@
      * @category Event Handling
      */
     onEnterKeyUp (event) {
-        this.doAction()
-        return false
+        this.doAction();
+        return false;
     }
-    
+
     /**
      * @description Performs the action associated with this tile.
      * @returns {SvActionFieldTile} The instance.
@@ -94,19 +94,19 @@
      */
     doAction () {
         if (this.node().isEnabled()) { // check in node field?
-            this.node().doAction()
+            this.node().doAction();
         }
-        return this     
+        return this;
     }
-    
+
     /**
      * @description Handles the button click event.
      * @returns {SvActionFieldTile} The instance.
      * @category Event Handling
      */
     didClickButton () {
-        this.doAction()
-        return this
+        this.doAction();
+        return this;
     }
 
     /**
@@ -115,9 +115,9 @@
      * @category Data Synchronization
      */
     syncToNode () {
-        this.node().setTitle(this.buttonView().title()) 
-        super.syncToNode()
-        return this
+        this.node().setTitle(this.buttonView().title());
+        super.syncToNode();
+        return this;
     }
 
     /**
@@ -126,11 +126,11 @@
      * @returns {boolean} Always returns true.
      * @category Event Handling
      */
-    onDidEdit (changedView) {     
-        this.scheduleSyncToNode()
+    onDidEdit (changedView) {
+        this.scheduleSyncToNode();
         //this.node().didUpdateView(this)
         //this.scheduleSyncFromNode() // needed for validation?
-        return true
+        return true;
     }
-    
+
 }.initThisClass());

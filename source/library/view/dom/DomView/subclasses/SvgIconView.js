@@ -5,28 +5,28 @@
 /**
  * @class SvgIconView
  * @extends FlexDomView
- * @classdesc A view to render scalable SVG within a view that can be 
+ * @classdesc A view to render scalable SVG within a view that can be
  * synced to match the color of the parent view's text color by
  * getting the computed color and applying it to the fill or stroke of the
  * svg views.
- * 
+ *
  * TODO: support disabled/uneditable color style?
- * 
+ *
  * Example use:
- * 
+ *
  * SvgIconView.clone().setIconName("add")
  */
 "use strict";
 
 (class SvgIconView extends FlexDomView {
-    
+
     /**
      * @static
      * @description Initializes the class by creating a new class slot.
      * @category Initialization
      */
     static initClass () {
-        this.newClassSlot("sharedSvgMap", new Map()) // svgStringHash -> hidden svg element defined in document
+        this.newClassSlot("sharedSvgMap", new Map()); // svgStringHash -> hidden svg element defined in document
     }
 
     /**
@@ -110,7 +110,7 @@
      * @category Initialization
      */
     init () {
-        super.init()
+        super.init();
         this.setDisplay("flex");
         this.setPosition("relative");
         this.setElementClassName("SvgIconView");
@@ -119,7 +119,7 @@
 
         this.setPadding("0em");
         this.setMargin("0em");
-        
+
         this.setOverflow("visible");
         this.syncColors();
 
@@ -169,7 +169,7 @@
             } else {
                 const error = "can't find icon '" + name + "'";
                 console.error(this.logPrefix(), error);
-                
+
                 this.clear();
                 return this;
             }
@@ -224,7 +224,7 @@
         this.setStrokeColor(aColor);
         return this;
     }
-        
+
     /**
      * @description Synchronizes the colors with the CSS properties.
      * @category Styling

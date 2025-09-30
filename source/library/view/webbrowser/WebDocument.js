@@ -10,7 +10,7 @@
 "use strict";
 
 (class WebDocument extends ProtoClass {
-    
+
     /**
      * @static
      * @description Initializes the class by setting it as a singleton.
@@ -19,7 +19,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization
@@ -42,7 +42,7 @@
     }
 
     setTitle (title) {
-        if (typeof document !== 'undefined') {
+        if (typeof document !== "undefined") {
             document.title = title;
         }
         return this;
@@ -57,7 +57,7 @@
         const sheets = [];
 
         // Only access document.styleSheets in browser environment
-        if (typeof document !== 'undefined' && document.styleSheets) {
+        if (typeof document !== "undefined" && document.styleSheets) {
             const elements = document.styleSheets;
 
             for (let i = 0; i < elements.length; i ++) {
@@ -83,16 +83,16 @@
         }
 
         //console.log("addStyleSheetString", cssCode);
-        
+
         // Only manipulate DOM in browser environment
-        if (typeof document !== 'undefined' && document.createElement) {
-            const styleElement = document.createElement('style');
+        if (typeof document !== "undefined" && document.createElement) {
+            const styleElement = document.createElement("style");
             styleElement.innerHTML = cssCode;
             document.head.appendChild(styleElement);
         } else {
             console.log("addStyleSheetString: not in browser environment - ignoring");
         }
-        
+
         return this;
     }
 
@@ -111,12 +111,12 @@
     isFullscreen () {
         // Document is in fullscreen mode. Also see WebBrowserWindow.isFullscreen().
         return !!(
-          document.fullscreenElement ||
+            document.fullscreenElement ||
           document.webkitFullscreenElement ||
           document.mozFullScreenElement ||
           document.msFullscreenElement
         );
-      }
+    }
 
 }).initThisClass();
 

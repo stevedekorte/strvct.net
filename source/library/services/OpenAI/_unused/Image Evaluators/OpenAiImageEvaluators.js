@@ -8,7 +8,7 @@
  * @class OpenAiImageEvaluators
  * @extends SvSummaryNode
  * @classdesc Collection of OpenAI image evaluators.
- * 
+ *
  * Manages a collection of image evaluation operations that score
  * images based on how well they match a given content prompt.
  */

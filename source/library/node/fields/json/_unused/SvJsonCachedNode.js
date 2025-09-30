@@ -138,8 +138,8 @@
      * @category Data Management
      */
     removeJsonCaches () {
-        this.setJsonHashCode(null); 
-        this.setJsonCache(null);  
+        this.setJsonHashCode(null);
+        this.setJsonCache(null);
         return this;
     }
 
@@ -149,7 +149,7 @@
      */
     didUpdateNode () {
         super.didUpdateNode();
-        this.removeJsonCaches(); 
+        this.removeJsonCaches();
     }
 
     /**
@@ -159,7 +159,7 @@
      * @category Data Comparison
      */
     doesMatchJson (json) {
-        const a = JSON.stableStringifyWithStdOptions(json, null, 2); 
+        const a = JSON.stableStringifyWithStdOptions(json, null, 2);
         if (this.jsonHashCode()) {
             return this.jsonHashCode() === a.hashCode();
         }

@@ -10,7 +10,7 @@
  * @classdesc An ObjectPool that uses a PersistentAtomicMap to store its records.
  */
 (class PersistentObjectPool extends ObjectPool {
-    
+
     /**
      * @static
      * @description Initializes the class.
@@ -19,7 +19,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization
@@ -102,9 +102,9 @@
      * @category Testing
      */
     static async promiseSelfTest () {
-        this.addTimeout(() => { 
+        this.addTimeout(() => {
             return PersistentObjectPool.promiseSelfTest();
         }, 1000);
     }
-    
+
 }.initThisClass());

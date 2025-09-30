@@ -7,10 +7,10 @@
  * @extends Device
  * @classdesc Global shared instance that tracks current mouse state in window coordinates.
  * Registers for capture mouse events on document.body.
- * 
+ *
  * NOTES:
  * Doesn't deal with multi-button mouse input yet.
- * Not sure how multi-button mouse should be handled if we want code 
+ * Not sure how multi-button mouse should be handled if we want code
  * to be Mac, touch pad, and touch screen compatible.
  */
 
@@ -26,7 +26,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots for the Mouse class.
      * @category Initialization
@@ -152,7 +152,7 @@
         this.setDownEvent(event);
         this.setCurrentEvent(event);
         this.setIsDown(true);
-        return true
+        return true;
     }
 
     /**
@@ -177,7 +177,7 @@
         this.setUpEvent(event);
         this.setIsDown(false);
         return true;
-    }  
+    }
 
     /**
      * @description Converts a mouse event to a point.
@@ -207,11 +207,11 @@
      * @returns {Point} The drag vector.
      * @category Utilities
      */
-    dragVector (event) {   
+    dragVector (event) {
         if (this.downPos()) {
             return this.currentPos().subtract(this.downPos());
         }
-        /*  
+        /*
         if (this.isDown()) {
             return this.currentPos().subtract(this.downPos());
         }
@@ -267,5 +267,5 @@
         const s = SvKeyboard.shared().modsAndKeyNameForEvent(event);
         return "on" + s + "MouseUp";
     }
-    
+
 }.initThisClass());

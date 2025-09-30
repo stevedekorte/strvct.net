@@ -6,7 +6,7 @@
 * @class HomeAssistantDevice
 * @extends HomeAssistantObject
 * @classdesc Represents a Home Assistant device.
-* 
+*
 * HomeAssistantDevice:{
 *   "area_id": null,
 *   "configuration_url": null,
@@ -49,16 +49,16 @@
     * @category Initialization
     */
     init () {
-    super.init();
+        super.init();
     }
-    
+
     /**
     * @description Performs final initialization.
     * @category Initialization
     */
     finalInit () {
-    super.finalInit();
-    this.setNodeCanEditTitle(true);
+        super.finalInit();
+        this.setNodeCanEditTitle(true);
     }
 
     /**
@@ -67,7 +67,7 @@
     * @category Data Access
     */
     entitiesNode () {
-    return this;
+        return this;
     }
 
     /**
@@ -76,7 +76,7 @@
     * @category Data Access
     */
     id () {
-    return this.haJson().id;
+        return this.haJson().id;
     }
 
     /**
@@ -85,7 +85,7 @@
     * @category Data Access
     */
     areaId () {
-    return this.haJson().area_id;
+        return this.haJson().area_id;
     }
 
     /**
@@ -94,7 +94,7 @@
     * @category Data Access
     */
     ownerId () {
-    return this.areaId();
+        return this.areaId();
     }
 
     /**
@@ -103,7 +103,7 @@
     * @category Data Access
     */
     ownerGroup () {
-    return this.homeAssistant().areasNode();
+        return this.homeAssistant().areasNode();
     }
 
     /**
@@ -111,19 +111,19 @@
     * @category UI
     */
     updateTitles () {
-    let name = this.haJson().name_by_user;
-    if (!name) {
-        name = this.haJson().name;
-    }
-    if (name === null) {
-        name = "NULL";
-    }
-    this.setName(name);
-    this.setTitle(this.computeShortName());
+        let name = this.haJson().name_by_user;
+        if (!name) {
+            name = this.haJson().name;
+        }
+        if (name === null) {
+            name = "NULL";
+        }
+        this.setName(name);
+        this.setTitle(this.computeShortName());
 
-    if (this.state()) {
-        this.setSubtitle(this.state());
-    }
+        if (this.state()) {
+            this.setSubtitle(this.state());
+        }
     }
 
     /**
@@ -132,10 +132,10 @@
     * @category Data Access
     */
     state () {
-    if (this.subnodesCount() === 1) {
-        return this.subnodes().first().state();
-    }
-    return undefined;
+        if (this.subnodesCount() === 1) {
+            return this.subnodes().first().state();
+        }
+        return undefined;
     }
 
     /**
@@ -145,9 +145,9 @@
     * @category Data Manipulation
     */
     addEntity (entity) {
-    entity.removeFromParentNode();
-    this.entitiesNode().addSubnode(entity);
-    return this;
+        entity.removeFromParentNode();
+        this.entitiesNode().addSubnode(entity);
+        return this;
     }
 
 }).initThisClass();

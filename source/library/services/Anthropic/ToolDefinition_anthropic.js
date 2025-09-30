@@ -8,7 +8,7 @@
 
 (class ToolDefinition_anthropic extends ToolDefinition {
 
-  /*
+    /*
   Anthropic tool call schema:
       {
       "name": "get_weather",
@@ -31,33 +31,33 @@
     },
 */
 
- // TODO: move this to TooDefinition_anthropic category
- // define in AnthropicService folder
-  asAnthropicToolCallSchema () {
-    const schema = this.toolJsonDescription();
-    const json = {};
-    json.name = schema.toolName;
-    json.description = schema.description;
-    json.parameters = schema.parameters;
-    json.returns = schema.returns;
-    json.returnNotes = json.isSilentSuccess ? "This tool call is silent success" : "This tool call is not silent success";
+    // TODO: move this to TooDefinition_anthropic category
+    // define in AnthropicService folder
+    asAnthropicToolCallSchema () {
+        const schema = this.toolJsonDescription();
+        const json = {};
+        json.name = schema.toolName;
+        json.description = schema.description;
+        json.parameters = schema.parameters;
+        json.returns = schema.returns;
+        json.returnNotes = json.isSilentSuccess ? "This tool call is silent success" : "This tool call is not silent success";
 
-    const returnNotes = this.returnNotes();
-    if (returnNotes.length > 0) {
-      json.returnNotes = returnNotes;
+        const returnNotes = this.returnNotes();
+        if (returnNotes.length > 0) {
+            json.returnNotes = returnNotes;
+        }
+        return json;
     }
-    return json;
-  }
 
-  returnNotes () {
-    const notes = [];
-    if (this.toolJsonDescription().isSilentSuccess) {
-      notes.push("This tool call does not return a result on success.");
+    returnNotes () {
+        const notes = [];
+        if (this.toolJsonDescription().isSilentSuccess) {
+            notes.push("This tool call does not return a result on success.");
+        }
+        if (this.toolJsonDescription().isSilentError) {
+            notes.push("This tool call does not return a result on error.");
+        }
+        return notes.join("\n");
     }
-    if (this.toolJsonDescription().isSilentError) {
-      notes.push("This tool call does not return a result on error.");
-    }
-    return notes.join("\n");
-  }
 
 }.initThisCategory());

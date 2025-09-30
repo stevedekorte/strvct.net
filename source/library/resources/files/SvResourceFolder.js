@@ -11,7 +11,7 @@
  * SvFileResources will setup all SvResourceFolders.
  */
 (class SvResourceFolder extends BaseNode {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @category Initialization
@@ -38,8 +38,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     /**
@@ -48,7 +48,7 @@
      * @category Information
      */
     name () {
-        return this.path().lastPathComponent()
+        return this.path().lastPathComponent();
     }
 
     /**
@@ -87,7 +87,7 @@
      * @category Resource Management
      */
     addRelativeResourcePath (aPath) {
-        return this.addRelativeResourcePathArray(aPath.split("/"))
+        return this.addRelativeResourcePathArray(aPath.split("/"));
     }
 
     /**
@@ -116,7 +116,7 @@
             const subfolder = this.addSubnodeForFolderNameCreateIfAbsent(subfolderName);
             pathArray.shift();
             const file = subfolder.addRelativeResourcePathArray(pathArray);
-            return file
+            return file;
         }
     }
 
@@ -170,8 +170,8 @@
      * @category Debugging
      */
     show () {
-        const subnodeNames = this.subnodes().map(sn => sn.name())
-        console.log(this.logPrefix(), " '" + this.path() + "': " +  JSON.stringify(subnodeNames))
+        const subnodeNames = this.subnodes().map(sn => sn.name());
+        console.log(this.logPrefix(), " '" + this.path() + "': " +  JSON.stringify(subnodeNames));
     }
 
     /**
@@ -189,7 +189,7 @@
      * @category Node Management
      */
     subfolders () {
-        return this.subnodes().filter(node => node.svType() === this.folderClassName())
+        return this.subnodes().filter(node => node.svType() === this.folderClassName());
     }
 
     /**
@@ -208,7 +208,7 @@
      * @category Node Management
      */
     subfolderWithName (aName) {
-        return this.subfolders().detect(subnode => subnode.name() === aName)
+        return this.subfolders().detect(subnode => subnode.name() === aName);
     }
 
     /**
@@ -250,7 +250,7 @@
     files () {
         return this.subnodes().filter(sn => sn.thisClass().isKindOf(SvResourceFile));
     }
-    
+
     /**
      * @description Gets the names of all files in the folder.
      * @returns {string[]} An array of file names.
@@ -267,7 +267,7 @@
      * @category Node Management
      */
     fileWithName (aName) {
-        return this.subnodes().detect(sn => sn.name() === aName)
+        return this.subnodes().detect(sn => sn.name() === aName);
     }
 
     /**
@@ -325,7 +325,7 @@
      * @category Resource Management
      */
     resourceWithName (aName) {
-        const files = this.resourcesWithName(aName)
+        const files = this.resourcesWithName(aName);
         assert(files.length === 1, "expected one file with name '" + aName + "', got: " + files.length);
         return files.first();
     }
@@ -336,7 +336,7 @@
      * @category Resource Management
      */
     async prechacheWhereAppropriate () {
-       // console.log(this.logPrefix(), ".prechacheWhereAppropriate() " + this.path());
+        // console.log(this.logPrefix(), ".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }
 

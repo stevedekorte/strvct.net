@@ -10,7 +10,7 @@
  * @classdesc Listens to a set of keyboard events.
  */
 (class KeyboardListener extends EventSetListener {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @category Initialization
@@ -24,9 +24,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setIsDebugging(false);
+        return this;
     }
 
     /**
@@ -35,12 +35,12 @@
      * @category Event Setup
      */
     setupListeners () {
-        this.addEventNameAndMethodName("keyup", "onKeyUp").setIsUserInteraction(true)
-        this.addEventNameAndMethodName("keydown", "onKeyDown").setIsUserInteraction(true)
+        this.addEventNameAndMethodName("keyup", "onKeyUp").setIsUserInteraction(true);
+        this.addEventNameAndMethodName("keydown", "onKeyDown").setIsUserInteraction(true);
         //this.addEventNameAndMethodName("keypress", "onKeyPress"); // deprecated in modern browsers
         //this.addEventNameAndMethodName("change", "onChange");
         this.addEventNameAndMethodName("input", "onInput");
-        return this
+        return this;
     }
-    
+
 }.initThisClass());

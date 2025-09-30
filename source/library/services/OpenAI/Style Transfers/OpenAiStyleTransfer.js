@@ -8,31 +8,31 @@
  * @class OpenAiStyleTransfer
  * @extends SvSummaryNode
  * @classdesc OpenAI style transfer using style reference images.
- * 
+ *
  * This class implements style transfer using OpenAI's image generation API.
  * It provides a simpler alternative to the Midjourney style transfer approach.
- * 
+ *
  * How it works:
  * - Takes a content prompt describing what to generate
  * - Requires a style reference image (drop, paste, or upload)
  * - Optionally takes a style description to refine the style application
  * - Uses OpenAI's reference-image conditioning to apply the style
- * 
+ *
  * OpenAI's gpt-image-1 model supports using images as style references
  * alongside text prompts to guide the generation toward a specific look
- * 
+ *
  * Delegate messages sent:
  * - onImagePromptLoading
  * - onImagePromptError
  * - onImagePromptImageLoaded
  * - onImagePromptImageError
  * - onImagePromptEnd
- * 
+ *
  * (the delegate will typically be a UoImageMessage)
  */
 
 (class OpenAiStyleTransfer extends SvSummaryNode {
-    
+
     /**
      * @description Initializes the prototype slots for the OpenAiStyleTransfer class.
      */
@@ -231,7 +231,7 @@
      */
     didUpdateSlot (slot, oldValue, newValue) {
         super.didUpdateSlot(slot, oldValue, newValue);
-        
+
         if (slot.name() === "styleImageDataUrl" && newValue) {
             // Clear the style prompt since we now have an image
             this.setStylePrompt("");
@@ -252,12 +252,12 @@
                 const jsonMatch = prompt.match(/\{[\s\S]*\}/);
                 if (jsonMatch) {
                     const jsonObj = JSON.parse(jsonMatch[0]);
-                    
+
                     // Extract content (scene)
                     if (jsonObj.scene) {
                         this.setContentPrompt(jsonObj.scene);
                     }
-                    
+
                     // Extract style
                     if (jsonObj.artStyle) {
                         let style = jsonObj.artStyle;
@@ -266,18 +266,18 @@
                         style = style.replace(/^in the style of /, "");
                         this.setStylePrompt(style);
                     }
-                    
+
                     return this;
                 }
             } catch (e) {
                 console.warn("Failed to parse JSON prompt, using as single prompt:", e);
             }
         }
-        
+
         // If it's not JSON or parsing failed, use the prompt as content
         this.setContentPrompt(prompt);
         this.setStylePrompt("artistic illustration");
-        
+
         return this;
     }
 
@@ -299,23 +299,23 @@
         try {
             this.setError("");
             this.setStatus("generating OpenAI style transfer...");
-            
+
             // Check if OpenAI service has API key
             if (!this.service().hasApiKey()) {
                 throw new Error("OpenAI API key is not configured. Please set your API key in OpenAI Service settings.");
             }
-            
+
             // Validate inputs
             if (!this.contentPrompt() || this.contentPrompt().trim() === "") {
                 throw new Error("Content prompt is required");
             }
-            
+
             // Step 1: Handle style reference image
             // OpenAI's gpt-image-1 supports using images as style references
-            
+
             let styleImageUrl = null;
             let styleImageDataUrl = null;
-            
+
             // Check if we have a dropped/pasted style image data URL
             if (this.styleImageDataUrl()) {
                 // Upload the dropped image to Firebase for URL access
@@ -339,18 +339,18 @@
                 styleImageDataUrl = this.styleRefImage().dataUrl();
                 console.log("Uploaded style reference image:", styleImageUrl);
             }
-            
+
             // Step 2: Generate final image with style reference
             this.setStatus("generating styled image...");
             this.sendDelegateMessage("onImagePromptLoading");
-            
+
             // Build the prompt that combines content and optional style description
             let combinedPrompt = this.contentPrompt();
-            
+
             // Add optional style description to guide the style application
             if (this.stylePrompt() && this.stylePrompt().trim() !== "") {
                 combinedPrompt += ` in the style of ${this.stylePrompt()}`;
-                
+
                 // Apply style strength by adjusting the prompt emphasis
                 if (this.styleStrength() < 0.5) {
                     combinedPrompt += " with subtle stylistic elements";
@@ -358,18 +358,18 @@
                     combinedPrompt += " with strong emphasis on the artistic style";
                 }
             }
-            
+
             // Check if we have a style image
             if (!styleImageUrl && !styleImageDataUrl) {
                 throw new Error("Style reference image is required. Please drop or upload a style image.");
             }
-            
+
             console.log("Using style reference image for generation");
             console.log("Final prompt:", combinedPrompt);
-            
+
             // Make API call with style reference
             await this.generateWithStyleReference(combinedPrompt, styleImageUrl, styleImageDataUrl);
-            
+
         } catch (error) {
             console.error("OpenAI style transfer failed:", error);
             this.setError(error.message);
@@ -389,102 +389,102 @@
     async generateWithStyleReference (prompt, styleImageUrl, styleImageDataUrl) {
         try {
             const apiKey = await this.service().apiKeyOrUserAuthToken();
-            
+
             // Step 1: Upload the style image to OpenAI to get an internal ID
             console.log("=== OpenAI Style Transfer - Uploading Style Image ===");
-            const uploadEndpoint = 'https://api.openai.com/v1/images/uploads';
-            
+            const uploadEndpoint = "https://api.openai.com/v1/images/uploads";
+
             // Convert data URL to blob for upload
-            const base64Data = styleImageDataUrl.split(',')[1];
+            const base64Data = styleImageDataUrl.split(",")[1];
             const byteCharacters = atob(base64Data);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) {
                 byteNumbers[i] = byteCharacters.charCodeAt(i);
             }
             const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], { type: 'image/png' });
-            
+            const blob = new Blob([byteArray], { type: "image/png" });
+
             // Create FormData for upload
             const formData = new FormData();
-            formData.append('image', blob, 'style.png');
-            formData.append('purpose', 'style_reference');
-            
+            formData.append("image", blob, "style.png");
+            formData.append("purpose", "style_reference");
+
             const uploadProxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(uploadEndpoint);
-            
+
             const uploadResponse = await fetch(uploadProxyEndpoint, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${apiKey}`
+                    "Authorization": `Bearer ${apiKey}`
                 },
                 body: formData
             });
-            
+
             const uploadData = await uploadResponse.json();
-            
+
             if (!uploadResponse.ok) {
                 throw new Error(`Upload error: ${uploadData.error?.message || uploadResponse.statusText}`);
             }
-            
+
             // Get the internal image ID from the upload response
             const styleImageId = uploadData.id;
             console.log("Style image uploaded with ID:", styleImageId);
-            
+
             // Step 2: Generate image using the style reference ID
             console.log("=== OpenAI Style Transfer - Generating Image ===");
-            const generationEndpoint = 'https://api.openai.com/v1/images/generations';
-            
+            const generationEndpoint = "https://api.openai.com/v1/images/generations";
+
             const bodyJson = {
                 model: this.model(),
                 prompt: prompt,
                 size: this.imageSize(),
                 referenced_image_ids: [styleImageId]
             };
-            
+
             // Add optional style description to enhance the style application
             if (this.stylePrompt() && this.stylePrompt().trim() !== "") {
                 bodyJson.prompt = `${prompt} in the style of ${this.stylePrompt()}`;
             }
-            
+
             console.log("Prompt sent to OpenAI:", bodyJson.prompt);
             console.log("Referenced image IDs:", bodyJson.referenced_image_ids);
             console.log("Full API request body:", JSON.stringify(bodyJson, null, 2));
-            
+
             const generationProxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(generationEndpoint);
-            
+
             const response = await fetch(generationProxyEndpoint, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${apiKey}`,
-                    'Content-Type': 'application/json'
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(bodyJson)
             });
-            
+
             const resultData = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(`API error: ${resultData.error?.message || response.statusText}`);
             }
-            
+
             // Process the result
             if (resultData.data && resultData.data.length > 0) {
                 const imageData = resultData.data[0];
                 const imageUrl = imageData.url || imageData.b64_json;
-                
+
                 if (imageUrl) {
                     // If it's base64, convert to data URL
-                    const finalUrl = imageData.b64_json ? 
-                        `data:image/png;base64,${imageData.b64_json}` : 
+                    const finalUrl = imageData.b64_json ?
+                        `data:image/png;base64,${imageData.b64_json}` :
                         imageUrl;
-                    
+
                     this.setResultDataUrl(finalUrl);
                     this.setStatus("style transfer complete");
-                    
+
                     // Create a mock image object for the delegate
                     const resultImage = {
                         imageUrl: () => finalUrl
                     };
-                    
+
                     this.sendDelegateMessage("onImagePromptImageLoaded", [this, resultImage]);
                     this.sendDelegateMessage("onImagePromptEnd", [this]);
                 } else {
@@ -493,7 +493,7 @@
             } else {
                 throw new Error("No images generated");
             }
-            
+
         } catch (error) {
             console.error("Style reference generation failed:", error);
             throw error;
@@ -507,10 +507,10 @@
      */
     async uploadStyleImage () {
         try {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = "image/*";
+
             const fileSelected = new Promise((resolve, reject) => {
                 input.onchange = (e) => {
                     const file = e.target.files[0];
@@ -520,19 +520,19 @@
                         reader.onerror = reject;
                         reader.readAsDataURL(file);
                     } else {
-                        reject(new Error('No file selected'));
+                        reject(new Error("No file selected"));
                     }
                 };
             });
-            
+
             input.click();
             const dataUrl = await fileSelected;
-            
+
             this.styleRefImage().setDataUrl(dataUrl);
             this.styleRefImage().setImageLabel("Uploaded style reference");
-            
+
             this.setStatus("Style image ready for upload");
-            
+
         } catch (error) {
             console.error("Failed to select style image:", error);
             this.setError("Failed to select style image: " + error.message);
@@ -557,7 +557,7 @@
         const hasContent = !!(this.contentPrompt() && this.contentPrompt().trim() !== "");
         const hasStyleImage = !!((this.styleRefImage() && this.styleRefImage().hasDataUrl()) ||
                                (this.styleImageDataUrl() !== null && this.styleImageDataUrl() !== ""));
-        
+
         return {
             isEnabled: hasContent && hasStyleImage,
             isVisible: true
@@ -586,7 +586,7 @@
         this.setStatus("");
         this.setResultDataUrl(null);
         this.setStyleImageDataUrl(null);
-        
+
         return this;
     }
 
@@ -599,23 +599,23 @@
         if (this.hasError()) {
             return "Error: " + this.error();
         }
-        
+
         if (this.resultDataUrl()) {
             return "Complete";
         }
-        
+
         if (this.status()) {
             return this.status();
         }
-        
+
         if (this.styleImageDataUrl()) {
             return "Style image dropped";
         }
-        
+
         if (this.styleRefImage() && this.styleRefImage().hasDataUrl()) {
             return "Style image ready";
         }
-        
+
         return "Ready";
     }
 

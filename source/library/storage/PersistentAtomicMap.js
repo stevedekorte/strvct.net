@@ -5,33 +5,33 @@
 "use strict";
 
 /**
- * @class PersistentAtomicMap 
+ * @class PersistentAtomicMap
  * @extends ideal.AtomicMap
- * @classdesc An persistent atomic Map implemented as 
+ * @classdesc An persistent atomic Map implemented as
  * a read & write cache on top of IndexedDB.
- * 
+ *
  * On open, it reads the entire db into a dictionary
  * so we can do synchronous reads and writes (avoiding IndexedDB's async API),
  * and then call the async commit at the end of the event loop.
- * 
+ *
  * Notes:
- * 
+ *
  * - keys and values are assumed to be strings
  * - any exception between begin and commit should halt the app and require a restart to ensure consistency
- * 
+ *
  * API:
- * 
+ *
  * - at(key) returns a value from the internal dict
  * - begin() shallow copies the current internal dict
  * - atPut(key, value) & removeAt(key)
  *     applies normal op and adds key to changedKeySet
  * - revert() reverts changes since begin
- * - commit() constructs a transaction using changedKeySet 
+ * - commit() constructs a transaction using changedKeySet
  * - at(key) first checks the writeCache beforing checking the readCache
- * 	
- * TODO: 
- * 
- * - auto sweep after a write if getting full? 
+ *
+ * TODO:
+ *
+ * - auto sweep after a write if getting full?
  */
 (class PersistentAtomicMap extends ideal.AtomicMap {
     /**
@@ -125,7 +125,7 @@
         await this.idb().promiseOpen();
         await this.promiseOnOpen(); // it can deal with multiple calls while it's opening
     }
-	
+
     /**
      * @description Handles the opening of the map.
      * @returns {Promise} A promise that resolves when the map is loaded.
@@ -136,7 +136,7 @@
         if (false) {
             this.logDebug("onOpen() - CLEARING BEFORE OPEN");
              await this.promiseClear();
-        } 
+        }
         */
         this.logDebug("onOpen() - loading cache");
         await this.promiseLoadMap();
@@ -166,7 +166,7 @@
         super.close();
         return this;
     }
-	
+
     /**
      * @description Clears the map.
      * @returns {Promise} A promise that resolves when the map is cleared.
@@ -176,7 +176,7 @@
         await this.idb().promiseClear();
         this.map().clear();
     }
-		
+
     /**
      * @description Generates a new transaction ID.
      * @returns {string} The new transaction ID.
@@ -223,18 +223,18 @@
                     tx.atUpdate(k, v);
                 } else {
                     tx.atAdd(k, v);
-                }                
+                }
             }
         });
-        
+
         super.applyChanges(); // do this last as it will clear the snapshot
-        
+
         this.logDebug(() => "---- " + this.svType() + " committed tx with " + count + " writes ----");
 
         await tx.promiseCommit();
         this.setIsApplying(false);
     }
-	
+
     /**
      * @description Verifies that the map is in sync with the IDB.
      * @returns {Promise} A promise that resolves when verification is complete.
@@ -251,5 +251,5 @@
             throw new Error(this.svDebugId() + ".verifySync() FAILED");
         }
     }
-    
+
 }.initThisClass());

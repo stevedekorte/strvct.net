@@ -8,7 +8,7 @@
  * @classdesc SvJsonResources class for managing JSON resources.
  */
 (class SvJsonResources extends SvResourceGroup {
-    
+
     /**
      * @static
      * @description Initializes the class and sets it as a singleton.
@@ -17,7 +17,7 @@
     static initClass () {
         this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization

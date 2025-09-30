@@ -12,7 +12,7 @@
  * sheet.setSelectorProperty("body", "color", "red")
  */
 (class SvStyleSheet extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the SvStyleSheet class.
      * @category Initialization
@@ -34,7 +34,7 @@
      * @category Getters
      */
     href () {
-        return this.sheetElement().href
+        return this.sheetElement().href;
     }
 
     /**
@@ -46,14 +46,14 @@
      * @category Manipulation
      */
     changeStylesheetRule (selector, property, value) {
-        const sheet = this.sheetElement()
+        const sheet = this.sheetElement();
 
         selector = selector.toLowerCase();
         property = property.toLowerCase();
         value = value.toLowerCase(); // assumed to be a string?
 
         // Change it if it exists
-        for(let i = 0; i < sheet.cssRules.length; i++) {
+        for (let i = 0; i < sheet.cssRules.length; i++) {
             const rule = sheet.cssRules[i];
             if (rule.selectorText === selector) {
                 rule.style[property] = value;
@@ -71,7 +71,7 @@
      * @category Debugging
      */
     show () {
-        console.log(this.logPrefix(), "sheetElement:", this.sheetElement())
+        console.log(this.logPrefix(), "sheetElement:", this.sheetElement());
     }
 
 }.initThisClass());

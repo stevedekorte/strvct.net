@@ -10,7 +10,7 @@
 "use strict";
 
 (class SvImageTile extends TitledTile {
-    
+
     /**
      * @description Initializes the prototype slots for the SvImageTile class.
      * @returns {void}
@@ -26,24 +26,24 @@
      */
     initPrototype () {
     }
-    
+
     /**
      * @description Updates the subviews of the SvImageTile.
      * @returns {SvImageTile} Returns the instance of SvImageTile.
      * @category View Management
      */
     updateSubviews () {
-        super.updateSubviews()
-	
-        const node = this.node()
+        super.updateSubviews();
+
+        const node = this.node();
 
         if (node) {
-            const name = node.title()
-            this.titleView() //.setFontFamily(name)
+            const name = node.title();
+            this.titleView(); //.setFontFamily(name)
         }
 
-        return this
+        return this;
     }
 
-    
+
 }.initThisClass());

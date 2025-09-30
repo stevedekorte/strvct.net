@@ -4,7 +4,7 @@
  * @module library.ideal.formatters
  * @class ByteFormatter
  * @extends ProtoClass
- * @classdesc ByteFormatter takes a number of bytes and returns a string with the order of magnitude in 
+ * @classdesc ByteFormatter takes a number of bytes and returns a string with the order of magnitude in
  * standard SI decimal digital information format.
  * Example:
  * const stringVersion = ByteFormatter.clone().setValue(aNumberOfBytes).formattedValue()
@@ -86,19 +86,19 @@
          */
         {
             const slot = this.newSlot("orderNamesShort", [
-                "bytes", 
-                "k", 
-                "M", 
-                "G", 
-                "T", 
-                "P", 
-                "E", 
-                "Z", 
+                "bytes",
+                "k",
+                "M",
+                "G",
+                "T",
+                "P",
+                "E",
+                "Z",
                 "Y"
             ]);
             slot.setSlotType("Array");
         }
-        
+
         /**
          * @description Array of long unit names.
          * @type {string[]}
@@ -107,20 +107,20 @@
          */
         {
             const slot = this.newSlot("orderNamesLong", [
-                "bytes", 
-                "kilobytes", 
-                "megabytes", 
-                "gigabytes", 
-                "terabytes", 
-                "petabytes", 
-                "exabytes", 
-                "zettabytes", 
+                "bytes",
+                "kilobytes",
+                "megabytes",
+                "gigabytes",
+                "terabytes",
+                "petabytes",
+                "exabytes",
+                "zettabytes",
                 "yottabytes"
             ]);
             slot.setSlotType("Array");
         }
     }
-  
+
     initPrototype () {
     }
 
@@ -133,24 +133,24 @@
         const b = Math.floor(this.value());
         let postfix = this.usePostfix() ? "B" : "";
         let space = this.useSpace() ? " " : "";
-		
+
         const orderNames = this.useLongNames() ? this.orderNamesLong() : this.orderNamesShort();
-        let order = b === 0 ? 0 : Math.floor(Math.log10(b)/3)
-        order = Math.min(order, orderNames.length - 1)
-        let orderName = orderNames[order]
+        let order = b === 0 ? 0 : Math.floor(Math.log10(b) / 3);
+        order = Math.min(order, orderNames.length - 1);
+        let orderName = orderNames[order];
 
         if (order === 0 || this.useLongNames()) {
-            space = " "
-            postfix = ""
+            space = " ";
+            postfix = "";
         }
 
-        const v = Math.floor(b / Math.pow(10, order*3))
-		
+        const v = Math.floor(b / Math.pow(10, order * 3));
+
         // remove plural if v === 1
-        if (orderName[orderName.length-1] === "s" && v === 1) {
-            orderName = orderName.substring(0, orderName.length - 1)
+        if (orderName[orderName.length - 1] === "s" && v === 1) {
+            orderName = orderName.substring(0, orderName.length - 1);
         }
-		
-        return v + space + orderName + postfix
+
+        return v + space + orderName + postfix;
     }
 }.initThisClass());

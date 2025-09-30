@@ -16,9 +16,9 @@
      * @category Data Loading
      */
     loadFromRecord (aRecord, aStore) {
-        const values = aRecord.values.map(v => aStore.unrefValue(v))
-        values.forEach(v => this.add(v))
-        return this
+        const values = aRecord.values.map(v => aStore.unrefValue(v));
+        values.forEach(v => this.add(v));
+        return this;
     }
 
     /**
@@ -29,9 +29,9 @@
      */
     recordForStore (aStore) { // should only be called by Store
         return {
-            type: Type.typeName(this), 
+            type: Type.typeName(this),
             values: this.valuesArray().map(v => aStore.refValue(v))
-        }
+        };
     }
 
     /**
@@ -40,7 +40,7 @@
      * @category Data Management
      */
     shouldStore () {
-        return true
+        return true;
     }
 
     /**
@@ -50,12 +50,12 @@
      * @category Data Management
      */
     refsPidsForJsonStore (puuids = new Set()) {
-        this.forEach(v => { 
-            if (!Type.isNull(v)) { 
-                v.refsPidsForJsonStore(puuids)
-            } 
-        })
-        return puuids
+        this.forEach(v => {
+            if (!Type.isNull(v)) {
+                v.refsPidsForJsonStore(puuids);
+            }
+        });
+        return puuids;
     }
 
 }).initThisCategory();

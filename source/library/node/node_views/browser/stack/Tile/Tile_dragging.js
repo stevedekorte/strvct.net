@@ -9,13 +9,13 @@
  * This class implements protocols for both drag source and drop destination.
  */
 (class Tile_dragging extends Tile {
-    
+
     /**
      * @description Hides the tile for dragging.
      * @category Dragging
      */
     hideForDrag () {
-        this.hideDisplay()
+        this.hideDisplay();
     }
 
     /**
@@ -23,7 +23,7 @@
      * @category Dragging
      */
     unhideForDrag () {
-        this.unhideDisplay()
+        this.unhideDisplay();
     }
 
     /**
@@ -33,14 +33,14 @@
      */
     onDragRequestRemove () {
         if (this.hasParentView()) {
-            this.removeFromParentView()
+            this.removeFromParentView();
         }
-        assert(!this.hasParentView())
+        assert(!this.hasParentView());
 
-        this.node().removeFromParentNode()
-        assert(!this.node().parentNode())
+        this.node().removeFromParentNode();
+        assert(!this.node().parentNode());
 
-        return true
+        return true;
     }
 
     /**
@@ -50,7 +50,7 @@
      * @category Dropping
      */
     acceptsDropHover (dragView) {
-        return this.canDropSelect() || this.acceptsDropHoverComplete(dragView)
+        return this.canDropSelect() || this.acceptsDropHoverComplete(dragView);
     }
 
     /**
@@ -60,7 +60,7 @@
      */
     onDragDestinationEnter (dragView) {
         if (this.canDropSelect()) {
-            this.setupDropHoverTimeout()
+            this.setupDropHoverTimeout();
         }
     }
 
@@ -78,7 +78,7 @@
      * @category Dropping
      */
     onDragDestinationExit (dragView) {
-        this.cancelDropHoverTimeout()
+        this.cancelDropHoverTimeout();
     }
 
     /**
@@ -88,9 +88,9 @@
      * @category Dropping
      */
     acceptsDropHoverComplete (dragView) {
-        const node = this.node()
+        const node = this.node();
         if (node && node.nodeAcceptsDrop) {
-            return node.nodeAcceptsDrop(dragView.item().node())
+            return node.nodeAcceptsDrop(dragView.item().node());
         }
     }
 
@@ -101,13 +101,13 @@
      * @category Dropping
      */
     onDragDestinationDropped (dragView) {
-        console.log(this.svTypeId() + " onDragDestinationDropped")
+        console.log(this.svTypeId() + " onDragDestinationDropped");
 
-        const itemNode = dragView.item().node()
+        const itemNode = dragView.item().node();
 
-        const node = this.node()
+        const node = this.node();
         if (itemNode && node && node.nodeDropped) {
-            return node.nodeDropped(itemNode)
+            return node.nodeDropped(itemNode);
         }
     }
 
@@ -117,7 +117,7 @@
      * @category Dropping
      */
     dropCompleteDocumentFrame () {
-        return this.frameInDocument()
+        return this.frameInDocument();
     }
 
     /**
@@ -126,7 +126,7 @@
      * @category Dropping
      */
     dropHoverDidTimeoutSeconds () {
-        return 0.3
+        return 0.3;
     }
 
     /**
@@ -135,7 +135,7 @@
      * @category Dropping
      */
     canDropSelect () {
-        return true
+        return true;
     }
 
     /**
@@ -144,7 +144,7 @@
      * @category Dropping
      */
     dropHoverEnterTimeoutName () {
-        return "dropHoverEnter"
+        return "dropHoverEnter";
     }
 
     /**
@@ -152,8 +152,8 @@
      * @category Dropping
      */
     setupDropHoverTimeout () {
-        const ms = this.dropHoverDidTimeoutSeconds() * 1000
-        this.addTimeout(() => this.dropHoverDidTimeout(), ms, this.dropHoverEnterTimeoutName())
+        const ms = this.dropHoverDidTimeoutSeconds() * 1000;
+        this.addTimeout(() => this.dropHoverDidTimeout(), ms, this.dropHoverEnterTimeoutName());
     }
 
     /**
@@ -162,8 +162,8 @@
      * @category Dropping
      */
     cancelDropHoverTimeout () {
-        this.clearTimeoutNamed(this.dropHoverEnterTimeoutName())
-        return this
+        this.clearTimeoutNamed(this.dropHoverEnterTimeoutName());
+        return this;
     }
 
     /**
@@ -171,7 +171,7 @@
      * @category Dropping
      */
     dropHoverDidTimeout () {
-        this.justTap()
+        this.justTap();
     }
 
     /**
@@ -180,17 +180,17 @@
      * @returns {boolean} True if the drag start was handled, false otherwise.
      * @category Dragging
      */
-    onBrowserDragStart (event) {  
-        let dKey = SvKeyboard.shared().keyForName("d")
+    onBrowserDragStart (event) {
+        let dKey = SvKeyboard.shared().keyForName("d");
         if (!dKey.isDown()) {
-            return false
+            return false;
         }
 
-        const node = this.node()
+        const node = this.node();
         if (node && node.getSvDataUrl) {
-            const bdd = node.getSvDataUrl()
+            const bdd = node.getSvDataUrl();
             if (bdd) {
-                event.dataTransfer.setData(bdd.transferMimeType(), bdd.dataUrlString())
+                event.dataTransfer.setData(bdd.transferMimeType(), bdd.dataUrlString());
                 return true;
             }
         }

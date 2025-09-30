@@ -10,7 +10,7 @@
 "use strict";
 
 (class TilesView_helpers extends TilesView {
-    
+
     // --- reordering support ---
 
     /*
@@ -34,7 +34,7 @@
             tile.setWidthPercentage(100)
             //console.log("i" + i + " : y" + y)
         })
-        
+
         return this
     }
     */
@@ -63,7 +63,7 @@
     makeAbsolutePositionAndSize () {
         const f = this.frameInParentView()
         this.setFrameInParent(f)
-        return this 
+        return this
     }
 
     makeRelativePositionAndSize () {
@@ -75,12 +75,12 @@
         this.setBottomPx(null)
 
         this.setMinAndMaxWidth(null)
-        this.setMinAndMaxHeight(null)  
-        return this 
+        this.setMinAndMaxHeight(null)
+        return this
     }
 
     flexDirectionLength () {
-        const fd = this.parentView().flexDirection() 
+        const fd = this.parentView().flexDirection()
         // tile is left to right
         if (Type.isNull(fd)) {
             fd = "row"
@@ -126,11 +126,11 @@
     showTiles (tiles) {
         console.log("tiles: ", tiles.map(r => {
             if (r.node) {
-                return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "")
+                return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "");
             }
-            return r.svType() 
-        }).join(", "))
-        return this
+            return r.svType();
+        }).join(", "));
+        return this;
     }
 
     /**
@@ -141,13 +141,13 @@
      */
     showNodes (nodes) {
         console.log("nodes: ", nodes.map(node => {
-            return node.title()
-        }).join(", "))
-        return this
+            return node.title();
+        }).join(", "));
+        return this;
     }
 
     // --- helpers ---
-/*
+    /*
     svDebugId () {
         const comment = " '" + (this.node() ? this.node().title() : "untitled node") + "'"
         return super.svDebugId() + comment

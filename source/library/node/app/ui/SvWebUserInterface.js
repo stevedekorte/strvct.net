@@ -45,7 +45,7 @@
         const doc = DocumentBody.shared();
         doc.setBackgroundColor("#191919");
         doc.setFontFamily("HoeflerTitling");
-        
+
         //doc.setFontFamily("EB Garamond");
         //doc.setFontFamily("IMFellEnglish");
         //doc.setFontFamily("Lusitana");
@@ -54,6 +54,6 @@
 
         //doc.setFontSize("18px");
         //doc.setLineHeight(1.3);
-   }
+    }
 
 }.initThisClass());

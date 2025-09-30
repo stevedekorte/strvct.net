@@ -43,7 +43,7 @@
      * @category Hierarchy
      */
     scrollView () {
-        return this.parentView()
+        return this.parentView();
     }
 
     /**
@@ -53,12 +53,12 @@
      * @category Synchronization
      */
     syncFromNode () {
-        super.syncFromNode()
-        const node = this.node()
+        super.syncFromNode();
+        const node = this.node();
         if (node && node.subviewsScrollSticksToBottom) {
-            this.scrollView().setSticksToBottom(node.subviewsScrollSticksToBottom())
+            this.scrollView().setSticksToBottom(node.subviewsScrollSticksToBottom());
         }
-        return this
+        return this;
     }
 
     /**
@@ -72,10 +72,10 @@
         super.setNode(aNode);
 
         if (didChange && aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
-            this.setJustifyContent("flex-end")
-            this.addTimeout(() => { this.scrollToBottom() }, 0);
+            this.setJustifyContent("flex-end");
+            this.addTimeout(() => { this.scrollToBottom(); }, 0);
         }
-        return this
+        return this;
     }
 
     /**
@@ -95,7 +95,7 @@
     startContentMutationObserverIfNeeded () {
         if (!this.contentMutationObserver()) {
             const observer = new MutationObserver((mutations) => {
-                this.onContentMutations(mutations)
+                this.onContentMutations(mutations);
             });
 
             this.setContentMutationObserver(observer);
@@ -107,7 +107,7 @@
 
             observer.observe(this.element(), observerOptions);
         }
-        return this
+        return this;
     }
 
     /**

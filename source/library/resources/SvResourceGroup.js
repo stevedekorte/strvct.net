@@ -8,7 +8,7 @@
  * @classdesc Represents a group of resources.
  */
 (class SvResourceGroup extends BaseNode {
-    
+
     /**
      * @static
      * @description Initializes the class.
@@ -121,7 +121,7 @@
             }
             this.addResource(aResource);
         });
-        
+
         //console.log(this.logPrefix(), ".setupSubnodes done");
 
         if (this.svType() !== "SvFileResources") {
@@ -226,7 +226,7 @@
      */
     async prechacheWhereAppropriate () {
         //console.log(this.logPrefix(), "resource group: " + this.svType() + ".prechacheWhereAppropriate()");
-        
+
         await this.resources().promiseParallelMap(async (r) => {
             //console.log(this.logPrefix(), "resource: " + r.svType() + ".prechacheWhereAppropriate()");
             if (r.prechacheWhereAppropriate) {

@@ -7,7 +7,7 @@
 "use strict";
 
 (class SvHourNode extends BaseNode {
-    
+
     /**
      * Initializes the prototype slots for the SvHourNode.
      * @category Initialization
@@ -29,13 +29,13 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setCanDelete(false)
-        this.setNodeCanInspect(false)
+        this.setCanDelete(false);
+        this.setNodeCanInspect(false);
 
-        this.setNodeCanEditTitle(false)
-        this.setNodeCanReorderSubnodes(false)
+        this.setNodeCanEditTitle(false);
+        this.setNodeCanReorderSubnodes(false);
 
-        this.setNoteIconName("right-arrow")
+        this.setNoteIconName("right-arrow");
     }
 
     /**
@@ -45,9 +45,9 @@
      * @category Data
      */
     setValue (v) {
-        assert(Number.isInteger(v) && v > -1 && v < 23)
-        this._value = v
-        return this
+        assert(Number.isInteger(v) && v > -1 && v < 23);
+        this._value = v;
+        return this;
     }
 
     /**
@@ -57,9 +57,9 @@
      */
     meridiemName () {
         if (this.value() > 11) {
-            return "pm"
+            return "pm";
         }
-        return "am"
+        return "am";
     }
 
     /**
@@ -68,9 +68,9 @@
      * @category Time Conversion
      */
     hourName () {
-        let v = this.value() % 12
-        if (v === 0) { v = 12 }
-        return v + "" + this.meridiemName()
+        let v = this.value() % 12;
+        if (v === 0) { v = 12; }
+        return v + "" + this.meridiemName();
     }
 
     /**
@@ -79,7 +79,7 @@
      * @category Display
      */
     title () {
-        return this.hourName()
+        return this.hourName();
     }
 
     /**
@@ -88,13 +88,13 @@
      * @category Display
      */
     subtitle () {
-        return null
+        return null;
     }
-    
+
     /*
     nodeTileLink () {
         return this
-    },    
+    },
     */
 
     /**
@@ -105,10 +105,10 @@
         // called after clicked
         if (!this.hasSubnodes()) {
             for (let i = 0; i < 60; i += 5) {
-                const minute = SvMinuteNode.clone().setValue(i)
-                this.addSubnode(minute)
+                const minute = SvMinuteNode.clone().setValue(i);
+                this.addSubnode(minute);
             }
         }
     }
-    
+
 }.initThisClass());

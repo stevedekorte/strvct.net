@@ -70,7 +70,7 @@
      * @returns {boolean} True if in a browser, false otherwise.
      */
     isInBrowser () {
-        return (typeof(document) !== 'undefined');
+        return (typeof(document) !== "undefined");
     }
 
     /**
@@ -155,12 +155,12 @@
      */
     async promiseLoadCamIfNeeded () {
         //console.log("🔍 Checking if CAM loading is needed...");
-        
+
         if (SvPlatform.isNodePlatform()) {
             console.log("🔍 Clearing SvHashCache on Node.js...");
             await SvHashCache.shared().promiseClear();
         }
-        
+
         //await SvHashCache.shared().promiseClear();
 
 
@@ -187,10 +187,10 @@
                 const path = "build/_cam.json.zip";
                 const resource = await SvUrlResource.clone().setPath(path).promiseLoad();
                 const cam = resource.dataAsJson();
-                
+
                 // Store CAM content in memory for synchronous access
                 this._camContent = cam;
-                
+
                 // Also store in SvHashCache for async access
                 const camKeys = Reflect.ownKeys(cam);
                 await camKeys.promiseParallelForEach(async (k) => {
@@ -299,7 +299,7 @@
     shouldLoadResourceInCurrentEnvironment (resource) {
         const path = resource.path();
         const canUse = StrvctFile.with(path).canUseInCurrentEnv();
-        
+
         /*
         if (!canUse) {
             const envName = SvPlatform.isNodePlatform() ? 'Node.js' : 'browser';
@@ -307,7 +307,7 @@
             console.log(`⏭️  Skipping ${skipReason} resource in ${envName}: ${path}`);
         }
         */
-        
+
         return canUse;
     }
 
@@ -322,14 +322,14 @@
 
         const undeferredPromises = this.undeferredResources().map(r => r.promiseLoad());
         await Promise.all(undeferredPromises);
-        
+
         /*
         // Load CSS resources in parallel
         const cssLoadPromises = this.cssResources().map(r => r.promiseLoad());
-        
-        // Load JS resources in parallel  
+
+        // Load JS resources in parallel
         const jsLoadPromises = this.jsResources().map(r => r.promiseLoad());
-        
+
         // Wait for all loads to complete
         await Promise.all([...cssLoadPromises, ...jsLoadPromises]);
         const cssCount = this.cssResources().length;
@@ -371,12 +371,12 @@
         return count;
     }
 
-    updateBar () {    
+    updateBar () {
         if (this._indexResources === null) {
             return;
         }
         const n = this.countOfEvaledUndeferredResources();
-        const m = this.undeferredResourceCount();   
+        const m = this.undeferredResourceCount();
         SvBootLoadingView.shared().setBarRatio(n / m);
         //SvBootLoadingView.shared().setSubtitle(n + " / " + m);
     }
@@ -396,7 +396,7 @@
      * @param {Error} error - The error that occurred.
      */
     onError (/*error*/) {
-        //this.postEvent("resourceLoaderError", { error: error }); 
+        //this.postEvent("resourceLoaderError", { error: error });
     }
 
     /**
@@ -440,10 +440,10 @@
         if (SvPlatform.isNodePlatform()) {
             return "N/A";
         }
-        
-        return "" + 
-            Math.round(this._pageLoadTime/100)/10 + "s, " + 
-            Math.round(SvUrlResource._totalBytesLoaded/1000) + "k, " + 
+
+        return "" +
+            Math.round(this._pageLoadTime / 100) / 10 + "s, " +
+            Math.round(SvUrlResource._totalBytesLoaded / 1000) + "k, " +
             SvUrlResource._totalUrlsLoaded + " files";
     }
 
@@ -475,7 +475,7 @@
         const extSet = extensions.asSet();
         return this.indexResources().filter(r => extSet.has(r.pathExtension()));
     }
-        
+
     /**
      * @category Resource Access
      * @description Returns resource file paths filtered by multiple file extensions.
@@ -497,5 +497,4 @@
     }
 
 }).initThisClass();
-
 

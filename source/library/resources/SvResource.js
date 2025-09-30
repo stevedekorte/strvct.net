@@ -10,7 +10,7 @@
 "use strict";
 
 (class SvResource extends BaseNode {
-    
+
     // --- supported mime types ---
 
     /**
@@ -43,7 +43,7 @@
      * @category MIME Types
      */
     static openMimeChunk (/*dataChunk*/) {
-         throw new Error("subclasses should override this method");
+        throw new Error("subclasses should override this method");
         //const aNode = this.clone();
         //setValue(dataChunk);
         //console.log(this.logPrefix(), dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length);
@@ -112,13 +112,13 @@
              * @member {string} loadState - The current load state of the resource.
              * @category Resource Properties
              */
-            const slot = this.newSlot("loadState", "unloaded"); 
+            const slot = this.newSlot("loadState", "unloaded");
             slot.setSlotType("String");
             slot.setValidValues([
-                "unloaded", 
-                "loading", 
+                "unloaded",
+                "loading",
                 "loading failed",
-                "decoding", 
+                "decoding",
                 "decoding failed",
                 "loaded"
             ]);
@@ -229,9 +229,9 @@
         return SvFileResources.shared().rootFolder().nodeAtSubpathString(this.path());
     }
 
-    async asyncLoadFileResource () {        
+    async asyncLoadFileResource () {
         this.setTitle(this.path().lastPathComponent().sansExtension());
-        
+
         const fileResource = this.fileResource();
         if (!fileResource) {
           const error = "no index for file resource at path '" + this.path() + "'"
@@ -241,7 +241,7 @@
         await fileResource.promiseLoad();
         this.onFileResourceLoaded(fileResource);
     }
-    
+
     onFileResourceLoaded (fileResource) {
         this.setData(fileResource.data());
         this.postNoteNamed("resourceLoaded");
@@ -334,7 +334,7 @@
         this.setData(data);
         await this.onDidLoad();
     }
-    
+
     /**
      * @description Called when the resource has finished loading.
      * @returns {Promise<void>} A promise that resolves when post-load operations are complete.

@@ -8,7 +8,7 @@
  * @classdesc Represents a font family containing multiple fonts.
  */
 (class SvFontFamily extends BaseNode {
-    
+
     /**
      * Initialize prototype slots for the SvFontFamily.
      * @private
@@ -45,7 +45,7 @@
      * @category Getters
      */
     title () {
-        return this.name()
+        return this.name();
     }
 
     /*
@@ -62,8 +62,8 @@
      */
     addFont (aFont) {
         //debugger
-        this.addSubnode(aFont)
-        return this
+        this.addSubnode(aFont);
+        return this;
     }
 
     /*

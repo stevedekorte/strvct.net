@@ -8,7 +8,7 @@
  */
 
 (class SvJsonNode extends SvJsonIdNode {
-    
+
     /**
      * @static
      * @description Checks if the given MIME type can be opened by this class.
@@ -51,11 +51,11 @@
      */
     jsonClasses () {
         return [
-            SvJsonArrayNode, 
-            SvBooleanField, 
-            SvJsonNullField, 
-            SvNumberField, 
-            SvJsonDictionaryNode, 
+            SvJsonArrayNode,
+            SvBooleanField,
+            SvJsonNullField,
+            SvNumberField,
+            SvJsonDictionaryNode,
             SvStringField
         ];
     }
@@ -74,9 +74,9 @@
             "Number"  : "SvNumberField",
             "Object"  : "SvJsonDictionaryNode",
             "String"  : "SvStringField",
-        }
+        };
     }
-    
+
     /**
      * @static
      * @description Creates a node instance based on the given JSON data.

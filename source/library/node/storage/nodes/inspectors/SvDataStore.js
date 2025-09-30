@@ -5,14 +5,14 @@
  * @classdesc A visible representation of the storage system
  */
 (class SvDataStore extends BaseNode {
-    
+
     /**
      * @static
      * @description Initializes the class
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
 
     /**
@@ -35,8 +35,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setTitle("Storage")
+        super.init();
+        this.setTitle("Storage");
     }
 
     /**
@@ -45,7 +45,7 @@
      * @category Display
      */
     subtitle () {
-        return this.defaultStore().totalBytes().byteSizeDescription()
+        return this.defaultStore().totalBytes().byteSizeDescription();
     }
 
     /**
@@ -54,7 +54,7 @@
      * @category State Management
      */
     storeHasChanged () {
-        return this.defaultStore().lastSyncTime() !== this.lastSyncTime()
+        return this.defaultStore().lastSyncTime() !== this.lastSyncTime();
     }
 
     /**
@@ -63,9 +63,9 @@
      */
     prepareToSyncToView () {
         if (this.subnodeCount() === 0 || this.storeHasChanged()) {
-            this.defaultStore().collect()
-            this.setLastSyncTime(this.defaultStore().lastSyncTime())
-            this.refreshSubnodes()
+            this.defaultStore().collect();
+            this.setLastSyncTime(this.defaultStore().lastSyncTime());
+            this.refreshSubnodes();
         }
     }
 
@@ -75,7 +75,7 @@
      * @category Data Access
      */
     store () {
-        return this.defaultStore()
+        return this.defaultStore();
     }
 
     /**
@@ -83,11 +83,11 @@
      * @category Data Management
      */
     refreshSubnodes () {
-        this.removeAllSubnodes()
+        this.removeAllSubnodes();
         this.store().allPids().forEach((pid) => {
-            const aRecord = this.store().recordForPid(pid)
-            this.addRecord(aRecord)
-        })
+            const aRecord = this.store().recordForPid(pid);
+            this.addRecord(aRecord);
+        });
     }
 
     /**
@@ -97,12 +97,12 @@
      * @category Node Management
      */
     subnodeForClassName (aClassName) {
-        let subnode = this.firstSubnodeWithTitle(aClassName)
+        let subnode = this.firstSubnodeWithTitle(aClassName);
         if (!subnode) {
-            subnode = BaseNode.clone().setTitle(aClassName).setNoteIsSubnodeCount(true)
-            this.justAddSubnode(subnode)
+            subnode = BaseNode.clone().setTitle(aClassName).setNoteIsSubnodeCount(true);
+            this.justAddSubnode(subnode);
         }
-        return subnode
+        return subnode;
     }
 
     /**
@@ -112,17 +112,17 @@
      * @category Data Management
      */
     addRecord (aRecord) {
-        const subnode = SvDataStoreRecord.clone()
-        subnode.setTitle(aRecord.id)
-        subnode.setKey(aRecord.id)
-        subnode.setStore(this.store())
-        const size = JSON.stableStringifyWithStdOptions(aRecord).length
-        subnode.setSubtitle(size.byteSizeDescription())
+        const subnode = SvDataStoreRecord.clone();
+        subnode.setTitle(aRecord.id);
+        subnode.setKey(aRecord.id);
+        subnode.setStore(this.store());
+        const size = JSON.stableStringifyWithStdOptions(aRecord).length;
+        subnode.setSubtitle(size.byteSizeDescription());
 
-        const classNode = this.subnodeForClassName(aRecord.type)
-        classNode.justAddSubnode(subnode)
+        const classNode = this.subnodeForClassName(aRecord.type);
+        classNode.justAddSubnode(subnode);
 
-        return this
+        return this;
     }
-    
+
 }.initThisClass());

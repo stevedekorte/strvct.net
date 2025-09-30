@@ -1,13 +1,12 @@
 /*
 
 
-
 */
 
 SvGlobals.globals().Mixin = class Mixin extends Object {
-    
+
     static mixIntoClass (aClass) {
-        // copy class methods (except initClass) into aClass, 
+        // copy class methods (except initClass) into aClass,
         // and throw exception on overrights
 
         // ....
@@ -26,5 +25,5 @@ SvGlobals.globals().Mixin = class Mixin extends Object {
         // NOTE: what about Mixin inheritance?
         // should it be allowed?
     }
-    
-}
+
+};

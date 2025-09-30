@@ -7,7 +7,7 @@
  * @classdesc Represents a JSON null field in the application.
  */
 (class SvJsonNullField extends SvField {
-    
+
     /**
      * @description Initializes prototype slots for the class.
      * @private
@@ -21,16 +21,16 @@
      * @category Initialization
      */
     initPrototype () {
-        this.setNodeCanEditTitle(true)
-        this.setNodeCanEditSubtitle(false)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setNodeCanReorderSubnodes(false)
-        this.setCanDelete(true)
+        this.setNodeCanEditTitle(true);
+        this.setNodeCanEditSubtitle(false);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setCanDelete(true);
         //this.setNoteIconName("right-arrow")
 
-        this.setKeyIsVisible(false)
-        this.setValue("NULL")
+        this.setKeyIsVisible(false);
+        this.setValue("NULL");
         //this.setValueIsEditable(false)
         //this.overrideSlot("valueIsEditable", false).setInitValue(false)
     }
@@ -41,7 +41,7 @@
      * @category Serialization
      */
     jsonArchive () {
-        return null
+        return null;
     }
 
     /**
@@ -51,7 +51,7 @@
      * @category Serialization
      */
     setJson (/*json, jsonPathComponents = []*/) {
-        return this
+        return this;
     }
 
     /**
@@ -66,7 +66,7 @@
             console.log(this.logPrefix(), ".setValueIsEditable true")
         }
         */
-        return super.setValueIsEditable(false)
+        return super.setValueIsEditable(false);
     }
-    
+
 }.initThisClass());

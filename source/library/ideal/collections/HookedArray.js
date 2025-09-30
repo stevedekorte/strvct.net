@@ -3,18 +3,18 @@
 /**
  * A subclass of Array that hooks the base mutation methods so we can
  * track mutations to the array and call willMutate and didMutate hooks.
- * 
+ *
  * For this to work, you need to use method alternatives to the non-method
  * array operations:
- * 
- *   - a[i] -> instead use a.at(i) 
+ *
+ *   - a[i] -> instead use a.at(i)
  *   - a[i] = b -> instead use a.atPut(i, b)
  *   - delete a[i] -> instead use a.removeAt(i)
- * 
+ *
  * To do this without using method alternatives, we would need to use
- * a Proxy to intercept the array operations, which would be safer, 
+ * a Proxy to intercept the array operations, which would be safer,
  * but also slower and more memory intensive.
- * 
+ *
  * @module library.ideal.collections
  * @class HookedArray
  * @extends Array
@@ -29,7 +29,7 @@
     initPrototypeSlots () {
         //Object.defineSlot(this, "_allowsNulls", false)
 
-        this.setupMutatorHooks()
+        this.setupMutatorHooks();
         //Array.prototype.setupMutatorHooks()
     }
 
@@ -51,7 +51,7 @@
             "sort",
             "splice",
             "unshift"
-        ])
+        ]);
     }
 
     /**
@@ -59,11 +59,11 @@
      * @category Array Operations
      */
     asReadOnlyShalowCopy () {
-        const obj = this.thisClass().withArray(this)
+        const obj = this.thisClass().withArray(this);
         obj.willMutate = () => {
-            throw new Error("attempt to mutate a read only array")
-        }
-        return obj
+            throw new Error("attempt to mutate a read only array");
+        };
+        return obj;
     }
 
     /**
@@ -72,33 +72,33 @@
      * @category Testing
      */
     static selfTest () {
-        const a = this.clone()
+        const a = this.clone();
 
-        let gotWillMutate = false
-        let gotDidMutate = false
+        let gotWillMutate = false;
+        let gotDidMutate = false;
 
         a.willMutate = () => {
-            gotWillMutate = true
-        }
+            gotWillMutate = true;
+        };
         a.didMutate = () => {
-            gotDidMutate = true
-        }
-        a.push("b")
-        assert(gotWillMutate)
-        assert(gotDidMutate)
+            gotDidMutate = true;
+        };
+        a.push("b");
+        assert(gotWillMutate);
+        assert(gotDidMutate);
 
-        const b = a.asReadOnlyShalowCopy()
+        const b = a.asReadOnlyShalowCopy();
 
-        let caughtReadOnlyMutate = false
+        let caughtReadOnlyMutate = false;
         try {
-            b.pop()
+            b.pop();
         } catch (e) {
-            caughtReadOnlyMutate = true
+            caughtReadOnlyMutate = true;
         }
-        assert(caughtReadOnlyMutate)
+        assert(caughtReadOnlyMutate);
 
-        console.log(this.svType() + " - passed self test")
-        return this
+        console.log(this.svType() + " - passed self test");
+        return this;
     }
 
 }.initThisClass()); //.selfTest()

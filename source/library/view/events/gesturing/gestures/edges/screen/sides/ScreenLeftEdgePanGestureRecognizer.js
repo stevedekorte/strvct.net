@@ -6,16 +6,16 @@
  * @class ScreenLeftEdgePanGestureRecognizer
  * @extends ScreenEdgePanGestureRecognizer
  * @classdesc ScreenLeftEdgePanGestureRecognizer
- * 
+ *
  * Delegate messages:
- * 
+ *
  *     onScreenLeftEdgePanBegin
  *     onScreenLeftEdgePanMove
  *     onScreenLeftEdgePanComplete
  *     onScreenLeftEdgePanCancelled
  */
 (class ScreenLeftEdgePanGestureRecognizer extends ScreenEdgePanGestureRecognizer {
-    
+
     /**
      * @description Initializes prototype slots
      * @returns {void}
@@ -31,9 +31,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setEdgeName("left")
-        return this
+        super.init();
+        this.setEdgeName("left");
+        return this;
     }
 
 }.initThisClass());

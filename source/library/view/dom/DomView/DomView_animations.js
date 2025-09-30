@@ -15,8 +15,8 @@
      * @category Scrolling
      */
     immediatelyScrollToBottom () {
-        const focusedElement = document.activeElement
-        const needsRefocus = focusedElement !== this.element()
+        const focusedElement = document.activeElement;
+        const needsRefocus = focusedElement !== this.element();
         // console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
 
         //this.setScrollTop(this.scrollHeight() + "px")
@@ -47,17 +47,17 @@
      * @category Scrolling
      */
     scrollSubviewToTop (aSubview) {
-        console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollSubviewToTop()")
-        assert(this.hasSubview(aSubview))
+        console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollSubviewToTop()");
+        assert(this.hasSubview(aSubview));
         //this.setScrollTop(aSubview.offsetTop())
         //this.setScrollTopSmooth(aSubview.offsetTop())
         //this.setScrollTop(aSubview.offsetTop() + aSubview.scrollHeight())
         this.animateValue(
-            () => { return aSubview.offsetTop() },
-            () => { return this.scrollTop() },
-            (v) => { this.setScrollTop(v) },
-            200)
-        return this
+            () => { return aSubview.offsetTop(); },
+            () => { return this.scrollTop(); },
+            (v) => { this.setScrollTop(v); },
+            200);
+        return this;
     }
 
     /**
@@ -69,36 +69,36 @@
      * @returns {DomView_animations} The instance of the class.
      * @category Animation
      */
-    animateValue (targetFunc, valueFunc, setterFunc, duration) { // duration in milliseconds         
-        console.log("]]]]]]]]]]]] " + this.svTypeId() + ".animateValue()")
+    animateValue (targetFunc, valueFunc, setterFunc, duration) { // duration in milliseconds
+        console.log("]]]]]]]]]]]] " + this.svTypeId() + ".animateValue()");
         if (duration == null) {
-            duration = 200
+            duration = 200;
         }
         //duration = 1500
         const startTime = Date.now();
 
         const step = () => {
-            const dt = (Date.now() - startTime)
-            let r = dt / duration
-            r = Math.sin(r * Math.PI / 2)
-            r = r * r * r
+            const dt = (Date.now() - startTime);
+            let r = dt / duration;
+            r = Math.sin(r * Math.PI / 2);
+            r = r * r * r;
 
-            const currentValue = valueFunc()
-            const currentTargetValue = targetFunc()
+            const currentValue = valueFunc();
+            const currentTargetValue = targetFunc();
 
             //console.log("time: ", dt, " /", duration, " r:", r, " top:", currentValue, "/", currentTargetValue)
 
             if (dt > duration) {
-                setterFunc(currentTargetValue)
+                setterFunc(currentTargetValue);
             } else {
-                const newValue = currentValue + (currentTargetValue - currentValue) * r
-                setterFunc(newValue)
+                const newValue = currentValue + (currentTargetValue - currentValue) * r;
+                setterFunc(newValue);
                 window.requestAnimationFrame(step);
             }
-        }
+        };
 
         window.requestAnimationFrame(step);
-        return this
+        return this;
     }
 
     /**
@@ -109,8 +109,8 @@
      * @category Scrolling
      */
     setScrollTopSmooth (newScrollTop, scrollDuration) {
-        this.animateValue(() => { return newScrollTop }, () => { return this.scrollTop() }, (v) => { this.setScrollTop(v) }, scrollDuration)
-        return this
+        this.animateValue(() => { return newScrollTop; }, () => { return this.scrollTop(); }, (v) => { this.setScrollTop(v); }, scrollDuration);
+        return this;
     }
 
     /**
@@ -119,8 +119,8 @@
      * @category Scrolling
      */
     dynamicScrollIntoView () {
-        this.parentView().scrollSubviewToTop(this)
-        return this
+        this.parentView().scrollSubviewToTop(this);
+        return this;
     }
 
     /**
@@ -131,10 +131,10 @@
     scrollIntoView () {
         // TODO: return immediately if already visible
         if (this.isScrolledIntoView()) {
-            return false
+            return false;
         }
 
-        const focusedView = WebBrowserWindow.shared().activeDomView()
+        const focusedView = WebBrowserWindow.shared().activeDomView();
         //console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollIntoView() needsRefocus = ", focusedView !== this)
 
         // if another view is focused, the scrolling will unfocus it, so we
@@ -143,29 +143,29 @@
             //console.log("scrollIntoView - registerForVisibility")
             // this hack is needed to return focus that scrollIntoView grabs from other elements
             // need to do this before element().scrollIntoView appearently
-            this.registerForVisibility()
-            // hack around lack of end of scrollIntoView event 
+            this.registerForVisibility();
+            // hack around lack of end of scrollIntoView event
             // needed to return focus that scrollIntoView grabs from other elements
             this.setOnVisibilityCallback(() => {
                 //console.log("_endScrollIntoViewFunc - returning focus")
                 //focusedView.focus()
                 // need delay to allow scroll to finish - hack - TODO: check for full visibility
-                focusedView.focusAfterDelay(0.2)
-            })
+                focusedView.focusAfterDelay(0.2);
+            });
         }
 
         this.addTimeout(() => {
             // have browser do scroll
             //ThrashDetector.shared().didOp("scrollIntoView")
-            this.element().scrollIntoView({ 
-                block: "start", 
-                inline: "nearest", 
-                behavior: this.usesSmoothScrolling() ? "smooth" : "auto", 
-            })
-        }, 0)
+            this.element().scrollIntoView({
+                block: "start",
+                inline: "nearest",
+                behavior: this.usesSmoothScrolling() ? "smooth" : "auto",
+            });
+        }, 0);
 
-        this.element().addEventListener('transitionend', (transitionEvent) => {
-            console.log("completed scrollIntoView transition?:", transitionEvent.propertyName)
+        this.element().addEventListener("transitionend", (transitionEvent) => {
+            console.log("completed scrollIntoView transition?:", transitionEvent.propertyName);
         });
 
         /*
@@ -173,16 +173,16 @@
             focusedView.focusAfterDelay(0.5) // TODO: get this value from transition property
         }
         */
-        return this
+        return this;
     }
-    
+
     /**
      * @description Checks if the view is scrolled into view.
      * @returns {boolean} True if the view is visible, false otherwise.
      * @category Visibility
      */
     isScrolledIntoView () {
-        const r = this.boundingClientRect()
+        const r = this.boundingClientRect();
         const isVisible = (r.top >= 0) && (r.bottom <= window.innerHeight);
         return isVisible;
     }
@@ -193,16 +193,16 @@
      * @category Alignment
      */
     verticallyAlignAbsoluteNow () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv) {
-            this.setPosition("absolute")
-            const parentHeight = pv.computedHeight() //pv.calcHeight() // computedHeight?
-            const height = this.computedHeight()
-            this.setTopPx((parentHeight / 2) - (height / 2))
+            this.setPosition("absolute");
+            const parentHeight = pv.computedHeight(); //pv.calcHeight() // computedHeight?
+            const height = this.computedHeight();
+            this.setTopPx((parentHeight / 2) - (height / 2));
         } else {
-            throw new Error("missing parentView")
+            throw new Error("missing parentView");
         }
-        return this
+        return this;
     }
 
     /**
@@ -211,14 +211,14 @@
      * @category Alignment
      */
     horizontallyAlignAbsoluteNow () {
-        const pv = this.parentView()
+        const pv = this.parentView();
         if (pv) {
-            this.setPosition("absolute")
+            this.setPosition("absolute");
             this.addTimeout(() => {
-                this.setRightPx(pv.clientWidth() / 2 - this.clientWidth() / 2)
-            }, 0)
+                this.setRightPx(pv.clientWidth() / 2 - this.clientWidth() / 2);
+            }, 0);
         }
-        return this
+        return this;
     }
 
     /**
@@ -230,19 +230,19 @@
      * @category Animation
      */
     animateToDocumentFrame (destinationFrame, seconds, completionCallback) {
-        this.setTransition("all " + seconds + "s")
-        assert(this.position() === "absolute")
+        this.setTransition("all " + seconds + "s");
+        assert(this.position() === "absolute");
         this.addTimeout(() => {
-            this.setTopPx(destinationFrame.origin().y())
-            this.setLeftPx(destinationFrame.origin().x())
-            this.setMinAndMaxWidth(destinationFrame.size().width())
-            this.setMinAndMaxHeight(destinationFrame.size().height())
-        }, 0)
+            this.setTopPx(destinationFrame.origin().y());
+            this.setLeftPx(destinationFrame.origin().x());
+            this.setMinAndMaxWidth(destinationFrame.size().width());
+            this.setMinAndMaxHeight(destinationFrame.size().height());
+        }, 0);
 
         this.addTimeout(() => {
-            completionCallback()
-        }, seconds * 1000)
-        return this
+            completionCallback();
+        }, seconds * 1000);
+        return this;
     }
 
     /**
@@ -254,17 +254,17 @@
      * @category Animation
      */
     animateToDocumentPoint (destinationPoint, seconds, completionCallback) {
-        this.setTransition("all " + seconds + "s")
-        assert(this.position() === "absolute")
+        this.setTransition("all " + seconds + "s");
+        assert(this.position() === "absolute");
         this.addTimeout(() => {
-            this.setTopPx(destinationPoint.y())
-            this.setLeftPx(destinationPoint.x())
-        }, 0)
+            this.setTopPx(destinationPoint.y());
+            this.setLeftPx(destinationPoint.x());
+        }, 0);
 
         this.addTimeout(() => {
-            completionCallback()
-        }, seconds * 1000)
-        return this
+            completionCallback();
+        }, seconds * 1000);
+        return this;
     }
 
     /**
@@ -273,11 +273,11 @@
      * @category Animation
      */
     hideAndFadeIn () {
-        this.setOpacity(0)
+        this.setOpacity(0);
         //this.setTransition("all 0.5s")
         this.addTimeout(() => {
-            this.setOpacity(1)
-        }, 0)
+            this.setOpacity(1);
+        }, 0);
     }
 
     /**
@@ -286,13 +286,13 @@
      * @category Animation
      */
     fadeInToDisplayInlineBlock () {
-        this.transitions().at("opacity").updateDuration("0.3s")
-        this.setDisplay("inline-block")
-        this.setOpacity(0)
+        this.transitions().at("opacity").updateDuration("0.3s");
+        this.setDisplay("inline-block");
+        this.setOpacity(0);
         this.addTimeout(() => {
-            this.setOpacity(1)
-        }, 0)
-        return this
+            this.setOpacity(1);
+        }, 0);
+        return this;
     }
 
     /**
@@ -301,12 +301,12 @@
      * @category Animation
      */
     fadeOutToDisplayNone () {
-        this.transitions().at("opacity").updateDuration("0.3s")
-        this.setOpacity(0)
+        this.transitions().at("opacity").updateDuration("0.3s");
+        this.setOpacity(0);
         this.addTimeout(() => {
-            this.setDisplay("none")
-        }, 200)
-        return this
+            this.setDisplay("none");
+        }, 200);
+        return this;
     }
 
     /**
@@ -315,12 +315,12 @@
      * @category Animation
      */
     fadeInHeightToDisplayBlock () {
-        this.setDisplay("block")
-        this.setOpacity(1)
-        this.setMinHeight("100%")
-        this.setMaxHeight("100%")
-        return this
-/*
+        this.setDisplay("block");
+        this.setOpacity(1);
+        this.setMinHeight("100%");
+        this.setMaxHeight("100%");
+        return this;
+        /*
         this.setMinHeight("100%")
         this.setMaxHeight("100%")
         const targetHeight = this.calcHeight()
@@ -339,7 +339,7 @@
             this.setMinAndMaxHeight(targetHeight)
         }, 0)
         */
-        return this
+        return this;
     }
 
     /**
@@ -348,22 +348,22 @@
      * @category Animation
      */
     fadeOutHeightToDisplayNone () {
-        this.setOverflow("hidden")
-        this.transitions().at("opacity").updateDuration("0.2s")
-        this.transitions().at("min-height").updateDuration("0.3s")
-        this.transitions().at("max-height").updateDuration("0.3s")
+        this.setOverflow("hidden");
+        this.transitions().at("opacity").updateDuration("0.2s");
+        this.transitions().at("min-height").updateDuration("0.3s");
+        this.transitions().at("max-height").updateDuration("0.3s");
 
         this.addTimeout(() => {
-            this.setOpacity(0)
-            this.setMinAndMaxHeight(0)
-        }, 1)
+            this.setOpacity(0);
+            this.setMinAndMaxHeight(0);
+        }, 1);
 
         /*
         this.addTimeout(() => {
             this.setDisplay("none")
         }, 300)
         */
-        return this
+        return this;
     }
 
 

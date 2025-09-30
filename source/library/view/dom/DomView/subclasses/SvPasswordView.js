@@ -4,19 +4,19 @@
  * @module library.view.dom.DomView.subclasses
  * @class SvPasswordView
  * @extends SvTextView
- * @classdesc A specialized text view for password input. 
+ * @classdesc A specialized text view for password input.
  * Uses an actual input element with type="password" instead of a contenteditable div.
  * This provides native password masking and better integration with password managers.
  */
 
 (class SvPasswordView extends SvTextView {
-    
+
     /**
      * @description Initializes the prototype slots
      * @category Initialization
      */
     initPrototypeSlots () {
-        
+
         /**
          * @member {String} elementType
          * @description Override to use input element instead of div
@@ -25,7 +25,7 @@
             const slot = this.overrideSlot("elementType", "input");
             slot.setSlotType("String");
         }
-        
+
         /**
          * @member {Boolean} showPasswordToggle
          * @description Whether to show a toggle button for revealing the password
@@ -68,7 +68,7 @@
      * @category Initialization
      */
     initPrototype () {
-        
+
         // Password-specific settings
         this.setAllowsHtml(false); // Input elements can't contain HTML
         this.setIsMergeable(false); // No merge support for password fields
@@ -82,12 +82,12 @@
      */
     setupElement () {
         super.setupElement();
-        
+
         const e = this.element();
         if (e) {
             e.setAttribute("type", "password");
             e.setAttribute("autocomplete", this.autocompleteType());
-            
+
             // Apply consistent styling
             this.setStyleIfUnset("appearance", "none"); // as opposed to "button", which is the default
             this.setStyleIfUnset("-webkit-appearance", "none");
@@ -99,11 +99,11 @@
             this.setFontSize("1em");
             this.setFontFamily("inherit");
             this.setFontStyle("italic");
-            
+
             // Ensure we're registered for input events
             this.setIsRegisteredForKeyboard(true);
         }
-        
+
         return this;
     }
 
@@ -132,14 +132,14 @@
         if (Type.isNullOrUndefined(newValue)) {
             newValue = "";
         }
-        
+
         const e = this.element();
         if (e) {
             if (e.value !== newValue) {
                 e.value = newValue;
                 this.didEdit();
             }
-            
+
             // Update placeholder to indicate if password is set
             if (newValue && newValue.length > 0) {
                 e.placeholder = this.filledPlaceholder();  // Show dots as placeholder when password exists
@@ -147,7 +147,7 @@
                 e.placeholder = this.emptyPlaceholder();
             }
         }
-        
+
         return this;
     }
 
@@ -204,12 +204,12 @@
         const e = this.element();
         const start = e.selectionStart;
         const end = e.selectionEnd;
-        
+
         if (start !== end) {
             // Return masked characters instead of actual password
             return "•".repeat(end - start);
         }
-        
+
         return "";
     }
 
@@ -298,7 +298,7 @@
         if (this.string().length > 0) {
             this.setFontStyle("normal");
         } else {
-            this.setFontStyle("italic"); 
+            this.setFontStyle("italic");
         }
     }
 

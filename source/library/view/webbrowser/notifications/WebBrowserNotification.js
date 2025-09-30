@@ -6,18 +6,18 @@
  * @class WebBrowserNotification
  * @extends ProtoClass
  * @classdesc WebBrowserNotification
- * 
- * Don't instantiate these directly. 
+ *
+ * Don't instantiate these directly.
  * See WebBrowserNotifications example code.
- * 
+ *
  * Example actions:
- * 
+ *
  * [{action: 'reply', title: 'Reply'}, ...]
  */
 "use strict";
 
 (class WebBrowserNotification extends ProtoClass {
-    
+
     initPrototypeSlots () {
         /**
          * @member {String} title
@@ -93,7 +93,7 @@
         super.init();
         this.setActions([]);
         this.setIsDebugging(true);
-        return this
+        return this;
     }
 
     /**
@@ -113,8 +113,8 @@
      * @category Notification Management
      */
     justPost () {
-        const ref = new Notification(this.title(), { 
-            body: this.body(), 
+        const ref = new Notification(this.title(), {
+            body: this.body(),
             icon: this.icon(),
             actions: this.actions()
         });
@@ -124,10 +124,10 @@
         ref.onclose = () => { this.onClose(); };
         ref.onerror = (error) => { this.onError(error); };
         ref.onaction = (event) => { this.onAction(event); };
-        
+
         this.setNotificationRef(ref);
-        
-        return this
+
+        return this;
     }
 
     /**

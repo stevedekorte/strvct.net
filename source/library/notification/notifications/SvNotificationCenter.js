@@ -1,5 +1,5 @@
 
- /**
+/**
   * @module library.notification.notifications
   */
 
@@ -8,14 +8,14 @@
 /**
  * @class SvNotificationCenter
  * @extends ProtoClass
- * @description 
-    
-    A notification system that queues notifications and waits for the 
-    app to return to the event loop (using a timeout) to post them. 
-    It filters out duplicate notifications (posted on the same event loop) 
+ * @description
+
+    A notification system that queues notifications and waits for the
+    app to return to the event loop (using a timeout) to post them.
+    It filters out duplicate notifications (posted on the same event loop)
     and duplicate observations (same object registering the same observation again).
-        
-    WeakRefs: 
+
+    WeakRefs:
 
         The Observation class holds sender and observer references as weakrefs,
         and when either is collected, it will automatically call Observation.stopWatching()
@@ -26,18 +26,18 @@
         lifetime.
 
     Example use:
- 
+
     Observing notifications:
 
         // start watching for "changed" message from sender object
         this._obs = SvNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setSender(sender).startWatching();
-    
+
         // start watching for "changedStoredSlot" message from any sender object
         this._obs = SvNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).startWatching();
 
         // stop watching this observation
         this._obs.stopWatching();
-        
+
         // stop watching all
         SvNotificationCenter.shared().removeObserver(this);
 
@@ -48,7 +48,7 @@
     If the source object has an accessor for a notification it uses, we can do:
 
         sourceObject.didLoadNote().newObservation().setObserver(this).startWatching();
-        
+
     Posting notifications:
 
         // post a notification
@@ -59,7 +59,7 @@
 
     Broadcasting notifications:
 
-        For use cases where the overhead of creating post objects would be costly, 
+        For use cases where the overhead of creating post objects would be costly,
         it's possible to send a direct message to all name listeners without waiting
         until the event loop to end. These will pass the sender itself instead of a Notification object.
 
@@ -95,9 +95,9 @@
      * @description sets up the class as a singleton
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
-    
+
     /**
      * @description sets up the prototype slots for the class
      */
@@ -108,7 +108,7 @@
          * @description an array of observations
          */
         {
-            const slot = this.newSlot("observations", null); // array 
+            const slot = this.newSlot("observations", null); // array
             slot.setSlotType("Array");
         }
 
@@ -118,7 +118,7 @@
          * @description a map of observation hashes to observations
          */
         {
-            const slot = this.newSlot("observationsMap", null); // map of obsHash to observation 
+            const slot = this.newSlot("observationsMap", null); // map of obsHash to observation
             slot.setSlotType("Map");
         }
 
@@ -128,7 +128,7 @@
          * @description an array of notifications
          */
         {
-            const slot = this.newSlot("notifications", null); // array 
+            const slot = this.newSlot("notifications", null); // array
             slot.setSlotType("Array");
         }
 
@@ -240,7 +240,7 @@
      * @description initializes the notification center
      */
     init () {
-        super.init()
+        super.init();
         this.setObservations([]);
         this.setObservationsMap(new Map());
         this.setNotifications([]);
@@ -252,7 +252,7 @@
      * @returns {Array} the observations
      */
     observations () {
-       
+
         return this.observationsMap().valuesArray();
     }
 
@@ -299,7 +299,7 @@
         })
     }
     */
-    
+
     /**
      * @description checks if the observation is in the observations map
      * @param {SvObservation} obs the observation to check
@@ -309,7 +309,7 @@
         return this.observationsMap().has(obs.obsHash());
         //return this.observations().canDetect(ob => ob.isEqual(obs));
     }
-    
+
     /**
      * @description adds an observation to the observations map
      * @param {SvObservation} obs the observation to add
@@ -380,14 +380,14 @@
     hasObservationsForObserver (observer) {
         return this.observationsWithObserver(observer).length > 0;
     }
-    
+
     /*
     observationsForSender (sender) {
         const matches = this.observations().filter(obs => obs.sender() === sender)
         return matches
     }
     */
-    
+
     /**
      * @description removes an observation from the observations map
      * @param {SvObservation} anObservation the observation to remove
@@ -399,21 +399,21 @@
         const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
         this.setObservations(filtered)
         */
-        return this
+        return this;
     }
-    
+
     /**
      * @description removes an observer from the observations map
      * @param {SvNode} anObserver the observer to remove
      * @returns {SvNotificationCenter} the notification center
      */
-    removeObserver (anObserver) {        
+    removeObserver (anObserver) {
         this.observationsMap().selectInPlaceKV((key, obs) => obs.observer() !== anObserver);
         return this;
     }
 
     // --- notifying ----
-    
+
     /**
      * @description checks if the notification is in the note set
      * @param {SvNotification} note the notification to check
@@ -423,11 +423,11 @@
         if (this.noteSet().has(note)) {
             // quick check to see if we have an exact match
             // reusing notes can help make these lookups more efficient
-            return true
+            return true;
         }
-        return this.notifications().canDetect(n => n.isEqual(note))
+        return this.notifications().canDetect(n => n.isEqual(note));
     }
-    
+
     /**
      * @description adds a notification to the note set
      * @param {SvNotification} note the notification to add
@@ -454,9 +454,9 @@
     newNote () {
         return SvNotification.clone().setCenter(this);
     }
-    
+
     // --- timeout & posting ---
-    
+
     /**
      * @description processes the post queue
      * @returns {SvNotificationCenter} the notification center
@@ -470,7 +470,7 @@
         // TODO: for performance, we could make an observationName->observations dictionary
         // but only worthwhile if observation list is sufficiently large
 
-        // keep local ref of notifications and set 
+        // keep local ref of notifications and set
         // notifications to empty array in case any are
         // added while we process them
 
@@ -490,7 +490,7 @@
             notes.forEach(note => {
                 this.noteSet().delete(note);
                 this.postNotificationNow(note);
-            })
+            });
             //notes.forEach(note => this.tryToPostNotificationNow(note));
             this.setIsProcessing(false);
         } else {
@@ -509,7 +509,7 @@
      * @returns {SvNotificationCenter} the notification center
      */
     tryToPostNotificationNow (note) {
-        try { 
+        try {
             this.postNotificationNow(note);
             //this.logDebug("   <- posting " + note.description() )
         } catch (error) {
@@ -547,20 +547,20 @@
         const nullNameMatchSet = this.nameIndex().get(null) || emptySet;
         this.setNullNameMatchSet(nullNameMatchSet);
     }
-    
+
     /**
      * @description posts a notification now
      * @param {SvNotification} note the notification to post
      * @returns {SvNotificationCenter} the notification center
      */
     postNotificationNow (note) {
-        // use a copy of the observations list in 
-        // case any are added while we are posting 
+        // use a copy of the observations list in
+        // case any are added while we are posting
         //
         // TODO: add an dictionary index for efficiency
 
         this.setCurrentNote(note);
-        
+
         /*
         const showDebug = this.shouldDebugNote(note);
 
@@ -581,11 +581,11 @@
                 }
             }
             */
-        
+
             obs.sendNotification(note);
-            //obs.tryToSendNotification(note);  
-        });       
-        
+            //obs.tryToSendNotification(note);
+        });
+
         this.setCurrentNote(null);
     }
 
@@ -642,7 +642,7 @@
     observersDescription () {
         return this.observations() .map(obs => "    " + obs.description()).join("\n");
     }
-    
+
     /**
      * @description shows the current note stack
      * @returns {SvNotificationCenter} the notification center

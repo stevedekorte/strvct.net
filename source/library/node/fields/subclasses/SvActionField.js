@@ -8,7 +8,7 @@
  * The value is the action method name, the target is the field owner.
  */
 (class SvActionField extends SvField {
-    
+
     /**
      * @static
      * @returns {boolean} True if the class is available as a node primitive
@@ -17,7 +17,7 @@
     static availableAsNodePrimitive () {
         return true;
     }
-    
+
     /**
      * @description Initializes the prototype slots for the class
      * @category Initialization
@@ -80,7 +80,7 @@
         super.setTitle(s);
         return this;
     }
-    
+
     /**
      * @description Returns a summary of the action field
      * @returns {string} An empty string
@@ -119,7 +119,7 @@
     doAction () {
         if (this.canDoAction()) {
             const func = this.target()[this.methodName()];
-            
+
             if (Type.isFunction(func)) {
                 const target = this.target();
                 const result = func.call(target, this);
@@ -141,7 +141,7 @@
      */
     syncFromTarget () {
         super.syncFromTarget();
-    
+
         const t = this.target();
         if (t) {
             const infoMethodName = this.methodName() + "ActionInfo";
@@ -163,7 +163,7 @@
         this.syncFromTarget();
         return this;
     }
-    
+
     /**
      * @description Sets the action info
      * @param {Object} infoDict - The action info dictionary

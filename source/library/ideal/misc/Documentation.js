@@ -5,7 +5,7 @@
  * @class Documentation
  * @extends ProtoClass
  * @classdesc An simple in-memory documentation system.
- * 
+ *
  * TODO: Rename to something more unique.
  */
 (class Documentation extends ProtoClass {
@@ -70,7 +70,7 @@
      * @description Logs a summary of the documentation for all classes and their methods to the console.
      * @category Output
      */
-     show () {
+    show () {
         const classes = this.asJson();
         const lines = [];
         classes.forEach((aClass) => {

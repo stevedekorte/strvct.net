@@ -10,27 +10,27 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
  * @class SvDbDataType
  * @extends Base
  * @classdesc Centralizes data type detection, validation, and compatibility logic for the ORM.
- * 
+ *
  * This class provides static methods for JavaScript type analysis and database type compatibility
  * checking. It serves as the foundation for data validation throughout the ORM system.
- * 
+ *
  * Key responsibilities:
  * - JavaScript value type detection with detailed classification
  * - Database type compatibility mapping and validation
  * - Type-specific validation rules (UUID format, date parsing, etc.)
  * - Centralized type conversion and coercion logic
- * 
+ *
  * Usage:
  * ```javascript
  * // Detect JavaScript type of a value
  * const jsType = SvDbDataType.dataTypeForValue(42); // "Integer"
- * 
+ *
  * // Validate value compatibility with database type
  * const validation = SvDbDataType.validateValueForDbType(value, "UUID", true);
  * if (!validation.valid) {
  *   console.error(validation.error);
  * }
- * 
+ *
  * // Check type compatibility
  * const compatible = SvDbDataType.isValueCompatibleWithDbType("hello", "STRING"); // true
  * ```
@@ -67,7 +67,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
         if (value === undefined) {
             return "Undefined";
         }
-        
+
         // Handle primitive types
         if (typeof value === "string") {
             return "String";
@@ -78,7 +78,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
         if (typeof value === "bigint") {
             return "BigInt";
         }
-        
+
         // Handle numbers with special cases
         if (typeof value === "number") {
             if (Number.isNaN(value)) {
@@ -92,7 +92,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
             }
             return "Float";
         }
-        
+
         // Handle object types by constructor
         if (typeof value === "object") {
             const constructor = value.constructor?.name;
@@ -110,7 +110,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
                     return constructor || "Object";
             }
         }
-        
+
         // Catch-all for functions and other exotic types
         return typeof value;
     }
@@ -123,16 +123,16 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
      */
     static getCompatibleJsTypesForDbType (dbType) {
         const typeCompatibility = {
-            'UUID': ['String'],
-            'STRING': ['String', 'Integer', 'Float'], // Numbers can be converted to strings
-            'INTEGER': ['Integer', 'Boolean'], // Boolean -> 0/1
-            'FLOAT': ['Float', 'Integer'],
-            'DATE': ['Date', 'String'], // ISO strings are acceptable
-            'BOOLEAN': ['Boolean', 'Integer'], // 0/1 values
-            'BLOB': ['Buffer', 'String'],
-            'DECIMAL': ['Float', 'Integer', 'String'],
-            'TIME': ['Date', 'String'],
-            'ENUM': ['String']
+            "UUID": ["String"],
+            "STRING": ["String", "Integer", "Float"], // Numbers can be converted to strings
+            "INTEGER": ["Integer", "Boolean"], // Boolean -> 0/1
+            "FLOAT": ["Float", "Integer"],
+            "DATE": ["Date", "String"], // ISO strings are acceptable
+            "BOOLEAN": ["Boolean", "Integer"], // 0/1 values
+            "BLOB": ["Buffer", "String"],
+            "DECIMAL": ["Float", "Integer", "String"],
+            "TIME": ["Date", "String"],
+            "ENUM": ["String"]
         };
 
         return typeCompatibility[dbType] || [dbType];
@@ -204,12 +204,12 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
         }
 
         // UUID-specific validation
-        if (dbType === 'UUID' && jsType === 'String') {
+        if (dbType === "UUID" && jsType === "String") {
             return this.validateUuidFormat(value);
         }
 
         // Date-specific validation
-        if (dbType === 'DATE' && jsType === 'String') {
+        if (dbType === "DATE" && jsType === "String") {
             return this.validateDateFormat(value);
         }
 
@@ -229,7 +229,7 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
      * @static
      */
     static validateValueForDbType (value, dbType, allowNull = true, columnName = null) {
-        const columnRef = columnName ? `Column '${columnName}'` : 'Column';
+        const columnRef = columnName ? `Column '${columnName}'` : "Column";
 
         // Handle null values
         if (value === null || value === undefined) {
@@ -244,18 +244,18 @@ const { Base } = require("../../../GameServer/site/strvct/webserver");
         // Check basic type compatibility
         if (!this.isJsTypeCompatibleWithDbType(jsType, dbType)) {
             const compatibleTypes = this.getCompatibleJsTypesForDbType(dbType);
-            return { 
-                valid: false, 
-                error: `${columnRef} expects ${dbType} but received ${jsType}. Compatible types: ${compatibleTypes.join(', ')}` 
+            return {
+                valid: false,
+                error: `${columnRef} expects ${dbType} but received ${jsType}. Compatible types: ${compatibleTypes.join(", ")}`
             };
         }
 
         // Perform type-specific validation
         const specificValidation = this.validateSpecificDbType(value, dbType, jsType);
         if (!specificValidation.valid) {
-            return { 
-                valid: false, 
-                error: `${columnRef} ${specificValidation.error}` 
+            return {
+                valid: false,
+                error: `${columnRef} ${specificValidation.error}`
             };
         }
 

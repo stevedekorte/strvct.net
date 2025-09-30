@@ -6,15 +6,15 @@
 
 /**
  * ListenerDomView
- * 
+ *
  * Dealing with EventListeners
- * 
+ *
  * @class ListenerDomView
  * @extends SubviewsDomView
  * @classdesc Handles event listeners for DOM views
  */
 (class ListenerDomView extends SubviewsDomView {
-    
+
     initPrototypeSlots () {
         /**
          * @member {Map} eventListenersMap - Map to store event listeners
@@ -30,9 +30,9 @@
      * @returns {ListenerDomView} The initialized instance
      */
     init () {
-        super.init()
+        super.init();
         //this.setEventListenersMap(new Map())
-        return this
+        return this;
     }
 
     /**
@@ -41,7 +41,7 @@
      */
     eventListenersMap () {
         if (!this._eventListenersMap) {
-            this.setEventListenersMap(new Map())
+            this.setEventListenersMap(new Map());
         }
         return this._eventListenersMap;
     }
@@ -53,7 +53,7 @@
      * @returns {Array} Array of all event listeners
      */
     eventListeners () {
-        return this.eventListenersMap().valuesArray().map(v => v.allEventListeners()).flat()
+        return this.eventListenersMap().valuesArray().map(v => v.allEventListeners()).flat();
     }
 
     /**
@@ -61,12 +61,12 @@
      * @returns {ListenerDomView} The current instance
      */
     removeAllListeners () {
-        const map = this.eventListenersMap()
-        map.forEachKV( (k, listener) => { 
-            listener.setIsListening(false) 
-        } )
-        map.clear()
-        return this
+        const map = this.eventListenersMap();
+        map.forEachKV((k, listener) => {
+            listener.setIsListening(false);
+        });
+        map.clear();
+        return this;
     }
 
     /**
@@ -75,8 +75,8 @@
      * @returns {boolean} True if the listener exists, false otherwise
      */
     hasListenerNamed (className) {
-        const map = this.eventListenersMap()
-        return map.has(className)
+        const map = this.eventListenersMap();
+        return map.has(className);
     }
 
     /**
@@ -85,14 +85,14 @@
      * @returns {Object} The listener instance
      */
     listenerNamed (className) {
-        const map = this.eventListenersMap()
+        const map = this.eventListenersMap();
         if (!map.has(className)) {
-            const proto = Object.getClassNamed(className)
-            assert(!Type.isNullOrUndefined(proto))
-            const instance = proto.clone().setListenTarget(this.element()).setDelegate(this)
-            map.set(className, instance)
+            const proto = Object.getClassNamed(className);
+            assert(!Type.isNullOrUndefined(proto));
+            const instance = proto.clone().setListenTarget(this.element()).setDelegate(this);
+            map.set(className, instance);
         }
-        return map.get(className)
+        return map.get(className);
     }
 
     // --- specific event listeners ---
@@ -102,7 +102,7 @@
      * @returns {Object} The animation listener instance
      */
     animationListener () {
-        return this.listenerNamed("AnimationListener")
+        return this.listenerNamed("AnimationListener");
     }
 
     /**
@@ -110,7 +110,7 @@
      * @returns {Object} The clipboard listener instance
      */
     clipboardListener () {
-        return this.listenerNamed("ClipboardListener")
+        return this.listenerNamed("ClipboardListener");
     }
 
     /**
@@ -118,7 +118,7 @@
      * @returns {Object} The window listener instance
      */
     windowListener () {
-        return this.listenerNamed("WindowListener") // listen target will be the window
+        return this.listenerNamed("WindowListener"); // listen target will be the window
     }
 
     /**
@@ -126,7 +126,7 @@
      * @returns {Object} The document listener instance
      */
     documentListener () {
-        return this.listenerNamed("DocumentListener") // listen target will be the window
+        return this.listenerNamed("DocumentListener"); // listen target will be the window
     }
 
     /**
@@ -134,7 +134,7 @@
      * @returns {Object} The browser drag listener instance
      */
     browserDragListener () {
-        return this.listenerNamed("DragListener")
+        return this.listenerNamed("DragListener");
     }
 
     /**
@@ -142,7 +142,7 @@
      * @returns {Object} The drop listener instance
      */
     dropListener () {
-        return this.listenerNamed("DropListener")
+        return this.listenerNamed("DropListener");
     }
 
     /**
@@ -150,7 +150,7 @@
      * @returns {Object} The focus listener instance
      */
     focusListener () {
-        return this.listenerNamed("FocusListener")
+        return this.listenerNamed("FocusListener");
     }
 
     /**
@@ -158,7 +158,7 @@
      * @returns {Object} The mouse listener instance
      */
     mouseListener () {
-        return this.listenerNamed("MouseListener")
+        return this.listenerNamed("MouseListener");
     }
 
     /**
@@ -166,7 +166,7 @@
      * @returns {Object} The mouse move listener instance
      */
     mouseMoveListener () {
-        return this.listenerNamed("MouseMoveListener")
+        return this.listenerNamed("MouseMoveListener");
     }
 
     /**
@@ -174,7 +174,7 @@
      * @returns {Object} The keyboard listener instance
      */
     keyboardListener () {
-        return this.listenerNamed("KeyboardListener")
+        return this.listenerNamed("KeyboardListener");
     }
 
     /**
@@ -182,7 +182,7 @@
      * @returns {Object} The scroll listener instance
      */
     scrollListener () {
-        return this.listenerNamed("ScrollListener")
+        return this.listenerNamed("ScrollListener");
     }
 
     /**
@@ -198,7 +198,7 @@
      * @returns {Object} The touch listener instance
      */
     touchListener () {
-        return this.listenerNamed("TouchListener")
+        return this.listenerNamed("TouchListener");
     }
 
     /**
@@ -206,7 +206,7 @@
      * @returns {Object} The transition listener instance
      */
     transitionListener () {
-        return this.listenerNamed("TransitionListener")
+        return this.listenerNamed("TransitionListener");
     }
 
     // --- invoking event handler methods ---
@@ -222,15 +222,15 @@
         //console.log(this.svTypeId() + ".invokeMethodNameForEvent('" + methodName + "')")
         if (this[methodName]) {
             //console.log(this.svTypeId() + ".invokeMethodNameForEvent('" + methodName + "')")
-            const continueProp = this[methodName].apply(this, [event])
+            const continueProp = this[methodName].apply(this, [event]);
             if (continueProp === false) {
                 //event.preventDefault()
-                event.stopPropagation()
-                return false
+                event.stopPropagation();
+                return false;
             }
         }
 
-        return true
+        return true;
     }
 
     // --- register window resize events ---
@@ -240,7 +240,7 @@
      * @returns {boolean} True if registered, false otherwise
      */
     isRegisteredForWindowResize () {
-        return this.windowListener().isListening()
+        return this.windowListener().isListening();
     }
 
     /**
@@ -249,8 +249,8 @@
      * @returns {ListenerDomView} The current instance
      */
     setIsRegisteredForWindowResize (aBool) {
-        this.windowListener().setIsListening(aBool)
-        return this
+        this.windowListener().setIsListening(aBool);
+        return this;
     }
 
     // --- handle window resize events ---
@@ -261,7 +261,7 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onWindowResize (/*event*/) {
-        return true
+        return true;
     }
 
     // --- register onClick events ---
@@ -272,7 +272,7 @@
      */
     isRegisteredForClicks () {
         //return this.mouseListener().isListening()
-        return this.defaultTapGesture().isListening()
+        return this.defaultTapGesture().isListening();
     }
 
     /**
@@ -282,15 +282,15 @@
      */
     setIsRegisteredForClicks (aBool) {
         //this.mouseListener().setIsListening(aBool)
-        this.setHasDefaultTapGesture(aBool) // use tap gesture instead of mouse click
+        this.setHasDefaultTapGesture(aBool); // use tap gesture instead of mouse click
 
         if (aBool) {
-            this.makeCursorPointer()
+            this.makeCursorPointer();
         } else {
-            this.makeCursorDefault()
+            this.makeCursorDefault();
         }
 
-        return this
+        return this;
     }
 
 
@@ -304,7 +304,7 @@
      * @returns {boolean} True if registered, false otherwise
      */
     isRegisteredForMouse () {
-        return this.mouseListener().isListening()
+        return this.mouseListener().isListening();
     }
 
     /**
@@ -314,8 +314,8 @@
      * @returns {ListenerDomView} The current instance
      */
     setIsRegisteredForMouse (aBool, useCapture) {
-        this.mouseListener().setUseCapture(useCapture).setIsListening(aBool) 
-        return this
+        this.mouseListener().setUseCapture(useCapture).setIsListening(aBool);
+        return this;
     }
 
     // --- mouse events ---
@@ -346,12 +346,12 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onMouseDown (event) {
-        const methodName = Mouse.shared().downMethodNameForEvent(event)
+        const methodName = Mouse.shared().downMethodNameForEvent(event);
         if (methodName !== "onMouseDown") {
-            this.logDebug(".onMouseDown calling: ", methodName)
-            this.invokeMethodNameForEvent(methodName, event)
+            this.logDebug(".onMouseDown calling: ", methodName);
+            this.invokeMethodNameForEvent(methodName, event);
         }
-        return true
+        return true;
     }
 
     /**
@@ -360,12 +360,12 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onMouseUp (event) {
-        const methodName = Mouse.shared().upMethodNameForEvent(event)
+        const methodName = Mouse.shared().upMethodNameForEvent(event);
         if (methodName !== "onMouseUp") {
-            this.logDebug(".onMouseUp calling: ", methodName)
-            this.invokeMethodNameForEvent(methodName, event)
+            this.logDebug(".onMouseUp calling: ", methodName);
+            this.invokeMethodNameForEvent(methodName, event);
         }
-        return true
+        return true;
     }
 
     // --- registering for keyboard events ---
@@ -375,7 +375,7 @@
      * @returns {boolean} True if registered, false otherwise
      */
     isRegisteredForKeyboard () {
-        return this.keyboardListener().isListening()
+        return this.keyboardListener().isListening();
     }
 
     /**
@@ -384,19 +384,19 @@
      * @param {boolean} useCapture - Whether to use event capture
      * @returns {ListenerDomView} The current instance
      */
-    setIsRegisteredForKeyboard (aBool, useCapture=false) {
-        this.keyboardListener().setUseCapture(useCapture).setIsListening(aBool)
+    setIsRegisteredForKeyboard (aBool, useCapture = false) {
+        this.keyboardListener().setUseCapture(useCapture).setIsListening(aBool);
 
-        const e = this.element()
+        const e = this.element();
         if (aBool) {
-            DomView.setTabCount(DomView.tabCount() + 1)
-            e.tabIndex = DomView.tabCount()  // need this in order for focus to work on BrowserColumn?
+            DomView.setTabCount(DomView.tabCount() + 1);
+            e.tabIndex = DomView.tabCount();  // need this in order for focus to work on BrowserColumn?
             //this.setCssProperty("outline", "none"); // needed?
         } else {
-            delete e.tabindex
+            delete e.tabindex;
         }
 
-        return this
+        return this;
     }
 
     // --- keyboard events ---
@@ -428,12 +428,12 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onKeyUp (event) {
-        let shouldPropogate = true
+        let shouldPropogate = true;
         //this.logDebug(" onKeyUp ", event._id)
-        const methodName = SvKeyboard.shared().upMethodNameForEvent(event)
+        const methodName = SvKeyboard.shared().upMethodNameForEvent(event);
         //console.log(this.svTypeId() + " onKeyUp methodName: ", methodName)
-        shouldPropogate = this.invokeMethodNameForEvent(methodName, event)
-        return shouldPropogate
+        shouldPropogate = this.invokeMethodNameForEvent(methodName, event);
+        return shouldPropogate;
     }
 
     // --- registering for focus / blur events ---
@@ -443,7 +443,7 @@
      * @returns {boolean} True if registered, false otherwise
      */
     isRegisteredForFocus () {
-        return this.focusListener().isListening()
+        return this.focusListener().isListening();
     }
 
     /**
@@ -453,10 +453,10 @@
      */
     setIsRegisteredForFocus (aBool) {
         if (aBool === false && !this.hasListenerNamed("FocusListener")) { // todo: clean this up
-            return
+            return;
         }
-        this.focusListener().setIsListening(aBool)
-        return this
+        this.focusListener().setIsListening(aBool);
+        return this;
     }
 
     // --- focus events ---
@@ -467,7 +467,7 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onFocusIn (/*event*/) {
-        return true
+        return true;
     }
 
     /**
@@ -476,7 +476,7 @@
      * @returns {boolean} True to continue event propagation, false otherwise
      */
     onFocusOut (/*event*/) {
-        return true
+        return true;
     }
 
     /**
@@ -487,9 +487,9 @@
     onFocus (/*event*/) {
         //console.log(this.svTypeId() + " onFocus")
         this.willAcceptFirstResponder();
-        // subclasses can override 
+        // subclasses can override
         //this.logDebug(" onFocus")
-        return true
+        return true;
     }
 
     /**
@@ -500,9 +500,9 @@
     onBlur (/*event*/) {
         //console.log(this.svTypeId() + " onBlur")
         this.didReleaseFirstResponder();
-        // subclasses can override 
+        // subclasses can override
         //this.logDebug(" onBlur")
-        return true
+        return true;
     }
 
     // --- registering for clipboard events ---
@@ -512,7 +512,7 @@
      * @returns {boolean} True if registered, false otherwise.
      */
     isRegisteredForClipboard () {
-        return this.clipboardListener().isListening()
+        return this.clipboardListener().isListening();
     }
 
     /**
@@ -521,8 +521,8 @@
      * @returns {ListenerDomView} The current instance.
      */
     setIsRegisteredForClipboard (aBool) {
-        this.clipboardListener().setIsListening(aBool)
-        return this
+        this.clipboardListener().setIsListening(aBool);
+        return this;
     }
-        
+
 }.initThisClass());

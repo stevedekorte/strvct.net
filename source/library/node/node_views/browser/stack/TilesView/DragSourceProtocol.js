@@ -9,7 +9,7 @@
  */
 
 (class DragSourceProtocol extends Protocol {
-    
+
     // -- messages sent by DragView to the parent/owner of the view it's dragging ---
 
     /**
@@ -83,6 +83,6 @@
      */
     acceptsDropHover (dragView) {
     }
-    
+
 }).initThisProtocol();
 

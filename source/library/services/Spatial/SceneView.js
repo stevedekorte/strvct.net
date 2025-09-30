@@ -10,7 +10,7 @@
  * @classdesc Represents a 3D scene view using Babylon.js
  */
 (class SceneView extends NodeView {
-    
+
     initPrototypeSlots () {
         this.setElementType("canvas");
         /**
@@ -99,15 +99,15 @@
      * @returns {ButtonView} The created close button view
      */
     newCloseButtonView () {
-        const v = ButtonView.clone().setElementClassName("ImageCloseButton")
-        v.setDisplay("flex")
-        v.setPosition("absolute")
-        v.setTitleIsVisible(false)
-        v.setTopPx(0)
-        v.setRightPx(0)
-        v.setTarget(this).setAction("close")
-        v.setIconName("close")
-        return v
+        const v = ButtonView.clone().setElementClassName("ImageCloseButton");
+        v.setDisplay("flex");
+        v.setPosition("absolute");
+        v.setTitleIsVisible(false);
+        v.setTopPx(0);
+        v.setRightPx(0);
+        v.setTarget(this).setAction("close");
+        v.setIconName("close");
+        return v;
     }
 
     /**
@@ -116,7 +116,7 @@
      * @throws {Error} Always throws an error as this method shouldn't be called
      */
     setIsRegisteredForBrowserDrop (aBool) {
-        throw new Error("shouldn't be called")
+        throw new Error("shouldn't be called");
     }
 
     /**
@@ -125,8 +125,8 @@
      * @returns {SceneView} The SceneView instance
      */
     setIsEditable (aBool) {
-        this.closeButtonView().setIsDisplayHidden(!aBool)
-        return this
+        this.closeButtonView().setIsDisplayHidden(!aBool);
+        return this;
     }
 
     /**
@@ -136,47 +136,47 @@
      */
     setEditable (aBool) {
         // to avoid editable content?
-        return this
+        return this;
     }
-    
+
     /**
      * @description Checks if the view accepts drops
      * @returns {Boolean} Always returns false
      */
     acceptsDrop () {
-        return false
+        return false;
     }
 
     /**
      * @description Collapses the view
      */
     collapse () {
-        this.closeButtonView().setOpacity(0).setTarget(null)
-        this.setOpacity(0)
-		
-        this.setWidth("0px")
-		
-        this.setPaddingLeftPx(0)
-        this.setPaddingRightPx(0)
-		
-        this.setMarginLeft(0)
-        this.setMarginRightPx(0)
+        this.closeButtonView().setOpacity(0).setTarget(null);
+        this.setOpacity(0);
+
+        this.setWidth("0px");
+
+        this.setPaddingLeftPx(0);
+        this.setPaddingRightPx(0);
+
+        this.setMarginLeft(0);
+        this.setMarginRightPx(0);
     }
-    
+
     /**
      * @description Closes the view with animation
      */
     close () {
-        const seconds = 0.3
-		
-        this.collapse()
-        
-        this.addTimeout( () => { 
-            this.closeButtonView().hideDisplay()
-            const parentView = this.parentView()
-            this.removeFromParentView()
-            parentView.scheduleSyncToNode()
-        }, seconds * 1000)
+        const seconds = 0.3;
+
+        this.collapse();
+
+        this.addTimeout(() => {
+            this.closeButtonView().hideDisplay();
+            const parentView = this.parentView();
+            this.removeFromParentView();
+            parentView.scheduleSyncToNode();
+        }, seconds * 1000);
     }
 
     /**
@@ -204,14 +204,14 @@
     async setupEngine () {
         const engine = new BABYLON.Engine(this.canvas(), true);
         this.setEngine(engine);
-                    
+
         // Render loop
         engine.runRenderLoop(function () {
             scene.render();
         });
-        
+
         // Resize the engine on window resize
-        window.addEventListener('resize', function () {
+        window.addEventListener("resize", function () {
             engine.resize();
         });
     }
@@ -224,7 +224,7 @@
         this.setScene(scene);
 
         const c = 0.5;
-        var blueprintColor = new BABYLON.Color4(0.2*c, 0.6*c, 0.8*c, 1); // Blueprint blue color
+        var blueprintColor = new BABYLON.Color4(0.2 * c, 0.6 * c, 0.8 * c, 1); // Blueprint blue color
         scene.clearColor = blueprintColor;
     }
 
@@ -232,7 +232,7 @@
      * @description Sets up the Babylon.js camera
      */
     async setupCamera () {
-        const camera = new BABYLON.FreeCamera('camera', new BABYLON.Vector3(-500, 200, 800), this.scene());
+        const camera = new BABYLON.FreeCamera("camera", new BABYLON.Vector3(-500, 200, 800), this.scene());
         this.setCamera(camera);
 
         camera.attachControl(this.canvas(), true);
@@ -243,8 +243,8 @@
      * @description Sets up the Babylon.js light
      */
     async setupLight () {
-        const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene());
-    }    
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), this.scene());
+    }
 
     /**
      * @description Fetches an array buffer for a given file path
@@ -264,7 +264,7 @@
         const filePaths = ["main house.obj", "main house.mtl"];
 
         const arrayBuffers = this.map(async (path) => {
-            return this.arrayBufferForFilePath(path)
+            return this.arrayBufferForFilePath(path);
         });
 
         // create new file list object, and add the files
@@ -272,10 +272,10 @@
         for (let i = 0; i < files.length; i++) {
             fileList.AddFile (files[i], new Uint8Array (arrayBuffers[i]));
         }
-        
+
         // convert file list to assimp json
-        const result = ajs.ConvertFileList (fileList, 'assjson');
-        
+        const result = ajs.ConvertFileList (fileList, "assjson");
+
         // check if the conversion succeeded
         if (!result.IsSuccess () || result.FileCount () == 0) {
             resultDiv.innerHTML = result.GetErrorCode ();
@@ -289,37 +289,36 @@
 
         // --------------------------------------------------------------------
         const redMaterial = new BABYLON.StandardMaterial("redMaterial", scene);
-        redMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0); 
+        redMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0);
 
         const roofMaterial = new BABYLON.StandardMaterial("roofMaterial", scene);
-        roofMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4); 
+        roofMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4);
 
         const windowSlatsMaterial = new BABYLON.StandardMaterial("windowSlatsMaterial", scene);
-        windowSlatsMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7); 
+        windowSlatsMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7);
 
         const stoneMaterial = new BABYLON.StandardMaterial("stoneMaterial", scene);
-        stoneMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7); 
+        stoneMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7);
 
-        
 
         const wallsMaterial = new BABYLON.StandardMaterial("wallsMaterial", scene);
-        wallsMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1); 
+        wallsMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1);
 
         const deckMaterial = new BABYLON.StandardMaterial("deckMaterial", scene);
         deckMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1); // A shade of brown
 
 
         const windowMaterial = new BABYLON.StandardMaterial("windowMaterial", scene);
-        windowMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0); 
+        windowMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         windowMaterial.alpha = 0.4;
 
         const windowFrameMaterial = new BABYLON.StandardMaterial("windowFrameMaterial", scene);
-        windowFrameMaterial.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8); 
+        windowFrameMaterial.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8);
 
         const grassMaterial = new BABYLON.StandardMaterial("grassMaterial", scene);
-        grassMaterial.diffuseColor = new BABYLON.Color3(0, 0.3, 0); 
+        grassMaterial.diffuseColor = new BABYLON.Color3(0, 0.3, 0);
         grassMaterial.specularColor = new BABYLON.Color3(0, 0, 0); // Minimal specular highlights
-        grassMaterial.specularPower = 128; 
+        grassMaterial.specularPower = 128;
 
 
         //grassMaterial.diffuseTexture = new BABYLON.Texture("Grass_Light_Green.jpg", scene);
@@ -352,7 +351,7 @@
             }
 
             /*
-            materialindex 
+            materialindex
             1= decks, chimney
             2: stone wall
             3: grass
@@ -361,17 +360,17 @@
             6: window slats
             7: roof
             */
-            //mesh.material = wallsMaterial;    
+            //mesh.material = wallsMaterial;
 
 
             if (meshData.materialindex === 0) {
                 console.log("meshData.materialindex:", meshData.materialindex);
 
-                //mesh.material = wallsMaterial;    
+                //mesh.material = wallsMaterial;
             } else if (meshData.materialindex === 1) {
-                mesh.material = deckMaterial;  
+                mesh.material = deckMaterial;
             } else if (meshData.materialindex === 2) {
-                mesh.material = stoneMaterial;  
+                mesh.material = stoneMaterial;
             } else if (meshData.materialindex === 3) {
                 mesh.material = grassMaterial;
             } else if (meshData.materialindex === 4) {
@@ -382,17 +381,17 @@
                 mesh.material = windowSlatsMaterial;
             } else if (meshData.materialindex === 7) {
                 //mesh.material = windowFrameMaterial;
-                mesh.material = roofMaterial
+                mesh.material = roofMaterial;
             } else {
                 console.log("meshData.materialindex:", meshData.materialindex);
                 //mesh.material = redMaterial
             }
-            
+
         });
 
 
         scene.meshes.forEach(function (mesh) {
-            if(mesh.material){
+            if (mesh.material) {
                 mesh.material.backFaceCulling = false;
             }
         });
@@ -415,7 +414,7 @@
         event.preventDefault(); // Prevent the default scroll behavior
 
         const delta = Math.sign(event.deltaY);
-        const speed = 5; 
+        const speed = 5;
         this.camera().position.addInPlace(this.camera().getForwardRay().direction.scale(delta * speed));
         //}, { passive: false }); // Set passive to false to allow preventDefault
     }
@@ -449,5 +448,5 @@
         }
         //}, { passive: false }); // Prevent the default scroll behavior
     }
-    
+
 }.initThisClass());

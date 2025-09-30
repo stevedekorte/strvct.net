@@ -8,9 +8,9 @@
  * @class Devices
  * @extends ProtoClass
  * @classdesc Devices class for setting up standard devices.
- * 
- * Right now, this just sets up the standard devices. 
- * Later, we can using it for 
+ *
+ * Right now, this just sets up the standard devices.
+ * Later, we can using it for
  *     - discovering
  *     - organizing
  *     - inspecting
@@ -19,16 +19,16 @@
  *     etc.
  */
 (class Devices extends ProtoClass {
-    
+
     /**
      * @static
      * @description Initializes the class.
      * @category Initialization
      */
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
-    
+
     /**
      * @description Initializes the prototype slots.
      * @category Initialization
@@ -88,9 +88,9 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        this.setupIfNeeded() 
-        return this
+        super.init();
+        this.setupIfNeeded();
+        return this;
     }
 
     /**
@@ -105,13 +105,13 @@
         }
 
         if (!this.isSetup()) {
-            Mouse.shared()
-            SvKeyboard.shared()
-            TouchScreen.shared()
+            Mouse.shared();
+            SvKeyboard.shared();
+            TouchScreen.shared();
             //GamePadManager.shared()
-            this.setIsSetup(true)
+            this.setIsSetup(true);
         }
-        return this
+        return this;
     }
 
     /**
@@ -121,11 +121,11 @@
      */
     currentTouchOrMouseEvent () {
         // needed?
-        const me = Mouse.shared().currentEvent()
-        const te = TouchScreen.shared().currentEvent()
-        const es = [me, te]
-        es.filter(e => !TypeError.isNullOrUndefined(e))
-        return es.min(e => e.timeStamp)
+        const me = Mouse.shared().currentEvent();
+        const te = TouchScreen.shared().currentEvent();
+        const es = [me, te];
+        es.filter(e => !TypeError.isNullOrUndefined(e));
+        return es.min(e => e.timeStamp);
     }
-    
+
 }.initThisClass());

@@ -3,7 +3,7 @@
  * @class SvOptionsNodeTile
  * @extends TitledTile
  * @classdesc View for SvOptionsNode
- * 
+ *
  * SvOptionsNode -> SvOptionsNodeTile
  *     SvOption -> SvSingleOptionTile
  *     SvMultiOption -> SvMultiOptionTile
@@ -12,7 +12,7 @@
 "use strict";
 
 (class SvOptionsNodeTile extends TitledTile {
-    
+
     /*
     initPrototypeSlots () {
     }
@@ -32,12 +32,12 @@
      * @category Synchronization
      */
     syncFromNode () {
-        super.syncFromNode()
+        super.syncFromNode();
 
         /*
             We need a way of enabling/dissabling the options
             depending on whether the node value is editable.
-            We still want the subnodes to be visible, 
+            We still want the subnodes to be visible,
             we just don't want to allow the selection to chage.
         */
 
@@ -46,7 +46,7 @@
         } else {
         }
         */
-        return this
+        return this;
     }
-	
+
 }.initThisClass());

@@ -9,7 +9,7 @@
  * Provides methods for serializing to and parsing from cookie strings.
  */
 (class WbCookie extends ProtoClass {
-    
+
     /**
      * @description Initializes the prototype slots for the class.
      * @category Initialization
@@ -57,7 +57,7 @@
             slot.setSlotType("WbCookieManager");
         }
     }
-    
+
     /**
      * @description Initializes the WbCookie instance.
      * @returns {WbCookie} The initialized instance.
@@ -81,35 +81,35 @@
      */
     cookieString () {
         let cookieStr = `${encodeURIComponent(this.name())}=${encodeURIComponent(this.value())}`;
-        
+
         if (this.maxAge() !== null) {
             cookieStr += `; Max-Age=${this.maxAge()}`;
         }
-        
+
         if (this.expires() !== null) {
             cookieStr += `; Expires=${this.expires().toUTCString()}`;
         }
-        
+
         if (this.path()) {
             cookieStr += `; Path=${this.path()}`;
         }
-        
+
         if (this.domain()) {
             cookieStr += `; Domain=${this.domain()}`;
         }
-        
+
         if (this.secure()) {
-            cookieStr += `; Secure`;
+            cookieStr += "; Secure";
         }
-        
+
         if (this.sameSite()) {
             cookieStr += `; SameSite=${this.sameSite()}`;
         }
-        
+
         if (this.httpOnly()) {
-            cookieStr += `; HttpOnly`;
+            cookieStr += "; HttpOnly";
         }
-        
+
         return cookieStr;
     }
 
@@ -120,46 +120,46 @@
      * @category Cookie Parsing
      */
     setCookieString (cookieString) {
-        const parts = cookieString.split(';').map(part => part.trim());
-        
+        const parts = cookieString.split(";").map(part => part.trim());
+
         // First part is always name=value
         if (parts.length > 0) {
-            const [name, ...valueParts] = parts[0].split('=');
+            const [name, ...valueParts] = parts[0].split("=");
             this.setName(decodeURIComponent(name));
-            this.setValue(decodeURIComponent(valueParts.join('=')));
+            this.setValue(decodeURIComponent(valueParts.join("=")));
         }
-        
+
         // Parse additional attributes
         for (let i = 1; i < parts.length; i++) {
             const part = parts[i];
-            const [key, ...valueParts] = part.split('=');
-            const value = valueParts.join('=');
-            
+            const [key, ...valueParts] = part.split("=");
+            const value = valueParts.join("=");
+
             switch (key.toLowerCase()) {
-                case 'max-age':
+                case "max-age":
                     this.setMaxAge(parseInt(value));
                     break;
-                case 'expires':
+                case "expires":
                     this.setExpires(new Date(value));
                     break;
-                case 'path':
+                case "path":
                     this.setPath(value);
                     break;
-                case 'domain':
+                case "domain":
                     this.setDomain(value);
                     break;
-                case 'secure':
+                case "secure":
                     this.setSecure(true);
                     break;
-                case 'samesite':
+                case "samesite":
                     this.setSameSite(value);
                     break;
-                case 'httponly':
+                case "httponly":
                     this.setHttpOnly(true);
                     break;
             }
         }
-        
+
         return this;
     }
 
@@ -170,7 +170,7 @@
      * @category Cookie Parsing
      */
     static fromCookieString (cookieString) {
-        
+
         const cookie = this.clone();
         cookie.setCookieString(cookieString);
         return cookie;
@@ -192,15 +192,15 @@
         // We'll preserve the path and domain to ensure we're deleting the right cookie
 
         let deleteStr = `${encodeURIComponent(this.name())}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-        
+
         if (this.path()) {
             deleteStr += `; Path=${this.path()}`;
         }
-        
+
         if (this.domain()) {
             deleteStr += `; Domain=${this.domain()}`;
         }
-        
+
         return deleteStr;
     }
 

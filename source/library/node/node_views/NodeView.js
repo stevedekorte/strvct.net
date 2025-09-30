@@ -9,7 +9,7 @@
  * It handles the synchronization between the node model and its visual representation.
  */
 (class NodeView extends StyledDomView {
-    
+
     /**
      * @description Initializes the prototype slots for the NodeView.
      */
@@ -19,8 +19,8 @@
          * @description The node associated with this view.
          */
         {
-            const slot = this.newSlot("node", null); 
-            slot.setSlotType("SvNode")
+            const slot = this.newSlot("node", null);
+            slot.setSlotType("SvNode");
         }
 
         /**
@@ -65,12 +65,12 @@
      * @returns {NodeView} The current instance.
      */
     init () {
-        super.init()
-        this.setNodeObservation(SvNotificationCenter.shared().newObservation().setObserver(this))
-        this.updateSubnodeToSubviewMap()
-        return this
+        super.init();
+        this.setNodeObservation(SvNotificationCenter.shared().newObservation().setObserver(this));
+        this.updateSubnodeToSubviewMap();
+        return this;
     }
-    
+
     /**
      * @description Sets the node for this view.
      * @param {SvNode} aNode - The node to set.
@@ -85,7 +85,7 @@
             this.updateElementIdLabel();
             this.didChangeNode();
         }
-		
+
         return this;
     }
 
@@ -108,21 +108,21 @@
      * @returns {NodeView} The current instance.
      */
     updateElementIdLabel () {
-        this.element().id = this.svDebugId()
-        return this
+        this.element().id = this.svDebugId();
+        return this;
     }
-    
+
     /**
      * @description Handles changes to the node.
      * @returns {NodeView} The current instance.
      */
     didChangeNode () {
         if (this.node()) {
-            this.scheduleSyncFromNode()
+            this.scheduleSyncFromNode();
         }
-        return this
+        return this;
     }
- 
+
     /**
      * @description Starts watching the node for changes.
      * @returns {NodeView} The current instance.
@@ -133,7 +133,7 @@
         }
         return this;
     }
-       
+
     /**
      * @description Stops watching the node for changes.
      * @returns {NodeView} The current instance.
@@ -142,9 +142,9 @@
         if (this.node()) {
             this.nodeObservation().stopWatching();
         }
-        return this
+        return this;
     }
-    
+
     /**
      * @description Prepares the view for removal.
      * @returns {NodeView} The current instance.
@@ -154,7 +154,7 @@
         this.stopWatchingNode();
         return this;
     }
-    
+
     /**
      * @description Gets the prototype for subviews.
      * @returns {Class} The subview prototype.
@@ -162,7 +162,7 @@
     subviewProto () {
         if (this.node()) {
             const vc = this.node().nodeTileClass();
-            if (vc) { 
+            if (vc) {
                 return vc;
             }
         }
@@ -186,10 +186,10 @@
     updateSubnodeToSubviewMap () {
         const dict = {};
         this.subviews().forEach(sv => {
-            if (sv.node) { 
+            if (sv.node) {
                 dict.atSlotPut(sv.node(), sv);
-            } 
-        })
+            }
+        });
         this._subnodeToSubview = dict;
         return this;
     }
@@ -201,7 +201,7 @@
      */
     subviewProtoForSubnode (aSubnode) {
         let proto = this.overrideSubviewProto();
-		
+
         if (!proto) {
 		    proto = aSubnode.nodeViewClass();
         }
@@ -209,7 +209,7 @@
         if (!proto) {
             proto = this.defaultSubviewProto();
         }
-				
+
         return proto;
     }
 
@@ -259,11 +259,11 @@
             if (depth > 0) {
                 subnode.subnodes().forEach(sub => flattened.push(sub));
             }
-        })
+        });
 
         return flattened;
     }
-    
+
     /**
      * @description Gets the visible subnodes.
      * @returns {Array<SvNode>} The visible subnodes.
@@ -298,7 +298,7 @@
         Object.keys(dict).forEach(k => {
             const v = dict[k];
             el.style.setProperty(k, v);
-        })
+        });
     }
 
     /**
@@ -309,7 +309,7 @@
         let subnodesDidChange = false;
         const node = this.node();
 
-        if (!node) { 
+        if (!node) {
             if (this.subviews().length > 0) {
                 this.removeAllSubviews();
                 return true;
@@ -318,34 +318,34 @@
         }
 
         this.syncCssFromNode();
-        
+
         node.prepareToSyncToView();
         this.updateSubnodeToSubviewMap();
-       
+
         const newSubviews = [];
-        
-        if(this.visibleSubnodes().hasDuplicates()) {
+
+        if (this.visibleSubnodes().hasDuplicates()) {
             throw new Error("visibleSubnodes has duplicates");
         }
-        
+
         this.visibleSubnodes().forEach(subnode => {
             let subview = undefined;
 
-            subview = this.subviewForNode(subnode)
+            subview = this.subviewForNode(subnode);
 
             if (!subview) {
-                subview = this.newSubviewForSubnode(subnode)
+                subview = this.newSubviewForSubnode(subnode);
             }
 
             if (Type.isNull(subview)) {
-                throw new Error("null subview")
+                throw new Error("null subview");
             }
-            
-            newSubviews.push(subview)
+
+            newSubviews.push(subview);
         });
 
         if (!newSubviews.isEqual(this.subviews())) {
-            subnodesDidChange = true
+            subnodesDidChange = true;
             this.removeAllSubviews();
             this.addSubviews(newSubviews);
             this.updateSubnodeToSubviewMap();
@@ -374,11 +374,11 @@
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue);
 
-        if (aSlot.syncsToNode()) { 
+        if (aSlot.syncsToNode()) {
             this.scheduleSyncToNode();
         }
     }
-    
+
     /**
      * @description Syncs the view to the node.
      * @returns {NodeView} The current instance.
@@ -399,7 +399,7 @@
         assert(aNote);
         this.scheduleSyncFromNode();
     }
-    
+
     /**
      * @description Schedules a sync to the node.
      * @param {number} [priority=0] - The priority of the sync.
@@ -412,11 +412,11 @@
             this.unscheduleSyncFromNode();
             return this;
         }
-        
+
         SvSyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", priority);
         return this;
     }
-    
+
     /**
      * @description Checks if a sync to node is scheduled.
      * @returns {boolean} True if a sync to node is scheduled, false otherwise.
@@ -465,7 +465,7 @@
     logName () {
         return this.svType();
     }
-    
+
     /**
      * @description Logs a message.
      * @param {string} msg - The message to log.
@@ -476,7 +476,7 @@
         console.log(s);
         return this;
     }
-    
+
     /**
      * @description Handles visibility changes.
      * @returns {NodeView} The current instance.
@@ -490,7 +490,7 @@
 
 	    return this;
     }
-    
+
     /**
      * @description Sets the value of the view.
      * @param {*} newValue - The new value to set.
@@ -500,7 +500,7 @@
         this.setInnerHtml(newValue);
         return this;
     }
-    
+
     /**
      * @description Gets the value of the view.
      * @returns {*} The value of the view.
@@ -532,7 +532,7 @@
         }
         return null;
     }
-    
+
     /**
      * @description Gets the description of the node.
      * @returns {string|null} The description of the node, or null if there is no node.
@@ -562,7 +562,7 @@
     svDebugId () {
         let s = "view:'" + this.svTypeId() + "'";
         s += " node:'" + this.nodeId() + "'";
-        s += " themeClass:'" +this.themeClassName() + "'";
+        s += " themeClass:'" + this.themeClassName() + "'";
         if (this.node()) {
             s += " nodeTileClassName:'" + this.node().nodeTileClassName() + "'";
         }

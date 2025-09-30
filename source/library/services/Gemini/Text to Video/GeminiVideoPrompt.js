@@ -2,7 +2,7 @@
 
 /*
     GeminiVideoPrompt
-    
+
     A class to handle calls to Google's Gemini Text to Video API (Veo 3)
     for generating videos from text prompts.
 */
@@ -178,7 +178,7 @@
         const frameRate = this.frameRate();
         */
         const status = this.status();
-    
+
         let s = `${prompt}\n${duration}s${audioString}, ${this.ttvModel()}`;
         if (status.length > 0) {
             s += `\n${status}`;
@@ -196,12 +196,12 @@
     apiKey () {
         return this.service().apiKeyOrUserAuthToken();
     }
-    
+
     // Get project ID from the Gemini service
     projectId () {
         return this.service().projectId();
     }
-    
+
     // Get location ID (region) from the Gemini service
     locationId () {
         return this.service().locationId();
@@ -211,7 +211,7 @@
         return true;
     }
 
-    apiUrl () {        
+    apiUrl () {
         if (!this.projectId()) {
             this.setStatus("Configuration error");
             this.setError("No project ID available. Please check GeminiService configuration.");
@@ -224,20 +224,20 @@
     activeApiUrl () {
         let url = this.apiUrl();
         if (this.needsProxy()) {
-          url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+            url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
         }
         return url;
-      }
+    }
 
     // Build the request body for the Gemini Video API
     requestBody () {
         // Base structure for Vertex AI LLM API
-        const endpoint = `projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.ttvModel()}`
+        const endpoint = `projects/${this.projectId()}/locations/${this.locationId()}/publishers/google/models/${this.ttvModel()}`;
         const body = {
             "endpoint": endpoint,
             "instances": [
                 {
-                "prompt": this.prompt()
+                    "prompt": this.prompt()
                 }
             ],
             "parameters": {
@@ -255,7 +255,7 @@
 
         // TODO: Add reference image/video data if provided
         // looks like it should go in instances info
-            
+
 
         return body;
     }
@@ -271,13 +271,13 @@
     // Step 1: Start the video generation process
     async startGeneration () {
         this.clearStatus();
-        
+
         this.setStatus("Requesting generation...");
         this.setError(null); // Clear any previous errors
         this.sendDelegateMessage("onVideoPromptStart", [this]);
 
         // For this API, we just need a text prompt - image data is optional
-        
+
         const body = this.requestBody();
 
         const apiUrl = this.activeApiUrl();
@@ -293,14 +293,14 @@
             };
 
             this.setFetchOptionsString([
-                "url:", apiUrl, 
-                "headers:", JSON.stringify(fetchOptions.headers, null, 2), 
+                "url:", apiUrl,
+                "headers:", JSON.stringify(fetchOptions.headers, null, 2),
                 "body:", JSON.stringify(body, null, 2)].join("\n\n")
             );
 
             // Make the initial request to start the generation process
             const response = await fetch(apiUrl, fetchOptions);
-            
+
             if (!response.ok) {
                 const errorText = await response.text();
                 const errorMessage = `API error: ${response.status} ${response.statusText} - ${errorText}`;
@@ -309,10 +309,10 @@
                 this.sendDelegateMessage("onVideoPromptError", [this]);
                 return null;
             }
-            
+
             // Parse the operation response
             //this.setStatus("Getting Operation ID...");
-            const operationData = await response.json();                
+            const operationData = await response.json();
             //this.setStatus("Got operation ID: " + operationData.name.slice(0, 8) + "...");
             this.setStatus("Generating...");
 
@@ -328,14 +328,14 @@
             return null;
         }
     }
-    
+
     // Legacy method for compatibility
     async sendRequest () {
         return this.startGeneration();
     }
 
     host () {
-        return `${this.locationId()}-aiplatform.googleapis.com`
+        return `${this.locationId()}-aiplatform.googleapis.com`;
     }
 
     // Check the status of a long-running operation
@@ -370,9 +370,9 @@
                 this.sendDelegateMessage("onVideoPromptError", [this]);
                 return null;
             }
-            
+
             const data = await response.json();
-            
+
             // Check for percentage completion if available in metadata
             if (data.done) {
 
@@ -415,7 +415,7 @@
                 }
                 this.waitAndCheckAgainIfNeeded();
             }
-            
+
         } catch (error) {
             const errorMessage = `Operation error: ${error.message}`;
             this.setStatus("Status check failed");
@@ -430,7 +430,7 @@
         if (this.videoDataUrl() || this.error()) {
             return;
         }
-        
+
         if (this.attempts() < this.maxAttempts()) {
             this.addTimeout(() => {
                 this.checkOperationStatus();

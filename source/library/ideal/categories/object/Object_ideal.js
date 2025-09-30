@@ -2,20 +2,20 @@
 
 /**
  * Some added state and behavior on Object prototype.
- * 
+ *
  * Note:Object keys always get turned into strings.
- * 
+ *
  * @module library.ideal.object
  * @class Object_ideal
  * @extends Object
- * 
+ *
  */
 
 (class Object_ideal extends Object {
-    
+
     static newSubclassWithName (className) {
         const SuperClass = this;
-        
+
         const NewClass = {
             [className]: class extends SuperClass {
                 constructor (...args) {
@@ -23,9 +23,9 @@
                 }
             }
         }[className];
-        
+
         SvGlobals.globals()[className] = NewClass;
-        
+
         return NewClass;
     }
 
@@ -38,16 +38,16 @@
     }
 
     static isValidIdentifier (name) {
-        const reservedWords = ['class', 'function', 'import', 'export', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default', 'break',
-     'continue', 'return', 'try', 'catch', 'finally', 'throw', 'new', 'this', 'super', 'extends', 'implements', 'interface', 'package', 'private', 'protected',
-    'public', 'static'];
-  
+        const reservedWords = ["class", "function", "import", "export", "var", "let", "const", "if", "else", "for", "while", "do", "switch", "case", "default", "break",
+            "continue", "return", "try", "catch", "finally", "throw", "new", "this", "super", "extends", "implements", "interface", "package", "private", "protected",
+            "public", "static"];
+
         // Check if it's a valid identifier pattern
         if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) return false;
-  
+
         // Check if it's a reserved word
         if (reservedWords.includes(name)) return false;
-  
+
         return true;
     }
 
@@ -55,7 +55,7 @@
         assert(this.isClass(), "addStaticMethod must be called on a class");
         assert(name.isString(), "name must be a string");
         assert(fn.isFunction(), "fn must be a function");
-        
+
         if (!this.isValidIdentifier(name)) {
             throw new Error("invalid class method name: " + name);
         }
@@ -124,7 +124,7 @@
         }
         throw new Error("unable to identify");
     }
- 
+
     /**
      * Returns the full type name of this object.
      * @returns {string} The full type name.
@@ -133,7 +133,7 @@
     fullTypeName () {
         return this.svType() + " " + this.typeCategory();
     }
- 
+
     /**
      * Performs a method on this object.
      * @param {string} methodName - The name of the method to perform.
@@ -151,7 +151,7 @@
         }
         throw new Error(this.svTypeId() + " does not respond to '" + methodName + "'");
     }
- 
+
     /**
      * Performs a method on this object if it responds to it.
      * @param {string} methodName - The name of the method to perform.
@@ -167,7 +167,7 @@
             return f.call(this, arg1, arg2, arg3);
         }
     }
- 
+
     /**
      * Gets the value of a slot.
      * @param {string|symbol} key - The key of the slot.
@@ -177,7 +177,7 @@
     atSlot (key) {
         return this[key];
     }
- 
+
     /**
      * Sets the value of a slot.
      * @param {string|symbol} key - The key of the slot.
@@ -189,7 +189,7 @@
         this[key] = value;
         return this;
     }
- 
+
     /**
      * Removes a slot from this object.
      * @param {string|symbol} key - The key of the slot to remove.
@@ -200,7 +200,7 @@
         delete this[key];
         return this;
     }
-    
+
     /**
      * Maps over the object's own key-value pairs.
      * @param {Function} fn - The function to call for each key-value pair.
@@ -210,7 +210,7 @@
     ownKVMap (fn) {
         return Object.entries(this).map(entry => fn(entry[0], entry[1]));
     }
- 
+
     /**
      * Iterates over the object's own values.
      * @param {Function} fn - The function to call for each value.
@@ -218,10 +218,10 @@
      * @category Iteration
      */
     ownForEachValue (fn) {
-        Object.entries(this).forEach(entry => fn(entry[1])); 
+        Object.entries(this).forEach(entry => fn(entry[1]));
         return this;
     }
- 
+
     /**
      * Iterates over the object's own keys.
      * @param {Function} fn - The function to call for each key.
@@ -229,10 +229,10 @@
      * @category Iteration
      */
     ownForEachKey (fn) {
-        Object.entries(this).forEach(entry => fn(entry[0])); 
+        Object.entries(this).forEach(entry => fn(entry[0]));
         return this;
     }
- 
+
     /**
      * Iterates over the object's own key-value pairs.
      * @param {Function} fn - The function to call for each key-value pair.
@@ -240,10 +240,10 @@
      * @category Iteration
      */
     ownForEachKV (fn) {
-        Object.entries(this).forEach(entry => fn(entry[0], entry[1])); 
+        Object.entries(this).forEach(entry => fn(entry[0], entry[1]));
         return this;
     }
- 
+
     /**
      * Checks if this object is equal to another object.
      * @param {Object} anObject - The object to compare with.
@@ -259,14 +259,14 @@
         if (entries.length !== otherEntries.length) {
             return false;
         }
- 
+
         return entries.canDetect(entry => {
             const k = entry[0];
             const v = entry[1];
             return v !== anObject.getOwnProperty(k);
         });
     }
- 
+
     /**
      * Gets the value of an own property.
      * @param {string|symbol} key - The key of the property.
@@ -279,7 +279,7 @@
         }
         return undefined;
     }
- 
+
     /**
      * Gets the slot value path for debugging serialization/deserialization.
      * @param {string} slotName - The name of the slot.
@@ -290,12 +290,12 @@
     slotValuePath (slotName, entries = []) {
         const entry = [this.fullTypeName(), this.getOwnProperty(slotName)];
         entries.push(entry);
- 
+
         const proto = this.__proto__;
         if (proto) {
             return proto.slotValuePath.apply(proto, [slotName, entries]);
         }
- 
+
         return entries;
     }
 
@@ -356,7 +356,7 @@
 
     asCleanJson () {
         // We assume the receiver is being used as a JSON object,
-        // but it needs to have it's prototype slots removed. 
+        // but it needs to have it's prototype slots removed.
         // To do this, we:
         // 1. duplicate via JSON.stringify, and JSON.parse
         // 2. remove the prototype slots (which are not JSON compatible)
@@ -382,9 +382,9 @@
             return o;
         }
 
-        return cleanJson(dup);   
+        return cleanJson(dup);
     }
 
 }).initThisCategory();
 
-Object.prototype.initPrototypeSlots()
+Object.prototype.initPrototypeSlots();

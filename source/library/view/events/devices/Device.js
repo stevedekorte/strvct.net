@@ -10,7 +10,7 @@
  * @classdesc Represents a device.
  */
 (class Device extends ProtoClass {
-    
+
     /**
      * @description Initializes prototype slots for the Device class.
      * @private
@@ -25,8 +25,8 @@
      * @category Initialization
      */
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
 }.initThisClass());

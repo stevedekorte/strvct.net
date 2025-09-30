@@ -9,58 +9,58 @@
  */
 (class GroqService extends AiService {
 
-  /**
+    /**
    * @static
    * @description Initializes the class
    * @category Initialization
    */
-  static initClass () {
-    this.setIsSingleton(true);
-  }
+    static initClass () {
+        this.setIsSingleton(true);
+    }
 
-  serviceInfo () {
-    return {
-      "chatEndpoint": "https://api.groq.com/openai/v1/chat/completions"
-    };
-  }
+    serviceInfo () {
+        return {
+            "chatEndpoint": "https://api.groq.com/openai/v1/chat/completions"
+        };
+    }
 
-  /**
+    /**
    * @description Returns the JSON representation of available models
    * @returns {Array} An array of model objects
    * @category Model Management
    */
-  modelsJson () {
+    modelsJson () {
     // See: https://console.groq.com/docs/models
-    return [
-      {
-        "name": "openai/gpt-oss-120b",
-        "title": "Groq GPT OSS 120B",
-        "inputTokenLimit": 131072,
-        "outputTokenLimit": 32766  // though docs say 131072, API error says max is 32766
-      },
-      {
-        "name": "openai/gpt-oss-20b",
-        "title": "Groq GPT OSS 20B",
-        "inputTokenLimit": 131072,
-        "outputTokenLimit": 32766 
-      },
-      {
-        "name": "qwen/qwen3-32b",
-        "title": "Groq Qwen3 32B",
-        "inputTokenLimit": 131072,
-        "outputTokenLimit": 131072 
-      },
-      {
-        "name": "deepseek-r1-distill-llama-70b",
-        "title": "DeepSeek R1 Distill Llama 70B",
-        "inputTokenLimit": 128000,
-        "outputTokenLimit": 128000 // just a guess, not specified
-      },
-      /*
+        return [
+            {
+                "name": "openai/gpt-oss-120b",
+                "title": "Groq GPT OSS 120B",
+                "inputTokenLimit": 131072,
+                "outputTokenLimit": 32766  // though docs say 131072, API error says max is 32766
+            },
+            {
+                "name": "openai/gpt-oss-20b",
+                "title": "Groq GPT OSS 20B",
+                "inputTokenLimit": 131072,
+                "outputTokenLimit": 32766
+            },
+            {
+                "name": "qwen/qwen3-32b",
+                "title": "Groq Qwen3 32B",
+                "inputTokenLimit": 131072,
+                "outputTokenLimit": 131072
+            },
+            {
+                "name": "deepseek-r1-distill-llama-70b",
+                "title": "DeepSeek R1 Distill Llama 70B",
+                "inputTokenLimit": 128000,
+                "outputTokenLimit": 128000 // just a guess, not specified
+            },
+            /*
       {
         "name": "llama-3.1-405b-reasoning",
         "title": "Groq Llama 3.1 405B Reasoning",
-        "inputTokenLimit": 131072 
+        "inputTokenLimit": 131072
       }
       {
           "name": "llama-3.1-70b-versatile",
@@ -83,64 +83,64 @@
           "inputTokenLimit": 8192
       }
       */
-    ];
-  }
-    
-  /**
+        ];
+    }
+
+    /**
    * @description Initializes prototype slots
    * @category Initialization
    */
-  initPrototypeSlots () {
-  }
+    initPrototypeSlots () {
+    }
 
-  /**
+    /**
    * @description Initializes the service
    * @category Initialization
    */
-  init () {
-    super.init();
-  }
+    init () {
+        super.init();
+    }
 
-  /**
+    /**
    * @description Performs final initialization steps
    * @category Initialization
    */
-  finalInit () {
-    super.finalInit()
-    this.setTitle(this.svType().before("Service"));
-    this.setSystemRoleName("user"); // only replaced in outbound request json
-  }
+    finalInit () {
+        super.finalInit();
+        this.setTitle(this.svType().before("Service"));
+        this.setSystemRoleName("user"); // only replaced in outbound request json
+    }
 
-  /**
+    /**
    * @description Validates the API key
    * @param {string} s - The API key to validate
    * @returns {boolean} True if the API key is valid, false otherwise
    * @category Authentication
    */
-  validateKey (s) {
-    return s.startsWith("gsk_");
-  }
-
-  prepareToSendRequest (aRequest) {
-    const bodyJson = aRequest.bodyJson();
-    let messages = bodyJson.messages;
-
-    // remove initial system message and place it in the request json
-    
-    if (messages.length == 1 && messages[0].role === this.systemRoleName()) {
-      // if the last message is not a user message, we need to add a user message
-      const userMessage = {
-        role: this.userRoleName(),
-        content: "Please begin the conversation now."
-      }
-      messages.push(userMessage);
+    validateKey (s) {
+        return s.startsWith("gsk_");
     }
 
-    // remove messages with empy content
-    messages = messages.filter((message) => { return message.content.length > 0; });
+    prepareToSendRequest (aRequest) {
+        const bodyJson = aRequest.bodyJson();
+        let messages = bodyJson.messages;
 
-    // merge messages in order to ensure messages alternate between user and assistant roles
-    /*
+        // remove initial system message and place it in the request json
+
+        if (messages.length == 1 && messages[0].role === this.systemRoleName()) {
+            // if the last message is not a user message, we need to add a user message
+            const userMessage = {
+                role: this.userRoleName(),
+                content: "Please begin the conversation now."
+            };
+            messages.push(userMessage);
+        }
+
+        // remove messages with empy content
+        messages = messages.filter((message) => { return message.content.length > 0; });
+
+        // merge messages in order to ensure messages alternate between user and assistant roles
+        /*
     const newMessages = [];
     let lastRole = null;
     let mergedMessageCount = 0;
@@ -150,7 +150,7 @@
       }
       if (message.role === lastRole) {
         const lastMessage = newMessages.last();
-        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n" 
+        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n"
         lastMessage.content = lastMessage.content + "\n" + message.content;
       } else {
         newMessages.push(message);
@@ -159,15 +159,15 @@
       mergedMessageCount += 1;
     });
    */
-    bodyJson.messages = messages; // newMessages not needed
-    aRequest.setBodyJson(bodyJson);
+        bodyJson.messages = messages; // newMessages not needed
+        aRequest.setBodyJson(bodyJson);
 
-    /*
+        /*
     if (mergedMessageCount) {
       //console.log("AnthropicService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
     }
     */
-    return this;
-  }
+        return this;
+    }
 
 }.initThisClass());
