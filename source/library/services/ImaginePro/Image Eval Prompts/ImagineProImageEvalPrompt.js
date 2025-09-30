@@ -50,7 +50,7 @@
 
         // Update generate action label
         {
-            const slot = this.thisPrototype().slotNamed("generateAction");
+            const slot = this.overrideSlot("generateAction");
             slot.setLabel("Generate & Evaluate");
         }
     }

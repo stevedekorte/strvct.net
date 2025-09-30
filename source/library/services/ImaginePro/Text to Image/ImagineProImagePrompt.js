@@ -122,13 +122,13 @@
             const slot = this.newSlot("omniRefImageUrl", null);
             slot.setInspectorPath("Settings");
             slot.setSlotType("String");
-            slot.setLabel("Omniref Image URL");
+            slot.setLabel("Omniref Image Url");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
             slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
-            slot.setSummaryFormat("key value");
+            slot.setSummaryFormat("key: value");
         }
 
 

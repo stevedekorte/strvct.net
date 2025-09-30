@@ -197,7 +197,7 @@
         const hasHash = await this.promiseHasHash(hash);
 
         if (hasHash) {
-            // Check if the existing data actually matches
+            // Check if the existing data actually matches the hash key, if not, remove it
             const existingData = await this.idb().promiseAt(hash);
             const existingHash = await this.promiseHashKeyForData(existingData);
             if (existingHash !== hash) {

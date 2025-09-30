@@ -14,5 +14,7 @@
  */
 Uint8Array.prototype.asyncSha256 = async function () {
     // Convert to ArrayBuffer and use its asyncSha256 method
-    return await this.buffer.slice(this.byteOffset, this.byteOffset + this.byteLength).asyncSha256();
+    // the purpose of this is to allow for hashing of Uint8Arrays that are not contiguous in memory
+    const chunk = this.buffer.slice(this.byteOffset, this.byteOffset + this.byteLength);
+    return await chunk.asyncSha256();
 };

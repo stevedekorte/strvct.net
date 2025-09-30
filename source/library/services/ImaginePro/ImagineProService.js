@@ -74,21 +74,16 @@
      * @member {ImagineProImageEvalPrompts} imageEvalPrompts
      * @category Image Eval Prompts
      */
+
         {
             const slot = this.newSlot("imageEvalPrompts", null);
             slot.setFinalInitProto(ImagineProImageEvalPrompts);
             slot.setIsSubnode(true);
             slot.setShouldStoreSlot(true);
         }
+
     }
 
-    /**
-   * @description Initializes the instance.
-   * @category Initialization
-   */
-    init () {
-        super.init();
-    }
 
     /**
    * @description Performs final initialization steps for the instance.
@@ -106,8 +101,8 @@
    * @category Authentication
    */
     validateKey (s) {
-    // ImaginePro API keys are typically longer alphanumeric strings
-    // Adjust validation based on actual ImaginePro key format
+        // ImaginePro API keys are typically longer alphanumeric strings
+        // Adjust validation based on actual ImaginePro key format
         return s.length > 20 && /^[a-zA-Z0-9_-]+$/.test(s);
     }
 
