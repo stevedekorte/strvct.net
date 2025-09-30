@@ -48,11 +48,17 @@
             slot.setSlotType("Promise");
         }
 
-        // Update generate action label
         {
-            const slot = this.overrideSlot("generateAction");
-            slot.setLabel("Generate & Evaluate");
+            const slot = this.newSlot("evaluateAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Evaluate");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("evaluate");
         }
+
     }
 
     /**
@@ -96,6 +102,13 @@
         }
     }
 
+    evaluateActionInfo () {
+        return {
+            isVisible: true,
+            isEnabled: this.svImages().subnodes().length > 0
+        };
+    }
+
     /**
    * @description Evaluates the generated images using ImagesEvaluator.
    * @returns {Promise<void>}
@@ -120,6 +133,8 @@
             this.setStatus("evaluation complete");
 
         } catch (error) {
+            const normalizedError = Error.normalizeError(error);
+            this.setError(normalizedError);
             console.error(this.logPrefix(), "Image evaluation failed:", error);
             this.setError(new Error("Evaluation failed: " + error.message));
             return this.onEvalError(error);
@@ -133,7 +148,7 @@
    * @category Evaluation
    */
     processEvaluationResults () {
-    //const bestSvImage = this.imageEvaluators().bestSvImage();
+        //const bestSvImage = this.imageEvaluators().bestSvImage();
         const bestIndex = this.imageEvaluators().bestImageIndex();
 
         // Send delegate notification if we have a corresponding image node

@@ -2,6 +2,9 @@
 .DS_Store
 /indexeddb/*
 
+# Build output (should not be in strvct submodule)
+build/
+
 # Logs
 logs
 *.log

@@ -200,6 +200,15 @@
             slot.setSlotType("ImagineProImageGenerations");
         }
 
+        {
+            const slot = this.newSlot("svImages", null);
+            slot.setFinalInitProto(SvImages);
+            slot.setLabel("Images");
+            slot.setIsSubnode(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+        }
+
         /**
      * @member {Object} delegate
      * @description The delegate object for handling various events.
@@ -225,22 +234,6 @@
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("generate");
-        }
-
-        /**
-     * @member {Action} evaluateAction
-     * @description The action to trigger image generation.
-     * @category Action
-     */
-        {
-            const slot = this.newSlot("evaluateAction", null);
-            slot.setInspectorPath("");
-            slot.setLabel("Evaluate");
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("Action");
-            slot.setIsSubnodeField(true);
-            slot.setActionMethodName("evaluate");
         }
 
         /**
@@ -532,11 +525,7 @@
         this.setError(null);
         this.shutdown();
         this.generations().removeAllSubnodes();
-    //this.svImages().removeAllSubnodes();
-    }
-
-    evaluate () {
-
+        //this.svImages().removeAllSubnodes();
     }
 
 }.initThisClass());

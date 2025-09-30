@@ -12,19 +12,17 @@
 (class ImagineProImageEvalPrompts extends ImagineProImagePrompts {
 
     /**
-   * @description Initializes the prototype slots for the class.
-   * @category Initialization
-   */
-    initPrototypeSlots () {
-    }
-
-    /**
    * @description Initializes the prototype.
    * @category Initialization
    */
     initPrototype () {
         this.setSubnodeClasses([ImagineProImageEvalPrompt]);
         this.setTitle("Image Eval Prompts");
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.initPrototype();
     }
 
 }.initThisClass());
