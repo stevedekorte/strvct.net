@@ -19,7 +19,7 @@
  *
  * ```
  * storage/
- * ├── files/{userId}/       # User-specific files (private)
+ * ├── users/{userId}/       # User-specific files (private)
  * │   ├── images/
  * │   ├── documents/
  * │   └── ...
@@ -32,8 +32,8 @@
  * ```
  *
  * This structure enables clean security rules:
- * - `files/{userId}/` - Only the owner can access
- * - `public/` - Everyone can read, admins can write
+ * - `users/{userId}/` - Only the owner can access
+ * - `public/` - Everyone can read, authenticated users can write
  * - `shared/` - Collaborative access with specific permissions
  */
 (class FirebaseFolder extends FirebaseNode {
@@ -45,6 +45,19 @@
             const slot = this.newSlot("isLoaded", false);
             slot.setSlotType("Boolean");
             slot.setShouldStoreSlot(false);
+        }
+
+        // Read subnodes action
+        {
+            const slot = this.newSlot("asyncReadSubnodesAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Refresh");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(false);
+            slot.setCanInspect(true);
+            slot.setActionMethodName("asyncReadSubnodes");
         }
 
     }
@@ -84,6 +97,18 @@
         }
 
         return parts.length > 0 ? parts.join(", ") : "empty";
+    }
+
+    /**
+     * @description Gets action info for refresh action
+     * @returns {Object} Action info with isEnabled property
+     * @category Actions
+     */
+    asyncReadSubnodesActionInfo () {
+        return {
+            isEnabled: true,
+            title: this.isLoaded() ? "Refresh from Firebase" : "Load from Firebase"
+        };
     }
 
     /**
@@ -130,6 +155,31 @@
         return subfolder;
     }
 
+    subfolderAtPathCreateIfAbsent (path) {
+        const pathArray = path.split("/");
+        let subfolder = this;
+        for (const name of pathArray) {
+            subfolder = subfolder.subfolderNamedCreateIfAbsent(name);
+        }
+        return subfolder;
+    }
+
+    fileAtPath (path) {
+        const pathArray = path.split("/");
+        const fileName = pathArray.pop();
+        const folder = this.subfolderAtPath(pathArray.join("/"));
+        const file = folder.fileNamed(fileName);
+        return file;
+    }
+
+    fileAtPathCreateIfAbsent (path) {
+        const pathArray = path.split("/");
+        const fileName = pathArray.pop();
+        const folder = this.subfolderAtPathCreateIfAbsent(pathArray.join("/"));
+        const file = folder.fileNamedCreateIfAbsent(fileName);
+        return file;
+    }
+
     /**
      * @description Finds a file by name
      * @param {string} name - The file name to find
@@ -138,6 +188,16 @@
      */
     fileNamed (name) {
         return this.files().find(file => file.name() === name);
+    }
+
+    fileNamedCreateIfAbsent (name) {
+        let file = this.fileNamed(name);
+        if (!file) {
+            file = FirebaseFile.clone();
+            file.setName(name);
+            this.addSubnode(file);
+        }
+        return file;
     }
 
     /**
@@ -170,6 +230,11 @@
             // Remove subnodes not found on server
             const existingSubnodes = this.subnodes().slice(); // Copy array
             for (const subnode of existingSubnodes) {
+                // Skip non-Firebase nodes (like action fields)
+                if (!subnode.isKindOf(FirebaseNode)) {
+                    debugger;
+                }
+
                 const name = subnode.name();
                 if (subnode.svType() === "FirebaseFolder") {
                     if (!serverFolderNames.has(name)) {

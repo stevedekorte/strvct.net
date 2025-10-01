@@ -63,7 +63,7 @@
         // Style reference image storage
         {
             const slot = this.newSlot("styleRefImage", null);
-            slot.setFinalInitProto(FirestoreImage);
+            slot.setFinalInitProto(SvImage); // FIXME: update code to use Firestore
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
         }

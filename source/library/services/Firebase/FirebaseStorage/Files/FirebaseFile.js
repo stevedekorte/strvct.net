@@ -108,6 +108,18 @@
             slot.setActionMethodName("asyncDownload");
         }
 
+        // Delete action
+        {
+            const slot = this.newSlot("deleteAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Delete");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncDelete");
+        }
+
     }
 
     initPrototype () {
@@ -157,6 +169,18 @@
     }
 
     /**
+     * @description Gets action info for delete action
+     * @returns {Object} Action info with isEnabled property
+     * @category Actions
+     */
+    deleteActionInfo () {
+        return {
+            isEnabled: this.parentNode() !== null,
+            title: this.parentNode() ? "Delete from Firebase" : "Cannot delete (no parent)"
+        };
+    }
+
+    /**
      * @description Gets the title for display
      * @returns {string} The file name
      * @category Display
@@ -202,6 +226,32 @@
     }
 
     /**
+     * @description Checks if the file exists on Firebase Storage
+     * Uses getDownloadURL() which may propagate faster than getMetadata()
+     * @returns {Promise<boolean>} True if file exists on server
+     * @category Helper
+     */
+    async asyncDoesExist () {
+        // If file has no parent, it can't exist on Firebase
+        if (!this.parentNode()) {
+            return false;
+        }
+
+        try {
+            const ref = this.storageRef();
+            await ref.getDownloadURL();
+            return true;
+        } catch (error) {
+            // Both "not found" and "unauthorized" mean the file doesn't exist for our purposes
+            if (error.code === "storage/object-not-found" || error.code === "storage/unauthorized") {
+                return false;
+            }
+            // Re-throw unexpected errors
+            throw error;
+        }
+    }
+
+    /**
      * @description Checks if local metadata matches the version on Firebase
      * @returns {Promise<boolean>} True if local version matches server version
      * @category Helper
@@ -242,6 +292,16 @@
         }
     }
 
+    setDataArrayBufferToString (string) {
+        this.setContentType("text/plain");
+        this.setDataArrayBuffer(string.asArrayBuffer());
+        return this;
+    }
+
+    arrayBufferAsString () {
+        return this.dataArrayBuffer().asString();
+    }
+
     /**
      * @description Downloads the data from Firebase Storage as ArrayBuffer
      * @returns {Promise<ArrayBuffer>} The downloaded data as ArrayBuffer
@@ -250,11 +310,14 @@
     async asyncDownload () {
         try {
             this.setError(null);
-            const url = await this.getDownloadUrl();
+            const ref = this.storageRef();
+
+            // Get download URL and fetch the data
+            const url = await ref.getDownloadURL();
             const response = await fetch(url);
 
             if (!response.ok) {
-                throw new Error(`Download failed: ${response.statusText}`);
+                throw new Error(`Download failed: ${response.status} ${response.statusText}`);
             }
 
             const arrayBuffer = await response.arrayBuffer();
@@ -262,7 +325,7 @@
 
             return arrayBuffer;
         } catch (error) {
-            console.error("Error downloading blob:", error);
+            console.error("Error downloading file:", error);
             this.setError(error);
             throw error;
         }
@@ -274,8 +337,10 @@
      * @category Storage Operations
      */
     async asyncUpload () {
+        assert(this.parentNode(), "asyncUpload must be called on a node with a parent");
         try {
             this.setError(null);
+            this.setDownloadUrl(null); // Clear cached URL before upload
 
             const arrayBuffer = this.dataArrayBuffer();
             if (!arrayBuffer) {
@@ -325,9 +390,12 @@
                         // Upload completed successfully
                         console.log(`Upload completed for ${this.name()}`);
 
-                        // Download metadata from server
-                        await this.asyncDownloadMetadata();
+                        // do this to unsure the file is uploaded before we download the metadata or return from the upload method
+                        const url = await ref.getDownloadURL();
+                        this.setDownloadUrl(url);
 
+                        // Download metadata from server - to ensure we are in sync
+                        await this.asyncDownloadMetadata();
                         resolve();
                     }
                 );
@@ -365,6 +433,8 @@
     async asyncDelete () {
         try {
             this.setError(null);
+
+            // Delete from storage
             const ref = this.storageRef();
             await ref.delete();
 
@@ -372,7 +442,7 @@
             this.setDataArrayBuffer(null);
             this.setDownloadUrl(null);
 
-            // Remove from parent
+            // Remove from parent after delete completes
             const parent = this.parentNode();
             if (parent && parent.removeSubnode) {
                 parent.removeSubnode(this);

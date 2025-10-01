@@ -33,16 +33,6 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("images", null);
-            slot.setFinalInitProto(FirestoreImages);
-            slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("FirestoreImages");
-        }
-
-        {
             const slot = this.newSlot("rootFolder", null);
             slot.setFinalInitProto(FirebaseRootFolder);
             slot.setIsSubnodeField(true);
@@ -71,12 +61,27 @@
         this.watchForNote("onUpdateAccountLogin");
     }
 
-    async onUpdateAccountLogin () {
-        debugger;
+    userId () {
         if (firebase.auth().currentUser) {
             const userId = firebase.auth().currentUser.uid;
-            const userFolder = this.rootFolder().folderForUser(userId);
+            return userId;
+        }
+        return null;
+    }
+
+    userFolder () {
+        const userId = this.userId();
+        if (userId) {
+            return this.rootFolder().folderForUser(userId);
+        }
+        return null;
+    }
+
+    async onUpdateAccountLogin () {
+        if (this.userId()) {
+            const userFolder = this.userFolder();
             await userFolder.asyncReadSubnodes();
+            await this.asyncTest();
         } else {
             //this.rootFolder().removeSubnode(this.rootFolder().subfolderNamed("files"));
         }
@@ -92,7 +97,7 @@
     async listUserBlobs (userId, subfolder = "") {
         try {
             const storage = this.getFirebaseStorage();
-            const path = subfolder ? `files/${userId}/${subfolder}` : `files/${userId}`;
+            const path = subfolder ? `users/${userId}/${subfolder}` : `users/${userId}`;
             const userFolderRef = storage.ref(path);
 
             // List all items in the user's folder
@@ -132,7 +137,7 @@
     async listUserFolders (userId, subfolder = "") {
         try {
             const storage = this.getFirebaseStorage();
-            const path = subfolder ? `files/${userId}/${subfolder}` : `files/${userId}`;
+            const path = subfolder ? `users/${userId}/${subfolder}` : `users/${userId}`;
             const userFolderRef = storage.ref(path);
 
             // List all items in the user's folder
@@ -158,7 +163,7 @@
     async listUserBlobsAndFolders (userId, subfolder = "") {
         try {
             const storage = this.getFirebaseStorage();
-            const path = subfolder ? `files/${userId}/${subfolder}` : `files/${userId}`;
+            const path = subfolder ? `users/${userId}/${subfolder}` : `users/${userId}`;
             const userFolderRef = storage.ref(path);
 
             // List all items in the user's folder
@@ -197,21 +202,25 @@
         }
     }
 
-    /**
-     * @description Gets Firebase Storage instance (reuses the initialized instance)
-     * @returns {Object} Firebase Storage instance
-     * @throws {Error} If Firebase Storage is not available
-     * @category Helper
-     */
-    getFirebaseStorage () {
+    isFirebaseStorageAvailable () {
+        return this.firebaseApp() !== null;
+    }
+
+    firebaseApp () {
         // Check for cached storage instance (configured with emulator in firebase-shim.js)
         if (typeof globalThis !== "undefined" && globalThis._firebaseStorageInstance) {
             return globalThis._firebaseStorageInstance;
         }
 
-        // Check if Firebase is available globally
         if (typeof firebase !== "undefined" && firebase && firebase.storage && firebase.app) {
-            const app = firebase.app();
+            return firebase.app();
+        }
+        return null;
+    }
+
+    bucketName () {
+        const app = this.firebaseApp();
+        if (app) {
             let bucketName = null;
 
             if (typeof globalThis !== "undefined" && globalThis.UoBuildEnv) {
@@ -223,13 +232,63 @@
             }
 
             if (!bucketName) {
-                throw new Error("Firebase Storage bucket not configured in UoBuildEnv");
+                throw new Error("Firebase Storage bucket found in UoBuildEnv or Firebase app options");
             }
 
-            return app.storage(`gs://${bucketName}`);
+            return bucketName;
         }
-
-        throw new Error("Firebase Storage is not available - ensure Firebase libraries are loaded");
+        return null;
     }
+
+    /**
+     * @description Gets Firebase Storage instance (reuses the initialized instance)
+     * @returns {Object} Firebase Storage instance
+     * @throws {Error} If Firebase Storage is not available
+     * @category Helper
+     */
+    getFirebaseStorage () {
+        const app = this.firebaseApp();
+        if (app) {
+            return app.storage(`gs://${this.bucketName()}`);
+        }
+        return null;
+    }
+
+    async asyncTest () {
+        if (!this._didTest) {
+            this._didTest = true;
+            console.log(this.logPrefix(), "testing...");
+
+            const file = this.userFolder().fileNamedCreateIfAbsent("test.txt");
+            console.log("File fullPath:", file.fullPath());
+            console.log("File parent:", file.parentNode());
+            console.log("userFolder:", this.userFolder().fullPath());
+            file.setDataArrayBufferToString("Hello, world!");
+
+            // test upload
+            await file.asyncUpload();
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Delay for Firebase to propagate
+            assert(await file.asyncDoesExist(), "File should exist");
+            console.log(this.logPrefix(), "upload passed");
+
+            // test download
+            file.setDataArrayBuffer(null);
+            await file.asyncDownload();
+            const string = file.arrayBufferAsString();
+            assert(string === "Hello, world!", "String should be 'Hello, world!'");
+            console.log(this.logPrefix(), "download passed");
+
+            // test delete
+            await file.asyncDelete();
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Delay for Firebase to propagate
+
+            {
+                let deletedFile = this.userFolder().fileNamedCreateIfAbsent("test.txt");
+                assert(!await deletedFile.asyncDoesExist(), "File should not exist");
+                console.log(this.logPrefix(), "delete passed");
+            }
+        }
+    }
+
 
 }.initThisClass());

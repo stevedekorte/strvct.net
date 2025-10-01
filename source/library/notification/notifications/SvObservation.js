@@ -351,7 +351,7 @@
     sendNotification (note) {
         const obs = this.observer();
         if (obs === undefined) { // observer may have been collected
-            console.log(this.logPrefix(), "OBSERVER COLLECTED ON: " + this.description());
+            //console.log(this.logPrefix(), "OBSERVER COLLECTED ON: " + this.description());
             this.stopWatching();
             return;
         }

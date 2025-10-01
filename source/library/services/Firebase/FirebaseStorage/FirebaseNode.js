@@ -101,6 +101,7 @@
      * @category Helper
      */
     storageRef () {
+        assert(this.parentNode(), "storageRef must be called on a node with a parent");
         const storage = this.getFirebaseStorage();
         return storage.ref(this.fullPath());
     }

@@ -765,6 +765,10 @@
         return this.byteLength().byteSizeDescription();
     }
 
+    asArrayBuffer () {
+        return new TextEncoder().encode(this).buffer;
+    }
+
     /**
      * Computes a hash code for the string
      * @returns {number} The hash code

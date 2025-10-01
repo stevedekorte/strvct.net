@@ -49,5 +49,13 @@
         return new Blob([this], { type: mimeType });
     }
 
+    /*
+    // already defined in ArrayBuffer_sha256.js
+    asString () {
+        // assumes utf-8 encoding
+        return new TextDecoder().decode(this);
+    }
+    */
+
 }).initThisCategory();
 
