@@ -1,4 +1,7 @@
 [
+    "FirebaseNode.js",
     "Images/_imports.json",
+    "Files/_imports.json",
+    "Folders/_imports.json",
     "FirebaseStorageService.js"
 ]

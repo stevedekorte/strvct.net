@@ -300,7 +300,7 @@
             const filename = `${sanitizedLabel}_${timestamp}.png`;
 
             // Create the full path for the file
-            const fullPath = `blobs/${user.uid}/${filename}`;
+            const fullPath = `files/${user.uid}/${filename}`;
 
             console.log("FirestoreImage.uploadToFirebase: Full path:", fullPath);
 
