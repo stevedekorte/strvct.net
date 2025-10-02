@@ -139,7 +139,7 @@
         }
         const models = this.parentNode();
         if (models) {
-            const service = models.parentNode();
+            const service = models.ownerNode();
             if (service) {
                 return service;
             }

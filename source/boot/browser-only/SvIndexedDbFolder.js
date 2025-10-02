@@ -150,9 +150,9 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            console.log("Storage will not be cleared except by explicit user action.");
+            console.log(this.logPrefix(), "YAY!: Storage will NOT be cleared except by explicit user action.");
         } else {
-            console.warn("WARNING: IndexedDB storage may be cleared by the browser under storage pressure.");
+            console.warn(this.logPrefix(), "WARNING: IndexedDB storage may be cleared by the browser under storage pressure.");
         }
 
         return granted;

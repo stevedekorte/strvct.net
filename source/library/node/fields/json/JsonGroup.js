@@ -220,17 +220,17 @@
                             } else {
                                 // slot doesn't allow null, use the default/init value
                                 const initValue = slot.initValue();
-                                console.warn(this.svType() + ".setJson() slot '" + slot.name() + "' doesn't allow null, using initValue: " + initValue);
+                                console.warn(this.logPrefix(), " .setJson() slot '" + slot.name() + "' doesn't allow null, using initValue: " + initValue);
                                 slot.onInstanceSetValue(this, initValue);
                                 this.markAsDirty(); // save our type conversion
                             }
                         } else if (slot.slotType() !== Type.typeName(v)) {
-                            const errorMessage = this.svTypeId() + ".setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
+                            const errorMessage = this.logPrefix(), " .setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
                             console.warn(errorMessage);
                             //throw new Error(errorMessage);
 
                             if (slot.slotType() === "Number" && v && v.asNumber) {
-                                console.warn(this.logPrefix() + "WARNING: resolving by converting input value to number using asNumber(): ", v.asNumber());
+                                console.warn(this.logPrefix(), " WARNING: resolving by converting input value to number using asNumber(): ", v.asNumber());
                                 const resolvedValue = v.asNumber();
                                 assert(!Type.isNaN(resolvedValue), "resolved value must be a number");
                                 slot.onInstanceSetValue(this, resolvedValue);
@@ -239,7 +239,7 @@
                                 const errorMessage = this.svTypeId() + ".setJson() slotType mismatch: " + slot.slotType() + " !== " + Type.typeName(v) + " at path: " + jsonPathComponents.concat(k).join("/");
                                 console.warn(errorMessage);
                                 if (slot.slotType() === "String" && Type.isNumber(v)) {
-                                    console.warn(`converting value from number ${v} to string '${v.asString()}'`);
+                                    console.warn(this.logPrefix(), `converting value from number ${v} to string '${v.asString()}'`);
                                     let newValue = v.asString();
                                     // tmp hack for challenge rating
                                     /*

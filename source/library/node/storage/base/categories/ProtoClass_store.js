@@ -8,6 +8,9 @@
 
 (class ProtoClass_store extends ProtoClass {
 
+    static logPrefix () {
+        return "[" + this.svType() + " Class] ";
+    }
 
     /**
      * @static
@@ -20,13 +23,25 @@
     static instanceFromRecordInStore (/*aRecord, aStore*/) {
 
         if (!this.shouldStore()) {
-            console.warn(this.svType() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" + this.svType() + ") with shouldStore set to false - returning null");
+            console.warn(this.logPrefix() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" + this.svType() + ") with shouldStore set to false - returning null");
             return null;
         }
 
+        const isSingleton = this.isSingleton();
+
+        if (isSingleton && this._shared) {
+            //console.warn(this.logPrefix() + "WARNING: instanceFromRecordInStore() on an allocated singleton.");
+            //finalInit and afterInit should be skipped by the caller in this case
+            return this._shared;
+        }
 
         const instance = this.preClone ? this.preClone() : new this();
         instance.init();
+
+        if (isSingleton && !this._shared) {
+            this._shared = instance;
+        }
+
         // caller needs to call finalInit and afterInit
         return instance;
     }

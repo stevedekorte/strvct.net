@@ -213,6 +213,10 @@
         return this.svType();
     }
 
+    static logPrefix () {
+        return "[" + this.svType() + " Class] ";
+    }
+
     logPrefix () {
         return "[" + this.svDebugId() + "] ";
     }

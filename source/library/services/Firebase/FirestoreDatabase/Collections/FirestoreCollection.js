@@ -21,6 +21,26 @@
 
     initPrototypeSlots () {
 
+        // Documents container (simple view of all documents)
+        {
+            const slot = this.newSlot("documents", null);
+            slot.setFinalInitProto(FirestoreDocuments);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setSlotType("FirestoreDocuments");
+        }
+
+        // Query (for searches with limit, orderBy, filtering, pagination)
+        {
+            const slot = this.newSlot("query", null);
+            slot.setFinalInitProto(FirestoreQuery);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setSlotType("FirestoreQuery");
+        }
+
         // Whether contents have been loaded
         {
             const slot = this.newSlot("isLoaded", false);
@@ -54,10 +74,9 @@
     }
 
     initPrototype () {
-        this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
-        this.setSubnodeClasses([FirestoreDocument]);
-        this.setNodeCanAddSubnode(true);
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanAddSubnode(false);
         this.setNodeCanReorderSubnodes(false);
     }
 
@@ -80,104 +99,48 @@
             return `Error: ${this.error()}`;
         }
 
-        const count = this.documents().length;
+        const count = this.documents().documents().length;
         const status = this.isLoaded() ? "" : " (not loaded)";
         return `${count} document${count !== 1 ? "s" : ""}${status}`;
     }
 
-    /**
-     * @description Gets all documents in this collection
-     * @returns {Array<FirestoreDocument>} Array of documents
-     * @category Query
-     */
-    documents () {
-        return this.subnodes().filter(node => node.svType() === "FirestoreDocument");
+    didUpdateSlotPath (oldPath, newPath) {
+        //this.documents().setPath(newPath);
+        this.query().setPath(newPath);
     }
 
     /**
-     * @description Finds a document by ID
+     * @description Finds a document by ID (delegates to documents container)
      * @param {string} docId - The document ID to find
      * @returns {FirestoreDocument|null} The found document or null
      * @category Query
      */
     documentWithId (docId) {
-        return this.documents().find(doc => doc.docId() === docId);
+        return this.documents().documentWithDocId(docId);
     }
 
     /**
-     * @description Gets or creates a document by ID
+     * @description Gets or creates a document by ID (delegates to documents container)
      * @param {string} docId - The document ID
      * @returns {FirestoreDocument} The found or created document
      * @category Helper
      */
     documentWithIdCreateIfAbsent (docId) {
-        let doc = this.documentWithId(docId);
-        if (!doc) {
-            doc = FirestoreDocument.clone();
-            doc.setDocId(docId);
-            this.addSubnode(doc);
-        }
-        return doc;
+        return this.documents().documentWithDocIdCreateIfAbsent(docId);
     }
 
     /**
-     * @description Lists all documents in this collection from Firestore
+     * @description Lists all documents in this collection from Firestore (delegates to documents container)
      * @returns {Promise<void>}
      * @category Firestore Operations
      */
     async asyncListDocuments () {
         try {
             this.setError(null);
-
-            const collectionPath = this.path();
-            if (!collectionPath) {
-                throw new Error("No collection path - check name is set");
-            }
-
-            const db = this.getFirestoreDb();
-
-            // Get all documents in the collection
-            const snapshot = await db.collection(collectionPath).get();
-
-            // Get server document IDs
-            const serverDocIds = new Set();
-            snapshot.forEach(doc => {
-                serverDocIds.add(doc.id);
-            });
-
-            // Remove subnodes not found on server
-            const existingDocs = this.documents().slice(); // Copy array
-            for (const doc of existingDocs) {
-                const docId = doc.docId();
-                if (docId && !serverDocIds.has(docId)) {
-                    this.removeSubnode(doc);
-                }
-            }
-
-            // Add or update documents from server
-            snapshot.forEach(docSnap => {
-                const docId = docSnap.id;
-                let doc = this.documentWithId(docId);
-
-                if (!doc) {
-                    // Create new document node
-                    doc = FirestoreDocument.clone();
-                    doc.setDocId(docId);
-                    this.addSubnode(doc);
-                }
-
-                // Update document content
-                const data = docSnap.data();
-                doc.setContent(data);
-
-                // Update timestamp
-                if (docSnap.updateTime) {
-                    doc.setUpdateTimeMillis(docSnap.updateTime.toMillis());
-                }
-            });
-
+            await this.documents().asyncRefresh();
             this.setIsLoaded(true);
         } catch (error) {
+            const collectionPath = this.path();
             console.error(`Error listing documents for ${collectionPath}:`, error);
             this.setError(error.message || String(error));
             throw error;
@@ -202,12 +165,12 @@
      * @category Actions
      */
     listDocumentsActionInfo () {
-        const hasName = this.name() !== null && this.name() !== "";
+        const hasPath = this.path() !== null && this.path() !== "";
         return {
-            isEnabled: hasName,
-            title: hasName
+            isEnabled: hasPath,
+            title: hasPath
                 ? (this.isLoaded() ? "Refresh Documents" : "Load Documents")
-                : "No collection name set"
+                : "No collection path set"
         };
     }
 
@@ -217,10 +180,12 @@
      * @category Actions
      */
     addDocumentActionInfo () {
-        const hasName = this.name() !== null && this.name() !== "";
+        const hasPath = this.path() !== null && this.path() !== "";
+        const subtitle = !hasPath ? "No collection path set" : "";
         return {
-            isEnabled: hasName,
-            title: hasName ? "Add New Document" : "No collection name set"
+            isEnabled: hasPath,
+            title: "Add New Document",
+            subtitle: subtitle
         };
     }
 

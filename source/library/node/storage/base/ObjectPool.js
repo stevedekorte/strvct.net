@@ -52,6 +52,10 @@
 
 (class ObjectPool extends ProtoClass {
 
+    static instanceFromRecordInStore (/*aRecord, aStore*/) {
+        throw new Error("We should not be calling instanceFromRecordInStore on ObjectPool");
+    }
+
     /**
      * @static
      * @description
@@ -935,6 +939,11 @@
             return null;
         }
 
+        let isSingleton = false;
+        if (aClass.isSingleton !== undefined) {
+            isSingleton = aClass.isSingleton();
+        }
+        //const wasAlreadyAllocated = isSingleton && (aClass._shared !== null && aClass._shared !== undefined);
 
         const obj = aClass.instanceFromRecordInStore(aRecord, this);
         if (obj === null) {
@@ -942,7 +951,11 @@
             return null;
         }
 
-        assert(!this.hasActiveObject(obj)); // if it's already active in memory, we shouldn't be asking for it's record to load it into memory
+        // this assert may fail if the object is a singleton and was already allocated
+        if (!isSingleton) {
+            assert(!this.hasActiveObject(obj), "objectForRecord: object is already active in memory"); // if it's already active in memory, we shouldn't be asking for it's record to load it into memory
+        }
+
         obj.setPuuid(aRecord.id);
         this.addActiveObject(obj);
         if (obj.puuid() === this.rootPid()) {
@@ -955,12 +968,14 @@
 
         //assert(!obj._hasDoneInit); // if the class is a singleton, _hasDoneInit may already be true. Should init be called in that case?
 
-        if (obj.finalInit) {
-            obj.finalInit();
-        }
+        if (obj._hasDoneInit === false || obj._hasDoneInit === undefined) {
+            if (obj.finalInit) {
+                obj.finalInit();
+            }
 
-        if (obj.afterInit) {
-            obj.afterInit(); // called didInit, which sets _hasDoneInit to true
+            if (obj.afterInit) {
+                obj.afterInit(); // called didInit, which sets _hasDoneInit to true
+            }
         }
         return obj;
     }

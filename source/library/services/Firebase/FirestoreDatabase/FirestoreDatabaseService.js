@@ -28,7 +28,7 @@
             const slot = this.newSlot("root", null);
             slot.setFinalInitProto(FirestoreRoot);
             slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setSlotType("FirestoreRoot");
         }
@@ -40,5 +40,12 @@
         this.setShouldStoreSubnodes(false);
     }
 
+    finalInit () {
+        super.finalInit();
+        //debugger;
+        this.root().collectionWithPathCreateIfAbsent("users");
+        //this.root().collectionWithPathCreateIfAbsent("campaigns");
+        //this.root().collectionWithPathCreateIfAbsent("sessions");
+    }
 
 }.initThisClass());

@@ -89,7 +89,7 @@
             this._isSetup = true;
             const userFolder = this.userFolder();
             await userFolder.asyncReadSubnodes();
-            await this.asyncTest();
+            //await this.asyncTest();
         } else {
             //this.rootFolder().removeSubnode(this.rootFolder().subfolderNamed("files"));
         }
@@ -308,7 +308,9 @@
 
             {
                 let deletedFile = this.userFolder().fileNamedCreateIfAbsent("test.txt");
-                assert(!await deletedFile.asyncDoesExist(), "File should not exist");
+                const exists = await deletedFile.asyncDoesExist();
+                console.log(this.logPrefix(), "Deleted file exists:", exists);
+                assert(!exists, "File should not exist");
                 console.log(this.logPrefix(), "delete passed");
             }
             console.log("================================================");

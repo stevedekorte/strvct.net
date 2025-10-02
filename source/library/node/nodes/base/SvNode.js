@@ -608,7 +608,7 @@
      * @returns {SvNode} The added subnode.
      */
     addSubnode (aSubnode) {
-        assert(!this.hasSubnode(aSubnode));
+        assert(!this.hasSubnode(aSubnode), "addSubnode: subnode already exists");
         return this.addSubnodeAt(aSubnode, this.subnodeCount());
     }
 
@@ -967,8 +967,8 @@
      * @returns {SvNode} This instance.
      */
     orderSubnodeFirst (aSubnode) {
-        assert(aSubnode);
-        assert(this.hasSubnode(aSubnode));
+        assert(aSubnode, "orderSubnodeFirst: subnode is null");
+        assert(this.hasSubnode(aSubnode), "orderSubnodeFirst: subnode does not exist");
         const subnodes = this.subnodes().shallowCopy();
         subnodes.remove(aSubnode);
         subnodes.atInsert(0, aSubnode);
@@ -983,7 +983,7 @@
      * @returns {SvNode} This instance.
      */
     orderSubnodeLast (aSubnode) {
-        assert(this.hasSubnode(aSubnode));
+        assert(this.hasSubnode(aSubnode), "orderSubnodeLast: subnode does not exist");
         const subnodes = this.subnodes().shallowCopy();
         subnodes.remove(aSubnode);
         subnodes.push(aSubnode);
@@ -1023,7 +1023,7 @@
         // TODO: make this more efficient, as we don't always need it
 
         if (this.parentNode()) {
-            assert(this.parentNode() !== this);
+            assert(this.parentNode() !== this, "didUpdateNode: parent node is self");
             this.parentNode().didUpdateNodeIfInitialized();
         } else if (this.ownerNode()) {
             this.ownerNode().didUpdateNodeIfInitialized();
@@ -1286,7 +1286,13 @@
         if (classes.length === 0) {
             newSubnode = null;
         } else if (classes.length === 1) {
-            newSubnode = classes.first().clone();
+            let aClass = classes.first();
+            if (Type.isString(aClass)) {
+                SvGlobals.assertHas(aClass, "class '" + aClass + "' not found");
+                aClass = SvGlobals.get(aClass);
+                assert(Type.isClass(aClass), "value not a class");
+            }
+            newSubnode = aClass.clone();
         } else {
             newSubnode = SvCreatorNode.clone();
             newSubnode.addSubnodesForObjects(classes);
@@ -1519,7 +1525,7 @@
             this._subnodes = SubnodesArray.from(newValue);
             newValue.removeDuplicates();
             newValue = this._subnodes;
-            assert(newValue.svType() === "SubnodesArray");
+            assert(newValue.svType() === "SubnodesArray", "didUpdateSlotSubnodes: new value is not a SubnodesArray");
         } else {
             /*
             if (this.hasNullSubnodes()) {
@@ -1541,7 +1547,7 @@
         this.watchSubnodes();
         if (this._subnodes.contains(null)) { // what would cause this?
 
-            console.warn("found null in subnodes array - removing");
+            console.warn(this.logPrefix(), "found null in subnodes array - removing");
             this._subnodes.filterInPlace(sn => !(sn === null));
         }
 

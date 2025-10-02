@@ -300,7 +300,7 @@ class StrvctFile extends Object {
             throw new Error("No content loaded. Use load() first.");
         }
 
-        console.log("StrvctFile eval path: " + this._path);
+        //console.log("StrvctFile eval path: " + this._path);
 
         if (SvPlatform.isNodePlatform()) {
             // Use absolute path for better Node.js debugging
@@ -308,7 +308,7 @@ class StrvctFile extends Object {
             const basePath = StrvctFile.workingPath() || process.cwd();
             const absolutePath = path.resolve(basePath, this._path);
             const sourceUrlComment = `\n//# sourceURL=${absolutePath}`;
-            console.log("eval: " + absolutePath.split("/").pop());
+            //console.log("eval: " + absolutePath.split("/").pop());
             eval(this._content + sourceUrlComment);
         } else {
             // Browser: use relative path for VSCode compatibility (no leading slash)
@@ -386,7 +386,7 @@ class StrvctFile extends Object {
         // Evaluate files sequentially to maintain order
         files.forEach(file => {
             if (file.canUseInCurrentEnv()) {
-                console.log("🔍 Evaluating file: " + file.path());
+                //console.log("🔍 Evaluating file: " + file.path());
                 file.eval();
             }
         });

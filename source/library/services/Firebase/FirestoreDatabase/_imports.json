@@ -1,6 +1,7 @@
 [
     "FirestoreNode.js",
     "Documents/_imports.json",
+    "FirestoreQuery.js",
     "Collections/_imports.json",
     "FirestoreRoot.js",
     "FirestoreDatabaseService.js"

@@ -14,19 +14,20 @@
  * - Error handling
  * - Firestore database access with emulator support
  */
+
 (class FirestoreNode extends SvSummaryNode {
 
     initPrototypeSlots () {
 
-        // Name (collection name or document ID)
+        // Path (Firestore path string)
         {
-            const slot = this.newSlot("name", null);
-            slot.setDescription("Collection name or document ID");
+            const slot = this.newSlot("path", null);
+            slot.setDescription("Firestore path (e.g., 'users' or 'users/user123' or 'users/user123/posts')");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
-            slot.setCanEditInspection(true);
+            slot.setCanEditInspection(false);
         }
 
         // Error (if any operation failed)
@@ -36,32 +37,20 @@
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
         }
     }
 
     /**
-     * @description Computes the full Firestore path from the node hierarchy
-     * @returns {string} The full path composed from parent nodes
-     * @category Hierarchy
+     * @description Gets the name (last segment of path)
+     * @returns {string|null} The name/ID from the path
+     * @category Firestore
      */
-    path () {
-        const segments = [];
-        let current = this;
-
-        while (current) {
-            if (current.isKindOf(FirestoreNode)) {
-                const name = current.name();
-                if (name) {
-                    segments.unshift(name);
-                }
-                current = current.parentNode();
-            } else {
-                // Stop at non-Firestore nodes
-                break;
-            }
-        }
-
-        return segments.join("/");
+    name () {
+        const path = this.path();
+        if (!path) return null;
+        const parts = path.split("/");
+        return parts[parts.length - 1];
     }
 
     /**

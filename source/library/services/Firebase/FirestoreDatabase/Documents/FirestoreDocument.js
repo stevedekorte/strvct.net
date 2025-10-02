@@ -7,14 +7,21 @@
 /**
  * @class FirestoreDocument
  * @extends FirestoreNode
- * @classdesc Represents a document stored in Firebase Firebase
- *
- * FirestoreDatabase records
+ * @classdesc Represents a Document stored in Firestore Database.
  *
  */
 (class FirestoreDocument extends FirestoreNode {
 
     initPrototypeSlots () {
+
+        // Subcollections container
+        {
+            const slot = this.newSlot("subcollections", null);
+            slot.setFinalInitProto("FirestoreCollections");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+        }
 
         // Content
         {
@@ -62,7 +69,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("uploadToFirebase");
+            slot.setActionMethodName("asyncUpload");
         }
 
         // Delete action
@@ -74,48 +81,37 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("deleteFromFirebase");
+            slot.setActionMethodName("asyncDelete");
         }
 
         // Test download action
         {
-            const slot = this.newSlot("testDownloadAction", null);
+            const slot = this.newSlot("downloadAction", null);
             slot.setInspectorPath("");
             slot.setLabel("Test Download");
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("testDownload");
+            slot.setActionMethodName("asyncDownload");
         }
     }
 
     initPrototype () {
-        this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
-        this.setSubnodeClasses([FirestoreCollection]);
-        this.setNodeCanAddSubnode(true);
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanAddSubnode(false);
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(true);
     }
 
     /**
      * @description Gets the document ID (alias for name)
-     * @returns {string} The document ID
+     * @returns {string} The document ID (last segment of path)
      * @category Firestore
      */
     docId () {
         return this.name();
-    }
-
-    /**
-     * @description Sets the document ID (alias for setName)
-     * @param {string} id - The document ID
-     * @returns {FirestoreDocument} This document for chaining
-     * @category Firestore
-     */
-    setDocId (id) {
-        return this.setName(id);
     }
 
     contentString () {
@@ -141,7 +137,7 @@
      * @category UI
      */
     title () {
-        return this.name() || "Unnamed Document";
+        return this.docId() || "Unnamed Document";
     }
 
     /**
@@ -306,46 +302,24 @@
     }
 
     /**
-     * @description Gets all subcollections in this document
-     * @returns {Array<FirestoreCollection>} Array of subcollections
-     * @category Query
-     */
-    subcollections () {
-        return this.subnodes().filter(node => node.svType() === "FirestoreCollection");
-    }
-
-    /**
-     * @description Finds a subcollection by name
+     * @description Finds a subcollection by name (delegates to subcollections container)
      * @param {string} name - The subcollection name to find
      * @returns {FirestoreCollection|null} The found subcollection or null
      * @category Query
      */
     subcollectionNamed (name) {
-        return this.subcollections().find(col => col.name() === name);
+        return this.subcollections().collectionNamed(name);
     }
 
     /**
-     * @description Gets or creates a subcollection by name
+     * @description Gets or creates a subcollection by name (delegates to subcollections container)
      * @param {string} name - The subcollection name
      * @returns {FirestoreCollection} The found or created subcollection
      * @category Helper
      */
     subcollectionNamedCreateIfAbsent (name) {
-        let col = this.subcollectionNamed(name);
-        if (!col) {
-            col = FirestoreCollection.clone();
-            col.setName(name);
-            this.addSubnode(col);
-        }
-        return col;
+        return this.subcollections().collectionNamedCreateIfAbsent(name);
     }
-
-    // --- action wrappers ---
-
-    // Action wrappers (match inspector action names)
-    async uploadToFirebase () { return this.asyncUpload(); }
-    async deleteFromFirebase () { return this.asyncDelete(); }
-    async testDownload () { return this.asyncDownload(); }
 
     /**
      * @description Gets action info for upload action
@@ -376,7 +350,7 @@
      * @returns {Object} Action info
      * @category Actions
      */
-    testDownloadActionInfo () {
+    downloadActionInfo () {
         return {
             isEnabled: true,
             isVisible: true

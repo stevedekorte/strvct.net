@@ -181,11 +181,18 @@
     deleteActionInfo () {
         const hasParent = this.parentNode() !== null;
         const canWrite = this.canWrite();
+        const issues = [];
+        if (!hasParent) {
+            issues.push("No parent");
+        }
+        if (!canWrite) {
+            issues.push("No write permission");
+        }
+        const subtitle = issues.join("\n");
         return {
             isEnabled: hasParent && canWrite,
-            title: !hasParent ? "Cannot delete (no parent)"
-                : !canWrite ? "No write permission"
-                : "Delete from Firebase"
+            title: "Delete from Firebase",
+            subtitle: subtitle
         };
     }
 
@@ -255,6 +262,7 @@
             console.log("asyncDoesExist: got download URL, file exists");
             return true;
         } catch (error) {
+            debugger;
             console.log("asyncDoesExist caught error:", error);
             console.log("asyncDoesExist error.code:", error.code);
             console.log("asyncDoesExist error.message:", error.message);
@@ -409,10 +417,11 @@
                     },
                     async () => {
                         // Upload completed successfully
-                        console.log(this.logPrefix(), `Upload completed for ${this.name()}`);
+                        console.log(this.logPrefix(), `Upload completed for ${this.name()} - now lets get download URL`);
 
                         // do this to unsure the file is uploaded before we download the metadata or return from the upload method
                         const url = await ref.getDownloadURL();
+                        console.log(this.logPrefix(), `Upload completed for ${this.name()}, got download URL: ${url}`);
                         this.setDownloadUrl(url);
 
                         // Download metadata from server - to ensure we are in sync (only if still attached)
