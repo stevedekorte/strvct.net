@@ -105,9 +105,12 @@
      * @category Actions
      */
     asyncReadSubnodesActionInfo () {
+        const canRead = this.canRead();
         return {
-            isEnabled: true,
-            title: this.isLoaded() ? "Refresh from Firebase" : "Load from Firebase"
+            isEnabled: canRead,
+            title: canRead
+                ? (this.isLoaded() ? "Refresh from Firebase" : "Load from Firebase")
+                : "No read permission"
         };
     }
 

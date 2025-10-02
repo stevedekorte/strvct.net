@@ -106,4 +106,37 @@
         return storage.ref(this.fullPath());
     }
 
+    /**
+     * @description Checks if current user can read from this path based on security rules
+     * This is a client-side simulation of the security rules, not a server check
+     * @returns {boolean} True if user likely has read permission
+     * @category Permissions
+     */
+    canRead () {
+        const permissions = this.firebaseStorageService().permissionsForPath(this.fullPath());
+        return permissions.canRead;
+    }
+
+    /**
+     * @description Checks if current user can write to this path based on security rules
+     * This is a client-side simulation of the security rules, not a server check
+     * @returns {boolean} True if user likely has write permission
+     * @category Permissions
+     */
+    canWrite () {
+        const permissions = this.firebaseStorageService().permissionsForPath(this.fullPath());
+        return permissions.canWrite;
+    }
+
+    /**
+     * @description Checks if anyone (including unauthenticated users) can read from this path
+     * This is a client-side simulation of the security rules, not a server check
+     * @returns {boolean} True if path allows public read access
+     * @category Permissions
+     */
+    anyoneCanRead () {
+        const permissions = this.firebaseStorageService().permissionsForPath(this.fullPath());
+        return permissions.anyoneCanRead;
+    }
+
 }.initThisClass());

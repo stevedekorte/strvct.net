@@ -2,5 +2,6 @@
     "FirebaseNode.js",
     "Files/_imports.json",
     "Folders/_imports.json",
+    "FirebaseStoragePermissions.js",
     "FirebaseStorageService.js"
 ]

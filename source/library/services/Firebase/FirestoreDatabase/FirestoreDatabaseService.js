@@ -5,18 +5,12 @@
  */
 
 /**
- * @class FirebaseStorageService
- * @extends AiService
- * @classdesc Service for Firebase Storage integration via AccountServer
+ * @class FirestoreDatabaseService
+ * @extends SvSummaryNode
+ * @classdesc Service for Firebase Firestore Database integration
  *
- * This service coordinates with the AccountServer to get signed upload URLs,
- * allowing secure uploads to Firebase Storage without exposing credentials.
- *
- * Security model:
- * - Client requests signed URL from AccountServer (authenticated)
- * - AccountServer generates time-limited upload URL using Firebase Admin SDK
- * - Client uploads directly to Firebase using signed URL
- * - No Firebase credentials exposed to client
+ * This service provides access to Firestore collections and documents.
+ * The root collection serves as the entry point to the Firestore hierarchy.
  */
 (class FirestoreDatabaseService extends SvSummaryNode {
 
@@ -31,11 +25,12 @@
 
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("documents", null);
-            slot.setFinalInitProto(FirestoreDocuments);
+            const slot = this.newSlot("root", null);
+            slot.setFinalInitProto(FirestoreRoot);
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
+            slot.setSlotType("FirestoreRoot");
         }
     }
 
@@ -45,24 +40,5 @@
         this.setShouldStoreSubnodes(false);
     }
 
-    static preClone () {
-        const obj = super.preClone();
-        console.log("----------- " + obj.svTypeId() + " [after preClone] ");
-
-        return obj;
-    }
-
-    static clone () {
-        const obj = super.clone();
-        console.log("----------- " + obj.svTypeId() + " [after clone] ");
-
-        return obj;
-    }
-
-    init () {
-        super.init();
-        console.log("----------- " + this.svTypeId() + ".init() ");
-
-    }
 
 }.initThisClass());

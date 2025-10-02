@@ -150,9 +150,12 @@
      * @category Actions
      */
     uploadActionInfo () {
+        const hasData = this.dataArrayBuffer() !== null;
+        const canWrite = this.canWrite();
         return {
-            isEnabled: this.dataArrayBuffer() !== null,
-            title: this.dataArrayBuffer() ? "Upload to Firebase" : "No data to upload"
+            isEnabled: hasData && canWrite,
+            title: !canWrite ? "No write permission"
+                : hasData ? "Upload to Firebase" : "No data to upload"
         };
     }
 
@@ -162,9 +165,11 @@
      * @category Actions
      */
     downloadActionInfo () {
+        const canRead = this.canRead();
         return {
-            isEnabled: true,
-            title: this.isDownloaded() ? "Re-download from Firebase" : "Download from Firebase"
+            isEnabled: canRead,
+            title: !canRead ? "No read permission"
+                : this.isDownloaded() ? "Re-download from Firebase" : "Download from Firebase"
         };
     }
 
@@ -174,9 +179,13 @@
      * @category Actions
      */
     deleteActionInfo () {
+        const hasParent = this.parentNode() !== null;
+        const canWrite = this.canWrite();
         return {
-            isEnabled: this.parentNode() !== null,
-            title: this.parentNode() ? "Delete from Firebase" : "Cannot delete (no parent)"
+            isEnabled: hasParent && canWrite,
+            title: !hasParent ? "Cannot delete (no parent)"
+                : !canWrite ? "No write permission"
+                : "Delete from Firebase"
         };
     }
 
@@ -234,19 +243,31 @@
     async asyncDoesExist () {
         // If file has no parent, it can't exist on Firebase
         if (!this.parentNode()) {
+            console.log("asyncDoesExist: no parent, returning false");
             return false;
         }
 
         try {
+            console.log("asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
-            await ref.getDownloadURL();
+            const url = await ref.getDownloadURL();
+            this.setDownloadUrl(url);
+            console.log("asyncDoesExist: got download URL, file exists");
             return true;
         } catch (error) {
+            console.log("asyncDoesExist caught error:", error);
+            console.log("asyncDoesExist error.code:", error.code);
+            console.log("asyncDoesExist error.message:", error.message);
+
             // Both "not found" and "unauthorized" mean the file doesn't exist for our purposes
-            if (error.code === "storage/object-not-found" || error.code === "storage/unauthorized") {
+            const errorCode = error.code || "";
+            if (errorCode.includes("object-not-found") || errorCode.includes("unauthorized")) {
+                console.log("asyncDoesExist: file doesn't exist, returning false");
                 return false;
             }
+
             // Re-throw unexpected errors
+            console.error("asyncDoesExist: unexpected error, re-throwing:", error);
             throw error;
         }
     }
@@ -379,7 +400,7 @@
                     "state_changed",
                     (snapshot) => {
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log(`Upload progress for ${this.name()}: ${progress.toFixed(2)}%`);
+                        console.log(this.logPrefix(), `Upload progress for ${this.name()}: ${progress.toFixed(2)}%`);
                     },
                     (error) => {
                         console.error("Upload error:", error);
@@ -388,20 +409,24 @@
                     },
                     async () => {
                         // Upload completed successfully
-                        console.log(`Upload completed for ${this.name()}`);
+                        console.log(this.logPrefix(), `Upload completed for ${this.name()}`);
 
                         // do this to unsure the file is uploaded before we download the metadata or return from the upload method
                         const url = await ref.getDownloadURL();
                         this.setDownloadUrl(url);
 
-                        // Download metadata from server - to ensure we are in sync
-                        await this.asyncDownloadMetadata();
+                        // Download metadata from server - to ensure we are in sync (only if still attached)
+                        if (this.parentNode()) {
+                            await this.asyncDownloadMetadata();
+                        } else {
+                            console.warn("Upload completed but file was detached from parent, skipping metadata download");
+                        }
                         resolve();
                     }
                 );
             });
         } catch (error) {
-            console.error("Error uploading blob:", error);
+            console.error(this.logPrefix(), "Error uploading blob:", error);
             this.setError(error);
             throw error;
         }

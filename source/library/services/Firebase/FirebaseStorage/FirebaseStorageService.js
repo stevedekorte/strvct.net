@@ -47,6 +47,13 @@
             slot.setShouldStoreSlot(false);
         }
 
+        {
+            const slot = this.newSlot("permissions", null);
+            slot.setFinalInitProto(FirebaseStoragePermissions);
+            slot.setSlotType("FirebaseStoragePermissions");
+            slot.setShouldStoreSlot(false);
+        }
+
     }
 
     initPrototype () {
@@ -78,7 +85,8 @@
     }
 
     async onUpdateAccountLogin () {
-        if (this.userId()) {
+        if (this.userId() && this._isSetup === undefined) {
+            this._isSetup = true;
             const userFolder = this.userFolder();
             await userFolder.asyncReadSubnodes();
             await this.asyncTest();
@@ -254,15 +262,31 @@
         return null;
     }
 
+    /**
+     * @description Checks permissions for a given path based on security rules
+     * This is a client-side simulation of the security rules, not a server check
+     * @param {string} path - The storage path to check
+     * @returns {Object} Object with canRead, canWrite, and anyoneCanRead boolean properties
+     * @category Permissions
+     */
+    permissionsForPath (path) {
+        const context = {
+            auth: this.userId() ? { uid: this.userId() } : null
+        };
+
+        return this.permissions().evaluatePath(path, context);
+    }
+
     async asyncTest () {
         if (!this._didTest) {
             this._didTest = true;
+            console.log("================================================");
             console.log(this.logPrefix(), "testing...");
 
             const file = this.userFolder().fileNamedCreateIfAbsent("test.txt");
-            console.log("File fullPath:", file.fullPath());
-            console.log("File parent:", file.parentNode());
-            console.log("userFolder:", this.userFolder().fullPath());
+            console.log(this.logPrefix(), "File fullPath:", file.fullPath());
+            console.log(this.logPrefix(), "File parent:", file.parentNode());
+            console.log(this.logPrefix(), "userFolder:", this.userFolder().fullPath());
             file.setDataArrayBufferToString("Hello, world!");
 
             // test upload
@@ -287,6 +311,7 @@
                 assert(!await deletedFile.asyncDoesExist(), "File should not exist");
                 console.log(this.logPrefix(), "delete passed");
             }
+            console.log("================================================");
         }
     }
 

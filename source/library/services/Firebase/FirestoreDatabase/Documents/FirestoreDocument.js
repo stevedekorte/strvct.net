@@ -6,24 +6,15 @@
 
 /**
  * @class FirestoreDocument
- * @extends SvStorableNode
+ * @extends FirestoreNode
  * @classdesc Represents a document stored in Firebase Firebase
  *
  * FirestoreDatabase records
  *
  */
-(class FirestoreDocument extends SvSummaryNode {
+(class FirestoreDocument extends FirestoreNode {
 
     initPrototypeSlots () {
-
-        {
-            const slot = this.newSlot("storagePath", null);
-            slot.setDescription("Firestore document path (collection/docId)");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setIsSubnodeField(true);
-        }
 
         // Content
         {
@@ -57,16 +48,6 @@
             const slot = this.newSlot("uploadStatus", "");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setIsSubnodeField(true);
-            slot.setCanEditInspection(false);
-        }
-
-        // Error message
-        {
-            const slot = this.newSlot("error", "");
-            slot.setSlotType("String");
-            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
@@ -111,9 +92,30 @@
 
     initPrototype () {
         this.setShouldStore(true);
-        this.setShouldStoreSubnodes(false);
-        this.setNodeCanAddSubnode(false);
+        this.setShouldStoreSubnodes(true);
+        this.setSubnodeClasses([FirestoreCollection]);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(true);
+    }
+
+    /**
+     * @description Gets the document ID (alias for name)
+     * @returns {string} The document ID
+     * @category Firestore
+     */
+    docId () {
+        return this.name();
+    }
+
+    /**
+     * @description Sets the document ID (alias for setName)
+     * @param {string} id - The document ID
+     * @returns {FirestoreDocument} This document for chaining
+     * @category Firestore
+     */
+    setDocId (id) {
+        return this.setName(id);
     }
 
     contentString () {
@@ -134,12 +136,12 @@
     }
 
     /**
-     * @description Gets the title for this image
+     * @description Gets the title for this document
      * @returns {string} The title
      * @category UI
      */
     title () {
-        return this.storagePath();
+        return this.name() || "Unnamed Document";
     }
 
     /**
@@ -167,33 +169,7 @@
             this.setError("");
             this.setUploadStatus("preparing upload...");
 
-            // Ensure Firestore web client is available
-            if (typeof firebase === "undefined" || !firebase.firestore) {
-                throw new Error("Firebase Firestore web client not available");
-            }
-
-            // Connect to Firestore
-            const db = firebase.firestore();
-
-            // In local development, attempt to use the emulator if available
-            try {
-                const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
-                const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
-                if (isLocal) {
-                    // Guard to avoid reconfiguring emulator repeatedly
-                    if (!window.__uo_firestore_emulator_configured__) {
-                        if (typeof db.useEmulator === "function") {
-                            db.useEmulator("localhost", 8080);
-                        } else if (typeof db.settings === "function") {
-                            db.settings({ host: "localhost:8080", ssl: false });
-                        }
-                        window.__uo_firestore_emulator_configured__ = true;
-                    }
-                }
-            } catch (e) {
-                // Non-fatal; continue with default config
-                console.warn("Firestore emulator configuration failed (non-fatal):", e);
-            }
+            const db = this.getFirestoreDb();
 
             // Parse content from JSON string or accept object directly
             const rawContent = this.content();
@@ -213,20 +189,16 @@
                 throw new Error("Unsupported content type: " + (typeof rawContent));
             }
 
-            // Determine target document path
-            let path = this.storagePath();
+            // Determine target document path from hierarchy
+            const path = this.path();
             if (!path || typeof path !== "string" || path.trim() === "") {
-                // Provide a reasonable default path if none is provided
-                path = `TestDocuments/${Date.now()}`;
-                this.setStoragePath(path);
+                throw new Error("No document path - check docId and parent collection are set");
             }
 
             // Firestore requires an even number of segments for document paths
             const segments = path.split("/").filter(Boolean);
             if (segments.length % 2 !== 0) {
-                // If a collection path was given, append a generated id
-                path = path.endsWith("/") ? path + Date.now() : `${path}/${Date.now()}`;
-                this.setStoragePath(path);
+                throw new Error("Invalid document path (must be collection/docId): " + path);
             }
 
             this.setUploadStatus("uploading to Firestore...");
@@ -252,31 +224,12 @@
             this.setError("");
             this.setUploadStatus("preparing delete...");
 
-            if (typeof firebase === "undefined" || !firebase.firestore) {
-                throw new Error("Firebase Firestore web client not available");
-            }
-
-            const path = this.storagePath();
+            const path = this.path();
             if (!path) {
-                throw new Error("No storagePath set for document");
+                throw new Error("No document path - check docId and parent collection are set");
             }
 
-            const db = firebase.firestore();
-            // Ensure emulator in dev before operation
-            try {
-                const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
-                const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
-                if (isLocal && !window.__uo_firestore_emulator_configured__) {
-                    if (typeof db.useEmulator === "function") {
-                        db.useEmulator("localhost", 8080);
-                    } else if (typeof db.settings === "function") {
-                        db.settings({ host: "localhost:8080", ssl: false });
-                    }
-                    window.__uo_firestore_emulator_configured__ = true;
-                }
-            } catch (e) {
-                console.error("FirestoreDocument.asyncDelete: Error configuring emulator:", e);
-            }
+            const db = this.getFirestoreDb();
             await db.doc(path).delete();
 
             this.setUploadStatus("deleted successfully");
@@ -297,31 +250,12 @@
             this.setError("");
             this.setUploadStatus("downloading from Firestore...");
 
-            if (typeof firebase === "undefined" || !firebase.firestore) {
-                throw new Error("Firebase Firestore web client not available");
-            }
-
-            const path = this.storagePath();
+            const path = this.path();
             if (!path) {
-                throw new Error("No storagePath set for document");
+                throw new Error("No document path - check docId and parent collection are set");
             }
 
-            const db = firebase.firestore();
-            // Ensure emulator in dev before operation
-            try {
-                const h = (typeof window !== "undefined" && window.location && window.location.hostname) || "";
-                const isLocal = ["localhost", "127.0.0.1", "::1"].includes(h) || h.endsWith(".local") || h.endsWith(".test");
-                if (isLocal && !window.__uo_firestore_emulator_configured__) {
-                    if (typeof db.useEmulator === "function") {
-                        db.useEmulator("localhost", 8080);
-                    } else if (typeof db.settings === "function") {
-                        db.settings({ host: "localhost:8080", ssl: false });
-                    }
-                    window.__uo_firestore_emulator_configured__ = true;
-                }
-            } catch (e) {
-                console.error("FirestoreDocument.asyncDownload: Error configuring emulator:", e);
-            }
+            const db = this.getFirestoreDb();
             const snap = await db.doc(path).get();
             if (!snap.exists) {
                 throw new Error("Document does not exist at path: " + path);
@@ -351,8 +285,8 @@
     }
 
     async asyncCloudUpdateTimeMillis () {
-        const db = firebase.firestore();
-        const docRef = db.doc(this.storagePath());
+        const db = this.getFirestoreDb();
+        const docRef = db.doc(this.path());
 
         // Use select() with empty array to fetch ONLY metadata, not document content
         const docSnapshot = await docRef.select().get();
@@ -369,6 +303,41 @@
         const cloudUpdateTime = await this.asyncCloudUpdateTimeMillis();
         const localUpdateTime = this.updateTimeMillis();
         return localUpdateTime > cloudUpdateTime;
+    }
+
+    /**
+     * @description Gets all subcollections in this document
+     * @returns {Array<FirestoreCollection>} Array of subcollections
+     * @category Query
+     */
+    subcollections () {
+        return this.subnodes().filter(node => node.svType() === "FirestoreCollection");
+    }
+
+    /**
+     * @description Finds a subcollection by name
+     * @param {string} name - The subcollection name to find
+     * @returns {FirestoreCollection|null} The found subcollection or null
+     * @category Query
+     */
+    subcollectionNamed (name) {
+        return this.subcollections().find(col => col.name() === name);
+    }
+
+    /**
+     * @description Gets or creates a subcollection by name
+     * @param {string} name - The subcollection name
+     * @returns {FirestoreCollection} The found or created subcollection
+     * @category Helper
+     */
+    subcollectionNamedCreateIfAbsent (name) {
+        let col = this.subcollectionNamed(name);
+        if (!col) {
+            col = FirestoreCollection.clone();
+            col.setName(name);
+            this.addSubnode(col);
+        }
+        return col;
     }
 
     // --- action wrappers ---
