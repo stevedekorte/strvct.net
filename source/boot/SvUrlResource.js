@@ -54,6 +54,10 @@
         return "SvUrlResource";
     }
 
+    logPrefix () {
+        return "[" + this.svType() + "] ";
+    }
+
     /**
      * Initializes the SvUrlResource instance.
      * @returns {SvUrlResource} The initialized instance.
@@ -211,7 +215,7 @@
                 return this;
             } else {
                 // otherwise, load normally and cache result
-                this.logDebug(this.svType() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                this.logDebug(this.logPrefix() + "no cache for '" + this.resourceHash() + "' " + this.path());
                 console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path());
 
                 assert(this.data() === null, "this.data() should be null");
@@ -231,7 +235,7 @@
                     throw error;
                 }
                 assert(await hc.promiseHasKey(h), "hashcache should now have key for " + this.resourceHash());
-                //console.log(this.svType() + " stored cache for ", this.resourceHash() + " " + this.path());
+                //console.log(this.logPrefix()+ " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
         } else {

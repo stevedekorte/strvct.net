@@ -39,7 +39,7 @@
      */
     async promiseLoad () {
         const path = this.href;
-        console.log("URL.promiseLoad() (over NETWORK) ", path);
+        console.log("[URL] promiseLoad() (over NETWORK) ", path);
 
         try {
             const file = StrvctFile.with(path);

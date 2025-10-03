@@ -26,6 +26,12 @@
         this.setNodeCanReorderSubnodes(false);
         this.setTitle("root");
     }
+
+    finalInit () {
+        this.setTitle("root");
+        //debugger;
+    }
+
     /**
      * @description Gets the subtitle for display
      * @returns {string} Count of collections

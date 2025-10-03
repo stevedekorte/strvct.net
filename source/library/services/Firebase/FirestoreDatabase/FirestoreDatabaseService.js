@@ -37,15 +37,19 @@
     initPrototype () {
         this.setTitle("Firestore Database");
         this.setSubtitle("document database");
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
         this.setShouldStoreSubnodes(false);
     }
 
     finalInit () {
         super.finalInit();
+        //this.root().collectionWithPathCreateIfAbsent("users");
+    }
+
+    afterUnserializeAndInit () {
         //debugger;
         this.root().collectionWithPathCreateIfAbsent("users");
-        //this.root().collectionWithPathCreateIfAbsent("campaigns");
-        //this.root().collectionWithPathCreateIfAbsent("sessions");
     }
 
 }.initThisClass());

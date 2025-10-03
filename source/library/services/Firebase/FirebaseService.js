@@ -26,7 +26,7 @@
             const slot = this.newSlot("firestoreDatabaseService", null);
             slot.setFinalInitProto(FirestoreDatabaseService);
             slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
         }
 
@@ -34,7 +34,7 @@
             const slot = this.newSlot("firebaseStorageService", null);
             slot.setFinalInitProto(FirebaseStorageService);
             slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
         }
 

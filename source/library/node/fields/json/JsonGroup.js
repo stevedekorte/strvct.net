@@ -225,7 +225,7 @@
                                 this.markAsDirty(); // save our type conversion
                             }
                         } else if (slot.slotType() !== Type.typeName(v)) {
-                            const errorMessage = this.logPrefix(), " .setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
+                            const errorMessage = this.logPrefix() + " .setJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
                             console.warn(errorMessage);
                             //throw new Error(errorMessage);
 
@@ -243,14 +243,14 @@
                                     let newValue = v.asString();
                                     // tmp hack for challenge rating
                                     /*
-                    if (v === 1/8) {
-                      newValue = "1/8";
-                    } else if (v === 1/4) {
-                      newValue = "1/4";
-                    } else if (v === 1/2) {
-                      newValue = "1/2";
-                    }
-                      */
+                                    if (v === 1/8) {
+                                    newValue = "1/8";
+                                    } else if (v === 1/4) {
+                                    newValue = "1/4";
+                                    } else if (v === 1/2) {
+                                    newValue = "1/2";
+                                    }
+                                    */
                                     slot.onInstanceSetValue(this, newValue);
                                     this.markAsDirty(); // save our type conversion
                                 } else {

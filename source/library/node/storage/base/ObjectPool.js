@@ -611,22 +611,23 @@
 
         if (Type.typeName(anObject) === "PersistentObjectPool") {
             const msg = "addActiveObject() called with PersistentObjectPool";
-            console.warn(msg);
+            console.warn(this.logPrefix(), msg);
             throw new Error(msg);
             //return false;
         }
 
         if (!anObject.shouldStore()) {
-            const msg = "attempt to addActiveObject '" + anObject.svType() + "' but shouldStore is false";
-            console.warn(msg);
-            anObject.shouldStore();
+            const msg = "attempt to addActiveObject '" + anObject.svType() + "' but shouldStore is false. Adding anyway so we don't load it multiple times. Let's hope it's garbage collected.";
+            console.warn(this.logPrefix(), msg);
+            //debugger;
+            //anObject.shouldStore();
             //throw new Error(msg);
-            return false;
+            //return false;
         }
 
         if (!anObject.isInstance()) {
             const msg = "can't store non instance of type '" + anObject.svType() + "'";
-            console.log(msg);
+            console.warn(this.logPrefix(), msg);
             anObject.isKindOf(ProtoClass);
             throw new Error(msg);
         }
@@ -777,7 +778,7 @@
      * @returns {ObjectPool}
      */
     forceAddDirtyObject (anObject) {
-        console.log("forceAddDirtyObject " + anObject.svTypeId());
+        console.log(this.logPrefix(), " forceAddDirtyObject(" + anObject.svTypeId() + ")");
         if (this.storingPids() !== null) {
             // we might be in the middle of storing changes
             if (this.storingPids().has(anObject.puuid())) {
@@ -957,7 +958,13 @@
         }
 
         obj.setPuuid(aRecord.id);
-        this.addActiveObject(obj);
+
+        if (obj.shouldStore) {
+            if (!obj.shouldStore()) {
+                console.warn(this.logPrefix() + "WARNING: object " + obj.svType() + " loaded from store but has shouldStore=false. Not adding to activeObjects.");
+            }
+            this.addActiveObject(obj);
+        }
         if (obj.puuid() === this.rootPid()) {
             this._rootObject = obj; // bit of a hack to make sure root ref is set before we load root contents
             // might want to split this method into one to get ref and another to load contents instead
@@ -977,6 +984,11 @@
                 obj.afterInit(); // called didInit, which sets _hasDoneInit to true
             }
         }
+
+        if (obj.afterUnserializeAndInit) {
+            obj.afterUnserializeAndInit();
+        }
+
         return obj;
     }
 

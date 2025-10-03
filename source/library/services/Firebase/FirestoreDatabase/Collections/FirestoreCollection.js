@@ -135,6 +135,7 @@
      * @category Firestore Operations
      */
     async asyncListDocuments () {
+        console.log(this.logPrefix(), "asyncListDocuments");
         try {
             this.setError(null);
             await this.documents().asyncRefresh();
