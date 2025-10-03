@@ -102,14 +102,14 @@
         }
 
         /**
-         * @member {Map} activeObjects
+         * @member {EnumerableWeakMap} activeObjects
          * @description objects known to the pool (previously loaded or referenced)
          * @default null
          */
         {
             const slot = this.newSlot("activeObjects", null);
             slot.setDescription("objects known to the pool (previously loaded or referenced)");
-            slot.setSlotType("Map");
+            slot.setSlotType("EnumerableWeakMap");
         }
 
         /**
@@ -228,7 +228,7 @@
     init () {
         super.init();
         this.setRecordsMap(ideal.AtomicMap.clone());
-        this.setActiveObjects(new Map());
+        this.setActiveObjects(new EnumerableWeakMap());
         this.setDirtyObjects(new Map());
         this.setLoadingPids(new Set());
         this.setLastSyncTime(null);
@@ -256,7 +256,7 @@
      * @returns {ObjectPool}
      */
     clearCache () {
-        this.setActiveObjects(new Map());
+        this.setActiveObjects(new EnumerableWeakMap());
         this.setDirtyObjects(new Map());
         this.readRootObject();
         //this.setRootObject(this.objectForPid(this.rootObject().puuid()));
@@ -649,7 +649,7 @@
      */
     close () {
         this.removeMutationObservations();
-        this.setActiveObjects(new Map());
+        this.setActiveObjects(new EnumerableWeakMap());
         this.setDirtyObjects(new Map());
         this.recordsMap().close();
         return this;

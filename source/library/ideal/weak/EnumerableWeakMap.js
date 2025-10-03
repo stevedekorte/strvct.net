@@ -111,8 +111,8 @@ SvGlobals.globals().EnumerableWeakMap = (class EnumerableWeakMap {
    * @description Executes the provided function once for each key-value pair in the EnumerableWeakMap instance. The function is passed the value, key, and the EnumerableWeakMap instance itself. Also removes collected keys during iteration.
    * @category Iteration
    */
-    forEach (fn) { // fn (value, key, map)
-    // also removes collected keys
+    forEach (fn, optionalRemovedKeysClosure = null) { // fn (value, key, map)
+        // also removes collected keys
         const refs = this._refs;
         let keysToRemove = null;
         // fn(value, key, set)
@@ -129,9 +129,34 @@ SvGlobals.globals().EnumerableWeakMap = (class EnumerableWeakMap {
                 }
             });
         }
+
         if (keysToRemove) {
             keysToRemove.forEach(k => refs.delete(k));
         }
+
+        if (optionalRemovedKeysClosure) {
+            optionalRemovedKeysClosure(keysToRemove);
+        }
+    }
+
+    /**
+   * Executes the provided function once for each key-value pair, with key first.
+   * @param {Function} fn - The function to execute for each key-value pair (receives key, value, map).
+   * @description Like forEach but passes key before value to match Map_ideal convention.
+   * @category Iteration
+   */
+    forEachKV (fn) { // fn (key, value, map)
+        this.forEach((v, k, self) => fn(k, v, self));
+    }
+
+    /**
+   * Executes the provided function once for each key.
+   * @param {Function} fn - The function to execute for each key.
+   * @description Executes the provided function once for each key in the EnumerableWeakMap instance.
+   * @category Iteration
+   */
+    forEachK (fn) { // fn (key)
+        this.forEach((v, k) => fn(k));
     }
 
     /**
