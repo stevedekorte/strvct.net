@@ -19,6 +19,7 @@
         // Node name (file or folder name)
         {
             const slot = this.newSlot("name", null);
+            slot.setLabel("Name");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -30,6 +31,7 @@
         // Error (if any operation failed)
         {
             const slot = this.newSlot("error", null);
+            slot.setLabel("Error");
             slot.setSlotType("Error");
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);

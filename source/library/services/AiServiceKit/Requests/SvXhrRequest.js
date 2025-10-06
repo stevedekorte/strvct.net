@@ -214,6 +214,16 @@
             slot.setSummaryFormat("key: value");
         }
 
+        {
+            const slot = this.newSlot("errorString", "");
+            slot.setLabel("Error String");
+            slot.setInspectorPath("State");
+            slot.setCanEditInspection(false);
+            slot.setIsSubnodeField(true);
+            slot.setSlotType("String");
+            slot.setSummaryFormat("key: value");
+        }
+
 
         /**
      * @member {Boolean} didAbort - Whether the request was aborted.
@@ -341,6 +351,10 @@
       body: this.body()
     }
   */
+
+    errorString () {
+        return this.error() ? this.error().message : "";
+    }
 
     /**
    * Sets the method for the request

@@ -183,7 +183,6 @@
         assert(this.tx() === null);
         const tx = this.db().transaction(this.storeName(), "readwrite", this.options());
         tx.onerror    = (error) => {
-            debugger;
             throw new Error(error);
         };
         this.setTx(tx);

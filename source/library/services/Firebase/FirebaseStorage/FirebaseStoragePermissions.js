@@ -65,6 +65,12 @@
                 description: "Root bucket - no access"
             },
             {
+                pattern: "users",
+                read: "auth != null",
+                write: false,
+                description: "Users folder - authenticated users can list"
+            },
+            {
                 pattern: "users/{userId}/**",
                 read: "auth != null && auth.uid == userId",
                 write: "auth != null && auth.uid == userId",
@@ -188,25 +194,35 @@
                 const context = contextOverride || this.context();
 
                 // Build evaluation scope
-                const scope = {
+                const scope = { // this is used by eval()
                     auth: context.auth,
                     ...variables
                 };
 
+                if (scope) {
+                    // just to keep linter happy
+                }
+
                 // Simple expression evaluator
                 // Supports: auth, auth.uid, variable names, ==, !=, &&, ||, null
                 const expr = condition
-                    .replace(/auth\.uid/g, "scope.auth?.uid")
-                    .replace(/auth/g, "scope.auth")
-                    .replace(/\b(\w+)\b(?!\s*[.(])/g, (match) => {
-                        // Replace variable names with scope access
-                        if (match === "null" || match === "true" || match === "false") {
+                    .replace(/\b(\w+)\b(?:\.(uid))?/g, (match, word, prop) => {
+                        // Handle reserved words
+                        if (word === "null" || word === "true" || word === "false") {
                             return match;
                         }
-                        if (match === "scope") {
-                            return match;
+                        // Handle auth with property access
+                        if (word === "auth") {
+                            if (prop === "uid") {
+                                return "scope.auth?.uid";
+                            }
+                            return "scope.auth";
                         }
-                        return `scope.${match}`;
+                        // Handle other variables (only if no property access)
+                        if (!prop) {
+                            return `scope.${word}`;
+                        }
+                        return match;
                     });
 
                 // Evaluate

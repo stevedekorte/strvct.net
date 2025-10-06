@@ -39,7 +39,6 @@
         this.setSubtitle("document database");
         this.setShouldStore(false);
         this.setShouldStoreSubnodes(false);
-        this.setShouldStoreSubnodes(false);
     }
 
     finalInit () {
@@ -48,7 +47,6 @@
     }
 
     afterUnserializeAndInit () {
-        //debugger;
         this.root().collectionWithPathCreateIfAbsent("users");
     }
 

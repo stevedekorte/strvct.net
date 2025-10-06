@@ -987,7 +987,6 @@
                 }
             }, this.connectRetryDelayMs());
         } else {
-            debugger;
             const warning = "Reached maximum number of " + this.maxRetries() + " retries.";
             console.warn(this.svType() + " " + warning);
             this.setStatus(warning);

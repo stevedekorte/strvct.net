@@ -18,12 +18,14 @@
 
         {
             const slot = this.overrideSlot("name", null);
+            slot.setLabel("Name");
             slot.setIsSubnodeField(true);
         }
 
         // Time created
         {
             const slot = this.newSlot("timeCreated", null);
+            slot.setLabel("Time Created");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -34,6 +36,7 @@
         // Last updated
         {
             const slot = this.newSlot("updated", null);
+            slot.setLabel("Time Updated");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -44,6 +47,7 @@
         // File size in bytes
         {
             const slot = this.newSlot("size", 0);
+            slot.setLabel("Size In Bytes");
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -53,17 +57,22 @@
 
         // Content type (MIME type)
         {
-            const slot = this.newSlot("contentType", null);
+            const validItems = this.contentCategoryValidItems();
+            const slot = this.newSlot("contentCategory", validItems.first().value);
+            slot.setAllowsNullValue(true);
+            slot.setLabel("Content Category");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
+            slot.setValidItems(validItems);
         }
 
         // Custom metadata
         {
             const slot = this.newSlot("customMetadata", null);
+            slot.setLabel("Custom Metadata");
             slot.setSlotType("Object");
             slot.setShouldStoreSlot(true);
         }
@@ -71,6 +80,7 @@
         // Download URL (cached)
         {
             const slot = this.newSlot("downloadUrl", null);
+            slot.setLabel("Download URL");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
@@ -80,6 +90,7 @@
         // ArrayBuffer data (for upload or after download)
         {
             const slot = this.newSlot("dataArrayBuffer", null);
+            slot.setLabel("Data ArrayBuffer");
             slot.setSlotType("ArrayBuffer");
             slot.setShouldStoreSlot(false);
         }
@@ -122,9 +133,60 @@
 
     }
 
+
+    /**
+     * @description Returns the valid items for the content category
+     * @returns {Array} The valid items
+     * @category Valid Items
+     */
+    contentCategoryValidItems () {
+        // NOTE: these categories are primarily used to determine which UI components to show for the file
+        // e.g. an ImageWell, VideoWell, AudioWell, StringField, TextAreaField, etc.
+
+        return [
+            {
+                label: "Unselected",
+                subtitle: "No category selected",
+                value: "unselected"
+            },
+            {
+                label: "text",
+                subtitle: "Text, Markdown, JSON, etc.",
+                value: "text"
+            },
+            {
+                label: "image",
+                subtitle: "Image",
+                value: "image"
+            },
+            {
+                label: "video",
+                subtitle: "Video",
+                value: "video"
+            },
+            {
+                label: "audio",
+                subtitle: "Audio",
+                value: "audio"
+            },
+            {
+                label: "JSON",
+                subtitle: "JSON",
+                value: "other"
+            }
+        ];
+    }
+
     initPrototype () {
         this.setShouldStore(false);
         this.setShouldStoreSubnodes(false);
+    }
+
+    didUpdateSlotContentCategory (oldValue, newValue) {
+        this.setContentType(newValue);
+        this.setCustomMetadata({
+            contentCategory: newValue
+        });
     }
 
     /**
@@ -212,7 +274,7 @@
      */
     subtitle () {
         const size = this.humanReadableSize();
-        const type = this.contentType() || "unknown type";
+        const type = this.contentCategory() || "unknown type";
         return `${size} - ${type}`;
     }
 

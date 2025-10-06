@@ -235,7 +235,7 @@
             for (const subnode of existingSubnodes) {
                 // Skip non-Firebase nodes (like action fields)
                 if (!subnode.isKindOf(FirebaseNode)) {
-                    debugger;
+                    throw new Error("subnode is not a FirebaseNode: " + subnode.svType());
                 }
 
                 const name = subnode.name();

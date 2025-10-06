@@ -236,7 +236,6 @@
         } catch (error) {
             console.error(this.logPrefix(), error);
             console.log(this.logPrefix(), "error writing hash/value pair: " + this.description());
-            debugger;
         }
     }
 

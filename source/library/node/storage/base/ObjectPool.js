@@ -619,7 +619,6 @@
         if (!anObject.shouldStore()) {
             const msg = "attempt to addActiveObject '" + anObject.svType() + "' but shouldStore is false. Adding anyway so we don't load it multiple times. Let's hope it's garbage collected.";
             console.warn(this.logPrefix(), msg);
-            //debugger;
             //anObject.shouldStore();
             //throw new Error(msg);
             //return false;

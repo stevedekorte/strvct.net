@@ -82,7 +82,6 @@ Image.__proto__ = Object;
         if (this.isLoaded()) {
             this._promiseLoaded = Promise.resolve(this);
         } else {
-            debugger;
             this._promiseLoaded = new Promise((resolve, reject) => {
                 this.onload = () => {
                     this.onDidLoad();

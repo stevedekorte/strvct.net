@@ -53,7 +53,6 @@
     * @category Setup
     */
     setupAsDefault () {
-        debugger;
         this.setTitle("DefaultTheme");
         const defaultThemeClass = SvThemeClass.clone().setupAsDefault();
         this.addSubnode(defaultThemeClass);
@@ -70,6 +69,8 @@
     */
     themeClassNamed (name) {
         return this.firstSubnodeWithTitle(name);
+        //        return this.allThemeClasses().detect(themeClass => themeClass.title() === name);
+
     }
 
     /**
@@ -96,22 +97,6 @@
         return options;
     }
 
-    /**
-    * @description Retrieves a theme class by its name from all theme classes.
-    * @param {string} name - The name of the theme class to retrieve.
-    * @returns {SvThemeClass|undefined} The theme class with the given name, or undefined if not found.
-    * @category Retrieval
-    */
-    themeClassNamed (name) {
-        return this.allThemeClasses().detect(themeClass => themeClass.title() === name);
-        /*
-    const themeClass = this.firstSubnodeWithTitle(className);
-    if (themeClass) {
-        return themeClass.themeClassNamed(name);
-    }
-    return null;
-    */
-    }
 
     /**
     * @description Gets an array of all theme classes, including nested ones.

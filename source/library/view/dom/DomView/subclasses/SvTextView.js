@@ -1326,7 +1326,7 @@
      * @returns {void}
      */
     onSelectStart (/*event*/) {
-        console.log(this.logPrefix(), "'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()");
+        //console.log(this.logPrefix(), "'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()");
     }
 
 }.initThisClass());

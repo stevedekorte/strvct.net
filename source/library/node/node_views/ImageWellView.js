@@ -135,7 +135,7 @@
      * @returns {Boolean} Always returns true in this implementation.
      * @category Drag and Drop
      */
-    acceptsDrop (event) {
+    acceptsDrop (/*event*/) {
         //return true;
         return this.isEditable();
     }

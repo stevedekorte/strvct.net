@@ -63,8 +63,7 @@
     * @category View Creation
     */
     svgIconView () {
-    // TODO: this view stuff probably shouldn't be in the model
-        debugger;
+        // TODO: this view stuff probably shouldn't be in the model
         const icon = SvgIconView.clone().setSvgString(this.svgString());
         return icon;
     }

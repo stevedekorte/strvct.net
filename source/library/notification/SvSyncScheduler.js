@@ -479,7 +479,6 @@
                     console.log("\nSvSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription());
                     console.log("\n" + SvNotificationCenter.shared().shortDescription() + ":\n" + SvNotificationCenter.shared().notesDescription());
                     console.log(" --- ");
-                    debugger;
                 }
                 assert (count < maxCount);
             }

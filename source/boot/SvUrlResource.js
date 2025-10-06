@@ -221,12 +221,6 @@
 
                 await this.promiseJustLoad();
 
-
-                if (this.path() === "strvct/source/library/services/ImaginePro/Text to Image/files/FileToDownload.js") {
-                    console.log(this.logPrefix() + "this.data().asString(): [[[\n", this.data().asString(), "\n]]]");
-                    debugger;
-                }
-
                 try {
                     await hc.promiseAtPut(h, this.data());
                 } catch (error) {

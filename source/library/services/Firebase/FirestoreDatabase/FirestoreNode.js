@@ -22,6 +22,7 @@
         // Path (Firestore path string)
         {
             const slot = this.newSlot("path", null);
+            slot.setLabel("Path");
             slot.setDescription("Firestore path (e.g., 'users' or 'users/user123' or 'users/user123/posts')");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
@@ -33,6 +34,7 @@
         // Error (if any operation failed)
         {
             const slot = this.newSlot("error", null);
+            slot.setLabel("Error");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);

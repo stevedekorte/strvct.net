@@ -29,7 +29,6 @@
 
     finalInit () {
         this.setTitle("root");
-        //debugger;
     }
 
     /**
