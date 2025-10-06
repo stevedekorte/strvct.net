@@ -817,7 +817,11 @@
     }
 
     setBackgroundImageUrlPath (path) {
-        this.setBackgroundImage("url(\"" + path + "\")");
+        if (path === null || path === undefined || path === "") {
+            this.setBackgroundImage(null);
+        } else {
+            this.setBackgroundImage("url(\"" + path + "\")");
+        }
         return this;
     }
 
