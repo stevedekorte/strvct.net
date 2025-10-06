@@ -159,7 +159,7 @@
      * @category Debugging
      */
     isDebugging () {
-        return true;
+        return false;
     }
 
     /**
@@ -169,7 +169,7 @@
      */
     logDebug (s) {
         if (this.isDebugging()) {
-            console.log(s);
+            console.log(this.logPrefix() + s);
         }
     }
 
@@ -184,7 +184,7 @@
         }
         SvResourceManager.shared().updateBar();
 
-        //console.log("SvUrlResource.asyncLoadFromCache() " + this.path())
+        //console.log(this.logPrefix() + ".asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
         if (h && SvGlobals.has("SvHashCache")) {
             const hc = SvHashCache.shared();
@@ -193,30 +193,29 @@
             //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
             if (this.path().split("/").includes("deferred")) {
-
-                //console.log("SvUrlResource loading a deferred resource: " + this.path());
+                console.log(this.logPrefix() + "loading a deferred resource: " + this.path());
             }
             //if (data !== undefined) {
             if (hasKey) {
                 // if hashcache is available and has data, use it
                 const data = await hc.promiseAt(h, this.path());
                 if (data === undefined) {
-                    console.warn("hashcache has undefined data for " + h + " " + this.path());
-                    console.log("SvUrlResource load from network: " + this.path());
+                    console.warn(this.logPrefix() + "hashcache has undefined data for " + h + " " + this.path());
+                    console.log(this.logPrefix() + "load from network: " + this.path());
                     return this.promiseJustLoad();
                 }
 
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
                 if (!["js", "css", "woff2", "woff", "ttf", "otf"].includes(this.path().split(".").pop())) {
-                    //console.log("SvUrlResource load from cache: " + this.path());
+                    //console.log(this.logPrefix() + "load from cache: " + this.path());
 
                 }
                 return this;
             } else {
                 // otherwise, load normally and cache result
-                this.logDebug(this.logPrefix() + "no cache for '" + this.resourceHash() + "' " + this.path());
-                console.log("SvUrlResource.asyncLoadFromCache() (over NETWORK) " + this.path());
+                this.logDebug("no cache for '" + this.resourceHash() + "' " + this.path());
+                console.log(this.logPrefix() + ".asyncLoadFromCache() (over NETWORK) " + this.path());
 
                 assert(this.data() === null, "this.data() should be null");
 
@@ -224,7 +223,7 @@
 
 
                 if (this.path() === "strvct/source/library/services/ImaginePro/Text to Image/files/FileToDownload.js") {
-                    console.log("this.data().asString(): [[[\n", this.data().asString(), "\n]]]");
+                    console.log(this.logPrefix() + "this.data().asString(): [[[\n", this.data().asString(), "\n]]]");
                     debugger;
                 }
 
@@ -278,7 +277,7 @@
      * @category Loading and Evaluation
      */
     async promiseLoadAndEval () {
-        console.log("promiseLoadAndEval " + this.path());
+        console.log(this.logPrefix() + "promiseLoadAndEval " + this.path());
         await this.promiseLoad();
         this.eval();
     }
@@ -290,7 +289,7 @@
      */
     eval () {
         if (this._didEval) {
-            console.warn("SvUrlResource already evaluated: " + this.path());
+            console.warn(this.logPrefix() + "already evaluated: " + this.path());
             return this;
         }
 
@@ -308,7 +307,7 @@
      * @category Evaluation
      */
     evalDataAsJS () {
-        //console.log("SvUrlResource eval ", this.path())
+        //console.log(this.logPrefix() + "eval ", this.path())
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }
@@ -321,7 +320,7 @@
     evalDataAsCss () {
         // Skip CSS evaluation in Node.js since there's no DOM
         if (SvPlatform.isNodePlatform()) {
-            // console.log("⏭️  Skipping CSS evaluation in Node.js:", this.path());
+            // console.log(this.logPrefix() + "⏭️  Skipping CSS evaluation in Node.js:", this.path());
             return;
         }
 
@@ -331,7 +330,7 @@
         const encodedPath = encodeURI(this.path());
         const sourceUrl = `\n//# sourceURL=${encodedPath}`;
         const debugCssString = cssString + sourceUrl;
-        //console.log("eval css: " +  entry.path)
+        //console.log(this.logPrefix() + "eval css: " +  entry.path)
         const element = document.createElement("style");
         element.type = "text/css";
         element.appendChild(document.createTextNode(debugCssString));
