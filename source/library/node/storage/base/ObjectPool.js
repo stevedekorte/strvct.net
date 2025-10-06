@@ -783,9 +783,15 @@
             // we might be in the middle of storing changes
             if (this.storingPids().has(anObject.puuid())) {
                 // looks like this object is already queued to be stored
+                console.log(this.logPrefix(), " forceAddDirtyObject(" + anObject.svTypeId() + ") already queued to be stored - skipping");
                 return this;
             }
         }
+        if (!this._forcedDirtyObjectsSet) {
+            this._forcedDirtyObjectsSet = new Set();
+        }
+        this._forcedDirtyObjectsSet.add(anObject);
+
         this.dirtyObjects().set(anObject.puuid(), anObject);
         this.scheduleStore();
         return this;
@@ -797,7 +803,7 @@
      */
     scheduleStore () {
         if (!this.isOpen()) {
-            console.log(this.svTypeId() + " can't schedule store yet, not open");
+            console.log(this.logPrefix(), " can't schedule store yet, not open");
             return this;
         }
         assert(this.isOpen());
@@ -835,6 +841,16 @@
             this.logDebug("--- commitStoreDirtyObjects total objects: " + this.recordsMap().count());
 
             //this.show("AFTER commitStoreDirtyObjects");
+
+            if (this._forcedDirtyObjectsSet) {
+                if (this._forcedDirtyObjectsSet.size !== 0) {
+                    console.log(this.logPrefix() + "forceDirectObjectsSet is not empty! scheduling another store to get the rest");
+                    this.scheduleStore();
+                } else {
+                    console.log(this.logPrefix() + "--- commitStoreDirtyObjects end -- all forced dirty objects were stored!");
+                    this._forcedDirtyObjectsSet = null;
+                }
+            }
         }
     }
 
@@ -865,6 +881,11 @@
                 }
 
                 this.storingPids().add(puuid);
+
+                if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
+                    console.log(this.logPrefix(), " storing forced dirty object (" + obj.svTypeId() + ") ");
+                    this._forcedDirtyObjectsSet.delete(obj);
+                }
 
                 this.storeObject(obj);
 
