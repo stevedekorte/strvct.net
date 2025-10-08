@@ -128,7 +128,7 @@
 
 
         {
-            const slot = this.newSlot("timeoutPeriodInMs", 60000); // 30 seconds
+            const slot = this.newSlot("timeoutPeriodInMs", 60000);
             slot.setLabel("Timeout Period Ms");
             slot.setInspectorPath("Settings");
             slot.setShouldStoreSlot(false);
@@ -428,7 +428,7 @@
    * @returns {string}
    */
     subtitle () {
-        return [this.contentByteCount() + " bytes", this.status()].join("\n");
+        return [this.contentByteCount() + " bytes received", this.status()].join("\n");
     }
 
     /**

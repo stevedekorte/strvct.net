@@ -321,10 +321,10 @@ class ImportsIndexer {
      * @category Data Processing
      */
     hashForData (data) {
-        // Use the same hash method as ArrayBuffer.prototype.asyncSha256() for consistency
+        // Use the same hash method as ArrayBuffer.prototype.asyncHexSha256() for consistency
         // This ensures hashes match between build time and runtime
         const buffer = Buffer.from(data, "utf8");
-        const hash = crypto.createHash("sha256").update(buffer).digest("base64");
+        const hash = crypto.createHash("sha256").update(buffer).digest("hex");
         return hash;
     }
 

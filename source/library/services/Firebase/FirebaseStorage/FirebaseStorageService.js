@@ -68,6 +68,10 @@
         this.watchForNote("onUpdateAccountLogin");
     }
 
+    isLoggedIn () {
+        return this.userId() !== null;
+    }
+
     userId () {
         if (firebase.auth().currentUser) {
             const userId = firebase.auth().currentUser.uid;
@@ -85,14 +89,37 @@
     }
 
     async onUpdateAccountLogin () {
-        if (this.userId() && this._isSetup === undefined) {
-            this._isSetup = true;
-            const userFolder = this.userFolder();
-            await userFolder.asyncReadSubnodes();
-            //await this.asyncTest();
+        if (this.userId()) {
+            this.onDidLogin();
         } else {
             //this.rootFolder().removeSubnode(this.rootFolder().subfolderNamed("files"));
         }
+    }
+
+    async onDidLogin () {
+        if (this.userId() && this._isSetup === undefined) {
+            this.asyncSetupDefaultFolders();
+            //await this.asyncTest();
+        }
+    }
+
+    async asyncSetupDefaultFolders () {
+        this._isSetup = true;
+        // add user folder under /users/userId/
+        const userFolder = this.userFolder();
+        await userFolder.asyncReadSubnodes();
+
+        // add shared folder under /shared/
+        const sharedFolder = this.rootFolder().subfolderNamedCreateIfAbsent("shared");
+        await sharedFolder.asyncReadSubnodes();
+
+        // add public folder under /public/
+        const publicFolder = this.rootFolder().subfolderNamedCreateIfAbsent("public");
+        await publicFolder.asyncReadSubnodes();
+    }
+
+    publicFolder () {
+        return this.rootFolder().subfolderNamed("public");
     }
 
     /**
@@ -317,5 +344,29 @@
         }
     }
 
+    async asyncPublicUrlForArrayBuffer (arrayBuffer) {
+        if (!this.isLoggedIn()) {
+            throw new Error("Not logged in");
+        }
+        const hashString = await arrayBuffer.asyncHexSha256();
+        const file = this.publicFolder().fileNamedCreateIfAbsent(hashString);
+        const doesExist = await file.asyncDoesExist();
+        if (doesExist) {
+            return file.downloadUrl();
+        }
+
+        // Detect MIME type from the binary data
+        const mimeType = SvMimeTypeDetector.detectFromArrayBuffer(arrayBuffer);
+        if (mimeType) {
+            file.setContentType(mimeType);
+        } else {
+            console.warn(this.logPrefix(), "Could not detect MIME type for file, using application/octet-stream");
+            file.setContentType("application/octet-stream");
+        }
+
+        file.setDataArrayBuffer(arrayBuffer);
+        await file.asyncUpload();
+        return file.downloadUrl();
+    }
 
 }.initThisClass());

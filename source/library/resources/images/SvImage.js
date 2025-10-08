@@ -40,7 +40,7 @@
         }
 
         {
-            const slot = this.newSlot("sha256Hash", "");
+            const slot = this.newSlot("hexSha256Hash", "");
             slot.setSlotType("String");
         }
 
@@ -76,7 +76,7 @@
     }
 
     onUpdateSlotDataURL () {
-        this.setSha256Hash(null);
+        this.setHexSha256Hash(null);
         // we'll lazily calculate the hash if/when needed
     }
 
@@ -144,87 +144,6 @@
             return path;
         }
         return null;
-    }
-
-
-    async asyncSha256Hash () {
-        if (!this.sha256Hash()) {
-            this.setSha256Hash(await this.asyncCalculateSha256Hash());
-        }
-
-        return this.sha256Hash();
-    }
-
-    sha256Hash () {
-        return this._sha256Hash;
-    }
-
-    async asyncCalculateSha256Hash () {
-        const imageData = this.getImageData();
-        if (!imageData) {
-            throw new Error("No image data available for hashing");
-        }
-
-        // Check if it's a data URL or regular URL
-        if (imageData.startsWith("data:")) {
-            // Extract the base64 data part (after the comma)
-            const base64Data = imageData.split(",")[1];
-            if (!base64Data) {
-                throw new Error("Invalid data URL format");
-            }
-
-            // Convert base64 to array buffer
-            const binaryString = atob(base64Data);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-
-            // Use the TypedArray's promiseSha256Digest method
-            const hashBuffer = await bytes.promiseSha256Digest();
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-            return hashHex;
-        } else {
-            // For URLs, use String's promiseSha256Digest
-            const hashBuffer = await imageData.promiseSha256Digest();
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-            return hashHex;
-        }
-    }
-
-    /**
-     * @description Generates a filename based on the SHA256 hash of the image content
-     * @returns {Promise<string>} The filename in format "hash.extension" (e.g., "a3f5b8c9d2e1f4g6.png")
-     * @category Utility
-     */
-    async asyncGetHashFileName () {
-        const imageData = this.getImageData();
-        if (!imageData) {
-            throw new Error("No image data available for generating filename");
-        }
-
-        // Generate hash
-        const hash = await this.asyncSha256Hash();
-
-        // Determine file extension from data URL
-        let extension = "png"; // default
-        if (imageData.startsWith("data:image/")) {
-            const mimeMatch = imageData.match(/^data:image\/([^;]+)/);
-            if (mimeMatch && mimeMatch[1]) {
-                extension = mimeMatch[1].toLowerCase();
-                // Handle special cases
-                if (extension === "jpeg") {
-                    extension = "jpg";
-                } else if (extension === "svg+xml") {
-                    extension = "svg";
-                }
-            }
-        }
-
-        // Return filename with hash and extension
-        return `${hash}.${extension}`;
     }
 
     /*

@@ -131,6 +131,21 @@
             slot.setSummaryFormat("key: value");
         }
 
+        // omniRefWeight
+        {
+            const slot = this.newSlot("omniRefWeight", 100);
+            slot.setInspectorPath("Settings");
+            slot.setSlotType("Number");
+            slot.setLabel("Omniref Weight");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setValidValues([25, 50, 75, 100, 150, 200, 300, 400, 600, 800, 1000]);
+            slot.setDescription("Omnireference weight (1-1000): 25-50 subtle, 100-300 balanced, 400+ strong influence");
+            slot.setSummaryFormat("key: value");
+        }
+
 
         /**
      * @member {SvXhrRequest} xhrRequest
@@ -396,7 +411,7 @@
         // V7 uses --oref (omnireference) and --ow (omnireference weight) parameters
         // We do NOT support V6 or earlier (which used --cref/--cw)
         if (this.omniRefImageUrl()) {
-            prompt += " --oref " + this.omniRefImageUrl() + " --ow 100";
+            prompt += " --oref " + this.omniRefImageUrl() + " --ow " + this.omniRefWeight();
         }
 
         // Append aspect ratio

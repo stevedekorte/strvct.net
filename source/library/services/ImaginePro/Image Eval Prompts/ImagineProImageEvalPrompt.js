@@ -44,11 +44,6 @@
         }
 
         {
-            const slot = this.newSlot("evalCompletionPromise", null);
-            slot.setSlotType("Promise");
-        }
-
-        {
             const slot = this.newSlot("evaluateAction", null);
             slot.setInspectorPath("");
             slot.setLabel("Evaluate");
@@ -56,7 +51,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("evaluate");
+            slot.setActionMethodName("asyncEvaluateImages");
         }
 
     }
@@ -76,36 +71,15 @@
    * @category Action
    */
     async generate () {
-        this.setEvalCompletionPromise(Promise.clone());
-
         await super.generate();
-
-        // Don't proceed with evaluation if generation failed
-        if (this.error()) {
-            this.onEvalError(this.error());
-        }
-        return this.evalCompletionPromise();
+        await this.asyncEvaluateImages();
     }
 
-    /**
-   * @description Override to add evaluation after successful generation.
-   * @param {Object} generation - The generation object.
-   * @category Delegation
-   */
-    onImageGenerationEnd (generation) {
-    // Let parent handle the basic completion
-        super.onImageGenerationEnd(generation);
-
-        // If generation was successful, evaluate
-        if (generation.status() === "completed") {
-            this.evaluateImages();
-        }
-    }
 
     evaluateActionInfo () {
         return {
             isVisible: true,
-            isEnabled: this.svImages().subnodes().length > 0
+            isEnabled: this.allResultImages().length > 0
         };
     }
 
@@ -114,32 +88,30 @@
    * @returns {Promise<void>}
    * @category Evaluation
    */
-    async evaluateImages () {
+    async asyncEvaluateImages () {
         try {
             this.setStatus("preparing evaluation...");
+            this.imageEvaluators().removeAllSubnodes();
 
-            this.images().subnodes().forEach(node => {
-                const svImage = node.asSvImage();
+            // setup image evaluators
+            this.allResultImages().forEach(fileToDownload => {
+                const svImage = SvImage.clone();
+                svImage.setDataURL(fileToDownload.dataUrl());
                 const evaluator = this.imageEvaluators().add();
+                //debugger;
                 evaluator.setSvImage(svImage);
                 evaluator.setImageGenPrompt(this.prompt());
-                evaluator.evaluate();
             });
 
             this.setStatus("evaluating images...");
-            await this.imageEvaluators().asyncEvaluate();
-            this.processEvaluationResults();
-
+            await this.imageEvaluators().asyncEvaluate(); // evals in parallel
+            const bestImage = this.imageEvaluators().bestSvImage();
+            this.setResultImageUrlData(bestImage.dataURL());
             this.setStatus("evaluation complete");
 
         } catch (error) {
-            const normalizedError = Error.normalizeError(error);
-            this.setError(normalizedError);
-            console.error(this.logPrefix(), "Image evaluation failed:", error);
-            this.setError(new Error("Evaluation failed: " + error.message));
-            return this.onEvalError(error);
+            this.throwEvalError(error);
         }
-        return this.onEvalCompletion();
     }
 
     /**
@@ -147,26 +119,17 @@
    * The best image has already been selected by the evaluator's selectBestImage() method.
    * @category Evaluation
    */
-    processEvaluationResults () {
-        //const bestSvImage = this.imageEvaluators().bestSvImage();
-        const bestIndex = this.imageEvaluators().bestImageIndex();
-
-        // Send delegate notification if we have a corresponding image node
-        const imageNodes = this.images().subnodes();
-        if (bestIndex < imageNodes.length) {
-            this.sendDelegateMessage("onImagePromptImageLoaded", [this, imageNodes[bestIndex]]);
-        }
+    bestImage () {
+        return this.imageEvaluators().bestSvImage();
     }
 
-    onEvalCompletion () {
-        this.evalCompletionPromise().callResolveFunc(this);
-    }
 
-    onEvalError (error) {
+    throwEvalError (error) {
         const normalizedError = Error.normalizeError(error);
+        console.error(this.logPrefix(), "Image evaluation failed:", normalizedError);
         this.setError(normalizedError);
         this.setStatus("Error: " + normalizedError.message);
-        this.evalCompletionPromise().callRejectFunc(normalizedError);
+        throw normalizedError;
     }
 
 }).initThisClass();

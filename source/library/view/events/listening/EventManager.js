@@ -77,6 +77,11 @@
             slot.setSlotType("Promise");
             slot.setAllowsNullValue(true);
         }
+
+        {
+            const slot = this.newSlot("userEventNames", new Set(["KeyboardEvent", "MouseEvent", "DragEvent", "TouchEvent", "PointerEvent", "WheelEvent", "InputEvent", "ClipboardEvent"]));
+            slot.setSlotType("Set");
+        }
     }
 
     /**
@@ -109,8 +114,7 @@
      * @category Event Handling
      */
     currentEventIsUserInput () {
-        const userEventNames = ["KeyboardEvent", "MouseEvent"];
-        return userEventNames.includes(this.currentEventName());
+        return this.userEventNames().has(this.currentEventName());
     }
 
     /**

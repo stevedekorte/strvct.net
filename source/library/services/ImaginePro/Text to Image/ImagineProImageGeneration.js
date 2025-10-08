@@ -298,7 +298,6 @@
         }
 
         this.completionPromise().callResolveFunc(this);
-        this.sendDelegateMessage("onImageGenerationEnd", [this]);
     }
 
     async downloadImageUrls (imageUrls) {

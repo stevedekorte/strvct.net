@@ -10,22 +10,23 @@
 // ArrayBuffer_sha256.js
 
 /**
- * Computes SHA-256 hash of the ArrayBuffer and returns it as a base64 string.
+ * Computes SHA-256 hash of the ArrayBuffer and returns it as a hexadecimal string.
  * Works in both browser and Node.js environments.
- * @returns {Promise<string>} The SHA-256 hash as a base64 string
+ * @returns {Promise<string>} The SHA-256 hash as a hexadecimal string (64 characters, lowercase)
  */
-ArrayBuffer.prototype.asyncSha256 = async function () {
+ArrayBuffer.prototype.asyncHexSha256 = async function () {
     if (typeof crypto !== "undefined" && crypto.subtle) {
         // Browser environment or Node.js with Web Crypto API
         const hashArrayBuffer = await crypto.subtle.digest("SHA-256", this);
-        const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)));
-        return hashString;
+        const hashArray = Array.from(new Uint8Array(hashArrayBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        return hashHex;
     } else if (typeof require !== "undefined") {
         // Node.js environment - use Node's crypto module
         const nodeCrypto = require("crypto");
         const hash = nodeCrypto.createHash("sha256");
         hash.update(Buffer.from(this));
-        return hash.digest("base64");
+        return hash.digest("hex");
     } else {
         throw new Error("No crypto implementation available");
     }

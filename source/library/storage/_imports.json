@@ -1,5 +1,4 @@
 [
     "PersistentAtomicMap.js",
-    "PersistentAsyncMap.js",
-    "SvMediaCache.js"
+    "PersistentAsyncMap.js"
 ]

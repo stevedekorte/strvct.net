@@ -2,7 +2,6 @@
     "SvResource.js",
     "SvResources.js",
     "SvResourceGroup.js",
-    "SvMimeExtensions.js",
     "files/_imports.json",
     "fonts/_imports.json",
     "sounds/_imports.json",

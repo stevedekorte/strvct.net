@@ -17,6 +17,11 @@
  */
 (class SvDataUrl extends ProtoClass {
 
+    static from (dataUrlString) {
+        const dataUrlObj = SvDataUrl.clone().setDataUrlString(dataUrlString);
+        return dataUrlObj;
+    }
+
     /**
      * @description Initializes the prototype slots for the SvDataUrl class.
      */
@@ -114,6 +119,18 @@
      */
     isHtml () {
         return this.mimeType() === "text/html";
+    }
+
+    isImage () {
+        return this.mimeType().startsWith("image/");
+    }
+
+    contentCategory () {
+        return this.mimeType().split("/").first();
+    }
+
+    contentSubtype () {
+        return this.mimeType().split("/").last();
     }
 
     /**

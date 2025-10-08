@@ -131,6 +131,22 @@
             slot.setDescription("Error from evaluation process");
         }
 
+        /**
+     * @member {SvXhrRequest} svXhrRequest
+     * @description The XHR request used for evaluation.
+     * @category Request
+     */
+        {
+            const slot = this.newSlot("svXhrRequest", null);
+            slot.setSlotType("SvXhrRequest");
+            slot.setLabel("XHR Request");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+            slot.setAllowsNullValue(true);
+            slot.setDescription("XHR request used for OpenAI API call");
+        }
+
 
         // Action to evaluate the image
     /*
@@ -151,7 +167,7 @@
     initPrototype () {
         this.setTitle("Image Evaluator");
         this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
+        this.setShouldStoreSubnodes(false);
     }
 
     /**
@@ -171,9 +187,11 @@
             issues.push("No image to evaluate");
         }
 
+        /*
         if (this.svImage() && !this.svImage().hasPublicUrl()) {
             issues.push("Image needs a public URL for evaluation");
         }
+        */
 
         if (!this.imageGenPrompt()) {
             issues.push("Image generation prompt is required");
@@ -201,8 +219,15 @@
         this.setStatus("");
         this.setError(null);
         this.setScore(null);
-        this.setReasoning("");
+        //this.setReasoning("");
         this.setChecklist(null);
+    }
+
+    async asyncPublicUrlForImage () {
+        const imageObject = await this.svImage().asImageObject().promiseLoaded();
+        const imageArrayBuffer = await imageObject.asyncAsArrayBuffer();
+        const publicUrl = await SvApp.shared().asyncPublicUrlForArrayBuffer(imageArrayBuffer);
+        return publicUrl;
     }
 
     /**
@@ -265,16 +290,17 @@
     ]`;
     }
 
-    async userPrompt () {
+    userPrompt () {
         const userPrompt = `Original Image Generation Prompt:
     "${this.imageGenPrompt()}"
-    
+
     Please evaluate how well the image matches this prompt using the checklist methodology described in the system prompt.`;
         return userPrompt;
     }
 
     async asyncComposeBodyJson () {
-        const publicUrl = await this.svImage().asyncPublicFirestoreUrl();
+        const publicUrl = await this.asyncPublicUrlForImage();
+        console.log(this.logPrefix(), "publicUrl: " + publicUrl);
 
         // Build the message for OpenAI
         const messages = [
@@ -302,8 +328,8 @@
         const bodyJson = {
             model: this.evaluationModel(),
             messages: messages,
-            max_tokens: 500,  // Less needed for single image
-            temperature: 0.3
+            max_completion_tokens: 8000  // High limit needed for gpt-5 which uses reasoning tokens internally
+            // Note: temperature parameter not supported by some models (e.g., gpt-5) - uses default of 1
         };
 
         return bodyJson;
@@ -318,19 +344,33 @@
         const bodyJson = await this.asyncComposeBodyJson();
         const apiKey = await OpenAiService.shared().apiKeyOrUserAuthToken();
 
+        // IMPORTANT: Always use proxy for OpenAI API requests:
+        // 1. ACCOUNTING: Tracks API usage for user billing
+        // 2. AUTHENTICATION: Handles API key management securely
+        // 3. CORS: Ensures proper headers for cross-origin requests
+        const endpoint = "https://api.openai.com/v1/chat/completions";
+        const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
+
+        console.log(this.logPrefix(), "Proxy endpoint:", proxyEndpoint);
+        console.log(this.logPrefix(), "Request body size:", JSON.stringify(bodyJson).length, "bytes");
+
         const request = SvXhrRequest.clone();
-        request.setUrl("https://api.openai.com/v1/chat/completions");
+        this.setSvXhrRequest(request); // Store reference for debugging
+        request.setUrl(proxyEndpoint);
         request.setMethod("POST");
         request.setHeaders({
-            "Content-Type": "application/json",
+            "Content-Type": "application/json; charset=UTF-8",
             "Authorization": `Bearer ${apiKey}`
         });
         request.setBody(JSON.stringify(bodyJson));
+        request.setResponseType(""); // "" or "text" - required for proper response handling
+        request.setTimeoutPeriodInMs(5 * 60 * 1000); // 5 minutes
+        console.log(this.logPrefix(), "Sending request to OpenAI via proxy...");
 
         await request.asyncSend();
 
         if (!request.isSuccess()) {
-            throw new Error(`OpenAI API error: ${request.statusText()}`);
+            throw new Error(`OpenAI API error: ${request.error().message}`);
         }
 
         // Parse the response
@@ -392,7 +432,7 @@
         // Update the image with the score
         if (this.svImage()) {
             this.svImage().setTitle(finalScore.toFixed(2));  // Show as 0.75, 0.92, etc.
-            this.svImage().setSubtitle(reasoning);
+            //this.svImage().setSubtitle(reasoning);
         }
     }
 

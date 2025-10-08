@@ -20,11 +20,12 @@
         this.setCanDelete(false);
         this.setSubnodeClasses([ImagineProImagePrompt]);
         this.setNodeCanReorderSubnodes(false);
+        this.setTitle("Image Prompts");
     }
 
     finalInit () {
         super.finalInit();
-        this.setTitle("Image Prompts");
+        this.initPrototype();
     }
 
 }.initThisClass());

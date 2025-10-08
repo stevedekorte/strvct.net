@@ -1271,6 +1271,20 @@
         return this;
     }
 
+    /**
+     * @description Post the onRequestNavigateToNode notification.
+     * @returns {SvNode} This instance.
+     */
+    postOnRequestNavigateToNode () {
+        /*
+        if (this.parentNode()) {
+            this.parentNode().postShouldFocusSubnode(this);
+        }
+        */
+        this.postNoteNamed("onRequestNavigateToNode", this);
+        return this;
+    }
+
     // -- adding subnodes by instantiating subnode class ----
 
     /**

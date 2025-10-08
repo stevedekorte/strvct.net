@@ -79,6 +79,7 @@
         this.setIsSelectable(true);
         this.setIsRegisteredForWindowResize(true);
         this.setCrumbObservations([]);
+        this.contentView().setPaddingLeft("22px");
         return this;
     }
 

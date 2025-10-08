@@ -108,9 +108,8 @@
         const canRead = this.canRead();
         return {
             isEnabled: canRead,
-            title: canRead
-                ? (this.isLoaded() ? "Refresh from Firebase" : "Load from Firebase")
-                : "No read permission"
+            title: "Refresh from Firebase",
+            subtitle: canRead ? null : "No read permission"
         };
     }
 

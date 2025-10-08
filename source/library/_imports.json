@@ -7,6 +7,7 @@
     "node/_imports.json",
     "resources/_imports.json",
     "image/_imports.json",
+    "media/_imports.json",
     "credentials/_imports.json",
     "services/_imports.json",
     "app/_imports.json",

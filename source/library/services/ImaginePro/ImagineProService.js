@@ -84,6 +84,11 @@
 
     }
 
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+    }
+
 
     /**
    * @description Performs final initialization steps for the instance.

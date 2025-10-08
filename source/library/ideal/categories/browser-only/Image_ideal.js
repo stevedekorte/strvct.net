@@ -123,11 +123,32 @@ Image.__proto__ = Object;
         });
     }
 
+    async asyncAsArrayBuffer () {
+        // i need an arraybuffer not a blob
+        const blob = await this.asyncAsBlob();
+        return await blob.asyncToArrayBuffer();
+    }
+
     async asyncRemoveAllMetadata () {
         await this.promiseLoaded();
         const blob = await this.asyncAsBlob();
         this.src = blob;
         return this;
+    }
+
+
+    async asyncComputeHexSha256Hash () {
+        await this.promiseLoaded();
+
+        const canvas = this.asCanvas();
+
+        // ImageData object containing a data propert with aUint8ClampedArray of the raw pixel data
+        const imageData = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height);
+
+        // Hash the pixel buffer
+        const hash = await imageData.data.asyncHexSha256();
+        this.setHexSha256Hash(hash);
+        return hash;
     }
 
 }).initThisCategory();

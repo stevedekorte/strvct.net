@@ -252,8 +252,8 @@
         // check if data is a valid type
         assert(data instanceof Uint8Array || data instanceof ArrayBuffer, "data is not a valid type");
 
-        // Use the unified asyncSha256 method from ArrayBuffer_ideal
-        return await data.asyncSha256();
+        // Use the unified asyncHexSha256 method from ArrayBuffer_ideal
+        return await data.asyncHexSha256();
     }
 
     /**

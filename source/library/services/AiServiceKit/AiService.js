@@ -136,14 +136,6 @@
     }
 
     /**
-   * @description Initializes the AiService.
-   * @category Initialization
-   */
-    init () {
-        super.init();
-    }
-
-    /**
    * @description Performs final initialization of the AiService.
    * @category Initialization
    */

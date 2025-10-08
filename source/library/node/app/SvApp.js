@@ -383,4 +383,37 @@
         console.log(this.logPrefix(), s);
     }
 
+    // General Cloud APIs
+    // These are here so services which need them don't have to be tied directly to
+    // the service that provide them. The app can override these to route them appropriately.
+    // e.g. if an AI service requests takes a url to a public file, we can use this to upload
+    // the file to the cloud and return the url, without tying it to specific cloud services.
+    // SvApp.shared().asyncPublicUrlForArrayBuffer(arrayBuffer);
+
+    cloudStorageService () {
+        return FirebaseService.shared().firebaseStorageService();
+    }
+
+    async asyncPublicUrlForArrayBuffer (arrayBuffer) {
+        assert(arrayBuffer, "arrayBuffer is null");
+        assert(arrayBuffer.byteLength > 0, "arrayBuffer is empty");
+        assert(arrayBuffer instanceof ArrayBuffer, "arrayBuffer is not an ArrayBuffer");
+
+        const publicUrl = await this.cloudStorageService().asyncPublicUrlForArrayBuffer(arrayBuffer);
+
+        assert(Type.isString(publicUrl), "publicUrl not a string");
+        assert(publicUrl.length > 0, "publicUrl is empty");
+        assert(publicUrl.startsWith("http://") || publicUrl.startsWith("https://"), "publicUrl is not a valid URL");
+
+        return publicUrl;
+    }
+
+    /*
+    async asyncPublicArrayBufferForHash (hash) {
+        const arrayBuffer = await this.cloudStorageService().asyncPublicArrayBufferForHash(hash);
+        return arrayBuffer;
+    }
+    */
+
+
 }.initThisClass());

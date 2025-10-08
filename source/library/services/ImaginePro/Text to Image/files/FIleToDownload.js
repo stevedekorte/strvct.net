@@ -65,12 +65,12 @@
      * @category Status
      */
         {
-            const slot = this.newSlot("error", "");
+            const slot = this.newSlot("error", null);
             slot.setInspectorPath("");
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
-            slot.setSlotType("String");
+            slot.setSlotType("Error");
             slot.setCanEditInspection(false);
         }
 
@@ -112,6 +112,18 @@
             slot.setCanEditInspection(false);
         }
 
+        // retry method
+        {
+            const slot = this.newSlot("asyncFetchAction", null);
+            slot.setSlotType("Action");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncFetch");
+        }
+    }
+
+    initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setSubnodeClasses([]);
@@ -185,7 +197,7 @@
    * @category Status
    */
     hasError () {
-        return this.error().length > 0;
+        return this.error() !== null;
     }
 
     /**
@@ -198,7 +210,7 @@
         }
 
         this.setIsLoading(true);
-        this.setError("");
+        this.setError(null);
 
         const url = this.url();
         console.log(this.logPrefix() + " fetching url: " + url);
@@ -213,6 +225,7 @@
         request.setHeaders({});
         request.setResponseType("blob"); // Request binary blob data for images
 
+        request.setTimeoutPeriodInMs(120 * 1000);
         // Send the request
         await request.asyncSend();
 
@@ -249,12 +262,12 @@
     onLoaded (dataUrl) {
         this.setDataUrl(dataUrl);  // Keep for compatibility
         this.setIsLoading(false);
-        this.setError("");
+        this.setError(null);
 
         console.log(this.logPrefix() + " Loaded Data URL: " + dataUrl.length + " bytes");
 
         // Notify delegate if it exists
-        this.sendDelegateMessage("onImageLoaded", [this]);
+        //this.sendDelegateMessage("onImageLoaded", [this]);
     }
 
     /**
@@ -263,11 +276,10 @@
    * @category Loading
    */
     onError (error) {
-        this.setError(error.message);
+        this.setError(error);
         this.setIsLoading(false);
-
         // Notify delegate if it exists
-        this.sendDelegateMessage("onImageError", [this]);
+        //this.sendDelegateMessage("onImageError", [this]);
     }
 
     /**
@@ -329,7 +341,7 @@
    * @param {SvXhrRequest} request - The request object.
    * @category Request Delegation
    */
-    onRequestFailure (/*request*/) {
+    onRequestFailure (request) {
         const error = request.error() || new Error(`Image request failed: ${request.status()}`);
         this.onError(error);
     }

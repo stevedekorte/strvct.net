@@ -17,7 +17,9 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.overrideSlot("name", null);
+            const slot = this.overrideSlot("name", "");
+            slot.setSyncsToView(true);
+            slot.setAllowsNullValue(false);
             slot.setLabel("Name");
             slot.setIsSubnodeField(true);
         }
@@ -25,53 +27,75 @@
         // Time created
         {
             const slot = this.newSlot("timeCreated", null);
+            slot.setInspectorPath("Info");
             slot.setLabel("Time Created");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
+            slot.setSummaryFormat("key: value");
         }
 
         // Last updated
         {
             const slot = this.newSlot("updated", null);
+            slot.setInspectorPath("Info");
             slot.setLabel("Time Updated");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
+            slot.setSummaryFormat("key: value");
         }
 
         // File size in bytes
         {
             const slot = this.newSlot("size", 0);
+            slot.setInspectorPath("Info");
             slot.setLabel("Size In Bytes");
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
+            slot.setSummaryFormat("key: value");
         }
 
         // Content type (MIME type)
+        /*
         {
-            const validItems = this.contentCategoryValidItems();
-            const slot = this.newSlot("contentCategory", validItems.first().value);
+            const validValues = this.contentCategoryValidValues();
+            const slot = this.newSlot("contentCategory", validValues.first());
             slot.setAllowsNullValue(true);
             slot.setLabel("Content Category");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(true);
+            slot.setValidValues(validValues);
+        }
+        */
+
+        // contentType
+        {
+            const slot = this.newSlot("contentType", "text/plain");
+            slot.setInspectorPath("Info");
+            slot.setLabel("Content Type");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setValidItems(validItems);
+            slot.setSummaryFormat("key: value");
         }
 
         // Custom metadata
         {
             const slot = this.newSlot("customMetadata", null);
+            slot.setInspectorPath("Info");
             slot.setLabel("Custom Metadata");
             slot.setSlotType("Object");
             slot.setShouldStoreSlot(true);
@@ -80,11 +104,14 @@
         // Download URL (cached)
         {
             const slot = this.newSlot("downloadUrl", null);
+            slot.setInspectorPath("Info");
+            slot.setCanEditInspection(false);
             slot.setLabel("Download URL");
             slot.setSlotType("String");
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
         }
 
         // ArrayBuffer data (for upload or after download)
@@ -92,15 +119,34 @@
             const slot = this.newSlot("dataArrayBuffer", null);
             slot.setLabel("Data ArrayBuffer");
             slot.setSlotType("ArrayBuffer");
+            slot.setSyncsToView(true);
             slot.setShouldStoreSlot(false);
+        }
+
+        {
+            const slot = this.newSlot("dataUrl", null);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldJsonArchive(true);
+            slot.setLabel("Image");
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanEditInspection(true);
+            slot.setSyncsToView(true);
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true); // field inspector
+            slot.setIsSubnode(false);
+            slot.setFieldInspectorViewClassName("SvImageWellField"); // field inspector view class
+            // IMPORTANT: This slot should ONLY store dataURLs (data:image/...)
+            // Never store external URLs here - they cause CORS issues
+            // If we need external URLs (we shouldn't), use a different slot name
+            slot.setDescription("Image data URL (must be data:image/... format, not external URL)");
         }
 
         // Upload action
         {
-            const slot = this.newSlot("uploadAction", null);
+            const slot = this.newSlot("asyncUploadAction", null);
             slot.setInspectorPath("");
             slot.setLabel("Upload");
-            slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
@@ -109,10 +155,9 @@
 
         // Download action
         {
-            const slot = this.newSlot("downloadAction", null);
+            const slot = this.newSlot("asyncDownloadAction", null);
             slot.setInspectorPath("");
             slot.setLabel("Download");
-            slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
@@ -121,14 +166,46 @@
 
         // Delete action
         {
-            const slot = this.newSlot("deleteAction", null);
+            const slot = this.newSlot("asyncDeleteAction", null);
             slot.setInspectorPath("");
             slot.setLabel("Delete");
-            slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("asyncDelete");
+        }
+
+        // refresh method
+        {
+            const slot = this.newSlot("asyncRefreshAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Refresh");
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncRefresh");
+        }
+
+        // set name to data hash action
+        {
+            const slot = this.newSlot("asyncSetNameToDataHashAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Set Name to Data Hash");
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncSetNameToDataHash");
+        }
+
+        // open download url in separate tab action
+        {
+            const slot = this.newSlot("openDownloadUrlInSeparateTabAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Open Download URL in Separate Tab");
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("openDownloadUrlInSeparateTab");
         }
 
     }
@@ -139,42 +216,10 @@
      * @returns {Array} The valid items
      * @category Valid Items
      */
-    contentCategoryValidItems () {
+    contentCategoryValidValues () {
         // NOTE: these categories are primarily used to determine which UI components to show for the file
         // e.g. an ImageWell, VideoWell, AudioWell, StringField, TextAreaField, etc.
-
-        return [
-            {
-                label: "Unselected",
-                subtitle: "No category selected",
-                value: "unselected"
-            },
-            {
-                label: "text",
-                subtitle: "Text, Markdown, JSON, etc.",
-                value: "text"
-            },
-            {
-                label: "image",
-                subtitle: "Image",
-                value: "image"
-            },
-            {
-                label: "video",
-                subtitle: "Video",
-                value: "video"
-            },
-            {
-                label: "audio",
-                subtitle: "Audio",
-                value: "audio"
-            },
-            {
-                label: "JSON",
-                subtitle: "JSON",
-                value: "other"
-            }
-        ];
+        return ["text", "image", "video", "audio", "other"];
     }
 
     initPrototype () {
@@ -182,11 +227,45 @@
         this.setShouldStoreSubnodes(false);
     }
 
-    didUpdateSlotContentCategory (oldValue, newValue) {
-        this.setContentType(newValue);
-        this.setCustomMetadata({
-            contentCategory: newValue
-        });
+    async didUpdateSlotDataUrl (oldValue, newValue) {
+        if (newValue && this.dataArrayBuffer() === null) {
+            this.updateDataArrayBufferFromDataUrl(newValue);
+        }
+
+        if (newValue) {
+            const dataUrlObj = SvDataUrl.clone().setDataUrlString(newValue);
+            this.setContentType(dataUrlObj.mimeType());
+        } else {
+            this.setContentType(null);
+        }
+    }
+
+    async updateDataArrayBufferFromDataUrl () {
+        const arrayBuffer = await ArrayBuffer.asyncFromDataUrlString(this.dataUrl());
+        this.setDataArrayBuffer(arrayBuffer);
+    }
+
+    async didUpdateSlotDataArrayBuffer (oldValue, newValue) {
+        if (newValue && this.dataUrl() === null) {
+            // download set the dataArrayBuffer, so copy it into the dataUrl *if* the data url is an image type
+            await this.updateDataUrlFromDataArrayBuffer();
+            this.setSize(newValue.byteLength);
+        }
+    }
+
+    async updateDataUrlFromDataArrayBuffer () {
+        const dataUrlString = await this.dataArrayBuffer().asyncToDataUrl();
+        const dataUrlObj = SvDataUrl.clone().setDataUrlString(dataUrlString);
+        this.setContentType(dataUrlObj.mimeType());
+        //this.setContentCategory(dataUrlObj.contentCategory());
+
+        if (dataUrlObj.isImage()) {
+            this.setDataUrl(dataUrlString);
+        } else {
+            this.setDataUrl(null);
+        }
+
+        this.setDataUrl(dataUrlString);
     }
 
     /**
@@ -206,19 +285,52 @@
         return this;
     }
 
+    hasName () {
+        return this.name() !== "";
+    }
+
+    hasDataArrayBuffer () {
+        return this.dataArrayBuffer() !== null;
+    }
+
+    canUpload () {
+        return this.hasName() && this.hasDataArrayBuffer() && this.canWrite();
+    }
+
+    uploadIssues () {
+        const issues = [];
+        if (!this.hasName()) {
+            issues.push("No name");
+        }
+        if (!this.hasDataArrayBuffer()) {
+            issues.push("No data");
+        }
+        if (!this.canWrite()) {
+            issues.push("No write permission");
+        }
+        return issues;
+    }
+
     /**
      * @description Gets action info for upload action
      * @returns {Object} Action info with isEnabled property
      * @category Actions
      */
-    uploadActionInfo () {
-        const hasData = this.dataArrayBuffer() !== null;
-        const canWrite = this.canWrite();
+    asyncUploadActionInfo () {
+        const canUpload = this.canUpload();
         return {
-            isEnabled: hasData && canWrite,
-            title: !canWrite ? "No write permission"
-                : hasData ? "Upload to Firebase" : "No data to upload"
+            title: "Upload",
+            isEnabled: canUpload,
+            subtitle: canUpload ? null : this.uploadIssues().join("\n")
         };
+    }
+
+    downloadIssues () {
+        const issues = [];
+        if (!this.canRead()) {
+            issues.push("No read permission");
+        }
+        return issues;
     }
 
     /**
@@ -226,13 +338,26 @@
      * @returns {Object} Action info with isEnabled property
      * @category Actions
      */
-    downloadActionInfo () {
+    asyncDownloadActionInfo () {
         const canRead = this.canRead();
         return {
+            title: "Download",
             isEnabled: canRead,
-            title: !canRead ? "No read permission"
-                : this.isDownloaded() ? "Re-download from Firebase" : "Download from Firebase"
+            subtitle: canRead ? null : this.downloadIssues().join("\n")
         };
+    }
+
+    deleteIssues () {
+        const canWrite = this.canWrite();
+        const issues = [];
+        if (!canWrite) {
+            issues.push("No write permission");
+        }
+        return issues;
+    }
+
+    canDelete () {
+        return this.canWrite();
     }
 
     /**
@@ -240,21 +365,12 @@
      * @returns {Object} Action info with isEnabled property
      * @category Actions
      */
-    deleteActionInfo () {
-        const hasParent = this.parentNode() !== null;
-        const canWrite = this.canWrite();
-        const issues = [];
-        if (!hasParent) {
-            issues.push("No parent");
-        }
-        if (!canWrite) {
-            issues.push("No write permission");
-        }
-        const subtitle = issues.join("\n");
+    asyncDeleteActionInfo () {
+        const canDelete = this.canDelete();
         return {
-            isEnabled: hasParent && canWrite,
-            title: "Delete from Firebase",
-            subtitle: subtitle
+            title: "Delete",
+            isEnabled: canDelete,
+            subtitle: canDelete ? null : this.deleteIssues().join("\n")
         };
     }
 
@@ -274,8 +390,8 @@
      */
     subtitle () {
         const size = this.humanReadableSize();
-        const type = this.contentCategory() || "unknown type";
-        return `${size} - ${type}`;
+        const type = this.contentType();
+        return [type, size].join("\n");
     }
 
     /**
@@ -284,14 +400,7 @@
      * @category Helper
      */
     humanReadableSize () {
-        const bytes = this.size();
-        if (bytes === 0) return "0 Bytes";
-
-        const k = 1024;
-        const sizes = ["Bytes", "KB", "MB", "GB"];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+        return NumberFormatter.clone().setValue(this.size()).setSignificantDigits(2).formattedValue();
     }
 
     /**
@@ -303,28 +412,26 @@
         return this.dataArrayBuffer() !== null;
     }
 
+    async asyncDoesExist () {
+        const url = await this.asyncRefreshDownloadUrl();
+        return url !== null;
+    }
+
     /**
      * @description Checks if the file exists on Firebase Storage
      * Uses getDownloadURL() which may propagate faster than getMetadata()
      * @returns {Promise<boolean>} True if file exists on server
      * @category Helper
      */
-    async asyncDoesExist () {
-        // If file has no parent, it can't exist on Firebase
-        if (!this.parentNode()) {
-            console.log("asyncDoesExist: no parent, returning false");
-            return false;
-        }
-
+    async asyncRefreshDownloadUrl () {
         try {
             console.log("asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
             const url = await ref.getDownloadURL();
             this.setDownloadUrl(url);
             console.log("asyncDoesExist: got download URL, file exists");
-            return true;
+            return url;
         } catch (error) {
-            debugger;
             console.log("asyncDoesExist caught error:", error);
             console.log("asyncDoesExist error.code:", error.code);
             console.log("asyncDoesExist error.message:", error.message);
@@ -333,7 +440,7 @@
             const errorCode = error.code || "";
             if (errorCode.includes("object-not-found") || errorCode.includes("unauthorized")) {
                 console.log("asyncDoesExist: file doesn't exist, returning false");
-                return false;
+                return null;
             }
 
             // Re-throw unexpected errors
@@ -341,6 +448,7 @@
             throw error;
         }
     }
+
 
     /**
      * @description Checks if local metadata matches the version on Firebase
@@ -428,7 +536,6 @@
      * @category Storage Operations
      */
     async asyncUpload () {
-        assert(this.parentNode(), "asyncUpload must be called on a node with a parent");
         try {
             this.setError(null);
             this.setDownloadUrl(null); // Clear cached URL before upload
@@ -487,11 +594,8 @@
                         this.setDownloadUrl(url);
 
                         // Download metadata from server - to ensure we are in sync (only if still attached)
-                        if (this.parentNode()) {
-                            await this.asyncDownloadMetadata();
-                        } else {
-                            console.warn("Upload completed but file was detached from parent, skipping metadata download");
-                        }
+                        await this.asyncDownloadMetadata();
+
                         resolve();
                     }
                 );
@@ -538,11 +642,18 @@
             this.setDataArrayBuffer(null);
             this.setDownloadUrl(null);
 
+            // request navigate to parent (need to do this before removing from parent)
+            //if (this.parentNode()) {
+            //  only want to do this if the delete occurred while viewing it...
+            //  this.parentNode().postShouldFocusSubnode();
+            //}
+
             // Remove from parent after delete completes
             const parent = this.parentNode();
             if (parent && parent.removeSubnode) {
                 parent.removeSubnode(this);
             }
+
         } catch (error) {
             console.error("Error deleting blob:", error);
             this.setError(error);
@@ -556,6 +667,11 @@
      * @category Storage Operations
      */
     async asyncDownloadMetadata () {
+        const doesExist = await this.asyncDoesExist();
+        if (!doesExist) {
+            return;
+        }
+
         try {
             this.setError(null);
             const ref = this.storageRef();
@@ -570,6 +686,56 @@
             console.error("Error downloading metadata:", error);
             this.setError(error);
             throw error;
+        }
+    }
+
+    asyncRefresh () {
+        this.didUpdateNode();
+        this.asyncDownloadMetadata();
+        this.asyncRefreshDownloadUrl();
+        this.didUpdateNode();
+    }
+
+    prepareForFirstAccess () {
+        this.asyncRefresh();
+        return this;
+    }
+
+    prepareToAccess () {
+        super.prepareToAccess();
+        //this.asyncRefresh();
+        return this;
+    }
+
+    asyncSetNameToDataHashActionInfo () {
+        return {
+            title: "Set Name to Data Hash",
+            isEnabled: this.hasDataArrayBuffer(),
+            subtitle: this.hasDataArrayBuffer() ? null : "No data"
+        };
+    }
+
+    async asyncSetNameToDataHash () {
+        this.setName(await this.dataArrayBuffer().asyncHexSha256());
+        this.didUpdateNode();
+    }
+
+    openDownloadUrlInSeparateTabActionInfo () {
+        return {
+            title: "Open Download URL",
+            isEnabled: this.hasDownloadUrl(),
+            subtitle: this.hasDownloadUrl() ? null : "No download URL"
+        };
+    }
+
+    hasDownloadUrl () {
+        return this.downloadUrl() !== null;
+    }
+
+    async openDownloadUrlInSeparateTab () {
+        const url = await this.getDownloadUrl();
+        if (url) {
+            window.open(url, "_blank");
         }
     }
 

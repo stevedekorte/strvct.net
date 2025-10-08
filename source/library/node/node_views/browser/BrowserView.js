@@ -68,6 +68,7 @@
         this.scheduleMethod("moveToBase");
         //this.scheduleMethod("pullPathFromUrlHash")
         this.setIsRegisteredForKeyboard(true); // to get special keys like Option shift D
+        this.watchForNote("onRequestNavigateToNode");
         return this;
     }
 
@@ -112,6 +113,12 @@
         return this.browserHeaderNode().subnodes().first();
     }
     */
+
+    onRequestNavigateToNode (aNote) {
+        const node = aNote.info();
+        this.navigateToNode(node);
+        return this;
+    }
 
     /**
      * @description Navigates to the specified node.
