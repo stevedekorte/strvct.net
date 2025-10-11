@@ -667,11 +667,23 @@
         return this.node().note();
     }
 
+    valueViewValue () {
+        return this.valueView().value();
+    }
+
+    canSyncToNode () {
+        return true;
+    }
+
     /**
      * @description Syncs to the node.
      * @returns {SvFieldTile} The current instance.
      */
     syncToNode () {
+        if (!this.canSyncToNode()) {
+            return this;
+        }
+
         const node = this.node();
 
         if (node.keyIsEditable()) {
@@ -680,7 +692,7 @@
         }
 
         if (node.valueIsEditable()) {
-            const valueViewValue = this.valueView().value();
+            const valueViewValue = this.valueViewValue();
             node.setValue(valueViewValue);
         }
 

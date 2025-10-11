@@ -17,6 +17,18 @@
    */
     initPrototypeSlots () {
 
+        // prompt note
+
+        {
+            const slot = this.newSlot("promptNote", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(false);
+        }
+
         /**
      * @member {string} taskId
      * @description The task ID for tracking the generation.

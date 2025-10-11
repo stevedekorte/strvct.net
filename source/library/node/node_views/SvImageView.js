@@ -1,12 +1,12 @@
 /**
  * @module library.node.node_views
- * @class ImageView
+ * @class SvImageView
  * @extends NodeView
- * @classdesc ImageView is a specialized view for displaying images with additional features like a close button and editability.
+ * @classdesc SvImageView is a specialized view for displaying images with additional features like a close button and editability.
  */
 "use strict";
 
-(class ImageView extends NodeView {
+(class SvImageView extends NodeView {
 
     initPrototypeSlots () {
         /**
@@ -64,8 +64,8 @@
     }
 
     /**
-     * @description Initializes the ImageView
-     * @returns {ImageView} The initialized ImageView instance
+     * @description Initializes the SvImageView
+     * @returns {SvImageView} The initialized SvImageView instance
      * @category Initialization
      */
     init () {
@@ -142,7 +142,7 @@
     /**
      * @description Sets whether the image view is editable
      * @param {Boolean} aBool - Whether the image view is editable
-     * @returns {ImageView} The ImageView instance
+     * @returns {SvImageView} The ImageView instance
      * @category State
      */
     setIsEditable (aBool) {
@@ -153,7 +153,7 @@
     /**
      * @description Sets whether the image view is editable (placeholder method)
      * @param {Boolean} aBool - Whether the image view is editable
-     * @returns {ImageView} The ImageView instance
+     * @returns {SvImageView} The ImageView instance
      * @category State
      */
     setEditable (/*aBool*/) {
@@ -216,7 +216,7 @@
 
     /**
      * @description Removes the raw image view
-     * @returns {ImageView} The ImageView instance
+     * @returns {SvImageView} The ImageView instance
      * @category UI Operations
      */
     removeRawImageView () {
@@ -230,7 +230,7 @@
     /**
      * @description Fetches the data URL from a source URL
      * @param {String} src - The source URL
-     * @returns {ImageView} The ImageView instance
+     * @returns {SvImageView} The ImageView instance
      * @category Data
      */
     async asyncFetchDataURLFromSrc (src) {
@@ -268,7 +268,7 @@
     /**
      * @description Sets the image from a data URL
      * @param {String} dataURL - The data URL of the image
-     * @returns {ImageView} The ImageView instance
+     * @returns {SvImageView} The ImageView instance
      * @category Data
      */
     setFromDataURL (dataURL) {

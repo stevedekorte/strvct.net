@@ -14,13 +14,13 @@
  * mosaic.setDividerWidth(2);
  * mosaic.setDividerColor("#a0a0a0");
  *
- * // Add character views (assumes SvImage instances are loaded)
- * mosaic.addImage(frontViewImage);
- * mosaic.addImage(sideViewImage);
- * mosaic.addImage(backViewImage);
+ * // Add character views (assumes SvImageNode instances are loaded)
+ * mosaic.addImageNode(frontViewImageNode);
+ * mosaic.addImageNode(sideViewImageNode);
+ * mosaic.addImageNode(backViewImageNode);
  *
  * // Compose the mosaic
- * const compositeImage = await mosaic.asyncCompose();
+ * await mosaic.asyncCompose();
  *
  * // Get as data URL for display or upload
  * const dataUrl = mosaic.compositeDataURL();
@@ -42,24 +42,31 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      */
     initPrototypeSlots () {
         /**
-         * @member {Array} images - Array of SvImage (or compatible) objects to compose
+         * @member {SvImagesNode} svImagesNode - Node containing SvImage objects to compose
          * @category Data
          */
         {
-            const slot = this.newSlot("svImages", null);
-            slot.setFinalInitProto(SvImages);
+            const slot = this.newSlot("svImagesNode", null);
+            slot.setSlotType("SvImagesNode");
+            slot.setFinalInitProto("SvImagesNode");
             slot.setCanInspect(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {Image} compositeImage - The resulting composite image after mosaic generation
+         * @member {SvImageNode} compositeImageNode - The resulting composite image node after mosaic generation
          * @category Data
          */
         {
-            const slot = this.newSlot("compositeImage", null);
-            slot.setSlotType("Image");
+            const slot = this.newSlot("compositeImageNode", null);
+            slot.setSlotType("SvImageNode");
+            slot.setFinalInitProto("SvImageNode");
+            slot.setCanInspect(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -86,28 +93,30 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Initialization
      */
     initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
     }
 
 
     /**
-     * @description Adds an image to the mosaic
-     * @param {SvImage|Image|Object} image - The image to add (SvImage object or Image element)
+     * @description Adds an image node to the mosaic
+     * @param {SvImageNode} svImageNode - The image node to add
      * @returns {SvImageMosaic} Returns this for method chaining
      * @category Image Management
      */
-    addImage (svImage) {
-        this.svImages().addSubnode(svImage);
+    addImageNode (svImageNode) {
+        this.svImagesNode().addSubnode(svImageNode);
         return this;
     }
 
     /**
-     * @description Adds multiple images to the mosaic at once
-     * @param {Array<SvImage|Image|Object>} images - Array of images to add
+     * @description Adds multiple image nodes to the mosaic at once
+     * @param {Array<SvImageNode>} svImageNodeArray - Array of image nodes to add
      * @returns {SvImageMosaic} Returns this for method chaining
      * @category Image Management
      */
-    addImages (svImageArray) {
-        this.svImages().addSubnodes(svImageArray);
+    addImageNodes (svImageNodeArray) {
+        this.svImagesNode().addSubnodes(svImageNodeArray);
         return this;
     }
 
@@ -117,30 +126,27 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Image Management
      */
     clear () {
-        this.svImages().removeAllSubnodes();
-        this.setCompositeImage(null);
+        this.svImagesNode().removeAllSubnodes();
+        this.setCompositeImageNode(null);
         return this;
     }
 
     /**
      * @description Composes all images into a horizontal mosaic with colored dividers
-     * @returns {Promise<Image>} The composite image
+     * @returns {Promise<SvImageNode>} The composite image node
      * @category Composition
      */
     async asyncCompose () {
-        const images = this.svImages().subnodes();
-
-        if (!images || images.length === 0) {
+        if (this.svImagesNode().subnodeCount() === 0) {
             console.warn("**WARNING**:", this.logPrefix(), "No images to compose");
             return null;
         }
 
-        // Load if needed, and convert to Image objects
-        const loadedImages = await Promise.all(images.map(img => img.asyncAsImageObject()));
+        const imageObjects = await this.svImagesNode().asyncImageObjects();
 
         // Calculate target height and scaled dimensions
-        const targetHeight = this.calculateMaxHeight(loadedImages);
-        const scaledDimensions = this.calculateScaledDimensions(loadedImages, targetHeight);
+        const targetHeight = this.calculateMaxHeight(imageObjects);
+        const scaledDimensions = this.calculateScaledDimensions(imageObjects, targetHeight);
         const totalWidth = this.calculateTotalWidthFromDimensions(scaledDimensions);
 
         // Create canvas
@@ -156,8 +162,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
 
         // Draw each image scaled to target height
         let xOffset = 0;
-        for (let i = 0; i < loadedImages.length; i++) {
-            const img = loadedImages[i];
+        for (let i = 0; i < imageObjects.length; i++) {
+            const img = imageObjects[i];
             const { width: scaledWidth } = scaledDimensions[i];
 
             // Draw image scaled to target height
@@ -167,25 +173,18 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             xOffset += scaledWidth;
 
             // Add divider width if not the last image
-            if (i < loadedImages.length - 1) {
+            if (i < imageObjects.length - 1) {
                 xOffset += this.dividerWidth();
             }
         }
 
-        // Convert canvas to image
-        const compositeImage = new Image();
-        compositeImage.src = canvas.toDataURL("image/png");
+        // Convert canvas to data URL and create SvImageNode
+        const dataURL = canvas.toDataURL("image/png");
+        const compositeImageNode = this.compositeImageNode();
+        compositeImageNode.setDataURL(dataURL);
 
-        // Wait for the image to load
-        await new Promise((resolve, reject) => {
-            compositeImage.onload = resolve;
-            compositeImage.onerror = reject;
-        });
-
-        this.setCompositeImage(compositeImage);
-        return compositeImage;
+        return compositeImageNode;
     }
-
 
     /**
      * @description Calculates scaled dimensions for all images to match target height
@@ -223,7 +222,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Helper
      */
     calculateTotalWidth (imageObjects) {
-        const imageWidths = images.reduce((sum, img) => sum + img.width, 0);
+        const imageWidths = imageObjects.reduce((sum, img) => sum + img.width, 0);
         const dividerWidths = this.dividerWidth() * (imageObjects.length - 1);
         return imageWidths + dividerWidths;
     }
@@ -238,32 +237,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         return Math.max(...imageObjects.map(img => img.height));
     }
 
-    /*
-    compositeCanvas () {
-        const img = this.compositeImage();
-
-        const canvas = document.createElement("canvas");
-        if (img) {
-            canvas.width = img.width;
-            canvas.height = img.height;
-        }
-        const ctx = canvas.getContext("2d");
-        if (img) {
-            ctx.drawImage(img, 0, 0);
-        }
-        return canvas;
-    }
-
     compositeDataURL () {
-        return this.compositeCanvas().toDataURL("image/png");
+        return this.compositeImageNode().dataURL();
     }
 
-    async compositeBlob () {
-        const canvas = this.compositeCanvas();
-
-        return new Promise((resolve) => {
-            canvas.toBlob(resolve, "image/png");
-        });
-    }
-    */
 }.initThisClass());

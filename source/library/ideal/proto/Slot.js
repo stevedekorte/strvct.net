@@ -130,11 +130,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("isVisible", null); // only set on finalInitProto if true or false, ignore if null
     }
 
-    /*
-    slotTypeDict() and setSlotTypeDict() are deprecated
-
-    */
-
     setSlotType (s) {
         assert(Type.isString(s), "Slot.setSlotType called with non-string: " + s);
         this.setSlotTypeDict({
@@ -153,29 +148,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         }
         return null;
     }
-
-    /*
-    slotTypeDict () {
-        if (this._slotType) {
-            // parse the slotType string into a dictionary
-            const parts = this._slotType.split(" ");
-            return {
-                kind: parts[0],
-                name: parts[1]
-            };
-        }
-        return null
-    }
-
-    setSlotTypeDict (aDict) {
-        this._slotTypeDict = aDict;
-        assert(Type.isDictionary(aDict));
-        assert(Type.isString(aDict.kind));
-        assert(Type.isString(aDict.name));
-        this._slotType = aDict.kind + " " + aDict.name;
-        return this;
-    }
-    */
 
     /**
      * @private

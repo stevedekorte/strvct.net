@@ -128,7 +128,7 @@
 
 
         {
-            const slot = this.newSlot("timeoutPeriodInMs", 60000);
+            const slot = this.newSlot("timeoutPeriodInMs", 60 * 1000);
             slot.setLabel("Timeout Period Ms");
             slot.setInspectorPath("Settings");
             slot.setShouldStoreSlot(false);
@@ -320,7 +320,7 @@
    */
     init () {
         super.init();
-        this.setIsDebugging(false);
+        this.setIsDebugging(true);
         this.setRequestId(this.puuid());
         this.setRequestOptions({});
         this.setCompletionPromise(Promise.clone());

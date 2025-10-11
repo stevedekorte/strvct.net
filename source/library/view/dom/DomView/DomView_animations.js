@@ -16,7 +16,7 @@
      */
     immediatelyScrollToBottom () {
         const focusedElement = document.activeElement;
-        const needsRefocus = focusedElement !== this.element();
+        //const needsRefocus = focusedElement !== this.element();
         // console.log("]]]]]]]]]]]] " + this.svTypeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
 
         //this.setScrollTop(this.scrollHeight() + "px")
@@ -165,7 +165,7 @@
         }, 0);
 
         this.element().addEventListener("transitionend", (transitionEvent) => {
-            console.log("completed scrollIntoView transition?:", transitionEvent.propertyName);
+            console.log("transition end event completed scrollIntoView transition?:", transitionEvent.propertyName);
         });
 
         /*
@@ -339,7 +339,6 @@
             this.setMinAndMaxHeight(targetHeight)
         }, 0)
         */
-        return this;
     }
 
     /**

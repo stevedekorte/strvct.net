@@ -99,7 +99,7 @@
      * @category Configuration
      */
         {
-            const slot = this.newSlot("processMode", "fast");
+            const slot = this.newSlot("processMode", "turbo");
             slot.setInspectorPath("Settings");
             slot.setLabel("Process Mode");
             slot.setShouldStoreSlot(true);
@@ -487,6 +487,7 @@
     async addGenerationForTaskId (taskId) {
         this.setStatus("task submitted, awaiting completion...");
         const generation = this.generations().add();
+        generation.setPromptNote(this.composeFullPrompt());
         generation.setTaskId(taskId);
         generation.setDelegate(this);
         await generation.asyncStartPolling();

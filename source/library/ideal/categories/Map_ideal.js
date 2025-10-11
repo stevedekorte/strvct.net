@@ -123,7 +123,7 @@
      * @category Iteration
      */
     forEachV (fn) {
-        this.forEach((v, k) => fn(v));
+        this.forEach((v/*, k*/) => fn(v));
     }
 
     /**

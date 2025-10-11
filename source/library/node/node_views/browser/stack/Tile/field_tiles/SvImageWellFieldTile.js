@@ -6,6 +6,12 @@
  */
 "use strict";
 
+/*
+    @class SvImageWellFieldTile
+    @extends SvFieldTile
+    @classdesc Represents an image well field tile in the browser stack.
+*/
+
 (class SvImageWellFieldTile extends SvFieldTile {
 
     /**
@@ -48,15 +54,15 @@
 
     /**
      * @description Creates and returns a value view.
-     * @returns {ImageWellView} The created image well view.
+     * @returns {SvImageWellView} The created image well view.
      * @category View Creation
      */
     createValueView () {
         /*
-            Note: if we drop an image on the ImageWellView, it will send a didUpdateImageWellView to it's parents
+            Note: if we drop an image on the SvImageWellView, it will send a didUpdateImageWellView to it's parents
             which we respond to and use to call setValue
         */
-        const imageWellView = ImageWellView.clone();
+        const imageWellView = SvImageWellView.clone();
         //imageWellView.setDelegate(this);
         //imageWellView.setWidth("100%").setHeight("fit-content");
         return imageWellView;
@@ -69,11 +75,16 @@
 
     /**
      * @description Returns the image well view.
-     * @returns {ImageWellView} The image well view.
+     * @returns {SvImageWellView} The image well view.
      * @category View Access
      */
     imageWellView () {
         return this.valueView();
+    }
+
+    fieldValueIsImage () {
+        const value = this.node().value();
+        return value instanceof Image;
     }
 
     /**
@@ -88,7 +99,13 @@
         this.setMaxWidth("100em"); // get this from node instead?
 
         this.applyStyles(); // normally this would happen in updateSubviews
-        this.imageWellView().setImageDataUrl(field.value());
+
+        // handle image values
+        let value = field.value();
+        if (this.fieldValueIsImage()) {
+            value = value.asDataURL();
+        }
+        this.imageWellView().setImageDataUrl(value);
 
         this.imageWellView().setIsEditable(field.valueIsEditable());
 
@@ -115,7 +132,12 @@
         field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
-            const data = this.imageWellView().imageDataUrl();
+            let data = this.imageWellView().imageDataUrl();
+
+            // handle image values
+            if (this.fieldValueIsImage()) {
+                data = new Image(data); // we could set the src directly, but we want to trigger normal mutation behavior
+            }
             field.setValue(data);
         }
 
@@ -143,7 +165,7 @@
 
     /**
      * @description Handles the update of the image well view.
-     * @param {ImageWellView} anImageWell - The updated image well view.
+     * @param {SvImageWellView} anImageWell - The updated image well view.
      * @returns {SvImageWellFieldTile} The current instance.
      * @category Event Handling
      */

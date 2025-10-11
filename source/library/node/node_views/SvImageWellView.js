@@ -1,8 +1,8 @@
 /**
  * @module library.node.node_views
- * @class ImageWellView
+ * @class SvImageWellView
  * @extends NodeView
- * @classdesc ImageWellView
+ * @classdesc SvImageWellView
  *
  * - designed to contain an ImageView
  * - can have its own frame and decoration
@@ -11,10 +11,10 @@
 
 "use strict";
 
-(class ImageWellView extends NodeView {
+(class SvImageWellView extends NodeView {
 
     /**
-     * @description Initializes prototype slots for the ImageWellView.
+     * @description Initializes prototype slots for the SvImageWellView.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -37,8 +37,8 @@
     }
 
     /**
-     * @description Initializes the ImageWellView.
-     * @returns {ImageWellView} The initialized ImageWellView instance.
+     * @description Initializes the SvImageWellView.
+     * @returns {SvImageWellView} The initialized SvImageWellView instance.
      * @category Initialization
      */
     init () {
@@ -67,7 +67,7 @@
 
     /**
      * @description Synchronizes the view with its associated node.
-     * @returns {ImageWellView} The current ImageWellView instance.
+     * @returns {SvImageWellView} The current SvImageWellView instance.
      * @category Synchronization
      */
     syncToNode () {
@@ -92,7 +92,7 @@
     /**
      * @description Sets the editable state of the image well.
      * @param {Boolean} aBool - The new editable state.
-     * @returns {ImageWellView} The current ImageWellView instance.
+     * @returns {SvImageWellView} The current SvImageWellView instance.
      * @category State Management
      */
     setIsEditable (aBool) {
@@ -155,7 +155,7 @@
     /**
      * @description Sets the value of the image well (its image data URL).
      * @param {string} aValue - The image data URL.
-     * @returns {ImageWellView} The current ImageWellView instance.
+     * @returns {SvImageWellView} The current SvImageWellView instance.
      * @category Data Management
      */
     setValue (aValue) {
@@ -175,7 +175,7 @@
     /**
      * @description Sets the image data URL for the image well.
      * @param {string} dataURL - The image data URL.
-     * @returns {ImageWellView} The current ImageWellView instance.
+     * @returns {SvImageWellView} The current SvImageWellView instance.
      * @category Data Management
      */
     setImageDataUrl (dataURL) {
@@ -187,13 +187,13 @@
 
         this.removeAllSubviews();
 
-        const v = ImageView.clone();
+        const v = SvImageView.clone();
         this.setImageView(v);
         this.addSubview(v);
 
-        if (!Type.isNullOrUndefined(dataURL) && Type.isString(dataURL)) {
+        if (!Type.isNullOrUndefined(dataURL) && Type.isString(dataURL) && dataURL.length > 0) {
             /*
-            const v = ImageView.clone();
+            const v = SvImageView.clone();
             this.setImageView(v);
             this.addSubview(v);
             */
@@ -270,7 +270,7 @@
     /**
      * @description Processes dropped image data.
      * @param {Object} dataChunk - The dropped image data.
-     * @returns {ImageWellView} The current ImageWellView instance.
+     * @returns {SvImageWellView} The current SvImageWellView instance.
      * @category Drag and Drop
      */
     droppedImageData (dataChunk) {
@@ -282,7 +282,7 @@
     /**
      * @description Called before removing a subview.
      * @param {Object} aSubview - The subview being removed.
-     * @returns {ImageWellView} The current ImageWellView instance.
+     * @returns {SvImageWellView} The current SvImageWellView instance.
      * @category View Management
      */
     willRemoveSubview (aSubview) {

@@ -4,6 +4,7 @@
     "Blob_store.js",
     "Date_store.js",
     "Error_store.js",
+    "Image_store.js",
     "JsonObject.js",
     "Map_store.js",
     "Set_store.js",

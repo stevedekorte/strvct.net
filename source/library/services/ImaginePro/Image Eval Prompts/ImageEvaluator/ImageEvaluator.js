@@ -342,55 +342,42 @@
    */
     async asyncPerformEvaluation () {
         const bodyJson = await this.asyncComposeBodyJson();
-        const apiKey = await OpenAiService.shared().apiKeyOrUserAuthToken();
 
-        // IMPORTANT: Always use proxy for OpenAI API requests:
-        // 1. ACCOUNTING: Tracks API usage for user billing
-        // 2. AUTHENTICATION: Handles API key management securely
-        // 3. CORS: Ensures proper headers for cross-origin requests
-        const endpoint = "https://api.openai.com/v1/chat/completions";
-        const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-
-        console.log(this.logPrefix(), "Proxy endpoint:", proxyEndpoint);
         console.log(this.logPrefix(), "Request body size:", JSON.stringify(bodyJson).length, "bytes");
 
-        const request = SvXhrRequest.clone();
-        this.setSvXhrRequest(request); // Store reference for debugging
-        request.setUrl(proxyEndpoint);
-        request.setMethod("POST");
-        request.setHeaders({
-            "Content-Type": "application/json; charset=UTF-8",
-            "Authorization": `Bearer ${apiKey}`
-        });
-        request.setBody(JSON.stringify(bodyJson));
-        request.setResponseType(""); // "" or "text" - required for proper response handling
-        request.setTimeoutPeriodInMs(5 * 60 * 1000); // 5 minutes
-        console.log(this.logPrefix(), "Sending request to OpenAI via proxy...");
+        // Use OpenAiRequest for proper authentication, proxy handling, and error handling
+        const request = OpenAiRequest.clone();
+        request.setChatModel(Services.shared().openAiService().defaultChatModel());
+        request.setBodyJson(bodyJson);
+        request.setIsStreaming(false); // We want the complete response, not streaming
+        request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)
 
-        await request.asyncSend();
+        // Store reference to underlying XHR for debugging
+        this.setSvXhrRequest(request.currentXhrRequest());
 
-        if (!request.isSuccess()) {
+        console.log(this.logPrefix(), "Sending request to OpenAI...");
+
+        await request.asyncSendAndStreamResponse();
+
+        if (request.error()) {
             throw new Error(`OpenAI API error: ${request.error().message}`);
         }
 
         // Parse the response
-        const response = JSON.parse(request.responseText());
-        const content = response.choices[0].message.content;
+        const responseText = request.fullContent();
+        if (!responseText) {
+            throw new Error("No response received from OpenAI");
+        }
 
-        // Extract JSON array from the response
+        const response = JSON.parse(responseText);
+        let checklist = response;
+
         try {
-            // Try to find JSON array in the response
-            const jsonMatch = content.match(/\[[\s\S]*\]/);
-            if (jsonMatch) {
-                const checklist = JSON.parse(jsonMatch[0]);
-                this.setChecklist(checklist);
-                this.assertValidChecklist();
-                this.processChecklist();
-            } else {
-                throw new Error("No JSON array found in response");
-            }
+            this.setChecklist(checklist);
+            this.assertValidChecklist();
+            this.processChecklist();
         } catch (parseError) {
-            console.error("Failed to parse evaluation response:", content);
+            console.error("Failed to parse evaluation response:", response);
             console.error("parseError:", parseError);
             throw new Error("Failed to parse evaluation results from OpenAI");
         }
@@ -421,6 +408,7 @@
 
     processChecklist () {
         const checklist = this.checklist();
+        console.log(this.logPrefix(), "checklist:", JSON.stringify(checklist, null, 2));
 
         // Calculate the final score from the checklist
         const sumOfScores = checklist.map((item) => item.score).sum();

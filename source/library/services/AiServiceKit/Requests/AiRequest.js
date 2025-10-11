@@ -211,6 +211,15 @@
             slot.setCanEditInspection(false);
         }
 
+        // timeout period in ms
+        {
+            const slot = this.newSlot("timeoutPeriodInMs", 4 * 60 * 1000);
+            slot.setSlotType("Number");
+            slot.setInspectorPath(this.svType());
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+        }
+
         /**
      * @member {Number} retryDelaySeconds - The delay before retrying the request.
      */
@@ -517,6 +526,7 @@
    * @returns {string}
    */
     curlCommand () {
+        // can be useful to debug requests
         const commandParts = [];
         commandParts.push("curl  --insecure \"" + this.activeApiUrl() + '"');
         const headers = this.requestOptions().headers;
@@ -575,7 +585,6 @@
    */
 
     async asyncSendAndStreamResponse () {
-
         if (this.isContinuation()) {
             //this.logDebug(" asyncSendAndStreamResponse() isContinuation");
         }
@@ -605,6 +614,7 @@
 
         // Create a new SvXhrRequest for this request
         const xhrRequest = SvXhrRequest.clone();
+        xhrRequest.setTimeoutPeriodInMs(this.timeoutPeriodInMs());
         this.setCurrentXhrRequest(xhrRequest);
         this.xhrRequestHistory().push(xhrRequest);
 
@@ -655,7 +665,7 @@
    * @param {SvXhrRequest} request
    */
     onRequestSuccess (/*request*/) {
-    // Finish reading any remaining lines
+        // Finish reading any remaining lines
         this.readXhrLines();
 
         if (this.stoppedDueToMaxTokens()) {
@@ -974,10 +984,10 @@
         const newLine = responseText.substring(this.readIndex(), newLineIndex);
 
         /*
-    console.log(this.logPrefix(), "responseText: [" + responseText + "]");
-    console.log(this.logPrefix(), "indexes: " + this.readIndex() + " -> " + newLineIndex);
-    console.log(this.logPrefix(), "newLine: [" + newLine + "]");
-    */
+        console.log(this.logPrefix(), "responseText: [" + responseText + "]");
+        console.log(this.logPrefix(), "indexes: " + this.readIndex() + " -> " + newLineIndex);
+        console.log(this.logPrefix(), "newLine: [" + newLine + "]");
+        */
         this.setReadIndex(newLineIndex + 1); // advance the read index
 
         return newLine;

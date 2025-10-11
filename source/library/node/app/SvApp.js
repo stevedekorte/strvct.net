@@ -394,6 +394,12 @@
         return FirebaseService.shared().firebaseStorageService();
     }
 
+    async asyncPublicUrlForImageObject (imageObject) {
+        const arrayBuffer = await imageObject.asyncAsArrayBuffer();
+        const publicUrl = await this.asyncPublicUrlForArrayBuffer(arrayBuffer);
+        return publicUrl;
+    }
+
     async asyncPublicUrlForArrayBuffer (arrayBuffer) {
         assert(arrayBuffer, "arrayBuffer is null");
         assert(arrayBuffer.byteLength > 0, "arrayBuffer is empty");

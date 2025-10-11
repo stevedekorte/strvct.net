@@ -1145,7 +1145,7 @@ Inspector
 
 ImageWellFieldRowView
     key
-    vale -> ImageWellView 
+    vale -> SvImageWellView 
                 subviews -> ImageView 
                             subviews -> ImageViewImageContainer
 

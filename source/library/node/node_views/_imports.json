@@ -2,8 +2,8 @@
     "_css.css",
     "NodeView.js",
     "SvCoachableView.js",
-    "ImageWellView.js",
-    "ImageView.js",
+    "SvImageWellView.js",
+    "SvImageView.js",
     "SvVideoWellView.js",
     "SvVideoView.js",
     "browser/_imports.json"

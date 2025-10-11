@@ -3,6 +3,7 @@
     "SvCoachMarkManager.js",
     "SvFolderNode.js",
     "SvImageNode.js",
+    "SvImagesNode.js",
     "SvTextNode.js",
     "SvLinkNode.js",
     "SvPrototypesNode.js"

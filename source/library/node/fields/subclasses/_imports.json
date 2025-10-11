@@ -5,6 +5,7 @@
     "SvDateField.js",
     "SvIdentityField.js",
     "SvImageWellField.js",
+    "SvImageField.js",
     "SvNumberField.js",
     "SvPointerField.js",
     "SvJsonField.js",
@@ -17,5 +18,5 @@
     "SvVideoWellField.js",
     "options/_imports.json",
     "date/_imports.json",
-    "time/_imports.json"   
+    "time/_imports.json"
 ]

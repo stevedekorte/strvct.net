@@ -113,7 +113,7 @@
                     field.setOwnerNode(this);
                     field.setTarget(this);
                     field.setCanDelete(false);
-                    //field.setSummaryFormat("key value");
+                    //field.setSummaryFormat("key: value");
                     pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath(), "SvSummaryNode");
                     pathNodes.last().addSubnode(field);
                 } else {

@@ -8,11 +8,9 @@
 "use strict";
 
 /*
-const typedArrayClass = Int8Array.__proto__;
-
-Object.defineSlots(typedArrayClass.prototype, {
-    _isDeserializing: false
-});
+    @class Object_store
+    @extends Object
+    @classdesc This class extends Object to provide methods for storing and loading objects from a persistent store.
 */
 
 (class Object_store extends Object {

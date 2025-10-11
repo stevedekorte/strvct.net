@@ -126,8 +126,8 @@
     }
 
     /*
-    didUpdateImageWellView (anImageWell) {
-        //this.logDebug(".didUpdateImageWellView()")
+    didUpdateSvImageWellView (anImageWell) {
+        //this.logDebug(".didUpdateSvImageWellView()")
         this.scheduleSyncToNode()
         return this
     }
