@@ -18,6 +18,7 @@
      */
         {
             const slot = this.newSlot("url", "");
+            slot.setLabel("Url");
             slot.setInspectorPath("");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -34,6 +35,7 @@
      */
         {
             const slot = this.newSlot("imageUrl", ""); // this is a passthrough to dataUrl
+            slot.setLabel("Image");
             slot.setInspectorPath("");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -115,6 +117,7 @@
         // retry method
         {
             const slot = this.newSlot("asyncFetchAction", null);
+            slot.setLabel("Download");
             slot.setSlotType("Action");
             slot.setShouldStoreSlot(true);
             slot.setCanEditInspection(true);
