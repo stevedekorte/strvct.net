@@ -22,6 +22,7 @@
         this.setNodeCanAddSubnode(true);
         this.setNodeCanReorderSubnodes(false);
         this.setTitle("Image Evaluators");
+        this.setNodeSubtitleIsChildrenSummary(true);
     }
 
     async asyncEvaluate () {
@@ -43,6 +44,28 @@
     bestImageIndex () {
         const bestEvaluator = this.bestEvaluator();
         return bestEvaluator ? this.subnodes().indexOf(bestEvaluator) : null;
+    }
+
+    onImageGenStatus (statusMessage) {
+        console.log(this.logPrefix(), "onImageGenStatus('", statusMessage, "')");
+        this.notifyOwners("imageGenStatus", this.status());
+    }
+
+    evaluatedCount () {
+        return this.subnodes().filter(node => node.status() === "evaluated").length;
+    }
+
+    errorCount () {
+        return this.subnodes().filter(node => node.error()).length;
+    }
+
+    status () {
+        // return a string like "Evaluated 3 of 4 images"
+        let s = `Evaluated ${this.evaluatedCount()} of ${this.subnodes().length} images`;
+        if (this.errorCount() > 0) {
+            s += `, ${this.errorCount()} errors`;
+        }
+        return s;
     }
 
 }.initThisClass());

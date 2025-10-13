@@ -28,7 +28,7 @@
             const slot = this.newSlot("svImage", null);
             slot.setFinalInitProto(SvImage);
             slot.setSlotType("SvImage");
-            slot.setLabel("Image");
+            slot.setLabel("Image to Evaluate");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -100,6 +100,7 @@
             slot.setAllowsNullValue(true);
             slot.setDescription("Evaluation score (0.0-1.0)");
             slot.setCanEditInspection(false);
+            slot.setSummaryFormat("key: value");
         }
 
 
@@ -117,6 +118,7 @@
             slot.setSyncsToView(true);
             slot.setDescription("Current evaluation status");
             slot.setCanEditInspection(false);
+            slot.setSummaryFormat("key: value");
         }
 
         /**
@@ -133,6 +135,7 @@
             slot.setSyncsToView(true);
             slot.setAllowsNullValue(true);
             slot.setDescription("Error from evaluation process");
+            slot.setSummaryFormat("key: value");
         }
 
         /**
@@ -172,6 +175,7 @@
         this.setTitle("Image Evaluator");
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
+        this.setNodeSubtitleIsChildrenSummary(true);
     }
 
     /**
