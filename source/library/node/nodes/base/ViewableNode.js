@@ -379,7 +379,7 @@
      * @category Interaction
      */
     onRequestSelectionOfNode () {
-        this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
+        this.tellFirstRespondingParentNode("onRequestSelectionOfDecendantNode", this);
         return this;
     }
 
@@ -389,7 +389,7 @@
      * @category Interaction
      */
     onTapOfNode () {
-        this.tellParentNodes("onTapOfDecendantNode", this);
+        this.tellFirstRespondingParentNode("onTapOfDecendantNode", this);
         return this;
     }
 

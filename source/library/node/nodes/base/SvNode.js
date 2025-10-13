@@ -1107,21 +1107,54 @@
 
     // --- parent chain notifications ---
 
+    notifyOwners (msg, args = []) {
+        // WHY:
+        // this pattern avoids:
+        // - having to set delegates (and managing their lifetimes)
+        // - dealing with passing messages up through collection or other intermediary objects
+        // CONVENTIONS:
+        // - use await instead of delegate messages for COMPLETION & ERRORS (check error slot)
+        // - use notifyOwners() for PROGRESS messages - the receiver might forward it further, possibly changing the arguments
+        // e.g. a node might report it's complete, and the receiver might forward the current number of complete items
+        this.tellFirstRespondingOwnerOrParentNode(msg, args);
+    }
+
+    tellFirstRespondingOwnerOrParentNode (msg, args = [], visited = new Set()) {
+        // the chain shouldn't have loops, but let's be safe
+        assert(!visited.has(this), "tellFirstRespondingOwnerOrParentNode: loop detected");
+        visited.add(this);
+        const o = this.ownerOrParentNode();
+        if (o) {
+            if (o.respondsTo(msg)) {
+                // NOTE: we leave it up to the receiving node to forward it
+                // further up the chain if needed
+                // IMPORTANT: it should pass the visited set
+                o.perform(msg, args, visited);
+                return;
+            } else {
+                o.tellFirstRespondingOwnerOrParentNode(msg, args, visited);
+            }
+        }
+    }
+
     /**
 
      * @description Send a message to this instance's parent nodes.
      * @param {string} msg - The message to send.
      * @param {*} aNode - The node associated with the message.
      */
-    tellParentNodes (msg, aNode) {
-        const f = this[msg];
-        if (f && f.apply(this, [aNode])) {
-            return;
-        }
-
+    tellFirstRespondingParentNode (msg, args = []) {
+        // the chain shouldn't have loops
         const p = this.parentNode();
         if (p) {
-            p.tellParentNodes(msg, aNode);
+            if (p.respondsTo(msg)) {
+                p.perform(msg, args);
+                return;
+            } else {
+                // we leave it up to the responding parent to forward it
+                // further up the chain if needed
+                p.tellFirstRespondingParentNode(msg, args);
+            }
         }
     }
 
@@ -1681,7 +1714,7 @@
      * @returns {SvNode} This instance.
      */
     onRequestSelectionOfNode () {
-        this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
+        this.tellFirstRespondingParentNode("onRequestSelectionOfDecendantNode", this);
         return this;
     }
 
@@ -1691,7 +1724,7 @@
      * @returns {SvNode} This instance.
      */
     onTapOfNode () {
-        this.tellParentNodes("onTapOfDecendantNode", this);
+        this.tellFirstRespondingParentNode("onTapOfDecendantNode", this);
         return this;
     }
 

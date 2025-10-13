@@ -33,6 +33,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setDescription("The image to evaluate");
+            slot.setFieldInspectorViewClassName("SvImageWellField");
         }
 
         /**
@@ -69,6 +70,22 @@
 
 
         /**
+         * @member {EvalChecklistItems} checklist
+         * @description Detailed checklist of prompt elements.
+         * @category Results
+         */
+        {
+            const slot = this.newSlot("checklist", null);
+            slot.setFinalInitProto(EvalChecklistItems);
+            slot.setLabel("Checklist");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setAllowsNullValue(true);
+            slot.setDescription("Checklist of prompt elements found in the image");
+        }
+
+        /**
      * @member {number} score
      * @description The evaluation score for the image.
      * @category Results
@@ -82,23 +99,9 @@
             slot.setSyncsToView(true);
             slot.setAllowsNullValue(true);
             slot.setDescription("Evaluation score (0.0-1.0)");
+            slot.setCanEditInspection(false);
         }
 
-        /**
-     * @member {Object} checklist
-     * @description Detailed checklist of prompt elements.
-     * @category Results
-     */
-        {
-            const slot = this.newSlot("checklist", null);
-            slot.setSlotType("Array");
-            slot.setLabel("Checklist");
-            slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setAllowsNullValue(true);
-            slot.setDescription("Checklist of prompt elements found in the image");
-        }
 
         /**
      * @member {string} status
@@ -113,6 +116,7 @@
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setDescription("Current evaluation status");
+            slot.setCanEditInspection(false);
         }
 
         /**
@@ -220,7 +224,7 @@
         this.setError(null);
         this.setScore(null);
         //this.setReasoning("");
-        this.setChecklist(null);
+        this.checklist().removeAllSubnodes();
     }
 
     async asyncPublicUrlForImage () {
@@ -370,11 +374,10 @@
         }
 
         const response = JSON.parse(responseText);
-        let checklist = response;
+        let checklistData = response;
 
         try {
-            this.setChecklist(checklist);
-            this.assertValidChecklist();
+            this.checklist().setJson(checklistData);
             this.processChecklist();
         } catch (parseError) {
             console.error("Failed to parse evaluation response:", response);
@@ -383,88 +386,16 @@
         }
     }
 
-    assertValidChecklist () {
-        const checklist = this.checklist();
-        if (!Array.isArray(checklist)) {
-            throw new Error("Invalid evaluation response: response must be an array");
-        }
-
-        if (checklist.length === 0) {
-            throw new Error("Invalid evaluation response: checklist is empty");
-        }
-
-        checklist.forEach((item, index) => {
-            if (!item.itemName || typeof item.itemName !== "string") {
-                throw new Error(`Invalid checklist item ${index}: missing or invalid itemName`);
-            }
-            if (typeof item.score !== "number" || item.score < 0 || item.score > 1) {
-                throw new Error(`Invalid checklist item ${index}: score must be a number between 0 and 1`);
-            }
-            if (!item.reasoning || typeof item.reasoning !== "string") {
-                throw new Error(`Invalid checklist item ${index}: missing or invalid reasoning`);
-            }
-        });
-    }
-
     processChecklist () {
         const checklist = this.checklist();
-        console.log(this.logPrefix(), "checklist:", JSON.stringify(checklist, null, 2));
+        console.log(this.logPrefix(), "checklist:", JSON.stringify(checklist.asJson(), null, 2));
 
-        // Calculate the final score from the checklist
-        const sumOfScores = checklist.map((item) => item.score).sum();
-        const numberOfItems = checklist.length;
-        const finalScore = sumOfScores / numberOfItems;  // Average of all item scores
+        this.setScore(this.checklist().score());
 
-        this.setScore(finalScore);
-
-        // Update the image with the score
+        //debugger;
         if (this.svImage()) {
-            this.svImage().setTitle(finalScore.toFixed(2));  // Show as 0.75, 0.92, etc.
-            //this.svImage().setSubtitle(reasoning);
+            this.svImage().setTitle(this.score().toFixed(2));  // Show as 0.75, 0.92, etc.
         }
-    }
-
-    /**
-   * @description Checks if the image contains all items from the prompt (even if imperfectly).
-   * An item is considered "contained" if its score is > 0.
-   * @returns {boolean} True if all checklist items have score > 0.
-   * @category Evaluation
-   */
-    doesContainAllItems () {
-        if (!this.checklist() || !Array.isArray(this.checklist())) {
-            return false;
-        }
-
-        // Check if every item has a score > 0 (meaning it's present, even if imperfect)
-        return this.checklist().every(item => item.score > 0);
-    }
-
-    /**
-   * @description Gets the count of missing items (score = 0).
-   * @returns {number} Number of items completely missing from the image.
-   * @category Evaluation
-   */
-    missingItemCount () {
-        if (!this.checklist() || !Array.isArray(this.checklist())) {
-            return 0;
-        }
-
-        return this.checklist().filter(item => item.score === 0).length;
-    }
-
-    /**
-   * @description Gets the names of missing items (score = 0).
-   * @returns {Array<string>} Array of item names that are completely missing.
-   * @category Evaluation
-   */
-    missingItemNames () {
-        if (!this.checklist() || !Array.isArray(this.checklist())) {
-            return [];
-        }
-
-        return this.checklist()
-            .filter(item => item.score === 0)
-            .map(item => item.itemName);
     }
 
     /**

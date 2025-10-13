@@ -71,9 +71,11 @@
    * @category Action
    */
     async generate () {
-        debugger;
+        //debugger;
         await super.generate();
-        await this.asyncEvaluateImages();
+        if (!this.error()) {
+            await this.asyncEvaluateImages();
+        }
     }
 
 
