@@ -34,7 +34,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
  */
 "use strict";
 
-(class SvImageMosaic extends BaseNode {
+(class SvImageMosaic extends SvSummaryNode {
 
     /**
      * @description Initializes the prototype slots for the SvImageMosaic class.
@@ -47,6 +47,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
          */
         {
             const slot = this.newSlot("svImagesNode", null);
+            slot.setLabel("Images to Composite");
             slot.setSlotType("SvImagesNode");
             slot.setFinalInitProto("SvImagesNode");
             slot.setCanInspect(true);
@@ -61,12 +62,19 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
          */
         {
             const slot = this.newSlot("compositeImageNode", null);
+            slot.setLabel("Composite Image");
             slot.setSlotType("SvImageNode");
             slot.setFinalInitProto("SvImageNode");
             slot.setCanInspect(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
+        }
+
+        // compose promise
+        {
+            const slot = this.newSlot("composePromise", null);
+            slot.setSlotType("Promise");
         }
 
         /**
@@ -76,6 +84,11 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         {
             const slot = this.newSlot("dividerWidth", 10);
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setSummaryFormat("key: value");
         }
 
         /**
@@ -85,6 +98,42 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         {
             const slot = this.newSlot("dividerColor", "#a0a0a0"); // good if background is #7f7f7f
             slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        // status
+        {
+            const slot = this.newSlot("status", "");
+            slot.setLabel("Status");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(false);
+            slot.setSummaryFormat("value");
+        }
+
+        // composite action
+        {
+            const slot = this.newSlot("compositeAction", null);
+            slot.setSlotType("Action");
+            slot.setLabel("Compose");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setActionMethodName("asyncCompose");
+        }
+
+        // clear action
+        {
+            const slot = this.newSlot("clearAction", null);
+            slot.setSlotType("Action");
+            slot.setLabel("Clear");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setActionMethodName("clear");
         }
     }
 
@@ -93,8 +142,34 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Initialization
      */
     initPrototype () {
+        this.setTitle("Image Mosaic");
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
+        this.setCanDelete(true);
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.initPrototype();
+        this.compositeImageNode().setTitle("Composite Image");
+    }
+
+    subtitle () {
+        const parts = [];
+        if (this.status().length > 0) {
+            parts.push(this.status());
+        }
+        parts.push(this.svImagesNode().subnodeCount() + " images");
+        //parts.push(this.dividerWidth() + "px divider");
+        //parts.push(this.dividerColor());
+        if (this.isComposed()) {
+            parts.push("composed ✓");
+        }
+        return parts.join("\n");
+    }
+
+    isComposed () {
+        return this.compositeImageNode().dataURL() !== null;
     }
 
 
@@ -137,6 +212,26 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      * @category Composition
      */
     async asyncCompose () {
+        if (this.composePromise()) {
+            return this.composePromise();
+        }
+        this.setComposePromise(Promise.clone());
+
+        try {
+            this.setStatus("Composing...");
+            await this.asyncJustCompose();
+            this.setStatus("Composed");
+            this.composePromise().callResolveFunc(this.compositeImageNode());
+        } catch (error) {
+            this.setStatus(error.message);
+            this.composePromise().callRejectFunc(error);
+        }
+
+        return this.composePromise();
+    }
+
+    async asyncJustCompose () {
+
         if (this.svImagesNode().subnodeCount() === 0) {
             console.warn("**WARNING**:", this.logPrefix(), "No images to compose");
             return null;

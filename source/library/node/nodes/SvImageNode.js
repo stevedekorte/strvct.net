@@ -168,7 +168,7 @@
             image.onerror = reject;
         });
         this.setImageObject(image);
-        this.imageObjectPromise().resolve(image);
+        this.imageObjectPromise().callResolveFunc(image);
         return image;
     }
 

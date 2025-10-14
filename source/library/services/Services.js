@@ -26,11 +26,20 @@
      */
     initPrototypeSlots () {
 
+        // SvImageMosaics
+
+        {
+            const slot = this.newSlot("imageMosaics", null);
+            slot.setFinalInitProto(SvImageMosaics);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+        }
+
         {
             const slot = this.newSlot("firebaseService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(FirebaseService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -42,7 +51,7 @@
             const slot = this.newSlot("leonardoService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(LeonardoService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
             slot.setSlotType("LeonardoService");
         }
         */
@@ -55,7 +64,7 @@
             const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(AnthropicService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -66,7 +75,7 @@
             const slot = this.newSlot("geminiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(GeminiService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -77,7 +86,7 @@
             const slot = this.newSlot("xaiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(XaiService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -89,7 +98,7 @@
             const slot = this.newSlot("piApiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(PiApiService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
             slot.setSlotType("PiApiService");
         }
         */
@@ -102,7 +111,7 @@
             const slot = this.newSlot("imagineProService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(ImagineProService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
 
@@ -114,7 +123,7 @@
             const slot = this.newSlot("openAiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(OpenAiService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -125,7 +134,7 @@
             const slot = this.newSlot("deepSeekService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(DeepSeekService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -136,7 +145,7 @@
             const slot = this.newSlot("groqService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(GroqService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /*
@@ -144,7 +153,7 @@
             const slot = this.newSlot("midjourneyService", null)
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(MJService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
         */
 
@@ -153,7 +162,7 @@
             const slot = this.newSlot("azureService", null)
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(AzureService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
         */
 
@@ -165,7 +174,7 @@
             const slot = this.newSlot("youtubeService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(YouTubeService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -177,7 +186,7 @@
             const slot = this.newSlot("peerService", null)
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(PeerService);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
         */
 
@@ -189,7 +198,7 @@
             const slot = this.newSlot("speechToTextSessions", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(SpeechToTextSessions);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -200,7 +209,7 @@
             const slot = this.newSlot("proxyServers", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(ProxyServers);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -211,15 +220,15 @@
             const slot = this.newSlot("homeAssistants", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(HomeAssistants);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
         }
     }
 
     initPrototype () {
         this.setTitle("Services");
-        this.setNodeCanReorderSubnodes(false);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
+        this.setNodeCanReorderSubnodes(false);
     }
 
     finalInit () {
