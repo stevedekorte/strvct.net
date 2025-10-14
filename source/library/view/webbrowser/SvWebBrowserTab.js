@@ -68,7 +68,7 @@
     setupResponderIfNeeded () {
         if (!this.responderSetup()) {
             this.setupResponder();
-            this.responderSetup(true);
+            this.setResponderSetup(true);
         }
     }
 

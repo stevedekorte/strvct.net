@@ -1009,9 +1009,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @category Getter
      */
     directGetter () {
-        assert(arguments.length === 0);
         const privateName = this.privateName();
-        const func = function () {
+        const func = function (...args) {
+            assert(args.length === 0, "directGetter() should not be called with arguments");
             return this[privateName];
         };
         return func;
@@ -1030,7 +1030,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     autoGetter () {
         const slot = this;
-        return function (/*arg*/) {
+        return function (...args) {
+            assert(args.length === 0, "autoGetter() should not be called with arguments");
             // assert(Type.isUndefined(arg)); // TODO: remove this
             return this.getSlotValue(slot);
         };
@@ -1133,7 +1134,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     autoSetter () {
         const slot = this;
-        return function (newValue) {
+        return function (newValue, invalidSecondArgumentCatcher) {
+            assert(invalidSecondArgumentCatcher === undefined, "autoSetter() should not be called with a 2nd argument");
             const valueDescription = function (v) {
                 let vString = String(v);
                 vString = vString.length < 20 ? vString : (vString.slice(0, 20) + "...");
