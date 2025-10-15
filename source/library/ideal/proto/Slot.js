@@ -128,6 +128,10 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("annotations", null);
 
         this.simpleNewSlot("isVisible", null); // only set on finalInitProto if true or false, ignore if null
+
+        // promise wrapper
+        this.newSimpleSlot("isPromiseWrapped", false);
+        this.newSimpleSlot("promiseResetsOnChangeOfSlotName", null);
     }
 
     setSlotType (s) {
@@ -899,10 +903,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     ownerImplemnentsdHooks () {
         return true;
-        /*
-        const slotsMap = this.owner().slotsMap() // TODO: this is slow
-        return this.hookNames().canDetect(hookName => slotsMap.has(hookName))
-        */
     }
 
     /**
@@ -959,11 +959,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     setupGetter () {
         if (this.ownsGetter()) {
-            if (this.ownerImplemnentsdHooks()) {
-                Object.defineSlot(this.owner(), this.getterName(), this.autoGetter());
-            } else {
-                this.makeDirectGetter();
-            }
+            Object.defineSlot(this.owner(), this.getterName(), this.autoGetter());
+            this.setupPromiseWrapperIfNeeded();
         }
         return this;
     }
@@ -980,12 +977,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     setupSetter () {
         if (this.ownsSetter()) {
-            if (this.ownerImplemnentsdHooks()) {
-                Object.defineSlot(this.owner(), this.setterName(), this.autoSetter());
-            } else {
-                this.makeDirectSetter();
-            }
-            //Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter());
+            Object.defineSlot(this.owner(), this.setterName(), this.autoSetter());
         }
         return this;
     }
@@ -1010,8 +1002,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     directGetter () {
         const privateName = this.privateName();
-        const func = function (...args) {
-            assert(args.length === 0, "directGetter() should not be called with arguments");
+        const func = function (arg) {
+            assert(arg === undefined, "getter should not be called with arguments");
             return this[privateName];
         };
         return func;
@@ -1030,9 +1022,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      */
     autoGetter () {
         const slot = this;
-        return function (...args) {
-            assert(args.length === 0, "autoGetter() should not be called with arguments");
-            // assert(Type.isUndefined(arg)); // TODO: remove this
+        return function (arg) {
+            assert(arg === undefined, "getter should not be called with arguments");
             return this.getSlotValue(slot);
         };
     }
@@ -1044,7 +1035,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
      * @returns {boolean} True if the value is valid, false otherwise.
      */
     validateValue (v) {
-
         if (v === null) {
             return this.allowsNullValue();
         }

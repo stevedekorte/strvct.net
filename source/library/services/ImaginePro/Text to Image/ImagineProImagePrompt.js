@@ -112,22 +112,22 @@
         }
 
         /**
- * @member {string} omniRefImageUrl
- * @description URL to character reference sheet composite image for Midjourney V7+ omnireference.
- * This will be used with --oref parameter (V7's omnireference flag).
- * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
- * @category Configuration
- */
+         * @member {string} omniRefImageNode
+         * @description Contains character reference sheet composite image for Midjourney V7+ omnireference.
+         * This will be used with --oref parameter (V7's omnireference flag).
+         * NOTE: We ONLY support V7 or later - V6's --cref is NOT supported.
+         * @category Configuration
+         */
         {
-            const slot = this.newSlot("omniRefImageUrl", null);
+            const slot = this.newSlot("omniRefImageNode", null);
             slot.setInspectorPath("Settings");
-            slot.setSlotType("String");
-            slot.setLabel("Omniref Image Url");
+            slot.setFinalInitProto("SvImageNode");
+            slot.setLabel("Omniref Image Node");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
-            slot.setDescription("URL to character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
+            slot.setDescription("Contains character reference sheet composite image for Midjourney (Firebase Storage or other hosted URL)");
             slot.setSummaryFormat("key: value");
         }
 
@@ -282,6 +282,11 @@
         this.setNodeCanReorderSubnodes(false);
     }
 
+    setOmniRefImageUrl (url) {
+        this.omniRefImageNode().setDataURL(url);
+        return this;
+    }
+
     /**
    * @description Gets the title for the image prompt.
    * @returns {string} The title.
@@ -308,6 +313,7 @@
     finalInit () {
         super.finalInit();
         this.setCanDelete(true);
+        this.omniRefImageNode().setTitle("Omniref Image");
     }
 
     /**
@@ -396,7 +402,7 @@
         return prompt;
     }
 
-    composeFullPrompt () {
+    async composeFullPrompt () {
         let prompt = this.prompt();
         prompt = this.sanitizePromptForMidjourney(prompt);
 
@@ -410,8 +416,9 @@
         // IMPORTANT: We ONLY support Midjourney V7 or later versions
         // V7 uses --oref (omnireference) and --ow (omnireference weight) parameters
         // We do NOT support V6 or earlier (which used --cref/--cw)
-        if (this.omniRefImageUrl()) {
-            prompt += " --oref " + this.omniRefImageUrl() + " --ow " + this.omniRefWeight();
+        if (this.omniRefImageNode().hasImage()) {
+            const publicUrl = await this.omniRefImageNode().asyncPublicUrl();
+            prompt += " --oref " + publicUrl + " --ow " + this.omniRefWeight();
         }
 
         // Append aspect ratio
@@ -442,7 +449,7 @@
         const endpoint = "https://api.imaginepro.ai/api/v1/nova/imagine";
 
         const bodyJson = {
-            prompt: this.composeFullPrompt(),
+            prompt: await this.composeFullPrompt(),
             process_mode: this.processMode()
         };
 

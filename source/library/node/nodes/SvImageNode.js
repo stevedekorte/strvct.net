@@ -49,6 +49,9 @@
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(true);
             slot.setFieldInspectorViewClassName("SvImageWellField");
+
+            //slot.setIsPromiseWrapped(true);
+            //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
         }
 
         // public url
@@ -76,6 +79,9 @@
             slot.setSlotType("Image");
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
+
+            slot.setIsPromiseWrapped(true);
+            slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
         }
 
         // image object promise
@@ -155,21 +161,34 @@
         return this;
     }
 
+    hasImage () {
+        return this.dataURL() !== null || this.publicUrl() !== null;
+    }
+
     async asyncImageObject () {
         if (this.imageObject()) {
             return this.imageObject();
         }
-        this.setImageObjectPromise(Promise.clone());
 
-        const image = new Image();
-        image.src = this.dataURL();
-        await new Promise((resolve, reject) => {
-            image.onload = resolve;
-            image.onerror = reject;
-        });
-        this.setImageObject(image);
-        this.imageObjectPromise().callResolveFunc(image);
-        return image;
+        const promise = Promise.clone();
+        this.setImageObjectPromise(promise);
+
+        try {
+            const image = new Image();
+            image.src = this.dataURL();
+            image.onload = () => {
+                this.setImageObject(image);
+                promise.callResolveFunc(image);
+            };
+            image.onerror = (error) => {
+                promise.callRejectFunc(error);
+                throw error;
+            };
+            return image;
+        } catch (error) {
+            promise.callRejectFunc(error);
+            throw error;
+        }
     }
 
     async asyncPublicUrl () {
@@ -182,13 +201,21 @@
         if (this.publicUrlPromise()) {
             return this.publicUrlPromise();
         }
-        this.setPublicUrlPromise(Promise.clone());
 
-        const imageObject = await this.asyncImageObject();
-        const publicUrl = await SvApp.shared().asyncPublicUrlForImageObject(imageObject);
-        this.setPublicUrl(publicUrl);
-        this.publicUrlPromise().resolve(publicUrl);
-        return publicUrl;
+        const promise = Promise.clone();
+        this.setPublicUrlPromise(promise);
+
+        try {
+            const imageObject = await this.asyncImageObject();
+            const publicUrl = await SvApp.shared().asyncPublicUrlForImageObject(imageObject);
+            this.setPublicUrl(publicUrl);
+            promise.callResolveFunc(publicUrl);
+            return publicUrl;
+        } catch (error) {
+            promise.callRejectFunc(error);
+            throw error;
+        }
     }
+
 
 }.initThisClass());

@@ -1,5 +1,6 @@
 [
     "Slot.js",
+    "Slot_promiseWrapper.js",
     "ProtoClass.js"
 ]
 

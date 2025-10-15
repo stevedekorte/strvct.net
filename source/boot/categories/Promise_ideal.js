@@ -171,6 +171,10 @@
 
     // resolve / reject
 
+    assertNotCompleted () {
+        assert(!this.isCompleted(), "promise reject call on already " + this._status + " promise");
+    }
+
     /**
  * @method callResolveFunc
  * @memberof Promise
@@ -180,7 +184,7 @@
  * @category Resolution
  */
     callResolveFunc (...args) {
-        assert(!this.isRejected(), "promise resolve call on already rejected promise");
+        this.assertNotCompleted();
         this._status = "resolved";
         this.clearAwaiterCount();
         this.cancelTimeout();
@@ -202,7 +206,7 @@
  * @category Resolution
  */
     callRejectFunc (...args) {
-        assert(!this.isResolved(), "promise reject call on already resolved promise");
+        this.assertNotCompleted();
         this._status = "rejected";
         this.clearAwaiterCount();
         this.cancelTimeout();
@@ -250,6 +254,10 @@
  */
     isPending () {
         return this._status === "pending";
+    }
+
+    isCompleted () {
+        return this.isResolved() || this.isRejected();
     }
 
     // awaiters
