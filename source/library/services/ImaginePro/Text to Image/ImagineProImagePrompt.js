@@ -524,8 +524,8 @@
    * @returns {ImagineProImagePrompt} The current instance.
    * @category Lifecycle
    */
-    shutdown () {
-        this.nodeShutdown();
+    shutdown (visited = new Set()) {
+        this.nodeShutdown(visited);
         return this;
     }
 

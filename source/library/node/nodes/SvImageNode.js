@@ -80,8 +80,8 @@
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
 
-            slot.setIsPromiseWrapped(true);
-            slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
+            //slot.setIsPromiseWrapped(true);
+            //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
         }
 
         // image object promise

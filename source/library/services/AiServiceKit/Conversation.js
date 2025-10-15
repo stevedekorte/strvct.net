@@ -131,7 +131,14 @@
     clear () {
         this.subnodes().forEach(msg => {
             if (msg.shutdown) {
-                msg.shutdown();
+                try {
+                    console.log(this.logPrefix(), " sending: " + msg.svType() + ".shutdown()");
+                    msg.shutdown();
+                } catch (error) {
+                    console.error(this.logPrefix(), "Error shutting down message: " + error.message);
+                    console.error(error.stack);
+                    debugger;
+                }
             }
         });
         this.removeAllSubnodes();

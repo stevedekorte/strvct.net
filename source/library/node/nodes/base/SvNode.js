@@ -2316,8 +2316,12 @@
         visited.add(this);
 
         this.performIfResponding("shutdown", visited);
-        this.ownedSlotValues().forEach(sv => sv.performIfResponding("nodeShutdown", visited));
+        this.ownedSlotValues().forEach(sv => {
+            console.log(this.logPrefix(), " sending: " + sv.svType() + ".nodeShutdown()");
+            sv.performIfResponding("nodeShutdown", visited);
+        });
         this.subnodes().forEach(sn => {
+            console.log(this.logPrefix(), " sending: " + sn.svType() + ".nodeShutdown()");
             sn.performIfResponding("nodeShutdown", visited);
         });
     }
@@ -2328,7 +2332,7 @@
        * @returns {Array} The slots whose values are owned by this instance.
        */
     slotsWhoseValuesAreOwned () {
-        return this.thisPrototype().slots().filter(slot => slot.ownsValue());
+        return this.thisPrototype().slotsMap().valuesArray().filter(slot => slot.ownsValue());
     }
 
     /**
