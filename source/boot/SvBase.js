@@ -104,6 +104,10 @@
      * @category Initialization
      */
     static initThisClass () {
+        if (this.svType().includes("_")) {
+            throw new Error("class name should not contain an underscore as those are reserved for categories");
+        }
+
         this.setupDefineSlot();
 
         // initPrototypeSlots is split from initPrototype as initPrototype may need to

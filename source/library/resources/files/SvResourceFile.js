@@ -123,7 +123,6 @@
      */
     init () {
         super.init();
-        this.setPromiseForLoad(Promise.clone());
         return this;
     }
 
@@ -209,12 +208,25 @@
      * @category Loading
      */
     async promiseLoad () {
-        const url = this.urlResource();
-        url.setResourceHash(this.resourceHash());
-        const r = await url.promiseLoad();
-        this._data = r.data();
-        this.setValue(await this.asyncValueFromData());
-        this.promiseForLoad().callResolveFunc();
+        if (this.promiseForLoad()) {
+            return this.promiseForLoad();
+        }
+        const promise = Promise.clone();
+        this.setPromiseForLoad(promise);
+
+        try {
+            const url = this.urlResource();
+            url.setResourceHash(this.resourceHash());
+            const r = await url.promiseLoad();
+            this._data = r.data();
+            this.setValue(await this.asyncValueFromData());
+            promise.callResolveFunc();
+        } catch (error) {
+            promise.callRejectFunc(error);
+            throw error;
+        }
+        this.setIsLoading(false);
+        this.setIsLoaded(true);
         return this;
     }
 

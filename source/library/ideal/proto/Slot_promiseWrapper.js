@@ -9,18 +9,19 @@
  *
  * Notes on promise wrapped method pattern:
 
-this.newSimpleSlot("isPromiseWrapped", false);
-this.newSimpleSlot("promiseResetsOnChangeOfSlotName", null);
+    Related ivars:
+        this.newSimpleSlot("isPromiseWrapped", false);
+        this.newSimpleSlot("promiseResetsOnChangeOfSlotName", null);
 
-    // exampe:
+    Example usage:
 
-    const slot = this.newSlot("publicUrl", null); // private
-    slot.setIsPromiseWrapped(true);
-    // - adds a asyncPublicUrl() method which does the promise wrapping and returns a promise
-    // and calls asyncComputePublicUrl() method to compute the public url
+        const slot = this.newSlot("publicUrl", null); // private
+        slot.setIsPromiseWrapped(true);
+        // - adds a asyncPublicUrl() method which does the promise wrapping and returns a promise
+        // and calls asyncComputePublicUrl() method to compute the public url
 
-    slot.setPromiseResetsOnChangeOfSlotName("dataUrl");
-    // - adds an onDidChangeOfSlotName("dataUrl") method which resets the promise
+        slot.setPromiseResetsOnChangeOfSlotName("dataUrl");
+        // - adds an onDidChangeOfSlotName("dataUrl") method which resets the promise
 
  */
 
@@ -124,4 +125,4 @@ this.newSimpleSlot("promiseResetsOnChangeOfSlotName", null);
         };
     }
 
-}.initThisClass());
+}.initThisCategory());

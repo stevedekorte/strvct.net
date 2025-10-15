@@ -130,8 +130,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("isVisible", null); // only set on finalInitProto if true or false, ignore if null
 
         // promise wrapper
-        this.newSimpleSlot("isPromiseWrapped", false);
-        this.newSimpleSlot("promiseResetsOnChangeOfSlotName", null);
+        this.simpleNewSlot("isPromiseWrapped", false);
+        this.simpleNewSlot("promiseResetsOnChangeOfSlotName", null);
     }
 
     setSlotType (s) {

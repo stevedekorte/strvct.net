@@ -247,7 +247,8 @@
      * @category AI Service
      */
     aiServices () {
-        return this.subnodes().filter(sn => sn.thisClass().isKindOf(AiService));
+        const values = this.subnodeFields().map(sn => sn.value());
+        return values.filter(sn => sn.thisClass().isKindOf(AiService));
     }
 
     // --- ai model helpers ---

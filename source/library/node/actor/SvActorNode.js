@@ -77,7 +77,6 @@
     }
 
     async asyncActorProcessIfNeeded () {
-        // TODO: consider stack depth
         const q = this.messageQueue();
         if (!q.hasPendingMessage()) {
             const msg = q.firstUnsentMessage();
@@ -91,6 +90,7 @@
                 }
                 q.removeSubnode(msg);
                 this.asyncActorProcessIfNeeded();
+                // TODO: consider stack depth - maybe use this.scheduleMethod("asyncActorProcessIfNeeded") instead?
             }
         }
     }
