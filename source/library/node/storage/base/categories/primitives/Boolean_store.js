@@ -8,7 +8,7 @@
  */
 (class Boolean_store extends Boolean {
 
-    static instanceFromRecordInStore (aRecord, aStore) {
+    static instanceFromRecordInStore (aRecord /*, aStore*/) {
         assert(Type.isBoolean(aRecord.value));
         return aRecord.value;
     }
@@ -19,7 +19,7 @@
      * @returns {Object} A record object representing the array for storage.
      * @category Serialization
      */
-    recordForStore (aStore) { // should only be called by Store
+    recordForStore (/*aStore*/) { // should only be called by Store
         const dict = {
             type: "Boolean", // TODO: fix this to support subclasses
             value: this
@@ -35,7 +35,7 @@
      * @returns {Array_store} The current instance.
      * @category Deserialization
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (/*aRecord, aStore*/) {
         return this;
     }
 

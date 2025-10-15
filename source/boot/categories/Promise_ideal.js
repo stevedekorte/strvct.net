@@ -22,6 +22,52 @@
 
 (class Promise_ideal extends Promise {
 
+    static storedProperties () {
+        return [
+            "_status",
+            "_awaiterCount",
+            "_timeoutMs",
+            "_timeoutId",
+            "_onAwaitFunc",
+            "_hasCalledAwaitFunc",
+            "_label"
+        ];
+    }
+
+    static instanceFromRecordInStore (/*aRecord, aStore*/) {
+        return Promise.clone();
+    }
+
+    recordForStore (/*aStore*/) { // should only be called by Store
+        const dict = {
+        };
+
+        Promise_ideal.storedProperties().forEach((property) => {
+            const value = this[property];
+            assert(!Type.isUndefined(value), "Promise_ideal.recordForStore: property '" + property + "' is undefined");
+            dict[property] = value;
+        });
+
+        return dict;
+    }
+
+    loadFromRecord (aRecord /*, aStore*/) {
+        Promise_ideal.storedProperties().forEach((property) => {
+            const value = aRecord[property];
+            //assert(!Type.isUndefined(value), "Promise_ideal.loadFromRecord: property '" + property + "' is undefined");
+            this[property] = value;
+        });
+        return this;
+    }
+
+    shouldStore () {
+        // we can't store the resolve and reject functions, so we return false
+        return false;
+    }
+
+
+    // -----------------------------------------------------------------------
+
     /**
      * @method initThisCategory
      * @static

@@ -110,6 +110,7 @@
         {
             const slot = this.newSlot("completionPromise", null);
             slot.setSlotType("Promise");
+            //slot.setShouldStoreSlot(true);
         }
 
         this.setShouldStore(true);
@@ -139,9 +140,12 @@
     finalInit () {
         super.finalInit();
         this.setCompletionPromise(Promise.clone());
+        /*
         if (this.isComplete()) {
-            this.completionPromise().callResolveFunc(this.content());
+            debugger;
+            //this.completionPromise().callResolveFunc(this.content());
         }
+        */
     }
 
     /**
@@ -363,6 +367,11 @@
    */
     onComplete () {
         super.onComplete(); // sends a delegate message
+        if (this.completionPromise().isCompleted()) {
+            console.log("completion promise is already completed");
+            debugger;
+            return;
+        }
         this.completionPromise().callResolveFunc();
     // to be overridden by subclasses
     }

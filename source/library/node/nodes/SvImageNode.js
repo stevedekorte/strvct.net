@@ -47,8 +47,11 @@
             slot.setSlotType("String");
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
+            slot.setCanInspect(true);
             slot.setCanEditInspection(true);
             slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setIsSubnodeField(true);
+
 
             //slot.setIsPromiseWrapped(true);
             //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
@@ -60,6 +63,8 @@
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
             slot.setIsSubnodeField(true);
         }
 
@@ -131,6 +136,13 @@
         this.setNodeViewClassName("SvImageWellView");
     }
 
+    clear () {
+        this.setDataURL(null);
+        this.setPublicUrl(null);
+        this.setImageObject(null);
+        return this;
+    }
+
     /**
      * @description Handles the event when the node is edited.
      * @category Event Handling
@@ -192,6 +204,10 @@
     }
 
     async asyncPublicUrl () {
+        if (this.dataUrlIsPublic()) {
+            return this.dataURL();
+        }
+
         // use it if we already have it
         if (this.publicUrl()) {
             return this.publicUrl();
@@ -215,6 +231,25 @@
             promise.callRejectFunc(error);
             throw error;
         }
+    }
+
+    /*
+    setDataURL (dataURL) {
+        if (dataURL && dataURL.startsWith("http")) {
+            throw new Error("setDataURL: dataURL is public");
+        }
+        this._dataURL = dataURL;
+        return this;
+    }
+    */
+
+    dataUrlIsPublic () {
+        return this.dataURL() !== null && this.dataURL().startsWith("http");
+    }
+
+
+    asDataURL () {
+        return this.dataURL();
     }
 
 

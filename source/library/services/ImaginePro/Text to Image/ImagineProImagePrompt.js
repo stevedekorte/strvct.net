@@ -397,7 +397,8 @@
             .replace(/\bsensual\b/gi, "graceful") // "sensual" -> "graceful"
             .replace(/\bviolent\b/gi, "intense") // "violent" -> "intense"
             .replace(/\bbloody\b/gi, "crimson") // "bloody" -> "crimson"
-            .replace(/\bbrutal\b/gi, "fierce"); // "brutal" -> "fierce"
+            .replace(/\bbrutal\b/gi, "fierce") // "brutal" -> "fierce"
+            .replace(/\bsex\b/gi, "injury"); // "wound" -> "injury"
 
         return prompt;
     }

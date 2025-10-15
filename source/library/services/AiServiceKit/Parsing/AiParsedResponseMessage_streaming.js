@@ -189,8 +189,7 @@
     }
 
     processStreamContent () { // see processStreamContent
-    // TODO: add check if we are currently streaming repsonse and/or speaking
-
+        // TODO: add check if we are currently streaming repsonse and/or speaking
         this.setIsComplete(false); // otherwise markAsComplete won't call delegate
         this.setupHtmlStreamReader();
         this.htmlStreamReader().beginHtmlStream();

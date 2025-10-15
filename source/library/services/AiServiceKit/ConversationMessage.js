@@ -317,9 +317,7 @@
    * @category State
    */
     didUpdateSlotIsComplete (oldValue, newValue) {
-
-        if (newValue && this.conversation()) { // so not called during deserialization
-
+        if (newValue === true && this.conversation()) { // so not called during deserialization
             this.scheduleMethod("onComplete");
         }
     }

@@ -48,7 +48,7 @@
 
     onImageGenStatus (statusMessage) {
         console.log(this.logPrefix(), "onImageGenStatus('", statusMessage, "')");
-        this.notifyOwners("imageGenStatus", this.status());
+        this.notifyOwners("onImageGenStatus", this.status());
     }
 
     evaluatedCount () {

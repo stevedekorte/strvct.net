@@ -63,12 +63,12 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         {
             const slot = this.newSlot("compositeImageNode", null);
             slot.setLabel("Composite Image");
-            slot.setSlotType("SvImageNode");
             slot.setFinalInitProto("SvImageNode");
             slot.setCanInspect(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
+            slot.setFieldInspectorViewClassName("SvImageWellField");
         }
 
         // compose promise
@@ -202,7 +202,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
      */
     clear () {
         this.svImagesNode().removeAllSubnodes();
-        this.setCompositeImageNode(null);
+        this.setCompositeImageNode().clear();
         return this;
     }
 
