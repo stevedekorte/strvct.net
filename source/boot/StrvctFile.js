@@ -204,7 +204,7 @@ class StrvctFile extends Object {
      * @category File Loading
      */
     async asyncLoadNode () {
-        console.log("🔍 asyncLoadNode file: " + this._path);
+        console.log("[StrvctFile] asyncLoadNode " + this._path);
         const fs = require("fs").promises;
         const path = require("path");
 

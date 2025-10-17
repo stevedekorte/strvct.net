@@ -4,7 +4,6 @@
  * @description Image and Canvas polyfill for Node.js environments using the canvas library.
  * This file is only executed when running in a Node.js environment.
  */
-console.log("evaluating ImageShim.js");
 
 try {
     const { createCanvas, loadImage, Image: NodeImage } = require("canvas");
@@ -79,7 +78,7 @@ try {
     SvGlobals.set("createCanvas", createCanvas);
     SvGlobals.set("loadImage", loadImage);
 
-    console.log("defined Image, HTMLCanvasElement, and canvas utilities");
+    //console.log("defined Image, HTMLCanvasElement, and canvas utilities");
     assert(global.Image, "Image should be available globally");
     assert(global.HTMLCanvasElement, "HTMLCanvasElement should be available globally");
 

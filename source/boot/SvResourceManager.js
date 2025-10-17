@@ -148,6 +148,10 @@
         return this._indexResources;
     }
 
+    logPrefix () {
+        return "[SvResourceManager]";
+    }
+
     /**
      * @category Resource Loading
      * @description Loads the CAM (Compressed Asset Manager) if needed.
@@ -157,7 +161,7 @@
         //console.log("🔍 Checking if CAM loading is needed...");
 
         if (SvPlatform.isNodePlatform()) {
-            console.log("🔍 Clearing SvHashCache on Node.js...");
+            console.log("\n" + this.logPrefix(), "Clearing SvHashCache on Node.js...");
             await SvHashCache.shared().promiseClear();
         }
 
@@ -340,7 +344,7 @@
         //const cssCount = this.cssResources().length;
         // Now evaluate CSS in sequence (order matters for cascading)
         SvBootLoadingView.shared().setSubtitle("compiling");
-        console.log("--- Evaluating CSS and JS ---");
+        console.log("\n--- Evaluating CSS and JS ---");
 
         //SvBootLoadingView.shared().setTitle("Evaluating CSS...");
         this.cssResources().promiseSerialForEach(async (r /*, index*/) => {
@@ -357,7 +361,7 @@
             r.eval();
         });
         SvBootLoadingView.shared().setSubtitle("running app");
-        console.log("--- Running App ---"); // _init.js has scheduled a timer to start the app when we return to event loop
+        console.log("\n--- Running App ---"); // _init.js has scheduled a timer to start the app when we return to event loop
         this.onDone();
     }
 

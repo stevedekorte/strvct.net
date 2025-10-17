@@ -215,7 +215,7 @@
             } else {
                 // otherwise, load normally and cache result
                 this.logDebug("no cache for '" + this.resourceHash() + "' " + this.path());
-                console.log(this.logPrefix() + ".asyncLoadFromCache() (over NETWORK) " + this.path());
+                console.log(this.logPrefix() + "asyncLoadFromCache (over NETWORK) " + this.path());
 
                 assert(this.data() === null, "this.data() should be null");
 

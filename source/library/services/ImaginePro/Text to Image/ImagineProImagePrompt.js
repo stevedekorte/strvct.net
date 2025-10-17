@@ -496,12 +496,17 @@
                 this.setError(request.error());
                 throw request.error();
             } else {
-                const responseJson = JSON.parse(request.responseText());
+                let responseJson = undefined;
+                try {
+                    responseJson = JSON.parse(request.responseText());
+                } catch (error) {
+                    throw new Error(this.logPrefix() + " (" + error.message + ") response is not valid JSON: " + request.responseText());
+                }
                 const taskId = responseJson.task_id || responseJson.messageId;
                 if (taskId) {
                     await this.addGenerationForTaskId(taskId);
                 } else {
-                    throw new Error("No task_id or messageId returned from ImaginePro");
+                    throw new Error(this.logPrefix() + " No task_id or messageId returned from ImaginePro");
                 }
             }
         } catch (error) {
