@@ -353,7 +353,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     setFinalInitProto (aProto) {
         this._finalInitProto = aProto;
         if (aProto) {
-            this.setOwnsValue(true);
+            this.setOwnsValue(true); // if we instantiate the object for the slot, we assume we own it
+            // note: this also causes setOwnerNode() to be set all values set on the slot -
+            // including deserialization (as we set it on the prototype slot during initPrototypeSlots)
 
             if (this.slotType() === null) {
                 if (aProto.svType() === "String") {

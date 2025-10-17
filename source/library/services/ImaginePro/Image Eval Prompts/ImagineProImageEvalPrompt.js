@@ -43,6 +43,17 @@
             slot.setCanEditInspection(false);
         }
 
+        // shouldEval slot
+        {
+            const slot = this.newSlot("shouldEval", true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("Should Eval");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(false);
+        }
+
         {
             const slot = this.newSlot("evaluateAction", null);
             slot.setInspectorPath("");
@@ -52,6 +63,17 @@
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("asyncEvaluateImages");
+        }
+
+        // onPromptEnd action
+        {
+            const slot = this.newSlot("onPromptEndAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("On Prompt End");
+            slot.setSyncsToView(true);
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("onPromptEnd");
         }
 
     }
@@ -74,8 +96,11 @@
         //debugger;
         await super.generate();
         if (!this.error()) {
-            await this.asyncEvaluateImages();
+            if (this.shouldEval()) {
+                await this.asyncEvaluateImages();
+            }
         }
+        this.onPromptEnd();
     }
 
 

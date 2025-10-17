@@ -146,6 +146,18 @@
             slot.setSummaryFormat("key: value");
         }
 
+        // generationCount slot
+        /*
+        {
+            const slot = this.newSlot("generationCount", 1);
+            slot.setSlotType("Number");
+            slot.setLabel("Generation Count");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+        }
+        */
+
 
         /**
      * @member {SvXhrRequest} xhrRequest
@@ -232,6 +244,7 @@
         {
             const slot = this.newSlot("delegate", null);
             slot.setSlotType("Object");
+            slot.setShouldStoreSlot(true);
         }
 
 
@@ -349,6 +362,8 @@
    */
     async generate () {
         await this.start();
+        this.onPromptEnd();
+
     }
 
     /**
@@ -444,7 +459,8 @@
         this.setCompletionPromise(Promise.clone());
         this.setError(null);
         this.setStatus("submitting task...");
-        this.sendDelegateMessage("onImagePromptStart", [this]);
+        //this.sendDelegateMessage("onImagePromptStart", [this]);
+        this.notifyOwners("onImagePromptStart", [this]);
 
         const apiKey = await this.service().apiKeyOrUserAuthToken();
         const endpoint = "https://api.imaginepro.ai/api/v1/nova/imagine";
@@ -489,7 +505,6 @@
         } catch (error) {
             this.onError(error);
         }
-        this.onPromptEnd();
     }
 
     async addGenerationForTaskId (taskId) {
@@ -506,7 +521,9 @@
    * @category Process
    */
     onPromptEnd () { // end of request to being task
-        this.sendDelegateMessage("onImagePromptEnd", [this]);
+        //this.sendDelegateMessage("onImagePromptEnd", [this]);
+        debugger;
+        this.notifyOwners("onImagePromptEnd", [this]);
     }
 
     // --- SvXhrRequest Delegate Methods ---
@@ -532,6 +549,11 @@
 
     allResultImages () {
         return this.generations().subnodes().map(generation => generation.images().subnodes()).flat();
+    }
+
+    allResultImageNodes () {
+        const allFilesToDownload = this.generations().subnodes().map(generation => generation.images().subnodes()).flat();
+        return allFilesToDownload.map(fileToDownload => SvImageNode.clone().setDataURL(fileToDownload.dataUrl()));
     }
 
     resultImageUrlData () {

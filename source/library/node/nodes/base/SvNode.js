@@ -134,11 +134,11 @@
             slot.setSlotType("SvNode");
         }
 
-
         {
             const slot = this.newSlot("ownerNode", null); // owner node is the node that owns this node but this node is not a subnode of the owner
             slot.setAllowsNullValue(true);
             slot.setSlotType("SvNode");
+            slot.setShouldStoreSlot(true); // shouldn't this be set when it's added to an owner's ivar?
         }
 
         {

@@ -18,7 +18,7 @@
      * @param {function(any): Promise<void>} aPromiseBlock - The function to execute for each element.
      * @returns {Promise<void>}
      */
-    async promiseSerialTimeoutsForEach (aPromiseBlock) {
+    async promiseSerialTimeoutsForEach (aPromiseBlock, delay = 0) {
         return new Promise((resolve, reject) => {
             const nextFunc = async function (array, index) {
                 try {
@@ -28,8 +28,8 @@
                     }
 
                     const v = array[index];
-                    await aPromiseBlock(v, index);
-                    setTimeout(() => nextFunc(array, index + 1), 0); // TODO: move to addTimeout?
+                    await aPromiseBlock(v, index, array.length);
+                    setTimeout(() => nextFunc(array, index + 1), delay); // TODO: move to addTimeout?
                     //requestIdleCallback(() => nextFunc(array, index+1));
                 } catch (error) {
                     reject(error);

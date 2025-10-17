@@ -330,6 +330,23 @@
         this.model().afterAppDidInit();
         this.userInterface().afterAppDidInit();
         this.didInitPromise().callResolveFunc(this);
+        this.appInitCompleted();
+    }
+
+    appInitCompleted () {
+        if (SvPlatform.isNodePlatform()) {
+            // Require Node.js modules only in Node.js environment
+            const path = require("path");
+            const fs = require("fs");
+
+            // look for a run.js file in the current directory and run it
+            const runJsPath = path.join(process.cwd(), "run.js");
+            if (fs.existsSync(runJsPath)) {
+                console.log("Running run.js file: " + runJsPath);
+                require(runJsPath); // File executes on require
+            }
+            // Note: Don't exit if no run.js - let the application decide when to exit
+        }
     }
 
     /**
