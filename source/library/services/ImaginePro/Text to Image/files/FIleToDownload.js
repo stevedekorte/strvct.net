@@ -225,12 +225,25 @@
         request.setDelegate(this);
         request.setUrl(url);
         request.setMethod("GET");
-        request.setHeaders({});
-        request.setResponseType("blob"); // Request binary blob data for images
+
+        // Add headers to make the request look like it's from a browser
+        // Midjourney CDN may block requests without proper User-Agent
+        const headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        };
+
+        // Only set Referer in browser (causes issues in Node.js)
+        if (!SvPlatform.isNodePlatform()) {
+            headers["Referer"] = "https://www.midjourney.com/";
+        }
+
+        request.setHeaders(headers);
+        request.setResponseType("arraybuffer"); // Request binary data as ArrayBuffer (better Node.js compatibility)
 
         request.setTimeoutPeriodInMs(120 * 1000);
         // Send the request
         await request.asyncSend();
+
 
         // Check if request succeeded
         if (request.hasError()) {
@@ -238,11 +251,13 @@
             return;
         }
 
-        // Convert blob response to data URL
-        const xhr = request.xhr();
-        if (xhr && xhr.response) {
-            const blob = xhr.response;
-            const dataUrl = await blob.asyncToDataUrl();
+        const arrayBuffer = request.response();
+
+        // Convert ArrayBuffer response to data URL
+        const mimeType = request.responseMimeType();
+        if (mimeType) {
+            console.log(this.logPrefix() + " Response MIME type: " + mimeType);
+            const dataUrl = await arrayBuffer.asyncToDataUrl(mimeType);
             this.onLoaded(dataUrl);
         } else {
             this.onError(new Error("No response data received"));
@@ -255,6 +270,12 @@
    */
     async asyncFetch () {
         return await this.fetch();
+    }
+
+    async asyncFetchIfNeeded () {
+        if (!this.hasDataUrl()) {
+            await this.asyncFetch();
+        }
     }
 
     /**

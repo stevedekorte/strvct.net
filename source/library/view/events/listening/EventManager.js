@@ -61,12 +61,15 @@
             slot.setSlotType("Boolean");
         }
         /**
-         * @member {Event} currentEvent
+         * @member {Event|String|null} currentEvent - Can be Event object, string identifier, or null
          * @category State
          */
         {
             const slot = this.newSlot("currentEvent", null);
-            slot.setSlotType("Event");
+            // Don't set slot type - this slot accepts Event objects, strings, or null
+            // Type validation would be too restrictive for this flexible slot
+            slot.setSlotType("Object"); // Accept any object type (Event, String, or null)
+            slot.setAllowsNullValue(true);
         }
         /**
          * @member {Promise} firstUserEventPromise
@@ -169,11 +172,16 @@
     /**
      * @description Safely wraps an event callback
      * @param {Function} callback - The callback function to wrap
-     * @param {Event} event - The event object
+     * @param {Event} event - The event object (may be null/string in Node.js environments)
      * @returns {*} The result of the callback function
      * @category Event Handling
      */
     safeWrapEvent (callback, event) {
+        // In Node.js, XMLHttpRequest events may not be proper Event objects
+        // Use a string identifier instead, which currentEventName() already handles
+        if (!event && typeof process !== "undefined" && process.versions && process.versions.node) {
+            event = "XhrEvent";
+        }
         assert(event);
         this.setCurrentEvent(event);
         let result = undefined;

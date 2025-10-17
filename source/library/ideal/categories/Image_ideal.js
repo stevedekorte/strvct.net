@@ -1,6 +1,11 @@
 "use strict";
 
-Image.__proto__ = Object;
+// In browser environments, Image needs to inherit from Object for initThisCategory to work
+// In Node.js, ImageShim already sets up the prototype chain properly
+if (!SvPlatform.isNodePlatform()) {
+    Image.__proto__ = Object;
+}
+
 /**
  * @module library.ideal
  * @class Image_ideal
@@ -70,6 +75,10 @@ Image.__proto__ = Object;
         console.warn("Image: error loading src '" + this.src + "' ", error);
     }
 
+    srcIsDataURL () {
+        return this.src.startsWith("data:");
+    }
+
     asDataURL () {
         if (!this._dataURL) {
             this._dataURL = this.composeDataURL();
@@ -99,7 +108,7 @@ Image.__proto__ = Object;
     }
 
     isLoaded () {
-        return (this.complete && this.naturalWidth > 0);
+        return (this.complete); // && this.naturalWidth > 0);
     }
 
     asCanvas () {
@@ -116,16 +125,41 @@ Image.__proto__ = Object;
         return this.asCanvas().toDataURL("image/png");
     }
 
-    async asyncAsBlob () {
+    async asyncAsBlob (mimeType = "image/png") {
+        await this.promiseLoaded();
+
+        const canvas = this.asCanvas();
+
+        // In Node.js, canvas.toBlob doesn't exist - convert via Buffer instead
+        if (SvPlatform.isNodePlatform()) {
+            // node-canvas provides toBuffer() which returns a Node.js Buffer
+            const buffer = canvas.toBuffer(mimeType);
+            // Convert Node.js Buffer to Blob (Node.js 18+ has native Blob)
+            return new Blob([buffer], { type: mimeType });
+        }
+
+        // Browser: use standard toBlob API
         return new Promise((resolve) => {
             const quality = 1.0;
-            this.asCanvas().toBlob(resolve, "image/png", quality);
+            canvas.toBlob(resolve, mimeType, quality);
         });
     }
 
-    async asyncAsArrayBuffer () {
-        // i need an arraybuffer not a blob
-        const blob = await this.asyncAsBlob();
+    async asyncAsArrayBuffer (mimeType = "image/png") {
+        await this.promiseLoaded();
+
+        const canvas = this.asCanvas();
+
+        // In Node.js, go directly from canvas to ArrayBuffer via Buffer
+        if (SvPlatform.isNodePlatform()) {
+            // node-canvas provides toBuffer() which returns a Node.js Buffer
+            const buffer = canvas.toBuffer(mimeType);
+            // Convert Node.js Buffer to ArrayBuffer
+            return buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+        }
+
+        // Browser: use blob conversion
+        const blob = await this.asyncAsBlob(mimeType);
         return await blob.asyncToArrayBuffer();
     }
 
@@ -135,7 +169,6 @@ Image.__proto__ = Object;
         this.src = blob;
         return this;
     }
-
 
     async asyncComputeHexSha256Hash () {
         await this.promiseLoaded();

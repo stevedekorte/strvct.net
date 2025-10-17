@@ -50,6 +50,52 @@ class FileReader extends Object {
         this.readyState = 2; // DONE
         if (this.onloadend) this.onloadend({ target: this });
     }
+
+    /**
+     * @static
+     * @description Promise-based wrapper for readAsArrayBuffer
+     * @param {Blob|Buffer|string} blob - The data to read
+     * @returns {Promise<ArrayBuffer>} Promise that resolves with the ArrayBuffer result
+     */
+    static promiseReadAsArrayBuffer (blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target.result);
+            reader.onerror = (event) => reject(event.target.error);
+            reader.readAsArrayBuffer(blob);
+        });
+    }
+
+    /**
+     * @static
+     * @description Promise-based wrapper for readAsDataURL
+     * @param {Blob|Buffer|string} blob - The data to read
+     * @returns {Promise<string>} Promise that resolves with the data URL string
+     */
+    static promiseReadAsDataURL (blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target.result);
+            reader.onerror = (event) => reject(event.target.error);
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    /**
+     * @static
+     * @description Promise-based wrapper for readAsText
+     * @param {Blob|Buffer|string} blob - The data to read
+     * @param {string} [encoding] - Optional encoding
+     * @returns {Promise<string>} Promise that resolves with the text result
+     */
+    static promiseReadAsText (blob, encoding) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => resolve(event.target.result);
+            reader.onerror = (event) => reject(event.target.error);
+            reader.readAsText(blob, encoding);
+        });
+    }
 };
 
 SvGlobals.set("FileReader", FileReader);

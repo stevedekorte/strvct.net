@@ -481,6 +481,20 @@
     description () {
         const optionsCopy = JSON.parse(JSON.stringify(this.requestOptions())); // breaks for non-JSON!
 
+        let bodyInfo = "";
+        const isFormData = Type.isFormData(optionsCopy.body);
+
+        if (isFormData) {
+            bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
+        } else if (Type.isString(optionsCopy.body)) {
+            const preview = optionsCopy.body.substring(0, 200) + (optionsCopy.body.length > 200 ? "..." : "");
+            bodyInfo = `String: ${preview}`;
+        } else if (Type.isBlob(optionsCopy.body)) {
+            bodyInfo = `Blob, size: ${optionsCopy.body.size} bytes, type: ${optionsCopy.body.type || "unknown"}`;
+        } else if (Type.isArrayBuffer(optionsCopy.body)) {
+            bodyInfo = `ArrayBuffer, size: ${optionsCopy.body.byteLength} bytes`;
+        }
+
         const maxBodyLength = 1000;
         if (optionsCopy.body && typeof optionsCopy.body === "string" && optionsCopy.body.length > maxBodyLength) {
             optionsCopy.body = optionsCopy.body.substring(0, maxBodyLength) + "...";
@@ -488,12 +502,15 @@
 
         // let's also clip the authorization header to just the first 10 characters
         if (optionsCopy.headers && optionsCopy.headers.Authorization) {
-            optionsCopy.headers.Authorization = optionsCopy.headers.Authorization.substring(0, 10) + "...";
+            optionsCopy.headers.Authorization = optionsCopy.headers.Authorization.substring(0, 20) + "...";
         }
 
+        delete optionsCopy["body"]; // show bodyInfo instead
+        optionsCopy.bodyInfo = bodyInfo;
         const json = {
             requestId: this.requestId(),
             url: this.url(),
+            method: this.method(),
             options: optionsCopy,
             readableState: this.readableJsonState()
         };
@@ -573,27 +590,7 @@
         }
 
         if (this.isDebugging()) {
-        // let's print the url and headers here to the console
-            let bodyInfo = "";
-            if (isFormData) {
-                bodyInfo = "FormData (multipart/form-data, Content-Type set automatically by browser with boundary)";
-            } else if (Type.isString(options.body)) {
-                const preview = options.body.substring(0, 200) + (options.body.length > 200 ? "..." : "");
-                bodyInfo = `String: ${preview}`;
-            } else if (Type.isBlob(options.body)) {
-                bodyInfo = `Blob, size: ${options.body.size} bytes, type: ${options.body.type || "unknown"}`;
-            } else if (Type.isArrayBuffer(options.body)) {
-                bodyInfo = `ArrayBuffer, size: ${options.body.byteLength} bytes`;
-            }
-            if (this.isDebugging()) {
-                const dict = {
-                    url: this.url(),
-                    method: this.method(),
-                    bodyType: bodyInfo,
-                    headers: options.headers
-                };
-                console.log(this.logPrefix(), JSON.stringify(dict, null, 2));
-            }
+            console.log(this.logPrefix(), "Sending request:", this.description());
         }
 
         xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" for binary data
@@ -753,13 +750,22 @@
         try {
             if (text.startsWith("<?xml")) {
                 if (text.includes("<Error>")) { // TODO: be more careful about response size...
-                    // parse XML and extract error message
-                    const xml = new DOMParser().parseFromString(text, "text/xml");
-                    const errorMessage = xml.querySelector("Error").textContent;
-                    if (errorMessage) {
-                        return errorMessage;
+                    // DOMParser is browser-only - skip XML parsing in Node.js
+                    if (typeof DOMParser !== "undefined") {
+                        // parse XML and extract error message
+                        const xml = new DOMParser().parseFromString(text, "text/xml");
+                        const errorMessage = xml.querySelector("Error").textContent;
+                        if (errorMessage) {
+                            return errorMessage;
+                        }
+                        return false;
+                    } else {
+                        // In Node.js, do simple regex extraction
+                        const errorMatch = text.match(/<Error>(.*?)<\/Error>/);
+                        if (errorMatch && errorMatch[1]) {
+                            return errorMatch[1];
+                        }
                     }
-                    return false;
                 }
             }
         } catch (error) {
@@ -813,6 +819,17 @@
             // ignore
         }
         return null;
+    }
+
+    /**
+   * @category XHR
+   * @description Called when an error occurs
+   * @param {Error} error
+   */
+    onError (error) {
+        this.setError(error);
+        this.setStatus("ERROR: " + error.message);
+        this.sendDelegateMessage("onRequestError", [this, error]);
     }
 
     /**
@@ -903,6 +920,40 @@
         }
 
         return null;
+    }
+
+    /**
+   * @category XHR
+   * @description Gets the response data from the XHR
+   * @returns {string|ArrayBuffer|Blob|Document|Object|null} The response data based on responseType
+   */
+    response () {
+        const xhr = this.xhr();
+        if (!xhr) {
+            return null;
+        }
+        return xhr.response;
+    }
+
+    /**
+   * @category XHR
+   * @description Gets the MIME type from the response Content-Type header
+   * @returns {string|null} The MIME type (e.g., "application/json", "image/png") or null if not available
+   */
+    responseMimeType () {
+        const xhr = this.xhr();
+        if (!xhr) {
+            return null;
+        }
+
+        const contentType = xhr.getResponseHeader("Content-Type");
+        if (!contentType) {
+            return null;
+        }
+
+        // Extract just the MIME type portion (before semicolon for charset)
+        // Example: "application/json; charset=utf-8" -> "application/json"
+        return contentType.split(";")[0].trim();
     }
 
     /**
@@ -1250,7 +1301,7 @@
             4: "Request finished"
         };
 
-        return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
+        return readyState + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
     }
 
     // -----------------------------------------------------------------------------
@@ -1373,7 +1424,7 @@
         }
 
         // Provide specific guidance for common issues
-        if (status === 0 && window.location.protocol === "file:" && !this.didTimeout() && !this.didAbort()) {
+        if (status === 0 && typeof window !== "undefined" && window.location && window.location.protocol === "file:" && !this.didTimeout() && !this.didAbort()) {
             causes.push("file:// protocol detected - XMLHttpRequest may be blocked");
         }
 

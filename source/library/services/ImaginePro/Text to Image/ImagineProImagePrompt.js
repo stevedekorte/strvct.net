@@ -418,7 +418,7 @@
         return prompt;
     }
 
-    async composeFullPrompt () {
+    async asyncComposeFullPrompt () {
         let prompt = this.prompt();
         prompt = this.sanitizePromptForMidjourney(prompt);
 
@@ -466,7 +466,7 @@
         const endpoint = "https://api.imaginepro.ai/api/v1/nova/imagine";
 
         const bodyJson = {
-            prompt: await this.composeFullPrompt(),
+            prompt: await this.asyncComposeFullPrompt(),
             process_mode: this.processMode()
         };
 
@@ -492,7 +492,9 @@
             await request.asyncSend(); // Delegate methods handle errors
 
             if (request.hasError()) {
+                console.error("request error: " + request.error());
                 this.setError(request.error());
+                throw request.error();
             } else {
                 const responseJson = JSON.parse(request.responseText());
                 const taskId = responseJson.task_id || responseJson.messageId;
@@ -503,14 +505,16 @@
                 }
             }
         } catch (error) {
-            this.onError(error);
+            this.setError(error);
+            this.setStatus("Error: " + error.message);
+            throw error;
         }
     }
 
     async addGenerationForTaskId (taskId) {
         this.setStatus("task submitted, awaiting completion...");
         const generation = this.generations().add();
-        generation.setPromptNote(this.composeFullPrompt());
+        generation.setPromptNote(await this.asyncComposeFullPrompt());
         generation.setTaskId(taskId);
         generation.setDelegate(this);
         await generation.asyncStartPolling();
@@ -522,7 +526,6 @@
    */
     onPromptEnd () { // end of request to being task
         //this.sendDelegateMessage("onImagePromptEnd", [this]);
-        debugger;
         this.notifyOwners("onImagePromptEnd", [this]);
     }
 
@@ -551,9 +554,23 @@
         return this.generations().subnodes().map(generation => generation.images().subnodes()).flat();
     }
 
-    allResultImageNodes () {
-        const allFilesToDownload = this.generations().subnodes().map(generation => generation.images().subnodes()).flat();
-        return allFilesToDownload.map(fileToDownload => SvImageNode.clone().setDataURL(fileToDownload.dataUrl()));
+    async asyncAllResultImageNodes () {
+        debugger;
+
+        const allFilesToDownload = this.generations().subnodes().map(gen => {
+            return gen.images().subnodes();
+        }).flat();
+
+        assert(allFilesToDownload.length > 0, "no files to download");
+
+        for (const fileToDownload of allFilesToDownload) {
+            await fileToDownload.asyncFetchIfNeeded();
+        }
+
+        return allFilesToDownload.map(fileToDownload => {
+            console.log("fileToDownload.dataUrl(): " + fileToDownload.dataUrl());
+            return SvImageNode.clone().setDataURL(fileToDownload.dataUrl());
+        });
     }
 
     resultImageUrlData () {

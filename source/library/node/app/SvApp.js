@@ -338,9 +338,15 @@
             // Require Node.js modules only in Node.js environment
             const path = require("path");
             const fs = require("fs");
+            // now let's get the command line argument for the main file to run
+            let mainJsPath = process.argv[2];
+            console.log("mainJsPath: " + mainJsPath);
+            if (!mainJsPath) {
+                mainJsPath = "main.js";
+            }
 
-            // look for a run.js file in the current directory and run it
-            const runJsPath = path.join(process.cwd(), "run.js");
+            // look for a main.js file in the current directory and run it
+            const runJsPath = path.join(process.cwd(), mainJsPath);
             if (fs.existsSync(runJsPath)) {
                 console.log("Running run.js file: " + runJsPath);
                 require(runJsPath); // File executes on require

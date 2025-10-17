@@ -11,8 +11,23 @@ function evalStringFromSourceUrl (codeString, path) {
     // Chrome doesn't like quotes around the path (fixed Dec 2023)
     // Rich Collins added encodeURI in Aug 2024 to handle spaces and special characters
     // Must NOT include leading slash for VSCode compatibility (makes sources editable)
-    const sourceURL = path;
-    const encodedURL = encodeURI(sourceURL);
+
+    let sourceURL = path;
+
+    // In Node.js, use absolute file paths for proper debugger source mapping
+    if (SvPlatform.isNodePlatform()) {
+        const nodePath = require("path");
+        const { pathToFileURL } = require("url");
+
+        // Convert relative path to absolute path based on cwd
+        const absolutePath = nodePath.resolve(process.cwd(), path);
+
+        // Use file:// URL format for Node.js debugger compatibility
+        // This ensures proper source mapping even with spaces in paths
+        sourceURL = pathToFileURL(absolutePath).href;
+    }
+
+    const encodedURL = SvPlatform.isNodePlatform() ? sourceURL : encodeURI(sourceURL);
 
     // sourceURL comment format for Chrome DevTools and VSCode debugging
     // Must be at end of code (Chrome spec), no leading slash (VSCode compat)

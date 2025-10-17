@@ -13,24 +13,11 @@ try {
     class Image extends NodeImage {
         constructor (width, height) {
             super(width, height);
-            this.onload = null;
-            this.onerror = null;
+            // Don't initialize onload/onerror - let node-canvas handle them
         }
 
-        // Override src setter to handle onload/onerror events
-        set src (value) {
-            super.src = value;
-            if (this.onload) {
-                // Simulate async loading
-                setTimeout(() => {
-                    this.onload({ target: this });
-                }, 0);
-            }
-        }
-
-        get src () {
-            return super.src;
-        }
+        // Don't override src setter - node-canvas handles async loading properly
+        // The parent NodeImage class will fire onload/onerror when the image actually loads
     }
 
     // Define HTMLCanvasElement polyfill

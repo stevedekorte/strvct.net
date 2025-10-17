@@ -19,7 +19,7 @@ ArrayBuffer.prototype.asyncHexSha256 = async function () {
         // Browser environment or Node.js with Web Crypto API
         const hashArrayBuffer = await crypto.subtle.digest("SHA-256", this);
         const hashArray = Array.from(new Uint8Array(hashArrayBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
         return hashHex;
     } else if (typeof require !== "undefined") {
         // Node.js environment - use Node's crypto module

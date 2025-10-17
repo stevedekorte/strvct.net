@@ -9,8 +9,8 @@
  * @extends Blob
  * @classdesc Category extending the native Blob class with helper methods.
  *
- * NOTE: ArrayBuffer is preferred over Blob for cross-platform compatibility.
- * These methods are browser-only and will not work in Node.js.
+ * NOTE: ArrayBuffer is preferred over Blob for better cross-platform compatibility.
+ * Works in both browser and Node.js environments (Node.js 18+ has native Blob support).
  */
 
 (class Blob_ideal extends Blob {
@@ -24,7 +24,6 @@
      * @deprecated Use ArrayBuffer.asyncFromDataUrlString() for cross-platform compatibility
      */
     static async asyncFromDataUrlString (dataUrlString) {
-        console.warn("Blob.asyncFromDataUrlString() is browser-only. Consider using ArrayBuffer.asyncFromDataUrlString() for cross-platform compatibility.");
         const response = await fetch(dataUrlString);
         return await response.blob();
     }
@@ -35,7 +34,6 @@
      * @category Conversion
      */
     asyncToArrayBuffer () {
-        console.warn("Blob.asyncToArrayBuffer() is browser-only. Consider using ArrayBuffer directly for cross-platform compatibility.");
         return FileReader.promiseReadAsArrayBuffer(this);
     }
 
@@ -45,7 +43,6 @@
      * @category Conversion
      */
     asyncToDataUrl () {
-        console.warn("Blob.asyncToDataUrl() is browser-only. Consider using ArrayBuffer.asyncToDataUrl() for cross-platform compatibility.");
         return FileReader.promiseReadAsDataURL(this);
     }
 
