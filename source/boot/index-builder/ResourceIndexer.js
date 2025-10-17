@@ -20,7 +20,7 @@
 
 */
 
-console.log("running ResourceIndexer.js");
+console.log("[ResourceIndexer.js] run");
 
 const ResourcesFolder = require("./ResourcesFolder.js");
 //console.log("ResourcesFolder:", ResourcesFolder);

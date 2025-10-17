@@ -8,7 +8,6 @@
 
 // Only define FontFace if it doesn't already exist
 if (typeof FontFace === "undefined") {
-    console.log("evaluating FontFaceShim.js");
 
     /**
      * Minimal FontFace implementation for Node.js environments.
@@ -84,6 +83,5 @@ if (typeof FontFace === "undefined") {
     // Set global reference
     SvGlobals.set("FontFace", FontFace);
     global.FontFace = FontFace;
-
-    console.log("defined FontFace shim for Node.js");
+    console.log("[FontFaceShim.js] defined");
 }

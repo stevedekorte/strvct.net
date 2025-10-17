@@ -389,7 +389,7 @@
         const map = this.recordsMap();
         if (map.at(this.rootKey()) !== pid) {
             map.atPut(this.rootKey(), pid);
-            console.log(this.logPrefix(), "---- SET ROOT PID " + pid + " ----");
+            console.log(this.logPrefix() + "---- SET ROOT PID " + pid + " ----");
 
         }
         assert(this.hasStoredRoot());
@@ -487,14 +487,14 @@
      * @returns {Object}
      */
     readRootObject () {
-        //console.log(this.logPrefix(), " this.hasStoredRoot() = " + this.hasStoredRoot())
+        //console.log(this.logPrefix() + " this.hasStoredRoot() = " + this.hasStoredRoot())
 
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()); // this call will actually internally set this._rootObject as we may need it while loading the root's refs
             //assert(!Type.isNullOrUndefined(root), this.svType() + " rootObject is null or undefined");
             if (Type.isNullOrUndefined(root)) {
                 // this can happen is the root object class doesn't exist anymore
-                console.log(this.logPrefix(), "readRootObject() rootObject is null or undefined");
+                console.log(this.logPrefix() + "readRootObject() rootObject is null or undefined");
                 // we'll let the caller handle this
                 return null;
             }
@@ -611,14 +611,14 @@
 
         if (Type.typeName(anObject) === "PersistentObjectPool") {
             const msg = "addActiveObject() called with PersistentObjectPool";
-            console.warn(this.logPrefix(), msg);
+            console.warn(this.logPrefix() + msg);
             throw new Error(msg);
             //return false;
         }
 
         if (!anObject.shouldStore()) {
             const msg = "attempt to addActiveObject '" + anObject.svType() + "' but shouldStore is false. Adding anyway so we don't load it multiple times. Let's hope it's garbage collected.";
-            console.warn(this.logPrefix(), msg);
+            console.warn(this.logPrefix() + msg);
             //anObject.shouldStore();
             //throw new Error(msg);
             //return false;
@@ -626,7 +626,7 @@
 
         if (!anObject.isInstance()) {
             const msg = "can't store non instance of type '" + anObject.svType() + "'";
-            console.warn(this.logPrefix(), msg);
+            console.warn(this.logPrefix() + msg);
             anObject.isKindOf(ProtoClass);
             throw new Error(msg);
         }
@@ -689,7 +689,7 @@
         // sanity check for debugging - could remove later
         if (this.hasActiveObject(anObject)) {
             const msg = "onObjectUpdatePid " + anObject.svTypeId() + " " + oldPid + " -> " + newPid;
-            console.log(this.logPrefix(), msg);
+            console.log(this.logPrefix() + msg);
             throw new Error(msg);
         }
     }
@@ -745,7 +745,7 @@
             throw new Error("attempt to addDirtyObject " + anObject.svTypeId() + " which is an ObjectPool");
         }
         if (!this.hasActiveObject(anObject)) {
-            console.log(this.logPrefix(), "looks like it hasn't been referenced yet");
+            console.log(this.logPrefix() + "looks like it hasn't been referenced yet");
             throw new Error("not referenced yet");
         }
 
@@ -777,12 +777,12 @@
      * @returns {ObjectPool}
      */
     forceAddDirtyObject (anObject) {
-        console.log(this.logPrefix(), "forceAddDirtyObject(" + anObject.svTypeId() + ")");
+        console.log(this.logPrefix() + "forceAddDirtyObject(" + anObject.svTypeId() + ")");
         if (this.storingPids() !== null) {
             // we might be in the middle of storing changes
             if (this.storingPids().has(anObject.puuid())) {
                 // looks like this object is already queued to be stored
-                console.log(this.logPrefix(), "forceAddDirtyObject(" + anObject.svTypeId() + ") already queued to be stored - skipping");
+                console.log(this.logPrefix() + "forceAddDirtyObject(" + anObject.svTypeId() + ") already queued to be stored - skipping");
                 return this;
             }
         }
@@ -802,7 +802,7 @@
      */
     scheduleStore () {
         if (!this.isOpen()) {
-            console.log(this.logPrefix(), " can't schedule store yet, not open");
+            console.log(this.logPrefix() + " can't schedule store yet, not open");
             return this;
         }
         assert(this.isOpen());
@@ -882,7 +882,7 @@
                 this.storingPids().add(puuid);
 
                 if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
-                    console.log(this.logPrefix(), " storing forced dirty object (" + obj.svTypeId() + ") ");
+                    console.log(this.logPrefix() + " storing forced dirty object (" + obj.svTypeId() + ") ");
                     this._forcedDirtyObjectsSet.delete(obj);
                 }
 
@@ -1045,11 +1045,11 @@
 
         const aRecord = this.recordForPid(puuid);
         if (Type.isUndefined(aRecord)) {
-            console.log(this.logPrefix(), "missing record for " + puuid);
+            console.log(this.logPrefix() + "missing record for " + puuid);
             return undefined;
         }
         if (aRecord.type === "PersistentObjectPool") {
-            console.log(this.logPrefix(), "skipping PersistentObjectPool record for " + puuid);
+            console.log(this.logPrefix() + "skipping PersistentObjectPool record for " + puuid);
             return null;
         }
         const loadedObj = this.objectForRecord(aRecord);
@@ -1071,7 +1071,7 @@
                 const obj = this.activeObjectForPid(loadedPid);
                 if (Type.isUndefined(obj)) {
                     const errorMsg = "missing activeObjectForPid " + loadedPid;
-                    console.warn(this.logPrefix(), errorMsg);
+                    console.warn(this.logPrefix() + errorMsg);
                     //throw new Error(errorMsg)
                 } else if (obj.didLoadFromStore) {
                     obj.didLoadFromStore(); // should this be able to trigger an objectForPid() that would add to loadingPids?
@@ -1264,7 +1264,7 @@
             const kvPromise = this.kvPromiseForObject(obj);
             this.recordsMap().asyncQueueSetKvPromise(kvPromise);
         } else {
-            //console.log(this.logPrefix(), "storeObject " + obj.svTypeId());
+            //console.log(this.logPrefix() + "storeObject " + obj.svTypeId());
 
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);
@@ -1318,7 +1318,7 @@
     async promiseCollect () {
         //console.log(this.svType() + " --- promiseCollect ---");
         if (Type.isUndefined(this.rootPid())) {
-            console.log(this.logPrefix(), "---- NO ROOT PID FOR COLLECT - clearing! ----");
+            console.log(this.logPrefix() + "---- NO ROOT PID FOR COLLECT - clearing! ----");
             await this.recordsMap().promiseBegin();
             this.recordsMap().clear();
             await this.recordsMap().promiseCommit();
@@ -1341,7 +1341,7 @@
         this.setMarkedSet(null);
 
         this.logDebug(() => "--- end collect --- collecting " + deleteCount + " pids ---");
-        //console.log(this.logPrefix(), "         --- end collect --- collecting " + deleteCount + " pids ---");
+        //console.log(this.logPrefix() + "         --- end collect --- collecting " + deleteCount + " pids ---");
 
         await this.recordsMap().promiseCommit();
 
@@ -1395,7 +1395,7 @@
         // We store dictionaries as an array of entries,
         // and reserve dicts in the json for pointers with the format { "*": "<puuid>" }
 
-        //console.log(this.logPrefix(), " json: ", JSON.stringify(json, null, 2));
+        //console.log(this.logPrefix() + " json: ", JSON.stringify(json, null, 2));
 
         if (Type.isLiteral(json)) {
             // we could call refsPidsForJsonStore but none will add any pids,
