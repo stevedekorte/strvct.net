@@ -272,6 +272,7 @@
     async prechacheWhereAppropriate () {
         if (this.precacheExtensions().includes(this.pathExtension())) {
             if (!this.canDeferLoad()) {
+                console.log(this.logPrefix(), "prechaching: " + this.path());
                 await this.promiseLoad();
                 assert(this.hasData(), "no data found for " + this.path());
             } else {
@@ -291,8 +292,8 @@
     async asyncValueFromData () {
         // let's get the mime type from the path extension
         const ext = this.pathExtension();
-        const mimeType = SvMimeExtensions.mimeTypeForPathExtension(ext);
-        const mimeCategory = SvMimeExtensions.mimeTypeCategoryForPathExtension(ext);
+        const mimeType = SvMimeExtensions.shared().mimeTypeForPathExtension(ext);
+        const mimeCategory = SvMimeExtensions.shared().mimeTypeCategoryForPathExtension(ext);
         if (mimeCategory === "text") {
             return this.data().asString();
         } else if (mimeCategory === "image") {
@@ -306,6 +307,8 @@
             const soundResource = SvSoundResource.clone();
             soundResource.setData(this.data());
             return soundResource.promiseToDecode(); // returns an SvWaSound
+        } else if (mimeCategory === "font") {
+            return this.data(); // just return the array buffer
         } else  {
             throw new Error("no support for " + mimeType + " files yet");
         }

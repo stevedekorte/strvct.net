@@ -24,12 +24,21 @@
      * @param {string} ext - The path extension.
      * @returns {string} The MIME type.
      */
-    static mimeTypeForPathExtension (ext) {
+    mimeTypeForPathExtension (ext) {
         if (ext[0] !== ".") {
             ext = "." + ext;
         }
 
         return this._fileExtensionToMimeTypeDict[ext];
+    }
+
+    mimeTypeCategoryForPathExtension (ext) {
+        const mimeType = this.mimeTypeForPathExtension(ext);
+        const parts = mimeType.split("/");
+        if (parts.length > 0) {
+            return parts[0];
+        }
+        throw new Error("no mime type category found for path extension: " + ext);
     }
 
     /**
@@ -38,7 +47,7 @@
      * @param {string} mimeType - The MIME type.
      * @returns {string[]} The path extensions.
      */
-    static pathExtensionsForMimeType (mimeType) {
+    pathExtensionsForMimeType (mimeType) {
         const allExtensions = Object.keys(this._fileExtensionToMimeTypeDict);
         const matchingExtensions = allExtensions.filter(ext => {
             return mimeType === this._fileExtensionToMimeTypeDict[ext];
