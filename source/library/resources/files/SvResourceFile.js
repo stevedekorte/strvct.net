@@ -272,7 +272,7 @@
     async prechacheWhereAppropriate () {
         if (this.precacheExtensions().includes(this.pathExtension())) {
             if (!this.canDeferLoad()) {
-                console.log(this.logPrefix(), "prechaching: " + this.path());
+                //console.log(this.logPrefix(), "prechaching: " + this.path());
                 await this.promiseLoad();
                 assert(this.hasData(), "no data found for " + this.path());
             } else {
