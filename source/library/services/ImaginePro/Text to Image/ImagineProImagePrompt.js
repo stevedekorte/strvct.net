@@ -451,6 +451,11 @@
         return prompt;
     }
 
+    static endpointBase () {
+        //return "https://api.imaginepro.ai/";
+        return "https://mj-api-474421.web.app/";
+    }
+
     /**
    * @description Starts the image generation process.
    * @category Process
@@ -459,11 +464,10 @@
         this.setCompletionPromise(Promise.clone());
         this.setError(null);
         this.setStatus("submitting task...");
-        //this.sendDelegateMessage("onImagePromptStart", [this]);
         this.notifyOwners("onImagePromptStart", [this]);
 
         const apiKey = await this.service().apiKeyOrUserAuthToken();
-        const endpoint = "https://api.imaginepro.ai/api/v1/nova/imagine";
+        const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/nova/imagine";
 
         const bodyJson = {
             prompt: await this.asyncComposeFullPrompt(),
