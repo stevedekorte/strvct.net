@@ -173,4 +173,39 @@
         return this.recursiveFilter(r => r.name() == name);
     }
 
+    //  --- helpers ---
+
+    async asyncArrayBufferForPath (path) {
+        const file = this.rootFolder().resourceAtPath(path);
+        if (!file) {
+            throw new Error("no resource found at path :'" + path + "'");
+        }
+        await file.promiseData();
+        return await file.data();
+    }
+
+    async asyncValueOfPath (path) {
+        // first get the file resource at the path
+        const file = SvFileResources.shared().rootFolder().resourceAtPath(path);
+        if (!file) {
+            throw new Error("no resource found at path :'" + path + "'");
+        }
+
+        // next, call asyncValueFromData() to decode the value based on the path extension
+        // (e.g. a string, json, image, audio, video, etc)
+        // and return the decoded value
+        const value = await file.asyncValueFromData();
+        return value;
+    }
+
+    async asyncJsonForPath (path) {
+        const string = await this.asyncStringForPath(path);
+        return JSON.parse(string);
+    }
+
+    async asyncStringForPath (path) {
+        const value = await this.asyncValueOfPath(path);
+        return value.asString();
+    }
+
 }.initThisClass());

@@ -219,7 +219,7 @@
 
                 assert(this.data() === null, "this.data() should be null");
 
-                await this.promiseJustLoad();
+                await this.promiseJustLoad(); // data is ArrayBuffer
 
                 try {
                     await hc.promiseAtPut(h, this.data());

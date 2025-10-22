@@ -289,22 +289,27 @@
      * @category Data Management
      */
     async asyncValueFromData () {
-        try {
-            const ext = this.pathExtension();
-            const data = this.data();
-            if (ext === "json") {
-                const jsonString = data.asString();
-                return JSON.parse(jsonString);
-            } else if (["js", "css", "txt", "html"].includes(ext)) {
-                const textString = data.asString();
-                return textString;
-            }
-            return this.data();
-        } catch (error) {
-            const errorMessage = this.svType() + ".asyncValueFromData() error loading value from data for " + this.path() + " : " + error.message;
-            console.error(errorMessage);
-            throw new Error(errorMessage);
+        // let's get the mime type from the path extension
+        const ext = this.pathExtension();
+        const mimeType = SvMimeExtensions.mimeTypeForPathExtension(ext);
+        const mimeCategory = SvMimeExtensions.mimeTypeCategoryForPathExtension(ext);
+        if (mimeCategory === "text") {
+            return this.data().asString();
+        } else if (mimeCategory === "image") {
+            const dataUrl = await this.data().asyncToDataUrl(mimeType);
+            return new Image().asyncLoadUrl(dataUrl);
+        } else if (mimeType === "application/json") {
+            return JSON.parse(this.data().asString());
+        } else if (mimeCategory === "video") {
+            throw new Error("no support for video files yet");
+        } else if (mimeCategory === "audio") {
+            const soundResource = SvSoundResource.clone();
+            soundResource.setData(this.data());
+            return soundResource.promiseToDecode(); // returns an SvWaSound
+        } else  {
+            throw new Error("no support for " + mimeType + " files yet");
         }
+
     }
 
 }.initThisClass());

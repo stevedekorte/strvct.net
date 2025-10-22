@@ -34,6 +34,15 @@ require("./Base.js");
         return this._fileExtensionToMimeTypeDict[ext];
     }
 
+    mimeTypeCategoryForPathExtension (ext) {
+        const mimeType = this.mimeTypeForPathExtension(ext);
+        const parts = mimeType.split("/");
+        if (parts.length > 0) {
+            return parts[0];
+        }
+        throw new Error("no mime type category found for path extension: " + ext);
+    }
+
     /**
      * @description Sets up the mime type dictionary
      */

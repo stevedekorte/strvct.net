@@ -22,6 +22,13 @@
         return await response.arrayBuffer();
     }
 
+    async asyncToDataUrlWithMimeType (mimeType) {
+        assert(mimeType, "mimeType is required");
+        assert(Type.isString(mimeType), "mimeType must be a string");
+        assert(mimeType.length > 0, "mimeType is empty");
+        return await this.asyncToDataUrl(mimeType);
+    }
+
     /**
      * @description Converts this ArrayBuffer to a data URL (browser-only)
      * @param {string} [mimeType="application/octet-stream"] - The MIME type for the data URL
