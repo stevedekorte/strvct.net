@@ -294,6 +294,9 @@
         const ext = this.pathExtension();
         const mimeType = SvMimeExtensions.shared().mimeTypeForPathExtension(ext);
         const mimeCategory = SvMimeExtensions.shared().mimeTypeCategoryForPathExtension(ext);
+
+        await this.promiseData();
+
         if (mimeCategory === "text") {
             return this.data().asString();
         } else if (mimeCategory === "image") {
@@ -312,7 +315,6 @@
         } else  {
             throw new Error("no support for " + mimeType + " files yet");
         }
-
     }
 
 }.initThisClass());

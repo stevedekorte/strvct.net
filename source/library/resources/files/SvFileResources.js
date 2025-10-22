@@ -204,7 +204,7 @@
     }
 
     async asyncStringForPath (path) {
-        const value = await this.asyncValueOfPath(path);
+        const value = await this.asyncArrayBufferForPath(path);
         return value.asString();
     }
 

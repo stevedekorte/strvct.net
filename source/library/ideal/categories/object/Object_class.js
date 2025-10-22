@@ -204,6 +204,10 @@
      * @category Class Initialization
      */
     static initThisClass () {
+        if (this.svType().includes("_")) {
+            throw new Error("class name should not contain an underscore as those are reserved for categories. If this is a category class, call initThisCategory() instead of initThisClass()");
+        }
+
         this.defineClassGlobally();
 
         // setup ancestor list
