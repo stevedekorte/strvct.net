@@ -573,6 +573,7 @@
         assert(allFilesToDownload.length > 0, "no files to download");
 
         for (const fileToDownload of allFilesToDownload) {
+            fileToDownload.setRefererUrl(this.endpointBase());
             await fileToDownload.asyncFetchIfNeeded();
         }
 

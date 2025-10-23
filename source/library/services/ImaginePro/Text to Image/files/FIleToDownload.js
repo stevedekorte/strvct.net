@@ -46,6 +46,18 @@
             slot.setFieldInspectorViewClassName("SvImageWellField"); // This makes it display as an image
         }
 
+        // referer slot
+        {
+            const slot = this.newSlot("refererUrl", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanEditInspection(false);
+            slot.setIsSubnodeField(true);
+            slot.setDescription("The URL of the page that referred to this image. This is used to track the source of the image.");
+        }
+
         /**
      * @member {string} dataUrl
      * @description The data URL of the loaded image (alias for imageUrl).
@@ -234,7 +246,9 @@
 
         // Only set Referer in browser (causes issues in Node.js)
         if (!SvPlatform.isNodePlatform()) {
-            headers["Referer"] = "https://www.midjourney.com/";
+            if (this.refererUrl()) {
+                headers["Referer"] = this.refererUrl();
+            }
         }
 
         request.setHeaders(headers);
