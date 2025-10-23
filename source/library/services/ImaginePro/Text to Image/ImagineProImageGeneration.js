@@ -232,7 +232,8 @@
         try {
             const apiKey = await this.service().apiKeyOrUserAuthToken();
             // ImaginePro uses /message/{messageId} endpoint, not /task/{taskId}/fetch
-            const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/midjourney/message/${this.taskId()}";
+            const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/message/fetch/" + this.taskId();
+            //const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/midjourney/message/" + this.taskId();
             // IMPORTANT: Use proxy for polling requests too (accounting & CORS)
             const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
 
