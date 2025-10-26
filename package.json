@@ -35,7 +35,7 @@
     "canvas": "^3.1.2",
     "level": "^10.0.0",
     "node-indexeddb-lmdb": "6.1.6",
-    "xmlhttprequest": "^1.8.0",
+    "xhr2": "^0.2.1",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

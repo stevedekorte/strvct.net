@@ -265,7 +265,10 @@
             return;
         }
 
-        const arrayBuffer = request.response();
+        const xhr = request.xhr();
+        const arrayBuffer = xhr.response;
+
+        assert(arrayBuffer && arrayBuffer instanceof ArrayBuffer, "arrayBuffer is a '" + Type.typeName(arrayBuffer) + "', not an ArrayBuffer");
 
         // Convert ArrayBuffer response to data URL
         const mimeType = request.responseMimeType();

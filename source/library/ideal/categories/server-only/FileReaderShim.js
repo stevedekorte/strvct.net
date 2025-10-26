@@ -29,18 +29,64 @@ class FileReader extends Object {
     }
 
     readAsDataURL (blob) {
-        setTimeout(() => {
+        setTimeout(async () => {
             this.readyState = 2; // DONE
-            this.result = "data:text/plain;base64," + Buffer.from(String(blob)).toString("base64");
+
+            // Handle different input types
+            let buffer;
+            let mimeType = "application/octet-stream";
+
+            if (blob instanceof ArrayBuffer) {
+                buffer = Buffer.from(blob);
+            } else if (Buffer.isBuffer(blob)) {
+                buffer = blob;
+            } else if (blob instanceof Blob) {
+                // Node.js 18+ has native Blob support
+                // Extract the MIME type from the Blob
+                mimeType = blob.type || mimeType;
+                // Convert Blob to ArrayBuffer then to Buffer
+                const arrayBuffer = await blob.arrayBuffer();
+                buffer = Buffer.from(arrayBuffer);
+            } else if (typeof blob === "string") {
+                buffer = Buffer.from(blob);
+                mimeType = "text/plain";
+            } else {
+                // Fallback for unknown types
+                buffer = Buffer.from(String(blob));
+                mimeType = "text/plain";
+            }
+
+            this.result = `data:${mimeType};base64,` + buffer.toString("base64");
             if (this.onload) this.onload({ target: this });
             if (this.onloadend) this.onloadend({ target: this });
         }, 0);
     }
 
     readAsArrayBuffer (blob) {
-        setTimeout(() => {
+        setTimeout(async () => {
             this.readyState = 2; // DONE
-            this.result = Buffer.from(String(blob)).buffer;
+
+            // Handle different input types
+            let buffer;
+
+            if (blob instanceof ArrayBuffer) {
+                this.result = blob;
+            } else if (Buffer.isBuffer(blob)) {
+                // Convert Node.js Buffer to ArrayBuffer
+                buffer = blob;
+                this.result = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+            } else if (blob instanceof Blob) {
+                // Node.js 18+ has native Blob support
+                this.result = await blob.arrayBuffer();
+            } else if (typeof blob === "string") {
+                buffer = Buffer.from(blob);
+                this.result = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+            } else {
+                // Fallback for unknown types
+                buffer = Buffer.from(String(blob));
+                this.result = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
+            }
+
             if (this.onload) this.onload({ target: this });
             if (this.onloadend) this.onloadend({ target: this });
         }, 0);

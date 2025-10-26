@@ -320,7 +320,7 @@
    */
     init () {
         super.init();
-        this.setIsDebugging(true);
+        this.setIsDebugging(false);
         this.setRequestId(this.puuid());
         this.setRequestOptions({});
         this.setCompletionPromise(Promise.clone());
@@ -593,7 +593,7 @@
             console.log(this.logPrefix(), "Sending request:", this.description());
         }
 
-        xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" for binary data
+        xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" or "arraybuffer" for binary data
 
         const em = EventManager.shared();
 

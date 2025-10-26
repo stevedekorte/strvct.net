@@ -81,4 +81,70 @@
         //await this.promiseSerialTimeoutsForEach(aBlock);
     }
 
+    /**
+     * Executes a promise-returning function for each element in the array with controlled concurrency,
+     * using setTimeout between batches for better control flow.
+     * @param {function(any, number, number): Promise<void>} asyncBlock - The async function to execute for each element.
+     * @param {number} maxConcurrent - Maximum number of concurrent tasks (default: 1).
+     * @param {number} delay - Delay in milliseconds between batches (default: 0).
+     * @param {function(Error, any, number): void} catchFunc - Optional error handler. If not provided, errors are logged and processing continues.
+     * @returns {Promise<void>}
+     */
+    async promiseConcurrentSerialTimeoutsForEach (asyncBlock, maxConcurrent = 1, delay = 0, catchFunc = null) {
+        // Validate that asyncBlock is an async function
+        if (asyncBlock.constructor.name !== "AsyncFunction") {
+            throw new Error("asyncBlock must be an async function");
+        }
+
+        const promise = Promise.clone();
+        let currentIndex = 0;
+        let activeCount = 0;
+
+        const processBatch = () => {
+            // If we've processed all items and no tasks are active, we're done
+            if (currentIndex >= this.length && activeCount === 0) {
+                promise.callResolveFunc();
+                return;
+            }
+
+            // Start new tasks up to maxConcurrent limit
+            while (activeCount < maxConcurrent && currentIndex < this.length) {
+                const index = currentIndex++;
+                const value = this[index];
+                activeCount++;
+
+                // Execute the async block
+                asyncBlock(value, index, this.length)
+                    .then(() => {
+                        activeCount--;
+                        // Use setTimeout to yield control before processing next batch
+                        setTimeout(processBatch, delay);
+                    })
+                    .catch(async (error) => {
+                        activeCount--;
+                        if (catchFunc) {
+                            // Call the provided error handler
+                            try {
+                                return await catchFunc(error, value, index);
+                            } catch (handlerError) {
+                                console.error(`❌ Error in catchFunc at index ${index}:`, handlerError);
+                            }
+                        } else {
+                            // Default error handling: log and continue
+                            console.error(`❌ Error in promiseConcurrentSerialTimeoutsForEach at index ${index}:`, error);
+                            console.error("Element:", value);
+                        }
+                        // Continue processing next batch
+                        setTimeout(processBatch, delay);
+                    });
+            }
+        };
+        console.log("promiseConcurrentSerialTimeoutsForEach [on index: " + currentIndex + " of " + this.length + ", active: " + activeCount + " max: " + maxConcurrent + "]");
+
+        // Start processing
+        processBatch();
+
+        return promise;
+    }
+
 }).initThisCategory();

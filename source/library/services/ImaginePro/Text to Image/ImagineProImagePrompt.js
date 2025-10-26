@@ -54,6 +54,16 @@
             slot.setDescription("Additional Midjourney parameters to append (e.g., '--no details --no frame --chaos 50')");
         }
 
+        // full prompt slot
+        {
+            const slot = this.newSlot("fullPrompt", "");
+            slot.setSlotType("String");
+            slot.setLabel("Full Prompt");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+        }
+
         // --- settings ---
 
         /**
@@ -448,6 +458,7 @@
         prompt += " --v 7";
 
         console.log("composeFullPrompt: [\n" + prompt + "\n]");
+        this.setFullPrompt(prompt);
         return prompt;
     }
 
@@ -467,12 +478,7 @@
         this.notifyOwners("onImagePromptStart", [this]);
 
         const apiKey = await this.service().apiKeyOrUserAuthToken();
-        const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/nova/imagine";
-
-        const bodyJson = {
-            prompt: await this.asyncComposeFullPrompt(),
-            process_mode: this.processMode()
-        };
+        const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/nova/imagine"; //?test=true";
 
         // IMPORTANT: Always use proxy for ImaginePro API requests:
         // 1. ACCOUNTING: Tracks API usage for user billing
@@ -487,6 +493,14 @@
             "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json"
         });
+
+        const bodyJson = {
+            prompt: await this.asyncComposeFullPrompt(),
+            process_mode: this.processMode()
+        };
+
+        bodyJson.mode = "test";
+
         request.setBody(JSON.stringify(bodyJson));
 
         // Store request for debugging
@@ -523,7 +537,7 @@
     async addGenerationForTaskId (taskId) {
         this.setStatus("task submitted, awaiting completion...");
         const generation = this.generations().add();
-        generation.setPromptNote(await this.asyncComposeFullPrompt());
+        generation.setPromptNote(this.fullPrompt());
         generation.setTaskId(taskId);
         generation.setDelegate(this);
         await generation.asyncStartPolling();
@@ -564,7 +578,7 @@
     }
 
     async asyncAllResultImageNodes () {
-        debugger;
+        //debugger;
 
         const allFilesToDownload = this.generations().subnodes().map(gen => {
             return gen.images().subnodes();
@@ -573,12 +587,12 @@
         assert(allFilesToDownload.length > 0, "no files to download");
 
         for (const fileToDownload of allFilesToDownload) {
-            fileToDownload.setRefererUrl(this.endpointBase());
+            fileToDownload.setRefererUrl(ImagineProImagePrompt.endpointBase());
             await fileToDownload.asyncFetchIfNeeded();
         }
 
         return allFilesToDownload.map(fileToDownload => {
-            console.log("fileToDownload.dataUrl(): " + fileToDownload.dataUrl());
+            // console.log("fileToDownload.dataUrl(): " + fileToDownload.dataUrl());
             return SvImageNode.clone().setDataURL(fileToDownload.dataUrl());
         });
     }

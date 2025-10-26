@@ -44,9 +44,47 @@ if (!SvPlatform.isNodePlatform()) {
 
     async asyncLoadUrl (url) {
         this.crossOrigin = "Anonymous";
-        // need to set up callbacks in the promise before setting the src!
-        const promise = this.promiseLoaded(); // promise resolves when loaded and calls onDidLoad() which may call ddidFetchDataUrl()
+
+        // In Node.js, node-canvas has issues with remote URLs (fetch timeouts)
+        // Download the image first using native https module, then load as Buffer
+        if (SvPlatform.isNodePlatform() && (url.startsWith("http://") || url.startsWith("https://"))) {
+            return await this.asyncLoadUrlViaDownload(url);
+        }
+
+        // Browser or local file: use direct src assignment
+        const promise = this.promiseLoaded();
         this.src = url;
+        return promise;
+    }
+
+    async asyncLoadUrlViaDownload (url) {
+        // Download the image using SvXhrRequest
+        const request = SvXhrRequest.clone();
+        request.setUrl(url);
+        request.setMethod("GET");
+        request.setResponseType("arraybuffer"); // Get binary data as ArrayBuffer
+        request.setTimeoutPeriodInMs(30000); // 30 second timeout
+
+        await request.asyncSend();
+
+        if (request.hasError()) {
+            throw new Error(`Failed to download image from ${url}: ${request.error().message}`);
+        }
+
+        const arrayBuffer = request.response();
+
+        // Convert ArrayBuffer to data URL (works in both Node.js and browser)
+        // Image.src must always be a string (URL or data URL)
+        const mimeType = request.responseMimeType() || "image/png";
+        const blob = new Blob([arrayBuffer], { type: mimeType });
+        const dataUrl = await FileReader.promiseReadAsDataURL(blob);
+
+        // Set up promise before setting src
+        const promise = this.promiseLoaded();
+
+        // Set src to data URL string
+        this.src = dataUrl;
+
         return promise;
     }
 
@@ -79,36 +117,32 @@ if (!SvPlatform.isNodePlatform()) {
         return this.src.startsWith("data:");
     }
 
-    asDataURL () {
-        if (!this._dataURL) {
-            this._dataURL = this.composeDataURL();
-        }
-        return this._dataURL;
-    }
-
     async promiseLoaded () {
         // we need to store the promise so we don't override the callbacks!
-        if (this.isLoaded()) {
-            this._promiseLoaded = Promise.resolve(this);
+        if (this._promiseLoaded) {
+            return this._promiseLoaded;
         } else {
-            this._promiseLoaded = new Promise((resolve, reject) => {
-                this.onload = () => {
-                    this.onDidLoad();
-                    resolve(this);
-                };
-                this.onerror = (error) => {
-                    error = Error.normalizeError(error);
-                    this.onLoadError(error);
-                    reject(error);
-                };
-            });
+            this._promiseLoaded = Promise.clone();
+
+            this.onload = () => {
+                this.onDidLoad();
+                this._promiseLoaded.callResolveFunc(this);
+            };
+
+            this.onerror = (error) => {
+                error = Error.normalizeError(error);
+                this.onLoadError(error);
+                this._promiseLoaded.callRejectFunc(error);
+            };
         }
 
         return this._promiseLoaded;
     }
 
     isLoaded () {
-        return (this.complete); // && this.naturalWidth > 0);
+        // Check both complete AND naturalWidth to ensure image is actually loaded
+        // In node-canvas, complete can be true before the image loads
+        return this.complete && this.naturalWidth > 0;
     }
 
     asCanvas () {
@@ -121,12 +155,23 @@ if (!SvPlatform.isNodePlatform()) {
         return canvas;
     }
 
-    composeDataURL () {
-        return this.asCanvas().toDataURL("image/png");
+    composeDataURL (mimeType = "image/png") {
+        return this.asCanvas().toDataURL(mimeType);
+    }
+
+    asDataURL (mimeType = "image/png") {
+        if (!this._dataURL) {
+            this._dataURL = this.composeDataURL(mimeType);
+        }
+        return this._dataURL;
     }
 
     async asyncAsBlob (mimeType = "image/png") {
-        await this.promiseLoaded();
+        // Only wait for load if image isn't already loaded
+        // This handles cases where src was changed after initial load
+        if (!this.isLoaded()) {
+            await this.promiseLoaded();
+        }
 
         const canvas = this.asCanvas();
 
@@ -146,7 +191,11 @@ if (!SvPlatform.isNodePlatform()) {
     }
 
     async asyncAsArrayBuffer (mimeType = "image/png") {
-        await this.promiseLoaded();
+        // Only wait for load if image isn't already loaded
+        // This handles cases where src was changed after initial load
+        if (!this.isLoaded()) {
+            await this.promiseLoaded();
+        }
 
         const canvas = this.asCanvas();
 

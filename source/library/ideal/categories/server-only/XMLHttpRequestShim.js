@@ -3,15 +3,19 @@
 /**
  * @description XMLHttpRequest polyfill for Node.js environments.
  * This file is only executed when running in a Node.js environment.
- * Provides XMLHttpRequest functionality using the xmlhttprequest package.
+ * Provides XMLHttpRequest functionality using the xhr2 package.
+ *
+ * The xhr2 package properly supports responseType="arraybuffer" for binary data,
+ * unlike the older xmlhttprequest package which corrupts binary responses.
  */
 
 // Only define XMLHttpRequest if it doesn't already exist
 if (typeof XMLHttpRequest === "undefined") {
 
-    const { XMLHttpRequest: NodeXMLHttpRequest } = require("xmlhttprequest");
+    const NodeXMLHttpRequest = require("xhr2");
 
     // Wrapper class to fix event handling compatibility
+    // Note: xhr2 properly supports responseType="arraybuffer" so no conversion needed
     class XMLHttpRequest extends NodeXMLHttpRequest {
         constructor () {
             super();

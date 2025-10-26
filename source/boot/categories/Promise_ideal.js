@@ -68,6 +68,15 @@
 
     // -----------------------------------------------------------------------
 
+    static resolveAfterTimerMs (timeoutMs = 1000) {
+        // just a timer promise that resolves after the timeout
+        const promise = Promise.clone();
+        promise.addTimeout(() => {
+            promise.callResolveFunc();
+        }, timeoutMs);
+        return promise;
+    }
+
     /**
      * @method initThisCategory
      * @static
