@@ -8,6 +8,7 @@
 // Complete Range polyfill for DOM range functionality
 class Range extends Object {
     constructor () {
+        super();
         this.startContainer = null;
         this.startOffset = 0;
         this.endContainer = null;
@@ -146,13 +147,13 @@ class Range extends Object {
         return this.extractContents();
     }
 
-    insertNode (node) {
+    insertNode (/*node*/) {
         // In a server environment, this would typically be a no-op
         // or could log that a node would be inserted
         return;
     }
 
-    surroundContents (newParent) {
+    surroundContents (/*newParent*/) {
         // In a server environment, this would typically be a no-op
         // or could log that content would be surrounded
         return;

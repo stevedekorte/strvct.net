@@ -3,5 +3,6 @@
     "FileReaderShim.js",
     "ImageShim.js",
     "FontFaceShim.js",
-    "XMLHttpRequestShim.js"
+    "XMLHttpRequestShim.js",
+    "Number_random.js"
 ]

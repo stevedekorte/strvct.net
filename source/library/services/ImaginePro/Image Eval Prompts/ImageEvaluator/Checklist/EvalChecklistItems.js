@@ -41,7 +41,7 @@
 
     score () {
         const score = this.subnodes().map(item => item.score()).sum() / this.subnodes().length;
-        return score.toFixed(2);
+        return score.toFixed(2).asNumber();
     }
 
     doesContainAllItems () {

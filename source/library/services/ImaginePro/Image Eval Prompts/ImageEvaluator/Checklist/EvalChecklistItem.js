@@ -92,7 +92,7 @@
         assert(Type.isString(dict.reasoning), "reasoning must be a string");
 
         this.setItemName(dict.itemName);
-        this.setScore(dict.score);
+        this.setScore(dict.score.asNumber());
         this.setReasoning(dict.reasoning);
         return this;
     }

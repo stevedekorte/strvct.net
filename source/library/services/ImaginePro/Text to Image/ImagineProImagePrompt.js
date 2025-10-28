@@ -2,6 +2,9 @@
 
 /**
  * @module library.services.ImaginePro.Text_to_Image
+ *
+
+
  */
 
 /**
@@ -13,11 +16,15 @@
  * We do NOT support V6 or earlier versions. All prompts will be sent with --v 7 flag.
  * Omnireference uses V7's --oref and --ow parameters (not V6's --cref/--cw).
  */
+
 (class ImagineProImagePrompt extends SvSummaryNode {
 
-    initPrototypeSlots () {
+    static initClass () {
+        super.initClass();
+        this.newClassSlot("endpointBase", "https://api.imaginepro.ai/"); // so we can override it globally at the app level
+    }
 
-        // --- prompt ---
+    initPrototypeSlots () {
 
         /**
      * @member {string} prompt
@@ -62,6 +69,7 @@
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
+            slot.setCanEditInspection(false);
         }
 
         // --- settings ---
@@ -74,7 +82,6 @@
         {
             const slot = this.newSlot("model", "midjourney");
             slot.setInspectorPath("Settings");
-            //slot.setLabel("Text to Image Model");
             slot.setLabel("Model");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -86,28 +93,10 @@
         }
 
         /**
-     * @member {string} aspectRatio
-     * @description The aspect ratio of the generated image.
-     * @category Configuration
-     */
-        {
-            const slot = this.newSlot("aspectRatio", "1:1");
-            slot.setInspectorPath("Settings");
-            slot.setLabel("Aspect Ratio");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("String");
-            slot.setValidValues(["1:1", "16:9", "9:16", "4:3", "3:4", "3:2", "2:3"]);
-            slot.setIsSubnodeField(true);
-            slot.setSummaryFormat("key: value");
-        }
-
-        /**
-     * @member {string} processMode
-     * @description The processing mode for image generation.
-     * @category Configuration
-     */
+         * @member {string} processMode
+         * @description The processing mode for image generation.
+         * @category Configuration
+         */
         {
             const slot = this.newSlot("processMode", "turbo");
             slot.setInspectorPath("Settings");
@@ -121,6 +110,218 @@
             slot.setSummaryFormat("key: value");
         }
 
+
+        /**
+     * @member {string} aspectRatio
+     * @description The aspect ratio of the generated image.
+     * @category Configuration
+     */
+        {
+            const validItems = [
+                { value: "1:1", label: "1:1 (Default)" },
+                { value: "16:9", label: "16:9" },
+                { value: "9:16", label: "9:16" },
+                { value: "4:3", label: "4:3" },
+                { value: "3:4", label: "3:4" },
+                { value: "3:2", label: "3:2" },
+                { value: "2:3", label: "2:3" },
+            ];
+            const slot = this.newSlot("aspectRatio", validItems.first().value);
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Aspect Ratio");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        // -stylize (--s) → integer 0–1000. Default ~100. Higher = more MJ “aesthetic” influence; lower = more literal to your text.
+
+        {
+            const validItems = [
+                { value: 0, label: "0 (No MJ influence)" },
+                { value: 25, label: "25" },
+                { value: 50, label: "50" },
+                { value: 75, label: "75" },
+                { value: 100, label: "100 (Default)" },
+                { value: 200, label: "200" },
+                { value: 300, label: "300" },
+                { value: 400, label: "400" },
+                { value: 500, label: "500" },
+                { value: 600, label: "600" },
+                { value: 700, label: "700 (Maximum MJ influence)" },
+            ];
+            const slot = this.newSlot("stylize", 100);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Stylize");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        // --chaos → integer 0–100. Higher = more variety/divergence across the 4 grid images. Default 0.
+
+        {
+            const validItems = [
+                { value: 0, label: "0 (Default)" },
+                { value: 5, label: "5" },
+                { value: 10, label: "10" },
+                { value: 15, label: "15" },
+                { value: 25, label: "25" },
+                { value: 35, label: "35" },
+                { value: 40, label: "40" },
+                { value: 45, label: "45" },
+                { value: 50, label: "50" },
+                { value: 55, label: "55" },
+                { value: 60, label: "60" },
+                { value: 65, label: "65" },
+                { value: 75, label: "75" },
+                { value: 80, label: "80" },
+                { value: 85, label: "85" },
+                { value: 90, label: "90" },
+                { value: 95, label: "95" },
+                { value: 100, label: "100 (Maximum variety)" },
+            ];
+            const slot = this.newSlot("chaos", validItems.first().value);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Chaos");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        // --weird (--w) → integer 0–3000. Adds experimental “strangeness.” Compatible with v5+ (incl. v7). Note: seed interactions can be less stable.
+
+
+        {
+            const validItems = [
+                { value: 0, label: "0 (Default)" },
+                { value: 25, label: "25" },
+                { value: 50, label: "50" },
+                { value: 75, label: "75" },
+                { value: 100, label: "100 (Maximum weirdness)" },
+            ];
+            const slot = this.newSlot("weird", validItems.first().value);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Weird");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        // --seed → integer 0–4,294,967,295. Locks the random start so you can reproduce/iterate.
+
+        {
+            const slot = this.newSlot("seed", null);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Seed");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+        }
+
+        // --quality (--q) → enum 1 | 2 | 4 in v7. Spends more GPU on the initial grid only (not variations/inpainting/upscales). Default 1.
+
+        {
+            const validItems = [
+                { value: 1, label: "Default" },
+                { value: 2, label: "Better quality" },
+                { value: 4, label: "Best quality" },
+            ];
+            const slot = this.newSlot("quality", validItems.first().value);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Quality");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
+        }
+        /*
+
+
+--sref <image_url> (Style Reference) → URL or attachment token. Applies the style (not content) of the reference image; works on v6 & v7. You can also set via the web UI’s style ref slot.
+Midjourney
+*/
+
+        {
+            const slot = this.newSlot("styleRefImageNode", null);
+            slot.setInspectorPath("Settings");
+            slot.setFinalInitProto("SvImageNode");
+            slot.setLabel("Style Ref Image");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setDescription("Contains style reference image for Midjourney (Firebase Storage or other hosted URL)");
+            slot.setSummaryFormat("key: value");
+        }
+
+        /*
+            Yes—use --sw (style weight) to weight an --sref.
+            Flag: --sw
+            Type: integer
+            Valid range: 0–1000 (default 100)
+            */
+        {
+            // style weight
+            const validItems = [
+                { value: 0, label: "0 (No influence)" },
+                { value: 1, label: "1" },
+                { value: 2, label: "2" },
+                { value: 3, label: "3" },
+                { value: 4, label: "4" },
+                { value: 5, label: "5" },
+                { value: 10, label: "10" },
+                { value: 15, label: "15" },
+                { value: 25, label: "25" },
+                { value: 50, label: "50" },
+                { value: 75, label: "75" },
+                { value: 100, label: "100 (Default)" },
+                { value: 200, label: "200" },
+                { value: 300, label: "300" },
+                { value: 400, label: "400" },
+                { value: 500, label: "500" },
+                { value: 600, label: "600" },
+                { value: 700, label: "700" },
+                { value: 800, label: "800" },
+                { value: 900, label: "900" },
+                { value: 1000, label: "1000 (Maximum influence)" },
+            ];
+            const slot = this.newSlot("styleWeight", 100);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Style Weight");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
+            slot.setSummaryFormat("key: value");
+            slot.setValidValuesArePermissive(true);
+        }
+
         /**
          * @member {string} omniRefImageNode
          * @description Contains character reference sheet composite image for Midjourney V7+ omnireference.
@@ -132,7 +333,7 @@
             const slot = this.newSlot("omniRefImageNode", null);
             slot.setInspectorPath("Settings");
             slot.setFinalInitProto("SvImageNode");
-            slot.setLabel("Omniref Image Node");
+            slot.setLabel("Omni Ref Image");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
@@ -143,6 +344,23 @@
 
         // omniRefWeight
         {
+            const validItems = [
+                { value: 0, label: "0 (No influence)" },
+                { value: 1, label: "1" },
+                { value: 2, label: "2" },
+                { value: 3, label: "3" },
+                { value: 4, label: "4" },
+                { value: 5, label: "5" },
+                { value: 10, label: "10" },
+                { value: 15, label: "15" },
+                { value: 25, label: "25 (Subtle)" },
+                { value: 50, label: "50" },
+                { value: 75, label: "75" },
+                { value: 100, label: "100 (Balanced)" },
+                { value: 150, label: "150" },
+                { value: 200, label: "200" },
+                { value: 300, label: "300 (Heavy)" },
+            ];
             const slot = this.newSlot("omniRefWeight", 100);
             slot.setInspectorPath("Settings");
             slot.setSlotType("Number");
@@ -151,8 +369,42 @@
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(true);
-            slot.setValidValues([25, 50, 75, 100, 150, 200, 300, 400, 600, 800, 1000]);
+            slot.setValidItems(validItems);
             slot.setDescription("Omnireference weight (1-1000): 25-50 subtle, 100-300 balanced, 400+ strong influence");
+            slot.setSummaryFormat("key: value");
+        }
+
+        // extraImages SvImagesNode slot
+
+        {
+            const slot = this.newSlot("extraImagesNode", null);
+            slot.setInspectorPath("Settings");
+            slot.setFinalInitProto("SvImagesNode");
+            slot.setLabel("Extra Images");
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setDescription("MJ calls these 'image prompts'.");
+            slot.setSummaryFormat("key: value");
+        }
+
+        // extra images weight (can be 1, 2, or 3)
+
+        {
+            const validItems = [
+                { value: 1, label: "1" },
+                { value: 2, label: "2" },
+                { value: 3, label: "3" },
+            ];
+            const slot = this.newSlot("extraImagesWeight", 1);
+            slot.setSlotType("Number");
+            slot.setInspectorPath("Settings");
+            slot.setLabel("Extra Images Weight");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setValidItems(validItems);
+            slot.setIsSubnodeField(true);
             slot.setSummaryFormat("key: value");
         }
 
@@ -167,7 +419,6 @@
             slot.setSyncsToView(true);
         }
         */
-
 
         /**
      * @member {SvXhrRequest} xhrRequest
@@ -336,7 +587,16 @@
     finalInit () {
         super.finalInit();
         this.setCanDelete(true);
-        this.omniRefImageNode().setTitle("Omniref Image");
+        this.omniRefImageNode().setTitle("Omni Reference Image");
+        this.styleRefImageNode().setTitle("Style Reference Image");
+        this.extraImagesNode().setTitle("Extra Images");
+        if (this.seed() === null) {
+            this.pickRandomSeed();
+        }
+    }
+
+    pickRandomSeed () {
+        this.setSeed(Number.randomUint32());
     }
 
     /**
@@ -363,7 +623,7 @@
    * @category Validation
    */
     canGenerate () {
-        return this.prompt().length !== 0;
+        return this.prompt().length !== 0 || this.extraImagesNode().subnodeCount() > 1;
     }
 
     /**
@@ -428,43 +688,85 @@
         return prompt;
     }
 
-    async asyncComposeFullPrompt () {
-        let prompt = this.prompt();
-        prompt = this.sanitizePromptForMidjourney(prompt);
+    composeOptionalParametersPrompt () {
+        // slot name to parameter name mapping
+        const parameterMap = new Map([
+            ["stylize", "--s"],
+            ["chaos", "--chaos"],
+            ["weird", "--weird"],
+            ["aspectRatio", "--ar"],
+            ["seed", "--seed"],
+            ["quality", "--quality"]
+        ]);
 
-        // Append prompt suffix if provided (e.g., "--no details --no frame")
-        const suffix = this.promptSuffix();
-        if (suffix.trim().length > 0) {
-            prompt += " " + suffix.trim();
+        let s = "";
+
+        for (const [slotName, parameterName] of parameterMap) {
+            const value = this[slotName].apply(this);
+            const slot = this.thisPrototype().slotNamed(slotName);
+            const defaultValue = slot.initValue();
+            if (!Type.isNullOrUndefined(value) && value !== defaultValue) {
+                s += parameterName + " " + value + " ";
+            }
         }
+        return s.trim();
+    }
 
+    async asyncComposeExtraImagesPrompt () {
+        const extraImageUrls = await this.extraImagesNode().subnodes().promiseParallelMap(async svImageNode => {
+            return await svImageNode.asyncPublicUrl();
+        });
+        let prompt = extraImageUrls.join(" ");
+        if (prompt.length === 1) {
+            prompt += "--iw " + this.extraImagesWeight();
+        }
+        return prompt;
+    }
+
+    async asyncComposeOrefPrompt () {
         // Append omnireference flags if image is provided
         // IMPORTANT: We ONLY support Midjourney V7 or later versions
         // V7 uses --oref (omnireference) and --ow (omnireference weight) parameters
         // We do NOT support V6 or earlier (which used --cref/--cw)
+        let s = "";
         if (this.omniRefImageNode().hasImage()) {
             const publicUrl = await this.omniRefImageNode().asyncPublicUrl();
-            prompt += " --oref " + publicUrl + " --ow " + this.omniRefWeight();
+            s += " --oref " + publicUrl + " --ow " + this.omniRefWeight();
         }
-
-        // Append aspect ratio
-        const aspectRatio = this.aspectRatio();
-        if (aspectRatio && aspectRatio !== "1:1") {
-            prompt += " --ar " + aspectRatio;
-        }
-
-        // IMPORTANT: We require Midjourney V7 or later
-        // Append version flag to ensure V7 is used
-        prompt += " --v 7";
-
-        console.log("composeFullPrompt: [\n" + prompt + "\n]");
-        this.setFullPrompt(prompt);
-        return prompt;
+        return s.trim();
     }
 
-    static endpointBase () {
-        //return "https://api.imaginepro.ai/";
-        return "https://mj-api-474421.web.app/";
+    async asyncComposeSrefPrompt () {
+        let s = "";
+        if (this.styleRefImageNode().hasImage()) {
+            const publicUrl = await this.styleRefImageNode().asyncPublicUrl();
+            s += " --sref " + publicUrl + " --sw " + this.styleWeight();
+        }
+        return s.trim();
+    }
+
+    trimmedPromptSuffix () {
+        return this.promptSuffix().trim();
+    }
+
+    async asyncComposeFullPrompt () {
+        const parts = [];
+
+        parts.push(await this.asyncComposeExtraImagesPrompt());
+
+        parts.push(this.sanitizePromptForMidjourney(this.prompt()));
+        parts.push(this.trimmedPromptSuffix());
+
+        parts.push(await this.asyncComposeOrefPrompt());
+        parts.push(await this.asyncComposeSrefPrompt());
+
+        parts.push(this.composeOptionalParametersPrompt());
+        parts.push(" --v 7"); // IMPORTANT: We require Midjourney V7
+
+        const fullPrompt = parts.join(" ");
+        console.log("composeFullPrompt: [\n" + fullPrompt + "\n]");
+        this.setFullPrompt(fullPrompt);
+        return fullPrompt;
     }
 
     /**
@@ -478,7 +780,7 @@
         this.notifyOwners("onImagePromptStart", [this]);
 
         const apiKey = await this.service().apiKeyOrUserAuthToken();
-        const endpoint = ImagineProImagePrompt.endpointBase() + "api/v1/nova/imagine"; //?test=true";
+        const endpoint = this.thisClass().endpointBase() + "api/v1/nova/imagine";
 
         // IMPORTANT: Always use proxy for ImaginePro API requests:
         // 1. ACCOUNTING: Tracks API usage for user billing
@@ -494,8 +796,10 @@
             "Content-Type": "application/json"
         });
 
+        const fullPrompt = await this.asyncComposeFullPrompt();
+
         const bodyJson = {
-            prompt: await this.asyncComposeFullPrompt(),
+            prompt: fullPrompt,
             process_mode: this.processMode()
         };
 
@@ -522,7 +826,7 @@
                 }
                 const taskId = responseJson.task_id || responseJson.messageId;
                 if (taskId) {
-                    await this.addGenerationForTaskId(taskId);
+                    await this.addGenerationForTaskId(taskId, fullPrompt);
                 } else {
                     throw new Error(this.logPrefix() + " No task_id or messageId returned from ImaginePro");
                 }
@@ -534,10 +838,10 @@
         }
     }
 
-    async addGenerationForTaskId (taskId) {
+    async addGenerationForTaskId (taskId, fullPrompt) {
         this.setStatus("task submitted, awaiting completion...");
         const generation = this.generations().add();
-        generation.setPromptNote(this.fullPrompt());
+        generation.setPromptNote(fullPrompt);
         generation.setTaskId(taskId);
         generation.setDelegate(this);
         await generation.asyncStartPolling();
@@ -587,7 +891,7 @@
         assert(allFilesToDownload.length > 0, "no files to download");
 
         for (const fileToDownload of allFilesToDownload) {
-            fileToDownload.setRefererUrl(ImagineProImagePrompt.endpointBase());
+            fileToDownload.setRefererUrl(this.thisClass().endpointBase());
             await fileToDownload.asyncFetchIfNeeded();
         }
 
