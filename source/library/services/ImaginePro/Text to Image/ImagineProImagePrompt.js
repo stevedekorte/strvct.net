@@ -394,7 +394,13 @@ Midjourney
         {
             const validItems = [
                 { value: 1, label: "1" },
+                { value: 1.25, label: "1.25" },
+                { value: 1.5, label: "1.5" },
+                { value: 1.75, label: "1.75" },
                 { value: 2, label: "2" },
+                { value: 2.25, label: "2.25" },
+                { value: 2.5, label: "2.5" },
+                { value: 2.75, label: "2.75" },
                 { value: 3, label: "3" },
             ];
             const slot = this.newSlot("extraImagesWeight", 1);
@@ -717,7 +723,7 @@ Midjourney
             return await svImageNode.asyncPublicUrl();
         });
         let prompt = extraImageUrls.join(" ");
-        if (prompt.length === 1) {
+        if (extraImageUrls.length === 1) {
             prompt += "--iw " + this.extraImagesWeight();
         }
         return prompt;

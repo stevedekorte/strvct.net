@@ -297,7 +297,10 @@
      */
     resourceAtPath (aPath) {
         const pathArray = aPath.split("/");
-        const first = pathArray.shift();
+        let first = pathArray.shift();
+        if (first === ".") {
+            first = pathArray.shift();
+        }
         const localResource = this.fileWithName(first);
 
         if (pathArray.length === 0) {
