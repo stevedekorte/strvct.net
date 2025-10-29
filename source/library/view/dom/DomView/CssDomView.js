@@ -1206,11 +1206,11 @@
     // float
 
     validFloatPropertyValues () {
-        return [null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"];
+        return new Set([null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"]);
     }
 
     setFloat (v) {
-        assert(this.validFloatPropertyValues().contains(v));
+        assert(this.validFloatPropertyValues().has(v), "Invalid float value: '" + v + "'");
         this.setCssProperty("float", v);
         return this;
     }
@@ -1234,11 +1234,11 @@
     // sizing
 
     validBoxSizingPropertyValues () {
-        return [null, "inherit", "content-box", "border-box"];
+        return new Set([null, "inherit", "content-box", "border-box"]);
     }
 
     setBoxSizing (s) {
-        assert(this.validBoxSizingPropertyValues().contains(s));
+        assert(this.validBoxSizingPropertyValues().has(s), "Invalid box-sizing value: '" + s + "'");
         return this.setCssProperty("box-sizing", s);
     }
 
@@ -1465,11 +1465,11 @@
     // alignment
 
     validTextAlignValues () {
-        return [null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"];
+        return new Set([null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"]);
     }
 
     setTextAlign (v) {
-        assert(this.validTextAlignValues().contains(v));
+        assert(this.validTextAlignValues().has(v), "Invalid text-align value: '" + v + "'");
         this.setCssProperty("text-align", v);
         return this;
     }
@@ -1480,8 +1480,12 @@
 
     // clear
 
+    validClearPropertyValues () {
+        return new Set([null, "none", "left", "right", "both", "initial", "inherit"]);
+    }
+
     setClear (v) {
-        assert([null, "none", "left", "right", "both", "initial", "inherit"].contains(v));
+        assert(this.validClearPropertyValues().has(v), "Invalid clear value: '" + v + "'");
         this.setCssProperty("clear", v);
         return this;
     }
@@ -1529,11 +1533,11 @@
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     validAlignItemsPropertyValues () {
-        return [null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch"];
+        return new Set([null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch"]);
     }
 
     setAlignItems (v) {
-        assert(this.validAlignItemsPropertyValues().contains(v));
+        assert(this.validAlignItemsPropertyValues().has(v), "Invalid align-items value: '" + v + "'");
         this.setCssProperty("align-items", v);
         return this;
     }
@@ -1545,11 +1549,11 @@
     // flex justify-content (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     validJustifyContentPropertyValues () {
-        return [null, "flex-start", "center", "flex-end", "space-between", "space-around"];
+        return new Set([null, "flex-start", "center", "flex-end", "space-between", "space-around"]);
     }
 
     setJustifyContent (v) {
-        assert(this.validJustifyContentPropertyValues().contains(v));
+        assert(this.validJustifyContentPropertyValues().has(v), "Invalid justify-content value: '" + v + "'");
         this.setCssProperty("justify-content", v);
         return this;
     }
@@ -1756,12 +1760,12 @@
     // webkit specific
 
     overflowScrollingValidValues () {
-        return [null, "auto", "touch", "inherit", "initial", "unset"];
+        return new Set([null, "auto", "touch", "inherit", "initial", "unset"]);
     }
 
     setOverflowScrolling (s) {
         //assert(Type.isString(s))
-        assert(this.overflowScrollingValidValues().contains(s));
+        assert(this.overflowScrollingValidValues().has(s), "Invalid overflow-scrolling value: '" + s + "'");
         this.setCssProperty("overflow-scrolling", s);
         this.setWebkitOverflowScrolling(s);
 
@@ -2769,6 +2773,36 @@
         this.setLeftPx(p.x());
         this.setTopPx(p.y());
         return this;
+    }
+
+    // --- Object Fit ---
+
+
+    validObjectFitPropertyValues () {
+        return new Set([
+            null,
+            "fill",
+            "contain",
+            "cover",
+            "none",
+            "scale-down",
+
+            "inherit",
+            "initial",
+            "unset",
+            "revert",
+            "revert-layer"
+        ]);
+    }
+
+    setObjectFit (s) {
+        assert(this.validObjectFitPropertyValues().has(s), "Invalid object-fit value: '" + s + "'");
+        this.setCssProperty("object-fit", s);
+        return this;
+    }
+
+    objectFit () {
+        return this.getCssProperty("object-fit");
     }
 
     // ---

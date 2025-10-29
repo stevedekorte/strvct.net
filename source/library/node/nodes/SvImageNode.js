@@ -38,6 +38,32 @@
 
     initPrototypeSlots () {
         {
+
+            //override title slot to make it a editable subnode field
+            {
+                const slot = this.overrideSlot("title", null);
+                slot.setLabel("Title");
+                slot.setShouldStoreSlot(true);
+                slot.setSlotType("String");
+                slot.setSyncsToView(true);
+                slot.setIsSubnodeField(true);
+                slot.setCanInspect(true);
+                slot.setCanEditInspection(true);
+            }
+
+            // same for subtitle
+            {
+                const slot = this.overrideSlot("subtitle", null);
+                slot.setInspectorPath("");
+                slot.setLabel("Subtitle");
+                slot.setShouldStoreSlot(true);
+                slot.setSlotType("String");
+                slot.setSyncsToView(true);
+                slot.setIsSubnodeField(true);
+                slot.setCanInspect(true);
+                slot.setCanEditInspection(true);
+            }
+
             /**
              * @member {String} dataURL - The data URL of the image.
              * @category Data

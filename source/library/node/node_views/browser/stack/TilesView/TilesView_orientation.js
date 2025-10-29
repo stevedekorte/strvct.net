@@ -42,7 +42,7 @@
 
         if (this.node()) {
             const align = this.node().nodeChildrenAlignment();
-            if (this.validAlignItemsPropertyValues().contains(align)) {
+            if (this.validAlignItemsPropertyValues().has(align)) {
                 this.setJustifyContent(align);
             } else {
                 // is this an error?
@@ -66,7 +66,7 @@
 
         if (this.node()) {
             const align = this.node().nodeChildrenAlignment();
-            if (this.validJustifyContentPropertyValues().contains(align)) {
+            if (this.validJustifyContentPropertyValues().has(align)) {
                 this.setJustifyContent(align);
             }
             this.setAlignItems(null);

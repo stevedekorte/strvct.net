@@ -157,28 +157,29 @@
      */
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
+            // Create thumbnail container
             const tv = DomView.clone().setElementClassName("TileThumbnailView");
-            tv.setDisplay("block");
-            tv.setLeftPx(10);
-            tv.setTopPx(5);
-            tv.setMinHeight("40px");
-            tv.setMinWidth("40px");
-            tv.setBorderRadiusPx(7);
-            tv.setBackgroundColor("transparent");
-            tv.setBorder("0px solid #aaa");
+            tv.setDisplay("flex");
+            tv.setAlignItems("center");
+            tv.setJustifyContent("center");
+            tv.setFlex("0 0 auto");
+            tv.setMinWidth("60px");
+            tv.setMaxWidth("60px");
+            tv.setPadding("5px");
+            tv.setBackgroundColor("rgba(0, 0, 0, 0.1)");
 
-            tv.makeBackgroundNoRepeat();
-            tv.makeBackgroundCentered();
-            //tv.makeBackgroundContain()
-            tv.setBackgroundSizeWH(50, 50);
+            // Create ImageView subview to hold the actual image
+            const imageView = SvImageView.clone();
+            imageView.setDisplay("block");
+            imageView.setWidth("50px");
+            imageView.setHeight("50px");
+            imageView.setObjectFit("cover");
+            imageView.setBorderRadiusPx(5);
+            tv.addSubview(imageView);
 
             this.setThumbnailView(tv);
-            this.addSubview(tv);
-
-            // TODO: make this dynamic with subview for title & subtitle
-            const offset = 60;
-            this.titleView().setLeftPx(offset);
-            this.subtitleView().setLeftPx(offset);
+            this.bottomContentArea().addSubview(tv);
+            //this.contentView().addSubview(tv);
         }
         return this;
     }
@@ -223,16 +224,22 @@
                 const imageUrl = node.nodeThumbnailUrl();
                 if (imageUrl) {
                     this.setupThumbnailViewIfAbsent();
-                    this.thumbnailView().setBackgroundImageUrlPath(imageUrl);
-                }
-            }
+                    const imageView = this.thumbnailView().subviews().first();
+                    if (imageView) {
+                        imageView.setFromDataURL(imageUrl);
+                    }
 
-            if (node.noteIconName() && !node.noteIsSubnodeCount()) {
-                this.hideNoteView();
-                this.showNoteIconView();
+                    this.hideNoteView();
+                    this.hideNoteIconView();
+                }
             } else {
-                this.showNoteView();
-                this.hideNoteIconView();
+                if (node.noteIconName() && !node.noteIsSubnodeCount()) {
+                    this.hideNoteView();
+                    this.showNoteIconView();
+                } else {
+                    this.showNoteView();
+                    this.hideNoteIconView();
+                }
             }
         } else {
             this.titleView().setIsEditable(false);
