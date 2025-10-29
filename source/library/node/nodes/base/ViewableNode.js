@@ -302,22 +302,22 @@
 
         if (canUseNodes.length) {
 
-            if (canUseNodes.length === 1) {
-                const match = canUseNodes.first();
-                const newNode = match.openMimeChunk(dataChunk);
+            //if (canUseNodes.length === 1) {
+            const match = canUseNodes.first();
+            const newNode = match.openMimeChunk(dataChunk);
 
-                if (okTypes.contains(newNode.svType())) {
-                    this.addSubnode(newNode);
-                } else {
-                    SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.svType() });
-                }
-                //if (this.acceptsAddingSubnode(match)) {
-                //    this.addSubnode(match);
-                //}
+            if (okTypes.contains(newNode.svType())) {
+                this.addSubnode(newNode);
             } else {
-                // TODO: add CreatorNode with those types and
-                // hook to instantiate from mime data
+                SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Cannot add node of type: " + newNode.svType() });
             }
+            //if (this.acceptsAddingSubnode(match)) {
+            //    this.addSubnode(match);
+            //}
+            //} else {
+            // TODO: add CreatorNode with those types and
+            // hook to instantiate from mime data
+            //}
         }
     }
 

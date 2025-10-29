@@ -6,6 +6,23 @@
  */
 (class SvImagesNode extends SvStorableNode {
 
+    static canOpenMimeType (mimeType) {
+        return mimeType.startsWith("image/");
+    }
+
+    /**
+     * @static
+     * @description Creates a new SvImageNode from a dropped data chunk.
+     * @param {Object} dataChunk - The dropped data chunk containing image data.
+     * @returns {SvImageNode} A new SvImageNode with the dropped image data.
+     * @category MIME Handling
+     */
+    static openMimeChunk (dataChunk) {
+        const newNode = SvImageNode.clone();
+        newNode.setDataURL(dataChunk.dataUrl());
+        return newNode;
+    }
+
     /**
      * @description Initializes the prototype slots for the node.
      * @category Initialization

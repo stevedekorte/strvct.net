@@ -124,6 +124,16 @@
         this.setShouldStoreSubnodes(false);
     }
 
+    nodeThumbnailUrl () {
+        if (this.dataURL()) {
+            return this.dataURL();
+        }
+        if (this.publicUrl()) {
+            return this.publicUrl();
+        }
+        return null;
+    }
+
     didUpdateSlotDataURL (oldValue, newValue) {
         if (oldValue && newValue) { // don't clear it if we're unserializing
             this.setPublicUrl(null);
