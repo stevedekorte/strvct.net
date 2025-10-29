@@ -119,7 +119,7 @@
      * @category Configuration
      */
         {
-            const slot = this.newSlot("maxPollAttempts", 60);
+            const slot = this.newSlot("maxPollAttempts", 120);
             slot.setSlotType("Number");
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
