@@ -394,7 +394,7 @@
         const checklist = this.checklist();
         console.log(this.logPrefix(), "checklist:", JSON.stringify(checklist.asJson(), null, 2));
 
-        this.setScore(this.checklist().score().asNumber());
+        this.setScore(Number(this.checklist().score()));
 
         //debugger;
         if (this.svImage()) {
