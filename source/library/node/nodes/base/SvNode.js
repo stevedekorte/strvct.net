@@ -386,7 +386,10 @@
     duplicate () {
         const dup = super.duplicate();
         if (!this.shouldStore() || this.shouldStoreSubnodes()) {
-            dup.copySubnodes(this.subnodes().map(sn => sn.duplicate()));
+            dup.copySubnodes(this.subnodes().map(sn => {
+                const item = sn.duplicate();
+                return item;
+            }));
         }
         return dup;
     }
@@ -925,6 +928,9 @@
      * @returns {SvNode} This instance.
      */
     copySubnodes (newSubnodes) {
+        newSubnodes.forEach(sn => {
+            sn.setParentNode(this);
+        });
         this.subnodes().copyFrom(newSubnodes);
         return this;
     }

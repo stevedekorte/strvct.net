@@ -354,6 +354,7 @@
         slot.setIsSubnodeField(true);
         slot.setSlotType(Type.isString(finalProto) ? finalProto : finalProto.svType());
         slot.setSummaryFormat("key: value");
+        slot.setDuplicateOp("duplicate");
 
         return slot;
     }
