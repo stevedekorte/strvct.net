@@ -21,6 +21,12 @@
  *
  * So, it seems like not writing the blob to the slot until it has already cached a dataUrl for itself
  * might be the simplest option. That would allow us to implement a normal Blob.recordForStore().
+ *
+ * Further Notes - Immutability:
+ *
+ * - Since Blobs are immutable, we can can use the same store reference (pid) for all instances with the same content.
+ * - So when we construct Blob pids, let's use a hash of the Blob's content as the pid.
+ * - PROBLEM: current code expects synchronous pid creation.
  */
 
 "use strict";
@@ -35,10 +41,26 @@
      * @returns {Blob_store} A new Blob_store instance.
      * @category Initialization
      */
-    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
+    static instanceFromRecordInStore (aRecord /*, aStore*/) { // should only be called by Store
         //assert(aRecord.type === "Blob")
         const obj = this.fromBase64(aRecord.dataUrl);
         return obj;
+    }
+
+    async asyncPuuid () {
+        if (this.hasPuuid()) {
+            return this.puuid();
+        }
+
+        const puuid = await this.asyncComputePuuid();
+        this.setPuuid(puuid);
+        return this.puuid();
+    }
+
+    async asyncComputePuuid () {
+        const arrayBuffer = await this.asyncToArrayBuffer();
+        const hexSha256 = await arrayBuffer.asyncHexSha256();
+        return hexSha256;
     }
 
     /**
@@ -48,14 +70,14 @@
      * @returns {Blob} A new Blob instance.
      * @category Data Loading
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (aRecord /*, aStore*/) {
         const dataUrl = aRecord.dataUrl;
         return Blob.fromBase64(dataUrl);
     }
 
     /*
     async asyncRecordForStore (aStore) { // should only be called by Store
-        const dataUrl = await this.toBase64()
+        const dataUrl = await this.asyncToBase64()
         return {
             type: "Blob", //Type.typeName(this), // should we use typeName to handle subclasses?
             dataUrl: dataUrl
@@ -69,7 +91,7 @@
      * @category Data Preparation
      */
     async asyncPrepareToStoreSynchronously () {
-        this._dataUrl = await this.toBase64();
+        this._dataUrl = await this.asyncToBase64();
     }
 
     /**
@@ -78,7 +100,7 @@
      * @returns {Object} The record object.
      * @category Data Serialization
      */
-    recordForStore (aStore) { // should only be called by Store
+    recordForStore (/*aStore*/) { // should only be called by Store
         assert(this._dataUrl);
         return {
             type: "Blob", //Type.typeName(this), // should we use typeName to handle subclasses?
@@ -101,7 +123,7 @@
      * @returns {Promise<string>} A promise that resolves to the base64 representation of the blob.
      * @category Data Conversion
      */
-    async toBase64 () {
+    async asyncToBase64 () {
         return this.asyncToDataUrl();
     }
 

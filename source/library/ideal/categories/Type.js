@@ -890,6 +890,27 @@ class Type extends Object {
         return Type.valueHasConstructor(v, TypedArray);
     }
 
+    // -- specialized "types" ---
+
+    static isRemoteUrlString (value) {
+        const urlPrefixes = ["http://", "https://"];
+        return Type.isString(value) && urlPrefixes.some(prefix => value.startsWith(prefix));
+    }
+
+    static isUrlString (value) {
+        const urlPrefixes = ["http://", "https://", "file://", "data:"];
+        return Type.isString(value) && urlPrefixes.some(prefix => value.startsWith(prefix));
+    }
+
+    static isFileUrlString (value) {
+        const urlPrefixes = ["file://"];
+        return Type.isString(value) && urlPrefixes.some(prefix => value.startsWith(prefix));
+    }
+
+    static isDataUrlString (value) {
+        return Type.isString(value) && value.startsWith("data:");
+    }
+
 
     // --- type id ---
 

@@ -28,10 +28,22 @@
 
 (class Slot_promiseWrapper extends Slot {
 
+    asyncGetterName () {
+        return "async" + this.name().capitalized();
+    }
+
+    computeMethodName () {
+        return "asyncCompute" + this.name().capitalized();
+    }
+
+    promisePrivateName () {
+        return this.privateName() + "Promise";
+    }
+
     setupPromiseWrapperIfNeeded () {
         if (this.isPromiseWrapped()) {
             // set the promise wrapped getter
-            this.owner()[this.name()] = this.newAsyncPromiseWrappedGetter();
+            this.owner()[this.asyncGetterName()] = this.newAsyncPromiseWrappedGetter();
         }
         this.setupPromiseResetMethodIdNeeded();
     }
@@ -41,47 +53,47 @@
         Example:
         for a publicUrl slot, we'd set up the following:
 
-            _publicUrl
-            _publicUrlPromise
-            publicUrl()
+            _publicUrl // privateName
+            _publicUrlPromise // promisePrivateName
+            publicUrl() // getterName
 
-            setPublicUrl(value)
-            asyncPublicUrl() <--- this method returns the promise
-            asyncComputePublicUrl()
+            setPublicUrl(value) // setterName
+            asyncPublicUrl() <--- asyncGetterName - this method returns the promise
+            asyncComputePublicUrl() // computeMethodName
 
             didUpdate{DependencySlotName}
 
         */
 
         const slot = this;
-        const slotName = this.name();
         const privateName = this.privateName();
+        const computeMethodName = this.computeMethodName();
+        const promisePrivateName = this.promisePrivateName();
 
         return async function (...args) { // Example: asyncPublicUrl()
             assert(args.length === 0, "getter should not be called with arguments");
 
-            // already have a value, return it (*ASSUME* null means it's not yet computed)
+            // If we already have a value, return it (*ASSUME* null means it's not yet computed)?
             if (this[privateName] !== null) {
                 return this[privateName];
             }
 
-            // return the promise if we already have one
-            // so we don't do more requests while we're waiting for the first one
-            const promisePrivateName = privateName + "Promise";
+            // If we already have a promise, return it
+            // so we don't do more requests while we're waiting for the first
             const promise = this[promisePrivateName];
             if (promise) {
                 return promise;
             }
 
-            // compute the value
-            const computeMethodName = this[slotName + "Compute"];
             const computeMethod = this[computeMethodName];
-            assert(computeMethod, "compute method not found for promise wrapped slot " + slotName);
+            assert(computeMethod, "compute method not found for promise wrapped slot " + slot.name());
 
             try {
+                // call the compute method and set the value
                 const value = await computeMethod.call(this);
                 const setterMethod = this[slot.setterName()];
                 setterMethod.call(this, value);
+                slot.onInstanceSetValue(this, value);
                 promise.callResolveFunc(value);
                 return value;
             } catch (error) {
@@ -109,16 +121,16 @@
             // to allow it to be recomputed when needed
 
             // reset the promise
-            const promisePrivateName = resetSlotName + "Promise";
+            const promisePrivateName = slot.promisePrivateName();
             const promise = this[promisePrivateName];
 
-            // how do we deal with the case of reseting the promise if it's not completed?
             if (promise && !promise.isCompleted()) {
+                // How do we deal with the case of reseting the promise if it's not completed? Reject it?
                 promise.callRejectFunc(new Error("slot wrapped promise reset before completion"));
             }
 
             // reset the value
-            this[slot.name()] = null;
+            this[slot.privateName()] = null;
 
             // reset the promise
             this[promisePrivateName] = null;

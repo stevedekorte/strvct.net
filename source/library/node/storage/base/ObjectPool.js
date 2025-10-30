@@ -1262,7 +1262,7 @@
             // synchronous option for serialization e.g. serializing a Blob
             //throw new Error("no support for asyncRecordForStore yet!");
             const kvPromise = this.kvPromiseForObject(obj);
-            this.recordsMap().asyncQueueSetKvPromise(kvPromise);
+            this.recordsMap().appendAsyncWriteKvPromise(kvPromise); // these will be awaited when committing the tx
         } else {
             //console.log(this.logPrefix() + "storeObject " + obj.svTypeId());
 

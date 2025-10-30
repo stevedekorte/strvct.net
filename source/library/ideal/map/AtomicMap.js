@@ -88,6 +88,12 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
              */
             slot.setSlotType("Array");
         }
+
+        {
+            const slot = this.newSlot("asyncWriteQueue", null); // queue of promises which return a [key, value] array to be written to the map
+            slot.setSlotType("Array");
+        }
+
     }
 
     initPrototype () {
@@ -103,7 +109,14 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.setSnapshot(null);
         this.setChangedKeySet(new Set());
         this.setBeginPromiseFifoQueue([]);
+        this.setAsyncWriteQueue([]);
         this.setIsDebugging(false);
+    }
+
+    appendAsyncWriteKvPromise (kvPromise) {
+        // kvPromise returns a [key, value] array
+        this.asyncWriteQueue().push(kvPromise);
+        return this;
     }
 
     /**
@@ -212,6 +225,14 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         await this.applyChanges();
     }
 
+    async asyncCompleteAsyncWrites () {
+        while (this.asyncWriteQueue().length > 0) {
+            const kvPromise = this.asyncWriteQueue().shift();
+            const [key, value] = await kvPromise;
+            this.atPut(key, value);
+        }
+    }
+
     /**
      * @async
      * @category Promise
@@ -219,6 +240,7 @@ SvGlobals.globals().ideal.AtomicMap = class AtomicMap extends ProtoClass {
      * @returns {Promise} A Promise that resolves when the changes have been committed.
      */
     async promiseCommit () {
+        await this.asyncCompleteAsyncWrites();
         this.logDebug(() => " prepare commit ---");
         this.assertInTx();
         if (this.hasChanges()) {

@@ -78,7 +78,6 @@
             slot.setFieldInspectorViewClassName("SvImageWellField");
             slot.setIsSubnodeField(true);
 
-
             //slot.setIsPromiseWrapped(true);
             //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
         }
@@ -124,15 +123,20 @@
             slot.setCanEditInspection(false);
         }
 
-        /*
         {
-            const slot = this.newSlot("note", null);
-            slot.setShouldStoreSlot(true);
+            const slot = this.newSlot("hexSha256Hash", null);
+            slot.setIsInJsonSchema(true);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
             slot.setIsSubnodeField(true);
+            slot.setDescription("Hex encoded SHA-256 hash of the image data");
+
+            slot.setIsPromiseWrapped(true);
+            slot.setPromiseResetsOnChangeOfSlotName("dataURL"); // calls computeHexSha256Hash()
         }
-        */
     }
 
     /**
@@ -142,7 +146,7 @@
     initPrototype () {
         this.setNodeCanEditTitle(true);
         this.setNodeCanEditSubtitle(false);
-        this.setTitle("Untitled");
+        this.setTitle("Image");
         this.setSubtitle(null);
         this.setCanDelete(true);
         this.setNodeCanAddSubnode(true);
@@ -164,7 +168,15 @@
         if (oldValue && newValue) { // don't clear it if we're unserializing
             this.setPublicUrl(null);
             this.setImageObject(null);
+            this.setHexSha256Hash(null);
         }
+    }
+
+    async asyncComputeHexSha256Hash () {
+        const imageObject = await this.asyncImageObject();
+        const hash = await imageObject.asyncHexSha256();
+        this.setHexSha256Hash(hash); // unneeded if we're using the promise wrapped slot
+        return hash;
     }
 
     finalInit () {
