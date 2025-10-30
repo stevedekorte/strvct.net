@@ -236,7 +236,11 @@
     description () {
         let s = "db: " + this.dbFolder().path() + " tx:\n";
         this.requests().forEach(rq => {
-            s += "    " + JSON.stringify({ action: rq._action, key: rq._key, value: rq._value });
+            const value = rq._value;
+            const valueDesc = (value instanceof ArrayBuffer)
+                ? `<ArrayBuffer ${value.byteLength} bytes>`
+                : value;
+            s += "    " + JSON.stringify({ action: rq._action, key: rq._key, value: valueDesc });
         });
         return s;
     }
