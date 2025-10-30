@@ -1229,7 +1229,14 @@
     async kvPromiseForObject (obj) {
         const record = await obj.asyncRecordForStore(this);
         const jsonString = JSON.stringify(record);
-        return [obj.puuid(), jsonString];
+        let puuid = null;
+        // use asyncPuuid if it exists (used for things like async computing a hash of a Blob)
+        if (obj.asyncPuuid) {
+            puuid = await obj.asyncPuuid();
+        } else {
+            puuid = obj.puuid();
+        }
+        return [puuid, jsonString];
     }
 
     /**
