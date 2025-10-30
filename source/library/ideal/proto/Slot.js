@@ -1142,6 +1142,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 if (!isValid) {
                     const errorMsg = "WARNING: " + this.logPrefix() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
                     console.warn(errorMsg);
+                    //throw new Error(errorMsg);
                     debugger;
                     slot.validateValue(newValue);
 

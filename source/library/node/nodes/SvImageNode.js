@@ -135,7 +135,7 @@
             slot.setDescription("Hex encoded SHA-256 hash of the image data");
 
             slot.setIsPromiseWrapped(true);
-            slot.setPromiseResetsOnChangeOfSlotName("dataURL"); // calls computeHexSha256Hash()
+            //slot.setPromiseResetsOnChangeOfSlotName("dataURL"); // calls computeHexSha256Hash()
         }
     }
 
