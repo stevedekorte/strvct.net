@@ -197,6 +197,11 @@
         return null;
     }
 
+    async asyncPrepareForAsJson () {
+        await this.asyncComputeHexSha256Hash();
+        return this;
+    }
+
     didUpdateSlotDataURL (oldValue, newValue) {
         if (oldValue && newValue) { // don't clear it if we're unserializing
             this.setPublicUrl(null);
@@ -207,6 +212,9 @@
     }
 
     async asyncComputeHexSha256Hash () {
+        if (this.dataURL() == null) {
+            return this;
+        }
         const dataUrlObj = SvDataUrl.clone().setDataUrlString(this.dataURL());
         this.setMimeType(dataUrlObj.mimeType());
         const decodedArrayBuffer = dataUrlObj.decodedArrayBuffer();

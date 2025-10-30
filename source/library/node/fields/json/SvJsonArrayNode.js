@@ -275,6 +275,16 @@
         return this.subnodes().map(sn => sn.asJson());
     }
 
+    async asyncPrepareForAsJson () {
+        // is this safe to do in parallel?
+        await this.subnodes().promiseParallelForEach(async sn => {
+            if (sn.asyncPrepareForAsJson) {
+                await sn.asyncPrepareForAsJson();
+            }
+        });
+        return this;
+    }
+
     /**
      * @description Gets the SvDataUrl for this node.
      * @returns {SvDataUrl} The SvDataUrl object.

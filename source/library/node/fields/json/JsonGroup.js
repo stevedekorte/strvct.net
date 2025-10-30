@@ -274,6 +274,41 @@
         return this;
     }
 
+    jsonReferencedValueSet (refs = new Set()) {
+        if (this.shouldStoreSubnodes()) {
+            this.subnodes().slice(0).forEach(sn => {
+                if (sn !== this && refs.has(sn) === false) {
+                    refs.add(sn);
+                    if (sn.jsonReferencedValueSet) {
+                        sn.jsonReferencedValueSet(refs);
+                    }
+                }
+            });
+        } else {
+            const slots = this.thisClass().jsonSchemaSlots();
+            slots.forEach(slot => {
+                const value = slot.onInstanceGetValue(this);
+                if (value && value !== this && refs.has(value) === false) {
+                    refs.add(value);
+                    if (value.jsonReferencedValueSet) {
+                        value.jsonReferencedValueSet(refs);
+                    }
+                }
+            });
+        }
+        return refs;
+    }
+
+    async asyncPrepareForAsJson () {
+        const values = this.jsonReferencedValueSet().values();
+        await values.promiseParallelForEach(async value => {
+            if (value && value.asyncPrepareForAsJson && value !== this) {
+                await value.asyncPrepareForAsJson();
+            }
+        });
+        return this;
+    }
+
     calcJson () {
     // we want to limit to just the slots that are json archivable
 
@@ -296,11 +331,11 @@
                 const slotName = slot.name();
 
                 /*
-        // Skip slots that aren't in alwaysLoadedSlotNames when unloaded
-        if (isUnloaded && slotName !== "hasBeenLoaded" && !this.shouldIncludeSlot(slotName)) {
-          return;
-        }
-        */
+                // Skip slots that aren't in alwaysLoadedSlotNames when unloaded
+                if (isUnloaded && slotName !== "hasBeenLoaded" && !this.shouldIncludeSlot(slotName)) {
+                return;
+                }
+                */
 
                 const value = slot.onInstanceGetValue(this);
                 if (value && value.asJson) {
