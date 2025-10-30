@@ -166,7 +166,8 @@
             tv.setMinWidth("60px");
             tv.setMaxWidth("60px");
             tv.setPadding("5px");
-            tv.setBackgroundColor("rgba(0, 0, 0, 0.1)");
+            //tv.setBackgroundColor("rgba(0, 0, 0, 0.1)");
+            tv.setBackgroundColor("transparent");
 
             // Create ImageView subview to hold the actual image
             const imageView = SvImageView.clone();

@@ -6,7 +6,11 @@
  * @extends SvStorableNode
  * @classdesc SvImageNode class for handling image nodes.
  */
-(class SvImageNode extends SvStorableNode {
+(class SvImageNode extends JsonGroup {
+
+    static jsonSchemaDescription () {
+        return "An image node with a hash and public url for the image";
+    }
 
     /**
      * @description Initializes the prototype slots for the SvImageNode.
@@ -77,6 +81,7 @@
             slot.setCanEditInspection(true);
             slot.setFieldInspectorViewClassName("SvImageWellField");
             slot.setIsSubnodeField(true);
+            slot.setDescription("Data URL of the image");
 
             //slot.setIsPromiseWrapped(true);
             //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
@@ -85,12 +90,14 @@
         // public url
         {
             const slot = this.newSlot("publicUrl", null); // should normally call asyncPublicUrl() to get it
+            slot.setIsInJsonSchema(true);
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
             slot.setCanInspect(true);
             slot.setCanEditInspection(true);
             slot.setIsSubnodeField(true);
+            slot.setDescription("Public URL of the image");
         }
 
         // public url promise
@@ -123,6 +130,19 @@
             slot.setCanEditInspection(false);
         }
 
+        // mime type
+        {
+            const slot = this.newSlot("mimeType", null);
+            slot.setIsInJsonSchema(true);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(false);
+            slot.setIsSubnodeField(true);
+            slot.setDescription("MIME type of the image");
+        }
+
         {
             const slot = this.newSlot("hexSha256Hash", null);
             slot.setIsInJsonSchema(true);
@@ -130,12 +150,25 @@
             slot.setSyncsToView(true);
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
-            slot.setCanEditInspection(true);
+            slot.setCanEditInspection(false);
             slot.setIsSubnodeField(true);
             slot.setDescription("Hex encoded SHA-256 hash of the image data");
 
             slot.setIsPromiseWrapped(true);
             //slot.setPromiseResetsOnChangeOfSlotName("dataURL"); // calls computeHexSha256Hash()
+        }
+
+        // compute hash action
+
+        {
+            const slot = this.newSlot("asyncComputeHexSha256HashAction", null);
+            slot.setLabel("Compute Hash");
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Action");
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncComputeHexSha256Hash");
         }
     }
 
@@ -169,12 +202,15 @@
             this.setPublicUrl(null);
             this.setImageObject(null);
             this.setHexSha256Hash(null);
+            this.asyncComputeHexSha256Hash(); // intentional no await
         }
     }
 
     async asyncComputeHexSha256Hash () {
-        const imageObject = await this.asyncImageObject();
-        const hash = await imageObject.asyncHexSha256();
+        const dataUrlObj = SvDataUrl.clone().setDataUrlString(this.dataURL());
+        this.setMimeType(dataUrlObj.mimeType());
+        const decodedArrayBuffer = dataUrlObj.decodedArrayBuffer();
+        const hash = await decodedArrayBuffer.asyncHexSha256();
         this.setHexSha256Hash(hash); // unneeded if we're using the promise wrapped slot
         return hash;
     }

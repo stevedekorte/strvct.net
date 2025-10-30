@@ -223,7 +223,7 @@
         const seenJsonIds = new Set();
 
         //assert(Type.isArray(json), "Expected array for JSON path: '" + this.nodePathString().after("Sessions/") + "'");
-        assert(Type.isArray(json), "Expected array for JSON path '" + jsonPathComponents.join("/") + "' but got: " + JSON.stringify(json));
+        assert(Type.isArray(json), "Expected array for JSON path '" + jsonPathComponents.join("/") + "' but got: " + json);
 
         json.forEachKV((index, v) => {
             const pathString = jsonPathComponents.concat(index).join("/");

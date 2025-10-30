@@ -359,6 +359,17 @@
         return window.atob(this);
     }
 
+    base64DecodedAsArrayBuffer () {
+        let b64 = String(this.valueOf());
+        b64 = b64.replace(/-/g, "+").replace(/_/g, "/");
+        b64 += "===".slice((4 - (b64.length % 4)) % 4);
+        const bin = atob(b64);
+        const len = bin.length;
+        const u8 = new Uint8Array(len);
+        for (let i = 0; i < len; i++) u8[i] = bin.charCodeAt(i);
+        return u8.buffer;
+    }
+
     /**
      * Decodes a URL-safe base64 encoded string
      * @returns {string} The decoded string

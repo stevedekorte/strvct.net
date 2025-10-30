@@ -4,7 +4,11 @@
  * @extends SvStorableNode
  * @classdesc Represents a node for managing image resources.
  */
-(class SvImagesNode extends SvStorableNode {
+(class SvImagesNode extends SvJsonArrayNode {
+
+    static jsonSchemaDescription () {
+        return "An array of image nodes";
+    }
 
     static canOpenMimeType (mimeType) {
         return mimeType.startsWith("image/");

@@ -14,6 +14,14 @@
  *
  * event.dataTransfer.setData("DownloadURL", "application/json:hello.json:data:application/json;base64," + btoa("[1,2,3]"));
  * event.dataTransfer.setData("DownloadURL", "text/plain:hello.txt:data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D");
+ *
+ * const dataUrlObj = SvDataUrl.clone().setDataUrlString(dataUrlString);
+ * const decodedArrayBuffer = dataUrlObj.decodedArrayBuffer();
+ *
+ * const mimeType = dataUrlObj.mimeType();
+ * const fileName = dataUrlObj.fileName();
+ * const dataUrlString = dataUrlObj.dataUrl();
+ *
  */
 (class SvDataUrl extends ProtoClass {
 
@@ -63,8 +71,14 @@
          * @category Data
          */
         {
-            const slot = this.newSlot("decodedData", "");
+            const slot = this.newSlot("decodedData", ""); // deprecte this as time permits
             slot.setSlotType("String");
+        }
+
+        // decodedArrayBuffer
+        {
+            const slot = this.newSlot("decodedArrayBuffer", null);
+            slot.setSlotType("ArrayBuffer");
         }
     }
 
@@ -174,11 +188,22 @@
         const afterData = dataUrl.after("data:");
         const mimeType = afterData.before(";");
         const encodedData = afterData.after("base64,");
-        const decodedData = encodedData.base64Decoded();
 
         this.setDataUrl(dataUrl);
         this.setMimeType(mimeType);
-        this.setDecodedData(decodedData);
+
+        // Data URLs use standard Base64 (not URL-safe), so decode directly with atob()
+        const decodedString = atob(encodedData);
+        this.setDecodedData(decodedString);
+
+        // Convert the decoded binary string to ArrayBuffer
+        const len = decodedString.length;
+        const u8 = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            u8[i] = decodedString.charCodeAt(i);
+        }
+        this.setDecodedArrayBuffer(u8.buffer);
+
         return this;
     }
 
