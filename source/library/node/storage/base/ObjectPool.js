@@ -701,7 +701,7 @@
      */
     onDidMutateObject (anObject) {
         //if (anObject.hasDoneInit() && ) {
-        if (this.hasActiveObject(anObject) && !this.isLoadingObject(anObject)) {
+        if (this.hasActiveObject(anObject) && !this.isLoadingObject(anObject) && anObject.shouldStore()) {
             this.addDirtyObject(anObject);
         }
     }
