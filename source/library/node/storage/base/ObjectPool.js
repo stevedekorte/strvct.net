@@ -215,6 +215,13 @@
             slot.setSlotType("Set");
         }
 
+        // blob pool
+        {
+            const slot = this.newSlot("blobPool", null);
+            slot.setSlotType("SvBlobPool");
+            slot.setDescription("Blob pool for storing blobs associated with the object pool");
+        }
+
 
     }
 
@@ -233,6 +240,7 @@
         this.setLoadingPids(new Set());
         this.setLastSyncTime(null);
         this.setMarkedSet(null);
+        this.setBlobPool(SvBlobPool.clone());
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"));
         this.setIsDebugging(false);
         return this;
@@ -287,6 +295,8 @@
         map.setName(this.name());
         try {
             await map.promiseOpen();
+            this.blobPool().setName(this.name() + "/blobs");
+            await this.blobPool().asyncOpen();
             await this.onPoolOpenSuccess();
         } catch (error) {
             this.onPoolOpenFailure(error);
@@ -1610,7 +1620,7 @@
      */
     async asyncCollectBlobs () {
         const keySet = this.allBlobHashesSet();
-        const removedCount = await SvBlobPool.shared().asyncCollectUnreferencedKeySet(keySet);
+        const removedCount = await this.blobPool().asyncCollectUnreferencedKeySet(keySet);
         return removedCount;
     }
 

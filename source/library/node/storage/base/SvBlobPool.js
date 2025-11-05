@@ -41,9 +41,6 @@
  * // Get just the metadata
  * const metadata = await SvBlobPool.shared().asyncGetMetadata(hash);
  *
- * // Direct ArrayBuffer access with content type
- * const hash = await SvBlobPool.shared().asyncStoreArrayBuffer(arrayBuffer, "image/png");
- * const arrayBuffer = await SvBlobPool.shared().asyncGetArrayBuffer(hash);
  *
  * // Check existence
  * const exists = await SvBlobPool.shared().asyncHasBlob(hash);
@@ -63,6 +60,12 @@
      * @category Initialization
      */
     initPrototypeSlots () {
+
+        // name
+        {
+            const slot = this.newSlot("name", "defaultBlobStore");
+            slot.setSlotType("String");
+        }
         {
             /**
              * @member {SvIndexedDbFolder} idb
@@ -100,7 +103,6 @@
     init () {
         super.init();
         this.setIdb(SvIndexedDbFolder.clone());
-        this.idb().setPath("defaultBlobStore");
         this.setActiveBlobs(EnumerableWeakMap.clone());
         this.setIsDebugging(false);
     }
@@ -118,10 +120,11 @@
             return;
         }
 
-        this.logDebug("Opening SvBlobPool");
+        this.idb().setPath(this.name());
+        this.logDebug(`Opening SvBlobPool ${this.name()}`);
         await this.idb().promiseOpen();
         this.setIsOpen(true);
-        this.logDebug("SvBlobPool opened successfully");
+        this.logDebug(`SvBlobPool ${this.name()} opened successfully`);
     }
 
     /**
@@ -135,11 +138,9 @@
             return;
         }
 
-        this.logDebug("Closing SvBlobPool");
         await this.idb().close();
         this.activeBlobs().clear();
         this.setIsOpen(false);
-        this.logDebug("SvBlobPool closed");
     }
 
     /**
@@ -293,7 +294,7 @@
         }
 
         // Try to load metadata
-        let contentType = "application/octet-stream";
+        let contentType = "application/octet-stream"; // we'll override if we find content type in metadata
         const metaKey = this.metadataKeyForHash(hash);
         const metadataJson = await this.idb().promiseAt(metaKey);
 
@@ -399,83 +400,6 @@
         this.logDebug(() => `Blob ${hash.substring(0, 8)}... removed`);
     }
 
-    // --- ArrayBuffer Helper Methods ---
-
-    /**
-     * @description Store an ArrayBuffer directly and return its content hash.
-     * Helper method for low-level access when you already have an ArrayBuffer.
-     * @async
-     * @param {ArrayBuffer} arrayBuffer - The data to store
-     * @param {string} contentType - MIME type (default: "application/octet-stream")
-     * @param {Object} customMetadata - Optional custom metadata
-     * @returns {Promise<string>} - The content hash
-     * @category Storage
-     */
-    async asyncStoreArrayBuffer (arrayBuffer, contentType = "application/octet-stream", customMetadata = {}) {
-        assert(arrayBuffer instanceof ArrayBuffer, "Must be ArrayBuffer");
-
-        // Compute hash (used directly as storage key)
-        const hash = await this.hashForArrayBuffer(arrayBuffer);
-
-        this.logDebug(() => `Storing ArrayBuffer with hash ${hash.substring(0, 8)}... (${arrayBuffer.byteLength} bytes)`);
-
-        // Check if already stored (deduplication)
-        if (await this.idb().promiseHasKey(hash)) {
-            this.logDebug(() => `ArrayBuffer ${hash.substring(0, 8)}... already exists (deduplicated)`);
-            // Convert to Blob and cache for future access
-            const blob = new Blob([arrayBuffer], { type: contentType });
-            this.activeBlobs().set(hash, blob);
-            return hash;
-        }
-
-        // Create metadata
-        const metadata = {
-            contentType: contentType,
-            size: arrayBuffer.byteLength,
-            timeCreated: new Date().toISOString(),
-            customMetadata: customMetadata
-        };
-
-        // Store ArrayBuffer at hash key
-        await this.idb().promiseAtPut(hash, arrayBuffer);
-
-        // Store metadata at hash:meta key (as JSON string)
-        const metaKey = this.metadataKeyForHash(hash);
-        await this.idb().promiseAtPut(metaKey, JSON.stringify(metadata));
-
-        // Convert to Blob and cache for future access
-        const blob = new Blob([arrayBuffer], { type: contentType });
-        this.activeBlobs().set(hash, blob);
-
-        this.logDebug(() => `ArrayBuffer ${hash.substring(0, 8)}... stored successfully with metadata`);
-
-        return hash;
-    }
-
-    /**
-     * @description Retrieve an ArrayBuffer directly by its content hash.
-     * Helper method for low-level access when you need the raw ArrayBuffer.
-     * @async
-     * @param {string} hash - The content hash
-     * @returns {Promise<ArrayBuffer|null>} - The ArrayBuffer, or null if not found
-     * @category Storage
-     */
-    async asyncGetArrayBuffer (hash) {
-        assert(typeof hash === "string", "Hash must be a string");
-
-        this.logDebug(() => `Getting ArrayBuffer ${hash.substring(0, 8)}...`);
-
-        // Get the blob (which handles caching)
-        const blob = await this.asyncGetBlob(hash);
-
-        if (blob) {
-            // Extract ArrayBuffer from blob (blob caches this internally)
-            return await blob.asyncToArrayBuffer();
-        }
-
-        return null;
-    }
-
     // --- Active Blobs Management ---
 
     /**
@@ -492,14 +416,6 @@
         return null;
     }
 
-    /**
-     * @description Clear all active blobs from memory
-     * @category Cache
-     */
-    clearActiveBlobs () {
-        this.activeBlobs().clear();
-        this.logDebug("Active blobs cleared");
-    }
 
     // --- Garbage Collection ---
 
@@ -516,19 +432,17 @@
         this.assertOpen();
         this.logDebug(`Collecting unreferenced blobs, (${referencedHashesSet.size} references)`);
 
-        const allHashes = await this.idb().promiseAllKeys();
-        let removedCount = 0;
+        const allHashesSet = new Set(await this.idb().promiseAllKeys());
+        const unreferencedHashesSet = allHashesSet.difference(referencedHashesSet);
+        this.logDebug(`Removing ${unreferencedHashesSet.size} unreferenced blobs`);
 
-        for (const hash of allHashes) {
-            if (!referencedHashesSet.has(hash)) {
-                await this.asyncRemoveBlob(hash);
-                removedCount++;
-            }
-        }
-
-        this.logDebug(`Collected ${removedCount} unreferenced blobs`);
-
-        return removedCount;
+        const tx = this.idb().newTransaction();
+        tx.begin();
+        unreferencedHashesSet.forEach(hash => {
+            tx.removeAt(hash);
+        });
+        await tx.promiseCommit();
+        return unreferencedHashesSet.size;
     }
 
     /**
@@ -565,7 +479,7 @@
     async asyncClear () {
         this.logDebug("Clearing all blobs from storage");
         await this.idb().promiseClear();
-        this.clearActiveBlobs();
+        this.activeBlobs().clear();
         this.logDebug("All blobs cleared");
     }
 
