@@ -30,11 +30,19 @@
 
     /**
      * @description Converts this Blob to an ArrayBuffer
-     * @returns {Promise<ArrayBuffer>} The ArrayBuffer
+     * @returns {Promise<ArrayBuffer>} The ArrayBuffer (cached on first call)
      * @category Conversion
      */
-    asyncToArrayBuffer () {
-        return FileReader.promiseReadAsArrayBuffer(this);
+    async asyncToArrayBuffer () {
+        // Return cached ArrayBuffer if already extracted
+        if (this._cachedArrayBuffer) {
+            return this._cachedArrayBuffer;
+        }
+
+        // Extract and cache the ArrayBuffer
+        const arrayBuffer = await FileReader.promiseReadAsArrayBuffer(this);
+        this._cachedArrayBuffer = arrayBuffer;
+        return this._cachedArrayBuffer;
     }
 
     /**
@@ -45,5 +53,11 @@
     asyncToDataUrl () {
         return FileReader.promiseReadAsDataURL(this);
     }
+
+    async asyncHexSha256 () {
+        const arrayBuffer = await this.asyncToArrayBuffer();
+        return await arrayBuffer.asyncHexSha256();
+    }
+
 
 }.initThisCategory());

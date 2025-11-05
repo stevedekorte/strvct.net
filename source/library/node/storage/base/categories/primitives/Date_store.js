@@ -15,7 +15,7 @@
      * @returns {Date_store} The current instance.
      * @category Data Loading
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (aRecord /*, aStore*/) {
         this.setTime(aRecord.time);
         return this;
     }
@@ -26,7 +26,7 @@
      * @returns {Object} An object containing the type and time of the date.
      * @category Data Storage
      */
-    recordForStore (aStore) { // should only be called by Store
+    recordForStore (/*aStore*/) { // should only be called by Store
         return {
             type: this.svType(),
             time: this.getTime() // toJSON is a standard library Date method

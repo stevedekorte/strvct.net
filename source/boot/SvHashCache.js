@@ -21,6 +21,9 @@
          * @category Storage
          */
         this.newSlot("idb", null);
+        this.newSlot("weakMap", null);
+        //this.newSlot("keyValidatorFunc", null);
+        this.newSlot("valueValidatorFunc", null);
     }
 
     /**
@@ -40,6 +43,20 @@
         this.setIsDebugging(false);
         this.idb().setIsDebugging(false);
         this.setPath("sharedSvHashCache");
+        this.setValueValidatorFunc((data) => this.defaultValueValidatorFunc(data));
+    }
+
+    defaultValueValidatorFunc (data) {
+        const isString = typeof(data) === "string";
+        const isArrayBuffer = data instanceof ArrayBuffer;
+        const isBuffer = (typeof Buffer !== "undefined" && Buffer.isBuffer(data));
+        return isString || isArrayBuffer || isBuffer;
+    }
+
+    enableWeakMap () {
+        console.log(this.logPrefix(), "enabling weak map");
+        this.setWeakMap(new EnumerableWeakMap());
+        return this;
     }
 
     /**
@@ -99,48 +116,19 @@
         return this.idb().promiseHasKey(key);
     }
 
-    /**
-     * @description Retrieves content for a given hash or URL.
-     * @param {string} hash - The hash to check.
-     * @param {string} url - The URL to load from if the hash is not found.
-     * @returns {Promise<*>} - A promise that resolves to the content.
-     * @throws {Error} Throws an error if the hash is not provided or if the URL cannot be loaded.
-     * @category Data Retrieval
-     */
-    async promiseContentForHashOrUrl (hash, url) {
-        if (!hash) {
-            throw new Error("this API requires a hash");
+    weakMapGet (hash) {
+        if (this.weakMap()) {
+            return this.weakMap().get(hash);
         }
-
-        const dataFromDb = await this.idb().promiseAt(hash);
-        if (typeof(dataFromDb) !== "undefined") {
-            // if we have the value, return it
-            this.assertValidValue(dataFromDb);
-            return dataFromDb;
-        }
-        console.log(this.logPrefix(), "no hachcache key '" + hash + "' '" + url + "'");
-        // otherwise load it from url, store it, and then return it
-        return this.promiseLoadUrlAndWriteToHash(url, hash);
+        return undefined;
     }
 
-    /**
-     * @description Loads content from a URL and writes it to the cache with the given hash.
-     * @param {string} url - The URL to load from.
-     * @param {string} hash - The hash to use as the key.
-     * @returns {Promise<*>} - A promise that resolves to the loaded data.
-     * @throws {Error} Throws an error if the URL cannot be loaded.
-     * @category Data Retrieval
-     */
-    async promiseLoadUrlAndWriteToHash (url, hash) {
-        const resource = await SvUrlResource.with(url).promiseLoad();
-        const data = resource.data();
-        if (data === undefined) {
-            throw new Error("unable to load url: '" + url + "'");
-        } else {
-            console.log(this.logPrefix(), "SvHashCache loaded url: '" + url + "'");
-            await this.promiseAtPut(hash, data);
-            return data;
+    checkValidValue (data) {
+        const validatorFunc = this.valueValidatorFunc();
+        if (validatorFunc === null) {
+            return true;
         }
+        return validatorFunc(data);
     }
 
     /**
@@ -151,15 +139,19 @@
      */
     async promiseAt (hash, optionalPathForDebugging) {
         const idb = this.idb();
+
+        const weakMapValue = this.weakMapGet(hash);
+        if (weakMapValue !== undefined) {
+            return weakMapValue;
+        }
+
         const data = await idb.promiseAt(hash);
         if (data === undefined) {
             return undefined;
         }
 
         // In Node.js, check for Buffer as well as ArrayBuffer
-        const typeIsOk = typeof(data) === "string" ||
-                        data instanceof ArrayBuffer ||
-                        (typeof Buffer !== "undefined" && Buffer.isBuffer(data));
+        const typeIsOk = this.checkValidValue(data);
 
         if (!typeIsOk) {
             console.warn("data is a " + typeof(data) + ", but we except a string, ArrayBuffer, or Buffer. Path: " + optionalPathForDebugging);
@@ -230,7 +222,12 @@
         if (this.isDebugging()) {
             console.log(this.logPrefix(), "SvHashCache atPut ", hash);
         }
-        return this.idb().promiseAtPut(hash, data);
+
+        const result = await this.idb().promiseAtPut(hash, data);
+        if (this.weakMap()) {
+            this.weakMap().set(hash, data);
+        }
+        return result;
     }
 
     /**
@@ -262,8 +259,11 @@
      * @category Data Management
      */
     async promiseClear () {
-        //debugger
-        return await this.idb().promiseClear();
+        const result = await this.idb().promiseClear();
+        if (this.weakMap()) {
+            this.weakMap().clear();
+        }
+        return result;
     }
 
     /**
@@ -273,10 +273,23 @@
      */
     async removeInvalidRecords () {
         const keys = await this.idb().promiseAllKeys();
-        //let promise = null;
-        keys.forEach(async (key) => {
+        await keys.promiseSerialForEach(async (key) => {
             await this.promiseVerifyOrDeleteKey(key);
         });
+    }
+
+    /**
+     * @description Removes a key from the cache.
+     * @param {string} key - The key to remove.
+     * @returns {Promise<void>} - A promise that resolves when the operation is complete.
+     * @category Data Management
+     */
+    async promiseRemoveAt (key) {
+        const result = await this.idb().promiseRemoveAt(key);
+        if (this.weakMap()) {
+            this.weakMap().delete(key);
+        }
+        return result;
     }
 
     /**
@@ -290,7 +303,7 @@
         const value = this.idb().promiseAt(key);
         const hashKey = this.promiseHashKeyForData(value);
         if (key !== hashKey) {
-            await this.idb().promiseRemoveAt(key);
+            await this.promiseRemoveAt(key);
         }
     }
 
@@ -302,10 +315,61 @@
 
         const tx = this.idb().newTransaction();
         tx.begin(); // Initialize the actual IndexedDB transaction
-        keysToRemove.forEach(async (key) => {
+        keysToRemove.forEach((key) => {
             tx.removeAt(key);
         });
         await tx.promiseCommit();
+    }
+
+    // -- url support ---
+
+    /**
+     * @description Retrieves content for a given hash or URL.
+     * @param {string} hash - The hash to check.
+     * @param {string} url - The URL to load from if the hash is not found.
+     * @returns {Promise<*>} - A promise that resolves to the content.
+     * @throws {Error} Throws an error if the hash is not provided or if the URL cannot be loaded.
+     * @category Data Retrieval
+     */
+    async promiseContentForHashOrUrl (hash, url) {
+        if (!hash) {
+            throw new Error("this API requires a hash");
+        }
+
+        const weakMapValue = this.weakMapGet(hash);
+        if (weakMapValue !== undefined) {
+            return weakMapValue;
+        }
+
+        const dataFromDb = await this.idb().promiseAt(hash);
+        if (typeof(dataFromDb) !== "undefined") {
+            // if we have the value, return it
+            this.assertValidValue(dataFromDb);
+            return dataFromDb;
+        }
+        console.log(this.logPrefix(), "no hachcache key '" + hash + "' '" + url + "'");
+        // otherwise load it from url, store it, and then return it
+        return this.promiseLoadUrlAndWriteToHash(url, hash);
+    }
+
+    /**
+     * @description Loads content from a URL and writes it to the cache with the given hash.
+     * @param {string} url - The URL to load from.
+     * @param {string} hash - The hash to use as the key.
+     * @returns {Promise<*>} - A promise that resolves to the loaded data.
+     * @throws {Error} Throws an error if the URL cannot be loaded.
+     * @category Data Retrieval
+     */
+    async promiseLoadUrlAndWriteToHash (url, hash) {
+        const resource = await SvUrlResource.with(url).promiseLoad();
+        const data = resource.data();
+        if (data === undefined) {
+            throw new Error("unable to load url: '" + url + "'");
+        } else {
+            console.log(this.logPrefix(), "SvHashCache loaded url: '" + url + "'");
+            await this.promiseAtPut(hash, data);
+            return data;
+        }
     }
 
 }.initThisClass());

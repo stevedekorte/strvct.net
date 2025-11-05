@@ -8,13 +8,14 @@
  * All values should be objects (or null, numbers, strings) but cannot be undefined.
  * @extends Map
  */
-SvGlobals.globals().EnumerableWeakMap = (class EnumerableWeakMap {
+SvGlobals.globals().EnumerableWeakMap = (class EnumerableWeakMap extends Object {
 
     /**
    * Creates an instance of EnumerableWeakMap.
    * @category Initialization
    */
     constructor () {
+        super();
         this._refs = new Map();
     }
 
