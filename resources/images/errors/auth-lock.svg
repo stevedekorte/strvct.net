@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Lock icon -->
+  <rect x="30" y="50" width="40" height="35" rx="3" fill="none" stroke="#ffc107" stroke-width="3"/>
+  <circle cx="50" cy="67" r="4" fill="#ffc107"/>
+  <line x1="50" y1="71" x2="50" y2="78" stroke="#ffc107" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 35,50 L 35,35 A 15,15 0 0,1 65,35 L 65,50" fill="none" stroke="#ffc107" stroke-width="3"/>
+</svg>

@@ -1,0 +1,7 @@
+[
+    "SvErrorImageResolver.js",
+    "SvErrorDefinition.js",
+    "SvErrorCatalog.js",
+    "SvErrorCatalog_auth.js",
+    "SvErrorCatalog_configuration.js"
+]

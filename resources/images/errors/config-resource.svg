@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- File/document icon with exclamation -->
+  <path d="M 30,15 L 60,15 L 75,30 L 75,85 L 30,85 Z" fill="none" stroke="#ff9800" stroke-width="3"/>
+  <path d="M 60,15 L 60,30 L 75,30" fill="none" stroke="#ff9800" stroke-width="3"/>
+  <circle cx="52" cy="60" r="3" fill="#ff9800"/>
+  <line x1="52" y1="40" x2="52" y2="52" stroke="#ff9800" stroke-width="3" stroke-linecap="round"/>
+</svg>
