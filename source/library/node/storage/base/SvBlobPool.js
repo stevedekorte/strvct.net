@@ -100,6 +100,7 @@
     init () {
         super.init();
         this.setIdb(SvIndexedDbFolder.clone());
+        this.idb().setPath("defaultBlobStore");
         this.setActiveBlobs(EnumerableWeakMap.clone());
         this.setIsDebugging(false);
     }
@@ -118,7 +119,6 @@
         }
 
         this.logDebug("Opening SvBlobPool");
-        this.idb().setPath("sharedBlobPool");
         await this.idb().promiseOpen();
         this.setIsOpen(true);
         this.logDebug("SvBlobPool opened successfully");
@@ -516,10 +516,9 @@
      * @category Garbage Collection
      */
     async asyncCollectUnreferencedKeySet (referencedHashesSet) {
+        await this.asyncOpen();
         this.assertOpen();
-        assert(referencedHashesSet instanceof Set, "referencedHashesSet must be a Set");
-
-        this.logDebug(`Collecting unreferenced blobs (${referencedHashesSet.size} referenced)`);
+        this.logDebug(`Collecting unreferenced blobs, (${referencedHashesSet.size} references)`);
 
         const allHashes = await this.idb().promiseAllKeys();
         let removedCount = 0;

@@ -1388,6 +1388,8 @@
         //console.log(this.logPrefix() + "         --- end collect --- collecting " + deleteCount + " pids ---");
 
         await this.kvMap().promiseCommit();
+        //await this.asyncCollectBlobs(); // good time to collect blobs while we have all kvRecords in memory
+        this.scheduleMethod("asyncCollectBlobs");
 
         const remainingCount = this.kvMap().count();
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
@@ -1619,7 +1621,11 @@
      */
     allObjects () {
         const objects = new Set();
+        const rootKey = this.rootKey();
         this.kvMap().keysSet().forEach(pid => {
+            if (pid === rootKey) {
+                return;
+            }
             const obj = this.objectForPid(pid);
             objects.add(obj);
         });
