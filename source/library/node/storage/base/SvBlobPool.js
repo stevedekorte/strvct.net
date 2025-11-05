@@ -343,7 +343,6 @@
      * @category Information
      */
     async asyncGetMetadata (hash) {
-        this.assertOpen();
         assert(typeof hash === "string", "Hash must be a string");
 
         // Try to load metadata from hash:meta key
@@ -383,7 +382,6 @@
      * @category Storage
      */
     async asyncRemoveBlob (hash) {
-        this.assertOpen();
         assert(typeof hash === "string", "Hash must be a string");
 
         this.logDebug(() => `Removing blob ${hash.substring(0, 8)}...`);
@@ -414,7 +412,6 @@
      * @category Storage
      */
     async asyncStoreArrayBuffer (arrayBuffer, contentType = "application/octet-stream", customMetadata = {}) {
-        this.assertOpen();
         assert(arrayBuffer instanceof ArrayBuffer, "Must be ArrayBuffer");
 
         // Compute hash (used directly as storage key)
@@ -464,7 +461,6 @@
      * @category Storage
      */
     async asyncGetArrayBuffer (hash) {
-        this.assertOpen();
         assert(typeof hash === "string", "Hash must be a string");
 
         this.logDebug(() => `Getting ArrayBuffer ${hash.substring(0, 8)}...`);
@@ -542,8 +538,6 @@
      * @category Information
      */
     async asyncAllHashes () {
-        this.assertOpen();
-
         const allKeys = await this.idb().promiseAllKeys();
         // Filter out metadata keys - only return blob hashes
         return allKeys.filter(key => !this.isMetadataKey(key));
@@ -556,8 +550,6 @@
      * @category Information
      */
     async asyncCount () {
-        this.assertOpen();
-
         const allKeys = await this.idb().promiseAllKeys();
         // Count only blob keys, not metadata keys
         return allKeys.filter(key => !this.isMetadataKey(key)).length;
@@ -571,8 +563,6 @@
      * @category Maintenance
      */
     async asyncClear () {
-        this.assertOpen();
-
         this.logDebug("Clearing all blobs from storage");
         await this.idb().promiseClear();
         this.clearActiveBlobs();
