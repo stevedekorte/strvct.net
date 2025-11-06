@@ -233,8 +233,8 @@
 
     async asyncPublicUrlForImage () {
         const imageObject = await this.svImage().asImageObject().promiseLoaded();
-        const imageArrayBuffer = await imageObject.asyncAsArrayBuffer();
-        const publicUrl = await SvApp.shared().asyncPublicUrlForArrayBuffer(imageArrayBuffer);
+        const blob = await imageObject.asyncAsBlob();
+        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
         return publicUrl;
     }
 

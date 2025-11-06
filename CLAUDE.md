@@ -343,6 +343,80 @@ class ConfigObject extends SvStorableNode {
   - Object pooling for memory efficiency
   - Optimistic locking for concurrent modifications
 
+### Blob Storage System
+
+The framework includes a separate content-addressable blob storage system (`SvBlobPool`) that works alongside the object persistence system:
+
+- **Architecture**:
+  - `SvBlobPool`: Global singleton for managing binary data (images, audio, etc.)
+  - Uses separate database from ObjectPool (`defaultBlobStore` vs `defaultDataStore`)
+  - Objects store blob references (SHA-256 hashes), not the actual binary data
+  - Automatic deduplication - identical content stored only once
+
+- **Storage format**:
+  - Data key: `{hash}` → ArrayBuffer
+  - Metadata key: `{hash}/meta` → JSON with contentType, size, timestamps, custom metadata
+  - Hierarchical key structure enables future extensions (e.g., `{hash}/thumbnail`)
+
+- **Key features**:
+  - Content-addressable storage using SHA-256 hashing
+  - Weak reference cache for active blobs (memory efficient)
+  - Metadata storage compatible with Firebase Storage format
+  - Async operations (doesn't block ObjectPool's synchronous API)
+  - Works with both IndexedDB (browser) and LevelDB (Node.js)
+  - Garbage collection support via `asyncCollectUnreferencedKeySet()`
+
+- **Usage pattern**:
+  ```javascript
+  // Store a blob with metadata
+  const hash = await SvBlobPool.shared().asyncStoreBlob(blob, {
+    author: "user123"
+  });
+
+  // Object stores only the hash reference
+  myObject.setImageHash(hash);
+
+  // Retrieve blob later
+  const blob = await SvBlobPool.shared().asyncGetBlob(hash);
+
+  // Query just metadata without loading blob data
+  const metadata = await SvBlobPool.shared().asyncGetMetadata(hash);
+  ```
+
+- **Integration with ObjectPool**:
+  - Objects implement `referencedBlobHashesSet()` to report which blobs they reference
+  - ObjectPool calls `SvBlobPool.shared().asyncCollectUnreferencedKeySet()` during GC
+  - Orphaned blobs (no longer referenced by any object) are automatically removed
+  - Keeps blob storage synchronized with object lifecycle
+
+- **Working with blobs in your objects**:
+  - Objects should store blob **hashes** (strings), not Blob objects themselves
+  - When you have a new Blob, store it and save the returned hash:
+    ```javascript
+    const hash = await SvBlobPool.shared().asyncStoreBlob(blob);
+    this.setImageHash(hash);  // Store the hash in your object
+    ```
+  - To retrieve the Blob later, use the stored hash:
+    ```javascript
+    const blob = await SvBlobPool.shared().asyncGetBlob(this.imageHash());
+    ```
+  - Implement `referencedBlobHashesSet()` to support garbage collection:
+    ```javascript
+    referencedBlobHashesSet () {
+        const hashes = new Set();
+        if (this.imageHash()) {
+            hashes.add(this.imageHash());
+        }
+        if (this.thumbnailHash()) {
+            hashes.add(this.thumbnailHash());
+        }
+        return hashes;
+    }
+    ```
+  - The Blob object returned by `asyncGetBlob()` does NOT have a hash property
+  - The hash is stored separately in your object's properties (e.g., `_imageHash`)
+  - This separation keeps blobs ephemeral while hashes provide persistent references
+
 ### JSON Serialization for Data Exchange
 
 - Separate from storage serialization, used for:

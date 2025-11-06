@@ -315,7 +315,8 @@
 
         try {
             const imageObject = await this.asyncImageObject();
-            const publicUrl = await SvApp.shared().asyncPublicUrlForImageObject(imageObject);
+            const blob = await imageObject.asyncAsBlob();
+            const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
             this.setPublicUrl(publicUrl);
             promise.callResolveFunc(publicUrl);
             return publicUrl;

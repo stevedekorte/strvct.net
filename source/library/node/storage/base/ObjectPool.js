@@ -1332,9 +1332,19 @@
 
 
             this.kvMap().set(puuid, jsonString);
+            this.storeBlobsReferencedByObject(obj);
             //this.storeRecord(puuid, record);
         }
         return this;
+    }
+
+    storeBlobsReferencedByObject (obj) {
+        if (obj.referencedBlobsSet) {
+            const blobsSet = obj.referencedBlobsSet();
+            blobsSet.forEach(blob => {
+                this.blobPool().asyncStoreBlob(blob);
+            });
+        }
     }
 
     /*
@@ -1656,8 +1666,8 @@
     allBlobHashesSet () {
         const hashesSet = new Set();
         this.allObjects().forEach(obj => {
-            if (obj.storeBlobHashesSet) {
-                const objBlobHashes = obj.storeBlobHashesSet();
+            if (obj.referencedBlobHashesSet) {
+                const objBlobHashes = obj.referencedBlobHashesSet();
                 hashesSet.addAll(objBlobHashes);
             }
         });

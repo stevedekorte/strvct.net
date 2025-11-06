@@ -153,23 +153,6 @@
     }
 
     // --- Hash Computation ---
-
-    /**
-     * @description Compute SHA-256 hash for an ArrayBuffer
-     * @async
-     * @param {ArrayBuffer} arrayBuffer - The data to hash
-     * @returns {Promise<string>} - Hex-encoded hash string
-     * @category Hashing
-     */
-    async hashForArrayBuffer (arrayBuffer) {
-        assert(arrayBuffer instanceof ArrayBuffer, "Must be ArrayBuffer");
-
-        const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-        return hashHex;
-    }
-
     // --- Key Management ---
 
     /**
@@ -224,7 +207,7 @@
         const arrayBuffer = await blob.asyncToArrayBuffer();
 
         // Compute hash (used directly as storage key)
-        const hash = await this.hashForArrayBuffer(arrayBuffer);
+        const hash = await arrayBuffer.asyncHexSha256();
 
         this.logDebug(() => `Storing blob with hash ${hash.substring(0, 8)}... (${arrayBuffer.byteLength} bytes)`);
 
@@ -436,12 +419,7 @@
         const unreferencedHashesSet = allHashesSet.difference(referencedHashesSet);
         this.logDebug(`Removing ${unreferencedHashesSet.size} unreferenced blobs`);
 
-        const tx = this.idb().newTransaction();
-        tx.begin();
-        unreferencedHashesSet.forEach(hash => {
-            tx.removeAt(hash);
-        });
-        await tx.promiseCommit();
+        await this.idb().promiseRemoveKeySet(unreferencedHashesSet);
         return unreferencedHashesSet.size;
     }
 
@@ -481,6 +459,45 @@
         await this.idb().promiseClear();
         this.activeBlobs().clear();
         this.logDebug("All blobs cleared");
+    }
+
+    // -- sanity checks ---
+
+    async asyncAllHashKeysSet () {
+        const allKeys = await this.idb().promiseAllKeys();
+        return new Set(allKeys.filter(key => !this.isMetadataKey(key)));
+    }
+
+    /**
+     * @description Get a set of keys which are not the hexSha256 of their values
+     * @async
+     * @returns {Promise<Set<string>>} - Set of invalid keys (includes metadata keys)
+     * @category Sanity Checks
+     */
+    async invalidKeysSet () {
+        const allHashKeysSet = await this.asyncAllHashKeysSet();
+        const invalidKeysSet = new Set();
+        allHashKeysSet.forEach(async (key) => {
+            const arrayBuffer = await this.idb().promiseAt(key);
+            const hash = await arrayBuffer.asyncHexSha256();
+            if (key !== hash) {
+                invalidKeysSet.add(key);
+                const metaKey = this.metadataKeyForHash(key);
+                invalidKeysSet.add(metaKey);
+            }
+        });
+        return invalidKeysSet;
+    }
+
+    /**
+     * @description Remove all invalid keys from the database
+     * @async
+     * @returns {Promise<void>}
+     * @category Sanity Checks
+     */
+    async removeInvalidEntries () {
+        const invalidKeysSet = await this.invalidKeysSet();
+        await this.idb().promiseRemoveKeySet(invalidKeysSet);
     }
 
 }.initThisClass());

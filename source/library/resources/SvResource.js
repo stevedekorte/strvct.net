@@ -195,6 +195,14 @@
         return this.path().lastPathComponent().sansExtension();
     }
 
+    mimeType () {
+        return SvMimeExtensions.shared().mimeTypeForPathExtension(this.path().pathExtension());
+    }
+
+    mimeTypeCategory () {
+        return SvMimeExtensions.shared().mimeTypeCategoryForPathExtension(this.path().pathExtension());
+    }
+
     // --- promises ---
 
     /**

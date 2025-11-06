@@ -54,9 +54,22 @@
         return FileReader.promiseReadAsDataURL(this);
     }
 
+    /**
+     * @description Computes the SHA-256 hash of this Blob
+     * @returns {Promise<string>} The SHA-256 hash as a hexadecimal string (cached on first call)
+     * @category Hash
+     */
     async asyncHexSha256 () {
+        // Return cached hash if already computed
+        if (this._cachedHash) {
+            return this._cachedHash;
+        }
+
+        // Compute and cache the hash
         const arrayBuffer = await this.asyncToArrayBuffer();
-        return await arrayBuffer.asyncHexSha256();
+        const hash = await arrayBuffer.asyncHexSha256();
+        this._cachedHash = hash;
+        return this._cachedHash;
     }
 
 

@@ -735,6 +735,16 @@
         return tx.promiseCommit();
     }
 
+    async promiseRemoveKeySet (keySet) {
+        await this.promiseOpen();
+        const tx = await this.promiseNewTx();
+        tx.begin();
+        keySet.forEach(key => {
+            tx.removeAt(key);
+        });
+        return await tx.promiseCommit();
+    }
+
     // -----------------------------------------------------------------
 
     /**

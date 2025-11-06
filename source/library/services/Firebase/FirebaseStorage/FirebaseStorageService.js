@@ -344,19 +344,19 @@
         }
     }
 
-    async asyncPublicUrlForArrayBuffer (arrayBuffer) {
+    async asyncPublicUrlForBlob (blob) {
         if (!this.isLoggedIn()) {
             throw new Error("Not logged in");
         }
-        const hashString = await arrayBuffer.asyncHexSha256();
-        const file = this.publicFolder().fileNamedCreateIfAbsent(hashString);
+        const hash = await blob.asyncHexSha256();
+        const file = this.publicFolder().fileNamedCreateIfAbsent(hash);
         const doesExist = await file.asyncDoesExist();
         if (doesExist) {
             return file.downloadUrl();
         }
 
         // Detect MIME type from the binary data
-        const mimeType = SvMimeTypeDetector.detectFromArrayBuffer(arrayBuffer);
+        const mimeType = blob.mimeType();
         if (mimeType) {
             file.setContentType(mimeType);
         } else {
@@ -364,6 +364,7 @@
             file.setContentType("application/octet-stream");
         }
 
+        const arrayBuffer = await blob.asyncAsArrayBuffer();
         file.setDataArrayBuffer(arrayBuffer);
         await file.asyncUpload();
         return file.downloadUrl();
