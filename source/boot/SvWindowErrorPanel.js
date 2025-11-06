@@ -50,13 +50,34 @@ class SvWindowErrorPanel extends Object {
     }
 
     errorFromEvent (event) {
-        const message = event.reason ? event.reason : event.message;
-        const error = new Error(message);
-        error.reason = event.reason;
-        error.filename = event.filename;
-        error.lineno = event.lineno;
-        error.colno = event.colno;
-        error.error = event.error;
+        let error;
+
+        // For unhandledrejection events, event.reason is often the actual error
+        if (event.reason && event.reason instanceof Error) {
+            error = event.reason;
+        } else if (event.error instanceof Error) {
+            error = event.error;
+        } else {
+            // For regular error events or when reason is not an Error
+            const message = event.reason ? String(event.reason) : (event.message || "Unknown error");
+            error = new Error(message);
+        }
+
+        // Store additional event properties without modifying the error object
+        if (!error.filename && event.filename) {
+            error.filename = event.filename;
+        }
+        if (!error.lineno && event.lineno) {
+            error.lineno = event.lineno;
+        }
+        if (!error.colno && event.colno) {
+            error.colno = event.colno;
+        }
+        // Don't store reason if it would create a circular reference
+        if (!error.reason && event.reason && event.reason !== error) {
+            error.reason = event.reason;
+        }
+
         return error;
     }
     /**
@@ -90,7 +111,7 @@ class SvWindowErrorPanel extends Object {
             sourceName: this.cleanSourceName(error.filename),
             lineno: error.lineno,
             colno: error.colno,
-            error: error.error
+            error: error // Pass the error object itself, not error.error
         };
     }
 
@@ -170,10 +191,6 @@ class SvWindowErrorPanel extends Object {
      * @category UI
      */
     showPanelWithInfo (errorInfo, errorDefinition = null) {
-        console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
-        if (errorDefinition) {
-            console.log("Using error definition:", errorDefinition.id());
-        }
 
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window

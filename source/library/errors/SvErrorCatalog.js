@@ -74,6 +74,7 @@
         // - registerAuthenticationErrors()
         // - registerConfigurationErrors()
         // - registerFirebaseErrors()
+        // - registerApplicationErrors()
 
         // Call each registration method if it exists
         if (this.registerAuthenticationErrors) {
@@ -86,6 +87,10 @@
 
         if (this.registerFirebaseErrors) {
             this.registerFirebaseErrors();
+        }
+
+        if (this.registerApplicationErrors) {
+            this.registerApplicationErrors();
         }
 
         return this;

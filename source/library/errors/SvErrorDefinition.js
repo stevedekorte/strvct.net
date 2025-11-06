@@ -113,14 +113,44 @@
             return false;
         }
 
-        // Try each pattern
+        // Get stack trace for additional matching
+        const stackTrace = this.extractStackTrace(error);
+        const combinedText = errorMessage + (stackTrace ? "\n" + stackTrace : "");
+
+        // Try each pattern against both message and stack
         for (const pattern of this.patterns()) {
-            if (pattern.test(errorMessage)) {
+            if (pattern.test(combinedText)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @description Extract the stack trace from an error
+     * @param {Error|Object} error - The error object
+     * @returns {String|null} The stack trace or null
+     * @category Utilities
+     */
+    extractStackTrace (error) {
+        if (!error) {
+            return null;
+        }
+
+        if (error.stack) {
+            return error.stack;
+        }
+
+        if (error.error && error.error.stack) {
+            return error.error.stack;
+        }
+
+        if (error.reason && error.reason.stack) {
+            return error.reason.stack;
+        }
+
+        return null;
     }
 
     /**
