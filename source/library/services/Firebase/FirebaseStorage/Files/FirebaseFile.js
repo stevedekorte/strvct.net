@@ -299,6 +299,10 @@
 
     uploadIssues () {
         const issues = [];
+        if (!this.fullPath()) {
+            issues.push("No full path");
+            return issues;
+        }
         if (!this.hasName()) {
             issues.push("No name");
         }
@@ -327,6 +331,10 @@
 
     downloadIssues () {
         const issues = [];
+        if (!this.fullPath()) {
+            issues.push("No full path");
+            return issues;
+        }
         if (!this.canRead()) {
             issues.push("No read permission");
         }
@@ -350,6 +358,10 @@
     deleteIssues () {
         const canWrite = this.canWrite();
         const issues = [];
+        if (!this.fullPath()) {
+            issues.push("No full path");
+            return issues;
+        }
         if (!canWrite) {
             issues.push("No write permission");
         }
@@ -413,6 +425,12 @@
     }
 
     async asyncDoesExist () {
+        if (!this.hasName()) {
+            return false;
+        }
+        if (!this.fullPath()) {
+            return false;
+        }
         const url = await this.asyncRefreshDownloadUrl();
         return url !== null;
     }
@@ -424,6 +442,9 @@
      * @category Helper
      */
     async asyncRefreshDownloadUrl () {
+        if (!this.hasName() || !this.fullPath()) {
+            return;
+        }
         try {
             console.log("asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
@@ -736,6 +757,36 @@
         const url = await this.getDownloadUrl();
         if (url) {
             window.open(url, "_blank");
+        }
+    }
+
+    delete () { // called by slide delete gesture
+        this.asyncDelete();
+    }
+
+    // checking for existence of public url
+
+    publicUrlFromFullPath () {
+        const bucket = SvApp.shared().cloudStorageService().bucketName();
+        const encodedPath = encodeURIComponent(this.fullPath());
+        return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedPath}?alt=media`; // no trailing slash
+    }
+
+    async asyncCheckUrlExists (url) {
+        try {
+            const response = await fetch(url, { method: "HEAD" });
+            if (response.ok) {
+                return true;
+            } else if (response.status === 404) {
+                return false;
+            } else {
+                return undefined;
+            }
+        } catch (error) {
+            if (error) {
+                // noop
+            }
+            return undefined;
         }
     }
 

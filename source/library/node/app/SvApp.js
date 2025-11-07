@@ -394,13 +394,36 @@
     // e.g. if an AI service requests takes a url to a public file, we can use this to upload
     // the file to the cloud and return the url, without tying it to specific cloud services.
 
+    /*
+     couldBlobStore
+     - asyncStoreBlob(blob)
+     - asyncGetBlob(hash)
+     - asyncHasHash(hash)
+     - asyncRemoveHash(hash)
+     - asyncPublicUrlForHash(hash)
+
+     cloudDocStore
+     - asyncAtPathPut(path, json)
+     - asyncAtPath(path)
+     - asyncHasPath(path)
+     - asyncRemoveAtPath(path)
+     - asyncPublicUrlAtPath(path)
+
+     folderAtPath(path) // asyncSet(name, value), asyncGet(name), asyncRemove(name), asyncHas(name)
+    */
+
     cloudStorageService () {
         return FirebaseService.shared().firebaseStorageService();
+    }
+
+    cloudDocStore () {
+        return FirebaseService.shared().firestoreDatabaseService();
     }
 
     async asyncPublicUrlForBlob (blob) {
         return await this.cloudStorageService().asyncPublicUrlForBlob(blob);
     }
+
 
     /*
     async asyncPublicBlobForHash (hash) {

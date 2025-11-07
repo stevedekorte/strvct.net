@@ -66,6 +66,7 @@
         super.finalInit();
         this.initPrototype();
         this.watchForNote("onUpdateAccountLogin");
+        this.rootFolder().setNodeCanAddSubnode(false);
     }
 
     isLoggedIn () {
@@ -116,10 +117,19 @@
         // add public folder under /public/
         const publicFolder = this.rootFolder().subfolderNamedCreateIfAbsent("public");
         await publicFolder.asyncReadSubnodes();
+
+        // add public/blobs folder for content-addressable blob storage
+        // Note: Don't read subnodes - folder may be empty and Firebase Storage doesn't store empty folders
+        const publicBlobsFolder = publicFolder.subfolderNamedCreateIfAbsent("blobs");
+        await publicBlobsFolder.asyncReadSubnodes();
     }
 
     publicFolder () {
         return this.rootFolder().subfolderNamed("public");
+    }
+
+    publicBlobsFolder () {
+        return this.publicFolder().subfolderNamed("blobs");
     }
 
     /**
@@ -349,7 +359,7 @@
             throw new Error("Not logged in");
         }
         const hash = await blob.asyncHexSha256();
-        const file = this.publicFolder().fileNamedCreateIfAbsent(hash);
+        const file = this.publicBlobsFolder().fileNamedCreateIfAbsent(hash);
         const doesExist = await file.asyncDoesExist();
         if (doesExist) {
             return file.downloadUrl();
@@ -369,5 +379,6 @@
         await file.asyncUpload();
         return file.downloadUrl();
     }
+
 
 }.initThisClass());

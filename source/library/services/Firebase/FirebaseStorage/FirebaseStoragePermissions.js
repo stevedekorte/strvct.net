@@ -57,6 +57,7 @@
      * @category Rules
      */
     defaultRules () {
+        // standard rules from storage.rules file
         return [
             {
                 pattern: "",
