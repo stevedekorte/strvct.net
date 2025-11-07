@@ -68,7 +68,7 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setFieldInspectorClassName("SvImageWellField");
         }
 
         // compose promise

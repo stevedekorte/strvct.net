@@ -277,7 +277,7 @@
         //const name = slot.name();
         const field = slot.newInspectorField();
         if (!field) {
-            const className = slot.fieldInspectorViewClassName();
+            const className = slot.fieldInspectorClassName();
             throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.svType() + "'");
         }
 

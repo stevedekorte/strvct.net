@@ -24,7 +24,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setFieldInspectorViewClassName("SvVideoWellField"); // field inspector view class
+            slot.setFieldInspectorClassName("SvVideoWellField"); // field inspector view class
 
         }
 

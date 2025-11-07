@@ -33,7 +33,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setDescription("The image to evaluate");
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setFieldInspectorClassName("SvImageWellField");
         }
 
         /**

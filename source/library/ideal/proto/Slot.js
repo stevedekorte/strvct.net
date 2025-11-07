@@ -77,7 +77,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("isSubnode", null); // in finalInit, add value as subnode if not already present
         this.simpleNewSlot("isSubnodeField", null); // in finalInit, create a field for the slot and add as subnode
         this.simpleNewSlot("isSubnodeFieldVisible", true); // sets isVisible on Field when created
-        this.simpleNewSlot("fieldInspectorViewClassName", null);
+        this.simpleNewSlot("fieldInspectorClassName", null);
 
         this.simpleNewSlot("valueClass", null); // declare the value should be a kind of valueClass
         //this.simpleNewSlot("field", null);
@@ -707,9 +707,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     /**
      * @category Inspector
      */
-    fieldInspectorViewClassName () {
-        if (Type.isString(this._fieldInspectorViewClassName)) {
-            return this._fieldInspectorViewClassName;
+    fieldInspectorClassName () {
+        if (Type.isString(this._fieldInspectorClassName)) {
+            return this._fieldInspectorClassName;
         }
         return this.defaultFieldInspectorClassName();
     }
@@ -735,7 +735,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     newInspectorField () {
         const slotType = this.slotType();
         if (slotType /*&& this.canInspect()*/) {
-            const fieldName = this.fieldInspectorViewClassName();
+            const fieldName = this.fieldInspectorClassName();
             let proto = SvGlobals.globals()[fieldName];
 
             if (!proto) {

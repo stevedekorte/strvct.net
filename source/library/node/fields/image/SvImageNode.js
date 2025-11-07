@@ -79,7 +79,7 @@
             slot.setIsSubnodeField(true);
             slot.setCanInspect(true);
             slot.setCanEditInspection(true);
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setFieldInspectorClassName("SvImageWellField");
             slot.setIsSubnodeField(true);
             slot.setDescription("Data URL of the image");
 

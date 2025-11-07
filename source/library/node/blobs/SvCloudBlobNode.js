@@ -14,8 +14,7 @@
      */
     initPrototypeSlots () {
 
-        // download url (may be private)
-        /*
+        // download url (may be private or public)
         {
             const slot = this.newSlot("downloadUrl", null); // should normally call asyncDownloadUrl() to get it
             slot.setIsInJsonSchema(true);
@@ -26,20 +25,6 @@
             slot.setCanEditInspection(false);
             slot.setIsSubnodeField(true);
             slot.setDescription("Download URL of the blob");
-        }
-        */
-
-        // public url
-        {
-            const slot = this.newSlot("publicUrl", ""); // should normally call asyncPublicUrl() to get it
-            slot.setIsInJsonSchema(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSlotType("String");
-            slot.setSyncsToView(true);
-            slot.setCanInspect(true);
-            slot.setCanEditInspection(true);
-            slot.setIsSubnodeField(true);
-            slot.setDescription("Public URL of the image");
         }
 
         /// push to cloud action
@@ -62,7 +47,7 @@
             slot.setSlotType("String");
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("asyncPullFromCloud");
+            slot.setActionMethodName("asyncPullFromCloudByDownloadUrl");
         }
     }
 
@@ -83,13 +68,14 @@
         return this.blobValue() !== null;
     }
 
+    // --- push to cloud ---
+
     async asyncPushToCloud () {
         const blob = this.blobValue();
         if (!blob) {
             return;
         }
-        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
-        this.setPublicUrl(publicUrl);
+        await SvApp.shared().asyncPublicUrlForBlob(blob);
     }
 
     pushToCloudActionInfo () {
@@ -100,33 +86,29 @@
         };
     }
 
-    async asyncPullFromCloud () {
-        const url = this.publicUrl();
-        if (!url) {
-            throw new Error("No public URL available for pulling blob from cloud storage");
+    // --- public url ---
+
+    publicUrl () {
+        const hash = this.valueHash();
+        if (!hash) {
+            return null;
         }
+        return SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+    }
 
-        const svRequest = new SvRequest();
-        svRequest.setUrl(url);
-        svRequest.setMethod("GET");
-        svRequest.setHeaders({
-            "Accept": "application/octet-stream"
-        });
-        svRequest.setBody(null);
-        svRequest.setResponseType("arraybuffer");
-        svRequest.setResponseHeaders(true);
-        await svRequest.asyncSend();
+    // --- pull from cloud ---
 
-        if (svRequest.hasError()) {
-            throw new Error(`Failed to pull blob from cloud storage: ${svRequest.error().message}`);
-        }
+    async asyncPullFromCloudByHash () {
+        const hash = await this.asyncValueHash();
+        assert(hash, "Hash is required");
+        const blob = await SvApp.shared().asyncBlobForHash(hash);
+        this.setBlobValue(blob);
+    }
 
-        // Get content type from response headers or default to application/octet-stream
-        const contentType = svRequest.responseHeaders().get("content-type") || "application/octet-stream";
-
-        // Create blob with proper MIME type
-        const arrayBuffer = svRequest.response();
-        const blob = new Blob([arrayBuffer], { type: contentType });
+    async asyncPullFromCloudByDownloadUrl () {
+        const downloadUrl = this.downloadUrl();
+        assert(downloadUrl, "Download URL is required");
+        const blob = await SvApp.shared().cloudStorageService().asyncBlobForDownloadUrl(downloadUrl);
         this.setBlobValue(blob);
     }
 

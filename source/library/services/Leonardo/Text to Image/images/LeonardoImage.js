@@ -30,7 +30,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setFieldInspectorViewClassName("SvImageWellField"); // field inspector view class
+            slot.setFieldInspectorClassName("SvImageWellField"); // field inspector view class
         }
 
         /**

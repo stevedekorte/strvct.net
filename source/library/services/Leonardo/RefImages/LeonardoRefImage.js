@@ -86,7 +86,7 @@
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
-            slot.setFieldInspectorViewClassName("SvImageWellField"); // field inspector view class
+            slot.setFieldInspectorClassName("SvImageWellField"); // field inspector view class
         }
 
         /**

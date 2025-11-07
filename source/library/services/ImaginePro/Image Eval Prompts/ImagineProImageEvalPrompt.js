@@ -39,7 +39,7 @@
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setFieldInspectorClassName("SvImageWellField");
             slot.setCanEditInspection(false);
         }
 

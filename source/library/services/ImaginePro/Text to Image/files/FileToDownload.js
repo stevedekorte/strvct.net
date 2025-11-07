@@ -43,7 +43,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setFieldInspectorViewClassName("SvImageWellField"); // This makes it display as an image
+            slot.setFieldInspectorClassName("SvImageWellField"); // This makes it display as an image
         }
 
         // referer slot
