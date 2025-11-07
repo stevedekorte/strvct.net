@@ -70,13 +70,17 @@
      * @category Registration
      */
     registerAllDefinitions () {
-        // Categories add registration methods like:
+        // Framework categories add registration methods like:
         // - registerAuthenticationErrors()
         // - registerConfigurationErrors()
-        // - registerFirebaseErrors()
-        // - registerApplicationErrors()
+        //
+        // Applications can extend the catalog with additional methods via category extensions.
+        // For example, application-level categories might add:
+        // - customizeFrameworkErrors() - to override default error presentation
+        // - registerApplicationErrors() - to add app-specific errors
+        // Any such methods will be called automatically if they exist.
 
-        // Call each registration method if it exists
+        // Call framework registration methods
         if (this.registerAuthenticationErrors) {
             this.registerAuthenticationErrors();
         }
@@ -85,8 +89,9 @@
             this.registerConfigurationErrors();
         }
 
-        if (this.registerFirebaseErrors) {
-            this.registerFirebaseErrors();
+        // Call application-level methods (added by application category extensions)
+        if (this.customizeFrameworkErrors) {
+            this.customizeFrameworkErrors();
         }
 
         if (this.registerApplicationErrors) {
