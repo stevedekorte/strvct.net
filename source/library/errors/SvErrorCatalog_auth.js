@@ -38,7 +38,6 @@
                 /must.*be.*authenticated/i
             ])
             .setActions([
-                { label: "Login", method: "navigateToLogin" },
                 { label: "Dismiss", method: "dismiss" }
             ]);
 
@@ -65,7 +64,6 @@
                 /authentication.*expired/i
             ])
             .setActions([
-                { label: "Login", method: "navigateToLogin" },
                 { label: "Dismiss", method: "dismiss" }
             ]);
 
