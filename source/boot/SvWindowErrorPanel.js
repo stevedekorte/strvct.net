@@ -273,7 +273,7 @@ class SvWindowErrorPanel extends Object {
             let html = "";
             if (errorDefinition && errorDefinition.imageUrl()) {
                 const imageUrl = errorDefinition.imageUrl();
-                html += `<div style='flex-shrink:0;'><img src='${imageUrl}' style='max-height:120px; width:auto; opacity:0.8;' /></div>`;
+                html += `<div style='flex-shrink:0;'><img src='${imageUrl}' style='max-height:120px; width:80px; opacity:0.8;' /></div>`;
             }
 
             // Create text container on the right
