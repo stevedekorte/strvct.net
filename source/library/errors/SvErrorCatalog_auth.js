@@ -13,9 +13,9 @@
      * @category Registration
      */
     registerAuthenticationErrors () {
-        this.registerNotLoggedInError();
         this.registerSessionExpiredError();
         this.registerPermissionDeniedError();
+        this.registerNotLoggedInError();
         return this;
     }
 
