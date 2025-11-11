@@ -596,39 +596,6 @@ class SvWindowErrorPanel extends Object {
     }
 
     /**
-     * @description Test authentication error scenarios
-     * @category Testing
-     */
-    testAuthErrors () {
-        console.log("Testing authentication errors...");
-
-        // Test Not Logged In
-        setTimeout(() => {
-            throw new Error("You are not logged in. Please log in to continue.");
-        }, 500);
-    }
-
-    /**
-     * @description Test session expired error
-     * @category Testing
-     */
-    testSessionExpired () {
-        setTimeout(() => {
-            throw new Error("Your session has expired. Please log in again.");
-        }, 500);
-    }
-
-    /**
-     * @description Test permission denied error
-     * @category Testing
-     */
-    testPermissionDenied () {
-        setTimeout(() => {
-            throw new Error("Permission denied: You do not have access to this resource.");
-        }, 500);
-    }
-
-    /**
      * @description Test generic error (no definition match)
      * @category Testing
      */
@@ -639,53 +606,20 @@ class SvWindowErrorPanel extends Object {
     }
 
     /**
-     * @description Test Firebase Storage error
+     * @description Test various error types from the catalog
      * @category Testing
+     * @note Most test methods have been moved to their respective ErrorCatalog classes.
+     * Use SvErrorCatalog.shared().testMethodName() to trigger specific error types.
      */
-    testFirebaseStorage () {
-        setTimeout(() => {
-            throw new Error("Uncaught TypeError: app.storage is not a function");
-        }, 500);
-    }
+    testCatalogError (categoryName, errorType) {
+        const catalog = SvErrorCatalog.shared();
+        const methodName = `test${errorType}`;
 
-    /**
-     * @description Test storage initialization error
-     * @category Testing
-     */
-    testStorageInit () {
-        setTimeout(() => {
-            throw new Error("IndexedDB failed to initialize: QuotaExceededError");
-        }, 500);
-    }
-
-    /**
-     * @description Test network connectivity error
-     * @category Testing
-     */
-    testNetworkError () {
-        setTimeout(() => {
-            throw new Error("Failed to fetch: net::ERR_NETWORK_CHANGED");
-        }, 500);
-    }
-
-    /**
-     * @description Test resource loading error
-     * @category Testing
-     */
-    testResourceError () {
-        setTimeout(() => {
-            throw new Error("Failed to load resource: 404 Not Found");
-        }, 500);
-    }
-
-    /**
-     * @description Test configuration invalid error
-     * @category Testing
-     */
-    testConfigError () {
-        setTimeout(() => {
-            throw new Error("Invalid configuration: environment not configured");
-        }, 500);
+        if (catalog[methodName]) {
+            catalog[methodName]();
+        } else {
+            console.warn(`Test method '${methodName}' not found in catalog`);
+        }
     }
 
 };

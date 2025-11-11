@@ -126,4 +126,64 @@
         return this;
     }
 
+    // ----------------------------------------
+    // Test Methods
+    // ----------------------------------------
+
+    /**
+     * @description Test the "Storage Initialization Failed" error
+     * @category Testing
+     */
+    testStorageInit () {
+        setTimeout(() => {
+            throw new Error("IndexedDB failed to initialize: QuotaExceededError");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test the "Network Connectivity" error
+     * @category Testing
+     */
+    testNetworkError () {
+        setTimeout(() => {
+            throw new Error("Failed to fetch: net::ERR_NETWORK_CHANGED");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test the "Resource Loading" error
+     * @category Testing
+     */
+    testResourceLoading () {
+        setTimeout(() => {
+            throw new Error("Failed to load resource: Module not found at path /app/missing.js");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test the "Invalid Configuration" error
+     * @category Testing
+     */
+    testInvalidConfiguration () {
+        setTimeout(() => {
+            throw new Error("Invalid configuration: Environment not configured properly");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test all configuration errors in sequence
+     * @category Testing
+     */
+    testAllConfigErrors () {
+        this.testStorageInit();
+        setTimeout(() => this.testNetworkError(), 1000);
+        setTimeout(() => this.testResourceLoading(), 2000);
+        setTimeout(() => this.testInvalidConfiguration(), 3000);
+        return this;
+    }
+
 }.initThisCategory());

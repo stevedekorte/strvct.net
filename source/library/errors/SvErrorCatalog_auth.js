@@ -98,4 +98,52 @@
         return this;
     }
 
+    // ----------------------------------------
+    // Test Methods
+    // ----------------------------------------
+
+    /**
+     * @description Test the "Not Logged In" error
+     * @category Testing
+     */
+    testNotLoggedIn () {
+        setTimeout(() => {
+            throw new Error("User is not logged in. Authentication required.");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test the "Session Expired" error
+     * @category Testing
+     */
+    testSessionExpired () {
+        setTimeout(() => {
+            throw new Error("Your session has expired. Please log in again.");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test the "Permission Denied" error
+     * @category Testing
+     */
+    testPermissionDenied () {
+        setTimeout(() => {
+            throw new Error("Permission denied: You are not authorized to access this resource.");
+        }, 500);
+        return this;
+    }
+
+    /**
+     * @description Test all authentication errors in sequence
+     * @category Testing
+     */
+    testAllAuthErrors () {
+        this.testNotLoggedIn();
+        setTimeout(() => this.testSessionExpired(), 1000);
+        setTimeout(() => this.testPermissionDenied(), 2000);
+        return this;
+    }
+
 }.initThisCategory());
