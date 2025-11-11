@@ -14,10 +14,25 @@
      */
     initPrototypeSlots () {
 
+        // hasInCloud- set to yes if:
+        // - we downloaded it from cloud storage or
+        // - successfully pushed it to cloud storage
+        // NOTE:
+        // - it may be in cloud even if set to false (e.g. uploaded elsewhere)
+        // - it may not be in cloud even if set to true (e.g. deleted elsewhere)
+        {
+            const slot = this.newSlot("hasInCloud", false);
+            slot.setLabel("Has In Cloud");
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setIsSubnodeField(true);
+        }
+
         // download url (may be private or public)
         {
             const slot = this.newSlot("downloadUrl", null); // should normally call asyncDownloadUrl() to get it
-            slot.setIsInJsonSchema(true);
+            slot.setIsInJsonSchema(false);
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
@@ -30,11 +45,10 @@
         /// push to cloud action
         {
             const slot = this.newSlot("pushToCloudAction", null);
-            slot.setIsInJsonSchema(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSlotType("String");
+            slot.setLabel("Push to Cloud");
+            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
-            slot.setCanInspect(true);
+            slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("asyncPushToCloud");
         }
@@ -42,12 +56,12 @@
         /// pull from cloud action
         {
             const slot = this.newSlot("pullFromCloudAction", null);
-            slot.setIsInJsonSchema(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSlotType("String");
+            slot.setLabel("Pull from Cloud");
+            slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
+            slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
-            slot.setActionMethodName("asyncPullFromCloudByDownloadUrl");
+            slot.setActionMethodName("asyncPullFromCloudByHash");
         }
     }
 
@@ -76,6 +90,7 @@
             return;
         }
         await SvApp.shared().asyncPublicUrlForBlob(blob);
+        this.setHasInCloud(true);
     }
 
     pushToCloudActionInfo () {
@@ -88,21 +103,28 @@
 
     // --- public url ---
 
-    publicUrl () {
-        const hash = this.valueHash();
+    async asyncPublicUrl () {
+        const hash = await this.asyncValueHash();
         if (!hash) {
             return null;
         }
-        return SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+        return await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
     }
 
     // --- pull from cloud ---
 
     async asyncPullFromCloudByHash () {
-        const hash = await this.asyncValueHash();
-        assert(hash, "Hash is required");
+        if (this.blobValue()) {
+            return this.blobValue();
+        }
+        const hash = this.valueHash();
+        if (!hash) {
+            return null; // no hash to pull from cloud
+        }
         const blob = await SvApp.shared().asyncBlobForHash(hash);
         this.setBlobValue(blob);
+        this.setHasInCloud(true); // it's now in cloud storage
+        return this.blobValue();
     }
 
     async asyncPullFromCloudByDownloadUrl () {
@@ -110,14 +132,39 @@
         assert(downloadUrl, "Download URL is required");
         const blob = await SvApp.shared().cloudStorageService().asyncBlobForDownloadUrl(downloadUrl);
         this.setBlobValue(blob);
+        this.setHasInCloud(true); // it's now in cloud storage
+        return this.blobValue();
     }
 
     pullFromCloudActionInfo () {
         return {
             title: "Pull from Cloud",
-            isEnabled: this.hasPublicUrl(),
-            subtitle: this.hasPublicUrl() ? null : "No public URL"
+            isEnabled: this.hasValueHash(),
+            subtitle: this.hasValueHash() ? null : "No value hash"
         };
+    }
+
+    async asyncBlobValue () {
+        // return it if we already have it
+        if (this.blobValue()) {
+            return this.blobValue();
+        }
+
+        // we'll need a hash to get it
+        const hash = this.valueHash();
+        if (!hash) {
+            return null;
+        }
+
+        // try to fetch from local blob pool first
+        const blobValue = await super.asyncBlobValue();
+        if (blobValue) {
+            return blobValue;
+        }
+
+        // otherwise pull from cloud storage
+        await this.asyncPullFromCloudByHash();
+        return this.blobValue();
     }
 
 }.initThisClass());

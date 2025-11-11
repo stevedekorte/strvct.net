@@ -253,7 +253,7 @@
     }
 
     async updateDataUrlFromBlob () {
-        const dataUrlString = await this.blob().asyncToDataUrl();
+        const dataUrlString = await this.blob().asyncAsDataUrl();
         const dataUrlObj = SvDataUrl.clone().setDataUrlString(dataUrlString);
         this.setContentType(dataUrlObj.mimeType());
         //this.setContentCategory(dataUrlObj.contentCategory());

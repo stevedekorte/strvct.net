@@ -46,6 +46,18 @@
             slot.setSyncsToView(true);
             slot.setShouldStoreSlot(false); // Don't persist - only hash is stored
             slot.setSlotType("Blob");
+            slot.setIsSubnodeField(false);
+        }
+
+
+        // compute hash action
+        {
+            const slot = this.newSlot("computeValueHashAction", null);
+            slot.setLabel("Compute Hash");
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("asyncValueHash");
             slot.setIsSubnodeField(true);
         }
     }
@@ -105,9 +117,9 @@
     }
 
     async asyncBlobValue () {
-        const currentBlobValue = this.blobValue();
-        if (currentBlobValue) {
-            return currentBlobValue;
+        const blobValue = this.blobValue();
+        if (blobValue) {
+            return blobValue;
         }
 
         // lazy load the blob from the BlobPool
@@ -179,12 +191,25 @@
         return hash;
     }
 
+
     async asyncComputeValueHash () {
+        if (this.valueHash()) {
+            return this.valueHash(); // assume it's already computed (as we null it when the blob value changes)
+        }
+
         const blob = this.blobValue();
         if (blob) {
             return await blob.asyncHexSha256();
         }
         return null;
+    }
+
+    computeValueHashActionInfo () {
+        return {
+            title: "Compute Hash",
+            isEnabled: this.hasBlobValue(),
+            subtitle: this.hasBlobValue() ? null : "No blob value"
+        };
     }
 
     /**
@@ -199,6 +224,21 @@
             parts.push(slotName + ":" + this[slotName]());
         });
         return parts.join(", ");
+    }
+
+    // --- helpers ---
+
+    /**
+     * @description Converts the blob value to a data URL
+     * @returns {Promise<string>} The data URL
+     * @category Conversion
+     */
+    async asyncAsDataUrl () {
+        const blob = await this.asyncBlobValue();
+        if (!blob) {
+            return null;
+        }
+        return await blob.asyncAsDataUrl();
     }
 
 }.initThisClass());

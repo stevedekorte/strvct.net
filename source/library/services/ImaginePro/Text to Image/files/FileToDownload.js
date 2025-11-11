@@ -274,7 +274,7 @@
         const mimeType = request.responseMimeType();
         if (mimeType) {
             console.log(this.logPrefix() + " Response MIME type: " + mimeType);
-            const dataUrl = await arrayBuffer.asyncToDataUrl(mimeType);
+            const dataUrl = await arrayBuffer.asyncAsDataUrl(mimeType);
             this.onLoaded(dataUrl);
         } else {
             this.onError(new Error("No response data received"));

@@ -1,5 +1,6 @@
 [
     "SvBlobNode.js",
-    "SvBlobsNode.js"
+    "SvBlobsNode.js",
+    "SvCloudBlobNode.js"
 ]
 

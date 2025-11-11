@@ -85,7 +85,7 @@
         try {
             const response = await fetch(this.path());
             const blob = await response.blob();
-            const dataUrl = await blob.asyncToDataUrl();
+            const dataUrl = await blob.asyncAsDataUrl();
             this.setDataURL(dataUrl);
         } catch (error) {
             this.setError(error);

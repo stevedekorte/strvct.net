@@ -111,5 +111,25 @@
         return "";
     }
 
-}).initThisClass();
+    async asyncDataUrl () {
+        const value = await this.asyncValue();
+        if (!value) {
+            return null;
+        }
 
+        if (value instanceof String) {
+            return value;
+        }
+
+        if (value.asyncDataUrl) {
+            debugger;
+            return await value.asyncDataUrl();
+        }
+        return null;
+    }
+
+    async asyncThumbnailUrl () {
+        return await this.asyncDataUrl();
+    }
+
+}).initThisClass();

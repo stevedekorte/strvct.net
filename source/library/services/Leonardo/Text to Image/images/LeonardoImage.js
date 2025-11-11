@@ -302,7 +302,7 @@
             }
 
             const blob = await response.blob();
-            const dataUrl = await blob.asyncToDataUrl();
+            const dataUrl = await blob.asyncAsDataUrl();
             this.onLoaded(dataUrl);
         } catch (error) {
             this.onError(error);

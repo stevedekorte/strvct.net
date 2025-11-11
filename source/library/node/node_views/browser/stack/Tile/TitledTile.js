@@ -222,6 +222,8 @@
             this.subtitleView().setIsDisplayHidden(!this.hasSubtitle());
 
             if (node) {
+                this.asyncUpdateThumbnailView(); // no await
+                /*
                 const imageUrl = node.nodeThumbnailUrl();
                 if (imageUrl) {
                     this.setupThumbnailViewIfAbsent();
@@ -233,6 +235,7 @@
                     this.hideNoteView();
                     this.hideNoteIconView();
                 }
+                */
             } else {
                 if (node.noteIconName() && !node.noteIsSubnodeCount()) {
                     this.hideNoteView();
@@ -258,6 +261,25 @@
         }
         */
 
+        return this;
+    }
+
+    async asyncUpdateThumbnailView () {
+        const node = this.node();
+        if (!node || !node.asyncNodeThumbnailUrl) {
+            return this;
+        }
+        const imageUrl = await node.asyncNodeThumbnailUrl();
+        if (imageUrl) {
+            this.setupThumbnailViewIfAbsent();
+            const imageView = this.thumbnailView().subviews().first();
+            if (imageView) {
+                imageView.setFromDataURL(imageUrl);
+            }
+
+            this.hideNoteView();
+            this.hideNoteIconView();
+        }
         return this;
     }
 
