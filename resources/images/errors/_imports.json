@@ -1,0 +1,10 @@
+[
+    "default-error.svg",
+    "auth-lock.svg",
+    "auth-expired.svg",
+    "auth-denied.svg",
+    "config-storage.svg",
+    "config-network.svg",
+    "config-resource.svg",
+    "config-invalid.svg"
+]
