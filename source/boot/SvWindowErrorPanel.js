@@ -50,13 +50,34 @@ class SvWindowErrorPanel extends Object {
     }
 
     errorFromEvent (event) {
-        const message = event.reason ? event.reason : event.message;
-        const error = new Error(message);
-        error.reason = event.reason;
-        error.filename = event.filename;
-        error.lineno = event.lineno;
-        error.colno = event.colno;
-        error.error = event.error;
+        let error;
+
+        // For unhandledrejection events, event.reason is often the actual error
+        if (event.reason && event.reason instanceof Error) {
+            error = event.reason;
+        } else if (event.error instanceof Error) {
+            error = event.error;
+        } else {
+            // For regular error events or when reason is not an Error
+            const message = event.reason ? String(event.reason) : (event.message || "Unknown error");
+            error = new Error(message);
+        }
+
+        // Store additional event properties without modifying the error object
+        if (!error.filename && event.filename) {
+            error.filename = event.filename;
+        }
+        if (!error.lineno && event.lineno) {
+            error.lineno = event.lineno;
+        }
+        if (!error.colno && event.colno) {
+            error.colno = event.colno;
+        }
+        // Don't store reason if it would create a circular reference
+        if (!error.reason && event.reason && event.reason !== error) {
+            error.reason = event.reason;
+        }
+
         return error;
     }
     /**
@@ -90,7 +111,7 @@ class SvWindowErrorPanel extends Object {
             sourceName: this.cleanSourceName(error.filename),
             lineno: error.lineno,
             colno: error.colno,
-            error: error.error
+            error: error // Pass the error object itself, not error.error
         };
     }
 
@@ -128,14 +149,20 @@ class SvWindowErrorPanel extends Object {
                 return this;
             }
 
+            // Try to find a matching error definition
+            let errorDefinition = null;
+            if (SvGlobals.has("SvErrorCatalog")) {
+                errorDefinition = SvErrorCatalog.shared().definitionForError(error);
+            }
+
             // Create visual error notification
-            this.showPanelWithInfo(errorInfo);
+            this.showPanelWithInfo(errorInfo, errorDefinition);
 
             // Log the error
             console.error("JS Error:", errorInfo);
 
             // Send error report to server
-            this.sendErrorReport(errorInfo);
+            this.sendErrorReport(errorInfo, errorDefinition);
             return this;
         } catch (e) {
             console.error("Error in handleWindowError:", e);
@@ -160,12 +187,12 @@ class SvWindowErrorPanel extends Object {
     /**
      * @description Show a visual error notification.
      * @param {Object} errorInfo - The error information object.
+     * @param {SvErrorDefinition} errorDefinition - The matching error definition (if any).
      * @category UI
      */
-    showPanelWithInfo (errorInfo) {
-        console.log("showPanelWithInfo", JSON.stringify(errorInfo, null, 2));
+    showPanelWithInfo (errorInfo, errorDefinition = null) {
 
-        try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HEAR COULD CAUSE AN INFINITE LOOP
+        try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HERE COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window
             const backdropDiv = document.createElement("div");
             {
@@ -199,7 +226,7 @@ class SvWindowErrorPanel extends Object {
                 style.overflow = "hidden";
                 style.border = "1px solid #444";
                 style.transition = "opacity 0.5s ease-out, transform 0.5s ease-out";
-                style.maxWidth = "90%";
+                style.maxWidth = "min(40%, 90vw)"; // 40% on desktop, 90% on mobile
             }
 
             const messageDiv = document.createElement("div");
@@ -207,92 +234,268 @@ class SvWindowErrorPanel extends Object {
                 const style = messageDiv.style;
                 style.fontFamily = "inherit";
                 style.fontSize = "1em";
-                style.textAlign = "center";
                 style.paddingLeft = "2em";
                 style.paddingRight = "2em";
-                style.paddingTop = "1em";
-                style.paddingBottom = "0";
+                style.paddingTop = "1.5em";
+                style.paddingBottom = "1em";
                 style.lineHeight = "1.5em";
-                style.textAlign = "center";
-                style.width = "fit-content";
-                style.height = "fit-content";
+                style.display = "flex";
+                style.alignItems = "flex-start";
+                style.gap = "1.5em";
             }
 
             // Create error message content
-            let errorMessage = errorInfo.message ? errorInfo.message : "";
+            let errorTitle = "Sorry, there was an error.";
+            let errorMessage = "";
 
-            // First, extract only the first sentence (up to the first period)
-            const periodIndex = errorMessage.indexOf(".");
-            if (periodIndex > 0) {
-                errorMessage = errorMessage.substring(0, periodIndex + 1);
+            if (errorDefinition) {
+                // Use friendly error definition
+                errorTitle = errorDefinition.friendlyTitle();
+                errorMessage = errorDefinition.friendlyMessage();
+            } else {
+                // Fall back to simplified error message
+                errorMessage = errorInfo.message ? errorInfo.message : "";
+
+                // First, extract only the first sentence (up to the first period)
+                const periodIndex = errorMessage.indexOf(".");
+                if (periodIndex > 0) {
+                    errorMessage = errorMessage.substring(0, periodIndex + 1);
+                }
+
+                // Then, if the message contains a colon, extract the part after the last colon
+                if (errorMessage.includes(":")) {
+                    const lastColonIndex = errorMessage.lastIndexOf(":");
+                    errorMessage = errorMessage.substring(lastColonIndex + 1).trim();
+                }
             }
 
-            // Then, if the message contains a colon, extract the part after the last colon
-            if (errorMessage.includes(":")) {
-                const lastColonIndex = errorMessage.lastIndexOf(":");
-                errorMessage = errorMessage.substring(lastColonIndex + 1).trim();
-            }
-
-            //errorMessage += "<br>Source: '" + errorInfo.source + "'";
-            //errorMessage += "<br>Line: " + errorInfo.lineno;
-
-            //const errorTitle = parts[0];
-            //const errorMessage = '"' + parts[1] + '"';
-            //const location = `on ${errorSource} line${line}`;
+            // Create image container on the left
             let html = "";
-            html += "<div style='color:white; padding-bottom:0.4em;'>Sorry, there was an error.</div>";
-            //html += `<div style='color:black; font-weight:bold; padding-bottom:0.5em;'>${this.warningSvgIcon()}</div>`;
-            //html += `<div style="color:black">${errorTitle}</div>`;
-            html += `<div style="color:#888; padding-bottom:0.5em;">${errorMessage}</div>`;
-            //html += `<div style="color:#aaa;">${location}</div>`;
+            if (errorDefinition && errorDefinition.imageUrl()) {
+                const imageUrl = errorDefinition.imageUrl();
+                html += `<div style='flex-shrink:0;'><img src='${imageUrl}' style='max-height:120px; width:80px; opacity:0.8;' /></div>`;
+            }
+
+            // Create text container on the right
+            html += "<div style='flex:1;'>";
+            html += `<div style='color:white; font-weight:bold; font-size:1.2em; padding-bottom:0.5em;'>${errorTitle}</div>`;
+            html += `<div style="color:#888;">${errorMessage}</div>`;
+            html += "</div>";
+
             messageDiv.innerHTML = html;
 
-            // Create styled dismiss button as a div
-            const dismissButton = document.createElement("div");
+            // Create collapsible technical details section
+            const detailsContainer = document.createElement("div");
             {
-                const style = dismissButton.style;
+                const style = detailsContainer.style;
+                style.margin = "0 2em 0 2em";
+                style.borderTop = "1px solid #444";
+                style.paddingTop = "0.5em";
+            }
+
+            const detailsHeader = document.createElement("div");
+            {
+                const style = detailsHeader.style;
+                style.display = "flex";
+                style.alignItems = "center";
+                style.gap = "0.5em";
+                style.padding = "0.5em 0";
+            }
+
+            const detailsToggle = document.createElement("div");
+            {
+                const style = detailsToggle.style;
+                style.color = "#aaa";
+                style.cursor = "pointer";
+                style.fontSize = "0.9em";
+                style.userSelect = "none";
+                detailsToggle.textContent = "▸ Details";
+            }
+
+            const detailsContent = document.createElement("div");
+            {
+                const style = detailsContent.style;
+                style.display = "none";
+                style.color = "#999";
+                style.fontSize = "0.7em";
+                style.fontFamily = "monospace";
+                style.backgroundColor = "#1a1a1a";
+                style.padding = "0.5em";
+                style.borderRadius = "4px";
+                style.marginTop = "0.5em";
+                style.maxHeight = "200px";
+                style.overflowY = "auto";
+                style.whiteSpace = "pre-wrap";
+                style.wordBreak = "break-word";
+
+                // Build technical details content
+                let details = "";
+                if (errorInfo.error && errorInfo.error.name) {
+                    details += `Error: ${errorInfo.error.name}\n`;
+                }
+                details += `Message: ${errorInfo.message}\n`;
+                if (errorInfo.source) {
+                    details += `Source: ${errorInfo.sourceName}\n`;
+                }
+                if (errorInfo.lineno) {
+                    details += `Line: ${errorInfo.lineno}:${errorInfo.colno}\n`;
+                }
+
+                // Try to get stack trace from multiple sources
+                let stackTrace = null;
+                if (errorInfo.error && errorInfo.error.stack) {
+                    stackTrace = errorInfo.error.stack;
+                } else if (errorInfo.reason && errorInfo.reason.stack) {
+                    stackTrace = errorInfo.reason.stack;
+                }
+
+                details += `\nStack Trace:\n${stackTrace || "No stack trace available"}`;
+
+                detailsContent.textContent = details;
+            }
+
+            const copyButton = document.createElement("div");
+            {
+                const style = copyButton.style;
+                style.cursor = "pointer";
+                style.width = "28px";
+                style.height = "28px";
+                style.border = "1px solid #444";
+                style.borderRadius = "4px";
+                style.display = "none"; // Hidden until details are expanded
+                style.alignItems = "center";
+                style.justifyContent = "center";
+                style.transition = "all 0.2s ease";
+                style.flexShrink = "0";
+
+                // SVG icon paths
+                const clipboardIconPath = "/strvct/resources/icons/clipboard.svg";
+                const checkmarkIconPath = "/strvct/resources/icons/checkmark.svg";
+
+                // Create clipboard icon img element
+                const clipboardImg = document.createElement("img");
+                clipboardImg.src = clipboardIconPath;
+                clipboardImg.style.width = "16px";
+                clipboardImg.style.height = "16px";
+                clipboardImg.style.display = "block";
+                clipboardImg.style.filter = "invert(48%) sepia(0) saturate(2476%) hue-rotate(0deg) brightness(118%) contrast(119%)";
+                copyButton.appendChild(clipboardImg);
+
+                copyButton.addEventListener("mouseenter", () => {
+                    copyButton.style.backgroundColor = "#333";
+                });
+
+                copyButton.addEventListener("mouseleave", () => {
+                    copyButton.style.backgroundColor = "transparent";
+                });
+
+                copyButton.addEventListener("click", (e) => {
+                    e.stopPropagation(); // Prevent toggling details
+                    navigator.clipboard.writeText(detailsContent.textContent).then(() => {
+                        // Switch to checkmark (keep same grey opacity)
+                        clipboardImg.src = checkmarkIconPath;
+                        setTimeout(() => {
+                            // Switch back to clipboard (opacity stays the same)
+                            clipboardImg.src = clipboardIconPath;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error("Failed to copy:", err);
+                    });
+                });
+            }
+
+            // Toggle handler for expanding/collapsing details
+            let isExpanded = false;
+            detailsToggle.addEventListener("click", () => {
+                isExpanded = !isExpanded;
+                if (isExpanded) {
+                    detailsToggle.textContent = "▾ Details";
+                    detailsContent.style.display = "block";
+                    copyButton.style.display = "flex";
+                } else {
+                    detailsToggle.textContent = "▸ Details";
+                    detailsContent.style.display = "none";
+                    copyButton.style.display = "none";
+                }
+            });
+
+            detailsHeader.appendChild(detailsToggle);
+            detailsHeader.appendChild(copyButton);
+            detailsContainer.appendChild(detailsHeader);
+            detailsContainer.appendChild(detailsContent);
+
+            // Create action buttons container
+            const buttonsContainer = document.createElement("div");
+            {
+                const style = buttonsContainer.style;
+                style.display = "flex";
+                style.gap = "0.5em";
+                style.padding = "1em";
+                style.justifyContent = "center";
+            }
+
+            // Function to create a styled button
+            const createButton = (label, isPrimary, clickHandler) => {
+                const button = document.createElement("div");
+                const style = button.style;
                 style.fontFamily = "inherit";
                 style.textAlign = "center";
                 style.cursor = "pointer";
                 style.transition = "all 0.2s ease";
-                style.width = "100% - 2em";
-                style.backgroundColor = "rgb(25, 25, 25)";
-                style.color = "#aaa";
-                style.border = "none";
-                style.borderRadius = "0";
-                style.padding = "0.5em 1em";
-                style.margin = "1em";
+                style.backgroundColor = isPrimary ? "#444" : "rgb(25, 25, 25)";
+                style.color = isPrimary ? "#fff" : "#aaa";
                 style.border = "1px solid #444";
-                dismissButton.textContent = "Report and Continue";
-            }
+                style.borderRadius = "0";
+                style.padding = "0.5em 1.5em";
+                style.flex = "1";
+                button.textContent = label;
 
-            // Add hover effects
-            dismissButton.addEventListener("mouseenter", () => {
-                dismissButton.style.backgroundColor = "#333";
-            });
+                button.addEventListener("mouseenter", () => {
+                    button.style.backgroundColor = isPrimary ? "#555" : "#333";
+                });
 
-            dismissButton.addEventListener("mouseleave", () => {
-                dismissButton.style.backgroundColor = "transparent";
-            });
+                button.addEventListener("mouseleave", () => {
+                    button.style.backgroundColor = isPrimary ? "#444" : "rgb(25, 25, 25)";
+                });
 
-            // Add click handler
-            dismissButton.addEventListener("click", () => {
-                // Start fade out animation
+                button.addEventListener("click", clickHandler);
+                return button;
+            };
+
+            // Function to dismiss the error panel
+            const dismissPanel = () => {
                 backdropDiv.style.opacity = "0";
                 backdropDiv.style.backdropFilter = "blur(0px)";
                 backdropDiv.style.webkitBackdropFilter = "blur(0px)";
                 errorPanelDiv.style.opacity = "0";
                 errorPanelDiv.style.transform = "scale(0.95)";
 
-                // Remove element after animation completes
                 setTimeout(() => {
                     backdropDiv.remove();
-                }, 500); // Match the 0.5s transition duration
-            });
+                }, 500);
+            };
+
+            // Create action buttons based on error definition or default dismiss
+            if (errorDefinition && errorDefinition.actions() && errorDefinition.actions().length > 0) {
+                // Create buttons from error definition actions
+                for (const action of errorDefinition.actions()) {
+                    const isPrimary = action.method === "navigateToLogin";
+                    const button = createButton(action.label, isPrimary, () => {
+                        dismissPanel();
+                        this.handleAction(action.method);
+                    });
+                    buttonsContainer.appendChild(button);
+                }
+            } else {
+                // Default dismiss button
+                const button = createButton("Dismiss", false, dismissPanel);
+                buttonsContainer.appendChild(button);
+            }
 
             // Assemble the error panel
             errorPanelDiv.appendChild(messageDiv);
-            errorPanelDiv.appendChild(dismissButton);
+            errorPanelDiv.appendChild(detailsContainer);
+            errorPanelDiv.appendChild(buttonsContainer);
 
             // Add error panel to backdrop
             backdropDiv.appendChild(errorPanelDiv);
@@ -308,13 +511,70 @@ class SvWindowErrorPanel extends Object {
     /**
      * @description Send error report to server.
      * @param {Object} errorInfo - The error information object.
+     * @param {SvErrorDefinition} errorDefinition - The matching error definition (if any).
      * @category Error Reporting
      */
-    sendErrorReport (errorInfo) {
+    sendErrorReport (errorInfo, errorDefinition = null) {
         if (SvGlobals.has("SvErrorReport")) {
-            SvErrorReport.asyncSend(new Error(errorInfo.message), errorInfo);
+            // Prepare additional data with user-facing information
+            const additionalData = Object.assign({}, errorInfo);
+
+            // Add user-facing information if we have a definition
+            if (errorDefinition) {
+                additionalData.userFacing = {
+                    definitionId: errorDefinition.id(),
+                    category: errorDefinition.category(),
+                    friendlyTitle: errorDefinition.friendlyTitle(),
+                    friendlyMessage: errorDefinition.friendlyMessage(),
+                    imagePath: errorDefinition.imagePath()
+                };
+            } else {
+                additionalData.userFacing = null;
+            }
+
+            SvErrorReport.asyncSend(new Error(errorInfo.message), additionalData);
         } else {
             console.warn("SvErrorReport not defined yet, so we cannot send error report");
+        }
+    }
+
+    /**
+     * @description Handle error panel action button clicks
+     * @param {String} method - The action method name
+     * @category Actions
+     */
+    handleAction (method) {
+        console.log("Handling action:", method);
+
+        switch (method) {
+            case "navigateToLogin":
+                this.navigateToLogin();
+                break;
+            case "dismiss":
+                // Panel already dismissed, no additional action needed
+                break;
+            default:
+                console.warn("Unknown action method:", method);
+        }
+    }
+
+    /**
+     * @description Navigate to the login page
+     * @category Actions
+     */
+    navigateToLogin () {
+        // Check if we have access to the app's login navigation
+        if (SvGlobals.has("UoApp")) {
+            const app = UoApp.shared();
+            if (app && app.showLogin) {
+                app.showLogin();
+                return;
+            }
+        }
+
+        // Fallback: Try to navigate to /login
+        if (typeof window !== "undefined") {
+            window.location.href = "/login";
         }
     }
 
@@ -333,6 +593,33 @@ class SvWindowErrorPanel extends Object {
         setTimeout(() => {
             throw new Error("SvWindowErrorPanel test error");
         }, 300);
+    }
+
+    /**
+     * @description Test generic error (no definition match)
+     * @category Testing
+     */
+    testGenericError () {
+        setTimeout(() => {
+            throw new Error("Something went wrong with the frob widget.");
+        }, 500);
+    }
+
+    /**
+     * @description Test various error types from the catalog
+     * @category Testing
+     * @note Most test methods have been moved to their respective ErrorCatalog classes.
+     * Use SvErrorCatalog.shared().testMethodName() to trigger specific error types.
+     */
+    testCatalogError (categoryName, errorType) {
+        const catalog = SvErrorCatalog.shared();
+        const methodName = `test${errorType}`;
+
+        if (catalog[methodName]) {
+            catalog[methodName]();
+        } else {
+            console.warn(`Test method '${methodName}' not found in catalog`);
+        }
     }
 
 };

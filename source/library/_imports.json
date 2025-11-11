@@ -1,5 +1,6 @@
 [
     "ideal/_imports.json",
+    "errors/_imports.json",
     "notification/_imports.json",
     "storage/_imports.json",
     "audio/_imports.json",
