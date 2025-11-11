@@ -44,8 +44,18 @@
      * @category Utility
      */
     proxyGetter (methodName, defaultReturnValue = "") {
+        // using logPrefix() here causes a loop reference because it calls title->proxyGetter->title->...
+        console.log("SvPointerField proxyGetter: calling method '" + methodName);
+
         const v = this.value();
-        return v ? v[methodName].apply(v) : defaultReturnValue;
+        console.log("SvPointerField proxyGetter: on value object " + v.svType());
+
+        if (!v) {
+            return defaultReturnValue;
+        }
+        const method = v[methodName];
+        assert(method !== undefined, "SvPointerField proxyGetter: value object " + v.svType() + " missing method '" + methodName + "'");
+        return method.apply(v);
     }
 
     /**

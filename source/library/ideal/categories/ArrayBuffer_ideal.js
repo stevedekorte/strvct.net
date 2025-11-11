@@ -22,11 +22,11 @@
         return await response.arrayBuffer();
     }
 
-    async asyncToDataUrlWithMimeType (mimeType) {
+    async asyncAsDataUrlWithMimeType (mimeType) {
         assert(mimeType, "mimeType is required");
         assert(Type.isString(mimeType), "mimeType must be a string");
         assert(mimeType.length > 0, "mimeType is empty");
-        return await this.asyncToDataUrl(mimeType);
+        return await this.asyncAsDataUrl(mimeType);
     }
 
     /**
@@ -35,9 +35,9 @@
      * @returns {Promise<string>} The data URL
      * @category Conversion
      */
-    async asyncToDataUrl (mimeType = "application/octet-stream") {
+    async asyncAsDataUrl (mimeType = "application/octet-stream") {
         if (typeof Blob === "undefined") {
-            throw new Error("asyncToDataUrl requires Blob API (browser-only)");
+            throw new Error("asyncAsDataUrl requires Blob API (browser-only)");
         }
         const blob = new Blob([this], { type: mimeType });
         return FileReader.promiseReadAsDataURL(blob);

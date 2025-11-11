@@ -439,6 +439,8 @@
 	    return v;
     }
 
+    // --- value methods ---
+
     /**
      * @description Gets the value from the target.
      * @returns {Object} The value.
@@ -472,6 +474,40 @@
 
         return null;
     }
+
+    // --- async value methods ---
+
+    valueMethodIsAsync () {
+        const method = this.valueMethod();
+        return method && Type.isAsyncFunction(method);
+    }
+
+    async asyncValue () {
+        if (this.target()) {
+            if (this.valueMethodIsAsync()) {
+                const newValue = await this.asyncGetValueFromTarget();
+                if (this._value !== newValue) {
+                    this._value = newValue;
+                    //this.didUpdateNodeIfInitialized(); // this can cause sync action loops
+                }
+            } else {
+                return this.getValueFromTarget();
+            }
+        }
+        return this._value;
+    }
+
+    async asyncGetValueFromTarget () {
+        const target = this.target();
+        const slotName = this.valueMethod();
+        if (target[slotName]) {
+            return await target[slotName].apply(target);
+        }
+        return null;
+    }
+
+
+    // --- note methods ---
 
     /**
      * @description Gets the note from the target.

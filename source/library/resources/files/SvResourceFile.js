@@ -300,7 +300,7 @@
         if (mimeCategory === "text") {
             return this.data().asString();
         } else if (mimeCategory === "image") {
-            const dataUrl = await this.data().asyncToDataUrl(mimeType);
+            const dataUrl = await this.data().asyncAsDataUrl(mimeType);
             return new Image().asyncLoadUrl(dataUrl);
         } else if (mimeType === "application/json") {
             return JSON.parse(this.data().asString());
