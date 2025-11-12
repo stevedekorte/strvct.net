@@ -93,7 +93,6 @@
     }
 
     clear () {
-        debugger;
         this.setValueHash(null);
         this.setBlobValue(null);
         return this;

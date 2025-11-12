@@ -127,7 +127,7 @@
         } else if (value.asDataURL) {
             value = value.asDataURL();
         } else {
-            assert(value instanceof String, "value is not a string");
+            assert(typeof value === "string", "value is not a string");
         }
         imageWellView.setImageDataUrl(value);
         return this;
