@@ -546,35 +546,22 @@ class SvWindowErrorPanel extends Object {
     handleAction (method) {
         console.log("Handling action:", method);
 
+        // Try to find the method on the error catalog first
+        if (SvGlobals.has("SvErrorCatalog")) {
+            const catalog = SvErrorCatalog.shared();
+            if (catalog[method] && typeof catalog[method] === "function") {
+                catalog[method]();
+                return;
+            }
+        }
+
+        // Fall back to built-in actions
         switch (method) {
-            case "navigateToLogin":
-                this.navigateToLogin();
-                break;
             case "dismiss":
                 // Panel already dismissed, no additional action needed
                 break;
             default:
                 console.warn("Unknown action method:", method);
-        }
-    }
-
-    /**
-     * @description Navigate to the login page
-     * @category Actions
-     */
-    navigateToLogin () {
-        // Check if we have access to the app's login navigation
-        if (SvGlobals.has("UoApp")) {
-            const app = UoApp.shared();
-            if (app && app.showLogin) {
-                app.showLogin();
-                return;
-            }
-        }
-
-        // Fallback: Try to navigate to /login
-        if (typeof window !== "undefined") {
-            window.location.href = "/login";
         }
     }
 
@@ -627,8 +614,4 @@ class SvWindowErrorPanel extends Object {
 SvGlobals.set("SvWindowErrorPanel", SvWindowErrorPanel);
 
 SvWindowErrorPanel.shared();
-
-//SvWindowErrorPanel.shared(); // Move to app init until this class is extracted from Strvct
-
-//SvWindowErrorPanel.shared().test();
 
