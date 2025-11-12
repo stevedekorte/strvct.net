@@ -40,6 +40,15 @@
         return node;
     }
 
+    asJson () {
+        const json = super.asJson();
+        if (this.valueHash()) {
+            assert(json.valueHash === this.valueHash(), "valueHash mismatch");
+        }
+
+        return json;
+    }
+
     initPrototypeSlots () {
 
         //override title slot to make it a editable subnode field
@@ -136,7 +145,7 @@
     }
 
     nodeThumbnailUrl () {
-        console.log("WARNING: SvImageNode.nodeThumbnailUrl() - need to reimplement caller to use asyncThumbnailUrl()");
+        console.log("WARNING: SvImageNode.nodeThumbnailUrl() - need to reimplement caller to use asyncNodeThumbnailUrl()");
         return null;
     }
 
@@ -148,13 +157,15 @@
         return null;
     }
 
-    async asyncThumbnailUrl () {
-        return await this.asyncDataUrl();
+    onVisibility () {
+        this.logDebug(this.nodePathString() + " onVisibility");
+        // async load resources only needed for to present the view
+        return super.onVisibility();
     }
 
-    async asyncPrepareForAsJson () {
-        await this.asyncValueHash(); // make sure we have a hash if possible
-        return this;
+    async asyncNodeThumbnailUrl () {
+        const url = await this.asyncDataUrl();
+        return url;
     }
 
     finalInit () {
@@ -163,9 +174,8 @@
     }
 
     clear () {
-        this.setDataURL(null);
-        this.setPublicUrl(null);
-        this.setImageObject(null);
+        super.clear();
+        //this.setImageObject(null);
         return this;
     }
 
@@ -221,6 +231,7 @@
         const blob = Blob.fromDataUrl(dataURL);
         this.setValueHash(null);
         this.setBlobValue(blob);
+        this.asyncValueHash(); // compute the hash
         return this;
     }
 

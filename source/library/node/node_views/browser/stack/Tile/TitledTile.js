@@ -147,6 +147,8 @@
 
         this.updateSubviews();
         this.setIsSelectable(true);
+
+        //this.registerForVisibility();
         return this;
     }
 

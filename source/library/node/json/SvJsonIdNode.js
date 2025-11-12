@@ -93,6 +93,7 @@
                 if (sn.descendantWithJsonId) {
                     return sn.descendantWithJsonId(jsonId, newPath);
                 } else {
+                    debugger;
                     console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
 
                 }

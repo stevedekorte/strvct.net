@@ -128,7 +128,7 @@
         return null;
     }
 
-    async asyncThumbnailUrl () {
+    async asyncNodeThumbnailUrl () {
         return await this.asyncDataUrl();
     }
 

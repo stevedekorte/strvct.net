@@ -94,6 +94,18 @@
             const slot = this.newSlot("isOpen", false);
             slot.setSlotType("Boolean");
         }
+
+        // activeReadsMap (hash -> promise)
+        {
+            const slot = this.newSlot("activeReadsMap", null);
+            slot.setFinalInitProto(Map);
+        }
+
+        // activeWritesMap (hash -> promise)
+        {
+            const slot = this.newSlot("activeWritesMap", null);
+            slot.setFinalInitProto(Map);
+        }
     }
 
     /**
@@ -209,35 +221,54 @@
         // Compute hash (used directly as storage key)
         const hash = await arrayBuffer.asyncHexSha256();
 
-        this.logDebug(() => `Storing blob with hash ${hash.substring(0, 8)}... (${arrayBuffer.byteLength} bytes)`);
-
-        // Check if already stored (deduplication)
-        if (await this.idb().promiseHasKey(hash)) {
-            this.logDebug(() => `Blob ${hash.substring(0, 8)}... already exists (deduplicated)`);
-            // Cache the blob for future access
-            this.activeBlobs().set(hash, blob);
-            return hash;
+        if (this.activeReadsMap().has(hash)) {
+            await this.activeReadsMap().get(hash);
         }
 
-        // Create metadata
-        const metadata = {
-            contentType: blob.type || "application/octet-stream",
-            size: arrayBuffer.byteLength,
-            timeCreated: new Date().toISOString(),
-            customMetadata: customMetadata
-        };
+        if (this.activeWritesMap().has(hash)) {
+            return await this.activeWritesMap().get(hash);
+        }
 
-        // Store ArrayBuffer at hash key
-        await this.idb().promiseAtPut(hash, arrayBuffer);
+        const writePromise = Promise.clone();
+        this.activeWritesMap().set(hash, writePromise);
 
-        // Store metadata at hash:meta key (as JSON string)
-        const metaKey = this.metadataKeyForHash(hash);
-        await this.idb().promiseAtPut(metaKey, JSON.stringify(metadata));
+        try {
+            this.logDebug(() => `Storing blob with hash ${hash.substring(0, 8)}... (${arrayBuffer.byteLength} bytes)`);
 
-        // Cache the blob for future access
-        this.activeBlobs().set(hash, blob);
+            // Check if already stored (deduplication)
+            if (await this.idb().promiseHasKey(hash)) {
+                this.logDebug(() => `Blob ${hash.substring(0, 8)}... already exists (deduplicated)`);
+                // Cache the blob for future access
+                this.activeBlobs().set(hash, blob);
+                return hash;
+            }
 
-        this.logDebug(() => `Blob ${hash.substring(0, 8)}... stored successfully with metadata`);
+            // Create metadata
+            const metadata = {
+                contentType: blob.type || "application/octet-stream",
+                size: arrayBuffer.byteLength,
+                timeCreated: new Date().toISOString(),
+                customMetadata: customMetadata
+            };
+
+            // Store ArrayBuffer at hash key
+            await this.idb().promiseAtPut(hash, arrayBuffer);
+
+            // Store metadata at hash:meta key (as JSON string)
+            const metaKey = this.metadataKeyForHash(hash);
+            await this.idb().promiseAtPut(metaKey, JSON.stringify(metadata));
+            this.logDebug(() => `Blob ${hash.substring(0, 8)}... stored successfully with metadata`);
+
+            // Cache the blob for future access
+            this.activeBlobs().set(hash, blob);
+            this.activeWritesMap().delete(hash);
+            writePromise.callResolveFunc(hash);
+        } catch (error) {
+            console.error(`Error storing blob ${hash.substring(0, 8)}...: ${error.message}`);
+            this.activeWritesMap().delete(hash);
+            writePromise.callRejectFunc(error);
+            throw error;
+        }
 
         return hash;
     }
@@ -262,40 +293,57 @@
             return cachedBlob;
         }
 
-        // Load ArrayBuffer from database
-        const arrayBuffer = await this.idb().promiseAt(hash);
-
-        if (!arrayBuffer) {
-            this.logDebug(() => `Blob ${hash.substring(0, 8)}... not found`);
-            return null;
+        if (this.activeReadsMap().has(hash)) {
+            return this.activeReadsMap().get(hash);
         }
 
-        // ArrayBuffer should always be an ArrayBuffer in the new format
-        if (!(arrayBuffer instanceof ArrayBuffer)) {
-            this.logDebug(() => `Blob ${hash.substring(0, 8)}... has invalid format (not ArrayBuffer)`);
-            return null;
-        }
+        const readPromise = Promise.clone();
+        this.activeReadsMap().set(hash, readPromise);
 
-        // Try to load metadata
-        let contentType = "application/octet-stream"; // we'll override if we find content type in metadata
-        const metaKey = this.metadataKeyForHash(hash);
-        const metadataJson = await this.idb().promiseAt(metaKey);
+        try {
+            // Load ArrayBuffer from database
+            const arrayBuffer = await this.idb().promiseAt(hash);
 
-        if (metadataJson) {
-            try {
-                const metadata = JSON.parse(metadataJson);
-                contentType = metadata.contentType || contentType;
-                this.logDebug(() => `Blob ${hash.substring(0, 8)}... loaded with metadata (${arrayBuffer.byteLength} bytes, ${contentType})`);
-            } catch (parseError) {
-                this.logDebug(() => `Blob ${hash.substring(0, 8)}... metadata parse error: ${parseError.message}, using defaults`);
+            if (!arrayBuffer) {
+                this.logDebug(() => `Blob ${hash.substring(0, 8)}... not found`);
+                return null;
             }
-        } else {
-            this.logDebug(() => `Blob ${hash.substring(0, 8)}... loaded without metadata (${arrayBuffer.byteLength} bytes)`);
+
+            // ArrayBuffer should always be an ArrayBuffer in the new format
+            if (!(arrayBuffer instanceof ArrayBuffer)) {
+                this.logDebug(() => `Blob ${hash.substring(0, 8)}... has invalid format (not ArrayBuffer)`);
+                return null;
+            }
+
+            // Try to load metadata
+            let contentType = "application/octet-stream"; // we'll override if we find content type in metadata
+            const metaKey = this.metadataKeyForHash(hash);
+            const metadataJson = await this.idb().promiseAt(metaKey);
+
+            if (metadataJson) {
+                try {
+                    const metadata = JSON.parse(metadataJson);
+                    contentType = metadata.contentType || contentType;
+                    this.logDebug(() => `Blob ${hash.substring(0, 8)}... loaded with metadata (${arrayBuffer.byteLength} bytes, ${contentType})`);
+                } catch (parseError) {
+                    this.logDebug(() => `Blob ${hash.substring(0, 8)}... metadata parse error: ${parseError.message}, using defaults`);
+                }
+            } else {
+                this.logDebug(() => `Blob ${hash.substring(0, 8)}... loaded without metadata (${arrayBuffer.byteLength} bytes)`);
+            }
+
+            // Convert ArrayBuffer to Blob and cache it
+            const blob = new Blob([arrayBuffer], { type: contentType });
+            this.activeBlobs().set(hash, blob);
+            this.activeReadsMap().delete(hash);
+            readPromise.callResolveFunc(blob);
+        } catch (error) {
+            console.error(`Error getting blob ${hash.substring(0, 8)}...: ${error.message}`);
+            this.activeReadsMap().delete(hash);
+            readPromise.callRejectFunc(error);
+            throw error;
         }
 
-        // Convert ArrayBuffer to Blob and cache it
-        const blob = new Blob([arrayBuffer], { type: contentType });
-        this.activeBlobs().set(hash, blob);
         return blob;
     }
 

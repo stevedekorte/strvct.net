@@ -47,6 +47,7 @@
      */
     onVisibility () {
         //this.logDebug(".onVisibility()")
+        console.log(this.logPrefix() + " onVisibility");
         const callback = this.onVisibilityCallback();
         if (callback) {
             callback();
@@ -149,7 +150,7 @@
      * @param {IntersectionObserver} observer - The intersection observer.
      * @category Event Handling
      */
-    handleIntersection (entries, observer) {
+    handleIntersection (entries /*, observer*/) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 //  if (entries[0].intersectionRatio <= 0) return;

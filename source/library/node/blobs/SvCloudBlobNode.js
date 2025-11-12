@@ -74,6 +74,13 @@
         this.setCanDelete(true);
     }
 
+    clear () {
+        super.clear();
+        this.setHasInCloud(false);
+        this.setDownloadUrl(null);
+        return this;
+    }
+
     hasPublicUrl () {
         return this.publicUrl() !== "";
     }
@@ -145,26 +152,29 @@
     }
 
     async asyncBlobValue () {
-        // return it if we already have it
-        if (this.blobValue()) {
-            return this.blobValue();
+        const blob = await this.blobValue();
+        if (blob) {
+            return blob;
         }
 
-        // we'll need a hash to get it
+        debugger;
+
         const hash = this.valueHash();
-        if (!hash) {
-            return null;
+        if (hash) {
+            assert(hash.length === 64, "hash length is not 64 excepted for hex sha256");
+
+            const localBlob = await this.asyncReadFromLocalStorage();
+            if (localBlob) {
+                return localBlob;
+            }
+
+            const cloudBlob = await this.asyncPullFromCloudByHash();
+            if (cloudBlob) {
+                return cloudBlob;
+            }
         }
 
-        // try to fetch from local blob pool first
-        const blobValue = await super.asyncBlobValue();
-        if (blobValue) {
-            return blobValue;
-        }
-
-        // otherwise pull from cloud storage
-        await this.asyncPullFromCloudByHash();
-        return this.blobValue();
+        return null;
     }
 
 }.initThisClass());

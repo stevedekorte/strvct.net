@@ -45,10 +45,10 @@
      */
     proxyGetter (methodName, defaultReturnValue = "") {
         // using logPrefix() here causes a loop reference because it calls title->proxyGetter->title->...
-        console.log("SvPointerField proxyGetter: calling method '" + methodName);
+        //console.log("SvPointerField proxyGetter: calling method '" + methodName);
 
         const v = this.value();
-        console.log("SvPointerField proxyGetter: on value object " + v.svType());
+        //console.log("SvPointerField proxyGetter: on value object " + v.svType());
 
         if (!v) {
             return defaultReturnValue;

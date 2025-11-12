@@ -149,10 +149,11 @@
         }
 
         // Compute and cache the hash
-        this._asyncHexSha256Promise = this.asyncToArrayBuffer();
-        const arrayBuffer = await this._asyncHexSha256Promise;
+        this._asyncHexSha256Promise = Promise.clone();
+        const arrayBuffer = await this.asyncToArrayBuffer();
         const hash = await arrayBuffer.asyncHexSha256();
         this._cachedHash = hash;
+        this._asyncHexSha256Promise.callResolveFunc(hash);
         this._asyncHexSha256Promise = null;
         return this._cachedHash;
     }
@@ -178,6 +179,13 @@
             };
             image.src = url;
         });
+    }
+
+    async asyncAsString (encoding = "utf-8") {
+        assert(Type.isString(encoding), "encoding must be a string");
+        assert(encoding.length > 0, "encoding is empty");
+        const arrayBuffer = await this.asyncToArrayBuffer();
+        return new TextDecoder().decode(arrayBuffer);
     }
 
 }.initThisCategory());

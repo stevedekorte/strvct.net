@@ -24,7 +24,7 @@
          */
         {
             const slot = this.newSlot("imageView", null);
-            slot.setSlotType("ImageView");
+            slot.setSlotType("SvImageView");
         }
         /**
          * @member {Boolean} isEditable - Determines if the image well is editable.

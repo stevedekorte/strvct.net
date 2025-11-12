@@ -424,13 +424,10 @@
         return await this.cloudStorageService().asyncPublicUrlForBlob(blob);
     }
 
-
-    /*
-    async asyncPublicBlobForHash (hash) {
-        const arrayBuffer = await this.cloudStorageService().asyncPublicArrayBufferForHash(hash);
+    async asyncBlobForHash (hash) {
+        debugger;
+        const arrayBuffer = await this.cloudStorageService().asyncBlobForHash(hash);
         return arrayBuffer;
     }
-    */
-
 
 }.initThisClass());

@@ -53,6 +53,7 @@
         // compute hash action
         {
             const slot = this.newSlot("computeValueHashAction", null);
+            slot.setIsInJsonSchema(false);
             slot.setLabel("Compute Hash");
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Action");
@@ -60,6 +61,26 @@
             slot.setActionMethodName("asyncValueHash");
             slot.setIsSubnodeField(true);
         }
+
+        {
+            const slot = this.newSlot("asyncReadFromLocalStoragePromise", null);
+            slot.setIsInJsonSchema(false);
+            slot.setLabel("Async Get Blob From Local Storage Promise");
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Promise");
+            slot.setIsSubnodeField(true);
+        }
+
+        {
+            const slot = this.newSlot("asyncWriteToLocalStoragePromise", null);
+            slot.setIsInJsonSchema(false);
+            slot.setLabel("Async Save To Local Storage Promise");
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Promise");
+            slot.setIsSubnodeField(true);
+        }
+
+
     }
 
     /**
@@ -69,6 +90,28 @@
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setCanDelete(true);
+    }
+
+    clear () {
+        debugger;
+        this.setValueHash(null);
+        this.setBlobValue(null);
+        return this;
+    }
+
+    async asyncSetBlobValue (blob) {
+        this.setBlobValue(blob);
+        await this.asyncValueHash(); // compute the hash
+        await this.asyncWriteToLocalStorage();
+        return this;
+    }
+
+    async asyncPrepareForAsJson () {
+        await this.asyncValueHash(); // make sure we have a hash if possible
+        if (this.blobValue()) {
+            assert(this.valueHash() !== null, "blob value hash is null");
+        }
+        return this;
     }
 
     // --- ObjectPool ---
@@ -107,31 +150,84 @@
     }
 
     didUpdateSlotBlobValue (oldBlobValue, newBlobValue) {
-        if (oldBlobValue === null && newBlobValue !== null) {
+        if (newBlobValue !== null) {
             // Clear hash when blob changes - it will be recomputed on next access
-            this.defaultStore().blobPool().asyncStoreBlob(newBlobValue);
-            this.setValueHash(null);
+            this.asyncWriteToLocalStorage();
+
+            //this.setValueHash(null); // need to be careful - we might already have the correct hash
             this.asyncComputeValueHash(); // can't await here
             // NOTE: we might run into race conditions here if the blob is updated before the hash is computed
         }
     }
 
     async asyncBlobValue () {
-        const blobValue = this.blobValue();
-        if (blobValue) {
-            return blobValue;
+        const blob = this.blobValue();
+        if (blob) {
+            return blob;
         }
 
         // lazy load the blob from the BlobPool
         const hash = this.valueHash();
         if (hash) {
+            const localBlob = await this.asyncReadFromLocalStorage();
+            if (localBlob) {
+                return localBlob;
+            }
+        }
+
+        return null;
+    }
+
+
+    // --- read from and write to local storage ---
+
+    async asyncWriteToLocalStorage () {
+        console.log("writing blob to local storage");
+
+        if (this.asyncWriteToLocalStoragePromise()) {
+            return this.asyncWriteToLocalStoragePromise();
+        }
+
+        this.setAsyncWriteToLocalStoragePromise(Promise.clone());
+
+        const blob = this.blobValue();
+        if (blob) {
+            await this.defaultStore().blobPool().asyncStoreBlob(blob);
+            const hash = await this.valueHash();
+            console.log("locally stored blob with hash:", hash);
+            assert(hash !== null, "hash is null");
+
+            const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(hash);
+            assert(blobFromPool !== null, "blob from pool is null");
+        }
+        this.asyncWriteToLocalStoragePromise().callResolveFunc(null);
+        this.setAsyncWriteToLocalStoragePromise(null);
+        return this;
+    }
+
+    async asyncReadFromLocalStorage () {
+        if (this.asyncWriteToLocalStoragePromise()) {
+            await this.asyncWriteToLocalStoragePromise();
+        }
+
+        if (this.asyncReadFromLocalStoragePromise()) {
+            return this.asyncReadFromLocalStoragePromise();
+        }
+
+        this.setAsyncReadFromLocalStoragePromise(Promise.clone());
+
+        const hash = this.valueHash();
+        if (hash) {
             const blob = await this.defaultStore().blobPool().asyncGetBlob(hash);
             if (blob) {
                 this._blobValue = blob; // don't want to trigger saving the blob value
+                this.asyncReadFromLocalStoragePromise().callResolveFunc(blob);
+                this.setAsyncReadFromLocalStoragePromise(null);
                 return blob;
             }
         }
 
+        this.setAsyncReadFromLocalStoragePromise(null);
         return null;
     }
 
@@ -187,6 +283,7 @@
 
         // compute and store the hash
         const hash = await this.asyncComputeValueHash();
+        console.log("computed blob value hash: ", hash);
         this.setValueHash(hash);
         return hash;
     }
