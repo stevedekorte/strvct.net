@@ -157,8 +157,6 @@
             return blob;
         }
 
-        debugger;
-
         const hash = this.valueHash();
         if (hash) {
             assert(hash.length === 64, "hash length is not 64 excepted for hex sha256");

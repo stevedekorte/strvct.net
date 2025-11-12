@@ -337,14 +337,13 @@
             this.activeBlobs().set(hash, blob);
             this.activeReadsMap().delete(hash);
             readPromise.callResolveFunc(blob);
+            return blob;
         } catch (error) {
             console.error(`Error getting blob ${hash.substring(0, 8)}...: ${error.message}`);
             this.activeReadsMap().delete(hash);
             readPromise.callRejectFunc(error);
             throw error;
         }
-
-        return blob;
     }
 
     /**
