@@ -399,7 +399,8 @@
     }
 
     async asyncPublicUrlForHash (hash) {
-        return await this.asyncPublicFileForHash(hash).publicUrlFromPath();
+        const file = await this.asyncPublicFileForHash(hash);
+        return file.publicUrlFromPath();
     }
 
 }.initThisClass());

@@ -82,7 +82,7 @@
     }
 
     hasPublicUrl () {
-        return this.publicUrl() !== "";
+        return this.downloadUrl() !== null;
     }
 
     hasBlobValue () {
@@ -96,8 +96,10 @@
         if (!blob) {
             return;
         }
-        await SvApp.shared().asyncPublicUrlForBlob(blob);
+        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
+        this.setDownloadUrl(publicUrl);
         this.setHasInCloud(true);
+        return publicUrl;
     }
 
     pushToCloudActionInfo () {
@@ -113,9 +115,14 @@
     async asyncPublicUrl () {
         const hash = await this.asyncValueHash();
         if (!hash) {
-            return null;
+            throw new Error(this.logPrefix(), ".asyncPublicUrl(): no hash");
         }
-        return await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+
+        if (this.hasInCloud()) {
+            return await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+        }
+        await this.asyncPushToCloud();
+        return this.downloadUrl();
     }
 
     // --- pull from cloud ---

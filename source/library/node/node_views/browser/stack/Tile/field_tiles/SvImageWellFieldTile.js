@@ -126,6 +126,8 @@
             value = await value.asyncDataUrl();
         } else if (value.asDataURL) {
             value = value.asDataURL();
+        } else if (value instanceof SvImage) {
+            value = value.dataURL();
         } else {
             assert(typeof value === "string", "value is not a string");
         }

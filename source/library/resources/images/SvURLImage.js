@@ -44,6 +44,12 @@
         this.setIsDebugging(false);
     }
 
+    init () {
+        super.init();
+        //debugger;
+        return this;
+    }
+
     /**
      * @description Returns the title of the image, which is the file name of the path.
      * @returns {string} The title of the image.

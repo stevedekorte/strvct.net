@@ -257,9 +257,11 @@
      * @description Duplicates the tile.
      * @returns {Tile} The duplicated tile.
      */
-    duplicate () {
-        const dup = super.duplicate();
-        dup.setNode(this.node().duplicate());
+    duplicate (refs = new Set()) {
+        assert(!refs.has(this), "duplicate: recursive reference detected");
+        refs.add(this);
+        const dup = super.duplicate(refs);
+        dup.setNode(this.node().duplicate(refs));
         return dup;
     }
 

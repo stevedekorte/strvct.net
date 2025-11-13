@@ -33,6 +33,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
+            slot.setDuplicateOp("duplicate");
             /**
              * @member {string} valueHash - The hash value of the blob's data.
              * @category Data
@@ -47,6 +48,7 @@
             slot.setShouldStoreSlot(false); // Don't persist - only hash is stored
             slot.setSlotType("Blob");
             slot.setIsSubnodeField(false);
+            slot.setDuplicateOp("duplicate");
         }
 
 
@@ -335,6 +337,12 @@
             return null;
         }
         return await blob.asyncAsDataUrl();
+    }
+
+    async asyncSetDataURL (dataURL) {
+        const blob = Blob.fromDataUrl(dataURL);
+        await this.asyncSetBlobValue(blob);
+        return this;
     }
 
 }.initThisClass());

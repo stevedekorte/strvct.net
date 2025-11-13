@@ -15,6 +15,10 @@
 
 (class Blob_ideal extends Blob {
 
+    duplicate () {
+        return this; // blobs are immutable, so we can just return the same instance
+    }
+
     /**
      * @static
      * @description Creates a Blob from a data URL string
@@ -25,7 +29,7 @@
     static fromDataUrl (dataUrl) {
         // Validate data URL format
         if (!dataUrl || typeof dataUrl !== "string") {
-            throw new Error("Invalid data URL: must be a string");
+            throw new Error("Invalid data URL: must be a string, not a '" + typeof dataUrl + "'");
         }
         if (!dataUrl.startsWith("data:")) {
             throw new Error("Invalid data URL: must start with 'data:'");

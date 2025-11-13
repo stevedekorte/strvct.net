@@ -66,7 +66,7 @@
      * Creates a shallow copy of the array.
      * @returns {Array_ideal} A shallow copy of the array.
      */
-    duplicate () {
+    duplicate (/*refs = new Set()*/) {
         return this.shallowCopy();
     }
 

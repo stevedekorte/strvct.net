@@ -562,7 +562,13 @@ Midjourney
         this.setNodeCanReorderSubnodes(false);
     }
 
+    setOmniRefImagePublicUrl (publicUrl) {
+        this.omniRefImageNode().setPublicUrl(publicUrl);
+        return this;
+    }
+
     setOmniRefImageUrl (url) {
+        debugger;
         this.omniRefImageNode().setDataURL(url);
         return this;
     }

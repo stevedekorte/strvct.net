@@ -245,15 +245,12 @@
         return this;
     }
 
-    dataURL () {
+    async asyncDataURL () {
         const blob = this.blobValue();
         if (blob) {
-            const value = blob.asyncAsDataUrl(); // returns a string if already loaded
-            if (value instanceof String) {
-                return value;
-            }
+            return await blob.asyncAsDataUrl(); // returns a string if already loaded
         }
-        return null;
+        throw new Error("No blob value to get data URL from");
     }
 
 }.initThisClass());

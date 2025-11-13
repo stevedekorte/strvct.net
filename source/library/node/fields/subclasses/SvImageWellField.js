@@ -132,4 +132,11 @@
         return await this.asyncDataUrl();
     }
 
+    setValue (value) {
+        super.setValue(value);
+        if (value instanceof SvImage) {
+            debugger;
+        }
+    }
+
 }).initThisClass();

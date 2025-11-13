@@ -101,15 +101,17 @@
      * @returns {SvLinkNode} The duplicated node
      * @category Node Operations
      */
-    duplicate () {
-        const obj = super.duplicate();
+    duplicate (refs = new Set()) {
+        assert(!refs.has(this), "duplicate: recursive reference detected");
+        refs.add(this);
+        const dup = super.duplicate(refs);
         if (this.willDuplicateLinkedObject()) {
             const ln = this.linkedNode();
             if (ln) {
-                obj.setLinkedNode(ln.duplicate());
+                dup.setLinkedNode(ln.duplicate(refs));
             }
         }
-        return obj;
+        return dup;
     }
 
     /**

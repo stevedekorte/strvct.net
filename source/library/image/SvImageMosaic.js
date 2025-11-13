@@ -274,10 +274,9 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         }
 
         // Convert canvas to data URL and create SvImageNode
-        const dataURL = canvas.toDataURL("image/png");
+        const dataURL = canvas.toDataURL("image/jpeg");
         const compositeImageNode = this.compositeImageNode();
-        compositeImageNode.setDataURL(dataURL);
-
+        await compositeImageNode.asyncSetDataURL(dataURL);
         return compositeImageNode;
     }
 
@@ -332,8 +331,8 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         return Math.max(...imageObjects.map(img => img.height));
     }
 
-    compositeDataURL () {
-        return this.compositeImageNode().dataURL();
+    async asyncCompositeDataURL () {
+        return this.compositeImageNode().asyncDataURL();
     }
 
 }.initThisClass());
