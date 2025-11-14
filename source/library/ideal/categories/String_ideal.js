@@ -662,6 +662,26 @@
     }
 
     /**
+     * Checks if the string is all lowercase
+     * @returns {boolean} True if the string is all lowercase, false otherwise
+     */
+    isLowerCase () {
+        // use regex to check if all characters are lowercase
+        // ignore non alphabetic characters
+        return !/[A-Z]/.test(this);
+    }
+
+    /**
+     * Checks if the string is all uppercase
+     * @returns {boolean} True if the string is all uppercase, false otherwise
+     */
+    isUpperCase () {
+        // use regex to check if all characters are uppercase
+        // ignore non alphabetic characters
+        return !/[a-z]/.test(this);
+    }
+
+    /**
      * Checks if the string is capitalized
      * @returns {boolean} True if the string is capitalized, false otherwise
      */

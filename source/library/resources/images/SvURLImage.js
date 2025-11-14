@@ -44,6 +44,12 @@
         this.setIsDebugging(false);
     }
 
+    init () {
+        super.init();
+        //debugger;
+        return this;
+    }
+
     /**
      * @description Returns the title of the image, which is the file name of the path.
      * @returns {string} The title of the image.
@@ -85,7 +91,7 @@
         try {
             const response = await fetch(this.path());
             const blob = await response.blob();
-            const dataUrl = await blob.asyncToDataUrl();
+            const dataUrl = await blob.asyncAsDataUrl();
             this.setDataURL(dataUrl);
         } catch (error) {
             this.setError(error);

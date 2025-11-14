@@ -43,7 +43,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setFieldInspectorViewClassName("SvImageWellField"); // This makes it display as an image
+            slot.setFieldInspectorClassName("SvImageWellField"); // This makes it display as an image
         }
 
         // referer slot
@@ -274,7 +274,7 @@
         const mimeType = request.responseMimeType();
         if (mimeType) {
             console.log(this.logPrefix() + " Response MIME type: " + mimeType);
-            const dataUrl = await arrayBuffer.asyncToDataUrl(mimeType);
+            const dataUrl = await arrayBuffer.asyncAsDataUrl(mimeType);
             this.onLoaded(dataUrl);
         } else {
             this.onError(new Error("No response data received"));

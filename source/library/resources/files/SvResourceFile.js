@@ -291,30 +291,42 @@
      */
     async asyncValueFromData () {
         // let's get the mime type from the path extension
-        const ext = this.pathExtension();
-        const mimeType = SvMimeExtensions.shared().mimeTypeForPathExtension(ext);
-        const mimeCategory = SvMimeExtensions.shared().mimeTypeCategoryForPathExtension(ext);
+        const blob = await this.asyncBlobValue();
 
-        await this.promiseData();
+        const mimeType = blob.type;
+        const mimeCategory = SvMimeExtensions.shared().mimeTypeCategoryForMimeType(mimeType);
 
         if (mimeCategory === "text") {
-            return this.data().asString();
+            const string = await blob.asyncAsString();
+            return string;
         } else if (mimeCategory === "image") {
-            const dataUrl = await this.data().asyncToDataUrl(mimeType);
-            return new Image().asyncLoadUrl(dataUrl);
+            const dataUrl = await blob.asyncAsDataUrl();
+            const image = new Image();
+            await image.asyncLoadUrl(dataUrl);
+            return image;
         } else if (mimeType === "application/json") {
-            return JSON.parse(this.data().asString());
+            const string = await blob.asyncAsString();
+            const json = JSON.parse(string);
+            return json;
         } else if (mimeCategory === "video") {
             throw new Error("no support for video files yet");
         } else if (mimeCategory === "audio") {
             const soundResource = SvSoundResource.clone();
-            soundResource.setData(this.data());
+            soundResource.setData(await blob.asyncToArrayBuffer());
             return soundResource.promiseToDecode(); // returns an SvWaSound
         } else if (mimeCategory === "font") {
-            return this.data(); // just return the array buffer
+            return await blob.asyncToArrayBuffer(); // just return the array buffer
         } else  {
             throw new Error("no support for " + mimeType + " files yet");
         }
+    }
+
+    async asyncBlobValue () {
+        // let's get the mime type from the path extension
+        const ext = this.pathExtension();
+        const mimeType = SvMimeExtensions.shared().mimeTypeForPathExtension(ext);
+        const arrayBuffer = await this.promiseData();
+        return new Blob([arrayBuffer], { type: mimeType });
     }
 
 }.initThisClass());

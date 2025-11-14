@@ -393,38 +393,41 @@
     // the service that provide them. The app can override these to route them appropriately.
     // e.g. if an AI service requests takes a url to a public file, we can use this to upload
     // the file to the cloud and return the url, without tying it to specific cloud services.
-    // SvApp.shared().asyncPublicUrlForArrayBuffer(arrayBuffer);
+
+    /*
+     couldBlobStore
+     - asyncStoreBlob(blob)
+     - asyncGetBlob(hash)
+     - asyncHasHash(hash)
+     - asyncRemoveHash(hash)
+     - asyncPublicUrlForHash(hash)
+
+     cloudDocStore
+     - asyncAtPathPut(path, json)
+     - asyncAtPath(path)
+     - asyncHasPath(path)
+     - asyncRemoveAtPath(path)
+     - asyncPublicUrlAtPath(path)
+
+     folderAtPath(path) // asyncSet(name, value), asyncGet(name), asyncRemove(name), asyncHas(name)
+    */
 
     cloudStorageService () {
         return FirebaseService.shared().firebaseStorageService();
     }
 
-    async asyncPublicUrlForImageObject (imageObject) {
-        const arrayBuffer = await imageObject.asyncAsArrayBuffer();
-        const publicUrl = await this.asyncPublicUrlForArrayBuffer(arrayBuffer);
-        return publicUrl;
+    cloudDocStore () {
+        return FirebaseService.shared().firestoreDatabaseService();
     }
 
-    async asyncPublicUrlForArrayBuffer (arrayBuffer) {
-        assert(arrayBuffer, "arrayBuffer is null");
-        assert(arrayBuffer.byteLength > 0, "arrayBuffer is empty");
-        assert(arrayBuffer instanceof ArrayBuffer, "arrayBuffer is not an ArrayBuffer");
-
-        const publicUrl = await this.cloudStorageService().asyncPublicUrlForArrayBuffer(arrayBuffer);
-
-        assert(Type.isString(publicUrl), "publicUrl not a string");
-        assert(publicUrl.length > 0, "publicUrl is empty");
-        assert(publicUrl.startsWith("http://") || publicUrl.startsWith("https://"), "publicUrl is not a valid URL");
-
-        return publicUrl;
+    async asyncPublicUrlForBlob (blob) {
+        return await this.cloudStorageService().asyncPublicUrlForBlob(blob);
     }
 
-    /*
-    async asyncPublicArrayBufferForHash (hash) {
-        const arrayBuffer = await this.cloudStorageService().asyncPublicArrayBufferForHash(hash);
+    async asyncBlobForHash (hash) {
+        debugger;
+        const arrayBuffer = await this.cloudStorageService().asyncBlobForHash(hash);
         return arrayBuffer;
     }
-    */
-
 
 }.initThisClass());

@@ -33,7 +33,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setDescription("The image to evaluate");
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setFieldInspectorClassName("SvImageWellField");
         }
 
         /**
@@ -233,9 +233,17 @@
 
     async asyncPublicUrlForImage () {
         const imageObject = await this.svImage().asImageObject().promiseLoaded();
-        const imageArrayBuffer = await imageObject.asyncAsArrayBuffer();
-        const publicUrl = await SvApp.shared().asyncPublicUrlForArrayBuffer(imageArrayBuffer);
+        const blob = await imageObject.asyncAsBlob();
+        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
         return publicUrl;
+    }
+
+    subnodeIndex () {
+        return this.parentNode().indexOfSubnode(this);
+    }
+
+    onUpdateSlotStatus (oldValue, newValue) {
+        this.shareStatusChange("image " + this.subnodeIndex() + ": " + newValue);
     }
 
     /**

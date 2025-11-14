@@ -111,5 +111,32 @@
         return "";
     }
 
-}).initThisClass();
+    async asyncDataUrl () {
+        const value = await this.asyncValue();
+        if (!value) {
+            return null;
+        }
 
+        if (value instanceof String) {
+            return value;
+        }
+
+        if (value.asyncDataUrl) {
+            debugger;
+            return await value.asyncDataUrl();
+        }
+        return null;
+    }
+
+    async asyncNodeThumbnailUrl () {
+        return await this.asyncDataUrl();
+    }
+
+    setValue (value) {
+        super.setValue(value);
+        if (value instanceof SvImage) {
+            debugger;
+        }
+    }
+
+}).initThisClass();

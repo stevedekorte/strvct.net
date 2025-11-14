@@ -92,12 +92,12 @@
         }
 
         /**
-         * @member {AtomicMap} recordsMap
+         * @member {AtomicMap} kvMap
          * @description the map of records for the object pool
          * @default null
          */
         {
-            const slot = this.newSlot("recordsMap", null);
+            const slot = this.newSlot("kvMap", null);
             slot.setSlotType("AtomicMap");
         }
 
@@ -215,6 +215,13 @@
             slot.setSlotType("Set");
         }
 
+        // blob pool
+        {
+            const slot = this.newSlot("blobPool", null);
+            slot.setSlotType("SvBlobPool");
+            slot.setDescription("Blob pool for storing blobs associated with the object pool");
+        }
+
 
     }
 
@@ -227,12 +234,13 @@
      */
     init () {
         super.init();
-        this.setRecordsMap(ideal.AtomicMap.clone());
+        this.setKvMap(ideal.AtomicMap.clone());
         this.setActiveObjects(new EnumerableWeakMap());
         this.setDirtyObjects(new Map());
         this.setLoadingPids(new Set());
         this.setLastSyncTime(null);
         this.setMarkedSet(null);
+        this.setBlobPool(SvBlobPool.clone());
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"));
         this.setIsDebugging(false);
         return this;
@@ -267,8 +275,8 @@
 
     /*
     open () { // this class can also be used with synchronous AtomicMap
-        this.recordsMap().setName(this.name());
-        this.recordsMap().open();
+        this.kvMap().setName(this.name());
+        this.kvMap().open();
         this.onPoolOpenSuccess();
         return this
     }
@@ -280,13 +288,15 @@
      * @returns {Promise}
      */
     async promiseOpen () {
-        const map = this.recordsMap();
+        const map = this.kvMap();
         if (map.isOpen() && map.name() === this.name()) {
             return this;
         }
         map.setName(this.name());
         try {
             await map.promiseOpen();
+            this.blobPool().setName(this.name() + "/blobs");
+            await this.blobPool().asyncOpen();
             await this.onPoolOpenSuccess();
         } catch (error) {
             this.onPoolOpenFailure(error);
@@ -294,7 +304,7 @@
     }
 
     async promiseClose () {
-        const map = this.recordsMap();
+        const map = this.kvMap();
         if (map.isOpen()) {
             map.close(); // this is synchronous in indexeddb
             //await map.promiseClose();
@@ -336,8 +346,8 @@
         const comment = s ? " " + s + " " : "";
         console.log("---" + comment + "---");
         const max = 40;
-        console.log(this.recordsMap().count() + " records: ");
-        this.recordsMap().forEachKV((k, v) => {
+        console.log(this.kvMap().count() + " records: ");
+        this.kvMap().forEachKV((k, v) => {
             if (v.length > max) {
                 v = v.slice(0, max) + "...";
             }
@@ -353,7 +363,6 @@
      * @returns {Promise}
      */
     async onRecordsDictOpen () {
-
         //this.show("ON OPEN");
         await this.promiseCollect();
         //this.show("AFTER COLLECT");
@@ -366,7 +375,7 @@
      * @returns {Boolean}
      */
     isOpen () {
-        return this.recordsMap().isOpen();
+        return this.kvMap().isOpen();
     }
 
     // --- root ---
@@ -386,7 +395,7 @@
      */
     setRootPid (pid) {
         // private - it's assumed we aren't already in storing-dirty-objects tx
-        const map = this.recordsMap();
+        const map = this.kvMap();
         if (map.at(this.rootKey()) !== pid) {
             map.atPut(this.rootKey(), pid);
             console.log(this.logPrefix() + "---- SET ROOT PID " + pid + " ----");
@@ -401,7 +410,7 @@
      * @returns {String}
      */
     rootPid () {
-        return this.recordsMap().at(this.rootKey());
+        return this.kvMap().at(this.rootKey());
     }
 
     /**
@@ -409,7 +418,7 @@
      * @returns {Boolean}
      */
     hasStoredRoot () {
-        return this.recordsMap().hasKey(this.rootKey());
+        return this.kvMap().hasKey(this.rootKey());
     }
 
     hasValidStoredRoot () {
@@ -456,7 +465,7 @@
             const storedRootPid = this.rootPid();
             const appRootPid = appRootObject.puuid();
 
-            const map = this.recordsMap();
+            const map = this.kvMap();
 
             // Make sure there are no refs to this first
             const refs = this.objectSetReferencingPid(appRootPid);
@@ -506,13 +515,13 @@
     }
 
     /**
-     * @description check if the object pool knows about the object. Does not check if the object is referenced within records, it should be in the recordsMap if it is.
+     * @description check if the object pool knows about the object. Does not check if the object is referenced within records, it should be in the kvMap if it is.
      * @param {Object} obj - the object to check
      * @returns {Boolean}
      */
     knowsObject (obj) { // private
         const puuid = obj.puuid();
-        const foundIt = this.recordsMap().hasKey(puuid) ||
+        const foundIt = this.kvMap().hasKey(puuid) ||
             this.activeObjects().has(puuid) ||
             this.dirtyObjects().has(puuid); // dirty objects check redundant with activeObjects?
         return foundIt;
@@ -529,7 +538,7 @@
     /*
     changeOldPidToNewPid (oldPid, newPid) {
         // flush and change pids on all activeObjects
-        // and pids and pidRefs in recordsMap
+        // and pids and pidRefs in kvMap
         throw new Error("unimplemented");
         return this;
     }
@@ -566,7 +575,7 @@
      * @returns {String}
      */
     asJson () {
-        return this.recordsMap().asJson();
+        return this.kvMap().asJson();
     }
 
     /**
@@ -650,7 +659,7 @@
         this.removeMutationObservations();
         this.setActiveObjects(new EnumerableWeakMap());
         this.setDirtyObjects(new Map());
-        this.recordsMap().close();
+        this.kvMap().close();
         return this;
     }
 
@@ -833,11 +842,11 @@
             //console.log(this.svType() + " --- commitStoreDirtyObjects ---");
 
             //this.logDebug("--- commitStoreDirtyObjects begin ---");
-            await this.recordsMap().promiseBegin();
+            await this.kvMap().promiseBegin();
             const storeCount = this.storeDirtyObjects();
-            await this.recordsMap().promiseCommit();
+            await this.kvMap().promiseCommit();
             this.logDebug("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects");
-            this.logDebug("--- commitStoreDirtyObjects total objects: " + this.recordsMap().count());
+            this.logDebug("--- commitStoreDirtyObjects total objects: " + this.kvMap().count());
 
             //this.show("AFTER commitStoreDirtyObjects");
 
@@ -1021,6 +1030,19 @@
         return this.activeObjects().get(puuid);
     }
 
+    checkValidAsyncPidValue (v) {
+        if (typeof v === "string") {
+            if (v.startsWith("_")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    asyncObjectForPid (puuid) {
+        assert(this.checkValidAsyncPidValue(puuid), "invalid async pid value: " + puuid);
+    }
+
     /**
      * @description get the object for the given pid
      * @param {String} puuid - the pid to get the object for
@@ -1096,7 +1118,7 @@
      * @returns {Set}
      */
     allPidsSet () {
-        const keySet = this.recordsMap().keysSet();
+        const keySet = this.kvMap().keysSet();
         keySet.delete(this.headerKey());
         return keySet;
     }
@@ -1106,24 +1128,22 @@
      * @returns {Array}
      */
     allPids () {
-        const keys = this.recordsMap().keysArray();
+        const keys = this.kvMap().keysArray();
         keys.remove(this.rootKey());
         return keys;
     }
 
-    /**
-     * @description get the active lazy pids
-     * @returns {Set}
-     */
-    activeLazyPids () { // returns a set of pids
+    /*
+    //activeLazyPids () { // returns a set of pids
         const pids = new Set();
         this.activeObjects().forEachKV((pid, obj) => {
             if (obj.lazyPids) {
-                obj.lazyPids(pids);
+                //obj.lazyPids(pids);
             }
         });
         return pids;
     }
+    */
 
     // --- references ---
 
@@ -1179,14 +1199,22 @@
      * @returns {Object}
      */
     refValue (v) {
-
         assert(!Type.isPromise(v));
 
         if (Type.isLiteral(v)) {
+            // literals will be inlined in the record
             return v;
         }
 
-        assert(!v.isClass());
+        if (Type.isBlob(v)) {
+            // indexeddb will handle blob values in records natively, nice!
+            // NOTES:
+            // - idb doesn't deduplicate them
+            // - idb doesn't load the blob value into memory until it's needed (e.g. async method blob.arrayBuffer() called)
+            return v;
+        }
+
+        assert(!v.isClass(), "refValue called on a class: " + v.svType() + " and we can't serialize classes");
 
         if (!v.shouldStore()) {
             console.warn(this.logPrefix() + "WARNING: called refValue on " + v.svType() + " which has shouldStore=false");
@@ -1209,15 +1237,30 @@
      * @returns {Object}
      */
     recordForPid (puuid) { // private
-        if (!this.recordsMap().hasKey(puuid)) {
+        if (!this.kvMap().hasKey(puuid)) {
             return undefined;
         }
-        const jsonString = this.recordsMap().at(puuid);
+        const jsonString = this.kvMap().at(puuid);
         assert(Type.isString(jsonString));
         const aRecord = JSON.parse(jsonString);
         aRecord.id = puuid;
         return aRecord;
     }
+
+    async asyncRecordForPid (puuid) {
+        const data = await this.kvMap().asyncAt(puuid);
+        if (typeof data === "string") {
+            const aRecord = JSON.parse(data);
+            aRecord.id = puuid;
+            return aRecord;
+        } else {
+            const record = {};
+            record.id = puuid;
+            record.payload = data;
+            return record;
+        }
+    }
+
 
     // write an object
 
@@ -1269,7 +1312,7 @@
             // synchronous option for serialization e.g. serializing a Blob
             //throw new Error("no support for asyncRecordForStore yet!");
             const kvPromise = this.kvPromiseForObject(obj);
-            this.recordsMap().appendAsyncWriteKvPromise(kvPromise); // these will be awaited when committing the tx
+            this.kvMap().appendAsyncWriteKvPromise(kvPromise); // these will be awaited when committing the tx
         } else {
             //console.log(this.logPrefix() + "storeObject " + obj.svTypeId());
 
@@ -1288,17 +1331,27 @@
             }
 
 
-            this.recordsMap().set(puuid, jsonString);
+            this.kvMap().set(puuid, jsonString);
+            this.storeBlobsReferencedByObject(obj);
             //this.storeRecord(puuid, record);
         }
         return this;
+    }
+
+    storeBlobsReferencedByObject (obj) {
+        if (obj.referencedBlobsSet) {
+            const blobsSet = obj.referencedBlobsSet();
+            blobsSet.forEach(blob => {
+                this.blobPool().asyncStoreBlob(blob);
+            });
+        }
     }
 
     /*
     storeRecord (puuid, record) {
         const jsonString = JSON.stringify(record);
         this.logDebug(() => "store " + puuid + " <- " + record.type );
-        this.recordsMap().set(puuid, jsonString);
+        this.kvMap().set(puuid, jsonString);
         return this;
     }
     */
@@ -1326,33 +1379,39 @@
         //console.log(this.svType() + " --- promiseCollect ---");
         if (Type.isUndefined(this.rootPid())) {
             console.log(this.logPrefix() + "---- NO ROOT PID FOR COLLECT - clearing! ----");
-            await this.recordsMap().promiseBegin();
-            this.recordsMap().clear();
-            await this.recordsMap().promiseCommit();
+            await this.kvMap().promiseBegin();
+            this.kvMap().clear();
+            await this.kvMap().promiseCommit();
             return 0;
         }
 
         // this is an on-disk collection
         // in-memory objects aren't considered
         // so we make sure they're flushed to the db first
-        await this.recordsMap().promiseBegin();
+        await this.kvMap().promiseBegin();
         this.flushIfNeeded(); // store any dirty objects
 
-        this.logDebug(() => "--- begin collect --- with " + this.recordsMap().count() + " pids");
+        this.logDebug(() => "--- begin collect --- with " + this.kvMap().count() + " pids");
         this.setMarkedSet(new Set());
-        this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept
+        this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept (a special entry whose key is "rootKey" and value is the root pid)
         this.markPid(this.rootPid());
-        this.activeObjects().forEachK(pid => this.markPid(pid));
-        this.activeLazyPids().forEachK(pid => this.markPid(pid));
+
+        /*
+        // if we've already flushed the dirty objects, we don't need to mark the active objects
+        //this.activeObjects().forEachK(pid => this.markPid(pid));  // needed? isn't this an on disk collection?
+        //this.activeLazyPids().forEachK(pid => this.markPid(pid)); // needed? isn't this an on disk collection?
+        */
         const deleteCount = this.sweep();
         this.setMarkedSet(null);
 
         this.logDebug(() => "--- end collect --- collecting " + deleteCount + " pids ---");
         //console.log(this.logPrefix() + "         --- end collect --- collecting " + deleteCount + " pids ---");
 
-        await this.recordsMap().promiseCommit();
+        await this.kvMap().promiseCommit();
+        //await this.asyncCollectBlobs(); // good time to collect blobs while we have all kvRecords in memory
+        this.scheduleMethod("asyncCollectBlobs");
 
-        const remainingCount = this.recordsMap().count();
+        const remainingCount = this.kvMap().count();
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
         return remainingCount;
     }
@@ -1363,12 +1422,11 @@
      * @returns {Boolean}
      */
     markPid (pid) { // private
+        // TODO: rewrite to not use recursion in order to avoid stack depth limit
         //this.logDebug(() => "markPid(" + pid + ")")
         if (!this.markedSet().has(pid)) {
             this.markedSet().add(pid);
             const refPids = this.refSetForPuuid(pid);
-
-            //this.logDebug(() => "markPid " + pid + " w refs " + JSON.stringify(refPids.asArray()));
             refPids.forEach(refPid => this.markPid(refPid));
             return true;
         }
@@ -1418,7 +1476,7 @@
 
     objectSetReferencingPid (pid) {
         const objects = new Set();
-        this.recordsMap().keysSet().forEach(objPid => {
+        this.kvMap().keysSet().forEach(objPid => {
             const obj = this.objectForPid(objPid);
             if (obj.refSetForPuuid(pid).has(objPid)) {
                 objects.add(obj);
@@ -1429,36 +1487,34 @@
 
     // ------------------------
 
+
     /**
      * @description Sweep unmarked pids. Called after marking is complete. Part of garbage collection.
      * @returns {Number} The number of pids swept.
      */
     sweep () {
         const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()); // allPids doesn't contain rootKey
+        const kvMap = this.kvMap();
 
         unmarkedPidSet.forEach(pid => {
-            this.logDebug(() => "--- sweeping --- deletePid(" + pid + ") ");
-            this.recordsMap().removeKey(pid); // this will remove the pid from the recordsMap
+            //this.logDebug(() => "--- sweeping --- deletePid(" + pid + ") ");
+            this.onCollectPid(pid);
+            kvMap.removeKey(pid); // this will remove the pid from the kvMap
         });
 
         return unmarkedPidSet.count();
+    }
 
-        /*
-        // delete all unmarked records
-        let deleteCount = 0;
-        const recordsMap = this.recordsMap();
-        recordsMap.keysArray().forEach(pid => {
-            if (!this.markedSet().has(pid)) {
-                //this.logDebug("--- sweeping --- deletePid(" + pid + ") " + JSON.stringify(recordsMap.at(pid)));
-                this.logDebug(() => "--- sweeping --- deletePid(" + pid + ") ");
-                const count = recordsMap.count();
-                recordsMap.removeKey(pid);
-                assert(recordsMap.count() === count - 1);
-                deleteCount ++;
+    onCollectPid (pid) {
+        // give the class a chance to do something before the pid is collected
+        const record = this.recordForPid(pid);
+        const aClass = this.classForName(record.type);
+        if (aClass && aClass.willCollectRecord) {
+            const collectMethod = aClass.willCollectRecord(record);
+            if (collectMethod) {
+                collectMethod.apply(aClass, [record]);
             }
-        })
-        return deleteCount;
-        */
+        }
     }
 
     /**
@@ -1470,7 +1526,7 @@
         await this.promiseOpen();
         assert(this.isOpen());
         // assert not loading or storing?
-        const map = this.recordsMap();
+        const map = this.kvMap();
         await map.promiseBegin();
         map.forEachK(pid => {
             map.removeKey(pid);
@@ -1483,7 +1539,7 @@
      * @returns {void}
      */
     promiseClear () {
-        return this.recordsMap().promiseClear();
+        return this.kvMap().promiseClear();
     }
 
     // ---------------------------
@@ -1503,7 +1559,7 @@
      * @returns {Number}
      */
     count () {
-        return this.recordsMap().count();
+        return this.kvMap().count();
     }
 
     /**
@@ -1511,7 +1567,7 @@
      * @returns {Number}
      */
     totalBytes () {
-        return this.recordsMap().totalBytes();
+        return this.kvMap().totalBytes();
     }
 
     // ---------------------------
@@ -1564,6 +1620,61 @@
         console.log(this.svType() + " --- self test end --- ");
     }
     */
+
+    // --- blobs ---
+
+    /**
+     * @async
+     * @description collect blobs
+     * @returns {Promise<number>}
+     */
+    async asyncCollectBlobs () {
+        const keySet = this.allBlobHashesSet();
+        const removedCount = await this.blobPool().asyncCollectUnreferencedKeySet(keySet);
+        return removedCount;
+    }
+
+
+    /**
+     * @description get all objects
+     * @returns {Set}
+     */
+    allObjects () {
+        const objects = new Set();
+        const rootKey = this.rootKey();
+        this.kvMap().keysSet().forEach(pid => {
+            if (pid === rootKey) {
+                return;
+            }
+            const obj = this.objectForPid(pid);
+            objects.add(obj);
+        });
+        return objects;
+    }
+
+    /*
+    allRecords () {
+        const records = new Set();
+        this.kvMap().keysSet().forEach(pid => {
+            const record = this.recordForPid(pid);
+            records.add(record);
+        });
+        return records;
+    }
+    */
+
+    allBlobHashesSet () {
+        const hashesSet = new Set();
+        this.allObjects().forEach(obj => {
+            if (obj.referencedBlobHashesSet) {
+                const objBlobHashes = obj.referencedBlobHashesSet();
+                hashesSet.addAll(objBlobHashes);
+            }
+        });
+
+        return hashesSet;
+    }
+
 
 }.initThisClass());
 

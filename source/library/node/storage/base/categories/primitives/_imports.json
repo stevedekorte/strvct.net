@@ -1,7 +1,6 @@
 [
     "Array_store.js",
     "ArrayBuffer_store.js",
-    "Blob_store.js",
     "Date_store.js",
     "Error_store.js",
     "Image_store.js",

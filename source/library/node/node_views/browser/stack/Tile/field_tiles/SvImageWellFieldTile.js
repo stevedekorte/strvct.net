@@ -100,13 +100,7 @@
 
         this.applyStyles(); // normally this would happen in updateSubviews
 
-        // handle image values
-        let value = field.value();
-        if (this.fieldValueIsImage()) {
-            value = value.asDataURL();
-        }
-        this.imageWellView().setImageDataUrl(value);
-
+        // handl other details
         this.imageWellView().setIsEditable(field.valueIsEditable());
 
         // Hide the value view if we're still generating (showing dots in key)
@@ -116,6 +110,28 @@
             this.valueViewContainer().setDisplay("");
         }
 
+        // handle image values
+        this.asyncSyncFromNode(); // no await
+
+        return this;
+    }
+
+    async asyncSyncFromNode () {
+        const imageWellView = this.imageWellView();
+        const field = this.node();
+        let value = field.value();
+        if (value === null || value === undefined) {
+            value = null;
+        } else if (value.asyncDataUrl) {
+            value = await value.asyncDataUrl();
+        } else if (value.asDataURL) {
+            value = value.asDataURL();
+        } else if (value instanceof SvImage) {
+            value = value.dataURL();
+        } else {
+            assert(typeof value === "string", "value is not a string");
+        }
+        imageWellView.setImageDataUrl(value);
         return this;
     }
 

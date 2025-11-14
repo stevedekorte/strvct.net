@@ -27,6 +27,10 @@
  * - Since Blobs are immutable, we can can use the same store reference (pid) for all instances with the same content.
  * - So when we construct Blob pids, let's use a hash of the Blob's content as the pid.
  * - PROBLEM: current code expects synchronous pid creation.
+ *
+ * Tricky issue: PersistentAtomicMap gets fully loaded into memory.
+ * We need a way to asyncLoad lazy slots(?)
+ * If Blobs contain no refs, then we don't need to read them to collect
  */
 
 "use strict";
@@ -58,9 +62,7 @@
     }
 
     async asyncComputePuuid () {
-        const arrayBuffer = await this.asyncToArrayBuffer();
-        const hexSha256 = await arrayBuffer.asyncHexSha256();
-        return hexSha256;
+        return this.asyncHexSha256();
     }
 
     /**

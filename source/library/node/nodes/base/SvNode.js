@@ -383,11 +383,13 @@
      * @description Create a duplicate of this instance.
      * @returns {SvNode} A duplicate of this instance.
      */
-    duplicate () {
+    duplicate (refs = new Set()) {
+        assert(!refs.has(this), "duplicate: recursive reference detected");
+        refs.add(this);
         const dup = super.duplicate();
         if (!this.shouldStore() || this.shouldStoreSubnodes()) {
             dup.copySubnodes(this.subnodes().map(sn => {
-                const item = sn.duplicate();
+                const item = sn.duplicate(refs);
                 return item;
             }));
         }
@@ -631,6 +633,22 @@
         this.addSubnode(link);
         return link;
     }
+
+    addSubnodePointerFieldsFor (nodes) {
+        nodes.forEach(node => {
+            const pointerField = SvPointerField.clone().setValue(node);
+            this.addSubnode(pointerField);
+        });
+        return this;
+    }
+
+    /*
+    addSubnodeCopies (subnodes) {
+        const copies = subnodes.map(subnode => subnode.duplicate());
+        this.addSubnodes(copies);
+        return this;
+    }
+    */
 
     /**
 
@@ -1112,6 +1130,18 @@
     */
 
     // --- parent chain notifications ---
+
+    shareStatusChange (status) {
+        const msg = "onDescendantStatusChange";
+        const o = this.ownerOrParentNode();
+        if (o) {
+            if (o.respondsTo(msg)) {
+                o.perform(msg, [this, status]);
+            } else {
+                o.shareStatusChange(status);
+            }
+        }
+    }
 
     notifyOwners (msg, args = []) {
         // WHY:

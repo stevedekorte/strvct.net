@@ -66,6 +66,7 @@
         super.finalInit();
         this.initPrototype();
         this.watchForNote("onUpdateAccountLogin");
+        this.rootFolder().setNodeCanAddSubnode(false);
     }
 
     isLoggedIn () {
@@ -116,10 +117,19 @@
         // add public folder under /public/
         const publicFolder = this.rootFolder().subfolderNamedCreateIfAbsent("public");
         await publicFolder.asyncReadSubnodes();
+
+        // add public/blobs folder for content-addressable blob storage
+        // Note: Don't read subnodes - folder may be empty and Firebase Storage doesn't store empty folders
+        const publicBlobsFolder = publicFolder.subfolderNamedCreateIfAbsent("blobs");
+        await publicBlobsFolder.asyncReadSubnodes();
     }
 
     publicFolder () {
         return this.rootFolder().subfolderNamed("public");
+    }
+
+    publicBlobsFolder () {
+        return this.publicFolder().subfolderNamed("blobs");
     }
 
     /**
@@ -314,7 +324,7 @@
             console.log(this.logPrefix(), "File fullPath:", file.fullPath());
             console.log(this.logPrefix(), "File parent:", file.parentNode());
             console.log(this.logPrefix(), "userFolder:", this.userFolder().fullPath());
-            file.setDataArrayBufferToString("Hello, world!");
+            file.setBlobToString("Hello, world!");
 
             // test upload
             await file.asyncUpload();
@@ -323,9 +333,9 @@
             console.log(this.logPrefix(), "upload passed");
 
             // test download
-            file.setDataArrayBuffer(null);
+            file.setBlob(null);
             await file.asyncDownload();
-            const string = file.arrayBufferAsString();
+            const string = await file.blobAsString();
             assert(string === "Hello, world!", "String should be 'Hello, world!'");
             console.log(this.logPrefix(), "download passed");
 
@@ -344,29 +354,53 @@
         }
     }
 
-    async asyncPublicUrlForArrayBuffer (arrayBuffer) {
+    // --- getting public files ---
+
+    assertIsLoggedIn () {
         if (!this.isLoggedIn()) {
             throw new Error("Not logged in");
         }
-        const hashString = await arrayBuffer.asyncHexSha256();
-        const file = this.publicFolder().fileNamedCreateIfAbsent(hashString);
-        const doesExist = await file.asyncDoesExist();
+    }
+
+    async asyncPublicFileForHash (hash) {
+        return this.publicBlobsFolder().fileNamedCreateIfAbsent(hash);
+    }
+
+    async asyncPublicFileForBlob (blob) {
+        const hash = await blob.asyncHexSha256();
+        return this.asyncPublicFileForHash(hash);
+    }
+
+    // --- blob -> public url, hash -> public url ---
+
+    async asyncPublicUrlForBlob (blob) {
+        assert(blob.type, "Blob requires a type");
+
+        const file = await this.asyncPublicFileForBlob(blob);
+        const doesExist =  await file.asyncPublicUrlExists();
         if (doesExist) {
-            return file.downloadUrl();
+            // return url if it it already exists
+            return file.publicUrlFromPath();
         }
 
-        // Detect MIME type from the binary data
-        const mimeType = SvMimeTypeDetector.detectFromArrayBuffer(arrayBuffer);
-        if (mimeType) {
-            file.setContentType(mimeType);
-        } else {
-            console.warn(this.logPrefix(), "Could not detect MIME type for file, using application/octet-stream");
-            file.setContentType("application/octet-stream");
-        }
-
-        file.setDataArrayBuffer(arrayBuffer);
+        // Note, the hash is on the bytes, not the blob metadata,
+        // so this blob's metadata may not match that of the blob argument
+        // upload blob and return url
+        file.setBlob(blob);
+        this.assertIsLoggedIn();
         await file.asyncUpload();
         return file.downloadUrl();
+    }
+
+    async asyncBlobForHash (hash) {
+        const file = await this.asyncPublicFileForHash(hash);
+        await file.asyncDownloadIfNeeded();
+        return file.blob();
+    }
+
+    async asyncPublicUrlForHash (hash) {
+        const file = await this.asyncPublicFileForHash(hash);
+        return file.publicUrlFromPath();
     }
 
 }.initThisClass());

@@ -68,6 +68,19 @@
             slot.setActionMethodName("asyncReadSubnodes");
         }
 
+        // delete all subnodes action
+        {
+            const slot = this.newSlot("asyncDeleteAllSubnodesAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Delete All Subnodes");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(false);
+            slot.setCanInspect(true);
+            slot.setActionMethodName("asyncDeleteRecursively");
+        }
+
     }
 
     initPrototype () {
@@ -294,6 +307,7 @@
 
                 console.error(`Error reading subnodes for ${this.fullPath()}:`, error);
                 this.setError(error);
+                debugger;
                 throw error;
             } finally {
                 // Always clear the read promise when done
@@ -390,5 +404,6 @@
             throw error;
         }
     }
+
 
 }.initThisClass());

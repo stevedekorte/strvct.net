@@ -1,7 +1,7 @@
 [
     "SvFieldSetNode.js",
     "SvField.js",
-    "json/_imports.json",
+    "SvJsonNullField.js",
     "image/_imports.json",
     "SvCreatorNode.js",
     "subclasses/_imports.json"

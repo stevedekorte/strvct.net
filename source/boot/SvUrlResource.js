@@ -194,6 +194,7 @@
 
             if (this.path().split("/").includes("deferred")) {
                 console.log(this.logPrefix() + "loading a deferred resource: " + this.path());
+                //debugger;
             }
             //if (data !== undefined) {
             if (hasKey) {
@@ -301,7 +302,7 @@
      * @category Evaluation
      */
     evalDataAsJS () {
-        //console.log(this.logPrefix() + "eval ", this.path())
+        //console.log(this.logPrefix() + "eval ", this.path());
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }

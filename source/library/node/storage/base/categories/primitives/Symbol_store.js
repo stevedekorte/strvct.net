@@ -8,7 +8,7 @@
  */
 (class Symbol_store extends Symbol {
 
-    static instanceFromRecordInStore (aRecord, aStore) {
+    static instanceFromRecordInStore (aRecord /*, aStore*/) {
         const obj = Symbol.for(aRecord.key);
         return obj;
     }
@@ -19,7 +19,7 @@
      * @returns {Object} A record object representing the array for storage.
      * @category Serialization
      */
-    recordForStore (aStore) { // should only be called by Store
+    recordForStore (/*aStore*/) { // should only be called by Store
         const symbolKey = Symbol.keyFor(sym);
         if (symbolKey !== undefined) {
             // Global symbol with a key, can be serialized safely
@@ -43,7 +43,7 @@
      * @returns {Array_store} The current instance.
      * @category Deserialization
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (/*aRecord, aStore*/) {
         return this;
     }
 

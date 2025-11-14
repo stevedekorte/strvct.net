@@ -18,7 +18,7 @@
      * @description Should only be called by Store.
      * @category Initialization
      */
-    static instanceFromRecordInStore (aRecord, aStore) {
+    static instanceFromRecordInStore (aRecord /*, aStore*/) {
         //assert(aRecord.type === "ArrayBuffer")
         const bytes = aRecord.bytes;
         const obj = new ArrayBuffer(bytes.length);
@@ -32,7 +32,7 @@
      * @returns {ArrayBuffer_store} This instance after loading the data.
      * @category Data Loading
      */
-    loadFromRecord (aRecord, aStore) {
+    loadFromRecord (aRecord /*, aStore*/) {
         assert(aRecord.bytes.length === this.length);
         const bytes = aRecord.bytes;
         for (let i = 0; i < bytes.length; i++) {
@@ -61,7 +61,7 @@
      * @description Should only be called by Store.
      * @category Data Storage
      */
-    recordForStore (aStore) {
+    recordForStore (/*aStore*/) {
         return {
             type: "ArrayBuffer", //Type.typeName(this),
             bytes: this.bytes(),

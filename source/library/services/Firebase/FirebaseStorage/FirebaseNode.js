@@ -16,6 +16,16 @@
 
     initPrototypeSlots () {
 
+        // full path (Firebase Storage path string)
+        {
+            const slot = this.newSlot("fullPath", null);
+            slot.setLabel("Full Path");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(false);
+        }
+
         // Node name (file or folder name)
         {
             const slot = this.newSlot("name", null);
@@ -44,6 +54,14 @@
         this.setShouldStoreSubnodes(false);
     }
 
+    didUpdateSlotParentNode (oldValue, newValue) {
+        super.didUpdateSlotParentNode(oldValue, newValue);
+        if (this.parentFolder()) {
+            const fullPath = this.calcFullPathThroughParent();
+            this.setFullPath(fullPath);
+        }
+    }
+
     /**
      * @description Gets the parent folder
      * @returns {FirebaseFolder|null} The parent folder or null if at root
@@ -62,7 +80,7 @@
      * @returns {string} The full path composed from parent folder names
      * @category Hierarchy
      */
-    fullPath () {
+    calcFullPathThroughParent () {
         const segments = [];
         let current = this;
 
@@ -115,6 +133,9 @@
      * @category Permissions
      */
     canRead () {
+        if (!this.fullPath()) {
+            return false;
+        }
         const permissions = this.firebaseStorageService().permissionsForPath(this.fullPath());
         return permissions.canRead;
     }
@@ -126,6 +147,9 @@
      * @category Permissions
      */
     canWrite () {
+        if (!this.fullPath()) {
+            return false;
+        }
         const permissions = this.firebaseStorageService().permissionsForPath(this.fullPath());
         return permissions.canWrite;
     }
@@ -137,6 +161,9 @@
      * @category Permissions
      */
     anyoneCanRead () {
+        if (!this.fullPath()) {
+            return false;
+        }
         const permissions = this.firebaseStorageService().permissionsForPath(this.fullPath());
         return permissions.anyoneCanRead;
     }

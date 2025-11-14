@@ -184,6 +184,18 @@
         return await file.data();
     }
 
+    async asyncBlobForPath (path) {
+        const file = this.rootFolder().resourceAtPath(path);
+        if (!file) {
+            throw new Error("no resource found at path :'" + path + "'");
+        }
+        await file.promiseData();
+        const arrayBuffer = await file.data();
+        const mimeType = file.mimeType();
+        const blob = new Blob([arrayBuffer], { type: mimeType });
+        return blob;
+    }
+
     async asyncValueOfPath (path) {
         // first get the file resource at the path
         const file = SvFileResources.shared().rootFolder().resourceAtPath(path);

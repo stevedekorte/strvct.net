@@ -77,11 +77,11 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("isSubnode", null); // in finalInit, add value as subnode if not already present
         this.simpleNewSlot("isSubnodeField", null); // in finalInit, create a field for the slot and add as subnode
         this.simpleNewSlot("isSubnodeFieldVisible", true); // sets isVisible on Field when created
-        this.simpleNewSlot("fieldInspectorViewClassName", null);
+        this.simpleNewSlot("fieldInspectorClassName", null);
 
         this.simpleNewSlot("valueClass", null); // declare the value should be a kind of valueClass
         //this.simpleNewSlot("field", null);
-        //this.simpleNewSlot("isLazy", false); // should hook getter
+        this.simpleNewSlot("isLazy", false); // should hook getter
         this.simpleNewSlot("isWeak", false); // should hook getter
 
         // debugging
@@ -105,6 +105,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("canEditInspection", true);
         this.simpleNewSlot("label", null); // visible label on inspector
         this.simpleNewSlot("allowsNullValue", false); // used for validation
+        this.simpleNewSlot("allowsUndefinedValue", false); // used for validation
 
         // valid values
         this.simpleNewSlot("validValues", null); // used for options field and validation
@@ -151,6 +152,14 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
             return dict.name;
         }
         return null;
+    }
+
+    setIsLazy (aBool) {
+        this._isLazy = aBool;
+        if (aBool) {
+            this.setAllowsUndefinedValue(true); // we use undefined to indicate that the value is not yet loaded
+        }
+        return this;
     }
 
     /**
@@ -698,9 +707,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     /**
      * @category Inspector
      */
-    fieldInspectorViewClassName () {
-        if (Type.isString(this._fieldInspectorViewClassName)) {
-            return this._fieldInspectorViewClassName;
+    fieldInspectorClassName () {
+        if (Type.isString(this._fieldInspectorClassName)) {
+            return this._fieldInspectorClassName;
         }
         return this.defaultFieldInspectorClassName();
     }
@@ -726,7 +735,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     newInspectorField () {
         const slotType = this.slotType();
         if (slotType /*&& this.canInspect()*/) {
-            const fieldName = this.fieldInspectorViewClassName();
+            const fieldName = this.fieldInspectorClassName();
             let proto = SvGlobals.globals()[fieldName];
 
             if (!proto) {
@@ -1030,6 +1039,19 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         };
     }
 
+    autoLazyGetter () {
+        const slot = this;
+        return async function (arg) {
+            assert(arg === undefined, "getter should not be called with arguments");
+            const pid = this[slot.privateNameLazyPid()];
+            if (pid) {
+                const obj = await this.defaultStore().asyncObjectForPid(pid);
+                return obj;
+            }
+            return undefined;
+        };
+    }
+
     /**
      * @category Value Validation
      * @description Validates a value against the slot's valid items and type.
@@ -1285,22 +1307,23 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return anInstance.lazyRefsMap().get(this.name());
     }
 
+    privateNameLazyPid () {
+        return this.privateName() + "LazyPid"; // privateName begins with _
+    }
+
     /**
      * @category Call Helpers
      */
     copyValueFromInstanceTo (anInstance, otherInstance) {
-        /*
         if (this.isLazy()) {
-            const valueRef = this.onInstanceGetValueRef(anInstance);
-            if (valueRef) {
-                this.onInstanceSetValueRef(otherInstance, valueRef);
-                return this;
-            }
+            const k = this.privateNameLazyPid();
+            otherInstance[k] = anInstance[k];
         }
-        */
 
         const v = this.onInstanceGetValue(anInstance);
-        this.onInstanceSetValue(otherInstance, v);
+        if (v !== undefined) {
+            this.onInstanceSetValue(otherInstance, v);
+        }
         return this;
     }
 
@@ -1451,12 +1474,14 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         */
 
         const initProto = this._initProto;
-        /*
+
+
         if (this.isLazy()) {
-            const obj = initProto.clone();
-            anInstance[this._privateName] = obj;
-        } else */
+            anInstance[this.privateNameLazyPid()] = undefined; // undefined indicates that the value is not yet loaded
+        }
+
         if (initProto) {
+            assert(!this.isLazy(), "isLazy is true for slot '" + this.name() + "' but initProto is set");
             const obj = initProto.clone();
             this.onInstanceSetValue(anInstance, obj);
         } /*

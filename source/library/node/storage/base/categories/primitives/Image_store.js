@@ -19,7 +19,8 @@
      * @category Serialization
      */
     recordForStore (/*aStore*/) { // should only be called by Store
-        debugger;
+        throw new Error("Image_store.recordForStore: not implemented - we use blobs instead of images for storage");
+        /*
         let src = this.src;
         if (this.isLoaded()) {
             src = this.asDataURL();
@@ -31,6 +32,7 @@
         };
 
         return dict;
+        */
     }
 
     /**
@@ -40,8 +42,9 @@
      * @returns {Image_store} The current instance after loading the src.
      * @category Deserialization
      */
-    loadFromRecord (aRecord /*, aStore*/) {
-        debugger;
+    loadFromRecord (/*aRecord, aStore*/) {
+        throw new Error("Image_store.loadFromRecord: not implemented - we use blobs instead of images for storage");
+        /*
         const src = aRecord.src;
         assert(Type.isString(src), "Image_store.loadFromRecord: src is not a string");
         const isDataURL = src.startsWith("data:");
@@ -49,6 +52,7 @@
         this.crossOrigin = "Anonymous";  // Must be before src
         this.src = src;
         return this;
+        */
     }
 
 

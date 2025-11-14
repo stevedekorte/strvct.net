@@ -295,7 +295,7 @@
             const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
             const byteArray = new Uint8Array(byteNumbers);
             const blob = new Blob([byteArray], { type: "image/png" });
-            const dataUrl = await blob.asyncToDataUrl();
+            const dataUrl = await blob.asyncAsDataUrl();
 
             // create the image node and set the data URL
             const image = this.images().add();

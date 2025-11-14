@@ -10,13 +10,14 @@
 * Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
 * implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
 */
-SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
+SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet extends Object {
 
     /**
     * @constructor
     * @category Initialization
     */
     constructor () {
+        super();
         this._refs = new EnumerableWeakMap();
     }
 
@@ -28,7 +29,6 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     assertValidValue (v) {
         if (v === undefined) {
             throw new Error("values cannot be undefined as unref returns undefined after collection");
-            return;
         }
     }
 
@@ -138,7 +138,11 @@ SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet {
     * @category Maintenance
     */
     clearCollected () {
-        this.forEach(v => {}); // forEach will remove any stale weakrefs
+        this.forEach((v) => {
+            if (v) {
+                // noop
+            }
+        }); // forEach will remove any stale weakrefs
     }
 
     /**

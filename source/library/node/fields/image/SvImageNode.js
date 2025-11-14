@@ -6,7 +6,7 @@
  * @extends SvStorableNode
  * @classdesc SvImageNode class for handling image nodes.
  */
-(class SvImageNode extends JsonGroup {
+(class SvImageNode extends SvCloudBlobNode {
 
     static jsonSchemaDescription () {
         return "An image node with a hash and public url for the image";
@@ -40,52 +40,62 @@
         return node;
     }
 
+    asJson () {
+        const json = super.asJson();
+        if (this.valueHash()) {
+            assert(json.valueHash === this.valueHash(), "valueHash mismatch");
+        }
+
+        return json;
+    }
+
     initPrototypeSlots () {
+
+        //override title slot to make it a editable subnode field
         {
-
-            //override title slot to make it a editable subnode field
-            {
-                const slot = this.overrideSlot("title", null);
-                slot.setLabel("Title");
-                slot.setShouldStoreSlot(true);
-                slot.setSlotType("String");
-                slot.setSyncsToView(true);
-                slot.setIsSubnodeField(true);
-                slot.setCanInspect(true);
-                slot.setCanEditInspection(true);
-            }
-
-            // same for subtitle
-            {
-                const slot = this.overrideSlot("subtitle", null);
-                slot.setInspectorPath("");
-                slot.setLabel("Subtitle");
-                slot.setShouldStoreSlot(true);
-                slot.setSlotType("String");
-                slot.setSyncsToView(true);
-                slot.setIsSubnodeField(true);
-                slot.setCanInspect(true);
-                slot.setCanEditInspection(true);
-            }
-
-            /**
-             * @member {String} dataURL - The data URL of the image.
-             * @category Data
-             */
-            const slot = this.newSlot("dataURL", null);
+            const slot = this.overrideSlot("title", null);
+            slot.setLabel("Title");
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
             slot.setCanInspect(true);
             slot.setCanEditInspection(true);
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+        }
+
+        // same for subtitle
+        {
+            const slot = this.overrideSlot("subtitle", null);
+            slot.setInspectorPath("");
+            slot.setLabel("Subtitle");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+        }
+
+        /**
+         * @member {String} dataURL - The data URL of the image.
+         * @category Data
+         */
+        /*       {
+            const slot = this.newSlot("dataURL", null);
+            slot.setShouldStoreSlot(false); // we don't store the data URL. This slot is only used to present the field inspector view
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setIsSubnodeField(true);
+            slot.setCanInspect(true);
+            slot.setCanEditInspection(true);
+            slot.setFieldInspectorClassName("SvImageWellField");
             slot.setIsSubnodeField(true);
             slot.setDescription("Data URL of the image");
 
             //slot.setIsPromiseWrapped(true);
             //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
         }
+            */
 
         // public url
         {
@@ -100,76 +110,23 @@
             slot.setDescription("Public URL of the image");
         }
 
-        // public url promise
-        {
-            const slot = this.newSlot("publicUrlPromise", null); // private
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(false);
-        }
-
         // image object
         {
-            const slot = this.newSlot("imageObject", null); // private
+            const slot = this.newSlot("imageNode", null); // private - hack to get the image node displayed via the image well field
             slot.setShouldStoreSlot(false);
-            slot.setSlotType("Image");
+            slot.setSlotType("SvImageNode");
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
+            slot.setFieldInspectorClassName("SvImageWellField");
 
             //slot.setIsPromiseWrapped(true);
             //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
         }
 
-        // image object promise
-        {
-            const slot = this.newSlot("imageObjectPromise", null); // private
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Promise");
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(false);
-        }
+    }
 
-        // mime type
-        {
-            const slot = this.newSlot("mimeType", null);
-            slot.setIsInJsonSchema(true);
-            slot.setSlotType("String");
-            slot.setSyncsToView(true);
-            slot.setShouldStoreSlot(true);
-            slot.setCanInspect(true);
-            slot.setCanEditInspection(false);
-            slot.setIsSubnodeField(true);
-            slot.setDescription("MIME type of the image");
-        }
-
-        {
-            const slot = this.newSlot("hexSha256Hash", null);
-            slot.setIsInJsonSchema(true);
-            slot.setSlotType("String");
-            slot.setSyncsToView(true);
-            slot.setShouldStoreSlot(true);
-            slot.setCanInspect(true);
-            slot.setCanEditInspection(false);
-            slot.setIsSubnodeField(true);
-            slot.setDescription("Hex encoded SHA-256 hash of the image data");
-
-            slot.setIsPromiseWrapped(true);
-            //slot.setPromiseResetsOnChangeOfSlotName("dataURL"); // calls computeHexSha256Hash()
-        }
-
-        // compute hash action
-
-        {
-            const slot = this.newSlot("asyncComputeHexSha256HashAction", null);
-            slot.setLabel("Compute Hash");
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("Action");
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(true);
-            slot.setIsSubnodeField(true);
-            slot.setActionMethodName("asyncComputeHexSha256Hash");
-        }
+    imageNode () {
+        return this;
     }
 
     /**
@@ -188,39 +145,27 @@
     }
 
     nodeThumbnailUrl () {
-        if (this.dataURL()) {
-            return this.dataURL();
-        }
-        if (this.publicUrl()) {
-            return this.publicUrl();
+        console.log("WARNING: SvImageNode.nodeThumbnailUrl() - need to reimplement caller to use asyncNodeThumbnailUrl()");
+        return null;
+    }
+
+    async asyncDataUrl () {
+        const blob = await this.asyncBlobValue();
+        if (blob) {
+            return await blob.asyncAsDataUrl();
         }
         return null;
     }
 
-    async asyncPrepareForAsJson () {
-        await this.asyncComputeHexSha256Hash();
-        return this;
+    onVisibility () {
+        this.logDebug(this.nodePathString() + " onVisibility");
+        // async load resources only needed for to present the view
+        return super.onVisibility();
     }
 
-    didUpdateSlotDataURL (oldValue, newValue) {
-        if (oldValue && newValue) { // don't clear it if we're unserializing
-            this.setPublicUrl(null);
-            this.setImageObject(null);
-            this.setHexSha256Hash(null);
-            this.asyncComputeHexSha256Hash(); // intentional no await
-        }
-    }
-
-    async asyncComputeHexSha256Hash () {
-        if (this.dataURL() == null) {
-            return this;
-        }
-        const dataUrlObj = SvDataUrl.clone().setDataUrlString(this.dataURL());
-        this.setMimeType(dataUrlObj.mimeType());
-        const decodedArrayBuffer = dataUrlObj.decodedArrayBuffer();
-        const hash = await decodedArrayBuffer.asyncHexSha256();
-        this.setHexSha256Hash(hash); // unneeded if we're using the promise wrapped slot
-        return hash;
+    async asyncNodeThumbnailUrl () {
+        const url = await this.asyncDataUrl();
+        return url;
     }
 
     finalInit () {
@@ -229,9 +174,8 @@
     }
 
     clear () {
-        this.setDataURL(null);
-        this.setPublicUrl(null);
-        this.setImageObject(null);
+        super.clear();
+        //this.setImageObject(null);
         return this;
     }
 
@@ -257,92 +201,56 @@
     }
 
     value () {
+        debugger;
         return this.dataURL();
+        //return this.blobValue().asyncAsImageObject();
     }
 
-    setValue (value) {
-        this.setDataURL(value);
+    setValue (/*value*/) {
+        debugger;
+        //this.setDataURL(value);
         return this;
     }
 
     hasImage () {
-        return this.dataURL() !== null || this.publicUrl() !== null;
+        return this.valueHash() !== null; // we either have the blob or can get it from the blob pool with the hash
     }
 
     async asyncImageObject () {
-        if (this.imageObject()) {
-            return this.imageObject();
+        const blob = await this.asyncBlobValue();
+        if (!blob) {
+            return null;
         }
-
-        const promise = Promise.clone();
-        this.setImageObjectPromise(promise);
-
-        try {
-            const image = new Image();
-            image.src = this.dataURL();
-            image.onload = () => {
-                this.setImageObject(image);
-                promise.callResolveFunc(image);
-            };
-            image.onerror = (error) => {
-                promise.callRejectFunc(error);
-                throw error;
-            };
-            return image;
-        } catch (error) {
-            promise.callRejectFunc(error);
-            throw error;
-        }
+        return await blob.asyncAsImageObject();
     }
 
-    async asyncPublicUrl () {
-        if (this.dataUrlIsPublic()) {
-            return this.dataURL();
-        }
-
-        // use it if we already have it
-        if (this.publicUrl()) {
-            return this.publicUrl();
-        }
-
-        // so we don't do more requests while we're waiting for the first one
-        if (this.publicUrlPromise()) {
-            return this.publicUrlPromise();
-        }
-
-        const promise = Promise.clone();
-        this.setPublicUrlPromise(promise);
-
-        try {
-            const imageObject = await this.asyncImageObject();
-            const publicUrl = await SvApp.shared().asyncPublicUrlForImageObject(imageObject);
-            this.setPublicUrl(publicUrl);
-            promise.callResolveFunc(publicUrl);
-            return publicUrl;
-        } catch (error) {
-            promise.callRejectFunc(error);
-            throw error;
-        }
-    }
-
-    /*
-    setDataURL (dataURL) {
+    setBlobFromDataURL (dataURL) {
         if (dataURL && dataURL.startsWith("http")) {
             throw new Error("setDataURL: dataURL is public");
         }
-        this._dataURL = dataURL;
+        const blob = Blob.fromDataUrl(dataURL);
+        this.setValueHash(null);
+        this.setBlobValue(blob);
+        this.asyncValueHash(); // compute the hash
         return this;
     }
-    */
 
-    dataUrlIsPublic () {
-        return this.dataURL() !== null && this.dataURL().startsWith("http");
+    setDataURL (/*dataURL*/) {
+        debugger;
+        /*
+        const blob = Blob.fromDataUrl(dataURL);
+        this.setValueHash(null);
+        this.setBlobValue(blob);
+        */
+        return this;
     }
 
-
-    asDataURL () {
-        return this.dataURL();
+    async asyncDataURL () {
+        const blob = this.blobValue();
+        if (blob) {
+            return await blob.asyncAsDataUrl(); // returns a string if already loaded
+        }
+        throw new Error("No blob value to get data URL from");
     }
-
 
 }.initThisClass());

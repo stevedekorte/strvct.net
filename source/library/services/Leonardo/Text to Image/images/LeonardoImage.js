@@ -30,7 +30,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setCanEditInspection(false);
-            slot.setFieldInspectorViewClassName("SvImageWellField"); // field inspector view class
+            slot.setFieldInspectorClassName("SvImageWellField"); // field inspector view class
         }
 
         /**
@@ -302,7 +302,7 @@
             }
 
             const blob = await response.blob();
-            const dataUrl = await blob.asyncToDataUrl();
+            const dataUrl = await blob.asyncAsDataUrl();
             this.onLoaded(dataUrl);
         } catch (error) {
             this.onError(error);

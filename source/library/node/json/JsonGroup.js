@@ -300,7 +300,7 @@
     }
 
     async asyncPrepareForAsJson () {
-        const values = this.jsonReferencedValueSet().values();
+        const values = this.jsonReferencedValueSet().valuesArray();
         await values.promiseParallelForEach(async value => {
             if (value && value.asyncPrepareForAsJson && value !== this) {
                 await value.asyncPrepareForAsJson();
@@ -310,7 +310,7 @@
     }
 
     calcJson () {
-    // we want to limit to just the slots that are json archivable
+        // we want to limit to just the slots that are json archivable
 
         const dict = {};
 

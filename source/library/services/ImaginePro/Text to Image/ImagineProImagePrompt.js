@@ -562,7 +562,13 @@ Midjourney
         this.setNodeCanReorderSubnodes(false);
     }
 
+    setOmniRefImagePublicUrl (publicUrl) {
+        this.omniRefImageNode().setPublicUrl(publicUrl);
+        return this;
+    }
+
     setOmniRefImageUrl (url) {
+        debugger;
         this.omniRefImageNode().setDataURL(url);
         return this;
     }
@@ -923,6 +929,11 @@ Midjourney
         this.shutdown();
         this.generations().removeAllSubnodes();
         //this.svImages().removeAllSubnodes();
+    }
+
+    didUpdateSlotStatus (oldValue, newValue) {
+        //debugger;
+        this.shareStatusChange(newValue);
     }
 
 }.initThisClass());

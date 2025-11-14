@@ -80,7 +80,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setIsSubnodeField(true);
-            slot.setFieldInspectorViewClassName("SvImageWellField");
+            slot.setFieldInspectorClassName("SvImageWellField");
         }
 
         /**

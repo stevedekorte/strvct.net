@@ -36,11 +36,21 @@ require("./Base.js");
 
     mimeTypeCategoryForPathExtension (ext) {
         const mimeType = this.mimeTypeForPathExtension(ext);
-        const parts = mimeType.split("/");
-        if (parts.length > 0) {
-            return parts[0];
-        }
-        throw new Error("no mime type category found for path extension: " + ext);
+        return this.mimeTypeCategoryForMimeType(mimeType);
+    }
+
+    pathExtensionsForMimeType (mimeType) {
+        const allExtensions = Object.keys(this._fileExtensionToMimeTypeDict);
+        const matchingExtensions = allExtensions.filter(ext => {
+            return mimeType === this._fileExtensionToMimeTypeDict[ext];
+        });
+        return matchingExtensions.map(ext => ext.slice(1));
+    }
+
+    mimeTypeCategoryForMimeType (mimeType) {
+        assert(Type.isString(mimeType), "mimeType must be a string");
+        assert(mimeType.length > 0, "mimeType is empty");
+        return mimeType.split("/")[0];
     }
 
     /**

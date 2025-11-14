@@ -374,4 +374,9 @@
         return this.images().subnodes().map(image => image.asSvImage());
     }
 
+    didUpdateSlotStatus (oldValue, newValue) {
+        //debugger;
+        this.shareStatusChange(newValue);
+    }
+
 }.initThisClass());

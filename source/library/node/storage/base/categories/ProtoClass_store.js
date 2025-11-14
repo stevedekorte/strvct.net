@@ -80,12 +80,7 @@
         return aRecord;
     }
 
-    /**
-     * @description Collects lazy PIDs (Persistent Identifiers) for the object
-     * @param {Set} puuids - Set to store the collected PIDs
-     * @returns {Set} The set of collected PIDs
-     * @category Storage
-     */
+    /*
     lazyPids (puuids = new Set()) {
         // when doing Store.collect() will need to check for lazy slot pids on active objects
         this.allSlotsMap().forEachV(slot => {
@@ -97,6 +92,7 @@
         });
         return puuids;
     }
+    */
 
     /**
      * @description Loads object data from a record
@@ -119,14 +115,15 @@
                     // TODO: add something the schedule a didMutate?
                     console.warn("no setter for slot '" + slot.name() + "'?");
                 } else {
-                    /*if (slot.isLazy()) {
+                    if (slot.isLazy()) {
+                        // store the pid in _privateNameLazyPid for use on asyncGetter call
                         const pid = v["*"];
                         assert(pid);
-                        const storeRef = StoreRef.clone().setPid(pid).setStore(aStore);
+                        this[slot.privateNameLazyPid()] = pid;
+                        //const storeRef = StoreRef.clone().setPid(pid).setStore(aStore);
                         //console.log(this.svTypeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
-                        slot.onInstanceSetValueRef(this, storeRef);
-                    } else */
-                    if (slot.slotType() === "JSON Object") {
+                        //slot.onInstanceSetValueRef(this, storeRef);
+                    } else if (slot.slotType() === "JSON Object") {
                         const unrefedValue = JSON.parse(v);
                         slot.onInstanceSetValue(this, unrefedValue);
                     } else {

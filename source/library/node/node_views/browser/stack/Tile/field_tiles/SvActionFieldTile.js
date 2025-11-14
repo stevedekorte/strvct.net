@@ -36,9 +36,42 @@
         this.setButtonView(bv);
 	    bv.setTarget(this).setAction("didClickButton");
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
+        /*
+        bv.setMinWidth("100%");
+        bv.setWidth("100%");
+        bv.setMaxWidth("100%");
+
+        this.setMinWidth("100%");
+        this.setWidth("100%");
+        this.setMaxWidth("100%");
+        */
 
         this.addContentSubview(this.buttonView());
         //this.setMinHeightPx(64);
+        return this;
+    }
+
+    setupTileContentView () {
+        super.setupTileContentView();
+        const cv = this.contentView();
+        cv.setPaddingLeft("0.5em").setPaddingRight("0.5em");
+        cv.setPaddingTop("0.5em").setPaddingBottom("0.5em");
+        assert(cv.paddingLeft() === "0.5em");
+        assert(cv.paddingRight() === "0.5em");
+        assert(cv.paddingTop() === "0.5em");
+        assert(cv.paddingBottom() === "0.5em");
+        cv.setPaddingLeft = function () {
+            //throw new Error("setPaddingLeft is not allowed");
+        };
+        cv.setPaddingRight = function () {
+            //throw new Error("setPaddingRight is not allowed");
+        };
+        cv.setPaddingTop = function () {
+            //throw new Error("setPaddingTop is not allowed");
+        };
+        cv.setPaddingBottom = function () {
+            //throw new Error("setPaddingBottom is not allowed");
+        };
         return this;
     }
 
@@ -82,7 +115,7 @@
      * @returns {boolean} Always returns false.
      * @category Event Handling
      */
-    onEnterKeyUp (event) {
+    onEnterKeyUp (/*event*/) {
         this.doAction();
         return false;
     }
@@ -126,7 +159,7 @@
      * @returns {boolean} Always returns true.
      * @category Event Handling
      */
-    onDidEdit (changedView) {
+    onDidEdit (/*changedView*/) {
         this.scheduleSyncToNode();
         //this.node().didUpdateView(this)
         //this.scheduleSyncFromNode() // needed for validation?

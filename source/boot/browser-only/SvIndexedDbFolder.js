@@ -68,7 +68,7 @@
      * Initializes the prototype.
      */
     initPrototype () {
-        this.setIsDebugging(true);
+        //this.setIsDebugging(true);
         // This should never run in Node.js
         if (typeof process !== "undefined" && process.versions && process.versions.node) {
             throw new Error("Browser implementation loaded in Node.js environment!");
@@ -733,6 +733,16 @@
         tx.setIsDebugging(this.isDebugging());
         tx.removeAt(key);
         return tx.promiseCommit();
+    }
+
+    async promiseRemoveKeySet (keySet) {
+        await this.promiseOpen();
+        const tx = await this.promiseNewTx();
+        tx.begin();
+        keySet.forEach(key => {
+            tx.removeAt(key);
+        });
+        return await tx.promiseCommit();
     }
 
     // -----------------------------------------------------------------

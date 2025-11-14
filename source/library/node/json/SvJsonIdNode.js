@@ -81,7 +81,7 @@
             return this;
         }
         const newPath = path + "/" + this.jsonPathCompmentString();
-        console.log(newPath, ".descendantWithJsonId('" + jsonId + "')");
+        console.log("[[" + newPath + "]] .descendantWithJsonId('" + jsonId + "') != '" + this.jsonId() + "'");
 
         return this.nextJsonDescendants().detectAndReturnValue(sn => {
 
@@ -90,11 +90,16 @@
                     sn = sn.nodeTileLink();
                 }
 
-                if (sn.descendantWithJsonId) {
-                    return sn.descendantWithJsonId(jsonId, newPath);
-                } else {
-                    console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
-
+                if (sn.isKindOf(SvNode)) {
+                    if (sn.descendantWithJsonId) {
+                        if (sn.isKindOf(UoCampaign)) {
+                            debugger;
+                        }
+                        return sn.descendantWithJsonId(jsonId, newPath);
+                    } else {
+                        debugger;
+                        console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
+                    }
                 }
             }
             return null;

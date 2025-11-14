@@ -114,11 +114,11 @@
             slot.setSummaryFormat("key: value");
         }
 
-        // ArrayBuffer data (for upload or after download)
+        // Blob data (for upload or after download)
         {
-            const slot = this.newSlot("dataArrayBuffer", null);
-            slot.setLabel("Data ArrayBuffer");
-            slot.setSlotType("ArrayBuffer");
+            const slot = this.newSlot("blob", null);
+            slot.setLabel("Blob");
+            slot.setSlotType("Blob");
             slot.setSyncsToView(true);
             slot.setShouldStoreSlot(false);
         }
@@ -135,7 +135,7 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true); // field inspector
             slot.setIsSubnode(false);
-            slot.setFieldInspectorViewClassName("SvImageWellField"); // field inspector view class
+            slot.setFieldInspectorClassName("SvImageWellField"); // field inspector view class
             // IMPORTANT: This slot should ONLY store dataURLs (data:image/...)
             // Never store external URLs here - they cause CORS issues
             // If we need external URLs (we shouldn't), use a different slot name
@@ -207,7 +207,6 @@
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("openDownloadUrlInSeparateTab");
         }
-
     }
 
 
@@ -228,8 +227,8 @@
     }
 
     async didUpdateSlotDataUrl (oldValue, newValue) {
-        if (newValue && this.dataArrayBuffer() === null) {
-            this.updateDataArrayBufferFromDataUrl(newValue);
+        if (newValue && this.blob() === null) {
+            this.updateBlobFromDataUrl(newValue);
         }
 
         if (newValue) {
@@ -240,21 +239,21 @@
         }
     }
 
-    async updateDataArrayBufferFromDataUrl () {
-        const arrayBuffer = await ArrayBuffer.asyncFromDataUrlString(this.dataUrl());
-        this.setDataArrayBuffer(arrayBuffer);
+    async updateBlobFromDataUrl () {
+        const blob = await Blob.asyncFromDataUrlString(this.dataUrl());
+        this.setBlob(blob);
     }
 
-    async didUpdateSlotDataArrayBuffer (oldValue, newValue) {
+    async didUpdateSlotBlob (oldValue, newValue) {
         if (newValue && this.dataUrl() === null) {
-            // download set the dataArrayBuffer, so copy it into the dataUrl *if* the data url is an image type
-            await this.updateDataUrlFromDataArrayBuffer();
-            this.setSize(newValue.byteLength);
+            // download set the blob, so copy it into the dataUrl *if* the data url is an image type
+            await this.updateDataUrlFromBlob();
+            this.setSize(newValue.size);
         }
     }
 
-    async updateDataUrlFromDataArrayBuffer () {
-        const dataUrlString = await this.dataArrayBuffer().asyncToDataUrl();
+    async updateDataUrlFromBlob () {
+        const dataUrlString = await this.blob().asyncAsDataUrl();
         const dataUrlObj = SvDataUrl.clone().setDataUrlString(dataUrlString);
         this.setContentType(dataUrlObj.mimeType());
         //this.setContentCategory(dataUrlObj.contentCategory());
@@ -289,21 +288,25 @@
         return this.name() !== "";
     }
 
-    hasDataArrayBuffer () {
-        return this.dataArrayBuffer() !== null;
+    hasBlob () {
+        return this.blob() !== null;
     }
 
     canUpload () {
-        return this.hasName() && this.hasDataArrayBuffer() && this.canWrite();
+        return this.hasName() && this.hasBlob() && this.canWrite();
     }
 
     uploadIssues () {
         const issues = [];
+        if (!this.fullPath()) {
+            issues.push("No full path");
+            return issues;
+        }
         if (!this.hasName()) {
             issues.push("No name");
         }
-        if (!this.hasDataArrayBuffer()) {
-            issues.push("No data");
+        if (!this.hasBlob()) {
+            issues.push("No blob");
         }
         if (!this.canWrite()) {
             issues.push("No write permission");
@@ -327,6 +330,10 @@
 
     downloadIssues () {
         const issues = [];
+        if (!this.fullPath()) {
+            issues.push("No full path");
+            return issues;
+        }
         if (!this.canRead()) {
             issues.push("No read permission");
         }
@@ -350,6 +357,10 @@
     deleteIssues () {
         const canWrite = this.canWrite();
         const issues = [];
+        if (!this.fullPath()) {
+            issues.push("No full path");
+            return issues;
+        }
         if (!canWrite) {
             issues.push("No write permission");
         }
@@ -409,10 +420,16 @@
      * @category Helper
      */
     isDownloaded () {
-        return this.dataArrayBuffer() !== null;
+        return this.blob() !== null;
     }
 
     async asyncDoesExist () {
+        if (!this.hasName()) {
+            return false;
+        }
+        if (!this.fullPath()) {
+            return false;
+        }
         const url = await this.asyncRefreshDownloadUrl();
         return url !== null;
     }
@@ -424,6 +441,9 @@
      * @category Helper
      */
     async asyncRefreshDownloadUrl () {
+        if (!this.hasName() || !this.fullPath()) {
+            return;
+        }
         try {
             console.log("asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
@@ -491,19 +511,45 @@
         }
     }
 
-    setDataArrayBufferToString (string) {
-        this.setContentType("text/plain");
-        this.setDataArrayBuffer(string.asArrayBuffer());
+    setBlobToString (string) {
+        const arrayBuffer = string.asArrayBuffer();
+        const blob = new Blob([arrayBuffer], { type: "text/plain" });
+        this.setBlob(blob);
         return this;
     }
 
-    arrayBufferAsString () {
-        return this.dataArrayBuffer().asString();
+    async blobAsString () {
+        const blob = this.blob();
+        if (!blob) {
+            return null;
+        }
+        const arrayBuffer = await blob.asyncToArrayBuffer();
+        return arrayBuffer.asString();
     }
 
     /**
-     * @description Downloads the data from Firebase Storage as ArrayBuffer
-     * @returns {Promise<ArrayBuffer>} The downloaded data as ArrayBuffer
+     * @description Gets ArrayBuffer from the blob (for backward compatibility)
+     * @returns {Promise<ArrayBuffer>} The ArrayBuffer from the blob
+     * @category Helper
+     */
+    async arrayBuffer () {
+        const blob = this.blob();
+        if (!blob) {
+            return null;
+        }
+        return await blob.asyncToArrayBuffer();
+    }
+
+    async asyncDownloadIfNeeded () {
+        if (this.blob() !== null) {
+            return;
+        }
+        await this.asyncDownload();
+    }
+
+    /**
+     * @description Downloads the data from Firebase Storage as Blob
+     * @returns {Promise<Blob>} The downloaded data as Blob
      * @category Storage Operations
      */
     async asyncDownload () {
@@ -511,18 +557,34 @@
             this.setError(null);
             const ref = this.storageRef();
 
-            // Get download URL and fetch the data
+            // Get download URL
             const url = await ref.getDownloadURL();
-            const response = await fetch(url);
 
-            if (!response.ok) {
-                throw new Error(`Download failed: ${response.status} ${response.statusText}`);
+            // Use SvXhrRequest for proper response type handling
+            const request = SvXhrRequest.clone();
+            request.setUrl(url);
+            request.setMethod("GET");
+            request.setHeaders({});
+            request.setResponseType("blob");
+            await request.asyncSend();
+
+            if (request.hasError()) {
+                throw request.error();
             }
 
-            const arrayBuffer = await response.arrayBuffer();
-            this.setDataArrayBuffer(arrayBuffer);
+            // Get the blob from the response
+            let blob = request.response();
 
-            return arrayBuffer;
+            // Get content type from response headers or use existing/default
+            const contentType = request.xhr().getResponseHeader("Content-Type") || this.contentType() || "application/octet-stream";
+
+            // Ensure blob has correct type if needed
+            if (!blob.type || blob.type === "") {
+                blob = new Blob([blob], { type: contentType });
+            }
+
+            this.setBlob(blob);
+            return blob;
         } catch (error) {
             console.error("Error downloading file:", error);
             this.setError(error);
@@ -531,7 +593,7 @@
     }
 
     /**
-     * @description Uploads data to Firebase Storage (uses dataArrayBuffer from the object)
+     * @description Uploads data to Firebase Storage (uses blob from the object)
      * @returns {Promise<void>}
      * @category Storage Operations
      */
@@ -540,16 +602,19 @@
             this.setError(null);
             this.setDownloadUrl(null); // Clear cached URL before upload
 
-            const arrayBuffer = this.dataArrayBuffer();
-            if (!arrayBuffer) {
-                throw new Error("No data set - use setDataArrayBuffer() before uploading");
+            const blob = this.blob();
+            if (!blob) {
+                throw new Error("No data set - use setBlob() before uploading");
             }
 
             const ref = this.storageRef();
 
+            // Get content type from blob or use default
+            const contentType = blob.type || this.contentType() || "application/octet-stream";
+
             // Prepare upload metadata
             const uploadMetadata = {
-                contentType: this.contentType() || "application/octet-stream",
+                contentType: contentType,
                 customMetadata: this.customMetadata() || {}
             };
 
@@ -563,10 +628,7 @@
             // Set local metadata immediately (will be updated with server values after upload)
             this.setContentType(uploadMetadata.contentType);
             this.setCustomMetadata(uploadMetadata.customMetadata);
-            this.setSize(arrayBuffer.byteLength);
-
-            // Convert ArrayBuffer to Blob for Firebase upload (browser-only)
-            const blob = arrayBuffer.toBlob(uploadMetadata.contentType);
+            this.setSize(blob.size);
 
             // Perform upload
             const uploadTask = ref.put(blob, uploadMetadata);
@@ -607,23 +669,6 @@
         }
     }
 
-    /**
-     * @description Sets the dataArrayBuffer from a data URL string
-     * @param {string} dataUrl - The data URL to convert to ArrayBuffer
-     * @returns {Promise<void>}
-     * @category Helper
-     */
-    async asyncSetDataArrayBufferFromDataUrl (dataUrl) {
-        try {
-            this.setError(null);
-            const arrayBuffer = await ArrayBuffer.asyncFromDataUrlString(dataUrl);
-            this.setDataArrayBuffer(arrayBuffer);
-        } catch (error) {
-            console.error("Error setting dataArrayBuffer from data URL:", error);
-            this.setError(error);
-            throw error;
-        }
-    }
 
     /**
      * @description Deletes this blob from Firebase Storage
@@ -639,7 +684,7 @@
             await ref.delete();
 
             // Clear local data
-            this.setDataArrayBuffer(null);
+            this.setBlob(null);
             this.setDownloadUrl(null);
 
             // request navigate to parent (need to do this before removing from parent)
@@ -710,15 +755,17 @@
     asyncSetNameToDataHashActionInfo () {
         return {
             title: "Set Name to Data Hash",
-            isEnabled: this.hasDataArrayBuffer(),
-            subtitle: this.hasDataArrayBuffer() ? null : "No data"
+            isEnabled: this.hasBlob(),
+            subtitle: this.hasBlob() ? null : "No data"
         };
     }
 
     async asyncSetNameToDataHash () {
-        this.setName(await this.dataArrayBuffer().asyncHexSha256());
+        this.setName(await this.blob().asyncHexSha256());
         this.didUpdateNode();
     }
+
+    // --- open download url in separate tab ---
 
     openDownloadUrlInSeparateTabActionInfo () {
         return {
@@ -736,6 +783,39 @@
         const url = await this.getDownloadUrl();
         if (url) {
             window.open(url, "_blank");
+        }
+    }
+
+    // --- delete ---
+
+    delete () { // called by slide delete gesture
+        this.asyncDelete();
+    }
+
+    // --- public url ---
+
+    publicUrlFromPath () {
+        const bucket = SvApp.shared().cloudStorageService().bucketName();
+        const encodedPath = encodeURIComponent(this.fullPath());
+        return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodedPath}?alt=media`; // no trailing slash
+    }
+
+    async asyncPublicUrlExists () {
+        const url = this.publicUrlFromPath();
+        try {
+            const response = await fetch(url, { method: "HEAD" });
+            if (response.ok) {
+                return true;
+            } else if (response.status === 404) {
+                return false;
+            } else {
+                return undefined;
+            }
+        } catch (error) {
+            if (error) {
+                // noop
+            }
+            return undefined;
         }
     }
 

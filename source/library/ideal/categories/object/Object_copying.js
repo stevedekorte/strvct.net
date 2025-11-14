@@ -38,7 +38,7 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      * @returns {Object} A deep copy of the object.
      * @category Copying
      */
-    duplicate () {
+    duplicate (/*refs = new Set()*/) {
         if (this.constructor === Object) {
             // it's a dictionary!
             const deepCopyDict = JSON.parse(JSON.stringify(this)); // breaks for non-JSON!
