@@ -467,4 +467,28 @@
         return results;
     }
 
+    // --- footer node ---
+
+    /**
+     * @description Sets up the "add" footer node.
+     * @returns {TitledNode} This node.
+     */
+    setupAddFooterNode () {
+        const firstSubnodeClass = this.subnodeClasses().first();
+        if (!firstSubnodeClass) {
+            return;
+        }
+        const typeName = firstSubnodeClass.svTypeSansPrefix();
+        const f = SvActionField.clone();
+        f.setTitle("New " + typeName);
+        f.setCanDelete(false);
+        f.setTarget(this);
+        f.setMethodName("justAdd");
+        this.setFooterNode(f);
+        if (this.nodeCanAddSubnode()) {
+            this.setNodeCanAddSubnode(false); // to disable the click on column to add feature
+            // TODO: add a slot for whether tap-to-add is enabled?
+        }
+    }
+
 }.initThisClass());

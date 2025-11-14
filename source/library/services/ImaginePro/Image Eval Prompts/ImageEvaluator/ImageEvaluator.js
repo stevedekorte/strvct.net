@@ -238,6 +238,14 @@
         return publicUrl;
     }
 
+    subnodeIndex () {
+        return this.parentNode().indexOfSubnode(this);
+    }
+
+    onUpdateSlotStatus (oldValue, newValue) {
+        this.shareStatusChange("image " + this.subnodeIndex() + ": " + newValue);
+    }
+
     /**
    * @description Main evaluation method.
    * @returns {Promise<ImageEvaluator>} Returns this for chaining.

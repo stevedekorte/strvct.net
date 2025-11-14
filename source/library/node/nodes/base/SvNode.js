@@ -1131,6 +1131,18 @@
 
     // --- parent chain notifications ---
 
+    shareStatusChange (status) {
+        const msg = "onDescendantStatusChange";
+        const o = this.ownerOrParentNode();
+        if (o) {
+            if (o.respondsTo(msg)) {
+                o.perform(msg, [this, status]);
+            } else {
+                o.shareStatusChange(status);
+            }
+        }
+    }
+
     notifyOwners (msg, args = []) {
         // WHY:
         // this pattern avoids:

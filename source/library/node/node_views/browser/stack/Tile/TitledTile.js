@@ -236,9 +236,8 @@
 
                     this.hideNoteView();
                     this.hideNoteIconView();
-                }
+                } else {
                 */
-            } else {
                 if (node.noteIconName() && !node.noteIsSubnodeCount()) {
                     this.hideNoteView();
                     this.showNoteIconView();

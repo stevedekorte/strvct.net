@@ -931,4 +931,9 @@ Midjourney
         //this.svImages().removeAllSubnodes();
     }
 
+    didUpdateSlotStatus (oldValue, newValue) {
+        //debugger;
+        this.shareStatusChange(newValue);
+    }
+
 }.initThisClass());

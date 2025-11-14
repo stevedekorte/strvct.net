@@ -1205,6 +1205,33 @@
     }
 
     /**
+     * Gets the type name without the prefix.
+     * @returns {string} The type name without the prefix.
+     * @category Information
+     */
+    static svTypeSansPrefix () {
+        // we look for the pattern: uppercase letter, lowercase letter, uppercase letter
+        // this is a STRVCT convention for type names, including apps made with the STRVCT framework
+        const name = this.svType();
+        if (name.length < 3) {
+            return name;
+        }
+
+        const c1 = name.charAt(0);
+        const c2 = name.charAt(1);
+        const c3 = name.charAt(2);
+        if (c1.isUpperCase() && c2.isLowerCase() && c3.isUpperCase()) {
+            // return the string without the first *two* characters
+            return name.substring(2);
+        }
+        return name;
+    }
+
+    svTypeSansPrefix () {
+        return this.thisClass().svTypeSansPrefix();
+    }
+
+    /**
      * Gets a method by name.
      * @param {string} methodName - The name of the method.
      * @returns {Function} The method.

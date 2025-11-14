@@ -559,7 +559,8 @@
         //this.setWidth("fit-content")
         //this.setWidth("170px")
 
-        this.setMinAndMaxWidth("17em");
+        //this.setMinAndMaxWidth("17em");
+        this.setMinAndMaxWidth("100%");
         //this.setWidth("fit-content")
         this.setWidth("-webkit-fill-available");
 

@@ -302,7 +302,7 @@
      * @category Evaluation
      */
     evalDataAsJS () {
-        console.log(this.logPrefix() + "eval ", this.path());
+        //console.log(this.logPrefix() + "eval ", this.path());
         evalStringFromSourceUrl(this.dataAsText(), this.path());
         return this;
     }
