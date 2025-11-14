@@ -758,6 +758,11 @@
             throw new Error("not referenced yet");
         }
 
+        // Skip objects that shouldn't be stored
+        if (!anObject.shouldStore()) {
+            return this;
+        }
+
         const puuid = anObject.puuid();
 
         if (this.isStoringObject(anObject)) {
