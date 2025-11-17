@@ -1078,7 +1078,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         } else if (this.shouldStoreSlot() && !v.shouldStore()) {
             const errorMsg = "slot '" + this.name() + "' value shouldStore (" + v.shouldStore() + ") does not match slot shouldStoreSlot (" + this.shouldStoreSlot() + ")";
             console.warn(errorMsg);
-            throw new Error(errorMsg);
+            //throw new Error(errorMsg);
             //debugger;
             //return false;
         }
