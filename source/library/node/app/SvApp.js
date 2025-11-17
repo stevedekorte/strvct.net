@@ -175,6 +175,7 @@
 
     finalInit () {
         super.finalInit();
+        this.showVersionJson();
     }
 
     /**
@@ -186,6 +187,32 @@
         return this.name();
     }
 
+    async showVersionJson () {
+        const json = await this.asyncVersionJson();
+        console.log("App git head hash: '" + json.gitHash + "'");
+    }
+
+    async asyncVersionJson () {
+        /*
+        sample json file:
+          {
+            "gitTag": "",
+            "gitHash": "eb30038f...",
+            "gitHashShort": "eb30038",
+            "buildTimestamp": "2025-11-16T12:34:56Z"
+        }
+        */
+        const fileName = "app-version.json";
+        const file = SvFileResources.shared().rootFolder().fileWithName(fileName);
+        if (!file) {
+            console.error("versionJson: no file found in " + fileName);
+            return null;
+        }
+        const data = await file.asyncData();
+        const json = JSON.parse(data.asString()); // { "version": "1.0.0", "buildId": "1234567890" }
+        debugger;
+        return json.gitHash;
+    }
 
     /**
      * @description Runs the app
