@@ -22,6 +22,11 @@
         this.setIsSingleton(true);
     }
 
+    static _serviceInfoJson = {
+        "projectId": null,
+        "locationId": "us-central1"
+    };
+
     /**
    * @description Returns the JSON representation of available models.
    * @returns {Array} An array of model objects.
@@ -29,6 +34,12 @@
    */
     modelsJson () {
         return [
+            {
+                "name": "gemini-3-pro-preview",
+                "title": "Gemini 3.0 Pro Preview",
+                "inputTokenLimit": 1048576,
+                "outputTokenLimit": 65536
+            },
             {
                 "name": "gemini-2.5-pro",
                 "title": "Gemini 2.5 Pro",
@@ -45,11 +56,7 @@
     }
 
     serviceInfo () {
-    // need these to construct the endpoint url
-        return {
-            "projectId": "precise-blend-419917",
-            "locationId": "us-central1"
-        };
+        return this.thisClass()._serviceInfoJson;
     }
 
     /**
