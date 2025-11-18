@@ -208,10 +208,9 @@
             console.error("versionJson: no file found in " + fileName);
             return null;
         }
-        const data = await file.asyncData();
+        const data = await file.promiseData();
         const json = JSON.parse(data.asString()); // { "version": "1.0.0", "buildId": "1234567890" }
-        debugger;
-        return json.gitHash;
+        return json;
     }
 
     /**
