@@ -865,6 +865,8 @@
             //this.insertTextAtCursor("\n");
             this.insertTextAtCursorSimple("\n");
             this.placeCaretAtEnd();
+        } else {
+            console.log(this.logPrefix(), " not focused, not inserting enter");
         }
     }
 
@@ -885,6 +887,10 @@
         const returnKeyCode = 13; // return key
 
         if (event.keyCode === returnKeyCode) {
+            // Allow Shift+Enter and Alt+Enter to pass through for inserting newlines
+            if (event.shiftKey || event.altKey) {
+                return false;
+            }
             // block return key down if it's a single line text field (or if in input mode aka send onInput note on enter key up)
             // this still allows return up key event
             if (this.isSingleLine() || this.doesInput()) {
@@ -997,6 +1003,23 @@
         if (this.doesInput() && this.isMultiline()) {
             this.insertTextAtCursorAndConsolidate("\n");
             //this.formatValue();
+        }
+    }
+
+    // Shift Enter
+
+    /**
+     * @description On shift enter key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
+    onShiftEnterKeyDown (event) {
+        if (this.doesInput() && this.isMultiline()) {
+            console.log(this.logPrefix(), " onShiftEnterKeyDown");
+            this.insertEnterAtCursor();
+            //this.insertTextAtCursorAndConsolidate("\n");
+            event.preventDefault();
+            return false;
         }
     }
 

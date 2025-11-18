@@ -211,10 +211,9 @@
 
     /**
    * Initialize the prototype of the ConversationMessage class.
-
    */
     initPrototype () {
-        this.setNodeTileClassName("SvChatInputTile");
+        this.setNodeTileClassName("SvChatMessageTile");
         //this.setOverrideSubviewProto(this.nodeTileClass());
         this.setKeyIsVisible(true);
         this.setValueIsEditable(false);
@@ -225,7 +224,6 @@
 
     /**
    * Perform final initialization of the ConversationMessage instance.
-
    */
     finalInit () {
         super.finalInit();
