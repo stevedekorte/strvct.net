@@ -111,6 +111,9 @@
    */
     onValueInput (/*changedView*/) {
         if (this.value()) {
+            // now that we support shift-return, we'll need to convert returns to <br> tags
+            const v = this.value().replace(/\n/g, "<br>");
+            this.setValue(v);
             this.send();
         }
     }
