@@ -908,13 +908,19 @@
      */
     onKeyDown (event) {
         // sent before the content is changed
+
+        // Prevent default for Enter key in all cases when in input mode or single line
+        // This must happen before super.onKeyDown so specific handlers can insert text
+        const returnKeyCode = 13;
+        if (event.keyCode === returnKeyCode) {
+            if (this.isSingleLine() || this.doesInput()) {
+                event.preventDefault();
+            }
+        }
+
         super.onKeyDown(event);
         //const keyName = SvKeyboard.shared().keyForEvent(event);
         //console.log(this.logPrefix(), this.svDebugId() + " onKeyDown event.keyCode = ", event.keyCode);
-
-        if (this.shouldMuteEvent(event)) {
-            event.preventDefault();
-        }
 
         return true;
     }
@@ -1013,12 +1019,32 @@
      * @param {Event} event - The event.
      * @returns {void}
      */
-    onShiftEnterKeyDown (event) {
+    onShiftEnterKeyDown (/*event*/) {
+        // KeyDown is prevented in onKeyDown, actual insertion happens in KeyUp
+        return false;
+    }
+
+    /**
+     * @description On shift enter key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
+    onShiftEnterKeyUp (event) {
+        console.log(this.logPrefix(), " onShiftEnterKeyUp called");
         if (this.doesInput() && this.isMultiline()) {
-            console.log(this.logPrefix(), " onShiftEnterKeyDown");
-            this.insertEnterAtCursor();
-            //this.insertTextAtCursorAndConsolidate("\n");
-            event.preventDefault();
+            const beforeContent = this.value();
+            const beforeHTML = this.element().innerHTML;
+            console.log(this.logPrefix(), " BEFORE: value=", JSON.stringify(beforeContent), "html=", beforeHTML);
+
+            // Use insertLineBreak which handles contentEditable properly
+            document.execCommand("insertLineBreak");
+            this.didEdit();
+
+            const afterContent = this.value();
+            const afterHTML = this.element().innerHTML;
+            console.log(this.logPrefix(), " AFTER: value=", JSON.stringify(afterContent), "html=", afterHTML);
+
+            event.stopPropagation();
             return false;
         }
     }

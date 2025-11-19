@@ -19,15 +19,15 @@
         const v = super.createValueView();
 
         v.setAllowsHtml(false);
-        v.setWhiteSpace("normal");
+        v.setWhiteSpace("pre-wrap");
 
         v.setIsMultiline(true);
         v.setDoesInput(true);
 
         v.setDoesHoldFocusOnReturn(true);
+        v.setMinHeight("fit-content");
         //v.setDoesInput(true);
         return v;
     }
-
 
 }.initThisClass());
