@@ -220,21 +220,6 @@
         return this;
     }
 
-    /*
-    async fetchAndSetupInfo () {
-        debugger;
-        let info;
-
-        try {
-            info = await this.fetchInfo();
-            this.setServiceInfo(info);
-            this.setupFromInfo();
-        } catch (error) {
-            console.log(this.svType() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
-            return;
-        }
-    }
-        */
 
     setupFromInfo () {
         const info = this.serviceInfo();
@@ -304,25 +289,6 @@
         return this;
     }
 
-    /*
-    fetchInfoUrl () {
-        debugger;
-        const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-        const url = baseUrl + "/app/info/" + this.svType() + ".json";
-        console.log(this.logPrefix() + " fetchInfoUrl: " + url);
-        debugger;
-        return url;
-    }
-
-    async fetchInfo () {
-        return fetch(this.fetchInfoUrl())
-            .then(response => response.json())
-            .then(json => {
-                return json;
-            });
-    }
-    */
-
     /**
    * @description Returns the chat request class for the service.
    * @returns {Function} The chat request class.
@@ -340,34 +306,43 @@
 
     // ----------- fetching models -------------
 
-    canFetchModels () {
-        return this.fetchModelsUrl() !== null;
+    /*
+    async fetchAndSetupModels () {
+        debugger;
+        let info;
+
+        try {
+            info = await this.fetchInfo();
+            this.setServiceInfo(info);
+            this.setupFromInfo();
+        } catch (error) {
+            console.log(this.svType() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
+            return;
+        }
     }
 
-    /**
-   * @description Fetches and sets up the models.
-   * @returns {Promise<void>}
-   * @category Models
-   */
+    fetchModelsUrl () {
+        debugger;
+        const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+        const url = baseUrl + "/app/info/" + this.svType() + ".json";
+        console.log(this.logPrefix() + " fetchInfoUrl: " + url);
+        debugger;
+        return url;
+    }
+
+    async fetchInfo () {
+        return fetch(this.fetchInfoUrl())
+            .then(response => response.json())
+            .then(json => {
+                return json;
+            });
+    }
+
     async asyncFetchAndSetupModels () {
         const modelsJson = await this.fetchModelsJson();
         this.setModelsJson(modelsJson);
     }
 
-    /**
-   * @description Returns the URL for fetching models. Returns null if models API is not available.
-   * @returns {string} The URL for fetching models.
-   * @category Models
-   */
-    fetchModelsUrl () {
-        return null;
-    }
-
-    /**
-   * @description Fetches the models JSON.
-   * @returns {Promise<Object>} A promise that resolves to the models JSON.
-   * @category Models
-   */
     async asyncFetchModelsJson () {
         return fetch(this.fetchModelsUrl())
             .then(response => response.json())
@@ -375,5 +350,6 @@
                 return json.data;
             });
     }
+    */
 
 }.initThisClass());

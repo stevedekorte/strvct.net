@@ -117,6 +117,7 @@
         // this.setupModelsFromFetch();
     }
 
+    /*
     async setupModelsFromFetch () {
         try {
             const modelsJson = await this.fetchAllModelsDetails();
@@ -125,6 +126,7 @@
             console.error("Error fetching models:", error);
         }
     }
+    */
 
     /**
    * @description Validates the API key.
@@ -137,11 +139,7 @@
     }
 
 
-    /**
-   * @description Fetches the models URL.
-   * @returns {string} The URL for fetching models.
-   * @category Models
-   */
+    /*
     fetchModelsUrl () {
         return "https://api.openai.com/v1/models";
     }
@@ -150,12 +148,6 @@
         return `https://api.openai.com/v1/models/${modelId}`;
     }
 
-    /**
-   * @description Fetches the model details.
-   * @param {string} apiKey - The API key to use.
-   * @returns {Promise<Object>} A promise that resolves to the model details.
-   * @category Models
-   */
     async fetchAllModelsDetails () {
         const apiKey = this.apiKeyOrUserAuthToken();
         const headers = {
@@ -189,6 +181,7 @@
 
         return detailedModels;
     }
+    */
 
 
 }.initThisClass());

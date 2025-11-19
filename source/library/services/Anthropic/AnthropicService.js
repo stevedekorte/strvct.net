@@ -46,20 +46,6 @@
         ];
     }
 
-    /**
-   * @description Initializes the prototype slots.
-   * @category Initialization
-   */
-    initPrototypeSlots () {
-    }
-
-    /**
-   * @description Initializes the service.
-   * @category Initialization
-   */
-    init () {
-        super.init();
-    }
 
     serviceInfo () {
         return {
@@ -74,7 +60,7 @@
     finalInit () {
         super.finalInit();
         this.setTitle(this.svType().before("Service"));
-    //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
+        //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
     }
 
     /**
@@ -156,22 +142,19 @@
         // ok, now let's add the tools property where will with specify the tool call JSON schemas
 
         /*
-    if (tools.length > 0) {
-      bodyJson.tools = tools;
-    }
-    */
+        if (tools.length > 0) {
+            bodyJson.tools = tools;
+        }
+        */
 
         return this;
     }
 
-    /**
- * @description Returns the URL for fetching models.
- * @returns {string} The URL for fetching models.
- * @category Models
- */
+    /*
     fetchModelsUrl () {
         return "https://api.anthropic.com/v1/models";
     }
+    */
 
     toolCallSchemasForRequest (aRequest) {
         const assistantToolKit = aRequest.conversation().assistantToolKit();
