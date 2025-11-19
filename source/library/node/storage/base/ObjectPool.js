@@ -991,6 +991,9 @@
             assert(!this.hasActiveObject(obj), "objectForRecord: object is already active in memory"); // if it's already active in memory, we shouldn't be asking for it's record to load it into memory
         }
 
+        if (isSingleton && obj.hasPuuid() && obj.puuid() !== aRecord.id) {
+            console.log(this.logPrefix() + " changing singleton object " + obj.svDebugId() + " pid from " + obj.puuid() + " to " + aRecord.id);
+        }
         obj.setPuuid(aRecord.id);
 
         if (obj.shouldStore) {
@@ -999,23 +1002,25 @@
             }
             this.addActiveObject(obj);
         }
+
         if (obj.puuid() === this.rootPid()) {
             this._rootObject = obj; // bit of a hack to make sure root ref is set before we load root contents
             // might want to split this method into one to get ref and another to load contents instead
         }
+
         obj.loadFromRecord(aRecord, this);
 
         this.loadingPids().delete(obj.puuid()); // need to do this to get object to ber marked as dirty if it's slots are updated in finalInit
 
         //assert(!obj._hasDoneInit); // if the class is a singleton, _hasDoneInit may already be true. Should init be called in that case?
 
-        if (obj._hasDoneInit === false || obj._hasDoneInit === undefined) {
+        if (isSingleton || obj._hasDoneInit === false || obj._hasDoneInit === undefined) {
             if (obj.finalInit) {
                 obj.finalInit();
             }
 
             if (obj.afterInit) {
-                obj.afterInit(); // called didInit, which sets _hasDoneInit to true
+                obj.afterInit(); // calls didInit, which sets _hasDoneInit to true
             }
         }
 

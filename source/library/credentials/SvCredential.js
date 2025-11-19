@@ -41,17 +41,14 @@
         this.setNodeCanAddSubnode(false);
     }
 
+    /*
     fetchInfoUrl () {
+        debugger;
         const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
         const url = baseUrl + "/app/info/" + this.serviceName() + ".json";
         return url;
     }
 
-    /**
-   * @description Fetches the service information.
-   * @returns {Promise<Object>} A promise that resolves to the service information.
-   * @category Service Information
-   */
     async fetchInfo () {
         return fetch(this.fetchInfoUrl())
             .then(response => response.json())
@@ -59,5 +56,6 @@
                 return json;
             });
     }
+    */
 
 }.initThisClass());

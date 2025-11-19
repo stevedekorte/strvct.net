@@ -39,84 +39,18 @@
     modelsJson () {
         return [
             {
+                "name": "gpt-5.1-chat-latest",
+                "title": "ChatGPT 5.1",
+                "inputTokenLimit": 272000,
+                "outputTokenLimit": 128000
+                //"reasoning_effort": "low" | "medium" | "high"
+            },
+            {
                 "name": "gpt-4.1",
                 "title": "ChatGPT 4.1",
                 "inputTokenLimit": 1047576,
                 "outputTokenLimit": 32768
             }
-            /*
-      {
-        "name": "gpt-4.1-mini",
-        "title": "ChatGPT 4.1 mini",
-        "inputTokenLimit": 1047576,
-        "outputTokenLimit": 32768
-      },
-      {
-        "name": "gpt-4.1-nano",
-        "title": "OpenAI ChatGPT 4.1 nano",
-        "inputTokenLimit": 1047576,
-        "outputTokenLimit": 32768
-      },
-      */
-            /*
-      {
-        "name": "o3-2025-04-16",
-        "title": "OpenAI ChatGPT o3",
-        "inputTokenLimit": 200000,
-        "outputTokenLimit": 100000,
-        "supportsTemperature": false,
-        "supportsTopP": false
-      },
-      {
-        "name": "o3-mini-2025-01-31",
-        "title": "OpenAI ChatGPT o3 mini",
-        "inputTokenLimit": 128000,
-        "outputTokenLimit": 16384,
-        "supportsTemperature": false,
-        "supportsTopP": false
-      }
-      */
-
-
-            // we can't handle these non-streaming models yet (see AiRequest.js)
-            /*
-      {
-        "name": "o1",
-        "title": "OpenAI ChatGPT o1",
-        "note": "Latest.",
-        "inputTokenLimit": 200000,
-        "supportsTemperature": false, // o1 does not support temperature
-        "supportsTopP": false, // o1 does not support top_p
-        "canStream": false // o1 does not support streaming
-      },
-      {
-        "name": "o1-preview",
-        "title": "OpenAI ChatGPT o1-preview",
-        "note": "Latest.",
-        "inputTokenLimit": 128000,
-        "supportsTemperature": false, // o1 does not support temperature
-        "supportsTopP": false, // o1 does not support top_p
-        "canStream": false // o1 does not support streaming
-      },
-      {
-        "name": "o1-mini",
-        "title": "OpenAI ChatGPT o1-mini",
-        "note": "Latest",
-        "inputTokenLimit": 128000,
-        "supportsTemperature": false, // o1 does not support temperature
-        "supportsTopP": false, // o1 does not support top_p
-        "canStream": false // o1 does not support streaming
-      },
-      {
-        "name": "o3-mini",
-        "title": "OpenAI ChatGPT o3-mini",
-        "note": "Latest",
-        "inputTokenLimit": 200000,
-        "supportsTemperature": false, // o3 does not support temperature
-        "supportsTopP": false, // o3 does not support top_p
-        "canStream": false // o3 does not support streaming
-      }
-      */
         ];
     }
 

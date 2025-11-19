@@ -171,6 +171,7 @@
 
         v.setDoesHoldFocusOnReturn(true);
         v.setDoesInput(true);
+        v.turnOnUserSelect();
         return v;
     }
 

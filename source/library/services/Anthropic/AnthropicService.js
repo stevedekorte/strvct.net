@@ -32,102 +32,17 @@
    */
     modelsJson () {
         return [
-
-            // claude-opus-4-1-20250805
             {
-                "name": "claude-opus-4-1-20250805",
-                "title": "Claude 4.1 Opus",
+                "name": "claude-sonnet-4-5-20250929",
+                "title": "Claude 4.5 Sonnet",
                 "subtitle": "",
-                "inputTokenLimit": 200000,
+                "inputTokenLimit": 1000000, // would be 200k input tokens without beta request for 1M context
                 "notes": "",
-                "beta": "output-128k-2025-02-19",
-                "outputTokenLimit": 32000,
+                "beta": "context-1m-2025-08-07,output-128k-2025-02-19", // 1M context only supported for Tier 4 members
+                "outputTokenLimit": 128000, // 128k output tokens
                 "supportsTemperature": true,
                 "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
-            },
-            {
-                "name": "claude-opus-4-20250514",
-                "title": "Claude 4 Opus",
-                "subtitle": "",
-                "inputTokenLimit": 200000,
-                "notes": "",
-                "beta": "output-128k-2025-02-19",
-                "outputTokenLimit": 32000,
-                "supportsTemperature": true,
-                "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
-            },
-
-            {
-                "name": "claude-sonnet-4-20250514",
-                "title": "Claude 4 Sonnet",
-                "subtitle": "",
-                "inputTokenLimit": 200000,
-                "notes": "",
-                "beta": "output-128k-2025-02-19",
-                "outputTokenLimit": 64000,
-                "supportsTemperature": true,
-                "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
-            },
-
-
-            {
-                "name": "claude-3-7-sonnet-20250219",
-                "title": "Claude 3.7 Sonnet",
-                "subtitle": "",
-                "inputTokenLimit": 200000,
-                "notes": "",
-                "beta": "output-128k-2025-02-19",
-                "outputTokenLimit": 128000,
-                "supportsTemperature": true,
-                "supportsTopP": false,  // Anthropic doesn't allow both temperature and top_p
-                "extraHeaders": {
-                    "anthropic-version": "2023-06-01",
-                    "anthropic-beta": "output-128k-2025-02-19",
-                    "anthropic-dangerous-direct-browser-access": true
-                }
             }
-            /*
-      {
-        "name": "claude-3-5-sonnet-20241022",
-        "title": "Claude 3.5 Sonnet",
-        "subtitle": "",
-        "inputTokenLimit": 200000,
-        "notes": "",
-        "outputTokenLimit": 8192,
-        "extraHeaders": {
-          "anthropic-version": "2023-06-01",
-          'anthropic-dangerous-direct-browser-access': true
-        }
-      },
-      {
-        "name": "claude-3-5-sonnet-20240620",
-        "title": "Claude 3.5 Sonnet",
-        "subtitle": "Better than 3 with same context size.",
-        "inputTokenLimit": 200000,
-        "notes": ""
-      },
-      {
-          "name": "claude-3-opus-20240229",
-          "title": "Claude 3 Opus",
-          "subtitle": "Largest/Slowest",
-          "inputTokenLimit": 200000,
-          "notes": ""
-      },
-      {
-          "name": "claude-3-sonnet-20240229",
-          "title": "Claude 3 Sonnet",
-          "subtitle": "Medium size and speed",
-          "inputTokenLimit": 200000,
-          "notes": "This model is missing opening description, doesn't make roll request json with required fields"
-      },
-      {
-          "name": "claude-3-haiku-20240307",
-          "title": "Claude 3 Haiku",
-          "subtitle": "Smallest/Fastest",
-          "inputTokenLimit": 200000,
-          "notes": "This model also doesn't make roll request json with required fields"
-      }
-      */
         ];
     }
 

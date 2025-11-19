@@ -120,14 +120,6 @@
             slot.setIsSubnode(true);
         }
 
-
-        {
-            const slot = this.newSlot("fetchModelsPromise", null);
-            slot.setFinalInitProto(Promise);
-            slot.setSlotType("Promise");
-            slot.setShouldStoreSlot(false);
-        }
-
     }
 
     initPrototype () {
@@ -144,8 +136,6 @@
         this.setTitle("AI Service");
         this.setSubtitle("ai services");
         this.setModelsJson(this.modelsJson());
-        //this.setFetchModelsPromise(Promise.clone());
-        this.fetchModelsPromise().setLabel("Fetch models promise");
         //this.fetchAndSetupInfo();
         this.setupFromInfo();
     }
@@ -230,12 +220,9 @@
         return this;
     }
 
-    /**
-   * @description Fetches and sets up the service information.
-   * @returns {Promise<void>}
-   * @category Service Information
-   */
+    /*
     async fetchAndSetupInfo () {
+        debugger;
         let info;
 
         try {
@@ -247,11 +234,8 @@
             return;
         }
     }
+        */
 
-    /**
-   * @description Sets up the service from the fetched information.
-   * @category Service Information
-   */
     setupFromInfo () {
         const info = this.serviceInfo();
 
@@ -301,6 +285,10 @@
         return this.userAuthToken() !== null && token === this.userAuthToken();
     }
 
+    modelNames () {
+        return this.models().subnodes().map(model => model.modelName());
+    }
+
     /**
    * @description Sets up the models from JSON data.
    * @param {Array} json - The JSON data containing model information.
@@ -313,27 +301,19 @@
             const model = AiChatModel.clone().setJson(modelInfo).setService(this);
             this.models().addSubnode(model);
         });
-        //console.log(this.svType() + ".setModelsJson() has " + this.models().subnodes().length + " models now.");
-        this.fetchModelsPromise().callResolveFunc();
         return this;
     }
 
-    /**
-   * @description Returns the URL for fetching service information.
-   * @returns {string} The URL for fetching service information.
-   * @category Service Information
-   */
+    /*
     fetchInfoUrl () {
+        debugger;
         const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
         const url = baseUrl + "/app/info/" + this.svType() + ".json";
+        console.log(this.logPrefix() + " fetchInfoUrl: " + url);
+        debugger;
         return url;
     }
 
-    /**
-   * @description Fetches the service information.
-   * @returns {Promise<Object>} A promise that resolves to the service information.
-   * @category Service Information
-   */
     async fetchInfo () {
         return fetch(this.fetchInfoUrl())
             .then(response => response.json())
@@ -341,6 +321,7 @@
                 return json;
             });
     }
+    */
 
     /**
    * @description Returns the chat request class for the service.

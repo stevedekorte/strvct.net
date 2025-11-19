@@ -1069,15 +1069,15 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         if (v.shouldStore === undefined) {
             if (this.shouldStoreSlot() === true) {
-                const errorMsg = "slot '" + this.name() + "'value shouldStore is undefined but slot shouldStoreSlot is true";
+                const errorMsg = "slot '" + this.name() + "'value (" + v.svDebugId() + ") shouldStore is undefined but slot shouldStoreSlot is true";
                 console.warn(errorMsg);
                 //throw new Error(errorMsg);
                 //debugger;
                 return false;
             }
         } else if (this.shouldStoreSlot() && !v.shouldStore()) {
-            const errorMsg = "slot '" + this.name() + "' value shouldStore (" + v.shouldStore() + ") does not match slot shouldStoreSlot (" + this.shouldStoreSlot() + ")";
-            console.warn(errorMsg);
+            //const errorMsg = "slot '" + this.name() + "' value (" + v.svDebugId() + ") shouldStore (" + v.shouldStore() + ") does not match slot shouldStoreSlot (" + this.shouldStoreSlot() + ")";
+            //console.warn(errorMsg);
             //throw new Error(errorMsg);
             //debugger;
             //return false;

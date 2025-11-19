@@ -259,13 +259,7 @@
      * @category AI Service
      */
     defaultChatModel () {
-        //return this.groqService().defaultChatModel();
-        //return this.xaiService().defaultChatModel();
-        //return this.openAiService().defaultChatModel();
         return this.geminiService().defaultChatModel();
-        //return this.deepSeekService().defaultChatModel();
-        //return this.anthropicService().defaultChatModel(); // Opus is too expensive
-        //return this.aiServices().first().defaultChatModel();
     }
 
     /**
@@ -294,7 +288,14 @@
      * @category AI Service
      */
     chatModelWithName (name) {
-        return this.chatModels().detect(m => m.modelName() === name);
+        const match = this.chatModels().detect(m => m.modelName() === name);
+        if (!match) {
+            console.log("--------------------------------");
+            console.warn(this.logPrefix() + " chat model with name '" + name + "' not found in " + JSON.stringify(this.chatModelNames()));
+            console.log("--------------------------------");
+            debugger;
+        }
+        return match;
     }
 
 }.initThisClass());

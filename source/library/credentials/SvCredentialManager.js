@@ -65,29 +65,22 @@
         return await UoAccountServerApi.shared().authToken();
     }
 
-    /*==
-    /**
-   * @description Returns the URL for fetching service information.
-   * @returns {string} The URL for fetching service information.
-   * @category Service Information
-   */
+    /*
     fetchInfoUrl () {
+        debugger;
         const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
         const url = baseUrl + "/app/info/" + this.svType() + ".json";
         return url;
     }
 
-    /**
-   * @description Fetches the service information.
-   * @returns {Promise<Object>} A promise that resolves to the service information.
-   * @category Service Information
-   */
     async fetchInfo () {
+        debugger;
         return fetch(this.fetchInfoUrl())
             .then(response => response.json())
             .then(json => {
                 return json;
             });
     }
+    */
 
 }.initThisClass());

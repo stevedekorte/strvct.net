@@ -39,7 +39,8 @@
                 "title": "Gemini 3.0 Pro Preview",
                 "inputTokenLimit": 1048576,
                 "outputTokenLimit": 65536
-            },
+            }
+            /*
             {
                 "name": "gemini-2.5-pro",
                 "title": "Gemini 2.5 Pro",
@@ -52,6 +53,7 @@
                 "inputTokenLimit": 1048576,
                 "outputTokenLimit": 65536
             }
+            */
         ];
     }
 
@@ -93,14 +95,6 @@
             slot.setShouldStoreSlot(true);
         }
 
-    }
-
-    /**
-   * @description Initializes the instance.
-   * @category Initialization
-   */
-    init () {
-        super.init();
     }
 
     /*
@@ -175,14 +169,20 @@
         this.setUserRoleName("user");
         this.setAssistantRoleName("model");
         this.setSystemRoleName("system");
+        this.assertDefaultChatModel();
     }
 
-    /*
-  setupDefault () {
-    this.defaultChatModel().setModelName("gemini-1.5-pro");
-    this.defaultChatModel().setInputTokenLimit(1000000); // wow!
-  }
-  */
+    didInit () {
+        super.didInit();
+        console.log(this.logPrefix() + " didInit() geminiService: " + this.svDebugId());
+        assert(this.modelNames().includes("gemini-3-pro-preview"), "gemini-3-pro-preview model not found in " + JSON.stringify(this.modelNames()));
+        return this;
+    }
+
+    assertDefaultChatModel () {
+        assert(this.modelNames().includes("gemini-3-pro-preview"), this.svDebugId() + " gemini-3-pro-preview model not found in " + JSON.stringify(this.modelNames()));
+        return this;
+    }
 
     /**
    * @description Validates the API key.
@@ -211,34 +211,41 @@
             this.setProjectId(info.projectId);
         }
 
-    // Note: setupChatEndpoint is now async, will be called in prepareToSendRequest
+        // Note: setupChatEndpoint is now async, will be called in prepareToSendRequest
+    }
+
+    setModelsJson (json) {
+        super.setModelsJson(json);
+        console.log("--------------------------------");
+        console.log(this.svType() + " setModelsJson() modelNames: " + JSON.stringify(this.modelNames()));
+        console.log("--------------------------------");
+        return this;
     }
 
     /*
-
-  curl https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY \
-  -H 'Content-Type: application/json' \
-  -X POST \
-  -d '{
-    "contents": [
-      {
-        "parts": [
-          {
-            "text": "Explain how AI works"
-          }
-        ]
-      }
-    ],
-    "generationConfig": {
-      "stopSequences": [
-        "Title"
-      ],
-      "temperature": 1.0,
-      "maxOutputTokens": 800,
-      "topP": 0.8,
-      "topK": 10
-    }
-  }'
+        curl https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY \
+        -H 'Content-Type: application/json' \
+        -X POST \
+        -d '{
+            "contents": [
+            {
+                "parts": [
+                {
+                    "text": "Explain how AI works"
+                }
+                ]
+            }
+            ],
+            "generationConfig": {
+            "stopSequences": [
+                "Title"
+            ],
+            "temperature": 1.0,
+            "maxOutputTokens": 800,
+            "topP": 0.8,
+            "topK": 10
+            }
+        }'
   */
 
     /**

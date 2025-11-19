@@ -243,6 +243,22 @@
      */
     turnOnUserSelect () {
         super.turnOnUserSelect();
+        if (this.contentView()) {
+            // TODO: we may need to do this when the content view is added to the tile
+            this.contentView().turnOnUserSelect();
+        }
+        return this;
+    }
+
+    /**
+     * @description Turns off user select.
+     */
+    turnOffUserSelect () {
+        super.turnOffUserSelect();
+        if (this.contentView()) {
+            // TODO: we may need to do this when the content view is removed from the tile
+            this.contentView().turnOffUserSelect();
+        }
         return this;
     }
 
