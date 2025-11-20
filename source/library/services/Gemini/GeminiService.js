@@ -169,19 +169,6 @@
         this.setUserRoleName("user");
         this.setAssistantRoleName("model");
         this.setSystemRoleName("system");
-        this.assertDefaultChatModel();
-    }
-
-    didInit () {
-        super.didInit();
-        console.log(this.logPrefix() + " didInit() geminiService: " + this.svDebugId());
-        assert(this.modelNames().includes("gemini-3-pro-preview"), "gemini-3-pro-preview model not found in " + JSON.stringify(this.modelNames()));
-        return this;
-    }
-
-    assertDefaultChatModel () {
-        assert(this.modelNames().includes("gemini-3-pro-preview"), this.svDebugId() + " gemini-3-pro-preview model not found in " + JSON.stringify(this.modelNames()));
-        return this;
     }
 
     /**
@@ -212,14 +199,6 @@
         }
 
         // Note: setupChatEndpoint is now async, will be called in prepareToSendRequest
-    }
-
-    setModelsJson (json) {
-        super.setModelsJson(json);
-        console.log("--------------------------------");
-        console.log(this.svType() + " setModelsJson() modelNames: " + JSON.stringify(this.modelNames()));
-        console.log("--------------------------------");
-        return this;
     }
 
     /*
@@ -311,7 +290,6 @@
         messages = messages.filter((message) => { return message.content.length > 0; });
 
         //console.log("geminiBody", JSON.stringify(geminiBody, null, 2));
-
 
         aRequest.setBodyJson(geminiBody);
     }

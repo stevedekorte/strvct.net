@@ -79,8 +79,8 @@
             headers: {
                 //"Content-Type": "application/json",
                 "Content-Type": "application/json; charset=UTF-8",
-                "Authorization": `Bearer ${apiKey}`,
-                "Accept-Encoding": "identity", // to avoid dealing with gzip
+                "Authorization": `Bearer ${apiKey}`
+                //"Accept-Encoding": "identity", // to avoid dealing with gzip
             },
             body: JSON.stringify(this.bodyJson()),
         };

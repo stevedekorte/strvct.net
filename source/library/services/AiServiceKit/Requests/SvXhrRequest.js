@@ -585,8 +585,11 @@
                 console.warn("**WARNING**:", this.logPrefix(), "Skipping Content-Type header for FormData - browser will set it with boundary");
                 continue;
             }
-
-            xhr.setRequestHeader(header, value);
+            if (header.toLowerCase() === "accept-encoding") {
+                console.warn("**WARNING**:", this.logPrefix(), "Skipping Accept-Encoding header - browser will set it automatically");
+            } else {
+                xhr.setRequestHeader(header, value);
+            }
         }
 
         if (this.isDebugging()) {

@@ -160,7 +160,11 @@ The following formats will be used for tool calls and responses:
     async processQueuedToolCalls () {
         const queuedCalls = this.toolCalls().queuedCalls();
         for (const toolCall of queuedCalls) {
-            assert(toolCall.isQueued(), "sanity check: we're processing queued tool calls, but tool call status is not set to queued");
+            if (!toolCall.isQueued()) {
+                console.error("**ERROR**:", this.logPrefix(), "Tool call is not queued, it's '" + toolCall.status() + "', but we're processing queued tool calls");
+                debugger;
+            }
+            // assert(toolCall.isQueued(), "sanity check: we're processing queued tool calls, but tool call status is not set to queued");
             await this.processToolCall(toolCall);
         }
         this.scheduleMethod("sendCompletedToolCallResponses", 0);

@@ -254,7 +254,7 @@
    * @category Data Structure
    */
     pushKey (key) {
-        assert(Type.isString(key), "key must be a string");
+        assert(Type.isString(key), " JsonStreamReader: json key value of '" + key + "' must be a string not a " + Type.typeName(key));
         this.keyStack().push(key);
         return this;
     }

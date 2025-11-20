@@ -122,8 +122,8 @@
         const dict = {
             method: "POST",
             headers: {
-                "Content-Type": "application/json; charset=utf-8",
-                "Accept-Encoding": "identity"
+                "Content-Type": "application/json; charset=utf-8"
+                //"Accept-Encoding": "identity"
             },
             body: JSON.stringify(this.bodyJson())
         };

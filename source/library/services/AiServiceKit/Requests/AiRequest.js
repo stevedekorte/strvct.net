@@ -420,8 +420,8 @@
             method: "POST",
             headers: {
                 "Content-Type": "application/json; charset=utf-8",
-                "Authorization": `Bearer ${apiKey}`,
-                "Accept-Encoding": "identity"
+                "Authorization": `Bearer ${apiKey}`
+                //"Accept-Encoding": "identity"
             },
             body: this.body()
         };
@@ -632,7 +632,7 @@
         xhrRequest.setDelegate(this);
 
         // let's print the url and headers here to the console
-        this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}, headers:`, requestOptions.headers);
+        this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}, headers:`, JSON.stringify(requestOptions.headers, null, 2));
 
         if (!this.isContinuation()) {
             this.setFullContent("");

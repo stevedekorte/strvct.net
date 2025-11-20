@@ -991,9 +991,11 @@
             assert(!this.hasActiveObject(obj), "objectForRecord: object is already active in memory"); // if it's already active in memory, we shouldn't be asking for it's record to load it into memory
         }
 
+        /*
         if (isSingleton && obj.hasPuuid() && obj.puuid() !== aRecord.id) {
             console.log(this.logPrefix() + " changing singleton object " + obj.svDebugId() + " pid from " + obj.puuid() + " to " + aRecord.id);
         }
+        */
         obj.setPuuid(aRecord.id);
 
         if (obj.shouldStore) {
