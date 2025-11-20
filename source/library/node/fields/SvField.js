@@ -430,6 +430,22 @@
         return this;
     }
 
+    keyWhiteSpace () {
+        const t = this.target();
+        if (t && t.keyWhiteSpace) {
+            return t.keyWhiteSpace();
+        }
+        return null;
+    }
+
+    valueCanUserSelect () {
+        const t = this.target();
+        if (t && t.valueCanUserSelect) {
+            return t.valueCanUserSelect();
+        }
+        return null;
+    }
+
     /**
      * @description Normalizes the value.
      * @param {Object} v - The value.

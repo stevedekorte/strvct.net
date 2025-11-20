@@ -341,6 +341,10 @@
         }
     }
 
+    valueCanUserSelect () {
+        return true;
+    }
+
     /**
    * Check if the value is editable.
 

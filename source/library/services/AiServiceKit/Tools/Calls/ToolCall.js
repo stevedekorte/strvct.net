@@ -522,7 +522,18 @@ Example Tool call format:
     }
 
     toolTarget () {
-        return this.toolDefinition().toolTarget();
+        let toolDefinition = this.toolDefinition();
+
+        if (toolDefinition === null) {
+            this.findToolDefinition();
+            toolDefinition = this.toolDefinition();
+        }
+
+        if (toolDefinition === null) {
+            throw new Error("Tool definition not found for tool call: " + this.toolName());
+        }
+
+        return toolDefinition.toolTarget();
     }
 
     parametersDict () {

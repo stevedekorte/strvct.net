@@ -544,6 +544,11 @@
         keyView.setIsDisplayHidden(!node.keyIsVisible());
         keyView.setIsEditable(node.keyIsEditable());
         keyView.setColor(this.keyViewColor());
+
+        const keyWhiteSpace = node.keyWhiteSpace();
+        if (keyWhiteSpace !== null) {
+            keyView.setWhiteSpace(keyWhiteSpace);
+        }
     }
 
     /**
@@ -605,6 +610,16 @@
                 //valueView.setCanHitEnter(true);
             } else {
                 valueView.setCanHitEnter(true);
+            }
+        }
+
+        const userSelect = node.valueCanUserSelect();
+        if (userSelect !== null) {
+            assert(Type.isBoolean(userSelect), "valueCanUserSelect() must be a boolean");
+            if (userSelect) {
+                valueView.turnOnUserSelect();
+            } else {
+                valueView.turnOffUserSelect();
             }
         }
     }

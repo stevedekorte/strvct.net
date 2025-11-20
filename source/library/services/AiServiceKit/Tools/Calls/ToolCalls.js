@@ -113,6 +113,10 @@
         return this.subnodes().filter((toolCall) => toolCall.isCompleted());
     }
 
+    incompleteCalls () {
+        return this.subnodes().filter((toolCall) => !toolCall.isComplete());
+    }
+
     queuedCalls () {
         return this.subnodes().filter((toolCall) => toolCall.isQueued());
     }

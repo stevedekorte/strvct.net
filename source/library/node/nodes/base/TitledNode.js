@@ -483,11 +483,18 @@
         f.setTitle("New " + typeName);
         f.setCanDelete(false);
         f.setTarget(this);
-        f.setMethodName("justAdd");
+        f.setMethodName("addSubnodeViaFooterNode");
         this.setFooterNode(f);
         if (this.nodeCanAddSubnode()) {
             this.setNodeCanAddSubnode(false); // to disable the click on column to add feature
             // TODO: add a slot for whether tap-to-add is enabled?
+        }
+    }
+
+    addSubnodeViaFooterNode () {
+        const newSubnode = this.justAdd();
+        if (newSubnode) {
+            this.postShouldFocusAndExpandSubnode(newSubnode);
         }
     }
 

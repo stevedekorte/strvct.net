@@ -83,8 +83,7 @@
         const newPath = path + "/" + this.jsonPathCompmentString();
         console.log("[[" + newPath + "]] .descendantWithJsonId('" + jsonId + "') != '" + this.jsonId() + "'");
 
-        return this.nextJsonDescendants().detectAndReturnValue(sn => {
-
+        const result = this.nextJsonDescendants().detectAndReturnValue(sn => {
             if (sn) {
                 if (sn.isKindOf(SvPointerField)) {
                     sn = sn.nodeTileLink();
@@ -95,7 +94,8 @@
                         if (sn.isKindOf(UoCampaign)) {
                             debugger;
                         }
-                        return sn.descendantWithJsonId(jsonId, newPath);
+                        const result = sn.descendantWithJsonId(jsonId, newPath);
+                        return result;
                     } else {
                         debugger;
                         console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
@@ -104,6 +104,7 @@
             }
             return null;
         });
+        return result;
     }
 
     descendantWithJsonIdOrThrow (jsonId, path = "") {
