@@ -329,4 +329,22 @@
         return new Blob([arrayBuffer], { type: mimeType });
     }
 
+    /**
+   * @description Tests if the text matches the query.
+   * @param {string} query - Plain string or regex pattern wrapped in slashes (e.g., "/fire.*ball/")
+   * @returns {Promise<boolean>} True if text matches query
+   */
+    async asyncMatchesQuery (query) {
+        // query is a string which could contain a regex or a simple string
+        const text = await this.asyncValueFromData();
+        assert(typeof text === "string", "text is not a string");
+
+        if (query.startsWith("/") && query.endsWith("/")) {
+            const regex = new RegExp(query.slice(1, -1), "i");
+            return regex.test(text);
+        } else {
+            return text.toLowerCase().includes(query.toLowerCase());
+        }
+    }
+
 }.initThisClass());

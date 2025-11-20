@@ -569,7 +569,6 @@ Example Tool call format:
 
             // should we instantiate the parameter objects and replace them as values in the json, or just pass the json?
             // we should probably do the latter as it's more flexible
-
             // however, we don't want each tool call method to have to repeat code to:
             // - parse the parameters,
             // - instantiate the parameter objects
@@ -581,21 +580,32 @@ Example Tool call format:
             //   - etc.
 
             // Call the method and handle both sync and async functions
-            const result = method.apply(toolTarget, [this]);
+            const isAsync = Type.isAsyncFunction(method);
+            let result;
 
-            // Check if the result is a Promise (async function)
-            if (result && typeof result.then === "function") {
-                // Wait for the async function to complete
-                await result;
+            if (isAsync) {
+                result = await method.apply(toolTarget, [this]);
+            } else {
+                result = method.apply(toolTarget, [this]);
             }
 
+            console.log("---- TOOLCALL RESULT: ", result);
+
+            // NOTES:
+            // 1) there are methods that don't immediately return a value, such as dice rolls,
+            // so we need to be able to return *without* having a result value yet and
+            // leave it up to the method to call setCallResult() when the result is ready.
+            // or handleCallError() if there is an error.
+
+            // we also have to catch the errors that are thrown from the method
+
             /*
-      let resultValue = method.apply(toolTarget, [this]);
-      if (Type.isUndefined(resultValue)) {
-        resultValue = null; // should we make this more strict and throw an error?
-      }
-      this.handleCallSuccess(resultValue);
-      */
+            let resultValue = method.apply(toolTarget, [this]);
+            if (Type.isUndefined(resultValue)) {
+                resultValue = null; // should we make this more strict and throw an error?
+            }
+            this.handleCallSuccess(resultValue);
+            */
         } catch (e) {
             console.error("---- TOOLCALL ERROR: ", e, " Error making tool call: " + this.toolDefinition().name());
             this.handleCallError(e);
@@ -628,25 +638,27 @@ Example Tool call format:
     }
 
     handleCallError (e) {
+        this.setStatus("completed");
+
         if (!Type.isError(e)) {
             e = new Error("handleCallError requires an Error instance");
         }
 
         console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
 
-
-        this.setStatus("completed");
-
         const r = this.newToolResult();
+        r.setStatus("failure");
         r.setError(e.message);
         if (e.extraMessage) {
             r.setExtraMessage(e.extraMessage);
         }
-        r.setStatus("failure");
         this.setToolResult(r);
         this.toolCalls().onToolCallComplete(this);
-        console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
 
+        this.reportError(e);
+    }
+
+    reportError (e) {
         // Report error to the server if SvApp is available
         const errorData = {
             name: "ToolCallError",
@@ -667,12 +679,8 @@ Example Tool call format:
             errorData.toolCall.parameters = this.callJson().parameters;
         }
 
-        // Don't block execution - use setTimeout to post error asynchronously
-
-        SvErrorReport.asyncSend(e, errorData).catch(error => {
-            console.error("Failed to report tool call error:", error);
-        });
-
+        // Don't block execution, send asynchronously
+        SvErrorReport.asyncSend(e, errorData);
     }
 
     hasError () {
@@ -685,8 +693,21 @@ Example Tool call format:
     }
 
     setCallResult (json) {
-
+        // called by the tool method to set the result value
         this.handleCallSuccess(json);
+        return this;
+    }
+
+    setCallError (error) {
+        // called by the tool method to set the error value
+        /*
+        toolCall.setCallResult({
+            success: false,
+            error: error.patchError,
+            hint: "Check the path and operation type. Verify that parent nodes exist and have the expected structure."
+        });
+        */
+        this.handleCallError(error);
         return this;
     }
 

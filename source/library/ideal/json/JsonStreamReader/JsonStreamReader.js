@@ -289,7 +289,7 @@
    */
     onKey (key) {
         this.pushKey(key);
-    //this.logDebug("k '" + key + "'");
+        //this.logDebug("k '" + key + "'");
     }
 
     /**
@@ -312,7 +312,7 @@
 
     /**
    * @description Handles an open object event from the clarinet parser.
-   * @param {string} key - The key of the opened object.
+   * @param {string} key - The first key of the opened object, or undefined if the object is empty or an array element.
    * @category Parsing
    */
     onOpenObject (key) {
@@ -320,7 +320,10 @@
         this.onValue(item);
         this.pushContainer(item);
         //this.logDebug("onOpenObject ");
-        this.onKey(key);
+        // If key is provided, it's the first key in this object
+        if (key !== undefined && key !== null) {
+            this.onKey(key);
+        }
     }
 
     /**

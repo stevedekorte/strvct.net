@@ -117,7 +117,7 @@
    */
     async asyncEvaluateImages () {
         try {
-            this.setStatus("preparing for image evaluation");
+            this.appendStatus("Preparing for image evaluation...");
             this.imageEvaluators().removeAllSubnodes();
 
             // setup image evaluators
@@ -130,11 +130,11 @@
                 evaluator.setImageGenPrompt(this.prompt());
             });
 
-            this.setStatus("evaluating final images");
+            this.setStatus("Evaluating image set...");
             await this.imageEvaluators().asyncEvaluate(); // evals in parallel
             const bestImage = this.imageEvaluators().bestSvImage();
             this.setResultImageUrlData(bestImage.dataURL());
-            this.setStatus("evaluation complete");
+            this.setStatus("Selected best image!");
 
         } catch (error) {
             this.throwEvalError(error);

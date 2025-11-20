@@ -475,4 +475,8 @@
         return super.delete();
     }
 
+    valueIsComplete () {
+        return this.isComplete();
+    }
+
 }.initThisClass());

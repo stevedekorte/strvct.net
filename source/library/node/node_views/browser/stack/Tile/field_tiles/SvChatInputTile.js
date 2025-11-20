@@ -17,6 +17,7 @@
      */
     createValueView () {
         const v = super.createValueView();
+        v.setElementClassName("SvChatInputTileValueView");
 
         v.setAllowsHtml(false);
         v.setWhiteSpace("pre-wrap");

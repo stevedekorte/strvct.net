@@ -125,7 +125,8 @@
      * @category UI
      */
     createValueView () {
-        const v = SvTextView.clone().setElementClassName("SvChatInputTileValueView");
+        const v = SvTextView.clone();
+        v.setElementClassName("SvChatMessageTileValueView");
 
         v.setIsMergeable(true);
         v.setDisplay("block");
