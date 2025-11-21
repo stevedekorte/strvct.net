@@ -80,10 +80,6 @@
     */
     }
 
-    init () {
-        super.init();
-    }
-
     finalInit () {
         super.finalInit();
         this.setTitle("AssistantToolKit");

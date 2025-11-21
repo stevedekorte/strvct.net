@@ -607,6 +607,11 @@ Midjourney
         }
     }
 
+    appendStatus (status) {
+        this.setStatus(this.status() + "\n" + status);
+        return this;
+    }
+
     pickRandomSeed () {
         this.setSeed(Number.randomUint32());
     }

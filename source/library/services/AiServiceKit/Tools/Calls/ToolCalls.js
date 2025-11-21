@@ -49,14 +49,25 @@
         throw new Error("Not implemented");
     }
 
+    assertHasAssistantToolKit () {
+        const assistantToolKit = this.assistantToolKit();
+        if (!assistantToolKit) {
+            const msg = "Tool calls has an assistantToolKit slot that is null";
+            console.error(msg);
+            debugger;
+            throw new Error(msg);
+        }
+    }
+
     toolDefinitionWithName (name) {
+        this.assertHasAssistantToolKit();
         return this.assistantToolKit().toolDefinitions().toolDefinitionWithName(name);
     }
 
     handleToolCallTagFromMessage (innerTagString, aMessage) {
+        this.assertHasAssistantToolKit();
+
         const toolCall = ToolCall.clone();
-
-
         toolCall.setToolCalls(this);
 
         //assert(aMessage);

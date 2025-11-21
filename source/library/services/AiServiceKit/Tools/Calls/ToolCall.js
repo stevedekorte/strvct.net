@@ -243,7 +243,14 @@ Example Tool call format:
     }
 
     toolDefinitionForToolName (toolName) {
-        return this.toolCalls().toolDefinitionWithName(toolName);
+        const toolCalls = this.toolCalls();
+        if (!toolCalls) {
+            const msg = "Tool call '" + this.toolName() + "' has a toolCalls slot that is null";
+            console.error(msg);
+            debugger;
+            throw new Error(msg);
+        }
+        return toolCalls.toolDefinitionWithName(toolName);
     }
 
     findToolDefinition () {
