@@ -107,10 +107,22 @@
         this.setAiErrors([]);
     }
 
+    isVisibleToUser () {
+        const devMode = SvApp.shared().developerMode();
+        if (this.speakerName() === "Tool Call Results" && !devMode) { // temporary to hide tool call results from non-dev users
+            return false;
+        }
+        return super.isVisibleToUser();
+    }
 
     isVisible () {
+        const devMode = SvApp.shared().developerMode();
+        const isVisibleToUser = this.isVisibleToUser();
 
-        return super.isVisible() && (this.role() !== "system" /*|| SvApp.shared().developerMode() */);
+        if (this.speakerName() === "Tool Call Results" && !devMode) { // temporary to hide tool call results from non-dev users
+            return false;
+        }
+        return isVisibleToUser && super.isVisible() && (this.role() !== "system" /*|| SvApp.shared().developerMode() */);
     }
 
     tagDelegate () {

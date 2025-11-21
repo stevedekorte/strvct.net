@@ -113,6 +113,11 @@
    * @category Message Properties
    */
     isVisible () {
+        const devMode = SvApp.shared().developerMode();
+        if (this.speakerName() === "Tool Call Results" && !devMode) { // temporary to hide tool call results from non-dev users
+            return false;
+        }
+
         return this.role() !== "system";
     }
 
