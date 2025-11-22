@@ -289,17 +289,6 @@
         return this;
     }
 
-    /**
-     * @description Applies CSS variables from a dictionary.
-     * @param {Object} dict - The dictionary of CSS variables.
-     */
-    applyCssVariableDict (dict) {
-        const el = this.element();
-        Object.keys(dict).forEach(k => {
-            const v = dict[k];
-            el.style.setProperty(k, v);
-        });
-    }
 
     /**
      * @description Syncs the view from the node.

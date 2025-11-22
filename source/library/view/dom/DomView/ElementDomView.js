@@ -348,25 +348,21 @@
         return this;
     }
 
-    /**
-     * @description Inserts a class name to the element
-     * @param {string} aName - The class name to insert
-     * @returns {ElementDomView} The current instance
-     */
-    insertElementClassName (aName) {
-        const e = this.element();
-        e.classList.add(aName);
+    // --- css classes ---
+
+    addCssClass (aClassName) {
+        this.element().classList.add(aClassName);
         return this;
     }
 
-    /**
-     * @description Removes a class name from the element
-     * @param {string} aName - The class name to remove
-     * @returns {ElementDomView} The current instance
-     */
-    removeElementClassName (aName) {
+    removeCssClass (aClassName) {
+        this.element().classList.remove(aClassName);
+        return this;
+    }
+
+    insertElementClassName (aName) {
         const e = this.element();
-        e.classList.remove(aName);
+        e.classList.add(aName);
         return this;
     }
 
@@ -394,6 +390,64 @@
                 this.setAttribute("class", aName);
             }
         }
+        return this;
+    }
+
+    /**
+     * @description Gets the element class names
+     * @returns {Array} Array of element class names
+     */
+    elementClassNames () {
+        const name = this.elementClassName();
+        if (name) {
+            return name.split(" ");
+        }
+        return [];
+    }
+
+    appendElementClassName (aName) {
+        assert(aName);
+        const names = this.elementClassNames();
+        if (names.includes(aName)) {
+            return this;
+        }
+        names.push(aName);
+        this.setElementClassNames(names);
+        return this;
+    }
+
+    prependElementClassName (aName) {
+        assert(aName);
+        const names = this.elementClassNames();
+        if (names.includes(aName)) {
+            return this;
+        }
+        names.unshift(aName);
+        this.setElementClassNames(names);
+        return this;
+    }
+
+
+    /**
+     * @description Removes a class name from the element
+     * @param {string} aName - The class name to remove
+     * @returns {ElementDomView} The current instance
+     */
+    removeElementClassName (aName) {
+        const names = this.elementClassNames();
+        if (!names.includes(aName)) {
+            return this;
+        }
+        names.splice(names.indexOf(aName), 1);
+        this.setElementClassNames(names);
+        //const e = this.element();
+        //e.classList.remove(aName);
+        return this;
+    }
+
+
+    clearElementClassNames () {
+        this.setElementClassNames([]);
         return this;
     }
 

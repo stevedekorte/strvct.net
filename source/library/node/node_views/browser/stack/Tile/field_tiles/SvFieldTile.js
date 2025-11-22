@@ -550,6 +550,10 @@
         if (keyWhiteSpace !== null) {
             keyView.setWhiteSpace(keyWhiteSpace);
         }
+
+        if (node.keyCssDict) {
+            keyView.applyCssVariableDict(node.keyCssDict());
+        }
     }
 
     /**

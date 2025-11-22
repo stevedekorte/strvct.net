@@ -145,6 +145,24 @@
         }
     }
 
+    setNode (aNode) {
+        if (aNode !== this.node()) {
+
+            if (this.node()) {
+                const name = this.node().svType();
+                this.removeElementClassName(name);
+            }
+
+            super.setNode(aNode);
+
+            if (aNode) {
+                const name = aNode.svType();
+                this.appendElementClassName(name);
+            }
+        }
+        return this;
+    }
+
     /**
      * @description Applies styles to the tile.
      */
