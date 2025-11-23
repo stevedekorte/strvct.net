@@ -151,7 +151,7 @@
     }
 
     onUpdateSlotStatus (oldValue, newValue) {
-        this.shareStatusChange(newValue);
+        this.shareProgress(newValue);
     }
 
     throwEvalError (error) {

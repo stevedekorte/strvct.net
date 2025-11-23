@@ -238,12 +238,9 @@
         return publicUrl;
     }
 
-    subnodeIndex () {
-        return this.parentNode().indexOfSubnode(this);
-    }
 
     onUpdateSlotStatus (oldValue, newValue) {
-        this.shareStatusChange("image " + this.subnodeIndex() + ": " + newValue);
+        this.shareProgress("image " + (this.subnodeIndex() + 1) + ": " + newValue);
     }
 
     /**
@@ -258,7 +255,7 @@
 
             this.assertReadyToEvaluate();
 
-            this.setStatus("Evaluating image with OpenAI...");
+            //this.setStatus("Evaluating image with OpenAI...");
 
             // Perform evaluation
             await this.asyncPerformEvaluation();

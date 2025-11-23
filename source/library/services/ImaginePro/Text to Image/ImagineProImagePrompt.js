@@ -609,7 +609,12 @@ Midjourney
 
     appendStatus (status) {
         this.setStatus(this.status() + "\n" + status);
+        this.shareProgress(status);
         return this;
+    }
+
+    onDescendantProgress (descendant, status) {
+        this.appendStatus(status);
     }
 
     pickRandomSeed () {
@@ -936,9 +941,11 @@ Midjourney
         //this.svImages().removeAllSubnodes();
     }
 
+    /*
     didUpdateSlotStatus (oldValue, newValue) {
         //debugger;
-        this.shareStatusChange(newValue);
+        //this.shareProgress(newValue);
     }
+    */
 
 }.initThisClass());

@@ -224,6 +224,9 @@
             return;
         }
 
+        this.shareProgress("fetching image " + this.subnodeIndex() + "...");
+
+
         this.setIsLoading(true);
         this.setError(null);
 

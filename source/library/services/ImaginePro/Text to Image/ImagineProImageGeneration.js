@@ -194,6 +194,7 @@
         return ImagineProService.shared();
     }
 
+
     /**
    * @description Starts polling for the task status.
    * @category Process
@@ -201,6 +202,9 @@
     async asyncStartPolling () {
         this.setCompletionPromise(Promise.clone());
         this.setPollAttempts(0);
+
+        this.shareProgress("waiting on image results...");
+
         this.setStatus("preparing to poll for task status...");
         this.sendDelegateMessage("onImageGenerationStart", [this]);
 
@@ -269,6 +273,8 @@
                 }
             }
         } catch (error) {
+            this.shareProgress("error polling for image results...");
+
             console.error("Poll error:", error);
             this.schedulePoll();
         }
@@ -301,6 +307,7 @@
     }
 
     async handlePollDone (response) {
+        this.shareProgress("got image results...");
         this.setStatus("completed");
         this.stopPolling();
 
@@ -376,7 +383,7 @@
 
     didUpdateSlotStatus (oldValue, newValue) {
         //debugger;
-        this.shareStatusChange(newValue);
+        this.shareProgress(newValue);
     }
 
 }.initThisClass());

@@ -291,6 +291,13 @@
         return chain.map(node => node.title()).join("/");
     }
 
+    subnodeIndex () {
+        if (this.parentNode()) {
+            return this.parentNode().indexOfSubnode(this);
+        }
+        return -1;
+    }
+
     /**
 
      * @description Set the subnodes for this instance.
@@ -1131,14 +1138,14 @@
 
     // --- parent chain notifications ---
 
-    shareStatusChange (status) {
-        const msg = "onDescendantStatusChange";
+    shareProgress (status) {
+        const msg = "onDescendantProgress";
         const o = this.ownerOrParentNode();
         if (o) {
             if (o.respondsTo(msg)) {
                 o.perform(msg, [this, status]);
             } else {
-                o.shareStatusChange(status);
+                o.shareProgress(status);
             }
         }
     }

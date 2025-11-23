@@ -707,14 +707,9 @@ Example Tool call format:
 
     setCallError (error) {
         // called by the tool method to set the error value
-        /*
-        toolCall.setCallResult({
-            success: false,
-            error: error.patchError,
-            hint: "Check the path and operation type. Verify that parent nodes exist and have the expected structure."
-        });
-        */
-        this.handleCallError(error);
+        const normalizedError = Error.normalizeError(error);
+        console.error(this.logPrefix() + "'" + this.toolName() + "' tool call failed with error: ", normalizedError.message);
+        this.handleCallError(normalizedError);
         return this;
     }
 

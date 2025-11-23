@@ -81,7 +81,7 @@
             return this;
         }
         const newPath = path + "/" + this.jsonPathCompmentString();
-        console.log("[[" + newPath + "]] .descendantWithJsonId('" + jsonId + "') != '" + this.jsonId() + "'");
+        //console.log("[[" + newPath + "]] .descendantWithJsonId('" + jsonId + "') != '" + this.jsonId() + "'");
 
         const result = this.nextJsonDescendants().detectAndReturnValue(sn => {
             if (sn) {
