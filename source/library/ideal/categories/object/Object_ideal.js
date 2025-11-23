@@ -144,14 +144,12 @@
      * @throws {Error} If the object does not respond to the given method.
      * @category Method Invocation
      */
-    perform (methodName, args) {
-        const f = this[methodName];
-        if (f) {
-            return f.call(this, ...args);
+    perform (message, ...args) {
+        if (this[message] && this[message].apply) {
+            return this[message].apply(this, args);
         }
-        throw new Error(this.svTypeId() + " does not respond to '" + methodName + "'");
+        throw new Error(this, ".perform(" + message + ") missing method");
     }
-
     /**
      * Performs a method on this object if it responds to it.
      * @param {string} methodName - The name of the method to perform.

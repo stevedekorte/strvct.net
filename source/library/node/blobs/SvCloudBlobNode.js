@@ -113,6 +113,11 @@
     // --- public url ---
 
     async asyncPublicUrl () {
+        if (this.publicUrl()) {
+            // we assume this is set to null when appropriate
+            return this.publicUrl();
+        }
+
         const hash = await this.asyncValueHash();
         if (!hash) {
             throw new Error(this.logPrefix(), ".asyncPublicUrl(): no hash");

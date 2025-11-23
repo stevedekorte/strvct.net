@@ -958,14 +958,12 @@
      * @throws {Error} If the method doesn't exist.
      * @category Helpers
      */
-    perform (message) { // will apply any extra arguments to call
+    perform (message, ...args) {
         if (this[message] && this[message].apply) {
-            return this[message].apply(this, this.argsAsArray(arguments).slice(1));
+            return this[message].apply(this, args);
         }
-
         throw new Error(this, ".perform(" + message + ") missing method");
     }
-
     /**
      * Gets the setter name for a given slot.
      * @param {string} name - The name of the slot.

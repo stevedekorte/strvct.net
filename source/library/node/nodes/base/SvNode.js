@@ -1138,14 +1138,17 @@
 
     // --- parent chain notifications ---
 
-    shareProgress (status) {
+    shareProgress (status, visited = new Set()) {
+        assert(!visited.has(this), "shareProgress: loop detected");
+        visited.add(this);
+
         const msg = "onDescendantProgress";
         const o = this.ownerOrParentNode();
         if (o) {
             if (o.respondsTo(msg)) {
-                o.perform(msg, [this, status]);
+                o.perform(msg, this, status);
             } else {
-                o.shareProgress(status);
+                o.shareProgress(status, visited);
             }
         }
     }

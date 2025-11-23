@@ -568,7 +568,6 @@ Midjourney
     }
 
     setOmniRefImageUrl (url) {
-        debugger;
         this.omniRefImageNode().setDataURL(url);
         return this;
     }
@@ -904,8 +903,6 @@ Midjourney
     }
 
     async asyncAllResultImageNodes () {
-        //debugger;
-
         const allFilesToDownload = this.generations().subnodes().map(gen => {
             return gen.images().subnodes();
         }).flat();
