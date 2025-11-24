@@ -411,7 +411,13 @@
         // expand the method name to include combinations of meta keys (e.g. shift, function, control, option, command, etc)
         const methodName = SvKeyboard.shared().downMethodNameForEvent(event);
         //console.log(" onKeyDown ", methodName);
-        //assert(methodName !== "onKeyDown");
+
+        // Prevent infinite recursion if method name is the same as current method
+        if (methodName === "onKeyDown") {
+            console.warn("onKeyDown: methodName resolved to 'onKeyDown', preventing infinite recursion for event:", event);
+            return false;
+        }
+
         const result = this.invokeMethodNameForEvent(methodName, event);
         /*
         if (event.repeat) { // should this be a different method name?
@@ -432,6 +438,13 @@
         //this.logDebug(" onKeyUp ", event._id)
         const methodName = SvKeyboard.shared().upMethodNameForEvent(event);
         //console.log(this.svTypeId() + " onKeyUp methodName: ", methodName)
+
+        // Prevent infinite recursion if method name is the same as current method
+        if (methodName === "onKeyUp") {
+            console.warn("onKeyUp: methodName resolved to 'onKeyUp', preventing infinite recursion for event:", event);
+            return false;
+        }
+
         shouldPropogate = this.invokeMethodNameForEvent(methodName, event);
         return shouldPropogate;
     }
