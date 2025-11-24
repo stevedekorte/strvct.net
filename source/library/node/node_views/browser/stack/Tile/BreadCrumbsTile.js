@@ -29,7 +29,9 @@
          * @category Display
          */
         {
-            const slot = this.newSlot("separatorString", "/");
+            //const slot = this.newSlot("separatorString", "/");
+            //const slot = this.newSlot("separatorString", "•");→
+            const slot = this.newSlot("separatorString", "›");
             slot.setSlotType("String");
         }
 
@@ -262,7 +264,7 @@
      * @category Data
      */
     previousCrumb () {
-        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/");
+        const crumbs = this.crumbs().select(crumb => crumb.title() !== this.separatorString());
         if (crumbs.length > 1) {
             return crumbs[crumbs.length - 2];
         }
@@ -354,6 +356,7 @@
         v.titleView().setPaddingLeft("0.5em");
         v.titleView().setPaddingRight("0.5em");
         v.setTitle(this.separatorString());
+        //v.titleView().setOpacity(0.5);
         return v;
     }
 
@@ -588,7 +591,7 @@
         for (let i = 1; i < views.length - 1; i++) {
             const view = views[i];
             const sum = this.sumOfPathWidths() + padding;
-            const isSeparator = view.title() === "/";
+            const isSeparator = view.title() === this.separatorString();
             if (isSeparator && views[i - 1].isDisplayHidden()) {
                 view.hideDisplay();
             }
