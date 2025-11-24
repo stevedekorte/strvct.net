@@ -352,11 +352,23 @@
      */
     containsSelection () {
         const selection = window.getSelection();
-        const range = selection.getRangeAt(0);
-        const startContainer = range.startContainer;
-        const endContainer = range.endContainer;
-        const element = this.element();
-        return element.contains(startContainer) && element.contains(endContainer);
+
+        // Check if there are any ranges before trying to access them
+        if (!selection.rangeCount) {
+            return false;
+        }
+
+        try {
+            const range = selection.getRangeAt(0);
+            const startContainer = range.startContainer;
+            const endContainer = range.endContainer;
+            const element = this.element();
+            return element.contains(startContainer) && element.contains(endContainer);
+        } catch (error) {
+            // Safari can throw IndexSizeError even when rangeCount > 0
+            console.warn(this.svTypeId() + " containsSelection() getRangeAt(0) failed:", error.message);
+            return false;
+        }
     }
 
 }.initThisClass());
