@@ -78,19 +78,20 @@
      * @category Selection
      */
     getWindowSelectionRange () {
-        try {
-            if (window.getSelection) {
-                const selection = window.getSelection();
-                //selection.collapse(<node>); // safe?
-                if (selection.getRangeAt && selection.rangeCount) {
+        if (window.getSelection) {
+            const selection = window.getSelection();
+            //selection.collapse(<node>); // safe?
+            if (selection.getRangeAt && selection.rangeCount) {
+                try {
                     return selection.getRangeAt(0);
+                } catch (rangeError) {
+                    // Safari can throw IndexSizeError even when rangeCount > 0
+                    console.warn(this.svTypeId() + " getRangeAt(0) failed despite rangeCount=" + selection.rangeCount, rangeError.message);
+                    return null;
                 }
-            } else if (document.selection && document.selection.createRange) {
-                return document.selection.createRange();
             }
-        } catch (error) {
-            console.error(this.svTypeId() + "--- error getting window selection range ---", error);
-            return null;
+        } else if (document.selection && document.selection.createRange) {
+            return document.selection.createRange();
         }
         return null;
     }
