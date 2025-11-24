@@ -78,14 +78,19 @@
      * @category Selection
      */
     getWindowSelectionRange () {
-        if (window.getSelection) {
-            const selection = window.getSelection();
-            //selection.collapse(<node>); // safe?
-            if (selection.getRangeAt && selection.rangeCount) {
-                return selection.getRangeAt(0);
+        try {
+            if (window.getSelection) {
+                const selection = window.getSelection();
+                //selection.collapse(<node>); // safe?
+                if (selection.getRangeAt && selection.rangeCount) {
+                    return selection.getRangeAt(0);
+                }
+            } else if (document.selection && document.selection.createRange) {
+                return document.selection.createRange();
             }
-        } else if (document.selection && document.selection.createRange) {
-            return document.selection.createRange();
+        } catch (error) {
+            console.error(this.svTypeId() + "--- error getting window selection range ---", error);
+            return null;
         }
         return null;
     }
