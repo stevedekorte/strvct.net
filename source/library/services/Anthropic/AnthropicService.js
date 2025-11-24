@@ -33,7 +33,7 @@
     modelsJson () {
         return [
             {
-                "name": "claude-sonnet-4-5-20250929",
+                "name": "claude-opus-4-5-20251101",
                 "title": "Claude 4.5 Sonnet",
                 "subtitle": "",
                 "inputTokenLimit": 1000000, // would be 200k input tokens without beta request for 1M context
