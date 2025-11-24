@@ -259,7 +259,8 @@
      * @category AI Service
      */
     defaultChatModel () {
-        return this.geminiService().defaultChatModel();
+        return this.anthropicService().defaultChatModel();
+        //return this.geminiService().defaultChatModel();
     }
 
     /**
