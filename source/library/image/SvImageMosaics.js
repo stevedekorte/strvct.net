@@ -5,7 +5,7 @@
 /**
  * @class SvImageMosaics
  * @extends SvSummaryNode
- * @classdesc A collection of SvImageMosaics
+ * @classdesc An array of SvImageMosaics
  */
 
 "use strict";

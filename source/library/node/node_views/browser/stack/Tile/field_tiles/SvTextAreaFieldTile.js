@@ -91,9 +91,14 @@
         bv.setWidth("2.3em");
 	    bv.setTarget(this).setAction("onClickValueButton");
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
-        bv.setPadding("0px");
+        bv.setPaddingTop("0px");
+        bv.setPaddingBottom("0px");
+        bv.setPaddingLeft("0px");
+        bv.setPaddingRight("0px");
         bv.setMarginTop("1px");
         bv.titleView().setIsDisplayHidden(true);
+        bv.titleView().setPaddingLeft("0px");
+        bv.titleView().setPaddingRight("0px");
         bv.setAttribute("title", "Speech to text input");
         this.setSttButton(bv);
         this.updateSttButton();

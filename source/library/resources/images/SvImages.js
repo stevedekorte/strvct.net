@@ -2,13 +2,13 @@
 
 /**
  * @class SvImages
- * @extends SvSummaryNode
- * @classdesc A collection of SvImages
+ * @extends SvJsonArrayNode
+ * @classdesc An array of SvImages
  */
 
 "use strict";
 
-(class SvImages extends SvSummaryNode {
+(class SvImages extends SvJsonArrayNode {
 
     /**
    * @description Initializes the prototype.
