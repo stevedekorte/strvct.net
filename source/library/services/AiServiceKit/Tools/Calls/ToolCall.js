@@ -281,9 +281,9 @@ Example Tool call format:
         return this.callId() + "\n" + this.status();
     }
 
-
-    didUpdateSlotCallString (oldValue, newValue) {
-        if (oldValue !== this.callString() && newValue !== null) {
+    handleCallString (callString) {
+        this.setCallString(callString);
+        if (callString !== null) {
             this.parseCallString();
         }
     }

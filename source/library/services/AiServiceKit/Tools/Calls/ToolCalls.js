@@ -74,7 +74,7 @@
         toolCall.setMessage(aMessage);
         //assert(toolCall.message());
 
-        toolCall.setCallString(innerTagString);
+        toolCall.handleCallString(innerTagString);
 
         if (toolCall.toolName()) { // might not have one if there's a parse error
             const toolDef = this.toolDefinitionWithName(toolCall.toolName());
