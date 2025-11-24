@@ -472,6 +472,7 @@
         return this.incompleteMessages().length > 0;
     }
 
+
     /**
    * @description Gets active responses.
    * @returns {Array} The active responses.
@@ -505,7 +506,13 @@
    * @category State
    */
     acceptsChatInput () {
-        return !this.hasIncompleteMessages();
+        if (this.hasIncompleteMessages()) {
+            const firstIncompleteMessage = this.incompleteMessages().first();
+            console.log(this.logPrefix(), ".acceptsChatInput() - has incomplete message: ", firstIncompleteMessage.svType());
+            //debugger;
+            return false;
+        }
+        return true;
     }
 
     /* --- Client State --- */

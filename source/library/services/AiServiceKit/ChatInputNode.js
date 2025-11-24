@@ -68,11 +68,11 @@
     }
 
     /*
-  didUpdateSlotValue (oldValue, newValue) {
-    super.didUpdateSlotValue(oldValue, newValue);
-    return this;
-  }
-  */
+    didUpdateSlotValue (oldValue, newValue) {
+        super.didUpdateSlotValue(oldValue, newValue);
+        return this;
+    }
+    */
 
     /**
    * Set the value of the chat input
