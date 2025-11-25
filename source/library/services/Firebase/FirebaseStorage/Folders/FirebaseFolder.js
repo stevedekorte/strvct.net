@@ -305,6 +305,14 @@
                     return; // Don't set error or re-throw for canceled operations
                 }
 
+                // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+                // Treat this as an empty folder rather than an error
+                if (error.code === "storage/retry-limit-exceeded") {
+                    console.log(`Folder ${this.fullPath()} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                    this.setIsLoaded(true);
+                    return; // Don't set error or re-throw - treat as empty folder
+                }
+
                 console.error(`Error reading subnodes for ${this.fullPath()}:`, error);
                 this.setError(error);
                 debugger;

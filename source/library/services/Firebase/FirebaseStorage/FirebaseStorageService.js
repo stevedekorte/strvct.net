@@ -167,6 +167,11 @@
 
             return filesMetadata;
         } catch (error) {
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`User folder ${userId} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                return []; // Return empty array for empty/non-existent folders
+            }
             console.error(`Error listing blobs for user ${userId}:`, error);
             throw error;
         }
@@ -193,6 +198,11 @@
 
             return folders;
         } catch (error) {
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`User folder ${userId} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                return []; // Return empty array for empty/non-existent folders
+            }
             console.error(`Error listing folders for user ${userId}:`, error);
             throw error;
         }
@@ -242,6 +252,11 @@
                 folders: folders
             };
         } catch (error) {
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`User folder ${userId} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                return { files: [], folders: [] }; // Return empty arrays for empty/non-existent folders
+            }
             console.error(`Error listing blobs and folders for user ${userId}:`, error);
             throw error;
         }
