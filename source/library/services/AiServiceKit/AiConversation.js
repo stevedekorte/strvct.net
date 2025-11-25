@@ -205,18 +205,16 @@
    * @category Configuration
    */
     chatModel () {
-
-
         if (this._chatModel) {
             return this._chatModel;
         }
 
         /*
-    const ownerNode = this.firstOwnerChainNodeThatRespondsTo("chatModel");
-    if (ownerNode) {
-      return ownerNode.chatModel();
-    }
-    */
+        const ownerNode = this.firstOwnerChainNodeThatRespondsTo("chatModel");
+        if (ownerNode) {
+            return ownerNode.chatModel();
+        }
+        */
 
         if (this.conversations()) {
             return this.conversations().service().defaultChatModel();
@@ -255,10 +253,10 @@
    * @category State
    */
     updateTokenCount () {
-    // need to count the tokens in the chat history
-    // and update the token count
-    //const chatHistory = this.jsonHistoryString();
-    // conact all the messages and the system prompt
+        // need to count the tokens in the chat history
+        // and update the token count
+        //const chatHistory = this.jsonHistoryString();
+        // conact all the messages and the system prompt
         const allMessagesString = this.messages().map(m => m.content).join("\n");
         // estimate the token count
         const tokenCount = allMessagesString.length / 4;
@@ -445,13 +443,8 @@
         return this;
     }
 
-    /**
-   * @description Gets non-image messages.
-   * @returns {Array} The non-image messages.
-   * @category Message Filtering
-   */
-    nonImageMessages () {
-        return this.messages().select(m => !m.thisClass().isKindOf(UoImageMessage));
+    messagesRequiringCompletionBeforeUserResponse () {
+        return this.messages().select(m => m.requiresCompletionBeforeUserResponse());
     }
 
     /**
@@ -460,7 +453,7 @@
    * @category Message Filtering
    */
     incompleteMessages () {
-        return this.nonImageMessages().select(m => !m.isComplete());
+        return this.messagesRequiringCompletionBeforeUserResponse().select(m => !m.isComplete());
     }
 
     /**
@@ -506,10 +499,13 @@
    * @category State
    */
     acceptsChatInput () {
-        if (this.hasIncompleteMessages()) {
-            const firstIncompleteMessage = this.incompleteMessages().first();
-            console.log(this.logPrefix(), ".acceptsChatInput() - has incomplete message: ", firstIncompleteMessage.svType());
-            //debugger;
+        // we block user input until all blocking tool calls are complete
+        if (this.assistantToolKit().hasUncompletedBlockingToolCalls()) {
+            return false;
+        }
+
+        // we block user input until all messages requiring completion before user response are complete
+        if (this.messagesRequiringCompletionBeforeUserResponse().length > 0) {
             return false;
         }
         return true;

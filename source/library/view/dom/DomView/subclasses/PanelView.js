@@ -152,7 +152,7 @@
      * @category Lifecycle
      */
     openInWindow () {
-        SvApp.shared().mainWindow().documentBody().addSubview(this);
+        SvApp.shared().userInterface().mainWindow().documentBody().addSubview(this);
         return this;
     }
 

@@ -255,6 +255,10 @@
         return this;
     }
 
+    requiresCompletionBeforeUserResponse () {
+        return true;
+    }
+
 
     // --- error handling ---
 

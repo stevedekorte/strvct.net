@@ -134,10 +134,10 @@
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(false);
         this.setNodeCanAddSubnode(false);
-    /*
-    this.setSummaryFormat("value");
-    this.setHasNewlineAfterSummary(true);
-    */
+        /*
+        this.setSummaryFormat("value");
+        this.setHasNewlineAfterSummary(true);
+        */
     }
 
     jsonSchemaValidator () {
@@ -151,12 +151,12 @@
     title () {
         let title = "";
         /*
-    if (this.toolTarget()) {
-      title += this.toolTarget().thisClass().svType() + ".";
-    } else {
-      title += "NULL";
-    }
-    */
+        if (this.toolTarget()) {
+        title += this.toolTarget().thisClass().svType() + ".";
+        } else {
+        title += "NULL";
+        }
+        */
         title += this.name();
         return title;
     }
@@ -166,7 +166,7 @@
     }
 
     toolMethod () {
-    //const method = this.toolTarget().methodNamed(this.name());
+        //const method = this.toolTarget().methodNamed(this.name());
 
         // we may need to follow the prototype chain to find the method with the tool info on it
         // we check func.isToolable() to see if the method is toolable

@@ -277,7 +277,22 @@
         this.conversation().addSubnode(response);
         response.setSpeakerName(this.conversation().aiSpeakerName());
         //this.conversation().postShouldFocusSubnode(responseMessage)
-        response.asyncMakeRequest();
+        try {
+            response.asyncMakeRequest();
+        } catch (error) {
+            if (error instanceof AiRequestOverloadedError) {
+                // TODO: handle overloaded error
+                /*
+                const failoverModel = Services.shared().defaultFailoverChatModel();
+                if (failoverModel !== currentModel) {
+                    // TODO: switch to failover model
+                }
+                */
+                error.rethrow();
+            } else {
+                error.rethrow();
+            }
+        }
         return response;
     }
 
@@ -333,11 +348,12 @@
     cleanupAssistantMessage () {
         if (this.svType() === "AiResponseMessage") {
             //if (this.svType() !== "UoRollRequestMessage" && this.svType() !== "UoImageMessage") {
-
-            // TODO: add sanity check before deleting
-            this.deleteFollowingMessages();
-            this.setContent("");
-            this.asyncMakeRequest();
+            if (this.requiresCompletionBeforeUserResponse()) {
+                // TODO: add sanity check before deleting
+                this.deleteFollowingMessages();
+                this.setContent("");
+                this.asyncMakeRequest();
+            }
         }
     }
 

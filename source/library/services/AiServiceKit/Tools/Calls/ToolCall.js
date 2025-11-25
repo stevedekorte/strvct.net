@@ -206,17 +206,17 @@ Example Tool call format:
         }
 
         /*
-    {
-      const slot = this.newSlot("doesWaitForMessageCompletion", false);
-      slot.setDescription("If true, the tool call will wait for the message complete notification before returning.");
-      slot.setSlotType("Boolean");
-      slot.setShouldJsonArchive(false);
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-      slot.setIsInJsonSchema(false);
-      slot.setShouldStoreSlot(true);
-    }
-    */
+        {
+            const slot = this.newSlot("doesWaitForMessageCompletion", false);
+            slot.setDescription("If true, the tool call will wait for the message complete notification before returning.");
+            slot.setSlotType("Boolean");
+            slot.setShouldJsonArchive(false);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+        */
 
 
         {
@@ -230,16 +230,22 @@ Example Tool call format:
             //slot.setCanInspect(true);
             slot.setActionMethodName("makeCall");
         }
+    }
 
+    initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(false);
         this.setNodeCanAddSubnode(false);
-    /*
-    this.setSummaryFormat("value");
-    this.setHasNewlineAfterSummary(true);
-    */
+        /*
+        this.setSummaryFormat("value");
+        this.setHasNewlineAfterSummary(true);
+        */
+    }
+
+    doesWaitForMessageCompletion () {
+        return this.toolDefinition().doesWaitForMessageCompletion();
     }
 
     toolDefinitionForToolName (toolName) {
@@ -559,6 +565,10 @@ Example Tool call format:
 
     isOnNarrationTool () {
         return this.toolDefinition().toolMethod().callsOnNarrationTool();
+    }
+
+    isBlockingTool () {
+        return this.toolDefinition().toolMethod().isBlockingTool();
     }
 
     // make call

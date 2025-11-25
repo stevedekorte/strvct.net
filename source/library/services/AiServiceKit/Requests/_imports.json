@@ -1,4 +1,5 @@
 [
     "SvXhrRequest.js",
-    "AiRequest.js"
+    "AiRequest.js",
+    "errors/_imports.json"
 ]

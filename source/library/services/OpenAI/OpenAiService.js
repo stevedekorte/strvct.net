@@ -6,11 +6,6 @@
  * @class OpenAiService
  * @extends AiService
  * @classdesc OpenAiService is a SvSummaryNode that holds the API key and subnodes for the various OpenAI services.
- *
- * Example:
- *
- * OpenAiService.shared().setApiKey("sk-1234567890");
- * const hasApiKey = OpenAiService.shared().hasApiKey();
  */
 "use strict";
 

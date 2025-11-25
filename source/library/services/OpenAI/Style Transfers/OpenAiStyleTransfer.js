@@ -300,11 +300,6 @@
             this.setError("");
             this.setStatus("generating OpenAI style transfer...");
 
-            // Check if OpenAI service has API key
-            if (!this.service().hasApiKey()) {
-                throw new Error("OpenAI API key is not configured. Please set your API key in OpenAI Service settings.");
-            }
-
             // Validate inputs
             if (!this.contentPrompt() || this.contentPrompt().trim() === "") {
                 throw new Error("Content prompt is required");

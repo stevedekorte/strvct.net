@@ -458,6 +458,18 @@ Function.prototype.isToolable = function () {
     return this.getMetaProperty("isToolable") == true;
 };
 
+// Is Blocking Tool - if true, the AssistantToolKit will wait for all blocking tool calls to complete before responding to the AI
+
+Function.prototype.setIsBlockingTool = function (aBool) {
+    assert(Type.isBoolean(aBool));
+    this.setMetaProperty("isBlockingTool", aBool);
+    return this;
+};
+
+Function.prototype.isBlockingTool = function () {
+    return this.getMetaProperty("isBlockingTool") !== false; // assume it's blocking as that is safer
+};
+
 // Tool Call Timing - when to make the tool call (on stream, on completion, on narration)
 
 Function.prototype.setToolTiming = function (timing) {

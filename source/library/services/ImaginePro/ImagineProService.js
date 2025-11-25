@@ -11,10 +11,6 @@
  * V7 uses --oref (omnireference) and --ow (omnireference weight) parameters.
  * We do NOT support V6 or earlier versions (which used --cref/--cw).
  *
- * Example:
- *
- * ImagineProService.shared().setApiKey("your-imaginepro-key");
- * const hasApiKey = ImagineProService.shared().hasApiKey();
  */
 "use strict";
 

@@ -48,7 +48,7 @@
         }
 
         {
-            const slot = this.newSlot("errors", null);
+            const slot = this.newSlot("failedToolCalls", null);
             slot.setFinalInitProto(ToolCalls);
             slot.setShouldJsonArchive(false);
             slot.setIsSubnodeField(true);
@@ -57,16 +57,16 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /*
-    {
-      const slot = this.newSlot("toolResults", null);
-      slot.setFinalInitProto(ToolResults);
-      slot.setShouldJsonArchive(false);
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
+        {
+            const slot = this.newSlot("successfulToolCalls", null);
+            slot.setFinalInitProto(ToolCalls);
+            slot.setShouldJsonArchive(false);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+        }
     }
-    */
 
+    initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setSummaryFormat("value");
@@ -74,17 +74,18 @@
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(false);
 
-    /*
-    this.setSummaryFormat("value");
-    this.setHasNewlineAfterSummary(true);
-    */
+        /*
+        this.setSummaryFormat("value");
+        this.setHasNewlineAfterSummary(true);
+        */
     }
 
     finalInit () {
         super.finalInit();
         this.setTitle("AssistantToolKit");
         this.toolCalls().setAssistantToolKit(this);
-        this.errors().setTitle("Tool Call Errors");
+        this.failedToolCalls().setTitle("Failed Tool Call Errors");
+        this.successfulToolCalls().setTitle("Successful Tool Calls");
     }
 
     handleToolCallTagFromMessage (innerTagString, aMessage) {
@@ -136,21 +137,29 @@ The following formats will be used for tool calls and responses:
 
 
     async onToolCallAdded (toolCall) {
-        if (toolCall.isOnStreamTool()) {
+        if (toolCall.isOnStreamTool()) { //ToolDefinition.callsOnStreamTool
+            // call immediately when seeing in content stream e.g. sfx, music, etc.
             await this.processToolCall(toolCall);
         }
     }
 
     onMessageComplete (aMsg) {
-        console.log(this.logPrefix(), ".onMessageComplete('" + aMsg.messageId() + "')");
-
-        if (aMsg.isResponse()) { // should we only call the tools from this message?
+        //console.log(this.logPrefix(), ".onMessageComplete('" + aMsg.messageId() + "')");
+        if (aMsg.isResponse()) {
+            // Ai just completed a message, so we can process the tool calls that were queued for this (or any remaining previous) messages
             this.processQueuedToolCalls();
         }
     }
 
     onToolCallComplete (/*toolCall*/) {
         this.scheduleMethod("sendCompletedToolCallResponses", 0);
+    }
+
+    hasUncompletedBlockingToolCalls () {
+        const isBlocked = this.toolCalls().incompleteCalls().some((toolCall) => {
+            return toolCall.isBlockingTool();
+        });
+        return isBlocked;
     }
 
     async processQueuedToolCalls () {
@@ -163,7 +172,12 @@ The following formats will be used for tool calls and responses:
             // assert(toolCall.isQueued(), "sanity check: we're processing queued tool calls, but tool call status is not set to queued");
             await this.processToolCall(toolCall);
         }
-        this.scheduleMethod("sendCompletedToolCallResponses", 0);
+
+        if (!this.hasUncompletedBlockingToolCalls()) {
+            // we wait for all blocking tool calls (e.g. patches, etc.) to complete before sending the completed tool call responses
+            // user responses should also be blocked until all blocking tool calls are complete
+            this.scheduleMethod("sendCompletedToolCallResponses", 0);
+        }
     }
 
     async processToolCall (toolCall) {
@@ -192,7 +206,11 @@ The following formats will be used for tool calls and responses:
                 this.newCallResponseMessage("Tool Call Results", content);
             }
             this.toolCalls().removeCalls(completedCalls);
-            this.errors().addCalls(completedCalls.filter((toolCall) => toolCall.hasError()));
+
+            const failedCalls = completedCalls.filter((toolCall) => toolCall.hasError());
+            const successfulCalls = completedCalls.filter((toolCall) => !toolCall.hasError());
+            this.successfulToolCalls().addCalls(successfulCalls);
+            this.failedToolCalls().addCalls(failedCalls);
         }
     }
 

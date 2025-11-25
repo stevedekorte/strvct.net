@@ -37,7 +37,7 @@
 
     finalInit () {
         super.finalInit();
-        this.setTitle("Tool Calls");
+        this.setTitle("Active Tool Calls");
         this.setNoteIsSubnodeCount(true);
         this.setNoteIconName(null);
     }
@@ -125,7 +125,7 @@
     }
 
     incompleteCalls () {
-        return this.subnodes().filter((toolCall) => !toolCall.isComplete());
+        return this.subnodes().filter((toolCall) => !toolCall.isCompleted());
     }
 
     queuedCalls () {

@@ -10,8 +10,7 @@
  * @classdesc A SvSummaryNode that holds the API key and subnodes for the various Anthropic services.
  *
  * @example
- * AnthropicService.shared().setApiKey("...");
- * const hasApiKey = AnthropicService.shared().hasApiKey();
+
 */
 
 (class AnthropicService extends AiService {
@@ -34,12 +33,12 @@
         return [
             {
                 "name": "claude-opus-4-5-20251101",
-                "title": "Claude 4.5 Sonnet",
+                "title": "Claude 4.5 Opus",
                 "subtitle": "",
                 "inputTokenLimit": 1000000, // would be 200k input tokens without beta request for 1M context
                 "notes": "",
                 "beta": "context-1m-2025-08-07,output-128k-2025-02-19", // 1M context only supported for Tier 4 members
-                "outputTokenLimit": 128000, // 128k output tokens
+                "outputTokenLimit": 64000, // 128k output tokens
                 "supportsTemperature": true,
                 "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
             }
@@ -71,15 +70,6 @@
    */
     validateKey (s) {
         return s.startsWith("sk-");
-    }
-
-    /**
-   * @description Checks if a valid API key is set.
-   * @returns {boolean} True if a valid API key is set, false otherwise.
-   * @category Authentication
-   */
-    hasApiKey () {
-        return this.apiKeyOrUserAuthToken() && this.apiKeyOrUserAuthToken().length > 0;
     }
 
     /**

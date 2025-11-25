@@ -7,11 +7,7 @@
 /**
  * @class XaiService
  * @extends AiService
- * @classdesc
- *
- * @example
- * XaiService.shared().setApiKey("...");
- * const hasApiKey = XaiService.shared().hasApiKey();
+ * @classdesc XaiService
  *
  * NOTES: Grok doesn't require alternate user and assistant roles, so we don't need to merge messages like Xai does.
  * - No docs on whether system messages must be placed at the beginning of the messages array.
@@ -104,15 +100,6 @@
    */
     validateKey (/*s*/) {
         return true;
-    }
-
-    /**
-   * @description Checks if a valid API key is set.
-   * @returns {boolean} True if a valid API key is set, false otherwise.
-   * @category Authentication
-   */
-    hasApiKey () {
-        return true; //this.apiKey().length > 0;
     }
 
     /**

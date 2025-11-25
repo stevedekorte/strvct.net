@@ -8,11 +8,7 @@
  * @class AiService
  * @extends SvSummaryNode
  * @classdesc A SvSummaryNode that holds the API key and subnodes related to the service.
- *
- * Example:
- *
- * AiService.shared().setApiKey("sk-1234567890");
- * const hasApiKey = AiService.shared().hasApiKey();
+ *;
  */
 (class AiService extends SvSummaryNode {
 
@@ -173,7 +169,7 @@
    * @returns {boolean} True if the API key is set and valid, false otherwise.
    * @category Authentication
    */
-    async hasApiKey () {
+    async asyncHasApiKey () {
         const token = await this.apiKeyOrUserAuthToken();
         return token && token.length > 0;
     }

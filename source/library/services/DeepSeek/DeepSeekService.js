@@ -6,11 +6,6 @@
  * @class DeepSeekService
  * @extends AiService
  * @classdesc DeepSeekService is a SvSummaryNode that holds the API key and subnodes for the various OpenAI services.
- *
- * Example:
- *
- * DeepSeekService.shared().setApiKey("sk-1234567890");
- * const hasApiKey = DeepSeekService.shared().hasApiKey();
  */
 "use strict";
 

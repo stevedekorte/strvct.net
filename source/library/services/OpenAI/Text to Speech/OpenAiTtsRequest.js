@@ -231,7 +231,6 @@
    * @category Validation
    */
     assertValid () {
-        assert(this.service().hasApiKey(), this.svType() + " apiKey missing");
         assert(this.apiUrl(), this.svType() + " apiUrl missing");
     }
 

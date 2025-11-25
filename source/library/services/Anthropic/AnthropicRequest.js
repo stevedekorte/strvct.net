@@ -160,7 +160,11 @@
     onStreamJsonChunk (json) {
         const type = json.type;
         if (json.type === "error") {
-            const error = new Error(json.error.message);
+            let errorClass = Error;
+            if (json.error.type === "overloaded_error") {
+                errorClass = AiRequestOverloadedError;
+            }
+            const error = new errorClass(json.error.message);
             error.name = json.error.type;
             this.onError(error);
             this.setStopReason(json.error.type);
