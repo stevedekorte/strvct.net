@@ -78,9 +78,8 @@
 
         if (toolCall.toolName()) { // might not have one if there's a parse error
             const toolDef = this.toolDefinitionWithName(toolCall.toolName());
-            assert(toolDef, "Tool definition not found for tool call: " + toolCall.toolName());
+            assert(toolDef, this.logPrefix() + ".handleToolCallTagFromMessage() - Tool definition not found for tool call: " + toolCall.toolName());
             toolDef.assertMethodExists();
-            assert(toolDef, "Tool definition not found for tool call: " + toolCall.toolName()); // should the tool call report the error
             // this.toolCall().reportErrorToAssistant(new Error("Tool definition not found for tool call: " + toolCall.toolName()));
             toolCall.setToolDefinition(toolDef);
         }

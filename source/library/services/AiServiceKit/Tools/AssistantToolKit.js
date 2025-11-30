@@ -162,6 +162,12 @@ The following formats will be used for tool calls and responses:
         return isBlocked;
     }
 
+    canSendResponsesNow () {
+        const isBlocked = !this.hasUncompletedBlockingToolCalls();
+        const aiIsResponding = this.conversation().hasActiveResponses();
+        return !isBlocked && !aiIsResponding;
+    }
+
     async processQueuedToolCalls () {
         const queuedCalls = this.toolCalls().queuedCalls();
         for (const toolCall of queuedCalls) {
@@ -173,7 +179,7 @@ The following formats will be used for tool calls and responses:
             await this.processToolCall(toolCall);
         }
 
-        if (!this.hasUncompletedBlockingToolCalls()) {
+        if (this.canSendResponsesNow()) {
             // we wait for all blocking tool calls (e.g. patches, etc.) to complete before sending the completed tool call responses
             // user responses should also be blocked until all blocking tool calls are complete
             this.scheduleMethod("sendCompletedToolCallResponses", 0);

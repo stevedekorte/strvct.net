@@ -289,6 +289,24 @@
    * @category Message Creation
    */
     newAssistantMessage () {
+        if (this.messagesRequiringCompletionBeforeUserResponse().length > 0) {
+            this.messagesRequiringCompletionBeforeUserResponse();
+            debugger;
+            throw new Error("newAssistantMessage() should not be called if there are messages requiring completion before user response");
+        }
+
+        if (!this.hasIncompleteAiResponseMessages()) {
+            this.hasIncompleteAiResponseMessages();
+            debugger;
+            throw new Error("newAssistantMessage() should not be called if there are incomplete ai response messages");
+        }
+
+        if (this.assistantToolKit() && !this.assistantToolKit().canSendResponsesNow()) {
+            debugger;
+            this.assistantToolKit().canSendResponsesNow();
+            throw new Error("newAssistantMessage() should not be called if the assistant tool kit cannot send responses now");
+        }
+
         const m = this.newMessage();
         m.setSpeakerName(this.aiSpeakerName());
         m.setRole("assistant");
@@ -382,7 +400,6 @@
    * @category Interaction
    */
     startWithPrompt (prompt) {
-
         this.clear();
         //this.setSystemPrompt(prompt);
         const promptMsg = this.newSystemMessage();
@@ -452,7 +469,7 @@
    * @returns {Array} The incomplete messages.
    * @category Message Filtering
    */
-    incompleteMessages () {
+    incompleteMessages () { // TODO: rename to incompleteMessagesRequiringCompletionBeforeUserResponse()
         return this.messagesRequiringCompletionBeforeUserResponse().select(m => !m.isComplete());
     }
 
@@ -465,6 +482,13 @@
         return this.incompleteMessages().length > 0;
     }
 
+    incompleteAiResponseMessages () {
+        return this.incompleteMessages().select(m => m.isKindOf(AiResponseMessage));
+    }
+
+    hasIncompleteAiResponseMessages () {
+        return this.incompleteAiResponseMessages().length > 0;
+    }
 
     /**
    * @description Gets active responses.
@@ -505,7 +529,7 @@
         }
 
         // we block user input until all messages requiring completion before user response are complete
-        if (this.messagesRequiringCompletionBeforeUserResponse().length > 0) {
+        if (this.incompleteMessages().length > 0) {
             return false;
         }
         return true;

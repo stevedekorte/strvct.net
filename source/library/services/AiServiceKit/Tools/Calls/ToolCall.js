@@ -543,7 +543,7 @@ Example Tool call format:
         }
 
         if (toolDefinition === null) {
-            throw new Error("Tool definition not found for tool call: " + this.toolName());
+            throw new Error(this.logPrefix() + ".toolTarget() - Tool definition not found for tool call: " + this.toolName());
         }
 
         return toolDefinition.toolTarget();

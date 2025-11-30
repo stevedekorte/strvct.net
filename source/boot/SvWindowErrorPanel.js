@@ -192,6 +192,8 @@ class SvWindowErrorPanel extends Object {
      */
     showPanelWithInfo (errorInfo, errorDefinition = null) {
 
+        debugger;
+
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HERE COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window
             const backdropDiv = document.createElement("div");
