@@ -675,7 +675,24 @@
      * @returns {SvTextView} The text field.
      */
     setValue (newValue) {
+
         newValue = this.cleanseNewValue(newValue);
+
+        let didChange = undefined;
+
+        if (this.allowsHtml()) {
+            // create an temporary element to hold the new value
+            const tempElement = document.createElement("div");
+            tempElement.innerHTML = newValue;
+            const newInnerHtml = tempElement.innerHTML;
+            tempElement.remove();
+
+            didChange = this._lastInnerHtml !== newInnerHtml;
+            if (!didChange) {
+                return this;
+            }
+            this._lastInnerHtml = newInnerHtml; // need this before merging or setting?
+        }
 
         if (this.isMergeable()) {
             this.setValueWithMerge(newValue);
@@ -683,11 +700,42 @@
             this.setString(newValue);
         }
 
+        if (this.allowsHtml()) {
+            if (didChange) {
+                this.handleCustomHtmlValueViews();
+            }
+        }
+
         /*
         if (this.innerHtml() !== newValue) {
             throw new Error(this.svDebugId() + " setValue innerHtml !== newValue");
         }
         */
+
+        return this;
+    }
+
+    handleCustomHtmlValueViews () {
+        if (!this.allowsHtml()) {
+            // we only handle custom html value views if allowsHtml is true
+            return this;
+        }
+        // Scans child elements for attribute name "data-custom-view-class" (we'll call their value the "className")
+        // If they don't have children, we assume they're not setup yet,
+        // so we clone ClassName and call setupInElement(this.element())
+
+        const elements = this.element().querySelectorAll("[data-custom-view-class]");
+        elements.forEach(element => {
+            const className = element.getAttribute("data-custom-view-class");
+            if (element.children.length === 0) {
+                const aClass = SvGlobals.get(className);
+                if (!aClass) {
+                    throw new Error("Custom view class not found: '" + className + "'");
+                }
+                const clonedElement = aClass.clone();
+                clonedElement.setupInElement(this.element());
+            }
+        });
         return this;
     }
 
