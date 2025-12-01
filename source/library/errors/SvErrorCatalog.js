@@ -89,15 +89,49 @@
             this.registerConfigurationErrors();
         }
 
-        // Call application-level methods (added by application category extensions)
+        // Allow applications to customize framework errors
         if (this.customizeFrameworkErrors) {
             this.customizeFrameworkErrors();
         }
 
+        // Register application-specific errors (added by application category extensions)
         if (this.registerApplicationErrors) {
             this.registerApplicationErrors();
         }
 
+        // Register the default catch-all error LAST so its /.*/ pattern
+        // only matches errors not caught by more specific patterns above
+        this.registerDefaultError();
+
+        // Allow applications to customize the default error after it's registered
+        if (this.customizeDefaultError) {
+            this.customizeDefaultError();
+        }
+
+        return this;
+    }
+
+    /**
+     * @description Register the default catch-all error definition.
+     * This matches any error not caught by more specific patterns.
+     * Applications can customize this via customizeFrameworkErrors().
+     * @category Registration
+     */
+    registerDefaultError () {
+        const def = SvErrorDefinition.clone()
+            .setId("default-error")
+            .setCategory("default")
+            .setFriendlyTitle("Something Went Wrong")
+            .setFriendlyMessage("An unexpected error occurred. Please try again or refresh the page if the problem persists.")
+            .setImageName(null) // Applications should customize with their own image
+            .setPatterns([
+                /.*/ // Matches any error message
+            ])
+            .setActions([
+                { label: "Dismiss", method: "dismiss" }
+            ]);
+
+        this.registerDefinition(def);
         return this;
     }
 
