@@ -107,6 +107,15 @@
         return false;
     }
 
+    didUpdateSlotRole (oldValue, newValue) {
+        if (this.hasDoneInit()) {
+            console.log(this.logPrefix(), "didUpdateSlotRole", oldValue, newValue);
+            if (newValue === "assistant") {
+                debugger;
+            }
+        }
+    }
+
     /**
    * @description Determines if the message is visible.
    * @returns {boolean} True if the role is not "system", false otherwise.
