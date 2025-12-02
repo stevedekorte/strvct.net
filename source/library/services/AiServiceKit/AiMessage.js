@@ -276,12 +276,16 @@
         return this.conversation().responseMsgClass();
     }
 
+
     /**
    * @description Requests a response from the AI.
    * @returns {Object} The response message object.
    * @category Actions
    */
     requestResponse () {
+        this.conversation().assertNoUncompletedBlockingToolCalls();
+
+
         const response = this.conversation().newMessageOfClass(this.responseMsgClass());
         this.conversation().addSubnode(response);
         response.setSpeakerName(this.conversation().aiSpeakerName());

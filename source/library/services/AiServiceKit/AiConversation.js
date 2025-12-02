@@ -626,5 +626,25 @@
         this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, aMessage);
     }
 
+    assertNoUncompletedBlockingToolCalls () {
+        const tk = this.assistantToolKit();
+        if (tk) {
+            if (tk.hasUncompletedBlockingToolCalls()) {
+                let blockingCalls = tk.blockingCalls();
+                const blockingCallsString = blockingCalls.map(c => c.toolDefinition().name()).join(", ");
+                console.error("**ERROR**:", this.logPrefix(), "assertNoUncompletedBlockingToolCalls() called when there are uncompleted blocking tool calls: " + blockingCallsString);
+                debugger;
+                tk.hasUncompletedBlockingToolCalls();
+            }
+        }
+
+    }
+
+    addSubnode (subnode) {
+        if (subnode.isKindOf(AiResponseMessage)) {
+            this.assertNoUncompletedBlockingToolCalls();
+        }
+        super.addSubnode(subnode);
+    }
 
 }.initThisClass());

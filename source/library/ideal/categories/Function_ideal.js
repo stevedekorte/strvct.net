@@ -496,7 +496,8 @@ Function.prototype.setCallsOnCompletionTool = function (aBool) {
 };
 
 Function.prototype.callsOnCompletionTool = function () {
-    return this.toolTiming() == "on completion";
+    const notOnCompletion = this.toolTiming() !== "on completion";
+    return !notOnCompletion;
 };
 
 // on stream
@@ -508,7 +509,7 @@ Function.prototype.setCallsOnStreamTool = function (aBool) {
 };
 
 Function.prototype.callsOnStreamTool = function () {
-    return this.toolTiming() == "on stream";
+    return this.toolTiming() === "on stream";
 };
 
 // on narration

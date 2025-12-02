@@ -733,7 +733,7 @@
                     throw new Error("Custom view class not found: '" + className + "'");
                 }
                 const clonedElement = aClass.clone();
-                clonedElement.setupInElement(this.element());
+                clonedElement.setupInElement(element);
             }
         });
         return this;

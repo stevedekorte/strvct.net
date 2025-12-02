@@ -155,10 +155,20 @@ The following formats will be used for tool calls and responses:
         this.scheduleMethod("sendCompletedToolCallResponses", 0);
     }
 
-    hasUncompletedBlockingToolCalls () {
-        const isBlocked = this.toolCalls().incompleteCalls().some((toolCall) => {
+    blockingCalls () {
+        return this.toolCalls().incompleteCalls().filter((toolCall) => {
             return toolCall.isBlockingTool();
         });
+    }
+
+    /*
+    activeAiResponses () {
+        return this.conversation().activeResponses();
+    }
+    */
+
+    hasUncompletedBlockingToolCalls () {
+        const isBlocked = this.blockingCalls().length > 0;
         return isBlocked;
     }
 
@@ -205,9 +215,19 @@ The following formats will be used for tool calls and responses:
     }
 
     async sendCompletedToolCallResponses () {
-        const completedCalls = this.toolCalls().completedCalls();
-        if (completedCalls.length > 0) {
+        let completedCalls = this.toolCalls().completedCalls();
+        let uncompletedBlockingToolCalls = this.blockingCalls();
+
+        if (completedCalls.length > 0 && uncompletedBlockingToolCalls.length === 0) {
+
+            assert(uncompletedBlockingToolCalls.length === 0, "sendCompletedToolCallResponses() called when there are uncompleted blocking tool calls: " + uncompletedBlockingToolCalls.map(c => c.toolDefinition().name()).join(", "));
+
             if (this.completedCallsRequiringResponse().length > 0) {
+
+                let activeResponses = this.conversation().activeResponses();
+                assert(activeResponses.length === 0, "sendCompletedToolCallResponses() called when there are active ai responses: " + activeResponses.map(r => r.messageId()).join(", "));
+
+
                 const content = this.composeResponseForToolCalls(completedCalls);
                 this.newCallResponseMessage("Tool Call Results", content);
             }
@@ -226,6 +246,7 @@ The following formats will be used for tool calls and responses:
         m.setContent(content);
         m.setIsVisibleToUser(false);
         assert(!m.isVisibleToUser(), "Tool call results should not be visible to user");
+        //debugger;
         m.setIsComplete(true); // does this trigger a requestResponse by the conversation assistant?
         //const responseMessage = m.requestResponse();
         //await responseMessage.completionPromise();
