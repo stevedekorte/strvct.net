@@ -39,14 +39,21 @@
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("SvTextView");
         }
+
+        // buttons row view
+        {
+            const slot = this.newSlot("buttonsRowView", null);
+            slot.setSlotType("DomView");
+        }
         /**
          * @member {ButtonView} button1 - The primary button of the panel.
          * @category UI Components
          */
         {
-            const slot = this.newSlot("button1", null);
-            slot.setSlotType("ButtonView");
+            const slot = this.newSlot("buttons", null);
+            slot.setSlotType("Array");
         }
+
         /**
          * @member {Boolean} isDragging - Indicates if the panel is currently being dragged.
          * @category State
@@ -65,24 +72,17 @@
             const slot = this.newSlot("isOpen", false);
             slot.setSlotType("Boolean");
         }
-    }
 
-    /**
-     * Set CSS properties on a subview.
-     * @param {DomView} view - The subview to apply CSS to.
-     * @returns {SvPanelView} - Returns this for chaining.
-     * @category Styling
-     */
-    setCssOnSubview (view) {
-        //view.setPadding("10px");
-        //view.setBorder("1px solid #ddd");
-        view.setMarginBottom("5px");
-        view.setPaddingLeft("1em");
-        view.setPaddingRight("1em");
-        view.setWidth("fit-content");
-        view.setHeight("fit-content");
-        view.setInset(null);
-        return this;
+        // completion promise
+        {
+            const slot = this.newSlot("completionPromise", null);
+            slot.setSlotType("Promise");
+        }
+
+        {
+            const slot = this.newSlot("result", null);
+            slot.setSlotType("Object");
+        }
     }
 
     /**
@@ -92,54 +92,126 @@
      */
     init () {
         super.init();
+        this.setButtons([]);
+
         this.setDisplay("flex");
         this.setPosition("absolute");
 
         this.setAlignItems("center");
         this.setJustifyContent("center");
-        this.setTop("0%");
+        this.setTop("50%");
         this.setLeft("50%");
         this.setTransform("translate(-50%, -50%)");
         this.setFlexDirection("column");
         //this.setMinAndMaxHeight("fit-content");
         this.setWidth("fit-content");
+        this.setMinWidth("12em");
         this.setHeight("fit-content");
+        this.setBorder("1px solid rgb(68, 68, 68)");
         this.setZIndex(1000);
+        this.setBackgroundColor("rgb(25, 25, 25)");
 
         {
             // title view
-            const view = SvTextView.clone().setElementClassName("PanelTitleView");
-            this.setTitleView(view);
-            this.addSubview(view);
-            view.setTextAlign("center");
-            view.setHeight("3em");
-            view.setWhiteSpace("normal");
-            view.centerInParentView();
-            view.setValue("");
-            view.setColor("white");
-            this.setCssOnSubview(view);
+            const v = SvTextView.clone().setElementClassName("PanelTitleView");
+            v.setTextAlign("center");
+            v.setHeight("3em");
+            //v.centerInParentView();
+            v.setValue("");
+            v.setColor("white");
+            v.setWhiteSpace("pre-wrap");
+            v.setWidth("100%");
+            v.setTextAlign("left");
+            v.setHeight("fit-content");
+            v.setPaddingLeft("2em");
+            v.setPaddingRight("2em");
+            v.setPaddingTop("1.5em");
+            v.setPaddingBottom("0.5em");
+            v.setFontWeight("bold");
+            //v.setBorder("1px solid rgb(68, 68, 68)");
+            this.setTitleView(v);
+            this.addSubview(v);
+        }
+
+        // subtitleView
+        {
+            const v = SvTextView.clone().setElementClassName("PanelSubtitleView");
+            v.setTextAlign("center");
+            v.setHeight("3em");
+            v.setWhiteSpace("pre-wrap");
+            v.setWidth("100%");
+            v.setTextAlign("left");
+            v.setHeight("fit-content");
+            v.setPaddingLeft("2em");
+            v.setPaddingRight("2em");
+            v.setPaddingTop("0.5em");
+            v.setPaddingBottom("1em");
+            v.setFontWeight("bold");
+            v.setColor("#999");
+            //v.setBorder("1px solid rgb(68, 68, 68)");
+            this.setSubtitleView(v);
+            this.addSubview(v);
         }
 
         //this.setSubtitleView(SvTextView.clone().setElementClassName("PanelSubtitleView"))
         //this.addSubview(this.subtitleView())
 
+        // buttonsRowView
         {
-            // button 1
-            const view = ButtonView.clone();
-            this.setButton1(view);
-            this.addSubview(view);
-            //view.setPosition("absolute").setRightPx(10).setBottomPx(10);
-            //view.setMinAndMaxWidth(100);
-            view.setTitle("OK");
-            view.setTarget(this).setAction("hitButton1");
-            view.setBorder("1px solid rgba(255,255,255,0.5)");
-            view.setPaddingTop("0em");
-            view.setPaddingBottom("0em");
-
-            this.setCssOnSubview(view);
+            const v = DomView.clone();
+            v.setDisplay("flex");
+            v.setFlexDirection("row");
+            v.setJustifyContent("space-between");
+            v.setAlignItems("flex-end");
+            v.setMarginTop("1em");
+            v.setWidth("100%");
+            v.setHeight("2em");
+            v.setBorderTop("1px solid rgb(68, 68, 68)");
+            v.setPadding("0em");
+            this.addSubview(v);
+            this.setButtonsRowView(v);
         }
 
         return this;
+    }
+
+    addOption (title) {
+        const button = this.addButton();
+        button.setTitle(title);
+        return this;
+    }
+
+    setOptionDicts (optionDicts) {
+        optionDicts.forEach((optionDict) => {
+            const button = this.addButton();
+            button.setTitle(optionDict.label);
+            button.setInfo(optionDict);
+        });
+        return this;
+    }
+
+    addButton () {
+        const button = this.newHitButton();
+        this.buttonsRowView().addSubview(button);
+        if (this.buttons().length > 0) {
+            button.setBorderLeft("1px solid rgb(68, 68, 68)");
+        }
+        this.buttons().push(button);
+        return button;
+    }
+
+    newHitButton () {
+        const v = ButtonView.clone();
+        v.setWidth("100%");
+        v.setPaddingTop("0em");
+        v.setPaddingBottom("0em");
+        v.setPaddingLeft("0.5em");
+        v.setPaddingRight("0.5em");
+        v.setColor("#999");
+        v.setHeight("2em");
+        v.setTarget(this);
+        v.setAction("hitButton");
+        return v;
     }
 
     /**
@@ -153,6 +225,11 @@
         return this;
     }
 
+    setSubtitle (s) {
+        this.subtitleView().setValue(s);
+        return this;
+    }
+
     /**
      * Open the panel in the main window.
      * @returns {SvPanelView} - Returns this for chaining.
@@ -161,6 +238,24 @@
     openInWindow () {
         SvApp.shared().userInterface().mainWindow().documentBody().addSubview(this);
         return this;
+    }
+
+    prepareForOpen () {
+        if (this.titleView().value().length === 0) {
+            this.titleView().setDisplay("none");
+        }
+        if (this.subtitleView().value().length === 0) {
+            this.subtitleView().setDisplay("none");
+        }
+        return this;
+    }
+
+    async asyncOpen () {
+        assert(this.buttons().length > 0, "buttons should be set");
+        assert(!this.completionPromise(), "completionPromise should not be set");
+        this.setCompletionPromise(Promise.clone());
+        this.openInWindow();
+        return await this.completionPromise();
     }
 
     /**
@@ -179,6 +274,31 @@
         panel.setColor("white");
         panel.openInWindow();
         return panel;
+    }
+
+    /**
+     * Handle the click event of the primary button.
+     * @returns {SvPanelView} - Returns this for chaining.
+     * @category Event Handling
+     */
+    hitButton (aButtonView) {
+        const title = aButtonView.title();
+        const info = aButtonView.info();
+        const result = info ? info : title;
+        //console.log("hitButton: ", result);
+        this.close();
+        this.completionPromise().callResolveFunc(result);
+        return this;
+    }
+
+    /**
+     * Close the panel by removing it from its parent view.
+     * @returns {SvPanelView} - Returns this for chaining.
+     * @category Lifecycle
+     */
+    close () {
+        this.removeFromParentView();
+        return this;
     }
 
     /*
@@ -217,25 +337,5 @@
         this.parentView().element().removeEventListener("mousemove", this._mouseMoveTrackerFunc, false);
     }
     */
-
-    /**
-     * Handle the click event of the primary button.
-     * @returns {SvPanelView} - Returns this for chaining.
-     * @category Event Handling
-     */
-    hitButton1 () {
-        this.close();
-        return this;
-    }
-
-    /**
-     * Close the panel by removing it from its parent view.
-     * @returns {SvPanelView} - Returns this for chaining.
-     * @category Lifecycle
-     */
-    close () {
-        this.removeFromParentView();
-        return this;
-    }
 
 }.initThisClass());
