@@ -338,4 +338,17 @@
     }
     */
 
+    static async asyncTestPanel () {
+        //const panel = SvPanelView.clone().setTitle("Delete").setSubtitle("Delete this session?").setOptionDicts([
+        const panel = SvPanelView.clone().setSubtitle("Restart 'The Eternal Arena' session?").setOptionDicts([
+            //{ label: "Maybe", value: 0 },
+            //{ label: "Not Sure", value: 1 },
+            { label: "Cancel", value: 2 },
+            { label: "Delete Session", value: 3 }
+        ]);
+
+        const result = await panel.asyncOpen();
+        await SvPanelView.clone().setTitle("Got result").setSubtitle(JSON.stringify(result, null, 2)).addOption("OK").asyncOpen();
+    }
+
 }.initThisClass());
