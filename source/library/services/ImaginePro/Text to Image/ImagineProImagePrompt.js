@@ -824,7 +824,7 @@ Midjourney
             process_mode: this.processMode()
         };
 
-        bodyJson.mode = "test";
+        //bodyJson.mode = "test";
 
         request.setBody(JSON.stringify(bodyJson));
 
