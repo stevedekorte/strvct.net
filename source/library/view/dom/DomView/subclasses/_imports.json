@@ -5,7 +5,7 @@
     "DocumentBody.js",
     "DragBarView.js",
     "DragView.js",
-    "PanelView.js",
+    "SvPanelView.js",
     "SvgIconCache.js",
     "SvgIconView.js",
     "browser-only/_imports.json",

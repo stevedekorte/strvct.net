@@ -5,14 +5,21 @@
  */
 
 /**
- * @class PanelView
+ * @class SvPanelView
  * @extends DomView
- * @classdesc PanelView is a customizable panel component with a title, subtitle, and a button.
+ * @classdesc SvPanelView is a customizable panel component with a title, subtitle, and a button.
+ *
+ * Example:
+ * const panel = SvPanelView.clone().setTitle("Hello, world!").openInWindow();
+ * panel.setButton1(ButtonView.clone().setTitle("OK").setTarget(this).setAction("onHitButton1"));
+ * panel.setButton2(ButtonView.clone().setTitle("Cancel").setTarget(this).setAction("onHitButton2"));
+ * panel.openInWindow(); // opens the panel in the main window, it will close when a button is hit
  */
-(class PanelView extends DomView {
+
+(class SvPanelView extends DomView {
 
     /**
-     * Initialize prototype slots for the PanelView.
+     * Initialize prototype slots for the SvPanelView.
      * @private
      */
     initPrototypeSlots () {
@@ -63,7 +70,7 @@
     /**
      * Set CSS properties on a subview.
      * @param {DomView} view - The subview to apply CSS to.
-     * @returns {PanelView} - Returns this for chaining.
+     * @returns {SvPanelView} - Returns this for chaining.
      * @category Styling
      */
     setCssOnSubview (view) {
@@ -79,8 +86,8 @@
     }
 
     /**
-     * Initialize the PanelView.
-     * @returns {PanelView} - Returns this for chaining.
+     * Initialize the SvPanelView.
+     * @returns {SvPanelView} - Returns this for chaining.
      * @category Initialization
      */
     init () {
@@ -138,7 +145,7 @@
     /**
      * Set the title of the panel.
      * @param {string} s - The title text.
-     * @returns {PanelView} - Returns this for chaining.
+     * @returns {SvPanelView} - Returns this for chaining.
      * @category UI Manipulation
      */
     setTitle (s) {
@@ -148,7 +155,7 @@
 
     /**
      * Open the panel in the main window.
-     * @returns {PanelView} - Returns this for chaining.
+     * @returns {SvPanelView} - Returns this for chaining.
      * @category Lifecycle
      */
     openInWindow () {
@@ -160,11 +167,11 @@
      * Show an error panel.
      * @static
      * @param {Error} error - The error object to display.
-     * @returns {PanelView} - The created error panel.
+     * @returns {SvPanelView} - The created error panel.
      * @category Error Handling
      */
     static showError (error) {
-        const panel = PanelView.clone().setTitle(error.message);
+        const panel = SvPanelView.clone().setTitle(error.message);
         //.setMinAndMaxWidth(300).setMinAndMaxHeight(200);
         panel.centerInParentView();
         panel.setTopPx(0);
@@ -213,7 +220,7 @@
 
     /**
      * Handle the click event of the primary button.
-     * @returns {PanelView} - Returns this for chaining.
+     * @returns {SvPanelView} - Returns this for chaining.
      * @category Event Handling
      */
     hitButton1 () {
@@ -223,7 +230,7 @@
 
     /**
      * Close the panel by removing it from its parent view.
-     * @returns {PanelView} - Returns this for chaining.
+     * @returns {SvPanelView} - Returns this for chaining.
      * @category Lifecycle
      */
     close () {

@@ -454,7 +454,7 @@
         this.setStatus(s);
         this.sendDelegateMessage("onTtsPromptError", [this]);
         //this.onEnd();
-        PanelView.showError(new Error("Text to Speech request " + s));
+        SvPanelView.showError(new Error("Text to Speech request " + s));
     }
 
     //onEnd () {
