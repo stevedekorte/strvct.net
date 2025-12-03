@@ -821,10 +821,8 @@ Midjourney
 
         const bodyJson = {
             prompt: fullPrompt,
-            process_mode: this.processMode()
+            mode: this.processMode()
         };
-
-        //bodyJson.mode = "test";
 
         request.setBody(JSON.stringify(bodyJson));
 
