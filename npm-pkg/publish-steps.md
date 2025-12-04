@@ -1,6 +1,13 @@
 # Steps to Publish STRVCT as an NPM Package
 
-Follow these steps to publish the STRVCT framework as an npm package:
+Follow these steps to publish the STRVCT framework as an npm package.
+
+## ⚠️ IMPORTANT: NPM Token Migration Required
+
+**NPM is deprecating classic tokens. All classic tokens will stop working on December 9th, 2025.**
+
+Before you can publish, you must migrate to granular access tokens or set up automated publishing. See:
+- **[TOKEN_MIGRATION_GUIDE.md](./TOKEN_MIGRATION_GUIDE.md)** - Complete migration instructions
 
 ## Preparation
 
@@ -14,21 +21,42 @@ Follow these steps to publish the STRVCT framework as an npm package:
 
 ## Publishing Process
 
-1. Copy the package.json and README.md from the npm-pkg directory to the strvct root:
+### Option 1: Manual Publishing (Traditional Method)
+
+1. Ensure you have a valid granular access token (see TOKEN_MIGRATION_GUIDE.md)
+
+2. Copy the package.json and README.md from the npm-pkg directory to the strvct root:
    ```bash
    cp npm-pkg/package.json .
    cp npm-pkg/README.md .
    ```
 
-2. Log in to npm (if not already logged in):
+3. Verify your npm authentication:
    ```bash
-   npm login
+   npm whoami
    ```
 
-3. Publish the package:
+4. Publish the package:
    ```bash
    npm publish
    ```
+
+### Option 2: Automated Publishing via GitHub Actions (Recommended)
+
+1. Set up trusted publishing with NPM (see TOKEN_MIGRATION_GUIDE.md)
+
+2. Go to the GitHub repository's Actions tab:
+   https://github.com/stevedekorte/strvct.net/actions
+
+3. Select "Publish to NPM" workflow
+
+4. Click "Run workflow" and enter the version number (e.g., `0.1.2`)
+
+5. The workflow will:
+   - Update the version in package.json
+   - Copy files to the root
+   - Publish to NPM with provenance
+   - Create a git tag and GitHub release
 
 ## Updating the Package
 

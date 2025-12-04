@@ -1,0 +1,92 @@
+name: Publish to NPM
+
+# This workflow allows manual publishing of the strvct package to NPM
+# It can be triggered from the GitHub Actions UI
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., 0.1.2)'
+        required: true
+        type: string
+      dry-run:
+        description: 'Perform a dry run without actually publishing'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed for tagging
+      id-token: write  # Required for NPM provenance/OIDC
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Validate version format
+        run: |
+          if ! echo "${{ inputs.version }}" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
+            echo "Error: Invalid version format. Expected format: X.Y.Z or X.Y.Z-beta.N"
+            exit 1
+          fi
+
+      - name: Update version in package.json
+        run: |
+          cd npm-pkg
+          npm version ${{ inputs.version }} --no-git-tag-version --allow-same-version
+
+      - name: Copy package files to root
+        run: |
+          cp npm-pkg/package.json .
+          cp npm-pkg/README.md .
+
+      - name: Display package info
+        run: |
+          echo "Package name: $(node -p "require('./package.json').name")"
+          echo "Version: $(node -p "require('./package.json').version")"
+          echo "Files to publish:"
+          npm pack --dry-run
+
+      - name: Publish to NPM (Dry Run)
+        if: ${{ inputs.dry-run }}
+        run: |
+          echo "Performing dry run - package will NOT be published"
+          npm publish --dry-run --provenance --access public
+
+      - name: Publish to NPM
+        if: ${{ !inputs.dry-run }}
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Git tag
+        if: ${{ !inputs.dry-run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${{ inputs.version }}" -m "Release v${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
+
+      - name: Create GitHub Release
+        if: ${{ !inputs.dry-run }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ inputs.version }}
+          release_name: Release v${{ inputs.version }}
+          body: |
+            Release of strvct v${{ inputs.version }}
+
+            Published to NPM: https://www.npmjs.com/package/strvct/v/${{ inputs.version }}
+          draft: false
+          prerelease: false
