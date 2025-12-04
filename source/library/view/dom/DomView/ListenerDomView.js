@@ -334,10 +334,6 @@
     onMouseLeave (event) {
         return true
     }
-
-    onMouseOver (event) {
-        return true
-    }
     */
 
     /**

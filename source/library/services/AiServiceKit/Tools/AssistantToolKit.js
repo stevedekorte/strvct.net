@@ -217,14 +217,13 @@ The following formats will be used for tool calls and responses:
     async sendCompletedToolCallResponses () {
         let completedCalls = this.toolCalls().completedCalls();
         let uncompletedBlockingToolCalls = this.blockingCalls();
+        let activeResponses = this.conversation().activeResponses();
 
-        if (completedCalls.length > 0 && uncompletedBlockingToolCalls.length === 0) {
+        if (activeResponses.length === 0 && completedCalls.length > 0 && uncompletedBlockingToolCalls.length === 0) {
 
             assert(uncompletedBlockingToolCalls.length === 0, "sendCompletedToolCallResponses() called when there are uncompleted blocking tool calls: " + uncompletedBlockingToolCalls.map(c => c.toolDefinition().name()).join(", "));
 
             if (this.completedCallsRequiringResponse().length > 0) {
-
-                let activeResponses = this.conversation().activeResponses();
                 assert(activeResponses.length === 0, "sendCompletedToolCallResponses() called when there are active ai responses: " + activeResponses.map(r => r.messageId()).join(", "));
 
 
@@ -267,6 +266,11 @@ The following formats will be used for tool calls and responses:
         });
         const content = "<tool-call-results>\n\n" + parts.join("\n\n") + "\n\n</tool-call-results>";
         return content;
+    }
+
+    removeAllToolCalls () {
+        this.toolCalls().removeAllCalls();
+        return this;
     }
 
 }.initThisClass());

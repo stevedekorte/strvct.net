@@ -64,6 +64,22 @@
             slot.setSlotType("Boolean");
             slot.setLabel("Should Confirm");
         }
+
+        // confirm title
+        {
+            const slot = this.newSlot("confirmTitle", null);
+            slot.setDescription("The text to display in the confirmation panel title.");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+        }
+
+        // confirm subtitle
+        {
+            const slot = this.newSlot("confirmSubtitle", null);
+            slot.setDescription("The text to display in the confirmation panel subtitle.");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+        }
     }
 
     /**
@@ -136,7 +152,9 @@
         }
 
         const actionName = this.title();
-        const panel = SvPanelView.clone().setSubtitle("Are you sure you want to '" + actionName + "'?").setOptionDicts([
+        const title = this.confirmTitle();
+        const subtitle = this.confirmSubtitle() ? this.confirmSubtitle() : "Are you sure you want to '" + actionName + "'?";
+        const panel = SvPanelView.clone().setTitle(title).setSubtitle(subtitle).setOptionDicts([
             { label: "Cancel", value: false },
             { label: actionName, value: true }
         ]);
@@ -254,6 +272,22 @@
             if (v !== undefined) {
                 assert(Type.isBoolean(v), "shouldConfirm must be a boolean");
                 this.setShouldConfirm(v);
+            }
+        }
+
+        {
+            const v = infoDict.confirmTitle;
+            if (v !== undefined) {
+                assert(Type.isString(v) || Type.isNull(v), "confirmTitle must be a string or null");
+                this.setConfirmTitle(v);
+            }
+        }
+
+        {
+            const v = infoDict.confirmSubtitle;
+            if (v !== undefined) {
+                assert(Type.isString(v) || Type.isNull(v), "confirmSubtitle must be a string or null");
+                this.setConfirmSubtitle(v);
             }
         }
 

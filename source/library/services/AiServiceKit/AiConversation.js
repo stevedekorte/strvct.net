@@ -408,6 +408,12 @@
         return responseMessage;
     }
 
+    clear () {
+        this.assistantToolKit().removeAllToolCalls();
+        super.clear();
+        return this;
+    }
+
     /**
    * @description Handles a new message from an update.
    * @param {AiMessage} newMsg - The new message.

@@ -83,6 +83,15 @@
             const slot = this.newSlot("result", null);
             slot.setSlotType("Object");
         }
+
+        /**
+         * @member {SvScrimView} scrimView - The backdrop scrim view behind the panel.
+         * @category UI Components
+         */
+        {
+            const slot = this.newSlot("scrimView", null);
+            slot.setSlotType("SvScrimView");
+        }
     }
 
     /**
@@ -93,6 +102,9 @@
     init () {
         super.init();
         this.setButtons([]);
+
+        // Create scrim view
+        this.setScrimView(SvScrimView.clone());
 
         this.setDisplay("flex");
         this.setPosition("absolute");
@@ -108,7 +120,7 @@
         this.setMinWidth("12em");
         this.setHeight("fit-content");
         this.setBorder("1px solid rgb(68, 68, 68)");
-        this.setZIndex(1000);
+        this.setZIndex(10000);
         this.setBackgroundColor("rgb(25, 25, 25)");
 
         {
@@ -211,6 +223,9 @@
         v.setHeight("2em");
         v.setTarget(this);
         v.setAction("hitButton");
+        // let's set it to have a drak gray background when hovered
+        //v.setHoverBackgroundColor("rgba(128, 128, 128, 0.4)");
+        //v.element().style.hoverBackgroundColor = "rgba(128, 128, 128, 0.4)";
         return v;
     }
 
@@ -236,7 +251,14 @@
      * @category Lifecycle
      */
     openInWindow () {
-        SvApp.shared().userInterface().mainWindow().documentBody().addSubview(this);
+        const documentBody = SvApp.shared().userInterface().mainWindow().documentBody();
+
+        // Show scrim first (lower z-index)
+        this.scrimView().showInWindow();
+
+        // Then add panel on top (higher z-index)
+        documentBody.addSubview(this);
+
         return this;
     }
 
@@ -297,7 +319,12 @@
      * @category Lifecycle
      */
     close () {
+        // Hide scrim first
+        this.scrimView().hide();
+
+        // Then remove panel
         this.removeFromParentView();
+
         return this;
     }
 

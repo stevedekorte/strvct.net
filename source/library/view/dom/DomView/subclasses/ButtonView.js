@@ -72,6 +72,15 @@
             const slot = this.newSlot("info", null);
             slot.setSlotType("Object");
         }
+
+        /*
+        {
+            const slot = this.newSlot("hoverBackgroundColor", null);
+            slot.setDescription("The background color to use when the button is hovered.");
+            slot.setSlotType("String");
+            slot.setLabel("Hover Background Color");
+        }
+        */
     }
 
     /**
@@ -140,8 +149,25 @@
 
         this.addDefaultTapGesture();
 
+        //this.registerForMouseEvents();
+
         return this;
     }
+
+    /*
+    onMouseOver () {
+        this._normalBackgroundColor = this.backgroundColor();
+        this.setBackgroundColor(this.hoverBackgroundColor());
+        return true;
+    }
+
+    onMouseOut () {
+        if (this._normalBackgroundColor) {
+            this.setBackgroundColor(this._normalBackgroundColor);
+        }
+        return true;
+    }
+    */
 
     /**
      * @description Sets the icon name for the button.

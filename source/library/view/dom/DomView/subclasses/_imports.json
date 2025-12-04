@@ -6,6 +6,7 @@
     "DragBarView.js",
     "DragView.js",
     "SvPanelView.js",
+    "SvScrimView.js",
     "SvgIconCache.js",
     "SvgIconView.js",
     "browser-only/_imports.json",

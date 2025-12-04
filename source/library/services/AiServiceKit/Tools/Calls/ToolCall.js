@@ -741,7 +741,7 @@ Example Tool call format:
     }
 
     extractCallIdWithRegex (invalidJsonString) {
-    // This regex looks for "callId": followed by a string or number value
+        // This regex looks for "callId": followed by a string or number value
         const callIdRegex = /"callId"\s*:\s*(?:"([^"]*)"|([\d]+))/;
         const match = invalidJsonString.match(callIdRegex);
 
@@ -751,6 +751,13 @@ Example Tool call format:
         }
 
         return null; // No callId found
+    }
+
+    shutdown () {
+        // TODO: send shutdown messages to active/open subtasks?
+        this.setStatus("completed");
+        this.setToolResult("aborted by call to ToolCall.shutdown()");
+        return this;
     }
 
 }.initThisClass());

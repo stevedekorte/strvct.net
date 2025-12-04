@@ -143,6 +143,11 @@
         this.removeSubnodes(subnodes);
     }
 
+    removeAllCalls () {
+        // TODO: call abort on any tool calls that are in progress?
+        this.removeAllSubnodes();
+    }
+
     addCalls (subnodes) {
         this.addSubnodes(subnodes);
     }

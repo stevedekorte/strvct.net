@@ -1456,6 +1456,13 @@
         return this;
     }
 
+    deleteNodeAndNavigateToParent () {
+        const parentNode = this.parentNode();
+        this.delete();
+        parentNode.postOnRequestNavigateToNode();
+        return this;
+    }
+
     // --- utility -----------------------------
 
     /**

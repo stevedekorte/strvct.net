@@ -825,6 +825,19 @@
         return this;
     }
 
+    // backdrop filter
+
+    setBackdropFilter (s) {
+        assert(Type.isString(s));
+        this.setCssProperty("backdrop-filter", s);
+        this.setCssProperty("webkitBackdropFilter", s);
+        return this;
+    }
+
+    backdropFilter () {
+        return this.getCssProperty("backdrop-filter"); // beware, this is not the same as the webkit backdrop filter
+    }
+
     // background size
 
     setBackgroundSizeWH (x, y) {

@@ -908,7 +908,7 @@
      * @param {Event} event - The event.
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
-    onEvent (event) {
+    onEvent (/*event*/) {
         if (this.isVisualDebugging()) {
             this.updateOutlineView();
             this.updateFingerViews();
@@ -1146,7 +1146,7 @@
      * @param {Event} event - The event.
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
-    onTouchCancel (event) {
+    onTouchCancel (/*event*/) {
         //this.onUp(event)
         this.cancel();
     }
@@ -1185,7 +1185,7 @@
      * @param {Event} event - The event.
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
-    onTouchCancelCapture (event) {
+    onTouchCancelCapture (/*event*/) {
         //this.onUp(event)
         this.cancel();
     }
@@ -1209,11 +1209,11 @@
         const dx = Math.abs(dp.x());
         const dy = Math.abs(dp.y());
         const funcs = {
-            left: (dx, dy) => dx,
-            right: (dx, dy) => dx,
+            left: (dx/*, dy*/) => dx,
+            right: (dx/*, dy*/) => dx,
             up: (dx, dy) => dy,
             down: (dx, dy) => dy,
-            x: (dx, dy) => dx,
+            x: (dx/*, dy*/) => dx,
             y: (dx, dy) => dy
         };
         return funcs[this.direction()](dx, dy);
@@ -1336,7 +1336,7 @@
      * @param {GestureRecognizer} byGesture - The gesture that requests the cancellation.
      * @returns {GestureRecognizer} The updated gesture recognizer.
      */
-    requestCancel (byGesture) {
+    requestCancel (/*byGesture*/) {
         if (this.shouldAcceptCancelRequest()) {
             this.cancel();
         }
