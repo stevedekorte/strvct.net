@@ -312,6 +312,7 @@
         cv.setDisplay("flex");
         cv.setHeight("auto");
         cv.setMinHeightPx(60);
+        //cv.setMinHeight("5em");
         cv.setWidthPercentage(100);
         cv.setHeightPercentage(100);
         cv.setPosition("relative");
