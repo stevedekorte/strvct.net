@@ -209,6 +209,8 @@
             button.setBorderLeft("1px solid rgb(68, 68, 68)");
         }
         this.buttons().push(button);
+
+        this.setMinWidth(9 * this.buttons().length + "em");
         return button;
     }
 
@@ -223,9 +225,6 @@
         v.setHeight("2em");
         v.setTarget(this);
         v.setAction("hitButton");
-        // let's set it to have a drak gray background when hovered
-        //v.setHoverBackgroundColor("rgba(128, 128, 128, 0.4)");
-        //v.element().style.hoverBackgroundColor = "rgba(128, 128, 128, 0.4)";
         return v;
     }
 
