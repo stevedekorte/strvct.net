@@ -140,9 +140,9 @@ cleanup:
 
 Inline Row views? for Document style rendering
 
-- add BMNode.inlineLevelHint
-- have BMNodeView.visibleNodes looks at inlineLevelHint
-- add BMNode.subitemsFlattenedToLevel(n)
+- add SvNode.inlineLevelHint
+- have SvNodeView.visibleNodes looks at inlineLevelHint
+- add SvNode.subitemsFlattenedToLevel(n)
 
 
 - want to be able to go from, say, json doc structure to inlined doc e.g. Io guide

@@ -55,6 +55,15 @@
             slot.setShouldStoreSlot(true);
             slot.setSlotType("JSON Object");
         }
+
+        // should confirm
+        {
+            const slot = this.newSlot("shouldConfirm", false);
+            slot.setDescription("If true, the action will be confirmed by the user.");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("Should Confirm");
+        }
     }
 
     /**
@@ -117,6 +126,39 @@
      * @category Action
      */
     doAction () {
+        this.asyncDoAction();
+    }
+
+    async asyncConfirmAction () {
+        if (!SvPlatform.isBrowserPlatform()) {
+            // we don't have an abstraction for this yet
+            return true;
+        }
+
+        const actionName = this.title();
+        const panel = SvPanelView.clone().setSubtitle("Are you sure you want to '" + actionName + "'?").setOptionDicts([
+            { label: "Cancel", value: false },
+            { label: actionName, value: true }
+        ]);
+        const result = await panel.asyncOpen();
+        return result.value;
+    }
+
+    async asyncDoAction () {
+        let canDoAction = this.canDoAction();
+
+        if (this.shouldConfirm()) {
+            canDoAction = await this.asyncConfirmAction();
+        }
+
+        if (canDoAction) {
+            this.applyActionToTarget();
+        }
+
+        return this;
+    }
+
+    applyActionToTarget () {
         if (this.canDoAction()) {
             const func = this.target()[this.methodName()];
 
@@ -204,6 +246,14 @@
             if (v !== undefined) {
                 assert(Type.isBoolean(v), "isVisible must be a boolean");
                 this.setIsVisible(v);
+            }
+        }
+
+        {
+            const v = infoDict.shouldConfirm;
+            if (v !== undefined) {
+                assert(Type.isBoolean(v), "shouldConfirm must be a boolean");
+                this.setShouldConfirm(v);
             }
         }
 

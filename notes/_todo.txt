@@ -143,7 +143,7 @@ TODO:
 		
 	Hide ColumnGroup headers when not used
 
-	Merge BMNode and BMStorable Node?
+	Merge SvNode and BMStorable Node?
 	
 	validate Fields after editing validation related slots?
 	
@@ -511,7 +511,7 @@ TODO:
 
 	tap-tap-hold for link
 	
-	move BMNode.note to visibleNote so noteIsSubnodeCount() etc is separated from stored value
+	move SvNode.note to visibleNote so noteIsSubnodeCount() etc is separated from stored value
 
 	- need a type of NodeLink that links to a proto and when duplicated, 
 	  duplicates that proto instead of just linking to it
@@ -598,7 +598,7 @@ TODO:
 	FINALIZATION
 
 		// called on all objects
-		- scheduleDidInit // Object just calls didInit(), BMNode schedules didInit
+		- scheduleDidInit // Object just calls didInit(), SvNode schedules didInit
 		- didInit
 
 		- didLoadFromStore
@@ -612,7 +612,7 @@ TODO:
 	referenced by owner node, so it's always safe to unload it
 	how to remove from activeObjects unless we can be sure no references are held?
 	Store.activeObjectsReferencingObject(anObject), using refPids
-	BMNode.unloadSubnodesIfPossible
+	SvNode.unloadSubnodesIfPossible
 	
 	
 	TIMESTAMPS
@@ -640,10 +640,10 @@ TODO:
 	- copy slots?
 	
 	
-	- remove old BMNode sorting code
-	- with BMNode subnode observer, no longer need didChangeSubnodeList calls?
+	- remove old SvNode sorting code
+	- with SvNode subnode observer, no longer need didChangeSubnodeList calls?
 	
-	- merge BMFieldSetNode with BMNode?
+	- merge BMFieldSetNode with SvNode?
 	
 	- find how Theme and other stuff is getting into Storage
 
@@ -704,7 +704,7 @@ TODO:
 	NodeStore:
 		Remove global _ roots and replace with a single root Node.
 	
-	BMNode
+	SvNode
 		- need to support array and dict values on slots which can reference nodes
 		  so we can implement Store.pidRefsFromNodeDict
 		

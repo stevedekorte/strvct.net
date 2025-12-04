@@ -126,6 +126,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("syncsToNode", false); // if true, will hook slot setter to call this.scheduleSyncToNode() on slotValue change (implemented by NodeView)
 
         this.simpleNewSlot("actionMethodName", null); // used by slots that will be represented by ActionFields to store the methodName
+        //this.simpleNewSlot("actionShouldConfirm", false); // used by slots that will be represented by ActionFields to store whether the action should be confirmed - do with action info instead
         this.simpleNewSlot("annotations", null);
 
         this.simpleNewSlot("isVisible", null); // only set on finalInitProto if true or false, ignore if null
@@ -774,6 +775,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     if (slotType === "Action") { // TODO: hack - find a uniform way to handle this
                         field.setTitle(this.label());
                         field.setMethodName(this.actionMethodName());
+                        //field.setShouldConfirm(this.actionShouldConfirm());
                     } else {
                         field.setKey(this.label());
                     }

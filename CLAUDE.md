@@ -505,7 +505,7 @@ The framework includes a separate content-addressable blob storage system (`SvBl
 ### Base Classes
 
 - `ProtoClass`: Base class with slot system
-- `BMNode`: Base node class
+- `SvNode`: Base node class
 - `ViewableNode`: Node with view capabilities
 - `SvStorableNode`: Persistent node
 

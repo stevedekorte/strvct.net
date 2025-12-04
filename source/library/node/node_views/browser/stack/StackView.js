@@ -1036,7 +1036,7 @@
 
     /**
      * @description Determines if the otherView should be shown for a given node.
-     * @param {BMNode} node The node to check.
+     * @param {SvNode} node The node to check.
      * @returns {boolean} True if the otherView should be shown, false otherwise.
      */
     shouldShowOtherViewForNode (node) {
