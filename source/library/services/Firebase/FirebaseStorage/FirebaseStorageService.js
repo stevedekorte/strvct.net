@@ -106,22 +106,25 @@
 
     async asyncSetupDefaultFolders () {
         this._isSetup = true;
+        // Create folder references but don't read their contents yet
+        // Firebase Storage doesn't store empty folders, so reading non-existent folders
+        // causes CORS preflight 404 errors. Folders will be read on-demand when accessed.
+
         // add user folder under /users/userId/
         const userFolder = this.userFolder();
-        await userFolder.asyncReadSubnodes();
+        // Don't read - may not exist yet for new users
 
         // add shared folder under /shared/
         const sharedFolder = this.rootFolder().subfolderNamedCreateIfAbsent("shared");
-        await sharedFolder.asyncReadSubnodes();
+        // Don't read - may not exist yet
 
         // add public folder under /public/
         const publicFolder = this.rootFolder().subfolderNamedCreateIfAbsent("public");
-        await publicFolder.asyncReadSubnodes();
+        // Don't read - may not exist yet
 
         // add public/blobs folder for content-addressable blob storage
-        // Note: Don't read subnodes - folder may be empty and Firebase Storage doesn't store empty folders
         const publicBlobsFolder = publicFolder.subfolderNamedCreateIfAbsent("blobs");
-        await publicBlobsFolder.asyncReadSubnodes();
+        // Don't read - folder may be empty and Firebase Storage doesn't store empty folders
     }
 
     publicFolder () {

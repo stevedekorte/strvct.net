@@ -52,7 +52,7 @@
         if (typeof UoEnvironment !== "undefined" && UoEnvironment.shared) {
             const config = UoEnvironment.shared().getProxyConfig();
             this.setIsSecure(config.isSecure);
-            this.setSubdomain(config.subdomain);
+            this.setSubdomain(config.subdomain ? config.subdomain : "");
             this.setDomain(config.domain);
             this.setPort(config.port);
             this.setPath(config.path);

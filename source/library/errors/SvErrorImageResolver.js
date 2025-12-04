@@ -12,18 +12,9 @@
  */
 (class SvErrorImageResolver extends ProtoClass {
 
-    static _shared = null;
-
-    /**
-     * Returns the singleton instance
-     * @returns {SvErrorImageResolver}
-     * @category Singleton
-     */
-    static shared () {
-        if (!this._shared) {
-            this._shared = this.clone();
-        }
-        return this._shared;
+    initClass () {
+        this.setIsSingleton(true);
+        return this;
     }
 
     /**
@@ -66,7 +57,7 @@
      */
     setupSearchPaths () {
         this.setSearchPaths([
-            "app/resources/images/errors/",
+            "app/resources/images/errors/deferred/",
             "strvct/resources/images/errors/"
         ]);
         return this;

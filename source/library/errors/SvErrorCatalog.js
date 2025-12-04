@@ -15,18 +15,9 @@
  */
 (class SvErrorCatalog extends ProtoClass {
 
-    static _shared = null;
-
-    /**
-     * Returns the singleton instance
-     * @returns {SvErrorCatalog}
-     * @category Singleton
-     */
-    static shared () {
-        if (!this._shared) {
-            this._shared = this.clone();
-        }
-        return this._shared;
+    static initClass () {
+        this.setIsSingleton(true);
+        return this;
     }
 
     /**
