@@ -790,6 +790,30 @@
         return this.getPxCssProperty("padding-bottom");
     }
 
+    // background
+
+    setBackground (v) {
+        assert(Type.isNull(v) || Type.isString(v));
+        this.setCssProperty("background", v);
+        return this;
+    }
+
+    background () {
+        return this.getCssProperty("background");
+    }
+
+    // mask image
+
+    setMaskImage (v) {
+        assert(Type.isNull(v) || Type.isString(v));
+        this.setCssProperty("mask-image", v);
+        return this;
+    }
+
+    maskImage () {
+        return this.getCssProperty("mask-image");
+    }
+
     // background color
 
     setBackgroundColor (v) {
