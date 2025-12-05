@@ -122,8 +122,8 @@
         // Styling with gradient background (transparent at bottom)
         this.setBackground("linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0))");
         this.setBackdropFilter("blur(10px)");
-        this.setPaddingTop("2em");
-        this.setPaddingBottom("2em");
+        //this.setPaddingTop("2em");
+        //this.setPaddingBottom("2em");
         this.setOpacity(0);
 
         // Create a mask for the blur effect to fade at the bottom
@@ -135,6 +135,7 @@
         // Create title view
         {
             const v = SvTextView.clone().setElementClassName("OverlayBannerTitleView");
+            v.setDisplay("block");
             v.setWidth("100%");
             v.setTextAlign("center");
             v.setColor("white");
@@ -151,12 +152,13 @@
         // Create subtitle view
         {
             const v = SvTextView.clone().setElementClassName("OverlayBannerSubtitleView");
+            v.setDisplay("block");
             v.setWidth("100%");
             v.setTextAlign("center");
             v.setColor("rgba(255, 255, 255, 0.8)");
             v.setPaddingLeft("2em");
             v.setPaddingRight("2em");
-            v.setPaddingTop("0.5em");
+            //v.setPaddingTop("0.5em");
             v.setWhiteSpace("normal");
             v.setWordBreak("break-word");
             this.updateSubtitleFontSize(v);
@@ -164,14 +166,10 @@
             this.addSubview(v);
         }
 
-        // Listen for window resize to update font sizes
-        if (typeof window !== "undefined") {
-            this._resizeHandler = () => this.onWindowResize();
-            window.addEventListener("resize", this._resizeHandler);
-        }
-
+        this.setIsRegisteredForWindowResize(true);
         return this;
     }
+
 
     /**
      * Update the CSS transitions for smooth fade effects.
@@ -290,33 +288,6 @@
         }
 
         return this._hidePromise;
-    }
-
-    /**
-     * Toggle the banner visibility.
-     * @returns {SvOverlayBannerView} - Returns this for chaining.
-     * @category Lifecycle
-     */
-    toggle () {
-        if (this.isShown()) {
-            this.hide();
-        } else {
-            this.show();
-        }
-        return this;
-    }
-
-    /**
-     * Clean up event listeners.
-     * @returns {SvOverlayBannerView} - Returns this for chaining.
-     * @category Lifecycle
-     */
-    prepareToRetire () {
-        if (this._resizeHandler && typeof window !== "undefined") {
-            window.removeEventListener("resize", this._resizeHandler);
-            this._resizeHandler = null;
-        }
-        return super.prepareToRetire();
     }
 
 }.initThisClass());
