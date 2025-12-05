@@ -243,12 +243,24 @@
         const index = this.validateArrayIndex(segment, "navigate");
 
         if (index === -1) {
-            throw new Error("Cannot navigate to append position '/-'");
+            throw new JsonPatchError(
+                "Cannot navigate to append position '/-'",
+                null,
+                [segment],
+                segment,
+                this
+            );
         }
 
         const arrayLength = this.subnodes().length;
         if (index >= arrayLength) {
-            throw new Error(`Array index ${index} is out of bounds. Array has ${arrayLength} elements (valid indices: 0-${arrayLength - 1})`);
+            throw new JsonPatchError(
+                `Array index ${index} is out of bounds. Array has ${arrayLength} elements (valid indices: 0-${arrayLength - 1})`,
+                null,
+                [segment],
+                segment,
+                this
+            );
         }
 
         return this.subnodes().at(index);
