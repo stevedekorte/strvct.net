@@ -1,5 +1,6 @@
 [
     "Checklist/_imports.json",
+    "ImageEvalChecklistMaker.js",
     "ImageEvaluator.js",
     "ImageEvaluators.js",
     "SvImage_evaluator.js"

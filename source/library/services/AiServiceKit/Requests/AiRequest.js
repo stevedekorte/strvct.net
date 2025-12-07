@@ -440,7 +440,7 @@
     /**
    * Asserts that the request is valid
    */
-    async assertValid () {
+    async asyncAssertValid () {
         if (!this.apiUrl()) {
             throw new Error(this.svType() + " apiUrl missing");
         }
@@ -599,7 +599,7 @@
             this.setXhrPromise(Promise.clone());
         }
 
-        this.assertValid();
+        await this.asyncAssertValid();
         this.assertReadyToStream();
 
         //this.logDebug("--- URL ---\n", this.activeApiUrl(), "\n-----------");

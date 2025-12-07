@@ -230,7 +230,7 @@
    * @throws {Error} If the API key or URL is missing.
    * @category Validation
    */
-    assertValid () {
+    async asyncAssertValid () {
         assert(this.apiUrl(), this.svType() + " apiUrl missing");
     }
 
@@ -275,7 +275,7 @@
             this.setStatus("sending");
             this.sendDelegateMessage("onRequestBegin");
 
-            this.assertValid();
+            await this.asyncAssertValid();
             if (this.isDebugging()) {
                 this.showRequest();
             }

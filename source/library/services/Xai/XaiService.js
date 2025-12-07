@@ -44,8 +44,14 @@
                 "outputTokenLimit": 256000
             },
             {
-                "name": "grok-3-beta",
-                "title": "Grok 3 Beta",
+                "name": "grok-4-1-fast-reasoning",
+                "title": "Grok 4.1 Fast Reasoning",
+                "inputTokenLimit": 131072,
+                "outputTokenLimit": 16384
+            },
+            {
+                "name": "grok-4-1-fast-non-reasoning",
+                "title": "Grok 4.1 Fast Non-Reasoning",
                 "inputTokenLimit": 131072,
                 "outputTokenLimit": 16384
             }

@@ -245,4 +245,11 @@
         return this.modelName() + " (" + cw + ")\n";
     }
 
+    newChatRequest () {
+        const requestClass = this.service().chatRequestClass();
+        const request = requestClass.clone();
+        request.setChatModel(this);
+        return request;
+    }
+
 }.initThisClass());

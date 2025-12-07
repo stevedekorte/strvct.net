@@ -41,10 +41,16 @@
                 //"reasoning_effort": "low" | "medium" | "high"
             },
             {
-                "name": "gpt-4.1",
-                "title": "ChatGPT 4.1",
-                "inputTokenLimit": 1047576,
-                "outputTokenLimit": 32768
+                "name": "gpt-5-mini",
+                "title": "ChatGPT 5 Mini",
+                "inputTokenLimit": 400000,
+                "outputTokenLimit": 128000
+            },
+            {
+                "name": "gpt-5-nano",
+                "title": "ChatGPT 5 Nano",
+                "inputTokenLimit": 272000,
+                "outputTokenLimit": 128000
             }
         ];
     }

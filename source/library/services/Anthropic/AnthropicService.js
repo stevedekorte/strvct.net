@@ -41,7 +41,18 @@
                 "outputTokenLimit": 64000, // 128k output tokens
                 "supportsTemperature": true,
                 "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
+            },
+            {
+                "name": "claude-haiku-4-5",
+                "title": "Claude Haiku 4.5",
+                "subtitle": "",
+                "inputTokenLimit": 200000, // would be 200k input tokens without beta request for 1M context
+                "notes": "",
+                "outputTokenLimit": 64000,
+                "supportsTemperature": true,
+                "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
             }
+
         ];
     }
 

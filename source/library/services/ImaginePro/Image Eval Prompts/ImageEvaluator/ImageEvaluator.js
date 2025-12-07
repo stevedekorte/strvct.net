@@ -58,13 +58,13 @@
      * @category Configuration
      */
         {
-            const slot = this.newSlot("evaluationModel", "gpt-5");
+            const slot = this.newSlot("evaluationModel", "gpt-5-nano");
             slot.setSlotType("String");
             slot.setLabel("Evaluation Model");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
-            slot.setValidValues(["gpt-4o-mini", "gpt-4o", "gpt-5-nano", "gpt-5-mini", "gpt-5"]);
+            slot.setValidValues(["gpt-5-nano", "gpt-5-mini", "gpt-5"]);
             slot.setDescription("OpenAI model for image evaluation (gpt-4o-mini most economical, gpt-5 most capable)");
         }
 
