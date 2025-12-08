@@ -40,6 +40,16 @@
             slot.setFinalInitProto(SvCredential);
             slot.setIsSubnode(true);
         }
+
+        {
+            const slot = this.newSlot("bearerTokenForServiceClosure", null);
+            slot.setSlotType("Function");
+        }
+
+        {
+            const slot = this.newSlot("bearerTokenForEndpointClosure", null);
+            slot.setSlotType("Function");
+        }
     }
 
     initPrototype () {
@@ -50,19 +60,22 @@
         this.setSubnodeClasses([SvCredential]);
     }
 
-    finalInit () {
-        //this.setUserAuthToken("");
-        super.finalInit();
-    }
-
     // Return fresh Firebase ID token for API authentication
 
     async bearerTokenForService (/*serviceName*/) {
-        return await UoAccountServerApi.shared().authToken();
+        const closure = this.bearerTokenForServiceClosure();
+        if (closure) {
+            return await closure();
+        }
+        throw new Error("bearerTokenForServiceClosure is not set");
     }
 
     async bearerTokenForEndpoint (/*endpoint*/) {
-        return await UoAccountServerApi.shared().authToken();
+        const closure = this.bearerTokenForEndpointClosure();
+        if (closure) {
+            return await closure();
+        }
+        throw new Error("bearerTokenForEndpointClosure is not set");
     }
 
     /*
