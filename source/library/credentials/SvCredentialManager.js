@@ -7,10 +7,15 @@
  * @classdesc A shared global object to manage passwords.
  * Used by Service APIs. Examples:
  *
- * SvCredentialManager.shared().setUserAuthToken("..."); // set the user auth token for the current user
+ * Typical usage:
+ * On startup, the application should set the closure to return the bearer token for the service.
+ * SvCredentialManager.shared().setBearerTokenForServiceClosure((serviceName) => { return ...; });
  *
- * const bearerToken = SvCredentialManager.shared().bearerTokenForService("OpenAI");
- * const bearerToken = SvCredentialManager.shared().bearerTokenForEndpoint("https://api.openai.com/v1/chat/completions");
+ *
+ * Alternatively, you can set the bearer token directly:
+ * const credential = SvCredentialManager.shared().credentials().newCredential();
+ * credential.setServiceName("OpenAI");
+ * credential.setBearerToken("... bearer token ...");
  *
  */
 
@@ -22,22 +27,12 @@
     }
 
     initPrototypeSlots () {
-        /*
-        {
-            const slot = this.newSlot("userAuthToken", "");
-            slot.setLabelToCapitalizedSlotName();
-            slot.setShouldStoreSlot(true);
-            slot.setSlotType("String");
-            slot.setIsSubnodeField(true);
-            slot.setAllowsNullValue(true);
-        }
-        */
 
         {
             const slot = this.newSlot("credentials", null);
             slot.setLabelToCapitalizedSlotName();
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(SvCredential);
+            slot.setFinalInitProto(SvCredentials);
             slot.setIsSubnode(true);
         }
 
@@ -62,20 +57,34 @@
 
     // Return fresh Firebase ID token for API authentication
 
-    async bearerTokenForService (/*serviceName*/) {
+    async bearerTokenForService (serviceName) {
         const closure = this.bearerTokenForServiceClosure();
         if (closure) {
             return await closure();
         }
-        throw new Error("bearerTokenForServiceClosure is not set");
+
+        const credential = this.credentials().credentialForService(serviceName);
+        if (credential) {
+            return credential.bearerToken();
+        }
+
+        throw new Error("No bearer token found for service: " + serviceName);
     }
 
-    async bearerTokenForEndpoint (/*endpoint*/) {
+    async bearerTokenForEndpoint (endpoint) {
+        // note: endpoint matching might be tricky with services like Gemini
+
         const closure = this.bearerTokenForEndpointClosure();
         if (closure) {
             return await closure();
         }
-        throw new Error("bearerTokenForEndpointClosure is not set");
+
+        const credential = this.credentials().credentialForEndpoint(endpoint);
+        if (credential) {
+            return credential.bearerToken();
+        }
+
+        throw new Error("No bearer token found for endpoint: " + endpoint);
     }
 
     /*

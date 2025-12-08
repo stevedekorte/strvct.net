@@ -26,4 +26,12 @@
         this.setSubnodeClasses([SvCredential]);
     }
 
+    credentialForService (serviceName) {
+        return this.subnodes().find(credential => credential.serviceName() === serviceName);
+    }
+
+    credentialForEndpoint (endpoint) {
+        return this.subnodes().find(credential => credential.endpoint().beginsWith(endpoint));
+    }
+
 }.initThisClass());

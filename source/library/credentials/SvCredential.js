@@ -20,6 +20,13 @@
         }
 
         {
+            const slot = this.newSlot("endpoint", "");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+        }
+
+        {
             const slot = this.newSlot("userName", "");
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
@@ -32,6 +39,14 @@
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
         }
+
+        // auth token
+        {
+            const slot = this.newSlot("bearerToken", "");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
+        }
     }
 
     initPrototype () {
@@ -39,6 +54,12 @@
         this.setNodeCanReorderSubnodes(false);
         this.setShouldStoreSubnodes(false);
         this.setNodeCanAddSubnode(false);
+    }
+
+    newCredential () {
+        const credential = SvCredential.clone();
+        this.addSubnode(credential);
+        return credential;
     }
 
     /*
