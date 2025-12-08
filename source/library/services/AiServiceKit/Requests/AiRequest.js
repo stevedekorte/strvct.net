@@ -705,7 +705,10 @@
                 const json = JSON.parse(responseText);
                 if (json.error) {
                     let msg = null;
-                    if (Type.isString(json.error)) {
+                    // Prefer json.message if it exists (more detailed error message)
+                    if (Type.isString(json.message)) {
+                        msg = json.message;
+                    } else if (Type.isString(json.error)) {
                         msg = json.error;
                     } else if (Type.isString(json.error.message)) {
                         msg = json.error.message;

@@ -194,6 +194,13 @@ class SvWindowErrorPanel extends Object {
 
         debugger;
 
+        // If no errorDefinition provided, try to find one from the catalog
+        if (!errorDefinition && SvGlobals.has("SvErrorCatalog")) {
+            // Create an Error object from errorInfo for pattern matching
+            const errorForMatching = errorInfo.error || new Error(errorInfo.message || "");
+            errorDefinition = SvErrorCatalog.shared().definitionForError(errorForMatching);
+        }
+
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HERE COULD CAUSE AN INFINITE LOOP
             // Create backdrop div that fills the window
             const backdropDiv = document.createElement("div");
