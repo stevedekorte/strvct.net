@@ -128,7 +128,13 @@
                         slot.onInstanceSetValue(this, unrefedValue);
                     } else {
                         const unrefedValue = aStore.unrefValue(v);
-                        slot.onInstanceSetValue(this, unrefedValue);
+                        try {
+                            slot.onInstanceSetValue(this, unrefedValue);
+                        } catch (error) {
+                            console.error(this.svType() + " loadFromRecord() error setting value for slot '" + slot.name() + "'", error);
+                            console.error("RESOLUTION: since this was during loadFromRecord(), we will leave the existing value in the slot");
+                            //debugger;
+                        }
                     }
                 }
             } else {

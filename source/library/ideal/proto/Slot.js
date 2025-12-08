@@ -1148,7 +1148,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     return true;
                 }
                 console.log("Slot '" + this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
-
+                //debugger;
                 Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
                 return false;
             }
