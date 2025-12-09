@@ -222,6 +222,13 @@
             slot.setFinalInitProto(HomeAssistants);
             slot.setIsSubnodeField(true);
         }
+
+        {
+            const slot = this.newSlot("defaultChatModel", null);
+            slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(false);
+            slot.setSlotType("AiChatModel");
+        }
     }
 
     initPrototype () {
@@ -234,12 +241,15 @@
     finalInit () {
         super.finalInit();
         this.thisPrototype().initPrototype();
-        this.scheduleMethod("markAsMutated", 1000);
+        //this.scheduleMethod("markAsMutated", 1000);
+        this.setupDefaultChatModel();
     }
 
+    /*
     markAsMutated () {
         this.defaultStore().onDidMutateObject(this);
     }
+    */
 
     /**
      * @description Returns an array of AI services.
@@ -253,14 +263,12 @@
 
     // --- ai model helpers ---
 
-    /**
-     * @description Returns the default chat model.
-     * @returns {Object} The default chat model.
-     * @category AI Service
-     */
-    defaultChatModel () {
-        return this.anthropicService().defaultChatModel();
-        //return this.geminiService().defaultChatModel();
+    setupDefaultChatModel () {
+        //const defaultChatService = this.geminiService();
+        const defaultChatService = this.anthropicService();
+        const model = defaultChatService.defaultChatModel();
+        this.setDefaultChatModel(model);
+        return this;
     }
 
     /**

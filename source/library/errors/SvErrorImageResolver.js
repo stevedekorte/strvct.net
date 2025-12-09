@@ -148,4 +148,4 @@
         return this.urlForPath(path);
     }
 
-}.initThisClass());
+}).initThisClass();
