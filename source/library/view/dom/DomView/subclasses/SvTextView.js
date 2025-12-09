@@ -558,7 +558,26 @@
         //console.log(this.logPrefix(), " '" + this.string() + "' onFocusIn")
         if (this.contentEditable()) {
             this.pauseGestures();
+            this.selectParentTileIfNeeded();
         }
+    }
+
+    /**
+     * @description Activates the first parent view that responds to activate() when contenteditable field begins editing.
+     * @returns {SvTextView} The text field.
+     */
+    selectParentTileIfNeeded () {
+        // Walk up the view hierarchy to find a view that can be activated
+        let parentView = this.parentView();
+        while (parentView) {
+            // Check if this view responds to activate
+            if (parentView.respondsTo("activate")) {
+                parentView.activate();
+                break;
+            }
+            parentView = parentView.parentView();
+        }
+        return this;
     }
 
     /**
