@@ -32,7 +32,7 @@
             slot.setLabel("Theme Class");
             slot.setInspectorPath("Node/Styled");
             slot.setSyncsToView(true);
-            slot.setValidValuesClosure((instance) => {
+            slot.setValidValuesClosure((/*instance*/) => {
                 return SvThemeResources.shared().activeTheme().themeClassNames();
             });
         }
