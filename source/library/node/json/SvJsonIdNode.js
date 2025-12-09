@@ -90,22 +90,12 @@
                 }
 
                 if (sn.isKindOf(SvNode)) {
-                    if (jsonId === "FYb64FIb1X") {
-                        if (sn.isKindOf(UoPlayers)) {
-                            debugger;
-                        }
-                    }
                     if (sn.descendantWithJsonId) {
-                        /*
-                        if (sn.isKindOf(UoCampaign)) {
-                            debugger;
-                        }
-                        */
                         const result = sn.descendantWithJsonId(jsonId, newPath);
                         return result;
                     } else {
-                        debugger;
                         console.log(this.jsonPathCompmentString() + " descendant (", sn, ") does not have descendantWithJsonId method");
+                        debugger;
                     }
                 }
             }

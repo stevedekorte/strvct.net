@@ -451,7 +451,6 @@
     }
 
     async asyncBlobForHash (hash) {
-        debugger;
         const arrayBuffer = await this.cloudStorageService().asyncBlobForHash(hash);
         return arrayBuffer;
     }

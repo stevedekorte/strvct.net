@@ -194,7 +194,6 @@
 
             if (this.path().split("/").includes("deferred")) {
                 console.log(this.logPrefix() + "loading a deferred resource: " + this.path());
-                //debugger;
             }
             //if (data !== undefined) {
             if (hasKey) {

@@ -191,9 +191,6 @@ class SvWindowErrorPanel extends Object {
      * @category UI
      */
     showPanelWithInfo (errorInfo, errorDefinition = null) {
-
-        debugger;
-
         // If no errorDefinition provided, try to find one from the catalog
         if (!errorDefinition && SvGlobals.has("SvErrorCatalog")) {
             // Create an Error object from errorInfo for pattern matching

@@ -1074,14 +1074,12 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                 const errorMsg = "slot '" + this.name() + "'value (" + v.svDebugId() + ") shouldStore is undefined but slot shouldStoreSlot is true";
                 console.warn(errorMsg);
                 //throw new Error(errorMsg);
-                //debugger;
                 return false;
             }
         } else if (this.shouldStoreSlot() && !v.shouldStore()) {
             //const errorMsg = "slot '" + this.name() + "' value (" + v.svDebugId() + ") shouldStore (" + v.shouldStore() + ") does not match slot shouldStoreSlot (" + this.shouldStoreSlot() + ")";
             //console.warn(errorMsg);
             //throw new Error(errorMsg);
-            //debugger;
             //return false;
         }
 
@@ -1148,7 +1146,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     return true;
                 }
                 console.log("Slot '" + this.name() + "' validateValue: invalid value type '" + Type.typeName(v) + "' for slot type '" + slotType + "'");
-                //debugger;
                 Type.typeNameIsKindOf(Type.typeName(v), Type.instanceNameForClassName(slotType));
                 return false;
             }
@@ -1187,7 +1184,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     const errorMsg = "WARNING: " + this.logPrefix() + "." + slot.setterName() +  "() called with " + valueDescription(newValue) + " expected type '" + slot.slotType() + "'";
                     console.warn(errorMsg);
                     //throw new Error(errorMsg);
-                    //debugger;
                     slot.validateValue(newValue);
 
 

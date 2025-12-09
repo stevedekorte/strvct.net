@@ -122,7 +122,6 @@
         }
 
         if (value.asyncDataUrl) {
-            debugger;
             return await value.asyncDataUrl();
         }
         return null;

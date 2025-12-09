@@ -64,7 +64,6 @@
 
     /*
     fetchInfoUrl () {
-        debugger;
         const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
         const url = baseUrl + "/app/info/" + this.serviceName() + ".json";
         return url;

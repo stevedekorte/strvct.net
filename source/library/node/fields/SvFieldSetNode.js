@@ -62,7 +62,7 @@
      * @param {SvField} aField - The field that was updated.
      * @category Event Handling
      */
-    didUpdateField (aField) {
+    didUpdateField (/*aField*/) {
         // override to implement hooks
     }
 

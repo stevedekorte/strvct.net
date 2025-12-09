@@ -209,6 +209,8 @@
             if (method) {
                 const infoDict = method.apply(t, []);
                 this.setActionInfo(infoDict);
+            } else {
+                console.warn(this.logPrefix(), "ActionField missing method with this name: ", infoMethodName);
             }
         }
     }
