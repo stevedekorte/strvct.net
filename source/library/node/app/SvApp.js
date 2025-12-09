@@ -356,7 +356,7 @@
         this.model().afterAppDidInit();
         this.userInterface().afterAppDidInit();
         this.didInitPromise().callResolveFunc(this);
-        this.appInitCompleted();
+        this.scheduleMethodForNextCycle("appInitCompleted");
     }
 
     appInitCompleted () {

@@ -119,6 +119,7 @@
         tv.setUsesDoubleTapToEdit(true);
         //tv.setOverflow("visible")
         tv.setPaddingLeft("0em");
+        tv.setWidth("fit-content");
 
         const st = TileSubtitleView.clone();
         lv.addSubview(st);
@@ -127,6 +128,7 @@
         st.setPaddingLeft("0em");
         st.setPaddingTop("0em");
         st.setOpacity(0.6);
+        //st.setWidth("fit-content");
 
 
         const rv = this.bottomContentArea();

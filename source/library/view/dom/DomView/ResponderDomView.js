@@ -241,7 +241,7 @@
      * @returns {Boolean}
      * @category Event Handling
      */
-    onEnterKeyUp (event) {
+    onEnterKeyUp (/*event*/) {
         return true;
     }
 
@@ -255,6 +255,8 @@
      */
     onTabKeyDown (event) {
         if (this.selectNextKeyView()) {
+            // noop
+            event.preventDefault();
         }
         return false;
     }
@@ -265,7 +267,7 @@
      * @returns {Boolean}
      * @category Event Handling
      */
-    onTabKeyUp (event) {
+    onTabKeyUp (/*event*/) {
         return false;
     }
 
