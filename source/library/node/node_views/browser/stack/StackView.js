@@ -424,7 +424,9 @@
                 // console.log("- so syncFromNodeNow and see if we can find it");
                 this.tilesView().syncFromNodeNow();
                 selectedTile = this.tilesView().selectTileWithNode(node);
-                assert(selectedTile, "failed to find tile for node: " + node.title());
+                if (selectedTile === null) {
+                    console.error(this.logPrefix(), "failed to find tile for node: " + node.title());
+                }
             }
         }
 

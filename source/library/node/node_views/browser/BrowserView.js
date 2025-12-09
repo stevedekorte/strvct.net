@@ -142,7 +142,10 @@
             return this;
         }
 
-        //components.shift(); // remove first component
+        if (components.first() === "") {
+            components.shift(); // remove first component
+        }
+
         const selectedNode = this.node().nodeAtSubpathArray(components);
         if (selectedNode) {
             const pathArray = selectedNode.nodePathArray();
