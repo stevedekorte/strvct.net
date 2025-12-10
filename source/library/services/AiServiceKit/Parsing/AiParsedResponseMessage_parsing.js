@@ -58,6 +58,7 @@
     //return undefined;
     }
 
+    /*
     async promiseParseAiJsonString (s, description) {
         try {
             const json = JSON.parse(s);
@@ -66,7 +67,7 @@
             this.addAiError("AI responded with invalid JSON in [" + description + "]: " + e.message);
             console.log("attempting to repair json string...");
 
-            const repairedString = await UoJsonFixer.repairJsonString(s); // throws an error if repair failed
+            const repairedString = await SvJsonFixer.repairJsonString(s); // throws an error if repair failed
             if (repairedString && repairedString !== s) {
                 console.log("trying repaired json string...");
                 return this.parseAiJsonString(repairedString, description);
@@ -74,6 +75,7 @@
             throw e;
         }
     }
+    */
 
     /*
   jsonOfElementsOfTag (tagName) {

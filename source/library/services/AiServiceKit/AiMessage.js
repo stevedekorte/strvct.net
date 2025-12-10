@@ -360,7 +360,6 @@
    */
     cleanupAssistantMessage () {
         if (this.svType() === "AiResponseMessage") {
-            //if (this.svType() !== "UoRollRequestMessage" && this.svType() !== "UoImageMessage") {
             if (this.requiresCompletionBeforeUserResponse()) {
                 // TODO: add sanity check before deleting
                 this.deleteFollowingMessages();
