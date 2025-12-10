@@ -403,7 +403,10 @@
      */
     didUpdateSlotIsInspecting (/*oldValue, newValue*/) {
         //super.didUpdateSlotIsSelected (oldValue, newValue)
-        this.tilesView().didChangeNavSelection();
+        const tv = this.tilesView();
+        if (tv && tv.didChangeNavSelection) {
+            tv.didChangeNavSelection();
+        }
         //this.updateSubviews()
     }
 
@@ -423,7 +426,10 @@
             this.setLastSelectionDate(null);
         }
 
-        this.tilesView().didChangeNavSelection(); // handed by onTap?
+        const tv = this.tilesView();
+        if (tv && tv.didChangeNavSelection) {
+            tv.didChangeNavSelection(); // handled by onTap?
+        }
         //this.updateSubviews()
     }
 
