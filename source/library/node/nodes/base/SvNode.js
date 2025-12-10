@@ -1897,6 +1897,10 @@
             newNode.setSubtitle(item.subtitle);
         }
 
+        if (item.node) {
+            newNode.setNode(item.node);
+        }
+
         this.addSubnode(newNode);
 
         if (hasSubnodes) {

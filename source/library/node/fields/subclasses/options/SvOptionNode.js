@@ -46,6 +46,13 @@
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
         }
+
+        {
+            const slot = this.newSlot("node", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("SvNode");
+        }
     }
 
     /**
@@ -172,11 +179,24 @@
     }
 
     itemDict () {
-        return {
+        const dict = {
             label: this.title(),
             subtitle: this.subtitle(),
             value: this.value()
         };
+
+        if (this.node()) {
+            dict.node = this.node();
+        }
+
+        return dict;
+    }
+
+    async asyncNodeThumbnailUrl () {
+        if (this.node()) {
+            return await this.node().asyncNodeThumbnailUrl();
+        }
+        return null;
     }
 
 
