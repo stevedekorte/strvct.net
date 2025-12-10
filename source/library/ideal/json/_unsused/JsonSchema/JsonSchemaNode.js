@@ -135,24 +135,6 @@
     }
 
     /**
-   * Updates the message JSON
-   * @description Creates a JSON object containing the necessary information to update the character on the server
-   * @returns {Object} The message JSON object
-   * @category Data Management
-   */
-    updateMsgJson () {
-        const json = {
-            name: "updateCharacter",
-            characterId: this.characterId(),
-            payload: this.asJson() // special case JSON representation which we also share with AI
-        };
-        if (this.player()) {
-            json.userId = this.player().userId();
-        }
-        return json;
-    }
-
-    /**
    * Returns the JSON string representation of this instance
    * @description Returns the JSON string representation of this instance
    * @returns {String} The JSON string representation
