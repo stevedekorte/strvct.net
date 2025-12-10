@@ -79,7 +79,7 @@
     }
 
     onSoundStarted (sound) {
-    //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
+        //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
         this.onSpeakingText(sound.transcript());
 
         /*
@@ -101,7 +101,7 @@
     }
 
     onSoundEnded (sound) {
-    //console.log(this.svType() + ".onSoundEnded [" + sound.transcript().clipWithEllipsis(15) + "]");
+        //console.log(this.svType() + ".onSoundEnded [" + sound.transcript().clipWithEllipsis(15) + "]");
         this.onSpokeText(sound.transcript());
     }
 
@@ -110,21 +110,19 @@
     }
 
     /*
-  onSoundStarted (aNote) {
-    const sound = aNote.sender();
-    this.postNoteNamed("onSpeakingText").setInfo(sound.transcript());
-  }
+    onSoundStarted (aNote) {
+        const sound = aNote.sender();
+        this.postNoteNamed("onSpeakingText").setInfo(sound.transcript());
+    }
 
-  onSoundEnded (aNote) {
-    const sound = aNote.sender();
-    this.postNoteNamed("onSpokeText").setInfo(sound.transcript());
-  }
-  */
+    onSoundEnded (aNote) {
+        const sound = aNote.sender();
+        this.postNoteNamed("onSpokeText").setInfo(sound.transcript());
+    }
 
-    /*
-  spokenContentOfText (text) {
-    return text.stripHtmlElementsWithTagNames(this.unspeakableTagNames());
-  }
+    spokenContentOfText (text) {
+        return text.stripHtmlElementsWithTagNames(this.unspeakableTagNames());
+    }
   */
 
 }).initThisCategory();

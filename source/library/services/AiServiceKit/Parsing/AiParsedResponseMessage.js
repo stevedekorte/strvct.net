@@ -39,25 +39,24 @@
 
         {
             /*
-         When tags containg a dash (e.g. "session-name") are found in the content,
-         we can delegate to this object to handle them object is set to this by default,
-         but can be set to another object if needed.
+            When tags containg a dash (e.g. "tool-call") are found in the content,
+            we can delegate to this object to handle them object is set to this by default,
+            but can be set to another object if needed.
 
-        Called while streaming:
+            Called while streaming:
 
-          onStream_TagName_TagText // sent if tagDelegate responds to it
-          onStream_TagName_TagJson // sent if tagDelegate responds to it. Will parse the json and send the result.
+            onStream_TagName_TagText // sent if tagDelegate responds to it
+            onStream_TagName_TagJson // sent if tagDelegate responds to it. Will parse the json and send the result.
 
-        Called when message is complete:
+            Called when message is complete:
 
-          onComplete_TagName_TagText
-          onComplete_TagName_TagJson
+            onComplete_TagName_TagText
+            onComplete_TagName_TagJson
 
-        Note: TagName is the camelCase version of the tag name. e.g. "session-name" becomes "sessionName"
-
-       NOTE: the delegate should probably only implement one or the other of these methods, not both.
-
-      */
+            Notes:
+            - TagName is the camelCase version of the tag name. e.g. "session-name" becomes "sessionName"
+            - The delegate should probably only implement one or the other of these methods, not both.
+        */
 
             const slot = this.newSlot("tagDelegate", null); // if null on the instance, we return the instance itself
             slot.setSlotType("Object");
@@ -172,16 +171,11 @@
     }
 
     handleEmbeddedRequests () {
-    // this should be transactional within the calling event
+        // this should be transactional within the calling event
         try {
             this.justHandleEmbeddedRequests();
         } catch (e) {
-            console.warn(
-                this.svType() +
-          ".handleEmbeddedRequests() ERROR: " +
-          e.message +
-          " ================================"
-            );
+            console.warn(this.svType() + ".handleEmbeddedRequests() ERROR: " + e.message + " =======");
             if (e.message.startsWith("AI ERROR:")) {
                 this.addAiError(e.message);
             }
