@@ -67,7 +67,7 @@
         }
 
         /**
-         * @member {UoModel} model
+         * @member {SvModel} model
          * @category Model
          */
         {

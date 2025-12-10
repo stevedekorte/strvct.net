@@ -200,6 +200,8 @@
    * @category Configuration
    */
     setHostname (hostname) {
+        assert(Type.isString(hostname) && hostname.length > 0, "hostname is required");
+
         const parts = hostname.split(".");
 
         if (parts.length < 2) {

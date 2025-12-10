@@ -4,7 +4,23 @@
  * @extends SvSummaryNode
  * @classdesc ProxyServers class for managing proxy servers.
  *
- * example use:
+ *
+ * Example config:
+ *
+ * const config = {
+ *   "isSecure": true,
+ *   "subdomain": "",
+ *   "domain": "proxy.example.com",
+ *   "port": 80,
+ *   "path": "/proxy",
+ *   "parameterName": "proxyUrl"
+ * }
+ *
+ * ProxyServers.shared().defaultServer().setupForConfigDict(config);
+
+ *
+ *
+ * Example use:
  *
  * const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(targetUrl);
  */

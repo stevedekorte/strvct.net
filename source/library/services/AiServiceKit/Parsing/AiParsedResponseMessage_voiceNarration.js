@@ -82,15 +82,18 @@
     //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
         this.onSpeakingText(sound.transcript());
 
-
-        if (this.session().isHost() /*&& this.session().hasClients() */) {
-            const audioMsg = UoAudioMessage.clone()
-                .setInReplyToMessageId(this.messageId())
-                .setSound(sound);
-            audioMsg.promisePrepareDataUrl().then(() => {
-                this.session().shareAudioMessage(audioMsg);
-            });
+        /*
+        if (this.session().isHost()) {
+            if (this.session().hasClients()) {
+                const audioMsg = UoAudioMessage.clone()
+                    .setInReplyToMessageId(this.messageId())
+                    .setSound(sound);
+                audioMsg.promisePrepareDataUrl().then(() => {
+                    this.session().shareAudioMessage(audioMsg);
+                });
+            }
         }
+        */
     }
 
     onSpeakingText (text) {

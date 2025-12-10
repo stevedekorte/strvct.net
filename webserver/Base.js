@@ -43,7 +43,7 @@
     /**
    * Set debugging state
    * @param {boolean} enabled - Whether to enable debugging
-   * @returns {UoAccountServerApi} The instance itself for method chaining
+   * @returns {Base} The instance itself for method chaining
    */
     setIsDebugging (enabled) {
         this._isDebugging = enabled;

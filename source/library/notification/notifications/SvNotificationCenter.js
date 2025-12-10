@@ -576,7 +576,7 @@
             /*
             if (showDebug) {
                 //console.log(this.logPrefix(), " >>> " + this.svType() + " " + note.name() + " matches obs: " + obs.description());
-                if (obs.observer.svType() === "UoChatInputTile") {
+                if (obs.observer.svType() === ...) {
                     console.log(this.logPrefix(), " >>> " +this.svType() + " sending ", note.name() + " to observer " + obs.observer().svTypeId());
                 }
             }

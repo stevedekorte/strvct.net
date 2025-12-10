@@ -8,6 +8,8 @@
  * @class DefaultProxyServer
  * @extends ProxyServer
  * @classdesc ProxyServer implementation for default proxy settings.
+ *
+ *
  */
 (class DefaultProxyServer extends ProxyServer {
 
@@ -46,27 +48,37 @@
             return;
         }
 
-        // Use centralized environment configuration
-        // Note: UoEnvironment may not be loaded yet when DefaultProxyServer is initialized
-        // So we check if it exists first
-        if (typeof UoEnvironment !== "undefined" && UoEnvironment.shared) {
-            const config = UoEnvironment.shared().getProxyConfig();
-            this.setIsSecure(config.isSecure);
-            this.setSubdomain(config.subdomain ? config.subdomain : "");
-            this.setDomain(config.domain);
-            this.setPort(config.port);
-            this.setPath(config.path);
-            this.setParameterName(config.parameterName);
+        // default to the window location
+        this.setupForConfigDict(this.configDictForWindowLocation());
+
+        // SvApp subclass might want to set this in it's init() method
+        // Example: ProxyServers.shared().defaultServer().setupForConfigDict(appProxyConfigDict);
+    }
+
+    configDictForWindowLocation () {
+        return {
+            isSecure: window.location.protocol === "https:",
+            hostname: window.location.hostname,
+            port: Number(window.location.port) || null,
+            path: "/proxy",
+            parameterName: "proxyUrl"
+        };
+    }
+
+    setupForConfigDict (dict) {
+        this.setIsSecure(typeof dict.isSecure === "boolean" ? dict.isSecure : true);
+
+        if (Type.isString(dict.hostname) && dict.hostname.length > 0) {
+            this.setHostname(dict.hostname); // this will set the domain and subdomain
         } else {
-            // Fallback to basic configuration if UoEnvironment isn't available yet
-            // This can happen during early initialization
-            const loc = window.location;
-            this.setHostname(loc.hostname);
-            this.setPort(Number(loc.port) || null);
-            this.setIsSecure(loc.protocol === "https:");
-            this.setPath("/proxy");
-            this.setParameterName("proxyUrl");
+            this.setDomain(dict.domain ? dict.domain : "");
+            this.setSubdomain(dict.subdomain ? dict.subdomain : "");
         }
+
+        this.setPort(dict.port ? dict.port : 0);
+        this.setPath(dict.path ? dict.path : "");
+        this.setParameterName(dict.parameterName ? dict.parameterName : "");
+        return this;
     }
 
 }.initThisClass());
