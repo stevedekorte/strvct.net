@@ -2,18 +2,22 @@
 
 /*
 
-    AiParsedResponseMessage_parsing
+    @class AiParsedResponseMessage_parsing
+    @extends AiParsedResponseMessage
+    @description A class for parsing AI response messages.
 
 */
 
 (class AiParsedResponseMessage_parsing extends AiParsedResponseMessage {
 
     convertTagToCamelCase (str) {
-    // have to lower case as dom node tag names are upper case
+        // have to lower case as dom node tag names are upper case
         let s = str.toLowerCase().split("-").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join("");
         s = s.charAt(0).toLowerCase() + s.slice(1);
         return s;
     }
+
+    /*
 
     // --- finding embeded info tags -------------------------
 
@@ -23,7 +27,6 @@
     }
 
     contentOfElementsOfTag (tagName) {
-
         function Element_hasParentWithTag (element, tagName) {
             tagName = tagName.toLowerCase();
 
@@ -46,7 +49,6 @@
         return results;
     }
 
-
     parseAiJsonString (s, description) {
         try {
             const json = JSON.parse(s);
@@ -55,46 +57,8 @@
             this.addAiError("AI responded with invalid JSON in [" + description + "]: " + e.message);
             throw e;
         }
-    //return undefined;
-    }
-
-    /*
-    async promiseParseAiJsonString (s, description) {
-        try {
-            const json = JSON.parse(s);
-            return json;
-        } catch (e) {
-            this.addAiError("AI responded with invalid JSON in [" + description + "]: " + e.message);
-            console.log("attempting to repair json string...");
-
-            const repairedString = await SvJsonFixer.repairJsonString(s); // throws an error if repair failed
-            if (repairedString && repairedString !== s) {
-                console.log("trying repaired json string...");
-                return this.parseAiJsonString(repairedString, description);
-            }
-            throw e;
-        }
     }
     */
-
-    /*
-  jsonOfElementsOfTag (tagName) {
-    const jsonStrings = this.contentOfElementsOfTag(tagName);
-    const results = [];
-    jsonStrings.forEach((s) => {
-      const json = this.parseAiJsonString(s, tagName);
-      if (!Type.isUndefined(json)) {
-        results.push(json);
-      }
-    });
-    return results;
-  }
-  */
-
-    /*
-  queueSendErrorsToAi (errorMessage) {
-  }
-  */
 
 }).initThisCategory();
 

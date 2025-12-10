@@ -2,7 +2,9 @@
 
 /*
 
-    AiParsedResponseMessage
+    @class AiParsedResponseMessage
+    @extends AiResponseMessage
+    @description A class for parsing AI response messages.
 
 */
 
