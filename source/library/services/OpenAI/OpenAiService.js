@@ -33,6 +33,13 @@
    */
     modelsJson () {
         return [
+
+            {
+                "name": "gpt-5.2",
+                "title": "ChatGPT 5.2",
+                "inputTokenLimit": 400000,
+                "outputTokenLimit": 128000
+            },
             {
                 "name": "gpt-5.1-chat-latest",
                 "title": "ChatGPT 5.1",
