@@ -14,8 +14,8 @@
     }
 
     static asJsonSchema () {
-    // Don't include $schema when used as a definition within another schema
-    // Simplified schema without if/then which may not be supported by z-schema
+        // Don't include $schema when used as a definition within another schema
+        // Simplified schema without if/then which may not be supported by z-schema
         return {
             "title": "JSON Patch",
             "type": "array",

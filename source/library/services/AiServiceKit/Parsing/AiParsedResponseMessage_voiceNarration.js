@@ -2,28 +2,15 @@
 
 /*
 
-    AiParsedResponseMessage_voiceNarration
+    @class AiParsedResponseMessage_voiceNarration
+    @extends AiParsedResponseMessage
+    @description A class for voice narration of AI response messages.
 
 */
 
 (class AiParsedResponseMessage_voiceNarration extends AiParsedResponseMessage {
 
-    /*
-  initPrototypeSlots () {
-    //voice narration
-    {
-      const slot = ≈.newSlot("isDoneSpeaking", false);
-      slot.setCanInspect(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setInspectorPath(this.svType());
-      slot.setLabel("Is Done Speaking");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setSlotType("Boolean");
-      slot.setIsSubnodeField(false);
-    }
-  }
-    */
+    // TODO: make a generic protocol for voice narration, without session and settings dependencies
 
     didUpdateIsDoneSpeaking (oldValue, newValue) {
         if (newValue) {
@@ -47,7 +34,7 @@
         if (session && session.settings) {
             const settings = session.settings();
             const voiceNarrationOn = settings.shouldVoiceNarrate();
-            return !this.isDoneSpeaking() && this.session().isHost() && voiceNarrationOn;
+            return !this.isDoneSpeaking() && session.isHost() && voiceNarrationOn;
         }
         return false;
     }
@@ -81,19 +68,6 @@
     onSoundStarted (sound) {
         //console.log(this.svType() + ".onSoundStarted [" + sound.transcript().clipWithEllipsis(15) + "]");
         this.onSpeakingText(sound.transcript());
-
-        /*
-        if (this.session().isHost()) {
-            if (this.session().hasClients()) {
-                const audioMsg = UoAudioMessage.clone()
-                    .setInReplyToMessageId(this.messageId())
-                    .setSound(sound);
-                audioMsg.promisePrepareDataUrl().then(() => {
-                    this.session().shareAudioMessage(audioMsg);
-                });
-            }
-        }
-        */
     }
 
     onSpeakingText (text) {
