@@ -1,7 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm update:*)",
+      "Bash(npm install)",
+      "Bash(rm:*)",
+      "Bash(npm outdated:*)",
+      "Bash(npm --prefix source/library/cli install:*)",
+      "Bash(pushd:*)",
+      "Bash(popd)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(npm install:*)",
+      "Bash(npm audit fix:*)"
     ],
     "deny": []
   }
