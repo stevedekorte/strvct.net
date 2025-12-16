@@ -54,6 +54,13 @@
             slot.setShouldStoreSlot(false);
         }
 
+        // default bucket name
+        {
+            const slot = this.newSlot("defaultBucketName", null);
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(false);
+        }
+
     }
 
     initPrototype () {
@@ -286,9 +293,17 @@
         if (app) {
             let bucketName = null;
 
+            if (this.defaultBucketName()) {
+                console.log("FirebaseStorageService.bucketName: Using default bucket name:", this.defaultBucketName());
+                bucketName = this.defaultBucketName();
+            }
+
+            /*
+            FirebaseStorageService.shared().setDefaultBucketName(globalThis.UoBuildEnv.storageBucket);
             if (typeof globalThis !== "undefined" && globalThis.UoBuildEnv) {
                 bucketName = globalThis.UoBuildEnv.storageBucket;
             }
+            */
 
             if (!bucketName && app.options.storageBucket) {
                 bucketName = app.options.storageBucket;
