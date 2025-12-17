@@ -25,7 +25,7 @@
     static _serviceInfoJson = {
         "projectId": null,
         "locationId": "us-central1"
-    };
+    }; // so we can override these at runtime (see the getter and setter methods)
 
     /**
    * @description Returns the JSON representation of available models.
