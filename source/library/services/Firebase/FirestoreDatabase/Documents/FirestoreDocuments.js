@@ -142,6 +142,9 @@
             if (docSnap.updateTime) {
                 doc.setUpdateTimeMillis(docSnap.updateTime.toMillis());
             }
+
+            // Document exists in cloud - sync its cloudPath
+            doc.syncCloudPath();
         });
     }
 
@@ -181,8 +184,9 @@
 
             if (collection && collection.isKindOf(FirestoreCollection)) {
                 const collectionPath = collection.path();
-                doc.setPath(`${collectionPath}/${docId}`);
+                doc.setBasePath(collectionPath);
             }
+            doc.setName(docId);
 
             this.addSubnode(doc);
         }

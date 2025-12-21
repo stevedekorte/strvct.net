@@ -1,9 +1,16 @@
-/**
- * @module browser.stack.Tile.field_tiles
- * @class SvActionFieldTile
+/** * @module browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvActionFieldTile
  * @extends Tile
  * @classdesc SvActionFieldTile is a specialized Tile class for action fields.
  * It includes a button view and handles user interactions.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

@@ -1,11 +1,18 @@
 "use strict";
 
-/**
-* @module framework
-* @class StrvctFramework
+/*** @module framework
+ */
+
+/*** @class StrvctFramework
 * @description Main entry point for the STRVCT framework when used as an npm module
 * Allows consumers to import/require the framework through a single entry point
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 class StrvctFramework {
     /**

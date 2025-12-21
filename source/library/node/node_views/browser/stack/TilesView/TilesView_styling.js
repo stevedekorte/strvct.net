@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_styling
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_styling
  * @extends TilesView
  * @classdesc TilesView_styling class for handling styling of tiles view.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

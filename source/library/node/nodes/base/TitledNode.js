@@ -1,6 +1,7 @@
-/**
- * @module library.node.nodes.base
- * @class TitledNode
+/** * @module library.node.nodes.base
+ */
+
+/** * @class TitledNode
  * @extends SvNode
  * @classdesc Class for handling a node's:
  *     title
@@ -9,6 +10,12 @@
  *     icon/thumbnail (move to viewable?)
  *
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

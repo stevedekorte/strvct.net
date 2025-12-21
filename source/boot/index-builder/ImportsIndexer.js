@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module IndexBuilder
- * @class ImportsIndexer
+/** * @module IndexBuilder
+ */
+
+/** * @class ImportsIndexer
  * @extends Object
  * @classdesc Builds an index of resources from _imports.json files.
  *  Runs in node.js.
@@ -39,7 +40,13 @@
     will load the above two files and eval the JS and CSS code to start
     the app.
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 // --------------------------------------------------
 

@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories.primitives.literals
- * @class String_store
+/** * @module library.node.storage.base.categories.primitives.literals
+ */
+
+/** * @class String_store
  * @extends String
  * @classdesc A class extending the String primitive to provide storage-related functionality.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

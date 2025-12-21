@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.nodes
- * @class Slot_promiseWrapper
+/** * @module library.node.nodes
+ */
+
+/** * @class Slot_promiseWrapper
  * @extends Slot
  * @classdesc Category of Slot class to add support for promise wrapped getters.
  * Their values (and the promise wrapper) can automatically be reset when another slot is updated.
@@ -22,6 +23,12 @@
 
         slot.setPromiseResetsOnChangeOfSlotName("dataUrl");
         // - adds an onDidChangeOfSlotName("dataUrl") method which resets the promise
+
+ 
+ 
+ */
+
+/**
 
  */
 

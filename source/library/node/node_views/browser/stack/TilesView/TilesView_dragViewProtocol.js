@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_dragViewProtocol
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_dragViewProtocol
  * @extends TilesView
  * @classdesc Handles the drag and drop protocol for TilesView.
  *
@@ -31,6 +32,12 @@
  * - onDragSourceEnd
  *
  * @implements {DragViewProtocol}
+ 
+ 
+ */
+
+/**
+
  */
 
 (class TilesView_dragViewProtocol extends TilesView {

@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module boot
- * @class SvBase
+/** * @module boot
+ */
+
+/** * @class SvBase
  * @extends Object
  * @description SvBase class with helpful methods for cloning and slot creation.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvBase extends Object {
@@ -76,7 +83,7 @@
 
     /**
      * Sets up the Object.defineSlot method for defining slots on objects.
-     * @returns {typeof SvBase} The class itself.
+     * @returns {Function} The class itself.
      * @category Initialization
      */
     static setupDefineSlot () {
@@ -100,7 +107,7 @@
 
     /**
      * Initializes the class by setting up prototype slots and methods.
-     * @returns {typeof SvBase} The class itself.
+     * @returns {Function} The class itself.
      * @category Initialization
      */
     static initThisClass () {

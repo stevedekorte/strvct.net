@@ -1,8 +1,15 @@
-/**
- * @module browser.stack.Tile.field_tiles
- * @class SvStringFieldTile
+/** * @module browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvStringFieldTile
  * @extends SvFieldTile
  * @classdesc SvStringFieldTile class for handling string field tiles.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvStringFieldTile extends SvFieldTile {
 

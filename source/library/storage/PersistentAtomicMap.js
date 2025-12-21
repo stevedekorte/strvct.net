@@ -252,4 +252,8 @@
         }
     }
 
+    async asyncTotalSize () {
+        return await this.idb().asyncTotalSize();
+    }
+
 }.initThisClass());

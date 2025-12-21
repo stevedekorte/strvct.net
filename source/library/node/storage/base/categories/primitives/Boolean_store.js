@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Boolean_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Boolean_store
  * @extends Boolean
  * @classdesc A category of Boolean with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 (class Boolean_store extends Boolean {
 

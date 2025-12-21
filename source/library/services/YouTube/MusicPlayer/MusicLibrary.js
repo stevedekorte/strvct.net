@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.services.YouTube.MusicPlayer
- * @class MusicLibrary
+/** * @module library.services.YouTube.MusicPlayer
+ */
+
+/** * @class MusicLibrary
  * @extends SvSummaryNode
  * @description A music library.
  * All tracks are under a Creative Commons License.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class MusicLibrary extends SvSummaryNode {

@@ -1,6 +1,16 @@
 "use strict";
 
+/** * @module library.ideal.formatters
+ */
+
+/** * @class TimePeriodFormatter
+ * @extends ProtoClass
+ 
+ 
+ */
+
 /**
+
  * TimePeriodFormatter takes a number of seconds and formats it in a compact format.
  *
  * @example
@@ -13,9 +23,6 @@
  * // if seconds was 3600, stringVersion would be 1h.
  * // if seconds was 172800, stringVersion would be 2d.
  *
- * @module library.ideal.formatters
- * @class TimePeriodFormatter
- * @extends ProtoClass
  */
 (class TimePeriodFormatter extends ProtoClass {
     initPrototypeSlots () {

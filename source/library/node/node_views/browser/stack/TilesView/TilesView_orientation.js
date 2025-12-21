@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_orientation
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_orientation
  * @extends TilesView
  * @classdesc TilesView_orientation extends TilesView to handle orientation-related functionality.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

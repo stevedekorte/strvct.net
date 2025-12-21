@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class SvJsonArrayNode_patches
+/** * @module library.node.fields.json
+ */
+
+/** * @class SvJsonArrayNode_patches
  * @extends SvJsonArrayNode
  * @classdesc Category class that adds native JSON patch support to SvJsonArrayNode.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvJsonArrayNode_patches extends SvJsonArrayNode {
 

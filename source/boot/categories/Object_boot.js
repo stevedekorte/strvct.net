@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module boot
- * @class Object_boot
+/** * @module boot
+ */
+
+/** * @class Object_boot
  * @extends Object
  * @classdesc Category to add some basic functionality to the Object class.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class Object_boot extends Object {

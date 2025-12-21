@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvBooleanField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvBooleanField
  * @extends SvField
  * @classdesc SvBooleanField represents a boolean field in the system.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvBooleanField extends SvField {
 

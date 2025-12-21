@@ -1,6 +1,7 @@
-/**
- * @module library.node.nodes
- * @class SvSummaryNode
+/** * @module library.node.nodes
+ */
+
+/** * @class SvSummaryNode
  * @extends SvStorableNode
  * @classdesc A node that contains Text, stores its:
  * - content
@@ -11,6 +12,12 @@
  * and has an inspector for these attributes
  *
  * support for links?
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

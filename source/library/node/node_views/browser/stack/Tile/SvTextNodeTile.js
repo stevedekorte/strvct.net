@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile
- * @class SvTextNodeTile
+/** * @module library.node.node_views.browser.stack.Tile
+ */
+
+/** * @class SvTextNodeTile
  * @extends Tile
  * @classdesc SvTextNodeTile represents a tile for displaying and editing text nodes.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvTextNodeTile extends Tile {

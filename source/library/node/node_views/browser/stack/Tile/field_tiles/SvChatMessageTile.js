@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvChatMessageTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvChatMessageTile
  * @extends SvTextAreaFieldTile
  * @classdesc SvChatMessageTile is a specialized tile for chat message functionality.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

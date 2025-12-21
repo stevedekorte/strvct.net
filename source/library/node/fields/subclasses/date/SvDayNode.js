@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses.date
- * @class SvDayNode
+/** * @module library.node.fields.subclasses.date
+ */
+
+/** * @class SvDayNode
  * @extends BaseNode
  * @classdesc Represents a day node in a calendar or date system. It handles the representation and manipulation of a single day value.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvDayNode extends BaseNode {
 

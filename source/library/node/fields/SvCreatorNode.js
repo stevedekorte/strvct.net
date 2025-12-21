@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields
- * @class SvCreatorNode
+/** * @module library.node.fields
+ */
+
+/** * @class SvCreatorNode
  * @extends SvStorableNode
  * @classdesc A stand-in node that lets the user select a field to replace it with.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvCreatorNode extends SvStorableNode {
 

@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.collections
- * @class IndexedArray
+/** * @module library.ideal.collections
+ */
+
+/** * @class IndexedArray
  * @extends HookedArray
  * @description A subclass of Array that maintains a dictionary index of the
  * elements of the list via an index closure. The index closure should return
@@ -13,6 +14,12 @@
  *     a[i] = b -> instead use a.atPut(i, b)
  *     delete a[i] -> instead use a.removeAt(i)
  *
+ 
+ 
+ */
+
+/**
+
  */
 (class IndexedArray extends HookedArray {
 

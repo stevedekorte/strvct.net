@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.ideal
- * @class Set_ideal
+/** * @module library.ideal
+ */
+
+/** * @class Set_ideal
  * @extends Set
  * @description Extended Set class with additional utility methods.
+ 
+ 
+ */
+
+/**
+
  */
 (class Set_ideal extends Set {
 

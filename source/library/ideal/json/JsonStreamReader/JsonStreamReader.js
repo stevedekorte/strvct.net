@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.json.JsonStreamReader
- * @class JsonStreamReader
+/** * @module library.ideal.json.JsonStreamReader
+ */
+
+/** * @class JsonStreamReader
  * @extends ProtoClass
  * @classdesc Wrapper over clarinet library which constructs JSON while reading stream.
  *
@@ -22,6 +23,12 @@
  *   onJsonStreamReaderPushContainer (reader, json)
  *   onJsonStreamReaderPopBaseContainer (reader, json)
  *   //onJsonStreamReaderEnd (reader)
+ 
+ 
+ */
+
+/**
+
  */
 
 (class JsonStreamReader extends ProtoClass {

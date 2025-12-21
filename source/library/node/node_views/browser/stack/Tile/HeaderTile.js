@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module browser.stack.Tile
- * @class HeaderTile
+/** * @module browser.stack.Tile
+ */
+
+/** * @class HeaderTile
  * @extends TitledTile
  * @classdesc HeaderTile is a specialized TitledTile that is selectable and has a specific theme class.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class HeaderTile extends TitledTile {

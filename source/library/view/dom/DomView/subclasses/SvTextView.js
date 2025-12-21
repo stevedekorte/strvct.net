@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.view.dom.DomView.subclasses
- * @class SvTextView
+/** * @module library.view.dom.DomView.subclasses
+ */
+
+/** * @class SvTextView
  * @extends StyledDomView
  * @description A view for a single line of text.
  * For multi-line text, use TextArea.
@@ -11,6 +12,12 @@
  * Behavior:
  * (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent.
  *
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvTextView extends StyledDomView {

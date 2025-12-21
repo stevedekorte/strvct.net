@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile
- * @class Tile
+/** * @module library.node.node_views.browser.stack.Tile
+ */
+
+/** * @class Tile
  * @extends NodeView
  * @classdesc Base tile view. This is a sort of empty canvas for subclasses to put subviews in.
     It's important that subviews are put within the contentView, as this is used
@@ -25,7 +26,13 @@
 
     See lookedUpStyles method.
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 (class Tile extends NodeView {
 

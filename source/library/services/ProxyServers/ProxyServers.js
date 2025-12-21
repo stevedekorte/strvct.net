@@ -1,6 +1,7 @@
-/**
- * @module library.services.ProxyServers
- * @class ProxyServers
+/** * @module library.services.ProxyServers
+ */
+
+/** * @class ProxyServers
  * @extends SvSummaryNode
  * @classdesc ProxyServers class for managing proxy servers.
  *
@@ -23,6 +24,12 @@
  * Example use:
  *
  * const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(targetUrl);
+ 
+ 
+ */
+
+/**
+
  */
 (class ProxyServers extends SvSummaryNode {
 

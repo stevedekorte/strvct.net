@@ -1,10 +1,9 @@
 "use strict";
 
-/**
+/** * @module library.ideal.object
+ */
 
- *
- * @module library.ideal.object
- * @class Object_timeouts
+/** * @class Object_timeouts
  * @extends Object
  * @classdesc
  * Extends Object with timeout functionality.
@@ -15,6 +14,14 @@
  *
  * This helps track all timeouts for an object, and cancel them all at once via cancelAllTimeouts()
  * which is useful when retiring an object.
+ 
+ 
+ */
+
+/**
+
+
+ *
  */
 (class Object_timeouts extends Object {
 

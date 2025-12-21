@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * Extends the ArrayBuffer class with storage-related functionality.
- * @module library.node.storage.base.categories.primitives
- * @class ArrayBuffer_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class ArrayBuffer_store
  * @extends ArrayBuffer
  * @classdesc Provides methods for storing and loading ArrayBuffer data in a store.
+ 
+ 
+ */
+
+/**
+
+ * Extends the ArrayBuffer class with storage-related functionality.
  */
 (class ArrayBuffer_store extends ArrayBuffer {
 

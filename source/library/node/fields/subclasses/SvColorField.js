@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvColorField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvColorField
  * @extends SvField
  * @classdesc SvColorField represents a color field with red, green, blue, and alpha components.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvColorField extends SvField {
 

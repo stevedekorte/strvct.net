@@ -1,8 +1,15 @@
-/**
- * @module library.ideal.html.HtmlStreamReader
- * @class StreamElementNode
+/** * @module library.ideal.html.HtmlStreamReader
+ */
+
+/** * @class StreamElementNode
  * @extends StreamNode
  * @classdesc StreamElementNode represents an HTML element node in a stream of HTML elements.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

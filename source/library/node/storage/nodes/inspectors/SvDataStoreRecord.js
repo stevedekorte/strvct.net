@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.nodes.inspectors
- * @class SvDataStoreRecord
+/** * @module library.node.storage.nodes.inspectors
+ */
+
+/** * @class SvDataStoreRecord
  * @extends SvFieldSetNode
  * @classdesc A visible representation of a storage record.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.ideal.proto
- * @class ProtoClass
+/** * @module library.ideal.proto
+ */
+
+/** * @class ProtoClass
  * @extends Object
  * @classdesc A place for adding Smalltalk-like features to the base object
  * that we don't want to add to all Object (and Object descendants) yet,
  * as I'm not sure how they might affect the rest of the system.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvTask extends ProtoClass {

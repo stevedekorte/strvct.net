@@ -1,15 +1,22 @@
 "use strict";
 
-/**
-* @module library.ideal.weak
-* @class EnumerableWeakSet
+/*** @module library.ideal.weak
+ */
+
+/*** @class EnumerableWeakSet
 * @extends WeakSet
 * @classdesc A Set with WeakRef values internally, but external API looks normal (gets and sets values).
 * Unlike WeakSet, it's values are enumerable.
 *
 * Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
 * implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
-*/
+
+ 
+ */
+
+/**
+
+ */
 SvGlobals.globals().EnumerableWeakSet = (class EnumerableWeakSet extends Object {
 
     /**

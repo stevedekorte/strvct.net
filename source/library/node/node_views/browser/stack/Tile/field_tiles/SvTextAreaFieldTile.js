@@ -1,9 +1,16 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvTextAreaFieldTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvTextAreaFieldTile
  * @extends SvFieldTile
  * @classdesc SvTextAreaFieldTile is a specialized field tile for text area input.
  * It includes functionality for speech-to-text input.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

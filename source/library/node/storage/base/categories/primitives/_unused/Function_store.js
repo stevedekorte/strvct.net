@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Function_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Function_store
  * @extends Function
  * @classdesc A category of Function with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 (class Function_store extends Function {
 

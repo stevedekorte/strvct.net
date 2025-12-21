@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.app
- * @class CredentialManager
+/** * @module library.app
+ */
+
+/** * @class CredentialManager
  * @extends SvSummaryNode
  * @classdesc A shared global object to manage passwords.
  * Used by Service APIs. Examples:
@@ -17,6 +18,12 @@
  * credential.setServiceName("OpenAI");
  * credential.setBearerToken("... bearer token ...");
  *
+ 
+ 
+ */
+
+/**
+
  */
 
 

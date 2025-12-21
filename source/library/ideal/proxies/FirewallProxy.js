@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.proxies
- * @class FirewallProxy
+/** * @module library.ideal.proxies
+ */
+
+/** * @class FirewallProxy
  * @extends ObservableProxy
  * @classdesc
  * FirewallProxy
@@ -20,6 +21,12 @@
  *     const proxyRef = FirewallProxy.newProxyFor(array)
  *     proxyRef.observable().setProtectedMethodNames(new Set([...]))
  *     proxyRef.observable().setProtectedTrapNames(new Set([...]))
+ 
+ 
+ */
+
+/**
+
  */
 (class FirewallProxy extends ObservableProxy {
     /**

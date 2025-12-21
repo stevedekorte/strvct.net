@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.ideal
- * @class Boolean_ideal
+/** * @module library.ideal
+ */
+
+/** * @class Boolean_ideal
  * @extends Boolean
  * @description Extended Boolean class with additional utility methods.
+ 
+ 
+ */
+
+/**
+
  */
 (class Boolean_ideal extends Boolean {
 

@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Date_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Date_store
  * @extends Date
  * @classdesc A class that extends the native Date object with additional methods for storage functionality.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

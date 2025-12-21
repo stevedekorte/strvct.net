@@ -1,6 +1,7 @@
-/**
- * @module library.audio
- * @class SimpleSynth
+/** * @module library.audio
+ */
+
+/** * @class SimpleSynth
  * @extends ProtoClass
  * @classdesc
  * A simple audio synthesizer for playing sequences of notes in the browser.
@@ -27,6 +28,12 @@
  * Play by track dict notes array:
  * synth.playTrackNotes([{pitch: 440, lengthMs: 1000, oscillator: "sine", delayMs: 100, volume: 0.7}]);
  *
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

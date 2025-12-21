@@ -1,6 +1,7 @@
-/**
- * @module library.node.node_views
- * @class SvVideoWellView
+/** * @module library.node.node_views
+ */
+
+/** * @class SvVideoWellView
  * @extends NodeView
  * @classdesc SvVideoWellView
  *
@@ -8,6 +9,12 @@
  * - can have its own frame and decoration
  * - supports drag & drop of videos
  * - supports standard video controls and playback
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

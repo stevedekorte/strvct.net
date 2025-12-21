@@ -1,6 +1,7 @@
-/**
- * @module browser.stack.Tile
- * @class TitledTile
+/** * @module browser.stack.Tile
+ */
+
+/** * @class TitledTile
  * @extends Tile
  * @classdesc
  * TitledTile
@@ -14,6 +15,12 @@
  *     - thumbnailView
  *
  * Most of these can easily be disabled, if not needed.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

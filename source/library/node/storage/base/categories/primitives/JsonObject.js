@@ -1,6 +1,7 @@
-/**
- * @module library.node.storage.base.categories.primitives
- * @class JsonObject_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class JsonObject_store
  * @extends Object
  * @classdesc A bit of a hack to deal with slots containing JSON objects.
  *
@@ -16,6 +17,12 @@
  * - we don't want to store them in the JSON string.
  * - we need to make sure those properties are not enumerable so they don't corrupt collections like Sets, Maps, Dictionaries, Arrays, etc.
  *
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

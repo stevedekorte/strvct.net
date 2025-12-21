@@ -146,13 +146,21 @@
      * @category UI
      */
     subtitle () {
+        const lines = ["Document"];
+
         if (this.error()) {
-            return "Error: " + this.error();
+            lines.push("Error: " + this.error());
         }
+
         if (this.uploadStatus()) {
-            return this.uploadStatus();
+            lines.push("Upload Status: " + this.uploadStatus());
         }
-        return "No image";
+
+        if (this.updateTimeMillis()) {
+            lines.push("Update Time: " + this.updateTimeMillis());
+        }
+
+        return lines.join("\n");
     }
 
     /**
@@ -201,6 +209,9 @@
 
             // Write the document (replace document with provided data)
             await db.doc(path).set(data, { merge: false });
+
+            // Sync cloudPath after successful upload
+            this.syncCloudPath();
 
             this.setUploadStatus("uploaded successfully");
         } catch (error) {
@@ -319,6 +330,106 @@
      */
     subcollectionNamedCreateIfAbsent (name) {
         return this.subcollections().collectionNamedCreateIfAbsent(name);
+    }
+
+    // --- Migration ---
+
+    /**
+     * @description Migrates this document from cloudPath to current path()
+     * Uses two-phase approach: copy all first, then delete all
+     * @returns {Promise<void>}
+     * @category Migration
+     */
+    async asyncMigrate () {
+        const oldPath = this.cloudPath();
+        const newPath = this.path();
+
+        if (!oldPath) {
+            throw new Error("Document has no cloudPath - nothing to migrate");
+        }
+
+        if (oldPath === newPath) {
+            throw new Error("Paths are the same - no migration needed");
+        }
+
+        try {
+            this.setError("");
+            this.setUploadStatus("migrating document...");
+
+            // Phase 1: Copy this document and all subcollections to new paths
+            this.setUploadStatus("copying to new path...");
+            await this.asyncMigrateCopy();
+
+            // Phase 2: Delete this document and all subcollections from old paths
+            this.setUploadStatus("deleting old data...");
+            await this.asyncMigrateDelete();
+
+            // Update cloudPath
+            this.syncCloudPath();
+
+            this.setUploadStatus("migration completed successfully");
+        } catch (error) {
+            console.error("FirestoreDocument.asyncMigrate failed:", error);
+            this.setError(error.message || String(error));
+            this.setUploadStatus("migration failed");
+            throw error;
+        }
+    }
+
+    /**
+     * @description Phase 1: Copy document data to new path, recursively copy subcollections
+     * @returns {Promise<void>}
+     * @category Migration
+     */
+    async asyncMigrateCopy () {
+        const oldPath = this.cloudPath();
+        const newPath = this.path();
+        const db = this.getFirestoreDb();
+
+        // Copy this document's data
+        const oldDocSnap = await db.doc(oldPath).get();
+        if (!oldDocSnap.exists) {
+            throw new Error("Document does not exist at old path: " + oldPath);
+        }
+        await db.doc(newPath).set(oldDocSnap.data(), { merge: false });
+
+        // Update subcollection basePaths and copy them in parallel
+        const subcollections = this.subcollections().collections();
+        for (const subcollection of subcollections) {
+            subcollection.setBasePath(newPath);
+        }
+
+        const copyPromises = subcollections
+            .filter(sc => sc.existsInCloud())
+            .map(sc => sc.asyncMigrateCopy());
+
+        await Promise.all(copyPromises);
+    }
+
+    /**
+     * @description Phase 2: Delete document from old path, recursively delete subcollections
+     * @returns {Promise<void>}
+     * @category Migration
+     */
+    async asyncMigrateDelete () {
+        const oldPath = this.cloudPath();
+        const db = this.getFirestoreDb();
+
+        // Delete subcollections from old paths in parallel
+        const subcollections = this.subcollections().collections();
+        const deletePromises = subcollections
+            .filter(sc => sc.existsInCloud())
+            .map(sc => sc.asyncMigrateDelete());
+
+        await Promise.all(deletePromises);
+
+        // Delete this document from old path
+        await db.doc(oldPath).delete();
+
+        // Update subcollection cloudPaths
+        for (const subcollection of subcollections) {
+            subcollection.syncCloudPath();
+        }
     }
 
     /**

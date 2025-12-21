@@ -1,14 +1,21 @@
 "use strict";
 
-/**
- * @module library.app
- * @class HeaderNode
+/** * @module library.app
+ */
+
+/** * @class HeaderNode
  * @extends SvFolderNode
  * @classdesc This singleton sets up:
  *   - themes (inspectable) slot
  *   - blobs (inspectable) slot
  *   - breadcrumb subnode
  *   (if not already set up after loading from store)
+ 
+ 
+ */
+
+/**
+
  */
 
 

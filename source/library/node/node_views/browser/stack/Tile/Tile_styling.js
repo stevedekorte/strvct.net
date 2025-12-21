@@ -1,8 +1,15 @@
-/**
- * @module browser.stack.Tile
- * @class Tile_styling
+/** * @module browser.stack.Tile
+ */
+
+/** * @class Tile_styling
  * @extends Tile
  * @classdesc Tile_styling class for handling styling of Tile objects.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

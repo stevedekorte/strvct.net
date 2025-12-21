@@ -1,11 +1,18 @@
 "use strict";
 
+/** * @module library.ideal.object
+ */
+
+/** * @class Object_mutation
+ * @extends Object
+ 
+ 
+ */
+
 /**
+
  * Object category to support observing slot value changes (i.e. "mutations").
  *
- * @module library.ideal.object
- * @class Object_mutation
- * @extends Object
  */
 (class Object_mutation extends Object {
 

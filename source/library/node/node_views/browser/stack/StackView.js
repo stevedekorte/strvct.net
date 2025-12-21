@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack
- * @class StackView
+/** * @module library.node.node_views.browser.stack
+ */
+
+/** * @class StackView
  * @extends NodeView
  * @description
 
@@ -51,7 +52,13 @@
         When dragging & dropping, hierarchy views for nodes are cached (in nodeToStackCache) in order to make the drag & drop implementation
         more manageable. For example, the source tilesView needs to remember where the dragged item was when returning to it.
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 (class StackView extends NodeView {
 

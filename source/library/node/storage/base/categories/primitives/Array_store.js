@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Array_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Array_store
  * @extends Array
  * @classdesc An Array category with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 (class Array_store extends Array {
 

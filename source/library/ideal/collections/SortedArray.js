@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.ideal.collections
- * @class SortedArray
+/** * @module library.ideal.collections
+ */
+
+/** * @class SortedArray
  * @extends IndexedArray
  * @description A subclass of IndexedArray that maintains its subnodes in sorted order.
  * It does this by calling resort() on the array when a mutation occurs on the subnode items or the sort function changes.
  * The sort closure should return a comparison result.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SortedArray extends IndexedArray {
@@ -123,7 +130,7 @@
 
     /**
      * Runs a self-test on the SortedArray class.
-     * @returns {typeof SortedArray} The SortedArray class.
+     * @returns {Function} The SortedArray class.
      * @category Testing
      */
     static selfTest () {

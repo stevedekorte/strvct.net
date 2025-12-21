@@ -1,8 +1,15 @@
-/**
- * @module library.node.fields.subclasses.time
- * @class SvHourNode
+/** * @module library.node.fields.subclasses.time
+ */
+
+/** * @class SvHourNode
  * @extends BaseNode
  * @classdesc Represents an hour node in a time-related structure. Handles hours from 0 to 23.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

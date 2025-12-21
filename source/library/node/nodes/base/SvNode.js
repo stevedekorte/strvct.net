@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.nodes.base
- * @class SvNode
+/** * @module library.node.nodes.base
+ */
+
+/** * @class SvNode
  * @extends ProtoClass
  * @classdesc The base class of model objects that supports the protocol
  * used to sync with views (subclasses of NodeView).
@@ -28,6 +29,10 @@
  *
  * Protocol helpers:
  * - watchOnceForNote(aNote) // typically used to watch for appDidInit
+ */
+
+/**
+
  */
 
 (class SvNode extends ProtoClass {
@@ -1737,6 +1742,16 @@
      */
     hasSubnodeWithHash (h) {
         return this.lazyIndexedSubnodes().hasIndexKey(h);
+    }
+
+    // puuid lookup
+    /**
+     * @description Get the subnode with a given PUUID.
+     * @param {string} puuid - The PUUID to search for.
+     * @returns {SvNode|null} The subnode with the given PUUID, or null if not found.
+     */
+    subnodeWithPuuid (puuid) {
+        return this.subnodes().detect(sn => sn.puuid() === puuid);
     }
 
     // visibility

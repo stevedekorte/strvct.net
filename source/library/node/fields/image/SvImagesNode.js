@@ -1,8 +1,15 @@
-/**
- * @module library.node.nodes
- * @class SvImagesNode
+/** * @module library.node.nodes
+ */
+
+/** * @class SvImagesNode
  * @extends SvStorableNode
  * @classdesc Represents a node for managing image resources.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvImagesNode extends SvJsonArrayNode {
 

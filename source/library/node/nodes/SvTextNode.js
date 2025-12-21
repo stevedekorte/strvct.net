@@ -1,10 +1,17 @@
-/**
- * @module library.node.nodes
- * @class SvTextNode
+/** * @module library.node.nodes
+ */
+
+/** * @class SvTextNode
  * @extends SvStorableNode
  * @classdesc A node that contains Text, stores its:
  *    content, color, font, padding, margin
  *    and has an inspector for these attributes
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

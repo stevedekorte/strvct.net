@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.ideal.misc
- * @class Documentation
+/** * @module library.ideal.misc
+ */
+
+/** * @class Documentation
  * @extends ProtoClass
  * @classdesc An simple in-memory documentation system.
  *
  * TODO: Rename to something more unique.
+ 
+ 
+ */
+
+/**
+
  */
 (class Documentation extends ProtoClass {
     initPrototypeSlots () {

@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses.options
- * @class SvOptionsNode
+/** * @module library.node.fields.subclasses.options
+ */
+
+/** * @class SvOptionsNode
  * @extends SvField
  * @classdesc SvOptionsNode represents a field for selecting one or multiple options.
  *
@@ -46,6 +47,12 @@
  *
  * SvField.setValueOnTarget() needs to handle both cases.
  *
+ 
+ 
+ */
+
+/**
+
  */
 (class SvOptionsNode extends SvField {
 

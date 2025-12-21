@@ -1,8 +1,15 @@
-/**
- * @module library.node.fields.subclasses.time
- * @class SvMeridiemNode
+/** * @module library.node.fields.subclasses.time
+ */
+
+/** * @class SvMeridiemNode
  * @extends BaseNode
  * @classdesc SvMeridiemNode represents a meridiem (AM/PM) node in a time-related structure.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

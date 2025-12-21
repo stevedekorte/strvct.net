@@ -95,6 +95,10 @@
         console.log(this.svType() + " --- self test end --- ");
     }
 
+    async asyncTotalSize () {
+        return await this.kvMap().asyncTotalSize();
+    }
+
     /**
      * @static
      * @description Schedules a self-test to run after a delay.

@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.ideal.json.JsonSchema
- * @class JsonSchema
+/** * @module library.ideal.json.JsonSchema
+ */
+
+/** * @class JsonSchema
  * @classdesc This class provides utility methods for working with JSON schemas.
  * @extends Object
+ 
+ 
+ */
+
+/**
+
  */
 
 SvGlobals.globals().JsonSchema = (class JsonSchema extends Object {

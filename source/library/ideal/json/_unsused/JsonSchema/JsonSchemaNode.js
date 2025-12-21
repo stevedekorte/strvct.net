@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.ideal.json.JsonSchema
- * @class JsonSchemaNode
+/** * @module library.ideal.json.JsonSchema
+ */
+
+/** * @class JsonSchemaNode
  * @extends SvSummaryNode
  * @classdesc JsonSchemaNode is a class that extends SvSummaryNode and is used to manage JSON schema representations and related operations.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class JsonSchemaNode extends SvSummaryNode {

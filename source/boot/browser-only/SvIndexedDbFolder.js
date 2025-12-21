@@ -745,6 +745,10 @@
         return await tx.promiseCommit();
     }
 
+    async asyncTotalSize () {
+        return await aysncTotalSizeOfDatabase(this.storeName());
+    }
+
     // -----------------------------------------------------------------
 
     /**
@@ -763,8 +767,8 @@
         console.log(this.logPrefix(), "read ", v);
     }
 
-    static async usage () {
-        return estimateAllIndexedDBUsage(); // TODO inline this
+    static async asyncTotalSizeOfAllIndexedDbDatabases () {
+        return await asyncTotalSizeOfAllIndexedDbDatabases(); // TODO inline this
     }
 
 }.initThisClass());
@@ -778,13 +782,13 @@
  * @async
  * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
  */
-async function estimateAllIndexedDBUsage () {
+async function asyncTotalSizeOfAllIndexedDbDatabases () {
     const databases = await this.indexedDB().databases();
     let totalUsage = 0;
 
     for (const database of databases) {
         const databaseName = database.name;
-        const usage = await estimateIndexedDBUsage(databaseName);
+        const usage = await aysncTotalSizeOfDatabase(databaseName);
         console.log(this.logPrefix(), `Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
         totalUsage += usage;
     }
@@ -794,7 +798,7 @@ async function estimateAllIndexedDBUsage () {
 }
 
 // Function to estimate the usage of a single IndexedDB database
-async function estimateIndexedDBUsage (databaseName) {
+async function aysncTotalSizeOfDatabase (databaseName) {
     return new Promise((resolve, reject) => {
         const request = this.indexedDB().open(databaseName);
         request.onerror = () => {

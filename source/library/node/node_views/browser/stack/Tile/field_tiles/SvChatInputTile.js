@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvChatInputTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvChatInputTile
  * @extends SvChatMessageTile
  * @classdesc SvChatInputTile is a specialized tile for chat input functionality.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

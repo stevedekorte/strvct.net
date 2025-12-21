@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class JsonGroup_patches
+/** * @module library.node.fields.json
+ */
+
+/** * @class JsonGroup_patches
  * @extends JsonGroup
  * @classdesc Category class that adds native JSON patch support to JsonGroup.
+ 
+ 
+ */
+
+/**
+
  */
 (class JsonGroup_patches extends JsonGroup {
 

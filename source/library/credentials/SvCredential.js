@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.credentials
- * @class SvCredential
+/** * @module library.credentials
+ */
+
+/** * @class SvCredential
  * @extends SvSummaryNode
  * @classdesc An individual credential for a service.
  *
+ 
+ 
+ */
+
+/**
+
  */
 
 

@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack
- * @class NavView
+/** * @module library.node.node_views.browser.stack
+ */
+
+/** * @class NavView
  * @extends NodeView
  * @classdesc NavView is a component for navigation in a stack-based layout. It includes header, footer, and scrollable content areas.
  *
@@ -14,6 +15,12 @@
  * 3. Through gesture handling: The onRightEdgePanMove() method allows users to resize by dragging the right edge
  * 4. Via StackView width management: The parent StackView can compact and expand NavViews based on available space
  * 5. The width can also be adapted using setWidth("-webkit-fill-available") when a NavView needs to fill remaining space
+ 
+ 
+ */
+
+/**
+
  */
 (class NavView extends NodeView {
 

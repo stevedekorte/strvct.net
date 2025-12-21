@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.ideal
- * @class ArrayBuffer_ideal
+/** * @module library.ideal
+ */
+
+/** * @class ArrayBuffer_ideal
  * @extends ArrayBuffer
  * @classdesc Category extending the native ArrayBuffer class with async helper methods.
  *
  * ArrayBuffer is preferred over Blob for cross-platform compatibility (works in both Node.js and browsers).
+ 
+ 
+ */
+
+/**
+
  */
 (class ArrayBuffer_ideal extends ArrayBuffer {
 

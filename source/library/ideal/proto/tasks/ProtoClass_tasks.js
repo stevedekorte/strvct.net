@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.ideal.proto
- * @class ProtoClass_tasks
+/** * @module library.ideal.proto
+ */
+
+/** * @class ProtoClass_tasks
  * @extends ProtoClass
  * @classdesc
+ 
+ 
+ */
+
+/**
+
  */
 
 (class ProtoClass_tasks extends ProtoClass {

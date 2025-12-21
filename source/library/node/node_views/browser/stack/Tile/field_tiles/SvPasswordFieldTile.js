@@ -1,6 +1,7 @@
-/**
- * @module browser.stack.Tile.field_tiles
- * @class SvPasswordFieldTile
+/** * @module browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvPasswordFieldTile
  * @extends SvStringFieldTile
  * @classdesc SvPasswordFieldTile class for handling password field tiles. Uses SvPasswordView for native password input behavior.
  *
@@ -11,6 +12,12 @@
     - required: Prevents form submission if left empty.
     - autocomplete="off" or "new-password": Helps control browser autofill behavior.
     - pattern: Can be used for client-side validation (e.g., pattern=".{8,}" for minimum 8 characters).
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvPasswordFieldTile extends SvStringFieldTile {

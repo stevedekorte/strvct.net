@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views
- * @class SvImageView
+/** * @module library.node.node_views
+ */
+
+/** * @class SvImageView
  * @extends NodeView
  * @classdesc SvImageView is a specialized view for displaying images with additional features like a close button and editability.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

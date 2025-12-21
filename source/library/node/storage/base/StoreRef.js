@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base
- * @class StoreRef
+/** * @module library.node.storage.base
+ */
+
+/** * @class StoreRef
  * @extends Object
  * @classdesc StoreRef class for handling store references and persistent IDs.
+ 
+ 
+ */
+
+/**
+
  */
 (class StoreRef extends Object {
 

@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories.primitives.literals
- * @class Boolean_store
+/** * @module library.node.storage.base.categories.primitives.literals
+ */
+
+/** * @class Boolean_store
  * @extends Boolean
  * @classdesc Extension of the Boolean class for storage purposes.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

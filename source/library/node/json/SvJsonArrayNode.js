@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class SvJsonArrayNode
+/** * @module library.node.fields.json
+ */
+
+/** * @class SvJsonArrayNode
  * @extends SvJsonNode
  * @classdesc Represents a JSON array node in the object tree.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvJsonArrayNode extends SvJsonNode {
 

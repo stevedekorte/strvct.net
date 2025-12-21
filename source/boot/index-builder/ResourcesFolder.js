@@ -1,9 +1,16 @@
-/**
- * @module IndexBuilder
- * @class ResourcesFolder
+/** * @module IndexBuilder
+ */
+
+/** * @class ResourcesFolder
  * @extends Object
  * @classdesc A class to manage a folder containing resources.
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 const fs = require("fs");
 const nodePath = require("path");

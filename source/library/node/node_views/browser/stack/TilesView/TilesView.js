@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView
  * @extends ScrollContentView
  * @classdesc Contains array of Tile (and Tile decendant class) views.
  * Parent is a StackScrollView, whose parent is a NavView.
+ 
+ 
+ */
+
+/**
+
  */
 (class TilesView extends ScrollContentView {
 

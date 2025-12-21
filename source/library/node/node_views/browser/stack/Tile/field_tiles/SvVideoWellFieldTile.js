@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvVideoWellFieldTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvVideoWellFieldTile
  * @extends SvFieldTile
  * @classdesc Represents a video well field tile in the browser stack.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

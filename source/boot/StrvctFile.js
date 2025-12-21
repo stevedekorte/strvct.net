@@ -84,7 +84,7 @@ class StrvctFile extends Object {
      * @static
      * @description Sets the base URL for browser file loading
      * @param {string} url - Base URL (e.g., 'https://example.com/strvct/')
-     * @returns {typeof StrvctFile} The class for chaining
+     * @returns {Function} The class for chaining
      * @category Class Configuration
      */
     static setBaseUrl (url) {
@@ -106,7 +106,7 @@ class StrvctFile extends Object {
      * @static
      * @description Sets the working directory path for Node.js file loading
      * @param {string} path - Working directory path
-     * @returns {typeof StrvctFile} The class for chaining
+     * @returns {Function} The class for chaining
      * @category Class Configuration
      */
     static setWorkingPath (path) {

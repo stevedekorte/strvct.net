@@ -1,7 +1,14 @@
-/**
- * @module library.ideal.html.HtmlStreamReader
- * @class StreamNode
+/** * @module library.ideal.html.HtmlStreamReader
+ */
+
+/** * @class StreamNode
  * @classdesc StreamNode represents a generic node in a stream of HTML elements.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

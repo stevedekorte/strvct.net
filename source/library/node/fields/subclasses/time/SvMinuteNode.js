@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses.time
- * @class SvMinuteNode
+/** * @module library.node.fields.subclasses.time
+ */
+
+/** * @class SvMinuteNode
  * @extends BaseNode
  * @classdesc Represents a minute node in a time-related structure.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvMinuteNode extends BaseNode {
 

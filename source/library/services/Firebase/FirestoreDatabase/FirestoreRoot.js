@@ -70,7 +70,8 @@
         let col = this.collectionWithPath(path);
         if (!col) {
             col = FirestoreCollection.clone();
-            col.setPath(path);
+            // Top-level collections have no basePath, the path IS the name
+            col.setName(path);
             this.addSubnode(col);
         }
         return col;

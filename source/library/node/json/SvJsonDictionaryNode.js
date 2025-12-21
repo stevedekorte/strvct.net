@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class SvJsonDictionaryNode
+/** * @module library.node.fields.json
+ */
+
+/** * @class SvJsonDictionaryNode
  * @extends SvJsonNode
  * @classdesc Represents a JSON dictionary node in the Sv (STRVCT) system.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvJsonDictionaryNode extends SvJsonNode {
 

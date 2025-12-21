@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.blobs
- * @class SvCloudBlob
+/** * @module library.node.blobs
+ */
+
+/** * @class SvCloudBlob
  * @extends SvBlobNode
  * @classdesc
  * SvCloudBlobNode extends SvBlobNode to handle storing blobs in Google Cloud Storage.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvCloudBlobNode extends SvBlobNode {
 

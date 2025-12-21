@@ -1,6 +1,7 @@
-/**
-* @module library.ideal.protocol
-* @class Protocol
+/*** @module library.ideal.protocol
+ */
+
+/*** @class Protocol
 * @extends ProtoClass
 * @classdesc A base class for protocol subclasses.
 * This class provides some helper methods, such as verifying that an object supports a given protocol.
@@ -27,7 +28,13 @@
 * Cons:
 * - conflicts with the instance method namespace (somewhat avoided by only looking at instance methods up to the Protocol class's instance methods)
 *
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 "use strict";
 

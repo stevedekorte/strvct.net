@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * Custom error class for missing slots.
- * @module library.ideal.object
- * @class MissingSlotError
+/** * @module library.ideal.object
+ */
+
+/** * @class MissingSlotError
  * @extends Error
+ 
+ 
+ */
+
+/**
+
+ * Custom error class for missing slots.
  */
 
 SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
@@ -14,11 +21,18 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
     }
 });
 
-/**
- * Adds copying related behaviors for Object class.
- * @module library.ideal.object
- * @class Object_copying
+/** * @module library.ideal.object
+ */
+
+/** * @class Object_copying
  * @extends Object
+ 
+ 
+ */
+
+/**
+
+ * Adds copying related behaviors for Object class.
  */
 
 (class Object_copying extends Object {

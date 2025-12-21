@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack
- * @class StackScrollView
+/** * @module library.node.node_views.browser.stack
+ */
+
+/** * @class StackScrollView
  * @extends ScrollView
  * @classdesc StackScrollView is a specialized ScrollView that can be configured for vertical or horizontal scrolling.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

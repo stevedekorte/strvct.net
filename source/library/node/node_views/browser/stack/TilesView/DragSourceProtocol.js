@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class DragViewProtocol
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class DragViewProtocol
  * @extends Protocol
  * @classdesc A drag and drop source protocol for views.
  * @implements {DragViewProtocol}
+ 
+ 
+ */
+
+/**
+
  */
 
 (class DragSourceProtocol extends Protocol {

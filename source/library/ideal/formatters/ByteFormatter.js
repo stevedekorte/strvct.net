@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.formatters
- * @class ByteFormatter
+/** * @module library.ideal.formatters
+ */
+
+/** * @class ByteFormatter
  * @extends ProtoClass
  * @classdesc ByteFormatter takes a number of bytes and returns a string with the order of magnitude in
  * standard SI decimal digital information format.
@@ -17,6 +18,12 @@
  * // if aNumberOfBytes was 3,000,000, stringVersion would be 3 MB.
  *
  * Todo: Move to power notation after max order name exceeded
+ 
+ 
+ */
+
+/**
+
  */
 
 (class ByteFormatter extends ProtoClass {

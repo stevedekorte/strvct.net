@@ -1,6 +1,7 @@
-/**
- * @module IndexBuilder
- * @class ResourceIndexer
+/** * @module IndexBuilder
+ */
+
+/** * @class ResourceIndexer
  * @extends Object
  * @classdesc Command line script to recursively walk directories and
     generate a _imports.json file. These files are used by
@@ -18,7 +19,13 @@
     which don't need to be loaded immediately, and whose load order
     isn't critical (unlike load&eval on JS source files).
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 console.log("[ResourceIndexer.js] run");
 

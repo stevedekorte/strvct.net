@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.services.AiServiceKit.Composer
- * @classdesc A utility for composing AI prompts.
+/** * @module library.services.AiServiceKit.Composer
+ */
+
+/** * @classdesc A utility for composing AI prompts.
  * It will replace occurrences of:
  * - {{file$fileName}} with the contents of the file
  * - {{$tableOfContents}} with the table of contents of the prompt.
  * - {{$methodName}} with the result of the method call on the promptTarget.
+ 
+ 
+ */
+
+/**
+
  */
 
 /**

@@ -1,12 +1,19 @@
 "use strict";
 
+/** * @module library.ideal.object
+ */
+
+/** * @class Object_class
+ * @extends Object
+ 
+ 
+ */
+
 /**
+
  * Object_class
  *
  * Some added state and behavior on Object class.
- * @module library.ideal.object
- * @class Object_class
- * @extends Object
  */
 
 (class Object_class extends Object {

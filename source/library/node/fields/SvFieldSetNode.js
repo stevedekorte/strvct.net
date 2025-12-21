@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.fields
- * @class SvFieldSetNode
+/** * @module library.node.fields
+ */
+
+/** * @class SvFieldSetNode
  * @extends SvStorableNode
  * @classdesc Useful for nodes which are to be viewed and interacted with as forms.
  * Child nodes are of type SvField and should only be added via addFieldNamed().
@@ -23,6 +24,12 @@
  *         this.setActions(["send"])
  *         this.setCanDelete(true)
  *     }
+ 
+ 
+ */
+
+/**
+
  */
 (class SvFieldSetNode extends SvStorableNode {
 

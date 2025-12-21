@@ -1,11 +1,18 @@
-/**
- * @module library.node.nodes.base
- * @class StyledNode
+/** * @module library.node.nodes.base
+ */
+
+/** * @class StyledNode
  * @extends ViewableNode
  * @classdesc StyledNode extends ViewableNode and is part of the inheritance chain:
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  *
  * This class is responsible for state and behavior specific to styling of views.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

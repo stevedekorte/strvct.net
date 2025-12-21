@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Set_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Set_store
  * @extends Set
  * @classdesc Extension of Set class with methods for loading from and recording to a store.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

@@ -1,13 +1,20 @@
 "use strict";
 
+/** * @module library.ideal.collections
+ */
+
+/** * @class HookedSet
+ * @extends Set
+ 
+ 
+ */
+
 /**
+
  * A subclass of Set that hooks the base mutation methods.
  *
  * For this to work, you need to use method alternatives to the non-method
  * (operator) operations.
- * @module library.ideal.collections
- * @class HookedSet
- * @extends Set
  */
 
 (class HookedSet extends Set {

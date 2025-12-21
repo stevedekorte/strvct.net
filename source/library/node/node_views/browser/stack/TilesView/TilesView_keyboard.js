@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_keyboard
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_keyboard
  * @extends TilesView
  * @classdesc TilesView_keyboard class for handling keyboard controls and arrow navigation in TilesView
+ 
+ 
+ */
+
+/**
+
  */
 (class TilesView_keyboard extends TilesView {
 

@@ -1,9 +1,16 @@
 "use strict";
-/**
- * Extends Object with UUID (Universally Unique Identifier) functionality.
- * @module library.ideal.object
- * @class Object_puuid
+/** * @module library.ideal.object
+ */
+
+/** * @class Object_puuid
  * @extends Object
+ 
+ 
+ */
+
+/**
+
+ * Extends Object with UUID (Universally Unique Identifier) functionality.
  */
 (class Object_puuid extends Object {
 

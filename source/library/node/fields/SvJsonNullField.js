@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class SvJsonNullField
+/** * @module library.node.fields.json
+ */
+
+/** * @class SvJsonNullField
  * @extends SvField
  * @classdesc Represents a JSON null field in the application.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvJsonNullField extends SvField {
 

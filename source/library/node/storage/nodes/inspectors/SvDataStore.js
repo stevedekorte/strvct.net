@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.nodes.inspectors
- * @class SvDataStore
+/** * @module library.node.storage.nodes.inspectors
+ */
+
+/** * @class SvDataStore
  * @extends BaseNode
  * @classdesc A visible representation of the storage system
+ 
+ 
+ */
+
+/**
+
  */
 (class SvDataStore extends BaseNode {
 

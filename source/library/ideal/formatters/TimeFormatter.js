@@ -1,6 +1,16 @@
 "use strict";
 
+/** * @module library.ideal.formatters
+ */
+
+/** * @class TimeFormatter
+ * @extends ProtoClass
+ 
+ 
+ */
+
 /**
+
  * TimeFormatter takes a JavaScript Date and produces a formatted string description
  * following the object's format option properties.
  *
@@ -19,9 +29,6 @@
  *
  * // example output: "10:11am"
  *
- * @module library.ideal.formatters
- * @class TimeFormatter
- * @extends ProtoClass
  */
 (class TimeFormatter extends ProtoClass {
     initPrototypeSlots () {

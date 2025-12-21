@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles.options
- * @class SvOptionNodeTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles.options
+ */
+
+/** * @class SvOptionNodeTile
  * @extends TitledTile
  * @classdesc SvOptionNodeTile represents an option node tile in the browser stack.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

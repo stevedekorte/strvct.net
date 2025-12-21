@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Map_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Map_store
  * @extends Map
  * @classdesc A custom Map class with additional methods for loading from and converting to records for storage purposes.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

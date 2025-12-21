@@ -6,11 +6,18 @@ if (!SvPlatform.isNodePlatform()) {
     Image.__proto__ = Object;
 }
 
-/**
- * @module library.ideal
- * @class Image_ideal
+/** * @module library.ideal
+ */
+
+/** * @class Image_ideal
  * @extends Image
  * @description Some extra methods for the Javascript Image primitive
+ 
+ 
+ */
+
+/**
+
  */
 (class Image_ideal extends Image {
 

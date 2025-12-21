@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.nodes
- * @class SvImageNode
+/** * @module library.node.nodes
+ */
+
+/** * @class SvImageNode
  * @extends SvStorableNode
  * @classdesc SvImageNode class for handling image nodes.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvImageNode extends SvCloudBlobNode {
 

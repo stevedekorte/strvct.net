@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.audio
- * @class AudioQueue
+/** * @module library.node.audio
+ */
+
+/** * @class AudioQueue
  * @extends SvSummaryNode
  * @implements {AudioClipDelegateProtocol}
  * @classdesc Manages a queue of audio clips.
@@ -19,6 +20,12 @@
  * - addDelegate(delegate)
  * - removeDelegate(delegate)
  * - stop()
+ 
+ 
+ */
+
+/**
+
  */
 
 (class AudioQueue extends SvSummaryNode {

@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.nodes
- * @class SvPrototypesNode
+/** * @module library.node.nodes
+ */
+
+/** * @class SvPrototypesNode
  * @extends SvStorableNode
  * @classdesc Represents a node for managing prototypes.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvPrototypesNode extends SvStorableNode {
 

@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvImageWellFieldTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvImageWellFieldTile
  * @extends SvFieldTile
  * @classdesc Represents an image well field tile in the browser stack.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

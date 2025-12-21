@@ -15,10 +15,10 @@
 (class SvUrlResource extends Object {
 
     static initThisClass () {
-        /** @type {number} Total bytes loaded across all instances */
+        /** Total bytes loaded across all instances */
         this._totalBytesLoaded = 0;
 
-        /** @type {number} Total number of URLs loaded across all instances */
+        /** Total number of URLs loaded across all instances */
         this._totalUrlsLoaded = 0;
 
         SvGlobals.globals().SvUrlResource = SvUrlResource;

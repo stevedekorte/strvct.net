@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.proxies
- * @class ObservableProxy
+/** * @module library.ideal.proxies
+ */
+
+/** * @class ObservableProxy
  * @extends ProtoClass
  * @classdesc
  * A class for wrapping a reference in a proxy which can
@@ -33,6 +34,12 @@
  *         proxyRef.length
  *
  *     it will trigger the "get" trap and send an "onGetObserved" message to myObserver.
+ 
+ 
+ */
+
+/**
+
  */
 (class ObservableProxy extends ProtoClass {
 

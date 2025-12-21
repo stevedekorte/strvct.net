@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile.subviews
- * @class TileNoteView
+/** * @module library.node.node_views.browser.stack.Tile.subviews
+ */
+
+/** * @class TileNoteView
  * @extends SvTextView
  * @classdesc TileNoteView is a specialized SvTextView for displaying notes in a Tile.
+ 
+ 
+ */
+
+/**
+
  */
 (class TileNoteView extends SvTextView {
 

@@ -1,8 +1,15 @@
-/**
- * @module library.app
- * @class BreadCrumbsNode
+/** * @module library.app
+ */
+
+/** * @class BreadCrumbsNode
  * @extends SvFolderNode
  * @classdesc BreadCrumbsNode is a class that extends SvFolderNode and represents a breadcrumb node.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

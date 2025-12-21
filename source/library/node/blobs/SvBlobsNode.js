@@ -1,11 +1,18 @@
 
 "use strict";
 
-/**
- * @module library.node.blobs
- * @class SvBlobsNode
+/** * @module library.node.blobs
+ */
+
+/** * @class SvBlobsNode
  * @extends SvStorableNode
  * @classdesc A container for SvBlobNode subnodes.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvBlobsNode extends SvStorableNode {

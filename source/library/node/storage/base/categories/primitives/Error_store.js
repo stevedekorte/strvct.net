@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Error_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Error_store
  * @extends Error
  * @classdesc A class representing an error that can be stored and loaded from a record.
+ 
+ 
+ */
+
+/**
+
  */
 (class Error_store extends Error {
 

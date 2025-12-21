@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvFieldTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvFieldTile
  * @extends Tile
  * @classdesc
 
@@ -12,7 +13,13 @@
     The idea is to use the field as the container, and then get
     a custom value view to present in the value area.
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 
 (class SvFieldTile extends Tile {

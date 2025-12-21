@@ -1,11 +1,18 @@
 "use strict";
 
+/** * @module library.ideal.object
+ */
+
+/** * @class Object_notification
+ * @extends Object
+ 
+ 
+ */
+
 /**
+
  * Object category to support notification and observation functionality.
  *
- * @module library.ideal.object
- * @class Object_notification
- * @extends Object
  */
 (class Object_notification extends Object {
 

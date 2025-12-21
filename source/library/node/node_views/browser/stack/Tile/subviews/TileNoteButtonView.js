@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile.subviews
- * @class TileNoteButtonView
+/** * @module library.node.node_views.browser.stack.Tile.subviews
+ */
+
+/** * @class TileNoteButtonView
  * @extends ButtonView
  * @classdesc Aa specialized ButtonView for displaying abutton in the notes section of a Tile.
+ 
+ 
+ */
+
+/**
+
  */
 (class TileNoteButtonView extends ButtonView {
 

@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_selection
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_selection
  * @extends TilesView
  * @classdesc
  * TilesView_selection extends TilesView to handle selection-related functionality.
+ 
+ 
+ */
+
+/**
+
  */
 (class TilesView_selection extends TilesView {
 

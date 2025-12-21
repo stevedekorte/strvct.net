@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.misc
- * @class NamespaceSearch
+/** * @module library.ideal.misc
+ */
+
+/** * @class NamespaceSearch
  * @extends ProtoClass
  * @classdesc A way to search the Javascript namespace. All slots are enumerated and passed through a user-defined closure to find matches.
  *
@@ -14,6 +15,12 @@
  *      })
  *      search.find()
  *      assert(search.matchingPaths()[0] === "globalThis/String")
+ 
+ 
+ */
+
+/**
+
  */
 (class NamespaceSearch extends ProtoClass {
 

@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.view.dom.DomView
- * @class SubviewsDomView
+/** * @module library.view.dom.DomView
+ */
+
+/** * @class SubviewsDomView
  * @extends CssDomView
  * @classdesc Manages subviews and parent views.
+ 
+ 
+ */
+
+/**
+
  */
 
 

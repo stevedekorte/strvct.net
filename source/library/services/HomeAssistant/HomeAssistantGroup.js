@@ -167,10 +167,10 @@
    * @throws {Error} Always throws an error as this method should not be used.
    * @category Data Retrieval
    */
-    subnodeWithId (id) {
+    subnodeWithId (/*id*/) {
         throw new Error("shouldn't use this");
         //const ids = this.subnodes().map(sn => sn.id());
-        return this.subnodes().detect(sn => sn.id() === id);
+        //return this.subnodes().detect(sn => sn.id() === id);
     }
 
 }.initThisClass());

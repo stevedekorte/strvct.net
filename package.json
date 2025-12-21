@@ -5,7 +5,8 @@
   "main": "source/module/StrvctFramework.js",
   "browser": "source/module/StrvctFramework.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
-    "eslint": "^9.30.1"
+    "eslint": "^9.30.1",
+    "jsdoc": "^4.0.5"
   }
 }

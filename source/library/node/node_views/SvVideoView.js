@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views
- * @class SvVideoView
+/** * @module library.node.node_views
+ */
+
+/** * @class SvVideoView
  * @extends NodeView
  * @classdesc SvVideoView is a specialized view for displaying videos with additional features like a close button, playback controls, and editability.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

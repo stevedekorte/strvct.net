@@ -1,6 +1,16 @@
 "use strict";
 
+/** * @module library.ideal.collections
+ */
+
+/** * @class HookedArray
+ * @extends Array
+ 
+ 
+ */
+
 /**
+
  * A subclass of Array that hooks the base mutation methods so we can
  * track mutations to the array and call willMutate and didMutate hooks.
  *
@@ -15,9 +25,6 @@
  * a Proxy to intercept the array operations, which would be safer,
  * but also slower and more memory intensive.
  *
- * @module library.ideal.collections
- * @class HookedArray
- * @extends Array
  */
 
 (class HookedArray extends Array {
@@ -68,7 +75,7 @@
 
     /**
      * Performs a self-test of the HookedArray class
-     * @returns {typeof HookedArray} The HookedArray class
+     * @returns {Function} The HookedArray class
      * @category Testing
      */
     static selfTest () {

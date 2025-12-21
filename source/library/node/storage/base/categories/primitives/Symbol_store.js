@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Symbol_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Symbol_store
  * @extends Symbol
  * @classdesc A category of Symbol with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 (class Symbol_store extends Symbol {
 

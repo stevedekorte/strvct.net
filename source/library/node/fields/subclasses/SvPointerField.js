@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvPointerField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvPointerField
  * @extends SvField
  * @classdesc A field that's a pointer to another node.
  * (sometimes the other node is used as a list of items, but not always)
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvPointerField extends SvField {

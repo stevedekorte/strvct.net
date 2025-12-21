@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.app
- * @class RootContentNode
+/** * @module library.app
+ */
+
+/** * @class RootContentNode
  * @extends SvFolderNode
  * @classdesc Root node to use for app persistent store.
  * The app is responsible for loading this from the store or creating it if it doesn't exist.
@@ -17,6 +18,12 @@
  * - breadcrumb subnode
  *
  * (if not already set up after loading from store)
+ 
+ 
+ */
+
+/**
+
  */
 
 

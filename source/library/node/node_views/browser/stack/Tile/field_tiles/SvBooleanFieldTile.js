@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvBooleanFieldTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvBooleanFieldTile
  * @extends SvFieldTile
  * @classdesc Represents a boolean field tile in the browser stack.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvBooleanFieldTile extends SvFieldTile {
 

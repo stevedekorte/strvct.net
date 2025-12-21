@@ -1,6 +1,7 @@
-/**
- * @module library.ideal.html.HtmlStreamReader
- * @class HtmlStreamReader
+/** * @module library.ideal.html.HtmlStreamReader
+ */
+
+/** * @class HtmlStreamReader
  * @extends ProtoClass
  * @classdesc Wrapper over htmlparser2 library which:
  *   - deals with TextNodes (instead of just elements)
@@ -13,6 +14,12 @@
  *    reader.rootNode().innerHtml()
  *   Will being with the exact value of the last call to it.
  *   This is helpful for doing proper incremental merging.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

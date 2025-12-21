@@ -12,9 +12,10 @@
 
 /**
  * Counts the number of nodes in a JSON structure.
+ * @function nodeCount
+ * @static
  * @param {*} json - The JSON structure to count nodes for.
  * @returns {number} The total number of nodes in the JSON structure.
- * @memberof JSON
  * @category Data Analysis
  */
 JSON.nodeCount = function (json) {
@@ -37,9 +38,10 @@ JSON.nodeCount = function (json) {
 
 /**
  * Stringifies only the JSON compatible values in an object.
+ * @function stringifyOnlyJson
+ * @static
  * @param {*} obj - The object to stringify.
  * @returns {string} The stringified object.
- * @memberof JSON
  * @category Data Analysis
  */
 JSON.stringifyOnlyJson = function (obj, replacer, space) {
@@ -66,9 +68,10 @@ JSON.stringifyOnlyJson = function (obj, replacer, space) {
 
 /**
  * Stringifies only the JSON compatible values in an object, with stable key order.
+ * @function stableStringifyOnlyJson
+ * @static
  * @param {*} obj - The object to stringify.
  * @returns {string} The stringified object.
- * @memberof JSON
  * @category Data Analysis
  */
 JSON.stableStringifyOnlyJson = function (obj, replacer, space) {

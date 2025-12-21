@@ -134,19 +134,19 @@
     collectionNamedCreateIfAbsent (name) {
         // Build full path from parent document
         const parentDoc = this.ownerNode();
-        let fullPath = name;
+        let basePath = null;
 
         if (parentDoc && parentDoc.isKindOf(FirestoreDocument)) {
-            const docPath = parentDoc.path();
-            if (docPath) {
-                fullPath = `${docPath}/${name}`;
-            }
+            basePath = parentDoc.path();
         }
 
+        // Check if collection already exists
+        const fullPath = basePath ? `${basePath}/${name}` : name;
         let col = this.collectionWithPath(fullPath);
         if (!col) {
             col = FirestoreCollection.clone();
-            col.setPath(fullPath);
+            col.setBasePath(basePath);
+            col.setName(name);
             this.addSubnode(col);
         }
         return col;

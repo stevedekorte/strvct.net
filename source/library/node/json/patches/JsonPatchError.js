@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class JsonPatchError
+/** * @module library.node.fields.json
+ */
+
+/** * @class JsonPatchError
  * @extends Error
  * @classdesc Custom error class for JSON patch operations with detailed context information.
+ 
+ 
+ */
+
+/**
+
  */
 (class JsonPatchError extends Error {
 

@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories.primitives.literals
- * @class Number_store
+/** * @module library.node.storage.base.categories.primitives.literals
+ */
+
+/** * @class Number_store
  * @extends Number
  * @classdesc A class extending the Number primitive type with additional storage-related functionality.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

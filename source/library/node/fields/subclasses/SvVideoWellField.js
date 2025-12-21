@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvVideoWellField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvVideoWellField
  * @extends SvField
  * @classdesc Represents a video well field in the application.
  * This class handles video-related operations and supports specific mime types.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvVideoWellField extends SvField {

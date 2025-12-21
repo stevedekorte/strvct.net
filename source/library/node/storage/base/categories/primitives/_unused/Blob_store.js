@@ -1,6 +1,7 @@
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Blob_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Blob_store
  * @extends Blob
  * @classdesc
  * A class for handling Blob storage and serialization.
@@ -31,6 +32,12 @@
  * Tricky issue: PersistentAtomicMap gets fully loaded into memory.
  * We need a way to asyncLoad lazy slots(?)
  * If Blobs contain no refs, then we don't need to read them to collect
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

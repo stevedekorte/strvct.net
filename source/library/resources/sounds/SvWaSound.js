@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.resources.sounds
- * @class SvWaSound
+/** * @module library.resources.sounds
+ */
+
+/** * @class SvWaSound
  * @extends SvResource
  * @description A sound resource.
 
@@ -17,7 +18,13 @@
         sound.setData(data);
         sound.play(); // returns a promise
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 (class SvWaSound extends SvResource {
 

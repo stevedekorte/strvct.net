@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvStampField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvStampField
  * @extends SvField
  * @classdesc SvStampField class for handling stamp fields.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvStampField extends SvField {
 

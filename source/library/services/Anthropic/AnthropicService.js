@@ -8,10 +8,7 @@
  * @class AnthropicService
  * @extends AiService
  * @classdesc A SvSummaryNode that holds the API key and subnodes for the various Anthropic services.
- *
- * @example
-
-*/
+ */
 
 (class AnthropicService extends AiService {
 

@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.node.nodes.base
- * @class InspectableNode
+/** * @module library.node.nodes.base
+ */
+
+/** * @class InspectableNode
  * @extends TitledNode
  * @classdesc InspectableNode
  *
@@ -11,6 +12,12 @@
  *
  * Inheritance chain:
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ 
+ 
+ */
+
+/**
+
  */
 (class InspectableNode extends TitledNode {
 

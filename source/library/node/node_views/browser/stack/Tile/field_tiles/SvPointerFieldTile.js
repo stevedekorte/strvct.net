@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack.Tile.field_tiles
- * @class SvPointerFieldTile
+/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvPointerFieldTile
  * @extends TitledTile
  * @classdesc Represents a pointer field tile in the browser stack.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvPointerFieldTile extends TitledTile {
 

@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class RegExp_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class RegExp_store
  * @extends RegExp
  * @classdesc A category of RegExp with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class RegExp_store extends RegExp {

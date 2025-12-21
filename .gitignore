@@ -5,6 +5,9 @@
 # Build output (should not be in strvct submodule)
 build/
 
+# JSDoc generated documentation
+jsdocs/
+
 # Logs
 logs
 *.log

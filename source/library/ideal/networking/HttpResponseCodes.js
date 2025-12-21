@@ -1,8 +1,15 @@
-/**
- * @module library.ideal.networking
- * @class HttpResponseCodes
+/** * @module library.ideal.networking
+ */
+
+/** * @class HttpResponseCodes
  * @extends ProtoClass
  * @classdesc The HttpResponseCodes class provides a convenient way to retrieve information about HTTP response codes.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

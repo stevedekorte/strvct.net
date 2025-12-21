@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.ideal.object
- * @class Object_init
+/** * @module library.ideal.object
+ */
+
+/** * @class Object_init
  * @extends Object
  * @classdesc Initialization related behavior.
  *
@@ -58,6 +59,12 @@
  * - appDidInit (when the Application posts an appDidInit notification)
  *   Implement an appDidInit() method, and in init() call this.listenForAppDidInit().
  *
+ 
+ 
+ */
+
+/**
+
  */
 
 (class Object_init extends Object {

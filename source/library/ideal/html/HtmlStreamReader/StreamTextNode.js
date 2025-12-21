@@ -1,8 +1,15 @@
-/**
- * @module library.ideal.html.HtmlStreamReader
- * @class StreamTextNode
+/** * @module library.ideal.html.HtmlStreamReader
+ */
+
+/** * @class StreamTextNode
  * @extends StreamNode
  * @classdesc Represents a text node in the HTML stream reader. This class is responsible for handling text nodes in the HTML document.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

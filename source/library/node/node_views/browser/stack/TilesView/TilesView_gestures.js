@@ -1,11 +1,18 @@
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_gestures
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_gestures
  * @extends TilesView
  * @classdesc
  * TilesView_gestures
  *
  * This class extends TilesView to add gesture handling functionality.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

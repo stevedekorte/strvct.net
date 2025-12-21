@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.services.Anthropic
- * @class AnthropicRequest
+/** * @module library.services.Anthropic
+ */
+
+/** * @class AnthropicRequest
  * @extends AiRequest
  * @classdesc Handles requests to the Anthropic API for AI interactions.
  *
@@ -45,6 +46,12 @@
  *     "continuation": true,
  *     "parent_message_id": "def456"
  *   }'
+ 
+ 
+ */
+
+/**
+
  */
 (class AnthropicRequest extends AiRequest {
 

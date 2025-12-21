@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.node_views.browser.stack.Tile.subviews
- * @class TileSubtitleView
+/** * @module library.node.node_views.browser.stack.Tile.subviews
+ */
+
+/** * @class TileSubtitleView
  * @extends SvTextView
  * @classdesc TileSubtitleView is a specialized SvTextView for displaying subtitles in a Tile.
+ 
+ 
+ */
+
+/**
+
  */
 (class TileSubtitleView extends SvTextView {
 

@@ -118,7 +118,6 @@
 
     /**
      * @method setOnAwaitFunc
-     * @memberof Promise
      * @description Sets a function to be called when the promise is awaited.
      * @param {Function} aFunc - The function to be called on await.
      * @returns {Promise} The promise instance.
@@ -131,7 +130,6 @@
 
     /**
      * @method onAwait
-     * @memberof Promise
      * @description Handles the await operation on the promise.
      * @category Await
      */
@@ -152,7 +150,6 @@
 
     /**
  * @method setLabel
- * @memberof Promise
  * @description Sets a label for the promise.
  * @param {string} s - The label to set.
  * @returns {Promise} The promise instance.
@@ -165,7 +162,6 @@
 
     /**
  * @method label
- * @memberof Promise
  * @description Gets the label of the promise.
  * @returns {string} The promise label.
  * @category Labeling
@@ -178,7 +174,6 @@
 
     /**
  * @method beginTimeout
- * @memberof Promise
  * @description Begins a timeout for the promise.
  * @param {number} ms - The timeout duration in milliseconds.
  * @returns {Promise} The promise instance.
@@ -196,7 +191,6 @@
 
     /**
  * @method cancelTimeout
- * @memberof Promise
  * @description Cancels the timeout for the promise.
  * @returns {Promise} The promise instance.
  * @category Timeout
@@ -214,7 +208,6 @@
 
     /**
  * @method onTimeout
- * @memberof Promise
  * @description Handles the timeout event for the promise.
  * @private
  * @category Timeout
@@ -232,7 +225,6 @@
 
     /**
  * @method callResolveFunc
- * @memberof Promise
  * @description Calls the resolve function of the promise with variable arguments.
  * @param {...*} args - Arguments to pass to the resolve function.
  * @returns {*} The result of calling the resolve function.
@@ -251,7 +243,6 @@
 
     /**
  * @method callRejectFunc
- * @memberof Promise
  * @description Calls the reject function of the promise with variable arguments.
  * If no reject function exists (e.g., promise not created via Promise.clone()),
  * rethrows the first argument as an exception.
@@ -280,7 +271,6 @@
 
     /**
  * @method isResolved
- * @memberof Promise
  * @description Checks if the promise is resolved.
  * @returns {boolean} True if the promise is resolved, false otherwise.
  * @category Status
@@ -291,7 +281,6 @@
 
     /**
  * @method isRejected
- * @memberof Promise
  * @description Checks if the promise is rejected.
  * @returns {boolean} True if the promise is rejected, false otherwise.
  * @category Status
@@ -302,7 +291,6 @@
 
     /**
  * @method isPending
- * @memberof Promise
  * @description Checks if the promise is pending.
  * @returns {boolean} True if the promise is pending, false otherwise.
  * @category Status
@@ -319,7 +307,6 @@
 
     /**
  * @method hasAwaiters
- * @memberof Promise
  * @description Checks if the promise has any awaiters.
  * @returns {boolean} True if the promise has awaiters, false otherwise.
  * @category Await
@@ -330,7 +317,6 @@
 
     /**
  * @method clearAwaiterCount
- * @memberof Promise
  * @description Clears the awaiter count.
  * @private
  * @category Await
@@ -341,7 +327,6 @@
 
     /**
  * @method then
- * @memberof Promise
  * @description Overrides the then method to include onAwait functionality.
  * @param {Function} onFulfilled - The function to execute if the promise is fulfilled.
  * @param {Function} onRejected - The function to execute if the promise is rejected.

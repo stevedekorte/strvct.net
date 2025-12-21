@@ -2,6 +2,9 @@
 
 /**
  * @module library.ideal
+ */
+
+/**
  * @class Type
  * @extends Object
  * @description A collection of functions for type checking and type name related functions.
@@ -56,7 +59,6 @@
 
 
 */
-
 //SvGlobals.globals().Type = (class Type extends Object {
 class Type extends Object {
 

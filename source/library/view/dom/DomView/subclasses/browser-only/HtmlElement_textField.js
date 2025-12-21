@@ -1,8 +1,9 @@
 "use strict";
 
-/**
- * @module library.view.dom.DomView.subclasses
- * @class HTMLElement_textField
+/** * @module library.view.dom.DomView.subclasses
+ */
+
+/** * @class HTMLElement_textField
  * @extends HTMLElement
  * @description Adds experimental DOM merge support.
     TODO: move to ideal if useful.
@@ -25,7 +26,13 @@
     "12": "NOTATION_NODE"
     }
 
-*/
+
+ 
+ */
+
+/**
+
+ */
 
 assert(HTMLElement.prototype.clone === undefined);
 
@@ -171,9 +178,8 @@ const newClass = (class HTMLElement_textField extends HTMLElement {
     };
 
     /**
- * @memberof HTMLElement
- * @instance
- * @description Get all subelements with any of class.
+ * Get all subelements with any of class.
+ * @method getAllSubelementsWithAnyOfClass
  * @param {Array} classNames - The class names.
  * @returns {Array} The subelements.
  * @category Element Search

@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.json
- * @class SvJsonNode
+/** * @module library.node.fields.json
+ */
+
+/** * @class SvJsonNode
  * @extends SvJsonIdNode
  * @classdesc Represents a JSON node in the application. This class handles JSON data and provides methods for parsing and creating nodes from JSON.
+
+
+ */
+
+/**
+
  */
 
 (class SvJsonNode extends SvJsonIdNode {
@@ -130,6 +137,10 @@
         if (this.subnodeClasses().length === 0) {
             this.setSubnodeClasses(this.jsonClasses());
         }
+    }
+
+    subnodeWithJsonId (jsonId) {
+        return this.subnodes().detect(sn => sn.jsonId() === jsonId);
     }
 
 }.initThisClass());

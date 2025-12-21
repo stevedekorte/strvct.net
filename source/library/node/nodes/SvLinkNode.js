@@ -1,8 +1,15 @@
-/**
- * @module library.node.nodes
- * @class SvLinkNode
+/** * @module library.node.nodes
+ */
+
+/** * @class SvLinkNode
  * @extends SvSummaryNode
  * @classdesc A node that represents a link to another node, which is not a subnode
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

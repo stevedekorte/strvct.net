@@ -1,8 +1,15 @@
-/**
- * @module library.app
- * @class SvSettingsNode
+/** * @module library.app
+ */
+
+/** * @class SvSettingsNode
  * @extends SvStorableNode
  * @classdesc Represents a settings node in the application.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

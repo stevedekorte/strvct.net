@@ -1,9 +1,16 @@
-/**
- * @module library.node.fields.subclasses.time
- * @class SvTimeNode
+/** * @module library.node.fields.subclasses.time
+ */
+
+/** * @class SvTimeNode
  * @extends SvSummaryNode
  * @classdesc SvTimeNode represents a time node in the application.
  * It handles the storage and formatting of time information.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

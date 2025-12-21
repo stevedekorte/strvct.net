@@ -12,7 +12,10 @@
       "Bash(cat:*)",
       "Bash(find:*)",
       "Bash(npm install:*)",
-      "Bash(npm audit fix:*)"
+      "Bash(npm audit fix:*)",
+      "Bash(npm run docs:*)",
+      "Bash(npx jsdoc:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

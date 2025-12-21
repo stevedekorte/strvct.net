@@ -1,15 +1,22 @@
 "use strict";
 
+/** * @module library.ideal.formatters
+ */
+
+/** * @class NumberFormatter
+ * @extends ProtoClass
+ 
+ 
+ */
+
 /**
+
  * Takes a number and returns a string with a more human readable format.
  *
  * @example
  * const stringVersion = NumberFormatter.clone().setValue(1234).setSignificantDigits(2).formattedValue();
  * // stringVersion will be "1.2K"
  *
- * @module library.ideal.formatters
- * @class NumberFormatter
- * @extends ProtoClass
  */
 (class NumberFormatter extends ProtoClass {
     initPrototypeSlots () {

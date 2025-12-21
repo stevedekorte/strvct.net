@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.node.node_views
- * @class NodeView
+/** * @module library.node.node_views
+ */
+
+/** * @class NodeView
  * @extends StyledDomView
  * @classdesc
  * NodeView represents a view for a node in the application.
  * It handles the synchronization between the node model and its visual representation.
+ 
+ 
+ */
+
+/**
+
  */
 (class NodeView extends StyledDomView {
 

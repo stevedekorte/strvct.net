@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvImageWellField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvImageWellField
  * @extends SvField
  * @classdesc Represents an image well field in the application.
  * This class handles image-related operations and supports specific mime types.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvImageWellField extends SvField {

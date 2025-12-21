@@ -2,11 +2,13 @@
 
 /**
  * @module boot
+ */
+
+/**
  * @class SvBootLoadingView
  * @extends Object
  * @description Manages the loading view displayed during the boot process.
  */
-
 class SvBootLoadingView extends Object {
 
     constructor () {

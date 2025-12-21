@@ -1,8 +1,15 @@
-/**
- * @module library.node.node_views.browser.stack
- * @class TileContainer
+/** * @module library.node.node_views.browser.stack
+ */
+
+/** * @class TileContainer
  * @extends NodeView
  * @classdesc TileContainer is a container for Tile objects. It manages the layout and orientation of tiles based on its parent view.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

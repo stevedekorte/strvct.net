@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvUrlField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvUrlField
  * @extends SvField
  * @classdesc SvUrlField is a specialized field for handling URL data.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvUrlField extends SvField {
 

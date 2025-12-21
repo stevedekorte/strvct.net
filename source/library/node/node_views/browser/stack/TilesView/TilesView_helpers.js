@@ -1,10 +1,17 @@
-/**
- * @module library.node.node_views.browser.stack.TilesView
- * @class TilesView_helpers
+/** * @module library.node.node_views.browser.stack.TilesView
+ */
+
+/** * @class TilesView_helpers
  * @extends TilesView
  * @classdesc
  * TilesView_helpers class provides helper methods for TilesView.
  * This class includes methods for debugging and displaying tiles and nodes.
+ 
+ 
+ */
+
+/**
+
  */
 
 "use strict";

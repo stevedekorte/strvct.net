@@ -95,18 +95,36 @@
      * @category Display
      */
     subtitle () {
+        const lines = ["Collection"];
         if (this.error()) {
-            return `Error: ${this.error()}`;
+            lines.push("Error: " + this.error());
+        } else {
+            const count = this.documents().documents().length;
+            const status = this.isLoaded() ? "" : " (not loaded)";
+            lines.push(count + " document" + (count !== 1 ? "s" : "") + status);
         }
-
-        const count = this.documents().documents().length;
-        const status = this.isLoaded() ? "" : " (not loaded)";
-        return `${count} document${count !== 1 ? "s" : ""}${status}`;
+        return lines.join("\n");
     }
 
-    didUpdateSlotPath (oldPath, newPath) {
-        //this.documents().setPath(newPath);
-        this.query().setPath(newPath);
+    /**
+     * @description Called when name or basePath changes, updates query path
+     * @param {string} oldValue - The old value
+     * @param {string} newValue - The new value
+     * @category Slots
+     */
+    didUpdateSlotName (oldValue, newValue) {
+        this.updateQueryPath();
+    }
+
+    didUpdateSlotBasePath (oldValue, newValue) {
+        this.updateQueryPath();
+    }
+
+    updateQueryPath () {
+        const query = this.query();
+        if (query) {
+            query.setPath(this.path());
+        }
     }
 
     /**
@@ -140,6 +158,8 @@
             this.setError(null);
             await this.documents().asyncRefresh();
             this.setIsLoaded(true);
+            // Collection exists in cloud if we successfully listed it
+            this.syncCloudPath();
         } catch (error) {
             const collectionPath = this.path();
             console.error(`Error listing documents for ${collectionPath}:`, error);
@@ -188,6 +208,94 @@
             title: "Add New Document",
             subtitle: subtitle
         };
+    }
+
+    // --- Migration ---
+
+    /**
+     * @description Migrates this collection from cloudPath to current path()
+     * Uses two-phase approach: copy all first, then delete all
+     * @returns {Promise<void>}
+     * @category Migration
+     */
+    async asyncMigrate () {
+        const oldPath = this.cloudPath();
+        const newPath = this.path();
+
+        if (!oldPath) {
+            throw new Error("Collection has no cloudPath - nothing to migrate");
+        }
+
+        if (oldPath === newPath) {
+            throw new Error("Paths are the same - no migration needed");
+        }
+
+        try {
+            this.setError(null);
+
+            console.log(this.logPrefix(), `Migrating collection from ${oldPath} to ${newPath}`);
+
+            // Phase 1: Copy all documents to new paths
+            await this.asyncMigrateCopy();
+
+            // Phase 2: Delete all documents from old paths
+            await this.asyncMigrateDelete();
+
+            // Update cloudPath
+            this.syncCloudPath();
+
+            // Update query path
+            this.updateQueryPath();
+
+            console.log(this.logPrefix(), `Migration complete`);
+        } catch (error) {
+            console.error("FirestoreCollection.asyncMigrate failed:", error);
+            this.setError(error.message || String(error));
+            throw error;
+        }
+    }
+
+    /**
+     * @description Phase 1: Update document basePaths and copy them in parallel
+     * @returns {Promise<void>}
+     * @category Migration
+     */
+    async asyncMigrateCopy () {
+        const newPath = this.path();
+        const documents = this.documents().documents();
+
+        // Update all document basePaths first
+        for (const doc of documents) {
+            doc.setBasePath(newPath);
+        }
+
+        // Copy all documents in parallel
+        const copyPromises = documents
+            .filter(doc => doc.existsInCloud())
+            .map(doc => doc.asyncMigrateCopy());
+
+        await Promise.all(copyPromises);
+    }
+
+    /**
+     * @description Phase 2: Delete all documents from old paths in parallel
+     * @returns {Promise<void>}
+     * @category Migration
+     */
+    async asyncMigrateDelete () {
+        const documents = this.documents().documents();
+
+        // Delete all documents in parallel
+        const deletePromises = documents
+            .filter(doc => doc.existsInCloud())
+            .map(doc => doc.asyncMigrateDelete());
+
+        await Promise.all(deletePromises);
+
+        // Update document cloudPaths
+        for (const doc of documents) {
+            doc.syncCloudPath();
+        }
     }
 
 }.initThisClass());

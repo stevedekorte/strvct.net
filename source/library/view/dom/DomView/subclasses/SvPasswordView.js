@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module library.view.dom.DomView.subclasses
- * @class SvPasswordView
+/** * @module library.view.dom.DomView.subclasses
+ */
+
+/** * @class SvPasswordView
  * @extends SvTextView
  * @classdesc A specialized text view for password input.
  * Uses an actual input element with type="password" instead of a contenteditable div.
  * This provides native password masking and better integration with password managers.
+ 
+ 
+ */
+
+/**
+
  */
 
 (class SvPasswordView extends SvTextView {

@@ -23,8 +23,8 @@ Type.typedArrayTypeNames().forEach((name) => {
 
     Object.defineSlots(aClass.prototype, { // instance methods
         /**
-         * @memberof TypedArray.prototype
          * @method base64Encoded
+         * @description Encodes the typed array as base64
          * @returns {string} The base64 encoded string.
          * @category Encoding
          */
@@ -41,8 +41,8 @@ Type.typedArrayTypeNames().forEach((name) => {
 
 Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
     /**
-     * @memberof ArrayBuffer.prototype
      * @method base64Encoded
+     * @description Encodes the array buffer as base64
      * @returns {string} The base64 encoded string.
      * @category Encoding
      */

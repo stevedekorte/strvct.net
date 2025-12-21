@@ -1,8 +1,15 @@
-/**
- * @module library.node.storage.base.categories
- * @class ProtoClass_store
+/** * @module library.node.storage.base.categories
+ */
+
+/** * @class ProtoClass_store
  * @extends ProtoClass
  * @classdesc This class extends ProtoClass and provides methods for storing and loading object data.
+ 
+ 
+ */
+
+/**
+
  */
 "use strict";
 

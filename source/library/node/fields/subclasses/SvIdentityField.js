@@ -1,11 +1,18 @@
 "use strict";
 
-/**
- * @module library.node.fields.subclasses
- * @class SvIdentityField
+/** * @module library.node.fields.subclasses
+ */
+
+/** * @class SvIdentityField
  * @extends SvField
  * @classdesc Represents an identity field for Bitcoin-related operations.
  * This field is used to handle and validate Bitcoin public keys.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvIdentityField extends SvField {
 

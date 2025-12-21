@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class Audio_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class Audio_store
  * @extends Audio
  * @classdesc Audio category with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 (class Audio_store extends Audio {
 

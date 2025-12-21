@@ -1,10 +1,17 @@
 "use strict";
 
-/**
- * @module library.node.storage.base.categories.primitives
- * @class BigInt_store
+/** * @module library.node.storage.base.categories.primitives
+ */
+
+/** * @class BigInt_store
  * @extends BigInt
  * @classdesc A category of BigInt with additional methods for storage and serialization.
+ 
+ 
+ */
+
+/**
+
  */
 (class BigInt_store extends BigInt {
 

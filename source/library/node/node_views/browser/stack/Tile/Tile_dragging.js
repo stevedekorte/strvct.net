@@ -1,12 +1,19 @@
 "use strict";
 
-/**
- * @module browser.stack.Tile
- * @class Tile_dragging
+/** * @module browser.stack.Tile
+ */
+
+/** * @class Tile_dragging
  * @extends Tile
  * @classdesc
  * Tile_dragging class extends Tile to provide dragging functionality.
  * This class implements protocols for both drag source and drop destination.
+ 
+ 
+ */
+
+/**
+
  */
 (class Tile_dragging extends Tile {
 

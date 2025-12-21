@@ -1,8 +1,15 @@
-/**
- * @module browser.stack.Tile.field_tiles
- * @class SvJsonFieldTile
+/** * @module browser.stack.Tile.field_tiles
+ */
+
+/** * @class SvJsonFieldTile
  * @extends SvStringFieldTile
  * @classdesc SvJsonFieldTile class for handling JSON field tiles.
+ 
+ 
+ */
+
+/**
+
  */
 (class SvJsonFieldTile extends SvStringFieldTile {
 
