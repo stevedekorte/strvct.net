@@ -6,8 +6,6 @@
 /** * @class Error_ideal
  * @extends Error
  * @description Extended Error class with additional utility methods.
- 
- 
  */
 
 /**

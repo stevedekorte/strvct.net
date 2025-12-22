@@ -1403,6 +1403,8 @@
         await this.kvMap().promiseBegin();
         this.flushIfNeeded(); // store any dirty objects
 
+        const isDebugging = this.isDebugging();
+        this.setIsDebugging(true);
         this.logDebug(() => "--- begin collect --- with " + this.kvMap().count() + " pids");
         this.setMarkedSet(new Set());
         this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept (a special entry whose key is "rootKey" and value is the root pid)
@@ -1421,10 +1423,26 @@
 
         await this.kvMap().promiseCommit();
         //await this.asyncCollectBlobs(); // good time to collect blobs while we have all kvRecords in memory
-        this.scheduleMethod("asyncCollectBlobs");
+        this.scheduleMethod("asyncCollectBlobs"); // we need to let the object finish initializing before we can ask them for their blob references
 
         const remainingCount = this.kvMap().count();
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
+
+        // estimate size of remaining objects
+        const remainingSize = this.kvMap().totalBytes();
+        console.log(this.logPrefix(), "==== this.kvMap().totalBytes() after collect = ", ByteFormatter.clone().setValue(remainingSize).formattedValue());
+
+        this.kvMap().forEachKV((key, value) => {
+            console.log(this.logPrefix(), "\"", key, "\": \"", value.length, "\" bytes");
+            if (value.length > 1000) {
+                console.log(this.logPrefix(), "==== value = ", value.slice(0, 1000), "...");
+                //debugger;
+            }
+        });
+        //debugger;
+
+        this.setIsDebugging(isDebugging);
+
         return remainingCount;
     }
 

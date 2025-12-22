@@ -746,7 +746,7 @@
     }
 
     async asyncTotalSize () {
-        return await aysncTotalSizeOfDatabase(this.storeName());
+        return await this.thisClass().asyncTotalSizeOfDatabase(this.storeName());
     }
 
     // -----------------------------------------------------------------
@@ -767,79 +767,85 @@
         console.log(this.logPrefix(), "read ", v);
     }
 
+    /**
+     * Estimates the total usage of all IndexedDB databases.
+     * @static
+     * @async
+     * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
+     */
     static async asyncTotalSizeOfAllIndexedDbDatabases () {
-        return await asyncTotalSizeOfAllIndexedDbDatabases(); // TODO inline this
+        const idb = SvGlobals.get("indexedDB");
+        const databases = await idb.databases();
+        let totalUsage = 0;
+
+        for (const database of databases) {
+            const databaseName = database.name;
+            const usage = await this.asyncTotalSizeOfDatabase(databaseName);
+            console.log(this.logPrefix(), `Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
+            totalUsage += usage;
+        }
+
+        console.log(this.logPrefix(), `Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
+        return totalUsage;
+    }
+
+    /**
+     * Estimates the usage of a single IndexedDB database.
+     * @static
+     * @async
+     * @param {string} databaseName - The name of the database to measure.
+     * @returns {Promise<number>} - A promise that resolves to the usage in bytes.
+     */
+    static async asyncTotalSizeOfDatabase (databaseName) {
+        return new Promise((resolve, reject) => {
+            const idb = SvGlobals.get("indexedDB");
+            const request = idb.open(databaseName);
+            request.onerror = () => {
+                reject(request.error);
+            };
+            request.onsuccess = () => {
+                const db = request.result;
+                const storeNames = db.objectStoreNames;
+                let totalSize = 0;
+
+                const transaction = db.transaction(storeNames, "readonly");
+                transaction.onerror = () => {
+                    reject(transaction.error);
+                };
+                transaction.oncomplete = () => {
+                    db.close();
+                    resolve(totalSize);
+                };
+
+                for (let i = 0; i < storeNames.length; i++) {
+                    const storeName = storeNames[i];
+                    const objectStore = transaction.objectStore(storeName);
+                    const cursorRequest = objectStore.openCursor();
+
+                    cursorRequest.onsuccess = (event) => {
+                        const cursor = event.target.result;
+                        if (cursor) {
+                            const value = cursor.value;
+                            const size = this.estimateObjectSize(value);
+                            totalSize += size;
+                            cursor.continue();
+                        }
+                    };
+                }
+            };
+        });
+    }
+
+    /**
+     * Estimates the size of an object by JSON stringifying it.
+     * @static
+     * @param {*} object - The object to measure.
+     * @returns {number} - The estimated size in bytes.
+     */
+    static estimateObjectSize (object) {
+        const jsonString = JSON.stringify(object);
+        const bytes = new TextEncoder().encode(jsonString).length;
+        return bytes;
     }
 
 }.initThisClass());
-
-
-// -----------------------------------------------------------------
-
-/**
- * Estimates the total usage of all IndexedDB databases.
- * @function
- * @async
- * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
- */
-async function asyncTotalSizeOfAllIndexedDbDatabases () {
-    const databases = await this.indexedDB().databases();
-    let totalUsage = 0;
-
-    for (const database of databases) {
-        const databaseName = database.name;
-        const usage = await aysncTotalSizeOfDatabase(databaseName);
-        console.log(this.logPrefix(), `Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
-        totalUsage += usage;
-    }
-
-    console.log(this.logPrefix(), `Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
-    return totalUsage;
-}
-
-// Function to estimate the usage of a single IndexedDB database
-async function aysncTotalSizeOfDatabase (databaseName) {
-    return new Promise((resolve, reject) => {
-        const request = this.indexedDB().open(databaseName);
-        request.onerror = () => {
-            reject(request.error);
-        };
-        request.onsuccess = () => {
-            const db = request.result;
-            const storeNames = db.objectStoreNames;
-            let totalSize = 0;
-
-            const transaction = db.transaction(storeNames, "readonly");
-            transaction.onerror = () => {
-                reject(transaction.error);
-            };
-            transaction.oncomplete = () => {
-                db.close();
-                resolve(totalSize);
-            };
-
-            for (let i = 0; i < storeNames.length; i++) {
-                const storeName = storeNames[i];
-                const objectStore = transaction.objectStore(storeName);
-                const cursorRequest = objectStore.openCursor();
-
-                cursorRequest.onsuccess = (event) => {
-                    const cursor = event.target.result;
-                    if (cursor) {
-                        const value = cursor.value;
-                        const size = estimateObjectSize(value);
-                        totalSize += size;
-                        cursor.continue();
-                    }
-                };
-            }
-        };
-    });
-}
-
-// Function to estimate the size of an object
-function estimateObjectSize (object) {
-    const jsonString = JSON.stringify(object);
-    const bytes = new TextEncoder().encode(jsonString).length;
-    return bytes;
-}

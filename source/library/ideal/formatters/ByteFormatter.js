@@ -18,8 +18,6 @@
  * // if aNumberOfBytes was 3,000,000, stringVersion would be 3 MB.
  *
  * Todo: Move to power notation after max order name exceeded
- 
- 
  */
 
 /**
