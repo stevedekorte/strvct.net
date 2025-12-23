@@ -4,6 +4,7 @@
 	
     "storage/_imports.json",
     "nodes/_imports.json",
+    "nodes/syncing/_imports.json",
     "json/_imports.json",
     "blobs/_imports.json",
     "fields/_imports.json",
