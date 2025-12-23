@@ -12,8 +12,8 @@
  * {
  *     subnodeIds: ["id1", "id2", ...],  // Ordered array
  *     items: {
- *         "id1": { title: "...", lastModified: ... },
- *         "id2": { title: "...", lastModified: ... }
+ *         "id1": { title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... },
+ *         "id2": { title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... }
  *     }
  * }
  */
@@ -164,9 +164,10 @@
 
     /**
      * Updates the manifest with current collection state.
+     * @returns {Promise<void>}
      * @category Manifest
      */
-    updateManifestFromCollection () {
+    async asyncUpdateManifestFromCollection () {
         const collection = this.targetCollection();
         if (!collection) {
             this.setManifest(this.emptyManifest());
@@ -176,19 +177,48 @@
         const subnodeIds = [];
         const items = {};
 
-        collection.subnodes().forEach(subnode => {
+        for (const subnode of collection.subnodes()) {
             const id = subnode.jsonId();
             subnodeIds.push(id);
-            items[id] = subnode.syncMetadata ? subnode.syncMetadata() : {
-                title: subnode.title ? subnode.title() : id,
-                lastModified: Date.now()
-            };
-        });
+            items[id] = await this.asyncSyncMetadataForItem(subnode);
+        }
 
         this.setManifest({
             subnodeIds: subnodeIds,
             items: items
         });
+    }
+
+    /**
+     * Gets sync metadata for an item, including thumbnail URL.
+     * @param {Object} item - The item node
+     * @returns {Promise<Object>} Metadata object with title, subtitle, thumbnailUrl, lastModified
+     * @category Manifest
+     */
+    async asyncSyncMetadataForItem (item) {
+        // If item has its own asyncSyncMetadata method, use it
+        if (item.asyncSyncMetadata) {
+            return await item.asyncSyncMetadata();
+        }
+
+        const metadata = {
+            title: item.title ? item.title() : item.jsonId(),
+            subtitle: item.subtitle ? item.subtitle() : "",
+            thumbnailUrl: null,
+            lastModified: Date.now()
+        };
+
+        // Get thumbnail URL if available
+        if (item.asyncNodeThumbnailUrl) {
+            try {
+                metadata.thumbnailUrl = await item.asyncNodeThumbnailUrl();
+            } catch (e) {
+                // Thumbnail not available, leave as null
+                console.warn("Failed to get thumbnail URL for item:", item.jsonId(), e);
+            }
+        }
+
+        return metadata;
     }
 
     // --- Sync Operations ---
@@ -259,7 +289,7 @@
         }
 
         // Update and upload manifest
-        this.updateManifestFromCollection();
+        await this.asyncUpdateManifestFromCollection();
         await this.asyncUploadManifest();
     }
 
