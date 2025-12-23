@@ -196,7 +196,7 @@
      * @category Manifest
      */
     async asyncSyncMetadataForItem (item) {
-        // If item has its own syncMetadata method, use it
+        // If item has its own asyncSyncMetadata method, use it
         if (item.asyncSyncMetadata) {
             return await item.asyncSyncMetadata();
         }
