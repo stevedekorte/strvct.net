@@ -392,6 +392,8 @@
             console.error("Failed to parse evaluation response:", response);
             console.error("parseError:", parseError);
             throw new Error("Failed to parse evaluation results from OpenAI");
+        } finally {
+            this.setSvXhrRequest(null);
         }
     }
 

@@ -140,6 +140,7 @@
     finalInit () {
         super.finalInit();
         this.setCompletionPromise(Promise.clone());
+        this.setRequest(null); // yes, this will delete the request if it exists so be careful about resuming a broken request
         /*
         if (this.isComplete()) {
             debugger;
@@ -256,7 +257,9 @@
         this.setError(null);
         const request = this.newRequest();
         this.setRequest(request);
-        request.asyncSendAndStreamResponse();
+        await request.asyncSendAndStreamResponse();
+        // todo: only clear request if request is successful
+        this.setRequest(null);
         return this;
     }
 
@@ -339,14 +342,14 @@
         // TODO: look at error and retry if appropriate,
         // otherwise show error panel
         SvWindowErrorPanel.shared().showPanelWithInfo({ message: msg });
-    /*
-    if (msg.includes("Please try again in 6ms.")) {
-      this.setRetryCount(this.retryCount() + 1);
-      const seconds = Math.pow(2, this.retryCount());
-      console.warn("WARNING: retrying openai request in " + seconds + " seconds");
-      this.addTimeout(() => this.asyncMakeRequest(), seconds*1000);
-    }
-    */
+        /*
+        if (msg.includes("Please try again in 6ms.")) {
+            this.setRetryCount(this.retryCount() + 1);
+            const seconds = Math.pow(2, this.retryCount());
+            console.warn("WARNING: retrying openai request in " + seconds + " seconds");
+            this.addTimeout(() => this.asyncMakeRequest(), seconds*1000);
+        }
+        */
     }
 
     /**

@@ -646,6 +646,7 @@
         // Send the request
         await xhrRequest.asyncSend();
 
+        // We need a separate promise so the caller can wait if we need to continue the request (use multiple requests to get the full response)
         return this.xhrPromise();
     }
 
