@@ -224,6 +224,7 @@
 
         {
             const slot = this.newSlot("headerNode", null);
+            slot.setSyncsToView(true);
             slot.setSlotType("SvNode");
         }
 
@@ -233,6 +234,7 @@
              * @category UI
              */
             const slot = this.newSlot("footerNode", null);
+            slot.setSyncsToView(true);
             slot.setSlotType("SvNode");
         }
 
