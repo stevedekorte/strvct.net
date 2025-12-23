@@ -14,8 +14,6 @@
  *    reader.rootNode().innerHtml()
  *   Will being with the exact value of the last call to it.
  *   This is helpful for doing proper incremental merging.
- 
- 
  */
 
 /**
