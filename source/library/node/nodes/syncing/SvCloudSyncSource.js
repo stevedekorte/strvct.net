@@ -134,12 +134,20 @@
         const json = item.asJson();
         const blob = await this.asyncCompressJson(json);
 
+        // Get sync metadata (includes subtitle and thumbnailUrl)
+        const syncMetadata = await this.asyncSyncMetadataForItem(item);
+
+        // Firebase custom metadata values must be strings
+        const customMetadata = {
+            title: String(syncMetadata.title || ""),
+            subtitle: String(syncMetadata.subtitle || ""),
+            thumbnailUrl: String(syncMetadata.thumbnailUrl || ""),
+            lastModified: String(syncMetadata.lastModified || Date.now())
+        };
+
         const metadata = {
             contentType: "application/gzip",
-            customMetadata: item.syncMetadata ? item.syncMetadata() : {
-                title: item.title ? item.title() : item.jsonId(),
-                lastModified: String(Date.now())
-            }
+            customMetadata: customMetadata
         };
 
         await ref.put(blob, metadata);
