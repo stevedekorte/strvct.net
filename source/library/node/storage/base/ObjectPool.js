@@ -1433,8 +1433,8 @@
         console.log(this.logPrefix(), "==== this.kvMap().totalBytes() after collect = ", ByteFormatter.clone().setValue(remainingSize).formattedValue());
 
         this.kvMap().forEachKV((key, value) => {
-            console.log(this.logPrefix(), "\"", key, "\": \"", value.length, "\" bytes");
-            if (value.length > 1000) {
+            //console.log(this.logPrefix(), "\"", key, "\": \"", value.length, "\" bytes");
+            if (value.length > 5000) {
                 console.log(this.logPrefix(), "==== value = ", value.slice(0, 1000), "...");
                 //debugger;
             }
