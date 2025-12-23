@@ -19,7 +19,7 @@
     }
 
     tagsToSpeak () {
-        return ["sentence", "location-name", "session-name"];
+        return ["sentence"];
     }
 
     // --- voice narration ---
