@@ -53,13 +53,14 @@
                 "inputTokenLimit": 1048576,
                 "outputTokenLimit": 65536
             },
-            */
             {
                 "name": "gemini-2.5-flash-lite",
                 "title": "Gemini 2.5 Flash",
                 "inputTokenLimit": 1048576,
                 "outputTokenLimit": 65536
             }
+            */
+
         ];
     }
 
