@@ -12,8 +12,8 @@
  *
  * Inheritance chain:
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
- 
- 
+
+
  */
 
 /**
@@ -274,6 +274,7 @@
         });
     }
 
+
     /**
      * @description Adds a subnode field for the given slot.
      * @param {Object} slot - The slot to add a field for.
@@ -281,6 +282,12 @@
      * @category Field
      */
     addSubnodeFieldForSlot (slot) {
+        const existingField = this.existingSubnodeFieldForSlot(slot);
+        if (existingField) {
+            console.warn("existing subnode field for slot '" + slot.name() + "' on node '" + this.svType() + "' - returning existing field");
+            return existingField;
+        }
+
         //const name = slot.name();
         const field = slot.newInspectorField();
         if (!field) {
@@ -367,6 +374,7 @@
             return subnode.valueMethod() === slot.name();
         });
         return match;
+        // return this.subnodeFields().detect(field => field.fieldSlotName() === slot.name());
     }
 
 }.initThisClass());

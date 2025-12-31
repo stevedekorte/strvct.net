@@ -44,11 +44,20 @@
         this.setTitle("Firebase");
         this.setSubtitle("could services");
         this.setShouldStoreSubnodes(false);
+        this.setShouldStore(false);
     }
 
     finalInit () {
+        //debugger;
         super.finalInit();
         this.initPrototype();
+    }
+
+    addSubnode (subnode) {
+        if (this.subnodes().length > 2) {
+            debugger;
+        }
+        super.addSubnode(subnode);
     }
 
 }.initThisClass());

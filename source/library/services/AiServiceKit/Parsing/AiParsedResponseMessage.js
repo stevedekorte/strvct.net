@@ -311,37 +311,9 @@
 
     requestTags () {
         return [
-            // music
+            // tool calls
             {
-                "tagName": "music-track-play",
-                "isIncremental": true,
-                "shouldSpeak": false
-            },
-            {
-                "tagName": "music-track-stop",
-                "isIncremental": true,
-                "isJson": false,
-                "shouldSpeak": false
-            },
-
-            // rolls
-            {
-                "tagName": "roll-request",
-                "isIncremental": false,
-                "shouldSpeak": false
-            },
-
-            // images
-            {
-                "tagName": "scene-description",
-                "isIncremental": false,
-                "shouldSpeak": false
-            },
-
-            // sound fx
-            {
-                "tagName": "sound-effect-play",
-                "isIncremental": true,
+                "tagName": "tool-call",
                 "shouldSpeak": false
             }
         ];
@@ -353,22 +325,6 @@
         }
         return this._unspeakableTagNames;
     }
-
-    /*
-  nonIncrementalRequestTypes () {
-    if (!this._nonIncrementalRequestTypes) {
-      this._nonIncrementalRequestTypes = this.requestTags().select(tag => tag.isIncremental === false).map(tag => tag.tagName);
-    }
-    return this._nonIncrementalRequestTypes
-  }
-
-  incrementalSafeRequestTypes () {
-    if (!this._incrementalSafeRequestTypes) {
-      this._incrementalSafeRequestTypes = this.requestTags().select(tag => tag.isIncremental === true).map(tag => tag.tagName);
-    }
-    return this._incrementalSafeRequestTypes;
-  }
-  */
 
 }).initThisClass();
 
