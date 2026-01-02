@@ -143,7 +143,7 @@ TODO:
 		
 	Hide ColumnGroup headers when not used
 
-	Merge SvNode and BMStorable Node?
+	Merge SvNode and SvStorable Node?
 	
 	validate Fields after editing validation related slots?
 	
@@ -171,8 +171,8 @@ TODO:
 			
 		
 
-	make a BMTextField type which BMStringField and BMNumberField inherit from,
-	but BMImageField, etc does not
+	make a SvTextField type which SvStringField and SvNumberField inherit from,
+	but SvImageField, etc does not
 	- handling padding and border of value
 	
 	
@@ -213,12 +213,12 @@ TODO:
 	
 	replace Themes with Menus and Values?
 	
-	rename BMFolderNode to BMFolderNode?
+	rename SvFolderNode to SvFolderNode?
 
 	inspector -> note -> icon -> icon (not showing SVG icon note)
 
 	Root
-	BMStorageNode -> App ->	Notes
+	SvStorageNode -> App ->	Notes
 							Resource
 							Settings
 	
@@ -242,7 +242,7 @@ TODO:
 
 	- add Slot initOp (nop, null, copy, duplicate)
 	
-	- remove BMFieldSetNode?
+	- remove SvFieldSetNode?
 
 	- add a style for active selection?
 	
@@ -505,7 +505,7 @@ TODO:
 	
 	
 	
-	BMFolderNode option to allow subtitle to be edited
+	SvFolderNode option to allow subtitle to be edited
 	
 	ImageWell forgetting image
 
@@ -643,7 +643,7 @@ TODO:
 	- remove old SvNode sorting code
 	- with SvNode subnode observer, no longer need didChangeSubnodeList calls?
 	
-	- merge BMFieldSetNode with SvNode?
+	- merge SvFieldSetNode with SvNode?
 	
 	- find how Theme and other stuff is getting into Storage
 
@@ -877,7 +877,7 @@ TODO:
 	rename scheduleSyncToView to scheduleSyncToViews
 	rename syncToView to syncToViews
 	
-	replace didUpdateView(aView) on BMField with notification system?
+	replace didUpdateView(aView) on SvField with notification system?
 
 	remove use of &gt;, replace with SVG 
 
@@ -1269,7 +1269,7 @@ Color
 
 **Fields**
 - make statefull and have them sync with parent nodes if they have targetGetter/setters (Done?)
-BMOptionRow - sends this.parentNode().selectOption(this) when clicked
+SvOptionRow - sends this.parentNode().selectOption(this) when clicked
 
 - a row duplicate feature? (command D? command copy/paste? three finger long press?)
 
@@ -1291,14 +1291,14 @@ store/edit style at row prototype level
     A field is a type of node used to represent a property of a node.
     
     Field types:
-        Creator     BMCreatorField
-        Button      BMActionNode
-        Boolean     BMBooleanField  
-        Date        BMDateNode
+        Creator     SvCreatorField
+        Button      SvActionNode
+        Boolean     SvBooleanField  
+        Date        SvDateNode
         Text 
-        TextArea    BMTextAreaField
-        Identity    BMIdentityField
-        Number      BMNumberField
+        TextArea    SvTextAreaField
+        Identity    SvIdentityField
+        Number      SvNumberField
         Time
         Options (can point to node containing list of options, or it's own local set?)
         Pointer
@@ -1320,7 +1320,7 @@ store/edit style at row prototype level
 	- method to add double tap gesture on TextArea/Textfield?
 
 -- ability to switch themes
--- dark theme for BMFieldRow when not in FieldSet?
+-- dark theme for SvFieldRow when not in FieldSet?
 
 -- Dragging from anywhere in window
 	- standard long press with 2-3 fingers to drag?
@@ -1351,9 +1351,9 @@ copy / paste /duplicate rows?
 
 BrowserColumn -> *Row
 Node          -> subitems 
-         node.subitems -> BMField
+         node.subitems -> SvField
 
-Network Node.subitems = [BMBooleanField
+Network Node.subitems = [SvBooleanField
 
 
 
