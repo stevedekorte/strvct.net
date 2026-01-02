@@ -13,8 +13,6 @@
     The idea is to use the field as the container, and then get
     a custom value view to present in the value area.
 
-
- 
  */
 
 /**
@@ -141,6 +139,14 @@
              * @description The border for uneditable value.
              */
             const slot = this.newSlot("valueUneditableBorder", "none");
+            slot.setSlotType("String");
+        }
+        {
+            /** @member {string} localValidationError
+             * @description Local validation error from view-side validation.
+             * This is shown when user input fails validation before syncing to model.
+             */
+            const slot = this.newSlot("localValidationError", null);
             slot.setSlotType("String");
         }
     }
@@ -637,7 +643,8 @@
     }
 
     /**
-     * @description Syncs the error from the node.
+     * @description Syncs the error display from both local validation and model errors.
+     * Local validation errors take priority over model errors.
      * @returns {SvFieldTile} The current instance.
      */
     syncErrorFromNode () {
@@ -645,14 +652,18 @@
         const valueView = this.valueView();
         const errorView = this.errorView();
 
+        // Local validation error takes priority, then model error
+        const localError = this.localValidationError();
+        const modelError = node.valueError();
+        const errorToShow = localError || modelError;
+
         const color = valueView.color();
 
-        if (node.valueError()) {
+        if (errorToShow) {
             valueView.setColor(this.errorColor());
             errorView.setColor(this.errorColor());
-            errorView.setInnerHtml(node.valueError());
+            errorView.setInnerHtml(errorToShow);
             errorView.fadeInHeightToDisplayBlock();
-            //valueView.setToolTip(node.valueError())
         } else {
             valueView.setBackgroundColor("transparent");
             valueView.setColor(color);
@@ -660,9 +671,6 @@
             if (errorView.display() !== "none") {
                 errorView.setDisplay("none");
             }
-            //errorView.fadeOutHeightToDisplayNone()
-
-            //valueView.setToolTip("")
         }
     }
 
@@ -704,6 +712,7 @@
 
     /**
      * @description Syncs to the node.
+     * Validates value before committing - only syncs if valid.
      * @returns {SvFieldTile} The current instance.
      */
     syncToNode () {
@@ -719,10 +728,19 @@
         }
 
         if (node.valueIsEditable()) {
-            const valueViewValue = this.valueViewValue();
-            node.setValue(valueViewValue);
+            const candidateValue = this.valueViewValue();
+            const error = node.validateValue(candidateValue);
+
+            this.setLocalValidationError(error);
+
+            if (!error) {
+                // Valid - sync to model
+                node.setValue(candidateValue);
+            }
+            // If invalid, value stays in view but doesn't sync to model
         }
 
+        this.syncErrorFromNode();
         super.syncToNode();
         return this;
     }

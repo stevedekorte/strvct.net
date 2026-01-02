@@ -83,7 +83,7 @@ CLEAN: move gestureRecognizers to map?
 -- Still allow RowView class to be customized for value type
  
 - replace Field subclasses with Value classes?
--- BMNumberField with NumberValueNode
+-- SvNumberField with NumberValueNode
 
 
 

@@ -575,12 +575,27 @@
     }
 
     /**
-     * @description Validates the field.
+     * @description Validates a candidate value without mutating field state.
+     * Subclasses should override this to add validation logic.
+     * @param {*} v - The value to validate
+     * @returns {String|null} Error message if invalid, null if valid
+     * @category Validation
+     */
+    validateValue (v) {
+        // Base implementation - all values valid by default
+        // Subclasses override to add constraints
+        return null;
+    }
+
+    /**
+     * @description Validates the current field value and updates valueError.
      * @returns {boolean} Whether the field is valid.
+     * @category Validation
      */
     validate () {
-        // subclasses should override if needed
-        return true;
+        const error = this.validateValue(this.value());
+        this.setValueError(error);
+        return error === null;
     }
 
     /**

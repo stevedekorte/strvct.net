@@ -190,41 +190,33 @@
     }
 
     /**
-     * @description Validate the field value
-     * @returns {boolean} True if the value is valid
+     * @description Validates a candidate value without mutating field state.
+     * @param {*} v - The value to validate
+     * @returns {String|null} Error message if invalid, null if valid
      * @category Validation
      */
-    validate () {
-        const v = Number(this.value());
+    validateValue (v) {
+        const n = Number(v);
         const errors = [];
 
-        if (!this.valueIsNumeric()) {
+        if (isNaN(n) || !isFinite(n)) {
             errors.push("This needs to be a number.");
-        }
-
-        if (this.hasLimits()) {
-            if (v < this.minValue()) {
-                errors.push("Must be >= " + this.minValue() + ".");
+        } else {
+            if (this.hasLimits()) {
+                if (n < this.minValue()) {
+                    errors.push("Must be >= " + this.minValue() + ".");
+                }
+                if (n > this.maxValue()) {
+                    errors.push("Must be <= " + this.maxValue() + ".");
+                }
             }
-            if (v > this.maxValue()) {
-                errors.push("Must be <= " + this.maxValue() + ".");
-            }
-        }
 
-        if (this.isInteger()) {
-            if (!Number.isInteger(v)) {
+            if (this.isInteger() && !Number.isInteger(n)) {
                 errors.push("Must be an integer.");
             }
         }
 
-        if (errors.length) {
-            this.setValueError(errors.join("\n"));
-        } else {
-            this.setValueError(null);
-        }
-
-        const isValid = this.valueError() === null;
-        return isValid;
+        return errors.length ? errors.join("\n") : null;
     }
 
 }.initThisClass());
