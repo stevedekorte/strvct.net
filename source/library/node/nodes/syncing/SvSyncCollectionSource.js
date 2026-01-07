@@ -8,14 +8,17 @@
  * - SvCloudSyncSource: Firebase Storage (read/write)
  * - SvLocalResourceSource: Bundled JSON resources (read-only)
  *
- * The manifest structure preserves subnode order:
+ * The manifest structure preserves subnode order and includes type for class instantiation:
  * {
  *     subnodeIds: ["id1", "id2", ...],  // Ordered array
  *     items: {
- *         "id1": { title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... },
- *         "id2": { title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... }
+ *         "id1": { type: "UoCharacter", title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... },
+ *         "id2": { type: "UoCharacters", title: "...", subtitle: "...", thumbnailUrl: "...", lastModified: ... }
  *     }
  * }
+ *
+ * The type field is critical for hierarchical collections where items can be different classes
+ * (e.g., UoCharacter instances and UoCharacters folder instances).
  */
 (class SvSyncCollectionSource extends SvSummaryNode {
 
@@ -25,11 +28,11 @@
 
     initPrototypeSlots () {
         /**
-         * @member {SvJsonArrayNode} targetCollection - The collection to sync
+         * @member {SvNode} targetCollection - The collection to sync
          */
         {
             const slot = this.newSlot("targetCollection", null);
-            slot.setSlotType("SvJsonArrayNode");
+            slot.setSlotType("SvNode");
             slot.setDescription("The collection node to sync items to/from");
         }
 
@@ -59,6 +62,15 @@
             slot.setSlotType("Boolean");
             slot.setDescription("Whether this source is read-only");
         }
+
+        /**
+         * @member {Map} uploadedThumbnailUrls - Map of itemId -> cloud thumbnail URL (temporary, during sync)
+         */
+        {
+            const slot = this.newSlot("uploadedThumbnailUrls", null);
+            slot.setSlotType("Map");
+            slot.setDescription("Temporary map of uploaded thumbnail URLs during sync");
+        }
     }
 
     initPrototype () {
@@ -82,17 +94,11 @@
      * @returns {Promise<Object>} The item's JSON data
      * @category Abstract
      */
-    async asyncFetchItem (itemId) {
+    async asyncFetchItem (/* itemId */) {
         throw new Error("Subclass must implement asyncFetchItem()");
     }
 
-    /**
-     * Uploads an item to the source (for writable sources).
-     * @param {Object} item - The item node to upload
-     * @returns {Promise<void>}
-     * @category Abstract
-     */
-    async asyncUploadItem (item) {
+    async asyncUploadItem (/* item */) {
         if (this.isReadOnly()) {
             throw new Error("Cannot upload to read-only source");
         }
@@ -117,7 +123,7 @@
      * @returns {Promise<void>}
      * @category Abstract
      */
-    async asyncDeleteItem (itemId) {
+    async asyncDeleteItem (/* itemId */) {
         if (this.isReadOnly()) {
             throw new Error("Cannot delete from read-only source");
         }
@@ -190,9 +196,9 @@
     }
 
     /**
-     * Gets sync metadata for an item, including thumbnail URL.
+     * Gets sync metadata for an item, including type and thumbnail URL.
      * @param {Object} item - The item node
-     * @returns {Promise<Object>} Metadata object with title, subtitle, thumbnailUrl, lastModified
+     * @returns {Promise<Object>} Metadata object with type, title, subtitle, thumbnailUrl, lastModified
      * @category Manifest
      */
     async asyncSyncMetadataForItem (item) {
@@ -202,16 +208,25 @@
         }
 
         const metadata = {
+            type: item.svType(),
             title: item.title ? item.title() : item.jsonId(),
             subtitle: item.subtitle ? item.subtitle() : "",
             thumbnailUrl: null,
             lastModified: Date.now()
         };
 
-        // Get thumbnail URL if available
-        if (item.asyncNodeThumbnailUrl) {
+        // Check for uploaded cloud thumbnail URL first
+        const uploadedUrls = this.uploadedThumbnailUrls();
+        if (uploadedUrls && uploadedUrls.has(item.jsonId())) {
+            metadata.thumbnailUrl = uploadedUrls.get(item.jsonId());
+        } else if (item.asyncNodeThumbnailUrl) {
+            // Fall back to item's thumbnail URL (skip data URLs - they're too large for manifest)
             try {
-                metadata.thumbnailUrl = await item.asyncNodeThumbnailUrl();
+                const url = await item.asyncNodeThumbnailUrl();
+                // Only include actual URLs, not data URLs (which can be hundreds of KB)
+                if (url && !url.startsWith("data:")) {
+                    metadata.thumbnailUrl = url;
+                }
             } catch (e) {
                 // Thumbnail not available, leave as null
                 console.warn("Failed to get thumbnail URL for item:", item.jsonId(), e);
@@ -224,7 +239,7 @@
     // --- Sync Operations ---
 
     /**
-     * Syncs items from the source to the target collection.
+     * Syncs items from the source to the target collection (full fetch).
      * @returns {Promise<void>}
      * @category Sync
      */
@@ -248,7 +263,8 @@
             if (!localItem) {
                 // New item - fetch and add
                 const json = await this.asyncFetchItem(itemId);
-                const newItem = this.createItemFromJson(json);
+                const typeName = sourceMetadata ? sourceMetadata.type : null;
+                const newItem = this.createItemFromJson(json, typeName);
                 if (newItem) {
                     collection.addSubnode(newItem);
                     this.didSyncItemFromSource(newItem, sourceMetadata);
@@ -266,7 +282,55 @@
     }
 
     /**
+     * Syncs from source lazily - only loads manifest and creates stubs.
+     * Items are fetched on-demand when accessed.
+     * @returns {Promise<void>}
+     * @category Sync
+     */
+    async asyncLazySyncFromSource () {
+        // Fetch manifest first
+        const manifest = await this.asyncFetchManifest();
+        this.setManifest(manifest);
+
+        const collection = this.targetCollection();
+        console.log("CLOUDSYNC [SvSyncCollectionSource] asyncLazySyncFromSource - targetCollection:", collection, "this:", this.type ? this.type() : this.constructor?.name, "folderName:", this.folderName ? this.folderName() : "n/a", "userId:", this.userId ? this.userId() : "n/a");
+        if (!collection) {
+            throw new Error("No target collection set");
+        }
+
+        const subnodeIds = this.manifestSubnodeIds();
+
+        // Create stubs for new items, update metadata for existing items
+        for (const itemId of subnodeIds) {
+            const localItem = collection.subnodeWithJsonId(itemId);
+            const sourceMetadata = this.manifestItemMetadata(itemId);
+
+            if (!localItem) {
+                // New item - create stub (will fetch on demand)
+                const stub = this.createStubFromMetadata(itemId, sourceMetadata);
+                if (stub) {
+                    collection.addSubnode(stub);
+                }
+            } else if (this.shouldUpdateItem(localItem, sourceMetadata)) {
+                // Mark existing item as needing refresh
+                // We don't fetch yet - just mark it
+                if (localItem.setFetchState && localItem.isFetched && localItem.isFetched()) {
+                    // Item was fetched before but cloud has newer - mark for refetch
+                    localItem.setFetchState("unfetched");
+                }
+                if (localItem.setCloudLastModified && sourceMetadata.lastModified) {
+                    localItem.setCloudLastModified(sourceMetadata.lastModified);
+                }
+            }
+        }
+
+        // Reorder subnodes to match manifest order
+        this.reorderCollectionToMatchManifest();
+    }
+
+    /**
      * Syncs items from the target collection to the source.
+     * Uploads modified items, deletes removed items, updates manifest.
      * @returns {Promise<void>}
      * @category Sync
      */
@@ -280,6 +344,12 @@
             throw new Error("No target collection set");
         }
 
+        // Clear uploaded thumbnail URLs from any previous sync
+        this.setUploadedThumbnailUrls(new Map());
+
+        // Remember old manifest IDs before updating
+        const oldManifestIds = new Set(this.manifestSubnodeIds());
+
         // Upload items that need syncing
         for (const item of collection.subnodes()) {
             if (this.itemNeedsUpload(item)) {
@@ -288,32 +358,139 @@
             }
         }
 
-        // Update and upload manifest
+        // Update manifest from current collection state
         await this.asyncUpdateManifestFromCollection();
+
+        // Find and delete items that were removed locally
+        const newManifestIds = new Set(this.manifestSubnodeIds());
+        for (const oldId of oldManifestIds) {
+            if (!newManifestIds.has(oldId)) {
+                // Item was deleted locally - delete from cloud
+                try {
+                    await this.asyncDeleteItem(oldId);
+                    console.log("Deleted cloud item:", oldId);
+                } catch (error) {
+                    console.warn("Failed to delete cloud item:", oldId, error.message);
+                }
+            }
+        }
+
+        // Upload updated manifest
         await this.asyncUploadManifest();
     }
 
     /**
-     * Creates an item node from JSON data.
+     * Creates an item node from JSON data, using type field if available.
      * @param {Object} json - The item's JSON data
+     * @param {String} [typeName] - Optional type name (from manifest metadata)
      * @returns {Object|null} The created item node
      * @category Sync
      */
-    createItemFromJson (json) {
+    createItemFromJson (json, typeName = null) {
         const collection = this.targetCollection();
         if (!collection) {
             return null;
         }
 
-        const subnodeClasses = collection.subnodeClasses();
-        if (!subnodeClasses || subnodeClasses.length === 0) {
-            console.warn("No subnode classes defined on collection");
+        // Try to determine the class to use
+        let itemClass = null;
+
+        // 1. Use provided typeName (from manifest metadata)
+        // 2. Fall back to type in json itself
+        // 3. Fall back to first subnode class
+        const typeToUse = typeName || json.type;
+        if (typeToUse) {
+            itemClass = this.classForTypeName(typeToUse);
+        }
+
+        if (!itemClass) {
+            const subnodeClasses = collection.subnodeClasses();
+            if (!subnodeClasses || subnodeClasses.length === 0) {
+                console.warn("No subnode classes defined on collection and no type specified");
+                return null;
+            }
+            itemClass = subnodeClasses[0];
+        }
+
+        const newItem = itemClass.clone();
+        newItem.setJson(json);
+        return newItem;
+    }
+
+    /**
+     * Creates a stub item from manifest metadata (for lazy loading).
+     * The stub has basic info but fetchState = "unfetched".
+     * @param {String} itemId - The item's jsonId
+     * @param {Object} metadata - Metadata from manifest (type, title, subtitle, lastModified)
+     * @returns {Object|null} The stub item node
+     * @category Sync
+     */
+    createStubFromMetadata (itemId, metadata) {
+        const collection = this.targetCollection();
+        if (!collection) {
             return null;
         }
 
-        const newItem = subnodeClasses[0].clone();
-        newItem.setJson(json);
-        return newItem;
+        const typeName = metadata.type;
+        let itemClass = typeName ? this.classForTypeName(typeName) : null;
+
+        if (!itemClass) {
+            const subnodeClasses = collection.subnodeClasses();
+            if (!subnodeClasses || subnodeClasses.length === 0) {
+                console.warn("No subnode classes defined on collection and no type specified in metadata");
+                return null;
+            }
+            itemClass = subnodeClasses[0];
+        }
+
+        const stub = itemClass.clone();
+
+        // Set basic identification
+        stub.setJsonId(itemId);
+        if (stub.setTitle && metadata.title) {
+            stub.setTitle(metadata.title);
+        }
+
+        // Mark as unfetched for lazy loading
+        if (stub.setFetchState) {
+            stub.setFetchState("unfetched");
+        }
+
+        // Set content source so it can fetch itself
+        if (stub.setContentSource) {
+            stub.setContentSource(this);
+        }
+
+        // Set cloud timestamp from metadata
+        if (stub.setCloudLastModified && metadata.lastModified) {
+            stub.setCloudLastModified(metadata.lastModified);
+        }
+
+        return stub;
+    }
+
+    /**
+     * Gets the class for a given type name.
+     * @param {String} typeName - The class name (e.g., "UoCharacter")
+     * @returns {Class|null} The class or null if not found
+     * @category Sync
+     */
+    classForTypeName (typeName) {
+        // Check if it's a valid subnode class for the collection
+        const collection = this.targetCollection();
+        if (collection) {
+            const subnodeClasses = collection.subnodeClasses();
+            if (subnodeClasses) {
+                const matchingClass = subnodeClasses.find(cls => cls.svType() === typeName);
+                if (matchingClass) {
+                    return matchingClass;
+                }
+            }
+        }
+
+        // Fall back to global class lookup
+        const cls = Object.getClassNamed(typeName);
+        return cls || null;
     }
 
     /**
@@ -381,6 +558,10 @@
         }
 
         const subnodeIds = this.manifestSubnodeIds();
+        if (subnodeIds.length === 0) {
+            return; // Nothing to reorder
+        }
+
         const subnodeMap = new Map();
 
         // Build map of existing subnodes by ID
@@ -403,8 +584,8 @@
             orderedSubnodes.push(subnode);
         }
 
-        // Replace subnodes with ordered array
-        collection.setSubnodes(orderedSubnodes);
+        // Replace subnodes using copyFrom to maintain SubnodesArray type
+        collection.subnodes().copyFrom(orderedSubnodes);
     }
 
 }.initThisClass());

@@ -44,11 +44,10 @@
         this.setTitle("Firebase");
         this.setSubtitle("could services");
         this.setShouldStoreSubnodes(false);
-        this.setShouldStore(false);
+        this.setShouldStore(true);
     }
 
     finalInit () {
-        //debugger;
         super.finalInit();
         this.initPrototype();
     }

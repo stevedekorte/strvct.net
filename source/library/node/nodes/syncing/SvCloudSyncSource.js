@@ -6,11 +6,20 @@
  *
  * Handles reading and writing gzipped JSON files to Firebase Storage.
  * Supports bidirectional sync with compression for bandwidth efficiency.
+ * Supports hierarchical collections with sub-collection paths.
  *
- * Storage structure:
+ * Storage structure (flat):
  * /users/{userId}/{folderName}/
  *     _manifest.json           - Collection manifest
  *     {jsonId}.json.gz         - Item data (gzipped)
+ *
+ * Storage structure (hierarchical):
+ * /users/{userId}/{folderName}/
+ *     _manifest.json           - Top-level manifest
+ *     {itemJsonId}.json.gz     - Item data
+ *     {subCollectionJsonId}/   - Sub-collection folder
+ *         _manifest.json       - Sub-collection manifest
+ *         {nestedItemId}.json.gz
  */
 (class SvCloudSyncSource extends SvSyncCollectionSource {
 
@@ -38,6 +47,16 @@
         }
 
         /**
+         * @member {String} subPath - Optional sub-path for nested collections
+         */
+        {
+            const slot = this.newSlot("subPath", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("Sub-path for nested collections (e.g., '{parentJsonId}')");
+        }
+
+        /**
          * @member {Object} storageRef - Firebase Storage reference
          */
         {
@@ -55,11 +74,38 @@
 
     /**
      * Gets the base path for this collection in storage.
+     * Includes subPath if set (for nested collections).
      * @returns {String}
      * @category Paths
      */
     basePath () {
-        return `users/${this.userId()}/${this.folderName()}`;
+        let path = `users/${this.userId()}/${this.folderName()}`;
+        if (this.subPath()) {
+            path += `/${this.subPath()}`;
+        }
+        return path;
+    }
+
+    /**
+     * Creates a sync source for a sub-collection.
+     * @param {String} subCollectionId - The jsonId of the sub-collection item
+     * @returns {SvCloudSyncSource} A new sync source for the sub-collection
+     * @category Paths
+     */
+    syncSourceForSubCollection (subCollectionId) {
+        const subSource = this.thisClass().clone();
+        subSource.setUserId(this.userId());
+        subSource.setFolderName(this.folderName());
+        subSource.setStorageRef(this.storageRef());
+
+        // Build the sub-path
+        const currentSubPath = this.subPath();
+        const newSubPath = currentSubPath
+            ? `${currentSubPath}/${subCollectionId}`
+            : subCollectionId;
+        subSource.setSubPath(newSubPath);
+
+        return subSource;
     }
 
     /**
@@ -98,8 +144,12 @@
             }
             return await response.json();
         } catch (error) {
-            if (error.code === "storage/object-not-found") {
+            // Handle various "not found" error formats from Firebase Storage
+            if (error.code === "storage/object-not-found" ||
+                (error.message && error.message.includes("404")) ||
+                (error.message && error.message.includes("does not exist"))) {
                 // No manifest exists yet - return empty
+                console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
                 return this.emptyManifest();
             }
             throw error;
@@ -134,14 +184,26 @@
         const json = item.asJson();
         const blob = await this.asyncCompressJson(json);
 
-        // Get sync metadata (includes subtitle and thumbnailUrl)
+        // Upload thumbnail if available and get cloud URL
+        const thumbnailUrl = await this.asyncUploadThumbnailForItem(item);
+
+        // Store the cloud thumbnail URL for manifest building
+        if (thumbnailUrl) {
+            if (!this.uploadedThumbnailUrls()) {
+                this.setUploadedThumbnailUrls(new Map());
+            }
+            this.uploadedThumbnailUrls().set(item.jsonId(), thumbnailUrl);
+        }
+
+        // Get sync metadata (includes type, subtitle)
         const syncMetadata = await this.asyncSyncMetadataForItem(item);
 
         // Firebase custom metadata values must be strings
         const customMetadata = {
+            type: String(syncMetadata.type || item.svType()),
             title: String(syncMetadata.title || ""),
             subtitle: String(syncMetadata.subtitle || ""),
-            thumbnailUrl: String(syncMetadata.thumbnailUrl || ""),
+            thumbnailUrl: String(thumbnailUrl || syncMetadata.thumbnailUrl || ""),
             lastModified: String(syncMetadata.lastModified || Date.now())
         };
 
@@ -151,6 +213,72 @@
         };
 
         await ref.put(blob, metadata);
+    }
+
+    /**
+     * Uploads a thumbnail for an item and returns the public URL.
+     * Uses content-addressable storage in /public/blobs/ via FirebaseStorageService.
+     * @param {Object} item - The item node
+     * @returns {Promise<String|null>} The public URL or null
+     * @category Sync
+     */
+    async asyncUploadThumbnailForItem (item) {
+        if (!item.asyncNodeThumbnailUrl) {
+            return null;
+        }
+
+        try {
+            const dataUrl = await item.asyncNodeThumbnailUrl();
+            if (!dataUrl) {
+                return null;
+            }
+
+            // If already a URL (not data URL), return as-is
+            if (!dataUrl.startsWith("data:")) {
+                return dataUrl;
+            }
+
+            // Convert data URL to blob
+            const blob = this.dataUrlToBlob(dataUrl);
+            if (!blob) {
+                return null;
+            }
+
+            // Upload to public/blobs/ using content-addressable storage
+            const publicUrl = await FirebaseStorageService.shared().asyncPublicUrlForBlob(blob);
+            return publicUrl;
+
+        } catch (e) {
+            console.warn("Failed to upload thumbnail for item:", item.jsonId(), e.message);
+            return null;
+        }
+    }
+
+    /**
+     * Converts a data URL to a Blob.
+     * @param {String} dataUrl - The data URL
+     * @returns {Blob|null}
+     * @category Helpers
+     */
+    dataUrlToBlob (dataUrl) {
+        try {
+            const parts = dataUrl.split(",");
+            const mimeMatch = parts[0].match(/:(.*?);/);
+            if (!mimeMatch) {
+                return null;
+            }
+            const mime = mimeMatch[1];
+            const base64 = parts[1];
+            const binary = atob(base64);
+            const array = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                array[i] = binary.charCodeAt(i);
+            }
+            return new Blob([array], { type: mime });
+        } catch (e) {
+            console.warn("Failed to convert data URL to blob:", e.message);
+            return null;
+        }
     }
 
     /**
@@ -197,6 +325,58 @@
             throw new Error("No storage reference set");
         }
         return storage.child(path);
+    }
+
+    /**
+     * Lists all item files in the cloud folder.
+     * @returns {Promise<Array<String>>} Array of item IDs found in cloud
+     * @category Storage
+     */
+    async asyncListCloudItemIds () {
+        const folderRef = this.storageRefForPath(this.basePath());
+        const itemIds = [];
+
+        try {
+            const result = await folderRef.listAll();
+            for (const itemRef of result.items) {
+                const name = itemRef.name;
+                // Extract jsonId from filename (e.g., "abc123.json.gz" -> "abc123")
+                if (name.endsWith(".json.gz")) {
+                    const itemId = name.slice(0, -8); // Remove ".json.gz"
+                    itemIds.push(itemId);
+                }
+            }
+        } catch (error) {
+            console.warn("Failed to list cloud items:", error.message);
+        }
+
+        return itemIds;
+    }
+
+    /**
+     * Deletes orphaned cloud files not in the manifest.
+     * Call this periodically or after sync to clean up.
+     * @returns {Promise<Array<String>>} Array of deleted item IDs
+     * @category Storage
+     */
+    async asyncDeleteOrphanedCloudItems () {
+        const manifestIds = new Set(this.manifestSubnodeIds());
+        const cloudIds = await this.asyncListCloudItemIds();
+        const deletedIds = [];
+
+        for (const cloudId of cloudIds) {
+            if (!manifestIds.has(cloudId)) {
+                try {
+                    await this.asyncDeleteItem(cloudId);
+                    deletedIds.push(cloudId);
+                    console.log("Deleted orphaned cloud item:", cloudId);
+                } catch (error) {
+                    console.warn("Failed to delete orphaned item:", cloudId, error.message);
+                }
+            }
+        }
+
+        return deletedIds;
     }
 
     // --- Compression Helpers ---
