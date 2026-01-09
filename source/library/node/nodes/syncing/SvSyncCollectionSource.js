@@ -447,10 +447,13 @@
 
         const stub = itemClass.clone();
 
-        // Set basic identification
+        // Set basic identification from manifest metadata
         stub.setJsonId(itemId);
         if (stub.setTitle && metadata.title) {
             stub.setTitle(metadata.title);
+        }
+        if (stub.setSubtitle && metadata.subtitle) {
+            stub.setSubtitle(metadata.subtitle);
         }
 
         // Mark as unfetched for lazy loading
