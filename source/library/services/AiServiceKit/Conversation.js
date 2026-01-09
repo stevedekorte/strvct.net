@@ -6,11 +6,12 @@
 
 /**
  * @class Conversation
- * @extends SvStorableNode
+ * @extends SvJsonArrayNode
  * @classdesc Represents a conversation with messages and chat input functionality.
+ * Extends SvJsonArrayNode so messages serialize as an array for cloud storage.
  */
 
-(class Conversation extends SvStorableNode {
+(class Conversation extends SvJsonArrayNode {
     /**
    * @description Initializes the prototype slots for the Conversation class.
    * @category Initialization

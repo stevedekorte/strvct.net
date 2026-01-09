@@ -6,8 +6,6 @@
 /** * @class SvJsonDictionaryNode
  * @extends SvJsonNode
  * @classdesc Represents a JSON dictionary node in the Sv (STRVCT) system.
- 
- 
  */
 
 /**

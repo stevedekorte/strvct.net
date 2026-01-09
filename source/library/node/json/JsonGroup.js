@@ -309,48 +309,38 @@
         return this;
     }
 
-    calcJson () {
-        // we want to limit to just the slots that are json archivable
+    calcJson (options = {}) {
+        // Options:
+        // - slots: Array of slots to serialize (defaults to jsonSchemaSlots())
+        // - jsonMethodName: Method name to call on nested objects (defaults to "asJson")
+        const slots = options.slots || this.thisClass().jsonSchemaSlots();
+        const jsonMethodName = options.jsonMethodName || "asJson";
 
         const dict = {};
 
-        // Check if we support lazy loading and are in unloaded state
-        //const supportsLazyLoading = this.constructor.supportsHasBeenLoaded();
-        //const isUnloaded = supportsLazyLoading && this.isUnloaded();
-
         if (this.shouldStoreSubnodes()) {
             this.subnodes().filter(sn => sn.title() !== "jsonString").map(sn => {
-                if (sn.asJson && sn.asJson() !== undefined) { // skip things like images
-                    console.log("calcJson() " + this.svType() + " subnode: " + sn.title());
-                    dict[sn.title()] = sn.asJson();
+                const method = sn[jsonMethodName];
+                if (method) {
+                    const result = method.call(sn);
+                    if (result !== undefined) { // skip things like images
+                        console.log("calcJson() " + this.svType() + " subnode: " + sn.title());
+                        dict[sn.title()] = result;
+                    }
                 }
             });
         } else {
-            const slots = this.thisClass().jsonSchemaSlots();
             slots.forEach(slot => {
                 const slotName = slot.name();
-
-                /*
-                // Skip slots that aren't in alwaysLoadedSlotNames when unloaded
-                if (isUnloaded && slotName !== "hasBeenLoaded" && !this.shouldIncludeSlot(slotName)) {
-                return;
-                }
-                */
-
                 const value = slot.onInstanceGetValue(this);
-                if (value && value.asJson) {
-                    dict[slotName] = value.asJson();
+                if (value && value[jsonMethodName]) {
+                    dict[slotName] = value[jsonMethodName]();
                 }
                 else {
                     dict[slotName] = value;
                 }
             });
         }
-
-        // Always include hasBeenLoaded if we support lazy loading
-        //if (supportsLazyLoading) {
-        //  dict.hasBeenLoaded = this.hasBeenLoaded() || false;
-        //}
 
         return dict;
     }
@@ -424,6 +414,29 @@
 
     asJsonString () {
         return JSON.stableStringifyWithStdOptions(this.asJson(), null, 2);
+    }
+
+    /**
+     * @description Returns JSON representation for cloud storage.
+     * Default implementation calls asJson(). Subclasses like SyncableJsonGroup
+     * override this to use cloudJsonSchemaSlots().
+     * @returns {Object} JSON object for cloud storage
+     * @category JSON
+     */
+    asCloudJson () {
+        return this.asJson();
+    }
+
+    /**
+     * @description Sets state from cloud JSON data.
+     * Default implementation calls setJson(). Subclasses can override
+     * to customize how cloud data is applied.
+     * @param {Object} json - The JSON data from cloud
+     * @returns {JsonGroup} This instance
+     * @category JSON
+     */
+    setCloudJson (json) {
+        return this.setJson(json);
     }
 
     copyJsonToClipboard () {

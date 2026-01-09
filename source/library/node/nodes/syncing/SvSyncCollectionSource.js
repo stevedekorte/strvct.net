@@ -264,7 +264,7 @@
                 // New item - fetch and add
                 const json = await this.asyncFetchItem(itemId);
                 const typeName = sourceMetadata ? sourceMetadata.type : null;
-                const newItem = this.createItemFromJson(json, typeName);
+                const newItem = await this.asyncCreateItemFromJsonWithErrorHandling(json, typeName, itemId);
                 if (newItem) {
                     collection.addSubnode(newItem);
                     this.didSyncItemFromSource(newItem, sourceMetadata);
@@ -272,8 +272,10 @@
             } else if (this.shouldUpdateItem(localItem, sourceMetadata)) {
                 // Update existing item if source is newer
                 const json = await this.asyncFetchItem(itemId);
-                localItem.setJson(json);
-                this.didSyncItemFromSource(localItem, sourceMetadata);
+                const success = await this.asyncApplyJsonWithErrorHandling(localItem, json, itemId);
+                if (success) {
+                    this.didSyncItemFromSource(localItem, sourceMetadata);
+                }
             }
         }
 
@@ -413,7 +415,7 @@
         }
 
         const newItem = itemClass.clone();
-        newItem.setJson(json);
+        newItem.setCloudJson(json);
         return newItem;
     }
 
@@ -586,6 +588,89 @@
 
         // Replace subnodes using copyFrom to maintain SubnodesArray type
         collection.subnodes().copyFrom(orderedSubnodes);
+    }
+
+    // --- Error Handling for Cloud Sync ---
+
+    /**
+     * Creates an item from JSON with error handling.
+     * If deserialization fails, logs error, notifies user, and deletes cloud item.
+     * @param {Object} json - The JSON data
+     * @param {String} typeName - The type name
+     * @param {String} itemId - The item ID (for error handling)
+     * @returns {Promise<Object|null>} The created item or null on error
+     * @category Error Handling
+     */
+    async asyncCreateItemFromJsonWithErrorHandling (json, typeName, itemId) {
+        try {
+            return this.createItemFromJson(json, typeName);
+        } catch (error) {
+            await this.handleCloudItemError(itemId, error);
+            return null;
+        }
+    }
+
+    /**
+     * Applies JSON to an item with error handling.
+     * If deserialization fails, logs error, notifies user, and deletes cloud item.
+     * @param {Object} item - The item to update
+     * @param {Object} json - The JSON data
+     * @param {String} itemId - The item ID (for error handling)
+     * @returns {Promise<Boolean>} True if successful, false on error
+     * @category Error Handling
+     */
+    async asyncApplyJsonWithErrorHandling (item, json, itemId) {
+        try {
+            item.setCloudJson(json);
+            return true;
+        } catch (error) {
+            await this.handleCloudItemError(itemId, error);
+            return false;
+        }
+    }
+
+    /**
+     * Handles an error when loading a cloud item.
+     * Logs the error, notifies the user, and deletes the problematic cloud item.
+     * @param {String} itemId - The item ID that failed
+     * @param {Error} error - The error that occurred
+     * @returns {Promise<void>}
+     * @category Error Handling
+     */
+    async handleCloudItemError (itemId, error) {
+        console.error("CLOUDSYNC [SvSyncCollectionSource] Failed to load cloud item '" + itemId + "':", error.message);
+        console.error("CLOUDSYNC [SvSyncCollectionSource] The cloud data format is incompatible. Deleting cloud item.");
+
+        // Show user notification
+        this.showCloudItemErrorNotice(itemId, error);
+
+        // Delete the problematic cloud item
+        try {
+            await this.asyncDeleteItem(itemId);
+            console.log("CLOUDSYNC [SvSyncCollectionSource] Deleted incompatible cloud item:", itemId);
+        } catch (deleteError) {
+            console.warn("CLOUDSYNC [SvSyncCollectionSource] Failed to delete cloud item:", itemId, deleteError.message);
+        }
+    }
+
+    /**
+     * Shows a notice to the user about a cloud item error.
+     * @param {String} itemId - The item ID that failed
+     * @param {Error} error - The error that occurred
+     * @category Error Handling
+     */
+    showCloudItemErrorNotice (itemId, error) {
+        const message = "A cloud-stored item could not be loaded due to a data format change. " +
+            "The incompatible cloud data has been removed. Some data may have been lost. " +
+            "(Item: " + itemId + ")";
+
+        // Try to show a toast notification if available
+        if (typeof SvNotification !== "undefined" && SvNotification.shared) {
+            SvNotification.shared().showWarning(message);
+        } else {
+            console.warn("CLOUD SYNC ERROR: " + message);
+            // Could also use alert() as last resort, but that's disruptive
+        }
     }
 
 }.initThisClass());

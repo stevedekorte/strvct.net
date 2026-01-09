@@ -6,8 +6,6 @@
 /** * @class SvJsonArrayNode
  * @extends SvJsonNode
  * @classdesc Represents a JSON array node in the object tree.
- 
- 
  */
 
 /**
@@ -275,11 +273,39 @@
 
     /**
      * @description Calculates the JSON representation of this node.
+     * @param {Object} options - Optional settings
+     * @param {String} options.jsonMethodName - Method to call on subnodes (default: "asJson")
      * @returns {Array} The JSON representation.
      * @category JSON Operations
      */
-    calcJson () {
-        return this.subnodes().map(sn => sn.asJson());
+    calcJson (options = {}) {
+        const jsonMethodName = options.jsonMethodName || "asJson";
+        return this.subnodes().map(sn => {
+            const method = sn[jsonMethodName];
+            if (method) {
+                return method.call(sn);
+            }
+            return sn.asJson(); // fallback
+        });
+    }
+
+    /**
+     * @description Returns JSON representation for cloud storage.
+     * @returns {Array} Array of subnodes serialized with asCloudJson
+     * @category JSON Operations
+     */
+    asCloudJson () {
+        return this.calcJson({ jsonMethodName: "asCloudJson" });
+    }
+
+    /**
+     * @description Sets state from cloud JSON data.
+     * @param {Array} json - The JSON array from cloud
+     * @returns {SvJsonArrayNode} This instance
+     * @category JSON Operations
+     */
+    setCloudJson (json) {
+        return this.setJson(json);
     }
 
     async asyncPrepareForAsJson () {

@@ -2064,6 +2064,18 @@
     }
 
     /**
+     * @description Get the cloud JSON schema slots for this instance.
+     * Returns slots where isInCloudJson() returns true.
+     * @returns {Array} The cloud JSON schema slots.
+     */
+    static cloudJsonSchemaSlots () {
+        // Get all slots and filter by isInCloudJson()
+        // Note: isInCloudJson() defaults to isInJsonSchema() if not explicitly set
+        const allSlots = this.prototype.allSlotsMap().valuesArray();
+        return allSlots.filter(slot => slot.isInCloudJson());
+    }
+
+    /**
 
      * @description Get the JSON schema properties for this instance.
      * @param {Set} refSet - The reference set.

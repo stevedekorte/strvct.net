@@ -18,7 +18,7 @@
     initPrototypeSlots () {
 
         /**
-     * @member {String} key - The key of the message.
+     * @member {String} key - The key of the message (speaker name).
      * @category Data
      */
         {
@@ -27,6 +27,7 @@
             slot.setCanInspect(true);
             slot.setSlotType("String");
             slot.setAllowsNullValue(true);
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -40,6 +41,7 @@
             slot.setCanInspect(true);
             slot.setInspectorPath("Node/Field/Value");
             slot.setSlotType("String");
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -64,6 +66,7 @@
             slot.setInspectorPath("ConversationMessage");
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -77,7 +80,7 @@
             slot.setInspectorPath("ConversationMessage");
             slot.setShouldStoreSlot(true);
             slot.setShouldJsonArchive(true);
-            slot.setSlotType("String");
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -90,9 +93,9 @@
             slot.setDuplicateOp("duplicate");
             slot.setCanInspect(true);
             slot.setInspectorPath("ConversationMessage");
-            slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
             slot.setShouldJsonArchive(true);
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -106,16 +109,8 @@
             slot.setInspectorPath("ConversationMessage");
             slot.setShouldStoreSlot(true);
             slot.setSlotType("Number");
-            //slot.setShouldJsonArchive(true)
+            slot.setIsInJsonSchema(true);
         }
-
-        /*
-    {
-      const slot = this.newSlot("annotations", null); // a place for any sort of extra JSON info
-      slot.setShouldStoreSlot(true)
-      slot.setShouldJsonArchive(false)
-    }
-    */
 
         /**
      * @member {Boolean} isComplete - Indicates if the message is complete.
@@ -125,11 +120,11 @@
             const slot = this.newSlot("isComplete", false);
             slot.setShouldJsonArchive(true);
             slot.setCanInspect(true);
-            //slot.setDoesHookSetter(true); // no longer needed?
             slot.setInspectorPath("ConversationMessage");
             slot.setShouldStoreSlot(true);
             slot.setSlotType("Boolean");
             slot.setSyncsToView(true);
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -575,6 +570,32 @@
     cleanupIfIncomplete () {
     // called on startup to clean up any incomplete messages
     // subclasses should override, as needed
+    }
+
+    // --- JSON Serialization ---
+    // Override SvField.asJson() which just returns the value.
+    // We need the full JSON object with all message properties for cloud sync.
+
+    /**
+     * @description Returns the JSON representation of this message.
+     * Overrides SvField.asJson() to use JsonGroup's calcJson() for proper serialization.
+     * @returns {Object} JSON object with all message properties
+     * @category JSON
+     */
+    asJson () {
+        return this.calcJson();
+    }
+
+    /**
+     * @description Returns the JSON representation for cloud storage.
+     * @returns {Object} JSON object with all message properties
+     * @category JSON
+     */
+    asCloudJson () {
+        return this.calcJson({
+            slots: this.thisClass().cloudJsonSchemaSlots(),
+            jsonMethodName: "asCloudJson"
+        });
     }
 
 }.initThisClass());

@@ -6,8 +6,8 @@
 /** * @class JsonSchemaNode
  * @extends SvSummaryNode
  * @classdesc JsonSchemaNode is a class that extends SvSummaryNode and is used to manage JSON schema representations and related operations.
- 
- 
+
+
  */
 
 /**
@@ -178,7 +178,7 @@
    * @category Data Conversion
    */
     asJson () {
-    // we want to limit to just the slots that are json archivable
+        // we want to limit to just the slots that are json archivable
 
         const slots = this.thisClass().jsonSchemaSlots();
         const dict = {};

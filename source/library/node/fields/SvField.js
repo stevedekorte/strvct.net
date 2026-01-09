@@ -6,11 +6,12 @@
 
 /**
  * @class SvField
- * @extends SvSummaryNode
- * @classdesc A SvStorageNode that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
+ * @extends JsonGroup
+ * @classdesc A node that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
+ * Extends JsonGroup to support JSON serialization for cloud sync.
  */
 
-(class SvField extends SvSummaryNode {
+(class SvField extends JsonGroup {
 
     initPrototypeSlots () {
 

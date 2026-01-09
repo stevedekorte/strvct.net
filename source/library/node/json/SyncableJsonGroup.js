@@ -184,6 +184,36 @@
         };
     }
 
+    // --- Cloud JSON Serialization ---
+
+    /**
+     * @description Returns JSON representation for cloud storage.
+     * Uses cloudJsonSchemaSlots() which includes slots with isInCloudJson: true.
+     * By default, isInCloudJson defaults to isInJsonSchema, so this includes
+     * all JSON schema slots plus any slots explicitly marked for cloud storage.
+     * @returns {Object} JSON object for cloud storage
+     * @category Sync
+     */
+    asCloudJson () {
+        return this.calcJson({
+            slots: this.thisClass().cloudJsonSchemaSlots(),
+            jsonMethodName: "asCloudJson"
+        });
+    }
+
+    /**
+     * @description Sets state from cloud JSON data.
+     * By default, calls setJson(). Subclasses can override to customize
+     * how cloud data is applied (e.g., merge instead of replace).
+     * @param {Object} json - The JSON data from cloud
+     * @returns {SyncableJsonGroup} This instance
+     * @category Sync
+     */
+    setCloudJson (json) {
+        this.setJson(json);
+        return this;
+    }
+
     /**
      * @description Ensures content is fetched. If already fetched, returns immediately.
      * If unfetched, triggers fetch from contentSource.
@@ -210,12 +240,18 @@
         this._fetchPromise = (async () => {
             try {
                 const json = await source.asyncFetchItem(this.jsonId());
-                this.setJson(json);
+                this.setCloudJson(json);
                 this.setFetchState("fetched");
                 return this;
             } catch (error) {
                 this.setFetchState("fetchError");
                 console.error("Failed to fetch content for " + this.svTypeId() + ": " + error.message);
+
+                // Handle incompatible cloud data format - notify user and delete cloud item
+                if (source.handleCloudItemError) {
+                    await source.handleCloudItemError(this.jsonId(), error);
+                }
+
                 throw error;
             }
         })();

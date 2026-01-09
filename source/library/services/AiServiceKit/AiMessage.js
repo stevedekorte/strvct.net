@@ -52,6 +52,7 @@
             slot.setValidValues(this.validRoles());
             slot.setCanInspect(true);
             slot.setInspectorPath(this.svType());
+            slot.setIsInJsonSchema(true);
         }
 
         /**
@@ -64,6 +65,7 @@
             slot.setShouldStoreSlot(true);
             slot.setCanInspect(true);
             slot.setInspectorPath(this.svType());
+            slot.setIsInJsonSchema(true);
         }
 
         /**

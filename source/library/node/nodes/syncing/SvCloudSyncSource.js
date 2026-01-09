@@ -4,22 +4,22 @@
  * @extends SvSyncCollectionSource
  * @description Sync source for Firebase Cloud Storage.
  *
- * Handles reading and writing gzipped JSON files to Firebase Storage.
- * Supports bidirectional sync with compression for bandwidth efficiency.
- * Supports hierarchical collections with sub-collection paths.
+ * Handles reading and writing JSON files to Firebase Storage.
+ * Supports bidirectional sync and hierarchical collections with sub-collection paths.
+ * Note: Compression is currently disabled for easier debugging.
  *
  * Storage structure (flat):
  * /users/{userId}/{folderName}/
  *     _manifest.json           - Collection manifest
- *     {jsonId}.json.gz         - Item data (gzipped)
+ *     {jsonId}.json             - Item data (plain JSON)
  *
  * Storage structure (hierarchical):
  * /users/{userId}/{folderName}/
  *     _manifest.json           - Top-level manifest
- *     {itemJsonId}.json.gz     - Item data
+ *     {itemJsonId}.json         - Item data
  *     {subCollectionJsonId}/   - Sub-collection folder
  *         _manifest.json       - Sub-collection manifest
- *         {nestedItemId}.json.gz
+ *         {nestedItemId}.json
  */
 (class SvCloudSyncSource extends SvSyncCollectionSource {
 
@@ -124,7 +124,8 @@
      * @category Paths
      */
     itemPath (itemId) {
-        return `${this.basePath()}/${itemId}.json.gz`;
+        // Using .json instead of .json.gz for easier debugging
+        return `${this.basePath()}/${itemId}.json`;
     }
 
     // --- Abstract Method Implementations ---
@@ -169,8 +170,8 @@
         if (!response.ok) {
             throw new Error(`Failed to fetch item ${itemId}: ${response.status}`);
         }
-        const blob = await response.blob();
-        return await this.asyncDecompressJson(blob);
+        // Using plain JSON for easier debugging (no compression)
+        return await response.json();
     }
 
     /**
@@ -181,8 +182,10 @@
      */
     async asyncUploadItem (item) {
         const ref = this.storageRefForPath(this.itemPath(item.jsonId()));
-        const json = item.asJson();
-        const blob = await this.asyncCompressJson(json);
+        const json = item.asCloudJson();
+        // Using plain JSON for easier debugging (no compression)
+        const jsonString = JSON.stringify(json, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
 
         // Upload thumbnail if available and get cloud URL
         const thumbnailUrl = await this.asyncUploadThumbnailForItem(item);
@@ -208,7 +211,7 @@
         };
 
         const metadata = {
-            contentType: "application/gzip",
+            contentType: "application/json",
             customMetadata: customMetadata
         };
 
@@ -340,9 +343,10 @@
             const result = await folderRef.listAll();
             for (const itemRef of result.items) {
                 const name = itemRef.name;
-                // Extract jsonId from filename (e.g., "abc123.json.gz" -> "abc123")
-                if (name.endsWith(".json.gz")) {
-                    const itemId = name.slice(0, -8); // Remove ".json.gz"
+                // Extract jsonId from filename (e.g., "abc123.json" -> "abc123")
+                // Skip manifest file
+                if (name.endsWith(".json") && name !== "_manifest.json") {
+                    const itemId = name.slice(0, -5); // Remove ".json"
                     itemIds.push(itemId);
                 }
             }

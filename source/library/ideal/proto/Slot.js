@@ -696,6 +696,29 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return this.getAnnotation("isInJsonSchema");
     }
 
+    /**
+     * @description Sets whether this slot should be included in cloud JSON serialization.
+     * Defaults to the value of isInJsonSchema if not explicitly set.
+     * @category Is In Cloud JSON
+     */
+    setIsInCloudJson (b) {
+        this.setAnnotation("isInCloudJson", b);
+        return this;
+    }
+
+    /**
+     * @description Returns whether this slot should be included in cloud JSON serialization.
+     * Defaults to the value of isInJsonSchema if not explicitly set.
+     * @category Is In Cloud JSON
+     */
+    isInCloudJson () {
+        const v = this.getAnnotation("isInCloudJson");
+        if (v === undefined) {
+            return this.isInJsonSchema(); // default to isInJsonSchema
+        }
+        return v;
+    }
+
     setJsonSchemaPattern (s) {
         this.setAnnotation("jsonSchemaPattern", s);
         return this;
