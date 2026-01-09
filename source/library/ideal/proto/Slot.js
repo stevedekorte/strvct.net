@@ -240,7 +240,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         return null;
     }
 
-
     /**
      * @category Validation
      * @description Sets the valid values array.
