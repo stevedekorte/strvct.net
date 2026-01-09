@@ -1429,16 +1429,18 @@
         this.logDebug(() => " ---- keys count after commit: " + remainingCount + " ---");
 
         // estimate size of remaining objects
-        const remainingSize = this.kvMap().totalBytes();
-        console.log(this.logPrefix(), "==== this.kvMap().totalBytes() after collect = ", ByteFormatter.clone().setValue(remainingSize).formattedValue());
+        // NOTE: totalBytes() temporarily disabled due to transaction state assertion issue
+        // TODO: investigate why isInTx() is still true after promiseCommit()
+        // const remainingSize = this.kvMap().totalBytes();
+        // console.log(this.logPrefix(), "==== this.kvMap().totalBytes() after collect = ", ByteFormatter.clone().setValue(remainingSize).formattedValue());
 
-        this.kvMap().forEachKV((key, value) => {
-            //console.log(this.logPrefix(), "\"", key, "\": \"", value.length, "\" bytes");
-            if (value.length > 5000) {
-                console.log(this.logPrefix(), "==== value = ", value.slice(0, 1000), "...");
-                //debugger;
-            }
-        });
+        // this.kvMap().forEachKV((key, value) => {
+        //     //console.log(this.logPrefix(), "\"", key, "\": \"", value.length, "\" bytes");
+        //     if (value.length > 5000) {
+        //         console.log(this.logPrefix(), "==== value = ", value.slice(0, 1000), "...");
+        //         //debugger;
+        //     }
+        // });
         //debugger;
 
         this.setIsDebugging(isDebugging);
