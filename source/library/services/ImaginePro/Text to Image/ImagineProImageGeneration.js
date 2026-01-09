@@ -289,7 +289,7 @@
         const status = response.status;// PROCESSING, DONE, FAILED, etc.
         const isDone = ["DONE"].includes(status);
         const isError = ["failed", "error", "FAIL"].includes(status);
-        const isPending = ["PROCESSING"].includes(status);
+        const isPending = ["QUEUED", "PROCESSING"].includes(status);
 
         // ImaginePro returns "DONE" when completed
         if (isDone) {
