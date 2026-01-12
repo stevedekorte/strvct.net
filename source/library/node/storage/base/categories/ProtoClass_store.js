@@ -4,8 +4,6 @@
 /** * @class ProtoClass_store
  * @extends ProtoClass
  * @classdesc This class extends ProtoClass and provides methods for storing and loading object data.
- 
- 
  */
 
 /**

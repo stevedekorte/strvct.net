@@ -15,8 +15,6 @@
  *     - thumbnailView
  *
  * Most of these can easily be disabled, if not needed.
- 
- 
  */
 
 /**

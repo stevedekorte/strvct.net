@@ -6,8 +6,6 @@
 /** * @class Map_ideal
  * @extends Map
  * @description Extended Map class with additional utility methods.
- 
- 
  */
 
 /**
