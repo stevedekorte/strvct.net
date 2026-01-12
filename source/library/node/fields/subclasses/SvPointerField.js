@@ -7,8 +7,8 @@
  * @extends SvField
  * @classdesc A field that's a pointer to another node.
  * (sometimes the other node is used as a list of items, but not always)
- 
- 
+
+
  */
 
 /**
@@ -102,16 +102,47 @@
         return this.value();
     }
 
+    hasNewLineSeparator () {
+        return this.proxyGetter("hasNewLineSeparator");
+    }
+
     /**
      * @description Gets the JSON archive of the value object.
      * @returns {*} The JSON archive of the value object, or undefined if not available.
      * @category Data Access
      */
     jsonArchive () {
+        return this.proxyGetter("jsonArchive", undefined);
+        /*
         if (this.value() && this.value().jsonArchive) {
             return this.value().jsonArchive();
         }
         return undefined;
+        */
+    }
+
+    summary () {
+        return this.proxyGetter("summary", "(no summary)");
+    }
+
+    summaryFormat () {
+        return this.proxyGetter("summaryFormat", "key");
+    }
+
+    summaryHidePolicy () {
+        return this.proxyGetter("summaryHidePolicy", "none");
+    }
+
+    summaryHasNewlineAfterSummary () {
+        return this.proxyGetter("summaryHasNewlineAfterSummary", true);
+    }
+
+    summaryHasNewlineBeforeSummary () {
+        return this.proxyGetter("summaryHasNewlineBeforeSummary", false);
+    }
+
+    summaryKey () {
+        return this.proxyGetter("summaryKey", "(no key)");
     }
 
     /**
@@ -119,8 +150,10 @@
      * @returns {Object} The value.
      */
     summaryValue () {
+        return this.proxyGetter("summaryValue", "(no value)");
+        /*
         const v = this.value();
-        if (v && v.summaryValue) {
+        if (v && v.summaryValue) { // need this in case we're pointing to a node that doesn't have a summaryValue method
             const summaryValue = v.summaryValue();
             // if summaryValue is a string with multiple lines, add a newline prefix
             if (Type.isString(summaryValue) && summaryValue.includes("\n")) {
@@ -128,7 +161,7 @@
             }
             return summaryValue;
         }
-        return "(no value)";
+        */
     }
 
 }.initThisClass());
