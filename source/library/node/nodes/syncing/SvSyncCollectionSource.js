@@ -662,7 +662,7 @@
      * @param {Error} error - The error that occurred
      * @category Error Handling
      */
-    showCloudItemErrorNotice (itemId, error) {
+    showCloudItemErrorNotice (itemId /*, error */) {
         const message = "A cloud-stored item could not be loaded due to a data format change. " +
             "The incompatible cloud data has been removed. Some data may have been lost. " +
             "(Item: " + itemId + ")";
