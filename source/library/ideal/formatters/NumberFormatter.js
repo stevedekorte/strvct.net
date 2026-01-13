@@ -63,6 +63,11 @@
         const number = this.value();
         const significantDigits = this.significantDigits();
 
+        // Handle zero to avoid Math.log10(0) = -Infinity
+        if (number === 0) {
+            return "0";
+        }
+
         const suffixes = ["", "K", "M", "B", "T"];
         const magnitude = Math.floor(Math.log10(Math.abs(number)) / 3);
         const scaled = number / Math.pow(10, magnitude * 3);
