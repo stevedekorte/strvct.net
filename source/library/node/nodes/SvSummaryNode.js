@@ -12,8 +12,6 @@
  * and has an inspector for these attributes
  *
  * support for links?
- 
- 
  */
 
 /**
