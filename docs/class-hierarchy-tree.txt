@@ -1,0 +1,531 @@
+Scanning: ../../source
+
+Found 606 JavaScript files
+Found 561 classes
+
+├── BasicJsonRepairShop
+├── BigInt_store
+├── EnumerableWeakMap
+├── EnumerableWeakSet
+├── FileReader
+├── FontFace
+├── HTMLCanvasElement
+├── HTMLElement_textField
+├── Image
+│   ├── Image_ideal
+│   └── Image_store
+├── ImportsIndexer
+├── JsonSchema
+├── MarkdownRelative
+├── MarkdownToc
+├── MinimalIndexedDbFolder
+├── Mirror
+├── Object_boot
+├── Object_categorySupport
+├── Object_class
+├── Object_copying
+├── Object_ideal
+├── Object_init
+├── Object_mutation
+├── Object_notification
+├── Object_puuid
+├── Object_store
+├── Object_timeouts
+├── PersistentAtomicMap
+├── Promise_ideal
+├── ProtoClass
+│   ├── AtomicMap
+│   ├── ByteFormatter
+│   ├── CanvasTextTapeMeasure
+│   ├── CssAnimation
+│   ├── CssColor
+│   ├── Device
+│   │   ├── GamePad
+│   │   ├── KeyboardKey
+│   │   ├── Mouse
+│   │   ├── SvKeyboard
+│   │   └── TouchScreen
+│   ├── Devices
+│   ├── Documentation
+│   ├── DomBorderRadius
+│   ├── DomCssInspector
+│   ├── DomTextTapeMeasure
+│   ├── DomTransition
+│   ├── DomTransitions
+│   ├── ElementDomView
+│   │   └── CssDomView
+│   │       └── SubviewsDomView
+│   │           └── ListenerDomView
+│   │               └── VisibleDomView
+│   │                   └── GesturableDomView
+│   │                       └── ResponderDomView
+│   │                           └── ControlDomView
+│   │                               └── SelectableDomView
+│   │                                   └── EditableDomView
+│   │                                       └── DomView
+│   │                                           ├── DocumentBody
+│   │                                           ├── DomView_animations
+│   │                                           ├── DomView_browserDragAndDrop
+│   │                                           ├── DragBarView
+│   │                                           ├── FlexDomView
+│   │                                           │   ├── ButtonView
+│   │                                           │   │   └── TileNoteButtonView
+│   │                                           │   ├── CloseButton
+│   │                                           │   ├── StyledDomView
+│   │                                           │   │   ├── BooleanView
+│   │                                           │   │   ├── DragView
+│   │                                           │   │   ├── NodeView
+│   │                                           │   │   │   ├── NavView
+│   │                                           │   │   │   ├── SceneView
+│   │                                           │   │   │   ├── ScrollContentView
+│   │                                           │   │   │   │   └── TilesView
+│   │                                           │   │   │   │       ├── TilesView_dragViewProtocol
+│   │                                           │   │   │   │       ├── TilesView_gestures
+│   │                                           │   │   │   │       ├── TilesView_helpers
+│   │                                           │   │   │   │       ├── TilesView_keyboard
+│   │                                           │   │   │   │       ├── TilesView_orientation
+│   │                                           │   │   │   │       ├── TilesView_selection
+│   │                                           │   │   │   │       └── TilesView_styling
+│   │                                           │   │   │   ├── StackView
+│   │                                           │   │   │   │   └── BrowserView
+│   │                                           │   │   │   ├── SvCoachableView
+│   │                                           │   │   │   ├── SvImageView
+│   │                                           │   │   │   ├── SvImageWellView
+│   │                                           │   │   │   ├── SvVideoView
+│   │                                           │   │   │   ├── SvVideoWellView
+│   │                                           │   │   │   ├── Tile
+│   │                                           │   │   │   │   ├── BreadCrumbsTile
+│   │                                           │   │   │   │   ├── SvActionFieldTile
+│   │                                           │   │   │   │   ├── SvFieldTile
+│   │                                           │   │   │   │   │   ├── SceneViewWellFieldTile
+│   │                                           │   │   │   │   │   ├── SvBooleanFieldTile
+│   │                                           │   │   │   │   │   ├── SvImageWellFieldTile
+│   │                                           │   │   │   │   │   ├── SvStringFieldTile
+│   │                                           │   │   │   │   │   │   └── SvPasswordFieldTile
+│   │                                           │   │   │   │   │   ├── SvTextAreaFieldTile
+│   │                                           │   │   │   │   │   │   └── SvChatMessageTile
+│   │                                           │   │   │   │   │   │       └── SvChatInputTile
+│   │                                           │   │   │   │   │   └── SvVideoWellFieldTile
+│   │                                           │   │   │   │   ├── SvTextNodeTile
+│   │                                           │   │   │   │   ├── Tile_dragging
+│   │                                           │   │   │   │   ├── Tile_gestures
+│   │                                           │   │   │   │   ├── Tile_keyboard
+│   │                                           │   │   │   │   ├── Tile_slideGesture
+│   │                                           │   │   │   │   ├── Tile_styling
+│   │                                           │   │   │   │   └── TitledTile
+│   │                                           │   │   │   │       ├── HeaderTile
+│   │                                           │   │   │   │       ├── SvFontTile
+│   │                                           │   │   │   │       ├── SvImageTile
+│   │                                           │   │   │   │       ├── SvOptionNodeTile
+│   │                                           │   │   │   │       ├── SvOptionsNodeTile
+│   │                                           │   │   │   │       └── SvPointerFieldTile
+│   │                                           │   │   │   └── TileContainer
+│   │                                           │   │   └── SvTextView
+│   │                                           │   │       ├── SvPasswordView
+│   │                                           │   │       ├── TileNoteView
+│   │                                           │   │       ├── TileSubtitleView
+│   │                                           │   │       └── TileTitleView
+│   │                                           │   └── SvgIconView
+│   │                                           ├── ScrollView
+│   │                                           │   └── StackScrollView
+│   │                                           ├── SvCoachMarkView
+│   │                                           ├── SvOverlayBannerView
+│   │                                           ├── SvPanelView
+│   │                                           └── SvScrimView
+│   ├── EventListener
+│   ├── EventManager
+│   ├── EventSetListener
+│   │   ├── AnimationListener
+│   │   ├── ClipboardListener
+│   │   ├── DocumentListener
+│   │   ├── DragListener
+│   │   ├── DropListener
+│   │   ├── FocusListener
+│   │   ├── GamePadListener
+│   │   ├── KeyboardListener
+│   │   ├── MouseListener
+│   │   ├── MouseMoveListener
+│   │   ├── ScrollListener
+│   │   ├── SelectListener
+│   │   ├── SpeechListener
+│   │   ├── TouchListener
+│   │   ├── TouchMoveListener
+│   │   ├── TransitionListener
+│   │   ├── WebSocketListener
+│   │   ├── WheelListener
+│   │   └── WindowListener
+│   ├── FirebaseStoragePermissions
+│   ├── GamePadManager
+│   ├── GestureManager
+│   ├── GestureRecognizer
+│   │   ├── LongPressGestureRecognizer
+│   │   ├── OrientGestureRecognizer
+│   │   ├── PanGestureRecognizer
+│   │   │   ├── EdgePanGestureRecognizer
+│   │   │   │   ├── BottomEdgePanGestureRecognizer
+│   │   │   │   ├── LeftEdgePanGestureRecognizer
+│   │   │   │   ├── RightEdgePanGestureRecognizer
+│   │   │   │   └── TopEdgePanGestureRecognizer
+│   │   │   └── ScreenEdgePanGestureRecognizer
+│   │   │       ├── ScreenBottomEdgePanGestureRecognizer
+│   │   │       ├── ScreenLeftEdgePanGestureRecognizer
+│   │   │       ├── ScreenRightEdgePanGestureRecognizer
+│   │   │       └── ScreenTopEdgePanGestureRecognizer
+│   │   ├── PinchGestureRecognizer
+│   │   ├── RotationGestureRecognizer
+│   │   ├── SlideGestureRecognizer
+│   │   └── TapGestureRecognizer
+│   ├── HtmlStreamReader
+│   ├── HttpResponseCodes
+│   ├── JsonObject
+│   ├── JsonStreamReader
+│   ├── NamespaceSearch
+│   ├── NumberFormatter
+│   ├── ObjectPool
+│   │   └── PersistentObjectPool
+│   ├── ObservableProxy
+│   │   └── FirewallProxy
+│   ├── PersistentAsyncMap
+│   ├── Point
+│   │   └── EventPoint
+│   ├── ProtoClass_protocol
+│   ├── ProtoClass_store
+│   ├── ProtoClass_tasks
+│   ├── Protocol
+│   │   ├── AudioClipDelegateProtocol
+│   │   ├── AudioClipProtocol
+│   │   ├── DragDestinationProtocol
+│   │   └── DragSourceProtocol
+│   ├── Rectangle
+│   ├── SimpleSynth
+│   ├── StackFrame
+│   ├── StackTrace
+│   ├── StreamNode
+│   │   ├── StreamElementNode
+│   │   └── StreamTextNode
+│   ├── SvAsyncTimer
+│   ├── SvBlobPool
+│   ├── SvBroadcaster
+│   ├── SvDataUrl
+│   ├── SvErrorCatalog
+│   │   ├── SvErrorCatalog_auth
+│   │   └── SvErrorCatalog_configuration
+│   ├── SvErrorDefinition
+│   ├── SvErrorImageResolver
+│   ├── SvgIconCache
+│   ├── SvNode
+│   │   ├── SvNode_store
+│   │   └── TitledNode
+│   │       ├── InspectableNode
+│   │       │   └── ViewableNode
+│   │       │       └── StyledNode
+│   │       │           ├── BaseNode
+│   │       │           │   ├── SvActorMessage
+│   │       │           │   ├── SvActorMessages
+│   │       │           │   ├── SvActorNode
+│   │       │           │   ├── SvDataStore
+│   │       │           │   ├── SvDayNode
+│   │       │           │   ├── SvFontFamily
+│   │       │           │   ├── SvHourNode
+│   │       │           │   ├── SvMeridiemNode
+│   │       │           │   ├── SvMinuteNode
+│   │       │           │   ├── SvMonthNode
+│   │       │           │   ├── SvResource
+│   │       │           │   │   ├── SvFont
+│   │       │           │   │   ├── SvgIconNode
+│   │       │           │   │   ├── SvImage
+│   │       │           │   │   │   └── SvImage_evaluator
+│   │       │           │   │   ├── SvJsonResource
+│   │       │           │   │   ├── SvURLImage
+│   │       │           │   │   └── SvWaSound
+│   │       │           │   ├── SvResourceFile
+│   │       │           │   ├── SvResourceFolder
+│   │       │           │   ├── SvResourceGroup
+│   │       │           │   │   ├── SvFileResources
+│   │       │           │   │   ├── SvFontResources
+│   │       │           │   │   ├── SvIconResources
+│   │       │           │   │   ├── SvImageResources
+│   │       │           │   │   ├── SvJsonResources
+│   │       │           │   │   └── SvSoundResources
+│   │       │           │   ├── SvWaContext
+│   │       │           │   └── SvYearNode
+│   │       │           └── SvStorableNode
+│   │       │               ├── AiRequest
+│   │       │               │   ├── AnthropicRequest
+│   │       │               │   ├── GeminiRequest
+│   │       │               │   └── OpenAiRequest
+│   │       │               │       ├── DeepSeekRequest
+│   │       │               │       ├── GroqRequest
+│   │       │               │       └── XaiRequest
+│   │       │               ├── AzureService
+│   │       │               ├── AzureTtsRequest
+│   │       │               ├── RzPeer
+│   │       │               ├── RzSigServer
+│   │       │               ├── RzSigServerConn
+│   │       │               ├── SpatialModelNode
+│   │       │               ├── SpatialModelNode
+│   │       │               ├── SvBlobsNode
+│   │       │               ├── SvCreatorNode
+│   │       │               ├── SvFieldSetNode
+│   │       │               │   └── SvDataStoreRecord
+│   │       │               ├── SvModel
+│   │       │               ├── SvOptionNode
+│   │       │               ├── SvPrototypesNode
+│   │       │               ├── SvResources
+│   │       │               ├── SvSummaryNode
+│   │       │               │   ├── AiChatModel
+│   │       │               │   ├── AiChatModels
+│   │       │               │   ├── AiConversations
+│   │       │               │   ├── AiPromptComposer
+│   │       │               │   ├── AiService
+│   │       │               │   │   ├── AnthropicService
+│   │       │               │   │   ├── DeepSeekService
+│   │       │               │   │   ├── GeminiService
+│   │       │               │   │   ├── GroqService
+│   │       │               │   │   ├── ImagineProService
+│   │       │               │   │   ├── LeonardoService
+│   │       │               │   │   ├── OpenAiService
+│   │       │               │   │   └── XaiService
+│   │       │               │   ├── AssistantToolKit
+│   │       │               │   ├── AudioQueue
+│   │       │               │   ├── AzureLocale
+│   │       │               │   ├── AzureLocales
+│   │       │               │   ├── AzureSpeaker
+│   │       │               │   ├── AzureSpeakers
+│   │       │               │   ├── AzureTtsRequests
+│   │       │               │   ├── AzureVoice
+│   │       │               │   ├── AzureVoices
+│   │       │               │   ├── EvalChecklistItem
+│   │       │               │   ├── EvalChecklistItems
+│   │       │               │   ├── FilesToDownload
+│   │       │               │   ├── FileToDownload
+│   │       │               │   ├── FirebaseNode
+│   │       │               │   │   ├── FirebaseFile
+│   │       │               │   │   └── FirebaseFolder
+│   │       │               │   │       └── FirebaseRootFolder
+│   │       │               │   ├── FirebaseService
+│   │       │               │   ├── FirebaseStorageService
+│   │       │               │   ├── FirestoreCollections
+│   │       │               │   ├── FirestoreDatabaseService
+│   │       │               │   ├── FirestoreDocuments
+│   │       │               │   ├── FirestoreNode
+│   │       │               │   │   ├── FirestoreCollection
+│   │       │               │   │   └── FirestoreDocument
+│   │       │               │   ├── FirestoreQuery
+│   │       │               │   ├── FirestoreRoot
+│   │       │               │   ├── GeminiVideoPrompt
+│   │       │               │   ├── GeminiVideoPrompts
+│   │       │               │   ├── HomeAssistant
+│   │       │               │   ├── HomeAssistantFolder
+│   │       │               │   ├── HomeAssistantGroup
+│   │       │               │   │   ├── HomeAssistantAreas
+│   │       │               │   │   ├── HomeAssistantDevices
+│   │       │               │   │   ├── HomeAssistantEntities
+│   │       │               │   │   └── HomeAssistantStates
+│   │       │               │   ├── HomeAssistantObject
+│   │       │               │   │   ├── HomeAssistantArea
+│   │       │               │   │   ├── HomeAssistantDevice
+│   │       │               │   │   ├── HomeAssistantEntity
+│   │       │               │   │   └── HomeAssistantState
+│   │       │               │   ├── HomeAssistants
+│   │       │               │   ├── HomeAssistants
+│   │       │               │   ├── ImageEvalChecklistMaker
+│   │       │               │   ├── ImageEvaluator
+│   │       │               │   ├── ImageEvaluators
+│   │       │               │   ├── ImagineProImageGeneration
+│   │       │               │   ├── ImagineProImageGenerations
+│   │       │               │   ├── ImagineProImagePrompt
+│   │       │               │   │   └── ImagineProImageEvalPrompt
+│   │       │               │   ├── JsonSchemaNode
+│   │       │               │   ├── LeonardoImage
+│   │       │               │   ├── LeonardoImageGeneration
+│   │       │               │   ├── LeonardoImagePrompt
+│   │       │               │   ├── LeonardoImagePrompts
+│   │       │               │   ├── LeonardoImages
+│   │       │               │   ├── LeonardoRefImage
+│   │       │               │   ├── LeonardoRefImages
+│   │       │               │   ├── LeoStyleTransfer
+│   │       │               │   ├── LeoStyleTransfers
+│   │       │               │   ├── MusicFolder
+│   │       │               │   ├── MusicLibrary
+│   │       │               │   ├── MusicTrack
+│   │       │               │   ├── OpenAiImage
+│   │       │               │   ├── OpenAiImagePrompt
+│   │       │               │   ├── OpenAiImagePrompts
+│   │       │               │   ├── OpenAiImages
+│   │       │               │   ├── OpenAiStyleTransfer
+│   │       │               │   ├── OpenAiStyleTransfers
+│   │       │               │   ├── OpenAiTtsRequest
+│   │       │               │   ├── OpenAiTtsSession
+│   │       │               │   ├── OpenAiTtsSessions
+│   │       │               │   ├── PeerService
+│   │       │               │   ├── ProxyServer
+│   │       │               │   │   └── DefaultProxyServer
+│   │       │               │   ├── ProxyServers
+│   │       │               │   ├── RzMsg
+│   │       │               │   ├── RzMsgs
+│   │       │               │   ├── RzPeerConn
+│   │       │               │   ├── RzPeerConns
+│   │       │               │   ├── RzSigServerConns
+│   │       │               │   ├── RzSigServerPeers
+│   │       │               │   ├── RzSigServers
+│   │       │               │   ├── Services
+│   │       │               │   ├── SpeechToTextSession
+│   │       │               │   ├── SpeechToTextSessions
+│   │       │               │   ├── SttMessage
+│   │       │               │   ├── SttMessages
+│   │       │               │   ├── SvCoachMarkManager
+│   │       │               │   ├── SvCredential
+│   │       │               │   ├── SvCredentialManager
+│   │       │               │   ├── SvCredentials
+│   │       │               │   ├── SvDateNode
+│   │       │               │   ├── SvFolderNode
+│   │       │               │   │   └── BreadCrumbsNode
+│   │       │               │   ├── SvImageMosaic
+│   │       │               │   ├── SvImageMosaics
+│   │       │               │   ├── SvJsonIdNode
+│   │       │               │   │   ├── JsonGroup
+│   │       │               │   │   │   ├── JsonGroup_patches
+│   │       │               │   │   │   ├── SvBlobNode
+│   │       │               │   │   │   │   └── SvCloudBlobNode
+│   │       │               │   │   │   │       └── SvImageNode
+│   │       │               │   │   │   ├── SvField
+│   │       │               │   │   │   │   ├── SvActionField
+│   │       │               │   │   │   │   ├── SvBooleanField
+│   │       │               │   │   │   │   ├── SvColorField
+│   │       │               │   │   │   │   ├── SvDateField
+│   │       │               │   │   │   │   ├── SvIdentityField
+│   │       │               │   │   │   │   ├── SvImageWellField
+│   │       │               │   │   │   │   │   └── SvImageField
+│   │       │               │   │   │   │   ├── SvJsonField
+│   │       │               │   │   │   │   │   └── SvArrayField
+│   │       │               │   │   │   │   ├── SvJsonNullField
+│   │       │               │   │   │   │   ├── SvNumberField
+│   │       │               │   │   │   │   ├── SvOptionsNode
+│   │       │               │   │   │   │   ├── SvPointerField
+│   │       │               │   │   │   │   ├── SvStampField
+│   │       │               │   │   │   │   ├── SvStringField
+│   │       │               │   │   │   │   │   └── SvPasswordField
+│   │       │               │   │   │   │   ├── SvTextAreaField
+│   │       │               │   │   │   │   │   ├── ChatInputNode
+│   │       │               │   │   │   │   │   └── ConversationMessage
+│   │       │               │   │   │   │   │       └── AiMessage
+│   │       │               │   │   │   │   │           └── AiResponseMessage
+│   │       │               │   │   │   │   │               └── AiParsedResponseMessage
+│   │       │               │   │   │   │   │                   ├── AiParsedResponseMessage_parsing
+│   │       │               │   │   │   │   │                   ├── AiParsedResponseMessage_streaming
+│   │       │               │   │   │   │   │                   ├── AiParsedResponseMessage_tagEvents
+│   │       │               │   │   │   │   │                   └── AiParsedResponseMessage_voiceNarration
+│   │       │               │   │   │   │   ├── SvUrlField
+│   │       │               │   │   │   │   └── SvVideoWellField
+│   │       │               │   │   │   ├── SvModelReference
+│   │       │               │   │   │   └── SyncableJsonGroup
+│   │       │               │   │   └── SvJsonNode
+│   │       │               │   │       ├── SvJsonArrayNode
+│   │       │               │   │       │   ├── Conversation
+│   │       │               │   │       │   │   └── AiConversation
+│   │       │               │   │       │   ├── FirebaseFiles
+│   │       │               │   │       │   ├── FirebaseFolders
+│   │       │               │   │       │   ├── ImagineProImagePrompts
+│   │       │               │   │       │   │   └── ImagineProImageEvalPrompts
+│   │       │               │   │       │   ├── SvImages
+│   │       │               │   │       │   ├── SvImagesNode
+│   │       │               │   │       │   └── SvJsonArrayNode_patches
+│   │       │               │   │       └── SvJsonDictionaryNode
+│   │       │               │   │           └── UoJsonDictionaryNode
+│   │       │               │   │               ├── JsonPatchRequest
+│   │       │               │   │               ├── ToolCall
+│   │       │               │   │               └── ToolDefinition
+│   │       │               │   │                   └── ToolDefinition_anthropic
+│   │       │               │   ├── SvLinkNode
+│   │       │               │   ├── SvSyncCollectionSource
+│   │       │               │   │   ├── SvCloudSyncSource
+│   │       │               │   │   └── SvLocalResourceSource
+│   │       │               │   ├── SvTimeNode
+│   │       │               │   ├── SvWaQueue
+│   │       │               │   ├── ToolCalls
+│   │       │               │   ├── ToolDefinitions
+│   │       │               │   └── ToolResult
+│   │       │               ├── SvTextNode
+│   │       │               ├── SvThemeFolder
+│   │       │               │   ├── SvTheme
+│   │       │               │   │   └── SvDefaultTheme
+│   │       │               │   ├── SvThemeClass
+│   │       │               │   ├── SvThemeClassChildren
+│   │       │               │   ├── SvThemeState
+│   │       │               │   └── SvThemeStates
+│   │       │               ├── SvThemeResources
+│   │       │               ├── SvUserInterface
+│   │       │               │   ├── SvCliUserInterface
+│   │       │               │   ├── SvHeadlessUserInterface
+│   │       │               │   └── SvWebUserInterface
+│   │       │               ├── SvXhrRequest
+│   │       │               ├── YouTubeAudioPlayer
+│   │       │               └── YouTubeService
+│   │       ├── SvApp
+│   │       └── SvErrorReport
+│   ├── SvNotification
+│   ├── SvNotificationCenter
+│   ├── SvObservation
+│   ├── SvStyleSheet
+│   ├── SvSyncAction
+│   ├── SvSyncScheduler
+│   ├── SvTask
+│   ├── SvTasks
+│   ├── SvWebBrowserTab
+│   ├── ThrashDetector
+│   ├── TimeFormatter
+│   ├── TimePeriodFormatter
+│   ├── Transform
+│   ├── ViewAnimator
+│   ├── WbCookie
+│   ├── WbCookieManager
+│   ├── WebBrowserCookie
+│   ├── WebBrowserNotification
+│   ├── WebBrowserNotifications
+│   ├── WebBrowserScreen
+│   ├── WebBrowserWindow
+│   ├── WebDocument
+│   └── YouTubePlayerFrame
+├── Range
+│   └── Range_ideal
+├── RegExp_store
+├── ResourceIndexer
+├── ResourcesFolder
+├── Slot
+│   └── Slot_promiseWrapper
+├── StoreRef
+├── StrvctFile
+├── StrvctFramework
+├── SvBase
+│   ├── SvDatabase
+│   ├── SvDbCache
+│   ├── SvDbColumn
+│   ├── SvDbDataType
+│   ├── SvDbRow
+│   │   └── SvDbCustomRow
+│   ├── SvDbSchema
+│   ├── SvDbTable
+│   │   └── SvDbCustomTable
+│   ├── SvDbTx
+│   ├── SvHashCache
+│   ├── SvIndexedDbFolder
+│   ├── SvIndexedDbFolder
+│   ├── SvIndexedDbTx
+│   ├── SvIndexedDbTx
+│   └── SvMimeExtensions
+├── SvBootLoader
+├── SvBootLoadingView
+├── SvCliBrowser
+├── SvGlobals
+├── SvMimeTypeDetector
+├── SvPlatform
+├── SvResourceManager
+├── SvServiceWorker
+├── SvUrlResource
+├── SvWindowErrorPanel
+├── Symbol_store
+├── TestRunner
+├── Type
+├── URL_promises
+└── XMLHttpRequest
