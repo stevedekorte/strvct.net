@@ -121,6 +121,7 @@
                     console.warn("no setter for slot '" + slot.name() + "'?");
                 } else {
                     if (slot.isLazy()) {
+                        debugger; // we don't support lazy slots yet
                         // store the pid in _privateNameLazyPid for use on asyncGetter call
                         const pid = v["*"];
                         assert(pid);
@@ -144,9 +145,7 @@
                 }
             } else {
                 console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change?");
-
                 this.scheduleMethod("didMutate", 1000); // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete
-
             }
         });
 
