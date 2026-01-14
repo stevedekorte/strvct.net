@@ -743,7 +743,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
     defaultFieldInspectorClassName () {
         const slotType = this.slotType();
         assert(!Type.isNull(slotType), "slotType is null for slot: " + this.name());
-        let fieldName = "Sv" + slotType + "Field";
+        let fieldName = slotType + "Field";
 
         if (this.validValues() || this.validValuesClosure() || this.validItems() || this.validItemsClosure()) {
             fieldName = "SvOptionsNode";
@@ -759,12 +759,20 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         const slotType = this.slotType();
         if (slotType /*&& this.canInspect()*/) {
             const fieldName = this.fieldInspectorClassName();
-            let proto = SvGlobals.globals()[fieldName];
+            let proto = SvGlobals.get(fieldName);
 
             if (!proto) {
                 //let nodeName = "Sv" + slotType + "Node";
-                const nodeName = "SvPointerField";
-                proto = SvGlobals.globals()[nodeName];
+                // handle cases like slotType is "String", "Boolean", etc and fieldName is "SvStringField", etc
+                const svFieldName = "Sv" + fieldName;
+                if (!fieldName.beginsWith("Sv")) {
+                    proto = SvGlobals.get(svFieldName);
+                }
+                if (!proto) {
+                    //console.log("no proto '" + fieldName + "' or '" + svFieldName + "' found for slot type: " + slotType);
+                    const nodeName = "SvPointerField";
+                    proto = SvGlobals.get(nodeName);
+                }
             }
 
             if (proto) {
