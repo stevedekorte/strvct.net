@@ -193,6 +193,9 @@
     }
 
     async asyncVersionJson () {
+        if (this._versionJson) {
+            return this._versionJson;
+        }
         /*
         sample json file:
           {
@@ -210,6 +213,7 @@
         }
         const data = await file.promiseData();
         const json = JSON.parse(data.asString()); // { "version": "1.0.0", "buildId": "1234567890" }
+        this._versionJson = json;
         return json;
     }
 
