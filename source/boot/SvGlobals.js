@@ -64,6 +64,21 @@ const SvGlobals = (class SvGlobals extends Object {
         return this.globals()[key];
     }
 
+    /*
+    static assertGetClassNamed (className) {
+        const value = this.get(className);
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value instanceof Function) {
+            if (value.prototype instanceof Object) {
+                return value;
+            }
+        }
+        throw new Error("SvGlobals.getClass('" + className + "') is not a class");
+    }
+    */
+
     static set (key, value) {
         if (this.has(key)) {
             throw new Error(`SvGlobals.set("${key}") is already defined`);
