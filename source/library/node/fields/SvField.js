@@ -582,7 +582,7 @@
      * @returns {String|null} Error message if invalid, null if valid
      * @category Validation
      */
-    validateValue (v) {
+    validateValue (/*v*/) {
         // Base implementation - all values valid by default
         // Subclasses override to add constraints
         return null;
