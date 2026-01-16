@@ -109,7 +109,12 @@
         }
 
         // Extract and cache the ArrayBuffer
-        this._asyncToArrayBufferPromise = FileReader.promiseReadAsArrayBuffer(this);
+        // Use native arrayBuffer() method if available (modern browsers), otherwise fall back to FileReader
+        if (typeof this.arrayBuffer === "function") {
+            this._asyncToArrayBufferPromise = this.arrayBuffer();
+        } else {
+            this._asyncToArrayBufferPromise = FileReader.promiseReadAsArrayBuffer(this);
+        }
         const arrayBuffer = await this._asyncToArrayBufferPromise;
         this._cachedArrayBuffer = arrayBuffer;
         this._asyncToArrayBufferPromise = null;
