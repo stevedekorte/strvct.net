@@ -22,7 +22,7 @@
      * @category Data
      */
         {
-            const slot = this.overrideSlot("key");
+            const slot = this.overrideSlot("key", null);
             slot.setShouldJsonArchive(true);
             slot.setCanInspect(true);
             slot.setSlotType("String");
@@ -35,8 +35,8 @@
      * @category Data
      */
         {
-            const slot = this.overrideSlot("value");
-            slot.setInitValue("");
+            const slot = this.overrideSlot("value", "");
+            //slot.setInitValue("");
             slot.setShouldJsonArchive(true);
             slot.setCanInspect(true);
             slot.setInspectorPath("Node/Field/Value");

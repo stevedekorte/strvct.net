@@ -608,9 +608,10 @@
             console.log(msg);
             throw new Error(msg);
         }
-        const slot = this.justNewSlot(slotName, initialValue, allowOnInstance);
+        const initValue = initialValue === undefined ? oldSlot.initValue() : initialValue; // use the old slot's initial value is undefined
+        const slot = this.justNewSlot(slotName, initValue, allowOnInstance);
         slot.copyFrom(oldSlot);
-        slot.setInitValue(initialValue);
+        //slot.setInitValue(initValue); // needed?
         slot.setOwner(this);
         return slot;
     }

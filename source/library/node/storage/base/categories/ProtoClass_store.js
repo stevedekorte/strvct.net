@@ -69,7 +69,7 @@
                 if (Type.isPromise(v)) {
                     throw new Error(this.svType() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored");
                 }
-                assert(!Type.isUndefined(v), this.svType() + " slot '" + slotName + "' is set to shouldStore, but is undefined");
+                assert(!Type.isUndefined(v), this.svType() + " slot '" + slotName + "' is set to shouldStore, but it's value is undefined which cannot be stored");
 
                 let valueToRecord;
                 if (slot.slotType() === "JSON Object") {
