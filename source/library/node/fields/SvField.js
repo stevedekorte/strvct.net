@@ -7,8 +7,24 @@
 /**
  * @class SvField
  * @extends JsonGroup
- * @classdesc A node that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
+ * @classdesc A node that has a key and value, useful for displaying and editing data.
  * Extends JsonGroup to support JSON serialization for cloud sync.
+ *
+ * SvField supports two modes of operation:
+ *
+ * **1. Data Owner Mode** (no target set):
+ *    - The field stores key/value directly in its own slots
+ *    - Used when the field is a persistent subnode that owns its data
+ *    - Example: ConversationMessage stores speaker name in `key` and message content in `value`
+ *
+ * **2. Delegate Mode** (target and valueMethod set):
+ *    - The field proxies to another node's slot
+ *    - `value()` calls `target[valueMethod]()` to get the value
+ *    - `setValue()` calls `target[setValueMethod]()` to update the target
+ *    - Used for inspector fields that represent another node's properties
+ *    - The field observes the target and syncs when it changes
+ *
+ * The mode is determined implicitly by whether `target` is set.
  */
 
 (class SvField extends JsonGroup {

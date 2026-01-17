@@ -7,8 +7,6 @@
  * @extends StyledNode
  * @classdesc SvStorableNode is a thin subclass that overrides some slots and marks them as shouldStore.
  * It also hooks didUpdateSlot() to didMutate so ObjectPool (if observing mutations) gets told it needs to store the change.
- 
- 
  */
 
 /**

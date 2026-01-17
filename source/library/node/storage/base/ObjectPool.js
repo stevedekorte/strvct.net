@@ -1018,7 +1018,7 @@
 
         if (isSingleton || obj._hasDoneInit === false || obj._hasDoneInit === undefined) {
             if (obj.finalInit) {
-                obj.finalInit();
+                obj.finalInit();  // this might be called again if the object is a singleton
             }
 
             if (obj.afterInit) {
