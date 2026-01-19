@@ -242,6 +242,11 @@
                 const json = await source.asyncFetchItem(this.jsonId());
                 this.setCloudJson(json);
                 this.setFetchState("fetched");
+                // Notify that we synced from cloud
+                if (this.didSyncFromCloud) {
+                    const timestamp = this.cloudLastModified() || Date.now();
+                    this.didSyncFromCloud(timestamp);
+                }
                 return this;
             } catch (error) {
                 this.setFetchState("fetchError");
