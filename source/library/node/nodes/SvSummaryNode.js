@@ -325,7 +325,7 @@
      * @category Summary
      */
     childrenSummary () {
-        return this.subnodes().map(subnode => subnode.summary()).filter(s => s.length).join("");
+        return this.subnodes().map(subnode => subnode.summary()).filter(s => s && s.length).join("");
     }
 
     /**
