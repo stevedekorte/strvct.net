@@ -80,6 +80,7 @@
 
     asJson () {
         return {
+            //_type: this.thisClass().svType(),
             itemName: this.itemName(),
             score: this.score(),
             reasoning: this.reasoning()

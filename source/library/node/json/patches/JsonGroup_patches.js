@@ -3,11 +3,11 @@
 /** * @module library.node.fields.json
  */
 
-/** * @class JsonGroup_patches
+/**
+ * @module library.node.fields.json.patches
+ * @class JsonGroup_patches
  * @extends JsonGroup
  * @classdesc Category class that adds native JSON patch support to JsonGroup.
- 
- 
  */
 
 /**
@@ -469,10 +469,9 @@
                 throw new Error(`Cannot replace slot '${key}': not found. Available slots: [${availableSlots}]`);
             }
 
-            const currentValue = slot.onInstanceGetValue(this);
-            if (currentValue === null || currentValue === undefined) {
-                throw new Error(`Cannot replace slot '${key}': current value is null/undefined`);
-            }
+            // Note: We don't check if current value is null/undefined.
+            // A slot can exist with a null value, and replacing it is valid.
+            // The slot existing (checked above) is sufficient for a "replace" operation.
 
             return this.setJsonKeyValue(key, value);
         }

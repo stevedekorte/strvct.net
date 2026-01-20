@@ -241,7 +241,7 @@
      * @category Serialization
      */
     asJson () {
-        return {
+        let json = {
             id: this.id(),
             category: this.category(),
             friendlyTitle: this.friendlyTitle(),
@@ -250,6 +250,8 @@
             imagePath: this.imagePath(),
             actions: this.actions()
         };
+        json._type = this.thisClass().svType();
+        return json;
     }
 
 }.initThisClass());

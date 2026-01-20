@@ -87,7 +87,6 @@
 
     initPrototype () {
         this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
         this.setCanDelete(false);
     }
 

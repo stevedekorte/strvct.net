@@ -82,18 +82,6 @@
 
     // ------------------
 
-    asJson () {
-        const json = this.calcJson();
-        /*
-    if (this.thisClass().supportsHasBeenLoaded()) {
-      json.hasBeenLoaded = this.isLoaded();
-    } else {
-      delete json.hasBeenLoaded;
-    }
-    */
-        return json;
-    }
-
     setJsonArchive () {
         throw new Error("don't use this");
     }
@@ -135,7 +123,9 @@
     }
 
     setSubnodesJson (dict, jsonPathComponents = []) {
+        debugger; // not sure if this should be called anymore as we use JsonArrayNode for arrays
         let keys = Object.keys(dict);
+        keys = keys.filter(k => !k.startsWith("_")); // ignore _type and other internal keys
 
         //console.log("keys: ", keys);
         //let localKeys = this.jsonSubnodes().map(sn => sn.title());
@@ -167,7 +157,9 @@
     }
 
     setSlotsJson (dict, jsonPathComponents = []) {
-        const keys = Object.keys(dict);
+        let keys = Object.keys(dict);
+        keys = keys.filter(k => !k.startsWith("_")); // ignore _type and other internal keys
+
         keys.forEach(k => {
             const v = dict[k];
             const slot = this.getSlot(k);
@@ -416,6 +408,21 @@
         return JSON.stableStringifyWithStdOptions(this.asJson(), null, 2);
     }
 
+    // ------------------------------------
+
+    asJson () {
+        const json = this.calcJson();
+        /*
+        if (this.thisClass().supportsHasBeenLoaded()) {
+            json.hasBeenLoaded = this.isLoaded();
+        } else {
+            delete json.hasBeenLoaded;
+        }
+        */
+        json._type = this.thisClass().svType();
+        return json;
+    }
+
     /**
      * @description Returns JSON representation for cloud storage.
      * Default implementation calls asJson(). Subclasses like SyncableJsonGroup
@@ -424,7 +431,30 @@
      * @category JSON
      */
     asCloudJson () {
-        return this.asJson();
+        let json = this.asJson();
+        json._type = this.thisClass().svType();
+        assert(Type.isObject(json) && Object.keys(json).length > 0, "asCloudJson() returned an empty JSON object");
+        return json;
+    }
+
+    static newInstanceFromJson (json, pathComponents = []) {
+        const className = json._type;
+        assert(className, "newInstanceFromJson() no _type in json: " + JSON.stableStringify(json) + " at path: " + pathComponents.join("/"));
+        const aClass = SvGlobals.get(className);
+        assert(aClass.isKindOf(this), "newInstanceFromJson() class mismatch: " + className + " !== " + this.svType() + " at path: " + pathComponents.join("/")); // sanity check
+        const instance = aClass.clone();
+        return instance;
+    }
+
+    static fromJson (json, pathComponents = []) {
+        const instance = this.newInstanceFromJson(json, pathComponents);
+        instance.setJson(json, pathComponents);
+        return instance;
+    }
+
+    static fromCloudJson (json, pathComponents = []) {
+        const instance = this.newInstanceFromJson(json, pathComponents);
+        return instance.setCloudJson(json, pathComponents);
     }
 
     /**
@@ -435,8 +465,8 @@
      * @returns {JsonGroup} This instance
      * @category JSON
      */
-    setCloudJson (json) {
-        return this.setJson(json);
+    setCloudJson (json, pathComponents = []) {
+        return this.setJson(json, pathComponents);
     }
 
     copyJsonToClipboard () {

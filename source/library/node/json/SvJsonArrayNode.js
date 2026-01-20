@@ -194,8 +194,20 @@
      */
     newSubnodeForJson (json, jsonPathComponents = []) {
         let aNode = null;
-        if (this.subnodeClasses().length === 1) {
+        let className = json._type;
+        if (className) {
+            const aClass = SvGlobals.get(className);
+            if (aClass) {
+                if (aClass.isKindOf(SvGlobals.get("ConversationMessage"))) {
+                    debugger;
+                }
+                aNode = aClass.fromJson(json, jsonPathComponents);
+            }
+        } else if (this.subnodeClasses().length === 1) {
             const aClass = this.subnodeClasses().first();
+            if (aClass.isKindOf(SvGlobals.get("ConversationMessage"))) {
+                debugger;
+            }
             aNode = aClass.clone().setJson(json, jsonPathComponents);
         } else {
             aNode = SvJsonNode.nodeForJson(json, jsonPathComponents);
@@ -283,7 +295,11 @@
         return this.subnodes().map(sn => {
             const method = sn[jsonMethodName];
             if (method) {
-                return method.call(sn);
+                let json = method.call(sn);
+                if (sn.isKindOf(SvGlobals.get("ConversationMessage"))) {
+                    assert(Type.isString(json._type), "ConversationMessage json must have _type");
+                }
+                return json;
             }
             return sn.asJson(); // fallback
         });

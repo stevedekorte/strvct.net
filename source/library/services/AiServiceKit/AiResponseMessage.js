@@ -114,7 +114,6 @@
         }
 
         this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
     }
 
     /**

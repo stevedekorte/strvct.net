@@ -16,7 +16,6 @@
 
    */
     initPrototypeSlots () {
-
         /**
      * @member {String} key - The key of the message (speaker name).
      * @category Data
@@ -213,7 +212,7 @@
         this.setKeyIsVisible(true);
         this.setValueIsEditable(false);
         this.setShouldStore(true);
-        this.setShouldStoreSubnodes(true);
+        this.setShouldStoreSubnodes(false);
         this.setCanDelete(false);
     }
 
@@ -583,8 +582,13 @@
      * @category JSON
      */
     asJson () {
-        return this.calcJson();
+        let json = this.calcJson();
+        json._type = this.thisClass().svType();
+        return json;
     }
+
+    // -------------------------------------
+
 
     /**
      * @description Returns the JSON representation for cloud storage.
@@ -592,10 +596,42 @@
      * @category JSON
      */
     asCloudJson () {
-        return this.calcJson({
+        const options = {
             slots: this.thisClass().cloudJsonSchemaSlots(),
             jsonMethodName: "asCloudJson"
-        });
+        };
+        let json = this.calcJson(options);
+        json._type = this.thisClass().svType();
+        assert(Type.isObject(json) && Object.keys(json).length > 0, "asCloudJson() returned an empty JSON object");
+        return json;
+    }
+
+    setCloudJson (json) {
+        debugger;
+        super.setCloudJson(json);
+        let newJson = this.asCloudJson();
+        assert(JSON.stableStringify(newJson) === JSON.stableStringify(json), "newJson and json are not the same");
+        return this;
+    }
+
+    fromJson (json) {
+        debugger;
+        super.fromJson(json);
+        return this;
+    }
+
+    // -------------------------------------
+
+
+    calcJson (options = {}) {
+        const json = super.calcJson(options);
+        // assert that json has some entries
+        if (Object.keys(json).length == 0) {
+            debugger;
+            let json2 = super.calcJson(options);
+            throw new Error("calcJson() returned an empty JSON object", json2);
+        }
+        return json;
     }
 
 }.initThisClass());
