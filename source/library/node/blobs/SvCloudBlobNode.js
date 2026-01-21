@@ -5,10 +5,7 @@
 
 /** * @class SvCloudBlob
  * @extends SvBlobNode
- * @classdesc
- * SvCloudBlobNode extends SvBlobNode to handle storing blobs in Google Cloud Storage.
- 
- 
+ * @classdesc SvCloudBlobNode extends SvBlobNode to handle storing blobs in Google Cloud Storage.
  */
 
 /**

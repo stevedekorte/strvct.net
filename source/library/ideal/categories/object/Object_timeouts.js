@@ -14,8 +14,6 @@
  *
  * This helps track all timeouts for an object, and cancel them all at once via cancelAllTimeouts()
  * which is useful when retiring an object.
- 
- 
  */
 
 /**

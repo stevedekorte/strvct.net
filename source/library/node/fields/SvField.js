@@ -677,7 +677,28 @@
      * @description Sets the JSON of the field.
      * @param {Object} json - The JSON.
      */
+
     setJson (json, jsonPathComponents = []) {
+        if (this.target()) {
+            this.setJsonForTarget(json, jsonPathComponents);
+        } else {
+            super.setJson(json, jsonPathComponents);
+            let afterJson = this.asJson();
+            assert(JSON.stableStringify(afterJson) === JSON.stableStringify(json), "failed to set value");
+        }
+        return this;
+    }
+
+    asJson () {
+        if (this.target()) {
+            return this.asJsonForTarget();
+        } else {
+            return super.asJson();
+        }
+    }
+
+    setJsonForTarget (json, jsonPathComponents = []) {
+        // used only when a target is set
         this.setValue(json);
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
         if (!didSet) {
@@ -690,11 +711,10 @@
                 console.warn(errorMessage);
                 throw new Error(errorMessage);
             }
-            /*
-            this.setValue(json);
-            let v = this.value();
-            assert(v === json, "failed to set value");
-            */
+            //this.setValue(json);
+            //let v = this.value();
+            // assert(v === json, "failed to set value");
+
         }
         assert(didSet);
         return this;
@@ -704,7 +724,8 @@
      * @description Returns the JSON of the field.
      * @returns {Object} The JSON.
      */
-    asJson () {
+    asJsonForTarget () {
+        // used only when a target is set
         // test used for Character sheet atm
         // separate fron jsonArchive
         return this.value();
