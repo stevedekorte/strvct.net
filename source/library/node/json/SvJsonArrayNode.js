@@ -292,7 +292,12 @@
      */
     calcJson (options = {}) {
         const jsonMethodName = options.jsonMethodName || "asJson";
+        const SvField = SvGlobals.get("SvField");
         return this.subnodes().map(sn => {
+            // Skip field objects - they are transient UI objects
+            if (SvField && sn.isKindOf(SvField)) {
+                return undefined;
+            }
             const method = sn[jsonMethodName];
             if (method) {
                 let json = method.call(sn);
@@ -302,7 +307,7 @@
                 return json;
             }
             return sn.asJson(); // fallback
-        });
+        }).filter(json => json !== undefined);
     }
 
     /**

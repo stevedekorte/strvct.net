@@ -180,18 +180,24 @@
             const slot = this.newSlot("didUpdateNodeNote", null); // private
             slot.setAllowsNullValue(true);
             slot.setSlotType("SvNotification");
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(false);
         }
 
         {
             const slot = this.newSlot("shouldFocusSubnodeNote", null); // private
             slot.setAllowsNullValue(true);
             slot.setSlotType("SvNotification");
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(false);
         }
 
         {
             const slot = this.newSlot("shouldFocusAndExpandSubnodeNote", null); // private
             slot.setAllowsNullValue(true);
             slot.setSlotType("SvNotification");
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(false);
         }
 
         // view related, but computed on node

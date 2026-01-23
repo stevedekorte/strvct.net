@@ -697,6 +697,16 @@
         }
     }
 
+    /**
+     * @description Returns undefined to prevent field objects from being serialized to cloud.
+     * Fields are transient UI objects that should not be included in cloud sync.
+     * @returns {undefined}
+     * @category JSON
+     */
+    asCloudJson () {
+        return undefined;
+    }
+
     setJsonForTarget (json, jsonPathComponents = []) {
         // used only when a target is set
         this.setValue(json);

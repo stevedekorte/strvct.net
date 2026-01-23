@@ -326,7 +326,10 @@
                 const slotName = slot.name();
                 const value = slot.onInstanceGetValue(this);
                 if (value && value[jsonMethodName]) {
-                    dict[slotName] = value[jsonMethodName]();
+                    const result = value[jsonMethodName]();
+                    if (result !== undefined) { // skip values that return undefined (e.g., SvField objects)
+                        dict[slotName] = result;
+                    }
                 }
                 else {
                     dict[slotName] = value;
