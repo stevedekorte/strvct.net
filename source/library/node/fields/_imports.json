@@ -3,6 +3,7 @@
     "SvField.js",
     "SvJsonNullField.js",
     "image/_imports.json",
+    "video/_imports.json",
     "SvCreatorNode.js",
     "subclasses/_imports.json"
 ]

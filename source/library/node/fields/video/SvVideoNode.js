@@ -3,45 +3,45 @@
 /** * @module library.node.nodes
  */
 
-/** * @class SvImageNode
- * @extends SvStorableNode
- * @classdesc SvImageNode class for handling image nodes.
+/** * @class SvVideoNode
+ * @extends SvCloudBlobNode
+ * @classdesc SvVideoNode class for handling video nodes.
  */
 
 /**
 
  */
-(class SvImageNode extends SvCloudBlobNode {
+(class SvVideoNode extends SvCloudBlobNode {
 
     static jsonSchemaDescription () {
-        return "An image node with a hash and public url for the image";
+        return "A video node with a hash and public url for the video";
     }
 
     /**
-     * @description Initializes the prototype slots for the SvImageNode.
+     * @description Initializes the prototype slots for the SvVideoNode.
      * @category Initialization
      */
     /**
      * @static
      * @description Checks if this class can open the given MIME type.
      * @param {string} mimeType - The MIME type to check.
-     * @returns {boolean} True if the MIME type is an image type.
+     * @returns {boolean} True if the MIME type is a video type.
      * @category MIME Handling
      */
     static canOpenMimeType (mimeType) {
-        return mimeType.startsWith("image/");
+        return mimeType.startsWith("video/");
     }
 
     /**
      * @static
-     * @description Creates a new SvImageNode from a dropped data chunk.
-     * @param {Object} dataChunk - The dropped data chunk containing image data.
-     * @returns {SvImageNode} A new SvImageNode with the dropped image data.
+     * @description Creates a new SvVideoNode from a dropped data chunk.
+     * @param {Object} dataChunk - The dropped data chunk containing video data.
+     * @returns {SvVideoNode} A new SvVideoNode with the dropped video data.
      * @category MIME Handling
      */
     static openMimeChunk (dataChunk) {
         const node = this.clone();
-        node.setDataURL(dataChunk.dataUrl());
+        node.setBlobFromDataURL(dataChunk.dataUrl());
         return node;
     }
 
@@ -81,27 +81,6 @@
             slot.setCanEditInspection(true);
         }
 
-        /**
-         * @member {String} dataURL - The data URL of the image.
-         * @category Data
-         */
-        /*       {
-            const slot = this.newSlot("dataURL", null);
-            slot.setShouldStoreSlot(false); // we don't store the data URL. This slot is only used to present the field inspector view
-            slot.setSlotType("String");
-            slot.setSyncsToView(true);
-            slot.setIsSubnodeField(true);
-            slot.setCanInspect(true);
-            slot.setCanEditInspection(true);
-            slot.setFieldInspectorClassName("SvImageWellField");
-            slot.setIsSubnodeField(true);
-            slot.setDescription("Data URL of the image");
-
-            //slot.setIsPromiseWrapped(true);
-            //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
-        }
-            */
-
         // public url
         {
             const slot = this.newSlot("publicUrl", null); // should normally call asyncPublicUrl() to get it
@@ -112,24 +91,22 @@
             slot.setCanInspect(true);
             slot.setCanEditInspection(true);
             slot.setIsSubnodeField(true);
-            slot.setDescription("Public URL of the image");
+            slot.setDescription("Public URL of the video");
         }
 
-        // image object
+        // video object - hack to get the video node displayed via the video well field
         {
-            const slot = this.newSlot("imageNode", null); // private - hack to get the image node displayed via the image well field
+            const slot = this.newSlot("videoNode", null);
             slot.setShouldStoreSlot(false);
-            slot.setSlotType("SvImageNode");
+            slot.setSlotType("SvVideoNode");
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
-            slot.setFieldInspectorClassName("SvImageWellField");
-
-            //slot.setIsPromiseWrapped(true);
-            //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
+            slot.setFieldInspectorClassName("SvVideoWellField");
         }
+
     }
 
-    imageNode () {
+    videoNode () {
         return this;
     }
 
@@ -140,7 +117,7 @@
     initPrototype () {
         this.setNodeCanEditTitle(true);
         this.setNodeCanEditSubtitle(false);
-        this.setTitle("Image");
+        this.setTitle("Video");
         this.setSubtitle(null);
         this.setCanDelete(true);
         this.setNodeCanAddSubnode(true);
@@ -149,7 +126,7 @@
     }
 
     nodeThumbnailUrl () {
-        console.log("WARNING: SvImageNode.nodeThumbnailUrl() - need to reimplement caller to use asyncNodeThumbnailUrl()");
+        console.log("WARNING: SvVideoNode.nodeThumbnailUrl() - need to reimplement caller to use asyncNodeThumbnailUrl()");
         return null;
     }
 
@@ -168,18 +145,18 @@
     }
 
     async asyncNodeThumbnailUrl () {
-        const url = await this.asyncDataUrl();
-        return url;
+        // Videos don't have a simple thumbnail URL
+        // Could potentially implement video frame extraction later
+        return null;
     }
 
     finalInit () {
         super.finalInit();
-        this.setNodeViewClassName("SvImageWellView");
+        this.setNodeViewClassName("SvVideoWellView");
     }
 
     clear () {
         super.clear();
-        //this.setImageObject(null);
         return this;
     }
 
@@ -207,30 +184,20 @@
     value () {
         debugger;
         return this.dataURL();
-        //return this.blobValue().asyncAsImageObject();
     }
 
     setValue (/*value*/) {
         debugger;
-        //this.setDataURL(value);
         return this;
     }
 
-    hasImage () {
-        return this.valueHash() !== null || this.publicUrl() !== null; // we either have the blob or can get it from the blob pool with the hash
-    }
-
-    async asyncImageObject () {
-        const blob = await this.asyncBlobValue();
-        if (!blob) {
-            return null;
-        }
-        return await blob.asyncAsImageObject();
+    hasVideo () {
+        return this.valueHash() !== null || this.publicUrl() !== null;
     }
 
     setBlobFromDataURL (dataURL) {
         if (dataURL && dataURL.startsWith("http")) {
-            throw new Error("setDataURL: dataURL is public");
+            throw new Error("setBlobFromDataURL: dataURL is public");
         }
         const blob = Blob.fromDataUrl(dataURL);
         this.setValueHash(null);
@@ -241,18 +208,13 @@
 
     setDataURL (/*dataURL*/) {
         debugger;
-        /*
-        const blob = Blob.fromDataUrl(dataURL);
-        this.setValueHash(null);
-        this.setBlobValue(blob);
-        */
         return this;
     }
 
     async asyncDataURL () {
         const blob = this.blobValue();
         if (blob) {
-            return await blob.asyncAsDataUrl(); // returns a string if already loaded
+            return await blob.asyncAsDataUrl();
         }
         throw new Error("No blob value to get data URL from");
     }

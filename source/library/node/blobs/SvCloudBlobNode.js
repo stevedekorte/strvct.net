@@ -3,7 +3,8 @@
 /** * @module library.node.blobs
  */
 
-/** * @class SvCloudBlob
+/**
+ * @class SvCloudBlobNode
  * @extends SvBlobNode
  * @classdesc SvCloudBlobNode extends SvBlobNode to handle storing blobs in Google Cloud Storage.
  */

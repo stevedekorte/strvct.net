@@ -15,6 +15,7 @@
             const slot = this.newSlot("hasProcessed", false);
             slot.setSlotType("Boolean");
             slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(true);
         }
 
         // -- actions ---
@@ -95,6 +96,7 @@
             slot.setSyncsToView(true);
             slot.setSlotType("Boolean");
             slot.setIsSubnodeField(false);
+            slot.setIsInCloudJson(true);
         }
     }
 

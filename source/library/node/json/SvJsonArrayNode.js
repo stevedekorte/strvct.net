@@ -199,14 +199,14 @@
             const aClass = SvGlobals.get(className);
             if (aClass) {
                 if (aClass.isKindOf(SvGlobals.get("ConversationMessage"))) {
-                    debugger;
+                    //debugger;
                 }
                 aNode = aClass.fromJson(json, jsonPathComponents);
             }
         } else if (this.subnodeClasses().length === 1) {
             const aClass = this.subnodeClasses().first();
             if (aClass.isKindOf(SvGlobals.get("ConversationMessage"))) {
-                debugger;
+                //debugger;
             }
             aNode = aClass.clone().setJson(json, jsonPathComponents);
         } else {

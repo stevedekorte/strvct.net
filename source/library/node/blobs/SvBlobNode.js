@@ -3,10 +3,10 @@
 /** * @module library.node.blobs
  */
 
-/** * @class SvBlob
+/**
+ * @class SvBlobNode
  * @extends JsonGroup
- * @classdesc
- * SvBlobNode is a class that represents a binary blob in the system.
+ * @classdesc SvBlobNode is a class that represents a binary blob in the system.
  *
  * Lazy loading:
  * Instances keep a hash of the blob data which acts as a reference to the blob which can be lazy loaded from a BlobPool when needed.
@@ -18,8 +18,8 @@
  * A subclass of this one will add support for mirroring in a cloud storage system.
  * Issues: how do we garbage collect blobs that we might share with other user's clients?
  *
- 
- 
+
+
  */
 
 /**

@@ -565,7 +565,7 @@
      * @throws {Error} If the slot already exists.
      * @category Slot Creation
      */
-    newSlot (slotName, initialValue, allowOnInstance = false) {
+    newSlot (slotName, initialValue = null, allowOnInstance = false) {
         /*
         if (Reflect.ownKeys(this).contains(slotName)) {
             const msg = "WARNING: " + this.svType() + "." + slotName + " slot already exists"

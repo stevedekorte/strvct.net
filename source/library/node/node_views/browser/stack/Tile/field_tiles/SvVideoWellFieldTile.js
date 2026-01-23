@@ -89,7 +89,6 @@
         this.setMaxWidth("100em"); // get this from node instead?
 
         this.applyStyles(); // normally this would happen in updateSubviews
-        this.videoWellView().setVideoDataUrl(field.value());
         this.videoWellView().setIsEditable(field.valueIsEditable());
 
         // Hide the value view if we're still generating (showing dots in key)
@@ -99,6 +98,32 @@
             this.valueViewContainer().setDisplay("");
         }
 
+        // Handle video values asynchronously
+        this.asyncSyncFromNode(); // no await
+
+        return this;
+    }
+
+    /**
+     * @description Asynchronously synchronizes video data from the node.
+     * @returns {Promise<SvVideoWellFieldTile>} The synchronized instance.
+     * @category Synchronization
+     */
+    async asyncSyncFromNode () {
+        const videoWellView = this.videoWellView();
+        const field = this.node();
+        let value = field.value();
+
+        if (value === null || value === undefined) {
+            value = null;
+        } else if (value.asyncDataUrl) {
+            value = await value.asyncDataUrl();
+        } else if (typeof value !== "string") {
+            console.warn("SvVideoWellFieldTile.asyncSyncFromNode: unexpected value type", typeof value);
+            value = null;
+        }
+
+        videoWellView.setVideoDataUrl(value);
         return this;
     }
 

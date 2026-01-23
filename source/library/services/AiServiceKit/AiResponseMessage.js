@@ -52,6 +52,7 @@
             slot.setSlotType("Boolean");
             slot.setCanInspect(true);
             slot.setInspectorPath(this.svType());
+            slot.setIsInCloudJson(true);
         }
 
         /**

@@ -148,6 +148,7 @@
             slot.setSlotType("Boolean");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
+            slot.setIsInCloudJson(true);
         }
 
         /**
