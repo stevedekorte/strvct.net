@@ -795,6 +795,9 @@ Midjourney
    * @category Process
    */
     async start () {
+        // Performance monitoring: Start MJ API generation timing
+        performance.mark('mj-api-generation-start');
+
         this.setCompletionPromise(Promise.clone());
         this.setError(null);
         this.setStatus("submitting task...");
@@ -846,11 +849,19 @@ Midjourney
                 const taskId = responseJson.task_id || responseJson.messageId;
                 if (taskId) {
                     await this.addGenerationForTaskId(taskId, fullPrompt);
+
+                    // Performance monitoring: Complete MJ API generation timing
+                    performance.mark('mj-api-generation-end');
+                    performance.measure('mj-api-generation', 'mj-api-generation-start', 'mj-api-generation-end');
                 } else {
                     throw new Error(this.logPrefix() + " No task_id or messageId returned from ImaginePro");
                 }
             }
         } catch (error) {
+            // Performance monitoring: Mark end even on error
+            performance.mark('mj-api-generation-end');
+            performance.measure('mj-api-generation', 'mj-api-generation-start', 'mj-api-generation-end');
+
             this.setError(error);
             this.setStatus("Error: " + error.message);
             throw error;
