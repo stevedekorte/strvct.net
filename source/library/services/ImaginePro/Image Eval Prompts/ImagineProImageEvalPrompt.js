@@ -5,7 +5,7 @@
 /**
  * @class ImagineProImageEvalPrompt
  * @extends ImagineProImagePrompt
- * @classdesc An ImaginePro image eval prompt that generates images and evaluates them with OpenAI.
+ * @classdesc An ImaginePro image eval prompt that generates images and evaluates them with Gemini.
  *
  * How it works:
  * 1. Generates images using the parent ImagineProImagePrompt parent class

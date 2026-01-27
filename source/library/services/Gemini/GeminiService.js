@@ -284,11 +284,22 @@
         geminiBody.contents = messages.map((message) => {
             let role = message.role.toLowerCase();
             assert([this.assistantRoleName(), this.userRoleName()].includes(role), "Invalid message role: " + message.role);
+
+            // Handle both string content and array content (for vision API)
+            let parts;
+            if (Array.isArray(message.content)) {
+                // Content is already an array of parts (e.g., for vision API with text + images)
+                parts = message.content;
+            } else {
+                // Content is a simple string, wrap it in the parts format
+                parts = {
+                    text: message.content
+                };
+            }
+
             return {
                 role: role,
-                parts: {
-                    text: message.content
-                }
+                parts: parts
             };
         });
 
