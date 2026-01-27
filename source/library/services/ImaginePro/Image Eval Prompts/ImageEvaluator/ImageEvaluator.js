@@ -275,7 +275,9 @@
         - A score between 0.0 and 1.0 is given if it is present but not correctly depicted.
         - A score of 1.0 is given if it is present and correctly depicted.
     
-    Return your evaluation checklist and scores as a JSON object. Here's an example:
+    IMPORTANT: Return ONLY a valid JSON array as your response. Do not include any markdown formatting, code fences, or explanatory text. Just the raw JSON array.
+
+    Example format:
     [
         {
             "itemName": "glowing effect on sword",
@@ -296,6 +298,27 @@
 
     Please evaluate how well the image matches this prompt using the checklist methodology described in the system prompt.`;
         return userPrompt;
+    }
+
+    /**
+     * @description Strips markdown code fences from text if present.
+     * @param {string} text - Text that may contain markdown code fences
+     * @returns {string} Text with code fences removed
+     * @category Parsing
+     */
+    stripMarkdownCodeFences (text) {
+        // Remove markdown code fences like ```json ... ``` or ``` ... ```
+        const trimmed = text.trim();
+
+        // Check for code fence at start
+        const codeBlockRegex = /^```(?:json)?\s*\n([\s\S]*?)\n```$/;
+        const match = trimmed.match(codeBlockRegex);
+
+        if (match) {
+            return match[1].trim();
+        }
+
+        return text;
     }
 
     async asyncComposeBodyJson () {
@@ -367,12 +390,16 @@
             throw new Error("No response received from Gemini");
         }
 
+        // Strip markdown code fences if present (Gemini often wraps JSON in ```json ... ```)
+        const cleanedText = this.stripMarkdownCodeFences(responseText);
+
         // Parse the checklist JSON from the response text
         let checklistData;
         try {
-            checklistData = JSON.parse(responseText);
+            checklistData = JSON.parse(cleanedText);
         } catch (parseError) {
-            console.error("Failed to parse checklist JSON:", responseText);
+            console.error("Failed to parse checklist JSON:", cleanedText);
+            console.error("Original response:", responseText);
             console.error("parseError:", parseError);
             throw new Error("Failed to parse evaluation results from Gemini - invalid JSON");
         }
