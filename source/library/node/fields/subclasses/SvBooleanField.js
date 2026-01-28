@@ -3,11 +3,10 @@
 /** * @module library.node.fields.subclasses
  */
 
-/** * @class SvBooleanField
+/**
+ *  @class SvBooleanField
  * @extends SvField
  * @classdesc SvBooleanField represents a boolean field in the system.
- 
- 
  */
 
 /**

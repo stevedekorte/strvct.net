@@ -129,7 +129,7 @@
     }
 
     copyPrompt () {
-        this.outputString().copyToClipboard();
+        this.outputString().asyncCopyToClipboard();
     }
 
     setInputFileName (fileName) {

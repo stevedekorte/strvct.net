@@ -3,12 +3,11 @@
 /** * @module library.node.fields.subclasses
  */
 
-/** * @class SvJsonField
+/**
+ * @class SvJsonField
  * @extends SvField
  * @classdesc SvJsonField is a specialized field for handling JSON data.
  * It provides functionality to set and retrieve JSON values, and interact with SvJsonNode.
- 
- 
  */
 
 /**

@@ -789,7 +789,7 @@
    * @returns {AiRequest}
    */
     copyBody () {
-        this.body().copyToClipboard();
+        this.body().asyncCopyToClipboard();
         return this;
     }
 
@@ -801,7 +801,7 @@
     copyMessages () {
         const messages = this.bodyJson().messages;
         const content = JSON.stringify(messages, null, 2);
-        content.copyToClipboard();
+        content.asyncCopyToClipboard();
         return this;
     }
 

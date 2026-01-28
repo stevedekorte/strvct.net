@@ -313,16 +313,38 @@
                 if (stub) {
                     collection.addSubnode(stub);
                 }
-            } else if (this.shouldUpdateItem(localItem, sourceMetadata)) {
-                // Mark existing item as needing refresh
-                // We don't fetch yet - just mark it
-                if (localItem.setFetchState && localItem.isFetched && localItem.isFetched()) {
-                    // Item was fetched before but cloud has newer - mark for refetch
-                    localItem.setFetchState("unfetched");
+            } else {
+                // Existing item - always set content source so it can fetch if needed
+                if (localItem.setContentSource) {
+                    localItem.setContentSource(this);
                 }
-                if (localItem.setCloudLastModified && sourceMetadata.lastModified) {
-                    localItem.setCloudLastModified(sourceMetadata.lastModified);
+
+                if (this.shouldUpdateItem(localItem, sourceMetadata)) {
+                    // Mark existing item as needing refresh
+                    // We don't fetch yet - just mark it
+                    if (localItem.setFetchState && localItem.isFetched && localItem.isFetched()) {
+                        // Item was fetched before but cloud has newer - mark for refetch
+                        localItem.setFetchState("unfetched");
+                    }
+                    if (localItem.setCloudLastModified && sourceMetadata.lastModified) {
+                        localItem.setCloudLastModified(sourceMetadata.lastModified);
+                    }
                 }
+            }
+        }
+
+        // Remove local items that were deleted from cloud
+        // (items that exist locally, were previously synced, but are no longer in cloud manifest)
+        const cloudIds = new Set(subnodeIds);
+        for (const localItem of collection.subnodes().slice()) { // slice to avoid mutation during iteration
+            if (!cloudIds.has(localItem.jsonId())) {
+                // Item not in cloud manifest
+                if (localItem.existsInCloud && localItem.existsInCloud()) {
+                    // Item was synced before but no longer in cloud = deleted remotely
+                    console.log("CLOUDSYNC [SvSyncCollectionSource] Removing locally item deleted from cloud:", localItem.jsonId());
+                    collection.removeSubnode(localItem);
+                }
+                // If item doesn't exist in cloud (never synced), keep it as a new local item
             }
         }
 
@@ -500,6 +522,7 @@
 
     /**
      * Determines if a local item should be updated from source.
+     * Detects conflicts when both local and cloud have been modified.
      * @param {Object} localItem - The local item node
      * @param {Object} sourceMetadata - Metadata from the source manifest
      * @returns {Boolean}
@@ -511,8 +534,44 @@
             return false;
         }
 
-        const localModified = localItem.cloudLastModified ? localItem.cloudLastModified() : 0;
-        return sourceMetadata.lastModified > localModified;
+        const localCloudTimestamp = localItem.cloudLastModified ? localItem.cloudLastModified() : 0;
+        const cloudIsNewer = sourceMetadata.lastModified > localCloudTimestamp;
+
+        if (!cloudIsNewer) {
+            return false; // Cloud hasn't changed since last sync
+        }
+
+        // Check for conflict: cloud is newer AND local has unsaved changes
+        // Only check for conflict if item was previously synced from cloud (has cloudLastModified)
+        // If cloudLastModified is null, this is a first-time sync, not a conflict
+        const wasPreiouslySyncedFromCloud = localItem.cloudLastModified && localItem.cloudLastModified();
+        const hasLocalChanges = localItem.localLastModified && localItem.localLastModified() > localCloudTimestamp;
+
+        if (wasPreiouslySyncedFromCloud && hasLocalChanges) {
+            // True conflict: item was synced before, modified locally, and cloud has newer version
+            this.handleSyncConflict(localItem, sourceMetadata);
+            return false; // Don't overwrite local changes
+        }
+
+        return true; // Safe to update from cloud
+    }
+
+    /**
+     * Handles a sync conflict where both local and cloud have changes.
+     * Default behavior: keep local changes (will be uploaded on next sync).
+     * Subclasses can override for custom conflict resolution.
+     * @param {Object} localItem - The local item with unsaved changes
+     * @param {Object} sourceMetadata - Metadata from cloud
+     * @category Sync
+     */
+    handleSyncConflict (localItem, sourceMetadata) {
+        console.warn("CLOUDSYNC [SvSyncCollectionSource] Conflict detected for item:", localItem.jsonId(),
+            "- Local modified:", localItem.localLastModified ? localItem.localLastModified() : "unknown",
+            "- Cloud modified:", sourceMetadata.lastModified,
+            "- Keeping local changes (will upload on next sync)");
+        // Default: keep local changes. They will be uploaded on the next syncToSource.
+        // This is a "local wins" strategy. Subclasses can override for other behaviors
+        // like prompting the user, merging, or creating a copy.
     }
 
     /**
@@ -666,14 +725,10 @@
         const message = "A cloud-stored item could not be loaded due to a data format change. " +
             "The incompatible cloud data has been removed. Some data may have been lost. " +
             "(Item: " + itemId + ")";
+        console.warn("CLOUD SYNC ERROR: " + message);
 
-        // Try to show a toast notification if available
-        if (typeof SvNotification !== "undefined" && SvNotification.shared) {
-            SvNotification.shared().showWarning(message);
-        } else {
-            console.warn("CLOUD SYNC ERROR: " + message);
-            // Could also use alert() as last resort, but that's disruptive
-        }
+        throw new Error(message);
+        //this.postNoteNamed("cloudItemError", message);
     }
 
 }.initThisClass());

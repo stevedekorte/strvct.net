@@ -7,8 +7,6 @@
  * @extends SvField
  * @classdesc An abstraction of a UI visible action that can be performed on an object.
  * The value is the action method name, the target is the field owner.
- 
- 
  */
 
 /**

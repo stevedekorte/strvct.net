@@ -979,7 +979,7 @@
    * @returns {AiRequest}
    */
     copyBody () {
-        this.body().copyToClipboard();
+        this.body().asyncCopyToClipboard();
         return this;
     }
 
@@ -989,7 +989,7 @@
    * @returns {AiRequest}
    */
     copyResponseText () {
-        this.responseText().copyToClipboard();
+        this.responseText().asyncCopyToClipboard();
         return this;
     }
 

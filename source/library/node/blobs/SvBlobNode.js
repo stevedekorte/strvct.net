@@ -18,8 +18,6 @@
  * A subclass of this one will add support for mirroring in a cloud storage system.
  * Issues: how do we garbage collect blobs that we might share with other user's clients?
  *
-
-
  */
 
 /**
@@ -38,6 +36,7 @@
             slot.setAllowsNullValue(true);
             slot.setSyncsToView(true);
             slot.setShouldStoreSlot(true);
+            slot.setIsInCloudJson(true); // CLOUD STORED
             slot.setSlotType("String");
             slot.setIsSubnodeField(true);
             slot.setDuplicateOp("duplicate");
@@ -53,6 +52,7 @@
             slot.setAllowsNullValue(true);
             slot.setSyncsToView(true);
             slot.setShouldStoreSlot(false); // Don't persist - only hash is stored
+            slot.setIsInCloudJson(false); // NOT CLOUD STORED
             slot.setSlotType("Blob");
             slot.setIsSubnodeField(false);
             slot.setDuplicateOp("duplicate");
@@ -88,7 +88,6 @@
             slot.setSlotType("Promise");
             slot.setIsSubnodeField(true);
         }
-
 
     }
 

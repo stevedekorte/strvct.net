@@ -6,8 +6,8 @@
 /** * @class Object_ideal
  * @extends Object
  *
- 
- 
+
+
  */
 
 /**
@@ -388,6 +388,16 @@
         }
 
         return cleanJson(dup);
+    }
+
+    asyncCopyToClipboard () {
+        try {
+            let s = JSON.stableStringifyWithStdOptions(this, null, 2);
+            s.asyncCopyToClipboard();
+        } catch (error) {
+            console.error("Error while copying object as JSON to clipboard:", error);
+        }
+        return this;
     }
 
 }).initThisCategory();

@@ -176,7 +176,7 @@
             this.onError(error);
             this.setStopReason(json.error.type);
             if (json.error.message === "Output blocked by content filtering policy") {
-                //this.fullContent().copyToClipboard();
+                //this.fullContent().asyncCopyToClipboard();
             }
             this.abort();
             return;

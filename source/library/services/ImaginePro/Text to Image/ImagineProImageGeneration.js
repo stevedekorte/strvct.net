@@ -99,6 +99,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSlotType("Object");
             slot.setCanInspect(true);
+            slot.setIsInCloudJson(false); // Delegates are runtime refs, would create circular references
         }
 
         /**
@@ -165,6 +166,15 @@
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
         this.setCanDelete(true);
+    }
+
+    finalInit () {
+        super.finalInit();
+        // Re-establish delegate relationships after cloud deserialization
+        // (delegates are excluded from cloud JSON to avoid circular references)
+        this.images().subnodes().forEach(image => {
+            image.setDelegate(this);
+        });
     }
 
     /**

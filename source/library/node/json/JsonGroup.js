@@ -305,8 +305,16 @@
         // Options:
         // - slots: Array of slots to serialize (defaults to jsonSchemaSlots())
         // - jsonMethodName: Method name to call on nested objects (defaults to "asJson")
-        const slots = options.slots || this.thisClass().jsonSchemaSlots();
         const jsonMethodName = options.jsonMethodName || "asJson";
+        let slots;
+
+        if (jsonMethodName === "asCloudJson") {
+            slots = this.thisClass().cloudJsonSchemaSlots();
+        } else if (jsonMethodName === "asJson") {
+            slots = this.thisClass().jsonSchemaSlots();
+        } else {
+            throw new Error("invalid jsonMethodName: " + jsonMethodName);
+        }
 
         const dict = {};
 
@@ -317,6 +325,7 @@
                     const result = method.call(sn);
                     if (result !== undefined) { // skip things like images
                         console.log("calcJson() " + this.svType() + " subnode: " + sn.title());
+                        assert(Type.isJsonType(result), "result is not a JSON object: " + JSON.stringify(result));
                         dict[sn.title()] = result;
                     }
                 }
@@ -324,15 +333,37 @@
         } else {
             slots.forEach(slot => {
                 const slotName = slot.name();
+                if (slotName === "aiChat") {
+                    debugger;
+                }
                 const value = slot.onInstanceGetValue(this);
                 if (value && value[jsonMethodName]) {
                     const result = value[jsonMethodName]();
                     if (result !== undefined) { // skip values that return undefined (e.g., SvField objects)
+                        assert(Type.isJsonType(result), "result is not a JSON type: " + JSON.stringify(result));
                         dict[slotName] = result;
                     }
                 }
-                else {
+                else if (value === null || value === undefined || typeof value !== "object") {
+                    // Only include primitives directly (null, undefined, strings, numbers, booleans)
+                    assert(Type.isJsonType(value), "value is not a JSON type: " + JSON.stringify(value));
                     dict[slotName] = value;
+                }
+                else if (Array.isArray(value)) {
+                    // Plain arrays: serialize each element
+                    const result = value.map(item => {
+                        if (item && item[jsonMethodName]) {
+                            return item[jsonMethodName]();
+                        }
+                        return item; // primitives or null
+                    }).filter(item => item !== undefined);
+                    assert(Type.isJsonType(result), "array result is not a JSON type");
+                    dict[slotName] = result;
+                }
+                else {
+                    // Object without json method - skip to avoid circular reference issues
+                    // This catches SvField and other objects that should have asJson/asCloudJson
+                    console.warn("calcJson: skipping object without " + jsonMethodName + " method:", slotName, value?.constructor?.name);
                 }
             });
         }
@@ -428,13 +459,13 @@
 
     /**
      * @description Returns JSON representation for cloud storage.
-     * Default implementation calls asJson(). Subclasses like SyncableJsonGroup
-     * override this to use cloudJsonSchemaSlots().
+     * Uses asCloudJson on nested objects to properly exclude cloud-excluded slots.
      * @returns {Object} JSON object for cloud storage
      * @category JSON
      */
     asCloudJson () {
-        let json = this.asJson();
+        // Use jsonMethodName: "asCloudJson" so nested objects also use asCloudJson()
+        const json = this.calcJson({ jsonMethodName: "asCloudJson" });
         json._type = this.thisClass().svType();
         assert(Type.isObject(json) && Object.keys(json).length > 0, "asCloudJson() returned an empty JSON object");
         return json;
@@ -473,7 +504,7 @@
     }
 
     copyJsonToClipboard () {
-        JSON.stringify(this.asJson(), null, 2).copyToClipboard();
+        JSON.stringify(this.asJson(), null, 2).asyncCopyToClipboard();
         return this;
     }
 

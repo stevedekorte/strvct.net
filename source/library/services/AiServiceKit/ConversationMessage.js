@@ -604,6 +604,10 @@
         let json = this.calcJson(options);
         json._type = this.thisClass().svType();
         assert(Type.isObject(json) && Object.keys(json).length > 0, "asCloudJson() returned an empty JSON object");
+        console.log("--------------------------------");
+
+        console.log("asCloudJson()", JSON.stringify(json, null, 2)); // makes sure it's not circular
+        console.log("--------------------------------");
         return json;
     }
 

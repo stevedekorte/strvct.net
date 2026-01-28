@@ -2004,6 +2004,7 @@
         jsonArchiveSlots.forEach(slot => {
             const k = slot.getterName();
             const v = slot.onInstanceGetValue(this);
+            assert(Type.isJsonType(v), "value is not a JSON type, it's a '" + Type.typeName(v) + "'");
             dict[k] = v;
         });
 

@@ -976,7 +976,7 @@ class SvCliBrowser extends Object {
         const selectedItemText = column.items[column.selected];
         const cleanText = this._stripBlessedTags(selectedItemText);
 
-        this._copyToClipboard(cleanText, "Copied current item to clipboard");
+        this._asyncCopyToClipboard(cleanText, "Copied current item to clipboard");
     }
 
     _copyAllText () {
@@ -1003,10 +1003,10 @@ class SvCliBrowser extends Object {
             }
         });
 
-        this._copyToClipboard(allText, "All visible text copied to clipboard");
+        this._asyncCopyToClipboard(allText, "All visible text copied to clipboard");
     }
 
-    _copyToClipboard (text, successMessage) {
+    _asyncCopyToClipboard (text, successMessage) {
         try {
             const { spawn } = require("child_process");
             const process = spawn("pbcopy");

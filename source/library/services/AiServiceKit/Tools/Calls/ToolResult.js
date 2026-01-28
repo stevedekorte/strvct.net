@@ -168,6 +168,7 @@ See schema for the particular tool call (whose name is in the toolName property)
     }
 
     composeResponseString () {
+        debugger;
         const json = this.jsonArchive();
         let content = JSON.stableStringifyWithStdOptions(json, null, 2);
         //content = "![CDATA[${" + content + "]]>";
@@ -225,7 +226,7 @@ See schema for the particular tool call (whose name is in the toolName property)
     }
 
     copyExtraMessage () {
-        this.extraMessage().copyToClipboard();
+        this.extraMessage().asyncCopyToClipboard();
     }
 
 

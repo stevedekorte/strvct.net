@@ -3,11 +3,10 @@
 /** * @module library.node.fields.subclasses.date
  */
 
-/** * @class SvDateNode
+/**
+ * @class SvDateNode
  * @extends SvSummaryNode
  * @classdesc SvDateNode represents a date field in the application. It provides functionality to select and display dates.
- 
- 
  */
 
 /**

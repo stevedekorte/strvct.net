@@ -36,6 +36,7 @@
             slot.setInspectorPath("");
             slot.setAllowsNullValue(false);
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
@@ -55,6 +56,7 @@
             slot.setLabel("Prompt Suffix");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setCanEditInspection(true);
@@ -68,6 +70,7 @@
             slot.setLabel("Full Prompt");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
         }
@@ -84,6 +87,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Model");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
@@ -102,6 +106,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Process Mode");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
@@ -130,6 +135,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Aspect Ratio");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setSlotType("String");
@@ -160,6 +166,7 @@
             slot.setLabel("Stylize");
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
+            //slot.setIsInCloudJson(true);
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
             slot.setIsSubnodeField(true);
@@ -194,6 +201,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Chaos");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
@@ -218,6 +226,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Weird");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
@@ -234,6 +243,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Seed");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setIsSubnodeField(true);
@@ -253,6 +263,7 @@
             slot.setInspectorPath("Settings");
             slot.setLabel("Quality");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(true);
             slot.setSyncsToView(true);
             slot.setDuplicateOp("duplicate");
             slot.setValidItems(validItems);
@@ -283,7 +294,7 @@ Midjourney
             Flag: --sw
             Type: integer
             Valid range: 0–1000 (default 100)
-            */
+        */
         {
             // style weight
             const validItems = [
@@ -512,6 +523,7 @@ Midjourney
             const slot = this.newSlot("delegate", null);
             slot.setSlotType("Object");
             slot.setShouldStoreSlot(true);
+            //slot.setIsInCloudJson(false); // Delegates are runtime refs, would create circular references
         }
 
 
@@ -604,6 +616,12 @@ Midjourney
         if (this.seed() === null) {
             this.pickRandomSeed();
         }
+
+        // Re-establish delegate relationships after cloud deserialization
+        // (delegates are excluded from cloud JSON to avoid circular references)
+        this.generations().subnodes().forEach(gen => {
+            gen.setDelegate(this);
+        });
     }
 
     appendStatus (status) {

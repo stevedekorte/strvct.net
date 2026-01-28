@@ -117,11 +117,11 @@
     needsCloudSync () {
         const local = this.localLastModified();
         const cloud = this.cloudLastModified();
-        if (!local) {
-            return false;
-        }
         if (!cloud) {
-            return true; // Never synced to cloud
+            return true; // Not in cloud = needs sync
+        }
+        if (!local) {
+            return false; // In cloud, but not locally modified
         }
         return local > cloud;
     }
@@ -185,21 +185,8 @@
     }
 
     // --- Cloud JSON Serialization ---
-
-    /**
-     * @description Returns JSON representation for cloud storage.
-     * Uses cloudJsonSchemaSlots() which includes slots with isInCloudJson: true.
-     * By default, isInCloudJson defaults to isInJsonSchema, so this includes
-     * all JSON schema slots plus any slots explicitly marked for cloud storage.
-     * @returns {Object} JSON object for cloud storage
-     * @category Sync
-     */
-    asCloudJson () {
-        return this.calcJson({
-            slots: this.thisClass().cloudJsonSchemaSlots(),
-            jsonMethodName: "asCloudJson"
-        });
-    }
+    // Note: asCloudJson() is inherited from JsonGroup.
+    // Filtering happens at the value level - each object's asCloudJson() decides what to include.
 
     /**
      * @description Sets state from cloud JSON data.
@@ -251,12 +238,12 @@
             } catch (error) {
                 this.setFetchState("fetchError");
                 console.error("Failed to fetch content for " + this.svTypeId() + ": " + error.message);
+                debugger;
 
                 // Handle incompatible cloud data format - notify user and delete cloud item
                 if (source.handleCloudItemError) {
                     await source.handleCloudItemError(this.jsonId(), error);
                 }
-
                 throw error;
             }
         })();
@@ -288,7 +275,9 @@
      * @category Sync
      */
     didUpdateNode () {
-        // Only mark as locally modified if we're a fetched item, not a stub
+        // Only mark as locally modified if we're a fully fetched item
+        // Don't track during fetch (would interfere with fetch completion check)
+        // Don't track on unfetched stubs
         if (this.isFetched()) {
             this.touchLocalModified();
         }

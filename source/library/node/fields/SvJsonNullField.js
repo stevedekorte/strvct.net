@@ -3,11 +3,10 @@
 /** * @module library.node.fields.json
  */
 
-/** * @class SvJsonNullField
+/**
+ * @class SvJsonNullField
  * @extends SvField
  * @classdesc Represents a JSON null field in the application.
- 
- 
  */
 
 /**

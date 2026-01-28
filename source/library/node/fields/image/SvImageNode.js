@@ -1,9 +1,11 @@
 "use strict";
 
-/** * @module library.node.nodes
+/**
+ * @module library.node.nodes
  */
 
-/** * @class SvImageNode
+/**
+ * @class SvImageNode
  * @extends SvStorableNode
  * @classdesc SvImageNode class for handling image nodes.
  */
@@ -197,6 +199,7 @@
      * @category Data Serialization
      */
     jsonArchive () {
+        debugger;
         return undefined;
     }
 

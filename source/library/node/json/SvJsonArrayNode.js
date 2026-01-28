@@ -292,12 +292,14 @@
      */
     calcJson (options = {}) {
         const jsonMethodName = options.jsonMethodName || "asJson";
-        const SvField = SvGlobals.get("SvField");
+        //const SvField = SvGlobals.get("SvField");
         return this.subnodes().map(sn => {
-            // Skip field objects - they are transient UI objects
+            /*
+            // Skip field objects - they are transient UI objects - Not true, for example in UoAiChat the subnodes are ConversationMessages and we need to store them
             if (SvField && sn.isKindOf(SvField)) {
                 return undefined;
             }
+            */
             const method = sn[jsonMethodName];
             if (method) {
                 let json = method.call(sn);

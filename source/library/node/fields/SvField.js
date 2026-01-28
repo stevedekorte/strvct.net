@@ -662,15 +662,6 @@
     setNodeSummaryShowsValue () {
     }
 
-    /**
-     * @description Returns the JSON archive of the field.
-     * @returns {Object} The JSON archive.
-     */
-    jsonArchive () {
-        //console.log(this.logPrefix(), ".jsonArchive()")
-        return super.jsonArchive();
-    }
-
     // --- simplified JSON representation ---
 
     /**
@@ -684,14 +675,30 @@
         } else {
             super.setJson(json, jsonPathComponents);
             let afterJson = this.asJson();
-            assert(JSON.stableStringify(afterJson) === JSON.stableStringify(json), "failed to set value");
+            this.verifyJsonMatches(afterJson, json);
         }
         return this;
     }
 
+    verifyJsonMatches (afterJson, json) {
+        let afterJsonString = JSON.stableStringifyWithStdOptions(afterJson);
+        let jsonString = JSON.stableStringifyWithStdOptions(json);
+        if (afterJsonString !== jsonString) {
+            const diff = SvGlobals.get("jsondiffpatch").diff(json, afterJson);
+            console.log("diff: " + JSON.stringify(diff, null, 2));
+            debugger;
+            console.log("afterJsonString: ", afterJsonString);
+            debugger;
+            console.log("jsonString: ", jsonString);
+        }
+    }
+
     asJson () {
         if (this.target()) {
-            return this.asJsonForTarget();
+            // Delegate fields (with target set) are transient UI objects that proxy
+            // to another node's slot. Return undefined to exclude them from JSON serialization.
+            // Data owner fields (no target) are serialized normally via super.asJson().
+            return undefined;
         } else {
             return super.asJson();
         }

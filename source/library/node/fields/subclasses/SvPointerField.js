@@ -112,13 +112,8 @@
      * @category Data Access
      */
     jsonArchive () {
+        debugger;
         return this.proxyGetter("jsonArchive", undefined);
-        /*
-        if (this.value() && this.value().jsonArchive) {
-            return this.value().jsonArchive();
-        }
-        return undefined;
-        */
     }
 
     summary () {

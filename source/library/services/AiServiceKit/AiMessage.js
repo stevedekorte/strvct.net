@@ -329,18 +329,6 @@
     }
 
     /**
-   * @description Generates a JSON message for updates.
-   * @returns {Object} JSON object with name and payload.
-   * @category JSON
-   */
-    jsonMsgForSet () {
-        return {
-            name: "updateAiChatMessage",
-            payload: this.jsonArchive()
-        };
-    }
-
-    /**
    * @description Cleans up the message if it's incomplete.
    * @category Cleanup
    */
