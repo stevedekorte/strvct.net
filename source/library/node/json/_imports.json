@@ -3,7 +3,7 @@
     "SvJsonNode.js",
     "SvJsonArrayNode.js",
     "SvJsonDictionaryNode.js",
-    "JsonGroup.js",
-    "SyncableJsonGroup.js",
+    "SvJsonGroup.js",
+    "SvSyncableJsonGroup.js",
     "patches/_imports.json"
 ]

@@ -5,7 +5,7 @@
 
 /**
  * @module library.node.fields.json.patches
- * @class JsonGroup_patches
+ * @class SvJsonGroup_patches
  * @extends JsonGroup
  * @classdesc Category class that adds native JSON patch support to JsonGroup.
  */
@@ -13,7 +13,7 @@
 /**
 
  */
-(class JsonGroup_patches extends JsonGroup {
+(class SvJsonGroup_patches extends SvJsonGroup {
 
     // --- Native JSON Patch Support ---
 
@@ -36,7 +36,7 @@
             }
             return this;
         } catch (error) {
-            if (error instanceof JsonPatchError) {
+            if (error instanceof SvJsonPatchError) {
                 // Enhanced error handling for LLM consumption
                 const errorDetails = error.toDetailedMessage();
                 const enhancedError = new Error(`JSON Patch failed: ${JSON.stringify(errorDetails, null, 2)}`);
@@ -67,7 +67,7 @@
                 }
 
                 const nodeType = targetInfo.node.svType ? targetInfo.node.svType() : typeof targetInfo.node;
-                throw new JsonPatchError(
+                throw new SvJsonPatchError(
                     `Target node type '${nodeType}' does not support JSON patch operations. Only JSON collection nodes (JsonGroup, SvJsonArrayNode) with patch categories or plain Object slots support direct operations.`,
                     operation,
                     pathSegments,
@@ -80,12 +80,12 @@
             const patchRoot = rootNode || this;
             return targetInfo.node.executeDirectOperation(operation.op, targetInfo.key, operation.value, operation, patchRoot);
         } catch (error) {
-            if (error instanceof JsonPatchError) {
+            if (error instanceof SvJsonPatchError) {
                 error.operation = operation;
                 throw error;
             }
 
-            throw new JsonPatchError(
+            throw new SvJsonPatchError(
                 `Failed to apply patch: ${error.message}`,
                 operation,
                 this.parsePathSegments(operation.path),
@@ -154,7 +154,7 @@
             const childNode = this.childNodeForSegment(nextSegment);
 
             if (!childNode) {
-                throw new JsonPatchError(
+                throw new SvJsonPatchError(
                     `No child found for segment '${nextSegment}'`,
                     null,
                     fullPath,
@@ -182,7 +182,7 @@
                     }
 
                     const nodeType = childNode.svType ? childNode.svType() : typeof childNode;
-                    throw new JsonPatchError(
+                    throw new SvJsonPatchError(
                         `Cannot navigate further from '${nextSegment}' - node type '${nodeType}' does not support path navigation`,
                         null,
                         fullPath,
@@ -195,11 +195,11 @@
                 return { node: childNode, parentNode: this, slotName: nextSegment };
             }
         } catch (error) {
-            if (error instanceof JsonPatchError) {
+            if (error instanceof SvJsonPatchError) {
                 throw error;
             }
 
-            throw new JsonPatchError(
+            throw new SvJsonPatchError(
                 `Failed to navigate to '${nextSegment}': ${error.message}`,
                 null,
                 fullPath,
@@ -230,7 +230,7 @@
             const childNode = this.childNodeForSegment(nextSegment);
 
             if (!childNode) {
-                throw new JsonPatchError(
+                throw new SvJsonPatchError(
                     `No child found for segment '${nextSegment}'`,
                     null,
                     fullPath,
@@ -246,7 +246,7 @@
                 // Child node is likely a primitive field or other non-collection type
                 // If there's still path remaining, this is an error
                 if (remainingPath.length > 0) {
-                    throw new JsonPatchError(
+                    throw new SvJsonPatchError(
                         `Cannot navigate further from '${nextSegment}' - node type '${childNode.svType()}' does not support path navigation`,
                         null,
                         fullPath,
@@ -259,11 +259,11 @@
             }
 
         } catch (error) {
-            if (error instanceof JsonPatchError) {
+            if (error instanceof SvJsonPatchError) {
                 throw error;
             }
 
-            throw new JsonPatchError(
+            throw new SvJsonPatchError(
                 `Error navigating to '${nextSegment}': ${error.message}`,
                 null,
                 fullPath,
@@ -332,7 +332,7 @@
                 break;
             case "test":
                 if (newObject[key] !== value) {
-                    throw new JsonPatchError(
+                    throw new SvJsonPatchError(
                         `Test operation failed: expected ${JSON.stringify(value)}, got ${JSON.stringify(newObject[key])}`,
                         operation,
                         null,
@@ -342,7 +342,7 @@
                 }
                 return parentNode;
             default:
-                throw new JsonPatchError(
+                throw new SvJsonPatchError(
                     `Unsupported operation '${op}' for plain Object slots`,
                     operation,
                     null,
@@ -354,7 +354,7 @@
         // Update the slot with the modified object
         const slot = parentNode.getSlot(slotName);
         if (!slot) {
-            throw new JsonPatchError(
+            throw new SvJsonPatchError(
                 `Cannot find slot '${slotName}' to update`,
                 operation,
                 null,

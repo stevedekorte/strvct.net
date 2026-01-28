@@ -2,12 +2,12 @@
 
 /**
  * @module library.node.json
- * @class SyncableJsonGroup
+ * @class SvSyncableJsonGroup
  * @extends JsonGroup
- * @classdesc A JsonGroup that supports cloud syncing and lazy loading.
+ * @classdesc A SvJsonGroup that supports cloud syncing and lazy loading.
  * Adds fetch state management, sync timestamps, and content source references.
  */
-(class SyncableJsonGroup extends JsonGroup {
+(class SvSyncableJsonGroup extends SvJsonGroup {
 
     initPrototypeSlots () {
         // --- Lazy Fetching Support ---
@@ -137,7 +137,7 @@
 
     /**
      * @description Marks the item as locally modified. Call when content changes.
-     * @returns {SyncableJsonGroup} This instance
+     * @returns {SvSyncableJsonGroup} This instance
      * @category Sync
      */
     touchLocalModified () {
@@ -148,7 +148,7 @@
     /**
      * @description Called after successfully syncing TO the cloud.
      * @param {Number} [timestamp=Date.now()] - The sync timestamp
-     * @returns {SyncableJsonGroup} This instance
+     * @returns {SvSyncableJsonGroup} This instance
      * @category Sync
      */
     didSyncToCloud (timestamp = Date.now()) {
@@ -160,7 +160,7 @@
      * @description Called after successfully syncing FROM the cloud.
      * Sets both timestamps to indicate local and cloud are in sync.
      * @param {Number} cloudTimestamp - The cloud's lastModified timestamp
-     * @returns {SyncableJsonGroup} This instance
+     * @returns {SvSyncableJsonGroup} This instance
      * @category Sync
      */
     didSyncFromCloud (cloudTimestamp) {
@@ -193,7 +193,7 @@
      * By default, calls setJson(). Subclasses can override to customize
      * how cloud data is applied (e.g., merge instead of replace).
      * @param {Object} json - The JSON data from cloud
-     * @returns {SyncableJsonGroup} This instance
+     * @returns {SvSyncableJsonGroup} This instance
      * @category Sync
      */
     setCloudJson (json) {
@@ -204,7 +204,7 @@
     /**
      * @description Ensures content is fetched. If already fetched, returns immediately.
      * If unfetched, triggers fetch from contentSource.
-     * @returns {Promise<SyncableJsonGroup>} This node after fetching completes
+     * @returns {Promise<SvSyncableJsonGroup>} This node after fetching completes
      * @category Fetching
      */
     async asyncEnsureFetched () {

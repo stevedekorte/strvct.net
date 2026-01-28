@@ -23,7 +23,7 @@
 /**
 
  */
-(class SvBlobNode extends JsonGroup {
+(class SvBlobNode extends SvJsonGroup {
 
     /**
      * Initializes the prototype slots for the SvBlobNode class.

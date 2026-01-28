@@ -1,5 +1,5 @@
 [
-    "JsonPatchError.js",
+    "SvJsonPatchError.js",
     "SvJsonArrayNode_patches.js",
-    "JsonGroup_patches.js"
+    "SvJsonGroup_patches.js"
 ]

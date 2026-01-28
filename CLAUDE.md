@@ -92,7 +92,7 @@ Categories are implemented as classes that extend the target class and use `.ini
 #### Category Naming Convention
 
 - Use underscore to separate the base class name from the category name
-- Examples: `JsonGroup_patches.js`, `SvJsonArrayNode_patches.js`, `JsonGroup_clientState.js`
+- Examples: `SvJsonGroup_patches.js`, `SvJsonArrayNode_patches.js`, `JsonGroup_clientState.js`
 - Category names should describe the functionality they add
 
 #### Benefits of Categories
@@ -107,17 +107,17 @@ Categories are implemented as classes that extend the target class and use `.ini
 
 ```javascript
 // JsonGroup.js - Core JSON functionality
-(class JsonGroup extends SvJsonIdNode {
+(class SvJsonGroup extends SvJsonIdNode {
     asJson() { /* core JSON methods */ }
 }.initThisClass());
 
-// JsonGroup_patches.js - JSON Patch functionality
-(class JsonGroup_patches extends JsonGroup {
+// SvJsonGroup_patches.js - JSON Patch functionality
+(class SvJsonGroup_patches extends SvJsonGroup {
     applyJsonPatches(patches) { /* patch methods */ }
 }.initThisCategory());
 
 // JsonGroup_clientState.js - Tool call functionality  
-(class JsonGroup_clientState extends JsonGroup {
+(class JsonGroup_clientState extends SvJsonGroup {
     patchClientState(toolCall) { /* tool methods */ }
 }.initThisCategory());
 ```

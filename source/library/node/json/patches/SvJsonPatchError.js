@@ -3,20 +3,20 @@
 /** * @module library.node.fields.json
  */
 
-/** * @class JsonPatchError
+/** * @class SvJsonPatchError
  * @extends Error
  * @classdesc Custom error class for JSON patch operations with detailed context information.
- 
- 
+
+
  */
 
 /**
 
  */
-(class JsonPatchError extends Error {
+(class SvJsonPatchError extends Error {
 
     /**
-     * @description Creates a new JsonPatchError with detailed context.
+     * @description Creates a new SvJsonPatchError with detailed context.
      * @param {string} message - The error message.
      * @param {Object} operation - The JSON patch operation that failed.
      * @param {Array} pathSegments - The path segments being processed.
@@ -96,7 +96,7 @@
         }
 
         super(fullMessage);
-        this.name = "JsonPatchError";
+        this.name = "SvJsonPatchError";
         this.operation = operation;
         this.pathSegments = pathSegments;
         this.currentSegment = currentSegment;

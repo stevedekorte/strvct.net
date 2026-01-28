@@ -4,11 +4,11 @@
     @module app/json
     @class JsonGroup
     @extends SvJsonIdNode
-    @classdesc A JsonGroup is a node that supports importing and exporting itself as JSON dictionary data.
+    @classdesc A SvJsonGroup is a node that supports importing and exporting itself as JSON dictionary data.
 
 */
 
-(class JsonGroup extends SvJsonIdNode {
+(class SvJsonGroup extends SvJsonIdNode {
 
     initPrototypeSlots () {
         {

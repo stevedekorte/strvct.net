@@ -9,7 +9,7 @@
 
 */
 
-(class SvModelReference extends JsonGroup {
+(class SvModelReference extends SvJsonGroup {
 
     static jsonSchemaDescription () {
         return "A reference to a model object instance";

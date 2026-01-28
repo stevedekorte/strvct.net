@@ -126,7 +126,7 @@
 
         {
             /**
-             * @member {SvSvUrlResource} urlResource - The URL resource associated with this resource.
+             * @member {SvUrlResource} urlResource - The URL resource associated with this resource.
              * @category Resource Properties
              */
             const slot = this.newSlot("urlResource", null);

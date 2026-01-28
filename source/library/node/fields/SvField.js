@@ -8,7 +8,7 @@
  * @class SvField
  * @extends JsonGroup
  * @classdesc A node that has a key and value, useful for displaying and editing data.
- * Extends JsonGroup to support JSON serialization for cloud sync.
+ * Extends SvJsonGroup to support JSON serialization for cloud sync.
  *
  * SvField supports two modes of operation:
  *
@@ -27,7 +27,7 @@
  * The mode is determined implicitly by whether `target` is set.
  */
 
-(class SvField extends JsonGroup {
+(class SvField extends SvJsonGroup {
 
     initPrototypeSlots () {
 
