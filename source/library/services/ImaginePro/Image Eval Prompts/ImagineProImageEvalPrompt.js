@@ -5,7 +5,7 @@
 /**
  * @class ImagineProImageEvalPrompt
  * @extends ImagineProImagePrompt
- * @classdesc An ImaginePro image eval prompt that generates images and evaluates them with OpenAI.
+ * @classdesc An ImaginePro image eval prompt that generates images and evaluates them with Gemini.
  *
  * How it works:
  * 1. Generates images using the parent ImagineProImagePrompt parent class
@@ -117,6 +117,9 @@
    */
     async asyncEvaluateImages () {
         try {
+            // Performance monitoring: Start evaluation timing
+            performance.mark('evaluation-start');
+
             this.appendStatus("Preparing to evaluate images...");
             this.imageEvaluators().removeAllSubnodes();
 
@@ -136,7 +139,15 @@
             this.setResultImageUrlData(bestImage.dataURL());
             this.setStatus("Selected best image!");
 
+            // Performance monitoring: Complete evaluation timing
+            performance.mark('evaluation-end');
+            performance.measure('evaluation-duration', 'evaluation-start', 'evaluation-end');
+
         } catch (error) {
+            // Performance monitoring: Mark end even on error
+            performance.mark('evaluation-end');
+            performance.measure('evaluation-duration', 'evaluation-start', 'evaluation-end');
+
             this.throwEvalError(error);
         }
     }

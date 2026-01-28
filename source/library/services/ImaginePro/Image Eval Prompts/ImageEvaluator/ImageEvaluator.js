@@ -5,7 +5,7 @@
 /**
  * @class ImageEvaluator
  * @extends SvSummaryNode
- * @classdesc Evaluates a single image using OpenAI's vision model based on custom prompts.
+ * @classdesc Evaluates a single image using Gemini's vision model based on custom prompts.
  * This class provides image evaluation for a single image, useful for parallel evaluation
  * or when evaluating images individually.
  */
@@ -51,23 +51,6 @@
             slot.setCanEditInspection(true);
             slot.setDescription("The prompt that was used to generate the image");
         }
-
-        /**
-     * @member {string} evaluationModel
-     * @description The OpenAI model to use for evaluation.
-     * @category Configuration
-     */
-        {
-            const slot = this.newSlot("evaluationModel", "gpt-5-nano");
-            slot.setSlotType("String");
-            slot.setLabel("Evaluation Model");
-            slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setValidValues(["gpt-5-nano", "gpt-5-mini", "gpt-5"]);
-            slot.setDescription("OpenAI model for image evaluation (gpt-4o-mini most economical, gpt-5 most capable)");
-        }
-
 
         /**
          * @member {EvalChecklistItems} checklist
@@ -151,7 +134,7 @@
             slot.setShouldStoreSlot(false);
             slot.setSyncsToView(true);
             slot.setAllowsNullValue(true);
-            slot.setDescription("XHR request used for OpenAI API call");
+            slot.setDescription("XHR request used for Gemini API call");
         }
 
 
@@ -231,11 +214,17 @@
         this.checklist().removeAllSubnodes();
     }
 
-    async asyncPublicUrlForImage () {
-        const imageObject = await this.svImage().asImageObject().promiseLoaded();
-        const blob = await imageObject.asyncAsBlob();
-        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
-        return publicUrl;
+    async asyncImageAsBase64 () {
+        const dataUrl = this.svImage().dataURL();
+        if (!dataUrl) {
+            throw new Error("Image has no data URL");
+        }
+        // Extract base64 portion (after "data:image/jpeg;base64," or similar)
+        const parts = dataUrl.split(',');
+        if (parts.length < 2) {
+            throw new Error("Invalid data URL format");
+        }
+        return parts[1];
     }
 
 
@@ -254,8 +243,6 @@
             this.setStatus("Starting evaluation...");
 
             this.assertReadyToEvaluate();
-
-            //this.setStatus("Evaluating image with OpenAI...");
 
             // Perform evaluation
             await this.asyncPerformEvaluation();
@@ -288,7 +275,9 @@
         - A score between 0.0 and 1.0 is given if it is present but not correctly depicted.
         - A score of 1.0 is given if it is present and correctly depicted.
     
-    Return your evaluation checklist and scores as a JSON object. Here's an example:
+    IMPORTANT: Return ONLY a valid JSON array as your response. Do not include any markdown formatting, code fences, or explanatory text. Just the raw JSON array.
+
+    Example format:
     [
         {
             "itemName": "glowing effect on sword",
@@ -311,11 +300,33 @@
         return userPrompt;
     }
 
-    async asyncComposeBodyJson () {
-        const publicUrl = await this.asyncPublicUrlForImage();
-        console.log(this.logPrefix(), "publicUrl: " + publicUrl);
+    /**
+     * @description Strips markdown code fences from text if present.
+     * @param {string} text - Text that may contain markdown code fences
+     * @returns {string} Text with code fences removed
+     * @category Parsing
+     */
+    stripMarkdownCodeFences (text) {
+        // Remove markdown code fences like ```json ... ``` or ``` ... ```
+        const trimmed = text.trim();
 
-        // Build the message for OpenAI
+        // Check for code fence at start
+        const codeBlockRegex = /^```(?:json)?\s*\n([\s\S]*?)\n```$/;
+        const match = trimmed.match(codeBlockRegex);
+
+        if (match) {
+            return match[1].trim();
+        }
+
+        return text;
+    }
+
+    async asyncComposeBodyJson () {
+        const base64Data = await this.asyncImageAsBase64();
+        console.log(this.logPrefix(), "Image converted to base64, size:", base64Data.length, "bytes");
+
+        // Build the request body in standard message format
+        // GeminiService will convert this to Gemini's native format
         const messages = [
             {
                 role: "system",
@@ -325,13 +336,12 @@
                 role: "user",
                 content: [
                     {
-                        type: "text",
                         text: this.userPrompt()
                     },
                     {
-                        type: "image_url",
-                        image_url: {
-                            url: publicUrl
+                        inline_data: {
+                            mime_type: "image/jpeg",
+                            data: base64Data
                         }
                     }
                 ]
@@ -339,17 +349,15 @@
         ];
 
         const bodyJson = {
-            model: this.evaluationModel(),
             messages: messages,
-            max_completion_tokens: 8000  // High limit needed for gpt-5 which uses reasoning tokens internally
-            // Note: temperature parameter not supported by some models (e.g., gpt-5) - uses default of 1
+            max_output_tokens: 8000
         };
 
         return bodyJson;
     }
 
     /**
-   * @description Performs the actual evaluation with OpenAI.
+   * @description Performs the actual evaluation with Gemini.
    * @returns {Promise<void>}
    * @category Evaluation
    */
@@ -358,9 +366,9 @@
 
         console.log(this.logPrefix(), "Request body size:", JSON.stringify(bodyJson).length, "bytes");
 
-        // Use OpenAiRequest for proper authentication, proxy handling, and error handling
-        const request = OpenAiRequest.clone();
-        request.setChatModel(Services.shared().openAiService().defaultChatModel());
+        // Use GeminiRequest for proper authentication, proxy handling, and error handling
+        const request = GeminiRequest.clone();
+        request.setChatModel(Services.shared().geminiService().defaultChatModel());
         request.setBodyJson(bodyJson);
         request.setIsStreaming(false); // We want the complete response, not streaming
         request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)
@@ -368,30 +376,41 @@
         // Store reference to underlying XHR for debugging
         this.setSvXhrRequest(request.currentXhrRequest());
 
-        console.log(this.logPrefix(), "Sending request to OpenAI...");
+        console.log(this.logPrefix(), "Sending request to Gemini...");
 
         await request.asyncSendAndStreamResponse();
 
         if (request.error()) {
-            throw new Error(`OpenAI API error: ${request.error().message}`);
+            throw new Error(`Gemini API error: ${request.error().message}`);
         }
 
-        // Parse the response
+        // Get the response text content from Gemini
         const responseText = request.fullContent();
         if (!responseText) {
-            throw new Error("No response received from OpenAI");
+            throw new Error("No response received from Gemini");
         }
 
-        const response = JSON.parse(responseText);
-        let checklistData = response;
+        // Strip markdown code fences if present (Gemini often wraps JSON in ```json ... ```)
+        const cleanedText = this.stripMarkdownCodeFences(responseText);
+
+        // Parse the checklist JSON from the response text
+        let checklistData;
+        try {
+            checklistData = JSON.parse(cleanedText);
+        } catch (parseError) {
+            console.error("Failed to parse checklist JSON:", cleanedText);
+            console.error("Original response:", responseText);
+            console.error("parseError:", parseError);
+            throw new Error("Failed to parse evaluation results from Gemini - invalid JSON");
+        }
 
         try {
             this.checklist().setJson(checklistData);
             this.processChecklist();
         } catch (parseError) {
-            console.error("Failed to parse evaluation response:", response);
+            console.error("Failed to apply checklist data:", checklistData);
             console.error("parseError:", parseError);
-            throw new Error("Failed to parse evaluation results from OpenAI");
+            throw new Error("Failed to apply evaluation results");
         } finally {
             this.setSvXhrRequest(null);
         }
