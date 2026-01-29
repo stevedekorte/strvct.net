@@ -698,6 +698,15 @@
         // sanity check for debugging - could remove later
         if (this.hasActiveObject(anObject)) {
             const msg = "onObjectUpdatePid " + anObject.svTypeId() + " " + oldPid + " -> " + newPid;
+
+            // Allow pid changes for singletons during loading (they may have been stored with different pids)
+            const aClass = anObject.thisClass();
+            const isSingleton = aClass.isSingleton && aClass.isSingleton();
+            if (isSingleton) {
+                console.warn(this.logPrefix() + "WARNING: singleton pid change - " + msg);
+                return; // Allow it for singletons
+            }
+
             console.log(this.logPrefix() + msg);
             throw new Error(msg);
         }
