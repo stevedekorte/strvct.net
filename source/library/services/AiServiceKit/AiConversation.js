@@ -557,7 +557,7 @@
     clientStateJson () {
         const delegate = this.assistedObject();
         if (delegate) {
-            return delegate.asJsonString();
+            return delegate.serializeToJsonString(null, []);
         }
         return null;
     }

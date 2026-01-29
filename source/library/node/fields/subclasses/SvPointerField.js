@@ -66,6 +66,21 @@
     }
 
     /**
+     * @description Proxy method to call methods on the value object.
+     * @param {string} methodName - The name of the method to call on the value object.
+     * @param {...*} args - The arguments to pass to the method.
+     * @returns {*} The result of calling the method on the value object.
+     * @category Utility
+     */
+    proxySend (methodName, ...args) {
+        const v = this.value();
+        assert(v, "SvPointerField proxySend: value is null");
+        const method = v[methodName];
+        assert(method !== undefined, "SvPointerField proxySend: value object " + v.svType() + " missing method '" + methodName + "'");
+        return method.apply(v, args);
+    }
+
+    /**
      * @description Gets the title of the value object.
      * @returns {string} The title of the value object.
      * @category Data Access
@@ -106,14 +121,12 @@
         return this.proxyGetter("hasNewLineSeparator");
     }
 
-    /**
-     * @description Gets the JSON archive of the value object.
-     * @returns {*} The JSON archive of the value object, or undefined if not available.
-     * @category Data Access
-     */
-    jsonArchive () {
-        debugger;
-        return this.proxyGetter("jsonArchive", undefined);
+    serializeToJson (filterName, pathComponents = []) {
+        return this.proxySend("serializeToJson", filterName, pathComponents);
+    }
+
+    deserializeFromJson (json, filterName, pathComponents = []) {
+        return this.proxySend("deserializeFromJson", json, filterName, pathComponents);
     }
 
     summary () {

@@ -116,11 +116,13 @@
     }
 
     /**
-     * @description Creates a JSON archive of the field's value.
+     * @description Serializes the field's value to a JSON representation.
+     * @param {string} filterName - The name of the filter to use.
+     * @param {string[]} pathComponents - The path components to use.
      * @returns {boolean} The boolean value of the field.
      * @category Serialization
      */
-    jsonArchive () {
+    serializeToJson (/*filterName, pathComponents = []*/) {
         return this.value() ? true : false;
     }
 
@@ -130,7 +132,7 @@
      * @returns {SvBooleanField} This instance for method chaining.
      * @category Serialization
      */
-    setJson (json, jsonPathComponents = []) {
+    deserializeFromJson (json, filterName, jsonPathComponents = []) {
         assert(Type.isBoolean(json), "Expected boolean for JSON path: " + jsonPathComponents.join("/"));
         this.setValue(json);
         return this;

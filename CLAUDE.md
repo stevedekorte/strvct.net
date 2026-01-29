@@ -425,9 +425,8 @@ The framework includes a separate content-addressable blob storage system (`SvBl
   - Import/export functionality
   - Clipboard operations
 - Core JSON methods:
-  - `asJson()`: Converts object to a plain JavaScript object suitable for JSON
-  - `setJson(json)`: Updates object from a JSON representation
-  - `updateJson(json)`: Applies partial updates (can handle patch arrays)
+  - `serializeToJson(...)`: Converts object to a plain JavaScript object suitable for JSON
+  - `deserializeFromJson(json, ...)`: Updates object from a JSON representation
   - `applyJsonPatches(patches)`: Applies JSON patch format changes
   - `mergeJson(json)`: Merges JSON data with existing object state
 - Format considerations:
@@ -438,7 +437,7 @@ The framework includes a separate content-addressable blob storage system (`SvBl
 - Used with AI integration:
   - Character JSON sent to AI for updates
   - AI returns patches or complete objects
-  - Changes applied through `updateJson()` or `applyJsonPatches()`
+  - Changes applied through `applyJsonPatches()`
   - Handles collaborative editing between user and AI
 
 ## Resource Loading System

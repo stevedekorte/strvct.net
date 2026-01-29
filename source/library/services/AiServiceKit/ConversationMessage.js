@@ -568,75 +568,8 @@
    * @category Maintenance
    */
     cleanupIfIncomplete () {
-    // called on startup to clean up any incomplete messages
-    // subclasses should override, as needed
-    }
-
-    // --- JSON Serialization ---
-    // Override SvField.asJson() which just returns the value.
-    // We need the full JSON object with all message properties for cloud sync.
-
-    /**
-     * @description Returns the JSON representation of this message.
-     * Overrides SvField.asJson() to use JsonGroup's calcJson() for proper serialization.
-     * @returns {Object} JSON object with all message properties
-     * @category JSON
-     */
-    asJson () {
-        let json = this.calcJson();
-        json._type = this.thisClass().svType();
-        return json;
-    }
-
-    // -------------------------------------
-
-
-    /**
-     * @description Returns the JSON representation for cloud storage.
-     * @returns {Object} JSON object with all message properties
-     * @category JSON
-     */
-    asCloudJson () {
-        const options = {
-            slots: this.thisClass().cloudJsonSchemaSlots(),
-            jsonMethodName: "asCloudJson"
-        };
-        let json = this.calcJson(options);
-        json._type = this.thisClass().svType();
-        assert(Type.isObject(json) && Object.keys(json).length > 0, "asCloudJson() returned an empty JSON object");
-        console.log("--------------------------------");
-
-        console.log("asCloudJson()", JSON.stringify(json, null, 2)); // makes sure it's not circular
-        console.log("--------------------------------");
-        return json;
-    }
-
-    setCloudJson (json) {
-        debugger;
-        super.setCloudJson(json);
-        let newJson = this.asCloudJson();
-        assert(JSON.stableStringify(newJson) === JSON.stableStringify(json), "newJson and json are not the same");
-        return this;
-    }
-
-    fromJson (json) {
-        debugger;
-        super.fromJson(json);
-        return this;
-    }
-
-    // -------------------------------------
-
-
-    calcJson (options = {}) {
-        const json = super.calcJson(options);
-        // assert that json has some entries
-        if (Object.keys(json).length == 0) {
-            debugger;
-            let json2 = super.calcJson(options);
-            throw new Error("calcJson() returned an empty JSON object", json2);
-        }
-        return json;
+        // called on startup to clean up any incomplete messages
+        // subclasses should override, as needed
     }
 
 }.initThisClass());

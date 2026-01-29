@@ -168,15 +168,6 @@
         this.logDebug(" onDidEditNode");
     }
 
-    /**
-     * @description Creates a JSON archive of the node.
-     * @returns {undefined}
-     * @category Data Serialization
-     */
-    jsonArchive () {
-        return undefined;
-    }
-
     key () {
         return this.title();
     }

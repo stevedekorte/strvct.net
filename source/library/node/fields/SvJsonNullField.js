@@ -41,22 +41,13 @@
         //this.overrideSlot("valueIsEditable", false).setInitValue(false)
     }
 
-    /**
-     * @description Returns the JSON archive representation of this field.
-     * @returns {null} Always returns null for this field type.
-     * @category Serialization
-     */
-    jsonArchive () {
+    serializeToJson (/*filterName, pathComponents = []*/) {
         return null;
     }
 
-    /**
-     * @description Sets the JSON representation of this field.
-     * @param {*} json - The JSON data to set (ignored in this implementation).
-     * @returns {SvJsonNullField} Returns this instance for method chaining.
-     * @category Serialization
-     */
-    setJson (/*json, jsonPathComponents = []*/) {
+    deserializeFromJson (json, filterName, pathComponents = []) {
+        // this might never be called as null is a special case
+        assert(json === null, "Expected null for JSON path: " + pathComponents.join("/"));
         return this;
     }
 

@@ -177,8 +177,7 @@
    * @returns {AiChatModel} The current instance.
    * @category Model Configuration
    */
-    setJson (json, jsonPathComponents = []) {
-        assert(json.name, "Expected name property available at JSON path: " + jsonPathComponents.join("/"));
+    setJson (json) {
         this.setModelName(json.name);
 
         if (json.title) {
@@ -200,7 +199,6 @@
             this.setOutputTokenLimit(otl);
         }
         //console.log(">>>>>>>>>>>>>>>> " + this.title() + " outputTokenLimit:" + this.outputTokenLimit());
-
 
         const t = json.supportsTemperature;
         if (!Type.isUndefined(t)) {

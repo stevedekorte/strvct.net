@@ -62,7 +62,7 @@
    * @category Data Management
    */
     setJson (json) {
-    // json should be an dict of trackName:trackId entries
+        // json should be an dict of trackName:trackId entries
 
         Object.keys(json).forEach(trackName => {
             const trackId = json[trackName];

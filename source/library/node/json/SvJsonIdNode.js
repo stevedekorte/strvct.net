@@ -149,27 +149,74 @@
     }
 
 
+    // DEPRECATED METHODS
+
+    json () {
+        throw new Error("json() deprecated - use serializeToJson instead");
+    }
+
+    static fromJsonArchive (/*json*/) {
+        throw new Error("fromJsonArchive deprecated - use cloneDeserializeFromJson instead");
+    }
+
+    setJsonArchive (/*json*/) {
+        throw new Error("setJsonArchive deprecated - use deserializeFromJson instead");
+    }
+
+    jsonArchive () {
+        throw new Error("jsonArchive() deprecated - use serializeToJson instead");
+    }
+
+    serializeToJsonString (filterName, jsonPathComponents = []) {
+        return JSON.stableStringifyWithStdOptions(this.serializeToJson(filterName, jsonPathComponents), null, 4); // will default to isInJsonSchema slots
+    }
+
+
+    // ==============================================
+
+    // UNIMPLEMENTED METHODS
+
+    // --- serialization ---
+
+    /*
+    serializeToJson (filterName, pathComponents = []) {
+        throw new Error("serializeToJson should be implemented by subclasses");
+    }
+
+
+    // --- deserializion ---
+
+    cloneDeserializeFromJson (json, filterName, pathComponents = []) {
+        throw new Error("cloneDeserializeFromJson not implemented for " + this.svType() + " at path: " + pathComponents.join("/"));
+    }
+    */
+
+    deserializeFromJson (json, filterName, pathComponents = []) {
+        throw new Error("deserializeFromJson not implemented for " + this.svType() + " at path: " + pathComponents.join("/"));
+    }
+
+    asJsonString () { // deprecate soon?
+        throw new Error("asJsonString deprecated - use serializeToJsonString instead");
+    }
+
+    setJson (json) {
+        return this.deserializeFromJson(json, null, []);
+    }
+
     asJson () {
-        return this.calcJson();
-        /*
-        if (this.jsonCache() !== null) {
-            /// sanity check to make sure the jsonCache is valid
-            const json = this.calcJson();
-            const diff = JsonPatch.compare(this.jsonCache(), json);
-            if (diff.length > 0) {
-                console.error("jsonCache is invalid:\n" + JSON.stringify(diff, null, 2));
-            }
-
-            return this.jsonCache();
-        }
-        const json = this.calcJson();
-        this.setJsonCache(json);
-        return json;
-        */
+        return this.serializeToJson(null, []);
     }
 
-    calcJson () {
-        throw new Error("subclass must implement calcJson()");
+
+    /*
+    // TODO: add AiJson support
+    asAiJson () {
+        return this.serializeToJson("Ai", []);
     }
+
+    setAiJson (json) {
+        return this.deserializeFromJson(json, "Ai", []);
+    }
+    */
 
 }.initThisClass());

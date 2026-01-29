@@ -1,11 +1,18 @@
 "use strict";
 
-/** * @module library.node.fields.json
+/**
+ * @module library.node.fields.json
  */
 
-/** * @class SvJsonDictionaryNode
+/**
+ * @class SvJsonDictionaryNode
  * @extends SvJsonNode
  * @classdesc Represents a JSON dictionary node in the Sv (STRVCT) system.
+ *
+ * Notes:
+ * This was deigned aroung being able to edit JSON within the strvct UI
+ * - drop json strings into the UI to create new nodes
+ * - drag nodes out of the UI to create json strings (see Tile_dragging.js and getSvDataUrl method)
  */
 
 /**
@@ -54,17 +61,6 @@
         this.setSummaryFormat("key value");
         this.setHasNewLineSeparator(true);
         this.setHasNewlineAfterSummary(true);
-    }
-
-    /**
-     * @description Returns the JSON archive of the node.
-     * @throws {Error} Throws an error as this method is not implemented.
-     * @category Data Operations
-     */
-    jsonArchive () {
-        // use asJson() if you want to get the json
-        // jsonAcrchive is for the storable or communication version
-        throw new Error("unimplemented");
     }
 
     requiredSlotNamesSet () {
@@ -174,13 +170,14 @@
      * @returns {Object} The calculated JSON object.
      * @category Data Operations
      */
-    calcJson () {
+
+    serializeToJson (filterName, jsonPathComponents = []) {
         const dict = {};
         this.subnodes().forEach((sn) => {
             const key = sn.key ? sn.key() : sn.title();
-            if (sn.asJson) {
+            if (sn.serializeToJson) {
                 // so we skip CreatorNode
-                const value = sn.asJson();
+                const value = sn.serializeToJson(filterName, jsonPathComponents.concat(key));
                 dict[key] = value;
             }
         });

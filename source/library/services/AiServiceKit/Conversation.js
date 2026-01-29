@@ -241,43 +241,7 @@
    * @category Input Handling
    */
     clearInput () {
-    // shouldn't need this as TextField has option to do this
-    }
-
-    /**
-   * @description Creates a JSON archive of the conversation.
-   * @returns {Object} The JSON representation of the conversation.
-   * @category Serialization
-   */
-    jsonArchive () {
-        const msgsJson = [];
-        this.messages().forEach(msg => {
-            msgsJson.push(msg.jsonArchive());
-        }); // we don't use map because it returns a SubnodesArray instance...
-        assert(Type.isArray(msgsJson));
-
-        const json = {
-            type: this.svType(),
-            messages: msgsJson
-        };
-        return json;
-    }
-
-    /**
-   * @description Sets the conversation state from a JSON archive.
-   * @param {Object} json - The JSON representation of the conversation.
-   * @returns {Conversation} The conversation instance.
-   * @category Serialization
-   */
-    setJsonArchive (json) {
-        assert(Type.isArray(json.messages)); // sanity check
-
-        this.removeAllSubnodes();
-
-        json.messages.forEach(msgJson => {
-            this.newMessageFromJson(msgJson);
-        });
-        return this;
+        // shouldn't need this as TextField has option to do this
     }
 
     /**
@@ -296,12 +260,14 @@
    * @returns {*} The new message instance.
    * @category Data Manipulation
    */
+    /*
     newMessageFromJson (msgJson) {
         const msg = ConversationMessage.fromJsonArchive(msgJson);
         msg.setConversation(this);
         this.addSubnode(msg);
         return msg;
     }
+    */
 
     /**
    * @description Updates an existing message or creates a new one from JSON.
@@ -309,11 +275,12 @@
    * @returns {*} The updated or new message instance.
    * @category Data Manipulation
    */
+    /*
     updateMessageJson (msgJson) {
         const oldMsg = this.messageWithId(msgJson.messageId);
 
         if (oldMsg) {
-            oldMsg.setJsonArchive(msgJson);
+            oldMsg.deserializeFromJson(msgJson, "Cloud", []);
             return oldMsg;
         } else {
             const newMsg = this.newMessageFromJson(msgJson);
@@ -326,6 +293,7 @@
             return newMsg;
         }
     }
+    */
 
     /**
    * @description Handles a new message from an update. To be overridden by subclasses.
@@ -333,21 +301,21 @@
    * @category Event Handling
    */
     onNewMessageFromUpdate (/*newMsg*/) {
-    // for subclasses to override
+        // for subclasses to override
     }
 
     // --- enable / disable input ---
 
     /*
-  disableInput () {
-    this.chatInputNode().disableEnter();
-    return this
-  }
+    disableInput () {
+        this.chatInputNode().disableEnter();
+        return this;
+    }
 
-  enableInput () {
-    this.chatInputNode().enableEnter();
-    return this
-  }
+    enableInput () {
+        this.chatInputNode().enableEnter();
+        return this
+    }
   */
 
 }.initThisClass());

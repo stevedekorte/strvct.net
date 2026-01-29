@@ -30,6 +30,18 @@
 (class HookedArray extends Array {
 
     /**
+     * Returns Array as the species for derived arrays.
+     * This ensures that methods like map(), filter(), slice() return plain Arrays
+     * instead of HookedArray subclass instances, avoiding complex initialization
+     * overhead and potential stack overflows during serialization.
+     * @returns {Function} The Array constructor
+     * @category Array Operations
+     */
+    static get [Symbol.species] () {
+        return Array;
+    }
+
+    /**
      * Initializes prototype slots and sets up mutator hooks.
      * @category Initialization
      */

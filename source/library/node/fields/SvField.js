@@ -669,23 +669,23 @@
      * @param {Object} json - The JSON.
      */
 
-    setJson (json, jsonPathComponents = []) {
+    deserializeFromJson (json, filterName, jsonPathComponents = []) {
         if (this.target()) {
             this.setJsonForTarget(json, jsonPathComponents);
         } else {
-            super.setJson(json, jsonPathComponents);
-            let afterJson = this.asJson();
+            super.deserializeFromJson(json, filterName, jsonPathComponents);
+            let afterJson = this.serializeToJson(filterName, jsonPathComponents);
             this.verifyJsonMatches(afterJson, json);
         }
         return this;
     }
 
     verifyJsonMatches (afterJson, json) {
-        let afterJsonString = JSON.stableStringifyWithStdOptions(afterJson);
-        let jsonString = JSON.stableStringifyWithStdOptions(json);
+        let afterJsonString = JSON.stableStringifyWithStdOptions(afterJson, null, 4);
+        let jsonString = JSON.stableStringifyWithStdOptions(json, null, 4);
         if (afterJsonString !== jsonString) {
             const diff = SvGlobals.get("jsondiffpatch").diff(json, afterJson);
-            console.log("diff: " + JSON.stringify(diff, null, 2));
+            console.log("diff: " + JSON.stringify(diff, null, 4));
             debugger;
             console.log("afterJsonString: ", afterJsonString);
             debugger;
@@ -693,25 +693,15 @@
         }
     }
 
-    asJson () {
+    serializeToJson (filterName, jsonPathComponents = []) {
         if (this.target()) {
             // Delegate fields (with target set) are transient UI objects that proxy
             // to another node's slot. Return undefined to exclude them from JSON serialization.
             // Data owner fields (no target) are serialized normally via super.asJson().
             return undefined;
         } else {
-            return super.asJson();
+            return super.serializeToJson(filterName, jsonPathComponents);
         }
-    }
-
-    /**
-     * @description Returns undefined to prevent field objects from being serialized to cloud.
-     * Fields are transient UI objects that should not be included in cloud sync.
-     * @returns {undefined}
-     * @category JSON
-     */
-    asCloudJson () {
-        return undefined;
     }
 
     setJsonForTarget (json, jsonPathComponents = []) {
@@ -737,16 +727,14 @@
         return this;
     }
 
-    /**
-     * @description Returns the JSON of the field.
-     * @returns {Object} The JSON.
-     */
+    /*
     asJsonForTarget () {
         // used only when a target is set
         // test used for Character sheet atm
-        // separate fron jsonArchive
+        // separate from serializeToJson and deserializeFromJson
         return this.value();
     }
+    */
 
     // ----------------
 

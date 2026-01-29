@@ -63,7 +63,7 @@
     value () {
         const node = this.nodeTileLink();
         if (node) {
-            return node.jsonArchive();
+            return node.serializeToJson(null, []);
         }
         return undefined;
     }

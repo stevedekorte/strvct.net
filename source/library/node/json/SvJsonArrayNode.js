@@ -178,38 +178,24 @@
     }
 
     /**
-     * @description Creates a JSON archive of this node.
-     * @returns {Array} The JSON archive.
-     * @category JSON Operations
-     */
-    jsonArchive () {
-        return this.subnodes().map(sn => sn.jsonArchive());
-    }
-
-    /**
      * @description Creates a new subnode for a given JSON object.
      * @param {Object} json - The JSON object to create a subnode for.
      * @returns {SvJsonNode} The new subnode.
      * @category Subnode Management
      */
-    newSubnodeForJson (json, jsonPathComponents = []) {
+    newSubnodeForJson (json, filterName, jsonPathComponents = []) {
         let aNode = null;
         let className = json._type;
         if (className) {
             const aClass = SvGlobals.get(className);
             if (aClass) {
-                if (aClass.isKindOf(SvGlobals.get("ConversationMessage"))) {
-                    //debugger;
-                }
                 aNode = aClass.fromJson(json, jsonPathComponents);
             }
-        } else if (this.subnodeClasses().length === 1) {
+        } else if (this.subnodeClasses().length === 1) { // only one subnode class, so we can use the clone method
             const aClass = this.subnodeClasses().first();
-            if (aClass.isKindOf(SvGlobals.get("ConversationMessage"))) {
-                //debugger;
-            }
-            aNode = aClass.clone().setJson(json, jsonPathComponents);
+            aNode = aClass.clone().deserializeFromJson(json, filterName, jsonPathComponents);
         } else {
+            debugger; // should not happen
             aNode = SvJsonNode.nodeForJson(json, jsonPathComponents);
         }
         return aNode;
@@ -221,13 +207,7 @@
      * @returns {SvJsonArrayNode} This node.
      * @category JSON Operations
      */
-    setJson (json, jsonPathComponents = []) {
-        /*
-        if (this.doesMatchJson(json)) {
-            return this;
-        }
-        */
-
+    deserializeFromJson (json, filterName, jsonPathComponents = []) {
         const jsonIdToSubnodeMap = new Map();
         this.subnodes().forEach(sn => {
             jsonIdToSubnodeMap.set(sn.jsonId(), sn);
@@ -263,10 +243,10 @@
             const existingNode = jsonIdToSubnodeMap.get(jsonId);
 
             if (existingNode) {
-                existingNode.setJson(v, jsonPathComponents.concat(index));
+                existingNode.deserializeFromJson(v, filterName, jsonPathComponents.concat(index));
                 newSubnodes.push(existingNode);
             } else {
-                const aNode = this.newSubnodeForJson(v, jsonPathComponents.concat(index));
+                const aNode = this.newSubnodeForJson(v, filterName, jsonPathComponents.concat(index));
                 newSubnodes.push(aNode);
                 //console.log(this.logPrefix(), "SvJsonArrayNode.setJson() creating new node " + aNode.svType() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
             }
@@ -284,51 +264,53 @@
     }
 
     /**
-     * @description Calculates the JSON representation of this node.
-     * @param {Object} options - Optional settings
-     * @param {String} options.jsonMethodName - Method to call on subnodes (default: "asJson")
-     * @returns {Array} The JSON representation.
+     * @description Creates a JSON archive of this node.
+     * @returns {Array} The JSON archive.
      * @category JSON Operations
      */
-    calcJson (options = {}) {
-        const jsonMethodName = options.jsonMethodName || "asJson";
-        //const SvField = SvGlobals.get("SvField");
-        return this.subnodes().map(sn => {
-            /*
-            // Skip field objects - they are transient UI objects - Not true, for example in UoAiChat the subnodes are ConversationMessages and we need to store them
-            if (SvField && sn.isKindOf(SvField)) {
-                return undefined;
-            }
-            */
-            const method = sn[jsonMethodName];
-            if (method) {
-                let json = method.call(sn);
-                if (sn.isKindOf(SvGlobals.get("ConversationMessage"))) {
-                    assert(Type.isString(json._type), "ConversationMessage json must have _type");
-                }
-                return json;
-            }
-            return sn.asJson(); // fallback
-        }).filter(json => json !== undefined);
+    static maxSerializationDepth () {
+        return 100; // Reasonable limit for nested JSON structures
     }
 
-    /**
-     * @description Returns JSON representation for cloud storage.
-     * @returns {Array} Array of subnodes serialized with asCloudJson
-     * @category JSON Operations
-     */
-    asCloudJson () {
-        return this.calcJson({ jsonMethodName: "asCloudJson" });
-    }
+    serializeToJson (filterName, pathComponents = [], visitedSet = null) {
+        // Initialize visitedSet at the root call to detect circular references
+        if (visitedSet === null) {
+            visitedSet = new WeakSet();
+        }
 
-    /**
-     * @description Sets state from cloud JSON data.
-     * @param {Array} json - The JSON array from cloud
-     * @returns {SvJsonArrayNode} This instance
-     * @category JSON Operations
-     */
-    setCloudJson (json) {
-        return this.setJson(json);
+        // Check for excessive depth (likely indicates a problem in the data structure)
+        const maxDepth = this.thisClass().maxSerializationDepth();
+        if (pathComponents.length > maxDepth) {
+            const identifier = this.title ? this.title() : (this.name ? this.name() : (this.jsonId ? this.jsonId() : "unknown"));
+            throw new Error(
+                "serializeToJson: maximum depth (" + maxDepth + ") exceeded\n" +
+                "  Type: " + this.svType() + "\n" +
+                "  Identifier: " + identifier + "\n" +
+                "  Path: " + pathComponents.join("/") + "\n" +
+                "  This usually indicates a circular reference or unexpectedly deep nesting."
+            );
+        }
+
+        // Check for circular reference
+        if (visitedSet.has(this)) {
+            const identifier = this.title ? this.title() : (this.name ? this.name() : (this.jsonId ? this.jsonId() : "unknown"));
+            throw new Error(
+                "serializeToJson: circular reference detected\n" +
+                "  Type: " + this.svType() + "\n" +
+                "  Identifier: " + identifier + "\n" +
+                "  Path: " + pathComponents.join("/")
+            );
+        }
+        visitedSet.add(this);
+
+        const results = [];
+        this.subnodes().forEach((sn, index) => {
+            const result = sn.serializeToJson(filterName, pathComponents.concat(index), visitedSet);
+            if (result !== undefined) {
+                results.push(result);
+            }
+        });
+        return results;
     }
 
     async asyncPrepareForAsJson () {
@@ -347,7 +329,7 @@
      * @category Data Operations
      */
     getSvDataUrl () {
-        const json = this.jsonArchive();
+        const json = this.serializeToJson(null, []);
         const d = SvDataUrl.clone();
         d.setMimeType("application/json");
         d.setFileName(this.title() + ".json");

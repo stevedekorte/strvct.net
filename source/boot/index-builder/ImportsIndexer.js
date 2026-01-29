@@ -40,8 +40,6 @@
     will load the above two files and eval the JS and CSS code to start
     the app.
 
-
- 
  */
 
 /**

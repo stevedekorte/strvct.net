@@ -130,8 +130,21 @@
                         //console.log(this.svTypeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
                         //slot.onInstanceSetValueRef(this, storeRef);
                     } else if (slot.slotType() === "JSON Object") {
-                        const unrefedValue = JSON.parse(v);
-                        slot.onInstanceSetValue(this, unrefedValue);
+                        if (Type.isString(v)) {
+                            // properly serialized JSON object
+                            const unrefedValue = JSON.parse(v);
+                            slot.onInstanceSetValue(this, unrefedValue);
+                        } else {
+                            const wasObject = v["*"] !== undefined;
+                            // looks like this was serialized as an an object instead of a JSON string
+                            console.warn("loadFromRecord() found 'JSON Object' slot '" + slot.name() + "' with value that was serialized as an object instead of a JSON string - setting to null");
+                            if (wasObject) {
+                                console.warn("looks like it was previously serialized as an object instead of a JSON string - setting to null");
+                            }
+                            slot.onInstanceSetValue(this, null);
+                        }
+
+
                     } else {
                         const unrefedValue = aStore.unrefValue(v);
                         try {

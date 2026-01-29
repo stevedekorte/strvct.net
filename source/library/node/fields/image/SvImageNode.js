@@ -47,12 +47,11 @@
         return node;
     }
 
-    asJson () {
-        const json = super.asJson();
+    serializeToJson (filterName, jsonPathComponents = []) {
+        const json = super.serializeToJson(filterName, jsonPathComponents);
         if (this.valueHash()) {
-            assert(json.valueHash === this.valueHash(), "valueHash mismatch");
+            assert(json.valueHash === this.valueHash(), "valueHash in serialized json does not match valueHash");
         }
-
         return json;
     }
 
@@ -193,15 +192,6 @@
         this.logDebug(" onDidEditNode");
     }
 
-    /**
-     * @description Creates a JSON archive of the node.
-     * @returns {undefined}
-     * @category Data Serialization
-     */
-    jsonArchive () {
-        debugger;
-        return undefined;
-    }
 
     key () {
         return this.title();

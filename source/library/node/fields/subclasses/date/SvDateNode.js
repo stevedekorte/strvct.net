@@ -145,6 +145,13 @@
         return null;
     }
 
+    setJsDate (d) {
+        this.setYear(d.getFullYear());
+        this.setMonth(d.getMonth());
+        this.setDay(d.getDate());
+        return this;
+    }
+
     /**
      * @description Generates a subtitle for the node.
      * @returns {string} A string representation of the date or "No date selected".
@@ -264,9 +271,17 @@
      * @returns {string|null} A string representation of the date or null if no date is set.
      * @category Serialization
      */
-    jsonArchive () {
+    serializeToJson (/*filterName, pathComponents = []*/) {
         const d = this.jsDate();
         return d ? d.toString() : null;
+    }
+
+    deserializeFromJson (json, filterName, pathComponents = []) {
+        assert(Type.isNumber(json.year), (() => { return "Expected number for JSON path: " + pathComponents.concat("year").join("/"); }));
+        assert(Type.isNumber(json.month), (() => { return "Expected number for JSON path: " + pathComponents.concat("month").join("/"); }));
+        assert(Type.isNumber(json.day), (() => { return "Expected number for JSON path: " + pathComponents.concat("day").join("/"); }));
+        this.setJsDate(json);
+        return this;
     }
 
 }.initThisClass());

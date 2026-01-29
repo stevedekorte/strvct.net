@@ -5,8 +5,8 @@
  * @extends SvSummaryNode
  * @classdesc SvTimeNode represents a time node in the application.
  * It handles the storage and formatting of time information.
- 
- 
+
+
  */
 
 /**
@@ -113,6 +113,12 @@
         return null;
     }
 
+    setJsDate (d) {
+        this.setHour(d.getHours());
+        this.setMinute(d.getMinutes());
+        return this;
+    }
+
     /**
      * @description Formats the time as a string.
      * @returns {string} The formatted time string.
@@ -179,14 +185,23 @@
         return true;
     }
 
-    /**
-     * @description Creates a JSON archive of the time.
-     * @returns {string|null} A string representation of the time, or null if no time is set.
-     * @category Serialization
-     */
-    jsonArchive () {
-        const d = this.jsDate();
-        return d ? d.toString() : null;
+    serializeToJson (/*filterName, pathComponents = []*/) {
+        const json = {
+            hour: this.hour(),
+            minute: this.minute(),
+            timezone: this.timezone(),
+        };
+        return json;
+    }
+
+    deserializeFromJson (json, filterName, pathComponents = []) {
+        assert(Type.isNumber(json.hour), (() => { return "Expected number for JSON path: " + pathComponents.concat("hour").join("/"); }));
+        assert(Type.isNumber(json.minute), (() => { return "Expected number for JSON path: " + pathComponents.concat("minute").join("/"); }));
+        assert(Type.isString(json.timezone), (() => { return "Expected string for JSON path: " + pathComponents.concat("timezone").join("/"); }));
+        this.setHour(json.hour);
+        this.setMinute(json.minute);
+        this.setTimezone(json.timezone);
+        return this;
     }
 
 }.initThisClass());

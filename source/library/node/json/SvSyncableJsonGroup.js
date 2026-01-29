@@ -184,23 +184,6 @@
         };
     }
 
-    // --- Cloud JSON Serialization ---
-    // Note: asCloudJson() is inherited from JsonGroup.
-    // Filtering happens at the value level - each object's asCloudJson() decides what to include.
-
-    /**
-     * @description Sets state from cloud JSON data.
-     * By default, calls setJson(). Subclasses can override to customize
-     * how cloud data is applied (e.g., merge instead of replace).
-     * @param {Object} json - The JSON data from cloud
-     * @returns {SvSyncableJsonGroup} This instance
-     * @category Sync
-     */
-    setCloudJson (json) {
-        this.setJson(json);
-        return this;
-    }
-
     /**
      * @description Ensures content is fetched. If already fetched, returns immediately.
      * If unfetched, triggers fetch from contentSource.
@@ -297,6 +280,36 @@
             result += " (fetching)";
         }
         return result;
+    }
+
+
+    // --- Cloud JSON Serialization ---
+
+    // HELPER METHODS
+
+    asCloudJson () {
+        return this.serializeToJson("Cloud", []);
+    }
+
+    setCloudJson (json) {
+        this.deserializeFromJson(json, "Cloud", []);
+        this.assertCloudJson(json);
+        return this;
+    }
+
+    assertCloudJson (json) {
+        // verify that the cloud json matches the json and show a diff and throw an error if they don't match
+        let cloudJson = this.asCloudJson();
+        const s1 = JSON.stableStringify(json);
+        const s2 = JSON.stableStringify(cloudJson);
+        if (s1 !== s2) {
+            console.error("assertCloudJson failed");
+            const diff = SvGlobals.get("jsondiffpatch").diff(json, cloudJson);
+            const diffString = JSON.stringify(diff, null, 2);
+            console.log("diff: " + diffString);
+            throw new Error("assertCloudJson failed: " + diffString);
+        }
+        return this;
     }
 
 }.initThisClass());

@@ -101,13 +101,8 @@
         this.setNoteIsSubnodeCount(true);
     }
 
-    /**
-   * @description Returns the JSON string representation of the haJson.
-   * @returns {string} The JSON string.
-   * @category Data
-   */
     jsonString () {
-        return JSON.stringify(this.haJson(), null, 2);
+        return JSON.stableStringifyWithStdOptions(this.haJson(), null, 2);
     }
 
     /**
