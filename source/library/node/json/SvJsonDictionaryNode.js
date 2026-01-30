@@ -83,12 +83,7 @@
         return jsonSchemaSlotNames;
     }
 
-    /**
-     * @description Sets the JSON for this node, updating its structure accordingly.
-     * @param {Object} json - The JSON object to set.
-     * @returns {SvJsonDictionaryNode} Returns this node after updating.
-     * @category Data Operations
-     */
+    /*
     setJson (json, jsonPathComponents = []) {
 
         // so if this node stores it's subodes, then whatever properties we find in the json will be added as subnodes
@@ -159,11 +154,9 @@
                 this.addSubnode(aNode);
             }
         });
-
-        this.setJsonCache(json);
-
         return this;
     }
+    */
 
     /**
      * @description Calculates and returns the JSON representation of this node.
