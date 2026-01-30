@@ -1,5 +1,6 @@
 [
     "SvSyncCollectionSource.js",
     "SvCloudSyncSource.js",
-    "SvLocalResourceSource.js"
+    "SvLocalResourceSource.js",
+    "SvSyncableArrayNode.js"
 ]

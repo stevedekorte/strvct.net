@@ -6,6 +6,14 @@
  * @extends JsonGroup
  * @classdesc A SvJsonGroup that supports cloud syncing and lazy loading.
  * Adds fetch state management, sync timestamps, and content source references.
+ *
+ * IMPORTANT: Only ROOT objects of documents that are synced to cloud should inherit
+ * from this class (e.g., UoHostSession, UoCharacter). Child objects within those
+ * documents should inherit from SvJsonGroup instead. The sync timestamps and dirty
+ * tracking are managed at the document root level, not on every child object.
+ *
+ * Child objects can check if an ancestor is syncing via isAnySyncingFromCloud(),
+ * which walks up the parent chain to find the root's isSyncingFromCloud flag.
  */
 (class SvSyncableJsonGroup extends SvJsonGroup {
 
@@ -254,13 +262,14 @@
     /**
      * @description Called when the node or any descendant changes.
      * Marks this item for cloud sync if it's been fetched.
+     * Note: During sync FROM cloud, didSyncFromCloud() is called AFTER deserialization,
+     * which sets both timestamps equal, clearing any dirty state.
      * @returns {Boolean} Whether the notification was posted
      * @category Sync
      */
     didUpdateNode () {
         // Only mark as locally modified if we're a fully fetched item
-        // Don't track during fetch (would interfere with fetch completion check)
-        // Don't track on unfetched stubs
+        // (not unfetched stub or currently fetching)
         if (this.isFetched()) {
             this.touchLocalModified();
         }

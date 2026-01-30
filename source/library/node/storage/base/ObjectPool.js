@@ -701,13 +701,18 @@
 
             // Allow pid changes for singletons during loading (they may have been stored with different pids)
             const aClass = anObject.thisClass();
-            const isSingleton = aClass.isSingleton && aClass.isSingleton();
+            const hasSingletonMethod = typeof aClass.isSingleton === "function";
+            const isSingleton = hasSingletonMethod && aClass.isSingleton();
+
+            console.log(this.logPrefix() + "onObjectUpdatePid check: " + aClass.type() +
+                " hasSingletonMethod=" + hasSingletonMethod + " isSingleton=" + isSingleton);
+
             if (isSingleton) {
-                console.warn(this.logPrefix() + "WARNING: singleton pid change - " + msg);
+                console.warn(this.logPrefix() + "WARNING: singleton pid change allowed - " + msg);
                 return; // Allow it for singletons
             }
 
-            console.log(this.logPrefix() + msg);
+            console.error(this.logPrefix() + msg);
             throw new Error(msg);
         }
     }

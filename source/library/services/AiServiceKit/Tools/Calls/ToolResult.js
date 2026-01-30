@@ -228,5 +228,51 @@ See schema for the particular tool call (whose name is in the toolName property)
         this.extraMessage().asyncCopyToClipboard();
     }
 
+    // --- JSON Serialization for Cloud Sync ---
+
+    /**
+     * @description Serializes this ToolResult to JSON for cloud sync.
+     * @param {String} filterName - The filter name (e.g., "Cloud")
+     * @param {Array} pathComponents - Path components for error messages
+     * @returns {Object} JSON representation
+     * @category Serialization
+     */
+    serializeToJson (filterName, pathComponents = []) {
+        return {
+            _type: this.svType(),
+            toolName: this.toolName(),
+            callId: this.callId(),
+            status: this.status(),
+            result: this.result(),
+            error: this.error()
+        };
+    }
+
+    /**
+     * @description Deserializes JSON data into this ToolResult.
+     * @param {Object} json - The JSON data
+     * @param {String} filterName - The filter name (e.g., "Cloud")
+     * @param {Array} pathComponents - Path components for error messages
+     * @returns {ToolResult} This instance
+     * @category Serialization
+     */
+    deserializeFromJson (json, filterName, pathComponents = []) {
+        if (json.toolName !== undefined) {
+            this.setToolName(json.toolName);
+        }
+        if (json.callId !== undefined) {
+            this.setCallId(json.callId);
+        }
+        if (json.status !== undefined) {
+            this.setStatus(json.status);
+        }
+        if (json.result !== undefined) {
+            this.setResult(json.result);
+        }
+        if (json.error !== undefined) {
+            this.setError(json.error);
+        }
+        return this;
+    }
 
 }.initThisClass());
