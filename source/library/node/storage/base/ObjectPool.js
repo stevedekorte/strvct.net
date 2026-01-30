@@ -704,7 +704,7 @@
             const hasSingletonMethod = typeof aClass.isSingleton === "function";
             const isSingleton = hasSingletonMethod && aClass.isSingleton();
 
-            console.log(this.logPrefix() + "onObjectUpdatePid check: " + aClass.type() +
+            console.log(this.logPrefix() + "onObjectUpdatePid check: " + aClass.svType() +
                 " hasSingletonMethod=" + hasSingletonMethod + " isSingleton=" + isSingleton);
 
             if (isSingleton) {
