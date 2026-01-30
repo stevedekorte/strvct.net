@@ -14,22 +14,22 @@
         // --- streaming ---
 
         /*
-    {
-      const slot = this.newSlot("htmlStreamReader", null);
-      slot.setSlotType("HtmlStreamReader");
-    }
+        {
+            const slot = this.newSlot("htmlStreamReader", null);
+            slot.setSlotType("HtmlStreamReader");
+        }
 
-    {
-      const slot = this.newSlot("processStreamContentAction", null);
-      slot.setInspectorPath("");
-      slot.setCanInspect(true);
-      slot.setLabel("Process Stream Content");
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(false);
-      slot.setActionMethodName("processStreamContent");
-    }
+        {
+            const slot = this.newSlot("processStreamContentAction", null);
+            slot.setInspectorPath("");
+            slot.setCanInspect(true);
+            slot.setLabel("Process Stream Content");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(false);
+            slot.setActionMethodName("processStreamContent");
+        }
       */
 
     }
@@ -51,50 +51,51 @@
     // --- stream messages only handled on host ---
 
     onStreamStart (/*request*/) {
-    //super.onStreamStart(request);
+        //super.onStreamStart(request);
         this.setupHtmlStreamReader();
         this.htmlStreamReader().beginHtmlStream();
         this.setContent("");
     }
 
     onStreamData (request, newContent) {
-    //console.log("----------------------------------------------------------");
-    //console.log("onStreamData('" + newContent + "')");
+        //console.log("----------------------------------------------------------");
+        //console.log("onStreamData('" + newContent + "')");
         this.htmlStreamReader().onStreamHtml(newContent);
         this.updateContent(this.htmlStreamReader().rootNode().innerHtml());
-    //console.log("content: [[" + this.content() + "]]");
-    //console.log("----------------------------------------------------------");
+        //console.log("content: [[" + this.content() + "]]");
+        //console.log("----------------------------------------------------------");
     }
 
     /*
-  onStreamAbort (request) {
+    onStreamAbort (request) {
 
-  }
-  */
-
-    onStreamEnd (request) {
-    /*
-    if (request.didAbort()) {
-      // the response is likley incomplete and invalid, so we should not process the
-      // content and should not send it to the AI
-      return;
     }
     */
+
+    onStreamEnd (request) {
+        /*
+        if (request.didAbort()) {
+            // the response is likley incomplete and invalid, so we should not process the
+            // content and should not send it to the AI
+            return;
+        }
+        */
 
         if (request.error()) {
             this.addAiError("AI ERROR: " + request.error().message);
             return;
         }
 
-        //super.onStreamEnd(request);
         if (this.htmlStreamReader()) {
             // if there was an error, have we already shutdown the reader?
             this.htmlStreamReader().endHtmlStream();
         }
         //console.log("onStreamEnd request.fullContent() = [" + request.fullContent() + "]");
         //this.updateContent(request.fullContent())
-        this.sendDelegateMessage("onMessageUpdate");
+        //this.sendDelegateMessage("onMessageUpdate");
         this.shutdownSentenceReader();
+
+        super.onStreamEnd(request);
     }
 
     // --- HtmlStreamReader delegate methods ---
