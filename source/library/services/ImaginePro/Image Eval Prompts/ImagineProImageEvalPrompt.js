@@ -118,7 +118,7 @@
     async asyncEvaluateImages () {
         try {
             // Performance monitoring: Start evaluation timing
-            performance.mark('evaluation-start');
+            performance.mark("evaluation-start");
 
             this.appendStatus("Preparing to evaluate images...");
             this.imageEvaluators().removeAllSubnodes();
@@ -140,13 +140,13 @@
             this.setStatus("Selected best image!");
 
             // Performance monitoring: Complete evaluation timing
-            performance.mark('evaluation-end');
-            performance.measure('evaluation-duration', 'evaluation-start', 'evaluation-end');
+            performance.mark("evaluation-end");
+            performance.measure("evaluation-duration", "evaluation-start", "evaluation-end");
 
         } catch (error) {
             // Performance monitoring: Mark end even on error
-            performance.mark('evaluation-end');
-            performance.measure('evaluation-duration', 'evaluation-start', 'evaluation-end');
+            performance.mark("evaluation-end");
+            performance.measure("evaluation-duration", "evaluation-start", "evaluation-end");
 
             this.throwEvalError(error);
         }
