@@ -110,12 +110,7 @@
      * @category Setup
      */
     setupSubnodes () {
-        //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", SvThemeResources);
-        //themes.setNodeCanReorderSubnodes(true);
-        //this.addSubnode(themes);
-        //let link = this.addLinkSubnode(themes);
-        //this.setThemes(themes);
-        //console.log(this.logPrefix(), "themes link = ", link.svDebugId());
+        //const themes = this.setThemes(SvThemeResources.shared());
 
         this.setFiles(SvFileResources.shared());
         this.addSubnode(this.files());

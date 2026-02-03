@@ -1259,7 +1259,6 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
                     if (this.shouldStore()) {
                         const store = this.defaultStore();
                         if (store.hasActiveObject(this)) {
-
                             store.forceAddDirtyObject(this); // not ideal, but let's see if it works
                         }
                     }

@@ -245,12 +245,6 @@
         this.setupDefaultChatModel();
     }
 
-    /*
-    markAsMutated () {
-        this.defaultStore().onDidMutateObject(this);
-    }
-    */
-
     /**
      * @description Returns an array of AI services.
      * @returns {Array} An array of AI service instances.

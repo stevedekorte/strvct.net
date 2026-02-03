@@ -429,4 +429,138 @@
         return JSON.parse(text);
     }
 
+    // --- Session Pool Methods (for SubObjectPool cloud sync) ---
+
+    /**
+     * Gets the path to a session's pool.json file.
+     * @param {String} sessionId - The session ID
+     * @returns {String}
+     * @category Pool Sync
+     */
+    sessionPoolPath (sessionId) {
+        return `${this.basePath()}/sessions/${sessionId}/pool.json`;
+    }
+
+    /**
+     * Uploads a session pool JSON to Firebase Storage.
+     * @param {String} sessionId - The session ID
+     * @param {Object} poolJson - The pool JSON to upload
+     * @returns {Promise<void>}
+     * @category Pool Sync
+     */
+    async asyncUploadPoolJson (sessionId, poolJson) {
+        const ref = this.storageRefForPath(this.sessionPoolPath(sessionId));
+        const jsonString = JSON.stringify(poolJson, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+
+        const metadata = {
+            contentType: "application/json",
+            customMetadata: {
+                type: "session-pool",
+                sessionId: sessionId,
+                lastModified: String(Date.now())
+            }
+        };
+
+        await ref.put(blob, metadata);
+    }
+
+    /**
+     * Downloads a session pool JSON from Firebase Storage.
+     * @param {String} sessionId - The session ID
+     * @returns {Promise<Object|null>} The pool JSON or null if not found
+     * @category Pool Sync
+     */
+    async asyncDownloadPoolJson (sessionId) {
+        try {
+            const ref = this.storageRefForPath(this.sessionPoolPath(sessionId));
+            const url = await ref.getDownloadURL();
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch pool: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            if (error.code === "storage/object-not-found" ||
+                (error.message && error.message.includes("404")) ||
+                (error.message && error.message.includes("does not exist"))) {
+                console.log("CLOUDSYNC [SvCloudSyncSource] No pool found for session:", sessionId);
+                return null;
+            }
+            throw error;
+        }
+    }
+
+    // --- Lock Management Methods ---
+
+    /**
+     * Acquires or refreshes a lock on a session.
+     * @param {String} sessionId - The session ID
+     * @param {String} clientId - The client ID requesting the lock
+     * @returns {Promise<Object>} Result with success boolean and error message if failed
+     * @category Lock Management
+     */
+    async asyncAcquireLock (sessionId, clientId) {
+        // This calls the Firebase Function endpoint for lock management
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+            return { success: false, error: "Not authenticated" };
+        }
+
+        const idToken = await currentUser.getIdToken();
+        const baseUrl = UoBuildEnv.functions.url;
+
+        const url = `${baseUrl}api/manifest/acquire-lock`;
+        console.log("SvCloudSyncSource: Acquiring lock at:", url);
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${idToken}`
+            },
+            body: JSON.stringify({
+                sessionId: sessionId,
+                clientId: clientId
+            })
+        });
+
+        console.log("SvCloudSyncSource: Lock response status:", response.status);
+        const result = await response.json();
+        console.log("SvCloudSyncSource: Lock response:", result);
+        return result;
+    }
+
+    /**
+     * Releases a lock on a session.
+     * @param {String} sessionId - The session ID
+     * @param {String} clientId - The client ID releasing the lock
+     * @returns {Promise<Object>} Result with success boolean
+     * @category Lock Management
+     */
+    async asyncReleaseLock (sessionId, clientId) {
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+            return { success: false, error: "Not authenticated" };
+        }
+
+        const idToken = await currentUser.getIdToken();
+        const baseUrl = UoBuildEnv.functions.url;
+
+        const response = await fetch(`${baseUrl}/api/manifest/release-lock`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${idToken}`
+            },
+            body: JSON.stringify({
+                sessionId: sessionId,
+                clientId: clientId
+            })
+        });
+
+        const result = await response.json();
+        return result;
+    }
+
 }.initThisClass());

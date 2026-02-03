@@ -58,11 +58,54 @@
 
     /**
      * @static
+     * @description Creates an ObjectPool from cloud JSON data.
+     * @param {Object} json - The JSON object containing pool data
+     * @returns {ObjectPool} A new pool initialized from the JSON
+     * @category Cloud Sync
+     */
+    static fromCloudJson (json) {
+        const pool = this.clone();
+        pool.kvMap().fromJson(json);
+        pool.loadStoredRoot();
+        return pool;
+    }
+
+    /**
+     * @static
      * @description
      * @returns {boolean}
      */
     static shouldStore () {
         return false;
+    }
+
+    /**
+     * @static
+     * @description Returns the set of all currently open ObjectPools.
+     * Uses EnumerableWeakSet to allow pools to be garbage collected when no longer referenced.
+     * @returns {EnumerableWeakSet}
+     */
+    static openPools () {
+        if (!this._openPools) {
+            this._openPools = new EnumerableWeakSet();
+        }
+        return this._openPools;
+    }
+
+    /**
+     * @static
+     * @description Notifies all open pools when an object's puuid changes.
+     * This allows all pools tracking an object to update their internal mappings.
+     * @param {Object} obj - The object whose puuid changed
+     * @param {String} oldPid - The previous puuid
+     * @param {String} newPid - The new puuid
+     */
+    static notifyAllPoolsOfPidChange (obj, oldPid, newPid) {
+        this.openPools().forEach(pool => {
+            if (pool.hasActiveObject(obj)) {
+                pool.onObjectUpdatePid(obj, oldPid, newPid);
+            }
+        });
     }
 
     /**
@@ -298,6 +341,7 @@
             this.blobPool().setName(this.name() + "/blobs");
             await this.blobPool().asyncOpen();
             await this.onPoolOpenSuccess();
+            ObjectPool.openPools().add(this);
         } catch (error) {
             this.onPoolOpenFailure(error);
         }
@@ -433,6 +477,19 @@
     }
 
     /**
+     * @description Loads and returns the stored root object.
+     * @returns {Object} The root object
+     * @throws {Error} If no valid stored root exists
+     * @category Root Management
+     */
+    loadStoredRoot () {
+        if (!this.hasValidStoredRoot()) {
+            throw new Error("No stored root in pool");
+        }
+        return this.readRootObject();
+    }
+
+    /**
      * @description get the root object or create it if it doesn't exist
      * @param {Function} aClosure - the closure to create the root object if it doesn't exist
      * @returns {Object}
@@ -441,6 +498,9 @@
         if (this.hasValidStoredRoot()) {
             this.readRootObject();
         } else {
+            if (!aClosure) {
+                throw new Error("No stored root and no closure provided");
+            }
             const newRoot = aClosure();
             assert(newRoot);
             this.setRootObject(newRoot);
@@ -656,6 +716,7 @@
      * @returns {ObjectPool}
      */
     close () {
+        ObjectPool.openPools().delete(this);
         this.removeMutationObservations();
         this.setActiveObjects(new EnumerableWeakMap());
         this.setDirtyObjects(new Map());
@@ -1341,7 +1402,9 @@
             this.kvMap().appendAsyncWriteKvPromise(kvPromise); // these will be awaited when committing the tx
         } else {
             //console.log(this.logPrefix() + "storeObject " + obj.svTypeId());
+            const jsonString = this.jsonStringForObject(obj);
 
+            /*
             const record = obj.recordForStore(this);
             const jsonString = JSON.stringify(record);
             //this.logDebug(() => "store " + puuid + " <- " + record.type )
@@ -1355,6 +1418,7 @@
                 const recordClass = SvGlobals.globals()[recordType];
                 assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
             }
+            */
 
 
             this.kvMap().set(puuid, jsonString);
@@ -1362,6 +1426,24 @@
             //this.storeRecord(puuid, record);
         }
         return this;
+    }
+
+    jsonStringForObject (obj) {
+        const record = obj.recordForStore(this);
+        const jsonString = JSON.stringify(record);
+        //this.logDebug(() => "store " + puuid + " <- " + record.type )
+
+        {
+            // sanity checks
+            // object should have a type and a class
+            const recordType = record.type;
+            assert(!Type.isNullOrUndefined(recordType), "object has no type property");
+
+            const recordClass = SvGlobals.globals()[recordType];
+            assert(recordClass && recordClass.isClass && recordClass.isClass(), "missing class for " + recordType);
+        }
+
+        return jsonString;
     }
 
     storeBlobsReferencedByObject (obj) {

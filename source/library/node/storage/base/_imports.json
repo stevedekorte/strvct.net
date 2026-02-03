@@ -1,6 +1,7 @@
 [
     "categories/_imports.json",
     "ObjectPool.js",
+    "SubObjectPool.js",
     "PersistentObjectPool.js",
     "SvBlobPool.js",
     "StoreRef.js"

@@ -8,8 +8,6 @@
  * Unlike WeakMap, the keys can be primitives such as strings and numbers, and it's entries are enumerable.
  * All values should be objects (or null, numbers, strings) but cannot be undefined.
  * @extends Map
- 
- 
  */
 
 /**

@@ -175,6 +175,24 @@
     }
 
     /**
+     * Gets the title for display in UI fields.
+     * @returns {string} The error name
+     * @category UI
+     */
+    title () {
+        return this.name || "Error";
+    }
+
+    /**
+     * Gets the subtitle for display in UI fields.
+     * @returns {string} The short error message
+     * @category UI
+     */
+    subtitle () {
+        return this.shortMessage();
+    }
+
+    /**
      * @category Debugging
      */
     stackURLs () {
