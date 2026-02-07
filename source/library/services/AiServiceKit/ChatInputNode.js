@@ -45,6 +45,36 @@
             slot.setSyncsToView(true);
         }
 
+        /**
+     * @member {Boolean} hasLeftButton - Indicates if the node has a left button
+     * @category UI
+     */
+        {
+            const slot = this.newSlot("hasLeftButton", false);
+            slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
+        }
+
+        /**
+     * @member {Boolean} isLeftButtonOn - Indicates if the left button is in the "on" state
+     * @category UI
+     */
+        {
+            const slot = this.newSlot("isLeftButtonOn", false);
+            slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
+        }
+
+        /**
+     * @member {String} leftButtonIconName - Icon name for the left button
+     * @category UI
+     */
+        {
+            const slot = this.newSlot("leftButtonIconName", null);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+        }
+
     /*
     {
       const slot = this.newSlot("sttSession", null);
@@ -127,6 +157,16 @@
         this.conversation().onChatInputValue(v);
         this.setValue("");
         this.scheduleSyncToView();
+    }
+
+    /**
+   * Handles click on the left button by delegating to the conversation.
+   * @category Event Handling
+   */
+    onClickLeftButton () {
+        if (this.conversation() && this.conversation().onClickChatLeftButton) {
+            this.conversation().onClickChatLeftButton();
+        }
     }
 
     /*

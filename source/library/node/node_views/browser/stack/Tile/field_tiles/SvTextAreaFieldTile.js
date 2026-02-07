@@ -38,6 +38,15 @@
             const slot = this.newSlot("sttSession", null);
             slot.setSlotType("SpeechToTextSession");
         }
+
+        /**
+         * @member {ButtonView} leftButton - Button for the left side of the input (e.g. narration toggle).
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("leftButton", null);
+            slot.setSlotType("ButtonView");
+        }
     }
 
     /**
@@ -58,6 +67,7 @@
         this.setValueEditableBorder("none");
 
         this.setupValueViewButton();
+        this.setupLeftButton();
         return this;
     }
 
@@ -84,35 +94,81 @@
     }
 
     /**
+     * Creates an icon-only ButtonView configured for use in the input area.
+     * @param {string} action - The action method name for click handling.
+     * @returns {ButtonView} The configured button.
+     * @category UI
+     */
+    newIconButton (action) {
+        const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
+        bv.setBorderRadius("0.4em");
+        bv.setHeight("2.1em");
+        bv.setMaxHeight("2.1em");
+        bv.setMinHeight("2.1em");
+        bv.setWidth("2.3em");
+        bv.setTarget(this).setAction(action);
+        bv.setBoxSizing("border-box");
+        bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
+        bv.setPaddingTop("0px");
+        bv.setPaddingBottom("0px");
+        bv.setPaddingLeft("0px");
+        bv.setPaddingRight("0px");
+        bv.titleView().setIsDisplayHidden(true);
+        bv.subtitleView().setIsDisplayHidden(true);
+        bv.iconView().setMinAndMaxWidth(16);
+        bv.iconView().setMinAndMaxHeight(16);
+        bv.iconView().flexCenterContent();
+        return bv;
+    }
+
+    /**
      * Sets up the button for the value view.
      * @category UI
      */
     setupValueViewButton () {
         this.valueViewContainer().setGap("1em");
-
-        const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
-        bv.setBorderRadius("0.4em");
-        bv.setMaxHeight("2.1em");
-        bv.setHeight("2.1em");
-        bv.setMinHeight(null);
-        bv.setWidth("2.3em");
-	    bv.setTarget(this).setAction("onClickValueButton");
-	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
-        bv.setPaddingTop("0px");
-        bv.setPaddingBottom("0px");
-        bv.setPaddingLeft("0px");
-        bv.setPaddingRight("0px");
-        bv.setMarginTop("1px");
-        bv.titleView().setIsDisplayHidden(true);
-        bv.titleView().setPaddingLeft("0px");
-        bv.titleView().setPaddingRight("0px");
+        const bv = this.newIconButton("onClickValueButton");
         bv.setAttribute("title", "Speech to text input");
         this.setSttButton(bv);
         this.updateSttButton();
     }
 
     /**
-     * Synchronizes the value from the node and updates the STT button visibility.
+     * Sets up the left button for the input area.
+     * @category UI
+     */
+    setupLeftButton () {
+        const bv = this.newIconButton("onClickLeftButton");
+        bv.setOrder(-1); // positions it before the text area in the flex row
+        this.setLeftButton(bv);
+    }
+
+    /**
+     * Updates the left button icon and opacity based on node state.
+     * @category UI
+     */
+    updateLeftButton () {
+        const iconName = this.getFromNodeDelegate("leftButtonIconName");
+        const isOn = this.getFromNodeDelegate("isLeftButtonOn");
+        if (iconName) {
+            this.leftButton().setIconName(iconName);
+        }
+        this.leftButton().setOpacity(isOn ? 1 : 0.3);
+    }
+
+    /**
+     * Handles click on the left button, delegating to the node.
+     * @category Event Handling
+     */
+    onClickLeftButton () {
+        const node = this.node();
+        if (node && node.onClickLeftButton) {
+            node.onClickLeftButton();
+        }
+    }
+
+    /**
+     * Synchronizes the value from the node and updates button visibility.
      * @category Data Synchronization
      */
     syncValueFromNode () {
@@ -121,6 +177,12 @@
         if (show !== undefined) {
             this.sttButton().setParentViewIfTrue(this.valueViewContainer(), show);
             this.updateSttButton();
+        }
+
+        const showLeft = this.getFromNodeDelegate("hasLeftButton");
+        if (showLeft !== undefined) {
+            this.leftButton().setParentViewIfTrue(this.valueViewContainer(), showLeft);
+            this.updateLeftButton();
         }
     }
 
