@@ -24,6 +24,24 @@
             slot.setShouldStoreSlot(false);
         }
 
+        /**
+     * @member {Boolean} chatInputHasSttButton - Whether the chat input has a speech-to-text button
+     * @category UI
+     */
+        {
+            const slot = this.newSlot("chatInputHasSttButton", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+     * @member {Boolean} chatInputHasNarrationButton - Whether the chat input has a narration toggle button
+     * @category UI
+     */
+        {
+            const slot = this.newSlot("chatInputHasNarrationButton", false);
+            slot.setSlotType("Boolean");
+        }
+
     }
 
     /**
@@ -59,7 +77,8 @@
         const f = ChatInputNode.clone();
         f.setCanDelete(false);
         f.setConversation(this);
-        f.setHasValueButton(true);
+        f.setHasValueButton(this.chatInputHasSttButton());
+        f.setHasLeftButton(this.chatInputHasNarrationButton());
         this.setChatInputNode(f);
         return f;
     }
