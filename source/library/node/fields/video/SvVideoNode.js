@@ -123,6 +123,7 @@
         this.setNodeCanAddSubnode(true);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
+        this.setDoesAutoSyncToCloud(true);
     }
 
     nodeThumbnailUrl () {

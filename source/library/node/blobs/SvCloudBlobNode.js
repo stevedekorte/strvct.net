@@ -58,6 +58,14 @@
             slot.setActionMethodName("asyncPushToCloud");
         }
 
+        // so multiple calls to push to cloud don't result in multiple promises
+        {
+            const slot = this.newSlot("pushToCloudPromise", null);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Promise");
+            slot.setIsSubnodeField(false);
+        }
+
         /// pull from cloud action
         {
             const slot = this.newSlot("pullFromCloudAction", null);
@@ -67,6 +75,15 @@
             slot.setSlotType("Action");
             slot.setIsSubnodeField(true);
             slot.setActionMethodName("asyncPullFromCloudByHash");
+        }
+
+        // auto-sync to cloud after local storage
+        {
+            const slot = this.newSlot("doesAutoSyncToCloud", false);
+            slot.setLabel("Auto Sync to Cloud");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setIsSubnodeField(true);
         }
     }
 
@@ -94,17 +111,55 @@
         return this.blobValue() !== null;
     }
 
+    // --- auto-sync to cloud ---
+
+    async asyncJustSetBlobValue (blob) { // private method, don't call directly, use asyncSetBlobValue instead
+        await super.asyncJustSetBlobValue(blob);
+        if (this.doesAutoSyncToCloud()) {
+            this.schedulePushToCloud();
+        }
+        return this;
+    }
+
+    schedulePushToCloud () {
+        if (this.pushToCloudPromise() || this.hasInCloud()) {
+            return;
+        }
+        SvSyncScheduler.shared().scheduleTargetAndMethod(this, "onScheduledPushToCloud");
+    }
+
+    onScheduledPushToCloud () {
+        this.asyncPushToCloud();
+    }
+
     // --- push to cloud ---
 
     async asyncPushToCloud () {
+        if (this.pushToCloudPromise()) {
+            return this.pushToCloudPromise();
+        }
+        this.setPushToCloudPromise(Promise.clone());
         const blob = this.blobValue();
         if (!blob) {
             return;
         }
-        const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
-        this.setDownloadUrl(publicUrl);
-        this.setHasInCloud(true);
-        return publicUrl;
+        try {
+            const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
+            this.setDownloadUrl(publicUrl);
+            this.setHasInCloud(true);
+            this.pushToCloudPromise().callResolveFunc();
+            this.clearPushToCloudPromise();
+            return publicUrl;
+        } catch (error) {
+            this.pushToCloudPromise().callRejectFunc(error);
+            this.clearPushToCloudPromise();
+            throw error;
+        }
+    }
+
+    clearPushToCloudPromise () {
+        this.setPushToCloudPromise(null);
+        return this;
     }
 
     pushToCloudActionInfo () {

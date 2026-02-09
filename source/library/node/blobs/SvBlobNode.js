@@ -106,7 +106,23 @@
         return this;
     }
 
+    async asyncDoesHaveBlob (blob) {
+        if (!blob || !this.valueHash()) {
+            return false;
+        }
+        const blobHash = await blob.asyncHexSha256();
+        return blobHash === this.valueHash();
+    }
+
     async asyncSetBlobValue (blob) {
+        if (await this.asyncDoesHaveBlob(blob)) {
+            return this;
+        }
+        await this.asyncJustSetBlobValue(blob);
+        return this;
+    }
+
+    async asyncJustSetBlobValue (blob) { // private method, don't call directly, use asyncSetBlobValue instead
         this.setBlobValue(blob);
         await this.asyncValueHash(); // compute the hash
         await this.asyncWriteToLocalStorage();
