@@ -285,6 +285,10 @@
      * @param {Error} error - The error object to display.
      * @returns {SvPanelView} - The created error panel.
      * @category Error Handling
+     * @deprecated Use SvWindowErrorPanel instead, which provides a richer error UI
+     * with collapsible technical details, copy-to-clipboard, error catalog integration,
+     * and server-side error reporting. Errors thrown or rejected will be caught
+     * automatically by SvWindowErrorPanel's window error listeners.
      */
     static showError (error) {
         const panel = SvPanelView.clone().setTitle(error.message);

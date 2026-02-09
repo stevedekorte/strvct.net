@@ -453,8 +453,6 @@
         this.setError(error.message);
         this.setStatus(s);
         this.sendDelegateMessage("onTtsPromptError", [this]);
-        //this.onEnd();
-        SvPanelView.showError(new Error("Text to Speech request " + s));
     }
 
     //onEnd () {
