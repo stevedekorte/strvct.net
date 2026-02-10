@@ -295,7 +295,9 @@
             }
 
             // Log the full request details for debugging
-            console.log("OpenAiTtsRequest: Request completed\n" + xhrRequest.description());
+            if (this.isDebugging()) {
+                console.log("OpenAiTtsRequest: Request completed\n" + xhrRequest.description());
+            }
 
             // Get the audio blob from the response
             const xhr = xhrRequest.xhr();
@@ -305,7 +307,9 @@
                 throw new Error("No response blob received from TTS API");
             }
 
-            console.log(`TTS Response: size=${audioBlob.size}, type=${audioBlob.type}`);
+            if (this.isDebugging()) {
+                console.log(`TTS Response: size=${audioBlob.size}, type=${audioBlob.type}`);
+            }
 
             // Check if blob is suspiciously small (less than 1KB is likely an error)
             if (audioBlob.size < 1000) {
@@ -339,14 +343,18 @@
 
             try {
                 const sound = this.sound();
-                console.log("OpenAiTtsRequest: Loading audio blob into SvWaSound...");
+                if (this.isDebugging()) {
+                    console.log("OpenAiTtsRequest: Loading audio blob into SvWaSound...");
+                }
                 await sound.asyncLoadFromDataBlob(audioBlob);
-                console.log("OpenAiTtsRequest: Audio loaded", JSON.stringify({
-                    data: sound.data(),
-                    hasData: sound.hasData(),
-                    dataByteLength: sound.data() ? sound.data().byteLength : null,
-                    loadState: sound.loadState()
-                }, null, 2));
+                if (this.isDebugging()) {
+                    console.log("OpenAiTtsRequest: Audio loaded", JSON.stringify({
+                        data: sound.data(),
+                        hasData: sound.hasData(),
+                        dataByteLength: sound.data() ? sound.data().byteLength : null,
+                        loadState: sound.loadState()
+                    }, null, 2));
+                }
             } catch (error) {
                 console.error("Failed to load audio data into SvWaSound:", error);
                 throw new Error(`Failed to decode audio: ${error.message}`);
