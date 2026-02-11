@@ -491,6 +491,23 @@
         }
     }
 
+    /**
+     * Deletes a session pool JSON from Firebase Storage.
+     * @param {String} sessionId - The session ID
+     * @returns {Promise<void>}
+     * @category Pool Sync
+     */
+    async asyncDeleteSessionPool (sessionId) {
+        try {
+            const ref = this.storageRefForPath(this.sessionPoolPath(sessionId));
+            await ref.delete();
+        } catch (error) {
+            if (error.code !== "storage/object-not-found") {
+                throw error;
+            }
+        }
+    }
+
     // --- Lock Management Methods ---
 
     /**
