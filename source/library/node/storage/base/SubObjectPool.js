@@ -172,6 +172,7 @@
      * @returns {SubObjectPool}
      */
     close () {
+        this.stopLockRefreshTimer();
         super.close();
         this.setCloudSyncSource(null);
         this.setSessionId(null);
@@ -244,6 +245,7 @@
             if (result.success) {
                 this.setLockClientId(clientId);
                 this.setLockTime(Date.now());
+                this.startLockRefreshTimer();
                 console.log("SubObjectPool: Lock acquired for session:", sessionId);
                 return true;
             }
@@ -274,6 +276,7 @@
         }
 
         try {
+            this.stopLockRefreshTimer();
             await cloudSource.asyncReleaseLock(sessionId, clientId);
             this.setLockClientId(null);
             this.setLockTime(null);
@@ -303,6 +306,40 @@
         }
         const elapsed = Date.now() - lockTime;
         return elapsed > 60000; // 1 minute
+    }
+
+    // --- Lock Refresh Timer ---
+
+    /**
+     * @description Starts a periodic timer to refresh the lock before TTL expires.
+     * Should be called after a lock is acquired.
+     * @returns {SubObjectPool}
+     */
+    startLockRefreshTimer () {
+        this.stopLockRefreshTimer();
+
+        this._lockRefreshTimerId = setInterval(() => {
+            if (this.hasLock() && this.lockNeedsRefresh()) {
+                console.log("SubObjectPool: Auto-refreshing lock for session:", this.sessionId());
+                this.asyncAcquireOrRefreshLock().catch(error => {
+                    console.error("SubObjectPool: Lock auto-refresh failed:", error);
+                });
+            }
+        }, 60000); // Check every 60 seconds
+
+        return this;
+    }
+
+    /**
+     * @description Stops the lock refresh timer.
+     * @returns {SubObjectPool}
+     */
+    stopLockRefreshTimer () {
+        if (this._lockRefreshTimerId) {
+            clearInterval(this._lockRefreshTimerId);
+            this._lockRefreshTimerId = null;
+        }
+        return this;
     }
 
 }.initThisClass());

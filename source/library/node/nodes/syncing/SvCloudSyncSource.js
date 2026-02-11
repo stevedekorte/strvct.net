@@ -27,6 +27,59 @@
         return "Sync source for Firebase Cloud Storage";
     }
 
+    // --- Retry Utility ---
+
+    /**
+     * Retries an async function with exponential backoff on transient errors.
+     * Only retries on network errors and HTTP 5xx; does not retry auth (401) or validation (400).
+     * @param {Function} fn - Async function to retry
+     * @param {Number} [maxAttempts=3] - Maximum number of attempts
+     * @param {Array<Number>} [delays=[1000, 3000]] - Delay in ms between retries
+     * @returns {Promise<*>} Result of the function
+     * @category Helpers
+     */
+    static async asyncRetry (fn, maxAttempts = 3, delays = [1000, 3000]) {
+        let lastError;
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            try {
+                return await fn();
+            } catch (error) {
+                lastError = error;
+
+                // Don't retry auth or validation errors
+                if (this.isNonRetryableError(error)) {
+                    throw error;
+                }
+
+                if (attempt < maxAttempts - 1) {
+                    const delay = delays[Math.min(attempt, delays.length - 1)];
+                    console.warn("CLOUDSYNC [SvCloudSyncSource] Transient error (attempt " + (attempt + 1) + "/" + maxAttempts + "), retrying in " + delay + "ms:", error.message);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+        throw lastError;
+    }
+
+    /**
+     * Checks if an error is non-retryable (auth or validation).
+     * @param {Error} error - The error to check
+     * @returns {Boolean} True if the error should not be retried
+     * @category Helpers
+     */
+    static isNonRetryableError (error) {
+        const msg = error.message || "";
+        // Firebase auth errors
+        if (error.code === "storage/unauthorized" || error.code === "storage/unauthenticated") {
+            return true;
+        }
+        // HTTP 400/401/403
+        if (msg.includes("400") || msg.includes("401") || msg.includes("403")) {
+            return true;
+        }
+        return false;
+    }
+
     initPrototypeSlots () {
         /**
          * @member {String} userId - The user ID for the storage path
@@ -118,6 +171,15 @@
     }
 
     /**
+     * Gets the path to the manifest backup file.
+     * @returns {String}
+     * @category Paths
+     */
+    manifestBackupPath () {
+        return `${this.basePath()}/_manifest_backup.json`;
+    }
+
+    /**
      * Gets the path to an item file.
      * @param {String} itemId - The item's jsonId
      * @returns {String}
@@ -153,7 +215,31 @@
                 console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
                 return this.emptyManifest();
             }
-            throw error;
+
+            // Primary manifest corrupt or unreadable - try backup
+            console.warn("CLOUDSYNC [SvCloudSyncSource] Primary manifest failed, trying backup:", error.message);
+            return await this.asyncFetchManifestBackup();
+        }
+    }
+
+    /**
+     * Fetches the backup manifest. Returns empty manifest if backup also fails.
+     * @returns {Promise<Object>}
+     * @category Sync
+     */
+    async asyncFetchManifestBackup () {
+        try {
+            const ref = this.storageRefForPath(this.manifestBackupPath());
+            const url = await ref.getDownloadURL();
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch backup manifest: ${response.status}`);
+            }
+            console.log("CLOUDSYNC [SvCloudSyncSource] Loaded manifest from backup");
+            return await response.json();
+        } catch (backupError) {
+            console.warn("CLOUDSYNC [SvCloudSyncSource] Backup manifest also unavailable:", backupError.message);
+            return this.emptyManifest();
         }
     }
 
@@ -164,14 +250,28 @@
      * @category Sync
      */
     async asyncFetchItem (itemId) {
-        const ref = this.storageRefForPath(this.itemPath(itemId));
-        const url = await ref.getDownloadURL();
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch item ${itemId}: ${response.status}`);
+        try {
+            const ref = this.storageRefForPath(this.itemPath(itemId));
+            const url = await ref.getDownloadURL();
+            const response = await fetch(url);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found (404):", itemId);
+                    return null;
+                }
+                throw new Error(`Failed to fetch item ${itemId}: ${response.status}`);
+            }
+            // Using plain JSON for easier debugging (no compression)
+            return await response.json();
+        } catch (error) {
+            if (error.code === "storage/object-not-found" ||
+                (error.message && error.message.includes("404")) ||
+                (error.message && error.message.includes("does not exist"))) {
+                console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found:", itemId);
+                return null;
+            }
+            throw error;
         }
-        // Using plain JSON for easier debugging (no compression)
-        return await response.json();
     }
 
     /**
@@ -215,7 +315,7 @@
             customMetadata: customMetadata
         };
 
-        await ref.put(blob, metadata);
+        await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
     }
 
     /**
@@ -290,10 +390,20 @@
      * @category Sync
      */
     async asyncUploadManifest () {
-        const ref = this.storageRefForPath(this.manifestPath());
         const manifestJson = JSON.stringify(this.manifest(), null, 2);
         const blob = new Blob([manifestJson], { type: "application/json" });
-        await ref.put(blob, { contentType: "application/json" });
+
+        // Save backup of current manifest before overwriting
+        try {
+            const backupRef = this.storageRefForPath(this.manifestBackupPath());
+            await backupRef.put(blob, { contentType: "application/json" });
+        } catch (backupError) {
+            // Non-fatal - continue with primary upload
+            console.warn("CLOUDSYNC [SvCloudSyncSource] Manifest backup failed:", backupError.message);
+        }
+
+        const ref = this.storageRefForPath(this.manifestPath());
+        await this.thisClass().asyncRetry(() => ref.put(blob, { contentType: "application/json" }));
     }
 
     /**
@@ -311,6 +421,53 @@
                 throw error;
             }
             // Already deleted, ignore
+        }
+
+        // Cascade delete: also delete any sub-collection folder for this item
+        await this.asyncDeleteSubFolder(itemId);
+    }
+
+    /**
+     * Deletes all files in an item's sub-collection folder.
+     * @param {String} itemId - The item ID whose subfolder to delete
+     * @returns {Promise<void>}
+     * @category Storage
+     */
+    async asyncDeleteSubFolder (itemId) {
+        try {
+            const subFolderRef = this.storageRefForPath(`${this.basePath()}/${itemId}`);
+            const result = await subFolderRef.listAll();
+
+            if (result.items.length === 0 && result.prefixes.length === 0) {
+                return; // No subfolder exists
+            }
+
+            // Delete all files in the subfolder
+            for (const fileRef of result.items) {
+                try {
+                    await fileRef.delete();
+                } catch (e) {
+                    console.warn("CLOUDSYNC [SvCloudSyncSource] Failed to delete sub-item:", fileRef.fullPath, e.message);
+                }
+            }
+
+            // Recursively delete nested subfolders
+            for (const prefixRef of result.prefixes) {
+                try {
+                    const nested = await prefixRef.listAll();
+                    for (const nestedFile of nested.items) {
+                        await nestedFile.delete();
+                    }
+                } catch (e) {
+                    console.warn("CLOUDSYNC [SvCloudSyncSource] Failed to delete nested folder:", prefixRef.fullPath, e.message);
+                }
+            }
+
+            console.log("CLOUDSYNC [SvCloudSyncSource] Cascade deleted subfolder for:", itemId);
+        } catch (error) {
+            if (error.code !== "storage/object-not-found") {
+                console.warn("CLOUDSYNC [SvCloudSyncSource] Cascade delete failed for:", itemId, error.message);
+            }
         }
     }
 
@@ -462,7 +619,7 @@
             }
         };
 
-        await ref.put(blob, metadata);
+        await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
     }
 
     /**
@@ -524,13 +681,13 @@
             return { success: false, error: "Not authenticated" };
         }
 
-        const idToken = await currentUser.getIdToken();
+        let idToken = await currentUser.getIdToken();
         const baseUrl = UoBuildEnv.functions.url;
 
         const url = `${baseUrl}api/manifest/acquire-lock`;
         console.log("SvCloudSyncSource: Acquiring lock at:", url);
 
-        const response = await fetch(url, {
+        let response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -541,6 +698,26 @@
                 clientId: clientId
             })
         });
+
+        // If token expired, force-refresh and retry once
+        if (response.status === 401) {
+            console.log("SvCloudSyncSource: Token expired, refreshing and retrying lock acquire");
+            idToken = await currentUser.getIdToken(true);
+            response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    sessionId: sessionId,
+                    clientId: clientId
+                })
+            });
+        }
+
+        // Cache token for use during page unload (releaseLockOnUnload)
+        this._cachedIdToken = idToken;
 
         console.log("SvCloudSyncSource: Lock response status:", response.status);
         const result = await response.json();
@@ -561,10 +738,10 @@
             return { success: false, error: "Not authenticated" };
         }
 
-        const idToken = await currentUser.getIdToken();
+        let idToken = await currentUser.getIdToken();
         const baseUrl = UoBuildEnv.functions.url;
 
-        const response = await fetch(`${baseUrl}/api/manifest/release-lock`, {
+        let response = await fetch(`${baseUrl}/api/manifest/release-lock`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -576,8 +753,81 @@
             })
         });
 
+        // If token expired, force-refresh and retry once
+        if (response.status === 401) {
+            console.log("SvCloudSyncSource: Token expired, refreshing and retrying lock release");
+            idToken = await currentUser.getIdToken(true);
+            response = await fetch(`${baseUrl}/api/manifest/release-lock`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    sessionId: sessionId,
+                    clientId: clientId
+                })
+            });
+        }
+
         const result = await response.json();
         return result;
+    }
+
+    /**
+     * Releases a lock using a keepalive fetch that survives page unload.
+     * Use this in beforeunload handlers where async operations cannot complete.
+     * @param {String} sessionId - The session ID
+     * @param {String} clientId - The client ID releasing the lock
+     * @category Lock Management
+     */
+    releaseLockOnUnload (sessionId, clientId) {
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+            return;
+        }
+
+        // Use the cached token - getIdToken() is async and won't complete during unload
+        currentUser.getIdToken().then(idToken => {
+            // This won't run during unload, but is here for completeness
+            this._cachedIdToken = idToken;
+        });
+
+        const idToken = this._cachedIdToken;
+        if (!idToken) {
+            return;
+        }
+
+        const baseUrl = UoBuildEnv.functions.url;
+
+        try {
+            fetch(`${baseUrl}/api/manifest/release-lock`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${idToken}`
+                },
+                body: JSON.stringify({
+                    sessionId: sessionId,
+                    clientId: clientId
+                }),
+                keepalive: true // Survives page unload
+            });
+        } catch (e) {
+            // Best effort - can't do much during unload
+        }
+    }
+
+    /**
+     * Caches the current auth token for use during page unload.
+     * Call this periodically or after token refresh to keep it fresh.
+     * @category Lock Management
+     */
+    async asyncCacheAuthToken () {
+        const currentUser = firebase.auth().currentUser;
+        if (currentUser) {
+            this._cachedIdToken = await currentUser.getIdToken();
+        }
     }
 
 }.initThisClass());

@@ -263,6 +263,11 @@
             if (!localItem) {
                 // New item - fetch and add
                 const json = await this.asyncFetchItem(itemId);
+                if (json === null) {
+                    // File missing from cloud storage - skip this item
+                    console.warn("CLOUDSYNC [SvSyncCollectionSource] Skipping missing cloud item:", itemId);
+                    continue;
+                }
                 const typeName = sourceMetadata ? sourceMetadata.type : null;
                 const newItem = await this.asyncCreateItemFromJsonWithErrorHandling(json, typeName, itemId);
                 if (newItem) {
@@ -272,6 +277,10 @@
             } else if (this.shouldUpdateItem(localItem, sourceMetadata)) {
                 // Update existing item if source is newer
                 const json = await this.asyncFetchItem(itemId);
+                if (json === null) {
+                    console.warn("CLOUDSYNC [SvSyncCollectionSource] Skipping missing cloud item on update:", itemId);
+                    continue;
+                }
                 const success = await this.asyncApplyJsonWithErrorHandling(localItem, json, itemId);
                 if (success) {
                     this.didSyncItemFromSource(localItem, sourceMetadata);
@@ -399,8 +408,24 @@
             }
         }
 
-        // Upload updated manifest
-        await this.asyncUploadManifest();
+        // Upload updated manifest (critical - retry separately if needed)
+        try {
+            await this.asyncUploadManifest();
+        } catch (manifestError) {
+            console.error("CLOUDSYNC [SvSyncCollectionSource] Manifest upload failed, retrying once:", manifestError.message);
+            // One extra retry specifically for manifest since it's the critical consistency piece
+            await this.asyncUploadManifest();
+        }
+
+        // Clean up orphaned cloud files not in the manifest
+        try {
+            if (this.asyncDeleteOrphanedCloudItems) {
+                await this.asyncDeleteOrphanedCloudItems();
+            }
+        } catch (cleanupError) {
+            // Non-fatal - orphans will be cleaned up on next sync
+            console.warn("CLOUDSYNC [SvSyncCollectionSource] Orphan cleanup failed:", cleanupError.message);
+        }
     }
 
     /**
@@ -726,9 +751,6 @@
             "The incompatible cloud data has been removed. Some data may have been lost. " +
             "(Item: " + itemId + ")";
         console.warn("CLOUD SYNC ERROR: " + message);
-
-        throw new Error(message);
-        //this.postNoteNamed("cloudItemError", message);
     }
 
 }.initThisClass());

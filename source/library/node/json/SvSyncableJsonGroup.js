@@ -215,10 +215,24 @@
 
         this.setFetchState("fetching");
 
+        const fetchStartTime = Date.now();
+
         this._fetchPromise = (async () => {
             try {
                 const json = await source.asyncFetchItem(this.jsonId());
-                this.setCloudJson(json);
+
+                // Check if local modifications occurred during the async fetch
+                const localMod = this.localLastModified();
+                if (localMod && localMod > fetchStartTime) {
+                    // Local wins - user edited while fetch was in flight
+                    console.log("CLOUDSYNC [SvSyncableJsonGroup] Local modifications during fetch, skipping cloud data for:", this.svTypeId());
+                    this.setFetchState("fetched");
+                    return this;
+                }
+
+                if (json) {
+                    this.setCloudJson(json);
+                }
                 this.setFetchState("fetched");
                 // Notify that we synced from cloud
                 if (this.didSyncFromCloud) {
@@ -229,7 +243,6 @@
             } catch (error) {
                 this.setFetchState("fetchError");
                 console.error("Failed to fetch content for " + this.svTypeId() + ": " + error.message);
-                debugger;
 
                 // Handle incompatible cloud data format - notify user and delete cloud item
                 if (source.handleCloudItemError) {
