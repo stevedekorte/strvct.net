@@ -800,6 +800,41 @@
     }
 
     /**
+     * Returns the timestamp of the latest delta file for a session.
+     * Delta files are named {timestamp}.json, so the latest timestamp
+     * can be derived from the filenames without downloading any data.
+     * Used by the reader to determine the true lastModified when the
+     * manifest may not have been updated on every delta write.
+     * @param {String} sessionId - The session ID
+     * @returns {Promise<Number>} The latest delta timestamp, or 0 if no deltas
+     * @category Pool Sync
+     */
+    async asyncLatestDeltaTimestamp (sessionId) {
+        const folderRef = this.storageRefForPath(this.sessionDeltasFolder(sessionId));
+
+        try {
+            const result = await folderRef.listAll();
+            if (result.items.length === 0) {
+                return 0;
+            }
+
+            let latest = 0;
+            for (const itemRef of result.items) {
+                const timestamp = parseInt(itemRef.name.replace(".json", ""), 10);
+                if (!isNaN(timestamp) && timestamp > latest) {
+                    latest = timestamp;
+                }
+            }
+            return latest;
+        } catch (error) {
+            if (error.code === "storage/object-not-found") {
+                return 0;
+            }
+            throw error;
+        }
+    }
+
+    /**
      * Counts the number of delta files for a session.
      * @param {String} sessionId - The session ID
      * @returns {Promise<Number>} The count of delta files

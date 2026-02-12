@@ -284,10 +284,38 @@
     // --- Cloud Save ---
 
     /**
+     * @static
+     * @description Save type indicating no changes were detected.
+     * @returns {String}
+     */
+    static saveTypeNone () { return "none"; }
+
+    /**
+     * @static
+     * @description Save type indicating a delta was uploaded.
+     * @returns {String}
+     */
+    static saveTypeDelta () { return "delta"; }
+
+    /**
+     * @static
+     * @description Save type indicating a full snapshot was uploaded.
+     * @returns {String}
+     */
+    static saveTypeFull () { return "full"; }
+
+    /**
+     * @static
+     * @description Save type indicating compaction was performed (full snapshot + delta cleanup).
+     * @returns {String}
+     */
+    static saveTypeCompacted () { return "compacted"; }
+
+    /**
      * @async
      * @description Save the pool to cloud storage using delta optimization.
      * Uploads only changes when possible, falls back to full upload when needed.
-     * @returns {Promise<Boolean>} True if data was uploaded, false if no changes
+     * @returns {Promise<String>} Save type: "none", "delta", "full", or "compacted"
      */
     async asyncSaveToCloud () {
         const cloudSource = this.cloudSyncSource();
@@ -314,9 +342,12 @@
 
             // Clean up any existing deltas since we just did a full snapshot
             await cloudSource.asyncDeleteAllDeltas(sessionId);
+
+            this.updateLastSyncedSnapshot();
+            return this.thisClass().saveTypeFull();
         } else if (delta.isEmpty) {
             // No changes - skip upload entirely
-            return false;
+            return this.thisClass().saveTypeNone();
         } else {
             // Delta upload
             console.log("CLOUDSYNC [SubObjectPool] Performing delta upload for session:", sessionId);
@@ -327,12 +358,13 @@
             if (deltaCount >= this.thisClass().compactionThreshold()) {
                 console.log("CLOUDSYNC [SubObjectPool] Delta count (" + deltaCount + ") exceeds threshold, compacting...");
                 await this.asyncCompactToCloud();
+                this.updateLastSyncedSnapshot();
+                return this.thisClass().saveTypeCompacted();
             }
-        }
 
-        // Update snapshot after successful upload
-        this.updateLastSyncedSnapshot();
-        return true;
+            this.updateLastSyncedSnapshot();
+            return this.thisClass().saveTypeDelta();
+        }
     }
 
     /**
