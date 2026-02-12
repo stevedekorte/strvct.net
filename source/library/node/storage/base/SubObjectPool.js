@@ -81,6 +81,17 @@
             slot.setAllowsNullValue(true);
             slot.setDescription("Cloud sync source for uploads/downloads");
         }
+
+        /**
+         * @member {Object} lastSyncedSnapshot
+         * @description Snapshot of kvMap state after last successful cloud upload (puuid -> jsonString)
+         */
+        {
+            const slot = this.newSlot("lastSyncedSnapshot", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+            slot.setDescription("Snapshot of kvMap state after last successful upload");
+        }
     }
 
     initPrototype () {
@@ -178,6 +189,95 @@
         this.setSessionId(null);
         this.setLockClientId(null);
         this.setLockTime(null);
+        this.setLastSyncedSnapshot(null);
+        return this;
+    }
+
+    // --- Delta Tracking Constants ---
+
+    /**
+     * @description Threshold ratio of changes to total records above which a full upload is used instead of a delta.
+     * @returns {Number}
+     */
+    static fullUploadThreshold () {
+        return 0.5;
+    }
+
+    /**
+     * @description Maximum number of delta files before compaction triggers.
+     * @returns {Number}
+     */
+    static compactionThreshold () {
+        return 20;
+    }
+
+    // --- Delta Tracking ---
+
+    /**
+     * @description Compares current kvMap state against lastSyncedSnapshot to produce a delta.
+     * Returns null if no snapshot exists (full upload needed) or changes exceed threshold.
+     * Returns an object with empty writes/deletes if nothing changed.
+     * @returns {Object|null} Delta object {writes, deletes, timestamp} or null for full upload
+     */
+    collectDelta () {
+        const snapshot = this.lastSyncedSnapshot();
+
+        // No snapshot means first save or snapshot was cleared - do full upload
+        if (!snapshot) {
+            console.log("CLOUDSYNC [SubObjectPool] No snapshot - full upload needed");
+            return null;
+        }
+
+        const writes = {};
+        const deletes = [];
+        const currentJson = this.asJson();
+
+        // Find writes: keys in current that are new or changed
+        const currentKeys = Object.keys(currentJson);
+        for (const key of currentKeys) {
+            if (!Object.hasOwn(snapshot, key) || snapshot[key] !== currentJson[key]) {
+                writes[key] = currentJson[key];
+            }
+        }
+
+        // Find deletes: keys in snapshot that are no longer in current
+        const snapshotKeys = Object.keys(snapshot);
+        for (const key of snapshotKeys) {
+            if (!Object.hasOwn(currentJson, key)) {
+                deletes.push(key);
+            }
+        }
+
+        const totalChanges = Object.keys(writes).length + deletes.length;
+
+        // If no changes, return empty delta
+        if (totalChanges === 0) {
+            console.log("CLOUDSYNC [SubObjectPool] No changes detected - skipping upload");
+            return { writes: {}, deletes: [], timestamp: Date.now(), isEmpty: true };
+        }
+
+        // If changes exceed threshold, prefer full upload
+        const totalRecords = currentKeys.length;
+        if (totalRecords > 0 && totalChanges / totalRecords > this.thisClass().fullUploadThreshold()) {
+            console.log("CLOUDSYNC [SubObjectPool] Changes (" + totalChanges + "/" + totalRecords + ") exceed threshold - full upload");
+            return null;
+        }
+
+        console.log("CLOUDSYNC [SubObjectPool] Delta collected: " + Object.keys(writes).length + " writes, " + deletes.length + " deletes");
+
+        return {
+            writes: writes,
+            deletes: deletes,
+            timestamp: Date.now()
+        };
+    }
+
+    /**
+     * @description Copies the current kvMap state to lastSyncedSnapshot.
+     * @returns {SubObjectPool}
+     */
+    updateLastSyncedSnapshot () {
+        this.setLastSyncedSnapshot(Object.assign({}, this.asJson()));
         return this;
     }
 
@@ -185,8 +285,9 @@
 
     /**
      * @async
-     * @description Save the pool to cloud storage
-     * @returns {Promise<void>}
+     * @description Save the pool to cloud storage using delta optimization.
+     * Uploads only changes when possible, falls back to full upload when needed.
+     * @returns {Promise<Boolean>} True if data was uploaded, false if no changes
      */
     async asyncSaveToCloud () {
         const cloudSource = this.cloudSyncSource();
@@ -202,9 +303,52 @@
             await this.kvMap().promiseCommit();
         }
 
-        // Get the pool JSON and upload
+        // Collect delta to determine upload strategy
+        const delta = this.collectDelta();
+
+        if (delta === null) {
+            // Full upload needed (no snapshot, or changes too large)
+            console.log("CLOUDSYNC [SubObjectPool] Performing full upload for session:", sessionId);
+            const poolJson = this.asJson();
+            await cloudSource.asyncUploadPoolJson(sessionId, poolJson);
+
+            // Clean up any existing deltas since we just did a full snapshot
+            await cloudSource.asyncDeleteAllDeltas(sessionId);
+        } else if (delta.isEmpty) {
+            // No changes - skip upload entirely
+            return false;
+        } else {
+            // Delta upload
+            console.log("CLOUDSYNC [SubObjectPool] Performing delta upload for session:", sessionId);
+            await cloudSource.asyncUploadDelta(sessionId, delta);
+
+            // Check if compaction is needed
+            const deltaCount = await cloudSource.asyncCountDeltas(sessionId);
+            if (deltaCount >= this.thisClass().compactionThreshold()) {
+                console.log("CLOUDSYNC [SubObjectPool] Delta count (" + deltaCount + ") exceeds threshold, compacting...");
+                await this.asyncCompactToCloud();
+            }
+        }
+
+        // Update snapshot after successful upload
+        this.updateLastSyncedSnapshot();
+        return true;
+    }
+
+    /**
+     * @async
+     * @description Compacts by uploading full snapshot and deleting all deltas.
+     * @returns {Promise<void>}
+     */
+    async asyncCompactToCloud () {
+        const cloudSource = this.cloudSyncSource();
+        const sessionId = this.sessionId();
+
         const poolJson = this.asJson();
         await cloudSource.asyncUploadPoolJson(sessionId, poolJson);
+        await cloudSource.asyncDeleteAllDeltas(sessionId);
+
+        console.log("CLOUDSYNC [SubObjectPool] Compaction complete for session:", sessionId);
     }
 
     // --- Lock Management ---
@@ -288,14 +432,6 @@
     }
 
     /**
-     * @description Check if we currently hold the lock
-     * @returns {Boolean}
-     */
-    hasLock () {
-        return this.lockClientId() === this.thisClass().browserClientId();
-    }
-
-    /**
      * @description Check if lock needs refresh (older than 1 minute)
      * @returns {Boolean}
      */
@@ -341,5 +477,14 @@
         }
         return this;
     }
+
+    /**
+     * @description Check if we currently hold the lock
+     * @returns {Boolean}
+     */
+    hasLock () {
+        return this.lockClientId() === this.thisClass().browserClientId();
+    }
+
 
 }.initThisClass());

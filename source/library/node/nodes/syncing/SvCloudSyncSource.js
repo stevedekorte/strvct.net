@@ -665,6 +665,160 @@
         }
     }
 
+    // --- Session Delta Methods (for incremental sync) ---
+
+    /**
+     * Gets the path to a session's deltas folder.
+     * @param {String} sessionId - The session ID
+     * @returns {String}
+     * @category Pool Sync
+     */
+    sessionDeltasFolder (sessionId) {
+        return `${this.basePath()}/sessions/${sessionId}/deltas`;
+    }
+
+    /**
+     * Gets the path to a specific delta file.
+     * @param {String} sessionId - The session ID
+     * @param {Number} timestamp - The delta timestamp
+     * @returns {String}
+     * @category Pool Sync
+     */
+    sessionDeltaPath (sessionId, timestamp) {
+        return `${this.sessionDeltasFolder(sessionId)}/${timestamp}.json`;
+    }
+
+    /**
+     * Uploads a delta JSON file to Firebase Storage.
+     * @param {String} sessionId - The session ID
+     * @param {Object} delta - The delta object {writes, deletes, timestamp}
+     * @returns {Promise<void>}
+     * @category Pool Sync
+     */
+    async asyncUploadDelta (sessionId, delta) {
+        const path = this.sessionDeltaPath(sessionId, delta.timestamp);
+        const ref = this.storageRefForPath(path);
+        const jsonString = JSON.stringify(delta, null, 2);
+        const blob = new Blob([jsonString], { type: "application/json" });
+
+        const metadata = {
+            contentType: "application/json",
+            customMetadata: {
+                type: "session-delta",
+                sessionId: sessionId,
+                timestamp: String(delta.timestamp)
+            }
+        };
+
+        await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
+        console.log("CLOUDSYNC [SvCloudSyncSource] Uploaded delta:", delta.timestamp,
+            "writes:", Object.keys(delta.writes || {}).length,
+            "deletes:", (delta.deletes || []).length);
+    }
+
+    /**
+     * Downloads all delta files for a session, sorted chronologically.
+     * @param {String} sessionId - The session ID
+     * @returns {Promise<Array<Object>>} Sorted array of delta objects
+     * @category Pool Sync
+     */
+    async asyncDownloadDeltas (sessionId) {
+        const folderRef = this.storageRefForPath(this.sessionDeltasFolder(sessionId));
+        let result;
+
+        try {
+            result = await folderRef.listAll();
+        } catch (error) {
+            if (error.code === "storage/object-not-found") {
+                return [];
+            }
+            throw error;
+        }
+
+        if (result.items.length === 0) {
+            return [];
+        }
+
+        console.log("CLOUDSYNC [SvCloudSyncSource] Found", result.items.length, "delta files for session:", sessionId);
+
+        // Sort by filename (timestamp) to ensure chronological order
+        const sortedItems = result.items.slice().sort((a, b) => {
+            return a.name.localeCompare(b.name);
+        });
+
+        const deltas = [];
+        for (const itemRef of sortedItems) {
+            try {
+                const url = await itemRef.getDownloadURL();
+                const response = await fetch(url);
+                if (response.ok) {
+                    const delta = await response.json();
+                    deltas.push(delta);
+                }
+            } catch (error) {
+                console.warn("CLOUDSYNC [SvCloudSyncSource] Failed to download delta:", itemRef.name, error.message);
+            }
+        }
+
+        return deltas;
+    }
+
+    /**
+     * Deletes all delta files for a session.
+     * @param {String} sessionId - The session ID
+     * @returns {Promise<void>}
+     * @category Pool Sync
+     */
+    async asyncDeleteAllDeltas (sessionId) {
+        const folderRef = this.storageRefForPath(this.sessionDeltasFolder(sessionId));
+        let result;
+
+        try {
+            result = await folderRef.listAll();
+        } catch (error) {
+            if (error.code === "storage/object-not-found") {
+                return;
+            }
+            throw error;
+        }
+
+        if (result.items.length === 0) {
+            return;
+        }
+
+        console.log("CLOUDSYNC [SvCloudSyncSource] Deleting", result.items.length, "delta files for session:", sessionId);
+
+        for (const itemRef of result.items) {
+            try {
+                await itemRef.delete();
+            } catch (error) {
+                if (error.code !== "storage/object-not-found") {
+                    console.warn("CLOUDSYNC [SvCloudSyncSource] Failed to delete delta:", itemRef.name, error.message);
+                }
+            }
+        }
+    }
+
+    /**
+     * Counts the number of delta files for a session.
+     * @param {String} sessionId - The session ID
+     * @returns {Promise<Number>} The count of delta files
+     * @category Pool Sync
+     */
+    async asyncCountDeltas (sessionId) {
+        const folderRef = this.storageRefForPath(this.sessionDeltasFolder(sessionId));
+
+        try {
+            const result = await folderRef.listAll();
+            return result.items.length;
+        } catch (error) {
+            if (error.code === "storage/object-not-found") {
+                return 0;
+            }
+            throw error;
+        }
+    }
+
     // --- Lock Management Methods ---
 
     /**
