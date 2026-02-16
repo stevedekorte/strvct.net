@@ -173,9 +173,9 @@ The following formats will be used for tool calls and responses:
     }
 
     canSendResponsesNow () {
-        const isBlocked = !this.hasUncompletedBlockingToolCalls();
+        const hasBlockers = this.hasUncompletedBlockingToolCalls();
         const aiIsResponding = this.conversation().hasActiveResponses();
-        return !isBlocked && !aiIsResponding;
+        return !hasBlockers && !aiIsResponding;
     }
 
     async processQueuedToolCalls () {
