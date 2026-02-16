@@ -663,6 +663,7 @@
                 throw error;
             }
         }
+        await this.asyncDeleteAllDeltas(sessionId);
     }
 
     // --- Session Delta Methods (for incremental sync) ---
