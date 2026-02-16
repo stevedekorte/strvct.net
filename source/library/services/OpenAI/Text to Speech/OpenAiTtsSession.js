@@ -64,7 +64,7 @@
         }
 
         {
-            const validModels = ["tts-1", "tts-1-hd"];
+            const validModels = ["gpt-4o-mini-tts", "tts-1", "tts-1-hd"];
             /**
        * @member {string} ttsModel
        * @description The TTS model to use.
@@ -133,6 +133,17 @@
             slot.setIsSubnodeField(true);
             slot.setSummaryFormat("value key");
             slot.setValidValues(validValuesJson);
+        }
+
+        // instructions
+        {
+            const slot = this.newSlot("instructions", "Dungeon Master narration. Cinematic and vivid but easy to follow. Slightly slower than normal with short pauses after sentences and a longer pause before reveals. Vary intonation for tension and wonder; confident downward cadence on statements. Enunciate fantasy names. Clearly emphasize numbers, dice results, and status conditions. Use subtle, consistent NPC voices without going cartoonish.");
+            slot.setInspectorPath("");
+            slot.setLabel("instructions");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("String");
         }
 
         {
@@ -375,8 +386,12 @@
             voice: this.voice(),
             input: this.prompt(),
             response_format: this.responseFormat(),
-            speed: this.speed()
+            speed: this.speed(),
         };
+
+        if (this.instructions().length > 0) {
+            bodyJson.instructions = this.instructions();
+        }
 
         request.setBodyJson(bodyJson);
         return request;
