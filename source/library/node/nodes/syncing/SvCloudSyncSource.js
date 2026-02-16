@@ -595,7 +595,7 @@
      * @category Pool Sync
      */
     sessionPoolPath (sessionId) {
-        return `${this.basePath()}/sessions/${sessionId}/pool.json`;
+        return `${this.basePath()}/${sessionId}/pool.json`;
     }
 
     /**
@@ -674,7 +674,7 @@
      * @category Pool Sync
      */
     sessionDeltasFolder (sessionId) {
-        return `${this.basePath()}/sessions/${sessionId}/deltas`;
+        return `${this.basePath()}/${sessionId}/deltas`;
     }
 
     /**
