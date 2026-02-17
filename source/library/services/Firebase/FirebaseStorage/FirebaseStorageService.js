@@ -277,11 +277,6 @@
     }
 
     firebaseApp () {
-        // Check for cached storage instance (configured with emulator in firebase-shim.js)
-        if (typeof globalThis !== "undefined" && globalThis._firebaseStorageInstance) {
-            return globalThis._firebaseStorageInstance;
-        }
-
         if (typeof firebase !== "undefined" && firebase && firebase.storage && firebase.app) {
             return firebase.app();
         }
@@ -325,6 +320,11 @@
      * @category Helper
      */
     getFirebaseStorage () {
+        // Check for cached storage instance first (configured in firebase-shim.js)
+        if (typeof globalThis !== "undefined" && globalThis._firebaseStorageInstance) {
+            return globalThis._firebaseStorageInstance;
+        }
+
         const app = this.firebaseApp();
         if (app) {
             return app.storage(`gs://${this.bucketName()}`);
