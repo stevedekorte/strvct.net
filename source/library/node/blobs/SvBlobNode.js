@@ -116,6 +116,12 @@
 
     async asyncSetBlobValue (blob) {
         if (await this.asyncDoesHaveBlob(blob)) {
+            // Hash matches, but ensure blob is available in memory and local storage
+            // (e.g. when valueHash was set via JSON deserialization without blob data)
+            if (!this.blobValue()) {
+                this.setBlobValue(blob);
+                await this.asyncWriteToLocalStorage();
+            }
             return this;
         }
         await this.asyncJustSetBlobValue(blob);
