@@ -290,8 +290,32 @@
             // Check if successful
             if (!xhrRequest.isSuccess()) {
                 const statusCode = xhrRequest.statusCode();
-                const statusText = xhrRequest.statusText();
-                throw new Error(`TTS API error: ${statusCode} - ${statusText}`);
+                let errorMessage = xhrRequest.statusText() || "";
+                // Try to read error details from the response body
+                try {
+                    const xhr = xhrRequest.xhr();
+                    const response = xhr.response;
+                    let text = "";
+                    if (response instanceof Blob) {
+                        text = await response.text();
+                    } else if (typeof response === "string") {
+                        text = response;
+                    } else if (response) {
+                        text = String(response);
+                    }
+                    console.warn("TTS error response:", text);
+                    if (text) {
+                        const errorJson = JSON.parse(text);
+                        if (errorJson.error && errorJson.error.message) {
+                            errorMessage = errorJson.error.message;
+                        } else if (errorJson.message) {
+                            errorMessage = errorJson.message;
+                        }
+                    }
+                } catch (e) {
+                    console.warn("TTS error response parse failed:", e.message);
+                }
+                throw new Error(`TTS API error: ${statusCode} - ${errorMessage}`);
             }
 
             // Log the full request details for debugging

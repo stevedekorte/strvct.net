@@ -389,7 +389,7 @@
             speed: this.speed(),
         };
 
-        if (this.instructions().length > 0) {
+        if (this.ttsModel() === "gpt-4o-mini-tts" && this.instructions().length > 0) {
             bodyJson.instructions = this.instructions();
         }
 
