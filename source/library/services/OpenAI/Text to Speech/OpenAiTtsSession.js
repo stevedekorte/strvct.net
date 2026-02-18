@@ -64,7 +64,7 @@
         }
 
         {
-            const validModels = ["gpt-4o-mini-tts", "tts-1", "tts-1-hd"];
+            const validModels = ["tts-1-hd", "tts-1", "gpt-4o-mini-tts"]; // tts-1 is better than the newer gpt-4o-mini-tts!
             /**
        * @member {string} ttsModel
        * @description The TTS model to use.
