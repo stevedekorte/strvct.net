@@ -1,10 +1,21 @@
 {
   "title": "STRVCT Framework",
   "topTitle": "STRVCT",
-  "subtitle": "Naked objects framework documentation, guides, and reference.",
+  "subtitle": "A naked objects framework for JavaScript with automatic UI generation, persistence, and cloud sync.",
   "content": [
     {
+      "type": "ContentText",
+      "title": "About",
+      "body": "<p>STRVCT implements the <a href=\"http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf\">naked objects</a> pattern for JavaScript. You write domain model classes with annotated properties — the framework automatically generates the user interface, handles persistence, and keeps everything synchronized.</p><p>The model layer is completely independent of the UI, allowing the same application code to run in a browser, on a command line, or headlessly in Node.js for testing and server-side processing.</p>"
+    },
+    {
+      "type": "ContentText",
+      "title": "Key Features",
+      "body": "<ul><li><strong>Automatic UI</strong> — Views are generated from the model graph using a Miller Column inspired navigation pattern. Custom views can override defaults when needed.</li><li><strong>Slot System</strong> — Properties are declared as slots with annotations that control type checking, persistence, UI generation, and synchronization.</li><li><strong>Notification-Based Sync</strong> — The model layer communicates to the views layer through deferred, deduplicated notifications with automatic sync loop detection.</li><li><strong>Transparent Persistence</strong> — No custom serialization code required. Declare which objects and slots to persist, and the framework handles dirty tracking, automatic commits, and garbage collection via IndexedDB.</li><li><strong>Cloud Sync</strong> — Object pools sync to Firebase Storage using a write-ahead log of delta files for efficient incremental updates.</li><li><strong>Gesture System</strong> — Unifies mouse and touch input gestures.</li><li><strong>Content-Addressable Build</strong> — Custom resource loading with content hashing for optimal caching and minimal network transfers.</li></ul>"
+    },
+    {
       "type": "ContentCards",
+      "title": "Documentation",
       "columns": 3,
       "items": [
         "docs/Introduction",
@@ -18,6 +29,10 @@
         "docs/Notes",
         "docs/Reference"
       ]
+    },
+    {
+      "type": "ContentText",
+      "body": "<p><a href=\"https://github.com/stevedekorte/strvct.net\">GitHub Repository</a></p>"
     }
   ]
 }
