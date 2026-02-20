@@ -1,4 +1,4 @@
-# Notes
+# First Principles
 
 First principles arguments for the naked objects approach.
 

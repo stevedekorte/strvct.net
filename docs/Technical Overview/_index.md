@@ -16,6 +16,17 @@ The framework is organized around three layers with a notification-based synchro
 - **UI** — Composed of `NodeView` subclass instances. Each `NodeView` holds a reference to an `SvNode` and observes its change notifications. Multiple views may point to the same node instance.
 - **Storage** — A `PersistentObjectPool` that monitors node mutations, bundles changes within an event loop into atomic transactions, and handles automatic garbage collection of the stored object graph. Only model objects are persisted; UI objects are transient and recreated from the model on load.
 
+### SvApp
+
+`SvApp` is the top-level application class that coordinates these layers. It holds two key slots:
+
+- **`model`** (`SvModel`) — The root of the persistent model graph. `SvModel` extends `SvStorableNode` and contains the application's entire data structure. It has no dependencies on the UI layer.
+- **`userInterface`** (`SvUserInterface`) — The root of the UI layer. `SvUserInterface` is an abstract base class with multiple implementations: `SvWebUserInterface` for browsers, `SvCliUserInterface` for command-line use, and `SvHeadlessUserInterface` for running without any UI at all.
+
+At startup, `SvApp` opens the persistence store, loads or creates the model, then sets up the user interface. The UI class is selected by name via `userInterfaceClassName`, and applications choose the appropriate implementation based on the runtime environment — typically using `SvPlatform.isBrowserPlatform()` to decide.
+
+Because the model layer is completely independent of the UI, the same application code can run headlessly in Node.js for testing, batch processing, or server-side operations. The headless user interface is an empty implementation — the model runs, persists data, and processes logic without any DOM or browser APIs.
+
 ## Class System
 
 ### Class Definition

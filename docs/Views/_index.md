@@ -143,6 +143,8 @@ The base `Tile` class provides:
 - A close button for item removal.
 - Style lookup that checks the node's style configuration, then falls back to the tile's own style, then to the parent column's style.
 
+Each tile contains an inner `contentView` that holds the tile's visible content. The outer tile element stays fixed in place while the `contentView` slides horizontally in response to pan gestures, revealing action buttons (such as delete) underneath. This inner/outer structure is what makes slide-to-delete work — the gesture translates the content layer without moving the tile itself.
+
 ### TitledTile
 
 The most common tile type. Displays the node's title, subtitle, and note (derived from `SvSummaryNode` methods). Used as the default tile for most nodes.
