@@ -644,6 +644,7 @@ p code, li code {
   .header { flex-direction: column; gap: 8px; margin-bottom: 32px; }
   .section-two-col { grid-template-columns: 1fr; gap: 12px 0; }
   .card-grid, .card-grid.cols-2 { grid-template-columns: 1fr; }
+  .card-span-2, .card-span-3 { grid-column: span 1; }
   .card { border-right: none !important; border-top: none !important; padding-left: 0 !important; padding-right: 0 !important; }
   .card:not(:last-child) { border-bottom: 1px solid #ddd; }
   .page-timeline .header,
