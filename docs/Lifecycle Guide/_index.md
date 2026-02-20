@@ -1,4 +1,6 @@
-# STRVCT Framework Lifecycle Guide
+# Lifecycle Guide
+
+Boot sequence, node initialization, view synchronization, and persistence cycles.
 
 ## Table of Contents
 
@@ -237,45 +239,6 @@ setSlotValue(newValue)
 
 - `didLoadFromStore(store)` - After all objects loaded
 - `willStore()` - Before serialization (optional)
-
-## Notification System
-
-### Key Notifications
-
-**App Level:**
-- `"appDidInit"` - Application ready
-- `"onAppDeveloperModeChangedNote"` - Dev mode change
-
-**Node Level:**
-- `"didUpdateNode"` - Node data changed
-- `"shouldFocusSubnode"` - Request UI focus
-- `"didReorderParentSubnodes"` - Order changed
-
-### Posting Notifications
-
-```javascript
-// Direct notification
-this.postNoteNamed("myNotification");
-
-// With info
-SvNotificationCenter.shared().post(this, "myNotification", { data: value });
-```
-
-### Observing Notifications
-
-```javascript
-// One-time observation
-this.watchOnceForNote("appDidInit").then(() => {
-    // App is ready
-});
-
-// Persistent observation
-const obs = SvNotificationCenter.shared().newObservation()
-    .setName("didUpdateNode")
-    .setTarget(targetNode)
-    .setObserver(this)
-    .setAction("handleUpdate");
-```
 
 ## Common Patterns and Best Practices
 

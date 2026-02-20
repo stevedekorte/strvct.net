@@ -1,4 +1,6 @@
-# SvCloudBlobNode and SvBlobPool System
+# Local and Cloud Blob Storage
+
+Content-addressable storage for binary data like images, audio, and video.
 
 ## Motivation
 
@@ -50,7 +52,7 @@ The solution uses a **dual-database architecture** with hash-based references be
 2. **SvBlobNode** - Node wrapper that manages a blob reference with lazy loading
 3. **SvCloudBlobNode** - Adds cloud push/pull for cross-device sync
 
-Media-specific classes like **SvImageNode** extend `SvCloudBlobNode` to add format-specific behavior (MIME type handling, thumbnails, etc.) while inheriting all the storage and sync capabilities.
+Media-specific classes like **SvImageNode** and **SvVideoNode** extend `SvCloudBlobNode` to add format-specific behavior (MIME type handling, thumbnails, etc.) while inheriting all the storage and sync capabilities.
 
 ---
 
@@ -123,6 +125,7 @@ const meta = await SvBlobPool.shared().asyncGetMetadata(hash);
 
 - `hasInCloud`: Boolean flag indicating cloud presence
 - `downloadUrl`: Public/private URL for cloud retrieval
+- `doesAutoSyncToCloud`: When true, automatically pushes to cloud after local storage
 
 ### Key Methods
 
@@ -261,63 +264,3 @@ referencedBlobHashesSet () {
 4. **Cloud-ready**: Clean extension point for cloud sync without changing base storage
 5. **GC-aware**: Hash-based references allow proper garbage collection across dual storage systems
 
----
-
-## Future Plans
-
-### Incremental Cloud Sync via JSON Patches
-
-Currently, cloud sync uploads the entire document when changes occur. For large documents (approaching the 1MB Firestore limit), this is inefficient for small changes. The planned solution uses **queued JSON patches** to enable incremental sync.
-
-#### Planned Cloud Functions
-
-1. **`pushDocumentPatch`**: Accepts a JSON patch (RFC 6902 format) and queues it for a document
-
-   **Arguments:**
-   | Parameter | Type | Description |
-   |-----------|------|-------------|
-   | `documentPath` | string | Firestore document path (e.g., `users/{uid}/characters/{charId}`) |
-   | `patch` | array | JSON Patch operations (RFC 6902 format) |
-   | `baseVersionId` | string | Hash or version ID of the document state this patch applies to |
-   | `timestamp` | number | Client timestamp for ordering and conflict detection |
-
-   **Behavior:**
-   - Client sends only the delta (patch), not the full document
-   - Patches are stored in a subcollection or array field on the document
-   - `baseVersionId` enables detection of conflicting patches (patches based on stale state)
-   - Enables fast sync for small, frequent changes (e.g., updating a single character stat)
-
-2. **`getDocument`** (enhanced): On read, applies any queued patches before returning
-
-   **Arguments:**
-   | Parameter | Type | Description |
-   |-----------|------|-------------|
-   | `documentPath` | string | Firestore document path |
-   | `afterVersionId` | string? | Optional: only return if newer than this version (for polling) |
-
-   **Returns:**
-   | Field | Type | Description |
-   |-------|------|-------------|
-   | `document` | object | The consolidated document data |
-   | `versionId` | string | Hash/version of the returned document (use as `baseVersionId` for patches) |
-   | `patchesApplied` | number | How many queued patches were consolidated |
-
-   **Behavior:**
-   - Checks for pending patches
-   - Applies patches to the base document in order
-   - Saves the consolidated document and clears the patch queue
-   - Returns the fully up-to-date document to the client
-
-#### Benefits
-
-- **Reduced bandwidth**: Small changes don't require uploading the entire document
-- **Lower latency**: Patch uploads are fast; consolidation happens lazily on read
-- **Conflict-friendly**: Patches can potentially be merged or rebased
-- **Stays under size limit**: Frequent small syncs prevent document growth between full saves
-
-#### Considerations
-
-- Patch queue size needs a limit (consolidate after N patches or M bytes)
-- Read-time consolidation adds latency to first read after many patches
-- May need a background function to periodically consolidate dormant documents
-- Patch ordering must be preserved for correctness

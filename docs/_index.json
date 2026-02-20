@@ -1,0 +1,21 @@
+{
+  "title": "STRVCT Framework",
+  "subtitle": "Naked objects framework documentation, guides, and reference.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "Project Overview",
+        "Getting Started Guide",
+        "Technical Overview",
+        "Lifecycle Guide",
+        "Notification System",
+        "Local and Cloud Blob Storage",
+        "Object Pool Cloud Storage",
+        "Design Discussions",
+        "Reference"
+      ]
+    }
+  ]
+}

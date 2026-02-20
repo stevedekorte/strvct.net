@@ -1,0 +1,14 @@
+{
+  "title": "Design Discussions",
+  "subtitle": "Design ideas, architectural discussions, and potential future improvements.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "Async Final Initialization",
+        "Notes"
+      ]
+    }
+  ]
+}

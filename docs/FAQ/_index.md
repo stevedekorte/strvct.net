@@ -1,34 +1,6 @@
-# <a href="../index.html">STRVCT</a> / FAQ
+# FAQ
 
 #### How does Strvct differ from React?
-
-<style>
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-  }
-  th {
-    text-align: left;
-    padding: 12px 15px;
-    font-weight: bold;
-    vertical-align: top;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    text-transform: uppercase;
-  }
-  td {
-    padding: 12px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    vertical-align: top;
-    text-align: left;
-  }
-  tr:nth-child(even) {
-  }
-  tr:hover {
-    background-color: #rgba(255, 255, 255, 0.1);
-  }
-</style>
 
 <table>
   <thead>
@@ -77,8 +49,6 @@
   </tbody>
 </table>
 
-<br><br>
-<br><br>
 
 <!--
 #### What does Strvct do for you that you'd need to implement yourself in React?

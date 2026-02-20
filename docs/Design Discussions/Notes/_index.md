@@ -1,6 +1,8 @@
-First principles arguments for naked objects:
+# Notes
 
-### Argument from User Interface Design Guidelines
+First principles arguments for the naked objects approach.
+
+## Argument from User Interface Design Guidelines
 
 In a naked objects system, as user interface components are no longer bespoke to the application, the major challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is that not just _possible_, but effectively _required_ for information-oriented user interfaces of complex domain models to follow user interface design guidelines such as:
 
@@ -22,7 +24,7 @@ That is, each of these guidelines benefits from the use of a small set of of wel
 
 These guidelines can be challenging to achieve when a system is saddled with a large number of disparate bespoke components commonly found in traditional systems, for a domain model of any complexity. Therefore, greatly reducing the number of visual components by finding a small set of well composable ones may be the only practical way to achieve these goals.
 
-### Argument from Software Development Goals
+## Argument from Software Development Goals
 
 Some well accepted major goals for software development systems include: Efficiency, Quality, Scalability, Maintainability, Security, Performance, Compatibility, Cost-effectiveness, Flexibility.
 
