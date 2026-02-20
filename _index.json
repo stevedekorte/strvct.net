@@ -27,13 +27,7 @@
         "docs/Persistence",
         "docs/Events and Gestures",
         "docs/Notes",
-        "docs/Reference"
-      ]
-    },
-    {
-      "type": "ContentCards",
-      "columns": 3,
-      "items": [
+        "docs/Reference",
         {
           "title": "GitHub Repository",
           "subtitle": "Source code, issues, and contributions.",
