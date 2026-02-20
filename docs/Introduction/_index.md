@@ -1,4 +1,4 @@
-# Project Overview
+# Introduction
 
 A naked objects framework for JavaScript with automatic UI generation and persistence.
 

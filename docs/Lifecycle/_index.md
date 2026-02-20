@@ -1,4 +1,4 @@
-# Lifecycle Guide
+# Lifecycle
 
 Boot sequence, node initialization, view synchronization, and persistence cycles.
 
@@ -10,7 +10,7 @@ Boot sequence, node initialization, view synchronization, and persistence cycles
 4. [Node Lifecycle (SvNode)](#node-lifecycle-svnode)
 5. [View/UI Lifecycle](#viewui-lifecycle)
 6. [Persistence Lifecycle](#persistence-lifecycle)
-7. [Notification System](#notification-system)
+7. [Notifications](#notifications)
 8. [Common Patterns and Best Practices](#common-patterns-and-best-practices)
 
 ## Introduction

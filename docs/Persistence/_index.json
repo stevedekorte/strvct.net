@@ -1,0 +1,16 @@
+{
+  "title": "Persistence",
+  "topTitle": "STRVCT",
+  "subtitle": "Local storage, cloud sync, and blob management for object graphs.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "Local Object Pools",
+        "Cloud Object Pools",
+        "Local and Cloud Blob Storage"
+      ]
+    }
+  ]
+}

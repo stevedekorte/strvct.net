@@ -1,4 +1,4 @@
-# Notification System
+# Notifications
 
 Event-driven communication between framework layers using observations, scheduling, and weak references.
 

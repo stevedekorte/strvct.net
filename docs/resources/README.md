@@ -9,7 +9,7 @@ This allows us to automatically extract them to build reference documentation.
 
 The root index.html file contains code to open .md files and format them as html.
 It will automatically convert the md style links to references to itself with a path parameter added.
-For example, navigating to the Project Overview page will open:
+For example, navigating to the Introduction page will open:
 
     http://localhost:8001/index.html?path=docs%2FProjectOverview.md
 

@@ -1,4 +1,4 @@
-# Object Pool Cloud Storage
+# Cloud Object Pools
 
 Cloud sync for object pools and collections using Firebase Storage.
 
@@ -7,7 +7,7 @@ Cloud sync for object pools and collections using Firebase Storage.
 Strvct's local persistence stores serialized object graphs in IndexedDB via `PersistentObjectPool`. Cloud sync extends this with two complementary strategies depending on what is being synced:
 
 - **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.
-- **Pool sync** — Entire object graphs are synced as a single pool with incremental delta support.
+- **Pool sync** — Entire object graphs are synced as a single pool. A write-ahead log of small delta files makes updates fast and efficient — only changed records are uploaded, with periodic compaction back to a full snapshot.
 
 Both strategies require the synced object graph to be **self-contained** — the rest of the system holds only a reference to the graph's root, and objects within the graph hold no persistent references to objects outside it. This isolation is what makes it possible to serialize, upload, and reconstruct the graph independently.
 
@@ -81,7 +81,7 @@ For complex object graphs where many interrelated objects need to be synced toge
 
 This is stored at `/users/{userId}/{collectionName}/{poolId}/pool.json`.
 
-### Delta Optimization
+### Write Ahead Log
 
 To avoid uploading the entire pool on every save, `SubObjectPool` tracks changes since the last sync and produces incremental deltas:
 

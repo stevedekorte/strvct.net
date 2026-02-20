@@ -4,7 +4,7 @@ Technical implementation details for classes, slots, views, and persistence.
 
 ## Introduction
 
-This document is intended to be read after the [Project Overview](../Project%20Overview/index.html), which outlines the goals and structure of the Strvct framework. Here we go into the technical details of the implementation and how the various parts work together.
+This document is intended to be read after the [Introduction](../Introduction/index.html), which outlines the goals and structure of the Strvct framework. Here we go into the technical details of the implementation and how the various parts work together.
 
 Applications are typically composed of **Model**, **UI**, and **Storage** layers. Much of the code and potential bugs in complex real-world applications is the "glue" that synchronizes these layers. Strvct puts enough meta-information in the model layer — through slots and their annotations — to allow the UI and Storage layers, and the synchronization between them, to be handled automatically. You write the model and the rest is handled for you, though custom views can be added when needed.
 
@@ -100,8 +100,8 @@ Instance properties:
 - Should almost never be accessed directly — always use accessor methods
 - Are never accessed directly by external objects
 - Getter: `propertyName()`, setter: `setPropertyName(value)`
-- Instance properties declared in `initPrototypeSlots()` with `this.newSlot()`
-- Class properties declared in `initClass()` with `this.newClassSlot()`
+- Use `this.newSlot()` and `this.overrideSlot()` in `initPrototypeSlots()` to define instance properties
+- Use `this.newClassSlot()` in `initClass()` to define class properties
 
 ## Model Layer
 
@@ -210,7 +210,7 @@ Strvct uses a notification-based system to keep layers synchronized without tigh
 
 Observations use weak references, so garbage collection of either party automatically cleans up the subscription. Sync loops are detected and halted — slot setters only fire change hooks when the value actually differs.
 
-For full details on posting, observing, scheduling, weak reference cleanup, and sync loop detection, see the [Notification System](../Notification%20System/index.html) guide.
+For full details on posting, observing, scheduling, weak reference cleanup, and sync loop detection, see the [Notifications](../Notifications/index.html) guide.
 
 ## Build System
 

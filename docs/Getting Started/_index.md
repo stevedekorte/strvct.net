@@ -1,4 +1,4 @@
-# Getting Started Guide
+# Getting Started
 
 Setup, integration, and first steps with the Strvct framework.
 
@@ -172,5 +172,5 @@ This creates a persistent node with an editable string property that automatical
 ## Next Steps
 
 - [Technical Overview](../Technical%20Overview/index.html) — Implementation details for classes, slots, views, and persistence
-- [Lifecycle Guide](../Lifecycle%20Guide/index.html) — Boot sequence, node initialization, and persistence cycles
-- [Project Overview](../Project%20Overview/index.html) — Architecture and design goals
+- [Lifecycle](../Lifecycle/index.html) — Boot sequence, node initialization, and persistence cycles
+- [Introduction](../Introduction/index.html) — Architecture and design goals
