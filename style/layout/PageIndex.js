@@ -41,7 +41,7 @@ export class PageIndex {
         const folderName = pathSegments.length > 0
             ? decodeURIComponent(pathSegments[pathSegments.length - 1])
             : "";
-        this.pageTitle = this.json.title || folderName || "Untitled";
+        this.pageTitle = ("title" in this.json) ? this.json.title : (folderName || "Untitled");
         this.topTitle = this.json.topTitle || "UndreamedOf";
 
         // Check for back-link override via URL parameter
@@ -142,7 +142,7 @@ export class PageIndex {
         // Header
         let headerHtml = '<div class="header">';
         if (this.isRoot) {
-            headerHtml += `<h1>${this.pageTitle}</h1>`;
+            if (this.pageTitle) headerHtml += `<h1>${this.pageTitle}</h1>`;
             headerHtml += `<div class="brand">${this.topTitle}</div>`;
         } else {
             const backHref = this.backUrl || "../index.html";
