@@ -31,8 +31,16 @@
       ]
     },
     {
-      "type": "ContentText",
-      "body": "<p><a href=\"https://github.com/stevedekorte/strvct.net\">GitHub Repository</a></p>"
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        {
+          "title": "GitHub Repository",
+          "subtitle": "Source code, issues, and contributions.",
+          "href": "https://github.com/stevedekorte/strvct.net",
+          "arrow": "View"
+        }
+      ]
     }
   ]
 }
