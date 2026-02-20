@@ -1,0 +1,23 @@
+{
+  "title": "STRVCT Framework",
+  "topTitle": "STRVCT",
+  "subtitle": "Naked objects framework documentation, guides, and reference.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "docs/Introduction",
+        "docs/Getting Started",
+        "docs/Technical Overview",
+        "docs/Lifecycle",
+        "docs/Notifications",
+        "docs/Views",
+        "docs/Persistence",
+        "docs/Events and Gestures",
+        "docs/Notes",
+        "docs/Reference"
+      ]
+    }
+  ]
+}
