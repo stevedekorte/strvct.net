@@ -33,6 +33,24 @@
     }
 
     /**
+     * @category Configuration
+     * @description Returns the set of file extensions eligible for CAM storage.
+     * @returns {Set<string>} The CAM-eligible extensions.
+     */
+    static camExtensions () {
+        return new Set(["js", "css", "svg", "json", "txt"]);
+    }
+
+    /**
+     * @category Configuration
+     * @description Returns the missing-bytes ratio above which the full CAM bundle is loaded.
+     * @returns {number} The threshold ratio (0 to 1).
+     */
+    static camLoadThreshold () {
+        return 0.3;
+    }
+
+    /**
      * @category Instance Methods
      * @description Returns the type of the manager.
      * @returns {string} The type "SvResourceManager".
@@ -153,30 +171,55 @@
     }
 
     /**
+     * @category Resource Access
+     * @description Returns index entries whose file extensions are eligible for CAM storage.
+     * @returns {Array<Object>} The CAM-eligible index entries.
+     */
+    camEligibleEntries () {
+        const exts = SvResourceManager.camExtensions();
+        return this._index.filter(entry => {
+            const ext = entry.path.split(".").pop().toLowerCase();
+            return exts.has(ext);
+        });
+    }
+
+    /**
      * @category Resource Loading
-     * @description Loads the CAM (Compressed Asset Manager) if needed.
+     * @description Loads the full CAM bundle if the ratio of missing cached bytes exceeds the threshold.
+     * Also garbage-collects stale cache entries regardless of which path is taken.
      * @returns {Promise<void>}
      */
     async promiseLoadCamIfNeeded () {
-        //console.log("🔍 Checking if CAM loading is needed...");
-
         if (SvPlatform.isNodePlatform()) {
             console.log("\n" + this.logPrefix(), "Clearing SvHashCache on Node.js...");
             await SvHashCache.shared().promiseClear();
         }
 
-        //await SvHashCache.shared().promiseClear();
-
-
-        const count = await SvHashCache.shared().promiseCount();
-        //console.log("📊 SvHashCache count:", count);
-        if (!count) {
-            //console.log("💾 Loading CAM...");
-            await this.promiseLoadCam();
-            //console.log("✅ CAM loading completed");
-        } else {
-            //console.log("✅ CAM already loaded (cache count > 0)");
+        const camEntries = this.camEligibleEntries();
+        if (camEntries.length === 0) {
+            return;
         }
+
+        const hc = SvHashCache.shared();
+        const totalBytes = camEntries.reduce((sum, e) => sum + e.size, 0);
+        let missingBytes = 0;
+
+        await camEntries.promiseParallelForEach(async (entry) => {
+            const hasKey = await hc.promiseHasKey(entry.hash);
+            if (!hasKey) {
+                missingBytes += entry.size;
+            }
+        });
+
+        const missingRatio = totalBytes > 0 ? missingBytes / totalBytes : 1;
+
+        if (missingRatio > SvResourceManager.camLoadThreshold()) {
+            await this.promiseLoadCam();
+        }
+
+        // Garbage collect stale cache entries regardless of which path was taken
+        const validHashes = new Set(camEntries.map(e => e.hash));
+        await hc.promiseRemoveKeysNotInSet(validHashes);
     }
 
     /**
@@ -201,7 +244,6 @@
                     const v = cam[k];
                     return SvHashCache.shared().promiseAtPut(k, v);
                 });
-                SvHashCache.shared().promiseRemoveKeysNotInSet(new Set(camKeys)); // collect garbage
                 this._promiseForLoadCam.callResolveFunc();
             } catch (error) {
                 console.error("❌ Error in promiseLoadCam:", error);

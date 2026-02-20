@@ -89,7 +89,7 @@ STRVCT uses `SvSyncScheduler` to batch and coordinate synchronization between no
 
 ### Batching and Loop Prevention
 
-`SvSyncScheduler` coalesces multiple calls to the same target and method into a single execution. It also detects sync loops — if a sync action attempts to re-schedule itself during execution, an error is thrown rather than entering an infinite loop.
+`SvSyncScheduler` coalesces multiple calls to the same target and method into a single execution. It also detects sync loops — if a sync action attempts to re-schedule itself during execution, an error is thrown rather than entering an infinite loop. Additionally, slot setters only fire change hooks when the value actually differs, preventing redundant notification cascades at the source.
 
 The scheduler can be paused during bulk operations (e.g., application initialization) and resumed afterward to trigger a single consolidated sync pass.
 

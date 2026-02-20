@@ -219,9 +219,9 @@ Strvct uses a notification-based system to keep layers synchronized without tigh
 - **`SvSyncScheduler`** — Coalesces method calls so that multiple changes in one event loop result in a single sync pass.
 - **`SvBroadcaster`** — Lightweight immediate broadcast for high-frequency internal events.
 
-Observations use weak references, so garbage collection of either party automatically cleans up the subscription. Sync loops are detected and halted — slot setters only fire change hooks when the value actually differs.
+Observations use weak references, so garbage collection of either party automatically cleans up the subscription.
 
-For full details on posting, observing, scheduling, weak reference cleanup, and sync loop detection, see the [Notifications](../Notifications/index.html) guide.
+For full details on posting, observing, scheduling, and weak reference cleanup, see the [Notifications](../Notifications/index.html) guide. For sync loop detection, see the [Views](../Views/index.html) guide.
 
 ## Build System
 
@@ -245,11 +245,13 @@ The build process runs two indexers:
 
 ### Runtime Loading
 
-At runtime, the client-side `SvResourceManager` loads the small `_index.json` first, compares hashes against its local `SvHashCache` (an IndexedDB-backed store), and only downloads `_cam.json.zip` if the cache is missing entries. The bundle is unpacked into the client-side IndexedDB database, keyed by content hash. On subsequent loads, resources are served directly from this local store. Because content is addressed by hash, identical content across different file paths is stored only once, and unchanged files are never re-downloaded — even across deployments.
+At runtime, the client-side `SvResourceManager` loads the small `_index.json` first, then scans CAM-eligible hashes (js, css, svg, json, txt) against its local `SvHashCache` (an IndexedDB-backed store). If the ratio of missing bytes exceeds a threshold (default 30%), it downloads the full `_cam.json.zip` bundle; otherwise, individual cache misses are loaded on demand. The bundle is unpacked into the client-side IndexedDB database, keyed by content hash. On subsequent loads, resources are served directly from this local store. Because content is addressed by hash, identical content across different file paths is stored only once, and unchanged files are never re-downloaded — even across deployments. Stale cache entries are garbage-collected against the current index after every load.
 
-| Environment | Cache Miss Policy |
-|---|---|
-| Development | Load full CAM |
-| Production | Load missing file |
+| Scenario | Missing Ratio | Action |
+|---|---|---|
+| Fresh install (empty cache) | 100% | Loads full CAM bundle |
+| No changes (fully cached) | 0% | Skips CAM, serves from cache |
+| Small update (few files changed) | ~5% | Skips CAM, loads individual files on demand |
+| Major update (many files changed) | ~60% | Loads full CAM bundle |
 
 Resources are loaded in dependency order as declared in `_imports.json` files. CSS is evaluated sequentially to preserve cascade ordering. JavaScript files are evaluated via `eval()` with `sourceURL` comments to enable full debugger support (breakpoints, stepping, source display in DevTools).
