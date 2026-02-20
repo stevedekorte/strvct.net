@@ -198,7 +198,7 @@ p code, li code {
 .section-body table {
   width: 100%;
   border-collapse: collapse;
-  margin: 12px 0;
+  margin: 12px 0 24px;
   font-size: 13px;
 }
 

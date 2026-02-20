@@ -229,6 +229,12 @@ For full details on posting, observing, scheduling, weak reference cleanup, and 
 
 Strvct does not use standard ES module imports or bundlers like Webpack or Rollup. Instead, it uses a custom Content-Addressable Memory (CAM) build and loading system designed around two goals: minimal network transfers and fine-grained caching.
 
+### Motivation
+
+Standard ES module imports issue a separate HTTP request per file, which becomes a significant bottleneck for large applications with hundreds of source files. Bundlers address this but sacrifice fine-grained caching — changing one file invalidates the entire bundle. Strvct's CAM system provides the compression benefits of bundling while preserving per-file cache granularity through content hashing.
+
+### Build Process
+
 The build process runs two indexers:
 
 - **ImportsIndexer** scans `_imports.json` files throughout the source tree to discover all JavaScript and CSS resources and their dependency order. It produces two output files:
@@ -239,10 +245,11 @@ The build process runs two indexers:
 
 ### Runtime Loading
 
-At runtime, the client-side `SvResourceManager` loads the small `_index.json` first, compares hashes against its local `SvHashCache`, and only downloads `_cam.json.zip` if the cache is missing entries. Because content is addressed by hash, identical content across different file paths is stored only once, and unchanged files are never re-downloaded — even across deployments.
+At runtime, the client-side `SvResourceManager` loads the small `_index.json` first, compares hashes against its local `SvHashCache` (an IndexedDB-backed store), and only downloads `_cam.json.zip` if the cache is missing entries. The bundle is unpacked into the client-side IndexedDB database, keyed by content hash. On subsequent loads, resources are served directly from this local store. Because content is addressed by hash, identical content across different file paths is stored only once, and unchanged files are never re-downloaded — even across deployments.
+
+| Environment | Cache Miss Policy |
+|---|---|
+| Development | Load full CAM |
+| Production | Load missing file |
 
 Resources are loaded in dependency order as declared in `_imports.json` files. CSS is evaluated sequentially to preserve cascade ordering. JavaScript files are evaluated via `eval()` with `sourceURL` comments to enable full debugger support (breakpoints, stepping, source display in DevTools).
-
-### Motivation
-
-Standard ES module imports issue a separate HTTP request per file, which becomes a significant bottleneck for large applications with hundreds of source files. Bundlers address this but sacrifice fine-grained caching — changing one file invalidates the entire bundle. Strvct's CAM system provides the compression benefits of bundling while preserving per-file cache granularity through content hashing.
