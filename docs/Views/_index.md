@@ -4,7 +4,7 @@ How the view layer connects to model nodes, synchronizes state, and provides nav
 
 ## Overview
 
-STRVCT's view layer automatically generates user interfaces from the model node graph. Every visible node gets a corresponding view — typically a `NodeView` subclass — that observes the node for changes and keeps the display in sync. Views are discovered by naming convention, so adding a class like `MyNodeView` automatically associates it with `MyNode` instances.
+STRVCT's view layer automatically generates user interfaces from the model node graph. Every visible node gets a corresponding view — typically a `NodeView` subclass — that observes the node for changes and keeps the display in sync. When the UI needs to instantiate a view for a node, it follows the conventions described in the View Resolution section.
 
 The UI is built around a Miller Column navigation pattern: selecting an item in one column reveals its children in the next. This recursive structure, implemented through `StackView` and `BrowserView`, allows arbitrarily deep navigation through the node graph.
 
@@ -93,28 +93,36 @@ STRVCT uses `SvSyncScheduler` to batch and coordinate synchronization between no
 
 The scheduler can be paused during bulk operations (e.g., application initialization) and resumed afterward to trigger a single consolidated sync pass.
 
-## Navigation: BrowserView and StackView
+## Navigation
 
-The primary UI structure is a recursive Miller Column browser.
+The primary UI structure is a Miller Column browser built from a single recursive building block — the master-detail view.
 
 ### StackView
 
-`StackView` is the core navigation unit. It contains two regions:
+`StackView` is the master-detail view — the core navigation unit. It contains two regions:
 
-- **`NavView`** — A navigation column with a header, a scrollable `TilesView`, and a footer.
-- **`otherView`** — A detail area that displays the content of the selected item.
+- **`NavView`** (master) — A navigation column with a header, a scrollable `TilesView` of the current node's subnodes, and a footer. The header and footer can be used for search, message input, or group actions.
+- **`otherView`** (detail) — Displays the content of the selected item, which is typically another `StackView`.
 
-When a user selects a tile in the `NavView`, a new `StackView` is created in the `otherView`, with its own `NavView` populated by the subnodes of the selected node. This recursive nesting allows navigation to any depth.
+When a user selects a tile in the master column, a new `StackView` is created in the detail area, populated by the subnodes of the selected node.
 
-Layout direction is configurable — `"right"` places the nav column on the left with detail to the right; `"down"` places it on top with detail below.
+### Orientation
+
+Layout direction is configurable per node — `"right"` places the master column on the left with detail to the right (horizontal); `"down"` places it on top with detail below (vertical). Mixing orientations at different levels of the hierarchy allows the same recursive structure to express a wide range of layouts: horizontal Miller Columns, vertical drill-down, or hybrids of both.
 
 ### Compaction
 
-When the chain of nested `StackView`s would exceed the available display width, upper columns automatically compact (collapse) to make room for deeper levels. As the user navigates back, columns re-expand. This keeps the most relevant navigation context visible regardless of depth.
+When the chain of nested `StackView`s would exceed the available display width, upper columns automatically compact (collapse) to make room for deeper levels. As the user navigates back, columns re-expand. This keeps the most relevant navigation context visible regardless of depth or viewport size.
+
+### Navigation Path
+
+Tiles along the current selection path are highlighted, and the focused tile (the most recently selected) is distinguished with a unique highlight. These visual attributes are customizable via themes.
 
 ### BrowserView
 
-`BrowserView` extends `StackView` and adds a breadcrumb path header at the top. It provides methods for programmatic navigation:
+`BrowserView` is the top-level navigation container. It extends `StackView` and is composed of recursively nested `StackView`s — each level of navigation creates a new `StackView` inside the previous one. This recursive structure allows navigation to arbitrary depth through the node graph without any per-level wiring.
+
+`BrowserView` adds a breadcrumb path header that auto-compacts on narrow viewports, replacing truncated segments with a back arrow. It provides methods for programmatic navigation:
 
 - `navigateToNode(aNode)` — Navigate directly to a specific node.
 - `selectNodePathArray(pathArray)` — Set the navigation path from an array of nodes.
@@ -182,7 +190,9 @@ Colors and borders change based on editability state.
 | `SvPasswordFieldTile` | Masked password input |
 | `SvActionFieldTile` | Button that invokes a method on the node |
 | `SvPointerFieldTile` | Object reference with navigation arrow |
-| `SvImageWellFieldTile` | Image display and upload |
-| `SvVideoWellFieldTile` | Video display |
+| `SvImageWellFieldTile` | Image display and drag in/out |
+| `SvVideoWellFieldTile` | Video display and drag in/out |
+
+Not every field type has its own tile subclass. `SvNumberField`, for example, uses the string tile but adds its own numeric validation.
 
 When a field tile's value is edited, the change flows through `syncToNode()` back to the node's slot, which posts a change notification, completing the bidirectional sync cycle.

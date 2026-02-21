@@ -6,9 +6,9 @@ Event-driven communication between framework layers using observations, scheduli
 
 Strvct's notification system provides loose coupling between the model, view, and storage layers. Rather than holding direct references to each other, objects communicate through two complementary mechanisms:
 
-- **`SvNotificationCenter`** — A deferred, deduplicated event system. Objects post named notifications; other objects register observations to receive them. Notifications are queued and dispatched at the end of the event loop, so multiple changes within a single operation result in a single notification.
+- **`SvNotificationCenter`** — A deferred, deduplicated event system. Objects post named notifications; other objects register observations to receive them. Notifications are queued and dispatched at the end of the event loop, so multiple changes within a single operation result in a single notification. Notifications are loosely coupled — the sender doesn't know who is listening.
 
-- **`SvSyncScheduler`** — A method-call scheduler that coalesces and deduplicates work. When a sync action is scheduled multiple times in the same event loop, it executes only once. This prevents redundant view updates and storage writes.
+- **`SvSyncScheduler`** — A method-call scheduler that coalesces and deduplicates direct method calls on specific targets. Where notifications broadcast events that any number of observers may handle, the sync scheduler ensures a specific method on a specific object runs exactly once per event loop — even if multiple code paths request it. This is used for view synchronization and storage writes, where the work is a concrete action (e.g. "sync this view to its node") rather than a broadcast event. The notification center uses `SvSyncScheduler` internally for its own dispatch.
 
 Both systems use weak references for automatic cleanup — when an observer or sender is garbage collected, its observations are removed without manual intervention.
 

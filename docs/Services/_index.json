@@ -1,0 +1,22 @@
+{
+  "title": "Services",
+  "subtitle": "AI, cloud, media, and IoT service integrations.",
+  "content": [
+    {
+      "type": "ContentText",
+      "title": "Overview",
+      "body": "<p>Services are not part of the Strvct core — they are optional integrations provided as a convenient way to quickly connect with important external services. The <code>Services</code> singleton is the root container for all of them. Each service is a standard Strvct node with slots, persistence, and automatic UI — the same patterns used for domain objects apply to service configuration. Users can inspect and configure services (API keys, model selection, proxy settings) through the generated interface without any custom settings UI.</p>"
+    },
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "AI Services",
+        "Cloud Storage",
+        "Media",
+        "Proxies",
+        "Home Assistant"
+      ]
+    }
+  ]
+}
