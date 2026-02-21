@@ -26,8 +26,10 @@
         "docs/Views",
         "docs/Persistence",
         "docs/Events and Gestures",
+        "docs/Services",
         "docs/Notes",
         "docs/Reference",
+        "docs/Comparing to React",
         {
           "title": "GitHub Repository",
           "subtitle": "Source code, issues, and contributions.",
