@@ -169,7 +169,10 @@
             const syncSource = SvCloudSyncSource.clone();
             syncSource.setUserId(this.currentUserId());
             syncSource.setFolderName(this.cloudFolderName());
-            syncSource.setStorageRef(firebase.storage().ref());
+            const storage = (typeof globalThis !== "undefined" && globalThis._firebaseStorageInstance)
+                ? globalThis._firebaseStorageInstance
+                : firebase.storage();
+            syncSource.setStorageRef(storage.ref());
             syncSource.setTargetCollection(this);
             this.setCloudSyncSource(syncSource);
         }
