@@ -598,31 +598,17 @@ Example Tool call format:
 
             // Call the method and handle both sync and async functions
             const isAsync = Type.isAsyncFunction(method);
-            let result;
+
+            // Tool methods communicate results via toolCall.setCallResult() callback,
+            // not via return values. See handleCallSuccess() for result logging.
+            // If a tool never calls setCallResult(), this dispatch log helps identify it.
+            console.log("---- TOOLCALL DISPATCHED: " + this.toolName() + " (" + this.callId() + ")");
 
             if (isAsync) {
-                result = await method.apply(toolTarget, [this]);
+                await method.apply(toolTarget, [this]);
             } else {
-                result = method.apply(toolTarget, [this]);
+                method.apply(toolTarget, [this]);
             }
-
-            console.log("---- TOOLCALL RESULT: ", result);
-
-            // NOTES:
-            // 1) there are methods that don't immediately return a value, such as dice rolls,
-            // so we need to be able to return *without* having a result value yet and
-            // leave it up to the method to call setCallResult() when the result is ready.
-            // or handleCallError() if there is an error.
-
-            // we also have to catch the errors that are thrown from the method
-
-            /*
-            let resultValue = method.apply(toolTarget, [this]);
-            if (Type.isUndefined(resultValue)) {
-                resultValue = null; // should we make this more strict and throw an error?
-            }
-            this.handleCallSuccess(resultValue);
-            */
         } catch (e) {
             console.error("---- TOOLCALL ERROR: ", e, " Error making tool call: " + this.toolDefinition().name());
             this.handleCallError(e);
@@ -651,6 +637,7 @@ Example Tool call format:
         r.setResult(resultValue);
         r.setStatus("success");
         this.setToolResult(r);
+        console.log("---- TOOLCALL RESULT: " + this.toolName() + " (" + this.callId() + "): success", resultValue);
         this.toolCalls().onToolCallComplete(this);
     }
 
