@@ -116,6 +116,15 @@
         return this.idb().promiseHasKey(key);
     }
 
+    /**
+     * @description Returns all keys in the cache.
+     * @returns {Promise<Array<string>>} - A promise that resolves to an array of all keys.
+     * @category Query
+     */
+    promiseAllKeys () {
+        return this.idb().promiseAllKeys();
+    }
+
     weakMapGet (hash) {
         if (this.weakMap()) {
             return this.weakMap().get(hash);
