@@ -204,12 +204,15 @@
         const totalBytes = camEntries.reduce((sum, e) => sum + e.size, 0);
         let missingBytes = 0;
 
-        await camEntries.promiseParallelForEach(async (entry) => {
-            const hasKey = await hc.promiseHasKey(entry.hash);
-            if (!hasKey) {
+        // Fetch all cached keys in a single IndexedDB call instead of
+        // checking each entry individually (avoids ~1900 separate transactions)
+        const cachedKeys = new Set(await hc.promiseAllKeys());
+
+        for (const entry of camEntries) {
+            if (!cachedKeys.has(entry.hash)) {
                 missingBytes += entry.size;
             }
-        });
+        }
 
         const missingRatio = totalBytes > 0 ? missingBytes / totalBytes : 1;
 
