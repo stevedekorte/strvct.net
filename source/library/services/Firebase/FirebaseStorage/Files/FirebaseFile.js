@@ -647,18 +647,24 @@
                         reject(error);
                     },
                     async () => {
-                        // Upload completed successfully
-                        console.log(this.logPrefix(), `Upload completed for ${this.name()} - now lets get download URL`);
+                        try {
+                            // Upload completed successfully
+                            console.log(this.logPrefix(), `Upload completed for ${this.name()} - now lets get download URL`);
 
-                        // do this to unsure the file is uploaded before we download the metadata or return from the upload method
-                        const url = await ref.getDownloadURL();
-                        console.log(this.logPrefix(), `Upload completed for ${this.name()}, got download URL: ${url}`);
-                        this.setDownloadUrl(url);
+                            // do this to ensure the file is uploaded before we download the metadata or return from the upload method
+                            const url = await ref.getDownloadURL();
+                            console.log(this.logPrefix(), `Upload completed for ${this.name()}, got download URL: ${url}`);
+                            this.setDownloadUrl(url);
 
-                        // Download metadata from server - to ensure we are in sync (only if still attached)
-                        await this.asyncDownloadMetadata();
+                            // Download metadata from server - to ensure we are in sync (only if still attached)
+                            await this.asyncDownloadMetadata();
 
-                        resolve();
+                            resolve();
+                        } catch (error) {
+                            console.error(this.logPrefix(), "Error in upload completion for", this.name(), ":", error);
+                            this.setError(error);
+                            reject(error);
+                        }
                     }
                 );
             });

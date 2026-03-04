@@ -19,7 +19,6 @@
         sound.play(); // returns a promise
 
 
- 
  */
 
 /**
@@ -549,7 +548,14 @@
         //console.log(this.logPrefix(), "Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
         this.setSource(null);
-        this.playPromise().callResolveFunc();
+        const playPromise = this.playPromise();
+        if (!playPromise.isResolved()) {
+            playPromise.callResolveFunc();
+        } else {
+            //console.warn(this.logPrefix(), "Sound.onEnded() play promise already resolved");
+            // Note: this is not a problem, it just means the sound may have been cancelled
+            // e.g. the user hit return in a chat window - cancelling the rest of the TTS
+        }
         this.post("onSoundEnded");
     }
 
