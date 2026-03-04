@@ -612,7 +612,7 @@
         const initValue = initialValue === undefined ? oldSlot.initValue() : initialValue; // use the old slot's initial value is undefined
         const slot = this.justNewSlot(slotName, initValue, allowOnInstance);
         slot.copyFrom(oldSlot);
-        //slot.setInitValue(initValue); // needed?
+        slot.setInitValue(initValue);
         slot.setOwner(this);
         return slot;
     }
