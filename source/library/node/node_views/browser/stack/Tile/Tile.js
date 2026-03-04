@@ -698,10 +698,9 @@
      * @description Deletes the tile.
      */
     delete () {
-        //console.log("delete")
         if (this.canDelete()) {
-            this.removeFromParentView();
             this.node().delete();
+            this.removeFromParentView();
         }
     }
 
