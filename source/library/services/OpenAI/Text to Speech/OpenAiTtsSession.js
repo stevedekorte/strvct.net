@@ -197,6 +197,24 @@
 
         {
             /**
+       * @member {Number} maxConcurrentRequests
+       * @description Maximum concurrent TTS API requests in flight.
+       */
+            const slot = this.newSlot("maxConcurrentRequests", 3);
+            slot.setSlotType("Number");
+        }
+
+        {
+            /**
+       * @member {Set} inFlightRequests
+       * @description Set of TTS requests currently in flight.
+       */
+            const slot = this.newSlot("inFlightRequests", null);
+            slot.setSlotType("Set");
+        }
+
+        {
+            /**
        * @member {Array} ttsRequestQueue
        * @description Queue for TTS requests.
        */
@@ -284,6 +302,7 @@
     init () {
         super.init();
         this.setTtsRequestQueue([]);
+        this.setInFlightRequests(new Set());
         //if (!this.audioQueue()) {
         this.setAudioQueue(AudioQueue.clone());
         //}
@@ -403,12 +422,26 @@
    */
     generate () {
         const request = this.newRequest();
-        this.ttsRequestQueue().unshift(request); // needed?
+        this.ttsRequestQueue().push(request);
         const sound = request.sound();
         sound.setTranscript(this.prompt());
         this.queueSound(sound);
-        request.asyncSend();
+        this.processRequestQueue();
         return sound;
+    }
+
+    /**
+   * @description Sends queued requests up to the concurrency limit.
+   */
+    processRequestQueue () {
+        while (
+            this.inFlightRequests().size < this.maxConcurrentRequests() &&
+            this.ttsRequestQueue().length > 0
+        ) {
+            const request = this.ttsRequestQueue().shift();
+            this.inFlightRequests().add(request);
+            request.asyncSend();
+        }
     }
 
     /**
@@ -437,6 +470,9 @@
         this.ttsRequestQueue().forEach(r => r.shutdown());
         this.setTtsRequestQueue([]);
 
+        this.inFlightRequests().forEach(r => r.shutdown());
+        this.inFlightRequests().clear();
+
         this.audioQueue().stopAndClearQueue();
     }
 
@@ -451,10 +487,10 @@
    * @description Callback for when a request completes successfully.
    * @param {OpenAiTtsRequest} request - The completed request.
    */
-    async onRequestComplete (/*request*/) {
+    async onRequestComplete (request) {
         this.setStatus("success");
-    //this.onEnd();
-    //console.log('Success: got audio blob of size: ' + audioBlob.size);
+        this.inFlightRequests().delete(request);
+        this.processRequestQueue();
     }
 
     /**
@@ -468,6 +504,8 @@
         this.setError(error.message);
         this.setStatus(s);
         this.sendDelegateMessage("onTtsPromptError", [this]);
+        this.inFlightRequests().delete(request);
+        this.processRequestQueue();
     }
 
     //onEnd () {
