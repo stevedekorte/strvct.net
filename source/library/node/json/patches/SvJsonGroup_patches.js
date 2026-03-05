@@ -577,7 +577,7 @@
                     const initValue = slot.initValue();
                     slot.onInstanceSetValue(this, initValue);
                 }
-            } else if (slot.slotType() && slot.slotType() !== Type.typeName(value)) {
+            } else if (slot.slotType() && !slot.validateValueTypeOnly(value)) {
                 if (slot.slotType() === "Number" && value && value.asNumber) {
                     slot.onInstanceSetValue(this, value.asNumber());
                 } else {
