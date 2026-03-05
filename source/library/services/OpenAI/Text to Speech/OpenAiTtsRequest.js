@@ -290,6 +290,18 @@
             // Check if successful
             if (!xhrRequest.isSuccess()) {
                 const statusCode = xhrRequest.statusCode();
+
+                // Status 0 means the request was aborted or the connection was lost
+                // (e.g., intentional abort, debugger pause, network interruption).
+                // These are not actionable API errors — handle silently.
+                if (statusCode === 0) {
+                    const reason = this._isAborted ? "aborted" : "connection lost";
+                    console.log(`TTS request ${reason}, skipping.`);
+                    fetchPromise.callRejectFunc(new Error("TTS request " + reason));
+                    this.setSvXhrRequest(null);
+                    return;
+                }
+
                 let errorMessage = xhrRequest.statusText() || "";
                 // Try to read error details from the response body
                 try {
@@ -393,8 +405,12 @@
             this.setSvXhrRequest(null);
 
         } catch (error) {
-            console.error("Error:", error);
-            this.onError(error);
+            if (this._isAborted) {
+                console.log("TTS request aborted, skipping.");
+            } else {
+                console.error("Error:", error);
+                this.onError(error);
+            }
             this.setSvXhrRequest(null);
 
             // Reject the fetchPromise on error
@@ -408,6 +424,7 @@
    * @category Networking
    */
     abort () {
+        this._isAborted = true;
         if (this.svXhrRequest()) {
             this.svXhrRequest().abort();
             this.setSvXhrRequest(null);
