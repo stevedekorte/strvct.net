@@ -25,6 +25,7 @@ class SvWindowErrorPanel extends Object {
     constructor () {
         super();
         this._isRegistered = false;
+        this._openPanels = new Map(); // error message -> backdrop element
         this.init();
     }
 
@@ -196,6 +197,13 @@ class SvWindowErrorPanel extends Object {
             // Create an Error object from errorInfo for pattern matching
             const errorForMatching = errorInfo.error || new Error(errorInfo.message || "");
             errorDefinition = SvErrorCatalog.shared().definitionForError(errorForMatching);
+        }
+
+        // Skip duplicate panels — if an open panel already shows this error, don't open another
+        const panelKey = errorInfo.message || "";
+        if (this._openPanels.has(panelKey)) {
+            console.log("Skipping duplicate error panel for:", panelKey);
+            return;
         }
 
         try { // DONT REMOVE THIS AS AN UNCAUGHT ERROR HERE COULD CAUSE AN INFINITE LOOP
@@ -478,6 +486,7 @@ class SvWindowErrorPanel extends Object {
 
                 setTimeout(() => {
                     backdropDiv.remove();
+                    this._openPanels.delete(panelKey);
                 }, 500);
             };
 
@@ -508,6 +517,7 @@ class SvWindowErrorPanel extends Object {
 
             // Add backdrop to document body
             document.body.appendChild(backdropDiv);
+            this._openPanels.set(panelKey, backdropDiv);
 
         } catch (e) {
             console.error("Error in showPanelWithInfo:", e);
