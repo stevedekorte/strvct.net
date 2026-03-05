@@ -829,7 +829,7 @@ Midjourney
         // 2. AUTHENTICATION: Handles API key management securely
         // 3. CORS: Ensures proper headers for cross-origin requests
         const proxyEndpoint = ProxyServers.shared().defaultServer().proxyUrlForUrl(endpoint);
-        const request = SvXhrRequest.clone();
+        let request = SvXhrRequest.clone();
         request.setDelegate(this);
         request.setUrl(proxyEndpoint);
         request.setMethod("POST");
@@ -850,14 +850,40 @@ Midjourney
         // Store request for debugging
         this.setXhrRequest(request);
 
-        try {
-            await request.asyncSend(); // Delegate methods handle errors
+        const maxRetries = 3;
 
-            if (request.hasError()) {
-                console.error("request error: " + request.error());
-                this.setError(request.error());
-                throw request.error();
-            } else {
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            // Create a fresh request for each attempt (XHR can't be reused)
+            if (attempt > 0) {
+                request = SvXhrRequest.clone();
+                request.setDelegate(this);
+                request.setUrl(proxyEndpoint);
+                request.setMethod("POST");
+                request.setHeaders({
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json"
+                });
+                request.setBody(JSON.stringify(bodyJson));
+                this.setXhrRequest(request);
+            }
+
+            try {
+                await request.asyncSend();
+
+                if (request.hasError()) {
+                    // Retry on 429 (rate limit) with backoff
+                    if (request.statusCode() === 429 && attempt < maxRetries) {
+                        const delay = (attempt + 1) * 10000; // 10s, 20s, 30s
+                        console.warn(this.logPrefix(), `Rate limited (429), retrying in ${delay / 1000}s (attempt ${attempt + 1}/${maxRetries})...`);
+                        this.setStatus(`Rate limited, retrying in ${delay / 1000}s...`);
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    console.error("request error: " + request.error());
+                    this.setError(request.error());
+                    throw request.error();
+                }
+
                 let responseJson = undefined;
                 try {
                     responseJson = JSON.parse(request.responseText());
@@ -874,15 +900,17 @@ Midjourney
                 } else {
                     throw new Error(this.logPrefix() + " No task_id or messageId returned from ImaginePro");
                 }
-            }
-        } catch (error) {
-            // Performance monitoring: Mark end even on error
-            performance.mark('mj-api-generation-end');
-            performance.measure('mj-api-generation', 'mj-api-generation-start', 'mj-api-generation-end');
 
-            this.setError(error);
-            this.setStatus("Error: " + error.message);
-            throw error;
+                return; // success
+            } catch (error) {
+                // Performance monitoring: Mark end even on error
+                performance.mark('mj-api-generation-end');
+                performance.measure('mj-api-generation', 'mj-api-generation-start', 'mj-api-generation-end');
+
+                this.setError(error);
+                this.setStatus("Error: " + error.message);
+                throw error;
+            }
         }
     }
 
