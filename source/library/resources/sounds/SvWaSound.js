@@ -414,7 +414,8 @@
             }
 
             if (!this.hasData()) {
-                throw new Error("no data for sound");
+                console.warn(this.logPrefix(), "promiseToDecode() skipped: no data for sound");
+                return;
             }
 
             assert(this.data().byteLength);
@@ -505,6 +506,13 @@
      */
     async play () {
         await this.promiseToDecode();
+
+        if (!this.hasDecoded()) {
+            // Data was missing or decode failed — resolve silently
+            console.warn(this.logPrefix(), "play() skipped: no decoded audio data");
+            return Promise.resolve();
+        }
+
         this.setPlayPromise(Promise.clone());
         this.setSource(this.newAudioSource()); // setups source with decoded buffer
         this.syncToSource(this.source());
