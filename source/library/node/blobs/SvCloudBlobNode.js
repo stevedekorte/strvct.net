@@ -200,10 +200,17 @@
         if (!hash) {
             return null; // no hash to pull from cloud
         }
-        const blob = await SvApp.shared().asyncBlobForHash(hash);
-        this.setBlobValue(blob);
-        this.setHasInCloud(true); // it's now in cloud storage
-        return this.blobValue();
+        try {
+            const blob = await SvApp.shared().asyncBlobForHash(hash);
+            if (blob) {
+                this.setBlobValue(blob);
+                this.setHasInCloud(true);
+            }
+            return this.blobValue();
+        } catch (error) {
+            console.warn("SvCloudBlobNode: Failed to pull blob from cloud (hash: " + hash.slice(0, 12) + "...):", error.message);
+            return null;
+        }
     }
 
     async asyncPullFromCloudByDownloadUrl () {

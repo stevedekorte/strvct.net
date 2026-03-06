@@ -127,16 +127,21 @@
         const imageWellView = this.imageWellView();
         const field = this.node();
         let value = field.value();
-        if (value === null || value === undefined) {
+        try {
+            if (value === null || value === undefined) {
+                value = null;
+            } else if (value.asyncDataUrl) {
+                value = await value.asyncDataUrl();
+            } else if (value.asDataURL) {
+                value = value.asDataURL();
+            } else if (value instanceof SvImage) {
+                value = value.dataURL();
+            } else {
+                assert(typeof value === "string", "value is not a string");
+            }
+        } catch (error) {
+            console.warn("SvImageWellFieldTile: Failed to load image data:", error.message);
             value = null;
-        } else if (value.asyncDataUrl) {
-            value = await value.asyncDataUrl();
-        } else if (value.asDataURL) {
-            value = value.asDataURL();
-        } else if (value instanceof SvImage) {
-            value = value.dataURL();
-        } else {
-            assert(typeof value === "string", "value is not a string");
         }
         imageWellView.setImageDataUrl(value);
         return this;
