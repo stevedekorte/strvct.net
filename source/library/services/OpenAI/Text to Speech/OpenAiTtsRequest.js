@@ -297,7 +297,8 @@
                 if (statusCode === 0) {
                     const reason = this._isAborted ? "aborted" : "connection lost";
                     console.log(`TTS request ${reason}, skipping.`);
-                    fetchPromise.callRejectFunc(new Error("TTS request " + reason));
+                    // Resolve (not reject) to avoid unhandled rejection in AudioQueue
+                    fetchPromise.callResolveFunc();
                     this.setSvXhrRequest(null);
                     return;
                 }
@@ -413,8 +414,12 @@
             }
             this.setSvXhrRequest(null);
 
-            // Reject the fetchPromise on error
-            fetchPromise.callRejectFunc(error);
+            if (this._isAborted) {
+                // Resolve (not reject) to avoid unhandled rejection in AudioQueue
+                fetchPromise.callResolveFunc();
+            } else {
+                fetchPromise.callRejectFunc(error);
+            }
         }
     }
 
