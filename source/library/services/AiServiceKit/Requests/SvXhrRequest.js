@@ -876,7 +876,7 @@
                 const statusCode = this.xhr().status;
                 const fullStatus = this.fullNameForXhrStatusCode(statusCode);
 
-                if (this.isDebugging()) console.log(this.logPrefix(), this.description());
+                console.warn(this.logPrefix(), "HTTP error:", fullStatus, "URL:", this.url());
 
                 // Try to extract an error message from the response
                 const xhr = this.xhr();
@@ -1279,7 +1279,7 @@
             504: { name: "Gateway Timeout", shouldAutoRetry: true }
         };
 
-        return new Map(Object.entries(xhrStatuses));
+        return new Map(Object.entries(xhrStatuses).map(([k, v]) => [Number(k), v]));
     }
 
     /**
