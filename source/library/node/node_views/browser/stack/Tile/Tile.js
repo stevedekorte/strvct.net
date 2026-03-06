@@ -698,7 +698,11 @@
      * @description Deletes the tile.
      */
     delete () {
+        if (this.isDeleting()) {
+            return; // already in progress (e.g., slide gesture + tap race)
+        }
         if (this.canDelete()) {
+            this.setIsDeleting(true);
             this.node().delete();
             this.removeFromParentView();
         }
