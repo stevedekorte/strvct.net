@@ -1454,7 +1454,7 @@
         if (pn) {
             pn.removeSubnode(this);
         } else {
-            console.warn(this.logPrefix(), "removeFromParentNode() skipped: no parentNode");
+            throw new Error("missing parentNode");
         }
         return this;
     }
