@@ -133,7 +133,6 @@
      * @category Gesture
      */
     finishSlideAndDelete () {
-        this.setIsDeleting(true);
         const dt = 0.08; // seconds
         this.contentView().setTransition("right " + dt + "s");
         this.setTransition(this.transitionStyle());
