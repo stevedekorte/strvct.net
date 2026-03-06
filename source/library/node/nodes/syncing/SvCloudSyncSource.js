@@ -931,7 +931,7 @@
         let idToken = await currentUser.getIdToken();
         const baseUrl = UoBuildEnv.functions.url;
 
-        let response = await fetch(`${baseUrl}/api/manifest/release-lock`, {
+        let response = await fetch(`${baseUrl}api/manifest/release-lock`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -947,7 +947,7 @@
         if (response.status === 401) {
             console.log("SvCloudSyncSource: Token expired, refreshing and retrying lock release");
             idToken = await currentUser.getIdToken(true);
-            response = await fetch(`${baseUrl}/api/manifest/release-lock`, {
+            response = await fetch(`${baseUrl}api/manifest/release-lock`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -991,7 +991,7 @@
         const baseUrl = UoBuildEnv.functions.url;
 
         try {
-            fetch(`${baseUrl}/api/manifest/release-lock`, {
+            fetch(`${baseUrl}api/manifest/release-lock`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
