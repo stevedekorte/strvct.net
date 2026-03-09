@@ -351,8 +351,17 @@
 
         // Extract error message from various possible locations
         const errorMsg = response.error || response.message || response.errorMessage ||
-                    response.failureReason || response.reason || "Task failed";
-        this.setError(new Error(errorMsg));
+                    response.failureReason || response.reason || "Unknown error";
+
+        // Build a debug-friendly error with key response fields
+        const details = [];
+        details.push("error: " + errorMsg);
+        if (response.status) { details.push("status: " + response.status); }
+        if (response.messageId) { details.push("messageId: " + response.messageId); }
+        if (response.progress !== undefined) { details.push("progress: " + response.progress); }
+
+        const error = new Error("Image generation failed (" + details.join(", ") + ")");
+        this.setError(error);
         this.stopPolling();
         this.completionPromise().callRejectFunc(this.error());
         this.sendDelegateMessage("onImageGenerationError", [this]);
