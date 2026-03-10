@@ -219,18 +219,24 @@
 
         this.setAsyncWriteToLocalStoragePromise(Promise.clone());
 
-        const blob = this.blobValue();
-        if (blob) {
-            await this.defaultStore().blobPool().asyncStoreBlob(blob);
-            const hash = await this.valueHash();
-            console.log("locally stored blob with hash:", hash);
-            assert(hash !== null, "hash is null");
+        try {
+            const blob = this.blobValue();
+            if (blob) {
+                await this.defaultStore().blobPool().asyncStoreBlob(blob);
+                const hash = await this.valueHash();
+                console.log("locally stored blob with hash:", hash);
+                assert(hash !== null, "hash is null");
 
-            const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(hash);
-            assert(blobFromPool !== null, "blob from pool is null");
+                const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(hash);
+                assert(blobFromPool !== null, "blob from pool is null");
+            }
+            this.asyncWriteToLocalStoragePromise().callResolveFunc(null);
+        } catch (error) {
+            this.asyncWriteToLocalStoragePromise().callRejectFunc(error);
+            throw error;
+        } finally {
+            this.setAsyncWriteToLocalStoragePromise(null);
         }
-        this.asyncWriteToLocalStoragePromise().callResolveFunc(null);
-        this.setAsyncWriteToLocalStoragePromise(null);
         return this;
     }
 
@@ -245,15 +251,21 @@
 
         this.setAsyncReadFromLocalStoragePromise(Promise.clone());
 
-        const hash = this.valueHash();
-        if (hash) {
-            const blob = await this.defaultStore().blobPool().asyncGetBlob(hash);
-            if (blob) {
-                this._blobValue = blob; // don't want to trigger saving the blob value
-                this.asyncReadFromLocalStoragePromise().callResolveFunc(blob);
-                this.setAsyncReadFromLocalStoragePromise(null);
-                return blob;
+        try {
+            const hash = this.valueHash();
+            if (hash) {
+                const blob = await this.defaultStore().blobPool().asyncGetBlob(hash);
+                if (blob) {
+                    this._blobValue = blob; // don't want to trigger saving the blob value
+                    this.asyncReadFromLocalStoragePromise().callResolveFunc(blob);
+                    this.setAsyncReadFromLocalStoragePromise(null);
+                    return blob;
+                }
             }
+        } catch (error) {
+            this.asyncReadFromLocalStoragePromise().callRejectFunc(error);
+            this.setAsyncReadFromLocalStoragePromise(null);
+            throw error;
         }
 
         this.setAsyncReadFromLocalStoragePromise(null);

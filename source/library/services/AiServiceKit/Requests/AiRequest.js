@@ -632,7 +632,8 @@
         xhrRequest.setDelegate(this);
 
         // let's print the url and headers here to the console
-        this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}, headers:`, JSON.stringify(requestOptions.headers, null, 2));
+        //this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}, headers:`, JSON.stringify(requestOptions.headers, null, 2));
+        this.logDebug(`API Request - model: ${this.chatModel().title()}, url: ${apiUrl}`);
 
         if (!this.isContinuation()) {
             this.setFullContent("");

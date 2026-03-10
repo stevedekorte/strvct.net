@@ -229,11 +229,13 @@
 
             const jsonId = v.jsonId;
 
-            if (seenJsonIds.has(jsonId)) {
-                console.warn("SvJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId, " at path: " + pathString);
-                return;
-            } else {
-                seenJsonIds.add(jsonId);
+            if (jsonId !== undefined && jsonId !== null) {
+                if (seenJsonIds.has(jsonId)) {
+                    console.warn("SvJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId, " at path: " + pathString);
+                    return;
+                } else {
+                    seenJsonIds.add(jsonId);
+                }
             }
 
             if (hasOldSubnodes && !jsonId) {

@@ -138,11 +138,11 @@
         if (this.pushToCloudPromise()) {
             return this.pushToCloudPromise();
         }
-        this.setPushToCloudPromise(Promise.clone());
         const blob = this.blobValue();
         if (!blob) {
-            return;
+            throw new Error(this.logPrefix() + " asyncPushToCloud: no blob value to push");
         }
+        this.setPushToCloudPromise(Promise.clone());
         try {
             const publicUrl = await SvApp.shared().asyncPublicUrlForBlob(blob);
             this.setDownloadUrl(publicUrl);

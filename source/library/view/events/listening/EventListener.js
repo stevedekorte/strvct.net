@@ -154,6 +154,15 @@
             slot.setSlotType("Boolean");
         }
         /**
+         * @member {Boolean} isPassive - Whether the listener is passive (cannot call preventDefault).
+         * null = auto-detect based on event type.
+         */
+        {
+            const slot = this.newSlot("isPassive", null);
+            slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
+        }
+        /**
          * @member {String} methodSuffix - The suffix to add to the method name.
          */
         {
@@ -313,6 +322,37 @@
     }
 
     /**
+     * @description Builds the options object for addEventListener/removeEventListener.
+     * @returns {Object} The options object with capture and passive settings.
+     */
+    listenerOptions () {
+        const options = { capture: this.useCapture() };
+        const passive = this.effectiveIsPassive();
+        if (passive !== null) {
+            options.passive = passive;
+        }
+        return options;
+    }
+
+    /**
+     * @description Auto-detect passive based on event type, unless explicitly set.
+     * Touch and wheel events default to passive since CSS touch-action handles scroll prevention.
+     * @returns {Boolean|null} The effective passive setting.
+     */
+    effectiveIsPassive () {
+        if (this.isPassive() !== null) {
+            return this.isPassive();
+        }
+        // Default touch and wheel events to passive for better scroll performance.
+        // CSS touch-action already handles browser gesture prevention.
+        const name = this.eventName();
+        if (name === "touchstart" || name === "touchmove" || name === "touchend" || name === "touchcancel" || name === "wheel") {
+            return true;
+        }
+        return null;
+    }
+
+    /**
      * @description Starts the listener.
      * @returns {EventListener} The EventListener instance.
      */
@@ -324,12 +364,7 @@
                 this.logDebug(() => this.delegate().svTypeId() + " will start listening for " + this.eventName() + " -> " + this.methodName());
                 assert(this.isValid());
                 this._isListening = true; // can't use setter here as it would cause a loop
-                this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
-                /*
-                if (this.useCapture()) {
-
-                }
-                */
+                this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.listenerOptions());
             }
         } else {
             //console.log(this.delegate().svDebugId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
@@ -477,7 +512,7 @@
             this.decrementListenCount();
 
             //this.logDebug(() => this.delegate().svTypeId() + " will stop listening for " + this.methodName())
-            t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
+            t.removeEventListener(this.eventName(), this.handlerFunc(), this.listenerOptions());
             this._isListening = false; // can't use setter here as it would cause a loop
         }
 

@@ -121,6 +121,7 @@
 
     initPrototype () {
         this.setIsReadOnly(false);
+        this.setIsDebugging(false);
     }
 
     // --- Path Construction ---
@@ -212,7 +213,7 @@
                 (error.message && error.message.includes("404")) ||
                 (error.message && error.message.includes("does not exist"))) {
                 // No manifest exists yet - return empty
-                console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
+                this.logDebug("CLOUDSYNC No manifest found, starting fresh");
                 return this.emptyManifest();
             }
 
@@ -235,7 +236,7 @@
             if (!response.ok) {
                 throw new Error(`Failed to fetch backup manifest: ${response.status}`);
             }
-            console.log("CLOUDSYNC [SvCloudSyncSource] Loaded manifest from backup");
+            this.logDebug("CLOUDSYNC Loaded manifest from backup");
             return await response.json();
         } catch (backupError) {
             console.warn("CLOUDSYNC [SvCloudSyncSource] Backup manifest also unavailable:", backupError.message);
@@ -463,7 +464,7 @@
                 }
             }
 
-            console.log("CLOUDSYNC [SvCloudSyncSource] Cascade deleted subfolder for:", itemId);
+            this.logDebug("CLOUDSYNC Cascade deleted subfolder for:", itemId);
         } catch (error) {
             if (error.code !== "storage/object-not-found") {
                 console.warn("CLOUDSYNC [SvCloudSyncSource] Cascade delete failed for:", itemId, error.message);
@@ -530,7 +531,7 @@
                 try {
                     await this.asyncDeleteItem(cloudId);
                     deletedIds.push(cloudId);
-                    console.log("Deleted orphaned cloud item:", cloudId);
+                    this.logDebug("Deleted orphaned cloud item: " + cloudId);
                 } catch (error) {
                     console.warn("Failed to delete orphaned item:", cloudId, error.message);
                 }
@@ -641,7 +642,7 @@
             if (error.code === "storage/object-not-found" ||
                 (error.message && error.message.includes("404")) ||
                 (error.message && error.message.includes("does not exist"))) {
-                console.log("CLOUDSYNC [SvCloudSyncSource] No pool found for session:", sessionId);
+                this.logDebug("CLOUDSYNC No pool found for session:", sessionId);
                 return null;
             }
             throw error;
@@ -712,7 +713,7 @@
         };
 
         await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
-        console.log("CLOUDSYNC [SvCloudSyncSource] Uploaded delta:", delta.timestamp,
+        this.logDebug("CLOUDSYNC Uploaded delta:", delta.timestamp,
             "writes:", Object.keys(delta.writes || {}).length,
             "deletes:", (delta.deletes || []).length);
     }
@@ -740,7 +741,7 @@
             return [];
         }
 
-        console.log("CLOUDSYNC [SvCloudSyncSource] Found", result.items.length, "delta files for session:", sessionId);
+        this.logDebug("CLOUDSYNC Found", result.items.length, "delta files for session:", sessionId);
 
         // Sort by filename (timestamp) to ensure chronological order
         const sortedItems = result.items.slice().sort((a, b) => {
@@ -787,7 +788,7 @@
             return;
         }
 
-        console.log("CLOUDSYNC [SvCloudSyncSource] Deleting", result.items.length, "delta files for session:", sessionId);
+        this.logDebug("CLOUDSYNC Deleting", result.items.length, "delta files for session:", sessionId);
 
         for (const itemRef of result.items) {
             try {
@@ -875,7 +876,7 @@
         const baseUrl = UoBuildEnv.functions.url;
 
         const url = `${baseUrl}api/manifest/acquire-lock`;
-        console.log("SvCloudSyncSource: Acquiring lock at:", url);
+        this.logDebug(" Acquiring lock at:", url);
 
         let response = await fetch(url, {
             method: "POST",
@@ -891,7 +892,7 @@
 
         // If token expired, force-refresh and retry once
         if (response.status === 401) {
-            console.log("SvCloudSyncSource: Token expired, refreshing and retrying lock acquire");
+            this.logDebug(" Token expired, refreshing and retrying lock acquire");
             idToken = await currentUser.getIdToken(true);
             response = await fetch(url, {
                 method: "POST",
@@ -909,9 +910,9 @@
         // Cache token for use during page unload (releaseLockOnUnload)
         this._cachedIdToken = idToken;
 
-        console.log("SvCloudSyncSource: Lock response status:", response.status);
+        this.logDebug(" Lock response status:", response.status);
         const result = await response.json();
-        console.log("SvCloudSyncSource: Lock response:", result);
+        this.logDebug(" Lock response:", result);
         return result;
     }
 
@@ -945,7 +946,7 @@
 
         // If token expired, force-refresh and retry once
         if (response.status === 401) {
-            console.log("SvCloudSyncSource: Token expired, refreshing and retrying lock release");
+            this.logDebug(" Token expired, refreshing and retrying lock release");
             idToken = await currentUser.getIdToken(true);
             response = await fetch(`${baseUrl}api/manifest/release-lock`, {
                 method: "POST",

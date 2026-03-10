@@ -255,8 +255,8 @@
      */
     pointsForEvent (event) {
         if (!event.hasCachedPoints()) {
-            event.preventDefault(); // needed to prevent browser from handling touches?
-
+            // CSS touch-action handles browser gesture prevention;
+            // no need for preventDefault() here (and it would fail with passive listeners).
             const points = this.justPointsForEvent(event);
             event.setCachedPoints(points);
         }
