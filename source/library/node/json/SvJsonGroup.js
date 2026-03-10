@@ -264,6 +264,9 @@
                                 slot.onInstanceSetValue(this, initValue);
                                 this.markAsDirty(); // save our type conversion
                             }
+                        } else if (slot.slotType() === "JSON Object" && Type.typeName(v) === "Object") {
+                            // "JSON Object" slots accept plain objects from JSON deserialization
+                            slot.onInstanceSetValue(this, v);
                         } else if (slot.slotType() !== Type.typeName(v)) {
                             const errorMessage = this.logPrefix() + " .setSlotsJson() slotType mismatch: " + slot.slotType() + " slot type !== " + Type.typeName(v) + " value type at path: " + jsonPathComponents.concat(k).join("/");
                             console.warn(errorMessage);
