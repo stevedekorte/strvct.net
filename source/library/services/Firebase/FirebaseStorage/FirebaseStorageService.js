@@ -411,9 +411,9 @@
         assert(blob.type, "Blob requires a type");
 
         const file = await this.asyncPublicFileForBlob(blob);
-        const doesExist =  await file.asyncPublicUrlExists();
+        const doesExist = await file.asyncDoesExist();
         if (doesExist) {
-            // return url if it it already exists
+            // return url if it already exists
             return file.publicUrlFromPath();
         }
 

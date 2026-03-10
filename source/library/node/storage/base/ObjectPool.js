@@ -769,7 +769,7 @@
                 " hasSingletonMethod=" + hasSingletonMethod + " isSingleton=" + isSingleton);
 
             if (isSingleton) {
-                console.warn(this.logPrefix() + "WARNING: singleton pid change allowed - " + msg);
+                //console.warn(this.logPrefix() + "WARNING: singleton pid change allowed - " + msg);
                 return; // Allow it for singletons
             }
 
