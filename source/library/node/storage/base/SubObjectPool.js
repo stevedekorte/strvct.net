@@ -225,7 +225,7 @@
 
         // No snapshot means first save or snapshot was cleared - do full upload
         if (!snapshot) {
-            this.logDebug("CLOUDSYNC No snapshot - full upload needed");
+            this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] No snapshot - full upload needed");
             return null;
         }
 
@@ -253,18 +253,18 @@
 
         // If no changes, return empty delta
         if (totalChanges === 0) {
-            this.logDebug("CLOUDSYNC No changes detected - skipping upload");
+            this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] No changes detected - skipping upload");
             return { writes: {}, deletes: [], timestamp: Date.now(), isEmpty: true };
         }
 
         // If changes exceed threshold, prefer full upload
         const totalRecords = currentKeys.length;
         if (totalRecords > 0 && totalChanges / totalRecords > this.thisClass().fullUploadThreshold()) {
-            this.logDebug("CLOUDSYNC Changes (" + totalChanges + "/" + totalRecords + ") exceed threshold - full upload");
+            this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] Changes (" + totalChanges + "/" + totalRecords + ") exceed threshold - full upload");
             return null;
         }
 
-        this.logDebug("CLOUDSYNC Delta collected: " + Object.keys(writes).length + " writes, " + deletes.length + " deletes");
+        this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] Delta collected: " + Object.keys(writes).length + " writes, " + deletes.length + " deletes");
 
         return {
             writes: writes,
@@ -337,7 +337,7 @@
 
         if (delta === null) {
             // Full upload needed (no snapshot, or changes too large)
-            this.logDebug("CLOUDSYNC Performing full upload for session:", sessionId);
+            this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] Performing full upload for session:", sessionId);
             const poolJson = this.asJson();
             await cloudSource.asyncUploadPoolJson(sessionId, poolJson);
 
@@ -351,13 +351,13 @@
             return this.thisClass().saveTypeNone();
         } else {
             // Delta upload
-            this.logDebug("CLOUDSYNC Performing delta upload for session:", sessionId);
+            this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] Performing delta upload for session:", sessionId);
             await cloudSource.asyncUploadDelta(sessionId, delta);
 
             // Check if compaction is needed
             const deltaCount = await cloudSource.asyncCountDeltas(sessionId);
             if (deltaCount >= this.thisClass().compactionThreshold()) {
-                this.logDebug("CLOUDSYNC Delta count (" + deltaCount + ") exceeds threshold, compacting...");
+                this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] Delta count (" + deltaCount + ") exceeds threshold, compacting...");
                 await this.asyncCompactToCloud();
                 this.updateLastSyncedSnapshot();
                 return this.thisClass().saveTypeCompacted();
@@ -381,7 +381,7 @@
         await cloudSource.asyncUploadPoolJson(sessionId, poolJson);
         await cloudSource.asyncDeleteAllDeltas(sessionId);
 
-        this.logDebug("CLOUDSYNC Compaction complete for session:", sessionId);
+        this.isDebugging() && console.log("CLOUDSYNC [SubObjectPool] Compaction complete for session:", sessionId);
     }
 
     // --- Lock Management ---
@@ -423,7 +423,7 @@
                 this.setLockClientId(clientId);
                 this.setLockTime(Date.now());
                 this.startLockRefreshTimer();
-                this.logDebug(" Lock acquired for session:", sessionId);
+                this.isDebugging() && console.log("[SubObjectPool] Lock acquired for session:", sessionId);
                 return true;
             }
             console.error("SubObjectPool: Lock acquisition failed:", result.error || result);
@@ -489,7 +489,7 @@
 
         this._lockRefreshTimerId = setInterval(() => {
             if (this.hasLock() && this.lockNeedsRefresh()) {
-                this.logDebug(" Auto-refreshing lock for session:", this.sessionId());
+                this.isDebugging() && console.log("[SubObjectPool] Auto-refreshing lock for session:", this.sessionId());
                 this.asyncAcquireOrRefreshLock().catch(error => {
                     console.error("SubObjectPool: Lock auto-refresh failed:", error);
                 });

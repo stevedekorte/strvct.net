@@ -225,7 +225,7 @@
                 const localMod = this.localLastModified();
                 if (localMod && localMod > fetchStartTime) {
                     // Local wins - user edited while fetch was in flight
-                    console.log("CLOUDSYNC [SvSyncableJsonGroup] Local modifications during fetch, skipping cloud data for:", this.svTypeId());
+                    this.isDebugging() && console.log("CLOUDSYNC [SvSyncableJsonGroup] Local modifications during fetch, skipping cloud data for:", this.svTypeId());
                     this.setFetchState("fetched");
                     return this;
                 }

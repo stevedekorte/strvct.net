@@ -211,7 +211,7 @@
     // --- read from and write to local storage ---
 
     async asyncWriteToLocalStorage () {
-        console.log("writing blob to local storage");
+        this.isDebugging() && console.log("[SvBlobNode] writing blob to local storage");
 
         if (this.asyncWriteToLocalStoragePromise()) {
             return this.asyncWriteToLocalStoragePromise();
@@ -224,7 +224,7 @@
             if (blob) {
                 await this.defaultStore().blobPool().asyncStoreBlob(blob);
                 const hash = await this.valueHash();
-                console.log("locally stored blob with hash:", hash);
+                this.isDebugging() && console.log("[SvBlobNode] locally stored blob with hash:", hash);
                 assert(hash !== null, "hash is null");
 
                 const blobFromPool = await this.defaultStore().blobPool().asyncGetBlob(hash);
@@ -324,7 +324,7 @@
 
         // compute and store the hash
         const hash = await this.asyncComputeValueHash();
-        console.log("computed blob value hash: ", hash);
+        this.isDebugging() && console.log("[SvBlobNode] computed blob value hash:", hash);
         this.setValueHash(hash);
         return hash;
     }

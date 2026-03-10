@@ -67,6 +67,7 @@
         this.setTitle("Firebase Storage");
         this.setSubtitle("file hosting");
         this.setShouldStoreSubnodes(false);
+        this.setIsDebugging(false);
     }
 
     finalInit () {
@@ -289,7 +290,7 @@
             let bucketName = null;
 
             if (this.defaultBucketName()) {
-                console.log("FirebaseStorageService.bucketName: Using default bucket name:", this.defaultBucketName());
+                this.isDebugging() && console.log("FirebaseStorageService.bucketName: Using default bucket name:", this.defaultBucketName());
                 bucketName = this.defaultBucketName();
             }
 

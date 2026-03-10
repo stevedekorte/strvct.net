@@ -75,6 +75,7 @@
 
     initPrototype () {
         this.setShouldStore(false);
+        this.setIsDebugging(false);
     }
 
     // --- Abstract Methods (subclasses must implement) ---
@@ -304,7 +305,7 @@
         this.setManifest(manifest);
 
         const collection = this.targetCollection();
-        console.log("CLOUDSYNC [SvSyncCollectionSource] asyncLazySyncFromSource - targetCollection:", collection, "this:", this.type ? this.type() : this.constructor?.name, "folderName:", this.folderName ? this.folderName() : "n/a", "userId:", this.userId ? this.userId() : "n/a");
+        this.isDebugging() && console.log("CLOUDSYNC [SvSyncCollectionSource] asyncLazySyncFromSource - targetCollection:", collection, "this:", this.type ? this.type() : this.constructor?.name, "folderName:", this.folderName ? this.folderName() : "n/a", "userId:", this.userId ? this.userId() : "n/a");
         if (!collection) {
             throw new Error("No target collection set");
         }
@@ -350,7 +351,7 @@
                 // Item not in cloud manifest
                 if (localItem.existsInCloud && localItem.existsInCloud()) {
                     // Item was synced before but no longer in cloud = deleted remotely
-                    console.log("CLOUDSYNC [SvSyncCollectionSource] Removing locally item deleted from cloud:", localItem.jsonId());
+                    this.isDebugging() && console.log("CLOUDSYNC [SvSyncCollectionSource] Removing locally item deleted from cloud:", localItem.jsonId());
                     collection.removeSubnode(localItem);
                 }
                 // If item doesn't exist in cloud (never synced), keep it as a new local item
@@ -734,7 +735,7 @@
         // Delete the problematic cloud item
         try {
             await this.asyncDeleteItem(itemId);
-            console.log("CLOUDSYNC [SvSyncCollectionSource] Deleted incompatible cloud item:", itemId);
+            this.isDebugging() && console.log("CLOUDSYNC [SvSyncCollectionSource] Deleted incompatible cloud item:", itemId);
         } catch (deleteError) {
             console.warn("CLOUDSYNC [SvSyncCollectionSource] Failed to delete cloud item:", itemId, deleteError.message);
         }
