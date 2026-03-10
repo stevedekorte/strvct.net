@@ -103,7 +103,8 @@
      */
     acceptsLongPress () {
         if (!this.column()) {
-            console.log("missing parent view on: " + this.svTypeId());
+            // this isn't an error for header and footer tiles
+            //console.log("missing parent view on: " + this.svTypeId());
         }
 
         if (this.column()) {

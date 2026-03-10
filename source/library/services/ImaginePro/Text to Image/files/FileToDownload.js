@@ -241,11 +241,11 @@
         request.setUrl(url);
         request.setMethod("GET");
 
-        // Add headers to make the request look like it's from a browser
-        // Midjourney CDN may block requests without proper User-Agent
-        const headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        };
+        // NOTE: User-Agent is a forbidden header in browsers (XHR/fetch refuse to set it)
+        // const headers = {
+        //     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        // };
+        const headers = {};
 
         // Only set Referer in browser (causes issues in Node.js)
         if (!SvPlatform.isNodePlatform()) {

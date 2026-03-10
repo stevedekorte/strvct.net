@@ -205,6 +205,31 @@ Example Tool call format:
             slot.setShouldStoreSlot(true);
         }
 
+        // start time slot
+        {
+            const slot = this.newSlot("startTime", null);
+            slot.setDescription("The start time of the tool call.");
+            slot.setSlotType("Date");
+            slot.setShouldJsonArchive(true);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
+        // end time slot
+        {
+            const slot = this.newSlot("endTime", null);
+            slot.setDescription("The end time of the tool call.");
+            slot.setSlotType("Date");
+            slot.setShouldJsonArchive(true);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
+            slot.setIsInJsonSchema(false);
+            slot.setShouldStoreSlot(true);
+        }
+
+
         /*
         {
             const slot = this.newSlot("doesWaitForMessageCompletion", false);
@@ -288,6 +313,7 @@ Example Tool call format:
     }
 
     handleCallString (callString) {
+        this.setStartTime(new Date());
         this.setCallString(callString);
         if (callString !== null) {
             this.parseCallString();
@@ -337,11 +363,34 @@ Example Tool call format:
     }
 
     didUpdateSlotCallJson (oldValue, newValue) {
-
         if (oldValue !== this.callJson() && newValue !== null) {
             this.setToolName(newValue.toolName);
             this.setCallId(newValue.callId);
         }
+    }
+
+    didUpdateSlotToolResult (oldValue, newValue) {
+        if (this.startTime() !== null && newValue !== null) {
+            this.onToolCallCompleted();
+        }
+    }
+
+    identifierDescription () {
+        const toolName = this.toolName() ? this.toolName() : "(unknown tool name)";
+        const callId = this.callId() ? this.callId() : "(unknown call id)";
+        return toolName + "-" + callId;
+    }
+
+    onToolCallCompleted () { // complete does not imply success or failure
+        this.setEndTime(new Date());
+        console.log(this.logPrefix() + "Tool call '" + this.identifierDescription() + "' completed in " + this.secondsToComplete() + "s");
+    }
+
+    secondsToComplete () {
+        if (this.startTime() !== null && this.endTime() !== null) {
+            return (this.endTime().getTime() - this.startTime().getTime()) / 1000;
+        }
+        return 0;
     }
 
     assertValidCall () {
@@ -598,15 +647,13 @@ Example Tool call format:
 
             // Call the method and handle both sync and async functions
             const isAsync = Type.isAsyncFunction(method);
-            let result;
 
+            // note: we don't use the return value, instead we rely on the tool method to call setCallResult() or handleCallError() when the result is ready.
             if (isAsync) {
-                result = await method.apply(toolTarget, [this]);
+                await method.apply(toolTarget, [this]);
             } else {
-                result = method.apply(toolTarget, [this]);
+                method.apply(toolTarget, [this]);
             }
-
-            console.log("---- TOOLCALL RESULT: ", result);
 
             // NOTES:
             // 1) there are methods that don't immediately return a value, such as dice rolls,

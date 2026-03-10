@@ -445,26 +445,26 @@
             return;
         }
         try {
-            console.log("asyncDoesExist: checking", this.fullPath());
+            console.log(this.logPrefix(), "asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
             const url = await ref.getDownloadURL();
             this.setDownloadUrl(url);
-            console.log("asyncDoesExist: got download URL, file exists");
+            console.log(this.logPrefix(), "asyncDoesExist: got download URL, file exists");
             return url;
         } catch (error) {
-            console.log("asyncDoesExist caught error:", error);
-            console.log("asyncDoesExist error.code:", error.code);
-            console.log("asyncDoesExist error.message:", error.message);
+            console.log(this.logPrefix(), "asyncDoesExist caught error:", error);
+            console.log(this.logPrefix(), "asyncDoesExist error.code:", error.code);
+            console.log(this.logPrefix(), "asyncDoesExist error.message:", error.message);
 
             // Both "not found" and "unauthorized" mean the file doesn't exist for our purposes
             const errorCode = error.code || "";
             if (errorCode.includes("object-not-found") || errorCode.includes("unauthorized")) {
-                console.log("asyncDoesExist: file doesn't exist, returning false");
+                console.log(this.logPrefix(), "asyncDoesExist: file doesn't exist, returning false");
                 return null;
             }
 
             // Re-throw unexpected errors
-            console.error("asyncDoesExist: unexpected error, re-throwing:", error);
+            console.error(this.logPrefix(), "asyncDoesExist: unexpected error, re-throwing:", error);
             throw error;
         }
     }
@@ -484,7 +484,7 @@
             return this.updated() === serverMetadata.updated &&
                    this.size() === serverMetadata.size;
         } catch (error) {
-            console.error("Error checking if file matches server:", error);
+            console.error(this.logPrefix(), "Error checking if file matches server:", error);
             return false;
         }
     }
@@ -506,7 +506,7 @@
             this.setDownloadUrl(url);
             return url;
         } catch (error) {
-            console.error("Error getting download URL:", error);
+            console.error(this.logPrefix(), "Error getting download URL:", error);
             throw error;
         }
     }
@@ -586,7 +586,7 @@
             this.setBlob(blob);
             return blob;
         } catch (error) {
-            console.error("Error downloading file:", error);
+            console.error(this.logPrefix(), "Error downloading file:", error);
             this.setError(error);
             throw error;
         }
@@ -639,10 +639,10 @@
                     "state_changed",
                     (snapshot) => {
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log(this.logPrefix(), `Upload progress for ${this.name()}: ${progress.toFixed(2)}%`);
+                        this.isDebugging() && console.log(this.logPrefix(), `Upload progress for ${this.name()}: ${progress.toFixed(2)}%`);
                     },
                     (error) => {
-                        console.error("Upload error:", error);
+                        console.error(this.logPrefix(), "Upload error:", error);
                         this.setError(error);
                         reject(error);
                     },
@@ -706,7 +706,7 @@
             }
 
         } catch (error) {
-            console.error("Error deleting blob:", error);
+            console.error(this.logPrefix(), "Error deleting blob:", error);
             this.setError(error);
             throw error;
         }
@@ -734,7 +734,7 @@
             this.setContentType(metadata.contentType);
             this.setCustomMetadata(metadata.customMetadata || {});
         } catch (error) {
-            console.error("Error downloading metadata:", error);
+            console.error(this.logPrefix(), "Error downloading metadata:", error);
             this.setError(error);
             throw error;
         }
