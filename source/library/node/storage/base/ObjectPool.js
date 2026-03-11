@@ -442,7 +442,9 @@
         const map = this.kvMap();
         if (map.at(this.rootKey()) !== pid) {
             map.atPut(this.rootKey(), pid);
-            console.log(this.logPrefix() + "---- SET ROOT PID " + pid + " ----");
+            if (this.isDebugging()) {
+                console.log(this.logPrefix() + "---- SET ROOT PID " + pid + " ----");
+            }
 
         }
         assert(this.hasStoredRoot());
@@ -1500,7 +1502,7 @@
         this.flushIfNeeded(); // store any dirty objects
 
         const isDebugging = this.isDebugging();
-        this.setIsDebugging(true);
+        //this.setIsDebugging(true);
         this.logDebug(() => "--- begin collect --- with " + this.kvMap().count() + " pids");
         this.setMarkedSet(new Set());
         this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept (a special entry whose key is "rootKey" and value is the root pid)
