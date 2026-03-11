@@ -517,7 +517,7 @@
     storeSelectionRange () {
         const range = this.getSelectionRange();
         if (range) {
-            console.log(this.svTypeId() + "--- storing selection ---");
+            //console.log(this.svTypeId() + "--- storing selection ---");
             this.setStoredSelectionRange(range);
             return true;
         }

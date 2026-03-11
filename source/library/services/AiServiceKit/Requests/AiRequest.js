@@ -352,6 +352,10 @@
 
     // --- helper accessors ---
 
+    logPrefix () {
+        return this.thisClass().svType();
+    }
+
     service () {
         return this.chatModel().service();
     }
@@ -688,7 +692,7 @@
         this.setStatus("completed " + this.responseSizeDescription());
         this.xhrPromise().callResolveFunc(this.fullContent());
 
-        console.log(this.logPrefix(), " request completed");
+        console.log(this.logPrefix(), "completed");
     }
 
     /**

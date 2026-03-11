@@ -53,7 +53,7 @@
         super.init();
         this.setName("defaultDataStore");
         this.setKvMap(PersistentAtomicMap.clone());
-        //this.setIsDebugging(false);
+        this.setIsDebugging(false);
         return this;
     }
 

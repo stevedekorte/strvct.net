@@ -221,7 +221,9 @@
         }
 
         // Garbage collect stale cache entries regardless of which path was taken
-        const validHashes = new Set(camEntries.map(e => e.hash));
+        // Use ALL index entries (not just CAM-eligible) so non-CAM resources
+        // (e.g. binary files cached after network fetch) aren't incorrectly evicted
+        const validHashes = new Set(this._index.map(e => e.hash));
         await hc.promiseRemoveKeysNotInSet(validHashes);
     }
 

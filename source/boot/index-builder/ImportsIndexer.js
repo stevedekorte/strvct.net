@@ -255,7 +255,7 @@ class ImportsIndexer {
      * @category Data Processing
      */
     computeCam () {
-        const paths = this.pathsWithExtensions(["js", "css", "svg", "json", "txt"]); // file extensions to include in cam
+        const paths = this.pathsWithExtensions(["js", "css", "svg", "json", "txt", "html"]); // file extensions to include in cam (text-based only; binary formats like jpeg/woff2 need base64 encoding)
         const cam = {};
         paths.forEach(path => {
             const fullPath = nodePath.join(process.cwd(), path);
@@ -328,7 +328,9 @@ class ImportsIndexer {
     hashForData (data) {
         // Use the same hash method as ArrayBuffer.prototype.asyncHexSha256() for consistency
         // This ensures hashes match between build time and runtime
-        const buffer = Buffer.from(data, "utf8");
+        // Note: if data is already a Buffer (from fs.readFileSync without encoding), use it directly
+        // to avoid corrupting binary data by re-encoding as UTF-8
+        const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data, "utf8");
         const hash = crypto.createHash("sha256").update(buffer).digest("hex");
         return hash;
     }

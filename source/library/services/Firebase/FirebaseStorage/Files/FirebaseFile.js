@@ -210,6 +210,10 @@
     }
 
 
+    logPrefix () {
+        return this.thisClass().svType();
+    }
+
     /**
      * @description Returns the valid items for the content category
      * @returns {Array} The valid items
@@ -445,13 +449,18 @@
             return;
         }
         try {
-            console.log(this.logPrefix(), "asyncDoesExist: checking", this.fullPath());
+            //console.log(this.logPrefix(), "asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
             const url = await ref.getDownloadURL();
             this.setDownloadUrl(url);
-            console.log(this.logPrefix(), "asyncDoesExist: got download URL, file exists");
+            //console.log(this.logPrefix(), "asyncDoesExist: got download URL, file exists");
             return url;
         } catch (error) {
+            if (error.code === "storage/object-not-found") {
+                // this is expected when we are testing for existence of a file that doesn't exist
+                //console.log(this.logPrefix(), "asyncDoesExist: file doesn't exist, returning false");
+                throw error;
+            }
             console.log(this.logPrefix(), "asyncDoesExist caught error:", error);
             console.log(this.logPrefix(), "asyncDoesExist error.code:", error.code);
             console.log(this.logPrefix(), "asyncDoesExist error.message:", error.message);

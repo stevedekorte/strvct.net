@@ -54,7 +54,7 @@
     }
 
     enableWeakMap () {
-        console.log(this.logPrefix(), "enabling weak map");
+        //console.log(this.logPrefix(), "enabling weak map");
         this.setWeakMap(new EnumerableWeakMap());
         return this;
     }
