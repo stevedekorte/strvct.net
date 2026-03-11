@@ -109,6 +109,20 @@
     }
 
     /**
+     * @static
+     * @description Force-marks an object as dirty in all open pools that contain it.
+     * Used when schema changes require re-saving to purge stale slots.
+     * @param {Object} anObject - The object to mark dirty
+     */
+    static forceAddDirtyObjectToAllPools (anObject) {
+        this.openPools().forEach(pool => {
+            if (pool.hasActiveObject(anObject)) {
+                pool.forceAddDirtyObject(anObject);
+            }
+        });
+    }
+
+    /**
      * @description initialize the prototype slots
      * @returns {void}
      */
@@ -767,8 +781,10 @@
             const hasSingletonMethod = typeof aClass.isSingleton === "function";
             const isSingleton = hasSingletonMethod && aClass.isSingleton();
 
-            console.log(this.logPrefix() + "onObjectUpdatePid check: " + aClass.svType() +
-                " hasSingletonMethod=" + hasSingletonMethod + " isSingleton=" + isSingleton);
+            if (this.isDebugging()) {
+                console.log(this.logPrefix() + "onObjectUpdatePid check: " + aClass.svType() +
+                    " hasSingletonMethod=" + hasSingletonMethod + " isSingleton=" + isSingleton);
+            }
 
             if (isSingleton) {
                 //console.warn(this.logPrefix() + "WARNING: singleton pid change allowed - " + msg);
@@ -868,12 +884,21 @@
      * @returns {ObjectPool}
      */
     forceAddDirtyObject (anObject) {
-        console.log(this.logPrefix() + "forceAddDirtyObject(" + anObject.svTypeId() + ")");
+        if (!anObject.shouldStore()) {
+            return this;
+        }
+
+        if (!this.hasActiveObject(anObject)) {
+            console.warn(this.logPrefix() + "forceAddDirtyObject(" + anObject.svTypeId() + ") not in pool - skipping");
+            return this;
+        }
+
+        this.logDebug(() => "forceAddDirtyObject(" + anObject.svTypeId() + ")");
         if (this.storingPids() !== null) {
             // we might be in the middle of storing changes
             if (this.storingPids().has(anObject.puuid())) {
                 // looks like this object is already queued to be stored
-                console.log(this.logPrefix() + "forceAddDirtyObject(" + anObject.svTypeId() + ") already queued to be stored - skipping");
+                this.logDebug(() => "forceAddDirtyObject(" + anObject.svTypeId() + ") already queued to be stored - skipping");
                 return this;
             }
         }

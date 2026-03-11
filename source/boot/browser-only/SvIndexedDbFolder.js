@@ -152,7 +152,7 @@
         if (granted) {
             console.log(this.logPrefix(), "YAY!: Storage will NOT be cleared except by explicit user action.");
         } else {
-            console.warn(this.logPrefix(), "WARNING: IndexedDB storage may be cleared by the browser under storage pressure.");
+            console.log(this.logPrefix(), "NOTE: IndexedDB storage may be cleared by the browser under storage pressure.");
         }
 
         return granted;

@@ -187,9 +187,16 @@
         return this.name();
     }
 
+    logPrefix () {
+        return "[" + this.thisClass().svType() + "] ";
+    }
+
     async showVersionJson () {
         const json = await this.asyncVersionJson();
-        console.log("App git head hash: '" + json.gitHash + "'");
+        console.log(this.logPrefix(), "version: ", json);
+
+        //console.log(this.logPrefix(), "App git head hash: '" + json.gitHash + "'");
+        //console.log(this.logPrefix(), "App git tag: '" + json.gitTag + "' short hash: '" + json.gitHashShort + "' timestamp: '" + json.buildTimestamp + "'");
     }
 
     async asyncVersionJson () {

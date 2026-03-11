@@ -111,6 +111,37 @@
         return this.blobValue() !== null;
     }
 
+    /**
+     * @description Checks if the blob is available without downloading it.
+     * Checks in-memory, local IndexedDB, and cloud storage existence.
+     * @returns {Promise<boolean>}
+     * @category Availability
+     */
+    async asyncHasBlob () {
+        if (this.blobValue()) {
+            return true;
+        }
+
+        const hash = this.valueHash();
+        if (!hash) {
+            return false;
+        }
+
+        // Check local blob pool (in-memory cache + IndexedDB, no download)
+        const hasLocal = await this.defaultStore().blobPool().asyncHasBlob(hash);
+        if (hasLocal) {
+            return true;
+        }
+
+        // Check cloud storage existence (metadata only, no download)
+        try {
+            const file = await SvApp.shared().cloudStorageService().asyncPublicFileForHash(hash);
+            return await file.asyncDoesExist();
+        } catch (e) {
+            return false;
+        }
+    }
+
     // --- auto-sync to cloud ---
 
     async asyncJustSetBlobValue (blob) { // private method, don't call directly, use asyncSetBlobValue instead
@@ -184,8 +215,24 @@
         }
 
         if (this.hasInCloud()) {
-            return await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+            try {
+                return await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+            } catch (error) {
+                if (error.code === "storage/object-not-found") {
+                    // Cloud object was deleted — clear stale flag
+                    console.warn(this.logPrefix() + " cloud object not found, clearing hasInCloud flag");
+                    this.setHasInCloud(false);
+                    // Fall through to re-upload if we have the blob, otherwise throw
+                } else {
+                    throw error;
+                }
+            }
         }
+
+        if (!this.hasBlobValue()) {
+            throw new Error("Not Found");
+        }
+
         await this.asyncPushToCloud();
         return this.downloadUrl();
     }
