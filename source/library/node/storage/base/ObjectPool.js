@@ -115,11 +115,16 @@
      * @param {Object} anObject - The object to mark dirty
      */
     static forceAddDirtyObjectToAllPools (anObject) {
+        let found = false;
         this.openPools().forEach(pool => {
             if (pool.hasActiveObject(anObject)) {
                 pool.forceAddDirtyObject(anObject);
+                found = true;
             }
         });
+        if (!found) {
+            console.warn("forceAddDirtyObjectToAllPools: " + anObject.svTypeId() + " (puuid:" + anObject.puuid() + ") not found in any open pool! openPools count: " + this.openPools().size);
+        }
     }
 
     /**
@@ -918,16 +923,14 @@
      */
     scheduleStore () {
         if (!this.isOpen()) {
-            console.log(this.logPrefix() + " can't schedule store yet, not open");
+            console.warn(this.logPrefix() + "scheduleStore: can't schedule store yet, not open. Dirty count: " + this.dirtyObjects().size);
             return this;
         }
         assert(this.isOpen());
         const scheduler = SvSyncScheduler.shared();
         const methodName = "commitStoreDirtyObjects";
-        //console.log(this.svType() + " --- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
-                //console.warn("scheduleStore currentAction = ", SvSyncScheduler.currentAction() ? SvSyncScheduler.currentAction().description() : null);
                 this.logDebug("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
                 scheduler.scheduleTargetAndMethod(this, methodName, 1000);
             }
@@ -959,10 +962,8 @@
 
             if (this._forcedDirtyObjectsSet) {
                 if (this._forcedDirtyObjectsSet.size !== 0) {
-                    console.log(this.logPrefix() + "forceDirectObjectsSet is not empty! scheduling another store to get the rest");
                     this.scheduleStore();
                 } else {
-                    console.log(this.logPrefix() + "--- commitStoreDirtyObjects end -- all forced dirty objects were stored!");
                     this._forcedDirtyObjectsSet = null;
                 }
             }
@@ -998,7 +999,6 @@
                 this.storingPids().add(puuid);
 
                 if (this._forcedDirtyObjectsSet && this._forcedDirtyObjectsSet.has(obj)) {
-                    console.log(this.logPrefix() + " storing forced dirty object (" + obj.svTypeId() + ") ");
                     this._forcedDirtyObjectsSet.delete(obj);
                 }
 
@@ -1026,11 +1026,22 @@
      * @returns {Map}
      */
     classNameConversionMap () {
-        const m = new Map();
-        /*
-        m.set("SvMenuNode", "SvFolderNode")
-        */
-        return m;
+        if (!this._classNameConversionMap) {
+            this._classNameConversionMap = new Map();
+        }
+        return this._classNameConversionMap;
+    }
+
+    /**
+     * @description Adds a class name conversion to the map.
+     * Used when a class has been renamed and stored records reference the old name.
+     * @param {String} oldName - The old class name
+     * @param {String} newName - The new class name
+     * @returns {ObjectPool}
+     */
+    addClassNameConversion (oldName, newName) {
+        this.classNameConversionMap().set(oldName, newName);
+        return this;
     }
 
     /**
@@ -1041,9 +1052,9 @@
     classForName (className) {
         const m = this.classNameConversionMap();
         if (m.has(className)) {
-            return Object.getClassNamed(m.get(className));
+            const newName = m.get(className);
+            return Object.getClassNamed(newName);
         }
-
         return Object.getClassNamed(className);
     }
 
@@ -1054,7 +1065,6 @@
      */
     objectForRecord (aRecord) { // private
         const className = aRecord.type;
-        //console.log("loading " + className + " " + aRecord.id);
         if (className === "Promise") {
             console.warn(this.svType() + " WARNING: a Promise was stored. Returning a null. Check stack trace to see which object stored it.");
             return null;

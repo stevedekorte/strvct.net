@@ -34,7 +34,7 @@
 
         const isSingleton = this.isSingleton();
 
-        if (isSingleton && this._shared) {
+        if (isSingleton && this.hasShared()) {
             //console.warn(this.logPrefix() + "WARNING: instanceFromRecordInStore() on an allocated singleton.");
             //finalInit and afterInit should be skipped by the caller in this case
             return this._shared;
@@ -43,8 +43,8 @@
         const instance = this.preClone ? this.preClone() : new this();
         instance.init();
 
-        if (isSingleton && !this._shared) {
-            this._shared = instance;
+        if (isSingleton && !this.hasShared()) {
+            this.setShared(instance);
         }
 
         // caller needs to call finalInit and afterInit
@@ -157,7 +157,7 @@
                     }
                 }
             } else {
-                console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change?");
+                console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change? Will re-save to purge.");
                 ObjectPool.forceAddDirtyObjectToAllPools(this); // re-save without the stale slot
             }
         });
