@@ -10,11 +10,15 @@ While functionally complete, these systems often lack the interface patterns exp
 
 ## Why Naked Objects?
 
-In his influential essay [The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), Rich Sutton observed that across 70 years of AI research, general methods that scale with computation consistently outperform approaches that try to encode human knowledge by hand. The same principle applies to user interfaces.
+### The Principle
 
-Likewise, conventional UI development uses bespoke user interfaces for every domain object — custom forms, layouts, and views. And just like Sutton's observation, the bitter part is that developers *want* to hand-craft UIs. It feels like the right thing to do and may seem polished early on, but every new model class or schema change carries both a development cost and potentially introduces new and inconsistent patterns which accumulate clutter and confusion. The large indexes commonly found at the bottom of each page are a symptom this problem as even navigation has become too confusing at scale.
+In his influential essay [The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), Rich Sutton observed that across 70 years of AI research, general methods that leverage structure in the problem itself outperform hand-crafted solutions that encode human expertise, and the gap widens with scale. The naked objects pattern is the bitter lesson applied to UI where the "general method" of directly mapping the domain model to the UI replaces "hand-crafting" user interfaces.
 
-The naked objects pattern is the bitter lesson applied to UI.  Instead of hand-coding interfaces, the structure of the domain model itself drives the generation of the user interface in a simple, consistent and scalable way. 
+### The Problem
+
+Bespoke UIs — custom forms, layouts, and views for every domain object — may seem polished early on, but each addition carries a development cost and risks introducing inconsistent patterns. As scale increases, clutter and confusion accumulate. The large indexes at the bottom of each page are a familiar symptom: even navigation itself has become unmanageable.
+
+### The Solution
 
 In Strvct, object annotations describe the model in a structured way, views are generated from the node hierarchy, and the inspector and tile system makes everything navigable and reactive without writing view code for each class. The framework *is* the general method — and the challenge it embraces is making that general method good enough (through the thoughtful use of common organizational patterns) that you rarely need to override it with hand-crafted specialization.
 
