@@ -12,13 +12,11 @@ While functionally complete, these systems often lack the interface patterns exp
 
 In his influential essay [The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), Rich Sutton observed that across 70 years of AI research, general methods that scale with computation consistently outperform approaches that try to encode human knowledge by hand. The same principle applies to user interfaces.
 
-The conventional approach to UI development is to hand-craft bespoke screens for every domain object — custom forms, custom layouts, custom views. This is the equivalent of encoding human knowledge into the system. It looks polished early on, but it doesn't scale: every new model class or schema change carries a linear (or worse) UI cost.
+Likewise, conventional UI development uses bespoke user interfaces for every domain object — custom forms, layouts, and views. And just like Sutton's observation, the bitter part is that developers *want* to hand-craft UIs. It feels like the right thing to do and may seem polished early on, but every new model class or schema change carries both a development cost and potentially introduces new and inconsistent patterns which accumulate clutter and confusion. The large indexes commonly found at the bottom of each page are a symptom this problem as even navigation has become too confusing at scale.
 
-The naked objects pattern is the bitter lesson applied to UI. Instead of hand-coding interfaces, the structure of the domain model itself drives the generation of the user interface. A generic, computation-driven method that scales automatically with the complexity of your data.
+The naked objects pattern is the bitter lesson applied to UI.  Instead of hand-coding interfaces, the structure of the domain model itself drives the generation of the user interface in a simple, consistent and scalable way. 
 
-And just like Sutton's observation, the bitter part is that developers *want* to hand-craft UIs. It feels like the right thing to do — but the generic approach wins as a system grows.
-
-Strvct takes this idea seriously. Slots describe the model, views are generated from the node hierarchy, and the inspector and tile system makes everything navigable without writing view code for each class. The framework *is* the general method — and the challenge it embraces is making that general method good enough that you rarely need to override it with hand-crafted specialization.
+In Strvct, object annotations describe the model in a structured way, views are generated from the node hierarchy, and the inspector and tile system makes everything navigable and reactive without writing view code for each class. The framework *is* the general method — and the challenge it embraces is making that general method good enough (through the thoughtful use of common organizational patterns) that you rarely need to override it with hand-crafted specialization.
 
 <!--
 ## Introduction
