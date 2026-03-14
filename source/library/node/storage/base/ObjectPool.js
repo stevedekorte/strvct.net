@@ -67,6 +67,7 @@
         const pool = this.clone();
         pool.kvMap().fromJson(json);
         pool.loadStoredRoot();
+        ObjectPool.openPools().add(pool); // register so blob GC knows about this pool's references
         return pool;
     }
 
@@ -1829,12 +1830,17 @@
     */
 
     allBlobHashesSet () {
+        // Collect blob hashes from ALL open pools, not just this one.
+        // SubObjectPools (e.g. session pools) share the same SvBlobPool,
+        // so their blob references must be included to prevent incorrect GC.
         const hashesSet = new Set();
-        this.allObjects().forEach(obj => {
-            if (obj.referencedBlobHashesSet) {
-                const objBlobHashes = obj.referencedBlobHashesSet();
-                hashesSet.addAll(objBlobHashes);
-            }
+        ObjectPool.openPools().forEach(pool => {
+            pool.allObjects().forEach(obj => {
+                if (obj.referencedBlobHashesSet) {
+                    const objBlobHashes = obj.referencedBlobHashesSet();
+                    hashesSet.addAll(objBlobHashes);
+                }
+            });
         });
 
         return hashesSet;

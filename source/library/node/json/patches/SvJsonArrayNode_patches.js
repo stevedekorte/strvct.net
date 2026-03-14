@@ -431,13 +431,10 @@
         }
 
         if (index >= this.subnodes().length) {
-            throw new SvJsonPatchError(
-                `Cannot replace in array: index ${index} is out of bounds (array length: ${this.subnodes().length}, valid range: 0-${this.subnodes().length - 1})`,
-                operation,
-                operation ? this.parsePathSegments(operation.path) : null,
-                key,
-                this
-            );
+            // Auto-convert replace to add when the target index doesn't exist yet
+            // This handles a common AI pattern of using replace on an empty or shorter array
+            console.warn("[JsonPatch] replace at index " + index + " is out of bounds (array length: " + this.subnodes().length + "), converting to add");
+            return this.addDirectly(key, value, operation);
         }
 
         const newNode = this.newSubnodeForJson(value);

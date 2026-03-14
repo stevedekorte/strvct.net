@@ -203,26 +203,48 @@
 
     // --- public url ---
 
+    isLocalhostUrl (url) {
+        if (!url) {
+            return false;
+        }
+        try {
+            const hostname = new URL(url).hostname;
+            return hostname === "localhost" || hostname === "127.0.0.1";
+        } catch (e) {
+            return false;
+        }
+    }
+
     async asyncPublicUrl () {
-        if (this.publicUrl()) {
-            // we assume this is set to null when appropriate
-            return this.publicUrl();
+        const cachedUrl = this.publicUrl();
+        if (cachedUrl && !this.isLocalhostUrl(cachedUrl)) {
+            return cachedUrl;
+        }
+
+        // Clear stale localhost URLs
+        if (cachedUrl) {
+            this.setPublicUrl(null);
         }
 
         const hash = await this.asyncValueHash();
         if (!hash) {
-            throw new Error(this.logPrefix(), ".asyncPublicUrl(): no hash");
+            throw new Error(this.logPrefix() + " asyncPublicUrl(): no valueHash — blob may not have been stored");
         }
 
         if (this.hasInCloud()) {
             try {
-                return await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+                const url = await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+                if (!this.isLocalhostUrl(url)) {
+                    this.setPublicUrl(url);
+                    return url;
+                }
+                // Got a localhost URL from cloud service — clear flag and re-upload
+                console.warn(this.logPrefix() + " cloud returned localhost URL, will re-upload");
+                this.setHasInCloud(false);
             } catch (error) {
                 if (error.code === "storage/object-not-found") {
-                    // Cloud object was deleted — clear stale flag
                     console.warn(this.logPrefix() + " cloud object not found, clearing hasInCloud flag");
                     this.setHasInCloud(false);
-                    // Fall through to re-upload if we have the blob, otherwise throw
                 } else {
                     throw error;
                 }
@@ -234,7 +256,17 @@
         }
 
         await this.asyncPushToCloud();
-        return this.downloadUrl();
+        let url = this.downloadUrl();
+
+        // If push returned a localhost URL, get the public URL via the storage service
+        // (which may be overridden in local dev to use the correct GCS bucket)
+        if (this.isLocalhostUrl(url)) {
+            console.warn(this.logPrefix() + " asyncPushToCloud returned localhost URL, resolving via storage service");
+            url = await SvApp.shared().cloudStorageService().asyncPublicUrlForHash(hash);
+        }
+
+        this.setPublicUrl(url);
+        return url;
     }
 
     // --- pull from cloud ---

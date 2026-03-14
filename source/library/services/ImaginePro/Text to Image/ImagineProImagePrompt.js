@@ -753,7 +753,9 @@ Midjourney
 
     async asyncComposeExtraImagesPrompt () {
         const extraImageUrls = await this.extraImagesNode().subnodes().promiseParallelMap(async svImageNode => {
-            return await svImageNode.asyncPublicUrl();
+            const url = await svImageNode.asyncPublicUrl();
+            this.assertPublicUrl(url, "Extra image");
+            return url;
         });
         let prompt = extraImageUrls.join(" ");
         if (extraImageUrls.length === 1) {
@@ -769,7 +771,10 @@ Midjourney
         // We do NOT support V6 or earlier (which used --cref/--cw)
         let s = "";
         if (this.omniRefImageNode().hasImage()) {
-            const publicUrl = await this.omniRefImageNode().asyncPublicUrl();
+            // Always go through asyncPublicUrl() which validates and cleans up stale localhost URLs
+            const node = this.omniRefImageNode();
+            const publicUrl = await node.asyncPublicUrl();
+            this.assertPublicUrl(publicUrl, "Omni reference image");
             s += " --oref " + publicUrl + " --ow " + this.omniRefWeight();
         }
         return s.trim();
@@ -779,6 +784,7 @@ Midjourney
         let s = "";
         if (this.styleRefImageNode().hasImage()) {
             const publicUrl = await this.styleRefImageNode().asyncPublicUrl();
+            this.assertPublicUrl(publicUrl, "Style reference image");
             s += " --sref " + publicUrl + " --sw " + this.styleWeight();
         }
         return s.trim();
@@ -786,6 +792,31 @@ Midjourney
 
     trimmedPromptSuffix () {
         return this.promptSuffix().trim();
+    }
+
+    /**
+     * @description Validates that a URL is publicly accessible (not localhost or local network).
+     * @param {string} url - The URL to validate
+     * @param {string} context - Description of what the URL is for (for error messages)
+     * @category Validation
+     */
+    assertPublicUrl (url, context) {
+        if (!url) {
+            return;
+        }
+        try {
+            const parsed = new URL(url);
+            const hostname = parsed.hostname;
+            if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "0.0.0.0" || hostname.startsWith("192.168.") || hostname.startsWith("10.")) {
+                throw new Error(context + " URL is not publicly accessible: " + url);
+            }
+        } catch (e) {
+            if (e.message.includes("not publicly accessible")) {
+                throw e;
+            }
+            // URL parsing failed — not a valid URL
+            throw new Error(context + " is not a valid URL: " + url);
+        }
     }
 
     async asyncComposeFullPrompt () {

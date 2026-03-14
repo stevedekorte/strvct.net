@@ -257,7 +257,7 @@
             // Store metadata at hash:meta key (as JSON string)
             const metaKey = this.metadataKeyForHash(hash);
             await this.idb().promiseAtPut(metaKey, JSON.stringify(metadata));
-            this.logDebug(() => `Blob ${hash.substring(0, 8)}... stored successfully with metadata`);
+            console.log(this.logPrefix() + "stored blob " + hash.substring(0, 12) + "... (" + arrayBuffer.byteLength + " bytes)");
 
             // Cache the blob for future access
             this.activeBlobs().set(hash, blob);
@@ -415,7 +415,7 @@
     async asyncRemoveBlob (hash) {
         assert(typeof hash === "string", "Hash must be a string");
 
-        this.logDebug(() => `Removing blob ${hash.substring(0, 8)}...`);
+        console.log(this.logPrefix() + "removing blob " + hash.substring(0, 12) + "...");
 
         // Remove from activeBlobs cache
         this.activeBlobs().delete(hash);
@@ -460,13 +460,28 @@
     async asyncCollectUnreferencedKeySet (referencedHashesSet) {
         await this.asyncOpen();
         this.assertOpen();
-        this.logDebug(`Collecting unreferenced blobs, (${referencedHashesSet.size} references)`);
+        console.log(this.logPrefix() + "collecting unreferenced blobs (" + referencedHashesSet.size + " referenced hashes)");
 
-        const allHashesSet = new Set(await this.idb().promiseAllKeys());
-        const unreferencedHashesSet = allHashesSet.difference(referencedHashesSet);
-        this.logDebug(`Removing ${unreferencedHashesSet.size} unreferenced blobs`);
+        const allKeys = await this.idb().promiseAllKeys();
+        // Only consider blob data keys (not metadata keys) when determining unreferenced blobs
+        const allBlobHashesSet = new Set(allKeys.filter(key => !this.isMetadataKey(key)));
+        const unreferencedHashesSet = allBlobHashesSet.difference(referencedHashesSet);
 
-        await this.idb().promiseRemoveKeySet(unreferencedHashesSet);
+        if (unreferencedHashesSet.size === 0) {
+            console.log(this.logPrefix() + "no unreferenced blobs to collect");
+            return 0;
+        }
+
+        // Build the full set of keys to remove (blob data + metadata for each unreferenced hash)
+        const keysToRemove = new Set();
+        unreferencedHashesSet.forEach(hash => {
+            console.log(this.logPrefix() + "collecting unreferenced blob " + hash.substring(0, 12) + "...");
+            keysToRemove.add(hash);
+            keysToRemove.add(this.metadataKeyForHash(hash));
+        });
+
+        console.log(this.logPrefix() + "removing " + unreferencedHashesSet.size + " unreferenced blobs (" + keysToRemove.size + " keys including metadata)");
+        await this.idb().promiseRemoveKeySet(keysToRemove);
         return unreferencedHashesSet.size;
     }
 
