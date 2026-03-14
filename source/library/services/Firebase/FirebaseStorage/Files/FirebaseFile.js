@@ -449,31 +449,18 @@
             return;
         }
         try {
-            //console.log(this.logPrefix(), "asyncDoesExist: checking", this.fullPath());
             const ref = this.storageRef();
             const url = await ref.getDownloadURL();
             this.setDownloadUrl(url);
-            //console.log(this.logPrefix(), "asyncDoesExist: got download URL, file exists");
             return url;
         } catch (error) {
-            if (error.code === "storage/object-not-found") {
-                // this is expected when we are testing for existence of a file that doesn't exist
-                //console.log(this.logPrefix(), "asyncDoesExist: file doesn't exist, returning false");
-                throw error;
-            }
-            console.log(this.logPrefix(), "asyncDoesExist caught error:", error);
-            console.log(this.logPrefix(), "asyncDoesExist error.code:", error.code);
-            console.log(this.logPrefix(), "asyncDoesExist error.message:", error.message);
-
-            // Both "not found" and "unauthorized" mean the file doesn't exist for our purposes
             const errorCode = error.code || "";
             if (errorCode.includes("object-not-found") || errorCode.includes("unauthorized")) {
-                console.log(this.logPrefix(), "asyncDoesExist: file doesn't exist, returning false");
                 return null;
             }
 
             // Re-throw unexpected errors
-            console.error(this.logPrefix(), "asyncDoesExist: unexpected error, re-throwing:", error);
+            console.error(this.logPrefix(), "asyncRefreshDownloadUrl: unexpected error:", error);
             throw error;
         }
     }
