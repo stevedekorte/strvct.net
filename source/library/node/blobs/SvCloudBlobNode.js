@@ -319,15 +319,20 @@
         if (hash) {
             assert(hash.length === 64, "hash length is not 64 excepted for hex sha256");
 
+            console.log(this.logPrefix() + " asyncBlobValue: trying local storage for " + hash.substring(0, 12) + "...");
             const localBlob = await this.asyncReadFromLocalStorage();
             if (localBlob) {
+                console.log(this.logPrefix() + " asyncBlobValue: found in local storage");
                 return localBlob;
             }
 
+            console.log(this.logPrefix() + " asyncBlobValue: trying cloud for " + hash.substring(0, 12) + "...");
             const cloudBlob = await this.asyncPullFromCloudByHash();
             if (cloudBlob) {
+                console.log(this.logPrefix() + " asyncBlobValue: found in cloud");
                 return cloudBlob;
             }
+            console.warn(this.logPrefix() + " asyncBlobValue: blob not found anywhere for " + hash.substring(0, 12) + "...");
         }
 
         return null;
