@@ -237,7 +237,9 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
             return null;
         }
 
+        console.log(this.logPrefix(), "asyncJustCompose: loading " + this.svImagesNode().subnodeCount() + " image objects...");
         const imageObjects = await this.svImagesNode().asyncImageObjects();
+        console.log(this.logPrefix(), "asyncJustCompose: loaded " + imageObjects.length + " image objects, nulls: " + imageObjects.filter(img => !img).length);
 
         // Calculate target height and scaled dimensions
         const targetHeight = this.calculateMaxHeight(imageObjects);

@@ -60,7 +60,17 @@
     }
 
     async asyncImageObjects () {
-        return await Promise.all(this.subnodes().map(node => node.asyncImageObject()));
+        const results = [];
+        for (let i = 0; i < this.subnodes().length; i++) {
+            const node = this.subnodes()[i];
+            console.log(this.logPrefix(), "asyncImageObjects: loading image " + (i + 1) + "/" + this.subnodes().length + " (" + (node.title() || "untitled") + ") hash: " + (node.valueHash() ? node.valueHash().substring(0, 12) + "..." : "none"));
+            const hasBlobValue = node.blobValue() !== null;
+            console.log(this.logPrefix(), "asyncImageObjects: hasBlobValue: " + hasBlobValue);
+            const img = await node.asyncImageObject();
+            console.log(this.logPrefix(), "asyncImageObjects: loaded image " + (i + 1) + " -> " + (img ? img.width + "x" + img.height : "null"));
+            results.push(img);
+        }
+        return results;
     }
 
 }.initThisClass());
