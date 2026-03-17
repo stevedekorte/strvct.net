@@ -276,9 +276,12 @@ Dark neutral gray (#404040) if your characters are mostly pale/light-clad.
         }
 
         // Convert canvas to data URL and create SvImageNode
+        console.log(this.logPrefix(), "asyncJustCompose: converting canvas to dataURL...");
         const dataURL = canvas.toDataURL("image/jpeg");
+        console.log(this.logPrefix(), "asyncJustCompose: dataURL length: " + dataURL.length + ", setting on composite node...");
         const compositeImageNode = this.compositeImageNode();
         await compositeImageNode.asyncSetDataURL(dataURL);
+        console.log(this.logPrefix(), "asyncJustCompose: composite node set, done");
         return compositeImageNode;
     }
 
