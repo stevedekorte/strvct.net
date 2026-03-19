@@ -623,7 +623,11 @@
      * @param {*} aNote - The notification object
      * @category Event Handling
      */
-    onUpdatedNode (/*aNote*/) {
+    onUpdatedNode (aNote) {
+        const sender = aNote.sender();
+        const pathNodes = this.pathNodes();
+        const isInPath = pathNodes.includes(sender);
+        console.log("[BreadCrumbs] onUpdatedNode from " + sender.svTypeId() + " title='" + sender.title() + "' isInPath=" + isInPath);
         this.scheduleMethod("setupPathViews");
     }
 
@@ -634,7 +638,9 @@
      */
     watchPathNodes () {
         this.unwatchPathNodes();
-        this.pathNodes().forEach(node => {
+        const nodes = this.pathNodes();
+        console.log("[BreadCrumbs] watchPathNodes: watching " + nodes.length + " nodes: " + nodes.map(n => n.svTypeId()).join(", "));
+        nodes.forEach(node => {
             const obs = this.watchSender(node);
             this.crumbObservations().push(obs);
         });

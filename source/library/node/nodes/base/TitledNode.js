@@ -34,6 +34,7 @@
             const slot = this.newSlot("title", null);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("String");
+            slot.setSyncsToView(true);
         }
 
         /**
@@ -48,6 +49,7 @@
             slot.setSlotType("String");
             slot.setInspectorPath("Node/Subtitle");
             slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
         }
 
         /**
