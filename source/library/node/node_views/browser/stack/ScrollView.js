@@ -56,6 +56,15 @@
             const slot = this.newSlot("lastScrollHeight", 0);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @member {SvScrollToBottomButton} scrollToBottomButton - Floating button shown when not at bottom
+         * @category UI
+         */
+        {
+            const slot = this.newSlot("scrollToBottomButton", null);
+            slot.setSlotType("SvScrollToBottomButton");
+        }
     }
 
     /**
@@ -112,8 +121,30 @@
                 this.listenForScroll();
                 this.updateScrollTracking();
                 this.contentView().startContentMutationObserverIfNeeded();
+                this.setupScrollToBottomButton();
             }
         }
+    }
+
+    /**
+     * @description Creates and adds the scroll-to-bottom button if not already present.
+     * The button is added directly to the ScrollView's DOM element (not as a framework subview)
+     * so it doesn't interfere with the subview hierarchy. Uses position:sticky to stay
+     * fixed at the bottom of the scroll viewport.
+     * @returns {ScrollView} The ScrollView instance.
+     * @category UI
+     */
+    setupScrollToBottomButton () {
+        if (!this.scrollToBottomButton()) {
+            console.log("[AnchorScroll] ScrollView.setupScrollToBottomButton() creating button");
+            const button = SvScrollToBottomButton.clone();
+            button.setScrollView(this);
+            this.setScrollToBottomButton(button);
+            // Append to DOM directly rather than using addSubview,
+            // to avoid interfering with contentView()/scrollContentView()
+            this.element().appendChild(button.element());
+        }
+        return this;
     }
 
     /**
@@ -123,6 +154,11 @@
      */
     onScroll (event) {
         this.updateScrollTracking();
+        this.updateScrollToBottomButton();
+        // Clear anchor padding once user re-engages auto-scroll
+        if (this.wasAtBottom()) {
+            this.clearAnchorPadding();
+        }
     }
 
     /**
@@ -137,6 +173,7 @@
                 this.setWasAtBottom(true);
                 this.setLastScrollHeight(this.clientHeight());
             }
+            this.updateScrollToBottomButton();
         }
     }
 
@@ -202,6 +239,105 @@
     updateWasAtBottom () {
         if (this.wasAtBottom() !== this.isAtBottom()) {
             this.setWasAtBottom(this.isAtBottom());
+        }
+        return this;
+    }
+
+    // --- scroll-to-bottom button ---
+
+    /**
+     * @description Updates the visibility of the scroll-to-bottom button.
+     * Shows when not at bottom and content overflows; hides when at bottom.
+     * @returns {ScrollView} The ScrollView instance.
+     * @category UI
+     */
+    updateScrollToBottomButton () {
+        const button = this.scrollToBottomButton();
+        if (button) {
+            const e = this.element();
+            // Account for anchor padding — the real content height is
+            // scrollHeight minus any padding we added for anchoring
+            const contentView = this.contentView();
+            const anchorPadding = contentView ? parseFloat(contentView.paddingBottom()) || 0 : 0;
+            const realContentHeight = e.scrollHeight - anchorPadding;
+            const realContentOverflows = realContentHeight > e.clientHeight;
+            // Also check that the scroll position isn't just sitting in the padding area
+            const scrollBottom = e.scrollTop + e.clientHeight;
+            const pastRealContent = scrollBottom <= realContentHeight;
+
+            if (!this.isAtBottom() && realContentOverflows && pastRealContent) {
+                button.showButton();
+            } else {
+                button.hideButton();
+            }
+        }
+        return this;
+    }
+
+    /**
+     * @description Smooth-scrolls to the bottom of the scroll view.
+     * @returns {ScrollView} The ScrollView instance.
+     * @category Scrolling
+     */
+    scrollToBottomSmooth () {
+        this.element().scrollTo({
+            top: this.element().scrollHeight,
+            behavior: "smooth"
+        });
+        return this;
+    }
+
+    // --- anchor scroll ---
+
+    /**
+     * @description Scrolls so that the given subview is at the top of the viewport.
+     * Disengages auto-scroll by updating scroll tracking (wasAtBottom becomes false).
+     * @param {DomView} aSubview - The subview to anchor at the top.
+     * @returns {ScrollView} The ScrollView instance.
+     * @category Scrolling
+     */
+    anchorOnSubview (aSubview) {
+        console.log("[AnchorScroll] ScrollView.anchorOnSubview() subview:", aSubview ? aSubview.svType() : "null");
+        const contentView = this.contentView();
+
+        if (aSubview) {
+            // Add bottom padding so we can scroll the target to the top of the viewport
+            // even when it's near the end of the content. The padding gives the browser
+            // room to scroll past the natural end of the content.
+            const viewportHeight = this.element().clientHeight;
+            if (contentView) {
+                contentView.setPaddingBottom(viewportHeight + "px");
+            }
+
+            this.element().scrollTop = aSubview.element().offsetTop;
+            console.log("[AnchorScroll]   set scrollTop to:", aSubview.element().offsetTop,
+                "scrollHeight:", this.element().scrollHeight, "clientHeight:", viewportHeight);
+        } else {
+            // No anchor target — scroll to top
+            this.element().scrollTop = 0;
+        }
+        // Force wasAtBottom to false to disengage auto-scroll.
+        // Even though the scroll position may technically be "at bottom" right now
+        // (because the response is empty/short), we don't want auto-scroll to
+        // chase the response as it streams in.
+        this.setWasAtBottom(false);
+        this.updateLastScrollHeight();
+        console.log("[AnchorScroll]   after anchor: isAtBottom:", this.isAtBottom(), "wasAtBottom:", this.wasAtBottom());
+        this.updateScrollToBottomButton();
+        return this;
+    }
+
+    /**
+     * @description Removes the anchor padding from the content view.
+     * Called when the user scrolls to the bottom (re-engages auto-scroll)
+     * so the extra padding doesn't leave empty space.
+     * @returns {ScrollView} The ScrollView instance.
+     * @category Scrolling
+     */
+    clearAnchorPadding () {
+        const contentView = this.contentView();
+        if (contentView) {
+            contentView.setPaddingBottom("0px");
         }
         return this;
     }

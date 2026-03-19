@@ -291,7 +291,12 @@
         const response = this.conversation().newMessageOfClass(this.responseMsgClass());
         this.conversation().addSubnode(response);
         response.setSpeakerName(this.conversation().aiSpeakerName());
-        //this.conversation().postShouldFocusSubnode(responseMessage)
+
+        // Anchor scroll on the user's message (this) so it stays visible
+        // while the response streams below it
+        console.log("[AnchorScroll] AiMessage.requestResponse() calling requestAnchorOnMessage");
+        this.conversation().requestAnchorOnMessage(this);
+
         try {
             response.asyncMakeRequest();
         } catch (error) {

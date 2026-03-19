@@ -21,8 +21,19 @@
          * @member {MutationObserver} contentMutationObserver - Observer for content mutations, triggers onContentMutations() event.
          * @category DOM
          */
-        const slot = this.newSlot("contentMutationObserver", null);
-        slot.setSlotType("MutationObserver");
+        {
+            const slot = this.newSlot("contentMutationObserver", null);
+            slot.setSlotType("MutationObserver");
+        }
+
+        /**
+         * @member {SvObservation} anchorScrollObservation - Observation for requestAnchorScroll notifications.
+         * @category Notification
+         */
+        {
+            const slot = this.newSlot("anchorScrollObservation", null);
+            slot.setSlotType("SvObservation");
+        }
     }
 
     /**
@@ -34,6 +45,11 @@
     prepareToRetire () {
         super.prepareToRetire();
         this.stopContentMutationObserver();
+        const obs = this.anchorScrollObservation();
+        if (obs) {
+            obs.stopWatching();
+            this.setAnchorScrollObservation(null);
+        }
         return this;
     }
 
@@ -71,10 +87,63 @@
         const didChange = this.node() !== aNode;
         super.setNode(aNode);
 
-        if (didChange && aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
-            this.setJustifyContent("flex-end");
-            this.addTimeout(() => { this.scrollToBottom(); }, 0);
+        if (didChange) {
+            // Stop watching old node
+            const oldObs = this.anchorScrollObservation();
+            if (oldObs) {
+                oldObs.stopWatching();
+                this.setAnchorScrollObservation(null);
+            }
+
+            if (aNode) {
+                if (aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
+                    this.setJustifyContent("flex-end");
+                    this.addTimeout(() => { this.scrollToBottom(); }, 0);
+                }
+
+                // Watch for anchor scroll requests from this node
+                const obs = this.watchForNoteFrom("requestAnchorScroll", aNode);
+                this.setAnchorScrollObservation(obs);
+                console.log("[AnchorScroll] ScrollContentView.setNode() watching requestAnchorScroll from:", aNode.svType());
+            }
         }
+        return this;
+    }
+
+    /**
+     * Handles the requestAnchorScroll notification.
+     * Scrolls the target message's tile to the top of the viewport.
+     * @param {BMNotification} aNote - The notification with the target message as info.
+     * @returns {ScrollContentView} The current instance.
+     * @category Scrolling
+     */
+    requestAnchorScroll (aNote) {
+        const targetNode = aNote.info();
+        const scrollView = this.scrollView();
+
+        console.log("[AnchorScroll] requestAnchorScroll received, targetNode:", targetNode ? targetNode.svType() : "null");
+
+        if (!scrollView) {
+            return this;
+        }
+
+        if (!targetNode) {
+            scrollView.anchorOnSubview(null);
+            return this;
+        }
+
+        // Defer to allow view sync to complete — the tile may not exist yet
+        // since notifications fire before the view hierarchy updates
+        this.addTimeout(() => {
+            this.syncFromNodeNow(); // force sync so tile exists
+            const subview = this.subviewForNode(targetNode);
+            console.log("[AnchorScroll]   after sync, subviewForNode:", subview ? subview.svType() : "null",
+                "subviews:", this.subviews().length, "subnodeMap entries:", this._subnodeToSubview ? Object.keys(this._subnodeToSubview).length : 0);
+            if (subview) {
+                scrollView.anchorOnSubview(subview);
+            }
+        }, 0);
+
         return this;
     }
 

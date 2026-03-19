@@ -2,6 +2,7 @@
     "StackView.js",
     "NavView.js",
     "ScrollView.js",
+    "SvScrollToBottomButton.js",
     "StackScrollView.js",
     "ScrollContentView.js",
     "TilesView/_imports.json",

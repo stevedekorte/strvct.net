@@ -323,6 +323,20 @@
         // for subclasses to override
     }
 
+    // --- anchor scroll ---
+
+    /**
+   * @description Posts a requestAnchorScroll notification asking the view to scroll
+   * the given message to the top of the viewport. This disengages auto-scroll
+   * so the user can read at their own pace while new content grows below.
+   * @param {Object} aMessage - The message node to anchor at the top of the viewport, or null for top.
+   * @category Scrolling
+   */
+    requestAnchorOnMessage (aMessage) {
+        console.log("[AnchorScroll] Conversation.requestAnchorOnMessage() posting requestAnchorScroll, target:", aMessage ? aMessage.svType() : "null");
+        this.postNoteNamed("requestAnchorScroll", aMessage);
+    }
+
     // --- enable / disable input ---
 
     /*
