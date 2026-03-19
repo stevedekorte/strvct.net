@@ -58,6 +58,20 @@
         }
 
         /**
+         * @member {Boolean} isAnchored - True when anchor-scroll is active.
+         * While anchored, updateWasAtBottom() is suppressed so transient
+         * layout changes during view syncs cannot flip wasAtBottom to true
+         * and trigger an unwanted scroll-to-bottom.
+         * Cleared only by explicit user action (scroll-to-bottom button or
+         * scrolling to the bottom manually).
+         * @category State
+         */
+        {
+            const slot = this.newSlot("isAnchored", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
          * @member {SvScrollToBottomButton} scrollToBottomButton - Floating button shown when not at bottom
          * @category UI
          */
@@ -153,12 +167,14 @@
      * @category Event Handling
      */
     onScroll (event) {
-        this.updateScrollTracking();
-        this.updateScrollToBottomButton();
-        // Clear anchor padding once user re-engages auto-scroll
-        if (this.wasAtBottom()) {
+        // If anchored and user has scrolled to the bottom, disengage anchor mode
+        if (this.isAnchored() && this.isAtBottom()) {
+            console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
+            this.setIsAnchored(false);
             this.clearAnchorPadding();
         }
+        this.updateScrollTracking();
+        this.updateScrollToBottomButton();
     }
 
     /**
@@ -237,6 +253,12 @@
      * @category State
      */
     updateWasAtBottom () {
+        if (this.isAnchored()) {
+            // While anchored, never flip wasAtBottom to true.
+            // This prevents transient layout changes during view syncs
+            // from re-engaging auto-scroll.
+            return this;
+        }
         if (this.wasAtBottom() !== this.isAtBottom()) {
             this.setWasAtBottom(this.isAtBottom());
         }
@@ -280,6 +302,12 @@
      * @category Scrolling
      */
     scrollToBottomSmooth () {
+        // Disengage anchor mode — user is explicitly requesting scroll to bottom
+        if (this.isAnchored()) {
+            console.log("[AnchorScroll] scrollToBottomSmooth: disengaging anchor");
+            this.setIsAnchored(false);
+            this.clearAnchorPadding();
+        }
         this.element().scrollTo({
             top: this.element().scrollHeight,
             behavior: "smooth"
@@ -316,13 +344,12 @@
             // No anchor target — scroll to top
             this.element().scrollTop = 0;
         }
-        // Force wasAtBottom to false to disengage auto-scroll.
-        // Even though the scroll position may technically be "at bottom" right now
-        // (because the response is empty/short), we don't want auto-scroll to
-        // chase the response as it streams in.
+        // Engage anchor mode — suppresses wasAtBottom from being flipped
+        // to true by transient layout changes during view syncs.
+        this.setIsAnchored(true);
         this.setWasAtBottom(false);
         this.updateLastScrollHeight();
-        console.log("[AnchorScroll]   after anchor: isAtBottom:", this.isAtBottom(), "wasAtBottom:", this.wasAtBottom());
+        console.log("[AnchorScroll]   after anchor: isAnchored:", this.isAnchored(), "isAtBottom:", this.isAtBottom(), "wasAtBottom:", this.wasAtBottom());
         this.updateScrollToBottomButton();
         return this;
     }
