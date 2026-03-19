@@ -11,6 +11,11 @@
 
     initPrototypeSlots () {
 
+        {
+            const slot = this.newSlot("battery", null);
+            slot.setSlotType("SvWebBrowserBattery");
+            slot.setFinalInitProto(SvWebBrowserBattery);
+        }
     }
 
     /**
