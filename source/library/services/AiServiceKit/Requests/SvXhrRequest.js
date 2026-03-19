@@ -478,7 +478,7 @@
    * Returns a description of the request
    * @returns {string}
    */
-    description () {
+    descriptionJson () {
         const optionsCopy = JSON.parse(JSON.stringify(this.requestOptions())); // breaks for non-JSON!
 
         let bodyInfo = "";
@@ -515,7 +515,11 @@
             readableState: this.readableJsonState()
         };
 
-        return JSON.stringify(json, null, 2);
+        return json;
+    }
+
+    description () {
+        return JSON.stringify(this.descriptionJson(), null, 2);
     }
 
     clear () {
@@ -570,6 +574,7 @@
         this.setXhr(xhr);
         xhr.timeout = this.timeoutPeriodInMs();
         xhr.open(this.method(), this.url());
+
 
         // set headers
         const options = this.requestOptions();
@@ -655,6 +660,7 @@
         xhr.addEventListener("timeout", (event) => {
             em.safeWrapEvent(() => {
                 const error = new Error(`Request timeout: exceeded ${this.timeoutPeriodInMs()}ms`);
+                console.warn(this.logPrefix(), error.message, "\n", this.descriptionJson());
                 this.onXhrTimeout(error);
             }, event);
         });
