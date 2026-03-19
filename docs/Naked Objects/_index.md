@@ -10,17 +10,39 @@ While functionally complete, these systems often lack the interface patterns exp
 
 ## Why Naked Objects?
 
-### The Principle
+Most UI frameworks ask developers to hand-craft interfaces for every domain object — custom forms, layouts, and views. Naked objects takes a fundamentally different approach: the domain model *is* the interface. Define your objects, and the UI follows.
 
-In his influential essay [The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), Rich Sutton observed that across 70 years of AI research, general methods that leverage structure in the problem itself outperform hand-crafted solutions that encode human expertise, and the gap widens with scale. The naked objects pattern is the bitter lesson applied to UI where the "general method" of directly mapping the domain model to the UI replaces "hand-crafting" user interfaces.
+This isn't just a convenience. It addresses real problems that compound as applications grow.
 
-### The Problem
+### Development Cost
 
-Bespoke UIs — custom forms, layouts, and views for every domain object — may seem polished early on, but each addition carries a development cost and risks introducing inconsistent patterns. As scale increases, clutter and confusion accumulate. The large indexes at the bottom of each page are a familiar symptom: even navigation itself has become unmanageable.
+Every bespoke screen requires design, implementation, and maintenance. Each new model class or schema change means more UI work. In a naked objects system, every new object, property, or relationship automatically produces UI without additional interface code. The development cost of growing the application is concentrated where it belongs — in the domain model.
 
-### The Solution
+### Consistency
 
-In Strvct, object annotations describe the model in a structured way, views are generated from the node hierarchy, and the inspector and tile system makes everything navigable and reactive without writing view code for each class. The framework *is* the general method — and the challenge it embraces is making that general method good enough (through the thoughtful use of common organizational patterns) that you rarely need to override it with hand-crafted specialization.
+No team can maintain coherent design across hundreds of bespoke screens. Each developer, each feature, each deadline introduces slightly different patterns. Over time, clutter and confusion accumulate — not because anyone made a bad decision, but because there was no structural force keeping things consistent. Users must learn new navigation patterns for each screen rather than relying on a single, predictable structure. Inconsistency isn't just an aesthetic problem — it's a usability problem.
+
+### Adaptability
+
+Bespoke UIs are typically designed for a specific viewport size and a specific depth of navigation. When the two combine — a narrow screen and a deep object hierarchy — hand-crafted layouts break down or require yet more custom work: responsive breakpoints, separate mobile views, dedicated navigation stacks. Each is another bespoke solution to maintain. A naked objects system handles this structurally — the same navigation pattern collapses and expands uniformly regardless of depth or viewport size, because the layout is driven by the model's structure rather than case-by-case design.
+
+### A Narrow Design Space
+
+When you survey informational UIs across websites, applications, and social networks, the same spatial conventions appear repeatedly: hierarchy expressed top-to-bottom, navigation depth expressed left-to-right, containment for ownership, and lists for collections. These aren't independent design choices — they're conventions inherited from how we organize written information, following the same top-to-bottom, left-to-right reading order found in Western text and books.
+
+Bespoke UI developers are already converging on these patterns — unconsciously and inconsistently. The design space for presenting structured information is much narrower than it appears, and most of the variation in hand-crafted interfaces is just reinventing these same patterns with slight differences that hurt rather than help the user. Naked objects makes this convergence explicit: rather than each screen rediscovering the same organizational principles, the framework applies them uniformly.
+
+### The Crossover Point
+
+Hand-crafted UIs may seem more polished early on. But at sufficient complexity, a consistent structure generated from a coherent domain model produces a *better* interface than a patchwork of bespoke screens, because the user can rely on uniform navigation, layout, and interaction patterns throughout the application. The general approach doesn't just cost less — it eventually produces a better result.
+
+### Strvct's Approach
+
+In Strvct, object annotations describe the model, views are generated from the node hierarchy, and the inspector and tile system makes everything navigable and reactive without writing view code for each class. The challenge — and ambition — is making this general method produce interfaces good enough, through thoughtful use of common organizational patterns, that hand-crafted specialization becomes the exception rather than the rule.
+
+### A Familiar Pattern
+
+This dynamic — general methods outperforming hand-crafted solutions as scale increases — is not unique to UI. In his essay [The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), Rich Sutton observed the same pattern across 70 years of AI research: general methods that leverage structure in the problem itself consistently outperform approaches that encode human expertise, and the gap widens with scale. In AI, the scaling dimension is computation. In naked objects, it is domain model complexity. The principle is the same.
 
 <!--
 ## Introduction
