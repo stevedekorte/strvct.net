@@ -372,7 +372,7 @@ Midjourney
                 { value: 200, label: "200" },
                 { value: 300, label: "300 (Heavy)" },
             ];
-            const slot = this.newSlot("omniRefWeight", 100);
+            const slot = this.newSlot("omniRefWeight", 25);
             slot.setInspectorPath("Settings");
             slot.setSlotType("Number");
             slot.setLabel("Omniref Weight");
@@ -845,7 +845,7 @@ Midjourney
    */
     async start () {
         // Performance monitoring: Start MJ API generation timing
-        performance.mark('mj-api-generation-start');
+        performance.mark("mj-api-generation-start");
 
         this.setCompletionPromise(Promise.clone());
         this.setError(null);
@@ -926,8 +926,8 @@ Midjourney
                     await this.addGenerationForTaskId(taskId, fullPrompt);
 
                     // Performance monitoring: Complete MJ API generation timing
-                    performance.mark('mj-api-generation-end');
-                    performance.measure('mj-api-generation', 'mj-api-generation-start', 'mj-api-generation-end');
+                    performance.mark("mj-api-generation-end");
+                    performance.measure("mj-api-generation", "mj-api-generation-start", "mj-api-generation-end");
                 } else {
                     throw new Error(this.logPrefix() + " No task_id or messageId returned from ImaginePro");
                 }
@@ -935,8 +935,8 @@ Midjourney
                 return; // success
             } catch (error) {
                 // Performance monitoring: Mark end even on error
-                performance.mark('mj-api-generation-end');
-                performance.measure('mj-api-generation', 'mj-api-generation-start', 'mj-api-generation-end');
+                performance.mark("mj-api-generation-end");
+                performance.measure("mj-api-generation", "mj-api-generation-start", "mj-api-generation-end");
 
                 this.setError(error);
                 this.setStatus("Error: " + error.message);
