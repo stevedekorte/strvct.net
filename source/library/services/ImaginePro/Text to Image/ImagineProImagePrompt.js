@@ -160,7 +160,7 @@
                 { value: 600, label: "600" },
                 { value: 700, label: "700 (Maximum MJ influence)" },
             ];
-            const slot = this.newSlot("stylize", 100);
+            const slot = this.newSlot("stylize", 500); // 100 makes it stand out too much against the background
             slot.setSlotType("Number");
             slot.setInspectorPath("Settings");
             slot.setLabel("Stylize");
