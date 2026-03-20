@@ -12,6 +12,7 @@
  * Posts "onBatteryThrottling" notification when the battery level crosses
  * the expected throttling threshold.
  */
+
 (class SvWebBrowserBattery extends ProtoClass {
 
     initPrototypeSlots () {
@@ -75,12 +76,16 @@
         this.setBatteryManager(bm);
         this.syncFromManager();
 
+        this.setupBatteryListener();
+        return this;
+    }
+
+    setupBatteryListener () {
         const listener = BatteryListener.clone();
-        listener.setListenTarget(bm);
+        listener.setListenTarget(this.batteryManager());
         listener.setDelegate(this);
         listener.setIsListening(true);
         this.setBatteryListener(listener);
-
         return this;
     }
 
@@ -106,7 +111,7 @@
      * @param {Event} event
      * @category Delegate
      */
-    onChargingChange (event) {
+    onChargingChange (/* event */) {
         this.syncFromManager();
     }
 
@@ -115,7 +120,7 @@
      * @param {Event} event
      * @category Delegate
      */
-    onLevelChange (event) {
+    onLevelChange (/* event */) {
         this.syncFromManager();
     }
 
@@ -124,7 +129,7 @@
      * @param {Event} event
      * @category Delegate
      */
-    onDischargingTimeChange (event) {
+    onDischargingTimeChange (/* event */) {
         this.syncFromManager();
     }
 
