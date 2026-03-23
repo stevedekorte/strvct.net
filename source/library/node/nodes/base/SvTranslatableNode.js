@@ -50,6 +50,11 @@
             return value;
         }
 
+        // Skip values that don't need translation (numbers, currency, codes)
+        if (this.isUntranslatableValue(value)) {
+            return value;
+        }
+
         const context = this.translationContextForSlotNamed(slotName);
 
         // Try synchronous cache lookup
@@ -70,6 +75,53 @@
 
         // Return English as fallback until translation arrives
         return value;
+    }
+
+    /**
+     * @description Returns true if the value does not need translation.
+     * Matches numbers, currency amounts, alphanumeric codes, and other
+     * non-linguistic strings that would come back unchanged from translation.
+     *
+     * Examples that pass through: "42", "-3.14", "1,000", "$9.99", "23A",
+     * "#7", "100%", "10/20", "3d6", "+5", "2:30", "1st", "HP: 45"
+     *
+     * @param {String} value - The string to test.
+     * @returns {Boolean}
+     * @category i18n
+     */
+    isUntranslatableValue (value) {
+        const trimmed = value.trim();
+
+        // Strip leading currency symbols and whitespace for the core check
+        // Covers $, EUR, GBP, JPY, etc. and common currency signs
+        const stripped = trimmed.replace(/^[\$\u20AC\u00A3\u00A5\u20B9\u20A9\u20BD\u20BF\s]+/, "");
+
+        // If what remains is purely numeric (with optional separators, decimals, signs, percent)
+        // then it's a number or currency amount
+        if (/^[+-]?[\d][\d,.']*[%]?$/.test(stripped)) {
+            return true;
+        }
+
+        // Alphanumeric codes: short strings with no translatable word runs
+        // A "word run" is 3+ consecutive letters (e.g. "Hit" is translatable, "A2" is not)
+        // This catches: "23A", "#7", "B2", "3d6", "+5", "10/20", "2:30"
+        if (trimmed.length <= 10 && !/[a-zA-Z]{3,}/.test(trimmed)) {
+            return true;
+        }
+
+        // Ordinals like "1st", "2nd", "3rd", "4th" — these are borderline but
+        // typically don't translate well in isolation
+        if (/^\d+(?:st|nd|rd|th)$/i.test(trimmed)) {
+            return true;
+        }
+
+        // Colon-separated label:value where the value is numeric
+        // e.g. "HP: 45", "AC: 18" — the label part is short enough to skip
+        if (/^[A-Z]{1,4}:\s*[\d,.']+$/.test(trimmed)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
