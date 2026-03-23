@@ -317,7 +317,7 @@
     showNoteView () {
         const nv = this.noteView();
         nv.unhideDisplay();
-        nv.setString(this.node().note());
+        nv.setString(this.node().translatedValueOfSlotNamed("note"));
         // Clear any background image that might have been set (e.g. right arrow)
         nv.setBackgroundImageUrlPath(null);
         nv.setBackgroundSizeWH(null, null);
@@ -453,8 +453,8 @@
     syncFromNode () {
         super.syncFromNode();
         const node = this.node();
-        this.titleView().setString(node.title());
-        this.subtitleView().setString(node.subtitle());
+        this.titleView().setString(node.translatedValueOfSlotNamed("title"));
+        this.subtitleView().setString(node.translatedValueOfSlotNamed("subtitle"));
         //this.noteView().setString(this.node().note())
         this.updateSubviews();
 

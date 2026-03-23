@@ -134,6 +134,9 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         // promise wrapper
         this.simpleNewSlot("isPromiseWrapped", false);
         this.simpleNewSlot("promiseResetsOnChangeOfSlotName", null);
+
+        // i18n
+        this.simpleNewSlot("translationContext", null); // if non-null, declares translation context category for this slot's value (e.g. "ui-label", "game-mechanic")
     }
 
     setSlotType (s) {

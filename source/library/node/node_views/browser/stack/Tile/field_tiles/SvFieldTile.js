@@ -507,7 +507,7 @@
      * @returns {string} The visible key.
      */
     visibleKey () {
-        return this.node().key();
+        return this.node().translatedValueOfSlotNamed("key");
     }
 
     // sync

@@ -4,14 +4,14 @@
  */
 
 /** * @class InspectableNode
- * @extends TitledNode
+ * @extends SvTranslatableNode
  * @classdesc InspectableNode
  *
  * Handles creating inspector nodes and related fields.
  * Slot has some logic for this too.
  *
  * Inheritance chain:
- * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ * SvNode -> TitledNode -> SvTranslatableNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
 
 
  */
@@ -19,7 +19,7 @@
 /**
 
  */
-(class InspectableNode extends TitledNode {
+(class InspectableNode extends SvTranslatableNode {
 
     /**
      * @description Initializes the prototype slots for the InspectableNode.

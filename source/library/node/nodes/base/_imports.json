@@ -1,6 +1,7 @@
 [
     "SvNode.js",
     "TitledNode.js",
+    "SvTranslatableNode.js",
     "InspectableNode.js",
     "ViewableNode.js",
     "StyledNode.js",

@@ -456,7 +456,6 @@
     syncPlaceholderText () {
         const pt = this.placeholderText();
         if (pt && pt.length > 0) {
-
             this.element().setAttribute("data-placeholder", pt);
             assert(this.element().getAttribute("data-placeholder") === pt);
         } else {
@@ -836,7 +835,7 @@
         } else {
             super.setString(v);
         }
-        this.setLastMergeValue(v);;
+        this.setLastMergeValue(v);
         return this;
     }
 

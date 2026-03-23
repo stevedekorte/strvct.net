@@ -92,8 +92,8 @@
 
         const node = this.node();
         const bv = this.buttonView();
-        bv.setTitle(node.title());
-        bv.setSubtitle(node.subtitle());
+        bv.setTitle(node.translatedValueOfSlotNamed("title"));
+        bv.setSubtitle(node.translatedValueOfSlotNamed("subtitle"));
         bv.setIsEditable(node.nodeCanEditTitle());
 
         bv.setIsEnabled(node.isEnabled());

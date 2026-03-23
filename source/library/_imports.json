@@ -11,6 +11,7 @@
     "media/_imports.json",
     "credentials/_imports.json",
     "services/_imports.json",
+    "i18n/_imports.json",
     "app/_imports.json",
     "cli/_imports.json"
 ]

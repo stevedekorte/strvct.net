@@ -45,6 +45,15 @@
         }
 
         /**
+         * @member {SvObservation} onLanguageChangeObs
+         * @category Observation
+         */
+        {
+            const slot = this.newSlot("onLanguageChangeObs", null);
+            slot.setSlotType("SvObservation");
+        }
+
+        /**
          * @member {Array} crumbObservations
          * @category Observation
          */
@@ -77,6 +86,7 @@
         super.init();
         this.setThemeClassName("BreadCrumbsTile");
         this.setOnStackViewPathChangeObs(SvNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this));
+        this.setOnLanguageChangeObs(SvNotificationCenter.shared().newObservation().setName("svI18nLanguageChanged").setObserver(this).startWatching());
         this.setWidth("100%");
         this.setIsSelectable(true);
         this.setIsRegisteredForWindowResize(true);
@@ -202,6 +212,16 @@
      * @param {*} aNote - The notification object
      * @category Event Handling
      */
+    /**
+     * @description Handles the i18n language change notification — rebuilds crumb labels.
+     * @param {*} aNote - The notification object.
+     * @category Event Handling
+     */
+    svI18nLanguageChanged (/*aNote*/) {
+        this.setPreviousPathNodes([]); // force full rebuild
+        this.scheduleMethod("setupPathViews");
+    }
+
     onStackViewPathChange (/*aNote*/) {
         this.syncPathToStack();
         if (!this.targetStackView()) {
@@ -369,7 +389,7 @@
      * @category View Creation
      */
     crumbViewForNode (node, i, pathNodes) {
-        const name = node.title();
+        const name = node.translatedValueOfSlotNamed("title");
         const crumb = this.buttonForName(name);
         if (crumb.setNode) {
             crumb.setNode(node);
