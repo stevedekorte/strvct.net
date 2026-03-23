@@ -84,13 +84,10 @@
     listenerSetForName (name) {
         assert(!Type.isNullOrUndefined(name));
 
-        // probably not inneficient since
-        // 1. we don't remove listeners often
-        // 2. we don't have many names
         const n2l = this.nameToListenersMap();
 
         if (!n2l.has(name)) {
-            n2l.set(name, new Set());
+            n2l.set(name, new EnumerableWeakSet());
         }
         return n2l.get(name);
     }
@@ -151,7 +148,7 @@
     clean () {
         const n2l = this.nameToListenersMap();
         n2l.shallowCopy().forEachKV((name, listenerSet) => {
-            if (listenerSet.size === 0) {
+            if (listenerSet.count() === 0) {
                 n2l.delete(name);
             }
         });
