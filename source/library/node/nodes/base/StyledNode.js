@@ -7,8 +7,6 @@
  * SvNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
  *
  * This class is responsible for state and behavior specific to styling of views.
- 
- 
  */
 
 /**

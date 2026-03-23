@@ -3,13 +3,13 @@
 /** * @module library.node.blobs
  */
 
-/** * @class SvBlob
+/** * @class SvBlobNode
  * @extends BaseNode
  * @classdesc
  * SvBlobNode is a class that represents a binary blob in the system.
  * It extends the BaseNode class and provides functionality for managing and storing binary data.
- 
- 
+
+
  */
 
 /**
