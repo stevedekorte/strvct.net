@@ -182,9 +182,9 @@
     sendBatch (strings, language, context) {
         let model = this.chatModel();
 
-        // Lazy model resolution — Services may not be ready at setup time
-        if (!model && typeof Services !== "undefined") {
-            model = Services.shared().defaultChatModel();
+        // Lazy model resolution — SvServices may not be ready at setup time
+        if (!model && typeof SvServices !== "undefined") {
+            model = SvServices.shared().defaultChatModel();
             if (model) {
                 this.setChatModel(model);
             }

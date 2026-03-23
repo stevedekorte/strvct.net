@@ -58,7 +58,7 @@
          * @category Configuration
          */
         {
-            //const chatModelNames = Services.shared().chatModelNames();
+            //const chatModelNames = SvServices.shared().chatModelNames();
             const slot = this.newSlot("evaluationModel", "gemini-2.5-flash-lite"); // cheap and fastest
             slot.setSlotType("String");
             slot.setLabel("Evaluation Model");
@@ -66,7 +66,7 @@
             slot.setShouldStoreSlot(true);
             slot.setSyncsToView(true);
             slot.setValidValuesClosure(() => {
-                return Services.shared().chatModelNames();
+                return SvServices.shared().chatModelNames();
             });
             //slot.setValidValues(["gpt-5"]);
             slot.setDescription("Chat model use to generate checklist from image prompt");
@@ -119,7 +119,7 @@
     }
 
     aiChatModel () {
-        return Services.shared().chatModelWithName(this.evaluationModel());
+        return SvServices.shared().chatModelWithName(this.evaluationModel());
     }
 
     /**

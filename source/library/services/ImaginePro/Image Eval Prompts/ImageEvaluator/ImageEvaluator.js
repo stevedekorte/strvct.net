@@ -368,7 +368,7 @@
 
         // Use GeminiRequest for proper authentication, proxy handling, and error handling
         const request = GeminiRequest.clone();
-        request.setChatModel(Services.shared().geminiService().defaultChatModel());
+        request.setChatModel(SvServices.shared().geminiService().defaultChatModel());
         request.setBodyJson(bodyJson);
         request.setIsStreaming(false); // We want the complete response, not streaming
         request.setTimeoutPeriodInMs(30 * 60 * 1000); // 30 minutes for vision API (can be slow)

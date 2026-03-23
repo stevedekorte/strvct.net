@@ -41,6 +41,7 @@
         {
             const slot = this.newSlot("cache", null);
             slot.setSlotType("SvI18nCache");
+            slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(SvI18nCache);
             slot.setIsSubnodeField(true);
         }
@@ -81,7 +82,7 @@
 
     initPrototype () {
         this.setTitle("Internationalization");
-        this.setShouldStore(false);
+        this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
     }
 

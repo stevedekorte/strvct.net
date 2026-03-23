@@ -5,11 +5,11 @@
  */
 
 /**
- * @class Services
+ * @class SvServices
  * @extends SvSummaryNode
- * @classdesc Services class that manages various AI and other services.
+ * @classdesc SvServices class that manages various AI and other services.
  */
-(class Services extends SvSummaryNode {
+(class SvServices extends SvSummaryNode {
 
     /**
      * @static
@@ -21,7 +21,7 @@
     }
 
     /**
-     * @description Initializes the prototype slots for the Services class.
+     * @description Initializes the prototype slots for the SvServices class.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -229,6 +229,18 @@
             slot.setIsSubnodeField(false);
             slot.setSlotType("AiChatModel");
         }
+
+        /**
+         * @member {SvI18n} i18n
+         * @description Internationalization service with persistent translation cache.
+         * @category i18n
+         */
+        {
+            const slot = this.newSlot("i18n", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(SvI18n);
+            slot.setIsSubnodeField(true);
+        }
     }
 
     initPrototype () {
@@ -250,7 +262,7 @@
      * @returns {Array} An array of AI service instances.
      * @category AI Service
      */
-    aiServices () {
+    aiSvServices () {
         const values = this.subnodeFields().map(sn => sn.value());
         return values.filter(sn => sn.thisClass().isKindOf(AiService));
     }
@@ -272,7 +284,7 @@
      * @category AI Service
      */
     chatModels () {
-        return this.aiServices().map(s => s.models().subnodes()).flat();
+        return this.aiSvServices().map(s => s.models().subnodes()).flat();
     }
 
     /**

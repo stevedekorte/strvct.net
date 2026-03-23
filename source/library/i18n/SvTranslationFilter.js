@@ -19,6 +19,10 @@
 
 (class SvTranslationFilter extends ProtoClass {
 
+    static initClass () {
+        this.setIsSingleton(true);
+    }
+
     /**
      * @description Returns true if the value should be translated.
      * @param {String} value - The string to test.

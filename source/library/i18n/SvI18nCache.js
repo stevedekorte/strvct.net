@@ -7,8 +7,9 @@
 /**
  * @class SvI18nCache
  * @extends SvStorableNode
- * @classdesc Persisted translation store. Stores SvI18nEntry instances as subnodes.
- * Uses an in-memory Map index for fast lookups, built from subnodes on load.
+ * @classdesc Persisted translation store. Stores SvI18nEntry instances as subnodes,
+ * persisted via the STRVCT object pool (IndexedDB). Uses an in-memory Map index
+ * for fast lookups, rebuilt from subnodes on load.
  */
 
 (class SvI18nCache extends SvStorableNode {
@@ -18,6 +19,7 @@
         /**
          * @member {Map} index
          * @description In-memory lookup index: cacheKey → SvI18nEntry.
+         * Rebuilt from subnodes on load — not stored.
          */
         {
             const slot = this.newSlot("index", null);
@@ -27,7 +29,7 @@
 
         /**
          * @member {Set} pendingKeys
-         * @description Keys currently awaiting translation (dedup).
+         * @description Keys currently awaiting translation (dedup). Runtime state only.
          */
         {
             const slot = this.newSlot("pendingKeys", null);
@@ -38,8 +40,8 @@
 
     initPrototype () {
         this.setTitle("Translation Cache");
-        this.setShouldStore(false);
-        this.setShouldStoreSubnodes(false);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
         this.setSubnodeClasses([SvI18nEntry]);
         this.setNodeCanAddSubnode(false);
     }
@@ -48,6 +50,16 @@
         super.init();
         this.setIndex(new Map());
         this.setPendingKeys(new Set());
+        return this;
+    }
+
+    /**
+     * @description Called after loading from storage. Rebuilds the in-memory index from subnodes.
+     * @returns {SvI18nCache}
+     */
+    finalInit () {
+        super.finalInit();
+        this.rebuildIndex();
         return this;
     }
 
@@ -63,115 +75,6 @@
             index.set(entry.cacheKey(), entry);
         });
         this.setIndex(index);
-        return this;
-    }
-
-    /**
-     * @description localStorage key for persisting translations.
-     * @returns {String}
-     * @category Persistence
-     */
-    localStorageKey () {
-        return "svi18n_cache";
-    }
-
-    /**
-     * @description Called after loading from storage. Loads cached translations from localStorage.
-     * @returns {SvI18nCache}
-     */
-    finalInit () {
-        super.finalInit();
-        this.loadFromLocalStorage();
-        return this;
-    }
-
-    /**
-     * @description Saves all translations to localStorage as JSON.
-     * @returns {SvI18nCache}
-     * @category Persistence
-     */
-    saveToLocalStorage () {
-        if (typeof localStorage === "undefined") {
-            return this;
-        }
-
-        const data = {};
-        this.index().forEach((entry, key) => {
-            data[key] = {
-                sourceText: entry.sourceText(),
-                targetText: entry.targetText(),
-                targetLanguage: entry.targetLanguage(),
-                context: entry.context(),
-                sourceHash: entry.sourceHash(),
-                timestamp: entry.timestamp()
-            };
-        });
-
-        try {
-            localStorage.setItem(this.localStorageKey(), JSON.stringify(data));
-            console.log("[i18n] cache saved to localStorage: " + Object.keys(data).length + " entries");
-        } catch (e) {
-            console.warn("[i18n] failed to save cache to localStorage:", e.message);
-        }
-
-        return this;
-    }
-
-    /**
-     * @description Debounces saves to localStorage so batch stores don't trigger multiple writes.
-     * @returns {SvI18nCache}
-     * @category Persistence
-     */
-    scheduleSaveToLocalStorage () {
-        if (this._saveTimer) {
-            clearTimeout(this._saveTimer);
-        }
-        this._saveTimer = setTimeout(() => {
-            this._saveTimer = null;
-            this.saveToLocalStorage();
-        }, 500);
-        return this;
-    }
-
-    /**
-     * @description Loads translations from localStorage and populates the in-memory index.
-     * @returns {SvI18nCache}
-     * @category Persistence
-     */
-    loadFromLocalStorage () {
-        if (typeof localStorage === "undefined") {
-            return this;
-        }
-
-        try {
-            const json = localStorage.getItem(this.localStorageKey());
-            if (!json) {
-                return this;
-            }
-
-            const data = JSON.parse(json);
-            const keys = Object.keys(data);
-            let count = 0;
-
-            keys.forEach(key => {
-                const d = data[key];
-                const entry = SvI18nEntry.clone();
-                entry.setSourceText(d.sourceText);
-                entry.setTargetText(d.targetText);
-                entry.setTargetLanguage(d.targetLanguage);
-                entry.setContext(d.context);
-                entry.setSourceHash(d.sourceHash);
-                entry.setTimestamp(d.timestamp);
-                this.addSubnode(entry);
-                this.index().set(key, entry);
-                count++;
-            });
-
-            console.log("[i18n] cache loaded from localStorage: " + count + " entries");
-        } catch (e) {
-            console.warn("[i18n] failed to load cache from localStorage:", e.message);
-        }
-
         return this;
     }
 
@@ -229,9 +132,6 @@
 
         // Remove from pending
         this.pendingKeys().delete(key);
-
-        // Debounce save to localStorage
-        this.scheduleSaveToLocalStorage();
 
         return entry;
     }
@@ -329,7 +229,6 @@
             this.removeAllSubnodes();
         }
         this.rebuildIndex();
-        this.saveToLocalStorage();
         return this;
     }
 

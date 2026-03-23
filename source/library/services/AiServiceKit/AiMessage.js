@@ -303,7 +303,7 @@
             if (error instanceof AiRequestOverloadedError) {
                 // TODO: handle overloaded error
                 /*
-                const failoverModel = Services.shared().defaultFailoverChatModel();
+                const failoverModel = SvServices.shared().defaultFailoverChatModel();
                 if (failoverModel !== currentModel) {
                     // TODO: switch to failover model
                 }

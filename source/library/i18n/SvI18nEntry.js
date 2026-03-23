@@ -78,7 +78,7 @@
     }
 
     initPrototype () {
-        this.setShouldStore(false);
+        this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
     }
 
