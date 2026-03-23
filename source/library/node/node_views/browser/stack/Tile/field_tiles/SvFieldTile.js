@@ -591,7 +591,14 @@
 
         if (valueView.setPlaceholderText) {
             if (node.valuePlaceholderText) {
-                valueView.setPlaceholderText(node.valuePlaceholderText());
+                let placeholder = node.valuePlaceholderText();
+                // Translate placeholder if the model node supports it
+                const target = node.target ? node.target() : null;
+                const slotName = node.valueMethod ? node.valueMethod() : null;
+                if (placeholder && target && slotName && target.translatedValuePlaceholderOfSlotNamed) {
+                    placeholder = target.translatedValuePlaceholderOfSlotNamed(slotName);
+                }
+                valueView.setPlaceholderText(placeholder);
             } else {
                 valueView.setPlaceholderText(null);
             }
