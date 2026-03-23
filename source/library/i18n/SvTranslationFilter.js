@@ -76,7 +76,7 @@
 
     /**
      * @description Numbers and currency amounts.
-     * Matches: "42", "-3.14", "1,000", "$9.99", "€100", "100%"
+     * Matches: "42", "-3.14", "1,000", "$9.99", "€100", "100%", "$70.16 USD"
      * @param {String} trimmed - The trimmed string to test.
      * @returns {Boolean}
      * @category Patterns
@@ -84,7 +84,8 @@
     isNumericOrCurrency (trimmed) {
         // Strip leading currency symbols and whitespace
         // Covers $, €, £, ¥, ₹, ₩, ₽, ₿ and common currency signs
-        const stripped = trimmed.replace(/^[\$\u20AC\u00A3\u00A5\u20B9\u20A9\u20BD\u20BF\s]+/, "");
+        const stripped = trimmed.replace(/^[\$\u20AC\u00A3\u00A5\u20B9\u20A9\u20BD\u20BF\s]+/, "")
+            .replace(/\s*[A-Z]{2,4}$/, ""); // Strip trailing currency codes (USD, EUR, etc.)
         return /^[+-]?[\d][\d,.']*[%]?$/.test(stripped);
     }
 

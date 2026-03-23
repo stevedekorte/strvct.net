@@ -50,7 +50,7 @@
         }
         const slotContext = this.translationContextForSlotNamed(slotName);
         const context = slotContext ? slotContext + " (placeholder text)" : "placeholder text";
-        return this.translatedValueWithContext(value, context);
+        return this.translatedValueWithContext(value, context, { skipWordLimit: true });
     }
 
     /**
@@ -59,10 +59,12 @@
      *
      * @param {String} value - The string to translate.
      * @param {String} context - The translation context.
+     * @param {Object} [options] - Optional settings.
+     * @param {Boolean} [options.skipWordLimit] - If true, skip the 20-word limit check.
      * @returns {String} The translated string, or the original value as fallback.
      * @category i18n
      */
-    translatedValueWithContext (value, context) {
+    translatedValueWithContext (value, context, options) {
         if (!value || typeof value !== "string" || value.trim().length === 0) {
             return value;
         }
@@ -77,9 +79,11 @@
         }
 
         // Skip translation for long text (likely content, not UI chrome)
-        const wordCount = value.trim().split(/\s+/).length;
-        if (wordCount > 20) {
-            return value;
+        if (!options || !options.skipWordLimit) {
+            const wordCount = value.trim().split(/\s+/).length;
+            if (wordCount > 20) {
+                return value;
+            }
         }
 
         // Skip values that don't need translation (numbers, currency, codes, etc.)
