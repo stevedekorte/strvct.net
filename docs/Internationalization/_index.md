@@ -301,6 +301,7 @@ Most web frameworks treat i18n as an opt-in layer that developers wire into each
 - **Adding a new language is a configuration change**, not a translation project.
 - **Progressive rendering.** English text displays immediately; translated text swaps in asynchronously when it arrives from cache or AI. No blocking on translation load.
 - **Domain-aware context.** Slot annotations provide translation context (e.g., "game mechanic" vs. "ui label") that travels with the model, improving translation quality without developer effort.
+- **Optional seed files for instant cold starts.** A shared pool file per language can be pre-generated from the codebase and loaded into an in-memory seed map at startup, giving synchronous access to common UI translations without any AI calls. The seed generation extracts translatable strings from class prototypes — possible because the naked objects pattern makes all UI strings discoverable from the model definition.
 
 ### Tradeoffs
 
@@ -312,7 +313,7 @@ Most web frameworks treat i18n as an opt-in layer that developers wire into each
 | Determinism | Same input always produces same output | Cached after first translation |
 | Professional quality | Human translators catch cultural nuance | AI may miss subtle distinctions |
 | Runtime cost | None (static lookup) | Async on first encounter, then cached |
-| Tooling maturity | Extraction tools, TMS platforms, CI checks | Slot annotations, seed generation |
+| Tooling maturity | Extraction tools, TMS platforms, CI checks | Slot annotations, automatic seed generation from model |
 
 Traditional i18n excels when professional translation quality is critical and a mature localization workflow is already in place. STRVCT's approach excels when minimizing developer effort is the priority and the application needs to support new languages rapidly without a dedicated localization team.
 
