@@ -6,6 +6,8 @@ AI-powered translation of UI text with persistent caching, batched requests, and
 
 STRVCT includes a built-in internationalization (i18n) system that translates UI strings on the fly using AI language models. Rather than maintaining static translation files for each language, the framework sends batched translation requests to an AI service and caches the results persistently in IndexedDB. This means any application built on STRVCT can support new languages without manual translation effort.
 
+This approach is uniquely enabled by the naked objects pattern. Because the framework generates the UI from model slot annotations, there is a single point — the model-to-view boundary — where all display text passes through. Translation is injected at that boundary, making every model class translatable by default with no per-component wiring. In a bespoke-view framework, every component would need explicit `t()` calls and separate translation key files.
+
 The system is designed around three principles:
 
 - **Non-blocking** — translations happen asynchronously. The UI displays English text immediately and swaps in the translated version when it arrives, with no visible delay on subsequent visits thanks to persistent caching.

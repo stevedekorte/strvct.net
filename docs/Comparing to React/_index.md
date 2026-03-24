@@ -179,6 +179,16 @@ This is where the two approaches differ most starkly.
 | npm dependencies | Dozens to hundreds | None (self-contained) |
 | Community size | Very large | Small |
 
+## Internationalization
+
+React has no built-in i18n. Libraries like `react-intl` and `next-intl` require developers to maintain separate JSON translation files for each language, wrap every visible string with a `t()` call or `<FormattedMessage>` component, and manage a localization workflow with human translators or external services. Adding a new language to a React application means producing a complete translation file and ensuring every string in every component is wrapped — a cost that grows linearly with the application's surface area.
+
+Strvct translates the UI automatically. Because the naked objects pattern means all UI text flows from model slots through a single framework-controlled rendering pipeline, translation can be injected at that boundary without any per-component work. New model classes are translatable by default — no wrapping, no key files, no per-string effort. The framework uses AI translation with persistent caching, so adding a new language is a single configuration change. Slot annotations provide domain-specific context to the translator (e.g., "game mechanic" vs. "ui label"), improving translation quality without developer intervention.
+
+**React's strength**: Mature tooling ecosystem — extraction tools, translation management platforms, CI checks for missing keys, and professional human translation workflows.
+
+**Strvct's strength**: Zero localization effort for developers. The framework translates every slot value automatically, new languages require no translation files, and domain context travels with the model rather than being bolted onto each component.
+
 ## Resource Loading and Caching
 
 React applications use standard ES module imports and bundlers (Vite, Webpack, esbuild). Cache invalidation relies on filename hashing — when a file changes, its hash changes, and browsers fetch the new version. Changing one file in a chunk invalidates the entire chunk.

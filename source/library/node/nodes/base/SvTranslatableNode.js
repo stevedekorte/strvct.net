@@ -29,6 +29,10 @@
      * @category i18n
      */
     translatedValueOfSlotNamed (slotName) {
+        const slot = this.thisPrototype().slotNamed(slotName);
+        if (slot && !slot.shouldTranslate()) {
+            return this[slotName].call(this);
+        }
         const value = this[slotName].call(this);
         const context = this.translationContextForSlotNamed(slotName);
         return this.translatedValueWithContext(value, context);
@@ -94,18 +98,34 @@
         // Try synchronous cache lookup
         const cached = i18n.cachedTranslate(value, context);
         if (cached !== null) {
-            console.log("[i18n] cache hit: '" + value + "' → '" + cached + "'");
             return cached;
         }
 
-        // Cache miss — request async translation, update node when ready
-        console.log("[i18n] cache miss: '" + value + "' — requesting async translation (context: " + context + ")");
-        i18n.asyncTranslate(value, context).then(() => {
-            console.log("[i18n] translation arrived for '" + value + "' — triggering didUpdateNode on " + this.svType());
-            this.didUpdateNode();
-        }).catch(e => {
-            console.warn("[i18n] translation FAILED for '" + value + "':", e);
-        });
+        // Cache miss — check IndexedDB store, then fall back to AI translation
+        const store = i18n.store();
+        if (store && store.isOpen()) {
+            store.asyncLookup(value, i18n.currentLanguage()).then(stored => {
+                if (stored !== null) {
+                    // Found in IndexedDB — add to legacy cache for synchronous access
+                    i18n.cache().store(value, i18n.currentLanguage(), context, stored);
+                    this.didUpdateNode();
+                } else {
+                    // Not in store — request AI translation
+                    return i18n.asyncTranslate(value, context).then(() => {
+                        this.didUpdateNode();
+                    });
+                }
+            }).catch(e => {
+                console.warn("[i18n] translation failed for '" + value + "':", e);
+            });
+        } else {
+            // Store not available — go straight to AI translation
+            i18n.asyncTranslate(value, context).then(() => {
+                this.didUpdateNode();
+            }).catch(e => {
+                console.warn("[i18n] translation failed for '" + value + "':", e);
+            });
+        }
 
         // Return English as fallback until translation arrives
         return value;

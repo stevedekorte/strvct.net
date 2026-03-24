@@ -507,7 +507,11 @@
      * @returns {string} The visible key.
      */
     visibleKey () {
-        return this.node().translatedValueOfSlotNamed("key");
+        const node = this.node();
+        if (node.keyIsEditable()) {
+            return node.key();
+        }
+        return node.translatedValueOfSlotNamed("key");
     }
 
     // sync
@@ -595,17 +599,8 @@
                 // Translate placeholder if the model node supports it
                 const target = node.target ? node.target() : null;
                 const slotName = node.valueMethod ? node.valueMethod() : null;
-                if (placeholder) {
-                    if (!target) {
-                        console.log("[i18n placeholder] no target for placeholder: '" + placeholder + "'");
-                    } else if (!slotName) {
-                        console.log("[i18n placeholder] no slotName for placeholder: '" + placeholder + "' target: " + target.svType());
-                    } else if (!target.translatedValuePlaceholderOfSlotNamed) {
-                        console.log("[i18n placeholder] target " + target.svType() + " missing translatedValuePlaceholderOfSlotNamed for: '" + placeholder + "'");
-                    } else {
-                        console.log("[i18n placeholder] translating '" + placeholder + "' via " + target.svType() + "." + slotName);
-                        placeholder = target.translatedValuePlaceholderOfSlotNamed(slotName);
-                    }
+                if (placeholder && target && slotName && target.translatedValuePlaceholderOfSlotNamed) {
+                    placeholder = target.translatedValuePlaceholderOfSlotNamed(slotName);
                 }
                 valueView.setPlaceholderText(placeholder);
             } else {

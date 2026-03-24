@@ -271,6 +271,10 @@ Themes can be used to customize the appearance of the UI. Domain objects can als
 Drag and drop of domain objects into the UI and out of it for export is also supported.
 Domain objects can register for which MIME type they can exported to and imported from. For example, if a domain object supports it, it can be dragged out of one browser window onto a user's desktop, or even dropped into another Strvct app that accepts that MIME type. Domain objects have a standard property which lists its valid subnode types, and this can be used to validate drops and auto generate subnodes for imported data.
 
+### Internationalization
+
+Because the framework controls the model-to-view pipeline, it can intercept slot values at the view boundary and translate them transparently — no per-string wrapping required. Developers define model classes; the framework translates the generated UI automatically. Adding a new language is a configuration change, not a translation project. This is only possible because naked objects centralizes the point where model data flows to the UI — in a bespoke-view framework, every component would need its own translation wiring.
+
 ### JSON Schema
 
 Domain objects can automatically generate JSON Schema for themselves based on their properties and annotations. These schemas are be used to export metadata about the domain model, which is particularly usefull when interacting with Large Language Models.

@@ -137,6 +137,7 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
 
         // i18n
         this.simpleNewSlot("translationContext", null); // if non-null, declares translation context category for this slot's value (e.g. "ui-label", "game-mechanic")
+        this.simpleNewSlot("shouldTranslate", true); // if false, skip translation for this slot's value and its option labels
     }
 
     setSlotType (s) {

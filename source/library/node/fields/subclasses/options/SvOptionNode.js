@@ -132,6 +132,30 @@
     }
 
     /**
+     * @description Returns the translated value for the named slot, respecting
+     * the parent options node's source slot shouldTranslate annotation.
+     * This prevents option labels from being translated when the owning
+     * slot has shouldTranslate(false) (e.g., a language picker).
+     * @param {String} slotName - The name of the slot.
+     * @returns {*} The translated or raw slot value.
+     * @category i18n
+     */
+    translatedValueOfSlotNamed (slotName) {
+        const optionsNode = this.optionsNode();
+        if (optionsNode) {
+            const target = optionsNode.target();
+            const valueMethod = optionsNode.valueMethod();
+            if (target && valueMethod) {
+                const sourceSlot = target.thisPrototype().slotNamed(valueMethod);
+                if (sourceSlot && !sourceSlot.shouldTranslate()) {
+                    return this[slotName].call(this);
+                }
+            }
+        }
+        return super.translatedValueOfSlotNamed(slotName);
+    }
+
+    /**
      * @description Sets the title (label) of the option.
      * @param {string} aString - The new title.
      * @returns {SvOptionNode} The current instance.
