@@ -16,12 +16,13 @@ The system is designed around three principles:
 
 ## Architecture
 
-The i18n system consists of five classes that form a pipeline from UI request to cached translation:
+The i18n system consists of six classes that form a pipeline from UI request to cached translation:
 
 | Class | Role |
 |-------|------|
-| `SvI18n` | Singleton coordinator. Manages language state, delegates to cache and service, deduplicates promises. |
-| `SvI18nCache` | Persistent translation store. Holds `SvI18nEntry` subnodes indexed by a composite cache key. |
+| `SvI18n` | Singleton coordinator. Manages language state, delegates to cache, store, and service, deduplicates promises. |
+| `SvI18nStore` | Dedicated IndexedDB store with an in-memory seed map. Two-layer lookup: synchronous seed map for shared UI strings, async IndexedDB for user-specific translations. |
+| `SvI18nCache` | Legacy translation cache. Holds `SvI18nEntry` subnodes indexed by a composite cache key. |
 | `SvI18nEntry` | Individual translation record with source text, translated text, language, context, and a source hash for staleness detection. |
 | `SvI18nService` | Batched request service. Debounces incoming requests, groups them by context, sends them to an AI chat model, and stores results. |
 | `SvTranslationFilter` | Pattern-based filter that determines whether a string contains translatable linguistic content. |
@@ -31,8 +32,9 @@ Supporting integration points:
 | Class | Role |
 |-------|------|
 | `SvTranslatableNode` | Base class for nodes that need translated slot values. Sits in the hierarchy between `TitledNode` and `InspectableNode`. |
-| `Slot` | Supports a `translationContext` annotation for per-slot context. |
-| `SvFieldTile` | Calls `translatedValueOfSlotNamed()` to display translated keys and placeholder text. |
+| `Slot` | Supports `translationContext` (per-slot context) and `shouldTranslate` (disable translation) annotations. |
+| `SvFieldTile` | Calls `translatedValueOfSlotNamed()` to display translated keys and placeholder text. Skips translation for editable keys. |
+| `SvOptionNode` | Respects the parent slot's `shouldTranslate` annotation for option labels. |
 | `BreadCrumbsTile` | Observes `"svI18nLanguageChanged"` to rebuild breadcrumbs in the new language. |
 | `SvServices` | Hosts the `SvI18n` singleton as a persisted subnode field. |
 
@@ -49,18 +51,22 @@ When a view needs to display a slot value:
    - Is the text short enough (20 words or fewer for slot values)?
    - Does `SvTranslationFilter` confirm the string contains translatable text (not a number, URL, email, etc.)?
 
-3. **Cache lookup** — `SvI18n.cachedTranslate(text, context)` does an O(1) lookup in the in-memory index. The cache key is `"text/language/context"`. If the entry exists and is not stale (source hash matches), the translation is returned immediately.
+3. **Seed map lookup** — `SvI18n.cachedTranslate(text, context)` first checks the `SvI18nStore` in-memory seed map for a synchronous hit. The seed map is loaded from a shared pool file at startup and covers common UI strings.
 
-4. **Cache miss** — On a miss, `SvI18n.asyncTranslate(text, context)` returns a Promise and:
+4. **Legacy cache lookup** — On seed miss, falls back to `SvI18nCache` for an O(1) in-memory lookup. The cache key is `"text/language/context"`. If the entry exists and is not stale (source hash matches), the translation is returned immediately.
+
+5. **IndexedDB lookup** — On cache miss, `SvTranslatableNode` checks `SvI18nStore.asyncLookup()` for a translation in IndexedDB. If found, it is promoted to the legacy cache for synchronous access on subsequent renders, and the view is updated.
+
+6. **AI translation** — If not found in any cache layer, `SvI18n.asyncTranslate(text, context)` returns a Promise and:
    - Deduplicates: if the same key is already pending, the new caller's promise is chained to the existing request.
    - Enqueues the text in `SvI18nService` for batched submission.
    - Returns the English text as an immediate fallback.
 
-5. **Batch** — `SvI18nService` accumulates requests for 200ms (configurable), then groups them by context and sends one AI request per group. Each request includes a JSON template mapping English strings to empty values, asking the model to fill in translations.
+7. **Batch** — `SvI18nService` accumulates requests for 200ms (configurable), then groups them by context and sends one AI request per group. Each request includes a JSON template mapping English strings to empty values, asking the model to fill in translations.
 
-6. **Response** — The AI returns a JSON object mapping English to translated strings. The service stores each result in `SvI18nCache` and resolves all pending promises for those keys.
+8. **Response** — The AI returns a JSON object mapping English to translated strings. The service stores each result in `SvI18nCache`, persists it to `SvI18nStore` (IndexedDB) for future sessions, and resolves all pending promises for those keys.
 
-7. **View update** — The resolved promise calls `didUpdateNode()` on the requesting node, which triggers a view sync. The view calls `translatedValueOfSlotNamed()` again, this time getting a cache hit, and displays the translated text.
+9. **View update** — The resolved promise calls `didUpdateNode()` on the requesting node, which triggers a view sync. The view calls `translatedValueOfSlotNamed()` again, this time getting a cache hit, and displays the translated text.
 
 ## SvTranslationFilter
 
@@ -81,17 +87,43 @@ The main entry point is `SvTranslationFilter.shared().shouldTranslate(value)`, w
 
 ## Caching
 
-### Persistent Storage
+Translation caching uses three layers, each optimized for different access patterns:
 
-`SvI18nCache` stores `SvI18nEntry` instances as subnodes, persisted to IndexedDB via the standard STRVCT object pool. An in-memory `Map` index (cache key to entry) provides O(1) lookups and is rebuilt from subnodes when the cache loads from storage.
+### Layer 1: Seed Map (Synchronous)
+
+`SvI18nStore` maintains an in-memory `Map` of shared translations loaded from a pool file at startup. Keys are `"{language}:{sourceText}"`. This layer is checked first by `SvI18n.cachedTranslate()` and provides synchronous O(1) lookups for common UI strings, ensuring no flash of untranslated text on initial render.
+
+```javascript
+// Load shared translations from a pool file
+SvI18nStore.shared().loadSeedMap(poolJson, "es");
+
+// Synchronous lookup
+SvI18nStore.shared().seedLookup("Hit Points", "es"); // → "Puntos de Golpe"
+```
+
+### Layer 2: IndexedDB Store (Asynchronous)
+
+`SvI18nStore` also wraps a dedicated IndexedDB database (`SvIndexedDbFolder`) for user-specific and overflow translations. This is separate from the main object pool to avoid loading all translations into memory at startup. When an AI translation arrives, it is persisted here for future sessions.
+
+```javascript
+// Async lookup (called on seed miss by SvTranslatableNode)
+const translation = await SvI18nStore.shared().asyncLookup("some text", "es");
+
+// Async store (called automatically when AI translations arrive)
+await SvI18nStore.shared().asyncStore("some text", "es", "algún texto");
+```
+
+### Layer 3: Legacy Cache
+
+`SvI18nCache` stores `SvI18nEntry` instances as subnodes, persisted to IndexedDB via the standard STRVCT object pool. An in-memory `Map` index (cache key to entry) provides O(1) lookups and is rebuilt from subnodes when the cache loads from storage. When a translation is found in the IndexedDB store (Layer 2), it is promoted to the legacy cache for synchronous access on subsequent renders.
 
 ### Staleness Detection
 
-Each entry stores a hash of its source text. When a cached translation is looked up, the current source text is hashed and compared. If the English text has changed since the translation was cached, the entry is treated as stale and a new translation is requested.
+Each `SvI18nEntry` stores a hash of its source text. When a cached translation is looked up, the current source text is hashed and compared. If the English text has changed since the translation was cached, the entry is treated as stale and a new translation is requested.
 
 ### Seed Import and Export
 
-The cache supports bulk operations for pre-loading translations:
+The legacy cache supports bulk operations for pre-loading translations:
 
 ```javascript
 // Import translations from a seed file
@@ -206,9 +238,20 @@ Translation must never corrupt model data. The system translates values at the v
 
 **Serialization boundary** — All JSON serialization paths (`asJson()`, `serializeToJson()`, `getClientState()`) read raw slot values, not translated display values. AI services, game mechanics, and network sync never see translations.
 
-**Editable keys** — When `keyIsEditable()` is true on a field tile, `syncToNode()` writes the DOM value back to the model. If translation is active, the view must write back the original untranslated key, not the translated display text. This requires comparing the current DOM value against the known translated value to distinguish user edits from displayed translations.
+**Editable keys** — When `keyIsEditable()` is true on a field tile, `visibleKey()` returns the raw slot value without translation. This prevents translated text from being written back to the model when the user edits the key.
 
-**Planned: `shouldTranslate` slot annotation** — An explicit `shouldTranslate(false)` on data-bearing slots (e.g., `jsonId`, `email`) would short-circuit translation checks before any string analysis. When creating option nodes for selection UI, this annotation should propagate from the parent slot to prevent translating option labels that serve as identifiers (e.g., a language picker must always show language names in their native script).
+**`shouldTranslate` slot annotation** — Setting `slot.setShouldTranslate(false)` disables translation for a slot's value. `SvTranslatableNode.translatedValueOfSlotNamed()` checks this annotation and returns the raw value when false. `SvOptionNode` also checks the parent slot's `shouldTranslate` annotation, so option labels inherit the setting — for example, a language picker's options stay in their native script rather than being translated.
+
+```javascript
+{
+    const slot = this.newSlot("language", "en");
+    slot.setShouldTranslate(false); // "Español", "Français" stay untranslated
+    slot.setValidItems([
+        { label: "English", value: "en" },
+        { label: "Español", value: "es" }
+    ]);
+}
+```
 
 ## Framework / App Boundary
 
@@ -275,14 +318,15 @@ Traditional i18n excels when professional translation quality is critical and a 
 
 ## Planned Enhancements
 
-### Two-Tier Storage
+### Shared Cloud Pool
 
-The current implementation stores all translations in the local `SvI18nCache` (IndexedDB). A planned two-tier architecture would add shared cloud storage:
+The local caching layers (seed map, IndexedDB, legacy cache) are implemented. The next step is a shared cloud pool so all users benefit from translations:
 
-- **Tier 1: Short strings** — UI labels stored in a shared cloud pool per language, fetched in a single request on cold start. New translations are promoted from local cache to the shared pool so all users benefit.
-- **Tier 2: Long content** — Strings over 64 characters stored in `SvBlobPool`, keyed by SHA-256 hash of the source text. Content-addressable storage ensures changed source text automatically invalidates old translations.
-
-This replaces the seed file workflow with an organic, self-growing translation store.
+- A single `pool.json` per language hosted in cloud storage (e.g., Firebase Storage at `public/translations/{languageCode}/pool.json`).
+- Admin-write, everyone-read access rules.
+- On cold start, clients check the pool's metadata (ETag/timestamp) against a locally cached version to avoid unnecessary downloads.
+- A `just translate` command extracts translatable strings from the codebase, translates them, and writes the pool file.
+- A promotion Cloud Function moves validated translations from local caches to the shared pool.
 
 ### Translation Persistence Annotation
 
