@@ -92,6 +92,10 @@
         return this;
     }
 
+    subtitle () {
+        return "UI text translation";
+    }
+
     /**
      * @description Returns true if translation is needed (enabled and language is not English).
      * @returns {Boolean}
