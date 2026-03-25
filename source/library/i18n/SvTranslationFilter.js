@@ -8,13 +8,17 @@
  * @class SvTranslationFilter
  * @extends ProtoClass
  * @classdesc Determines whether a string value needs translation.
- * Filters out non-linguistic content such as numbers, currency,
- * email addresses, phone numbers, URLs, IP addresses, and
- * alphanumeric codes that would come back unchanged from translation.
+ * Uses a pluggable map of named filter functions. Each function takes a trimmed
+ * string and returns true if it should NOT be translated.
+ *
+ * Built-in filters cover numbers, currency, codes, emails, URLs, etc.
+ * Applications can add domain-specific filters via addFilter().
+ * Names prevent duplicate registration.
  *
  * Usage:
  *   SvTranslationFilter.shared().shouldTranslate("Hello") // true
  *   SvTranslationFilter.shared().shouldTranslate("$9.99") // false
+ *   SvTranslationFilter.shared().addFilter("diceNotation", s => /^\d+d\d+/.test(s));
  */
 
 (class SvTranslationFilter extends ProtoClass {
@@ -23,8 +27,74 @@
         this.setIsSingleton(true);
     }
 
+    initPrototypeSlots () {
+
+        /**
+         * @member {Map} filters
+         * @description Map of filter name → filter function. Each function takes a
+         * trimmed string and returns true if the string should NOT be translated.
+         * Names prevent duplicate registration.
+         * @category Filtering
+         */
+        {
+            const slot = this.newSlot("filters", null);
+            slot.setSlotType("Map");
+        }
+    }
+
+    init () {
+        super.init();
+        this.setFilters(new Map());
+        this.addDefaultFilters();
+        return this;
+    }
+
+    /**
+     * @description Registers the built-in filter functions.
+     * @returns {SvTranslationFilter}
+     * @category Setup
+     * @private
+     */
+    addDefaultFilters () {
+        this.addFilter("hasNoLetters", s => this.hasNoLetters(s));
+        this.addFilter("numericOrCurrency", s => this.isNumericOrCurrency(s));
+        this.addFilter("alphanumericCode", s => this.isAlphanumericCode(s));
+        this.addFilter("ordinal", s => this.isOrdinal(s));
+        this.addFilter("labeledNumeric", s => this.isLabeledNumeric(s));
+        this.addFilter("email", s => this.isEmail(s));
+        this.addFilter("phoneNumber", s => this.isPhoneNumber(s));
+        this.addFilter("url", s => this.isUrl(s));
+        this.addFilter("ipAddress", s => this.isIpAddress(s));
+        return this;
+    }
+
+    /**
+     * @description Adds a named filter function. If a filter with the same name
+     * already exists, it is replaced.
+     * @param {String} name - Unique name for the filter.
+     * @param {Function} filterFunc - Takes a trimmed string, returns true if it should NOT be translated.
+     * @returns {SvTranslationFilter}
+     * @category Filtering
+     */
+    addFilter (name, filterFunc) {
+        this.filters().set(name, filterFunc);
+        return this;
+    }
+
+    /**
+     * @description Removes a filter by name.
+     * @param {String} name - The filter name to remove.
+     * @returns {SvTranslationFilter}
+     * @category Filtering
+     */
+    removeFilter (name) {
+        this.filters().delete(name);
+        return this;
+    }
+
     /**
      * @description Returns true if the value should be translated.
+     * Returns false if any filter function matches (i.e. says "don't translate").
      * @param {String} value - The string to test.
      * @returns {Boolean}
      * @category Filtering
@@ -39,39 +109,27 @@
             return false;
         }
 
-        if (this.isNumericOrCurrency(trimmed)) {
-            return false;
-        }
-
-        if (this.isAlphanumericCode(trimmed)) {
-            return false;
-        }
-
-        if (this.isOrdinal(trimmed)) {
-            return false;
-        }
-
-        if (this.isLabeledNumeric(trimmed)) {
-            return false;
-        }
-
-        if (this.isEmail(trimmed)) {
-            return false;
-        }
-
-        if (this.isPhoneNumber(trimmed)) {
-            return false;
-        }
-
-        if (this.isUrl(trimmed)) {
-            return false;
-        }
-
-        if (this.isIpAddress(trimmed)) {
-            return false;
+        const filters = this.filters();
+        for (const [name, fn] of filters) {
+            if (fn(trimmed)) {
+                return false;
+            }
         }
 
         return true;
+    }
+
+    // --- Built-in filter functions ---
+
+    /**
+     * @description Strings with no alphabetical characters (a-z, A-Z).
+     * Matches: "17 (+3)", "+5 / +3 / +2", "15, 12, 10, 8", "---"
+     * @param {String} trimmed - The trimmed string to test.
+     * @returns {Boolean}
+     * @category Patterns
+     */
+    hasNoLetters (trimmed) {
+        return !/[a-zA-Z]/.test(trimmed);
     }
 
     /**

@@ -6,8 +6,6 @@
 /** * @class SvStampField
  * @extends SvField
  * @classdesc SvStampField class for handling stamp fields.
- 
- 
  */
 
 /**

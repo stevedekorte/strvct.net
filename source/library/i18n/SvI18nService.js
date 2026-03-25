@@ -31,6 +31,7 @@
         {
             const slot = this.newSlot("debounceTimer", null);
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(false);
         }
 
         /**
@@ -40,6 +41,7 @@
         {
             const slot = this.newSlot("debounceMs", 200);
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -49,6 +51,7 @@
         {
             const slot = this.newSlot("maxBatchSize", 50);
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -58,6 +61,7 @@
         {
             const slot = this.newSlot("maxConcurrent", 3);
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -67,6 +71,7 @@
         {
             const slot = this.newSlot("activeRequests", 0);
             slot.setSlotType("Number");
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -76,6 +81,7 @@
         {
             const slot = this.newSlot("systemPrompt", "");
             slot.setSlotType("String");
+            slot.setIsSubnodeField(true);
         }
 
         /**
@@ -89,12 +95,29 @@
     }
 
     initPrototype () {
+        this.setTitle("i18n Service");
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
     }
 
     init () {
         super.init();
         this.setQueue([]);
         return this;
+    }
+
+    subtitle () {
+        return this.queuedCount() + " queued, " + this.activeRequests() + " active";
+    }
+
+    /**
+     * @description Returns the total number of strings awaiting translation
+     * (queued + in-flight).
+     * @returns {Number}
+     * @category Status
+     */
+    queuedCount () {
+        return this.queue().length + this.activeRequests();
     }
 
     /**
@@ -247,7 +270,7 @@
         this.setActiveRequests(Math.max(0, this.activeRequests() - 1));
 
         const content = request.fullContent();
-        const context = request._i18nContext;
+        //const context = request._i18nContext;
         const language = request._i18nLanguage;
 
         try {
@@ -260,13 +283,16 @@
             const translations = JSON.parse(jsonStr);
             const i18n = SvI18n.shared();
             const cache = i18n.cache();
+            const store = i18n.store();
             const translatedKeys = [];
 
             Object.keys(translations).forEach(sourceText => {
                 const translation = translations[sourceText];
                 if (translation && translation.length > 0) {
-                    cache.store(sourceText, language, context, translation);
-                    translatedKeys.push(SvI18nEntry.cacheKeyFor(sourceText, language, context));
+                    // Store in cache (strong refs, survives GC) and store (IndexedDB persist)
+                    cache.store(sourceText, language, translation);
+                    store.storeSync(sourceText, language, translation);
+                    translatedKeys.push(i18n.keyFor(sourceText, language));
                     console.log("[i18n] result: '" + sourceText + "' → '" + translation + "'");
                 }
             });
@@ -275,6 +301,7 @@
 
             // Resolve promises for the translated keys
             i18n.resolveTranslations(translatedKeys);
+            i18n.didUpdateNode();
 
         } catch (e) {
             console.warn("[i18n] Failed to parse translation response:", e.message);
@@ -294,31 +321,29 @@
 
         // Remove pending keys so they can be retried later
         const language = request._i18nLanguage;
-        const context = request._i18nContext;
         const strings = request._i18nStrings;
         const i18n = SvI18n.shared();
-        const cache = i18n.cache();
         const failedKeys = [];
 
         if (strings) {
             strings.forEach(text => {
-                const key = SvI18nEntry.cacheKeyFor(text, language, context);
-                cache.pendingKeys().delete(key);
+                const key = i18n.keyFor(text, language);
                 failedKeys.push(key);
             });
         }
 
         // Reject promises for the failed keys
         i18n.rejectTranslations(failedKeys, error);
+        i18n.didUpdateNode();
     }
 
     /**
      * @description No-op delegate methods for AiRequest protocol.
      * @category Delegate
      */
-    onRequestBegin (request) {}
-    onStreamStart (request) {}
-    onStreamData (request, newContent) {}
-    onStreamEnd (request) {}
+    onRequestBegin (/*request*/) {}
+    onStreamStart (/*request*/) {}
+    onStreamData (/*request, newContent*/) {}
+    onStreamEnd (/*request*/) {}
 
 }).initThisClass();

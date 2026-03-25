@@ -1836,7 +1836,7 @@
         const hashesSet = new Set();
         ObjectPool.openPools().forEach(pool => {
             pool.allObjects().forEach(obj => {
-                if (obj.referencedBlobHashesSet) {
+                if (obj && obj.referencedBlobHashesSet) {
                     const objBlobHashes = obj.referencedBlobHashesSet();
                     hashesSet.addAll(objBlobHashes);
                 }

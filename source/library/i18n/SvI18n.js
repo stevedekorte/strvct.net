@@ -6,9 +6,19 @@
 
 /**
  * @class SvI18n
- * @extends SvNode
+ * @extends BaseNode
  * @classdesc Singleton coordinator for the i18n system.
- * Holds the current language, the translation cache, and the translation service.
+ * Owns a dedicated IndexedDB for translations, shared between:
+ *   - SvI18nCache (eager, in-memory Map for the current language)
+ *   - SvI18nStore (async IndexedDB bridge for on-demand reads)
+ *
+ * Lookup order (from SvTranslatableNode):
+ *   1. Node's translationMap (sync) → per-node FIFO cache of recent lookups
+ *   2. SvI18nCache Map (sync) → all entries for current language
+ *   3. SvI18nStore IndexedDB (async) → promotes hit to cache
+ *   4. Queue for AI translation → stores result in cache + store
+ *
+ * Inactive when language is English. Clears caches on language change.
  *
  * Usage:
  *   SvI18n.shared().setCurrentLanguage("es");
@@ -32,18 +42,19 @@
             const slot = this.newSlot("currentLanguage", "en");
             slot.setSlotType("String");
             slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(false);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
         }
 
         /**
          * @member {SvI18nCache} cache
-         * @description Persistent translation cache.
+         * @description Eager in-memory cache. Loads all entries for the current language.
          */
         {
             const slot = this.newSlot("cache", null);
             slot.setSlotType("SvI18nCache");
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(SvI18nCache);
-            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
         }
 
         /**
@@ -67,12 +78,13 @@
             slot.setSlotType("Boolean");
             slot.setSyncsToView(true);
             slot.setShouldStoreSlot(false);
+            slot.setIsSubnodeField(true);
+            slot.setCanEditInspection(false);
         }
 
         /**
          * @member {SvI18nStore} store
-         * @description Dedicated IndexedDB store for translations. Two layers:
-         * in-memory seed map (synchronous) and IndexedDB (async).
+         * @description Async translation store backed by IndexedDB.
          */
         {
             const slot = this.newSlot("store", null);
@@ -81,12 +93,58 @@
         }
 
         /**
+         * @member {SvIndexedDbFolder} idb
+         * @description Dedicated IndexedDB for all translations. Shared by cache and store.
+         */
+        {
+            const slot = this.newSlot("idb", null);
+            slot.setSlotType("SvIndexedDbFolder");
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
          * @member {Map} pendingPromises
-         * @description Map of cacheKey → Array of {resolve, reject} for pending async translations.
+         * @description Map of key → Array of {resolve, reject} for pending async translations.
          */
         {
             const slot = this.newSlot("pendingPromises", null);
             slot.setSlotType("Map");
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
+         * @member {Set} pendingKeys
+         * @description Keys currently awaiting translation (dedup guard).
+         */
+        {
+            const slot = this.newSlot("pendingKeys", null);
+            slot.setSlotType("Set");
+            slot.setShouldStoreSlot(false);
+        }
+
+        // --- Status display slots (read-only, computed on access) ---
+
+        /**
+         * @member {Number} queuedCount
+         * @description Number of strings awaiting translation. Computed live via getter override.
+         */
+        {
+            const slot = this.newSlot("queuedCount", 0);
+            slot.setSlotType("Number");
+            slot.setCanEditInspection(false);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
+        }
+
+        /**
+         * @member {Number} completedCount
+         * @description Number of translations in the cache for the current language. Computed live via getter override.
+         */
+        {
+            const slot = this.newSlot("completedCount", 0);
+            slot.setSlotType("Number");
+            slot.setCanEditInspection(false);
+            slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(false);
         }
     }
@@ -100,20 +158,105 @@
     init () {
         super.init();
         this.setPendingPromises(new Map());
-        this.setStore(SvI18nStore.shared());
+        this.setPendingKeys(new Set());
+        return this;
+    }
 
-        // Open the translation store asynchronously.
-        // Until it's open, translations fall through to the legacy cache or AI.
-        this.store().asyncOpen().catch(e => {
-            console.warn("[i18n] failed to open translation store:", e);
+    /**
+     * @description Creates the dedicated IndexedDB, cache, and store instances.
+     * Called after init (and after any legacy data is loaded from ObjectPool).
+     * Always creates fresh instances — we no longer persist these through ObjectPool.
+     * @returns {SvI18n}
+     * @category Lifecycle
+     */
+    finalInit () {
+        super.finalInit();
+
+        // Create dedicated IndexedDB for translations
+        const idb = SvIndexedDbFolder.clone();
+        idb.setPath("i18nTranslations");
+        this.setIdb(idb);
+
+        // Create cache and store, sharing the IDB reference
+        const cache = SvI18nCache.clone();
+        cache.setIdb(idb);
+        this.setCache(cache);
+
+        const store = SvI18nStore.clone();
+        store.setIdb(idb);
+        this.setStore(store);
+
+        // Open IDB asynchronously — translations unavailable until this completes
+        this.asyncOpen().catch(e => {
+            console.warn("[SvI18n] failed to open:", e);
         });
 
         return this;
     }
 
-    subtitle () {
-        return "UI text translation";
+    /**
+     * @description Computed getter for queuedCount. Returns the number of strings
+     * awaiting translation (service queue + in-flight + pending async lookups).
+     * @returns {Number}
+     * @category Status
+     */
+    queuedCount () {
+        const service = this.service();
+        return (service ? service.queuedCount() : 0) + this.pendingKeys().size;
     }
+
+    /**
+     * @description Computed getter for completedCount. Returns the number of
+     * translations in the cache for the current language.
+     * @returns {Number}
+     * @category Status
+     */
+    completedCount () {
+        const cache = this.cache();
+        return cache ? cache.entries().size : 0;
+    }
+
+    subtitle () {
+        const lang = this.currentLanguage();
+        if (lang === "en") {
+            return "disabled (English)";
+        }
+        const q = this.queuedCount();
+        const c = this.completedCount();
+        return lang + " — " + c + " translated" + (q > 0 ? ", " + q + " queued" : "");
+    }
+
+    // --- Lifecycle ---
+
+    /**
+     * @description Opens the IndexedDB and loads the cache for the current language.
+     * @returns {Promise<void>}
+     * @category Lifecycle
+     */
+    async asyncOpen () {
+        await this.idb().promiseOpen();
+
+        const lang = this.currentLanguage();
+        if (lang !== "en") {
+            await this.cache().asyncLoadForLanguage(lang);
+        }
+    }
+
+    // --- Key Construction ---
+
+    /**
+     * @description Constructs a storage key from language and source text.
+     * Used by both cache and store, and by the service for pending key tracking.
+     * @param {String} text - Source English text.
+     * @param {String} language - ISO 639-1 code.
+     * @returns {String}
+     * @category Keys
+     */
+    keyFor (text, language) {
+        return language + ":" + text;
+    }
+
+    // --- Translation ---
 
     /**
      * @description Returns true if translation is needed (enabled and language is not English).
@@ -125,40 +268,31 @@
     }
 
     /**
-     * @description Synchronous cache lookup. Checks the in-memory seed map first,
-     * then falls back to the legacy SvI18nCache.
+     * @description Synchronous translation lookup from the cache Map.
      * @param {String} text - Source English text.
-     * @param {String} [context="ui-label"] - The context category.
+     * @param {String} [context] - Context category (unused in key, kept for API compat).
      * @returns {String|null} The translated string, or null on cache miss.
      * @category Translation
      */
-    cachedTranslate (text, context) {
-        if (!context) {
-            context = "ui-label";
-        }
+    cachedTranslate (text /*,context*/) {
         const language = this.currentLanguage();
 
-        // Check seed map first (synchronous, covers all shared UI strings)
-        const store = this.store();
-        if (store) {
-            const seedResult = store.seedLookup(text, language);
-            if (seedResult !== null) {
-                return seedResult;
-            }
+        const cacheResult = this.cache().lookup(text, language);
+        if (cacheResult !== null) {
+            return cacheResult;
         }
 
-        // Fall back to legacy cache
-        return this.cache().lookup(text, language, context);
+        return null;
     }
 
     /**
-     * @description Requests an async translation. Returns a Promise that resolves when
-     * the translation is cached and available via cachedTranslate().
-     * Deduplicates: if the same string is already pending, returns a promise
-     * that chains onto the existing request.
+     * @description Requests an async translation. Checks store IndexedDB first,
+     * then falls back to AI translation. Returns a Promise that resolves when
+     * the translation is available via cachedTranslate().
+     * Deduplicates: if the same key is already pending, chains onto the existing request.
      * @param {String} text - Source English text.
-     * @param {String} [context="ui-label"] - The context category.
-     * @returns {Promise} Resolves when translation is cached.
+     * @param {String} [context="ui-label"] - Context category (used for AI prompt quality).
+     * @returns {Promise} Resolves when translation is available.
      * @category Translation
      */
     asyncTranslate (text, context) {
@@ -167,7 +301,7 @@
         }
 
         const language = this.currentLanguage();
-        const key = SvI18nEntry.cacheKeyFor(text, language, context);
+        const key = this.keyFor(text, language);
 
         return new Promise((resolve, reject) => {
             // Add to pending promises list for this key
@@ -176,57 +310,69 @@
             }
             this.pendingPromises().get(key).push({ resolve: resolve, reject: reject });
 
-            // Only enqueue if not already pending in the service
-            if (!this.cache().hasPending(text, language, context)) {
-                this.cache().addPending(text, language, context);
-                this.service().enqueue(text, context);
+            // Only process if not already pending
+            if (!this.pendingKeys().has(key)) {
+                this.pendingKeys().add(key);
+
+                // Try store IndexedDB first (async)
+                this.store().asyncLookup(text, language).then(storeResult => {
+                    if (storeResult !== null) {
+                        // Found in IndexedDB — promote to cache for stable sync access
+                        this.cache().store(text, language, storeResult);
+                        this.pendingKeys().delete(key);
+                        this.resolvePendingForKey(key);
+                    } else {
+                        // Not found anywhere — queue for AI translation
+                        this.service().enqueue(text, context);
+                    }
+                }).catch(e => {
+                    // IndexedDB lookup failed — queue AI translation anyway
+                    console.warn("[SvI18n] store lookup failed, falling back to AI:", e);
+                    this.service().enqueue(text, context);
+                });
             }
         });
     }
 
+    // --- Promise Resolution ---
+
     /**
-     * @description Called by SvI18nService when translations are stored in the cache.
-     * Also persists translations to SvI18nStore (IndexedDB) for future sessions.
+     * @description Resolves all pending promises for a given key.
+     * @param {String} key - The translation key.
+     * @category Promises
+     * @private
+     */
+    resolvePendingForKey (key) {
+        const callbacks = this.pendingPromises().get(key);
+        if (callbacks) {
+            callbacks.forEach(cb => cb.resolve());
+            this.pendingPromises().delete(key);
+        }
+    }
+
+    /**
+     * @description Called by SvI18nService when translations are stored.
      * Resolves all pending promises for the translated keys.
-     * @param {Array} translatedKeys - Array of cache keys that were just translated.
+     * @param {Array} translatedKeys - Array of keys that were just translated.
      * @category Promises
      */
     resolveTranslations (translatedKeys) {
-        const store = this.store();
-        const cache = this.cache();
-
         translatedKeys.forEach(key => {
-            // Persist to SvI18nStore if available
-            if (store && store.isOpen()) {
-                const entry = cache.index().get(key);
-                if (entry) {
-                    store.asyncStore(
-                        entry.sourceText(),
-                        entry.targetLanguage(),
-                        entry.targetText()
-                    ).catch(e => {
-                        console.warn("[i18n] failed to persist translation to store:", e);
-                    });
-                }
-            }
-
-            const callbacks = this.pendingPromises().get(key);
-            if (callbacks) {
-                callbacks.forEach(cb => cb.resolve());
-                this.pendingPromises().delete(key);
-            }
+            this.pendingKeys().delete(key);
+            this.resolvePendingForKey(key);
         });
     }
 
     /**
      * @description Called by SvI18nService when a translation request fails.
      * Rejects all pending promises for the failed keys.
-     * @param {Array} failedKeys - Array of cache keys that failed.
+     * @param {Array} failedKeys - Array of keys that failed.
      * @param {Error} error - The error.
      * @category Promises
      */
     rejectTranslations (failedKeys, error) {
         failedKeys.forEach(key => {
+            this.pendingKeys().delete(key);
             const callbacks = this.pendingPromises().get(key);
             if (callbacks) {
                 callbacks.forEach(cb => cb.reject(error));
@@ -235,8 +381,10 @@
         });
     }
 
+    // --- Language ---
+
     /**
-     * @description Sets the current language and triggers a UI refresh.
+     * @description Sets the current language and triggers cache/store reload.
      * @param {String} code - ISO 639-1 language code.
      * @returns {SvI18n}
      * @category Language
@@ -246,11 +394,28 @@
         this._currentLanguage = code;
 
         if (oldValue !== code) {
-            // Notify views to re-render with new language
+            this.onLanguageChanged(code);
             this.postNoteNamed("svI18nLanguageChanged");
         }
 
         return this;
+    }
+
+    /**
+     * @description Handles language change. Reloads the cache for the new language
+     * from IndexedDB. Node translation maps auto-clear lazily on next access
+     * when they detect the language has changed.
+     * @param {String} newLang - The new language code.
+     * @category Language
+     * @private
+     */
+    onLanguageChanged (newLang) {
+        // Reload cache for new language
+        if (this.cache() && this.idb() && this.idb().isOpen()) {
+            this.cache().asyncLoadForLanguage(newLang).catch(e => {
+                console.warn("[SvI18n] failed to load cache for " + newLang + ":", e);
+            });
+        }
     }
 
 }).initThisClass();

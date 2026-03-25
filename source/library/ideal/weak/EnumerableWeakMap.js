@@ -5,9 +5,10 @@
 
 /** * @class EnumerableWeakMap
  * @classdesc A Map with WeakRef values internally, but external API looks normal (gets and sets values).
- * Unlike WeakMap, the keys can be primitives such as strings and numbers, and it's entries are enumerable.
- * All values should be objects (or null, numbers, strings) but cannot be undefined.
- * @extends Map
+ * Unlike WeakMap, the keys can be primitives such as strings and numbers, and its entries are enumerable.
+ * Values must be objects (not null or primitives) since WeakRef only accepts objects.
+ * Values may be reclaimed by the garbage collector when no other strong references exist.
+ * @extends Object
  */
 
 /**
@@ -25,15 +26,17 @@ SvGlobals.globals().EnumerableWeakMap = (class EnumerableWeakMap extends Object 
     }
 
     /**
-   * Asserts that the provided value is valid (not undefined).
+   * Asserts that the provided value is not undefined.
    * @param {*} v - The value to assert.
    * @throws {Error} - If the value is undefined.
-   * @description Throws an error if the provided value is undefined because unref returns undefined after collection.
+   * @description Undefined is rejected because deref() returns undefined
+   * for collected references. Note: WeakRef only accepts objects, so
+   * storing primitives or null will throw at new WeakRef(v).
    * @category Validation
    */
     assertValidValue  (v) {
         if (v === undefined) {
-            throw new Error("values cannot be undefined as unref returns undefined after collection");
+            throw new Error("values cannot be undefined as deref() returns undefined after collection");
         }
     }
 

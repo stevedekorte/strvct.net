@@ -12,11 +12,73 @@
  * request translated display values. On cache miss, queues an async
  * translation and calls didUpdateNode() when it arrives.
  *
+ * Each node maintains a lazy translationMap (allocated on first use)
+ * that caches translated strings for fast sync re-render. This map is
+ * FIFO-capped to prevent unbounded growth and cleared on language change.
+ * The map lives on the node (not the view) so translations survive view
+ * reallocation during UI navigation.
+ *
+ * NOTE: If accumulated node translation maps become a memory concern,
+ * a GC sweep could be added: walk all views, collect their referenced nodes,
+ * and clear translationMaps on all in-memory nodes not in that set.
+ *
  * Inheritance chain:
  * SvNode -> TitledNode -> SvTranslatableNode -> InspectableNode -> ViewableNode -> ...
  */
 
 (class SvTranslatableNode extends TitledNode {
+
+    /**
+     * @description Maximum number of entries in the node's translationMap.
+     * Uses FIFO eviction when exceeded.
+     * @returns {Number}
+     * @category i18n
+     */
+    translationMapMaxSize () {
+        return 10;
+    }
+
+    /**
+     * @description Returns the node's translation map, allocating lazily on first use.
+     * Maps English source text → translated text for the current language.
+     * Auto-clears if the language has changed since the map was last used.
+     * @returns {Map}
+     * @category i18n
+     */
+    translationMap () {
+        const currentLang = SvI18n.shared().currentLanguage();
+        if (this._translationMap) {
+            if (this._translationMapLanguage !== currentLang) {
+                this._translationMap.clear();
+                this._translationMapLanguage = currentLang;
+            }
+        } else {
+            this._translationMap = new Map();
+            this._translationMapLanguage = currentLang;
+        }
+        return this._translationMap;
+    }
+
+    /**
+     * @description Stores a translation in the node's map with FIFO eviction.
+     * @param {String} sourceText - English source text.
+     * @param {String} translation - Translated text.
+     * @category i18n
+     */
+    storeInTranslationMap (sourceText, translation) {
+        const map = this.translationMap();
+        // If key already exists, delete first so re-insertion moves it to end (most recent)
+        if (map.has(sourceText)) {
+            map.delete(sourceText);
+        }
+        map.set(sourceText, translation);
+
+        // FIFO eviction: remove oldest entry (first in iteration order)
+        if (map.size > this.translationMapMaxSize()) {
+            const firstKey = map.keys().next().value;
+            map.delete(firstKey);
+        }
+    }
 
     /**
      * @description Returns a translated display value for the named slot.
@@ -95,37 +157,33 @@
             return value;
         }
 
-        // Try synchronous cache lookup
+        // 1. Check node's own translation map (sync, survives view reallocation)
+        if (this._translationMap && this._translationMap.size > 0) {
+            const nodeResult = this.translationMap().get(value);
+            if (nodeResult !== undefined) {
+                return nodeResult;
+            }
+        }
+
+        // 2. Try synchronous cache/store lookup
         const cached = i18n.cachedTranslate(value, context);
         if (cached !== null) {
+            this.storeInTranslationMap(value, cached);
             return cached;
         }
 
-        // Cache miss — check IndexedDB store, then fall back to AI translation
-        const store = i18n.store();
-        if (store && store.isOpen()) {
-            store.asyncLookup(value, i18n.currentLanguage()).then(stored => {
-                if (stored !== null) {
-                    // Found in IndexedDB — add to legacy cache for synchronous access
-                    i18n.cache().store(value, i18n.currentLanguage(), context, stored);
-                    this.didUpdateNode();
-                } else {
-                    // Not in store — request AI translation
-                    return i18n.asyncTranslate(value, context).then(() => {
-                        this.didUpdateNode();
-                    });
-                }
-            }).catch(e => {
-                console.warn("[i18n] translation failed for '" + value + "':", e);
-            });
-        } else {
-            // Store not available — go straight to AI translation
-            i18n.asyncTranslate(value, context).then(() => {
-                this.didUpdateNode();
-            }).catch(e => {
-                console.warn("[i18n] translation failed for '" + value + "':", e);
-            });
-        }
+        // 3. Cache miss — async lookup (IndexedDB then AI translation)
+        const node = this;
+        i18n.asyncTranslate(value, context).then(() => {
+            // Translation is now available in the cache — store in node map too
+            const result = i18n.cachedTranslate(value, context);
+            if (result !== null) {
+                node.storeInTranslationMap(value, result);
+            }
+            node.didUpdateNode();
+        }).catch(e => {
+            console.warn("[i18n] translation failed for '" + value + "':", e);
+        });
 
         // Return English as fallback until translation arrives
         return value;
