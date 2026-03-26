@@ -290,8 +290,8 @@
                 const translation = translations[sourceText];
                 if (translation && translation.length > 0) {
                     // Store in cache (strong refs, survives GC) and store (IndexedDB persist)
-                    cache.store(sourceText, language, translation);
-                    store.storeSync(sourceText, language, translation);
+                    cache.store(sourceText, translation);
+                    store.storeSync(sourceText, translation);
                     translatedKeys.push(i18n.keyFor(sourceText, language));
                     console.log("[i18n] result: '" + sourceText + "' → '" + translation + "'");
                 }

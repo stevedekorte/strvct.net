@@ -16,25 +16,26 @@ The system is designed around three principles:
 
 ## Implementation Overview
 
-Translation storage is fully decoupled from the STRVCT ObjectPool. All translations live in a dedicated IndexedDB database (`i18nTranslations`).
+Translation storage is fully decoupled from the STRVCT ObjectPool. Each language gets its own pair of IndexedDB databases — one for cache, one for store — so loading never needs to scan or filter entries from other languages.
 
 **SvI18n** (singleton coordinator)
-- Owns the dedicated IndexedDB, shared between cache and store
-- One active SvI18nCache + one active SvI18nStore for the current target language
+- Coordinates cache and store; each owns its own per-language IndexedDB
+- On language change, opens new databases on both cache and store
 - Inactive when language is English
-- Reloads cache on language change
 - Computed status getters (`queuedCount`, `completedCount`) for admin UI
 
 **SvI18nCache** (eager, in-memory, for common UI text)
-- Loads all entries for the current language from IndexedDB into a `Map` on language select
+- Owns a per-language IndexedDB at `i18nTranslations/cache/{lang}`
+- Loads all entries from its database into a `Map` on language select (no filtering needed)
 - Seed entries loaded from cloud seed file
 - Runtime additions (e.g. short common phrases) also stored here
-- High water mark = 3x seed entry count (FIFO eviction on timestamped entries only)
+- High water mark = max(highWaterMarkDefault, 3× seed count). FIFO eviction on timestamped entries only
 - Writes runtime additions back to IndexedDB
 - Synchronous lookups
 - Handles legacy format migration (plain strings from Phase 1)
 
 **SvI18nStore** (async IndexedDB bridge)
+- Owns a per-language IndexedDB at `i18nTranslations/store/{lang}`
 - No in-memory state — purely an async read/write interface to IndexedDB
 - Async lookups; results promoted to SvI18nCache by SvI18n
 - Fire-and-forget persistence for new translations
@@ -49,11 +50,11 @@ NOTE: If accumulated node translation maps become a memory concern,
 a GC sweep could be added: walk all views, collect their referenced nodes,
 and clear translationMaps on all in-memory nodes not in that set.
 
-**Shared value format in IndexedDB (serialized as JSON):**
+**Value format in IndexedDB (serialized as JSON):**
 - Seed entry: `{ t: "translation" }` (no timestamp = permanent, never evicted)
 - Runtime entry: `{ t: "translation", ts: 1711382400000 }` (evictable by FIFO)
 
-**Shared IndexedDB key format:** `"lang:sourceText"` (e.g. `"fr:Hit Points"`)
+**IndexedDB key:** source English text (language is encoded in the database path, not the key)
 
 **Lookup order:**
 1. Node's translationMap (sync) — per-node FIFO cache of recent lookups

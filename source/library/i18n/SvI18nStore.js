@@ -7,18 +7,18 @@
 /**
  * @class SvI18nStore
  * @extends ProtoClass
- * @classdesc Async translation store backed by IndexedDB.
+ * @classdesc Async translation store backed by a per-language IndexedDB.
  * Provides on-demand async lookups and fire-and-forget persistence.
  * Results from IndexedDB lookups are promoted to SvI18nCache by SvI18n.
  *
- * Shares the same IndexedDB as SvI18nCache (owned by SvI18n).
+ * Each language gets its own database (e.g. "i18nTranslations/store/fr").
  * Handles translations that are not in the eager cache — typically longer
  * or less common strings that were evicted or never loaded into the cache.
  *
  * Value format in IndexedDB (serialized as JSON string):
  *   { t: "translation", ts: 1711382400000 }
  *
- * IndexedDB key format: "lang:sourceText"
+ * IndexedDB key: source English text (language is encoded in the database path).
  */
 
 (class SvI18nStore extends ProtoClass {
@@ -27,24 +27,58 @@
 
         /**
          * @member {SvIndexedDbFolder} idb
-         * @description Shared IndexedDB folder reference (owned by SvI18n).
+         * @description Per-language IndexedDB. Path: "i18nTranslations/store/{lang}".
          * @category Storage
          */
         {
             const slot = this.newSlot("idb", null);
             slot.setSlotType("SvIndexedDbFolder");
         }
+
+        /**
+         * @member {String} language
+         * @description The language code this store is currently open for.
+         * @category State
+         */
+        {
+            const slot = this.newSlot("language", null);
+            slot.setSlotType("String");
+        }
     }
 
     /**
-     * @description Constructs a storage key.
-     * @param {String} text - Source English text.
+     * @description Returns the IndexedDB path for a given language.
      * @param {String} language - ISO 639-1 code.
      * @returns {String}
-     * @category Keys
+     * @category Storage
      */
-    keyFor (text, language) {
-        return language + ":" + text;
+    idbPathForLanguage (language) {
+        return "i18nTranslations/store/" + language;
+    }
+
+    // --- Database Lifecycle ---
+
+    /**
+     * @description Closes the current IndexedDB (if open) and opens a new one
+     * for the given language.
+     * @param {String} language - ISO 639-1 code.
+     * @returns {Promise<void>}
+     * @category Lifecycle
+     */
+    async asyncOpenForLanguage (language) {
+        // Close previous database if switching languages
+        if (this.idb()) {
+            this.idb().close();
+            this.setIdb(null);
+        }
+
+        this.setLanguage(language);
+
+        // Open per-language database
+        const idb = SvIndexedDbFolder.clone();
+        idb.setPath(this.idbPathForLanguage(language));
+        this.setIdb(idb);
+        await idb.promiseOpen();
     }
 
     /**
@@ -98,19 +132,17 @@
 
     /**
      * @description Async lookup from IndexedDB.
-     * @param {String} text - Source English text.
-     * @param {String} language - ISO 639-1 code.
+     * @param {String} text - Source English text (used as the key).
      * @returns {Promise<String|null>} Translation or null.
      * @category Lookup
      */
-    async asyncLookup (text, language) {
+    async asyncLookup (text) {
         const idb = this.idb();
         if (!idb || !idb.isOpen()) {
             return null;
         }
 
-        const key = this.keyFor(text, language);
-        const value = await idb.promiseAt(key);
+        const value = await idb.promiseAt(text);
 
         if (value !== undefined && value !== null) {
             const parsed = this.safeDeserialize(value);
@@ -124,19 +156,17 @@
 
     /**
      * @description Persists a translation to IndexedDB (fire-and-forget).
-     * @param {String} text - Source English text.
-     * @param {String} language - ISO 639-1 code.
+     * @param {String} text - Source English text (used as the key).
      * @param {String} translation - Translated text.
      * @returns {SvI18nStore}
      * @category Storage
      */
-    storeSync (text, language, translation) {
-        const key = this.keyFor(text, language);
+    storeSync (text, translation) {
         const value = { t: translation, ts: Date.now() };
 
         const idb = this.idb();
         if (idb && idb.isOpen()) {
-            idb.promiseAtPut(key, this.serializeValue(value)).catch(e => {
+            idb.promiseAtPut(text, this.serializeValue(value)).catch(e => {
                 console.warn("[SvI18nStore] persist error:", e);
             });
         }

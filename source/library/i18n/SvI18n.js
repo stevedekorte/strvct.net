@@ -8,9 +8,9 @@
  * @class SvI18n
  * @extends BaseNode
  * @classdesc Singleton coordinator for the i18n system.
- * Owns a dedicated IndexedDB for translations, shared between:
- *   - SvI18nCache (eager, in-memory Map for the current language)
- *   - SvI18nStore (async IndexedDB bridge for on-demand reads)
+ * Cache and store each own a per-language IndexedDB:
+ *   - SvI18nCache: "i18nTranslations/cache/{lang}" (eager, in-memory Map)
+ *   - SvI18nStore: "i18nTranslations/store/{lang}" (async on-demand reads)
  *
  * Lookup order (from SvTranslatableNode):
  *   1. Node's translationMap (sync) → per-node FIFO cache of recent lookups
@@ -18,7 +18,7 @@
  *   3. SvI18nStore IndexedDB (async) → promotes hit to cache
  *   4. Queue for AI translation → stores result in cache + store
  *
- * Inactive when language is English. Clears caches on language change.
+ * Inactive when language is English. Opens new databases on language change.
  *
  * Usage:
  *   SvI18n.shared().setCurrentLanguage("es");
@@ -49,7 +49,7 @@
 
         /**
          * @member {SvI18nCache} cache
-         * @description Eager in-memory cache. Loads all entries for the current language.
+         * @description Eager in-memory cache. Owns a per-language IndexedDB.
          */
         {
             const slot = this.newSlot("cache", null);
@@ -84,21 +84,11 @@
 
         /**
          * @member {SvI18nStore} store
-         * @description Async translation store backed by IndexedDB.
+         * @description Async translation store. Owns a per-language IndexedDB.
          */
         {
             const slot = this.newSlot("store", null);
             slot.setSlotType("SvI18nStore");
-            slot.setShouldStoreSlot(false);
-        }
-
-        /**
-         * @member {SvIndexedDbFolder} idb
-         * @description Dedicated IndexedDB for all translations. Shared by cache and store.
-         */
-        {
-            const slot = this.newSlot("idb", null);
-            slot.setSlotType("SvIndexedDbFolder");
             slot.setShouldStoreSlot(false);
         }
 
@@ -163,33 +153,25 @@
     }
 
     /**
-     * @description Creates the dedicated IndexedDB, cache, and store instances.
-     * Called after init (and after any legacy data is loaded from ObjectPool).
-     * Always creates fresh instances — we no longer persist these through ObjectPool.
+     * @description Creates the cache and store instances (without IDB — databases
+     * are opened per-language when needed). Opens databases for the current
+     * language if not English.
      * @returns {SvI18n}
      * @category Lifecycle
      */
     finalInit () {
         super.finalInit();
 
-        // Create dedicated IndexedDB for translations
-        const idb = SvIndexedDbFolder.clone();
-        idb.setPath("i18nTranslations");
-        this.setIdb(idb);
+        this.setCache(SvI18nCache.clone());
+        this.setStore(SvI18nStore.clone());
 
-        // Create cache and store, sharing the IDB reference
-        const cache = SvI18nCache.clone();
-        cache.setIdb(idb);
-        this.setCache(cache);
-
-        const store = SvI18nStore.clone();
-        store.setIdb(idb);
-        this.setStore(store);
-
-        // Open IDB asynchronously — translations unavailable until this completes
-        this.asyncOpen().catch(e => {
-            console.warn("[SvI18n] failed to open:", e);
-        });
+        // Open databases for current language (if not English)
+        const lang = this.currentLanguage();
+        if (lang !== "en") {
+            this.asyncOpenForLanguage(lang).catch(e => {
+                console.warn("[SvI18n] failed to open for " + lang + ":", e);
+            });
+        }
 
         return this;
     }
@@ -229,24 +211,24 @@
     // --- Lifecycle ---
 
     /**
-     * @description Opens the IndexedDB and loads the cache for the current language.
+     * @description Opens per-language databases on both cache and store.
+     * @param {String} language - ISO 639-1 code.
      * @returns {Promise<void>}
      * @category Lifecycle
      */
-    async asyncOpen () {
-        await this.idb().promiseOpen();
-
-        const lang = this.currentLanguage();
-        if (lang !== "en") {
-            await this.cache().asyncLoadForLanguage(lang);
-        }
+    async asyncOpenForLanguage (language) {
+        await Promise.all([
+            this.cache().asyncOpenForLanguage(language),
+            this.store().asyncOpenForLanguage(language)
+        ]);
     }
 
     // --- Key Construction ---
 
     /**
-     * @description Constructs a storage key from language and source text.
-     * Used by both cache and store, and by the service for pending key tracking.
+     * @description Constructs a pending-promise tracking key from language and source text.
+     * Used for deduplication of in-flight translation requests.
+     * Cache and store no longer use this — their keys are just the source text.
      * @param {String} text - Source English text.
      * @param {String} language - ISO 639-1 code.
      * @returns {String}
@@ -275,9 +257,7 @@
      * @category Translation
      */
     cachedTranslate (text /*,context*/) {
-        const language = this.currentLanguage();
-
-        const cacheResult = this.cache().lookup(text, language);
+        const cacheResult = this.cache().lookup(text);
         if (cacheResult !== null) {
             return cacheResult;
         }
@@ -315,10 +295,10 @@
                 this.pendingKeys().add(key);
 
                 // Try store IndexedDB first (async)
-                this.store().asyncLookup(text, language).then(storeResult => {
+                this.store().asyncLookup(text).then(storeResult => {
                     if (storeResult !== null) {
                         // Found in IndexedDB — promote to cache for stable sync access
-                        this.cache().store(text, language, storeResult);
+                        this.cache().store(text, storeResult);
                         this.pendingKeys().delete(key);
                         this.resolvePendingForKey(key);
                     } else {
@@ -384,7 +364,7 @@
     // --- Language ---
 
     /**
-     * @description Sets the current language and triggers cache/store reload.
+     * @description Sets the current language and triggers database switch.
      * @param {String} code - ISO 639-1 language code.
      * @returns {SvI18n}
      * @category Language
@@ -402,20 +382,21 @@
     }
 
     /**
-     * @description Handles language change. Reloads the cache for the new language
-     * from IndexedDB. Node translation maps auto-clear lazily on next access
-     * when they detect the language has changed.
+     * @description Handles language change. Opens new per-language databases
+     * on cache and store. Node translation maps auto-clear lazily on next
+     * access when they detect the language has changed.
      * @param {String} newLang - The new language code.
      * @category Language
      * @private
      */
     onLanguageChanged (newLang) {
-        // Reload cache for new language
-        if (this.cache() && this.idb() && this.idb().isOpen()) {
-            this.cache().asyncLoadForLanguage(newLang).catch(e => {
-                console.warn("[SvI18n] failed to load cache for " + newLang + ":", e);
-            });
+        if (newLang === "en") {
+            return;
         }
+
+        this.asyncOpenForLanguage(newLang).catch(e => {
+            console.warn("[SvI18n] failed to open for " + newLang + ":", e);
+        });
     }
 
 }).initThisClass();

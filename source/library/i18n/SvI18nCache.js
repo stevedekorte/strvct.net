@@ -8,16 +8,17 @@
  * @class SvI18nCache
  * @extends ProtoClass
  * @classdesc Eager in-memory translation cache for the current language.
- * Loads all entries for the active language from IndexedDB into a Map on language select.
+ * Owns a per-language IndexedDB (e.g. "i18nTranslations/cache/fr").
+ * Loads all entries from its database into a Map on language select.
  * Seed entries (no timestamp) are permanent and never evicted.
  * Runtime entries (with timestamp) are evictable by FIFO when the entry count
- * exceeds the high water mark (3× seed count).
+ * exceeds the high water mark (3× seed count, or highWaterMarkDefault if no seed).
  *
  * Value format:
  *   Seed entry:    { t: "translation" }
  *   Runtime entry: { t: "translation", ts: 1711382400000 }
  *
- * IndexedDB key format: "lang:sourceText"
+ * IndexedDB key: source English text (language is encoded in the database path).
  */
 
 (class SvI18nCache extends ProtoClass {
@@ -26,7 +27,7 @@
 
         /**
          * @member {Map} entries
-         * @description In-memory lookup: "lang:sourceText" → { t, ts? }
+         * @description In-memory lookup: sourceText → { t, ts? }
          * @category Storage
          */
         {
@@ -67,7 +68,7 @@
 
         /**
          * @member {SvIndexedDbFolder} idb
-         * @description Shared IndexedDB folder reference (owned by SvI18n).
+         * @description Per-language IndexedDB. Path: "i18nTranslations/cache/{lang}".
          * @category Storage
          */
         {
@@ -93,6 +94,16 @@
     }
 
     /**
+     * @description Returns the IndexedDB path for a given language.
+     * @param {String} language - ISO 639-1 code.
+     * @returns {String}
+     * @category Storage
+     */
+    idbPathForLanguage (language) {
+        return "i18nTranslations/cache/" + language;
+    }
+
+    /**
      * @description Returns the eviction threshold. Runtime entries are evicted when
      * total entry count exceeds this value. Falls back to highWaterMarkDefault
      * when no seed is loaded.
@@ -101,17 +112,6 @@
      */
     highWaterMark () {
         return Math.max(this.highWaterMarkDefault(), this.seedCount() * this.highWaterMultiplier());
-    }
-
-    /**
-     * @description Constructs a storage key.
-     * @param {String} text - Source English text.
-     * @param {String} language - ISO 639-1 code.
-     * @returns {String}
-     * @category Keys
-     */
-    keyFor (text, language) {
-        return language + ":" + text;
     }
 
     /**
@@ -163,37 +163,42 @@
         return { t: stored };
     }
 
-    // --- Loading ---
+    // --- Database Lifecycle ---
 
     /**
-     * @description Loads all entries for a language from IndexedDB into the Map.
-     * Called on language change and on initial open.
+     * @description Closes the current IndexedDB (if open) and opens a new one
+     * for the given language. Loads all entries into the in-memory Map.
      * @param {String} language - ISO 639-1 code.
      * @returns {Promise<void>}
      * @category Loading
      */
-    async asyncLoadForLanguage (language) {
+    async asyncOpenForLanguage (language) {
+        // Close previous database if switching languages
+        if (this.idb()) {
+            this.idb().close();
+            this.setIdb(null);
+        }
+
         this.setLanguage(language);
         this.entries().clear();
         this.setSeedCount(0);
 
-        const idb = this.idb();
-        if (!idb || !idb.isOpen()) {
-            return;
-        }
+        // Open per-language database
+        const idb = SvIndexedDbFolder.clone();
+        idb.setPath(this.idbPathForLanguage(language));
+        this.setIdb(idb);
+        await idb.promiseOpen();
 
+        // Load all entries (everything in this DB is for this language)
         const allEntries = await idb.promiseAsMap();
-        const prefix = language + ":";
         let seedCount = 0;
 
         allEntries.forEach((serialized, key) => {
-            if (key.startsWith(prefix)) {
-                const value = this.safeDeserialize(serialized);
-                if (value) {
-                    this.entries().set(key, value);
-                    if (!value.ts) {
-                        seedCount++;
-                    }
+            const value = this.safeDeserialize(serialized);
+            if (value) {
+                this.entries().set(key, value);
+                if (!value.ts) {
+                    seedCount++;
                 }
             }
         });
@@ -210,13 +215,11 @@
     /**
      * @description Synchronous lookup in the in-memory Map.
      * @param {String} text - Source English text.
-     * @param {String} language - ISO 639-1 code.
      * @returns {String|null} Translation or null on miss.
      * @category Lookup
      */
-    lookup (text, language) {
-        const key = this.keyFor(text, language);
-        const entry = this.entries().get(key);
+    lookup (text) {
+        const entry = this.entries().get(text);
         return entry ? entry.t : null;
     }
 
@@ -225,21 +228,19 @@
     /**
      * @description Stores a runtime translation in the Map and IndexedDB.
      * Runtime entries have a timestamp and are evictable by FIFO.
-     * @param {String} text - Source English text.
-     * @param {String} language - ISO 639-1 code.
+     * @param {String} text - Source English text (used as the key).
      * @param {String} translation - Translated text.
      * @returns {SvI18nCache}
      * @category Storage
      */
-    store (text, language, translation) {
-        const key = this.keyFor(text, language);
+    store (text, translation) {
         const value = { t: translation, ts: Date.now() };
-        this.entries().set(key, value);
+        this.entries().set(text, value);
 
         // Persist to IndexedDB (fire-and-forget)
         const idb = this.idb();
         if (idb && idb.isOpen()) {
-            idb.promiseAtPut(key, this.serializeValue(value)).catch(e => {
+            idb.promiseAtPut(text, this.serializeValue(value)).catch(e => {
                 console.warn("[SvI18nCache] persist error:", e);
             });
         }
@@ -258,7 +259,6 @@
      * @category Seed
      */
     loadSeedJson (seedJson) {
-        const language = seedJson.meta.language;
         const entries = seedJson.entries;
         const idb = this.idb();
         let seedCount = 0;
@@ -267,14 +267,13 @@
             const contextEntries = entries[context];
             Object.keys(contextEntries).forEach(sourceText => {
                 const translation = contextEntries[sourceText];
-                const key = this.keyFor(sourceText, language);
                 const value = { t: translation }; // No timestamp = seed = permanent
-                this.entries().set(key, value);
+                this.entries().set(sourceText, value);
                 seedCount++;
 
                 // Persist to IndexedDB (fire-and-forget)
                 if (idb && idb.isOpen()) {
-                    idb.promiseAtPut(key, this.serializeValue(value)).catch(e => {
+                    idb.promiseAtPut(sourceText, this.serializeValue(value)).catch(e => {
                         console.warn("[SvI18nCache] seed persist error:", e);
                     });
                 }
@@ -282,7 +281,7 @@
         });
 
         this.setSeedCount(seedCount);
-        console.log("[SvI18nCache] Loaded " + seedCount + " seed entries for " + language);
+        console.log("[SvI18nCache] Loaded " + seedCount + " seed entries for " + this.language());
         return this;
     }
 
@@ -326,37 +325,25 @@
     // --- Management ---
 
     /**
-     * @description Clears all entries for a language from the Map and IndexedDB.
+     * @description Clears all entries and deletes the per-language IndexedDB.
      * Used when a new seed version is available (wipe-and-replace).
      * @param {String} language - ISO 639-1 code.
      * @returns {Promise<void>}
      * @category Management
      */
     async clearForLanguage (language) {
-        const prefix = language + ":";
-        const keysToRemove = [];
-
-        this.entries().forEach((value, key) => {
-            if (key.startsWith(prefix)) {
-                keysToRemove.push(key);
-            }
-        });
-
-        keysToRemove.forEach(key => this.entries().delete(key));
+        this.entries().clear();
         this.setSeedCount(0);
 
-        // Also clear from IndexedDB
+        // Close and delete the per-language database
         const idb = this.idb();
-        if (idb && idb.isOpen()) {
-            const allKeys = await idb.promiseAllKeys();
-            const idbKeysToRemove = allKeys.filter(k => k.startsWith(prefix));
-            if (idbKeysToRemove.length > 0) {
-                await idb.promiseRemoveKeySet(new Set(idbKeysToRemove));
-            }
+        if (idb) {
+            idb.close();
+            this.setIdb(null);
+            await idb.promiseDelete();
         }
 
-        console.log("[SvI18nCache] Cleared " + keysToRemove.length +
-            " entries for " + language);
+        console.log("[SvI18nCache] Cleared database for " + language);
     }
 
 }).initThisClass();
