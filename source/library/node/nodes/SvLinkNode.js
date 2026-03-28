@@ -4,8 +4,6 @@
 /** * @class SvLinkNode
  * @extends SvSummaryNode
  * @classdesc A node that represents a link to another node, which is not a subnode
- 
- 
  */
 
 /**
@@ -149,6 +147,14 @@
      * @returns {string} The subtitle of the linked node or a default message if no node is linked
      * @category Node Information
      */
+    async asyncNodeThumbnailUrl () {
+        const ln = this.linkedNode();
+        if (ln && ln.asyncNodeThumbnailUrl) {
+            return await ln.asyncNodeThumbnailUrl();
+        }
+        return null;
+    }
+
     subtitle () {
         const ln = this.linkedNode();
         if (ln) {

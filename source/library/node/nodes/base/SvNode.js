@@ -532,6 +532,7 @@
     justAddSubnodeAt (aSubnode, anIndex) {
         assert(!Type.isNullOrUndefined(aSubnode));
         assert(!this.hasSubnode(aSubnode));
+        assert(aSubnode.thisClass().isKindOf(SvNode), "Attempt to add subnode of type '" + aSubnode.svType() + "' which does not inherit from SvNode (as subnodes are required to do)");
         this.subnodes().atInsert(anIndex, aSubnode);
         aSubnode.setParentNode(this);
         return aSubnode;
@@ -690,6 +691,34 @@
     addSubnodesIfAbsent (subnodes) {
         subnodes.forEach(subnode => this.addSubnodeIfAbsent(subnode));
         return this;
+    }
+
+    /**
+     * @description Wraps each node in an SvLinkNode and adds it as a subnode.
+     * This avoids reparenting the original nodes away from their owners.
+     * @param {Array} nodes - The nodes to link.
+     * @returns {SvNode} This instance.
+     * @category Subnodes
+     */
+    addLinkSubnodes (nodes) {
+        nodes.forEach(node => {
+            const link = SvLinkNode.clone();
+            link.setLinkedNode(node);
+            this.addSubnode(link);
+        });
+        return this;
+    }
+
+    /**
+     * @description Returns the linked nodes from all SvLinkNode subnodes.
+     * @returns {Array} The linked node instances.
+     * @category Subnodes
+     */
+    linkedSubnodes () {
+        return this.subnodes().map(node => {
+            assert(node.linkedNode, node.svType() + " is not an SvLinkNode");
+            return node.linkedNode();
+        });
     }
 
     /**
