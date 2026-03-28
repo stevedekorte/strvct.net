@@ -155,6 +155,7 @@
             try {
                 return this.deserializeValue(stored);
             } catch (e) {
+                console.warn("[SvI18nCache] safeDeserialize error:", e);
                 return null;
             }
         }
