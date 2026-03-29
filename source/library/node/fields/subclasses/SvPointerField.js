@@ -55,13 +55,15 @@
         //console.log("SvPointerField proxyGetter: calling method '" + methodName);
 
         const v = this.value();
-        //console.log("SvPointerField proxyGetter: on value object " + v.svType());
 
         if (!v) {
             return defaultReturnValue;
         }
+
         const method = v[methodName];
-        assert(method !== undefined, "SvPointerField proxyGetter: value object " + v.svType() + " missing method '" + methodName + "'");
+        if (method === undefined) {
+            return defaultReturnValue;
+        }
         return method.apply(v);
     }
 

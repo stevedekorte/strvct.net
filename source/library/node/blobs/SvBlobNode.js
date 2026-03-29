@@ -77,7 +77,7 @@
             slot.setLabel("Async Get Blob From Local Storage Promise");
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Promise");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
         }
 
         {
@@ -86,7 +86,7 @@
             slot.setLabel("Async Save To Local Storage Promise");
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Promise");
-            slot.setIsSubnodeField(true);
+            slot.setIsSubnodeField(false);
         }
 
     }
