@@ -166,30 +166,19 @@
      */
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
-            // Create thumbnail container
+            // Create thumbnail as a simple DomView using CSS background-image
+            // so wide/tall images are center-cropped to fill the square.
             const tv = DomView.clone().setElementClassName("TileThumbnailView");
-            tv.setDisplay("flex");
-            tv.setAlignItems("center");
-            tv.setJustifyContent("center");
             tv.setFlex("0 0 auto");
-            tv.setMinWidth("60px");
-            tv.setMaxWidth("60px");
-            tv.setPadding("5px");
-            //tv.setBackgroundColor("rgba(0, 0, 0, 0.1)");
-            tv.setBackgroundColor("transparent");
-
-            // Create ImageView subview to hold the actual image
-            const imageView = SvImageView.clone();
-            imageView.setDisplay("block");
-            imageView.setWidth("50px");
-            imageView.setHeight("50px");
-            imageView.setObjectFit("cover");
-            imageView.setBorderRadiusPx(5);
-            tv.addSubview(imageView);
+            tv.setMinAndMaxWidth(50);
+            tv.setMinAndMaxHeight(50);
+            tv.setBorderRadiusPx(5);
+            tv.setOverflow("hidden");
+            tv.setBackgroundSize("cover");
+            tv.setBackgroundPosition("center");
 
             this.setThumbnailView(tv);
             this.bottomContentArea().addSubview(tv);
-            //this.contentView().addSubview(tv);
         }
         return this;
     }
@@ -280,9 +269,18 @@
         const imageUrl = await node.asyncNodeThumbnailUrl();
         if (imageUrl) {
             this.setupThumbnailViewIfAbsent();
-            const imageView = this.thumbnailView().subviews().first();
-            if (imageView) {
-                imageView.setFromDataURL(imageUrl);
+            const tv = this.thumbnailView();
+            tv.setBackgroundImageUrlPath(imageUrl);
+
+            // Check aspect ratio: crop wide images to fill, fit tall images whole
+            const img = new Image();
+            img.src = imageUrl;
+            await img.decode();
+            if (img.naturalWidth >= img.naturalHeight) {
+                tv.setBackgroundSize("cover");
+            } else {
+                tv.setBackgroundSize("contain");
+                tv.setBackgroundRepeat("no-repeat");
             }
 
             this.hideNoteView();
