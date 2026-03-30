@@ -372,7 +372,7 @@ Midjourney
                 { value: 200, label: "200" },
                 { value: 300, label: "300 (Heavy)" },
             ];
-            const slot = this.newSlot("omniRefWeight", 25);
+            const slot = this.newSlot("omniRefWeight", 50);
             slot.setInspectorPath("Settings");
             slot.setSlotType("Number");
             slot.setLabel("Omniref Weight");

@@ -118,11 +118,12 @@
 
         // image object
         {
-            const slot = this.newSlot("imageNode", null); // private - hack to get the image node displayed via the image well field
+            const slot = this.newSlot("imageNode", null); // self-referential slot to display the image well field tile
             slot.setShouldStoreSlot(false);
             slot.setSlotType("SvImageNode");
             slot.setSyncsToView(true);
             slot.setCanEditInspection(false);
+            slot.setIsSubnodeField(true);
             slot.setFieldInspectorClassName("SvImageWellField");
 
             //slot.setIsPromiseWrapped(true);
