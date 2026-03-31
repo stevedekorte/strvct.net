@@ -79,8 +79,12 @@
      */
     syncToNode () {
         super.syncToNode();
-        if (this.imageView() && this.node()) {
-            this.node().setDataUrl(this.imageView().dataURL()); // untested
+        const node = this.node();
+        if (this.imageView() && node) {
+            const dataUrl = this.imageView().dataURL();
+            if (node.setBlobFromDataURL) {
+                node.setBlobFromDataURL(dataUrl);
+            }
         }
         this.tellParentViews("didUpdateImageWellView", this);
         return this;
@@ -269,6 +273,15 @@
      * @category Drag and Drop
      */
     onBrowserDropImagePng (dataChunk) {
+        this.droppedImageData(dataChunk);
+    }
+
+    /**
+     * @description Handles browser drop of WebP images.
+     * @param {Object} dataChunk - The dropped image data.
+     * @category Drag and Drop
+     */
+    onBrowserDropImageWebp (dataChunk) {
         this.droppedImageData(dataChunk);
     }
 

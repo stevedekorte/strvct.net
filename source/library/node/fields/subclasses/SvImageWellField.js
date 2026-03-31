@@ -33,7 +33,7 @@
      * @category Configuration
      */
     static supportedMimeTypes () {
-        return new Set(["image/jpeg", "image/gif", "image/png"]);
+        return new Set(["image/jpeg", "image/gif", "image/png", "image/webp"]);
     }
 
     /**
@@ -140,9 +140,6 @@
 
     setValue (value) {
         super.setValue(value);
-        if (value instanceof SvImage) {
-            debugger;
-        }
     }
 
 }).initThisClass();

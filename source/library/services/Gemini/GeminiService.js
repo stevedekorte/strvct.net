@@ -105,7 +105,14 @@
         {
             const slot = this.newSlot("textToVideo", null);
             slot.setFinalInitProto(GeminiVideoPrompts);
-            slot.setIsSubnode(true);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(true);
+        }
+
+        {
+            const slot = this.newSlot("imageUpscaling", null);
+            slot.setFinalInitProto(GeminiImageUpscalings);
+            slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
         }
 

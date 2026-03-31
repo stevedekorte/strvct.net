@@ -57,6 +57,20 @@
 
     initPrototypeSlots () {
 
+        // image object
+        {
+            const slot = this.newSlot("imageNode", null); // self-referential slot to display the image well field tile
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("SvImageNode");
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true); // dangerous! we need to make sure things stay in sync!
+            slot.setIsSubnodeField(true);
+            slot.setFieldInspectorClassName("SvImageWellField");
+
+            //slot.setIsPromiseWrapped(true);
+            //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
+        }
+
         //override title slot to make it a editable subnode field
         {
             const slot = this.overrideSlot("title", null);
@@ -116,19 +130,7 @@
             slot.setDescription("Public URL of the image");
         }
 
-        // image object
-        {
-            const slot = this.newSlot("imageNode", null); // self-referential slot to display the image well field tile
-            slot.setShouldStoreSlot(false);
-            slot.setSlotType("SvImageNode");
-            slot.setSyncsToView(true);
-            slot.setCanEditInspection(false);
-            slot.setIsSubnodeField(true);
-            slot.setFieldInspectorClassName("SvImageWellField");
 
-            //slot.setIsPromiseWrapped(true);
-            //slot.setPromiseResetsOnChangeOfSlotName("publicUrl");
-        }
     }
 
     imageNode () {
@@ -200,14 +202,13 @@
     }
 
     value () {
-        debugger;
-        return this.dataURL();
-        //return this.blobValue().asyncAsImageObject();
+        return this.publicUrl();
     }
 
-    setValue (/*value*/) {
-        debugger;
-        //this.setDataURL(value);
+    setValue (v) {
+        if (typeof v === "string" && v.startsWith("data:")) {
+            this.setBlobFromDataURL(v);
+        }
         return this;
     }
 
@@ -234,13 +235,10 @@
         return this;
     }
 
-    setDataURL (/*dataURL*/) {
-        debugger;
-        /*
-        const blob = Blob.fromDataUrl(dataURL);
-        this.setValueHash(null);
-        this.setBlobValue(blob);
-        */
+    setDataURL (dataURL) {
+        if (dataURL) {
+            this.setBlobFromDataURL(dataURL);
+        }
         return this;
     }
 

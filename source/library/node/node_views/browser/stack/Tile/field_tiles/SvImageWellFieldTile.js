@@ -75,6 +75,9 @@
         return imageWellView;
     }
 
+    /**
+     * @deprecated Use syncToNode flow instead.
+     */
     setDataUrl (dataUrl) {
         this.setValue(dataUrl);
         return this;
@@ -87,11 +90,6 @@
      */
     imageWellView () {
         return this.valueView();
-    }
-
-    fieldValueIsImage () {
-        const value = this.node().value();
-        return value instanceof Image;
     }
 
     /**
@@ -107,7 +105,7 @@
 
         this.applyStyles(); // normally this would happen in updateSubviews
 
-        // handl other details
+        // handle other details
         this.imageWellView().setIsEditable(field.valueIsEditable());
 
         // Hide the value view if we're still generating (showing dots in key)
@@ -132,10 +130,6 @@
                 value = null;
             } else if (value.asyncDataUrl) {
                 value = await value.asyncDataUrl();
-            } else if (value.asDataURL) {
-                value = value.asDataURL();
-            } else if (value instanceof SvImage) {
-                value = value.dataURL();
             } else {
                 assert(typeof value === "string", "value is not a string");
             }
@@ -155,21 +149,20 @@
     syncToNode () {
         const field = this.node();
 
-        //this.updateKeyView();
-
         field.setKey(this.keyView().value());
 
         if (field.valueIsEditable()) {
-            let data = this.imageWellView().imageDataUrl();
+            const dataUrl = this.imageWellView().imageDataUrl();
+            const value = field.value();
 
-            // handle image values
-            if (this.fieldValueIsImage()) {
-                data = new Image(data); // we could set the src directly, but we want to trigger normal mutation behavior
+            if (value && value.setBlobFromDataURL) {
+                // Value is an SvImageNode or similar blob-backed object
+                value.setBlobFromDataURL(dataUrl);
+            } else {
+                field.setValue(dataUrl);
             }
-            field.setValue(data);
         }
 
-        //super.suncToNode();
         return this;
     }
 

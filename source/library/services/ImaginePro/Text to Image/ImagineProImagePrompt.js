@@ -528,6 +528,22 @@ Midjourney
 
 
         /**
+         * @member {Action} newSeedAction
+         * @description The action to generate a new random seed.
+         * @category Action
+         */
+        {
+            const slot = this.newSlot("newSeedAction", null);
+            slot.setInspectorPath("");
+            slot.setLabel("New Seed");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Action");
+            slot.setIsSubnodeField(true);
+            slot.setActionMethodName("newSeed");
+        }
+
+        /**
      * @member {Action} generateAction
      * @description The action to trigger image generation.
      * @category Action
@@ -636,6 +652,10 @@ Midjourney
 
     pickRandomSeed () {
         this.setSeed(Number.randomUint32());
+    }
+
+    newSeed () {
+        this.pickRandomSeed();
     }
 
     /**

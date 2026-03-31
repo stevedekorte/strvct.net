@@ -1,5 +1,6 @@
 [
     "GeminiRequest.js",
     "Text to Video/_imports.json",
+    "Image Upscaling/_imports.json",
     "GeminiService.js"
 ]
