@@ -41,6 +41,12 @@
                 "outputTokenLimit": 65536
             },
             {
+                "name": "gemini-3.1-flash-image-preview",
+                "title": "Gemini 3.1 Flash Image Preview",
+                "inputTokenLimit": 1048576,
+                "outputTokenLimit": 65536
+            },
+            {
                 "name": "gemini-3.1-flash-lite-preview",
                 "title": "Gemini 3.1 Flash-Lite Preview",
                 "inputTokenLimit": 1048576,
