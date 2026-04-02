@@ -124,6 +124,29 @@
         this.setIsDebugging(false);
     }
 
+    // --- Existence Check ---
+
+    /**
+     * Checks if a file exists in Firebase Storage without triggering a 404 network error.
+     * Uses listAll() on the parent folder, which returns empty results for missing paths
+     * instead of throwing a 404 that appears in the browser console.
+     * @param {String} path - The storage path to check
+     * @returns {Promise<Boolean>} True if the file exists
+     * @category Storage
+     */
+    async asyncFileExists (path) {
+        const ref = this.storageRefForPath(path);
+        const parentRef = ref.parent;
+        const fileName = ref.name;
+
+        try {
+            const result = await parentRef.listAll();
+            return result.items.some(item => item.name === fileName);
+        } catch (error) {
+            return false;
+        }
+    }
+
     // --- Path Construction ---
 
     /**
@@ -199,8 +222,17 @@
      * @category Sync
      */
     async asyncFetchManifest () {
+        const manifestPath = this.manifestPath();
+
+        // Check existence first to avoid 404 console errors for new users
+        const exists = await this.asyncFileExists(manifestPath);
+        if (!exists) {
+            this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
+            return this.emptyManifest();
+        }
+
         try {
-            const ref = this.storageRefForPath(this.manifestPath());
+            const ref = this.storageRefForPath(manifestPath);
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
             if (!response.ok) {
@@ -208,15 +240,6 @@
             }
             return await response.json();
         } catch (error) {
-            // Handle various "not found" error formats from Firebase Storage
-            if (error.code === "storage/object-not-found" ||
-                (error.message && error.message.includes("404")) ||
-                (error.message && error.message.includes("does not exist"))) {
-                // No manifest exists yet - return empty
-                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
-                return this.emptyManifest();
-            }
-
             // Primary manifest corrupt or unreadable - try backup
             console.warn("CLOUDSYNC [SvCloudSyncSource] Primary manifest failed, trying backup:", error.message);
             return await this.asyncFetchManifestBackup();
@@ -229,8 +252,17 @@
      * @category Sync
      */
     async asyncFetchManifestBackup () {
+        const backupPath = this.manifestBackupPath();
+
+        // Check existence first to avoid 404 console errors
+        const exists = await this.asyncFileExists(backupPath);
+        if (!exists) {
+            console.warn("CLOUDSYNC [SvCloudSyncSource] Backup manifest also unavailable");
+            return this.emptyManifest();
+        }
+
         try {
-            const ref = this.storageRefForPath(this.manifestBackupPath());
+            const ref = this.storageRefForPath(backupPath);
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
             if (!response.ok) {
@@ -239,7 +271,7 @@
             this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] Loaded manifest from backup");
             return await response.json();
         } catch (backupError) {
-            console.warn("CLOUDSYNC [SvCloudSyncSource] Backup manifest also unavailable:", backupError.message);
+            console.warn("CLOUDSYNC [SvCloudSyncSource] Backup manifest failed:", backupError.message);
             return this.emptyManifest();
         }
     }
@@ -251,26 +283,25 @@
      * @category Sync
      */
     async asyncFetchItem (itemId) {
+        const path = this.itemPath(itemId);
+
+        // Check existence first to avoid 404 console errors
+        const exists = await this.asyncFileExists(path);
+        if (!exists) {
+            console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found:", itemId);
+            return null;
+        }
+
         try {
-            const ref = this.storageRefForPath(this.itemPath(itemId));
+            const ref = this.storageRefForPath(path);
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
             if (!response.ok) {
-                if (response.status === 404) {
-                    console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found (404):", itemId);
-                    return null;
-                }
                 throw new Error(`Failed to fetch item ${itemId}: ${response.status}`);
             }
             // Using plain JSON for easier debugging (no compression)
             return await response.json();
         } catch (error) {
-            if (error.code === "storage/object-not-found" ||
-                (error.message && error.message.includes("404")) ||
-                (error.message && error.message.includes("does not exist"))) {
-                console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found:", itemId);
-                return null;
-            }
             throw error;
         }
     }
@@ -630,8 +661,17 @@
      * @category Pool Sync
      */
     async asyncDownloadPoolJson (sessionId) {
+        const poolPath = this.sessionPoolPath(sessionId);
+
+        // Check existence first to avoid 404 console errors
+        const exists = await this.asyncFileExists(poolPath);
+        if (!exists) {
+            this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] No pool found for session:", sessionId);
+            return null;
+        }
+
         try {
-            const ref = this.storageRefForPath(this.sessionPoolPath(sessionId));
+            const ref = this.storageRefForPath(poolPath);
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
             if (!response.ok) {
@@ -639,12 +679,6 @@
             }
             return await response.json();
         } catch (error) {
-            if (error.code === "storage/object-not-found" ||
-                (error.message && error.message.includes("404")) ||
-                (error.message && error.message.includes("does not exist"))) {
-                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] No pool found for session:", sessionId);
-                return null;
-            }
             throw error;
         }
     }
