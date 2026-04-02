@@ -8,8 +8,9 @@
       "columns": 3,
       "items": [
         "Naked Objects",
-        "Getting Started",
         "Technical Overview",
+        "Implementation Overview",
+        "Getting Started",
         "Lifecycle",
         "Notifications",
         "Views",
@@ -19,7 +20,8 @@
         "Services",
         "Notes",
         "Reference",
-        "Comparing to React"
+        "Comparing to React",
+        "Research Paper"
       ]
     }
   ]

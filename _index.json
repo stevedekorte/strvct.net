@@ -19,8 +19,9 @@
       "columns": 3,
       "items": [
         "docs/Naked Objects",
-        "docs/Getting Started",
         "docs/Technical Overview",
+        "docs/Implementation Overview",
+        "docs/Getting Started",
         "docs/Lifecycle",
         "docs/Notifications",
         "docs/Views",
@@ -31,6 +32,7 @@
         "docs/Notes",
         "docs/Reference",
         "docs/Comparing to React",
+        "docs/Research Paper",
         {
           "title": "GitHub Repository",
           "subtitle": "Source code, issues, and contributions.",

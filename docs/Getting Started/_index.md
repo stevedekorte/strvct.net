@@ -171,6 +171,6 @@ This creates a persistent node with an editable string property that automatical
 
 ## Next Steps
 
-- [Technical Overview](../Technical%20Overview/index.html) — Implementation details for classes, slots, views, and persistence
+- [Technical Overview](../Technical%20Overview/index.html) — High-level architecture and key concepts
+- [Implementation Overview](../Implementation%20Overview/index.html) — Implementation details for classes, slots, views, and persistence
 - [Lifecycle](../Lifecycle/index.html) — Boot sequence, node initialization, and persistence cycles
-- [Introduction](../Introduction/index.html) — Architecture and design goals

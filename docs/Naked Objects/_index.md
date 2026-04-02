@@ -66,30 +66,6 @@ Strvct is different enough from other UI frameworks that it may be worth startin
 In a naked objects system, as user interface components are no longer bespoke to the application, the major challenge is to find a small set of components which can efficiently express a large range of useful interface patterns.
 -->
 
-## Domain Model
-
-In our system, the domain model is a cyclic graph of domain objects.
-Each domain object has:
-
-- **Properties** (instance variables) and **actions** (methods)
-- a `subnodes` property containing an ordered unique collection of child domain objects
-- a `parentNode` property pointing to its parent domain object
-- property `annotations` [2] which allow for the automatic handling of UI and storage mechanisms
-- `title` and `subtitle` properties
-- a unique ID
-
-The domain model can be seen as an ownership tree of domain objects, which may also contain non-ownership links between nodes.
-
-### Collection Managers
-
-Complex collections of domain objects use Collection Manager domain objects to encapsulate collection-specific logic and data. This pattern is essential for properly expressing domain models within Strvct.
-
-For example, a Server class might have a guestConnections property referencing a GuestConnections instance (a DomainObject descendant) whose subnodes are GuestConnection instances.
-
-### Indirect UI Coupling
-
-The domain model operates independently of UI, allowing for "headless" execution. It can, however, use annotations to provide optional UI hints without direct coupling. This is possible because model objects hold no references to UI objects and can only communicate with them via notifications.
-
 ## User Interface
 
 <i>Note: the following diagrams are designed to illustrate view layouts and not their actual appearance.</i>
@@ -262,56 +238,4 @@ Strvct framework as used in an AI based interactive fiction game.
 
 <a href="../resources/images/screenshot-1.png" target="_blank"><img src="../resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 100%; height: auto;"></a>
 
-### Themes
-
-Themes can be used to customize the appearance of the UI. Domain objects can also request object specific styles to be applied to them.
-
-### Importing and Exporting
-
-Drag and drop of domain objects into the UI and out of it for export is also supported.
-Domain objects can register for which MIME type they can exported to and imported from. For example, if a domain object supports it, it can be dragged out of one browser window onto a user's desktop, or even dropped into another Strvct app that accepts that MIME type. Domain objects have a standard property which lists its valid subnode types, and this can be used to validate drops and auto generate subnodes for imported data.
-
-### Internationalization
-
-Because the framework controls the model-to-view pipeline, it can intercept slot values at the view boundary and translate them transparently — no per-string wrapping required. Developers define model classes; the framework translates the generated UI automatically. Adding a new language is a configuration change, not a translation project. This is only possible because naked objects centralizes the point where model data flows to the UI — in a bespoke-view framework, every component would need its own translation wiring.
-
-### JSON Schema
-
-Domain objects can automatically generate JSON Schema for themselves based on their properties and annotations. These schemas are be used to export metadata about the domain model, which is particularly usefull when interacting with Large Language Models.
-
-### UI Synchronization
-
-Model-view synchronization is managed by views, which either pull or push changes to the domain objects they are presenting. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only properties in views and domain objects which have the "sync" annotation will trigger sync operations. Both domain object change notifications and view push messages are coalesced and sent at the end of the event loop. <!-- These have different ordering priorities to ensure safe execution. -->
-
-#### Sync Loop Avoidance
-
-Bidirectional sync stops automatically as property changes trigger sync operations only when values actually differ, preventing infinite loops. If secondary changes do occur, the notification system detects the loop, halts it, and identifies the source.
-
-#### Reference Loop Avoidance
-
-Observations use weak references, allowing garbage collection of both posters and listeners. The Notification system automatically removes observations when the listener is collected.
-
-## Storage
-
-### Annotations
-
-Domain objects have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. Using this information, the system automatically manages persistence.
-
-### Transactions
-
-Mutations on persistent properties auto-queue domain objects for storage. Queued objects are bundled into a transaction committed at the end of the current event loop.
-
-### Garbage Collection
-
-Automatic garbage collection of the stored object graph occurs on startup, or when requested. Only objects reachable from the root domain object remain after garbage collection.
-
-### Native Collections
-
-Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by persistent properties of domain objects are also automatically persisted in their own records.
-
-### Local Storage
-
-Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. Currently, the only index is on the unique ID.
-
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
-[2]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (OOPSLA 1995). Annotating Objects for Transport to Other Worlds. In Proceedings of the Tenth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '95). Austin, TX, USA. ACM Press."
