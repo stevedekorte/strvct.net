@@ -1,16 +1,16 @@
 "use strict";
 
 /**
- * @module library.services.Gemini.Image_Upscaling
+ * @module library.services.Gemini.Image_Editing
  */
 
 /**
- * @class GeminiImageUpscalings
+ * @class SvGeminiImageEditors
  * @extends SvSummaryNode
- * @classdesc Collection of GeminiImageUpscaling instances.
+ * @classdesc Collection of SvGeminiImageEditor instances.
  */
 
-(class GeminiImageUpscalings extends SvSummaryNode {
+(class SvGeminiImageEditors extends SvSummaryNode {
 
     initPrototypeSlots () {
     }
@@ -18,10 +18,10 @@
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
-        this.setSubnodeClasses([SvGeminiImageScaler]);
+        this.setSubnodeClasses([SvGeminiImageEditor]);
         this.setNodeCanAddSubnode(true);
         this.setNodeCanReorderSubnodes(false);
-        this.setTitle("Image Upscaling");
+        this.setTitle("Image Editing");
         this.setNoteIsSubnodeCount(true);
     }
 

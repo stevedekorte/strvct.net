@@ -1,4 +1,5 @@
 [
+    "ImageEditor/_imports.json",
     "Requests/_imports.json",
     "AiChatModel.js",
     "AiChatModels.js",
