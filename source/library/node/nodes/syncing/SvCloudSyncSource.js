@@ -302,6 +302,11 @@
             // Using plain JSON for easier debugging (no compression)
             return await response.json();
         } catch (error) {
+            // Safety net for race condition: file deleted between existence check and fetch
+            if (error.code === "storage/object-not-found") {
+                console.warn("CLOUDSYNC [SvCloudSyncSource] Item disappeared during fetch:", itemId);
+                return null;
+            }
             throw error;
         }
     }
@@ -679,6 +684,11 @@
             }
             return await response.json();
         } catch (error) {
+            // Safety net for race condition: file deleted between existence check and fetch
+            if (error.code === "storage/object-not-found") {
+                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] Pool disappeared during fetch:", sessionId);
+                return null;
+            }
             throw error;
         }
     }
