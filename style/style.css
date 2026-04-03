@@ -14,6 +14,11 @@ body {
   background: #faf9f6;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   padding: 60px 70px 80px;
+  display: none;
+}
+
+.page.loaded {
+  display: block;
 }
 
 /* Header */

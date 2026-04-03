@@ -169,6 +169,7 @@ export class PageIndex {
         }
 
         page.innerHTML = headerHtml + introHtml + contentHtml;
+        page.classList.add("loaded");
 
         // Post-render hooks
         this.children.forEach(c => c.postRender(page));
