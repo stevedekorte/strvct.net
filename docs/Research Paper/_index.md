@@ -66,7 +66,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Summary Tile
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
 **Property tiles** present individual properties as key-value pairs, with optional notes and validation errors. Specialized property tiles handle common types — strings, numbers, dates, images, booleans — with type-appropriate editing interactions.
@@ -75,7 +75,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Property Tile
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
 Tiles support gestures for direct manipulation: slide-to-delete, long-press reordering, and drag-and-drop between tile stacks or across browser windows. Domain objects register which MIME types they accept, enabling type-safe import and export through standard drag interactions.
@@ -90,7 +90,7 @@ A **tile stack** is a scrollable, ordered sequence of tiles presenting the subno
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Tile Stack
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>
 
 ### 4.3 Master-Detail Views
@@ -101,7 +101,7 @@ A **master-detail view** pairs a tile stack (the master) with a detail area that
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Master-Detail View
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
 Three features make this composition practical:
@@ -112,28 +112,24 @@ Three features make this composition practical:
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Master-Detail Orientations
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; max-width: 500px; width: 90%;">[SVG diagram]</object>
 </div>
 
 **Automatic collapsing.** When the viewport is too narrow to display the full chain of master-detail views, earlier columns automatically collapse. A breadcrumb bar tracks the navigation path and provides back-navigation. The same structure works on a wide desktop monitor and a narrow mobile screen without any per-object responsive design.
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="max-width: 600px; margin: 0 auto;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Expanded
   </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-    <object type="image/svg+xml" data="../diagrams/svg/expanded.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
+  <object type="image/svg+xml" data="../diagrams/svg/expanded.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
 </div>
 <br>
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
+<div style="max-width: 600px; margin: 0 auto;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Collapsed
   </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-    <object type="image/svg+xml" data="../diagrams/svg/collapsed.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
+  <object type="image/svg+xml" data="../diagrams/svg/collapsed.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
 </div>
 <br>
 
@@ -143,16 +139,16 @@ Three features make this composition practical:
 
 Nesting master-detail views with varying orientations produces navigation structures that match many common application patterns: Miller column file browsers, settings hierarchies, email clients, chat applications, inspector panels. These are not special cases implemented individually — they are natural compositions of the same three primitives.
 
-<div style="display: flex; justify-content: center; gap: 2%; width: 100%;">
-  <div style="width: 30%; text-align: center;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2%; width: 100%;">
+  <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Vertical</div>
     <object type="image/svg+xml" data="../diagrams/svg/vertical-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
-  <div style="width: 30%; text-align: center;">
+  <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Horizontal</div>
     <object type="image/svg+xml" data="../diagrams/svg/horizontal-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
-  <div style="width: 30%; text-align: center;">
+  <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Hybrid</div>
     <object type="image/svg+xml" data="../diagrams/svg/hybrid-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
