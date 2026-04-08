@@ -24,6 +24,37 @@
         return false;
     }
 
+    /*
+    onBrowserDropChunk (dataChunk) {
+        if (dataChunk.mimeType() === "application/json") {
+            try {
+                const json = JSON.parse(dataChunk.decodedData());
+                const subnodeClasses = this.subnodeClasses();
+                const jsonType = json._type;
+                let subnodeClass = null;
+                if (subnodeClasses.length === 1) {
+                    subnodeClass = subnodeClasses.first();
+                } else {
+                    subnodeClass = subnodeClasses.detect(cls => cls.svType() === jsonType);
+                }
+                if (subnodeClass) {
+                    const campaign = subnodeClass.clone().deserializeFromJson(json, null, []);
+                    this.addSubnode(campaign);
+                } else {
+                    console.error(this.logPrefix(), "Error importing campaign JSON: unknown type:", jsonType);
+                    SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Failed to import campaign: unknown type: " + jsonType });
+                }
+                this.addSubnode(campaign);
+            } catch (error) {
+                console.error(this.logPrefix(), "Error importing campaign JSON:", error);
+                SvWindowErrorPanel.shared().showPanelWithInfo({ message: "Failed to import campaign: " + error.message });
+            }
+        } else {
+            super.onBrowserDropChunk(dataChunk);
+        }
+    }
+        */
+
     /**
      * @static
      * @description Checks if the node is available as a primitive.

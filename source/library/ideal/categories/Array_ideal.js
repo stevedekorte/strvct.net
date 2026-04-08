@@ -5,9 +5,7 @@
 
 /** * @class
  * @extends Array
- * Extends the native Array with additional utility methods.
- 
- 
+ * @classdesc Extends the native Array with additional utility methods.
  */
 
 /**

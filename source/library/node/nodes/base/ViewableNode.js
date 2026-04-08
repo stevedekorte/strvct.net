@@ -296,7 +296,9 @@
      */
     onBrowserDropChunk (dataChunk) {
         const mimeType = dataChunk.mimeType();
-        const canOpenNodes = SvNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
+        const subnodeClasses = this.subnodeClasses();
+        const canOpenNodes = subnodeClasses.select((aClass) => aClass.canOpenMimeType(mimeType));
+        //const canOpenNodes = SvNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
         const okTypes = this.acceptedSubnodeTypes(); // did we already check when accepting drop?
         const canUseNodes = canOpenNodes; /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
 
@@ -318,6 +320,8 @@
             // TODO: add CreatorNode with those types and
             // hook to instantiate from mime data
             //}
+        } else {
+            console.log(this.svTypeId() + ".onBrowserDropChunk: no matching subnode class found for mime type:", mimeType);
         }
     }
 

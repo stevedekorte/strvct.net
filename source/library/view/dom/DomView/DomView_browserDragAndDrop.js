@@ -85,7 +85,7 @@
      * @param {Event} event - The drag over event.
      * @category Drag Event Handling
      */
-    onBrowserDragOverAccept (event) {
+    onBrowserDragOverAccept (/*event*/) {
         this.dragHighlight();
     }
 
@@ -131,6 +131,8 @@
             event.preventDefault();
             event.stopPropagation();
             return true;
+        } else {
+            console.log(this.svTypeId() + ".onBrowserDrop(event): drop not accepted");
         }
         event.preventDefault();
         return false;
@@ -278,7 +280,7 @@
      * @returns {boolean} False to indicate the event was not handled.
      * @category Drag Event Handling
      */
-    onBrowserDragStart (event) {
+    onBrowserDragStart (/*event*/) {
         return false;
     }
 

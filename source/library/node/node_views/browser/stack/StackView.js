@@ -1053,7 +1053,7 @@
             return false;
         }
 
-        return node.canNavTo();
+        return true; // Always show detail column for selected node (Miller Column behavior)
     }
 
     /**

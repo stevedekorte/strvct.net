@@ -54,6 +54,7 @@
      * @category Event Handling
      */
     acceptsDrop (event) { // to avoid dropping on window
+        console.log("DocumentBody: acceptsDrop: event:", event.type, "returning false - preventing default to avoid dropping on window");
         event.preventDefault();
         return false;
     }

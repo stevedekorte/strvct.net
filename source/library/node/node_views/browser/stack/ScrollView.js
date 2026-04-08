@@ -94,7 +94,40 @@
         this.setMsOverflowStyle("none");
         this.setOverflow("-moz-scrollbars-none");
         this.setBackgroundColor("transparent");
+        this.setIsRegisteredForBrowserDrop(true);
         return this;
+    }
+
+    // --- drop delegation to content view ---
+
+    /**
+     * @description Delegates drop acceptance to the scroll content view.
+     * This ensures drops anywhere in the scroll area (including empty
+     * space below the content) are handled by the content view.
+     * @param {Event} event - The drag/drop event.
+     * @returns {boolean} Whether the content view accepts the drop.
+     * @category Drop Handling
+     */
+    acceptsDrop (event) {
+        const cv = this.scrollContentView();
+        const result = cv && cv.acceptsDrop ? cv.acceptsDrop(event) : false;
+        console.log("ScrollView: acceptsDrop: event:", event.type, "result:", result);
+        return result;
+    }
+
+    /**
+     * @description Delegates the drop event to the scroll content view.
+     * @param {Event} event - The drop event.
+     * @returns {boolean} Whether the drop was handled.
+     * @category Drop Handling
+     */
+    onBrowserDrop (event) {
+        const cv = this.scrollContentView();
+        if (cv) {
+            return cv.onBrowserDrop(event);
+        }
+        event.preventDefault();
+        return false;
     }
 
     /**
@@ -166,7 +199,7 @@
      * @param {Event} event - The scroll event
      * @category Event Handling
      */
-    onScroll (event) {
+    onScroll (/*event*/) {
         // If anchored and user has scrolled to the bottom, disengage anchor mode
         if (this.isAnchored() && this.isAtBottom()) {
             console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
@@ -182,7 +215,7 @@
      * @param {MutationRecord[]} mutations - The mutations that occurred
      * @category Event Handling
      */
-    onContentViewMutations (mutations) {
+    onContentViewMutations (/*mutations*/) {
         if (this.sticksToBottom()) {
             if (this.wasAtBottom()) {
                 this.immediatelyScrollToBottom();

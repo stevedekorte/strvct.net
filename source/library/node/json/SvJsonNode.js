@@ -35,12 +35,14 @@
      * @category Data Parsing
      */
     static openMimeChunk (dataChunk) {
+        debugger;
         const data = dataChunk.decodedData();
         //console.log(this.logPrefix(), "data = '" + data + "'");
         let json = null;
 
         try {
             json = JSON.parse(data);
+            //if (json._type) {
             //console.log(this.logPrefix(), "drop json = " + JSON.stableStringifyWithStdOptions(json, null, 2) + "");
         } catch (error) {
             console.error(this.logPrefix(), error);

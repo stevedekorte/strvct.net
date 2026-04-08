@@ -7,8 +7,8 @@
  * @extends ScrollContentView
  * @classdesc Contains array of Tile (and Tile decendant class) views.
  * Parent is a StackScrollView, whose parent is a NavView.
- 
- 
+
+
  */
 
 /**
@@ -464,6 +464,7 @@
      */
     onBrowserDropChunk (dataChunk) {
         const node = this.node();
+        console.log("[TilesView] onBrowserDropChunk mimeType:", dataChunk.mimeType(), "node:", node ? node.title() : "(none)");
 
         if (node && node.onBrowserDropChunk) {
             node.onBrowserDropChunk(dataChunk);

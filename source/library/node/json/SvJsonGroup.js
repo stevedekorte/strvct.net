@@ -10,6 +10,15 @@
 
 (class SvJsonGroup extends SvJsonIdNode {
 
+    static canOpenMimeType (mimeType) {
+        return mimeType === "application/json";
+    }
+
+    static openMimeChunk (dataChunk) {
+        const json = JSON.parse(dataChunk.decodedData());
+        return this.clone().deserializeFromJson(json, null, []);
+    }
+
     initPrototypeSlots () {
         {
             const slot = this.newSlot("lastJson", null); // used for top level of json patches
