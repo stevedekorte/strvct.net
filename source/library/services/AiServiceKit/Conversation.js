@@ -333,7 +333,7 @@
    * @category Scrolling
    */
     requestAnchorOnMessage (aMessage) {
-        console.log("[AnchorScroll] Conversation.requestAnchorOnMessage() posting requestAnchorScroll, target:", aMessage ? aMessage.svType() : "null");
+        //console.log("[AnchorScroll] Conversation.requestAnchorOnMessage() posting requestAnchorScroll, target:", aMessage ? aMessage.svType() : "null");
         this.postNoteNamed("requestAnchorScroll", aMessage);
     }
 

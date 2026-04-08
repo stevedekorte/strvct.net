@@ -294,7 +294,7 @@
 
         // Anchor scroll on the user's message (this) so it stays visible
         // while the response streams below it
-        console.log("[AnchorScroll] AiMessage.requestResponse() calling requestAnchorOnMessage");
+        //console.log("[AnchorScroll] AiMessage.requestResponse() calling requestAnchorOnMessage");
         this.conversation().requestAnchorOnMessage(this);
 
         try {

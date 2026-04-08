@@ -104,7 +104,7 @@
                 // Watch for anchor scroll requests from this node
                 const obs = this.watchForNoteFrom("requestAnchorScroll", aNode);
                 this.setAnchorScrollObservation(obs);
-                console.log("[AnchorScroll] ScrollContentView.setNode() watching requestAnchorScroll from:", aNode.svType());
+                //console.log("[AnchorScroll] ScrollContentView.setNode() watching requestAnchorScroll from:", aNode.svType());
             }
         }
         return this;
@@ -121,7 +121,7 @@
         const targetNode = aNote.info();
         const scrollView = this.scrollView();
 
-        console.log("[AnchorScroll] requestAnchorScroll received, targetNode:", targetNode ? targetNode.svType() : "null");
+        //console.log("[AnchorScroll] requestAnchorScroll received, targetNode:", targetNode ? targetNode.svType() : "null");
 
         if (!scrollView) {
             return this;
@@ -137,8 +137,8 @@
         this.addTimeout(() => {
             this.syncFromNodeNow(); // force sync so tile exists
             const subview = this.subviewForNode(targetNode);
-            console.log("[AnchorScroll]   after sync, subviewForNode:", subview ? subview.svType() : "null",
-                "subviews:", this.subviews().length, "subnodeMap entries:", this._subnodeToSubview ? Object.keys(this._subnodeToSubview).length : 0);
+            //console.log("[AnchorScroll]   after sync, subviewForNode:", subview ? subview.svType() : "null",
+            //    "subviews:", this.subviews().length, "subnodeMap entries:", this._subnodeToSubview ? Object.keys(this._subnodeToSubview).length : 0);
             if (subview) {
                 scrollView.anchorOnSubview(subview);
             }

@@ -183,7 +183,7 @@
      */
     setupScrollToBottomButton () {
         if (!this.scrollToBottomButton()) {
-            console.log("[AnchorScroll] ScrollView.setupScrollToBottomButton() creating button");
+            //console.log("[AnchorScroll] ScrollView.setupScrollToBottomButton() creating button");
             const button = SvScrollToBottomButton.clone();
             button.setScrollView(this);
             this.setScrollToBottomButton(button);
@@ -202,7 +202,7 @@
     onScroll (/*event*/) {
         // If anchored and user has scrolled to the bottom, disengage anchor mode
         if (this.isAnchored() && this.isAtBottom()) {
-            console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
+            //console.log("[AnchorScroll] onScroll: user reached bottom, disengaging anchor");
             this.setIsAnchored(false);
             this.clearAnchorPadding();
         }
@@ -337,7 +337,7 @@
     scrollToBottomSmooth () {
         // Disengage anchor mode — user is explicitly requesting scroll to bottom
         if (this.isAnchored()) {
-            console.log("[AnchorScroll] scrollToBottomSmooth: disengaging anchor");
+            //console.log("[AnchorScroll] scrollToBottomSmooth: disengaging anchor");
             this.setIsAnchored(false);
             this.clearAnchorPadding();
         }
@@ -358,7 +358,7 @@
      * @category Scrolling
      */
     anchorOnSubview (aSubview) {
-        console.log("[AnchorScroll] ScrollView.anchorOnSubview() subview:", aSubview ? aSubview.svType() : "null");
+        //console.log("[AnchorScroll] ScrollView.anchorOnSubview() subview:", aSubview ? aSubview.svType() : "null");
         const contentView = this.contentView();
 
         if (aSubview) {
@@ -371,8 +371,8 @@
             }
 
             this.element().scrollTop = aSubview.element().offsetTop;
-            console.log("[AnchorScroll]   set scrollTop to:", aSubview.element().offsetTop,
-                "scrollHeight:", this.element().scrollHeight, "clientHeight:", viewportHeight);
+            //console.log("[AnchorScroll]   set scrollTop to:", aSubview.element().offsetTop,
+            //    "scrollHeight:", this.element().scrollHeight, "clientHeight:", viewportHeight);
         } else {
             // No anchor target — scroll to top
             this.element().scrollTop = 0;
@@ -382,7 +382,7 @@
         this.setIsAnchored(true);
         this.setWasAtBottom(false);
         this.updateLastScrollHeight();
-        console.log("[AnchorScroll]   after anchor: isAnchored:", this.isAnchored(), "isAtBottom:", this.isAtBottom(), "wasAtBottom:", this.wasAtBottom());
+        //console.log("[AnchorScroll]   after anchor: isAnchored:", this.isAnchored(), "isAtBottom:", this.isAtBottom(), "wasAtBottom:", this.wasAtBottom());
         this.updateScrollToBottomButton();
         return this;
     }
