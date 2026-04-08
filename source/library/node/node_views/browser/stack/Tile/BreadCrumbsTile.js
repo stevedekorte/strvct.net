@@ -647,7 +647,7 @@
         const sender = aNote.sender();
         const pathNodes = this.pathNodes();
         const isInPath = pathNodes.includes(sender);
-        console.log("[BreadCrumbs] onUpdatedNode from " + sender.svTypeId() + " title='" + sender.title() + "' isInPath=" + isInPath);
+        //console.log("[BreadCrumbs] onUpdatedNode from " + sender.svTypeId() + " title='" + sender.title() + "' isInPath=" + isInPath);
         this.scheduleMethod("setupPathViews");
     }
 
