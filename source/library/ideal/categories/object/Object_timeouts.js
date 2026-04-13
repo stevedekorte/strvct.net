@@ -127,6 +127,73 @@
         return tids.has(name);
     }
 
+    // --- weak timeouts ---
+
+    /**
+     * Gets or creates a Map to store weak timeout callbacks keyed by Symbol.
+     * Callbacks are stored here (not in the setTimeout closure) so that the
+     * closure only holds a WeakRef to the target. This allows the target to
+     * be garbage collected even while timers are pending.
+     * @returns {Map} A Map of Symbol keys to callback functions.
+     * @category Timeout Management
+     */
+    weakTimeoutCallbackMap () {
+        const slotName = "_weakTimeoutCallbackMap";
+        if (Type.isNullOrUndefined(this[slotName])) {
+            Object.defineSlot(this, slotName, new Map());
+        }
+        return this[slotName];
+    }
+
+    /**
+     * Adds a timeout that does not prevent the target from being garbage collected.
+     * The setTimeout closure holds only a WeakRef to this object and a Symbol key
+     * to look up the callback. If the object is collected before the timer fires,
+     * the callback is silently skipped.
+     * @param {Function} aFunc - The function to be executed.
+     * @param {number} msDelay - The delay in milliseconds before the function is executed.
+     * @param {string} [optionalName] - An optional name for the timeout.
+     * @returns {number} The timeout ID.
+     * @category Timeout Management
+     */
+    addWeakTimeout (aFunc, msDelay, optionalName) {
+        const tids = this.timeoutNameToIdMap();
+        if (optionalName && tids.has(optionalName)) {
+            this.clearTimeoutNamed(optionalName);
+        }
+
+        // Store callback on the object, keyed by Symbol
+        const callbackKey = Symbol();
+        this.weakTimeoutCallbackMap().set(callbackKey, aFunc);
+
+        const weakThis = new WeakRef(this);
+        const tidInfo = new Array(2);
+        const tid = setTimeout(() => {
+            const target = weakThis.deref();
+            if (!target) {
+                return; // target was collected, skip
+            }
+            target.removeTimeoutNamed(tidInfo[0]);
+            const callbacks = target.weakTimeoutCallbackMap();
+            const fn = callbacks.get(callbackKey);
+            callbacks.delete(callbackKey);
+            if (fn) {
+                const event = new Event("Custom_addTimeoutEvent", { bubbles: false, cancelable: true });
+                EventManager.shared().safeWrapEvent(fn, event);
+            }
+        }, msDelay);
+        tidInfo[0] = optionalName ? optionalName : tid;
+        tidInfo[1] = tid;
+        if (!tids.has(tidInfo[0])) {
+            tids.set(tidInfo[0], tid);
+        } else {
+            console.warn("addWeakTimeout('" + tidInfo[0] + "') timeout with that name already exists");
+        }
+        return tid;
+    }
+
+    // --- cancel ---
+
     /**
      * Cancels all timeouts associated with this object.
      * @returns {Object_timeouts} This object.
@@ -135,6 +202,9 @@
     cancelAllTimeouts () {
         const tids = this.timeoutNameToIdMap();
         tids.forEachKV((name, tid) => this.clearTimeout(tid));
+        if (this._weakTimeoutCallbackMap) {
+            this._weakTimeoutCallbackMap.clear();
+        }
         return this;
     }
 

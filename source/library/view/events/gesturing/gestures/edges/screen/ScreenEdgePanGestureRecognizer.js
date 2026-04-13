@@ -8,6 +8,13 @@
  * @classdesc Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge.
  * Don't use this class directly - instead use its subclass for the edge you're interested in.
  *
+ * **GC note:** Unlike most gesture recognizers (Pan, Slide, etc.) which only attach `window`
+ * listeners during active tracking (press-to-finish), this recognizer registers permanent
+ * `window` listeners via `startDocListeners()` in `start()`. If a view with this gesture is
+ * removed from the hierarchy without calling `stop()`, those listeners will root the view
+ * and prevent garbage collection. Ensure `stop()` is called or the gesture is removed via
+ * `removeGestureRecognizer()` before discarding the view.
+ *
  * Delegate messages:
  *
  *     onScreenEdgePanBegin

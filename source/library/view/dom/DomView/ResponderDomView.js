@@ -70,7 +70,7 @@
             this.setIsRegisteredForFocus(true);
         } else {
             // only need timeout when create dom element in same event?
-            this.addTimeout(() => {
+            this.addWeakTimeout(() => {
                 this.setIsRegisteredForFocus(true);
             }, 0);
         }
@@ -108,7 +108,7 @@
      * @category Focus Management
      */
     focusAfterDelay (seconds) {
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             const e = this.element();
             if (e) {
                 // in case element has retired during the timeout
@@ -390,7 +390,7 @@
         this.setPointerEvents("none");
         this.logDebug(" disabling pointer events");
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.logDebug(" enabling pointer events");
             this.setPointerEvents("inherit");
         }, ms);

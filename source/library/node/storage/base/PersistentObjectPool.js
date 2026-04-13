@@ -106,7 +106,7 @@
      * @category Testing
      */
     static async promiseSelfTest () {
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             return PersistentObjectPool.promiseSelfTest();
         }, 1000);
     }

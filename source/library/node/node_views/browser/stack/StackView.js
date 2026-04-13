@@ -642,7 +642,7 @@
                     // When we create a new view, ensure its NavView syncs orientation
                     if (ov && ov.navView) {
                         // Schedule orientation sync after the view is added to DOM
-                        this.addTimeout(() => {
+                        this.addWeakTimeout(() => {
                             if (ov.navView()) {
                                 ov.navView().syncOrientation();
                             }

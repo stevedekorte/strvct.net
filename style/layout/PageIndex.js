@@ -17,12 +17,12 @@ export class PageIndex {
 
         // Fetch _index.json, fall back to _index.md
         try {
-            const resp = await fetch("./_index.json");
+            const resp = await ContentBase.asyncFetch("./_index.json");
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             this.json = await resp.json();
         } catch (e) {
             try {
-                const mdResp = await fetch("./_index.md");
+                const mdResp = await ContentBase.asyncFetch("./_index.md");
                 if (!mdResp.ok) throw new Error(`HTTP ${mdResp.status}`);
                 const mdText = await mdResp.text();
                 this.json = parseMarkdown(mdText);
@@ -57,7 +57,7 @@ export class PageIndex {
             if (this.backUrl) {
                 const backDir = this.backUrl.replace(/\/[^/]*$/, "/");
                 try {
-                    const resp = await fetch(`${backDir}_index.json`);
+                    const resp = await ContentBase.asyncFetch(`${backDir}_index.json`);
                     if (resp.ok) {
                         const json = await resp.json();
                         this.backTitle = json.title || null;
@@ -65,7 +65,7 @@ export class PageIndex {
                 } catch (e) { /* fall back */ }
                 if (!this.backTitle) {
                     try {
-                        const resp = await fetch(`${backDir}_index.md`);
+                        const resp = await ContentBase.asyncFetch(`${backDir}_index.md`);
                         if (resp.ok) {
                             const json = parseMarkdown(await resp.text());
                             this.backTitle = json.title || null;
@@ -75,7 +75,7 @@ export class PageIndex {
             }
 
             try {
-                const parentResp = await fetch("../_index.json");
+                const parentResp = await ContentBase.asyncFetch("../_index.json");
                 if (parentResp.ok) {
                     parentJson = await parentResp.json();
                     this.parentTitle = parentJson.title || null;
@@ -84,7 +84,7 @@ export class PageIndex {
 
             if (!this.parentTitle) {
                 try {
-                    const parentMd = await fetch("../_index.md");
+                    const parentMd = await ContentBase.asyncFetch("../_index.md");
                     if (parentMd.ok) {
                         const mdText = await parentMd.text();
                         parentJson = parseMarkdown(mdText);
@@ -103,7 +103,7 @@ export class PageIndex {
                     while (depth <= maxDepth) {
                         const prefix = "../".repeat(depth);
                         try {
-                            const resp = await fetch(`${prefix}_index.json`);
+                            const resp = await ContentBase.asyncFetch(`${prefix}_index.json`);
                             if (resp.ok) {
                                 const json = await resp.json();
                                 if (json.topTitle) { this.topTitle = json.topTitle; break; }

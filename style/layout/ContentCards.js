@@ -11,6 +11,13 @@ export class ContentCards extends ContentBase {
         return path.split("/").map(s => encodeURIComponent(s)).join("/");
     }
 
+    static cardSubtitle (meta) {
+        if (meta.cardSubtitle) return meta.cardSubtitle;
+        const s = meta.subtitle || "";
+        const br = s.indexOf("<br");
+        return br !== -1 ? s.slice(0, br) : s;
+    }
+
     async resolve () {
         const items = this.json.items || [];
         this.resolvedItems = [];
@@ -23,17 +30,17 @@ export class ContentCards extends ContentBase {
                 let title = displayName;
                 let subtitle = "";
                 try {
-                    const resp = await fetch(`${encoded}/_index.json`);
+                    const resp = await ContentBase.asyncFetch(`${encoded}/_index.json`);
                     if (resp.ok) {
                         const meta = await resp.json();
                         title = meta.title || displayName;
-                        subtitle = meta.cardSubtitle || meta.subtitle || "";
+                        subtitle = ContentCards.cardSubtitle(meta);
                     } else {
-                        const mdResp = await fetch(`${encoded}/_index.md`);
+                        const mdResp = await ContentBase.asyncFetch(`${encoded}/_index.md`);
                         if (mdResp.ok) {
                             const meta = parseMarkdown(await mdResp.text());
                             title = meta.title || displayName;
-                            subtitle = meta.cardSubtitle || meta.subtitle || "";
+                            subtitle = ContentCards.cardSubtitle(meta);
                         }
                     }
                 } catch (e) {

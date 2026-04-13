@@ -281,7 +281,7 @@
             /*
             if (e) {
                 // use timer as focus listener can't be set up yet - why not?
-                this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
+                this.addWeakTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
             }
             */
         }

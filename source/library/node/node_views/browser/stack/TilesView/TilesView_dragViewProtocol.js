@@ -416,7 +416,7 @@
         const ph = this.tilePlaceHolder();
         if (ph) {
             ph.setMinAndMaxHeight(0);
-            this.addTimeout(() => {
+            this.addWeakTimeout(() => {
                 this.removeTilePlaceHolder();
                 if (resolve) {
                     resolve();

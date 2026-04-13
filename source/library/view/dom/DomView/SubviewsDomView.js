@@ -449,11 +449,11 @@
 
         this.setTransition("all " + delayInSeconds + "s");
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setOpacity(0);
         }, 0);
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.parentView().removeSubview(this);
         }, delayInSeconds * 1000);
 
@@ -732,7 +732,7 @@
 
         // timeout used to make sure div is placed and laid out first
         // TODO: consider ordering issue
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             let sh = this.parentView().clientHeight()
             let h = this.clientHeight()
             this.setTopPx(sh/2 - h/2)
@@ -752,7 +752,7 @@
 
         // timeout used to make sure div is placed and laid out first
         // TODO: consider ordering issue
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             let sw = this.parentView().clientWidth()
             let w = this.clientWidth()
             this.setTopPx(sw/2 - w/2)

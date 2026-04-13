@@ -86,6 +86,14 @@ Individual gestures can also be removed at any time with `removeGestureRecognize
 
 This means application code rarely needs to manage gesture cleanup manually. As long as views are properly removed from the hierarchy, all gesture state is released automatically.
 
+## Garbage Collection
+
+Modern JavaScript engines use mark-and-sweep garbage collection, which correctly handles circular references. When a view is removed from its parent and no other rooted object references it, the entire cluster — view, gesture recognizers, and element-level event listeners — becomes unreachable and is collected automatically without explicit cleanup.
+
+The main GC concern is listeners registered on **rooted targets** like `window` or `document`, since those targets' internal listener registries hold strong references back to the callback (and through it, the gesture and view). Most gesture recognizers only attach `window` listeners temporarily during active tracking (between the down/press and up/finish events), so they clean up naturally when the gesture completes. `ScreenEdgePanGestureRecognizer` is the exception — it registers permanent `window` listeners and must be explicitly stopped or removed.
+
+Timers (`setTimeout`) also root their target until they fire. Gesture recognizers use `addWeakTimeout()` for their internal timers (deactivation delays, long-press detection, etc.), which holds only a `WeakRef` to the target — allowing the object to be collected if it becomes unreachable, with the timer silently becoming a no-op.
+
 ## Multi-Touch Emulation
 
 On desktop, holding Shift while clicking simulates a second finger. This allows testing pinch, rotation, and other multi-touch gestures without a touch device. The emulation is handled transparently by the gesture recognizer base class.

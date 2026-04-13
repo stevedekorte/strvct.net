@@ -42,6 +42,10 @@ export function renderList (json, tag, depth) {
 export class ContentBase {
     static typeMap = {};
 
+    static asyncFetch (url) {
+        return fetch(url, { cache: "no-store" });
+    }
+
     constructor () {
         this.json = null;
         this.children = [];

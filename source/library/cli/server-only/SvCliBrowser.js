@@ -1069,7 +1069,7 @@ class SvCliBrowser extends Object {
         this._messageBox.setFront();
         this._screen.render();
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             if (this._messageBox) {
                 this._screen.remove(this._messageBox);
                 this._messageBox = null;

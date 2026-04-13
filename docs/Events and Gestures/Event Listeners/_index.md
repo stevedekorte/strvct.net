@@ -4,6 +4,8 @@ Thin wrappers around native DOM events that forward to handler methods on views.
 
 ## Architecture
 
+Calling `addEventListener` directly ties views to specific DOM event names and requires manual bookkeeping — tracking which listeners are registered, removing them at the right time, and ensuring handlers exist before registering. Event listeners centralize this: they register lazily on first use, group related events (e.g., all mouse events) into a single toggle, dispatch to named methods on the view, and clean up automatically when the view is retired. This keeps views focused on handling events rather than managing listener lifecycle.
+
 Event listening is built on two base classes:
 
 - **`EventListener`** — Wraps a single DOM event. Registers with a target element, and when the event fires, calls a named method on its delegate (typically the view).

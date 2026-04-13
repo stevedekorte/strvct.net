@@ -354,7 +354,7 @@
 
     postAppDidInit () {
         this.postNoteNamed("appDidInit");
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.scheduleMethodForNextCycle("afterAppDidInit");
         }, 0);
     }

@@ -308,7 +308,7 @@
         this.setActiveCoachMark(null);
 
         // Show next coach mark after a short delay
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.showNextCoachMark();
         }, 500);
 

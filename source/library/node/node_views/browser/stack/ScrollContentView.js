@@ -98,7 +98,7 @@
             if (aNode) {
                 if (aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
                     this.setJustifyContent("flex-end");
-                    this.addTimeout(() => { this.scrollToBottom(); }, 0);
+                    this.addWeakTimeout(() => { this.scrollToBottom(); }, 0);
                 }
 
                 // Watch for anchor scroll requests from this node
@@ -134,7 +134,7 @@
 
         // Defer to allow view sync to complete — the tile may not exist yet
         // since notifications fire before the view hierarchy updates
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.syncFromNodeNow(); // force sync so tile exists
             const subview = this.subviewForNode(targetNode);
             //console.log("[AnchorScroll]   after sync, subviewForNode:", subview ? subview.svType() : "null",

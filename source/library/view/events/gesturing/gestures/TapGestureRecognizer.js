@@ -128,7 +128,7 @@
             this.stopTimer();
         }
 
-        const tid = this.addTimeout(() => this.cancel(), this.maxHoldPeriod());
+        const tid = this.addWeakTimeout(() => this.cancel(), this.maxHoldPeriod());
         this.setTimeoutId(tid);
         return this;
     }

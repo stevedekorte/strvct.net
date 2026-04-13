@@ -74,7 +74,7 @@
             this.stopTimer();
         }
 
-        const tid = this.addTimeout(() => { this.onLongPress(); }, this.timePeriod());
+        const tid = this.addWeakTimeout(() => { this.onLongPress(); }, this.timePeriod());
         this.setTimeoutId(tid);
         this.startDocListeners(); // didFinish will stop listening
         return this;

@@ -207,7 +207,7 @@
                 this.removeTile(newTile);
             } else {
                 //newTile.setTransition("all 0.3s, height 0s")
-                this.addTimeout(() => {
+                this.addWeakTimeout(() => {
                     newTile.contentView().setTopPx(0);
                     newTile.setMinAndMaxHeight(minHeight);
                 }, 0);

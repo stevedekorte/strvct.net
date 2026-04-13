@@ -137,9 +137,9 @@
         this.contentView().setTransition("right " + dt + "s");
         this.setTransition(this.transitionStyle());
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setTouchRight(this.clientWidth());
-            this.addTimeout(() => {
+            this.addWeakTimeout(() => {
                 this.cleanupSlide();
                 this.delete();
             }, dt * 1000);
@@ -155,12 +155,12 @@
 
         this.contentView().setTransition("left 0.2s ease, right 0.2s ease");
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setTouchRight(0);
             this.contentView().setTransition(this.transitionStyle());
         });
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.didCompleteSlide();
         }, 300);
     }

@@ -259,7 +259,7 @@
 
         this.collapse();
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.closeButtonView().hideDisplay();
             const parentView = this.parentView();
             this.removeFromParentView();

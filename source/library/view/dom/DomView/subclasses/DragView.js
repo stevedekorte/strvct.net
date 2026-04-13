@@ -361,7 +361,7 @@
         this.logDebug("onPanBegin");
         this.setDragStartPos(this.item().positionInDocument());
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.addPanStyle();
         });
 
@@ -386,7 +386,7 @@
     onPanMove (aGesture) {
         this.updatePosition();
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.hoverOverViews();
         });
     }

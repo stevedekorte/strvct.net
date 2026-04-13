@@ -27,7 +27,7 @@
  * happen at the end of an event loop, so a shared SvSyncScheduler instance is used to
  * track which sync actions should be sent at the end of the event loop and only sends each one once.
  *
- * SvSyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
+ * SvSyncScheduler should be used to replace most cases where this.addWeakTimeout() would otherwise be used.
  *
  * Example use:
  *
@@ -371,7 +371,7 @@
     setTimeoutIfNeeded () {
 	    if (!this.hasTimeout() && !this.isPaused() && this.actions().size > 0) {
             this.setHasTimeout(true);
-	        this.addTimeout(() => {
+	        this.addWeakTimeout(() => {
 	            this.setHasTimeout(false);
 	            this.processSets();
 	        }, 1);

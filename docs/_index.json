@@ -1,7 +1,7 @@
 {
   "title": "Documentation",
   "topTitle": "STRVCT",
-  "subtitle": "Naked objects framework documentation, guides, and reference.",
+  "subtitle": "Guides, architecture, and API reference.",
   "content": [
     {
       "type": "ContentCards",
@@ -16,13 +16,12 @@
         "Views",
         "Persistence",
         "Events and Gestures",
-        "Drag and Drop",
         "Internationalization",
         "Services",
         "Notes",
         "Reference",
         "Comparing to React",
-        "Research Paper"
+        "Inspirations"
       ]
     }
   ]

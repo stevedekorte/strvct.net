@@ -252,9 +252,9 @@ Module hierarchy and file organization.
     - [SyncAction](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2FSyncAction.js)
     - [SyncScheduler](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2FSyncScheduler.js)
     - notifications
-      - [BMNotification](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FBMNotification.js)
-      - [BMNotificationCenter](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FBMNotificationCenter.js)
-      - [BMObservation](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FBMObservation.js)
+      - [SvNotification](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FSvNotification.js)
+      - [SvNotificationCenter](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FSvNotificationCenter.js)
+      - [SvObservation](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fnotification%2Fnotifications%2FSvObservation.js)
   - resources
     - [BMResource](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FBMResource.js)
     - [BMResources](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fresources%2FBMResources.js)

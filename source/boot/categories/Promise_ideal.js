@@ -71,7 +71,7 @@
     static resolveAfterTimerMs (timeoutMs = 1000) {
         // just a timer promise that resolves after the timeout
         const promise = Promise.clone();
-        promise.addTimeout(() => {
+        promise.addWeakTimeout(() => {
             promise.callResolveFunc();
         }, timeoutMs);
         return promise;

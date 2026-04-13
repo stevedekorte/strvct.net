@@ -1,241 +1,344 @@
 # Naked Objects
 
-A naked objects framework for JavaScript with automatic UI generation and persistence.
+Closing the Usability Gap in Naked Objects
 
 ## Abstract
 
-Naked objects [1] aimed to simplify and accelerate software development by exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage. Despite these advantages, usability limitations have restricted its adoption to internal tools and prototypes.
+The naked objects pattern proposed that user interfaces could be generated directly from domain models, eliminating the cost of bespoke UI development while guaranteeing consistency between interface and business logic. Twenty-five years later, this promise remains largely unfulfilled — not because automatic generation failed, but because the generated interfaces lacked the spatial organization and navigational fluency that users expect. This paper argues that the design space for presenting structured information is far narrower than the software industry assumes, and that a small set of composable UI primitives — tiles, tile stacks, and recursively nested master-detail views — can cover it. We present Strvct, an open-source JavaScript framework implementing this approach, and show that centralizing the model-to-view pipeline produces emergent capabilities — transparent internationalization, annotation-driven persistence with cloud sync, and automatic schema generation — that would require significant per-component effort in conventional frameworks.
 
-While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
+## 1. Introduction
 
-## Why Naked Objects?
+Most application frameworks treat the user interface as a separate engineering problem from the domain model. Each screen must be designed, implemented, and maintained independently. Every new model class or schema change propagates into view code, form layouts, navigation logic, and responsive design. This duplication is not incidental — it is structural, and its cost grows linearly with the number of domain objects.
 
-Most UI frameworks ask developers to hand-craft interfaces for every domain object — custom forms, layouts, and views. Naked objects takes a fundamentally different approach: the domain model *is* the interface. Define your objects, and the UI follows.
+Naked objects [1] proposed a radical alternative: expose domain objects directly to users and generate the interface automatically. Developers write only the domain model; the UI follows from it. This also guarantees structural consistency — the interface always reflects the actual state and shape of the model, because there is no separate representation to fall out of sync.
 
-This isn't just a convenience. It addresses real problems that compound as applications grow.
+The pattern was described by Pawson and Matthews in 2000 and has been implemented in several frameworks, most notably Apache Isis (now Apache Causeway) for Java [3]. These implementations demonstrated the core thesis: automatic UI generation from domain models is feasible and produces functionally complete interfaces. Yet adoption has remained confined to internal tools, administrative interfaces, and prototypes.
 
-### Development Cost
+The reason is not technical but perceptual. The generated interfaces — generic forms for objects, tables for collections, menus for navigation — are correct and complete but *feel wrong*. They lack the spatial hierarchy, navigational depth, and responsive behavior that users have come to expect. They resemble database administration tools more than the applications people use daily. This usability gap, rather than any limitation of the underlying pattern, has prevented naked objects from reaching its potential.
 
-Every bespoke screen requires design, implementation, and maintenance. Each new model class or schema change means more UI work. In a naked objects system, every new object, property, or relationship automatically produces UI without additional interface code. The development cost of growing the application is concentrated where it belongs — in the domain model.
+This paper describes an approach to closing that gap. We argue that the design space for presenting structured information is narrower than it appears, identify a small set of composable primitives that covers it, and present a framework — Strvct — that demonstrates the approach in a production application.
 
-### Consistency
+## 2. The Usability Gap
 
-No team can maintain coherent design across hundreds of bespoke screens. Each developer, each feature, each deadline introduces slightly different patterns. Over time, clutter and confusion accumulate — not because anyone made a bad decision, but because there was no structural force keeping things consistent. Users must learn new navigation patterns for each screen rather than relying on a single, predictable structure. Inconsistency isn't just an aesthetic problem — it's a usability problem.
+Prior naked objects implementations typically present each object as a form with fields for its properties, and collections as tables or lists. Navigation is handled through menus, links, or search. This strategy is functionally sufficient but creates four specific problems:
 
-### Adaptability
+**Lack of spatial hierarchy.** Users expect spatial relationships to convey meaning: hierarchy expressed top-to-bottom, navigation depth expressed left-to-right, containment for ownership. Generic forms and tables flatten these relationships, requiring users to navigate through menus rather than perceiving structure visually.
 
-Bespoke UIs are typically designed for a specific viewport size and a specific depth of navigation. When the two combine — a narrow screen and a deep object hierarchy — hand-crafted layouts break down or require yet more custom work: responsive breakpoints, separate mobile views, dedicated navigation stacks. Each is another bespoke solution to maintain. A naked objects system handles this structurally — the same navigation pattern collapses and expands uniformly regardless of depth or viewport size, because the layout is driven by the model's structure rather than case-by-case design.
+**No viewport adaptation.** Modern applications invest heavily in responsive design — collapsing navigation, stacking layouts, hiding secondary content. Generic form-based interfaces either ignore viewport constraints entirely or implement ad-hoc responsive behavior that doesn't generalize across the domain model.
 
-### A Narrow Design Space
+**Inconsistent navigation depth.** As users navigate deeper into an object hierarchy, form-based interfaces either replace the current view entirely (losing context) or open new windows (fragmenting context). Neither gives users a sense of where they are within the larger structure.
 
-When you survey informational UIs across websites, applications, and social networks, the same spatial conventions appear repeatedly: hierarchy expressed top-to-bottom, navigation depth expressed left-to-right, containment for ownership, and lists for collections. These aren't independent design choices — they're conventions inherited from how we organize written information, following the same top-to-bottom, left-to-right reading order found in Western text and books.
+**No visual continuity.** Without a consistent spatial model, users cannot build a mental map of the application. Each navigation action feels like arriving at a new, disconnected screen rather than moving within a coherent space.
 
-Bespoke UI developers are already converging on these patterns — unconsciously and inconsistently. The design space for presenting structured information is much narrower than it appears, and most of the variation in hand-crafted interfaces is just reinventing these same patterns with slight differences that hurt rather than help the user. Naked objects makes this convergence explicit: rather than each screen rediscovering the same organizational principles, the framework applies them uniformly.
+These problems are not inherent to the naked objects pattern. They are artifacts of a UI strategy — generic forms and tables — that prior implementations chose because it was simple and sufficient for their target audience. The question is whether a different strategy can retain the benefits of automatic generation while producing interfaces that meet the expectations set by modern hand-crafted applications.
 
-### The Crossover Point
+## 3. A Narrow Design Space
 
-Hand-crafted UIs may seem more polished early on. But at sufficient complexity, a consistent structure generated from a coherent domain model produces a *better* interface than a patchwork of bespoke screens, because the user can rely on uniform navigation, layout, and interaction patterns throughout the application. The general approach doesn't just cost less — it eventually produces a better result.
+Before proposing a specific solution, it is worth examining what those expectations actually entail.
 
-### Strvct's Approach
+When you survey informational interfaces across applications, websites, and operating systems, the same spatial conventions appear repeatedly: hierarchy expressed top-to-bottom, navigation depth expressed left-to-right, containment for ownership, and lists for collections. Consider three examples:
 
-In Strvct, object annotations describe the model, views are generated from the node hierarchy, and the inspector and tile system makes everything navigable and reactive without writing view code for each class. The challenge — and ambition — is making this general method produce interfaces good enough, through thoughtful use of common organizational patterns, that hand-crafted specialization becomes the exception rather than the rule.
+- **macOS Finder** (Miller Columns): a horizontal chain of list panels, each showing the contents of the item selected in the panel to its left. Selecting a folder reveals its contents in the next column. The spatial metaphor is depth as horizontal position.
 
-### A Familiar Pattern
+- **iOS Settings**: a vertical list of categories. Selecting one pushes a new list onto a navigation stack, with a back button to return. The spatial metaphor is depth as screen replacement with a linear path.
 
-This dynamic — general methods outperforming hand-crafted solutions as scale increases — is not unique to UI. In his essay [The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html), Rich Sutton observed the same pattern across 70 years of AI research: general methods that leverage structure in the problem itself consistently outperform approaches that encode human expertise, and the gap widens with scale. In AI, the scaling dimension is computation. In naked objects, it is domain model complexity. The principle is the same.
+- **Slack**: a vertical list of channels on the left, message content on the right, thread detail in a panel further right. The spatial metaphor is the same master-detail pattern at two levels of nesting.
 
-<!--
-## Introduction
+These are three different applications built by three different teams for three different purposes, yet they use the same underlying spatial logic. This is not coincidence. These conventions are inherited from how we organize written information — the same top-to-bottom, left-to-right reading order found in Western text. They are so deeply embedded in interface culture that deviating from them creates confusion rather than innovation.
 
-### A Few Notes on Implementation
+Bespoke UI developers are already converging on these patterns — unconsciously and inconsistently. The variation between hand-crafted interfaces is largely superficial: different visual styling, different spacing, different component libraries, but the same underlying spatial logic. Most of what distinguishes one application's navigation from another's, at the structural level, is accidental rather than essential.
 
-Strvct is different enough from other UI frameworks that it may be worth starting with a description of how it differs in order to over confusion when the reader makes a mental model of how the system works.
--->
+This observation has a practical consequence: if the design space is narrow, a framework that applies these conventions uniformly may produce interfaces that are not merely acceptable but *preferable* to a patchwork of bespoke screens, because the user can rely on consistent navigation throughout the application. The framework's limitation — it cannot produce arbitrary layouts — is actually an advantage, because arbitrary layouts are precisely what creates inconsistency.
 
-<!--
-<div class="no-markdown">
+There are, of course, interfaces that fall outside this narrow space: data visualizations, design canvases, game renderers, media editors. These require domain-specific rendering that cannot be derived from model structure alone. But these are a minority of the screens in most applications. The majority — settings, lists, forms, inspectors, hierarchical browsers — are well within the space that a small set of composable primitives can cover.
 
-<div class="epigraph">
-<i>"Everything has its pattern," Freddy put in.<br>
-"If you find it, the great can be contained within the small."</i><br>
-- Clive Barker, <i>Weaveworld</i>
+## 4. Approach: Composable UI Primitives
 
-</div>
-</div>
+Our approach is to define a small set of composable UI primitives that embody the spatial conventions identified above. Each primitive handles one aspect of presentation; composed together, they cover the navigational and layout patterns found in typical informational applications.
 
-In a naked objects system, as user interface components are no longer bespoke to the application, the major challenge is to find a small set of components which can efficiently express a large range of useful interface patterns.
--->
+### 4.1 Tiles
 
-## User Interface
+The fundamental unit of presentation is the **tile**: a view that presents a single domain object or a single property of a domain object.
 
-<i>Note: the following diagrams are designed to illustrate view layouts and not their actual appearance.</i>
-
-### Tiles
-
-The core navigational elements, referred to as **Tiles** are used to present a single domain object or a single domain property. Tile subclasses can be used to customize the appearance of and interaction with these. Domain objects annotations can be used to request specific tiles to be used to represent them or their properties.
-
-#### Domain Object Tiles
-
-**Summary Tiles** are the default tiles used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars. More specialized tiles can be also used to represent domain objects.
+**Summary tiles** present domain objects with a title, subtitle, and optional sidebars. They serve as the primary navigation element: selecting a summary tile reveals the object's contents in an adjacent detail area.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Summary Tile
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
-<!--
-For example, for a domain model representing a Markdown document, and composed of domain objects such as **Heading**, **Paragraph** objects, with corresponding **HeadingTile** and **ParagraphTile** objects to represent each element in the document.
--->
-
-#### Property Tiles
-
-**Property Tiles** present a property of a domain object and typically display a name and value, and optionally a note, and/or error (i.e. validation error).
+**Property tiles** present individual properties as key-value pairs, with optional notes and validation errors. Specialized property tiles handle common types — strings, numbers, dates, images, booleans — with type-appropriate editing interactions.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Property Tile
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
-Strvct includes a number of specialized property tiles for common property types, such as Strings, Numbers, Dates, Times, and Images.
+Tiles support gestures for direct manipulation: slide-to-delete, long-press reordering, and drag-and-drop between tile stacks or across browser windows. Domain objects register which MIME types they accept, enabling type-safe import and export through standard drag interactions.
 
-#### Dynamic Inspectors
+Tiles can be subclassed for domain-specific presentation, but the default tiles are designed to be sufficient for the majority of cases. The goal is to make custom tiles the exception, not the rule.
 
-Properties with complex structures, such as Dates, Times, valid value pickers, may dynamically create a transient domain model objects when accessed which can be navigated and interacted with as if they were part of the model.
+### 4.2 Tile Stacks
 
-<!--
-### Summary Customization
-
-A notable feature of the Tiles is their ability to generate summaries that reflect deeper levels of the hierarchy. This is controlled by annotations on the Tiles' slots, which dictate whether or not sub-item summaries should be included. This provides a powerful way to condense information, giving users a quick overview of nested structures without requiring deep navigation.
--->
-
-### Tile Stacks
-
-A **Tile Stack** is a scrollable stacks of **Tiles** which are used to present the subnodes of a domain object. They support flexible orientation, and gestures for adding, removing, and reordering tiles. Optional support for grid or outline layouts could be added, but are not currently supported.
+A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. Tile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Tile Stack
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>
 
-### Master-Detail Views
+### 4.3 Master-Detail Views
 
-A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view. The master section supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The divider between the master and detail sections can also be dragged to resize the sections if the domain object allows it.
+A **master-detail view** pairs a tile stack (the master) with a detail area that presents the currently selected item. The detail area itself may contain another master-detail view, enabling arbitrarily deep navigation through recursive composition.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Master-Detail View
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
-#### Flexible Orientation
+Three features make this composition practical:
 
-Detail Views can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
+**Flexible orientation.** The detail area can be positioned to the right of or below the master, as specified by the domain object or overridden by the interface. This allows the same primitive to express both horizontal navigation (like a file manager) and vertical drill-down (like a settings panel).
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Master-Detail Orientations
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; height: auto; max-height: 100%; width: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="../diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; max-width: 500px; width: 90%;">[SVG diagram]</object>
 </div>
 
-#### Nesting
+**Automatic collapsing.** When the viewport is too narrow to display the full chain of master-detail views, earlier columns automatically collapse. A breadcrumb bar tracks the navigation path and provides back-navigation. The same structure works on a wide desktop monitor and a narrow mobile screen without any per-object responsive design.
 
-Nesting of master-detail views with flexible orientations allows for navigation structures which fit many common application design patterns.
+<div style="max-width: 600px; margin: 0 auto;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Expanded
+  </div>
+  <object type="image/svg+xml" data="../diagrams/svg/expanded.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
+</div>
+<br>
 
-<div style="display: flex; justify-content: center; gap: 2%; width: 100%;">
-  <div style="width: 30%; text-align: center;">
+<div style="max-width: 600px; margin: 0 auto;">
+  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
+    Collapsed
+  </div>
+  <object type="image/svg+xml" data="../diagrams/svg/collapsed.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
+</div>
+<br>
+
+**Header and footer areas.** The master section supports optional header and footer views for features like search, message input, or group actions, allowing common interaction patterns to be expressed within the same compositional framework.
+
+### 4.4 Composition
+
+Nesting master-detail views with varying orientations produces navigation structures that match many common application patterns: Miller column file browsers, settings hierarchies, email clients, chat applications, inspector panels. These are not special cases implemented individually — they are natural compositions of the same three primitives.
+
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2%; width: 100%;">
+  <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Vertical</div>
     <object type="image/svg+xml" data="../diagrams/svg/vertical-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
-  <div style="width: 30%; text-align: center;">
+  <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Horizontal</div>
     <object type="image/svg+xml" data="../diagrams/svg/horizontal-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
-  <div style="width: 30%; text-align: center;">
+  <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Hybrid</div>
     <object type="image/svg+xml" data="../diagrams/svg/hybrid-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
 </div>
 
-#### Auto Collapsing and Expanding
+This composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose to produce appropriate layouts for each part of the domain model. The Miller Column pattern [4] has been used since NeXTSTEP for file browsing; our contribution is making it recursive, orientation-flexible, and self-composing based on model annotations.
 
-Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use of display space across a wide range of viewport sizes.
+## 5. From Model to Interface
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
-  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Expanded
-  </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-    <object type="image/svg+xml" data="../diagrams/svg/expanded.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
-</div>
-<br>
+To make the "write the model, get the UI" claim concrete, consider a minimal domain class in Strvct:
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
-  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Collapsed
-  </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-  <object type="image/svg+xml" data="../diagrams/svg/collapsed.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
-</div>
-<br>
+```javascript
+(class Character extends SvStorableNode {
 
-#### Navigation Path
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setCanEditInspection(true);
+        }
+        {
+            const slot = this.newSlot("level", 1);
+            slot.setSlotType("Number");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+        }
+        {
+            const slot = this.newSlot("inventory", null);
+            slot.setFinalInitProto(Inventory);
+            slot.setIsSubnodeField(true);
+        }
+    }
 
-Tiles on the selected are highlighted, and the focused tile (which represents the most recently selected location) is distinguished with a unique highlight.
+    initPrototype () {
+        this.setShouldStore(true);
+    }
 
-These highlights and other visual attributes are customizable via themes.
+    subtitle () {
+        return "Level " + this.level();
+    }
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
-  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Navigation Path
-  </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-  <object type="image/svg+xml" data="../diagrams/svg/path.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
-</div>
-<br>
+}.initThisClass());
+```
 
-#### Breadcrumbs
+This definition contains no UI code, no form layouts, no navigation logic, and no serialization code. Yet it produces:
 
-A BreadcrumbTile can be used to represent the current navigation path. It automatically compacts and expands to reveal more of the path based on the current viewport size, replacing the compacted path with a back arrow.
+- A **summary tile** displaying the character's name as a title and "Level 3" as a subtitle
+- **Property tiles** for `name` (editable string field) and `level` (editable number field), with appropriate input types
+- A **navigable field** for `inventory` that, when selected, opens a new master-detail view showing the inventory's contents
+- **Automatic persistence** to IndexedDB, with dirty tracking and transactional commits
+- **Bidirectional synchronization** between model and view — editing a field updates the model; programmatic model changes update the view
+- **Automatic translation** of field labels and values when internationalization is active
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
-  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Breadcrumbs
-  </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-  <object type="image/svg+xml" data="../diagrams/svg/breadcrumbs.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
-</div>
-<br>
+The slot annotations — `setShouldStoreSlot`, `setSyncsToView`, `setCanEditInspection`, `setIsSubnodeField` — are the bridge between the domain model and the framework's automatic behaviors. Each annotation controls one aspect of the object's lifecycle; together, they provide enough information for the UI, storage, and synchronization layers to operate without additional code.
 
-#### Menus
+The following screenshot shows the Strvct framework as used in undreamedof.ai, an AI-powered virtual tabletop for tabletop roleplaying games. The interface — including character sheets, campaign hierarchies, session management, and settings panels — is generated from domain model annotations. No bespoke layout code was written for any of the screens shown.
 
-Tile navigation is very similar to menu navigation, and multiple levels of traditional menus can be constructed using various orientations of master-detail views.
+<a href="../resources/images/screenshot-1.png" target="_blank"><img src="../resources/images/screenshot-1.png" alt="Screenshot of undreamedof.ai, a Strvct-based application" style="width: 100%; height: auto;"></a>
 
-<div style="width: 100%; max-width: 100vw; overflow: hidden;">
-  <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Horizontal Menus
-  </div>
-  <div style="width: 100%; padding-bottom: 37.14%; position: relative;">
-  <object type="image/svg+xml" data="../diagrams/svg/horizontal-menus.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">[SVG diagram]</object>
-  </div>
-</div>
-<br>
+## 6. Architecture
 
-### Screenshots
+Strvct is implemented as a client-side JavaScript framework. Applications run as single-page apps in the browser, making heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent object database of application state in IndexedDB.
 
-Strvct framework as used in an AI based interactive fiction game.
+### 6.1 Domain Model
 
-<a href="../resources/images/screenshot-1.png" target="_blank"><img src="../resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 100%; height: auto;"></a>
+The domain model is a graph of objects inheriting from a common base class. Each object has properties declared as *slots* with annotations, actions exposed as methods, a `subnodes` array of child objects, a `parentNode` reference, and a unique persistent identifier.
 
-[1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
+The model is fully independent of the UI layer. Model objects hold no references to views and communicate outward solely by posting notifications. This allows the same model code to run headlessly in Node.js for testing or server-side processing.
+
+### 6.2 The Annotation Bridge
+
+The slot system is what makes automatic UI and storage possible. Rather than using raw instance variables, properties carry metadata annotations that each framework layer consults independently:
+
+- **Type** — selects the appropriate property tile and enables type checking
+- **Persistence** — includes the slot in storage records
+- **View synchronization** — triggers view updates when the value changes
+- **Subnode relationship** — controls whether the value appears in the object's navigable hierarchy
+- **Editability** — determines whether the property can be modified through the UI
+- **Auto-initialization** — specifies a class to instantiate if no value was loaded from storage
+- **Translation context** — provides semantic context for AI-powered translation
+
+No single annotation knows about the others. The UI layer reads type and editability; the storage layer reads persistence; the synchronization layer reads sync flags. This separation means new layers can be added — internationalization, cloud sync, schema generation — without modifying existing annotations or the domain model itself.
+
+### 6.3 Storage
+
+Persistence is annotation-driven. The persistence layer monitors slot mutations, batches dirty objects at the end of each event loop into atomic transactions, and commits them to IndexedDB. On load, stored records are deserialized back into live object instances with relationships re-established.
+
+A separate content-addressable blob store handles large binary data using SHA-256 hashes as keys, providing automatic deduplication. Objects store hash references rather than blob data directly.
+
+Automatic garbage collection walks the stored object graph from the root; unreachable objects are removed.
+
+### 6.4 Synchronization
+
+Model and view layers communicate through a deferred, deduplicated notification system. When a model property changes, a notification is posted; observing views schedule a sync pass. Multiple changes within a single event loop are coalesced. Bidirectional sync stops automatically when values converge, preventing infinite loops. Observations use weak references, so garbage collection of either party automatically cleans up subscriptions.
+
+## 7. Emergent Capabilities
+
+When the framework controls the entire pipeline from model annotation to rendered view, capabilities that would normally require per-component effort become emergent properties of the architecture. Each capability described below exists because of the same structural fact: the framework has complete knowledge of the domain model and controls the single point where model data flows to the UI.
+
+### 7.1 Transparent Internationalization
+
+Because all UI text flows from model slot annotations through a single rendering pipeline, translation can be injected at the model-to-view boundary transparently. No per-component `t()` calls or translation key files are needed. New model classes are translatable by default.
+
+This centralization also makes AI-powered translation practical. The framework discovers every translatable string by walking model class prototypes — an introspection that is only possible because all UI-visible text originates from annotated slots. Slot-level context annotations (e.g., "game mechanic" vs. "ui label") travel with the model, giving the AI translator domain-appropriate terminology without developer effort. Adding support for a new language becomes a configuration change rather than a translation project.
+
+In a conventional framework, achieving automatic translation would require either instrumenting every component with translation calls, or building an extraction tool that parses component templates to find translatable strings. Both approaches scale linearly with the number of components. In Strvct, the cost is zero per component — the framework handles it structurally.
+
+### 7.2 Transparent Persistence and Cloud Sync
+
+Because the framework owns the complete object graph and understands the structure of every node through annotations, it can split persistence into two strategies transparently. The object pool — the graph of domain objects and their properties — is loaded synchronously, ensuring the model is immediately available for UI rendering. Large binary resources such as media and document files are stored separately in a content-addressable blob store and loaded asynchronously on demand, so they never block the UI.
+
+This same structural knowledge enables transparent cloud synchronization. Subgraphs of the local object database can be lazily synced to cloud storage without the developer writing any sync logic — the framework knows which objects have changed, which blobs they reference, and how to reconcile local and remote state. The developer annotates what should persist; the framework decides how and when to load, store, and sync it.
+
+### 7.3 JSON Schema Generation
+
+Domain objects can automatically generate JSON Schema descriptions of themselves based on their slot annotations. This is particularly valuable for integration with large language models, which can use the schema to understand the structure of domain objects, validate their output, and generate patches or new instances that conform to the model's constraints. In Strvct's production use, AI assistants modify game state by generating JSON Patch operations validated against auto-generated schemas — a workflow that requires no hand-written schema definitions.
+
+### 7.4 Content-Addressable Resource Loading
+
+The framework's build system produces a content-addressable bundle where source files are keyed by SHA-256 hash. The client caches resources locally in IndexedDB and uses hash comparison to determine what has changed between deployments. Unchanged resources are never re-downloaded, and identical content across different file paths is stored only once. This is a consequence of the framework controlling the full resource pipeline — analogous to how it controls the model-to-view pipeline — and provides caching granularity that standard bundlers cannot achieve.
+
+## 8. Case Study: undreamedof.ai
+
+Strvct has been used to build undreamedof.ai, an AI-powered virtual tabletop for Dungeons & Dragons and other tabletop roleplaying games. The application includes:
+
+- **Character system**: hierarchical character sheets with ability scores, inventory, spellcasting, and equipment — approximately 30 domain classes
+- **Campaign system**: adventure management with nested locations, NPCs, creatures, treasures, and narrative structure — approximately 20 domain classes
+- **Session system**: real-time multiplayer game sessions with AI game master, dice rolling, voice narration, and peer-to-peer networking — approximately 25 domain classes
+- **AI integration**: multiple AI service providers, tool calling, streaming responses, and prompt composition — approximately 15 domain classes
+
+The application comprises roughly 90 domain model classes. Of these, fewer than 10 required custom view classes. The remainder — including character sheets, campaign hierarchies, settings panels, and administrative interfaces — use the framework's automatically generated views exclusively.
+
+This ratio — approximately 90% auto-generated views — is the practical test of the composable primitive approach. The domain model is non-trivial: character sheets have deeply nested hierarchies (character → ability scores → individual scores → modifiers), campaigns contain recursive location trees, and the session system manages real-time state across multiple connected clients. Despite this complexity, the default tiles and master-detail views produce navigable, usable interfaces throughout.
+
+The custom views that were needed fall into the category identified in Section 3 as outside the narrow design space: a chat interface for AI conversation, a 3D dice roller, and a map view. These are inherently graphical, domain-specific components that cannot be derived from model annotations. Their existence does not undermine the approach — it confirms that the boundary between auto-generated and bespoke views falls where predicted.
+
+## 9. Related Work
+
+**Naked objects implementations.** Apache Isis (now Apache Causeway) [3] is the most mature naked objects framework, providing automatic UI generation for Java domain models with both a web UI (Wicket viewer) and a REST API. JMatter [5] implemented naked objects for Java Swing. Both use form-and-table UI strategies and target enterprise/administrative use cases. Strvct differs in its UI strategy (composable spatial primitives rather than forms and tables) and its target (end-user applications rather than internal tools).
+
+**Model-driven UI generation.** The broader field of model-driven development has produced approaches like IFML [6] (Interaction Flow Modeling Language) and UsiXML, which use abstract UI models to generate interfaces. These typically require separate UI models in addition to domain models — a layer of specification that naked objects explicitly eliminates. Strvct's approach is closer to naked objects in that the domain model itself, annotated with metadata, is the only specification needed.
+
+**Miller Columns.** The column-based navigation pattern was introduced in NeXTSTEP and popularized by macOS Finder [4]. It provides spatial continuity when browsing hierarchical data. Strvct extends this pattern by making it recursive (columns can nest vertically or horizontally), orientation-flexible (each level can choose its own orientation), and self-composing (the layout is determined by model annotations rather than application code).
+
+**Low-code and no-code platforms.** Modern low-code platforms (Retool, Appsmith, OutSystems) aim to reduce UI development cost through visual builders and pre-built components. They approach the same problem as naked objects — reducing the cost of UI development — but from the opposite direction: rather than eliminating bespoke UI, they make bespoke UI faster to produce. The result is still a collection of individually designed screens that must be maintained as the data model evolves. Naked objects eliminates this maintenance cost entirely.
+
+**AI-generated UI.** Large language models can now generate UI code from natural language descriptions. This automates the *creation* of bespoke interfaces but does not address their *maintenance* — each generated screen is still a separate artifact that must be updated when the model changes. Naked objects is a fundamentally different approach: rather than automating the production of bespoke UIs, it eliminates the need for them.
+
+## 10. Discussion
+
+### The Crossover Point
+
+Hand-crafted interfaces may appear more polished early in an application's life, when the number of screens is small and each can receive individual design attention. But as the domain model grows, the cost of maintaining bespoke screens grows with it, while inconsistencies accumulate. At some point — the crossover point — a consistent, automatically generated interface produces a better user experience than a patchwork of hand-crafted screens, because the user can rely on uniform navigation throughout the application.
+
+The composable primitive approach shifts this crossover point earlier by improving the quality of the generated interface. The undreamedof.ai case study suggests the crossover may occur sooner than expected: at ~90 domain classes, auto-generated views were not merely acceptable but preferred for 90% of the interface, because they provided consistent navigation and interaction patterns that would have been difficult to maintain across hand-crafted screens.
+
+### A Familiar Dynamic
+
+This dynamic — general methods outperforming hand-crafted solutions as scale increases — appears in other domains. In his essay *The Bitter Lesson* [2], Rich Sutton observed that across 70 years of AI research, general methods that leverage computation consistently outperformed approaches that encoded human expertise, and the gap widened with scale.
+
+The analogy to naked objects is instructive if imperfect. In AI, the scaling dimension is computation; in naked objects, it is domain model complexity. The principle is similar: investing in a general method that improves with scale — rather than in case-by-case engineering that must be repeated for each new component — produces compounding returns. But unlike AI scaling, which depends on hardware improvements, naked objects scaling depends on a design choice: whether the framework's primitives are good enough to make hand-crafted specialization unnecessary for most screens.
+
+### Limitations
+
+The composable primitive approach is best suited to informational and navigational interfaces — applications centered on browsing, editing, and managing structured data. Highly graphical interfaces (data visualizations, design canvases, game renderers) require domain-specific rendering that cannot be derived from model annotations. Strvct supports custom view classes for these cases, but they fall outside the automatic generation pipeline.
+
+The spatial conventions we rely on — top-to-bottom hierarchy, left-to-right depth — reflect Western reading order. Right-to-left languages would require mirrored layouts, which the framework's flexbox-based rendering can accommodate but which have not yet been fully validated.
+
+## 11. Conclusion
+
+The naked objects pattern has offered a compelling proposition for twenty-five years: write the domain model, and the rest follows. Its limited adoption is not a failure of this proposition but of the UI strategies that prior implementations chose. Generic forms and tables were sufficient for internal tools but did not meet the expectations set by modern consumer software.
+
+We have argued that the gap is closable because the design space is narrow. Bespoke UI developers are converging on a small set of spatial conventions; a framework can apply these conventions uniformly through composable primitives — tiles, tile stacks, and recursively nested master-detail views — that produce familiar, navigable interfaces from annotated domain models alone.
+
+Strvct demonstrates this approach in production. A non-trivial application with ~90 domain classes uses auto-generated views for approximately 90% of its interface, with custom views needed only for inherently graphical components that fall outside the narrow design space. The centralized model-to-view pipeline enables emergent capabilities — transparent internationalization, annotation-driven persistence with cloud sync, and automatic schema generation — that validate the architectural decision to invest in the general method.
+
+The challenge remains making the general method good enough that hand-crafted specialization becomes the exception rather than the rule. We believe the evidence presented here — a narrow design space, a small set of composable primitives, and a production application that confirms both — suggests this goal is within reach.
+
+## References
+
+[1] Pawson, R. (2004). *Naked Objects.* PhD Thesis, Trinity College, Dublin.
+
+[2] Sutton, R. (2019). *The Bitter Lesson.* Incomplete Ideas. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+
+[3] Apache Software Foundation. *Apache Causeway* (formerly Apache Isis). https://causeway.apache.org/
+
+[4] Becker, N. (2005). Miller Columns. Wikipedia. https://en.wikipedia.org/wiki/Miller_columns
+
+[5] Arteaga, J. M. *JMatter: A Naked Objects Framework for Java Swing.* http://jmatter.org/
+
+[6] Brambilla, M., & Fraternali, P. (2014). Interaction Flow Modeling Language. In *Proceedings of the 23rd International Conference on World Wide Web (WWW '14 Companion).* ACM.

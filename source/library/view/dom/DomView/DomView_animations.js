@@ -154,7 +154,7 @@
             });
         }
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             // have browser do scroll
             //ThrashDetector.shared().didOp("scrollIntoView")
             this.element().scrollIntoView({
@@ -214,7 +214,7 @@
         const pv = this.parentView();
         if (pv) {
             this.setPosition("absolute");
-            this.addTimeout(() => {
+            this.addWeakTimeout(() => {
                 this.setRightPx(pv.clientWidth() / 2 - this.clientWidth() / 2);
             }, 0);
         }
@@ -232,14 +232,14 @@
     animateToDocumentFrame (destinationFrame, seconds, completionCallback) {
         this.setTransition("all " + seconds + "s");
         assert(this.position() === "absolute");
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setTopPx(destinationFrame.origin().y());
             this.setLeftPx(destinationFrame.origin().x());
             this.setMinAndMaxWidth(destinationFrame.size().width());
             this.setMinAndMaxHeight(destinationFrame.size().height());
         }, 0);
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             completionCallback();
         }, seconds * 1000);
         return this;
@@ -256,12 +256,12 @@
     animateToDocumentPoint (destinationPoint, seconds, completionCallback) {
         this.setTransition("all " + seconds + "s");
         assert(this.position() === "absolute");
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setTopPx(destinationPoint.y());
             this.setLeftPx(destinationPoint.x());
         }, 0);
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             completionCallback();
         }, seconds * 1000);
         return this;
@@ -275,7 +275,7 @@
     hideAndFadeIn () {
         this.setOpacity(0);
         //this.setTransition("all 0.5s")
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setOpacity(1);
         }, 0);
     }
@@ -289,7 +289,7 @@
         this.transitions().at("opacity").updateDuration("0.3s");
         this.setDisplay("inline-block");
         this.setOpacity(0);
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setOpacity(1);
         }, 0);
         return this;
@@ -303,7 +303,7 @@
     fadeOutToDisplayNone () {
         this.transitions().at("opacity").updateDuration("0.3s");
         this.setOpacity(0);
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setDisplay("none");
         }, 200);
         return this;
@@ -334,7 +334,7 @@
         this.setOpacity(0)
         this.setMinAndMaxHeight(0)
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setOpacity(1)
             this.setMinAndMaxHeight(targetHeight)
         }, 0)
@@ -352,13 +352,13 @@
         this.transitions().at("min-height").updateDuration("0.3s");
         this.transitions().at("max-height").updateDuration("0.3s");
 
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setOpacity(0);
             this.setMinAndMaxHeight(0);
         }, 1);
 
         /*
-        this.addTimeout(() => {
+        this.addWeakTimeout(() => {
             this.setDisplay("none")
         }, 300)
         */

@@ -160,7 +160,7 @@
      */
     setupDropHoverTimeout () {
         const ms = this.dropHoverDidTimeoutSeconds() * 1000;
-        this.addTimeout(() => this.dropHoverDidTimeout(), ms, this.dropHoverEnterTimeoutName());
+        this.addWeakTimeout(() => this.dropHoverDidTimeout(), ms, this.dropHoverEnterTimeoutName());
     }
 
     /**

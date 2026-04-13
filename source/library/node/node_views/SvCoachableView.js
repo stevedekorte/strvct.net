@@ -146,7 +146,7 @@
         const manager = this.coachMarkManager();
         if (!manager) {
             // Manager not available yet, try again later
-            this.addTimeout(() => this.registerForCoachMark(), 100);
+            this.addWeakTimeout(() => this.registerForCoachMark(), 100);
             return this;
         }
 

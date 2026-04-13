@@ -713,7 +713,7 @@
 		this.setTransition(this.transitionStyle())
 		this.setOpacity(0)
 		this.setMinAndMaxHeight(0)
-		this.addTimeout(() => {
+		this.addWeakTimeout(() => {
 			this.setOpacity(1)
 			this.setMinAndMaxHeight(this.defaultHeight())
 		}, 0)
