@@ -46,8 +46,7 @@
         {"date": "2026-03", "title": "Anchor Scroll", "subtitle": "AI chat anchor scrolling and scroll-to-bottom button"},
         {"date": "2026-03", "title": "Battery Aware", "subtitle": "Battery level monitoring for performance throttling detection"},
         {"date": "2026-04", "title": "AI Image Editor", "subtitle": "Gemini-based image editing and scaling class hierarchy"},
-        {"date": "2026-04", "title": "Public Cloud", "subtitle": "SvPublicCloudSource for serving shared content via Firebase Storage manifests"},
-        {"date": "2026-04", "title": "Miller Columns", "subtitle": "Detail view support in Miller Column navigation; ScrollView drop delegation"}
+        {"date": "2026-04", "title": "Public Cloud", "subtitle": "SvPublicCloudSource for serving shared content via Firebase Storage manifests"}
       ]
     }
   ]
