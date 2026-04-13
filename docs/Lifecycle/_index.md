@@ -2,17 +2,6 @@
 
 Boot sequence, node initialization, view synchronization, and persistence cycles.
 
-## Table of Contents
-
-1. [Introduction](#introduction)
-2. [Application Boot Sequence](#application-boot-sequence)
-3. [App Lifecycle (SvApp)](#app-lifecycle-svapp)
-4. [Node Lifecycle (SvNode)](#node-lifecycle-svnode)
-5. [View/UI Lifecycle](#viewui-lifecycle)
-6. [Persistence Lifecycle](#persistence-lifecycle)
-7. [Notifications](#notifications)
-8. [Common Patterns and Best Practices](#common-patterns-and-best-practices)
-
 ## Introduction
 
 This guide provides a comprehensive overview of the STRVCT framework's lifecycle events, from initial boot through application initialization, node creation and management, UI synchronization, and persistence. Understanding these lifecycles is essential for building robust STRVCT applications.

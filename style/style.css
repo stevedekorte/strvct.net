@@ -501,7 +501,7 @@ p code, li code {
 /* Timeline container */
 .timeline-wrap {
   flex: 1;
-  overflow-x: auto;
+  overflow-x: scroll;
   overflow-y: hidden;
   background: #f9f8f6;
 }

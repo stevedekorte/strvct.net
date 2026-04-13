@@ -188,6 +188,70 @@ export class ContentTimeline extends ContentBase {
             applyZoom(cur + 0.15);
         });
 
+        // Click-drag to scroll with momentum
+        let isDragging = false;
+        let dragStartX = 0;
+        let scrollStartX = 0;
+        let lastClientX = 0;
+        let lastMoveTime = 0;
+        let velocity = 0;
+        let momentumId = null;
+
+        wrap.style.cursor = "grab";
+
+        wrap.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            dragStartX = e.clientX;
+            lastClientX = e.clientX;
+            scrollStartX = wrap.scrollLeft;
+            lastMoveTime = performance.now();
+            velocity = 0;
+            if (momentumId) {
+                cancelAnimationFrame(momentumId);
+                momentumId = null;
+            }
+            wrap.style.cursor = "grabbing";
+            wrap.style.userSelect = "none";
+            e.preventDefault();
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            const now = performance.now();
+            const dt = now - lastMoveTime;
+            const dx = e.clientX - lastClientX;
+            if (dt > 0) {
+                velocity = dx / dt;
+            }
+            lastClientX = e.clientX;
+            lastMoveTime = now;
+            wrap.scrollLeft = scrollStartX - (e.clientX - dragStartX);
+        });
+
+        window.addEventListener("mouseup", () => {
+            if (!isDragging) return;
+            isDragging = false;
+            wrap.style.cursor = "grab";
+            wrap.style.userSelect = "";
+
+            // Apply momentum
+            const friction = 0.95;
+            let v = -velocity * 16; // scale to px/frame
+
+            function step () {
+                if (Math.abs(v) < 0.5) {
+                    momentumId = null;
+                    return;
+                }
+                wrap.scrollLeft += v;
+                v *= friction;
+                momentumId = requestAnimationFrame(step);
+            }
+            if (Math.abs(v) > 0.5) {
+                momentumId = requestAnimationFrame(step);
+            }
+        });
+
         // Auto-scroll to the end of the timeline
         wrap.scrollLeft = wrap.scrollWidth;
 
