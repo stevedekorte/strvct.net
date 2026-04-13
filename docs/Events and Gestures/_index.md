@@ -58,6 +58,34 @@ view.setIsRegisteredForBrowserDrop(true);
 
 Event handler methods are called by name on the view. Returning `false` from a handler calls `event.stopPropagation()` to prevent the event from bubbling.
 
+### Listener Lifecycle
+
+Listeners are created lazily when first accessed via `ListenerDomView.listenerNamed()`:
+
+```javascript
+listenerNamed (className) {
+    const map = this.eventListenersMap();
+    if (!map.has(className)) {
+        const instance = Object.getClassNamed(className).clone()
+            .setListenTarget(this.element())
+            .setDelegate(this);
+        map.set(className, instance);
+    }
+    return map.get(className);
+}
+```
+
+The listener target is the view's DOM element. The delegate is the view itself.
+
+`EventSetListener.start()` iterates its child `EventListener` instances, each of which:
+
+1. Checks `delegateCanRespond()` — verifies the delegate has the handler method
+2. Calls `addEventListener()` on the target element with the configured options
+
+`stop()` removes all event listeners. `setIsListening(bool)` toggles between started and stopped states.
+
+If the listen target, delegate, or capture mode changes while listening, the listener automatically stops, updates its configuration, and restarts via `resync()`.
+
 ## Gesture Recognizers
 
 ### How Gestures Work
@@ -158,7 +186,7 @@ The responder chain ensures that keyboard events are routed to the focused view,
 
 ## Drag and Drop
 
-STRVCT wraps the HTML5 drag-and-drop API with drop targets, drag sources, MIME-type dispatch, and ScrollView drop delegation. See the dedicated [Drag and Drop](../Drag%20and%20Drop/index.html) documentation for full details.
+STRVCT wraps the HTML5 drag-and-drop API with drop targets, drag sources, MIME-type dispatch, ScrollView drop delegation, and node integration. See the dedicated [Drag and Drop](Drag%20and%20Drop/index.html) sub-page for full details.
 
 ## Event Flow
 
