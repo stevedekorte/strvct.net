@@ -74,6 +74,18 @@ Views can also explicitly cancel gestures:
 view.cancelAllGesturesExcept(panGesture);
 ```
 
+## Cleanup and Lifecycle
+
+Gesture recognizers are automatically cleaned up when a view is retired. When a view loses its parent and is removed from the view hierarchy, its `prepareToRetire()` method runs a three-step teardown:
+
+1. **`removeAllGestureRecognizers()`** — Each recognizer is stopped (removing its event listeners) and its view target is cleared.
+2. **`removeAllListeners()`** — All event listeners registered on the view's element are removed.
+3. **`cancelAllTimeouts()`** — Any pending timers (such as long-press delays) are cancelled.
+
+Individual gestures can also be removed at any time with `removeGestureRecognizer(gesture)`, which stops the recognizer and detaches it from the view. Some recognizers set `shouldRemoveOnComplete(true)` to automatically remove themselves after firing once — useful for one-shot gestures.
+
+This means application code rarely needs to manage gesture cleanup manually. As long as views are properly removed from the hierarchy, all gesture state is released automatically.
+
 ## Multi-Touch Emulation
 
 On desktop, holding Shift while clicking simulates a second finger. This allows testing pinch, rotation, and other multi-touch gestures without a touch device. The emulation is handled transparently by the gesture recognizer base class.

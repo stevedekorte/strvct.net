@@ -74,3 +74,7 @@ The listener target is the view's DOM element. The delegate is the view itself.
 `stop()` removes all event listeners. `setIsListening(bool)` toggles between started and stopped states.
 
 If the listen target, delegate, or capture mode changes while listening, the listener automatically stops, updates its configuration, and restarts via `resync()`.
+
+## Cleanup
+
+Listeners are automatically removed when a view is retired from the hierarchy. The view's `prepareToRetire()` calls `removeAllListeners()`, which stops every registered `EventSetListener` and clears the listener map. No manual cleanup is needed for views that follow normal lifecycle patterns.
