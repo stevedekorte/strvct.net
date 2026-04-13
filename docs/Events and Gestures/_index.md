@@ -158,28 +158,7 @@ The responder chain ensures that keyboard events are routed to the focused view,
 
 ## Drag and Drop
 
-STRVCT wraps the HTML5 drag-and-drop API through `DomView_browserDragAndDrop`:
-
-**Drop target registration:**
-
-```javascript
-view.setIsRegisteredForBrowserDrop(true);
-```
-
-**Drop handling methods:**
-
-- `acceptsDrop()` — Override to control whether the view accepts drops.
-- `onBrowserDragEnter()` / `onBrowserDragOver()` / `onBrowserDragLeave()` — Visual feedback during drag.
-- `onBrowserDrop(event)` — Handle the drop.
-- `onBrowserDataTransfer(dataTransfer)` — Process dropped data.
-
-**MIME type routing:**
-
-Dropped data is routed to type-specific handlers. For example, dropping an image calls `onBrowserDropImagePng()`. The method name is derived automatically from the MIME type.
-
-**Drag source handling:**
-
-Views can also act as drag sources via `onBrowserDragStart()`, `onBrowserDrag()`, and `onBrowserDragEnd()`.
+STRVCT wraps the HTML5 drag-and-drop API with drop targets, drag sources, MIME-type dispatch, and ScrollView drop delegation. See the dedicated [Drag and Drop](../Drag%20and%20Drop/index.html) documentation for full details.
 
 ## Event Flow
 
