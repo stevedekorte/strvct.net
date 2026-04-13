@@ -188,6 +188,9 @@ export class ContentTimeline extends ContentBase {
             applyZoom(cur + 0.15);
         });
 
+        // Auto-scroll to the end of the timeline
+        wrap.scrollLeft = wrap.scrollWidth;
+
         detailsBtn.addEventListener("click", () => {
             const cur = parseFloat(track.style.zoom || 1);
             const minZoom = getMinZoom();
