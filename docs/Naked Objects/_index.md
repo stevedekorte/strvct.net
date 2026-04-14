@@ -1,6 +1,6 @@
 # Naked Objects
 
-Closing the Usability Gap in Naked Objects
+Closing the Usability Gap in Naked Objects — [PDF version](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf)
 
 ## Abstract
 
