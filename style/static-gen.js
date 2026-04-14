@@ -162,8 +162,30 @@ async function generatePage (pageDir) {
 }
 
 // ---------------------------------------------------------------------------
+// Sitemap generator
+// ---------------------------------------------------------------------------
+
+function generateSitemap (pages, baseUrl) {
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+    for (const pageDir of pages) {
+        const relPath = relative(siteRoot, pageDir);
+        const urlPath = relPath
+            ? relPath.split(sep).map(s => encodeURIComponent(s)).join("/") + "/"
+            : "";
+        xml += `  <url><loc>${baseUrl}${urlPath}</loc></url>\n`;
+    }
+
+    xml += "</urlset>\n";
+    return xml;
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
+
+const SITE_URL = "https://strvct.net/";
 
 async function main () {
     const pages = findLayoutPages(siteRoot);
@@ -172,6 +194,11 @@ async function main () {
     for (const pageDir of pages) {
         await generatePage(pageDir);
     }
+
+    // Write sitemap.xml at site root
+    const sitemap = generateSitemap(pages, SITE_URL);
+    writeFileSync(join(siteRoot, "sitemap.xml"), sitemap);
+    console.log(`  generated: sitemap.xml (${pages.length} URLs)`);
 
     console.log(`Static gen: done (${pages.length} pages).`);
 }
