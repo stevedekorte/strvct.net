@@ -238,4 +238,4 @@ Assuming you have a Firebase project with Storage enabled, making the contacts c
 }.initThisClass());
 ```
 
-`SvSyncableArrayNode` extends `SvJsonArrayNode` with cloud sync capabilities. The `cloudFolderName()` method tells the framework where to store this collection's data in Firebase Storage. Everything else — delta tracking, manifest management, retry with backoff, conflict handling — is inherited automatically. The collection syncs when the app saves, and loads from the cloud on the next login.
+`SvSyncableArrayNode` extends `SvJsonArrayNode` with cloud sync capabilities. The `cloudFolderName()` method tells the framework where to store this collection's data in Firebase Storage. Everything else — delta tracking, manifest management, retry with backoff, and session locking — is inherited automatically. The collection syncs when the app saves, and loads from the cloud on the next login.
