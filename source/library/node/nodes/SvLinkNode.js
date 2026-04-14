@@ -38,6 +38,7 @@
             slot.setShouldStoreSlot(true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("SvNode");
+            slot.setSyncsToView(true);
         }
 
         /**
