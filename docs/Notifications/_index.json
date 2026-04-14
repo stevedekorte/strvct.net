@@ -1,0 +1,20 @@
+{
+  "title": "Notifications",
+  "subtitle": "Event-driven communication between framework layers using observations, scheduling, and weak references.",
+  "content": [
+    {
+      "type": "ContentText",
+      "body": "<p>STRVCT's notification system provides loose coupling between the model, view, and storage layers. Rather than holding direct references to each other, objects communicate through three complementary mechanisms: a deferred, deduplicated notification center for broadcast events; a sync scheduler that coalesces direct method calls; and a lightweight broadcaster for synchronous dispatch. All three use weak references for automatic cleanup — when an observer or sender is garbage collected, its registrations are removed without manual intervention.</p><p>These are separate because they optimize for different tradeoffs. The notification center is loosely coupled — the sender doesn't know who's listening — but that generality has overhead: queuing, indexing, pattern matching. View synchronization doesn't need any of that; it needs a specific method on a specific object to run exactly once, which is what the sync scheduler provides directly. And some internal events (like storage-layer slot propagation) need synchronous delivery with no deferral at all, which is the broadcaster's role. A single mechanism couldn't serve all three without either over-engineering the simple cases or under-serving the complex ones.</p><p><strong>Processing order within an event loop:</strong> Application code runs first — any slot changes during this phase trigger slot change hooks immediately, and any Broadcaster dispatches also execute synchronously inline. Meanwhile, notifications and sync requests are queued, not executed. At the end of the event loop, the SyncScheduler processes its queue in priority order: view-to-model syncs (priority 0) run first, then notification dispatch (which delivers queued NotificationCenter events to observers), then model-to-view syncs (priority 2). Finally, the persistence layer auto-commits all dirty objects to IndexedDB. This ordering guarantees that user edits land before reactive updates, and that storage always sees the final settled state.</p>"
+    },
+    {
+      "type": "ContentCards",
+      "columns": 2,
+      "items": [
+        "Notification Center",
+        "Sync Scheduler",
+        "Broadcaster",
+        "Slot Change Hooks"
+      ]
+    }
+  ]
+}

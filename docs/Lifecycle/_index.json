@@ -1,0 +1,21 @@
+{
+  "title": "Lifecycle",
+  "subtitle": "Boot sequence, node initialization, view synchronization, and persistence cycles.",
+  "content": [
+    {
+      "type": "ContentText",
+      "body": "<p>The core design challenge is that the same object must work whether it is freshly created or loaded from storage. A single-phase constructor can't handle both cases — if it creates default child objects, it will overwrite data that was just deserialized. STRVCT solves this with a three-phase sequence: <code>init()</code> sets up primitives and slot defaults, <code>finalInit()</code> creates complex child objects only if they weren't already loaded from the store, and <code>afterInit()</code> runs once the full object graph is ready. This separation means persistence is transparent — a class doesn't need different code paths for \"new\" vs. \"loaded.\"</p>"
+    },
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "Boot Sequence",
+        "App Lifecycle",
+        "Node Lifecycle",
+        "View Synchronization",
+        "Persistence Lifecycle"
+      ]
+    }
+  ]
+}
