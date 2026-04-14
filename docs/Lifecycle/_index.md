@@ -6,6 +6,8 @@ Boot sequence, node initialization, view synchronization, and persistence cycles
 
 This guide provides a comprehensive overview of the STRVCT framework's lifecycle events, from initial boot through application initialization, node creation and management, UI synchronization, and persistence. Understanding these lifecycles is essential for building robust STRVCT applications.
 
+The core design challenge is that the same object must work whether it is freshly created or loaded from storage. A single-phase constructor can't handle both cases — if it creates default child objects, it will overwrite data that was just deserialized. STRVCT solves this with a three-phase sequence: `init()` sets up primitives and slot defaults, `finalInit()` creates complex child objects only if they weren't already loaded from the store, and `afterInit()` runs once the full object graph is ready. This separation means persistence is transparent — a class doesn't need different code paths for "new" vs. "loaded."
+
 ## Application Boot Sequence
 
 ### 1. Initial Bootstrap

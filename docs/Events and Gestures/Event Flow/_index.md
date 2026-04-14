@@ -4,6 +4,8 @@ The end-to-end path from a browser event to an application handler.
 
 ## Overview
 
+Raw DOM events are too low-level for most application code. Distinguishing a tap from a long-press from a pan requires tracking timing, movement thresholds, and finger counts — and when multiple gestures compete on the same element, the browser offers no arbitration. STRVCT's event pipeline absorbs this complexity: raw events feed into gesture recognizer state machines, a central GestureManager resolves conflicts (so a tap and a long-press on the same view don't both fire), and the application only sees clean, high-level callbacks like `onTapComplete` or `onPanMove`. Views that don't need gestures can still handle raw events directly — the gesture layer is additive, not mandatory.
+
 ```
 Browser DOM Event
   → EventListener receives it

@@ -4,6 +4,8 @@ Browser drag-and-drop support for views and nodes, covering both drop targets an
 
 ## Overview
 
+The browser's native drag-and-drop API is low-level and inconsistent — you must manually parse `DataTransfer` objects, handle file vs. string items differently, prevent the browser from navigating to dropped files, and deal with empty-space drops that bypass child elements entirely. STRVCT wraps this into a clean protocol: register a view for drops, and data arrives already parsed, typed by MIME, and routed to a handler method you name. You only implement the types you care about; everything else is silently ignored. The result is that adding drag-and-drop to a new view is typically a one-line registration plus one handler method.
+
 STRVCT wraps the HTML5 Drag and Drop API through two complementary systems:
 
 - **Drop targets** — Views register to accept dropped content (files, text, HTML from the desktop or other apps). Handled by `DomView_browserDragAndDrop` (a category on `DomView`) and `DropListener`.

@@ -6,6 +6,8 @@ How the view layer connects to model nodes, synchronizes state, and provides nav
 
 The entire view system is built from a small number of composable elements: a node, a tile, a column, and a master-detail split. These four pieces nest recursively — a column of tiles where selecting a tile opens another column — so the same structure that displays a flat list also handles arbitrarily deep, mixed-orientation navigation without any additional wiring. The power comes from composition, not from having a large vocabulary of specialized components.
 
+The view hierarchy wraps DOM elements rather than extending them. This is deliberate: the DOM API is large and mutable, and subclassing it tightly couples framework code to browser internals that change across engines and versions. Wrapping keeps the boundary clean — each layer in the class chain adds exactly one capability (visibility, event listening, gestures, layout, styling), so any layer can be understood, tested, or replaced independently. This layered approach also means that headless environments only need to stub the outermost wrapper, not the entire DOM surface.
+
 ## DomView Hierarchy
 
 Rather than subclassing DOM elements directly, STRVCT wraps them. Each layer in the view class hierarchy adds one capability:

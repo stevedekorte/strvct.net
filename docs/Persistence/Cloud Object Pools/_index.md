@@ -4,7 +4,7 @@ Cloud sync for object pools and collections using Firebase Storage.
 
 ## Overview
 
-Strvct's local persistence stores serialized object graphs in IndexedDB via `PersistentObjectPool`. Cloud sync extends this with two complementary strategies depending on what is being synced:
+Strvct's local persistence stores serialized object graphs in IndexedDB via `PersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
 
 - **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.
 - **Pool sync** — Entire object graphs are synced as a single pool. A write-ahead log of small delta files makes updates fast and efficient — only changed records are uploaded, with periodic compaction back to a full snapshot.
