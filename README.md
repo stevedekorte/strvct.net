@@ -49,7 +49,7 @@ Define a model class with annotated slots:
 
 This produces an editable, navigable, persistent contact — no view code, no storage code, no routing. The framework generates the UI from the slot annotations, persists to IndexedDB automatically, and creates navigation from the object hierarchy.
 
-For a complete working application (app class, model, collection, and project setup), see the [Example App](https://strvct.net/docs/Example%20App/) walkthrough.
+For a complete working application (app class, model, collection, and project setup), see the [Example App](https://strvct.net/Example%20App/) walkthrough.
 
 ## What you get
 

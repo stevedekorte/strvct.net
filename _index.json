@@ -15,8 +15,9 @@
     },
     {
       "type": "ContentCards",
-      "columns": 3,
+      "columns": 2,
       "items": [
+        "Example App",
         "docs",
         "Timeline",
         {
