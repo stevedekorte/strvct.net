@@ -214,3 +214,28 @@ From these four classes, the framework generates:
 - Slide-to-delete on contacts
 
 No view classes were written. No event handlers. No storage code. No routing. The domain model is the application.
+
+## Adding Cloud Sync
+
+Assuming you have a Firebase project with Storage enabled, making the contacts collection sync to the cloud is a two-line change. Replace the base class and add a folder name:
+
+```javascript
+(class Contacts extends SvSyncableArrayNode {
+
+    initPrototype () {
+        this.setTitle("Contacts");
+        this.setSubnodeClasses([Contact]);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(true);
+    }
+
+    cloudFolderName () {
+        return "contacts";
+    }
+
+}.initThisClass());
+```
+
+`SvSyncableArrayNode` extends `SvJsonArrayNode` with cloud sync capabilities. The `cloudFolderName()` method tells the framework where to store this collection's data in Firebase Storage. Everything else — delta tracking, manifest management, retry with backoff, conflict handling — is inherited automatically. The collection syncs when the app saves, and loads from the cloud on the next login.
