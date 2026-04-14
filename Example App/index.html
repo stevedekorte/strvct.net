@@ -17,9 +17,139 @@
   <link rel="modulepreload" href="/style/layout/ContentToc.js">
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Example App – STRVCT</title>
 </head>
 <body>
-  <div class="page"></div>
+  <div class="page loaded"><div class="header"><div><h1>Example App</h1><a class="back-link" href="../index.html">&larr; Home</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">A complete contacts application in four classes, with zero view code.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-model">The Model</a></li><li><a href="#the-app">The App</a></li><li><a href="#project-files">Project Files</a></li><li><a href="#what-you-get">What You Get</a></li><li><a href="#adding-cloud-sync">Adding Cloud Sync</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>This walkthrough builds a working contacts app from scratch to show how the pieces of STRVCT fit together. The app lets you create contacts with name, email, phone, and notes fields &mdash; all editable, navigable, and persisted to IndexedDB automatically. The entire application is four small classes and a few configuration files.</p></div></div><h2 id="the-model">The Model</h2><div class="section"><div class="section-body"><h3 id="contact">Contact</h3><p>A single contact with four fields. Each slot is annotated for storage and editing:</p><pre><code>(class Contact extends SvStorableNode {
+
+    static jsonSchemaDescription () {
+        return "A person's contact information";
+    }
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Name");
+        }
+        {
+            const slot = this.newSlot("email", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Email");
+        }
+        {
+            const slot = this.newSlot("phone", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Phone");
+        }
+        {
+            const slot = this.newSlot("notes", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+            slot.setLabel("Notes");
+        }
+    }
+
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setNodeCanEditTitle(true);
+        this.setTitle("New Contact");
+        this.setNodeCanInspect(true);
+    }
+
+    // The tile in the contact list shows the name as title and email as subtitle
+    title () {
+        return this.name() || "New Contact";
+    }
+
+    subtitle () {
+        return this.email();
+    }
+
+}.initThisClass());</code></pre><p>That's the entire Contact class. The framework reads the slot annotations and generates:</p><ul><li>An editable tile in the contacts list (showing <code>title()</code> and <code>subtitle()</code>)</li><li>An inspector view with labeled fields for each slot when you select it</li><li>Automatic persistence to IndexedDB whenever any field changes</li><li>Change notifications that keep the tile in sync with the field values</li></ul><h3 id="contacts">Contacts</h3><p>A collection that holds Contact items:</p><pre><code>(class Contacts extends SvJsonArrayNode {
+
+    initPrototype () {
+        this.setTitle("Contacts");
+        this.setSubnodeClasses([Contact]);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(true);
+    }
+
+}.initThisClass());</code></pre><p><code>setSubnodeClasses([Contact])</code> tells the framework what kind of objects this collection holds. <code>setNodeCanAddSubnode(true)</code> adds an "add" action to the UI. <code>setShouldStoreSubnodes(true)</code> persists the list and its contents. New contacts are created by tapping the add button &mdash; no handler code needed.</p></div></div><h2 id="the-app">The App</h2><div class="section"><div class="section-body"><h3 id="contactsmodel">ContactsModel</h3><p>The root model node. This is the top of the object hierarchy that becomes the navigation tree:</p><pre><code>(class ContactsModel extends SvStorableNode {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("contacts", null);
+            slot.setFinalInitProto(Contacts);
+            slot.setIsSubnode(true);
+        }
+    }
+
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setTitle("Contacts App");
+    }
+
+}.initThisClass());</code></pre><p><code>setFinalInitProto(Contacts)</code> tells the framework to create a <code>Contacts</code> instance during initialization &mdash; but only if one wasn't already loaded from storage. This is the key mechanism that makes the three-phase lifecycle work: on first run, the <code>Contacts</code> node is created fresh; on subsequent loads, it's restored from IndexedDB with all its data intact. <code>setIsSubnode(true)</code> places it in the navigation hierarchy.</p><h3 id="contactsapp">ContactsApp</h3><p>The application class &mdash; just declares which model and UI to use:</p><pre><code>(class ContactsApp extends SvApp {
+
+    initPrototypeSlots () {
+        {
+            const slot = this.overrideSlot("model");
+            slot.setSlotType("ContactsModel");
+        }
+    }
+
+    initPrototype () {
+        this.setName("Contacts");
+    }
+
+}.initThisClass());</code></pre><p>That's the entire app class. <code>overrideSlot("model")</code> tells the base <code>SvApp</code> to use <code>ContactsModel</code> as the root. The framework handles everything else: opening the store, creating or loading the model, setting up the UI, and wiring synchronization.</p></div></div><h2 id="project-files">Project Files</h2><div class="section"><div class="section-body"><h3 id="importsjson">_imports.json</h3><p>The import manifest tells the build system which files to include:</p><pre><code>[
+    "Contact.js",
+    "Contacts.js",
+    "ContactsModel.js",
+    "ContactsApp.js"
+]</code></pre><p>A root-level <code>_imports.json</code> would reference the framework and this app folder:</p><pre><code>[
+    "strvct/_imports.json",
+    "app/_imports.json"
+]</code></pre><h3 id="apphtml">app.html</h3><p>The HTML entry point loads the boot loader:</p><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Contacts&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;script type="module" src="strvct/source/boot/SvBootLoader.js"&gt;&lt;/script&gt;
+    &lt;script type="module"&gt;
+        await SvBootLoader.asyncRun();
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre><h3 id="build">Build</h3><p>Run the indexer to generate the content-addressable resource bundle:</p><pre><code>node ./strvct/source/boot/index-builder/ImportsIndexer.js</code></pre><p>This produces <code>_index.json</code> (metadata) and <code>_cam.json.zip</code> (compressed bundle). Serve the directory with any static file server and open <code>app.html</code>.</p></div></div><h2 id="what-you-get">What You Get</h2><div class="section"><div class="section-body"><p>From these four classes, the framework generates:</p><ul><li>A navigable list of contacts with add and reorder support</li><li>Editable inspector fields for each contact's properties</li><li>Persistent storage &mdash; close the browser, reopen, data is still there</li><li>Bidirectional sync &mdash; edit a field, the tile title updates; changes batch efficiently</li><li>Keyboard navigation, breadcrumbs, and responsive column compaction</li><li>Slide-to-delete on contacts</li></ul><p>No view classes were written. No event handlers. No storage code. No routing. The domain model is the application.</p></div></div><h2 id="adding-cloud-sync">Adding Cloud Sync</h2><div class="section"><div class="section-body"><p>Assuming you have a Firebase project with Storage enabled, making the contacts collection sync to the cloud is a two-line change. Replace the base class and add a folder name:</p><pre><code>(class Contacts extends SvSyncableArrayNode {
+
+    initPrototype () {
+        this.setTitle("Contacts");
+        this.setSubnodeClasses([Contact]);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(true);
+    }
+
+    cloudFolderName () {
+        return "contacts";
+    }
+
+}.initThisClass());</code></pre><p><code>SvSyncableArrayNode</code> extends <code>SvJsonArrayNode</code> with cloud sync capabilities. The <code>cloudFolderName()</code> method tells the framework where to store this collection's data in Firebase Storage. Everything else &mdash; delta tracking, manifest management, retry with backoff, and session locking &mdash; is inherited automatically. The collection syncs when the app saves, and loads from the cloud on the next login.</p></div></div></div>
   <script src="/style/layout/layout.js" type="module"></script>
 </body>
 </html>

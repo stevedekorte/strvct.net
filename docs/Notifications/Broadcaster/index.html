@@ -17,9 +17,14 @@
   <link rel="modulepreload" href="/style/layout/ContentToc.js">
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Broadcaster – STRVCT</title>
 </head>
 <body>
-  <div class="page"></div>
+  <div class="page loaded"><div class="header"><div><h1>Broadcaster</h1><a class="back-link" href="../index.html">&larr; Notifications</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Lightweight synchronous dispatch for high-frequency internal events.</p><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Some internal framework events &mdash; like storage-layer slot propagation &mdash; need to arrive immediately, not at the end of the event loop. Deferral would mean downstream code sees stale state between the change and the next microtask. The notification center's queuing and deduplication are liabilities here, not features.</p><p><code>SvBroadcaster</code> is a minimal synchronous alternative. Broadcasts execute immediately when posted &mdash; no queue, no deduplication, no event-loop delay. The tradeoff is less sophistication (no sender filtering, no pattern matching), which is fine for high-frequency internal events where the simplicity is the point.</p></div></div><h2 id="usage">Usage</h2><div class="section"><div class="section-body"><pre><code>// Register a listener
+SvBroadcaster.shared().addListenerForName(this, "didChangeStoredSlot");
+
+// Broadcast (immediate, synchronous)
+SvBroadcaster.shared().broadcastNameAndArgument("didChangeStoredSlot", this);</code></pre><p>When the broadcast fires, the system calls the listener's method matching the broadcast name &mdash; in this case, <code>this.didChangeStoredSlot(argument)</code>.</p></div></div><h2 id="when-to-use-broadcaster-vs-notification-center">When to Use Broadcaster vs. Notification Center</h2><div class="section"><div class="section-body"><table><thead><tr><th></th><th>SvNotificationCenter</th><th>SvBroadcaster</th></tr></thead><tbody><tr><td><strong>Timing</strong></td><td>Deferred to end of event loop</td><td>Immediate, synchronous</td></tr><tr><td><strong>Deduplication</strong></td><td>Same name+sender dispatched once per loop</td><td>Every call dispatches</td></tr><tr><td><strong>Registration</strong></td><td>SvObservation with name, sender, observer</td><td>Listener + name</td></tr><tr><td><strong>Sender filtering</strong></td><td>Can observe a specific sender</td><td>Receives from all senders</td></tr><tr><td><strong>Overhead</strong></td><td>Higher (queuing, indexing, dedup)</td><td>Lower</td></tr></tbody></table><p>Use the notification center for most inter-layer communication &mdash; the deferred deduplication is almost always what you want. Use the broadcaster for internal framework events that need synchronous delivery and where the slight overhead of the notification center matters, such as storage-layer slot change propagation.</p></div></div></div>
   <script src="/style/layout/layout.js" type="module"></script>
 </body>
 </html>

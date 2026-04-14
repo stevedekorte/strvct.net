@@ -17,9 +17,28 @@
   <link rel="modulepreload" href="/style/layout/ContentToc.js">
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Persistence Lifecycle – STRVCT</title>
 </head>
 <body>
-  <div class="page"></div>
+  <div class="page loaded"><div class="header"><div><h1>Persistence Lifecycle</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">How objects are stored, loaded, and kept in sync with IndexedDB.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#storing-objects">Storing Objects</a></li><li><a href="#loading-objects">Loading Objects</a></li><li><a href="#persistence-aware-initialization">Persistence-Aware Initialization</a></li><li><a href="#store-events">Store Events</a></li><li><a href="#clean-shutdown">Clean Shutdown</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Persistence in STRVCT is automatic. Objects marked as storable are tracked for changes, serialized at the end of each event loop, and written to IndexedDB. On reload, they're deserialized and re-initialized through the same three-phase lifecycle as new objects. The goal is transparency &mdash; a class shouldn't need different code paths for "new" and "loaded."</p></div></div><h2 id="storing-objects">Storing Objects</h2><div class="section"><div class="section-body"><h3 id="marking-dirty">Marking Dirty</h3><p>When a storable slot changes, the framework automatically marks the object as dirty:</p><ol><li><code>didMutate()</code> is called from the slot's <code>didUpdateSlot()</code> hook.</li><li>The object is added to the store's dirty set.</li><li>At the end of the event loop, all dirty objects are auto-committed.</li></ol><h3 id="serialization">Serialization</h3><pre><code>recordForStore(store)
+  ├── Serialize slots marked with setShouldStoreSlot(true)
+  ├── Convert object references to puuids
+  └── Return JSON-compatible record</code></pre><p>Only slots explicitly marked with <code>setShouldStoreSlot(true)</code> are persisted. Object references are stored as persistent unique IDs (puuids) rather than direct pointers, so the full object graph can be reconstructed on load.</p></div></div><h2 id="loading-objects">Loading Objects</h2><div class="section"><div class="section-body"><p>Loading reverses the process in three steps:</p><h3 id="1-instance-creation">1. Instance Creation</h3><pre><code>instanceFromRecordInStore(record, store)
+  ├── Create blank instance
+  ├── Call init()
+  └── Return for population</code></pre><h3 id="2-data-population">2. Data Population</h3><pre><code>loadFromRecord(record, store)
+  ├── Restore slot values
+  ├── Resolve object references via puuids
+  └── Skip slots with setFinalInitProto() (they'll be handled next)</code></pre><h3 id="3-relationship-restoration">3. Relationship Restoration</h3><p><code>finalInit()</code> re-establishes complex relationships. Slots configured with <code>setFinalInitProto()</code> only create default instances if the slot wasn't already populated from the store &mdash; this is the key mechanism that makes the three-phase lifecycle work for both new and loaded objects.</p></div></div><h2 id="persistence-aware-initialization">Persistence-Aware Initialization</h2><div class="section"><div class="section-body"><p>When you need initialization logic that only runs for newly created objects (not loaded ones):</p><pre><code>finalInit () {
+    super.finalInit();
+    if (!this.hasStoredData()) {
+        this.randomizeValues();
+    }
+}</code></pre></div></div><h2 id="store-events">Store Events</h2><div class="section"><div class="section-body"><ul><li><code>didLoadFromStore(store)</code> &mdash; Called after all objects have been loaded and initialized. Safe to access the full object graph.</li><li><code>willStore()</code> &mdash; Called just before serialization. Optional hook for pre-save cleanup.</li></ul></div></div><h2 id="clean-shutdown">Clean Shutdown</h2><div class="section"><div class="section-body"><pre><code>shutdown () {
+    this.stopWatchingNode();
+    this.subnodes().forEach(node =&gt; node.shutdown());
+    this.removeFromParent();
+}</code></pre></div></div></div>
   <script src="/style/layout/layout.js" type="module"></script>
 </body>
 </html>

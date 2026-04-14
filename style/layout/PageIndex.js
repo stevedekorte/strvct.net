@@ -10,10 +10,27 @@ export class PageIndex {
     }
 
     async init () {
-    // Determine root: layout.js is at {root}/style/layout/layout.js
-        const rootDir = new URL("../..", import.meta.url).href;
-        const pageDir = new URL("./", window.location.href).href;
-        this.isRoot = (pageDir === rootDir);
+        await this.loadPage({
+            isRoot: () => {
+                const rootDir = new URL("../..", import.meta.url).href;
+                const pageDir = new URL("./", window.location.href).href;
+                return pageDir === rootDir;
+            },
+            pathSegments: () => {
+                const segs = window.location.pathname.split("/").filter(s => s.length > 0);
+                if (segs.length && segs[segs.length - 1].includes(".")) segs.pop();
+                return segs;
+            },
+            urlParam: (key) => new URLSearchParams(window.location.search).get(key)
+        });
+
+        // Render to DOM
+        this.render();
+    }
+
+    async loadPage (context) {
+        this.isRoot = context.isRoot();
+        const pathSegments = context.pathSegments();
 
         // Fetch _index.json, fall back to _index.md
         try {
@@ -33,11 +50,6 @@ export class PageIndex {
         }
 
         // Derive title from json or folder name
-        const pathSegments = window.location.pathname
-            .split("/").filter(s => s.length > 0);
-        if (pathSegments.length && pathSegments[pathSegments.length - 1].includes(".")) {
-            pathSegments.pop(); // remove filename like index.html
-        }
         const folderName = pathSegments.length > 0
             ? decodeURIComponent(pathSegments[pathSegments.length - 1])
             : "";
@@ -45,8 +57,7 @@ export class PageIndex {
         this.topTitle = this.json.topTitle || "UndreamedOf";
 
         // Check for back-link override via URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        this.backUrl = urlParams.get("back") || null;
+        this.backUrl = context.urlParam("back") || null;
         this.backTitle = null;
 
         // Fetch parent metadata for back-link and inherited topTitle
@@ -130,15 +141,9 @@ export class PageIndex {
 
         // Resolve (async fetches)
         await Promise.all(this.children.map(c => c.resolve()));
-
-        // Render
-        this.render();
     }
 
-    render () {
-        const page = document.querySelector(".page");
-        if (!page) return;
-
+    computePageHtml () {
         // Header
         let headerHtml = '<div class="header">';
         if (this.isRoot) {
@@ -164,21 +169,34 @@ export class PageIndex {
         // Content
         const contentHtml = this.children.map(c => c.computeHtml()).join("");
 
+        return headerHtml + introHtml + contentHtml;
+    }
+
+    computeDocumentTitle () {
+        if (this.isRoot) {
+            return this.topTitle;
+        }
+        return `${this.pageTitle} \u2013 ${this.topTitle}`;
+    }
+
+    render () {
+        const page = document.querySelector(".page");
+        if (!page) return;
+
+        // Skip HTML generation if static content was already inlined by the build
+        if (!page.classList.contains("loaded")) {
+            page.innerHTML = this.computePageHtml();
+        }
+
         if (this.json.pageLayout) {
             page.classList.add(`page-${this.json.pageLayout}`);
         }
-
-        page.innerHTML = headerHtml + introHtml + contentHtml;
         page.classList.add("loaded");
 
         // Post-render hooks
         this.children.forEach(c => c.postRender(page));
 
         // Document title
-        if (this.isRoot) {
-            document.title = this.topTitle;
-        } else {
-            document.title = `${this.pageTitle} \u2013 ${this.topTitle}`;
-        }
+        document.title = this.computeDocumentTitle();
     }
 }

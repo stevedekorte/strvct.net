@@ -42,7 +42,16 @@ export function renderList (json, tag, depth) {
 export class ContentBase {
     static typeMap = {};
 
+    static _fetchFn = null;
+
+    static setFetchFn (fn) {
+        ContentBase._fetchFn = fn;
+    }
+
     static asyncFetch (url) {
+        if (ContentBase._fetchFn) {
+            return ContentBase._fetchFn(url);
+        }
         return fetch(url, { cache: "no-store" });
     }
 

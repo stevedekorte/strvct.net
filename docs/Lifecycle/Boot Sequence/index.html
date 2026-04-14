@@ -17,9 +17,27 @@
   <link rel="modulepreload" href="/style/layout/ContentToc.js">
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Boot Sequence – STRVCT</title>
 </head>
 <body>
-  <div class="page"></div>
+  <div class="page loaded"><div class="header"><div><h1>Boot Sequence</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">How the application loads from first script tag to a running app.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#1-initial-bootstrap">1. Initial Bootstrap</a></li><li><a href="#2-resource-loading">2. Resource Loading</a></li><li><a href="#3-app-creation">3. App Creation</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>The boot process has three phases: load the boot loader, load all resources via the content-addressable memory system, then create and run the app. Each phase completes fully before the next begins, so by the time application code runs, every class and resource is available.</p></div></div><h2 id="1-initial-bootstrap">1. Initial Bootstrap</h2><div class="section"><div class="section-body"><p>The browser loads the boot loader script. Core boot files are loaded in parallel and evaluated sequentially. These include: Object extensions, Promise extensions, IndexedDB support, HashCache, and ResourceManager.</p></div></div><h2 id="2-resource-loading">2. Resource Loading</h2><div class="section"><div class="section-body"><p><code>ResourceManager.shared().setupAndRun()</code> drives this phase:</p><ol><li>Loads <code>_index.json</code> containing resource metadata and content hashes.</li><li>Checks <code>HashCache</code> for cached resources &mdash; unchanged content is never re-downloaded.</li><li>Downloads <code>_cam.json.zip</code> (compressed content bundle) on cache miss.</li><li>Evaluates CSS resources sequentially (cascade order matters).</li><li>Evaluates JavaScript resources in dependency order.</li></ol><p>After this phase, all classes are defined and available globally.</p></div></div><h2 id="3-app-creation">3. App Creation</h2><div class="section"><div class="section-body"><p><code>SvApp.loadAndRunShared()</code> creates the app singleton and opens the persistent store:</p><pre><code>SvApp.loadAndRunShared()
+  ├── setStore(defaultStore())
+  ├── loadFromStore()
+  │   ├── store.promiseOpen()
+  │   └── store.rootOrIfAbsentFromClosure()
+  └── run()
+      └── setup()
+          ├── pauseSchedulers()
+          ├── setupModel()
+          ├── setupUi()
+          ├── appDidInit()
+          │   ├── setHasDoneAppInit(true)
+          │   ├── postNoteNamed("appDidInit")
+          │   ├── unhideRootView()
+          │   └── afterAppUiDidInit()
+          │       ├── handleSearchParams()
+          │       └── didInitPromise.resolve()
+          └── resumeSchedulers()</code></pre><p>Schedulers are paused during setup so that model and UI initialization don't trigger premature sync cycles. They resume once everything is wired up.</p></div></div></div>
   <script src="/style/layout/layout.js" type="module"></script>
 </body>
 </html>
