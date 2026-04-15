@@ -131,7 +131,7 @@ This is where the two approaches differ most significantly.
 
 **React** has a vast ecosystem. Component libraries, dev tools, testing frameworks, extensive documentation, and a large developer community mean that most problems have documented solutions and available help.
 
-**Strvct** is self-contained — UI generation, state management, persistence, navigation, resource loading, and caching are all built in. This eliminates dependency management and ensures the pieces work together, but the tradeoff is real: fewer third-party integrations, less documentation, a non-standard module system that can't use npm packages directly, and a smaller community. When you hit a problem, you're more likely to need to read the framework source than find a Stack Overflow answer.
+**Strvct** bundles its core functionality — UI generation, state management, persistence, navigation, resource loading, and caching — and includes a small number of third-party libraries as vendored source files rather than npm packages. This avoids package manager churn and ensures the pieces work together, but the tradeoff is real: fewer third-party integrations, less documentation, a non-standard module system that can't use npm packages directly, and a smaller community. When you hit a problem, you're more likely to need to read the framework source than find a Stack Overflow answer.
 
 | | React | Strvct |
 |---|---|---|
@@ -141,7 +141,7 @@ This is where the two approaches differ most significantly.
 | Routing | React Router, Next.js, etc. | Built-in (model graph navigation) |
 | Build tooling | Vite, Webpack, esbuild, etc. | Built-in (CAM resource system) |
 | TypeScript | First-class support | Not used (dynamic evaluation) |
-| npm ecosystem | Full access | Not compatible (custom module system) |
+| npm ecosystem | Full access | Not used (vendored external libs) |
 | Debugging | React DevTools, source maps | sourceURL-based, read the source |
 
 ## When to Consider Each
@@ -179,4 +179,4 @@ For React developers getting oriented, here's how familiar concepts map:
 | React Router | Model graph navigation (automatic) |
 | JSX | No equivalent — UI generated from annotations |
 | Virtual DOM | No equivalent — direct DOM updates via NodeView |
-| npm install | No equivalent — framework is self-contained |
+| npm install | No equivalent — external libs vendored as source |

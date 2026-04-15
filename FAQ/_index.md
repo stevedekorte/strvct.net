@@ -12,7 +12,7 @@ No. The auto-generated views cover the common case, but you can override any nod
 
 ## Does STRVCT use npm or standard ES modules?
 
-No. STRVCT has its own content-addressable resource loading system. You declare dependencies in `_imports.json` files, and the build tools produce optimized, hash-indexed bundles. This gives true content-based caching — unchanged code is never re-downloaded, even across deployments — which standard ES module bundlers can't achieve. The tradeoff is that standard import/export syntax isn't used within the framework.
+STRVCT does not use npm or standard ES module imports. It has its own content-addressable resource loading system — you declare dependencies in `_imports.json` files, and the build tools produce optimized, hash-indexed bundles. This gives true content-based caching — unchanged code is never re-downloaded, even across deployments — which standard bundlers can't achieve. The tradeoff is that standard import/export syntax isn't used within the framework, and npm packages can't be used directly. A handful of third-party libraries (pako, htmlparser2, jwt-decode, js-sha256, simple-peer) are included as source files in `external-libs/` rather than managed through a package manager.
 
 ## How does persistence work?
 
