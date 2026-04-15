@@ -10,20 +10,20 @@
   </style>
   
   <!-- Tile View -->
-  <rect x="50" y="20" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)"/>
+  <rect x="50" y="20" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" vector-effect="non-scaling-stroke"/>
   <text x="200" y="75" font-family="var(--font-family)" font-size="var(--font-size-large)" text-anchor="middle" fill="var(--color-font)">View</text>
 
   <!-- Naked Object -->
-  <rect x="50" y="170" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)"/>
+  <rect x="50" y="170" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" vector-effect="non-scaling-stroke"/>
   <text x="200" y="225" font-family="var(--font-family)" font-size="var(--font-size-large)" text-anchor="middle" fill="var(--color-font)">Domain Object</text>
 
   <!-- Storage Record -->
-  <rect x="50" y="320" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)"/>
+  <rect x="50" y="320" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" vector-effect="non-scaling-stroke"/>
   <text x="200" y="375" font-family="var(--font-family)" font-size="var(--font-size-large)" text-anchor="middle" fill="var(--color-font)">Storage Record</text>
 
   <!-- Bidirectional Arrows -->
-  <path d="M 200 120 L 200 170" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" fill="none" marker-end="url(#arrowhead-down)" marker-start="url(#arrowhead-up)"/>
-  <path d="M 200 270 L 200 320" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" fill="none" marker-end="url(#arrowhead-down)" marker-start="url(#arrowhead-up)"/>
+  <path d="M 200 120 L 200 170" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" fill="none" marker-end="url(#arrowhead-down)" marker-start="url(#arrowhead-up)" vector-effect="non-scaling-stroke"/>
+  <path d="M 200 270 L 200 320" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" fill="none" marker-end="url(#arrowhead-down)" marker-start="url(#arrowhead-up)" vector-effect="non-scaling-stroke"/>
   
   <!-- Arrowhead definitions -->
   <defs>

@@ -11,13 +11,16 @@
       fill: var(--background-color);
       stroke: var(--line-color);
       stroke-width: var(--line-width);
+      vector-effect: non-scaling-stroke;
     }
     line {
       stroke: var(--line-color);
       stroke-width: var(--line-width);
+      vector-effect: non-scaling-stroke;
     }
     .nav-item {
       stroke: var(--nav-item-color);
+      vector-effect: non-scaling-stroke;
     }
   </style>
 
