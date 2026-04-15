@@ -1,8 +1,10 @@
 # Naked Objects
 
-Closing the Usability Gap in Naked Objects — [PDF version](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf)
+Closing the Usability Gap in Naked Objects
 
 ## Abstract
+
+Also available as a [PDF](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf).
 
 The naked objects pattern proposed that user interfaces could be generated directly from domain models, eliminating the cost of bespoke UI development while guaranteeing consistency between interface and business logic. Twenty-five years later, this promise remains largely unfulfilled — not because automatic generation failed, but because the generated interfaces lacked the spatial organization and navigational fluency that users expect. This paper argues that the design space for presenting structured information is far narrower than the software industry assumes, and that a small set of composable UI primitives — tiles, tile stacks, and recursively nested master-detail views — can cover it. We present Strvct, an open-source JavaScript framework implementing this approach, and show that centralizing the model-to-view pipeline produces emergent capabilities — transparent internationalization, annotation-driven persistence with cloud sync, and automatic schema generation — that would require significant per-component effort in conventional frameworks.
 

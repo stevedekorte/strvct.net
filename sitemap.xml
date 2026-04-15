@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://strvct.net/</loc></url>
   <url><loc>https://strvct.net/Example%20App/</loc></url>
+  <url><loc>https://strvct.net/FAQ/</loc></url>
   <url><loc>https://strvct.net/Timeline/</loc></url>
   <url><loc>https://strvct.net/docs/</loc></url>
   <url><loc>https://strvct.net/docs/Comparing%20to%20React/</loc></url>
@@ -12,7 +13,6 @@
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Gesture%20Recognizers/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/</loc></url>
   <url><loc>https://strvct.net/docs/Events%20and%20Gestures/Timers/</loc></url>
-  <url><loc>https://strvct.net/docs/FAQ/</loc></url>
   <url><loc>https://strvct.net/docs/Getting%20Started/</loc></url>
   <url><loc>https://strvct.net/docs/Implementation%20Overview/</loc></url>
   <url><loc>https://strvct.net/docs/Inspirations/</loc></url>
