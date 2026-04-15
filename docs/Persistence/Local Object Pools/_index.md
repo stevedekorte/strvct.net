@@ -117,7 +117,7 @@ Because the commit is deferred, multiple slot changes within the same event loop
 
 ## PersistentAtomicMap
 
-`PersistentAtomicMap` wraps IndexedDB with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to IndexedDB in batched transactions on commit.
+`PersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/index.html) for details on the storage abstraction.
 
 This design means:
 

@@ -14,7 +14,8 @@
         "App Lifecycle",
         "Node Lifecycle",
         "View Synchronization",
-        "Persistence Lifecycle"
+        "Persistence Lifecycle",
+        "Headless Execution"
       ]
     }
   ]

@@ -18,9 +18,10 @@ The browser loads the boot loader script. Core boot files are loaded in parallel
 2. Checks `HashCache` for cached resources — unchanged content is never re-downloaded.
 3. Downloads `_cam.json.zip` (compressed content bundle) on cache miss.
 4. Evaluates CSS resources sequentially (cascade order matters).
-5. Evaluates JavaScript resources in dependency order.
+5. Filters out environment-inappropriate resources (e.g., `browser-only/` files in Node.js) via `StrvctFile.canUseInCurrentEnv()`.
+6. Evaluates JavaScript resources in dependency order.
 
-After this phase, all classes are defined and available globally.
+After this phase, all classes are defined and available globally. See [Headless Execution](../Headless%20Execution/index.html) for details on how the boot sequence adapts to Node.js.
 
 ## 3. App Creation
 

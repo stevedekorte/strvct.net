@@ -93,7 +93,7 @@ Three-phase lifecycle that works for both new and deserialized objects:
 
 ## Self-contained
 
-STRVCT does not use npm or JavaScript package managers. A handful of third-party libraries (pako, htmlparser2, jwt-decode, js-sha256, simple-peer) are included as source files in `external-libs/` and loaded through the framework's own module system. State management, persistence, navigation, resource loading, gesture recognition, and the build system are all built in. The framework uses a content-addressable module system rather than ES module imports — `_imports.json` files declare dependencies, and the build tools produce optimized bundles.
+STRVCT does not use npm or JavaScript package managers. A handful of third-party libraries (pako, htmlparser2, jwt-decode, js-sha256, simple-peer) are included as source files in `external-libs/` and loaded through the framework's own module system. State management, persistence, navigation, resource loading, gesture recognition, and the build system are all built in. The framework uses a content-addressable module system rather than ES module imports — `_imports.json` files declare dependencies, and the build tools produce optimized bundles. Because all dependencies are vendored source, there are no transitive dependencies or post-install scripts — the entire dependency tree is auditable in the repository.
 
 ## Production use
 

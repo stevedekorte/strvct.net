@@ -14,6 +14,8 @@ No. The auto-generated views cover the common case, but you can override any nod
 
 STRVCT does not use npm or standard ES module imports. It has its own content-addressable resource loading system — you declare dependencies in `_imports.json` files, and the build tools produce optimized, hash-indexed bundles. This gives true content-based caching — unchanged code is never re-downloaded, even across deployments — which standard bundlers can't achieve. The tradeoff is that standard import/export syntax isn't used within the framework, and npm packages can't be used directly. A handful of third-party libraries (pako, htmlparser2, jwt-decode, js-sha256, simple-peer) are included as source files in `external-libs/` rather than managed through a package manager.
 
+This approach also has a security benefit: there are no transitive dependencies, no post-install scripts, and no exposure to supply chain attacks through compromised or malicious npm packages. The entire dependency tree is vendored source in the repository — auditable and version-controlled.
+
 ## How does persistence work?
 
 Mark a class with `setShouldStore(true)` and its slots with `setShouldStoreSlot(true)`. The framework handles everything else: dirty tracking, batched commits at the end of each event loop, and transparent IndexedDB storage. Objects loaded from storage go through the same initialization lifecycle as new objects — no separate code paths. Cloud sync to Firebase Storage is available by extending `SvSyncableArrayNode` and providing a folder name.
