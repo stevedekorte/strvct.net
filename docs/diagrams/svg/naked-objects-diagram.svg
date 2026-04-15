@@ -3,8 +3,8 @@
     :root {
       --font-family: Arial, sans-serif;
       --font-size-large: 1.5em;
-      --color-line: #666;
-      --color-font: #999;
+      --color-line: #000;
+      --color-font: #000;
       --stroke-width-thick: 1px;
     }
   </style>

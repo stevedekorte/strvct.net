@@ -2,9 +2,9 @@
   <style>
     :root {
       --background-color: transparent;
-      --text-color: #999;
-      --line-color: #666;
-      --nav-item-color: #999;
+      --text-color: #000;
+      --line-color: #000;
+      --nav-item-color: #000;
       --line-width: 1px;
     }
     rect {
