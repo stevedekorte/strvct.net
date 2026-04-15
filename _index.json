@@ -6,7 +6,7 @@
     {
       "type": "ContentText",
       "title": "About",
-      "body": "<p>STRVCT implements the <a href=\"http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf\">naked objects</a> pattern for JavaScript. You write domain model classes with annotated properties — the framework automatically generates the user interface, handles persistence, and keeps everything synchronized.</p><p>The model layer is completely independent of the UI, allowing the same application code to run in a browser, on a command line, or headlessly in Node.js for testing and server-side processing.</p>"
+      "body": "<p>STRVCT implements the <a href=\"http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf\">naked objects</a> pattern for JavaScript. You write domain model classes with annotated properties — the framework automatically generates the user interface, handles persistence, and keeps everything synchronized.</p><p>The model layer is completely independent of the UI, allowing the same application code to run in a browser, on a command line, or headlessly in Node.js for testing and server-side processing.</p><p>For a detailed treatment of this approach, see <a href=\"docs/Naked%20Objects/index.html\">Closing the Usability Gap in Naked Objects</a>.</p>"
     },
     {
       "type": "ContentText",

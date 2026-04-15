@@ -641,10 +641,19 @@ p code, li code {
   flex-shrink: 0;
 }
 
+/* Desktop heading weights */
+@media (min-width: 701px) {
+  .header h1 { font-weight: 400; }
+  h2 { font-weight: 400; }
+  h3 { font-weight: 400; }
+  h4 { font-weight: 500; }
+}
+
 /* Responsive */
 @media (max-width: 700px) {
   .page { margin: 0; padding: 32px 28px 48px; box-shadow: none; }
   .header { flex-direction: column; gap: 8px; margin-bottom: 32px; }
+  .header .brand { order: -1; }
   .section-two-col { grid-template-columns: 1fr; gap: 12px 0; }
   .card-grid, .card-grid.cols-2 { grid-template-columns: 1fr; }
   .toc ul { columns: 1; }

@@ -144,6 +144,8 @@ A \textbf{tile stack} is a scrollable, ordered sequence of tiles presenting the 
 \label{fig:tile-stack}
 \end{figure}
 
+The sequential tile stack is the default master presentation, but the architecture does not require it. Because tiles present structured, annotated data from model slots, the same information could equally be projected as a table (columns derived from slot metadata), a grid or gallery (compact visual layout for image-heavy collections), or a chart (numeric slots rendered as data series). The model need not change---the slot annotations already carry enough information for any of these projections. The framework could select among them based on hints from the domain object, user preference, or data characteristics. For example, a node with millions of asynchronously loaded subnodes cannot be presented as a scrollable tile stack---the framework could query the node's subnode count and automatically select a paginated table or search-driven view when the count exceeds a threshold. A node could also advertise multiple applicable presentations, allowing the view to offer users a tab or toggle mechanism for switching between them---a table and a chart of the same data, for instance---with the node itself hinting which presentations are appropriate via a method on the model. This is a designed-for extension point that we have not yet implemented, but the pipeline's centralization makes it feasible without per-component effort.
+
 \subsection{Master-Detail Views}
 
 A \textbf{master-detail view} pairs a tile stack (the master) with a detail area that presents the currently selected item. The detail area itself may contain another master-detail view, enabling arbitrarily deep navigation through recursive composition.
