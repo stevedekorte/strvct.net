@@ -42,6 +42,12 @@ Modern evergreen browsers (Chrome, Firefox, Safari, Edge). STRVCT uses contempor
 
 STRVCT is in active development and used in production by [undreamedof.ai](https://undreamedof.ai), an AI-powered virtual tabletop for D&D with ~90 domain classes, multiplayer sessions, cloud sync, and AI integration. The framework has been in continuous development since 2018. It is not yet widely adopted and the API may still change.
 
+## What kinds of apps is STRVCT a good fit for?
+
+App-shell SPAs — logged-in, state-heavy products where the running application is the product and the marketing surface, if any, is a separate concern. A lot of the highest-valued consumer software being built right now fits this shape: OpenAI, Anthropic, xAI, Perplexity, Cursor (Anysphere), Harvey, Glean, Character.ai, ElevenLabs, Suno, Gamma, Midjourney — and, from the prior generation, Notion, Linear, Figma, Discord. Almost none of these depend on SSR or SEO for their core product. ChatGPT, Claude, Cursor, Figma, Linear, Notion, Discord, Character.ai, Suno, and Midjourney are all app-shell SPAs where the logged-in product is the product. They have marketing pages that need SEO, but those are typically a separate concern, often on a different stack entirely. The app itself is a client-side application with heavy state, real-time interaction, and no meaningful SEO surface.
+
+STRVCT targets that shape of software directly: heavy client-side state, hundreds of domain classes, local-first persistence, first-class LLM integration, and a UI generated from the model rather than hand-assembled per screen. It is not a good fit for content platforms, traditional e-commerce, or marketing sites — categories where SEO and first-paint latency are competitive necessities and where frameworks like Next.js exist precisely to serve.
+
 ## What's the history of this project?
 
 STRVCT began as internal infrastructure, not as a framework project. The earliest code was written in 2016 as part of an application called bitmarkets.js — Miller columns, a node hierarchy, and slot-based persistence — and was carried into a second unrelated application, voluntary.app, starting in 2017. The framework code was progressively separated from application code and extracted into its own repository, strvct.net, in 2020. It has since grown to include the object pool persistence system, gestures and drag-and-drop, content-addressable builds, cloud sync, and internationalization. The [Timeline](../Timeline/index.html) has the full list of milestones.

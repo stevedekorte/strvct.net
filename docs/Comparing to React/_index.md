@@ -164,6 +164,10 @@ This is where the two approaches differ most significantly.
 - You're building a local-first or offline-capable application
 - You want your model layer testable without a browser
 
+### A note on SSR and SEO
+
+The "SEO is critical" and "needs server-side rendering" criteria above rule Strvct out for marketing sites, content platforms, and traditional e-commerce — cases where first-paint latency and search discoverability are competitive necessities. That category is smaller than the defaults of modern web frameworks make it appear. A large share of high-value consumer software today — ChatGPT, Claude, Cursor, Figma, Linear, Notion, Discord, Character.ai, Suno, Midjourney — is app-shell SPAs, where the logged-in product is the product and the marketing site, if there is one, sits on a different stack. For that class of product, SSR isn't load-bearing, and framework choices that center it (Next.js, Remix, server components) are solving a problem these apps don't have. Strvct targets this shape of software directly: an authenticated client-side application with heavy state, real-time interaction, and no meaningful SEO surface.
+
 ## Concepts Mapping
 
 For React developers getting oriented, here's how familiar concepts map:
