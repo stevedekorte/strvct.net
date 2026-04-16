@@ -228,7 +228,7 @@ The model is fully independent of the UI layer. Model objects hold no references
 
 The slot system is what makes automatic UI and storage possible. Rather than using raw instance variables, properties carry metadata annotations that each framework layer consults independently:
 
-- **Type** — selects the appropriate property tile and enables type checking
+- **Type** — selects the appropriate property tile and enables runtime type checking (every generated setter validates its argument against the declared type, catching type errors at the point of assignment rather than at compile time)
 - **Persistence** — includes the slot in storage records
 - **View synchronization** — triggers view updates when the value changes
 - **Subnode relationship** — controls whether the value appears in the object's navigable hierarchy
