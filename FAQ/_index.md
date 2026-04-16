@@ -20,6 +20,10 @@ No. The choice is load-bearing rather than stylistic.
 
 **Security:** There are no transitive dependencies, no post-install scripts, and no exposure to supply chain attacks through compromised or malicious npm packages. The entire dependency tree is vendored source in the repository — auditable and version-controlled.
 
+## Why not TypeScript?
+
+Integration cost. STRVCT's content-addressable build and in-browser source-level debugging (via eval with sourceURL) work cleanly with plain JavaScript. Adding a TS compile step while preserving content-hashed caching and step-through debugging looked like meaningful work for uncertain gain, especially given that slot annotations already carry type information at runtime and serve most of the same validation and documentation roles. The option remains open for the future, but it's not currently a priority.
+
 ## How does persistence work?
 
 Mark a class with `setShouldStore(true)` and its slots with `setShouldStoreSlot(true)`. The framework handles everything else: dirty tracking, batched commits at the end of each event loop, and transparent IndexedDB storage. Objects loaded from storage go through the same initialization lifecycle as new objects — no separate code paths. Cloud sync to Firebase Storage is available by extending `SvSyncableArrayNode` and providing a folder name.
