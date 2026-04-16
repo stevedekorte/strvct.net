@@ -6495,6 +6495,7 @@ The ecosystem is small. There's no Stack Overflow tag, no Discord, no book. What
 - In-repo docs, regenerated from markdown and linked from the main index
 - [`llms.txt`](/llms.txt) and [`llms-full.txt`](/llms-full.txt), designed to be pasted into an LLM coding assistant
 - The framework source itself — vendored, readable, plain JavaScript with no transitive dependencies
+- [GitHub issues](https://github.com/stevedekorte/strvct.net/issues) for bug reports and questions
 
 In practice the recommended workflow is to give an LLM-backed coding agent (Claude Code, Cursor, Codex, etc.) the relevant docs and source as context, then let it reason from first principles. The slot/notification/naked-objects patterns are regular enough that a capable model can internalize them from a few dozen files — which is how the framework author works with it day-to-day.
 
