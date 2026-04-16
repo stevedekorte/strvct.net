@@ -10,7 +10,7 @@ The idea that the domain model should be the user interface. Instead of writing 
 
 No. The auto-generated views cover the common case, but you can override any node's view by creating a custom view class that follows the naming convention (e.g., `MyNodeView` for `MyNode`). In practice, most applications need very few custom views — undreamedof.ai has ~90 domain classes and fewer than 10 custom views, all for inherently graphical things like 3D dice, maps, and chat.
 
-## Does STRVCT use npm or standard ES modules?
+## Does it use npm or standard ES modules?
 
 No. The choice is load-bearing rather than stylistic.
 
@@ -24,11 +24,11 @@ No. The choice is load-bearing rather than stylistic.
 
 Mark a class with `setShouldStore(true)` and its slots with `setShouldStoreSlot(true)`. The framework handles everything else: dirty tracking, batched commits at the end of each event loop, and transparent IndexedDB storage. Objects loaded from storage go through the same initialization lifecycle as new objects — no separate code paths. Cloud sync to Firebase Storage is available by extending `SvSyncableArrayNode` and providing a folder name.
 
-## Is STRVCT local-first?
+## Is it local-first?
 
 Yes. Data lives in the browser's IndexedDB by default. The application works fully offline. Cloud sync is opt-in and additive — it backs up data and enables cross-device access, but the local database is always the primary store and serves as a cache for cloud data on subsequent loads.
 
-## How does STRVCT handle styling?
+## How is styling handled?
 
 All styling uses named JavaScript methods (`setBackgroundColor()`, `setFlexDirection()`, `setPadding()`) rather than CSS files. Themes are swappable dictionaries that can be scoped to any subtree. This avoids the combinatorial explosion of CSS selectors when views have multiple independent states (selected, disabled, highlighted, error, etc.) that interact visually. See the [Programmatic Styling](docs/Views/Programmatic%20Styling/index.html) docs for details.
 
@@ -36,19 +36,19 @@ All styling uses named JavaScript methods (`setBackgroundColor()`, `setFlexDirec
 
 There is no router. The object graph is the navigation structure. Nested objects produce drill-down columns. Breadcrumbs, column compaction on narrow viewports, and keyboard navigation are built in. Adding a new object type to the model automatically makes it navigable — no route configuration needed.
 
-## What browsers does STRVCT support?
+## What browsers are supported?
 
 Modern evergreen browsers (Chrome, Firefox, Safari, Edge). STRVCT uses contemporary JavaScript features like WeakRef, FinalizationRegistry, and private class fields. There is no transpilation step or polyfill layer.
 
-## Can STRVCT run outside the browser?
+## Can it run outside the browser?
 
 Yes. The model layer, persistence system, and boot sequence all run in Node.js with no DOM — the same application code, the same storage behavior, the same object lifecycle, just without the view layer. This is possible because the model never references views; views observe the model through notifications, not the other way around. Useful for tests, CLI tools, and server-side processing of the same object graphs the client uses. See [Headless Execution](../docs/Lifecycle/Headless%20Execution/index.html) for details.
 
-## Is STRVCT production-ready?
+## Is it production-ready?
 
 STRVCT is in active development and used in production by [undreamedof.ai](https://undreamedof.ai), an AI-powered virtual tabletop for D&D with ~90 domain classes, multiplayer sessions, cloud sync, and AI integration. The framework has been in continuous development since 2018. It is not yet widely adopted and the API may still change.
 
-## What kinds of apps is STRVCT a good fit for?
+## What kinds of apps is it a good fit for?
 
 App-shell SPAs — logged-in, state-heavy products where the running application is the product and the marketing surface, if any, is a separate concern. A lot of the highest-valued consumer software being built right now fits this shape: OpenAI, Anthropic, xAI, Perplexity, Cursor (Anysphere), Harvey, Glean, Character.ai, ElevenLabs, Suno, Gamma, Midjourney — and, from the prior generation, Notion, Linear, Figma, Discord. Almost none of these depend on SSR or SEO for their core product. ChatGPT, Claude, Cursor, Figma, Linear, Notion, Discord, Character.ai, Suno, and Midjourney are all app-shell SPAs where the logged-in product is the product. They have marketing pages that need SEO, but those are typically a separate concern, often on a different stack entirely. The app itself is a client-side application with heavy state, real-time interaction, and no meaningful SEO surface.
 
@@ -60,7 +60,7 @@ STRVCT began as internal infrastructure, not as a framework project. The earlies
 
 The project has not been publicly marketed or announced. Its only public presence is the GitHub repository and links from the author's GitHub and Twitter profile subtitles. It is not a commercial product, has no funding or sponsoring organization, and is developed as a personal framework — used in production by [undreamedof.ai](https://undreamedof.ai).
 
-## How does STRVCT work with AI-assisted development?
+## How does it work with AI-assisted development?
 
 STRVCT's architecture is well suited to AI-assisted "vibe coding." In a conventional framework, building a feature means coordinating across components, stylesheets, state management, persistence wiring, route definitions, and API layers — an AI has to understand and keep all of these in sync. In STRVCT, a feature is typically a single model class with annotated slots. The AI only needs to describe the domain — what properties an object has, which should persist, which are editable — and the framework handles the rest.
 
