@@ -5661,12 +5661,9 @@ The block-scope pattern (`{ const slot = ... }`) is a convention that keeps each
 
 ### Auto-generated getters
 
-A plain getter returns the private ivar directly, but the framework first calls an optional `willGetSlotSlotName()` hook on the owning object if one is defined. This is the mechanism behind lazy initialization for specific slots without having to subclass the setter.
+A plain getter returns the private ivar directly, but the framework first calls an optional `willGetSlotSlotName()` hook on the owning object if one is defined. This is the mechanism behind on-demand initialization for specific slots without having to subclass the setter.
 
-Two slot configurations change getter behavior:
-
-- **Weak slots** — the getter dereferences the underlying `WeakRef` transparently. If the target has been garbage-collected, the getter returns `undefined`.
-- **Lazy slots** (`setIsLazy(true)`) — the getter is asynchronous and loads the value from the persistent store on demand, by the pid recorded in the slot. The caller must `await` it.
+For **weak slots**, the getter dereferences the underlying `WeakRef` transparently. If the target has been garbage-collected, the getter returns `undefined`.
 
 ### Auto-generated setters
 
@@ -5806,7 +5803,7 @@ The `Slot` class lives in `source/library/ideal/proto/Slot.js` and defines many 
 
 - **Layout hints** — `setNodeFillsRemainingWidth`, `setKeyIsVisible`, `setValueWhiteSpace`, `setValueAllowsHtml`.
 - **JSON schema refinement** — `setJsonSchema`, `setJsonSchemaItemsType`, `setJsonSchemaItemsRef`, `setJsonSchemaItemsDescription`, `setJsonSchemaItemsIsUnique`, `setExamples`.
-- **Lazy/lifecycle** — `setIsLazy`, `setAnnotation`, `setDuplicateOp`.
+- **Lifecycle / metadata** — `setAnnotation`, `setDuplicateOp`.
 
 For the complete list, read `Slot.js` directly — the file is heavily commented and organized by category.
 
