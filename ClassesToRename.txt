@@ -1,0 +1,445 @@
+Classes defined in strvct source that do not use the Sv* prefix.
+
+Excludes: external-libs/, _unused/.
+Generated from: grep of `class X extends Y` patterns in source/.
+
+================================================================================
+KEEP AS-IS (not rename candidates)
+================================================================================
+
+--- Native JS type categories (extend built-ins by design) ---
+Array_ideal
+Array_mutator
+Array_promises
+Array_store
+ArrayBuffer_ideal
+ArrayBuffer_store
+BigInt_store
+Blob_ideal
+Boolean_ideal
+Boolean_store
+Date_ideal
+Date_store
+Error_ideal
+Error_store
+Function_ideal
+Image_ideal
+Image_store
+JSON_ideal
+Map_ideal
+Map_store
+Number_ideal
+Number_random
+Number_store
+Object_boot
+Object_categorySupport
+Object_class
+Object_copying
+Object_ideal
+Object_init
+Object_mutation
+Object_notification
+Object_puuid
+Object_store
+Object_timeouts
+Promise_ideal
+Range_ideal
+RegExp_store
+Set_ideal
+Set_store
+String_ideal
+String_store
+Symbol_store
+URL_promises
+
+--- Node shims for browser APIs (must keep browser names) ---
+FileReader
+HTMLElement_textField
+Image
+Range
+XMLHttpRequest
+
+--- Foundational / possibly intentional ---
+Mirror
+ProtoClass
+ProtoClass_protocol
+ProtoClass_store
+ProtoClass_tasks
+Protocol
+Slot
+Slot_promiseWrapper
+StrvctFile
+Type
+
+================================================================================
+INCONSISTENT PREFIX CLUSTERS
+================================================================================
+
+--- Rz* (WebRTC signaling) → rename to SvRz* ---
+RzMsg              → SvRzMsg
+RzMsgs             → SvRzMsgs
+RzPeer             → SvRzPeer
+RzPeerConn         → SvRzPeerConn
+RzPeerConns        → SvRzPeerConns
+RzSigServer        → SvRzSigServer
+RzSigServerConn    → SvRzSigServerConn
+RzSigServerConns   → SvRzSigServerConns
+RzSigServerPeers   → SvRzSigServerPeers
+RzSigServers       → SvRzSigServers
+
+--- Web* / WebBrowser* (browser APIs) → rename to SvWeb* ---
+WebBrowserCookie        → SvWebBrowserCookie
+WebBrowserNotification  → SvWebBrowserNotification
+WebBrowserNotifications → SvWebBrowserNotifications
+WebBrowserScreen        → SvWebBrowserScreen
+WebBrowserWindow        → SvWebBrowserWindow
+WebDocument             → SvWebDocument
+
+================================================================================
+CANDIDATES FOR Sv PREFIX
+================================================================================
+
+--- AI / LLM services ---
+AiChatModel
+AiChatModels
+AiConversation
+AiConversations
+AiJsonArchiver
+AiMessage
+AiParsedResponseMessage
+AiParsedResponseMessage_parsing
+AiParsedResponseMessage_streaming
+AiParsedResponseMessage_tagEvents
+AiParsedResponseMessage_voiceNarration
+AiPromptComposer
+AiRequest
+AiRequestOverloadedError
+AiResponseMessage
+AiService
+AnthropicRequest
+AnthropicService
+DeepSeekRequest
+DeepSeekService
+GeminiRequest
+GeminiService
+GeminiImageUpscalings
+GeminiVideoPrompt
+GeminiVideoPrompts
+GroqRequest
+GroqService
+OpenAiRequest
+OpenAiService
+OpenAiImage
+OpenAiImages
+OpenAiImagePrompt
+OpenAiImagePrompts
+OpenAiStyleTransfer
+OpenAiStyleTransfers
+OpenAiTtsRequest
+OpenAiTtsSession
+OpenAiTtsSessions
+XaiRequest
+XaiService
+
+--- Tool calls ---
+AssistantToolKit
+ToolCall
+ToolCalls
+ToolDefinition
+ToolDefinition_anthropic
+ToolDefinitions
+ToolResult
+
+--- Conversation ---
+Conversation
+ConversationMessage
+
+--- Azure TTS ---
+AzureLocale
+AzureLocales
+AzureService
+AzureSpeaker
+AzureSpeakers
+AzureTtsRequest
+AzureTtsRequests
+AzureVoice
+AzureVoices
+
+--- Image generation / eval ---
+EvalChecklistItem
+EvalChecklistItems
+ImageEvalChecklistMaker
+ImageEvaluator
+ImageEvaluators
+ImagineProImageEvalPrompt
+ImagineProImageEvalPrompts
+ImagineProImageGeneration
+ImagineProImageGenerations
+ImagineProImagePrompt
+ImagineProImagePrompts
+ImagineProService
+LeonardoImage
+LeonardoImageGeneration
+LeonardoImagePrompt
+LeonardoImagePrompts
+LeonardoImages
+LeonardoRefImage
+LeonardoRefImages
+LeonardoService
+LeoStyleTransfer
+LeoStyleTransfers
+
+--- Firebase / Firestore ---
+FirebaseFile
+FirebaseFiles
+FirebaseFolder
+FirebaseFolders
+FirebaseNode
+FirebaseRootFolder
+FirebaseService
+FirebaseStoragePermissions
+FirebaseStorageService
+FirestoreCollection
+FirestoreCollections
+FirestoreDatabaseService
+FirestoreDocument
+FirestoreDocuments
+FirestoreNode
+FirestoreQuery
+FirestoreRoot
+
+--- Home Assistant ---
+HomeAssistant
+HomeAssistants
+HomeAssistantArea
+HomeAssistantAreas
+HomeAssistantDevice
+HomeAssistantDevices
+HomeAssistantEntities
+HomeAssistantEntity
+HomeAssistantFolder
+HomeAssistantGroup
+HomeAssistantObject
+HomeAssistantState
+HomeAssistantStates
+
+--- YouTube ---
+YouTubeAudioPlayer
+YouTubePlayerFrame
+YouTubeService
+
+--- Proxy servers ---
+DefaultProxyServer
+FirewallProxy
+PeerService
+ProxyServer
+ProxyServers
+
+--- Audio / music / STT ---
+AudioClipDelegateProtocol
+AudioClipProtocol
+AudioQueue
+MusicFolder
+MusicLibrary
+MusicTrack
+SimpleSynth
+SpeechToTextSession
+SpeechToTextSessions
+SttMessage
+SttMessages
+
+--- Gesture recognizers ---
+BottomEdgePanGestureRecognizer
+EdgePanGestureRecognizer
+GestureManager
+GestureRecognizer
+LeftEdgePanGestureRecognizer
+LongPressGestureRecognizer
+OrientGestureRecognizer
+PanGestureRecognizer
+PinchGestureRecognizer
+RightEdgePanGestureRecognizer
+RotationGestureRecognizer
+ScreenBottomEdgePanGestureRecognizer
+ScreenEdgePanGestureRecognizer
+ScreenLeftEdgePanGestureRecognizer
+ScreenRightEdgePanGestureRecognizer
+ScreenTopEdgePanGestureRecognizer
+SlideGestureRecognizer
+TapGestureRecognizer
+TopEdgePanGestureRecognizer
+
+--- Event listeners ---
+AnimationListener
+BatteryListener
+ClipboardListener
+DocumentListener
+DragListener
+DropListener
+EventListener
+EventManager
+EventPoint
+EventSetListener
+FocusListener
+GamePadListener
+KeyboardListener
+MouseListener
+MouseMoveListener
+ScrollListener
+SelectListener
+SpeechListener
+TouchListener
+TouchMoveListener
+TransitionListener
+WebSocketListener
+WheelListener
+WindowListener
+
+--- Input devices ---
+Device
+Devices
+GamePad
+GamePadManager
+KeyboardKey
+Mouse
+TouchScreen
+
+--- Views (DomView hierarchy) ---
+BooleanView
+BrowserView
+ButtonView
+CloseButton
+ControlDomView
+CssDomView
+DomView
+DomView_animations
+DomView_browserDragAndDrop
+DragBarView
+DragView
+EditableDomView
+ElementDomView
+FlexDomView
+GesturableDomView
+ListenerDomView
+NavView
+NodeView
+ResponderDomView
+SceneView
+SceneViewWellFieldTile
+ScrollContentView
+ScrollView
+SelectableDomView
+StackScrollView
+StackView
+StyledDomView
+SubviewsDomView
+ViewAnimator
+ViewableNode
+VisibleDomView
+
+--- Tiles ---
+HeaderTile
+Tile
+Tile_dragging
+Tile_gestures
+Tile_keyboard
+Tile_slideGesture
+Tile_styling
+TileContainer
+TileNoteButtonView
+TileNoteView
+TileSubtitleView
+TilesView
+TilesView_dragViewProtocol
+TilesView_gestures
+TilesView_helpers
+TilesView_keyboard
+TilesView_orientation
+TilesView_selection
+TilesView_styling
+TileTitleView
+TitledTile
+
+--- Nodes ---
+BaseNode
+BreadCrumbsNode
+BreadCrumbsTile
+ChatInputNode
+InspectableNode
+SpatialModelNode
+StreamElementNode
+StreamNode
+StreamTextNode
+StyledNode
+TitledNode
+
+--- DOM utilities ---
+CanvasTextTapeMeasure
+CssAnimation
+CssColor
+DomBorderRadius
+DomCssInspector
+DomTextTapeMeasure
+DomTransition
+DomTransitions
+DragDestinationProtocol
+DragSourceProtocol
+
+--- Documents ---
+Documentation
+DocumentBody
+WebDocument
+
+--- JSON / stream ---
+BasicJsonRepairShop
+HtmlStreamReader
+JsonObject
+JsonPatchRequest
+JsonStreamReader
+MarkdownRelative
+MarkdownToc
+
+--- Storage / pools / data structures ---
+AtomicMap
+EnumerableWeakMap
+EnumerableWeakSet
+FifoMap
+HookedArray
+HookedMap
+HookedSet
+ImmutableSet
+IndexedArray
+ObservableProxy
+ObjectPool
+PersistentAsyncMap
+PersistentAtomicMap
+PersistentObjectPool
+SortedArray
+StoreRef
+SubnodesArray
+SubObjectPool
+
+--- HTTP / files / formatters ---
+ByteFormatter
+FilesToDownload
+FileToDownload
+HttpResponseCodes
+MissingSlotError
+NumberFormatter
+TimeFormatter
+TimePeriodFormatter
+
+--- Geometry ---
+Point
+Rectangle
+Transform
+
+--- Misc ---
+MyArray
+MyFunction
+NamespaceSearch
+ResourceIndexer
+ResourcesFolder
+StackFrame
+StackTrace
+ThrashDetector

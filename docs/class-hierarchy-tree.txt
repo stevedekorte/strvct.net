@@ -1,7 +1,7 @@
 Scanning: ../../source
 
-Found 606 JavaScript files
-Found 561 classes
+Found 615 JavaScript files
+Found 575 classes
 
 ├── BasicJsonRepairShop
 ├── BigInt_store
@@ -15,7 +15,6 @@ Found 561 classes
 │   ├── Image_ideal
 │   └── Image_store
 ├── ImportsIndexer
-├── JsonSchema
 ├── MarkdownRelative
 ├── MarkdownToc
 ├── MinimalIndexedDbFolder
@@ -125,7 +124,8 @@ Found 561 classes
 │   │                                           │   │       ├── TileNoteView
 │   │                                           │   │       ├── TileSubtitleView
 │   │                                           │   │       └── TileTitleView
-│   │                                           │   └── SvgIconView
+│   │                                           │   ├── SvgIconView
+│   │                                           │   └── SvScrollToBottomButton
 │   │                                           ├── ScrollView
 │   │                                           │   └── StackScrollView
 │   │                                           ├── SvCoachMarkView
@@ -136,6 +136,7 @@ Found 561 classes
 │   ├── EventManager
 │   ├── EventSetListener
 │   │   ├── AnimationListener
+│   │   ├── BatteryListener
 │   │   ├── ClipboardListener
 │   │   ├── DocumentListener
 │   │   ├── DragListener
@@ -182,7 +183,8 @@ Found 561 classes
 │   ├── NamespaceSearch
 │   ├── NumberFormatter
 │   ├── ObjectPool
-│   │   └── PersistentObjectPool
+│   │   ├── PersistentObjectPool
+│   │   └── SubObjectPool
 │   ├── ObservableProxy
 │   │   └── FirewallProxy
 │   ├── PersistentAsyncMap
@@ -213,257 +215,269 @@ Found 561 classes
 │   ├── SvErrorDefinition
 │   ├── SvErrorImageResolver
 │   ├── SvgIconCache
+│   ├── SvI18nCache
+│   ├── SvI18nStore
 │   ├── SvNode
 │   │   ├── SvNode_store
 │   │   └── TitledNode
-│   │       ├── InspectableNode
-│   │       │   └── ViewableNode
-│   │       │       └── StyledNode
-│   │       │           ├── BaseNode
-│   │       │           │   ├── SvActorMessage
-│   │       │           │   ├── SvActorMessages
-│   │       │           │   ├── SvActorNode
-│   │       │           │   ├── SvDataStore
-│   │       │           │   ├── SvDayNode
-│   │       │           │   ├── SvFontFamily
-│   │       │           │   ├── SvHourNode
-│   │       │           │   ├── SvMeridiemNode
-│   │       │           │   ├── SvMinuteNode
-│   │       │           │   ├── SvMonthNode
-│   │       │           │   ├── SvResource
-│   │       │           │   │   ├── SvFont
-│   │       │           │   │   ├── SvgIconNode
-│   │       │           │   │   ├── SvImage
-│   │       │           │   │   │   └── SvImage_evaluator
-│   │       │           │   │   ├── SvJsonResource
-│   │       │           │   │   ├── SvURLImage
-│   │       │           │   │   └── SvWaSound
-│   │       │           │   ├── SvResourceFile
-│   │       │           │   ├── SvResourceFolder
-│   │       │           │   ├── SvResourceGroup
-│   │       │           │   │   ├── SvFileResources
-│   │       │           │   │   ├── SvFontResources
-│   │       │           │   │   ├── SvIconResources
-│   │       │           │   │   ├── SvImageResources
-│   │       │           │   │   ├── SvJsonResources
-│   │       │           │   │   └── SvSoundResources
-│   │       │           │   ├── SvWaContext
-│   │       │           │   └── SvYearNode
-│   │       │           └── SvStorableNode
-│   │       │               ├── AiRequest
-│   │       │               │   ├── AnthropicRequest
-│   │       │               │   ├── GeminiRequest
-│   │       │               │   └── OpenAiRequest
-│   │       │               │       ├── DeepSeekRequest
-│   │       │               │       ├── GroqRequest
-│   │       │               │       └── XaiRequest
-│   │       │               ├── AzureService
-│   │       │               ├── AzureTtsRequest
-│   │       │               ├── RzPeer
-│   │       │               ├── RzSigServer
-│   │       │               ├── RzSigServerConn
-│   │       │               ├── SpatialModelNode
-│   │       │               ├── SpatialModelNode
-│   │       │               ├── SvBlobsNode
-│   │       │               ├── SvCreatorNode
-│   │       │               ├── SvFieldSetNode
-│   │       │               │   └── SvDataStoreRecord
-│   │       │               ├── SvModel
-│   │       │               ├── SvOptionNode
-│   │       │               ├── SvPrototypesNode
-│   │       │               ├── SvResources
-│   │       │               ├── SvSummaryNode
-│   │       │               │   ├── AiChatModel
-│   │       │               │   ├── AiChatModels
-│   │       │               │   ├── AiConversations
-│   │       │               │   ├── AiPromptComposer
-│   │       │               │   ├── AiService
-│   │       │               │   │   ├── AnthropicService
-│   │       │               │   │   ├── DeepSeekService
-│   │       │               │   │   ├── GeminiService
-│   │       │               │   │   ├── GroqService
-│   │       │               │   │   ├── ImagineProService
-│   │       │               │   │   ├── LeonardoService
-│   │       │               │   │   ├── OpenAiService
-│   │       │               │   │   └── XaiService
-│   │       │               │   ├── AssistantToolKit
-│   │       │               │   ├── AudioQueue
-│   │       │               │   ├── AzureLocale
-│   │       │               │   ├── AzureLocales
-│   │       │               │   ├── AzureSpeaker
-│   │       │               │   ├── AzureSpeakers
-│   │       │               │   ├── AzureTtsRequests
-│   │       │               │   ├── AzureVoice
-│   │       │               │   ├── AzureVoices
-│   │       │               │   ├── EvalChecklistItem
-│   │       │               │   ├── EvalChecklistItems
-│   │       │               │   ├── FilesToDownload
-│   │       │               │   ├── FileToDownload
-│   │       │               │   ├── FirebaseNode
-│   │       │               │   │   ├── FirebaseFile
-│   │       │               │   │   └── FirebaseFolder
-│   │       │               │   │       └── FirebaseRootFolder
-│   │       │               │   ├── FirebaseService
-│   │       │               │   ├── FirebaseStorageService
-│   │       │               │   ├── FirestoreCollections
-│   │       │               │   ├── FirestoreDatabaseService
-│   │       │               │   ├── FirestoreDocuments
-│   │       │               │   ├── FirestoreNode
-│   │       │               │   │   ├── FirestoreCollection
-│   │       │               │   │   └── FirestoreDocument
-│   │       │               │   ├── FirestoreQuery
-│   │       │               │   ├── FirestoreRoot
-│   │       │               │   ├── GeminiVideoPrompt
-│   │       │               │   ├── GeminiVideoPrompts
-│   │       │               │   ├── HomeAssistant
-│   │       │               │   ├── HomeAssistantFolder
-│   │       │               │   ├── HomeAssistantGroup
-│   │       │               │   │   ├── HomeAssistantAreas
-│   │       │               │   │   ├── HomeAssistantDevices
-│   │       │               │   │   ├── HomeAssistantEntities
-│   │       │               │   │   └── HomeAssistantStates
-│   │       │               │   ├── HomeAssistantObject
-│   │       │               │   │   ├── HomeAssistantArea
-│   │       │               │   │   ├── HomeAssistantDevice
-│   │       │               │   │   ├── HomeAssistantEntity
-│   │       │               │   │   └── HomeAssistantState
-│   │       │               │   ├── HomeAssistants
-│   │       │               │   ├── HomeAssistants
-│   │       │               │   ├── ImageEvalChecklistMaker
-│   │       │               │   ├── ImageEvaluator
-│   │       │               │   ├── ImageEvaluators
-│   │       │               │   ├── ImagineProImageGeneration
-│   │       │               │   ├── ImagineProImageGenerations
-│   │       │               │   ├── ImagineProImagePrompt
-│   │       │               │   │   └── ImagineProImageEvalPrompt
-│   │       │               │   ├── JsonSchemaNode
-│   │       │               │   ├── LeonardoImage
-│   │       │               │   ├── LeonardoImageGeneration
-│   │       │               │   ├── LeonardoImagePrompt
-│   │       │               │   ├── LeonardoImagePrompts
-│   │       │               │   ├── LeonardoImages
-│   │       │               │   ├── LeonardoRefImage
-│   │       │               │   ├── LeonardoRefImages
-│   │       │               │   ├── LeoStyleTransfer
-│   │       │               │   ├── LeoStyleTransfers
-│   │       │               │   ├── MusicFolder
-│   │       │               │   ├── MusicLibrary
-│   │       │               │   ├── MusicTrack
-│   │       │               │   ├── OpenAiImage
-│   │       │               │   ├── OpenAiImagePrompt
-│   │       │               │   ├── OpenAiImagePrompts
-│   │       │               │   ├── OpenAiImages
-│   │       │               │   ├── OpenAiStyleTransfer
-│   │       │               │   ├── OpenAiStyleTransfers
-│   │       │               │   ├── OpenAiTtsRequest
-│   │       │               │   ├── OpenAiTtsSession
-│   │       │               │   ├── OpenAiTtsSessions
-│   │       │               │   ├── PeerService
-│   │       │               │   ├── ProxyServer
-│   │       │               │   │   └── DefaultProxyServer
-│   │       │               │   ├── ProxyServers
-│   │       │               │   ├── RzMsg
-│   │       │               │   ├── RzMsgs
-│   │       │               │   ├── RzPeerConn
-│   │       │               │   ├── RzPeerConns
-│   │       │               │   ├── RzSigServerConns
-│   │       │               │   ├── RzSigServerPeers
-│   │       │               │   ├── RzSigServers
-│   │       │               │   ├── Services
-│   │       │               │   ├── SpeechToTextSession
-│   │       │               │   ├── SpeechToTextSessions
-│   │       │               │   ├── SttMessage
-│   │       │               │   ├── SttMessages
-│   │       │               │   ├── SvCoachMarkManager
-│   │       │               │   ├── SvCredential
-│   │       │               │   ├── SvCredentialManager
-│   │       │               │   ├── SvCredentials
-│   │       │               │   ├── SvDateNode
-│   │       │               │   ├── SvFolderNode
-│   │       │               │   │   └── BreadCrumbsNode
-│   │       │               │   ├── SvImageMosaic
-│   │       │               │   ├── SvImageMosaics
-│   │       │               │   ├── SvJsonIdNode
-│   │       │               │   │   ├── JsonGroup
-│   │       │               │   │   │   ├── JsonGroup_patches
-│   │       │               │   │   │   ├── SvBlobNode
-│   │       │               │   │   │   │   └── SvCloudBlobNode
-│   │       │               │   │   │   │       └── SvImageNode
-│   │       │               │   │   │   ├── SvField
-│   │       │               │   │   │   │   ├── SvActionField
-│   │       │               │   │   │   │   ├── SvBooleanField
-│   │       │               │   │   │   │   ├── SvColorField
-│   │       │               │   │   │   │   ├── SvDateField
-│   │       │               │   │   │   │   ├── SvIdentityField
-│   │       │               │   │   │   │   ├── SvImageWellField
-│   │       │               │   │   │   │   │   └── SvImageField
-│   │       │               │   │   │   │   ├── SvJsonField
-│   │       │               │   │   │   │   │   └── SvArrayField
-│   │       │               │   │   │   │   ├── SvJsonNullField
-│   │       │               │   │   │   │   ├── SvNumberField
-│   │       │               │   │   │   │   ├── SvOptionsNode
-│   │       │               │   │   │   │   ├── SvPointerField
-│   │       │               │   │   │   │   ├── SvStampField
-│   │       │               │   │   │   │   ├── SvStringField
-│   │       │               │   │   │   │   │   └── SvPasswordField
-│   │       │               │   │   │   │   ├── SvTextAreaField
-│   │       │               │   │   │   │   │   ├── ChatInputNode
-│   │       │               │   │   │   │   │   └── ConversationMessage
-│   │       │               │   │   │   │   │       └── AiMessage
-│   │       │               │   │   │   │   │           └── AiResponseMessage
-│   │       │               │   │   │   │   │               └── AiParsedResponseMessage
-│   │       │               │   │   │   │   │                   ├── AiParsedResponseMessage_parsing
-│   │       │               │   │   │   │   │                   ├── AiParsedResponseMessage_streaming
-│   │       │               │   │   │   │   │                   ├── AiParsedResponseMessage_tagEvents
-│   │       │               │   │   │   │   │                   └── AiParsedResponseMessage_voiceNarration
-│   │       │               │   │   │   │   ├── SvUrlField
-│   │       │               │   │   │   │   └── SvVideoWellField
-│   │       │               │   │   │   ├── SvModelReference
-│   │       │               │   │   │   └── SyncableJsonGroup
-│   │       │               │   │   └── SvJsonNode
-│   │       │               │   │       ├── SvJsonArrayNode
-│   │       │               │   │       │   ├── Conversation
-│   │       │               │   │       │   │   └── AiConversation
-│   │       │               │   │       │   ├── FirebaseFiles
-│   │       │               │   │       │   ├── FirebaseFolders
-│   │       │               │   │       │   ├── ImagineProImagePrompts
-│   │       │               │   │       │   │   └── ImagineProImageEvalPrompts
-│   │       │               │   │       │   ├── SvImages
-│   │       │               │   │       │   ├── SvImagesNode
-│   │       │               │   │       │   └── SvJsonArrayNode_patches
-│   │       │               │   │       └── SvJsonDictionaryNode
-│   │       │               │   │           └── UoJsonDictionaryNode
-│   │       │               │   │               ├── JsonPatchRequest
-│   │       │               │   │               ├── ToolCall
-│   │       │               │   │               └── ToolDefinition
-│   │       │               │   │                   └── ToolDefinition_anthropic
-│   │       │               │   ├── SvLinkNode
-│   │       │               │   ├── SvSyncCollectionSource
-│   │       │               │   │   ├── SvCloudSyncSource
-│   │       │               │   │   └── SvLocalResourceSource
-│   │       │               │   ├── SvTimeNode
-│   │       │               │   ├── SvWaQueue
-│   │       │               │   ├── ToolCalls
-│   │       │               │   ├── ToolDefinitions
-│   │       │               │   └── ToolResult
-│   │       │               ├── SvTextNode
-│   │       │               ├── SvThemeFolder
-│   │       │               │   ├── SvTheme
-│   │       │               │   │   └── SvDefaultTheme
-│   │       │               │   ├── SvThemeClass
-│   │       │               │   ├── SvThemeClassChildren
-│   │       │               │   ├── SvThemeState
-│   │       │               │   └── SvThemeStates
-│   │       │               ├── SvThemeResources
-│   │       │               ├── SvUserInterface
-│   │       │               │   ├── SvCliUserInterface
-│   │       │               │   ├── SvHeadlessUserInterface
-│   │       │               │   └── SvWebUserInterface
-│   │       │               ├── SvXhrRequest
-│   │       │               ├── YouTubeAudioPlayer
-│   │       │               └── YouTubeService
 │   │       ├── SvApp
-│   │       └── SvErrorReport
+│   │       ├── SvErrorReport
+│   │       └── SvTranslatableNode
+│   │           └── InspectableNode
+│   │               └── ViewableNode
+│   │                   └── StyledNode
+│   │                       ├── BaseNode
+│   │                       │   ├── SvActorMessage
+│   │                       │   ├── SvActorMessages
+│   │                       │   ├── SvActorNode
+│   │                       │   ├── SvDataStore
+│   │                       │   ├── SvDayNode
+│   │                       │   ├── SvFontFamily
+│   │                       │   ├── SvHourNode
+│   │                       │   ├── SvI18n
+│   │                       │   ├── SvI18nService
+│   │                       │   ├── SvMeridiemNode
+│   │                       │   ├── SvMinuteNode
+│   │                       │   ├── SvMonthNode
+│   │                       │   ├── SvResource
+│   │                       │   │   ├── SvFont
+│   │                       │   │   ├── SvgIconNode
+│   │                       │   │   ├── SvImage
+│   │                       │   │   │   └── SvImage_evaluator
+│   │                       │   │   ├── SvJsonResource
+│   │                       │   │   ├── SvURLImage
+│   │                       │   │   └── SvWaSound
+│   │                       │   ├── SvResourceFile
+│   │                       │   ├── SvResourceFolder
+│   │                       │   ├── SvResourceGroup
+│   │                       │   │   ├── SvFileResources
+│   │                       │   │   ├── SvFontResources
+│   │                       │   │   ├── SvIconResources
+│   │                       │   │   ├── SvImageResources
+│   │                       │   │   ├── SvJsonResources
+│   │                       │   │   └── SvSoundResources
+│   │                       │   ├── SvWaContext
+│   │                       │   └── SvYearNode
+│   │                       └── SvStorableNode
+│   │                           ├── AiRequest
+│   │                           │   ├── AnthropicRequest
+│   │                           │   ├── GeminiRequest
+│   │                           │   └── OpenAiRequest
+│   │                           │       ├── DeepSeekRequest
+│   │                           │       ├── GroqRequest
+│   │                           │       └── XaiRequest
+│   │                           ├── AzureService
+│   │                           ├── AzureTtsRequest
+│   │                           ├── RzPeer
+│   │                           ├── RzSigServer
+│   │                           ├── RzSigServerConn
+│   │                           ├── SpatialModelNode
+│   │                           ├── SpatialModelNode
+│   │                           ├── SvBlobsNode
+│   │                           ├── SvCreatorNode
+│   │                           ├── SvFieldSetNode
+│   │                           │   └── SvDataStoreRecord
+│   │                           ├── SvI18nEntry
+│   │                           ├── SvModel
+│   │                           ├── SvOptionNode
+│   │                           ├── SvPrototypesNode
+│   │                           ├── SvResources
+│   │                           ├── SvSummaryNode
+│   │                           │   ├── AiChatModel
+│   │                           │   ├── AiChatModels
+│   │                           │   ├── AiConversations
+│   │                           │   ├── AiPromptComposer
+│   │                           │   ├── AiService
+│   │                           │   │   ├── AnthropicService
+│   │                           │   │   ├── DeepSeekService
+│   │                           │   │   ├── GeminiService
+│   │                           │   │   ├── GroqService
+│   │                           │   │   ├── ImagineProService
+│   │                           │   │   ├── LeonardoService
+│   │                           │   │   ├── OpenAiService
+│   │                           │   │   └── XaiService
+│   │                           │   ├── AssistantToolKit
+│   │                           │   ├── AudioQueue
+│   │                           │   ├── AzureLocale
+│   │                           │   ├── AzureLocales
+│   │                           │   ├── AzureSpeaker
+│   │                           │   ├── AzureSpeakers
+│   │                           │   ├── AzureTtsRequests
+│   │                           │   ├── AzureVoice
+│   │                           │   ├── AzureVoices
+│   │                           │   ├── EvalChecklistItem
+│   │                           │   ├── EvalChecklistItems
+│   │                           │   ├── FilesToDownload
+│   │                           │   ├── FileToDownload
+│   │                           │   ├── FirebaseNode
+│   │                           │   │   ├── FirebaseFile
+│   │                           │   │   └── FirebaseFolder
+│   │                           │   │       └── FirebaseRootFolder
+│   │                           │   ├── FirebaseService
+│   │                           │   ├── FirebaseStorageService
+│   │                           │   ├── FirestoreCollections
+│   │                           │   ├── FirestoreDatabaseService
+│   │                           │   ├── FirestoreDocuments
+│   │                           │   ├── FirestoreNode
+│   │                           │   │   ├── FirestoreCollection
+│   │                           │   │   └── FirestoreDocument
+│   │                           │   ├── FirestoreQuery
+│   │                           │   ├── FirestoreRoot
+│   │                           │   ├── GeminiImageUpscalings
+│   │                           │   ├── GeminiVideoPrompt
+│   │                           │   ├── GeminiVideoPrompts
+│   │                           │   ├── HomeAssistant
+│   │                           │   ├── HomeAssistantFolder
+│   │                           │   ├── HomeAssistantGroup
+│   │                           │   │   ├── HomeAssistantAreas
+│   │                           │   │   ├── HomeAssistantDevices
+│   │                           │   │   ├── HomeAssistantEntities
+│   │                           │   │   └── HomeAssistantStates
+│   │                           │   ├── HomeAssistantObject
+│   │                           │   │   ├── HomeAssistantArea
+│   │                           │   │   ├── HomeAssistantDevice
+│   │                           │   │   ├── HomeAssistantEntity
+│   │                           │   │   └── HomeAssistantState
+│   │                           │   ├── HomeAssistants
+│   │                           │   ├── ImageEvalChecklistMaker
+│   │                           │   ├── ImageEvaluator
+│   │                           │   ├── ImageEvaluators
+│   │                           │   ├── ImagineProImageGeneration
+│   │                           │   ├── ImagineProImageGenerations
+│   │                           │   ├── ImagineProImagePrompt
+│   │                           │   │   └── ImagineProImageEvalPrompt
+│   │                           │   ├── LeonardoImage
+│   │                           │   ├── LeonardoImageGeneration
+│   │                           │   ├── LeonardoImagePrompt
+│   │                           │   ├── LeonardoImagePrompts
+│   │                           │   ├── LeonardoImages
+│   │                           │   ├── LeonardoRefImage
+│   │                           │   ├── LeonardoRefImages
+│   │                           │   ├── LeoStyleTransfer
+│   │                           │   ├── LeoStyleTransfers
+│   │                           │   ├── MusicFolder
+│   │                           │   ├── MusicLibrary
+│   │                           │   ├── MusicTrack
+│   │                           │   ├── OpenAiImage
+│   │                           │   ├── OpenAiImagePrompt
+│   │                           │   ├── OpenAiImagePrompts
+│   │                           │   ├── OpenAiImages
+│   │                           │   ├── OpenAiStyleTransfer
+│   │                           │   ├── OpenAiStyleTransfers
+│   │                           │   ├── OpenAiTtsRequest
+│   │                           │   ├── OpenAiTtsSession
+│   │                           │   ├── OpenAiTtsSessions
+│   │                           │   ├── PeerService
+│   │                           │   ├── ProxyServer
+│   │                           │   │   └── DefaultProxyServer
+│   │                           │   ├── ProxyServers
+│   │                           │   ├── RzMsg
+│   │                           │   ├── RzMsgs
+│   │                           │   ├── RzPeerConn
+│   │                           │   ├── RzPeerConns
+│   │                           │   ├── RzSigServerConns
+│   │                           │   ├── RzSigServerPeers
+│   │                           │   ├── RzSigServers
+│   │                           │   ├── SpeechToTextSession
+│   │                           │   ├── SpeechToTextSessions
+│   │                           │   ├── SttMessage
+│   │                           │   ├── SttMessages
+│   │                           │   ├── SvAiImageEditor
+│   │                           │   │   ├── SvGeminiImageEditor
+│   │                           │   │   └── SvGeminiImageScaler
+│   │                           │   ├── SvCoachMarkManager
+│   │                           │   ├── SvCredential
+│   │                           │   ├── SvCredentialManager
+│   │                           │   ├── SvCredentials
+│   │                           │   ├── SvDateNode
+│   │                           │   ├── SvFolderNode
+│   │                           │   │   └── BreadCrumbsNode
+│   │                           │   ├── SvGeminiImageEditors
+│   │                           │   ├── SvImageMosaic
+│   │                           │   ├── SvImageMosaics
+│   │                           │   ├── SvJsonArchiver
+│   │                           │   ├── SvJsonIdNode
+│   │                           │   │   ├── SvJsonGroup
+│   │                           │   │   │   ├── SvBlobNode
+│   │                           │   │   │   │   └── SvCloudBlobNode
+│   │                           │   │   │   │       ├── SvImageNode
+│   │                           │   │   │   │       └── SvVideoNode
+│   │                           │   │   │   ├── SvField
+│   │                           │   │   │   │   ├── SvActionField
+│   │                           │   │   │   │   ├── SvBooleanField
+│   │                           │   │   │   │   ├── SvColorField
+│   │                           │   │   │   │   ├── SvDateField
+│   │                           │   │   │   │   ├── SvIdentityField
+│   │                           │   │   │   │   ├── SvImageWellField
+│   │                           │   │   │   │   │   └── SvImageField
+│   │                           │   │   │   │   ├── SvJsonField
+│   │                           │   │   │   │   │   └── SvArrayField
+│   │                           │   │   │   │   ├── SvJsonNullField
+│   │                           │   │   │   │   ├── SvNumberField
+│   │                           │   │   │   │   ├── SvOptionsNode
+│   │                           │   │   │   │   ├── SvPointerField
+│   │                           │   │   │   │   ├── SvStampField
+│   │                           │   │   │   │   ├── SvStringField
+│   │                           │   │   │   │   │   └── SvPasswordField
+│   │                           │   │   │   │   ├── SvTextAreaField
+│   │                           │   │   │   │   │   ├── ChatInputNode
+│   │                           │   │   │   │   │   └── ConversationMessage
+│   │                           │   │   │   │   │       └── AiMessage
+│   │                           │   │   │   │   │           └── AiResponseMessage
+│   │                           │   │   │   │   │               └── AiParsedResponseMessage
+│   │                           │   │   │   │   │                   ├── AiParsedResponseMessage_parsing
+│   │                           │   │   │   │   │                   ├── AiParsedResponseMessage_streaming
+│   │                           │   │   │   │   │                   ├── AiParsedResponseMessage_tagEvents
+│   │                           │   │   │   │   │                   └── AiParsedResponseMessage_voiceNarration
+│   │                           │   │   │   │   ├── SvUrlField
+│   │                           │   │   │   │   └── SvVideoWellField
+│   │                           │   │   │   ├── SvJsonGroup_patches
+│   │                           │   │   │   ├── SvModelReference
+│   │                           │   │   │   └── SvSyncableJsonGroup
+│   │                           │   │   └── SvJsonNode
+│   │                           │   │       ├── SvJsonArrayNode
+│   │                           │   │       │   ├── Conversation
+│   │                           │   │       │   │   └── AiConversation
+│   │                           │   │       │   ├── FirebaseFiles
+│   │                           │   │       │   ├── FirebaseFolders
+│   │                           │   │       │   ├── ImagineProImagePrompts
+│   │                           │   │       │   │   └── ImagineProImageEvalPrompts
+│   │                           │   │       │   ├── SvImages
+│   │                           │   │       │   ├── SvImagesNode
+│   │                           │   │       │   ├── SvJsonArrayNode_patches
+│   │                           │   │       │   └── SvSyncableArrayNode
+│   │                           │   │       └── SvJsonDictionaryNode
+│   │                           │   │           ├── JsonPatchRequest
+│   │                           │   │           ├── ToolCall
+│   │                           │   │           └── ToolDefinition
+│   │                           │   │               └── ToolDefinition_anthropic
+│   │                           │   ├── SvLinkNode
+│   │                           │   ├── SvServices
+│   │                           │   ├── SvSyncCollectionSource
+│   │                           │   │   ├── SvCloudSyncSource
+│   │                           │   │   │   └── SvPublicCloudSource
+│   │                           │   │   └── SvLocalResourceSource
+│   │                           │   ├── SvTimeNode
+│   │                           │   ├── SvWaQueue
+│   │                           │   ├── ToolCalls
+│   │                           │   ├── ToolDefinitions
+│   │                           │   └── ToolResult
+│   │                           ├── SvTextNode
+│   │                           ├── SvThemeFolder
+│   │                           │   ├── SvTheme
+│   │                           │   │   └── SvDefaultTheme
+│   │                           │   ├── SvThemeClass
+│   │                           │   ├── SvThemeClassChildren
+│   │                           │   ├── SvThemeState
+│   │                           │   └── SvThemeStates
+│   │                           ├── SvThemeResources
+│   │                           ├── SvUserInterface
+│   │                           │   ├── SvCliUserInterface
+│   │                           │   ├── SvHeadlessUserInterface
+│   │                           │   └── SvWebUserInterface
+│   │                           ├── SvXhrRequest
+│   │                           ├── YouTubeAudioPlayer
+│   │                           └── YouTubeService
 │   ├── SvNotification
 │   ├── SvNotificationCenter
 │   ├── SvObservation
@@ -472,14 +486,14 @@ Found 561 classes
 │   ├── SvSyncScheduler
 │   ├── SvTask
 │   ├── SvTasks
+│   ├── SvTranslationFilter
+│   ├── SvWebBrowserBattery
 │   ├── SvWebBrowserTab
 │   ├── ThrashDetector
 │   ├── TimeFormatter
 │   ├── TimePeriodFormatter
 │   ├── Transform
 │   ├── ViewAnimator
-│   ├── WbCookie
-│   ├── WbCookieManager
 │   ├── WebBrowserCookie
 │   ├── WebBrowserNotification
 │   ├── WebBrowserNotifications
