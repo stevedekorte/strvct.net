@@ -2582,6 +2582,8 @@ The following screenshot shows the Strvct framework as used in undreamedof.ai, a
 
 Strvct is implemented as a client-side JavaScript framework. Applications run as single-page apps in the browser, making heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent object database of application state in IndexedDB.
 
+An important architectural distinction: Strvct does not compile or pre-render user interfaces. There is no build step that produces a view tree, no template system, and no static component hierarchy. Views are instantiated lazily at runtime — only when the user navigates to a node in the object graph. Each navigation step inspects the target node's class and slot annotations, discovers or creates an appropriate view, and binds it to the node for live bidirectional synchronization. Once created, a view persists as long as its node remains visible, staying in sync with the model through the notification system. The result is closer to a live object browser than a conventional render pipeline: the UI that exists at any moment is determined by the user's current navigation path through the object graph, and it responds immediately to changes in the underlying model.
+
 ### 6.1 Domain Model
 
 The domain model is a graph of objects inheriting from a common base class. Each object has properties declared as *slots* with annotations, actions exposed as methods, a `subnodes` array of child objects, a `parentNode` reference, and a unique persistent identifier.
@@ -3742,6 +3744,36 @@ const root = await pool.rootOrIfAbsentFromClosure(() => {
 ### Loading Cascade
 
 Loading the root object triggers a cascade: as each object is deserialized, its slot values that contain `{ "*": "puuid" }` references cause those referenced objects to be loaded in turn. After all objects in the reachable graph have been loaded, `finalInit()` is called on each to re-establish object relationships, followed by `afterInit()`.
+
+## Class Name Migrations
+
+Renaming a stored class would normally break deserialization: existing IndexedDB records still reference the old class name in their `type` field, and `classForName()` would fail to find the renamed class. To avoid a forced data migration, the pool supports a **conversion map** that routes old class names to their new names at load time.
+
+### Registering Conversions
+
+Before opening the pool, register the old→new mappings:
+
+```javascript
+const store = this.defaultStore();
+store.addClassNameConversion("OldName", "NewName");
+// or for many at once:
+store.addClassNameConversionTuples([
+    ["OldName", "NewName"],
+    ["AnotherOldName", "AnotherNewName"]
+]);
+await store.promiseOpen();
+```
+
+`classForName()` checks the map first — if an entry exists, it looks up the new name instead. Stored records are left unchanged on disk; next time each object is saved, it's written with the new class name, so the database gradually migrates itself.
+
+### When to Use It
+
+- **Any rename of a stored class** — classes that `extend SvStorableNode` (directly or indirectly) have their names embedded in records, so a rename without a conversion mapping will strand that data.
+- **Permanent retention** — keep every mapping forever unless you're certain no user has stale data. Removing an entry later breaks any client whose IndexedDB predates the rename.
+
+### Scope
+
+The conversion map only affects record deserialization. It does **not** rewrite code, JSDoc, or string literals elsewhere in the codebase — those must be updated directly (see the codemod pattern in `ClassRenames.json`).
 
 ## Garbage Collection
 
@@ -5820,6 +5852,8 @@ High-level architecture and key concepts of the Strvct framework.
 ## Introduction
 
 Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent object database of application state in IndexedDB. Subgraphs of this object database can be transparently and lazily synced to the cloud, allowing offline-first operation with seamless cloud persistence.
+
+Strvct is not a template system, a compile-time UI generator, or a component framework in the React/Flutter sense. There is no build step that produces views, no static component tree, and no pre-rendered layout. Views are created lazily at runtime as the user navigates the object graph — each navigation step inspects the target node's annotations, discovers an appropriate view class, and instantiates it. Once created, a view stays live and in sync with its model node through bidirectional notifications. The UI at any moment is a dynamic projection of the user's current navigation path, not a pre-built artifact.
 
 This page covers the key concepts: the domain model, storage, UI synchronization, and the capabilities these enable. For the design rationale, see [Naked Objects](../Naked%20Objects/index.html). For implementation details, see the [Implementation Overview](../Implementation%20Overview/index.html).
 

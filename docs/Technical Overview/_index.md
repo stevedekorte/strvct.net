@@ -6,6 +6,8 @@ High-level architecture and key concepts of the Strvct framework.
 
 Strvct applications run as client-side single-page apps in the browser. The framework makes heavy use of client-side persistent storage — both for caching code and resources via a content-addressable build system, and for maintaining a persistent object database of application state in IndexedDB. Subgraphs of this object database can be transparently and lazily synced to the cloud, allowing offline-first operation with seamless cloud persistence.
 
+Strvct is not a template system, a compile-time UI generator, or a component framework in the React/Flutter sense. There is no build step that produces views, no static component tree, and no pre-rendered layout. Views are created lazily at runtime as the user navigates the object graph — each navigation step inspects the target node's annotations, discovers an appropriate view class, and instantiates it. Once created, a view stays live and in sync with its model node through bidirectional notifications. The UI at any moment is a dynamic projection of the user's current navigation path, not a pre-built artifact.
+
 This page covers the key concepts: the domain model, storage, UI synchronization, and the capabilities these enable. For the design rationale, see [Naked Objects](../Naked%20Objects/index.html). For implementation details, see the [Implementation Overview](../Implementation%20Overview/index.html).
 
 ## Domain Model

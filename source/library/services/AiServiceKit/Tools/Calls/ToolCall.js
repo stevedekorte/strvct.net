@@ -24,7 +24,7 @@ Example Tool call format:
 
 */
 
-(class ToolCall extends UoJsonDictionaryNode {
+(class ToolCall extends SvJsonDictionaryNode {
 
     static jsonSchemaDescription () {
         return `Generic format for Assistant API call to make an '" + this.svType() + "' tool call.

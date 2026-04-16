@@ -3,11 +3,11 @@
 /*
 * @module library.services.AiServiceKit.Tools.Definitions
 * @class JsonPatchRequest
-* @extends UoJsonDictionaryNode
+* @extends SvJsonDictionaryNode
 * @classdesc Describes a JSON patch.
 */
 
-(class JsonPatchRequest extends UoJsonDictionaryNode {
+(class JsonPatchRequest extends SvJsonDictionaryNode {
 
     static jsonSchemaDescription () {
         return "JSON Patch is defined in RFC 6902 as a format for describing changes to a JSON document.";

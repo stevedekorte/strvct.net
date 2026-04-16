@@ -22,7 +22,8 @@
       "Bash(find /Users/steve/_projects/Active/undreamedof.ai/CloudSync/Servers/GameServer/site/strvct -maxdepth 3 -type f \\\\\\( -name \"*.yml\" -o -name \"*.yaml\" -o -name \"*deploy*\" -o -name \"*CNAME*\" -o -name \"*.toml\" -o -name \".nojekyll\" \\\\\\) 2>/dev/null | head -30)",
       "Bash(find /Users/steve/_projects/Active/undreamedof.ai/CloudSync -maxdepth 3 -name \"package*.json\" -exec grep -l \"homepage\\\\|pages\" {} \\\\; 2>/dev/null | head -10)",
       "Bash(/tmp/strvct_deployment_summary.txt:*)",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(python3 *)"
     ],
     "deny": []
   }

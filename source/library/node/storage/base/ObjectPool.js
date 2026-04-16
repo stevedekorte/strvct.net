@@ -1045,6 +1045,13 @@
         return this;
     }
 
+    addClassNameConversionTuples (conversionTuples) {
+        conversionTuples.forEach((conversionTuple) => {
+            this.addClassNameConversion(conversionTuple[0], conversionTuple[1]);
+        });
+        return this;
+    }
+
     /**
      * @description get the class for the given name
      * @param {String} className - the name of the class

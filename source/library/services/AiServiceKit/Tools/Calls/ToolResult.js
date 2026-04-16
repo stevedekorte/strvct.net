@@ -17,7 +17,6 @@
 
 */
 
-//UoJsonDictionaryNode
 (class ToolResult extends SvSummaryNode {
 
     static enclosingTagName () {

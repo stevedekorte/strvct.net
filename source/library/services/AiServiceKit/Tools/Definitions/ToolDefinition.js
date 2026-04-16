@@ -8,7 +8,7 @@
 
 */
 
-(class ToolDefinition extends UoJsonDictionaryNode {
+(class ToolDefinition extends SvJsonDictionaryNode {
 
     static jsonSchemaDescription () {
         return "Format for Assistant API call to make an '" + this.svType() + "' API call.";

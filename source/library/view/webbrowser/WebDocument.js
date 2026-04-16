@@ -27,8 +27,8 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("cookieManager", WbCookieManager.shared());
-            slot.setSlotType("WbCookieManager");
+            //const slot = this.newSlot("cookieManager", WbCookieManager.shared());
+            //slot.setSlotType("WbCookieManager");
         }
     }
 

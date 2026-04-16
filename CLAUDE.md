@@ -249,7 +249,9 @@ class ConfigObject extends SvStorableNode {
 
 ## UI/View System
 
-- Implements Naked Objects pattern - model objects generate UI automatically
+- Implements Naked Objects pattern — the UI is **not precompiled, templated, or code-generated**
+- Views are created **lazily at runtime** as the user navigates: a view for a node is only instantiated when that node becomes visible in the UI. There is no upfront rendering pass and no static view tree.
+- The entire UI is **dynamic and mutable at runtime** — model changes (adding/removing subnodes, changing slot values, restructuring the node graph) are immediately reflected in the UI through the notification system. The view layer is a live projection of the model, not a snapshot.
 - Core components:
   - `NodeView`: Connects model nodes to visual representation
   - `ViewableNode`: Base class for nodes that have a visual representation
@@ -258,7 +260,7 @@ class ConfigObject extends SvStorableNode {
   - Node → View: Changes in node data trigger view updates via notifications
   - View → Node: User interactions in views call action methods on nodes, which then update their own internal state
 - View discovery and creation:
-  - Views found by naming convention (e.g., `NodeNameView` for `NodeName`)
+  - When a node needs to be displayed, the framework searches for a view class by naming convention (e.g., `NodeNameView` for `NodeName`), falling back up the inheritance chain
   - Nodes can specify custom view class via `nodeViewClass()`
   - View hierarchy mirrors node hierarchy automatically
 - Properties control UI behavior:
@@ -267,6 +269,7 @@ class ConfigObject extends SvStorableNode {
   - `setNodeIsVertical(true/false)` - Controls subnode visual layout direction
 - CSS variables can be defined by nodes and applied to views
 - Scheduled synchronization batches updates for efficiency
+- See `docs/Views/`, `docs/Lifecycle/View Synchronization/`, and `docs/Naked Objects/` for detailed documentation
 
 ### Notification System
 
@@ -442,11 +445,11 @@ The framework includes a separate content-addressable blob storage system (`SvBl
 
 ## Resource Loading System
 
-- CRITICAL: STRVCT does not use npm
+- CRITICAL: STRVCT does not use npm for browser resource loading
   - Strvct does not use a conventional JS import/require system, so when writing/editing strvct files, do *not* convert them to use import/require. 
-  - The npm-pkg is only used for allowing external build systems to easily include enough of strvct to "boot" the rest using strvct's own resource loading system.
-  - The package.json & package-lock.json files are only used for building strvct's own npm package and should contain *no external npm dependencies*
-  - All dependencies are contained as source in external-libs, are part of the repo, and are in a form which can be loaded and evaled in a browser.
+  - The `npm-pkg/` directory is only for allowing external build systems to easily include enough of strvct to "boot" the rest using strvct's own resource loading system.
+  - The root `package.json` contains Node.js-only dependencies (canvas, level, node-indexeddb-lmdb, xhr2, yargs) used for headless execution and tooling — these are not used in the browser.
+  - All browser-side dependencies are contained as source in `external-libs/`, are part of the repo, and are in a form which can be loaded and eval'd in a browser.
 - Two-file architecture for efficient loading:
   - `_index.json`: Metadata catalog with paths and content hashes
   - `_cam.json.zip`: Compressed content-addressable memory bundle
@@ -580,15 +583,18 @@ The STRVCT framework supports headless execution in Node.js environments for tes
 
 When running in Node.js, some browser APIs are not available. The framework handles this through minimal polyfills:
 
-**Available Shims:**
+**Available Shims** (in `source/library/ideal/categories/server-only/`):
 - `RangeShim.js` - Minimal DOM Range API polyfill
 - `FileReaderShim.js` - Basic FileReader API polyfill for file operations
+- `FontFaceShim.js` - FontFace API polyfill
+- `ImageShim.js` - Image constructor polyfill
+- `XMLHttpRequestShim.js` - XMLHttpRequest polyfill
 
 **Important Guidelines:**
 - **DO NOT** create polyfills for `document`, `window`, or other major DOM objects
 - **DO NOT** attempt to simulate a complete browser environment in Node.js
 - **DO** create minimal shims only for specific APIs that are essential for framework operation
-- **DO** place all Node.js-specific polyfills in `strvct/source/boot/ShimsForNode/`
+- **DO** place all Node.js-specific polyfills in `source/library/ideal/categories/server-only/`
 - **DO** check for existence before defining: `if (typeof SomeAPI === 'undefined')`
 
 The framework is designed to gracefully handle the absence of browser APIs in headless environments. Most browser-specific functionality should be conditionally executed based on environment detection using `SvPlatform.isNodePlatform()`.
@@ -646,6 +652,19 @@ The framework uses ESLint for code consistency. Key rules to follow:
 - All custom Strvct framework classes (not including categories of JS classes) should have the "Sv" prefix to indicate they are part of the STRVCT framework
 - External code in the external-libs folder is exempt from naming conventions
 - Follow the formatting examples in existing code
+
+## Detailed Documentation
+
+The `docs/` directory contains browsable HTML documentation covering:
+
+- **Architecture**: Naked Objects, Technical Overview, Implementation Overview
+- **Guides**: Getting Started, Comparing to React
+- **Core Systems**: Lifecycle (Boot, Node, App, Persistence, View Sync), Notifications (Center, Broadcaster, Slot Hooks, Scheduler), Persistence (Local Pools, Cloud Pools, Blob Storage), Views, Events and Gestures
+- **Services**: AI Services, Cloud Storage, Media, Proxies, Home Assistant
+- **Reference**: Classes, Modules, Protocols
+- **Other**: Internationalization, Inspirations, Notes
+
+When the docs system covers a topic in more detail than this file, prefer reading the docs for current information.
 
 # Important
 

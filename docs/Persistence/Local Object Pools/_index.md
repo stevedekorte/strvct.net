@@ -149,6 +149,36 @@ const root = await pool.rootOrIfAbsentFromClosure(() => {
 
 Loading the root object triggers a cascade: as each object is deserialized, its slot values that contain `{ "*": "puuid" }` references cause those referenced objects to be loaded in turn. After all objects in the reachable graph have been loaded, `finalInit()` is called on each to re-establish object relationships, followed by `afterInit()`.
 
+## Class Name Migrations
+
+Renaming a stored class would normally break deserialization: existing IndexedDB records still reference the old class name in their `type` field, and `classForName()` would fail to find the renamed class. To avoid a forced data migration, the pool supports a **conversion map** that routes old class names to their new names at load time.
+
+### Registering Conversions
+
+Before opening the pool, register the old→new mappings:
+
+```javascript
+const store = this.defaultStore();
+store.addClassNameConversion("OldName", "NewName");
+// or for many at once:
+store.addClassNameConversionTuples([
+    ["OldName", "NewName"],
+    ["AnotherOldName", "AnotherNewName"]
+]);
+await store.promiseOpen();
+```
+
+`classForName()` checks the map first — if an entry exists, it looks up the new name instead. Stored records are left unchanged on disk; next time each object is saved, it's written with the new class name, so the database gradually migrates itself.
+
+### When to Use It
+
+- **Any rename of a stored class** — classes that `extend SvStorableNode` (directly or indirectly) have their names embedded in records, so a rename without a conversion mapping will strand that data.
+- **Permanent retention** — keep every mapping forever unless you're certain no user has stale data. Removing an entry later breaks any client whose IndexedDB predates the rename.
+
+### Scope
+
+The conversion map only affects record deserialization. It does **not** rewrite code, JSDoc, or string literals elsewhere in the codebase — those must be updated directly (see the codemod pattern in `ClassRenames.json`).
+
 ## Garbage Collection
 
 The pool uses mark-and-sweep garbage collection to remove unreachable objects:
