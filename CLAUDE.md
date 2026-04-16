@@ -272,9 +272,9 @@ class ConfigObject extends SvStorableNode {
 
 - Central to framework's reactivity
 - Components:
-  - `BMNotification`: Event object with name, sender, and info
-  - `BMNotificationCenter`: Global event dispatcher
-  - `BMObservation`: Subscription to specific notifications
+  - `SvNotification`: Event object with name, sender, and info
+  - `SvNotificationCenter`: Global event dispatcher
+  - `SvObservation`: Subscription to specific notifications
 - Common notification patterns:
   - Property changes via `didUpdateSlot()`
   - Node hierarchy changes
@@ -284,20 +284,20 @@ class ConfigObject extends SvStorableNode {
 
 - Central to framework's reactivity and component communication
 - Key components:
-  - `BMNotification`: Event object with name, sender, and info
-  - `BMNotificationCenter`: Global event dispatcher
-  - `BMObservation`: Subscription to specific notifications
+  - `SvNotification`: Event object with name, sender, and info
+  - `SvNotificationCenter`: Global event dispatcher
+  - `SvObservation`: Subscription to specific notifications
 - Common notification patterns:
   - Property changes: `this.didUpdateSlot(slot, oldValue, newValue)`
   - Node hierarchy changes: `this.didAddSubnode()`, `this.willRemoveSubnode()`
   - View updates: `this.postNeedsDisplay()`, `this.scheduleSyncToView()`
 - Sending notifications:
   ```javascript
-  BMNotificationCenter.shared().post(this, "myNotificationName", {extraInfo: value})
+  SvNotificationCenter.shared().post(this, "myNotificationName", {extraInfo: value})
   ```
 - Observing notifications:
   ```javascript
-  const observation = BMNotificationCenter.shared().newObservation()
+  const observation = SvNotificationCenter.shared().newObservation()
     .setObserver(this)
     .setName("myNotificationName")
     .setTarget(targetObject)
@@ -517,7 +517,7 @@ The framework includes a separate content-addressable blob storage system (`SvBl
 ### Services
 
 - `AiService`: Base class for AI service integration
-- `BMNotificationCenter`: Event dispatcher
+- `SvNotificationCenter`: Event dispatcher
 - `SvResourceManager`: Handles resource loading
 - `PersistentObjectPool`: Manages object persistence
 

@@ -49,8 +49,8 @@ node class-tree.js --filter View --full
 
 ```
 └── ProtoClass
-    ├── BMNotification
-    ├── BMObservation
+    ├── SvNotification
+    ├── SvObservation
     ├── Protocol
     └── SvNode
         ├── SvField

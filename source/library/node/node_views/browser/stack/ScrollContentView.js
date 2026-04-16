@@ -113,7 +113,7 @@
     /**
      * Handles the requestAnchorScroll notification.
      * Scrolls the target message's tile to the top of the viewport.
-     * @param {BMNotification} aNote - The notification with the target message as info.
+     * @param {SvNotification} aNote - The notification with the target message as info.
      * @returns {ScrollContentView} The current instance.
      * @category Scrolling
      */
