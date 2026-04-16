@@ -6,7 +6,8 @@
       "type": "ContentCards",
       "columns": 3,
       "items": [
-        "Async Final Initialization"
+        "Async Final Initialization",
+        "Lazy Slots"
       ]
     }
   ]
