@@ -5672,6 +5672,24 @@ Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedAr
 
 Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects' JSON records.
 
+## Resource Delivery
+
+A naked objects application leans on having the full domain model present in the client. Real apps built this way run to hundreds of classes, plus view code, icons, and style resources. Standard JavaScript delivery mechanisms don't scale gracefully to that operating point:
+
+- Loading ES modules individually issues one request per file; cold starts degrade linearly with class count.
+- Bundlers collapse many files into one, but any change to any file invalidates the entire chunk. Code splitting helps but requires manual chunking and still invalidates per chunk.
+- HTTP caches key on URL. Because deployments change URLs — via versioned filenames or query strings — clients re-download bytes they already have.
+- None of the above deduplicates identical code that appears at different paths.
+
+STRVCT replaces this with a content-addressable build. Every resource is keyed by the SHA-256 hash of its content. The build produces a small manifest and a bundle indexed by hash. At runtime:
+
+- The manifest is fetched first and checked against a persistent client-side hash cache.
+- Any content already in the cache — from a previous load, a previous deployment, or a different STRVCT app on the same origin — is not re-fetched.
+- When enough content is missing to justify it, the app downloads the whole bundle in one request; when only a little is missing, it fetches those items directly. The threshold adapts to the actual delta.
+- Identical content at different paths is stored and transferred once.
+
+The practical behavior this produces is qualitatively different from what npm plus a bundler can deliver. A redeploy that changes a single file costs roughly that file's bytes, not a chunk's. A returning user after a year of development cycles fetches only content that is actually new. A first-time visitor who has used any other STRVCT app gets the shared framework for free. None of these properties are reachable by configuration on top of the mainstream stack; they require content-level identity, which URL-based caching doesn't have. This is what lets STRVCT keep its "usability gap" closed at the data-model scales it targets, where conventional tooling begins to impose latency and cache-invalidation costs that the framework's design intentionally eliminates.
+
 ## UI Synchronization
 
 Model-view synchronization is managed by views, which either pull or push changes to the domain objects they are presenting. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only annotated properties trigger sync operations. Both directions are coalesced and sent at the end of the event loop.
@@ -6400,7 +6418,9 @@ No. The auto-generated views cover the common case, but you can override any nod
 
 ## Does STRVCT use npm or standard ES modules?
 
-STRVCT does not use npm or standard ES module imports. It has its own content-addressable resource loading system — you declare dependencies in `_imports.json` files, and the build tools produce optimized, hash-indexed bundles. This gives true content-based caching — unchanged code is never re-downloaded, even across deployments — which standard bundlers can't achieve. The tradeoff is that standard import/export syntax isn't used within the framework, and npm packages can't be used directly. A handful of third-party libraries (pako, htmlparser2, jwt-decode, js-sha256, simple-peer) are included as source files in `external-libs/` rather than managed through a package manager.
+No, and that choice is load-bearing rather than stylistic. For the kind of app STRVCT targets — hundreds of model classes running client-side, long-lived installs, data that stays resident across sessions — mainstream JavaScript tooling delivers a noticeably poor experience. Loading ES modules individually makes cold starts slow once you have a few hundred files. Bundlers solve the request count but invalidate the whole chunk on any change, and browser caches key on URL rather than content, so each deployment makes clients re-download bytes they already have. Code-splitting and cache-busting configurations narrow but don't close that gap.
+
+STRVCT uses a content-addressable build instead. Resources are keyed by the SHA-256 hash of their content, so unchanged code is never re-downloaded — even across deployments, and even when the same code appears at different paths. You declare dependencies in `_imports.json` files, and the build tools produce a small manifest plus a hash-indexed bundle. The tradeoff is that standard import/export syntax isn't used within the framework, and npm packages can't be used directly. A handful of third-party libraries (pako, htmlparser2, jwt-decode, js-sha256, simple-peer) are included as source files in `external-libs/` rather than managed through a package manager.
 
 This approach also has a security benefit: there are no transitive dependencies, no post-install scripts, and no exposure to supply chain attacks through compromised or malicious npm packages. The entire dependency tree is vendored source in the repository — auditable and version-controlled.
 

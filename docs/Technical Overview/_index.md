@@ -51,6 +51,24 @@ Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedAr
 
 Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects' JSON records.
 
+## Resource Delivery
+
+A naked objects application leans on having the full domain model present in the client. Real apps built this way run to hundreds of classes, plus view code, icons, and style resources. Standard JavaScript delivery mechanisms don't scale gracefully to that operating point:
+
+- Loading ES modules individually issues one request per file; cold starts degrade linearly with class count.
+- Bundlers collapse many files into one, but any change to any file invalidates the entire chunk. Code splitting helps but requires manual chunking and still invalidates per chunk.
+- HTTP caches key on URL. Because deployments change URLs — via versioned filenames or query strings — clients re-download bytes they already have.
+- None of the above deduplicates identical code that appears at different paths.
+
+STRVCT replaces this with a content-addressable build. Every resource is keyed by the SHA-256 hash of its content. The build produces a small manifest and a bundle indexed by hash. At runtime:
+
+- The manifest is fetched first and checked against a persistent client-side hash cache.
+- Any content already in the cache — from a previous load, a previous deployment, or a different STRVCT app on the same origin — is not re-fetched.
+- When enough content is missing to justify it, the app downloads the whole bundle in one request; when only a little is missing, it fetches those items directly. The threshold adapts to the actual delta.
+- Identical content at different paths is stored and transferred once.
+
+The practical behavior this produces is qualitatively different from what npm plus a bundler can deliver. A redeploy that changes a single file costs roughly that file's bytes, not a chunk's. A returning user after a year of development cycles fetches only content that is actually new. A first-time visitor who has used any other STRVCT app gets the shared framework for free. None of these properties are reachable by configuration on top of the mainstream stack; they require content-level identity, which URL-based caching doesn't have. This is what lets STRVCT keep its "usability gap" closed at the data-model scales it targets, where conventional tooling begins to impose latency and cache-invalidation costs that the framework's design intentionally eliminates.
+
 ## UI Synchronization
 
 Model-view synchronization is managed by views, which either pull or push changes to the domain objects they are presenting. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only annotated properties trigger sync operations. Both directions are coalesced and sent at the end of the event loop.
