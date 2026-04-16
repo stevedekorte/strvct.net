@@ -1,5 +1,9 @@
 # Slots
 
+The property system: declaration, annotations, and the most common slot settings.
+
+## Overview
+
 Slots are STRVCT's property system. A property declared as a slot is more than a value holder — it carries metadata that each framework layer (UI, storage, validation, JSON schema) reads independently. That metadata is what lets the framework auto-generate forms, persist state, sync views, and produce JSON schemas without per-property glue code.
 
 ## Declaration

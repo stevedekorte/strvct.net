@@ -46,7 +46,7 @@
 - [Home Assistant](https://strvct.net/docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
 - [Media](https://strvct.net/docs/Services/Media/): YouTube audio playback and browser speech recognition.
 - [Proxies](https://strvct.net/docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
-- [Slots](https://strvct.net/docs/Slots/)
+- [Slots](https://strvct.net/docs/Slots/): The property system: declaration, annotations, and the most common slot settings.
 - [Technical Overview](https://strvct.net/docs/Technical%20Overview/): High-level architecture and key concepts of the Strvct framework.
 - [Views](https://strvct.net/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
 - [Auto-Generated Views](https://strvct.net/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
