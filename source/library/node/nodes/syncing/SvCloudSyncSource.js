@@ -611,6 +611,8 @@
         const jsonString = JSON.stringify(poolJson, null, 2);
         const blob = new Blob([jsonString], { type: "application/json" });
 
+        console.log("CLOUDSYNC [SvCloudSyncSource] Uploading pool JSON for session:", sessionId, "size:", jsonString.length, "bytes");
+
         const metadata = {
             contentType: "application/json",
             customMetadata: {
@@ -621,6 +623,7 @@
         };
 
         await this.thisClass().asyncRetry(() => ref.put(blob, metadata));
+        console.log("CLOUDSYNC [SvCloudSyncSource] Pool JSON upload complete for session:", sessionId);
     }
 
     /**

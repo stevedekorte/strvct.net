@@ -27,6 +27,7 @@
             slot.setCanInspect(true);
             slot.setSyncsToView(true);
             slot.setShouldJsonArchive(true);
+            slot.setDuplicateOp("copyValue");
         }
 
     }
@@ -69,6 +70,101 @@
         return this;
     }
 
+    /**
+     * @description Assigns new unique JSON IDs to this node and all its JSON descendants.
+     * @returns {SvJsonIdNode} The current instance.
+     * @category Initialization
+     */
+    regenerateJsonIds () {
+        this.setJsonId(Object.newUuid());
+        this.nextJsonDescendants().forEach(sn => {
+            if (sn && sn.regenerateJsonIds) {
+                sn.regenerateJsonIds();
+            }
+        });
+        return this;
+    }
+
+    /**
+     * @description Collects all jsonIds from this node and its JSON descendants into the given map.
+     * @param {Map} idToNode - Map from jsonId to the node that owns it.
+     * @returns {Map} The populated map.
+     * @category Validation
+     */
+    collectJsonIds (idToNode = new Map()) {
+        const id = this.jsonId();
+        if (id !== null) {
+            idToNode.set(id, this);
+        }
+        this.nextJsonDescendants().forEach(sn => {
+            if (sn && sn.collectJsonIds) {
+                sn.collectJsonIds(idToNode);
+            }
+        });
+        return idToNode;
+    }
+
+    /**
+     * @description Checks that no jsonIds are shared between this node's descendants and another node's descendants.
+     * @param {SvJsonIdNode} otherNode - The other node tree to check against.
+     * @throws {Error} If any shared jsonIds are found.
+     * @returns {SvJsonIdNode} The current instance.
+     * @category Validation
+     */
+    verifyNoSharedJsonIds (otherNode) {
+        const ourIds = this.collectJsonIds();
+        const theirIds = otherNode.collectJsonIds();
+        const shared = [];
+        ourIds.forEach((node, id) => {
+            if (theirIds.has(id)) {
+                shared.push(id);
+            }
+        });
+        if (shared.length > 0) {
+            throw new Error(this.svType() + " shares " + shared.length + " jsonId(s) with " + otherNode.svType() + ": " + shared.join(", "));
+        }
+        return this;
+    }
+
+    /**
+     * @description Checks that no two descendants of this node share the same jsonId.
+     * @throws {Error} If any duplicate jsonIds are found within this tree.
+     * @returns {SvJsonIdNode} The current instance.
+     * @category Validation
+     */
+    verifyNoDuplicateJsonIds () {
+        const idToPath = new Map();
+        const duplicates = [];
+        this._collectJsonIdsWithPaths(idToPath, duplicates, [this.title()]);
+        if (duplicates.length > 0) {
+            throw new Error(this.svType() + " has " + duplicates.length + " duplicate jsonId(s): " + duplicates.join(", "));
+        }
+        return this;
+    }
+
+    /**
+     * @description Helper to collect jsonIds with their paths for duplicate detection.
+     * @param {Map} idToPath - Map from jsonId to the path where it was first seen.
+     * @param {Array} duplicates - Array to collect duplicate jsonId strings.
+     * @param {Array} path - Current path in the tree.
+     * @category Validation
+     * @private
+     */
+    _collectJsonIdsWithPaths (idToPath, duplicates, path) {
+        const id = this.jsonId();
+        if (id !== null) {
+            if (idToPath.has(id)) {
+                duplicates.push(id + " (at " + path.join("/") + " and " + idToPath.get(id) + ")");
+            } else {
+                idToPath.set(id, path.join("/"));
+            }
+        }
+        this.nextJsonDescendants().forEach(sn => {
+            if (sn && sn._collectJsonIdsWithPaths) {
+                sn._collectJsonIdsWithPaths(idToPath, duplicates, path.concat([sn.title()]));
+            }
+        });
+    }
 
     /**
      * @description Finds a descendant node (including self) with the given JSON ID.
