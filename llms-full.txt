@@ -6464,7 +6464,7 @@ STRVCT is in active development and used in production by [undreamedof.ai](https
 
 **Where it fits:** heavy client-side state, hundreds of domain classes, local-first persistence, first-class LLM integration, and a UI generated from the model rather than hand-assembled per screen.
 
-**Where it doesn't:** content platforms, traditional e-commerce, or marketing sites — categories where SEO and first-paint latency are competitive necessities and where frameworks like Next.js exist precisely to serve.
+**Where it doesn't:** content platforms, traditional e-commerce, or marketing sites — categories where SEO and first-paint latency are competitive necessities and where frameworks like Next.js exist precisely to serve. The marketing surface around an app-shell SPA can be handled separately: [undreamedof.ai](https://undreamedof.ai) pairs a static marketing site with a STRVCT app on the same domain, which is usually the right split anyway.
 
 ## What's the history of this project?
 
