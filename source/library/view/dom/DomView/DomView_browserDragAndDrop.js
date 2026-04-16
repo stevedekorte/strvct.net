@@ -289,7 +289,7 @@
      * @param {Event} event - The drag end event.
      * @category Drag Event Handling
      */
-    onBrowserDragEnd (event) {
+    onBrowserDragEnd (/*event*/) {
         this.dragUnhighlight();
     }
 

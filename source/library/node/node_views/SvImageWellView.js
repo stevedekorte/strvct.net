@@ -1,15 +1,15 @@
-/** * @module library.node.node_views
+/**
+ * @module library.node.node_views
  */
 
-/** * @class SvImageWellView
+/**
+ * @class SvImageWellView
  * @extends NodeView
  * @classdesc SvImageWellView
  *
  * - designed to contain an ImageView
  * - can have its own frame and decoration
  * - supports drag & drop of images
- 
- 
  */
 
 /**

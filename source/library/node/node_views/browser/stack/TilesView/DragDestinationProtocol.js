@@ -1,14 +1,14 @@
 "use strict";
 
-/** * @module library.node.node_views.browser.stack.TilesView
+/**
+ * @module library.node.node_views.browser.stack.TilesView
  */
 
-/** * @class DragDestinationProtocol
+/**
+ * @class DragDestinationProtocol
  * @extends Protocol
  * @classdesc A drag and drop destination protocol for views.
  * @implements {DragViewProtocol}
- 
- 
  */
 
 /**
@@ -63,7 +63,7 @@
      * @description Handles when the drag destination is exited
      * @param {Object} dragView - The view being dragged
      */
-    onDragDestinationExit (dragView) {
+    onDragDestinationExit (/*aDragView*/) {
         this.endDropMode();
     }
 
@@ -71,7 +71,7 @@
      * @description Handles the end of the drag destination
      * @param {Object} aDragView - The view being dragged
      */
-    onDragDestinationEnd (aDragView) {
+    onDragDestinationEnd (/*aDragView*/) {
         this.endDropMode();
     }
 

@@ -9,8 +9,6 @@
  * - can have its own frame and decoration
  * - supports drag & drop of videos
  * - supports standard video controls and playback
- 
- 
  */
 
 /**
@@ -141,7 +139,7 @@
      * @returns {Boolean} Returns true if editable, otherwise false.
      * @category Drag and Drop
      */
-    acceptsDrop (event) {
+    acceptsDrop (/*event*/) {
         return this.isEditable();
     }
 

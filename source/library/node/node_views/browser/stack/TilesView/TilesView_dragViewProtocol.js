@@ -212,7 +212,7 @@
      * @description Handles the end of a drag operation
      * @param {Object} dragView - The view being dragged
      */
-    onDragSourceEnd (dragView) {
+    onDragSourceEnd (/*aDragView*/) {
         this.endDropMode();
         //ElementDomView.unpauseRetires();
     }
@@ -358,7 +358,7 @@
      * @param {Object} dragView - The view being dragged
      * @returns undefined
      */
-    onDragDestinationExit (dragView) {
+    onDragDestinationExit (/*aDragView*/) {
         this.endDropMode();
     }
 
@@ -366,7 +366,7 @@
      * @description Handles the end of the drag destination
      * @param {Object} aDragView - The view being dragged
      */
-    onDragDestinationEnd (aDragView) {
+    onDragDestinationEnd (/*aDragView*/) {
         this.endDropMode();
     }
 
