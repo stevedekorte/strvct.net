@@ -33,6 +33,15 @@ The block-scope pattern (`{ const slot = ... }`) is a convention that keeps each
 - `newSubnodeFieldSlot(name, ProtoClass)` — convenience for subnode-field slots (see below). Available on `SvJsonGroup` and descendants.
 - `overrideSlot(name, initialValue)` — overrides a slot inherited from a parent class, preserving its configuration while changing the default value.
 
+### Auto-generated getters
+
+A plain getter returns the private ivar directly, but the framework first calls an optional `willGetSlotSlotName()` hook on the owning object if one is defined. This is the mechanism behind lazy initialization for specific slots without having to subclass the setter.
+
+Two slot configurations change getter behavior:
+
+- **Weak slots** — the getter dereferences the underlying `WeakRef` transparently. If the target has been garbage-collected, the getter returns `undefined`.
+- **Lazy slots** (`setIsLazy(true)`) — the getter is asynchronous and loads the value from the persistent store on demand, by the pid recorded in the slot. The caller must `await` it.
+
 ### Auto-generated setters
 
 The setter generated for a typed slot validates the incoming value against `slotType()`. If the value doesn't match, the setter logs a warning and attempts to recover — converting `Number` → `String` or `String` → `Number` where possible, falling back to the slot's initial value otherwise. Validation is on by default (`validatesOnSet` defaults to `true`); disable it with `slot.setValidatesOnSet(false)` when you need to store runtime values that intentionally don't match the declared type.
