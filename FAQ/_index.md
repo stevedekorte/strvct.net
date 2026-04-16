@@ -52,6 +52,10 @@ Yes. The model layer, persistence system, and boot sequence all run in Node.js w
 
 STRVCT is in active development and used in production by [undreamedof.ai](https://undreamedof.ai), an AI-powered virtual tabletop for D&D with ~90 domain classes, multiplayer sessions, cloud sync, and AI integration. The framework has been in continuous development since 2018. It is not yet widely adopted and the API may still change.
 
+## What happens if the author stops working on this?
+
+MIT-licensed, and the entire codebase is readable: plain JavaScript, no transpiler, no opaque build chain, no transitive npm dependencies. The few third-party libraries are vendored source in `external-libs/`. If development stops, a sufficiently motivated user could fork it without needing to reverse-engineer a tooling stack first. It's not a reassuring answer in the sense of "you'll get corporate backing" — but compared to frameworks that lock you into their ecosystem, the escape route is short.
+
 ## What kinds of apps is it a good fit for?
 
 **App-shell SPAs:** logged-in, state-heavy products where the running application is the product and the marketing surface, if any, is a separate concern. A lot of the highest-valued consumer software being built right now fits this shape: OpenAI, Anthropic, xAI, Perplexity, Cursor (Anysphere), Harvey, Glean, Character.ai, ElevenLabs, Suno, Gamma, Midjourney — and, from the prior generation, Notion, Linear, Figma, Discord. Almost none of these depend on SSR or SEO for their core product. ChatGPT, Claude, Cursor, Figma, Linear, Notion, Discord, Character.ai, Suno, and Midjourney are all app-shell SPAs where the logged-in product is the product. They have marketing pages that need SEO, but those are typically a separate concern, often on a different stack entirely. The app itself is a client-side application with heavy state, real-time interaction, and no meaningful SEO surface.
@@ -59,6 +63,8 @@ STRVCT is in active development and used in production by [undreamedof.ai](https
 **Where it fits:** heavy client-side state, hundreds of domain classes, local-first persistence, first-class LLM integration, and a UI generated from the model rather than hand-assembled per screen.
 
 **Where it doesn't:** content platforms, traditional e-commerce, or marketing sites — categories where SEO and first-paint latency are competitive necessities and where frameworks like Next.js exist precisely to serve. The marketing surface around an app-shell SPA can be handled separately: [undreamedof.ai](https://undreamedof.ai) pairs a static marketing site with a STRVCT app on the same domain, which is usually the right split anyway.
+
+**Visual distinctiveness as the pitch:** the auto-generated UI has a consistent look of its own. Custom views can override any piece, but products where the interface is itself a design statement will spend more effort fighting the defaults than riding them. The framework suits products where correctness, data density, and navigation consistency matter more than visual differentiation.
 
 ## What's the history of this project?
 
@@ -71,6 +77,16 @@ STRVCT is in active development and used in production by [undreamedof.ai](https
 **Less to coordinate:** STRVCT's architecture is well suited to AI-assisted "vibe coding." In a conventional framework, building a feature means coordinating across components, stylesheets, state management, persistence wiring, route definitions, and API layers — an AI has to understand and keep all of these in sync. In STRVCT, a feature is typically a single model class with annotated slots. The AI only needs to describe the domain — what properties an object has, which should persist, which are editable — and the framework handles the rest.
 
 **What follows:** An AI can produce working, persistent, navigable applications from high-level descriptions of the domain model without needing to generate or coordinate view code, storage logic, or navigation. The consistent slot annotation pattern is easy to learn from examples, and the same pattern applies to every class in the system. For complex, data-model-driven applications, this can dramatically reduce the amount of code an AI needs to generate and the number of places things can go wrong.
+
+## How do I get help when I'm stuck?
+
+The ecosystem is small. There's no Stack Overflow tag, no Discord, no book. What's there:
+
+- In-repo docs, regenerated from markdown and linked from the main index
+- [`llms.txt`](/llms.txt) and [`llms-full.txt`](/llms-full.txt), designed to be pasted into an LLM coding assistant
+- The framework source itself — vendored, readable, plain JavaScript with no transitive dependencies
+
+In practice the recommended workflow is to give an LLM-backed coding agent (Claude Code, Cursor, Codex, etc.) the relevant docs and source as context, then let it reason from first principles. The slot/notification/naked-objects patterns are regular enough that a capable model can internalize them from a few dozen files — which is how the framework author works with it day-to-day.
 
 ## How do I get started?
 
