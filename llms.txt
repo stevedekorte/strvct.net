@@ -13,6 +13,8 @@
 - [Gesture Recognizers](https://strvct.net/docs/Events%20and%20Gestures/Gesture%20Recognizers/): Higher-level state machines that interpret sequences of events as meaningful gestures.
 - [Keyboard and Focus](https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
 - [Timers](https://strvct.net/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+- [Future Work](https://strvct.net/docs/Future%20Work/): Design ideas, architectural discussions, and potential future improvements.
+- [Async Final Initialization](https://strvct.net/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
 - [Getting Started](https://strvct.net/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.
 - [Implementation Overview](https://strvct.net/docs/Implementation%20Overview/): Implementation details for classes, slots, views, and persistence.
 - [Inspirations](https://strvct.net/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
@@ -25,8 +27,6 @@
 - [Persistence Lifecycle](https://strvct.net/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with IndexedDB.
 - [View Synchronization](https://strvct.net/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
 - [Naked Objects](https://strvct.net/docs/Naked%20Objects/): Closing the Usability Gap in Naked Objects
-- [Notes](https://strvct.net/docs/Notes/): Design ideas, architectural discussions, and potential future improvements.
-- [Async Final Initialization](https://strvct.net/docs/Notes/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
 - [Notifications](https://strvct.net/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
 - [Broadcaster](https://strvct.net/docs/Notifications/Broadcaster/): Lightweight synchronous dispatch for high-frequency internal events.
 - [Notification Center](https://strvct.net/docs/Notifications/Notification%20Center/): Deferred, deduplicated event dispatch with weak-reference cleanup.

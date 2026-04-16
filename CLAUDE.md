@@ -662,7 +662,7 @@ The `docs/` directory contains browsable HTML documentation covering:
 - **Core Systems**: Lifecycle (Boot, Node, App, Persistence, View Sync), Notifications (Center, Broadcaster, Slot Hooks, Scheduler), Persistence (Local Pools, Cloud Pools, Blob Storage), Views, Events and Gestures
 - **Services**: AI Services, Cloud Storage, Media, Proxies, Home Assistant
 - **Reference**: Classes, Modules, Protocols
-- **Other**: Internationalization, Inspirations, Notes
+- **Other**: Internationalization, Inspirations, Future Work
 
 When the docs system covers a topic in more detail than this file, prefer reading the docs for current information.
 
