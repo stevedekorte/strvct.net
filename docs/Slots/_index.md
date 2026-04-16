@@ -6,6 +6,8 @@ The property system: declaration, annotations, and the most common slot settings
 
 Slots are STRVCT's property system. A property declared as a slot is more than a value holder — it carries metadata that each framework layer (UI, storage, validation, JSON schema) reads independently. That metadata is what lets the framework auto-generate forms, persist state, sync views, and produce JSON schemas without per-property glue code.
 
+Two things often surprise newcomers: the auto-generated setter **type-checks values at runtime** against the declared slot type (warning and attempting recovery on mismatch), and slots can hold **weak references** via `newWeakSlot`, which is the standard way to express back-references and non-owning pointers without creating retain cycles. Both are covered in detail below.
+
 ## Declaration
 
 Slots are declared in a class's `initPrototypeSlots()` method. Each declaration creates a private instance variable (`_slotName`), an auto-generated getter (`slotName()`), and an auto-generated setter (`setSlotName(value)`).
