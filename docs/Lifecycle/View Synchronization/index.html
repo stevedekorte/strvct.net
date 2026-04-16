@@ -18,6 +18,7 @@
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
   <title>View Synchronization – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>View Synchronization</h1><a class="back-link" href="../index.html">&larr; Lifecycle</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">How views discover nodes, synchronize state, and batch updates efficiently.</p><nav class="toc"><ul><li><a href="#view-discovery">View Discovery</a></li><li><a href="#model-to-view">Model to View</a></li><li><a href="#view-to-model">View to Model</a></li><li><a href="#the-sync-scheduler">The Sync Scheduler</a></li><li><a href="#view-lifecycle-events">View Lifecycle Events</a></li><li><a href="#performance">Performance</a></li></ul></nav><h2 id="view-discovery">View Discovery</h2><div class="section"><div class="section-body"><p>The framework creates views automatically when a node needs to be displayed:</p><ol><li>The node calls <code>nodeViewClass()</code>.</li><li>The framework searches for <code>NodeClassNameView</code> or <code>NodeClassNameTile</code>.</li><li>Falls back up the inheritance chain until a match is found.</li><li>Creates an instance via <code>clone()</code> and associates it via <code>setNode()</code>.</li></ol><pre><code>NodeView.newSubviewForSubnode(node)

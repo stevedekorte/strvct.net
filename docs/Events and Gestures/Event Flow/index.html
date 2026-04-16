@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/style/style.css">
   <title>Event Flow – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>Event Flow</h1><a class="back-link" href="../index.html">&larr; Events and Gestures</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">The end-to-end path from a browser event to an application handler.</p><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Raw DOM events are too low-level for most application code. Distinguishing a tap from a long-press from a pan requires tracking timing, movement thresholds, and finger counts &mdash; and when multiple gestures compete on the same element, the browser offers no arbitration. STRVCT's event pipeline absorbs this complexity: raw events feed into gesture recognizer state machines, a central GestureManager resolves conflicts (so a tap and a long-press on the same view don't both fire), and the application only sees clean, high-level callbacks like <code>onTapComplete</code> or <code>onPanMove</code>. Views that don't need gestures can still handle raw events directly &mdash; the gesture layer is additive, not mandatory.</p><pre><code>Browser DOM Event

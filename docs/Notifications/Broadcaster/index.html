@@ -18,6 +18,7 @@
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
   <title>Broadcaster – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>Broadcaster</h1><a class="back-link" href="../index.html">&larr; Notifications</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Lightweight synchronous dispatch for high-frequency internal events.</p><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Some internal framework events &mdash; like storage-layer slot propagation &mdash; need to arrive immediately, not at the end of the event loop. Deferral would mean downstream code sees stale state between the change and the next microtask. The notification center's queuing and deduplication are liabilities here, not features.</p><p><code>SvBroadcaster</code> is a minimal synchronous alternative. Broadcasts execute immediately when posted &mdash; no queue, no deduplication, no event-loop delay. The tradeoff is less sophistication (no sender filtering, no pattern matching), which is fine for high-frequency internal events where the simplicity is the point.</p></div></div><h2 id="usage">Usage</h2><div class="section"><div class="section-body"><pre><code>// Register a listener

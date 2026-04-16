@@ -1,0 +1,67 @@
+# STRVCT
+
+> A naked objects framework for JavaScript with automatic UI generation, persistence, and cloud sync.
+
+## Documentation
+
+- [Documentation](https://strvct.net/docs/): Guides, architecture, and API reference.
+- [Comparing to React](https://strvct.net/docs/Comparing%20to%20React/): A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
+- [Events and Gestures](https://strvct.net/docs/Events%20and%20Gestures/): Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-and-drop.
+- [Drag and Drop](https://strvct.net/docs/Events%20and%20Gestures/Drag%20and%20Drop/): Browser drag-and-drop support for views and nodes, covering both drop targets and drag sources.
+- [Event Flow](https://strvct.net/docs/Events%20and%20Gestures/Event%20Flow/): The end-to-end path from a browser event to an application handler.
+- [Event Listeners](https://strvct.net/docs/Events%20and%20Gestures/Event%20Listeners/): Thin wrappers around native DOM events that forward to handler methods on views.
+- [Gesture Recognizers](https://strvct.net/docs/Events%20and%20Gestures/Gesture%20Recognizers/): Higher-level state machines that interpret sequences of events as meaningful gestures.
+- [Keyboard and Focus](https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
+- [Timers](https://strvct.net/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
+- [Getting Started](https://strvct.net/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.
+- [Implementation Overview](https://strvct.net/docs/Implementation%20Overview/): Implementation details for classes, slots, views, and persistence.
+- [Inspirations](https://strvct.net/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
+- [Internationalization](https://strvct.net/docs/Internationalization/): AI-powered translation of UI text with persistent caching, batched requests, and smart content filtering.
+- [Lifecycle](https://strvct.net/docs/Lifecycle/): Boot sequence, node initialization, view synchronization, and persistence cycles.
+- [App Lifecycle](https://strvct.net/docs/Lifecycle/App%20Lifecycle/): SvApp initialization, extension points, and readiness signaling.
+- [Boot Sequence](https://strvct.net/docs/Lifecycle/Boot%20Sequence/): How the application loads from first script tag to a running app.
+- [Headless Execution](https://strvct.net/docs/Lifecycle/Headless%20Execution/): Running STRVCT applications in Node.js without a browser.
+- [Node Lifecycle](https://strvct.net/docs/Lifecycle/Node%20Lifecycle/): Creation, three-phase initialization, parent-child relationships, and update notifications.
+- [Persistence Lifecycle](https://strvct.net/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with IndexedDB.
+- [View Synchronization](https://strvct.net/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
+- [Naked Objects](https://strvct.net/docs/Naked%20Objects/): Closing the Usability Gap in Naked Objects
+- [Notes](https://strvct.net/docs/Notes/): Design ideas, architectural discussions, and potential future improvements.
+- [Async Final Initialization](https://strvct.net/docs/Notes/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
+- [Notifications](https://strvct.net/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
+- [Broadcaster](https://strvct.net/docs/Notifications/Broadcaster/): Lightweight synchronous dispatch for high-frequency internal events.
+- [Notification Center](https://strvct.net/docs/Notifications/Notification%20Center/): Deferred, deduplicated event dispatch with weak-reference cleanup.
+- [Slot Change Hooks](https://strvct.net/docs/Notifications/Slot%20Change%20Hooks/): Automatic per-slot callbacks that connect property changes to notifications and persistence.
+- [Sync Scheduler](https://strvct.net/docs/Notifications/Sync%20Scheduler/): Deferred, deduplicated method calls with priority ordering and loop detection.
+- [Persistence](https://strvct.net/docs/Persistence/): Local storage, cloud sync, and blob management for object graphs.
+- [Cloud Object Pools](https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/): Cloud sync for object pools and collections using Firebase Storage.
+- [Local and Cloud Blob Storage](https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): Content-addressable storage for binary data like images, audio, and video.
+- [Local Object Pools](https://strvct.net/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
+- [Reference](https://strvct.net/docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
+- [Classes](https://strvct.net/docs/Reference/Classes/)
+- [Modules](https://strvct.net/docs/Reference/Modules/)
+- [Protocols](https://strvct.net/docs/Reference/Protocols/)
+- [Services](https://strvct.net/docs/Services/): AI, cloud, media, and IoT service integrations.
+- [AI Services](https://strvct.net/docs/Services/AI%20Services/): Base classes, requests, conversations, tool calling, response parsing, and prompt composition.
+- [Cloud Storage](https://strvct.net/docs/Services/Cloud%20Storage/): Firebase integration for cloud persistence and file storage.
+- [Home Assistant](https://strvct.net/docs/Services/Home%20Assistant/): IoT device control via Home Assistant's WebSocket API.
+- [Media](https://strvct.net/docs/Services/Media/): YouTube audio playback and browser speech recognition.
+- [Proxies](https://strvct.net/docs/Services/Proxies/): Client-side proxy configuration for routing API calls through intermediary servers.
+- [Technical Overview](https://strvct.net/docs/Technical%20Overview/): High-level architecture and key concepts of the Strvct framework.
+- [Views](https://strvct.net/docs/Views/): The view layer: auto-generated UI, custom views, and programmatic styling.
+- [Auto-Generated Views](https://strvct.net/docs/Views/Auto-Generated%20Views/): How the view layer connects to model nodes, synchronizes state, and provides navigation — without writing any view code.
+- [Custom Views](https://strvct.net/docs/Views/Custom%20Views/): How to create custom view classes when the auto-generated UI doesn't fit.
+- [Programmatic Styling](https://strvct.net/docs/Views/Programmatic%20Styling/): Named CSS methods, the chainable API, and why STRVCT avoids CSS files.
+- [Themes and Style States](https://strvct.net/docs/Views/Themes%20and%20Style%20States/): How views resolve their appearance from theme classes, style states, and node configuration.
+
+## Example App
+
+- [Example App](https://strvct.net/Example%20App/): A complete contacts application in four classes, with zero view code.
+
+## FAQ
+
+- [FAQ](https://strvct.net/FAQ/): Frequently asked questions about STRVCT.
+
+## Project Timeline
+
+- [Project Timeline](https://strvct.net/Timeline/): Key milestones from the first commit through present day Framework architecture, UI system, persistence, and developer tooling.
+

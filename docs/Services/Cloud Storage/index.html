@@ -18,6 +18,7 @@
   <link rel="modulepreload" href="/style/layout/PageIndex.js">
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
   <title>Cloud Storage – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>Cloud Storage</h1><a class="back-link" href="../index.html">&larr; Services</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Firebase integration for cloud persistence and file storage.</p><h2 id="firebaseservice">FirebaseService</h2><div class="section"><div class="section-body"><p>Integrates with Firebase for cloud persistence and file storage. Unlike AI services, <code>FirebaseService</code> extends <code>SvSummaryNode</code> directly and contains two sub-services:</p><ul><li><strong><code>FirestoreDatabaseService</code></strong> &mdash; Document and collection access via Firestore. Provides query building, real-time listeners, and CRUD operations through Strvct node wrappers (<code>FirestoreNode</code>, <code>FirestoreQuery</code>).</li><li><strong><code>FirebaseStorageService</code></strong> &mdash; File upload and download via Firebase Storage, with permission management.</li></ul></div></div></div>

@@ -31,6 +31,7 @@ import { ContentImage } from "./layout/ContentImage.js";
 import { ContentTimeline } from "./layout/ContentTimeline.js";
 import { ContentToc } from "./layout/ContentToc.js";
 import { PageIndex } from "./layout/PageIndex.js";
+import { parseMarkdown } from "./layout/MarkdownParser.js";
 
 // Register content types (mirrors layout.js)
 ContentBase.typeMap = {
@@ -157,6 +158,13 @@ async function generatePage (pageDir) {
         html = html.replace("</head>", `  <title>${docTitle}</title>\n</head>`);
     }
 
+    // Inject a <link rel="alternate"> pointing to /llms.txt so LLM agents
+    // can discover the machine-readable index from any page.
+    const llmsLinkTag = '<link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">';
+    if (!html.includes('href="/llms.txt"') && /<\/head>/i.test(html)) {
+        html = html.replace(/<\/head>/i, `  ${llmsLinkTag}\n</head>`);
+    }
+
     writeFileSync(htmlPath, html);
     console.log(`  generated: ${relPath}`);
 }
@@ -182,6 +190,278 @@ function generateSitemap (pages, baseUrl) {
 }
 
 // ---------------------------------------------------------------------------
+// llms.txt / llms-full.txt generation
+// ---------------------------------------------------------------------------
+
+function htmlToPlain (html) {
+    if (!html) return "";
+    return html
+        .replace(/<br\s*\/?>/gi, " ")
+        .replace(/<[^>]+>/g, "")
+        .replace(/&nbsp;/g, " ")
+        .replace(/&mdash;/g, "\u2014")
+        .replace(/&ndash;/g, "\u2013")
+        .replace(/&ldquo;/g, "\u201c").replace(/&rdquo;/g, "\u201d")
+        .replace(/&lsquo;/g, "\u2018").replace(/&rsquo;/g, "\u2019")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function htmlToMarkdown (html) {
+    if (!html) return "";
+    let s = html;
+    // Code blocks
+    s = s.replace(/<pre><code>([\s\S]*?)<\/code><\/pre>/gi, (_, code) => `\n\`\`\`\n${code}\n\`\`\`\n`);
+    // Headings (rare in bodies, but handle them)
+    s = s.replace(/<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/gi, (_, level, text) => `\n\n${"#".repeat(+level)} ${text.trim()}\n\n`);
+    // Lists: open tag → newline; close tag → newline; items become "- item"
+    s = s.replace(/<\/li>\s*<li[^>]*>/gi, "\n- ");
+    s = s.replace(/<(ul|ol)[^>]*>\s*<li[^>]*>/gi, "\n- ");
+    s = s.replace(/<\/li>\s*<\/(ul|ol)>/gi, "\n");
+    s = s.replace(/<(ul|ol)[^>]*>/gi, "\n").replace(/<\/(ul|ol)>/gi, "\n");
+    s = s.replace(/<li[^>]*>/gi, "- ").replace(/<\/li>/gi, "\n");
+    // Inline formatting
+    s = s.replace(/<a\s+[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, "[$2]($1)");
+    s = s.replace(/<(strong|b)>([\s\S]*?)<\/(strong|b)>/gi, "**$2**");
+    s = s.replace(/<(em|i)>([\s\S]*?)<\/(em|i)>/gi, "*$2*");
+    s = s.replace(/<code>([\s\S]*?)<\/code>/gi, "`$1`");
+    // Paragraphs and breaks
+    s = s.replace(/<p[^>]*>/gi, "").replace(/<\/p>/gi, "\n\n");
+    s = s.replace(/<br\s*\/?>/gi, "\n");
+    // Strip remaining tags
+    s = s.replace(/<[^>]+>/g, "");
+    // Entities
+    s = s.replace(/&nbsp;/g, " ")
+        .replace(/&mdash;/g, "\u2014")
+        .replace(/&ndash;/g, "\u2013")
+        .replace(/&ldquo;/g, "\u201c").replace(/&rdquo;/g, "\u201d")
+        .replace(/&lsquo;/g, "\u2018").replace(/&rsquo;/g, "\u2019")
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">");
+    s = s.replace(/\n{3,}/g, "\n\n");
+    return s.trim();
+}
+
+function pageUrlPath (pageDir) {
+    const relPath = relative(siteRoot, pageDir);
+    if (!relPath) return "";
+    return relPath.split(sep).map(s => encodeURIComponent(s)).join("/") + "/";
+}
+
+function readPageMeta (pageDir) {
+    const jsonPath = join(pageDir, "_index.json");
+    const mdPath = join(pageDir, "_index.md");
+
+    if (existsSync(jsonPath)) {
+        const json = JSON.parse(readFileSync(jsonPath, "utf-8"));
+        return { json, rawMarkdown: null };
+    }
+    if (existsSync(mdPath)) {
+        const raw = readFileSync(mdPath, "utf-8");
+        return { json: parseMarkdown(raw), rawMarkdown: raw };
+    }
+    return null;
+}
+
+function pageDisplayTitle (pageDir, meta) {
+    if (meta && meta.json && meta.json.title) return meta.json.title;
+    const relPath = relative(siteRoot, pageDir);
+    return relPath ? relPath.split(sep).pop() : "";
+}
+
+function contentEntryToMarkdown (entry, depth = 0) {
+    const title = entry.title || "";
+    const heading = depth === 0 ? "##" : "###";
+
+    switch (entry.type) {
+    case "ContentText": {
+        let md = "";
+        if (title) md += `${heading} ${title}\n\n`;
+        if (entry.body) md += htmlToMarkdown(entry.body) + "\n\n";
+        if (Array.isArray(entry.content)) {
+            for (const child of entry.content) md += contentEntryToMarkdown(child, depth + 1);
+        }
+        return md;
+    }
+    case "ContentCards": {
+        let md = "";
+        if (title) md += `${heading} ${title}\n\n`;
+        for (const item of entry.items || []) {
+            if (typeof item === "string") {
+                md += `- ${item}\n`;
+            } else {
+                let line = `- **${item.title || item.folder || ""}**`;
+                if (item.href) line = `- [${item.title || item.href}](${item.href})`;
+                if (item.date) line += ` (${item.date})`;
+                if (item.subtitle) line += ` — ${htmlToPlain(item.subtitle)}`;
+                md += line + "\n";
+            }
+        }
+        return md + "\n";
+    }
+    case "ContentKeyValue": {
+        let md = "";
+        if (title) md += `${heading} ${title}\n\n`;
+        for (const [k, v] of Object.entries(entry.items || {})) {
+            md += `- **${k}**: ${htmlToPlain(String(v))}\n`;
+        }
+        return md + "\n";
+    }
+    case "ContentUnorderedList":
+    case "ContentOrderedList": {
+        let md = "";
+        if (title) md += `${heading} ${title}\n\n`;
+        const marker = entry.type === "ContentOrderedList" ? (i) => `${i + 1}.` : () => "-";
+        (entry.items || []).forEach((item, i) => {
+            const text = typeof item === "string" ? item : (item.text || "");
+            md += `${marker(i)} ${htmlToPlain(text)}\n`;
+        });
+        return md + "\n";
+    }
+    case "ContentTable": {
+        let md = "";
+        if (title) md += `${heading} ${title}\n\n`;
+        if (entry.subtitle) md += htmlToPlain(entry.subtitle) + "\n\n";
+        const cols = entry.columns || [];
+        const rows = entry.rows || [];
+        if (cols.length) {
+            md += "| " + cols.join(" | ") + " |\n";
+            md += "| " + cols.map(() => "---").join(" | ") + " |\n";
+            for (const row of rows) {
+                md += "| " + row.map(c => Array.isArray(c) ? c.join("; ") : htmlToPlain(String(c || ""))).join(" | ") + " |\n";
+            }
+        }
+        if (entry.note) md += `\n*${htmlToPlain(entry.note)}*\n`;
+        return md + "\n";
+    }
+    case "ContentTimeline": {
+        let md = "";
+        if (title) md += `${heading} ${title}\n\n`;
+        for (const item of entry.items || []) {
+            const date = item.date ? `**${item.date}** — ` : "";
+            const t = item.title || "";
+            const sub = item.subtitle ? `: ${htmlToPlain(item.subtitle)}` : "";
+            md += `- ${date}${t}${sub}\n`;
+        }
+        return md + "\n";
+    }
+    case "ContentImage": {
+        const alt = entry.alt || entry.title || "";
+        const src = entry.src || entry.href || "";
+        return src ? `![${alt}](${src})\n\n` : "";
+    }
+    case "ContentToc":
+        return "";
+    default:
+        return "";
+    }
+}
+
+function jsonPageToMarkdown (json) {
+    let md = "";
+    if (json.title) md += `# ${json.title}\n\n`;
+    if (json.subtitle) md += htmlToPlain(json.subtitle) + "\n\n";
+    for (const entry of json.content || []) {
+        md += contentEntryToMarkdown(entry, 0);
+    }
+    return md.trim() + "\n";
+}
+
+function groupOrderKey (group) {
+    // Keep a stable, readable ordering: docs first, then alphabetical.
+    if (group === "docs") return "0";
+    return "1" + group.toLowerCase();
+}
+
+function generateLlmsIndex (pages) {
+    const rootMeta = readPageMeta(siteRoot);
+    const rootJson = rootMeta ? rootMeta.json : {};
+    const rootTitle = rootJson.topTitle || rootJson.title || "Site";
+    const rootSubtitle = htmlToPlain(rootJson.subtitle || "");
+
+    const groups = new Map();
+    for (const pageDir of pages) {
+        if (pageDir === siteRoot) continue;
+        const relPath = relative(siteRoot, pageDir);
+        const top = relPath.split(sep)[0];
+        if (!groups.has(top)) groups.set(top, []);
+        groups.get(top).push(pageDir);
+    }
+
+    const sortedGroups = [...groups.keys()].sort((a, b) =>
+        groupOrderKey(a).localeCompare(groupOrderKey(b))
+    );
+
+    let txt = `# ${rootTitle}\n\n`;
+    if (rootSubtitle) txt += `> ${rootSubtitle}\n\n`;
+
+    for (const group of sortedGroups) {
+        const groupDir = join(siteRoot, group);
+        const groupMeta = readPageMeta(groupDir);
+        const groupTitle = (groupMeta && groupMeta.json && groupMeta.json.title) || group;
+        txt += `## ${groupTitle}\n\n`;
+
+        const groupPages = groups.get(group).sort((a, b) =>
+            relative(siteRoot, a).localeCompare(relative(siteRoot, b))
+        );
+
+        for (const pageDir of groupPages) {
+            const meta = readPageMeta(pageDir);
+            if (!meta) continue;
+            const title = pageDisplayTitle(pageDir, meta);
+            const subtitle = htmlToPlain(meta.json.subtitle || "");
+            const url = SITE_URL + pageUrlPath(pageDir);
+            txt += `- [${title}](${url})`;
+            if (subtitle) txt += `: ${subtitle}`;
+            txt += "\n";
+        }
+        txt += "\n";
+    }
+
+    return txt;
+}
+
+function generateLlmsFull (pages) {
+    const rootMeta = readPageMeta(siteRoot);
+    const rootJson = rootMeta ? rootMeta.json : {};
+    const rootTitle = rootJson.topTitle || rootJson.title || "Site";
+
+    const sorted = [...pages].sort((a, b) => {
+        if (a === siteRoot) return -1;
+        if (b === siteRoot) return 1;
+        return relative(siteRoot, a).localeCompare(relative(siteRoot, b));
+    });
+
+    let out = `# ${rootTitle} — Full Documentation\n\n`;
+    out += `This file concatenates the full site content for LLM consumption.\n`;
+    out += `See also: ${SITE_URL}llms.txt (curated index) and ${SITE_URL}sitemap.xml.\n\n`;
+
+    for (const pageDir of sorted) {
+        const meta = readPageMeta(pageDir);
+        if (!meta) continue;
+        const urlPath = pageUrlPath(pageDir);
+        const url = SITE_URL + urlPath;
+        const pathLabel = relative(siteRoot, pageDir) || "(root)";
+
+        out += `\n\n---\n\n`;
+        out += `<!-- Page: ${pathLabel} -->\n`;
+        out += `Source: ${url}\n\n`;
+
+        if (meta.rawMarkdown) {
+            out += meta.rawMarkdown.trim() + "\n";
+        } else {
+            out += jsonPageToMarkdown(meta.json);
+        }
+    }
+
+    return out;
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -199,6 +479,16 @@ async function main () {
     const sitemap = generateSitemap(pages, SITE_URL);
     writeFileSync(join(siteRoot, "sitemap.xml"), sitemap);
     console.log(`  generated: sitemap.xml (${pages.length} URLs)`);
+
+    // Write llms.txt (curated index for LLMs)
+    const llmsIndex = generateLlmsIndex(pages);
+    writeFileSync(join(siteRoot, "llms.txt"), llmsIndex);
+    console.log(`  generated: llms.txt`);
+
+    // Write llms-full.txt (full content for LLMs)
+    const llmsFull = generateLlmsFull(pages);
+    writeFileSync(join(siteRoot, "llms-full.txt"), llmsFull);
+    console.log(`  generated: llms-full.txt`);
 
     console.log(`Static gen: done (${pages.length} pages).`);
 }
