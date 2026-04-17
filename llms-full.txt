@@ -1066,6 +1066,19 @@ Existing applications store data in Firebase Storage. A migration path is needed
 
 Firebase Storage is a managed service with minimal operational overhead. A graph database requires either a managed graph DB service (e.g., Neo4j Aura, Amazon Neptune) or self-hosted infrastructure with its own scaling, backup, and monitoring concerns.
 
+## Object Sub-Pools
+
+One concept from the current architecture that should carry forward is the **object sub-pool** — a self-contained subgraph where outside nodes may point to the root, but all internal objects hold no hard references to objects outside the subgraph. These sub-pools can be nested and are the natural unit of ownership, sync, and access control.
+
+In practice, sub-pools correspond to the coarse-grained "documents" of the application: a character sheet, a campaign, a game session, an app's settings. Each is a self-contained graph that can be:
+
+- **Synced independently** — upload or download a sub-pool without touching the rest of the graph
+- **Garbage collected** — objects reachable only within the sub-pool can be collected together
+- **Access controlled** — permissions can be scoped to a sub-pool (e.g., a user owns their characters but has read access to a shared campaign)
+- **Migrated or archived** — move a sub-pool to cold storage or a different backend without breaking references
+
+A graph database backend should preserve this sub-pool structure as a first-class concept — not flatten everything into a single global graph. The sub-pool boundary is what makes it practical to sync, permission, and reason about parts of the graph independently, even though the database itself supports arbitrary cross-references.
+
 ## Relationship to Current Architecture
 
 This is envisioned as a backend replacement, not a framework rewrite. The domain model, slot system, persistence API, and view layer would remain unchanged. The swap would happen below the `SvCloudSyncSource` abstraction:
@@ -1074,6 +1087,7 @@ This is envisioned as a backend replacement, not a framework rewrite. The domain
 - `SvCloudSyncSource` (or a new sibling) would speak to a graph database API instead of Firebase Storage
 - The serialization format would change from JSON documents to node/edge mutations
 - The sync protocol would change from snapshot+delta to a graph-aware change feed
+- Object sub-pools remain the unit of sync — the graph database stores the full graph, but sync, permissions, and lifecycle operate at the sub-pool level
 
 The domain model already *is* a graph — the change is making the storage layer acknowledge that.
 
