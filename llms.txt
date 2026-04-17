@@ -14,6 +14,7 @@
 - [Keyboard and Focus](https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/): Keyboard state tracking, modifier-aware key dispatch, and the responder chain for focus management.
 - [Timers](https://strvct.net/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
 - [Future Work](https://strvct.net/docs/Future%20Work/): Design ideas, architectural discussions, and potential future improvements.
+- [Accessibility](https://strvct.net/docs/Future%20Work/Accessibility/): Leveraging the naked objects pattern to provide automatic, framework-level accessibility.
 - [Async Final Initialization](https://strvct.net/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
 - [Complete Protocols](https://strvct.net/docs/Future%20Work/Complete%20Protocols/): Formalizing the many undeclared interface contracts throughout the codebase.
 - [Graph Database](https://strvct.net/docs/Future%20Work/Graph%20Database/): Long-term direction: replacing the current cloud storage backend with a native graph database.
