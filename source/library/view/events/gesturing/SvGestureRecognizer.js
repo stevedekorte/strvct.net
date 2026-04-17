@@ -1238,7 +1238,7 @@
         if (this._gestureName) {
             return this._gestureName;
         }
-        return this.svType().before("SvGestureRecognizer");
+        return this.svType().before("GestureRecognizer").sansPrefix("Sv");
     }
 
     /**
