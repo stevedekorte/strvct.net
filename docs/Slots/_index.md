@@ -171,6 +171,93 @@ A weak slot holds a `WeakRef` instead of a direct reference. The getter transpar
 
 Weak slots participate in the framework's `FinalizationRegistry`-based cleanup: when the referenced object is collected, `onFinalizedSlot()` is called on the owning object.
 
+## Common recipes
+
+Quick-reference for the most frequent slot configurations. These compose freely — a slot can be stored, view-synced, JSON-visible, and cloud-synced all at once.
+
+### Stored property with view sync
+
+```javascript
+{
+    const slot = this.newSlot("hitPoints", 0);
+    slot.setSlotType("Number");
+    slot.setShouldStoreSlot(true);
+    slot.setSyncsToView(true);
+    slot.setCanEditInspection(true);
+}
+```
+
+### Transient (non-stored) property
+
+Runtime-only state that resets on reload. Not persisted, not shown in the inspector.
+
+```javascript
+{
+    const slot = this.newSlot("isLoading", false);
+    slot.setSlotType("Boolean");
+}
+```
+
+### Read-only display
+
+A computed or system-managed value shown in the inspector but not editable.
+
+```javascript
+{
+    const slot = this.newSlot("createdAt", null);
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setCanEditInspection(true);
+    slot.setIsReadOnly(true);
+}
+```
+
+### JSON-visible property
+
+A slot included in JSON serialization for AI consumption or data exchange, with a schema description.
+
+```javascript
+{
+    const slot = this.newSlot("characterClass", "Fighter");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setIsInJsonSchema(true);
+    slot.setShouldJsonArchive(true);
+    slot.setDescription("The character's class (e.g., Fighter, Wizard, Rogue)");
+}
+```
+
+### Cloud-synced property
+
+A slot included when the object is serialized for cloud storage.
+
+```javascript
+{
+    const slot = this.newSlot("lastModified", null);
+    slot.setSlotType("Number");
+    slot.setShouldStoreSlot(true);
+    slot.setIsInCloudJson(true);
+}
+```
+
+### Collection (stored subnodes)
+
+A variable-length list of child objects. Each child is a subnode with independent identity.
+
+```javascript
+// In initPrototypeSlots():
+{
+    const slot = this.newSlot("subnodes", null);
+    slot.setShouldStoreSlot(true);
+}
+
+// In initPrototype():
+this.setShouldStoreSubnodes(true);
+this.setSubnodeClasses([ItemNode]);  // accepted child types
+```
+
+Classes extending `SvJsonArrayNode` get this behavior by default.
+
 ## Full reference
 
 The `Slot` class lives in `source/library/ideal/proto/Slot.js` and defines many more settings than are covered here — most application code will only use the ones above. Additional categories include:
