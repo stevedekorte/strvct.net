@@ -6,6 +6,7 @@
       "type": "ContentCards",
       "columns": 3,
       "items": [
+        "Style Guide",
         "Async Patterns",
         "Categories",
         "Protocols"

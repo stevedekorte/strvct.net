@@ -185,6 +185,8 @@ function generateSitemap (pages, baseUrl) {
         xml += `  <url><loc>${baseUrl}${urlPath}</loc></url>\n`;
     }
 
+    xml += `  <url><loc>${baseUrl}llms.txt</loc></url>\n`;
+    xml += `  <url><loc>${baseUrl}llms-full.txt</loc></url>\n`;
     xml += "</urlset>\n";
     return xml;
 }

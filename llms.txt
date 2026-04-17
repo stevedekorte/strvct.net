@@ -45,6 +45,7 @@
 - [Async Patterns](https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/): Extended promises, serial and parallel iteration, and concurrency control.
 - [Categories](https://strvct.net/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files.
 - [Protocols](https://strvct.net/docs/Programming%20Idioms/Protocols/): Declaring interfaces and verifying conformance at runtime.
+- [Style Guide](https://strvct.net/docs/Programming%20Idioms/Style%20Guide/): Naming conventions, formatting rules, and code structure patterns.
 - [Reference](https://strvct.net/docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
 - [Classes](https://strvct.net/docs/Reference/Classes/)
 - [Modules](https://strvct.net/docs/Reference/Modules/)

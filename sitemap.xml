@@ -45,6 +45,7 @@
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Categories/</loc></url>
   <url><loc>https://strvct.net/docs/Programming%20Idioms/Protocols/</loc></url>
+  <url><loc>https://strvct.net/docs/Programming%20Idioms/Style%20Guide/</loc></url>
   <url><loc>https://strvct.net/docs/Reference/</loc></url>
   <url><loc>https://strvct.net/docs/Reference/Classes/</loc></url>
   <url><loc>https://strvct.net/docs/Reference/Modules/</loc></url>
@@ -62,4 +63,6 @@
   <url><loc>https://strvct.net/docs/Views/Custom%20Views/</loc></url>
   <url><loc>https://strvct.net/docs/Views/Programmatic%20Styling/</loc></url>
   <url><loc>https://strvct.net/docs/Views/Themes%20and%20Style%20States/</loc></url>
+  <url><loc>https://strvct.net/llms.txt</loc></url>
+  <url><loc>https://strvct.net/llms-full.txt</loc></url>
 </urlset>

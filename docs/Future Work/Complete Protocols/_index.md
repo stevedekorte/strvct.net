@@ -62,3 +62,89 @@ This is an ongoing improvement, not a single task. The codebase has dozens of im
 - Are implemented by many classes (high fan-out)
 - Have been a source of bugs from missing methods
 - Would benefit from being documented as a discrete interface
+
+## Candidates
+
+Specific informal protocols identified in the codebase, grouped by priority. Each entry lists a suggested protocol name, the methods it would declare, and where the duck-typing checks currently live.
+
+### High priority
+
+These are core framework contracts implemented by many classes.
+
+**`SvStorableProtocol`** -- persistence serialization
+
+- Methods: `recordForStore(store)`, `loadFromRecord(record, store)`
+- Duck-typed in: `SvObjectPool.js` (lines 1133, 1453, 1477)
+- Implementers: `Array_store`, `Map_store`, `ProtoClass_store`, `Object_store`, and 10+ primitive type stores
+
+**`SvJsonSerializableProtocol`** -- JSON exchange for AI and data transfer
+
+- Methods: `serializeToJson()`, `deserializeFromJson(json)`
+- Duck-typed in: `SvJsonGroup.js` (lines 429, 445) via `if (value && value.serializeToJson)`
+- Implementers: `SvJsonGroup`, `SvJsonArrayNode`, `SvJsonDictionaryNode`, `SvField`, `SvBooleanField`, `SvImageNode`
+
+**`SvViewSyncProtocol`** -- bidirectional model-view synchronization
+
+- Methods: `syncToNode()`, `syncFromNode()`
+- Duck-typed in: `SvSyncScheduler.js` (scheduled batch calls)
+- Implementers: `SvNodeView`, `SvStackView`, `SvNavView`, `SvTile`, `SvTilesView`, and 15+ view classes
+
+**`SvFieldRenderingProtocol`** -- field display and completion state
+
+- Methods: `keyIsComplete()`, `valueIsComplete()`, `keyWhiteSpace()`, `valueCanUserSelect()`
+- Duck-typed in: `SvFieldTile.js` (lines 397--470) via `if (node && node.keyIsComplete)`
+- Implementers: `SvField`, `SvAiResponseMessage`, `SvConversationMessage`
+
+### Medium priority
+
+Important contracts with more specialized scope.
+
+**`SvNodeDropTargetProtocol`** -- node-level drop acceptance
+
+- Methods: `nodeAcceptsDrop(node)`, `nodeDropped(node)`
+- Duck-typed in: `SvTile_dragging.js` (lines 99, 116)
+- Implementers: `SvLinkNode`
+
+**`SvBrowserDropHandlerProtocol`** -- browser drag-and-drop data handling
+
+- Methods: `onBrowserDropChunk(chunk)`
+- Duck-typed in: `SvTilesView.js` (line 469)
+- Implementers: `SvViewableNode`, `SvJsonArrayNode`
+
+**`SvBlobTrackableProtocol`** -- blob reference tracking for garbage collection
+
+- Methods: `referencedBlobHashesSet()`
+- Duck-typed in: `SvObjectPool.js` (line 1846)
+- Implementers: `SvBlobNode`, `SvField`, `SvPointerField`
+
+**`SvNodeVisibilityProtocol`** -- visibility lifecycle notification
+
+- Methods: `nodeBecameVisible()`
+- Duck-typed in: `SvNodeView.js` (line 483)
+- Implementers: `SvNode`, `SvViewableNode`
+
+**`SvNavSelectionProtocol`** -- navigation selection changes
+
+- Methods: `didChangeNavSelection()`
+- Duck-typed in: `SvTile.js` (lines 414, 437)
+- Implementers: `SvStackView`, `SvTilesView`
+
+### Lower priority
+
+Narrower contracts or single-implementer interfaces worth formalizing for documentation.
+
+**`SvTileLinkableProtocol`** -- tile navigation target
+
+- Methods: `nodeTileLink()`
+- Duck-typed in: `SvJsonIdNode.js` (lines 185, 232)
+- Implementers: `SvPointerField`, `SvJsonArrayNode`, `SvOptionsNode`, `SvField`, `SvLinkNode`
+
+**`SvCssVariableProviderProtocol`** -- node-defined CSS custom properties
+
+- Methods: `cssVariableDict()`
+- Duck-typed in: `SvNodeView.js` (line 290)
+
+**`SvActivatableProtocol`** -- tile activation on keyboard/gesture
+
+- Methods: `activate()`
+- Duck-typed in: `SvTilesView_keyboard.js` (line 185)
