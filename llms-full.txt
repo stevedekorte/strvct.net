@@ -137,12 +137,25 @@ View classes derive ARIA labels from node metadata:
 
 | Source | ARIA usage |
 |---|---|
-| `node.title()` | `aria-label` on tiles and views |
+| `node.ariaLabel()` | `aria-label` on tiles, tile lists, and navigation regions |
 | `node.subtitle()` | `aria-description` on tiles |
 | `slot.description()` | `aria-description` on field tiles |
 | Key view text | `aria-label` on field tiles |
 
-The label priority follows a natural mapping: `title()` provides the short instance-specific label that screen readers announce, while `subtitle()` and slot `description()` provide longer detail available on demand.
+`ariaLabel()` is defined on `SvTitledNode` and returns `title()` by default. Domain objects can override it to provide a more descriptive label for screen readers without affecting the visible UI title. `subtitle()` and slot `description()` provide longer detail available on demand.
+
+### Node-Level ARIA Overrides
+
+`SvTitledNode` provides methods that domain objects can override to customize accessibility behavior without modifying view code:
+
+| Method | Default | Purpose |
+|---|---|---|
+| `ariaLabel()` | `title()` | Label announced by screen readers |
+| `ariaRole()` | `null` (view's default) | Override the view class's default ARIA role |
+| `ariaIsReadOnly()` | `null` (from slot editability) | Override read-only state |
+| `ariaIsRequired()` | `null` (from slot `isRequired()`) | Override required state |
+
+Returning `null` from `ariaRole()`, `ariaIsReadOnly()`, or `ariaIsRequired()` defers to the view's default behavior. Returning a value overrides it. This follows the same pattern as `setNodeViewClass()` -- the framework provides sensible defaults, the domain object overrides when it knows better.
 
 ### State Tracking
 

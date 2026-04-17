@@ -550,14 +550,21 @@
         this.syncNoteFromNode();
         this.syncDotsFromNode();
 
-        // Accessibility: label the field group from its key text
+        // Accessibility: label and role from node or key text
         const keyText = this.keyView() ? this.keyView().innerText() : "";
         if (keyText) {
             this.setAttribute("aria-label", keyText);
         }
+        const role = node.ariaRole();
+        if (role) {
+            this.setAttribute("role", role);
+        }
 
-        // Accessibility: reflect editable and required state
-        if (node.valueIsEditable && !node.valueIsEditable()) {
+        // Accessibility: reflect editable state (node override takes precedence)
+        const readOnly = node.ariaIsReadOnly();
+        if (readOnly !== null) {
+            this.setAttribute("aria-readonly", readOnly ? "true" : "false");
+        } else if (node.valueIsEditable && !node.valueIsEditable()) {
             this.setAttribute("aria-readonly", "true");
         } else {
             this.removeAttribute("aria-readonly");
@@ -842,8 +849,12 @@
             return this;
         }
 
-        // aria-required from slot isRequired annotation
-        if (slot.isRequired && slot.isRequired()) {
+        // aria-required: node override takes precedence over slot annotation
+        const node = this.node();
+        const requiredOverride = node ? node.ariaIsRequired() : null;
+        if (requiredOverride !== null) {
+            this.setAttribute("aria-required", requiredOverride ? "true" : "false");
+        } else if (slot.isRequired && slot.isRequired()) {
             this.setAttribute("aria-required", "true");
         } else {
             this.removeAttribute("aria-required");

@@ -497,9 +497,9 @@
         this.footerView().syncFromNode();
         this.syncClickToAddView();
 
-        // Accessibility: label the region from its node title
+        // Accessibility: label the region from its node ariaLabel
         if (this.node()) {
-            const label = this.node().title();
+            const label = this.node().ariaLabel();
             if (label) {
                 this.setAttribute("aria-label", label);
             }

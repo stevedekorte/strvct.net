@@ -460,6 +460,47 @@
         return null;
     }
 
+    // --- ARIA accessibility overrides ---
+
+    /**
+     * @description Gets the ARIA label for this node. Returns title() by default.
+     * Domain objects can override this to provide a more descriptive label for screen readers.
+     * @returns {string} The ARIA label.
+     */
+    ariaLabel () {
+        return this.title();
+    }
+
+    /**
+     * @description Gets the ARIA role override for this node. Returns null by default,
+     * meaning the view class provides its own default role. Domain objects can override
+     * this to specify a more semantically appropriate role (e.g., "listbox", "option").
+     * @returns {string|null} The ARIA role, or null to use the view's default.
+     */
+    ariaRole () {
+        return null;
+    }
+
+    /**
+     * @description Gets the ARIA read-only state for this node. Returns null by default,
+     * meaning the view determines read-only state from slot editability.
+     * Domain objects can override this to force read-only state.
+     * @returns {boolean|null} True/false to override, or null to use the view's default.
+     */
+    ariaIsReadOnly () {
+        return null;
+    }
+
+    /**
+     * @description Gets the ARIA required state for this node. Returns null by default,
+     * meaning the view determines required state from slot metadata.
+     * Domain objects can override this to force required state.
+     * @returns {boolean|null} True/false to override, or null to use the view's default.
+     */
+    ariaIsRequired () {
+        return null;
+    }
+
     /**
      * @description Gets the summary of the node.
      * @returns {string} The summary of the node.

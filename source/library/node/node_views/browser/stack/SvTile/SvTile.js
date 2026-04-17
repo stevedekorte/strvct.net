@@ -516,10 +516,14 @@
         if (node) {
             this.setIsDisplayHidden(!node.isVisible());
 
-            // Accessibility: label from node title and subtitle
-            const label = node.title();
+            // Accessibility: label and role from node
+            const label = node.ariaLabel();
             if (label) {
                 this.setAttribute("aria-label", label);
+            }
+            const role = node.ariaRole();
+            if (role) {
+                this.setAttribute("role", role);
             }
             if (node.subtitle) {
                 const desc = node.subtitle();

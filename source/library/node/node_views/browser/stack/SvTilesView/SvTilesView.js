@@ -254,10 +254,10 @@
         this.syncOrientation(); // implemented in Tiles_orientation.js
         super.syncFromNode();
 
-        // Accessibility: label the list from its node title
+        // Accessibility: label the list from its node ariaLabel
         const node = this.node();
         if (node) {
-            const label = node.title();
+            const label = node.ariaLabel();
             if (label) {
                 this.setAttribute("aria-label", label);
             }
