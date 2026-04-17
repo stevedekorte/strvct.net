@@ -145,11 +145,19 @@ async function generatePage (pageDir) {
     const htmlPath = join(pageDir, "index.html");
     let html = readFileSync(htmlPath, "utf-8");
 
-    // Replace the .page div contents (greedy match to find the last </div> before <script>)
-    html = html.replace(
-        /(<body>\s*)<div class="page[^"]*"[^>]*>[\s\S]*<\/div>(\s*<script)/,
-        `$1<div class="${pageClasses.join(" ")}">${pageHtml}</div>$2`
-    );
+    // Replace the .page div contents, or insert one if missing
+    const pageDiv = `<div class="${pageClasses.join(" ")}">${pageHtml}</div>`;
+    if (/(<body>\s*)<div class="page[^"]*"[^>]*>[\s\S]*<\/div>(\s*<script)/.test(html)) {
+        html = html.replace(
+            /(<body>\s*)<div class="page[^"]*"[^>]*>[\s\S]*<\/div>(\s*<script)/,
+            `$1${pageDiv}$2`
+        );
+    } else {
+        html = html.replace(
+            /(<body>)\s*(\s*<script)/,
+            `$1\n  ${pageDiv}\n$2`
+        );
+    }
 
     // Add or update <title> tag
     if (/<title>/.test(html)) {
