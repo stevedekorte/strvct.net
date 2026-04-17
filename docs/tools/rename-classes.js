@@ -228,11 +228,27 @@ const stats = {
     filesScanned: 0,
     filesChanged: 0,
     totalMatches: 0,
-    filesRenamed: 0
+    filesRenamed: 0,
+    dirsRenamed: 0
 };
 
 const pendingContentWrites = []; // [{ path, newText, matches }]
 const pendingFileRenames = [];   // [{ oldPath, newPath }]
+const pendingDirRenames = [];    // [{ oldPath, newPath, depth }]
+
+function* walkDirs (dir) {
+    let entries;
+    try { entries = readdirSync(dir, { withFileTypes: true }); }
+    catch { return; }
+
+    for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        if (SKIP_DIRS.has(entry.name)) continue;
+        const full = join(dir, entry.name);
+        yield full;
+        yield* walkDirs(full);
+    }
+}
 
 for (const root of roots) {
     if (!existsSync(root)) continue;
@@ -256,7 +272,23 @@ for (const root of roots) {
             pendingFileRenames.push(rename);
         }
     }
+
+    // Collect directories whose basename matches an old class name.
+    // Applied deepest-first so parent renames don't invalidate child paths.
+    for (const dir of walkDirs(root)) {
+        const name = basename(dir);
+        if (renameMap.has(name)) {
+            stats.dirsRenamed += 1;
+            pendingDirRenames.push({
+                oldPath: dir,
+                newPath: join(dirname(dir), renameMap.get(name)),
+                depth: dir.split(sep).length
+            });
+        }
+    }
 }
+
+pendingDirRenames.sort((a, b) => b.depth - a.depth);
 
 // ---------------------------------------------------------------------------
 // Report
@@ -289,11 +321,18 @@ for (const { oldPath, newPath } of pendingFileRenames) {
 }
 
 console.log();
+console.log("=== Directory renames ===");
+for (const { oldPath, newPath } of pendingDirRenames) {
+    console.log(`  ${relative(siteRoot, oldPath)} → ${relative(siteRoot, newPath)}`);
+}
+
+console.log();
 console.log("=== Summary ===");
 console.log(`  Files scanned: ${stats.filesScanned}`);
 console.log(`  Files with content changes: ${stats.filesChanged}`);
 console.log(`  Total identifier/string matches: ${stats.totalMatches}`);
 console.log(`  Files to rename: ${stats.filesRenamed}`);
+console.log(`  Directories to rename: ${stats.dirsRenamed}`);
 
 // ---------------------------------------------------------------------------
 // Apply
@@ -307,6 +346,10 @@ if (flags.apply) {
         writeFileSync(path, newText, "utf-8");
     }
     for (const { oldPath, newPath } of pendingFileRenames) {
+        renameSync(oldPath, newPath);
+    }
+    // Directories last, deepest-first (already sorted).
+    for (const { oldPath, newPath } of pendingDirRenames) {
         renameSync(oldPath, newPath);
     }
 

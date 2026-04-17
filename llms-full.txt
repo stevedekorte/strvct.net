@@ -5050,8 +5050,8 @@ Protocol files follow the standard one-class-per-file rule and live alongside th
 ```
 library/node/audio/SvAudioClipProtocol.js
 library/node/audio/SvAudioClipDelegateProtocol.js
-library/node/node_views/.../TilesView/SvDragSourceProtocol.js
-library/node/node_views/.../TilesView/SvDragDestinationProtocol.js
+library/node/node_views/.../SvTilesView/SvDragSourceProtocol.js
+library/node/node_views/.../SvTilesView/SvDragDestinationProtocol.js
 ```
 
 See [Protocols](../Protocols/index.html) for details on defining and implementing protocols.
