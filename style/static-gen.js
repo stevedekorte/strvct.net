@@ -416,7 +416,7 @@ function generateLlmsIndex (pages) {
             if (!meta) continue;
             const title = pageDisplayTitle(pageDir, meta);
             const subtitle = htmlToPlain(meta.json.subtitle || "");
-            const url = SITE_URL + pageUrlPath(pageDir);
+            const url = "/" + pageUrlPath(pageDir);
             txt += `- [${title}](${url})`;
             if (subtitle) txt += `: ${subtitle}`;
             txt += "\n";
@@ -425,6 +425,18 @@ function generateLlmsIndex (pages) {
     }
 
     return txt;
+}
+
+function rootFirstParagraph () {
+    const meta = readPageMeta(siteRoot);
+    if (!meta || !meta.json || !meta.json.content) return "";
+    for (const entry of meta.json.content) {
+        if (entry.type === "ContentText" && entry.body) {
+            const match = entry.body.match(/<p[^>]*>([\s\S]*?)<\/p>/i);
+            if (match) return htmlToPlain(match[0]);
+        }
+    }
+    return "";
 }
 
 function generateLlmsFull (pages) {
@@ -439,14 +451,15 @@ function generateLlmsFull (pages) {
     });
 
     let out = `# ${rootTitle} — Full Documentation\n\n`;
-    out += `This file concatenates the full site content for LLM consumption.\n`;
-    out += `See also: ${SITE_URL}llms.txt (curated index) and ${SITE_URL}sitemap.xml.\n\n`;
+    const summary = rootFirstParagraph();
+    if (summary) out += `${summary}\n\n`;
+    out += `See also: /llms.txt (curated index) and /sitemap.xml.\n\n`;
 
     for (const pageDir of sorted) {
         const meta = readPageMeta(pageDir);
         if (!meta) continue;
         const urlPath = pageUrlPath(pageDir);
-        const url = SITE_URL + urlPath;
+        const url = "/" + urlPath;
         const pathLabel = relative(siteRoot, pageDir) || "(root)";
 
         out += `\n\n---\n\n`;
@@ -464,12 +477,25 @@ function generateLlmsFull (pages) {
 }
 
 // ---------------------------------------------------------------------------
+// Config
+// ---------------------------------------------------------------------------
+
+function loadConfig () {
+    const configPath = join(siteRoot, "llms-config.json");
+    if (existsSync(configPath)) {
+        return JSON.parse(readFileSync(configPath, "utf-8"));
+    }
+    return {};
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
-const SITE_URL = "https://strvct.net/";
-
 async function main () {
+    const config = loadConfig();
+    const siteUrl = config.siteUrl || "/";
+
     const pages = findLayoutPages(siteRoot);
     console.log(`Static gen: found ${pages.length} layout pages under ${siteRoot}`);
 
@@ -478,7 +504,7 @@ async function main () {
     }
 
     // Write sitemap.xml at site root
-    const sitemap = generateSitemap(pages, SITE_URL);
+    const sitemap = generateSitemap(pages, siteUrl);
     writeFileSync(join(siteRoot, "sitemap.xml"), sitemap);
     console.log(`  generated: sitemap.xml (${pages.length} URLs)`);
 

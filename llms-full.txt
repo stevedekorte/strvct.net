@@ -1,14 +1,15 @@
 # STRVCT — Full Documentation
 
-This file concatenates the full site content for LLM consumption.
-See also: https://strvct.net/llms.txt (curated index) and https://strvct.net/sitemap.xml.
+STRVCT implements the naked objects pattern for JavaScript. You write domain model classes with annotated properties — the framework automatically generates the user interface, handles persistence, and keeps everything synchronized.
+
+See also: /llms.txt (curated index) and /sitemap.xml.
 
 
 
 ---
 
 <!-- Page: (root) -->
-Source: https://strvct.net/
+Source: /
 
 A naked objects framework for JavaScript with automatic UI generation, persistence, and cloud sync.
 
@@ -29,6 +30,7 @@ For a detailed treatment of this approach, see [Closing the Usability Gap in Nak
 - **Cloud Sync** — Object pools sync to Firebase Storage using a write-ahead log of delta files for efficient incremental updates.
 - **Gesture System** — Unifies mouse and touch input gestures.
 - **Internationalization** — AI-powered translation of UI text with no per-component wiring. The naked objects pattern means every slot value is translated at the model-to-view boundary automatically.
+- **Accessibility** — Automatic ARIA roles, labels, and states derived from the model. Slot metadata maps to aria-required, aria-valuemin/max, and aria-description; view classes emit landmark roles, live regions, and focus-visible styling.
 - **Content-Addressable Build** — Custom resource loading with content hashing for optimal caching and minimal network transfers.
 
 - Example App
@@ -43,7 +45,7 @@ For AI agents: [llms.txt](llms.txt) (curated index) and [llms-full.txt](llms-ful
 ---
 
 <!-- Page: docs -->
-Source: https://strvct.net/docs/
+Source: /docs/
 
 # Documentation
 
@@ -59,6 +61,7 @@ Guides, architecture, and API reference.
 - Views
 - Persistence
 - Events and Gestures
+- Accessibility
 - Internationalization
 - Services
 - Programming Idioms
@@ -70,8 +73,227 @@ Guides, architecture, and API reference.
 
 ---
 
+<!-- Page: docs/Accessibility -->
+Source: /docs/Accessibility/
+
+# Accessibility
+
+Automatic, framework-level ARIA support derived from the naked objects pattern.
+
+## Overview
+
+STRVCT provides built-in accessibility support that works automatically for every application built on the framework. Because the UI is generated from model nodes through a small set of view classes, accessibility metadata is emitted at the framework level -- developers don't need to add ARIA attributes to individual components.
+
+This is a direct consequence of the naked objects architecture. In a conventional web framework, accessibility is a per-component concern: every button, list, and form field needs manual ARIA attributes, and the cost scales linearly with the number of components. In STRVCT, the same ~15 view classes render every application's UI, so fixing accessibility in those classes fixes it everywhere.
+
+## Why the Naked Objects Pattern Helps
+
+Most frameworks require developers to manually add accessibility attributes to each component. STRVCT's architecture inverts this: since the framework generates views from the model, it can also generate accessibility metadata from the model -- automatically, in one place, for all applications.
+
+**The slot system already describes the data.** Slot metadata maps almost directly to ARIA attributes:
+
+| Slot metadata | ARIA attribute |
+|---|---|
+| `description()` | `aria-description` |
+| `isReadOnly()` | `aria-readonly` |
+| `isRequired()` | `aria-required` |
+| `slotType()` | informs the appropriate `role` |
+
+**JSON Schema annotations serve double duty.** The same annotations that generate JSON Schema for AI tool calls also drive accessibility attributes. A slot with `setMinimum(0)` and `setMaximum(100)` emits both JSON Schema constraints for AI and `aria-valuemin="0"` / `aria-valuemax="100"` for screen readers. The investment in richer slot annotations directly improves both AI integration and accessibility.
+
+**The node hierarchy maps to ARIA patterns.** The tile/stack navigation model (drill in, drill out, select with arrows) maps naturally to ARIA roles:
+
+| STRVCT concept | ARIA role |
+|---|---|
+| `SvTilesView` | `list` |
+| `SvTile` | `link` |
+| `SvFieldTile` | `group` |
+| Selected tile | `aria-current` |
+
+**Every new application inherits it.** When a developer creates a new `SvNode` subclass with slots, the framework automatically generates views with correct ARIA roles, labels, states, and metadata-derived attributes. No accessibility code required.
+
+## Implementation
+
+### ARIA Roles
+
+Each core view class emits an appropriate ARIA role:
+
+| View class | Role | Purpose |
+|---|---|---|
+| `SvTilesView` | `list` | Container for navigable tile items |
+| `SvTile` | `link` | Individual navigation item in a list |
+| `SvFieldTile` | `group` | Key-value field with label and value |
+| `SvBooleanFieldTile` | `checkbox` | Toggle field with checked/unchecked state |
+| `SvActionFieldTile` | `button` | Clickable action |
+| `SvOptionsNodeTile` | `listbox` | Container for selectable options |
+| `SvOptionNodeTile` | `option` | Individual selectable option |
+| `SvStackView` | `navigation` | Top-level navigation landmark |
+| `SvNavView` | `region` | Named content region |
+| `SvBreadCrumbsTile` | `navigation` | Breadcrumb navigation with `aria-label="Breadcrumb"` |
+
+### Labels and Descriptions
+
+View classes derive ARIA labels from node metadata:
+
+| Source | ARIA usage |
+|---|---|
+| `node.title()` | `aria-label` on tiles and views |
+| `node.subtitle()` | `aria-description` on tiles |
+| `slot.description()` | `aria-description` on field tiles |
+| Key view text | `aria-label` on field tiles |
+
+The label priority follows a natural mapping: `title()` provides the short instance-specific label that screen readers announce, while `subtitle()` and slot `description()` provide longer detail available on demand.
+
+### State Tracking
+
+ARIA states are updated dynamically through the framework's notification system:
+
+- **`aria-current`** -- Set to `"true"` on the selected tile, removed when deselected. The selected tile also receives focus.
+- **`aria-checked`** -- Updated on `SvBooleanFieldTile` when the boolean value changes.
+- **`aria-selected`** -- Updated on `SvOptionNodeTile` based on `isPicked()` state.
+- **`aria-disabled`** -- Set on `SvActionFieldTile` when the action's node is not enabled.
+- **`aria-readonly`** -- Set on `SvFieldTile` when the field is not editable.
+
+### Slot Metadata to ARIA
+
+`SvFieldTile` includes a `syncAriaFromSlotMetadata()` method that reads slot annotations and emits corresponding ARIA attributes:
+
+| Slot annotation | ARIA attribute |
+|---|---|
+| `isRequired()` | `aria-required="true"` |
+| `getAnnotation("minimum")` | `aria-valuemin` |
+| `getAnnotation("maximum")` | `aria-valuemax` |
+| `description()` | `aria-description` |
+
+This wiring means that any slot configured with validation constraints automatically exposes those constraints to assistive technology. For example, a slot defined as:
+
+```javascript
+{
+    const slot = this.newSlot("hitPoints", 0);
+    slot.setSlotType("Number");
+    slot.setIsRequired(true);
+    slot.setAnnotation("minimum", 0);
+    slot.setAnnotation("maximum", 999);
+    slot.setDescription("Current hit points");
+}
+```
+
+...produces a field tile with `aria-required="true"`, `aria-valuemin="0"`, `aria-valuemax="999"`, and `aria-description="Current hit points"` -- with no accessibility-specific code from the developer.
+
+### Live Regions
+
+Live regions announce dynamic content changes to screen readers without requiring focus.
+
+**Opt-in via nodes:** Any node can declare itself as a live region by implementing `nodeAriaLive()` returning `"polite"` or `"assertive"`. When `SvTilesView` syncs from a node with this method, it sets `aria-live` on the container. This is useful for status displays, notification lists, and progress indicators.
+
+**Direct on chat:** `SvChatMessageTile` sets `aria-live="polite"` directly, so new chat messages and AI responses are announced to screen readers as they arrive.
+
+### Breadcrumb Navigation
+
+`SvBreadCrumbsTile` implements the ARIA breadcrumb pattern:
+
+- Container has `role="navigation"` and `aria-label="Breadcrumb"`
+- The last crumb (current location) is marked with `aria-current="location"`
+- Screen readers announce the breadcrumb trail as "Breadcrumb navigation" with the current item identified as "current location"
+
+### Focus Management
+
+- **Tiles are programmatically focusable** via `tabindex=-1`. This makes them reachable by the framework's focus management without adding them to the Tab order.
+- **Focus indicators** use `:focus-visible` styling (2px solid cornflower blue outline) that appears only for keyboard navigation, not mouse clicks.
+- **High contrast mode** (`prefers-contrast: more`) increases the focus outline to 3px solid white for maximum visibility.
+- **Focus follows selection** -- when a tile is selected, it receives both `aria-current="true"` and DOM focus, ensuring screen readers announce the newly selected item.
+
+### Visual Accessibility
+
+The framework's global CSS includes media query support for visual accessibility preferences:
+
+**Reduced motion** (`prefers-reduced-motion: reduce`):
+- All animations reduced to 0.01ms duration
+- All transitions reduced to 0.01ms duration
+- Animation iteration counts set to 1
+- Scroll behavior set to auto (instant)
+
+**High contrast** (`prefers-contrast: more`):
+- Focus indicators enhanced to 3px solid white with tighter offset
+- Provides stronger visual distinction for keyboard navigation
+
+### ARIA Landmarks
+
+Landmark roles provide structural navigation for screen readers:
+
+- `SvStackView` is marked as `navigation` -- the top-level navigation structure
+- `SvNavView` is marked as `region` with an `aria-label` derived from the current node's title
+- `SvBreadCrumbsTile` is marked as `navigation` with `aria-label="Breadcrumb"`
+
+Screen reader users can use landmark navigation (e.g., VoiceOver's VO+U landmarks menu) to jump between these regions.
+
+## WCAG 2.2 Compliance
+
+The implementation targets WCAG 2.2 Level AA, which covers the requirements of most accessibility legislation (ADA, EAA, Section 508).
+
+### Criteria Addressed
+
+| WCAG Criterion | How addressed |
+|---|---|
+| 1.3.1 Info and Relationships | ARIA roles and landmarks convey structure |
+| 1.3.2 Meaningful Sequence | DOM order matches visual order (flexbox layout) |
+| 2.1.1 Keyboard | Arrow keys, Enter, Escape for full navigation |
+| 2.3.3 Animation from Interactions | `prefers-reduced-motion` media query |
+| 2.4.1 Bypass Blocks | Landmark roles enable skip navigation |
+| 2.4.6 Headings and Labels | `aria-label` from node `title()` |
+| 2.4.7 Focus Visible | `:focus-visible` outline styling |
+| 3.2.1 On Focus | No context changes on focus |
+| 4.1.2 Name, Role, Value | ARIA roles, labels, and states on all interactive elements |
+
+### Remaining for Full AA Compliance
+
+See [Accessibility Testing & Tuning](Future%20Work/Accessibility%20Testing%20%26%20Tuning/index.html) for details on remaining testing and tuning work, including VoiceOver validation, cross-screen-reader testing, focus management refinements, and per-application adjustments.
+
+## Design Decisions
+
+### ARIA Roles vs. Semantic Elements
+
+ARIA roles on div elements are equivalent to semantic HTML from the screen reader's perspective. Since STRVCT already handles keyboard activation and focus management on tiles, the native behaviors that semantic elements provide (space/Enter activation, default tab order) are redundant. Using ARIA attributes on existing div elements avoids disrupting existing CSS selectors and layout behavior.
+
+### Default Roles from View Classes
+
+Default roles come from the view class, not the node, because the same node can appear in multiple views with different roles. For example, a node shown as a tile in a parent view has `role="link"`, while the same node as the root of its own tiles view has no tile role. Nodes can override the view's default role for cases where the node's semantics are more specific (e.g., `SvOptionsNodeTile` overrides to `listbox`).
+
+### Label Priority
+
+| Source | ARIA attribute | Rationale |
+|---|---|---|
+| `title()` | `aria-label` | Short, instance-specific -- what the screen reader announces |
+| `subtitle()` | `aria-description` | Longer detail -- available on demand |
+| `jsonSchemaDescription()` | Fallback label | Describes the class when no instance title exists |
+| Node `description()` | Skipped | Intended for debugging, not user-facing |
+
+Slot-level `description()` (set via `setDescription()`) is distinct from node-level `description()` and is used for field-level `aria-description`.
+
+## Files Modified
+
+The accessibility implementation touches the following framework files:
+
+| File | Changes |
+|---|---|
+| `_css.css` | `:focus-visible` styling, `prefers-reduced-motion`, `prefers-contrast` |
+| `SvTilesView.js` | `role="list"`, `aria-label`, opt-in `aria-live` |
+| `SvTile.js` | `role="link"`, `tabindex=-1`, `aria-label`, `aria-description`, `aria-current` |
+| `SvFieldTile.js` | `role="group"`, `aria-label`, `aria-readonly`, `syncAriaFromSlotMetadata()` |
+| `SvBooleanFieldTile.js` | `role="checkbox"`, `aria-checked` |
+| `SvActionFieldTile.js` | `role="button"`, `aria-label`, `aria-disabled` |
+| `SvOptionsNodeTile.js` | `role="listbox"` |
+| `SvOptionNodeTile.js` | `role="option"`, `aria-selected` |
+| `SvChatMessageTile.js` | `aria-live="polite"` |
+| `SvStackView.js` | `role="navigation"` |
+| `SvNavView.js` | `role="region"`, `aria-label` |
+| `SvBreadCrumbsTile.js` | `role="navigation"`, `aria-label="Breadcrumb"`, `aria-current="location"` |
+
+
+---
+
 <!-- Page: docs/Comparing to React -->
-Source: https://strvct.net/docs/Comparing%20to%20React/
+Source: /docs/Comparing%20to%20React/
 
 # Comparing to React
 
@@ -264,7 +486,7 @@ For React developers getting oriented, here's how familiar concepts map:
 ---
 
 <!-- Page: docs/Events and Gestures -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/
+Source: /docs/Events%20and%20Gestures/
 
 # Events and Gestures
 
@@ -285,7 +507,7 @@ Most application code uses gesture recognizers rather than raw event listeners. 
 ---
 
 <!-- Page: docs/Events and Gestures/Drag and Drop -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/Drag%20and%20Drop/
+Source: /docs/Events%20and%20Gestures/Drag%20and%20Drop/
 
 # Drag and Drop
 
@@ -507,7 +729,7 @@ If a child view handles the drop first and calls `stopPropagation()`, SvDocument
 ---
 
 <!-- Page: docs/Events and Gestures/Event Flow -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/Event%20Flow/
+Source: /docs/Events%20and%20Gestures/Event%20Flow/
 
 # Event Flow
 
@@ -557,7 +779,7 @@ For raw event listeners (without gestures), the handler is called directly on th
 ---
 
 <!-- Page: docs/Events and Gestures/Event Listeners -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/Event%20Listeners/
+Source: /docs/Events%20and%20Gestures/Event%20Listeners/
 
 # Event Listeners
 
@@ -646,7 +868,7 @@ Listeners are automatically removed when a view is retired from the hierarchy. T
 ---
 
 <!-- Page: docs/Events and Gestures/Gesture Recognizers -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/Gesture%20Recognizers/
+Source: /docs/Events%20and%20Gestures/Gesture%20Recognizers/
 
 # Gesture Recognizers
 
@@ -752,7 +974,7 @@ On desktop, holding Shift while clicking simulates a second finger. This allows 
 ---
 
 <!-- Page: docs/Events and Gestures/Keyboard and Focus -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/Keyboard%20and%20Focus/
+Source: /docs/Events%20and%20Gestures/Keyboard%20and%20Focus/
 
 # Keyboard and Focus
 
@@ -790,7 +1012,7 @@ The responder chain ensures that keyboard events are routed to the focused view,
 ---
 
 <!-- Page: docs/Events and Gestures/Timers -->
-Source: https://strvct.net/docs/Events%20and%20Gestures/Timers/
+Source: /docs/Events%20and%20Gestures/Timers/
 
 # Timers
 
@@ -890,7 +1112,7 @@ These timers do not prevent their views from being garbage collected if the view
 ---
 
 <!-- Page: docs/Future Work -->
-Source: https://strvct.net/docs/Future%20Work/
+Source: /docs/Future%20Work/
 
 # Future Work
 
@@ -902,240 +1124,110 @@ Design ideas, architectural discussions, and potential future improvements.
 - JSON Schema
 - Graph Database
 - Complete Protocols
-- Accessibility
+- Accessibility Testing & Tuning
 
 
 ---
 
-<!-- Page: docs/Future Work/Accessibility -->
-Source: https://strvct.net/docs/Future%20Work/Accessibility/
+<!-- Page: docs/Future Work/Accessibility Testing & Tuning -->
+Source: /docs/Future%20Work/Accessibility%20Testing%20%26%20Tuning/
 
-# Accessibility
+# Accessibility Testing & Tuning
 
-Leveraging the naked objects pattern to provide automatic, framework-level accessibility.
+Validating and refining the framework's ARIA implementation across screen readers, devices, and applications.
 
-## Context
+## Overview
 
-STRVCT already supports keyboard-only interaction for most of the UI. `SvTilesView` handles arrow-key navigation, Enter to drill in, Escape to drill out. The responder chain (`SvResponderDomView`) manages focus routing through the view hierarchy, and `nextKeyView` provides tab-order navigation between focusable views. This keyboard support works automatically for any application built on the framework -- developers get it without writing keyboard-handling code.
+The core accessibility infrastructure is in place -- ARIA roles, labels, states, landmarks, live regions, focus indicators, and slot-to-ARIA metadata wiring are all implemented in the framework's view classes (see [Accessibility](../../Accessibility/index.html) documentation). What remains is testing that implementation against real assistive technology and tuning behavior for edge cases that only surface during actual screen reader use.
 
-What's missing is the other half of accessibility: telling assistive technology (screen readers, braille displays, voice control) *what* the UI elements are and *what state* they're in. The keyboard support means a blind user can physically navigate the UI, but a screen reader can't yet describe what they're navigating through.
+## VoiceOver Testing
 
-## Why the Naked Objects Pattern Helps
+macOS VoiceOver is the primary testing target since it's built into the development platform.
 
-Most frameworks require developers to manually add accessibility attributes to each component. STRVCT's architecture inverts this: since the framework generates views from the model, it can also generate accessibility metadata from the model -- automatically, in one place, for all applications.
+- Walk through a representative application with VoiceOver enabled (Cmd+F5)
+- Verify that tile navigation announces tile content (`aria-label` from `title()`)
+- Verify that field tiles announce their role, label, and current value
+- Verify that boolean fields announce as checkboxes with checked state
+- Verify that action fields announce as buttons with enabled/disabled state
+- Verify that option lists announce as listbox with selected option
+- Verify that breadcrumbs announce as navigation with current location
+- Verify that `aria-live` regions announce new content (chat messages, status updates)
+- Verify that landmark roles provide useful navigation shortcuts (VO+U landmarks menu)
 
-**The slot system already describes the data.** Slot metadata maps almost directly to ARIA attributes:
+## Tab Key / Screen Reader Interaction
 
-| Slot metadata | ARIA equivalent |
-|---|---|
-| `description()` | `aria-label` or `aria-describedby` |
-| `isReadOnly()` | `aria-readonly` |
-| `validValues()` | communicable as allowed options |
-| `isRequired()` | `aria-required` |
-| `slotType()` | informs the appropriate `role` |
+The framework overrides native Tab behavior with a custom `nextKeyView` chain. This may conflict with screen reader conventions.
 
-**JSON Schema annotations serve double duty.** The same slot annotations that generate [JSON Schema](../JSON%20Schema/index.html) for AI tool calls can drive accessibility attributes. A slot with `setMinimum(0)` and `setMaximum(100)` already describes the valid range for AI -- it can also emit `aria-valuemin="0"` and `aria-valuemax="100"` on a slider or spinbutton. A slot with `setFormat("email")` tells both AI and screen readers what kind of input is expected. A slot with `setExamples(["red", "blue"])` can provide input hints. The investment in richer JSON Schema coverage directly improves accessibility coverage -- both are about describing the data model's constraints to an external consumer.
+- Test whether VoiceOver's Tab navigation (VO+Tab) works correctly with `tabindex=-1` tiles
+- Determine if the `nextKeyView` chain needs to be suspended when a screen reader is detected
+- Investigate `aria-activedescendant` as an alternative to physical focus movement for tile navigation
+- Verify that form fields within tiles receive focus correctly when Tab is pressed
 
-**The node hierarchy maps to ARIA tree patterns.** The tile/stack navigation model (drill in, drill out, select with arrows) is essentially an ARIA tree:
+## Navigation Announcement Mechanism
 
-| STRVCT concept | ARIA role |
-|---|---|
-| `SvTilesView` | `tree` or `list` |
-| `SvTile` | `treeitem` or `link` |
-| Expanded/collapsed state | `aria-expanded` |
-| Nesting depth | `aria-level` |
-| Selected tile | `aria-current` |
+The policy is established: announce programmatic navigation, stay silent on user-initiated navigation. The mechanism needs implementation.
 
-**The notification system can drive live regions.** When a node posts `didUpdateSlot`, the view layer could announce the change to screen readers via `aria-live` -- for free, without developer effort.
+- Investigate whether tile-selection navigation and programmatic navigation go through different code paths in `SvStackView` / `SvNavView`
+- Determine how to detect "this focus change was not a direct response to a tile selection"
+- Implement `aria-live` announcements for programmatic navigation (e.g., "Start Session" navigating to Narration view)
+- Test that user-initiated drill-in/drill-out does not produce redundant announcements
 
-## What's Already Working
+## Cross-Screen-Reader Testing
 
-These features provide keyboard-only interaction today:
+Different screen readers have different behaviors and ARIA support levels.
 
-- **Arrow-key navigation** in tile views (up/down to move, Enter to drill in, Escape to drill out)
-- **Responder chain** for keyboard event routing through the view hierarchy
-- **Tab-order navigation** via `nextKeyView` between focusable views
-- **Modifier-aware key handling** -- `SvKeyboard` generates method names like `onShiftAKeyDown` automatically
-- **Focus management** through the view tree, not just at the DOM element level
+- **NVDA on Windows** -- the most popular free screen reader; test with Firefox and Chrome
+- **JAWS on Windows** -- the most widely used commercial screen reader
+- **TalkBack on Android** -- test with Chrome on Android
+- Verify that ARIA roles, states, and properties work consistently across readers
+- Document any reader-specific workarounds needed
 
-## What's Needed
+## Per-Application Adjustments
 
-### Automatic ARIA from the model
+The framework provides good defaults, but some content needs application-level attention.
 
-`NodeView` and its subclasses should emit ARIA roles, labels, and states derived from node type and slot metadata. The goal is zero developer effort for common cases:
+- **Alternative text for images** -- the framework can't infer what a picture shows; applications must provide `alt` text for meaningful images
+- **Custom views** -- any view that overrides default rendering may need custom ARIA attributes
+- **Domain-specific labels** -- where auto-generated slot descriptions aren't clear enough, applications should override `title()` or provide `aria-label` overrides
+- **Complex widgets** -- application-specific composite widgets (e.g., dice rollers, map views) need manual ARIA patterns
 
-- `SvTilesView` emits `role="tree"` or `role="list"` with proper `aria-label`
-- Each `SvTile` emits `role="treeitem"` or `role="link"` with `aria-level`, `aria-expanded`, `aria-current`
-- `SvField` subviews emit the appropriate input role (`textbox`, `checkbox`, `spinbutton`) based on slot type
-- Slot descriptions become `aria-label` or `aria-describedby` attributes
-- Read-only, required, and disabled states are reflected automatically
+## Color Contrast Verification
 
-### Accessibility slots on nodes
+The default dark theme has been reviewed for WCAG 4.5:1 contrast compliance. Remaining work:
 
-Optional overrides for when the automatic behavior isn't right, following the same pattern as `setNodeViewClass()` -- good default, explicit override when needed:
+- Run automated contrast checks (axe, Lighthouse) against a running application
+- Verify contrast ratios for all interactive states (hover, focus, disabled, selected)
+- Check contrast in light theme variants if applicable
+- Verify that `prefers-contrast: more` media query produces sufficient enhancement
+- Ensure information is not conveyed by color alone -- use shape, text, or pattern as reinforcement
 
-- `setAriaRole(role)` -- override the inferred role
-- `setAriaLabel(label)` -- override the inferred label
-- `setAccessibilityHint(hint)` -- additional context for screen readers
+## Text Resize Testing
 
-### Live region integration
+WCAG 1.4.4 requires content to be usable at 200% text size.
 
-Opt-in `aria-live` announcements tied to the notification system. When a node's view is marked as a live region, changes posted through `didUpdateSlot` are automatically announced to screen readers. Useful for:
+- Test with browser zoom at 200%
+- Verify that content reflows correctly at 320px equivalent viewport width (WCAG 1.4.10)
+- Check that no content is clipped or overlapping at increased text sizes
+- Verify that STRVCT's flexbox-based layout accommodates text expansion gracefully
 
-- Chat messages and AI responses
-- Status updates and progress indicators
-- Error messages and validation feedback
-- Dynamic content that changes without user action
+## Focus Management Refinements
 
-### Breadcrumb navigation
+- **Focus trapping in modals** -- when a modal dialog is open, Tab should cycle within the dialog
+- **Focus restoration** -- drilling out should restore focus to the tile that was drilled into
+- **Skip links** -- provide a way to skip past repetitive navigation to main content
+- Verify that focus is visible and meets WCAG 2.2 contrast requirements (3:1 against adjacent colors) in all themes
 
-The browser-level view that shows the drill-in path should emit the ARIA breadcrumb pattern: a `role="navigation"` container with `aria-label="Breadcrumb"`, an ordered list of links for each level, and `aria-current="location"` on the current (last) item. Screen readers announce this as "you are here" context -- e.g., "Breadcrumb navigation: Contacts, link / John Smith, current location." Since there's one breadcrumb component in the framework, this is another single fix that applies everywhere.
+## Automated Regression Testing
 
-### Focus management improvements
-
-- Visible focus indicators that meet WCAG 2.2 contrast requirements (3:1 against adjacent colors)
-- Focus trapping in modal dialogs
-- Focus restoration when navigating back (drill out should restore focus to the tile that was drilled into)
-- Skip links for jumping past repetitive navigation
-
-### Visual accessibility
-
-The programmatic styling system could provide:
-
-- **High-contrast themes** respecting `prefers-contrast`
-- **Reduced motion** respecting `prefers-reduced-motion` (disable animations, transitions)
-- **Text scaling** -- ensure layouts accommodate up to 200% text size (WCAG 1.4.4)
-- **Color independence** -- information conveyed by color alone should also use shape, text, or pattern
-
-### ARIA landmarks and structure
-
-ARIA landmark roles can provide the same structural information as semantic HTML elements without changing the existing div-based DOM. The framework could add `role="navigation"`, `role="main"`, `role="list"`, and `role="listitem"` to the appropriate views, along with a proper heading hierarchy (`aria-level`) derived from node depth. This approach avoids disrupting existing CSS selectors and layout behavior.
-
-## Implementation Strategy
-
-The work can be layered incrementally:
-
-1. **Landmark roles and basic ARIA** -- Add ARIA landmark roles and structure to existing div elements in `NodeView`. Highest impact for least effort.
-2. **Slot-derived ARIA attributes** -- Wire slot metadata into `aria-*` attributes on field views. Builds on existing infrastructure.
-3. **Tree navigation ARIA** -- Add `role="tree"` / `role="treeitem"` and state attributes to the tile/stack views. Complements the existing keyboard navigation.
-4. **Live regions** -- Integrate `aria-live` with the notification system for dynamic content.
-5. **Visual accessibility** -- High-contrast themes, reduced motion, focus indicators. Can be done in parallel with the above.
-6. **Audit tooling** -- Since the framework knows the full node graph and view hierarchy, it could provide a built-in accessibility checker that flags missing labels, contrast issues, and keyboard traps at the framework level.
-
-## WCAG Compliance Target
-
-WCAG 2.2 Level AA is the practical target -- it's the standard required by most accessibility legislation (ADA, EAA, Section 508) and covers the issues that affect the most users. Level AAA is aspirational but not required for most applications.
-
-## Relationship to Current Architecture
-
-Like the [Graph Database](../Graph%20Database/index.html) direction, this is a framework-level improvement that benefits all applications. The accessibility layer would sit between the existing node/view system and the DOM:
-
-- `SvNode` and its subclasses remain unchanged
-- `NodeView` and its subclasses gain ARIA-emitting behavior
-- The slot system gains accessibility-related annotations
-- The theme system gains high-contrast and reduced-motion variants
-- Applications get improved accessibility automatically, with opt-in overrides for edge cases
-
-## Open Questions
-
-### Role inference (partially resolved)
-
-**Default roles come from the view class, not the node**, because the same node can appear in multiple views with different roles (e.g., a node shown as a selected tile in the parent view and as the root of a tiles list in a descendant view). Each view class provides its own default: `SvTilesView` → `list`, `SvTile` → `link` (navigation item), `SvFieldTile` → input role based on slot type, etc.
-
-**Nodes can override the view's default role** for cases where the node's semantics are more specific than the view's generic default. For example, an options node should declare itself as a `listbox` and its children as `option` items, overriding the default `list`/`link` roles. This follows the same pattern as `setNodeViewClass()` -- the view provides a sensible default, the node overrides when it knows better. A method like `setAriaRole("option")` on the node would accomplish this.
-
-### Focus model reconciliation (resolved)
-
-**Resolved: the DOM focus bridge already exists.** `becomeFirstResponder()` calls `this.focus()` which calls `element.focus()` directly (`SvResponderDomView.js`). `releaseFirstResponder()` calls `element.blur()`. The framework tracks the active view via `document.activeElement`. Screen readers can follow the responder chain through DOM focus.
-
-Remaining issues in this area:
-
-- **Focus outlines globally suppressed.** `_css.css` sets `outline: none` on `* :focus`, removing all visual focus indicators. This needs to be replaced with visible focus styling that meets WCAG 2.2 contrast requirements.
-- **Tiles are not individually focusable.** `SvTile` sets `acceptsFirstResponder(false)` -- focus lands on `SvTilesView`, not on individual tiles. Screen readers need individual tiles to be focusable to announce their content.
-- **Tab key intercepted.** The framework overrides native Tab behavior with a custom `nextKeyView` chain. This may confuse screen reader users who expect standard Tab navigation.
-- **`tabindex` only on keyboard-registered views.** Views that call `setIsRegisteredForKeyboard(true)` get an auto-incremented `tabindex`. Other elements are unfocusable. For accessibility, more elements may need `tabindex`.
-
-### Navigation announcements (policy resolved, mechanism open)
-
-**Policy:** announce navigation that the user didn't directly trigger, stay silent on navigation that's a direct response to their action. When the user taps a tile to drill in, the screen reader's normal behavior -- announcing the newly focused element -- is sufficient. But programmatic navigation (e.g., pressing "Start Session" navigates to the Narration view) needs an explicit `aria-live` announcement, since the user didn't choose that destination.
-
-**Open:** how does the framework distinguish these two cases at the point where focus changes? Need to investigate whether tile-selection navigation and programmatic navigation go through different code paths (different methods on `SvStackView` / `SvNavView`, a flag indicating the source of the navigation request, etc.). The goal is a reliable way to detect "this focus change was not a direct response to a tile selection" and trigger an announcement.
-
-### ARIA roles vs. semantic elements (resolved)
-
-ARIA roles like `role="button"` on a div are equivalent to a native button from the screen reader's perspective -- the ARIA spec was designed for exactly this. Since STRVCT already handles keyboard activation and focus management on tiles, the native behaviors that semantic elements provide for free (space/Enter activation, default tab order) are redundant. This means the framework can add accessibility through ARIA attributes on existing div elements without migrating to semantic HTML elements, avoiding any disruption to existing styling and layout.
-
-### Label priority (resolved)
-
-The existing node metadata has a natural mapping to ARIA label attributes:
-
-| Source | ARIA usage | Rationale |
-|---|---|---|
-| `title()` | `aria-label` | Short instance-specific label -- what the screen reader announces |
-| `subtitle()` | `aria-description` | Longer instance detail -- available on demand |
-| `jsonSchemaDescription()` | Fallback label when no instance title | Describes the class, not the instance |
-| `description()` | Skip | Intended for debugging, not user-facing |
-
-The slot-level `description()` (set via `setDescription()` on a slot) is distinct from the node-level `description()` and is appropriate for field-level `aria-label` when a slot's title alone isn't clear enough.
-
-### Testing strategy
-
-Automated tools (axe, Lighthouse) catch missing attributes but not the actual screen reader experience. The real test is whether a VoiceOver or NVDA user can navigate the app. Is manual testing with VoiceOver sufficient, or do we need a formal testing protocol? Should there be automated accessibility regression tests in the test suite?
-
-## Effort Estimate
-
-### Why STRVCT makes this easier than usual
-
-Accessibility audits typically assume a hand-authored web application where every page has different layout patterns, bespoke widgets, and inconsistent structure. STRVCT is the opposite: the UI is generated from a small set of view classes -- `SvTilesView`, `SvTile`, `SvFieldTile`, `SvStackView`, `SvNavView`. There are roughly 10-15 view classes that cover the vast majority of the UI.
-
-This means fixing accessibility in the core view classes fixes it everywhere, across every application. If reading order is correct in `SvTilesView`, it's correct in every list. If focus management works in `SvStackView`, it works for every drill-in navigation. If field labels are properly wired in `SvFieldTile`, every field in every app gets a proper label.
-
-Items that would still need per-application attention:
-- Alternative text for app-specific images (the framework can't guess what a picture shows)
-- Custom views that override the default rendering
-- Domain-specific labels where the auto-generated slot description isn't clear enough
-
-But these are exceptions, not the rule. The naked objects pattern is almost uniquely well-suited for centralized accessibility work.
-
-### Day 1 -- Core ARIA and focus
-
-- Add ARIA roles to core views (`SvTilesView` as listbox, tiles as options, fields as appropriate input roles)
-- Make individual tiles focusable (`tabindex` with arrow-key management)
-- Replace the global `outline: none` with proper `:focus-visible` styling
-- Add `aria-selected` and `aria-expanded` state tracking to tiles
-- Wire slot `description()` into `aria-label` on field views
-- Basic VoiceOver testing to verify navigation works
-
-### Days 2-3 -- Slot-to-ARIA mapping and contrast
-
-- Wire remaining slot metadata into ARIA attributes (`isReadOnly`, `isRequired`, `validValues`, JSON Schema constraints like `minimum`/`maximum`)
-- Add `aria-live` regions for dynamic content (status updates, notifications)
-- Audit current theme for WCAG 4.5:1 color contrast and fix violations
-- Test text resize to 200% and content reflow at 320px width
-
-### Days 4-5 -- Edge cases and manual testing
-
-- Address `nextKeyView` / Tab key interaction with screen readers
-- Navigation announcement tuning (what's announced on drill-in, what's silent)
-- Landmark roles on container views (navigation, main content)
-- Full manual VoiceOver walkthrough of a representative application
-- Automated accessibility audit (axe or Lighthouse) and fix remaining issues
-
-### Ongoing
-
-- Address issues surfaced by real screen reader testing
-- Per-application fixes for custom views or domain-specific labels
-- Cross-screen-reader testing (NVDA on Windows, TalkBack on Android)
-
-### AA compliance outlook
-
-Substantive WCAG 2.2 Level AA compliance is realistic within a focused week of work. Automated tools typically catch 30-40% of AA issues in a conventional web app, but STRVCT's regularity pushes effective coverage much higher -- fixing the core view classes plus running an automated scan could address 70-80% of criteria. The remaining items require manual screen reader testing but benefit from the same structural regularity.
+- Evaluate integrating axe-core or similar into the test suite for automated ARIA validation
+- Consider adding Playwright accessibility assertions for critical navigation paths
+- Set up CI checks that flag new accessibility regressions
 
 
 ---
 
 <!-- Page: docs/Future Work/Async Final Initialization -->
-Source: https://strvct.net/docs/Future%20Work/Async%20Final%20Initialization/
+Source: /docs/Future%20Work/Async%20Final%20Initialization/
 
 # Async Final Initialization
 
@@ -1221,7 +1313,7 @@ Add an `asyncFinalInit()` phase that runs after synchronous initialization but b
 ---
 
 <!-- Page: docs/Future Work/Complete Protocols -->
-Source: https://strvct.net/docs/Future%20Work/Complete%20Protocols/
+Source: /docs/Future%20Work/Complete%20Protocols/
 
 # Complete Protocols
 
@@ -1378,7 +1470,7 @@ Narrower contracts or single-implementer interfaces worth formalizing for docume
 ---
 
 <!-- Page: docs/Future Work/Graph Database -->
-Source: https://strvct.net/docs/Future%20Work/Graph%20Database/
+Source: /docs/Future%20Work/Graph%20Database/
 
 # Graph Database
 
@@ -1489,7 +1581,7 @@ This is a long-term architectural direction, not near-term work. The current Fir
 ---
 
 <!-- Page: docs/Future Work/JSON Schema -->
-Source: https://strvct.net/docs/Future%20Work/JSON%20Schema/
+Source: /docs/Future%20Work/JSON%20Schema/
 
 # JSON Schema
 
@@ -1639,7 +1731,7 @@ This would generate `oneOf` or union types in JSON Schema and validate against a
 ---
 
 <!-- Page: docs/Future Work/Lazy Slots -->
-Source: https://strvct.net/docs/Future%20Work/Lazy%20Slots/
+Source: /docs/Future%20Work/Lazy%20Slots/
 
 # Lazy Slots
 
@@ -1743,7 +1835,7 @@ A lazy slot that resolves its value could trigger the loaded object's `asyncFina
 ---
 
 <!-- Page: docs/Future Work/Promise-Wrapped Slots -->
-Source: https://strvct.net/docs/Future%20Work/Promise-Wrapped%20Slots/
+Source: /docs/Future%20Work/Promise-Wrapped%20Slots/
 
 # Promise-Wrapped Slots
 
@@ -1841,7 +1933,7 @@ A slot could potentially be both: lazy-loaded from storage, with a promise wrapp
 ---
 
 <!-- Page: docs/Getting Started -->
-Source: https://strvct.net/docs/Getting%20Started/
+Source: /docs/Getting%20Started/
 
 # Getting Started
 
@@ -2024,7 +2116,7 @@ This creates a persistent node with an editable string property that automatical
 ---
 
 <!-- Page: docs/Implementation Overview -->
-Source: https://strvct.net/docs/Implementation%20Overview/
+Source: /docs/Implementation%20Overview/
 
 # Implementation Overview
 
@@ -2288,7 +2380,7 @@ Resources are loaded in dependency order as declared in `_imports.json` files. C
 ---
 
 <!-- Page: docs/Inspirations -->
-Source: https://strvct.net/docs/Inspirations/
+Source: /docs/Inspirations/
 
 # Inspirations
 
@@ -2315,7 +2407,7 @@ The application framework layer is heavily influenced by Apple's Cocoa and UIKit
 ---
 
 <!-- Page: docs/Internationalization -->
-Source: https://strvct.net/docs/Internationalization/
+Source: /docs/Internationalization/
 
 # Internationalization
 
@@ -2760,7 +2852,7 @@ Some UI text is hardcoded in view classes rather than flowing through the node s
 ---
 
 <!-- Page: docs/Lifecycle -->
-Source: https://strvct.net/docs/Lifecycle/
+Source: /docs/Lifecycle/
 
 # Lifecycle
 
@@ -2779,7 +2871,7 @@ The core design challenge is that the same object must work whether it is freshl
 ---
 
 <!-- Page: docs/Lifecycle/App Lifecycle -->
-Source: https://strvct.net/docs/Lifecycle/App%20Lifecycle/
+Source: /docs/Lifecycle/App%20Lifecycle/
 
 # App Lifecycle
 
@@ -2827,7 +2919,7 @@ if (SvApp.hasShared() && SvApp.shared().hasDoneAppInit()) {
 ---
 
 <!-- Page: docs/Lifecycle/Boot Sequence -->
-Source: https://strvct.net/docs/Lifecycle/Boot%20Sequence/
+Source: /docs/Lifecycle/Boot%20Sequence/
 
 # Boot Sequence
 
@@ -2885,7 +2977,7 @@ Schedulers are paused during setup so that model and UI initialization don't tri
 ---
 
 <!-- Page: docs/Lifecycle/Headless Execution -->
-Source: https://strvct.net/docs/Lifecycle/Headless%20Execution/
+Source: /docs/Lifecycle/Headless%20Execution/
 
 # Headless Execution
 
@@ -3051,7 +3143,7 @@ Headless execution enables several workflows:
 ---
 
 <!-- Page: docs/Lifecycle/Node Lifecycle -->
-Source: https://strvct.net/docs/Lifecycle/Node%20Lifecycle/
+Source: /docs/Lifecycle/Node%20Lifecycle/
 
 # Node Lifecycle
 
@@ -3150,7 +3242,7 @@ didUpdateSlotFoo (oldValue, newValue) {
 ---
 
 <!-- Page: docs/Lifecycle/Persistence Lifecycle -->
-Source: https://strvct.net/docs/Lifecycle/Persistence%20Lifecycle/
+Source: /docs/Lifecycle/Persistence%20Lifecycle/
 
 # Persistence Lifecycle
 
@@ -3239,7 +3331,7 @@ shutdown () {
 ---
 
 <!-- Page: docs/Lifecycle/View Synchronization -->
-Source: https://strvct.net/docs/Lifecycle/View%20Synchronization/
+Source: /docs/Lifecycle/View%20Synchronization/
 
 # View Synchronization
 
@@ -3314,7 +3406,7 @@ this.otherProperty().scheduleSyncToView();
 ---
 
 <!-- Page: docs/Naked Objects -->
-Source: https://strvct.net/docs/Naked%20Objects/
+Source: /docs/Naked%20Objects/
 
 # Naked Objects
 
@@ -3324,7 +3416,7 @@ Closing the Usability Gap in Naked Objects
 
 Also available as a [PDF](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf).
 
-The naked objects pattern proposed that user interfaces could be generated directly from domain models, eliminating the cost of bespoke UI development while guaranteeing consistency between interface and business logic. Twenty-five years later, this promise remains largely unfulfilled — not because automatic generation failed, but because the generated interfaces lacked the spatial organization and navigational fluency that users expect. This paper argues that the design space for presenting structured information is far narrower than the software industry assumes, and that a small set of composable UI primitives — tiles, tile stacks, and recursively nested master-detail views — can cover it. We present Strvct, an open-source JavaScript framework implementing this approach, and show that centralizing the model-to-view pipeline produces emergent capabilities — transparent internationalization, annotation-driven persistence with cloud sync, and automatic schema generation — that would require significant per-component effort in conventional frameworks.
+The naked objects pattern proposed that user interfaces could be generated directly from domain models, eliminating the cost of bespoke UI development while guaranteeing consistency between interface and business logic. Twenty-five years later, this promise remains largely unfulfilled — not because automatic generation failed, but because the generated interfaces lacked the spatial organization and navigational fluency that users expect. This paper argues that the design space for presenting structured information is far narrower than the software industry assumes, and that a small set of composable UI primitives — tiles, tile stacks, and recursively nested master-detail views — can cover it. We present Strvct, an open-source JavaScript framework implementing this approach, and show that centralizing the model-to-view pipeline produces emergent capabilities — transparent internationalization, automatic accessibility, annotation-driven persistence with cloud sync, and automatic schema generation — that would require significant per-component effort in conventional frameworks.
 
 ## 1. Introduction
 
@@ -3384,7 +3476,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Summary Tile
+    Summary SvTile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -3393,7 +3485,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Property Tile
+    Property SvTile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -3402,13 +3494,13 @@ Tiles support gestures for direct manipulation: slide-to-delete, long-press reor
 
 Tiles can be subclassed for domain-specific presentation, but the default tiles are designed to be sufficient for the majority of cases. The goal is to make custom tiles the exception, not the rule.
 
-### 4.2 Tile Stacks
+### 4.2 SvTile Stacks
 
-A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. Tile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
+A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. SvTile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Tile Stack
+    SvTile Stack
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>
@@ -3590,7 +3682,15 @@ This same structural knowledge enables transparent cloud synchronization. Subgra
 
 Domain objects can automatically generate JSON Schema descriptions of themselves based on their slot annotations. This is particularly valuable for integration with large language models, which can use the schema to understand the structure of domain objects, validate their output, and generate patches or new instances that conform to the model's constraints. In Strvct's production use, AI assistants modify game state by generating JSON Patch operations validated against auto-generated schemas — a workflow that requires no hand-written schema definitions.
 
-### 7.4 Content-Addressable Resource Loading
+### 7.4 Automatic Accessibility
+
+Because the framework generates the view hierarchy from model annotations and controls the rendering of every tile, field, and navigation structure, it can emit ARIA roles, labels, and states automatically — without any accessibility-specific code from the developer.
+
+Each view class provides a default ARIA role derived from its function: tile stacks become `list` containers, individual tiles become `link` items, field tiles become `group` elements, boolean fields become `checkbox`, action fields become `button`. Slot metadata that already exists for type checking and schema generation — `isRequired()`, `isReadOnly()`, minimum/maximum constraints, `description()` — maps directly to ARIA attributes: `aria-required`, `aria-readonly`, `aria-valuemin`/`aria-valuemax`, `aria-description`. The node hierarchy provides landmarks (`navigation`, `region`) and breadcrumb structure. Dynamic content nodes can opt into `aria-live` announcements.
+
+The parallel to internationalization (Section 7.1) is exact. Both capabilities exist because all UI-visible information flows from annotated model slots through a single framework-controlled pipeline. In a conventional framework, accessibility is a per-component obligation — every button, list, and form field needs manual ARIA attributes, and the cost scales linearly with the number of components. In Strvct, fixing accessibility in the ~15 core view classes fixes it for every application built on the framework.
+
+### 7.5 Content-Addressable Resource Loading
 
 The framework's build system produces a content-addressable bundle where source files are keyed by SHA-256 hash. The client caches resources locally in IndexedDB and uses hash comparison to determine what has changed between deployments. Unchanged resources are never re-downloaded, and identical content across different file paths is stored only once. This is a consequence of the framework controlling the full resource pipeline — analogous to how it controls the model-to-view pipeline — and provides caching granularity that standard bundlers cannot achieve.
 
@@ -3653,7 +3753,7 @@ The naked objects pattern has offered a compelling proposition for twenty-five y
 
 We have argued that the gap is closable because the design space is narrow. Bespoke UI developers are converging on a small set of spatial conventions; a framework can apply these conventions uniformly through composable primitives — tiles, tile stacks, and recursively nested master-detail views — that produce familiar, navigable interfaces from annotated domain models alone.
 
-Strvct demonstrates this approach in production. A non-trivial application with ~90 domain classes uses auto-generated views for approximately 90% of its interface, with custom views needed only for inherently graphical components that fall outside the narrow design space. The centralized model-to-view pipeline enables emergent capabilities — transparent internationalization, annotation-driven persistence with cloud sync, and automatic schema generation — that validate the architectural decision to invest in the general method.
+Strvct demonstrates this approach in production. A non-trivial application with ~90 domain classes uses auto-generated views for approximately 90% of its interface, with custom views needed only for inherently graphical components that fall outside the narrow design space. The centralized model-to-view pipeline enables emergent capabilities — transparent internationalization, automatic accessibility, annotation-driven persistence with cloud sync, and automatic schema generation — that validate the architectural decision to invest in the general method.
 
 The challenge remains making the general method good enough that hand-crafted specialization becomes the exception rather than the rule. We believe the evidence presented here — a narrow design space, a small set of composable primitives, and a production application that confirms both — suggests this goal is within reach.
 
@@ -3675,7 +3775,7 @@ The challenge remains making the general method good enough that hand-crafted sp
 ---
 
 <!-- Page: docs/Notifications -->
-Source: https://strvct.net/docs/Notifications/
+Source: /docs/Notifications/
 
 # Notifications
 
@@ -3696,7 +3796,7 @@ These are separate because they optimize for different tradeoffs. The notificati
 ---
 
 <!-- Page: docs/Notifications/Broadcaster -->
-Source: https://strvct.net/docs/Notifications/Broadcaster/
+Source: /docs/Notifications/Broadcaster/
 
 # Broadcaster
 
@@ -3736,7 +3836,7 @@ Use the notification center for most inter-layer communication — the deferred 
 ---
 
 <!-- Page: docs/Notifications/Notification Center -->
-Source: https://strvct.net/docs/Notifications/Notification%20Center/
+Source: /docs/Notifications/Notification%20Center/
 
 # Notification Center
 
@@ -3856,7 +3956,7 @@ Applications define additional notification names for their domain-specific even
 ---
 
 <!-- Page: docs/Notifications/Slot Change Hooks -->
-Source: https://strvct.net/docs/Notifications/Slot%20Change%20Hooks/
+Source: /docs/Notifications/Slot%20Change%20Hooks/
 
 # Slot Change Hooks
 
@@ -3923,7 +4023,7 @@ slot value changes
 ---
 
 <!-- Page: docs/Notifications/Sync Scheduler -->
-Source: https://strvct.net/docs/Notifications/Sync%20Scheduler/
+Source: /docs/Notifications/Sync%20Scheduler/
 
 # Sync Scheduler
 
@@ -3996,7 +4096,7 @@ The app startup sequence uses this to prevent premature sync cycles during model
 ---
 
 <!-- Page: docs/Persistence -->
-Source: https://strvct.net/docs/Persistence/
+Source: /docs/Persistence/
 
 # Persistence
 
@@ -4010,7 +4110,7 @@ Local storage, cloud sync, and blob management for object graphs.
 ---
 
 <!-- Page: docs/Persistence/Cloud Object Pools -->
-Source: https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/
+Source: /docs/Persistence/Cloud%20Object%20Pools/
 
 # Cloud Object Pools
 
@@ -4180,7 +4280,7 @@ Cloud sync is triggered automatically on:
 ---
 
 <!-- Page: docs/Persistence/Local and Cloud Blob Storage -->
-Source: https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/
+Source: /docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/
 
 # Local and Cloud Blob Storage
 
@@ -4452,7 +4552,7 @@ referencedBlobHashesSet () {
 ---
 
 <!-- Page: docs/Persistence/Local Object Pools -->
-Source: https://strvct.net/docs/Persistence/Local%20Object%20Pools/
+Source: /docs/Persistence/Local%20Object%20Pools/
 
 # Local Object Pools
 
@@ -4664,7 +4764,7 @@ Blob garbage collection runs separately via `SvBlobPool` (see [Local and Cloud B
 ---
 
 <!-- Page: docs/Programming Idioms -->
-Source: https://strvct.net/docs/Programming%20Idioms/
+Source: /docs/Programming%20Idioms/
 
 # Programming Idioms
 
@@ -4679,7 +4779,7 @@ Recurring patterns and conventions for writing STRVCT code.
 ---
 
 <!-- Page: docs/Programming Idioms/Async Patterns -->
-Source: https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/
+Source: /docs/Programming%20Idioms/Async%20Patterns/
 
 # Async Patterns
 
@@ -4833,7 +4933,7 @@ The workhorse for API-heavy operations. Runs up to `maxConcurrent` items simulta
 ---
 
 <!-- Page: docs/Programming Idioms/Categories -->
-Source: https://strvct.net/docs/Programming%20Idioms/Categories/
+Source: /docs/Programming%20Idioms/Categories/
 
 # Categories
 
@@ -4945,7 +5045,7 @@ This means:
 ---
 
 <!-- Page: docs/Programming Idioms/Protocols -->
-Source: https://strvct.net/docs/Programming%20Idioms/Protocols/
+Source: /docs/Programming%20Idioms/Protocols/
 
 # Protocols
 
@@ -5102,7 +5202,7 @@ Formal protocols address all three. The trade-off is a small amount of ceremony 
 ---
 
 <!-- Page: docs/Programming Idioms/Style Guide -->
-Source: https://strvct.net/docs/Programming%20Idioms/Style%20Guide/
+Source: /docs/Programming%20Idioms/Style%20Guide/
 
 # Style Guide
 
@@ -5346,7 +5446,7 @@ These apply to function declarations, expressions, async functions, and method d
 ---
 
 <!-- Page: docs/Reference -->
-Source: https://strvct.net/docs/Reference/
+Source: /docs/Reference/
 
 # Reference
 
@@ -5360,7 +5460,7 @@ Class hierarchy, module hierarchy, and protocol definitions.
 ---
 
 <!-- Page: docs/Reference/Classes -->
-Source: https://strvct.net/docs/Reference/Classes/
+Source: /docs/Reference/Classes/
 
 # Classes
 
@@ -6004,7 +6104,7 @@ Complete class inheritance hierarchy.
 ---
 
 <!-- Page: docs/Reference/Modules -->
-Source: https://strvct.net/docs/Reference/Modules/
+Source: /docs/Reference/Modules/
 
 # Modules
 
@@ -6727,7 +6827,7 @@ Module hierarchy and file organization.
 ---
 
 <!-- Page: docs/Reference/Protocols -->
-Source: https://strvct.net/docs/Reference/Protocols/
+Source: /docs/Reference/Protocols/
 
 # Protocols
 
@@ -6749,7 +6849,7 @@ Protocol definitions and implementations.
 ---
 
 <!-- Page: docs/Services -->
-Source: https://strvct.net/docs/Services/
+Source: /docs/Services/
 
 # Services
 
@@ -6769,7 +6869,7 @@ Services are not part of the Strvct core — they are optional integrations prov
 ---
 
 <!-- Page: docs/Services/AI Services -->
-Source: https://strvct.net/docs/Services/AI%20Services/
+Source: /docs/Services/AI%20Services/
 
 # AI Services
 
@@ -6861,7 +6961,7 @@ The naming convention (`NewProviderService` resolves to `NewProviderRequest`) ha
 ---
 
 <!-- Page: docs/Services/Cloud Storage -->
-Source: https://strvct.net/docs/Services/Cloud%20Storage/
+Source: /docs/Services/Cloud%20Storage/
 
 # Cloud Storage
 
@@ -6878,7 +6978,7 @@ Integrates with Firebase for cloud persistence and file storage. Unlike AI servi
 ---
 
 <!-- Page: docs/Services/Home Assistant -->
-Source: https://strvct.net/docs/Services/Home%20Assistant/
+Source: /docs/Services/Home%20Assistant/
 
 # Home Assistant
 
@@ -6973,7 +7073,7 @@ The four data group nodes (`areasNode`, `devicesNode`, `entitiesNode`, `statesNo
 ---
 
 <!-- Page: docs/Services/Media -->
-Source: https://strvct.net/docs/Services/Media/
+Source: /docs/Services/Media/
 
 # Media
 
@@ -7117,7 +7217,7 @@ onSpeechEnd (speechSession) {
 ---
 
 <!-- Page: docs/Services/Proxies -->
-Source: https://strvct.net/docs/Services/Proxies/
+Source: /docs/Services/Proxies/
 
 # Proxies
 
@@ -7196,7 +7296,7 @@ This applies to all AI service requests (chat, image generation, text-to-speech,
 ---
 
 <!-- Page: docs/Slots -->
-Source: https://strvct.net/docs/Slots/
+Source: /docs/Slots/
 
 # Slots
 
@@ -7472,7 +7572,7 @@ For the complete list, read `Slot.js` directly — the file is heavily commented
 ---
 
 <!-- Page: docs/Technical Overview -->
-Source: https://strvct.net/docs/Technical%20Overview/
+Source: /docs/Technical%20Overview/
 
 # Technical Overview
 
@@ -7585,7 +7685,7 @@ Domain objects can automatically generate JSON Schema for themselves based on th
 ---
 
 <!-- Page: docs/Views -->
-Source: https://strvct.net/docs/Views/
+Source: /docs/Views/
 
 # Views
 
@@ -7604,7 +7704,7 @@ The view hierarchy wraps DOM elements rather than extending them. This is delibe
 ---
 
 <!-- Page: docs/Views/Auto-Generated Views -->
-Source: https://strvct.net/docs/Views/Auto-Generated%20Views/
+Source: /docs/Views/Auto-Generated%20Views/
 
 # Auto-Generated Views
 
@@ -7722,7 +7822,7 @@ Not every field type needs its own tile — `SvNumberField` uses the string tile
 ---
 
 <!-- Page: docs/Views/Custom Views -->
-Source: https://strvct.net/docs/Views/Custom%20Views/
+Source: /docs/Views/Custom%20Views/
 
 # Custom Views
 
@@ -7833,7 +7933,7 @@ These eliminate the most common multi-property patterns and keep `init()` method
 ---
 
 <!-- Page: docs/Views/Programmatic Styling -->
-Source: https://strvct.net/docs/Views/Programmatic%20Styling/
+Source: /docs/Views/Programmatic%20Styling/
 
 # Programmatic Styling
 
@@ -7953,7 +8053,7 @@ These should be rare in practice — the named methods cover the vast majority o
 ---
 
 <!-- Page: docs/Views/Themes and Style States -->
-Source: https://strvct.net/docs/Views/Themes%20and%20Style%20States/
+Source: /docs/Views/Themes%20and%20Style%20States/
 
 # Themes and Style States
 
@@ -8011,7 +8111,7 @@ Because all style values flow through the theme, switching the active theme on `
 ---
 
 <!-- Page: Example App -->
-Source: https://strvct.net/Example%20App/
+Source: /Example%20App/
 
 # Example App
 
@@ -8259,7 +8359,7 @@ Assuming you have a Firebase project with Storage enabled, making the contacts c
 ---
 
 <!-- Page: FAQ -->
-Source: https://strvct.net/FAQ/
+Source: /FAQ/
 
 # FAQ
 
@@ -8360,7 +8460,7 @@ See the [Example App](Example%20App/index.html) for a complete working applicati
 ---
 
 <!-- Page: Timeline -->
-Source: https://strvct.net/Timeline/
+Source: /Timeline/
 
 # Project Timeline
 
