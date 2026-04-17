@@ -67,7 +67,7 @@
             "type": "shell",
             "command": "node",
             "args": [
-                "./source/boot/index-builder/ResourceIndexer.js",
+                "./source/boot/index-builder/SvResourceIndexer.js",
                 "./resources/icons",
                 "./resources/sounds"
             ],
