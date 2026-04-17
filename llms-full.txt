@@ -61,6 +61,7 @@ Guides, architecture, and API reference.
 - Events and Gestures
 - Internationalization
 - Services
+- Programming Idioms
 - Reference
 - Comparing to React
 - Inspirations
@@ -248,7 +249,7 @@ For React developers getting oriented, here's how familiar concepts map:
 
 | React Concept | Strvct Equivalent |
 |---|---|
-| Component | NodeView (auto-generated or custom) |
+| Component | SvNodeView (auto-generated or custom) |
 | Props | Slot values (accessed via getters) |
 | State (useState) | Slots with `setSyncsToView(true)` |
 | Context / prop drilling | SvNotificationCenter (publish/subscribe) |
@@ -256,7 +257,7 @@ For React developers getting oriented, here's how familiar concepts map:
 | Redux / Zustand | Slots + notification system (built in) |
 | React Router | Model graph navigation (automatic) |
 | JSX | No equivalent — UI generated from annotations |
-| Virtual DOM | No equivalent — direct DOM updates via NodeView |
+| Virtual DOM | No equivalent — direct DOM updates via SvNodeView |
 | npm install | No equivalent — external libs vendored as source |
 
 
@@ -271,7 +272,7 @@ Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-
 
 STRVCT provides two layers for handling user interaction: **event listeners** that wrap native DOM events and forward them to handler methods on views, and **gesture recognizers** that interpret sequences of events as higher-level gestures like taps, pans, and pinches. A managed **timer system** supports deferred work with both strong and GC-friendly weak timeouts.
 
-Most application code uses gesture recognizers rather than raw event listeners. The gesture system unifies mouse and touch input, handles multi-touch emulation on desktop, and coordinates competing gestures through a global `GestureManager`.
+Most application code uses gesture recognizers rather than raw event listeners. The gesture system unifies mouse and touch input, handles multi-touch emulation on desktop, and coordinates competing gestures through a global `SvGestureManager`.
 
 - Event Flow
 - Event Listeners
@@ -296,8 +297,8 @@ The browser's native drag-and-drop API is low-level and inconsistent — you mus
 
 STRVCT wraps the HTML5 Drag and Drop API through two complementary systems:
 
-- **Drop targets** — Views register to accept dropped content (files, text, HTML from the desktop or other apps). Handled by `DomView_browserDragAndDrop` (a category on `DomView`) and `DropListener`.
-- **Drag sources** — Views register to be draggable, providing data when the user initiates a drag. Handled by the same category class plus `DragListener`.
+- **Drop targets** — Views register to accept dropped content (files, text, HTML from the desktop or other apps). Handled by `SvDomView_browserDragAndDrop` (a category on `SvDomView`) and `SvDropListener`.
+- **Drag sources** — Views register to be draggable, providing data when the user initiates a drag. Handled by the same category class plus `SvDragListener`.
 
 The system routes dropped data through a MIME-type dispatch chain, ultimately delivering it to either the view or its backing node.
 
@@ -305,10 +306,10 @@ The system routes dropped data through a MIME-type dispatch chain, ultimately de
 
 | File | Purpose |
 |------|---------|
-| `DomView_browserDragAndDrop.js` | Drop/drag API on all views |
-| `DropListener.js` | Drop event listener set |
-| `DragListener.js` | Drag event listener set |
-| `DocumentBody.js` | Global drop prevention |
+| `SvDomView_browserDragAndDrop.js` | Drop/drag API on all views |
+| `SvDropListener.js` | Drop event listener set |
+| `SvDragListener.js` | Drag event listener set |
+| `SvDocumentBody.js` | Global drop prevention |
 
 ## Drop Targets
 
@@ -319,7 +320,7 @@ The system routes dropped data through a MIME-type dispatch chain, ultimately de
 this.setIsRegisteredForBrowserDrop(true);
 ```
 
-This creates a `DropListener` that registers four event handlers on the view's DOM element:
+This creates a `SvDropListener` that registers four event handlers on the view's DOM element:
 
 | DOM Event | Handler Method |
 |-----------|---------------|
@@ -406,7 +407,7 @@ this.setIsRegisteredForBrowserDrag(true);
 // This also calls setDraggable(true) on the element.
 ```
 
-This registers a `DragListener` for `dragstart`, `drag`, and `dragend` events.
+This registers a `SvDragListener` for `dragstart`, `drag`, and `dragend` events.
 
 ### Providing Drag Data
 
@@ -422,10 +423,10 @@ onBrowserDragStart (event) {
 
 ## Node Integration
 
-Views (particularly `TilesView`) forward drop data to their backing node:
+Views (particularly `SvTilesView`) forward drop data to their backing node:
 
 ```javascript
-// In TilesView:
+// In SvTilesView:
 onBrowserDropChunk (dataChunk) {
     const node = this.node();
     if (node && node.onBrowserDropChunk) {
@@ -448,14 +449,14 @@ onBrowserDropChunk (dataChunk) {
 }
 ```
 
-## ScrollView Drop Delegation
+## SvScrollView Drop Delegation
 
 Drop events fire on the innermost DOM element under the cursor and bubble upward. When a child view's element doesn't fill its parent container, drops in the empty space land on the parent and bypass the child.
 
-`ScrollView` solves this by registering for drops itself and delegating to its content view:
+`SvScrollView` solves this by registering for drops itself and delegating to its content view:
 
 ```javascript
-// ScrollView:
+// SvScrollView:
 acceptsDrop (event) {
     const cv = this.scrollContentView();
     return cv && cv.acceptsDrop ? cv.acceptsDrop(event) : false;
@@ -471,21 +472,21 @@ onBrowserDrop (event) {
 }
 ```
 
-This ensures drops anywhere in the scroll area — including empty space below the content — are handled by the content view (typically TilesView).
+This ensures drops anywhere in the scroll area — including empty space below the content — are handled by the content view (typically SvTilesView).
 
-## DocumentBody Safety Net
+## SvDocumentBody Safety Net
 
-`DocumentBody` registers for drops globally on `document.body` to prevent the browser's default behavior of navigating to dropped files:
+`SvDocumentBody` registers for drops globally on `document.body` to prevent the browser's default behavior of navigating to dropped files:
 
 ```javascript
-// DocumentBody:
+// SvDocumentBody:
 acceptsDrop (event) {
     event.preventDefault();  // prevent browser from opening the file
     return false;            // reject the drop
 }
 ```
 
-If a child view handles the drop first and calls `stopPropagation()`, DocumentBody never sees the event.
+If a child view handles the drop first and calls `stopPropagation()`, SvDocumentBody never sees the event.
 
 ## Summary
 
@@ -499,8 +500,8 @@ If a child view handles the drop first and calls `stopPropagation()`, DocumentBo
 | Make draggable | `setIsRegisteredForBrowserDrag(true)` | Enable as drag source |
 | Provide drag data | `onBrowserDragStart(event)` | Set transfer data |
 | Node integration | `node.onBrowserDropChunk(chunk)` | Forward drops to model |
-| Safety net | `DocumentBody.acceptsDrop()` | Prevent browser file open |
-| Scroll delegation | `ScrollView.onBrowserDrop()` | Forward drops in empty space |
+| Safety net | `SvDocumentBody.acceptsDrop()` | Prevent browser file open |
+| Scroll delegation | `SvScrollView.onBrowserDrop()` | Forward drops in empty space |
 
 
 ---
@@ -514,14 +515,14 @@ The end-to-end path from a browser event to an application handler.
 
 ## Overview
 
-Raw DOM events are too low-level for most application code. Distinguishing a tap from a long-press from a pan requires tracking timing, movement thresholds, and finger counts — and when multiple gestures compete on the same element, the browser offers no arbitration. STRVCT's event pipeline absorbs this complexity: raw events feed into gesture recognizer state machines, a central GestureManager resolves conflicts (so a tap and a long-press on the same view don't both fire), and the application only sees clean, high-level callbacks like `onTapComplete` or `onPanMove`. Views that don't need gestures can still handle raw events directly — the gesture layer is additive, not mandatory.
+Raw DOM events are too low-level for most application code. Distinguishing a tap from a long-press from a pan requires tracking timing, movement thresholds, and finger counts — and when multiple gestures compete on the same element, the browser offers no arbitration. STRVCT's event pipeline absorbs this complexity: raw events feed into gesture recognizer state machines, a central SvGestureManager resolves conflicts (so a tap and a long-press on the same view don't both fire), and the application only sees clean, high-level callbacks like `onTapComplete` or `onPanMove`. Views that don't need gestures can still handle raw events directly — the gesture layer is additive, not mandatory.
 
 ```
 Browser DOM Event
-  → EventListener receives it
+  → SvEventListener receives it
     → calls named method on delegate (the view)
-      → if a GestureRecognizer is listening, updates its state machine
-        → when conditions are met, requests activation from GestureManager
+      → if a SvGestureRecognizer is listening, updates its state machine
+        → when conditions are met, requests activation from SvGestureManager
           → if accepted, sends delegate messages to the view
             → view handler executes application logic
 ```
@@ -532,15 +533,15 @@ For raw event listeners (without gestures), the handler is called directly on th
 
 1. **Browser fires a native DOM event** (mouse, touch, keyboard, etc.) on a DOM element.
 
-2. **An `EventListener` receives it.** The listener was registered on the view's element via `addEventListener()`. It calls the corresponding method on its delegate — typically the view itself. For example, a `mousedown` event calls `onMouseDown(event)` on the view.
+2. **An `SvEventListener` receives it.** The listener was registered on the view's element via `addEventListener()`. It calls the corresponding method on its delegate — typically the view itself. For example, a `mousedown` event calls `onMouseDown(event)` on the view.
 
 3. **Returning `false` stops propagation.** If the handler returns `false`, `event.stopPropagation()` is called, preventing the event from bubbling to ancestor elements.
 
-4. **Gesture recognizers observe the event.** If the view has gesture recognizers attached, they receive the raw event and update their internal state machines. For example, a `TapGestureRecognizer` tracks mousedown/mouseup timing and position.
+4. **Gesture recognizers observe the event.** If the view has gesture recognizers attached, they receive the raw event and update their internal state machines. For example, a `SvTapGestureRecognizer` tracks mousedown/mouseup timing and position.
 
-5. **The recognizer requests activation.** When the gesture's conditions are met (correct finger count, sufficient movement, hold duration, etc.), it calls `GestureManager.requestActiveGesture()`.
+5. **The recognizer requests activation.** When the gesture's conditions are met (correct finger count, sufficient movement, hold duration, etc.), it calls `SvGestureManager.requestActiveGesture()`.
 
-6. **GestureManager arbitrates.** The singleton manager checks whether another gesture is already active, considers the view hierarchy, and decides whether to accept or reject the request. Competing gestures on the same or ancestor views are cancelled.
+6. **SvGestureManager arbitrates.** The singleton manager checks whether another gesture is already active, considers the view hierarchy, and decides whether to accept or reject the request. Competing gestures on the same or ancestor views are cancelled.
 
 7. **The recognizer sends delegate messages.** If accepted, the recognizer calls phase methods on the view: `onGestureBegin`, `onGestureMove`, `onGestureComplete`, or `onGestureCancelled`.
 
@@ -549,8 +550,8 @@ For raw event listeners (without gestures), the handler is called directly on th
 ## Special Cases
 
 - **Keyboard events** route through `SvKeyboard`, which generates modifier-aware method names (e.g., `onShiftAKeyDown`).
-- **Drag-and-drop events** route through `DropListener`/`DragListener` and the MIME dispatch chain in `DomView_browserDragAndDrop`.
-- **Focus events** interact with the responder chain in `ResponderDomView`.
+- **Drag-and-drop events** route through `SvDropListener`/`SvDragListener` and the MIME dispatch chain in `SvDomView_browserDragAndDrop`.
+- **Focus events** interact with the responder chain in `SvResponderDomView`.
 
 
 ---
@@ -568,31 +569,31 @@ Calling `addEventListener` directly ties views to specific DOM event names and r
 
 Event listening is built on two base classes:
 
-- **`EventListener`** — Wraps a single DOM event. Registers with a target element, and when the event fires, calls a named method on its delegate (typically the view).
-- **`EventSetListener`** — Groups related `EventListener` instances. Subclasses define which events they cover via `setupListeners()`.
+- **`SvEventListener`** — Wraps a single DOM event. Registers with a target element, and when the event fires, calls a named method on its delegate (typically the view).
+- **`SvEventSetListener`** — Groups related `SvEventListener` instances. Subclasses define which events they cover via `setupListeners()`.
 
-Views manage their listeners through `ListenerDomView`, which maintains a map of listener class names to listener instances. Listeners are created lazily on first access and cleaned up when the view is removed.
+Views manage their listeners through `SvListenerDomView`, which maintains a map of listener class names to listener instances. Listeners are created lazily on first access and cleaned up when the view is removed.
 
 ## Available Listeners
 
 | Listener | Events |
 |----------|--------|
-| `MouseListener` | mousedown, mouseup, mouseover, mouseleave, click, dblclick, contextmenu |
-| `MouseMoveListener` | mousemove (separate to avoid overhead when not needed) |
-| `TouchListener` | touchstart, touchmove, touchcancel, touchend |
-| `TouchMoveListener` | touchmove (separate for same reason) |
-| `KeyboardListener` | keydown, keyup, input |
-| `FocusListener` | focus, blur, focusin, focusout |
-| `DragListener` | dragstart, drag, dragend |
-| `DropListener` | dragenter, dragover, dragleave, drop |
-| `ScrollListener` | scroll |
-| `WheelListener` | wheel |
-| `ClipboardListener` | copy, cut, paste |
-| `SelectListener` | select |
-| `WindowListener` | resize |
-| `AnimationListener` | animationstart, animationend, animationiteration |
-| `TransitionListener` | transitionend |
-| `GamePadListener` | gamepadconnected, gamepaddisconnected |
+| `SvMouseListener` | mousedown, mouseup, mouseover, mouseleave, click, dblclick, contextmenu |
+| `SvMouseMoveListener` | mousemove (separate to avoid overhead when not needed) |
+| `SvTouchListener` | touchstart, touchmove, touchcancel, touchend |
+| `SvTouchMoveListener` | touchmove (separate for same reason) |
+| `SvKeyboardListener` | keydown, keyup, input |
+| `SvFocusListener` | focus, blur, focusin, focusout |
+| `SvDragListener` | dragstart, drag, dragend |
+| `SvDropListener` | dragenter, dragover, dragleave, drop |
+| `SvScrollListener` | scroll |
+| `SvWheelListener` | wheel |
+| `SvClipboardListener` | copy, cut, paste |
+| `SvSelectListener` | select |
+| `SvWindowListener` | resize |
+| `SvAnimationListener` | animationstart, animationend, animationiteration |
+| `SvTransitionListener` | transitionend |
+| `SvGamePadListener` | gamepadconnected, gamepaddisconnected |
 
 ## Registering for Events
 
@@ -602,7 +603,7 @@ Views provide convenience methods for common event families:
 view.setIsRegisteredForMouse(true);    // onMouseDown, onMouseUp, etc.
 view.setIsRegisteredForKeyboard(true); // onKeyDown, onKeyUp
 view.setIsRegisteredForFocus(true);    // onFocus, onBlur
-view.setIsRegisteredForClicks(true);   // uses a TapGestureRecognizer internally
+view.setIsRegisteredForClicks(true);   // uses a SvTapGestureRecognizer internally
 view.setIsRegisteredForWindowResize(true);
 view.setIsRegisteredForBrowserDrop(true);
 ```
@@ -611,7 +612,7 @@ Event handler methods are called by name on the view. Returning `false` from a h
 
 ## Listener Lifecycle
 
-Listeners are created lazily when first accessed via `ListenerDomView.listenerNamed()`:
+Listeners are created lazily when first accessed via `SvListenerDomView.listenerNamed()`:
 
 ```javascript
 listenerNamed (className) {
@@ -628,7 +629,7 @@ listenerNamed (className) {
 
 The listener target is the view's DOM element. The delegate is the view itself.
 
-`EventSetListener.start()` iterates its child `EventListener` instances, each of which:
+`SvEventSetListener.start()` iterates its child `SvEventListener` instances, each of which:
 
 1. Checks `delegateCanRespond()` — verifies the delegate has the handler method
 2. Calls `addEventListener()` on the target element with the configured options
@@ -639,7 +640,7 @@ If the listen target, delegate, or capture mode changes while listening, the lis
 
 ## Cleanup
 
-Listeners are automatically removed when a view is retired from the hierarchy. The view's `prepareToRetire()` calls `removeAllListeners()`, which stops every registered `EventSetListener` and clears the listener map. No manual cleanup is needed for views that follow normal lifecycle patterns.
+Listeners are automatically removed when a view is retired from the hierarchy. The view's `prepareToRetire()` calls `removeAllListeners()`, which stops every registered `SvEventSetListener` and clears the listener map. No manual cleanup is needed for views that follow normal lifecycle patterns.
 
 
 ---
@@ -655,9 +656,9 @@ Higher-level state machines that interpret sequences of events as meaningful ges
 
 The browser provides two separate event families for pointing — mouse events on desktop and touch events on mobile — with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.
 
-Gesture recognizers eliminate this. They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view. A `PanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe — the view implements `onPanBegin` once and it works on every device. This is not just a convenience; it means new interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
+Gesture recognizers eliminate this. They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view. A `SvPanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe — the view implements `onPanBegin` once and it works on every device. This is not just a convenience; it means new interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
 
-Mouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
+SvMouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
 
 ## How Gestures Work
 
@@ -673,20 +674,20 @@ onGestureTypeComplete(gesture) — gesture finished successfully
 onGestureTypeCancelled(gesture) — gesture was interrupted
 ```
 
-For example, a `PanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanComplete`, and `onPanCancelled`.
+For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanComplete`, and `onPanCancelled`.
 
 ## Available Gestures
 
 | Recognizer | Detects | Key Configuration |
 |------------|---------|-------------------|
-| `TapGestureRecognizer` | Single or multi-tap | `numberOfTapsRequired`, `numberOfFingersRequired`, `maxHoldPeriod` |
-| `PanGestureRecognizer` | Click-and-drag | `minNumberOfFingersRequired`, `maxNumberOfFingersAllowed` |
-| `PinchGestureRecognizer` | Two-finger pinch/zoom | Fixed to 2 fingers |
-| `RotationGestureRecognizer` | Two-finger rotation | Fixed to 2 fingers |
-| `LongPressGestureRecognizer` | Press-and-hold | `timePeriod` (default 500ms) |
-| `SlideGestureRecognizer` | Directional slide | `direction` ("left", "right", "up", "down"), `maxPerpendicularDistToBegin` |
-| `EdgePanGestureRecognizer` | Pan from view edge | Subclasses for left, right, top, bottom |
-| `ScreenEdgePanGestureRecognizer` | Pan from screen edge | Subclasses for left, right, top, bottom |
+| `SvTapGestureRecognizer` | Single or multi-tap | `numberOfTapsRequired`, `numberOfFingersRequired`, `maxHoldPeriod` |
+| `SvPanGestureRecognizer` | Click-and-drag | `minNumberOfFingersRequired`, `maxNumberOfFingersAllowed` |
+| `SvPinchGestureRecognizer` | Two-finger pinch/zoom | Fixed to 2 fingers |
+| `SvRotationGestureRecognizer` | Two-finger rotation | Fixed to 2 fingers |
+| `SvLongPressGestureRecognizer` | Press-and-hold | `timePeriod` (default 500ms) |
+| `SvSlideGestureRecognizer` | Directional slide | `direction` ("left", "right", "up", "down"), `maxPerpendicularDistToBegin` |
+| `SvEdgePanGestureRecognizer` | Pan from view edge | Subclasses for left, right, top, bottom |
+| `SvScreenEdgePanGestureRecognizer` | Pan from screen edge | Subclasses for left, right, top, bottom |
 
 ## Adding Gestures to a View
 
@@ -701,15 +702,15 @@ view.addDefaultPanGesture();       // drag
 For custom configuration, clone a recognizer and configure it:
 
 ```javascript
-const gesture = LongPressGestureRecognizer.clone();
+const gesture = SvLongPressGestureRecognizer.clone();
 gesture.setTimePeriod(800); // 800ms hold
 view.addGestureRecognizer(gesture);
 // implement onLongPressComplete(gesture) on the view
 ```
 
-## GestureManager
+## SvGestureManager
 
-`GestureManager` is a singleton that coordinates competing gestures globally. When a gesture requests activation, the manager decides whether to accept it based on:
+`SvGestureManager` is a singleton that coordinates competing gestures globally. When a gesture requests activation, the manager decides whether to accept it based on:
 
 - Whether another gesture is already active
 - View hierarchy (child views can steal control from parent views)
@@ -739,7 +740,7 @@ This means application code rarely needs to manage gesture cleanup manually. As 
 
 Modern JavaScript engines use mark-and-sweep garbage collection, which correctly handles circular references. When a view is removed from its parent and no other rooted object references it, the entire cluster — view, gesture recognizers, and element-level event listeners — becomes unreachable and is collected automatically without explicit cleanup.
 
-The main GC concern is listeners registered on **rooted targets** like `window` or `document`, since those targets' internal listener registries hold strong references back to the callback (and through it, the gesture and view). Most gesture recognizers only attach `window` listeners temporarily during active tracking (between the down/press and up/finish events), so they clean up naturally when the gesture completes. `ScreenEdgePanGestureRecognizer` is the exception — it registers permanent `window` listeners and must be explicitly stopped or removed.
+The main GC concern is listeners registered on **rooted targets** like `window` or `document`, since those targets' internal listener registries hold strong references back to the callback (and through it, the gesture and view). Most gesture recognizers only attach `window` listeners temporarily during active tracking (between the down/press and up/finish events), so they clean up naturally when the gesture completes. `SvScreenEdgePanGestureRecognizer` is the exception — it registers permanent `window` listeners and must be explicitly stopped or removed.
 
 Timers (`setTimeout`) also root their target until they fire. Gesture recognizers use `addWeakTimeout()` for their internal timers (deactivation delays, long-press detection, etc.), which holds only a `WeakRef` to the target — allowing the object to be collected if it becomes unreachable, with the timer silently becoming a no-op.
 
@@ -759,7 +760,7 @@ Keyboard state tracking, modifier-aware key dispatch, and the responder chain fo
 
 ## SvKeyboard
 
-The browser's native keyboard handling has two gaps that matter for an application framework. First, `keydown` and `keyup` events tell you which key was just pressed but not which other keys are already held — there is no built-in API for querying current keyboard state. Second, the DOM's `focus` model is element-level: it knows which element has focus, but has no concept of a focus chain through a view hierarchy, tab-order navigation between views, or a centralized way for views to declare whether they accept keyboard input. `SvKeyboard` and the responder chain address these: a singleton tracks live key state and generates modifier-aware method names (so views handle `onShiftAKeyDown` instead of parsing modifier flags), while `ResponderDomView` layers a responder chain on top of DOM focus to manage keyboard routing through the view tree.
+The browser's native keyboard handling has two gaps that matter for an application framework. First, `keydown` and `keyup` events tell you which key was just pressed but not which other keys are already held — there is no built-in API for querying current keyboard state. Second, the DOM's `focus` model is element-level: it knows which element has focus, but has no concept of a focus chain through a view hierarchy, tab-order navigation between views, or a centralized way for views to declare whether they accept keyboard input. `SvKeyboard` and the responder chain address these: a singleton tracks live key state and generates modifier-aware method names (so views handle `onShiftAKeyDown` instead of parsing modifier flags), while `SvResponderDomView` layers a responder chain on top of DOM focus to manage keyboard routing through the view tree.
 
 `SvKeyboard` is a singleton that tracks global keyboard state — which keys are currently pressed, modifier key status, and key code/name mapping.
 
@@ -777,7 +778,7 @@ The generated method names follow the pattern: `on[Modifiers][KeyName]Key[Down|U
 
 ## Responder Chain
 
-`ResponderDomView` implements a responder chain for managing keyboard focus:
+`SvResponderDomView` implements a responder chain for managing keyboard focus:
 
 - **`acceptsFirstResponder`** — Whether a view can receive keyboard focus.
 - **`becomeFirstResponder()`** / **`releaseFirstResponder()`** — Acquire or release focus.
@@ -877,11 +878,11 @@ this.addTimeout(() => this.save(), 5000, "autoSave");
 
 Gesture recognizers and views use `addWeakTimeout` for their internal timers:
 
-- **`GestureRecognizer.didFinish()`** — Deferred deactivation after gesture completes
-- **`LongPressGestureRecognizer`** — Long-press detection timer
-- **`TapGestureRecognizer`** — Maximum hold period before cancellation
-- **`DomView_animations`** — CSS transition timing and sequencing
-- **`ResponderDomView`** — Deferred focus management
+- **`SvGestureRecognizer.didFinish()`** — Deferred deactivation after gesture completes
+- **`SvLongPressGestureRecognizer`** — Long-press detection timer
+- **`SvTapGestureRecognizer`** — Maximum hold period before cancellation
+- **`SvDomView_animations`** — CSS transition timing and sequencing
+- **`SvResponderDomView`** — Deferred focus management
 
 These timers do not prevent their views from being garbage collected if the view is removed from the hierarchy.
 
@@ -1262,7 +1263,7 @@ node ./strvct/source/boot/index-builder/ImportsIndexer.js
 For non-code assets (icons, sounds), run the resource indexer:
 
 ```
-node ./strvct/source/boot/index-builder/ResourceIndexer.js ./resources/icons ./resources/sounds
+node ./strvct/source/boot/index-builder/SvResourceIndexer.js ./resources/icons ./resources/sounds
 ```
 
 If your project uses a `justfile`, these are typically wrapped in a `just build` command.
@@ -1391,8 +1392,8 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
 The framework is organized around three layers with a notification-based synchronization system connecting them:
 
 - **Model** — A graph of `SvNode` objects. Nodes are the unit of both storage and UI presentation. Model objects hold no references to UI objects — they communicate outward solely by posting notifications, which the other layers observe.
-- **UI** — Composed of `NodeView` subclass instances. Each `NodeView` holds a reference to an `SvNode` and observes its change notifications. Multiple views may point to the same node instance.
-- **Storage** — A `PersistentObjectPool` that monitors node mutations, bundles changes within an event loop into atomic transactions, and handles automatic garbage collection of the stored object graph. Only model objects are persisted; UI objects are transient and recreated from the model on load.
+- **UI** — Composed of `SvNodeView` subclass instances. Each `SvNodeView` holds a reference to an `SvNode` and observes its change notifications. Multiple views may point to the same node instance.
+- **Storage** — A `SvPersistentObjectPool` that monitors node mutations, bundles changes within an event loop into atomic transactions, and handles automatic garbage collection of the stored object graph. Only model objects are persisted; UI objects are transient and recreated from the model on load.
 
 ### SvApp
 
@@ -1522,39 +1523,39 @@ Fields are nodes that sync to a slot value via their `target` and `valueMethod` 
 
 The view system is built from a layered class hierarchy where each layer adds a specific capability:
 
-`ElementDomView` → `CssDomView` → `SubviewsDomView` → `ListenerDomView` → `VisibleDomView` → `GesturableDomView` → `ResponderDomView` → `ControlDomView` → `SelectableDomView` → `EditableDomView` → `DomView` → `FlexDomView` → `StyledDomView` → `NodeView`
+`SvElementDomView` → `SvCssDomView` → `SvSubviewsDomView` → `SvListenerDomView` → `SvVisibleDomView` → `SvGesturableDomView` → `SvResponderDomView` → `SvControlDomView` → `SvSelectableDomView` → `SvEditableDomView` → `SvDomView` → `SvFlexDomView` → `SvStyledDomView` → `SvNodeView`
 
 Notable layers:
 
-- **`ElementDomView`** — Wraps a DOM element rather than extending it, keeping open the possibility of swapping the DOM as a render layer.
-- **`GesturableDomView`** — Gesture recognizer framework (tap, double-tap, pan, long-press, etc.).
-- **`ResponderDomView`** — Focus management and keyboard navigation.
-- **`ControlDomView`** — Target/action pattern for connecting views to handler objects.
-- **`StyledDomView`** — Named style states (selected, unselected, active, disabled) with theme class name support.
+- **`SvElementDomView`** — Wraps a DOM element rather than extending it, keeping open the possibility of swapping the DOM as a render layer.
+- **`SvGesturableDomView`** — Gesture recognizer framework (tap, double-tap, pan, long-press, etc.).
+- **`SvResponderDomView`** — Focus management and keyboard navigation.
+- **`SvControlDomView`** — Target/action pattern for connecting views to handler objects.
+- **`SvStyledDomView`** — Named style states (selected, unselected, active, disabled) with theme class name support.
 
-### NodeView
+### SvNodeView
 
-`NodeView` extends `StyledDomView` and is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes its change notifications, and synchronizes the view accordingly. Nearly all application-visible views are `NodeView` subclasses.
+`SvNodeView` extends `SvStyledDomView` and is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes its change notifications, and synchronizes the view accordingly. Nearly all application-visible views are `SvNodeView` subclasses.
 
 ### Navigation Structure
 
 Strvct's UI is based on nested master-detail views using a Miller Column pattern:
 
-- **`StackView`** — Core navigation unit. Contains a `NavView` (master column) and an `otherView` (detail area). Orientation can be left-right or top-bottom. Chains of StackViews automatically compact and expand based on available space.
-- **`BrowserView`** — Top-level `StackView` with a breadcrumb path header.
-- **`NavView`** — Navigation column containing a header, a scrollable `TilesView`, and a footer. Column width is resizable.
-- **`TilesView`** — Scrollable container for an array of `Tile` views. Manages selection, cursor navigation, drag-and-drop, and keyboard input.
+- **`SvStackView`** — Core navigation unit. Contains a `SvNavView` (master column) and an `otherView` (detail area). Orientation can be left-right or top-bottom. Chains of StackViews automatically compact and expand based on available space.
+- **`SvBrowserView`** — Top-level `SvStackView` with a breadcrumb path header.
+- **`SvNavView`** — Navigation column containing a header, a scrollable `SvTilesView`, and a footer. Column width is resizable.
+- **`SvTilesView`** — Scrollable container for an array of `SvTile` views. Manages selection, cursor navigation, drag-and-drop, and keyboard input.
 
-When a user selects a tile, a new `StackView` is created in the detail area, with its `NavView` populated by the subnodes of the selected node. This recursive structure allows arbitrarily deep navigation.
+When a user selects a tile, a new `SvStackView` is created in the detail area, with its `SvNavView` populated by the subnodes of the selected node. This recursive structure allows arbitrarily deep navigation.
 
-### Tile Views
+### SvTile Views
 
 Tiles are the individual items displayed in navigation columns:
 
-- **`Tile`** — Base tile with selection, state-based styling, slide-to-delete, long-press reorder, and drag support.
-- **`TitledTile`** — Standard tile with title, subtitle, note, and optional thumbnail.
-- **`HeaderTile`** — Section header tile.
-- **`BreadCrumbsTile`** — Breadcrumb path that auto-compacts to fit available width.
+- **`SvTile`** — Base tile with selection, state-based styling, slide-to-delete, long-press reorder, and drag support.
+- **`SvTitledTile`** — Standard tile with title, subtitle, note, and optional thumbnail.
+- **`SvHeaderTile`** — Section header tile.
+- **`SvBreadCrumbsTile`** — Breadcrumb path that auto-compacts to fit available width.
 
 ### Field Tiles
 
@@ -1578,7 +1579,7 @@ Object references within records are stored as puuid strings. This uniform refer
 
 ### Persistence Lifecycle
 
-Nodes opt into persistence via `setShouldStore(true)`, and individual slots via `setShouldStoreSlot(true)`. The `PersistentObjectPool` then:
+Nodes opt into persistence via `setShouldStore(true)`, and individual slots via `setShouldStoreSlot(true)`. The `SvPersistentObjectPool` then:
 
 1. **Monitors mutations** — When a stored slot changes, the owning node is marked dirty via `didMutate()`.
 2. **Batches transactions** — All dirty objects are collected at the end of the current event loop and committed atomically.
@@ -1619,7 +1620,7 @@ The build process runs two indexers:
   - `_index.json` — a metadata catalog listing every resource path and its SHA-256 content hash
   - `_cam.json.zip` — a compressed bundle containing the actual file contents, keyed by hash
 
-- **ResourceIndexer** scans specified directories (e.g. icons, sounds) and produces a similar index for non-code assets.
+- **SvResourceIndexer** scans specified directories (e.g. icons, sounds) and produces a similar index for non-code assets.
 
 ### Runtime Loading
 
@@ -1657,8 +1658,8 @@ STRVCT's object model draws from the Smalltalk tradition. Naming follows Smallta
 The application framework layer is heavily influenced by Apple's Cocoa and UIKit:
 
 - **Notification center** — `SvNotificationCenter` with observations mirrors `NSNotificationCenter` closely, providing publish/subscribe communication between loosely coupled components.
-- **Responder chain** — `ResponderDomView` implements `becomeFirstResponder()`, `releaseFirstResponder()`, `acceptsFirstResponder`, and `nextKeyView`, mapping directly to Cocoa's `NSResponder` / UIKit's `UIResponder` model for keyboard focus and event routing.
-- **Gesture recognizers** — `TapGestureRecognizer`, `PanGestureRecognizer`, `PinchGestureRecognizer`, and `LongPressGestureRecognizer` follow the UIKit `UIGestureRecognizer` pattern, including centralized arbitration of competing gestures via `GestureManager`.
+- **Responder chain** — `SvResponderDomView` implements `becomeFirstResponder()`, `releaseFirstResponder()`, `acceptsFirstResponder`, and `nextKeyView`, mapping directly to Cocoa's `NSResponder` / UIKit's `UIResponder` model for keyboard focus and event routing.
+- **Gesture recognizers** — `SvTapGestureRecognizer`, `SvPanGestureRecognizer`, `SvPinchGestureRecognizer`, and `SvLongPressGestureRecognizer` follow the UIKit `UIGestureRecognizer` pattern, including centralized arbitration of competing gestures via `SvGestureManager`.
 - **Delegate pattern** — Used throughout for communication between views, listeners, and gesture recognizers, following Cocoa's preference for delegation over subclassing.
 
 
@@ -1685,7 +1686,7 @@ The system is designed around three principles:
 
 ## Implementation Overview
 
-Translation storage is fully decoupled from the STRVCT ObjectPool. Each language gets its own pair of IndexedDB databases — one for cache, one for store — so loading never needs to scan or filter entries from other languages.
+Translation storage is fully decoupled from the STRVCT SvObjectPool. Each language gets its own pair of IndexedDB databases — one for cache, one for store — so loading never needs to scan or filter entries from other languages.
 
 **SvI18n** (singleton coordinator)
 - Coordinates cache and store; each owns its own per-language IndexedDB
@@ -1756,11 +1757,11 @@ Supporting integration points:
 
 | Class | Role |
 |-------|------|
-| `SvTranslatableNode` | Base class for translatable nodes. Maintains a per-node `translationMap` for flicker-free re-renders. Sits between `TitledNode` and `InspectableNode`. |
+| `SvTranslatableNode` | Base class for translatable nodes. Maintains a per-node `translationMap` for flicker-free re-renders. Sits between `SvTitledNode` and `SvInspectableNode`. |
 | `Slot` | Supports `translationContext` (per-slot context) and `shouldTranslate` (disable translation) annotations. |
 | `SvFieldTile` | Calls `translatedValueOfSlotNamed()` to display translated keys and placeholder text. Skips translation for editable keys. |
 | `SvOptionNode` | Respects the parent slot's `shouldTranslate` annotation for option labels. |
-| `BreadCrumbsTile` | Observes `"svI18nLanguageChanged"` to rebuild breadcrumbs in the new language. |
+| `SvBreadCrumbsTile` | Observes `"svI18nLanguageChanged"` to rebuild breadcrumbs in the new language. |
 | `SvServices` | Hosts the `SvI18n` singleton as a subnode field. |
 
 All i18n source files live in `source/library/i18n/`.
@@ -1820,7 +1821,7 @@ The main entry point is `SvTranslationFilter.shared().shouldTranslate(value)`, w
 
 ## Caching
 
-Translation caching uses two tiers backed by a single dedicated IndexedDB, separate from the main STRVCT ObjectPool.
+Translation caching uses two tiers backed by a single dedicated IndexedDB, separate from the main STRVCT SvObjectPool.
 
 ### Tier 0: Node Translation Map (Per-Node, Synchronous)
 
@@ -1830,7 +1831,7 @@ Key properties:
 - **FIFO capped at 10** — enough for title, subtitle, and a handful of labels per node
 - **Lazy allocation** — the Map is only created when the first translation is stored (English-only users pay zero cost)
 - **Auto-clears on language change** — tracks the language it was populated for and clears itself if the language differs on next access (no notification observers needed)
-- **Lives on the node, not the view** — survives view reallocation during UI navigation (clicking between tiles in a TilesView)
+- **Lives on the node, not the view** — survives view reallocation during UI navigation (clicking between tiles in a SvTilesView)
 
 ### Tier 1: SvI18nCache (Eager, Synchronous)
 
@@ -1904,7 +1905,7 @@ Seed files are generated through a two-phase process accessible via the admin UI
 
 ## Making Nodes Translatable
 
-Nodes opt into translation by extending `SvTranslatableNode` (which sits between `TitledNode` and `InspectableNode` in the hierarchy). This provides three methods:
+Nodes opt into translation by extending `SvTranslatableNode` (which sits between `SvTitledNode` and `SvInspectableNode` in the hierarchy). This provides three methods:
 
 - **`translatedValueOfSlotNamed(slotName)`** — Returns the translated value of a slot, falling back to English while a translation is pending.
 - **`translatedValuePlaceholderOfSlotNamed(slotName)`** — Translates a slot's placeholder text annotation.
@@ -1968,7 +1969,7 @@ const i18n = SvServices.shared().i18n();
 
 ### Breadcrumbs
 
-`BreadCrumbsTile` observes the `"svI18nLanguageChanged"` notification. When the language changes, it clears its cached path and rebuilds all breadcrumb segments with translated titles.
+`SvBreadCrumbsTile` observes the `"svI18nLanguageChanged"` notification. When the language changes, it clears its cached path and rebuilds all breadcrumb segments with translated titles.
 
 ### Custom Views
 
@@ -2039,11 +2040,11 @@ Different languages have different text metrics that affect UI layout:
 
 **Context grouping** — Batches are grouped by translation context before sending, so the AI model receives semantically related strings together, improving translation consistency.
 
-**ObjectPool decoupling** — Translation storage is fully separate from the STRVCT ObjectPool. This avoids loading thousands of translation records into the main persistence layer, keeps translation I/O independent of model persistence, and simplifies the data format (plain `{ t, ts }` objects instead of full `SvStorableNode` instances).
+**SvObjectPool decoupling** — Translation storage is fully separate from the STRVCT SvObjectPool. This avoids loading thousands of translation records into the main persistence layer, keeps translation I/O independent of model persistence, and simplifies the data format (plain `{ t, ts }` objects instead of full `SvStorableNode` instances).
 
 **Sync loop safety** — Status display slots (`queuedCount`, `completedCount`) use computed getter overrides rather than `setSyncsToView`. This avoids sync loops: since translation lookups happen during view sync, any state mutation with `syncsToView` during that cycle would create infinite feedback. The computed getters read live state without mutation.
 
-**Node vs view translation maps** — Translation maps live on the node, not the view, because views are ephemeral (reallocated when navigating between tiles in a TilesView) while nodes persist. A view-level map would be empty every time the user navigates back to a previously visited tile.
+**Node vs view translation maps** — Translation maps live on the node, not the view, because views are ephemeral (reallocated when navigating between tiles in a SvTilesView) while nodes persist. A view-level map would be empty every time the user navigates back to a previously visited tile.
 
 ## Comparison to Other Frameworks
 
@@ -2314,9 +2315,9 @@ The persistence system works identically in both environments because the storag
 ```
 Application code
     ↓
-ObjectPool / PersistentObjectPool     — object cache, dirty tracking, GC
+SvObjectPool / SvPersistentObjectPool     — object cache, dirty tracking, GC
     ↓
-PersistentAtomicMap                   — synchronous in-memory cache, batched writes
+SvPersistentAtomicMap                   — synchronous in-memory cache, batched writes
     ↓
 SvIndexedDbFolder                     — environment-specific storage backend
     ↓
@@ -2325,7 +2326,7 @@ IndexedDB (browser) or LevelDB (Node.js)
 
 ### Why Everything Loads Into Memory
 
-IndexedDB is entirely asynchronous — every read requires a callback or promise. But the object graph needs synchronous access: when a slot getter runs during deserialization or normal code, it can't `await` a database read. `PersistentAtomicMap` resolves this by loading the entire object store into a JavaScript `Map` on open. After that, all reads are synchronous map lookups and all writes go to an in-memory change set. On commit, changes are flushed to the underlying store in a single atomic transaction.
+IndexedDB is entirely asynchronous — every read requires a callback or promise. But the object graph needs synchronous access: when a slot getter runs during deserialization or normal code, it can't `await` a database read. `SvPersistentAtomicMap` resolves this by loading the entire object store into a JavaScript `Map` on open. After that, all reads are synchronous map lookups and all writes go to an in-memory change set. On commit, changes are flushed to the underlying store in a single atomic transaction.
 
 This design means the layers above `SvIndexedDbFolder` never make async storage calls during normal operation — the async boundary is only at open and commit time. The tradeoff is that the full object dataset must fit in memory, which is fine for typical object graphs (tens of megabytes) but wouldn't work for large binary data.
 
@@ -2394,7 +2395,7 @@ Headless execution enables several workflows:
 
 - **Automated testing** — run model-layer tests in Node.js without browser overhead
 - **Server-side processing** — load and manipulate the same object graphs that the browser uses
-- **CLI tools** — the STRVCT boot system itself (`ImportsIndexer`, `ResourceIndexer`) runs headlessly
+- **CLI tools** — the STRVCT boot system itself (`ImportsIndexer`, `SvResourceIndexer`) runs headlessly
 - **Build pipelines** — static site generation and other build-time processing can use the full framework
 
 
@@ -2410,7 +2411,7 @@ Creation, three-phase initialization, parent-child relationships, and update not
 ## Class Hierarchy
 
 ```
-Object → ProtoClass → SvNode → ViewableNode → StyledNode → SvStorableNode
+Object → ProtoClass → SvNode → SvViewableNode → SvStyledNode → SvStorableNode
 ```
 
 ## Three-Phase Initialization
@@ -2605,7 +2606,7 @@ The framework creates views automatically when a node needs to be displayed:
 4. Creates an instance via `clone()` and associates it via `setNode()`.
 
 ```
-NodeView.newSubviewForSubnode(node)
+SvNodeView.newSubviewForSubnode(node)
   ├── Determine view class
   ├── Create instance via clone()
   └── Associate via setNode()
@@ -2734,7 +2735,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Summary Tile
+    Summary SvTile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -2743,7 +2744,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Property Tile
+    Property SvTile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -2752,13 +2753,13 @@ Tiles support gestures for direct manipulation: slide-to-delete, long-press reor
 
 Tiles can be subclassed for domain-specific presentation, but the default tiles are designed to be sufficient for the majority of cases. The goal is to make custom tiles the exception, not the rule.
 
-### 4.2 Tile Stacks
+### 4.2 SvTile Stacks
 
-A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. Tile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
+A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. SvTile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Tile Stack
+    SvTile Stack
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>
@@ -2973,7 +2974,7 @@ The custom views that were needed fall into the category identified in Section 3
 
 ## 10. Discussion
 
-### The Crossover Point
+### The Crossover SvPoint
 
 Hand-crafted interfaces may appear more polished early in an application's life, when the number of screens is small and each can receive individual design attention. But as the domain model grows, the cost of maintaining bespoke screens grows with it, while inconsistencies accumulate. At some point — the crossover point — a consistent, automatically generated interface produces a better user experience than a patchwork of hand-crafted screens, because the user can rely on uniform navigation throughout the application.
 
@@ -3368,7 +3369,7 @@ Cloud sync for object pools and collections using Firebase Storage.
 
 ## Overview
 
-Strvct's local persistence stores serialized object graphs in IndexedDB via `PersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
+Strvct's local persistence stores serialized object graphs in IndexedDB via `SvPersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
 
 - **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.
 - **Pool sync** — Entire object graphs are synced as a single pool. A write-ahead log of small delta files makes updates fast and efficient — only changed records are uploaded, with periodic compaction back to a full snapshot.
@@ -3434,7 +3435,7 @@ This is a "local wins" strategy — local changes always take priority.
 
 ### How It Works
 
-For complex object graphs where many interrelated objects need to be synced together, `SubObjectPool` serializes the entire pool as a single JSON document. The pool maps persistent unique IDs (puuids) to serialized object records:
+For complex object graphs where many interrelated objects need to be synced together, `SvSubObjectPool` serializes the entire pool as a single JSON document. The pool maps persistent unique IDs (puuids) to serialized object records:
 
 ```json
 {
@@ -3447,7 +3448,7 @@ This is stored at `/users/{userId}/{collectionName}/{poolId}/pool.json`.
 
 ### Write Ahead Log
 
-To avoid uploading the entire pool on every save, `SubObjectPool` tracks changes since the last sync and produces incremental deltas:
+To avoid uploading the entire pool on every save, `SvSubObjectPool` tracks changes since the last sync and produces incremental deltas:
 
 ```json
 {
@@ -3489,9 +3490,9 @@ The primary cloud-aware sync class. Configured with a user ID, folder name, and 
 - Retry logic with exponential backoff
 - Orphaned file cleanup
 
-### SubObjectPool
+### SvSubObjectPool
 
-An in-memory `ObjectPool` (not backed by IndexedDB) designed for cloud sync. Provides:
+An in-memory `SvObjectPool` (not backed by IndexedDB) designed for cloud sync. Provides:
 
 - `asyncSaveToCloud()` — saves with delta or full upload optimization
 - `collectDelta()` — produces incremental changes vs. last synced snapshot
@@ -3511,11 +3512,11 @@ Abstract base class for collection syncing. Defines the interface for:
 
 | Component | Backing Store | Cloud Sync | Purpose |
 |-----------|--------------|------------|---------|
-| `PersistentObjectPool` | IndexedDB | No | Local app state (singleton, never synced directly) |
-| `SubObjectPool` | In-memory | Yes | Session-level cloud sync with delta support |
+| `SvPersistentObjectPool` | IndexedDB | No | Local app state (singleton, never synced directly) |
+| `SvSubObjectPool` | In-memory | Yes | Session-level cloud sync with delta support |
 | `SvCloudSyncSource` | Firebase Storage | Yes | Collection-level cloud sync with manifests |
 
-The local `PersistentObjectPool` is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while sessions create a `SubObjectPool` snapshot for upload.
+The local `SvPersistentObjectPool` is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while sessions create a `SvSubObjectPool` snapshot for upload.
 
 ## Auto-Sync Triggers
 
@@ -3542,7 +3543,7 @@ The system addresses a fundamental challenge in web applications: **efficiently 
 
 **Key problems solved:**
 
-1. **Synchronous vs Async APIs**: The main `ObjectPool` persistence system uses synchronous operations for fast object loading. Binary blobs are large and require async I/O. Separating them prevents blocking.
+1. **Synchronous vs Async APIs**: The main `SvObjectPool` persistence system uses synchronous operations for fast object loading. Binary blobs are large and require async I/O. Separating them prevents blocking.
 
 2. **Deduplication**: Images or media might be referenced by multiple objects. Content-addressable storage (keyed by SHA-256 hash) means identical blobs are stored once.
 
@@ -3570,7 +3571,7 @@ The solution uses a **dual-database architecture** with hash-based references be
 
 | Component | Purpose | Storage |
 |-----------|---------|---------|
-| **ObjectPool** | Stores structured objects (characters, sessions, etc.) | IndexedDB (sync API) |
+| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) | IndexedDB (sync API) |
 | **SvBlobPool** | Stores binary blobs (images, audio, video) | Separate IndexedDB (async API) |
 
 **The key insight**: Objects don't store blobs directly. Instead, they store a SHA-256 hash that acts as a pointer to the blob in `SvBlobPool`. This provides:
@@ -3604,7 +3605,7 @@ Media-specific classes like **SvImageNode** and **SvVideoNode** extend `SvCloudB
 
 2. **Deduplication**: When storing a blob, it computes the SHA-256 hash. If that hash already exists, the store is skipped.
 
-3. **Weak Reference Cache**: Uses `EnumerableWeakMap` for `activeBlobs` - blobs in memory are cached by hash, but can be garbage collected when not in use.
+3. **Weak Reference Cache**: Uses `SvEnumerableWeakMap` for `activeBlobs` - blobs in memory are cached by hash, but can be garbage collected when not in use.
 
 4. **Concurrency Control**: Tracks active read/write operations via `activeReadsMap` and `activeWritesMap` to prevent duplicate concurrent operations on the same hash.
 
@@ -3645,7 +3646,7 @@ const meta = await SvBlobPool.shared().asyncGetMetadata(hash);
 
 2. **Auto-hashing**: When `blobValue` is set, `didUpdateSlotBlobValue()` automatically computes the hash and writes to local storage.
 
-3. **GC Integration**: `referencedBlobHashesSet()` returns the hash for garbage collection coordination with `ObjectPool`.
+3. **GC Integration**: `referencedBlobHashesSet()` returns the hash for garbage collection coordination with `SvObjectPool`.
 
 ---
 
@@ -3691,13 +3692,13 @@ SvBlobNode computes SHA-256 hash
         ↓
 SvBlobPool.asyncStoreBlob() stores ArrayBuffer + metadata
         ↓
-SvBlobNode stores only the hash in ObjectPool
+SvBlobNode stores only the hash in SvObjectPool
 ```
 
 ### Loading an Image
 
 ```
-Object loads from ObjectPool (has valueHash: "abc123...")
+Object loads from SvObjectPool (has valueHash: "abc123...")
         ↓
 asyncBlobValue() called
         ↓
@@ -3712,15 +3713,15 @@ Blob cached in activeBlobs for future access
 
 ## Garbage Collection Coordination
 
-Since blobs and objects are stored in separate databases, garbage collection requires coordination between `ObjectPool` and `SvBlobPool` to prevent orphaned blobs from accumulating.
+Since blobs and objects are stored in separate databases, garbage collection requires coordination between `SvObjectPool` and `SvBlobPool` to prevent orphaned blobs from accumulating.
 
 ### How It Works
 
 1. **Objects report their blob references**: Any object that holds blob references implements `referencedBlobHashesSet()`, which returns a `Set` of SHA-256 hashes it depends on.
 
-2. **ObjectPool aggregates all references**: When GC runs, `ObjectPool.allBlobHashesSet()` iterates through all stored objects, calling `referencedBlobHashesSet()` on each, and combines them into a master set of referenced hashes.
+2. **SvObjectPool aggregates all references**: When GC runs, `SvObjectPool.allBlobHashesSet()` iterates through all stored objects, calling `referencedBlobHashesSet()` on each, and combines them into a master set of referenced hashes.
 
-3. **BlobPool removes orphans**: `ObjectPool.asyncCollectBlobs()` passes this master set to `SvBlobPool.asyncCollectUnreferencedKeySet()`, which:
+3. **BlobPool removes orphans**: `SvObjectPool.asyncCollectBlobs()` passes this master set to `SvBlobPool.asyncCollectUnreferencedKeySet()`, which:
    - Gets all keys currently in blob storage
    - Computes the difference (keys in storage but not in the reference set)
    - Deletes those orphaned blobs and their metadata
@@ -3728,9 +3729,9 @@ Since blobs and objects are stored in separate databases, garbage collection req
 ### Code Flow
 
 ```
-ObjectPool.asyncCollectBlobs()
+SvObjectPool.asyncCollectBlobs()
         ↓
-ObjectPool.allBlobHashesSet()
+SvObjectPool.allBlobHashesSet()
         ↓
     ┌───────────────────────────────────────┐
     │  for each object in allObjects():     │
@@ -3749,7 +3750,7 @@ SvBlobPool.asyncCollectUnreferencedKeySet(hashesSet)
 
 ### Implementation Details
 
-**In ObjectPool** (`ObjectPool.js`):
+**In SvObjectPool** (`SvObjectPool.js`):
 ```javascript
 allBlobHashesSet () {
     const hashesSet = new Set();
@@ -3784,7 +3785,7 @@ referencedBlobHashesSet () {
 ### Key Points
 
 - **Mark-and-sweep style**: The approach mirrors classic GC - mark what's referenced, sweep the rest
-- **Async-safe**: Blob GC is fully async and doesn't block the synchronous ObjectPool operations
+- **Async-safe**: Blob GC is fully async and doesn't block the synchronous SvObjectPool operations
 - **Metadata cleanup**: When a blob is removed, its `/meta` key is also deleted
 - **Deduplication preserved**: If multiple objects reference the same hash, the blob stays until all references are gone
 
@@ -3812,8 +3813,8 @@ IndexedDB-backed persistence for object graphs using dirty tracking and automati
 
 Strvct's persistence system stores object graphs in the browser's IndexedDB. Rather than requiring explicit save/load calls, it monitors slot changes and automatically commits dirty objects at the end of the event loop. The system is built from three layers:
 
-- **`ObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.
-- **`PersistentAtomicMap`** — An IndexedDB wrapper that loads the entire database into memory on open, provides synchronous read/write to the cache, and batches writes into atomic IndexedDB transactions on commit.
+- **`SvObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.
+- **`SvPersistentAtomicMap`** — An IndexedDB wrapper that loads the entire database into memory on open, provides synchronous read/write to the cache, and batches writes into atomic IndexedDB transactions on commit.
 - **`SvStorableNode`** — A node base class that hooks slot changes into the dirty tracking system.
 
 ## Opting Into Persistence
@@ -3866,7 +3867,7 @@ A third flag controls whether child nodes are stored:
 Storage capability begins at `SvStorableNode` in the class hierarchy:
 
 ```
-ProtoClass → SvNode → TitledNode → InspectableNode → ViewableNode → StyledNode → SvStorableNode
+ProtoClass → SvNode → SvTitledNode → SvInspectableNode → SvViewableNode → SvStyledNode → SvStorableNode
 ```
 
 Classes above `SvStorableNode` cannot be stored. Application model classes typically extend `SvStorableNode` or one of its subclasses like `SvSummaryNode`.
@@ -3910,7 +3911,7 @@ The persistence system uses automatic dirty tracking so application code never n
 
 1. A slot value changes (via its setter method).
 2. `SvStorableNode.didUpdateSlot()` checks whether the node and slot are both marked for storage.
-3. If so, it calls `didMutate()`, which notifies the `ObjectPool` via a mutation observer.
+3. If so, it calls `didMutate()`, which notifies the `SvObjectPool` via a mutation observer.
 4. The pool calls `addDirtyObject(obj)` to add the object to its dirty set.
 5. `addDirtyObject()` calls `scheduleStore()`, which uses `SvSyncScheduler` to defer the commit.
 6. At the end of the event loop, `commitStoreDirtyObjects()` runs, serializing all dirty objects and writing them to IndexedDB in a single atomic transaction.
@@ -3919,11 +3920,11 @@ Because the commit is deferred, multiple slot changes within the same event loop
 
 ### Commit Details
 
-`commitStoreDirtyObjects()` begins an IndexedDB transaction via `PersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes the JSON string to the map keyed by puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
+`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes the JSON string to the map keyed by puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
 
-## PersistentAtomicMap
+## SvPersistentAtomicMap
 
-`PersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/index.html) for details on the storage abstraction.
+`SvPersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/index.html) for details on the storage abstraction.
 
 This design means:
 
@@ -3942,7 +3943,7 @@ This design means:
 The application opens the pool once at startup:
 
 ```javascript
-const pool = PersistentObjectPool.sharedPool();
+const pool = SvPersistentObjectPool.sharedPool();
 await pool.promiseOpen();
 const root = await pool.rootOrIfAbsentFromClosure(() => {
     return MyRootNode.clone();
@@ -3996,19 +3997,465 @@ Garbage collection runs automatically when the pool opens. It ensures that objec
 
 Blob garbage collection runs separately via `SvBlobPool` (see [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html)).
 
-## SubObjectPool
+## SvSubObjectPool
 
-`SubObjectPool` is an in-memory variant of `ObjectPool` used for cloud sync rather than local persistence. It uses a plain `AtomicMap` instead of `PersistentAtomicMap` (no IndexedDB) and does not auto-schedule commits. Instead, it provides explicit methods for cloud upload with delta optimization. See [Cloud Object Pools](../Cloud%20Object%20Pools/index.html) for details.
+`SvSubObjectPool` is an in-memory variant of `SvObjectPool` used for cloud sync rather than local persistence. It uses a plain `SvAtomicMap` instead of `SvPersistentAtomicMap` (no IndexedDB) and does not auto-schedule commits. Instead, it provides explicit methods for cloud upload with delta optimization. See [Cloud Object Pools](../Cloud%20Object%20Pools/index.html) for details.
 
 ## Key Classes Summary
 
 | Class | Purpose |
 |-------|---------|
-| `ObjectPool` | Base pool: object cache, dirty tracking, serialization, GC |
-| `PersistentObjectPool` | Singleton `ObjectPool` backed by IndexedDB |
-| `PersistentAtomicMap` | IndexedDB wrapper with synchronous in-memory cache |
+| `SvObjectPool` | Base pool: object cache, dirty tracking, serialization, GC |
+| `SvPersistentObjectPool` | Singleton `SvObjectPool` backed by IndexedDB |
+| `SvPersistentAtomicMap` | IndexedDB wrapper with synchronous in-memory cache |
 | `SvStorableNode` | Node base class that hooks slot changes to dirty tracking |
-| `SubObjectPool` | In-memory pool for cloud sync (no IndexedDB) |
+| `SvSubObjectPool` | In-memory pool for cloud sync (no IndexedDB) |
+
+
+---
+
+<!-- Page: docs/Programming Idioms -->
+Source: https://strvct.net/docs/Programming%20Idioms/
+
+# Programming Idioms
+
+Recurring patterns and conventions for writing STRVCT code.
+
+- Async Patterns
+- Categories
+- Slot Patterns
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Async Patterns -->
+Source: https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/
+
+# Async Patterns
+
+Extended promises, serial and parallel iteration, and concurrency control.
+
+## Promise.clone()
+
+STRVCT extends the native `Promise` class (via `Promise_ideal.js`) with a factory method that exposes the resolve and reject functions as callable methods on the promise itself. This is the foundation for most async coordination in the framework.
+
+```javascript
+const promise = Promise.clone();
+promise.setLabel("loadUserData");
+
+// Later, from any code that holds a reference:
+promise.callResolveFunc(result);
+// or:
+promise.callRejectFunc(error);
+```
+
+### Why not `new Promise()`?
+
+The native constructor captures resolve/reject inside the executor callback, making them inaccessible outside it. `Promise.clone()` stores them as properties so the promise can be resolved externally — by a different method, a timer, or a network callback — without nesting all the logic inside the constructor.
+
+### Status tracking
+
+Cloned promises track their state explicitly:
+
+```javascript
+promise.isPending()    // true until resolved or rejected
+promise.isResolved()   // true after callResolveFunc()
+promise.isRejected()   // true after callRejectFunc()
+promise.isCompleted()  // true if resolved or rejected
+```
+
+Calling `callResolveFunc()` or `callRejectFunc()` on an already-completed promise throws an assertion error, catching double-resolution bugs immediately.
+
+### Timeouts
+
+```javascript
+const promise = Promise.clone();
+promise.setLabel("apiCall");
+promise.beginTimeout(5000); // reject after 5 seconds if still pending
+```
+
+The timeout auto-cancels on resolution or rejection. The rejection message includes the label and duration for debugging.
+
+### Await hooks
+
+```javascript
+const promise = Promise.clone();
+promise.setOnAwaitFunc((p) => {
+    // Called the first time someone awaits this promise.
+    // Useful for lazy initialization — don't start the work
+    // until someone actually needs the result.
+    startExpensiveOperation(p);
+});
+```
+
+The framework also tracks `hasAwaiters()` — whether anyone is currently waiting on the promise.
+
+### Common pattern: deferred resolution
+
+The most frequent use of `Promise.clone()` is to bridge callback-style or event-driven code into async/await:
+
+```javascript
+async fetchData () {
+    const promise = Promise.clone();
+    promise.setLabel("fetchData");
+    promise.beginTimeout(10000);
+
+    this.setOnResponseCallback((data) => {
+        promise.callResolveFunc(data);
+    });
+
+    this.setOnErrorCallback((error) => {
+        promise.callRejectFunc(error);
+    });
+
+    this.sendRequest();
+    return promise;
+}
+```
+
+## Array async iteration
+
+`Array_promises.js` adds methods for controlled async iteration. These are categories on `Array`, so they're available on any array.
+
+### Serial iteration
+
+```javascript
+await items.promiseSerialForEach(async (item, index) => {
+    await processItem(item);
+});
+```
+
+Processes one item at a time, in order. Throws immediately if any iteration fails.
+
+### Serial with yielding
+
+```javascript
+await items.promiseSerialTimeoutsForEach(async (item, index, total) => {
+    await processItem(item);
+}, 0); // delay in ms between iterations
+```
+
+Like serial, but inserts a `setTimeout` between iterations. This yields control back to the event loop between items, preventing UI freezes during long-running sequences. A delay of `0` still yields; higher values add intentional pacing.
+
+### Parallel
+
+```javascript
+const results = await items.promiseParallelMap(async (item) => {
+    return await transform(item);
+});
+
+// or when you don't need results:
+await items.promiseParallelForEach(async (item) => {
+    await processItem(item);
+});
+```
+
+All items processed concurrently via `Promise.all()`. Fast, but can overwhelm APIs or exhaust resources if the array is large.
+
+### Concurrency-limited batching
+
+```javascript
+await items.promiseConcurrentSerialTimeoutsForEach(
+    async (item, index, total) => {
+        await callApi(item);
+    },
+    3,    // maxConcurrent — at most 3 in flight at once
+    100,  // delay in ms between batches
+    async (error, item, index) => {
+        // optional error handler — log and continue
+        console.error("Failed:", item, error);
+    }
+);
+```
+
+The workhorse for API-heavy operations. Runs up to `maxConcurrent` items simultaneously, yields between batches, and supports per-item error handling without aborting the whole sequence. Uses `Promise.clone()` internally for coordination.
+
+## Choosing the right iteration method
+
+| Method | Concurrency | Yielding | Error handling | Use when |
+|--------|------------|----------|----------------|----------|
+| `promiseSerialForEach` | 1 | No | Fail-fast | Order matters, small arrays |
+| `promiseSerialTimeoutsForEach` | 1 | Yes | Fail-fast | Order matters, UI must stay responsive |
+| `promiseParallelMap` | All | No | Fail-fast | Independent items, bounded array size |
+| `promiseConcurrentSerialTimeoutsForEach` | N | Yes | Configurable | API calls, large arrays, rate limiting |
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Categories -->
+Source: https://strvct.net/docs/Programming%20Idioms/Categories/
+
+# Categories
+
+Extending existing classes by adding methods from separate files.
+
+## Overview
+
+Categories allow you to add methods to an existing class without modifying its original file. This is borrowed from Objective-C/Smalltalk traditions and is used throughout STRVCT to separate concerns — keeping core class files focused on essential functionality while adding specialized behavior in dedicated files.
+
+A category is a class that extends the target class but calls `initThisCategory()` instead of `initThisClass()`. The framework copies the category's methods onto the target class's prototype rather than creating a new class in the hierarchy.
+
+## Defining a category
+
+```javascript
+// SvJsonGroup_patches.js — adds JSON Patch support to SvJsonGroup
+(class SvJsonGroup_patches extends SvJsonGroup {
+
+    applyJsonPatches (patches) {
+        // patch implementation
+    }
+
+    applyPatch (operation) {
+        // single patch operation
+    }
+
+}.initThisCategory());
+```
+
+The key difference from a normal class: `.initThisCategory()` instead of `.initThisClass()`. This tells the framework to merge the methods into the parent class rather than registering a new class.
+
+## Naming convention
+
+Category files use an underscore to separate the base class name from the category purpose:
+
+```
+SvJsonGroup.js                  // base class
+SvJsonGroup_patches.js          // JSON Patch operations
+SvJsonGroup_clientState.js      // client state tool methods
+```
+
+The category class name follows the same pattern: `SvJsonGroup_patches`, `Array_promises`, `Promise_ideal`.
+
+## Loading order
+
+Base classes must be loaded before their categories. In `_imports.json` files, list the base class first:
+
+```json
+[
+    "SvJsonGroup.js",
+    "SvJsonGroup_patches.js",
+    "SvJsonGroup_clientState.js"
+]
+```
+
+If a category loads before its base class, the `extends` clause will fail because the base class doesn't exist yet.
+
+## Extending JavaScript builtins
+
+Categories are commonly used to extend native JavaScript classes. The boot system includes several:
+
+```javascript
+// Promise_ideal.js — adds clone(), status tracking, timeouts
+(class Promise_ideal extends Promise {
+    static clone () { /* ... */ }
+    callResolveFunc (...args) { /* ... */ }
+    isPending () { /* ... */ }
+}.initThisCategory());
+
+// Array_promises.js — adds async iteration methods
+(class Array_promises extends Array {
+    async promiseSerialForEach (aBlock) { /* ... */ }
+    async promiseParallelMap (aBlock) { /* ... */ }
+}.initThisCategory());
+```
+
+After these categories load, every `Promise` and `Array` instance has the new methods — no imports needed.
+
+## When to use categories
+
+**Good uses:**
+
+- Separating a large class into thematic files (e.g., persistence, UI, serialization)
+- Adding framework methods to JavaScript builtins
+- Adding app-specific behavior to framework classes without forking them
+- Keeping a base class stable while iterating on extensions
+
+**Avoid when:**
+
+- The methods need their own slots or state — categories can't add slots, only methods
+- You need polymorphism (override behavior in subclasses) — a subclass is the right tool
+- The base class is in an external library that doesn't use the STRVCT class system
+
+## How it works internally
+
+`initThisCategory()` iterates over the category class's own methods (both prototype and static) and copies them onto the target class. It does not create a new entry in the class registry — `SvJsonGroup_patches` is not a class you can instantiate or look up by name. It's purely a delivery mechanism for methods.
+
+This means:
+
+- `instanceof` checks are unaffected — an `SvJsonGroup` instance won't show as `instanceof SvJsonGroup_patches`
+- Category methods have full access to `this` and the base class's slots and methods
+- If two categories define the same method name on the same base class, the last one loaded wins (with a warning)
+
+## Related patterns
+
+- [Slot Patterns](../Slot%20Patterns/index.html) — how to declare properties on classes
+- [Lifecycle](../../Lifecycle/index.html) — `initPrototypeSlots` / `initPrototype` and the initialization chain, which categories cannot participate in (only methods are merged)
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Slot Patterns -->
+Source: https://strvct.net/docs/Programming%20Idioms/Slot%20Patterns/
+
+# Slot Patterns
+
+Common slot configurations for typical scenarios.
+
+## Overview
+
+The [Slots](../../Slots/index.html) page covers the full slot API. This page is a quick-reference for the most common combinations — the patterns you'll reach for repeatedly when defining classes.
+
+## Simple stored property
+
+A value that persists to IndexedDB and shows in the inspector.
+
+```javascript
+{
+    const slot = this.newSlot("displayName", "");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setCanEditInspection(true);
+}
+```
+
+## Stored property with view sync
+
+Same as above, but the view updates when the value changes.
+
+```javascript
+{
+    const slot = this.newSlot("hitPoints", 0);
+    slot.setSlotType("Number");
+    slot.setShouldStoreSlot(true);
+    slot.setSyncsToView(true);
+    slot.setCanEditInspection(true);
+}
+```
+
+## Enum / constrained value
+
+A property restricted to a fixed set of choices. The inspector renders a dropdown.
+
+```javascript
+{
+    const slot = this.newSlot("alignment", "neutral");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setValidValues(["lawful", "neutral", "chaotic"]);
+    slot.setCanEditInspection(true);
+}
+```
+
+## Transient (non-stored) property
+
+Runtime-only state that resets on reload. Not persisted, not shown in inspector.
+
+```javascript
+{
+    const slot = this.newSlot("isLoading", false);
+    slot.setSlotType("Boolean");
+}
+```
+
+## Subnode field (always-present child)
+
+A structured sub-object that's always part of the parent. Shows as a navigable tile in the inspector.
+
+```javascript
+{
+    const slot = this.newSlot("settings", null);
+    slot.setFinalInitProto(SettingsNode);
+    slot.setIsSubnodeField(true);
+    slot.setShouldStoreSlot(true);
+}
+```
+
+The convenience form (available on `SvJsonGroup` descendants):
+
+```javascript
+{
+    const slot = this.newSubnodeFieldSlot("settings", SettingsNode);
+}
+```
+
+The parent class should set `shouldStoreSubnodes(false)` in `initPrototype()` — data lives in the slots, not the subnodes array.
+
+## Collection (stored subnodes)
+
+A variable-length list of child objects. Each child is a subnode with independent identity.
+
+```javascript
+// In initPrototypeSlots():
+{
+    const slot = this.newSlot("subnodes", null);
+    slot.setShouldStoreSlot(true);
+}
+
+// In initPrototype():
+this.setShouldStoreSubnodes(true);
+this.setSubnodeClasses([ItemNode]);  // accepted child types
+```
+
+Classes extending `SvJsonArrayNode` get this behavior by default.
+
+## Back-reference (weak slot)
+
+A non-owning pointer to another node. Doesn't prevent garbage collection, doesn't create retain cycles.
+
+```javascript
+{
+    const slot = this.newWeakSlot("parentSession", null);
+    slot.setSlotType("UoSession");
+}
+```
+
+The getter transparently dereferences the `WeakRef`. If the target has been collected, returns `null`.
+
+## JSON-visible property
+
+A slot included in JSON serialization for AI consumption or data exchange, with a schema description.
+
+```javascript
+{
+    const slot = this.newSlot("characterClass", "Fighter");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setIsInJsonSchema(true);
+    slot.setShouldJsonArchive(true);
+    slot.setDescription("The character's class (e.g., Fighter, Wizard, Rogue)");
+}
+```
+
+## Cloud-synced property
+
+A slot included when the object is serialized for cloud storage.
+
+```javascript
+{
+    const slot = this.newSlot("lastModified", null);
+    slot.setSlotType("Number");
+    slot.setShouldStoreSlot(true);
+    slot.setIsInCloudJson(true);
+}
+```
+
+## Read-only display
+
+A computed or system-managed value shown in the inspector but not editable by the user.
+
+```javascript
+{
+    const slot = this.newSlot("createdAt", null);
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setCanEditInspection(true);
+    slot.setIsReadOnly(true);
+}
+```
+
+## Combining patterns
+
+These patterns compose freely. A property can be stored, view-synced, JSON-visible, and cloud-synced all at once — each annotation is independent. The common combinations above cover the vast majority of slot declarations; for the full set of annotations, see the [Slots](../../Slots/index.html) page.
 
 
 ---
@@ -5443,37 +5890,37 @@ Source: https://strvct.net/docs/Services/AI%20Services/
 
 Base classes, requests, conversations, tool calling, response parsing, and prompt composition.
 
-## AiService
+## SvAiService
 
 The base class for AI service providers. Each subclass is a singleton representing one provider (Anthropic, OpenAI, Gemini, etc.). Key responsibilities:
 
 - **Authentication** — `apiKeyOrUserAuthToken()` prefers a Firebase bearer token from `SvCredentialManager`, falling back to a stored API key. This allows both direct API access during development and proxied access through Firebase Functions in production.
 - **Model registry** — Each service defines a `modelsJson()` method returning its available models with context limits and capability flags (temperature, top-p, image generation, etc.).
-- **Request class resolution** — `chatRequestClass()` uses naming convention (`GeminiService` resolves to `GeminiRequest`) so no explicit registration is needed when adding providers.
+- **Request class resolution** — `chatRequestClass()` uses naming convention (`SvGeminiService` resolves to `SvGeminiRequest`) so no explicit registration is needed when adding providers.
 
-## AiChatModel
+## SvAiChatModel
 
 Represents one model offered by a service. Slots include `modelName`, `inputTokenLimit`, `outputTokenLimit`, and capability flags like `supportsTemperature`, `supportsTopP`, and `supportsImageGeneration`. The `Services` node exposes helper methods to query models across all providers: `chatModels()`, `chatModelNames()`, `chatModelWithName()`.
 
-## AiRequest
+## SvAiRequest
 
 The base HTTP request wrapper for API calls. Manages streaming responses via a delegate protocol:
 
 - `onRequestBegin` / `onRequestComplete` / `onRequestError`
 - `onStreamStart` / `onStreamData` / `onStreamEnd`
 
-Each AI service has a paired request subclass (e.g. `AnthropicRequest`, `GeminiRequest`) that handles provider-specific message formatting, headers, and response parsing. This is the only class that needs to know about the provider's wire format.
+Each AI service has a paired request subclass (e.g. `SvAnthropicRequest`, `SvGeminiRequest`) that handles provider-specific message formatting, headers, and response parsing. This is the only class that needs to know about the provider's wire format.
 
 ## Conversations and Messages
 
-`AiConversation` extends a generic `Conversation` base class, adding AI-specific state: the selected chat model, token tracking, response message class, and tool call management. `AiMessage` extends `ConversationMessage` with role support (system, user, assistant), where role names are mapped to each provider's conventions by the service.
+`SvAiConversation` extends a generic `SvConversation` base class, adding AI-specific state: the selected chat model, token tracking, response message class, and tool call management. `SvAiMessage` extends `SvConversationMessage` with role support (system, user, assistant), where role names are mapped to each provider's conventions by the service.
 
 ## Tool Calling
 
-The `AssistantToolKit` coordinates structured function calling between AI models and application code:
+The `SvAssistantToolKit` coordinates structured function calling between AI models and application code:
 
-- **`ToolDefinitions`** — A registry of available tools, each defined with a name, description, typed parameters, and return types.
-- **`ToolCalls`** — A queue of pending and completed invocations from the AI.
+- **`SvToolDefinitions`** — A registry of available tools, each defined with a name, description, typed parameters, and return types.
+- **`SvToolCalls`** — A queue of pending and completed invocations from the AI.
 - **Execution timing** — Tools can run during streaming (real-time effects like sound), after response completion (state changes), or during narration playback (synchronized audio effects).
 
 Tools are defined on model objects using the slot/method system:
@@ -5489,11 +5936,11 @@ The AI invokes tools via structured tags in its response. Results are collected 
 
 ## Response Parsing
 
-`AiParsedResponseMessage` handles structured tag extraction from AI responses. Tags like `<tool-call>`, `<narration>`, `<quote>`, and `<sentence>` are parsed incrementally during streaming, enabling real-time processing before the full response arrives. A voice narration category routes speakable content to the TTS pipeline as it's parsed.
+`SvAiParsedResponseMessage` handles structured tag extraction from AI responses. Tags like `<tool-call>`, `<narration>`, `<quote>`, and `<sentence>` are parsed incrementally during streaming, enabling real-time processing before the full response arrives. A voice narration category routes speakable content to the TTS pipeline as it's parsed.
 
 ## Prompt Composition
 
-`AiPromptComposer` assembles prompts from modular template files using three substitution patterns:
+`SvAiPromptComposer` assembles prompts from modular template files using three substitution patterns:
 
 - `{{file$FileName.txt}}` — Include the contents of another file (recursive)
 - `{{$methodName}}` — Call a method on the target object and insert the result
@@ -5507,20 +5954,20 @@ Each AI provider is implemented as a service/request pair. The service defines a
 
 | Service | Provider | Key Capabilities |
 |---|---|---|
-| `AnthropicService` | Anthropic | Claude models, tool calling with Anthropic-specific schema |
-| `GeminiService` | Google | Gemini models, text-to-video generation |
-| `OpenAiService` | OpenAI | GPT models, DALL-E image generation, text-to-speech, style transfer |
-| `ImagineProService` | ImaginePro | Midjourney image generation via API |
-| `GroqService` | Groq | Fast inference with OpenAI-compatible API |
-| `DeepSeekService` | DeepSeek | Code-focused models |
-| `XaiService` | xAI | Grok models with OpenAI-compatible API |
+| `SvAnthropicService` | Anthropic | Claude models, tool calling with Anthropic-specific schema |
+| `SvGeminiService` | Google | Gemini models, text-to-video generation |
+| `SvOpenAiService` | OpenAI | GPT models, DALL-E image generation, text-to-speech, style transfer |
+| `SvImagineProService` | ImaginePro | Midjourney image generation via API |
+| `SvGroqService` | Groq | Fast inference with OpenAI-compatible API |
+| `SvDeepSeekService` | DeepSeek | Code-focused models |
+| `SvXaiService` | xAI | Grok models with OpenAI-compatible API |
 
 ## Adding a New AI Provider
 
 Adding a provider requires two classes and one registration:
 
-1. **`NewProviderService`** extending `AiService` — define `modelsJson()` with available models, set the endpoint URL, and configure role name mappings if they differ from the defaults.
-2. **`NewProviderRequest`** extending `AiRequest` — implement `buildBody()` for the provider's message format and `readDataChunk()` for streaming response parsing.
+1. **`NewProviderService`** extending `SvAiService` — define `modelsJson()` with available models, set the endpoint URL, and configure role name mappings if they differ from the defaults.
+2. **`NewProviderRequest`** extending `SvAiRequest` — implement `buildBody()` for the provider's message format and `readDataChunk()` for streaming response parsing.
 3. **Register** the service as a slot in `Services.initPrototypeSlots()`.
 
 The naming convention (`NewProviderService` resolves to `NewProviderRequest`) handles the wiring automatically. If the provider uses an OpenAI-compatible API, the request class can be minimal.
@@ -5535,12 +5982,12 @@ Source: https://strvct.net/docs/Services/Cloud%20Storage/
 
 Firebase integration for cloud persistence and file storage.
 
-## FirebaseService
+## SvFirebaseService
 
-Integrates with Firebase for cloud persistence and file storage. Unlike AI services, `FirebaseService` extends `SvSummaryNode` directly and contains two sub-services:
+Integrates with Firebase for cloud persistence and file storage. Unlike AI services, `SvFirebaseService` extends `SvSummaryNode` directly and contains two sub-services:
 
-- **`FirestoreDatabaseService`** — Document and collection access via Firestore. Provides query building, real-time listeners, and CRUD operations through Strvct node wrappers (`FirestoreNode`, `FirestoreQuery`).
-- **`FirebaseStorageService`** — File upload and download via Firebase Storage, with permission management.
+- **`SvFirestoreDatabaseService`** — Document and collection access via Firestore. Provides query building, real-time listeners, and CRUD operations through Strvct node wrappers (`SvFirestoreNode`, `SvFirestoreQuery`).
+- **`SvFirebaseStorageService`** — File upload and download via Firebase Storage, with permission management.
 
 
 ---
@@ -5578,10 +6025,10 @@ After authentication, the integration fetches four registries in parallel:
 
 | Group | HA WebSocket Command | Node Class |
 |---|---|---|
-| Areas | `config/area_registry/list` | `HomeAssistantArea` |
-| Devices | `config/device_registry/list` | `HomeAssistantDevice` |
-| Entities | `config/entity_registry/list` | `HomeAssistantEntity` |
-| States | `get_states` | `HomeAssistantState` |
+| Areas | `config/area_registry/list` | `SvHomeAssistantArea` |
+| SvDevices | `config/device_registry/list` | `SvHomeAssistantDevice` |
+| Entities | `config/entity_registry/list` | `SvHomeAssistantEntity` |
+| States | `get_states` | `SvHomeAssistantState` |
 
 Each registry response is an array of JSON objects. For each entry, a corresponding Strvct node is created and registered in an ID map for O(1) lookup.
 
@@ -5589,11 +6036,11 @@ Each registry response is an array of JSON objects. For each entry, a correspond
 
 After all four registries are loaded, a wiring pass connects objects into a hierarchy based on their foreign keys:
 
-- **Devices** attach to **Areas** via `area_id`
-- **Entities** attach to **Devices** via `device_id`
+- **SvDevices** attach to **Areas** via `area_id`
+- **Entities** attach to **SvDevices** via `device_id`
 - **States** attach to **Entities** via `entity_id`
 
-The result is a tree rooted at a `HomeAssistantFolder` node (titled "regions") that mirrors the physical layout of the home:
+The result is a tree rooted at a `SvHomeAssistantFolder` node (titled "regions") that mirrors the physical layout of the home:
 
 ```
 Home Assistant
@@ -5614,25 +6061,25 @@ Each object computes a short display name by stripping its parent's name as a pr
 ## Class Hierarchy
 
 ```
-HomeAssistants              — Collection of HA connections
- └── HomeAssistant          — One connection instance
+SvHomeAssistants              — Collection of HA connections
+ └── SvHomeAssistant          — One connection instance
       ├── rootFolder        — Navigable UI tree (regions)
-      ├── HomeAssistantAreas     ─┐
-      ├── HomeAssistantDevices    │ Data groups (hidden,
-      ├── HomeAssistantEntities   │ used for ID lookup)
-      └── HomeAssistantStates    ─┘
+      ├── SvHomeAssistantAreas     ─┐
+      ├── SvHomeAssistantDevices    │ Data groups (hidden,
+      ├── SvHomeAssistantEntities   │ used for ID lookup)
+      └── SvHomeAssistantStates    ─┘
 
-HomeAssistantGroup          — Base for the four registry groups
- ├── HomeAssistantAreas
- ├── HomeAssistantDevices
- ├── HomeAssistantEntities
- └── HomeAssistantStates
+SvHomeAssistantGroup          — Base for the four registry groups
+ ├── SvHomeAssistantAreas
+ ├── SvHomeAssistantDevices
+ ├── SvHomeAssistantEntities
+ └── SvHomeAssistantStates
 
-HomeAssistantObject         — Base for individual HA items
- ├── HomeAssistantArea
- ├── HomeAssistantDevice
- ├── HomeAssistantEntity
- └── HomeAssistantState
+SvHomeAssistantObject         — Base for individual HA items
+ ├── SvHomeAssistantArea
+ ├── SvHomeAssistantDevice
+ ├── SvHomeAssistantEntity
+ └── SvHomeAssistantState
 ```
 
 The four data group nodes (`areasNode`, `devicesNode`, `entitiesNode`, `statesNode`) are hidden from the UI — they exist for ID-based lookup during the wiring pass. The visible navigation tree is the `rootFolder`, which is populated with area nodes after all data is loaded and wired.
@@ -5647,17 +6094,17 @@ Source: https://strvct.net/docs/Services/Media/
 
 YouTube audio playback and browser speech recognition.
 
-## YouTubeService
+## SvYouTubeService
 
-Manages YouTube-based audio playback via the IFrame Player API. The service contains a `YouTubeAudioPlayer` subnode that wraps a hidden YouTube player element.
+Manages YouTube-based audio playback via the IFrame Player API. The service contains a `SvYouTubeAudioPlayer` subnode that wraps a hidden YouTube player element.
 
-### YouTubeAudioPlayer
+### SvYouTubeAudioPlayer
 
 The core playback class. Handles player lifecycle, volume, looping, and state tracking. The YouTube IFrame API script is loaded lazily on first use, and playback waits for a user gesture (browser autoplay policy).
 
 ```javascript
 // Create a player and loop background music
-const player = YouTubeAudioPlayer.clone();
+const player = SvYouTubeAudioPlayer.clone();
 player.setTrackName("Ambient Forest");
 player.setVideoId("abc123xyz");
 player.setShouldRepeat(true);
@@ -5678,9 +6125,9 @@ await player.play();
 await player.shutdown();  // destroys the YT.Player and removes the DOM element
 ```
 
-### MusicLibrary
+### SvMusicLibrary
 
-A higher-level layer that manages playlists of `MusicTrack` nodes loaded from a JSON resource file. Owns two `YouTubeAudioPlayer` instances — one for background music (low volume), one for sound effects (higher volume).
+A higher-level layer that manages playlists of `SvMusicTrack` nodes loaded from a JSON resource file. Owns two `SvYouTubeAudioPlayer` instances — one for background music (low volume), one for sound effects (higher volume).
 
 ```javascript
 // Play looping background music by track name
@@ -5693,8 +6140,8 @@ await library.playSoundEffectWithName("Sword Clash");
 library.musicPlayer().stop();
 
 // Lookup
-library.trackWithName("Battle Theme");       // => MusicTrack
-library.playlists();                          // => MusicFolder[]
+library.trackWithName("Battle Theme");       // => SvMusicTrack
+library.playlists();                          // => SvMusicFolder[]
 library.trackNames();                         // => String[]
 ```
 
@@ -5712,7 +6159,7 @@ Playlist data is a JSON object mapping folder names to track dictionaries:
 }
 ```
 
-### MusicTrack
+### SvMusicTrack
 
 Represents a single track with a YouTube video ID. Supports a delegate set for playback notifications:
 
@@ -5724,14 +6171,14 @@ track.stop();
 
 Delegates receive `onSoundStarted(track)` and `onSoundEnded(track)`.
 
-## SpeechToTextSessions
+## SvSpeechToTextSessions
 
-Wraps the browser's native `SpeechRecognition` API for voice input. Each `SpeechToTextSession` tracks recognition state, language settings, and transcription results. Not a cloud service — all processing happens in the browser.
+Wraps the browser's native `SpeechRecognition` API for voice input. Each `SvSpeechToTextSession` tracks recognition state, language settings, and transcription results. Not a cloud service — all processing happens in the browser.
 
-### SpeechToTextSession
+### SvSpeechToTextSession
 
 ```javascript
-const session = SpeechToTextSession.clone();
+const session = SvSpeechToTextSession.clone();
 session.setDelegate(myObject);
 session.setLanguage("en-US");
 session.setIsContinuous(true);
@@ -5770,7 +6217,7 @@ Any text field supports voice input via Alt+L. Holding the key starts a session;
 
 ```javascript
 startSpeechToText () {
-    this._speechSession = SpeechToTextSession.clone().setDelegate(this);
+    this._speechSession = SvSpeechToTextSession.clone().setDelegate(this);
     this._speechSession.start();
 }
 
@@ -5797,15 +6244,15 @@ These classes do not run proxy servers — they are client-side configuration no
 
 The primary use case is routing AI service API calls through a proxy that holds the real API keys, so that browser clients never see provider credentials directly. The client sends a Firebase user auth token to the proxy, and the proxy adds the appropriate API key before forwarding the request.
 
-## ProxyServers
+## SvProxyServers
 
-`ProxyServers` is a singleton collection of `ProxyServer` entries, accessible via `ProxyServers.shared()`. In practice, a single `DefaultProxyServer` entry handles all routing, accessible via `ProxyServers.shared().defaultServer()`.
+`SvProxyServers` is a singleton collection of `SvProxyServer` entries, accessible via `SvProxyServers.shared()`. In practice, a single `SvDefaultProxyServer` entry handles all routing, accessible via `SvProxyServers.shared().defaultServer()`.
 
 Users can add, remove, and reorder proxy entries through the generated inspector UI. All entries are persisted to IndexedDB.
 
-## ProxyServer
+## SvProxyServer
 
-Each `ProxyServer` node stores the connection details for one proxy endpoint:
+Each `SvProxyServer` node stores the connection details for one proxy endpoint:
 
 | Slot | Type | Default | Purpose |
 |---|---|---|---|
@@ -5832,9 +6279,9 @@ The target URL is passed as a query parameter (named by `parameterName`), so the
 
 If `isDisabled` is true, the target URL is returned unchanged — useful for direct API access during development.
 
-## DefaultProxyServer
+## SvDefaultProxyServer
 
-`DefaultProxyServer` extends `ProxyServer` and auto-configures itself from the browser's current page URL on startup. For a page served at `https://localhost:8443`, it defaults to:
+`SvDefaultProxyServer` extends `SvProxyServer` and auto-configures itself from the browser's current page URL on startup. For a page served at `https://localhost:8443`, it defaults to:
 
 - `isSecure`: `true`
 - `hostname`: `localhost`
@@ -5846,13 +6293,13 @@ This means the proxy is assumed to run on the same origin as the application by 
 
 ## Integration with AI Services
 
-`AiRequest` has a `needsProxy` slot (default `true`). When making an API call, the request checks this flag and rewrites the URL if needed:
+`SvAiRequest` has a `needsProxy` slot (default `true`). When making an API call, the request checks this flag and rewrites the URL if needed:
 
 ```javascript
 async activeApiUrl () {
     let url = this.apiUrl();  // e.g. "https://api.openai.com/v1/chat/completions"
     if (this.needsProxy()) {
-        url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+        url = SvProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     }
     return url;
 }
@@ -6195,28 +6642,28 @@ How the view layer connects to model nodes, synchronizes state, and provides nav
 
 The defining feature of a naked objects framework is that the UI is derived from the model. In STRVCT, every node automatically gets a visual representation: the framework discovers the right view class, creates instances, wires up observation, and keeps the view synchronized as the model changes. Application developers define model classes and get a fully navigable, editable UI for free.
 
-## DomView Hierarchy
+## SvDomView Hierarchy
 
 Rather than subclassing DOM elements directly, STRVCT wraps them. Each layer in the view class hierarchy adds one capability:
 
-- **`ElementDomView`** — Wraps a DOM element. Manages creation, type, and class attributes.
-- **`VisibleDomView`** — Visibility toggling.
-- **`ResponderDomView`** — Responder chain for keyboard and mouse event routing.
-- **`ListenerDomView`** — Event listener registration and removal.
-- **`ControlDomView`** — Target/action pattern for connecting views to handlers.
-- **`SelectableDomView`** — Selection state with styled feedback.
-- **`EditableDomView`** — Content editability and edit mode.
-- **`GesturableDomView`** — Gesture recognizers: tap, double-tap, pan, long-press, pinch.
-- **`FlexDomView`** — Flexbox layout: direction, wrap, grow, shrink, basis, alignment.
-- **`StyledDomView`** — Named style states (unselected, selected, active, disabled) with theme support.
-- **`SubviewsDomView`** — Parent/child view hierarchy.
-- **`CssDomView`** — CSS variable application from dictionaries.
-- **`DomView`** — Combines all layers above.
-- **`NodeView`** — Adds model-to-view synchronization. The primary class for application views.
+- **`SvElementDomView`** — Wraps a DOM element. Manages creation, type, and class attributes.
+- **`SvVisibleDomView`** — Visibility toggling.
+- **`SvResponderDomView`** — Responder chain for keyboard and mouse event routing.
+- **`SvListenerDomView`** — Event listener registration and removal.
+- **`SvControlDomView`** — Target/action pattern for connecting views to handlers.
+- **`SvSelectableDomView`** — Selection state with styled feedback.
+- **`SvEditableDomView`** — Content editability and edit mode.
+- **`SvGesturableDomView`** — Gesture recognizers: tap, double-tap, pan, long-press, pinch.
+- **`SvFlexDomView`** — Flexbox layout: direction, wrap, grow, shrink, basis, alignment.
+- **`SvStyledDomView`** — Named style states (unselected, selected, active, disabled) with theme support.
+- **`SvSubviewsDomView`** — Parent/child view hierarchy.
+- **`SvCssDomView`** — CSS variable application from dictionaries.
+- **`SvDomView`** — Combines all layers above.
+- **`SvNodeView`** — Adds model-to-view synchronization. The primary class for application views.
 
-## NodeView
+## SvNodeView
 
-`NodeView` is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes change notifications, and manages the subview lifecycle.
+`SvNodeView` is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes change notifications, and manages the subview lifecycle.
 
 - `setNode(aNode)` — Assigns a node and begins observation via `SvNotificationCenter`.
 - `syncFromNode()` — Diffs visible subnodes against current subviews: creates, reuses, or removes as needed.
@@ -6225,7 +6672,7 @@ Rather than subclassing DOM elements directly, STRVCT wraps them. Each layer in 
 
 ## View Resolution
 
-The framework discovers view classes by naming convention: append `"View"` or `"Tile"` to the node's class name.
+The framework discovers view classes by naming convention: append `"View"` or `"SvTile"` to the node's class name.
 
 1. Check for an explicit `nodeViewClassName` override on the node.
 2. Walk the node's class hierarchy from most-derived to base.
@@ -6246,41 +6693,41 @@ The scheduler coalesces duplicate calls, detects sync loops, and can be paused d
 
 ## Navigation
 
-### StackView
+### SvStackView
 
-`StackView` is the single recursive building block of all navigation. It splits into two regions:
+`SvStackView` is the single recursive building block of all navigation. It splits into two regions:
 
-- **`NavView`** (master) — A column with a header, a scrollable `TilesView`, and a footer.
-- **`otherView`** (detail) — The content of the selected item — typically another `StackView`.
+- **`SvNavView`** (master) — A column with a header, a scrollable `SvTilesView`, and a footer.
+- **`otherView`** (detail) — The content of the selected item — typically another `SvStackView`.
 
-Selecting a tile creates a new `StackView` in the detail area for the selected node's subnodes. This is the entire navigation mechanism: the same master-detail split, repeated at every level.
+Selecting a tile creates a new `SvStackView` in the detail area for the selected node's subnodes. This is the entire navigation mechanism: the same master-detail split, repeated at every level.
 
 **Orientation** is set per node — `"right"` for horizontal (master left, detail right) or `"down"` for vertical (master top, detail below). Mixing orientations at different depths produces horizontal Miller Columns, vertical drill-down, or hybrids, all from the same structure.
 
 **Compaction**: When nested columns would exceed the viewport, upper columns collapse automatically. Navigating back re-expands them. Tiles along the selection path are highlighted; the focused tile gets a distinct highlight.
 
-### BrowserView
+### SvBrowserView
 
-`BrowserView` is the top-level container — a `StackView` whose detail area contains another `StackView`, whose detail area contains another, to any depth. It adds a breadcrumb header that auto-compacts on narrow viewports, replacing truncated segments with a back arrow.
+`SvBrowserView` is the top-level container — a `SvStackView` whose detail area contains another `SvStackView`, whose detail area contains another, to any depth. It adds a breadcrumb header that auto-compacts on narrow viewports, replacing truncated segments with a back arrow.
 
 - `navigateToNode(aNode)` — Navigate directly to a node.
 - `selectNodePathArray(pathArray)` — Set the navigation path programmatically.
 
-## TilesView
+## SvTilesView
 
-`TilesView` is the scrollable column that displays one `Tile` per visible subnode. It handles selection, keyboard navigation (arrow keys, Enter, Escape), long-press reordering, pinch gestures, and drag-and-drop between columns. Layout direction follows the parent `StackView`.
+`SvTilesView` is the scrollable column that displays one `SvTile` per visible subnode. It handles selection, keyboard navigation (arrow keys, Enter, Escape), long-press reordering, pinch gestures, and drag-and-drop between columns. Layout direction follows the parent `SvStackView`.
 
 ## Tiles
 
-Tiles are the items in a navigation column. All extend `NodeView`.
+Tiles are the items in a navigation column. All extend `SvNodeView`.
 
-**`Tile`** — The base class. Provides selection feedback, slide-to-delete (an inner `contentView` slides to reveal action buttons beneath), long-press reorder, and a style cascade that checks the node, then the tile, then the parent column.
+**`SvTile`** — The base class. Provides selection feedback, slide-to-delete (an inner `contentView` slides to reveal action buttons beneath), long-press reorder, and a style cascade that checks the node, then the tile, then the parent column.
 
-**`TitledTile`** — The default. Displays title, subtitle, and note from `SvSummaryNode`.
+**`SvTitledTile`** — The default. Displays title, subtitle, and note from `SvSummaryNode`.
 
-**`HeaderTile`** — A non-selectable section header.
+**`SvHeaderTile`** — A non-selectable section header.
 
-**`BreadCrumbsTile`** — A breadcrumb path that auto-compacts to fit.
+**`SvBreadCrumbsTile`** — A breadcrumb path that auto-compacts to fit.
 
 ## Field Tiles
 
@@ -6315,10 +6762,10 @@ The auto-generated view system handles the common case: a node's slots and subno
 
 ## The Basic Pattern
 
-A custom view extends `DomView` (or one of its ancestors) and configures itself in `init()`:
+A custom view extends `SvDomView` (or one of its ancestors) and configures itself in `init()`:
 
 ```javascript
-(class MyOverlayView extends DomView {
+(class MyOverlayView extends SvDomView {
 
     init () {
         super.init();
@@ -6347,7 +6794,7 @@ init () {
     super.init();
     this.makeFlexAndCenterContent();
 
-    const label = DomView.clone();
+    const label = SvDomView.clone();
     label.setInnerHTML("Hello");
     label.setColor("white");
     label.setFontSize("24px");
@@ -6361,14 +6808,14 @@ init () {
 
 ## Connecting to a Node
 
-To make a custom view respond to model changes, extend `NodeView` instead of `DomView` and implement `syncFromNode()`:
+To make a custom view respond to model changes, extend `SvNodeView` instead of `SvDomView` and implement `syncFromNode()`:
 
 ```javascript
-(class MyStatusView extends NodeView {
+(class MyStatusView extends SvNodeView {
 
     init () {
         super.init();
-        this._label = DomView.clone();
+        this._label = SvDomView.clone();
         this.addSubview(this._label);
         return this;
     }
@@ -6398,7 +6845,7 @@ You can also override on the node side with `nodeViewClassName()` to point at a 
 
 ## Convenience Methods
 
-`FlexDomView` provides shortcuts for common layout patterns:
+`SvFlexDomView` provides shortcuts for common layout patterns:
 
 | Method | Effect |
 |--------|--------|
@@ -6463,7 +6910,7 @@ Every setter returns `this`, so calls chain naturally. Each property also has a 
 
 ## Flexbox Methods
 
-`FlexDomView` adds named methods for every flexbox property:
+`SvFlexDomView` adds named methods for every flexbox property:
 
 ```javascript
 this.setDisplay("flex");
@@ -6479,7 +6926,7 @@ this.setGap("8px");
 
 ## Layout Convenience Methods
 
-`FlexDomView` also provides higher-level shortcuts for common multi-property patterns:
+`SvFlexDomView` also provides higher-level shortcuts for common multi-property patterns:
 
 | Method | Effect |
 |--------|--------|
@@ -6514,13 +6961,13 @@ cssVariableDict () {
 }
 ```
 
-During the normal sync cycle, `NodeView.syncCssFromNode()` picks up this dictionary and applies it to the view's DOM element. This lets model logic influence presentation without the node needing any reference to its view — the node declares what it wants, and the view system handles the rest.
+During the normal sync cycle, `SvNodeView.syncCssFromNode()` picks up this dictionary and applies it to the view's DOM element. This lets model logic influence presentation without the node needing any reference to its view — the node declares what it wants, and the view system handles the rest.
 
 In general, prefer keeping styling in the view layer. Node-driven CSS is available for cases where the model genuinely determines a visual property (e.g. a user-chosen color or a status-dependent highlight), but most styling belongs in views or themes, not in model code.
 
 ## Low-Level Access
 
-For unusual CSS properties that don't have a named method, `CssDomView` provides generic accessors:
+For unusual CSS properties that don't have a named method, `SvCssDomView` provides generic accessors:
 
 | Method | Description |
 |--------|-------------|
@@ -6546,7 +6993,7 @@ Every view has a visual state — selected, active, disabled, or the default uns
 
 ## Style States
 
-`StyledDomView` tracks three independent boolean properties: `isSelected`, `isActive`, and `isDisabled`. These combine into a single resolved state name with a fixed priority:
+`SvStyledDomView` tracks three independent boolean properties: `isSelected`, `isActive`, and `isDisabled`. These combine into a single resolved state name with a fixed priority:
 
 1. **disabled** — checked first, takes precedence over all others
 2. **active** — the view is the current focus of interaction
@@ -6561,24 +7008,24 @@ The theme system is a hierarchy of named objects:
 
 - **`SvThemeResources`** — Singleton that holds the active theme.
 - **`SvTheme`** — A complete theme containing a set of theme classes.
-- **`SvThemeClass`** — Defines style values for a particular kind of view (e.g. "Tile", "TextTile", "Header"). Theme classes form a hierarchy — a class inherits from its parent, so "TextTile" inherits defaults from "Tile" and only overrides what differs.
-- **`SvThemeState`** — One state within a theme class (e.g. "selected" within "Tile"). Contains concrete style values: color, backgroundColor, fontSize, padding, border, and dozens more.
+- **`SvThemeClass`** — Defines style values for a particular kind of view (e.g. "SvTile", "TextTile", "Header"). Theme classes form a hierarchy — a class inherits from its parent, so "TextTile" inherits defaults from "SvTile" and only overrides what differs.
+- **`SvThemeState`** — One state within a theme class (e.g. "selected" within "SvTile"). Contains concrete style values: color, backgroundColor, fontSize, padding, border, and dozens more.
 
 ## How a View Resolves Its Style
 
 When a view needs to apply its current style:
 
-1. The view reads its `themeClassName` (set on the node via `StyledNode`, or inherited from the parent view).
+1. The view reads its `themeClassName` (set on the node via `SvStyledNode`, or inherited from the parent view).
 2. It asks the active theme for the `SvThemeClass` matching that name.
 3. It determines its current state name (`disabled`, `active`, `selected`, or `unselected`).
 4. It retrieves the `SvThemeState` for that state from the theme class.
 5. The theme state applies its values to the view via named setter methods (`setColor()`, `setBackgroundColor()`, etc.).
 
-Style values resolve up the theme class hierarchy — if "TextTile" doesn't define a `backgroundColor` for its "selected" state, the lookup walks up to "Tile" and uses its value.
+Style values resolve up the theme class hierarchy — if "TextTile" doesn't define a `backgroundColor` for its "selected" state, the lookup walks up to "SvTile" and uses its value.
 
 ## Node-Side Configuration
 
-Nodes control which theme class their view uses through the `themeClassName` slot on `StyledNode`. This slot is marked `syncsToView`, so changing it triggers a re-style automatically. The node doesn't know anything about the visual details — it just names the class, and the theme provides the rest.
+Nodes control which theme class their view uses through the `themeClassName` slot on `SvStyledNode`. This slot is marked `syncsToView`, so changing it triggers a re-style automatically. The node doesn't know anything about the visual details — it just names the class, and the theme provides the rest.
 
 ## Locked Attributes
 

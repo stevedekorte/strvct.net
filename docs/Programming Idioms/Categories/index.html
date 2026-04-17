@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="stylesheet" href="/style/style.css">
+  <link rel="modulepreload" href="/style/layout/ContentBase.js">
+  <link rel="modulepreload" href="/style/layout/ContentText.js">
+  <link rel="modulepreload" href="/style/layout/ContentCards.js">
+  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentTable.js">
+  <link rel="modulepreload" href="/style/layout/ContentImage.js">
+  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/style/layout/ContentToc.js">
+  <link rel="modulepreload" href="/style/layout/PageIndex.js">
+  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Categories – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
+</head>
+<body>
+  <div class="page loaded"><div class="header"><div><h1>Categories</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Extending existing classes by adding methods from separate files.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#defining-a-category">Defining a category</a></li><li><a href="#naming-convention">Naming convention</a></li><li><a href="#loading-order">Loading order</a></li><li><a href="#extending-javascript-builtins">Extending JavaScript builtins</a></li><li><a href="#when-to-use-categories">When to use categories</a></li><li><a href="#how-it-works-internally">How it works internally</a></li><li><a href="#related-patterns">Related patterns</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Categories allow you to add methods to an existing class without modifying its original file. This is borrowed from Objective-C/Smalltalk traditions and is used throughout STRVCT to separate concerns &mdash; keeping core class files focused on essential functionality while adding specialized behavior in dedicated files.</p><p>A category is a class that extends the target class but calls <code>initThisCategory()</code> instead of <code>initThisClass()</code>. The framework copies the category's methods onto the target class's prototype rather than creating a new class in the hierarchy.</p></div></div><h2 id="defining-a-category">Defining a category</h2><div class="section"><div class="section-body"><pre><code>// SvJsonGroup_patches.js — adds JSON Patch support to SvJsonGroup
+(class SvJsonGroup_patches extends SvJsonGroup {
+
+    applyJsonPatches (patches) {
+        // patch implementation
+    }
+
+    applyPatch (operation) {
+        // single patch operation
+    }
+
+}.initThisCategory());</code></pre><p>The key difference from a normal class: <code>.initThisCategory()</code> instead of <code>.initThisClass()</code>. This tells the framework to merge the methods into the parent class rather than registering a new class.</p></div></div><h2 id="naming-convention">Naming convention</h2><div class="section"><div class="section-body"><p>Category files use an underscore to separate the base class name from the category purpose:</p><pre><code>SvJsonGroup.js                  // base class
+SvJsonGroup_patches.js          // JSON Patch operations
+SvJsonGroup_clientState.js      // client state tool methods</code></pre><p>The category class name follows the same pattern: <code>SvJsonGroup_patches</code>, <code>Array_promises</code>, <code>Promise_ideal</code>.</p></div></div><h2 id="loading-order">Loading order</h2><div class="section"><div class="section-body"><p>Base classes must be loaded before their categories. In <code>_imports.json</code> files, list the base class first:</p><pre><code>[
+    "SvJsonGroup.js",
+    "SvJsonGroup_patches.js",
+    "SvJsonGroup_clientState.js"
+]</code></pre><p>If a category loads before its base class, the <code>extends</code> clause will fail because the base class doesn't exist yet.</p></div></div><h2 id="extending-javascript-builtins">Extending JavaScript builtins</h2><div class="section"><div class="section-body"><p>Categories are commonly used to extend native JavaScript classes. The boot system includes several:</p><pre><code>// Promise_ideal.js — adds clone(), status tracking, timeouts
+(class Promise_ideal extends Promise {
+    static clone () { /* ... */ }
+    callResolveFunc (...args) { /* ... */ }
+    isPending () { /* ... */ }
+}.initThisCategory());
+
+// Array_promises.js — adds async iteration methods
+(class Array_promises extends Array {
+    async promiseSerialForEach (aBlock) { /* ... */ }
+    async promiseParallelMap (aBlock) { /* ... */ }
+}.initThisCategory());</code></pre><p>After these categories load, every <code>Promise</code> and <code>Array</code> instance has the new methods &mdash; no imports needed.</p></div></div><h2 id="when-to-use-categories">When to use categories</h2><div class="section"><div class="section-body"><p><strong>Good uses:</strong></p><ul><li>Separating a large class into thematic files (e.g., persistence, UI, serialization)</li><li>Adding framework methods to JavaScript builtins</li><li>Adding app-specific behavior to framework classes without forking them</li><li>Keeping a base class stable while iterating on extensions</li></ul><p><strong>Avoid when:</strong></p><ul><li>The methods need their own slots or state &mdash; categories can't add slots, only methods</li><li>You need polymorphism (override behavior in subclasses) &mdash; a subclass is the right tool</li><li>The base class is in an external library that doesn't use the STRVCT class system</li></ul></div></div><h2 id="how-it-works-internally">How it works internally</h2><div class="section"><div class="section-body"><p><code>initThisCategory()</code> iterates over the category class's own methods (both prototype and static) and copies them onto the target class. It does not create a new entry in the class registry &mdash; <code>SvJsonGroup_patches</code> is not a class you can instantiate or look up by name. It's purely a delivery mechanism for methods.</p><p>This means:</p><ul><li><code>instanceof</code> checks are unaffected &mdash; an <code>SvJsonGroup</code> instance won't show as <code>instanceof SvJsonGroup_patches</code></li><li>Category methods have full access to <code>this</code> and the base class's slots and methods</li><li>If two categories define the same method name on the same base class, the last one loaded wins (with a warning)</li></ul></div></div><h2 id="related-patterns">Related patterns</h2><div class="section"><div class="section-body"><ul><li><a href="../Slot%20Patterns/index.html">Slot Patterns</a> &mdash; how to declare properties on classes</li><li><a href="../../Lifecycle/index.html">Lifecycle</a> &mdash; <code>initPrototypeSlots</code> / <code>initPrototype</code> and the initialization chain, which categories cannot participate in (only methods are merged)</li></ul></div></div></div>
+  <script src="/style/layout/layout.js" type="module"></script>
+</body>
+</html>

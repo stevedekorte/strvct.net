@@ -1,0 +1,15 @@
+{
+  "title": "Programming Idioms",
+  "subtitle": "Recurring patterns and conventions for writing STRVCT code.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "Async Patterns",
+        "Categories",
+        "Slot Patterns"
+      ]
+    }
+  ]
+}

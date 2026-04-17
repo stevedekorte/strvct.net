@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="stylesheet" href="/style/style.css">
+  <link rel="modulepreload" href="/style/layout/ContentBase.js">
+  <link rel="modulepreload" href="/style/layout/ContentText.js">
+  <link rel="modulepreload" href="/style/layout/ContentCards.js">
+  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentTable.js">
+  <link rel="modulepreload" href="/style/layout/ContentImage.js">
+  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/style/layout/ContentToc.js">
+  <link rel="modulepreload" href="/style/layout/PageIndex.js">
+  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Async Patterns – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
+</head>
+<body>
+  <div class="page loaded"><div class="header"><div><h1>Async Patterns</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Extended promises, serial and parallel iteration, and concurrency control.</p><h2 id="promiseclone">Promise.clone()</h2><div class="section"><div class="section-body"><p>STRVCT extends the native <code>Promise</code> class (via <code>Promise_ideal.js</code>) with a factory method that exposes the resolve and reject functions as callable methods on the promise itself. This is the foundation for most async coordination in the framework.</p><pre><code>const promise = Promise.clone();
+promise.setLabel("loadUserData");
+
+// Later, from any code that holds a reference:
+promise.callResolveFunc(result);
+// or:
+promise.callRejectFunc(error);</code></pre><h3 id="why-not-new-promise">Why not <code>new Promise()</code>?</h3><p>The native constructor captures resolve/reject inside the executor callback, making them inaccessible outside it. <code>Promise.clone()</code> stores them as properties so the promise can be resolved externally &mdash; by a different method, a timer, or a network callback &mdash; without nesting all the logic inside the constructor.</p><h3 id="status-tracking">Status tracking</h3><p>Cloned promises track their state explicitly:</p><pre><code>promise.isPending()    // true until resolved or rejected
+promise.isResolved()   // true after callResolveFunc()
+promise.isRejected()   // true after callRejectFunc()
+promise.isCompleted()  // true if resolved or rejected</code></pre><p>Calling <code>callResolveFunc()</code> or <code>callRejectFunc()</code> on an already-completed promise throws an assertion error, catching double-resolution bugs immediately.</p><h3 id="timeouts">Timeouts</h3><pre><code>const promise = Promise.clone();
+promise.setLabel("apiCall");
+promise.beginTimeout(5000); // reject after 5 seconds if still pending</code></pre><p>The timeout auto-cancels on resolution or rejection. The rejection message includes the label and duration for debugging.</p><h3 id="await-hooks">Await hooks</h3><pre><code>const promise = Promise.clone();
+promise.setOnAwaitFunc((p) =&gt; {
+    // Called the first time someone awaits this promise.
+    // Useful for lazy initialization — don't start the work
+    // until someone actually needs the result.
+    startExpensiveOperation(p);
+});</code></pre><p>The framework also tracks <code>hasAwaiters()</code> &mdash; whether anyone is currently waiting on the promise.</p><h3 id="common-pattern-deferred-resolution">Common pattern: deferred resolution</h3><p>The most frequent use of <code>Promise.clone()</code> is to bridge callback-style or event-driven code into async/await:</p><pre><code>async fetchData () {
+    const promise = Promise.clone();
+    promise.setLabel("fetchData");
+    promise.beginTimeout(10000);
+
+    this.setOnResponseCallback((data) =&gt; {
+        promise.callResolveFunc(data);
+    });
+
+    this.setOnErrorCallback((error) =&gt; {
+        promise.callRejectFunc(error);
+    });
+
+    this.sendRequest();
+    return promise;
+}</code></pre></div></div><h2 id="array-async-iteration">Array async iteration</h2><div class="section"><div class="section-body"><p><code>Array_promises.js</code> adds methods for controlled async iteration. These are categories on <code>Array</code>, so they're available on any array.</p><h3 id="serial-iteration">Serial iteration</h3><pre><code>await items.promiseSerialForEach(async (item, index) =&gt; {
+    await processItem(item);
+});</code></pre><p>Processes one item at a time, in order. Throws immediately if any iteration fails.</p><h3 id="serial-with-yielding">Serial with yielding</h3><pre><code>await items.promiseSerialTimeoutsForEach(async (item, index, total) =&gt; {
+    await processItem(item);
+}, 0); // delay in ms between iterations</code></pre><p>Like serial, but inserts a <code>setTimeout</code> between iterations. This yields control back to the event loop between items, preventing UI freezes during long-running sequences. A delay of <code>0</code> still yields; higher values add intentional pacing.</p><h3 id="parallel">Parallel</h3><pre><code>const results = await items.promiseParallelMap(async (item) =&gt; {
+    return await transform(item);
+});
+
+// or when you don't need results:
+await items.promiseParallelForEach(async (item) =&gt; {
+    await processItem(item);
+});</code></pre><p>All items processed concurrently via <code>Promise.all()</code>. Fast, but can overwhelm APIs or exhaust resources if the array is large.</p><h3 id="concurrency-limited-batching">Concurrency-limited batching</h3><pre><code>await items.promiseConcurrentSerialTimeoutsForEach(
+    async (item, index, total) =&gt; {
+        await callApi(item);
+    },
+    3,    // maxConcurrent — at most 3 in flight at once
+    100,  // delay in ms between batches
+    async (error, item, index) =&gt; {
+        // optional error handler — log and continue
+        console.error("Failed:", item, error);
+    }
+);</code></pre><p>The workhorse for API-heavy operations. Runs up to <code>maxConcurrent</code> items simultaneously, yields between batches, and supports per-item error handling without aborting the whole sequence. Uses <code>Promise.clone()</code> internally for coordination.</p></div></div><h2 id="choosing-the-right-iteration-method">Choosing the right iteration method</h2><div class="section"><div class="section-body"><table><thead><tr><th>Method</th><th>Concurrency</th><th>Yielding</th><th>Error handling</th><th>Use when</th></tr></thead><tbody><tr><td><code>promiseSerialForEach</code></td><td>1</td><td>No</td><td>Fail-fast</td><td>Order matters, small arrays</td></tr><tr><td><code>promiseSerialTimeoutsForEach</code></td><td>1</td><td>Yes</td><td>Fail-fast</td><td>Order matters, UI must stay responsive</td></tr><tr><td><code>promiseParallelMap</code></td><td>All</td><td>No</td><td>Fail-fast</td><td>Independent items, bounded array size</td></tr><tr><td><code>promiseConcurrentSerialTimeoutsForEach</code></td><td>N</td><td>Yes</td><td>Configurable</td><td>API calls, large arrays, rate limiting</td></tr></tbody></table></div></div></div>
+  <script src="/style/layout/layout.js" type="module"></script>
+</body>
+</html>

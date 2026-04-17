@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="stylesheet" href="/style/style.css">
+  <link rel="modulepreload" href="/style/layout/ContentBase.js">
+  <link rel="modulepreload" href="/style/layout/ContentText.js">
+  <link rel="modulepreload" href="/style/layout/ContentCards.js">
+  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentTable.js">
+  <link rel="modulepreload" href="/style/layout/ContentImage.js">
+  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/style/layout/ContentToc.js">
+  <link rel="modulepreload" href="/style/layout/PageIndex.js">
+  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Slot Patterns – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
+</head>
+<body>
+  <div class="page loaded"><div class="header"><div><h1>Slot Patterns</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Common slot configurations for typical scenarios.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#simple-stored-property">Simple stored property</a></li><li><a href="#stored-property-with-view-sync">Stored property with view sync</a></li><li><a href="#enum-constrained-value">Enum / constrained value</a></li><li><a href="#transient-non-stored-property">Transient (non-stored) property</a></li><li><a href="#subnode-field-always-present-child">Subnode field (always-present child)</a></li><li><a href="#collection-stored-subnodes">Collection (stored subnodes)</a></li><li><a href="#back-reference-weak-slot">Back-reference (weak slot)</a></li><li><a href="#json-visible-property">JSON-visible property</a></li><li><a href="#cloud-synced-property">Cloud-synced property</a></li><li><a href="#read-only-display">Read-only display</a></li><li><a href="#combining-patterns">Combining patterns</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>The <a href="../../Slots/index.html">Slots</a> page covers the full slot API. This page is a quick-reference for the most common combinations &mdash; the patterns you'll reach for repeatedly when defining classes.</p></div></div><h2 id="simple-stored-property">Simple stored property</h2><div class="section"><div class="section-body"><p>A value that persists to IndexedDB and shows in the inspector.</p><pre><code>{
+    const slot = this.newSlot("displayName", "");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setCanEditInspection(true);
+}</code></pre></div></div><h2 id="stored-property-with-view-sync">Stored property with view sync</h2><div class="section"><div class="section-body"><p>Same as above, but the view updates when the value changes.</p><pre><code>{
+    const slot = this.newSlot("hitPoints", 0);
+    slot.setSlotType("Number");
+    slot.setShouldStoreSlot(true);
+    slot.setSyncsToView(true);
+    slot.setCanEditInspection(true);
+}</code></pre></div></div><h2 id="enum-constrained-value">Enum / constrained value</h2><div class="section"><div class="section-body"><p>A property restricted to a fixed set of choices. The inspector renders a dropdown.</p><pre><code>{
+    const slot = this.newSlot("alignment", "neutral");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setValidValues(["lawful", "neutral", "chaotic"]);
+    slot.setCanEditInspection(true);
+}</code></pre></div></div><h2 id="transient-non-stored-property">Transient (non-stored) property</h2><div class="section"><div class="section-body"><p>Runtime-only state that resets on reload. Not persisted, not shown in inspector.</p><pre><code>{
+    const slot = this.newSlot("isLoading", false);
+    slot.setSlotType("Boolean");
+}</code></pre></div></div><h2 id="subnode-field-always-present-child">Subnode field (always-present child)</h2><div class="section"><div class="section-body"><p>A structured sub-object that's always part of the parent. Shows as a navigable tile in the inspector.</p><pre><code>{
+    const slot = this.newSlot("settings", null);
+    slot.setFinalInitProto(SettingsNode);
+    slot.setIsSubnodeField(true);
+    slot.setShouldStoreSlot(true);
+}</code></pre><p>The convenience form (available on <code>SvJsonGroup</code> descendants):</p><pre><code>{
+    const slot = this.newSubnodeFieldSlot("settings", SettingsNode);
+}</code></pre><p>The parent class should set <code>shouldStoreSubnodes(false)</code> in <code>initPrototype()</code> &mdash; data lives in the slots, not the subnodes array.</p></div></div><h2 id="collection-stored-subnodes">Collection (stored subnodes)</h2><div class="section"><div class="section-body"><p>A variable-length list of child objects. Each child is a subnode with independent identity.</p><pre><code>// In initPrototypeSlots():
+{
+    const slot = this.newSlot("subnodes", null);
+    slot.setShouldStoreSlot(true);
+}
+
+// In initPrototype():
+this.setShouldStoreSubnodes(true);
+this.setSubnodeClasses([ItemNode]);  // accepted child types</code></pre><p>Classes extending <code>SvJsonArrayNode</code> get this behavior by default.</p></div></div><h2 id="back-reference-weak-slot">Back-reference (weak slot)</h2><div class="section"><div class="section-body"><p>A non-owning pointer to another node. Doesn't prevent garbage collection, doesn't create retain cycles.</p><pre><code>{
+    const slot = this.newWeakSlot("parentSession", null);
+    slot.setSlotType("UoSession");
+}</code></pre><p>The getter transparently dereferences the <code>WeakRef</code>. If the target has been collected, returns <code>null</code>.</p></div></div><h2 id="json-visible-property">JSON-visible property</h2><div class="section"><div class="section-body"><p>A slot included in JSON serialization for AI consumption or data exchange, with a schema description.</p><pre><code>{
+    const slot = this.newSlot("characterClass", "Fighter");
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setIsInJsonSchema(true);
+    slot.setShouldJsonArchive(true);
+    slot.setDescription("The character's class (e.g., Fighter, Wizard, Rogue)");
+}</code></pre></div></div><h2 id="cloud-synced-property">Cloud-synced property</h2><div class="section"><div class="section-body"><p>A slot included when the object is serialized for cloud storage.</p><pre><code>{
+    const slot = this.newSlot("lastModified", null);
+    slot.setSlotType("Number");
+    slot.setShouldStoreSlot(true);
+    slot.setIsInCloudJson(true);
+}</code></pre></div></div><h2 id="read-only-display">Read-only display</h2><div class="section"><div class="section-body"><p>A computed or system-managed value shown in the inspector but not editable by the user.</p><pre><code>{
+    const slot = this.newSlot("createdAt", null);
+    slot.setSlotType("String");
+    slot.setShouldStoreSlot(true);
+    slot.setCanEditInspection(true);
+    slot.setIsReadOnly(true);
+}</code></pre></div></div><h2 id="combining-patterns">Combining patterns</h2><div class="section"><div class="section-body"><p>These patterns compose freely. A property can be stored, view-synced, JSON-visible, and cloud-synced all at once &mdash; each annotation is independent. The common combinations above cover the vast majority of slot declarations; for the full set of annotations, see the <a href="../../Slots/index.html">Slots</a> page.</p></div></div></div>
+  <script src="/style/layout/layout.js" type="module"></script>
+</body>
+</html>

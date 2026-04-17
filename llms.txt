@@ -38,6 +38,10 @@
 - [Cloud Object Pools](https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/): Cloud sync for object pools and collections using Firebase Storage.
 - [Local and Cloud Blob Storage](https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/): Content-addressable storage for binary data like images, audio, and video.
 - [Local Object Pools](https://strvct.net/docs/Persistence/Local%20Object%20Pools/): IndexedDB-backed persistence for object graphs using dirty tracking and automatic serialization.
+- [Programming Idioms](https://strvct.net/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
+- [Async Patterns](https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/): Extended promises, serial and parallel iteration, and concurrency control.
+- [Categories](https://strvct.net/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files.
+- [Slot Patterns](https://strvct.net/docs/Programming%20Idioms/Slot%20Patterns/): Common slot configurations for typical scenarios.
 - [Reference](https://strvct.net/docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
 - [Classes](https://strvct.net/docs/Reference/Classes/)
 - [Modules](https://strvct.net/docs/Reference/Modules/)

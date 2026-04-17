@@ -661,6 +661,7 @@ The `docs/` directory contains browsable HTML documentation covering:
 - **Guides**: Getting Started, Comparing to React
 - **Core Systems**: Lifecycle (Boot, Node, App, Persistence, View Sync), Notifications (Center, Broadcaster, Slot Hooks, Scheduler), Persistence (Local Pools, Cloud Pools, Blob Storage), Views, Events and Gestures
 - **Services**: AI Services, Cloud Storage, Media, Proxies, Home Assistant
+- **Programming Idioms**: Async Patterns (Promise.clone, Array iteration), Categories, Slot Patterns
 - **Reference**: Classes, Modules, Protocols
 - **Other**: Internationalization, Inspirations, Future Work
 
