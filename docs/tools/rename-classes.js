@@ -3,7 +3,8 @@
 /**
  * rename-classes.js — codemod for strvct class renames.
  *
- * Reads ../../ClassRenames.json and applies [oldName, newName] tuples across
+ * Reads ../../../ClassRenames.json (site/ClassRenames.json) and applies
+ * [oldName, newName] tuples across
  * the source trees. Updates code identifiers, string literals, filenames, and
  * _imports.json entries.
  *
@@ -87,7 +88,7 @@ for (const arg of args) {
 // Load and filter renames
 // ---------------------------------------------------------------------------
 
-const allTuples = JSON.parse(readFileSync(join(strvctRoot, "ClassRenames.json"), "utf-8"));
+const allTuples = JSON.parse(readFileSync(join(siteRoot, "ClassRenames.json"), "utf-8"));
 
 const tuples = allTuples.filter(([oldName, _newName]) => {
     if (flags.only && !flags.only.has(oldName)) return false;
