@@ -1,10 +1,10 @@
 "use strict";
 
-/** * @module library.view.dom.DomView.subclasses
+/** * @module library.view.dom.SvDomView.subclasses
  */
 
 /** * @class SvTextView
- * @extends StyledDomView
+ * @extends SvStyledDomView
  * @description A view for a single line of text.
  * For multi-line text, use TextArea.
  * On input, sends didEdit up parent view chain.
@@ -20,7 +20,7 @@
 
  */
 
-(class SvTextView extends StyledDomView {
+(class SvTextView extends SvStyledDomView {
 
     initPrototypeSlots () {
 
@@ -42,12 +42,12 @@
         }
 
         /**
-         * @member {HtmlStreamReader} htmlStreamReader
+         * @member {SvHtmlStreamReader} htmlStreamReader
          * @description The HTML stream reader.
          */
         {
             const slot = this.newSlot("htmlStreamReader", null); // for merge support
-            slot.setSlotType("HtmlStreamReader");
+            slot.setSlotType("SvHtmlStreamReader");
         }
 
         /**
@@ -503,7 +503,7 @@
 
     /**
      * @description On double tap cancelled.
-     * @param {GestureRecognizer} aGesture - The gesture.
+     * @param {SvGestureRecognizer} aGesture - The gesture.
      * @returns {void}
      */
     onDoubleTapCancelled (/*aGesture*/) {
@@ -512,7 +512,7 @@
 
     /**
      * @description On double tap complete.
-     * @param {GestureRecognizer} aGesture - The gesture.
+     * @param {SvGestureRecognizer} aGesture - The gesture.
      * @returns {SvTextView} The text field.
      */
     onDoubleTapComplete (/*aGesture*/) {
@@ -539,7 +539,7 @@
      * @returns {void}
      */
     pauseGestures () {
-        GestureManager.shared().pause(); // so things like text selection don't trigger gestures
+        SvGestureManager.shared().pause(); // so things like text selection don't trigger gestures
     }
 
     /**
@@ -547,7 +547,7 @@
      * @returns {void}
      */
     unpauseGestures () {
-        GestureManager.shared().unpause(); // so things like text selection don't trigger gestures
+        SvGestureManager.shared().unpause(); // so things like text selection don't trigger gestures
     }
 
     // --- onFocusIn / onFocusOut ---
@@ -797,7 +797,7 @@
                 console.log(this.logPrefix(), "newValue: [" + newValue + "]");
                 */
 
-                const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
+                const reader = SvHtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
                 reader.beginHtmlStream();
                 reader.onStreamHtml(newValue);
                 reader.endHtmlStream();
@@ -1144,7 +1144,7 @@
             if (this.canHitEnter()) {
                 this.tellParentViews("didInput", this);
             } else {
-                SimpleSynth.clone().playButtonCancelled();
+                SvSimpleSynth.clone().playButtonCancelled();
                 return;
             }
         }
@@ -1339,19 +1339,19 @@
 
         // TODO: add visual indicator?
         if (!this._speechSession) {
-            if (SvGlobals.globals()["SpeechToTextSession"]) {
-                this._speechSession = SpeechToTextSession.clone().setDelegate(this);
+            if (SvGlobals.globals()["SvSpeechToTextSession"]) {
+                this._speechSession = SvSpeechToTextSession.clone().setDelegate(this);
 
                 this._speechSession.start();
             } else {
-                console.warn("no SpeechToTextSession class available");
+                console.warn("no SvSpeechToTextSession class available");
             }
         }
     }
 
     /**
      * @description On speech interim result.
-     * @param {SpeechToTextSession} speechSession - The speech session.
+     * @param {SvSpeechToTextSession} speechSession - The speech session.
      * @returns {void}
      */
     onSpeechInterimResult (/*speechSession*/) {
@@ -1363,7 +1363,7 @@
 
     /**
      * @description On speech end.
-     * @param {SpeechToTextSession} speechSession - The speech session.
+     * @param {SvSpeechToTextSession} speechSession - The speech session.
      * @returns {void}
      */
     onSpeechEnd (speechSession) {

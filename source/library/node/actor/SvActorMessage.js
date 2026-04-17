@@ -6,7 +6,7 @@
 
 */
 
-(class SvActorMessage extends BaseNode {
+(class SvActorMessage extends SvBaseNode {
 
     initPrototypeSlots () {
 

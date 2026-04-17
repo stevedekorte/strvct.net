@@ -4,7 +4,7 @@
 
 /**
  * @class SvKeyboard
- * @extends Device
+ * @extends SvDevice
  * @classdesc Keyboard
  *
  * Global shared instance that tracks current keyboard state.
@@ -42,7 +42,7 @@
 
 "use strict";
 
-(class SvKeyboard extends Device {
+(class SvKeyboard extends SvDevice {
 
     /**
      * @category Initialization
@@ -60,19 +60,19 @@
     initPrototypeSlots () {
         /**
          * @member {Map} codeToKeysMap
-         * @description Dictionary of KeyboardKey objects
+         * @description Dictionary of SvKeyboardKey objects
          */
         {
             const slot = this.newSlot("codeToKeysMap", null);
-            slot.setComment("dictionary of KeyboardKey objects");
+            slot.setComment("dictionary of SvKeyboardKey objects");
             slot.setSlotType("Map");
         }
         /**
-         * @member {KeyboardListener} keyboardListener
+         * @member {SvKeyboardListener} keyboardListener
          */
         {
             const slot = this.newSlot("keyboardListener", null);
-            slot.setSlotType("KeyboardListener");
+            slot.setSlotType("SvKeyboardListener");
         }
         /**
          * @member {Array} allModifierKeys
@@ -103,7 +103,7 @@
      * @returns {SvKeyboard} The keyboard instance
      */
     startListening () {
-        const listener = KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this);
+        const listener = SvKeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this);
         this.setKeyboardListener(listener);
         this.keyboardListener().setIsListening(true);
         return this;
@@ -118,7 +118,7 @@
         const map = new Map();
         this.keyCodesToNamesMap().forEachKV((code, name) => {
             //const name = c2k[code];
-            const key = KeyboardKey.clone().setName(name).setCode(code).setKeyboard(this);
+            const key = SvKeyboardKey.clone().setName(name).setCode(code).setKeyboard(this);
             assert(Type.isNumber(code));
             map.set(Number(code), key);
         });
@@ -130,7 +130,7 @@
      * @category Key Lookup
      * @description Gets the key for a given code
      * @param {number} aCode - The key code
-     * @returns {KeyboardKey} The keyboard key
+     * @returns {SvKeyboardKey} The keyboard key
      */
     keyForCode (aCode) {
         return this.codeToKeysMap().get(aCode);
@@ -140,7 +140,7 @@
      * @category Key Lookup
      * @description Gets the key for a given name
      * @param {string} aName - The key name
-     * @returns {KeyboardKey} The keyboard key
+     * @returns {SvKeyboardKey} The keyboard key
      */
     keyForName (aName) {
         const code = this.keyCodeForName(aName);
@@ -366,7 +366,7 @@
      * @category Event Handling
      * @description Gets the key for a given event
      * @param {Event} event - The keyboard event
-     * @returns {KeyboardKey} The keyboard key
+     * @returns {SvKeyboardKey} The keyboard key
      */
     keyForEvent (event) {
         const code = event.keyCode;
@@ -535,7 +535,7 @@
     /**
      * @category Special Keys
      * @description Gets the shift key
-     * @returns {KeyboardKey} The shift key
+     * @returns {SvKeyboardKey} The shift key
      */
     shiftKey () {
         return this.keyForName("Shift");
@@ -544,7 +544,7 @@
     /**
      * @category Special Keys
      * @description Gets the control key
-     * @returns {KeyboardKey} The control key
+     * @returns {SvKeyboardKey} The control key
      */
     controlKey () {
         return this.keyForName("Control");
@@ -553,7 +553,7 @@
     /**
      * @category Special Keys
      * @description Gets the alternate key
-     * @returns {KeyboardKey} The alternate key
+     * @returns {SvKeyboardKey} The alternate key
      */
     alternateKey () {
         return this.keyForName("Alternate");
@@ -562,7 +562,7 @@
     /**
      * @category Special Keys
      * @description Gets the left command key
-     * @returns {KeyboardKey} The left command key
+     * @returns {SvKeyboardKey} The left command key
      */
     leftCommandKey () {
         return this.keyForName("MetaLeft");
@@ -571,7 +571,7 @@
     /**
      * @category Special Keys
      * @description Gets the right command key
-     * @returns {KeyboardKey} The right command key
+     * @returns {SvKeyboardKey} The right command key
      */
     rightCommandKey () {
         return this.keyForName("MetaRight");
@@ -598,7 +598,7 @@
     /**
      * @category Special Keys
      * @description Gets the equals sign key
-     * @returns {KeyboardKey} The equals sign key
+     * @returns {SvKeyboardKey} The equals sign key
      */
     equalsSignKey () {
         return this.keyForName("EqualsSign");
@@ -607,7 +607,7 @@
     /**
      * @category Special Keys
      * @description Gets the minus key
-     * @returns {KeyboardKey} The minus key
+     * @returns {SvKeyboardKey} The minus key
      */
     minusKey () {
         return this.keyForName("Dash");
@@ -616,7 +616,7 @@
     /**
      * @category Special Keys
      * @description Gets the plus key
-     * @returns {KeyboardKey} The plus key
+     * @returns {SvKeyboardKey} The plus key
      */
     plusKey () {
         return this.keyForName("Plus");

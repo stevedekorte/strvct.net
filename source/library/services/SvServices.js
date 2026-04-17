@@ -38,54 +38,54 @@
         {
             const slot = this.newSlot("firebaseService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(FirebaseService);
+            slot.setFinalInitProto(SvFirebaseService);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {LeonardoService} leonardoService
+         * @member {SvLeonardoService} leonardoService
          * @category AI Service
          */
         /*
         {
             const slot = this.newSlot("leonardoService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(LeonardoService);
+            slot.setFinalInitProto(SvLeonardoService);
             slot.setIsSubnodeField(true);
-            slot.setSlotType("LeonardoService");
+            slot.setSlotType("SvLeonardoService");
         }
         */
 
         /**
-         * @member {AnthropicService} anthropicService
+         * @member {SvAnthropicService} anthropicService
          * @category AI Service
          */
         {
             const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(AnthropicService);
+            slot.setFinalInitProto(SvAnthropicService);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {GeminiService} geminiService
+         * @member {SvGeminiService} geminiService
          * @category AI Service
          */
         {
             const slot = this.newSlot("geminiService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(GeminiService);
+            slot.setFinalInitProto(SvGeminiService);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {XaiService} xaiService
+         * @member {SvXaiService} xaiService
          * @category AI Service
          */
         {
             const slot = this.newSlot("xaiService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(XaiService);
+            slot.setFinalInitProto(SvXaiService);
             slot.setIsSubnodeField(true);
         }
 
@@ -104,47 +104,47 @@
         */
 
         /**
-         * @member {ImagineProService} imagineProService
+         * @member {SvImagineProService} imagineProService
          * @category AI Service
          */
         {
             const slot = this.newSlot("imagineProService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(ImagineProService);
+            slot.setFinalInitProto(SvImagineProService);
             slot.setIsSubnodeField(true);
         }
 
 
         /**
-         * @member {OpenAiService} openAiService
+         * @member {SvOpenAiService} openAiService
          * @category AI Service
          */
         {
             const slot = this.newSlot("openAiService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(OpenAiService);
+            slot.setFinalInitProto(SvOpenAiService);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {DeepSeekService} deepSeekService
+         * @member {SvDeepSeekService} deepSeekService
          * @category AI Service
          */
         {
             const slot = this.newSlot("deepSeekService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(DeepSeekService);
+            slot.setFinalInitProto(SvDeepSeekService);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {GroqService} groqService
+         * @member {SvGroqService} groqService
          * @category AI Service
          */
         {
             const slot = this.newSlot("groqService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(GroqService);
+            slot.setFinalInitProto(SvGroqService);
             slot.setIsSubnodeField(true);
         }
 
@@ -161,65 +161,65 @@
         {
             const slot = this.newSlot("azureService", null)
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(AzureService);
+            slot.setFinalInitProto(SvAzureService);
             slot.setIsSubnodeField(true);
         }
         */
 
         /**
-         * @member {YouTubeService} youtubeService
+         * @member {SvYouTubeService} youtubeService
          * @category Video Service
          */
         {
             const slot = this.newSlot("youtubeService", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(YouTubeService);
+            slot.setFinalInitProto(SvYouTubeService);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {PeerService} peerService
+         * @member {SvPeerService} peerService
          * @category Networking
          */
         /*
         {
             const slot = this.newSlot("peerService", null)
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(PeerService);
+            slot.setFinalInitProto(SvPeerService);
             slot.setIsSubnodeField(true);
         }
         */
 
         /**
-         * @member {SpeechToTextSessions} speechToTextSessions
+         * @member {SvSpeechToTextSessions} speechToTextSessions
          * @category Audio Processing
          */
         {
             const slot = this.newSlot("speechToTextSessions", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(SpeechToTextSessions);
+            slot.setFinalInitProto(SvSpeechToTextSessions);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {ProxyServers} proxyServers
+         * @member {SvProxyServers} proxyServers
          * @category Networking
          */
         {
             const slot = this.newSlot("proxyServers", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(ProxyServers);
+            slot.setFinalInitProto(SvProxyServers);
             slot.setIsSubnodeField(true);
         }
 
         /**
-         * @member {HomeAssistants} homeAssistants
+         * @member {SvHomeAssistants} homeAssistants
          * @category Home Automation
          */
         {
             const slot = this.newSlot("homeAssistants", null);
             slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(HomeAssistants);
+            slot.setFinalInitProto(SvHomeAssistants);
             slot.setIsSubnodeField(true);
         }
 
@@ -227,7 +227,7 @@
             const slot = this.newSlot("defaultChatModel", null);
             slot.setShouldStoreSlot(true);
             slot.setIsSubnodeField(false);
-            slot.setSlotType("AiChatModel");
+            slot.setSlotType("SvAiChatModel");
         }
 
         /**
@@ -264,7 +264,7 @@
      */
     aiSvServices () {
         const values = this.subnodeFields().map(sn => sn.value());
-        return values.filter(sn => sn.thisClass().isKindOf(AiService));
+        return values.filter(sn => sn.thisClass().isKindOf(SvAiService));
     }
 
     // --- ai model helpers ---

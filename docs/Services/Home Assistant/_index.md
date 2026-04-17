@@ -28,10 +28,10 @@ After authentication, the integration fetches four registries in parallel:
 
 | Group | HA WebSocket Command | Node Class |
 |---|---|---|
-| Areas | `config/area_registry/list` | `HomeAssistantArea` |
-| Devices | `config/device_registry/list` | `HomeAssistantDevice` |
-| Entities | `config/entity_registry/list` | `HomeAssistantEntity` |
-| States | `get_states` | `HomeAssistantState` |
+| Areas | `config/area_registry/list` | `SvHomeAssistantArea` |
+| SvDevices | `config/device_registry/list` | `SvHomeAssistantDevice` |
+| Entities | `config/entity_registry/list` | `SvHomeAssistantEntity` |
+| States | `get_states` | `SvHomeAssistantState` |
 
 Each registry response is an array of JSON objects. For each entry, a corresponding Strvct node is created and registered in an ID map for O(1) lookup.
 
@@ -39,11 +39,11 @@ Each registry response is an array of JSON objects. For each entry, a correspond
 
 After all four registries are loaded, a wiring pass connects objects into a hierarchy based on their foreign keys:
 
-- **Devices** attach to **Areas** via `area_id`
-- **Entities** attach to **Devices** via `device_id`
+- **SvDevices** attach to **Areas** via `area_id`
+- **Entities** attach to **SvDevices** via `device_id`
 - **States** attach to **Entities** via `entity_id`
 
-The result is a tree rooted at a `HomeAssistantFolder` node (titled "regions") that mirrors the physical layout of the home:
+The result is a tree rooted at a `SvHomeAssistantFolder` node (titled "regions") that mirrors the physical layout of the home:
 
 ```
 Home Assistant
@@ -64,25 +64,25 @@ Each object computes a short display name by stripping its parent's name as a pr
 ## Class Hierarchy
 
 ```
-HomeAssistants              — Collection of HA connections
- └── HomeAssistant          — One connection instance
+SvHomeAssistants              — Collection of HA connections
+ └── SvHomeAssistant          — One connection instance
       ├── rootFolder        — Navigable UI tree (regions)
-      ├── HomeAssistantAreas     ─┐
-      ├── HomeAssistantDevices    │ Data groups (hidden,
-      ├── HomeAssistantEntities   │ used for ID lookup)
-      └── HomeAssistantStates    ─┘
+      ├── SvHomeAssistantAreas     ─┐
+      ├── SvHomeAssistantDevices    │ Data groups (hidden,
+      ├── SvHomeAssistantEntities   │ used for ID lookup)
+      └── SvHomeAssistantStates    ─┘
 
-HomeAssistantGroup          — Base for the four registry groups
- ├── HomeAssistantAreas
- ├── HomeAssistantDevices
- ├── HomeAssistantEntities
- └── HomeAssistantStates
+SvHomeAssistantGroup          — Base for the four registry groups
+ ├── SvHomeAssistantAreas
+ ├── SvHomeAssistantDevices
+ ├── SvHomeAssistantEntities
+ └── SvHomeAssistantStates
 
-HomeAssistantObject         — Base for individual HA items
- ├── HomeAssistantArea
- ├── HomeAssistantDevice
- ├── HomeAssistantEntity
- └── HomeAssistantState
+SvHomeAssistantObject         — Base for individual HA items
+ ├── SvHomeAssistantArea
+ ├── SvHomeAssistantDevice
+ ├── SvHomeAssistantEntity
+ └── SvHomeAssistantState
 ```
 
 The four data group nodes (`areasNode`, `devicesNode`, `entitiesNode`, `statesNode`) are hidden from the UI — they exist for ID-based lookup during the wiring pass. The visible navigation tree is the `rootFolder`, which is populated with area nodes after all data is loaded and wired.

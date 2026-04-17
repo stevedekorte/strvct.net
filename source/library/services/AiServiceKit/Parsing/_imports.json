@@ -1,6 +1,6 @@
 [
-    "AiParsedResponseMessage.js",
-    "AiParsedResponseMessage_parsing.js",
-    "AiParsedResponseMessage_streaming.js",
-    "AiParsedResponseMessage_voiceNarration.js"
+    "SvAiParsedResponseMessage.js",
+    "SvAiParsedResponseMessage_parsing.js",
+    "SvAiParsedResponseMessage_streaming.js",
+    "SvAiParsedResponseMessage_voiceNarration.js"
 ]

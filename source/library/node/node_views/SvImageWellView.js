@@ -4,7 +4,7 @@
 
 /**
  * @class SvImageWellView
- * @extends NodeView
+ * @extends SvNodeView
  * @classdesc SvImageWellView
  *
  * - designed to contain an ImageView
@@ -18,7 +18,7 @@
 
 "use strict";
 
-(class SvImageWellView extends NodeView {
+(class SvImageWellView extends SvNodeView {
 
     /**
      * @description Initializes prototype slots for the SvImageWellView.

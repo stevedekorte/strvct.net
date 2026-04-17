@@ -15,7 +15,7 @@
  * **1. Data Owner Mode** (no target set):
  *    - The field stores key/value directly in its own slots
  *    - Used when the field is a persistent subnode that owns its data
- *    - Example: ConversationMessage stores speaker name in `key` and message content in `value`
+ *    - Example: SvConversationMessage stores speaker name in `key` and message content in `value`
  *
  * **2. Delegate Mode** (target and valueMethod set):
  *    - The field proxies to another node's slot

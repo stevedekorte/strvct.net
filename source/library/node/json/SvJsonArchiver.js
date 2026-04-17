@@ -41,7 +41,7 @@
 
     For example:
     ```
-    class AiJsonArchiver extends SvJsonArchiver {
+    class SvAiJsonArchiver extends SvJsonArchiver {
         initPrototype () {
             super.initPrototype();
             this.setFilterByAnnotationName("isInAiJsonSchema");

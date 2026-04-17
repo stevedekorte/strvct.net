@@ -316,7 +316,7 @@
 
 
     /**
-   * Initializes the AiRequest instance
+   * Initializes the SvAiRequest instance
    */
     init () {
         super.init();
@@ -451,7 +451,7 @@
    */
     responseSizeDescription () {
         const size = this.contentByteCount();
-        return ByteFormatter.clone().setValue(size).formattedValue();
+        return SvByteFormatter.clone().setValue(size).formattedValue();
     }
 
     /**
@@ -603,7 +603,7 @@
 
         xhr.responseType = this.responseType(); // "" or "text" is required for streams, "blob" or "arraybuffer" for binary data
 
-        const em = EventManager.shared();
+        const em = SvEventManager.shared();
 
         // NOTE: This is the reason why we use the false argument for the third argument to addEventListener:
         // https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
@@ -982,7 +982,7 @@
     /**
    * @category XHR
    * @description Copies the body to the clipboard
-   * @returns {AiRequest}
+   * @returns {SvAiRequest}
    */
     copyBody () {
         this.body().asyncCopyToClipboard();
@@ -992,7 +992,7 @@
     /**
    * @category XHR
    * @description Copies the response text to the clipboard
-   * @returns {AiRequest}
+   * @returns {SvAiRequest}
    */
     copyResponseText () {
         this.responseText().asyncCopyToClipboard();
@@ -1015,7 +1015,7 @@
     retryIfApplicable () {
         if (this.shouldAutoRetryForCurrentError() && !this.hasExceededMaxRetries()) {
             this.retryWithDelay(this.currentRetryDelaySeconds());
-            const ts = TimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
+            const ts = SvTimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
             e.message = "retrying in " + ts;
         }
     }
@@ -1344,7 +1344,7 @@
     /**
    * @category XHR
    * @description Aborts the request
-   * @returns {AiRequest}
+   * @returns {SvAiRequest}
    */
     abort () {
         if (this.isActive()) {
@@ -1356,7 +1356,7 @@
     /**
    * @category XHR
    * @description Shuts down the request
-   * @returns {AiRequest}
+   * @returns {SvAiRequest}
    */
     shutdown () {
         this.abort();

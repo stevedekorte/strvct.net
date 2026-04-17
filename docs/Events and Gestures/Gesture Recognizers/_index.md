@@ -6,9 +6,9 @@ Higher-level state machines that interpret sequences of events as meaningful ges
 
 The browser provides two separate event families for pointing — mouse events on desktop and touch events on mobile — with different semantics, coordinate systems, and lifecycle patterns. Without an abstraction layer, every interactive view needs parallel code paths for both input types, plus logic to prevent ghost clicks and handle edge cases where both fire simultaneously.
 
-Gesture recognizers eliminate this. They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view. A `PanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe — the view implements `onPanBegin` once and it works on every device. This is not just a convenience; it means new interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
+Gesture recognizers eliminate this. They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view. A `SvPanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe — the view implements `onPanBegin` once and it works on every device. This is not just a convenience; it means new interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
 
-Mouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
+SvMouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
 
 ## How Gestures Work
 
@@ -24,20 +24,20 @@ onGestureTypeComplete(gesture) — gesture finished successfully
 onGestureTypeCancelled(gesture) — gesture was interrupted
 ```
 
-For example, a `PanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanComplete`, and `onPanCancelled`.
+For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanComplete`, and `onPanCancelled`.
 
 ## Available Gestures
 
 | Recognizer | Detects | Key Configuration |
 |------------|---------|-------------------|
-| `TapGestureRecognizer` | Single or multi-tap | `numberOfTapsRequired`, `numberOfFingersRequired`, `maxHoldPeriod` |
-| `PanGestureRecognizer` | Click-and-drag | `minNumberOfFingersRequired`, `maxNumberOfFingersAllowed` |
-| `PinchGestureRecognizer` | Two-finger pinch/zoom | Fixed to 2 fingers |
-| `RotationGestureRecognizer` | Two-finger rotation | Fixed to 2 fingers |
-| `LongPressGestureRecognizer` | Press-and-hold | `timePeriod` (default 500ms) |
-| `SlideGestureRecognizer` | Directional slide | `direction` ("left", "right", "up", "down"), `maxPerpendicularDistToBegin` |
-| `EdgePanGestureRecognizer` | Pan from view edge | Subclasses for left, right, top, bottom |
-| `ScreenEdgePanGestureRecognizer` | Pan from screen edge | Subclasses for left, right, top, bottom |
+| `SvTapGestureRecognizer` | Single or multi-tap | `numberOfTapsRequired`, `numberOfFingersRequired`, `maxHoldPeriod` |
+| `SvPanGestureRecognizer` | Click-and-drag | `minNumberOfFingersRequired`, `maxNumberOfFingersAllowed` |
+| `SvPinchGestureRecognizer` | Two-finger pinch/zoom | Fixed to 2 fingers |
+| `SvRotationGestureRecognizer` | Two-finger rotation | Fixed to 2 fingers |
+| `SvLongPressGestureRecognizer` | Press-and-hold | `timePeriod` (default 500ms) |
+| `SvSlideGestureRecognizer` | Directional slide | `direction` ("left", "right", "up", "down"), `maxPerpendicularDistToBegin` |
+| `SvEdgePanGestureRecognizer` | Pan from view edge | Subclasses for left, right, top, bottom |
+| `SvScreenEdgePanGestureRecognizer` | Pan from screen edge | Subclasses for left, right, top, bottom |
 
 ## Adding Gestures to a View
 
@@ -52,15 +52,15 @@ view.addDefaultPanGesture();       // drag
 For custom configuration, clone a recognizer and configure it:
 
 ```javascript
-const gesture = LongPressGestureRecognizer.clone();
+const gesture = SvLongPressGestureRecognizer.clone();
 gesture.setTimePeriod(800); // 800ms hold
 view.addGestureRecognizer(gesture);
 // implement onLongPressComplete(gesture) on the view
 ```
 
-## GestureManager
+## SvGestureManager
 
-`GestureManager` is a singleton that coordinates competing gestures globally. When a gesture requests activation, the manager decides whether to accept it based on:
+`SvGestureManager` is a singleton that coordinates competing gestures globally. When a gesture requests activation, the manager decides whether to accept it based on:
 
 - Whether another gesture is already active
 - View hierarchy (child views can steal control from parent views)
@@ -90,7 +90,7 @@ This means application code rarely needs to manage gesture cleanup manually. As 
 
 Modern JavaScript engines use mark-and-sweep garbage collection, which correctly handles circular references. When a view is removed from its parent and no other rooted object references it, the entire cluster — view, gesture recognizers, and element-level event listeners — becomes unreachable and is collected automatically without explicit cleanup.
 
-The main GC concern is listeners registered on **rooted targets** like `window` or `document`, since those targets' internal listener registries hold strong references back to the callback (and through it, the gesture and view). Most gesture recognizers only attach `window` listeners temporarily during active tracking (between the down/press and up/finish events), so they clean up naturally when the gesture completes. `ScreenEdgePanGestureRecognizer` is the exception — it registers permanent `window` listeners and must be explicitly stopped or removed.
+The main GC concern is listeners registered on **rooted targets** like `window` or `document`, since those targets' internal listener registries hold strong references back to the callback (and through it, the gesture and view). Most gesture recognizers only attach `window` listeners temporarily during active tracking (between the down/press and up/finish events), so they clean up naturally when the gesture completes. `SvScreenEdgePanGestureRecognizer` is the exception — it registers permanent `window` listeners and must be explicitly stopped or removed.
 
 Timers (`setTimeout`) also root their target until they fire. Gesture recognizers use `addWeakTimeout()` for their internal timers (deactivation delays, long-press detection, etc.), which holds only a `WeakRef` to the target — allowing the object to be collected if it becomes unreachable, with the timer silently becoming a no-op.
 

@@ -3,7 +3,7 @@
 
 /**
  * @class SvErrorReport
- * @extends TitledNode
+ * @extends SvTitledNode
  * @classdesc A class for reporting errors to the server.
  *
  * Example:
@@ -12,7 +12,7 @@
  *
  */
 
-(class SvErrorReport extends TitledNode {
+(class SvErrorReport extends SvTitledNode {
 
     static async asyncSend (error, additionalJson = null) {
         const errorReport = SvErrorReport.clone();

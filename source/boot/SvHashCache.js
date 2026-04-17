@@ -55,7 +55,7 @@
 
     enableWeakMap () {
         //console.log(this.logPrefix(), "enabling weak map");
-        this.setWeakMap(new EnumerableWeakMap());
+        this.setWeakMap(new SvEnumerableWeakMap());
         return this;
     }
 

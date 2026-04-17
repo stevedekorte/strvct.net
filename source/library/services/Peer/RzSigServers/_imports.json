@@ -1,7 +1,7 @@
 [
-    "RzSigServerConns/_imports.json",
-    "RzPeer.js",
-    "RzSigServerPeers.js",
-    "RzSigServer.js",
-    "RzSigServers.js"
+    "SvRzSigServerConns/_imports.json",
+    "SvRzPeer.js",
+    "SvRzSigServerPeers.js",
+    "SvRzSigServer.js",
+    "SvRzSigServers.js"
 ]

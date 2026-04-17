@@ -12,7 +12,7 @@
 
     init () {
         super.init();
-        //WebDocument.shared().setTitle(this.app().name());
+        //SvWebDocument.shared().setTitle(this.app().name());
         return this;
     }
 

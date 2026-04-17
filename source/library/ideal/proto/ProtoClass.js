@@ -210,7 +210,7 @@
         this.newClassSlot("setterNameMap", new Map()); // TODO: share this between all classes
         this.newClassSlot("jsonSchemaDescription", null);
 
-        //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet());
+        //this.newClassSlot("allInstancesWeakSet", new SvEnumerableWeakSet());
     }
 
     // --- class slots and variables ---
@@ -1007,7 +1007,7 @@
     firstAncestorClassWithPostfix (aPostfix) {
         // not a great name but this walks back the ancestors (including self) and tries to find an
         // existing class with the same name as the ancestor + the given postfix
-        // useful for things like type + "View" or type + "Tile", etc
+        // useful for things like type + "View" or type + "SvTile", etc
         //this.logDebug(" firstAncestorClassWithPostfix(" + aPostfix + ")")
         const classes = this.thisClass().ancestorClassesIncludingSelf();
         for (let i = 0; i < classes.length; i++) {

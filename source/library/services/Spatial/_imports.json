@@ -1,6 +1,6 @@
 [
     "SpatialModelNodes.js",
-    "SpatialModelNode.js",
+    "SvSpatialModelNode.js",
     "SceneViewTile.js",
-    "SceneView.js"
+    "SvSceneView.js"
 ]

@@ -4,7 +4,7 @@ Cloud sync for object pools and collections using Firebase Storage.
 
 ## Overview
 
-Strvct's local persistence stores serialized object graphs in IndexedDB via `PersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
+Strvct's local persistence stores serialized object graphs in IndexedDB via `SvPersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
 
 - **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.
 - **Pool sync** — Entire object graphs are synced as a single pool. A write-ahead log of small delta files makes updates fast and efficient — only changed records are uploaded, with periodic compaction back to a full snapshot.
@@ -70,7 +70,7 @@ This is a "local wins" strategy — local changes always take priority.
 
 ### How It Works
 
-For complex object graphs where many interrelated objects need to be synced together, `SubObjectPool` serializes the entire pool as a single JSON document. The pool maps persistent unique IDs (puuids) to serialized object records:
+For complex object graphs where many interrelated objects need to be synced together, `SvSubObjectPool` serializes the entire pool as a single JSON document. The pool maps persistent unique IDs (puuids) to serialized object records:
 
 ```json
 {
@@ -83,7 +83,7 @@ This is stored at `/users/{userId}/{collectionName}/{poolId}/pool.json`.
 
 ### Write Ahead Log
 
-To avoid uploading the entire pool on every save, `SubObjectPool` tracks changes since the last sync and produces incremental deltas:
+To avoid uploading the entire pool on every save, `SvSubObjectPool` tracks changes since the last sync and produces incremental deltas:
 
 ```json
 {
@@ -125,9 +125,9 @@ The primary cloud-aware sync class. Configured with a user ID, folder name, and 
 - Retry logic with exponential backoff
 - Orphaned file cleanup
 
-### SubObjectPool
+### SvSubObjectPool
 
-An in-memory `ObjectPool` (not backed by IndexedDB) designed for cloud sync. Provides:
+An in-memory `SvObjectPool` (not backed by IndexedDB) designed for cloud sync. Provides:
 
 - `asyncSaveToCloud()` — saves with delta or full upload optimization
 - `collectDelta()` — produces incremental changes vs. last synced snapshot
@@ -147,11 +147,11 @@ Abstract base class for collection syncing. Defines the interface for:
 
 | Component | Backing Store | Cloud Sync | Purpose |
 |-----------|--------------|------------|---------|
-| `PersistentObjectPool` | IndexedDB | No | Local app state (singleton, never synced directly) |
-| `SubObjectPool` | In-memory | Yes | Session-level cloud sync with delta support |
+| `SvPersistentObjectPool` | IndexedDB | No | Local app state (singleton, never synced directly) |
+| `SvSubObjectPool` | In-memory | Yes | Session-level cloud sync with delta support |
 | `SvCloudSyncSource` | Firebase Storage | Yes | Collection-level cloud sync with manifests |
 
-The local `PersistentObjectPool` is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while sessions create a `SubObjectPool` snapshot for upload.
+The local `SvPersistentObjectPool` is the ground truth for the running application. Cloud sync operates alongside it — collections push individual items, while sessions create a `SvSubObjectPool` snapshot for upload.
 
 ## Auto-Sync Triggers
 

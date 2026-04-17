@@ -1,33 +1,33 @@
-⏺ I understand now. With an additional class to manage ToolDefinitions, the structure would be:
+⏺ I understand now. With an additional class to manage SvToolDefinitions, the structure would be:
 
-  1. ToolDefinitions - Manages the registry of available tool definitions
-    - Stores all available ToolDefinition instances
+  1. SvToolDefinitions - Manages the registry of available tool definitions
+    - Stores all available SvToolDefinition instances
     - Methods for registering/unregistering tools
     - Generates tool definition sections for system prompts
     - Provides lookup/filtering of available tools
-  2. ToolDefinition - Definition of a specific tool
-  3. ToolCalls - Manages active/historical tool calls
-    - Tracks all ToolCall instances
+  2. SvToolDefinition - Definition of a specific tool
+  3. SvToolCalls - Manages active/historical tool calls
+    - Tracks all SvToolCall instances
     - Handles persistence, error recovery, and state management
     - Provides the developer UI for inspecting calls
-    - Manages the lifecycle of ToolCall instances
-  4. ToolCall - Instance of a specific tool invocation
-  5. ToolResult - Result of a tool execution
+    - Manages the lifecycle of SvToolCall instances
+  4. SvToolCall - Instance of a specific tool invocation
+  5. SvToolResult - Result of a tool execution
 
   This separation makes sense - one class manages the available tools, and another manages the instances of those tools being used.
 
-> and a ToolResult instance would be owned by a ToolCall instance
+> and a SvToolResult instance would be owned by a SvToolCall instance
 
 ⏺ Correct. The ownership hierarchy would be:
 
-  1. ToolCalls (manages collection of tool calls)
-    - Contains many ToolCall instances
-  2. ToolCall (specific invocation)
-    - References its ToolDefinition (what tool is being called)
-    - Owns its ToolResult (result of the call)
+  1. SvToolCalls (manages collection of tool calls)
+    - Contains many SvToolCall instances
+  2. SvToolCall (specific invocation)
+    - References its SvToolDefinition (what tool is being called)
+    - Owns its SvToolResult (result of the call)
     - May have multiple historical responses if retries occurred
 
-  The ToolResult being owned by its ToolCall maintains a clean object model where:
+  The SvToolResult being owned by its SvToolCall maintains a clean object model where:
   - Each response knows which call created it
   - The call history is preserved (especially important for error handling/retries)
   - Responses are properly scoped to their specific invocation

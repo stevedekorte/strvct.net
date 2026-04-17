@@ -3,7 +3,7 @@
 /** * @module library.ideal.object
  */
 
-/** * @class MissingSlotError
+/** * @class SvMissingSlotError
  * @extends Error
  
  
@@ -14,10 +14,10 @@
  * Custom error class for missing slots.
  */
 
-SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
+SvGlobals.globals().SvMissingSlotError = (class SvMissingSlotError extends Error {
     constructor (message) {
         super(message);
-        this.name = "MissingSlotError";
+        this.name = "SvMissingSlotError";
     }
 });
 
@@ -110,7 +110,7 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
      * @param {Object} otherObject - The object to duplicate from.
      * @param {boolean} [ignoreMissingSlots=false] - Whether to ignore missing slots.
      * @returns {Object} This object after duplicating slot values.
-     * @throws {MissingSlotError} If a slot is missing and ignoreMissingSlots is false.
+     * @throws {SvMissingSlotError} If a slot is missing and ignoreMissingSlots is false.
      * @category Copying
      */
     duplicateSlotValuesFrom (otherObject, ignoreMissingSlots = false) {
@@ -134,7 +134,7 @@ SvGlobals.globals().MissingSlotError = (class MissingSlotError extends Error {
                     }
                 }
             } else if (!ignoreMissingSlots) {
-                throw new MissingSlotError();
+                throw new SvMissingSlotError();
             }
         });
         return this;

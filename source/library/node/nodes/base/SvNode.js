@@ -6,7 +6,7 @@
 /** * @class SvNode
  * @extends ProtoClass
  * @classdesc The base class of model objects that supports the protocol
- * used to sync with views (subclasses of NodeView).
+ * used to sync with views (subclasses of SvNodeView).
  * State and behavior here are focused on managing subnodes.
  * The SvStorableNode subclass is used to sync the model to
  * the persistence system.
@@ -153,9 +153,9 @@
 
         {
             const slot = this.newSlot("subnodes", null);
-            slot.setInitProto(SubnodesArray);
+            slot.setInitProto(SvSubnodesArray);
             slot.setDoesHookSetter(true);
-            slot.setSlotType("SubnodesArray");
+            slot.setSlotType("SvSubnodesArray");
             //slot.setIsRequired(true);
         }
 
@@ -1662,12 +1662,12 @@
             newValue = [];
         }
 
-        if (newValue.svType() !== "SubnodesArray") {
+        if (newValue.svType() !== "SvSubnodesArray") {
 
-            this._subnodes = SubnodesArray.from(newValue);
+            this._subnodes = SvSubnodesArray.from(newValue);
             newValue.removeDuplicates();
             newValue = this._subnodes;
-            assert(newValue.svType() === "SubnodesArray", "didUpdateSlotSubnodes: new value is not a SubnodesArray");
+            assert(newValue.svType() === "SvSubnodesArray", "didUpdateSlotSubnodes: new value is not a SvSubnodesArray");
         } else {
             /*
             if (this.hasNullSubnodes()) {

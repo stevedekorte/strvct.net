@@ -674,7 +674,7 @@
             orderedSubnodes.push(subnode);
         }
 
-        // Replace subnodes using copyFrom to maintain SubnodesArray type
+        // Replace subnodes using copyFrom to maintain SvSubnodesArray type
         collection.subnodes().copyFrom(orderedSubnodes);
     }
 

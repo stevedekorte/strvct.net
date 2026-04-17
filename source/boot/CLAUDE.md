@@ -1,4 +1,4 @@
-# STRVCT Boot System Documentation
+# STRVCT Boot System SvDocumentation
 
 ## Overview
 
@@ -17,13 +17,13 @@ The index-builder creates two key files that enable the framework's resource loa
 - Creates the index and CAM files in the `build/` directory
 - Starts from the root `_imports.json` and follows all references
 
-#### ResourceIndexer.js
+#### SvResourceIndexer.js
 - Command-line tool that generates `_imports.json` files for resource directories
 - Used to index assets like icons, sounds, images, etc.
-- Example usage: `node ResourceIndexer.js ./resources/icons ./resources/sounds`
+- Example usage: `node SvResourceIndexer.js ./resources/icons ./resources/sounds`
 
-#### ResourcesFolder.js
-- Helper class used by ResourceIndexer
+#### SvResourcesFolder.js
+- Helper class used by SvResourceIndexer
 - Recursively scans directories and creates `_imports.json` files
 - File filtering rules:
   - Excludes files starting with `.` (hidden files)
@@ -83,7 +83,7 @@ The build is typically run via:
 ```bash
 # From GameServer directory
 node ./site/strvct/source/boot/index-builder/ImportsIndexer.js
-node ./site/strvct/source/boot/index-builder/ResourceIndexer.js ./strvct/resources/icons ./strvct/resources/sounds
+node ./site/strvct/source/boot/index-builder/SvResourceIndexer.js ./strvct/resources/icons ./strvct/resources/sounds
 ```
 
 ## Runtime Loading

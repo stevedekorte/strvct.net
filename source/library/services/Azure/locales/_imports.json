@@ -1,6 +1,6 @@
 [
-    "AzureLocale.js",
-    "AzureLocales.js",
-    "AzureVoice.js",
-    "AzureVoices.js"
+    "SvAzureLocale.js",
+    "SvAzureLocales.js",
+    "SvAzureVoice.js",
+    "SvAzureVoices.js"
 ]

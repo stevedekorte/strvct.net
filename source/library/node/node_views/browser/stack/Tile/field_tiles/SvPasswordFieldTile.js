@@ -1,4 +1,4 @@
-/** * @module browser.stack.Tile.field_tiles
+/** * @module browser.stack.SvTile.field_tiles
  */
 
 /** * @class SvPasswordFieldTile

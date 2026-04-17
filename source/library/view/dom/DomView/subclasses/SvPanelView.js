@@ -1,22 +1,22 @@
 "use strict";
 
 /**
- * @module library.view.dom.DomView.subclasses
+ * @module library.view.dom.SvDomView.subclasses
  */
 
 /**
  * @class SvPanelView
- * @extends DomView
+ * @extends SvDomView
  * @classdesc SvPanelView is a customizable panel component with a title, subtitle, and a button.
  *
  * Example:
  * const panel = SvPanelView.clone().setTitle("Hello, world!").openInWindow();
- * panel.setButton1(ButtonView.clone().setTitle("OK").setTarget(this).setAction("onHitButton1"));
- * panel.setButton2(ButtonView.clone().setTitle("Cancel").setTarget(this).setAction("onHitButton2"));
+ * panel.setButton1(SvButtonView.clone().setTitle("OK").setTarget(this).setAction("onHitButton1"));
+ * panel.setButton2(SvButtonView.clone().setTitle("Cancel").setTarget(this).setAction("onHitButton2"));
  * panel.openInWindow(); // opens the panel in the main window, it will close when a button is hit
  */
 
-(class SvPanelView extends DomView {
+(class SvPanelView extends SvDomView {
 
     /**
      * Initialize prototype slots for the SvPanelView.
@@ -43,10 +43,10 @@
         // buttons row view
         {
             const slot = this.newSlot("buttonsRowView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         /**
-         * @member {ButtonView} button1 - The primary button of the panel.
+         * @member {SvButtonView} button1 - The primary button of the panel.
          * @category UI Components
          */
         {
@@ -170,7 +170,7 @@
 
         // buttonsRowView
         {
-            const v = DomView.clone();
+            const v = SvDomView.clone();
             v.setDisplay("flex");
             v.setFlexDirection("row");
             v.setJustifyContent("space-between");
@@ -215,7 +215,7 @@
     }
 
     newHitButton () {
-        const v = ButtonView.clone();
+        const v = SvButtonView.clone();
         v.setWidth("100%");
         v.setPaddingTop("0em");
         v.setPaddingBottom("0em");

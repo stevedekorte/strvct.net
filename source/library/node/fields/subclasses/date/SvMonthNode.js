@@ -6,10 +6,10 @@
 
 /**
  * @class SvMonthNode
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a month node in a date hierarchy. This class handles month-specific operations and properties.
  */
-(class SvMonthNode extends BaseNode {
+(class SvMonthNode extends SvBaseNode {
 
     /**
      * @description Initializes the prototype slots for the SvMonthNode.

@@ -67,7 +67,7 @@ node ./strvct/source/boot/index-builder/ImportsIndexer.js
 For non-code assets (icons, sounds), run the resource indexer:
 
 ```
-node ./strvct/source/boot/index-builder/ResourceIndexer.js ./resources/icons ./resources/sounds
+node ./strvct/source/boot/index-builder/SvResourceIndexer.js ./resources/icons ./resources/sounds
 ```
 
 If your project uses a `justfile`, these are typically wrapped in a `just build` command.

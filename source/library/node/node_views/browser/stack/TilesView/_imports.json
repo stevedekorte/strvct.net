@@ -1,10 +1,10 @@
 [
-    "TilesView.js",
-    "TilesView_dragViewProtocol.js",
-    "TilesView_selection.js",
-    "TilesView_orientation.js",
-    "TilesView_keyboard.js",
-    "TilesView_gestures.js",
-    "TilesView_helpers.js"
+    "SvTilesView.js",
+    "SvTilesView_dragViewProtocol.js",
+    "SvTilesView_selection.js",
+    "SvTilesView_orientation.js",
+    "SvTilesView_keyboard.js",
+    "SvTilesView_gestures.js",
+    "SvTilesView_helpers.js"
 ]
 

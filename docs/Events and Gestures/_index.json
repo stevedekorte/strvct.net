@@ -4,7 +4,7 @@
   "content": [
     {
       "type": "ContentText",
-      "body": "<p>STRVCT provides two layers for handling user interaction: <strong>event listeners</strong> that wrap native DOM events and forward them to handler methods on views, and <strong>gesture recognizers</strong> that interpret sequences of events as higher-level gestures like taps, pans, and pinches. A managed <strong>timer system</strong> supports deferred work with both strong and GC-friendly weak timeouts.</p><p>Most application code uses gesture recognizers rather than raw event listeners. The gesture system unifies mouse and touch input, handles multi-touch emulation on desktop, and coordinates competing gestures through a global <code>GestureManager</code>.</p>"
+      "body": "<p>STRVCT provides two layers for handling user interaction: <strong>event listeners</strong> that wrap native DOM events and forward them to handler methods on views, and <strong>gesture recognizers</strong> that interpret sequences of events as higher-level gestures like taps, pans, and pinches. A managed <strong>timer system</strong> supports deferred work with both strong and GC-friendly weak timeouts.</p><p>Most application code uses gesture recognizers rather than raw event listeners. The gesture system unifies mouse and touch input, handles multi-touch emulation on desktop, and coordinates competing gestures through a global <code>SvGestureManager</code>.</p>"
     },
     {
       "type": "ContentCards",

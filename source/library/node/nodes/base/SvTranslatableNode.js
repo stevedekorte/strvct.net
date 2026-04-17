@@ -6,7 +6,7 @@
 
 /**
  * @class SvTranslatableNode
- * @extends TitledNode
+ * @extends SvTitledNode
  * @classdesc Adds i18n translation support to the node hierarchy.
  * Provides translatedValueOfSlotNamed() for the presentation layer to
  * request translated display values. On cache miss, queues an async
@@ -23,10 +23,10 @@
  * and clear translationMaps on all in-memory nodes not in that set.
  *
  * Inheritance chain:
- * SvNode -> TitledNode -> SvTranslatableNode -> InspectableNode -> ViewableNode -> ...
+ * SvNode -> SvTitledNode -> SvTranslatableNode -> SvInspectableNode -> SvViewableNode -> ...
  */
 
-(class SvTranslatableNode extends TitledNode {
+(class SvTranslatableNode extends SvTitledNode {
 
     /**
      * @description Maximum number of entries in the node's translationMap.

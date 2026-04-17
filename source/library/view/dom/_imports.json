@@ -1,7 +1,7 @@
 [
     "Attributes/_imports.json",
     "Helpers/_imports.json",
-    "DomView/_imports.json",
+    "SvDomView/_imports.json",
     "BrowserDragAndDrop/_imports.json"
 ]
 

@@ -6,7 +6,7 @@
 
 /**
  * @class SvApp
- * @extends TitledNode
+ * @extends SvTitledNode
  * @classdesc A shared instance that represents the application.
  *
  * Handles:
@@ -23,7 +23,7 @@
  * But that felt difficult so instead we create an instance now, and ask it to load the object pool the store.
  */
 
-(class SvApp extends TitledNode {
+(class SvApp extends SvTitledNode {
 
     /**
      * @static
@@ -58,12 +58,12 @@
         }
 
         /**
-         * @member {PersistentObjectPool} store
+         * @member {SvPersistentObjectPool} store
          * @category Data Management
          */
         {
             const slot = this.newSlot("store", null);
-            slot.setSlotType("PersistentObjectPool");
+            slot.setSlotType("SvPersistentObjectPool");
         }
 
         /**
@@ -450,11 +450,11 @@
     */
 
     cloudStorageService () {
-        return FirebaseService.shared().firebaseStorageService();
+        return SvFirebaseService.shared().firebaseStorageService();
     }
 
     cloudDocStore () {
-        return FirebaseService.shared().firestoreDatabaseService();
+        return SvFirebaseService.shared().firestoreDatabaseService();
     }
 
     async asyncPublicUrlForBlob (blob) {

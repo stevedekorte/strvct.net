@@ -1,9 +1,9 @@
-/** * @module browser.stack.Tile.field_tiles
+/** * @module browser.stack.SvTile.field_tiles
  */
 
 /** * @class SvActionFieldTile
- * @extends Tile
- * @classdesc SvActionFieldTile is a specialized Tile class for action fields.
+ * @extends SvTile
+ * @classdesc SvActionFieldTile is a specialized SvTile class for action fields.
  * It includes a button view and handles user interactions.
  
  
@@ -15,16 +15,16 @@
 
 "use strict";
 
-(class SvActionFieldTile extends Tile {
+(class SvActionFieldTile extends SvTile {
 
     initPrototypeSlots () {
         /**
-         * @member {ButtonView} buttonView - The button view for this action field tile.
+         * @member {SvButtonView} buttonView - The button view for this action field tile.
          * @category UI
          */
         {
             const slot = this.newSlot("buttonView", null);
-            slot.setSlotType("ButtonView");
+            slot.setSlotType("SvButtonView");
         }
     }
 
@@ -39,7 +39,7 @@
         const cv = this.contentView();
         cv.flexCenterContent();
 
-        const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
+        const bv = SvButtonView.clone().setElementClassName("SvActionFieldView");
         this.setButtonView(bv);
 	    bv.setTarget(this).setAction("didClickButton");
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");

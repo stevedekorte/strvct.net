@@ -1,6 +1,6 @@
 "use strict";
 
-/** * @module library.view.dom.DomView.subclasses
+/** * @module library.view.dom.SvDomView.subclasses
  */
 
 /** * @class SvPasswordView

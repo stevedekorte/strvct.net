@@ -1,17 +1,17 @@
 [
     "ImageEditor/_imports.json",
     "Requests/_imports.json",
-    "AiChatModel.js",
-    "AiChatModels.js",
-    "Conversation.js",
-    "ConversationMessage.js",
-    "ChatInputNode.js",
-    "AiMessage.js",
-    "AiResponseMessage.js",
+    "SvAiChatModel.js",
+    "SvAiChatModels.js",
+    "SvConversation.js",
+    "SvConversationMessage.js",
+    "SvChatInputNode.js",
+    "SvAiMessage.js",
+    "SvAiResponseMessage.js",
     "Composer/_imports.json",
     "Tools/_imports.json",
     "Parsing/_imports.json",
-    "AiConversation.js",
-    "AiConversations.js",
-    "AiService.js"
+    "SvAiConversation.js",
+    "SvAiConversations.js",
+    "SvAiService.js"
 ]

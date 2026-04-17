@@ -6,28 +6,28 @@ How the view layer connects to model nodes, synchronizes state, and provides nav
 
 The defining feature of a naked objects framework is that the UI is derived from the model. In STRVCT, every node automatically gets a visual representation: the framework discovers the right view class, creates instances, wires up observation, and keeps the view synchronized as the model changes. Application developers define model classes and get a fully navigable, editable UI for free.
 
-## DomView Hierarchy
+## SvDomView Hierarchy
 
 Rather than subclassing DOM elements directly, STRVCT wraps them. Each layer in the view class hierarchy adds one capability:
 
-- **`ElementDomView`** — Wraps a DOM element. Manages creation, type, and class attributes.
-- **`VisibleDomView`** — Visibility toggling.
-- **`ResponderDomView`** — Responder chain for keyboard and mouse event routing.
-- **`ListenerDomView`** — Event listener registration and removal.
-- **`ControlDomView`** — Target/action pattern for connecting views to handlers.
-- **`SelectableDomView`** — Selection state with styled feedback.
-- **`EditableDomView`** — Content editability and edit mode.
-- **`GesturableDomView`** — Gesture recognizers: tap, double-tap, pan, long-press, pinch.
-- **`FlexDomView`** — Flexbox layout: direction, wrap, grow, shrink, basis, alignment.
-- **`StyledDomView`** — Named style states (unselected, selected, active, disabled) with theme support.
-- **`SubviewsDomView`** — Parent/child view hierarchy.
-- **`CssDomView`** — CSS variable application from dictionaries.
-- **`DomView`** — Combines all layers above.
-- **`NodeView`** — Adds model-to-view synchronization. The primary class for application views.
+- **`SvElementDomView`** — Wraps a DOM element. Manages creation, type, and class attributes.
+- **`SvVisibleDomView`** — Visibility toggling.
+- **`SvResponderDomView`** — Responder chain for keyboard and mouse event routing.
+- **`SvListenerDomView`** — Event listener registration and removal.
+- **`SvControlDomView`** — Target/action pattern for connecting views to handlers.
+- **`SvSelectableDomView`** — Selection state with styled feedback.
+- **`SvEditableDomView`** — Content editability and edit mode.
+- **`SvGesturableDomView`** — Gesture recognizers: tap, double-tap, pan, long-press, pinch.
+- **`SvFlexDomView`** — Flexbox layout: direction, wrap, grow, shrink, basis, alignment.
+- **`SvStyledDomView`** — Named style states (unselected, selected, active, disabled) with theme support.
+- **`SvSubviewsDomView`** — Parent/child view hierarchy.
+- **`SvCssDomView`** — CSS variable application from dictionaries.
+- **`SvDomView`** — Combines all layers above.
+- **`SvNodeView`** — Adds model-to-view synchronization. The primary class for application views.
 
-## NodeView
+## SvNodeView
 
-`NodeView` is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes change notifications, and manages the subview lifecycle.
+`SvNodeView` is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes change notifications, and manages the subview lifecycle.
 
 - `setNode(aNode)` — Assigns a node and begins observation via `SvNotificationCenter`.
 - `syncFromNode()` — Diffs visible subnodes against current subviews: creates, reuses, or removes as needed.
@@ -36,7 +36,7 @@ Rather than subclassing DOM elements directly, STRVCT wraps them. Each layer in 
 
 ## View Resolution
 
-The framework discovers view classes by naming convention: append `"View"` or `"Tile"` to the node's class name.
+The framework discovers view classes by naming convention: append `"View"` or `"SvTile"` to the node's class name.
 
 1. Check for an explicit `nodeViewClassName` override on the node.
 2. Walk the node's class hierarchy from most-derived to base.
@@ -57,41 +57,41 @@ The scheduler coalesces duplicate calls, detects sync loops, and can be paused d
 
 ## Navigation
 
-### StackView
+### SvStackView
 
-`StackView` is the single recursive building block of all navigation. It splits into two regions:
+`SvStackView` is the single recursive building block of all navigation. It splits into two regions:
 
-- **`NavView`** (master) — A column with a header, a scrollable `TilesView`, and a footer.
-- **`otherView`** (detail) — The content of the selected item — typically another `StackView`.
+- **`SvNavView`** (master) — A column with a header, a scrollable `SvTilesView`, and a footer.
+- **`otherView`** (detail) — The content of the selected item — typically another `SvStackView`.
 
-Selecting a tile creates a new `StackView` in the detail area for the selected node's subnodes. This is the entire navigation mechanism: the same master-detail split, repeated at every level.
+Selecting a tile creates a new `SvStackView` in the detail area for the selected node's subnodes. This is the entire navigation mechanism: the same master-detail split, repeated at every level.
 
 **Orientation** is set per node — `"right"` for horizontal (master left, detail right) or `"down"` for vertical (master top, detail below). Mixing orientations at different depths produces horizontal Miller Columns, vertical drill-down, or hybrids, all from the same structure.
 
 **Compaction**: When nested columns would exceed the viewport, upper columns collapse automatically. Navigating back re-expands them. Tiles along the selection path are highlighted; the focused tile gets a distinct highlight.
 
-### BrowserView
+### SvBrowserView
 
-`BrowserView` is the top-level container — a `StackView` whose detail area contains another `StackView`, whose detail area contains another, to any depth. It adds a breadcrumb header that auto-compacts on narrow viewports, replacing truncated segments with a back arrow.
+`SvBrowserView` is the top-level container — a `SvStackView` whose detail area contains another `SvStackView`, whose detail area contains another, to any depth. It adds a breadcrumb header that auto-compacts on narrow viewports, replacing truncated segments with a back arrow.
 
 - `navigateToNode(aNode)` — Navigate directly to a node.
 - `selectNodePathArray(pathArray)` — Set the navigation path programmatically.
 
-## TilesView
+## SvTilesView
 
-`TilesView` is the scrollable column that displays one `Tile` per visible subnode. It handles selection, keyboard navigation (arrow keys, Enter, Escape), long-press reordering, pinch gestures, and drag-and-drop between columns. Layout direction follows the parent `StackView`.
+`SvTilesView` is the scrollable column that displays one `SvTile` per visible subnode. It handles selection, keyboard navigation (arrow keys, Enter, Escape), long-press reordering, pinch gestures, and drag-and-drop between columns. Layout direction follows the parent `SvStackView`.
 
 ## Tiles
 
-Tiles are the items in a navigation column. All extend `NodeView`.
+Tiles are the items in a navigation column. All extend `SvNodeView`.
 
-**`Tile`** — The base class. Provides selection feedback, slide-to-delete (an inner `contentView` slides to reveal action buttons beneath), long-press reorder, and a style cascade that checks the node, then the tile, then the parent column.
+**`SvTile`** — The base class. Provides selection feedback, slide-to-delete (an inner `contentView` slides to reveal action buttons beneath), long-press reorder, and a style cascade that checks the node, then the tile, then the parent column.
 
-**`TitledTile`** — The default. Displays title, subtitle, and note from `SvSummaryNode`.
+**`SvTitledTile`** — The default. Displays title, subtitle, and note from `SvSummaryNode`.
 
-**`HeaderTile`** — A non-selectable section header.
+**`SvHeaderTile`** — A non-selectable section header.
 
-**`BreadCrumbsTile`** — A breadcrumb path that auto-compacts to fit.
+**`SvBreadCrumbsTile`** — A breadcrumb path that auto-compacts to fit.
 
 ## Field Tiles
 

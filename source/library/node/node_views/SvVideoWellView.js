@@ -2,7 +2,7 @@
  */
 
 /** * @class SvVideoWellView
- * @extends NodeView
+ * @extends SvNodeView
  * @classdesc SvVideoWellView
  *
  * - designed to contain a SvVideoView
@@ -17,7 +17,7 @@
 
 "use strict";
 
-(class SvVideoWellView extends NodeView {
+(class SvVideoWellView extends SvNodeView {
 
     /**
      * @description Initializes prototype slots for the VideoWellView.

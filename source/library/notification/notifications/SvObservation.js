@@ -384,7 +384,7 @@
         this.center().addObservation(this);
 
         /*
-        if (this.sender() && this.sender().isKindOf(FirestoreDatabaseService)) {
+        if (this.sender() && this.sender().isKindOf(SvFirestoreDatabaseService)) {
             console.log(this.logPrefix(), "STARTING WATCHING FOR " + this.sender().svTypeId() + " " + this.name());
 
             this.sender().onDidMutateObject(this);

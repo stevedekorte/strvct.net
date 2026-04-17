@@ -9,14 +9,14 @@
  * @extends ProtoClass
  * @classdesc Global singleton for content-addressable blob storage.
  * Provides efficient storage and retrieval of binary data using SHA-256 hashing.
- * Completely independent of ObjectPool - objects store blob references (hashes),
+ * Completely independent of SvObjectPool - objects store blob references (hashes),
  * and SvBlobPool manages the actual blob data.
  *
  * Features:
  * - Content-addressable storage (automatic deduplication)
  * - Metadata storage (contentType, size, timestamps, custom metadata)
  * - Weak reference cache for active blobs
- * - Async operations (does not affect ObjectPool synchronicity)
+ * - Async operations (does not affect SvObjectPool synchronicity)
  * - Works with both IndexedDB (browser) and LevelDB (Node.js)
  * - Backward compatible with old ArrayBuffer-only storage format
  *
@@ -76,14 +76,14 @@
         }
         {
             /**
-             * @member {EnumerableWeakMap} activeBlobs
+             * @member {SvEnumerableWeakMap} activeBlobs
              * @category Cache
              * @description Blobs known to the pool (previously loaded or referenced).
              * Maps hash keys to Blob objects. When ArrayBuffers are stored or retrieved,
              * they are converted to/from Blobs for caching.
              */
             const slot = this.newSlot("activeBlobs", null);
-            slot.setSlotType("EnumerableWeakMap");
+            slot.setSlotType("SvEnumerableWeakMap");
         }
         {
             /**
@@ -115,7 +115,7 @@
     init () {
         super.init();
         this.setIdb(SvIndexedDbFolder.clone());
-        this.setActiveBlobs(EnumerableWeakMap.clone());
+        this.setActiveBlobs(SvEnumerableWeakMap.clone());
         this.setIsDebugging(false);
     }
 

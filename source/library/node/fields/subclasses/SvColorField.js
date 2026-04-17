@@ -95,16 +95,16 @@
 
     /**
      * @description Converts the color field to a CSS color object.
-     * @returns {CssColor} A CSS color object representing the current color.
+     * @returns {SvCssColor} A CSS color object representing the current color.
      * @category Conversion
      */
     asCssColor () {
-        return CssColor.clone().set(this.red(), this.green(), this.blue(), this.alpha());
+        return SvCssColor.clone().set(this.red(), this.green(), this.blue(), this.alpha());
     }
 
     /**
      * @description Sets the color field from a CSS color object.
-     * @param {CssColor} aCssColor - The CSS color object to set the field from.
+     * @param {SvCssColor} aCssColor - The CSS color object to set the field from.
      * @returns {SvColorField} The current instance for method chaining.
      * @category Conversion
      */

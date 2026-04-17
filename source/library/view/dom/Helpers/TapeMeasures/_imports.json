@@ -1,5 +1,5 @@
 [
-    "CanvasTextTapeMeasure.js",
-    "DomTextTapeMeasure.js"
+    "SvCanvasTextTapeMeasure.js",
+    "SvDomTextTapeMeasure.js"
 ]
 

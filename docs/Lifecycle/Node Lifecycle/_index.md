@@ -5,7 +5,7 @@ Creation, three-phase initialization, parent-child relationships, and update not
 ## Class Hierarchy
 
 ```
-Object → ProtoClass → SvNode → ViewableNode → StyledNode → SvStorableNode
+Object → ProtoClass → SvNode → SvViewableNode → SvStyledNode → SvStorableNode
 ```
 
 ## Three-Phase Initialization

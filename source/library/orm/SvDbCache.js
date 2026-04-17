@@ -5,7 +5,7 @@
 "use strict";
 
 const { Base } = require("../../../GameServer/site/strvct/webserver");
-const FifoMap = require("/Users/steve/_projects/Active/undreamedof.ai/Servers/GameServer/site/strvct/source/library/ideal/categories/FifoMap.js");
+const SvFifoMap = require("/Users/steve/_projects/Active/undreamedof.ai/Servers/GameServer/site/strvct/source/library/ideal/categories/SvFifoMap.js");
 
 /**
  * @class SvDbCache
@@ -66,7 +66,7 @@ const SvDbCache = (class SvDbCache extends SvBase {
      */
     init () {
         super.init();
-        this.setFifoMap(FifoMap.clone());
+        this.setFifoMap(SvFifoMap.clone());
         this.setWeakRowMap(new WeakMap());
         return this;
     }

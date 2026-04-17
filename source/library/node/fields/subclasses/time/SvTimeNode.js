@@ -62,14 +62,14 @@
             slot.setSlotType("String");
         }
         /**
-         * @member {TimeFormatter} formatter - The formatter for the time.
+         * @member {SvTimeFormatter} formatter - The formatter for the time.
          * @category Formatting
          */
         {
             const slot = this.newSlot("formatter", null);
             slot.setShouldStoreSlot(true);
-            slot.setSlotType("TimeFormatter");
-            slot.setFinalInitProto(TimeFormatter);
+            slot.setSlotType("SvTimeFormatter");
+            slot.setFinalInitProto(SvTimeFormatter);
         }
     }
 
@@ -126,7 +126,7 @@
      */
     timeString () {
         if (!this.formatter()) { //tmp hack to deal with bug
-            this.setFormatter(TimeFormatter.clone());
+            this.setFormatter(SvTimeFormatter.clone());
         }
 
         return this.formatter().setDate(this.jsDate()).formattedValue();

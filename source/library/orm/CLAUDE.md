@@ -33,7 +33,7 @@ SvDatabase
 │   │   ├── defaultValue: any
 │   │   ├── isIndexed: boolean (true if column has database indexes)
 │   │   └── foreignKey: object (with referencedTable, referencedColumn, onUpdate, onDelete, constraintName)
-│   ├── weakRowMap: EnumerableWeakMap (cached row objects by primary key)
+│   ├── weakRowMap: SvEnumerableWeakMap (cached row objects by primary key)
 │   └── database: SvDatabase (parent reference)
 ├── databaseName: string
 └── activeTxs: Set<SvDbTx> (active transactions)
@@ -552,7 +552,7 @@ console.log(passwordColumn.getQueryPerformance());
 
 ### Row Object Caching
 - **Object Identity Consistency**: Multiple queries for the same database record return the identical JavaScript object instance
-- **Memory-Efficient Caching**: Uses `EnumerableWeakMap` for automatic garbage collection of unused row objects
+- **Memory-Efficient Caching**: Uses `SvEnumerableWeakMap` for automatic garbage collection of unused row objects
 - **Cache-First Query Strategy**: `selectRows()` automatically checks cache before creating new row instances
 - **Automatic Cache Management**: 
   - Rows added to cache when inserted (`insertRow()` → `onAssignedIdToRow()`)
@@ -629,11 +629,11 @@ await tx.begin(async () => {
 - **Sequelize** - Database connection and introspection
 - **Zone.js** - Async context tracking for transaction management
 
-## Related Documentation
+## Related SvDocumentation
 
-- **STRVCT Framework Documentation** - Base framework patterns and usage
-- **Sequelize Documentation** - Database abstraction layer
-- **Zone.js Documentation** - Async context tracking
+- **STRVCT Framework SvDocumentation** - Base framework patterns and usage
+- **Sequelize SvDocumentation** - Database abstraction layer
+- **Zone.js SvDocumentation** - Async context tracking
 
 
 ## Coding Guidelines

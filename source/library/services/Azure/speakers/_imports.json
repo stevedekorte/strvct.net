@@ -1,5 +1,5 @@
 [
     "requests/_imports.json",
-    "AzureSpeaker.js",
-    "AzureSpeakers.js"
+    "SvAzureSpeaker.js",
+    "SvAzureSpeakers.js"
 ]

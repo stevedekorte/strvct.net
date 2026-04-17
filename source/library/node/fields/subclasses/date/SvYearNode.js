@@ -6,10 +6,10 @@
 
 /**
  * @class SvYearNode
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a year node in a date-related structure.
  */
-(class SvYearNode extends BaseNode {
+(class SvYearNode extends SvBaseNode {
 
     /**
      * @description Initializes the prototype slots for the SvYearNode.

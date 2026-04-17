@@ -104,7 +104,7 @@
 
     /**
      * @description Override in subclasses to return the appropriate service.
-     * @returns {AiService}
+     * @returns {SvAiService}
      * @category Service
      */
     service () {
@@ -171,7 +171,7 @@
      * @category API
      */
     proxiedUrl (url) {
-        return ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+        return SvProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     }
 
     /**

@@ -9,7 +9,7 @@
  *
  * Usage:
  *   node rename-classes.js --dry-run
- *   node rename-classes.js --dry-run --only=RzMsg,RzMsgs
+ *   node rename-classes.js --dry-run --only=SvRzMsg,SvRzMsgs
  *   node rename-classes.js --dry-run --cluster=Rz
  *   node rename-classes.js --apply --cluster=Rz
  *

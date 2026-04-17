@@ -1,4 +1,4 @@
 [
-    "PersistentAtomicMap.js",
-    "PersistentAsyncMap.js"
+    "SvPersistentAtomicMap.js",
+    "SvPersistentAsyncMap.js"
 ]

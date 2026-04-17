@@ -4,7 +4,7 @@
 
 /**
  * Helper methods for DOM nodes.
- * Mostly for use inside DomView.
+ * Mostly for use inside SvDomView.
  * Not for general consumption as elements typically shouldn't be interacted with directly.
  */
 "use strict";

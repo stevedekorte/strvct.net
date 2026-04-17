@@ -10,7 +10,7 @@
  *
  * Lazy loading:
  * Instances keep a hash of the blob data which acts as a reference to the blob which can be lazy loaded from a BlobPool when needed.
- * So we store SvBlobNode (and the blob's hash) in the ObjectPool where it's sync loaded,
+ * So we store SvBlobNode (and the blob's hash) in the SvObjectPool where it's sync loaded,
  * and the blob data in SvBlobPool where it's lazy async loaded.
  *
  * Further notes:
@@ -143,13 +143,13 @@
         return this;
     }
 
-    // --- ObjectPool ---
+    // --- SvObjectPool ---
 
     /**
      * @description Returns a Set of Blob objects referenced by this node (for storing)
-     * Called by ObjectPool.storeBlobsReferencedByObject() when saving objects
+     * Called by SvObjectPool.storeBlobsReferencedByObject() when saving objects
      * @returns {Set<Blob>}
-     * @category ObjectPool
+     * @category SvObjectPool
      */
 
     /*
@@ -167,9 +167,9 @@
     /**
      * @description Returns a Set of blob hashes referenced by this node (for GC)
      * @returns {Set<string>}
-     * @category ObjectPool
+     * @category SvObjectPool
      */
-    referencedBlobHashesSet () { // called by ObjectPool.allBlobHashesSet()
+    referencedBlobHashesSet () { // called by SvObjectPool.allBlobHashesSet()
         const hashesSet = new Set();
         const hash = this.valueHash();
         if (hash) {

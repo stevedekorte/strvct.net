@@ -30,7 +30,7 @@
 
     finalInit () {
         super.finalInit();
-        this.setNodeTileClassName("BreadCrumbsTile");
+        this.setNodeTileClassName("SvBreadCrumbsTile");
     }
 
     async afterAppDidInit () {

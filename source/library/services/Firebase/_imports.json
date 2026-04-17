@@ -1,5 +1,5 @@
 [
     "FirestoreDatabase/_imports.json",
     "FirebaseStorage/_imports.json",
-    "FirebaseService.js"
+    "SvFirebaseService.js"
 ]

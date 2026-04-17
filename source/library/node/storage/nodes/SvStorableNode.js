@@ -4,15 +4,15 @@
  */
 
 /** * @class SvStorableNode
- * @extends StyledNode
+ * @extends SvStyledNode
  * @classdesc SvStorableNode is a thin subclass that overrides some slots and marks them as shouldStore.
- * It also hooks didUpdateSlot() to didMutate so ObjectPool (if observing mutations) gets told it needs to store the change.
+ * It also hooks didUpdateSlot() to didMutate so SvObjectPool (if observing mutations) gets told it needs to store the change.
  */
 
 /**
 
  */
-(class SvStorableNode extends StyledNode {
+(class SvStorableNode extends SvStyledNode {
 
     /**
      * @description Initializes the prototype slots for the SvStorableNode.
@@ -66,7 +66,7 @@
         }
 
         /**
-         * @member {SubnodesArray|null} subnodes
+         * @member {SvSubnodesArray|null} subnodes
          * @description The subnodes of the current node.
          * @category Node Structure
          */
@@ -77,7 +77,7 @@
             slot.setDoesHookGetter(true);
             //slot.setHookedGetterIsOneShot(true)
             //slot.setIsLazy(true) // no point in using this until we have coroutines?
-            slot.setInitProto(SubnodesArray);
+            slot.setInitProto(SvSubnodesArray);
 
             assert(slot.doesHookGetter());
         }

@@ -1,5 +1,5 @@
 [
-    "RzPeerConns/_imports.json",
-    "RzSigServerConn.js",
-    "RzSigServerConns.js"
+    "SvRzPeerConns/_imports.json",
+    "SvRzSigServerConn.js",
+    "SvRzSigServerConns.js"
 ]

@@ -1,6 +1,6 @@
 [
-    "Point.js",
-    "Rectangle.js",
-    "Transform.js"
+    "SvPoint.js",
+    "SvRectangle.js",
+    "SvTransform.js"
 ]
 

@@ -1,5 +1,5 @@
 [
     "external-libs/_imports.json",
-    "RzSigServers/_imports.json",
-    "PeerService.js"
+    "SvRzSigServers/_imports.json",
+    "SvPeerService.js"
 ]

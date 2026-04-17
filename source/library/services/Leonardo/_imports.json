@@ -2,5 +2,5 @@
     "RefImages/_imports.json",
     "Text to Image/_imports.json",
     "Style Transfers/_imports.json",
-    "LeonardoService.js"
+    "SvLeonardoService.js"
 ]

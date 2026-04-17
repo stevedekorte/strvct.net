@@ -1,10 +1,10 @@
 "use strict";
 
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles
  */
 
 /** * @class SvFieldTile
- * @extends Tile
+ * @extends SvTile
  * @classdesc
 
     Field views are tiles that present nodes which have key/value pairs,
@@ -20,7 +20,7 @@
  */
 
 
-(class SvFieldTile extends Tile {
+(class SvFieldTile extends SvTile {
 
     initPrototypeSlots () {
         {
@@ -38,67 +38,67 @@
             slot.setSlotType("String");
         }
         {
-            /** @member {DomView} kvSection
+            /** @member {SvDomView} kvSection
              * @description The key-value section view.
              */
             const slot = this.newSlot("kvSection", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} keyViewContainer
+            /** @member {SvDomView} keyViewContainer
              * @description The container for the key view.
              */
             const slot = this.newSlot("keyViewContainer", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} valueViewContainer
+            /** @member {SvDomView} valueViewContainer
              * @description The container for the value view.
              */
             const slot = this.newSlot("valueViewContainer", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} errorViewContainer
+            /** @member {SvDomView} errorViewContainer
              * @description The container for the error view.
              */
             const slot = this.newSlot("errorViewContainer", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} noteViewContainer
+            /** @member {SvDomView} noteViewContainer
              * @description The container for the note view.
              */
             const slot = this.newSlot("noteViewContainer", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} keyView
+            /** @member {SvDomView} keyView
              * @description The key view.
              */
             const slot = this.newSlot("keyView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} valueView
+            /** @member {SvDomView} valueView
              * @description The value view.
              */
             const slot = this.newSlot("valueView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} errorView
+            /** @member {SvDomView} errorView
              * @description The error view.
              */
             const slot = this.newSlot("errorView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
-            /** @member {DomView} noteView
+            /** @member {SvDomView} noteView
              * @description The note view.
              */
             const slot = this.newSlot("noteView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
         {
             /** @member {string} editableColor
@@ -218,7 +218,7 @@
 
     /**
      * @description Sets up the key view.
-     * @returns {DomView} The key view.
+     * @returns {SvDomView} The key view.
      */
     setupKeyView () {
         const v = SvTextView.clone().setElementClassName("SvFieldKeyView");
@@ -246,7 +246,7 @@
 
     /**
      * @description Sets up the value view.
-     * @returns {DomView} The value view.
+     * @returns {SvDomView} The value view.
      */
     setupValueView () {
         const v = this.createValueView();
@@ -268,10 +268,10 @@
 
     /**
      * @description Sets up the note view.
-     * @returns {DomView} The note view.
+     * @returns {SvDomView} The note view.
      */
     setupNoteView () {
-        const v = DomView.clone().setElementClassName("SvFieldTileNoteViewView");
+        const v = SvDomView.clone().setElementClassName("SvFieldTileNoteViewView");
         v.setDisplay("block");
         v.setPosition("relative");
         v.setOverflow("hidden");
@@ -290,10 +290,10 @@
 
     /**
      * @description Sets up the error view.
-     * @returns {DomView} The error view.
+     * @returns {SvDomView} The error view.
      */
     setupErrorView () {
-        const v = DomView.clone().setElementClassName("SvFieldTileErrorView");
+        const v = SvDomView.clone().setElementClassName("SvFieldTileErrorView");
         v.setUserSelect("text");
         v.setSpellCheck(false);
         //v.setInnerHtml("error")
@@ -307,7 +307,7 @@
 
     /**
      * @description Creates the value view.
-     * @returns {DomView} The value view.
+     * @returns {SvDomView} The value view.
      */
     createValueView () {
         const v = SvTextView.clone().setElementClassName("SvFieldValueView");
@@ -336,16 +336,16 @@
 
     /**
      * @description Gets the current background CSS color.
-     * @returns {CssColor} The current background color.
+     * @returns {SvCssColor} The current background color.
      */
     currentBackgroundCssColor () {
         const bg = this.navView().computedBackgroundColor();
-        return CssColor.clone().setCssColorString(bg);
+        return SvCssColor.clone().setCssColorString(bg);
     }
 
     /**
      * @description Gets the value background CSS color.
-     * @returns {CssColor} The value background color.
+     * @returns {SvCssColor} The value background color.
      */
     valueBackgroundCssColor () {
         return this.currentBackgroundCssColor().contrastComplement(0.2);
@@ -610,7 +610,7 @@
 
 
         /*
-        if (this.node().svType() === "ChatInputNode" && newValue === "") {
+        if (this.node().svType() === "SvChatInputNode" && newValue === "") {
             console.log(this.logPrefix(), "SvChatInputTile syncValueFromNode(SvChatInputNode) newValue = [" + newValue + "]");
             valueView.setValue(newValue);
         }
@@ -758,7 +758,7 @@
 
     /**
      * @description Called when an edit occurs.
-     * @param {DomView} changedView - The changed view.
+     * @param {SvDomView} changedView - The changed view.
      * @returns {SvFieldTile} The current instance.
      */
     onDidEdit (changedView) { // sent up subview chain when an edit occurs
@@ -774,7 +774,7 @@
 
     /**
      * @description Called when an input occurs.
-     * @param {DomView} changedView - The changed view.
+     * @param {SvDomView} changedView - The changed view.
      * @returns {SvFieldTile} The current instance.
      */
     onDidInput (changedView) { // sent up subview chain when an input occurs

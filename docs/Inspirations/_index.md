@@ -15,6 +15,6 @@ STRVCT's object model draws from the Smalltalk tradition. Naming follows Smallta
 The application framework layer is heavily influenced by Apple's Cocoa and UIKit:
 
 - **Notification center** — `SvNotificationCenter` with observations mirrors `NSNotificationCenter` closely, providing publish/subscribe communication between loosely coupled components.
-- **Responder chain** — `ResponderDomView` implements `becomeFirstResponder()`, `releaseFirstResponder()`, `acceptsFirstResponder`, and `nextKeyView`, mapping directly to Cocoa's `NSResponder` / UIKit's `UIResponder` model for keyboard focus and event routing.
-- **Gesture recognizers** — `TapGestureRecognizer`, `PanGestureRecognizer`, `PinchGestureRecognizer`, and `LongPressGestureRecognizer` follow the UIKit `UIGestureRecognizer` pattern, including centralized arbitration of competing gestures via `GestureManager`.
+- **Responder chain** — `SvResponderDomView` implements `becomeFirstResponder()`, `releaseFirstResponder()`, `acceptsFirstResponder`, and `nextKeyView`, mapping directly to Cocoa's `NSResponder` / UIKit's `UIResponder` model for keyboard focus and event routing.
+- **Gesture recognizers** — `SvTapGestureRecognizer`, `SvPanGestureRecognizer`, `SvPinchGestureRecognizer`, and `SvLongPressGestureRecognizer` follow the UIKit `UIGestureRecognizer` pattern, including centralized arbitration of competing gestures via `SvGestureManager`.
 - **Delegate pattern** — Used throughout for communication between views, listeners, and gesture recognizers, following Cocoa's preference for delegation over subclassing.

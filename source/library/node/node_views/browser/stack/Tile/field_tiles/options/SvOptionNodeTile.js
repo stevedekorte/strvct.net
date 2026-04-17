@@ -1,8 +1,8 @@
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles.options
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles.options
  */
 
 /** * @class SvOptionNodeTile
- * @extends TitledTile
+ * @extends SvTitledTile
  * @classdesc SvOptionNodeTile represents an option node tile in the browser stack.
  
  
@@ -13,7 +13,7 @@
  */
 "use strict";
 
-(class SvOptionNodeTile extends TitledTile {
+(class SvOptionNodeTile extends SvTitledTile {
 
     /**
      * @description Toggles the option state if editable

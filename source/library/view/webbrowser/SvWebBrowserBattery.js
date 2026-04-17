@@ -24,7 +24,7 @@
 
         {
             const slot = this.newSlot("batteryListener", null);
-            slot.setSlotType("BatteryListener");
+            slot.setSlotType("SvBatteryListener");
         }
 
         {
@@ -81,7 +81,7 @@
     }
 
     setupBatteryListener () {
-        const listener = BatteryListener.clone();
+        const listener = SvBatteryListener.clone();
         listener.setListenTarget(this.batteryManager());
         listener.setDelegate(this);
         listener.setIsListening(true);
@@ -104,7 +104,7 @@
         return this;
     }
 
-    // --- BatteryListener delegate methods ---
+    // --- SvBatteryListener delegate methods ---
 
     /**
      * @description Called when charging state changes.

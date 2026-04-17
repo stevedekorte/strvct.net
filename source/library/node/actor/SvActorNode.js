@@ -23,7 +23,7 @@
 
 */
 
-(class SvActorNode extends BaseNode {
+(class SvActorNode extends SvBaseNode {
 
     initPrototypeSlots () {
 

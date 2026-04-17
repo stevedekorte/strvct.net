@@ -8,7 +8,7 @@ The system addresses a fundamental challenge in web applications: **efficiently 
 
 **Key problems solved:**
 
-1. **Synchronous vs Async APIs**: The main `ObjectPool` persistence system uses synchronous operations for fast object loading. Binary blobs are large and require async I/O. Separating them prevents blocking.
+1. **Synchronous vs Async APIs**: The main `SvObjectPool` persistence system uses synchronous operations for fast object loading. Binary blobs are large and require async I/O. Separating them prevents blocking.
 
 2. **Deduplication**: Images or media might be referenced by multiple objects. Content-addressable storage (keyed by SHA-256 hash) means identical blobs are stored once.
 
@@ -36,7 +36,7 @@ The solution uses a **dual-database architecture** with hash-based references be
 
 | Component | Purpose | Storage |
 |-----------|---------|---------|
-| **ObjectPool** | Stores structured objects (characters, sessions, etc.) | IndexedDB (sync API) |
+| **SvObjectPool** | Stores structured objects (characters, sessions, etc.) | IndexedDB (sync API) |
 | **SvBlobPool** | Stores binary blobs (images, audio, video) | Separate IndexedDB (async API) |
 
 **The key insight**: Objects don't store blobs directly. Instead, they store a SHA-256 hash that acts as a pointer to the blob in `SvBlobPool`. This provides:
@@ -70,7 +70,7 @@ Media-specific classes like **SvImageNode** and **SvVideoNode** extend `SvCloudB
 
 2. **Deduplication**: When storing a blob, it computes the SHA-256 hash. If that hash already exists, the store is skipped.
 
-3. **Weak Reference Cache**: Uses `EnumerableWeakMap` for `activeBlobs` - blobs in memory are cached by hash, but can be garbage collected when not in use.
+3. **Weak Reference Cache**: Uses `SvEnumerableWeakMap` for `activeBlobs` - blobs in memory are cached by hash, but can be garbage collected when not in use.
 
 4. **Concurrency Control**: Tracks active read/write operations via `activeReadsMap` and `activeWritesMap` to prevent duplicate concurrent operations on the same hash.
 
@@ -111,7 +111,7 @@ const meta = await SvBlobPool.shared().asyncGetMetadata(hash);
 
 2. **Auto-hashing**: When `blobValue` is set, `didUpdateSlotBlobValue()` automatically computes the hash and writes to local storage.
 
-3. **GC Integration**: `referencedBlobHashesSet()` returns the hash for garbage collection coordination with `ObjectPool`.
+3. **GC Integration**: `referencedBlobHashesSet()` returns the hash for garbage collection coordination with `SvObjectPool`.
 
 ---
 
@@ -157,13 +157,13 @@ SvBlobNode computes SHA-256 hash
         ↓
 SvBlobPool.asyncStoreBlob() stores ArrayBuffer + metadata
         ↓
-SvBlobNode stores only the hash in ObjectPool
+SvBlobNode stores only the hash in SvObjectPool
 ```
 
 ### Loading an Image
 
 ```
-Object loads from ObjectPool (has valueHash: "abc123...")
+Object loads from SvObjectPool (has valueHash: "abc123...")
         ↓
 asyncBlobValue() called
         ↓
@@ -178,15 +178,15 @@ Blob cached in activeBlobs for future access
 
 ## Garbage Collection Coordination
 
-Since blobs and objects are stored in separate databases, garbage collection requires coordination between `ObjectPool` and `SvBlobPool` to prevent orphaned blobs from accumulating.
+Since blobs and objects are stored in separate databases, garbage collection requires coordination between `SvObjectPool` and `SvBlobPool` to prevent orphaned blobs from accumulating.
 
 ### How It Works
 
 1. **Objects report their blob references**: Any object that holds blob references implements `referencedBlobHashesSet()`, which returns a `Set` of SHA-256 hashes it depends on.
 
-2. **ObjectPool aggregates all references**: When GC runs, `ObjectPool.allBlobHashesSet()` iterates through all stored objects, calling `referencedBlobHashesSet()` on each, and combines them into a master set of referenced hashes.
+2. **SvObjectPool aggregates all references**: When GC runs, `SvObjectPool.allBlobHashesSet()` iterates through all stored objects, calling `referencedBlobHashesSet()` on each, and combines them into a master set of referenced hashes.
 
-3. **BlobPool removes orphans**: `ObjectPool.asyncCollectBlobs()` passes this master set to `SvBlobPool.asyncCollectUnreferencedKeySet()`, which:
+3. **BlobPool removes orphans**: `SvObjectPool.asyncCollectBlobs()` passes this master set to `SvBlobPool.asyncCollectUnreferencedKeySet()`, which:
    - Gets all keys currently in blob storage
    - Computes the difference (keys in storage but not in the reference set)
    - Deletes those orphaned blobs and their metadata
@@ -194,9 +194,9 @@ Since blobs and objects are stored in separate databases, garbage collection req
 ### Code Flow
 
 ```
-ObjectPool.asyncCollectBlobs()
+SvObjectPool.asyncCollectBlobs()
         ↓
-ObjectPool.allBlobHashesSet()
+SvObjectPool.allBlobHashesSet()
         ↓
     ┌───────────────────────────────────────┐
     │  for each object in allObjects():     │
@@ -215,7 +215,7 @@ SvBlobPool.asyncCollectUnreferencedKeySet(hashesSet)
 
 ### Implementation Details
 
-**In ObjectPool** (`ObjectPool.js`):
+**In SvObjectPool** (`SvObjectPool.js`):
 ```javascript
 allBlobHashesSet () {
     const hashesSet = new Set();
@@ -250,7 +250,7 @@ referencedBlobHashesSet () {
 ### Key Points
 
 - **Mark-and-sweep style**: The approach mirrors classic GC - mark what's referenced, sweep the rest
-- **Async-safe**: Blob GC is fully async and doesn't block the synchronous ObjectPool operations
+- **Async-safe**: Blob GC is fully async and doesn't block the synchronous SvObjectPool operations
 - **Metadata cleanup**: When a blob is removed, its `/meta` key is also deleted
 - **Deduplication preserved**: If multiple objects reference the same hash, the blob stays until all references are gone
 

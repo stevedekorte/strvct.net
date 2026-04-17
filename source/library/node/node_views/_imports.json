@@ -1,6 +1,6 @@
 [
     "_css.css",
-    "NodeView.js",
+    "SvNodeView.js",
     "SvCoachableView.js",
     "SvImageWellView.js",
     "SvImageView.js",

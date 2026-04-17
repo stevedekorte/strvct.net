@@ -2,7 +2,7 @@
  */
 
 /** * @class SvMeridiemNode
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc SvMeridiemNode represents a meridiem (AM/PM) node in a time-related structure.
  
  
@@ -13,7 +13,7 @@
  */
 "use strict";
 
-(class SvMeridiemNode extends BaseNode {
+(class SvMeridiemNode extends SvBaseNode {
 
     /**
      * Initializes the prototype slots for the SvMeridiemNode.

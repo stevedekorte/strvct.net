@@ -1,5 +1,5 @@
 [
-    "AnthropicRequest.js",
-    "AnthropicService.js",
-    "ToolDefinition_anthropic.js"
+    "SvAnthropicRequest.js",
+    "SvAnthropicService.js",
+    "SvToolDefinition_anthropic.js"
 ]

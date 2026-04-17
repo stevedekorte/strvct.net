@@ -8,7 +8,7 @@
  * @classdesc
  * SvStyleSheet
  *
- * const sheet = DocumentBody.shared().styleSheets().first()
+ * const sheet = SvDocumentBody.shared().styleSheets().first()
  * sheet.setSelectorProperty("body", "color", "red")
  */
 (class SvStyleSheet extends ProtoClass {

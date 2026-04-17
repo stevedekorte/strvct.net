@@ -87,7 +87,7 @@
         const n2l = this.nameToListenersMap();
 
         if (!n2l.has(name)) {
-            n2l.set(name, new EnumerableWeakSet());
+            n2l.set(name, new SvEnumerableWeakSet());
         }
         return n2l.get(name);
     }

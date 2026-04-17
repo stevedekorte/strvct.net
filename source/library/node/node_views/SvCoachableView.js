@@ -6,8 +6,8 @@
 
 /**
  * @class SvCoachableView
- * @extends NodeView
- * @classdesc Adds coach mark support to NodeView. Views can register themselves with the
+ * @extends SvNodeView
+ * @classdesc Adds coach mark support to SvNodeView. Views can register themselves with the
  * coach mark manager to provide contextual help to users.
  *
  * NOTES: At first, we'll stick to just supporting one coach mark at the view level.
@@ -34,7 +34,7 @@
  *
  */
 
-(class SvCoachableView extends NodeView {
+(class SvCoachableView extends SvNodeView {
 
     /**
      * @description Initializes the prototype slots for the SvCoachableView

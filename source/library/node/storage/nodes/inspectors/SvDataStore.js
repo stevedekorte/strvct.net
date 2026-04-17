@@ -2,7 +2,7 @@
  */
 
 /** * @class SvDataStore
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc A visible representation of the storage system
  
  
@@ -11,7 +11,7 @@
 /**
 
  */
-(class SvDataStore extends BaseNode {
+(class SvDataStore extends SvBaseNode {
 
     /**
      * @static
@@ -106,7 +106,7 @@
     subnodeForClassName (aClassName) {
         let subnode = this.firstSubnodeWithTitle(aClassName);
         if (!subnode) {
-            subnode = BaseNode.clone().setTitle(aClassName).setNoteIsSubnodeCount(true);
+            subnode = SvBaseNode.clone().setTitle(aClassName).setNoteIsSubnodeCount(true);
             this.justAddSubnode(subnode);
         }
         return subnode;

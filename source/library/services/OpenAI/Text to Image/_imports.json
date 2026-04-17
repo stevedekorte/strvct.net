@@ -1,5 +1,5 @@
 [
     "images/_imports.json",
-    "OpenAiImagePrompt.js",
-    "OpenAiImagePrompts.js"
+    "SvOpenAiImagePrompt.js",
+    "SvOpenAiImagePrompts.js"
 ]

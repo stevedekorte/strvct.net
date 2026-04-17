@@ -8,15 +8,15 @@ These classes do not run proxy servers — they are client-side configuration no
 
 The primary use case is routing AI service API calls through a proxy that holds the real API keys, so that browser clients never see provider credentials directly. The client sends a Firebase user auth token to the proxy, and the proxy adds the appropriate API key before forwarding the request.
 
-## ProxyServers
+## SvProxyServers
 
-`ProxyServers` is a singleton collection of `ProxyServer` entries, accessible via `ProxyServers.shared()`. In practice, a single `DefaultProxyServer` entry handles all routing, accessible via `ProxyServers.shared().defaultServer()`.
+`SvProxyServers` is a singleton collection of `SvProxyServer` entries, accessible via `SvProxyServers.shared()`. In practice, a single `SvDefaultProxyServer` entry handles all routing, accessible via `SvProxyServers.shared().defaultServer()`.
 
 Users can add, remove, and reorder proxy entries through the generated inspector UI. All entries are persisted to IndexedDB.
 
-## ProxyServer
+## SvProxyServer
 
-Each `ProxyServer` node stores the connection details for one proxy endpoint:
+Each `SvProxyServer` node stores the connection details for one proxy endpoint:
 
 | Slot | Type | Default | Purpose |
 |---|---|---|---|
@@ -43,9 +43,9 @@ The target URL is passed as a query parameter (named by `parameterName`), so the
 
 If `isDisabled` is true, the target URL is returned unchanged — useful for direct API access during development.
 
-## DefaultProxyServer
+## SvDefaultProxyServer
 
-`DefaultProxyServer` extends `ProxyServer` and auto-configures itself from the browser's current page URL on startup. For a page served at `https://localhost:8443`, it defaults to:
+`SvDefaultProxyServer` extends `SvProxyServer` and auto-configures itself from the browser's current page URL on startup. For a page served at `https://localhost:8443`, it defaults to:
 
 - `isSecure`: `true`
 - `hostname`: `localhost`
@@ -57,13 +57,13 @@ This means the proxy is assumed to run on the same origin as the application by 
 
 ## Integration with AI Services
 
-`AiRequest` has a `needsProxy` slot (default `true`). When making an API call, the request checks this flag and rewrites the URL if needed:
+`SvAiRequest` has a `needsProxy` slot (default `true`). When making an API call, the request checks this flag and rewrites the URL if needed:
 
 ```javascript
 async activeApiUrl () {
     let url = this.apiUrl();  // e.g. "https://api.openai.com/v1/chat/completions"
     if (this.needsProxy()) {
-        url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+        url = SvProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     }
     return url;
 }

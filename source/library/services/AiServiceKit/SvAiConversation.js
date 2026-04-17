@@ -1,0 +1,649 @@
+"use strict";
+
+/**
+ * @module library.services.AiServiceKit
+ */
+
+/**
+ * @class SvAiConversation
+ * @extends SvConversation
+ * @classdesc Represents an AI conversation. It adds state for:
+ *  - chat model
+ *  - ai speaker name
+ *  - token count
+ *  - response message class
+ *
+ * Delgates:
+ *  - prompt delegate (to get the system prompt)
+ *  - tag delegate (to send tag messages to the client)
+ *  - client state delegate (to read and write client state)
+ *
+ * History:
+ *  - jsonHistoryString (stringified json of the chat history)
+ *
+ * Tools:
+ *  - assistantApiCalls (list of tool apis available to the assistant)
+ *
+ */
+
+(class SvAiConversation extends SvConversation {
+
+    /**
+   * @description Initializes the prototype slots for the SvAiConversation class.
+   * @category Initialization
+   */
+    initPrototypeSlots () {
+
+        /**
+     * @member {SvAiChatModel} chatModel - Reference to SvAiChatModel
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("chatModel", null);
+            slot.setSlotType("SvAiChatModel");
+        }
+
+        /**
+     * @member {SvAiResponseMessage} responseMsgClass - Class for response messages
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("responseMsgClass", null);
+            slot.setSlotType("SvAiResponseMessage class");
+        }
+
+        /**
+     * @member {Number} tokenCount - Sum of tokens of all messages. A null value means we need to update the token count. We set to null on each new message so we can lazy update the token count.
+     * @category State
+     */
+        {
+            const slot = this.newSlot("tokenCount", 0);
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+
+        /**
+     * @member {SvAiService} service - Pointer to SvAiService instance
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("service", null);
+            slot.setSlotType("SvAiService");
+        }
+
+        /**
+     * @member {String} aiSpeakerName - Name of the AI speaker
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("aiSpeakerName", null);
+            slot.setSlotType("String");
+        }
+
+        /**
+     * @member {Object} tagDelegate - Delegate to receive tag messages from responses.
+     * @category Delegates
+     */
+        {
+            const slot = this.newSlot("tagDelegate", null);
+            slot.setSlotType("Object");
+        }
+
+        /**
+     * @member {Object} assistedObject - Delegate to receive getJson, asRootJsonSchemaString, assistantPromptString messages
+     * @category Delegates
+     */
+        {
+            const slot = this.newSlot("assistedObject", null);
+            slot.setSlotType("Object");
+        }
+
+        /**
+     * @member {Object} promptDelegate - Delegate from which we get the system prompt for the conversation.
+     * @category Delegates
+     */
+        {
+            const slot = this.newSlot("promptDelegate", null); // on start, we send a systemPromptString message to the delegate.
+            slot.setSlotType("Object");
+        }
+
+        /**
+     * @member {String} jsonHistoryString - The JSON history string of the conversation.
+     * @category State
+     */
+        {
+            const slot = this.newSlot("jsonHistoryString", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+            slot.setCanInspect(false);
+        }
+
+        /**
+     * @member {SvAssistantToolKit} assistantToolKit - The tool kit for the assistant.
+     * @category Configuration
+     */
+        {
+            const slot = this.newSlot("assistantToolKit", null);
+            slot.setFinalInitProto(SvAssistantToolKit);
+            slot.setCanInspect(true);
+        }
+
+        this.initPrototypeToolSlots();
+    }
+
+    initPrototype () {
+        this.setSubnodeClasses([SvAiMessage]);
+        this.setResponseMsgClass(SvAiParsedResponseMessage);
+
+        //this.setNodeMinTileWidth(500);
+        //this.setNodeCanEditColumnWidth(true);
+
+        this.setNodeFillsRemainingWidth(true);
+        this.setNodeCanEditColumnWidth(false);
+        this.setNodeMinTileWidth(600);
+    }
+
+    finalInit () {
+        super.finalInit();
+
+        // careful - could potentially override descendant initPrototype
+        this.setNodeFillsRemainingWidth(true);
+        this.setNodeCanEditColumnWidth(false);
+        this.setNodeMinTileWidth(600);
+
+        this.setTagDelegate(this); // needed to get tool calls
+        this.assistantToolKit().setConversation(this); // TODO: replace with nodeOwner
+        this.setResponseMsgClass(SvAiParsedResponseMessage);
+    }
+
+    didInit () {
+        super.didInit();
+        //this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+        return this;
+    }
+
+    prepareForFirstAccess () {
+        super.prepareForFirstAccess();
+        this.assistantToolKit().toolDefinitions().addToolsForInstance(this); // add any tools defined in the conversation
+        return this;
+    }
+
+    initPrototypeToolSlots () { // no super initPrototypeToolSlots() because we are not an assistable JSON group?
+    // placeholder for subclasses to override
+        assert(this.isPrototype(), "initPrototypeToolSlots() should only be called on a prototype");
+    }
+
+    jsonHistoryString () {
+        const lastMessage = this.messages().last();
+        if (lastMessage) {
+            const jsonHistory = lastMessage.jsonHistory();
+            const s = JSON.stableStringifyWithStdOptions(jsonHistory, null, 2);
+            return s;
+        }
+        return "[no messages]";
+    }
+
+    /**
+   * @description Gets the service associated with the chat model.
+   * @returns {Object} The service object.
+   * @category Service
+   */
+    service () {
+        return this.chatModel().service();
+    }
+
+    /**
+   * @description Gets the chat model for the conversation.
+   * @returns {SvAiChatModel} The chat model.
+   * @category Configuration
+   */
+    chatModel () {
+        if (this._chatModel) {
+            return this._chatModel;
+        }
+
+        /*
+        const ownerNode = this.firstOwnerChainNodeThatRespondsTo("chatModel");
+        if (ownerNode) {
+            return ownerNode.chatModel();
+        }
+        */
+
+        if (this.conversations()) {
+            return this.conversations().service().defaultChatModel();
+        } else {
+            const model = App.shared().services().defaultChatModel();
+            assert(model, "no default chat model");
+            return model;
+        }
+    }
+
+    /**
+   * @description Gets the parent conversations object.
+   * @returns {SvAiConversations|null} The parent conversations object or null.
+   * @category Navigation
+   */
+    conversations () {
+        const p = this.parentNode();
+        if (p && p.thisClass().isKindOf(SvAiConversations)) {
+            return p;
+        }
+        return null;
+    }
+
+    /**
+   * @description Gets the maximum context token count.
+   * @returns {Number} The maximum context token count.
+   * @category Configuration
+   */
+    inputTokenLimit () {
+        return this.chatModel().inputTokenLimit();
+    }
+
+    /**
+   * @description Updates the token count for the conversation.
+   * @returns {SvAiConversation} The current instance.
+   * @category State
+   */
+    updateTokenCount () {
+        // need to count the tokens in the chat history
+        // and update the token count
+        //const chatHistory = this.jsonHistoryString();
+        // conact all the messages and the system prompt
+        const allMessagesString = this.messages().map(m => m.content).join("\n");
+        // estimate the token count
+        const tokenCount = allMessagesString.length / 4;
+        this.setTokenCount(tokenCount);
+        return this;
+    }
+
+    /**
+   * @description Checks and manages the token count.
+   * @category State
+   */
+    checkTokenCount () {
+        this.updateTokenCount();
+        const tc = this.tokenCount();
+        if (tc > this.inputTokenLimit() * 0.9) {
+            this.compactTokens();
+        }
+    }
+
+    /**
+   * @description Compacts tokens to manage conversation length.
+   * @category State
+   */
+    compactTokens () {
+    }
+
+    /**
+   * @description Creates a new assistant message.
+   * @returns {SvAiMessage} The new assistant message.
+   * @category Message Creation
+   */
+    newAssistantMessage () {
+        if (this.messagesRequiringCompletionBeforeUserResponse().length > 0) {
+            this.messagesRequiringCompletionBeforeUserResponse();
+            debugger;
+            throw new Error("newAssistantMessage() should not be called if there are messages requiring completion before user response");
+        }
+
+        if (!this.hasIncompleteAiResponseMessages()) {
+            this.hasIncompleteAiResponseMessages();
+            debugger;
+            throw new Error("newAssistantMessage() should not be called if there are incomplete ai response messages");
+        }
+
+        if (this.assistantToolKit() && !this.assistantToolKit().canSendResponsesNow()) {
+            debugger;
+            this.assistantToolKit().canSendResponsesNow();
+            throw new Error("newAssistantMessage() should not be called if the assistant tool kit cannot send responses now");
+        }
+
+        const m = this.newMessage();
+        m.setSpeakerName(this.aiSpeakerName());
+        m.setRole("assistant");
+        m.setConversation(this);
+        return m;
+    }
+
+    /**
+   * @description Creates a new system message.
+   * @returns {SvAiMessage} The new system message.
+   * @category Message Creation
+   */
+    newSystemMessage () {
+        const m = this.newMessage();
+        m.setSpeakerName("System Message");
+        m.setRole("system");
+        m.setIsComplete(true);
+        m.setIsVisibleToUser(false);
+        m.setConversation(this);
+        return m;
+    }
+
+    /**
+   * @description Creates a new user message.
+   * @returns {SvAiMessage} The new user message.
+   * @category Message Creation
+   */
+    newUserMessage () {
+        const m = this.newMessage();
+        m.setSpeakerName("User");
+        m.setRole("user");
+        m.setConversation(this);
+        return m;
+    }
+
+    /**
+   * @description Creates a new response message.
+   * @returns {SvAiResponseMessage} The new response message.
+   * @category Message Creation
+   */
+    newResponseMessage () {
+        const m = this.newMessageOfClass(this.responseMsgClass());
+        m.setConversation(this);
+        this.addSubnode(m);
+        return m;
+    }
+
+    /**
+   * @description Gets the AI speaker name.
+   * @returns {String} The AI speaker name.
+   * @category Configuration
+   */
+    aiSpeakerName () {
+        if (this._aiSpeakerName) {
+            return this._aiSpeakerName;
+        }
+        return this.chatModel().title().toUpperCase();
+    }
+
+    /**
+   * @description Handles chat input value.
+   * @param {String} v - The chat input value.
+   * @returns {SvAiResponseMessage} The response message.
+   * @category Interaction
+   */
+    onChatInputValue (v) {
+        const userMsg = this.newUserMessage();
+        userMsg.setContent(v);
+        userMsg.setIsComplete(true); // this should trigger a requestResponse
+        //userMsg.requestResponse();
+        SvSimpleSynth.clone().playSendBeep();
+    }
+
+    /**
+   * @description Composes the API specification prompt.
+   * @returns {String} The API specification prompt.
+   * @category Configuration
+   */
+    composeApiSpecPrompt () {
+        let s = "The following APIs are available for you to use:\n\n";
+        const apiCallClasses = this.apiCallClasses();
+        const apiSpecPrompt = apiCallClasses.map(c => c.apiSpecPrompt()).join("\n\n");
+        s += apiSpecPrompt;
+        return s;
+    }
+
+    /**
+   * @description Starts the conversation with a prompt.
+   * @param {String} prompt - The initial prompt.
+   * @returns {SvAiResponseMessage} The response message.
+   * @category Interaction
+   */
+    startWithPrompt (prompt) {
+        this.clear();
+        //this.setSystemPrompt(prompt);
+        const promptMsg = this.newSystemMessage();
+        promptMsg.setContent(prompt);
+        const responseMessage = promptMsg.requestResponse();
+        return responseMessage;
+    }
+
+    clear () {
+        this.assistantToolKit().removeAllToolCalls();
+        super.clear();
+        return this;
+    }
+
+    /**
+   * @description Handles a new message from an update.
+   * @param {SvAiMessage} newMsg - The new message.
+   * @category Message Handling
+   */
+    onNewMessageFromUpdate (/*newMsg*/) {
+    }
+
+    /**
+   * @description Gets the AI visible history for a response.
+   * @param {SvAiResponseMessage} aResponseMessage - The response message.
+   * @returns {Array} The visible messages for AI.
+   * @category Message Handling
+   */
+    aiVisibleHistoryForResponse (aResponseMessage) {
+        assert(this.messages().includes(aResponseMessage));
+        const previousMessages = this.messages().before(aResponseMessage);
+        const visibleMessages = previousMessages.select(m => m.isVisibleToAi());
+        return visibleMessages;
+    }
+
+    /**
+   * @description Gets the chat request class.
+   * @returns {Class} The chat request class.
+   * @category Configuration
+   */
+    chatRequestClass () {
+        return this.service().chatRequestClass();
+    }
+
+    /**
+   * @description Handles message completion.
+   * @param {SvAiMessage} aMsg - The completed message.
+   * @returns {SvAiConversation} The current instance.
+   * @category Message Handling
+   */
+    onMessageComplete (aMsg) {
+        super.onMessageComplete(aMsg);
+        this.assistantToolKit().onMessageComplete(aMsg);
+        return this;
+    }
+
+    /**
+   * @description Shuts down the conversation.
+   * @returns {SvAiConversation} The current instance.
+   * @category Lifecycle
+   */
+    shutdown () {
+        this.messages().forEach(m => m.performIfResponding("shutdown"));
+        return this;
+    }
+
+    messagesRequiringCompletionBeforeUserResponse () {
+        return this.messages().select(m => m.requiresCompletionBeforeUserResponse());
+    }
+
+    /**
+   * @description Gets incomplete messages.
+   * @returns {Array} The incomplete messages.
+   * @category Message Filtering
+   */
+    incompleteMessages () { // TODO: rename to incompleteMessagesRequiringCompletionBeforeUserResponse()
+        return this.messagesRequiringCompletionBeforeUserResponse().select(m => !m.isComplete());
+    }
+
+    /**
+   * @description Checks if there are incomplete messages.
+   * @returns {Boolean} True if there are incomplete messages, false otherwise.
+   * @category State
+   */
+    hasIncompleteMessages () {
+        return this.incompleteMessages().length > 0;
+    }
+
+    incompleteAiResponseMessages () {
+        return this.incompleteMessages().select(m => m.isKindOf(SvAiResponseMessage));
+    }
+
+    hasIncompleteAiResponseMessages () {
+        return this.incompleteAiResponseMessages().length > 0;
+    }
+
+    /**
+   * @description Gets active responses.
+   * @returns {Array} The active responses.
+   * @category Message Filtering
+   */
+    activeResponses () {
+        return this.incompleteMessages().filter(m => m.isResponse());
+    }
+
+    /**
+   * @description Checks if there are active responses.
+   * @returns {Boolean} True if there are active responses, false otherwise.
+   * @category State
+   */
+    hasActiveResponses () {
+        return this.activeResponses().length > 0;
+    }
+
+    /**
+   * @description Syncs the chat input state.
+   * @returns {SvAiConversation} The current instance.
+   * @category State
+   */
+    syncChatInputState () {
+        return this;
+    }
+
+    /**
+   * @description Checks if the conversation accepts chat input.
+   * @returns {Boolean} True if it accepts chat input, false otherwise.
+   * @category State
+   */
+    acceptsChatInput () {
+        // we block user input until all blocking tool calls are complete
+        if (this.assistantToolKit().hasUncompletedBlockingToolCalls()) {
+            return false;
+        }
+
+        // we block user input until all messages requiring completion before user response are complete
+        if (this.incompleteMessages().length > 0) {
+            return false;
+        }
+        return true;
+    }
+
+    /* --- Client State --- */
+
+
+    /**
+   * @description Gets the session state tag map.
+   * @returns {Map} The session state tag map.
+   * @category Session State
+   */
+    clientStateTagMap () {
+        const m = new Map();
+        m.set("client-state",       "{Content removed as it has been outdated. See client-state tag in the last message of the conversation for the latest client state.}");
+        m.set("client-state-patch", "{Content removed as the patch is already applied. See client-state tag in the last message of the conversation for the latest client state.}");
+        return m;
+    }
+
+    /**
+   * @description Gets the session JSON. This gets inserted into the last message of the conversation. Note: session JSON gets removed from all but the last message.
+   * @returns {Object|null} The session JSON or null.
+   * @category Session State
+   */
+    clientStateJson () {
+        const delegate = this.assistedObject();
+        if (delegate) {
+            return delegate.serializeToJsonString(null, []);
+        }
+        return null;
+    }
+
+    /**
+   * @description Gets the client state schema.
+   * @returns {String} The client state schema.
+   * @category Client State
+   */
+    clientStateJsonSchema () {
+        const delegate = this.assistedObject();
+        if (delegate) {
+            return delegate.asRootJsonSchemaString();
+        }
+        return null;
+    }
+
+    /**
+   * @description Filters the JSON history of messages.
+   * @param {Array} messages - The messages to filter.
+   * @returns {Array} The filtered messages.
+   * @category Session State
+   */
+
+    onFilterJsonHistory (messages) {
+        const json = this.clientStateJson();
+
+        if (json) {
+            //const tagMap = this.clientStateTagMap();
+            //const lastMessage = messages.last();
+
+            // modify the content of all messages except the last 20
+            const messagesToModify = messages.slice(0, -20);
+            messagesToModify.forEachKV((index, m) => {
+                if (index === 0) {
+                    return; // skip the first message (might be a system message)
+                }
+                // find all the tool-call-result tags which are for getClientState or patchClientState
+                // and replace them with a note that they were removed
+                m.content = m.content.mapContentOfTagsWithName("tool-call-result", (content) => {
+                    if (content.includes("getClientState") || content.includes("patchClientState")) {
+                        const json = JSON.parse(content);
+                        if (json.toolName === "getClientState" || json.toolName === "patchClientState") {
+                            json.result = "result removed to save tokens";
+                            return JSON.stableStringifyWithStdOptions(json, null, 2);
+                        }
+                    }
+                    return content;
+                });
+            });
+        }
+
+        return messages;
+    }
+
+    /*
+  const schemaString = JSON.stableStringifyWithStdOptions(schema, null, 2);
+  const jsonString = JSON.stableStringifyWithStdOptions(json, null, 2);
+*/
+
+    // --- tool calls ---
+
+    onStream_toolCall_TagText (innerTagString, aMessage) { // sent by SvAiParsedResponseMessage
+        assert(aMessage);
+        this.assistantToolKit().handleToolCallTagFromMessage(innerTagString, aMessage);
+    }
+
+    assertNoUncompletedBlockingToolCalls () {
+        const tk = this.assistantToolKit();
+        if (tk) {
+            if (tk.hasUncompletedBlockingToolCalls()) {
+                let blockingCalls = tk.blockingCalls();
+                const blockingCallsString = blockingCalls.map(c => c.toolDefinition().name()).join(", ");
+                console.error("**ERROR**:", this.logPrefix(), "assertNoUncompletedBlockingToolCalls() called when there are uncompleted blocking tool calls: " + blockingCallsString);
+                debugger;
+                tk.hasUncompletedBlockingToolCalls();
+            }
+        }
+
+    }
+
+    addSubnode (subnode) {
+        if (subnode.isKindOf(SvAiResponseMessage)) {
+            this.assertNoUncompletedBlockingToolCalls();
+        }
+        super.addSubnode(subnode);
+    }
+
+}.initThisClass());

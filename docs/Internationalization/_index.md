@@ -16,7 +16,7 @@ The system is designed around three principles:
 
 ## Implementation Overview
 
-Translation storage is fully decoupled from the STRVCT ObjectPool. Each language gets its own pair of IndexedDB databases — one for cache, one for store — so loading never needs to scan or filter entries from other languages.
+Translation storage is fully decoupled from the STRVCT SvObjectPool. Each language gets its own pair of IndexedDB databases — one for cache, one for store — so loading never needs to scan or filter entries from other languages.
 
 **SvI18n** (singleton coordinator)
 - Coordinates cache and store; each owns its own per-language IndexedDB
@@ -87,11 +87,11 @@ Supporting integration points:
 
 | Class | Role |
 |-------|------|
-| `SvTranslatableNode` | Base class for translatable nodes. Maintains a per-node `translationMap` for flicker-free re-renders. Sits between `TitledNode` and `InspectableNode`. |
+| `SvTranslatableNode` | Base class for translatable nodes. Maintains a per-node `translationMap` for flicker-free re-renders. Sits between `SvTitledNode` and `SvInspectableNode`. |
 | `Slot` | Supports `translationContext` (per-slot context) and `shouldTranslate` (disable translation) annotations. |
 | `SvFieldTile` | Calls `translatedValueOfSlotNamed()` to display translated keys and placeholder text. Skips translation for editable keys. |
 | `SvOptionNode` | Respects the parent slot's `shouldTranslate` annotation for option labels. |
-| `BreadCrumbsTile` | Observes `"svI18nLanguageChanged"` to rebuild breadcrumbs in the new language. |
+| `SvBreadCrumbsTile` | Observes `"svI18nLanguageChanged"` to rebuild breadcrumbs in the new language. |
 | `SvServices` | Hosts the `SvI18n` singleton as a subnode field. |
 
 All i18n source files live in `source/library/i18n/`.
@@ -151,7 +151,7 @@ The main entry point is `SvTranslationFilter.shared().shouldTranslate(value)`, w
 
 ## Caching
 
-Translation caching uses two tiers backed by a single dedicated IndexedDB, separate from the main STRVCT ObjectPool.
+Translation caching uses two tiers backed by a single dedicated IndexedDB, separate from the main STRVCT SvObjectPool.
 
 ### Tier 0: Node Translation Map (Per-Node, Synchronous)
 
@@ -161,7 +161,7 @@ Key properties:
 - **FIFO capped at 10** — enough for title, subtitle, and a handful of labels per node
 - **Lazy allocation** — the Map is only created when the first translation is stored (English-only users pay zero cost)
 - **Auto-clears on language change** — tracks the language it was populated for and clears itself if the language differs on next access (no notification observers needed)
-- **Lives on the node, not the view** — survives view reallocation during UI navigation (clicking between tiles in a TilesView)
+- **Lives on the node, not the view** — survives view reallocation during UI navigation (clicking between tiles in a SvTilesView)
 
 ### Tier 1: SvI18nCache (Eager, Synchronous)
 
@@ -235,7 +235,7 @@ Seed files are generated through a two-phase process accessible via the admin UI
 
 ## Making Nodes Translatable
 
-Nodes opt into translation by extending `SvTranslatableNode` (which sits between `TitledNode` and `InspectableNode` in the hierarchy). This provides three methods:
+Nodes opt into translation by extending `SvTranslatableNode` (which sits between `SvTitledNode` and `SvInspectableNode` in the hierarchy). This provides three methods:
 
 - **`translatedValueOfSlotNamed(slotName)`** — Returns the translated value of a slot, falling back to English while a translation is pending.
 - **`translatedValuePlaceholderOfSlotNamed(slotName)`** — Translates a slot's placeholder text annotation.
@@ -299,7 +299,7 @@ const i18n = SvServices.shared().i18n();
 
 ### Breadcrumbs
 
-`BreadCrumbsTile` observes the `"svI18nLanguageChanged"` notification. When the language changes, it clears its cached path and rebuilds all breadcrumb segments with translated titles.
+`SvBreadCrumbsTile` observes the `"svI18nLanguageChanged"` notification. When the language changes, it clears its cached path and rebuilds all breadcrumb segments with translated titles.
 
 ### Custom Views
 
@@ -370,11 +370,11 @@ Different languages have different text metrics that affect UI layout:
 
 **Context grouping** — Batches are grouped by translation context before sending, so the AI model receives semantically related strings together, improving translation consistency.
 
-**ObjectPool decoupling** — Translation storage is fully separate from the STRVCT ObjectPool. This avoids loading thousands of translation records into the main persistence layer, keeps translation I/O independent of model persistence, and simplifies the data format (plain `{ t, ts }` objects instead of full `SvStorableNode` instances).
+**SvObjectPool decoupling** — Translation storage is fully separate from the STRVCT SvObjectPool. This avoids loading thousands of translation records into the main persistence layer, keeps translation I/O independent of model persistence, and simplifies the data format (plain `{ t, ts }` objects instead of full `SvStorableNode` instances).
 
 **Sync loop safety** — Status display slots (`queuedCount`, `completedCount`) use computed getter overrides rather than `setSyncsToView`. This avoids sync loops: since translation lookups happen during view sync, any state mutation with `syncsToView` during that cycle would create infinite feedback. The computed getters read live state without mutation.
 
-**Node vs view translation maps** — Translation maps live on the node, not the view, because views are ephemeral (reallocated when navigating between tiles in a TilesView) while nodes persist. A view-level map would be empty every time the user navigates back to a previously visited tile.
+**Node vs view translation maps** — Translation maps live on the node, not the view, because views are ephemeral (reallocated when navigating between tiles in a SvTilesView) while nodes persist. A view-level map would be empty every time the user navigates back to a previously visited tile.
 
 ## Comparison to Other Frameworks
 

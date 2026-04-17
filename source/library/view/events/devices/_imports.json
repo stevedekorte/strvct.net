@@ -1,13 +1,13 @@
 [
     "Event-cachedPoints.js",
-    "EventPoint.js",
-    "Device.js",
-    "KeyboardKey.js",
+    "SvEventPoint.js",
+    "SvDevice.js",
+    "SvKeyboardKey.js",
     "SvKeyboard.js",
-    "Mouse.js",
-    "TouchScreen.js",
-    "GamePadManager.js",
-    "GamePad.js",
-    "Devices.js"
+    "SvMouse.js",
+    "SvTouchScreen.js",
+    "SvGamePadManager.js",
+    "SvGamePad.js",
+    "SvDevices.js"
 ]
 

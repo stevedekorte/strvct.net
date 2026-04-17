@@ -321,7 +321,7 @@
 
     /**
      * Uploads a thumbnail for an item and returns the public URL.
-     * Uses content-addressable storage in /public/blobs/ via FirebaseStorageService.
+     * Uses content-addressable storage in /public/blobs/ via SvFirebaseStorageService.
      * @param {Object} item - The item node
      * @returns {Promise<String|null>} The public URL or null
      * @category Sync
@@ -349,7 +349,7 @@
             }
 
             // Upload to public/blobs/ using content-addressable storage
-            const publicUrl = await FirebaseStorageService.shared().asyncPublicUrlForBlob(blob);
+            const publicUrl = await SvFirebaseStorageService.shared().asyncPublicUrlForBlob(blob);
             return publicUrl;
 
         } catch (e) {
@@ -587,7 +587,7 @@
         return JSON.parse(text);
     }
 
-    // --- Session Pool Methods (for SubObjectPool cloud sync) ---
+    // --- Session Pool Methods (for SvSubObjectPool cloud sync) ---
 
     /**
      * Gets the path to a session's pool.json file.

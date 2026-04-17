@@ -1,6 +1,6 @@
 [
-    "EnumerableWeakMap.js",
-    "EnumerableWeakSet.js"
+    "SvEnumerableWeakMap.js",
+    "SvEnumerableWeakSet.js"
 ]
 
 

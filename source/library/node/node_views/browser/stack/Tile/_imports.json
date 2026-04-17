@@ -1,14 +1,14 @@
 [
-    "Tile.js",
-    "Tile_dragging.js",
-    "Tile_keyboard.js",
-    "Tile_gestures.js",
-    "Tile_slideGesture.js",
-    "Tile_styling.js",
-    "TitledTile.js",
+    "SvTile.js",
+    "SvTile_dragging.js",
+    "SvTile_keyboard.js",
+    "SvTile_gestures.js",
+    "SvTile_slideGesture.js",
+    "SvTile_styling.js",
+    "SvTitledTile.js",
     "SvTextNodeTile.js",
-    "BreadCrumbsTile.js",
-    "HeaderTile.js",
+    "SvBreadCrumbsTile.js",
+    "SvHeaderTile.js",
     "subviews/_imports.json",
     "field_tiles/_imports.json"
 ]

@@ -1,4 +1,4 @@
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles
  */
 
 /** * @class SvTextAreaFieldTile
@@ -22,30 +22,30 @@
      */
     initPrototypeSlots () {
         /**
-         * @member {ButtonView} sttButton - Button for speech to text functionality.
+         * @member {SvButtonView} sttButton - Button for speech to text functionality.
          * @category UI
          */
         {
             const slot = this.newSlot("sttButton", null);
-            slot.setSlotType("ButtonView");
+            slot.setSlotType("SvButtonView");
         }
 
         /**
-         * @member {SpeechToTextSession} sttSession - Session for managing speech to text conversion.
+         * @member {SvSpeechToTextSession} sttSession - Session for managing speech to text conversion.
          * @category Speech Recognition
          */
         {
             const slot = this.newSlot("sttSession", null);
-            slot.setSlotType("SpeechToTextSession");
+            slot.setSlotType("SvSpeechToTextSession");
         }
 
         /**
-         * @member {ButtonView} leftButton - Button for the left side of the input (e.g. narration toggle).
+         * @member {SvButtonView} leftButton - Button for the left side of the input (e.g. narration toggle).
          * @category UI
          */
         {
             const slot = this.newSlot("leftButton", null);
-            slot.setSlotType("ButtonView");
+            slot.setSlotType("SvButtonView");
         }
     }
 
@@ -94,13 +94,13 @@
     }
 
     /**
-     * Creates an icon-only ButtonView configured for use in the input area.
+     * Creates an icon-only SvButtonView configured for use in the input area.
      * @param {string} action - The action method name for click handling.
-     * @returns {ButtonView} The configured button.
+     * @returns {SvButtonView} The configured button.
      * @category UI
      */
     newIconButton (action) {
-        const bv = ButtonView.clone().setElementClassName("SvActionFieldView");
+        const bv = SvButtonView.clone().setElementClassName("SvActionFieldView");
         bv.setBorderRadius("0.4em");
         bv.setHeight("2.1em");
         bv.setMaxHeight("2.1em");
@@ -228,14 +228,14 @@
      */
     setupSttSessionIfNeeded () {
         if (!this.sttSession()) {
-            const stt = SpeechToTextSession.clone().setDelegate(this).setSessionLabel("ChatInputNode STT input");
+            const stt = SvSpeechToTextSession.clone().setDelegate(this).setSessionLabel("SvChatInputNode STT input");
             this.setSttSession(stt);
         }
     }
 
     /**
      * Handles interim speech recognition results.
-     * @param {SpeechToTextSession} sttSession - The STT session.
+     * @param {SvSpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
     onSpeechInterimResult (/*sttSession*/) {
@@ -246,7 +246,7 @@
 
     /**
      * Handles final speech recognition results.
-     * @param {SpeechToTextSession} sttSession - The STT session.
+     * @param {SvSpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
     onSpeechFinal (/*sttSession*/) {
@@ -255,7 +255,7 @@
 
     /**
      * Handles speech input and updates the value view.
-     * @param {SpeechToTextSession} sttSession - The STT session.
+     * @param {SvSpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
     onSpeechInput (sttSession) {
@@ -272,7 +272,7 @@
 
     /**
      * Handles the end of speech recognition.
-     * @param {SpeechToTextSession} sttSession - The STT session.
+     * @param {SvSpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
     onSpeechEnd (/*sttSession*/) {
@@ -281,7 +281,7 @@
 
     /**
      * Handles the end of the STT session.
-     * @param {SpeechToTextSession} sttSession - The STT session.
+     * @param {SvSpeechToTextSession} sttSession - The STT session.
      * @category Speech Recognition
      */
     onSessionEnd (/*sttSession*/) {

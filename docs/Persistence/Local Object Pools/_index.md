@@ -6,8 +6,8 @@ IndexedDB-backed persistence for object graphs using dirty tracking and automati
 
 Strvct's persistence system stores object graphs in the browser's IndexedDB. Rather than requiring explicit save/load calls, it monitors slot changes and automatically commits dirty objects at the end of the event loop. The system is built from three layers:
 
-- **`ObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.
-- **`PersistentAtomicMap`** — An IndexedDB wrapper that loads the entire database into memory on open, provides synchronous read/write to the cache, and batches writes into atomic IndexedDB transactions on commit.
+- **`SvObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.
+- **`SvPersistentAtomicMap`** — An IndexedDB wrapper that loads the entire database into memory on open, provides synchronous read/write to the cache, and batches writes into atomic IndexedDB transactions on commit.
 - **`SvStorableNode`** — A node base class that hooks slot changes into the dirty tracking system.
 
 ## Opting Into Persistence
@@ -60,7 +60,7 @@ A third flag controls whether child nodes are stored:
 Storage capability begins at `SvStorableNode` in the class hierarchy:
 
 ```
-ProtoClass → SvNode → TitledNode → InspectableNode → ViewableNode → StyledNode → SvStorableNode
+ProtoClass → SvNode → SvTitledNode → SvInspectableNode → SvViewableNode → SvStyledNode → SvStorableNode
 ```
 
 Classes above `SvStorableNode` cannot be stored. Application model classes typically extend `SvStorableNode` or one of its subclasses like `SvSummaryNode`.
@@ -104,7 +104,7 @@ The persistence system uses automatic dirty tracking so application code never n
 
 1. A slot value changes (via its setter method).
 2. `SvStorableNode.didUpdateSlot()` checks whether the node and slot are both marked for storage.
-3. If so, it calls `didMutate()`, which notifies the `ObjectPool` via a mutation observer.
+3. If so, it calls `didMutate()`, which notifies the `SvObjectPool` via a mutation observer.
 4. The pool calls `addDirtyObject(obj)` to add the object to its dirty set.
 5. `addDirtyObject()` calls `scheduleStore()`, which uses `SvSyncScheduler` to defer the commit.
 6. At the end of the event loop, `commitStoreDirtyObjects()` runs, serializing all dirty objects and writing them to IndexedDB in a single atomic transaction.
@@ -113,11 +113,11 @@ Because the commit is deferred, multiple slot changes within the same event loop
 
 ### Commit Details
 
-`commitStoreDirtyObjects()` begins an IndexedDB transaction via `PersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes the JSON string to the map keyed by puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
+`commitStoreDirtyObjects()` begins an IndexedDB transaction via `SvPersistentAtomicMap`, then iterates the dirty set. For each dirty object, it calls `recordForStore()` to serialize it and writes the JSON string to the map keyed by puuid. After all objects are stored, the transaction is committed atomically. If any object becomes dirty again during the commit (because serialization triggers side effects), the cycle repeats until the dirty set is empty.
 
-## PersistentAtomicMap
+## SvPersistentAtomicMap
 
-`PersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/index.html) for details on the storage abstraction.
+`SvPersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/index.html) for details on the storage abstraction.
 
 This design means:
 
@@ -136,7 +136,7 @@ This design means:
 The application opens the pool once at startup:
 
 ```javascript
-const pool = PersistentObjectPool.sharedPool();
+const pool = SvPersistentObjectPool.sharedPool();
 await pool.promiseOpen();
 const root = await pool.rootOrIfAbsentFromClosure(() => {
     return MyRootNode.clone();
@@ -190,16 +190,16 @@ Garbage collection runs automatically when the pool opens. It ensures that objec
 
 Blob garbage collection runs separately via `SvBlobPool` (see [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html)).
 
-## SubObjectPool
+## SvSubObjectPool
 
-`SubObjectPool` is an in-memory variant of `ObjectPool` used for cloud sync rather than local persistence. It uses a plain `AtomicMap` instead of `PersistentAtomicMap` (no IndexedDB) and does not auto-schedule commits. Instead, it provides explicit methods for cloud upload with delta optimization. See [Cloud Object Pools](../Cloud%20Object%20Pools/index.html) for details.
+`SvSubObjectPool` is an in-memory variant of `SvObjectPool` used for cloud sync rather than local persistence. It uses a plain `SvAtomicMap` instead of `SvPersistentAtomicMap` (no IndexedDB) and does not auto-schedule commits. Instead, it provides explicit methods for cloud upload with delta optimization. See [Cloud Object Pools](../Cloud%20Object%20Pools/index.html) for details.
 
 ## Key Classes Summary
 
 | Class | Purpose |
 |-------|---------|
-| `ObjectPool` | Base pool: object cache, dirty tracking, serialization, GC |
-| `PersistentObjectPool` | Singleton `ObjectPool` backed by IndexedDB |
-| `PersistentAtomicMap` | IndexedDB wrapper with synchronous in-memory cache |
+| `SvObjectPool` | Base pool: object cache, dirty tracking, serialization, GC |
+| `SvPersistentObjectPool` | Singleton `SvObjectPool` backed by IndexedDB |
+| `SvPersistentAtomicMap` | IndexedDB wrapper with synchronous in-memory cache |
 | `SvStorableNode` | Node base class that hooks slot changes to dirty tracking |
-| `SubObjectPool` | In-memory pool for cloud sync (no IndexedDB) |
+| `SvSubObjectPool` | In-memory pool for cloud sync (no IndexedDB) |

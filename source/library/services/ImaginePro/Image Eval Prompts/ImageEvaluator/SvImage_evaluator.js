@@ -8,7 +8,7 @@
      * @returns {number} The score of the image for the prompt.
      */
     async asyncScoreForPrompt (anImageGenPrompt) {
-        const evaluator = ImageEvaluator.clone();
+        const evaluator = SvImageEvaluator.clone();
         evaluator.setSvImage(this);
         evaluator.setImageGenPrompt(anImageGenPrompt);
         await evaluator.asyncEvaluate();

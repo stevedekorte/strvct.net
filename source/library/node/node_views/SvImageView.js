@@ -2,7 +2,7 @@
  */
 
 /** * @class SvImageView
- * @extends NodeView
+ * @extends SvNodeView
  * @classdesc SvImageView is a specialized view for displaying images with additional features like a close button and editability.
  
  
@@ -13,32 +13,32 @@
  */
 "use strict";
 
-(class SvImageView extends NodeView {
+(class SvImageView extends SvNodeView {
 
     initPrototypeSlots () {
         /**
-         * @member {FlexDomView} imageContainer - Container for the image
+         * @member {SvFlexDomView} imageContainer - Container for the image
          * @category UI Components
          */
         {
             const slot = this.newSlot("imageContainer", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
-         * @member {FlexDomView} rawImageView - View for the raw image
+         * @member {SvFlexDomView} rawImageView - View for the raw image
          * @category UI Components
          */
         {
             const slot = this.newSlot("rawImageView", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
-         * @member {FlexDomView} closeButtonView - View for the close button
+         * @member {SvFlexDomView} closeButtonView - View for the close button
          * @category UI Components
          */
         {
             const slot = this.newSlot("closeButtonView", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
          * @member {String} srcUrl - Source URL of the image
@@ -104,11 +104,11 @@
 
     /**
      * @description Creates a new close button view
-     * @returns {ButtonView} The created close button view
+     * @returns {SvButtonView} The created close button view
      * @category UI Components
      */
     newCloseButtonView () {
-        const v = ButtonView.clone().setElementClassName("ImageCloseButton");
+        const v = SvButtonView.clone().setElementClassName("ImageCloseButton");
         v.setDisplay("flex");
         v.setPosition("absolute");
         v.setTitleIsVisible(false);
@@ -121,11 +121,11 @@
 
     /**
      * @description Creates a new image view container
-     * @returns {FlexDomView} The created image view container
+     * @returns {SvFlexDomView} The created image view container
      * @category UI Components
      */
     newImageViewContainer () {
-        const v = FlexDomView.clone().setElementClassName("ImageViewImageContainer");
+        const v = SvFlexDomView.clone().setElementClassName("ImageViewImageContainer");
         v.setDisplay("flex");
         v.setPosition("relative");
         v.setJustifyContent("center");
@@ -256,11 +256,11 @@
     /**
      * @description Creates a new raw image view for a given image
      * @param {Image} image - The image to create a view for
-     * @returns {FlexDomView} The created raw image view
+     * @returns {SvFlexDomView} The created raw image view
      * @category UI Components
      */
     newRawImageViewForImage (image) {
-        const v = FlexDomView.clone().setElement(image).setElementClassName("RawImageView");
+        const v = SvFlexDomView.clone().setElement(image).setElementClassName("RawImageView");
         v.setDisplay("flex");
         v.setPosition("relative");
         v.setJustifyContent("center");

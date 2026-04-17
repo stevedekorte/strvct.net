@@ -1,9 +1,9 @@
 [
     "SvNode.js",
-    "TitledNode.js",
+    "SvTitledNode.js",
     "SvTranslatableNode.js",
-    "InspectableNode.js",
-    "ViewableNode.js",
-    "StyledNode.js",
-    "BaseNode.js"
+    "SvInspectableNode.js",
+    "SvViewableNode.js",
+    "SvStyledNode.js",
+    "SvBaseNode.js"
 ]

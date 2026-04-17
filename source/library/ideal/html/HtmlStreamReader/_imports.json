@@ -1,6 +1,6 @@
 [
-    "StreamNode.js",
-    "StreamTextNode.js",
-    "StreamElementNode.js",
-    "HtmlStreamReader.js"
+    "SvStreamNode.js",
+    "SvStreamTextNode.js",
+    "SvStreamElementNode.js",
+    "SvHtmlStreamReader.js"
 ]

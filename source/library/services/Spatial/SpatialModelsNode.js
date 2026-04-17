@@ -5,14 +5,14 @@
  */
 
 /**
- * @class SpatialModelNode
+ * @class SvSpatialModelNode
  * @extends SvStorableNode
  * @classdesc Represents a spatial model node for 3D models.
  */
-(class SpatialModelNode extends SvStorableNode {
+(class SvSpatialModelNode extends SvStorableNode {
 
     /**
-     * @description Initializes the prototype slots for the SpatialModelNode.
+     * @description Initializes the prototype slots for the SvSpatialModelNode.
      * @category Initialization
      */
     initPrototypeSlots () {
@@ -37,11 +37,11 @@
         this.setSubtitle(null);
         this.setCanDelete(true);
 
-        this.setNodeTileClassName(SceneViewWellFieldTile);
+        this.setNodeTileClassName(SvSceneViewWellFieldTile);
     }
 
     /**
-     * @description Initializes the SpatialModelNode.
+     * @description Initializes the SvSpatialModelNode.
      * @category Initialization
      */
     init () {

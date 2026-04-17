@@ -1,11 +1,11 @@
 [
     "SvWebBrowserTab.js",
     "SvWebBrowserBattery.js",
-    "WebBrowserScreen.js",
-    "WebBrowserWindow.js",
+    "SvWebBrowserScreen.js",
+    "SvWebBrowserWindow.js",
     "notifications/_imports.json",
-    "WebDocument.js",
+    "SvWebDocument.js",
     "SvStyleSheet.js",
-    "ThrashDetector.js"
+    "SvThrashDetector.js"
 ]
 

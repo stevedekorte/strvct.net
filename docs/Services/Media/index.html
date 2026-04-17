@@ -21,8 +21,8 @@
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Media</h1><a class="back-link" href="../index.html">&larr; Services</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">YouTube audio playback and browser speech recognition.</p><h2 id="youtubeservice">YouTubeService</h2><div class="section"><div class="section-body"><p>Manages YouTube-based audio playback via the IFrame Player API. The service contains a <code>YouTubeAudioPlayer</code> subnode that wraps a hidden YouTube player element.</p><h3 id="youtubeaudioplayer">YouTubeAudioPlayer</h3><p>The core playback class. Handles player lifecycle, volume, looping, and state tracking. The YouTube IFrame API script is loaded lazily on first use, and playback waits for a user gesture (browser autoplay policy).</p><pre><code>// Create a player and loop background music
-const player = YouTubeAudioPlayer.clone();
+  <div class="page loaded"><div class="header"><div><h1>Media</h1><a class="back-link" href="../index.html">&larr; Services</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">YouTube audio playback and browser speech recognition.</p><h2 id="svyoutubeservice">SvYouTubeService</h2><div class="section"><div class="section-body"><p>Manages YouTube-based audio playback via the IFrame Player API. The service contains a <code>SvYouTubeAudioPlayer</code> subnode that wraps a hidden YouTube player element.</p><h3 id="svyoutubeaudioplayer">SvYouTubeAudioPlayer</h3><p>The core playback class. Handles player lifecycle, volume, looping, and state tracking. The YouTube IFrame API script is loaded lazily on first use, and playback waits for a user gesture (browser autoplay policy).</p><pre><code>// Create a player and loop background music
+const player = SvYouTubeAudioPlayer.clone();
 player.setTrackName("Ambient Forest");
 player.setVideoId("abc123xyz");
 player.setShouldRepeat(true);
@@ -40,7 +40,7 @@ player.setShouldRepeat(false);
 await player.play();
 
 // Cleanup
-await player.shutdown();  // destroys the YT.Player and removes the DOM element</code></pre><h3 id="musiclibrary">MusicLibrary</h3><p>A higher-level layer that manages playlists of <code>MusicTrack</code> nodes loaded from a JSON resource file. Owns two <code>YouTubeAudioPlayer</code> instances &mdash; one for background music (low volume), one for sound effects (higher volume).</p><pre><code>// Play looping background music by track name
+await player.shutdown();  // destroys the YT.Player and removes the DOM element</code></pre><h3 id="svmusiclibrary">SvMusicLibrary</h3><p>A higher-level layer that manages playlists of <code>SvMusicTrack</code> nodes loaded from a JSON resource file. Owns two <code>SvYouTubeAudioPlayer</code> instances &mdash; one for background music (low volume), one for sound effects (higher volume).</p><pre><code>// Play looping background music by track name
 library.playTrackWithName("Mystical Forest");
 
 // Play a one-shot sound effect
@@ -50,8 +50,8 @@ await library.playSoundEffectWithName("Sword Clash");
 library.musicPlayer().stop();
 
 // Lookup
-library.trackWithName("Battle Theme");       // =&gt; MusicTrack
-library.playlists();                          // =&gt; MusicFolder[]
+library.trackWithName("Battle Theme");       // =&gt; SvMusicTrack
+library.playlists();                          // =&gt; SvMusicFolder[]
 library.trackNames();                         // =&gt; String[]</code></pre><p>Playlist data is a JSON object mapping folder names to track dictionaries:</p><pre><code>{
   "Fantasy": {
     "Mystical Forest": "YouTubeVideoId1",
@@ -60,9 +60,9 @@ library.trackNames();                         // =&gt; String[]</code></pre><p>P
   "Sound FX": {
     "Sword Clash": "YouTubeVideoId3"
   }
-}</code></pre><h3 id="musictrack">MusicTrack</h3><p>Represents a single track with a YouTube video ID. Supports a delegate set for playback notifications:</p><pre><code>track.addDelegate(myObserver);
+}</code></pre><h3 id="svmusictrack">SvMusicTrack</h3><p>Represents a single track with a YouTube video ID. Supports a delegate set for playback notifications:</p><pre><code>track.addDelegate(myObserver);
 await track.play();
-track.stop();</code></pre><p>Delegates receive <code>onSoundStarted(track)</code> and <code>onSoundEnded(track)</code>.</p></div></div><h2 id="speechtotextsessions">SpeechToTextSessions</h2><div class="section"><div class="section-body"><p>Wraps the browser's native <code>SpeechRecognition</code> API for voice input. Each <code>SpeechToTextSession</code> tracks recognition state, language settings, and transcription results. Not a cloud service &mdash; all processing happens in the browser.</p><h3 id="speechtotextsession">SpeechToTextSession</h3><pre><code>const session = SpeechToTextSession.clone();
+track.stop();</code></pre><p>Delegates receive <code>onSoundStarted(track)</code> and <code>onSoundEnded(track)</code>.</p></div></div><h2 id="svspeechtotextsessions">SvSpeechToTextSessions</h2><div class="section"><div class="section-body"><p>Wraps the browser's native <code>SpeechRecognition</code> API for voice input. Each <code>SvSpeechToTextSession</code> tracks recognition state, language settings, and transcription results. Not a cloud service &mdash; all processing happens in the browser.</p><h3 id="svspeechtotextsession">SvSpeechToTextSession</h3><pre><code>const session = SvSpeechToTextSession.clone();
 session.setDelegate(myObject);
 session.setLanguage("en-US");
 session.setIsContinuous(true);
@@ -80,7 +80,7 @@ session.stop();
 session.isRecording();
 session.fullTranscript();       // accumulated text
 session.interimTranscript();    // current partial text</code></pre><h3 id="delegate-protocol">Delegate Protocol</h3><p>All methods are optional. The session is passed as the first argument.</p><table><thead><tr><th>Method</th><th>When</th></tr></thead><tbody><tr><td><code>onSpeechInterimResult(session)</code></td><td>Partial result received</td></tr><tr><td><code>onSpeechFinal(session)</code></td><td>Finalized segment received, appended to <code>fullTranscript</code></td></tr><tr><td><code>onSpeechEnd(session)</code></td><td>Browser speech recognition ended</td></tr><tr><td><code>onSpeechInput(session)</code></td><td>Input timeout elapsed &mdash; transcript is final</td></tr><tr><td><code>onSessionEnd(session)</code></td><td>Recognition service disconnected</td></tr><tr><td><code>onSpeechError(session, error)</code></td><td>Recognition error</td></tr></tbody></table><h3 id="usage-in-svtextview">Usage in SvTextView</h3><p>Any text field supports voice input via Alt+L. Holding the key starts a session; releasing it stops recognition and inserts the transcript at the cursor:</p><pre><code>startSpeechToText () {
-    this._speechSession = SpeechToTextSession.clone().setDelegate(this);
+    this._speechSession = SvSpeechToTextSession.clone().setDelegate(this);
     this._speechSession.start();
 }
 

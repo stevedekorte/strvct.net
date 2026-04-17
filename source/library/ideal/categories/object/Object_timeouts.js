@@ -58,7 +58,7 @@
         const tid = setTimeout(() => {
             this.removeTimeoutNamed(tidInfo[0]);
             const event = new Event("Custom_addTimeoutEvent", { bubbles: false, cancelable: true }); // not sure about these options settings
-            EventManager.shared().safeWrapEvent(aFunc, event);
+            SvEventManager.shared().safeWrapEvent(aFunc, event);
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;
         tidInfo[1] = tid;
@@ -179,7 +179,7 @@
             callbacks.delete(callbackKey);
             if (fn) {
                 const event = new Event("Custom_addTimeoutEvent", { bubbles: false, cancelable: true });
-                EventManager.shared().safeWrapEvent(fn, event);
+                SvEventManager.shared().safeWrapEvent(fn, event);
             }
         }, msDelay);
         tidInfo[0] = optionalName ? optionalName : tid;

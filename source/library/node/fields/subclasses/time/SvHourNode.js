@@ -2,7 +2,7 @@
  */
 
 /** * @class SvHourNode
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents an hour node in a time-related structure. Handles hours from 0 to 23.
  
  
@@ -13,7 +13,7 @@
  */
 "use strict";
 
-(class SvHourNode extends BaseNode {
+(class SvHourNode extends SvBaseNode {
 
     /**
      * Initializes the prototype slots for the SvHourNode.

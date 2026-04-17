@@ -45,7 +45,7 @@ Every setter returns `this`, so calls chain naturally. Each property also has a 
 
 ## Flexbox Methods
 
-`FlexDomView` adds named methods for every flexbox property:
+`SvFlexDomView` adds named methods for every flexbox property:
 
 ```javascript
 this.setDisplay("flex");
@@ -61,7 +61,7 @@ this.setGap("8px");
 
 ## Layout Convenience Methods
 
-`FlexDomView` also provides higher-level shortcuts for common multi-property patterns:
+`SvFlexDomView` also provides higher-level shortcuts for common multi-property patterns:
 
 | Method | Effect |
 |--------|--------|
@@ -96,13 +96,13 @@ cssVariableDict () {
 }
 ```
 
-During the normal sync cycle, `NodeView.syncCssFromNode()` picks up this dictionary and applies it to the view's DOM element. This lets model logic influence presentation without the node needing any reference to its view — the node declares what it wants, and the view system handles the rest.
+During the normal sync cycle, `SvNodeView.syncCssFromNode()` picks up this dictionary and applies it to the view's DOM element. This lets model logic influence presentation without the node needing any reference to its view — the node declares what it wants, and the view system handles the rest.
 
 In general, prefer keeping styling in the view layer. Node-driven CSS is available for cases where the model genuinely determines a visual property (e.g. a user-chosen color or a status-dependent highlight), but most styling belongs in views or themes, not in model code.
 
 ## Low-Level Access
 
-For unusual CSS properties that don't have a named method, `CssDomView` provides generic accessors:
+For unusual CSS properties that don't have a named method, `SvCssDomView` provides generic accessors:
 
 | Method | Description |
 |--------|-------------|

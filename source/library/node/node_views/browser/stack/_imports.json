@@ -1,12 +1,12 @@
 [
-    "StackView.js",
-    "NavView.js",
-    "ScrollView.js",
+    "SvStackView.js",
+    "SvNavView.js",
+    "SvScrollView.js",
     "SvScrollToBottomButton.js",
-    "StackScrollView.js",
-    "ScrollContentView.js",
-    "TilesView/_imports.json",
-    "Tile/_imports.json",
-    "TileContainer.js"
+    "SvStackScrollView.js",
+    "SvScrollContentView.js",
+    "SvTilesView/_imports.json",
+    "SvTile/_imports.json",
+    "SvTileContainer.js"
 ]
 

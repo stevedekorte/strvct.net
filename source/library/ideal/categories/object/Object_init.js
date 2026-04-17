@@ -20,7 +20,7 @@
         return obj;
     }
 
- * Init inside of deserialization looks like this (within ObjectPool):
+ * Init inside of deserialization looks like this (within SvObjectPool):
  *
        obj.loadFromRecord(aRecord, this)
 
@@ -51,9 +51,9 @@
  *   This will cause the didInit method called after Object.init() inside Object.clone() to
  *   be scheduled for the end of the current event loop.
  *
- * - initAfterDeserialization of the ObjectPool that created the object is complete (similar to awakeFromNib:)
+ * - initAfterDeserialization of the SvObjectPool that created the object is complete (similar to awakeFromNib:)
  *   Implement a didLoadFromStore(aStore) method.
- *   This will be called (on the deserialized objects) after the ObjectPool has finished deserializing.
+ *   This will be called (on the deserialized objects) after the SvObjectPool has finished deserializing.
  *   Deserialization currently takes place synchronously within a single event loop.
  *
  * - appDidInit (when the Application posts an appDidInit notification)

@@ -12,7 +12,7 @@
  * Notes:
  * This was deigned aroung being able to edit JSON within the strvct UI
  * - drop json strings into the UI to create new nodes
- * - drag nodes out of the UI to create json strings (see Tile_dragging.js and getSvDataUrl method)
+ * - drag nodes out of the UI to create json strings (see SvTile_dragging.js and getSvDataUrl method)
  */
 
 /**

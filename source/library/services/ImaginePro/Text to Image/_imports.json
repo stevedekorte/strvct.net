@@ -1,7 +1,7 @@
 [
   "files/_imports.json",
-  "ImagineProImageGeneration.js",
-  "ImagineProImageGenerations.js",
-  "ImagineProImagePrompt.js",
-  "ImagineProImagePrompts.js"
+  "SvImagineProImageGeneration.js",
+  "SvImagineProImageGenerations.js",
+  "SvImagineProImagePrompt.js",
+  "SvImagineProImagePrompts.js"
 ]

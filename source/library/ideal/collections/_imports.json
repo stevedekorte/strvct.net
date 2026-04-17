@@ -1,10 +1,10 @@
 [
-    "HookedArray.js",
-    "HookedSet.js",
-    "HookedMap.js",
+    "SvHookedArray.js",
+    "SvHookedSet.js",
+    "SvHookedMap.js",
 
-    "IndexedArray.js",
-    "SortedArray.js"
+    "SvIndexedArray.js",
+    "SvSortedArray.js"
 ]
 
 

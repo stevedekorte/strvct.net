@@ -126,7 +126,7 @@
                         const pid = v["*"];
                         assert(pid);
                         this[slot.privateNameLazyPid()] = pid;
-                        //const storeRef = StoreRef.clone().setPid(pid).setStore(aStore);
+                        //const storeRef = SvStoreRef.clone().setPid(pid).setStore(aStore);
                         //console.log(this.svTypeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ");
                         //slot.onInstanceSetValueRef(this, storeRef);
                     } else if (slot.slotType() === "JSON Object") {
@@ -158,7 +158,7 @@
                 }
             } else {
                 console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.svType() + "' does not. Did schema change? Will re-save to purge.");
-                ObjectPool.forceAddDirtyObjectToAllPools(this); // re-save without the stale slot
+                SvObjectPool.forceAddDirtyObjectToAllPools(this); // re-save without the stale slot
             }
         });
 
@@ -167,7 +167,7 @@
 
     /*
     didLoadFromStore (aStore) {
-        // called by ObjectPool.didInitLoadingPids() after all objects are deserialized
+        // called by SvObjectPool.didInitLoadingPids() after all objects are deserialized
         super.didLoadFromStore(aStore);
     }
     */

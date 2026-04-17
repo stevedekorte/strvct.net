@@ -1,5 +1,5 @@
 [
-    "SttMessages/_imports.json",
-    "SpeechToTextSession.js",
-    "SpeechToTextSessions.js"
+    "SvSttMessages/_imports.json",
+    "SvSpeechToTextSession.js",
+    "SvSpeechToTextSessions.js"
 ]

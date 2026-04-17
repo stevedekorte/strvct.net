@@ -1,6 +1,6 @@
 [
     "MusicPlayer/_imports.json",
-    "YouTubePlayerFrame.js",
-    "YouTubeAudioPlayer.js",
-    "YouTubeService.js"
+    "SvYouTubePlayerFrame.js",
+    "SvYouTubeAudioPlayer.js",
+    "SvYouTubeService.js"
 ]

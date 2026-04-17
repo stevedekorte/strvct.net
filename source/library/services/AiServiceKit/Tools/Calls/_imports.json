@@ -1,5 +1,5 @@
 [
-    "ToolCall.js",
-    "ToolCalls.js",
-    "ToolResult.js"
+    "SvToolCall.js",
+    "SvToolCalls.js",
+    "SvToolResult.js"
 ]

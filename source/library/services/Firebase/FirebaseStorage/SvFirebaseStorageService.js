@@ -1,0 +1,440 @@
+"use strict";
+
+/**
+ * @module library.services.Firebase
+ */
+
+/**
+ * @class SvFirebaseStorageService
+ * @extends SvAiService
+ * @classdesc Service for Firebase Storage integration via AccountServer
+ *
+ * This service coordinates with the AccountServer to get signed upload URLs,
+ * allowing secure uploads to Firebase Storage without exposing credentials.
+ *
+ * Security model:
+ * - Client requests signed URL from AccountServer (authenticated)
+ * - AccountServer generates time-limited upload URL using Firebase Admin SDK
+ * - Client uploads directly to Firebase using signed URL
+ * - No Firebase credentials exposed to client
+ */
+
+(class SvFirebaseStorageService extends SvSummaryNode {
+
+    /**
+     * @static
+     * @description Initializes the class and sets it as a singleton.
+     * @category Initialization
+     */
+    static initClass () {
+        this.setIsSingleton(true);
+    }
+
+    initPrototypeSlots () {
+
+        {
+            const slot = this.newSlot("rootFolder", null);
+            slot.setFinalInitProto(SvFirebaseRootFolder);
+            slot.setIsSubnodeField(true);
+            slot.setShouldStoreSlot(false);
+            slot.setSyncsToView(true);
+            slot.setSlotType("SvFirebaseRootFolder");
+        }
+
+        {
+            const slot = this.newSlot("bucketName", null);
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(false);
+        }
+
+        {
+            const slot = this.newSlot("permissions", null);
+            slot.setFinalInitProto(SvFirebaseStoragePermissions);
+            slot.setSlotType("SvFirebaseStoragePermissions");
+            slot.setShouldStoreSlot(false);
+        }
+
+        // default bucket name
+        {
+            const slot = this.newSlot("defaultBucketName", null);
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(false);
+        }
+
+    }
+
+    initPrototype () {
+        this.setTitle("Firebase Storage");
+        this.setSubtitle("file hosting");
+        this.setShouldStoreSubnodes(false);
+        this.setIsDebugging(false);
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.initPrototype();
+        this.watchForNote("onUpdateAccountLogin");
+        this.rootFolder().setNodeCanAddSubnode(false);
+    }
+
+    isLoggedIn () {
+        return this.userId() !== null;
+    }
+
+    userId () {
+        if (firebase.auth().currentUser) {
+            const userId = firebase.auth().currentUser.uid;
+            return userId;
+        }
+        return null;
+    }
+
+    userFolder () {
+        const userId = this.userId();
+        if (userId) {
+            return this.rootFolder().folderForUser(userId);
+        }
+        return null;
+    }
+
+    async onUpdateAccountLogin () {
+        if (this.userId()) {
+            this.onDidLogin();
+        } else {
+            //this.rootFolder().removeSubnode(this.rootFolder().subfolderNamed("files"));
+        }
+    }
+
+    async onDidLogin () {
+        if (this.userId() && this._isSetup === undefined) {
+            this.asyncSetupDefaultFolders();
+            //await this.asyncTest();
+        }
+    }
+
+    async asyncSetupDefaultFolders () {
+        this._isSetup = true;
+        // Create folder references but don't read their contents yet
+        // Firebase Storage doesn't store empty folders, so reading non-existent folders
+        // causes CORS preflight 404 errors. Folders will be read on-demand when accessed.
+
+        // add user folder under /users/userId/
+        const userFolder = this.userFolder();
+        // Don't read - may not exist yet for new users
+
+        // add shared folder under /shared/
+        const sharedFolder = this.rootFolder().subfolderNamedCreateIfAbsent("shared");
+        // Don't read - may not exist yet
+
+        // add public folder under /public/
+        const publicFolder = this.rootFolder().subfolderNamedCreateIfAbsent("public");
+        // Don't read - may not exist yet
+
+        // add public/blobs folder for content-addressable blob storage
+        const publicBlobsFolder = publicFolder.subfolderNamedCreateIfAbsent("blobs");
+        // Don't read - folder may be empty and Firebase Storage doesn't store empty folders
+    }
+
+    publicFolder () {
+        return this.rootFolder().subfolderNamed("public");
+    }
+
+    publicBlobsFolder () {
+        return this.publicFolder().subfolderNamed("blobs");
+    }
+
+    /**
+     * @description Lists all files in a user's files folder
+     * @param {string} userId - The user ID to list files for
+     * @param {string} [subfolder] - Optional subfolder path under the user's folder (e.g., "images", "documents/pdfs")
+     * @returns {Promise<Array>} Array of file metadata objects with { name, fullPath, timeCreated, updated, size, contentType }
+     * @category Storage Operations
+     */
+    async listUserBlobs (userId, subfolder = "") {
+        try {
+            const storage = this.getFirebaseStorage();
+            const path = subfolder ? `users/${userId}/${subfolder}` : `users/${userId}`;
+            const userFolderRef = storage.ref(path);
+
+            // List all items in the user's folder
+            const result = await userFolderRef.listAll();
+
+            // Get metadata for each file
+            const filesMetadata = await Promise.all(
+                result.items.map(async (itemRef) => {
+                    const metadata = await itemRef.getMetadata();
+                    return {
+                        name: itemRef.name,
+                        fullPath: itemRef.fullPath,
+                        bucket: itemRef.bucket,
+                        timeCreated: metadata.timeCreated,
+                        updated: metadata.updated,
+                        size: metadata.size,
+                        contentType: metadata.contentType,
+                        customMetadata: metadata.customMetadata || {}
+                    };
+                })
+            );
+
+            return filesMetadata;
+        } catch (error) {
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`User folder ${userId} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                return []; // Return empty array for empty/non-existent folders
+            }
+            console.error(`Error listing blobs for user ${userId}:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * @description Lists all subfolders (prefixes) in a user's files folder
+     * @param {string} userId - The user ID to list folders for
+     * @param {string} [subfolder] - Optional subfolder path to list within (e.g., "images", "documents")
+     * @returns {Promise<Array>} Array of folder names (without the full path)
+     * @category Storage Operations
+     */
+    async listUserFolders (userId, subfolder = "") {
+        try {
+            const storage = this.getFirebaseStorage();
+            const path = subfolder ? `users/${userId}/${subfolder}` : `users/${userId}`;
+            const userFolderRef = storage.ref(path);
+
+            // List all items in the user's folder
+            const result = await userFolderRef.listAll();
+
+            // Extract folder names from prefixes
+            const folders = result.prefixes.map(prefixRef => prefixRef.name);
+
+            return folders;
+        } catch (error) {
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`User folder ${userId} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                return []; // Return empty array for empty/non-existent folders
+            }
+            console.error(`Error listing folders for user ${userId}:`, error);
+            throw error;
+        }
+    }
+
+    /**
+     * @description Lists all files and folders in a user's files folder
+     * @param {string} userId - The user ID to list for
+     * @param {string} [subfolder] - Optional subfolder path
+     * @returns {Promise<Object>} Object with { files: Array, folders: Array }
+     * @category Storage Operations
+     */
+    async listUserBlobsAndFolders (userId, subfolder = "") {
+        try {
+            const storage = this.getFirebaseStorage();
+            const path = subfolder ? `users/${userId}/${subfolder}` : `users/${userId}`;
+            const userFolderRef = storage.ref(path);
+
+            // List all items in the user's folder
+            const result = await userFolderRef.listAll();
+
+            // Get metadata for each file
+            const filesMetadata = await Promise.all(
+                result.items.map(async (itemRef) => {
+                    const metadata = await itemRef.getMetadata();
+                    return {
+                        name: itemRef.name,
+                        fullPath: itemRef.fullPath,
+                        bucket: itemRef.bucket,
+                        timeCreated: metadata.timeCreated,
+                        updated: metadata.updated,
+                        size: metadata.size,
+                        contentType: metadata.contentType,
+                        customMetadata: metadata.customMetadata || {}
+                    };
+                })
+            );
+
+            // Extract folder names from prefixes
+            const folders = result.prefixes.map(prefixRef => ({
+                name: prefixRef.name,
+                fullPath: prefixRef.fullPath
+            }));
+
+            return {
+                files: filesMetadata,
+                folders: folders
+            };
+        } catch (error) {
+            // Handle retry-limit-exceeded (often caused by CORS preflight failures on empty/non-existent folders)
+            if (error.code === "storage/retry-limit-exceeded") {
+                console.log(`User folder ${userId} appears to be empty or doesn't exist yet (CORS preflight failed)`);
+                return { files: [], folders: [] }; // Return empty arrays for empty/non-existent folders
+            }
+            console.error(`Error listing blobs and folders for user ${userId}:`, error);
+            throw error;
+        }
+    }
+
+    isFirebaseStorageAvailable () {
+        return this.firebaseApp() !== null;
+    }
+
+    firebaseApp () {
+        if (typeof firebase !== "undefined" && firebase && firebase.storage && firebase.app) {
+            return firebase.app();
+        }
+        return null;
+    }
+
+    bucketName () {
+        const app = this.firebaseApp();
+        if (app) {
+            let bucketName = null;
+
+            if (this.defaultBucketName()) {
+                this.isDebugging() && console.log("SvFirebaseStorageService.bucketName: Using default bucket name:", this.defaultBucketName());
+                bucketName = this.defaultBucketName();
+            }
+
+            /*
+            SvFirebaseStorageService.shared().setDefaultBucketName(globalThis.UoBuildEnv.storageBucket);
+            if (typeof globalThis !== "undefined" && globalThis.UoBuildEnv) {
+                bucketName = globalThis.UoBuildEnv.storageBucket;
+            }
+            */
+
+            if (!bucketName && app.options.storageBucket) {
+                bucketName = app.options.storageBucket;
+            }
+
+            if (!bucketName) {
+                throw new Error("Firebase Storage bucket found in UoBuildEnv or Firebase app options");
+            }
+
+            return bucketName;
+        }
+        return null;
+    }
+
+    /**
+     * @description Gets Firebase Storage instance (reuses the initialized instance)
+     * @returns {Object} Firebase Storage instance
+     * @throws {Error} If Firebase Storage is not available
+     * @category Helper
+     */
+    getFirebaseStorage () {
+        // Check for cached storage instance first (configured in firebase-shim.js)
+        if (typeof globalThis !== "undefined" && globalThis._firebaseStorageInstance) {
+            return globalThis._firebaseStorageInstance;
+        }
+
+        const app = this.firebaseApp();
+        if (app) {
+            return app.storage(`gs://${this.bucketName()}`);
+        }
+        return null;
+    }
+
+    /**
+     * @description Checks permissions for a given path based on security rules
+     * This is a client-side simulation of the security rules, not a server check
+     * @param {string} path - The storage path to check
+     * @returns {Object} Object with canRead, canWrite, and anyoneCanRead boolean properties
+     * @category Permissions
+     */
+    permissionsForPath (path) {
+        const context = {
+            auth: this.userId() ? { uid: this.userId() } : null
+        };
+
+        return this.permissions().evaluatePath(path, context);
+    }
+
+    async asyncTest () {
+        if (!this._didTest) {
+            this._didTest = true;
+            console.log("================================================");
+            console.log(this.logPrefix(), "testing...");
+
+            const file = this.userFolder().fileNamedCreateIfAbsent("test.txt");
+            console.log(this.logPrefix(), "File fullPath:", file.fullPath());
+            console.log(this.logPrefix(), "File parent:", file.parentNode());
+            console.log(this.logPrefix(), "userFolder:", this.userFolder().fullPath());
+            file.setBlobToString("Hello, world!");
+
+            // test upload
+            await file.asyncUpload();
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Delay for Firebase to propagate
+            assert(await file.asyncDoesExist(), "File should exist");
+            console.log(this.logPrefix(), "upload passed");
+
+            // test download
+            file.setBlob(null);
+            await file.asyncDownload();
+            const string = await file.blobAsString();
+            assert(string === "Hello, world!", "String should be 'Hello, world!'");
+            console.log(this.logPrefix(), "download passed");
+
+            // test delete
+            await file.asyncDelete();
+            await new Promise(resolve => setTimeout(resolve, 1500)); // Delay for Firebase to propagate
+
+            {
+                let deletedFile = this.userFolder().fileNamedCreateIfAbsent("test.txt");
+                const exists = await deletedFile.asyncDoesExist();
+                console.log(this.logPrefix(), "Deleted file exists:", exists);
+                assert(!exists, "File should not exist");
+                console.log(this.logPrefix(), "delete passed");
+            }
+            console.log("================================================");
+        }
+    }
+
+    // --- getting public files ---
+
+    assertIsLoggedIn () {
+        if (!this.isLoggedIn()) {
+            throw new Error("Not logged in");
+        }
+    }
+
+    async asyncPublicFileForHash (hash) {
+        return this.publicBlobsFolder().fileNamedCreateIfAbsent(hash);
+    }
+
+    async asyncPublicFileForBlob (blob) {
+        const hash = await blob.asyncHexSha256();
+        return this.asyncPublicFileForHash(hash);
+    }
+
+    // --- blob -> public url, hash -> public url ---
+
+    async asyncPublicUrlForBlob (blob) {
+        assert(blob.type, "Blob requires a type");
+
+        const file = await this.asyncPublicFileForBlob(blob);
+        const doesExist = await file.asyncDoesExist();
+        if (doesExist) {
+            // return url if it already exists
+            return file.publicUrlFromPath();
+        }
+
+        // Note, the hash is on the bytes, not the blob metadata,
+        // so this blob's metadata may not match that of the blob argument
+        // upload blob and return url
+        file.setBlob(blob);
+        this.assertIsLoggedIn();
+        await file.asyncUpload();
+        return file.downloadUrl();
+    }
+
+    async asyncBlobForHash (hash) {
+        const file = await this.asyncPublicFileForHash(hash);
+        await file.asyncDownloadIfNeeded();
+        return file.blob();
+    }
+
+    async asyncPublicUrlForHash (hash) {
+        const file = await this.asyncPublicFileForHash(hash);
+        return file.publicUrlFromPath();
+    }
+
+}.initThisClass());

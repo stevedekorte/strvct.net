@@ -154,7 +154,7 @@ Consider replacing `xmlhttprequest` with a more modern package that supports bin
 ## Usage in Codebase
 
 ### Primary Usage
-`/Servers/GameServer/site/strvct/source/library/services/ImaginePro/Text to Image/files/FileToDownload.js`
+`/Servers/GameServer/site/strvct/source/library/services/ImaginePro/Text to Image/files/SvFileToDownload.js`
 
 This class downloads binary image files (PNG, JPEG) from URLs and needs:
 - `xhr.responseType = "arraybuffer"`

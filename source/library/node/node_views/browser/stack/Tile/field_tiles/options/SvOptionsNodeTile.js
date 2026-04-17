@@ -1,8 +1,8 @@
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles.options
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles.options
  */
 
 /** * @class SvOptionsNodeTile
- * @extends TitledTile
+ * @extends SvTitledTile
  * @classdesc View for SvOptionsNode
  *
  * SvOptionsNode -> SvOptionsNodeTile
@@ -18,7 +18,7 @@
 
 "use strict";
 
-(class SvOptionsNodeTile extends TitledTile {
+(class SvOptionsNodeTile extends SvTitledTile {
 
     /*
     initPrototypeSlots () {

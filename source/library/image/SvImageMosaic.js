@@ -4,7 +4,7 @@
 
 /**
  * @class SvImageMosaic
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Creates a horizontal mosaic of multiple images with configurable dividers.
  * All images are proportionally scaled to the same height for consistent reference sheets.
  *

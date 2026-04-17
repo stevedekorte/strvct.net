@@ -1,4 +1,4 @@
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles
  */
 
 /**

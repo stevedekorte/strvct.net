@@ -365,11 +365,11 @@
 
     /**
      * Returns an immutable version of this set
-     * @returns {ImmutableSet} An immutable set with the same elements as this set
+     * @returns {SvImmutableSet} An immutable set with the same elements as this set
      * @category Conversion
      */
     asImmutable () {
-        return new ImmutableSet(this);
+        return new SvImmutableSet(this);
     }
 
     /**

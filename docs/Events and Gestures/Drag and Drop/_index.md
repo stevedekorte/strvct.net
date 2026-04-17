@@ -8,8 +8,8 @@ The browser's native drag-and-drop API is low-level and inconsistent — you mus
 
 STRVCT wraps the HTML5 Drag and Drop API through two complementary systems:
 
-- **Drop targets** — Views register to accept dropped content (files, text, HTML from the desktop or other apps). Handled by `DomView_browserDragAndDrop` (a category on `DomView`) and `DropListener`.
-- **Drag sources** — Views register to be draggable, providing data when the user initiates a drag. Handled by the same category class plus `DragListener`.
+- **Drop targets** — Views register to accept dropped content (files, text, HTML from the desktop or other apps). Handled by `SvDomView_browserDragAndDrop` (a category on `SvDomView`) and `SvDropListener`.
+- **Drag sources** — Views register to be draggable, providing data when the user initiates a drag. Handled by the same category class plus `SvDragListener`.
 
 The system routes dropped data through a MIME-type dispatch chain, ultimately delivering it to either the view or its backing node.
 
@@ -17,10 +17,10 @@ The system routes dropped data through a MIME-type dispatch chain, ultimately de
 
 | File | Purpose |
 |------|---------|
-| `DomView_browserDragAndDrop.js` | Drop/drag API on all views |
-| `DropListener.js` | Drop event listener set |
-| `DragListener.js` | Drag event listener set |
-| `DocumentBody.js` | Global drop prevention |
+| `SvDomView_browserDragAndDrop.js` | Drop/drag API on all views |
+| `SvDropListener.js` | Drop event listener set |
+| `SvDragListener.js` | Drag event listener set |
+| `SvDocumentBody.js` | Global drop prevention |
 
 ## Drop Targets
 
@@ -31,7 +31,7 @@ The system routes dropped data through a MIME-type dispatch chain, ultimately de
 this.setIsRegisteredForBrowserDrop(true);
 ```
 
-This creates a `DropListener` that registers four event handlers on the view's DOM element:
+This creates a `SvDropListener` that registers four event handlers on the view's DOM element:
 
 | DOM Event | Handler Method |
 |-----------|---------------|
@@ -118,7 +118,7 @@ this.setIsRegisteredForBrowserDrag(true);
 // This also calls setDraggable(true) on the element.
 ```
 
-This registers a `DragListener` for `dragstart`, `drag`, and `dragend` events.
+This registers a `SvDragListener` for `dragstart`, `drag`, and `dragend` events.
 
 ### Providing Drag Data
 
@@ -134,10 +134,10 @@ onBrowserDragStart (event) {
 
 ## Node Integration
 
-Views (particularly `TilesView`) forward drop data to their backing node:
+Views (particularly `SvTilesView`) forward drop data to their backing node:
 
 ```javascript
-// In TilesView:
+// In SvTilesView:
 onBrowserDropChunk (dataChunk) {
     const node = this.node();
     if (node && node.onBrowserDropChunk) {
@@ -160,14 +160,14 @@ onBrowserDropChunk (dataChunk) {
 }
 ```
 
-## ScrollView Drop Delegation
+## SvScrollView Drop Delegation
 
 Drop events fire on the innermost DOM element under the cursor and bubble upward. When a child view's element doesn't fill its parent container, drops in the empty space land on the parent and bypass the child.
 
-`ScrollView` solves this by registering for drops itself and delegating to its content view:
+`SvScrollView` solves this by registering for drops itself and delegating to its content view:
 
 ```javascript
-// ScrollView:
+// SvScrollView:
 acceptsDrop (event) {
     const cv = this.scrollContentView();
     return cv && cv.acceptsDrop ? cv.acceptsDrop(event) : false;
@@ -183,21 +183,21 @@ onBrowserDrop (event) {
 }
 ```
 
-This ensures drops anywhere in the scroll area — including empty space below the content — are handled by the content view (typically TilesView).
+This ensures drops anywhere in the scroll area — including empty space below the content — are handled by the content view (typically SvTilesView).
 
-## DocumentBody Safety Net
+## SvDocumentBody Safety Net
 
-`DocumentBody` registers for drops globally on `document.body` to prevent the browser's default behavior of navigating to dropped files:
+`SvDocumentBody` registers for drops globally on `document.body` to prevent the browser's default behavior of navigating to dropped files:
 
 ```javascript
-// DocumentBody:
+// SvDocumentBody:
 acceptsDrop (event) {
     event.preventDefault();  // prevent browser from opening the file
     return false;            // reject the drop
 }
 ```
 
-If a child view handles the drop first and calls `stopPropagation()`, DocumentBody never sees the event.
+If a child view handles the drop first and calls `stopPropagation()`, SvDocumentBody never sees the event.
 
 ## Summary
 
@@ -211,5 +211,5 @@ If a child view handles the drop first and calls `stopPropagation()`, DocumentBo
 | Make draggable | `setIsRegisteredForBrowserDrag(true)` | Enable as drag source |
 | Provide drag data | `onBrowserDragStart(event)` | Set transfer data |
 | Node integration | `node.onBrowserDropChunk(chunk)` | Forward drops to model |
-| Safety net | `DocumentBody.acceptsDrop()` | Prevent browser file open |
-| Scroll delegation | `ScrollView.onBrowserDrop()` | Forward drops in empty space |
+| Safety net | `SvDocumentBody.acceptsDrop()` | Prevent browser file open |
+| Scroll delegation | `SvScrollView.onBrowserDrop()` | Forward drops in empty space |

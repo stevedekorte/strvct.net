@@ -1,6 +1,6 @@
 "use strict";
 
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles
  */
 
 /** * @class SvBooleanFieldTile
@@ -53,12 +53,12 @@
     }
 
     /**
-     * @description Creates and returns a BooleanView for the value.
-     * @returns {BooleanView} The created BooleanView instance.
+     * @description Creates and returns a SvBooleanView for the value.
+     * @returns {SvBooleanView} The created SvBooleanView instance.
      * @category View Creation
      */
     createValueView () {
-        const bv = BooleanView.clone();
+        const bv = SvBooleanView.clone();
         // Ensure the view starts with the field's initial value
         if (this.node() && this.node().value !== undefined) {
             bv.setValue(this.node().value());
@@ -67,8 +67,8 @@
     }
 
     /**
-     * @description Returns the BooleanView used for the value.
-     * @returns {BooleanView} The BooleanView instance.
+     * @description Returns the SvBooleanView used for the value.
+     * @returns {SvBooleanView} The SvBooleanView instance.
      * @category Accessors
      */
     booleanView () {

@@ -4,7 +4,7 @@
  */
 
 /** * @class SvDayNode
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a day node in a calendar or date system. It handles the representation and manipulation of a single day value.
  
  
@@ -13,7 +13,7 @@
 /**
 
  */
-(class SvDayNode extends BaseNode {
+(class SvDayNode extends SvBaseNode {
 
     /**
      * @description Initializes the prototype slots for the SvDayNode.

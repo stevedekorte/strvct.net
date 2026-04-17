@@ -1,10 +1,10 @@
 [
-    "HomeAssistantFolder.js",
-    "HomeAssistantObject.js",
-    "HomeAssistantGroup.js",
+    "SvHomeAssistantFolder.js",
+    "SvHomeAssistantObject.js",
+    "SvHomeAssistantGroup.js",
     "States/_imports.json",
     "Entities/_imports.json",
-    "Devices/_imports.json",
+    "SvDevices/_imports.json",
     "Areas/_imports.json",
     "Assistants/_imports.json"
 ]

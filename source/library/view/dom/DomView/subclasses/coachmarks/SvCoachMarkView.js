@@ -1,16 +1,16 @@
 /**
- * @module library.view.dom.DomView.subclasses
+ * @module library.view.dom.SvDomView.subclasses
  */
 
 "use strict";
 
 /**
  * @class SvCoachMarkView
- * @extends DomView
+ * @extends SvDomView
  * @classdesc A coach mark view that displays instructional content positioned above a target view.
  * Automatically closes when tapped and includes open/close animations.
  */
-(class SvCoachMarkView extends DomView {
+(class SvCoachMarkView extends SvDomView {
 
     /**
      * @description Initializes the prototype slots for the SvCoachMarkView
@@ -28,20 +28,20 @@
 
         {
             /**
-             * @member {DomView} targetView - The view that this coach mark points to
+             * @member {SvDomView} targetView - The view that this coach mark points to
              * @category Positioning
              */
             const slot = this.newSlot("targetView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
 
         {
             /**
-             * @member {DomView} labelView - The view containing the label text
+             * @member {SvDomView} labelView - The view containing the label text
              * @category View
              */
             const slot = this.newSlot("labelView", null);
-            slot.setSlotType("DomView");
+            slot.setSlotType("SvDomView");
         }
 
         {
@@ -74,7 +74,7 @@
         this.setTransition("opacity 0.3s ease-out, transform 0.3s ease-out");
 
         // Create the label view
-        const labelView = DomView.clone();
+        const labelView = SvDomView.clone();
         labelView.setBackgroundColor("rgba(0, 0, 0, 0.9)");
         labelView.setColor("white");
         labelView.setPadding("12px 20px");
@@ -90,7 +90,7 @@
         this.addSubview(labelView);
 
         // Add arrow pointing down
-        const arrow = DomView.clone();
+        const arrow = SvDomView.clone();
         arrow.setWidth("0");
         arrow.setHeight("0");
         arrow.setBorderLeft("8px solid transparent");

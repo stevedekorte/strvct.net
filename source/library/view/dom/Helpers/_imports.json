@@ -1,6 +1,6 @@
 [
-    "DomCssInspector.js",
-    "CssColor.js",
+    "SvDomCssInspector.js",
+    "SvCssColor.js",
     "Node-helpers.js",
     "TapeMeasures/_imports.json"
 ]

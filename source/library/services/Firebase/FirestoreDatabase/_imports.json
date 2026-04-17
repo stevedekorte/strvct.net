@@ -1,8 +1,8 @@
 [
-    "FirestoreNode.js",
+    "SvFirestoreNode.js",
     "Documents/_imports.json",
-    "FirestoreQuery.js",
+    "SvFirestoreQuery.js",
     "Collections/_imports.json",
-    "FirestoreRoot.js",
-    "FirestoreDatabaseService.js"
+    "SvFirestoreRoot.js",
+    "SvFirestoreDatabaseService.js"
 ]

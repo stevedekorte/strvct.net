@@ -174,7 +174,7 @@ For React developers getting oriented, here's how familiar concepts map:
 
 | React Concept | Strvct Equivalent |
 |---|---|
-| Component | NodeView (auto-generated or custom) |
+| Component | SvNodeView (auto-generated or custom) |
 | Props | Slot values (accessed via getters) |
 | State (useState) | Slots with `setSyncsToView(true)` |
 | Context / prop drilling | SvNotificationCenter (publish/subscribe) |
@@ -182,5 +182,5 @@ For React developers getting oriented, here's how familiar concepts map:
 | Redux / Zustand | Slots + notification system (built in) |
 | React Router | Model graph navigation (automatic) |
 | JSX | No equivalent — UI generated from annotations |
-| Virtual DOM | No equivalent — direct DOM updates via NodeView |
+| Virtual DOM | No equivalent — direct DOM updates via SvNodeView |
 | npm install | No equivalent — external libs vendored as source |

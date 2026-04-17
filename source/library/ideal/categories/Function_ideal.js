@@ -464,7 +464,7 @@ Function.prototype.isToolable = function () {
     return this.getMetaProperty("isToolable") == true;
 };
 
-// Is Blocking Tool - if true, the AssistantToolKit will wait for all blocking tool calls to complete before responding to the AI
+// Is Blocking Tool - if true, the SvAssistantToolKit will wait for all blocking tool calls to complete before responding to the AI
 
 Function.prototype.setIsBlockingTool = function (aBool) {
     assert(Type.isBoolean(aBool));

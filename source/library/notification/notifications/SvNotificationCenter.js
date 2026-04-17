@@ -319,7 +319,7 @@
         if (!this.hasObservation(obs)) {
             this.observationsMap().set(obs.obsHash(), obs);
             /*
-            if (obs.sender() !== null && obs.sender().svType() === "FirestoreDatabaseService") {
+            if (obs.sender() !== null && obs.sender().svType() === "SvFirestoreDatabaseService") {
                 console.log("----------- " + obs.observer().svTypeId() + " now observing " + obs.sender().svTypeId());
             }
             */
@@ -539,7 +539,7 @@
         const nameIndex = this.observationsMap().indexedByMethod("name");
         this.setNameIndex(nameIndex);
 
-        const emptySet = ImmutableSet.emptySet();
+        const emptySet = SvImmutableSet.emptySet();
 
         const nullSenderMatchSet = this.senderIndex().get(null) || emptySet;
         this.setNullSenderMatchSet(nullSenderMatchSet);
@@ -592,13 +592,13 @@
     /**
      * @description returns the observations matching the notification
      * @param {SvNotification} note the notification to match
-     * @returns {ImmutableSet} the observations matching the notification
+     * @returns {SvImmutableSet} the observations matching the notification
      */
     observationsMatchingNotification (note) {
         // use our observation indexes for fast matching with the notification
         // IMPORTANT: assumes calcIndexes() has been called before modifying observations
 
-        const emptySet = ImmutableSet.emptySet();
+        const emptySet = SvImmutableSet.emptySet();
 
         const senderMatchSet = this.senderIndex().get(note.sender()) || emptySet;
         const nameMatchSet = this.nameIndex().get(note.name()) || emptySet;

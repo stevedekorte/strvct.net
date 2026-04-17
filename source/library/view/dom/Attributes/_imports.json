@@ -1,7 +1,7 @@
 [
-    "DomTransition.js",
-    "DomTransitions.js",
-    "DomBorderRadius.js",
-    "ViewAnimator.js",
-    "CssAnimation.js"
+    "SvDomTransition.js",
+    "SvDomTransitions.js",
+    "SvDomBorderRadius.js",
+    "SvViewAnimator.js",
+    "SvCssAnimation.js"
 ]

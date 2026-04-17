@@ -6,7 +6,7 @@
 
 /**
  * @class SvI18n
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Singleton coordinator for the i18n system.
  * Cache and store each own a per-language IndexedDB:
  *   - SvI18nCache: "i18nTranslations/cache/{lang}" (eager, in-memory Map)
@@ -26,7 +26,7 @@
  *   SvI18n.shared().asyncTranslate("Hit Points", "ui-label").then(() => { ... });
  */
 
-(class SvI18n extends BaseNode {
+(class SvI18n extends SvBaseNode {
 
     static initClass () {
         this.setIsSingleton(true);

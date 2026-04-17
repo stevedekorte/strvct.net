@@ -2,17 +2,17 @@
 
 YouTube audio playback and browser speech recognition.
 
-## YouTubeService
+## SvYouTubeService
 
-Manages YouTube-based audio playback via the IFrame Player API. The service contains a `YouTubeAudioPlayer` subnode that wraps a hidden YouTube player element.
+Manages YouTube-based audio playback via the IFrame Player API. The service contains a `SvYouTubeAudioPlayer` subnode that wraps a hidden YouTube player element.
 
-### YouTubeAudioPlayer
+### SvYouTubeAudioPlayer
 
 The core playback class. Handles player lifecycle, volume, looping, and state tracking. The YouTube IFrame API script is loaded lazily on first use, and playback waits for a user gesture (browser autoplay policy).
 
 ```javascript
 // Create a player and loop background music
-const player = YouTubeAudioPlayer.clone();
+const player = SvYouTubeAudioPlayer.clone();
 player.setTrackName("Ambient Forest");
 player.setVideoId("abc123xyz");
 player.setShouldRepeat(true);
@@ -33,9 +33,9 @@ await player.play();
 await player.shutdown();  // destroys the YT.Player and removes the DOM element
 ```
 
-### MusicLibrary
+### SvMusicLibrary
 
-A higher-level layer that manages playlists of `MusicTrack` nodes loaded from a JSON resource file. Owns two `YouTubeAudioPlayer` instances — one for background music (low volume), one for sound effects (higher volume).
+A higher-level layer that manages playlists of `SvMusicTrack` nodes loaded from a JSON resource file. Owns two `SvYouTubeAudioPlayer` instances — one for background music (low volume), one for sound effects (higher volume).
 
 ```javascript
 // Play looping background music by track name
@@ -48,8 +48,8 @@ await library.playSoundEffectWithName("Sword Clash");
 library.musicPlayer().stop();
 
 // Lookup
-library.trackWithName("Battle Theme");       // => MusicTrack
-library.playlists();                          // => MusicFolder[]
+library.trackWithName("Battle Theme");       // => SvMusicTrack
+library.playlists();                          // => SvMusicFolder[]
 library.trackNames();                         // => String[]
 ```
 
@@ -67,7 +67,7 @@ Playlist data is a JSON object mapping folder names to track dictionaries:
 }
 ```
 
-### MusicTrack
+### SvMusicTrack
 
 Represents a single track with a YouTube video ID. Supports a delegate set for playback notifications:
 
@@ -79,14 +79,14 @@ track.stop();
 
 Delegates receive `onSoundStarted(track)` and `onSoundEnded(track)`.
 
-## SpeechToTextSessions
+## SvSpeechToTextSessions
 
-Wraps the browser's native `SpeechRecognition` API for voice input. Each `SpeechToTextSession` tracks recognition state, language settings, and transcription results. Not a cloud service — all processing happens in the browser.
+Wraps the browser's native `SpeechRecognition` API for voice input. Each `SvSpeechToTextSession` tracks recognition state, language settings, and transcription results. Not a cloud service — all processing happens in the browser.
 
-### SpeechToTextSession
+### SvSpeechToTextSession
 
 ```javascript
-const session = SpeechToTextSession.clone();
+const session = SvSpeechToTextSession.clone();
 session.setDelegate(myObject);
 session.setLanguage("en-US");
 session.setIsContinuous(true);
@@ -125,7 +125,7 @@ Any text field supports voice input via Alt+L. Holding the key starts a session;
 
 ```javascript
 startSpeechToText () {
-    this._speechSession = SpeechToTextSession.clone().setDelegate(this);
+    this._speechSession = SvSpeechToTextSession.clone().setDelegate(this);
     this._speechSession.start();
 }
 

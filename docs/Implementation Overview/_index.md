@@ -13,8 +13,8 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
 The framework is organized around three layers with a notification-based synchronization system connecting them:
 
 - **Model** — A graph of `SvNode` objects. Nodes are the unit of both storage and UI presentation. Model objects hold no references to UI objects — they communicate outward solely by posting notifications, which the other layers observe.
-- **UI** — Composed of `NodeView` subclass instances. Each `NodeView` holds a reference to an `SvNode` and observes its change notifications. Multiple views may point to the same node instance.
-- **Storage** — A `PersistentObjectPool` that monitors node mutations, bundles changes within an event loop into atomic transactions, and handles automatic garbage collection of the stored object graph. Only model objects are persisted; UI objects are transient and recreated from the model on load.
+- **UI** — Composed of `SvNodeView` subclass instances. Each `SvNodeView` holds a reference to an `SvNode` and observes its change notifications. Multiple views may point to the same node instance.
+- **Storage** — A `SvPersistentObjectPool` that monitors node mutations, bundles changes within an event loop into atomic transactions, and handles automatic garbage collection of the stored object graph. Only model objects are persisted; UI objects are transient and recreated from the model on load.
 
 ### SvApp
 
@@ -144,39 +144,39 @@ Fields are nodes that sync to a slot value via their `target` and `valueMethod` 
 
 The view system is built from a layered class hierarchy where each layer adds a specific capability:
 
-`ElementDomView` → `CssDomView` → `SubviewsDomView` → `ListenerDomView` → `VisibleDomView` → `GesturableDomView` → `ResponderDomView` → `ControlDomView` → `SelectableDomView` → `EditableDomView` → `DomView` → `FlexDomView` → `StyledDomView` → `NodeView`
+`SvElementDomView` → `SvCssDomView` → `SvSubviewsDomView` → `SvListenerDomView` → `SvVisibleDomView` → `SvGesturableDomView` → `SvResponderDomView` → `SvControlDomView` → `SvSelectableDomView` → `SvEditableDomView` → `SvDomView` → `SvFlexDomView` → `SvStyledDomView` → `SvNodeView`
 
 Notable layers:
 
-- **`ElementDomView`** — Wraps a DOM element rather than extending it, keeping open the possibility of swapping the DOM as a render layer.
-- **`GesturableDomView`** — Gesture recognizer framework (tap, double-tap, pan, long-press, etc.).
-- **`ResponderDomView`** — Focus management and keyboard navigation.
-- **`ControlDomView`** — Target/action pattern for connecting views to handler objects.
-- **`StyledDomView`** — Named style states (selected, unselected, active, disabled) with theme class name support.
+- **`SvElementDomView`** — Wraps a DOM element rather than extending it, keeping open the possibility of swapping the DOM as a render layer.
+- **`SvGesturableDomView`** — Gesture recognizer framework (tap, double-tap, pan, long-press, etc.).
+- **`SvResponderDomView`** — Focus management and keyboard navigation.
+- **`SvControlDomView`** — Target/action pattern for connecting views to handler objects.
+- **`SvStyledDomView`** — Named style states (selected, unselected, active, disabled) with theme class name support.
 
-### NodeView
+### SvNodeView
 
-`NodeView` extends `StyledDomView` and is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes its change notifications, and synchronizes the view accordingly. Nearly all application-visible views are `NodeView` subclasses.
+`SvNodeView` extends `SvStyledDomView` and is the bridge between model nodes and the DOM. It holds a reference to an `SvNode`, observes its change notifications, and synchronizes the view accordingly. Nearly all application-visible views are `SvNodeView` subclasses.
 
 ### Navigation Structure
 
 Strvct's UI is based on nested master-detail views using a Miller Column pattern:
 
-- **`StackView`** — Core navigation unit. Contains a `NavView` (master column) and an `otherView` (detail area). Orientation can be left-right or top-bottom. Chains of StackViews automatically compact and expand based on available space.
-- **`BrowserView`** — Top-level `StackView` with a breadcrumb path header.
-- **`NavView`** — Navigation column containing a header, a scrollable `TilesView`, and a footer. Column width is resizable.
-- **`TilesView`** — Scrollable container for an array of `Tile` views. Manages selection, cursor navigation, drag-and-drop, and keyboard input.
+- **`SvStackView`** — Core navigation unit. Contains a `SvNavView` (master column) and an `otherView` (detail area). Orientation can be left-right or top-bottom. Chains of StackViews automatically compact and expand based on available space.
+- **`SvBrowserView`** — Top-level `SvStackView` with a breadcrumb path header.
+- **`SvNavView`** — Navigation column containing a header, a scrollable `SvTilesView`, and a footer. Column width is resizable.
+- **`SvTilesView`** — Scrollable container for an array of `SvTile` views. Manages selection, cursor navigation, drag-and-drop, and keyboard input.
 
-When a user selects a tile, a new `StackView` is created in the detail area, with its `NavView` populated by the subnodes of the selected node. This recursive structure allows arbitrarily deep navigation.
+When a user selects a tile, a new `SvStackView` is created in the detail area, with its `SvNavView` populated by the subnodes of the selected node. This recursive structure allows arbitrarily deep navigation.
 
-### Tile Views
+### SvTile Views
 
 Tiles are the individual items displayed in navigation columns:
 
-- **`Tile`** — Base tile with selection, state-based styling, slide-to-delete, long-press reorder, and drag support.
-- **`TitledTile`** — Standard tile with title, subtitle, note, and optional thumbnail.
-- **`HeaderTile`** — Section header tile.
-- **`BreadCrumbsTile`** — Breadcrumb path that auto-compacts to fit available width.
+- **`SvTile`** — Base tile with selection, state-based styling, slide-to-delete, long-press reorder, and drag support.
+- **`SvTitledTile`** — Standard tile with title, subtitle, note, and optional thumbnail.
+- **`SvHeaderTile`** — Section header tile.
+- **`SvBreadCrumbsTile`** — Breadcrumb path that auto-compacts to fit available width.
 
 ### Field Tiles
 
@@ -200,7 +200,7 @@ Object references within records are stored as puuid strings. This uniform refer
 
 ### Persistence Lifecycle
 
-Nodes opt into persistence via `setShouldStore(true)`, and individual slots via `setShouldStoreSlot(true)`. The `PersistentObjectPool` then:
+Nodes opt into persistence via `setShouldStore(true)`, and individual slots via `setShouldStoreSlot(true)`. The `SvPersistentObjectPool` then:
 
 1. **Monitors mutations** — When a stored slot changes, the owning node is marked dirty via `didMutate()`.
 2. **Batches transactions** — All dirty objects are collected at the end of the current event loop and committed atomically.
@@ -241,7 +241,7 @@ The build process runs two indexers:
   - `_index.json` — a metadata catalog listing every resource path and its SHA-256 content hash
   - `_cam.json.zip` — a compressed bundle containing the actual file contents, keyed by hash
 
-- **ResourceIndexer** scans specified directories (e.g. icons, sounds) and produces a similar index for non-code assets.
+- **SvResourceIndexer** scans specified directories (e.g. icons, sounds) and produces a similar index for non-code assets.
 
 ### Runtime Loading
 

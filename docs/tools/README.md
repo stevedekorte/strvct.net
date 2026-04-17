@@ -1,4 +1,4 @@
-# STRVCT Documentation Tools
+# STRVCT SvDocumentation Tools
 
 Utilities for generating documentation and visualizations from the STRVCT codebase.
 
@@ -59,9 +59,9 @@ node class-tree.js --filter View --full
         ├── SvStorableNode
         │   └── JsonGroup
         │       └── UoCharacter
-        └── ViewableNode
-            └── DomView
-                └── NodeView
+        └── SvViewableNode
+            └── SvDomView
+                └── SvNodeView
 ```
 
 ### Requirements

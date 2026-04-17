@@ -4,7 +4,7 @@
  */
 
 /** * @class SvMinuteNode
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a minute node in a time-related structure.
  
  
@@ -13,7 +13,7 @@
 /**
 
  */
-(class SvMinuteNode extends BaseNode {
+(class SvMinuteNode extends SvBaseNode {
 
     /**
      * Initializes the prototype slots for the SvMinuteNode.

@@ -2,7 +2,7 @@
  */
 
 /** * @class SvVideoView
- * @extends NodeView
+ * @extends SvNodeView
  * @classdesc SvVideoView is a specialized view for displaying videos with additional features like a close button, playback controls, and editability.
  
  
@@ -13,40 +13,40 @@
  */
 "use strict";
 
-(class SvVideoView extends NodeView {
+(class SvVideoView extends SvNodeView {
 
     initPrototypeSlots () {
         /**
-         * @member {FlexDomView} videoContainer - Container for the video
+         * @member {SvFlexDomView} videoContainer - Container for the video
          * @category UI Components
          */
         {
             const slot = this.newSlot("videoContainer", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
-         * @member {FlexDomView} rawVideoView - View for the raw video
+         * @member {SvFlexDomView} rawVideoView - View for the raw video
          * @category UI Components
          */
         {
             const slot = this.newSlot("rawVideoView", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
-         * @member {FlexDomView} closeButtonView - View for the close button
+         * @member {SvFlexDomView} closeButtonView - View for the close button
          * @category UI Components
          */
         {
             const slot = this.newSlot("closeButtonView", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
-         * @member {FlexDomView} downloadButtonView - View for the download button
+         * @member {SvFlexDomView} downloadButtonView - View for the download button
          * @category UI Components
          */
         {
             const slot = this.newSlot("downloadButtonView", null);
-            slot.setSlotType("FlexDomView");
+            slot.setSlotType("SvFlexDomView");
         }
         /**
          * @member {String} srcUrl - Source URL of the video
@@ -148,11 +148,11 @@
 
     /**
      * @description Creates a new close button view
-     * @returns {ButtonView} The created close button view
+     * @returns {SvButtonView} The created close button view
      * @category UI Components
      */
     newCloseButtonView () {
-        const v = ButtonView.clone().setElementClassName("VideoCloseButton");
+        const v = SvButtonView.clone().setElementClassName("VideoCloseButton");
         v.setDisplay("flex");
         v.setPosition("absolute");
         v.setTitleIsVisible(false);
@@ -165,11 +165,11 @@
 
     /**
      * @description Creates a new download button view
-     * @returns {ButtonView} The created download button view
+     * @returns {SvButtonView} The created download button view
      * @category UI Components
      */
     newDownloadButtonView () {
-        const v = ButtonView.clone().setElementClassName("VideoDownloadButton");
+        const v = SvButtonView.clone().setElementClassName("VideoDownloadButton");
         v.setDisplay("flex");
         v.setPosition("absolute");
         v.setTitleIsVisible(false);
@@ -182,11 +182,11 @@
 
     /**
      * @description Creates a new video view container
-     * @returns {FlexDomView} The created video view container
+     * @returns {SvFlexDomView} The created video view container
      * @category UI Components
      */
     newVideoViewContainer () {
-        const v = FlexDomView.clone().setElementClassName("VideoViewVideoContainer");
+        const v = SvFlexDomView.clone().setElementClassName("VideoViewVideoContainer");
         v.setDisplay("flex");
         v.setPosition("relative");
         v.setJustifyContent("center");
@@ -322,11 +322,11 @@
     /**
      * @description Creates a new raw video view for a given video element
      * @param {HTMLVideoElement} videoElement - The video element to create a view for
-     * @returns {FlexDomView} The created raw video view
+     * @returns {SvFlexDomView} The created raw video view
      * @category UI Components
      */
     newRawVideoViewForVideo (videoElement) {
-        const v = FlexDomView.clone().setElement(videoElement).setElementClassName("RawVideoView");
+        const v = SvFlexDomView.clone().setElement(videoElement).setElementClassName("RawVideoView");
         v.setDisplay("flex");
         v.setPosition("relative");
         v.setJustifyContent("center");

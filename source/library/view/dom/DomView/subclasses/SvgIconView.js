@@ -1,10 +1,10 @@
 /**
- * @module library.view.dom.DomView.subclasses
+ * @module library.view.dom.SvDomView.subclasses
  */
 
 /**
  * @class SvgIconView
- * @extends FlexDomView
+ * @extends SvFlexDomView
  * @classdesc A view to render scalable SVG within a view that can be
  * synced to match the color of the parent view's text color by
  * getting the computed color and applying it to the fill or stroke of the
@@ -18,7 +18,7 @@
  */
 "use strict";
 
-(class SvgIconView extends FlexDomView {
+(class SvgIconView extends SvFlexDomView {
 
     /**
      * @static

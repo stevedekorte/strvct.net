@@ -75,9 +75,9 @@ The persistence system works identically in both environments because the storag
 ```
 Application code
     ↓
-ObjectPool / PersistentObjectPool     — object cache, dirty tracking, GC
+SvObjectPool / SvPersistentObjectPool     — object cache, dirty tracking, GC
     ↓
-PersistentAtomicMap                   — synchronous in-memory cache, batched writes
+SvPersistentAtomicMap                   — synchronous in-memory cache, batched writes
     ↓
 SvIndexedDbFolder                     — environment-specific storage backend
     ↓
@@ -86,7 +86,7 @@ IndexedDB (browser) or LevelDB (Node.js)
 
 ### Why Everything Loads Into Memory
 
-IndexedDB is entirely asynchronous — every read requires a callback or promise. But the object graph needs synchronous access: when a slot getter runs during deserialization or normal code, it can't `await` a database read. `PersistentAtomicMap` resolves this by loading the entire object store into a JavaScript `Map` on open. After that, all reads are synchronous map lookups and all writes go to an in-memory change set. On commit, changes are flushed to the underlying store in a single atomic transaction.
+IndexedDB is entirely asynchronous — every read requires a callback or promise. But the object graph needs synchronous access: when a slot getter runs during deserialization or normal code, it can't `await` a database read. `SvPersistentAtomicMap` resolves this by loading the entire object store into a JavaScript `Map` on open. After that, all reads are synchronous map lookups and all writes go to an in-memory change set. On commit, changes are flushed to the underlying store in a single atomic transaction.
 
 This design means the layers above `SvIndexedDbFolder` never make async storage calls during normal operation — the async boundary is only at open and commit time. The tradeoff is that the full object dataset must fit in memory, which is fine for typical object graphs (tens of megabytes) but wouldn't work for large binary data.
 
@@ -155,5 +155,5 @@ Headless execution enables several workflows:
 
 - **Automated testing** — run model-layer tests in Node.js without browser overhead
 - **Server-side processing** — load and manipulate the same object graphs that the browser uses
-- **CLI tools** — the STRVCT boot system itself (`ImportsIndexer`, `ResourceIndexer`) runs headlessly
+- **CLI tools** — the STRVCT boot system itself (`ImportsIndexer`, `SvResourceIndexer`) runs headlessly
 - **Build pipelines** — static site generation and other build-time processing can use the full framework

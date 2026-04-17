@@ -1,6 +1,6 @@
 [
-    "ObservableProxy.js",
-    "FirewallProxy.js"
+    "SvObservableProxy.js",
+    "SvFirewallProxy.js"
 ]
 
 

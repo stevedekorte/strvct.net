@@ -1,5 +1,5 @@
 [
-    "EdgePanGestureRecognizer.js",
+    "SvEdgePanGestureRecognizer.js",
     "view/_imports.json",
     "screen/_imports.json"
 ]

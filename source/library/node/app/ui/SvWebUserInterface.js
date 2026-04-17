@@ -12,7 +12,7 @@
 
     init () {
         super.init();
-        //WebDocument.shared().setTitle(this.app().name());
+        //SvWebDocument.shared().setTitle(this.app().name());
         return this;
     }
 
@@ -31,7 +31,7 @@
      * @category UI
      */
     setupDocTheme () {
-        const doc = DocumentBody.shared();
+        const doc = SvDocumentBody.shared();
         doc.setColor("#f4f4ec");
         doc.setBackgroundColor("rgb(25, 25, 25)");
         this.setupNormalDocTheme();
@@ -42,7 +42,7 @@
      * @category UI
      */
     setupNormalDocTheme () {
-        const doc = DocumentBody.shared();
+        const doc = SvDocumentBody.shared();
         doc.setBackgroundColor("#191919");
         doc.setFontFamily("HoeflerTitling");
 

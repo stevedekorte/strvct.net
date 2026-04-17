@@ -1,5 +1,5 @@
 [
-  "ImageEvaluator/_imports.json",
-  "ImagineProImageEvalPrompt.js",
-  "ImagineProImageEvalPrompts.js"
+  "SvImageEvaluator/_imports.json",
+  "SvImagineProImageEvalPrompt.js",
+  "SvImagineProImageEvalPrompts.js"
 ]

@@ -84,10 +84,10 @@ this.addTimeout(() => this.save(), 5000, "autoSave");
 
 Gesture recognizers and views use `addWeakTimeout` for their internal timers:
 
-- **`GestureRecognizer.didFinish()`** — Deferred deactivation after gesture completes
-- **`LongPressGestureRecognizer`** — Long-press detection timer
-- **`TapGestureRecognizer`** — Maximum hold period before cancellation
-- **`DomView_animations`** — CSS transition timing and sequencing
-- **`ResponderDomView`** — Deferred focus management
+- **`SvGestureRecognizer.didFinish()`** — Deferred deactivation after gesture completes
+- **`SvLongPressGestureRecognizer`** — Long-press detection timer
+- **`SvTapGestureRecognizer`** — Maximum hold period before cancellation
+- **`SvDomView_animations`** — CSS transition timing and sequencing
+- **`SvResponderDomView`** — Deferred focus management
 
 These timers do not prevent their views from being garbage collected if the view is removed from the hierarchy.

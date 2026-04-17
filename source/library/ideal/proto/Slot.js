@@ -122,8 +122,8 @@ SvGlobals.globals().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("inspectorPath", null); // if non-null, uses to create a path for the slot inspector
         this.simpleNewSlot("summaryFormat", "none"); // passed into slot inspector node
 
-        this.simpleNewSlot("syncsToView", false); // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change (implemented by ViewableNode)
-        this.simpleNewSlot("syncsToNode", false); // if true, will hook slot setter to call this.scheduleSyncToNode() on slotValue change (implemented by NodeView)
+        this.simpleNewSlot("syncsToView", false); // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change (implemented by SvViewableNode)
+        this.simpleNewSlot("syncsToNode", false); // if true, will hook slot setter to call this.scheduleSyncToNode() on slotValue change (implemented by SvNodeView)
 
         this.simpleNewSlot("actionMethodName", null); // used by slots that will be represented by ActionFields to store the methodName
         //this.simpleNewSlot("actionShouldConfirm", false); // used by slots that will be represented by ActionFields to store whether the action should be confirmed - do with action info instead

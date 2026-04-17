@@ -1,10 +1,10 @@
 "use strict";
 
-/** * @module library.node.node_views.browser.stack.Tile
+/** * @module library.node.node_views.browser.stack.SvTile
  */
 
 /** * @class SvTextNodeTile
- * @extends Tile
+ * @extends SvTile
  * @classdesc SvTextNodeTile represents a tile for displaying and editing text nodes.
  
  
@@ -14,7 +14,7 @@
 
  */
 
-(class SvTextNodeTile extends Tile {
+(class SvTextNodeTile extends SvTile {
 
     /**
      * Initializes the prototype slots for the SvTextNodeTile.

@@ -1269,10 +1269,10 @@ class Type extends Object {
         // so comment out test for now
 
         // Array subclass cases
-        class MyArray extends Array {}
-        const myArr = new MyArray();
-        test(myArr, 'MyArray', 'Array subclass instance');
-        test(MyArray, 'MyArray class', 'Array subclass constructor');
+        class SvMyArray extends Array {}
+        const myArr = new SvMyArray();
+        test(myArr, 'SvMyArray', 'Array subclass instance');
+        test(SvMyArray, 'SvMyArray class', 'Array subclass constructor');
         test(new Array(), 'Array', 'Array instance');
 
         // Function cases
@@ -1283,8 +1283,8 @@ class Type extends Object {
 
         // Note: We can't meaningfully subclass Function because the instances
         // are always anonymous functions. Keeping the constructor test only.
-        class MyFunction extends Function {}
-        test(MyFunction, 'MyFunction class', 'Function subclass constructor');
+        class SvMyFunction extends Function {}
+        test(SvMyFunction, 'SvMyFunction class', 'Function subclass constructor');
 
         // Regular class cases
         class MyClass {}

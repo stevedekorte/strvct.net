@@ -12,7 +12,7 @@ The framework creates views automatically when a node needs to be displayed:
 4. Creates an instance via `clone()` and associates it via `setNode()`.
 
 ```
-NodeView.newSubviewForSubnode(node)
+SvNodeView.newSubviewForSubnode(node)
   ├── Determine view class
   ├── Create instance via clone()
   └── Associate via setNode()

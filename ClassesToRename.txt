@@ -3,6 +3,10 @@ Classes defined in strvct source that do not use the Sv* prefix.
 Excludes: external-libs/, _unused/.
 Generated from: grep of `class X extends Y` patterns in source/.
 
+STATUS: renames applied 2026-04-16 via docs/tools/rename-classes.js.
+Kept for historical reference. See ClassRenames.json for the old→new tuples,
+which are loaded at runtime by UoApp for persistence migration.
+
 ================================================================================
 KEEP AS-IS (not rename candidates)
 ================================================================================

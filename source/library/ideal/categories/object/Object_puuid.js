@@ -92,7 +92,7 @@
 
     justSetPuuid (puuid) {
         if (this.hasPuuid()) {
-            // NOTE: Dangerous! Only ObjectPool should use this!
+            // NOTE: Dangerous! Only SvObjectPool should use this!
             this._puuid = puuid;
         } else {
             Object.defineSlot(this, "_puuid", puuid); // so _puuid isn't enumerable

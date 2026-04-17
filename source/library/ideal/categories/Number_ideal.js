@@ -205,7 +205,7 @@ const Base64 = (function () {
      * @category Formatting
      */
     byteSizeDescription () {
-        return ByteFormatter.clone().setValue(this).formattedValue();
+        return SvByteFormatter.clone().setValue(this).formattedValue();
     }
 
     /**

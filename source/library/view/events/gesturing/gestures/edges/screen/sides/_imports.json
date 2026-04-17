@@ -1,7 +1,7 @@
 [
-    "ScreenTopEdgePanGestureRecognizer.js",
-    "ScreenBottomEdgePanGestureRecognizer.js",
-    "ScreenLeftEdgePanGestureRecognizer.js",
-    "ScreenRightEdgePanGestureRecognizer.js"
+    "SvScreenTopEdgePanGestureRecognizer.js",
+    "SvScreenBottomEdgePanGestureRecognizer.js",
+    "SvScreenLeftEdgePanGestureRecognizer.js",
+    "SvScreenRightEdgePanGestureRecognizer.js"
 ]
 

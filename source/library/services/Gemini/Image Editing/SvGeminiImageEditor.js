@@ -94,7 +94,7 @@
     // --- Service ---
 
     service () {
-        return GeminiService.shared();
+        return SvGeminiService.shared();
     }
 
     // --- API URL ---

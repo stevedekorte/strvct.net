@@ -1,12 +1,12 @@
 "use strict";
 
 /**
- * @module library.view.dom.DomView.subclasses
+ * @module library.view.dom.SvDomView.subclasses
  */
 
 /**
  * @class SvOverlayBannerView
- * @extends DomView
+ * @extends SvDomView
  * @classdesc SvOverlayBannerView creates a full-width banner at the top of the window for displaying
  * temporary messages, notifications, or information overlays.
  *
@@ -27,7 +27,7 @@
  * setTimeout(() => banner.hide(), 3000);
  * ```
  */
-(class SvOverlayBannerView extends DomView {
+(class SvOverlayBannerView extends SvDomView {
 
     /**
      * Initialize prototype slots for the SvOverlayBannerView.
@@ -252,7 +252,7 @@
     show () {
         if (!this.isShown()) {
             // Add to document body
-            DocumentBody.shared().addSubview(this);
+            SvDocumentBody.shared().addSubview(this);
 
             // Update transition for fade-in
             this.setTransition(`opacity ${this.fadeInDuration()}s ease-in-out`);

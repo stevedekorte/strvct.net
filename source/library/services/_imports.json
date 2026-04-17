@@ -12,7 +12,7 @@
     "YouTube/_imports.json",
     "Peer/_imports.json",
     "SpeechToText/_imports.json",
-    "ProxyServers/_imports.json",
-    "HomeAssistant/_imports.json",
+    "SvProxyServers/_imports.json",
+    "SvHomeAssistant/_imports.json",
     "SvServices.js"
 ]

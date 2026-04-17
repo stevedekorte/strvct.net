@@ -112,8 +112,8 @@
 
         // Arrays, Maps, and Sets already support recordForStore() ,
         // but we typically want to handle Object instances (but not subclasses of Object) as JSON when possible.
-        if (type === "Object" && JsonObject.objectIsJson(this)) { // Hack to deal with Json
-            const jsonObject = JsonObject.instanceForObject(this);
+        if (type === "Object" && SvJsonObject.objectIsJson(this)) { // Hack to deal with Json
+            const jsonObject = SvJsonObject.instanceForObject(this);
             return jsonObject.recordForStore(aStore);
         }
 
@@ -158,7 +158,7 @@
      * @category Data Storage
      */
     defaultStore () {
-        const store = PersistentObjectPool.sharedPool();
+        const store = SvPersistentObjectPool.sharedPool();
         return store;
     }
 

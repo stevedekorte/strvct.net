@@ -1,5 +1,5 @@
 /**
- * @module library.view.dom.DomView.subclasses.coachmarks
+ * @module library.view.dom.SvDomView.subclasses.coachmarks
  */
 
 "use strict";
@@ -11,7 +11,7 @@
  * to provide contextual help. The manager coordinates display timing and prevents overlapping marks.
  *
  * @example
- * // Basic usage - register a coach mark from any DomView subclass
+ * // Basic usage - register a coach mark from any SvDomView subclass
  * this.setupCoachMark({
  *     label: "Click here to save your work",
  *     priority: 10
@@ -133,7 +133,7 @@
     /**
      * @description Registers a view with the coach mark manager
      * @param {Object} config - Configuration object with properties:
-     *   - view: The target DomView instance
+     *   - view: The target SvDomView instance
      *   - id: Unique identifier for this coach mark
      *   - label: Text to display in the coach mark
      *   - priority: Display priority (higher shows first)

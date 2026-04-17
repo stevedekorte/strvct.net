@@ -6,7 +6,7 @@
 
 */
 
-(class SvActorMessages extends BaseNode {
+(class SvActorMessages extends SvBaseNode {
 
     initPrototype () {
         this.setShouldStore(true);

@@ -1,12 +1,12 @@
 "use strict";
 
 /**
- * @module library.view.dom.DomView.subclasses
+ * @module library.view.dom.SvDomView.subclasses
  */
 
 /**
  * @class SvScrimView
- * @extends DomView
+ * @extends SvDomView
  * @classdesc SvScrimView creates a blurred, blocking background overlay for modal dialogs.
  *
  * Features:
@@ -25,7 +25,7 @@
  * scrim.showInWindow();
  * ```
  */
-(class SvScrimView extends DomView {
+(class SvScrimView extends SvDomView {
 
     /**
      * Initialize prototype slots for the SvScrimView.
@@ -180,7 +180,7 @@
      */
     showInWindow () {
         if (!this.isShown()) {
-            DocumentBody.shared().addSubview(this);
+            SvDocumentBody.shared().addSubview(this);
             this.setIsShown(true);
 
             // Force a reflow before setting opacity to ensure transition works

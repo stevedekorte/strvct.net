@@ -1,0 +1,161 @@
+"use strict";
+
+/*
+* @module library.services.AiServiceKit.Tools.Definitions
+* @class SvToolDefinitions
+* @extends SvSummaryNode
+* @classdesc A collection of SvToolDefinition instances.
+*/
+
+(class SvToolDefinitions extends SvSummaryNode {
+    /*
+   * Initializes the prototype slots.
+   * @category Initialization
+   */
+    initPrototypeSlots () {
+
+        {
+            const slot = this.newSlot("toolTargetInstances", null); // is a Set of instances that have tools defined for them
+            slot.setFinalInitProto(Set);
+            slot.setShouldJsonArchive(true);
+            slot.setCanEditInspection(false);
+        }
+    }
+
+    initPrototype () {
+        this.setCanDelete(false);
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
+        this.setSubnodeClasses([SvToolDefinition]);
+
+        this.setSummaryFormat("value");
+        this.setHasNewlineAfterSummary(true);
+        this.setNodeCanReorderSubnodes(false);
+        this.setNoteIsSubnodeCount(true);
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.setTitle("Tool Definitions");
+        this.setNoteIsSubnodeCount(true);
+        this.setNoteIconName(null);
+    }
+
+    addToolsForInstance (instance) {
+    // we use this to add tools for other instances besides ourselves. e.g. the Session, Campaign, or Character
+
+        //const ownerPath = this.ownershipChainPathString();
+        //console.log("\n assistant at '" + ownerPath + "' adding tools for " + instance.svTypeId() + " '" + instance.title() + "'");
+
+        if (this.toolTargetInstances().has(instance)) {
+            const errorMessage = "Tool definitions already added for instance: " + instance.svType();
+            this.logDebug(errorMessage);
+
+            //throw new Error(errorMessage);
+            return this;
+        }
+
+        this.toolTargetInstances().add(instance);
+
+        //console.log(this.svTypeId() + " addToolsForInstance(" + instance.svTypeId() + "):");
+        const methodSet = instance.getInheritedToolMethodSet();
+        for (const method of methodSet) {
+        //console.log("  -- adding tool '" + method.name + "'");
+            //console.log(instance.svType() + " " + method.name + " isToolable: " + method.isToolable());
+            assert(!this.toolDefinitionWithName(method.name), "tool definition already exists for " + method.name);
+            //if (!this.toolDefinitionWithName(method.name)) {
+            const toolDef = SvToolDefinition.clone();
+            //console.log(" - tool: " + method.name);
+            toolDef.setToolTarget(instance);
+            toolDef.setName(method.name);
+            toolDef.updateJsonSchemaString();
+            this.addTool(toolDef);
+            //}
+        }
+
+        if (this.subnodeCount() === 0) {
+            console.warn("no tools found for instance: " + instance.svTypeId());
+        }
+        //console.log("--- " + instance.svTypeId() + " tools ---");
+        //console.log(this.description() + "\n");
+
+        return this;
+    }
+
+    addTool (toolDef) {
+        this.addSubnode(toolDef);
+        return this;
+    }
+
+    toolDefinitionWithName (name) {
+        return this.toolDefinitions().find(toolDef => toolDef.name() === name);
+    }
+
+    toolSpecPrompt () {
+        const parts = [];
+        parts.push(`
+
+Notes: The tool definitions below describe the available tools and their behaviors. Each definition includes:
+ - "parameters": The schema for what you should send in your tool call (this is what goes in your tool call's "parameters" field)
+ - "returns": A JSON Schema describing what the tool sends back (for your reference only)
+ - "isSilentSuccess": Whether the tool sends a result on success (for your reference only)
+ - "isSilentError": Whether the tool sends a result on error (for your reference only)
+
+**Important**: When making a tool call, you only use the "parameters" schema. The other properties (returns, isSilentSuccess, etc.) are documentation to help you understand the tool's behavior - they are NOT part of your actual tool call.
+
+>#> 
+=#= List of Tools
+
+The following tools are available for you to use:
+`);
+        parts.push("<tools>\n" + JSON.stableStringifyWithStdOptions(this.toolSpecsJson(), null, 2) + "\n</tools>"); // includes tools and type definitions
+        //parts.push("<tools>\n" + JSON.stableStringify(this.toolSpecsJson()) + "\n</tools>"); // includes tools and type definitions
+
+
+        parts.push(`
+        
+=#= How to Use These Definitions
+
+When making a tool call, use only the "parameters" schema from the definition. For example, for the rollRequest tool:
+
+Tool call structure:
+{
+  "callId": "call_X",
+  "toolName": "rollRequest",
+  "parameters": {
+    "rollRequest": { /* Use schema from #/definitions/UoRollRequestMessage */ }
+  }
+}
+`);
+        return parts.join("\n\n");
+    }
+
+    toolSpecsJson () {
+        const refSet = new Set();
+        const tools = this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
+        /*
+    const types = refSet.map(type => type.jsonSchemaRef());
+    const json = {
+      "tools": tools,
+      "types": types
+    };
+    return json;
+    */
+        return tools;
+    }
+
+    toolDefinitions () {
+        return this.subnodes();
+    }
+
+    classesReferencedByToolTypes () {
+        const refSet = new Set();
+        this.toolDefinitions().map(toolDef => toolDef.toolJsonDescription(refSet));
+        return refSet;
+    }
+
+    description () {
+        return this.subnodes().map(toolDef => toolDef.description()).join("\n");
+    }
+
+}.initThisClass());

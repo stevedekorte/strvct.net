@@ -1,0 +1,61 @@
+"use strict";
+
+/**
+ * @module library.view.events.gesturing.gestures
+ */
+
+/**
+ * @class SvPinchGestureRecognizer
+ * @extends SvGestureRecognizer
+ * @classdesc Subclass of SvOrientGestureRecognizer that overrides hasMovedEnough() to
+ * check for minDistToBegin.
+ *
+ * Delegate messages:
+ *     onPinchBegin
+ *     onPinchMove
+ *     onPinchComplete
+ *     onPinchCancelled
+ *
+ * Helper methods:
+ *     scale:
+ *         scale // current distance between 1st to fingers down divided by their initial distance
+ */
+(class SvPinchGestureRecognizer extends SvGestureRecognizer {
+
+    /**
+     * @description Initializes prototype slots
+     * @private
+     * @category Initialization
+     */
+    initPrototypeSlots () {
+
+    }
+
+    /**
+     * @description Initializes the SvPinchGestureRecognizer
+     * @returns {SvPinchGestureRecognizer} The initialized instance
+     * @category Initialization
+     */
+    init () {
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
+        //this.setIsDebugging(false)
+        //this.setIsVisualDebugging(true)
+        this.setMinFingersRequired(2);
+        this.setMaxFingersAllowed(2);
+        return this;
+    }
+
+    /**
+     * @description Checks if the gesture has moved enough to be recognized
+     * @returns {boolean} True if the gesture has moved enough, false otherwise
+     * @category Gesture Recognition
+     */
+    hasMovedEnough () {
+        const m = this.minDistToBegin();
+        const d = this.currentPosition().distanceFrom(this.downPosition());
+        //console.log(this.shortTypeId() + ".hasMovedEnough() " + d + ">= min " + m)
+        return d >= m;
+    }
+
+}.initThisClass());

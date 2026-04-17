@@ -1,8 +1,8 @@
-/** * @module library.node.node_views.browser.stack.Tile.field_tiles
+/** * @module library.node.node_views.browser.stack.SvTile.field_tiles
  */
 
 /** * @class SvPointerFieldTile
- * @extends TitledTile
+ * @extends SvTitledTile
  * @classdesc Represents a pointer field tile in the browser stack.
  
  
@@ -11,7 +11,7 @@
 /**
 
  */
-(class SvPointerFieldTile extends TitledTile {
+(class SvPointerFieldTile extends SvTitledTile {
 
     /**
      * @description Initializes the prototype slots for the SvPointerFieldTile class.

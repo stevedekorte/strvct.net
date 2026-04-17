@@ -7,11 +7,11 @@
 /**
  * @class SvI18nService
  * @extends SvNode
- * @classdesc Handles batched translation requests using AiRequest.
+ * @classdesc Handles batched translation requests using SvAiRequest.
  * Collects cache misses, debounces, then sends a single batched AI translation request.
  */
 
-(class SvI18nService extends BaseNode {
+(class SvI18nService extends SvBaseNode {
 
     initPrototypeSlots () {
 
@@ -85,12 +85,12 @@
         }
 
         /**
-         * @member {AiChatModel} chatModel
+         * @member {SvAiChatModel} chatModel
          * @description Which AI model to use for translation.
          */
         {
             const slot = this.newSlot("chatModel", null);
-            slot.setSlotType("AiChatModel");
+            slot.setSlotType("SvAiChatModel");
         }
     }
 
@@ -195,7 +195,7 @@
     }
 
     /**
-     * @description Sends a batched translation request via AiRequest.
+     * @description Sends a batched translation request via SvAiRequest.
      * @param {Array} strings - Array of English strings to translate.
      * @param {String} language - Target language code.
      * @param {String} context - Context category.
@@ -235,7 +235,7 @@
         }
         messages.push({ role: "user", content: userPrompt });
 
-        // Build bodyJson for AiRequest
+        // Build bodyJson for SvAiRequest
         const bodyJson = {
             model: model.modelName(),
             messages: messages,
@@ -259,11 +259,11 @@
         return this;
     }
 
-    // --- AiRequest delegate protocol ---
+    // --- SvAiRequest delegate protocol ---
 
     /**
      * @description Called when the AI request completes successfully.
-     * @param {AiRequest} request - The completed request.
+     * @param {SvAiRequest} request - The completed request.
      * @category Delegate
      */
     onRequestComplete (request) {
@@ -311,7 +311,7 @@
 
     /**
      * @description Called when the AI request encounters an error.
-     * @param {AiRequest} request - The failed request.
+     * @param {SvAiRequest} request - The failed request.
      * @param {Error} error - The error.
      * @category Delegate
      */
@@ -338,7 +338,7 @@
     }
 
     /**
-     * @description No-op delegate methods for AiRequest protocol.
+     * @description No-op delegate methods for SvAiRequest protocol.
      * @category Delegate
      */
     onRequestBegin (/*request*/) {}

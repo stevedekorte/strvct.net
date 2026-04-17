@@ -1,6 +1,6 @@
 [
-    "TileNoteView.js",
-    "TileNoteButtonView.js",
-    "TileSubtitleView.js",
-    "TileTitleView.js"
+    "SvTileNoteView.js",
+    "SvTileNoteButtonView.js",
+    "SvTileSubtitleView.js",
+    "SvTileTitleView.js"
 ]

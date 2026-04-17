@@ -6,11 +6,11 @@
 
 /**
  * @class SvScrollToBottomButton
- * @extends FlexDomView
- * @classdesc A floating button that appears at the bottom-center of a ScrollView
+ * @extends SvFlexDomView
+ * @classdesc A floating button that appears at the bottom-center of a SvScrollView
  * when content extends below the viewport. Clicking it smooth-scrolls to the bottom.
  */
-(class SvScrollToBottomButton extends FlexDomView {
+(class SvScrollToBottomButton extends SvFlexDomView {
 
     /**
      * @description Initializes the prototype slots for the SvScrollToBottomButton.
@@ -27,12 +27,12 @@
         }
 
         /**
-         * @member {ScrollView} scrollView - Reference to the owning ScrollView.
+         * @member {SvScrollView} scrollView - Reference to the owning SvScrollView.
          * @category View
          */
         {
             const slot = this.newSlot("scrollView", null);
-            slot.setSlotType("ScrollView");
+            slot.setSlotType("SvScrollView");
         }
     }
 
@@ -47,7 +47,7 @@
         this.makeFlexAndCenterContent();
         this.turnOffUserSelect();
 
-        // Sticky positioning inside the ScrollView:
+        // Sticky positioning inside the SvScrollView:
         // stays fixed at the bottom of the visible scroll area
         this.setPosition("sticky");
         this.setBottomPx(16);
@@ -118,7 +118,7 @@
     }
 
     /**
-     * @description Handles tap complete — scrolls parent ScrollView to bottom.
+     * @description Handles tap complete — scrolls parent SvScrollView to bottom.
      * @param {Object} aGesture - The gesture object.
      * @returns {Boolean} False to prevent default behavior.
      * @category Event Handling

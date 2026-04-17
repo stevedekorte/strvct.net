@@ -8,10 +8,10 @@ The auto-generated view system handles the common case: a node's slots and subno
 
 ## The Basic Pattern
 
-A custom view extends `DomView` (or one of its ancestors) and configures itself in `init()`:
+A custom view extends `SvDomView` (or one of its ancestors) and configures itself in `init()`:
 
 ```javascript
-(class MyOverlayView extends DomView {
+(class MyOverlayView extends SvDomView {
 
     init () {
         super.init();
@@ -40,7 +40,7 @@ init () {
     super.init();
     this.makeFlexAndCenterContent();
 
-    const label = DomView.clone();
+    const label = SvDomView.clone();
     label.setInnerHTML("Hello");
     label.setColor("white");
     label.setFontSize("24px");
@@ -54,14 +54,14 @@ init () {
 
 ## Connecting to a Node
 
-To make a custom view respond to model changes, extend `NodeView` instead of `DomView` and implement `syncFromNode()`:
+To make a custom view respond to model changes, extend `SvNodeView` instead of `SvDomView` and implement `syncFromNode()`:
 
 ```javascript
-(class MyStatusView extends NodeView {
+(class MyStatusView extends SvNodeView {
 
     init () {
         super.init();
-        this._label = DomView.clone();
+        this._label = SvDomView.clone();
         this.addSubview(this._label);
         return this;
     }
@@ -91,7 +91,7 @@ You can also override on the node side with `nodeViewClassName()` to point at a 
 
 ## Convenience Methods
 
-`FlexDomView` provides shortcuts for common layout patterns:
+`SvFlexDomView` provides shortcuts for common layout patterns:
 
 | Method | Effect |
 |--------|--------|
