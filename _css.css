@@ -96,8 +96,11 @@ html {
 
 * :focus {
     outline: none;
-    outline-style: none;
-    -moz-outline-style: none;
+}
+
+* :focus-visible {
+    outline: 2px solid rgba(100, 149, 237, 0.8);
+    outline-offset: -2px;
 }
 
 html :active {

@@ -83,6 +83,12 @@
     syncFromNode () {
         super.syncFromNode();
         this.booleanView().updateAppearance();
+
+        // Accessibility: reflect checked state
+        this.setAttribute("role", "checkbox");
+        const isChecked = this.booleanView().value() ? "true" : "false";
+        this.setAttribute("aria-checked", isChecked);
+
         return this;
     }
 

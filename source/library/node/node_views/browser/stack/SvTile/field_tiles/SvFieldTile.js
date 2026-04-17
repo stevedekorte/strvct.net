@@ -213,6 +213,9 @@
             */
         }
 
+        // Accessibility: field tiles are labeled groups, not navigation links
+        this.setAttribute("role", "group");
+
         return this;
     }
 
@@ -546,6 +549,20 @@
         this.syncErrorFromNode();
         this.syncNoteFromNode();
         this.syncDotsFromNode();
+
+        // Accessibility: label the field group from its key text
+        const keyText = this.keyView() ? this.keyView().innerText() : "";
+        if (keyText) {
+            this.setAttribute("aria-label", keyText);
+        }
+
+        // Accessibility: reflect editable and required state
+        if (node.valueIsEditable && !node.valueIsEditable()) {
+            this.setAttribute("aria-readonly", "true");
+        } else {
+            this.removeAttribute("aria-readonly");
+        }
+
         return this;
     }
 

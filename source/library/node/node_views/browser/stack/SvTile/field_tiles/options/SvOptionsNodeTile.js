@@ -41,6 +41,9 @@
     syncFromNode () {
         super.syncFromNode();
 
+        // Accessibility: options container is a listbox
+        this.setAttribute("role", "listbox");
+
         /*
             We need a way of enabling/dissabling the options
             depending on whether the node value is editable.

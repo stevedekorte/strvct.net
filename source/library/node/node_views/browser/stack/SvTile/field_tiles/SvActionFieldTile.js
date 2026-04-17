@@ -55,6 +55,10 @@
 
         this.addContentSubview(this.buttonView());
         //this.setMinHeightPx(64);
+
+        // Accessibility: action tiles are buttons
+        this.setAttribute("role", "button");
+
         return this;
     }
 
@@ -113,6 +117,15 @@
         if (!isVisible) {
             assert(this.isDisplayHidden());
         }
+
+        // Accessibility: label and disabled state
+        this.setAttribute("aria-label", bv.title() || "");
+        if (!node.isEnabled()) {
+            this.setAttribute("aria-disabled", "true");
+        } else {
+            this.removeAttribute("aria-disabled");
+        }
+
         return this;
     }
 

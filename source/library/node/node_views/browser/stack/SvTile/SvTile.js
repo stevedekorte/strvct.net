@@ -260,6 +260,11 @@
 
         this.setIsRegisteredForKeyboard(true);
         this.setIsDebugging(false);
+
+        // Accessibility: make tiles focusable and declare role
+        this.element().tabIndex = -1;
+        this.setAttribute("role", "link");
+
         return this;
     }
 
@@ -428,9 +433,13 @@
 
         if (this.isSelected()) {
             this.setLastSelectionDate(Date.clone());
+            // Accessibility: mark as current and move focus
+            this.setAttribute("aria-current", "true");
+            this.element().focus();
         } else {
             //this.setShouldShowFlash(true)
             this.setLastSelectionDate(null);
+            this.removeAttribute("aria-current");
         }
 
         const tv = this.tilesView();
@@ -506,6 +515,20 @@
         const node = this.node();
         if (node) {
             this.setIsDisplayHidden(!node.isVisible());
+
+            // Accessibility: label from node title and subtitle
+            const label = node.title();
+            if (label) {
+                this.setAttribute("aria-label", label);
+            }
+            if (node.subtitle) {
+                const desc = node.subtitle();
+                if (desc) {
+                    this.setAttribute("aria-description", desc);
+                } else {
+                    this.removeAttribute("aria-description");
+                }
+            }
         }
         this.updateSubviews();
         this.syncOrientation();

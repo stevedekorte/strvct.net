@@ -101,6 +101,10 @@
 
         //this.setBorder("1px dashed red");
         this.setDefaultSubviewProto(SvTitledTile);
+
+        // Accessibility: list container role
+        this.setAttribute("role", "list");
+
         return this;
     }
 
@@ -249,6 +253,15 @@
     syncFromNode () {
         this.syncOrientation(); // implemented in Tiles_orientation.js
         super.syncFromNode();
+
+        // Accessibility: label the list from its node title
+        const node = this.node();
+        if (node) {
+            const label = node.title();
+            if (label) {
+                this.setAttribute("aria-label", label);
+            }
+        }
 
         /*
         if (this.node().nodeMinTileHeight()) {

@@ -58,6 +58,17 @@
      * @returns {SvOptionNodeTile} Returns this instance
      * @category Data Synchronization
      */
+    syncFromNode () {
+        super.syncFromNode();
+
+        // Accessibility: individual option with picked/selected state
+        this.setAttribute("role", "option");
+        const isPicked = this.node().isPicked ? this.node().isPicked() : false;
+        this.setAttribute("aria-selected", isPicked ? "true" : "false");
+
+        return this;
+    }
+
     syncToNode () {
         super.syncToNode();
         return this;
