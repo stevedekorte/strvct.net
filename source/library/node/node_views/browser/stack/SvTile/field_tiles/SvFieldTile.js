@@ -833,11 +833,11 @@
 
         const target = node.target();
         const slotName = node.valueMethod();
-        if (!target || !slotName || !target.slotNamed) {
+        if (!target || !slotName || !target.thisPrototype) {
             return this;
         }
 
-        const slot = target.slotNamed(slotName);
+        const slot = target.thisPrototype().slotNamed(slotName);
         if (!slot) {
             return this;
         }
