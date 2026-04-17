@@ -14,11 +14,11 @@ A graph database would store nodes and edges as first-class entities, directly m
 
 **Structural alignment.** Each domain object becomes a node in the database. Each slot that references another object becomes an edge. The database's structure matches the application's structure — no serialization/deserialization impedance mismatch.
 
-**Granular sync.** Changes to a single node or edge can be synced independently without uploading an entire pool snapshot or maintaining a separate delta log. A single property change on one object doesn't require re-uploading the entire object graph.
+**Granular sync.** Changes to a single node or edge can be synced independently without uploading an entire pool snapshot or maintaining a separate delta log. Updating a contact's phone number doesn't require re-uploading the entire address book.
 
 **Lazy traversal.** The database can serve subgraphs on demand — fetch a node and its immediate neighbors, then expand as the user navigates. This is the graph-native version of what collection sync's manifest stubs approximate with per-item lazy loading.
 
-**Query by structure.** "Find all nodes of type X connected to this node" or "show me every node reachable from this root" become native graph traversals rather than full-table scans or application-level filtering.
+**Query by structure.** "Find all contacts who share a company with this person" or "show me every group this contact belongs to" become native graph traversals rather than full-table scans or application-level filtering.
 
 **Conflict resolution at the edge level.** When two clients modify different parts of the same graph concurrently, a graph-aware system can merge at the node/edge level rather than the document level, reducing false conflicts.
 
@@ -74,11 +74,11 @@ Firebase Storage is a managed service with minimal operational overhead. A graph
 
 One concept from the current architecture that should carry forward is the **object sub-pool** — a self-contained subgraph where outside nodes may point to the root, but all internal objects hold no hard references to objects outside the subgraph. These sub-pools can be nested and are the natural unit of ownership, sync, and access control.
 
-In practice, sub-pools correspond to the coarse-grained "documents" of an application: a user profile, a project, a collaborative session, an app's settings. Each is a self-contained graph that can be:
+In practice, sub-pools correspond to the coarse-grained "documents" of an application. In a contacts app, for example, each contact card — with its addresses, phone numbers, notes, and group memberships — forms a sub-pool. The contacts list holds references to each card's root, but the internal objects within a card don't reference objects in other cards. Each sub-pool can be:
 
 - **Synced independently** — upload or download a sub-pool without touching the rest of the graph
 - **Garbage collected** — objects reachable only within the sub-pool can be collected together
-- **Access controlled** — permissions can be scoped to a sub-pool (e.g., a user owns their own data but has read access to a shared project)
+- **Access controlled** — permissions can be scoped to a sub-pool (e.g., a user owns their contacts but shares specific groups with collaborators)
 - **Migrated or archived** — move a sub-pool to cold storage or a different backend without breaking references
 
 A graph database backend should preserve this sub-pool structure as a first-class concept — not flatten everything into a single global graph. The sub-pool boundary is what makes it practical to sync, permission, and reason about parts of the graph independently, even though the database itself supports arbitrary cross-references.
