@@ -57,7 +57,7 @@
         //this.setMinHeightPx(64);
 
         // Accessibility: action tiles are buttons
-        this.setAttribute("role", "button");
+        this.setAriaRole("button");
 
         return this;
     }
@@ -119,12 +119,8 @@
         }
 
         // Accessibility: label and disabled state
-        this.setAttribute("aria-label", bv.title() || "");
-        if (!node.isEnabled()) {
-            this.setAttribute("aria-disabled", "true");
-        } else {
-            this.removeAttribute("aria-disabled");
-        }
+        this.setAriaLabel(this.ariaLabel());
+        this.setAriaDisabled(this.ariaIsDisabled());
 
         return this;
     }
@@ -184,6 +180,27 @@
         //this.node().didUpdateView(this)
         //this.scheduleSyncFromNode() // needed for validation?
         return true;
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Returns the ARIA label from the button title.
+     * @returns {string} The ARIA label.
+     * @category Accessibility
+     */
+    ariaLabel () {
+        return this.buttonView().title() || "";
+    }
+
+    /**
+     * @description Returns the ARIA disabled state from the node's enabled state.
+     * @returns {boolean|null} True if disabled, null if enabled.
+     * @category Accessibility
+     */
+    ariaIsDisabled () {
+        const node = this.node();
+        return (node && !node.isEnabled()) ? true : null;
     }
 
 }.initThisClass());

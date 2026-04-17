@@ -467,7 +467,7 @@
      * Domain objects can override this to provide a more descriptive label for screen readers.
      * @returns {string} The ARIA label.
      */
-    ariaLabel () {
+    nodeAriaLabel () {
         return this.title();
     }
 
@@ -477,7 +477,7 @@
      * this to specify a more semantically appropriate role (e.g., "listbox", "option").
      * @returns {string|null} The ARIA role, or null to use the view's default.
      */
-    ariaRole () {
+    nodeAriaRole () {
         return null;
     }
 
@@ -487,7 +487,7 @@
      * Domain objects can override this to force read-only state.
      * @returns {boolean|null} True/false to override, or null to use the view's default.
      */
-    ariaIsReadOnly () {
+    nodeAriaIsReadOnly () {
         return null;
     }
 
@@ -497,7 +497,7 @@
      * Domain objects can override this to force required state.
      * @returns {boolean|null} True/false to override, or null to use the view's default.
      */
-    ariaIsRequired () {
+    nodeAriaIsRequired () {
         return null;
     }
 

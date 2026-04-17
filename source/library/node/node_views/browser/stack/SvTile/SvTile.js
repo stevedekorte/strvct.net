@@ -263,7 +263,7 @@
 
         // Accessibility: make tiles focusable and declare role
         this.element().tabIndex = -1;
-        this.setAttribute("role", "link");
+        this.setAriaRole("link");
 
         return this;
     }
@@ -434,12 +434,12 @@
         if (this.isSelected()) {
             this.setLastSelectionDate(Date.clone());
             // Accessibility: mark as current and move focus
-            this.setAttribute("aria-current", "true");
+            this.setAriaCurrent(this.ariaCurrent());
             this.element().focus();
         } else {
             //this.setShouldShowFlash(true)
             this.setLastSelectionDate(null);
-            this.removeAttribute("aria-current");
+            this.setAriaCurrent(this.ariaCurrent());
         }
 
         const tv = this.tilesView();
@@ -515,28 +515,32 @@
         const node = this.node();
         if (node) {
             this.setIsDisplayHidden(!node.isVisible());
-
-            // Accessibility: label and role from node
-            const label = node.ariaLabel();
-            if (label) {
-                this.setAttribute("aria-label", label);
-            }
-            const role = node.ariaRole();
-            if (role) {
-                this.setAttribute("role", role);
-            }
-            if (node.subtitle) {
-                const desc = node.subtitle();
-                if (desc) {
-                    this.setAttribute("aria-description", desc);
-                } else {
-                    this.removeAttribute("aria-description");
-                }
-            }
+            this.syncAriaFromNode();
         }
         this.updateSubviews();
         this.syncOrientation();
         return this;
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Returns the ARIA role for this tile, checking node override first.
+     * @returns {string} The ARIA role.
+     * @category Accessibility
+     */
+    ariaRole () {
+        const node = this.node();
+        return (node && node.nodeAriaRole()) || "link";
+    }
+
+    /**
+     * @description Returns the ARIA current value based on selection state.
+     * @returns {string|null} "true" if selected, null otherwise.
+     * @category Accessibility
+     */
+    ariaCurrent () {
+        return this.isSelected() ? "true" : null;
     }
 
     /**

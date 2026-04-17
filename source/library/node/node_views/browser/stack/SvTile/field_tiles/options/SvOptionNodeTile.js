@@ -62,9 +62,7 @@
         super.syncFromNode();
 
         // Accessibility: individual option with picked/selected state
-        this.setAttribute("role", "option");
-        const isPicked = this.node().isPicked ? this.node().isPicked() : false;
-        this.setAttribute("aria-selected", isPicked ? "true" : "false");
+        this.setAriaSelected(this.ariaIsSelected());
 
         return this;
     }
@@ -72,6 +70,27 @@
     syncToNode () {
         super.syncToNode();
         return this;
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Returns the ARIA role for this option tile.
+     * @returns {string} The ARIA role.
+     * @category Accessibility
+     */
+    ariaRole () {
+        return "option";
+    }
+
+    /**
+     * @description Returns the ARIA selected state from the node's picked state.
+     * @returns {boolean} The selected state.
+     * @category Accessibility
+     */
+    ariaIsSelected () {
+        const node = this.node();
+        return (node && node.isPicked) ? node.isPicked() : false;
     }
 
 }.initThisClass());

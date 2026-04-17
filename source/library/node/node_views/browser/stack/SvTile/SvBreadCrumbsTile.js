@@ -94,8 +94,8 @@
         this.contentView().setPaddingLeft("22px");
 
         // Accessibility: breadcrumb navigation pattern
-        this.setAttribute("role", "navigation");
-        this.setAttribute("aria-label", "Breadcrumb");
+        this.setAriaRole("navigation");
+        this.setAriaLabel("Breadcrumb");
 
         return this;
     }
@@ -464,9 +464,9 @@
 
         // Accessibility: mark the last crumb as current location
         const crumbs = this.crumbs().select(crumb => crumb._isCrumb);
-        crumbs.forEach(crumb => crumb.removeAttribute("aria-current"));
+        crumbs.forEach(crumb => crumb.setAriaCurrent(null));
         if (crumbs.length > 0) {
-            crumbs.last().setAttribute("aria-current", "location");
+            crumbs.last().setAriaCurrent("location");
         }
 
         return this;

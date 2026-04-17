@@ -59,12 +59,12 @@ View classes derive ARIA labels from node metadata:
 
 | Source | ARIA usage |
 |---|---|
-| `node.ariaLabel()` | `aria-label` on tiles, tile lists, and navigation regions |
+| `node.nodeAriaLabel()` | `aria-label` on tiles, tile lists, and navigation regions |
 | `node.subtitle()` | `aria-description` on tiles |
 | `slot.description()` | `aria-description` on field tiles |
 | Key view text | `aria-label` on field tiles |
 
-`ariaLabel()` is defined on `SvTitledNode` and returns `title()` by default. Domain objects can override it to provide a more descriptive label for screen readers without affecting the visible UI title. `subtitle()` and slot `description()` provide longer detail available on demand.
+`nodeAriaLabel()` is defined on `SvTitledNode` and returns `title()` by default. Domain objects can override it to provide a more descriptive label for screen readers without affecting the visible UI title. `subtitle()` and slot `description()` provide longer detail available on demand.
 
 ### Node-Level ARIA Overrides
 
@@ -72,12 +72,12 @@ View classes derive ARIA labels from node metadata:
 
 | Method | Default | Purpose |
 |---|---|---|
-| `ariaLabel()` | `title()` | Label announced by screen readers |
-| `ariaRole()` | `null` (view's default) | Override the view class's default ARIA role |
-| `ariaIsReadOnly()` | `null` (from slot editability) | Override read-only state |
-| `ariaIsRequired()` | `null` (from slot `isRequired()`) | Override required state |
+| `nodeAriaLabel()` | `title()` | Label announced by screen readers |
+| `nodeAriaRole()` | `null` (view's default) | Override the view class's default ARIA role |
+| `nodeAriaIsReadOnly()` | `null` (from slot editability) | Override read-only state |
+| `nodeAriaIsRequired()` | `null` (from slot `isRequired()`) | Override required state |
 
-Returning `null` from `ariaRole()`, `ariaIsReadOnly()`, or `ariaIsRequired()` defers to the view's default behavior. Returning a value overrides it. This follows the same pattern as `setNodeViewClass()` -- the framework provides sensible defaults, the domain object overrides when it knows better.
+Returning `null` from `nodeAriaRole()`, `nodeAriaIsReadOnly()`, or `nodeAriaIsRequired()` defers to the view's default behavior. Returning a value overrides it. This follows the same pattern as `setNodeViewClass()` -- the framework provides sensible defaults, the domain object overrides when it knows better.
 
 ### State Tracking
 

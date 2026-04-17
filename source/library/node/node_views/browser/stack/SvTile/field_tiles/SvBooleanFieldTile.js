@@ -85,11 +85,29 @@
         this.booleanView().updateAppearance();
 
         // Accessibility: reflect checked state
-        this.setAttribute("role", "checkbox");
-        const isChecked = this.booleanView().value() ? "true" : "false";
-        this.setAttribute("aria-checked", isChecked);
+        this.setAriaChecked(this.ariaIsChecked());
 
         return this;
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Returns the ARIA role for this boolean field tile.
+     * @returns {string} The ARIA role.
+     * @category Accessibility
+     */
+    ariaRole () {
+        return "checkbox";
+    }
+
+    /**
+     * @description Returns the ARIA checked state from the boolean value.
+     * @returns {boolean} The checked state.
+     * @category Accessibility
+     */
+    ariaIsChecked () {
+        return this.booleanView().value() ? true : false;
     }
 
 }.initThisClass());

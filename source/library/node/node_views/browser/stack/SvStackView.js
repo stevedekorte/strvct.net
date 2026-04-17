@@ -158,7 +158,7 @@
         this.syncOrientation();
 
         // Accessibility: landmark role for the main navigation container
-        this.setAttribute("role", "navigation");
+        this.setAriaRole("navigation");
 
         return this;
     }

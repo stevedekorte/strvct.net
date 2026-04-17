@@ -200,7 +200,7 @@
         this.setupClickToAddViewIfNeeded();
 
         // Accessibility: each nav column is a region with its own content
-        this.setAttribute("role", "region");
+        this.setAriaRole("region");
 
         return this;
     }
@@ -497,12 +497,9 @@
         this.footerView().syncFromNode();
         this.syncClickToAddView();
 
-        // Accessibility: label the region from its node ariaLabel
+        // Accessibility: label the region from its node
         if (this.node()) {
-            const label = this.node().ariaLabel();
-            if (label) {
-                this.setAttribute("aria-label", label);
-            }
+            this.setAriaLabel(this.ariaLabel());
         }
 
         //console.log(this.svTypeId(), " syncFromNode done");

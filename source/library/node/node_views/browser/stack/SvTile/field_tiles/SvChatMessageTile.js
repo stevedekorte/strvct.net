@@ -35,7 +35,7 @@
         this.setElementClassName("SvChatMessageTile");
 
         // Accessibility: chat messages are live region content
-        this.setAttribute("aria-live", "polite");
+        this.setAriaLive("polite");
 
         return this;
     }
@@ -232,6 +232,17 @@
      */
     hideDots () {
         return this.hideValueDots();
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Chat messages are always a polite live region.
+     * @returns {string} The ARIA live value.
+     * @category Accessibility
+     */
+    ariaLive () {
+        return "polite";
     }
 
 }.initThisClass());

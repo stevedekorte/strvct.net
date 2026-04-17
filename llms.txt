@@ -17,11 +17,15 @@
 - [Future Work](/docs/Future%20Work/): Design ideas, architectural discussions, and potential future improvements.
 - [Accessibility Testing & Tuning](/docs/Future%20Work/Accessibility%20Testing%20%26%20Tuning/): Validating and refining the framework's ARIA implementation across screen readers, devices, and applications.
 - [Async Final Initialization](/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
+- [Async Navigation](/docs/Future%20Work/Async%20Navigation/): Rearchitecting the navigation stack to support asynchronous loading at every level.
 - [Complete Protocols](/docs/Future%20Work/Complete%20Protocols/): Formalizing the many undeclared interface contracts throughout the codebase.
+- [Emergent Capabilities](/docs/Future%20Work/Emergent%20Capabilities/): Capabilities that the naked objects architecture makes possible at the framework level.
 - [Graph Database](/docs/Future%20Work/Graph%20Database/): Long-term direction: replacing the current cloud storage backend with a native graph database.
 - [JSON Schema](/docs/Future%20Work/JSON%20Schema/): Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 - [Lazy Slots](/docs/Future%20Work/Lazy%20Slots/): Deferring object loading until first access, so large object graphs don't pay for what they don't touch.
 - [Promise-Wrapped Slots](/docs/Future%20Work/Promise-Wrapped%20Slots/): Automatic async getter generation with promise caching and dependency-driven invalidation.
+- [Tile Container Views](/docs/Future%20Work/Tile%20Container%20Views/): Layout strategies for presenting a node's subnodes.
+- [Tile Views](/docs/Future%20Work/Tile%20Views/): Tile subclasses for presenting individual subnodes in specialized ways.
 - [Getting Started](/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.
 - [Implementation Overview](/docs/Implementation%20Overview/): Implementation details for classes, slots, views, and persistence.
 - [Inspirations](/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.

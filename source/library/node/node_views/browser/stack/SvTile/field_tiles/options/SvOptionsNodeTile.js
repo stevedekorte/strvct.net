@@ -41,9 +41,6 @@
     syncFromNode () {
         super.syncFromNode();
 
-        // Accessibility: options container is a listbox
-        this.setAttribute("role", "listbox");
-
         /*
             We need a way of enabling/dissabling the options
             depending on whether the node value is editable.
@@ -57,6 +54,17 @@
         }
         */
         return this;
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Returns the ARIA role for this options container.
+     * @returns {string} The ARIA role.
+     * @category Accessibility
+     */
+    ariaRole () {
+        return "listbox";
     }
 
 }.initThisClass());

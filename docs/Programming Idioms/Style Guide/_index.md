@@ -7,7 +7,7 @@ Naming conventions, formatting rules, and code structure patterns.
 Class names use UpperCamelCase with a two-letter prefix indicating their origin:
 
 - **`Sv`** -- framework classes: `SvNode`, `SvStorableNode`, `SvJsonGroup`, `SvNotificationCenter`
-- **Application prefix** -- applications built on STRVCT should choose their own short prefix and use it consistently for all custom classes. This prevents name collisions between framework, application, and third-party code.
+- **Application prefix** -- applications built on STRVCT should choose their own short prefix and use it consistently for all custom classes. The prefix doesn't need to be two characters -- any short, distinctive prefix works (`Uo`, `App`, `Xyz`). This prevents name collisions between framework, application, and third-party code.
 
 The prefix is not applied to external libraries or JavaScript builtins extended via categories.
 
@@ -40,8 +40,6 @@ Slot names use lowerCamelCase. The slot system automatically generates a getter 
 | `newSlot("is24Hour", false)` | `is24Hour()` | `setIs24Hour(value)` |
 | `newSlot("subnodes", null)` | `subnodes()` | `setSubnodes(value)` |
 
-The backing instance variable uses an underscore prefix (`_userName`, `_is24Hour`), but should only be accessed through the generated getter -- never directly. Bypassing the getter/setter skips the slot's hooks: dirty tracking for persistence, `didUpdateSlot` notifications, and view sync scheduling. A direct `this._name = x` silently breaks storage and UI updates.
-
 Each slot declaration is wrapped in a block scope so `const slot` can be reused without naming collisions:
 
 ```javascript
@@ -69,6 +67,59 @@ Boolean slot names use a query-style prefix that reads naturally as a question:
 | `should` | Configuration flags | `shouldStore`, `shouldStoreSlot`, `shouldStoreSubnodes` |
 | `does` | Behavioral switches | `doesPadHours`, `doesHookSetter` |
 | `shows` | Visibility toggles | `showsMeridiem`, `showsHours` |
+
+## Instance Variables
+
+Instance variables use an underscore prefix (`_userName`, `_isActive`) and are subject to three rules:
+
+### 1. Always declare via `newSlot()`
+
+Never assign an instance variable directly. All instance variables are created by the slot system in `initPrototypeSlots()`:
+
+```javascript
+// Correct
+{
+    const slot = this.newSlot("userName", "");
+    slot.setSlotType("String");
+}
+
+// Wrong -- bypasses the slot system entirely
+this._userName = "";
+```
+
+Declaring variables through `newSlot()` ensures they participate in the framework's infrastructure: getter/setter generation, dirty tracking, persistence, view synchronization, JSON Schema, and ARIA metadata. A manually assigned `_` variable gets none of this.
+
+### 2. Internal access: use the getter
+
+Within the same object, access instance variables through the generated getter (`this.userName()`), not directly (`this._userName`). The getter is the standard access path; direct access is reserved for rare, performance-critical cases where you intentionally need to skip hooks.
+
+```javascript
+// Standard -- uses the getter
+formattedName () {
+    return this.userName().toUpperCase();
+}
+
+// Avoid -- skips hooks, breaks the uniform access pattern
+formattedName () {
+    return this._userName.toUpperCase();
+}
+```
+
+Bypassing the getter may seem harmless for reads, but it creates a maintenance hazard: if a subclass or category overrides the getter (to add lazy initialization, computed values, or delegation), direct `_` access silently bypasses that override.
+
+### 3. External access: always use the getter
+
+Accessing another object's instance variables directly (`other._userName`) is never acceptable. External code must always go through the public getter (`other.userName()`). This isn't just convention -- the setter performs dirty tracking for persistence, posts `didUpdateSlot` notifications, and schedules view sync. A direct `other._name = x` silently breaks storage, UI updates, and any observers watching that slot.
+
+```javascript
+// Correct
+player.setUserName("Alice");
+const name = player.userName();
+
+// Wrong -- breaks persistence, notifications, and view sync
+player._userName = "Alice";
+const name = player._userName;
+```
 
 ## Methods
 
@@ -224,7 +275,7 @@ These are used for type checking, JSON Schema generation, and documentation -- n
 - **`super` in `initPrototypeSlots` / `initPrototype`** -- the framework walks the hierarchy automatically. Adding `super` causes each level to execute multiple times.
 - **`instance.hasOwnProperty()`** -- use `Object.hasOwn(instance, key)` instead. `hasOwnProperty` is a prototype method that can be shadowed by an object's own property; `Object.hasOwn()` is a static method that can't be overridden.
 - **Plain objects as dictionaries** -- use `Map` for key-value collections. Plain objects risk prototype pollution (`toString`, `constructor` as key names), only support string keys, and lack `.size`.
-- **Direct instance variable access** -- always go through the generated getter, even inside the class. Bypassing the setter skips dirty tracking, persistence hooks, and view sync scheduling.
+- **Direct instance variable access** -- see [Instance Variables](#instance-variables) for the full rules. In short: always use the getter.
 
 ## Formatting
 

@@ -10,9 +10,13 @@
         "Lazy Slots",
         "Promise-Wrapped Slots",
         "JSON Schema",
-        "Graph Database",
         "Complete Protocols",
-        "Accessibility Testing & Tuning"
+        "Tile Views",
+        "Tile Container Views",
+        "Emergent Capabilities",
+        "Accessibility Testing & Tuning",
+        "Async Navigation",
+        "Graph Database"
       ]
     }
   ]

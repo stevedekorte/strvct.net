@@ -214,7 +214,7 @@
         }
 
         // Accessibility: field tiles are labeled groups, not navigation links
-        this.setAttribute("role", "group");
+        this.setAriaRole("group");
 
         return this;
     }
@@ -550,30 +550,54 @@
         this.syncNoteFromNode();
         this.syncDotsFromNode();
 
-        // Accessibility: label and role from node or key text
-        const keyText = this.keyView() ? this.keyView().innerText() : "";
-        if (keyText) {
-            this.setAttribute("aria-label", keyText);
-        }
-        const role = node.ariaRole();
-        if (role) {
-            this.setAttribute("role", role);
-        }
-
-        // Accessibility: reflect editable state (node override takes precedence)
-        const readOnly = node.ariaIsReadOnly();
-        if (readOnly !== null) {
-            this.setAttribute("aria-readonly", readOnly ? "true" : "false");
-        } else if (node.valueIsEditable && !node.valueIsEditable()) {
-            this.setAttribute("aria-readonly", "true");
-        } else {
-            this.removeAttribute("aria-readonly");
-        }
-
-        // Accessibility: wire slot-level metadata (required, min/max)
+        // Accessibility: sync read-only state and slot metadata
+        this.setAriaReadOnly(this.ariaIsReadOnly());
         this.syncAriaFromSlotMetadata();
 
         return this;
+    }
+
+    // --- ARIA accessibility getters ---
+
+    /**
+     * @description Returns the ARIA role for this field tile.
+     * @returns {string} The ARIA role.
+     * @category Accessibility
+     */
+    ariaRole () {
+        const node = this.node();
+        return (node && node.nodeAriaRole()) || "group";
+    }
+
+    /**
+     * @description Returns the ARIA label from the key text.
+     * @returns {string|null} The ARIA label.
+     * @category Accessibility
+     */
+    ariaLabel () {
+        const keyText = this.keyView() ? this.keyView().innerText() : "";
+        return keyText || null;
+    }
+
+    /**
+     * @description Returns the ARIA read-only state, checking node override
+     * then falling back to the field's editable state.
+     * @returns {boolean|null} The read-only state.
+     * @category Accessibility
+     */
+    ariaIsReadOnly () {
+        const node = this.node();
+        if (!node) {
+            return null;
+        }
+        const override = node.nodeAriaIsReadOnly();
+        if (override !== null) {
+            return override;
+        }
+        if (node.valueIsEditable && !node.valueIsEditable()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -850,35 +874,24 @@
         }
 
         // aria-required: node override takes precedence over slot annotation
-        const node = this.node();
-        const requiredOverride = node ? node.ariaIsRequired() : null;
+        const requiredOverride = this.ariaIsRequired();
         if (requiredOverride !== null) {
-            this.setAttribute("aria-required", requiredOverride ? "true" : "false");
+            this.setAriaRequired(requiredOverride);
         } else if (slot.isRequired && slot.isRequired()) {
-            this.setAttribute("aria-required", "true");
+            this.setAriaRequired(true);
         } else {
-            this.removeAttribute("aria-required");
+            this.setAriaRequired(null);
         }
 
         // aria-valuemin / aria-valuemax from JSON Schema annotations
         if (slot.getAnnotation) {
-            const min = slot.getAnnotation("minimum");
-            const max = slot.getAnnotation("maximum");
-            if (min !== undefined && min !== null) {
-                this.setAttribute("aria-valuemin", String(min));
-            } else {
-                this.removeAttribute("aria-valuemin");
-            }
-            if (max !== undefined && max !== null) {
-                this.setAttribute("aria-valuemax", String(max));
-            } else {
-                this.removeAttribute("aria-valuemax");
-            }
+            this.setAriaValueMin(slot.getAnnotation("minimum"));
+            this.setAriaValueMax(slot.getAnnotation("maximum"));
         }
 
         // Use slot description as aria-description if available
         if (slot.description && slot.description()) {
-            this.setAttribute("aria-description", slot.description());
+            this.setAriaDescription(slot.description());
         }
 
         return this;

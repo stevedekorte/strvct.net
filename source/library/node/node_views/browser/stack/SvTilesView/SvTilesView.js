@@ -103,7 +103,7 @@
         this.setDefaultSubviewProto(SvTitledTile);
 
         // Accessibility: list container role
-        this.setAttribute("role", "list");
+        this.setAriaRole("list");
 
         return this;
     }
@@ -254,21 +254,11 @@
         this.syncOrientation(); // implemented in Tiles_orientation.js
         super.syncFromNode();
 
-        // Accessibility: label the list from its node ariaLabel
+        // Accessibility: sync label and opt-in live region from node
         const node = this.node();
         if (node) {
-            const label = node.ariaLabel();
-            if (label) {
-                this.setAttribute("aria-label", label);
-            }
-
-            // Opt-in live region: node can declare nodeAriaLive() returning "polite" or "assertive"
-            if (node.nodeAriaLive) {
-                const liveValue = node.nodeAriaLive();
-                if (liveValue) {
-                    this.setAttribute("aria-live", liveValue);
-                }
-            }
+            this.setAriaLabel(this.ariaLabel());
+            this.setAriaLive(this.ariaLive());
         }
 
         /*

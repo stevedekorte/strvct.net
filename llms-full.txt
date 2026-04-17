@@ -137,12 +137,12 @@ View classes derive ARIA labels from node metadata:
 
 | Source | ARIA usage |
 |---|---|
-| `node.ariaLabel()` | `aria-label` on tiles, tile lists, and navigation regions |
+| `node.nodeAriaLabel()` | `aria-label` on tiles, tile lists, and navigation regions |
 | `node.subtitle()` | `aria-description` on tiles |
 | `slot.description()` | `aria-description` on field tiles |
 | Key view text | `aria-label` on field tiles |
 
-`ariaLabel()` is defined on `SvTitledNode` and returns `title()` by default. Domain objects can override it to provide a more descriptive label for screen readers without affecting the visible UI title. `subtitle()` and slot `description()` provide longer detail available on demand.
+`nodeAriaLabel()` is defined on `SvTitledNode` and returns `title()` by default. Domain objects can override it to provide a more descriptive label for screen readers without affecting the visible UI title. `subtitle()` and slot `description()` provide longer detail available on demand.
 
 ### Node-Level ARIA Overrides
 
@@ -150,12 +150,12 @@ View classes derive ARIA labels from node metadata:
 
 | Method | Default | Purpose |
 |---|---|---|
-| `ariaLabel()` | `title()` | Label announced by screen readers |
-| `ariaRole()` | `null` (view's default) | Override the view class's default ARIA role |
-| `ariaIsReadOnly()` | `null` (from slot editability) | Override read-only state |
-| `ariaIsRequired()` | `null` (from slot `isRequired()`) | Override required state |
+| `nodeAriaLabel()` | `title()` | Label announced by screen readers |
+| `nodeAriaRole()` | `null` (view's default) | Override the view class's default ARIA role |
+| `nodeAriaIsReadOnly()` | `null` (from slot editability) | Override read-only state |
+| `nodeAriaIsRequired()` | `null` (from slot `isRequired()`) | Override required state |
 
-Returning `null` from `ariaRole()`, `ariaIsReadOnly()`, or `ariaIsRequired()` defers to the view's default behavior. Returning a value overrides it. This follows the same pattern as `setNodeViewClass()` -- the framework provides sensible defaults, the domain object overrides when it knows better.
+Returning `null` from `nodeAriaRole()`, `nodeAriaIsReadOnly()`, or `nodeAriaIsRequired()` defers to the view's default behavior. Returning a value overrides it. This follows the same pattern as `setNodeViewClass()` -- the framework provides sensible defaults, the domain object overrides when it knows better.
 
 ### State Tracking
 
@@ -1135,9 +1135,13 @@ Design ideas, architectural discussions, and potential future improvements.
 - Lazy Slots
 - Promise-Wrapped Slots
 - JSON Schema
-- Graph Database
 - Complete Protocols
+- Tile Views
+- Tile Container Views
+- Emergent Capabilities
 - Accessibility Testing & Tuning
+- Async Navigation
+- Graph Database
 
 
 ---
@@ -1325,6 +1329,65 @@ Add an `asyncFinalInit()` phase that runs after synchronous initialization but b
 
 ---
 
+<!-- Page: docs/Future Work/Async Navigation -->
+Source: /docs/Future%20Work/Async%20Navigation/
+
+# Async Navigation
+
+Rearchitecting the navigation stack to support asynchronous loading at every level.
+
+## Status
+
+This is a long-term architectural direction, not expected to happen soon. The current synchronous navigation model works well for the common case and is significantly simpler to reason about. This page captures the motivation and tradeoffs for future reference.
+
+## Context
+
+STRVCT's navigation stack is currently synchronous. When a user drills into a node, its subnodes are expected to be available immediately in memory -- the tile container reads the subnode array, creates tiles, and displays them in the same frame. This synchronous guarantee makes the navigation code straightforward: there are no loading states, no cancellation of in-flight requests, no partial renders, and no race conditions between navigation events.
+
+However, this model assumes all data is local. As the framework is used with cloud-backed data, server-side collections, or very large hierarchies, the assumption that subnodes are always available breaks down. Async navigation would allow any level of the hierarchy to load its children on demand -- from a remote API, a lazy database query, or any other asynchronous source.
+
+## What Would Change
+
+The synchronous contract runs deep through the navigation stack:
+
+- **`SvStackView`** assumes column content is ready when a navigation event fires.
+- **`SvNavView`** assumes it can read a node's subnodes and build tiles immediately.
+- **`SvTilesView`** assumes the subnode array is complete and in memory.
+- **Tile creation** assumes the node it represents is fully initialized.
+
+An async-capable navigation stack would need to handle the possibility that any of these steps returns a promise rather than a value. This means:
+
+- **Loading states**: Each navigation level needs a placeholder (spinner, skeleton tiles, or empty state) while data loads.
+- **Cancellation**: If the user navigates away before loading completes, in-flight requests must be cancelled to avoid stale data arriving in the wrong column.
+- **Error handling**: Network failures, timeouts, and partial results need UI treatment at every level, not just at the data layer.
+- **Progressive rendering**: Results may arrive incrementally -- the container needs to render partial subnode sets and update as more arrive.
+- **Back-navigation caching**: Previously loaded levels should be cached so drilling out doesn't re-fetch.
+
+## Performance Tradeoffs
+
+The synchronous model is fast precisely because it avoids async overhead. Making navigation async introduces significant performance costs even when data is local:
+
+- **Microtask overhead**: Every `await` yields to the microtask queue, adding latency between navigation steps. A drill-in that currently takes one synchronous frame would span multiple frames even if all data is cached, creating visible delay or flicker.
+- **Layout thrashing**: Progressive rendering (show spinner, then replace with content) causes multiple layout passes. The current model lays out tiles once.
+- **Complexity tax**: Every call site in the navigation chain gains error handling, cancellation logic, and state management. This isn't just code complexity -- it's runtime cost from additional branching, promise allocation, and state tracking on every navigation event.
+- **Synchronous fast path**: Even with an async architecture, the common case (local data) should remain fast. Maintaining a synchronous fast path alongside async support adds implementation complexity and testing surface.
+- **Memory pressure**: Caching previously loaded levels for back-navigation trades memory for responsiveness. The cache eviction policy itself becomes a source of bugs and tuning.
+
+These tradeoffs are the primary reason this is a long-term direction rather than an immediate goal. The current synchronous model is the right default for most applications -- the performance cost of async navigation is only worth paying when the data genuinely can't be local.
+
+## Relationship to Other Work
+
+Several other Future Work items intersect with async navigation:
+
+- **[Lazy Slots](../Lazy%20Slots/index.html)** and **[Promise-Wrapped Slots](../Promise-Wrapped%20Slots/index.html)** address async data at the slot level. Async navigation would be the view-layer counterpart -- the container knowing how to wait for and display async subnode sources.
+- **[Scaling to Large Collections](../Tile%20Container%20Views/index.html)** (in Tile Container Views) describes virtual scrolling and async data sources for tile containers. Async navigation generalizes this from a single container feature to a stack-wide capability.
+- **[Graph Database](../Graph%20Database/index.html)** would introduce query-based node retrieval, which naturally produces async results.
+
+If lazy slots and promise-wrapped slots are implemented first, they may provide the async primitives that async navigation builds on -- the slot system handles the data loading, and the navigation stack handles the display timing.
+
+
+---
+
 <!-- Page: docs/Future Work/Complete Protocols -->
 Source: /docs/Future%20Work/Complete%20Protocols/
 
@@ -1478,6 +1541,84 @@ Narrower contracts or single-implementer interfaces worth formalizing for docume
 
 - Methods: `activate()`
 - Duck-typed in: `SvTilesView_keyboard.js` (line 185)
+
+
+---
+
+<!-- Page: docs/Future Work/Emergent Capabilities -->
+Source: /docs/Future%20Work/Emergent%20Capabilities/
+
+# Emergent Capabilities
+
+Capabilities that the naked objects architecture makes possible at the framework level.
+
+## Context
+
+In a conventional web framework, cross-cutting concerns -- accessibility, internationalization, search, undo -- must be implemented per component. The cost scales linearly with the number of components, and coverage is always incomplete.
+
+STRVCT's architecture inverts this. All state lives in typed slots with rich metadata (type, description, min/max, required, read-only). All UI passes through a small set of view classes (~15 tile and container classes render every application). This means a capability implemented once at the framework level automatically covers every application built on the framework.
+
+Two capabilities already demonstrate this pattern:
+
+- **[Accessibility](../../Accessibility/index.html)** -- Slot metadata maps to ARIA attributes, view classes emit roles and states, and every application inherits WCAG 2.2 AA support without per-component accessibility code.
+- **[Internationalization](../../Internationalization/index.html)** -- Translatable nodes and a batched translation service give every application multilingual support through the model layer.
+
+The candidates below are additional capabilities that the same architectural properties make possible. Each would be difficult or impractical to add after the fact in a conventional framework, but in STRVCT they can be implemented at the framework level and applied uniformly.
+
+## Candidates
+
+### Undo / Redo
+
+Every state change flows through `didUpdateSlot()` with both old and new values. A command history captured at the slot level would give automatic undo/redo to every editable field and action. The notification system already provides the hook points; what's missing is a journal that records slot mutations and can replay them in reverse.
+
+The slot system's granularity is an advantage here -- each undo step corresponds to a single slot change with a known previous value, avoiding the complexity of diffing arbitrary state trees.
+
+### Search & Filtering
+
+The entire node graph is structured, typed, and labeled. A framework-level search could traverse all nodes and slots, using slot metadata (type, description) to build both full-text and structured queries -- without per-component indexing code.
+
+Slot types inform how to search (string matching on text slots, range queries on numeric slots, boolean filtering on flags), and node titles and descriptions provide natural result labels. The same traversal could support filtering a tile container's visible subnodes by query.
+
+### Data Validation
+
+Slot annotations already drive three consumers: JSON Schema for AI tool calls, ARIA attributes for screen readers, and persistence constraints. A fourth consumer -- a validation layer -- would use the same metadata (type, min, max, required, pattern) to provide automatic error messages and visual feedback on invalid input.
+
+Because the metadata is already there, validation rules wouldn't need to be declared separately from the slot definitions. A field tile with `setAnnotation("minimum", 0)` would automatically reject negative input and display an appropriate message, just as it already emits `aria-valuemin="0"` and `"minimum": 0` in JSON Schema.
+
+### Automated Testing
+
+The model is effectively its own specification. Slot metadata declares what types, ranges, and constraints each field accepts. This makes generative testing possible: the framework could automatically produce test cases for every editable slot (valid and invalid input for its type), exercise every action, and walk every navigation path in the node graph.
+
+This is a stronger property than conventional snapshot or integration testing -- the tests derive from the model's structural definition rather than from manually written expectations, so they stay in sync as the model evolves.
+
+### Analytics & Telemetry
+
+Every user interaction passes through the same tile, navigation, and action paths. Instrumenting once at the framework level would capture usage data (which nodes are visited, which fields edited, which actions taken, how users navigate the hierarchy) for every application -- without per-feature tracking code.
+
+The node hierarchy provides natural grouping for analytics events, and slot metadata provides labels and types for structured event properties.
+
+### Debug Inspection
+
+STRVCT applications are already their own inspectors -- the node hierarchy is directly navigable, every slot's current value is visible in the UI, and the notification system shows the flow of changes in real time. This isn't a feature to build; it's an inherent property of the naked objects pattern worth calling out as a capability.
+
+Conventional frameworks require separate developer tools (React DevTools, Vue DevTools) to inspect component state. In STRVCT, the production UI and the debug inspector are the same thing.
+
+### Migration & Schema Evolution
+
+When slot definitions change across versions, the framework knows both the stored schema (from the persisted record) and the current schema (from live slot definitions). This structural knowledge makes automatic migration possible: detecting renamed, added, or removed slots and transforming stored records to match the current definition.
+
+In conventional systems, schema migration requires manually written migration scripts. In STRVCT, the slot system provides enough information to detect and potentially automate many common migrations.
+
+## The Common Pattern
+
+Each candidate above follows the same structural argument:
+
+1. **Slot metadata already describes the data** -- types, constraints, descriptions, and relationships are declared once in `initPrototypeSlots()`.
+2. **A small set of view classes renders everything** -- behavior added to the ~15 tile and container classes covers every application.
+3. **The notification system provides hook points** -- `didUpdateSlot()`, `scheduleSyncToView()`, and the notification center make it possible to intercept and react to changes at the framework level.
+4. **The node hierarchy provides structure** -- traversal, search, serialization, and inspection all operate on a uniform graph rather than an ad-hoc component tree.
+
+The cost of each capability is proportional to the number of view classes (small and fixed), not the number of application components (large and growing). This is the fundamental leverage of the naked objects pattern.
 
 
 ---
@@ -1945,6 +2086,185 @@ A slot could potentially be both: lazy-loaded from storage, with a promise wrapp
 
 ---
 
+<!-- Page: docs/Future Work/Tile Container Views -->
+Source: /docs/Future%20Work/Tile%20Container%20Views/
+
+# Tile Container Views
+
+Layout strategies for presenting a node's subnodes.
+
+## Context
+
+STRVCT's view architecture has two distinct roles: **tile views** present an individual subnode (its fields, label, appearance), while **tile container views** arrange the array of subnodes spatially and provide uniform interaction (selection, reordering, drill-in, drag-and-drop).
+
+Because the framework generates views from model metadata, adding a new container makes it instantly available to any node that opts in -- the same leverage that makes accessibility and i18n automatic.
+
+## Existing Container
+
+### Linear List (`SvTilesView`)
+
+The framework's current tile container, which lays out subnodes as a linear array -- vertical (top to bottom) or horizontal (left to right), controlled by the parent `SvStackView`'s direction. This covers most navigation and form-based interfaces. Each subnode is rendered as a tile; the container handles selection, keyboard navigation, reordering, and drill-in.
+
+## Proposed Containers
+
+### Wrapping Grid
+
+A container that flows tiles into rows (or columns), wrapping at the container edge. Useful for image galleries, icon grids, card collections, and any set of uniformly-sized items where the count varies.
+
+The node would opt in via something like `setNodeTilesViewClass(SvGridTilesView)` and optionally hint at minimum tile width. The grid container handles layout; each cell is still a standard tile -- so selection, drag-to-reorder, and accessibility carry over.
+
+### Spatial Map
+
+A pannable, zoomable 2D surface with an optional background image. Subnodes report their positions and are rendered as markers or pins at arbitrary coordinates on the surface. Useful for world maps, dungeon maps, floor plans, relationship diagrams, and any visualization where items exist at continuous positions on a backdrop.
+
+The container would support scroll, drag-to-pan, pinch-to-zoom, and mouse-wheel zoom gestures (extending the existing gesture recognizer system). Subnodes would store position in slot annotations (e.g. `setAnnotation("x", 120)`, `setAnnotation("y", 340)`) and the container reads these to place tiles absolutely. Positions could be 2D or potentially 3D (with a projection). The interaction model is navigating *within* a viewport -- the user moves around the map to find things.
+
+### Grid Map
+
+A structured grid where each subnode requests a discrete cell position and its tile fills that cell (or spans a rectangle of cells). Useful for tactical battle maps, inventory grids, seating charts, tile-based level editors, and scheduling layouts.
+
+Unlike the spatial map, the grid has cell identity -- each position is a discrete slot in the layout. This changes the interaction model: dragging a node between cells is a structured move operation (snapping to grid positions, validating placement rules, swapping or shifting occupants), not a free-form repositioning. Selection, adjacency, and pathfinding queries are natural on a grid but awkward on a continuous surface. The grid may also support cell-level styling (highlighting, coloring regions) and structured keyboard navigation (arrow keys move between cells).
+
+While a grid could technically be a special case of a spatial map with snap-to-grid, the interaction patterns diverge enough -- discrete drag-and-drop between cells, cell-based selection and navigation, occupancy rules -- that they likely warrant separate container classes with different gesture handling and different ARIA roles (`grid` + `gridcell` vs. a spatial landmark).
+
+### Table
+
+A dense tabular layout where each subnode is a row and its field slots become columns. Field tiles already parse key/value pairs; a table container would render the same data in a compact grid. Column headers would derive from slot names, sortability from slot types.
+
+### Chart
+
+A container that renders subnodes as data series in a chart (bar, line, scatter, etc.). The node's slot metadata (type, min, max, description) already provides enough information to auto-generate axis labels and scales -- the same annotations that drive JSON Schema and ARIA attributes.
+
+## Design Considerations
+
+- **Opt-in per node**: Nodes select their container via a new `setNodeTilesViewClass()`. The default remains `SvTilesView`.
+- **Tile reuse**: Each cell, marker, row, or data point should still be a tile (or tile subclass) so that selection, gestures, theming, and accessibility work without reimplementation.
+- **Stack composability**: New containers should compose within the existing stack navigation model -- drilling into a grid cell or map marker opens the next column just as drilling into a list tile does.
+- **Responsive behavior**: Containers should adapt to their available size, reflowing or scrolling as needed. The existing `SvNavView` width management and compaction logic would need extension points.
+- **Accessibility**: Each container needs appropriate ARIA roles (e.g. `grid`, `table`, `img` for canvas) following the same pattern as the `SvNodeView_accessibility` category.
+- **User-switchable containers**: Nodes could declare a set of supported container views, and the UI would offer a control (e.g. a segmented toggle or menu in the nav header) for the user to switch between them at runtime -- viewing the same subnodes as a list, then as a grid, then as a table. The selected container preference could be persisted per node or per node class. The node would provide the list of appropriate container options (e.g. via `nodeAlternativeTilesViewClasses()`) so the UI only presents choices that make sense for that data -- a collection of images might offer list and grid, while a dataset might offer list, table, and chart. The switcher control would only appear when the node declares more than one option.
+
+## Container Chrome
+
+Beyond the tile area itself, containers could support optional header and footer regions with standard affordances:
+
+- **Search & filter (header)**: A search field in the container header that filters visible subnodes by matching against node titles, slot values, or other metadata. The container would accept a filter predicate and re-render only matching tiles. For structured data, this could extend to faceted filtering (e.g. filter by slot type or annotation value).
+- **Create new item (footer)**: A persistent affordance at the bottom of the container for adding a new subnode -- similar to the "+" pattern in list UIs. The container would delegate creation to the parent node, which knows what subnode type to instantiate. This keeps the container generic while letting the node control the semantics.
+
+## Scaling to Large Collections
+
+The current `SvTilesView` materializes a tile for every subnode, which works well for typical navigation hierarchies but breaks down for large or asynchronous data sets (thousands to millions of items).
+
+A tile container protocol for large collections would need to address:
+
+- **Async subnode sources**: Rather than reading subnodes from an in-memory array, the container would request pages or windows of results from an async data source. The node would implement a query interface (filter, sort, offset, limit) and the container would fetch and display subsets on demand.
+- **Virtual scrolling**: Only tiles visible in the viewport (plus a buffer) would be materialized. As the user scrolls, tiles are recycled and rebound to new subnodes -- the same tile instance represents different data at different scroll positions.
+- **Search as primary navigation**: When a collection is too large to browse linearly, search becomes the entry point rather than an optional filter. The container could present a search-first UI, displaying results only after the user provides a query, rather than attempting to render all items.
+- **Automatic hierarchy structuring**: For very wide collections, the container (or the node) could automatically group subnodes into intermediate levels by a property (e.g. alphabetical buckets, category, date range), ensuring no single level presents an overwhelming number of tiles. This would be transparent to the user -- drill into "A-F" to see items in that range -- and could be computed lazily from the data source's sort order.
+
+
+---
+
+<!-- Page: docs/Future Work/Tile Views -->
+Source: /docs/Future%20Work/Tile%20Views/
+
+# Tile Views
+
+Tile subclasses for presenting individual subnodes in specialized ways.
+
+## Context
+
+STRVCT's view architecture has two distinct roles: **tile container views** arrange the array of subnodes spatially (see [Tile Container Views](../Tile%20Container%20Views/index.html)), while **tile views** present an individual subnode -- its content, appearance, and interaction affordances.
+
+Nodes select their tile class via `setNodeTileClass()`. All tiles inherit the standard tile infrastructure -- selection, theming, gestures, accessibility -- and add domain-specific rendering.
+
+## Existing Tiles
+
+### Base Tiles
+
+| Class | Extends | Purpose |
+|---|---|---|
+| `SvTile` | -- | Base navigable tile. Supports selection, styling, slide-to-delete, reordering, drag, and close/delete buttons. |
+| `SvTitledTile` | `SvTile` | Adds title, subtitle, note, note icon, and thumbnail subviews. |
+| `SvHeaderTile` | `SvTitledTile` | Section header with selectable state and specific theme class. |
+| `SvTextNodeTile` | `SvTile` | Displays and edits text nodes with a `SvTextView`. |
+| `SvBreadCrumbsTile` | `SvTile` | Breadcrumb path navigation. |
+
+### Field Tiles
+
+| Class | Extends | Purpose |
+|---|---|---|
+| `SvFieldTile` | `SvTile` | Key/value field with label and value areas. Syncs ARIA from slot metadata. |
+| `SvStringFieldTile` | `SvFieldTile` | Text input field. |
+| `SvPasswordFieldTile` | `SvStringFieldTile` | Masked password input. |
+| `SvBooleanFieldTile` | `SvFieldTile` | Checkbox toggle. |
+| `SvActionFieldTile` | `SvTile` | Clickable button with action handling. |
+| `SvTextAreaFieldTile` | `SvFieldTile` | Multiline text input with speech-to-text support. |
+| `SvPointerFieldTile` | `SvTitledTile` | Navigation link with arrow indicator. |
+
+### Media Input Tiles
+
+| Class | Extends | Purpose |
+|---|---|---|
+| `SvImageWellFieldTile` | `SvFieldTile` | Drag-and-drop image input. |
+| `SvVideoWellFieldTile` | `SvFieldTile` | Drag-and-drop video input. |
+| `SvSceneViewWellFieldTile` | `SvFieldTile` | 3D model input (model/* MIME types). |
+
+### Option Tiles
+
+| Class | Extends | Purpose |
+|---|---|---|
+| `SvOptionsNodeTile` | `SvTitledTile` | Container for selectable options (`role="listbox"`). |
+| `SvOptionNodeTile` | `SvTitledTile` | Individual selectable option (`role="option"`). |
+
+### Chat Tiles
+
+| Class | Extends | Purpose |
+|---|---|---|
+| `SvChatMessageTile` | `SvTextAreaFieldTile` | Chat bubble with HTML support, accessibility, and speech capability. |
+| `SvChatInputTile` | `SvChatMessageTile` | Multiline chat input. |
+
+### Resource Tiles
+
+| Class | Extends | Purpose |
+|---|---|---|
+| `SvImageTile` | `SvTitledTile` | Image display with caption derived from node title. |
+| `SvFontTile` | `SvTitledTile` | Font preview showing family, style, weight, and stretch. |
+
+## Proposed Tiles
+
+### Rich Text Tile
+
+A tile whose value area supports formatted text (bold, italic, lists, headings) rather than plain text. Useful for notes, journal entries, descriptions, and any long-form content. Would need to bridge the node's value to a contentEditable region with structured markup.
+
+### Media Tile
+
+A standalone playback tile that embeds audio or video transport controls (play/pause, scrubbing, volume). The node would reference a sound or video resource; the tile provides the playback UI. Builds on the existing `SvWaSound` infrastructure for audio and could extend to video via standard HTML5 media elements.
+
+The existing `SvVideoWellFieldTile` and `SvSceneViewWellFieldTile` handle drag-and-drop *input* of media files. This proposed tile is the complement: *playback* of media already associated with a node.
+
+### Meter / Progress Tile
+
+A tile that renders a numeric slot value as a visual meter, progress bar, or gauge. The slot's `minimum` and `maximum` annotations define the range -- the same annotations that already drive `aria-valuemin` / `aria-valuemax`. Useful for hit points, loading progress, skill levels, and any bounded numeric value.
+
+### Badge / Status Tile
+
+A compact tile optimized for small status indicators -- an icon plus a short label, possibly color-coded by state. Useful for tags, status markers, notification counts, and online/offline indicators. Would pair well with the wrapping grid container for dense displays.
+
+### Embed Tile
+
+A tile that renders an iframe or sandboxed external content. The node provides a URL; the tile handles sizing, loading states, and security boundaries. Useful for embedding external widgets, previews, or third-party content within the node hierarchy.
+
+## Design Considerations
+
+- **Slot-driven rendering**: New tiles should derive their behavior from slot metadata wherever possible (type, annotations, description), keeping domain objects declarative rather than view-aware.
+- **Tile class selection**: Nodes opt in via `setNodeTileClass(SvImageTile)` etc. The framework's existing view-discovery mechanism handles the rest.
+- **Accessibility**: Each new tile needs appropriate ARIA roles and state, following the `SvNodeView_accessibility` pattern. For example, a meter tile would use `role="meter"` with `aria-valuemin`, `aria-valuemax`, and `aria-valuenow`.
+- **Composability with containers**: New tile types should work in any container -- a media tile in a list, an image tile in a wrapping grid, a badge tile in a spatial map.
+
+
+---
+
 <!-- Page: docs/Getting Started -->
 Source: /docs/Getting%20Started/
 
@@ -2401,7 +2721,9 @@ Frameworks and ideas that shaped STRVCT's design.
 
 ## Miller Columns
 
-The default navigation pattern — a horizontal stack of nested tile lists — draws from Miller columns, independently invented by Mark S. Miller in 1980 and closely related to the class hierarchy browser in Smalltalk-76. The pattern appeared in the Macintosh Finder, the NeXTSTEP File Viewer, and later macOS's column view. The NeXTSTEP implementation was the primary inspiration — its combination of columnar navigation with an object-oriented framework made the pattern feel natural for browsing object hierarchies, not just file systems. This provides spatial context as users navigate deeper into a node hierarchy, with each level visible alongside its parent.
+The default navigation pattern — a horizontal stack of nested tile lists — draws from Miller columns, created by Mark S. Miller in 1980 and closely related to the class hierarchy browser in Smalltalk-76. The pattern appeared in the Macintosh Finder, the NeXTSTEP File Viewer, and later macOS's column view. The NeXTSTEP implementation was the primary inspiration — its combination of columnar navigation with an object-oriented framework made the pattern feel natural for browsing object hierarchies, not just file systems. This provides spatial context as users navigate deeper into a node hierarchy, with each level visible alongside its parent.
+
+STRVCT extends the classic Miller column pattern by allowing each level in the stack to independently choose its layout direction — vertical or horizontal — controlled by the node via `setNodeIsVertical()`. This recursive variant means a horizontal stack can contain a column whose subnodes lay out vertically, which in turn contains a row whose subnodes lay out horizontally, and so on. The alternating directions let the same navigation model serve both hierarchical browsing (vertical lists) and detail views (horizontal field layouts) without switching interaction paradigms.
 
 ## Smalltalk, Self, and Objective-C
 
@@ -5226,7 +5548,7 @@ Naming conventions, formatting rules, and code structure patterns.
 Class names use UpperCamelCase with a two-letter prefix indicating their origin:
 
 - **`Sv`** -- framework classes: `SvNode`, `SvStorableNode`, `SvJsonGroup`, `SvNotificationCenter`
-- **Application prefix** -- applications built on STRVCT should choose their own short prefix and use it consistently for all custom classes. This prevents name collisions between framework, application, and third-party code.
+- **Application prefix** -- applications built on STRVCT should choose their own short prefix and use it consistently for all custom classes. The prefix doesn't need to be two characters -- any short, distinctive prefix works (`Uo`, `App`, `Xyz`). This prevents name collisions between framework, application, and third-party code.
 
 The prefix is not applied to external libraries or JavaScript builtins extended via categories.
 
@@ -5259,8 +5581,6 @@ Slot names use lowerCamelCase. The slot system automatically generates a getter 
 | `newSlot("is24Hour", false)` | `is24Hour()` | `setIs24Hour(value)` |
 | `newSlot("subnodes", null)` | `subnodes()` | `setSubnodes(value)` |
 
-The backing instance variable uses an underscore prefix (`_userName`, `_is24Hour`), but should only be accessed through the generated getter -- never directly. Bypassing the getter/setter skips the slot's hooks: dirty tracking for persistence, `didUpdateSlot` notifications, and view sync scheduling. A direct `this._name = x` silently breaks storage and UI updates.
-
 Each slot declaration is wrapped in a block scope so `const slot` can be reused without naming collisions:
 
 ```javascript
@@ -5288,6 +5608,59 @@ Boolean slot names use a query-style prefix that reads naturally as a question:
 | `should` | Configuration flags | `shouldStore`, `shouldStoreSlot`, `shouldStoreSubnodes` |
 | `does` | Behavioral switches | `doesPadHours`, `doesHookSetter` |
 | `shows` | Visibility toggles | `showsMeridiem`, `showsHours` |
+
+## Instance Variables
+
+Instance variables use an underscore prefix (`_userName`, `_isActive`) and are subject to three rules:
+
+### 1. Always declare via `newSlot()`
+
+Never assign an instance variable directly. All instance variables are created by the slot system in `initPrototypeSlots()`:
+
+```javascript
+// Correct
+{
+    const slot = this.newSlot("userName", "");
+    slot.setSlotType("String");
+}
+
+// Wrong -- bypasses the slot system entirely
+this._userName = "";
+```
+
+Declaring variables through `newSlot()` ensures they participate in the framework's infrastructure: getter/setter generation, dirty tracking, persistence, view synchronization, JSON Schema, and ARIA metadata. A manually assigned `_` variable gets none of this.
+
+### 2. Internal access: use the getter
+
+Within the same object, access instance variables through the generated getter (`this.userName()`), not directly (`this._userName`). The getter is the standard access path; direct access is reserved for rare, performance-critical cases where you intentionally need to skip hooks.
+
+```javascript
+// Standard -- uses the getter
+formattedName () {
+    return this.userName().toUpperCase();
+}
+
+// Avoid -- skips hooks, breaks the uniform access pattern
+formattedName () {
+    return this._userName.toUpperCase();
+}
+```
+
+Bypassing the getter may seem harmless for reads, but it creates a maintenance hazard: if a subclass or category overrides the getter (to add lazy initialization, computed values, or delegation), direct `_` access silently bypasses that override.
+
+### 3. External access: always use the getter
+
+Accessing another object's instance variables directly (`other._userName`) is never acceptable. External code must always go through the public getter (`other.userName()`). This isn't just convention -- the setter performs dirty tracking for persistence, posts `didUpdateSlot` notifications, and schedules view sync. A direct `other._name = x` silently breaks storage, UI updates, and any observers watching that slot.
+
+```javascript
+// Correct
+player.setUserName("Alice");
+const name = player.userName();
+
+// Wrong -- breaks persistence, notifications, and view sync
+player._userName = "Alice";
+const name = player._userName;
+```
 
 ## Methods
 
@@ -5443,7 +5816,7 @@ These are used for type checking, JSON Schema generation, and documentation -- n
 - **`super` in `initPrototypeSlots` / `initPrototype`** -- the framework walks the hierarchy automatically. Adding `super` causes each level to execute multiple times.
 - **`instance.hasOwnProperty()`** -- use `Object.hasOwn(instance, key)` instead. `hasOwnProperty` is a prototype method that can be shadowed by an object's own property; `Object.hasOwn()` is a static method that can't be overridden.
 - **Plain objects as dictionaries** -- use `Map` for key-value collections. Plain objects risk prototype pollution (`toString`, `constructor` as key names), only support string keys, and lack `.size`.
-- **Direct instance variable access** -- always go through the generated getter, even inside the class. Bypassing the setter skips dirty tracking, persistence hooks, and view sync scheduling.
+- **Direct instance variable access** -- see [Instance Variables](#instance-variables) for the full rules. In short: always use the getter.
 
 ## Formatting
 

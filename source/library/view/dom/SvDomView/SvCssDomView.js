@@ -214,6 +214,188 @@
         return this;
     }
 
+    // --- ARIA accessibility setters ---
+
+    /**
+     * @description Sets the ARIA role attribute.
+     * @param {string|null} value - The role value, or null/falsy to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaRole (value) {
+        if (value) {
+            this.setAttribute("role", value);
+        } else {
+            this.removeAttribute("role");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-label attribute.
+     * @param {string|null} value - The label value, or null/falsy to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaLabel (value) {
+        if (value) {
+            this.setAttribute("aria-label", value);
+        } else {
+            this.removeAttribute("aria-label");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-description attribute.
+     * @param {string|null} value - The description value, or null/falsy to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaDescription (value) {
+        if (value) {
+            this.setAttribute("aria-description", value);
+        } else {
+            this.removeAttribute("aria-description");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-readonly attribute.
+     * @param {boolean|null} aBool - The read-only state, or null to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaReadOnly (aBool) {
+        if (aBool !== null && aBool !== undefined) {
+            this.setAttribute("aria-readonly", aBool ? "true" : "false");
+        } else {
+            this.removeAttribute("aria-readonly");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-required attribute.
+     * @param {boolean|null} aBool - The required state, or null to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaRequired (aBool) {
+        if (aBool !== null && aBool !== undefined) {
+            this.setAttribute("aria-required", aBool ? "true" : "false");
+        } else {
+            this.removeAttribute("aria-required");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-disabled attribute.
+     * @param {boolean|null} aBool - The disabled state, or null to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaDisabled (aBool) {
+        if (aBool !== null && aBool !== undefined) {
+            this.setAttribute("aria-disabled", aBool ? "true" : "false");
+        } else {
+            this.removeAttribute("aria-disabled");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-current attribute.
+     * @param {string|null} value - The current value (e.g. "true", "location"), or null/falsy to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaCurrent (value) {
+        if (value) {
+            this.setAttribute("aria-current", value);
+        } else {
+            this.removeAttribute("aria-current");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-checked attribute.
+     * @param {boolean|null} aBool - The checked state, or null to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaChecked (aBool) {
+        if (aBool !== null && aBool !== undefined) {
+            this.setAttribute("aria-checked", aBool ? "true" : "false");
+        } else {
+            this.removeAttribute("aria-checked");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-selected attribute.
+     * @param {boolean|null} aBool - The selected state, or null to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaSelected (aBool) {
+        if (aBool !== null && aBool !== undefined) {
+            this.setAttribute("aria-selected", aBool ? "true" : "false");
+        } else {
+            this.removeAttribute("aria-selected");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-live attribute.
+     * @param {string|null} value - The live region value ("polite" or "assertive"), or null/falsy to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaLive (value) {
+        if (value) {
+            this.setAttribute("aria-live", value);
+        } else {
+            this.removeAttribute("aria-live");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-valuemin attribute.
+     * @param {number|null} value - The minimum value, or null/undefined to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaValueMin (value) {
+        if (value !== undefined && value !== null) {
+            this.setAttribute("aria-valuemin", String(value));
+        } else {
+            this.removeAttribute("aria-valuemin");
+        }
+        return this;
+    }
+
+    /**
+     * @description Sets the aria-valuemax attribute.
+     * @param {number|null} value - The maximum value, or null/undefined to remove.
+     * @returns {SvCssDomView} The current instance.
+     * @category Accessibility
+     */
+    setAriaValueMax (value) {
+        if (value !== undefined && value !== null) {
+            this.setAttribute("aria-valuemax", String(value));
+        } else {
+            this.removeAttribute("aria-valuemax");
+        }
+        return this;
+    }
+
     // --- css properties ---
 
     setSpecialCssProperty (k, newValue) {
