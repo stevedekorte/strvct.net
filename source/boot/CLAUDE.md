@@ -1,4 +1,4 @@
-# STRVCT Boot System SvDocumentation
+# STRVCT Boot System Documentation
 
 ## Overview
 

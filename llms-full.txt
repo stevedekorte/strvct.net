@@ -658,7 +658,7 @@ The browser provides two separate event families for pointing — mouse events o
 
 Gesture recognizers eliminate this. They consume raw mouse and touch events internally and present a single, input-agnostic interface to the view. A `SvPanGestureRecognizer` works identically whether driven by a mouse drag or a finger swipe — the view implements `onPanBegin` once and it works on every device. This is not just a convenience; it means new interaction features are automatically cross-platform from the first line of code, with no per-device testing or branching required.
 
-SvMouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
+Mouse input naturally supports only single-finger gestures (tap, pan, long-press, slide), since a mouse has one cursor. Multi-finger gestures like pinch and rotation require touch input — or the Shift+click emulation described below, which simulates a second finger for desktop testing.
 
 ## How Gestures Work
 
@@ -901,6 +901,7 @@ Design ideas, architectural discussions, and potential future improvements.
 - Promise-Wrapped Slots
 - JSON Schema
 - Graph Database
+- Complete Protocols
 
 
 ---
@@ -987,6 +988,77 @@ Add an `asyncFinalInit()` phase that runs after synchronous initialization but b
 - React's `useEffect` for async operations after render
 - SwiftUI's `.task` modifier for async work tied to view lifecycle
 - Android's `ViewModel` with `init` blocks and coroutine scopes
+
+
+---
+
+<!-- Page: docs/Future Work/Complete Protocols -->
+Source: https://strvct.net/docs/Future%20Work/Complete%20Protocols/
+
+# Complete Protocols
+
+Formalizing the many undeclared interface contracts throughout the codebase.
+
+## Context
+
+STRVCT has a [protocol system](../../Programming%20Idioms/Protocols/index.html) for declaring interfaces and verifying conformance at class-registration time. In practice, only a handful of protocols have been formally declared (audio clip, audio clip delegate, drag source, drag destination). The rest of the codebase relies on informal duck-typing -- checking for a method's existence before calling it, or simply assuming it exists based on context.
+
+This means there are many implicit protocols scattered throughout the framework: sets of methods that classes are expected to implement but that have no formal declaration, no early verification, and no central documentation.
+
+## Examples of Undeclared Protocols
+
+These are recurring interface patterns in the codebase that are currently enforced by convention rather than by protocol declarations:
+
+### Node drop protocol
+
+Used by tile views to ask a node whether it accepts a dropped item:
+
+- `nodeAcceptsDrop(node)` -- returns whether the drop is allowed
+- `nodeDropped(node)` -- handles the actual drop
+
+Currently checked with `if (node && node.nodeAcceptsDrop)` at call sites. A formal `SvNodeDropProtocol` would make the contract explicit.
+
+### Delegate protocols
+
+The framework uses a delegation pattern in many places beyond audio. Any class that accepts delegates and calls methods on them defines an implicit protocol. Formalizing these as `SvThingDelegateProtocol` classes would:
+
+- Document which callbacks a delegate must implement
+- Catch missing delegate methods early
+- Make it easy to find all delegate interfaces in the codebase
+
+### Serialization protocols
+
+Classes that participate in persistence implement methods like `recordForStore()`, `loadFromRecord()`, and `referencedBlobHashesSet()`. Classes that participate in JSON exchange implement `serializeToJson()` and `deserializeFromJson()`. These are currently expected by convention -- a formal protocol would verify that a class claiming to be storable actually implements all the required methods.
+
+### View protocols
+
+Node views implement a set of methods for synchronization (`syncToNode()`, `syncFromNode()`), lifecycle (`prepareToRetire()`), and display (`postNeedsDisplay()`). These expectations are implicit -- a formal protocol would clarify the minimal interface a view must provide.
+
+## Approach
+
+The work is incremental and non-breaking. Each undeclared protocol can be formalized independently:
+
+1. **Identify the contract.** Find all the method names that call sites expect on the target objects.
+2. **Create the Protocol subclass.** List those methods as empty declarations in a new `Protocol` subclass.
+3. **Register conformance.** Add `addProtocol()` calls to classes that implement the interface.
+4. **Verify.** The framework's existing verification machinery checks method presence at registration time. Any missing implementations surface immediately.
+
+No existing behavior changes -- the methods already exist on the classes. The protocol declaration simply makes the contract explicit and verifiable.
+
+## Benefits
+
+- **Self-documenting interfaces.** Each protocol class is a readable list of required methods, replacing the need to read call sites to discover the contract.
+- **Early error detection.** A class that claims conformance but is missing a method throws at startup, not when the code path is eventually hit.
+- **Queryable.** `Protocol.allProtocols()` and `protocol.implementers()` provide runtime introspection of which classes implement which interfaces.
+- **Inheritance.** Protocols can extend other protocols, building larger contracts from smaller ones without repeating method lists.
+
+## Scope
+
+This is an ongoing improvement, not a single task. The codebase has dozens of implicit protocols. Formalizing them should happen organically -- when working in an area of the code, identify the implicit contracts and declare them as protocols. Priority should go to contracts that:
+
+- Are implemented by many classes (high fan-out)
+- Have been a source of bugs from missing methods
+- Would benefit from being documented as a discrete interface
 
 
 ---
@@ -2998,7 +3070,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Summary SvTile
+    Summary Tile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -3007,7 +3079,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Property SvTile
+    Property Tile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -3016,13 +3088,13 @@ Tiles support gestures for direct manipulation: slide-to-delete, long-press reor
 
 Tiles can be subclassed for domain-specific presentation, but the default tiles are designed to be sufficient for the majority of cases. The goal is to make custom tiles the exception, not the rule.
 
-### 4.2 SvTile Stacks
+### 4.2 Tile Stacks
 
-A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. SvTile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
+A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. Tile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    SvTile Stack
+    Tile Stack
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>
@@ -3237,7 +3309,7 @@ The custom views that were needed fall into the category identified in Section 3
 
 ## 10. Discussion
 
-### The Crossover SvPoint
+### The Crossover Point
 
 Hand-crafted interfaces may appear more polished early in an application's life, when the number of screens is small and each can receive individual design attention. But as the domain model grows, the cost of maintaining bespoke screens grows with it, while inconsistencies accumulate. At some point — the crossover point — a consistent, automatically generated interface produces a better user experience than a patchwork of hand-crafted screens, because the user can rely on uniform navigation throughout the application.
 
@@ -4286,6 +4358,7 @@ Recurring patterns and conventions for writing STRVCT code.
 
 - Async Patterns
 - Categories
+- Protocols
 
 
 ---
@@ -4552,6 +4625,163 @@ This means:
 
 - [Slot Patterns](../Slot%20Patterns/index.html) — how to declare properties on classes
 - [Lifecycle](../../Lifecycle/index.html) — `initPrototypeSlots` / `initPrototype` and the initialization chain, which categories cannot participate in (only methods are merged)
+
+
+---
+
+<!-- Page: docs/Programming Idioms/Protocols -->
+Source: https://strvct.net/docs/Programming%20Idioms/Protocols/
+
+# Protocols
+
+Declaring interfaces and verifying conformance at runtime.
+
+## Overview
+
+Protocols are STRVCT's interface system. A protocol defines a set of methods that a class promises to implement. Unlike duck-typing (where you check for individual methods at call sites), protocols give the contract a name, make it inheritable, and verify it at registration time rather than at the point of use.
+
+The most important property of the protocol system is **fail-fast verification**: when a class declares that it conforms to a protocol, the framework immediately checks that all required methods are present. **If any are missing, an error is thrown at startup** -- not later when a rarely-exercised code path happens to call the missing method. This moves an entire category of bugs from runtime surprises to immediate, deterministic failures.
+
+The conformance check is also designed to be very fast. It uses a single set-subset operation -- each required method name is looked up in the class's `Set` of slot names in O(1). Since this runs once at startup during class registration, there is zero per-call overhead. The cost is paid once, upfront, and the guarantee holds for the lifetime of the application.
+
+The system is inspired by Objective-C's `@protocol` and Smalltalk's message categories.
+
+## Defining a protocol
+
+A protocol is a subclass of `Protocol` that lists the required methods as empty instance methods:
+
+```javascript
+(class SvAudioClipProtocol extends Protocol {
+
+    play () {
+    }
+
+    addDelegate (audioClipDelegate) {
+    }
+
+    removeDelegate (audioClipDelegate) {
+    }
+
+    stop () {
+    }
+
+}.initThisProtocol());
+```
+
+Key points:
+
+- Call `.initThisProtocol()` instead of `.initThisClass()`. This registers the protocol and asserts the naming convention.
+- The class name **must** end with `Protocol` (enforced at runtime).
+- Method bodies are empty -- they exist to declare the interface, not to provide default implementations.
+- Use the `@interface` JSDoc tag (not `@class`) in the file's module comment.
+
+## Implementing a protocol
+
+A class declares conformance by calling `addProtocol()` in its `initPrototype()` method:
+
+```javascript
+(class SvWaSound extends SvSummaryNode {
+
+    initPrototype () {
+        this.addProtocol(SvAudioClipProtocol);
+    }
+
+    play () {
+        // actual implementation
+    }
+
+    addDelegate (audioClipDelegate) {
+        // actual implementation
+    }
+
+    removeDelegate (audioClipDelegate) {
+        // actual implementation
+    }
+
+    stop () {
+        // actual implementation
+    }
+
+}.initThisClass());
+```
+
+When `addProtocol()` is called, the framework immediately checks that the class's methods satisfy the protocol. If any required method is missing, an error is thrown at class-registration time -- not later when the method would have been called.
+
+## Verification API
+
+The protocol system provides several methods on `ProtoClass` (available to all STRVCT classes):
+
+| Method | Purpose |
+|---|---|
+| `addProtocol(protocol)` | Declare conformance; throws if methods are missing |
+| `conformsToProtocol(protocol)` | Returns `true` if the class has registered the protocol |
+| `assertConformsToProtocol(protocol)` | Throws if the class doesn't conform |
+| `methodsConformToProtocol(protocol)` | Returns which methods satisfy the protocol |
+| `implementsMethodNamesSet(set)` | Checks if the class implements a given set of method names |
+
+On the `Protocol` class itself:
+
+| Method | Purpose |
+|---|---|
+| `Protocol.allProtocols()` | Returns all registered protocol subclasses |
+| `protocol.addImplementer(class)` | Records a class as an implementer (called automatically by `addProtocol`) |
+| `protocol.implementers()` | Returns the set of all classes that conform to this protocol |
+
+## Protocol inheritance
+
+Protocols are classes, so they support inheritance. A protocol can extend another protocol to build larger interfaces from smaller ones:
+
+```javascript
+(class SvExtendedAudioProtocol extends SvAudioClipProtocol {
+
+    seek (position) {
+    }
+
+    duration () {
+    }
+
+}.initThisProtocol());
+```
+
+A class that conforms to `SvExtendedAudioProtocol` must implement both its own methods and those inherited from `SvAudioClipProtocol`.
+
+## Existing protocols
+
+The framework currently declares four formal protocols:
+
+- **`SvAudioClipProtocol`** -- playback interface: `play()`, `stop()`, `addDelegate()`, `removeDelegate()`
+- **`SvAudioClipDelegateProtocol`** -- callback interface: `onSoundEnded(audioClip)`
+- **`SvDragSourceProtocol`** -- drag source callbacks: `onDragSourceBegin()`, `onDragSourceDropped()`, `onDragSourceEnd()`, `acceptsDropHover()`, and others
+- **`SvDragDestinationProtocol`** -- drop target callbacks: `onDragDestinationEnter()`, `onDragDestinationHover()`, `onDragDestinationExit()`, `acceptsDropHoverComplete()`, `acceptsDrop()`, and others
+
+## Protocols vs. duck-typing
+
+Many parts of the codebase use informal duck-typing -- checking for a method's existence before calling it:
+
+```javascript
+if (node && node.nodeAcceptsDrop) {
+    node.nodeAcceptsDrop(droppedNode);
+}
+```
+
+This works, but it has drawbacks:
+
+- The interface contract is implicit -- you have to read call sites to discover what methods are expected.
+- There's no early verification -- a missing method surfaces only when the code path is hit at runtime.
+- There's no way to query which classes implement the interface.
+
+Formal protocols address all three. The trade-off is a small amount of ceremony (defining the protocol class and calling `addProtocol`). For optional interfaces where not every class is expected to conform, duck-typing remains appropriate. For interfaces that represent a real contract between components, a protocol is the better choice.
+
+## Naming conventions
+
+- Protocol class names always end with `Protocol`: `SvAudioClipProtocol`, `SvDragSourceProtocol`
+- Protocol files live alongside the classes they relate to (e.g., the audio protocols are in `library/node/audio/`)
+- Delegate protocols follow the pattern `SvThingDelegateProtocol` for callback interfaces
+
+## Related patterns
+
+- [Categories](../Categories/index.html) -- extending classes with methods from separate files (protocols define *what* methods to implement; categories *add* methods)
+- [Complete Protocols](../../Future%20Work/Complete%20Protocols/index.html) -- future work on formalizing the codebase's many undeclared protocols
 
 
 ---

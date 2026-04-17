@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="stylesheet" href="/style/style.css">
+  <link rel="modulepreload" href="/style/layout/ContentBase.js">
+  <link rel="modulepreload" href="/style/layout/ContentText.js">
+  <link rel="modulepreload" href="/style/layout/ContentCards.js">
+  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentTable.js">
+  <link rel="modulepreload" href="/style/layout/ContentImage.js">
+  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/style/layout/ContentToc.js">
+  <link rel="modulepreload" href="/style/layout/PageIndex.js">
+  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Protocols – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
+</head>
+<body>
+  <div class="page loaded"><div class="header"><div><h1>Protocols</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Declaring interfaces and verifying conformance at runtime.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#defining-a-protocol">Defining a protocol</a></li><li><a href="#implementing-a-protocol">Implementing a protocol</a></li><li><a href="#verification-api">Verification API</a></li><li><a href="#protocol-inheritance">Protocol inheritance</a></li><li><a href="#existing-protocols">Existing protocols</a></li><li><a href="#protocols-vs-duck-typing">Protocols vs. duck-typing</a></li><li><a href="#naming-conventions">Naming conventions</a></li><li><a href="#related-patterns">Related patterns</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Protocols are STRVCT's interface system. A protocol defines a set of methods that a class promises to implement. Unlike duck-typing (where you check for individual methods at call sites), protocols give the contract a name, make it inheritable, and verify it at registration time rather than at the point of use.</p><p>The most important property of the protocol system is <strong>fail-fast verification</strong>: when a class declares that it conforms to a protocol, the framework immediately checks that all required methods are present. <strong>If any are missing, an error is thrown at startup</strong> -- not later when a rarely-exercised code path happens to call the missing method. This moves an entire category of bugs from runtime surprises to immediate, deterministic failures.</p><p>The conformance check is also designed to be very fast. It uses a single set-subset operation -- each required method name is looked up in the class's <code>Set</code> of slot names in O(1). Since this runs once at startup during class registration, there is zero per-call overhead. The cost is paid once, upfront, and the guarantee holds for the lifetime of the application.</p><p>The system is inspired by Objective-C's <code>@protocol</code> and Smalltalk's message categories.</p></div></div><h2 id="defining-a-protocol">Defining a protocol</h2><div class="section"><div class="section-body"><p>A protocol is a subclass of <code>Protocol</code> that lists the required methods as empty instance methods:</p><pre><code>(class SvAudioClipProtocol extends Protocol {
+
+    play () {
+    }
+
+    addDelegate (audioClipDelegate) {
+    }
+
+    removeDelegate (audioClipDelegate) {
+    }
+
+    stop () {
+    }
+
+}.initThisProtocol());</code></pre><p>Key points:</p><ul><li>Call <code>.initThisProtocol()</code> instead of <code>.initThisClass()</code>. This registers the protocol and asserts the naming convention.</li><li>The class name <strong>must</strong> end with <code>Protocol</code> (enforced at runtime).</li><li>Method bodies are empty -- they exist to declare the interface, not to provide default implementations.</li><li>Use the <code>@interface</code> JSDoc tag (not <code>@class</code>) in the file's module comment.</li></ul></div></div><h2 id="implementing-a-protocol">Implementing a protocol</h2><div class="section"><div class="section-body"><p>A class declares conformance by calling <code>addProtocol()</code> in its <code>initPrototype()</code> method:</p><pre><code>(class SvWaSound extends SvSummaryNode {
+
+    initPrototype () {
+        this.addProtocol(SvAudioClipProtocol);
+    }
+
+    play () {
+        // actual implementation
+    }
+
+    addDelegate (audioClipDelegate) {
+        // actual implementation
+    }
+
+    removeDelegate (audioClipDelegate) {
+        // actual implementation
+    }
+
+    stop () {
+        // actual implementation
+    }
+
+}.initThisClass());</code></pre><p>When <code>addProtocol()</code> is called, the framework immediately checks that the class's methods satisfy the protocol. If any required method is missing, an error is thrown at class-registration time -- not later when the method would have been called.</p></div></div><h2 id="verification-api">Verification API</h2><div class="section"><div class="section-body"><p>The protocol system provides several methods on <code>ProtoClass</code> (available to all STRVCT classes):</p><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td><code>addProtocol(protocol)</code></td><td>Declare conformance; throws if methods are missing</td></tr><tr><td><code>conformsToProtocol(protocol)</code></td><td>Returns <code>true</code> if the class has registered the protocol</td></tr><tr><td><code>assertConformsToProtocol(protocol)</code></td><td>Throws if the class doesn't conform</td></tr><tr><td><code>methodsConformToProtocol(protocol)</code></td><td>Returns which methods satisfy the protocol</td></tr><tr><td><code>implementsMethodNamesSet(set)</code></td><td>Checks if the class implements a given set of method names</td></tr></tbody></table><p>On the <code>Protocol</code> class itself:</p><table><thead><tr><th>Method</th><th>Purpose</th></tr></thead><tbody><tr><td><code>Protocol.allProtocols()</code></td><td>Returns all registered protocol subclasses</td></tr><tr><td><code>protocol.addImplementer(class)</code></td><td>Records a class as an implementer (called automatically by <code>addProtocol</code>)</td></tr><tr><td><code>protocol.implementers()</code></td><td>Returns the set of all classes that conform to this protocol</td></tr></tbody></table></div></div><h2 id="protocol-inheritance">Protocol inheritance</h2><div class="section"><div class="section-body"><p>Protocols are classes, so they support inheritance. A protocol can extend another protocol to build larger interfaces from smaller ones:</p><pre><code>(class SvExtendedAudioProtocol extends SvAudioClipProtocol {
+
+    seek (position) {
+    }
+
+    duration () {
+    }
+
+}.initThisProtocol());</code></pre><p>A class that conforms to <code>SvExtendedAudioProtocol</code> must implement both its own methods and those inherited from <code>SvAudioClipProtocol</code>.</p></div></div><h2 id="existing-protocols">Existing protocols</h2><div class="section"><div class="section-body"><p>The framework currently declares four formal protocols:</p><ul><li><strong><code>SvAudioClipProtocol</code></strong> -- playback interface: <code>play()</code>, <code>stop()</code>, <code>addDelegate()</code>, <code>removeDelegate()</code></li><li><strong><code>SvAudioClipDelegateProtocol</code></strong> -- callback interface: <code>onSoundEnded(audioClip)</code></li><li><strong><code>SvDragSourceProtocol</code></strong> -- drag source callbacks: <code>onDragSourceBegin()</code>, <code>onDragSourceDropped()</code>, <code>onDragSourceEnd()</code>, <code>acceptsDropHover()</code>, and others</li><li><strong><code>SvDragDestinationProtocol</code></strong> -- drop target callbacks: <code>onDragDestinationEnter()</code>, <code>onDragDestinationHover()</code>, <code>onDragDestinationExit()</code>, <code>acceptsDropHoverComplete()</code>, <code>acceptsDrop()</code>, and others</li></ul></div></div><h2 id="protocols-vs-duck-typing">Protocols vs. duck-typing</h2><div class="section"><div class="section-body"><p>Many parts of the codebase use informal duck-typing -- checking for a method's existence before calling it:</p><pre><code>if (node &amp;&amp; node.nodeAcceptsDrop) {
+    node.nodeAcceptsDrop(droppedNode);
+}</code></pre><p>This works, but it has drawbacks:</p><ul><li>The interface contract is implicit -- you have to read call sites to discover what methods are expected.</li><li>There's no early verification -- a missing method surfaces only when the code path is hit at runtime.</li><li>There's no way to query which classes implement the interface.</li></ul><p>Formal protocols address all three. The trade-off is a small amount of ceremony (defining the protocol class and calling <code>addProtocol</code>). For optional interfaces where not every class is expected to conform, duck-typing remains appropriate. For interfaces that represent a real contract between components, a protocol is the better choice.</p></div></div><h2 id="naming-conventions">Naming conventions</h2><div class="section"><div class="section-body"><ul><li>Protocol class names always end with <code>Protocol</code>: <code>SvAudioClipProtocol</code>, <code>SvDragSourceProtocol</code></li><li>Protocol files live alongside the classes they relate to (e.g., the audio protocols are in <code>library/node/audio/</code>)</li><li>Delegate protocols follow the pattern <code>SvThingDelegateProtocol</code> for callback interfaces</li></ul></div></div><h2 id="related-patterns">Related patterns</h2><div class="section"><div class="section-body"><ul><li><a href="../Categories/index.html">Categories</a> -- extending classes with methods from separate files (protocols define <em>what</em> methods to implement; categories <em>add</em> methods)</li><li><a href="../../Future%20Work/Complete%20Protocols/index.html">Complete Protocols</a> -- future work on formalizing the codebase's many undeclared protocols</li></ul></div></div></div>
+  <script src="/style/layout/layout.js" type="module"></script>
+</body>
+</html>

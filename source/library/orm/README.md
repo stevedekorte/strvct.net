@@ -138,7 +138,7 @@ const database = await SvDatabase.shared().setup();
 - **Enhance Gradually**: Add custom implementations as domain logic emerges
 - **No Breaking Changes**: Custom classes extend the same base functionality
 
-See [Custom Classes SvDocumentation](docs/CustomClasses.md) for detailed information.
+See [Custom Classes Documentation](docs/CustomClasses.md) for detailed information.
 
 ## Architecture
 
@@ -379,7 +379,7 @@ Users, Products, Orders, Categories
 users, api_requests, User, ApiRequest, category
 ```
 
-## SvDocumentation
+## Documentation
 
 - **[Custom Classes](docs/CustomClasses.md)**: Detailed guide to automatic class generation and customization
 - **[CLAUDE.md](CLAUDE.md)**: Complete API reference and implementation details

@@ -629,11 +629,11 @@ await tx.begin(async () => {
 - **Sequelize** - Database connection and introspection
 - **Zone.js** - Async context tracking for transaction management
 
-## Related SvDocumentation
+## Related Documentation
 
-- **STRVCT Framework SvDocumentation** - Base framework patterns and usage
-- **Sequelize SvDocumentation** - Database abstraction layer
-- **Zone.js SvDocumentation** - Async context tracking
+- **STRVCT Framework Documentation** - Base framework patterns and usage
+- **Sequelize Documentation** - Database abstraction layer
+- **Zone.js Documentation** - Async context tracking
 
 
 ## Coding Guidelines

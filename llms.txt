@@ -15,6 +15,7 @@
 - [Timers](https://strvct.net/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
 - [Future Work](https://strvct.net/docs/Future%20Work/): Design ideas, architectural discussions, and potential future improvements.
 - [Async Final Initialization](https://strvct.net/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
+- [Complete Protocols](https://strvct.net/docs/Future%20Work/Complete%20Protocols/): Formalizing the many undeclared interface contracts throughout the codebase.
 - [Graph Database](https://strvct.net/docs/Future%20Work/Graph%20Database/): Long-term direction: replacing the current cloud storage backend with a native graph database.
 - [JSON Schema](https://strvct.net/docs/Future%20Work/JSON%20Schema/): Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 - [Lazy Slots](https://strvct.net/docs/Future%20Work/Lazy%20Slots/): Deferring object loading until first access, so large object graphs don't pay for what they don't touch.
@@ -43,6 +44,7 @@
 - [Programming Idioms](https://strvct.net/docs/Programming%20Idioms/): Recurring patterns and conventions for writing STRVCT code.
 - [Async Patterns](https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/): Extended promises, serial and parallel iteration, and concurrency control.
 - [Categories](https://strvct.net/docs/Programming%20Idioms/Categories/): Extending existing classes by adding methods from separate files.
+- [Protocols](https://strvct.net/docs/Programming%20Idioms/Protocols/): Declaring interfaces and verifying conformance at runtime.
 - [Reference](https://strvct.net/docs/Reference/): Class hierarchy, module hierarchy, and protocol definitions.
 - [Classes](https://strvct.net/docs/Reference/Classes/)
 - [Modules](https://strvct.net/docs/Reference/Modules/)

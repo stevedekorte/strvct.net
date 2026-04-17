@@ -1,4 +1,4 @@
-# STRVCT SvDocumentation Tools
+# STRVCT Documentation Tools
 
 Utilities for generating documentation and visualizations from the STRVCT codebase.
 
