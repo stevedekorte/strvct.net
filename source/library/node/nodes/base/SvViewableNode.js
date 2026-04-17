@@ -286,7 +286,7 @@
             console.warn("no class found for nodeTileClassName:'" + name + "'");
         }
 
-	  	return this.firstAncestorClassWithPostfix("SvTile");
+	  	return this.firstAncestorClassWithPostfix("Tile");
     }
 
     /**

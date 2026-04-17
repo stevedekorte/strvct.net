@@ -512,7 +512,7 @@
     filterListenerClassesForTouch () {
         // if we don't have a touch screen, avoid registering for touch events
         if (!SvTouchScreen.shared().isSupported()) {
-            const results = this.listenerClasses().filter(name => !name.beginsWith("Touch"));
+            const results = this.listenerClasses().filter(name => !name.beginsWith("SvTouch"));
             this._listenerClasses = results;
         }
     }
