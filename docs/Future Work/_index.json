@@ -9,7 +9,8 @@
         "Async Final Initialization",
         "Lazy Slots",
         "Promise-Wrapped Slots",
-        "JSON Schema"
+        "JSON Schema",
+        "Graph Database"
       ]
     }
   ]
