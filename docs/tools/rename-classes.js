@@ -42,8 +42,17 @@ const appRoot = resolve(siteRoot, "app");                        // site/app/
 
 const SKIP_DIRS = new Set([
     "_unused", "-unused", "external-libs", "node_modules", "build",
-    ".git", "resources", "npm-pkg"
+    ".git", "npm-pkg"
 ]);
+
+// Path-suffix skips (matched relative to a root). These hit specific
+// directories rather than any directory with a matching name. Using a
+// bare-name skip for "resources" was a bug: it also excluded
+// strvct/source/library/resources/, where framework class files live.
+const SKIP_PATH_SUFFIXES = [
+    `strvct${sep}resources`,   // generated CAM resources (icons, sounds, fonts bundles)
+    `strvct${sep}Timeline`     // generated timeline assets
+];
 
 const SKIP_FILENAMES = new Set([
     "llms.txt", "llms-full.txt", "sitemap.xml",
@@ -114,6 +123,13 @@ const urlRegex = new RegExp(`(?<=%2F)(${alternation})(?=\\.js\\b)`, "g");
 // File walker
 // ---------------------------------------------------------------------------
 
+function isSkipPath (p) {
+    for (const suffix of SKIP_PATH_SUFFIXES) {
+        if (p.endsWith(suffix) || p.includes(suffix + sep)) return true;
+    }
+    return false;
+}
+
 function* walk (dir) {
     let entries;
     try { entries = readdirSync(dir, { withFileTypes: true }); }
@@ -122,7 +138,9 @@ function* walk (dir) {
     for (const entry of entries) {
         if (entry.isDirectory()) {
             if (SKIP_DIRS.has(entry.name)) continue;
-            yield* walk(join(dir, entry.name));
+            const full = join(dir, entry.name);
+            if (isSkipPath(full)) continue;
+            yield* walk(full);
         } else if (entry.isFile()) {
             yield join(dir, entry.name);
         }
@@ -245,6 +263,7 @@ function* walkDirs (dir) {
         if (!entry.isDirectory()) continue;
         if (SKIP_DIRS.has(entry.name)) continue;
         const full = join(dir, entry.name);
+        if (isSkipPath(full)) continue;
         yield full;
         yield* walkDirs(full);
     }

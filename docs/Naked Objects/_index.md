@@ -66,7 +66,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Summary Tile
+    Summary SvTile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -75,7 +75,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Property Tile
+    Property SvTile
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
@@ -84,13 +84,13 @@ Tiles support gestures for direct manipulation: slide-to-delete, long-press reor
 
 Tiles can be subclassed for domain-specific presentation, but the default tiles are designed to be sufficient for the majority of cases. The goal is to make custom tiles the exception, not the rule.
 
-### 4.2 Tile Stacks
+### 4.2 SvTile Stacks
 
-A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. Tile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
+A **tile stack** is a scrollable, ordered sequence of tiles presenting the subnodes of a domain object. SvTile stacks support flexible orientation (vertical or horizontal) and gestures for adding, removing, and reordering items.
 
 <div style="width: 100%; max-width: 100vw; overflow: hidden;">
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
-    Tile Stack
+    SvTile Stack
   </div>
   <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>

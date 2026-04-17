@@ -4,12 +4,12 @@
 
 /**
  * @class SvImageTile
- * @extends TitledTile
+ * @extends SvTitledTile
  * @classdesc Represents an image tile component.
  */
 "use strict";
 
-(class SvImageTile extends TitledTile {
+(class SvImageTile extends SvTitledTile {
 
     /**
      * @description Initializes the prototype slots for the SvImageTile class.

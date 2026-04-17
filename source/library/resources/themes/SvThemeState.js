@@ -248,7 +248,7 @@
 
         /*
             We want to apply:
-            - border and margin to Tile
+            - border and margin to SvTile
             - padding and others to TileContentView
         */
 
@@ -485,7 +485,7 @@
 
         // lookup in ThemeClass's parent
         if (v === null) {
-            const parent = this.parentThemeClass(); // parent theme class eg: Default -(child)-> Tile -(child)-> TextTile
+            const parent = this.parentThemeClass(); // parent theme class eg: Default -(child)-> SvTile -(child)-> TextTile
             assert(parent !== this.themeClass());
             if (parent) {
                 const stateName = this.title();
@@ -596,7 +596,7 @@
     didUpdateSlot (aSlot, oldValue, newValue) {
         if (this.hasDoneInit()) {
             if (aSlot.name() !== "styleCacheMap") { // hack
-                DocumentBody.shared().resyncAllViews(); // this will apply any new styles
+                SvDocumentBody.shared().resyncAllViews(); // this will apply any new styles
                 this.scheduleCacheClears();
             }
         }

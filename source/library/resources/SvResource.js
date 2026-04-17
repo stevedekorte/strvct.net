@@ -4,12 +4,12 @@
 
 /**
  * @class SvResource
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a resource with loading and decoding capabilities.
  */
 "use strict";
 
-(class SvResource extends BaseNode {
+(class SvResource extends SvBaseNode {
 
     // --- supported mime types ---
 

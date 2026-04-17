@@ -12,13 +12,13 @@
  *
  * If we have the following path of theme classes:
  *
- *   Default -(child)-> Tile -(child)-> TextTile
+ *   Default -(child)-> SvTile -(child)-> TextTile
  *
  * Example lookup path for a selected TextTile:
  *
- *   TextTile/selected   -> Tile/selected   -> Default->selected
- *   TextTile/unselected -> Tile/unselected -> Default->unselected
- *   TextTile/disabled   -> Tile/disabled   -> Default->disabled
+ *   TextTile/selected   -> SvTile/selected   -> Default->selected
+ *   TextTile/unselected -> SvTile/unselected -> Default->unselected
+ *   TextTile/disabled   -> SvTile/disabled   -> Default->disabled
  */
 (class SvThemeClass extends SvThemeFolder {
 
@@ -75,11 +75,11 @@
    * @category Setup
    */
     setupAsDefault () {
-        this.setTitle("Tile");
+        this.setTitle("SvTile");
         //this.setupSubnodes();
         this.states().setupAsDefault();
-        this.children().addSubnode(SvThemeClass.clone().setTitle("HeaderTile"));
-        this.children().addSubnode(SvThemeClass.clone().setTitle("BreadCrumbsTile"));
+        this.children().addSubnode(SvThemeClass.clone().setTitle("SvHeaderTile"));
+        this.children().addSubnode(SvThemeClass.clone().setTitle("SvBreadCrumbsTile"));
         return this;
     }
 

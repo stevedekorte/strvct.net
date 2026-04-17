@@ -6,7 +6,7 @@
 
 /**
  * @class SvWaContext
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc A WebAudioContext wrapper.
  * This is used with SvWaSound for decoding and playing sounds.
  *
@@ -15,7 +15,7 @@
  * Browsers don't allow sounds to be played until a user interacts (using certain events) with the page,
  * so this class registers to listen for "onFirstUserEvent" notification, and sets up the WebAudioContext after when it's received.
  */
-(class SvWaContext extends BaseNode {
+(class SvWaContext extends SvBaseNode {
 
     /**
      * @static

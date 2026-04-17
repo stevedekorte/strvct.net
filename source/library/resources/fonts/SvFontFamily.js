@@ -4,10 +4,10 @@
 
 /**
  * @class SvFontFamily
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a font family containing multiple fonts.
  */
-(class SvFontFamily extends BaseNode {
+(class SvFontFamily extends SvBaseNode {
 
     /**
      * Initialize prototype slots for the SvFontFamily.

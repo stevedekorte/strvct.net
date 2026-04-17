@@ -6,11 +6,11 @@
 
 /**
  * @class SvResourceFolder
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc An abstraction for an individual file folder.
  * SvFileResources will setup all SvResourceFolders.
  */
-(class SvResourceFolder extends BaseNode {
+(class SvResourceFolder extends SvBaseNode {
 
     /**
      * @description Initializes prototype slots for the class.

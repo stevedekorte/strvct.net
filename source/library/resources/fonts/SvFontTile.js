@@ -4,10 +4,10 @@
 
 /**
  * @class SvFontTile
- * @extends TitledTile
- * @classdesc Represents a SvFontTile, which is a specialized TitledTile for displaying font information.
+ * @extends SvTitledTile
+ * @classdesc Represents a SvFontTile, which is a specialized SvTitledTile for displaying font information.
  */
-(class SvFontTile extends TitledTile {
+(class SvFontTile extends SvTitledTile {
 
     /**
      * @description Initializes the prototype slots for the SvFontTile.

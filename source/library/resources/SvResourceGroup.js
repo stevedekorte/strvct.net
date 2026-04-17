@@ -4,10 +4,10 @@
 
 /**
  * @class SvResourceGroup
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a group of resources.
  */
-(class SvResourceGroup extends BaseNode {
+(class SvResourceGroup extends SvBaseNode {
 
     /**
      * @static

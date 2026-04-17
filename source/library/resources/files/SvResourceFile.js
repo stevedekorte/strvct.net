@@ -6,10 +6,10 @@
 
 /**
  * @class SvResourceFile
- * @extends BaseNode
+ * @extends SvBaseNode
  * @classdesc Represents a resource file with methods for loading and managing file data.
  */
-(class SvResourceFile extends BaseNode {
+(class SvResourceFile extends SvBaseNode {
 
     /**
      * @description Initializes the prototype slots for the SvResourceFile class.
