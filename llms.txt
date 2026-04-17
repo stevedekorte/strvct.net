@@ -15,6 +15,7 @@
 - [Timers](https://strvct.net/docs/Events%20and%20Gestures/Timers/): Managed timeout system for scheduling deferred work, with support for weak references to avoid preventing garbage collection.
 - [Future Work](https://strvct.net/docs/Future%20Work/): Design ideas, architectural discussions, and potential future improvements.
 - [Async Final Initialization](https://strvct.net/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
+- [JSON Schema](https://strvct.net/docs/Future%20Work/JSON%20Schema/): Expanding auto-generated JSON Schema coverage across slots, classes, and the domain model.
 - [Lazy Slots](https://strvct.net/docs/Future%20Work/Lazy%20Slots/): Deferring object loading until first access, so large object graphs don't pay for what they don't touch.
 - [Promise-Wrapped Slots](https://strvct.net/docs/Future%20Work/Promise-Wrapped%20Slots/): Automatic async getter generation with promise caching and dependency-driven invalidation.
 - [Getting Started](https://strvct.net/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.

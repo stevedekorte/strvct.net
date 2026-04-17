@@ -8,7 +8,8 @@
       "items": [
         "Async Final Initialization",
         "Lazy Slots",
-        "Promise-Wrapped Slots"
+        "Promise-Wrapped Slots",
+        "JSON Schema"
       ]
     }
   ]
