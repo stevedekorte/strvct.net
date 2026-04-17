@@ -28,11 +28,11 @@ Most frameworks require developers to manually add accessibility attributes to e
 
 | STRVCT concept | ARIA role |
 |---|---|
-| `SvTilesView` | `tree` or `listbox` |
-| `SvTile` | `treeitem` or `option` |
+| `SvTilesView` | `tree` or `list` |
+| `SvTile` | `treeitem` or `link` |
 | Expanded/collapsed state | `aria-expanded` |
 | Nesting depth | `aria-level` |
-| Selected tile | `aria-selected` |
+| Selected tile | `aria-current` |
 
 **The notification system can drive live regions.** When a node posts `didUpdateSlot`, the view layer could announce the change to screen readers via `aria-live` -- for free, without developer effort.
 
@@ -52,8 +52,8 @@ These features provide keyboard-only interaction today:
 
 `NodeView` and its subclasses should emit ARIA roles, labels, and states derived from node type and slot metadata. The goal is zero developer effort for common cases:
 
-- `SvTilesView` emits `role="tree"` or `role="listbox"` with proper `aria-label`
-- Each `SvTile` emits `role="treeitem"` with `aria-level`, `aria-expanded`, `aria-selected`
+- `SvTilesView` emits `role="tree"` or `role="list"` with proper `aria-label`
+- Each `SvTile` emits `role="treeitem"` or `role="link"` with `aria-level`, `aria-expanded`, `aria-current`
 - `SvField` subviews emit the appropriate input role (`textbox`, `checkbox`, `spinbutton`) based on slot type
 - Slot descriptions become `aria-label` or `aria-describedby` attributes
 - Read-only, required, and disabled states are reflected automatically
@@ -74,6 +74,10 @@ Opt-in `aria-live` announcements tied to the notification system. When a node's 
 - Status updates and progress indicators
 - Error messages and validation feedback
 - Dynamic content that changes without user action
+
+### Breadcrumb navigation
+
+The browser-level view that shows the drill-in path should emit the ARIA breadcrumb pattern: a `role="navigation"` container with `aria-label="Breadcrumb"`, an ordered list of links for each level, and `aria-current="location"` on the current (last) item. Screen readers announce this as "you are here" context -- e.g., "Breadcrumb navigation: Contacts, link / John Smith, current location." Since there's one breadcrumb component in the framework, this is another single fix that applies everywhere.
 
 ### Focus management improvements
 
@@ -122,11 +126,13 @@ Like the [Graph Database](../Graph%20Database/index.html) direction, this is a f
 
 ## Open Questions
 
-### Role inference
+### Role inference (partially resolved)
 
-A `SvTilesView` could be a `tree`, `listbox`, `grid`, or `menu` depending on context. How does `NodeView` decide which ARIA role to emit? Is it based on the node class, a slot annotation, or the nesting depth? The wrong role is worse than no role -- a screen reader navigating a "tree" expects different keyboard behavior than a "listbox".
+**Default roles come from the view class, not the node**, because the same node can appear in multiple views with different roles (e.g., a node shown as a selected tile in the parent view and as the root of a tiles list in a descendant view). Each view class provides its own default: `SvTilesView` → `list`, `SvTile` → `link` (navigation item), `SvFieldTile` → input role based on slot type, etc.
 
-### Focus model reconciliation (researched)
+**Nodes can override the view's default role** for cases where the node's semantics are more specific than the view's generic default. For example, an options node should declare itself as a `listbox` and its children as `option` items, overriding the default `list`/`link` roles. This follows the same pattern as `setNodeViewClass()` -- the view provides a sensible default, the node overrides when it knows better. A method like `setAriaRole("option")` on the node would accomplish this.
+
+### Focus model reconciliation (resolved)
 
 **Resolved: the DOM focus bridge already exists.** `becomeFirstResponder()` calls `this.focus()` which calls `element.focus()` directly (`SvResponderDomView.js`). `releaseFirstResponder()` calls `element.blur()`. The framework tracks the active view via `document.activeElement`. Screen readers can follow the responder chain through DOM focus.
 
@@ -137,17 +143,28 @@ Remaining issues in this area:
 - **Tab key intercepted.** The framework overrides native Tab behavior with a custom `nextKeyView` chain. This may confuse screen reader users who expect standard Tab navigation.
 - **`tabindex` only on keyboard-registered views.** Views that call `setIsRegisteredForKeyboard(true)` get an auto-incremented `tabindex`. Other elements are unfocusable. For accessibility, more elements may need `tabindex`.
 
-### Navigation announcements
+### Navigation announcements (policy resolved, mechanism open)
 
-When the user drills into a tile, new views are added to the stack (only backward navigation removes views). Should the screen reader announce the new context? ("Entered: Contact Details, 6 items") Too much announcement is as bad as too little. ARIA live regions need a clear policy on what's announced and what's silent.
+**Policy:** announce navigation that the user didn't directly trigger, stay silent on navigation that's a direct response to their action. When the user taps a tile to drill in, the screen reader's normal behavior -- announcing the newly focused element -- is sufficient. But programmatic navigation (e.g., pressing "Start Session" navigates to the Narration view) needs an explicit `aria-live` announcement, since the user didn't choose that destination.
 
-### ARIA roles vs. semantic elements
+**Open:** how does the framework distinguish these two cases at the point where focus changes? Need to investigate whether tile-selection navigation and programmatic navigation go through different code paths (different methods on `SvStackView` / `SvNavView`, a flag indicating the source of the navigation request, etc.). The goal is a reliable way to detect "this focus change was not a direct response to a tile selection" and trigger an announcement.
+
+### ARIA roles vs. semantic elements (resolved)
 
 ARIA roles like `role="button"` on a div are equivalent to a native button from the screen reader's perspective -- the ARIA spec was designed for exactly this. Since STRVCT already handles keyboard activation and focus management on tiles, the native behaviors that semantic elements provide for free (space/Enter activation, default tab order) are redundant. This means the framework can add accessibility through ARIA attributes on existing div elements without migrating to semantic HTML elements, avoiding any disruption to existing styling and layout.
 
-### Label priority
+### Label priority (resolved)
 
-When multiple label sources exist -- slot `description()`, node `title()`, JSON Schema `jsonSchemaDescription()` -- which wins? Need a defined fallback order so labels are predictable and don't duplicate or contradict each other.
+The existing node metadata has a natural mapping to ARIA label attributes:
+
+| Source | ARIA usage | Rationale |
+|---|---|---|
+| `title()` | `aria-label` | Short instance-specific label -- what the screen reader announces |
+| `subtitle()` | `aria-description` | Longer instance detail -- available on demand |
+| `jsonSchemaDescription()` | Fallback label when no instance title | Describes the class, not the instance |
+| `description()` | Skip | Intended for debugging, not user-facing |
+
+The slot-level `description()` (set via `setDescription()` on a slot) is distinct from the node-level `description()` and is appropriate for field-level `aria-label` when a slot's title alone isn't clear enough.
 
 ### Testing strategy
 
