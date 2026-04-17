@@ -92,6 +92,11 @@
         this.setIsRegisteredForWindowResize(true);
         this.setCrumbObservations([]);
         this.contentView().setPaddingLeft("22px");
+
+        // Accessibility: breadcrumb navigation pattern
+        this.setAttribute("role", "navigation");
+        this.setAttribute("aria-label", "Breadcrumb");
+
         return this;
     }
 
@@ -456,6 +461,14 @@
         this.setPreviousPathNodes(currentPathNodes.slice()); // Store a copy
         this.updateCompaction();
         this.watchPathNodes();
+
+        // Accessibility: mark the last crumb as current location
+        const crumbs = this.crumbs().select(crumb => crumb._isCrumb);
+        crumbs.forEach(crumb => crumb.removeAttribute("aria-current"));
+        if (crumbs.length > 0) {
+            crumbs.last().setAttribute("aria-current", "location");
+        }
+
         return this;
     }
 

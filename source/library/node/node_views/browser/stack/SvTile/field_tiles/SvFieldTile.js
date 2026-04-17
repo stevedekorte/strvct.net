@@ -563,6 +563,9 @@
             this.removeAttribute("aria-readonly");
         }
 
+        // Accessibility: wire slot-level metadata (required, min/max)
+        this.syncAriaFromSlotMetadata();
+
         return this;
     }
 
@@ -812,6 +815,61 @@
         super.syncStylesToSubviews();
         this.keyView().syncStateFrom(this);
         this.valueView().syncStateFrom(this);
+        return this;
+    }
+
+    /**
+     * @description Syncs ARIA attributes from the source slot's metadata.
+     * Maps slot annotations (isRequired, minimum, maximum, description)
+     * to their ARIA equivalents on the field tile element.
+     * @returns {SvFieldTile} The current instance.
+     * @category Accessibility
+     */
+    syncAriaFromSlotMetadata () {
+        const node = this.node();
+        if (!node || !node.target || !node.valueMethod) {
+            return this;
+        }
+
+        const target = node.target();
+        const slotName = node.valueMethod();
+        if (!target || !slotName || !target.slotNamed) {
+            return this;
+        }
+
+        const slot = target.slotNamed(slotName);
+        if (!slot) {
+            return this;
+        }
+
+        // aria-required from slot isRequired annotation
+        if (slot.isRequired && slot.isRequired()) {
+            this.setAttribute("aria-required", "true");
+        } else {
+            this.removeAttribute("aria-required");
+        }
+
+        // aria-valuemin / aria-valuemax from JSON Schema annotations
+        if (slot.getAnnotation) {
+            const min = slot.getAnnotation("minimum");
+            const max = slot.getAnnotation("maximum");
+            if (min !== undefined && min !== null) {
+                this.setAttribute("aria-valuemin", String(min));
+            } else {
+                this.removeAttribute("aria-valuemin");
+            }
+            if (max !== undefined && max !== null) {
+                this.setAttribute("aria-valuemax", String(max));
+            } else {
+                this.removeAttribute("aria-valuemax");
+            }
+        }
+
+        // Use slot description as aria-description if available
+        if (slot.description && slot.description()) {
+            this.setAttribute("aria-description", slot.description());
+        }
+
         return this;
     }
 

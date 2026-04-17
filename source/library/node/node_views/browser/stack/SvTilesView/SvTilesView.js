@@ -261,6 +261,14 @@
             if (label) {
                 this.setAttribute("aria-label", label);
             }
+
+            // Opt-in live region: node can declare nodeAriaLive() returning "polite" or "assertive"
+            if (node.nodeAriaLive) {
+                const liveValue = node.nodeAriaLive();
+                if (liveValue) {
+                    this.setAttribute("aria-live", liveValue);
+                }
+            }
         }
 
         /*

@@ -108,3 +108,23 @@ html :active {
     outline-style: none;
     -moz-outline-style: none;
 }
+
+/* accessibility: reduce motion for users who prefer it */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* accessibility: high contrast mode */
+
+@media (prefers-contrast: more) {
+    * :focus-visible {
+        outline: 3px solid white;
+        outline-offset: -1px;
+    }
+}

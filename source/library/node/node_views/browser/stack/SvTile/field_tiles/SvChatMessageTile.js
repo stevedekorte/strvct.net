@@ -33,6 +33,10 @@
         this.setValueUneditableBorder("none");
         this.setValueEditableBorder("none");
         this.setElementClassName("SvChatMessageTile");
+
+        // Accessibility: chat messages are live region content
+        this.setAttribute("aria-live", "polite");
+
         return this;
     }
 

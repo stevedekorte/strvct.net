@@ -198,6 +198,10 @@
         this.addGestureRecognizer(SvBottomEdgePanGestureRecognizer.clone()); // for adjusting height
 
         this.setupClickToAddViewIfNeeded();
+
+        // Accessibility: each nav column is a region with its own content
+        this.setAttribute("role", "region");
+
         return this;
     }
 
@@ -492,6 +496,15 @@
         this.headerView().syncFromNode();
         this.footerView().syncFromNode();
         this.syncClickToAddView();
+
+        // Accessibility: label the region from its node title
+        if (this.node()) {
+            const label = this.node().title();
+            if (label) {
+                this.setAttribute("aria-label", label);
+            }
+        }
+
         //console.log(this.svTypeId(), " syncFromNode done");
         return this;
     }
