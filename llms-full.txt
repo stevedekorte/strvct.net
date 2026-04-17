@@ -8515,4 +8515,5 @@ Key milestones from the first commit through present day Framework architecture,
 - **2026-03** — Anchor Scroll: AI chat anchor scrolling and scroll-to-bottom button
 - **2026-03** — Battery Aware: Battery level monitoring for performance throttling detection
 - **2026-04** — AI Image Editor: Gemini-based image editing and scaling class hierarchy
+- **2026-04** — Accessibility: Automatic ARIA roles, labels, states, and landmarks derived from model annotations and view classes
 - **2026-04** — Public Cloud: SvPublicCloudSource for serving shared content via Firebase Storage manifests
