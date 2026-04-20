@@ -30,9 +30,6 @@
  
  */
 
-/**
-
- */
 
 assert(HTMLElement.prototype.clone === undefined);
 

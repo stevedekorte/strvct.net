@@ -22,11 +22,6 @@
  
  */
 
-/**
-
- */
-
-
 (class SvCredentialManager extends SvSummaryNode {
 
     static initClass () {

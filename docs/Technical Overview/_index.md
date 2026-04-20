@@ -67,6 +67,7 @@ STRVCT replaces this with a content-addressable build. Every resource is keyed b
 - The manifest is fetched first and checked against a persistent client-side hash cache.
 - Any content already in the cache — from a previous load, a previous deployment, or a different STRVCT app on the same origin — is not re-fetched.
 - When enough content is missing to justify it, the app downloads the whole bundle in one request; when only a little is missing, it fetches those items directly. The threshold adapts to the actual delta.
+- The bundle itself is shipped zip-compressed, so cold loads pay for compressed bytes while the cache stores decompressed content keyed by hash.
 - Identical content at different paths is stored and transferred once.
 
 The practical behavior this produces is qualitatively different from what npm plus a bundler can deliver. A redeploy that changes a single file costs roughly that file's bytes, not a chunk's. A returning user after a year of development cycles fetches only content that is actually new. A first-time visitor who has used any other STRVCT app gets the shared framework for free. None of these properties are reachable by configuration on top of the mainstream stack; they require content-level identity, which URL-based caching doesn't have. This is what lets STRVCT keep its "usability gap" closed at the data-model scales it targets, where conventional tooling begins to impose latency and cache-invalidation costs that the framework's design intentionally eliminates.

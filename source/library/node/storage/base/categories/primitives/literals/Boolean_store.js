@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class Boolean_store extends Boolean {

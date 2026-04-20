@@ -9,9 +9,6 @@
  * @classdesc SvDateNode represents a date field in the application. It provides functionality to select and display dates.
  */
 
-/**
-
- */
 (class SvDateNode extends SvSummaryNode {
 
     /**

@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
 * @module library.services.AiServiceKit.Tools.Calls
 * @class SvToolCalls
 * @extends SvSummaryNode

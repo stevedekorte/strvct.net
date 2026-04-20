@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 (class SvDataStore extends SvBaseNode {
 
     /**

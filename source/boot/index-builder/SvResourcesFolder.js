@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 
 const fs = require("fs");
 const nodePath = require("path");

@@ -20,10 +20,6 @@
  * Todo: Move to power notation after max order name exceeded
  */
 
-/**
-
- */
-
 (class SvByteFormatter extends ProtoClass {
     initPrototypeSlots () {
 

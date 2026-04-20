@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class SvMeridiemNode extends SvBaseNode {

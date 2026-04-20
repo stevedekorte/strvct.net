@@ -11,9 +11,6 @@
 
  */
 
-/**
-
- */
 (class SvTilesView extends SvScrollContentView {
 
     initPrototypeSlots () {

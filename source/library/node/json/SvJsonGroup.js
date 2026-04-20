@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
     @module app/json
     @class JsonGroup
     @extends SvJsonIdNode

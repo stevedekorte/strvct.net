@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Image_store extends Image {
 
     shouldStore () {

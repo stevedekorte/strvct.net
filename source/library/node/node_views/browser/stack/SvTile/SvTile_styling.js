@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class SvTile_styling extends SvTile {

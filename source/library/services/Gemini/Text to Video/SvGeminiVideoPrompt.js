@@ -1,11 +1,11 @@
 "use strict";
 
-/*
-    SvGeminiVideoPrompt
-
-    A class to handle calls to Google's Gemini Text to Video API (Veo 3)
-    for generating videos from text prompts.
-*/
+/**
+ * @class SvGeminiVideoPrompt
+ * @extends SvSummaryNode
+ * @classdesc Handles calls to Google's Gemini Text to Video API (Veo 3) for generating
+ * videos from text prompts.
+ */
 
 (class SvGeminiVideoPrompt extends SvSummaryNode {
 

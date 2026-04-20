@@ -16,10 +16,6 @@
  
  */
 
-/**
-
- */
-
 (class SvPasswordFieldTile extends SvStringFieldTile {
 
     /**

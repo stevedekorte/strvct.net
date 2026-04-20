@@ -2,15 +2,10 @@
 /** * @module library.ideal.object
  */
 
-/** * @class Object_puuid
- * @extends Object
- 
- 
- */
-
 /**
-
- * Extends Object with UUID (Universally Unique Identifier) functionality.
+ * @class Object_puuid
+ * @extends Object
+ * @classdesc Extends Object with UUID (Universally Unique Identifier) functionality.
  */
 (class Object_puuid extends Object {
 

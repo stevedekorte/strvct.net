@@ -16,11 +16,6 @@
  * which is useful when retiring an object.
  */
 
-/**
-
-
- *
- */
 (class Object_timeouts extends Object {
 
     /**

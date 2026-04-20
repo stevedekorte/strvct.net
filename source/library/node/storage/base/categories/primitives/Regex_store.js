@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class RegExp_store extends RegExp {
 
     static instanceFromRecordInStore (aRecord, aStore) {

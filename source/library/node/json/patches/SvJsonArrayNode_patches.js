@@ -10,9 +10,6 @@
 
  */
 
-/**
-
- */
 (class SvJsonArrayNode_patches extends SvJsonArrayNode {
 
     // --- Native JSON Patch Support ---

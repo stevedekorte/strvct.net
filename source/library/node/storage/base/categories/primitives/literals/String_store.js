@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class String_store extends String {

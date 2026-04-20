@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
     @class SvUserInterface
     @extends SvStorableNode
     @classdesc The SvUserInterface class is the main user interface class of the SvApp.

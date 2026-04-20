@@ -3,16 +3,10 @@
 /** * @module library.ideal.object
  */
 
-/** * @class Object_mutation
- * @extends Object
- 
- 
- */
-
 /**
-
- * Object category to support observing slot value changes (i.e. "mutations").
- *
+ * @class Object_mutation
+ * @extends Object
+ * @classdesc Object category to support observing slot value changes (i.e. "mutations").
  */
 (class Object_mutation extends Object {
 

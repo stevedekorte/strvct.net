@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvTileNoteButtonView extends SvButtonView {
 
     initPrototypeSlots () {

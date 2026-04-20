@@ -3,32 +3,10 @@
 /** * @module library.ideal.formatters
  */
 
-/** * @class SvTimeFormatter
- * @extends ProtoClass
- 
- 
- */
-
 /**
-
- * SvTimeFormatter takes a JavaScript Date and produces a formatted string description
- * following the object's format option properties.
- *
- * @example
- * const formatter = SvTimeFormatter.clone()
- * formatter.setIs24Hour(false)          // this is the default
- * formatter.setShowsMeridiem(true)      // this is the default
- * formatter.setUppercaseMeridiem(false) // this is the default
- * formatter.setAmString("am")           // this is the default
- * formatter.setPmString("pm")           // this is the default
- * formatter.setShowsSeconds(false)      // this is the default
- * formatter.setShowsMilliseconds(false) // this is the default
- * formatter.setHourMinuteSpacer(":")    // this is the default
- * formatter.setDate(new Date())
- * const aDateString = formatter.formattedValue()
- *
- * // example output: "10:11am"
- *
+ * @class SvTimeFormatter
+ * @extends ProtoClass
+ * @classdesc SvTimeFormatter takes a JavaScript Date and produces a formatted string description following the object's format option properties. const formatter = SvTimeFormatter.clone() formatter.setIs24Hour(false)          // this is the default formatter.setShowsMeridiem(true)      // this is the default formatter.setUppercaseMeridiem(false) // this is the default formatter.setAmString("am")           // this is the default formatter.setPmString("pm")           // this is the default formatter.setShowsSeconds(false)      // this is the default formatter.setShowsMilliseconds(false) // this is the default formatter.setHourMinuteSpacer(":")    // this is the default formatter.setDate(new Date()) const aDateString = formatter.formattedValue() // example output: "10:11am"
  */
 (class SvTimeFormatter extends ProtoClass {
     initPrototypeSlots () {

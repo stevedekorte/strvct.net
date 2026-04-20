@@ -28,9 +28,6 @@
  
  */
 
-/**
-
- */
 (class SvProxyServers extends SvSummaryNode {
 
     /**

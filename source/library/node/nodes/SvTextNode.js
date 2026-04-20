@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class SvTextNode extends SvStorableNode {

@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class Object_boot extends Object {
 
     /**

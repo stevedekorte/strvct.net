@@ -11,11 +11,6 @@
  
  */
 
-/**
-
- */
-
-
 (class SvCredential extends SvSummaryNode {
 
     initPrototypeSlots () {

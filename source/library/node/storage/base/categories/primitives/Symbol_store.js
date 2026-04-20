@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Symbol_store extends Symbol {
 
     static instanceFromRecordInStore (aRecord /*, aStore*/) {

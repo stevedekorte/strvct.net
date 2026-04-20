@@ -14,9 +14,6 @@
  * support for links?
  */
 
-/**
-
- */
 "use strict";
 
 (class SvSummaryNode extends SvStorableNode {

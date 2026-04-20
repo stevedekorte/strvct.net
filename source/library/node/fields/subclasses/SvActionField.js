@@ -9,9 +9,6 @@
  * The value is the action method name, the target is the field owner.
  */
 
-/**
-
- */
 (class SvActionField extends SvField {
 
     /**

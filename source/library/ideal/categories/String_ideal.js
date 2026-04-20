@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class String_ideal extends String {
 
     /**

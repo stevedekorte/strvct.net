@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvTilesView_keyboard extends SvTilesView {
 
     // --- keyboard controls, arrow navigation ---

@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 (class SvStringFieldTile extends SvFieldTile {
 
     /*

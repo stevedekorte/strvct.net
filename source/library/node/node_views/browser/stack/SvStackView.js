@@ -56,10 +56,6 @@
  
  */
 
-/**
-
- */
-
 (class SvStackView extends SvNodeView {
 
     initPrototypeSlots () {

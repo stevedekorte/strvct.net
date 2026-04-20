@@ -16,9 +16,6 @@
  *   This is helpful for doing proper incremental merging.
  */
 
-/**
-
- */
 "use strict";
 
 (class SvHtmlStreamReader extends ProtoClass {

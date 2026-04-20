@@ -28,11 +28,6 @@
  
  */
 
-/**
-
- */
-
-
 (class Slot_promiseWrapper extends Slot {
 
     asyncGetterName () {

@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
     @class SvModel
     @extends SvStorableNode
     @classdesc The SvModel class is the main model class of the SvApp.

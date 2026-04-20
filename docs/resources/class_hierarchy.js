@@ -1,209 +1,147 @@
-// class_hierarchy.js
+#!/usr/bin/env node
+// Regenerates docs/Reference/Classes/_index.md from the JS source tree.
+// No npm deps — parses `class Name extends Parent` and `(class Name extends Parent`
+// forms with a regex. Matches the output format expected by the docs site.
 
-const fs = require('fs').promises;
-const path = require('path');
-const acorn = require('acorn');
-const walk = require('acorn-walk');
+const fs = require("fs");
+const path = require("path");
 
-// Add these lines
-const CLASS_DOC_PATH = '../resources/class-doc/class_doc.html';
-const OUTPUT_DIR = 'docs/reference';
+const CLASS_DOC_PATH = "../../resources/class-doc/class_doc.html";
+const OUTPUT_REL = "docs/Reference/Classes/_index.md";
+const SUBTITLE = "Complete class inheritance hierarchy.";
 
-function ensureLeadingSlash (path) {
-  return path.startsWith('/') ? path : '/' + path;
+// Built-in types to render as grouping nodes under Object.
+const BUILT_IN_TYPES = [
+    "Array", "Boolean", "Date", "Error", "Map", "Set",
+    "String", "Number", "ArrayBuffer", "Blob", "Image", "Range"
+];
+
+const EXCLUDE_DIRS = new Set(["_unused", "external-libs", "docs", "node_modules", "build", ".git"]);
+
+function ensureLeadingSlash (p) {
+    return p.startsWith("/") ? p : "/" + p;
 }
 
-function composeClassDocUrl (path) {
-  return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
+function composeClassDocUrl (relPath) {
+    return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(relPath))}`;
 }
 
-async function findJsFiles (dir) {
-  const files = await fs.readdir(dir, { withFileTypes: true });
-  const jsFiles = [];
-
-  for (const file of files) {
-    const fullPath = path.join(dir, file.name);
-    if (file.isDirectory()) {
-      // Skip directories named "_unused"
-      if (file.name !== "_unused") {
-        jsFiles.push(...await findJsFiles(fullPath));
-      }
-    } else if (file.name.endsWith('.js')) {
-      jsFiles.push(fullPath);
+function findJsFiles (dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            if (!EXCLUDE_DIRS.has(entry.name)) findJsFiles(full, out);
+        } else if (entry.isFile() && entry.name.endsWith(".js")) {
+            out.push(full);
+        }
     }
-  }
-
-  return jsFiles;
+    return out;
 }
+
+// Matches `class Name {`, `class Name extends Parent {`, `(class Name extends Parent{`.
+// Group 1: class name. Group 2: superclass name (may be undefined).
+const CLASS_RE = /\bclass\s+([A-Za-z_$][\w$]*)(?:\s+extends\s+([A-Za-z_$][\w$]*))?\s*\{/g;
 
 function parseClasses (content) {
-  const ast = acorn.parse(content, { ecmaVersion: 'latest', sourceType: 'module' });
-  const classes = [];
-
-  walk.simple(ast, {
-    ClassDeclaration (node) {
-      classes.push({
-        name: node.id.name,
-        superClass: node.superClass ? node.superClass.name : null
-      });
-    },
-    ClassExpression (node) {
-      if (node.id) {
-        classes.push({
-          name: node.id.name,
-          superClass: node.superClass ? node.superClass.name : null
-        });
-      }
+    const classes = [];
+    let m;
+    CLASS_RE.lastIndex = 0;
+    while ((m = CLASS_RE.exec(content)) !== null) {
+        classes.push({ name: m[1], superClass: m[2] || null });
     }
-  });
-
-  return classes;
+    return classes;
 }
 
 function buildHierarchy (classes) {
-  const classIndex = {};
-  const hierarchy = { Object: { name: 'Object', children: {}, superClass: null } };
-  const builtInTypes = ['Array', 'Boolean', 'Date', 'Error', 'Map', 'Set', 'String', 'Number', 'ArrayBuffer', 'Blob', 'Image', 'Range'];
+    const classIndex = {};
+    const hierarchy = { Object: { name: "Object", children: {}, superClass: null } };
 
-  // Initialize hierarchy with built-in types
-  for (const type of builtInTypes) {
-    const classObj = { name: type, children: {}, superClass: 'Object' };
-    hierarchy.Object.children[type] = classObj;
-    classIndex[type] = classObj;
-  }
-
-  // First pass: create class objects
-  for (const cls of classes) {
-    if (cls && cls.name) {
-      classIndex[cls.name] = { name: cls.name, children: {}, superClass: cls.superClass || 'Object' };
+    for (const t of BUILT_IN_TYPES) {
+        const obj = { name: t, children: {}, superClass: "Object" };
+        hierarchy.Object.children[t] = obj;
+        classIndex[t] = obj;
     }
-  }
 
-  // Second pass: build hierarchy
-  for (const cls of classes) {
-    if (cls && cls.name) {
-      const classObj = classIndex[cls.name];
-      const superClass = classObj.superClass;
-      
-      if (superClass === 'Object') {
-        hierarchy.Object.children[cls.name] = classObj;
-      } else if (classIndex[superClass]) {
-        classIndex[superClass].children[cls.name] = classObj;
-      } else {
-        console.warn(`Superclass ${superClass} not found for ${cls.name}. Placing under Object.`);
-        hierarchy.Object.children[cls.name] = classObj;
-      }
+    for (const c of classes) {
+        if (!classIndex[c.name]) {
+            classIndex[c.name] = { name: c.name, children: {}, superClass: c.superClass || "Object" };
+        }
     }
-  }
 
-  return { hierarchy, classIndex };
+    for (const c of classes) {
+        const obj = classIndex[c.name];
+        const parent = obj.superClass;
+        if (parent === "Object") {
+            hierarchy.Object.children[c.name] = obj;
+        } else if (classIndex[parent]) {
+            classIndex[parent].children[c.name] = obj;
+        } else {
+            // Unknown parent — place under Object and warn.
+            console.warn(`Superclass ${parent} not found for ${c.name}. Placing under Object.`);
+            hierarchy.Object.children[c.name] = obj;
+        }
+    }
+
+    return hierarchy;
 }
 
-function placeOrphan (hierarchy, orphan) {
-  if (hierarchy[orphan.superClass]) {
-    hierarchy[orphan.superClass].children[orphan.name] = orphan;
-    return true;
-  }
-  for (const cls of Object.values(hierarchy)) {
-    if (placeOrphan(cls.children, orphan)) {
-      return true;
+function sortKey (name) {
+    // Match existing output ordering: ignore a leading Sv prefix for sort,
+    // but keep the prefix in the displayed name.
+    return name.startsWith("Sv") ? name.slice(2) : name;
+}
+
+function printHierarchy (hierarchy, classFiles, indent = "", isRoot = true) {
+    let out = "";
+    const entries = Object.entries(hierarchy);
+    entries.sort(([a], [b]) => {
+        if (a === "Object") return -1;
+        if (b === "Object") return 1;
+        return sortKey(a).localeCompare(sortKey(b));
+    });
+    for (const [name, cls] of entries) {
+        const p = classFiles[name];
+        const link = p ? `[${name}](${composeClassDocUrl(p)})` : name;
+        if (isRoot && name !== "Object") {
+            out += `${indent}- Object\n`;
+            out += `${indent}  - ${link}\n`;
+        } else {
+            out += `${indent}- ${link}\n`;
+        }
+        if (Object.keys(cls.children).length > 0) {
+            const nextIndent = isRoot && name !== "Object" ? indent + "    " : indent + "  ";
+            out += printHierarchy(cls.children, classFiles, nextIndent, false);
+        }
     }
-  }
-  return false;
+    return out;
 }
 
-function printHierarchy (hierarchy, classFiles, indent = '', isRoot = true) {
-  let output = '';
-  const entries = Object.entries(hierarchy);
-  
-  // Sort entries to ensure 'Object' is first if it exists
-  entries.sort(([nameA], [nameB]) => {
-    if (nameA === 'Object') return -1;
-    if (nameB === 'Object') return 1;
-    return nameA.localeCompare(nameB);
-  });
+function main () {
+    const root = process.argv[2] || ".";
+    const rootAbs = path.resolve(root);
 
-  for (const [name, cls] of entries) {
-    if (cls) {
-      const encodedPath = classFiles[name] ? ensureLeadingSlash(classFiles[name]) : '';
-      const link = classFiles[name] ? `[${name}](${composeClassDocUrl(encodedPath)})` : name;
-      if (isRoot && name !== 'Object') {
-        // For root-level classes that aren't Object, indent them under Object
-        output += `${indent}- Object\n`;
-        output += `${indent}  - ${link}\n`;
-      } else {
-        output += `${indent}- ${link}\n`;
-      }
-      if (Object.keys(cls.children).length > 0) {
-        output += printHierarchy(cls.children, classFiles, isRoot && name !== 'Object' ? indent + '    ' : indent + '  ', false);
-      }
-    }
-  }
-  return output;
-}
-
-function createClassLink (className, filePath) {
-    const link = document.createElement('a');
-    link.textContent = className;
-    link.href = composeClassDocUrl(filePath);
-    return link;
-}
-
-async function main (folderPath) {
-  try {
-    const jsFiles = await findJsFiles(folderPath);
+    const jsFiles = findJsFiles(rootAbs);
     const allClasses = [];
-    let warnings = '';
     const classFiles = {};
 
-    // Get the last component of the input path
-    const folderName = path.basename(folderPath);
-
     for (const file of jsFiles) {
-      const content = await fs.readFile(file, 'utf-8');
-      const classes = parseClasses(content);
-      allClasses.push(...classes);
-      
-      // Store the relative path for each class
-      classes.forEach(cls => {
-        classFiles[cls.name] = encodeURI(path.relative(folderPath, file).replace(/\\/g, '/'));
-      });
+        const content = fs.readFileSync(file, "utf8");
+        const classes = parseClasses(content);
+        const rel = path.relative(rootAbs, file).replace(/\\/g, "/");
+        for (const c of classes) {
+            allClasses.push(c);
+            classFiles[c.name] = encodeURI(rel);
+        }
     }
 
-    // Redirect console.warn to our warnings string
-    const originalWarn = console.warn;
-    console.warn = (...args) => {
-      warnings += args.join(' ') + '\n';
-    };
+    const hierarchy = buildHierarchy(allClasses);
+    const body = printHierarchy(hierarchy, classFiles);
+    const content = `# Classes\n\n${SUBTITLE}\n\n${body}`;
 
-    const { hierarchy, classIndex } = buildHierarchy(allClasses);
-
-    // Restore original console.warn
-    console.warn = originalWarn;
-
-    const markdownHierarchy = printHierarchy(hierarchy, classFiles);
-
-    // Add H1 header to the markdown content without the period
-    const markdownContent = `# Classes\n\n${markdownHierarchy}`;
-
-    // Create the output directory if it doesn't exist
-    const outputDir = path.join(folderPath, OUTPUT_DIR);
-    await fs.mkdir(outputDir, { recursive: true });
-
-    // Write the markdown hierarchy to a file in the output directory
-    await fs.writeFile(path.join(outputDir, 'class_hierarchy.md'), markdownContent);
-    console.log(`Class hierarchy has been written to ${path.join(OUTPUT_DIR, 'class_hierarchy.md')}`);
-
-    // Write warnings to a file in the output directory if there are any
-    if (warnings) {
-      await fs.writeFile(path.join(outputDir, 'hierarchy_warnings.log'), warnings);
-      console.log(`Warnings have been written to ${path.join(OUTPUT_DIR, 'hierarchy_warnings.log')}`);
-    }
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
+    const outPath = path.join(rootAbs, OUTPUT_REL);
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, content);
+    console.log(`wrote ${OUTPUT_REL}`);
 }
 
-const folderPath = process.argv[2] || '.';
-main(folderPath).catch(console.error);
-main(folderPath).catch(console.error);
+main();

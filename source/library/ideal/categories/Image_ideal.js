@@ -16,9 +16,6 @@ if (!SvPlatform.isNodePlatform()) {
  
  */
 
-/**
-
- */
 (class Image_ideal extends Image {
 
     static async asyncDataUrlForSrc (src) {

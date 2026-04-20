@@ -9,9 +9,6 @@
  * @description Some extra methods for the Javascript Function primitive
  */
 
-/**
-
- */
 
 /*
 (class Function_ideal extends Function {

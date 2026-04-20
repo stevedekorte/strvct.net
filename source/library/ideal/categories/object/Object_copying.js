@@ -3,17 +3,11 @@
 /** * @module library.ideal.object
  */
 
-/** * @class SvMissingSlotError
- * @extends Error
- 
- 
- */
-
 /**
-
- * Custom error class for missing slots.
+ * @class SvMissingSlotError
+ * @extends Error
+ * @classdesc Custom error class for missing slots.
  */
-
 SvGlobals.globals().SvMissingSlotError = (class SvMissingSlotError extends Error {
     constructor (message) {
         super(message);
@@ -24,17 +18,11 @@ SvGlobals.globals().SvMissingSlotError = (class SvMissingSlotError extends Error
 /** * @module library.ideal.object
  */
 
-/** * @class Object_copying
- * @extends Object
- 
- 
- */
-
 /**
-
- * Adds copying related behaviors for Object class.
+ * @class Object_copying
+ * @extends Object
+ * @classdesc Adds copying related behaviors for Object class.
  */
-
 (class Object_copying extends Object {
 
     /**

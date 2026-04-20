@@ -1,15 +1,13 @@
-/** * @module library.ideal.html.SvHtmlStreamReader
- */
-
-/** * @class SvStreamNode
- * @classdesc SvStreamNode represents a generic node in a stream of HTML elements.
- 
- 
+/**
+ * @module library.ideal.html.SvHtmlStreamReader
  */
 
 /**
-
+ * @class SvStreamNode
+ * @extends ProtoClass
+ * @classdesc SvStreamNode represents a generic node in a stream of HTML elements.
  */
+
 "use strict";
 
 (class SvStreamNode extends ProtoClass {

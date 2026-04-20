@@ -51,9 +51,6 @@
  
  */
 
-/**
-
- */
 (class SvOptionsNode extends SvField {
 
     /**

@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Range_ideal extends Range {
 
     /**

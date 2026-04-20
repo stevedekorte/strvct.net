@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class SvTextNodeTile extends SvTile {
 
     /**

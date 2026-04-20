@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Array_store extends Array {
 
     /**

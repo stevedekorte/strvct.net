@@ -27,10 +27,6 @@
  
  */
 
-/**
-
- */
-
 (class SvJsonStreamReader extends ProtoClass {
     initPrototypeSlots () {
     /**

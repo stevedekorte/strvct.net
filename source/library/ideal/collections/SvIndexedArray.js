@@ -18,9 +18,6 @@
  
  */
 
-/**
-
- */
 (class SvIndexedArray extends SvHookedArray {
 
     /**

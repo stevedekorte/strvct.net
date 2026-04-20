@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
 
     @class SvAiParsedResponseMessage_parsing
     @extends SvAiParsedResponseMessage

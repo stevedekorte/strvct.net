@@ -9,9 +9,6 @@
  * @classdesc Represents a JSON null field in the application.
  */
 
-/**
-
- */
 (class SvJsonNullField extends SvField {
 
     /**

@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class SvBreadCrumbsNode extends SvFolderNode {

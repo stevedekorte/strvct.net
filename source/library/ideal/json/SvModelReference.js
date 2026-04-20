@@ -1,13 +1,12 @@
 "use strict";
 
-/*
-
-    SvModelReference
-
-    A reference to a model object instance that is owned by another part of the model tree.
-    Used when we need to refer to objects without duplicating them or transferring ownership.
-
-*/
+/**
+ * @class SvModelReference
+ * @extends SvJsonGroup
+ * @classdesc A reference to a model object instance owned by another part of the model
+ * tree. Used when we need to refer to objects without duplicating them or transferring
+ * ownership.
+ */
 
 (class SvModelReference extends SvJsonGroup {
 

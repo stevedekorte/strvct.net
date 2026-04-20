@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvTileSubtitleView extends SvTextView {
 
     /**

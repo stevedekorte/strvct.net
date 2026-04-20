@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 (class SvPointerFieldTile extends SvTitledTile {
 
     /**

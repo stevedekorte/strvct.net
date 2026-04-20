@@ -63,10 +63,6 @@
  
  */
 
-/**
-
- */
-
 (class Object_init extends Object {
 
     /**

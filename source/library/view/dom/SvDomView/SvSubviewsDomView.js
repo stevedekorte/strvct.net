@@ -10,11 +10,6 @@
  
  */
 
-/**
-
- */
-
-
 (class SvSubviewsDomView extends SvCssDomView {
 
     initPrototypeSlots () {

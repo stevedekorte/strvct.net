@@ -1,27 +1,20 @@
 "use strict";
 
-/*
-
-    @class SvActorNode
-
-    Async messages don't ensure processing order,
-    but actors do. This actor class queues actorApply() message
-    and executes them sequentially (awaits the last message before sending the next).
-
-    It's also *persistent* so on unserialize:
-    - if there's a pending message, it's removed
-    - we continue processing unsent messages in order
-
-    Example use cases:
-    - ensuring a one mutator at a time
-    - ensuring ordered transaction requests on a database
-    - ensuring a patch ordering
-
-    NOTES
-
-    - auto runs if any messages are in inbox (the asyncMessageQueue)
-
-*/
+/**
+ * @class SvActorNode
+ * @extends SvBaseNode
+ * @classdesc Queues actorApply() messages and executes them sequentially, awaiting the
+ * previous message before sending the next — in contrast to plain async messages which
+ * don't guarantee processing order.
+ *
+ * Persistent: on unserialize any currently-pending message is discarded and processing
+ * continues with the remaining unsent messages in order.
+ *
+ * Example use cases: ensuring one mutator at a time, ordered database transaction
+ * requests, ordered patch application.
+ *
+ * Auto-runs whenever messages are present in the asyncMessageQueue inbox.
+ */
 
 (class SvActorNode extends SvBaseNode {
 

@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class ProtoClass_tasks extends ProtoClass {
 
     async asyncRunTaskMethod (methodName, methodArgs) {

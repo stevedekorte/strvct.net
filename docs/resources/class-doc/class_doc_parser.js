@@ -557,9 +557,15 @@ function escapeXmlPreserveWhitespace (unsafe) {
 
 function displayClassInfo (result) {
     const outputElement = document.getElementById('output');
-    
+
     // Set the page title to the class name
     document.title = result.classInfo.className;
+
+    // Populate the header h1 (matches main docs layout)
+    const titleElement = document.getElementById('class-title');
+    if (titleElement) {
+        titleElement.textContent = result.classInfo.className || 'Class';
+    }
     
     // Separate class methods from instance methods
     const classMethods = result.methods.filter(method => method.isStatic);

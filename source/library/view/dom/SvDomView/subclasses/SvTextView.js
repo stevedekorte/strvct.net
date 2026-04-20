@@ -16,10 +16,6 @@
  
  */
 
-/**
-
- */
-
 (class SvTextView extends SvStyledDomView {
 
     initPrototypeSlots () {

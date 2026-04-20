@@ -21,10 +21,6 @@
 
  */
 
-/**
-
- */
-
 (class SvWaSound extends SvResource {
 
     /**

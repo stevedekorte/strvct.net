@@ -6,9 +6,6 @@
  * @classdesc A node that represents a link to another node, which is not a subnode
  */
 
-/**
-
- */
 "use strict";
 
 (class SvLinkNode extends SvSummaryNode {

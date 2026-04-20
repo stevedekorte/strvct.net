@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
     @class SvHeadlessUserInterface
     @extends SvUserInterface
     @classdesc The SvHeadlessUserInterface class is the user interface class for the headless mode.

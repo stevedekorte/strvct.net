@@ -3,19 +3,11 @@
 /** * @module library.ideal.object
  */
 
-/** * @class Object_class
- * @extends Object
- 
- 
- */
-
 /**
-
- * Object_class
- *
- * Some added state and behavior on Object class.
+ * @class Object_class
+ * @extends Object
+ * @classdesc Object_class Some added state and behavior on Object class.
  */
-
 (class Object_class extends Object {
 
     /**

@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvPrototypesNode extends SvStorableNode {
 
     /**

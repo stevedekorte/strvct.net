@@ -10,9 +10,6 @@
 
  */
 
-/**
-
- */
 (class SvJsonPatchError extends Error {
 
     /**

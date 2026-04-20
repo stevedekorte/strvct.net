@@ -3,21 +3,11 @@
 /** * @module library.ideal.object
  */
 
-/** * @class Object_ideal
- * @extends Object
- *
-
-
- */
-
 /**
-
- * Some added state and behavior on Object prototype.
- *
- * Note:Object keys always get turned into strings.
- *
+ * @class Object_ideal
+ * @extends Object
+ * @classdesc Some added state and behavior on Object prototype. Note:Object keys always get turned into strings.
  */
-
 (class Object_ideal extends Object {
 
     static newSubclassWithName (className) {

@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class BigInt_store extends BigInt {
 
     static instanceFromRecordInStore (aRecord, aStore) {

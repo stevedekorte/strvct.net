@@ -28,9 +28,6 @@
  
  */
 
-/**
-
- */
 (class SvFieldSetNode extends SvStorableNode {
 
     /**

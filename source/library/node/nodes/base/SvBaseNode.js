@@ -11,9 +11,6 @@
     * various classes of sub state and behavior.
  */
 
-/**
-
- */
 (class SvBaseNode extends SvStyledNode {
 
 

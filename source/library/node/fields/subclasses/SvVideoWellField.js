@@ -11,10 +11,6 @@
  
  */
 
-/**
-
- */
-
 (class SvVideoWellField extends SvField {
     /**
      * @static

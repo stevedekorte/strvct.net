@@ -8,9 +8,6 @@
  * @classdesc SvVideoNode class for handling video nodes.
  */
 
-/**
-
- */
 (class SvVideoNode extends SvCloudBlobNode {
 
     static jsonSchemaDescription () {

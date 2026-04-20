@@ -7,9 +7,6 @@
  * @classdesc SvChatMessageTile is a specialized tile for chat message functionality.
  */
 
-/**
-
- */
 
 "use strict";
 

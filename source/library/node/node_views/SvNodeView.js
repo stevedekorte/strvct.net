@@ -12,9 +12,6 @@
  
  */
 
-/**
-
- */
 (class SvNodeView extends SvStyledDomView {
 
     /**

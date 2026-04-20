@@ -1,4 +1,4 @@
-/*
+/**
     @class SvWebBrowserTab
     @extends ProtoClass
     @classdesc A class whose instances represent a web browser tab.

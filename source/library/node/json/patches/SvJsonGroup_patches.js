@@ -10,9 +10,6 @@
  * @classdesc Category class that adds native JSON patch support to JsonGroup.
  */
 
-/**
-
- */
 (class SvJsonGroup_patches extends SvJsonGroup {
 
     // --- Native JSON Patch Support ---

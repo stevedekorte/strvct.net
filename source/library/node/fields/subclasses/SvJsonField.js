@@ -10,9 +10,6 @@
  * It provides functionality to set and retrieve JSON values, and interact with SvJsonNode.
  */
 
-/**
-
- */
 (class SvJsonField extends SvField {
 
     /**

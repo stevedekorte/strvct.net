@@ -15,9 +15,6 @@
  * - drag nodes out of the UI to create json strings (see SvTile_dragging.js and getSvDataUrl method)
  */
 
-/**
-
- */
 (class SvJsonDictionaryNode extends SvJsonNode {
 
     /**

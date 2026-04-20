@@ -3,20 +3,10 @@
 /** * @module library.ideal.formatters
  */
 
-/** * @class SvNumberFormatter
- * @extends ProtoClass
- 
- 
- */
-
 /**
-
- * Takes a number and returns a string with a more human readable format.
- *
- * @example
- * const stringVersion = SvNumberFormatter.clone().setValue(1234).setSignificantDigits(2).formattedValue();
- * // stringVersion will be "1.2K"
- *
+ * @class SvNumberFormatter
+ * @extends ProtoClass
+ * @classdesc Takes a number and returns a string with a more human readable format. const stringVersion = SvNumberFormatter.clone().setValue(1234).setSignificantDigits(2).formattedValue(); // stringVersion will be "1.2K"
  */
 (class SvNumberFormatter extends ProtoClass {
     initPrototypeSlots () {

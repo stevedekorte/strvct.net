@@ -11,10 +11,6 @@
  
  */
 
-/**
-
- */
-
 (class SvImageWellField extends SvField {
     /**
      * @static

@@ -1,683 +1,413 @@
-:root {
-    --responsive-margin: 0;
-    --code-font-size: 11px;
+/* ------------------------------------------------------------------ */
+/* Class documentation pages — light theme matching /style/style.css    */
+/* ------------------------------------------------------------------ */
+
+/* Give class-doc pages a bit more breathing room than the default docs
+   layout, since method signatures and code blocks benefit from width. */
+body > .page {
+    max-width: 1080px;
 }
 
-@media (max-width: 600px) {
-    :root {
-        --responsive-margin: 0;
-    }
-}
-  
-@media (min-width: 800px) {
-    :root {
-        --responsive-margin: -24px;
-    }
-}
-
-body {
-    font-family: Helvetica,Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5em;
-    color: #333;
-    max-width: min(45em, 100%);
-    margin: 0 auto;
-    padding: 0;
-}
-
-a:link,
-a:visited {
-  color: #77b;
-  text-decoration: none;
-  transition: background-color .15s linear, color .15s linear;
-}
-
-
-h1 {
-    color: #2c3e50;
-}
-
-code {
-    display: block;
-    font-family: monospace;
-    font-size: 11px;
-    line-height: 1.5em;
-    color: #333;
-    background-color: #f0f0f0;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-    border-radius: 5px;
-    margin-left: 1em;
-}
-
-/* --- class --- */
-
+/* Root wrapper produced by the parser */
 class {
     display: block;
-    border: 0px solid #ddd;
-    margin-top: 4em;
-    margin-bottom: 4em;
-    margin-left: 1em;
-    margin-right: 1em;
 }
 
-
-classInfo {
-    display: block;
-    line-height: 1.5em;
-}
-
-classInfo > className {
-    display: block;
-    margin-left: var(--responsive-margin);
-    margin-bottom: 2em;
-    font-size: 2em;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-classInfo > description {
-    display: block;
-    margin-top: 3em;
-    white-space: pre-wrap; /* Preserve whitespace */
-    margin-bottom: 3.5em;
-    font-weight: normal;
-}
-
-
-classInfo > description:before {
-    display: block;
-    content: "Class Description ";
-    font-weight: bold;
-    font-size: 1.25em;
-    font-style: normal;
-    margin-left:  var(--responsive-margin);
-    margin-bottom: 1em;
-}
-
-/* --- extends --- */
-
-extends {
-    display: block;
-    font-style: normal;
-    font-weight: normal;
-    font-style: normal;
-}
-
-extends:before {
-    content: "Extends: ";
-    font-weight: bold;
-    font-style: normal;
-}
-
-/* --- filePath --- */
-
-filepath {
-    display: block;
-    font-weight: normal;
-    font-style: normal;
-}
-
-filepath:before {
-    content: "Source: ";
-    font-weight: bold;
-    font-style: normal;
-}
-
-filepath a {
-    text-decoration: none;
-}
-
-filepath a:hover {
-    text-decoration: underline;
-}
-
-/* --- class methods --- */
-
-classmethods {
-    display: block;
-    margin-bottom: 3.5em;
-}
-
-classmethods:before {
-    content: "Class Methods ";
-    font-weight: bold;
-    font-size: 1.25em;
-    font-style: normal;
-    margin-left: var(--responsive-margin);
-    margin-bottom: 1.5em; /* Add this line to create space after the heading */
-    display: block; /* Ensure the pseudo-element is a block to apply margin */
-}
-
-/* Adjust the first method under classmethods */
-classmethods > method:first-child {
-    margin-top: 2em; /* Add top margin to the first method */
-}
-
-/* --- instance methods --- */
-
-instancemethods {
-    display: block;
-}
-
-instancemethods:before {
-    content: "Instance Methods ";
-    font-weight: bold;
-    font-size: 1.25em;
-    font-style: normal;
-    margin-left: var(--responsive-margin);
-    margin-bottom: 1.5em; /* Add this line to create space after the heading */
-    display: block; /* Ensure the pseudo-element is a block to apply margin */
-}
-
-/* Adjust the first method under instancemethods */
-instancemethods > method:first-child {
-    margin-top: 2m; /* Add top margin to the first method */
-}
-
-/* --- method --- */
-
-method {
-    display: block;
-    border-bottom: 0px solid #eee;
-    font-weight: normal;
-    margin-top: 2.5em; /* Set a fixed top margin */
-    margin-bottom: 1em; /* Set a fixed bottom margin */
-    transition: none; /* Remove the transition */
-}
-
-method.collapsed {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-/*
-method.expanded {
-}
-*/
-
-method > description {
-    display: block;
-    font-weight: 200;
-    white-space: pre-wrap; /* Preserve whitespace */
-}
-
-method > name {
-    display: none;
-    font-size: 18px;
-    font-weight: bold;
-    color: #3498db;
-}
-
-isAsync {
-    display: none;
-    background-color: #2ecc71;
-    color: #fff;
-    padding: 2px 5px;
-    border-radius: 3px;
-    font-size: 12px;
-}
-
-method > isAsync:before {
-    content: "async";
-}
-
-method > lineno {
-    display: none;
-    color: #95a5a6;
-    font-size: 12px;
-}
-
-method > methodName {
-    display: none;
-}
-
-method > fullMethodName {
-    display: block;
-    padding: 0;
-    margin-bottom: 0em;
-    font-weight: bold; /* Default to normal font weight */
-    transition: font-weight 0.3s ease; /* Smooth transition for font weight changes */
-}
-
-/* --- parameters --- */
-
-params {
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: 1em;
-    font-weight: lighter;
-}
-
-param {
-    display: block;
-    margin-left: 0em;
-    width: fit-content;
-}
-
-paramname {
-    display: inline-block;
-    font-weight: lighter;
-}
-
-paramtype {
-    display: inline-block;
-}
-
-paramtype:before {
-    content: "{";
-}
-
-paramtype:after {
-    content: "}";
-}
-
-
-parameter > description {
-    display: inline-block;
-    font-style: italic;
-    color: #7f8c8d;
-}
-
-/* --- method --- */
-
-method > description {
-    display: block;
-    margin-top: 0em;
-    /*margin-bottom: 0.25em;*/
-    font-style: normal;
-    font-weight: normal;
-}
-
-author, version {
-    display: block;
-    color: #7f8c8d;
-    margin-top: 1em;
-}
-
-method > fullMethodName[async]::before {
-    content: "async ";
-    color: #2ecc71;
-    font-weight: bold;
-}
-
-/* --- throws --- */
-
-throws {
-    display: block;
-    font-style: normal;
-    font-weight: lighter;
-}
-
-throws:before {
-    content: "throws: ";
-    font-style: normal;
-    font-weight: lighter;
-}
-
-/* --- returns --- */
-
-returns {
-    display: block;
-    font-style: normal;
-    font-weight: lighter;
-}
-
-returns:before {
-    content: "returns: ";
-    font-style: normal;
-    font-weight: lighter;
-}
-
-returns > returntype {
-    display: inline-block;
-}
-
-returns > returntype:before {
-    content: "{";
-}
-
-returns > returntype:after {
-    content: "}";
-}
-
-returns > description {
-    display: inline-block;
-}
-
-/* --- author --- */
-
-author {
-    display: none;
-    color: #7f8c8d;
-}
-
-author:before {
-    content: "author: ";
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* --- version --- */
-
-version {
-    display: none;
-    color: #7f8c8d;
-}
-
-version:before {
-    content: "version: ";
-    font-weight: normal;
-    font-style: normal;
-}
-
-isstatic {
-    display: none;
-}
-
-
-access {
-    display: none;
-}
-
-/* Property styles */
-
-properties, classMethods, instanceMethods {
-    margin-top: 20px;
-}
-
-properties > category,
-classMethods > category,
-instanceMethods > category {
-    margin-bottom: 15px;
-}
-
-category > name {
-    font-weight: bold;
-    font-size: 1.2em;
-    margin-bottom: 10px;
-}
-
-method, property {
-    margin-left: 20px;
-}
-
-properties {
-    display: block;
-    margin-bottom: 3.5em;
-}
-
-properties:before {
-    content: "Instance Slots ";
-    font-weight: bold;
-    font-size: 1.25em;
-    font-style: normal;
-    margin-left:  var(--responsive-margin);
-}
-
-category > property:first-child {
-    margin-top: 1.5em;
-}
-
-/*
-property:first-of-type {
-    margin-top: 2.5em;
-    color: #333;
-}
-    */
-
-property {
-    display: block;
-    /*margin-top: 2.5em;*/
-    font-weight: normal;
-}
-
-propertyname {
-    display: inline-block;
-    font-weight: bold;
-    /*color: #0066cc;*/
-}
-
-propertytype {
-    display: inline-block;
-    color: #666;
-    font-style: italic;
-    margin-left: 5px;
-}
-
-propertytype:before {
-    content: "{";
-}
-
-propertytype:after {
-    content: "}";
-}
-
-property description {
-    display: inline-block;
-    margin-top: 5px;
-    color: #333;
-}
-
-linenumberstart {
-    display: none;
-}
-
-linenumberend {
-    display: none;
-}
-
-/* Styling for the source code */
-source {
-    display: block;
-    white-space: pre-wrap;
-    font-family: 'Courier New', Courier, monospace;
-    background-color: #f4f4f4;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    margin: 10px 0;
-    overflow-x: auto;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
-/* Ensure the source content is displayed */
-source::before {
-    content: attr(data-content);
-    white-space: pre-wrap;
-}
-
-/* Add syntax highlighting */
-method > source .keyword {
-    color: #0000ff;
-}
-
-method > source .string {
-    color: #008000;
-}
-
-method > source .comment {
-    color: #808080;
-    font-style: italic;
-}
-
-method > source .function {
-    color: #795E26;
-}
-
-method > source .number {
-    color: #098658;
-}
-
-/* Add a toggle button for showing/hiding source code */
-method > name::after {
-    content: " [Show Source]";
-    cursor: pointer;
-    color: #0066cc;
-    font-size: 0.9em;
-}
-
-method > source {
-    display: none;
-}
-
-method > source.show {
-    display: block;
-}
-
-.property {
-    display: block;
-}
-
-.member {  
-    display: block;
-}
-
-/* Collapsible sections */
-
-.collapsible {
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-    padding-left: 15px; /* Reduced padding to accommodate smaller indicator */
-}
-
-.collapsible::before {
-    content: '\25B6'; /* Right-pointing triangle */
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: transform 0.2s;
-    font-size: 0.7em; /* Reduce the font size to make the triangle smaller */
-    line-height: 1; /* Ensure proper vertical alignment */
-    color: #ccc;
-}
-
-.collapsible.expanded::before {
-    content: '\25BC'; /* Down-pointing triangle */
-    transform: translateY(-50%);
-}
-
-.collapsible-content {
-    display: none;
-    margin-left: 15px; /* Indent the content slightly */
-    margin-bottom: 1em; /* Add a bottom margin to the collapsible content */
-}
-
-.collapsible-content.show {
-    display: block;
-}
-
-category {
-    display: block;
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-
-category > name {
-    display: block;
-    font-weight: bold;
-    font-size: 1em;
-    font-style: normal;
-    margin-bottom: 1em;
-    color: #999;
-}
-
+/* Elements we don't need to show (the className is hoisted into the header h1) */
+classInfo > className,
+method > name,
+method > methodName,
+method > lineno,
+method > isAsync,
+linenumberstart,
+linenumberend,
+isstatic,
+access,
+author,
+version,
 property > category {
     display: none;
 }
 
-methodinfo > category {
-    display: none;
+/* ---------- class header block ---------- */
+
+classInfo {
+    display: block;
+    padding-bottom: 24px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.8;
+}
+
+classInfo > extends,
+classInfo > filepath {
+    display: block;
+}
+
+classInfo > extends:before,
+classInfo > filepath:before {
+    display: inline-block;
+    min-width: 70px;
+    color: #2a2a2a;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+classInfo > extends:before { content: "Extends:"; }
+classInfo > filepath:before { content: "Source:"; }
+
+classInfo > filepath a {
+    color: #555;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 12px;
+}
+
+classInfo > filepath a:hover {
+    color: #2a2a2a;
+}
+
+classInfo > description {
+    display: block;
+    margin-top: 18px;
+    white-space: pre-wrap;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.75;
+}
+
+classInfo > description:before {
+    content: "Description";
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #2a2a2a;
+    margin-bottom: 10px;
+}
+
+/* ---------- section headings ---------- */
+
+classmethods,
+instancemethods,
+properties {
+    display: block;
+    border-top: 1px solid #ddd;
+    padding: 30px 0;
+}
+
+classmethods:before,
+instancemethods:before,
+properties:before {
+    display: block;
+    font-size: 22px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    color: #2a2a2a;
+    margin-bottom: 24px;
+}
+
+properties:before     { content: "Instance Slots"; }
+classmethods:before   { content: "Class Methods"; }
+instancemethods:before { content: "Instance Methods"; }
+
+/* ---------- categories within a section ---------- */
+
+category {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 4px;
+}
+
+category:first-child {
+    margin-top: 0;
+}
+
+category > name {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #2a2a2a;
+    margin-top: 16px;
+    margin-bottom: 8px;
 }
 
 category:not(:has(> name)) {
     margin-top: 0;
 }
 
-methodinfo viewSource {
+/* ---------- methods ---------- */
+
+method {
     display: block;
-    width: fit-content;
-    margin-top: 10px;
-    padding: 5px 10px;
-    background-color: #ccc;
-    border-radius: 5px;
+    padding: 2px 0;
+    border-bottom: 1px solid #ececec;
 }
 
-methodinfo > viewSource > a:link {
-    color: white;
-    text-decoration: none;
-    font-weight: normal;
+method:last-child {
+    border-bottom: none;
 }
 
-methodinfo > viewSource > a:visited {
-    color: white;
-    text-decoration: none;
-    font-weight: normal;
+method > fullMethodName {
+    display: block;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 13px;
+    color: #2a2a2a;
+    padding: 8px 0 8px 18px;
+    transition: color 0.15s;
 }
 
-methodinfo > viewSource:hover {
-    background-color: #888;
+method > fullMethodName:hover {
+    color: #000;
 }
 
-methodsource {
-    display: none;  /* Hidden by default */
-    white-space: pre;  /* Preserve whitespace */
-    font-family: monospace;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-top: 10px;
-    overflow-x: auto;
+method.expanded > fullMethodName {
+    color: #000;
+    font-weight: 500;
 }
+
+method > fullMethodName[async]::before {
+    content: "async ";
+    color: #5a9a5a;
+}
+
+/* Collapsible indicator — reused by fullMethodName and source-toggle */
+.collapsible {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.collapsible::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 9px;
+    color: #bbb;
+    line-height: 1;
+    transition: color 0.15s;
+}
+
+.collapsible:hover::before {
+    color: #2a2a2a;
+}
+
+.collapsible.expanded::before {
+    content: '▼';
+    color: #2a2a2a;
+}
+
+.collapsible-content {
+    display: none;
+}
+
+.collapsible-content.show {
+    display: block;
+}
+
+.method-info-content {
+    border-left: 2px solid #e6e6e3;
+    padding: 2px 0 10px 18px;
+    margin: 4px 0 10px 18px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.75;
+}
+
+.method-info-content > category {
+    display: none;
+}
+
+method > description,
+methodinfo description {
+    display: block;
+    margin: 2px 0 10px;
+    white-space: pre-wrap;
+}
+
+/* ---------- parameters ---------- */
+
+params {
+    display: block;
+    margin: 8px 0;
+}
+
+param {
+    display: block;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 12px;
+    color: #555;
+    padding: 1px 0;
+}
+
+paramname {
+    color: #2a2a2a;
+}
+
+paramtype {
+    color: #888;
+    margin-left: 6px;
+}
+
+paramtype:before { content: "{"; }
+paramtype:after  { content: "}"; }
+
+param > description {
+    display: inline;
+    margin-left: 8px;
+    font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-style: italic;
+    color: #888;
+}
+
+/* ---------- returns ---------- */
+
+returns {
+    display: block;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 12px;
+    color: #555;
+    margin: 6px 0;
+}
+
+returns:before {
+    content: "returns ";
+    color: #2a2a2a;
+}
+
+returns > returntype {
+    display: inline-block;
+    color: #888;
+}
+
+returns > returntype:before { content: "{"; }
+returns > returntype:after  { content: "}"; }
+
+returns > description {
+    display: inline;
+    margin-left: 8px;
+    font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-style: italic;
+    color: #888;
+}
+
+/* ---------- throws ---------- */
+
+throws {
+    display: block;
+    font-size: 12px;
+    color: #a05a5a;
+    margin: 6px 0;
+}
+
+throws:before {
+    content: "throws: ";
+    font-weight: 500;
+    color: #a05a5a;
+}
+
+/* ---------- method source toggle ---------- */
 
 .source-wrapper {
     margin-top: 10px;
-    margin-bottom: 0; /* Ensure no extra margin at the bottom */
 }
 
 .source-toggle {
+    display: inline-block;
     cursor: pointer;
-    color: #333;
-    margin-bottom: 5px;
+    position: relative;
+    padding: 4px 0 4px 16px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #888;
 }
 
 .source-toggle::before {
-    content: '▶ ';
-    font-size: 0.8em;
+    content: '▶';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 8px;
+    color: #bbb;
+    line-height: 1;
 }
 
 .source-toggle.expanded::before {
-    content: '▼ ';
+    content: '▼';
+    color: #2a2a2a;
+}
+
+.source-toggle:hover {
+    color: #2a2a2a;
 }
 
 methodsource {
     display: none;
     white-space: pre-wrap;
-    font-family: monospace;
-    background-color: #f5f5f5;
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-top: 5px;
-    overflow-x: auto;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
     font-size: 12px;
-    line-height: 1.4;
-    margin-bottom: 0; /* Remove bottom margin from methodsource */
+    color: #2a2a2a;
+    background: #f5f5f3;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    padding: 16px 20px;
+    margin-top: 6px;
+    overflow-x: auto;
+    line-height: 1.6;
 }
 
 methodsource.show {
     display: block;
-    margin-bottom: 0; /* Ensure no extra margin when shown */
 }
 
-methodsource.collapsed {
-    display: none;
+/* ---------- properties ---------- */
+
+property {
+    display: block;
+    padding: 8px 0;
+    border-bottom: 1px solid #ececec;
+    font-family: 'SF Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+    font-size: 13px;
 }
 
-/* Add a new style for the method info content */
-.method-info-content {
-    margin-bottom: 1em; /* Add a bottom margin to the method info content */
+property:last-child {
+    border-bottom: none;
+}
+
+propertyname {
+    display: inline-block;
+    color: #2a2a2a;
+}
+
+propertytype {
+    display: inline-block;
+    color: #888;
+    margin-left: 6px;
+}
+
+propertytype:before { content: "{"; }
+propertytype:after  { content: "}"; }
+
+property description {
+    display: block;
+    margin-top: 6px;
+    font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    color: #666;
+    line-height: 1.75;
+    white-space: pre-wrap;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 700px) {
+    classInfo > extends:before,
+    classInfo > filepath:before {
+        min-width: 56px;
+    }
 }

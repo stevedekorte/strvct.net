@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvDayNode extends SvBaseNode {
 
     /**

@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Date_ideal extends Date {
 
     static looksLikeAStandardDateFormat (str) {

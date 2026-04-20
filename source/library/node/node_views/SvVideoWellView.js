@@ -11,9 +11,6 @@
  * - supports standard video controls and playback
  */
 
-/**
-
- */
 
 "use strict";
 

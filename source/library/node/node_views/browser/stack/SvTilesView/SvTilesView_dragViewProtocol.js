@@ -36,10 +36,6 @@
 
  */
 
-/**
-
- */
-
 (class SvTilesView_dragViewProtocol extends SvTilesView {
 
     // -- messages sent by SvDragView to the parent/owner of the view it's dragging ---

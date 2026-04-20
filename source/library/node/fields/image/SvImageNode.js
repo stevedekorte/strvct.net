@@ -10,9 +10,6 @@
  * @classdesc SvImageNode class for handling image nodes.
  */
 
-/**
-
- */
 (class SvImageNode extends SvCloudBlobNode {
 
     static jsonSchemaDescription () {

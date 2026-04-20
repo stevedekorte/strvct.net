@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 (class SvStoreRef extends Object {
 
     /**

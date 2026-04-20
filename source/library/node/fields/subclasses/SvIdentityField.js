@@ -11,9 +11,6 @@
  
  */
 
-/**
-
- */
 (class SvIdentityField extends SvField {
 
     /**

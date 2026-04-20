@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class SvArrayField extends SvJsonField {
 
 }.initThisClass());

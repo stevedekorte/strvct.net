@@ -24,10 +24,6 @@
  
  */
 
-/**
-
- */
-
 (class SvAudioQueue extends SvSummaryNode {
 
     /**

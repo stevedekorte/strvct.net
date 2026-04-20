@@ -1,5 +1,11 @@
 "use strict";
 
+/**
+ * @class SvImage_evaluator
+ * @extends SvImage
+ * @classdesc Category of SvImage adding prompt-based image scoring via SvImageEvaluator.
+ */
+
 (class SvImage_evaluator extends SvImage {
 
     /**

@@ -14,9 +14,6 @@
  
  */
 
-/**
-
- */
 (class SvTileTitleView extends SvTextView {
 
     /**

@@ -3,20 +3,11 @@
 /** * @module library.ideal.collections
  */
 
-/** * @class SvHookedSet
- * @extends Set
- 
- 
- */
-
 /**
-
- * A subclass of Set that hooks the base mutation methods.
- *
- * For this to work, you need to use method alternatives to the non-method
- * (operator) operations.
+ * @class SvHookedSet
+ * @extends Set
+ * @classdesc A subclass of Set that hooks the base mutation methods. For this to work, you need to use method alternatives to the non-method (operator) operations.
  */
-
 (class SvHookedSet extends Set {
 
     /**

@@ -20,9 +20,6 @@
  *
  */
 
-/**
-
- */
 (class SvBlobNode extends SvJsonGroup {
 
     /**

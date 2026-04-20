@@ -23,9 +23,6 @@
  
  */
 
-/**
-
- */
 
 console.log("[SvResourceIndexer.js] run");
 

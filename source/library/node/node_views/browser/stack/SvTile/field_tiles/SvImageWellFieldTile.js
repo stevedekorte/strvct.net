@@ -8,12 +8,9 @@
  
  */
 
-/**
-
- */
 "use strict";
 
-/*
+/**
     @class SvImageWellFieldTile
     @extends SvFieldTile
     @classdesc Represents an image well field tile in the browser stack.

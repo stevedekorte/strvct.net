@@ -11,10 +11,6 @@
  * @implements {DragViewProtocol}
  */
 
-/**
-
- */
-
 (class SvDragDestinationProtocol extends Protocol {
 
     // --- drag destination ---

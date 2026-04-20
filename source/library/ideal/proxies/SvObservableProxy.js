@@ -38,9 +38,6 @@
  
  */
 
-/**
-
- */
 (class SvObservableProxy extends ProtoClass {
 
     /**

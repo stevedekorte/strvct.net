@@ -11,9 +11,6 @@
  
  */
 
-/**
-
- */
 (class SvTilesView_selection extends SvTilesView {
 
     /**

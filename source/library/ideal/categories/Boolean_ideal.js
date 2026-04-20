@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Boolean_ideal extends Boolean {
 
     /**

@@ -8,13 +8,10 @@
  
  */
 
-/**
-
- */
 
 "use strict";
 
-/*
+/**
     @class Object_store
     @extends Object
     @classdesc This class extends Object to provide methods for storing and loading objects from a persistent store.

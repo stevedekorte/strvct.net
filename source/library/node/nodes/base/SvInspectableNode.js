@@ -16,9 +16,6 @@
 
  */
 
-/**
-
- */
 (class SvInspectableNode extends SvTranslatableNode {
 
     /**

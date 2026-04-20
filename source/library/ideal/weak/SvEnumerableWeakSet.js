@@ -14,9 +14,6 @@
  
  */
 
-/**
-
- */
 SvGlobals.globals().SvEnumerableWeakSet = (class SvEnumerableWeakSet extends Object {
 
     /**

@@ -12,9 +12,6 @@
  
  */
 
-/**
-
- */
 
 class SvBootLoader extends Object {
 

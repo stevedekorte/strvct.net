@@ -8,9 +8,6 @@
  * @description Extended Map class with additional utility methods.
  */
 
-/**
-
- */
 (class Map_ideal extends Map {
 
     /**

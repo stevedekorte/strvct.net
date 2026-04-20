@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
 * @module library.services.AiServiceKit.Tools.Definitions
 * @class SvJsonPatchRequest
 * @extends SvJsonDictionaryNode

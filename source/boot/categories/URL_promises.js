@@ -6,6 +6,7 @@
 
 /**
  * @class URL_promises
+ * @extends Object
  * @classdesc A StrvctFile-based replacement for URL handling that works in both browser and Node.js.
  */
 (class URL_promises extends Object {

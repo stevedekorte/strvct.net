@@ -8,9 +8,6 @@
  * @description Extended Error class with additional utility methods.
  */
 
-/**
-
- */
 (class Error_ideal extends Error {
 
     /**

@@ -11,10 +11,6 @@
  
  */
 
-/**
-
- */
-
 (class SvDragSourceProtocol extends Protocol {
 
     // -- messages sent by SvDragView to the parent/owner of the view it's dragging ---

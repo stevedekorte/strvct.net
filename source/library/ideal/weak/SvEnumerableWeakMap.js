@@ -11,9 +11,6 @@
  * @extends Object
  */
 
-/**
-
- */
 SvGlobals.globals().SvEnumerableWeakMap = (class SvEnumerableWeakMap extends Object {
 
     /**

@@ -1,9 +1,11 @@
 "use strict";
 
 /**
-  * @module library.node.audio
-  * @interface SvAudioClipDelegateProtocol
-*/
+ * @module library.node.audio
+ * @class SvAudioClipDelegateProtocol
+ * @extends Protocol
+ * @classdesc Delegate protocol for receiving audio clip lifecycle events.
+ */
 
 (class SvAudioClipDelegateProtocol extends Protocol {
 

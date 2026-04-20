@@ -1,192 +1,133 @@
-const fs = require('fs').promises;
-const path = require('path');
-const acorn = require('acorn');
-const walk = require('acorn-walk');
-const doctrine = require('doctrine');
+#!/usr/bin/env node
+// Regenerates docs/Reference/Modules/_index.md from the JS source tree.
+// No npm deps — uses regex to pair each class declaration with its nearest
+// preceding `@module` JSDoc tag.
 
-// Add these lines
-const CLASS_DOC_PATH = '../resources/class-doc/class_doc.html';
-const OUTPUT_DIR = 'docs/reference';
+const fs = require("fs");
+const path = require("path");
 
-function ensureLeadingSlash (path) {
-  return path.startsWith('/') ? path : '/' + path;
+const CLASS_DOC_PATH = "../../resources/class-doc/class_doc.html";
+const OUTPUT_REL = "docs/Reference/Modules/_index.md";
+const SUBTITLE = "Module hierarchy and file organization.";
+
+// Modules page excludes external-libs and docs (unlike the class hierarchy).
+const EXCLUDE_DIRS = new Set(["_unused", "external-libs", "docs", "node_modules", "build", ".git"]);
+
+function ensureLeadingSlash (p) {
+    return p.startsWith("/") ? p : "/" + p;
 }
 
-function composeClassDocUrl (path) {
-  return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(path))}`;
+function composeClassDocUrl (relPath) {
+    return `${CLASS_DOC_PATH}?path=${encodeURIComponent(ensureLeadingSlash(relPath))}`;
 }
 
-async function findJsFiles (dir) {
-  const files = await fs.readdir(dir, { withFileTypes: true });
-  const jsFiles = [];
-
-  for (const file of files) {
-    const fullPath = path.join(dir, file.name);
-    if (file.isDirectory()) {
-      // Skip directories named "_unused", "external-libs", or "docs"
-      if (file.name !== "_unused" && file.name !== "external-libs" && file.name !== "docs") {
-        jsFiles.push(...await findJsFiles(fullPath));
-      }
-    } else if (file.name.endsWith('.js')) {
-      jsFiles.push(fullPath);
-    }
-  }
-
-  return jsFiles;
-}
-
-function parseModules (content, fileName) {
-  const comments = [];
-  try {
-    const ast = acorn.parse(content, {
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-      onComment: (block, text, start, end, startLoc, endLoc) => {
-        if (block && text.startsWith('*')) {
-          comments.push({ value: text, loc: { start: startLoc, end: endLoc } });
+function findJsFiles (dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+            if (!EXCLUDE_DIRS.has(entry.name)) findJsFiles(full, out);
+        } else if (entry.isFile() && entry.name.endsWith(".js")) {
+            out.push(full);
         }
-      },
-      locations: true
-    });
-    const modules = new Map();
-
-    walk.simple(ast, {
-      ClassDeclaration (node) {
-        const className = node.id.name;
-        const moduleName = getModuleName(node, comments) || 'globals';
-        addToModule(modules, moduleName, className);
-      },
-      ClassExpression (node) {
-        if (node.id) {
-          const className = node.id.name;
-          const moduleName = getModuleName(node, comments) || 'globals';
-          addToModule(modules, moduleName, className);
-        }
-      }
-    });
-
-    return modules;
-  } catch (error) {
-    console.error(`Error parsing file: ${fileName}`);
-    console.error(`Error message: ${error.message}`);
-    console.error(`Error location: Line ${error.loc.line}, Column ${error.loc.column}`);
-    throw error;
-  }
-}
-
-function getModuleName (node, comments) {
-  // Find all comments before the node
-  const relevantComments = comments.filter(comment => comment.loc.end.line <= node.loc.start.line);
-
-  // Iterate through comments in reverse order to find the closest @module tag
-  for (let i = relevantComments.length - 1; i >= 0; i--) {
-    const comment = relevantComments[i];
-    const jsdoc = doctrine.parse(comment.value, { unwrap: true });
-    const moduleTag = jsdoc.tags.find(tag => tag.title === 'module');
-    if (moduleTag) {
-      return moduleTag.name;
     }
-  }
-
-  return null;
+    return out;
 }
 
-function addToModule (modules, moduleName, itemName) {
-  if (!modules.has(moduleName)) {
-    modules.set(moduleName, new Set());
-  }
-  modules.get(moduleName).add(itemName);
+const MODULE_RE = /@module\s+([^\s*]+)/g;
+const CLASS_RE = /\bclass\s+([A-Za-z_$][\w$]*)(?:\s+extends\s+([A-Za-z_$][\w$]*))?\s*\{/g;
+
+// For each class declaration, return { name, module } where module is the
+// nearest preceding @module tag, or "globals" if none.
+function parseFileClassModules (content) {
+    const moduleTags = [];
+    let m;
+    MODULE_RE.lastIndex = 0;
+    while ((m = MODULE_RE.exec(content)) !== null) {
+        moduleTags.push({ index: m.index, name: m[1] });
+    }
+    const out = [];
+    CLASS_RE.lastIndex = 0;
+    while ((m = CLASS_RE.exec(content)) !== null) {
+        const classIndex = m.index;
+        let mod = "globals";
+        for (let i = moduleTags.length - 1; i >= 0; i--) {
+            if (moduleTags[i].index < classIndex) { mod = moduleTags[i].name; break; }
+        }
+        out.push({ name: m[1], module: mod });
+    }
+    return out;
+}
+
+function addToModule (modules, moduleName, item) {
+    if (!modules.has(moduleName)) modules.set(moduleName, new Set());
+    modules.get(moduleName).add(item);
 }
 
 function buildHierarchy (modules) {
-  const hierarchy = {};
-
-  for (const [moduleName, items] of modules) {
-    const parts = moduleName.split('.');
-    let current = hierarchy;
-
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i];
-      if (!current[part]) {
-        current[part] = { name: part, children: {}, items: [] };
-      }
-      if (i === parts.length - 1) {
-        // We're at the last part, so add the items here
-        current[part].items = Array.from(items);
-      } else {
-        // Move to the next level
-        current = current[part].children;
-      }
+    const hierarchy = {};
+    for (const [moduleName, items] of modules) {
+        const parts = moduleName.split(".");
+        let current = hierarchy;
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            if (!current[part]) current[part] = { name: part, children: {}, items: [] };
+            if (i === parts.length - 1) current[part].items = Array.from(items);
+            else current = current[part].children;
+        }
     }
-  }
-
-  return hierarchy;
+    return hierarchy;
 }
 
-function printHierarchy (hierarchy, classFiles, indent = '') {
-  let output = '';
-  const entries = Object.entries(hierarchy);
-
-  entries.sort(([nameA], [nameB]) => nameA.localeCompare(nameB));
-
-  for (const [name, module] of entries) {
-    output += `${indent}- ${name}\n`;
-
-    if (module.items && module.items.length > 0) {
-      for (const item of module.items.sort()) {
-        const encodedPath = classFiles[item] ? ensureLeadingSlash(classFiles[item]) : '';
-        const link = classFiles[item] ? `[${item}](${composeClassDocUrl(encodedPath)})` : item;
-        output += `${indent}  - ${link}\n`;
-      }
-    }
-
-    if (Object.keys(module.children).length > 0) {
-      output += printHierarchy(module.children, classFiles, indent + '  ');
-    }
-  }
-
-  return output;
+function sortKey (name) {
+    return name.startsWith("Sv") ? name.slice(2) : name;
 }
 
-async function main (folderPath) {
-  try {
-    const jsFiles = await findJsFiles(folderPath);
-    const allModules = new Map();
+function printHierarchy (hierarchy, classFiles, indent = "") {
+    let out = "";
+    const entries = Object.entries(hierarchy).sort(([a], [b]) => a.localeCompare(b));
+    for (const [name, mod] of entries) {
+        out += `${indent}- ${name}\n`;
+        if (mod.items && mod.items.length > 0) {
+            const sortedItems = mod.items.slice().sort((a, b) => sortKey(a).localeCompare(sortKey(b)));
+            for (const item of sortedItems) {
+                const p = classFiles[item];
+                const link = p ? `[${item}](${composeClassDocUrl(p)})` : item;
+                out += `${indent}  - ${link}\n`;
+            }
+        }
+        if (Object.keys(mod.children).length > 0) {
+            out += printHierarchy(mod.children, classFiles, indent + "  ");
+        }
+    }
+    return out;
+}
+
+function main () {
+    const root = process.argv[2] || ".";
+    const rootAbs = path.resolve(root);
+
+    const jsFiles = findJsFiles(rootAbs);
+    const modules = new Map();
     const classFiles = {};
 
     for (const file of jsFiles) {
-      const content = await fs.readFile(file, 'utf-8');
-      console.log(`Processing file: ${file}`); // Log the file being processed
-      console.log(`File content preview: ${content.slice(0, 100)}...`); // Log the first 100 characters of the file content
-      const modules = parseModules(content, path.basename(file));
-      
-      for (const [moduleName, items] of modules) {
-        if (!allModules.has(moduleName)) {
-          allModules.set(moduleName, new Set());
+        const content = fs.readFileSync(file, "utf8");
+        const classModules = parseFileClassModules(content);
+        const rel = encodeURI(path.relative(rootAbs, file).replace(/\\/g, "/"));
+        for (const { name, module } of classModules) {
+            addToModule(modules, module, name);
+            classFiles[name] = rel;
         }
-        for (const item of items) {
-          allModules.get(moduleName).add(item);
-          classFiles[item] = encodeURI(path.relative(folderPath, file).replace(/\\/g, '/'));
-        }
-      }
     }
 
-    const hierarchy = buildHierarchy(allModules);
-    const markdownHierarchy = printHierarchy(hierarchy, classFiles);
+    const hierarchy = buildHierarchy(modules);
+    const body = printHierarchy(hierarchy, classFiles);
+    const content = `# Modules\n\n${SUBTITLE}\n\n${body}`;
 
-    const markdownContent = `# Modules\n\n${markdownHierarchy}`;
-
-    // Create the output directory if it doesn't exist
-    const outputDir = path.join(folderPath, OUTPUT_DIR);
-    await fs.mkdir(outputDir, { recursive: true });
-
-    // Write the file to the output directory
-    await fs.writeFile(path.join(outputDir, 'module_hierarchy.md'), markdownContent);
-    console.log(`Module hierarchy has been written to ${path.join(OUTPUT_DIR, 'module_hierarchy.md')}`);
-  } catch (error) {
-    console.error('An error occurred:', error);
-  }
+    const outPath = path.join(rootAbs, OUTPUT_REL);
+    fs.mkdirSync(path.dirname(outPath), { recursive: true });
+    fs.writeFileSync(outPath, content);
+    console.log(`wrote ${OUTPUT_REL}`);
 }
 
-const folderPath = process.argv[2] || '.';
-main(folderPath).catch(console.error);
+main();

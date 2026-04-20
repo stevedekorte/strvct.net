@@ -12,9 +12,6 @@
  * - supports drag & drop of images
  */
 
-/**
-
- */
 
 "use strict";
 

@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class SvHeaderTile extends SvTitledTile {
 
     /**

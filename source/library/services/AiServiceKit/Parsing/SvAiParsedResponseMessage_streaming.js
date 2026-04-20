@@ -1,11 +1,11 @@
 "use strict";
 
-/*
-
-    SvAiParsedResponseMessage_streaming
-
-*/
-
+/**
+ * @class SvAiParsedResponseMessage_streaming
+ * @extends SvAiParsedResponseMessage
+ * @classdesc Streaming-response category of SvAiParsedResponseMessage — handles
+ * incremental tag parsing and progressive UI updates as tokens arrive.
+ */
 
 (class SvAiParsedResponseMessage_streaming extends SvAiParsedResponseMessage {
 

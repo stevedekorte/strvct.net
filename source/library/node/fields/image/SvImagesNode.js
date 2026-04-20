@@ -8,9 +8,6 @@
  
  */
 
-/**
-
- */
 (class SvImagesNode extends SvJsonArrayNode {
 
     static jsonSchemaDescription () {

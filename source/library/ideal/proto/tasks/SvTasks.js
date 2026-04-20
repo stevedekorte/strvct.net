@@ -12,10 +12,6 @@
  
  */
 
-/**
-
- */
-
 (class SvTasks extends ProtoClass {
 
     initPrototypeSlots () {

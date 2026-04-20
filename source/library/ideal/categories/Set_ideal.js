@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Set_ideal extends Set {
 
     /**

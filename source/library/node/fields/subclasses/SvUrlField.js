@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvUrlField extends SvField {
 
     /**

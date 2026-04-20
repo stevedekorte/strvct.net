@@ -11,9 +11,6 @@
  
  */
 
-/**
-
- */
 "use strict";
 
 (class SvTilesView_gestures extends SvTilesView {

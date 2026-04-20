@@ -30,10 +30,6 @@
  
  */
 
-/**
-
- */
-
 (class SvTile extends SvNodeView {
 
     initPrototypeSlots () {

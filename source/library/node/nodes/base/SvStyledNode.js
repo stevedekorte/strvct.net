@@ -9,9 +9,6 @@
  * This class is responsible for state and behavior specific to styling of views.
  */
 
-/**
-
- */
 
 "use strict";
 

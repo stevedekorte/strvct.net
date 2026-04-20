@@ -11,10 +11,6 @@
 
  */
 
-/**
-
- */
-
 (class SvPointerField extends SvField {
 
     /**

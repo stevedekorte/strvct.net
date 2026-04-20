@@ -12,9 +12,6 @@
  
  */
 
-/**
-
- */
 (class SvTile_dragging extends SvTile {
 
     /**

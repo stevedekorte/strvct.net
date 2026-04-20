@@ -12,10 +12,6 @@
  
  */
 
-/**
-
- */
-
 (class SvSortedArray extends SvIndexedArray {
 
 

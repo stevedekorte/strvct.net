@@ -8,9 +8,6 @@
  * @classdesc Represents a JSON array node in the object tree.
  */
 
-/**
-
- */
 (class SvJsonArrayNode extends SvJsonNode {
 
     /**

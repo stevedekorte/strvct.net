@@ -10,10 +10,6 @@
  * @classdesc Represents a JSON node in the application. This class handles JSON data and provides methods for parsing and creating nodes from JSON.
  */
 
-/**
-
- */
-
 (class SvJsonNode extends SvJsonIdNode {
 
     /**

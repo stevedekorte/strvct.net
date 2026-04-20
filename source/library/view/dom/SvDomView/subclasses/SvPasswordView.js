@@ -12,10 +12,6 @@
  
  */
 
-/**
-
- */
-
 (class SvPasswordView extends SvTextView {
 
     /**

@@ -3,21 +3,11 @@
 /** * @module library.ideal.collections
  */
 
-/** * @class SvHookedMap
- * @extends Map
- 
- 
- */
-
 /**
-
- * SvHookedMap is a subclass of Map that hooks the base mutation methods.
- *
- * The JS Map object holds key-value pairs and remembers the original insertion order of the keys.
- * For this to work, you need to use method alternatives to the non-method (operator) operations.
- *
+ * @class SvHookedMap
+ * @extends Map
+ * @classdesc SvHookedMap is a subclass of Map that hooks the base mutation methods. The JS Map object holds key-value pairs and remembers the original insertion order of the keys. For this to work, you need to use method alternatives to the non-method (operator) operations.
  */
-
 (class SvHookedMap extends Map {
 
     /**

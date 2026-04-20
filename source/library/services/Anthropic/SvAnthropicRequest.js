@@ -50,9 +50,6 @@
  
  */
 
-/**
-
- */
 (class SvAnthropicRequest extends SvAiRequest {
 
     initPrototypeSlots () {

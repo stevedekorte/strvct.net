@@ -10,10 +10,6 @@
  
  */
 
-/**
-
- */
-
 (class SvImageField extends SvImageWellField {
 
 }).initThisClass();

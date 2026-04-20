@@ -19,9 +19,6 @@
  
  */
 
-/**
-
- */
 (class SvNamespaceSearch extends ProtoClass {
 
     initPrototypeSlots () {

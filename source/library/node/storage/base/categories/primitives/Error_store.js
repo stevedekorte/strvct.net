@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Error_store extends Error {
 
     /**

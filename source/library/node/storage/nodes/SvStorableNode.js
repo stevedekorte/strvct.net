@@ -9,9 +9,6 @@
  * It also hooks didUpdateSlot() to didMutate so SvObjectPool (if observing mutations) gets told it needs to store the change.
  */
 
-/**
-
- */
 (class SvStorableNode extends SvStyledNode {
 
     /**

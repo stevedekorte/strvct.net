@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
 * @class SvToolDefinition_anthropic
 * @extends SvJsonDictionaryNode
 * @classdesc Describes what a tool can do.

@@ -1,10 +1,10 @@
 "use strict";
 
-/*
-
-    @class SvActorMessages
-
-*/
+/**
+ * @class SvActorMessages
+ * @extends SvBaseNode
+ * @classdesc Collection of SvActorMessage instances queued on an actor.
+ */
 
 (class SvActorMessages extends SvBaseNode {
 

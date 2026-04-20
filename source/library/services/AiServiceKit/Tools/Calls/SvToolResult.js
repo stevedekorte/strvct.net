@@ -1,5 +1,5 @@
 "use strict";
-/*
+/**
 * @module library.services.AiServiceKit.Tools.Calls
 * @class SvToolResult
 * @extends SvJsonDictionaryNode

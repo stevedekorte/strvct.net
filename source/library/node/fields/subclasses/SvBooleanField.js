@@ -9,9 +9,6 @@
  * @classdesc SvBooleanField represents a boolean field in the system.
  */
 
-/**
-
- */
 (class SvBooleanField extends SvField {
 
     /**

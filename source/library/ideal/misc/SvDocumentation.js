@@ -12,9 +12,6 @@
  
  */
 
-/**
-
- */
 (class SvDocumentation extends ProtoClass {
     initPrototypeSlots () {
     }

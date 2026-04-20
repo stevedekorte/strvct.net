@@ -25,9 +25,6 @@
  
  */
 
-/**
-
- */
 (class SvFirewallProxy extends SvObservableProxy {
     /**
      * @description Initializes prototype slots

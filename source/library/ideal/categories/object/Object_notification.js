@@ -3,16 +3,10 @@
 /** * @module library.ideal.object
  */
 
-/** * @class Object_notification
- * @extends Object
- 
- 
- */
-
 /**
-
- * Object category to support notification and observation functionality.
- *
+ * @class Object_notification
+ * @extends Object
+ * @classdesc Object category to support notification and observation functionality.
  */
 (class Object_notification extends Object {
 

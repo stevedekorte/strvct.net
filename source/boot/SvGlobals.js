@@ -5,9 +5,10 @@
  */
 
 /**
- * A single function which can be used either from the browser or node.js to get the global object.
- *
- * Notes:
+ * @class SvGlobals
+ * @extends Object
+ * @classdesc Provides a single function that works in both browser and Node.js to obtain
+ * the global object.
  *
  * From: https://developer.mozilla.org/en-US/docs/Glossary/Global_object
  *

@@ -31,10 +31,6 @@
  * - watchOnceForNote(aNote) // typically used to watch for appDidInit
  */
 
-/**
-
- */
-
 (class SvNode extends ProtoClass {
 
     static initClass () {

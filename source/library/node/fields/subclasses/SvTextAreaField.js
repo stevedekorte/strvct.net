@@ -11,9 +11,6 @@
  
  */
 
-/**
-
- */
 (class SvTextAreaField extends SvField {
 
     /**

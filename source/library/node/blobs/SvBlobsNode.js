@@ -11,10 +11,6 @@
  
  */
 
-/**
-
- */
-
 (class SvBlobsNode extends SvStorableNode {
 
     /**

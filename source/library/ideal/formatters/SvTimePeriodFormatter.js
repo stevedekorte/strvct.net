@@ -3,26 +3,10 @@
 /** * @module library.ideal.formatters
  */
 
-/** * @class SvTimePeriodFormatter
- * @extends ProtoClass
- 
- 
- */
-
 /**
-
- * SvTimePeriodFormatter takes a number of seconds and formats it in a compact format.
- *
- * @example
- * const stringVersion = SvTimePeriodFormatter.clone().setValueInSeconds(seconds).formattedValue()
- *
- * @example
- * // Output examples:
- * // if seconds was 10, stringVersion would be 10s.
- * // if seconds was 60, stringVersion would be 1m.
- * // if seconds was 3600, stringVersion would be 1h.
- * // if seconds was 172800, stringVersion would be 2d.
- *
+ * @class SvTimePeriodFormatter
+ * @extends ProtoClass
+ * @classdesc SvTimePeriodFormatter takes a number of seconds and formats it in a compact format. const stringVersion = SvTimePeriodFormatter.clone().setValueInSeconds(seconds).formattedValue() // Output examples: // if seconds was 10, stringVersion would be 10s. // if seconds was 60, stringVersion would be 1m. // if seconds was 3600, stringVersion would be 1h. // if seconds was 172800, stringVersion would be 2d.
  */
 (class SvTimePeriodFormatter extends ProtoClass {
     initPrototypeSlots () {

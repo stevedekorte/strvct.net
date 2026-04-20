@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class SvTile_keyboard extends SvTile {
 
     // --- keyboard controls ---

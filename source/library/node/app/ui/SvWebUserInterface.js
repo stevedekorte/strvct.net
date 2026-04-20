@@ -1,6 +1,6 @@
 "use strict";
 
-/*
+/**
     @class SvWebUserInterface
     @extends SvUserInterface
     @classdesc The SvWebUserInterface class is the user interface class for the web.

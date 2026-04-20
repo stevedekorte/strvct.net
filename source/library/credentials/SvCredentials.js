@@ -11,10 +11,6 @@
  
  */
 
-/**
-
- */
-
 (class SvCredentials extends SvSummaryNode {
 
     static initClass () {

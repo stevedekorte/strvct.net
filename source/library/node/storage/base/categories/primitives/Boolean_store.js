@@ -10,9 +10,6 @@
  
  */
 
-/**
-
- */
 (class Boolean_store extends Boolean {
 
     static instanceFromRecordInStore (aRecord /*, aStore*/) {

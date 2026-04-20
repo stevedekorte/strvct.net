@@ -12,9 +12,6 @@
  
  */
 
-/**
-
- */
 (class ArrayBuffer_ideal extends ArrayBuffer {
 
     /**

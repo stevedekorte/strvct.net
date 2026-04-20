@@ -1,10 +1,10 @@
 "use strict";
 
-/*
-
-    @class SvActorMessage
-
-*/
+/**
+ * @class SvActorMessage
+ * @extends SvBaseNode
+ * @classdesc Represents a single queued message within an actor's asyncMessageQueue.
+ */
 
 (class SvActorMessage extends SvBaseNode {
 

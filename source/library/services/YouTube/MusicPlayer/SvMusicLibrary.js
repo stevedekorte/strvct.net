@@ -11,10 +11,6 @@
  
  */
 
-/**
-
- */
-
 (class SvMusicLibrary extends SvSummaryNode {
 
     initPrototypeSlots () {

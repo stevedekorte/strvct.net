@@ -15,11 +15,6 @@
 
  */
 
-/**
-
- */
-
-
 (class SvFieldTile extends SvTile {
 
     initPrototypeSlots () {
