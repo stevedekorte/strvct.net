@@ -1020,16 +1020,13 @@ Midjourney
             await fileToDownload.asyncFetchIfNeeded();
         }
 
-        return allFilesToDownload.map(fileToDownload => {
-            // console.log("fileToDownload.dataUrl(): " + fileToDownload.dataUrl());
-            return SvImageNode.clone().setDataURL(fileToDownload.dataUrl());
-        });
+        return allFilesToDownload.map(fileToDownload => fileToDownload.imageNode());
     }
 
-    resultImageUrlData () {
-        const image = this.allResultImages().last();
-        if (image) {
-            return image.dataUrl();
+    async resultImageUrlData () {
+        const fileToDownload = this.allResultImages().last();
+        if (fileToDownload) {
+            return await fileToDownload.asyncDataUrl();
         }
         return null;
     }

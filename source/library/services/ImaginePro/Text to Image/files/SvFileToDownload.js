@@ -28,24 +28,6 @@
             slot.setCanEditInspection(false);
         }
 
-        /**
-     * @member {string} imageUrl
-     * @description The data URL of the loaded image for display.
-     * @category Image Data
-     */
-        {
-            const slot = this.newSlot("imageUrl", ""); // this is a passthrough to dataUrl
-            slot.setLabel("Image");
-            slot.setInspectorPath("");
-            slot.setShouldStoreSlot(true);
-            slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("String");
-            slot.setIsSubnodeField(true);
-            slot.setCanEditInspection(false);
-            slot.setFieldInspectorClassName("SvImageWellField"); // This makes it display as an image
-        }
-
         // referer slot
         {
             const slot = this.newSlot("refererUrl", "");
@@ -59,18 +41,18 @@
         }
 
         /**
-     * @member {string} dataUrl
-     * @description The data URL of the loaded image (alias for imageUrl).
+     * @member {SvImageNode} imageNode
+     * @description Blob-backed storage for the downloaded image. Data lives in SvBlobPool; record stores only a hash + public URL.
      * @category Image Data
      */
         {
-            const slot = this.newSlot("dataUrl", "");
-            slot.setInspectorPath("");
+            const slot = this.newSlot("imageNode", null);
+            slot.setFinalInitProto(SvImageNode);
             slot.setShouldStoreSlot(true);
+            slot.setIsSubnodeField(true);
             slot.setSyncsToView(true);
-            slot.setDuplicateOp("duplicate");
-            slot.setSlotType("String");
-            slot.setCanEditInspection(false);
+            slot.setSlotType("SvImageNode");
+            slot.setLabel("Image");
         }
 
         /**
@@ -147,17 +129,6 @@
         this.setNodeCanReorderSubnodes(false);
     }
 
-    setImageUrl (dataUrl) {
-    // this is a passthrough to dataUrl
-        this.setDataUrl(dataUrl);
-        return this;
-    }
-
-    imageUrl () {
-    // this is a passthrough to dataUrl
-        return this.dataUrl();
-    }
-
     /**
    * @description Gets the title for the image.
    * @returns {string} The title.
@@ -194,7 +165,19 @@
    * @category Status
    */
     hasLoaded () {
-        return this.dataUrl().length > 0;
+        return this.imageNode().hasImage();
+    }
+
+    /**
+   * @description Returns the data URL of the loaded image, resolving from the blob pool (or cloud) if needed.
+   * @returns {Promise<string|null>}
+   * @category Image Data
+   */
+    async asyncDataUrl () {
+        if (!this.hasLoaded()) {
+            return null;
+        }
+        return await this.imageNode().asyncDataUrl();
     }
 
     /**
@@ -293,7 +276,7 @@
     }
 
     async asyncFetchIfNeeded () {
-        if (!this.hasDataUrl()) {
+        if (!this.hasLoaded()) {
             await this.asyncFetch();
         }
     }
@@ -304,7 +287,7 @@
    * @category Loading
    */
     onLoaded (dataUrl) {
-        this.setDataUrl(dataUrl);  // Keep for compatibility
+        this.imageNode().setBlobFromDataURL(dataUrl);
         this.setIsLoading(false);
         this.setError(null);
 
@@ -417,45 +400,6 @@
    */
     onRequestComplete (/*request*/) {
     // Final cleanup if needed
-    }
-
-    hasDataUrl () {
-        return this.dataUrl().length > 0;
-    }
-
-    dataUrlType () {
-        if (!this.hasDataUrl()) {
-            return null;
-        }
-        // read the data type from the data url
-        const dataUrl = this.dataUrl();
-        const dataUrlType = dataUrl.split(";")[0].split(":")[1];
-        return dataUrlType;
-    }
-
-    dataUrlMimeType () {
-        if (!this.hasDataUrl()) {
-            return null;
-        }
-        const dataUrlType = this.dataUrlType();
-        const dataUrlMimeType = dataUrlType.split("/")[1];
-        return dataUrlMimeType;
-    }
-
-    dataUrlIsImage () {
-        if (!this.hasDataUrl()) {
-            return false;
-        }
-        const dataUrlType = this.dataUrlType();
-        return dataUrlType.startsWith("image/");
-    }
-
-    asSvImage () {
-        const image = SvImage.clone();
-        assert(this.dataUrl(), "dataUrl is required");
-        assert(this.dataUrlIsImage(), "dataUrl is not an image");
-        image.setDataURL(this.dataUrl());
-        return image;
     }
 
 }.initThisClass());

@@ -396,10 +396,6 @@
         return this;
     }
 
-    resultSvImages () {
-        return this.images().subnodes().map(image => image.asSvImage());
-    }
-
     didUpdateSlotStatus (oldValue, newValue) {
         //debugger;
         this.shareProgress(newValue);

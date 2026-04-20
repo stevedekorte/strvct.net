@@ -37,7 +37,7 @@
             slot.setSlotType("String");
             slot.setLabel("Best Result Image");
             slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(true);
+            slot.setShouldStoreSlot(false); // transient; consumers convert to blob-backed imageNode immediately
             slot.setSyncsToView(true);
             slot.setFieldInspectorClassName("SvImageWellField");
             slot.setCanEditInspection(false);
@@ -124,14 +124,14 @@
             this.imageEvaluators().removeAllSubnodes();
 
             // setup image evaluators
-            this.allResultImages().forEach(fileToDownload => {
+            for (const fileToDownload of this.allResultImages()) {
+                await fileToDownload.asyncFetchIfNeeded();
                 const svImage = SvImage.clone();
-                svImage.setDataURL(fileToDownload.dataUrl());
+                svImage.setDataURL(await fileToDownload.asyncDataUrl());
                 const evaluator = this.imageEvaluators().add();
-                //debugger;
                 evaluator.setSvImage(svImage);
                 evaluator.setImageGenPrompt(this.prompt());
-            });
+            }
 
             this.setStatus("Evaluating images...");
             await this.imageEvaluators().asyncEvaluate(); // evals in parallel
