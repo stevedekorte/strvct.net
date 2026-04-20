@@ -8,6 +8,17 @@ Slots are STRVCT's property system. A property declared as a slot is more than a
 
 Two things often surprise newcomers: the auto-generated setter **type-checks values at runtime** against the declared slot type (warning and attempting recovery on mismatch), and slots can hold **weak references** via `newWeakSlot`, which is the standard way to express back-references and non-owning pointers without creating retain cycles. Both are covered in detail below.
 
+## What a Slot Is
+
+A slot is an instance of the `Slot` class that lives on a class prototype. Each class prototype maintains two maps:
+
+- **`slotsMap()`** — slots defined directly on this class.
+- **`allSlotsMap()`** — all slots from this class and every ancestor, built by walking the prototype chain.
+
+When `initPrototypeSlots()` calls `newSlot("name", defaultValue)`, the framework creates a `Slot` instance, adds it to both maps, and installs a getter (`name()`) and setter (`setName(value)`) on the prototype. The Slot object itself holds all the metadata — type, storage flags, view sync, inspector settings, validation constraints — that the framework's layers read independently.
+
+Subclasses inherit their parent's slots automatically. The framework calls `initPrototypeSlots()` on every class in the hierarchy from base to derived (which is why it should never call `super`), and `allSlotsMap()` accumulates the full set. A subclass can add new slots or call `overrideSlot()` to change an inherited slot's default value while preserving its configuration.
+
 ## Declaration
 
 Slots are declared in a class's `initPrototypeSlots()` method. Each declaration creates a private instance variable (`_slotName`), an auto-generated getter (`slotName()`), and an auto-generated setter (`setSlotName(value)`).

@@ -18,6 +18,9 @@
 - [Accessibility Testing & Tuning](/docs/Future%20Work/Accessibility%20Testing%20%26%20Tuning/): Validating and refining the framework's ARIA implementation across screen readers, devices, and applications.
 - [Async Final Initialization](/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
 - [Async Navigation](/docs/Future%20Work/Async%20Navigation/): Rearchitecting the navigation stack to support asynchronous loading at every level.
+- [Browser Cleanup](/docs/Future%20Work/Browser%20Cleanup/): Simplifying and documenting the browser navigation architecture.
+- [Case Studies](/docs/Future%20Work/Case%20Studies/): Comparative implementations of small applications in STRVCT and conventional stacks.
+- [Cleanup Notes](/docs/Future%20Work/Cleanup%20Notes/): Areas of the codebase that work but could benefit from simplification, documentation, or restructuring.
 - [Complete Protocols](/docs/Future%20Work/Complete%20Protocols/): Formalizing the many undeclared interface contracts throughout the codebase.
 - [Emergent Capabilities](/docs/Future%20Work/Emergent%20Capabilities/): Capabilities that the naked objects architecture makes possible at the framework level.
 - [Graph Database](/docs/Future%20Work/Graph%20Database/): Long-term direction: replacing the current cloud storage backend with a native graph database.
@@ -38,6 +41,7 @@
 - [Persistence Lifecycle](/docs/Lifecycle/Persistence%20Lifecycle/): How objects are stored, loaded, and kept in sync with IndexedDB.
 - [View Synchronization](/docs/Lifecycle/View%20Synchronization/): How views discover nodes, synchronize state, and batch updates efficiently.
 - [Naked Objects](/docs/Naked%20Objects/): Closing the Usability Gap in Naked Objects
+- [Nodes](/docs/Nodes/): The object model at the heart of STRVCT.
 - [Notifications](/docs/Notifications/): Event-driven communication between framework layers using observations, scheduling, and weak references.
 - [Broadcaster](/docs/Notifications/Broadcaster/): Lightweight synchronous dispatch for high-frequency internal events.
 - [Notification Center](/docs/Notifications/Notification%20Center/): Deferred, deduplicated event dispatch with weak-reference cleanup.

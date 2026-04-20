@@ -81,6 +81,14 @@ A tile that renders a numeric slot value as a visual meter, progress bar, or gau
 
 A compact tile optimized for small status indicators -- an icon plus a short label, possibly color-coded by state. Useful for tags, status markers, notification counts, and online/offline indicators. Would pair well with the wrapping grid container for dense displays.
 
+### Document Tile
+
+A tile that composes a node's subnode tree into a rendered document. The subnodes represent the structural elements of a document -- headings, paragraphs, images, code blocks, lists -- each as an independent node with its own metadata. The document tile walks this subtree and renders the composed result inline as formatted HTML or markdown.
+
+The structural editing happens in the normal tile container: subnodes appear as draggable tiles that can be reordered, added, or removed. The document tile provides the complementary view -- the same content rendered as a reader would see it. A node could support both views (structural and composed) via the user-switchable container mechanism described in [Tile Container Views](../Tile%20Container%20Views/index.html), letting the user toggle between editing the structure and previewing the document.
+
+Use cases include blog posts, reports, style guides, documentation pages, and any content where the author benefits from structural manipulation (drag a section to a new position, tag individual blocks with metadata, collapse sections) but the reader needs a coherent rendered document.
+
 ### Embed Tile
 
 A tile that renders an iframe or sandboxed external content. The node provides a URL; the tile handles sizing, loading states, and security boundaries. Useful for embedding external widgets, previews, or third-party content within the node hierarchy.

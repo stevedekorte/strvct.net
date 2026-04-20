@@ -54,6 +54,7 @@ Guides, architecture, and API reference.
 - Naked Objects
 - Technical Overview
 - Implementation Overview
+- Nodes
 - Slots
 - Getting Started
 - Lifecycle
@@ -1139,7 +1140,10 @@ Design ideas, architectural discussions, and potential future improvements.
 - Tile Views
 - Tile Container Views
 - Emergent Capabilities
+- Case Studies
 - Accessibility Testing & Tuning
+- Browser Cleanup
+- Cleanup Notes
 - Async Navigation
 - Graph Database
 
@@ -1384,6 +1388,350 @@ Several other Future Work items intersect with async navigation:
 - **[Graph Database](../Graph%20Database/index.html)** would introduce query-based node retrieval, which naturally produces async results.
 
 If lazy slots and promise-wrapped slots are implemented first, they may provide the async primitives that async navigation builds on -- the slot system handles the data loading, and the navigation stack handles the display timing.
+
+
+---
+
+<!-- Page: docs/Future Work/Browser Cleanup -->
+Source: /docs/Future%20Work/Browser%20Cleanup/
+
+# Browser Cleanup
+
+Simplifying and documenting the browser navigation architecture.
+
+## Current Architecture
+
+The browser is built from four cooperating classes that implement a recursive Miller column navigation pattern:
+
+### SvBrowserView
+
+The top-level container. Extends `SvStackView` and adds application-level concerns: listening for `onRequestNavigateToNode` notifications, handling keyboard shortcuts, and managing the root node hierarchy (app root, settings, breadcrumbs). On startup it schedules `moveToBase()` to set the initial navigation state.
+
+### SvStackView
+
+The core navigation primitive. Each stack view is a pair: a **nav view** on the left (or top) showing the selected node's subnodes as selectable tiles, and an **other view** on the right (or bottom) that contains the next `SvStackView` for deeper navigation. This recursive nesting is what produces the Miller column layout.
+
+Key responsibilities:
+
+- **Path selection**: `selectNodePathArray(pathArray)` walks an array of nodes, selecting one at each level and recursing into the next stack view.
+- **Path reporting**: `selectedNodePathArray()` and `selectedPathTitlesString()` return the current selection path by walking up or down the stack chain.
+- **Direction**: The `direction` slot (`"right"` or `"down"`) controls whether subnodes lay out as side-by-side columns or stacked rows. Nodes set this via `setNodeIsVertical()` -- the stack view reads it and adjusts its flex direction accordingly. The recursive combination of different directions at each level is what distinguishes STRVCT's navigation from a standard Miller column browser.
+- **Compaction**: `updateCompactionChain()` automatically collapses columns that don't fit the available width, showing them as expandable when space is available again.
+- **Notification broadcasting**: When the user selects a tile, `didChangeNavSelection()` propagates up to the root, which posts `onStackViewPathChangeNote` for breadcrumbs and other observers.
+
+### SvNavView
+
+An individual navigation column within a stack view. Contains a header, a scrollable tile container (`SvTilesView`), and a footer. When assigned a node via `setNode()`, it populates the tiles view with that node's subnodes.
+
+Additional features:
+
+- **Gesture-based resizing**: Users can drag the right or bottom edge to resize the column. The new size is stored on the node (`nodeMinTileWidth` / `nodeMinTileHeight`), so it persists across navigation.
+- **Collapse / uncollapse**: The compaction system can hide a nav view entirely when space is tight, replacing it with a back-navigation affordance.
+- **Orientation sync**: Reads the parent stack view's direction and adjusts its own layout accordingly.
+
+### SvBreadCrumbsTile
+
+Displays the current navigation path as a row of clickable buttons. Coordinates with the stack view entirely through notifications:
+
+1. Observes `onStackViewPathChangeNote` from the root stack view.
+2. Reads `targetStackView().selectedNodePathArray()` to get the current path.
+3. Builds a button for each node in the path, storing the path-up-to-that-point in each button's `.info()`.
+4. On click, calls `targetStackView().selectNodePathArray()` with the stored path to navigate back.
+
+The breadcrumbs also compact: when the path is too long to fit, earlier crumbs are hidden and a back arrow appears that navigates to the most recent hidden crumb.
+
+## Navigation Flow
+
+When the user clicks a tile:
+
+1. `SvTilesView` selects the tile and notifies its `SvNavView`.
+2. The nav view's parent `SvStackView` calls `didChangeNavSelection()`.
+3. This propagates up to the root stack view, which posts `onStackViewPathChangeNote`.
+4. `SvBreadCrumbsTile` receives the notification and rebuilds its path buttons.
+5. The next `SvStackView` in the chain receives the selected node and populates its nav view.
+
+When the user clicks a breadcrumb:
+
+1. `SvBreadCrumbsTile` reads the stored path array from the clicked button.
+2. Calls `selectNodePathArray()` on the root stack view.
+3. The stack chain recursively selects each node in the path, collapsing deeper levels.
+4. The resulting path change triggers `onStackViewPathChangeNote`, and breadcrumbs update.
+
+## Cleanup Opportunities
+
+The browser navigation works well but has accumulated complexity over time. Areas to consider:
+
+### Clearer separation of concerns
+
+`SvStackView` handles direction, compaction, path selection, and notification broadcasting. Some of these could be factored into smaller, more focused collaborators -- for example, a compaction manager or a path selection coordinator.
+
+### Compaction logic
+
+The column compaction system spans `SvStackView` and `SvNavView` with mutual callbacks. Documenting or simplifying the compaction protocol would make it easier to extend (e.g., for mobile breakpoints or animation).
+
+### Navigation API surface
+
+`selectNodePathArray()`, `navigateToNode()`, `selectNodePathString()`, and `moveToBase()` all navigate but through different entry points. A unified navigation interface would reduce the number of paths through the code.
+
+### Mobile and responsive behavior
+
+The compaction system provides basic responsive behavior, but a dedicated mobile navigation mode (e.g., single-column with swipe gestures) could replace the current approach of compacting columns until they fit.
+
+### Composable breadcrumbs
+
+Breadcrumbs are not built into the browser view — they're a regular node (`SvBreadCrumbsTile`) added to the node tree. But the tile currently finds its target by walking up to the root `SvStackView`, so only one set of breadcrumbs can exist per browser. This breaks down when a split view or inspector pane contains its own nested stack view that the user navigates independently. That inner pane needs its own breadcrumbs tracking its own path, not the root's.
+
+A concrete example: during a game narration conversation, a side panel could let the player inspect their character sheet — drilling into inventory, spells, ability scores — without navigating away from the conversation. That panel would be its own stack view with its own breadcrumbs, independent of the main browser path.
+
+The fix is to make breadcrumbs composable: instead of always targeting the root stack view, the breadcrumbs node should target the nearest ancestor stack view (or a specifically assigned one). This would let any stack view — whether it's the top-level browser, one side of a split view, or a deep inspector panel — have its own independent navigation context with its own breadcrumb trail.
+
+### Auxiliary view
+
+A node could declare an auxiliary node that the view system renders as a side panel with its own independent navigation context. The auxiliary panel would be a full stack view — the user can drill into nested content within it — but scoped and constrained by hints from the primary node.
+
+```javascript
+this.setNodeAuxiliaryNode(this.characterSheet());
+this.setNodeAuxiliaryPosition("right");           // or "bottom"
+this.setNodeAuxiliaryDefaultState("expanded");    // or "collapsed"
+this.setNodeAuxiliaryCompactsFirst(true);         // collapse auxiliary before main columns
+this.setNodeAuxiliaryMaxColumns(2);               // cap drill-in depth within the panel
+```
+
+This stays declarative — the node says what it wants, the view system handles layout. The auxiliary side is a fully independent navigation context with its own breadcrumbs (once breadcrumbs are composable), its own selection, and its own internal compaction. No changes to the main selection model.
+
+The `maxColumns` hint is important for space management. A conversation node knows it only needs a narrow inspector — one or two columns to peek at the character sheet. Once the user drills past the limit, deeper navigation replaces the last column rather than adding a new one.
+
+### Compaction with auxiliary views
+
+The current compaction algorithm walks the stack chain and collapses columns that don't fit the available width. Auxiliary views add a new dimension to this because column compaction (horizontal, across navigation levels) and auxiliary compaction (within a single level's content area) are orthogonal.
+
+The compaction sequence would become:
+
+1. **Auxiliary internal compaction**: If the auxiliary panel has more columns than fit its allotted width, collapse its inner columns first (using the existing compaction logic, scoped to the auxiliary stack view).
+2. **Auxiliary collapse**: If still too tight, collapse the auxiliary panel entirely — to a toggle button, thin strip, or hidden — freeing its width for the main content.
+3. **Main column compaction**: If the main stack chain still doesn't fit, run the existing column compaction on the primary columns.
+
+Expanding works in reverse: as width becomes available, the main columns uncollapse first, then the auxiliary panel reappears, then the auxiliary's internal columns expand.
+
+Node hints control priority: `auxiliaryCompactsFirst` (default `true`) means the auxiliary gives up space before any main columns. A node could set this to `false` if the auxiliary content is more important than the surrounding navigation context — though that would be unusual.
+
+This approach requires no fundamental changes to the compaction algorithm itself. The auxiliary panel's internal compaction is just a smaller instance of the same algorithm running on a scoped stack view. The new work is the coordination layer that decides the order of compaction across the two contexts.
+
+
+---
+
+<!-- Page: docs/Future Work/Case Studies -->
+Source: /docs/Future%20Work/Case%20Studies/
+
+# Case Studies
+
+Comparative implementations of small applications in STRVCT and conventional stacks.
+
+## Purpose
+
+The naked objects pattern makes strong claims about development efficiency: the framework generates views from models, so developers write less code, and cross-cutting concerns like accessibility and persistence come automatically. These claims are testable.
+
+Each case study would implement the same application in STRVCT and in a conventional React stack (React + React Router + a state library + a component library), built by LLMs under identical conditions. The comparison would measure:
+
+- **Development effort** -- rounds of prompting, debugging iterations, total token usage
+- **Code volume** -- lines of code, number of files, boilerplate ratio
+- **Correctness** -- bugs found in manual testing, edge cases handled or missed
+- **Accessibility** -- ARIA coverage without explicit effort, screen reader usability
+- **Persistence and sync** -- how much code is required for local storage and cross-device sync
+- **Time to feature** -- how quickly a new feature can be added to the existing app
+
+Multiple LLMs could run the same studies independently to control for model-specific strengths.
+
+## Core Requirements
+
+Every case study app must meet these baseline requirements, because they represent what users expect from a real, useful application:
+
+- **Local persistence** -- data survives page refresh and browser restart
+- **Cloud sync** -- data is available across devices via authenticated user accounts
+- **Accessibility** -- correct ARIA roles, labels, and states on all interactive elements; keyboard-navigable
+- **Drag-to-reorder** -- lists that have a user-meaningful order support drag reordering
+
+These features are often omitted from small apps not because users don't want them, but because the tools make them expensive to implement. A fair comparison should include them precisely because they reveal where framework design choices reduce or increase the cost of building what users actually need.
+
+## Candidate Applications
+
+Each app is small enough to build in a single session but non-trivial enough to exercise real framework features: persistence, cloud sync, navigation, editing, validation, and multiple data types.
+
+### 1. Contacts
+
+A personal contacts manager. Each contact has structured fields (name, phone numbers, email addresses, physical address, birthday, notes) with the ability to add multiple entries per field type. Contacts are grouped, searchable, and persisted with cross-device sync. Exercises: nested data structures, multiple field types, search/filtering, persistence, list navigation.
+
+### 2. Photo Gallery
+
+A personal photo gallery with albums containing images. Users upload images (with drag-and-drop), which are stored as blobs with generated thumbnails. Each image has a caption, tags, and date taken. Albums display as a grid of thumbnails; selecting an image opens a detail view. Images are drag-reorderable within albums. Supports bulk upload. Exercises: binary blob storage and retrieval, image upload and thumbnail generation, grid layout, lazy loading, media-heavy UI, drag-to-reorder in a grid context, tagging and filtering.
+
+### 3. Project Tracker
+
+A lightweight project management tool with projects containing tasks. Each task has a title, description, status (todo/in-progress/done), priority, due date, and assignee. Tasks can be drag-reordered within status groups. Exercises: enum fields (status, priority), date handling, drag-to-reorder, grouping/filtering by property, multiple navigation levels (project → task list → task detail).
+
+### 4. Discussion Forum
+
+A multi-user discussion forum with boards, threads, and posts. Users create accounts, post in threads, and see content from other users in real time. Thread authors can edit or delete their own posts; board-level moderation controls allow designated admins to remove content. Threads sort by latest activity; posts are chronological within a thread. Posts support basic formatting (markdown or simple HTML). Exercises: shared mutable state across users, authentication and per-user permissions, real-time updates from other users, threading/nesting, rich text input, moderation controls.
+
+### 5. Knowledge Base
+
+A personal wiki for organizing notes, ideas, and reference material. Each entry has a title, rich text body (headings, bold, italic, lists, code blocks), tags, and creation/modification timestamps. Entries can link to other entries via wiki-style cross-references (`[[Entry Title]]`), forming a navigable graph. A backlinks section on each entry shows all entries that reference it. Full-text search across all entries. Exercises: rich text editing, cross-referencing and link resolution, backlink computation, tagging, full-text search, deep content hierarchy.
+
+### 6. Bookmark Manager
+
+
+A hierarchical bookmark organizer with folders, tags, and full-text search. Each bookmark has a URL, title, description, tags, and a timestamp. Folders can nest arbitrarily. Bookmarks are drag-reorderable within folders. Supports import from a simple format. Exercises: recursive hierarchy (nested folders), tagging system, full-text search, URL validation, drag-to-reorder, bulk import, deep navigation.
+
+## Study Design
+
+### Environment
+
+Each implementation starts from the same written specification. The LLM receives the app spec and the relevant framework documentation (STRVCT docs or React/library docs) and builds the app through iterative prompting. No human code review or correction during the build -- the LLM debugs its own errors.
+
+### Metrics
+
+| Metric | What it measures |
+|---|---|
+| Prompt rounds | Number of user→LLM turns to reach a working app |
+| Debug iterations | Turns spent fixing errors vs. building new features |
+| Token usage | Total input + output tokens consumed |
+| Lines of code | Final app size excluding framework/library code |
+| File count | Number of source files in the final app |
+| ARIA coverage | Percentage of interactive elements with correct ARIA roles and states |
+| Persistence + sync code | Lines dedicated to storage and cloud sync (annotations vs. explicit read/write) |
+| Feature addition | Effort to add a specified new feature after initial completion |
+
+### Controls
+
+- Same app spec, same acceptance criteria
+- Same LLM model (or multiple models run independently)
+- React stack chosen to be representative, not strawman: current React with hooks, a mainstream router, and a widely-used component library
+- React implementations may use any third-party libraries (drag-and-drop, Firebase SDK, accessibility utilities) -- the total effort including library integration is part of the measurement
+- Each app tested against the same manual test checklist
+
+
+---
+
+<!-- Page: docs/Future Work/Cleanup Notes -->
+Source: /docs/Future%20Work/Cleanup%20Notes/
+
+# Cleanup Notes
+
+Areas of the codebase that work but could benefit from simplification, documentation, or restructuring.
+
+## View Compaction Algorithm
+
+The column compaction system (`updateCompactionChain()` on `SvStackView`, `collapse()` / `uncollapse()` on `SvNavView`) is spread across multiple classes with mutual callbacks. It works, but the protocol between the classes is implicit and hard to follow.
+
+Opportunities:
+
+- **Extract a compaction coordinator**: The logic for measuring available width, deciding which columns to collapse, and triggering collapse/uncollapse could live in a dedicated object rather than being distributed across `SvStackView` and `SvNavView`.
+- **Clarify the compaction protocol**: Document the contract — what triggers compaction, what order columns are compacted in, how a column signals that it can't compact further, and how expansion reverses the process.
+- **Support compaction priorities**: Currently all columns compact uniformly. A priority system (some columns resist compaction longer than others) would be useful for auxiliary views (see [Browser Cleanup](../Browser%20Cleanup/index.html)) and for nodes that consider their content more important than their siblings.
+- **Animation**: Column collapse/expand is instant. Animating the transitions would make the responsive behavior feel more polished and help the user track what moved.
+
+## Notification Naming Conventions
+
+The framework uses string-based notification names (e.g., `onStackViewPathChangeNote`, `onRequestNavigateToNode`). These are scattered across the codebase as string literals. A cleanup pass could:
+
+- Collect notification names as constants on the classes that post them.
+- Document which classes post and which observe each notification.
+- Identify notifications that are no longer used.
+
+## View Class Discovery
+
+The naming-convention approach to view discovery (`ClassName` → `ClassNameView`) is elegant but can be surprising when it doesn't find a match. Logging or tooling that shows which view class was selected for a given node — and why — would help debugging.
+
+## Slot Hooks
+
+`Slot.js` (1,962 lines) has a TODO in the source: "hooks code is a mess, need to cleanup and modularize." The hook system (`onWillGet`, `onDidUpdate`, `onUndefinedGet`, etc.) is set up and torn down across scattered code paths that are hard to trace. The file also bundles storage configuration, inspector settings, and validation logic alongside the hooks.
+
+The category pattern could help here — splitting into `Slot_hooks.js`, `Slot_storage.js`, `Slot_inspection.js` would separate concerns without changing the public API.
+
+## SvCssDomView
+
+`SvCssDomView.js` (3,125 lines) contains 100+ CSS property getter/setter methods plus commented-out code for a push/pop attribute stack pattern that appears to be an incomplete refactoring.
+
+Opportunities:
+
+- **Generate or group CSS accessors**: The property methods are repetitive. They could be generated from a property list or grouped into categories (`SvCssDomView_layout.js`, `SvCssDomView_typography.js`, etc.).
+- **Remove or finish the push/pop code**: The commented-out sections should either be completed or removed to reduce noise.
+
+## Notification Center Indexing
+
+`SvNotificationCenter.js` has TODO comments about adding dictionary indexes for observation lookup. The current implementation searches through all observations for each notification post — O(n) in the number of active observations. Adding an index by notification name (and optionally by target) would improve performance as the number of observers grows.
+
+## Theme Value Generation
+
+`SvThemeState.js` generates value arrays (letter spacing, line height, padding, colors) on every access with no caching. Methods like `validLetterSpacingValues()` allocate 50+ strings per call. Caching the generated arrays as class-level properties would eliminate repeated allocations.
+
+## Boot Loader Ordering
+
+`SvBootLoader.js` loads 39 files in a hardcoded array where ordering is critical — dependencies between files are documented only by comments like "important that this be after SvIndexedDbFolder/Tx so it can be used." Adding or reordering files requires understanding implicit dependencies across the entire list.
+
+A more robust approach could be an explicit dependency manifest or topological sort, so the boot system validates its own ordering rather than relying on array position.
+
+## Unused File Sprawl
+
+The framework has 71 files across 34 `_unused/` directories scattered throughout the source tree. While the `_unused/` convention keeps dead code out of the build, the files add cognitive overhead when exploring the codebase. Consolidating them into a single archive directory (or removing them entirely, since git history preserves them) would reduce noise.
+
+## ObjectPool Recursive GC
+
+`SvObjectPool.markPid()` uses recursion to walk the object graph during garbage collection. Deep object hierarchies (a long chain of parent→child relationships) could overflow the stack. The code has a TODO acknowledging this: "rewrite to not use recursion in order to avoid stack depth limit." Converting to an iterative depth-first search with an explicit stack would eliminate the risk.
+
+A related TODO at line 1574 notes an uninvestigated issue: "investigate why isInTx() is still true after promiseCommit()." This could indicate a transaction state leak in edge cases.
+
+## Schema Migration
+
+The persistence system supports class renames via `classNameConversionMap()` but has no support for slot type changes (e.g., a slot that was a `String` becoming a `Number`), custom migration logic, or schema versioning. When a stored record has a slot that no longer exists on the class, it's silently dropped and the object is re-saved — safe, but one-directional.
+
+Adding optional version metadata to records and a migration hook (e.g., `migrateRecord(record, fromVersion)`) would make schema evolution more predictable, especially for cloud-synced data where old clients might encounter records from newer schemas.
+
+## IndexedDB Browser/Server Duplication
+
+`SvIndexedDbFolder.js` exists in both `browser-only/` (851 lines) and `server-only/` (423 lines), as does `SvIndexedDbTx.js` (418 and 433 lines respectively). Much of the interface and logic is shared. Extracting a common base class or shared module would reduce the maintenance surface and ensure behavioral consistency across environments.
+
+## Model/View Separation
+
+A few model-layer classes contain view-specific code. `SvgIconNode.js` has a TODO: "this view stuff probably shouldn't be in the model." Keeping view logic out of model classes is core to the naked objects pattern — the framework should generate views from model declarations, not have models manipulate views directly.
+
+A cleanup pass to identify and extract view code from model classes would reinforce the architecture's clean separation.
+
+## Commented-Out Code
+
+Several files contain substantial blocks of commented-out code that should be either completed or removed:
+
+- `SvJsonGroup.js` — 50 lines of commented-out lazy loading infrastructure (`hasBeenLoaded` slot, deferred initialization). Either finish the feature or remove the scaffolding.
+- `SvCssDomView.js` — push/pop attribute stack pattern (noted above).
+- `SvResourceManager.js` — alternative parallel loading approach.
+- `SvNode.js` — multiple "TODO: remove after debugging" comments marking leftover debug code.
+
+Git history preserves these experiments. Removing them from the working tree reduces noise for developers reading the code.
+
+## Error Handling Consistency
+
+Error handling varies across the codebase with no unified strategy:
+
+- Some code uses `console.error()` with emoji prefixes.
+- Some augments errors with context properties (e.g., `evalError.evalPath = path`).
+- Some throws custom error types (`SvJsonPatchError`).
+- Some silently catches and logs.
+
+A consistent pattern — whether that's a framework error class, a standard augmentation approach, or a centralized error handler — would make errors more predictable and easier to trace in production.
+
+## Resource Manager Concerns
+
+`SvResourceManager.js` mixes resource loading orchestration with UI progress updates. Methods like `promiseLoadCamIfNeeded()` and `evalIndexResources()` directly call into `SvBootLoadingView` for progress bars and status messages. These UI updates could be notifications instead, letting the loading view observe progress without the resource manager knowing about it.
+
+## Stale TODOs
+
+The codebase has ~170 TODO/FIXME comments. Many are useful markers for future work, but some appear stale:
+
+- **Resolved patterns**: Several TODOs ask "hasOwnProperty?" in `Slot.js` — the project standard is `Object.hasOwn()`, which the code already uses. These TODOs can be removed.
+- **Debug leftovers**: `SvNode.js` has multiple "remove after debugging" TODOs marking commented-out assertions and `cleanSubnodes()` calls.
+- **Incomplete markers**: Several files have bare `// TODO:` with no description. These should either be filled in with context or removed.
+
+A pass through the TODO list to resolve stale items and add context to vague ones would make the remaining TODOs more useful as a work backlog.
 
 
 ---
@@ -2250,6 +2598,14 @@ A tile that renders a numeric slot value as a visual meter, progress bar, or gau
 ### Badge / Status Tile
 
 A compact tile optimized for small status indicators -- an icon plus a short label, possibly color-coded by state. Useful for tags, status markers, notification counts, and online/offline indicators. Would pair well with the wrapping grid container for dense displays.
+
+### Document Tile
+
+A tile that composes a node's subnode tree into a rendered document. The subnodes represent the structural elements of a document -- headings, paragraphs, images, code blocks, lists -- each as an independent node with its own metadata. The document tile walks this subtree and renders the composed result inline as formatted HTML or markdown.
+
+The structural editing happens in the normal tile container: subnodes appear as draggable tiles that can be reordered, added, or removed. The document tile provides the complementary view -- the same content rendered as a reader would see it. A node could support both views (structural and composed) via the user-switchable container mechanism described in [Tile Container Views](../Tile%20Container%20Views/index.html), letting the user toggle between editing the structure and previewing the document.
+
+Use cases include blog posts, reports, style guides, documentation pages, and any content where the author benefits from structural manipulation (drag a section to a new position, tag individual blocks with metadata, collapse sections) but the reader needs a coherent rendered document.
 
 ### Embed Tile
 
@@ -4109,6 +4465,260 @@ The challenge remains making the general method good enough that hand-crafted sp
 
 ---
 
+<!-- Page: docs/Nodes -->
+Source: /docs/Nodes/
+
+# Nodes
+
+The object model at the heart of STRVCT.
+
+## Overview
+
+Nodes are the central abstraction in STRVCT. Every piece of application state -- a user, a document, a settings panel, a list of items -- is a node. Nodes form a tree: each node has a parent and an ordered array of subnodes. The framework generates the entire UI from this tree, so understanding nodes is understanding how STRVCT applications are structured.
+
+A node is not a UI component. It's a model object that declares its data (via [slots](../Slots/index.html)), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's [view system](../Views/index.html) reads this information and generates the appropriate UI automatically.
+
+## The Node Hierarchy
+
+STRVCT provides a single inheritance chain of node classes. Each level adds a specific capability:
+
+| Class | Adds | Typical usage |
+|---|---|---|
+| `SvNode` | Subnode management, parent/owner relationships | Base class -- rarely used directly |
+| `SvTitledNode` | Title, subtitle, note, ARIA methods, path navigation | Nodes that need display labels |
+| `SvTranslatableNode` | Per-node translation cache for i18n | Automatic -- all nodes below inherit this |
+| `SvInspectableNode` | Inspector generation from slot metadata, subnode fields | Automatic -- enables the debug inspector |
+| `SvViewableNode` | View class selection, layout direction, tile preferences | Nodes that appear in the UI |
+| `SvStyledNode` | Theme class name | Nodes with custom styling |
+| `SvStorableNode` | Persistence, dirty tracking, mutation notifications | Nodes that persist to storage |
+| `SvSummaryNode` | Configurable summary format, children summary | Most application model classes |
+
+Application classes typically extend `SvSummaryNode` or `SvStorableNode`. The intermediate classes exist to cleanly separate concerns but are rarely extended directly.
+
+## Subnodes
+
+Every node has an ordered array of subnodes accessed via `subnodes()`. This array is the primary structural relationship in STRVCT -- it defines the tree that the UI renders.
+
+```javascript
+// Adding subnodes
+parentNode.addSubnode(childNode);
+parentNode.addSubnodeAt(childNode, 0);  // insert at index
+
+// Querying
+parentNode.subnodeCount();
+parentNode.subnodeAt(2);
+parentNode.indexOfSubnode(childNode);
+parentNode.hasSubnode(childNode);
+
+// Removing
+parentNode.removeSubnode(childNode);
+
+// Reordering
+parentNode.moveSubnodesToIndex([nodeA, nodeB], 3);
+```
+
+When subnodes change, the framework automatically updates the UI through the [notification system](../Notifications/index.html). No manual view refresh is needed.
+
+### Subnodes vs. Subnode Fields
+
+There are two ways a node can have children in the UI:
+
+**Stored subnodes** (`setIsSubnode(true)`) are persistent children in the subnodes array. They're used for collections of similar items -- a list of contacts, a folder of bookmarks. The parent typically sets `setShouldStoreSubnodes(true)` so the array persists.
+
+**Subnode fields** (`setIsSubnodeField(true)`) are slots that appear as navigable tiles in the UI but live in the parent's slot, not in the subnodes array. They're used for structured properties of an object -- a contact's address, a character's inventory. The slot value is the child node; it appears in the UI as a tile you can drill into.
+
+```javascript
+// Collection pattern -- stored subnodes
+(class Contacts extends SvStorableNode {
+    initPrototype () {
+        this.setShouldStoreSubnodes(true);
+        this.setSubnodeClasses([Contact]);
+    }
+}.initThisClass());
+
+// Structured object pattern -- subnode fields
+(class Contact extends SvStorableNode {
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("address", null);
+            slot.setFinalInitProto(Address);
+            slot.setIsSubnodeField(true);
+        }
+    }
+    initPrototype () {
+        this.setShouldStoreSubnodes(false);
+    }
+}.initThisClass());
+```
+
+## Title, Subtitle, and Note
+
+`SvTitledNode` provides three display properties that tiles read to populate their content:
+
+| Property | Purpose | Tile usage |
+|---|---|---|
+| `title()` | Primary label | Displayed as the main text in `SvTitledTile` |
+| `subtitle()` | Secondary label or summary | Displayed below the title |
+| `note()` | Badge or indicator | Displayed as a trailing annotation |
+
+These are the most commonly overridden methods on application nodes:
+
+```javascript
+(class Character extends SvSummaryNode {
+    title () {
+        return this.name() || "Unnamed Character";
+    }
+
+    subtitle () {
+        return `Level ${this.level()} ${this.characterClass()}`;
+    }
+}.initThisClass());
+```
+
+### Automatic Counts
+
+`SvTitledNode` supports showing the subnode count as the subtitle or note without custom code:
+
+```javascript
+initPrototype () {
+    this.setSubtitleIsSubnodeCount(true);  // subtitle shows "3 items"
+    // or
+    this.setNoteIsSubnodeCount(true);      // note shows the count
+}
+```
+
+### Summary System
+
+`SvSummaryNode` extends the display system with a configurable summary format. A node can declare how its title and value combine into a summary string, and whether its subtitle should be composed from its children's summaries:
+
+```javascript
+initPrototype () {
+    this.setSummaryFormat("key: value");
+    this.setNodeSubtitleIsChildrenSummary(true);
+}
+```
+
+The `summaryFormat` options are: `"none"`, `"key"`, `"value"`, `"key value"`, `"value key"`, `"key: value"`.
+
+The summary is composed from two overridable methods:
+
+| Method | Default | Override when... |
+|---|---|---|
+| `summaryKey()` | Returns `title()` | The summary label should differ from the display title |
+| `summaryValue()` | Returns `subtitle()` | The summary value should differ from the display subtitle |
+
+`summary()` formats the key and value according to `summaryFormat` and returns the result. `childrenSummary()` joins each subnode's `summary()` into a single string -- this is what `nodeSubtitleIsChildrenSummary` displays.
+
+The summary system is used when a parent node composes a one-line description from its children -- for example, a character's ability scores displayed as a subtitle on the parent node.
+
+## View Preferences
+
+Nodes don't create views directly, but they declare preferences that the view system reads:
+
+### Layout Direction
+
+```javascript
+this.setNodeIsVertical(true);   // subnodes lay out top-to-bottom (default)
+this.setNodeIsVertical(false);  // subnodes lay out left-to-right
+```
+
+This controls the direction of the tile container when displaying this node's subnodes. Vertical nodes produce a scrollable list; horizontal nodes produce side-by-side columns. The recursive combination of vertical and horizontal nodes at different levels of the tree is what gives STRVCT its [Miller column](../Inspirations/index.html) navigation pattern.
+
+### Custom View and Tile Classes
+
+```javascript
+// Use a specific view class for this node
+this.setNodeViewClassName("MyCustomNodeView");
+
+// Use a specific tile class when this node appears as a subnode
+this.setNodeTileClassName("SvImageTile");
+```
+
+If no custom class is specified, the framework searches up the class hierarchy for a matching view class by naming convention (`ClassName` → `ClassNameView`).
+
+### Tile Behavior
+
+```javascript
+this.setNodeTileIsSelectable(true);     // tile can be selected/drilled into
+this.setNodeCanReorderSubnodes(true);   // subnodes support drag-to-reorder
+this.setNodeCanAddSubnode(true);        // user can add new subnodes
+this.setCanDelete(true);               // node can be deleted by the user
+this.setNodeMinTileHeight(80);          // minimum tile height in pixels
+```
+
+## Persistence
+
+`SvStorableNode` integrates with the [persistence system](../Persistence/index.html). Nodes that extend it are automatically stored to IndexedDB and can sync to the cloud. The key configuration is which slots to persist:
+
+```javascript
+initPrototypeSlots () {
+    {
+        const slot = this.newSlot("name", "");
+        slot.setSlotType("String");
+        slot.setShouldStoreSlot(true);  // this slot persists
+    }
+}
+initPrototype () {
+    this.setShouldStore(true);          // this node class persists
+    this.setShouldStoreSubnodes(true);  // subnode array persists
+}
+```
+
+When a stored slot changes (via its setter), `SvStorableNode` automatically calls `didMutate()` to mark the node as dirty for the next persistence commit. No manual save calls are needed.
+
+## Creating Application Nodes
+
+A typical application node:
+
+```javascript
+(class Bookmark extends SvSummaryNode {
+
+    static jsonSchemaDescription () {
+        return "A saved web bookmark with URL, title, and tags";
+    }
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("url", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+        }
+        {
+            const slot = this.newSlot("bookmarkTitle", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+        }
+        {
+            const slot = this.newSlot("tags", null);
+            slot.setFinalInitProto(SvJsonArrayNode);
+            slot.setIsSubnodeField(true);
+        }
+    }
+
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanEditTitle(true);
+    }
+
+    title () {
+        return this.bookmarkTitle() || "Untitled Bookmark";
+    }
+
+    subtitle () {
+        return this.url();
+    }
+
+}.initThisClass());
+```
+
+This declares three slots (two stored strings, one subnode field for tags), configures persistence, and overrides `title()` and `subtitle()` to control how the bookmark appears as a tile. The framework handles view generation, persistence, ARIA attributes, and i18n support automatically.
+
+
+---
+
 <!-- Page: docs/Notifications -->
 Source: /docs/Notifications/
 
@@ -4814,22 +5424,16 @@ Since blobs and objects are stored in separate databases, garbage collection req
 
 ```
 SvObjectPool.asyncCollectBlobs()
-        ↓
+    ↓
 SvObjectPool.allBlobHashesSet()
-        ↓
-    ┌───────────────────────────────────────┐
-    │  for each object in allObjects():     │
-    │    if object.referencedBlobHashesSet: │
-    │      hashesSet.addAll(object.referencedBlobHashesSet()) │
-    └───────────────────────────────────────┘
-        ↓
+    for each object in allObjects():
+        if object.referencedBlobHashesSet:
+            hashesSet.addAll(object.referencedBlobHashesSet())
+    ↓
 SvBlobPool.asyncCollectUnreferencedKeySet(hashesSet)
-        ↓
-    ┌───────────────────────────────────────┐
-    │  allKeys = await idb.promiseAllKeys() │
-    │  orphans = allKeys.difference(hashesSet) │
-    │  await idb.promiseRemoveKeySet(orphans) │
-    └───────────────────────────────────────┘
+    allKeys = await idb.promiseAllKeys()
+    orphans = allKeys.difference(hashesSet)
+    await idb.promiseRemoveKeySet(orphans)
 ```
 
 ### Implementation Details
@@ -7693,6 +8297,17 @@ The property system: declaration, annotations, and the most common slot settings
 Slots are STRVCT's property system. A property declared as a slot is more than a value holder — it carries metadata that each framework layer (UI, storage, validation, JSON schema) reads independently. That metadata is what lets the framework auto-generate forms, persist state, sync views, and produce JSON schemas without per-property glue code.
 
 Two things often surprise newcomers: the auto-generated setter **type-checks values at runtime** against the declared slot type (warning and attempting recovery on mismatch), and slots can hold **weak references** via `newWeakSlot`, which is the standard way to express back-references and non-owning pointers without creating retain cycles. Both are covered in detail below.
+
+## What a Slot Is
+
+A slot is an instance of the `Slot` class that lives on a class prototype. Each class prototype maintains two maps:
+
+- **`slotsMap()`** — slots defined directly on this class.
+- **`allSlotsMap()`** — all slots from this class and every ancestor, built by walking the prototype chain.
+
+When `initPrototypeSlots()` calls `newSlot("name", defaultValue)`, the framework creates a `Slot` instance, adds it to both maps, and installs a getter (`name()`) and setter (`setName(value)`) on the prototype. The Slot object itself holds all the metadata — type, storage flags, view sync, inspector settings, validation constraints — that the framework's layers read independently.
+
+Subclasses inherit their parent's slots automatically. The framework calls `initPrototypeSlots()` on every class in the hierarchy from base to derived (which is why it should never call `super`), and `allSlotsMap()` accumulates the full set. A subclass can add new slots or call `overrideSlot()` to change an inherited slot's default value while preserving its configuration.
 
 ## Declaration
 

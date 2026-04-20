@@ -111,7 +111,7 @@ function findLayoutPages (dir) {
 // Generate static HTML for a single page
 // ---------------------------------------------------------------------------
 
-async function generatePage (pageDir) {
+async function generatePage (pageDir, siteUrl) {
     const relPath = relative(siteRoot, pageDir) || ".";
     const pathSegments = relPath === "."
         ? []
@@ -173,8 +173,66 @@ async function generatePage (pageDir) {
         html = html.replace(/<\/head>/i, `  ${llmsLinkTag}\n</head>`);
     }
 
+    // Canonical URL — directory form, not index.html
+    if (siteUrl && siteUrl !== "/") {
+        const urlPath = relPath === "."
+            ? ""
+            : relPath.split(sep).map(s => encodeURIComponent(s)).join("/") + "/";
+        const canonicalUrl = siteUrl + urlPath;
+        const canonicalTag = `<link rel="canonical" href="${canonicalUrl}">`;
+        if (html.includes('rel="canonical"')) {
+            html = html.replace(/<link rel="canonical"[^>]*>/, canonicalTag);
+        } else {
+            html = html.replace(/<\/head>/i, `  ${canonicalTag}\n</head>`);
+        }
+    }
+
+    // Meta description — use subtitle/intro text if available
+    const descriptionText = extractDescription(page.json);
+    if (descriptionText) {
+        const escapedDesc = descriptionText.replace(/"/g, "&quot;");
+        const descTag = `<meta name="description" content="${escapedDesc}">`;
+        if (/<meta name="description"/.test(html)) {
+            html = html.replace(/<meta name="description"[^>]*>/, descTag);
+        } else {
+            html = html.replace(/<\/head>/i, `  ${descTag}\n</head>`);
+        }
+    }
+
     writeFileSync(htmlPath, html);
     console.log(`  generated: ${relPath}`);
+}
+
+/**
+ * Extract a short description from page JSON for the meta description tag.
+ * Prefers the subtitle, falls back to the first paragraph of body content.
+ * Truncates to 160 characters.
+ */
+function extractDescription (json) {
+    if (!json) return "";
+
+    // Try subtitle first
+    if (json.subtitle) {
+        return truncateDescription(htmlToPlain(json.subtitle));
+    }
+
+    // Fall back to first ContentText body paragraph
+    for (const entry of json.content || []) {
+        if (entry.type === "ContentText" && entry.body) {
+            const plain = htmlToPlain(entry.body);
+            if (plain) return truncateDescription(plain);
+        }
+    }
+
+    return "";
+}
+
+function truncateDescription (text) {
+    if (text.length <= 160) return text;
+    // Cut at last word boundary before 160 chars
+    const truncated = text.slice(0, 157);
+    const lastSpace = truncated.lastIndexOf(" ");
+    return (lastSpace > 100 ? truncated.slice(0, lastSpace) : truncated) + "...";
 }
 
 // ---------------------------------------------------------------------------
@@ -508,7 +566,7 @@ async function main () {
     console.log(`Static gen: found ${pages.length} layout pages under ${siteRoot}`);
 
     for (const pageDir of pages) {
-        await generatePage(pageDir);
+        await generatePage(pageDir, siteUrl);
     }
 
     // Write sitemap.xml at site root

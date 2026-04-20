@@ -195,22 +195,16 @@ Since blobs and objects are stored in separate databases, garbage collection req
 
 ```
 SvObjectPool.asyncCollectBlobs()
-        ↓
+    ↓
 SvObjectPool.allBlobHashesSet()
-        ↓
-    ┌───────────────────────────────────────┐
-    │  for each object in allObjects():     │
-    │    if object.referencedBlobHashesSet: │
-    │      hashesSet.addAll(object.referencedBlobHashesSet()) │
-    └───────────────────────────────────────┘
-        ↓
+    for each object in allObjects():
+        if object.referencedBlobHashesSet:
+            hashesSet.addAll(object.referencedBlobHashesSet())
+    ↓
 SvBlobPool.asyncCollectUnreferencedKeySet(hashesSet)
-        ↓
-    ┌───────────────────────────────────────┐
-    │  allKeys = await idb.promiseAllKeys() │
-    │  orphans = allKeys.difference(hashesSet) │
-    │  await idb.promiseRemoveKeySet(orphans) │
-    └───────────────────────────────────────┘
+    allKeys = await idb.promiseAllKeys()
+    orphans = allKeys.difference(hashesSet)
+    await idb.promiseRemoveKeySet(orphans)
 ```
 
 ### Implementation Details

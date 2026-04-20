@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="stylesheet" href="/style/style.css">
+  <link rel="modulepreload" href="/style/layout/ContentBase.js">
+  <link rel="modulepreload" href="/style/layout/ContentText.js">
+  <link rel="modulepreload" href="/style/layout/ContentCards.js">
+  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/style/layout/ContentTable.js">
+  <link rel="modulepreload" href="/style/layout/ContentImage.js">
+  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/style/layout/ContentToc.js">
+  <link rel="modulepreload" href="/style/layout/PageIndex.js">
+  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <title>Nodes – STRVCT</title>
+  <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
+  <link rel="canonical" href="https://strvct.net/docs/Nodes/">
+  <meta name="description" content="The object model at the heart of STRVCT.">
+</head>
+<body>
+  <div class="page loaded"><div class="header"><div><h1>Nodes</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">The object model at the heart of STRVCT.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-node-hierarchy">The Node Hierarchy</a></li><li><a href="#subnodes">Subnodes</a></li><li><a href="#title-subtitle-and-note">Title, Subtitle, and Note</a></li><li><a href="#view-preferences">View Preferences</a></li><li><a href="#persistence">Persistence</a></li><li><a href="#creating-application-nodes">Creating Application Nodes</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Nodes are the central abstraction in STRVCT. Every piece of application state -- a user, a document, a settings panel, a list of items -- is a node. Nodes form a tree: each node has a parent and an ordered array of subnodes. The framework generates the entire UI from this tree, so understanding nodes is understanding how STRVCT applications are structured.</p><p>A node is not a UI component. It's a model object that declares its data (via <a href="../Slots/index.html">slots</a>), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's <a href="../Views/index.html">view system</a> reads this information and generates the appropriate UI automatically.</p></div></div><h2 id="the-node-hierarchy">The Node Hierarchy</h2><div class="section"><div class="section-body"><p>STRVCT provides a single inheritance chain of node classes. Each level adds a specific capability:</p><table><thead><tr><th>Class</th><th>Adds</th><th>Typical usage</th></tr></thead><tbody><tr><td><code>SvNode</code></td><td>Subnode management, parent/owner relationships</td><td>Base class -- rarely used directly</td></tr><tr><td><code>SvTitledNode</code></td><td>Title, subtitle, note, ARIA methods, path navigation</td><td>Nodes that need display labels</td></tr><tr><td><code>SvTranslatableNode</code></td><td>Per-node translation cache for i18n</td><td>Automatic -- all nodes below inherit this</td></tr><tr><td><code>SvInspectableNode</code></td><td>Inspector generation from slot metadata, subnode fields</td><td>Automatic -- enables the debug inspector</td></tr><tr><td><code>SvViewableNode</code></td><td>View class selection, layout direction, tile preferences</td><td>Nodes that appear in the UI</td></tr><tr><td><code>SvStyledNode</code></td><td>Theme class name</td><td>Nodes with custom styling</td></tr><tr><td><code>SvStorableNode</code></td><td>Persistence, dirty tracking, mutation notifications</td><td>Nodes that persist to storage</td></tr><tr><td><code>SvSummaryNode</code></td><td>Configurable summary format, children summary</td><td>Most application model classes</td></tr></tbody></table><p>Application classes typically extend <code>SvSummaryNode</code> or <code>SvStorableNode</code>. The intermediate classes exist to cleanly separate concerns but are rarely extended directly.</p></div></div><h2 id="subnodes">Subnodes</h2><div class="section"><div class="section-body"><p>Every node has an ordered array of subnodes accessed via <code>subnodes()</code>. This array is the primary structural relationship in STRVCT -- it defines the tree that the UI renders.</p><pre><code>// Adding subnodes
+parentNode.addSubnode(childNode);
+parentNode.addSubnodeAt(childNode, 0);  // insert at index
+
+// Querying
+parentNode.subnodeCount();
+parentNode.subnodeAt(2);
+parentNode.indexOfSubnode(childNode);
+parentNode.hasSubnode(childNode);
+
+// Removing
+parentNode.removeSubnode(childNode);
+
+// Reordering
+parentNode.moveSubnodesToIndex([nodeA, nodeB], 3);</code></pre><p>When subnodes change, the framework automatically updates the UI through the <a href="../Notifications/index.html">notification system</a>. No manual view refresh is needed.</p><h3 id="subnodes-vs-subnode-fields">Subnodes vs. Subnode Fields</h3><p>There are two ways a node can have children in the UI:</p><p><strong>Stored subnodes</strong> (<code>setIsSubnode(true)</code>) are persistent children in the subnodes array. They're used for collections of similar items -- a list of contacts, a folder of bookmarks. The parent typically sets <code>setShouldStoreSubnodes(true)</code> so the array persists.</p><p><strong>Subnode fields</strong> (<code>setIsSubnodeField(true)</code>) are slots that appear as navigable tiles in the UI but live in the parent's slot, not in the subnodes array. They're used for structured properties of an object -- a contact's address, a character's inventory. The slot value is the child node; it appears in the UI as a tile you can drill into.</p><pre><code>// Collection pattern -- stored subnodes
+(class Contacts extends SvStorableNode {
+    initPrototype () {
+        this.setShouldStoreSubnodes(true);
+        this.setSubnodeClasses([Contact]);
+    }
+}.initThisClass());
+
+// Structured object pattern -- subnode fields
+(class Contact extends SvStorableNode {
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("address", null);
+            slot.setFinalInitProto(Address);
+            slot.setIsSubnodeField(true);
+        }
+    }
+    initPrototype () {
+        this.setShouldStoreSubnodes(false);
+    }
+}.initThisClass());</code></pre></div></div><h2 id="title-subtitle-and-note">Title, Subtitle, and Note</h2><div class="section"><div class="section-body"><p><code>SvTitledNode</code> provides three display properties that tiles read to populate their content:</p><table><thead><tr><th>Property</th><th>Purpose</th><th>Tile usage</th></tr></thead><tbody><tr><td><code>title()</code></td><td>Primary label</td><td>Displayed as the main text in <code>SvTitledTile</code></td></tr><tr><td><code>subtitle()</code></td><td>Secondary label or summary</td><td>Displayed below the title</td></tr><tr><td><code>note()</code></td><td>Badge or indicator</td><td>Displayed as a trailing annotation</td></tr></tbody></table><p>These are the most commonly overridden methods on application nodes:</p><pre><code>(class Character extends SvSummaryNode {
+    title () {
+        return this.name() || "Unnamed Character";
+    }
+
+    subtitle () {
+        return `Level ${this.level()} ${this.characterClass()}`;
+    }
+}.initThisClass());</code></pre><h3 id="automatic-counts">Automatic Counts</h3><p><code>SvTitledNode</code> supports showing the subnode count as the subtitle or note without custom code:</p><pre><code>initPrototype () {
+    this.setSubtitleIsSubnodeCount(true);  // subtitle shows "3 items"
+    // or
+    this.setNoteIsSubnodeCount(true);      // note shows the count
+}</code></pre><h3 id="summary-system">Summary System</h3><p><code>SvSummaryNode</code> extends the display system with a configurable summary format. A node can declare how its title and value combine into a summary string, and whether its subtitle should be composed from its children's summaries:</p><pre><code>initPrototype () {
+    this.setSummaryFormat("key: value");
+    this.setNodeSubtitleIsChildrenSummary(true);
+}</code></pre><p>The <code>summaryFormat</code> options are: <code>"none"</code>, <code>"key"</code>, <code>"value"</code>, <code>"key value"</code>, <code>"value key"</code>, <code>"key: value"</code>.</p><p>The summary is composed from two overridable methods:</p><table><thead><tr><th>Method</th><th>Default</th><th>Override when...</th></tr></thead><tbody><tr><td><code>summaryKey()</code></td><td>Returns <code>title()</code></td><td>The summary label should differ from the display title</td></tr><tr><td><code>summaryValue()</code></td><td>Returns <code>subtitle()</code></td><td>The summary value should differ from the display subtitle</td></tr></tbody></table><p><code>summary()</code> formats the key and value according to <code>summaryFormat</code> and returns the result. <code>childrenSummary()</code> joins each subnode's <code>summary()</code> into a single string -- this is what <code>nodeSubtitleIsChildrenSummary</code> displays.</p><p>The summary system is used when a parent node composes a one-line description from its children -- for example, a character's ability scores displayed as a subtitle on the parent node.</p></div></div><h2 id="view-preferences">View Preferences</h2><div class="section"><div class="section-body"><p>Nodes don't create views directly, but they declare preferences that the view system reads:</p><h3 id="layout-direction">Layout Direction</h3><pre><code>this.setNodeIsVertical(true);   // subnodes lay out top-to-bottom (default)
+this.setNodeIsVertical(false);  // subnodes lay out left-to-right</code></pre><p>This controls the direction of the tile container when displaying this node's subnodes. Vertical nodes produce a scrollable list; horizontal nodes produce side-by-side columns. The recursive combination of vertical and horizontal nodes at different levels of the tree is what gives STRVCT its <a href="../Inspirations/index.html">Miller column</a> navigation pattern.</p><h3 id="custom-view-and-tile-classes">Custom View and Tile Classes</h3><pre><code>// Use a specific view class for this node
+this.setNodeViewClassName("MyCustomNodeView");
+
+// Use a specific tile class when this node appears as a subnode
+this.setNodeTileClassName("SvImageTile");</code></pre><p>If no custom class is specified, the framework searches up the class hierarchy for a matching view class by naming convention (<code>ClassName</code> → <code>ClassNameView</code>).</p><h3 id="tile-behavior">Tile Behavior</h3><pre><code>this.setNodeTileIsSelectable(true);     // tile can be selected/drilled into
+this.setNodeCanReorderSubnodes(true);   // subnodes support drag-to-reorder
+this.setNodeCanAddSubnode(true);        // user can add new subnodes
+this.setCanDelete(true);               // node can be deleted by the user
+this.setNodeMinTileHeight(80);          // minimum tile height in pixels</code></pre></div></div><h2 id="persistence">Persistence</h2><div class="section"><div class="section-body"><p><code>SvStorableNode</code> integrates with the <a href="../Persistence/index.html">persistence system</a>. Nodes that extend it are automatically stored to IndexedDB and can sync to the cloud. The key configuration is which slots to persist:</p><pre><code>initPrototypeSlots () {
+    {
+        const slot = this.newSlot("name", "");
+        slot.setSlotType("String");
+        slot.setShouldStoreSlot(true);  // this slot persists
+    }
+}
+initPrototype () {
+    this.setShouldStore(true);          // this node class persists
+    this.setShouldStoreSubnodes(true);  // subnode array persists
+}</code></pre><p>When a stored slot changes (via its setter), <code>SvStorableNode</code> automatically calls <code>didMutate()</code> to mark the node as dirty for the next persistence commit. No manual save calls are needed.</p></div></div><h2 id="creating-application-nodes">Creating Application Nodes</h2><div class="section"><div class="section-body"><p>A typical application node:</p><pre><code>(class Bookmark extends SvSummaryNode {
+
+    static jsonSchemaDescription () {
+        return "A saved web bookmark with URL, title, and tags";
+    }
+
+    initPrototypeSlots () {
+        {
+            const slot = this.newSlot("url", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+        }
+        {
+            const slot = this.newSlot("bookmarkTitle", "");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanEditInspection(true);
+        }
+        {
+            const slot = this.newSlot("tags", null);
+            slot.setFinalInitProto(SvJsonArrayNode);
+            slot.setIsSubnodeField(true);
+        }
+    }
+
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanEditTitle(true);
+    }
+
+    title () {
+        return this.bookmarkTitle() || "Untitled Bookmark";
+    }
+
+    subtitle () {
+        return this.url();
+    }
+
+}.initThisClass());</code></pre><p>This declares three slots (two stored strings, one subnode field for tags), configures persistence, and overrides <code>title()</code> and <code>subtitle()</code> to control how the bookmark appears as a tile. The framework handles view generation, persistence, ARIA attributes, and i18n support automatically.</p></div></div></div>
+<script src="/style/layout/layout.js" type="module"></script>
+</body>
+</html>

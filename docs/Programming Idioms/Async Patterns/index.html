@@ -19,6 +19,8 @@
   <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
   <title>Async Patterns – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
+  <link rel="canonical" href="https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/">
+  <meta name="description" content="Extended promises, serial and parallel iteration, and concurrency control.">
 </head>
 <body>
   <div class="page loaded"><div class="header"><div><h1>Async Patterns</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Extended promises, serial and parallel iteration, and concurrency control.</p><h2 id="promiseclone">Promise.clone()</h2><div class="section"><div class="section-body"><p>STRVCT extends the native <code>Promise</code> class (via <code>Promise_ideal.js</code>) with a factory method that exposes the resolve and reject functions as callable methods on the promise itself. This is the foundation for most async coordination in the framework.</p><pre><code>const promise = Promise.clone();
