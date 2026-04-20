@@ -268,6 +268,7 @@
             throw error;
         }
 
+        this.asyncReadFromLocalStoragePromise().callResolveFunc(null);
         this.setAsyncReadFromLocalStoragePromise(null);
         return null;
     }

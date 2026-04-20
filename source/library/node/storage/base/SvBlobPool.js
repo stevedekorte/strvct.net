@@ -306,12 +306,16 @@
 
             if (!arrayBuffer) {
                 this.logDebug(() => `Blob ${hash.substring(0, 8)}... not found`);
+                this.activeReadsMap().delete(hash);
+                readPromise.callResolveFunc(null);
                 return null;
             }
 
             // ArrayBuffer should always be an ArrayBuffer in the new format
             if (!(arrayBuffer instanceof ArrayBuffer)) {
                 this.logDebug(() => `Blob ${hash.substring(0, 8)}... has invalid format (not ArrayBuffer)`);
+                this.activeReadsMap().delete(hash);
+                readPromise.callResolveFunc(null);
                 return null;
             }
 
