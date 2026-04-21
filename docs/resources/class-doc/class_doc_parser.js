@@ -376,14 +376,36 @@ class JsClassParser extends Object {
             case 'classdesc':
                 entries[tag] = content.trim();
                 break;
-            case 'member':
-                const [memberType, memberName, ...memberDesc] = content.split(/\s+/);
+            case 'member': {
+                // Supports two forms:
+                //   @member {Type} name description
+                //   @member name        (type provided separately via @type {Type})
+                const parts = content.split(/\s+/).filter(p => p.length > 0);
+                let memberType = '';
+                let memberName = '';
+                let memberDescParts = [];
+                if (parts.length && parts[0].startsWith('{')) {
+                    // Find the closing brace across tokens to tolerate `{foo bar}`.
+                    let typeTokens = [parts[0]];
+                    let i = 1;
+                    while (i < parts.length && !typeTokens[typeTokens.length - 1].endsWith('}')) {
+                        typeTokens.push(parts[i]);
+                        i += 1;
+                    }
+                    memberType = typeTokens.join(' ').replace(/^\{|\}$/g, '').trim();
+                    memberName = parts[i] || '';
+                    memberDescParts = parts.slice(i + 1);
+                } else {
+                    memberName = parts[0] || '';
+                    memberDescParts = parts.slice(1);
+                }
                 entries.member = {
                     propertyName: memberName || (entries.type ? entries.type.propertyName : 'unnamed'),
-                    propertyType: escapeXml((memberType || '').replace(/[{}]/g, '').trim()),
-                    description: escapeXml(memberDesc.join(' ').trim())
+                    propertyType: escapeXml(memberType),
+                    description: escapeXml(memberDescParts.join(' ').trim())
                 };
                 break;
+            }
             case 'type':
                 const [typeValue, typeName] = content.split(/\s+/);
                 entries.type = {
@@ -415,9 +437,10 @@ class JsClassParser extends Object {
             const { entries } = this.extractJSDocInfo(propertyComments);
             
             if (entries.member) {
+                const typeFromTypeTag = entries.type ? entries.type.propertyType : '';
                 const property = {
                     propertyName: entries.member.propertyName,
-                    propertyType: entries.member.propertyType,
+                    propertyType: entries.member.propertyType || typeFromTypeTag || '',
                     description: entries.description || entries.member.description || 'Undocumented',
                     category: entries.category || 'Uncategorized',
                     default: entries.default || null

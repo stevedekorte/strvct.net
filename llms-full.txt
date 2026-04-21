@@ -6456,6 +6456,10 @@ Source: /docs/Reference/Classes/
 
 Complete class inheritance hierarchy.
 
+Two naming conventions appear in this tree:
+- **Categories** (`BaseClass_suffix.js`, e.g. `Array_ideal`, `SvJsonGroup_patches`) — extend a base class purely to add methods. They share their base's prototype rather than introducing a new type.
+- **Protocols** (`*Protocol`, e.g. `SvAudioClipProtocol`) — interface-like classes extending `Protocol`, enumerated separately on the [Protocols](../Protocols/) page with their implementors.
+
 - Object
   - [AiParsedResponseMessage_tagEvents](../../resources/class-doc/class_doc.html?path=%2Fsource%2Flibrary%2Fservices%2FAiServiceKit%2FParsing%2F-unused%2FAiParsedResponseMessage_tagEvents.js)
   - Array

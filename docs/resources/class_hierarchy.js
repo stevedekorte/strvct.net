@@ -9,6 +9,9 @@ const path = require("path");
 const CLASS_DOC_PATH = "../../resources/class-doc/class_doc.html";
 const OUTPUT_REL = "docs/Reference/Classes/_index.md";
 const SUBTITLE = "Complete class inheritance hierarchy.";
+const INTRO_NOTE = `Two naming conventions appear in this tree:
+- **Categories** (\`BaseClass_suffix.js\`, e.g. \`Array_ideal\`, \`SvJsonGroup_patches\`) — extend a base class purely to add methods. They share their base's prototype rather than introducing a new type.
+- **Protocols** (\`*Protocol\`, e.g. \`SvAudioClipProtocol\`) — interface-like classes extending \`Protocol\`, enumerated separately on the [Protocols](../Protocols/) page with their implementors.`;
 
 // Built-in types to render as grouping nodes under Object.
 const BUILT_IN_TYPES = [
@@ -136,7 +139,7 @@ function main () {
 
     const hierarchy = buildHierarchy(allClasses);
     const body = printHierarchy(hierarchy, classFiles);
-    const content = `# Classes\n\n${SUBTITLE}\n\n${body}`;
+    const content = `# Classes\n\n${SUBTITLE}\n\n${INTRO_NOTE}\n\n${body}`;
 
     const outPath = path.join(rootAbs, OUTPUT_REL);
     fs.mkdirSync(path.dirname(outPath), { recursive: true });
