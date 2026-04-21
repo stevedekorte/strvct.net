@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>JSON Schema – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Future%20Work/JSON%20Schema/">
@@ -40,6 +40,6 @@ if (min !== undefined) {
 }</code></pre><p>The slot system's annotation mechanism already supports arbitrary key-value metadata, so no structural changes are needed &mdash; just adding the accessors and wiring them into <code>asJsonSchema()</code>.</p><h3 id="class-level-additions">Class-level additions</h3><p>Composition keywords (<code>oneOf</code>, <code>anyOf</code>) would need static methods on <code>SvNode</code> that <code>asJsonSchema()</code> includes in the class schema. Conditional keywords (<code>if</code>/<code>then</code>/<code>else</code>) are more complex &mdash; they'd require a way to express inter-slot dependencies at the class level, possibly as a static <code>jsonSchemaConditionals()</code> method that returns an array of condition objects.</p><h3 id="validation-unification">Validation unification</h3><p>Currently, JSON Schema annotations are output-only &mdash; they describe the slot's contract to external consumers but don't enforce it at runtime. A natural extension would be to have the auto-generated setter validate against the same constraints:</p><ul><li>A <code>Number</code> slot with <code>setMinimum(0)</code> would reject negative values</li><li>A <code>String</code> slot with <code>setMaxLength(100)</code> would warn on overflow</li><li>A <code>String</code> slot with <code>setFormat("email")</code> could validate format</li></ul><p>This would unify schema declaration and runtime validation, ensuring the contract described to AI consumers is actually enforced in the application. The existing <code>validatesOnSet</code> mechanism already provides the hook point &mdash; it just needs to consult the richer set of annotations.</p></div></div><h2 id="richer-type-unions">Richer Type Unions</h2><div class="section"><div class="section-body"><p>Slots currently declare a single type via <code>setSlotType("String")</code>. Some slots legitimately accept multiple types &mdash; a value that could be a <code>String</code> or <code>null</code>, or a slot that holds either a <code>Number</code> or an <code>Array</code>. The type system doesn't express this, leading to validation warnings that must be suppressed.</p><p>A possible API:</p><pre><code>slot.setSlotType("String|null");
 // or:
 slot.setSlotTypes(["String", "Number"]);</code></pre><p>This would generate <code>oneOf</code> or union types in JSON Schema and validate against any of the listed types at runtime.</p></div></div><h2 id="open-questions">Open Questions</h2><div class="section"><div class="section-body"><ul><li>Should all JSON Schema keywords be supported, or only those that map to runtime behavior? Keywords like <code>if</code>/<code>then</code>/<code>else</code> add schema expressiveness but may be complex to implement as runtime validation.</li><li>How should schema versioning work? If the schema changes between app versions, should the schema include a <code>$id</code> with a version component?</li><li>Could the framework auto-infer some constraints &mdash; for example, deriving <code>minimum: 0</code> from a slot named "count" or "quantity"? Or is explicit annotation always better?</li><li>How should the schema handle slots that are writable by the app but read-only for AI? The current <code>readOnly</code> is all-or-nothing.</li></ul></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

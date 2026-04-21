@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Broadcaster – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Notifications/Broadcaster/">
@@ -28,6 +28,6 @@ SvBroadcaster.shared().addListenerForName(this, "didChangeStoredSlot");
 
 // Broadcast (immediate, synchronous)
 SvBroadcaster.shared().broadcastNameAndArgument("didChangeStoredSlot", this);</code></pre><p>When the broadcast fires, the system calls the listener's method matching the broadcast name &mdash; in this case, <code>this.didChangeStoredSlot(argument)</code>.</p></div></div><h2 id="when-to-use-broadcaster-vs-notification-center">When to Use Broadcaster vs. Notification Center</h2><div class="section"><div class="section-body"><table><thead><tr><th></th><th>SvNotificationCenter</th><th>SvBroadcaster</th></tr></thead><tbody><tr><td><strong>Timing</strong></td><td>Deferred to end of event loop</td><td>Immediate, synchronous</td></tr><tr><td><strong>Deduplication</strong></td><td>Same name+sender dispatched once per loop</td><td>Every call dispatches</td></tr><tr><td><strong>Registration</strong></td><td>SvObservation with name, sender, observer</td><td>Listener + name</td></tr><tr><td><strong>Sender filtering</strong></td><td>Can observe a specific sender</td><td>Receives from all senders</td></tr><tr><td><strong>Overhead</strong></td><td>Higher (queuing, indexing, dedup)</td><td>Lower</td></tr></tbody></table><p>Use the notification center for most inter-layer communication &mdash; the deferred deduplication is almost always what you want. Use the broadcaster for internal framework events that need synchronous delivery and where the slight overhead of the notification center matters, such as storage-layer slot change propagation.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

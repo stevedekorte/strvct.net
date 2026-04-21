@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>View Synchronization – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Lifecycle/View%20Synchronization/">
@@ -30,6 +30,6 @@
 this.scheduleSyncToView();
 this.otherProperty().scheduleSyncToView();
 // Both handled in one pass</code></pre></div></div><h2 id="view-lifecycle-events">View Lifecycle Events</h2><div class="section"><div class="section-body"><ul><li><code>willAddSubview(subview)</code> &mdash; Before adding a child view</li><li><code>willRemoveSubview(subview)</code> &mdash; Before removing a child view</li><li><code>willRemove()</code> &mdash; Before this view is removed from its parent</li><li><code>onVisibility()</code> &mdash; Element becomes visible (via IntersectionObserver)</li><li><code>didChangeNode()</code> &mdash; The node reference changed</li></ul></div></div><h2 id="performance">Performance</h2><div class="section"><div class="section-body"><ul><li><strong>Lazy creation</strong> &mdash; Views are only created when their node becomes visible in the navigation.</li><li><strong>Visibility tracking</strong> &mdash; <code>IntersectionObserver</code> integration means off-screen views can skip expensive updates.</li><li><strong>Batched updates</strong> &mdash; The sync scheduler ensures that rapid state changes don't cause redundant DOM work.</li></ul></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

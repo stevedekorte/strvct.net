@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Notification Center – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Notifications/Notification%20Center/">
@@ -34,6 +34,6 @@
     .startWatching();</code></pre><p>When <code>targetNode</code> posts a <code>"didUpdateNode"</code> notification, the system calls <code>this.didUpdateNode(note)</code> &mdash; by default, the method name matches the notification name. To use a different method:</p><pre><code>obs.setSendName("handleNodeUpdate");</code></pre><p>For one-time observations that automatically stop after the first match:</p><pre><code>this.watchOnceForNote("appDidInit").then(() =&gt; {
     // App is ready
 });</code></pre><p>Observations can also match broadly:</p><ul><li><code>setName(null)</code> &mdash; match notifications with any name from the specified sender</li><li><code>setSender(null)</code> &mdash; match notifications with the specified name from any sender</li><li>Both null &mdash; match all notifications (useful for debugging)</li></ul></div></div><h2 id="svnotification">SvNotification</h2><div class="section"><div class="section-body"><p>Each notification is an <code>SvNotification</code> instance with three properties:</p><ul><li><code>name</code> &mdash; a string identifying the event (e.g. <code>"appDidInit"</code>, <code>"didUpdateNode"</code>)</li><li><code>sender</code> &mdash; the object that posted it</li><li><code>info</code> &mdash; optional additional data</li></ul><p>Notifications are deduplicated by a hash computed from <code>name</code> and <code>sender</code>. Posting the same event from the same object multiple times per event loop has no additional cost.</p></div></div><h2 id="svobservation">SvObservation</h2><div class="section"><div class="section-body"><p>An observation connects a notification pattern to an observer:</p><ul><li><code>name</code> &mdash; notification name to match (or null for any)</li><li><code>sender</code> &mdash; sender to match (or null for any), stored as a <strong>weak reference</strong></li><li><code>observer</code> &mdash; the object to notify, stored as a <strong>weak reference</strong></li><li><code>sendName</code> &mdash; optional custom method name to call on the observer</li><li><code>isOneShot</code> &mdash; if true, automatically stops watching after the first match</li></ul><p>The notification center maintains indexes by sender and by name for fast matching. When a notification is dispatched, matching observations are found by intersecting the relevant index sets.</p></div></div><h2 id="weak-references-and-automatic-cleanup">Weak References and Automatic Cleanup</h2><div class="section"><div class="section-body"><p>Both <code>sender</code> and <code>observer</code> on <code>SvObservation</code> are stored as weak references. This means:</p><ol><li>Observations do not prevent garbage collection of either party.</li><li>When a sender or observer is collected, a weak reference finalizer fires.</li><li>The finalizer schedules <code>stopWatching()</code> via <code>SvSyncScheduler</code>.</li><li>The observation is removed from the notification center automatically.</li></ol><p>This eliminates a common source of memory leaks in observer patterns. There is no need to manually remove observations when objects are destroyed. Descriptions of the sender and observer are captured at registration time so that debugging information remains available even after the objects have been collected.</p></div></div><h2 id="common-notification-names">Common Notification Names</h2><div class="section"><div class="section-body"><p><strong>Application lifecycle:</strong></p><ul><li><code>"appDidInit"</code> &mdash; application fully initialized and ready</li></ul><p><strong>Node changes:</strong></p><ul><li><code>"didUpdateNode"</code> &mdash; node data changed</li><li><code>"shouldFocusSubnode"</code> &mdash; request UI focus on a subnode</li><li><code>"didReorderParentSubnodes"</code> &mdash; subnode order changed</li></ul><p><strong>Browser events:</strong></p><ul><li><code>"onBrowserOnline"</code> / <code>"onBrowserOffline"</code> &mdash; connectivity changes</li><li><code>"onDocumentBeforeUnload"</code> &mdash; page unloading</li></ul><p><strong>Configuration:</strong></p><ul><li><code>"onAppDeveloperModeChangedNote"</code> &mdash; developer mode toggled</li></ul><p>Applications define additional notification names for their domain-specific events.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

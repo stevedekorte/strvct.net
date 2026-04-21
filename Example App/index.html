@@ -4,26 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Example App – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/Example%20App/">
   <meta name="description" content="A complete contacts application in four classes, with zero view code.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Example App</h1><a class="back-link" href="../index.html">&larr; Home</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">A complete contacts application in four classes, with zero view code.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-model">The Model</a></li><li><a href="#the-app">The App</a></li><li><a href="#project-files">Project Files</a></li><li><a href="#what-you-get">What You Get</a></li><li><a href="#adding-cloud-sync">Adding Cloud Sync</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>This walkthrough builds a working contacts app from scratch to show how the pieces of STRVCT fit together. The app lets you create contacts with name, email, phone, and notes fields &mdash; all editable, navigable, and persisted to IndexedDB automatically. The entire application is four small classes and a few configuration files.</p></div></div><h2 id="the-model">The Model</h2><div class="section"><div class="section-body"><h3 id="contact">Contact</h3><p>A single contact with four fields. Each slot is annotated for storage and editing:</p><pre><code>(class Contact extends SvStorableNode {
+  <div class="page loaded"><div class="header"><div><h1>Example App</h1><a class="back-link" href="../index.html">&larr; strvct</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">A complete contacts application in four classes, with zero view code.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-model">The Model</a></li><li><a href="#the-app">The App</a></li><li><a href="#project-files">Project Files</a></li><li><a href="#what-you-get">What You Get</a></li><li><a href="#adding-cloud-sync">Adding Cloud Sync</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>This walkthrough builds a working contacts app from scratch to show how the pieces of STRVCT fit together. The app lets you create contacts with name, email, phone, and notes fields &mdash; all editable, navigable, and persisted to IndexedDB automatically. The entire application is four small classes and a few configuration files.</p></div></div><h2 id="the-model">The Model</h2><div class="section"><div class="section-body"><h3 id="contact">Contact</h3><p>A single contact with four fields. Each slot is annotated for storage and editing:</p><pre><code>(class Contact extends SvStorableNode {
 
     static jsonSchemaDescription () {
         return "A person's contact information";
@@ -153,6 +153,6 @@
     }
 
 }.initThisClass());</code></pre><p><code>SvSyncableArrayNode</code> extends <code>SvJsonArrayNode</code> with cloud sync capabilities. The <code>cloudFolderName()</code> method tells the framework where to store this collection's data in Firebase Storage. Everything else &mdash; delta tracking, manifest management, retry with backoff, and session locking &mdash; is inherited automatically. The collection syncs when the app saves, and loads from the cloud on the next login.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

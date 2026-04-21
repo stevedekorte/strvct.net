@@ -374,7 +374,7 @@ if (flags.apply) {
     }
 
     console.log("Done. Review with `git status` and `git diff`.");
-    console.log("Remember to run `just class-tree` and `node style/static-gen.js` afterwards.");
+    console.log("Remember to run `just class-tree` and `node colvmn/static-gen.js` afterwards.");
 } else {
     console.log();
     console.log("Dry run complete. Re-run with --apply to make changes.");

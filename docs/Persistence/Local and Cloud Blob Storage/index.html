@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Local and Cloud Blob Storage – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Persistence/Local%20and%20Cloud%20Blob%20Storage/">
@@ -82,6 +82,6 @@ async asyncCollectBlobs () {
     }
     return hashesSet;
 }</code></pre><h3 id="key-points">Key Points</h3><ul><li><strong>Mark-and-sweep style</strong>: The approach mirrors classic GC - mark what's referenced, sweep the rest</li><li><strong>Async-safe</strong>: Blob GC is fully async and doesn't block the synchronous SvObjectPool operations</li><li><strong>Metadata cleanup</strong>: When a blob is removed, its <code>/meta</code> key is also deleted</li><li><strong>Deduplication preserved</strong>: If multiple objects reference the same hash, the blob stays until all references are gone</li></ul></div></div><h2 id="design-strengths">Design Strengths</h2><div class="section"><div class="section-body"><ol><li><strong>Separation of concerns</strong>: Objects remain lightweight; blobs handled separately</li><li><strong>Efficient caching</strong>: Content-addressable means natural deduplication</li><li><strong>Progressive loading</strong>: UI can show objects immediately, load media lazily</li><li><strong>Cloud-ready</strong>: Clean extension point for cloud sync without changing base storage</li><li><strong>GC-aware</strong>: Hash-based references allow proper garbage collection across dual storage systems</li></ol></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

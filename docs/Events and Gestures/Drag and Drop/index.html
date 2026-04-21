@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Drag and Drop – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Events%20and%20Gestures/Drag%20and%20Drop/">
@@ -80,6 +80,6 @@ acceptsDrop (event) {
     event.preventDefault();  // prevent browser from opening the file
     return false;            // reject the drop
 }</code></pre><p>If a child view handles the drop first and calls <code>stopPropagation()</code>, SvDocumentBody never sees the event.</p></div></div><h2 id="summary">Summary</h2><div class="section"><div class="section-body"><table><thead><tr><th>Concept</th><th>Class/Method</th><th>Purpose</th></tr></thead><tbody><tr><td>Register for drops</td><td><code>setIsRegisteredForBrowserDrop(true)</code></td><td>Listen for drag/drop events</td></tr><tr><td>Accept/reject</td><td><code>acceptsDrop(event)</code></td><td>Control which drops are handled</td></tr><tr><td>Process drop</td><td><code>onBrowserDropChunk(dataChunk)</code></td><td>Handle dropped data</td></tr><tr><td>MIME routing</td><td><code>dropMethodForMimeType(mimeType)</code></td><td>Route to type-specific handler</td></tr><tr><td>Visual feedback</td><td><code>dragHighlight()</code> / <code>dragUnhighlight()</code></td><td>Show drop zone state</td></tr><tr><td>Make draggable</td><td><code>setIsRegisteredForBrowserDrag(true)</code></td><td>Enable as drag source</td></tr><tr><td>Provide drag data</td><td><code>onBrowserDragStart(event)</code></td><td>Set transfer data</td></tr><tr><td>Node integration</td><td><code>node.onBrowserDropChunk(chunk)</code></td><td>Forward drops to model</td></tr><tr><td>Safety net</td><td><code>SvDocumentBody.acceptsDrop()</code></td><td>Prevent browser file open</td></tr><tr><td>Scroll delegation</td><td><code>SvScrollView.onBrowserDrop()</code></td><td>Forward drops in empty space</td></tr></tbody></table></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

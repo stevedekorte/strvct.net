@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Custom Views – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Views/Custom%20Views/">
@@ -67,6 +67,6 @@
     }
 
 }.initThisClass());</code></pre><p><code>syncFromNode()</code> is called automatically whenever the observed node posts a change notification. The sync scheduler batches these calls so multiple rapid changes produce a single update.</p></div></div><h2 id="view-resolution-for-custom-views">View Resolution for Custom Views</h2><div class="section"><div class="section-body"><p>The framework finds views by naming convention: for a node class <code>MyWidget</code>, it looks for <code>MyWidgetView</code>. To use a custom view for a node type, just name the class to match:</p><ul><li><code>UoCharacter</code> uses <code>UoCharacterView</code> (if it exists)</li><li><code>UoSession</code> uses <code>UoSessionView</code></li><li>Falls back to ancestor class names if no exact match</li></ul><p>You can also override on the node side with <code>nodeViewClassName()</code> to point at a different view class.</p></div></div><h2 id="convenience-methods">Convenience Methods</h2><div class="section"><div class="section-body"><p><code>SvFlexDomView</code> provides shortcuts for common layout patterns:</p><table><thead><tr><th>Method</th><th>Effect</th></tr></thead><tbody><tr><td><code>makeFlexAndCenterContent()</code></td><td>Sets display flex, centers both axes</td></tr><tr><td><code>flexCenterContent()</code></td><td>Centers content horizontally and vertically</td></tr><tr><td><code>makeStandardFlexView()</code></td><td>Flex display, relative positioning, centered, overflow hidden</td></tr><tr><td><code>fillParentView()</code></td><td>Sets width and height to 100%</td></tr><tr><td><code>newFlexSubview()</code></td><td>Creates and adds a flex child with min dimensions set</td></tr></tbody></table><p>These eliminate the most common multi-property patterns and keep <code>init()</code> methods concise.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

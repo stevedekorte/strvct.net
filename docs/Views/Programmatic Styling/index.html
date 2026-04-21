@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Programmatic Styling – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Views/Programmatic%20Styling/">
@@ -50,6 +50,6 @@ this.setGap("8px");</code></pre></div></div><h2 id="layout-convenience-methods">
         "--accent-color": this.themeColor()
     };
 }</code></pre><p>During the normal sync cycle, <code>SvNodeView.syncCssFromNode()</code> picks up this dictionary and applies it to the view's DOM element. This lets model logic influence presentation without the node needing any reference to its view &mdash; the node declares what it wants, and the view system handles the rest.</p><p>In general, prefer keeping styling in the view layer. Node-driven CSS is available for cases where the model genuinely determines a visual property (e.g. a user-chosen color or a status-dependent highlight), but most styling belongs in views or themes, not in model code.</p></div></div><h2 id="low-level-access">Low-Level Access</h2><div class="section"><div class="section-body"><p>For unusual CSS properties that don't have a named method, <code>SvCssDomView</code> provides generic accessors:</p><table><thead><tr><th>Method</th><th>Description</th></tr></thead><tbody><tr><td><code>setCssProperty(key, value)</code></td><td>Sets any CSS property by name</td></tr><tr><td><code>getCssProperty(key)</code></td><td>Gets the computed value</td></tr><tr><td><code>removeCssProperty(key)</code></td><td>Removes a property</td></tr></tbody></table><p>These should be rare in practice &mdash; the named methods cover the vast majority of styling needs.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

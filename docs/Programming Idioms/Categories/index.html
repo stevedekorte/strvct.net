@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Categories – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Programming%20Idioms/Categories/">
@@ -52,6 +52,6 @@ SvJsonGroup_clientState.js      // client state tool methods</code></pre><p>The 
     async promiseSerialForEach (aBlock) { /* ... */ }
     async promiseParallelMap (aBlock) { /* ... */ }
 }.initThisCategory());</code></pre><p>After these categories load, every <code>Promise</code> and <code>Array</code> instance has the new methods &mdash; no imports needed.</p></div></div><h2 id="when-to-use-categories">When to use categories</h2><div class="section"><div class="section-body"><p><strong>Good uses:</strong></p><ul><li>Separating a large class into thematic files (e.g., persistence, UI, serialization)</li><li>Adding framework methods to JavaScript builtins</li><li>Adding app-specific behavior to framework classes without forking them</li><li>Keeping a base class stable while iterating on extensions</li></ul><p><strong>Avoid when:</strong></p><ul><li>The methods need their own slots or state &mdash; categories can't add slots, only methods</li><li>You need polymorphism (override behavior in subclasses) &mdash; a subclass is the right tool</li><li>The base class is in an external library that doesn't use the STRVCT class system</li></ul></div></div><h2 id="how-it-works-internally">How it works internally</h2><div class="section"><div class="section-body"><p><code>initThisCategory()</code> iterates over the category class's own methods (both prototype and static) and copies them onto the target class. It does not create a new entry in the class registry &mdash; <code>SvJsonGroup_patches</code> is not a class you can instantiate or look up by name. It's purely a delivery mechanism for methods.</p><p>This means:</p><ul><li><code>instanceof</code> checks are unaffected &mdash; an <code>SvJsonGroup</code> instance won't show as <code>instanceof SvJsonGroup_patches</code></li><li>Category methods have full access to <code>this</code> and the base class's slots and methods</li><li>If two categories define the same method name on the same base class, the last one loaded wins (with a warning)</li></ul></div></div><h2 id="related-patterns">Related patterns</h2><div class="section"><div class="section-body"><ul><li><a href="../Slot%20Patterns/index.html">Slot Patterns</a> &mdash; how to declare properties on classes</li><li><a href="../../Lifecycle/index.html">Lifecycle</a> &mdash; <code>initPrototypeSlots</code> / <code>initPrototype</code> and the initialization chain, which categories cannot participate in (only methods are merged)</li></ul></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

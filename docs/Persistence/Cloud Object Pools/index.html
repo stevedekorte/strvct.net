@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Cloud Object Pools – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Persistence/Cloud%20Object%20Pools/">
@@ -45,6 +45,6 @@
   },
   "deletes": ["{puuid2}"]
 }</code></pre><p>Deltas are stored as separate timestamped files alongside the main pool. On load, the client fetches <code>pool.json</code> and applies all deltas in order to reconstruct the current state.</p><p><strong>Upload strategy:</strong></p><ul><li>If changes affect less than 50% of records &mdash; upload a delta file</li><li>If changes exceed 50% &mdash; upload the full pool (more efficient than a large delta)</li><li>When delta count exceeds 20 &mdash; compact by uploading a full pool and deleting all deltas</li></ul><h3 id="concurrency-control">Concurrency Control</h3><p>Pool sync uses lock-based concurrency to prevent simultaneous edits:</p><ul><li><code>asyncAcquireOrRefreshLock()</code> acquires an exclusive lock before writing</li><li>Locks are refreshed periodically (every 60 seconds) during active sessions</li><li><code>asyncReleaseLock()</code> releases the lock when the session ends</li><li>Lock acquisition and release are handled via cloud function endpoints</li></ul></div></div><h2 id="key-classes">Key Classes</h2><div class="section"><div class="section-body"><h3 id="svcloudsyncsource">SvCloudSyncSource</h3><p>The primary cloud-aware sync class. Configured with a user ID, folder name, and Firebase Storage reference. Handles:</p><ul><li>Item upload and download</li><li>Manifest management</li><li>Thumbnail uploads to content-addressed storage</li><li>Retry logic with exponential backoff</li><li>Orphaned file cleanup</li></ul><h3 id="svsubobjectpool">SvSubObjectPool</h3><p>An in-memory <code>SvObjectPool</code> (not backed by IndexedDB) designed for cloud sync. Provides:</p><ul><li><code>asyncSaveToCloud()</code> &mdash; saves with delta or full upload optimization</li><li><code>collectDelta()</code> &mdash; produces incremental changes vs. last synced snapshot</li><li><code>asyncCompactToCloud()</code> &mdash; consolidates deltas into a single pool file</li><li><code>fromCloudJson(json)</code> &mdash; reconstructs the pool from cloud data</li><li><code>asJson()</code> &mdash; serializes the complete pool for upload</li></ul><h3 id="svsynccollectionsource">SvSyncCollectionSource</h3><p>Abstract base class for collection syncing. Defines the interface for:</p><ul><li><code>asyncSyncFromSource()</code> &mdash; pull from cloud</li><li><code>asyncLazySyncFromSource()</code> &mdash; create stubs for lazy loading</li><li><code>asyncSyncToSource()</code> &mdash; push to cloud</li></ul></div></div><h2 id="relationship-to-local-persistence">Relationship to Local Persistence</h2><div class="section"><div class="section-body"><table><thead><tr><th>Component</th><th>Backing Store</th><th>Cloud Sync</th><th>Purpose</th></tr></thead><tbody><tr><td><code>SvPersistentObjectPool</code></td><td>IndexedDB</td><td>No</td><td>Local app state (singleton, never synced directly)</td></tr><tr><td><code>SvSubObjectPool</code></td><td>In-memory</td><td>Yes</td><td>Session-level cloud sync with delta support</td></tr><tr><td><code>SvCloudSyncSource</code></td><td>Firebase Storage</td><td>Yes</td><td>Collection-level cloud sync with manifests</td></tr></tbody></table><p>The local <code>SvPersistentObjectPool</code> is the ground truth for the running application. Cloud sync operates alongside it &mdash; collections push individual items, while sessions create a <code>SvSubObjectPool</code> snapshot for upload.</p></div></div><h2 id="auto-sync-triggers">Auto-Sync Triggers</h2><div class="section"><div class="section-body"><p>Cloud sync is triggered automatically on:</p><ul><li>Tab visibility change (switching back to the app)</li><li>Browser <code>beforeunload</code> event</li><li>Network online/offline transitions</li><li>Manual save actions</li></ul></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

@@ -1,0 +1,3 @@
+[submodule "colvmn"]
+	path = colvmn
+	url = git@github.com:stevedekorte/colvmn.git

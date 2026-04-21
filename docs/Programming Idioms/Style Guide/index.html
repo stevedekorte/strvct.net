@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Style Guide – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Programming%20Idioms/Style%20Guide/">
@@ -72,6 +72,6 @@ this.newSlot("didUpdateNodeNote", null);
 
 // Posting
 this.postNoteNamed("onRequestNavigateToNode", this);</code></pre></div></div><h2 id="slot-types">Slot types</h2><div class="section"><div class="section-body"><p>The <code>setSlotType()</code> method takes a string matching either a JavaScript built-in or a STRVCT class name:</p><ul><li><strong>Primitives</strong>: <code>"String"</code>, <code>"Number"</code>, <code>"Boolean"</code>, <code>"Array"</code>, <code>"Date"</code></li><li><strong>Framework types</strong>: <code>"SvNode"</code>, <code>"SvNotification"</code>, <code>"SvSubnodesArray"</code></li><li><strong>Semantic types</strong>: <code>"Action"</code>, <code>"UUID"</code>, <code>"Integer"</code>, <code>"Float"</code></li></ul><p>These are used for type checking, JSON Schema generation, and documentation -- not for runtime enforcement in most cases.</p></div></div><h2 id="things-to-avoid">Things to avoid</h2><div class="section"><div class="section-body"><ul><li><strong>ES6 <code>get</code>/<code>set</code> property definitions</strong> -- use <code>foo()</code> / <code>setFoo()</code> instead. ES6 getters hide method calls behind property-access syntax, making it impossible to distinguish a simple read from a computation with side effects.</li><li><strong><code>import</code> / <code>require</code></strong> -- use the <code>_imports.json</code> resource loading system. The CAM loader provides content-based caching and atomic updates that standard ES modules can't.</li><li><strong><code>super</code> in <code>initPrototypeSlots</code> / <code>initPrototype</code></strong> -- the framework walks the hierarchy automatically. Adding <code>super</code> causes each level to execute multiple times.</li><li><strong><code>instance.hasOwnProperty()</code></strong> -- use <code>Object.hasOwn(instance, key)</code> instead. <code>hasOwnProperty</code> is a prototype method that can be shadowed by an object's own property; <code>Object.hasOwn()</code> is a static method that can't be overridden.</li><li><strong>Plain objects as dictionaries</strong> -- use <code>Map</code> for key-value collections. Plain objects risk prototype pollution (<code>toString</code>, <code>constructor</code> as key names), only support string keys, and lack <code>.size</code>.</li><li><strong>Direct instance variable access</strong> -- see <a href="#instance-variables">Instance Variables</a> for the full rules. In short: always use the getter.</li></ul></div></div><h2 id="formatting">Formatting</h2><div class="section"><div class="section-body"><p>Style rules enforced by ESLint:</p><ul><li><strong>Space before parentheses</strong> in all function and method declarations: <code>initPrototype () {</code>, not <code>initPrototype() {</code>. This isn't just cosmetic -- it makes text search unambiguous: <code>methodName (</code> finds definitions, <code>methodName(</code> finds call sites.</li><li><strong>Four-space indentation</strong>, no tabs.</li><li><strong>Semicolons required</strong> at the end of statements. Avoids Automatic Semicolon Insertion edge cases, which matters more than usual in a codebase that loads code via <code>eval</code>.</li></ul><p>These apply to function declarations, expressions, async functions, and method definitions uniformly.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

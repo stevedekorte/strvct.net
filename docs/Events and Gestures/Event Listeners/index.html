@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/style/style.css">
+  <link rel="stylesheet" href="/colvmn/style.css">
   <title>Event Listeners – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Events%20and%20Gestures/Event%20Listeners/">
@@ -25,6 +25,6 @@ view.setIsRegisteredForBrowserDrop(true);</code></pre><p>Event handler methods a
     }
     return map.get(className);
 }</code></pre><p>The listener target is the view's DOM element. The delegate is the view itself.</p><p><code>SvEventSetListener.start()</code> iterates its child <code>SvEventListener</code> instances, each of which:</p><ol><li>Checks <code>delegateCanRespond()</code> &mdash; verifies the delegate has the handler method</li><li>Calls <code>addEventListener()</code> on the target element with the configured options</li></ol><p><code>stop()</code> removes all event listeners. <code>setIsListening(bool)</code> toggles between started and stopped states.</p><p>If the listen target, delegate, or capture mode changes while listening, the listener automatically stops, updates its configuration, and restarts via <code>resync()</code>.</p></div></div><h2 id="cleanup">Cleanup</h2><div class="section"><div class="section-body"><p>Listeners are automatically removed when a view is retired from the hierarchy. The view's <code>prepareToRetire()</code> calls <code>removeAllListeners()</code>, which stops every registered <code>SvEventSetListener</code> and clears the listener map. No manual cleanup is needed for views that follow normal lifecycle patterns.</p></div></div></div>
-  <script src="/style/layout/layout.js" type="module"></script>
+  <script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

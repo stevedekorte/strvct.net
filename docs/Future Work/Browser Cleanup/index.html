@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/style/style.css">
-  <link rel="modulepreload" href="/style/layout/ContentBase.js">
-  <link rel="modulepreload" href="/style/layout/ContentText.js">
-  <link rel="modulepreload" href="/style/layout/ContentCards.js">
-  <link rel="modulepreload" href="/style/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/style/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/style/layout/ContentTable.js">
-  <link rel="modulepreload" href="/style/layout/ContentImage.js">
-  <link rel="modulepreload" href="/style/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/style/layout/ContentToc.js">
-  <link rel="modulepreload" href="/style/layout/PageIndex.js">
-  <link rel="modulepreload" href="/style/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="/colvmn/style.css">
+  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
   <title>Browser Cleanup – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Future%20Work/Browser%20Cleanup/">
@@ -28,6 +28,6 @@ this.setNodeAuxiliaryPosition("right");           // or "bottom"
 this.setNodeAuxiliaryDefaultState("expanded");    // or "collapsed"
 this.setNodeAuxiliaryCompactsFirst(true);         // collapse auxiliary before main columns
 this.setNodeAuxiliaryMaxColumns(2);               // cap drill-in depth within the panel</code></pre><p>This stays declarative &mdash; the node says what it wants, the view system handles layout. The auxiliary side is a fully independent navigation context with its own breadcrumbs (once breadcrumbs are composable), its own selection, and its own internal compaction. No changes to the main selection model.</p><p>The <code>maxColumns</code> hint is important for space management. A conversation node knows it only needs a narrow inspector &mdash; one or two columns to peek at the character sheet. Once the user drills past the limit, deeper navigation replaces the last column rather than adding a new one.</p><h3 id="compaction-with-auxiliary-views">Compaction with auxiliary views</h3><p>The current compaction algorithm walks the stack chain and collapses columns that don't fit the available width. Auxiliary views add a new dimension to this because column compaction (horizontal, across navigation levels) and auxiliary compaction (within a single level's content area) are orthogonal.</p><p>The compaction sequence would become:</p><ol><li><strong>Auxiliary internal compaction</strong>: If the auxiliary panel has more columns than fit its allotted width, collapse its inner columns first (using the existing compaction logic, scoped to the auxiliary stack view).</li><li><strong>Auxiliary collapse</strong>: If still too tight, collapse the auxiliary panel entirely &mdash; to a toggle button, thin strip, or hidden &mdash; freeing its width for the main content.</li><li><strong>Main column compaction</strong>: If the main stack chain still doesn't fit, run the existing column compaction on the primary columns.</li></ol><p>Expanding works in reverse: as width becomes available, the main columns uncollapse first, then the auxiliary panel reappears, then the auxiliary's internal columns expand.</p><p>Node hints control priority: <code>auxiliaryCompactsFirst</code> (default <code>true</code>) means the auxiliary gives up space before any main columns. A node could set this to <code>false</code> if the auxiliary content is more important than the surrounding navigation context &mdash; though that would be unusual.</p><p>This approach requires no fundamental changes to the compaction algorithm itself. The auxiliary panel's internal compaction is just a smaller instance of the same algorithm running on a scoped stack view. The new work is the coordination layer that decides the order of compaction across the two contexts.</p></div></div></div>
-<script src="/style/layout/layout.js" type="module"></script>
+<script src="/colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>
