@@ -4139,15 +4139,17 @@ These problems are not inherent to the naked objects pattern. They are artifacts
 
 Before proposing a specific solution, it is worth examining what those expectations actually entail.
 
-When you survey informational interfaces across applications, websites, and operating systems, the same spatial conventions appear repeatedly: hierarchy expressed top-to-bottom, navigation depth expressed left-to-right, containment for ownership, and lists for collections. Consider three examples:
+When you survey informational interfaces across the applications where people spend most of their time, the same spatial conventions appear repeatedly: hierarchy expressed top-to-bottom, navigation depth expressed left-to-right, containment for ownership, and lists for collections. Consider four examples:
 
-- **macOS Finder** (Miller Columns): a horizontal chain of list panels, each showing the contents of the item selected in the panel to its left. Selecting a folder reveals its contents in the next column. The spatial metaphor is depth as horizontal position.
+- **Email** (Gmail, Outlook): a vertical list of messages on the left, message content on the right. Selecting a message reveals its contents in a detail pane. Folders or labels provide a second level of hierarchy. The spatial metaphor is master-detail with optional grouping.
 
-- **iOS Settings**: a vertical list of categories. Selecting one pushes a new list onto a navigation stack, with a back button to return. The spatial metaphor is depth as screen replacement with a linear path.
+- **Facebook**: a vertical feed of posts, each expandable into comments and replies. Navigation between sections (feed, groups, marketplace) uses a sidebar list. Profile pages are vertical stacks of categorized content. The spatial metaphor is list-of-lists with drill-down.
 
-- **Slack**: a vertical list of channels on the left, message content on the right, thread detail in a panel further right. The spatial metaphor is the same master-detail pattern at two levels of nesting.
+- **Twitter/X**: a vertical timeline of posts. Selecting one reveals a thread — a vertical stack of replies. Navigation between timelines (home, explore, notifications) uses a sidebar. The spatial metaphor is master-detail where both master and detail are vertical lists.
 
-These are three different applications built by three different teams for three different purposes, yet they use the same underlying spatial logic. This is not coincidence. These conventions are inherited from how we organize written information — the same top-to-bottom, left-to-right reading order found in Western text. They are so deeply embedded in interface culture that deviating from them creates confusion rather than innovation.
+- **Amazon**: a vertical list of search results, each clickable into a product detail page — a vertical stack of sections (images, description, reviews, related items). Category browsing uses a hierarchical sidebar. The spatial metaphor is master-detail with nested vertical stacks.
+
+These are four different applications built by four different companies for four different purposes, yet they use the same underlying spatial logic. This is not coincidence. These conventions are inherited from how we organize written information — the same top-to-bottom, left-to-right reading order found in Western text. They are so deeply embedded in interface culture that deviating from them creates confusion rather than innovation.
 
 Bespoke UI developers are already converging on these patterns — unconsciously and inconsistently. The variation between hand-crafted interfaces is largely superficial: different visual styling, different spacing, different component libraries, but the same underlying spatial logic. Most of what distinguishes one application's navigation from another's, at the structural level, is accidental rather than essential.
 
