@@ -200,6 +200,12 @@
      */
     async asyncFetchManifest () {
         try {
+            const exists = await this.asyncFileExistsInFolder(this.manifestPath());
+            if (!exists) {
+                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
+                return this.emptyManifest();
+            }
+
             const ref = this.storageRefForPath(this.manifestPath());
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
@@ -208,15 +214,6 @@
             }
             return await response.json();
         } catch (error) {
-            // Handle various "not found" error formats from Firebase Storage
-            if (error.code === "storage/object-not-found" ||
-                (error.message && error.message.includes("404")) ||
-                (error.message && error.message.includes("does not exist"))) {
-                // No manifest exists yet - return empty
-                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] No manifest found, starting fresh");
-                return this.emptyManifest();
-            }
-
             // Primary manifest corrupt or unreadable - try backup
             console.warn("CLOUDSYNC [SvCloudSyncSource] Primary manifest failed, trying backup:", error.message);
             return await this.asyncFetchManifestBackup();
@@ -230,6 +227,12 @@
      */
     async asyncFetchManifestBackup () {
         try {
+            const exists = await this.asyncFileExistsInFolder(this.manifestBackupPath());
+            if (!exists) {
+                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] Backup manifest not found");
+                return this.emptyManifest();
+            }
+
             const ref = this.storageRefForPath(this.manifestBackupPath());
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
@@ -252,25 +255,21 @@
      */
     async asyncFetchItem (itemId) {
         try {
+            const exists = await this.asyncFileExistsInFolder(this.itemPath(itemId));
+            if (!exists) {
+                this.isDebugging() && console.log("CLOUDSYNC [SvCloudSyncSource] Item not found:", itemId);
+                return null;
+            }
+
             const ref = this.storageRefForPath(this.itemPath(itemId));
             const url = await ref.getDownloadURL();
             const response = await fetch(url);
             if (!response.ok) {
-                if (response.status === 404) {
-                    console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found (404):", itemId);
-                    return null;
-                }
                 throw new Error(`Failed to fetch item ${itemId}: ${response.status}`);
             }
             // Using plain JSON for easier debugging (no compression)
             return await response.json();
         } catch (error) {
-            if (error.code === "storage/object-not-found" ||
-                (error.message && error.message.includes("404")) ||
-                (error.message && error.message.includes("does not exist"))) {
-                console.warn("CLOUDSYNC [SvCloudSyncSource] Item not found:", itemId);
-                return null;
-            }
             throw error;
         }
     }
@@ -486,6 +485,22 @@
             throw new Error("No storage reference set");
         }
         return storage.child(path);
+    }
+
+    /**
+     * Checks whether a file exists in its parent folder using listAll(),
+     * which avoids the 404 console error that getDownloadURL() produces.
+     * @param {String} path - Full storage path (e.g., "users/abc/_manifest.json")
+     * @returns {Promise<Boolean>}
+     * @category Storage
+     */
+    async asyncFileExistsInFolder (path) {
+        const parts = path.split("/");
+        const fileName = parts.pop();
+        const parentPath = parts.join("/");
+        const parentRef = this.storageRefForPath(parentPath);
+        const result = await parentRef.listAll();
+        return result.items.some(item => item.name === fileName);
     }
 
     /**
