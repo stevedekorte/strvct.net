@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450">
+  <style>
+    :root {
+      --background-color: transparent;
+      --text-color: #000;
+      --line-color: #000;
+      --nav-item-color: #000;
+      --line-width: 1px;
+    }
+    rect {
+      fill: var(--background-color);
+      stroke: var(--line-color);
+      stroke-width: var(--line-width);
+      vector-effect: non-scaling-stroke;
+    }
+    line {
+      stroke: var(--line-color);
+      stroke-width: var(--line-width);
+      vector-effect: non-scaling-stroke;
+    }
+    .nav-item {
+      stroke: var(--nav-item-color);
+      vector-effect: non-scaling-stroke;
+    }
+    text {
+      fill: var(--text-color);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 12px;
+    }
+  </style>
+
+  <!-- Level 1 (Horizontal: Department navigation) -->
+  <rect x="10" y="10" width="780" height="430"/>
+  <line x1="10" y1="60" x2="790" y2="60" stroke-dasharray="5,5"/>
+  <rect class="nav-item" x="20" y="20" width="100" height="30"/>
+  <text x="70" y="40" text-anchor="middle">Electronics</text>
+  <rect class="nav-item" x="130" y="20" width="80" height="30"/>
+  <text x="170" y="40" text-anchor="middle">Books</text>
+  <rect class="nav-item" x="220" y="20" width="80" height="30"/>
+  <text x="260" y="40" text-anchor="middle">Home</text>
+  <rect class="nav-item" x="310" y="20" width="80" height="30"/>
+  <text x="350" y="40" text-anchor="middle">Fashion</text>
+
+  <!-- Level 2 (Vertical: Category sidebar | Results area) -->
+  <rect x="20" y="70" width="760" height="360"/>
+  <line x1="170" y1="70" x2="170" y2="430" stroke-dasharray="5,5"/>
+  <rect class="nav-item" x="30" y="80" width="130" height="30"/>
+  <text x="95" y="100" text-anchor="middle">Laptops</text>
+  <rect class="nav-item" x="30" y="120" width="130" height="30"/>
+  <text x="95" y="140" text-anchor="middle">Phones</text>
+  <rect class="nav-item" x="30" y="160" width="130" height="30"/>
+  <text x="95" y="180" text-anchor="middle">Tablets</text>
+  <rect class="nav-item" x="30" y="200" width="130" height="30"/>
+  <text x="95" y="220" text-anchor="middle">Audio</text>
+  <rect class="nav-item" x="30" y="240" width="130" height="30"/>
+  <text x="95" y="260" text-anchor="middle">Cameras</text>
+
+  <!-- Level 3 (Vertical: Search results | Product detail) -->
+  <rect x="180" y="80" width="590" height="340"/>
+  <line x1="380" y1="80" x2="380" y2="420" stroke-dasharray="5,5"/>
+  <rect class="nav-item" x="190" y="90" width="180" height="30"/>
+  <text x="280" y="110" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="190" y="130" width="180" height="30"/>
+  <text x="280" y="150" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="190" y="170" width="180" height="30"/>
+  <text x="280" y="190" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="190" y="210" width="180" height="30"/>
+  <text x="280" y="230" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="190" y="250" width="180" height="30"/>
+  <text x="280" y="270" text-anchor="middle">Product</text>
+
+  <!-- Product detail view -->
+  <rect class="nav-item" x="390" y="90" width="370" height="320"/>
+  <text x="575" y="255" text-anchor="middle">Custom Content View</text>
+</svg>
