@@ -60,6 +60,17 @@ There are, of course, interfaces that fall outside this narrow space: data visua
 
 Our approach is to define a small set of composable UI primitives that embody the spatial conventions identified above. Each primitive handles one aspect of presentation; composed together, they cover the navigational and layout patterns found in typical informational applications.
 
+The guiding principle is simplicity and power through conceptual unification — each primitive eliminates distinctions that conventional frameworks maintain separately:
+
+| Concept | Unifies |
+| --- | --- |
+| Annotated slots | Properties, form fields, storage records, schema, translation keys, ARIA attributes |
+| Tiles | Summary views, property editors, list items, navigation elements |
+| Master-detail views | Menus, inspectors, drill-downs, settings panels, breadcrumbs, responsive layouts |
+| Domain nodes | Objects, navigation hierarchy, persistence graph, AI-operable surface |
+
+The sections below describe each primitive in detail.
+
 ### 4.1 Tiles
 
 The fundamental unit of presentation is the **tile**: a view that presents a single domain object or a single property of a domain object.
@@ -362,6 +373,8 @@ The composable primitive approach shifts this crossover point earlier by improvi
 
 This dynamic — general methods outperforming hand-crafted solutions as scale increases — appears in other domains. In his essay *The Bitter Lesson* [2], Rich Sutton observed that across 70 years of AI research, general methods that leverage computation consistently outperformed approaches that encoded human expertise, and the gap widened with scale.
 
+A closer structural parallel comes from programming language design. The Io language [7] states its guiding design principle as "simplicity and power through conceptual unification": prototypes unify objects, classes, namespaces, and locals; messages unify operators, calls, assigns, and variable access. There are no special forms — everything reduces to trees of messages. The cost of adding a language feature is near-zero because there is no second syntactic category to extend. Strvct makes the same bet at the UI level: annotated nodes rendered as composed master-detail tiles are the single primitive, and everything from settings panels to character sheets reduces to trees of them. The restriction is the feature — refusing a wider substrate is precisely what compounds the leverage, producing emergent capabilities that are paid for once at the primitive level instead of per-feature.
+
 The analogy to naked objects is instructive if imperfect. In AI, the scaling dimension is computation; in naked objects, it is domain model complexity. The principle is similar: investing in a general method that improves with scale — rather than in case-by-case engineering that must be repeated for each new component — produces compounding returns. But unlike AI scaling, which depends on hardware improvements, naked objects scaling depends on a design choice: whether the framework's primitives are good enough to make hand-crafted specialization unnecessary for most screens.
 
 ### Strengths
@@ -399,3 +412,5 @@ The challenge remains making the general method good enough that hand-crafted sp
 [5] Arteaga, J. M. *JMatter: A Naked Objects Framework for Java Swing.* http://jmatter.org/
 
 [6] Brambilla, M., & Fraternali, P. (2014). Interaction Flow Modeling Language. In *Proceedings of the 23rd International Conference on World Wide Web (WWW '14 Companion).* ACM.
+
+[7] Dekorte, S. (2002). *Io Programming Guide.* https://iolanguage.org/docs/Guide/

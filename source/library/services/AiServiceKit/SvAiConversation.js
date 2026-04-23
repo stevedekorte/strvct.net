@@ -202,20 +202,16 @@
             return this._chatModel;
         }
 
-        /*
-        const ownerNode = this.firstOwnerChainNodeThatRespondsTo("chatModel");
-        if (ownerNode) {
-            return ownerNode.chatModel();
+        // Walk up the node ancestry looking for any node that provides a default model
+        const ancestor = this.firstParentChainNodeThatRespondsTo("defaultChatModel");
+        if (ancestor) {
+            return ancestor.defaultChatModel();
         }
-        */
 
-        if (this.conversations()) {
-            return this.conversations().service().defaultChatModel();
-        } else {
-            const model = App.shared().services().defaultChatModel();
-            assert(model, "no default chat model");
-            return model;
-        }
+        // Final fallback to the global services default
+        const model = SvServices.shared().defaultChatModel();
+        assert(model, "no default chat model");
+        return model;
     }
 
     /**

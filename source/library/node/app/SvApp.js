@@ -179,6 +179,16 @@
     }
 
     /**
+     * @description Returns the default chat model from services.
+     * Acts as the terminal fallback for ancestor-walk model resolution.
+     * @returns {SvAiChatModel} The default chat model
+     * @category AI
+     */
+    defaultChatModel () {
+        return SvServices.shared().defaultChatModel();
+    }
+
+    /**
      * @description Returns the title of the app
      * @returns {string} The title
      * @category Metadata

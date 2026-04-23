@@ -667,6 +667,16 @@ The `docs/` directory contains browsable HTML documentation covering:
 
 When the docs system covers a topic in more detail than this file, prefer reading the docs for current information.
 
+### Docs Generation
+
+The `docs/` HTML pages are **generated** from `_index.md` (or `_index.json`) source files by the `colvmn` layout engine. **Do not edit `index.html` files directly** — edit the corresponding `_index.md` source instead, then regenerate:
+
+```bash
+node colvmn/static-gen.js
+```
+
+This regenerates all `index.html` files, `sitemap.xml`, `llms.txt`, and `llms-full.txt` from their source files. Always run this after editing any `_index.md` or `_index.json` file in the docs tree.
+
 # Important
 
 - Strvct is an independent framework and you should avoid making any changes that include information about the applications using it (i.e. maintain separation of concerns).
