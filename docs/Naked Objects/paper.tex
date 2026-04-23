@@ -315,6 +315,18 @@ This centralization also makes AI-powered translation practical. The framework d
 
 In a conventional framework, achieving automatic translation would require either instrumenting every component with translation calls, or building an extraction tool that parses component templates to find translatable strings. Both approaches scale linearly with the number of components. In Strvct, the cost is zero per component---the framework handles it structurally.
 
+\subsection{Accessibility}
+
+Because every interactive surface is a tile generated from a small set of composable primitives rather than a bespoke component, accessibility can be built into the primitives and apply uniformly to every screen. Focus order, arrow-key traversal between sibling tiles, Enter to drill into a detail column, and Escape to return are properties of the tile and tile stack---not of individual views. Screen reader labels, hierarchical roles, and semantic structure derive from the same slot annotations that drive the rendered view: a tile already knows its title, subtitle, and whether its children are navigable, so ARIA metadata is emitted without developer effort.
+
+In a conventional framework, accessibility is a per-component concern: each bespoke screen implements its own keyboard handlers, manages its own focus state, and annotates its own ARIA attributes. The result is uneven coverage---high-traffic screens receive attention, obscure ones do not, and the application's accessibility posture tends to degrade as surface area grows. In Strvct, accessibility is a property of the primitive, so an internal debugging interface is as keyboard-navigable and screen-reader-friendly as a character sheet.
+
+\subsection{Automatic Responsive Design}
+
+Because layout flows from node annotations---orientation, whether a tile fills remaining space, whether a collection displays inline or navigates to a detail view---rather than from screen-specific CSS, the interface adapts to viewport size without per-view breakpoints or media queries. The master-detail chain described in Section~4 illustrates this directly: earlier columns automatically collapse when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from a wide desktop monitor to a narrow mobile screen with no per-screen responsive code.
+
+This is structurally the same mechanism as the other emergent capabilities: the framework owns the single point where model structure becomes UI, so responsive behavior can be expressed once at that seam and amortized across every screen. In a conventional framework, each screen declares its own layout and its own breakpoints; the cost of maintaining responsive behavior grows linearly with the number of screens. In Strvct, it is paid once at the primitive level.
+
 \subsection{Transparent Persistence and Cloud Sync}
 
 Because the framework owns the complete object graph and understands the structure of every node through annotations, it can split persistence into two strategies transparently. The object pool---the graph of domain objects and their properties---is loaded synchronously, ensuring the model is immediately available for UI rendering. Large binary resources such as media and document files are stored separately in a content-addressable blob store and loaded asynchronously on demand, so they never block the UI.

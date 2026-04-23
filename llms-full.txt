@@ -4107,7 +4107,7 @@ Closing the Usability Gap in Naked Objects
 
 Also available as a [PDF](compiled/Closing_the_Usability_Gap_in_Naked_Objects.pdf).
 
-The naked objects pattern proposed that user interfaces could be generated directly from domain models, eliminating the cost of bespoke UI development while guaranteeing consistency between interface and business logic. Twenty-five years later, this promise remains largely unfulfilled — not because automatic generation failed, but because the generated interfaces lacked the spatial organization and navigational fluency that users expect. This paper argues that the design space for presenting structured information is far narrower than the software industry assumes, and that a small set of composable UI primitives — tiles, tile stacks, and recursively nested master-detail views — can cover it. We present Strvct, an open-source JavaScript framework implementing this approach, and show that centralizing the model-to-view pipeline produces emergent capabilities — transparent internationalization, automatic accessibility, annotation-driven persistence with cloud sync, and automatic schema generation — that would require significant per-component effort in conventional frameworks.
+The naked objects pattern proposed that user interfaces could be generated directly from domain models, eliminating the cost of bespoke UI development while guaranteeing consistency between interface and business logic. Twenty-five years later, this promise remains largely unfulfilled — not because automatic generation failed, but because the generated interfaces lacked the spatial organization and navigational fluency that users expect. This paper argues that the design space for presenting structured information is far narrower than the software industry assumes, and that a small set of composable UI primitives — tiles, tile stacks, and recursively nested master-detail views — can cover it. We present Strvct, an open-source JavaScript framework implementing this approach, and show that centralizing the model-to-view pipeline produces emergent capabilities — an AI-operable domain model, automatic responsive design and accessibility, transparent internationalization, and annotation-driven persistence with cloud sync — that would require significant per-component effort in conventional frameworks.
 
 ## 1. Introduction
 
@@ -4171,7 +4171,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Summary SvTile
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/summary-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
 **Property tiles** present individual properties as key-value pairs, with optional notes and validation errors. Specialized property tiles handle common types — strings, numbers, dates, images, booleans — with type-appropriate editing interactions.
@@ -4180,7 +4180,7 @@ The fundamental unit of presentation is the **tile**: a view that presents a sin
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Property SvTile
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/property-tile.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
 Tiles support gestures for direct manipulation: slide-to-delete, long-press reordering, and drag-and-drop between tile stacks or across browser windows. Domain objects register which MIME types they accept, enabling type-safe import and export through standard drag interactions.
@@ -4195,7 +4195,7 @@ A **tile stack** is a scrollable, ordered sequence of tiles presenting the subno
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     SvTile Stack
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/tiles.svg" style="display: block; margin: 0 auto; max-width: 200px; width: 60%;">[SVG diagram]</object>
 </div>
 
 ### 4.3 Master-Detail Views
@@ -4206,7 +4206,7 @@ A **master-detail view** pairs a tile stack (the master) with a detail area that
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Master-Detail View
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/master-detail.svg" style="display: block; margin: 0 auto; max-width: 400px; width: 80%;">[SVG diagram]</object>
 </div>
 
 Three features make this composition practical:
@@ -4217,7 +4217,7 @@ Three features make this composition practical:
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Master-Detail Orientations
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; max-width: 500px; width: 90%;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/orientations.svg" style="display: block; margin: 0 auto; max-width: 500px; width: 90%;">[SVG diagram]</object>
 </div>
 
 **Automatic collapsing.** When the viewport is too narrow to display the full chain of master-detail views, earlier columns automatically collapse. A breadcrumb bar tracks the navigation path and provides back-navigation. The same structure works on a wide desktop monitor and a narrow mobile screen without any per-object responsive design.
@@ -4226,7 +4226,7 @@ Three features make this composition practical:
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Expanded
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/expanded.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/expanded.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
 </div>
 <br>
 
@@ -4234,7 +4234,7 @@ Three features make this composition practical:
   <div style="padding: 0.2em 0 0.5em; margin: 0; text-align: center;">
     Collapsed
   </div>
-  <object type="image/svg+xml" data="../diagrams/svg/collapsed.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
+  <object type="image/svg+xml" data="diagrams/svg/collapsed.svg" style="display: block; width: 100%; height: auto;">[SVG diagram]</object>
 </div>
 <br>
 
@@ -4247,19 +4247,44 @@ Nesting master-detail views with varying orientations produces navigation struct
 <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2%; width: 100%;">
   <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Vertical</div>
-    <object type="image/svg+xml" data="../diagrams/svg/vertical-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+    <object type="image/svg+xml" data="diagrams/svg/vertical-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
   <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Horizontal</div>
-    <object type="image/svg+xml" data="../diagrams/svg/horizontal-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+    <object type="image/svg+xml" data="diagrams/svg/horizontal-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
   <div style="min-width: 150px; width: 30%; text-align: center;">
     <div style="padding: 0.2em 0 0.5em; margin: 0;">Hybrid</div>
-    <object type="image/svg+xml" data="../diagrams/svg/hybrid-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+    <object type="image/svg+xml" data="diagrams/svg/hybrid-hierarchical-miller-columns.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
   </div>
 </div>
 
 This composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose to produce appropriate layouts for each part of the domain model. The Miller Column pattern [4] has been used since NeXTSTEP for file browsing; our contribution is making it recursive, orientation-flexible, and self-composing based on model annotations.
+
+### 4.5 Examples
+
+To illustrate, we decompose four widely-used applications into their constituent views:
+
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2%; width: 100%;">
+  <div style="min-width: 300px; width: 48%; text-align: center;">
+    <div style="padding: 0.2em 0 0.5em; margin: 0;">Email</div>
+    <object type="image/svg+xml" data="diagrams/svg/gmail-composition.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+  </div>
+  <div style="min-width: 300px; width: 48%; text-align: center;">
+    <div style="padding: 0.2em 0 0.5em; margin: 0;">Twitter/X</div>
+    <object type="image/svg+xml" data="diagrams/svg/twitter-composition.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+  </div>
+  <div style="min-width: 300px; width: 48%; text-align: center;">
+    <div style="padding: 0.2em 0 0.5em; margin: 0;">Facebook</div>
+    <object type="image/svg+xml" data="diagrams/svg/facebook-composition.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+  </div>
+  <div style="min-width: 300px; width: 48%; text-align: center;">
+    <div style="padding: 0.2em 0 0.5em; margin: 0;">Amazon</div>
+    <object type="image/svg+xml" data="diagrams/svg/amazon-composition.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+  </div>
+</div>
+
+Despite serving very different domains — communication, social media, microblogging, and e-commerce — all four decompose into the same small set of primitives: horizontal menus, vertical lists, and custom content views nested in master-detail relationships. The structural variation between them is minimal; the differences that users perceive are primarily visual styling and the domain-specific content view.
 
 ## 5. From Model to Interface
 
@@ -4357,7 +4382,31 @@ Model and view layers communicate through a deferred, deduplicated notification 
 
 When the framework controls the entire pipeline from model annotation to rendered view, capabilities that would normally require per-component effort become emergent properties of the architecture. Each capability described below exists because of the same structural fact: the framework has complete knowledge of the domain model and controls the single point where model data flows to the UI.
 
-### 7.1 Transparent Internationalization
+### 7.1 AI-Operable Domain Model
+
+The same annotations that drive UI generation also make the domain model legible and operable to AI agents. JSON Schema descriptions of any object are derived automatically from slot metadata, and AI services retrieve them via a tool call — on demand — to include in system prompts. A complementary tool call applies JSON Patch operations to live objects, so the agent reads the shape of any part of the graph and writes valid changes back, with the same structural guarantees (required fields, type constraints, valid references) that are enforced on human users.
+
+This extends the naked objects premise. The original pattern exposed domain objects directly to users, eliminating the translation layer between model and UI. The same annotations now eliminate the translation layer between model and AI. No per-feature tool definitions are needed: a single pair of tools — "get schema for object X" and "apply patch to object X" — lets an agent inspect and modify any part of the domain graph. In Strvct's production use, an AI game master modifies session state, character sheets, and campaign data through exactly this loop, with no feature-specific AI integration code.
+
+When a patch fails — invalid path, type mismatch, constraint violation, unresolvable reference — the error response identifies the exact failing path and includes the schema of the affected slot, so the agent can correct the patch on the next attempt without refetching context. This closes the loop: the same uniform structure and metadata that drive UI generation, persistence, and validation also drive the feedback that lets an agent self-correct. No separate AI-error vocabulary needs to be maintained, and an agent that understands how to read a slot annotation automatically understands how to read a rejection.
+
+In a conventional framework, integrating an AI agent requires custom tool definitions for each editable surface, hand-maintained schema documents to describe what the AI may touch, and bespoke error-reporting paths for each. All three scale linearly with the domain model. In Strvct, one schema tool, one patch tool, and one error format cover the entire model, and the cost of exposing a new object to AI is zero.
+
+### 7.2 Automatic Responsive Design
+
+Because layout flows from node annotations — orientation, whether a tile fills remaining space, whether a collection displays inline or navigates to a detail view — rather than from screen-specific CSS, the interface adapts to viewport size without per-view breakpoints or media queries. The master-detail chain described in Section 4 illustrates this directly: earlier columns automatically collapse when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from a wide desktop monitor to a narrow mobile screen with no per-screen responsive code.
+
+This is structurally the same mechanism as the other emergent capabilities: the framework owns the single point where model structure becomes UI, so responsive behavior can be expressed once at that seam and amortized across every screen. In a conventional framework, each screen declares its own layout and its own breakpoints; the cost of maintaining responsive behavior grows linearly with the number of screens. In Strvct, it is paid once at the primitive level.
+
+### 7.3 Automatic Accessibility
+
+Because every interactive surface is a tile generated from a small set of composable primitives rather than a bespoke component, accessibility can be built into the primitives and apply uniformly to every screen. Focus order, arrow-key traversal between sibling tiles, Enter to drill into a detail column, and Escape to return are properties of the tile and tile stack — not of individual views. An internal debugging interface is as keyboard-navigable as a character sheet, because both are composed from the same primitives.
+
+The same structural knowledge that drives the rendered view also drives ARIA output. Each view class provides a default ARIA role derived from its function: tile stacks become `list` containers, individual tiles become `link` items, field tiles become `group` elements, boolean fields become `checkbox`, action fields become `button`. Slot metadata that already exists for type checking and schema generation — `isRequired()`, `isReadOnly()`, minimum/maximum constraints, `description()` — maps directly to ARIA attributes: `aria-required`, `aria-readonly`, `aria-valuemin`/`aria-valuemax`, `aria-description`. The node hierarchy provides landmarks (`navigation`, `region`) and breadcrumb structure. Dynamic content nodes can opt into `aria-live` announcements.
+
+All three UI-surface capabilities in this section — responsive design, accessibility, and internationalization — exist because UI-visible information flows from annotated model slots through a single framework-controlled pipeline. In a conventional framework, accessibility is a per-component obligation — every button, list, and form field needs manual ARIA attributes and keyboard handlers, and the cost scales linearly with the number of components. In Strvct, fixing accessibility in the ~15 core view classes fixes it for every application built on the framework.
+
+### 7.4 Transparent Internationalization
 
 Because all UI text flows from model slot annotations through a single rendering pipeline, translation can be injected at the model-to-view boundary transparently. No per-component `t()` calls or translation key files are needed. New model classes are translatable by default.
 
@@ -4365,25 +4414,13 @@ This centralization also makes AI-powered translation practical. The framework d
 
 In a conventional framework, achieving automatic translation would require either instrumenting every component with translation calls, or building an extraction tool that parses component templates to find translatable strings. Both approaches scale linearly with the number of components. In Strvct, the cost is zero per component — the framework handles it structurally.
 
-### 7.2 Transparent Persistence and Cloud Sync
+### 7.5 Transparent Persistence and Cloud Sync
 
 Because the framework owns the complete object graph and understands the structure of every node through annotations, it can split persistence into two strategies transparently. The object pool — the graph of domain objects and their properties — is loaded synchronously, ensuring the model is immediately available for UI rendering. Large binary resources such as media and document files are stored separately in a content-addressable blob store and loaded asynchronously on demand, so they never block the UI.
 
 This same structural knowledge enables transparent cloud synchronization. Subgraphs of the local object database can be lazily synced to cloud storage without the developer writing any sync logic — the framework knows which objects have changed, which blobs they reference, and how to reconcile local and remote state. The developer annotates what should persist; the framework decides how and when to load, store, and sync it.
 
-### 7.3 JSON Schema Generation
-
-Domain objects can automatically generate JSON Schema descriptions of themselves based on their slot annotations. This is particularly valuable for integration with large language models, which can use the schema to understand the structure of domain objects, validate their output, and generate patches or new instances that conform to the model's constraints. In Strvct's production use, AI assistants modify game state by generating JSON Patch operations validated against auto-generated schemas — a workflow that requires no hand-written schema definitions.
-
-### 7.4 Automatic Accessibility
-
-Because the framework generates the view hierarchy from model annotations and controls the rendering of every tile, field, and navigation structure, it can emit ARIA roles, labels, and states automatically — without any accessibility-specific code from the developer.
-
-Each view class provides a default ARIA role derived from its function: tile stacks become `list` containers, individual tiles become `link` items, field tiles become `group` elements, boolean fields become `checkbox`, action fields become `button`. Slot metadata that already exists for type checking and schema generation — `isRequired()`, `isReadOnly()`, minimum/maximum constraints, `description()` — maps directly to ARIA attributes: `aria-required`, `aria-readonly`, `aria-valuemin`/`aria-valuemax`, `aria-description`. The node hierarchy provides landmarks (`navigation`, `region`) and breadcrumb structure. Dynamic content nodes can opt into `aria-live` announcements.
-
-The parallel to internationalization (Section 7.1) is exact. Both capabilities exist because all UI-visible information flows from annotated model slots through a single framework-controlled pipeline. In a conventional framework, accessibility is a per-component obligation — every button, list, and form field needs manual ARIA attributes, and the cost scales linearly with the number of components. In Strvct, fixing accessibility in the ~15 core view classes fixes it for every application built on the framework.
-
-### 7.5 Content-Addressable Resource Loading
+### 7.6 Content-Addressable Resource Loading
 
 The framework's build system produces a content-addressable bundle where source files are keyed by SHA-256 hash. The client caches resources locally in IndexedDB and uses hash comparison to determine what has changed between deployments. Unchanged resources are never re-downloaded, and identical content across different file paths is stored only once. This is a consequence of the framework controlling the full resource pipeline — analogous to how it controls the model-to-view pipeline — and provides caching granularity that standard bundlers cannot achieve.
 
@@ -4430,7 +4467,7 @@ The analogy to naked objects is instructive if imperfect. In AI, the scaling dim
 
 ### Strengths
 
-The approach is strongest in domains where the model itself is the volatile, high-value artifact — where requirements change frequently and the cost of keeping UI, storage, and synchronization in sync with a shifting model is the main engineering bottleneck. Because a model change propagates automatically to the UI, persistence, cloud sync, schema generation, and internationalization, the iteration cycle from "requirement changed" to "working software" is compressed to the time it takes to modify a class definition. Adding a property, restructuring a hierarchy, or introducing a new entity requires no corresponding changes to view code, form layouts, serialization logic, or API schemas.
+The approach is strongest in domains where the model itself is the volatile, high-value artifact — where requirements change frequently and the cost of keeping UI, storage, and synchronization in sync with a shifting model is the main engineering bottleneck. Because a model change propagates automatically to the UI, persistence, cloud sync, AI integration, and internationalization, the iteration cycle from "requirement changed" to "working software" is compressed to the time it takes to modify a class definition. Adding a property, restructuring a hierarchy, or introducing a new entity requires no corresponding changes to view code, form layouts, serialization logic, or API schemas.
 
 This makes the approach particularly suited to exploratory or fast-evolving applications — tools for analysis, research, operations, or any domain where the data model is expected to grow and change throughout the application's life. The framework's headless execution capability reinforces this: the same model that drives the UI can be tested, simulated, or batch-processed in Node.js without any browser dependency, enabling rapid validation of model changes before they reach users.
 
@@ -4446,7 +4483,7 @@ The naked objects pattern has offered a compelling proposition for twenty-five y
 
 We have argued that the gap is closable because the design space is narrow. Bespoke UI developers are converging on a small set of spatial conventions; a framework can apply these conventions uniformly through composable primitives — tiles, tile stacks, and recursively nested master-detail views — that produce familiar, navigable interfaces from annotated domain models alone.
 
-Strvct demonstrates this approach in production. A non-trivial application with ~90 domain classes uses auto-generated views for approximately 90% of its interface, with custom views needed only for inherently graphical components that fall outside the narrow design space. The centralized model-to-view pipeline enables emergent capabilities — transparent internationalization, automatic accessibility, annotation-driven persistence with cloud sync, and automatic schema generation — that validate the architectural decision to invest in the general method.
+Strvct demonstrates this approach in production. A non-trivial application with ~90 domain classes uses auto-generated views for approximately 90% of its interface, with custom views needed only for inherently graphical components that fall outside the narrow design space. The centralized model-to-view pipeline enables emergent capabilities — an AI-operable domain model, automatic responsive design and accessibility, transparent internationalization, and annotation-driven persistence with cloud sync — that validate the architectural decision to invest in the general method.
 
 The challenge remains making the general method good enough that hand-crafted specialization becomes the exception rather than the rule. We believe the evidence presented here — a narrow design space, a small set of composable primitives, and a production application that confirms both — suggests this goal is within reach.
 
