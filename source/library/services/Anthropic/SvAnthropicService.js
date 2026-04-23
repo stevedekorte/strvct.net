@@ -29,6 +29,16 @@
     modelsJson () {
         return [
             {
+                "name": "claude-opus-4-7",
+                "title": "Claude Opus 4.7",
+                "subtitle": "",
+                "inputTokenLimit": 1000000, // 1M context included at standard pricing
+                "notes": "Uses a new tokenizer that may use up to 35% more tokens for the same text",
+                "outputTokenLimit": 128000, // 128k output tokens
+                "supportsTemperature": true,
+                "supportsTopP": false  // Anthropic doesn't allow both temperature and top_p
+            },
+            {
                 "name": "claude-opus-4-5-20251101",
                 "title": "Claude 4.5 Opus",
                 "subtitle": "",
