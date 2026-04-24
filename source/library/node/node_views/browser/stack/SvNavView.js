@@ -323,38 +323,19 @@
         this.setFlexGrow(0);
         this.setFlexShrink(0);
 
-        // On mobile, constrain width to viewport
-        if (SvWebBrowserWindow.shared().isOnMobile()) {
-            const targetW = this.targetWidth();
-            // Use min() to ensure we never exceed viewport width
-            this.setMinWidth(`min(${targetW}px, 100vw)`);
-            this.setWidth(`min(${targetW}px, 100vw)`);
-            this.setMaxWidth("100vw");
-            this.setFlexGrow(0);
+        const targetW = this.targetWidth();
+        const windowW = SvWebBrowserWindow.shared().width();
+
+        if (targetW >= windowW) {
+            this.setMinWidth("17em");
+            this.setWidth("100%");
+            this.setMaxWidth("100%");
+        } else if (this.shouldCurrentlyFillAvailble()) {
+            this.setMinWidth("17em");
+            this.setWidth(null);
+            this.setMaxWidth("100%");
         } else {
-            //this.setMinAndMaxWidth("17em");
-            const targetW = this.targetWidth();
-            const windowW = SvWebBrowserWindow.shared().width();
-
-            // If our target width exceeds window width, constrain to window
-            if (targetW >= windowW) {
-                this.setMinWidth("17em");
-                this.setWidth("100%");
-                this.setMaxWidth("100%");
-            } else {
-                if (this.shouldCurrentlyFillAvailble()) {
-                    this.setMinWidth("17em");
-                    this.setWidth(null);
-                    this.setMaxWidth("100%");
-
-                    //this.setWidth("-webkit-fill-available");
-                    //this.setMaxWidth("-webkit-fill-available");
-                    //console.log(this.node().nodePathString() + " shouldCurrentlyFillAvailble");
-                } else {
-                    this.setMinAndMaxWidth(targetW);
-                }
-            }
-
+            this.setMinAndMaxWidth(targetW);
         }
 
         this.setMinAndMaxHeight("100%");
@@ -470,16 +451,7 @@
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth();
             if (w && !Type.isNullOrUndefined(w)) {
-                if (SvWebBrowserWindow.shared().isOnMobile()) {
-                    // On mobile, use calc to ensure we never exceed viewport width
-                    // but still respect the node's minimum width if viewport is larger
-                    const widthValue = Type.isNumber(w) ? `${w}px` : w;
-                    this.setMinWidth(`min(${widthValue}, 100vw)`);
-                    this.setWidth(`min(${widthValue}, 100vw)`);
-                    this.setMaxWidth("100vw");
-                } else {
-                    this.setMinWidth(w);
-                }
+                this.setMinWidth(w);
                 this.setMinAndMaxHeight("100%");
             }
         } else {
@@ -561,25 +533,22 @@
      * @category Layout
      */
     updateWidthForWindow () {
-        if (!SvWebBrowserWindow.shared().isOnMobile() && this.isVertical()) {
+        if (this.isVertical()) {
             const targetW = this.targetWidth();
             const windowW = SvWebBrowserWindow.shared().width();
             const isLastNavView = this.stackView() && !this.stackView().nextStackView();
 
-            // If our target width exceeds window width, constrain to window
             if (targetW >= windowW) {
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
             } else if (isLastNavView && windowW < targetW * 2) {
-                // Only for the last SvNavView: if window is between 1x and 2x the SvNavView width, make it fill 100%
+                // Last visible nav view + viewport between 1x and 2x targetWidth: fill the slack
                 this.setMinWidth("17em");
                 this.setWidth("100%");
                 this.setMaxWidth("100%");
-            } else {
-                if (!this.shouldCurrentlyFillAvailble()) {
-                    this.setMinAndMaxWidth(targetW);
-                }
+            } else if (!this.shouldCurrentlyFillAvailble()) {
+                this.setMinAndMaxWidth(targetW);
             }
         }
         return this;
