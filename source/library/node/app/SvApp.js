@@ -185,6 +185,7 @@
      * @category AI
      */
     defaultChatModel () {
+        // SvServices.shared() returns the app's concrete subclass (e.g. UoServices)
         return SvServices.shared().defaultChatModel();
     }
 

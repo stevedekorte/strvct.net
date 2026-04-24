@@ -272,7 +272,7 @@
     setupDefaultChatModel () {
         // NOTE: This changes the default AI chat model across the whole system.
         // Please do tests locally or in a branch.
-        const defaultChatService = this.geminiService();
+        const defaultChatService = this.anthropicService(); //this.geminiService();
         const model = defaultChatService.defaultChatModel();
         this.setDefaultChatModel(model);
         return this;
