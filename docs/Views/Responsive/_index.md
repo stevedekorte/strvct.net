@@ -69,6 +69,12 @@ A few things developers often expect to find in a responsive system are delibera
 
 Applications that need true breakpoint behavior (e.g., a node that renders differently below a certain width) can observe window resize notifications and change their view or tile class from `nodeViewClass()` accordingly — the framework will tear down and reconstruct the view on the next sync pass.
 
+## iOS Safari Viewport Note (for Applications)
+
+On iPhone Safari, the CSS viewport units `100vh`, `100svh`, and `100dvh` do not reliably subtract the animated bottom URL bar area — observed values can be ~40px larger than the actually-visible region, and `env(safe-area-inset-*)` can report 0 in the same state. This is unrelated to the framework's column-sizing machinery, but applications that host a `SvStackView` at the top level will see symptoms it causes: content at the bottom of the flex chain (the last column's footer or click-to-add tile) ends up clipped by Safari's URL bar overlay, and breadcrumbs at the top can get pushed off-screen when Safari animates.
+
+The reliable fix is to set the page root's height from JavaScript using `window.visualViewport.height`, which reflects the true visible region in real time. A minimal implementation observes `visualViewport.resize`, `visualViewport.scroll`, and `orientationchange`, and sets `document.body.style` `min-height` and `max-height` accordingly. This is application-level glue — the framework does not prescribe a specific approach, since some apps want inner scroll views while others want body-level scrolling — but every mobile-targeted STRVCT app will need something like it.
+
 ## Related
 
 - `docs/Views/Auto-Generated Views` — How nav views, tiles, and stack views are discovered and instantiated from model nodes.
