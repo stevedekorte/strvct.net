@@ -51,6 +51,42 @@
             slot.setLabel("Will duplicate linked object");
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @member {string} unlinkedTitle
+         * @description Title shown when no node is linked. Overridable per instance
+         * so callers can display something meaningful (e.g. "My Sessions")
+         * before the target node finishes loading.
+         * @category Placeholders
+         */
+        {
+            const slot = this.newSlot("unlinkedTitle", "Unlinked");
+            slot.setSlotType("String");
+        }
+
+        /**
+         * @member {string} unlinkedSubtitle
+         * @description Subtitle shown when no node is linked. Defaults to a
+         * drop-to-link affordance; override to show a loading state.
+         * @category Placeholders
+         */
+        {
+            const slot = this.newSlot("unlinkedSubtitle", "drop tile to link");
+            slot.setSlotType("String");
+        }
+
+        /**
+         * @member {boolean} nodeAcceptsDrop
+         * @description Whether this node accepts a dropped tile as a link target.
+         * Default true — matches the prior method behavior. Set to false on
+         * link nodes whose target is wired up programmatically and should not
+         * be re-linked by user drag-and-drop.
+         * @category Drop Handling
+         */
+        {
+            const slot = this.newSlot("nodeAcceptsDrop", true);
+            slot.setSlotType("Boolean");
+        }
     }
 
     /**
@@ -81,16 +117,6 @@
     */
 
     /**
-     * @description Checks if this node accepts a drop of another node
-     * @param {SvNode} aNode - The node being dropped
-     * @returns {boolean} True if the node accepts the drop
-     * @category Drop Handling
-     */
-    nodeAcceptsDrop (/*aNode*/) {
-        return true;
-    }
-
-    /**
      * @description Handles the event when a node is dropped onto this node
      * @param {SvNode} aNode - The node that was dropped
      * @category Drop Handling
@@ -119,7 +145,8 @@
 
     /**
      * @description Gets the title of the node
-     * @returns {string} The title of the linked node or "Unlinked" if no node is linked
+     * @returns {string} The title of the linked node, or the unlinkedTitle
+     * slot value if no node is linked
      * @category Node Information
      */
     title () {
@@ -127,7 +154,7 @@
         if (ln) {
             return ln.title();
         }
-        return "Unlinked";
+        return this.unlinkedTitle();
     }
 
     /*
@@ -158,7 +185,7 @@
         if (ln) {
             return ln.subtitle();
         }
-        return "drop tile to link";
+        return this.unlinkedSubtitle();
     }
 
     /*

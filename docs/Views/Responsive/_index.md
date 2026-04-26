@@ -75,6 +75,8 @@ On iPhone Safari, the CSS viewport units `100vh`, `100svh`, and `100dvh` do not 
 
 The reliable fix is to set the page root's height from JavaScript using `window.visualViewport.height`, which reflects the true visible region in real time. A minimal implementation observes `visualViewport.resize`, `visualViewport.scroll`, and `orientationchange`, and sets `document.body.style` `min-height` and `max-height` accordingly. This is application-level glue — the framework does not prescribe a specific approach, since some apps want inner scroll views while others want body-level scrolling — but every mobile-targeted STRVCT app will need something like it.
 
+TODO: consider bumping the base font size on small screens. Tile text that reads comfortably at desktop widths tends to look a touch small on a phone, and the available width is large enough that a 1–2pt increase below a breakpoint (say `@media (max-width: 480px)`) would improve legibility without hurting density on tablets. Framework-level or app-level CSS — defer until we have a clearer opinion on which. Not a layout bug, just a readability nit worth revisiting.
+
 ## Related
 
 - `docs/Views/Auto-Generated Views` — How nav views, tiles, and stack views are discovered and instantiated from model nodes.
