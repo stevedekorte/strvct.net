@@ -10,8 +10,8 @@ STRVCT's architecture inverts this. All state lives in typed slots with rich met
 
 Two capabilities already demonstrate this pattern:
 
-- **[Accessibility](../../Accessibility/index.html)** -- Slot metadata maps to ARIA attributes, view classes emit roles and states, and every application inherits WCAG 2.2 AA support without per-component accessibility code.
-- **[Internationalization](../../Internationalization/index.html)** -- Translatable nodes and a batched translation service give every application multilingual support through the model layer.
+- **[Accessibility](../../Accessibility/)** -- Slot metadata maps to ARIA attributes, view classes emit roles and states, and every application inherits WCAG 2.2 AA support without per-component accessibility code.
+- **[Internationalization](../../Internationalization/)** -- Translatable nodes and a batched translation service give every application multilingual support through the model layer.
 
 The candidates below are additional capabilities that the same architectural properties make possible. Each would be difficult or impractical to add after the fact in a conventional framework, but in STRVCT they can be implemented at the framework level and applied uniformly.
 

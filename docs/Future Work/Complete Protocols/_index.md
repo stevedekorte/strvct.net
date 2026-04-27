@@ -4,7 +4,7 @@ Formalizing the many undeclared interface contracts throughout the codebase.
 
 ## Context
 
-STRVCT has a [protocol system](../../Programming%20Idioms/Protocols/index.html) for declaring interfaces and verifying conformance at class-registration time. In practice, only a handful of protocols have been formally declared (audio clip, audio clip delegate, drag source, drag destination). The rest of the codebase relies on informal duck-typing -- checking for a method's existence before calling it, or simply assuming it exists based on context.
+STRVCT has a [protocol system](../../Programming%20Idioms/Protocols/) for declaring interfaces and verifying conformance at class-registration time. In practice, only a handful of protocols have been formally declared (audio clip, audio clip delegate, drag source, drag destination). The rest of the codebase relies on informal duck-typing -- checking for a method's existence before calling it, or simply assuming it exists based on context.
 
 This means there are many implicit protocols scattered throughout the framework: sets of methods that classes are expected to implement but that have no formal declaration, no early verification, and no central documentation.
 

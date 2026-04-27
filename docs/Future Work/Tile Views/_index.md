@@ -4,7 +4,7 @@ Tile subclasses for presenting individual subnodes in specialized ways.
 
 ## Context
 
-STRVCT's view architecture has two distinct roles: **tile container views** arrange the array of subnodes spatially (see [Tile Container Views](../Tile%20Container%20Views/index.html)), while **tile views** present an individual subnode -- its content, appearance, and interaction affordances.
+STRVCT's view architecture has two distinct roles: **tile container views** arrange the array of subnodes spatially (see [Tile Container Views](../Tile%20Container%20Views/)), while **tile views** present an individual subnode -- its content, appearance, and interaction affordances.
 
 Nodes select their tile class via `setNodeTileClass()`. All tiles inherit the standard tile infrastructure -- selection, theming, gestures, accessibility -- and add domain-specific rendering.
 
@@ -85,7 +85,7 @@ A compact tile optimized for small status indicators -- an icon plus a short lab
 
 A tile that composes a node's subnode tree into a rendered document. The subnodes represent the structural elements of a document -- headings, paragraphs, images, code blocks, lists -- each as an independent node with its own metadata. The document tile walks this subtree and renders the composed result inline as formatted HTML or markdown.
 
-The structural editing happens in the normal tile container: subnodes appear as draggable tiles that can be reordered, added, or removed. The document tile provides the complementary view -- the same content rendered as a reader would see it. A node could support both views (structural and composed) via the user-switchable container mechanism described in [Tile Container Views](../Tile%20Container%20Views/index.html), letting the user toggle between editing the structure and previewing the document.
+The structural editing happens in the normal tile container: subnodes appear as draggable tiles that can be reordered, added, or removed. The document tile provides the complementary view -- the same content rendered as a reader would see it. A node could support both views (structural and composed) via the user-switchable container mechanism described in [Tile Container Views](../Tile%20Container%20Views/), letting the user toggle between editing the structure and previewing the document.
 
 Use cases include blog posts, reports, style guides, documentation pages, and any content where the author benefits from structural manipulation (drag a section to a new position, tag individual blocks with metadata, collapse sections) but the reader needs a coherent rendered document.
 

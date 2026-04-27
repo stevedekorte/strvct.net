@@ -8,7 +8,7 @@ Strvct applications run as client-side single-page apps in the browser. The fram
 
 Strvct is not a template system, a compile-time UI generator, or a component framework in the React/Flutter sense. There is no build step that produces views, no static component tree, and no pre-rendered layout. Views are created lazily at runtime as the user navigates the object graph — each navigation step inspects the target node's annotations, discovers an appropriate view class, and instantiates it. Once created, a view stays live and in sync with its model node through bidirectional notifications. The UI at any moment is a dynamic projection of the user's current navigation path, not a pre-built artifact.
 
-This page covers the key concepts: the domain model, storage, UI synchronization, and the capabilities these enable. For the design rationale, see [Naked Objects](../Naked%20Objects/index.html). For implementation details, see the [Implementation Overview](../Implementation%20Overview/index.html).
+This page covers the key concepts: the domain model, storage, UI synchronization, and the capabilities these enable. For the design rationale, see [Naked Objects](../Naked%20Objects/). For implementation details, see the [Implementation Overview](../Implementation%20Overview/).
 
 ## Domain Model
 
@@ -98,7 +98,7 @@ Drag and drop of domain objects into the UI and out of it for export is supporte
 
 ### Internationalization
 
-Because the framework controls the model-to-view pipeline, it can intercept slot values at the view boundary and translate them transparently — no per-string wrapping required. This centralization also makes AI-powered translation viable. The framework can automatically discover every translatable string in the application by walking the model, and include semantic context with each string to improve translation quality. See the [Internationalization](../Internationalization/index.html) guide for details.
+Because the framework controls the model-to-view pipeline, it can intercept slot values at the view boundary and translate them transparently — no per-string wrapping required. This centralization also makes AI-powered translation viable. The framework can automatically discover every translatable string in the application by walking the model, and include semantic context with each string to improve translation quality. See the [Internationalization](../Internationalization/) guide for details.
 
 ### JSON Schema
 

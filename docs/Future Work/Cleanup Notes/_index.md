@@ -10,7 +10,7 @@ Opportunities:
 
 - **Extract a compaction coordinator**: The logic for measuring available width, deciding which columns to collapse, and triggering collapse/uncollapse could live in a dedicated object rather than being distributed across `SvStackView` and `SvNavView`.
 - **Clarify the compaction protocol**: Document the contract — what triggers compaction, what order columns are compacted in, how a column signals that it can't compact further, and how expansion reverses the process.
-- **Support compaction priorities**: Currently all columns compact uniformly. A priority system (some columns resist compaction longer than others) would be useful for auxiliary views (see [Browser Cleanup](../Browser%20Cleanup/index.html)) and for nodes that consider their content more important than their siblings.
+- **Support compaction priorities**: Currently all columns compact uniformly. A priority system (some columns resist compaction longer than others) would be useful for auxiliary views (see [Browser Cleanup](../Browser%20Cleanup/)) and for nodes that consider their content more important than their siblings.
 - **Animation**: Column collapse/expand is instant. Animating the transitions would make the responsive behavior feel more polished and help the user track what moved.
 
 ## Notification Naming Conventions

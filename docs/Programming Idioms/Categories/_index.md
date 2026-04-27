@@ -101,5 +101,5 @@ This means:
 
 ## Related patterns
 
-- [Slot Patterns](../Slot%20Patterns/index.html) — how to declare properties on classes
-- [Lifecycle](../../Lifecycle/index.html) — `initPrototypeSlots` / `initPrototype` and the initialization chain, which categories cannot participate in (only methods are merged)
+- [Slot Patterns](../Slot%20Patterns/) — how to declare properties on classes
+- [Lifecycle](../../Lifecycle/) — `initPrototypeSlots` / `initPrototype` and the initialization chain, which categories cannot participate in (only methods are merged)

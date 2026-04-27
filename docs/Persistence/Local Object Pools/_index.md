@@ -117,7 +117,7 @@ Because the commit is deferred, multiple slot changes within the same event loop
 
 ## SvPersistentAtomicMap
 
-`SvPersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/index.html) for details on the storage abstraction.
+`SvPersistentAtomicMap` wraps `SvIndexedDbFolder` with a synchronous in-memory cache. On open, it loads the entire database into a JavaScript Map. All reads are served from memory. Writes go to an in-memory write cache and are flushed to the underlying store in batched transactions on commit. `SvIndexedDbFolder` is the environment abstraction point — it uses native IndexedDB in the browser and LevelDB (via `classic-level`) in Node.js, with the same async API in both cases. See [Headless Execution](../../Lifecycle/Headless%20Execution/) for details on the storage abstraction.
 
 This design means:
 
@@ -188,11 +188,11 @@ The pool uses mark-and-sweep garbage collection to remove unreachable objects:
 
 Garbage collection runs automatically when the pool opens. It ensures that objects which are no longer reachable from the root — for example, nodes removed from a collection — are cleaned up from IndexedDB.
 
-Blob garbage collection runs separately via `SvBlobPool` (see [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/index.html)).
+Blob garbage collection runs separately via `SvBlobPool` (see [Local and Cloud Blob Storage](../Local%20and%20Cloud%20Blob%20Storage/)).
 
 ## SvSubObjectPool
 
-`SvSubObjectPool` is an in-memory variant of `SvObjectPool` used for cloud sync rather than local persistence. It uses a plain `SvAtomicMap` instead of `SvPersistentAtomicMap` (no IndexedDB) and does not auto-schedule commits. Instead, it provides explicit methods for cloud upload with delta optimization. See [Cloud Object Pools](../Cloud%20Object%20Pools/index.html) for details.
+`SvSubObjectPool` is an in-memory variant of `SvObjectPool` used for cloud sync rather than local persistence. It uses a plain `SvAtomicMap` instead of `SvPersistentAtomicMap` (no IndexedDB) and does not auto-schedule commits. Instead, it provides explicit methods for cloud upload with delta optimization. See [Cloud Object Pools](../Cloud%20Object%20Pools/) for details.
 
 ## Key Classes Summary
 

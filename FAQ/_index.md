@@ -34,7 +34,7 @@ Yes. Data lives in the browser's IndexedDB by default. The application works ful
 
 ## How is styling handled?
 
-All styling uses named JavaScript methods (`setBackgroundColor()`, `setFlexDirection()`, `setPadding()`) rather than CSS files. Themes are swappable dictionaries that can be scoped to any subtree. This avoids the combinatorial explosion of CSS selectors when views have multiple independent states (selected, disabled, highlighted, error, etc.) that interact visually. See the [Programmatic Styling](docs/Views/Programmatic%20Styling/index.html) docs for details.
+All styling uses named JavaScript methods (`setBackgroundColor()`, `setFlexDirection()`, `setPadding()`) rather than CSS files. Themes are swappable dictionaries that can be scoped to any subtree. This avoids the combinatorial explosion of CSS selectors when views have multiple independent states (selected, disabled, highlighted, error, etc.) that interact visually. See the [Programmatic Styling](docs/Views/Programmatic%20Styling/) docs for details.
 
 ## What about routing?
 
@@ -46,7 +46,7 @@ Modern evergreen browsers (Chrome, Firefox, Safari, Edge). STRVCT uses contempor
 
 ## Can it run outside the browser?
 
-Yes. The model layer, persistence system, and boot sequence all run in Node.js with no DOM — the same application code, the same storage behavior, the same object lifecycle, just without the view layer. This is possible because the model never references views; views observe the model through notifications, not the other way around. Useful for tests, CLI tools, and server-side processing of the same object graphs the client uses. See [Headless Execution](../docs/Lifecycle/Headless%20Execution/index.html) for details.
+Yes. The model layer, persistence system, and boot sequence all run in Node.js with no DOM — the same application code, the same storage behavior, the same object lifecycle, just without the view layer. This is possible because the model never references views; views observe the model through notifications, not the other way around. Useful for tests, CLI tools, and server-side processing of the same object graphs the client uses. See [Headless Execution](../docs/Lifecycle/Headless%20Execution/) for details.
 
 ## Is it production-ready?
 
@@ -68,7 +68,7 @@ MIT-licensed, and the entire codebase is readable: plain JavaScript, no transpil
 
 ## What's the history of this project?
 
-**Origins:** STRVCT began as internal infrastructure, not as a framework project. The earliest code was written in 2016 as part of an application called bitmarkets.js — Miller columns, a node hierarchy, and slot-based persistence — and was carried into a second unrelated application, voluntary.app, starting in 2017. The framework code was progressively separated from application code and extracted into its own repository, strvct.net, in 2020. It has since grown to include the object pool persistence system, gestures and drag-and-drop, content-addressable builds, cloud sync, and internationalization. The [Timeline](../Timeline/index.html) has the full list of milestones.
+**Origins:** STRVCT began as internal infrastructure, not as a framework project. The earliest code was written in 2016 as part of an application called bitmarkets.js — Miller columns, a node hierarchy, and slot-based persistence — and was carried into a second unrelated application, voluntary.app, starting in 2017. The framework code was progressively separated from application code and extracted into its own repository, strvct.net, in 2020. It has since grown to include the object pool persistence system, gestures and drag-and-drop, content-addressable builds, cloud sync, and internationalization. The [Timeline](../Timeline/) has the full list of milestones.
 
 **Public presence:** The project has not been publicly marketed or announced. Its only public presence is the GitHub repository and links from the author's GitHub and Twitter profile subtitles. It is not a commercial product, has no funding or sponsoring organization, and is developed as a personal framework — used in production by [undreamedof.ai](https://undreamedof.ai).
 
@@ -91,4 +91,4 @@ In practice the recommended workflow is to give an LLM-backed coding agent (Clau
 
 ## How do I get started?
 
-See the [Example App](Example%20App/index.html) for a complete working application in four classes, or the [Getting Started](docs/Getting%20Started/index.html) guide for setup and project structure.
+See the [Example App](Example%20App/) for a complete working application in four classes, or the [Getting Started](docs/Getting%20Started/) guide for setup and project structure.

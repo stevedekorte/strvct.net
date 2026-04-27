@@ -74,7 +74,7 @@ Views that display a lazy slot's value will initially see `undefined`. The view 
 - Re-rendering when the lazy load completes
 - Handling the case where the load fails (network error, deleted object)
 
-This is closely related to the [Async Final Initialization](../Async%20Final%20Initialization/index.html) problem — both require views to handle an "object not yet ready" state.
+This is closely related to the [Async Final Initialization](../Async%20Final%20Initialization/) problem — both require views to handle an "object not yet ready" state.
 
 ### Copying and Cloning
 

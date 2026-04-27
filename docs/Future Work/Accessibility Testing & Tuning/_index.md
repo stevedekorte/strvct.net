@@ -4,7 +4,7 @@ Validating and refining the framework's ARIA implementation across screen reader
 
 ## Overview
 
-The core accessibility infrastructure is in place -- ARIA roles, labels, states, landmarks, live regions, focus indicators, and slot-to-ARIA metadata wiring are all implemented in the framework's view classes (see [Accessibility](../../Accessibility/index.html) documentation). What remains is testing that implementation against real assistive technology and tuning behavior for edge cases that only surface during actual screen reader use.
+The core accessibility infrastructure is in place -- ARIA roles, labels, states, landmarks, live regions, focus indicators, and slot-to-ARIA metadata wiring are all implemented in the framework's view classes (see [Accessibility](../../Accessibility/) documentation). What remains is testing that implementation against real assistive technology and tuning behavior for edge cases that only surface during actual screen reader use.
 
 ## VoiceOver Testing
 

@@ -45,8 +45,8 @@ These tradeoffs are the primary reason this is a long-term direction rather than
 
 Several other Future Work items intersect with async navigation:
 
-- **[Lazy Slots](../Lazy%20Slots/index.html)** and **[Promise-Wrapped Slots](../Promise-Wrapped%20Slots/index.html)** address async data at the slot level. Async navigation would be the view-layer counterpart -- the container knowing how to wait for and display async subnode sources.
-- **[Scaling to Large Collections](../Tile%20Container%20Views/index.html)** (in Tile Container Views) describes virtual scrolling and async data sources for tile containers. Async navigation generalizes this from a single container feature to a stack-wide capability.
-- **[Graph Database](../Graph%20Database/index.html)** would introduce query-based node retrieval, which naturally produces async results.
+- **[Lazy Slots](../Lazy%20Slots/)** and **[Promise-Wrapped Slots](../Promise-Wrapped%20Slots/)** address async data at the slot level. Async navigation would be the view-layer counterpart -- the container knowing how to wait for and display async subnode sources.
+- **[Scaling to Large Collections](../Tile%20Container%20Views/)** (in Tile Container Views) describes virtual scrolling and async data sources for tile containers. Async navigation generalizes this from a single container feature to a stack-wide capability.
+- **[Graph Database](../Graph%20Database/)** would introduce query-based node retrieval, which naturally produces async results.
 
 If lazy slots and promise-wrapped slots are implemented first, they may provide the async primitives that async navigation builds on -- the slot system handles the data loading, and the navigation stack handles the display timing.

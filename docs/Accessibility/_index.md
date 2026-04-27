@@ -182,7 +182,7 @@ The implementation targets WCAG 2.2 Level AA, which covers the requirements of m
 
 ### Remaining for Full AA Compliance
 
-See [Accessibility Testing & Tuning](Future%20Work/Accessibility%20Testing%20%26%20Tuning/index.html) for details on remaining testing and tuning work, including VoiceOver validation, cross-screen-reader testing, focus management refinements, and per-application adjustments.
+See [Accessibility Testing & Tuning](Future%20Work/Accessibility%20Testing%20%26%20Tuning/) for details on remaining testing and tuning work, including VoiceOver validation, cross-screen-reader testing, focus management refinements, and per-application adjustments.
 
 ## Design Decisions
 

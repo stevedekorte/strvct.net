@@ -6,7 +6,7 @@ The object model at the heart of STRVCT.
 
 Nodes are the central abstraction in STRVCT. Every piece of application state -- a user, a document, a settings panel, a list of items -- is a node. Nodes form a tree: each node has a parent and an ordered array of subnodes. The framework generates the entire UI from this tree, so understanding nodes is understanding how STRVCT applications are structured.
 
-A node is not a UI component. It's a model object that declares its data (via [slots](../Slots/index.html)), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's [view system](../Views/index.html) reads this information and generates the appropriate UI automatically.
+A node is not a UI component. It's a model object that declares its data (via [slots](../Slots/)), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's [view system](../Views/) reads this information and generates the appropriate UI automatically.
 
 ## The Node Hierarchy
 
@@ -47,7 +47,7 @@ parentNode.removeSubnode(childNode);
 parentNode.moveSubnodesToIndex([nodeA, nodeB], 3);
 ```
 
-When subnodes change, the framework automatically updates the UI through the [notification system](../Notifications/index.html). No manual view refresh is needed.
+When subnodes change, the framework automatically updates the UI through the [notification system](../Notifications/). No manual view refresh is needed.
 
 ### Subnodes vs. Subnode Fields
 
@@ -152,7 +152,7 @@ this.setNodeIsVertical(true);   // subnodes lay out top-to-bottom (default)
 this.setNodeIsVertical(false);  // subnodes lay out left-to-right
 ```
 
-This controls the direction of the tile container when displaying this node's subnodes. Vertical nodes produce a scrollable list; horizontal nodes produce side-by-side columns. The recursive combination of vertical and horizontal nodes at different levels of the tree is what gives STRVCT its [Miller column](../Inspirations/index.html) navigation pattern.
+This controls the direction of the tile container when displaying this node's subnodes. Vertical nodes produce a scrollable list; horizontal nodes produce side-by-side columns. The recursive combination of vertical and horizontal nodes at different levels of the tree is what gives STRVCT its [Miller column](../Inspirations/) navigation pattern.
 
 ### Custom View and Tile Classes
 
@@ -178,7 +178,7 @@ this.setNodeMinTileHeight(80);          // minimum tile height in pixels
 
 ## Persistence
 
-`SvStorableNode` integrates with the [persistence system](../Persistence/index.html). Nodes that extend it are automatically stored to IndexedDB and can sync to the cloud. The key configuration is which slots to persist:
+`SvStorableNode` integrates with the [persistence system](../Persistence/). Nodes that extend it are automatically stored to IndexedDB and can sync to the cloud. The key configuration is which slots to persist:
 
 ```javascript
 initPrototypeSlots () {

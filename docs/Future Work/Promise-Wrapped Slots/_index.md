@@ -75,7 +75,7 @@ If a promise-wrapped slot is also stored (`setShouldStoreSlot(true)`), the persi
 
 ## Relationship to Lazy Slots
 
-Promise-wrapped slots and [lazy slots](../Lazy%20Slots/index.html) solve different halves of the async slot problem:
+Promise-wrapped slots and [lazy slots](../Lazy%20Slots/) solve different halves of the async slot problem:
 
 - **Lazy slots** defer *loading* an already-persisted object until first access.
 - **Promise-wrapped slots** defer *computing* a derived value, with caching and invalidation.

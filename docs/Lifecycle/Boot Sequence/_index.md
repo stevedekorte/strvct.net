@@ -21,7 +21,7 @@ The browser loads the boot loader script. Core boot files are loaded in parallel
 5. Filters out environment-inappropriate resources (e.g., `browser-only/` files in Node.js) via `StrvctFile.canUseInCurrentEnv()`.
 6. Evaluates JavaScript resources in dependency order.
 
-After this phase, all classes are defined and available globally. See [Headless Execution](../Headless%20Execution/index.html) for details on how the boot sequence adapts to Node.js.
+After this phase, all classes are defined and available globally. See [Headless Execution](../Headless%20Execution/) for details on how the boot sequence adapts to Node.js.
 
 ## 3. App Creation
 

@@ -146,5 +146,5 @@ Formal protocols address all three. The trade-off is a small amount of ceremony 
 
 ## Related patterns
 
-- [Categories](../Categories/index.html) -- extending classes with methods from separate files (protocols define *what* methods to implement; categories *add* methods)
-- [Complete Protocols](../../Future%20Work/Complete%20Protocols/index.html) -- future work on formalizing the codebase's many undeclared protocols
+- [Categories](../Categories/) -- extending classes with methods from separate files (protocols define *what* methods to implement; categories *add* methods)
+- [Complete Protocols](../../Future%20Work/Complete%20Protocols/) -- future work on formalizing the codebase's many undeclared protocols

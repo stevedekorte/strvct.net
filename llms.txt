@@ -75,10 +75,6 @@
 - [Responsive](/docs/Views/Responsive/): How the view layer adapts the master-detail composition to different viewport sizes without per-screen layout code.
 - [Themes and Style States](/docs/Views/Themes%20and%20Style%20States/): How views resolve their appearance from theme classes, style states, and node configuration.
 
-## colvmn
-
-- [colvmn](/colvmn/): A minimal static-site layout engine.
-
 ## Example App
 
 - [Example App](/Example%20App/): A complete contacts application in four classes, with zero view code.

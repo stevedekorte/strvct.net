@@ -94,7 +94,7 @@ This design means the layers above `SvIndexedDbFolder` never make async storage 
 
 Binary data — images, audio, and other media — is stored separately in `SvBlobPool`, a content-addressable blob store that uses its own `SvIndexedDbFolder` instance (database name `defaultBlobStore`, separate from the object pool's `defaultDataStore`). Unlike the object pool, blob storage is fully asynchronous: blobs are read and written individually on demand, not loaded into memory all at once. This keeps memory usage proportional to what the application is actively using rather than the total size of all stored media.
 
-`SvBlobPool` also works in headless mode — it uses the same `SvIndexedDbFolder` abstraction, so it gets the LevelDB backend automatically in Node.js. See [Local and Cloud Blob Storage](../../Persistence/Local%20and%20Cloud%20Blob%20Storage/index.html) for details on the blob system.
+`SvBlobPool` also works in headless mode — it uses the same `SvIndexedDbFolder` abstraction, so it gets the LevelDB backend automatically in Node.js. See [Local and Cloud Blob Storage](../../Persistence/Local%20and%20Cloud%20Blob%20Storage/) for details on the blob system.
 
 ### Browser Backend
 
@@ -108,7 +108,7 @@ String values are stored with a byte marker prefix to distinguish them from bina
 
 ### What This Means in Practice
 
-Application code — model classes, slot definitions, `setShouldStore(true)`, dirty tracking — is completely unaware of which backend is in use. The same `Contact` class with the same slot annotations stores to IndexedDB in Chrome and to LevelDB in Node.js, with identical serialization format and identical commit behavior. See [Local Object Pools](../../Persistence/Local%20Object%20Pools/index.html) for details on the persistence system itself.
+Application code — model classes, slot definitions, `setShouldStore(true)`, dirty tracking — is completely unaware of which backend is in use. The same `Contact` class with the same slot annotations stores to IndexedDB in Chrome and to LevelDB in Node.js, with identical serialization format and identical commit behavior. See [Local Object Pools](../../Persistence/Local%20Object%20Pools/) for details on the persistence system itself.
 
 ## External Libraries
 

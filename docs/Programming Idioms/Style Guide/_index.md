@@ -203,7 +203,7 @@ SvTile_keyboard.js              // keyboard handling
 
 The category class name matches the filename: `SvJsonGroup_patches`, `SvTile_dragging`. The underscore convention makes it easy to see at a glance which class is being extended and what the extension adds.
 
-See [Categories](../Categories/index.html) for details on how categories work.
+See [Categories](../Categories/) for details on how categories work.
 
 ## Protocols
 
@@ -227,7 +227,7 @@ library/node/node_views/.../SvTilesView/SvDragSourceProtocol.js
 library/node/node_views/.../SvTilesView/SvDragDestinationProtocol.js
 ```
 
-See [Protocols](../Protocols/index.html) for details on defining and implementing protocols.
+See [Protocols](../Protocols/) for details on defining and implementing protocols.
 
 ## Files and directories
 

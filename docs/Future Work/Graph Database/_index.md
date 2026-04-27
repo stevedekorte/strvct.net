@@ -4,7 +4,7 @@ Long-term direction: replacing the current cloud storage backend with a native g
 
 ## Context
 
-STRVCT's domain model is a cyclic graph of objects connected by typed references. Locally, this graph is stored in IndexedDB as a flat key-value map of serialized records, with object references represented as persistent unique IDs (puuids). Cloud sync currently uses Firebase Storage, with two strategies: per-item JSON files for collections, and whole-pool snapshots with write-ahead log deltas for interconnected object graphs (see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/index.html)).
+STRVCT's domain model is a cyclic graph of objects connected by typed references. Locally, this graph is stored in IndexedDB as a flat key-value map of serialized records, with object references represented as persistent unique IDs (puuids). Cloud sync currently uses Firebase Storage, with two strategies: per-item JSON files for collections, and whole-pool snapshots with write-ahead log deltas for interconnected object graphs (see [Cloud Object Pools](../../Persistence/Cloud%20Object%20Pools/)).
 
 This works, but there's a fundamental mismatch: the domain model is a graph, while the storage and sync layers treat it as either a bag of independent documents (collection sync) or a monolithic blob (pool sync). Neither representation natively understands the structure of the data it's storing.
 
