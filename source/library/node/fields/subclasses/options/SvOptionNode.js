@@ -65,6 +65,8 @@
         this.setNodeCanReorderSubnodes(false);
         this.setCanDelete(true);
         this.setNodeCanEditTitle(true);
+        // Option tiles are terminal — tapping selects, doesn't drill in.
+        this.setNodeCanNavInto(false);
     }
 
     /**

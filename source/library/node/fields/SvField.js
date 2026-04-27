@@ -290,6 +290,10 @@
         this.setShouldStore(true);
         this.setSummaryFormat("key value");
         this.setHasNewlineAfterSummary(true);
+        // Tapping a field tile shouldn't push an empty column —
+        // fields are terminal property tiles. Inspection mode (alt-tap)
+        // overrides this in SvStackView.shouldShowOtherViewForNode.
+        this.setNodeCanNavInto(false);
     }
 
     /**

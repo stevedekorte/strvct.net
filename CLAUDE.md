@@ -7,6 +7,31 @@
 - Reactive properties via slot system
 - Notification-based synchronization between components
 
+## Model / View Separation (CRITICAL)
+
+STRVCT is a **naked objects** framework. The entire UI is auto-generated from the model node graph, and the view layer observes models via the notification system. Crossing this boundary in the wrong direction breaks the pattern, makes models harder to test (they pull in browser globals), and produces views that can't be re-skinned.
+
+**Models (`SvNode` and subclasses) MUST NOT:**
+
+- Reference view classes (`SvDomView`, `SvTile`, `SvBrowserView`, `SvNavView`, `SvStackView`, etc.).
+- Reach into browser globals: `document`, `window`, `navigator`, `localStorage`, `IndexedDB` directly.
+- Use `SvWebBrowserWindow` or any class under `library/view/`.
+- Inspect viewport size, touch state, focus, hover, or any UI state.
+- Drive layout, animation, or scrolling decisions.
+
+**Views (`SvDomView` subclasses, `SvTile`, `SvNavView`, etc.) DO:**
+
+- Observe model nodes via notifications (`didUpdateSlot*`, `setSyncsToView`, etc.).
+- Read viewport / device state and decide layout, gestures, animations.
+- Translate user interactions (taps, drags, key presses) into model action method calls.
+- Make navigation/compaction/responsive decisions based on viewport.
+
+**When a model needs UI-state-dependent behavior**, the view passes state in via a method call or argument. Example: instead of a node calling `SvWebBrowserWindow.shared().width()` to decide whether to auto-collapse on selection, the view layer (which already knows the viewport) does that decision and tells the node what to do, or the view itself performs the navigation.
+
+**Allowed model-side notifications**: posting domain events (`postOnRequestNavigateToNode`, custom `SvNotification`s) is fine — the model is announcing facts, not querying UI state. The view layer subscribes and decides what to do.
+
+This boundary is load-bearing for the framework's automatic-UI claim. Treat any model file `import` or reference that touches view classes / browser globals as a bug.
+
 ## Core Features
 
 ### Class Definition

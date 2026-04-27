@@ -131,6 +131,11 @@
 
         this.setNodeCanAddSubnode(true);
         this.setSummaryFormat("value");
+
+        // Override SvField's default: an options collection IS navigable —
+        // tapping it should reveal its SvOptionNode children. Only the
+        // individual option leaves opt out of nav.
+        this.setNodeCanNavInto(true);
         this.setNoteIconName("right-arrow");
         this.setSubnodeProto(SvOptionNode);
     }

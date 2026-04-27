@@ -628,8 +628,9 @@
             const oNode = tile.nodeTileLink();
 
             // Check if we should show the otherView
-            // Hide it if the node has no subnodes and can't add subnodes
-            if (!this.shouldShowOtherViewForNode(oNode)) {
+            // Hide it if the node has no subnodes and can't add subnodes,
+            // or opts out via nodeCanNavInto (unless the user is inspecting).
+            if (!this.shouldShowOtherViewForNode(oNode, tile)) {
                 // Hide the otherView since it serves no purpose
                 this.clearOtherView();
             } else {
@@ -1045,15 +1046,31 @@
 
     /**
      * @description Determines if the otherView should be shown for a given node.
+     * Inspection mode (alt-tap) always wins — the inspector column is shown
+     * regardless of whether the node opts out of navigation.
      * @param {SvNode} node The node to check.
+     * @param {SvTile} [tile] The tile that was selected. Optional — when
+     * absent, inspection state cannot be consulted and only the node-level
+     * gate is checked.
      * @returns {boolean} True if the otherView should be shown, false otherwise.
      */
-    shouldShowOtherViewForNode (node) {
+    shouldShowOtherViewForNode (node, tile) {
         if (!node) {
             return false;
         }
 
-        return true; // Always show detail column for selected node (Miller Column behavior)
+        // Inspection bypass: always show the inspector column when the
+        // user explicitly tapped to inspect this tile.
+        if (tile && tile.isInspecting && tile.isInspecting()) {
+            return true;
+        }
+
+        // Honor a node's opt-out (e.g. fields, leaf option nodes).
+        if (node.nodeCanNavInto && !node.nodeCanNavInto()) {
+            return false;
+        }
+
+        return true; // Default Miller Column behavior: detail column for selected node.
     }
 
     /**

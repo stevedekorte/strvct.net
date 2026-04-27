@@ -147,6 +147,23 @@
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @member {Boolean} nodeCanNavInto
+         * @description Whether tapping the node's tile in a stack view should
+         * push the next master-detail column. Default true. Override to false
+         * on terminal nodes (fields, leaf options, message bubbles) that have
+         * no meaningful child view to display — prevents an empty column from
+         * sliding in on mobile or a useless drill-in on desktop.
+         *
+         * Inspection mode bypasses this gate: when the user explicitly inspects
+         * a tile (alt-tap), the inspector column is still shown.
+         * @category Navigation
+         */
+        {
+            const slot = this.newSlot("nodeCanNavInto", true);
+            slot.setSlotType("Boolean");
+        }
+
         {
             const slot = this.newSlot("subnodes", null);
             slot.setInitProto(SvSubnodesArray);
