@@ -31,13 +31,13 @@
             slot.setSyncsToView(true);
         }
 
-        // Result image URL data (the best matching image) - kept for compatibility
+        // Result image node (the best matching image) - blob-backed, no data URL round-trip
         {
-            const slot = this.newSlot("resultImageUrlData", null);
-            slot.setSlotType("String");
+            const slot = this.newSlot("resultImageNode", null);
+            slot.setSlotType("SvImageNode");
             slot.setLabel("Best Result Image");
             slot.setIsSubnodeField(true);
-            slot.setShouldStoreSlot(false); // transient; consumers convert to blob-backed imageNode immediately
+            slot.setShouldStoreSlot(false); // transient; consumers copy the blob directly
             slot.setSyncsToView(true);
             slot.setFieldInspectorClassName("SvImageWellField");
             slot.setCanEditInspection(false);
@@ -123,20 +123,18 @@
             this.appendStatus("Preparing to evaluate images...");
             this.imageEvaluators().removeAllSubnodes();
 
-            // setup image evaluators
+            // setup image evaluators - pass imageNode directly, no SvImage intermediary
             for (const fileToDownload of this.allResultImages()) {
                 await fileToDownload.asyncFetchIfNeeded();
-                const svImage = SvImage.clone();
-                svImage.setDataURL(await fileToDownload.asyncDataUrl());
                 const evaluator = this.imageEvaluators().add();
-                evaluator.setSvImage(svImage);
+                evaluator.setSvImage(fileToDownload.imageNode());
                 evaluator.setImageGenPrompt(this.prompt());
             }
 
             this.setStatus("Evaluating images...");
             await this.imageEvaluators().asyncEvaluate(); // evals in parallel
-            const bestImage = this.imageEvaluators().bestSvImage();
-            this.setResultImageUrlData(bestImage.dataURL());
+            const bestImageNode = this.imageEvaluators().bestSvImage();
+            this.setResultImageNode(bestImageNode);
             this.setStatus("Selected best image!");
 
             // Performance monitoring: Complete evaluation timing
@@ -159,6 +157,19 @@
    */
     bestImage () {
         return this.imageEvaluators().bestSvImage();
+    }
+
+    /**
+     * @description Backward-compatible async accessor for the best result image as a data URL.
+     * @returns {Promise<string|null>} The data URL of the best result image, or null.
+     * @category Results
+     */
+    async resultImageUrlData () {
+        const node = this.resultImageNode();
+        if (node && node.hasImage()) {
+            return await node.asyncDataUrl();
+        }
+        return null;
     }
 
     onUpdateSlotStatus (oldValue, newValue) {

@@ -1,12 +1,12 @@
 "use strict";
 
 /**
- * @class SvImage_evaluator
- * @extends SvImage
- * @classdesc Category of SvImage adding prompt-based image scoring via SvImageEvaluator.
+ * @class SvImageNode_evaluator
+ * @extends SvImageNode
+ * @classdesc Category of SvImageNode adding prompt-based image scoring via SvImageEvaluator.
  */
 
-(class SvImage_evaluator extends SvImage {
+(class SvImageNode_evaluator extends SvImageNode {
 
     /**
      * @description Scores the image (0.0-1.0) for a given prompt.
@@ -22,4 +22,3 @@
     }
 
 }).initThisCategory();
-
