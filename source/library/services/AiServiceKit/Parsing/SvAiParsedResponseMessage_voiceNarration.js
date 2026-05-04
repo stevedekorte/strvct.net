@@ -30,18 +30,17 @@
     }
 
     shouldVoiceNarrate () {
-        const session = this.session();
-        if (session && session.settings) {
-            const settings = session.settings();
-            const voiceNarrationOn = settings.shouldVoiceNarrate();
-            return !this.isDoneSpeaking() && session.isHost() && voiceNarrationOn;
-        }
-        return false;
+        const controller = this.narrationController();
+        if (!controller) { return false; }
+        return !this.isDoneSpeaking() && controller.isEnabled();
     }
 
     stopSpeaking () {
         this.setIsDoneSpeaking(true);
-        this.speaker().stopAndClearQueue();
+        const controller = this.narrationController();
+        if (controller) {
+            controller.stopSpeaking();
+        }
         return this;
     }
 
@@ -49,20 +48,21 @@
         return this.conversation().firstOwnerChainNodeOfClass(UoSession);
     }
 
-    speaker () {
-        const settings = this.session().settings();
-        const speaker = settings.narrationSpeaker();
-        return speaker;
+    narrationController () {
+        const session = this.session();
+        if (!session || typeof session.narrationController !== "function") { return null; }
+        return session.narrationController();
     }
 
     voiceNarrateText (text) {
-        const speaker = this.speaker(); // this is anOpenAiTtsSession
-        speaker.setPrompt(text);
-        //speaker.setPrompt(this.spokenContentOfText(text));
-        const sound = speaker.generate(); // this will add it to the speaker's tts queue, and then audio queue
-        // we want to follow when the sound starts/stops playing so we can highlight/unhighlight the text
+        const controller = this.narrationController();
+        if (!controller) { return; }
+        const sound = controller.queueNarrationSegment(text);
+        if (!sound) { return; }
+        // we want to follow when the sound starts/stops playing so we can
+        // highlight/unhighlight the text in the chat view
         sound.addDelegate(this);
-        sound.setTranscript(text); // so we know which text audio is for when handling the delegate methods
+        sound.setTranscript(text); // so delegate callbacks know which text the audio is for
     }
 
     onSoundStarted (sound) {

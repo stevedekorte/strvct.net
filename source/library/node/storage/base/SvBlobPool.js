@@ -464,7 +464,6 @@
     async asyncCollectUnreferencedKeySet (referencedHashesSet) {
         await this.asyncOpen();
         this.assertOpen();
-        console.log(this.logPrefix() + "collecting unreferenced blobs (" + referencedHashesSet.size + " referenced hashes)");
 
         const allKeys = await this.idb().promiseAllKeys();
         // Only consider blob data keys (not metadata keys) when determining unreferenced blobs
@@ -472,7 +471,6 @@
         const unreferencedHashesSet = allBlobHashesSet.difference(referencedHashesSet);
 
         if (unreferencedHashesSet.size === 0) {
-            console.log(this.logPrefix() + "no unreferenced blobs to collect");
             return 0;
         }
 
