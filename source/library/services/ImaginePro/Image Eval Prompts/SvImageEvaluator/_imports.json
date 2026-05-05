@@ -3,5 +3,5 @@
     "SvImageEvalChecklistMaker.js",
     "SvImageEvaluator.js",
     "SvImageEvaluators.js",
-    "SvImage_evaluator.js"
+    "SvImageNode_evaluator.js"
 ]

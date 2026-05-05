@@ -20,14 +20,14 @@
     initPrototypeSlots () {
 
         /**
-     * @member {SvImage} svImage
+     * @member {SvImageNode} svImage
      * @description The image to evaluate.
      * @category Data
      */
         {
             const slot = this.newSlot("svImage", null);
-            slot.setFinalInitProto(SvImage);
-            slot.setSlotType("SvImage");
+            slot.setFinalInitProto(SvImageNode);
+            slot.setSlotType("SvImageNode");
             slot.setLabel("Image to Evaluate");
             slot.setIsSubnodeField(true);
             slot.setShouldStoreSlot(true);
@@ -215,7 +215,7 @@
     }
 
     async asyncImageAsBase64 () {
-        const dataUrl = this.svImage().dataURL();
+        const dataUrl = await this.svImage().asyncDataUrl();
         if (!dataUrl) {
             throw new Error("Image has no data URL");
         }
