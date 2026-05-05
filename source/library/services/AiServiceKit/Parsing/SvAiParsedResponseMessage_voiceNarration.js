@@ -45,7 +45,9 @@
     }
 
     session () {
-        return this.conversation().firstOwnerChainNodeOfClass(UoSession);
+        const conv = this.conversation();
+        if (!conv) { return null; }
+        return conv.firstOwnerChainNodeOfClass(UoSession);
     }
 
     narrationController () {
