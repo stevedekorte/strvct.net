@@ -10,7 +10,7 @@
  * @classdesc
  * Client-side representation of one node in the cloud-filesystem.
  *
- * Carries the common-fields schema documented in the Cloud Game Data
+ * Carries the common-fields schema documented in the Cloud Nodes
  * plan — id, parentId, sortKey, scopeRootId, title, lastModified, plus
  * a `subtype` envelope. Concrete shapes (folder, document, blob) are
  * subclasses that add fields and behavior to this base.
