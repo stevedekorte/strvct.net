@@ -85,4 +85,15 @@
         return this.client().backend().readDocument(this.id());
     }
 
+    /**
+     * Open an editing session (acquires lease, starts renewal).
+     * @param {Object} [options]
+     * @returns {Promise<SvFsDocumentSession>}
+     */
+    async asyncOpenSession (options) {
+        const session = SvFsDocumentSession.forDocument(this, options);
+        await session.open();
+        return session;
+    }
+
 }.initThisClass());
