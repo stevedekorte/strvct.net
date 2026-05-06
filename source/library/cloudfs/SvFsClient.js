@@ -77,4 +77,103 @@
         this.listenerPool().release(handle);
     }
 
+    /**
+     * Ensure a document node exists at `id` and return it as an
+     * `SvFsDocument`. If the node is missing, create it with the given
+     * parent / scope / subtype metadata; if it already exists, just
+     * read it back without touching its lease/headSeq state.
+     *
+     * Use this before opening a session to back app-level state on a
+     * stable node id (e.g. UoCharacter.characterId() → one node per
+     * character).
+     *
+     * @param {Object} args
+     * @param {string} args.id            - Stable node id (e.g. character id).
+     * @param {string} args.parentId      - Parent folder node id.
+     * @param {string} args.scopeRootId   - Owning scope-root id (typically the user's home).
+     * @param {string} [args.title]       - Display title (defaults to id).
+     * @param {string} [args.sortKey]     - Sibling order key (defaults to id).
+     * @param {Object} args.subtype       - { type:"document", documentClass, schemaVersion?, ... }
+     * @param {string} [args.visibility="private"]
+     * @returns {Promise<SvFsDocument>}
+     */
+    async asyncEnsureDocument (args) {
+        const existing = await this.asyncReadNode(args.id);
+        if (existing) {
+            if (!(existing instanceof SvFsDocument)) {
+                const e = new Error("node " + args.id + " exists but is not a document (" + existing.svType() + ")");
+                e.code = "failed-precondition";
+                throw e;
+            }
+            return existing;
+        }
+
+        const data = {
+            id: args.id,
+            parentId: args.parentId,
+            sortKey: args.sortKey || args.id,
+            scopeRootId: args.scopeRootId,
+            visibility: args.visibility || "private",
+            title: args.title || args.id,
+            subtype: args.subtype,
+            lease: null,
+            lastModified: this.backend().serverTimestampSentinel(),
+            childrenLastModified: this.backend().serverTimestampSentinel()
+        };
+        await this.backend().writeNode(args.id, data);
+        const created = await this.asyncReadNode(args.id);
+        if (!(created instanceof SvFsDocument)) {
+            const e = new Error("created node " + args.id + " did not read back as document");
+            e.code = "internal";
+            throw e;
+        }
+        return created;
+    }
+
+    /**
+     * Ensure a folder node exists at `id` and return it as an
+     * `SvFsFolder`. Symmetric with `asyncEnsureDocument`.
+     *
+     * @param {Object} args
+     * @param {string} args.id
+     * @param {string} args.parentId
+     * @param {string} args.scopeRootId
+     * @param {string} [args.title]
+     * @param {string} [args.sortKey]
+     * @param {Object} [args.subtype]   - defaults to { type: "folder" }
+     * @param {string} [args.visibility="private"]
+     * @returns {Promise<SvFsFolder>}
+     */
+    async asyncEnsureFolder (args) {
+        const existing = await this.asyncReadNode(args.id);
+        if (existing) {
+            if (!(existing instanceof SvFsFolder)) {
+                const e = new Error("node " + args.id + " exists but is not a folder (" + existing.svType() + ")");
+                e.code = "failed-precondition";
+                throw e;
+            }
+            return existing;
+        }
+
+        const data = {
+            id: args.id,
+            parentId: args.parentId,
+            sortKey: args.sortKey || args.id,
+            scopeRootId: args.scopeRootId,
+            visibility: args.visibility || "private",
+            title: args.title || args.id,
+            subtype: args.subtype || { type: "folder" },
+            lastModified: this.backend().serverTimestampSentinel(),
+            childrenLastModified: this.backend().serverTimestampSentinel()
+        };
+        await this.backend().writeNode(args.id, data);
+        const created = await this.asyncReadNode(args.id);
+        if (!(created instanceof SvFsFolder)) {
+            const e = new Error("created node " + args.id + " did not read back as folder");
+            e.code = "internal";
+            throw e;
+        }
+        return created;
+    }
+
 }.initThisClass());

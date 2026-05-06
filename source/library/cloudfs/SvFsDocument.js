@@ -86,6 +86,25 @@
     }
 
     /**
+     * Read the current pool.json as parsed JSON, ignoring any deltas.
+     * Intended for documents written via `SvFsDocumentSession.asyncWriteSnapshot`,
+     * where the entire content lives in pool.json on every save and the
+     * delta stream is unused.
+     * @returns {Promise<*|null>} parsed pool JSON, or null if pool absent
+     */
+    async asyncReadSnapshot () {
+        const urls = await this.asyncReadUrls();
+        if (!urls || !urls.poolUrl) return null;
+        const resp = await fetch(urls.poolUrl);
+        if (!resp.ok) {
+            const e = new Error("pool.json fetch failed: " + resp.status + " " + resp.statusText);
+            e.code = "internal";
+            throw e;
+        }
+        return resp.json();
+    }
+
+    /**
      * Open an editing session (acquires lease, starts renewal).
      * @param {Object} [options]
      * @returns {Promise<SvFsDocumentSession>}

@@ -228,6 +228,10 @@
         return e;
     }
 
+    serverTimestampSentinel () {
+        return firebase.firestore.FieldValue.serverTimestamp();
+    }
+
     // callFunction stays abstract — app subclass implements HTTP transport.
 
 }.initThisClass());

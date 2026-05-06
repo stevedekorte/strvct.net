@@ -194,6 +194,38 @@
         return result;
     }
 
+    /**
+     * Replace the document's pool with `content` (a JSON-serializable
+     * snapshot) and drop any accumulated deltas. Intended for documents
+     * small enough that every save is a full overwrite — characters,
+     * campaigns, and similar — where the WAL/coalesce machinery would
+     * just be churn. After success, headSeq is reset to 0.
+     *
+     * Caller must hold the lease (session must be open).
+     * @param {*} content
+     * @returns {Promise<{deletedDeltas:number, headSeq:number}>}
+     */
+    async asyncWriteSnapshot (content) {
+        if (!this.isOpen()) {
+            const e = new Error("session not open");
+            e.code = "failed-precondition";
+            throw e;
+        }
+        if (this.hasLostLease()) {
+            const e = new Error("lease lost; reopen the session before snapshotting");
+            e.code = "permission-denied";
+            throw e;
+        }
+        const result = await this.backend().coalesceDocument({
+            nodeId: this.nodeId(),
+            newPool: content
+        });
+        // headSeq is reset by coalesce; reflect that in our local lease.
+        const lease = this.currentLease() || {};
+        this.setCurrentLease({ ...lease, headSeq: 0 });
+        return result;
+    }
+
     // -------------------------------- internals
 
     startRenewTimer () {

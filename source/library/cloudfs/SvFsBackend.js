@@ -262,6 +262,17 @@
         throw this.notImplementedError("callFunction");
     }
 
+    /**
+     * Backend-native sentinel for "set this field to the server's clock at
+     * write time" when constructing node payloads (e.g. lastModified).
+     * Concrete backends return their SDK's server-timestamp value;
+     * fallback is a client `Date.now()`-based stamp.
+     * @returns {*}
+     */
+    serverTimestampSentinel () {
+        return new Date();
+    }
+
     // ---------------------------------------------------------------- helpers
 
     notImplementedError (method) {
