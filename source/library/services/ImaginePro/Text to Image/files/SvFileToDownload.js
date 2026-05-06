@@ -200,6 +200,15 @@
 
     /**
    * @description Starts loading the image from the URL.
+   *
+   * Throws on any failure so callers (and `asyncFetchIfNeeded()` callers
+   * upstream) see a meaningful error rather than silently observing
+   * `hasLoaded() === false` and `asyncDataUrl() === null` later in the
+   * pipeline. The delegate-driven `onError()` path still runs so the
+   * existing error/state-machine bookkeeping is unchanged.
+   *
+   * @throws {Error} If the underlying XHR fails, the response body is
+   *   missing/wrong-typed, or the response has no MIME type.
    * @category Loading
    */
     async fetch () {
@@ -241,29 +250,42 @@
         request.setResponseType("arraybuffer"); // Request binary data as ArrayBuffer (better Node.js compatibility)
 
         request.setTimeoutPeriodInMs(120 * 1000);
-        // Send the request
-        await request.asyncSend();
 
+        try {
+            await request.asyncSend();
 
-        // Check if request succeeded
-        if (request.hasError()) {
-            // Error handling is done in delegate methods
-            return;
-        }
+            // Surface XHR-level failures (network error, non-2xx status, CORS).
+            // Previously silent — caller's hasLoaded() stayed false, leading to
+            // a misleading "Image has no data URL" error downstream.
+            if (request.hasError()) {
+                const status = request.status();
+                throw request.error()
+                    || new Error("fetch failed for " + url + " (status=" + status + ")");
+            }
 
-        const xhr = request.xhr();
-        const arrayBuffer = xhr.response;
+            const xhr = request.xhr();
+            const arrayBuffer = xhr.response;
 
-        assert(arrayBuffer && arrayBuffer instanceof ArrayBuffer, "arrayBuffer is a '" + Type.typeName(arrayBuffer) + "', not an ArrayBuffer");
+            if (!arrayBuffer || !(arrayBuffer instanceof ArrayBuffer)) {
+                throw new Error("fetch for " + url + " returned no ArrayBuffer (got '"
+                    + Type.typeName(arrayBuffer) + "')");
+            }
 
-        // Convert ArrayBuffer response to data URL
-        const mimeType = request.responseMimeType();
-        if (mimeType) {
+            const mimeType = request.responseMimeType();
+            if (!mimeType) {
+                throw new Error("fetch for " + url + " returned no MIME type");
+            }
+
             console.log(this.logPrefix() + " Response MIME type: " + mimeType);
             const dataUrl = await arrayBuffer.asyncAsDataUrl(mimeType);
             this.onLoaded(dataUrl);
-        } else {
-            this.onError(new Error("No response data received"));
+        } catch (error) {
+            console.error(this.logPrefix() + " fetch failed for " + url + ": "
+                + (error && error.message ? error.message : String(error)));
+            // onError sets the local error/loading flags. If the XHR delegate
+            // already invoked onError, this is a harmless second call.
+            this.onError(error instanceof Error ? error : new Error(String(error)));
+            throw error;
         }
     }
 
