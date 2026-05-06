@@ -4,26 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/colvmn/style.css">
-  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
-  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
-  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="../../../colvmn/style.css">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="../../../colvmn/layout/MarkdownParser.js">
   <title>Async Patterns – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Programming%20Idioms/Async%20Patterns/">
   <meta name="description" content="Extended promises, serial and parallel iteration, and concurrency control.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Async Patterns</h1><a class="back-link" href="../">&larr; Programming Idioms</a></div><a class="brand" href="../">STRVCT</a></div><p class="intro">Extended promises, serial and parallel iteration, and concurrency control.</p><h2 id="promiseclone">Promise.clone()</h2><div class="section"><div class="section-body"><p>STRVCT extends the native <code>Promise</code> class (via <code>Promise_ideal.js</code>) with a factory method that exposes the resolve and reject functions as callable methods on the promise itself. This is the foundation for most async coordination in the framework.</p><pre><code>const promise = Promise.clone();
+  <div class="page loaded"><div class="header"><div><h1>Async Patterns</h1><a class="back-link" href="../index.html">&larr; Programming Idioms</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Extended promises, serial and parallel iteration, and concurrency control.</p><h2 id="promiseclone">Promise.clone()</h2><div class="section"><div class="section-body"><p>STRVCT extends the native <code>Promise</code> class (via <code>Promise_ideal.js</code>) with a factory method that exposes the resolve and reject functions as callable methods on the promise itself. This is the foundation for most async coordination in the framework.</p><pre><code>const promise = Promise.clone();
 promise.setLabel("loadUserData");
 
 // Later, from any code that holds a reference:
@@ -77,6 +77,6 @@ await items.promiseParallelForEach(async (item) =&gt; {
         console.error("Failed:", item, error);
     }
 );</code></pre><p>The workhorse for API-heavy operations. Runs up to <code>maxConcurrent</code> items simultaneously, yields between batches, and supports per-item error handling without aborting the whole sequence. Uses <code>Promise.clone()</code> internally for coordination.</p></div></div><h2 id="choosing-the-right-iteration-method">Choosing the right iteration method</h2><div class="section"><div class="section-body"><table><thead><tr><th>Method</th><th>Concurrency</th><th>Yielding</th><th>Error handling</th><th>Use when</th></tr></thead><tbody><tr><td><code>promiseSerialForEach</code></td><td>1</td><td>No</td><td>Fail-fast</td><td>Order matters, small arrays</td></tr><tr><td><code>promiseSerialTimeoutsForEach</code></td><td>1</td><td>Yes</td><td>Fail-fast</td><td>Order matters, UI must stay responsive</td></tr><tr><td><code>promiseParallelMap</code></td><td>All</td><td>No</td><td>Fail-fast</td><td>Independent items, bounded array size</td></tr><tr><td><code>promiseConcurrentSerialTimeoutsForEach</code></td><td>N</td><td>Yes</td><td>Configurable</td><td>API calls, large arrays, rate limiting</td></tr></tbody></table></div></div></div>
-  <script src="/colvmn/layout/layout.js" type="module"></script>
+  <script src="../../../colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

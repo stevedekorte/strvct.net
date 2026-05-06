@@ -4,26 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/colvmn/style.css">
-  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
-  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
-  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="../../colvmn/style.css">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="../../colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="../../colvmn/layout/MarkdownParser.js">
   <title>Getting Started – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Getting%20Started/">
   <meta name="description" content="Setup, integration, and first steps with the Strvct framework.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Getting Started</h1><a class="back-link" href="../">&larr; Documentation</a></div><a class="brand" href="../">STRVCT</a></div><p class="intro">Setup, integration, and first steps with the Strvct framework.</p><nav class="toc"><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#adding-strvct-to-your-project">Adding Strvct to Your Project</a></li><li><a href="#project-structure">Project Structure</a></li><li><a href="#declaring-imports">Declaring Imports</a></li><li><a href="#building">Building</a></li><li><a href="#running-locally">Running Locally</a></li><li><a href="#debugging">Debugging</a></li><li><a href="#eslint">ESLint</a></li><li><a href="#writing-your-first-class">Writing Your First Class</a></li><li><a href="#next-steps">Next Steps</a></li></ul></nav><h2 id="prerequisites">Prerequisites</h2><div class="section"><div class="section-body"><ul><li>Git (with submodule support)</li><li>Node.js</li><li><a href="https://cursor.sh/">Cursor</a> (or VSCode)</li></ul></div></div><h2 id="adding-strvct-to-your-project">Adding Strvct to Your Project</h2><div class="section"><div class="section-body"><p>Strvct is designed to be used as a git submodule within your project. From your project's root folder:</p><pre><code>git submodule add https://github.com/stevedekorte/strvct.net.git strvct</code></pre><p>If you plan to deploy on GitHub Pages, add a <code>.nojekyll</code> file to your root folder to prevent Jekyll processing.</p></div></div><h2 id="project-structure">Project Structure</h2><div class="section"><div class="section-body"><p>A typical Strvct project looks like this:</p><pre><code>your-project/
+  <div class="page loaded"><div class="header"><div><h1>Getting Started</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">Setup, integration, and first steps with the Strvct framework.</p><nav class="toc"><ul><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#adding-strvct-to-your-project">Adding Strvct to Your Project</a></li><li><a href="#project-structure">Project Structure</a></li><li><a href="#declaring-imports">Declaring Imports</a></li><li><a href="#building">Building</a></li><li><a href="#running-locally">Running Locally</a></li><li><a href="#debugging">Debugging</a></li><li><a href="#eslint">ESLint</a></li><li><a href="#writing-your-first-class">Writing Your First Class</a></li><li><a href="#next-steps">Next Steps</a></li></ul></nav><h2 id="prerequisites">Prerequisites</h2><div class="section"><div class="section-body"><ul><li>Git (with submodule support)</li><li>Node.js</li><li><a href="https://cursor.sh/">Cursor</a> (or VSCode)</li></ul></div></div><h2 id="adding-strvct-to-your-project">Adding Strvct to Your Project</h2><div class="section"><div class="section-body"><p>Strvct is designed to be used as a git submodule within your project. From your project's root folder:</p><pre><code>git submodule add https://github.com/stevedekorte/strvct.net.git strvct</code></pre><p>If you plan to deploy on GitHub Pages, add a <code>.nojekyll</code> file to your root folder to prevent Jekyll processing.</p></div></div><h2 id="project-structure">Project Structure</h2><div class="section"><div class="section-body"><p>A typical Strvct project looks like this:</p><pre><code>your-project/
 ├── strvct/              # Framework submodule
 ├── app/                 # Your application code
 │   ├── _imports.json    # Declares your app's source files
@@ -78,6 +78,6 @@
     }
 
 }.initThisClass());</code></pre><p>This creates a persistent node with an editable string property that automatically appears in the UI inspector. The framework handles view generation, storage, and synchronization &mdash; you only define the model.</p></div></div><h2 id="next-steps">Next Steps</h2><div class="section"><div class="section-body"><ul><li><a href="../Technical%20Overview/">Technical Overview</a> &mdash; High-level architecture and key concepts</li><li><a href="../Implementation%20Overview/">Implementation Overview</a> &mdash; Implementation details for classes, slots, views, and persistence</li><li><a href="../Lifecycle/">Lifecycle</a> &mdash; Boot sequence, node initialization, and persistence cycles</li></ul></div></div></div>
-  <script src="/colvmn/layout/layout.js" type="module"></script>
+  <script src="../../colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>

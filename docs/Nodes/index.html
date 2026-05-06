@@ -4,26 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <link rel="stylesheet" href="/colvmn/style.css">
-  <link rel="modulepreload" href="/colvmn/layout/ContentBase.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentText.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentCards.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentKeyValue.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentUnorderedList.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentOrderedList.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentTable.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentImage.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentTimeline.js">
-  <link rel="modulepreload" href="/colvmn/layout/ContentToc.js">
-  <link rel="modulepreload" href="/colvmn/layout/PageIndex.js">
-  <link rel="modulepreload" href="/colvmn/layout/MarkdownParser.js">
+  <link rel="stylesheet" href="../../colvmn/style.css">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentBase.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentText.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentCards.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentKeyValue.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentUnorderedList.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentOrderedList.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentTable.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentImage.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentTimeline.js">
+  <link rel="modulepreload" href="../../colvmn/layout/ContentToc.js">
+  <link rel="modulepreload" href="../../colvmn/layout/PageIndex.js">
+  <link rel="modulepreload" href="../../colvmn/layout/MarkdownParser.js">
   <title>Nodes – STRVCT</title>
   <link rel="alternate" type="text/plain" title="llms.txt" href="/llms.txt">
   <link rel="canonical" href="https://strvct.net/docs/Nodes/">
   <meta name="description" content="The object model at the heart of STRVCT.">
 </head>
 <body>
-  <div class="page loaded"><div class="header"><div><h1>Nodes</h1><a class="back-link" href="../">&larr; Documentation</a></div><a class="brand" href="../">STRVCT</a></div><p class="intro">The object model at the heart of STRVCT.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-node-hierarchy">The Node Hierarchy</a></li><li><a href="#subnodes">Subnodes</a></li><li><a href="#title-subtitle-and-note">Title, Subtitle, and Note</a></li><li><a href="#view-preferences">View Preferences</a></li><li><a href="#persistence">Persistence</a></li><li><a href="#creating-application-nodes">Creating Application Nodes</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Nodes are the central abstraction in STRVCT. Every piece of application state -- a user, a document, a settings panel, a list of items -- is a node. Nodes form a tree: each node has a parent and an ordered array of subnodes. The framework generates the entire UI from this tree, so understanding nodes is understanding how STRVCT applications are structured.</p><p>A node is not a UI component. It's a model object that declares its data (via <a href="../Slots/">slots</a>), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's <a href="../Views/">view system</a> reads this information and generates the appropriate UI automatically.</p></div></div><h2 id="the-node-hierarchy">The Node Hierarchy</h2><div class="section"><div class="section-body"><p>STRVCT provides a single inheritance chain of node classes. Each level adds a specific capability:</p><table><thead><tr><th>Class</th><th>Adds</th><th>Typical usage</th></tr></thead><tbody><tr><td><code>SvNode</code></td><td>Subnode management, parent/owner relationships</td><td>Base class -- rarely used directly</td></tr><tr><td><code>SvTitledNode</code></td><td>Title, subtitle, note, ARIA methods, path navigation</td><td>Nodes that need display labels</td></tr><tr><td><code>SvTranslatableNode</code></td><td>Per-node translation cache for i18n</td><td>Automatic -- all nodes below inherit this</td></tr><tr><td><code>SvInspectableNode</code></td><td>Inspector generation from slot metadata, subnode fields</td><td>Automatic -- enables the debug inspector</td></tr><tr><td><code>SvViewableNode</code></td><td>View class selection, layout direction, tile preferences</td><td>Nodes that appear in the UI</td></tr><tr><td><code>SvStyledNode</code></td><td>Theme class name</td><td>Nodes with custom styling</td></tr><tr><td><code>SvStorableNode</code></td><td>Persistence, dirty tracking, mutation notifications</td><td>Nodes that persist to storage</td></tr><tr><td><code>SvSummaryNode</code></td><td>Configurable summary format, children summary</td><td>Most application model classes</td></tr></tbody></table><p>Application classes typically extend <code>SvSummaryNode</code> or <code>SvStorableNode</code>. The intermediate classes exist to cleanly separate concerns but are rarely extended directly.</p></div></div><h2 id="subnodes">Subnodes</h2><div class="section"><div class="section-body"><p>Every node has an ordered array of subnodes accessed via <code>subnodes()</code>. This array is the primary structural relationship in STRVCT -- it defines the tree that the UI renders.</p><pre><code>// Adding subnodes
+  <div class="page loaded"><div class="header"><div><h1>Nodes</h1><a class="back-link" href="../index.html">&larr; Documentation</a></div><a class="brand" href="../index.html">STRVCT</a></div><p class="intro">The object model at the heart of STRVCT.</p><nav class="toc"><ul><li><a href="#overview">Overview</a></li><li><a href="#the-node-hierarchy">The Node Hierarchy</a></li><li><a href="#subnodes">Subnodes</a></li><li><a href="#title-subtitle-and-note">Title, Subtitle, and Note</a></li><li><a href="#view-preferences">View Preferences</a></li><li><a href="#persistence">Persistence</a></li><li><a href="#creating-application-nodes">Creating Application Nodes</a></li></ul></nav><h2 id="overview">Overview</h2><div class="section"><div class="section-body"><p>Nodes are the central abstraction in STRVCT. Every piece of application state -- a user, a document, a settings panel, a list of items -- is a node. Nodes form a tree: each node has a parent and an ordered array of subnodes. The framework generates the entire UI from this tree, so understanding nodes is understanding how STRVCT applications are structured.</p><p>A node is not a UI component. It's a model object that declares its data (via <a href="../Slots/">slots</a>), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's <a href="../Views/">view system</a> reads this information and generates the appropriate UI automatically.</p></div></div><h2 id="the-node-hierarchy">The Node Hierarchy</h2><div class="section"><div class="section-body"><p>STRVCT provides a single inheritance chain of node classes. Each level adds a specific capability:</p><table><thead><tr><th>Class</th><th>Adds</th><th>Typical usage</th></tr></thead><tbody><tr><td><code>SvNode</code></td><td>Subnode management, parent/owner relationships</td><td>Base class -- rarely used directly</td></tr><tr><td><code>SvTitledNode</code></td><td>Title, subtitle, note, ARIA methods, path navigation</td><td>Nodes that need display labels</td></tr><tr><td><code>SvTranslatableNode</code></td><td>Per-node translation cache for i18n</td><td>Automatic -- all nodes below inherit this</td></tr><tr><td><code>SvInspectableNode</code></td><td>Inspector generation from slot metadata, subnode fields</td><td>Automatic -- enables the debug inspector</td></tr><tr><td><code>SvViewableNode</code></td><td>View class selection, layout direction, tile preferences</td><td>Nodes that appear in the UI</td></tr><tr><td><code>SvStyledNode</code></td><td>Theme class name</td><td>Nodes with custom styling</td></tr><tr><td><code>SvStorableNode</code></td><td>Persistence, dirty tracking, mutation notifications</td><td>Nodes that persist to storage</td></tr><tr><td><code>SvSummaryNode</code></td><td>Configurable summary format, children summary</td><td>Most application model classes</td></tr></tbody></table><p>Application classes typically extend <code>SvSummaryNode</code> or <code>SvStorableNode</code>. The intermediate classes exist to cleanly separate concerns but are rarely extended directly.</p></div></div><h2 id="subnodes">Subnodes</h2><div class="section"><div class="section-body"><p>Every node has an ordered array of subnodes accessed via <code>subnodes()</code>. This array is the primary structural relationship in STRVCT -- it defines the tree that the UI renders.</p><pre><code>// Adding subnodes
 parentNode.addSubnode(childNode);
 parentNode.addSubnodeAt(childNode, 0);  // insert at index
 
@@ -132,6 +132,6 @@ initPrototype () {
     }
 
 }.initThisClass());</code></pre><p>This declares three slots (two stored strings, one subnode field for tags), configures persistence, and overrides <code>title()</code> and <code>subtitle()</code> to control how the bookmark appears as a tile. The framework handles view generation, persistence, ARIA attributes, and i18n support automatically.</p></div></div></div>
-<script src="/colvmn/layout/layout.js" type="module"></script>
+<script src="../../colvmn/layout/layout.js" type="module"></script>
 </body>
 </html>
