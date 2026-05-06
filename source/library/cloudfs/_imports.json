@@ -1,0 +1,10 @@
+[
+    "SvFsBackend.js",
+    "SvFsListenerPool.js",
+    "SvFsNode.js",
+    "SvFsFolder.js",
+    "SvFsBlob.js",
+    "SvFsDocument.js",
+    "SvFsClient.js",
+    "firebase/_imports.json"
+]
