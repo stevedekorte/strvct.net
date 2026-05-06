@@ -94,8 +94,21 @@
         );
     }
 
+    /**
+     * Listen to direct children of `parentId`.
+     *
+     * Firestore's rule evaluator denies LIST queries unless it can prove
+     * the read rule grants access for every potential match. For our
+     * Nodes rule (which gates on `resource.data.scopeRootId`) the query
+     * MUST include a matching `where("scopeRootId", "==", ...)` clause
+     * so the engine can substitute and verify. Pass it via
+     * `opts.scopeRootId` — the framework supplies it from the parent
+     * folder's scope.
+     */
     watchChildren (parentId, opts, onSnap, onErr) {
-        let q = this.nodesCol().where("parentId", "==", parentId).orderBy("sortKey");
+        let q = this.nodesCol().where("parentId", "==", parentId);
+        if (opts && opts.scopeRootId) q = q.where("scopeRootId", "==", opts.scopeRootId);
+        q = q.orderBy("sortKey");
         if (opts && opts.startAfterSortKey) q = q.startAfter(opts.startAfterSortKey);
         if (opts && opts.limit) q = q.limit(opts.limit);
         return q.onSnapshot(

@@ -98,7 +98,10 @@
 
         const unsubscribe = client.backend().watchChildren(
             this.id(),
-            { limit, startAfterSortKey },
+            // scopeRootId is required so the LIST query passes Firestore's
+            // rule evaluator — the rule reads resource.data.scopeRootId and
+            // the engine needs the where clause to substitute it.
+            { limit, startAfterSortKey, scopeRootId: this.scopeRootId() },
             (rawList) => {
                 const nodes = (rawList || []).map((d) => SvFsNode.fromData(client, d));
                 this.setChildrenCache(nodes);
@@ -152,7 +155,7 @@
         // Stale — run a one-shot children read via a watcher we immediately detach.
         const items = await new Promise((resolve, reject) => {
             const stop = client.backend().watchChildren(
-                this.id(), { limit: 50 },
+                this.id(), { limit: 50, scopeRootId: this.scopeRootId() },
                 (rawList) => {
                     stop();
                     resolve((rawList || []).map((d) => SvFsNode.fromData(client, d)));
