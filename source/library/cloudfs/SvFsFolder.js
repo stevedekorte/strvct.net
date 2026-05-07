@@ -119,6 +119,34 @@
         return this;
     }
 
+    /**
+     * One-shot list of this folder's direct children. Bypasses the
+     * cache-validation pattern — always issues a fresh query and
+     * resolves with the hydrated `SvFsNode` instances.
+     *
+     * @param {Object} [opts]
+     * @param {number} [opts.limit=200]
+     * @param {string} [opts.startAfterSortKey]
+     * @returns {Promise<Array<SvFsNode>>}
+     */
+    async asyncListChildren (opts) {
+        const client = this.client();
+        if (!client) throw new Error("SvFsFolder.asyncListChildren: client not set");
+        const limit = (opts && opts.limit) || 200;
+        const startAfterSortKey = opts && opts.startAfterSortKey;
+        return new Promise((resolve, reject) => {
+            const stop = client.backend().watchChildren(
+                this.id(),
+                { limit, startAfterSortKey, scopeRootId: this.scopeRootId() },
+                (rawList) => {
+                    try { stop(); } catch (_) { /* */ }
+                    resolve((rawList || []).map((d) => SvFsNode.fromData(client, d)));
+                },
+                (e) => { try { stop(); } catch (_) { /* */ } reject(e); }
+            );
+        });
+    }
+
     /** Detach the children listener if any. Idempotent. */
     detachChildrenListener () {
         const handle = this.childrenListenerHandle();
