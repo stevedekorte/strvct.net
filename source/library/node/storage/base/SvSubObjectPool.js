@@ -282,6 +282,28 @@
         return this;
     }
 
+    /**
+     * @async
+     * @description Flush any pending dirty objects into the kvMap. After
+     * this resolves, `asJson()` and `collectDelta()` reflect the latest
+     * model state. Idempotent — no-op if there are no dirty objects.
+     *
+     * Pulled out of `asyncSaveToCloud` so external orchestrators (e.g.
+     * `UoHostSession` driving `SvFsDocumentSession`) can flush + collect
+     * + dispatch the upload through their own transport instead of the
+     * built-in `SvCloudSyncSource` path.
+     *
+     * @returns {Promise<SvSubObjectPool>}
+     */
+    async asyncFlushDirty () {
+        if (this.hasDirtyObjects()) {
+            await this.kvMap().promiseBegin();
+            this.storeDirtyObjects();
+            await this.kvMap().promiseCommit();
+        }
+        return this;
+    }
+
     // --- Cloud Save ---
 
     /**
