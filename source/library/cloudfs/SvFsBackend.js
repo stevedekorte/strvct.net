@@ -125,12 +125,15 @@
     // ---------------------------------------------------------------- blobs
 
     /**
-     * Upload a content-addressable blob.
+     * Upload a content-addressable blob. The transport encodes bytes as
+     * a base64 string in `fileData` (a data-URL prefix is also accepted
+     * and stripped server-side).
+     *
      * @param {Object} args
-     * @param {string} args.hash       e.g. "sha256:..."
-     * @param {ArrayBuffer|Uint8Array|Blob} args.bytes
+     * @param {string} args.hash         "sha256:<64 hex>"
+     * @param {string} args.fileData     base64-encoded bytes (or data:URL)
      * @param {string} args.scopeRootId
-     * @param {string} args.mimeType
+     * @param {string} [args.mimeType]
      * @returns {Promise<{hash:string, bytes:number, created:boolean}>}
      */
     async uploadBlob (args) {
