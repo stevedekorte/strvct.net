@@ -121,6 +121,25 @@
         );
     }
 
+    /**
+     * One-shot get() of direct children. Used for `asyncListChildren`
+     * where we don't want a subscription and want server-consistent
+     * results immediately (avoiding the cache-then-server snapshot
+     * sequence that onSnapshot delivers — which can race against a
+     * just-server-written doc and return a stale empty list first).
+     */
+    async listChildren (parentId, opts) {
+        let q = this.nodesCol().where("parentId", "==", parentId);
+        if (opts && opts.scopeRootId) q = q.where("scopeRootId", "==", opts.scopeRootId);
+        q = q.orderBy("sortKey");
+        if (opts && opts.startAfterSortKey) q = q.startAfter(opts.startAfterSortKey);
+        if (opts && opts.limit) q = q.limit(opts.limit);
+        const snap = await q.get({ source: "server" });
+        const list = [];
+        snap.forEach((d) => list.push(d.data()));
+        return list;
+    }
+
     async writeNode (id, data) {
         await this.nodeRef(id).set(data);
     }

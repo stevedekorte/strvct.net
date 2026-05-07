@@ -120,9 +120,10 @@
     }
 
     /**
-     * One-shot list of this folder's direct children. Bypasses the
-     * cache-validation pattern — always issues a fresh query and
-     * resolves with the hydrated `SvFsNode` instances.
+     * One-shot list of this folder's direct children. Server-consistent
+     * (uses `backend.listChildren` rather than a watchChildren snapshot)
+     * so a list issued just after a server-side write doesn't return
+     * stale local-cache results.
      *
      * @param {Object} [opts]
      * @param {number} [opts.limit=200]
@@ -134,17 +135,12 @@
         if (!client) throw new Error("SvFsFolder.asyncListChildren: client not set");
         const limit = (opts && opts.limit) || 200;
         const startAfterSortKey = opts && opts.startAfterSortKey;
-        return new Promise((resolve, reject) => {
-            const stop = client.backend().watchChildren(
-                this.id(),
-                { limit, startAfterSortKey, scopeRootId: this.scopeRootId() },
-                (rawList) => {
-                    try { stop(); } catch (_) { /* */ }
-                    resolve((rawList || []).map((d) => SvFsNode.fromData(client, d)));
-                },
-                (e) => { try { stop(); } catch (_) { /* */ } reject(e); }
-            );
+        const rawList = await client.backend().listChildren(this.id(), {
+            limit,
+            startAfterSortKey,
+            scopeRootId: this.scopeRootId()
         });
+        return (rawList || []).map((d) => SvFsNode.fromData(client, d));
     }
 
     /** Detach the children listener if any. Idempotent. */

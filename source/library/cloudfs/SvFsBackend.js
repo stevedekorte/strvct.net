@@ -90,6 +90,24 @@
     }
 
     /**
+     * One-shot list of direct children. Server-consistent (no local
+     * cache fall-through). Default falls back to a watchChildren
+     * subscription that auto-stops; concrete backends override with
+     * a single `get()` for proper consistency semantics.
+     * @param {string} parentId
+     * @param {Object} opts - { limit, startAfterSortKey, scopeRootId }
+     * @returns {Promise<Array<Object>>}
+     */
+    async listChildren (parentId, opts) {
+        return new Promise((resolve, reject) => {
+            const stop = this.watchChildren(parentId, opts, (list) => {
+                try { stop(); } catch (_) { /* */ }
+                resolve(list);
+            }, reject);
+        });
+    }
+
+    /**
      * Create or update a node (full payload semantics). Concrete
      * backends decide whether create-only or upsert; framework
      * callers expect upsert.
