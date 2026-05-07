@@ -78,6 +78,62 @@
     }
 
     /**
+     * Upload a blob already cached in the local `SvBlobPool` to the
+     * cloud-nodes content-addressable store. Idempotent: the server
+     * function fast-paths if `/Blobs/{hash}` already exists.
+     *
+     * Local hashes from `SvBlobPool` are bare hex; the cloud-nodes
+     * function expects `sha256:<hex>` — this helper adds the prefix
+     * if the caller passes a bare hex hash.
+     *
+     * @param {Object} args
+     * @param {string} args.hash         bare hex sha256 OR `sha256:<hex>`
+     * @param {string} args.scopeRootId  scope owning this upload
+     * @param {string} [args.mimeType]
+     * @returns {Promise<{hash:string, bytes:number, created:boolean}|null>}
+     *          null if the local pool has no blob for the hash
+     */
+    async asyncUploadLocalBlob (args) {
+        const localPool = SvBlobPool.shared();
+        const bareHash = (args.hash || "").replace(/^sha256:/, "");
+        const localBlob = await localPool.asyncGetBlob(bareHash);
+        if (!localBlob) return null;
+        const arrayBuffer = await localBlob.arrayBuffer();
+        const base64 = SvFsClient._arrayBufferToBase64(arrayBuffer);
+        return this.backend().uploadBlob({
+            hash: "sha256:" + bareHash,
+            fileData: base64,
+            scopeRootId: args.scopeRootId,
+            mimeType: args.mimeType || localBlob.type || "application/octet-stream"
+        });
+    }
+
+    static _arrayBufferToBase64 (buffer) {
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        const chunk = 0x8000;
+        for (let i = 0; i < bytes.length; i += chunk) {
+            binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+        }
+        return (typeof btoa === "function") ? btoa(binary) : Buffer.from(binary, "binary").toString("base64");
+    }
+
+    /**
+     * Resolve the cloud-nodes blob URL for a hash. Accepts either a
+     * bare hex sha256 (as produced by `SvBlobPool`) or the full
+     * `sha256:<hex>` form expected by the storage path. Throws if the
+     * blob isn't present in /blobs/{hash} (caller should fall back to
+     * a legacy storage path).
+     *
+     * @param {string} hash
+     * @returns {Promise<string>}
+     */
+    async asyncBlobUrl (hash) {
+        const fullHash = (typeof hash === "string" && hash.startsWith("sha256:")) ? hash : "sha256:" + hash;
+        return this.backend().blobUrl(fullHash);
+    }
+
+    /**
      * Ensure a document node exists at `id` and return it as an
      * `SvFsDocument`. If the node is missing, create it with the given
      * parent / scope / subtype metadata; if it already exists, just
