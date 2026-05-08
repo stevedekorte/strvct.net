@@ -997,6 +997,18 @@
         //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes());
         if (this.hasDoneInit()) {
             this.didUpdateNode();
+            // ALSO notify mutation observers (e.g., SvObjectPool /
+            // SvSubObjectPool) that this node changed. Without this,
+            // adding a subnode triggers view updates but storage
+            // observers never learn the parent is dirty — so the BFS
+            // during the next save doesn't reach newly-added subnodes
+            // and their streaming mutations are silently dropped.
+            // SvHookedArray notifies the parent via onDidMutateObject,
+            // but the parent must in turn forward that to its own
+            // observers for the storage layer to track it.
+            if (this.didMutate) {
+                this.didMutate("subnodes");
+            }
         }
         return this;
     }
