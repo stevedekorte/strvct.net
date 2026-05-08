@@ -81,7 +81,12 @@
      * @category Sync
      */
     didUpdateNode () {
-        if (this.hasDoneInit()) {
+        // Skip the touch when `didSyncToCloud` / `didSyncFromCloud` is
+        // in flight — those align both timestamps deliberately and
+        // shouldn't be immediately re-dirtied by their own slot
+        // setters. See SvSyncableJsonGroup.didSyncToCloud for the
+        // longer rationale.
+        if (this.hasDoneInit() && !this._suppressLocalModifiedTouch) {
             this.touchLocalModified();
         }
         return super.didUpdateNode();
@@ -126,7 +131,13 @@
      * @category Sync
      */
     didSyncToCloud (timestamp = Date.now()) {
-        this.setCloudLastModified(timestamp);
+        this._suppressLocalModifiedTouch = true;
+        try {
+            this.setCloudLastModified(timestamp);
+            this.setLocalLastModified(timestamp);
+        } finally {
+            this._suppressLocalModifiedTouch = false;
+        }
         return this;
     }
 
@@ -138,8 +149,13 @@
      * @category Sync
      */
     didSyncFromCloud (cloudTimestamp = Date.now()) {
-        this.setCloudLastModified(cloudTimestamp);
-        this.setLocalLastModified(cloudTimestamp);
+        this._suppressLocalModifiedTouch = true;
+        try {
+            this.setCloudLastModified(cloudTimestamp);
+            this.setLocalLastModified(cloudTimestamp);
+        } finally {
+            this._suppressLocalModifiedTouch = false;
+        }
         return this;
     }
 

@@ -155,12 +155,27 @@
 
     /**
      * @description Called after successfully syncing TO the cloud.
+     * Sets both timestamps to the same value so `needsCloudSync()`
+     * (defined as `local > cloud`) reports false right after a sync.
+     *
+     * Suppresses the `touchLocalModified()` re-entry that would
+     * otherwise fire from `didUpdateNode` when these slot setters
+     * run — without the suppression, every successful save would
+     * leave the model permanently dirty (driving the "Leave site?"
+     * prompt loop and continuous auto-save thrashing).
+     *
      * @param {Number} [timestamp=Date.now()] - The sync timestamp
      * @returns {SvSyncableJsonGroup} This instance
      * @category Sync
      */
     didSyncToCloud (timestamp = Date.now()) {
-        this.setCloudLastModified(timestamp);
+        this._suppressLocalModifiedTouch = true;
+        try {
+            this.setCloudLastModified(timestamp);
+            this.setLocalLastModified(timestamp);
+        } finally {
+            this._suppressLocalModifiedTouch = false;
+        }
         return this;
     }
 
@@ -172,8 +187,13 @@
      * @category Sync
      */
     didSyncFromCloud (cloudTimestamp) {
-        this.setCloudLastModified(cloudTimestamp);
-        this.setLocalLastModified(cloudTimestamp);
+        this._suppressLocalModifiedTouch = true;
+        try {
+            this.setCloudLastModified(cloudTimestamp);
+            this.setLocalLastModified(cloudTimestamp);
+        } finally {
+            this._suppressLocalModifiedTouch = false;
+        }
         return this;
     }
 
@@ -282,8 +302,11 @@
      */
     didUpdateNode () {
         // Only mark as locally modified if we're a fully fetched item
-        // (not unfetched stub or currently fetching)
-        if (this.isFetched()) {
+        // (not unfetched stub or currently fetching). Skip the touch
+        // when a `didSyncToCloud` / `didSyncFromCloud` is in progress
+        // — those align the timestamps deliberately and shouldn't be
+        // immediately re-dirtied by their own slot setters.
+        if (this.isFetched() && !this._suppressLocalModifiedTouch) {
             this.touchLocalModified();
         }
         return super.didUpdateNode();
