@@ -31,6 +31,7 @@
 - [Tile Views](/docs/Future%20Work/Tile%20Views/): Tile subclasses for presenting individual subnodes in specialized ways.
 - [Getting Started](/docs/Getting%20Started/): Setup, integration, and first steps with the Strvct framework.
 - [Implementation Overview](/docs/Implementation%20Overview/): Implementation details for classes, slots, views, and persistence.
+- [Inspectors and Debugging](/docs/Inspectors%20and%20Debugging/): Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
 - [Inspirations](/docs/Inspirations/): Frameworks and ideas that shaped STRVCT's design.
 - [Internationalization](/docs/Internationalization/): AI-powered translation of UI text with persistent caching, batched requests, and smart content filtering.
 - [Lifecycle](/docs/Lifecycle/): Boot sequence, node initialization, view synchronization, and persistence cycles.

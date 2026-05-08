@@ -62,6 +62,7 @@ Guides, architecture, and API reference.
 - Views
 - Persistence
 - Events and Gestures
+- Inspectors and Debugging
 - Accessibility
 - Internationalization
 - Services
@@ -3068,6 +3069,91 @@ Resources are loaded in dependency order as declared in `_imports.json` files. C
 
 ---
 
+<!-- Page: docs/Inspectors and Debugging -->
+Source: /docs/Inspectors%20and%20Debugging/
+
+# Inspectors and Debugging
+
+Built-in tools for inspecting nodes and revealing hidden parts of the model graph at runtime.
+
+## Overview
+
+Because STRVCT generates the UI from annotated model nodes, the same machinery can render an *alternate* view of any node — one that exposes its slots directly. Two interactions take advantage of this:
+
+- **Option-Click** on a tile opens an **inspector** for that node — a column of field tiles, one per inspectable slot, showing the slot's current value, type, and editability.
+- **Option-Shift-D** toggles **developer mode** — a global flag that applications use to reveal nodes and subnodes normally hidden from end users.
+
+Both work in any STRVCT application without per-node setup.
+
+## Option-Click: Inspect a Tile
+
+Holding **Option** while clicking a tile opens an inspector view in the next column instead of navigating into the node's normal subnodes.
+
+### What you see
+
+The inspector is itself a node — generated on demand from the target's slot metadata. It contains one field tile for every slot whose configuration permits inspection (`canInspect()` returns true on the slot, which is set automatically when you call `setSlotType(...)` or related annotations). Each field tile shows:
+
+- the slot name as the field key,
+- the current slot value rendered with a type-appropriate editor (string, number, boolean, options list, pointer, etc.),
+- whether the value is editable in place (controlled by `setCanEditInspection(true|false)` on the slot).
+
+Slots can be grouped into sections by setting `setInspectorPath("Section/Subsection")`, which causes the inspector to nest summary nodes for organization.
+
+### Why it's useful
+
+The inspector reveals state that the tile's normal title/subtitle does not — internal flags, cached values, type information, references to other nodes. Because the editor is the same one the framework uses for forms, edits made in the inspector mutate the live object and propagate through the standard sync and persistence pipelines.
+
+### Implementation note
+
+`SvInspectableNode.nodeInspector()` lazily clones a base node and populates it via `setupInspectorFromSlots()`, which walks `allSlotsMap()` and creates a field for each inspectable slot. The tile gesture handler `justAlternateTap()` flips `isInspecting` on the tile, and `nodeTileLink()` then returns the inspector node instead of the regular link target — so the next column displays the inspector. The mechanism reuses the standard view pipeline, which is why no inspector-specific UI code exists.
+
+## Option-Shift-D: Developer Mode
+
+Pressing **Option+Shift+D** anywhere in a `SvBrowserView` toggles `SvApp.shared().developerMode()`. The framework posts an `onAppDeveloperModeChangedNote` notification when the flag flips; subscribers respond by toggling `isVisible` on nodes and slots that should appear only in developer mode.
+
+### What gets revealed
+
+Each application decides what is "hidden" — the framework only provides the toggle and the notification. Typical patterns include:
+
+- internal subnodes used for diagnostics or backing storage,
+- service configuration or resource indexes,
+- raw JSON / clipboard-export actions,
+- AI message history that's normally suppressed (system messages, parser internals).
+
+Nodes opt in by observing the note and calling `setIsVisible(devMode)` on the subnodes that should appear or disappear:
+
+```javascript
+init () {
+    super.init();
+    this.watchForNote("onAppDeveloperModeChangedNote");
+}
+
+onAppDeveloperModeChangedNote (/*aNote*/) {
+    const devMode = this.app().developerMode();
+    this.diagnostics().setIsVisible(devMode);
+    this.rawState().setIsVisible(devMode);
+}
+```
+
+Once visible, these subnodes are navigable like any other — Option-Click works on them too, so developer mode and the inspector compose naturally.
+
+### Implementation note
+
+The handler lives on `SvBrowserView` (`onAlternate_D_KeyDown`) and is bound by the standard keyboard naming convention: capital `D` implies the Shift modifier, and `Alternate` is the Option/Alt key. `toggleDeveloperMode()` flips a stored slot on `SvApp`, so the state survives navigation and persists across reloads if the slot is configured to store.
+
+## Composition
+
+The two features are independent but pair well:
+
+1. Press **Option-Shift-D** to surface developer-only nodes.
+2. Navigate into them like any other model node.
+3. **Option-Click** any tile to inspect its slots when the title and subtitle don't tell you enough.
+
+Because both operations reuse the same view pipeline as the rest of the framework, anything that can be displayed can be inspected, and anything that can be hidden can be revealed — without writing UI code for either case.
+
+
+---
+
 <!-- Page: docs/Inspirations -->
 Source: /docs/Inspirations/
 
@@ -4115,7 +4201,7 @@ Most application frameworks treat the user interface as a separate engineering p
 
 Naked objects [1] proposed a radical alternative: expose domain objects directly to users and generate the interface automatically. Developers write only the domain model; the UI follows from it. This also guarantees structural consistency — the interface always reflects the actual state and shape of the model, because there is no separate representation to fall out of sync.
 
-The pattern was described by Pawson and Matthews in 2000 and has been implemented in several frameworks, most notably Apache Isis (now Apache Causeway) for Java [3]. These implementations demonstrated the core thesis: automatic UI generation from domain models is feasible and produces functionally complete interfaces. Yet adoption has remained confined to internal tools, administrative interfaces, and prototypes.
+The pattern was described by Pawson and Matthews in 2000 and has been implemented in several frameworks, most notably Apache Isis (now Apache Causeway) for Java [2]. These implementations demonstrated the core thesis: automatic UI generation from domain models is feasible and produces functionally complete interfaces. Yet adoption has remained confined to internal tools, administrative interfaces, and prototypes.
 
 The reason is not technical but perceptual. The generated interfaces — generic forms for objects, tables for collections, menus for navigation — are correct and complete but *feel wrong*. They lack the spatial hierarchy, navigational depth, and responsive behavior that users have come to expect. They resemble database administration tools more than the applications people use daily. This usability gap, rather than any limitation of the underlying pattern, has prevented naked objects from reaching its potential.
 
@@ -4270,7 +4356,7 @@ Nesting master-detail views with varying orientations produces navigation struct
   </div>
 </div>
 
-This composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose to produce appropriate layouts for each part of the domain model. The Miller Column pattern [4] has been used since NeXTSTEP for file browsing; our contribution is making it recursive, orientation-flexible, and self-composing based on model annotations.
+This composability is the key insight. Rather than implementing a fixed set of application templates, the framework provides building blocks that compose to produce appropriate layouts for each part of the domain model. The Miller Column pattern [3] has been used since NeXTSTEP for file browsing; our contribution is making it recursive, orientation-flexible, and self-composing based on model annotations.
 
 ### 4.5 Examples
 
@@ -4395,45 +4481,33 @@ When the framework controls the entire pipeline from model annotation to rendere
 
 ### 7.1 AI-Operable Domain Model
 
-The same annotations that drive UI generation also make the domain model legible and operable to AI agents. JSON Schema descriptions of any object are derived automatically from slot metadata, and AI services retrieve them via a tool call — on demand — to include in system prompts. A complementary tool call applies JSON Patch operations to live objects, so the agent reads the shape of any part of the graph and writes valid changes back, with the same structural guarantees (required fields, type constraints, valid references) that are enforced on human users.
+The same annotations that drive UI generation make the domain model legible and operable to AI agents. The original naked objects pattern eliminated the translation layer between model and UI; the same annotations now eliminate it between model and AI. A schema for any object is derived from its slot metadata, and edits are expressed as patches against that schema — so a single pair of tools, schema-fetch and patch-apply, covers the entire domain. The structural guarantees enforced on human users (types, required fields, valid references) apply unchanged to the agent, and rejections carry the schema of the affected slot so the agent can self-correct without refetching context.
 
-This extends the naked objects premise. The original pattern exposed domain objects directly to users, eliminating the translation layer between model and UI. The same annotations now eliminate the translation layer between model and AI. No per-feature tool definitions are needed: a single pair of tools — "get schema for object X" and "apply patch to object X" — lets an agent inspect and modify any part of the domain graph. In Strvct's production use, an AI game master modifies session state, character sheets, and campaign data through exactly this loop, with no feature-specific AI integration code.
-
-When a patch fails — invalid path, type mismatch, constraint violation, unresolvable reference — the error response identifies the exact failing path and includes the schema of the affected slot, so the agent can correct the patch on the next attempt without refetching context. This closes the loop: the same uniform structure and metadata that drive UI generation, persistence, and validation also drive the feedback that lets an agent self-correct. No separate AI-error vocabulary needs to be maintained, and an agent that understands how to read a slot annotation automatically understands how to read a rejection.
-
-In a conventional framework, integrating an AI agent requires custom tool definitions for each editable surface, hand-maintained schema documents to describe what the AI may touch, and bespoke error-reporting paths for each. All three scale linearly with the domain model. In Strvct, one schema tool, one patch tool, and one error format cover the entire model, and the cost of exposing a new object to AI is zero.
+In a conventional framework, integrating an AI agent requires custom tools, schema documents, and error-handling paths per editable surface, all scaling linearly with the model. Here, the cost of exposing a new object to AI is zero.
 
 ### 7.2 Automatic Responsive Design
 
-Because layout flows from node annotations — orientation, whether a tile fills remaining space, whether a collection displays inline or navigates to a detail view — rather than from screen-specific CSS, the interface adapts to viewport size without per-view breakpoints or media queries. The master-detail chain described in Section 4 illustrates this directly: earlier columns automatically collapse when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from a wide desktop monitor to a narrow mobile screen with no per-screen responsive code.
-
-This is structurally the same mechanism as the other emergent capabilities: the framework owns the single point where model structure becomes UI, so responsive behavior can be expressed once at that seam and amortized across every screen. In a conventional framework, each screen declares its own layout and its own breakpoints; the cost of maintaining responsive behavior grows linearly with the number of screens. In Strvct, it is paid once at the primitive level.
+Because layout flows from model annotations rather than screen-specific CSS, the interface adapts to viewport size without per-view breakpoints. The recursive master-detail chain collapses when the viewport narrows, a breadcrumb bar preserves the navigation path, and the same composition scales from desktop to mobile with no per-screen responsive code. Responsive behavior is paid once at the primitive level, not per screen.
 
 ### 7.3 Automatic Accessibility
 
-Because every interactive surface is a tile generated from a small set of composable primitives rather than a bespoke component, accessibility can be built into the primitives and apply uniformly to every screen. Focus order, arrow-key traversal between sibling tiles, Enter to drill into a detail column, and Escape to return are properties of the tile and tile stack — not of individual views. An internal debugging interface is as keyboard-navigable as a character sheet, because both are composed from the same primitives.
-
-The same structural knowledge that drives the rendered view also drives ARIA output. Each view class provides a default ARIA role derived from its function: tile stacks become `list` containers, individual tiles become `link` items, field tiles become `group` elements, boolean fields become `checkbox`, action fields become `button`. Slot metadata that already exists for type checking and schema generation — `isRequired()`, `isReadOnly()`, minimum/maximum constraints, `description()` — maps directly to ARIA attributes: `aria-required`, `aria-readonly`, `aria-valuemin`/`aria-valuemax`, `aria-description`. The node hierarchy provides landmarks (`navigation`, `region`) and breadcrumb structure. Dynamic content nodes can opt into `aria-live` announcements.
-
-All three UI-surface capabilities in this section — responsive design, accessibility, and internationalization — exist because UI-visible information flows from annotated model slots through a single framework-controlled pipeline. In a conventional framework, accessibility is a per-component obligation — every button, list, and form field needs manual ARIA attributes and keyboard handlers, and the cost scales linearly with the number of components. In Strvct, fixing accessibility in the ~15 core view classes fixes it for every application built on the framework.
+Because every interactive surface is generated from a small set of composable primitives, accessibility can be built into the primitives and apply uniformly. Focus order, keyboard traversal, drill-in, and back-out are properties of tiles and tile stacks, not of individual views. The same slot metadata that drives type checking and schema generation — types, constraints, descriptions, edit-permissions — also generates ARIA roles and attributes, and the node hierarchy provides landmarks and breadcrumb structure. In a conventional framework, accessibility is a per-component obligation that scales with screen count; here, fixing it once at the primitive level fixes it everywhere.
 
 ### 7.4 Transparent Internationalization
 
-Because all UI text flows from model slot annotations through a single rendering pipeline, translation can be injected at the model-to-view boundary transparently. No per-component `t()` calls or translation key files are needed. New model classes are translatable by default.
-
-This centralization also makes AI-powered translation practical. The framework discovers every translatable string by walking model class prototypes — an introspection that is only possible because all UI-visible text originates from annotated slots. Slot-level context annotations (e.g., "game mechanic" vs. "ui label") travel with the model, giving the AI translator domain-appropriate terminology without developer effort. Adding support for a new language becomes a configuration change rather than a translation project.
-
-In a conventional framework, achieving automatic translation would require either instrumenting every component with translation calls, or building an extraction tool that parses component templates to find translatable strings. Both approaches scale linearly with the number of components. In Strvct, the cost is zero per component — the framework handles it structurally.
+All UI text flows from slot annotations through a single rendering pipeline, so translation is injected at the model-to-view boundary transparently. No per-component translation calls or extraction tools are needed; new model classes are translatable by default. Centralization also makes AI-powered translation practical: the framework can enumerate every translatable string by walking class prototypes, and slot-level context annotations travel with the model to give the translator domain-appropriate terminology. Adding a new language becomes a configuration change rather than a translation project.
 
 ### 7.5 Transparent Persistence and Cloud Sync
 
-Because the framework owns the complete object graph and understands the structure of every node through annotations, it can split persistence into two strategies transparently. The object pool — the graph of domain objects and their properties — is loaded synchronously, ensuring the model is immediately available for UI rendering. Large binary resources such as media and document files are stored separately in a content-addressable blob store and loaded asynchronously on demand, so they never block the UI.
-
-This same structural knowledge enables transparent cloud synchronization. Subgraphs of the local object database can be lazily synced to cloud storage without the developer writing any sync logic — the framework knows which objects have changed, which blobs they reference, and how to reconcile local and remote state. The developer annotates what should persist; the framework decides how and when to load, store, and sync it.
+Because the framework owns the complete object graph and understands its structure through annotations, persistence splits transparently into two strategies: a synchronous object pool for the model graph, so the UI is immediately responsive, and an asynchronous content-addressable blob store for large binary resources, so they never block rendering. The same structural knowledge enables transparent cloud synchronization — the framework knows what changed, which blobs are referenced, and how to reconcile state. The developer annotates what should persist; the framework decides how and when.
 
 ### 7.6 Content-Addressable Resource Loading
 
-The framework's build system produces a content-addressable bundle where source files are keyed by SHA-256 hash. The client caches resources locally in IndexedDB and uses hash comparison to determine what has changed between deployments. Unchanged resources are never re-downloaded, and identical content across different file paths is stored only once. This is a consequence of the framework controlling the full resource pipeline — analogous to how it controls the model-to-view pipeline — and provides caching granularity that standard bundlers cannot achieve.
+The build system produces a content-addressable bundle keyed by content hash. Unchanged resources are never re-downloaded across deployments, and identical content across paths is stored only once — caching granularity that path-based bundlers cannot achieve. The framework controlling the resource pipeline end-to-end is the same structural fact that makes the other capabilities in this section emergent.
+
+### 7.7 Built-in Inspector and Developer Mode
+
+Because every node carries enough slot metadata to drive its own UI, the same metadata also drives a generic inspector — a view that exposes any node's slots directly as editable fields, reachable on any tile through a single modifier-click. A complementary developer-mode toggle lets applications reveal subnodes normally hidden from end users, so the same navigation pipeline serves as a debug surface. In a conventional framework, debug tooling means custom inspectors per type and a parallel description of model shape, growing linearly with the model. Here, it is a free consequence of the model-to-view pipeline already covering every object.
 
 ## 8. Case Study: undreamedof.ai
 
@@ -4452,11 +4526,11 @@ The custom views that were needed fall into the category identified in Section 3
 
 ## 9. Related Work
 
-**Naked objects implementations.** Apache Isis (now Apache Causeway) [3] is the most mature naked objects framework, providing automatic UI generation for Java domain models with both a web UI (Wicket viewer) and a REST API. JMatter [5] implemented naked objects for Java Swing. Both use form-and-table UI strategies and target enterprise/administrative use cases. Strvct differs in its UI strategy (composable spatial primitives rather than forms and tables) and its target (end-user applications rather than internal tools).
+**Naked objects implementations.** Apache Isis (now Apache Causeway) [2] is the most mature naked objects framework, providing automatic UI generation for Java domain models with both a web UI (Wicket viewer) and a REST API. JMatter [4] implemented naked objects for Java Swing. Both use form-and-table UI strategies and target enterprise/administrative use cases. Strvct differs in its UI strategy (composable spatial primitives rather than forms and tables) and its target (end-user applications rather than internal tools).
 
-**Model-driven UI generation.** The broader field of model-driven development has produced approaches like IFML [6] (Interaction Flow Modeling Language) and UsiXML, which use abstract UI models to generate interfaces. These typically require separate UI models in addition to domain models — a layer of specification that naked objects explicitly eliminates. Strvct's approach is closer to naked objects in that the domain model itself, annotated with metadata, is the only specification needed.
+**Model-driven UI generation.** The broader field of model-driven development has produced approaches like IFML [5] (Interaction Flow Modeling Language) and UsiXML, which use abstract UI models to generate interfaces. These typically require separate UI models in addition to domain models — a layer of specification that naked objects explicitly eliminates. Strvct's approach is closer to naked objects in that the domain model itself, annotated with metadata, is the only specification needed.
 
-**Miller Columns.** The column-based navigation pattern was introduced in NeXTSTEP and popularized by macOS Finder [4]. It provides spatial continuity when browsing hierarchical data. Strvct extends this pattern by making it recursive (columns can nest vertically or horizontally), orientation-flexible (each level can choose its own orientation), and self-composing (the layout is determined by model annotations rather than application code).
+**Miller Columns.** The column-based navigation pattern was introduced in NeXTSTEP and popularized by macOS Finder [3]. It provides spatial continuity when browsing hierarchical data. Strvct extends this pattern by making it recursive (columns can nest vertically or horizontally), orientation-flexible (each level can choose its own orientation), and self-composing (the layout is determined by model annotations rather than application code).
 
 **Low-code and no-code platforms.** Modern low-code platforms (Retool, Appsmith, OutSystems) aim to reduce UI development cost through visual builders and pre-built components. They approach the same problem as naked objects — reducing the cost of UI development — but from the opposite direction: rather than eliminating bespoke UI, they make bespoke UI faster to produce. The result is still a collection of individually designed screens that must be maintained as the data model evolves. Naked objects eliminates this maintenance cost entirely.
 
@@ -4469,14 +4543,6 @@ The custom views that were needed fall into the category identified in Section 3
 Hand-crafted interfaces may appear more polished early in an application's life, when the number of screens is small and each can receive individual design attention. But as the domain model grows, the cost of maintaining bespoke screens grows with it, while inconsistencies accumulate. At some point — the crossover point — a consistent, automatically generated interface produces a better user experience than a patchwork of hand-crafted screens, because the user can rely on uniform navigation throughout the application.
 
 The composable primitive approach shifts this crossover point earlier by improving the quality of the generated interface. The undreamedof.ai case study suggests the crossover may occur sooner than expected: at ~90 domain classes, auto-generated views were not merely acceptable but preferred for 90% of the interface, because they provided consistent navigation and interaction patterns that would have been difficult to maintain across hand-crafted screens.
-
-### A Familiar Dynamic
-
-This dynamic — general methods outperforming hand-crafted solutions as scale increases — appears in other domains. In his essay *The Bitter Lesson* [2], Rich Sutton observed that across 70 years of AI research, general methods that leverage computation consistently outperformed approaches that encoded human expertise, and the gap widened with scale.
-
-A closer structural parallel comes from programming language design. The Io language [7] states its guiding design principle as "simplicity and power through conceptual unification": prototypes unify objects, classes, namespaces, and locals; messages unify operators, calls, assigns, and variable access. There are no special forms — everything reduces to trees of messages. The cost of adding a language feature is near-zero because there is no second syntactic category to extend. Strvct makes the same bet at the UI level: annotated nodes rendered as composed master-detail tiles are the single primitive, and everything from settings panels to character sheets reduces to trees of them. The restriction is the feature — refusing a wider substrate is precisely what compounds the leverage, producing emergent capabilities that are paid for once at the primitive level instead of per-feature.
-
-The analogy to naked objects is instructive if imperfect. In AI, the scaling dimension is computation; in naked objects, it is domain model complexity. The principle is similar: investing in a general method that improves with scale — rather than in case-by-case engineering that must be repeated for each new component — produces compounding returns. But unlike AI scaling, which depends on hardware improvements, naked objects scaling depends on a design choice: whether the framework's primitives are good enough to make hand-crafted specialization unnecessary for most screens.
 
 ### Strengths
 
@@ -4504,17 +4570,13 @@ The challenge remains making the general method good enough that hand-crafted sp
 
 [1] Pawson, R. (2004). *Naked Objects.* PhD Thesis, Trinity College, Dublin.
 
-[2] Sutton, R. (2019). *The Bitter Lesson.* Incomplete Ideas. http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+[2] Apache Software Foundation. *Apache Causeway* (formerly Apache Isis). https://causeway.apache.org/
 
-[3] Apache Software Foundation. *Apache Causeway* (formerly Apache Isis). https://causeway.apache.org/
+[3] Becker, N. (2005). Miller Columns. Wikipedia. https://en.wikipedia.org/wiki/Miller_columns
 
-[4] Becker, N. (2005). Miller Columns. Wikipedia. https://en.wikipedia.org/wiki/Miller_columns
+[4] Arteaga, J. M. *JMatter: A Naked Objects Framework for Java Swing.* http://jmatter.org/
 
-[5] Arteaga, J. M. *JMatter: A Naked Objects Framework for Java Swing.* http://jmatter.org/
-
-[6] Brambilla, M., & Fraternali, P. (2014). Interaction Flow Modeling Language. In *Proceedings of the 23rd International Conference on World Wide Web (WWW '14 Companion).* ACM.
-
-[7] Dekorte, S. (2002). *Io Programming Guide.* https://iolanguage.org/docs/Guide/
+[5] Brambilla, M., & Fraternali, P. (2014). Interaction Flow Modeling Language. In *Proceedings of the 23rd International Conference on World Wide Web (WWW '14 Companion).* ACM.
 
 
 ---
