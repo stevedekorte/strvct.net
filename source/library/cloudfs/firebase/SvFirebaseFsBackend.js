@@ -216,8 +216,21 @@
             const data = snap.data();
             const cur = data.lease;
             if (!cur || cur.uid !== callerUid) return;
+            // Preserve headSeq across lease release. Setting lease=null
+            // would discard the WAL sequence counter, and the next
+            // acquireLease would reset it to 0 — causing the next
+            // appendDelta to overwrite the existing seq=1 file in
+            // Storage, silently losing whatever was in the previous
+            // delta. Keep the lease object as a "no editor" sentinel
+            // (uid=null, expiresAt=null) but carry headSeq forward.
+            const releasedLease = {
+                uid: null,
+                deviceId: null,
+                expiresAt: null,
+                headSeq: typeof cur.headSeq === "number" ? cur.headSeq : 0
+            };
             tx.update(ref, {
-                lease: null,
+                lease: releasedLease,
                 lastModified: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
