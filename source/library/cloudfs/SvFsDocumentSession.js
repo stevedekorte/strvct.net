@@ -164,8 +164,18 @@
 
     /**
      * Append a delta. Callers typically don't need to worry about seq
-     * — the session keeps track and bumps headSeq on success. If the
-     * lease has been stolen, throws with code 'permission-denied'.
+     * — the session keeps track and bumps headSeq on success.
+     *
+     * Failure handling (see classifyWriteError below for the categories):
+     *   - transient (network/5xx): retried with exponential backoff up
+     *     to 3 times before escalating to conflict.
+     *   - conflict (lease stolen / headSeq advanced): error tagged with
+     *     `svIsConflict = true`, lease marked lost, error thrown.
+     *     Caller is expected to resync the document from cloud.
+     *   - state (not-found, failed-precondition, etc.): thrown as-is.
+     *     These represent a state mismatch the client cannot resolve by
+     *     resyncing.
+     *
      * @param {*} delta
      * @returns {Promise<{seq:number}>}
      */
@@ -178,14 +188,15 @@
         if (this.hasLostLease()) {
             const e = new Error("lease lost; reopen the session before appending");
             e.code = "permission-denied";
+            e.svIsConflict = true;
             throw e;
         }
         const expectedSeq = this.headSeq() + 1;
-        const result = await this.backend().appendDelta({
+        const result = await this.executeWithRetry(() => this.backend().appendDelta({
             nodeId: this.nodeId(),
             expectedSeq,
             delta
-        });
+        }));
         // Bump local headSeq optimistically; node watcher will reconfirm.
         const lease = this.currentLease() || {};
         this.setCurrentLease({ ...lease, headSeq: expectedSeq });
@@ -214,16 +225,89 @@
         if (this.hasLostLease()) {
             const e = new Error("lease lost; reopen the session before snapshotting");
             e.code = "permission-denied";
+            e.svIsConflict = true;
             throw e;
         }
-        const result = await this.backend().coalesceDocument({
+        const result = await this.executeWithRetry(() => this.backend().coalesceDocument({
             nodeId: this.nodeId(),
             newPool: content
-        });
+        }));
         // headSeq is reset by coalesce; reflect that in our local lease.
         const lease = this.currentLease() || {};
         this.setCurrentLease({ ...lease, headSeq: 0 });
         return result;
+    }
+
+    // -------------------------------- error handling
+
+    /**
+     * Classify a write error into one of:
+     *   "transient" — network / 5xx / timeout. Worth retrying.
+     *   "conflict"  — caller's view of state is stale (lease stolen,
+     *                 headSeq advanced under us). Caller must resync.
+     *   "state"     — the operation cannot succeed in this form
+     *                 (doc deleted, wrong type, bad argument). Surface
+     *                 as-is; resync wouldn't help.
+     * @param {Error} err
+     * @returns {"transient"|"conflict"|"state"}
+     * @category Error Handling
+     */
+    classifyWriteError (err) {
+        if (!err || !err.code) return "transient"; // typical for fetch-level network errors
+        if (err.code === "unavailable") return "transient";
+        if (err.code === "internal") return "transient";
+        if (err.code === "deadline-exceeded") return "transient";
+        if (err.code === "aborted") return "conflict";
+        if (err.code === "permission-denied") {
+            // Lease-related permission-denied indicates concurrent edit.
+            // Non-lease permission-denied is a real permission issue.
+            return /lease/i.test(err.message || "") ? "conflict" : "state";
+        }
+        return "state";
+    }
+
+    /**
+     * Invoke a write function, classifying any error. Retries transient
+     * failures with exponential backoff up to three times. If retries
+     * are exhausted, escalates to a conflict (forces caller to resync
+     * rather than silently keep marching forward against a possibly-stale
+     * cached state). Conflict-class errors are tagged with
+     * `err.svIsConflict = true` and the session's lease is marked lost.
+     * @param {Function} fn
+     * @returns {Promise<*>}
+     * @category Error Handling
+     */
+    async executeWithRetry (fn) {
+        const delaysMs = [100, 500, 2000];
+        let lastErr = null;
+        for (let attempt = 0; attempt <= delaysMs.length; attempt++) {
+            if (attempt > 0) {
+                await new Promise((resolve) => setTimeout(resolve, delaysMs[attempt - 1]));
+            }
+            try {
+                return await fn();
+            } catch (err) {
+                lastErr = err;
+                const klass = this.classifyWriteError(err);
+                if (klass === "transient") {
+                    if (attempt < delaysMs.length) continue;
+                    // Retries exhausted; escalate to conflict so the
+                    // caller resyncs rather than keep flying blind.
+                    err.svIsConflict = true;
+                    this.markLeaseLost();
+                    throw err;
+                }
+                if (klass === "conflict") {
+                    err.svIsConflict = true;
+                    this.markLeaseLost();
+                    throw err;
+                }
+                // state: surface as-is, no resync
+                throw err;
+            }
+        }
+        // Defensive — control should never reach here.
+        throw lastErr || new Error("executeWithRetry: unreachable");
     }
 
     // -------------------------------- internals
@@ -270,7 +354,19 @@
             if (!lease) return;
             const myUid = this.currentLease() && this.currentLease().uid;
             if (myUid && lease.uid !== myUid) {
-                this.markLeaseLost();
+                // Only treat a foreign lease as a real competitor if it
+                // is still valid. Firestore listeners can fire with
+                // cached pre-acquire state on attach, surfacing an
+                // expired/stale uid that doesn't actually contend with
+                // our just-acquired lease.
+                const expiresMs = lease.expiresAt
+                    ? (typeof lease.expiresAt.toMillis === "function"
+                        ? lease.expiresAt.toMillis()
+                        : Number(lease.expiresAt))
+                    : 0;
+                if (expiresMs > Date.now()) {
+                    this.markLeaseLost();
+                }
             } else if (typeof lease.headSeq === "number" && lease.headSeq > this.headSeq()) {
                 const merged = this.currentLease() ? { ...this.currentLease(), headSeq: lease.headSeq } : lease;
                 this.setCurrentLease(merged);

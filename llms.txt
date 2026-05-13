@@ -19,6 +19,7 @@
 - [Async Final Initialization](/docs/Future%20Work/Async%20Final%20Initialization/): Adding an async phase to the object initialization lifecycle.
 - [Async Navigation](/docs/Future%20Work/Async%20Navigation/): Rearchitecting the navigation stack to support asynchronous loading at every level.
 - [Browser Cleanup](/docs/Future%20Work/Browser%20Cleanup/): Simplifying and documenting the browser navigation architecture.
+- [Capabilities & Permissions](/docs/Future%20Work/Capabilities%20%26%20Permissions/): A node-level permissions protocol with a pluggable storage-layer ACL, so the framework can ask "can this caller do this here?" without baking specific roles into call sites.
 - [Case Studies](/docs/Future%20Work/Case%20Studies/): Comparative implementations of small applications in STRVCT and conventional stacks.
 - [Cleanup Notes](/docs/Future%20Work/Cleanup%20Notes/): Areas of the codebase that work but could benefit from simplification, documentation, or restructuring.
 - [Complete Protocols](/docs/Future%20Work/Complete%20Protocols/): Formalizing the many undeclared interface contracts throughout the codebase.
