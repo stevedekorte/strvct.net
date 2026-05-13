@@ -73,6 +73,11 @@
             slot.setSlotType("Object"); // backend timestamp shape varies
         }
         {
+            const slot = this.newSlot("createdAt", null);
+            slot.setSlotType("Object"); // backend timestamp shape varies
+            slot.setComment("server-set on create; locked against client updates after that");
+        }
+        {
             const slot = this.newSlot("rawData", null);
             slot.setSlotType("Object");
             slot.setComment("the original backend payload, for debugging / forward-compat fields");
@@ -119,6 +124,7 @@
         if ("visibility" in data) this.setVisibility(data.visibility);
         if ("subtype" in data) this.setSubtype(data.subtype);
         if ("lastModified" in data) this.setLastModified(data.lastModified);
+        if ("createdAt" in data) this.setCreatedAt(data.createdAt);
         return this;
     }
 

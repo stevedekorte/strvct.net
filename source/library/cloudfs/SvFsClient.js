@@ -164,6 +164,7 @@
             return existing;
         }
 
+        const ts = this.backend().serverTimestampSentinel();
         const data = {
             id: args.id,
             parentId: args.parentId,
@@ -173,8 +174,9 @@
             title: args.title || args.id,
             subtype: args.subtype,
             lease: null,
-            lastModified: this.backend().serverTimestampSentinel(),
-            childrenLastModified: this.backend().serverTimestampSentinel()
+            createdAt: ts,
+            lastModified: ts,
+            childrenLastModified: ts
         };
         await this.backend().writeNode(args.id, data);
         const created = await this.asyncReadNode(args.id);
@@ -211,6 +213,7 @@
             return existing;
         }
 
+        const ts = this.backend().serverTimestampSentinel();
         const data = {
             id: args.id,
             parentId: args.parentId,
@@ -219,8 +222,9 @@
             visibility: args.visibility || "private",
             title: args.title || args.id,
             subtype: args.subtype || { type: "folder" },
-            lastModified: this.backend().serverTimestampSentinel(),
-            childrenLastModified: this.backend().serverTimestampSentinel()
+            createdAt: ts,
+            lastModified: ts,
+            childrenLastModified: ts
         };
         await this.backend().writeNode(args.id, data);
         const created = await this.asyncReadNode(args.id);
