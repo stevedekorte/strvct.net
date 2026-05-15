@@ -236,6 +236,23 @@
         });
     }
 
+    // ---------------------------------------------------------------- membership discovery
+
+    async listMyMemberships () {
+        const uid = this._currentUid();
+        if (!uid) return [];
+        const snap = await this.firestore()
+            .collectionGroup("_members")
+            .where("uid", "==", uid)
+            .get({ source: "server" });
+        const out = [];
+        snap.forEach((d) => {
+            const data = d.data();
+            if (data && data.scopeRootId) out.push(data);
+        });
+        return out;
+    }
+
     // ---------------------------------------------------------------- helpers
 
     _currentUid () {

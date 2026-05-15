@@ -128,6 +128,15 @@
     }
 
     /**
+     * Caller's `_members` entries across all scopes (collection-group
+     * query). Each result is `{uid, role, joinedAt, scopeRootId}`.
+     * Filter client-side by role to find owned-vs-joined scopes.
+     */
+    async asyncListMyMemberships () {
+        return this.backend().listMyMemberships();
+    }
+
+    /**
      * Upload a blob already cached in the local `SvBlobPool` to the
      * cloud-nodes content-addressable store. Idempotent: the server
      * function fast-paths if `/Blobs/{hash}` already exists.

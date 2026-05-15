@@ -396,6 +396,25 @@
         throw this.notImplementedError("updateNarrationDoc");
     }
 
+    // ---------------------------------------------------------------- membership discovery
+
+    /**
+     * Collection-group query for the caller's own `_members` entries
+     * across all scopes. Each result is the raw doc payload
+     * `{uid, role, joinedAt, scopeRootId}`. Caller filters by role
+     * client-side (e.g. role==="owner" finds scopes the caller hosts).
+     *
+     * Rule-friendly: the standing collection-group rule grants reads
+     * only for docs whose `data.uid == request.auth.uid`, so this query
+     * returns nothing more than the caller's own memberships even on a
+     * shared multiplayer scope.
+     *
+     * @returns {Promise<Array<Object>>}
+     */
+    async listMyMemberships () {
+        throw this.notImplementedError("listMyMemberships");
+    }
+
     // ---------------------------------------------------------------- invites
 
     async createInvite (args) {
