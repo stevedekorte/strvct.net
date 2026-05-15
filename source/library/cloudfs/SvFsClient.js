@@ -72,9 +72,59 @@
         return this.listenerPool().acquire({ label: "node:" + id, unsubscribe });
     }
 
-    /** Release a handle returned by `watchNode`. */
+    /** Release a handle returned by any `watch*` method on this client. */
     unwatch (handle) {
         this.listenerPool().release(handle);
+    }
+
+    // ---------------------------------------------------------------- multiplayer subcollections
+
+    /**
+     * Pool-managed watch on `/Nodes/{rootId}/_meta/{docId}`.
+     * @param {string} rootId
+     * @param {string} docId
+     * @param {function(Object|null):void} onSnap
+     * @param {function(Error):void} [onErr]
+     * @returns {Object} listener-pool handle (release via `unwatch`)
+     */
+    watchMetaDoc (rootId, docId, onSnap, onErr) {
+        const unsubscribe = this.backend().watchMetaDoc(rootId, docId, onSnap, onErr);
+        return this.listenerPool().acquire({ label: "meta:" + rootId + "/" + docId, unsubscribe });
+    }
+
+    /**
+     * Pool-managed watch on `/Nodes/{rootId}/_presence/*`.
+     * @param {string} rootId
+     * @param {function(Array<Object>):void} onSnap
+     * @param {function(Error):void} [onErr]
+     * @returns {Object} listener-pool handle
+     */
+    watchPresence (rootId, onSnap, onErr) {
+        const unsubscribe = this.backend().watchPresence(rootId, onSnap, onErr);
+        return this.listenerPool().acquire({ label: "presence:" + rootId, unsubscribe });
+    }
+
+    /**
+     * Pool-managed watch on `/Nodes/{rootId}/_narration/*`, ordered by
+     * `createdAt` ascending. Pass `{ since: <Timestamp> }` to skip past
+     * already-applied messages on reconnect.
+     * @param {string} rootId
+     * @param {Object} opts                 — { since, limit }
+     * @param {function(Array<Object>):void} onSnap
+     * @param {function(Error):void} [onErr]
+     * @returns {Object} listener-pool handle
+     */
+    watchNarration (rootId, opts, onSnap, onErr) {
+        const unsubscribe = this.backend().watchNarration(rootId, opts, onSnap, onErr);
+        return this.listenerPool().acquire({ label: "narration:" + rootId, unsubscribe });
+    }
+
+    /**
+     * Promote a scope-leaf document to a fresh scope-root. Convenience
+     * wrapper over `backend.promoteToScopeRoot`.
+     */
+    async asyncPromoteToScopeRoot (args) {
+        return this.backend().promoteToScopeRoot(args);
     }
 
     /**

@@ -241,13 +241,159 @@
      * Cross-scope copy or move.
      * @param {Object} args
      * @param {string} args.srcId
-     * @param {string} args.dstScopeRootId
+     * @param {string} [args.dstScopeRootId]  Required unless promote=true.
      * @param {string} args.dstParentId
      * @param {"copy"|"move"} args.mode
-     * @returns {Promise<{mode:string, count:number, idMap:Object}>}
+     * @param {boolean} [args.promote]  When true, the destination becomes a
+     *   new scope-root (id == scopeRootId, server-generated). An owner
+     *   _members entry for the caller is written atomically. Used by
+     *   multiplayer-session promotion. See server-side copyNode.js.
+     * @returns {Promise<{mode:string, count:number, idMap:Object, promoted:boolean, dstRootId:string|null}>}
      */
     async copyNode (args) {
         return this.callFunction("copy", args);
+    }
+
+    /**
+     * Promote a scope-leaf document to a fresh scope-root. Thin wrapper
+     * over `copyNode({promote: true})` with the typical multiplayer-
+     * promotion defaults (mode === "move").
+     *
+     * @param {Object} args
+     * @param {string} args.srcId           — id of the personal-session document.
+     * @param {string} args.dstParentId     — id of the new scope-root's parent node
+     *                                        (typically the host's user home).
+     * @param {"copy"|"move"} [args.mode]   — defaults to "move".
+     * @returns {Promise<{dstRootId:string, idMap:Object, count:number}>}
+     */
+    async promoteToScopeRoot ({ srcId, dstParentId, mode }) {
+        return this.copyNode({
+            srcId,
+            dstParentId,
+            mode: mode || "move",
+            promote: true
+        });
+    }
+
+    // ---------------------------------------------------------------- multiplayer subcollections
+
+    /**
+     * Watch a single doc under `/Nodes/{rootId}/_meta/{docId}` (typically
+     * `_meta/activity` or `_meta/seq`).
+     * @param {string} _rootId
+     * @param {string} _docId
+     * @param {function(Object|null):void} _onSnap
+     * @param {function(Error):void} [_onErr]
+     * @returns {function():void} unsubscribe
+     */
+    watchMetaDoc (/*_rootId, _docId, _onSnap, _onErr*/) {
+        throw this.notImplementedError("watchMetaDoc");
+    }
+
+    /**
+     * One-shot read of `/Nodes/{rootId}/_meta/{docId}`.
+     * @param {string} _rootId
+     * @param {string} _docId
+     * @returns {Promise<Object|null>}
+     */
+    async getMetaDoc (/*_rootId, _docId*/) {
+        throw this.notImplementedError("getMetaDoc");
+    }
+
+    /**
+     * Write `/Nodes/{rootId}/_meta/{docId}` (host-only at the rule layer).
+     * @param {string} _rootId
+     * @param {string} _docId
+     * @param {Object} _data
+     * @returns {Promise<void>}
+     */
+    async setMetaDoc (/*_rootId, _docId, _data*/) {
+        throw this.notImplementedError("setMetaDoc");
+    }
+
+    /**
+     * Watch all per-member presence docs under `/Nodes/{rootId}/_presence/*`.
+     * Callback receives the full list of presence records on every change.
+     * @param {string} _rootId
+     * @param {function(Array<Object>):void} _onSnap
+     * @param {function(Error):void} [_onErr]
+     * @returns {function():void} unsubscribe
+     */
+    watchPresence (/*_rootId, _onSnap, _onErr*/) {
+        throw this.notImplementedError("watchPresence");
+    }
+
+    /**
+     * Set the caller's own presence doc.
+     * @param {string} _rootId
+     * @param {string} _uid
+     * @param {Object} _data
+     * @returns {Promise<void>}
+     */
+    async setPresenceDoc (/*_rootId, _uid, _data*/) {
+        throw this.notImplementedError("setPresenceDoc");
+    }
+
+    /**
+     * Delete a presence doc (rule allows self or owner).
+     * @param {string} _rootId
+     * @param {string} _uid
+     * @returns {Promise<void>}
+     */
+    async deletePresenceDoc (/*_rootId, _uid*/) {
+        throw this.notImplementedError("deletePresenceDoc");
+    }
+
+    /**
+     * Watch the narration stream under `/Nodes/{rootId}/_narration/*`,
+     * ordered by `createdAt` ascending.
+     *
+     * @param {string} _rootId
+     * @param {Object} _opts                 - { since, limit }
+     * @param {Date} [_opts.since]           - createdAt cursor (>); skip past on join.
+     * @param {number} [_opts.limit]
+     * @param {function(Array<Object>):void} _onSnap
+     * @param {function(Error):void} [_onErr]
+     * @returns {function():void} unsubscribe
+     */
+    watchNarration (/*_rootId, _opts, _onSnap, _onErr*/) {
+        throw this.notImplementedError("watchNarration");
+    }
+
+    /**
+     * One-shot list of recent narration docs (for join-time backfill).
+     * Default opts return the N most recent by `createdAt`.
+     * @param {string} _rootId
+     * @param {Object} _opts                 - { limit, descending }
+     * @returns {Promise<Array<Object>>}
+     */
+    async listNarration (/*_rootId, _opts*/) {
+        throw this.notImplementedError("listNarration");
+    }
+
+    /**
+     * Create a narration message. The rule requires `data.senderId` to match
+     * the caller's auth uid; for editors, the host's activity state must be
+     * "idle" (or absent).
+     * @param {string} _rootId
+     * @param {string} _msgId
+     * @param {Object} _data
+     * @returns {Promise<void>}
+     */
+    async setNarrationDoc (/*_rootId, _msgId, _data*/) {
+        throw this.notImplementedError("setNarrationDoc");
+    }
+
+    /**
+     * Update an existing narration message (rule: author-only). Used for
+     * streaming chunk appends and isFinal transitions.
+     * @param {string} _rootId
+     * @param {string} _msgId
+     * @param {Object} _patch
+     * @returns {Promise<void>}
+     */
+    async updateNarrationDoc (/*_rootId, _msgId, _patch*/) {
+        throw this.notImplementedError("updateNarrationDoc");
     }
 
     // ---------------------------------------------------------------- invites

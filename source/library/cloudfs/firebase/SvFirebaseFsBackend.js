@@ -266,4 +266,78 @@
 
     // callFunction stays abstract — app subclass implements HTTP transport.
 
+    // ---------------------------------------------------------------- multiplayer subcollections
+
+    _scopeCol (rootId, name) {
+        return this.nodeRef(rootId).collection(name);
+    }
+
+    watchMetaDoc (rootId, docId, onSnap, onErr) {
+        return this._scopeCol(rootId, "_meta").doc(docId).onSnapshot(
+            (snap) => onSnap(snap.exists ? snap.data() : null),
+            (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchMetaDoc error:", err); }
+        );
+    }
+
+    async getMetaDoc (rootId, docId) {
+        const snap = await this._scopeCol(rootId, "_meta").doc(docId).get();
+        return snap.exists ? snap.data() : null;
+    }
+
+    async setMetaDoc (rootId, docId, data) {
+        await this._scopeCol(rootId, "_meta").doc(docId).set(data);
+    }
+
+    watchPresence (rootId, onSnap, onErr) {
+        return this._scopeCol(rootId, "_presence").onSnapshot(
+            (snap) => {
+                const list = [];
+                snap.forEach((d) => list.push(d.data()));
+                onSnap(list);
+            },
+            (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchPresence error:", err); }
+        );
+    }
+
+    async setPresenceDoc (rootId, uid, data) {
+        await this._scopeCol(rootId, "_presence").doc(uid).set(data);
+    }
+
+    async deletePresenceDoc (rootId, uid) {
+        await this._scopeCol(rootId, "_presence").doc(uid).delete();
+    }
+
+    watchNarration (rootId, opts, onSnap, onErr) {
+        let q = this._scopeCol(rootId, "_narration").orderBy("createdAt", "asc");
+        if (opts && opts.since) q = q.startAfter(opts.since);
+        if (opts && opts.limit) q = q.limit(opts.limit);
+        return q.onSnapshot(
+            (snap) => {
+                const list = [];
+                snap.forEach((d) => list.push(d.data()));
+                onSnap(list);
+            },
+            (err) => { if (onErr) onErr(err); else console.error("[SvFirebaseFsBackend] watchNarration error:", err); }
+        );
+    }
+
+    async listNarration (rootId, opts) {
+        let q = this._scopeCol(rootId, "_narration");
+        const descending = opts && opts.descending === true;
+        q = q.orderBy("createdAt", descending ? "desc" : "asc");
+        if (opts && opts.limit) q = q.limit(opts.limit);
+        const snap = await q.get({ source: "server" });
+        const list = [];
+        snap.forEach((d) => list.push(d.data()));
+        return list;
+    }
+
+    async setNarrationDoc (rootId, msgId, data) {
+        await this._scopeCol(rootId, "_narration").doc(msgId).set(data);
+    }
+
+    async updateNarrationDoc (rootId, msgId, patch) {
+        await this._scopeCol(rootId, "_narration").doc(msgId).update(patch);
+    }
+
 }.initThisClass());
