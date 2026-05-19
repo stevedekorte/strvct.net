@@ -33,30 +33,33 @@
   <rect x="10" y="10" width="780" height="430"/>
   <line x1="10" y1="60" x2="790" y2="60" stroke-dasharray="5,5"/>
   <rect class="nav-item" x="20" y="20" width="80" height="30"/>
-  <text x="60" y="40" text-anchor="middle">Mail</text>
+  <text x="60" y="40" text-anchor="middle">Gmail</text>
   <rect class="nav-item" x="110" y="20" width="80" height="30"/>
-  <text x="150" y="40" text-anchor="middle">Settings</text>
+  <text x="150" y="40" text-anchor="middle">Search</text>
   <rect class="nav-item" x="200" y="20" width="80" height="30"/>
   <text x="240" y="40" text-anchor="middle">Help</text>
+  <rect class="nav-item" x="290" y="20" width="80" height="30"/>
+  <text x="330" y="40" text-anchor="middle">Settings</text>
 
   <!-- Level 2 (Vertical: Folders sidebar | Message area) -->
   <rect x="20" y="70" width="760" height="360"/>
   <line x1="170" y1="70" x2="170" y2="430" stroke-dasharray="5,5"/>
-  <rect class="nav-item" x="30" y="80" width="130" height="30"/>
-  <text x="95" y="100" text-anchor="middle">Inbox</text>
-  <rect class="nav-item" x="30" y="120" width="130" height="30"/>
-  <text x="95" y="140" text-anchor="middle">Starred</text>
-  <rect class="nav-item" x="30" y="160" width="130" height="30"/>
-  <text x="95" y="180" text-anchor="middle">Sent</text>
-  <rect class="nav-item" x="30" y="200" width="130" height="30"/>
-  <text x="95" y="220" text-anchor="middle">Drafts</text>
-  <rect class="nav-item" x="30" y="240" width="130" height="30"/>
-  <text x="95" y="260" text-anchor="middle">Trash</text>
 
-  <!-- Footer separator and Compose button -->
-  <line x1="20" y1="395" x2="170" y2="395"/>
-  <rect class="nav-item" x="30" y="400" width="130" height="25"/>
-  <text x="95" y="417" text-anchor="middle">Compose</text>
+  <!-- Header: Compose button and separator -->
+  <rect class="nav-item" x="30" y="80" width="130" height="25"/>
+  <text x="95" y="97" text-anchor="middle">Compose</text>
+  <line x1="20" y1="115" x2="170" y2="115"/>
+
+  <rect class="nav-item" x="30" y="125" width="130" height="30"/>
+  <text x="95" y="145" text-anchor="middle">Inbox</text>
+  <rect class="nav-item" x="30" y="165" width="130" height="30"/>
+  <text x="95" y="185" text-anchor="middle">Starred</text>
+  <rect class="nav-item" x="30" y="205" width="130" height="30"/>
+  <text x="95" y="225" text-anchor="middle">Sent</text>
+  <rect class="nav-item" x="30" y="245" width="130" height="30"/>
+  <text x="95" y="265" text-anchor="middle">Drafts</text>
+  <rect class="nav-item" x="30" y="285" width="130" height="30"/>
+  <text x="95" y="305" text-anchor="middle">Trash</text>
 
   <!-- Level 3 (Vertical: Message list | Message content) -->
   <rect x="180" y="80" width="590" height="340"/>

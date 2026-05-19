@@ -32,44 +32,49 @@
   <!-- Level 1 (Horizontal: Department navigation) -->
   <rect x="10" y="10" width="780" height="430"/>
   <line x1="10" y1="60" x2="790" y2="60" stroke-dasharray="5,5"/>
-  <rect class="nav-item" x="20" y="20" width="100" height="30"/>
-  <text x="70" y="40" text-anchor="middle">Electronics</text>
-  <rect class="nav-item" x="130" y="20" width="80" height="30"/>
-  <text x="170" y="40" text-anchor="middle">Books</text>
-  <rect class="nav-item" x="220" y="20" width="80" height="30"/>
-  <text x="260" y="40" text-anchor="middle">Home</text>
-  <rect class="nav-item" x="310" y="20" width="80" height="30"/>
-  <text x="350" y="40" text-anchor="middle">Fashion</text>
+  <rect class="nav-item" x="20" y="20" width="80" height="30"/>
+  <text x="60" y="40" text-anchor="middle">Amazon</text>
+  <rect class="nav-item" x="110" y="20" width="80" height="30"/>
+  <text x="150" y="40" text-anchor="middle">Account</text>
+  <rect class="nav-item" x="200" y="20" width="140" height="30"/>
+  <text x="270" y="40" text-anchor="middle">Orders &amp; Returns</text>
+  <rect class="nav-item" x="350" y="20" width="80" height="30"/>
+  <text x="390" y="40" text-anchor="middle">Cart</text>
 
-  <!-- Level 2 (Vertical: Category sidebar | Results area) -->
+  <!-- Level 2 (Horizontal: Category row, then Results area below) -->
   <rect x="20" y="70" width="760" height="360"/>
-  <line x1="170" y1="70" x2="170" y2="430" stroke-dasharray="5,5"/>
-  <rect class="nav-item" x="30" y="80" width="130" height="30"/>
-  <text x="95" y="100" text-anchor="middle">Laptops</text>
-  <rect class="nav-item" x="30" y="120" width="130" height="30"/>
-  <text x="95" y="140" text-anchor="middle">Phones</text>
-  <rect class="nav-item" x="30" y="160" width="130" height="30"/>
-  <text x="95" y="180" text-anchor="middle">Tablets</text>
-  <rect class="nav-item" x="30" y="200" width="130" height="30"/>
-  <text x="95" y="220" text-anchor="middle">Audio</text>
-  <rect class="nav-item" x="30" y="240" width="130" height="30"/>
-  <text x="95" y="260" text-anchor="middle">Cameras</text>
+  <line x1="20" y1="120" x2="780" y2="120" stroke-dasharray="5,5"/>
+  <rect class="nav-item" x="30" y="80" width="100" height="30"/>
+  <text x="80" y="100" text-anchor="middle">Laptops</text>
+  <rect class="nav-item" x="140" y="80" width="100" height="30"/>
+  <text x="190" y="100" text-anchor="middle">Phones</text>
+  <rect class="nav-item" x="250" y="80" width="100" height="30"/>
+  <text x="300" y="100" text-anchor="middle">Tablets</text>
+  <rect class="nav-item" x="360" y="80" width="100" height="30"/>
+  <text x="410" y="100" text-anchor="middle">Audio</text>
+  <rect class="nav-item" x="470" y="80" width="100" height="30"/>
+  <text x="520" y="100" text-anchor="middle">Cameras</text>
 
-  <!-- Level 3 (Vertical: Search results | Product detail) -->
-  <rect x="180" y="80" width="590" height="340"/>
-  <line x1="380" y1="80" x2="380" y2="420" stroke-dasharray="5,5"/>
-  <rect class="nav-item" x="190" y="90" width="180" height="30"/>
-  <text x="280" y="110" text-anchor="middle">Product</text>
-  <rect class="nav-item" x="190" y="130" width="180" height="30"/>
-  <text x="280" y="150" text-anchor="middle">Product</text>
-  <rect class="nav-item" x="190" y="170" width="180" height="30"/>
-  <text x="280" y="190" text-anchor="middle">Product</text>
-  <rect class="nav-item" x="190" y="210" width="180" height="30"/>
-  <text x="280" y="230" text-anchor="middle">Product</text>
-  <rect class="nav-item" x="190" y="250" width="180" height="30"/>
-  <text x="280" y="270" text-anchor="middle">Product</text>
+  <!-- Level 3 (Grid: Product grid | Product detail) -->
+  <rect x="30" y="130" width="740" height="290"/>
+  <line x1="560" y1="130" x2="560" y2="420" stroke-dasharray="5,5"/>
+
+  <!-- Product grid (3x2) -->
+  <rect class="nav-item" x="40" y="140" width="160" height="130"/>
+  <text x="120" y="210" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="210" y="140" width="160" height="130"/>
+  <text x="290" y="210" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="380" y="140" width="160" height="130"/>
+  <text x="460" y="210" text-anchor="middle">Product</text>
+
+  <rect class="nav-item" x="40" y="280" width="160" height="130"/>
+  <text x="120" y="350" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="210" y="280" width="160" height="130"/>
+  <text x="290" y="350" text-anchor="middle">Product</text>
+  <rect class="nav-item" x="380" y="280" width="160" height="130"/>
+  <text x="460" y="350" text-anchor="middle">Product</text>
 
   <!-- Product detail view -->
-  <rect class="nav-item" x="390" y="90" width="370" height="320"/>
-  <text x="575" y="255" text-anchor="middle">Custom Content View</text>
+  <rect class="nav-item" x="570" y="140" width="200" height="270"/>
+  <text x="670" y="271" text-anchor="middle">Custom Content View<tspan x="670" dy="18">(collapses product grid)</tspan></text>
 </svg>
