@@ -6,6 +6,56 @@ IndexedDB-backed persistence for object graphs using dirty tracking and automati
 
 Strvct's persistence system stores object graphs in the browser's IndexedDB. Rather than requiring explicit save/load calls, it monitors slot changes and automatically commits dirty objects at the end of the event loop. The system is built from three layers:
 
+<svg viewBox="0 0 820 540" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .edge { stroke: #888; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="alp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="190" y="20" width="440" height="100"/>
+  <text x="205" y="42" class="b">Node Graph</text>
+  <line class="edge" x1="240" y1="65" x2="310" y2="90"/>
+  <line class="edge" x1="240" y1="65" x2="380" y2="65"/>
+  <line class="edge" x1="310" y1="90" x2="410" y2="95"/>
+  <line class="edge" x1="380" y1="65" x2="410" y2="95"/>
+  <line class="edge" x1="410" y1="95" x2="490" y2="80"/>
+  <line class="edge" x1="490" y1="80" x2="560" y2="65"/>
+  <circle cx="240" cy="65" r="8" class="fill"/>
+  <circle cx="310" cy="90" r="8" class="fill"/>
+  <circle cx="380" cy="65" r="8" class="fill"/>
+  <circle cx="410" cy="95" r="11" class="fill" stroke-width="2"/>
+  <circle cx="490" cy="80" r="8" class="fill"/>
+  <circle cx="560" cy="65" r="8" class="fill"/>
+  <line class="flow" x1="410" y1="106" x2="410" y2="150" marker-end="url(#alp)"/>
+  <text x="425" y="135" class="dim">current node</text>
+  <rect class="fill" x="190" y="150" width="440" height="75"/>
+  <text x="410" y="178" text-anchor="middle" class="b">SvStorableNode</text>
+  <text x="410" y="200" text-anchor="middle" class="dim">your node class; slot setters hook into the persistence system</text>
+  <line class="flow" x1="410" y1="225" x2="410" y2="255" marker-end="url(#alp)"/>
+  <text x="420" y="245" class="dim">didUpdateSlot marks object dirty</text>
+  <rect class="fill" x="190" y="255" width="440" height="75"/>
+  <text x="410" y="283" text-anchor="middle" class="b">SvObjectPool</text>
+  <text x="410" y="305" text-anchor="middle" class="dim">in-memory cache; tracks dirty objects, serializes to JSON</text>
+  <line class="flow" x1="410" y1="330" x2="410" y2="360" marker-end="url(#alp)"/>
+  <text x="420" y="350" class="dim">commit at end of event loop</text>
+  <rect class="fill" x="190" y="360" width="440" height="75"/>
+  <text x="410" y="388" text-anchor="middle" class="b">SvPersistentAtomicMap</text>
+  <text x="410" y="410" text-anchor="middle" class="dim">IndexedDB wrapper; in-memory cache, batched writes</text>
+  <line class="flow" x1="410" y1="435" x2="410" y2="465" marker-end="url(#alp)"/>
+  <text x="420" y="455" class="dim">atomic transaction</text>
+  <rect class="box" x="190" y="465" width="440" height="55"/>
+  <text x="410" y="498" text-anchor="middle" class="b">IndexedDB</text>
+</svg>
+
 - **`SvObjectPool`** — Manages an in-memory cache of objects indexed by persistent unique IDs (puuids). Tracks dirty objects and handles serialization, deserialization, and garbage collection.
 - **`SvPersistentAtomicMap`** — An IndexedDB wrapper that loads the entire database into memory on open, provides synchronous read/write to the cache, and batches writes into atomic IndexedDB transactions on commit.
 - **`SvStorableNode`** — A node base class that hooks slot changes into the dirty tracking system.

@@ -1,0 +1,17 @@
+{
+  "title": "Diagrams",
+  "subtitle": "Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.",
+  "content": [
+    {
+      "type": "ContentCards",
+      "columns": 3,
+      "items": [
+        "Layers",
+        "Annotations",
+        "Sync Flow",
+        "View Resolution",
+        "Persistence Pipeline"
+      ]
+    }
+  ]
+}

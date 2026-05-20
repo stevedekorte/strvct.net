@@ -7,6 +7,12 @@
 - [Documentation](/docs/): Guides, architecture, and API reference.
 - [Accessibility](/docs/Accessibility/): Automatic, framework-level ARIA support derived from the naked objects pattern.
 - [Comparing to React](/docs/Comparing%20to%20React/): A guide for React developers exploring Strvct — what's different, what's similar, and when each approach makes more sense.
+- [Diagrams](/docs/Diagrams/): Architectural sketches of the Strvct framework. Working drafts; not yet placed in their final locations within the docs.
+- [Annotations](/docs/Diagrams/Annotations/)
+- [Layers](/docs/Diagrams/Layers/)
+- [Persistence Pipeline](/docs/Diagrams/Persistence%20Pipeline/)
+- [View ↔ Model ↔ Storage Syncing](/docs/Diagrams/Sync%20Flow/)
+- [View Resolution](/docs/Diagrams/View%20Resolution/)
 - [Events and Gestures](/docs/Events%20and%20Gestures/): Event flow, listeners, gesture recognizers, timers, keyboard handling, and drag-and-drop.
 - [Drag and Drop](/docs/Events%20and%20Gestures/Drag%20and%20Drop/): Browser drag-and-drop support for views and nodes, covering both drop targets and drag sources.
 - [Event Flow](/docs/Events%20and%20Gestures/Event%20Flow/): The end-to-end path from a browser event to an application handler.

@@ -6,14 +6,44 @@ Cloud sync for object pools and collections using Firebase Storage.
 
 Strvct's local persistence stores serialized object graphs in IndexedDB via `SvPersistentObjectPool`. Cloud sync extends this with two complementary strategies because different data has fundamentally different sync characteristics. A collection of independent items (e.g. characters or campaigns) benefits from per-item files — you can lazy-load, show thumbnails before downloading, and a change to one item doesn't require re-uploading everything. But an interconnected object graph (e.g. a game session with dozens of cross-referencing objects) can't be split into individual files because objects reference each other by ID — they must move as a unit. The two strategies reflect this distinction:
 
+<svg viewBox="0 0 820 220" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+  </style>
+  <rect class="box" x="40" y="20" width="350" height="185"/>
+  <text x="55" y="42" class="b">Collection Sync</text>
+  <rect class="fill" x="55" y="60" width="320" height="50"/>
+  <text x="215" y="80" text-anchor="middle" class="b">manifest.json</text>
+  <text x="215" y="100" text-anchor="middle" class="dim">subnodeIds + item metadata</text>
+  <rect class="fill" x="55" y="130" width="100" height="60"/>
+  <text x="105" y="165" text-anchor="middle" class="dim">item-1.json</text>
+  <rect class="fill" x="165" y="130" width="100" height="60"/>
+  <text x="215" y="165" text-anchor="middle" class="dim">item-2.json</text>
+  <rect class="fill" x="275" y="130" width="100" height="60"/>
+  <text x="325" y="165" text-anchor="middle" class="dim">item-3.json</text>
+  <rect class="box" x="430" y="20" width="350" height="185"/>
+  <text x="445" y="42" class="b">Pool Sync</text>
+  <rect class="fill" x="445" y="60" width="320" height="50"/>
+  <text x="605" y="80" text-anchor="middle" class="b">snapshot.json</text>
+  <text x="605" y="100" text-anchor="middle" class="dim">complete object graph</text>
+  <rect class="fill" x="445" y="130" width="100" height="60"/>
+  <text x="495" y="165" text-anchor="middle" class="dim">wal-001.json</text>
+  <rect class="fill" x="555" y="130" width="100" height="60"/>
+  <text x="605" y="165" text-anchor="middle" class="dim">wal-002.json</text>
+  <rect class="fill" x="665" y="130" width="100" height="60"/>
+  <text x="715" y="165" text-anchor="middle" class="dim">wal-003.json</text>
+</svg>
+
 - **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.
 - **Pool sync** — Entire object graphs are synced as a single pool. A write-ahead log of small delta files makes updates fast and efficient — only changed records are uploaded, with periodic compaction back to a full snapshot.
 
 Both strategies require the synced object graph to be **self-contained** — the rest of the system holds only a reference to the graph's root, and objects within the graph hold no persistent references to objects outside it. This isolation is what makes it possible to serialize, upload, and reconstruct the graph independently.
 
-Both strategies use Firebase Storage as the backend and are coordinated by `SvCloudSyncSource`.
-
-## Collection Sync
+Both strategies use Firebase Storage as the backend and are coordinated by `SvCloudSyncSource`.## Collection Sync
 
 ### How It Works
 
