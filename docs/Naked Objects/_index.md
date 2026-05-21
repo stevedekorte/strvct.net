@@ -421,6 +421,20 @@ This makes the approach particularly suited to exploratory or fast-evolving appl
 
 *Single-application evidence.* The case study is one application by one primary developer. Whether the approach scales to multi-team development, third-party plugins, or large existing codebases is open.
 
+*Server-side compute and concurrency.* Strvct runs entirely client-side, with IndexedDB persistence and optional cloud sync. This produces excellent offline operation and snappy local interactions, but constrains use cases that require very large datasets, heavy server-side computation, or strict multi-user concurrency control.
+
+*External validation.* Accessibility, internationalization, and mobile experience are architecturally supported but have not undergone external audits, large-scale user studies, or production deployment beyond the primary application.
+
+### Future Directions
+
+*Hybrid view composition.* Allowing custom view components to participate in the auto-generated tile/stack hierarchy would close the gap for the adversarial cases of §3: embedding a chart, a canvas, or a 3D viewport at a known node in the navigation tree without losing the structural guarantees of the surrounding interface.
+
+*Server-side execution variants.* Pairing Strvct's headless mode with a server-side coordinator could support workloads (large datasets, heavy compute, strict multi-user concurrency) that exceed pure-client constraints, while keeping the same model and annotations as the source of truth.
+
+*Empirical studies.* Controlled comparisons against component-based frameworks, measuring mental-model formation, task completion time, and maintenance cost as the model evolves, would replace the existence proof in §8 with quantitative evidence.
+
+*Disciplined primitive expansion.* Adding primitives for patterns the current set does not cover (timelines, graphs, free-form 2D positions) while preserving the narrow-design-space property: each new primitive should express a generalizable spatial pattern rather than a one-off layout.
+
 ## 11. Conclusion
 
 The naked objects pattern has offered a compelling proposition for twenty-five years: write the domain model, and the rest follows. Its limited adoption is not a failure of this proposition but of the UI strategies prior implementations chose. Generic forms and tables were sufficient for internal tools but never met the expectations of modern consumer software.
