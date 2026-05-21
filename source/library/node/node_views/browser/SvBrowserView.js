@@ -69,6 +69,19 @@
         //this.scheduleMethod("pullPathFromUrlHash")
         this.setIsRegisteredForKeyboard(true); // to get special keys like Option shift D
         this.watchForNote("onRequestNavigateToNode");
+        // Programmatic-nav alternative for SvLinkNode chains: caller
+        // posts an explicit array of node refs whose visible tiles
+        // form the desired path. selectNodePathArray walks the array
+        // column-by-column, and `tileWithNode` matches on
+        // `tile.nodeTileLink()` — which for a link tile resolves to
+        // the link's target. So an array like
+        //   [realm.mySessions(), specificSession]
+        // matches the visible "My Sessions" link tile (whose
+        // nodeTileLink === realm.mySessions) then the session tile in
+        // the next column. This bypasses `navigateToNode`'s
+        // `nodePathArray()` lookup, which walks the model parent
+        // chain through hidden intermediates and fails on link redirects.
+        this.watchForNote("onRequestSelectNodePath");
         return this;
     }
 
@@ -117,6 +130,20 @@
     onRequestNavigateToNode (aNote) {
         const node = aNote.info();
         this.navigateToNode(node);
+        return this;
+    }
+
+    /**
+     * @description Programmatic-nav with an explicit path array. See
+     * the comment in init() for why this exists.
+     * @param {SvNotification} aNote — info() is the path array.
+     * @returns {SvBrowserView}
+     */
+    onRequestSelectNodePath (aNote) {
+        const path = aNote.info();
+        if (Array.isArray(path) && path.length > 0) {
+            this.selectNodePathArray(path);
+        }
         return this;
     }
 
