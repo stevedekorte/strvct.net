@@ -10,6 +10,46 @@ View synchronization and storage writes don't need the notification center's bro
 
 The notification center uses `SvSyncScheduler` internally for its own dispatch, so notification delivery and view synchronization are handled in the same deferred processing pass.
 
+<svg viewBox="0 0 820 340" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ass" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="350" height="295"/>
+  <text x="55" y="42" class="b">Incoming requests</text>
+  <text x="55" y="62" class="dim">multiple calls, any order</text>
+  <rect class="fill" x="55" y="80" width="320" height="40"/>
+  <text x="70" y="105" class="dim">A.syncToView  (priority 2)</text>
+  <rect class="fill" x="55" y="130" width="320" height="40"/>
+  <text x="70" y="155" class="dim">B.syncFromView  (priority 0)</text>
+  <rect class="fill" x="55" y="180" width="320" height="40"/>
+  <text x="70" y="205" class="dim">A.syncToView  (priority 2)  · duplicate, ignored</text>
+  <rect class="fill" x="55" y="230" width="320" height="40"/>
+  <text x="70" y="255" class="dim">M.commit  (priority 1)</text>
+  <line class="flow" x1="390" y1="170" x2="430" y2="170" marker-end="url(#ass)"/>
+  <text x="410" y="160" text-anchor="middle" class="dim">drain</text>
+  <rect class="box" x="430" y="20" width="350" height="295"/>
+  <text x="445" y="42" class="b">Drain (end of event loop)</text>
+  <text x="445" y="62" class="dim">deduplicated, in priority order</text>
+  <rect class="fill" x="445" y="80" width="320" height="40"/>
+  <text x="460" y="105" class="dim">1. B.syncFromView()  · priority 0</text>
+  <rect class="fill" x="445" y="130" width="320" height="40"/>
+  <text x="460" y="155" class="dim">2. M.commit()  · priority 1</text>
+  <rect class="fill" x="445" y="180" width="320" height="40"/>
+  <text x="460" y="205" class="dim">3. A.syncToView()  · priority 2</text>
+  <text x="605" y="255" text-anchor="middle" class="dim">each (target, method) pair</text>
+  <text x="605" y="275" text-anchor="middle" class="dim">runs exactly once per loop</text>
+</svg>
+
 ## Scheduling Actions
 
 ```javascript

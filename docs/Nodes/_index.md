@@ -8,6 +8,54 @@ Nodes are the central abstraction in STRVCT. Every piece of application state --
 
 A node is not a UI component. It's a model object that declares its data (via [slots](../Slots/)), its children (via subnodes), and its display preferences (title, subtitle, layout direction). The framework's [view system](../Views/) reads this information and generates the appropriate UI automatically.
 
+<svg viewBox="0 0 820 600" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="an" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="50"/>
+  <text x="240" y="42" class="b">SvNode</text>
+  <text x="240" y="60" class="dim">subnodes, parent / owner</text>
+  <line class="flow" x1="410" y1="70" x2="410" y2="90" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="90" width="380" height="50"/>
+  <text x="240" y="112" class="b">SvTitledNode</text>
+  <text x="240" y="130" class="dim">title, subtitle, note, ARIA, path navigation</text>
+  <line class="flow" x1="410" y1="140" x2="410" y2="160" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="160" width="380" height="50"/>
+  <text x="240" y="182" class="b">SvTranslatableNode</text>
+  <text x="240" y="200" class="dim">per-node i18n translation cache</text>
+  <line class="flow" x1="410" y1="210" x2="410" y2="230" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="230" width="380" height="50"/>
+  <text x="240" y="252" class="b">SvInspectableNode</text>
+  <text x="240" y="270" class="dim">inspector tiles generated from slot metadata</text>
+  <line class="flow" x1="410" y1="280" x2="410" y2="300" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="300" width="380" height="50"/>
+  <text x="240" y="322" class="b">SvViewableNode</text>
+  <text x="240" y="340" class="dim">view class selection, layout direction, tile prefs</text>
+  <line class="flow" x1="410" y1="350" x2="410" y2="370" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="370" width="380" height="50"/>
+  <text x="240" y="392" class="b">SvStyledNode</text>
+  <text x="240" y="410" class="dim">theme class name</text>
+  <line class="flow" x1="410" y1="420" x2="410" y2="440" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="440" width="380" height="50"/>
+  <text x="240" y="462" class="b">SvStorableNode</text>
+  <text x="240" y="480" class="dim">persistence, dirty tracking, mutation notifications</text>
+  <line class="flow" x1="410" y1="490" x2="410" y2="510" marker-end="url(#an)"/>
+  <rect class="fill" x="220" y="510" width="380" height="50"/>
+  <text x="240" y="532" class="b">SvSummaryNode</text>
+  <text x="240" y="550" class="dim">summary format · base for most application classes</text>
+  <text x="410" y="590" text-anchor="middle" class="dim">Each layer adds one capability; application classes typically extend SvSummaryNode.</text>
+</svg>
+
 ## The Node Hierarchy
 
 STRVCT provides a single inheritance chain of node classes. Each level adds a specific capability:

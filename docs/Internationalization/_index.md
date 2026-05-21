@@ -14,6 +14,42 @@ The system is designed around three principles:
 - **Smart filtering** — numbers, currency amounts, codes, URLs, emails, and other non-linguistic content are detected and skipped automatically, avoiding unnecessary API calls.
 - **Batched and deduplicated** — individual translation requests are debounced, grouped by context, and sent as a single batch to minimize API usage.
 
+<svg viewBox="0 0 820 480" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ai18n" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="290" y="20" width="240" height="55"/>
+  <text x="410" y="44" text-anchor="middle" class="b">Model display text</text>
+  <text x="410" y="62" text-anchor="middle" class="dim">title, subtitle, slot labels</text>
+  <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#ai18n)"/>
+  <rect class="fill" x="220" y="110" width="380" height="75"/>
+  <text x="410" y="135" text-anchor="middle" class="b">Model-to-view boundary</text>
+  <text x="410" y="157" text-anchor="middle" class="dim">single point where all UI text passes through;</text>
+  <text x="410" y="175" text-anchor="middle" class="dim">translation hook applies here for every model class</text>
+  <line class="flow" x1="410" y1="185" x2="410" y2="220" marker-end="url(#ai18n)"/>
+  <rect class="fill" x="220" y="220" width="380" height="80"/>
+  <text x="410" y="245" text-anchor="middle" class="b">SvI18n cache (per-language IndexedDB)</text>
+  <text x="410" y="267" text-anchor="middle" class="dim">smart filter: skips numbers, URLs, emails, codes;</text>
+  <text x="410" y="285" text-anchor="middle" class="dim">cache hit → return immediately</text>
+  <line class="flow" x1="410" y1="300" x2="410" y2="335" marker-end="url(#ai18n)"/>
+  <text x="425" y="322" class="dim">cache miss</text>
+  <rect class="fill" x="220" y="335" width="380" height="75"/>
+  <text x="410" y="360" text-anchor="middle" class="b">Batch · dedupe · AI translation</text>
+  <text x="410" y="382" text-anchor="middle" class="dim">requests grouped by context, debounced,</text>
+  <text x="410" y="400" text-anchor="middle" class="dim">sent as a single call; result cached</text>
+  <text x="410" y="445" text-anchor="middle" class="dim">UI shows source text immediately, swaps to translation when it arrives; subsequent views are instant.</text>
+</svg>
+
 ## Implementation Overview
 
 Translation storage is fully decoupled from the STRVCT SvObjectPool. Each language gets its own pair of IndexedDB databases — one for cache, one for store — so loading never needs to scan or filter entries from other languages.

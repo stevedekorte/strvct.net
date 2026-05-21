@@ -13,6 +13,55 @@ Event listening is built on two base classes:
 
 Views manage their listeners through `SvListenerDomView`, which maintains a map of listener class names to listener instances. Listeners are created lazily on first access and cleaned up when the view is removed.
 
+<svg viewBox="0 0 820 380" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ael" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="55"/>
+  <text x="410" y="44" text-anchor="middle" class="b">SvListenerDomView</text>
+  <text x="410" y="62" text-anchor="middle" class="dim">manages a map of listeners; lazy creation, automatic cleanup</text>
+  <line class="flow" x1="410" y1="75" x2="410" y2="105"/>
+  <line class="flow" x1="160" y1="105" x2="660" y2="105"/>
+  <line class="flow" x1="160" y1="105" x2="160" y2="135" marker-end="url(#ael)"/>
+  <line class="flow" x1="410" y1="105" x2="410" y2="135" marker-end="url(#ael)"/>
+  <line class="flow" x1="660" y1="105" x2="660" y2="135" marker-end="url(#ael)"/>
+  <rect class="fill" x="60" y="135" width="200" height="105"/>
+  <text x="160" y="160" text-anchor="middle" class="b">SvMouseListener</text>
+  <text x="160" y="182" text-anchor="middle" class="dim">mousedown, mouseup,</text>
+  <text x="160" y="200" text-anchor="middle" class="dim">mouseover, mouseleave,</text>
+  <text x="160" y="218" text-anchor="middle" class="dim">click, dblclick, contextmenu</text>
+  <rect class="fill" x="310" y="135" width="200" height="105"/>
+  <text x="410" y="160" text-anchor="middle" class="b">SvKeyboardListener</text>
+  <text x="410" y="195" text-anchor="middle" class="dim">keydown, keyup, input</text>
+  <rect class="fill" x="560" y="135" width="200" height="105"/>
+  <text x="660" y="160" text-anchor="middle" class="b">SvTouchListener</text>
+  <text x="660" y="182" text-anchor="middle" class="dim">touchstart, touchmove,</text>
+  <text x="660" y="200" text-anchor="middle" class="dim">touchend, touchcancel</text>
+  <line class="flow" x1="160" y1="240" x2="160" y2="280" marker-end="url(#ael)"/>
+  <line class="flow" x1="410" y1="240" x2="410" y2="280" marker-end="url(#ael)"/>
+  <line class="flow" x1="660" y1="240" x2="660" y2="280" marker-end="url(#ael)"/>
+  <rect class="box" x="60" y="280" width="200" height="60"/>
+  <text x="160" y="305" text-anchor="middle" class="dim">view.onMouseDown(event)</text>
+  <text x="160" y="325" text-anchor="middle" class="dim">view.onClick(event), ...</text>
+  <rect class="box" x="310" y="280" width="200" height="60"/>
+  <text x="410" y="305" text-anchor="middle" class="dim">view.onKeyDown(event)</text>
+  <text x="410" y="325" text-anchor="middle" class="dim">view.onKeyUp(event)</text>
+  <rect class="box" x="560" y="280" width="200" height="60"/>
+  <text x="660" y="305" text-anchor="middle" class="dim">view.onTouchStart(event)</text>
+  <text x="660" y="325" text-anchor="middle" class="dim">view.onTouchMove(event)</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">Each listener registers lazily on first use and cleans up automatically when the view is removed.</text>
+</svg>
+
 ## Available Listeners
 
 | Listener | Events |

@@ -26,6 +26,46 @@ onGestureTypeCancelled(gesture) — gesture was interrupted
 
 For example, a `SvPanGestureRecognizer` sends `onPanBegin`, `onPanMove`, `onPanComplete`, and `onPanCancelled`.
 
+<svg viewBox="0 0 820 520" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="agr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="55"/>
+  <text x="410" y="44" text-anchor="middle" class="b">Raw events stream</text>
+  <text x="410" y="62" text-anchor="middle" class="dim">mouse + touch, unified input</text>
+  <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#agr)"/>
+  <rect class="fill" x="220" y="110" width="380" height="80"/>
+  <text x="410" y="135" text-anchor="middle" class="b">SvGestureRecognizer · state machine</text>
+  <text x="410" y="158" text-anchor="middle" class="dim">tracks finger count, timing, movement, hold;</text>
+  <text x="410" y="176" text-anchor="middle" class="dim">tap, pan, pinch, rotation, long-press, slide</text>
+  <line class="flow" x1="410" y1="190" x2="410" y2="225" marker-end="url(#agr)"/>
+  <text x="425" y="212" class="dim">when gesture conditions are met</text>
+  <rect class="fill" x="220" y="225" width="380" height="80"/>
+  <text x="410" y="250" text-anchor="middle" class="b">SvGestureManager · singleton</text>
+  <text x="410" y="273" text-anchor="middle" class="dim">arbitrates competing gestures;</text>
+  <text x="410" y="291" text-anchor="middle" class="dim">cancels conflicts on same / ancestor views</text>
+  <line class="flow" x1="410" y1="305" x2="410" y2="340" marker-end="url(#agr)"/>
+  <text x="425" y="327" class="dim">if accepted</text>
+  <rect class="fill" x="220" y="340" width="380" height="100"/>
+  <text x="410" y="365" text-anchor="middle" class="b">Delegate messages to view</text>
+  <text x="410" y="388" text-anchor="middle" class="dim">onGestureBegin → onGestureMove → onGestureComplete</text>
+  <text x="410" y="406" text-anchor="middle" class="dim">(or onGestureCancelled if interrupted)</text>
+  <text x="410" y="426" text-anchor="middle" class="dim">e.g. onPanBegin, onPinchMove, onTapComplete</text>
+  <line class="flow" x1="410" y1="440" x2="410" y2="475" marker-end="url(#agr)"/>
+  <rect class="fill" x="290" y="475" width="240" height="35"/>
+  <text x="410" y="497" text-anchor="middle" class="b">View handler runs</text>
+</svg>
+
 ## Available Gestures
 
 | Recognizer | Detects | Key Configuration |

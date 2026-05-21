@@ -8,6 +8,57 @@ Slots are STRVCT's property system. A property declared as a slot is more than a
 
 Two things often surprise newcomers: the auto-generated setter **type-checks values at runtime** against the declared slot type (warning and attempting recovery on mismatch), and slots can hold **weak references** via `newWeakSlot`, which is the standard way to express back-references and non-owning pointers without creating retain cycles. Both are covered in detail below.
 
+<svg viewBox="0 0 820 360" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="as" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="110"/>
+  <text x="410" y="44" text-anchor="middle" class="b">Slot</text>
+  <text x="410" y="64" text-anchor="middle" class="dim">declared in initPrototypeSlots() via newSlot();</text>
+  <text x="410" y="82" text-anchor="middle" class="dim">carries metadata: type, default, storage flags,</text>
+  <text x="410" y="100" text-anchor="middle" class="dim">view sync, inspector config, validation, weakness</text>
+  <text x="410" y="120" text-anchor="middle" class="dim">getter slotName() / setter setSlotName() auto-installed</text>
+  <line class="flow" x1="410" y1="130" x2="410" y2="155"/>
+  <line class="flow" x1="120" y1="155" x2="700" y2="155"/>
+  <line class="flow" x1="120" y1="155" x2="120" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="265" y1="155" x2="265" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="410" y1="155" x2="410" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="555" y1="155" x2="555" y2="185" marker-end="url(#as)"/>
+  <line class="flow" x1="700" y1="155" x2="700" y2="185" marker-end="url(#as)"/>
+  <rect class="fill" x="40" y="185" width="160" height="100"/>
+  <text x="120" y="210" text-anchor="middle" class="b">UI</text>
+  <text x="120" y="232" text-anchor="middle" class="dim">auto-generates forms,</text>
+  <text x="120" y="250" text-anchor="middle" class="dim">field editors, inspector</text>
+  <text x="120" y="268" text-anchor="middle" class="dim">tiles</text>
+  <rect class="fill" x="185" y="185" width="160" height="100"/>
+  <text x="265" y="210" text-anchor="middle" class="b">Storage</text>
+  <text x="265" y="232" text-anchor="middle" class="dim">persists slots flagged</text>
+  <text x="265" y="250" text-anchor="middle" class="dim">shouldStoreSlot</text>
+  <rect class="fill" x="330" y="185" width="160" height="100"/>
+  <text x="410" y="210" text-anchor="middle" class="b">Notifications</text>
+  <text x="410" y="232" text-anchor="middle" class="dim">setter posts on</text>
+  <text x="410" y="250" text-anchor="middle" class="dim">syncsToView</text>
+  <rect class="fill" x="475" y="185" width="160" height="100"/>
+  <text x="555" y="210" text-anchor="middle" class="b">Validation</text>
+  <text x="555" y="232" text-anchor="middle" class="dim">runtime type check;</text>
+  <text x="555" y="250" text-anchor="middle" class="dim">min/max/enum</text>
+  <rect class="fill" x="620" y="185" width="160" height="100"/>
+  <text x="700" y="210" text-anchor="middle" class="b">JSON Schema</text>
+  <text x="700" y="232" text-anchor="middle" class="dim">tool-call schemas</text>
+  <text x="700" y="250" text-anchor="middle" class="dim">for AI integration</text>
+  <text x="410" y="325" text-anchor="middle" class="dim">Each framework layer reads slot metadata independently; you declare once, every layer benefits.</text>
+</svg>
+
 ## What a Slot Is
 
 A slot is an instance of the `Slot` class that lives on a class prototype. Each class prototype maintains two maps:

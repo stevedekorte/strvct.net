@@ -13,6 +13,44 @@ STRVCT wraps the HTML5 Drag and Drop API through two complementary systems:
 
 The system routes dropped data through a MIME-type dispatch chain, ultimately delivering it to either the view or its backing node.
 
+<svg viewBox="0 0 820 500" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="add" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="290" y="20" width="240" height="60"/>
+  <text x="410" y="48" text-anchor="middle" class="b">browser drop event</text>
+  <text x="410" y="68" text-anchor="middle" class="dim">DataTransfer with files / text / html / ...</text>
+  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#add)"/>
+  <rect class="fill" x="220" y="115" width="380" height="85"/>
+  <text x="410" y="143" text-anchor="middle" class="b">SvDropListener</text>
+  <text x="410" y="165" text-anchor="middle" class="dim">dragenter / dragover / dragleave handlers;</text>
+  <text x="410" y="185" text-anchor="middle" class="dim">onBrowserDrop fires on the view</text>
+  <line class="flow" x1="410" y1="200" x2="410" y2="235" marker-end="url(#add)"/>
+  <text x="425" y="222" class="dim">if acceptsDrop(event)</text>
+  <rect class="fill" x="220" y="235" width="380" height="115"/>
+  <text x="410" y="263" text-anchor="middle" class="b">MIME-type dispatch</text>
+  <text x="410" y="287" text-anchor="middle" class="dim">text/plain  →  onTextDrop</text>
+  <text x="410" y="305" text-anchor="middle" class="dim">text/html  →  onHtmlDrop</text>
+  <text x="410" y="323" text-anchor="middle" class="dim">image/*    →  onImageDrop</text>
+  <text x="410" y="341" text-anchor="middle" class="dim">file       →  onFileDrop</text>
+  <line class="flow" x1="410" y1="350" x2="410" y2="385" marker-end="url(#add)"/>
+  <rect class="fill" x="220" y="385" width="380" height="75"/>
+  <text x="410" y="412" text-anchor="middle" class="b">View or backing node handler</text>
+  <text x="410" y="434" text-anchor="middle" class="dim">application logic processes the drop;</text>
+  <text x="410" y="452" text-anchor="middle" class="dim">unhandled MIME types are silently ignored</text>
+  <text x="410" y="490" text-anchor="middle" class="dim">Add drop support with setIsRegisteredForBrowserDrop(true) + one handler method per accepted type.</text>
+</svg>
+
 ## Key Files
 
 | File | Purpose |

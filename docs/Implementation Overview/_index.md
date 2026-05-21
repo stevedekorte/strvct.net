@@ -8,6 +8,59 @@ This document is intended to be read after [Naked Objects](../Naked%20Objects/) 
 
 Applications are typically composed of **Model**, **UI**, and **Storage** layers. Much of the code and potential bugs in complex real-world applications is the "glue" that synchronizes these layers. Strvct puts enough meta-information in the model layer — through slots and their annotations — to allow the UI and Storage layers, and the synchronization between them, to be handled automatically. You write the model and the rest is handled for you, though custom views can be added when needed.
 
+<svg viewBox="0 0 820 460" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="220" y="20" width="380" height="80"/>
+  <text x="410" y="48" text-anchor="middle" class="b">SvApp</text>
+  <text x="410" y="68" text-anchor="middle" class="dim">top-level application; holds model + userInterface</text>
+  <text x="410" y="86" text-anchor="middle" class="dim">SvWebUI · SvCliUI · SvHeadlessUI implementations</text>
+  <line class="flow" x1="410" y1="100" x2="410" y2="125"/>
+  <line class="flow" x1="150" y1="125" x2="670" y2="125"/>
+  <line class="flow" x1="150" y1="125" x2="150" y2="155" marker-end="url(#aio)"/>
+  <line class="flow" x1="410" y1="125" x2="410" y2="155" marker-end="url(#aio)"/>
+  <line class="flow" x1="670" y1="125" x2="670" y2="155" marker-end="url(#aio)"/>
+  <rect class="box" x="40" y="155" width="220" height="240"/>
+  <text x="55" y="177" class="b">Model layer</text>
+  <text x="55" y="197" class="dim">SvModel : SvStorableNode</text>
+  <rect class="fill" x="55" y="220" width="190" height="160"/>
+  <text x="150" y="260" text-anchor="middle" class="b">Domain SvNode graph</text>
+  <text x="150" y="282" text-anchor="middle" class="dim">root of persistent state;</text>
+  <text x="150" y="300" text-anchor="middle" class="dim">all data shapes are slots</text>
+  <text x="150" y="318" text-anchor="middle" class="dim">on subclasses of SvNode;</text>
+  <text x="150" y="340" text-anchor="middle" class="dim">no UI dependencies</text>
+  <rect class="box" x="300" y="155" width="220" height="240"/>
+  <text x="315" y="177" class="b">UI layer</text>
+  <text x="315" y="197" class="dim">SvUserInterface root</text>
+  <rect class="fill" x="315" y="220" width="190" height="160"/>
+  <text x="410" y="260" text-anchor="middle" class="b">SvNodeView tree</text>
+  <text x="410" y="282" text-anchor="middle" class="dim">each view holds one node;</text>
+  <text x="410" y="300" text-anchor="middle" class="dim">multiple views may share</text>
+  <text x="410" y="318" text-anchor="middle" class="dim">a node; observes its slots;</text>
+  <text x="410" y="340" text-anchor="middle" class="dim">created lazily on navigation</text>
+  <rect class="box" x="560" y="155" width="220" height="240"/>
+  <text x="575" y="177" class="b">Storage layer</text>
+  <text x="575" y="197" class="dim">SvPersistentObjectPool</text>
+  <rect class="fill" x="575" y="220" width="190" height="160"/>
+  <text x="670" y="260" text-anchor="middle" class="b">IndexedDB pool</text>
+  <text x="670" y="282" text-anchor="middle" class="dim">observes mutations via</text>
+  <text x="670" y="300" text-anchor="middle" class="dim">notifications; batches</text>
+  <text x="670" y="318" text-anchor="middle" class="dim">end-of-loop commits;</text>
+  <text x="670" y="340" text-anchor="middle" class="dim">handles GC on load</text>
+  <text x="410" y="430" text-anchor="middle" class="dim">Slot annotations carry enough information for UI generation, persistence, and synchronization to be handled automatically.</text>
+</svg>
+
 ## Architecture Overview
 
 The framework is organized around three layers with a notification-based synchronization system connecting them:

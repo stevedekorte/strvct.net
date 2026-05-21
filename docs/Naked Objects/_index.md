@@ -52,13 +52,21 @@ When you survey informational interfaces across the applications where people sp
 
 - **Amazon**: a vertical list of search results, each clickable into a product detail page: a vertical stack of sections (images, description, reviews, related items). Category browsing uses a hierarchical sidebar. The spatial metaphor is master-detail with nested vertical stacks.
 
-These are four different applications built by four different companies for four different purposes, yet they use the same underlying spatial logic. This is not coincidence. The conventions are inherited from how we organize written information, the same top-to-bottom, left-to-right reading order found in Western text. They are so deeply embedded in interface culture that deviating from them creates confusion rather than innovation.
+These are four different applications built by four different companies for four different purposes, yet they use the same underlying spatial logic.
 
-Bespoke UI developers are already converging on these patterns, unconsciously and inconsistently. The variation between hand-crafted interfaces is largely superficial: different visual styling, different spacing, different component libraries, but the same underlying spatial logic.
+This convergence is not coincidence; it is grounded in decades of HCI and cognitive science research.
+
+**Mental models and spatial metaphors.** Users construct internal *mental models* of systems that are overwhelmingly spatial (Norman, 1988; Gentner & Stevens, 1983). They reason about digital information using the same primitives they use for physical environments: location, containment, proximity, and hierarchy. Tiles, stacks, and master-detail views directly support these metaphors.
+
+**Information foraging and scanning patterns.** Eye-tracking research shows predictable Western reading behaviors: an F-pattern for text-heavy pages and a Z-pattern for mixed layouts (Nielsen, 2006; Pernice, 2017). Interfaces aligned with these patterns reduce cognitive load; those that fight them increase it. Our primitives are engineered to reinforce natural scanning order rather than fight it.
+
+**Consistency and Gestalt principles.** Jakob Nielsen lists “Consistency and Standards” among the top usability heuristics (Nielsen, 1994). Gestalt laws of perceptual organization (proximity, similarity, closure, and common fate; Wertheimer, 1923; Koffka, 1935) explain why vertically stacked tiles and recursive nesting feel immediately coherent. By baking these laws into the architecture, consistency becomes a structural guarantee rather than an aspirational goal.
+
+The design space is narrow because human cognition is narrow in how it organizes and navigates information; what feels like creative freedom in traditional UI design is often accidental complexity layered on these fundamental constraints. Bespoke UI developers are already converging on the same patterns, unconsciously and inconsistently: the variation between hand-crafted interfaces is largely superficial, with different visual styling, different spacing, and different component libraries sitting atop the same underlying spatial logic.
 
 The practical consequence: if the design space is narrow, a framework that applies the conventions uniformly may produce interfaces that are not merely acceptable but *preferable* to a patchwork of bespoke screens, because users can rely on consistent navigation throughout. The framework's limitation (it cannot produce arbitrary layouts) is actually an advantage, because arbitrary layouts are precisely what creates inconsistency.
 
-Adversarial cases exist: data visualizations, design canvases, game renderers, media editors. These require domain-specific rendering that cannot be derived from model structure alone and fall outside the auto-generation pipeline. The interesting empirical question is what fraction of typical applications falls inside the narrow space, and the case study in §8 is our existence proof, not a proof. Our claim is that the fraction is large enough to be worth designing around.
+Adversarial cases exist: data visualizations, design canvases, game renderers, media editors. These require domain-specific rendering that cannot be derived from model structure alone and fall outside the auto-generation pipeline. The interesting empirical question is what fraction of typical applications falls inside the narrow space; the case study in §8 is suggestive, not conclusive. Our claim is that the fraction is large enough to be worth designing around.
 
 ## 4. Approach: Composable UI Primitives
 

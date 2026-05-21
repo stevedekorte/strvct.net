@@ -11,6 +11,37 @@ Because STRVCT generates the UI from annotated model nodes, the same machinery c
 
 Both work in any STRVCT application without per-node setup.
 
+<svg viewBox="0 0 820 380" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ains" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="fill" x="290" y="20" width="240" height="60"/>
+  <text x="410" y="48" text-anchor="middle" class="b">Option-click a tile</text>
+  <text x="410" y="68" text-anchor="middle" class="dim">on any node in the running app</text>
+  <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#ains)"/>
+  <rect class="fill" x="220" y="115" width="380" height="80"/>
+  <text x="410" y="140" text-anchor="middle" class="b">Inspector node generated on demand</text>
+  <text x="410" y="162" text-anchor="middle" class="dim">framework walks the target's slot metadata;</text>
+  <text x="410" y="180" text-anchor="middle" class="dim">one field tile per slot whose canInspect() is true</text>
+  <line class="flow" x1="410" y1="195" x2="410" y2="230" marker-end="url(#ains)"/>
+  <rect class="fill" x="220" y="230" width="380" height="105"/>
+  <text x="410" y="255" text-anchor="middle" class="b">Field tiles open in the next column</text>
+  <text x="410" y="277" text-anchor="middle" class="dim">slot name · current value · type-aware editor;</text>
+  <text x="410" y="295" text-anchor="middle" class="dim">edits write through to the live object,</text>
+  <text x="410" y="313" text-anchor="middle" class="dim">persistence and view sync follow automatically</text>
+  <text x="410" y="365" text-anchor="middle" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
+</svg>
+
 ## Option-Click: Inspect a Tile
 
 Holding **Option** while clicking a tile opens an inspector view in the next column instead of navigating into the node's normal subnodes.

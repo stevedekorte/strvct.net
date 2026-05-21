@@ -12,6 +12,57 @@ React and Strvct solve the same fundamental problem — keeping a UI in sync wit
 
 They represent genuinely different philosophies about where developer effort should go.
 
+<svg viewBox="0 0 820 460" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="350" height="420"/>
+  <text x="55" y="42" class="b">React</text>
+  <text x="55" y="62" class="dim">view library</text>
+  <rect class="fill" x="55" y="85" width="320" height="140"/>
+  <text x="215" y="108" text-anchor="middle" class="b">You write</text>
+  <text x="215" y="132" text-anchor="middle" class="dim">Components (JSX)</text>
+  <text x="215" y="152" text-anchor="middle" class="dim">State management</text>
+  <text x="215" y="172" text-anchor="middle" class="dim">Routing</text>
+  <text x="215" y="192" text-anchor="middle" class="dim">Persistence</text>
+  <text x="215" y="212" text-anchor="middle" class="dim">Styling, i18n, etc.</text>
+  <rect class="fill" x="55" y="245" width="320" height="120"/>
+  <text x="215" y="268" text-anchor="middle" class="b">Framework provides</text>
+  <text x="215" y="292" text-anchor="middle" class="dim">DOM reconciliation</text>
+  <text x="215" y="312" text-anchor="middle" class="dim">Component lifecycle</text>
+  <text x="215" y="332" text-anchor="middle" class="dim">Hooks</text>
+  <text x="215" y="352" text-anchor="middle" class="dim">Re-render scheduling</text>
+  <text x="215" y="400" text-anchor="middle" class="dim">flexible runtime: SPA, SSR,</text>
+  <text x="215" y="418" text-anchor="middle" class="dim">static, hybrid</text>
+  <rect class="box" x="430" y="20" width="350" height="420"/>
+  <text x="445" y="42" class="b">Strvct</text>
+  <text x="445" y="62" class="dim">naked objects framework</text>
+  <rect class="fill" x="445" y="85" width="320" height="140"/>
+  <text x="605" y="108" text-anchor="middle" class="b">You write</text>
+  <text x="605" y="132" text-anchor="middle" class="dim">Domain model (SvNode classes)</text>
+  <text x="605" y="152" text-anchor="middle" class="dim">Slot annotations</text>
+  <text x="605" y="172" text-anchor="middle" class="dim">Action methods</text>
+  <text x="605" y="192" text-anchor="middle" class="dim">Custom views (only when needed)</text>
+  <rect class="fill" x="445" y="245" width="320" height="120"/>
+  <text x="605" y="268" text-anchor="middle" class="b">Framework provides</text>
+  <text x="605" y="292" text-anchor="middle" class="dim">UI generation from model</text>
+  <text x="605" y="312" text-anchor="middle" class="dim">Persistence (IndexedDB + cloud)</text>
+  <text x="605" y="332" text-anchor="middle" class="dim">Navigation, i18n, accessibility</text>
+  <text x="605" y="352" text-anchor="middle" class="dim">Inspector, debug tools</text>
+  <text x="605" y="400" text-anchor="middle" class="dim">local-first runtime;</text>
+  <text x="605" y="418" text-anchor="middle" class="dim">offline by default, cloud sync optional</text>
+</svg>
+
 ## Architecture
 
 React is flexible about where it runs. A React app can be a client-side SPA, a server-rendered application, or a hybrid. The modern ecosystem includes server-side rendering (Next.js, Remix), static site generation, and server components — but none of these are required. Many React applications are purely client-side.
