@@ -89,6 +89,54 @@ STRVCT provides built-in accessibility support that works automatically for ever
 
 This is a direct consequence of the naked objects architecture. In a conventional web framework, accessibility is a per-component concern: every button, list, and form field needs manual ARIA attributes, and the cost scales linearly with the number of components. In STRVCT, the same ~15 view classes render every application's UI, so fixing accessibility in those classes fixes it everywhere.
 
+<svg viewBox="0 0 820 400" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aac" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="350" height="320"/>
+  <text x="55" y="42" class="b">Slot annotations</text>
+  <text x="55" y="62" class="dim">declared once in initPrototypeSlots()</text>
+  <rect class="fill" x="55" y="80" width="320" height="35"/>
+  <text x="215" y="103" text-anchor="middle" class="dim">slot.description()</text>
+  <rect class="fill" x="55" y="125" width="320" height="35"/>
+  <text x="215" y="148" text-anchor="middle" class="dim">slot.isReadOnly()</text>
+  <rect class="fill" x="55" y="170" width="320" height="35"/>
+  <text x="215" y="193" text-anchor="middle" class="dim">slot.isRequired()</text>
+  <rect class="fill" x="55" y="215" width="320" height="35"/>
+  <text x="215" y="238" text-anchor="middle" class="dim">slot.slotType()</text>
+  <rect class="fill" x="55" y="260" width="320" height="35"/>
+  <text x="215" y="283" text-anchor="middle" class="dim">slot.minimum() · slot.maximum()</text>
+  <line class="flow" x1="390" y1="97" x2="430" y2="97" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="142" x2="430" y2="142" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="187" x2="430" y2="187" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="232" x2="430" y2="232" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="277" x2="430" y2="277" marker-end="url(#aac)"/>
+  <rect class="box" x="430" y="20" width="350" height="320"/>
+  <text x="445" y="42" class="b">ARIA attributes</text>
+  <text x="445" y="62" class="dim">emitted by the framework's ~15 view classes</text>
+  <rect class="fill" x="445" y="80" width="320" height="35"/>
+  <text x="605" y="103" text-anchor="middle" class="dim">aria-description</text>
+  <rect class="fill" x="445" y="125" width="320" height="35"/>
+  <text x="605" y="148" text-anchor="middle" class="dim">aria-readonly</text>
+  <rect class="fill" x="445" y="170" width="320" height="35"/>
+  <text x="605" y="193" text-anchor="middle" class="dim">aria-required</text>
+  <rect class="fill" x="445" y="215" width="320" height="35"/>
+  <text x="605" y="238" text-anchor="middle" class="dim">role  (button, list, ...)</text>
+  <rect class="fill" x="445" y="260" width="320" height="35"/>
+  <text x="605" y="283" text-anchor="middle" class="dim">aria-valuemin · aria-valuemax</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">The same annotations also generate JSON Schema for AI tool calls; one declaration drives accessibility, validation, and AI integration.</text>
+</svg>
+
 ## Why the Naked Objects Pattern Helps
 
 Most frameworks require developers to manually add accessibility attributes to each component. STRVCT's architecture inverts this: since the framework generates views from the model, it can also generate accessibility metadata from the model -- automatically, in one place, for all applications.
@@ -1702,44 +1750,50 @@ this.addWeakTimeout(() => this.fadeOut(), 300);
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .strong { stroke: #111; stroke-width: 1; fill: none; }
+    .weak { stroke: #888; stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
   </style>
   <defs>
     <marker id="at" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
+    <marker id="atw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+    </marker>
   </defs>
   <rect class="box" x="40" y="20" width="350" height="320"/>
   <text x="55" y="42" class="b">addTimeout · strong</text>
-  <text x="55" y="62" class="dim">work must happen regardless of object lifetime</text>
+  <text x="55" y="62" class="dim">closure pins the object alive</text>
   <rect class="fill" x="55" y="85" width="320" height="55"/>
   <text x="215" y="110" text-anchor="middle" class="b">Browser timer queue</text>
-  <text x="215" y="128" text-anchor="middle" class="dim">holds strong reference to closure</text>
-  <line class="flow" x1="215" y1="140" x2="215" y2="170" marker-end="url(#at)"/>
-  <text x="225" y="162" class="dim">captures `this`</text>
+  <text x="215" y="128" text-anchor="middle" class="dim">held by the JS engine</text>
+  <line class="strong" x1="215" y1="140" x2="215" y2="170" marker-end="url(#at)"/>
+  <text x="227" y="162" class="dim">strong ref</text>
   <rect class="fill" x="55" y="170" width="320" height="55"/>
   <text x="215" y="195" text-anchor="middle" class="b">Callback closure</text>
-  <text x="215" y="213" text-anchor="middle" class="dim">closes over the object</text>
-  <line class="flow" x1="215" y1="225" x2="215" y2="255" marker-end="url(#at)"/>
+  <text x="215" y="213" text-anchor="middle" class="dim">captures the object directly</text>
+  <line class="strong" x1="215" y1="225" x2="215" y2="255" marker-end="url(#at)"/>
+  <text x="227" y="247" class="dim">strong ref</text>
   <rect class="fill" x="55" y="255" width="320" height="55"/>
   <text x="215" y="280" text-anchor="middle" class="b">Object</text>
-  <text x="215" y="298" text-anchor="middle" class="dim">cannot be GC'd until timer fires</text>
+  <text x="215" y="298" text-anchor="middle" class="dim">pinned; cannot be collected</text>
   <rect class="box" x="430" y="20" width="350" height="320"/>
   <text x="445" y="42" class="b">addWeakTimeout · GC-friendly</text>
-  <text x="445" y="62" class="dim">work only matters while object is alive</text>
+  <text x="445" y="62" class="dim">weak link breaks the chain</text>
   <rect class="fill" x="445" y="85" width="320" height="55"/>
   <text x="605" y="110" text-anchor="middle" class="b">Browser timer queue</text>
-  <text x="605" y="128" text-anchor="middle" class="dim">closure holds only WeakRef + Symbol</text>
-  <line class="flow" x1="605" y1="140" x2="605" y2="170" marker-end="url(#at)"/>
-  <text x="615" y="162" class="dim">no strong ref</text>
+  <text x="605" y="128" text-anchor="middle" class="dim">held by the JS engine</text>
+  <line class="strong" x1="605" y1="140" x2="605" y2="170" marker-end="url(#at)"/>
+  <text x="617" y="162" class="dim">strong ref</text>
   <rect class="fill" x="445" y="170" width="320" height="55"/>
-  <text x="605" y="195" text-anchor="middle" class="b">weakTimeoutCallbackMap</text>
-  <text x="605" y="213" text-anchor="middle" class="dim">callback stored on the object itself</text>
-  <line class="flow" x1="605" y1="225" x2="605" y2="255" marker-end="url(#at)"/>
+  <text x="605" y="195" text-anchor="middle" class="b">Closure</text>
+  <text x="605" y="213" text-anchor="middle" class="dim">holds only WeakRef + Symbol</text>
+  <line class="weak" x1="605" y1="225" x2="605" y2="255" marker-end="url(#atw)"/>
+  <text x="617" y="247" class="dim">weak ref</text>
   <rect class="fill" x="445" y="255" width="320" height="55"/>
   <text x="605" y="280" text-anchor="middle" class="b">Object</text>
-  <text x="605" y="298" text-anchor="middle" class="dim">collectable; timer becomes a no-op</text>
-  <text x="410" y="370" text-anchor="middle" class="dim">Choose by lifecycle: strong for delivery guarantees, weak for view / animation / gesture work.</text>
+  <text x="605" y="298" text-anchor="middle" class="dim">collectable; timer becomes no-op</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">The weak link between closure and object breaks the reference chain that would otherwise pin the object alive.</text>
 </svg>
 
 ### How Weak Timeouts Work
@@ -4598,6 +4652,55 @@ How the application loads from first script tag to a running app.
 
 The boot process has three phases: load the boot loader, load all resources via the content-addressable memory system, then create and run the app. Each phase completes fully before the next begins, so by the time application code runs, every class and resource is available.
 
+<svg viewBox="0 0 820 690" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="abs" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="740" height="130"/>
+  <text x="55" y="42" class="b">1. Initial Bootstrap</text>
+  <rect class="fill" x="55" y="70" width="345" height="65"/>
+  <text x="227" y="95" text-anchor="middle" class="b">Browser loads boot loader</text>
+  <text x="227" y="115" text-anchor="middle" class="dim">single script tag entry point</text>
+  <rect class="fill" x="420" y="70" width="345" height="65"/>
+  <text x="592" y="95" text-anchor="middle" class="b">Core boot files</text>
+  <text x="592" y="115" text-anchor="middle" class="dim">Object, Promise, IndexedDB, HashCache, ResourceManager</text>
+  <line class="flow" x1="410" y1="150" x2="410" y2="180" marker-end="url(#abs)"/>
+  <rect class="box" x="40" y="180" width="740" height="214"/>
+  <text x="55" y="202" class="b">2. Resource Loading</text>
+  <text x="55" y="220" class="dim">ResourceManager.shared().setupAndRun()</text>
+  <rect class="fill" x="55" y="235" width="710" height="30"/>
+  <text x="410" y="255" text-anchor="middle" class="dim">Load _index.json: resource metadata + content hashes</text>
+  <rect class="fill" x="55" y="273" width="710" height="30"/>
+  <text x="410" y="293" text-anchor="middle" class="dim">Check HashCache: skip downloads for unchanged content</text>
+  <rect class="fill" x="55" y="311" width="710" height="30"/>
+  <text x="410" y="331" text-anchor="middle" class="dim">Download _cam.json.zip (compressed bundle) on cache miss</text>
+  <rect class="fill" x="55" y="349" width="710" height="30"/>
+  <text x="410" y="369" text-anchor="middle" class="dim">Evaluate CSS sequentially, then JS in dependency order; filter env-inappropriate files</text>
+  <line class="flow" x1="410" y1="394" x2="410" y2="424" marker-end="url(#abs)"/>
+  <rect class="box" x="40" y="424" width="740" height="214"/>
+  <text x="55" y="446" class="b">3. App Creation</text>
+  <text x="55" y="464" class="dim">SvApp.loadAndRunShared()</text>
+  <rect class="fill" x="55" y="479" width="710" height="30"/>
+  <text x="410" y="499" text-anchor="middle" class="dim">Open persistent store; load root object from store</text>
+  <rect class="fill" x="55" y="517" width="710" height="30"/>
+  <text x="410" y="537" text-anchor="middle" class="dim">Pause schedulers; setupModel(); setupUi()</text>
+  <rect class="fill" x="55" y="555" width="710" height="30"/>
+  <text x="410" y="575" text-anchor="middle" class="dim">appDidInit fires: post notification, unhide root view, handle URL params</text>
+  <rect class="fill" x="55" y="593" width="710" height="30"/>
+  <text x="410" y="613" text-anchor="middle" class="dim">Resume schedulers</text>
+  <text x="410" y="675" text-anchor="middle" class="dim">Each phase completes before the next; application code runs only after every class and resource is available.</text>
+</svg>
+
 ## 1. Initial Bootstrap
 
 The browser loads the boot loader script. Core boot files are loaded in parallel and evaluated sequentially. These include: Object extensions, Promise extensions, IndexedDB support, HashCache, and ResourceManager.
@@ -5145,7 +5248,20 @@ The design space is narrow because human cognition is narrow in how it organizes
 
 The practical consequence: if the design space is narrow, a framework that applies the conventions uniformly may produce interfaces that are not merely acceptable but *preferable* to a patchwork of bespoke screens, because users can rely on consistent navigation throughout. The framework's limitation (it cannot produce arbitrary layouts) is actually an advantage, because arbitrary layouts are precisely what creates inconsistency.
 
-Adversarial cases exist: data visualizations, design canvases, game renderers, media editors. These require domain-specific rendering that cannot be derived from model structure alone and fall outside the auto-generation pipeline. The interesting empirical question is what fraction of typical applications falls inside the narrow space; the case study in §8 is suggestive, not conclusive. Our claim is that the fraction is large enough to be worth designing around.
+### Scope and Counterexamples
+
+The narrow design space covers a large and important class of applications, but it is not universal. The following adversarial cases fall outside it:
+
+- **Data visualizations and dashboards.** Charts, graphs, heatmaps, and interactive analytics require specialized rendering and direct-manipulation gestures that cannot be usefully derived from domain model structure alone.
+- **Creative canvases and spatial editors.** Design tools (Figma, Miro), diagramming applications, CAD, and map editors, where objects have free-form 2D or 3D positioning.
+- **Real-time media and games.** Video editors, 3D renderers, audio workstations, and games (as in our own case study, where dice rolling and the battle map required custom views).
+- **Highly unusual workflows.** Interfaces that demand non-hierarchical navigation, complex state machines with many transient modes, or domain-specific interaction metaphors (e.g., timeline-based video editing or node-based programming).
+
+In our production case study (§8), fewer than 10% of domain classes required custom view code (3 of ~90); the rest were generated automatically and felt natural to users. We believe this ratio is representative for many enterprise, productivity, and data-management applications, but we do not claim universality.
+
+**Deliberate trade-off.** Refusing to support arbitrary layouts yields structural consequences a more general system loses: consistency, responsiveness, AI interoperability, and near-zero view-layer maintenance. Applications mostly inside the narrow space gain dramatically lower maintenance cost and higher consistency; those dominated by adversarial cases are better served by traditional component frameworks.
+
+Future work could explore hybrid approaches (e.g., allowing selected custom view components inside an otherwise auto-generated tile/stack hierarchy) or expanding the primitive set in a disciplined way, but we have intentionally kept the core grammar minimal.
 
 ## 4. Approach: Composable UI Primitives
 
@@ -5389,9 +5505,11 @@ The same annotations that drive UI generation make the domain model legible and 
 
 A schema for any object is derived from its slot metadata. Edits are expressed as JSON patches against that schema, validated through the same setters and type checks that govern human edits. A single pair of tools, *schema-fetch* and *apply-patch*, covers the entire domain regardless of the number of editable classes. Rejected patches carry the schema of the offending slot in the rejection payload, turning the type system into the agent's error-recovery channel: the agent self-corrects without re-fetching context.
 
+For example, an AI assistant in undreamedof.ai can be told "increase the barbarian's strength by 2 and add a healing potion to their inventory." The agent fetches the character schema, constructs a patch, and applies it; validation feedback flows back through the same code path a human edit would take, and the change propagates through the same notification pipeline.
+
 This contrasts with the prevailing pattern for AI tool use (function calling, Model Context Protocol, OpenAPI tool specs), where each editable surface requires a hand-authored tool, schema document, and error path, and the surface area grows linearly with the model. Here it is constant.
 
-In undreamedof.ai, the same character, campaign, and session objects are edited interchangeably: by users through generated tiles and by AI assistants through patch tools, against the same constraint set and through the same notification pipeline. New domain classes are AI-operable the moment they are declared.
+Characters, campaigns, and sessions are edited interchangeably by users (through generated tiles) and by AI assistants (through patch tools). New domain classes are AI-operable the moment they are declared.
 
 ### 7.2 Automatic Responsive Design
 
@@ -9331,49 +9449,6 @@ AI, cloud, media, and IoT service integrations.
 ## Overview
 
 Services are not part of the Strvct core — they are optional integrations provided as a convenient way to quickly connect with important external services. The `Services` singleton is the root container for all of them. Each service is a standard Strvct node with slots, persistence, and automatic UI — the same patterns used for domain objects apply to service configuration. Users can inspect and configure services (API keys, model selection, proxy settings) through the generated interface without any custom settings UI.
-
-  
-    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
-    .b { font-weight: 600; }
-    .dim { fill: #666; }
-    .box { fill: none; stroke: #111; stroke-width: 1; }
-    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
-  
-  
-    
-      
-    
-  
-  
-  Services (singleton)
-  root container; standard SvNode tree
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  
-  AI Services
-  OpenAI, Anthropic,
-  Gemini, Groq, ...
-  
-  Cloud Storage
-  Firebase, S3
-  
-  Media
-  TTS, image gen,
-  audio playback
-  
-  Proxies
-  CORS bypass,
-  API key handling
-  
-  Home Assistant
-  IoT integration
-  Each service is an ordinary SvNode subtree; configuration uses the framework's auto-generated UI and persistence.
 
 - AI Services
 - Cloud Storage

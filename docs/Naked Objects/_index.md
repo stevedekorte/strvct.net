@@ -66,7 +66,20 @@ The design space is narrow because human cognition is narrow in how it organizes
 
 The practical consequence: if the design space is narrow, a framework that applies the conventions uniformly may produce interfaces that are not merely acceptable but *preferable* to a patchwork of bespoke screens, because users can rely on consistent navigation throughout. The framework's limitation (it cannot produce arbitrary layouts) is actually an advantage, because arbitrary layouts are precisely what creates inconsistency.
 
-Adversarial cases exist: data visualizations, design canvases, game renderers, media editors. These require domain-specific rendering that cannot be derived from model structure alone and fall outside the auto-generation pipeline. The interesting empirical question is what fraction of typical applications falls inside the narrow space; the case study in §8 is suggestive, not conclusive. Our claim is that the fraction is large enough to be worth designing around.
+### Scope and Counterexamples
+
+The narrow design space covers a large and important class of applications, but it is not universal. The following adversarial cases fall outside it:
+
+- **Data visualizations and dashboards.** Charts, graphs, heatmaps, and interactive analytics require specialized rendering and direct-manipulation gestures that cannot be usefully derived from domain model structure alone.
+- **Creative canvases and spatial editors.** Design tools (Figma, Miro), diagramming applications, CAD, and map editors, where objects have free-form 2D or 3D positioning.
+- **Real-time media and games.** Video editors, 3D renderers, audio workstations, and games (as in our own case study, where dice rolling and the battle map required custom views).
+- **Highly unusual workflows.** Interfaces that demand non-hierarchical navigation, complex state machines with many transient modes, or domain-specific interaction metaphors (e.g., timeline-based video editing or node-based programming).
+
+In our production case study (§8), fewer than 10% of domain classes required custom view code (3 of ~90); the rest were generated automatically and felt natural to users. We believe this ratio is representative for many enterprise, productivity, and data-management applications, but we do not claim universality.
+
+**Deliberate trade-off.** Refusing to support arbitrary layouts yields structural consequences a more general system loses: consistency, responsiveness, AI interoperability, and near-zero view-layer maintenance. Applications mostly inside the narrow space gain dramatically lower maintenance cost and higher consistency; those dominated by adversarial cases are better served by traditional component frameworks.
+
+Future work could explore hybrid approaches (e.g., allowing selected custom view components inside an otherwise auto-generated tile/stack hierarchy) or expanding the primitive set in a disciplined way, but we have intentionally kept the core grammar minimal.
 
 ## 4. Approach: Composable UI Primitives
 
@@ -310,9 +323,11 @@ The same annotations that drive UI generation make the domain model legible and 
 
 A schema for any object is derived from its slot metadata. Edits are expressed as JSON patches against that schema, validated through the same setters and type checks that govern human edits. A single pair of tools, *schema-fetch* and *apply-patch*, covers the entire domain regardless of the number of editable classes. Rejected patches carry the schema of the offending slot in the rejection payload, turning the type system into the agent's error-recovery channel: the agent self-corrects without re-fetching context.
 
+For example, an AI assistant in undreamedof.ai can be told "increase the barbarian's strength by 2 and add a healing potion to their inventory." The agent fetches the character schema, constructs a patch, and applies it; validation feedback flows back through the same code path a human edit would take, and the change propagates through the same notification pipeline.
+
 This contrasts with the prevailing pattern for AI tool use (function calling, Model Context Protocol, OpenAPI tool specs), where each editable surface requires a hand-authored tool, schema document, and error path, and the surface area grows linearly with the model. Here it is constant.
 
-In undreamedof.ai, the same character, campaign, and session objects are edited interchangeably: by users through generated tiles and by AI assistants through patch tools, against the same constraint set and through the same notification pipeline. New domain classes are AI-operable the moment they are declared.
+Characters, campaigns, and sessions are edited interchangeably by users (through generated tiles) and by AI assistants (through patch tools). New domain classes are AI-operable the moment they are declared.
 
 ### 7.2 Automatic Responsive Design
 

@@ -47,44 +47,50 @@ this.addWeakTimeout(() => this.fadeOut(), 300);
     .dim { fill: #666; }
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
-    .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .strong { stroke: #111; stroke-width: 1; fill: none; }
+    .weak { stroke: #888; stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
   </style>
   <defs>
     <marker id="at" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
+    <marker id="atw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+    </marker>
   </defs>
   <rect class="box" x="40" y="20" width="350" height="320"/>
   <text x="55" y="42" class="b">addTimeout · strong</text>
-  <text x="55" y="62" class="dim">work must happen regardless of object lifetime</text>
+  <text x="55" y="62" class="dim">closure pins the object alive</text>
   <rect class="fill" x="55" y="85" width="320" height="55"/>
   <text x="215" y="110" text-anchor="middle" class="b">Browser timer queue</text>
-  <text x="215" y="128" text-anchor="middle" class="dim">holds strong reference to closure</text>
-  <line class="flow" x1="215" y1="140" x2="215" y2="170" marker-end="url(#at)"/>
-  <text x="225" y="162" class="dim">captures `this`</text>
+  <text x="215" y="128" text-anchor="middle" class="dim">held by the JS engine</text>
+  <line class="strong" x1="215" y1="140" x2="215" y2="170" marker-end="url(#at)"/>
+  <text x="227" y="162" class="dim">strong ref</text>
   <rect class="fill" x="55" y="170" width="320" height="55"/>
   <text x="215" y="195" text-anchor="middle" class="b">Callback closure</text>
-  <text x="215" y="213" text-anchor="middle" class="dim">closes over the object</text>
-  <line class="flow" x1="215" y1="225" x2="215" y2="255" marker-end="url(#at)"/>
+  <text x="215" y="213" text-anchor="middle" class="dim">captures the object directly</text>
+  <line class="strong" x1="215" y1="225" x2="215" y2="255" marker-end="url(#at)"/>
+  <text x="227" y="247" class="dim">strong ref</text>
   <rect class="fill" x="55" y="255" width="320" height="55"/>
   <text x="215" y="280" text-anchor="middle" class="b">Object</text>
-  <text x="215" y="298" text-anchor="middle" class="dim">cannot be GC'd until timer fires</text>
+  <text x="215" y="298" text-anchor="middle" class="dim">pinned; cannot be collected</text>
   <rect class="box" x="430" y="20" width="350" height="320"/>
   <text x="445" y="42" class="b">addWeakTimeout · GC-friendly</text>
-  <text x="445" y="62" class="dim">work only matters while object is alive</text>
+  <text x="445" y="62" class="dim">weak link breaks the chain</text>
   <rect class="fill" x="445" y="85" width="320" height="55"/>
   <text x="605" y="110" text-anchor="middle" class="b">Browser timer queue</text>
-  <text x="605" y="128" text-anchor="middle" class="dim">closure holds only WeakRef + Symbol</text>
-  <line class="flow" x1="605" y1="140" x2="605" y2="170" marker-end="url(#at)"/>
-  <text x="615" y="162" class="dim">no strong ref</text>
+  <text x="605" y="128" text-anchor="middle" class="dim">held by the JS engine</text>
+  <line class="strong" x1="605" y1="140" x2="605" y2="170" marker-end="url(#at)"/>
+  <text x="617" y="162" class="dim">strong ref</text>
   <rect class="fill" x="445" y="170" width="320" height="55"/>
-  <text x="605" y="195" text-anchor="middle" class="b">weakTimeoutCallbackMap</text>
-  <text x="605" y="213" text-anchor="middle" class="dim">callback stored on the object itself</text>
-  <line class="flow" x1="605" y1="225" x2="605" y2="255" marker-end="url(#at)"/>
+  <text x="605" y="195" text-anchor="middle" class="b">Closure</text>
+  <text x="605" y="213" text-anchor="middle" class="dim">holds only WeakRef + Symbol</text>
+  <line class="weak" x1="605" y1="225" x2="605" y2="255" marker-end="url(#atw)"/>
+  <text x="617" y="247" class="dim">weak ref</text>
   <rect class="fill" x="445" y="255" width="320" height="55"/>
   <text x="605" y="280" text-anchor="middle" class="b">Object</text>
-  <text x="605" y="298" text-anchor="middle" class="dim">collectable; timer becomes a no-op</text>
-  <text x="410" y="370" text-anchor="middle" class="dim">Choose by lifecycle: strong for delivery guarantees, weak for view / animation / gesture work.</text>
+  <text x="605" y="298" text-anchor="middle" class="dim">collectable; timer becomes no-op</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">The weak link between closure and object breaks the reference chain that would otherwise pin the object alive.</text>
 </svg>
 
 ### How Weak Timeouts Work

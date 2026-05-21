@@ -8,6 +8,54 @@ STRVCT provides built-in accessibility support that works automatically for ever
 
 This is a direct consequence of the naked objects architecture. In a conventional web framework, accessibility is a per-component concern: every button, list, and form field needs manual ARIA attributes, and the cost scales linearly with the number of components. In STRVCT, the same ~15 view classes render every application's UI, so fixing accessibility in those classes fixes it everywhere.
 
+<svg viewBox="0 0 820 400" width="820" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
+    .b { font-weight: 600; }
+    .dim { fill: #666; }
+    .box { fill: none; stroke: #111; stroke-width: 1; }
+    .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
+    .flow { stroke: #111; stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="aac" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect class="box" x="40" y="20" width="350" height="320"/>
+  <text x="55" y="42" class="b">Slot annotations</text>
+  <text x="55" y="62" class="dim">declared once in initPrototypeSlots()</text>
+  <rect class="fill" x="55" y="80" width="320" height="35"/>
+  <text x="215" y="103" text-anchor="middle" class="dim">slot.description()</text>
+  <rect class="fill" x="55" y="125" width="320" height="35"/>
+  <text x="215" y="148" text-anchor="middle" class="dim">slot.isReadOnly()</text>
+  <rect class="fill" x="55" y="170" width="320" height="35"/>
+  <text x="215" y="193" text-anchor="middle" class="dim">slot.isRequired()</text>
+  <rect class="fill" x="55" y="215" width="320" height="35"/>
+  <text x="215" y="238" text-anchor="middle" class="dim">slot.slotType()</text>
+  <rect class="fill" x="55" y="260" width="320" height="35"/>
+  <text x="215" y="283" text-anchor="middle" class="dim">slot.minimum() · slot.maximum()</text>
+  <line class="flow" x1="390" y1="97" x2="430" y2="97" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="142" x2="430" y2="142" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="187" x2="430" y2="187" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="232" x2="430" y2="232" marker-end="url(#aac)"/>
+  <line class="flow" x1="390" y1="277" x2="430" y2="277" marker-end="url(#aac)"/>
+  <rect class="box" x="430" y="20" width="350" height="320"/>
+  <text x="445" y="42" class="b">ARIA attributes</text>
+  <text x="445" y="62" class="dim">emitted by the framework's ~15 view classes</text>
+  <rect class="fill" x="445" y="80" width="320" height="35"/>
+  <text x="605" y="103" text-anchor="middle" class="dim">aria-description</text>
+  <rect class="fill" x="445" y="125" width="320" height="35"/>
+  <text x="605" y="148" text-anchor="middle" class="dim">aria-readonly</text>
+  <rect class="fill" x="445" y="170" width="320" height="35"/>
+  <text x="605" y="193" text-anchor="middle" class="dim">aria-required</text>
+  <rect class="fill" x="445" y="215" width="320" height="35"/>
+  <text x="605" y="238" text-anchor="middle" class="dim">role  (button, list, ...)</text>
+  <rect class="fill" x="445" y="260" width="320" height="35"/>
+  <text x="605" y="283" text-anchor="middle" class="dim">aria-valuemin · aria-valuemax</text>
+  <text x="410" y="370" text-anchor="middle" class="dim">The same annotations also generate JSON Schema for AI tool calls; one declaration drives accessibility, validation, and AI integration.</text>
+</svg>
+
 ## Why the Naked Objects Pattern Helps
 
 Most frameworks require developers to manually add accessibility attributes to each component. STRVCT's architecture inverts this: since the framework generates views from the model, it can also generate accessibility metadata from the model -- automatically, in one place, for all applications.
