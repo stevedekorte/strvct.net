@@ -20,30 +20,30 @@ Raw DOM events are too low-level for most application code. Distinguishing a tap
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="55"/>
-  <text x="410" y="48" text-anchor="middle" class="b">1. Browser DOM Event</text>
-  <text x="410" y="66" text-anchor="middle" class="dim">mouse, touch, keyboard, drop, ...</text>
+  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <text x="305" y="40" class="b">1. Browser DOM Event</text>
+  <text x="305" y="58" class="dim">mouse, touch, keyboard, drop, ...</text>
   <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#aef)"/>
-  <rect class="fill" x="220" y="110" width="380" height="70"/>
-  <text x="410" y="135" text-anchor="middle" class="b">2. SvEventListener</text>
-  <text x="410" y="155" text-anchor="middle" class="dim">calls named method on delegate view;</text>
-  <text x="410" y="173" text-anchor="middle" class="dim">returning false stops propagation</text>
+  <rect class="fill" x="220" y="110" width="380" height="64"/>
+  <text x="235" y="130" class="b">2. SvEventListener</text>
+  <text x="235" y="148" class="dim">calls named method on delegate view;</text>
+  <text x="235" y="166" class="dim">returning false stops propagation</text>
   <line class="flow" x1="410" y1="180" x2="410" y2="215" marker-end="url(#aef)"/>
   <text x="425" y="202" class="dim">if a gesture recognizer is attached</text>
-  <rect class="fill" x="220" y="215" width="380" height="70"/>
-  <text x="410" y="240" text-anchor="middle" class="b">3. Recognizer state machine updates</text>
-  <text x="410" y="260" text-anchor="middle" class="dim">tracks finger count, timing, movement;</text>
-  <text x="410" y="278" text-anchor="middle" class="dim">requests activation when conditions are met</text>
+  <rect class="fill" x="220" y="215" width="380" height="64"/>
+  <text x="235" y="235" class="b">3. Recognizer state machine updates</text>
+  <text x="235" y="253" class="dim">tracks finger count, timing, movement;</text>
+  <text x="235" y="271" class="dim">requests activation when conditions are met</text>
   <line class="flow" x1="410" y1="285" x2="410" y2="320" marker-end="url(#aef)"/>
-  <rect class="fill" x="220" y="320" width="380" height="70"/>
-  <text x="410" y="345" text-anchor="middle" class="b">4. SvGestureManager arbitrates</text>
-  <text x="410" y="365" text-anchor="middle" class="dim">resolves competing gestures across views;</text>
-  <text x="410" y="383" text-anchor="middle" class="dim">if accepted, sends delegate messages</text>
+  <rect class="fill" x="220" y="320" width="380" height="64"/>
+  <text x="235" y="340" class="b">4. SvGestureManager arbitrates</text>
+  <text x="235" y="358" class="dim">resolves competing gestures across views;</text>
+  <text x="235" y="376" class="dim">if accepted, sends delegate messages</text>
   <line class="flow" x1="410" y1="390" x2="410" y2="425" marker-end="url(#aef)"/>
-  <rect class="fill" x="220" y="425" width="380" height="70"/>
-  <text x="410" y="450" text-anchor="middle" class="b">5. View handler executes</text>
-  <text x="410" y="470" text-anchor="middle" class="dim">onGestureBegin / Move / Complete / Cancelled,</text>
-  <text x="410" y="488" text-anchor="middle" class="dim">or raw onMouseDown, etc., for non-gesture events</text>
+  <rect class="fill" x="220" y="425" width="380" height="64"/>
+  <text x="235" y="445" class="b">5. View handler executes</text>
+  <text x="235" y="463" class="dim">onGestureBegin / Move / Complete / Cancelled,</text>
+  <text x="235" y="481" class="dim">or raw onMouseDown, etc., for non-gesture events</text>
   <text x="410" y="525" text-anchor="middle" class="dim">For raw event listeners (no gesture), steps 3 and 4 are skipped; the listener calls the view handler directly at step 2.</text>
 </svg>
 

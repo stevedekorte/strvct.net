@@ -37,19 +37,19 @@ Strvct's persistence system stores object graphs in the browser's IndexedDB. Rat
   <circle cx="560" cy="65" r="8" class="fill"/>
   <line class="flow" x1="410" y1="106" x2="410" y2="150" marker-end="url(#alp)"/>
   <text x="425" y="135" class="dim">current node</text>
-  <rect class="fill" x="190" y="150" width="440" height="75"/>
-  <text x="410" y="178" text-anchor="middle" class="b">SvStorableNode</text>
-  <text x="410" y="200" text-anchor="middle" class="dim">your node class; slot setters hook into the persistence system</text>
+  <rect class="fill" x="190" y="150" width="440" height="46"/>
+  <text x="205" y="170" class="b">SvStorableNode</text>
+  <text x="205" y="188" class="dim">your node class; slot setters hook into the persistence system</text>
   <line class="flow" x1="410" y1="225" x2="410" y2="255" marker-end="url(#alp)"/>
   <text x="420" y="245" class="dim">didUpdateSlot marks object dirty</text>
-  <rect class="fill" x="190" y="255" width="440" height="75"/>
-  <text x="410" y="283" text-anchor="middle" class="b">SvObjectPool</text>
-  <text x="410" y="305" text-anchor="middle" class="dim">in-memory cache; tracks dirty objects, serializes to JSON</text>
+  <rect class="fill" x="190" y="255" width="440" height="46"/>
+  <text x="205" y="275" class="b">SvObjectPool</text>
+  <text x="205" y="293" class="dim">in-memory cache; tracks dirty objects, serializes to JSON</text>
   <line class="flow" x1="410" y1="330" x2="410" y2="360" marker-end="url(#alp)"/>
   <text x="420" y="350" class="dim">commit at end of event loop</text>
-  <rect class="fill" x="190" y="360" width="440" height="75"/>
-  <text x="410" y="388" text-anchor="middle" class="b">SvPersistentAtomicMap</text>
-  <text x="410" y="410" text-anchor="middle" class="dim">IndexedDB wrapper; in-memory cache, batched writes</text>
+  <rect class="fill" x="190" y="360" width="440" height="46"/>
+  <text x="205" y="380" class="b">SvPersistentAtomicMap</text>
+  <text x="205" y="398" class="dim">IndexedDB wrapper; in-memory cache, batched writes</text>
   <line class="flow" x1="410" y1="435" x2="410" y2="465" marker-end="url(#alp)"/>
   <text x="420" y="455" class="dim">atomic transaction</text>
   <rect class="box" x="190" y="465" width="440" height="55"/>

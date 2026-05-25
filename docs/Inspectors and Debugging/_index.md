@@ -25,20 +25,20 @@ Both work in any STRVCT application without per-node setup.
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="60"/>
-  <text x="410" y="48" text-anchor="middle" class="b">Option-click a tile</text>
-  <text x="410" y="68" text-anchor="middle" class="dim">on any node in the running app</text>
+  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <text x="305" y="40" class="b">Option-click a tile</text>
+  <text x="305" y="58" class="dim">on any node in the running app</text>
   <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="115" width="380" height="80"/>
-  <text x="410" y="140" text-anchor="middle" class="b">Inspector node generated on demand</text>
-  <text x="410" y="162" text-anchor="middle" class="dim">framework walks the target's slot metadata;</text>
-  <text x="410" y="180" text-anchor="middle" class="dim">one field tile per slot whose canInspect() is true</text>
+  <rect class="fill" x="220" y="115" width="380" height="64"/>
+  <text x="235" y="135" class="b">Inspector node generated on demand</text>
+  <text x="235" y="153" class="dim">framework walks the target's slot metadata;</text>
+  <text x="235" y="171" class="dim">one field tile per slot whose canInspect() is true</text>
   <line class="flow" x1="410" y1="195" x2="410" y2="230" marker-end="url(#ains)"/>
-  <rect class="fill" x="220" y="230" width="380" height="105"/>
-  <text x="410" y="255" text-anchor="middle" class="b">Field tiles open in the next column</text>
-  <text x="410" y="277" text-anchor="middle" class="dim">slot name · current value · type-aware editor;</text>
-  <text x="410" y="295" text-anchor="middle" class="dim">edits write through to the live object,</text>
-  <text x="410" y="313" text-anchor="middle" class="dim">persistence and view sync follow automatically</text>
+  <rect class="fill" x="220" y="230" width="380" height="82"/>
+  <text x="235" y="250" class="b">Field tiles open in the next column</text>
+  <text x="235" y="268" class="dim">slot name · current value · type-aware editor;</text>
+  <text x="235" y="286" class="dim">edits write through to the live object,</text>
+  <text x="235" y="304" class="dim">persistence and view sync follow automatically</text>
   <text x="410" y="365" text-anchor="middle" class="dim">Option-Shift-D toggles developer mode globally, revealing nodes that applications hide from end users.</text>
 </svg>
 

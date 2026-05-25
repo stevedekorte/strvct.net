@@ -19,22 +19,22 @@ Application code sits on the Strvct framework, which sits on the platform. Insid
     </defs>
     <rect class="box" x="40" y="20" width="740" height="110"/>
     <text x="55" y="42" class="b">Application Code</text>
-    <rect class="fill" x="80" y="60" width="660" height="50"/>
-    <text x="410" y="90" text-anchor="middle" class="dim">UoCharacter, UoCampaign, UoSession …</text>
+    <rect class="fill" x="80" y="60" width="660" height="28"/>
+    <text x="95" y="80" class="dim">UoCharacter, UoCampaign, UoSession …</text>
     <line class="flow" x1="410" y1="130" x2="410" y2="155" marker-end="url(#a1)"/>
     <rect class="box" x="40" y="155" width="740" height="320"/>
     <text x="55" y="177" class="b">STRVCT Framework</text>
-    <rect class="fill" x="80" y="200" width="240" height="70"/>
-    <text x="200" y="230" text-anchor="middle" class="b">Domain Model</text>
-    <text x="200" y="252" text-anchor="middle" class="dim">SvNode tree</text>
-    <rect class="fill" x="500" y="200" width="240" height="70"/>
-    <text x="620" y="230" text-anchor="middle" class="b">View Layer</text>
-    <text x="620" y="252" text-anchor="middle" class="dim">SvDomView, tiles</text>
+    <rect class="fill" x="80" y="200" width="240" height="46"/>
+    <text x="95" y="220" class="b">Domain Model</text>
+    <text x="95" y="238" class="dim">SvNode tree</text>
+    <rect class="fill" x="500" y="200" width="240" height="46"/>
+    <text x="515" y="220" class="b">View Layer</text>
+    <text x="515" y="238" class="dim">SvDomView, tiles</text>
     <line class="flow" x1="320" y1="235" x2="500" y2="235" marker-end="url(#a1)"/>
     <line class="flow" x1="500" y1="235" x2="320" y2="235" marker-end="url(#a1)"/>
-    <rect class="fill" x="290" y="300" width="240" height="70"/>
-    <text x="410" y="330" text-anchor="middle" class="b">Slot System</text>
-    <text x="410" y="352" text-anchor="middle" class="dim">shared metadata</text>
+    <rect class="fill" x="290" y="300" width="240" height="46"/>
+    <text x="305" y="320" class="b">Slot System</text>
+    <text x="305" y="338" class="dim">shared metadata</text>
     <line class="flow" x1="410" y1="370" x2="410" y2="390"/>
     <line class="flow" x1="120" y1="390" x2="700" y2="390"/>
     <line class="flow" x1="120" y1="390" x2="120" y2="410" marker-end="url(#a1)"/>
@@ -58,10 +58,10 @@ Application code sits on the Strvct framework, which sits on the platform. Insid
     <line class="flow" x1="600" y1="490" x2="600" y2="510" marker-end="url(#a1)"/>
     <rect class="box" x="40" y="510" width="360" height="110"/>
     <text x="55" y="532" class="b">Web Browser / Electron Platform</text>
-    <rect class="fill" x="80" y="550" width="280" height="50"/>
-    <text x="220" y="580" text-anchor="middle" class="dim">IndexedDB · DOM · Fetch</text>
+    <rect class="fill" x="80" y="550" width="280" height="28"/>
+    <text x="95" y="570" class="dim">IndexedDB · DOM · Fetch</text>
     <rect class="box" x="420" y="510" width="360" height="110"/>
     <text x="435" y="532" class="b">Node.js Headless Platform</text>
-    <rect class="fill" x="460" y="550" width="280" height="50"/>
-    <text x="600" y="580" text-anchor="middle" class="dim">LevelDB · Browser API Shims</text>
+    <rect class="fill" x="460" y="550" width="280" height="28"/>
+    <text x="475" y="570" class="dim">LevelDB · Browser API Shims</text>
   </svg>

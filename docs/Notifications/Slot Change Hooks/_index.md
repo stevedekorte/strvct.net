@@ -22,28 +22,28 @@ Slot change hooks centralize this. When a slot value changes, the framework auto
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="60"/>
-  <text x="410" y="48" text-anchor="middle" class="b">slot setter</text>
-  <text x="410" y="68" text-anchor="middle" class="dim">obj.setName("foo")</text>
+  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <text x="305" y="40" class="b">slot setter</text>
+  <text x="305" y="58" class="dim">obj.setName("foo")</text>
   <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#asch)"/>
   <text x="425" y="100" class="dim">if value changed</text>
-  <rect class="fill" x="290" y="115" width="240" height="60"/>
-  <text x="410" y="143" text-anchor="middle" class="b">didUpdateSlot fires</text>
-  <text x="410" y="163" text-anchor="middle" class="dim">per-slot hook + general hook</text>
+  <rect class="fill" x="290" y="115" width="240" height="46"/>
+  <text x="305" y="135" class="b">didUpdateSlot fires</text>
+  <text x="305" y="153" class="dim">per-slot hook + general hook</text>
   <line class="flow" x1="410" y1="175" x2="410" y2="200"/>
   <line class="flow" x1="230" y1="200" x2="590" y2="200"/>
   <line class="flow" x1="230" y1="200" x2="230" y2="225" marker-end="url(#asch)"/>
   <line class="flow" x1="590" y1="200" x2="590" y2="225" marker-end="url(#asch)"/>
-  <rect class="fill" x="80" y="225" width="300" height="115"/>
-  <text x="230" y="252" text-anchor="middle" class="b">if slot.shouldStoreSlot() is true</text>
-  <text x="230" y="278" text-anchor="middle" class="dim">didMutate() marks object dirty;</text>
-  <text x="230" y="298" text-anchor="middle" class="dim">persistence layer commits</text>
-  <text x="230" y="320" text-anchor="middle" class="dim">at end of event loop</text>
-  <rect class="fill" x="440" y="225" width="300" height="115"/>
-  <text x="590" y="252" text-anchor="middle" class="b">if slot.syncsToView() is true</text>
-  <text x="590" y="278" text-anchor="middle" class="dim">posts onUpdatedNode notification;</text>
-  <text x="590" y="298" text-anchor="middle" class="dim">observing views schedule</text>
-  <text x="590" y="320" text-anchor="middle" class="dim">syncFromNode via SyncScheduler</text>
+  <rect class="fill" x="80" y="225" width="300" height="82"/>
+  <text x="95" y="245" class="b">if slot.shouldStoreSlot() is true</text>
+  <text x="95" y="263" class="dim">didMutate() marks object dirty;</text>
+  <text x="95" y="281" class="dim">persistence layer commits</text>
+  <text x="95" y="299" class="dim">at end of event loop</text>
+  <rect class="fill" x="440" y="225" width="300" height="82"/>
+  <text x="455" y="245" class="b">if slot.syncsToView() is true</text>
+  <text x="455" y="263" class="dim">posts onUpdatedNode notification;</text>
+  <text x="455" y="281" class="dim">observing views schedule</text>
+  <text x="455" y="299" class="dim">syncFromNode via SyncScheduler</text>
   <text x="410" y="375" text-anchor="middle" class="dim">Each effect is gated by its slot's configuration flag; no manual save or notify calls at the call site.</text>
 </svg>
 

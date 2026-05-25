@@ -22,9 +22,9 @@ Some internal framework events — like storage-layer slot propagation — need 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="40" y="100" width="160" height="60"/>
-  <text x="120" y="125" text-anchor="middle" class="b">Caller</text>
-  <text x="120" y="145" text-anchor="middle" class="dim">broadcast("name1", arg)</text>
+  <rect class="fill" x="40" y="100" width="160" height="46"/>
+  <text x="55" y="120" class="b">Caller</text>
+  <text x="55" y="138" class="dim">broadcast("name1", arg)</text>
   <line class="flow" x1="200" y1="130" x2="280" y2="130" marker-end="url(#abc)"/>
   <rect class="box" x="280" y="20" width="280" height="220"/>
   <text x="295" y="42" class="b">SvBroadcaster</text>
@@ -33,15 +33,15 @@ Some internal framework events — like storage-layer slot propagation — need 
   <text x="420" y="145" text-anchor="middle" class="dim">to matching listeners</text>
   <line class="flow" x1="560" y1="75" x2="620" y2="75" marker-end="url(#abc)"/>
   <line class="flow" x1="560" y1="205" x2="620" y2="205" marker-end="url(#abc)"/>
-  <rect class="fill" x="620" y="50" width="160" height="50"/>
-  <text x="700" y="73" text-anchor="middle" class="b">Listener X</text>
-  <text x="700" y="91" text-anchor="middle" class="dim">listens for "name1"</text>
-  <rect class="fill" x="620" y="115" width="160" height="50"/>
-  <text x="700" y="138" text-anchor="middle" class="b">Listener Y</text>
-  <text x="700" y="156" text-anchor="middle" class="dim">listens for "name2"</text>
-  <rect class="fill" x="620" y="180" width="160" height="50"/>
-  <text x="700" y="203" text-anchor="middle" class="b">Listener Z</text>
-  <text x="700" y="221" text-anchor="middle" class="dim">listens for "name1"</text>
+  <rect class="fill" x="620" y="50" width="160" height="46"/>
+  <text x="635" y="70" class="b">Listener X</text>
+  <text x="635" y="88" class="dim">listens for "name1"</text>
+  <rect class="fill" x="620" y="115" width="160" height="46"/>
+  <text x="635" y="135" class="b">Listener Y</text>
+  <text x="635" y="153" class="dim">listens for "name2"</text>
+  <rect class="fill" x="620" y="180" width="160" height="46"/>
+  <text x="635" y="200" class="b">Listener Z</text>
+  <text x="635" y="218" class="dim">listens for "name1"</text>
 </svg>
 
 ## Usage

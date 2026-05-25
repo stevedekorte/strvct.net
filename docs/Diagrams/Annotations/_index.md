@@ -17,8 +17,8 @@ One slot declaration carries metadata that independent framework layers read wit
         <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
       </marker>
     </defs>
-    <rect class="fill" x="250" y="20" width="320" height="220"/>
-    <text x="410" y="48" text-anchor="middle" class="b">a single slot declaration</text>
+    <rect class="fill" x="250" y="20" width="320" height="28"/>
+    <text x="265" y="40" class="b">a single slot declaration</text>
     <text x="272" y="78">newSlot("name", "")</text>
     <text x="282" y="100">.setSlotType("String")</text>
     <text x="282" y="122">.setShouldStoreSlot(true)</text>

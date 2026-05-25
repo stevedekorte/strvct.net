@@ -27,26 +27,26 @@ Views manage their listeners through `SvListenerDomView`, which maintains a map 
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="220" y="20" width="380" height="55"/>
-  <text x="410" y="44" text-anchor="middle" class="b">SvListenerDomView</text>
-  <text x="410" y="62" text-anchor="middle" class="dim">manages a map of listeners; lazy creation, automatic cleanup</text>
+  <rect class="fill" x="220" y="20" width="380" height="46"/>
+  <text x="235" y="40" class="b">SvListenerDomView</text>
+  <text x="235" y="58" class="dim">manages a map of listeners; lazy creation, automatic cleanup</text>
   <line class="flow" x1="410" y1="75" x2="410" y2="105"/>
   <line class="flow" x1="160" y1="105" x2="660" y2="105"/>
   <line class="flow" x1="160" y1="105" x2="160" y2="135" marker-end="url(#ael)"/>
   <line class="flow" x1="410" y1="105" x2="410" y2="135" marker-end="url(#ael)"/>
   <line class="flow" x1="660" y1="105" x2="660" y2="135" marker-end="url(#ael)"/>
-  <rect class="fill" x="60" y="135" width="200" height="105"/>
-  <text x="160" y="160" text-anchor="middle" class="b">SvMouseListener</text>
-  <text x="160" y="182" text-anchor="middle" class="dim">mousedown, mouseup,</text>
-  <text x="160" y="200" text-anchor="middle" class="dim">mouseover, mouseleave,</text>
-  <text x="160" y="218" text-anchor="middle" class="dim">click, dblclick, contextmenu</text>
-  <rect class="fill" x="310" y="135" width="200" height="105"/>
-  <text x="410" y="160" text-anchor="middle" class="b">SvKeyboardListener</text>
-  <text x="410" y="195" text-anchor="middle" class="dim">keydown, keyup, input</text>
-  <rect class="fill" x="560" y="135" width="200" height="105"/>
-  <text x="660" y="160" text-anchor="middle" class="b">SvTouchListener</text>
-  <text x="660" y="182" text-anchor="middle" class="dim">touchstart, touchmove,</text>
-  <text x="660" y="200" text-anchor="middle" class="dim">touchend, touchcancel</text>
+  <rect class="fill" x="60" y="135" width="200" height="82"/>
+  <text x="75" y="155" class="b">SvMouseListener</text>
+  <text x="75" y="173" class="dim">mousedown, mouseup,</text>
+  <text x="75" y="191" class="dim">mouseover, mouseleave,</text>
+  <text x="75" y="209" class="dim">click, dblclick, contextmenu</text>
+  <rect class="fill" x="310" y="135" width="200" height="46"/>
+  <text x="325" y="155" class="b">SvKeyboardListener</text>
+  <text x="325" y="173" class="dim">keydown, keyup, input</text>
+  <rect class="fill" x="560" y="135" width="200" height="64"/>
+  <text x="575" y="155" class="b">SvTouchListener</text>
+  <text x="575" y="173" class="dim">touchstart, touchmove,</text>
+  <text x="575" y="191" class="dim">touchend, touchcancel</text>
   <line class="flow" x1="160" y1="240" x2="160" y2="280" marker-end="url(#ael)"/>
   <line class="flow" x1="410" y1="240" x2="410" y2="280" marker-end="url(#ael)"/>
   <line class="flow" x1="660" y1="240" x2="660" y2="280" marker-end="url(#ael)"/>

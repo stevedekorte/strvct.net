@@ -22,24 +22,24 @@ The browser's native keyboard handling has two gaps that matter for an applicati
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="60"/>
-  <text x="410" y="48" text-anchor="middle" class="b">keydown event</text>
-  <text x="410" y="68" text-anchor="middle" class="dim">key: "A", modifiers: Shift held</text>
+  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <text x="305" y="40" class="b">keydown event</text>
+  <text x="305" y="58" class="dim">key: "A", modifiers: Shift held</text>
   <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#akf)"/>
-  <rect class="fill" x="220" y="115" width="380" height="85"/>
-  <text x="410" y="143" text-anchor="middle" class="b">SvKeyboard · singleton</text>
-  <text x="410" y="165" text-anchor="middle" class="dim">tracks currently pressed keys + modifiers;</text>
-  <text x="410" y="185" text-anchor="middle" class="dim">builds modifier-aware method name</text>
+  <rect class="fill" x="220" y="115" width="380" height="64"/>
+  <text x="235" y="135" class="b">SvKeyboard · singleton</text>
+  <text x="235" y="153" class="dim">tracks currently pressed keys + modifiers;</text>
+  <text x="235" y="171" class="dim">builds modifier-aware method name</text>
   <line class="flow" x1="410" y1="200" x2="410" y2="235" marker-end="url(#akf)"/>
   <text x="425" y="222" class="dim">"onShiftAKeyDown"</text>
-  <rect class="fill" x="220" y="235" width="380" height="85"/>
-  <text x="410" y="263" text-anchor="middle" class="b">Responder chain (SvResponderDomView)</text>
-  <text x="410" y="285" text-anchor="middle" class="dim">first responder (focused view) receives event;</text>
-  <text x="410" y="305" text-anchor="middle" class="dim">nextKeyView controls Tab-order routing</text>
+  <rect class="fill" x="220" y="235" width="380" height="64"/>
+  <text x="235" y="255" class="b">Responder chain (SvResponderDomView)</text>
+  <text x="235" y="273" class="dim">first responder (focused view) receives event;</text>
+  <text x="235" y="291" class="dim">nextKeyView controls Tab-order routing</text>
   <line class="flow" x1="410" y1="320" x2="410" y2="355" marker-end="url(#akf)"/>
-  <rect class="fill" x="220" y="355" width="380" height="60"/>
-  <text x="410" y="380" text-anchor="middle" class="b">view.onShiftAKeyDown(event)</text>
-  <text x="410" y="400" text-anchor="middle" class="dim">view-specific handler runs</text>
+  <rect class="fill" x="220" y="355" width="380" height="46"/>
+  <text x="235" y="375" class="b">view.onShiftAKeyDown(event)</text>
+  <text x="235" y="393" class="dim">view-specific handler runs</text>
   <text x="410" y="445" text-anchor="middle" class="dim">Views handle specific combos by implementing the named method; no modifier-flag parsing required.</text>
 </svg>
 

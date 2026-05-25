@@ -29,36 +29,36 @@ They represent genuinely different philosophies about where developer effort sho
   <rect class="box" x="40" y="20" width="350" height="420"/>
   <text x="55" y="42" class="b">React</text>
   <text x="55" y="62" class="dim">view library</text>
-  <rect class="fill" x="55" y="85" width="320" height="140"/>
-  <text x="215" y="108" text-anchor="middle" class="b">You write</text>
-  <text x="215" y="132" text-anchor="middle" class="dim">Components (JSX)</text>
-  <text x="215" y="152" text-anchor="middle" class="dim">State management</text>
-  <text x="215" y="172" text-anchor="middle" class="dim">Routing</text>
-  <text x="215" y="192" text-anchor="middle" class="dim">Persistence</text>
-  <text x="215" y="212" text-anchor="middle" class="dim">Styling, i18n, etc.</text>
-  <rect class="fill" x="55" y="245" width="320" height="120"/>
-  <text x="215" y="268" text-anchor="middle" class="b">Framework provides</text>
-  <text x="215" y="292" text-anchor="middle" class="dim">DOM reconciliation</text>
-  <text x="215" y="312" text-anchor="middle" class="dim">Component lifecycle</text>
-  <text x="215" y="332" text-anchor="middle" class="dim">Hooks</text>
-  <text x="215" y="352" text-anchor="middle" class="dim">Re-render scheduling</text>
+  <rect class="fill" x="55" y="85" width="320" height="118"/>
+  <text x="70" y="105" class="b">You write</text>
+  <text x="70" y="123" class="dim">Components (JSX)</text>
+  <text x="70" y="141" class="dim">State management</text>
+  <text x="70" y="159" class="dim">Routing</text>
+  <text x="70" y="177" class="dim">Persistence</text>
+  <text x="70" y="195" class="dim">Styling, i18n, etc.</text>
+  <rect class="fill" x="55" y="245" width="320" height="100"/>
+  <text x="70" y="265" class="b">Framework provides</text>
+  <text x="70" y="283" class="dim">DOM reconciliation</text>
+  <text x="70" y="301" class="dim">Component lifecycle</text>
+  <text x="70" y="319" class="dim">Hooks</text>
+  <text x="70" y="337" class="dim">Re-render scheduling</text>
   <text x="215" y="400" text-anchor="middle" class="dim">flexible runtime: SPA, SSR,</text>
   <text x="215" y="418" text-anchor="middle" class="dim">static, hybrid</text>
   <rect class="box" x="430" y="20" width="350" height="420"/>
   <text x="445" y="42" class="b">Strvct</text>
   <text x="445" y="62" class="dim">naked objects framework</text>
-  <rect class="fill" x="445" y="85" width="320" height="140"/>
-  <text x="605" y="108" text-anchor="middle" class="b">You write</text>
-  <text x="605" y="132" text-anchor="middle" class="dim">Domain model (SvNode classes)</text>
-  <text x="605" y="152" text-anchor="middle" class="dim">Slot annotations</text>
-  <text x="605" y="172" text-anchor="middle" class="dim">Action methods</text>
-  <text x="605" y="192" text-anchor="middle" class="dim">Custom views (only when needed)</text>
-  <rect class="fill" x="445" y="245" width="320" height="120"/>
-  <text x="605" y="268" text-anchor="middle" class="b">Framework provides</text>
-  <text x="605" y="292" text-anchor="middle" class="dim">UI generation from model</text>
-  <text x="605" y="312" text-anchor="middle" class="dim">Persistence (IndexedDB + cloud)</text>
-  <text x="605" y="332" text-anchor="middle" class="dim">Navigation, i18n, accessibility</text>
-  <text x="605" y="352" text-anchor="middle" class="dim">Inspector, debug tools</text>
+  <rect class="fill" x="445" y="85" width="320" height="100"/>
+  <text x="460" y="105" class="b">You write</text>
+  <text x="460" y="123" class="dim">Domain model (SvNode classes)</text>
+  <text x="460" y="141" class="dim">Slot annotations</text>
+  <text x="460" y="159" class="dim">Action methods</text>
+  <text x="460" y="177" class="dim">Custom views (only when needed)</text>
+  <rect class="fill" x="445" y="245" width="320" height="100"/>
+  <text x="460" y="265" class="b">Framework provides</text>
+  <text x="460" y="283" class="dim">UI generation from model</text>
+  <text x="460" y="301" class="dim">Persistence (IndexedDB + cloud)</text>
+  <text x="460" y="319" class="dim">Navigation, i18n, accessibility</text>
+  <text x="460" y="337" class="dim">Inspector, debug tools</text>
   <text x="605" y="400" text-anchor="middle" class="dim">local-first runtime;</text>
   <text x="605" y="418" text-anchor="middle" class="dim">offline by default, cloud sync optional</text>
 </svg>

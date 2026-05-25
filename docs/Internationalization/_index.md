@@ -28,25 +28,25 @@ The system is designed around three principles:
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="55"/>
-  <text x="410" y="44" text-anchor="middle" class="b">Model display text</text>
-  <text x="410" y="62" text-anchor="middle" class="dim">title, subtitle, slot labels</text>
+  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <text x="305" y="40" class="b">Model display text</text>
+  <text x="305" y="58" class="dim">title, subtitle, slot labels</text>
   <line class="flow" x1="410" y1="75" x2="410" y2="110" marker-end="url(#ai18n)"/>
-  <rect class="fill" x="220" y="110" width="380" height="75"/>
-  <text x="410" y="135" text-anchor="middle" class="b">Model-to-view boundary</text>
-  <text x="410" y="157" text-anchor="middle" class="dim">single point where all UI text passes through;</text>
-  <text x="410" y="175" text-anchor="middle" class="dim">translation hook applies here for every model class</text>
+  <rect class="fill" x="220" y="110" width="380" height="64"/>
+  <text x="235" y="130" class="b">Model-to-view boundary</text>
+  <text x="235" y="148" class="dim">single point where all UI text passes through;</text>
+  <text x="235" y="166" class="dim">translation hook applies here for every model class</text>
   <line class="flow" x1="410" y1="185" x2="410" y2="220" marker-end="url(#ai18n)"/>
-  <rect class="fill" x="220" y="220" width="380" height="80"/>
-  <text x="410" y="245" text-anchor="middle" class="b">SvI18n cache (per-language IndexedDB)</text>
-  <text x="410" y="267" text-anchor="middle" class="dim">smart filter: skips numbers, URLs, emails, codes;</text>
-  <text x="410" y="285" text-anchor="middle" class="dim">cache hit → return immediately</text>
+  <rect class="fill" x="220" y="220" width="380" height="64"/>
+  <text x="235" y="240" class="b">SvI18n cache (per-language IndexedDB)</text>
+  <text x="235" y="258" class="dim">smart filter: skips numbers, URLs, emails, codes;</text>
+  <text x="235" y="276" class="dim">cache hit → return immediately</text>
   <line class="flow" x1="410" y1="300" x2="410" y2="335" marker-end="url(#ai18n)"/>
   <text x="425" y="322" class="dim">cache miss</text>
-  <rect class="fill" x="220" y="335" width="380" height="75"/>
-  <text x="410" y="360" text-anchor="middle" class="b">Batch · dedupe · AI translation</text>
-  <text x="410" y="382" text-anchor="middle" class="dim">requests grouped by context, debounced,</text>
-  <text x="410" y="400" text-anchor="middle" class="dim">sent as a single call; result cached</text>
+  <rect class="fill" x="220" y="335" width="380" height="64"/>
+  <text x="235" y="355" class="b">Batch · dedupe · AI translation</text>
+  <text x="235" y="373" class="dim">requests grouped by context, debounced,</text>
+  <text x="235" y="391" class="dim">sent as a single call; result cached</text>
   <text x="410" y="445" text-anchor="middle" class="dim">UI shows source text immediately, swaps to translation when it arrives; subsequent views are instant.</text>
 </svg>
 

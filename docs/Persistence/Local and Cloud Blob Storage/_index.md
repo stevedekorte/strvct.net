@@ -56,7 +56,7 @@ The solution uses a **dual-database architecture** with hash-based references be
   <rect class="box" x="40" y="20" width="350" height="255"/>
   <text x="55" y="42" class="b">SvObjectPool</text>
   <text x="55" y="62" class="dim">sync · structured records</text>
-  <rect class="fill" x="55" y="80" width="320" height="180"/>
+  <rect class="fill" x="55" y="80" width="320" height="148"/>
   <text x="70" y="115" class="b">UoCharacter</text>
   <text x="70" y="150" class="dim">name: "Sarah"</text>
   <text x="70" y="185" class="dim">level: 5</text>
@@ -67,7 +67,7 @@ The solution uses a **dual-database architecture** with hash-based references be
   <rect class="box" x="430" y="20" width="350" height="255"/>
   <text x="445" y="42" class="b">SvBlobPool</text>
   <text x="445" y="62" class="dim">async · content-addressable</text>
-  <rect class="fill" x="445" y="80" width="320" height="180"/>
+  <rect class="fill" x="445" y="80" width="320" height="148"/>
   <text x="460" y="115" class="b">a3f9c4…</text>
   <text x="460" y="150" class="dim">⟨ binary bytes ⟩</text>
   <text x="460" y="185" class="dim">size: 384 KB</text>

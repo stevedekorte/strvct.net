@@ -21,42 +21,42 @@ Drilling into Local Storage. The object pool persists slot mutations through the
     <text x="75" y="42" class="b">Object Pool (sync)</text>
     <rect class="box" x="440" y="20" width="320" height="565"/>
     <text x="455" y="42" class="b">Blob Pool (async)</text>
-    <rect class="fill" x="100" y="95" width="240" height="70"/>
-    <text x="220" y="125" text-anchor="middle" class="b">SvNode setter called</text>
-    <text x="220" y="147" text-anchor="middle" class="dim">slot mutation</text>
+    <rect class="fill" x="100" y="95" width="240" height="46"/>
+    <text x="115" y="115" class="b">SvNode setter called</text>
+    <text x="115" y="133" class="dim">slot mutation</text>
     <line class="flow" x1="220" y1="165" x2="220" y2="190" marker-end="url(#a6)"/>
-    <rect class="fill" x="100" y="190" width="240" height="70"/>
-    <text x="220" y="220" text-anchor="middle" class="b">addDirtyObject(self)</text>
-    <text x="220" y="242" text-anchor="middle" class="dim">via ObjectPool</text>
+    <rect class="fill" x="100" y="190" width="240" height="46"/>
+    <text x="115" y="210" class="b">addDirtyObject(self)</text>
+    <text x="115" y="228" class="dim">via ObjectPool</text>
     <line class="flow" x1="220" y1="260" x2="220" y2="285" marker-end="url(#a6)"/>
-    <rect class="fill" x="100" y="285" width="240" height="70"/>
-    <text x="220" y="315" text-anchor="middle" class="b">end of event loop</text>
-    <text x="220" y="337" text-anchor="middle" class="dim">begin atomic txn</text>
+    <rect class="fill" x="100" y="285" width="240" height="46"/>
+    <text x="115" y="305" class="b">end of event loop</text>
+    <text x="115" y="323" class="dim">begin atomic txn</text>
     <line class="flow" x1="220" y1="355" x2="220" y2="380" marker-end="url(#a6)"/>
-    <rect class="fill" x="100" y="380" width="240" height="70"/>
-    <text x="220" y="410" text-anchor="middle" class="b">recordForStore() per object</text>
-    <text x="220" y="432" text-anchor="middle" class="dim">write keyed by puuid</text>
-    <rect class="fill" x="100" y="475" width="240" height="70"/>
-    <text x="220" y="505" text-anchor="middle" class="b">GC: walk reachable</text>
-    <text x="220" y="527" text-anchor="middle" class="dim">collect referenced hashes</text>
-    <rect class="fill" x="480" y="95" width="240" height="70"/>
-    <text x="600" y="125" text-anchor="middle" class="b">asyncStoreBlob(blob)</text>
-    <text x="600" y="147" text-anchor="middle" class="dim">from app code</text>
+    <rect class="fill" x="100" y="380" width="240" height="46"/>
+    <text x="115" y="400" class="b">recordForStore() per object</text>
+    <text x="115" y="418" class="dim">write keyed by puuid</text>
+    <rect class="fill" x="100" y="475" width="240" height="46"/>
+    <text x="115" y="495" class="b">GC: walk reachable</text>
+    <text x="115" y="513" class="dim">collect referenced hashes</text>
+    <rect class="fill" x="480" y="95" width="240" height="46"/>
+    <text x="495" y="115" class="b">asyncStoreBlob(blob)</text>
+    <text x="495" y="133" class="dim">from app code</text>
     <line class="flow" x1="600" y1="165" x2="600" y2="190" marker-end="url(#a6)"/>
-    <rect class="fill" x="480" y="190" width="240" height="70"/>
-    <text x="600" y="220" text-anchor="middle" class="b">sha256(blob) → hash</text>
-    <text x="600" y="242" text-anchor="middle" class="dim">content-addressable key</text>
+    <rect class="fill" x="480" y="190" width="240" height="46"/>
+    <text x="495" y="210" class="b">sha256(blob) → hash</text>
+    <text x="495" y="228" class="dim">content-addressable key</text>
     <line class="flow" x1="600" y1="260" x2="600" y2="285" marker-end="url(#a6)"/>
-    <rect class="fill" x="480" y="285" width="240" height="70"/>
-    <text x="600" y="315" text-anchor="middle" class="b">write hash → data + meta</text>
-    <text x="600" y="337" text-anchor="middle" class="dim">{hash} and {hash}/meta</text>
+    <rect class="fill" x="480" y="285" width="240" height="46"/>
+    <text x="495" y="305" class="b">write hash → data + meta</text>
+    <text x="495" y="323" class="dim">{hash} and {hash}/meta</text>
     <line class="flow" x1="600" y1="355" x2="600" y2="380" marker-end="url(#a6)"/>
-    <rect class="fill" x="480" y="380" width="240" height="70"/>
-    <text x="600" y="410" text-anchor="middle" class="b">node stores hash string</text>
-    <text x="600" y="432" text-anchor="middle" class="dim">drives GC reachability</text>
-    <rect class="fill" x="480" y="475" width="240" height="70"/>
-    <text x="600" y="505" text-anchor="middle" class="b">remove orphan blobs</text>
-    <text x="600" y="527" text-anchor="middle" class="dim">not in referenced set</text>
+    <rect class="fill" x="480" y="380" width="240" height="46"/>
+    <text x="495" y="400" class="b">node stores hash string</text>
+    <text x="495" y="418" class="dim">drives GC reachability</text>
+    <rect class="fill" x="480" y="475" width="240" height="46"/>
+    <text x="495" y="495" class="b">remove orphan blobs</text>
+    <text x="495" y="513" class="dim">not in referenced set</text>
     <line class="flow" x1="340" y1="510" x2="480" y2="510" marker-end="url(#a6)"/>
     <text x="410" y="503" text-anchor="middle" class="dim">ref hash set</text>
   </svg>

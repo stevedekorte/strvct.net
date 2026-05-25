@@ -16,26 +16,26 @@ Strvct's local persistence stores serialized object graphs in IndexedDB via `SvP
   </style>
   <rect class="box" x="40" y="20" width="350" height="185"/>
   <text x="55" y="42" class="b">Collection Sync</text>
-  <rect class="fill" x="55" y="60" width="320" height="50"/>
-  <text x="215" y="80" text-anchor="middle" class="b">manifest.json</text>
-  <text x="215" y="100" text-anchor="middle" class="dim">subnodeIds + item metadata</text>
-  <rect class="fill" x="55" y="130" width="100" height="60"/>
-  <text x="105" y="165" text-anchor="middle" class="dim">item-1.json</text>
-  <rect class="fill" x="165" y="130" width="100" height="60"/>
-  <text x="215" y="165" text-anchor="middle" class="dim">item-2.json</text>
-  <rect class="fill" x="275" y="130" width="100" height="60"/>
-  <text x="325" y="165" text-anchor="middle" class="dim">item-3.json</text>
+  <rect class="fill" x="55" y="60" width="320" height="46"/>
+  <text x="70" y="80" class="b">manifest.json</text>
+  <text x="70" y="98" class="dim">subnodeIds + item metadata</text>
+  <rect class="fill" x="55" y="130" width="100" height="28"/>
+  <text x="70" y="150" class="dim">item-1.json</text>
+  <rect class="fill" x="165" y="130" width="100" height="28"/>
+  <text x="180" y="150" class="dim">item-2.json</text>
+  <rect class="fill" x="275" y="130" width="100" height="28"/>
+  <text x="290" y="150" class="dim">item-3.json</text>
   <rect class="box" x="430" y="20" width="350" height="185"/>
   <text x="445" y="42" class="b">Pool Sync</text>
-  <rect class="fill" x="445" y="60" width="320" height="50"/>
-  <text x="605" y="80" text-anchor="middle" class="b">snapshot.json</text>
-  <text x="605" y="100" text-anchor="middle" class="dim">complete object graph</text>
-  <rect class="fill" x="445" y="130" width="100" height="60"/>
-  <text x="495" y="165" text-anchor="middle" class="dim">wal-001.json</text>
-  <rect class="fill" x="555" y="130" width="100" height="60"/>
-  <text x="605" y="165" text-anchor="middle" class="dim">wal-002.json</text>
-  <rect class="fill" x="665" y="130" width="100" height="60"/>
-  <text x="715" y="165" text-anchor="middle" class="dim">wal-003.json</text>
+  <rect class="fill" x="445" y="60" width="320" height="46"/>
+  <text x="460" y="80" class="b">snapshot.json</text>
+  <text x="460" y="98" class="dim">complete object graph</text>
+  <rect class="fill" x="445" y="130" width="100" height="28"/>
+  <text x="460" y="150" class="dim">wal-001.json</text>
+  <rect class="fill" x="555" y="130" width="100" height="28"/>
+  <text x="570" y="150" class="dim">wal-002.json</text>
+  <rect class="fill" x="665" y="130" width="100" height="28"/>
+  <text x="680" y="150" class="dim">wal-003.json</text>
 </svg>
 
 - **Collection sync** — Individual items are synced as separate JSON files with a manifest. Items can be lazily loaded from stubs.

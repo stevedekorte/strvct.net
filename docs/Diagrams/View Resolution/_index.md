@@ -17,13 +17,13 @@ When a node becomes visible, the framework finds a view class by climbing the no
         <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
       </marker>
     </defs>
-    <rect class="fill" x="290" y="20" width="240" height="70"/>
-    <text x="410" y="50" text-anchor="middle" class="b">navigate to node N</text>
-    <text x="410" y="72" text-anchor="middle" class="dim">instance of class C</text>
+    <rect class="fill" x="290" y="20" width="240" height="46"/>
+    <text x="305" y="40" class="b">navigate to node N</text>
+    <text x="305" y="58" class="dim">instance of class C</text>
     <line class="flow" x1="410" y1="90" x2="410" y2="135" marker-end="url(#a4)"/>
-    <rect class="fill" x="290" y="135" width="240" height="70"/>
-    <text x="410" y="165" text-anchor="middle" class="b">C declares nodeViewClass()?</text>
-    <text x="410" y="187" text-anchor="middle" class="dim">decision</text>
+    <rect class="fill" x="290" y="135" width="240" height="46"/>
+    <text x="305" y="155" class="b">C declares nodeViewClass()?</text>
+    <text x="305" y="173" class="dim">decision</text>
     <line class="flow" x1="290" y1="170" x2="200" y2="170" marker-end="url(#a4)"/>
     <text x="245" y="162" text-anchor="middle" class="dim">yes</text>
     <rect class="box" x="40" y="135" width="160" height="70"/>
@@ -31,13 +31,13 @@ When a node becomes visible, the framework finds a view class by climbing the no
     <text x="120" y="187" text-anchor="middle" class="b">class</text>
     <line class="flow" x1="410" y1="205" x2="410" y2="245" marker-end="url(#a4)"/>
     <text x="425" y="232" class="dim">no</text>
-    <rect class="fill" x="290" y="245" width="240" height="70"/>
-    <text x="410" y="275" text-anchor="middle" class="b">look up</text>
+    <rect class="fill" x="290" y="245" width="240" height="28"/>
+    <text x="305" y="265" class="b">look up</text>
     <text x="410" y="297" text-anchor="middle">C.name + "View"</text>
     <line class="flow" x1="410" y1="315" x2="410" y2="355" marker-end="url(#a4)"/>
-    <rect class="fill" x="290" y="355" width="240" height="70"/>
-    <text x="410" y="385" text-anchor="middle" class="b">found?</text>
-    <text x="410" y="407" text-anchor="middle" class="dim">decision</text>
+    <rect class="fill" x="290" y="355" width="240" height="46"/>
+    <text x="305" y="375" class="b">found?</text>
+    <text x="305" y="393" class="dim">decision</text>
     <line class="flow" x1="530" y1="390" x2="620" y2="390" marker-end="url(#a4)"/>
     <text x="575" y="382" text-anchor="middle" class="dim">yes</text>
     <rect class="box" x="620" y="355" width="160" height="70"/>

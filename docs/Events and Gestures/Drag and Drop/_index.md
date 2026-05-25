@@ -27,27 +27,27 @@ The system routes dropped data through a MIME-type dispatch chain, ultimately de
       <path d="M0,0 L10,5 L0,10 z" fill="#111"/>
     </marker>
   </defs>
-  <rect class="fill" x="290" y="20" width="240" height="60"/>
-  <text x="410" y="48" text-anchor="middle" class="b">browser drop event</text>
-  <text x="410" y="68" text-anchor="middle" class="dim">DataTransfer with files / text / html / ...</text>
+  <rect class="fill" x="290" y="20" width="240" height="46"/>
+  <text x="305" y="40" class="b">browser drop event</text>
+  <text x="305" y="58" class="dim">DataTransfer with files / text / html / ...</text>
   <line class="flow" x1="410" y1="80" x2="410" y2="115" marker-end="url(#add)"/>
-  <rect class="fill" x="220" y="115" width="380" height="85"/>
-  <text x="410" y="143" text-anchor="middle" class="b">SvDropListener</text>
-  <text x="410" y="165" text-anchor="middle" class="dim">dragenter / dragover / dragleave handlers;</text>
-  <text x="410" y="185" text-anchor="middle" class="dim">onBrowserDrop fires on the view</text>
+  <rect class="fill" x="220" y="115" width="380" height="64"/>
+  <text x="235" y="135" class="b">SvDropListener</text>
+  <text x="235" y="153" class="dim">dragenter / dragover / dragleave handlers;</text>
+  <text x="235" y="171" class="dim">onBrowserDrop fires on the view</text>
   <line class="flow" x1="410" y1="200" x2="410" y2="235" marker-end="url(#add)"/>
   <text x="425" y="222" class="dim">if acceptsDrop(event)</text>
-  <rect class="fill" x="220" y="235" width="380" height="115"/>
-  <text x="410" y="263" text-anchor="middle" class="b">MIME-type dispatch</text>
-  <text x="410" y="287" text-anchor="middle" class="dim">text/plain  →  onTextDrop</text>
-  <text x="410" y="305" text-anchor="middle" class="dim">text/html  →  onHtmlDrop</text>
-  <text x="410" y="323" text-anchor="middle" class="dim">image/*    →  onImageDrop</text>
-  <text x="410" y="341" text-anchor="middle" class="dim">file       →  onFileDrop</text>
+  <rect class="fill" x="220" y="235" width="380" height="100"/>
+  <text x="235" y="255" class="b">MIME-type dispatch</text>
+  <text x="235" y="273" class="dim">text/plain  →  onTextDrop</text>
+  <text x="235" y="291" class="dim">text/html  →  onHtmlDrop</text>
+  <text x="235" y="309" class="dim">image/*    →  onImageDrop</text>
+  <text x="235" y="327" class="dim">file       →  onFileDrop</text>
   <line class="flow" x1="410" y1="350" x2="410" y2="385" marker-end="url(#add)"/>
-  <rect class="fill" x="220" y="385" width="380" height="75"/>
-  <text x="410" y="412" text-anchor="middle" class="b">View or backing node handler</text>
-  <text x="410" y="434" text-anchor="middle" class="dim">application logic processes the drop;</text>
-  <text x="410" y="452" text-anchor="middle" class="dim">unhandled MIME types are silently ignored</text>
+  <rect class="fill" x="220" y="385" width="380" height="64"/>
+  <text x="235" y="405" class="b">View or backing node handler</text>
+  <text x="235" y="423" class="dim">application logic processes the drop;</text>
+  <text x="235" y="441" class="dim">unhandled MIME types are silently ignored</text>
   <text x="410" y="490" text-anchor="middle" class="dim">Add drop support with setIsRegisteredForBrowserDrop(true) + one handler method per accepted type.</text>
 </svg>
 
