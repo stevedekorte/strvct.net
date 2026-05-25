@@ -10257,7 +10257,7 @@ Strvct is not a template system, a compile-time UI generator, or a component fra
 
 This page covers the key concepts: the domain model, storage, UI synchronization, and the capabilities these enable. For the design rationale, see [Naked Objects](../Naked%20Objects/). For implementation details, see the [Implementation Overview](../Implementation%20Overview/).
 
-<svg viewBox="0 0 820 360" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 390" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -10265,6 +10265,7 @@ This page covers the key concepts: the domain model, storage, UI synchronization
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
   </style>
   <defs>
     <marker id="ato" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -10272,21 +10273,21 @@ This page covers the key concepts: the domain model, storage, UI synchronization
     </marker>
   </defs>
   <rect class="box" x="30" y="20" width="200" height="280"/>
-  <text x="45" y="42" class="b">Model</text>
-  <text x="45" y="62" class="dim">SvNode graph</text>
+  <text x="45" y="42" class="b">UI</text>
+  <text x="45" y="62" class="dim">SvNodeView hierarchy</text>
   <rect class="fill" x="45" y="80" width="170" height="200"/>
-  <text x="130" y="155" text-anchor="middle" class="b">Domain objects</text>
-  <text x="130" y="177" text-anchor="middle" class="dim">slots, subnodes,</text>
-  <text x="130" y="195" text-anchor="middle" class="dim">annotations;</text>
-  <text x="130" y="217" text-anchor="middle" class="dim">no UI references</text>
+  <text x="130" y="155" text-anchor="middle" class="b">Views</text>
+  <text x="130" y="177" text-anchor="middle" class="dim">observe a node's slots;</text>
+  <text x="130" y="195" text-anchor="middle" class="dim">created lazily on navigation;</text>
+  <text x="130" y="217" text-anchor="middle" class="dim">discarded when not needed</text>
   <rect class="box" x="310" y="20" width="200" height="280"/>
-  <text x="325" y="42" class="b">UI</text>
-  <text x="325" y="62" class="dim">SvNodeView wrappers</text>
+  <text x="325" y="42" class="b">Model</text>
+  <text x="325" y="62" class="dim">SvNode graph</text>
   <rect class="fill" x="325" y="80" width="170" height="200"/>
-  <text x="410" y="155" text-anchor="middle" class="b">Views</text>
-  <text x="410" y="177" text-anchor="middle" class="dim">observe a node's slots;</text>
-  <text x="410" y="195" text-anchor="middle" class="dim">created lazily on navigation;</text>
-  <text x="410" y="217" text-anchor="middle" class="dim">discarded when not needed</text>
+  <text x="410" y="155" text-anchor="middle" class="b">Domain objects</text>
+  <text x="410" y="177" text-anchor="middle" class="dim">slots, subnodes,</text>
+  <text x="410" y="195" text-anchor="middle" class="dim">annotations;</text>
+  <text x="410" y="217" text-anchor="middle" class="dim">no UI references</text>
   <rect class="box" x="590" y="20" width="200" height="280"/>
   <text x="605" y="42" class="b">Storage</text>
   <text x="605" y="62" class="dim">SvPersistentObjectPool</text>
@@ -10295,15 +10296,20 @@ This page covers the key concepts: the domain model, storage, UI synchronization
   <text x="690" y="177" text-anchor="middle" class="dim">monitors mutations;</text>
   <text x="690" y="195" text-anchor="middle" class="dim">bundles per-loop changes</text>
   <text x="690" y="213" text-anchor="middle" class="dim">into atomic transactions</text>
-  <line class="flow" x1="230" y1="150" x2="310" y2="150" marker-end="url(#ato)"/>
-  <line class="flow" x1="310" y1="180" x2="230" y2="180" marker-end="url(#ato)"/>
-  <text x="270" y="142" text-anchor="middle" class="dim">notifies</text>
-  <text x="270" y="200" text-anchor="middle" class="dim">action calls</text>
-  <line class="flow" x1="510" y1="150" x2="590" y2="150" marker-end="url(#ato)"/>
+  <line class="flow-dashed" x1="310" y1="150" x2="230" y2="150" marker-end="url(#ato)"/>
+  <line class="flow" x1="230" y1="180" x2="310" y2="180" marker-end="url(#ato)"/>
+  <text x="270" y="128" text-anchor="middle" class="dim">mutation</text>
+  <text x="270" y="143" text-anchor="middle" class="dim">notification</text>
+  <text x="270" y="193" text-anchor="middle" class="dim">getter, setter,</text>
+  <text x="270" y="208" text-anchor="middle" class="dim">&amp; action calls</text>
+  <line class="flow-dashed" x1="510" y1="150" x2="590" y2="150" marker-end="url(#ato)"/>
   <line class="flow" x1="590" y1="180" x2="510" y2="180" marker-end="url(#ato)"/>
-  <text x="550" y="142" text-anchor="middle" class="dim">mutates</text>
-  <text x="550" y="200" text-anchor="middle" class="dim">loads</text>
-  <text x="410" y="335" text-anchor="middle" class="dim">Model is the source of truth; UI and Storage observe it through notifications and never reference each other directly.</text>
+  <text x="550" y="128" text-anchor="middle" class="dim">mutation</text>
+  <text x="550" y="143" text-anchor="middle" class="dim">notification</text>
+  <text x="550" y="193" text-anchor="middle" class="dim">loads &amp;</text>
+  <text x="550" y="208" text-anchor="middle" class="dim">stores</text>
+  <text x="410" y="335" text-anchor="middle" class="dim">Model is the source of truth.</text>
+  <text x="410" y="355" text-anchor="middle" class="dim">Views and the storage system may hold references to the model, but the model holds none in return; it only posts notifications that they listen for.</text>
 </svg>
 
 ## Domain Model
