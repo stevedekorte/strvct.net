@@ -3613,7 +3613,7 @@ This document is intended to be read after [Naked Objects](../Naked%20Objects/) 
 
 Applications are typically composed of **Model**, **UI**, and **Storage** layers. Much of the code and potential bugs in complex real-world applications is the "glue" that synchronizes these layers. Strvct puts enough meta-information in the model layer — through slots and their annotations — to allow the UI and Storage layers, and the synchronization between them, to be handled automatically. You write the model and the rest is handled for you, though custom views can be added when needed.
 
-<svg viewBox="0 0 820 460" width="820" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 820 480" width="820" xmlns="http://www.w3.org/2000/svg">
   <style>
     text { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 12px; fill: #111; }
     .b { font-weight: 600; }
@@ -3621,6 +3621,7 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
     .box { fill: none; stroke: #111; stroke-width: 1; }
     .fill { fill: #f0ede5; stroke: #111; stroke-width: 1; }
     .flow { stroke: #111; stroke-width: 1; fill: none; }
+    .flow-dashed { stroke: #111; stroke-width: 1; fill: none; stroke-dasharray: 4 3; }
   </style>
   <defs>
     <marker id="aio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
@@ -3632,38 +3633,52 @@ Applications are typically composed of **Model**, **UI**, and **Storage** layers
   <text x="410" y="68" text-anchor="middle" class="dim">top-level application; holds model + userInterface</text>
   <text x="410" y="86" text-anchor="middle" class="dim">SvWebUI · SvCliUI · SvHeadlessUI implementations</text>
   <line class="flow" x1="410" y1="100" x2="410" y2="125"/>
-  <line class="flow" x1="150" y1="125" x2="670" y2="125"/>
-  <line class="flow" x1="150" y1="125" x2="150" y2="155" marker-end="url(#aio)"/>
+  <line class="flow" x1="130" y1="125" x2="690" y2="125"/>
+  <line class="flow" x1="130" y1="125" x2="130" y2="155" marker-end="url(#aio)"/>
   <line class="flow" x1="410" y1="125" x2="410" y2="155" marker-end="url(#aio)"/>
-  <line class="flow" x1="670" y1="125" x2="670" y2="155" marker-end="url(#aio)"/>
-  <rect class="box" x="40" y="155" width="220" height="240"/>
-  <text x="55" y="177" class="b">Model layer</text>
-  <text x="55" y="197" class="dim">SvModel : SvStorableNode</text>
-  <rect class="fill" x="55" y="220" width="190" height="160"/>
-  <text x="150" y="260" text-anchor="middle" class="b">Domain SvNode graph</text>
-  <text x="150" y="282" text-anchor="middle" class="dim">root of persistent state;</text>
-  <text x="150" y="300" text-anchor="middle" class="dim">all data shapes are slots</text>
-  <text x="150" y="318" text-anchor="middle" class="dim">on subclasses of SvNode;</text>
-  <text x="150" y="340" text-anchor="middle" class="dim">no UI dependencies</text>
-  <rect class="box" x="300" y="155" width="220" height="240"/>
-  <text x="315" y="177" class="b">UI layer</text>
-  <text x="315" y="197" class="dim">SvUserInterface root</text>
-  <rect class="fill" x="315" y="220" width="190" height="160"/>
-  <text x="410" y="260" text-anchor="middle" class="b">SvNodeView tree</text>
-  <text x="410" y="282" text-anchor="middle" class="dim">each view holds one node;</text>
-  <text x="410" y="300" text-anchor="middle" class="dim">multiple views may share</text>
-  <text x="410" y="318" text-anchor="middle" class="dim">a node; observes its slots;</text>
-  <text x="410" y="340" text-anchor="middle" class="dim">created lazily on navigation</text>
-  <rect class="box" x="560" y="155" width="220" height="240"/>
-  <text x="575" y="177" class="b">Storage layer</text>
-  <text x="575" y="197" class="dim">SvPersistentObjectPool</text>
-  <rect class="fill" x="575" y="220" width="190" height="160"/>
-  <text x="670" y="260" text-anchor="middle" class="b">IndexedDB pool</text>
-  <text x="670" y="282" text-anchor="middle" class="dim">observes mutations via</text>
-  <text x="670" y="300" text-anchor="middle" class="dim">notifications; batches</text>
-  <text x="670" y="318" text-anchor="middle" class="dim">end-of-loop commits;</text>
-  <text x="670" y="340" text-anchor="middle" class="dim">handles GC on load</text>
-  <text x="410" y="430" text-anchor="middle" class="dim">Slot annotations carry enough information for UI generation, persistence, and synchronization to be handled automatically.</text>
+  <line class="flow" x1="690" y1="125" x2="690" y2="155" marker-end="url(#aio)"/>
+  <rect class="box" x="30" y="155" width="200" height="240"/>
+  <text x="45" y="177" class="b">UI layer</text>
+  <text x="45" y="197" class="dim">SvUserInterface root</text>
+  <rect class="fill" x="45" y="220" width="170" height="160"/>
+  <text x="130" y="260" text-anchor="middle" class="b">SvNodeView tree</text>
+  <text x="130" y="282" text-anchor="middle" class="dim">each view holds one node;</text>
+  <text x="130" y="300" text-anchor="middle" class="dim">multiple views may share</text>
+  <text x="130" y="318" text-anchor="middle" class="dim">a node; observes its slots;</text>
+  <text x="130" y="340" text-anchor="middle" class="dim">created lazily on navigation</text>
+  <rect class="box" x="310" y="155" width="200" height="240"/>
+  <text x="325" y="177" class="b">Model layer</text>
+  <text x="325" y="197" class="dim">SvModel : SvStorableNode</text>
+  <rect class="fill" x="325" y="220" width="170" height="160"/>
+  <text x="410" y="260" text-anchor="middle" class="b">Domain SvNode graph</text>
+  <text x="410" y="282" text-anchor="middle" class="dim">root of persistent state;</text>
+  <text x="410" y="300" text-anchor="middle" class="dim">all data shapes are slots</text>
+  <text x="410" y="318" text-anchor="middle" class="dim">on subclasses of SvNode;</text>
+  <text x="410" y="340" text-anchor="middle" class="dim">no UI dependencies</text>
+  <rect class="box" x="590" y="155" width="200" height="240"/>
+  <text x="605" y="177" class="b">Storage layer</text>
+  <text x="605" y="197" class="dim">SvPersistentObjectPool</text>
+  <rect class="fill" x="605" y="220" width="170" height="160"/>
+  <text x="690" y="260" text-anchor="middle" class="b">IndexedDB pool</text>
+  <text x="690" y="282" text-anchor="middle" class="dim">observes mutations via</text>
+  <text x="690" y="300" text-anchor="middle" class="dim">notifications; batches</text>
+  <text x="690" y="318" text-anchor="middle" class="dim">end-of-loop commits;</text>
+  <text x="690" y="340" text-anchor="middle" class="dim">handles GC on load</text>
+  <line class="flow-dashed" x1="310" y1="280" x2="230" y2="280" marker-end="url(#aio)"/>
+  <line class="flow" x1="230" y1="320" x2="310" y2="320" marker-end="url(#aio)"/>
+  <text x="270" y="258" text-anchor="middle" class="dim">mutation</text>
+  <text x="270" y="273" text-anchor="middle" class="dim">notification</text>
+  <text x="270" y="333" text-anchor="middle" class="dim">getter, setter,</text>
+  <text x="270" y="348" text-anchor="middle" class="dim">&amp; action calls</text>
+  <line class="flow-dashed" x1="510" y1="280" x2="590" y2="280" marker-end="url(#aio)"/>
+  <line class="flow" x1="590" y1="320" x2="510" y2="320" marker-end="url(#aio)"/>
+  <text x="550" y="258" text-anchor="middle" class="dim">mutation</text>
+  <text x="550" y="273" text-anchor="middle" class="dim">notification</text>
+  <text x="550" y="333" text-anchor="middle" class="dim">loads &amp;</text>
+  <text x="550" y="348" text-anchor="middle" class="dim">stores</text>
+  <text x="410" y="420" text-anchor="middle" class="dim">Model is the source of truth.</text>
+  <text x="410" y="440" text-anchor="middle" class="dim">Views and the storage system may hold references to the model, but the model holds none in return; it only posts notifications that they listen for.</text>
+  <text x="410" y="460" text-anchor="middle" class="dim">Slot annotations carry enough information for UI generation, persistence, and synchronization to be handled automatically.</text>
 </svg>
 
 ## Architecture Overview
