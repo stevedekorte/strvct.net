@@ -108,6 +108,31 @@
     }
 
     /**
+     * @description Override SvJsonArrayNode.deserializeFromJson so that
+     * subnodes reconstructed from cloud projection get their
+     * `conversation` slot wired up. The base implementation appends
+     * new subnodes directly to `this.subnodes()` (bypassing
+     * `addSubnode`, which is where `setConversation(this)` would
+     * normally fire). The `conversation` slot is intentionally not in
+     * cloud JSON (it's a back-reference that would cause a serialize
+     * cycle), so without this step the deserialized messages have
+     * `conversation === null` and any view-layer code that calls
+     * `this.conversation().session()` (e.g.
+     * `UoRollRequestMessage.sessionHasCharacter`) throws during the
+     * first render.
+     * @category Initialization
+     */
+    deserializeFromJson (json, filterName, jsonPathComponents = []) {
+        super.deserializeFromJson(json, filterName, jsonPathComponents);
+        this.subnodes().forEach((m) => {
+            if (m && typeof m.setConversation === "function") {
+                m.setConversation(this);
+            }
+        });
+        return this;
+    }
+
+    /**
    * @description Performs final initialization tasks for the SvConversation instance.
    * @category Initialization
    */
