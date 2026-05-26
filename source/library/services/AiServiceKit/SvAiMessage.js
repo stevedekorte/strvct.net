@@ -298,7 +298,27 @@
         this.conversation().requestAnchorOnMessage(this);
 
         try {
-            response.asyncMakeRequest();
+            // asyncMakeRequest returns a Promise — the surrounding
+            // try/catch only catches synchronous throws (e.g. from
+            // setting up the request). If the promise rejects, the
+            // error is silent: the empty `response` message we just
+            // appended sits in the chat forever, no stream ever fires
+            // (no `onStreamStart` → activityState never moves off
+            // "idle"), and the user has no signal anything went
+            // wrong. Hook the rejection to record the error on the
+            // response message itself.
+            const reqPromise = response.asyncMakeRequest();
+            if (reqPromise && typeof reqPromise.catch === "function") {
+                reqPromise.catch((err) => {
+                    console.warn("[SvAiMessage.requestResponse] asyncMakeRequest rejected:", err && err.message ? err.message : err);
+                    try {
+                        if (typeof response.setError === "function") response.setError(err);
+                        if (typeof response.setIsComplete === "function" && !response.isComplete()) {
+                            response.setIsComplete(true);
+                        }
+                    } catch (e) { /* swallow secondary failures */ }
+                });
+            }
         } catch (error) {
             if (error instanceof SvAiRequestOverloadedError) {
                 // TODO: handle overloaded error
