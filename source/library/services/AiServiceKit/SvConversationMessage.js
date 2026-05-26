@@ -337,6 +337,18 @@
     // to be overridden by subclasses
         this.sendDelegateMessage("onMessageComplete");
         if (this.shouldRequestResponseOnComplete()) {
+            // Conversation-level gate: a mirror/client conversation
+            // should never drive the AI loop locally. Without this,
+            // a projected-from-host user message (e.g. tool-call-
+            // results) lands on the client, flips isComplete=true
+            // via deserialize, and the chain here would call
+            // requestResponse — making the client generate its own
+            // AI replies that the host never sees. See
+            // SvConversation.shouldProcessToolCalls().
+            const conv = this.conversation();
+            if (conv && typeof conv.shouldProcessToolCalls === "function" && !conv.shouldProcessToolCalls()) {
+                return;
+            }
             this.requestResponse();
         }
     }

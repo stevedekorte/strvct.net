@@ -108,6 +108,22 @@
     }
 
     /**
+     * Whether THIS conversation instance should execute AI tool
+     * calls locally. Default true — single-player and host. App
+     * subclasses can override to return false for client-side
+     * mirror conversations (multiplayer guests) where running the
+     * tools would fork the AI session: the client would execute
+     * the host's tool calls in its own local aiChat, then build a
+     * tool-call-results user message and fire requestResponse,
+     * making the client run its own AI request that the host never
+     * sees.
+     * @category Tool calls
+     */
+    shouldProcessToolCalls () {
+        return true;
+    }
+
+    /**
      * @description Override SvJsonArrayNode.deserializeFromJson so that
      * subnodes reconstructed from cloud projection get their
      * `conversation` slot wired up. The base implementation appends

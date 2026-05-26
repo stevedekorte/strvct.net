@@ -137,6 +137,7 @@ The following formats will be used for tool calls and responses:
 
 
     async onToolCallAdded (toolCall) {
+        if (!this._shouldProcessToolCalls()) return;
         if (toolCall.isOnStreamTool()) { //SvToolDefinition.callsOnStreamTool
             // call immediately when seeing in content stream e.g. sfx, music, etc.
             await this.processToolCall(toolCall);
@@ -145,6 +146,7 @@ The following formats will be used for tool calls and responses:
 
     onMessageComplete (aMsg) {
         //console.log(this.logPrefix(), ".onMessageComplete('" + aMsg.messageId() + "')");
+        if (!this._shouldProcessToolCalls()) return;
         if (aMsg.isResponse()) {
             // Ai just completed a message, so we can process the tool calls that were queued for this (or any remaining previous) messages
             this.processQueuedToolCalls();
@@ -152,7 +154,23 @@ The following formats will be used for tool calls and responses:
     }
 
     onToolCallComplete (/*toolCall*/) {
+        if (!this._shouldProcessToolCalls()) return;
         this.scheduleMethod("sendCompletedToolCallResponses", 0);
+    }
+
+    /**
+     * Cooperative gate: defers to the parent conversation's
+     * `shouldProcessToolCalls()` method (default true on
+     * SvConversation). App subclasses can return false to suppress
+     * all local tool-call execution — useful for multiplayer
+     * client/mirror conversations where running the host's tool
+     * calls locally would fork the AI session into the client.
+     */
+    _shouldProcessToolCalls () {
+        const conv = this.conversation && this.conversation();
+        if (!conv) return true;
+        if (typeof conv.shouldProcessToolCalls !== "function") return true;
+        return !!conv.shouldProcessToolCalls();
     }
 
     blockingCalls () {
