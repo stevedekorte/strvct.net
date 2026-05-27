@@ -21,6 +21,30 @@
         return false;
     }
 
+    /**
+     * @description Whether deserializeFromJson should retain current
+     * subnodes that are absent from the incoming json (append-only)
+     * rather than dropping them. Default false (normal replace). Opt in
+     * for collections that only ever grow and may receive entries via a
+     * side-channel ahead of the authoritative snapshot (e.g. a
+     * multiplayer client's narration thread). See deserializeFromJson.
+     * @returns {boolean}
+     * @category JSON Operations
+     */
+    subnodesAreAppendOnly () {
+        return this._subnodesAreAppendOnly === true;
+    }
+
+    /**
+     * @param {boolean} b
+     * @returns {SvJsonArrayNode}
+     * @category JSON Operations
+     */
+    setSubnodesAreAppendOnly (b) {
+        this._subnodesAreAppendOnly = b;
+        return this;
+    }
+
     /*
     onBrowserDropChunk (dataChunk) {
         if (dataChunk.mimeType() === "application/json") {
@@ -282,13 +306,59 @@
             }
         });
 
-        //if (true) {
-        this.subnodes().clear();
-        this.subnodes().appendItems(newSubnodes);
-        newSubnodes.forEach(sn => sn.setParentNode(this));
-        //} else {
-        //    this.setSubnodes(newSubnodes);
-        //}
+        // Append-only mode (opt-in via setSubnodesAreAppendOnly(true)):
+        // retain current subnodes that are absent from the incoming json
+        // instead of dropping them. This is for collections that only
+        // ever grow (e.g. a multiplayer client's narration thread), where
+        // a message can be added locally via a fast side-channel BEFORE
+        // the lagging pool snapshot includes it. Without this, the next
+        // pool deserialize would build newSubnodes purely from the (stale)
+        // snapshot and the clear()+rebuild would delete the not-yet-synced
+        // message — it "appears then disappears". When the snapshot later
+        // catches up, the message matches by jsonId and updates in place.
+        // (Retained nodes are appended after the canonical ones — they are
+        // the newest, ahead-of-snapshot entries.)
+        // Skip retention when the incoming snapshot is EMPTY — that's a
+        // deliberate clear (e.g. host "Restart Session" → aiChat.clear()),
+        // not the snapshot merely lagging. Retaining here would leave
+        // stale messages forever after a reset. A non-empty snapshot that
+        // simply omits a just-arrived message is the lag case we retain.
+        if (this.subnodesAreAppendOnly() && json.length > 0) {
+            this.subnodes().forEach(sn => {
+                const jid = sn.jsonId();
+                if (jid === undefined || jid === null) return;
+                if (!seenJsonIds.has(jid)) {
+                    newSubnodes.push(sn);
+                    seenJsonIds.add(jid);
+                }
+            });
+        }
+
+        // Only rebuild the subnodes array when the membership/order
+        // actually changed. Existing nodes have already had their
+        // content updated in-place above (existingNode.deserializeFromJson),
+        // so when the resulting list is identical to the current one
+        // (same instances, same order) the clear()+appendItems() below
+        // is a no-op that still fires spurious remove/add subnode
+        // notifications — tearing down and rebuilding views for no
+        // reason. On a multiplayer client re-applying a pool snapshot
+        // every few seconds this manifests as the chat/list visibly
+        // "jumping" / flickering on each sync.
+        const current = this.subnodes();
+        let unchanged = current.length === newSubnodes.length;
+        if (unchanged) {
+            for (let i = 0; i < newSubnodes.length; i++) {
+                if (current[i] !== newSubnodes[i]) {
+                    unchanged = false;
+                    break;
+                }
+            }
+        }
+        if (!unchanged) {
+            this.subnodes().clear();
+            this.subnodes().appendItems(newSubnodes);
+            newSubnodes.forEach(sn => sn.setParentNode(this));
+        }
 
         return this;
     }
