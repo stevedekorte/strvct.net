@@ -678,22 +678,26 @@
             this.setJsonForTarget(json, jsonPathComponents);
         } else {
             super.deserializeFromJson(json, filterName, jsonPathComponents);
-            let afterJson = this.serializeToJson(filterName, jsonPathComponents);
-            this.verifyJsonMatches(afterJson, json);
+            // Round-trip verification is a dev-only sanity check. It
+            // re-serializes + stringifies + diffs the field on EVERY
+            // deserialize, which is expensive (e.g. large pool snapshots
+            // re-applied every few seconds on a multiplayer client) and
+            // floods the console. Gate to local dev so it never runs on
+            // deployed sites. See verifyJsonMatches.
+            if (typeof isLocalDev === "function" && isLocalDev()) {
+                const afterJson = this.serializeToJson(filterName, jsonPathComponents);
+                this.verifyJsonMatches(afterJson, json);
+            }
         }
         return this;
     }
 
     verifyJsonMatches (afterJson, json) {
-        let afterJsonString = JSON.stableStringifyWithStdOptions(afterJson, null, 4);
-        let jsonString = JSON.stableStringifyWithStdOptions(json, null, 4);
+        const afterJsonString = JSON.stableStringifyWithStdOptions(afterJson, null, 4);
+        const jsonString = JSON.stableStringifyWithStdOptions(json, null, 4);
         if (afterJsonString !== jsonString) {
             const diff = SvGlobals.get("jsondiffpatch").diff(json, afterJson);
-            console.log("diff: " + JSON.stringify(diff, null, 4));
-            debugger;
-            console.log("afterJsonString: ", afterJsonString);
-            debugger;
-            console.log("jsonString: ", jsonString);
+            console.warn(this.svType() + " deserialize round-trip mismatch (dev check):", JSON.stringify(diff));
         }
     }
 
