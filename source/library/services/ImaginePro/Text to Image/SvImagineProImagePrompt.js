@@ -123,15 +123,15 @@
      */
         {
             const validItems = [
-                { value: "9:16", label: "9:16 (Default)" },
+                { value: "9:16", label: "9:16" },
                 { value: "16:9", label: "16:9" },
                 { value: "4:3", label: "4:3" },
                 { value: "3:4", label: "3:4" },
                 { value: "3:2", label: "3:2" },
-                { value: "2:3", label: "2:3" },
+                { value: "2:3", label: "2:3 (Default)" },
                 { value: "1:1", label: "1:1" },
             ];
-            const slot = this.newSlot("aspectRatio", "9:16");
+            const slot = this.newSlot("aspectRatio", "2:3");
             slot.setInspectorPath("Settings");
             slot.setLabel("Aspect Ratio");
             slot.setShouldStoreSlot(true);

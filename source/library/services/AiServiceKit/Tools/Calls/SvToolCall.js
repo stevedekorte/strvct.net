@@ -709,7 +709,7 @@ Example Tool call format:
         }
 
         console.error("---- TOOLCALL ERROR: " + this.svType() + " Error handling tool call: " + e.message);
-        debugger;
+        //debugger;
         const r = this.newToolResult();
         r.setStatus("failure");
         r.setError(e.message);
