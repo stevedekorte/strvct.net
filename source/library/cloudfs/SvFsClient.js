@@ -120,6 +120,19 @@
     }
 
     /**
+     * Pool-managed watch on the HAEB liveness roster `/live/{sessionId}/*`.
+     * onSnap receives a { uid: data } map on every connect/disconnect.
+     * @param {string} sessionId
+     * @param {function(Object):void} onSnap
+     * @param {function(Error):void} [onErr]
+     * @returns {Object} listener-pool handle
+     */
+    watchLive (sessionId, onSnap, onErr) {
+        const unsubscribe = this.backend().watchLive(sessionId, onSnap, onErr);
+        return this.listenerPool().acquire({ label: "live:" + sessionId, unsubscribe });
+    }
+
+    /**
      * Promote a scope-leaf document to a fresh scope-root. Convenience
      * wrapper over `backend.promoteToScopeRoot`.
      */

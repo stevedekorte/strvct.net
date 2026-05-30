@@ -545,4 +545,55 @@
         await this._requestsRef(sessionId).child(uid).child(requestId).remove();
     }
 
+    // ---------------------------------------------------------------- liveness (RTDB onDisconnect)
+    //
+    // /live/{sessionId}/{uid} — each member writes its own presence node and
+    // registers onDisconnect().remove(), so RTDB clears it automatically when
+    // the connection drops. This replaces heartbeat polling + a stale-sweep.
+
+    _liveRef (sessionId) {
+        return firebase.database().ref("live/" + sessionId);
+    }
+
+    /**
+     * Announce presence at /live/{sessionId}/{uid} and arm onDisconnect so the
+     * node is removed automatically on disconnect. `data` carries identity
+     * (displayName, characterId, characterJson, isConnected).
+     */
+    async setLiveNode (sessionId, uid, data) {
+        const ref = this._liveRef(sessionId).child(uid);
+        const payload = Object.assign({}, data || {});
+        payload.connectedAt = firebase.database.ServerValue.TIMESTAMP;
+        ref.onDisconnect().remove();
+        await ref.set(payload);
+    }
+
+    /**
+     * Explicitly remove our live node (clean leave) and cancel the
+     * onDisconnect so it doesn't fire spuriously after.
+     */
+    async clearLiveNode (sessionId, uid) {
+        const ref = this._liveRef(sessionId).child(uid);
+        ref.onDisconnect().cancel();
+        await ref.remove();
+    }
+
+    /**
+     * Watch the live roster. onSnap receives a map { uid: data } on every
+     * change (connect/disconnect). Returns an unsubscribe function.
+     */
+    watchLive (sessionId, onSnap, onErr) {
+        const ref = this._liveRef(sessionId);
+        const onValue = (snap) => onSnap(snap.val() || {});
+        const onError = (err) => {
+            if (onErr) onErr(err);
+            else console.error("[SvFirebaseFsBackend] watchLive error:", err);
+        };
+        ref.on("value", onValue, onError);
+        return () => {
+            try { ref.off("value", onValue); }
+            catch (e) { console.warn("[SvFirebaseFsBackend] live off failed:", e && e.message); }
+        };
+    }
+
 }.initThisClass());
